@@ -1,0 +1,102 @@
+digraph G {
+
+  node [height=0.1,width=1,shape=box,style=filled,color="#49B4CF",fillcolor="#49B4CF",fontcolor=white,fontsize=14,fontname="Helvetica-Bold"]
+  edge [arrowhead=none,arrowtail=none,color="#49B4CF"]
+
+  n0 [label="root:wcmf973a4477d3bc27a223182cfe6a4b80eb"]
+  n0 -> n1
+  n0 -> n2
+  n0 -> n3
+  n0 -> n4
+
+  n1 [label="Author:292"]
+  n1 -> n5
+
+  n5 [label="Recipe:312"]
+  n5 -> n6
+  n5 -> n7
+  n5 -> n8
+  n5 -> n9
+  n5 -> n10
+  n5 -> n11
+
+  n6 [label="Image:315"]
+
+  n7 [label="Image:316"]
+
+  n8 [label="Image:317"]
+
+  n9 [label="AdminInfo:314"]
+
+  n10 [label="Info:313"]
+
+  n11 [label="NMRecipeCategory:318"]
+
+  n2 [label="Author:274"]
+  n2 -> n12
+
+  n12 [label="Recipe:293"]
+  n12 -> n13
+  n12 -> n14
+  n12 -> n15
+  n12 -> n16
+  n12 -> n17
+  n12 -> n18
+  n12 -> n19
+
+  n13 [label="Image:296"]
+
+  n14 [label="Image:297"]
+
+  n15 [label="Image:298"]
+
+  n16 [label="AdminInfo:294"]
+
+  n17 [label="Info:295"]
+
+  n18 [label="NMRecipeCategory:299"]
+
+  n19 [label="NMRecipeCategory:300"]
+
+  n3 [label="Author:291"]
+  n3 -> n20
+  n3 -> n21
+
+  n20 [label="Recipe:306"]
+  n20 -> n22
+  n20 -> n23
+  n20 -> n24
+  n20 -> n25
+  n20 -> n26
+  n20 -> n27
+
+  n22 [label="Image:309"]
+
+  n23 [label="Image:310"]
+
+  n24 [label="Image:311"]
+
+  n25 [label="AdminInfo:308"]
+
+  n26 [label="Info:307"]
+
+  n27 [label="NMRecipeCategory:319"]
+
+  n21 [label="Recipe:301"]
+  n21 -> n28
+  n21 -> n29
+  n21 -> n30
+  n21 -> n31
+
+  n28 [label="Image:304"]
+
+  n29 [label="AdminInfo:303"]
+
+  n30 [label="Info:302"]
+
+  n31 [label="NMRecipeCategory:305"]
+
+  n4 [label="Author:322"]
+
+
+}

@@ -1,0 +1,759 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wCMF cookbook\n"
+"POT-Creation-Date: 2008-10-09 18:18+0200\n"
+"PO-Revision-Date: 2008-10-09 18:18+0200\n"
+"Last-Translator: ingo herwig <ingo@wemove.com>\n"
+"Language-Team: ingo herwig <ingo@wemove.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: wcmf/application/controller/class.InsertController.php, wcmf/application/controller/class.CopyController.php
+msgid "%1% does not accept children of type %2%. The maximum number of children of that type is reached."
+msgstr "%1% akzeptiert keine Kindknoten des Typs %2%. Die maximale Anzahl von Kindern dieses Typs ist erreicht."
+
+#: wcmf/application/controller/class.InsertController.php, wcmf/application/controller/class.CopyController.php
+msgid "%1% does not accept children of type %2%. The parent type is not compatible."
+msgstr "%1% akzeptiert keine Kindknoten des Typs %2%. Der Elterntyp ist nicht kompatibel."
+
+#: wcmf/lib/persistence/class.ObjectQuery.php
+msgid "%1% does only support PersistenceMappers of type NodeUnifiedRDBMapper."
+msgstr "%1% unterstützt nur PersistenceMapper vom Typ NodeUnifiedRDBMapper."
+
+#: wcmf/lib/persistence/class.LockManager.php
+msgid "%1% is locked by user '%2%' since %3%"
+msgstr "%1% ist seit %3% von Benutzer '%2%' gesperrt"
+
+#: wcmf/lib/util/class.I18nUtil.php
+msgid "..."
+msgstr "..."
+
+#: wcmf/application/views/include/navigation.tpl
+msgid "Administration"
+msgstr "Administration"
+
+#: wcmf/blank/include/model/wcmf/class.AdodbseqBase.php
+msgid "Adodbseq"
+msgstr ""
+
+#: wcmf/application/views/include/navigation.tpl
+msgid "Advanced Search"
+msgstr "Erweiterte Suche"
+
+#: wcmf/application/views/admintool/rights.tpl
+msgid "Allow"
+msgstr "Erlaubt"
+
+#: wcmf/application/controller/class.SaveController.php, wcmf/application/controller/class.DisplayController.php
+msgid "A Node with object id %1% does not exist."
+msgstr "Ein Knoten mit der Objekt Id %1% exixtiert nicht."
+
+#: wcmf/application/controller/class.SaveController.php, wcmf/lib/util/class.FileUtil.php
+msgid "A possible reason is that the file size is too big (maximum allowed: %1%  bytes)."
+msgstr "Möglicherweise ist die Datei zu groß (maximal erlaubte Größe: %1% bytes)."
+
+#: wcmf/application/views/displaynode.tpl, wcmf/application/views/childrenlist.tpl
+msgid "Associate selected"
+msgstr "Auswahl verknüpfen"
+
+#: wcmf/application/controller/class.LoginController.php
+msgid "Attempt"
+msgstr "Versuch"
+
+#: wcmf/lib/presentation/class.ActionMapper.php
+msgid "Authorization failed: no valid user. Maybe your session has expired."
+msgstr "Autorisierung fehlgeschlagen: Kein gültiger Benutzer. Möglicherweise ist Ihre Sitzung abgelaufen."
+
+#: wcmf/lib/persistence/class.PersistenceMapper.php
+msgid "Authorization failed for action '%1%' on '%2%'."
+msgstr "Autorisierung für Aktion '%1%' auf '%2%' fehlgeschlagen."
+
+#: wcmf/application/views/admintool/include/navigation.tpl, wcmf/application/views/include/navigation.tpl
+msgid "Back"
+msgstr "Zurück"
+
+#: wcmf/application/views/forms/filebrowser.tpl, wcmf/application/views/forms/linkbrowser.tpl
+msgid "Browse Server"
+msgstr "Server durchsuchen"
+
+#: wcmf/application/controller/admintool/class.BackupController.php
+msgid "Can't restore backup from %1%. The directory does not exists."
+msgstr "Das Backup in %1% kann nicht gelesen werden. Das Verzeichnis existiert nicht."
+
+#: wcmf/application/controller/class.AssociateController.php
+msgid "Cannot associate %1% and %2%. No direct connection and no connection type found."
+msgstr "%1% und %2% können nicht verknüpft werden. Keine direkte Verknüpfung möglich und kein Verknüpfungstyp gefunden."
+
+#: wcmf/lib/util/class.FileUtil.php
+msgid "Cannot copy %1% (it's neither a file nor a directory)."
+msgstr "%1% kann nicht kopiert werden (keine Datei und kein Verzeichnis)."
+
+#: wcmf/application/controller/class.AssociateController.php
+msgid "Cannot disassociate %1% and %2%. No direct connection and no connection type found."
+msgstr "%1% und %2% können nicht getrennt werden. Keine direkte Verknüpfung möglich und kein Verknüpfungstyp gefunden."
+
+#: wcmf/application/views/admintool/user.tpl
+msgid "Change Password"
+msgstr "Passwort ändern"
+
+#: wcmf/application/views/searchpanel.tpl
+msgid "Clear Details"
+msgstr "Details zurücksetzen"
+
+#: wcmf/application/views/displayfailure.tpl
+msgid "Click %1%here%2% to return to application"
+msgstr "Klicken Sie %1%hier%2%, um zur Anwendung zurückzukehren"
+
+#: wcmf/application/views/admintool/include/navigation.tpl
+msgid "Close"
+msgstr "Schliessen"
+
+#: wcmf/application/views/admintool/include/navigation.tpl
+msgid "CMS"
+msgstr "CMS"
+
+#: wcmf/blank/include/model/wcmf/class.UserRDBBase.php
+msgid "config"
+msgstr "Konfiguration"
+
+#: wcmf/application/controller/admintool/class.ConfigController.php
+msgid "Configuration file %1% already exists."
+msgstr "Die Konfigurationsdatei %1% ist bereits vorhanden."
+
+#: wcmf/application/views/admintool/overview.tpl
+msgid "Configuration Files"
+msgstr "Konfigurationsdateien"
+
+#: wcmf/application/views/resourcelist.tpl
+msgid "Content"
+msgstr "Inhalt"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl, wcmf/application/views/include/resourcelist_content.tpl
+msgid "Content to link"
+msgstr "Verlinkbarer Inhalt"
+
+#: wcmf/application/views/admintool/include/navigation.tpl, wcmf/application/views/include/navigation.tpl
+msgid "Content Tree"
+msgstr "Baumansicht"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Could not create thumbnail image %1%."
+msgstr "Thumbnail Datei %1% konnte nicht erstellt werden."
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Could not open source image %1%."
+msgstr "Quelldatei %1% konnte nicht geöffnet werden."
+
+#: wcmf/application/views/childrenlist.tpl
+msgid "Create"
+msgstr "Anlegen"
+
+#: wcmf/blank/include/model/class.EntityBaseBase.php
+msgid "created"
+msgstr "Erstellt"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Create directory"
+msgstr "Verzeichnis anlegen"
+
+#: wcmf/application/views/displaynode.tpl, wcmf/application/views/childrenlist.tpl, wcmf/application/views/nodelist.tpl
+msgid "Create new %1%"
+msgstr "%1% anlegen"
+
+#: wcmf/application/views/displaynode.tpl
+msgid "Create new '%1%' under '%2%'"
+msgstr "'%1%' unter '%2%' anlegen"
+
+#: wcmf/application/views/admintool/overview.tpl
+msgid "Create new Configuration File"
+msgstr "Konfigurationsdatei anlegen"
+
+#: wcmf/application/views/admintool/overview.tpl
+msgid "Create new Role"
+msgstr "Gruppe anlegen"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Create new Section"
+msgstr "Abschnitt anlegen"
+
+#: wcmf/application/views/admintool/overview.tpl
+msgid "Create new User"
+msgstr "Benutzer anlegen"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Create Option in '%1%'"
+msgstr "Option in '%1%' anlegen"
+
+#: wcmf/blank/include/model/class.EntityBaseBase.php
+msgid "creator"
+msgstr "Erstellt von"
+
+#: wcmf/application/views/childrenlist.tpl, wcmf/application/views/admintool/overview.tpl, wcmf/application/views/nodelist.tpl, wcmf/application/views/include/resourcelist_resource.tpl, wcmf/application/js/grid/actions.js.php
+msgid "Delete %1%"
+msgstr "%1% löschen"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Delete directory %1%"
+msgstr "Verzeichnis %1% löschen"
+
+#: wcmf/application/views/forms/fileex.tpl
+msgid "delete file"
+msgstr "Datei löschen"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Delete file %1%"
+msgstr "Datei %1% löschen"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Delete option %1%"
+msgstr "Option %1% löschen"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Delete section %1%"
+msgstr "Abschnitt %1% löschen"
+
+#: wcmf/application/views/admintool/rights.tpl
+msgid "Deny"
+msgstr "Verboten"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Dimension 0 is not allowed."
+msgstr "Dimension 0 ist nicht erlaubt."
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Directories"
+msgstr "Verzeichnisse"
+
+#: wcmf/application/views/childrenlist.tpl, wcmf/application/js/grid/actions.js.php
+msgid "Disassociate %1%"
+msgstr "Verknüpfung zu %1% lösen"
+
+#: wcmf/application/js/grid/grid.js.php
+msgid "Display %1% items"
+msgstr "%1% Zeilen anzeigen"
+
+#: wcmf/application/js/grid/grid.js.php
+msgid "Displaying {0} - {1} of {2}"
+msgstr "{0} - {1} of {2}"
+
+#: wcmf/application/views/include/sort_item.tpl, wcmf/application/js/grid/actions.js.php
+msgid "Down"
+msgstr "Runter"
+
+#: wcmf/application/controller/class.SortController.php
+msgid "down"
+msgstr "Runter"
+
+#: wcmf/application/js/grid/grid.js.php
+msgid "Drop {0} row(s) here"
+msgstr "{0} Zeile(n) hier einfügen"
+
+#: wcmf/application/views/childrenlist.tpl, wcmf/application/views/nodelist.tpl, wcmf/application/js/grid/actions.js.php
+msgid "Duplicate %1%"
+msgstr "%1% duplizieren"
+
+#: wcmf/application/views/childrenlist.tpl, wcmf/application/views/admintool/config.tpl, wcmf/application/views/admintool/overview.tpl, wcmf/application/views/nodelist.tpl, wcmf/application/js/grid/actions.js.php
+msgid "Edit %1%"
+msgstr "%1% bearbeiten"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Either width or height must be given."
+msgstr "Entweder Breite oder Höhe müssen angegeben werden."
+
+#: wcmf/blank/include/model/class.EntityBaseBase.php
+msgid "EntityBase"
+msgstr "Basisklasse"
+
+#: wcmf/application/views/include/error.tpl
+msgid "Error"
+msgstr "Fehler"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "exactly"
+msgstr "exakt"
+
+#: wcmf/application/views/include/navigation.tpl
+msgid "Export"
+msgstr "Exportieren"
+
+#: wcmf/application/controller/class.XMLExportController.php
+msgid "Exporting tree: continue with %1%"
+msgstr "Exportiere Baum: Fortgesetzt bei %1%"
+
+#: wcmf/application/controller/class.XMLExportController.php
+msgid "Exporting tree: start with %1%"
+msgstr "Exportiere Baum: Angefangen bei %1%"
+
+#: wcmf/lib/util/class.FileUtil.php
+msgid "Failed to move %1% to %2%."
+msgstr "Die Datei %1% konnte nicht nach %2% verschoben werden."
+
+#: wcmf/application/views/admintool/rights.tpl
+msgid "File"
+msgstr "Datei"
+
+#: wcmf/application/controller/class.SaveController.php, wcmf/lib/util/class.FileUtil.php
+msgid "File '%1%' has wrong mime type: %2%. Allowed types: %3%."
+msgstr "Datei '%1%' hat den falschen Typ: %2%. Erlaubte Typen: %3%."
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Filename"
+msgstr "Dateiname"
+
+#: wcmf/application/views/display/image.tpl
+msgid "file not found: %1%"
+msgstr "Datei nicht gefunden: %1%"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Files in %1%"
+msgstr "Dateien in %1%"
+
+#: wcmf/lib/util/class.FileUtil.php
+msgid "File too big: %1%. Allowed size: %2% bytes."
+msgstr "Datei zu groß: %1%. Erlaubte Größe: %2% Bytes."
+
+#: wcmf/application/controller/class.XMLExportController.php
+msgid "Finish"
+msgstr "Fertig"
+
+#: wcmf/blank/include/model/wcmf/class.UserRDBBase.php
+msgid "firstname"
+msgstr "Vorname"
+
+#: wcmf/blank/include/model/wcmf/class.NMUserRoleBase.php
+msgid "fk_role_id"
+msgstr ""
+
+#: wcmf/blank/include/model/wcmf/class.LocktableBase.php
+msgid "fk_userrdb_id"
+msgstr ""
+
+#: wcmf/blank/include/model/wcmf/class.NMUserRoleBase.php
+msgid "fk_user_id"
+msgstr ""
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Font file '%1%' not found."
+msgstr "Schriftdatei '%1%' nicht gefunden."
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Format of font file '%1%' not supported."
+msgstr "Format der Schriftdatei '%1%' wird nicht unterstützt"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "gd library missing"
+msgstr "GD Bibliothek fehlt"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Go up one folder"
+msgstr "Verzeichnis nach oben"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Go to top folder"
+msgstr "Wurzelverzeichnis"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Goto Sections"
+msgstr "Abschnitte ansehen"
+
+#: wcmf/blank/include/model/class.EntityBaseBase.php, wcmf/blank/include/model/wcmf/class.LocktableBase.php, wcmf/blank/include/model/wcmf/class.AdodbseqBase.php, wcmf/blank/include/model/wcmf/class.UserRDBBase.php, wcmf/blank/include/model/wcmf/class.RoleRDBBase.php
+msgid "id"
+msgstr "Id"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Image format not supported."
+msgstr "Das Bildformat wird nicht unterstützt."
+
+#: wcmf/application/controller/class.XMLExportController.php
+msgid "Initialization"
+msgstr "Initialisierung"
+
+#: wcmf/blank/include/model/class.EntityBaseBase.php
+msgid "last_editor"
+msgstr "Zuletzt geändert von"
+
+#: wcmf/application/controller/class.ResourceListController.php
+msgid "List function is not implemented for type %1% subtype %2%"
+msgstr "List Funktion ist nicht implementiert für Typ %1% Untertyp %2%"
+
+#: wcmf/blank/include/model/wcmf/class.LocktableBase.php
+msgid "Locktable"
+msgstr ""
+
+#: wcmf/application/views/include/title.tpl, wcmf/lib/presentation/smarty_plugins/function.translate.php
+msgid "Logged in as %1% since %2%"
+msgstr "Angemeldet als %1% seit %2%"
+
+#: wcmf/application/views/login.tpl
+msgid "Login"
+msgstr "Anmeldename"
+
+#: wcmf/blank/include/model/wcmf/class.UserRDBBase.php
+msgid "login"
+msgstr "Anmeldename"
+
+#: wcmf/application/views/login.tpl, wcmf/application/views/admintool/include/navigation.tpl
+msgid "Log in"
+msgstr "Anmelden"
+
+#: wcmf/application/controller/class.LoginController.php
+msgid "Login failed. Try again."
+msgstr "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut."
+
+#: wcmf/application/views/admintool/include/navigation.tpl, wcmf/application/views/include/navigation.tpl
+msgid "Logout"
+msgstr "Abmelden"
+
+#: wcmf/application/views/forms/date.tpl
+msgid "m/d/Y"
+msgstr "d.m.Y"
+
+#: wcmf/application/views/include/navigation.tpl
+msgid "Media Pool"
+msgstr "Medien-Pool"
+
+#: wcmf/application/views/admintool/role.tpl
+msgid "Members"
+msgstr "Mitglieder"
+
+#: wcmf/blank/include/model/class.EntityBaseBase.php
+msgid "modified"
+msgstr "Zuletzt geändert"
+
+#: wcmf/application/views/searchresult.tpl
+msgid "Name"
+msgstr "Name"
+
+#: wcmf/blank/include/model/wcmf/class.UserRDBBase.php, wcmf/blank/include/model/wcmf/class.RoleRDBBase.php
+msgid "name"
+msgstr "Name"
+
+#: wcmf/application/views/admintool/user.tpl, wcmf/application/views/user.tpl
+msgid "New Password"
+msgstr "Neues Passwort"
+
+#: wcmf/application/views/admintool/user.tpl, wcmf/application/views/user.tpl
+msgid "New Password Repeated"
+msgstr "Passwortwiederholung"
+
+#: wcmf/application/views/include/list_navigation.tpl
+msgid "next"
+msgstr "Weiter"
+
+#: wcmf/blank/include/model/wcmf/class.NMUserRoleBase.php
+msgid "NMUserRole"
+msgstr ""
+
+#: wcmf/application/js/common.js.php
+msgid "No"
+msgstr "Nein"
+
+#: wcmf/application/views/childrenlist.tpl, wcmf/application/views/nodelist.tpl
+msgid "none"
+msgstr "Keine"
+
+#: wcmf/application/js/grid/grid.js.php
+msgid "No objects to display"
+msgstr "Keine Objekte vorhanden"
+
+#: wcmf/application/controller/class.DisplayController.php
+msgid "No root types defined."
+msgstr "Keine Wurzel Typen definiert."
+
+#: wcmf/lib/persistence/class.ObjectQuery.php
+msgid "null value found in group"
+msgstr "Null Wert in der Gruppe"
+
+#: wcmf/blank/include/model/wcmf/class.LocktableBase.php
+msgid "objectid"
+msgstr "Objekt ID"
+
+#: wcmf/application/views/displaynode.tpl, wcmf/application/views/admintool/role.tpl, wcmf/application/views/admintool/user.tpl
+msgid "object ID"
+msgstr "Objekt ID"
+
+#: wcmf/application/views/include/list_navigation.tpl
+msgid "of"
+msgstr "von"
+
+#: wcmf/application/views/admintool/user.tpl, wcmf/application/views/user.tpl
+msgid "Old Password"
+msgstr "Altes Passwort"
+
+#: wcmf/application/views/login.tpl
+msgid "Password"
+msgstr "Passwort"
+
+#: wcmf/blank/include/model/wcmf/class.UserRDBBase.php
+msgid "password"
+msgstr "Passwort"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Please note: Special characters like %1% are not allowed in the filename."
+msgstr "Achtung: Sonderzeichen wie %1% sind im Dateinamen nicht erlaubt."
+
+#: wcmf/application/controller/class.SaveController.php, wcmf/lib/util/class.FileUtil.php
+msgid "Possible file upload attack: filename %1%."
+msgstr "Möglicher Datei Upload Angriff: filename %1%."
+
+#: wcmf/application/views/include/list_navigation.tpl
+msgid "prev"
+msgstr "Zurück"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Preview"
+msgstr "Vorschau"
+
+#: wcmf/application/views/forms/fileex.tpl
+msgid "preview file"
+msgstr "Vorschau"
+
+#: wcmf/application/controller/class.BatchController.php
+msgid "Processing"
+msgstr "Bearbeite"
+
+#: wcmf/application/views/admintool/overview.tpl
+msgid "Really delete configuration %1%?"
+msgstr "Konfiguration %1% wirklich löschen?"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Really delete directory %1%?"
+msgstr "Soll das Verzeichnis %1% wirklich gelöscht werden?"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Really delete file %1%?"
+msgstr "Soll die Datei %1% wirklich gelöscht werden?"
+
+#: wcmf/application/views/childrenlist.tpl, wcmf/application/views/admintool/overview.tpl, wcmf/application/views/nodelist.tpl, wcmf/application/js/grid/actions.js.php
+msgid "Really delete node %1%?"
+msgstr "Soll der Knoten %1% wirklich gelöscht werden?"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Really delete option %1%?"
+msgstr "Option %1% wirklich löschen?"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Really delete section %1%?"
+msgstr "Abschnitt %1% wirklich löschen?"
+
+#: wcmf/application/views/displayfailure.tpl
+msgid "Reason"
+msgstr "Ursache"
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "referenced %1% time(s)"
+msgstr "%1% mal referenziert"
+
+#: wcmf/application/views/admintool/include/navigation.tpl, wcmf/application/views/include/navigation.tpl
+msgid "Reload"
+msgstr "Aktualisieren"
+
+#: wcmf/application/views/login.tpl
+msgid "Remember me"
+msgstr "Login merken"
+
+#: wcmf/application/views/resourcelist.tpl
+msgid "Resources"
+msgstr "Dateien"
+
+#: wcmf/application/views/admintool/rights.tpl
+msgid "Rights on %1%"
+msgstr "Rechte für %1%"
+
+#: wcmf/blank/include/model/wcmf/class.RoleRDBBase.php
+msgid "RoleRDB"
+msgstr ""
+
+#: wcmf/application/views/admintool/user.tpl, wcmf/application/views/admintool/overview.tpl
+msgid "Roles"
+msgstr "Gruppen"
+
+#: wcmf/application/views/displaynode.tpl, wcmf/application/views/nodelist.tpl, wcmf/application/controller/class.CopyController.php, wcmf/application/js/grid/actions.js.php, wcmf/application/js/tree/tree.js.php
+msgid "Root"
+msgstr "Wurzel"
+
+#: wcmf/application/views/admintool/config.tpl, wcmf/application/views/admintool/include/navigation.tpl, wcmf/application/views/include/navigation.tpl
+msgid "Save"
+msgstr "Speichern"
+
+#: wcmf/application/views/searchpanel.tpl, wcmf/application/views/include/navigation.tpl
+msgid "Search"
+msgstr "Suchen"
+
+#: wcmf/application/views/searchpanel.tpl
+msgid "search for"
+msgstr "Suche nach"
+
+#: wcmf/application/views/searchresult.tpl
+msgid "Search results for: %1%"
+msgstr "Suchergebnis für: %1%"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "Sections"
+msgstr "Abschnitte"
+
+#: wcmf/blank/include/model/wcmf/class.LocktableBase.php
+msgid "sessionid"
+msgstr ""
+
+#: wcmf/application/views/include/list_navigation.tpl
+msgid "show"
+msgstr "Zeige"
+
+#: wcmf/blank/include/model/wcmf/class.LocktableBase.php
+msgid "since"
+msgstr "Seit"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "smaller than"
+msgstr "kleiner als"
+
+#: wcmf/application/views/displaynode.tpl
+msgid "some objects are locked"
+msgstr "Einige Objekte sind gesperrt"
+
+#: wcmf/lib/util/class.FileUtil.php
+msgid "The directory '%1%' does not exist."
+msgstr "Das Verzeichnis '%1%' existiert nicht."
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The given passwords don't match"
+msgstr "Die angegebenen Passwörter stimmen nicht überein"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The login '%1%' already exists"
+msgstr "Der Anmeldename '%1%' existiert bereits"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The login '%1%' does not exist"
+msgstr "Der Anmeldename '%1%' existiert nicht"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The old password is incorrect"
+msgstr "Das alte Passwort ist nicht korrekt"
+
+#: wcmf/application/controller/class.UserController.php
+msgid "The password was successfully changed."
+msgstr "Das Passwort wurde erfolgreich geändert."
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The principal does not exist: '%1%'"
+msgstr "Benutzer/Gruppe '%1%' existiert nicht"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The role '%1%' already exists"
+msgstr "Die Gruppe '%1%' existiert bereits"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The role '%1%' does not exist"
+msgstr "Die Gruppe '%1%' existiert nicht"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The role requires a name"
+msgstr "Der Gruppenname muss angegeben werden"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The user '%1%' already has the role '%2%'"
+msgstr "Der Benutzer '%1%' ist bereits in der Gruppe '%2%'"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The user '%1%' does not have the role '%2%'"
+msgstr "Der Benutzer '%1%' ist nicht in der Gruppe '%2%'"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "The user requires a login name"
+msgstr "Der Benutzername muss angegeben werden"
+
+#: wcmf/application/controller/class.SaveController.php
+msgid "The value must match %1%."
+msgstr "Der Wert muss die Form %1% besitzen."
+
+#: wcmf/application/controller/class.SaveController.php
+msgid "The value must NOT match %1%."
+msgstr "Der Wert darf nicht die Form %1% besitzen."
+
+#: wcmf/application/views/displayfailure.tpl
+msgid "This page is currently not available"
+msgstr "Diese Seite ist momentan nicht verfügbar"
+
+#: wcmf/application/views/searchresult.tpl
+msgid "Type"
+msgstr "Typ"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "unknown FONTTYPE"
+msgstr "unbekannter FONTTYPE"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "Unknown object type: '%1%'"
+msgstr "Unbekannter Objekttyp: '%1%'"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "Unknown role property: '%1%'"
+msgstr "Unbekannte Gruppeneigenschaft: '%1%'"
+
+#: wcmf/lib/security/class.UserManager.php
+msgid "Unknown user property: '%1%'"
+msgstr "Unbekannte Benutzereigenschaft: '%1%'"
+
+#: wcmf/application/controller/class.SortController.php
+msgid "up"
+msgstr "hoch"
+
+#: wcmf/application/views/include/sort_item.tpl, wcmf/application/js/grid/actions.js.php
+msgid "Up"
+msgstr "Hoch"
+
+#: wcmf/application/controller/class.SaveController.php
+msgid "Upload failed for %1%."
+msgstr "Upload fehlgeschlagen für %1%."
+
+#: wcmf/application/views/include/resourcelist_resource.tpl
+msgid "Upload selected file(s)"
+msgstr "Ausgewählte Datei(en) hochladen"
+
+#: wcmf/application/views/user.tpl
+msgid "User"
+msgstr "Benutzer"
+
+#: wcmf/application/views/admintool/include/navigation.tpl, wcmf/application/views/include/navigation.tpl
+msgid "User data"
+msgstr "Benutzerdaten"
+
+#: wcmf/blank/include/model/wcmf/class.UserRDBBase.php
+msgid "UserRDB"
+msgstr ""
+
+#: wcmf/application/views/admintool/overview.tpl
+msgid "Users"
+msgstr "Benutzer"
+
+#: wcmf/lib/presentation/class.Controller.php
+msgid "Validation failed for the following reason: %1%"
+msgstr "Validierung aus folgendem Grund fehlgeschlagen: %1%"
+
+#: wcmf/application/views/admintool/config.tpl
+msgid "View %1%"
+msgstr "%1% ansehen"
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Wrong image height. Image height must be %1% %2%px - actual image height is %3%px."
+msgstr "Falsche Bildhöhe. Die Bildhöhe muss %1% %2%px sein - sie ist %3%px."
+
+#: wcmf/lib/util/class.GraphicsUtil.php
+msgid "Wrong image width. Image width must be %1% %2%px - actual image width is %3%px."
+msgstr "Falsche Bildbreite. Die Bildbreite muss %1% %2%px sein - sie ist %3%px."
+
+#: wcmf/application/controller/class.SaveController.php
+msgid "Wrong value for %1% (%2%). "
+msgstr "Ungültiger Wert für %1% (%2%). "
+
+#: wcmf/application/js/common.js.php
+msgid "Yes"
+msgstr "Ja"
+
+#: wcmf/lib/presentation/class.ActionMapper.php
+msgid "You don't have the permission to perform this action."
+msgstr "Sie haben nicht die Berechtigung diese Aktion durchzuführen."
+

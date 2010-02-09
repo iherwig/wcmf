@@ -1,0 +1,1 @@
+Version 3 -> 4- PHP5 only- introduced ObjectId Class- removed dataTypes from PersistentObjectcurrent 3.0 rev. 1144

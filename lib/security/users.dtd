@@ -1,0 +1,19 @@
+<!ELEMENT XmlDatabase (#PCDATA | nextID | users | roles)*>
+
+<!ELEMENT nextID (#PCDATA)>
+
+<!ELEMENT users (#PCDATA | user)*>
+<!ELEMENT user (#PCDATA | name | firstname | login | password | config | userroles)*>
+<!ATTLIST user id CDATA #IMPLIED>
+<!ELEMENT firstname (#PCDATA)>
+<!ELEMENT login (#PCDATA)>
+<!ELEMENT password (#PCDATA)>
+<!ELEMENT config (#PCDATA)>
+<!ELEMENT userroles (#PCDATA | roleid)*>
+<!ELEMENT roleid (#PCDATA)>
+
+<!ELEMENT roles (#PCDATA | role)*>
+<!ELEMENT role (#PCDATA | name)*>
+<!ATTLIST role id CDATA #IMPLIED>
+
+<!ELEMENT name (#PCDATA)>
