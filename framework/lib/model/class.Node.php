@@ -210,10 +210,11 @@ class Node extends PersistentObject
   /**
    * Delete a Node's child.
    * @param childOID The object id of the child Node to delete.
+   * @param role The role of the child. If null, the role is the child's type. [default: null]
    * @param reallyDelete True/false [default: false].
    * (if reallyDelete==false mark it and it's descendants as deleted).
    */
-  public function deleteChild($childOID, $reallyDelete=false)
+  public function deleteChild($childOID, $role=null, $reallyDelete=false)
   {
     for($i=0;$i<sizeOf($this->_children);$i++)
     {
@@ -734,7 +735,7 @@ class Node extends PersistentObject
   function __toString($verbose=false)
   {
     $str = 'NODE ';
-    $str .= parent::toString($verbose);
+    $str .= parent::__toString($verbose);
     $str .= 'depth:'.self::getDepth().' ';
     $str .= 'path:'.self::getPath().' ';
     $str .= 'roles:'.JSONUtil::encode(self::getRoles()).', ';

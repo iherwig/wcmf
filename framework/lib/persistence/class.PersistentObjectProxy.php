@@ -66,7 +66,7 @@ class PersistentObjectProxy
     if ($this->_realSubject == null) {
       $this->resolve();
     }
-    return $this->_realSubject->__call($name, $arguments);
+    return $this->_realSubject->$name($arguments);
   }
   /**
    * Delegate static method call to the instance.
@@ -76,7 +76,7 @@ class PersistentObjectProxy
     if ($this->_realSubject == null) {
       $this->resolve();
     }
-    return $this->_realSubject->__callStatic($name, $arguments);
+    return $this->_realSubject->$name($arguments);
   }
   /**
    * Load the PersistentObject instance

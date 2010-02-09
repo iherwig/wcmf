@@ -612,9 +612,12 @@ class PersistentObject
       $mapper = $this->getMapper();
       if ($mapper)
       {
-        $attr = $mapper->getAttribute($name);
-        if ($attr) {
-          return $attr->$property;
+        if ($mapper->hasAttribute($name))
+        {
+          $attr = $mapper->getAttribute($name);
+          if ($attr) {
+            return $attr->$property;
+          }
         }
       }
     }
