@@ -19,11 +19,13 @@
 require_once(BASE."wcmf/lib/util/class.Log.php");
 require_once(BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(BASE."wcmf/lib/output/class.OutputStrategy.php");
+require_once(BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
 require_once(BASE."wcmf/lib/persistence/class.ObjectQuery.php");
 require_once(BASE."wcmf/lib/persistence/class.StringQuery.php");
 require_once(BASE."wcmf/lib/persistence/class.PagingInfo.php");
 require_once(BASE."wcmf/lib/persistence/class.ChangeListener.php");
+require_once(BASE."wcmf/lib/core/class.ConfigurationException.php");
 
 /**
  * Some constants describing the build process
@@ -70,9 +72,9 @@ class PersistenceFacade implements ChangeListener
    * Get a list of types defined in the application.
    * @return The list of types
    */
-  function getKnownTypes()
+  public function getKnownTypes()
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     return array_keys($parser->getSection('typemapping'));
   }
   /**
@@ -80,7 +82,7 @@ class PersistenceFacade implements ChangeListener
    * @param type The type to check
    * @return True/False wether the type is defined or not
    */
-  static function isKnownType($type)
+  public static function isKnownType($type)
   {
     // find mapper in configfile
     $parser = InifileParser::getInstance();
@@ -102,7 +104,7 @@ class PersistenceFacade implements ChangeListener
    * @param buildTypes An array listing the (sub-)types to include (default: empty array, includes all types)
    * @return A reference to the object, null if oid does not exist or a given condition prevents loading.
    */
-  function load(ObjectId $oid, $buildDepth, array $buildAttribs=array(), array $buildTypes=array())
+  public function load(ObjectId $oid, $buildDepth, array $buildAttribs=array(), array $buildTypes=array())
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
@@ -144,13 +146,13 @@ class PersistenceFacade implements ChangeListener
   /**
    * Construct the template of an Object of a given type.
    * @param type The type of object to build
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (default: BUILDDEPTH_SINGLE)
    * @param buildAttribs An assoziative array listing the attributes to create (default: empty array, creates all attributes)
    *        (keys: the types, values: an array of attributes of the type to create)
    *        Use this to create only a subset of attributes
    * @return A reference to the object.
    */
-  function create($type, $buildDepth, array $buildAttribs=array())
+  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array())
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE, BUILDDEPTH_REQUIRED))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
@@ -159,7 +161,7 @@ class PersistenceFacade implements ChangeListener
     $mapper = $this->getMapper($type);
     if ($mapper != null)
     {
-      $obj = &$mapper->create($type, $buildDepth, $buildAttribs);
+      $obj = $mapper->create($type, $buildDepth, $buildAttribs);
 
       // register as change listener to track the created oid, after save
       $obj->addChangeListener($this);
@@ -172,7 +174,7 @@ class PersistenceFacade implements ChangeListener
    * @param object A reference to the object to save
    * @return True/False depending on success of operation
    */
-  function save(PersistentObject $object)
+  public function save(PersistentObject $object)
   {
     if ($this->_isReadOnly) {
       return true;
@@ -186,13 +188,13 @@ class PersistenceFacade implements ChangeListener
    * @param recursive True/False whether to physically delete it's children too [default: true]
    * @return True/False depending on success of operation
    */
-  function delete(ObjectId $oid, $recursive=true)
+  public function delete(ObjectId $oid, $recursive=true)
   {
     if ($this->_isReadOnly) {
       return true;
     }
     $result = false;
-    $mapper = &$this->getMapper($oid->getType());
+    $mapper = $this->getMapper($oid->getType());
     if ($mapper != null) {
       $result = $mapper->delete($oid, $recursive);
     }
@@ -203,7 +205,7 @@ class PersistenceFacade implements ChangeListener
    * @param type The type of the object
    * @return An array containing the objects ids
    */
-  function getCreatedOIDs($type)
+  public function getCreatedOIDs($type)
   {
     if (!array_key_exists($type, $this->_createdOIDs)) {
       return $this->_createdOIDs[$type];
@@ -215,7 +217,7 @@ class PersistenceFacade implements ChangeListener
    * @param type The type of the object
    * @return The object id or null
    */
-  function getLastCreatedOID($type)
+  public function getLastCreatedOID($type)
   {
     if (array_key_exists($type, $this->_createdOIDs) && sizeof($this->_createdOIDs[$type]) > 0) {
       return $this->_createdOIDs[$type][sizeof($this->_createdOIDs[$type])-1];
@@ -231,7 +233,7 @@ class PersistenceFacade implements ChangeListener
    * @param pagingInfo A reference PagingInfo instance. [default: null]
    * @return An array containing the objects ids
    */
-  function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
+  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
   {
     $result = array();
     $mapper = $this->getMapper($type);
@@ -249,7 +251,7 @@ class PersistenceFacade implements ChangeListener
    * @param pagingInfo A reference PagingInfo instance. [default: null]
    * @return An object id or null
    */
-  function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
+  public function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
   {
     $oids = PersistenceFacade::getOIDs($type, $criteria, $orderby, $pagingInfo);
     if (sizeof($oids) > 0) {
@@ -273,7 +275,7 @@ class PersistenceFacade implements ChangeListener
    * @param buildTypes An array listing the (sub-)types to include
    * @return An array containing the objects
    */
-  function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  public function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     array $buildAttribs=null, array $buildTypes=null)
   {
     $result = array();
@@ -297,7 +299,7 @@ class PersistenceFacade implements ChangeListener
    * @param buildTypes An array listing the (sub-)types to include
    * @return A reference to the object or null
    */
-  function loadFirstObject($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  public function loadFirstObject($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     array $buildAttribs=null, array $buildTypes=null)
   {
     $objects = PersistenceFacade::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
@@ -313,7 +315,7 @@ class PersistenceFacade implements ChangeListener
    * @param type The object type to search for
    * @return An ObjectQuery instance
    */
-  function createObjectQuery($type)
+  public static function createObjectQuery($type)
   {
     return new ObjectQuery($type);
   }
@@ -321,7 +323,7 @@ class PersistenceFacade implements ChangeListener
    * Create a string query.
    * @return An StringQuery instance
    */
-  function createStringQuery()
+  public static function createStringQuery()
   {
     return new StringQuery();
   }
@@ -332,7 +334,7 @@ class PersistenceFacade implements ChangeListener
    * @note There is only ONE transaction active at a time. Repeated calls of this method will leave the initial
    * transaction active until commitTransaction() ore rollbackTransaction() is called.
    */
-  function startTransaction()
+  public function startTransaction()
   {
     if (!$this->_inTransaction)
     {
@@ -354,7 +356,7 @@ class PersistenceFacade implements ChangeListener
    * @note There is only ONE transaction active at a time. Repeated calls of this method will do nothing until
    * a new transaction was started by calling startTransaction().
    */
-  function commitTransaction()
+  public function commitTransaction()
   {
     if ($this->_inTransaction)
     {
@@ -376,7 +378,7 @@ class PersistenceFacade implements ChangeListener
    * @note There is only ONE transaction active at a time. Repeated calls of this method will do nothing until
    * a new transaction was started by calling startTransaction(). Rollbacks have to be supported by the data storage.
    */
-  function rollbackTransaction()
+  public function rollbackTransaction()
   {
     if ($this->_inTransaction)
     {
@@ -396,7 +398,7 @@ class PersistenceFacade implements ChangeListener
    * @param type The type of the object to get the PersistenceMapper for
    * @return A reference to the PersistenceMapper, null on error
    */
-  function getMapper($type)
+  public function getMapper($type)
   {
     $mapper = null;
     // find type-specific mapper
@@ -497,16 +499,16 @@ class PersistenceFacade implements ChangeListener
    * @param type The type to set the mapper for
    * @param mapper A reference to the mapper
    */
-  function setMapper($type, PersistenceMapper $mapper)
+  public function setMapper($type, PersistenceMapper $mapper)
   {
-    $this->_mapperObjects[$type] = &$mapper;
+    $this->_mapperObjects[$type] = $mapper;
   }
   /**
    * Store a connection for reuse
    * @param initParams The initParams used to initialize the conenction
    * @param connection A reference to the connection to save
    */
-  function storeConnection(array $initParams, $connection)
+  public function storeConnection(array $initParams, $connection)
   {
     if ($connection != null)
     {
@@ -519,7 +521,7 @@ class PersistenceFacade implements ChangeListener
    * objects and save/delete methods are disabled.
    * @param isReadOnly True/False whether objects should be readonly or not
    */
-  function setReadOnly($isReadOnly)
+  public function setReadOnly($isReadOnly)
   {
     $this->_isReadOnly = $isReadOnly;
   }
@@ -527,7 +529,7 @@ class PersistenceFacade implements ChangeListener
    * Enable logging using a given OutputStrategy to log insert/update/delete actions to a file.
    * @param logStrategy The OutputStrategy to use.
    */
-  function enableLogging($logStrategy)
+  public function enableLogging($logStrategy)
   {
     $this->_logStrategy = $logStrategy;
     $this->_logging = true;
@@ -535,7 +537,7 @@ class PersistenceFacade implements ChangeListener
   /**
    * Disable logging.
    */
-  function disableLogging()
+  public function disableLogging()
   {
     $this->_logging = false;
   }
@@ -543,7 +545,7 @@ class PersistenceFacade implements ChangeListener
    * Check if the PersistenceMapper is logging.
    * @return True/False whether the PersistenceMapper is logging.
    */
-  function isLogging()
+  public function isLogging()
   {
     return $this->_logging;
   }
@@ -552,14 +554,14 @@ class PersistenceFacade implements ChangeListener
    * and returns cached instances when calling the PersistenceFacade::load method.
    * @param isCaching True/False whether objects should be chached or not
    */
-  function setCaching($isCaching)
+  public function setCaching($isCaching)
   {
     $this->_isCaching = $isCaching;
   }
   /**
    * Clear the object cache
    */
-  function clearCache()
+  public function clearCache()
   {
     $this->_cache = array();
   }
@@ -571,7 +573,7 @@ class PersistenceFacade implements ChangeListener
    * @param buildTypes An array (@see PersistenceFacade::load)
    * @return The cache key string
    */
-  function getCacheKey(ObjectId $oid, $buildDepth, array $buildAttribs, array $buildTypes)
+  public function getCacheKey(ObjectId $oid, $buildDepth, array $buildAttribs, array $buildTypes)
   {
     $key = $oid->__toString().':'.$buildDepth.':';
     foreach($buildAttribs as $type => $attribs) {
@@ -588,22 +590,22 @@ class PersistenceFacade implements ChangeListener
   /**
    * @see ChangeListener::getId()
    */
-  function getId()
+  public function getId()
   {
     return __CLASS__;
   }
   /**
    * @see ChangeListener::valueChanged()
    */
-  function valueChanged(PersistentObject $object, $name, $type, $oldValue, $newValue) {}
+  public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
   /**
    * @see ChangeListener::propertyChanged()
    */
-  function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
+  public function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
   /**
    * @see ChangeListener::stateChanged()
    */
-  function stateChanged(PersistentObject $object, $oldValue, $newValue)
+  public function stateChanged(PersistentObject $object, $oldValue, $newValue)
   {
     // store the object id in the internal registry if the object was saved after creation
     if ($oldValue == STATE_NEW && $newValue == STATE_CLEAN)

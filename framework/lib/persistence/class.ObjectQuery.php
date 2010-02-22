@@ -190,8 +190,8 @@ class ObjectQuery implements ChangeListener
       // set the values so that they are used in the query
       $template->copyValues($template, array(DATATYPE_ATTRIBUTE));
 
-      $template->setValue("pre_operator", $preOperator, DATATYPE_IGNORE);
-      $template->setValue("inter_operator", $interOperator, DATATYPE_IGNORE);
+      $template->setValue("pre_operator", $preOperator);
+      $template->setValue("inter_operator", $interOperator);
       $this->_root->addChild($template);
     }
   }
@@ -626,17 +626,15 @@ class ObjectQuery implements ChangeListener
   /**
    * @see ChangeListener::valueChanged()
    */
-  function valueChanged(PersistentObject $object, $name, $type, $oldValue, $newValue)
+  function valueChanged(PersistentObject $object, $name, $oldValue, $newValue)
   {
-    if ( !($type == DATATYPE_IGNORE && in_array($name, $GLOBALS['OQ_ATTRIBUTES'])) )
+    if ( !in_array($name, $GLOBALS['OQ_ATTRIBUTES']) )
     {
       // store change in internal array to have it when constructing the query
-      if (!array_key_exists($object->getOID(), $this->_conditions))
+      if (!array_key_exists($object->getOID(), $this->_conditions)) {
         $this->_conditions[$object->getOID()] = array();
-      if (!array_key_exists($type, $this->_conditions[$object->getOID()]))
-        $this->_conditions[$object->getOID()][$type] = array();
-
-      $this->_conditions[$object->getOID()][$type][$name] = $newValue;
+      }
+      $this->_conditions[$object->getOID()][$name] = $newValue;
     }
   }
   /**

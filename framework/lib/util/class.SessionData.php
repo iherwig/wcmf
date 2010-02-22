@@ -16,6 +16,7 @@
  *
  * $Id$
  */
+require_once(BASE."wcmf/lib/util/class.Storable.php");
 
 /**
  * @class SessionData

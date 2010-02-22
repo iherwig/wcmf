@@ -138,13 +138,13 @@ interface PersistenceMapper
   /**
    * Construct the template of an Object of a given type.
    * @param type The type of object to build
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (default: BUILDDEPTH_SINGLE)
    * @param buildAttribs An assoziative array listing the attributes to create (default: empty array, creates all attributes)
    *        (keys: the types, values: an array of attributes of the type to create)
    *        Use this to create only a subset of attributes
    * @return A reference to the object.
    */
-  public function create($type, array $buildDepth, array $buildAttribs=array());
+  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array());
 
   /**
    * Save an Object to the persistent storage.

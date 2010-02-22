@@ -71,7 +71,7 @@ class ObjectId
   }
 
   /**
-   * Get the object type
+   * Get the type
    * @return String
    */
   public function getType()
@@ -80,12 +80,21 @@ class ObjectId
   }
 
   /**
-   * Get the object id
+   * Get the id
    * @return Array
    */
   public function getId()
   {
     return $this->_id;
+  }
+
+  /**
+   * Get the first id. This is especially usefull, when you know that this id only consists of one id.
+   * @return String
+   */
+  public function getFirstId()
+  {
+    return $this->_id[0];
   }
 
   /**

@@ -28,7 +28,7 @@ function __autoload($className)
     return;
   }
 
-  Log::debug($className." searched from ".$stack[1]['file'], "__autoload");
+  Log::error($className." searched from ".$stack[1]['file'], "__autoload");
 
   // search the class definition and register it, if found
   if (!array_key_exists($className, $classMapping))

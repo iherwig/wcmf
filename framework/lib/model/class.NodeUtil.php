@@ -44,109 +44,74 @@ class NodeUtil
    * @param node The Node to find the path for
    * @return An array containing the nodes in the path
    */
-  function getPath(&$node)
+  public static function getPath($node)
   {
     $path = array();
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $parentOIDs = $node->getParentOIDs();
-    $parentOID = $parentOIDs[0];
-    while ($parentOID != '' && $persistenceFacade->isValidOID($parentOID))
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $parents = $node->getParents(false);
+    if (sizeof($parents) > 0)
     {
-      $nodeInPath = &$persistenceFacade->load($parentOID, BUILDDEPTH_SINGLE);
-      if ($nodeInPath)
+      $parentOID = $parents[0]->getOID();
+      while (ObjectId::isValid($parentOID))
       {
-        array_push($path, $nodeInPath);
-        $parentOIDs = $nodeInPath->getParentOIDs();
-        $parentOID = $parentOIDs[0];
-      }
-      else {
-        $parentOID = '';
+        $nodeInPath = $persistenceFacade->load($parentOID, BUILDDEPTH_SINGLE);
+        if ($nodeInPath)
+        {
+          array_push($path, $nodeInPath);
+          $parents = $nodeInPath->getParents(false);
+          if (sizeof($parents) > 0) {
+            $parentOID = $parents[0]->getOID();
+            continue;
+          }
+        }
+        break;
       }
     }
     return $path;
   }
   /**
-   * Get the node types that connect a type to a ancestor type.
-   * @param tplNode The node to start from
-   * @param ancestorType The type to connect to
-   * @param nodes Internal use only
-   * @return An array of connecting nodes or null (if no connection exists)
+   * Get the relations that connect a type to another type.
+   * @param type The type to start from
+   * @param otherType The type to connect to
+   * @param hierarchyType The hierarchy type that the other type has in relation to this type
+   *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
+   * @param relations Internal use only
+   * @return An array of RelationDescription instances, empty if no connection exists
    */
-  function getConnectionToAncestor(&$tplNode, $ancestorType, $nodes=null)
+  public static function getConnection($type, $otherType, $hierarchyType, $relations=null)
   {
-    if ($nodes == null) {
-      $nodes = array();
+    if ($relations == null) {
+      $relations = array();
     }
-    $parentOIDs = $tplNode->getParentOIDs();
-    if (sizeof($parentOIDs) > 0)
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $mapper = $persistenceFacade->getMapper($type);
+    $relationDescs = $mapper->getRelations($hierarchyType);
+    if (sizeof($relationDescs) > 0)
     {
-      $persistenceFacade = &PersistenceFacade::getInstance();
-      $parents = array();
-      // check parents
-      foreach ($parentOIDs as $oid)
+      // check relations
+      foreach ($relationDescs as $relationDesc)
       {
-        $parent = &$persistenceFacade->create(PersistenceFacade::getOIDParameter($oid, 'type'), 1);
-        if ($parent->getType() == $ancestorType)
+        // prevent recursion
+        if ($type == $otherType || $relationDesc->otherType != $type)
         {
-          $nodes[sizeof($nodes)] = &$parent;
-          return $nodes;
-        }
-        $parents[sizeof($parents)] = &$parent;
-      }
-      // nothing found -> proceed with grandparents
-      foreach ($parents as $parent)
-      {
-        $parentOIDs = $parent->getParentOIDs();
-        if (sizeof($parentOIDs) > 0)
-        {
-          $nodes[sizeof($nodes)] = &$parent;
-          NodeUtil::getConnectionToAncestor($parent, $ancestorType, $nodes);
-        }
-      }
-    }
-    return $nodes;
-  }
-  /**
-   * Get the node types that connect a type to a descendant type.
-   * @note tplNode must be loaded/created with at least BUILDDEPTH = 1
-   * @param tplNode The node to start from
-   * @param descendantType The type to connect to
-   * @param nodes Internal use only
-   * @return An array of connecting nodes or null (if no connection exists)
-   */
-  function getConnectionToDescendant(&$tplNode, $descendantType, $nodes=null)
-  {
-    if ($nodes == null) {
-      $nodes = array();
-    }
-    $childOIDs = $tplNode->getChildOIDs();
-    if (sizeof($childOIDs) > 0)
-    {
-      $persistenceFacade = &PersistenceFacade::getInstance();
-      $children = array();
-      // check children
-      foreach ($childOIDs as $oid)
-      {
-        $child = &$persistenceFacade->create(PersistenceFacade::getOIDParameter($oid, 'type'), 1);
-        if ($child->getType() == $descendantType)
-        {
-          $nodes[sizeof($nodes)] = &$child;
-          return $nodes;
-        }
-        $children[sizeof($children)] = &$child;
-      }
-      // nothing found -> proceed with grandparents
-      foreach ($children as $child)
-      {
-        $childOIDs = $child->getChildOIDs();
-        if (sizeof($childOIDs) > 0)
-        {
-          $nodes[sizeof($nodes)] = &$child;
-          NodeUtil::getConnectionToDescendant($child, $descendantType, $nodes);
+          if ($relationDesc->otherType == $otherType) {
+            // found -> return
+            $relations[] = $relationDesc;
+            return $relations;
+          }
+          else {
+            // nothing found -> proceed with next generation
+            $nextRelations = $relations;
+            $nextRelations[] = $relationDesc;
+            $result = NodeUtil::getConnection($relationDesc->otherType, $otherType, $hierarchyType, $nextRelations);
+            if (sizeof($result) > 0) {
+              return $result;
+            }
+          }
         }
       }
     }
-    return $nodes;
+    return array();
   }
   /**
    * Get the query used to select all Nodes of a type.
@@ -155,7 +120,7 @@ class NodeUtil
    */
   function getNodeQuery($nodeType)
   {
-    $query = &PersistenceFacade::createObjectQuery($nodeType);
+    $query = PersistenceFacade::createObjectQuery($nodeType);
     return $query->toString();
   }
   /**
@@ -166,9 +131,9 @@ class NodeUtil
    */
   function getSelfQuery($nodeType, $oid)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $query = &PersistenceFacade::createObjectQuery($nodeType);
-    $tpl = &$query->getObjectTemplate($nodeType);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $query = PersistenceFacade::createObjectQuery($nodeType);
+    $tpl = $query->getObjectTemplate($nodeType);
     $mapper = &$tpl->getMapper();
     $oidParts = PersistenceFacade::decomposeOID($oid);
     $i = 0;
@@ -183,14 +148,14 @@ class NodeUtil
    * @param childNode The Node to select the parents for
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  function getParentQuery($parentRole, &$childNode)
+  function getParentQuery($parentRole, $childNode)
   {
     $parentType = $childNode->getTypeForRole($parentRole);
   //Log::error($parentRole." ".$parentType." ".$childNode->toString(), __CLASS__);
-    $query = &PersistenceFacade::createObjectQuery($parentType);
-    $tpl = &$query->getObjectTemplate($parentType);
+    $query = PersistenceFacade::createObjectQuery($parentType);
+    $tpl = $query->getObjectTemplate($parentType);
     // prepare the child: use a new one and set the primary key values
-    $cTpl = &$query->getObjectTemplate($childNode->getType());
+    $cTpl = $query->getObjectTemplate($childNode->getType());
     $mapper = &$childNode->getMapper();
     foreach ($mapper->getPkNames() as $pkName) {
       $cTpl->setValue($pkName, '= '.$childNode->getValue($pkName));
@@ -205,15 +170,15 @@ class NodeUtil
    * @param childRole The child role
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  function getChildQuery(&$parentNode, $childRole)
+  function getChildQuery($parentNode, $childRole)
   {
     $childType = $parentNode->getTypeForRole($childRole);
   //Log::error($childRole." ".$childType." ".$parentNode->toString(), __CLASS__);
-    $query = &PersistenceFacade::createObjectQuery($childType);
-    $tpl = &$query->getObjectTemplate($childType);
+    $query = PersistenceFacade::createObjectQuery($childType);
+    $tpl = $query->getObjectTemplate($childType);
     // prepare the parent: use a new one and set the primary key values
-    $pTpl = &$query->getObjectTemplate($parentNode->getType());
-    $mapper = &$parentNode->getMapper();
+    $pTpl = $query->getObjectTemplate($parentNode->getType());
+    $mapper = $parentNode->getMapper();
     foreach ($mapper->getPkNames() as $pkName) {
       $pTpl->setValue($pkName, '= '.$parentNode->getValue($pkName));
     }
@@ -624,26 +589,6 @@ class NodeUtil
     return $def;
   }
   /**
-   * Add the missing attributes to a Node. The state remains the same.
-   * @param node A reference to the Node to complete
-   */
-  function completeNode(&$node)
-  {
-    // remember old state
-    $oldState = $node->getState();
-    // construct a template node and add the missing attributes to the node to save
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $tmpNode = &$persistenceFacade->create($node->getType(), BUILDDEPTH_SINGLE);
-    foreach ($tmpNode->getValueNames(DATATYPE_ATTRIBUTE) as $attribute)
-      if($node->getValue($attribute, DATATYPE_ATTRIBUTE) == null)
-      {
-        $node->setValue($attribute, '', DATATYPE_ATTRIBUTE, true);
-        $node->setValueProperties($attribute, $tmpNode->getValueProperties($attribute, DATATYPE_ATTRIBUTE), DATATYPE_ATTRIBUTE);
-      }
-    // reset old state
-    $node->setState($oldState, false);
-  }
-  /**
    * Sort a list of Nodes and set the sort properties on Nodes of a given list. The two attributes (DATATPE_IGNORE)
    * 'hasSortUp', 'hasSortDown' (values (false,true)) will be added to each Node depending on
    * its list position. If applicable the attributes (DATATPE_IGNORE) 'prevoid'
@@ -654,7 +599,7 @@ class NodeUtil
   function setSortProperties(&$nodeList)
   {
     if(sizeof($nodeList) > 0 && $nodeList[0]->hasValue('sortkey', DATATYPE_IGNORE)) {
-      Node::sort($nodeList, 'sortkey');
+      $nodeList = Node::sort($nodeList, 'sortkey');
     }
     for ($i=0; $i<sizeof($nodeList); $i++)
     {

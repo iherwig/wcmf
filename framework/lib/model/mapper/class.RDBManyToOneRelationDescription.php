@@ -28,32 +28,25 @@ require_once(BASE."wcmf/lib/persistence/class.RelationDescription.php");
  */
 class RDBManyToOneRelationDescription extends RelationDescription
 {
-  public $thisTable = '';
-  public $otherTable = '';
-
-  public $idColumn = '';
-  public $fkColumn = '';
+  public $idName = '';
+  public $fkName = '';
 
   /**
    * Constructor.
    * @see RelationDescription::__construct
-   * @param thisTable The database table name of 'this' end
-   * @param otherTable The database table name of the 'other' end
-   * @param idColumn The name of the column in the 'other' end's table, that is referenced by the foreign key column in 'this' end's table
-   * @param fkColumn The name of the foreign key column in 'this' end's table
+   * @param idName The name of the attribute in the 'other' end's type, that is referenced by the foreign key attribute in 'this' end's type
+   * @param fkName The name of the foreign key attribute in 'this' end's type
    */
   public function __construct($thisType, $thisRole, $otherType, $otherRole, $thisMinMultiplicity, $thisMaxMultiplicity,
     $otherMinMultiplicity, $otherMaxMultiplicity, $thisAggregationKind, $otherAggregationKind, $thisNavigability, $otherNavigability,
-    $hierarchyType, $thisTable, $otherTable, $idColumn, $fkColumn)
+    $hierarchyType, $idName, $fkName)
   {
     parent::__construct($thisType, $thisRole, $otherType, $otherRole, $thisMinMultiplicity, $thisMaxMultiplicity,
     $otherMinMultiplicity, $otherMaxMultiplicity, $thisAggregationKind, $otherAggregationKind, $thisNavigability, $otherNavigability,
     $hierarchyType);
 
-    $this->thisTable = $thisTable;
-    $this->otherTable = $otherTable;
-    $this->idColumn = $idColumn;
-    $this->fkColumn = $fkColumn;
+    $this->idName = $idName;
+    $this->fkName = $fkName;
   }
 }
 ?>

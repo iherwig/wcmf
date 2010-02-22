@@ -173,8 +173,6 @@ class SaveController extends Controller
                   $this->appendErrorMsg(Message::get("A Node with object id %1% does not exist.", array($curOID)));
                   return true;
                 }
-                // add missing attributes
-                $nodeUtil->completeNode($curNode);
               }
               // take existing node
               else {

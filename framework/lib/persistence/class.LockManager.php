@@ -83,21 +83,22 @@ abstract class LockManager
    * @return A message describing the problem if locking is not possible
    *         because another user holds the lock
    */
-  function handleLocking(&$object, $name)
+  public function handleLocking($object, $name)
   {
     $lockMsg = "";
 
     if ($object instanceof PersistentObject)
     {
-      $lockManager = &LockManager::getInstance();
-      $rightsManager = &RightsManager::getInstance();
+      $lockManager = LockManager::getInstance();
+      $rightsManager = RightsManager::getInstance();
       // check if we can edit the object
       if ($rightsManager->authorize($object->getOID(), '', ACTION_MODIFY))
       {
         // if object is locked by another user we retrieve the lock to show a message
         $lock = $object->getLock();
-        if ($lock != null)
+        if ($lock != null) {
           $lockMsg .= $lockManager->getLockMessage($lock, $name).'<br />';
+        }
         else
         {
           // try to lock object
@@ -108,19 +109,19 @@ abstract class LockManager
     return $lockMsg;
   }
   /**
-   * Aquire a lock on an OID for the current user.
-   * @param oid object id of the object to lock.
+   * Aquire a lock on an ObjectId for the current user.
+   * @param oid The object id of the object to lock.
    * @return True if successfull/False in case of an invalid oid or a Lock instance in case of an existing lock.
    */
-  function aquireLock($oid)
+  public function aquireLock(ObjectId $oid)
   {
-    if (!PersistenceFacade::isValidOID($oid))
+    if (!ObjectId::isValid($oid)) {
       return false;
-
+    }
     $lock = $this->getLock($oid);
     if ($lock === null)
     {
-      $session = &SessionData::getInstance();
+      $session = SessionData::getInstance();
       $authUser = $this->getUser();
       if ($authUser != null)
       {
@@ -131,39 +132,41 @@ abstract class LockManager
   	return $lock;
   }
   /**
-   * Release a lock on an OID for the current user.
+   * Release a lock on an ObjectId for the current user.
    * @param oid object id of the object to release.
    */
-  function releaseLock($oid)
+  public function releaseLock(ObjectId $oid)
   {
-    if (!PersistenceFacade::isValidOID($oid))
+    if (!ObjectId::isValid($oid)) {
       return false;
-
+    }
     $session = &SessionData::getInstance();
     $authUser = $this->getUser();
-    if ($authUser != null)
+    if ($authUser != null) {
       $this->releaseLockImpl($authUser->getOID(), $session->getID(), $oid);
+    }
   }
   /**
-   * Release all locks on an OID regardless of the user.
+   * Release all locks on an ObjectId regardless of the user.
    * @param oid object id of the object to release.
    */
-  function releaseLocks($oid)
+  public function releaseLocks(ObjectId $oid)
   {
-    if (!PersistenceFacade::isValidOID($oid))
+    if (!ObjectId::isValid($oid)) {
       return false;
-
+    }
     $this->releaseLockImpl(null, null, $oid);
   }
   /**
    * Release all lock for the current user.
    */
-  function releaseAllLocks()
+  public function releaseAllLocks()
   {
     $session = SessionData::getInstance();
     $authUser = $this->getUser();
-    if ($authUser != null)
+    if ($authUser != null) {
       $this->releaseAllLocksImpl($authUser->getOID(), $session->getID());
+    }
   }
   /**
    * Get the default lock message for a lock.
@@ -171,27 +174,28 @@ abstract class LockManager
    * @param objectText The display text for the locked object.
    * @return The lock message of the form 'objectText is locked by user 'admin' since 12:12:36<br />'.
    */
-  function getLockMessage($lock, $objectText)
+  public function getLockMessage($lock, $objectText)
   {
-    if ($objectText == '')
-      $objectText = $lock->getOID();
+    if ($objectText == '') {
+      $objectText = $lock->getOID()->__toString();
+    }
     $msg = Message::get("%1% is locked by user '%2%' since %3%. ", array($objectText, $lock->getLogin(), strftime("%X", strtotime($lock->getCreated()))));
     //$msg .= '<a href="javascript:submitAction(\'unlock\')">'.Message::get("Click here to unlock the object").'.</a>';
     return $msg;
   }
   /**
-   * Get lock data for an OID. This method may also be used to check for an lock.
+   * Get lock data for an ObjectId. This method may also be used to check for an lock.
    * @note The method uses the php parameter 'session.gc_maxlifetime' to determine if a lock belongs to an expired session.
    * A lock with a creation date older than 'session.gc_maxlifetime' seconds is regarded to belong to an expired
    * session which results in the removal of all locks attached to that session.
    * @param oid object id of the object to get the lock data for.
    * @return A Lock instance or null if no lock exists/or in case of an invalid oid.
    */
-  function getLock($oid)
+  public function getLock(ObjectId $oid)
   {
-    if (!PersistenceFacade::isValidOID($oid))
+    if (!ObjectId::isValid($oid)) {
       return null;
-
+    }
     $lock = $this->getLockImpl($oid);
 
     // remove lock if session is expired
@@ -210,7 +214,7 @@ abstract class LockManager
    * Get the currently logged in user.
    * @return An instance of AuthUser.
    */
-  function getUser()
+  protected function getUser()
   {
     $rightsManager = RightsManager::getInstance();
     return $rightsManager->getAuthUser();
@@ -222,26 +226,26 @@ abstract class LockManager
    * @param oid object id of the object to lock.
    * @param lockDate date of the lock.
    */
-  protected abstract function aquireLockImpl($useroid, $sessid, $oid, $lockDate);
+  protected abstract function aquireLockImpl(ObjectId $useroid, $sessid, ObjectId $oid, $lockDate);
   /**
-   * Release a lock on an OID for a given user or all locks for that user or all locks for the OID.
+   * Release a lock on an ObjectId for a given user or all locks for that user or all locks for the ObjectId.
    * The behaviour depends on the given parameters. A null means that this parameter should be ignored
    * @param useroid The oid of the user or null to ignore the userid.
    * @param sessid The id of the session of the user or null to ignore the session id.
    * @param oid object id of the object to release or null top ignore the oid.
    */
-  protected abstract function releaseLockImpl($useroid, $sessid, $oid);
+  protected abstract function releaseLockImpl(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null);
   /**
    * Release all lock for a given user.
    * @param useroid The oid of the user.
    * @param sessid The id of the session of the user.
    */
-  protected abstract function releaseAllLocksImpl($useroid, $sessid);
+  protected abstract function releaseAllLocksImpl(ObjectId $useroid, $sessid);
   /**
    * Get lock data for an OID. This method may also be used to check for an lock.
    * @param oid object id of the object to get the lock data for.
    * @return A Lock instance or null if no lock exists/or in case of an invalid oid.
    */
-  protected abstract function getLockImpl($oid);
+  protected abstract function getLockImpl(ObjectId $oid);
 }
 ?>

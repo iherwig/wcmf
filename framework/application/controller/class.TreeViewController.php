@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -65,12 +65,12 @@ class TreeViewController extends Controller
   {
     // the tree component sends the object id of the parent node in the 'node' parameter
     $oid = $this->_request->getValue('node');
-  
+
     if ($this->_request->getAction() == 'loadChildren')
     {
       // load model
       $nodes = $this->getChildren($oid);
-      
+
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest())
       {
@@ -79,12 +79,12 @@ class TreeViewController extends Controller
           $localization->loadTranslation($nodes[$i], $this->_request->getValue('language'), true, true);
         }
       }
-      
+
       // sort nodes if requested
       if ($this->_request->hasValue('sort')) {
-        Node::sort($nodes, $this->_request->getValue('sort'));
+        $nodes = Node::sort($nodes, $this->_request->getValue('sort'));
       }
-      
+
       // create the json response
       $responseObjects = array();
       for($i=0; $i<sizeof($nodes); $i++)
@@ -96,7 +96,7 @@ class TreeViewController extends Controller
       }
       $this->_response->setValue('objects', $responseObjects);
     }
-    
+
     // success
     $this->_response->setAction('ok');
     return false;
@@ -110,7 +110,7 @@ class TreeViewController extends Controller
   function getRootOIDs()
   {
     $oids = array();
-    
+
     // get root types from ini file
     $parser = &InifileParser::getInstance();
     $rootTypes = $parser->getValue('rootTypes', 'cms');
@@ -175,7 +175,7 @@ class TreeViewController extends Controller
     if (strlen($displayText) == 0) {
       $displayText = '-';
     }
-    // click action    
+    // click action
     $onClickAction = $this->getClickAction($node);
     if ($onClickAction == null) {
       $onClickAction = '#';

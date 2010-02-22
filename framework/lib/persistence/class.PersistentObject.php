@@ -419,7 +419,7 @@ class PersistentObject
    * This method is called once after creation of this object. At this time it
    * is not known in the store.
    */
-  protected function afterCreate() {}
+  public function afterCreate() {}
   /**
    * This method is called once before inserting the newly created object into the store.
    */
@@ -511,7 +511,7 @@ class PersistentObject
     $value = $this->getValue($name);
     $dataConverter = $this->getDataConverter();
     if (is_object($dataConverter) && $value != null) {
-      $value = $dataConverter->convertStorageToApplication($value, $this->getValueProperty($name, 'db_data_type'), $name);
+      $value = $dataConverter->convertStorageToApplication($value, $this->getValueProperty($name, 'type'), $name);
     }
     return $value;
   }
@@ -586,7 +586,7 @@ class PersistentObject
       }
     }
     $oldValue = $this->getValue($name);
-    if ($this->_data[$name]['value'] != $value || $forceSet)
+    if ($this->_data[$name]['value'] !== $value || $forceSet)
     {
       $this->_data[$name]['value'] = $value;
       PersistentObject::setState(STATE_DIRTY);

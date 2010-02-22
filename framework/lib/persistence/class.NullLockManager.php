@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -31,19 +31,19 @@ class NullLockManager extends LockManager
   /**
    * @see LockManager::aquireLockImpl();
    */
-  function aquireLockImpl($authUser, $session, $oid, $lockDate) {}
+  protected function aquireLockImpl(ObjectId $useroid, $session, ObjectId $oid, $lockDate) {}
   /**
    * @see LockManager::releaseLockImpl();
    */
-  function releaseLockImpl($authUser, $session, $oid) {}
+  protected function releaseLockImpl(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null) {}
   /**
    * @see LockManager::releaseAllLocksImpl();
    */
-  function releaseAllLocksImpl($authUser, $session) {}
+  protected function releaseAllLocksImpl(ObjectId $useroid, $session) {}
   /**
    * @see LockManager::getLockImpl();
    */
-  function getLockImpl($oid)
+  protected function getLockImpl(ObjectId $oid)
   {
     return null;
   }

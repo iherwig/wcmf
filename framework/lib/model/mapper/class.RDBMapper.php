@@ -126,10 +126,21 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
   }
   /**
+   * Get the database connection.
+   * @return A reference to the ADONewConnection object
+   */
+  protected function getConnection()
+  {
+    if ($this->_conn == null) {
+      $this->connect();
+    }
+    return $this->_conn;
+  }
+  /**
    * Get a new id for inserting into the database
    * @return An id value.
    */
-  private function getNextId()
+  protected function getNextId()
   {
     $nextId = $this->_conn->GenID();
     return $nextId;
@@ -294,8 +305,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     // delegate to loadObjects
     $criteria = $this->createPKCondition($oid);
     $pagingInfo = null;
-    $objects = $this->loadObjects($oid->getType(), $buildDepth, $criteria, null,
-                  $pagingInfo, $buildAttribs, $buildTypes);
+    $objects = $this->loadObjects($oid->getType(), $buildDepth, $criteria, null, $pagingInfo, $buildAttribs, $buildTypes);
     if (sizeof($objects) > 0)
       return $objects[0];
     else
@@ -305,12 +315,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * @see PersistenceMapper::createImpl()
    * @note The type parameter is not used here because this class only constructs one type
    */
-  protected function createImpl($type, $buildDepth, array $buildAttribs=array())
+  protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array())
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE, BUILDDEPTH_REQUIRED))) {
       throw new InvalidArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
     }
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
 
     // get attributes to load
     $attribs = array();
@@ -319,7 +329,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
 
     // create the object
-    $object = &$this->createObjectFromData($attribs);
+    $object = $this->createObjectFromData($attribs);
 
     // recalculate build depth for the next generation
     if ($buildDepth != BUILDDEPTH_REQUIRED && $buildDepth != BUILDDEPTH_SINGLE && $buildDepth != BUILDDEPTH_INFINITE && $buildDepth > 0) {
@@ -332,49 +342,21 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     // prevent infinite recursion
     if ($buildDepth < BUILDDEPTH_MAX)
     {
-      // get object definition (default values, properties)
-      $objectData = $this->getObjectDefinition();
+      $relationDescs = $this->getRelations();
 
       // set dependend objects of this object
-      foreach ($objectData['_children'] as $childDef)
+      foreach ($relationDescs as $curRelationDesc)
       {
-        // in case of a many to many child, use the child definition at the other end of the relation
-        $isManyToMany = $childDef['is_manyToMany'];
-        if ($isManyToMany)
-        {
-          // get the other types role
-          $otherEnd = $this->getOtherEndForManyToMany($childDef['role']);
-          // override the many to many type, except for relation properties
-          $childDef['type'] = $otherEnd['type'];
-          $childDef['role'] = $otherEnd['role'];
-          $childDef['table_name'] = $otherEnd['table_name'];
-          $childDef['pk_columns'] = $otherEnd['pk_columns'];
-          $childDef['fk_columns'] = '';
-          $childDef['order_by'] = array();
-          $childDef['is_manyToMany'] = false;
-        }
-
-        // set 'minOccurs', 'maxOccurs'
-        if (!array_key_exists('minOccurs', $childDef))
-          $childDef['minOccurs'] = 0; // default value
-        if (!array_key_exists('maxOccurs', $childDef))
-          $childDef['maxOccurs'] = 1; // default value
-
         if ( ($buildDepth != BUILDDEPTH_SINGLE) && (($buildDepth > 0) || ($buildDepth == BUILDDEPTH_INFINITE) ||
-          (($buildDepth == BUILDDEPTH_REQUIRED) && $childDef['minOccurs'] > 0 && $childDef['aggregation'] == true)) )
+          (($buildDepth == BUILDDEPTH_REQUIRED) && $curRelationDesc->minOccurs > 0 && $curRelationDesc->aggregation == true)) )
         {
-          if ($isManyToMany) {
-            $childObject = &$persistenceFacade->create($childDef['type'], BUILDDEPTH_SINGLE, $buildAttribs);
+          if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
+            $childObject = $persistenceFacade->create($curRelationDesc->otherType, BUILDDEPTH_SINGLE, $buildAttribs);
           }
           else {
-            $childObject = &$persistenceFacade->create($childDef['type'], $newBuildDepth, $buildAttribs);
+            $childObject = $persistenceFacade->create($curRelationDesc->otherType, $newBuildDepth, $buildAttribs);
           }
-
-          $childObject->setProperty('minOccurs', $childDef['minOccurs']);
-          $childObject->setProperty('maxOccurs', $childDef['maxOccurs']);
-          $childObject->setProperty('aggregation', $childDef['aggregation']);
-          $childObject->setProperty('composition', $childDef['composition']);
-          $this->appendObject($object, $childObject, $childDef['role']);
+          $object->setValue($curRelationDesc->otherRole, array($childObject));
         }
       }
     }
@@ -386,42 +368,42 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    */
   protected function saveImpl(PersistentObject $object)
   {
-    if ($this->_conn == null)
+    if ($this->_conn == null) {
       $this->connect();
-
+    }
     // prepare object data
     // escape all values (except for primary key values)
     $appValues = array();
-    foreach ($object->getDataTypes() as $type)
+    foreach ($object->getValueNames() as $valueName)
     {
-      foreach ($object->getValueNames($type) as $valueName)
+      if (!$this->isPkValue($valueName))
       {
-        if (!$this->isPkValue($valueName, $type))
-        {
-          $properties = $object->getValueProperties($valueName, $type);
-          $appValues[$type][$valueName] = $object->getValue($valueName, $type);
-          // NOTE: strip slashes from "'" and """ first because on INSERT/UPDATE we use ADODB's qstr
-          // with second parameter false which will add slashes again
-          // (we do this manually because we can't rely on get_magic_quotes_gpc())
-          $value = str_replace(array("\'","\\\""), array("'", "\""), $appValues[$type][$valueName]);
-          $object->setValue($valueName, $this->_dataConverter->convertApplicationToStorage($value, $properties['db_data_type'], $valueName), $type);
+        $appValues[$valueName] = $object->getValue($valueName);
+        $value = $appValues[$valueName];
+        // NOTE: strip slashes from "'" and """ first because on INSERT/UPDATE we use ADODB's qstr
+        // with second parameter false which will add slashes again
+        // (we do this manually because we can't rely on get_magic_quotes_gpc())
+        if (is_string($value)) {
+          $value = str_replace(array("\'","\\\""), array("'", "\""), $value);
         }
+        $convertedValue = $this->_dataConverter->convertApplicationToStorage($value, $object->getPropertyValue($valueName, 'type'), $valueName);
+        $object->setValue($valueName, $convertedValue);
       }
     }
 
-    $persistenceFacade = &PersistenceFacade::getInstance();
     if ($object->getState() == STATE_NEW)
     {
       // insert new object
       $this->prepareInsert($object);
       $sqlArray = $this->getInsertSQL($object);
       foreach($sqlArray as $sqlStr)
+      {
         if ($this->executeSql($sqlStr) === false)
         {
           Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
           throw new PersistenceException("Error inserting object ".$object->getOID().". See log file for details.");
         }
-
+      }
       // log action
       $this->logAction($object);
     }
@@ -436,20 +418,62 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       // save object
       $sqlArray = $this->getUpdateSQL($object);
       foreach($sqlArray as $sqlStr)
+      {
         if ($this->executeSql($sqlStr) === false)
         {
           Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
           throw new PersistenceException("Error updating object ".$object->getOID().". See log file for details.");
         }
+      }
     }
 
     // set escaped values back to application values
-    foreach ($object->getDataTypes() as $type)
-      foreach ($object->getValueNames($type) as $valueName)
-        if (!$this->isPkValue($valueName, $type))
-          $object->setValue($valueName, $appValues[$type][$valueName], $type, true);
-
+    foreach ($object->getValueNames() as $valueName)
+    {
+      if (!$this->isPkValue($valueName)) {
+        $object->setValue($valueName, $appValues[$valueName], true);
+      }
+    }
     $object->setState(STATE_CLEAN, false);
+
+    // Save many to many relations, if not already existing
+    $relationDescs = $this->getRelations();
+    $persistenceFacade = PersistenceFacade::getInstance();
+    foreach ($relationDescs as $relationDesc)
+    {
+      if ($relationDesc instanceof RDBManyToManyRelationDescription)
+      {
+        $relatives = $object->getValue($relationDesc->otherRole);
+        if (is_array($relatives))
+        {
+          foreach ($relatives as $relative)
+          {
+            if ($relative->getState() != STATE_NEW)
+            {
+              // check if the relation exists already
+              $sqlStr = $this->getRelationObjectSelectSQL($object, $relative, $relationDesc);
+              $rs = $this->executeSql($sqlStr);
+              if (!$rs) {
+                Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
+                throw new PersistenceException("Error loading relation object. See log file for details.");
+              }
+              else
+              {
+                if (!$rs->fetchRow())
+                {
+                  $nmObj = $persistenceFacade->create($relationDesc->thisEndRelation->otherType);
+                  $nmObj->setValue($relationDesc->thisEndRelation->thisRole, array($object));
+                  $nmObj->setValue($relationDesc->otherEndRelation->otherRole, array($relative));
+                  $nmObj->save();
+                }
+                $rs->Close();
+              }
+            }
+          }
+        }
+      }
+    }
+
     // postcondition: the object is saved to the db
     //                the object state is STATE_CLEAN
     //                attributes are only inserted if their values differ from ''
@@ -468,7 +492,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     // log action
     if ($this->isLogging())
     {
-      $obj = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+      $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
       if ($obj)
         $this->logAction($obj);
     }
@@ -487,13 +511,14 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     if ($recursive)
     {
       // make sure that we only delete the composition children...
-      $sqlArray = $this->getChildrenSelectSQL($oid);
+      $sqlArray = $this->getRelationSelectSQL(new PersistentObjectProxy($oid), 'child', true);
       foreach($sqlArray as $childRole => $childDef)
       {
         $attribs = $this->getPkNamesForType($childDef['type']);
         $childoids = $persistenceFacade->getOIDs($childDef['type'], $childDef['criteria']);
-        foreach($childoids as $childoid)
+        foreach($childoids as $childoid) {
           $persistenceFacade->delete($childoid, $recursive);
+        }
       }
       // ...for the others we have to break the foreign key relation
       $sqlArray = $this->getChildrenDisassociateSQL($oid, true);
@@ -508,17 +533,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
     // postcondition: the object and all dependend objects are deleted from db
     return true;
-  }
-  /**
-   * Get the database connection.
-   * @return A reference to the ADONewConnection object
-   */
-  protected function getConnection()
-  {
-    if ($this->_conn == null) {
-      $this->connect();
-    }
-    return $this->_conn;
   }
   /**
    * @see PersistenceMapper::getOIDs()
@@ -672,6 +686,53 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     return $object;
   }
   /**
+   * Apply the loaded object data to the object.
+   * @note Subclasses must implement this method to define their object type.
+   * @param object A reference to the object created with createObject method to which the data should be applied
+   * @param objectData An associative array with the data returned by execution of the database select statement
+   * 			(given by getSelectSQL).
+   * @param attribs The build attributes for the type of object (given in the buildAttribs parameter of the loadImpl method)
+   */
+    protected function applyDataOnLoad(PersistentObject $object, array $objectData, array $attribs)
+  {
+    // set object data
+    $attributeDescriptions = $this->getAttributes();
+    foreach($attributeDescriptions as $curAttributeDesc)
+    {
+      if (sizeof($attribs) == 0 || in_array($curAttributeDesc->name, $attribs))
+      {
+        $value = $objectData[$curAttributeDesc->name];
+        if (!is_null($value)) {
+          $value = $this->_dataConverter->convertStorageToApplication($value, $curAttributeDesc->type, $curAttributeDesc->name);
+        }
+        $object->setValue($curAttributeDesc->name, $value);
+      }
+    }
+  }
+  /**
+   * Apply the default data to the object.
+   * @note Subclasses must implement this method to define their object type.
+   * @param object A reference to the object created with createObject method to which the data should be applied
+   * @param attribs The build attributes for the type of object (given in the buildAttribs parameter of the loadImpl method).
+   */
+  protected function applyDataOnCreate(PersistentObject $object, array $attribs)
+  {
+    // set object data
+    $attributeDescriptions = $this->getAttributes();
+    foreach($attributeDescriptions as $curAttributeDesc)
+    {
+      if (sizeof($attribs) == 0 || in_array($curAttributeDesc->name, $attribs))
+      {
+        // don't override dummy ids
+        if (!$this->isPkValue($curAttributeDesc->name))
+        {
+          $value = $this->_dataConverter->convertStorageToApplication($curAttributeDesc->defaultValue, $curAttributeDesc->type, $curAttributeDesc->name);
+          $object->setValue($curAttributeDesc->name, $value);
+        }
+      }
+    }
+  }
+  /**
    * Append the child data to an object. If the buildDepth does not determine to load a
    * child generation, only the oids of the children will be loaded.
    * @param object A reference to the object to append the children to
@@ -693,62 +754,76 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     $loadNextGeneration = (($buildDepth != BUILDDEPTH_SINGLE) && ($buildDepth > 0 || $buildDepth == BUILDDEPTH_INFINITE));
 
     // get dependend objects of this object
-    $sqlArray = $this->getRelationSelectSQL($object);
+    $sqlArray = $this->getRelationSelectSQL(new PersistentObjectProxy($object->getOID(), $object));
     foreach($sqlArray as $role => $relativeDef)
     {
       $relDesc = $this->getRelation($role);
       $relatives = array();
 
-      // if the build depth is not satisfied already we load the complete objects add them
-      if ($loadNextGeneration)
+      // if the relation is a many to many relation, we have to load
+      // the relation object and collect the oids at the other end
+      $nmRelativeProxies = array();
+      if ($relDesc instanceof RDBManyToManyRelationDescription)
       {
         $tmp = null;
-        // if the relation is a many to many relation, we have to load the relation object and add the other side's instances
-        if ($relDesc instanceof RDBManyToManyRelationDescription)
-        {
-          $nmObjects = $persistenceFacade->loadObjects($relativeDef['type'], BUILDDEPTH_SINGLE, $relativeDef['criteria'], null, $tmp, $buildAttribs, $buildTypes);
-          $otherEndRole = $relDesc->otherEndRelation->otherRole;
+        $nmObjects = $persistenceFacade->loadObjects($relativeDef['type'], BUILDDEPTH_SINGLE, $relativeDef['criteria'], null, $tmp, $buildAttribs, $buildTypes);
+        $otherEndRole = $relDesc->otherEndRelation->otherRole;
 
-          for ($i=0, $countI=sizeof($nmObjects); $i<$countI; $i++)
+        for ($i=0, $countI=sizeof($nmObjects); $i<$countI; $i++)
+        {
+          $otherEndObjs = $nmObjects[$i]->getValue($otherEndRole);
+          if (is_array($otherEndObjs))
           {
-            $otherEndObjs = $nmObjects[$i]->getValue($otherEndRole);
-            if (is_array($otherEndObjs))
+            for ($j=0, $countJ=sizeof($otherEndObjs); $j<$countJ; $j++)
             {
-              for ($j=0, $countJ=sizeof($otherEndObjs); $j<$countJ; $j++)
-              {
-                $otherEndObj = $otherEndObjs[$j];
-                if (!$otherEndObj instanceof PersistentObjectProxy) {
-                  throw new ErrorException("PersistentObjectProxy instance expected");
-                }
-                if ($loadNextGeneration) {
-                  array_push($relatives, $otherEndObj->getRealSubject());
-                }
-                else {
-                  array_push($relatives, $otherEndObj);
-                }
+              $otherEndObj = $otherEndObjs[$j];
+              if (!$otherEndObj instanceof PersistentObjectProxy) {
+                throw new ErrorException("PersistentObjectProxy instance expected");
               }
+              array_push($nmRelativeProxies, $otherEndObj);
             }
           }
         }
-        else {
+      }
+
+      // if the build depth is not satisfied already we load the complete objects and add them
+      if ($loadNextGeneration)
+      {
+        // if the relation is a many to many relation, we add the already loaded subjects
+        if ($relDesc instanceof RDBManyToManyRelationDescription)
+        {
+          foreach ($nmRelativeProxies as $nmRelativeProxy) {
+            array_push($relatives, $nmRelativeProxy->getRealSubject());
+          }
+        }
+        else
+        {
+          $tmp = null;
           $relatives = $persistenceFacade->loadObjects($relativeDef['type'], $newBuildDepth, $relativeDef['criteria'], null, $tmp, $buildAttribs, $buildTypes);
         }
       }
       // otherwise only add proxies for the relation objects
       else
       {
-        $oids = $persistenceFacade->getOIDs($relativeDef['type'], $relativeDef['criteria']);
-        foreach ($oids as $oid) {
-          array_push($relatives, new PersistentObjectProxy($oid));
+        // if the relation is a many to many relation, we add the already loaded proxies
+        if ($relDesc instanceof RDBManyToManyRelationDescription)
+        {
+          foreach ($nmRelativeProxies as $nmRelativeProxy) {
+            array_push($relatives, $nmRelativeProxy);
+          }
+        }
+        else
+        {
+          $oids = $persistenceFacade->getOIDs($relativeDef['type'], $relativeDef['criteria']);
+          foreach ($oids as $oid) {
+            array_push($relatives, new PersistentObjectProxy($oid));
+          }
         }
       }
       // set the value
       $object->setValue($role, $relatives);
     }
   }
-  /**
-   * Get the child definition for a many to many child
-   */
   /**
    * @see PersistenceMapper::startTransaction()
    */
@@ -788,45 +863,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    */
 
   /**
-   * Factory method for the supported object type.
-   * @note Subclasses must implement this method to define their object type.
-   * @param oid The object id (maybe null)
-   * @return A reference to the created object.
-   */
-  abstract protected function createObject(ObjectId $oid=null);
-  /**
-   * Add a dependend object (child) to an object.
-   * @note Subclasses must implement this method to define their object type.
-   * @param object The object to add to.
-   * @param dependendObject The object to add.
-   * @param role The role of the dependent object in relation to the object. If null, the role is the type [default: null]
-   */
-  abstract protected function appendObject(PersistentObject $object, PersistentObject $dependendObject, $role=null);
-  /**
-   * Apply the loaded object data to the object.
-   * @note Subclasses must implement this method to define their object type.
-   * @param object A reference to the object created with createObject method to which the data should be applied
-   * @param objectData An associative array with the data returned by execution of the database select statement
-   * 			(given by getSelectSQL).
-   * @param attribs The build attributes for the type of object (given in the buildAttribs parameter of the loadImpl method)
-   */
-  abstract protected function applyDataOnLoad(PersistentObject $object, array $objectData, array $attribs);
-  /**
-   * Apply the default data to the object.
-   * @note Subclasses must implement this method to define their object type.
-   * @param object A reference to the object created with createObject method to which the data should be applied
-   * @param attribs The build attributes for the type of object (given in the buildAttribs parameter of the loadImpl method).
-   */
-  abstract protected function applyDataOnCreate(PersistentObject $object, array $attribs);
-  /**
-   * Set the object primary key values for inserting the object to the database.
-   * @note Subclasses must implement this method to define their object type.
-   * @param object A reference to the object to insert.
-   * @note The object does not have the final object id set. If a new id value for a primary key column is needed
-   * for the insert statement, use RDBMapper::getNextId().
-   */
-  abstract protected function prepareInsert(PersistentObject $object);
-  /**
    * Get a list of all RelationDescriptions.
    * @return An associative array with the relation names as keys and the RelationDescription instances as values.
    */
@@ -836,6 +872,21 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * @return An associative array with the attribute names as keys and the AttributeDescription instances as values.
    */
   abstract protected function getAttributeDescriptions();
+  /**
+   * Factory method for the supported object type.
+   * @note Subclasses must implement this method to define their object type.
+   * @param oid The object id (maybe null)
+   * @return A reference to the created object.
+   */
+  abstract protected function createObject(ObjectId $oid=null);
+  /**
+   * Set the object primary key values for inserting the object to the database.
+   * @note Subclasses must implement this method to define their object type.
+   * @param object A reference to the object to insert.
+   * @note The object does not have the final object id set. If a new id value for a primary key column is needed
+   * for the insert statement, use RDBMapper::getNextId().
+   */
+  abstract protected function prepareInsert(PersistentObject $object);
   /**
    * Get the SQL command to select object data from the database.
    * @note Subclasses must implement this method to define their object type.
@@ -854,13 +905,24 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   /**
    * Get the SQL commands to select the object's relatives from the database.
    * @note Subclasses must implement this method to define their object type.
-   * @param object The object to load the relatives for.
+   * @param object The object to load the relatives for. Maybe an proxy instance only.
+   * @param hierarchyType The hierarchy type @see PersistenceMapper::getRelations() [default: 'all']
    * @param compositionOnly True/False indicates wether to only select composition relatives or all [default: false].
    * @return An associative array with the relative roles as keys and an associative array with keys 'type' and 'criteria' as values,
    *       where 'type' is the relative type and 'criteria' is the corresponding SQL condition to be used as criteria parameter
    *       in PersistenceFacade::loadObjects().
    */
-  abstract protected function getRelationSelectSQL(PersistentObject $object, $compositionOnly=false);
+  abstract protected function getRelationSelectSQL(PersistentObjectProxy $object, $hierarchyType='all', $compositionOnly=false);
+  /**
+   * Get the SQL command to select the relation object in a many to many relation from the database.
+   * @note Subclasses must implement this method to define their object type.
+   * @param object The object at this end of the relation.
+   * @param relative The object at the other end of the relation.
+   * @param relationDesc The RDBManyToManyRelationDescription instance describing the relation.
+   * @return A SQL command that selects all relation objects connecting the two objects in a way
+   * 		defined in the relation description.
+   */
+  abstract protected function getRelationObjectSelectSQL(PersistentObject $object, PersistentObject $relative, RDBManyToManyRelationDescription $relationDesc);
   /**
    * Get the SQL command to disassociate the object's children from the object (e.g. setting the foreign key to null).
    * @note Subclasses must implement this method to define their object type.

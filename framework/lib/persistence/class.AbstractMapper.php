@@ -140,12 +140,12 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::create()
    */
-  public function create($type, array $buildDepth, array $buildAttribs=array())
+  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array())
   {
     // Don't check rights here, because object creation may be needed
     // for internal purposes. That newly created objects may not be saved
     // to the storage is asured by the save method.
-    $object = &$this->createImpl($type, $buildDepth, $buildAttribs);
+    $object = $this->createImpl($type, $buildDepth, $buildAttribs);
 
     $this->initialize($object);
 
@@ -184,7 +184,7 @@ abstract class AbstractMapper
       return;
     }
 
-    if (!ObjectId::isValidOID($oid)) {
+    if (!ObjectId::isValid($oid)) {
       return false;
     }
     // delete oid
@@ -192,7 +192,7 @@ abstract class AbstractMapper
     if ($result === true)
     {
       // release any locks on the object
-      $lockManager = &LockManager::getInstance();
+      $lockManager = LockManager::getInstance();
       $lockManager->releaseLocks($oid);
     }
     return $result;
@@ -242,7 +242,7 @@ abstract class AbstractMapper
    * @see PersistenceFacade::create()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function createImpl($type, $buildDepth, array $buildAttribs=null);
+  abstract protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=null);
   /**
    * @see PersistenceFacade::save()
    * @note Precondition: Object rights have been checked already

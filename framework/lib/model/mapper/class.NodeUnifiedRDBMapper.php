@@ -18,7 +18,7 @@
  */
 require_once(BASE."wcmf/lib/util/class.StringUtil.php");
 require_once(BASE."wcmf/lib/model/class.Node.php");
-require_once(BASE."wcmf/lib/model/mapper/class.NodeRDBMapper.php");
+require_once(BASE."wcmf/lib/model/mapper/class.RDBMapper.php");
 require_once(BASE."wcmf/lib/model/mapper/class.RDBAttributeDescription.php");
 require_once(BASE."wcmf/lib/model/mapper/class.RDBManyToManyRelationDescription.php");
 require_once(BASE."wcmf/lib/model/mapper/class.RDBManyToOneRelationDescription.php");
@@ -30,15 +30,14 @@ require_once(BASE."wcmf/lib/model/mapper/class.ReferenceDescription.php");
  * @ingroup Mapper
  * @brief NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node
  * type has its own table.
- * In comparison to NodeRDBMapper it implements almost all template methods from the
- * base classes and defines the sql queries. The newly defined template methods make it easier
- * for application developers to implement own mapper subclasses. The wCMFGenerator uses this class
- * as base class for all mappers.
+ * The wCMFGenerator uses this class as base class for all mappers.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListener
+abstract class NodeUnifiedRDBMapper extends RDBMapper implements ChangeListener
 {
+  private $_fkRelations = null;
+
   /**
    * @see PersistenceMapper::initialize()
    */
@@ -62,7 +61,7 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     {
       // foreign keys don't get a new id
       $pkName = $pkNames[$i];
-      if (!$this->isForeignKey($pkNames))
+      if (!$this->isForeignKey($pkName))
       {
         $pkValue = $ids[$i];
         // replace dummy ids with ids provided by the database sequence
@@ -98,13 +97,15 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     // parents
     $parentStr = '';
     $i=0;
-    $parentDescriptions = $this->getRelations('parent');
-    foreach($parentDescriptions as $curParentDesc)
+    $parentDescs = $this->getRelations('parent');
+    $persistenceFacade = PersistenceFacade::getInstance();
+    foreach($parentDescs as $curParentDesc)
     {
       if ($curParentDesc->otherNavigability)
       {
+        $fkAttr = $this->getAttribute($curParentDesc->fkName);
         $parentStr .= $this->quote($curParentDesc->otherType)." AS ptype$i, ".$this->quote($curParentDesc->otherRole)." AS prole$i, ".
-                        $tableName.".".$curParentDesc->fkColumn." AS pid$i, ";
+                        $tableName.".".$fkAttr->name." AS pid$i, ";
         $i++;
       }
     }
@@ -116,8 +117,8 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     }
 
     // attributes
-    $attributeDescriptions = $this->getAttributes();
-    foreach($attributeDescriptions as $curAttributeDesc)
+    $attributeDescs = $this->getAttributes();
+    foreach($attributeDescs as $curAttributeDesc)
     {
       if (!($curAttributeDesc instanceof ReferenceDescription))
       {
@@ -150,7 +151,8 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
       if (is_array($orderByNames))
       {
         $completeOrderStr = '';
-        foreach($orderByNames as $orderByName) {
+        foreach($orderByNames as $orderByName)
+        {
           if (strlen(trim($orderByName)) > 0) {
             $completeOrderStr .= $this->translateAppToDatabase($this->getTableName().".".$orderByName.", ");
           }
@@ -176,34 +178,42 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
   /**
    * @see RDBMapper::getRelationSelectSQL()
    */
-  protected function getRelationSelectSQL(PersistentObject $object, $compositionOnly=false)
+  protected function getRelationSelectSQL(PersistentObjectProxy $object, $hierarchyType='all', $compositionOnly=false)
   {
+    $persistenceFacade = PersistenceFacade::getInstance();
     $sqlArray = array();
     $oid = $object->getOID();
-    $dbid = $oid->getId();
-    $relDescs = $this->getRelations();
+    $relDescs = $this->getRelations($hierarchyType);
     foreach($relDescs as $relDesc)
     {
       if ($relDesc->otherNavigability)
       {
-        if (!$compositionOnly || ($compositionOnly && $relDesc->otherAggregationKind == 'composite'))
+        if (!$compositionOnly || ($compositionOnly && $relDesc->thisAggregationKind == 'composite'))
         {
           if ($relDesc instanceof RDBOneToManyRelationDescription)
           {
-            $sqlStr = $relDesc->otherTable.".".$relDesc->fkColumn."=".$this->quote($dbid[0]);
+            $dbid = $oid->getFirstId();
+            $otherMapper = $persistenceFacade->getMapper($relDesc->otherType);
+            $otherAttr = $otherMapper->getAttribute($relDesc->fkName);
+            $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($dbid);
             $sqlArray[$relDesc->otherRole] = array('type' => $relDesc->otherType, 'criteria' => $sqlStr);
           }
           elseif ($relDesc instanceof RDBManyToOneRelationDescription)
           {
-            $fkName = $this->getAttributeName($relDesc->fkColumn);
-            $sqlStr = $relDesc->otherTable.".".$relDesc->idColumn."=".$this->quote($object->getValue($fkName));
+            $otherMapper = $persistenceFacade->getMapper($relDesc->otherType);
+            $otherAttr = $otherMapper->getAttribute($relDesc->idName);
+            $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($object->getValue($relDesc->fkName));
             $sqlArray[$relDesc->otherRole] = array('type' => $relDesc->otherType, 'criteria' => $sqlStr);
           }
           elseif ($relDesc instanceof RDBManyToManyRelationDescription)
           {
             $thisRelDesc = $relDesc->thisEndRelation;
             $otherRelDesc = $relDesc->otherEndRelation;
-            $sqlStr = $thisRelDesc->otherTable.".".$thisRelDesc->fkColumn."=".$this->quote($dbid[0]);
+
+            $dbid = $oid->getFirstId();
+            $otherMapper = $persistenceFacade->getMapper($thisRelDesc->otherType);
+            $otherAttr = $otherMapper->getAttribute($thisRelDesc->fkName);
+            $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($dbid);
             $sqlArray[$otherRelDesc->otherRole] = array('type' => $thisRelDesc->otherType, 'criteria' => $sqlStr);
           }
         }
@@ -212,17 +222,41 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     return $sqlArray;
   }
   /**
+   * @see RDBMapper::getRelationObjectSelectSQL()
+   */
+  protected function getRelationObjectSelectSQL(PersistentObject $object, PersistentObject $relative,
+    RDBManyToManyRelationDescription $relationDesc)
+  {
+    $persistenceFacade = PersistenceFacade::getInstance();
+
+    $nmMapper = $persistenceFacade->getMapper($relationDesc->thisEndRelation->otherType);
+
+    $thisId = $object->getOID()->getFirstId();
+    $otherId = $relative->getOID()->getFirstId();
+    $thisFkAttr = $nmMapper->getAttribute($relationDesc->thisEndRelation->fkName);
+    $otherFkAttr = $nmMapper->getAttribute($relationDesc->otherEndRelation->fkName);
+
+    $condStr = $thisFkAttr->table.".".$thisFkAttr->name."=".$this->quote($thisId)." AND ".
+      $otherFkAttr->table.".".$otherFkAttr->name."=".$this->quote($otherId);
+    return $nmMapper->getSelectSQL($condStr);
+  }
+  /**
    * @see RDBMapper::getChildrenDisassociateSQL()
    */
   protected function getChildrenDisassociateSQL(ObjectId $oid, $sharedOnly=false)
   {
+    $persistenceFacade = PersistenceFacade::getInstance();
     $sqlArray = array();
-    $dbid = $oid->getId();
-    $nodeDef = $this->getObjectDefinitionImpl();
-    foreach($nodeDef['_children'] as $childDef) {
-      if (!$sharedOnly || ($sharedOnly && $childDef['composition'] == false)) {
-        array_push($sqlArray, "UPDATE ".$this->_dbPrefix.$childDef['table_name']." SET ".$childDef['fk_columns']."=NULL WHERE ".
-          $childDef['fk_columns']."=".$this->quote($dbid[0]).";");
+    $dbid = $oid->getFirstId();
+    $childDescs = $this->getRelations('child');
+    foreach($childDescs as $curChildDesc)
+    {
+      if (!$sharedOnly || ($sharedOnly && $curChildDesc->thisAggregationKind != 'composite'))
+      {
+        $childMapper = $persistenceFacade->getMapper($curChildDesc->otherType);
+        $fkAttr = $childMapper->getAttribute($curChildDesc->fkName);
+        array_push($sqlArray, "UPDATE ".$this->_dbPrefix.$fkAttr->table." SET ".$fkAttr->name."=NULL WHERE ".
+          $fkAttr->name."=".$this->quote($dbid).";");
       }
     }
     return $sqlArray;
@@ -232,8 +266,6 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
    */
   protected function getInsertSQL(PersistentObject $object)
   {
-    $persistenceFacade = PersistenceFacade::getInstance();
-
     $insertedAttributes = array();
     $attribNameStr = '';
     $attribValueStr = '';
@@ -250,43 +282,52 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
       if (!$this->isForeignKey($pkName))
       {
         $pkValue = $ids[$i];
-        $attribNameStr .= $pkName.", ";
+        $attribNameStr .= $tableName.".".$pkName.", ";
         $attribValueStr .= $this->quote($pkValue).", ";
         array_push($insertedAttributes, $pkName);
       }
     }
 
-    // parent definition
-    $parents = $object->getParents();
-    for ($i=0; $i<sizeof($parents); $i++)
+    // foreign key definition
+    $fkDescs = $this->getForeignKeyRelations();
+    for ($i=0, $count=sizeof($fkDescs); $i<$count; $i++)
     {
-      $parent = $parents[$i];
-      $poid = $parent->getOID();
-      if ($parent != null && $poid->isValid() && PersistenceFacade::isKnownType($parent->getType()))
+      $fkDesc = $fkDescs[$i];
+      $parents = $object->getValue($fkDesc->otherRole);
+      if (is_array($parents))
       {
-        $parentIds = $poid->getId();
-        $attribName = $this->getFKColumnName($parent->getType(), $object->getRole($poid));
+        // in a ManyToOneRelation only one parent is possible
+        $parent = $parents[0];
+        $poid = $parent->getOID();
+        if (ObjectId::isValid($poid))
+        {
+          $fkAttr = $this->getAttribute($fkDesc->fkName);
+          $attribName = $fkAttr->name;
 
-        $attribNameStr .= $attribName.", ";
-        $attribValueStr .= $this->quote($parentIds[0]).", ";
-        array_push($insertedAttributes, $attribName);
+          $attribNameStr .= $tableName.".".$attribName.", ";
+          $attribValueStr .= $this->quote($poid->getFirstId()).", ";
+          array_push($insertedAttributes, $attribName);
+        }
       }
     }
 
     // attribute definition
-    $nodeDef = $this->getObjectDefinitionImpl();
-    foreach($nodeDef['_datadef'] as $curDef)
+    $attributeDescs = $this->getAttributes();
+    foreach($attributeDescs as $curAttributeDesc)
     {
-      // insert only attributes that are defined in node
-      if (in_array($curDef['name'], $object->getValueNames($curDef['app_data_type'])))
+      if (!($curAttributeDesc instanceof ReferenceDescription))
       {
-        $attribName = $curDef['name'];
-        // don't insert the same attribute twice
-        if (!in_array($attribName, $insertedAttributes))
+        // insert only attributes that are defined in node
+        $attribName = $curAttributeDesc->name;
+        if ($object->hasValue($attribName))
         {
-          $attribNameStr .= $tableName.".".$curDef['column_name'].", ";
-          $attribValueStr .= $this->quote($object->getValue($attribName, $curDef['app_data_type'])).", ";
-          array_push($insertedAttributes, $attribName);
+          // don't insert the same attribute twice
+          if (!in_array($attribName, $insertedAttributes))
+          {
+            $attribNameStr .= $tableName.".".$curAttributeDesc->column.", ";
+            $attribValueStr .= $this->quote($object->getValue($attribName)).", ";
+            array_push($insertedAttributes, $attribName);
+          }
         }
       }
     }
@@ -305,8 +346,6 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
    */
   protected function getUpdateSQL(PersistentObject $object)
   {
-    $persistenceFacade = PersistenceFacade::getInstance();
-
     $updatedAttributes = array();
     $attribStr = '';
     $tableName = $this->getTableName();
@@ -314,34 +353,45 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     // primary key definition
     $pkStr = $this->createPKCondition($object->getOID());
 
-    // parent definition
-    $parents = $object->getParents();
-    for ($i=0, $count=sizeof($parents); $i<$count; $i++)
+    // foreign key definition
+    $fkDescs = $this->getForeignKeyRelations();
+    for ($i=0, $count=sizeof($fkDescs); $i<$count; $i++)
     {
-      $parent = $parents[$i];
-      $poid = $parent->getOID();
-      if ($parent != null && $poid->isValid() && PersistenceFacade::isKnownType($parent->getType()))
+      $fkDesc = $fkDescs[$i];
+      $parents = $object->getValue($fkDesc->otherRole);
+      if (is_array($parents))
       {
-        $parentIds = $poid->getId();
-        $attribName = $this->getFKColumnName($parent->getType(), $object->getRole($poid));
-        $attribStr = $tableName.".".$attribName."=".$this->quote($parentIds[0]).", ";
-        array_push($updatedAttributes, $attribName);
+        // in a ManyToOneRelation only one parent is possible
+        $parent = $parents[0];
+        $poid = $parent->getOID();
+        if (ObjectId::isValid($poid))
+        {
+          $fkAttr = $this->getAttribute($fkDesc->fkName);
+          $attribName = $fkAttr->name;
+
+          $attribStr .= $tableName.".".$attribName."=".$this->quote($poid->getFirstId()).", ";
+          array_push($updatedAttributes, $attribName);
+
+        }
       }
     }
 
     // attribute definition
-    $nodeDef = $this->getObjectDefinitionImpl();
-    foreach($nodeDef['_datadef'] as $curDef)
+    $attributeDescs = $this->getAttributes();
+    foreach($attributeDescs as $curAttributeDesc)
     {
-      // update only attributes that are defined in node
-      if (in_array($curDef['name'], $object->getValueNames($curDef['app_data_type'])))
+      if (!($curAttributeDesc instanceof ReferenceDescription))
       {
-        $attribName = $curDef['name'];
-        // don't insert the same attribute twice
-        if (!in_array($attribName, $updatedAttributes))
+        // update only attributes that are defined in node
+        $attribName = $curAttributeDesc->name;
+        if ($object->hasValue($attribName))
         {
-          $attribStr .= $tableName.".".$curDef['column_name']."=".$this->quote($object->getValue($attribName, $curDef['app_data_type'])).", ";
-          array_push($updatedAttributes, $attribName);
+          // don't insert the same attribute twice
+          if (!in_array($attribName, $updatedAttributes))
+          {
+            $attribStr .= $tableName.".".$curAttributeDesc->column."=".$this->quote($object->getValue($attribName)).", ";
+            array_push($updatedAttributes, $attribName);
+          }
         }
       }
     }
@@ -374,80 +424,6 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     return $sqlArray;
   }
   /**
-   * @see RDBMapper::createPKCondition()
-   */
-  protected function createPKCondition(ObjectId $oid)
-  {
-    $str = '';
-    $tableName = $this->getTableName();
-    $pkNames = $this->getPKNames();
-    $ids = $oid->getId();
-    for ($i=0, $count=sizeof($pkNames); $i<$count; $i++)
-    {
-      $pkValue = $ids[$i];
-      $str .= $tableName.".".$pkNames[$i]."=".$this->quote($pkValue).' AND ';
-    }
-    return substr($str, 0, -5);
-  }
-  /**
-   * Check if a given name is the name of a value
-   * @param name The name to check
-   * @return True/False
-   */
-  protected function isAttribute($name)
-  {
-    $nodeDef = $this->getObjectDefinition();
-    foreach($nodeDef['_datadef'] as $curDef)
-    {
-      if ($curDef['name'] == $name) {
-        return true;
-      }
-    }
-    return false;
-  }
-  /**
-   * Check if a given type is a child type
-   * @param type The type to check
-   * @param childDef The child array as defined in the _children key (see NodeRDBMapper::getObjectDefinition())
-   * @return True/False
-   */
-  protected function isChild($type, $childDef)
-  {
-    return NodeUnifiedRDBMapper::getChildDef($type, $childDef) != null;
-  }
-  /**
-   * Get the definition of a given child type
-   * @param type The type to get the definition for
-   * @param childDef The child array as defined in the _children key (see NodeRDBMapper::getObjectDefinition())
-   * @return The child definition or null if not found
-   */
-  protected function getChildDef($type, $childDef)
-  {
-    foreach($childDef as $curChild) {
-      if ($curChild['type'] == $type) {
-        return $curChild;
-      }
-    }
-    return null;
-  }
-  /**
-   * Check if a given column is a foreign key (used to reference a parent)
-   * @param column The column name
-   * @return True/False
-   */
-  protected function isForeignKey($column)
-  {
-    $nodeDef = $this->getObjectDefinitionImpl();
-    // search in parents
-    foreach($nodeDef['_parents'] as $parent)
-    {
-      if ($parent['fk_columns'] == $column) {
-        return true;
-      }
-    }
-    return false;
-  }
-  /**
    * Get the SQL strings for use for the referenced values based on the given strings
    * @param attribStr The SQL attribute string to append to
    * @param tableStr The SQL table string to append to
@@ -464,8 +440,8 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     $tableName = $this->getTableName();
     $referencedTables = array();
 
-    $attributeDescriptions = $this->getAttributes();
-    foreach($attributeDescriptions as $curAttributeDesc) {
+    $attributeDescs = $this->getAttributes();
+    foreach($attributeDescs as $curAttributeDesc) {
     {
       if ($curAttributeDesc instanceof ReferenceDescription)
       {
@@ -481,27 +457,31 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
             $otherAttributeDesc = $otherMapper->getAttribute($referencedValue);
             if ($otherAttributeDesc instanceof RDBAttributeDescription)
             {
-              $attribStr .= $relationDesc->otherTable.".".$otherAttributeDesc->column." AS ".$this->quote($curReferenceDesc->name).", ";
-              if (!in_array($relationDesc->otherTable, $referencedTables))
+              $attribStr .= $otherAttributeDesc->table.".".$otherAttributeDesc->column." AS ".$this->quote($curReferenceDesc->name).", ";
+              if (!in_array($otherAttributeDesc->table, $referencedTables))
               {
                 if ($relationDesc instanceof RDBManyToOneRelationDescription)
                 {
                   // reference from parent
-                  $joinStr .= " LEFT JOIN ".$this->_dbPrefix.$relationDesc->otherTable." ON ".
-                          $this->_dbPrefix.$relationDesc->otherTable.".".$relationDesc->idColumn."=".
-                          $this->_dbPrefix.$relationDesc->thisTable.".".$relationDesc->fkColumn;
+                  $thisAttr = $this->getAttribute($relationDesc->fkName);
+                  $otherAttr = $otherMapper->getAttribute($relationDesc->idName);
+                  $joinStr .= " LEFT JOIN ".$this->_dbPrefix.$otherAttr->table." ON ".
+                          $this->_dbPrefix.$otherAttr->table.".".$otherAttr->name."=".
+                          $this->_dbPrefix.$thisAttr->table.".".$thisAttr->name;
                 }
                 else if ($relationDesc instanceof RDBOneToManyRelationDescription)
                 {
                   // reference from child
-                    $joinStr .= " LEFT JOIN ".$this->_dbPrefix.$relationDesc->otherTable." ON ".
-                            $this->_dbPrefix.$relationDesc->otherTable.".".$relationDesc->fkColumn."=".
-                            $this->_dbPrefix.$relationDesc->thisTable.".".$relationDesc->idColumn;
+                  $thisAttr = $this->getAttribute($relationDesc->idName);
+                  $otherAttr = $otherMapper->getAttribute($relationDesc->fkName);
+                  $joinStr .= " LEFT JOIN ".$this->_dbPrefix.$otherAttr->table." ON ".
+                            $this->_dbPrefix.$otherAttr->table.".".$otherAttr->name."=".
+                            $this->_dbPrefix.$thisAttr->table.".".$thisAttr->name;
                   }
                 }
-                array_push($referencedTables, $relationDesc->otherTable);
+                array_push($referencedTables, $otherAttributeDesc->table);
               }
-              $condStr = str_replace($curReferenceDesc->name, $relationDesc->otherTable.".".$otherAttributeDesc->column, $condStr);
+              $condStr = str_replace($referencedType.".".$curReferenceDesc->name, $otherAttributeDesc->table.".".$otherAttributeDesc->column, $condStr);
 
               // add orderby, if reference from child
               if (sizeof($otherMapper->getDefaultOrder()) > 0)
@@ -510,7 +490,7 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
                 foreach($otherMapper->getDefaultOrder() as $orderBy)
                 {
                   if (strlen($orderBy)) {
-                    $tmpOrderStr .= $relationDesc->otherTable.".".$orderBy.", ";
+                    $tmpOrderStr .= $otherAttributeDesc->table.".".$orderBy.", ";
                   }
                 }
                 $orderStr .= $this->translateAppToDatabase($tmpOrderStr);
@@ -527,6 +507,57 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     return array('attribStr' => $attribStr, 'tableStr' => $tableStr, 'condStr' => $condStr, 'orderStr' => $orderStr);
   }
   /**
+   * @see RDBMapper::createPKCondition()
+   */
+  protected function createPKCondition(ObjectId $oid)
+  {
+    $str = '';
+    $tableName = $this->getTableName();
+    $pkNames = $this->getPKNames();
+    $ids = $oid->getId();
+    for ($i=0, $count=sizeof($pkNames); $i<$count; $i++)
+    {
+      $pkValue = $ids[$i];
+      $str .= $tableName.".".$pkNames[$i]."=".$this->quote($pkValue).' AND ';
+    }
+    return substr($str, 0, -5);
+  }
+  /**
+   * Get all foreign key relations (used to reference a parent)
+   * @return An array of RDBManyToOneRelationDescription instances
+   */
+  protected function getForeignKeyRelations()
+  {
+    if ($this->_fkRelations == null)
+    {
+      $this->_fkRelations = array();
+      $relationDescs = $this->getRelations();
+      foreach($relationDescs as $relationDesc)
+      {
+        if ($relationDesc instanceof RDBManyToOneRelationDescription) {
+          $this->_fkRelations[] = $relationDesc;
+        }
+      }
+    }
+    return $this->_fkRelations;
+  }
+  /**
+   * Check if a given attribute is a foreign key (used to reference a parent)
+   * @param name The attribute name
+   * @return True/False
+   */
+  protected function isForeignKey($name)
+  {
+    $fkDescs = $this->getForeignKeyRelations();
+    foreach($fkDescs as $fkDesc)
+    {
+      if ($fkDesc->fkName == $name) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /**
    * Replace all attribute and type occurences to columns and table name
    * @param str The string to translate (e.g. an orderby clause)
    * @param alias The alias for the table name (default: null uses none).
@@ -535,8 +566,8 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
   protected function translateAppToDatabase($str, $alias=null)
   {
     // replace application attribute/table names with sql names
-    $attributeDescriptions = $this->getAttributes();
-    foreach($attributeDescriptions as $curAttributeDesc)
+    $attributeDescs = $this->getAttributes();
+    foreach($attributeDescs as $curAttributeDesc)
     {
       if (!($curAttributeDesc instanceof ReferenceDescription)) {
         $str = preg_replace('/\b'.$curAttributeDesc->name.'\b/', $curAttributeDesc->column, $str);
@@ -552,89 +583,6 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
     return $str;
   }
   /**
-   * Get the name of a column
-   * @param attributeName The name of the corresponding attribute
-   * @param dataType The data type of the attribute
-   * @return The name of the column or null if not existent
-   */
-  protected function getColumnName($attributeName, $dataType=null)
-  {
-    $nodeDef = $this->getObjectDefinitionImpl();
-    // search in attributes
-    foreach($nodeDef['_datadef'] as $dataItem)
-    {
-      if ($dataItem['name'] == $attributeName && ($dataType == null || ($dataType != null && $dataType == $dataItem['app_data_type']))) {
-        return $dataItem['column_name'];
-      }
-    }
-    // search refs
-    foreach($nodeDef['_ref'] as $dataItem)
-    {
-      if ($dataItem['name'] == $attributeName) {
-        return null;
-      }
-    }
-    throw new PersistenceException($this->getType()." has no attribute ".$attributeName, __FILE__, __LINE__);
-  }
-  /**
-   * Get the name of an attribute
-   * @param columnName The name of the corresponding column
-   * @return The name of the attribute or null if not existent
-   */
-  protected function getAttributeName($columnName)
-  {
-    $attributeDescs = $this->getAttributes();
-    // search in attributes
-    foreach($attributeDescs as $attributeDesc)
-    {
-      if ($attributeDesc instanceof RDBAttributeDescription && $attributeDesc->column == $columnName) {
-        return $attributeDesc->name;
-      }
-    }
-    throw new PersistenceException($this->getType()." has no column ".$columnName);
-  }
-  /**
-   * Get the name of the foreign key column defined in a given child type that connects from that type to the primary key column
-   * of this type.
-   * @param childType The child type
-   * @param isRequired True/False wether it is required to find a fk column or not
-   * @return The name of the column
-   */
-   /*
-  function getChildFKColumnName($childType, $isRequired=true)
-  {
-    $nodeDef = $this->getObjectDefinitionImpl();
-    foreach($nodeDef['_children'] as $childDef)
-    {
-      if ($childDef['type'] == $childType) {
-        return $childDef['fk_columns'];
-      }
-    }
-    if ($isRequired) {
-      WCMFException::throwEx("No foreign key name found for '".$childType."' in '".$this->getType()."'", __FILE__, __LINE__);
-    }
-  }
-  */
-  /**
-   * Get the name of the foreign key column defined in this type that connects to the primary key column
-   * of a parent type.
-   * @param parentRole The current role of the parent object
-   * @param role The current role of the object that defines the foreign key
-   * @param isRequired True/False wether it is required to find a fk column or not
-   * @return The name of the column
-   */
-  protected function getFKColumnName($parentRole, $role, $isRequired=true)
-  {
-    // check if parent type is listed
-    $fkName = $this->getFKColumnNameImpl($parentRole, $role);
-    if (strlen($fkName) > 0) {
-      return $fkName;
-    }
-    if ($isRequired) {
-      WCMFException::throwEx("No foreign key name found for parent role '".$parentRole."' and role '".$role."' in '".$this->getType()."'", __FILE__, __LINE__);
-    }
-  }
-  /**
    * Quote a value to be inserted into the database
    * @param value The value to quote
    * @return The quoted value
@@ -642,7 +590,7 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
   protected function quote($value)
   {
     $conn = $this->getConnection();
-    if ($value == null) {
+    if ($value === null) {
       return 'null';
     }
     else {
@@ -664,7 +612,7 @@ abstract class NodeUnifiedRDBMapper extends NodeRDBMapper implements ChangeListe
   /**
    * @see ChangeListener::valueChanged()
    */
-  public function valueChanged(PersistentObject $object, $name, $type, $oldValue, $newValue) {}
+  public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
   /**
    * @see ChangeListener::propertyChanged()
    */

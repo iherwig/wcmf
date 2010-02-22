@@ -16,8 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/3rdparty/log4php/src/main/php/LoggerManager.php");
-require_once(BASE."wcmf/3rdparty/log4php/src/main/php/Logger.php");
+require_once(BASE."wcmf/3rdparty/log4php/Logger.php");
 
 /**
  * @class Log
@@ -139,7 +138,7 @@ class Log
    */
   public static function getLogger($category)
   {
-    $logger = LoggerManager::getLogger($category);
+    $logger = Logger::getLogger($category);
     return $logger;
   }
 }

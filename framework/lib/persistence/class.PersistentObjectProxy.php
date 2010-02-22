@@ -34,9 +34,12 @@ class PersistentObjectProxy
   /**
    * Constructor.
    * @param oid The object id of the PersistentObject instance.
+   * @param object The PersistentObject instance [optional]. This parameter is useful
+   * if you want to prevent automatic loading of the subject if it is already loaded.
    */
-  public function __construct(ObjectId $oid)
+  public function __construct(ObjectId $oid, PersistentObject $object=null)
   {
+    $this->_realSubject = $object;
     $this->_oid = $oid;
   }
   /**
@@ -66,7 +69,7 @@ class PersistentObjectProxy
     if ($this->_realSubject == null) {
       $this->resolve();
     }
-    return $this->_realSubject->$name($arguments);
+    return call_user_func_array(array($this->_realSubject, $name), $arguments);
   }
   /**
    * Delegate static method call to the instance.
@@ -76,14 +79,17 @@ class PersistentObjectProxy
     if ($this->_realSubject == null) {
       $this->resolve();
     }
-    return $this->_realSubject->$name($arguments);
+    return call_user_func_array(array($this->_realSubject, $name), $arguments);
   }
   /**
-   * Load the PersistentObject instance
+   * Load the PersistentObject instance. Use this method if the subject should be loaded
+   * with a depth greater than BUILDDEPTH_SINGLE
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        [default: BUILDDEPTH_SINGLE)]
    */
-  protected function resolve()
+  public function resolve($buildDepth=BUILDDEPTH_SINGLE)
   {
-    $this->_realSubject = PersistenceFacade::getInstance()->load($this->_oid, BUILDDEPTH_SINGLE);
+    $this->_realSubject = PersistenceFacade::getInstance()->load($this->_oid, $buildDepth);
     if ($this->_realSubject == null) {
       throw new PersistenceException("Could not resolve oid: ".$this->_oid);
     }

@@ -37,10 +37,10 @@ class RDBManyToManyRelationDescription
   /**
    * Constructor.
    * @see RelationDescription::__construct
-   * @param thisEndRelation The RDBManyToOneRelationInstance describing the relation between 'this' end and the connecting type
-   * @param oneToManyRelationDescription The RDBOneToManyRelationInstance describing the relation between the connecting type and the 'other' end
+   * @param thisEndRelation The RDBOneToManyRelationDescription describing the relation between 'this' end and the connecting type
+   * @param oneToManyRelationDescription The RDBManyToOneRelationDescription describing the relation between the connecting type and the 'other' end
    */
-  public function __construct($thisEndRelation, $otherEndRelation)
+  public function __construct(RDBOneToManyRelationDescription $thisEndRelation, RDBManyToOneRelationDescription $otherEndRelation)
   {
     $this->thisEndRelation = $thisEndRelation;
     $this->otherEndRelation = $otherEndRelation;
@@ -52,7 +52,7 @@ class RDBManyToManyRelationDescription
   public function __get($propName)
   {
     if (strpos($propName, 'this') === 0) {
-      return $this->_thisEndRelation->$propName;
+      return $this->thisEndRelation->$propName;
     }
     elseif (strpos($propName, 'other') === 0) {
       return $this->otherEndRelation->$propName;

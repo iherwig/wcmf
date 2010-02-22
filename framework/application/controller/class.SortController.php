@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -28,11 +28,11 @@ require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
  * @class SortController
  * @ingroup Controller
  * @brief SortController is a controller that sorts Nodes of same type.
- * 
+ *
  * This Controller sorts the Nodes by responding to the 'sortup', 'sortdown'
  * action names. It requires a parameter 'sortoid' which tells to which Node
  * the action should be applied. According to the given action the Nodes sortkey
- * attribute will be changed the way that it either swaps with its predecessor 
+ * attribute will be changed the way that it either swaps with its predecessor
  * ('prevoid') or with its successor ('nextoid') or move a given distance ('dist')
  * in a list of nodes that is either defined by the 'filter' or the 'poid' parameter.
  * If none of the both parameters is given, the list contains all entities that
@@ -40,22 +40,22 @@ require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
  *
  * After using the NodeUtil::setSortProperties method on a list of Nodes
  * you could write the following Smarty template code to support sorting:
- * 
+ *
  * @code
  * {foreach from=$nodeList item=curNode}
  *   {if $curNode->getValue('hasSortUp')}
- *     <a href="javascript:setVariable('sortoid', '{$curNode->getOID()}'); setVariable('prevoid', '{$curNode->getValue('prevoid')}'); submitAction('sortup');">{translate text="up"}</a> 
+ *     <a href="javascript:setVariable('sortoid', '{$curNode->getOID()}'); setVariable('prevoid', '{$curNode->getValue('prevoid')}'); submitAction('sortup');">{translate text="up"}</a>
  *   {else}
  *     <span>{translate text="up"}</span>
  *   {/if}
  *   {if $curNode->getValue('hasSortDown')}
- *     <a href="javascript:setVariable('sortoid', '{$curNode->getOID()}'); setVariable('nextoid', '{$curNode->getValue('nextoid')}'); submitAction('sortdown');">{translate text="down"}</a> 
+ *     <a href="javascript:setVariable('sortoid', '{$curNode->getOID()}'); setVariable('nextoid', '{$curNode->getValue('nextoid')}'); submitAction('sortdown');">{translate text="down"}</a>
  *   {else}
  *     <span>{translate text="down"}</span>
  *   {/if}
- * {/foreach} 
+ * {/foreach}
  * @endcode
- * 
+ *
  * <b>Input actions:</b>
  * - @em sortup Move the given Node up in the list
  * - @em sortdown Move the given Node down in the list
@@ -63,11 +63,11 @@ require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
  * <b>Output actions:</b>
  * - @em ok In any case
  *
- * @param[in] sortoid The oid of the Node to change its sortkey. The Controller assumes 
+ * @param[in] sortoid The oid of the Node to change its sortkey. The Controller assumes
  *            that the given Node has a sortkey attribute (DATATYPE_IGNORE).
- * @param[in] prevoid The oid of the Node to swap with on sortup action. 
+ * @param[in] prevoid The oid of the Node to swap with on sortup action.
  *            If not given, the Node with previous sortkey is taken.
- * @param[in] nextoid The oid of the Node to swap with on sortdown action. 
+ * @param[in] nextoid The oid of the Node to swap with on sortdown action.
  *            If not given, the Node with next sortkey is taken.
  * @param[in] dist The distance to move the Node up or down. 'prevoid', 'nextoid' will
  *            be ignored.
@@ -77,7 +77,7 @@ require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
  * @param[in] poid As alternative to the filter parameter the entity list maybe defined
  *            by a parent oid, which means that all child nodes of that parent are
  *            contained in the list to sort.
- * @param[in] sortcol The name of the column to use for sorting (DATATYPE_IGNORE). 
+ * @param[in] sortcol The name of the column to use for sorting (DATATYPE_IGNORE).
  *            If not given it defaults to 'sortkey'.
  * @param[out] oid The oid of the Node that changed its sortkey (= sortoid).
  *
@@ -133,7 +133,7 @@ class SortController extends Controller
       // if prevoid/nextoid are not given, we have to load all Nodes and sort...
       $this->sortAll();
     }
-        
+
     $this->_response->setValue('oid', $this->_request->getValue('sortoid'));
     $this->_response->setAction('ok');
     return true;
@@ -160,25 +160,25 @@ class SortController extends Controller
   function swapNodes(&$node1, &$node2, $doSave)
   {
     $sortCol = $this->getSortColumn();
-  
+
     $sortkey1 = $node2->getValue($sortCol, DATATYPE_IGNORE);
     $sortkey2 = $node1->getValue($sortCol, DATATYPE_IGNORE);
-    
+
     // fallback sortkeys have never been set
     if (!$sortkey1 || !$sortkey2)
     {
       $this->sortAll();
       return;
     }
-          
+
     // fallback if sortkeys are identical
     if ($sortkey1 == $sortkey2) {
       $sortkey1++;
     }
-    // actually swap sortkeys    
+    // actually swap sortkeys
     $node1->setValue($sortCol, $sortkey1, DATATYPE_IGNORE);
     $node2->setValue($sortCol, $sortkey2, DATATYPE_IGNORE);
-    
+
     if ($doSave)
     {
       $node1->save();
@@ -203,8 +203,7 @@ class SortController extends Controller
         $persistenceFacade = &PersistenceFacade::getInstance();
         $parent = &$persistenceFacade->load($poid, 1);
         if ($parent) {
-          $parent->sortChildren('sortkey');
-          $nodes = $parent->getChildren();
+          $nodes = Node::sort($parent->getChildren(), 'sortkey');
         }
       }
       else {
@@ -231,7 +230,7 @@ class SortController extends Controller
       $filter = NodeUtil::getNodeQuery($type);
       $nodes = ObjectQuery::executeString($type, $filter, BUILDDEPTH_SINGLE, array($type.'.'.$sortCol));
     }
-    
+
     // load all nodes and set their sortkeys ascending
     $rootNode = new Node('');
     $sortkey = 1;
@@ -241,7 +240,7 @@ class SortController extends Controller
       $rootNode->addChild($nodes[$i]);
       $sortkey++;
     }
-    
+
     $dist = 1;
     if (strlen($this->_request->getValue('dist')) > 0) {
       $dist = $this->_request->getValue('dist');
@@ -263,9 +262,9 @@ class SortController extends Controller
           }
         }
       }
-      Node::sort($nodes, $sortCol);
+      $nodes = Node::sort($nodes, $sortCol);
     }
-    
+
     // don't save the root node
     $rootNode->setState(STATE_CLEAN, false);
 

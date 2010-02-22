@@ -22,25 +22,28 @@ require_once(BASE."wcmf/lib/persistence/class.AttributeDescription.php");
  * @class RDBAttributeDescription
  * @ingroup Persistence
  * @brief Instances of RDBAttributeDescription describe attributes of PersistentObjects
- *  in a relational database.
+ * in a relational database.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class RDBAttributeDescription extends AttributeDescription
 {
+  public $table = '';
   public $column = '';
 
   /**
    * Constructor.
    * @see AttributeDescription::__construct
+   * @param table The table name
    * @param column The column name
    */
   public function __construct($name, $type, array $appDataTypes, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
-    $restrictionsDescription, $isEditable, $inputType, $displayType, $column)
+    $restrictionsDescription, $isEditable, $inputType, $displayType, $table, $column)
   {
     parent::__construct($name, $type, $appDataTypes, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
       $restrictionsDescription, $isEditable, $inputType, $displayType);
 
+    $this->table = $table;
     $this->column = $column;
   }
 }
