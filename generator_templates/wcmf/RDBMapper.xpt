@@ -39,14 +39,14 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
   /**
    * @see PersistenceMapper::getPkNames()
    */
-  function getPkNames()
+  public function getPkNames()
   {
     return «EXPAND primaryKeyArray»;
   }
   /**
    * @see PersistenceMapper::getProperties()
    */
-  function getProperties()
+  public function getProperties()
   {
   	return array(
 «IF this.metaType.toString().contains("WCMFManyToMany")-»
@@ -69,7 +69,7 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
   /**
    * @see PersistenceMapper::getDefaultOrder()
    */
-  function getDefaultOrder()
+  public function getDefaultOrder()
   {
     return array(«IF this.getOrderByName() != ""»'«this.getOrderByName()»'«ENDIF»);
   }
@@ -94,7 +94,7 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
        * Value description: Sort key for ordering
        */
       'sortkey' => new RDBAttributeDescription('sortkey', 'integer', array(DATATYPE_IGNORE), '', «REM»NOBR«ENDREM-»
-'[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'sortkey'),
+'[0-9]*', '', '', true, 'text[class="tiny"]', 'text', '«getTableName()»', 'sortkey'),
   «ENDIF-»
 «EXPAND references-»
     );
@@ -120,7 +120,7 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
 
 «REM» primaryKeyArray --------------------------------------------«ENDREM»
 «DEFINE primaryKeyArray FOR WCMFNode-»
-array(«FOREACH this.getPKValues() AS curPk SEPARATOR ', '»'«curPk.getColumnName()»'«ENDFOREACH»)«REM»NOBR«ENDREM-»
+array(«FOREACH this.getPKValues() AS curPk SEPARATOR ', '»'«curPk.name»'«ENDFOREACH»)«REM»NOBR«ENDREM-»
 «ENDDEFINE»
 
 «REM» references -------------------------------------------------«ENDREM»
@@ -162,7 +162,7 @@ new RDBOneToManyRelationDescription('«this.name»', '«child.getOtherEnd().getRole
 '«child.getOtherEnd().getLower()»', '«IF child.getOtherEnd().getUpper() == -1»unbounded«ELSE»«child.getOtherEnd().getUpper()»«ENDIF-»', «REM»NOBR«ENDREM-»
 '«child.getLower()»', '«IF child.getUpper() == -1»unbounded«ELSE»«child.getUpper()»«ENDIF-»', «REM»NOBR«ENDREM-»
 '«child.getOtherEnd().aggregation»', '«child.aggregation»', '«child.getOtherEnd().isNavigable()»', '«child.isNavigable()»', 'child', «REM»NOBR«ENDREM-»
-'«this.getTableName()»', '«child.type.getTableName()»', '«this.getPKValues().first().getColumnName()»', '«child.getOtherEnd().getFKName()»')«REM»NOBR«ENDREM-»
+'«this.getPKValues().first().name»', '«child.getOtherEnd().getFKName()»')«REM»NOBR«ENDREM-»
 «ENDDEFINE»
 
 «REM» many-to-one ---------------------------------------------------«ENDREM»
@@ -171,7 +171,7 @@ new RDBManyToOneRelationDescription('«this.name»', '«parent.getOtherEnd().getRol
 '«parent.getOtherEnd().getLower()»', '«IF parent.getOtherEnd().getUpper() == -1»unbounded«ELSE»«parent.getOtherEnd().getUpper()»«ENDIF-»', «REM»NOBR«ENDREM-»
 '«parent.getLower()»', '«IF parent.getUpper() == -1»unbounded«ELSE»«parent.getUpper()»«ENDIF-»', «REM»NOBR«ENDREM-»
 '«parent.getOtherEnd().aggregation»', '«parent.aggregation»', '«parent.getOtherEnd().isNavigable()»', '«parent.isNavigable()»', 'parent', «REM»NOBR«ENDREM-»
-'«this.getTableName()»', '«parent.type.getTableName()»', '«parent.type.getPKValues().first().getColumnName()»', '«parent.getOtherEnd().getFKName()»')«REM»NOBR«ENDREM-»
+'«parent.type.getPKValues().first().name»', '«parent.getOtherEnd().getFKName()»')«REM»NOBR«ENDREM-»
 «ENDDEFINE»
 
 «REM» attributes ---------------------------------------------------«ENDREM»
@@ -180,8 +180,9 @@ new RDBManyToOneRelationDescription('«this.name»', '«parent.getOtherEnd().getRol
      /**
       * Value description: «curValue.getComment(" ")»
       */
-      '«curValue.name»' => new RDBAttributeDescription('«curValue.name»', '«curValue.type.name»', array('«curValue.app_data_type»'), '«curValue.defaultValue.stringValue()»', «REM»NOBR«ENDREM-»
-'«curValue.restrictions_match»', '«curValue.restrictions_not_match»', '«curValue.restrictions_description»', «curValue.is_editable.boolString()», '«curValue.input_type»', «REM»NOBR«ENDREM-»
-'«curValue.display_type»', '«curValue.getColumnName()»'),
+      '«curValue.name»' => new RDBAttributeDescription('«curValue.name»', '«curValue.type.name»', array(«curValue.app_data_type»), «REM»NOBR«ENDREM-»
+«IF curValue.defaultValue.stringValue().isNullOrEmpty()»null«ELSE»'«curValue.defaultValue.stringValue()»'«ENDIF», '«curValue.restrictions_match»', «REM»NOBR«ENDREM-»
+'«curValue.restrictions_not_match»', '«curValue.restrictions_description»', «curValue.is_editable.boolString()», '«curValue.input_type»', «REM»NOBR«ENDREM-»
+'«curValue.display_type»', '«getTableName()»', '«curValue.getColumnName()»'),
   «ENDFOREACH-»
 «ENDDEFINE»

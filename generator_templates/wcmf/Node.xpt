@@ -41,11 +41,11 @@ class «this.name» extends «this.name»Base
   /**  
    * Method «this.name» 
    * description: «this.getComment("\n   * ")»
-	«FOREACH this.ownedParameter AS p-»  
-		«IF p.direction.toString() != "return"-»
+  «FOREACH this.ownedParameter AS p-»  
+    «IF p.direction.toString() != "return"-»
    * @param «p.name»
-		«ENDIF-»
-	«ENDFOREACH-»
+    «ENDIF-»
+  «ENDFOREACH-»
   * @return 
   */  
   function «name»(«FOREACH this.ownedParameter AS p SEPARATOR ", "»«IF p.direction.toString() != "return"»$«p.name»«ENDIF»«ENDFOREACH») 
