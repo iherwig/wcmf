@@ -191,17 +191,10 @@ abstract class User extends Node
    */
   public function hasRole($rolename)
   {
-    $role = $this->getRoleByName($rolename);
-    if ($role != null)
-    {
-      $roles = $this->getRoles();
-      for ($i=0; $i<sizeof($roles); $i++)
-      {
-        if ($roles[$i]->getOID() == $role->getOID()) {
-          return true;
-        }
-      }
-    }
+    $roles = $this->getRoles();
+    for ($i=0; $i<sizeof($roles); $i++)
+      if ($roles[$i]->getName() == $rolename)
+        return true;
     return false;
   }
 
@@ -239,7 +232,7 @@ abstract class User extends Node
    */
   protected function getRoleByName($rolename)
   {
-    if (!array_key_exists($rolename, $this->_cachedRoles))
+    if (!isset($this->_cachedRoles[$rolename]))
     {
       // load the role
       $persistenceFacade = PersistenceFacade::getInstance();

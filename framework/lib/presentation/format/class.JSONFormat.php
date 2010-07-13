@@ -30,7 +30,7 @@ $GLOBALS['gJSONData'] = array();
 $GLOBALS['gJSONUsed'] = false;
 function gPrintJSONResult()
 {
-  if (array_key_exists('gJSONUsed', $GLOBALS))
+  if ($GLOBALS['gJSONUsed'])
   {
     $data = $GLOBALS['gJSONData'];
     if ($data != null)
@@ -61,8 +61,9 @@ class JSONFormat extends HierarchicalFormat
   function beforeDeserialize(&$data)
   {
     // decode the json data into an array
-    foreach(array_keys($data) as $key)
+    foreach(array_keys($data) as $key) {
       $data[$key] = &JSONUtil::decode($data[$key], true);
+    }
   }
 
   /**
@@ -75,15 +76,15 @@ class JSONFormat extends HierarchicalFormat
     $GLOBALS['gJSONData'] = array_merge($GLOBALS['gJSONData'], $data);
     $GLOBALS['gJSONUsed'] = true;
   }
-  
+
   /**
    * @see HierarchicalFormat::isSerializedNode()
    */
   function isSerializedNode($key, &$value)
   {
-    return ((is_object($value) || is_array($value)) && array_key_exists('oid', $value) && array_key_exists('type', $value));
+    return ((is_object($value) || is_array($value)) && isset($value['oid']) && isset($value['type']));
   }
-  
+
   /**
    * @see HierarchicalFormat::serializeNode()
    */
@@ -98,14 +99,15 @@ class JSONFormat extends HierarchicalFormat
    */
   function &deserializeNode($key, &$value)
   {
-    if (is_array($value))
+    if (is_array($value)) {
       $type = $value['type'];
-    if (is_object($value))
+    }
+    if (is_object($value)) {
       $type = $value->type;
-    
+    }
     // use NodeSerializer to deserialize
     $node = &NodeSerializer::deserializeNode($type, $value, false);
     return $node;
-  }  
+  }
 }
 ?>

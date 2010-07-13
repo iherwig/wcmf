@@ -153,7 +153,7 @@ $g_oidArray = array();
 function g_getOIDArray($oidStringList)
 {
 	global $g_oidArray;
-	if (!array_key_exists($oidStringList, $g_oidArray))
+	if (!isset($g_oidArray[$oidStringList]))
 	{
 	  $persistenceFacade = &PersistenceFacade::getInstance();
 	  $result = array();

@@ -60,8 +60,7 @@ class LockManagerRDB extends LockManager
    */
   protected function releaseLockImpl(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null)
   {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $query = &$persistenceFacade->createObjectQuery('Locktable');
+    $query = &PersistenceFacade::createObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     if ($sessid != null) {
       $tpl->setValue('sessionid', "= '".$sessid."'", DATATYPE_ATTRIBUTE);
@@ -102,8 +101,7 @@ class LockManagerRDB extends LockManager
     $parser->setValue('locking', false, 'cms');
 
     // load locks
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $query = $persistenceFacade->createObjectQuery(UserManager::getUserClassName());
+    $query = &PersistenceFacade::createObjectQuery(UserManager::getUserClassName());
     $tpl1 = $query->getObjectTemplate(UserManager::getUserClassName());
     $tpl2 = $query->getObjectTemplate('Locktable');
     $tpl2->setValue('objectid', "= '".$oid."'", DATATYPE_ATTRIBUTE);

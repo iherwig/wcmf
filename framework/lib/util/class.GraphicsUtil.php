@@ -190,7 +190,7 @@ class GraphicsUtil
       $imageoutputFunction ($destImg, $destName, 100);
     else
       $imageoutputFunction ($destImg, $destName);
-    chmod($destName, 0775);
+    chmod($destName, 0644);
     
     return $this->exitThumbnail($srcImg, $destImg, "", true, $oldErrorLevel);
     }

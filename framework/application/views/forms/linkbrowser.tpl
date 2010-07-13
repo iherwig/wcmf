@@ -10,7 +10,7 @@ function SetUrl(value, fieldName)
 </script>
 {/if}
 {if $enabled}
-<input type="text" name="{$name}" value="{$value}" {$attributes} onchange="setDirty();" /><br />
+<input type="text" name="{$name}" value="{$value}" {$attributes} onchange="setDirty(this.name);" /><br />
 <a href="javascript:newWindowEx('', '', 'browseresources', 'browseWindow', 'width=800,height=700,resizable=yes,scrollbars=yes,status=yes,locationbar=no', '&type=link&subtype=content&fieldName={$name}')">{translate text="Internal Link"}</a>
 {else}
 <span class="disabled" {$attributes}>{$value}</span>

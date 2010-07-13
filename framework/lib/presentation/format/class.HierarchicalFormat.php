@@ -63,7 +63,7 @@ abstract class HierarchicalFormat extends AbstractFormat
    */
   protected function processValues(&$value, $key, $method)
   {
-    if (EncodingUtil::isUtf8($value)) {
+    if (is_string($value) && EncodingUtil::isUtf8($value)) {
       $value = EncodingUtil::convertCp1252Utf8ToIso($value);
     }
     if ( (strpos($method, 'deserialize') === 0 && $this->isSerializedNode($key, $value)) ||

@@ -142,7 +142,7 @@ class NodeXMLDBMapper extends PersistenceMapper
   	//WCMFException::throwEx("No Connection. Start transaction first", __FILE__, __LINE__);
 
     $persistenceFacade = &PersistenceFacade::getInstance();
-    $nodeDef = $persistenceFacade->decomposeOID($oid);
+    $nodeDef = PersistenceFacade::decomposeOID($oid);
 
     // check buildTypes
     if (is_array($buildTypes) && !in_array($nodeDef['type'], $buildTypes))
@@ -177,7 +177,7 @@ class NodeXMLDBMapper extends PersistenceMapper
     $parentoids = array();
     while (array_key_exists('pid'+$i, $nodeData['_data']))
     {
-      $parentoid = $persistenceFacade->composeOID(array('type' => $nodeData['_data']['ptype'+$i], 'id' => $nodeData['_data']['pid'+$i]));
+      $parentoid = PersistenceFacade::composeOID(array('type' => $nodeData['_data']['ptype'+$i], 'id' => $nodeData['_data']['pid'+$i]));
       array_push($parentoids, $parentoid);
       $i++;
     }
@@ -214,7 +214,7 @@ class NodeXMLDBMapper extends PersistenceMapper
     $childrenData = $this->_db->GetChildData($oid);
     foreach($childrenData as $childData)
     {
-      $childoid = $persistenceFacade->composeOID(array('type' => $childData['type'], 'id' => $childData['id']));
+      $childoid = PersistenceFacade::composeOID(array('type' => $childData['type'], 'id' => $childData['id']));
       array_push($childoids, $childoid);
       if ( ($buildDepth != BUILDDEPTH_SINGLE) && ($buildDepth > 0 || $buildDepth == BUILDDEPTH_INFINITE) )
       {
@@ -385,7 +385,7 @@ class NodeXMLDBMapper extends PersistenceMapper
   	//WCMFException::throwEx("No Connection. Start transaction first", __FILE__, __LINE__);
 
     $persistenceFacade = &PersistenceFacade::getInstance();
-    $nodeDef = $persistenceFacade->decomposeOID($oid);
+    $nodeDef = PersistenceFacade::decomposeOID($oid);
 
     // log action
     if ($this->isLogging())
@@ -405,7 +405,7 @@ class NodeXMLDBMapper extends PersistenceMapper
       $childrenData = $this->_db->GetChildData($oid);
       foreach($childrenData as $childData)
       {
-        $childoid = $persistenceFacade->composeOID(array('type' => $childData['type'], 'id' => $childData['id']));
+        $childoid = PersistenceFacade::composeOID(array('type' => $childData['type'], 'id' => $childData['id']));
         $persistenceFacade->delete($childoid, $recursive);
       }
     }

@@ -20,7 +20,7 @@ function SetUrl(value, fieldName)
 {else}
   {assign var="subtype" value=$attributeList.subtype}
 {/if}
-<input type="text" name="{$name}" value="{$value}" {$attributes} {if $error != ''}style="border:1px dotted #EC0000"{/if} onchange="setDirty();" /><br/>
+<input type="text" name="{$name}" value="{$value}" {$attributes} {if $error != ''}style="border:1px dotted #EC0000"{/if} onchange="setDirty(this.name);" /><br/>
 <a href="javascript:newWindowEx('', '', 'browseresources', 'browseWindow', 'width=800,height=700,resizable=yes,scrollbars=yes,status=yes,locationbar=no', '&type={$type}&subtype={$subtype}&fieldName={$name}&directory={$directory}')">{translate text="Browse Server"}</a>
 {else}
 <span class="disabled" {$attributes}>{$value}</span>

@@ -5,9 +5,9 @@
 {foreach key=listkey item=listvalue from=$listMap}
 {if ((!is_array($value) && strval($listkey) == strval($value)) || (is_array($value) && in_array($listkey, $value)))}
 {assign var="selected" value=1}
-  {assign var="controlstring" value="$controlstring<input type=\"radio\" name=\"$name\" value=\"$listkey\" checked=\"checked\" $attributes onchange=\"setDirty();\" /> $listvalue"}
+  {assign var="controlstring" value="$controlstring<input type=\"radio\" name=\"$name\" value=\"$listkey\" checked=\"checked\" $attributes onchange=\"setDirty(this.name);\" /> <label>$listvalue</label>"}
 {else}
-  {assign var="controlstring" value="$controlstring<input type=\"radio\" name=\"$name\" value=\"$listkey\" $attributes onchange=\"setDirty();\" /> $listvalue"}
+  {assign var="controlstring" value="$controlstring<input type=\"radio\" name=\"$name\" value=\"$listkey\" $attributes onchange=\"setDirty(this.name);\" /> <label>$listvalue</label>"}
 {/if}
 {/foreach}
 {if $selected == 0}

@@ -30,9 +30,11 @@
 function smarty_function_uniqueid($params, &$smarty)
 {
   $uid = md5(uniqid(ip2long($_SERVER['REMOTE_ADDR']) ^ (int)$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space('/tmp'), 1));
-  if (array_key_exists('varname', $params))
+  if (isset($params['varname'])) {
     $smarty->assign($params['varname'], $uid);
-  else
+  }
+  else {
   	echo $uid;
+  }
 }
 ?>

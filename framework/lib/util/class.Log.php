@@ -23,7 +23,7 @@ require_once(BASE."wcmf/3rdparty/log4php/Logger.php");
  * @ingroup Util
  * @brief Log is used to log application events. The implementation
  * is a wrapper over log4php. All methods may be called in a static way.
- * @note This only reason, why this class inherits from Logger is to get the
+ * @note The only reason, why this class inherits from Logger is to get the
  * correct location information.
  *
  * @author ingo herwig <ingo@wemove.com>

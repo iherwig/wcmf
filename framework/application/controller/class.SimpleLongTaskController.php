@@ -55,6 +55,14 @@ class SimpleLongTaskController extends LongTaskController
     return "Creating file number ".$step." ...";
   }
   /**
+   * @see LongTaskController::getSummaryText()
+   * The default implementation returns an empty string
+   */
+  function getSummaryText()
+  {
+    return "";
+  }
+  /**
    * @see LongTaskController::processPart()
    */
   function processPart()

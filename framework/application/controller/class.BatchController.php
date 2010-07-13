@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -25,14 +25,14 @@ require_once(BASE."wcmf/application/controller/class.LongTaskController.php");
  * in a sequence. It simplifies the usage of LongTaskController functionality
  * for splitting different bigger tasks into many smaller (similar) tasks where
  * the whole number of tasks isn't known at designtime.
- * 
+ *
  * <b>Input actions:</b>
- * - @em continue Process next work package if any 
+ * - @em continue Process next work package if any
  * - unspecified: Initialized work packages
  *
  * <b>Output actions:</b>
  * - see LongTaskController
- * 
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
 class BatchController extends LongTaskController
@@ -71,8 +71,8 @@ class BatchController extends LongTaskController
       $number = 0;
       while (($workPackage = $this->getWorkPackage($number)) !== null)
       {
-        if (!array_key_exists('name', $workPackage) || !array_key_exists('size', $workPackage) || 
-          !array_key_exists('oids', $workPackage) || !array_key_exists('callback', $workPackage))
+        if (!isset($workPackage['name']) || !isset($workPackage['size']) ||
+          !isset($workPackage['oids']) || !isset($workPackage['callback']))
           WCMFException::throwEx("Incomplete work package description.", __FILE__, __LINE__);
         else
         {
@@ -90,7 +90,7 @@ class BatchController extends LongTaskController
    * @param size Size of one sub package. This defines how many of the oids will be passed to the callback in one call (e.g. '7' means pass 7 oids per call)
    * @param oids An array of oids (or other application specific package identifiers) that will be distributed into sub packages of given size
    * @note The array must contain at least one value
-   * @param callback The name of method to call for this package type 
+   * @param callback The name of method to call for this package type
    * @note The callback method must accept the following parameters:
    *      - one array parameter (the oids to process in the current call)
    *      - optionally array parameter (the additional arguments)
@@ -113,10 +113,10 @@ class BatchController extends LongTaskController
       WCMFException::throwEx("Wrong work package description '".$name."': No callback given.", __FILE__, __LINE__);
       return;
     }
-    
+
     $session = &SessionData::getInstance();
     $workPackages = $session->get($this->WORK_PACKAGES_VARNAME);
-    
+
     $counter = 1;
     $total = sizeOf($oids);
     while(sizeOf($oids) > 0)
@@ -125,7 +125,7 @@ class BatchController extends LongTaskController
       for($i=0; $i<$size; $i++)
       {
         $nextItem = array_shift($oids);
-        if($nextItem !== null) 
+        if($nextItem !== null)
           array_push($items, $nextItem);
       }
 
@@ -156,10 +156,10 @@ class BatchController extends LongTaskController
   /**
    * Get definitions of work packages.
    * @param number The number of the work package (first number is 0, number is incremented on every call)
-   * @note This function gets called on first initialization run as often until it returns null. 
+   * @note This function gets called on first initialization run as often until it returns null.
    * This allows to define different static work packages. If you would like to add work packages dynamically on
    * subsequent runs this may be done by directly calling the BatchController::addWorkPackage() method.
-   * @return A work packages description as assoziative array with keys 'name', 'size', 'oids', 'callback' 
+   * @return A work packages description as assoziative array with keys 'name', 'size', 'oids', 'callback'
    *         as required for BatchController::addWorkPackage() method or null to terminate.
    * @note subclasses must implement this method.
    */

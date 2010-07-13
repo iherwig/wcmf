@@ -50,7 +50,7 @@ abstract class LockManager
     $locking = $parser->getValue('locking', 'cms');
     if ($locking)
     {
-      if (!is_object(self::$_instance) )
+      if (!isset(self::$_instance) )
       {
         // if the application runs in anonymous mode, locking is not supported
         $anonymous = $parser->getValue('anonymous', 'cms');
@@ -180,7 +180,6 @@ abstract class LockManager
       $objectText = $lock->getOID()->__toString();
     }
     $msg = Message::get("%1% is locked by user '%2%' since %3%. ", array($objectText, $lock->getLogin(), strftime("%X", strtotime($lock->getCreated()))));
-    //$msg .= '<a href="javascript:submitAction(\'unlock\')">'.Message::get("Click here to unlock the object").'.</a>';
     return $msg;
   }
   /**

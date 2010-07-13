@@ -51,7 +51,7 @@ class CommitVisitor extends Visitor
     }
 
     // store commit in result array
-    if (!array_key_exists($oldState, $this->_result)) {
+    if (!isset($this->_result[$oldState])) {
       $this->_result[$oldState] = array();
     }
     $this->_result[$oldState][sizeof($this->_result[$oldState])] = $obj->getOID();

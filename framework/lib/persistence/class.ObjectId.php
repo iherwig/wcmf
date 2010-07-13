@@ -25,7 +25,7 @@
  * @note The ObjectId must provide enough information to select the appropriate mapper for the object.
  *       This may be achived by different strategies, e.g. coding the object type into the ObjectId or
  *       having a global registry which maps ObjectIds to objects. wCMF uses the first method.
- *       Serialized ObjectIds have the following notation: type:id1:id2:... where type is the object type
+ *       Serialized ObjectIds have the following notation: prefix:type:id1:id2:... where type is the object type
  *       and id1, id2, .. are the values of the primary key columns (in case of simple keys only one).
  *       Serialization is done using the __toString method (using the ObjectId instance in a string context).
  *
@@ -33,20 +33,26 @@
  */
 class ObjectId
 {
+  private $_prefix;
   private $_type;
   private $_id;
+
+  private static $_dummyIdPattern = 'wcmf[A-Za-z0-9]{32}';
+  private static $_idPattern = null;
 
   /**
    * Constructor.
    * @param type The type of the object
    * @param id Either a single value or an array of values (for compound primary keys) identifying
+   * @param prefix Either a single value or an array of values (for compound primary keys) identifying
    * the object between others of the same type. [optional, default: null]
    * If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
    * If only type is given, the id will be set with initial values.
    */
-  public function __construct($type, $id=null)
+  public function __construct($type, $id=null, $prefix)
   {
+    $this->_prefix = $prefix;
     $this->_type = $type;
 
     // get given primary keys
@@ -64,10 +70,23 @@ class ObjectId
     }
 
     // add dummy ids for missing primary key values
-    $numPKs = ObjectId::getNumberOfPKs($type);
+    $numPKs = self::getNumberOfPKs($type);
     while (sizeof($this->_id) < $numPKs) {
-      array_push($this->_id, ObjectId::getDummyId());
+      array_push($this->_id, self::getDummyId());
     }
+
+    if (self::$_idPattern == null) {
+      self::$_idPattern = '/^[0-9]+$|^'.self::$_dummyIdPattern.'$/';
+    }
+  }
+
+  /**
+   * Get the prefix
+   * @return String
+   */
+  public function getPrefix()
+  {
+    return $this->_prefix;
   }
 
   /**
@@ -105,49 +124,55 @@ class ObjectId
    */
   public static function isValid($oid)
   {
-    // we expect at least one separator to separate the type from
-    // the primary key column values
-    if (strpos($oid, ':') !== false)
-    {
-      $oidParts = split(':', $oid);
-      $type = $oidParts[0];
-
-      if (PersistenceFacade::isKnownType($type))
-      {
-        // get number of expected primary keys
-        $numPks = ObjectId::getNumberOfPKs($type);
-        return sizeof(split(':', $oid)) == $numPks+1;
-      }
+    if (self::parse($oid) == null) {
+      return false;
     }
-    return false;
+    return true;
   }
 
   /**
    * Parse a serialized object id string into an ObjectId instance.
    * @param oid The string
-   * @return ObjectId
+   * @return ObjectId or null, if the id cannot be parsed
    */
   public static function parse($oid)
   {
-    // do simple test first
-    if (ObjectId::isValid($oid))
-    {
-      $oidParts = split(':', $oid);
-      $type = $oidParts[0];
-      $ids = array();
-      for ($i=1; $i<sizeof($oidParts); $i++) {
-        $id = $oidParts[$i];
-        if (!ObjectId::isDummyId($id)) {
-          $id = intval($id);
-        }
-        array_push($ids, $id);
-      }
-      return new ObjectId($type, $ids);
+    // fast checks first
+    if (strlen($oid) == 0) {
+      return null;
+    }
 
+    $oidParts = split(':', $oid);
+    if (!is_array($oidParts)) {
+      return null;
     }
-    else {
-      throw new PersistenceException('Illegal ObjectId found: '.$oid);
+
+    // get the ids from the oid
+    $ids = array();
+    $nextPart = array_pop($oidParts);
+    while($nextPart !== null && preg_match(self::$_idPattern, $nextPart) == 1)
+    {
+      $ids[] = $nextPart;
+      $nextPart = array_pop($oidParts);
     }
+    $ids = array_reverse($ids);
+
+    // get the type
+    $type = $nextPart;
+    if (!PersistenceFacade::isKnownType($type)) {
+      return null;
+    }
+
+    // check if number of ids match the type
+    $numPks = self::getNumberOfPKs($type);
+    if ($numPks == null || $numPks != sizeof($ids)) {
+      return null;
+    }
+
+    // get the prefix
+    $prefix = join(':', $oidParts);
+
+    return new ObjectID($type, $ids, $prefix);
   }
 
   /**
@@ -155,7 +180,11 @@ class ObjectId
    * @return String
    */
   public function __toString() {
-    return $this->_type.':'.join(':', $this->_id);
+    $oidStr = $this->_type.':'.join(':', $this->_id);
+    if (strlen($this->_prefix) > 0) {
+      $oidStr = $this->_prefix.':'.$oidStr;
+    }
+    return $oidStr;
   }
 
   /**

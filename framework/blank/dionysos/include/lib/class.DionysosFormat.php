@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -22,15 +22,15 @@ require_once(BASE."application/dionysos/include/lib/class.DionysosNodeSerializer
 
 /**
  * DionysosFormatter collects the response data from all executed controllers
- * into one response array and returns it all at once at the end of 
- * script execution. This prevents from having multiple junks of json 
+ * into one response array and returns it all at once at the end of
+ * script execution. This prevents from having multiple junks of json
  * from each controller response that can't be decoded by clients.
  */
 $GLOBALS['gDionysosData'] = array();
 $GLOBALS['gDionysosUsed'] = false;
 function gPrintDionysosResult()
 {
-  if (array_key_exists('gDionysosUsed', $GLOBALS))
+  if (isset($GLOBALS['gDionysosUsed']))
   {
     $data = $GLOBALS['gDionysosData'];
     if ($data != null)
@@ -67,12 +67,12 @@ class DionysosFormat extends HierarchicalFormat
       $data[$key] = &JSONUtil::decode($data[$key], true);
     }
     // combine oid, attributes key into one array for node deserialization
-    if (array_key_exists('oid', $data) && array_key_exists('attributes', $data)) {
+    if (isset($data['oid']) && isset($data['attributes'])) {
       $data[$data['oid']] = array('oid' => $data['oid'], 'attributes' => $data['attributes']);
     }
   }
   /**
-   * Callback function for array_walk_recursive. De-/Serializes any Node instances 
+   * Callback function for array_walk_recursive. De-/Serializes any Node instances
    * using the function given in method parameter.
    * @param value The array value
    * @param key The array key
@@ -108,20 +108,20 @@ class DionysosFormat extends HierarchicalFormat
     $GLOBALS['gDionysosData'] = array_merge($GLOBALS['gDionysosData'], $data);
     $GLOBALS['gDionysosUsed'] = true;
   }
-  
+
   /**
    * @see HierarchicalFormat::isSerializedNode()
    */
   function isSerializedNode($key, &$value)
   {
-    $syntaxOk = ((is_object($value) || is_array($value)) && array_key_exists('oid', $value) && array_key_exists('attributes', $value));
+    $syntaxOk = ((is_object($value) || is_array($value)) && isset($value['oid']) && isset($value['attributes']));
     // check for oid variables
     if ($syntaxOk && preg_match('/^\{.+\}$/', $value['oid'])) {
       return false;
     }
     return $syntaxOk;
   }
-  
+
   /**
    * @see HierarchicalFormat::serializeNode()
    */
@@ -150,7 +150,7 @@ class DionysosFormat extends HierarchicalFormat
     if (!PersistenceFacade::isKnownType($type)) {
       throw new DionysosException(null, null, 'Entity type '.$type.' is unknown', DionysosException::CLASS_NAME_INVALID);
     }
-    
+
     // use DionysosNodeSerializer to deserialize
     $node = &DionysosNodeSerializer::deserializeNode($type, $value, false);
     $node->setOID($oid);

@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses
+ * Licensed under the terms of any of the following licenses 
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for
+ * See the license.txt file distributed with this work for 
  * additional information.
  *
  * $Id$
@@ -41,7 +41,7 @@ $request->setFormat($callParams['requestFormat']);
 $request->setResponseFormat($callParams['responseFormat']);
 $result = ActionMapper::processAction($request);
 
-exitSearchUtil();
+register_shutdown_function('shutdown');
 exit;
 
 /**
@@ -75,11 +75,10 @@ function onError($message, $file='', $line='')
   else if ($numCalled == 3)
   {
     // make sure that no error can happen in this stage
-    $msg = 'See log for details.';
     if ($responseFormat == MSG_FORMAT_JSON)
-      print JSONUtil::encode(array('success' => false, 'errorMsg' => $msg));
+      print JSONUtil::encode(array('success' => false, 'errorMsg' => $message));
     else
-      Log::fatal($msg, 'main');
+      Log::fatal($message, 'main');
   }
   else
   {
@@ -94,15 +93,20 @@ function onError($message, $file='', $line='')
     $request->setResponseFormat($responseFormat);
     ActionMapper::processAction($request);
   }
-  exitSearchUtil();
   exit;
 }
 
-function exitSearchUtil()
+function shutdown()
 {
-  $index = SearchUtil::getIndex(false);
-  if ($index) {
-    $index->commit();
+  SearchUtil::commitIndex();
+  
+  $error = error_get_last();
+  if ($error !== NULL) {
+    $info = "[SHUTDOWN] file:".$error['file']." | ln:".$error['line']." | msg:".$error['message'] .PHP_EOL;
+    //Log::error($info, "main");
+  }
+  else{
+    Log::debug("SHUTDOWN", "main");
   }
 }
 ?>

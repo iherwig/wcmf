@@ -54,9 +54,9 @@ class DBUtil
       $connection = $mapper->getConnection();
 
       Log::debug('Starting transaction ...', __CLASS__);
-      $connection->startTrans();
+      $connection->beginTransaction();
 
-      $ok = true;
+      $exception = null;
       $fh = fopen($file, 'r');
       if ($fh)
       {
@@ -66,23 +66,27 @@ class DBUtil
           if (strlen(trim($command)) > 0)
           {
             Log::debug('Executing command: '.$command, __CLASS__);
-            $ok = $connection->Execute($command);
-            if (!$ok)
+            try {
+              $connection->query($command);
+            }
+            catch(PDOException $ex) {
+              $exception = $ex;
               break;
+            }
           }
         }
         fclose($fh);
       }
-      if ($ok)
+      if ($exception == null)
       {
         Log::debug('Execution succeeded, committing ...', __CLASS__);
-        $connection->commitTrans();
+        $connection->commit();
       }
       else
       {
-        Log::error('Execution failed. Reason'.$connection->ErrorMsg(), __CLASS__);
+        Log::error('Execution failed. Reason'.$exception->getMessage(), __CLASS__);
         Log::debug('Rolling back ...', __CLASS__);
-        $connection->rollbackTrans();
+        $connection->rollBack();
       }
       Log::debug('Finished SQL script '.$file.'.', __CLASS__);
     }

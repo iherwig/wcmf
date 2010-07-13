@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses
+ * Licensed under the terms of any of the following licenses 
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for
+ * See the license.txt file distributed with this work for 
  * additional information.
  *
  * $Id$
@@ -37,16 +37,20 @@ $CONFIG_PATH = BASE.'application/include/';
 $configFile = $CONFIG_PATH.'config.ini';
 Log::info("configuration file: ".$configFile, "install");
 $parser = &InifileParser::getInstance();
-$parser->parseIniFile($configFile, true);
-
+if (!$parser->parseIniFile($configFile, true))
+{
+  Log::error($parser->getErrorMsg(), "install");
+  exit();
+}
+    
 // message globals
 $GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'cms');
 $GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'cms');
-
+    
 // set locale
 if ($GLOBALS['MESSAGE_LANGUAGE'] !== false)
   setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
-
+    
 $rightsManager = &RightsManager::getInstance();
 $rightsManager->deactivate();
 

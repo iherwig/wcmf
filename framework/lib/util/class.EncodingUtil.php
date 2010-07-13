@@ -113,14 +113,14 @@ class EncodingUtil
       $result = array();
       foreach($input as $k => $v)
       {               
-        $key = ($encodeKeys) ? EncodingUtil::convertIsoToCp1252Utf8($k) : $k;
-        $result[$key] = EncodingUtil::utf8EncodeMix( $v, $encodeKeys);
+        $key = ($encodeKeys) ? self::convertIsoToCp1252Utf8($k) : $k;
+        $result[$key] = self::utf8EncodeMix($v, $encodeKeys);
       }
     }
     else
     {
       if (!is_int($input) && !is_float($input) && !is_bool($input)) {
-        $result = EncodingUtil::convertIsoToCp1252Utf8($input);
+        $result = self::convertIsoToCp1252Utf8($input);
       } else {
         $result = $input;
       }

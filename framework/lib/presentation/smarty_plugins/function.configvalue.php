@@ -33,7 +33,7 @@ function smarty_function_configvalue($params, &$smarty)
 {
   $parser = &InifileParser::getInstance();
   $value = $parser->getValue($params['key'], $params['section'], false);
-  if (array_key_exists('varname', $params))
+  if (isset($params['varname']))
     $smarty->assign($params['varname'], $value);
   else
   	echo $value;

@@ -118,7 +118,7 @@ class NodeUtil
    * @param nodeType The Node type
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  function getNodeQuery($nodeType)
+  public static function getNodeQuery($nodeType)
   {
     $query = PersistenceFacade::createObjectQuery($nodeType);
     return $query->toString();
@@ -129,7 +129,7 @@ class NodeUtil
    * @param oid The object id of the node
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  function getSelfQuery($nodeType, $oid)
+  public static function getSelfQuery($nodeType, $oid)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $query = PersistenceFacade::createObjectQuery($nodeType);
@@ -148,7 +148,7 @@ class NodeUtil
    * @param childNode The Node to select the parents for
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  function getParentQuery($parentRole, $childNode)
+  public static function getParentQuery($parentRole, $childNode)
   {
     $parentType = $childNode->getTypeForRole($parentRole);
   //Log::error($parentRole." ".$parentType." ".$childNode->toString(), __CLASS__);
@@ -170,7 +170,7 @@ class NodeUtil
    * @param childRole The child role
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  function getChildQuery($parentNode, $childRole)
+  public static function getChildQuery($parentNode, $childRole)
   {
     $childType = $parentNode->getTypeForRole($childRole);
   //Log::error($childRole." ".$childType." ".$parentNode->toString(), __CLASS__);
@@ -197,7 +197,7 @@ class NodeUtil
    *        - canAssociate (boolean) indicating if an instance may be associated (depends on the navigability from the parent)
    *        - composition (boolean) indicating if the parent child relation is a composition
    */
-  function getPossibleParents(&$realNode, &$tplNode)
+  public static function getPossibleParents(&$realNode, &$tplNode)
   {
     $allowedParentRoles = array();
     if ($tplNode != null && $realNode != null)
@@ -252,7 +252,7 @@ class NodeUtil
    *        - canCreate (boolean) indicating if an instance may be created (depends on the multiplicity)
    *        - realSubject the type of the real subject if the template is acting as proxy (many to many instance)
    */
-  function getPossibleChildren(&$realNode, &$tplNode, $resolveManyToMany=true)
+  public static function getPossibleChildren(&$realNode, &$tplNode, $resolveManyToMany=true)
   {
     $allowedChildRoles = array();
     if ($tplNode != null && $realNode != null)
@@ -302,7 +302,7 @@ class NodeUtil
    * @param parentType The parent type
    * @return The type
    */
-  function getRealSubjectType(&$proxy, $parentType)
+  public static function getRealSubjectType(&$proxy, $parentType)
   {
     $manyToMany = $proxy->getProperty('manyToMany');
     if (is_array($manyToMany) && sizeof($manyToMany) == 2)
@@ -322,7 +322,7 @@ class NodeUtil
    * @param node The Node instance
    * @return An array of value names
    */
-  function getDisplayValueNames(&$node)
+  public static function getDisplayValueNames(&$node)
   {
     $displayValueStr = $node->getProperty('display_value');
     if (!strPos($displayValueStr, '|')) {
@@ -351,7 +351,7 @@ class NodeUtil
    * @return The display string
    * @see DefaultValueRenderer::renderValue
    */
-  function getDisplayValue(&$node, $useDisplayType=false, $language=null, $values=null)
+  public static function getDisplayValue(&$node, $useDisplayType=false, $language=null, $values=null)
   {
     return join(' - ', array_values(NodeUtil::getDisplayValues($node, $useDisplayType, $language, $values)));
   }
@@ -363,7 +363,7 @@ class NodeUtil
    * @param values An assoziative array holding key value pairs that the display node's values should match [maybe null].
    * @return The display array
    */
-  function getDisplayValues(&$node, $useDisplayType=false, $language=null, $values=null)
+  public static function getDisplayValues(&$node, $useDisplayType=false, $language=null, $values=null)
   {
     // localize node if requested
     $localization = &Localization::getInstance();
@@ -506,7 +506,7 @@ class NodeUtil
    * @param type The name of the type
    * @return The display string
    */
-  function getDisplayNameFromType($type)
+  public static function getDisplayNameFromType($type)
   {
     $persistenceFacade = &PersistenceFacade::getInstance();
     $typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
@@ -524,7 +524,7 @@ class NodeUtil
    *        (if not given the definition will be taken from the node parameter) [optional]
    * @return The HTML control string (see FormUtil::getInputControl())
    */
-  function getInputControl(&$node, $name, $dataType=null, $templateNode=null)
+  public static function getInputControl(&$node, $name, $dataType=null, $templateNode=null)
   {
     // set the datatype if not given (to the fist one found)
     if ($dataType == null)
@@ -540,6 +540,12 @@ class NodeUtil
     }
     else {
       $properties = $node->getValueProperties($name, $dataType);
+      if (!$properties)
+      {
+        $persistenceFacade = PersistenceFacade::getInstance();
+        $templateNode = $persistenceFacade->create($node->getType(), BUILDDEPTH_SINGLE);
+        $properties = $templateNode->getValueProperties($name, $dataType);
+      }
     }
     $value = $node->getValue($name, $dataType);
     $formUtil = new FormUtil();
@@ -553,7 +559,7 @@ class NodeUtil
    *        (if type is omitted the first value of any type that matches will be used)
    * @return The HTML control name string in the form value-<datatype>-<name>-<oid>
    */
-  function getInputControlName(&$node, $name, $dataType=null)
+  public static function getInputControlName(&$node, $name, $dataType=null)
   {
     $fieldDelimiter = FormUtil::getInputFieldDelimiter();
     return 'value'.$fieldDelimiter.$dataType.$fieldDelimiter.$name.$fieldDelimiter.$node->getOID();
@@ -564,7 +570,7 @@ class NodeUtil
    * @return An associative array with keys 'oid', 'name', 'dataType' or null if the name is not valid
    * If the dataType is empty, it defaults to DATATYPE_ATTRIBUTE
    */
-  function getValueDefFromInputControlName($name)
+  public static function getValueDefFromInputControlName($name)
   {
     if (!(strpos($name, 'value') === 0)) {
       return null;
@@ -596,7 +602,7 @@ class NodeUtil
    * The attributes will only be added if a Node has a sortkey value (DATATPE_IGNORE).
    * @param nodeList A reference to the list of Nodes
    */
-  function setSortProperties(&$nodeList)
+  public static function setSortProperties(&$nodeList)
   {
     if(sizeof($nodeList) > 0 && $nodeList[0]->hasValue('sortkey', DATATYPE_IGNORE)) {
       $nodeList = Node::sort($nodeList, 'sortkey');
@@ -629,7 +635,7 @@ class NodeUtil
    * @param baseUrl The baseUrl to which matching urls will be made relative
    * @param recursive True/False wether to recurse into child Nodes or not (default: true)
    */
-  function makeNodeUrlsRelative(&$node, $baseUrl, $recursive=true)
+  public static function makeNodeUrlsRelative(&$node, $baseUrl, $recursive=true)
   {
     // use NodeProcessor to iterate over all Node values
     // and call the global convert function on each
@@ -643,7 +649,7 @@ class NodeUtil
    * @param dataType The dataType of the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
    */
-  function makeValueUrlsRelative(&$node, $valueName, $dataType, $baseUrl)
+  public static function makeValueUrlsRelative(&$node, $valueName, $dataType, $baseUrl)
   {
     $value = $node->getValue($valueName, $dataType);
 
@@ -673,7 +679,7 @@ class NodeUtil
    * @param language The language code, if the translated values should be localized.
    *                 Optional, default is Localization::getDefaultLanguage()
    */
-  function renderValues(&$nodes, $language=null)
+  public static function renderValues(&$nodes, $language=null)
   {
     // render the node values
     $nodeUtil = new NodeUtil();
@@ -690,7 +696,7 @@ class NodeUtil
    * @see NodeProcessor
    * @note This method is used internally only
    */
-  function renderValue(&$node, $valueName, $dataType, $formUtil)
+  public static function renderValue(&$node, $valueName, $dataType, $formUtil)
   {
     if ($dataType == DATATYPE_ATTRIBUTE)
     {
@@ -717,7 +723,7 @@ class NodeUtil
    * @param language The language code, if the translated values should be localized.
    *                 Optional, default is Localization::getDefaultLanguage()
    */
-  function translateValues(&$nodes, $language=null)
+  public static function translateValues(&$nodes, $language=null)
   {
     // translate the node values
     $nodeUtil = new NodeUtil();
@@ -734,7 +740,7 @@ class NodeUtil
    * @see NodeProcessor
    * @note This method is used internally only
    */
-  function translateValue(&$node, $valueName, $dataType, $formUtil)
+  public static function translateValue(&$node, $valueName, $dataType, $formUtil)
   {
     if ($dataType == DATATYPE_ATTRIBUTE)
     {
@@ -749,7 +755,7 @@ class NodeUtil
    * Remove all values from a Node that are not a display value and don't have DATATYPE_IGNORE.
    * @param node The Node instance
    */
-  function removeNonDisplayValues(&$node)
+  public static function removeNonDisplayValues(&$node)
   {
     $displayValues = NodeUtil::getDisplayValueNames($node);
     $valueNames = $node->getValueNames();

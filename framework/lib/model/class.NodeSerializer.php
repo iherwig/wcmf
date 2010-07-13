@@ -44,21 +44,41 @@ class NodeSerializer
     if (PersistenceFacade::isKnownType($type))
     {
       $persistenceFacade = &PersistenceFacade::getInstance();
-      // don't create all values by default (-> don't use PersistenceFacade::create())
-      $node = new Node($type);
-      if ($parent != null)
-        $parent->addChild($node);
+      $node = $persistenceFacade->create($type, BUILDEPTH_SINGLE);
+      // remove default values
+      $node->clearValues();
 
-        if (!$hasFlattendedValues)
+      if (!$hasFlattendedValues)
       {
-        if (is_object($data))
-          $dataValues = $data->values;
-        else
-          $dataValues = $data['values'];
-        foreach ($dataValues as $dataType => $values)
+        $valueData = array();
+        $properties = array();
+        $relatives = array();
+        foreach($data as $key => $value)
         {
-          foreach ($values as $key => $value)
-            NodeSerializer::deserializeValue($node, $key, $value, $dataType, $hasFlattendedValues);
+          if ($key == 'values') {
+            $valueData = $value;
+          }
+          elseif ($key == 'properties') {
+            $properties = $value;
+          }
+          elseif ($key != 'oid' && $key != 'type') {
+            $relatives[$key] = $value;
+          }
+        }        
+        foreach ($valueData as $dataType => $values)
+        {
+          foreach ($values as $key => $value) {
+            NodeSerializer::deserializeValue($node, $key, $value, $dataType, $hasFlattendedValues); 
+          }
+        }
+        foreach ($properties as $key => $value) {
+          $node->setProperty($key, $value);
+        }
+        foreach ($relatives as $type => $objects)
+        {
+          foreach ($objects as $object) {
+            NodeSerializer::deserializeNode($type, $object, $hasFlattendedValues, $node);
+          }
         }
       }
       else
@@ -67,6 +87,10 @@ class NodeSerializer
         // value names and values (no data types)
         foreach($data as $key => $value)
           NodeSerializer::deserializeValue($node, $key, $value, null, $hasFlattendedValues);
+      }
+      
+      if ($parent != null) {
+        $parent->addChild($node);
       }
       return $node;
     }
@@ -84,14 +108,14 @@ class NodeSerializer
   function deserializeValue(&$node, $key, $value, $dataType, $hasFlattendedValues)
   {
     if (!is_array($value)) {
-      Log::error("setValue: ".$key."=".$value, __CLASS__);
       $node->setValue($key, $value, $dataType);
     }
     else
     {
       // deserialize children
-      foreach($value as $childData)
+      foreach($value as $childData) {
         NodeSerializer::deserializeNode($key, $childData, $hasFlattendedValues, $node);
+      }
     }
   }
   /**
@@ -105,35 +129,36 @@ class NodeSerializer
   {
     $result = array();
     $rightsManager = &RightsManager::getInstance();
-    
+
     $iter = new NodeIterator($obj);
     while (!$iter->isEnd())
     {
       $curNode = &$iter->getCurrentObject();
       $curResult = &NodeSerializer::getArray();;
-      
-      // use NodeProcessor to iterate over all Node values 
+
+      // use NodeProcessor to iterate over all Node values
       // and call the global convert function on each
       $values = &NodeSerializer::getArray();
       $processor = new NodeProcessor('serializeAttribute', array(&$values, $flattenValues), new NodeSerializer());
       $processor->run($curNode, false);
-      
-      if ($flattenValues)
+
+      if ($flattenValues) {
         $curResult = $values;
-      else
+      }
+      else {
         $curResult['values'] = $values;
-      
+      }
+
       // add oid, type, parentoids, childoids
       $curResult['oid'] = $curNode->getOID();
       $curResult['type'] = $curNode->getType();
       $curResult['properties'] = array();
-      foreach($curNode->getPropertyNames() as $name)
+      foreach($curNode->getPropertyNames() as $name) {
         $curResult['properties'][$name] = $curNode->getProperty($name);
-      
+      }
       // add current result to result
       $path = split('/', $curNode->getPath());
-      if (sizeof($path) == 1)
-      {
+      if (sizeof($path) == 1) {
         $result = &$curResult;
       }
       else
@@ -144,7 +169,6 @@ class NodeSerializer
       }
       $iter->proceed();
     }
-    
     return $result;
   }
   /**
@@ -154,7 +178,7 @@ class NodeSerializer
   {
     if (!$flattenDataTypes)
     {
-      if (!array_key_exists($dataType, $result))
+      if (!isset($result[$dataType]))
         $result[$dataType] = array();
       $result[$dataType][$valueName] = $node->getValue($valueName, $dataType);
     }
@@ -171,7 +195,7 @@ class NodeSerializer
    */
   function &getPathArray(&$array, $path, $curDepth)
   {
-    if (!array_key_exists($path[$curDepth], $array))
+    if (!isset($array[$path[$curDepth]]))
       $array[$path[$curDepth]] = array();
 
     if ($curDepth < sizeof($path)-1)

@@ -46,7 +46,7 @@ class Application
   private function __construct()
   {
     // collect all request data
-    $this->_data = array_merge($_POST, $_GET, $_FILES);
+    $this->_data = array_merge($_REQUEST, $_FILES);
     $json = JSONUtil::decode(file_get_contents('php://input'), true);
     if (is_array($json))
     {
@@ -64,7 +64,7 @@ class Application
    */
   public static function getInstance()
   {
-    if (!is_object(self::$_instance)) {
+    if (!isset(self::$_instance)) {
       self::$_instance = new Application();
     }
     return self::$_instance;
@@ -109,8 +109,12 @@ class Application
     }
 
     // initialize session with session id if given
-    if (Application::getCallParameter('sid', '') != '') {
-      SessionData::init(Application::getCallParameter('sid', ''));
+    $sessionId = Application::getCallParameter('sid', false);
+    if ($sessionId === false) { 
+      $sessionId = Application::getCallParameter('PHPSESSID', false);
+    }
+    if ($sessionId !== false) {
+      SessionData::init($sessionId);
     }
     // clear errors
     $session = SessionData::getInstance();

@@ -22,8 +22,6 @@ require_once(BASE."wcmf/lib/persistence/class.LockManager.php");
 require_once(BASE."wcmf/lib/persistence/class.PersistenceException.php");
 require_once(BASE."wcmf/lib/persistence/class.ValidationException.php");
 require_once(BASE."wcmf/lib/util/class.SearchUtil.php");
-require_once(BASE."wcmf/lib/util/class.EncodingUtil.php");
-require_once(BASE."wcmf/lib/util/class.JSONUtil.php");
 
 /**
  * Some constants describing the state of the PersistentObject
@@ -143,7 +141,7 @@ class PersistentObject
 
     // set the mapper, if defined in PersistenceFacade
     $persistenceFacade = PersistenceFacade::getInstance();
-    if ($persistenceFacade->isKnownType($this->_type)) {
+    if (PersistenceFacade::isKnownType($this->_type)) {
       $mapper = $persistenceFacade->getMapper($this->_type);
     }
     return $mapper;
@@ -161,36 +159,33 @@ class PersistentObject
     return null;
   }
   /**
-   * Save data. This call will be delegated to the PersistenceMapper class.
+   * Save data. This call will be delegated to the PersistenceFacade class.
    */
   public function save()
   {
     if (!$this->_isImmutable)
     {
-      $mapper = $this->getMapper();
-      if ($mapper != null)
-      {
-        $oldState = $this->getState();
-        // call before hook method
-        if ($oldState == STATE_NEW) {
-          $this->beforeInsert();
-        }
-        elseif ($oldState == STATE_DIRTY) {
-          $this->beforeUpdate();
-        }
-        // save the object
-        $mapper->save($this);
+      $oldState = $this->getState();
+      // call before hook method
+      if ($oldState == STATE_NEW) {
+        $this->beforeInsert();
+      }
+      elseif ($oldState == STATE_DIRTY) {
+        $this->beforeUpdate();
+      }
+      // save the object
+      $persistenceFacade = PersistenceFacade::getInstance();
+      $persistenceFacade->save($this);
 
-        // update search index
-        $this->indexInSearch();
+      // update search index
+      SearchUtil::indexInSearch($this);
 
-        // call after hook method
-        if ($oldState == STATE_NEW) {
-          $this->afterInsert();
-        }
-        elseif ($oldState == STATE_DIRTY) {
-          $this->afterUpdate();
-        }
+      // call after hook method
+      if ($oldState == STATE_NEW) {
+        $this->afterInsert();
+      }
+      elseif ($oldState == STATE_DIRTY) {
+        $this->afterUpdate();
       }
     }
     else {
@@ -198,28 +193,25 @@ class PersistentObject
     }
   }
   /**
-   * Delete data. This call will be delegated to the PersistenceMapper class.
+   * Delete data. This call will be delegated to the PersistenceFacade class.
    * @param recursive True/False whether to physically delete it's children too [default: true]
    */
   public function delete($recursive=true)
   {
     if (!$this->_isImmutable)
     {
-      $mapper = $this->getMapper();
-      if ($mapper != null)
-      {
-        // call before hook method
-        $this->beforeDelete();
+      // call before hook method
+      $this->beforeDelete();
 
-        // delete the object
-        $mapper->delete($this->getOID(), $recursive);
+      // delete the object
+      $persistenceFacade = PersistenceFacade::getInstance();
+      $persistenceFacade->delete($this->getOID(), $recursive);
 
-        // remove from index
-        $this->deleteFromSearchIndex();
+      // remove from index
+      SearchUtil::deleteFromSearch($this);
 
-        // call after hook method
-        $this->afterDelete();
-      }
+      // call after hook method
+      $this->afterDelete();
     }
     else {
       throw new PersistenceException(Message::get("Cannot delete immutable object '%1%'.", array($this->getOID())));
@@ -345,12 +337,14 @@ class PersistentObject
   }
   /**
    * Private callback for copying values
+   * @param targetnode The node to copy the value to
+   * @param dataTypes An array of datatypes. Only values of that datatypes will be copied.
    * @param valuesToIgnore An associative array with the value names as keys and the types as values
    * @see NodeProcessor
    */
   private function copyValueIntern(Node $node, $valueName, PersistentObject $targetNode, array $valuesToIgnore)
   {
-    if (!in_array($valueName, $valuesToIgnore))
+    if (!isset($valuesToIgnore[$valueName]))
     {
       $value = $node->getValue($valueName);
       if (strlen($value) > 0) {
@@ -516,6 +510,30 @@ class PersistentObject
     return $value;
   }
   /**
+   * Validate all values
+   * @return Empty string if validation succeeded, an error string else. The default implementation returns the result of
+   *        PersistentObject::validateValueAgainstRestrictions().
+   */
+  public function validateValues()
+  {
+    $result = '';
+    $processor = new NodeProcessor('validateValueIntern', array(&$result), $this);
+    $processor->run($this, false);
+    return $result;
+  }
+  /**
+   * Private callback for validating values
+   * @param errorMsg A string to append error messages to
+   * @see NodeProcessor
+   */
+  private function validateValueIntern(PersistentObject $object, $valueName, &$errorMsg)
+  {
+    $error = $object->validateValue($valueName, $value);
+    if (strlen($error) > 0) {
+      $errorMsg .= $error."\n";
+    }
+  }
+  /**
    * Check if data may be set. The method is also called, when setting a value.
    * Controller may call this method before setting data and saving the object.
    * Throws a ValidationException in case of invalid data.
@@ -572,7 +590,7 @@ class PersistentObject
    */
   public function setValue($name, $value, $forceSet=false)
   {
-    if (!array_key_exists($name, $this->_data)) {
+    if (!isset($this->_data[$name])) {
       $this->_data[$name] = array('value' => null);
     }
     if (!$forceSet)
@@ -636,7 +654,7 @@ class PersistentObject
    */
   public function setValueProperty($name, $property, $value)
   {
-    if (!array_key_exists('properties', $this->_data[$name])) {
+    if (!isset($this->_data[$name]['properties'])) {
       $this->_data[$name]['properties'] = array();
     }
     $this->_data[$name]['properties'][$property] = $value;
@@ -677,7 +695,7 @@ class PersistentObject
    */
   public function getProperty($name)
   {
-    if (array_key_exists($name, $this->_properties)) {
+    if (isset($this->_properties[$name])) {
       return $this->_properties[$name];
     }
     else {
@@ -686,7 +704,7 @@ class PersistentObject
       if ($mapper)
       {
         $properties = $mapper->getProperties();
-        if (array_key_exists($name, $properties)) {
+        if (isset($properties[$name])) {
           return $properties[$name];
         }
       }
@@ -839,54 +857,13 @@ class PersistentObject
     return Message::get($name);
   }
   /**
-   * TODO: __toString returns only display values + oid, verbose dump maybe obtained by var_dump
    * Get a string representation of the PersistentObject.
    * @param verbose True to get a verbose output [default: false]
    * @return The string representation of the PersistentObject.
    */
-  public function __toString($verbose=false)
+  public function __toString()
   {
-    $str = 'type:'.$this->getType().', ';
-    $mapper = $this->getMapper();
-    if ($mapper != null) {
-      $str .= 'mapper:'.get_class($mapper).', ';
-    }
-    $str .= 'oid:'.$this->getOID().' ';
-    $str .= 'state:'.$this->getState().' ';
-    $str .= 'PROPERTIES ';
-    foreach($this->getPropertyNames() as $name)
-    {
-      $value = $this->getProperty($name);
-      if (is_array($value)) {
-        $str .= $name.':'.JSONUtil::encode($value).' ';
-      }
-      else {
-        $str .= $name.':'.$value.' ';
-      }
-    }
-    $str .= "\n";
-    $str .= 'VALUES [';
-    $valueNames = $this->getValueNames();
-    foreach($valueNames as $name)
-    {
-      $str .= $name.':'.$this->getValue($name).' ';
-      if ($verbose)
-      {
-        $valueProperties = $this->_data[$name]['properties'];
-        if (sizeOf($valueProperties) > 0)
-        {
-          $str .= '[';
-          foreach($valueProperties as $key => $value) {
-            $str .= $key.':'.$value.' ';
-          }
-          $str = substr($str, 0, strlen($str)-1);
-          $str .= '] ';
-        }
-      }
-    }
-    $str = substr($str, 0, -1);
-    $str .= "\n";
-    return $str;
+    return $this->getOID()->__toString();
   }
 
   /**
@@ -896,81 +873,6 @@ class PersistentObject
   protected function isIndexInSearch()
   {
     return (boolean) $this->getProperty('is_searchable');
-  }
-
-  /**
-   * Add the instance to the search index
-   */
-  public function indexInSearch()
-  {
-    if ($this->isIndexInSearch())
-    {
-      $index = SearchUtil::getIndex();
-      $encoding = new EncodingUtil();
-
-      $doc = new Zend_Search_Lucene_Document();
-
-      $valueNames = $this->getValueNames();
-
-      $doc->addField(Zend_Search_Lucene_Field::unIndexed('oid', $this->getOID(), 'utf-8'));
-      $typeField = Zend_Search_Lucene_Field::keyword('type', $this->getType(), 'utf-8');
-      $typeField->isStored = false;
-      $doc->addField($typeField);
-
-      foreach ($valueNames as $currValueName)
-      {
-        list($valueType) = $this->getValueTypes($currValueName);
-
-        if ($valueType == DATATYPE_ATTRIBUTE)
-        {
-          $value = $this->getValue($currValueName);
-
-          switch($this->getValueProperty($currValueName, 'input_type'))
-          {
-            case 'text':
-              $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName, $encoding->convertIsoToCp1252Utf8($value), 'utf-8'));
-              break;
-
-            case 'fckeditor':
-              $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName,
-                html_entity_decode($encoding->convertIsoToCp1252Utf8(strip_tags($value)), ENT_QUOTES,'utf-8'), 'utf-8'));
-              break;
-
-            default:
-              $field = Zend_Search_Lucene_Field::keyword($currValueName, $value, 'utf-8');
-              $field->isStored = false;
-              $doc->addField($field);
-          }
-        }
-      }
-
-      $term = new Zend_Search_Lucene_Index_Term($this->getOID(), 'oid');
-      $docIds  = $index->termDocs($term);
-      foreach ($docIds as $id)
-      {
-        $index->delete($id);
-      }
-
-      $index->addDocument($doc);
-    }
-  }
-
-  /**
-   * Delete this instance from the search index.
-   */
-  protected function deleteFromSearchIndex()
-  {
-    if ($this->isIndexInSearch())
-    {
-      $index = SearchUtil::getIndex();
-
-      $term = new Zend_Search_Lucene_Index_Term($this->getOID(), 'oid');
-      $docIds  = $index->termDocs($term);
-      foreach ($docIds as $id)
-      {
-        $index->delete($id);
-      }
-    }
   }
 }
 ?>

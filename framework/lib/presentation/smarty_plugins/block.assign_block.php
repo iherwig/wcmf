@@ -20,28 +20,24 @@
 /*
 * Smarty plugin
 * -------------------------------------------------------------
-* File:     function.translate.php
-* Type:     function
-* Name:     translate
-* Purpose:  translate a text
-* Usage:    e.g. {translate text="Logged in as %1% since %2%" r0="$login" r1="$logindate" [varname="loginText"]}
+* File:     block.assign_block.php
+* Type:     block
+* Name:     assign_block
+* Purpose:  assign a multiline string to a variable
+* Parameters: var [required] - the name of the variable
+* Usage:    {assign_block var="myVar"}
+*               ... string to 
+*               assign ...
+*           {/assign_block}
+*
+* Author:   Ingo Herwig <ingo@wemove.com>
 * -------------------------------------------------------------
 */
-function smarty_function_translate($params, &$smarty)
+function smarty_block_assign_block($params, $content, &$smarty)
 {
-  $variables = array();
-  foreach (array_keys($params) as $key)
-  {
-    if (preg_match("/^r[0-9]+$/", $key)) {
-      array_push($variables, $params[$key]);
+    if (!empty($content))
+    {
+      $smarty->assign($params['var'], $content);
     }
-  }
-  $value = Message::get($params['text'], $variables, $params['domain'], $params['lang']);
-  if (isset($params['varname'])) {
-    $smarty->assign($params['varname'], $value);
-  }
-  else {
-  	echo $value;
-  }
 }
 ?>

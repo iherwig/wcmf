@@ -33,7 +33,8 @@ require_once(BASE."wcmf/lib/model/class.Node.php");
  * - @em ok In any case
  * 
  * @param[in] deleteoids A comma-separated string of the oids of the Nodes to delete.
- * @param[out] oid The last parent oid of the last deleted Node.
+ * @param[out] oids A comma-separated string of the oids of the deleted Nodes.
+ * @param[out] poid The last parent oid of the last deleted Node.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -123,7 +124,8 @@ class DeleteController extends Controller
     // end the persistence transaction
     $persistenceFacade->commitTransaction();
 
-    $this->_response->setValue('oid', $lastPOID);
+    $this->_response->setValue('poid', $lastPOID);
+    $this->_response->setValue('oids', array_keys($removedOIDs));
     $this->_response->setAction('ok');
     return true;
   }

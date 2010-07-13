@@ -445,12 +445,12 @@ class CopyController extends BatchController
     $requestedType = $origOIDParts['type'];
 
     // check if the oid exists in the registry
-    if (!array_key_exists($origOID, $registry)) {
+    if (!isset($registry[$origOID])) {
       // check if the corresponding base oid exists in the registry
       $persistenceFacade = &PersistenceFacade::getInstance();
       $origNodeType = &$persistenceFacade->create($requestedType, BUILDDEPTH_SINGLE);
       $baseOID = PersistenceFacade::composeOID(array('type' => $origNodeType->getBaseType(), 'id' => $origOIDParts['id']));
-      if (!array_key_exists($baseOID, $registry))
+      if (!isset($registry[$baseOID]))
       {
         if (Log::isDebugEnabled(__CLASS__)) {
           Log::debug("Copy of ".$oid." not found.", __CLASS__);
@@ -461,9 +461,9 @@ class CopyController extends BatchController
         $oid = $baseOID;
       }
     }
-    
+
     $copyOID = $registry[$oid];
-    
+
     // make sure to return the oid in the requested role
     $copyOIDParts = PersistenceFacade::decomposeOID($copyOID);
     if ($copyOIDParts['type'] != $requestedType) {
@@ -536,7 +536,7 @@ class CopyController extends BatchController
     {
       // get a mapper wih the target initparams
       $mapperClass = get_class($sourceMapper);
-      if (!array_key_exists($mapperClass, $this->_targetMapper))
+      if (!isset($this->_targetMapper[$mapperClass]))
       {
         $initSection = $request->getValue('target_initparams');
         $parser = &InifileParser::getInstance();

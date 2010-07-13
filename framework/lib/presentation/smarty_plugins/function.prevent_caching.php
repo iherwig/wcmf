@@ -32,9 +32,9 @@
 function smarty_function_prevent_caching($params, &$smarty)
 {
   $variables = array();
-  if (array_key_exists('name', $params))
+  if (isset($params['name'])) {
     $params['name'] = 'cahceKiller';
-      
+  }
   echo $params['url']."?".$params['name']."=".uniqid((double)microtime()*1000000,1);
 }
 ?>

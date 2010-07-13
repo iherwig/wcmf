@@ -18,13 +18,6 @@
  */
 require_once(BASE."wcmf/lib/util/class.EncodingUtil.php");
 
-$gJSON = null;
-if (!function_exists('json_decode') || !function_exists('json_encode'))
-{
-  require_once(BASE."wcmf/3rdparty/json/JSON.php");
-  $GLOBALS['gJSON'] = new Services_JSON();
-}
-  
 /**
  * @class JSONUtil
  * @ingroup Util
@@ -40,19 +33,16 @@ class JSONUtil
    * @param assoc True/False, wether to convert objects into associative arrays or not [default: false]
    * @return The decoded value
    */
-  function decode($value, $assoc=false)
+  static function decode($value, $assoc=false)
   {
     if (is_scalar($value) === true)
     {
-      if ($GLOBALS['gJSON'] != null)
-      {
-        return $GLOBALS['gJSON']->decode(stripslashes($value));
+      if (get_magic_quotes_gpc()) {
+        $value = stripslashes($value);
       }
-      else
-      {
-        $result = json_decode(stripslashes($value), $assoc);
-        if ($result !== null)
-          return $result;
+      $result = json_decode($value, $assoc);
+      if ($result !== null) {
+        return $result;
       }
     }
     return $value;
@@ -63,15 +53,12 @@ class JSONUtil
    * @param value The value to encode
    * @return The encoded value
    */
-  function encode($value)
+  static function encode($value)
   {
     if (!is_int($value) && !is_float($value) && !is_bool($value)) {
       $value = EncodingUtil::utf8EncodeMix($value);
     }
-    if ($GLOBALS['gJSON'] != null)
-      return $GLOBALS['gJSON']->encode($value);
-    else
-      return json_encode($value);
+    return json_encode($value);
   }
 }
 ?>

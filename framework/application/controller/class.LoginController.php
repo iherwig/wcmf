@@ -173,10 +173,14 @@ class LoginController extends Controller
       $lockManager = &LockManager::getInstance();
       $lockManager->releaseAllLocks();
 
-      // delete cookies
+      // delete cookies (also clientside)
       setcookie('login', '', time()-3600, '/');
       setcookie('password', '', time()-3600, '/');
       setcookie(session_name(), '', time()-3600, '/');
+      print '<script type="text/javascript">
+      document.cookie = "login=; expires=Wed, 1 Mar 2006 00:00:00";
+      document.cookie = "password=; expires=Wed, 1 Mar 2006 00:00:00";
+      </script>';
       
       // clear all session data
       $session->destroy();

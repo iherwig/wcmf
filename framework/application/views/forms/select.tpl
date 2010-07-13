@@ -1,7 +1,7 @@
 {assign var="attributes" value=$attributes|default:'class="default" size="1"'}
 {if $enabled}
   {if !$isAsync}
-<select name="{$name}" {$attributes} {if $error != ''}style="border-color:#ff2b40"{/if} onchange="setDirty();" >
+<select name="{$name}" {$attributes} {if $error != ''}style="border-color:#ff2b40"{/if} onchange="setDirty(this.name);" >
     {assign var="selected" value=0}
     {assign var="optionsstring" value=""}
     {foreach key=listkey item=listvalue from=$listMap}
@@ -20,7 +20,7 @@
 </select>
   {else}
     {uniqueid varname="layerId"}
-<input type="text" id="{$layerId}" {$attributes} onchange="setDirty();" />
+<input type="text" id="{$layerId}" {$attributes} onchange="setDirty(this.name);" />
 <script type="text/javascript">
   new Listbox().init("{$layerId}", "{$name}", "{$entityType}", "{$value}", "{$translatedValue}", "{$obfuscator->obfuscate($filter)}", null, null);
 </script>

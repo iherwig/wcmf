@@ -44,20 +44,22 @@ class HTMLFormat extends AbstractFormat
     foreach ($data as $key => $value)
     {
       $valueDef = NodeUtil::getValueDefFromInputControlName($key);
-      if ($valueDef != null)
+      if ($valueDef != null && strlen($valueDef['oid']) > 0)
       {
         $node = &$this->getNode($valueDef['oid']);
         $node->setValue($valueDef['name'], $value, $valueDef['dataType']);
         array_push($nodeValues, $key);
       }
     }
-    
+
     // replace node values by nodes
-    foreach ($nodeValues as $key)
+    foreach ($nodeValues as $key) {
       $request->clearValue($key);
+    }
     $deserializedNodes = $this->getNodes();
-    foreach (array_keys($deserializedNodes) as $oid)
+    foreach (array_keys($deserializedNodes) as $oid) {
       $request->setValue($oid, $deserializedNodes[$oid]);
+    }
   }
   /**
    * @see IFormat::serialize()
@@ -70,10 +72,12 @@ class HTMLFormat extends AbstractFormat
       $data = &$response->getData();
       foreach (array_keys($data) as $variable)
       {
-        if (is_scalar($data[$variable]))
+        if (is_scalar($data[$variable])) {
           $view->assign($variable, $data[$variable]);
-        else
+        }
+        else {
           $view->assign_by_ref($variable, $data[$variable]);
+        }
       }
     }
   }

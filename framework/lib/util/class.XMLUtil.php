@@ -299,7 +299,6 @@ class XMLUtil extends CXmlDb
   function _InsertNode(&$node, $parentOID) 
   {
     $iResult = 0;
-    $persistenceFacade = &PersistenceFacade::getInstance();
 
     // get the parent path
     if ($parentOID != null)
@@ -317,7 +316,7 @@ class XMLUtil extends CXmlDb
       $nodeContent .= $node->getValue($elementName, DATATYPE_ELEMENT);
     
     // define element
-    $nodeDef = $persistenceFacade->decomposeOID($node->getOID());
+    $nodeDef = PersistenceFacade::decomposeOID($node->getOID());
     $nodeString = "<".$nodeDef['type'].">".$nodeContent."</".$nodeDef['type'].">";
     
     // add node
@@ -334,7 +333,7 @@ class XMLUtil extends CXmlDb
     $this->XmlDb->setAttributes($nodePath, $addAttributes);
 
     // set the new id on the node
-    $node->setOID($persistenceFacade->composeOID(array('type' => $node->getType(), 'id' => $newId)));
+    $node->setOID(PersistenceFacade::composeOID(array('type' => $node->getType(), 'id' => $newId)));
 
     $iResult = $newId;
     return $iResult;
@@ -419,10 +418,8 @@ class XMLUtil extends CXmlDb
    */
   function _GetNodePath($oid)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-
     // get the node path (take the first matching node)
-    $nodeDef = $persistenceFacade->decomposeOID($oid);
+    $nodeDef = PersistenceFacade::decomposeOID($oid);
     
     // the root node has no id
     if ($nodeDef['type'] == $this->getRootNodeName())
@@ -454,13 +451,12 @@ class XMLUtil extends CXmlDb
   {
     $old_error_handler = set_error_handler("XMLUtilErrorHandler"); 
     $iResult = 0;
-    $persistenceFacade = &PersistenceFacade::getInstance();
 
     // get type and id
     $type = array_pop($this->_GetTypes($nodePath));
     $nodeAttributes = $this->XmlDb->getAttributes($nodePath);
     $id = $nodeAttributes[$this->_idName];
-    $iResult = $persistenceFacade->composeOID(array('type' => $type, 'id' => $id));
+    $iResult = PersistenceFacade::composeOID(array('type' => $type, 'id' => $id));
 
     set_error_handler($old_error_handler);
     return $iResult;

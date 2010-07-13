@@ -232,7 +232,7 @@ class ControllerMessage
   }
 
   /**
-   * Get a string repräsentation of the message
+   * Get a string representation of the message
    * @return The string
    */  
   function toString()

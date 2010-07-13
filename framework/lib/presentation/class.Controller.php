@@ -55,7 +55,6 @@ abstract class Controller
   private $_request = null;
   private $_response = null;
 
-  private $_data = array();
   private $_errorMsg = '';
   private $_view = null;
   private $_delegate = null;
@@ -66,6 +65,8 @@ abstract class Controller
    */
   public function __construct($delegate)
   {
+    $this->_request = new Request(null, null, null, array());
+    $this->_response = new Response(null, null, null, array());
     $this->_delegate = $delegate;
   }
   /**
@@ -101,10 +102,12 @@ abstract class Controller
    */
   public function validate()
   {
-    if ($this->_delegate !== null)
+    if ($this->_delegate !== null) {
       return $this->_delegate->validate($this);
-    else
+    }
+    else {
       return true;
+    }
   }
   /**
    * Check if the Controller has a view.
@@ -226,17 +229,29 @@ abstract class Controller
    */
   public function appendErrorMsg($msg)
   {
+    // ignore if the last message is the same as msg
+    if (preg_match("/".$msg."$/", $this->_errorMsg)) {
+      return;
+    }
     if (strlen($this->_errorMsg) > 0)
       $this->_errorMsg .= "\n";
     $this->_errorMsg .= $msg;
   }
   /**
-   * Get the controller data.
-   * @return A reference to the controller data
+   * Get the Request object.
+   * @return A reference to the Request object
    */
-  public function getData()
+  public function getRequest()
   {
-    return $this->_data;
+    return $this->_request;
+  }
+  /**
+   * Get the Response object.
+   * @return A reference to the Response object
+   */
+  public function getResponse()
+  {
+    return $this->_response;
   }
   /**
    * Get the controller view.

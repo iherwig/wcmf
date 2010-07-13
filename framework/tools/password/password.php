@@ -7,7 +7,7 @@ define("BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
 require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/security/class.UserManager.php");  
+require_once(BASE."wcmf/lib/security/class.UserManager.php");
 
 ?>
 <html>
@@ -20,7 +20,7 @@ require_once(BASE."wcmf/lib/security/class.UserManager.php");
   <input type="submit" />
 </form>
 <?php
-  if (array_key_exists("password", $_POST ))
+  if (array_key_exists("password", $_POST))
 	  echo("encypted password: ".UserManager::encryptPassword($_POST["password"]));
 ?>
 </body>

@@ -34,7 +34,7 @@ require_once(BASE."wcmf/lib/model/mapper/class.ReferenceDescription.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class NodeUnifiedRDBMapper extends RDBMapper implements ChangeListener
+abstract class NodeUnifiedRDBMapper extends RDBMapper
 {
   private $_fkRelations = null;
 
@@ -589,56 +589,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper implements ChangeListener
    */
   protected function quote($value)
   {
-    $conn = $this->getConnection();
     if ($value === null) {
       return 'null';
     }
-    else {
+    else
+    {
+      $conn = $this->getConnection();
       return $conn->qstr($value);
     }
   }
-
-  /**
-   * ChangeListener interface implementation
-   */
-
-  /**
-   * @see ChangeListener::getId()
-   */
-  public function getId()
-  {
-    return __CLASS__;
-  }
-  /**
-   * @see ChangeListener::valueChanged()
-   */
-  public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
-  /**
-   * @see ChangeListener::propertyChanged()
-   */
-  public function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue)
-  {
-    if ($name == 'parentoids')
-    {
-      $nodeDef = $this->getObjectDefinitionImpl();
-
-      // update the foreign key column values
-      foreach($newValue as $newOID)
-      {
-        $oidParts = PersistenceFacade::decomposeOID($newOID);
-        foreach($nodeDef['_parents'] as $curParent)
-        {
-          if ($curParent['type'] == $oidParts['type']) {
-            $object->setValue($curParent['fk_columns'], $oidParts['id'][0]);
-          }
-        }
-      }
-    }
-  }
-  /**
-   * @see ChangeListener::stateChanged()
-   */
-  public function stateChanged(PersistentObject $object, $oldValue, $newValue) {}
 
   /**
    * TEMPLATE METHODS

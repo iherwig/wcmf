@@ -79,6 +79,11 @@ function smarty_function_image($params, &$smarty)
 
   $requestedWidth = isset($params['width']) ? $params['width']: null;
   $requestedHeight = isset($params['height']) ? $params['height']: null;
+  
+  // don't resize big images, because of resource limits
+  if (filesize($file) > 1500000) {
+    $noresize = true;
+  }
 
   if (!$noresize && ($requestedWidth != null || $requestedHeight != null) && 
     ($requestedWidth < $imageSize[0] || $requestedHeight < $imageSize[1]))
@@ -105,20 +110,17 @@ function smarty_function_image($params, &$smarty)
     }
   }
   
+  $widthStr = "";
+  $heightStr = "";
   if ($noresize)
   {
-    $widthStr = "";
     if ($requestedWidth != null) {
       $widthStr = ' width="'.$requestedWidth.'px"';
     }
-    $heightStr = "";
     if ($requestedHeight != null) {
       $heightStr = ' height="'.$requestedHeight.'px"';
     }
-    echo '<img src="'.$file.'"'.$widthStr.$heightStr.' alt="'.$params['alt'].'" '.$params['params'].'/>';
   }
-  else {
-    echo '<img src="'.$file.'" alt="'.$params['alt'].'" '.$params['params'].'/>';
-  }
+  echo '<img src="'.$file.'"'.$widthStr.$heightStr.' alt="'.$params['alt'].'" '.$params['params'].'/>';
 }
 ?>

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH

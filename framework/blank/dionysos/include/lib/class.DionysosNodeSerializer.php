@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -90,27 +90,27 @@ class DionysosNodeSerializer
     $result = array();
     $rightsManager = &RightsManager::getInstance();
     $serializedOids = array();
-    
+
     $iter = new NodeIterator($obj);
     while (!$iter->isEnd())
     {
       $curNode = &$iter->getCurrentObject();
       $curResult = &DionysosNodeSerializer::getArray();
-      
+
       // add className, oid, isReference, lastChange
       $curResult['className'] = $curNode->getBaseType();
       $curResult['oid'] = $curNode->getBaseOID();
       $curResult['isReference'] = false;
       $curResult['lastChange'] = strtotime($curNode->getValue('modified', DATATYPE_ATTRIBUTE));
-      
-      // use NodeProcessor to iterate over all Node values 
+
+      // use NodeProcessor to iterate over all Node values
       // and call the global convert function on each
       $values = &DionysosNodeSerializer::getArray();
       $processor = new NodeProcessor('serializeAttribute', array(&$values), new DionysosNodeSerializer());
       $processor->run($curNode, false);
       $curResult['attributes'] = $values;
       $serializedOids[] = $curNode->getOID();
-      
+
       // resolve parentoids as references (they are all loaded and serialized already)
       $parentOIDs = $curNode->getProperty('parentoids');
       foreach($parentOIDs as $oid)
@@ -124,7 +124,7 @@ class DionysosNodeSerializer
           $curResult['attributes'][$type] = $nodeRef;
         }
       }
-      
+
       // resolve childoids as references (if they are not loaded)
       $childOIDs = $curNode->getProperty('childoids');
       $children = $curNode->getChildren();
@@ -155,7 +155,7 @@ class DionysosNodeSerializer
             $nodeRef = array('className' => $ref['baseType'], 'oid' => $ref['baseOID'], 'isReference' => true);
             if ($ref['isMultiValued'])
             {
-              if (!array_key_exists($type, $curResult['attributes'])) {
+              if (!isset($curResult['attributes'][$type])) {
                 $curResult['attributes'][$type] = array();
               }
               $curResult['attributes'][$type][] = $nodeRef;
@@ -166,7 +166,7 @@ class DionysosNodeSerializer
           }
         }
       }
-      
+
       // add current result to result
       $path = split('/', $curNode->getPath());
       if (sizeof($path) == 1)
@@ -186,7 +186,7 @@ class DionysosNodeSerializer
       }
       $iter->proceed();
     }
-    
+
     return $result;
   }
   /**
@@ -200,7 +200,7 @@ class DionysosNodeSerializer
    * Serialize a oid as a reference.
    * @param oid The oid
    * @param parentType The parent node type (optional, default: null)
-   * @return An associative array with keys 'baseType', 'baseOID', 'type', 'isMultiValued' or null, 
+   * @return An associative array with keys 'baseType', 'baseOID', 'type', 'isMultiValued' or null,
    * if the oid is a dummy id
    */
   function serializeAsReference($oid, $parentType=null)
@@ -213,7 +213,7 @@ class DionysosNodeSerializer
       $relativeNode = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
       $baseType = $relativeNode->getBaseType();
       $baseOID = PersistenceFacade::composeOID(array('type' => $baseType, 'id' => $oidParts['id']));
-      
+
       $isMultiValued = false;
       if ($parentType) {
         $isMultiValued = DionysosNodeSerializer::isMultiValued($parentType, $type);
@@ -263,9 +263,9 @@ class DionysosNodeSerializer
     if ($curDepth > 0) {
       $isMultiValued = DionysosNodeSerializer::isMultiValued($path[$curDepth-1], $path[$curDepth]);
     }
-    
+
     // if there is no entry for the current type in the attributes array, create it
-    if (!array_key_exists($path[$curDepth], $array['attributes'])) {
+    if (!isset($array['attributes'][$path[$curDepth]])) {
       $array['attributes'][$path[$curDepth]] = array();
     }
     if ($curDepth < sizeof($path)-1) {

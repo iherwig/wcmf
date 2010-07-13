@@ -32,9 +32,11 @@
 function smarty_function_image_size($params, &$smarty)
 {
   $size = getimagesize($params['image']);
-  if (array_key_exists('widthvar', $params))
+  if (isset($params['widthvar'])) {
     $smarty->assign($params['widthvar'], $size[0]);
-  if (array_key_exists('heightvar', $params))
+  }
+  if (isset($params['heightvar'])) {
     $smarty->assign($params['heightvar'], $size[1]);
+  }
 }
 ?>

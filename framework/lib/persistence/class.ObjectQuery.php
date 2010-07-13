@@ -257,49 +257,35 @@ class ObjectQuery implements ChangeListener
   {
     $result = array();
 
-    if (strlen($query) == 0)
+    if (strlen($query) == 0) {
       return $result;
-
+    }
     $persistenceFacade = &PersistenceFacade::getInstance();
     $this->_typeNode = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
     $mapper = &ObjectQuery::getMapper($this->_typeNode);
-    if ($mapper == null)
+    if ($mapper == null) {
       return $result;
-
+    }
     // add orderby clause
     $query .= ObjectQuery::getOrderby($type, $query, $orderby);
 
     // execute the query
-    $connection = &ObjectQuery::getConnection($type);
-    if ($pagingInfo != null && $pagingInfo->getPageSize() > 0)
-      $rs = &$connection->PageExecute($query, $pagingInfo->getPageSize(), $pagingInfo->getPage());
-    else
-      $rs = &$connection->Execute($query);
-    if ($rs === false)
+    $stmt = &$mapper->select($query, $pagingInfo);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+    foreach ($rows as $row)
     {
-      Log::error($connection->ErrorMsg().". Your query was: ".$query, __CLASS__);
-      throw new PeristenceException("Error executing query. See log file for details.");
-    }
-    else
-    {
-      // update pagingInfo
-      if ($pagingInfo != null)
-        $pagingInfo->setTotalCount($rs->MaxRecordCount());
-
-      while ($rs && $row = $rs->FetchRow())
+      // construct oids or objects depending on builddepth
+      if ($buildDepth === false)
       {
-        // construct oids or objects depending on builddepth
-        if ($buildDepth === false)
-        {
-          $oid = $mapper->constructOID($type, $row);
-          $result[] = $oid;
-        }
-        else
-        {
-          $obj = &$mapper->createObjectFromData($this->_typeNode->getValueNames(), $row);
-          $mapper->appendChildData($obj, $buildDepth);
-          $result[sizeof($result)] = &$obj;
-        }
+        $oid = $mapper->constructOID($type, $row);
+        $result[] = $oid;
+      }
+      else
+      {
+        $obj = $mapper->createObjectFromData($this->_typeNode->getValueNames(), $row);
+        $mapper->appendChildData($obj, $buildDepth);
+        $result[sizeof($result)] = $obj;
       }
     }
     return $result;
@@ -630,11 +616,12 @@ class ObjectQuery implements ChangeListener
   {
     if ( !in_array($name, $GLOBALS['OQ_ATTRIBUTES']) )
     {
+      $oid = $object->getOID();
       // store change in internal array to have it when constructing the query
-      if (!array_key_exists($object->getOID(), $this->_conditions)) {
-        $this->_conditions[$object->getOID()] = array();
+      if (!isset($this->_conditions[$oid])) {
+        $this->_conditions[$oid] = array();
       }
-      $this->_conditions[$object->getOID()][$name] = $newValue;
+      $this->_conditions[$oid][$name] = $newValue;
     }
   }
   /**

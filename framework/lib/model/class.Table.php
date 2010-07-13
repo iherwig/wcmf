@@ -42,12 +42,11 @@ class Table extends PersistentObject
   function Table($type, $oid=null)
   {
     $this->_type = $type;
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    if (!(isset($oid)) || !$persistenceFacade->isValidOID($oid))
+    if (!(isset($oid)) || !PersistenceFacade::isValidOID($oid))
     {
       // no oid is given -> new node
       $id = md5(uniqid(ip2long($_SERVER['REMOTE_ADDR']) ^ (int)$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space('/tmp'), 1));
-      $this->_oid = $persistenceFacade->composeOID(array('type' => $this->_type, 'id' => $id));
+      $this->_oid = PersistenceFacade::composeOID(array('type' => $this->_type, 'id' => $id));
       $this->setState(STATE_NEW);
     }
     else

@@ -341,7 +341,7 @@ abstract class UserManager
     $this->addUserToRoleImpl($role, $user);
 
     // set role config
-    if ($this->_roleConfig && array_key_exists($rolename, $this->_roleConfig)) {
+    if ($this->_roleConfig && isset($this->_roleConfig[$rolename])) {
       $this->setUserProperty($login, USER_PROPERTY_CONFIG, $this->_roleConfig[$rolename]);
     }
   }
@@ -365,7 +365,7 @@ abstract class UserManager
     $this->removeUserFromRoleImpl($role, $user);
 
     // remove role config
-    if ($this->_roleConfig && array_key_exists($rolename, $this->_roleConfig)) {
+    if ($this->_roleConfig && isset($this->_roleConfig[$rolename])) {
       $this->setUserProperty($login, USER_PROPERTY_CONFIG, '');
     }
   }

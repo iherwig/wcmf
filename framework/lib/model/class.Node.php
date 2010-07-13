@@ -760,38 +760,13 @@ class Node extends PersistentObject
     return NodeUtil::getDisplayValues($this, $useDisplayType);
   }
   /**
-   * TODO: __toString returns only display values + oid, verbose dump maybe obtained by var_dump
    * Get a string representation of the Node.
    * @param verbose True to get a verbose output [default: false]
    * @return The string representation of the Node.
    */
-  public function __toString($verbose=false)
+  public function __toString()
   {
-    $str = 'NODE ';
-    $str .= parent::__toString($verbose);
-    $str .= 'depth:'.$this->getDepth().' ';
-    $str .= 'path:'.$this->getPath().' ';
-    $parents = $this->getParents();
-    if (sizeof($parents) > 0)
-    {
-      $str .= 'PARENTS ';
-      for($i=0, $count=sizeof($parents); $i<$count; $i++) {
-        $str .= $parents[$i]->getOID().',';
-      }
-      $str = substr($str, 0, strlen($str)-1);
-      $str .= "\n";
-    }
-    $children = $this->getChildren();
-    if (sizeof($children) > 0)
-    {
-      $str .= 'CHILDREN ';
-      for($i=0, $count=sizeof($children); $i<$count; $i++) {
-        $str .= $children[$i]->getOID().',';
-      }
-      $str = substr($str, 0, strlen($str)-1);
-      $str .= "\n";
-    }
-    return $str;
+    return NodeUtil::getDisplayValue($this).' ['.parent::__toString().']';
   }
 }
 ?>

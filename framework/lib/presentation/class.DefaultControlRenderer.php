@@ -130,7 +130,7 @@ class DefaultControlRenderer
   {
     // see if we have an async select box
     $inputType = $view->get_template_vars('inputType');
-    if (preg_match("/^select#async\:(.+)$/", $inputType, $matches))
+    if (preg_match("/^select.*?#async\:(.+)$/", $inputType, $matches))
     {
       $list = $matches[1];
       // get the entity type to list and an optional filter

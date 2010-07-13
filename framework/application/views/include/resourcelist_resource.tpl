@@ -45,7 +45,7 @@
     </a><br /><br />
   {/if}
     <a href="#" onClick="if (window.opener.SetUrl) window.opener.SetUrl('{$url}', '{$fieldName}'); window.close(); return true;">{$value.name}</a> ({$value.type}{if $value.width}, {$value.width}x{$value.height}{/if}{if $value.numReferences != -1}, {translate text="referenced %1% time(s)" r1=$value.numReferences}{/if})<br />
-  <a href="#" onClick="window.open('{$url}');"><img src="images/preview.png" alt="{translate text="Preview"} title="{translate text="Preview"} border="0"></a>
+  <a href="#" onClick="window.open('{$url}');"><img src="images/preview.png" alt="{translate text="Preview"}" title="{translate text="Preview"}" border="0"></a>
   <a href="#" onClick="javascript:if(doDelete('{$url}', true, '{translate text="Really delete file %1%?" r1=$value.name}')) submitAction('delete');" title="{translate text="Delete file %1%" r1=$value.name}"><img src="images/delete.png" alt="{translate text="Delete %1%" r1=$value.name}" title="{translate text="Delete %1%" r1=$value.name}" border="0"></a></span>
 {/if}
 {/foreach}

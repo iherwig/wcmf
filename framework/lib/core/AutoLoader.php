@@ -33,12 +33,22 @@ function __autoload($className)
   // search the class definition and register it, if found
   if (!array_key_exists($className, $classMapping))
   {
-    $dir = searchClass($className);
-    if ($dir === false) {
-      return;
-      //throw new Exception("Unable to load definition of class: $className.");
+    // ask ObjectFactory first
+    $objectFactory = &ObjectFactory::getInstance();
+    $classFile = $objectFactory->getClassfileFromConfig($className);
+    if ($classFile !== false) {
+      $classMapping[$className] = BASE.$classFile;
     }
-    $classMapping[$className] = $dir.getFileName($className);
+    else
+    {
+      // search directories
+      $dir = searchClass($className);
+      if ($dir === false) {
+        return;
+        //throw new Exception("Unable to load definition of class: $className.");
+      }
+      $classMapping[$className] = $dir.getFileName($className);
+    }
   }
   require_once $classMapping[$className];
 }

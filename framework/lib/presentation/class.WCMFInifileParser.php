@@ -46,7 +46,7 @@ class WCMFInifileParser
    */
   public static function getInstance()
   {
-    if (!is_object(self::$_instance))
+    if (!isset(self::$_instance))
     {
       self::$_instance = new WCMFInifileParser();
       // assign instance to InifileParser instance
@@ -162,7 +162,7 @@ class WCMFInifileParser
   function parseIniFile($filename, $processValues=true)
   {
     $parser = &InifileParser::getInstance();
-    $parser->parseIniFile($filename, $processValues);
+    return $parser->parseIniFile($filename, $processValues);
   }
   /**
    * @see InifileParser::getData()

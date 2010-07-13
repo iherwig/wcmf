@@ -36,7 +36,7 @@ foreach ($languages as $language)
   foreach ($allMessages as $file => $fileMessages)
     foreach ($fileMessages as $message)
     {
-      if (!array_key_exists($message, $messages))
+      if (!isset($messages[$message]))
       {
         $messages[$message] = array();
         $messages[$message]['translation'] = ${"messages_$language"}[$message];

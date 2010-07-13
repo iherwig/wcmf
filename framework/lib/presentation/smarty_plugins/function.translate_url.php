@@ -43,16 +43,18 @@ function smarty_function_translate_url($params, &$smarty)
 {
   $url = $params['url'];
   $base = $params['base'];
-  
-  $urls = URIUtil::translate($url, $base);
-  
-  $result = $urls['relative'];
-  if (array_key_exists('absolute', $params) && $params['absolute'])
-    $result = $urls['absolute'];
 
-  if (array_key_exists('varname', $params))
+  $urls = URIUtil::translate($url, $base);
+
+  $result = $urls['relative'];
+  if (isset($params['absolute']) && $params['absolute']) {
+    $result = $urls['absolute'];
+  }
+  if (isset($params['varname'])) {
     $smarty->assign($params['varname'], $result);
-  else
+  }
+  else {
   	echo $result;
+  }
 }
 ?>

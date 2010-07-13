@@ -46,15 +46,16 @@ class Formatter
     }
     $objectFactory = &ObjectFactory::getInstance();
     $formatter = &$objectFactory->createInstanceFromConfig('implementation', $format.'Format');
-    if ($formatter === null)
+    if ($formatter === null) {
       WCMFException::throwEx($objectFactory->getErrorMsg()."\nRequest: ".$request->toString(), __FILE__, __LINE__);
-
+    }
     // decode UTF-8
     $data = &$request->getData();
     foreach ($data as $key => $value)
     {
-      if (EncodingUtil::isUtf8($value))
+      if (is_string($value) && EncodingUtil::isUtf8($value)) {
         $data[$key] = EncodingUtil::convertCp1252Utf8ToIso($value);
+      }
     }
     $request->setData($data);
 
@@ -75,8 +76,9 @@ class Formatter
     }
     $objectFactory = &ObjectFactory::getInstance();
     $formatter = &$objectFactory->createInstanceFromConfig('implementation', $format.'Format');
-    if ($formatter === null)
+    if ($formatter === null) {
       WCMFException::throwEx($objectFactory->getErrorMsg()."\nResponse: ".$response->toString(), __FILE__, __LINE__);
+    }
     $formatter->serialize($response);
   }
 }

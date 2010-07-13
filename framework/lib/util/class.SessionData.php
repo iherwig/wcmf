@@ -80,7 +80,7 @@ class SessionData
    */
   public static function getInstance()
   {
-    if (!is_object(self::$_instance)) {
+    if (!isset(self::$_instance)) {
       self::$_instance = new SessionData();
     }
     return self::$_instance;
@@ -147,25 +147,30 @@ class SessionData
       }
 
       // Store class definitions of session object
-      $filename = SessionData::getClassDefinitionFile();
-      $classDefsStr = '';
-      if (file_exists($filename))
-      {
-        $fp = fopen($filename, "r");
-        $classDefsStr = fread($fp, filesize ($filename));
-        fclose($fp);
-      }
-      $classDefs = preg_split("/\n/", $classDefsStr);
-      $fp = fopen($filename, "a");
-      foreach ($classFiles as $classFile)
-      {
-        if (!in_array($classFile, $classDefs)) {
-          fwrite($fp, $classFile."\n");
-        }
-      }
-      fclose($fp);
+      $this->addClassDefinitions($classFiles);
     }
     $_SESSION[$key] = &$val;
+  }
+  /**
+   * Add an array of class definitions to the session's class definitions list.
+   * @param classFiles An array of class definition files.
+   */
+  public function addClassDefinitions($classFiles)
+  {
+    $filename = SessionData::getClassDefinitionFile();
+    $classDefsStr = '';
+    if (file_exists($filename))
+    {
+      $fp = fopen($filename, "r");
+      $classDefsStr = fread($fp, filesize ($filename));
+      fclose($fp);
+    }
+    $classDefs = preg_split("/\n/", $classDefsStr);
+    $fp = fopen($filename, "a");
+    foreach ($classFiles as $classFile)
+      if (!in_array($classFile, $classDefs))
+        fwrite($fp, $classFile."\n");
+    fclose($fp);
   }
   /**
    * Remove a session variable.

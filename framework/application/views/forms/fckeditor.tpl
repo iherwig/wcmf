@@ -6,7 +6,7 @@
   function fckCheck(editorInstance)
   {
     if (editorInstance.IsDirty() ) {
-      setDirty();
+      setDirty(this.name);
     }
   }
   function FCKeditor_OnComplete(editorInstance)

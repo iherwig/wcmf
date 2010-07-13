@@ -25,67 +25,186 @@ require_once BASE.'wcmf/lib/util/class.InifileParser.php';
  * @class SearchUtil
  * @ingroup Util
  * @brief This class provides access to the search based on Zend_Search_Lucene.
+ * The search index stored in the location that is defined by the configuration key 'indexPath'
+ * in the configuration section 'search'. To manage PersistentObjects in the index use the
+ * methods SearchUtil::indexInSearch() and SearchIndex::deleteFromSearch() and SearchUtil::commitIndex().
+ * The method SearchUtil::getIndex() offers direct access to the search index for advanced operations.
  *
- * @author 	Niko <enikao@users.sourceforge.net>
+ * @author Niko <enikao@users.sourceforge.net>
  */
 class SearchUtil
 {
-	const INI_SECTION = 'search';
-	const INI_INDEX_PATH = 'indexPath';
+  const INI_SECTION = 'search';
+  const INI_INDEX_PATH = 'indexPath';
 
-	private static $index;
-	private static $indexPath;
+  private static $index;
+  private static $indexPath;
+  private static $indexIsDirty = false;
 
-	public static function getIndex($create = true)
-	{
-		if (!self::$index && $create)
-		{
-			$indexPath = self::getIndexPath();
+  /**
+   * Get the search index.
+   * @param create True/False wether to create the index, if it does not exist [default: true]
+   * @return An instance of Zend_Search_Lucene_Interface
+   */
+  public static function getIndex($create = true)
+  {
+    if (!self::$index && $create)
+    {
+      $indexPath = self::getIndexPath();
 
-			Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
-			Zend_Search_Lucene_Search_Query_Wildcard::setMinPrefixLength(0);
-			Zend_Search_Lucene_Search_QueryParser::setDefaultOperator(Zend_Search_Lucene_Search_QueryParser::B_AND);
+      Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
+      if (defined(Zend_Search_Lucene_Search_Query_Wildcard)) {
+        Zend_Search_Lucene_Search_Query_Wildcard::setMinPrefixLength(0);
+      }
+      Zend_Search_Lucene_Search_QueryParser::setDefaultOperator(Zend_Search_Lucene_Search_QueryParser::B_AND);
 
-			try {
-				self::$index = Zend_Search_Lucene::open($indexPath);
-			}
-			catch (Zend_Search_Lucene_Exception $ex) {
-				self::$index = self::resetIndex();
-			}
-		}
-		return self::$index;
-	}
+      try {
+        self::$index = Zend_Search_Lucene::open($indexPath);
+      }
+      catch (Zend_Search_Lucene_Exception $ex) {
+        self::$index = self::resetIndex();
+      }
+    }
+    return self::$index;
+  }
 
-	public static function resetIndex() {
-		$indexPath = self::getIndexPath();
-		 
-		return Zend_Search_Lucene::create($indexPath);
-	}
+  /**
+   * Reset the search index.
+   */
+  public static function resetIndex()
+  {
+    $indexPath = self::getIndexPath();
 
-	private static function getIndexPath()
-	{
-		if (!self::$indexPath)
-		{
-			$parser = InifileParser::getInstance();
-			if (($path = $parser->getValue(self::INI_INDEX_PATH, self::INI_SECTION)) !== false)
-			{
-				self::$indexPath = BASE . 'application/' . $path;
+    return Zend_Search_Lucene::create($indexPath);
+  }
 
-				if (!file_exists(self::$indexPath)) {
-					FileUtil::mkdirRec(self::$indexPath);
-				}
+  /**
+   * Add a PersistentObject instance to the search index. This method modifies the
+   * index. For that reason SearchUtil::commitIndex() should be called afterwards.
+   * @param obj The PersistentObject instance.
+   */
+  public static function indexInSearch(&$obj)
+  {
+    if ($obj->isIndexInSearch())
+    {
+      $index = self::getIndex();
+      $encoding = new EncodingUtil();
 
-				if (!is_writeable(self::$indexPath)) {
-					Log::error("Index path '".self::$indexPath."' is not writeable.", __CLASS__);
-				}
+      $doc = new Zend_Search_Lucene_Document();
 
-				Log::info("Lucene index location: ".self::$indexPath, __CLASS__);
-			}
-			else
-			{
-				Log::error($parser->getErrorMsg(), __CLASS__);
-			}
-		}
-		return self::$indexPath;
-	}
+      $valueNames = $obj->getValueNames();
+
+      $doc->addField(Zend_Search_Lucene_Field::unIndexed('oid', $obj->getOID(), 'utf-8'));
+      $typeField = Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'utf-8');
+      $typeField->isStored = false;
+      $doc->addField($typeField);
+
+      foreach ($valueNames as $currValueName)
+      {
+        list($valueType) = $obj->getValueTypes($currValueName);
+        $properties = $obj->getValueProperties($currValueName);
+
+        if ($valueType == DATATYPE_ATTRIBUTE)
+        {
+          $value = $obj->getValue($currValueName, DATATYPE_ATTRIBUTE);
+
+          switch($properties['input_type'])
+          {
+            case 'text':
+              $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName, $encoding->convertIsoToCp1252Utf8($value), 'utf-8'));
+              break;
+
+            case 'fckeditor':
+              $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName,
+                html_entity_decode($encoding->convertIsoToCp1252Utf8(strip_tags($value)), ENT_QUOTES,'utf-8'), 'utf-8'));
+              break;
+
+            default:
+              $field = Zend_Search_Lucene_Field::keyword($currValueName, $value, 'utf-8');
+              $field->isStored = false;
+              $doc->addField($field);
+          }
+        }
+      }
+
+      $term = new Zend_Search_Lucene_Index_Term($obj->getOID(), 'oid');
+      $docIds  = $index->termDocs($term);
+      foreach ($docIds as $id)
+      {
+        $index->delete($id);
+      }
+
+      $index->addDocument($doc);
+      self::$indexIsDirty = true;
+    }
+  }
+
+  /**
+   * Delete a PersistentObject instance from the search index.
+   * @param obj The PersistentObject instance.
+   */
+  public static function deleteFromSearch(&$obj)
+  {
+    if ($obj->isIndexInSearch())
+    {
+      $index = self::getIndex();
+
+      $term = new Zend_Search_Lucene_Index_Term($obj->getOID(), 'oid');
+      $docIds  = $index->termDocs($term);
+      foreach ($docIds as $id)
+      {
+        $index->delete($id);
+      }
+      self::$indexIsDirty = true;
+    }
+  }
+
+  /**
+   * Commit any changes made by using SearchUtil::indexInSearch() and SearchIndex::deleteFromSearch().
+   * @note By default this method only commits the index if changes were made using the methods mentioned above.
+   * If you want to make sure that the index is committed in any case, set forceCommit to true.
+   * @param forceCommit True/False wether the index should be committed even if no changes were made
+   *   using the methods mentioned above [default: false].
+   */
+  public static function commitIndex($forceCommit = false)
+  {
+    if (self::$indexIsDirty || $forceCommit)
+    {
+      $index = self::getIndex(false);
+      if ($index) {
+        $index->commit();
+      }
+    }
+  }
+
+  /**
+   * Get the path to the index.
+   * @return The path.
+   */
+  private static function getIndexPath()
+  {
+    if (!self::$indexPath)
+    {
+      $parser = InifileParser::getInstance();
+      if (($path = $parser->getValue(self::INI_INDEX_PATH, self::INI_SECTION)) !== false)
+      {
+        self::$indexPath = BASE . 'application/' . $path;
+
+        if (!file_exists(self::$indexPath)) {
+          FileUtil::mkdirRec(self::$indexPath);
+        }
+
+        if (!is_writeable(self::$indexPath)) {
+          Log::error("Index path '".self::$indexPath."' is not writeable.", __CLASS__);
+        }
+
+        Log::info("Lucene index location: ".self::$indexPath, __CLASS__);
+      }
+      else
+      {
+        Log::error($parser->getErrorMsg(), __CLASS__);
+      }
+    }
+    return self::$indexPath;
+  }
 }

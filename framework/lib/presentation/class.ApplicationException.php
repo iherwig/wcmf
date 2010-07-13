@@ -72,7 +72,7 @@ class ApplicationException extends Exception
   {
     $class = new ReflectionClass(get_class($this));
     $codeMap = array_flip($class->getConstants());
-    if (array_key_exists($this->getCode(), $codeMap)) {
+    if (isset($codeMap[$this->getCode()])) {
       return $codeMap[$this->getCode()];
     }
     else {

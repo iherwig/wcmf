@@ -105,7 +105,7 @@ class AuthUser extends User implements Storable
   {
   	foreach ($policies AS $key => $value)
   	{
-  	  if (!array_key_exists($key, $this->_policies))
+  	  if (!isset($this->_policies[$key]))
   	  {
         $parsedPolicies = $this->parsePolicy($value);
         $this->_policies[$key] = $parsedPolicies;
@@ -124,7 +124,7 @@ class AuthUser extends User implements Storable
   	if ($actionKey == '') {
   	  return $this->_defaulPolicy;
   	}
-	if (array_key_exists($actionKey, $this->_policies)) {
+	if (isset($this->_policies[$actionKey])) {
 	  return $this->matchRoles($this->_policies[$actionKey]);
   	}
   	return $this->_defaulPolicy;

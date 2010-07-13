@@ -16,8 +16,8 @@
 
 {*------ Edit ------*}
 <div class="contentblock">
-	<h2 title="{translate text="object ID"}: {$oid|default:"-"}">{$principal->getDisplayValue(true)}&nbsp;</h2>
-	<span class="spacer"></span>
+  <h2 title="{translate text="object ID"}: {$oid|default:"-"}">{$principal->getDisplayValue(true)}&nbsp;</h2>
+  <span class="spacer"></span>
 {assign var="data_types" value=$principal->getDataTypes()}
 {section name=data_type_index loop=$data_types}
   {assign var="cur_data_type" value=$data_types[data_type_index]}
@@ -29,18 +29,18 @@
       {if $cur_value_name != "password"}
   <span class="dottedSeparator"></span>
   <span class="left" title="{$principal->getValueDescription($cur_value_name, $cur_data_type)}">{$principal->getValueDisplayName($cur_value_name, $cur_data_type)}</span>
-	<span class="right">{$nodeUtil->getInputControl($principal, $cur_value_name, $cur_data_type)}</span>
+  <span class="right">{$nodeUtil->getInputControl($principal, $cur_value_name, $cur_data_type)}</span>
       {/if}
     {/section}
   {/if}
 {/section}
-	<span class="spacer"></span>
+  <span class="spacer"></span>
   {* roles *}
-	<span class="spacer"></span>
-	<h2>{translate text="Members"}</h2>
+  <span class="spacer"></span>
+  <h2>{translate text="Members"}</h2>
   <span class="dottedSeparator"></span>
   <span class="all">{$formUtil->getInputControl("principals", "checkbox[class=\"check\"]#fix:$principalBaseList", $principalList, true)}</span>
-	<span class="spacer"></span>
+  <span class="spacer"></span>
 </div>
 
 </div>

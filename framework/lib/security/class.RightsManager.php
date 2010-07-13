@@ -51,6 +51,7 @@ class RightsManager
 {
   private static $_instance = null;
   private $_anonymousUser = null;
+  private $_anonymous = false;
 
   private function __construct()
   {
@@ -65,8 +66,10 @@ class RightsManager
    */
   public static function getInstance()
   {
-    if (!is_object(self::$_instance)) {
+    if (!isset(self::$_instance)) {
   	  self::$_instance = new RightsManager();
+      $parser = InifileParser::getInstance();
+      self::$_anonymous = $parser->getValue('anonymous', 'cms');
     }
     return self::$_instance;
   }
@@ -101,24 +104,21 @@ class RightsManager
    */
   public function isAnonymous()
   {
-    $parser = InifileParser::getInstance();
-    return $parser->getValue('anonymous', 'cms');
+    return $this->_anonymous;
   }
   /**
    * Deactivate rights checking by setting the anonymous confguration value.
    */
   public function deactivate()
   {
-    $parser = InifileParser::getInstance();
-    $parser->setValue('anonymous', 1, 'cms');
+    $this->_anonymous = true;
   }
   /**
    * (Re-)activate rights checking by unsetting the anonymous confguration value.
    */
   public function activate()
   {
-    $parser = InifileParser::getInstance();
-    $parser->setValue('anonymous', 0, 'cms');
+    $this->_anonymous = false;
   }
   /**
    * Authorize for given resource, context, action triple.

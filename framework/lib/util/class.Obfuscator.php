@@ -44,7 +44,7 @@ class Obfuscator
    */
   public static function getInstance()
   {
-    if (!is_object(self::$_instance)) {
+    if (!isset(self::$_instance)) {
       self::$_instance = new Obfuscator();
     }
     return self::$_instance;

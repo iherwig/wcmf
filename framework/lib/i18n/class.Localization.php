@@ -75,7 +75,7 @@ class Localization
    */
   public static function getInstance()
   {
-    if (!is_object(self::$_instance)) {
+    if (!isset(self::$_instance)) {
       self::$_instance = new Localization();
     }
     return self::$_instance;

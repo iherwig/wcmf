@@ -49,7 +49,7 @@ class ActionMapper
    */
   public static function getInstance()
   {
-    if (!is_object(self::$_instance)) {
+    if (!isset(self::$_instance)) {
       self::$_instance = new ActionMapper();
     }
     return self::$_instance;

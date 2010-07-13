@@ -22,26 +22,17 @@ require_once(BASE."wcmf/lib/persistence/class.AbstractMapper.php");
 require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(BASE."wcmf/lib/persistence/class.PersistentObjectProxy.php");
 require_once(BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
+require_once(BASE."wcmf/lib/persistence/pdo/class.PDOConnection.php");
 require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/3rdparty/adodb/adodb.inc.php");
 
 /**
  * Some constants describing the data types
+ * TODO: Should be removed later
  */
 define("DATATYPE_DONTCARE",  0);
 define("DATATYPE_ATTRIBUTE", 1);
 define("DATATYPE_ELEMENT",   2);
 define("DATATYPE_IGNORE",    3); // all data items >= DATATYPE_IGNORE wont be shown in human readable node discriptions
-
-/**
- * Global logging function
- */
-function &logSql($db, $sql, $inputarray)
-{
-  Log::info($sql."\n".WCMFException::getStackTrace(), __FILE__, __LINE__);
-  $null = null;
-  return $null;
-}
 
 /**
  * @class RDBMapper
@@ -54,6 +45,8 @@ function &logSql($db, $sql, $inputarray)
  */
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
 {
+  private static $_dbConnections = array();
+
   private $_connParams = null; // database connection parameters
   protected $_conn = null;       // database connection
   protected $_dbPrefix = '';     // database prefix (if given in the configuration file)
@@ -61,80 +54,69 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   private $_relations = null;
   private $_attributes = null;
 
+  // prepared statements
+  private $_idSelectStmt = null;
+  private $_idInsertStmt = null;
+  private $_idUpdateStmt = null;
+
   /**
    * Constructor.
    * @param params Initialization data given in an assoziative array with the following keys:
-   *               dbType, dbHostName, dbUserName, dbPassword, dbName OR dbConnection
+   *               dbType, dbHostName, dbUserName, dbPassword, dbName
    *               if dbPrefix is given it will be appended to every table string, which is
    *               usefull if different cms operate on the same database
    */
   public function __construct($params)
   {
     // store connection parameters to allow lazy connect
-    $this->_connParams = &$params;
+    $this->_connParams = $params;
     $this->_dataConverter = new DataConverter();
+  }
+  /**
+   * Select data to be stored in the session.
+   * PDO throws an excetption if tried to be (un-)serialized.
+   */
+  function __sleep()
+  {
+    return array('_connParams', '_dbPrefix');
   }
   /**
    * Actually connect to the database using the parameters given to the constructor.
    */
   private function connect()
   {
-    if (array_key_exists('dbType', $this->_connParams) && array_key_exists('dbHostName', $this->_connParams) &&
-      array_key_exists('dbUserName', $this->_connParams) && array_key_exists('dbPassword', $this->_connParams) &&
-      array_key_exists('dbName', $this->_connParams))
+    // if connection is already opened reuse it
+    $connectionKey = join(':', array_values($this->_connParams));
+    if (array_key_exists($connectionKey, self::$_dbConnections)) {
+      $this->_conn = self::$_dbConnections[$connectionKey];
+    }
+    // otherwise connect
+    elseif (isset($this->_connParams['dbType']) && isset($this->_connParams['dbHostName']) &&
+      isset($this->_connParams['dbUserName']) && isset($this->_connParams['dbPassword']) &&
+      isset($this->_connParams['dbName']))
     {
-      // create new connection
-      $this->_conn = ADONewConnection($this->_connParams['dbType']);
-      // we need to force a new connection so don't use Connect or PConnect
-      $connected = $this->_conn->NConnect($this->_connParams['dbHostName'],
-        $this->_connParams['dbUserName'],
-        $this->_connParams['dbPassword'],
-        $this->_connParams['dbName']);
-      if (!$connected) {
-        throw new PersistenceException("Connection to ".$this->_connParams['dbHostName'].".".
-          $this->_connParams['dbName']." failed: ".$this->_conn->ErrorMsg());
+      $dns = $this->_connParams['dbType'].':host='.$this->_connParams['dbHostName'].
+        ((!empty($this->_connParams['dbPort'])) ? (';port='.$this->_connParams['dbPort']) : '').
+        ';dbname='.$this->_connParams['dbName'];
+      try {
+        // create new connection
+        $this->_conn = new PDOConnection($dns, $this->_connParams['dbUserName'], $this->_connParams['dbPassword']);
+        $this->_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       }
-      $this->_conn->replaceQuote = "\'";
-      $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
-      $ADODB_COUNTRECS = false;
-      define('ADODB_OUTP', "gError");
+      catch(PDOException $ex) {
+        throw new PersistenceException("Connection to ".$this->_connParams['dbHostName'].".".
+          $this->_connParams['dbName']." failed: ".$ex->getMessage());
+      }
 
       // get database prefix if defined
-      if (array_key_exists('dbPrefix', $this->_connParams)) {
-        $this->_dbPrefix = $this->_connParams['dbPrefix'];
-      }
+      $this->_dbPrefix = $this->_connParams['dbPrefix'];
 
-      // log sql if requested
-      $parser = InifileParser::getInstance();
-      if (($logging = $parser->getValue('logSQL', 'cms')) === false) {
-        $logging = 0;
-      }
-      if ($logging) {
-        $this->_conn->fnExecute = 'logSql';
-      }
       // store connection for reuse
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $persistenceFacade->storeConnection($this->_connParams, $this->_conn);
-    }
-    elseif (array_key_exists('dbConnection', $this->_connParams))
-    {
-      // use existing connection
-      $this->_conn = &$this->_connParams['dbConnection'];
+      self::$_dbConnections[$connectionKey] = $this->_conn;
     }
     else {
       throw new InvalidArgumentException("Wrong parameters for constructor.", __FILE__, __LINE__);
     }
-  }
-  /**
-   * Get the database connection.
-   * @return A reference to the ADONewConnection object
-   */
-  protected function getConnection()
-  {
-    if ($this->_conn == null) {
-      $this->connect();
-    }
-    return $this->_conn;
   }
   /**
    * Get a new id for inserting into the database
@@ -142,28 +124,86 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    */
   protected function getNextId()
   {
-    $nextId = $this->_conn->GenID();
-    return $nextId;
+    try {
+      $id = 0;
+      if ($this->_idSelectStmt == null) {
+        $this->_idSelectStmt = $this->_conn->prepare("SELECT id FROM adodbseq");
+      }
+      if ($this->_idInsertStmt == null) {
+        $this->_idInsertStmt = $this->_conn->prepare("INSERT INTO adodbseq (id) VALUES (0)");
+      }
+      if ($this->_idUpdateStmt == null) {
+        $this->_idUpdateStmt = $this->_conn->prepare("UPDATE adodbseq SET id=LAST_INSERT_ID(id+1);");
+      }
+      $this->_idSelectStmt->execute();
+      $rows = $this->_idSelectStmt->fetchAll(PDO::FETCH_ASSOC);
+      if (sizeof($rows) == 0) {
+        $this->_idInsertStmt->execute();
+        $this->_idInsertStmt->closeCursor();
+        $row = array(array('id' => 0));
+      }
+      $id = $rows[0]['id'];
+      $this->_idUpdateStmt->execute();
+      $this->_idUpdateStmt->closeCursor();
+      $this->_idSelectStmt->closeCursor();
+      return $id;
+    }
+    catch (Exception $ex) {
+      Log::error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
+      throw new PersistenceException("Error in persistent operation. See log file for details.");
+    }
   }
   /**
-   * Execute a query on the adodb connection.
-   * Selects the optimal method depending on the command and logging.
+   * Execute a query on the connection.
    * @param sql The sql command
-   * @return A ADORecordSet or false
+   * @return A PDOStatement instance
    */
   public function executeSql($sql)
   {
-    // check if we are logging
-    if ($this->_conn->fnExecute == 'logSql')
-      $fkt = 'Execute';
-    else
-    {
-      if (strpos(strtolower($sql), 'select') === 0)
-        $fkt = '_Execute';
-      else
-        $fkt = '_query';
+    if ($this->_conn == null)
+      $this->connect();
+
+    try {
+      $result = $this->_conn->query($sql);
+      return $result;
     }
-    return $this->_conn->$fkt($sql);
+    catch (Exception $ex) {
+      Log::error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
+      throw new PersistenceException("Error in persistent operation. See log file for details.");
+    }
+  }
+  /**
+   * Execute a select query on the connection.
+   * @param sql The sql command
+   * @param pagingInfo An PagingInfo instance describing which page to load
+   * @return A PDOStatement instance
+   */
+  public function select($sql, PagingInfo $pagingInfo)
+  {
+    if ($this->_conn == null) {
+      $this->connect();
+    }
+    try {
+      if ($pagingInfo != null && $pagingInfo->getPageSize() > 0) {
+        // make a count query
+        $countSql = preg_replace('/^\s*SELECT\s.*\s+FROM\s/Uis', 'SELECT COUNT(*) FROM ', $sql);
+        $nRows = $this->_conn->query($countSql)->fetchColumn();
+        // update pagingInfo
+        $pagingInfo->setTotalCount($nRows);
+        // set the limit on the query (NOTE: not supported by all databases)
+        $limit = $pagingInfo->getPageSize();
+        $offset = ($pagingInfo->getPage()-1)*$limit;
+        $sql .= ' LIMIT '.$limit;
+        if ($offset > 0) {
+          $sql .= ' OFFSET '.$offset;
+        }
+      }
+      return $this->executeSql($sql);
+    }
+    catch (Exception $ex) {
+      Log::error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
+      throw new PersistenceException("Error in persistent operation. See log file for details.");
+    }
   }
   /**
    * @see PersistenceMapper::getRelations()
@@ -184,7 +224,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   public function getRelation($roleName)
   {
     $this->initRelations();
-    if (array_key_exists($roleName, $this->_relations['byrole'])) {
+    if (isset($this->_relations['byrole'][$roleName])) {
       return $this->_relations['byrole'][$roleName];
     }
     else {
@@ -242,7 +282,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   public function getAttribute($name)
   {
     $this->initAttributes();
-    if (array_key_exists($name, $this->_attributes['byname'])) {
+    if (isset($this->_attributes['byname'][$name])) {
       return $this->_attributes['byname'][$name];
     }
     else {
@@ -324,7 +364,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
 
     // get attributes to load
     $attribs = array();
-    if (sizeof($buildAttribs) > 0 && array_key_exists($this->getType(), $buildAttribs)) {
+    if (sizeof($buildAttribs) > 0 && isset($buildAttribs[$this->getType()])) {
       $attribs = $buildAttribs[$this->getType()];
     }
 
@@ -378,14 +418,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     {
       if (!$this->isPkValue($valueName))
       {
-        $appValues[$valueName] = $object->getValue($valueName);
-        $value = $appValues[$valueName];
-        // NOTE: strip slashes from "'" and """ first because on INSERT/UPDATE we use ADODB's qstr
-        // with second parameter false which will add slashes again
-        // (we do this manually because we can't rely on get_magic_quotes_gpc())
-        if (is_string($value)) {
-          $value = str_replace(array("\'","\\\""), array("'", "\""), $value);
-        }
+        $properties = $object->getValueProperties($valueName);
+        $value = $object->getValue($valueName);
+        $appValues[$valueName] = $value;
         $convertedValue = $this->_dataConverter->convertApplicationToStorage($value, $object->getPropertyValue($valueName, 'type'), $valueName);
         $object->setValue($valueName, $convertedValue);
       }
@@ -396,13 +431,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       // insert new object
       $this->prepareInsert($object);
       $sqlArray = $this->getInsertSQL($object);
-      foreach($sqlArray as $sqlStr)
-      {
-        if ($this->executeSql($sqlStr) === false)
-        {
-          Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
-          throw new PersistenceException("Error inserting object ".$object->getOID().". See log file for details.");
-        }
+      foreach($sqlArray as $sqlStr) {
+        $this->executeSql($sqlStr);
       }
       // log action
       $this->logAction($object);
@@ -417,17 +447,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
 
       // save object
       $sqlArray = $this->getUpdateSQL($object);
-      foreach($sqlArray as $sqlStr)
-      {
-        if ($this->executeSql($sqlStr) === false)
-        {
-          Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
-          throw new PersistenceException("Error updating object ".$object->getOID().". See log file for details.");
-        }
+      foreach($sqlArray as $sqlStr) {
+        $this->executeSql($sqlStr);
       }
     }
 
-    // set escaped values back to application values
+    // set converted values back to application values
     foreach ($object->getValueNames() as $valueName)
     {
       if (!$this->isPkValue($valueName)) {
@@ -436,7 +461,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
     $object->setState(STATE_CLEAN, false);
 
-    // Save many to many relations, if not already existing
+    // save many to many relations, if not already existing
     $relationDescs = $this->getRelations();
     $persistenceFacade = PersistenceFacade::getInstance();
     foreach ($relationDescs as $relationDesc)
@@ -499,13 +524,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
 
     // delete object
     $sqlArray = $this->getDeleteSQL($oid);
-    foreach($sqlArray as $sqlStr)
-    {
-      if ($this->executeSql($sqlStr) === false)
-      {
-        Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
-        throw new PersistenceException("Error deleting object '".$oid."'. See log file for details.");
-      }
+    foreach($sqlArray as $sqlStr) {
+      $this->executeSql($sqlStr);
     }
     // delete children
     if ($recursive)
@@ -522,13 +542,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       }
       // ...for the others we have to break the foreign key relation
       $sqlArray = $this->getChildrenDisassociateSQL($oid, true);
-      foreach($sqlArray as $sqlStr)
-      {
-        if ($this->executeSql($sqlStr) === false)
-        {
-          Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
-          throw new PersistenceException("Error disassociating object from '".$oid."'. See log file for details.");
-        }
+      foreach($sqlArray as $sqlStr) {
+        $this->executeSql($sqlStr);
       }
     }
     // postcondition: the object and all dependend objects are deleted from db
@@ -582,7 +597,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
     // get attributes to load
     $attribs = array();
-    if (sizeof($buildAttribs) > 0 && array_key_exists($this->getType(), $buildAttribs)) {
+    if (sizeof($buildAttribs) > 0 && isset($buildAttribs[$this->getType()])) {
       $attribs = $buildAttribs[$this->getType()];
     }
     // create condition
@@ -593,7 +608,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       if (is_array($criteria))
       {
         foreach($criteria as $name => $value) {
-          $attribCondStr .= $name."=".$this->_conn->qstr($value)." AND ";
+          $attribCondStr .= $name."=".$this->_conn->quote($value)." AND ";
         }
         $attribCondStr = substr($attribCondStr, 0, strlen($attribCondStr)-strlen(" AND "));
       }
@@ -609,32 +624,16 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
     // create query
     $data = array();
-    $sqlStr = $this->getSelectSQL($attribCondStr, null, $orderbyStr);
-    if ($pagingInfo != null && $pagingInfo->getPageSize() > 0) {
-      $rs = &$this->_conn->PageExecute($sqlStr, $pagingInfo->getPageSize(), $pagingInfo->getPage());
-    }
-    else {
-      $rs = $this->executeSql($sqlStr);
-    }
+    $sqlStr = $this->getSelectSQL($attribCondStr, $orderbyStr);
+    $stmt = $this->select($sqlStr, $pagingInfo);
 
-    if (!$rs) {
-      Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
-      throw new PersistenceException("Error loading objects. See log file for details.");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+      $data[] = $row;
     }
-    else
-    {
-      // update pagingInfo
-      if ($pagingInfo != null) {
-        $pagingInfo->setTotalCount($rs->MaxRecordCount());
-      }
-      while ($row = $rs->FetchRow()) {
-        $data[] = $row;
-      }
-      $rs->Close();
+    $stmt->closeCursor();
 
-      if (sizeof($data) == 0) {
-        return $objects;
-      }
+    if (sizeof($data) == 0) {
+      return $objects;
     }
 
     $numObjects = sizeof($data);
@@ -832,7 +831,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     if ($this->_conn == null) {
       $this->connect();
     }
-    $this->_conn->StartTrans();
+    $this->_conn->beginTransaction();
   }
   /**
    * @see PersistenceMapper::commitTransaction()
@@ -842,7 +841,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     if ($this->_conn == null) {
       $this->connect();
     }
-    $this->_conn->CompleteTrans();
+    $this->_conn->commit();
   }
   /**
    * @see PersistenceMapper::rollbackTransaction()
@@ -853,8 +852,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     if ($this->_conn == null) {
       $this->connect();
     }
-    $this->_conn->FailTrans();
-    $this->_conn->CompleteTrans();
+    $this->_conn->rollBack();
   }
 
   /**

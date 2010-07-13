@@ -34,7 +34,11 @@ $CONFIG_PATH = BASE.'application/include/';
 $configFile = $CONFIG_PATH.'config.ini';
 Log::info("configuration file: ".$configFile, "dbupdate");
 $parser = &InifileParser::getInstance();
-$parser->parseIniFile($configFile, true);
+if (!$parser->parseIniFile($configFile, true))
+{
+  Log::error($parser->getErrorMsg(), "dbupdate");
+  exit();
+}
 
 // message globals
 $GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'cms');
@@ -83,26 +87,26 @@ foreach ($tables as $tableDef)
   Log::info(("processing table ".$tableDef['name']."..."), "dbupdate");
   $mapper = &$persistenceFacade->getMapper($tableDef['entityType']);
   $connection = &$mapper->getConnection();
-  $connection->StartTrans();
+  $connection->beginTransaction();
 
   if (ensureUpdateTable($connection))
   {
     $oldValue = getOldValue($connection, $tableDef['id'], null, 'table');
-    $oldColumns = $connection->MetaColumns($tableDef['name']);
+    $oldColumns = getMetaData($connection, $tableDef['name']);
 
     // check if the table already has an update entry
-    if ($oldValue == null && $oldColumns === false)
+    if ($oldValue == null && $oldColumns === null)
     {
       // the table has no update entry and does not exist
       createTable($connection, $tableDef);
     }
     else
     {
-      if ($oldValue != null && $oldColumns === false)
+      if ($oldValue != null && $oldColumns === null)
       {
         // the old table needs to be renamed
         alterTable($connection, $oldValue['table'], $tableDef['name']);
-        $oldColumns = $connection->MetaColumns($tableDef['name']);
+        $oldColumns = getMetaData($connection, $tableDef['name']);
       }
       // the table has an update entry and/or exists
       updateColumns($connection, $tableDef, $oldColumns);
@@ -110,9 +114,7 @@ foreach ($tables as $tableDef)
     // update table update entry
     updateEntry($connection, $tableDef);
   }
-
-  if (true) $connection->FailTrans();
-  $connection->CompleteTrans();
+  $connection->commit();
 }
 
 // execute custom scripts from the directory 'custom-dbupdate'
@@ -128,29 +130,31 @@ foreach ($sqlScripts as $script)
 Log::info("done.", "dbupdate");
 
 
-/*
+/**
  * Ensure the existance of the update table 'dbupdate'
  * @param connection The database connection
  * @return True/False
  */
 function ensureUpdateTable(&$connection)
 {
-  $tables = $connection->MetaTables();
-  if (!in_array('dbupdate', $tables))
-  {
-    $sql = $connection->Prepare('CREATE TABLE `dbupdate` (`table_id` VARCHAR(100) NOT NULL, `column_id` VARCHAR(100) NOT NULL, `type` VARCHAR(100) NOT NULL, '.
+  try {
+    $connection->query('SELECT count(*) FROM dbupdate');
+  }
+  catch (Exception $e) {
+    try {
+      // the update table does not exist
+      $connection->query('CREATE TABLE `dbupdate` (`table_id` VARCHAR(100) NOT NULL, `column_id` VARCHAR(100) NOT NULL, `type` VARCHAR(100) NOT NULL, '.
                                 '`table` VARCHAR(255), `column` VARCHAR(255), `updated` DATETIME, PRIMARY KEY (`table_id`, `column_id`, `type`)) TYPE=MyISAM');
-    $rs = $connection->Execute($sql);
-    if ($rs === false)
-    {
-      Log::error('Error creating update table '.$connection->ErrorMsg(), "dbupdate");
+    }
+    catch (Exception $e) {
+      Log::error('Error creating update table '.$e->getMessage(), "dbupdate");
       return false;
     }
   }
   return true;
 }
 
-/*
+/**
  * Get the existing table/column definition that is stored in the update table
  * @param connection The database connection
  * @param tableId The id of the table definition
@@ -160,29 +164,30 @@ function ensureUpdateTable(&$connection)
  */
 function getOldValue(&$connection, $tableId, $columnId, $type)
 {
+  $result = null;
   if ($type == 'column')
   {
     // selection for columns
-    $sql = $connection->Prepare('SELECT * FROM `dbupdate` WHERE `table_id`=? AND `column_id`=? AND `type`=\'column\'');
-    $rs = $connection->Execute($sql, array($tableId, $columnId));
+    $st = $connection->prepare('SELECT * FROM `dbupdate` WHERE `table_id`=? AND `column_id`=? AND `type`=\'column\'');
+    $st->execute($sql, array($tableId, $columnId));
+    $result = $st->fetchAll(PDO::FETCH_ASSOC);
   }
   else
   {
     // selection for tables
-    $sql = $connection->Prepare('SELECT * FROM `dbupdate` WHERE `table_id`=? AND `type`=\'table\'');
-    $rs = $connection->Execute($sql, array($tableId));
+    $st = $connection->prepare('SELECT * FROM `dbupdate` WHERE `table_id`=? AND `type`=\'table\'');
+    $st->execute($sql, array($tableId));
+    $result = $st->fetchAll(PDO::FETCH_ASSOC);
   }
-  if ($rs !== false && $rs->RecordCount() > 0)
+  if (sizeof($result) > 0)
   {
-    $data = $rs->FetchRow();
+    $data = $result[0];
     return array('table' => $data['table'], 'column' => $data['column']);
   }
-  if ($rs !== false)
-    $rs->close();
   return null;
 }
 
-/*
+/**
  * Store a table/column definition in the update table
  * @param connection The database connection
  * @param tableId The id of the table definition
@@ -190,26 +195,29 @@ function getOldValue(&$connection, $tableId, $columnId, $type)
  * @param type 'table' or 'column'
  * @param table The table name
  * @param column The column name
- * @return An array with keys 'table', 'column' and 'type' or null if not stored
  */
 function updateValue(&$connection, $tableId, $columnId, $type, $table, $column)
 {
   $oldValue = getOldValue($connection, $tableId, $columnId, $type);
-  if ($oldValue === null)
-  {
-    $sql = $connection->Prepare('INSERT INTO `dbupdate` (`table_id`, `column_id`, `type`, `table`, `column`, `updated`) VALUES (?, ?, ?, ?, ?, ?)');
-    $rs = $connection->Execute($sql, array($tableId, $columnId, $type, $table, $column, date("Y-m-d H:i:s")));
+  $result = false;
+  try {
+    if ($oldValue === null)
+    {
+      $st = $connection->prepare('INSERT INTO `dbupdate` (`table_id`, `column_id`, `type`, `table`, `column`, `updated`) VALUES (?, ?, ?, ?, ?, ?)');
+      $result = $st->execute($sql, array($tableId, $columnId, $type, $table, $column, date("Y-m-d H:i:s")));
+    }
+    else
+    {
+      $st = $connection->prepare('UPDATE `dbupdate` SET `table`=?, `column`=?, `updated`=? WHERE `table_id`=? AND `column_id`=? AND `type`=?');
+      $result = $st->execute($sql, array($table, $column, date("Y-m-d H:i:s"), $tableId, $columnId, $type));
+    }
   }
-  else
-  {
-    $sql = $connection->Prepare('UPDATE `dbupdate` SET `table`=?, `column`=?, `updated`=? WHERE `table_id`=? AND `column_id`=? AND `type`=?');
-    $rs = $connection->Execute($sql, array($table, $column, date("Y-m-d H:i:s"), $tableId, $columnId, $type));
+  catch (Exception $e) {
+    Log::error('Error inserting/updating entry '.$e->getMessage(), "dbupdate");
   }
-  if ($rs === false)
-    Log::error('Error inserting/updating entry '.$connection->ErrorMsg(), "dbupdate");
 }
 
-/*
+/**
  * Store a table/column definition in the update table
  * @param connection The database connection
  * @param tableDef The table definition array as provided by processTableDef
@@ -217,12 +225,14 @@ function updateValue(&$connection, $tableId, $columnId, $type, $table, $column)
 function updateEntry($connection, $tableDef)
 {
   updateValue($connection, $tableDef['id'], '-', 'table', $tableDef['name'], '-');
-  foreach ($tableDef['columns'] as $columnDef)
-    if ($columnDef['id'])
+  foreach ($tableDef['columns'] as $columnDef) {
+    if ($columnDef['id']) {
       updateValue($connection, $tableDef['id'], $columnDef['id'], 'column', $tableDef['name'], $columnDef['name']);
+    }
+  }
 }
 
-/*
+/**
  * Create a table
  * @param connection The database connection
  * @param tableDef The table definition array as provided by processTableDef
@@ -231,12 +241,15 @@ function createTable(&$connection, $tableDef)
 {
   Log::info("> create table '".$tableDef['name']."'", "dbupdate");
   $sql = $tableDef['create'];
-  $rs = $connection->Execute($sql);
-  if ($rs === false)
-    Log::error('Error creating table '.$connection->ErrorMsg(), "dbupdate");
+  try {
+    $connection->query($sql);
+  }
+  catch (Exception $e) {
+    Log::error('Error creating table '.$e->getMessage()."\n".$sql, "dbupdate");
+  }
 }
 
-/*
+/**
  * Alter a table
  * @param connection The database connection
  * @param oldName The old name
@@ -245,13 +258,16 @@ function createTable(&$connection, $tableDef)
 function alterTable(&$connection, $oldName, $name)
 {
   Log::info("> alter table '".$name."'", "dbupdate");
-  $sql = $connection->Prepare('ALTER TABLE `'.$oldName.'` RENAME `'.$name.'`');
-  $rs = $connection->Execute($sql);
-  if ($rs === false)
-    Log::error('Error altering table '.$connection->ErrorMsg()."\n".$sql, "dbupdate");
+  $sql = 'ALTER TABLE `'.$oldName.'` RENAME `'.$name.'`';
+  try {
+    $connection->query($sql);
+  }
+  catch (Exception $e) {
+    Log::error('Error altering table '.$e->getMessage()."\n".$sql, "dbupdate");
+  }
 }
 
-/*
+/**
  * Create a column
  * @param connection The database connection
  * @param table The name of the table
@@ -260,13 +276,16 @@ function alterTable(&$connection, $oldName, $name)
 function createColumn(&$connection, $table, $columnDef)
 {
   Log::info("> create column '".$table.".".$columnDef['name'], "dbupdate");
-  $sql = $connection->Prepare('ALTER TABLE `'.$table.'` ADD `'.$columnDef['name'].'` '.$columnDef['type']);
-  $rs = $connection->Execute($sql);
-  if ($rs === false)
-    Log::error('Error creating column '.$connection->ErrorMsg(), "dbupdate");
+  $sql = 'ALTER TABLE `'.$table.'` ADD `'.$columnDef['name'].'` '.$columnDef['type'];
+  try {
+    $connection->query($sql);
+  }
+  catch (Exception $e) {
+    Log::error('Error creating column '.$e->getMessage()."\n".$sql, "dbupdate");
+  }
 }
 
-/*
+/**
  * Alter a column
  * @param connection The database connection
  * @param table The name of the table
@@ -276,13 +295,16 @@ function createColumn(&$connection, $table, $columnDef)
 function alterColumn(&$connection, $table, $oldColumnDef, $columnDef)
 {
   Log::info("> alter column '".$table.".".$columnDef['name'], "dbupdate");
-  $sql = $connection->Prepare('ALTER TABLE `'.$table.'` CHANGE `'.$oldColumnDef['name'].'` `'.$columnDef['name'].'` '.$columnDef['type']);
-  $rs = $connection->Execute($sql);
-  if ($rs === false)
-    Log::error('Error altering column '.$connection->ErrorMsg()."\n".$sql, "dbupdate");
+  $sql = 'ALTER TABLE `'.$table.'` CHANGE `'.$oldColumnDef['name'].'` `'.$columnDef['name'].'` '.$columnDef['type'];
+  try {
+    $connection->query($sql);
+  }
+  catch (Exception $e) {
+    Log::error('Error altering column '.$e->getMessage()."\n".$sql, "dbupdate");
+  }
 }
 
-/*
+/**
  * Update the columns of a table
  * @param connection The database connection
  * @param tableDef The table definition array as provided by processTableDef
@@ -293,17 +315,18 @@ function updateColumns(&$connection, $tableDef, $oldColumnDefs)
   foreach ($tableDef['columns'] as $columnDef)
   {
     $oldValue = getOldValue($connection, $tableDef['id'], $columnDef['id'], 'column');
-    if ($oldValue)
-      $oldColumnDef = $oldColumnDefs[strtoupper($oldValue['column'])];
-    else
-      $oldColumnDef = $oldColumnDefs[strtoupper($columnDef['name'])];
+    if ($oldValue) {
+      $oldColumnDef = $oldColumnDefs[$oldValue['column']];
+    }
+    else {
+      $oldColumnDef = $oldColumnDefs[$columnDef['name']];
+    }
     // translate oldColumnDef type
-    $oldColumnType = strtoupper($oldColumnDef->type);
-    if ($oldColumnDef->max_length > 0)
-      $oldColumnType .= '('.$oldColumnDef->max_length.')';
-    if ($oldColumnDef->not_null)
+    $oldColumnType = strtoupper($oldColumnDef['Type']);
+    if ($oldColumnDef['Null'] == 'NO') {
       $oldColumnType .= ' NOT NULL';
-    $oldColumnDefTransl = array('name' => $oldColumnDef->name, 'type' => $oldColumnType);
+    }
+    $oldColumnDefTransl = array('name' => $oldColumnDef['Field'], 'type' => $oldColumnType);
 
     if ($oldValue === null && $oldColumnDef === null)
     {
@@ -323,7 +346,7 @@ function updateColumns(&$connection, $tableDef, $oldColumnDefs)
   }
 }
 
-/*
+/**
  * Extract table information from a sql command string
  */
 function processTableDef($tableDef, &$tables)
@@ -360,4 +383,24 @@ function processTableDef($tableDef, &$tables)
   }
   $tables[$tableName]['pks'] = $pks;
   $tables[$tableName]['columns'] = $columns;
+}
+
+/**
+ * Get the meta data of a table
+ * @return An associative array with the column names as keys and
+ * associative arrays with keys 'Field', 'Type', 'Null'[YES|NO], 'Key' [empty|PRI], 'Default', 'Extra' as values
+ */
+function getMetaData(&$connection, $table)
+{
+  $result = array();
+  try {
+    $columns = $connection->query('SHOW COLUMNS FROM '.$table, PDO::FETCH_ASSOC);
+    foreach($columns as $key => $col) {
+      $result[$col['Field']] = $col;
+    }
+  }
+  catch (Exception $e) {
+    return null;
+  }
+  return $result;
 }
