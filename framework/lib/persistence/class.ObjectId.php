@@ -50,7 +50,7 @@ class ObjectId
    * by PersistenceMapper::getPkNames().
    * If only type is given, the id will be set with initial values.
    */
-  public function __construct($type, $id=null, $prefix)
+  public function __construct($type, $id=null, $prefix=null)
   {
     $this->_prefix = $prefix;
     $this->_type = $type;
@@ -142,7 +142,7 @@ class ObjectId
       return null;
     }
 
-    $oidParts = split(':', $oid);
+    $oidParts = preg_split('/:/', $oid);
     if (!is_array($oidParts)) {
       return null;
     }
@@ -159,7 +159,7 @@ class ObjectId
 
     // get the type
     $type = $nextPart;
-    if (!PersistenceFacade::isKnownType($type)) {
+    if (!PersistenceFacade::getInstance()->isKnownType($type)) {
       return null;
     }
 
@@ -214,7 +214,7 @@ class ObjectId
   private static function getNumberOfPKs($type)
   {
     $numPKs = 1;
-    if (PersistenceFacade::isKnownType($type))
+    if (PersistenceFacade::getInstance()->isKnownType($type))
     {
       $mapper = PersistenceFacade::getInstance()->getMapper($type);
       $numPKs = sizeof($mapper->getPKNames());

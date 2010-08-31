@@ -83,7 +83,7 @@ abstract class Controller
    * performed action. The sender attribute of the response is set to the current controller. Initially there
    * are no data stored in the response.
    */
-  public function initialize($request, $response)
+  public function initialize(Request $request, Response $response)
   {
     $this->_request = $request;
     $this->_response = $response;
@@ -91,8 +91,9 @@ abstract class Controller
     // restore the error message of a previous call
     $this->appendErrorMsg($request->getValue('errorMsg'));
 
-    if ($this->_delegate !== null)
+    if ($this->_delegate !== null) {
       $this->_delegate->postInitialize($this);
+    }
   }
   /**
    * Check if the data given by initialize() meet the requirements of the Controller.
@@ -100,7 +101,7 @@ abstract class Controller
    * @return True/False whether the data are ok or not.
    *         In case of False a detailed description is provided by getErrorMsg().
    */
-  public function validate()
+  protected function validate()
   {
     if ($this->_delegate !== null) {
       return $this->_delegate->validate($this);
@@ -115,7 +116,7 @@ abstract class Controller
    * @return True/False whether the Controller has a view or not.
    * TODO: make decision based on response format and remove this from
    */
-  public abstract function hasView();
+  protected abstract function hasView();
   /**
    * Execute the Controller resulting in its Action processed and/or its View beeing displayed.
    * @return True/False wether following Controllers should be executed or not.
@@ -157,17 +158,10 @@ abstract class Controller
       if (!$viewTpl) {
         throw new ConfigurationException("View definition missing for ".get_class($this).". Action key: ".$actionKey);
       }
-      $objectFactory = ObjectFactory::getInstance();
-      $this->_view = $objectFactory->createInstanceFromConfig('implementation', 'View');
-      if ($this->_view === null) {
-        throw new ConfigurationException($objectFactory->getErrorMsg());
-      }
-      else
-      {
-        $this->_view->setup();
-        $this->_response->setView($this->_view);
-        $this->assignViewDefaults($this->_view);
-      }
+      $this->_view = ObjectFactory::createInstanceFromConfig('implementation', 'View');
+      $this->_view->setup();
+      $this->_response->setView($this->_view);
+      $this->assignViewDefaults($this->_view);
     }
 
     if ($this->_delegate !== null)
@@ -206,12 +200,12 @@ abstract class Controller
    * @return False or an an assoziative array with keys 'context' and 'action' describing how to proceed.
    *         Return false to break the action processing chain.
    */
-  public abstract function executeKernel();
+  protected abstract function executeKernel();
   /**
    * Get a detailed description of the last error.
    * @return The error message.
    */
-  public function getErrorMsg()
+  protected function getErrorMsg()
   {
     return $this->_errorMsg;
   }
@@ -219,7 +213,7 @@ abstract class Controller
    * Set a detailed description of the last error.
    * @param msg The error message.
    */
-  public function setErrorMsg($msg)
+  protected function setErrorMsg($msg)
   {
     $this->_errorMsg = $msg;
   }
@@ -227,7 +221,7 @@ abstract class Controller
    * Append a detailed description of the last error to the existing errors.
    * @param msg The error message.
    */
-  public function appendErrorMsg($msg)
+  protected function appendErrorMsg($msg)
   {
     // ignore if the last message is the same as msg
     if (preg_match("/".$msg."$/", $this->_errorMsg)) {
@@ -241,7 +235,7 @@ abstract class Controller
    * Get the Request object.
    * @return A reference to the Request object
    */
-  public function getRequest()
+  protected function getRequest()
   {
     return $this->_request;
   }
@@ -249,7 +243,7 @@ abstract class Controller
    * Get the Response object.
    * @return A reference to the Response object
    */
-  public function getResponse()
+  protected function getResponse()
   {
     return $this->_response;
   }
@@ -257,7 +251,7 @@ abstract class Controller
    * Get the controller view.
    * @return A reference to the controller view / or null if none is existing
    */
-  public function getView()
+  protected function getView()
   {
     return $this->_view;
   }
@@ -265,7 +259,7 @@ abstract class Controller
    * Get the controller delegate.
    * @return A reference to the controller view / or null if none is existing
    */
-  public function getDelegate()
+  protected function getDelegate()
   {
     return $this->_delegate;
   }
@@ -277,7 +271,7 @@ abstract class Controller
    * @param action The name of the action
    * @return The filename of the template or false, if now view is defined
    */
-  public function getViewTemplate($controller, $context, $action)
+  protected function getViewTemplate($controller, $context, $action)
   {
     $view = '';
     $parser = WCMFInifileParser::getInstance();
@@ -296,7 +290,7 @@ abstract class Controller
    * to each different content of the same view.
    * @return The id or null, if no cache id should be used.
    */
-  public function getCacheId()
+  protected function getCacheId()
   {
     return null;
   }
@@ -306,7 +300,7 @@ abstract class Controller
    * @param view A reference to the View to assign the variables to
    * @attention Internal use only.
    */
-  public function assignViewDefaults($view)
+  protected function assignViewDefaults($view)
   {
     $parser = InifileParser::getInstance();
     $rightsManager = RightsManager::getInstance();
@@ -334,7 +328,7 @@ abstract class Controller
    * if it has a language parameter that is not equal to Localization::getDefaultLanguage().
    * @return True/False wether the request is localized or not
    */
-  public function isLocalizedRequest()
+  protected function isLocalizedRequest()
   {
     $localization = Localization::getInstance();
     if ($this->_request->hasValue('language') &&

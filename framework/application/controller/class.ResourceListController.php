@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -26,22 +26,22 @@ require_once(BASE."wcmf/application/controller/class.SaveController.php");
 /**
  * @class ResourceListController
  * @ingroup Controller
- * @brief ResourceListController is a controller that fetches a resource list from the 
+ * @brief ResourceListController is a controller that fetches a resource list from the
  * server and displays it using the resourcelist.tpl template. For each resource
- * type and subtype there has to be a method defined which is named getlist_'type'_'subtype'. 
+ * type and subtype there has to be a method defined which is named getlist_'type'_'subtype'.
  * This method returns an assoziative array with the urls of the resources as keys and a user
  * defined array as values. The returned array will be assigned to the view in a variable
  * named resourceList. For example for the resource type 'link' with subtype 'content' there
  * has to be a method getlist_link_content.
  * This controller defines three methods getlist_link_content, getlist_link_resource and
- * getlist_image_resource. 
+ * getlist_image_resource.
  * Users may override these methods to implement special application requirements.
- * The template resourcelist.tpl is usually opened in a popup window. When selecting a 
+ * The template resourcelist.tpl is usually opened in a popup window. When selecting a
  * resource it calls the method SetUrl(value, fieldName) of the opener window, which is
  * supposed to set the selected value in the input field identified by fieldName.
- * In addition to listing files the controller processes the actions 'createDir' 
+ * In addition to listing files the controller processes the actions 'createDir'
  * and 'delete'.
- * 
+ *
  * <b>Input actions:</b>
  * - @em delete Delete the given resources
  * - @em createDir Create a directory with the given name
@@ -53,7 +53,7 @@ require_once(BASE."wcmf/application/controller/class.SaveController.php");
  * @param[in,out] type The main resource type to list (e.g. link or image, default is image if not given).
  * @param[in,out] subtype The sub resource type to list (e.g. content or resource, default is resource if not given).
  * @param[in,out] fieldName The name of the input field to set the resource value to.
- * @param[in,out] directory The name of the directory to scan for resources (optinal, if not given the directory is 
+ * @param[in,out] directory The name of the directory to scan for resources (optinal, if not given the directory is
  *            retrieved using the ResourceListController::getResourceBaseDir() method).
  * @param[in] newDir The name of the directory to create when processing the 'createDir' action.
  * @param[in] deleteoids The object ids of the objects to delete when processing the 'delete' action.
@@ -73,7 +73,7 @@ class ResourceListController extends Controller
   // the resource directory
   var $_directory;
   var $_parentDirectory;
-  
+
   /**
    * @see Controller::initialize()
    */
@@ -85,13 +85,13 @@ class ResourceListController extends Controller
 
     // default directory is base dir
     $this->_directory = $baseDir;
-    
+
     // if there is a directory in the session, take this one
-   	$session = &SessionData::getInstance();    
+   	$session = &SessionData::getInstance();
     if ($session->exist())
 
     // try to get a formerly selected directory from the session
-   	$session = &SessionData::getInstance();    
+   	$session = &SessionData::getInstance();
     if ($session->exist($this->DIRECTORY_VARNAME))
       $this->_directory = $session->get($this->DIRECTORY_VARNAME);
 
@@ -104,7 +104,7 @@ class ResourceListController extends Controller
       $this->_parentDirectory = substr($this->_directory, 0, strrpos($this->_directory, '/'));
     else
       $this->_parentDirectory = $baseDir;
-      
+
     // store the directory in the session
     $session->set($this->DIRECTORY_VARNAME, $this->_directory);
 
@@ -130,13 +130,13 @@ class ResourceListController extends Controller
 
     $type = $this->_request->getValue('type', 'image');
     $subtype = $this->_request->getValue('subtype', 'resource');
-    
+
     $listFunction = "getlist_".$type."_".$subtype;
     if (!method_exists($this, $listFunction))
       WCMFException::throwEx(Message::get("List function is not implemented for type %1% subtype %2%", array($type, $subtype)), __FILE__, __LINE__);
 
     $resourceList = $this->$listFunction();
-    
+
     // process actions
     // save directory
     if ($this->_request->getAction() == 'save')
@@ -160,7 +160,7 @@ class ResourceListController extends Controller
     if ($this->_request->getAction() == 'delete')
     {
       // delete files if requested
-      foreach(split(",", $this->_request->getValue('deleteoids')) as $doid)
+      foreach(preg_split('/,/', $this->_request->getValue('deleteoids')) as $doid)
       {
         if (is_dir($doid))
         {
@@ -184,14 +184,14 @@ class ResourceListController extends Controller
       if (strlen($newDir) > 0 && !file_exists($this->_directory.'/'.$newDir))
         FileUtil::mkdirRec($this->_directory.'/'.$newDir);
     }
-      
+
     $resourceList = $this->$listFunction();
     $directories = FileUtil::getDirectories($this->_directory, '/./', true);
     natsort($directories);
-           
+
     // make link list from path
     $pathPartsStr = str_replace($this->getResourceBaseDir(), '', $this->_directory);
-    $pathParts = split('\/', $pathPartsStr);
+    $pathParts = preg_split('/\//', $pathPartsStr);
     $linkedDirectoryPath = "<a href=\"javascript:setVariable('directory', '".$this->getResourceBaseDir().
         "'); submitAction('');\">[".Message::get('Root')."]</a>";
     for ($i=0; $i<sizeof($pathParts); $i++)
@@ -202,7 +202,7 @@ class ResourceListController extends Controller
       $linkedDirectoryPath .= "<a href=\"javascript:setVariable('directory', '".$this->getResourceBaseDir().$curDir.
           "'); submitAction('');\">".$pathParts[$i]."</a>/";
     }
-           
+
     // assign resources to the response
     $this->_response->setValue('resourceList', $resourceList);
     $this->_response->setValue('type', $type);
@@ -213,7 +213,7 @@ class ResourceListController extends Controller
     $this->_response->setValue('parentDirectory', $this->_parentDirectory);
     $this->_response->setValue('directories', $directories);
     $this->_response->setValue('fieldName', $this->_request->getValue('fieldName'));
-    
+
     // success
     $this->_response->setAction('ok');
     return false;
@@ -224,7 +224,7 @@ class ResourceListController extends Controller
    * @return The directory name
    * @note Subclasses will override this method to implement special application requirements
    */
-  function getResourceBaseDir() 
+  function getResourceBaseDir()
   {
     $parser = &InifileParser::getInstance();
     if(($uploadDir = $parser->getValue('uploadDir', 'media')) !== false)
@@ -232,7 +232,7 @@ class ResourceListController extends Controller
       // remove slash if nescessary
       if (substr($uploadDir, -1) == '/')
         $uploadDir = substr($uploadDir, 0, -1);
-      
+
       return $uploadDir;
     }
     return '';
@@ -252,7 +252,7 @@ class ResourceListController extends Controller
    * This default implementation calls getlist_image_resource()
    * @return An assoziative array a returned by getlist_image_resource()
    */
-  function getlist_link_resource() 
+  function getlist_link_resource()
   {
     // links need to be absolute
     return $this->getResourceList(false);
@@ -262,7 +262,7 @@ class ResourceListController extends Controller
    * This default implementation calls getlist_image_resource()
    * @return An assoziative array a returned by getlist_image_resource()
    */
-  function getlist_link_content() 
+  function getlist_link_content()
   {
     // links need to be absolute
     return $this->getResourceList(false);
@@ -274,7 +274,7 @@ class ResourceListController extends Controller
    * @return An assoziative array with absolute urls as keys and an array with keys 'name', 'type',
    * 'width', 'height', 'numReferences' as values
    */
-  function getlist_image_resource() 
+  function getlist_image_resource()
   {
     // links need to be absolute
     return $this->getResourceList(true);
@@ -287,7 +287,7 @@ class ResourceListController extends Controller
    * @return An assoziative array with absolute urls as keys and an array with keys 'name', 'type', 'maintype', 'subtype'
    * 'width' (only images/swf), 'height' (only images/swf), 'numReferences' as values
    */
-  function getResourceList($imagesOnly) 
+  function getResourceList($imagesOnly)
   {
     $resourceList = array();
     $refURL = UriUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
@@ -309,7 +309,7 @@ class ResourceListController extends Controller
           {
             $url = $uploadDir.$file;
             $type = image_type_to_mime_type($info[2]);
-            list($maintype, $subtype) = split('/', $type);
+            list($maintype, $subtype) = preg_split('/\//', $type);
             $width = $info[0];
             $height = $info[1];
 

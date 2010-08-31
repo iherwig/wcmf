@@ -127,43 +127,6 @@ class ArrayUtil
   }
 
   /**
-   * Recursivly walk an array
-   * @see http://de.php.net/manual/en/function.array-walk-recursive.php
-   */
-  public static function array_walk_recursive(&$input, $funcname, $userdata = "")
-  {
-    static $depth = -1;
-    if (!is_callable($funcname))
-      return false;
-
-    if (!is_array($input))
-      return false;
-
-    $depth++;
-
-    foreach (array_keys($input) as $keyIdx => $key)
-    {
-      $saved_value = $input[$key];
-      $saved_key = $key;
-      call_user_func_array($funcname, array(&$input[$saved_key], &$key, $userdata));
-
-      if ($input[$saved_key] !== $saved_value || $saved_key !== $key)
-      {
-        $saved_value = $input[$saved_key];
-
-        unset($input[$saved_key]);
-        $input[$key] = $saved_value;
-      }
-      if (is_array($input[$key]))
-      {
-        if (!ArrayUtil::array_walk_recursive($input[$key], $funcname, $userdata)) return false;
-        $depth--;
-      }
-    }
-    return true;
-  }
-
-  /**
    * Object Id array helper methods
    */
 

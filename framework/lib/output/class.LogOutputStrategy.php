@@ -62,7 +62,7 @@ class LogOutputStrategy implements OutputStrategy
       // log update action
       case STATE_DIRTY:
         // get old object from storage
-        $oldObj = &$persistenceFacade->load($obj->getOID(), BUILDDEPTH_SINGLE);
+        $oldObj = $persistenceFacade->load($obj->getOID(), BUILDDEPTH_SINGLE);
         // collect differences
         $values = array();
         $valueNames = $obj->getValueNames();

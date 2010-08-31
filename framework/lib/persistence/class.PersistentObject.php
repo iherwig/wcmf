@@ -141,7 +141,7 @@ class PersistentObject
 
     // set the mapper, if defined in PersistenceFacade
     $persistenceFacade = PersistenceFacade::getInstance();
-    if (PersistenceFacade::isKnownType($this->_type)) {
+    if ($persistenceFacade->isKnownType($this->_type)) {
       $mapper = $persistenceFacade->getMapper($this->_type);
     }
     return $mapper;
@@ -354,37 +354,19 @@ class PersistentObject
   }
   /**
    * Clear all values. Set each value to null.
-   * @param dataTypes An array of datatypes. Only values of that datatypes will be cleared.
-   * Empty array means all datatypes [default:empty array]
    */
-  public function clearValues(array $dataTypes=array())
+  public function clearValues()
   {
-    $valuesToIgnore = array();
-    $mapper = $this->getMapper();
-    if ($mapper)
-    {
-      if (sizeof($dataTypes) > 0)
-      {
-        $attributesToCopy = $mapper->getAttributes($dataTypes);
-        $valuesToCopy = array();
-        foreach ($attributesToCopy as $attribute) {
-          $valuesToCopy[] = $attribute->name();
-        }
-        $valuesToIgnore = array_diff($this->getValueNames(), $valuesToCopy);
-      }
-    }
-    $processor = new NodeProcessor('clearValueIntern', array($dataTypes), $this);
+    $processor = new NodeProcessor('clearValueIntern', array(), $this);
     $processor->run($this, false);
   }
   /**
    * Private callback for clearing values
    * @see NodeProcessor
    */
-  private function clearValueIntern(Node $node, $valueName, array $dataTypes, array $valuesToIgnore)
+  private function clearValueIntern(Node $node, $valueName)
   {
-    if (!in_array($valueName, $valuesToIgnore)) {
-      $node->setValue($valueName, null, $dataType);
-    }
+    $node->setValue($valueName, null);
   }
   /**
    * Recalculate the object id

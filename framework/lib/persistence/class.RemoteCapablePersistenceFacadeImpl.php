@@ -230,7 +230,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
 
       // determine remote oid
       $oid = new ObjectId($umi->getType(), $umi->getId());
-      $serverKey = array_pop(split(':', $umi->getPrefix()));
+      $serverKey = array_pop(preg_split('/:/', $umi->getPrefix()));
 
       // create the request
       $request = new Request(
@@ -339,7 +339,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param buildDepth The depth the object was loaded [default: BUILDDEPTH_SINGLE].
    * @param varName The session variable name.
    */
-  function registerObject(ObjectId $umi, PersistentObject $obj, $buildDepth=BUILDDEPTH_SINGLE, $varName)
+  protected function registerObject(ObjectId $umi, PersistentObject $obj, $buildDepth=BUILDDEPTH_SINGLE, $varName)
   {
     if ($buildDepth == 0) {
       $buildDepth=BUILDDEPTH_SINGLE;
@@ -367,7 +367,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param buildDepth The requested build depth.
    * @return The proxy object or null if not found.
    */
-  function getRegisteredProxyObject(ObjectId $umi, $buildDepth)
+  protected function getRegisteredProxyObject(ObjectId $umi, $buildDepth)
   {
     $proxy = $this->getRegisteredObject($umi, $buildDepth, self::PROXY_OBJECTS_SESSION_VARNAME);
     return $proxy;
@@ -379,7 +379,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param buildDepth The requested build depth.
    * @return The remote object or null if not found.
    */
-  function getRegisteredRemoteObject(ObjectId $umi, $buildDepth)
+  protected function getRegisteredRemoteObject(ObjectId $umi, $buildDepth)
   {
     $object = $this->getRegisteredObject($umi, $buildDepth, self::REMOTE_OBJECTS_SESSION_VARNAME);;
     return $object;
@@ -391,7 +391,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param buildDepth The requested build depth [default: BUILDDEPTH_SINGLE].
    * @return The object or null if not found.
    */
-  function getRegisteredObject(ObjectId $umi, $buildDepth=BUILDDEPTH_SINGLE, $varName)
+  protected function getRegisteredObject(ObjectId $umi, $buildDepth=BUILDDEPTH_SINGLE, $varName)
   {
     if ($buildDepth == 0) {
       $buildDepth=BUILDDEPTH_SINGLE;
@@ -419,12 +419,12 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param list2 The second array
    * @return The merged array
    */
-  function mergeOIDs($list1, $list2)
+  protected function mergeOIDs($list1, $list2)
   {
     $result = array();
     foreach (array_merge($list1, $list2) as $oid) {
       $ids = $oid->getId();
-      if (!PersistenceFacade::isDummyId($ids[0])) {
+      if (!ObjectId::isDummyId($ids[0])) {
         $result[] = $oid;
       }
     }
@@ -437,12 +437,11 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param umiPrefix The umi prefix
    * @return The array of umis
    */
-  function makeUmis($oids, $umiPrefix)
+  protected function makeUmis($oids, $umiPrefix)
   {
     $result = array();
     foreach ($oids as $oid)
     {
-      $oidParts = PersistenceFacade::decomposeOID($oid);
       if (strlen($oid->getPrefix()) == 0)
       {
         $umi = new ObjectId($oid->getType(), $oid->getId(), $umiPrefix);

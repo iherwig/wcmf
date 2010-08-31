@@ -51,7 +51,7 @@ class FileUtil
         {
           if ($override == false && file_exists($destName))
           {
-            $pieces = split('\.', basename($destName));
+            $pieces = preg_split('/\./', basename($destName));
             $extension = array_pop($pieces);
             $name = join('.', $pieces);
             $destName = dirname($destName)."/".$name.uniqid(rand()).".".$extension;
@@ -236,7 +236,7 @@ class FileUtil
    */
   public static function mkdirRec($dirname)
   {
-    $folder_list = split("/", $dirname);
+    $folder_list = preg_split('/\//', $dirname);
     $len = sizeof($folder_list);
     for( $i=0; $i<$len; $i++ )
     {

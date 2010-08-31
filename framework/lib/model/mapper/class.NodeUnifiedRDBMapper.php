@@ -41,13 +41,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
   /**
    * @see PersistenceMapper::initialize()
    */
-  public function initialize(PersistentObject $object)
-  {
-    // add this as ChangeListener
-    if ($object != null) {
-      $object->addChangeListener($this);
-    }
-  }
+  public function initialize(PersistentObject $object) {}
 
   /**
    * @see RDBMapper::prepareInsert()
@@ -595,7 +589,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     else
     {
       $conn = $this->getConnection();
-      return $conn->qstr($value);
+      return $conn->quote($value);
     }
   }
 

@@ -33,7 +33,7 @@ require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
  *
  * @code
  * $queryStr = "Author.name LIKE '%ingo%' AND (Recipe.name LIKE '%Salat%' OR Recipe.portions = 4)";
- * $query = &PersistenceFacade::createStringQuery();
+ * $query = PersistenceFacade::getInstance()->createStringQuery();
  * $authorOIDs = $query->execute('Author', $queryStr, false);
  * @endcode
  *
@@ -58,7 +58,7 @@ class StringQuery
    */
   public function execute($type, $queryString, $buildDepth, $orderby=null, &$pagingInfo, $attribs=null)
   {
-    if (!PersistenceFacade::isKnownType($type))
+    if (!PersistenceFacade::getInstance()->isKnownType($type))
     {
       throw new IllegalArgumentException("Cannot search for unkown type '".$type."'.");
       return $result;
@@ -68,7 +68,7 @@ class StringQuery
     // create type node
     $persistenceFacade = PersistenceFacade::getInstance();
     $this->_typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
-    $mapper = &ObjectQuery::getMapper($this->_typeNode);
+    $mapper = ObjectQuery::getMapper($this->_typeNode);
     if ($mapper == null) {
       return array();
     }
@@ -144,7 +144,7 @@ class StringQuery
               // token is type.attribute
               $type = substr($token, 0, $pos);
               $attribute = substr($token, $pos+1, strlen($token));
-              if (PersistenceFacade::isKnownType($type))
+              if (PersistenceFacade::getInstance()->isKnownType($type))
               {
                 list($table, $column) = StringQuery::mapToDatabase($type, $attribute);
                 $queryString = str_replace($type.'.'.$attribute, $table.'.'.$column, $queryString);

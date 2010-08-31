@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -22,8 +22,8 @@ require_once(BASE."wcmf/lib/presentation/format/class.HierarchicalFormat.php");
 
 /**
  * JSONFormatter collects the response data from all executed controllers
- * into one response array and returns it all at once at the end of 
- * script execution. This prevents from having multiple junks of json 
+ * into one response array and returns it all at once at the end of
+ * script execution. This prevents from having multiple junks of json
  * from each controller response that can't be decoded by clients.
  */
 $GLOBALS['gJSONData'] = array();
@@ -58,7 +58,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::beforeDeserialize()
    */
-  function beforeDeserialize(&$data)
+  protected function beforeDeserialize(&$data)
   {
     // decode the json data into an array
     foreach(array_keys($data) as $key) {
@@ -69,7 +69,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::afterSerialize()
    */
-  function afterSerialize(&$data)
+  protected function afterSerialize(Request $data)
   {
     // merge data into global data array
     // new values override old
@@ -80,7 +80,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::isSerializedNode()
    */
-  function isSerializedNode($key, &$value)
+  protected function isSerializedNode($key, &$value)
   {
     return ((is_object($value) || is_array($value)) && isset($value['oid']) && isset($value['type']));
   }
@@ -88,7 +88,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::serializeNode()
    */
-  function serializeNode($key, &$value)
+  protected function serializeNode($key, &$value)
   {
     // use NodeSerializer to serialize
     return NodeSerializer::serializeNode($value, false);
@@ -97,7 +97,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::deserializeNode()
    */
-  function &deserializeNode($key, &$value)
+  protected function deserializeNode($key, &$value)
   {
     if (is_array($value)) {
       $type = $value['type'];
@@ -106,7 +106,7 @@ class JSONFormat extends HierarchicalFormat
       $type = $value->type;
     }
     // use NodeSerializer to deserialize
-    $node = &NodeSerializer::deserializeNode($type, $value, false);
+    $node = NodeSerializer::deserializeNode($type, $value, false);
     return $node;
   }
 }

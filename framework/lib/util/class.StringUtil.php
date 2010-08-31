@@ -101,54 +101,54 @@ class StringUtil
    *
    * @endcode
    *
-   * @param s The string to split
+   * @param string The string to split
    * @return An array of strings
    */
-  public static function quotesplit($s)
+  public static function quotesplit($string)
   {
     $r = Array();
     $p = 0;
-    $l = strlen($s);
+    $l = strlen($string);
     while ($p < $l)
     {
-      while (($p < $l) && (strpos(" \r\t\n",$s[$p]) !== false)) $p++;
-      if ($s[$p] == '"')
+      while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) $p++;
+      if ($string[$p] == '"')
       {
         $p++;
         $q = $p;
-        while (($p < $l) && ($s[$p] != '"'))
+        while (($p < $l) && ($string[$p] != '"'))
         {
-          if ($s[$p] == '\\') { $p+=2; continue; }
+          if ($string[$p] == '\\') { $p+=2; continue; }
           $p++;
         }
-        $r[] = stripslashes(substr($s, $q, $p-$q));
+        $r[] = stripslashes(substr($string, $q, $p-$q));
         $p++;
-        while (($p < $l) && (strpos(" \r\t\n",$s[$p]) !== false)) $p++;
+        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) $p++;
         $p++;
       }
-      else if ($s[$p] == "'")
+      else if ($string[$p] == "'")
       {
         $p++;
         $q = $p;
-        while (($p < $l) && ($s[$p] != "'"))
+        while (($p < $l) && ($string[$p] != "'"))
         {
-          if ($s[$p] == '\\') { $p+=2; continue; }
+          if ($string[$p] == '\\') { $p+=2; continue; }
           $p++;
         }
-        $r[] = stripslashes(substr($s, $q, $p-$q));
+        $r[] = stripslashes(substr($string, $q, $p-$q));
         $p++;
-        while (($p < $l) && (strpos(" \r\t\n",$s[$p]) !== false)) $p++;
+        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) $p++;
         $p++;
       }
       else
       {
         $q = $p;
-        while (($p < $l) && (strpos(",;",$s[$p]) === false))
+        while (($p < $l) && (strpos(",;",$string[$p]) === false))
         {
           $p++;
         }
-        $r[] = stripslashes(trim(substr($s, $q, $p-$q)));
-        while (($p < $l) && (strpos(" \r\t\n",$s[$p]) !== false)) $p++;
+        $r[] = stripslashes(trim(substr($string, $q, $p-$q)));
+        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) $p++;
         $p++;
       }
     }
@@ -160,7 +160,7 @@ class StringUtil
    * Code from http://snipt.net/hongster/underscore-to-camelcase/
    * @param string The string to convert
    * @param firstLowerCase True/False wether the first character should be lowercase or not [default: false]
-   * @return the converted string
+   * @return The converted string
    */
   public static function underScoreToCamelCase($string, $firstLowerCase=false)
   {
@@ -174,6 +174,20 @@ class StringUtil
     else {
       return '';
     }
+  }
+
+  /**
+   * Escape characters of a string for use in a regular expression
+   * Code from http://php.net/manual/de/function.preg-replace.php
+   * @param string The string
+   * @return The escaped string
+   */
+  function escapeForRegex($string)
+  {
+    $patterns = array('/\//', '/\^/', '/\./', '/\$/', '/\|/', '/\(/', '/\)/', '/\[/', '/\]/', '/\*/', '/\+/', '/\?/', '/\{/', '/\}/');
+    $replace = array('\/', '\^', '\.', '\$', '\|', '\(', '\)', '\[', '\]', '\*', '\+', '\?', '\{', '\}');
+
+    return preg_replace($patterns, $replace, $string);
   }
 }
 ?>

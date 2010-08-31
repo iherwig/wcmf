@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -24,16 +24,16 @@ require_once(BASE."wcmf/lib/model/class.NullNode.php");
 /**
  * @class AssociateController
  * @ingroup Controller
- * @brief AssociateController is a controller that (dis-)associates Nodes 
+ * @brief AssociateController is a controller that (dis-)associates Nodes
  * (by setting the parent/child relations).
- * 
+ *
  * <b>Input actions:</b>
  * - @em associate Associate one Node to another
  * - @em disassociate Disassociate one Node from another
  *
  * <b>Output actions:</b>
  * - @em ok In any case
- * 
+ *
  * @param[in] oid The object id of the Node to associate a Node as child to
  * @param[in] associateoids The object ids of the Nodes to (dis-)associate as parents/children (comma separated list)
  * @param[in] associateAs The role of the associated Nodes as seen from oid: Either 'parent' or 'child'
@@ -69,7 +69,7 @@ class AssociateController extends Controller
    */
   function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();    
+    $persistenceFacade = &PersistenceFacade::getInstance();
     $lockManager = &LockManager::getInstance();
 
     // get parent node
@@ -79,7 +79,7 @@ class AssociateController extends Controller
 
     // iterate over associateoids
     $associateoids = $this->_request->getValue('associateoids');
-    $associateoidArray = split(',', $associateoids);
+    $associateoidArray = preg_split('/,/', $associateoids);
     foreach ($associateoidArray as $associateoid)
     {
       $associateoid = trim($associateoid);
@@ -89,11 +89,11 @@ class AssociateController extends Controller
         $this->_response->setAction('ok');
         return true;
       }
-      
+
       // if the current user has a lock on the object, release it
       $lockManager->releaseLock($associateoid);
       $childNode = &$persistenceFacade->load($associateoid, BUILDDEPTH_SINGLE);
-    
+
       if ($parentNode != null && $childNode != null)
       {
         // create templates of parent and child
@@ -101,7 +101,7 @@ class AssociateController extends Controller
         $parentTemplate = &$persistenceFacade->create($parentType, 1);
         $childType = PersistenceFacade::getOIDParameter($associateoid, 'type');
         $childTemplate = &$persistenceFacade->create($childType, 1);
-    
+
         // process actions
         if ($this->_request->getAction() == 'associate')
         {
@@ -134,7 +134,7 @@ class AssociateController extends Controller
             }
             else
             {
-              $this->appendErrorMsg(Message::get("Cannot associate %1% and %2%. No direct connection and no connection type found.", 
+              $this->appendErrorMsg(Message::get("Cannot associate %1% and %2%. No direct connection and no connection type found.",
                 array($associateoid, $parentOID)));
             }
           }
@@ -164,7 +164,7 @@ class AssociateController extends Controller
             if ($linkType != null)
             {
               // find association object as child of both (parent and child)
-              // since the same nm object can have different roles (= different oids), 
+              // since the same nm object can have different roles (= different oids),
               // a simple array_intersect of the children oids does not work here
               $parentNode->loadChildren();
               $childNode->loadChildren();
@@ -185,7 +185,7 @@ class AssociateController extends Controller
             }
             else
             {
-              $this->appendErrorMsg(Message::get("Cannot disassociate %1% and %2%. No direct connection and no connection type found.", 
+              $this->appendErrorMsg(Message::get("Cannot disassociate %1% and %2%. No direct connection and no connection type found.",
                 array($associateoid, $parentOID)));
             }
           }

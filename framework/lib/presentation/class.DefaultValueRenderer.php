@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,12 +11,12 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/core/class.WCMFException.php");
+require_once(BASE."wcmf/lib/core/class.ConfigurationException.php");
 require_once(BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(BASE."wcmf/lib/presentation/class.View.php");
 require_once(BASE."wcmf/lib/presentation/class.Controller.php");
@@ -27,10 +27,10 @@ require_once(BASE."wcmf/lib/presentation/class.Controller.php");
  * @brief DefaultValueRenderer is responsible for rendering (Node) values of a given display type.
  * Each display type is defined in a smarty template, which is configured by the appropriate entry
  * in the configuration section 'htmldisplay' (e.g. the image display type has the entry 'image').
- * The templates get a default set of variables assigned. Additional variables, needed only for 
+ * The templates get a default set of variables assigned. Additional variables, needed only for
  * certain display types, are assigned in the appropriate configure method (e.g. 'configure_image')
  * which may be overridden by subclasses.
- * 
+ *
  * New controls may be defined by defining the template, putting it into the configuration
  * section 'htmlform' and maybe implementing a configure method in a subclass of DefaultControlRenderer.
  * If a subclass is needed, the key 'ControlRenderer' in the configuration section 'implementation'
@@ -40,11 +40,9 @@ require_once(BASE."wcmf/lib/presentation/class.Controller.php");
  */
 class DefaultValueRenderer
 {
-  var $view = null;
-  
   /**
    * Render a value of given type using the appropriate smarty template (defined in the
-   * config section 'htmldisplay'). The given parameters will be passed to the view. If additional 
+   * config section 'htmldisplay'). The given parameters will be passed to the view. If additional
    * parameters are needed an configure method must be implemented (name: configure_type)
    * @param type The display type of the value (the template is selected based on the type)
    * @param value The value to display
@@ -56,10 +54,7 @@ class DefaultValueRenderer
     $parser = InifileParser::getInstance();
 
     // build input control
-    if ($view == null)
-      $view = new View();
-    else
-      $view->clear_all_assign();
+    $view = new View();
 
     // set default view parameters
     $view->setup();
@@ -83,12 +78,12 @@ class DefaultValueRenderer
 
     // set additional view parameters if needed
     $configureFunction = "configure_".$type;
-    if (method_exists($this, $configureFunction))
+    if (method_exists($this, $configureFunction)) {
       $this->$configureFunction($view);
-
-    if ($viewTpl = $parser->getValue($type, 'htmldisplay') === false)
-      WCMFException::throwEx("Unknown value display '".$type."'", __FILE__, __LINE__);
-      
+    }
+    if ($viewTpl = $parser->getValue($type, 'htmldisplay') === false) {
+      throw new ConfigurationException("Unknown value display '".$type."'");
+    }
     $htmlString = $view->fetch(BASE.$parser->getValue($type, 'htmldisplay'));
     return $htmlString;
   }
@@ -96,7 +91,7 @@ class DefaultValueRenderer
    * Set additional parameters to the image html representation
    * @param view A reference to the html view
    */
-  function configure_image(&$view) 
+  function configure_image(View $view)
   {
     $value = $view->get_template_vars('value');
     if (file_exists($value))
@@ -107,14 +102,15 @@ class DefaultValueRenderer
       $view->assign('filename', basename($value));
       $view->assign('exists', true);
     }
-    else
+    else {
       $view->assign('exists', false);
+    }
   }
   /**
    * Set additional parameters to the text html representation
    * @param view A reference to the html view
    */
-  function configure_text(&$view) 
+  function configure_text(View $view)
   {
   }
 }

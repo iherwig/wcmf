@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -30,7 +30,7 @@ class PDF extends FPDI
 {
   var $_pageStarted = false;
   var $_pageEnded = false;
-  
+
   /**
    * Overriden to set the template on the page
    */
@@ -44,7 +44,7 @@ class PDF extends FPDI
    */
     function startPage()
   {
-    $this->_pageStarted = true; 
+    $this->_pageStarted = true;
     $this->_pageEnded = false;
   }
   /**
@@ -61,7 +61,7 @@ class PDF extends FPDI
    */
   function isPageStarted()
   {
-    return $this->_pageStarted; 
+    return $this->_pageStarted;
   }
   /**
    * Determine if a page finished
@@ -69,7 +69,7 @@ class PDF extends FPDI
    */
   function isPageEnded()
   {
-    return $this->_pageEnded; 
+    return $this->_pageEnded;
   }
   /**
    * Move the render position down by given units
@@ -77,7 +77,7 @@ class PDF extends FPDI
    */
   function moveDown($units)
   {
-    $this->SetY($units+$this->GetY()); 
+    $this->SetY($units+$this->GetY());
   }
   /**
    * Move the render position right by given units
@@ -96,17 +96,17 @@ class PDF extends FPDI
   function numberOfLines($width, $text)
   {
     $nbLines = 0;
-    $lines = split("\n", $text);
+    $lines = preg_split('/\n/', $text);
     foreach ($lines as $line)
       $nbLines += $this->NbLines($width, $line);
     return $nbLines;
   }
-  
+
   /**
-   * The following code is taken from FPDF Add-On 'Table with MultiCells' 
+   * The following code is taken from FPDF Add-On 'Table with MultiCells'
    * @see http://www.fpdf.de/downloads/addons/3/
-   */ 
-   
+   */
+
   /**
    * If the height h would cause an overflow, add a new page immediately
    * @param h The height

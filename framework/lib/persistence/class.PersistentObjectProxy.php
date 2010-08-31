@@ -72,16 +72,6 @@ class PersistentObjectProxy
     return call_user_func_array(array($this->_realSubject, $name), $arguments);
   }
   /**
-   * Delegate static method call to the instance.
-   */
-  public function __callStatic($name, array $arguments)
-  {
-    if ($this->_realSubject == null) {
-      $this->resolve();
-    }
-    return call_user_func_array(array($this->_realSubject, $name), $arguments);
-  }
-  /**
    * Load the PersistentObject instance. Use this method if the subject should be loaded
    * with a depth greater than BUILDDEPTH_SINGLE
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build

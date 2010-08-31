@@ -33,10 +33,10 @@ define("QUERYOP_OR", 'OR'); // the or operator
  * ObjectQuery attributes
  */
 $OQ_ATTRIBUTES = array(
-  "pre_operator",
-  "inter_operator",
-  "query_condition",
-  "table_name"
+  "object_query_pre_operator",
+  "object_query_inter_operator",
+  "object_query_query_condition",
+  "object_query_table_name"
 );
 
 /**
@@ -51,9 +51,9 @@ $OQ_ATTRIBUTES = array(
  * no operator is given LIKE '%...%' is assumed.
  *
  * All value conditions of one template are joined with the same operator ('AND', 'OR')
- * given in the "inter_operator" (DATATYPE_IGNORE) value of the template.
+ * given in the "object_query_inter_operator" value of the template.
  * The set of conditions of a template is preceded by the operator ('AND', 'OR', 'NOT')
- * given in the "pre_operator" (DATATYPE_IGNORE) value (default: 'AND') of the template
+ * given in the "object_query_pre_operator" value (default: 'AND') of the template
  * (see ObjectQuery::getObjectTemplate()).
  *
  * Multiple conditions for one value are built using different object templates of the
@@ -71,30 +71,30 @@ $OQ_ATTRIBUTES = array(
  * // WHERE (Author.name LIKE '%ingo%' AND Author.email LIKE '%wemove%') OR (Author.name LIKE '%herwig%') AND
  * //       (Recipe.created >= '2004-01-01') AND (Recipe.created < '2005-01-01') AND ((Recipe.name LIKE '%Salat%') OR (Recipe.portions = 4))
  *
- * $query = &PersistenceFacade::createObjectQuery('Author');
+ * $query = PersistenceFacade::getInstance()->createObjectQuery('Author');
  *
  * // (Author.name LIKE '%ingo%' AND Author.email LIKE '%wemove%')
  * $authorTpl1 = &$query->getObjectTemplate('Author');
- * $authorTpl1->setValue("name", "ingo", DATATYPE_ATTRIBUTE);
- * $authorTpl1->setValue("email", "LIKE '%wemove%'", DATATYPE_ATTRIBUTE);
+ * $authorTpl1->setValue("name", "ingo");
+ * $authorTpl1->setValue("email", "LIKE '%wemove%'");
  *
  * // OR Author.name LIKE '%herwig%'
  * $authorTpl2 = &$query->getObjectTemplate('Author', QUERYOP_OR);
- * $authorTpl2->setValue("name", "herwig", DATATYPE_ATTRIBUTE);
+ * $authorTpl2->setValue("name", "herwig");
  *
  * // Recipe.created >= '2004-01-01' AND Recipe.created < '2005-01-01'
  * $recipeTpl1 = &$query->getObjectTemplate('Recipe');
- * $recipeTpl1->setValue("created", ">= '2004-01-01'", DATATYPE_ATTRIBUTE);
+ * $recipeTpl1->setValue("created", ">= '2004-01-01'");
  * $recipeTpl2 = &$query->getObjectTemplate('Recipe');
- * $recipeTpl2->setValue("created", "< '2005-01-01'", DATATYPE_ATTRIBUTE);
+ * $recipeTpl2->setValue("created", "< '2005-01-01'");
  *
  * // AND (Recipe.name LIKE '%Salat%' OR Recipe.portions = 4)
  * // could have be built using one template, but this demonstrates the usage
  * // of the ObjectQuery::makeGroup() method
  * $recipeTpl3 = &$query->getObjectTemplate('Recipe');
- * $recipeTpl3->setValue("name", "Salat", DATATYPE_ATTRIBUTE);
+ * $recipeTpl3->setValue("name", "Salat");
  * $recipeTpl4 = &$query->getObjectTemplate('Recipe');
- * $recipeTpl4->setValue("portions", "= 4", DATATYPE_ATTRIBUTE);
+ * $recipeTpl4->setValue("portions", "= 4");
  * $query->makeGroup(array(&$recipeTpl3, &$recipeTpl4), QUERYOP_AND, QUERYOP_OR);
  *
  * $authorTpl1->addChild($recipeTpl1);
@@ -115,23 +115,23 @@ $OQ_ATTRIBUTES = array(
  */
 class ObjectQuery implements ChangeListener
 {
-  var $_id = '';
-  var $_typeNode = null;
-  var $_root = null;
-  var $_conditions = array();
-  var $_groups = array();
-  var $_groupedOIDs = array();
-  var $_query = '';
+  private $_id = '';
+  private $_typeNode = null;
+  private $_root = null;
+  private $_conditions = array();
+  private $_groups = array();
+  private $_groupedOIDs = array();
+  private $_query = '';
 
   /**
    * Constructor.
    * @param type The type to search for.
    */
-  function ObjectQuery($type)
+  public function ObjectQuery($type)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $this->_typeNode = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
-    $this->_typeNode->setValue("table_name", "SearchNode", DATATYPE_IGNORE);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $this->_typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+    $this->_typeNode->setValue("object_query_table_name", "SearchNode");
     $this->_root = new Node('ROOT');
     $this->_id = $this->_root->getOID();
   }
@@ -143,22 +143,22 @@ class ObjectQuery implements ChangeListener
    * @return A newly created instance of a Node subclass, that defines
    *         the requested type.
    */
-  function &getObjectTemplate($type, $preOperator=QUERYOP_AND, $interOperator=QUERYOP_AND)
+  public function getObjectTemplate($type, $preOperator=QUERYOP_AND, $interOperator=QUERYOP_AND)
   {
     // if the requested template type is the same as the search type and it was not requested
     // before, we return the type node. this will make sure that the values set on the first
     // template are really selected by the query, even if more templates of the same type are involved.
     if ($type == $this->_typeNode->getType() && $this->_typeNode->getNumParents() == 0)
     {
-      $template = &$this->_typeNode;
+      $template = $this->_typeNode;
     }
     else
     {
-      $persistenceFacade = &PersistenceFacade::getInstance();
-      $template = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+      $persistenceFacade = PersistenceFacade::getInstance();
+      $template = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
     }
-    $template->setValue("pre_operator", $preOperator, DATATYPE_IGNORE);
-    $template->setValue("inter_operator", $interOperator, DATATYPE_IGNORE);
+    $template->setValue("object_query_pre_operator", $preOperator);
+    $template->setValue("object_query_inter_operator", $interOperator);
     $template->addChangeListener($this);
     $this->_root->addChild($template);
     return $template;
@@ -169,29 +169,29 @@ class ObjectQuery implements ChangeListener
    * @param preOperator One of the QUERYOP constants that precedes the conditions described in the template [default: QUERYOP_AND]
    * @param interOperator One of the QUERYOP constants that is used to join the conditions described in the template [default: QUERYOP_AND]
    */
-  function registerObjectTemplate(&$template, $preOperator=QUERYOP_AND, $interOperator=QUERYOP_AND)
+  public function registerObjectTemplate(Node $template, $preOperator=QUERYOP_AND, $interOperator=QUERYOP_AND)
   {
     if ($template != null)
     {
-      $mapper = &ObjectQuery::getMapper($template);
+      $mapper = self::getMapper($template);
       if ($mapper == null)
         return;
 
       $template->addChangeListener($this);
 
       // set the oid values so that they are used in the query
-      if (!PersistenceFacade::isDummyId($template->getDBID()))
+      if (!ObjectId::isDummyId($template->getDBID()))
       {
-        $oidParts = PersistenceFacade::decomposeOID($template->getOID());
+        $ids = $template->getOID()->getId();
         $i = 0;
         foreach ($mapper->getPkNames() as $pkName)
-          $template->setValue($pkName, $oidParts['id'][$i++], true);
+          $template->setValue($pkName, $ids[$i++], true);
       }
       // set the values so that they are used in the query
-      $template->copyValues($template, array(DATATYPE_ATTRIBUTE));
+      $template->copyValues($template);
 
-      $template->setValue("pre_operator", $preOperator);
-      $template->setValue("inter_operator", $interOperator);
+      $template->setValue("object_query_pre_operator", $preOperator);
+      $template->setValue("object_query_inter_operator", $interOperator);
       $this->_root->addChild($template);
     }
   }
@@ -202,9 +202,10 @@ class ObjectQuery implements ChangeListener
    * @param preOperator One of the QUERYOP constants that precedes the group [default: QUERYOP_AND]
    * @param interOperator One of the QUERYOP constants that is used to join the conditions inside the group [default: QUERYOP_OR]
    */
-  function makeGroup($templates, $preOperator=QUERYOP_AND, $interOperator=QUERYOP_OR)
+  public function makeGroup($templates, $preOperator=QUERYOP_AND, $interOperator=QUERYOP_OR)
   {
-    $this->groups[sizeof($this->groups)] = array('tpls' => $templates, 'pre_operator' => $preOperator, 'inter_operator' => $interOperator);
+    $this->groups[sizeof($this->groups)] = array('tpls' => $templates, 'object_query_pre_operator' => $preOperator,
+      'object_query_inter_operator' => $interOperator);
     // store grouped nodes in an extra array to separate them from the others
     for ($i=0; $i<sizeof($templates); $i++)
     {
@@ -221,7 +222,7 @@ class ObjectQuery implements ChangeListener
    * @param value The value.
    * @return The escaped value.
    */
-  function escapeValue($value)
+  public function escapeValue($value)
   {
     $value = str_replace("'", "\'", $value);
     return $value;
@@ -240,7 +241,7 @@ class ObjectQuery implements ChangeListener
     // build the query
     $this->_query = $this->buildQuery($buildDepth, $attribs);
 
-    return ObjectQuery::executeString($this->_typeNode->getType(), $this->_query, $buildDepth, $orderby, $pagingInfo, $attribs);
+    return self::executeString($this->_typeNode->getType(), $this->_query, $buildDepth, $orderby, $pagingInfo, $attribs);
   }
   /**
    * Execute a serialized object query
@@ -253,21 +254,21 @@ class ObjectQuery implements ChangeListener
    * @param pagingInfo A reference paging info instance (optional, default null does not work in PHP4).
    * @return A list of objects that match the given conditions or a list of oids
    */
-  function executeString($type, $query, $buildDepth, $orderby=null, &$pagingInfo)
+  public function executeString($type, $query, $buildDepth, $orderby=null, &$pagingInfo)
   {
     $result = array();
 
     if (strlen($query) == 0) {
       return $result;
     }
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $this->_typeNode = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
-    $mapper = &ObjectQuery::getMapper($this->_typeNode);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $this->_typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+    $mapper = self::getMapper($this->_typeNode);
     if ($mapper == null) {
       return $result;
     }
     // add orderby clause
-    $query .= ObjectQuery::getOrderby($type, $query, $orderby);
+    $query .= self::getOrderby($type, $query, $orderby);
 
     // execute the query
     $stmt = &$mapper->select($query, $pagingInfo);
@@ -296,7 +297,7 @@ class ObjectQuery implements ChangeListener
    * @param attribs An array of attributes to load (null to load all, if buildDepth != false). [default: null]
    * @return The sql query string
    */
-  function toString($buildDepth=BUILDDEPTH_SINGLE, $attribs=null)
+  public function toString($buildDepth=BUILDDEPTH_SINGLE, $attribs=null)
   {
     return $this->buildQuery($buildDepth, $attribs);
   }
@@ -306,9 +307,9 @@ class ObjectQuery implements ChangeListener
    * @param attribs An array of attributes to load (null to load all, if buildDepth != false). [default: null]
    * @return The sql query string
    */
-  function buildQuery($buildDepth, $attribs=null)
+  protected function buildQuery($buildDepth, $attribs=null)
   {
-    $mapper = &ObjectQuery::getMapper($this->_typeNode);
+    $mapper = self::getMapper($this->_typeNode);
     if ($mapper == null)
       return;
 
@@ -325,7 +326,7 @@ class ObjectQuery implements ChangeListener
     // create attribute string (use the default select from the mapper, since we are only interested in the attributes)
     if ($buildDepth === false)
       $attribs = array();
-    $select = $mapper->getSelectSQL('', $this->_typeNode->getValue('table_name', DATATYPE_IGNORE), null, $attribs, true);
+    $select = $mapper->getSelectSQL('', $this->_typeNode->getValue('object_query_table_name'), null, $attribs, true);
     $attributeStr = $select['attributeStr'];
 
     // process all nodes in the tree except for root and grouped nodes
@@ -347,15 +348,15 @@ class ObjectQuery implements ChangeListener
       {
         $tpl = &$group['tpls'][$j];
 
-        // override the pre_operator by the inter_operator of the group
+        // override the object_query_pre_operator by the object_query_inter_operator of the group
         $tpl->removeChangeListener($this);
-        $tpl->setValue("pre_operator", $group['inter_operator'], DATATYPE_IGNORE);
+        $tpl->setValue("object_query_pre_operator", $group['object_query_inter_operator']);
         $tpl->addChangeListener($this);
 
         $this->processObjectTemplate($tpl, $tableArray, $groupConditionStr, $relationArray);
       }
       if (strlen($conditionStr) > 0)
-        $conditionStr .= ' '.$group['pre_operator'].' ';
+        $conditionStr .= ' '.$group['object_query_pre_operator'].' ';
       $conditionStr .= '('.$groupConditionStr.')';
     }
 
@@ -386,19 +387,19 @@ class ObjectQuery implements ChangeListener
    * @param relationArray An array of relation strings, where the relations of the template will be added
    * @return An assoziative array with the following keys: 'attributes', 'table', 'conditions'
    */
-  function processObjectTemplate(&$tpl, &$tableArray, &$conditionStr, &$relationArray)
+  protected function processObjectTemplate(Node $tpl, &$tableArray, &$conditionStr, &$relationArray)
   {
     // add table
-    array_push($tableArray, ObjectQuery::getTableName($tpl, true));
+    array_push($tableArray, self::getTableName($tpl, true));
 
     // add conditions
-    $processor = new NodeProcessor('makeConditionStr', array($tpl->getValue("inter_operator", DATATYPE_IGNORE)), $this);
+    $processor = new NodeProcessor('makeConditionStr', array($tpl->getValue("object_query_inter_operator")), $this);
     $processor->run($tpl, false);
-    $curConditionStr = $tpl->getValue("query_condition", DATATYPE_IGNORE);
+    $curConditionStr = $tpl->getValue("object_query_query_condition");
     if (strlen($curConditionStr) > 0)
     {
       if (strlen($conditionStr) > 0)
-        $conditionStr .= ' '.$tpl->getValue("pre_operator", DATATYPE_IGNORE).' ';
+        $conditionStr .= ' '.$tpl->getValue("object_query_pre_operator").' ';
       $conditionStr .= '('.$curConditionStr.')';
     }
 
@@ -406,7 +407,7 @@ class ObjectQuery implements ChangeListener
     $children = &$tpl->getChildren();
     for($i=0; $i<sizeof($children); $i++)
     {
-      $relationStr = ObjectQuery::getRelationCondition($tpl, $children[$i]);
+      $relationStr = self::getRelationCondition($tpl, $children[$i]);
       array_push($relationArray, $relationStr);
     }
   }
@@ -416,18 +417,17 @@ class ObjectQuery implements ChangeListener
    * @param asAliasString Return the table name in the form 'table as alias' [default: false]
    * @return An table name
    */
-  function getTableName(&$tpl, $asAliasString=false)
+  protected function getTableName(Node $tpl, $asAliasString=false)
   {
-    $mapper = &ObjectQuery::getMapper($tpl);
+    $mapper = self::getMapper($tpl);
     if ($mapper == null)
       return '';
 
     $tablename = '';
     $mapperTablename = $mapper->getTableName();
 
-    if ($tpl->hasValue("table_name", DATATYPE_IGNORE))
-    {
-      $tablename = $tpl->getValue("table_name", DATATYPE_IGNORE);
+    if ($tpl->hasValue("object_query_table_name")) {
+      $tablename = $tpl->getValue("object_query_table_name");
     }
     else
     {
@@ -439,13 +439,15 @@ class ObjectQuery implements ChangeListener
         $tablename .= time();
 
       // set the table name for later reference
-      $tpl->setValue("table_name", $tablename, DATATYPE_IGNORE);
+      $tpl->setValue("object_query_table_name", $tablename);
     }
 
-    if ($asAliasString && $tablename != $mapperTablename)
+    if ($asAliasString && $tablename != $mapperTablename) {
       return $mapperTablename.' as '.$tablename;
-    else
+    }
+    else {
       return $tablename;
+    }
   }
   /**
    * Get the relation condition between a parent and a child node.
@@ -453,16 +455,16 @@ class ObjectQuery implements ChangeListener
    * @param childTpl The child template node
    * @return The condition string
    */
-  function getRelationCondition(&$parentTpl, &$childTpl)
+  protected function getRelationCondition(Node $parentTpl, Node $childTpl)
   {
-    $parentMapper = &ObjectQuery::getMapper($parentTpl);
-    $childMapper = &ObjectQuery::getMapper($childTpl);
+    $parentMapper = self::getMapper($parentTpl);
+    $childMapper = self::getMapper($childTpl);
     if ($parentMapper != null && $childMapper != null)
     {
       // foreign key names are defined by NodeUnifiedRDBMapper
       $pkColumns = $parentMapper->getPKColumnNames();
       $fkColumn = $childMapper->getFKColumnName($parentTpl->getType(), $childTpl->getRole($parentTpl->getOID()), false);
-      $relationStr = ObjectQuery::getTableName($childTpl).'.'.$fkColumn.' = '.ObjectQuery::getTableName($parentTpl).'.'.$pkColumns[0];
+      $relationStr = self::getTableName($childTpl).'.'.$fkColumn.' = '.self::getTableName($parentTpl).'.'.$pkColumns[0];
       return $relationStr;
     }
     return '';
@@ -474,11 +476,11 @@ class ObjectQuery implements ChangeListener
    * @param query The query to set the order by on
    * @param orderby Array of attribute names
    */
-  function getOrderby($type, $query, $orderby)
+  protected function getOrderby($type, $query, $orderby)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $mapper = &$persistenceFacade->getMapper($type);
-    ObjectQuery::checkMapper($mapper);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $mapper = $persistenceFacade->getMapper($type);
+    self::checkMapper($mapper);
 
     // get default order if not given
     if ($orderby == null) {
@@ -504,31 +506,30 @@ class ObjectQuery implements ChangeListener
   }
   /**
    * Build a condition string from an object template. Used as a callback for a NodeProcessor.
-   * Adds each value condition to the "query_condition" value (DATATYPE_IGNORE)
+   * Adds each value condition to the "object_query_query_condition" value
    * @param node A reference to the Node the holds the value (the template)
    * @param valueName The name of the value
-   * @param dataType The dataType of the value
    * @param operator The operator to connect the value conditions with
    * @see NodeProcessor
    */
-  function makeConditionStr(&$node, $valueName, $dataType, $operator)
+  protected function makeConditionStr(Node $node, $valueName, $operator)
   {
     // check if the value was set when building the query
-    if (isset($this->_conditions[$node->getOID()][$dataType][$valueName]))
+    if (isset($this->_conditions[$node->getOID()][$valueName]))
     {
       // check if the value is a foreign key and ignore it if true
-      $mapper = &ObjectQuery::getMapper($node);
+      $mapper = self::getMapper($node);
       if ($mapper && $mapper->isForeignKey($valueName))
         return;
 
-      $currentCondition = $node->getValue("query_condition", DATATYPE_IGNORE);
+      $currentCondition = $node->getValue("object_query_query_condition");
       if (strlen($currentCondition))
         $currentCondition .= ' '.$operator.' ';
 
-      $value = $node->getValue($valueName, $dataType);
+      $value = $node->getValue($valueName);
 
       // set default LIKE '%...%' if no operator given
-        $parts = split(' ', $value);
+        $parts = preg_split('/ /', $value);
         if (sizeof($parts) == 1)
       {
         if (!in_array($valueName, $mapper->getPkNames())) {
@@ -540,10 +541,10 @@ class ObjectQuery implements ChangeListener
         }
       }
 
-      $colName = $mapper->getColumnName($valueName, $dataType);
+      $colName = $mapper->getColumnName($valueName);
       if ($colName !== null)
       {
-        $currentCondition .= ObjectQuery::getTableName($node).'.'.$colName.' '.$value;
+        $currentCondition .= self::getTableName($node).'.'.$colName.' '.$value;
       }
       else
       {
@@ -555,7 +556,7 @@ class ObjectQuery implements ChangeListener
       }
 
       $node->removeChangeListener($this);
-      $node->setValue("query_condition", $currentCondition, DATATYPE_IGNORE);
+      $node->setValue("object_query_query_condition", $currentCondition);
       $node->addChangeListener($this);
     }
   }
@@ -564,11 +565,11 @@ class ObjectQuery implements ChangeListener
    * @param type The node type to get the connection from connection
    * @return The connection
    */
-  function &getConnection($type)
+  protected function getConnection($type)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $mapper = &$persistenceFacade->getMapper($type);
-    $conn = &$mapper->getConnection();
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $mapper = $persistenceFacade->getMapper($type);
+    $conn = $mapper->getConnection();
     return $conn;
   }
   /**
@@ -576,12 +577,12 @@ class ObjectQuery implements ChangeListener
    * @param node A reference to the Node to get the mapper for
    * @return The mapper
    */
-  function &getMapper(&$node)
+  protected function getMapper(Node $node)
   {
     if ($node != null)
     {
       $mapper = $node->getMapper();
-      ObjectQuery::checkMapper($mapper);
+      self::checkMapper($mapper);
       return $mapper;
     }
     return null;
@@ -591,7 +592,7 @@ class ObjectQuery implements ChangeListener
    * @param mapper A reference to the PersistenceMapper
    * Throws an Exception
    */
-  function checkMapper($mapper)
+  protected function checkMapper(PersistentMapper $mapper)
   {
     if (!($mapper instanceof NodeUnifiedRDBMapper)) {
       throw new PersistenceException(Message::get('%1% does only support PersistenceMappers of type NodeUnifiedRDBMapper.', array(get_class($this))));
@@ -605,14 +606,14 @@ class ObjectQuery implements ChangeListener
   /**
    * @see ChangeListener::getId()
    */
-  function getId()
+  public function getId()
   {
     return $this->_id;
   }
   /**
    * @see ChangeListener::valueChanged()
    */
-  function valueChanged(PersistentObject $object, $name, $oldValue, $newValue)
+  public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue)
   {
     if ( !in_array($name, $GLOBALS['OQ_ATTRIBUTES']) )
     {
@@ -627,10 +628,10 @@ class ObjectQuery implements ChangeListener
   /**
    * @see ChangeListener::propertyChanged()
    */
-  function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
+  public function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
   /**
    * @see ChangeListener::stateChanged()
    */
-  function stateChanged(PersistentObject $object, $oldValue, $newValue) {}
+  public function stateChanged(PersistentObject $object, $oldValue, $newValue) {}
 }
 ?>

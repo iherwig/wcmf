@@ -571,7 +571,7 @@ abstract class UserManager
    * @return A reference to the created user
    * @note Precondition: The login does not exist
    */
-  protected abstract function &createUserImpl($name, $firstname, $login, $password);
+  protected abstract function createUserImpl($name, $firstname, $login, $password);
 
   /**
    * Remove a user.
@@ -579,7 +579,7 @@ abstract class UserManager
    * @note This method is responsible for removing the user from all roles it has
    * @note Precondition: The login does exist
    */
-  protected abstract function removeUserImpl($user);
+  protected abstract function removeUserImpl(User $user);
 
   /**
    * Set a user property.
@@ -587,7 +587,7 @@ abstract class UserManager
    * @param property One of the USER_PROPERTY constants or 'password'
    * @param value The value to set this property to
    */
-  protected abstract function setUserPropertyImpl($user, $property, $value);
+  protected abstract function setUserPropertyImpl(User $user, $property, $value);
 
   /**
    * Create a role.
@@ -603,7 +603,7 @@ abstract class UserManager
    * @note This method is responsible for removing the role from all users it is attached to
    * @note Precondition: The role does exist
    */
-  protected abstract function removeRoleImpl($role);
+  protected abstract function removeRoleImpl(Role $role);
 
   /**
    * Set a role property.
@@ -611,7 +611,7 @@ abstract class UserManager
    * @param property One of the ROLE_PROPERTY constants
    * @param value The value to set this property to
    */
-  protected abstract function setRolePropertyImpl($role, $property, $value);
+  protected abstract function setRolePropertyImpl(Role $role, $property, $value);
 
   /**
    * Add a user to a role.
@@ -619,7 +619,7 @@ abstract class UserManager
    * @param user A reference to the user
    * @note Precondition: user and role do exist and the user does not have the role
    */
-  protected abstract function addUserToRoleImpl($role, $user);
+  protected abstract function addUserToRoleImpl(Role $role, User $user);
 
   /**
    * Remove a user from a role.
@@ -627,6 +627,6 @@ abstract class UserManager
    * @param user A reference to the user
    * @note Precondition: user and role do exist and the user does have the role
    */
-  protected abstract function removeUserFromRoleImpl($role, $user);
+  protected abstract function removeUserFromRoleImpl(Role $role, User $user);
 }
 ?>

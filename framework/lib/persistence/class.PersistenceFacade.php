@@ -46,8 +46,7 @@ abstract class PersistenceFacade
   public static function getInstance()
   {
     if (!isset(self::$_instance)) {
-      $objectFactory = ObjectFactory::getInstance();
-      self::$_instance = $objectFactory->createInstanceFromConfig('implementation', 'PersistenceFacade');
+      self::$_instance = ObjectFactory::createInstanceFromConfig('implementation', 'PersistenceFacade');
     }
     return self::$_instance;
   }
@@ -55,24 +54,24 @@ abstract class PersistenceFacade
    * Get a list of types defined in the application.
    * @return The list of types
    */
-  abstract static function getKnownTypes();
+  abstract function getKnownTypes();
   /**
    * Check if a type is defined in the application.
    * @param type The type to check
    * @return True/False wether the type is defined or not
    */
-  abstract static function isKnownType($type);
+  abstract function isKnownType($type);
   /**
    * Create an object query.
    * @param type The object type to search for
    * @return An ObjectQuery instance
    */
-  abstract static function createObjectQuery($type);
+  abstract function createObjectQuery($type);
   /**
    * Create a string query.
    * @return An StringQuery instance
    */
-  abstract static function createStringQuery();
+  abstract function createStringQuery();
   /**
    * Load an object from the database.
    * @param oid The object id of the object to construct

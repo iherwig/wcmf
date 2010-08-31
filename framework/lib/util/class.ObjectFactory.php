@@ -16,6 +16,7 @@
  *
  * $Id$
  */
+require_once(BASE."wcmf/lib/core/class.ConfigurationException.php");
 require_once(BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
@@ -59,7 +60,7 @@ class ObjectFactory
       throw new ConfigurationException($parser->getErrorMsg());
     }
     // find class file
-    $classFile = $this->getClassfileFromConfig($className);
+    $classFile = self::getClassfileFromConfig($className);
 
     // include class definition
     if (file_exists(BASE.$classFile))
@@ -86,7 +87,7 @@ class ObjectFactory
     $obj = null;
 
     // load class definition
-    if (($className = $this->loadClassDefinitionFromConfig($section, $classEntry)) !== false)
+    if (($className = self::loadClassDefinitionFromConfig($section, $classEntry)) !== false)
     {
       // find init parameters
       $initParams = null;

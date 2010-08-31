@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,14 +11,15 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(E_ALL | E_PARSE);
 
 require_once("base_dir.php");
+require_once(BASE."wcmf/lib/core/AutoLoader.php");
 require_once(BASE."wcmf/lib/util/class.Log.php");
 require_once(BASE."wcmf/lib/util/class.Message.php");
 require_once(BASE."wcmf/lib/presentation/class.Request.php");
@@ -27,8 +28,8 @@ require_once(BASE."wcmf/lib/presentation/class.ActionMapper.php");
 require_once(BASE."wcmf/lib/util/class.SearchUtil.php");
 
 // initialize the application
-$application = &Application::getInstance();
-$callParams = &$application->initialize();
+$application = Application::getInstance();
+$callParams = $application->initialize();
 
 // process the requested action (we don't use the result here)
 $request = new Request(
@@ -58,16 +59,15 @@ function onError($message, $file='', $line='')
   static $numCalled = 0;
 
   $data['errorMsg'] = $message;
-  Log::error($message."\n".WCMFException::getStackTrace(), 'main');
+  Log::error($message."\n".Application::getStackTrace(), 'main');
 
   // rollback current transaction
-  $persistenceFacade = &PersistenceFacade::getInstance();
+  $persistenceFacade = PersistenceFacade::getInstance();
   $persistenceFacade->rollbackTransaction();
 
   // prevent recursive calls
   $numCalled++;
-  if ($numCalled == 2)
-  {
+  if ($numCalled == 2) {
     $request = new Request('FailureController', '', 'fatal', $data);
     $request->setResponseFormat($responseFormat);
     ActionMapper::processAction($request);
@@ -99,7 +99,7 @@ function onError($message, $file='', $line='')
 function shutdown()
 {
   SearchUtil::commitIndex();
-  
+
   $error = error_get_last();
   if ($error !== NULL) {
     $info = "[SHUTDOWN] file:".$error['file']." | ln:".$error['line']." | msg:".$error['message'] .PHP_EOL;

@@ -33,12 +33,12 @@ interface IFormat
    * Deserialize Request data from the external representation into Nodes and scalars/arrays.
    * @param request A reference to the Request instance
    */
-  function deserialize($request);
+  function deserialize(Request $request);
 
   /**
    * Serialize Response data according to the external representation.
    * @param response A reference to the Response instance
    */
-  function serialize($response);
+  function serialize(Response $response);
 }
 ?>

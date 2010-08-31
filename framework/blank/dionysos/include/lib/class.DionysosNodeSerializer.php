@@ -168,7 +168,7 @@ class DionysosNodeSerializer
       }
 
       // add current result to result
-      $path = split('/', $curNode->getPath());
+      $path = preg_split('/\//', $curNode->getPath());
       if (sizeof($path) == 1)
       {
         $result = &$curResult;

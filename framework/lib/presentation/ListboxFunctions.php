@@ -62,7 +62,7 @@ function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $la
   // create the real entries
   $orderby = null;
   if ($orderbyStr != null)
-    $orderby = split(',', $orderbyStr);
+    $orderby = preg_split('/,/', $orderbyStr);
 
   $query = &PersistenceFacade::createStringQuery();
   $pagingInfo = new PagingInfo();
@@ -160,7 +160,7 @@ function g_getOIDArray($oidStringList)
 	  if (strpos($oidStringList, '|') === false)
 	  	$oids = array($oidStringList);
 	 	else
-	  	$oids = split('\|', $oidStringList);
+	  	$oids = preg_split('/\|/', $oidStringList);
 	  foreach($oids as $oid)
 	  {
 	  	if (PersistenceFacade::isValidOID($oid))

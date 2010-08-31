@@ -67,9 +67,9 @@ class RightsManager
   public static function getInstance()
   {
     if (!isset(self::$_instance)) {
-  	  self::$_instance = new RightsManager();
+      self::$_instance = new RightsManager();
       $parser = InifileParser::getInstance();
-      self::$_anonymous = $parser->getValue('anonymous', 'cms');
+      self::$_instance->_anonymous = $parser->getValue('anonymous', 'cms');
     }
     return self::$_instance;
   }
@@ -84,13 +84,13 @@ class RightsManager
     }
     else
     {
-  	  // include this later to avoid circular includes
-  	  require_once(BASE."wcmf/lib/security/class.AuthUser.php");
+      // include this later to avoid circular includes
+      require_once(BASE."wcmf/lib/security/class.AuthUser.php");
       $session = SessionData::getInstance();
       $user = null;
       if ($session->exist('auth_user'))
       {
-        $user = &$session->get('auth_user');
+        $user = $session->get('auth_user');
         $user->resetRoleCache();
       }
       return $user;
@@ -130,16 +130,16 @@ class RightsManager
   public function authorize($resource, $context, $action)
   {
     global $PUBLIC_ACTIONS;
-    if (RightsManager::isAnonymous()) {
+    if ($this->isAnonymous()) {
       return true;
     }
     if (!in_array($action, $PUBLIC_ACTIONS))
     {
       // if authorization is requested for an oid, we check the type first
-      if (PersistenceFacade::isValidOID($resource))
+      if (ObjectId::isValid($resource))
       {
-        $oidParts = PersistenceFacade::decomposeOID($resource);
-        if (!$this->authorize($oidParts['type'], $context, $action)) {
+        $oid = ObjectId::parse($resource);
+        if (!$this->authorize($oid->getType(), $context, $action)) {
           return false;
         }
       }
@@ -150,16 +150,14 @@ class RightsManager
       $authUser = $this->getAuthUser();
       if (!($authUser && $authUser->authorize($actionKey)))
       {
-    	if ($authUser)
-    	{
-    	  // valid user but authorization for action failed
+        if ($authUser) {
+          // valid user but authorization for action failed
           return false;
         }
-        else
-        {
+        else {
           // no valid user
-    	  return false;
-    	}
+          return false;
+        }
       }
     }
     return true;

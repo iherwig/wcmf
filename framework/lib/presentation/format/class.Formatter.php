@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -35,7 +35,7 @@ class Formatter
    * @note UTF-8 encoded request data is decoded automatically
    * @param request A reference to the Request instance
    */
-  function deserialize(&$request)
+  public function deserialize(Request $request)
   {
     // get the formatter that should be used for this request format
     $format = $request->getFormat();
@@ -44,13 +44,12 @@ class Formatter
       // default to html (POST/GET variables) format
       $format = MSG_FORMAT_HTML;
     }
-    $objectFactory = &ObjectFactory::getInstance();
-    $formatter = &$objectFactory->createInstanceFromConfig('implementation', $format.'Format');
+    $formatter = ObjectFactory::createInstanceFromConfig('implementation', $format.'Format');
     if ($formatter === null) {
-      WCMFException::throwEx($objectFactory->getErrorMsg()."\nRequest: ".$request->toString(), __FILE__, __LINE__);
+      throw new ConfigurationException($objectFactory->getErrorMsg()."\nRequest: ".$request->toString());
     }
     // decode UTF-8
-    $data = &$request->getData();
+    $data = $request->getData();
     foreach ($data as $key => $value)
     {
       if (is_string($value) && EncodingUtil::isUtf8($value)) {
@@ -65,19 +64,18 @@ class Formatter
    * Serialize Response according to the output format.
    * @param response A reference to the Response instance
    */
-  function serialize(&$response)
+  public function serialize(Response $response)
   {
     // get the formatter that should be used for this response format
     $format = $response->getFormat();
     if ($format == null)
     {
       // the response format must be given!
-      WCMFException::throwEx("No response format defined for ".$response->toString(), __FILE__, __LINE__);
+      throw new ConfigurationException("No response format defined for ".$response->toString());
     }
-    $objectFactory = &ObjectFactory::getInstance();
-    $formatter = &$objectFactory->createInstanceFromConfig('implementation', $format.'Format');
+    $formatter = ObjectFactory::createInstanceFromConfig('implementation', $format.'Format');
     if ($formatter === null) {
-      WCMFException::throwEx($objectFactory->getErrorMsg()."\nResponse: ".$response->toString(), __FILE__, __LINE__);
+      throw new ConfigurationException($objectFactory->getErrorMsg()."\nResponse: ".$response->toString());
     }
     $formatter->serialize($response);
   }

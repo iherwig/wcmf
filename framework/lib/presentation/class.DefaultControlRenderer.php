@@ -134,7 +134,7 @@ class DefaultControlRenderer
     {
       $list = $matches[1];
       // get the entity type to list and an optional filter
-      $parts = split('\|', $list);
+      $parts = preg_split('/\|/', $list);
       $entityType = array_shift($parts);
       $filter = join('', $parts);
       $view->assign('entityType', $entityType);

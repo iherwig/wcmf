@@ -45,11 +45,9 @@ define("DATATYPE_IGNORE",    3); // all data items >= DATATYPE_IGNORE wont be sh
  */
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
 {
-  private static $_dbConnections = array();
-
   private $_connParams = null; // database connection parameters
-  protected $_conn = null;       // database connection
-  protected $_dbPrefix = '';     // database prefix (if given in the configuration file)
+  private $_conn = null;     // database connection
+  protected $_dbPrefix = '';   // database prefix (if given in the configuration file)
 
   private $_relations = null;
   private $_attributes = null;
@@ -85,13 +83,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    */
   private function connect()
   {
-    // if connection is already opened reuse it
-    $connectionKey = join(':', array_values($this->_connParams));
-    if (array_key_exists($connectionKey, self::$_dbConnections)) {
-      $this->_conn = self::$_dbConnections[$connectionKey];
-    }
-    // otherwise connect
-    elseif (isset($this->_connParams['dbType']) && isset($this->_connParams['dbHostName']) &&
+    // connect
+    if (isset($this->_connParams['dbType']) && isset($this->_connParams['dbHostName']) &&
       isset($this->_connParams['dbUserName']) && isset($this->_connParams['dbPassword']) &&
       isset($this->_connParams['dbName']))
     {
@@ -109,10 +102,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       }
 
       // get database prefix if defined
-      $this->_dbPrefix = $this->_connParams['dbPrefix'];
-
-      // store connection for reuse
-      self::$_dbConnections[$connectionKey] = $this->_conn;
+      if (isset($this->_connParams['dbPrefix'])) {
+        $this->_dbPrefix = $this->_connParams['dbPrefix'];
+      }
     }
     else {
       throw new InvalidArgumentException("Wrong parameters for constructor.", __FILE__, __LINE__);
@@ -178,7 +170,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * @param pagingInfo An PagingInfo instance describing which page to load
    * @return A PDOStatement instance
    */
-  public function select($sql, PagingInfo $pagingInfo)
+  public function select($sql, PagingInfo $pagingInfo=null)
   {
     if ($this->_conn == null) {
       $this->connect();
@@ -548,6 +540,17 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
     // postcondition: the object and all dependend objects are deleted from db
     return true;
+  }
+  /**
+   * Get the database connection.
+   * @return A reference to the PDOConnection object
+   */
+  function getConnection()
+  {
+    if ($this->_conn == null) {
+      $this->connect();
+    }
+    return $this->_conn;
   }
   /**
    * @see PersistenceMapper::getOIDs()

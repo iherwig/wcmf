@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -48,7 +48,7 @@ class PersistentIterator
     $this->_allList = array();
     $this->_currentOID = $oid;
     $this->_currentDepth = 0;
-  }  
+  }
   /**
    * Save the iterator state to the session
    * @return A unique id to provide for load, see PersistentIterator::load()
@@ -58,11 +58,11 @@ class PersistentIterator
     $session = &SessionData::getInstance();
 
     $uid = md5(uniqid(""));
-    $state = array('end' => $this->_end, 'oidList' => $this->_oidList, 'allList' => $this->_allList, 'currentOID' => $this->_currentOID, 
+    $state = array('end' => $this->_end, 'oidList' => $this->_oidList, 'allList' => $this->_allList, 'currentOID' => $this->_currentOID,
       'currentDepth' => $this->_currentDepth);
     $session->set('PersistentIterator.'.$uid, $state);
     return $uid;
-  }  
+  }
   /**
    * Load an iterator state from the session
    * @note static method
@@ -84,19 +84,19 @@ class PersistentIterator
     $instance->_allList = $state['allList'];
     $instance->_currentDepth = $state['currentDepth'];
     return $instance;
-  }  
+  }
   /**
    * Proceed to next oid.
    * @return A reference to the Iterator.
    */
   function &proceed()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $node = &$persistenceFacade->load($this->_currentOID, BUILDDEPTH_SINGLE);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $node = $persistenceFacade->load($this->_currentOID, BUILDDEPTH_SINGLE);
 
     $childOIDs = $node->getProperty('childoids');
     $this->addToSeenList($childOIDs, ++$this->_currentDepth);
-    
+
     if (sizeOf($this->_oidList) != 0) {
       list($this->_currentOID, $this->_currentDepth) = array_pop($this->_oidList);
     }
@@ -104,7 +104,7 @@ class PersistentIterator
       $this->_end = true;
     }
     return $this;
-  } 
+  }
   /**
    * Get the current oid.
    * @return The current oid.
@@ -124,29 +124,29 @@ class PersistentIterator
   /**
    * Find out whether iteration is finished.
    * @return 'True' if iteration is finished, 'False' alternatively.
-   */  
+   */
   function isEnd()
-  { 
+  {
     return $this->_end;
-  } 
+  }
   /**
    * Reset the iterator to given oid.
    * @param oid The oid of the object to start from.
    */
   function reset($oid)
-  {   
+  {
     $this->_end = false;
     $this->_oidList= array();
     $this->_allList = array();
     $this->_currentOID = $oid;
     $this->_currentDepth = 0;
-  } 
+  }
   /**
    * Add oids to the internal processed oid list.
    * @attention Internal use only.
    * @param oidList An array of oids.
    * @param depth The depth of the oids in the tree.
-   */  
+   */
   function addToSeenList($oidList, $depth)
   {
     for ($i=sizeOf($oidList)-1;$i>=0;$i--)
@@ -156,9 +156,9 @@ class PersistentIterator
         array_push($this->_allList, $oidList[$i]);
       }
     }
-  } 
+  }
   /**
-   */  
+   */
   function dumpOIDList()
   {
     $str = '';
@@ -167,6 +167,6 @@ class PersistentIterator
       $str .= $this->_oidList[$i][0].",";
     }
     return $str;
-  } 
+  }
 }
 ?>

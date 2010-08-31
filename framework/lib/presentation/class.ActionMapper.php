@@ -119,7 +119,7 @@ class ActionMapper
       }
     }
     if (strlen($controllerClass) == 0) {
-      throw new ApplicationException($request, null, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
+      throw new ConfigurationsException($request, null, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
     }
 
     // create controller delegate instance if configured

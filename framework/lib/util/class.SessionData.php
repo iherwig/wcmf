@@ -38,7 +38,7 @@ class SessionData
    */
   private static function getClassDefinitionFile()
   {
-      $path = array_pop(split(";", session_save_path()));
+      $path = array_pop(preg_split('/;/', session_save_path()));
       return $path."/sess_cd_".session_id();
   }
 
@@ -63,7 +63,7 @@ class SessionData
         $fp = fopen($filename, "r");
         $classDefs = fread($fp, filesize ($filename));
         fclose($fp);
-        foreach (split("\n", $classDefs) as $classDef)
+        foreach (preg_split('/\n/', $classDefs) as $classDef)
         {
           if ($classDef != '') {
             require_once($classDef);
@@ -101,7 +101,7 @@ class SessionData
   public function get($key)
   {
     $val = null;
-    if (array_key_exists($key, $_SESSION))
+    if (isset($_SESSION) && array_key_exists($key, $_SESSION))
     {
       $val = $_SESSION[$key];
       if (is_object($val))
@@ -125,31 +125,33 @@ class SessionData
   public function set($key, $val, array $classFiles=null)
   {
     // try to store class definition
-
-    if (is_object($val))
+    if (isset($_SESSION))
     {
-      if ($classFiles == null)
+      if (is_object($val))
       {
-        // no class files given -> check for Storable interface
-        $classMethods = array_map(strtolower, get_class_methods($val));
-        if (!in_array('getclassdefinitionfiles', $classMethods)) {
-          throw new IllegalArgumentException("Class ".get_class($val)." does not implement the Storable interface.");
-        }
-        else
+        if ($classFiles == null)
         {
-          // Store class definitions of session object
-          $classFiles = $val->getClassDefinitionFiles();
+          // no class files given -> check for Storable interface
+          $classMethods = array_map(strtolower, get_class_methods($val));
+          if (!in_array('getclassdefinitionfiles', $classMethods)) {
+            throw new IllegalArgumentException("Class ".get_class($val)." does not implement the Storable interface.");
+          }
+          else
+          {
+            // Store class definitions of session object
+            $classFiles = $val->getClassDefinitionFiles();
 
-          if (in_array('saveToSession', $classMethods)) {
-            $val->saveToSession();
+            if (in_array('saveToSession', $classMethods)) {
+              $val->saveToSession();
+            }
           }
         }
-      }
 
-      // Store class definitions of session object
-      $this->addClassDefinitions($classFiles);
+        // Store class definitions of session object
+        $this->addClassDefinitions($classFiles);
+      }
+      $_SESSION[$key] = $val;
     }
-    $_SESSION[$key] = &$val;
   }
   /**
    * Add an array of class definitions to the session's class definitions list.
@@ -167,9 +169,11 @@ class SessionData
     }
     $classDefs = preg_split("/\n/", $classDefsStr);
     $fp = fopen($filename, "a");
-    foreach ($classFiles as $classFile)
-      if (!in_array($classFile, $classDefs))
+    foreach ($classFiles as $classFile) {
+      if (!in_array($classFile, $classDefs)) {
         fwrite($fp, $classFile."\n");
+      }
+    }
     fclose($fp);
   }
   /**
@@ -178,7 +182,9 @@ class SessionData
    */
   public function remove($key)
   {
-    unset($_SESSION[$key]);
+    if (isset($_SESSION)) {
+      unset($_SESSION[$key]);
+    }
   }
   /**
    * Tests, if a certain session variable is defined.
@@ -187,7 +193,7 @@ class SessionData
    */
   public function exist($key)
   {
-    return array_key_exists($key, $_SESSION);
+    return isset($_SESSION) && array_key_exists($key, $_SESSION);
   }
   /**
    * Clear the session data.
@@ -203,10 +209,13 @@ class SessionData
    */
   public function addError($key, $error)
   {
-    if (!is_array($_SESSION[self::$ERROR_VARNAME])) {
-      $_SESSION[self::$ERROR_VARNAME] = array();
+    if (isset($_SESSION))
+    {
+      if (!is_array($_SESSION[self::$ERROR_VARNAME])) {
+        $_SESSION[self::$ERROR_VARNAME] = array();
+      }
+      $_SESSION[self::$ERROR_VARNAME][$key] = $error;
     }
-    $_SESSION[self::$ERROR_VARNAME][$key] = $error;
   }
   /**
    * Get an error stored in the session data.
@@ -215,7 +224,10 @@ class SessionData
    */
   public function getError($key)
   {
-    return $_SESSION[self::$ERROR_VARNAME][$key];
+    if (isset($_SESSION)) {
+      return $_SESSION[self::$ERROR_VARNAME][$key];
+    }
+    return null;
   }
   /**
    * Get all errors stored in the session data.
@@ -223,14 +235,19 @@ class SessionData
    */
   public function getErrors()
   {
-    return $_SESSION[self::$ERROR_VARNAME];
+    if (isset($_SESSION)) {
+      return $_SESSION[self::$ERROR_VARNAME];
+    }
+    return null;
   }
   /**
    * Clear the session error data.
    */
   public function clearErrors()
   {
-    unset($_SESSION[self::$ERROR_VARNAME]);
+    if (isset($_SESSION)) {
+      unset($_SESSION[self::$ERROR_VARNAME]);
+    }
   }
   /**
    * Destroy the session.

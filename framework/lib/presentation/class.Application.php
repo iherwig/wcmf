@@ -91,17 +91,16 @@ class Application
     $defaultResponseFormat=MSG_FORMAT_HTML)
   {
     Application::setupGlobals($configPath, $mainConfigFile);
-    $parser = &WCMFInifileParser::getInstance();
+    $parser = WCMFInifileParser::getInstance();
 
     // include files from implementation section
     // NOTE: this must be done before the session is started to avoid incomplete object definitions
-    $objectFactory = &ObjectFactory::getInstance();
     $implementationFiles = array_values($parser->getSection("implementation"));
     foreach($implementationFiles as $implementationFile)
     {
-      $impl = BASE.$objectFactory->getClassfileFromConfig($implementationFile);
+      $impl = BASE.ObjectFactory::getClassfileFromConfig($implementationFile);
       if (is_file($impl)) {
-        require_once(BASE.$objectFactory->getClassfileFromConfig($implementationFile));
+        require_once(BASE.ObjectFactory::getClassfileFromConfig($implementationFile));
       }
       else {
         throw new ConfigurationException("Implementation file ".$implementationFile." not found.", __FILE__, __LINE__);
@@ -110,7 +109,7 @@ class Application
 
     // initialize session with session id if given
     $sessionId = Application::getCallParameter('sid', false);
-    if ($sessionId === false) { 
+    if ($sessionId === false) {
       $sessionId = Application::getCallParameter('PHPSESSID', false);
     }
     if ($sessionId !== false) {
@@ -166,7 +165,7 @@ class Application
   public static function getCallParameter($name, $default)
   {
     $value = $default;
-    $application = &Application::getInstance();
+    $application = Application::getInstance();
     if (array_key_exists($name, $application->_data))
       $value = $application->_data[$name];
     return $value;
@@ -177,7 +176,7 @@ class Application
    * @param configPath The path where config files reside (as seen from main.php), maybe null [default: include/]
    * @param mainConfigFile The main configuration file to use, maybe null [default: config.ini]
    */
-  function setupGlobals($configPath='include/', $mainConfigFile='config.ini')
+  private function setupGlobals($configPath='include/', $mainConfigFile='config.ini')
   {
     // globals
     $GLOBALS['CONFIG_PATH'] = $configPath;
@@ -185,7 +184,7 @@ class Application
     $GLOBALS['MAIN_CONFIG_FILE'] = $mainConfigFile;
 
     // get configuration from file
-    $parser = &WCMFInifileParser::getInstance();
+    $parser = WCMFInifileParser::getInstance();
     $parser->parseIniFile($GLOBALS['CONFIG_PATH'].$GLOBALS['MAIN_CONFIG_FILE'], true);
 
     // message globals
@@ -193,8 +192,9 @@ class Application
     $GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'cms');
 
     // set locale
-    if ($GLOBALS['MESSAGE_LANGUAGE'] !== false)
+    if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {
       setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
+    }
   }
 
   /**

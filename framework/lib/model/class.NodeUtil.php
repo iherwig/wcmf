@@ -44,7 +44,7 @@ class NodeUtil
    * @param node The Node to find the path for
    * @return An array containing the nodes in the path
    */
-  public static function getPath($node)
+  public static function getPath(Node $node)
   {
     $path = array();
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -120,7 +120,7 @@ class NodeUtil
    */
   public static function getNodeQuery($nodeType)
   {
-    $query = PersistenceFacade::createObjectQuery($nodeType);
+    $query = PersistenceFacade::getInstance()->createObjectQuery($nodeType);
     return $query->toString();
   }
   /**
@@ -129,16 +129,15 @@ class NodeUtil
    * @param oid The object id of the node
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  public static function getSelfQuery($nodeType, $oid)
+  public static function getSelfQuery($nodeType, ObjectId $oid)
   {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $query = PersistenceFacade::createObjectQuery($nodeType);
+    $query = PersistenceFacade::getInstance()->createObjectQuery($nodeType);
     $tpl = $query->getObjectTemplate($nodeType);
-    $mapper = &$tpl->getMapper();
-    $oidParts = PersistenceFacade::decomposeOID($oid);
+    $mapper = $tpl->getMapper();
+    $ids = $oid->getId();
     $i = 0;
     foreach ($mapper->getPkNames() as $pkName) {
-      $tpl->setValue($pkName, '= '.$oidParts['id'][$i++]);
+      $tpl->setValue($pkName, '= '.$ids[$i++]);
     }
     return $query->toString();
   }
@@ -148,15 +147,15 @@ class NodeUtil
    * @param childNode The Node to select the parents for
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  public static function getParentQuery($parentRole, $childNode)
+  public static function getParentQuery($parentRole, Node $childNode)
   {
     $parentType = $childNode->getTypeForRole($parentRole);
   //Log::error($parentRole." ".$parentType." ".$childNode->toString(), __CLASS__);
-    $query = PersistenceFacade::createObjectQuery($parentType);
+    $query = PersistenceFacade::getInstance()->createObjectQuery($parentType);
     $tpl = $query->getObjectTemplate($parentType);
     // prepare the child: use a new one and set the primary key values
     $cTpl = $query->getObjectTemplate($childNode->getType());
-    $mapper = &$childNode->getMapper();
+    $mapper = $childNode->getMapper();
     foreach ($mapper->getPkNames() as $pkName) {
       $cTpl->setValue($pkName, '= '.$childNode->getValue($pkName));
     }
@@ -170,11 +169,11 @@ class NodeUtil
    * @param childRole The child role
    * @return The serialized query string to be used with ObjectQuery::executeString.
    */
-  public static function getChildQuery($parentNode, $childRole)
+  public static function getChildQuery(Node $parentNode, $childRole)
   {
     $childType = $parentNode->getTypeForRole($childRole);
   //Log::error($childRole." ".$childType." ".$parentNode->toString(), __CLASS__);
-    $query = PersistenceFacade::createObjectQuery($childType);
+    $query = PersistenceFacade::getInstance()->createObjectQuery($childType);
     $tpl = $query->getObjectTemplate($childType);
     // prepare the parent: use a new one and set the primary key values
     $pTpl = $query->getObjectTemplate($parentNode->getType());
@@ -187,114 +186,6 @@ class NodeUtil
     return $query->toString();
   }
   /**
-   * Get roles of allowed parents for a Node by comparing the existing parents of realNode with the possible parents of tplNode.
-   * @param realNode A reference to the Node that defines the existing parents (property parentoids must be given)
-   * @param tplNode A reference to the Node that defines the possible parents (property possibleParents must be given)
-   * @return An associative array with the parent role as key and a template of the parent as value (with the correct role in realtion to realNode).
-   * @note: The template has the following extra properties (use Node::getProperty()):
-   *        - assignedParent gives the parent object if an instance already assigned to that parent role
-   *          (per definition only one instance is assignable to a parent role)
-   *        - canAssociate (boolean) indicating if an instance may be associated (depends on the navigability from the parent)
-   *        - composition (boolean) indicating if the parent child relation is a composition
-   */
-  public static function getPossibleParents(&$realNode, &$tplNode)
-  {
-    $allowedParentRoles = array();
-    if ($tplNode != null && $realNode != null)
-    {
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $possibleParents = $tplNode->getPossibleParents();
-      foreach ($possibleParents as $type => $roles)
-      {
-        foreach ($roles as $role)
-        {
-          $possibleParent = &$persistenceFacade->create($type, 1);
-
-          // check if the parent itself knows the role as children and if the relation is a composition
-          $child = $possibleParent->getFirstChild(null, $role, null, null);
-          if ($child != null)
-          {
-            $possibleParent->setProperty('canAssociate', true);
-            $possibleParent->setProperty('composition', $child->getProperty('composition'));
-          }
-          else
-          {
-            $possibleParent->setProperty('canAssociate', false);
-            $possibleParent->setProperty('composition', true);
-          }
-
-          // get the already assigned parent, if existing (we expect only one)
-          foreach ($realNode->getParentOIDsByRole($role) as $parentOID)
-          {
-            // make parent a reference instead of pass &$parent
-            // (this avoids call-time pass-by-reference warning)
-            $ref = &$parent;
-            $parent = &$persistenceFacade->load($parentOID, BUILDDEPTH_SINGLE);
-            $possibleParent->setProperty('assignedParent', $parent);
-            break;
-          }
-
-          // set the role in realation to realNode
-          $possibleParent->setRole($realNode->getOID(), $role);
-          $allowedParentRoles[$role] = &$possibleParent;
-        }
-      }
-    }
-    return $allowedParentRoles;
-  }
-  /**
-   * Get allowed child types for a Node by comparing the existing children of realNode with the possible children of tplNode.
-   * @param realNode A reference to the Node that defines the existing children (property childoids must be given)
-   * @param tplNode A reference to the Node that defines the possible children (built with depth = 1, property possibleChildren must be given)
-   * @param resolveManyToMany True/False wether for all many to many children the real subject types should be returned [default: true]
-   * @return An associative array with the child role as key and a template of the child as values (with the correct role in realtion to realNode).
-   * @note: The template has the following extra properties (use Node::getProperty()):
-   *        - canCreate (boolean) indicating if an instance may be created (depends on the multiplicity)
-   *        - realSubject the type of the real subject if the template is acting as proxy (many to many instance)
-   */
-  public static function getPossibleChildren(&$realNode, &$tplNode, $resolveManyToMany=true)
-  {
-    $allowedChildRoles = array();
-    if ($tplNode != null && $realNode != null)
-    {
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $possibleChildren = $tplNode->getChildren();
-      for ($i=0; $i<sizeof($possibleChildren); $i++)
-      {
-        $possibleChild = &$possibleChildren[$i];
-        $role = $possibleChild->getRole($tplNode->getOID());
-
-        // get the number of existing children
-        $occurs = sizeof($realNode->getChildOIDsByRole($role));
-        if ($possibleChild->getProperty('maxOccurs') == 'unbounded' || ($occurs < $possibleChild->getProperty('maxOccurs'))) {
-           $possibleChild->setProperty('canCreate', true);
-        }
-        else {
-           $possibleChild->setProperty('canCreate', false);
-        }
-        // check if we have an association object
-        // if yes we set the composition property to false (instances are deleted with the parent)
-        // and get the display name from the associated type
-        $realSubjectType = NodeUtil::getRealSubjectType($possibleChild, $realNode->getType());
-        if ($realSubjectType != null)
-        {
-          $associatedNode = &$persistenceFacade->create($realSubjectType, BUILDTYPE_SINGLE);
-          $possibleChild->setProperty('composition', false);
-          $possibleChild->setProperty('realSubject', $associatedNode);
-        }
-
-        if ($realSubjectType != null && $resolveManyToMany) {
-          $role = $realSubjectType;
-        }
-
-        // set the role in realation to realNode
-        $possibleChild->setRole($realNode->getOID(), $role);
-        $allowedChildRoles[$role] = &$possibleChild;
-      }
-    }
-    return $allowedChildRoles;
-  }
-  /**
    * Get the real subject type for a proxy node, that is a many to many instance. A many to many instance
    * serves as proxy between a client and a real subject, where the client is the parent node in this case
    * and the proxy is the child node.
@@ -302,7 +193,7 @@ class NodeUtil
    * @param parentType The parent type
    * @return The type
    */
-  public static function getRealSubjectType(&$proxy, $parentType)
+  public static function getRealSubjectType(Node $proxy, $parentType)
   {
     $manyToMany = $proxy->getProperty('manyToMany');
     if (is_array($manyToMany) && sizeof($manyToMany) == 2)
@@ -322,14 +213,14 @@ class NodeUtil
    * @param node The Node instance
    * @return An array of value names
    */
-  public static function getDisplayValueNames(&$node)
+  public static function getDisplayValueNames(Node $node)
   {
     $displayValueStr = $node->getProperty('display_value');
     if (!strPos($displayValueStr, '|')) {
       $displayValues = array($displayValueStr);
     }
     else {
-      $displayValues = split('\|', $displayValueStr);
+      $displayValues = preg_split('/\|/', $displayValueStr);
     }
     return $displayValues;
   }
@@ -351,9 +242,9 @@ class NodeUtil
    * @return The display string
    * @see DefaultValueRenderer::renderValue
    */
-  public static function getDisplayValue(&$node, $useDisplayType=false, $language=null, $values=null)
+  public static function getDisplayValue(Node $node, $useDisplayType=false, $language=null, $values=null)
   {
-    return join(' - ', array_values(NodeUtil::getDisplayValues($node, $useDisplayType, $language, $values)));
+    return join(' - ', array_values(self::getDisplayValues($node, $useDisplayType, $language, $values)));
   }
   /**
    * Does the same as DefaultValueRenderer::getDisplayValue() but returns the display value as associative array
@@ -363,23 +254,23 @@ class NodeUtil
    * @param values An assoziative array holding key value pairs that the display node's values should match [maybe null].
    * @return The display array
    */
-  public static function getDisplayValues(&$node, $useDisplayType=false, $language=null, $values=null)
+  public static function getDisplayValues(Node $node, $useDisplayType=false, $language=null, $values=null)
   {
     // localize node if requested
-    $localization = &Localization::getInstance();
+    $localization = Localization::getInstance();
     if ($language != null) {
       $localization->loadTranslation($node, $language);
     }
 
     $displayArray = array();
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
     $formUtil = new FormUtil($language);
     $pathToShow = $node->getProperty('display_value');
     if (!strPos($pathToShow, '|')) {
       $pathToShowPieces = array($pathToShow);
     }
     else {
-      $pathToShowPieces = split('\|', $pathToShow);
+      $pathToShowPieces = preg_split('/\|/', $pathToShow);
     }
     foreach($pathToShowPieces as $pathToShowPiece)
     {
@@ -388,7 +279,7 @@ class NodeUtil
       if ($pathToShowPiece != '')
       {
         $curNode = $node;
-        $pieces = split('/', $pathToShowPiece);
+        $pieces = preg_split('/\//', $pathToShowPiece);
         foreach ($pieces as $curPiece)
         {
           if (in_array($curPiece, $curNode->getValueNames()))
@@ -406,9 +297,9 @@ class NodeUtil
             // see if the $value is valid for the child to look for
             if ($values != null)
             {
-              if (PersistenceFacade::isKnownType($curPiece))
+              if ($persistenceFacade->isKnownType($curPiece))
               {
-                $template = &$persistenceFacade->create($curPiece, BUILDDEPTH_SINGLE);
+                $template = $persistenceFacade->create($curPiece, BUILDDEPTH_SINGLE);
                 $possibleValues = $template->getValueNames();
                 foreach ($values as $key => $value) {
                   if (!in_array($key, $possibleValues)) {
@@ -430,14 +321,14 @@ class NodeUtil
             else
             {
               $loaded = false;
-              if (PersistenceFacade::isKnownType($curPiece))
+              if ($persistenceFacade->isKnownType($curPiece))
               {
                 $nodesOfTypePiece = $persistenceFacade->getOIDs($curPiece);
                 foreach($curNode->getChildOIDs() as $childOID)
                 {
                   if (in_array($childOID, $nodesOfTypePiece))
                   {
-                    $curNode = &$persistenceFacade->load($childOID, BUILDDEPTH_SINGLE);
+                    $curNode = $persistenceFacade->load($childOID, BUILDDEPTH_SINGLE);
                     // localize node if requested
                     if ($language != null) {
                       $localization->loadTranslation($curNode, $language);
@@ -479,8 +370,8 @@ class NodeUtil
         // apply display type if desired
         if (!is_object($GLOBALS['gValueRenderer']))
         {
-          $objectFactory = &ObjectFactory::getInstance();
-          $GLOBALS['gValueRenderer'] = &$objectFactory->createInstanceFromConfig('implementation', 'ValueRenderer');
+          $objectFactory = ObjectFactory::getInstance();
+          $GLOBALS['gValueRenderer'] = $objectFactory->createInstanceFromConfig('implementation', 'ValueRenderer');
           if ($GLOBALS['gValueRenderer'] == null) {
             throw new ConfigurationException('ValueRenderer not defined in section implementation.');
           }
@@ -508,7 +399,7 @@ class NodeUtil
    */
   public static function getDisplayNameFromType($type)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
     $typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
     return $typeNode->getObjectDisplayName();
   }
@@ -524,7 +415,7 @@ class NodeUtil
    *        (if not given the definition will be taken from the node parameter) [optional]
    * @return The HTML control string (see FormUtil::getInputControl())
    */
-  public static function getInputControl(&$node, $name, $dataType=null, $templateNode=null)
+  public static function getInputControl(Node $node, $name, $dataType=null, Node $templateNode=null)
   {
     // set the datatype if not given (to the fist one found)
     if ($dataType == null)
@@ -534,7 +425,7 @@ class NodeUtil
         $dataType = $dataTypes[0];
       }
     }
-    $controlName = NodeUtil::getInputControlName($node, $name, $dataType);
+    $controlName = self::getInputControlName($node, $name, $dataType);
     if ($templateNode != null) {
       $properties = $templateNode->getValueProperties($name, $dataType);
     }
@@ -559,7 +450,7 @@ class NodeUtil
    *        (if type is omitted the first value of any type that matches will be used)
    * @return The HTML control name string in the form value-<datatype>-<name>-<oid>
    */
-  public static function getInputControlName(&$node, $name, $dataType=null)
+  public static function getInputControlName(Node $node, $name, $dataType=null)
   {
     $fieldDelimiter = FormUtil::getInputFieldDelimiter();
     return 'value'.$fieldDelimiter.$dataType.$fieldDelimiter.$name.$fieldDelimiter.$node->getOID();
@@ -576,8 +467,8 @@ class NodeUtil
       return null;
     }
     $def = array();
-    $fieldDelimiter = FormUtil::getInputFieldDelimiter();
-    $pieces = split($fieldDelimiter, $name);
+    $fieldDelimiter = StringUtil::escapeForRegex(FormUtil::getInputFieldDelimiter());
+    $pieces = preg_split('/'.$fieldDelimiter.'/', $name);
     if (!sizeof($pieces) == 4) {
       return null;
     }
@@ -635,7 +526,7 @@ class NodeUtil
    * @param baseUrl The baseUrl to which matching urls will be made relative
    * @param recursive True/False wether to recurse into child Nodes or not (default: true)
    */
-  public static function makeNodeUrlsRelative(&$node, $baseUrl, $recursive=true)
+  public static function makeNodeUrlsRelative(Node $node, $baseUrl, $recursive=true)
   {
     // use NodeProcessor to iterate over all Node values
     // and call the global convert function on each
@@ -649,7 +540,7 @@ class NodeUtil
    * @param dataType The dataType of the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
    */
-  public static function makeValueUrlsRelative(&$node, $valueName, $dataType, $baseUrl)
+  public static function makeValueUrlsRelative(Node $node, $valueName, $dataType, $baseUrl)
   {
     $value = $node->getValue($valueName, $dataType);
 
@@ -696,7 +587,7 @@ class NodeUtil
    * @see NodeProcessor
    * @note This method is used internally only
    */
-  public static function renderValue(&$node, $valueName, $dataType, $formUtil)
+  public static function renderValue(Node $node, $valueName, $dataType, $formUtil)
   {
     if ($dataType == DATATYPE_ATTRIBUTE)
     {
@@ -740,7 +631,7 @@ class NodeUtil
    * @see NodeProcessor
    * @note This method is used internally only
    */
-  public static function translateValue(&$node, $valueName, $dataType, $formUtil)
+  public static function translateValue(Node $node, $valueName, $dataType, $formUtil)
   {
     if ($dataType == DATATYPE_ATTRIBUTE)
     {
@@ -755,9 +646,9 @@ class NodeUtil
    * Remove all values from a Node that are not a display value and don't have DATATYPE_IGNORE.
    * @param node The Node instance
    */
-  public static function removeNonDisplayValues(&$node)
+  public static function removeNonDisplayValues(Node $node)
   {
-    $displayValues = NodeUtil::getDisplayValueNames($node);
+    $displayValues = self::getDisplayValueNames($node);
     $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $displayValues)) {

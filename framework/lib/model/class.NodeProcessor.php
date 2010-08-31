@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -36,20 +36,20 @@ class NodeProcessor
    * @param params An array of paramters to pass to the callback (default: none).
    * @param obj A reference to the object that defines the callback. If null the callback must
    *            be a global function (default: null).
-   * 
+   *
    * @note The callback function must have the following interface:
    * callback(Node $node, $valueName, &$param0, &$param1, ...)
    *
    * usage example:
    *
    * @code
-   * // use NodeProcessor to iterate over all Node values 
+   * // use NodeProcessor to iterate over all Node values
    * // and call the global myCallback function on each
    * $processor = new NodeProcessor('myCallback', array(&$result));
    * $processor->run($node, false);
    *
    * // myCallback simply concats all node values to a result string
-   * function myCallback(&$node, $valueName, &$result)
+   * function myCallback(Node $node, $valueName, &$result)
    * {
    *   $value = $node->getValue($valueName);
    *   // add the value to the result
@@ -95,6 +95,6 @@ class NodeProcessor
         $this->run($children[$i], $recursive);
       }
     }
-  } 
+  }
 }
 ?>

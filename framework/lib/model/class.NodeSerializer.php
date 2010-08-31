@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -39,11 +39,11 @@ class NodeSerializer
    * @param parent The parent node [default: null]
    * @return A reference to the node deserialized from the data or null if the type does not exist
    */
-  function &deserializeNode($type, $data, $hasFlattendedValues, $parent=null)
+  public function deserializeNode($type, $data, $hasFlattendedValues, Node $parent=null)
   {
-    if (PersistenceFacade::isKnownType($type))
+    $persistenceFacade = PersistenceFacade::getInstance();
+    if ($persistenceFacade->isKnownType($type))
     {
-      $persistenceFacade = &PersistenceFacade::getInstance();
       $node = $persistenceFacade->create($type, BUILDEPTH_SINGLE);
       // remove default values
       $node->clearValues();
@@ -64,11 +64,11 @@ class NodeSerializer
           elseif ($key != 'oid' && $key != 'type') {
             $relatives[$key] = $value;
           }
-        }        
+        }
         foreach ($valueData as $dataType => $values)
         {
           foreach ($values as $key => $value) {
-            NodeSerializer::deserializeValue($node, $key, $value, $dataType, $hasFlattendedValues); 
+            NodeSerializer::deserializeValue($node, $key, $value, $dataType, $hasFlattendedValues);
           }
         }
         foreach ($properties as $key => $value) {
@@ -77,7 +77,7 @@ class NodeSerializer
         foreach ($relatives as $type => $objects)
         {
           foreach ($objects as $object) {
-            NodeSerializer::deserializeNode($type, $object, $hasFlattendedValues, $node);
+            self::deserializeNode($type, $object, $hasFlattendedValues, $node);
           }
         }
       }
@@ -86,9 +86,9 @@ class NodeSerializer
         // in case of not flattened values, the array only contains
         // value names and values (no data types)
         foreach($data as $key => $value)
-          NodeSerializer::deserializeValue($node, $key, $value, null, $hasFlattendedValues);
+          self::deserializeValue($node, $key, $value, null, $hasFlattendedValues);
       }
-      
+
       if ($parent != null) {
         $parent->addChild($node);
       }
@@ -105,7 +105,7 @@ class NodeSerializer
    * @param dataType The dataType of the value
    * @param hasFlattendedValues
    */
-  function deserializeValue(&$node, $key, $value, $dataType, $hasFlattendedValues)
+  protected function deserializeValue(Node $node, $key, $value, $dataType, $hasFlattendedValues)
   {
     if (!is_array($value)) {
       $node->setValue($key, $value, $dataType);
@@ -114,31 +114,31 @@ class NodeSerializer
     {
       // deserialize children
       foreach($value as $childData) {
-        NodeSerializer::deserializeNode($key, $childData, $hasFlattendedValues, $node);
+        self::deserializeNode($key, $childData, $hasFlattendedValues, $node);
       }
     }
   }
   /**
    * Serialize a Node into an array
-   * @param obj A reference to the node to serialize
+   * @param node A reference to the node to serialize
    * @param flattenValues True if all node data should be serialized into one array, false if
    *                      there should be an extra array 'values', that holds the data types and inside these the values
    * @return The node serialized into an associated array
    */
-  function serializeNode(&$obj, $flattenValues)
+  public function serializeNode(Node $obj, $flattenValues)
   {
     $result = array();
-    $rightsManager = &RightsManager::getInstance();
+    $rightsManager = RightsManager::getInstance();
 
     $iter = new NodeIterator($obj);
     while (!$iter->isEnd())
     {
-      $curNode = &$iter->getCurrentObject();
-      $curResult = &NodeSerializer::getArray();;
+      $curNode = $iter->getCurrentObject();
+      $curResult = array();
 
       // use NodeProcessor to iterate over all Node values
       // and call the global convert function on each
-      $values = &NodeSerializer::getArray();
+      $values = array();
       $processor = new NodeProcessor('serializeAttribute', array(&$values, $flattenValues), new NodeSerializer());
       $processor->run($curNode, false);
 
@@ -157,14 +157,14 @@ class NodeSerializer
         $curResult['properties'][$name] = $curNode->getProperty($name);
       }
       // add current result to result
-      $path = split('/', $curNode->getPath());
+      $path = preg_split('/\//', $curNode->getPath());
       if (sizeof($path) == 1) {
-        $result = &$curResult;
+        $result = $curResult;
       }
       else
       {
         array_shift($path);
-        $array = &NodeSerializer::getPathArray($result, $path, 0);
+        $array = self::getPathArray($result, $path, 0);
         $array[sizeof($array)] = $curResult;
       }
       $iter->proceed();
@@ -174,7 +174,7 @@ class NodeSerializer
   /**
    * Callback function for NodeProcessor (see NodeProcessor).
    */
-  function serializeAttribute(&$node, $valueName, $dataType, &$result, $flattenDataTypes)
+  protected function serializeAttribute(Node $node, $valueName, $dataType, &$result, $flattenDataTypes)
   {
     if (!$flattenDataTypes)
     {
@@ -187,19 +187,13 @@ class NodeSerializer
   }
   /**
    */
-  function &getArray()
-  {
-    return array();
-  }
-  /**
-   */
-  function &getPathArray(&$array, $path, $curDepth)
+  protected function getPathArray(&$array, $path, $curDepth)
   {
     if (!isset($array[$path[$curDepth]]))
       $array[$path[$curDepth]] = array();
 
     if ($curDepth < sizeof($path)-1)
-      return NodeSerializer::getPathArray($array[$path[$curDepth]][0], $path, ++$curDepth);
+      return self::getPathArray($array[$path[$curDepth]][0], $path, ++$curDepth);
     else
       return $array[$path[$curDepth]];
   }

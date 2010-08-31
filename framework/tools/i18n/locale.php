@@ -48,7 +48,7 @@ foreach ($languages as $language)
   $messages = natcaseksort($messages);
   Log::info($messages, "locale");
 
-  $languageParts = split("_", $language);
+  $languageParts = preg_split('/_/', $language);
   $i18nUtil->createPOFile(getConfigValue("applicationTitle", "cms"),
     getConfigValue("editor", "i18n"),
     getConfigValue("email", "i18n"),

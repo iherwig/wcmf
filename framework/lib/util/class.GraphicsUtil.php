@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -124,7 +124,7 @@ class GraphicsUtil
         $constraint = Message::get("exactly");
       else
         $constraint = Message::get("smaller than");
-      $this->_errorMsg .= Message::get("Wrong image height. Image height must be %1% %2%px - actual image height is %3%px.", 
+      $this->_errorMsg .= Message::get("Wrong image height. Image height must be %1% %2%px - actual image height is %3%px.",
         array($constraint, $height, $properties[1]));
       $this->_errorMsg .= "\n";
     }
@@ -144,7 +144,7 @@ class GraphicsUtil
   {
     if (!$this->checkImageSupport())
       return false;
-      
+
     $this->_errorMsg = '';
     $oldErrorLevel = error_reporting (0);
     $srcImg = null;
@@ -169,9 +169,9 @@ class GraphicsUtil
     // create thumbnail canvas to save to
     $destImg = imagecreatetruecolor($width, $height);
     if (!$destImg)
-      return $this->exitThumbnail($srcImg, $destImg, Message::get("Could not create thumbnail image %1%.", array($destName)), 
+      return $this->exitThumbnail($srcImg, $destImg, Message::get("Could not create thumbnail image %1%.", array($destName)),
         false, $oldErrorLevel);
-    
+
     // define image functions
     $imagecreationFunction = GraphicsUtil::getImageCreationFunction($srcName);
     if ($imagecreationFunction === false)
@@ -191,7 +191,7 @@ class GraphicsUtil
     else
       $imageoutputFunction ($destImg, $destName);
     chmod($destName, 0644);
-    
+
     return $this->exitThumbnail($srcImg, $destImg, "", true, $oldErrorLevel);
     }
   /**
@@ -223,13 +223,13 @@ class GraphicsUtil
 
     // get the dimensions
     list($width, $height) = getimagesize($srcName);
-    
+
     // define the source image
     $source = $imagecreationFunction($srcName);
 
     // create the canvas
     $bwimage= imagecreate($width, $height);
-    
+
     // create the 256 color palette
     $palette = array(255);
     for ($c=0; $c<256; $c++)
@@ -255,14 +255,14 @@ class GraphicsUtil
 
     // output a jpg image
     $imageoutputFunction($bwimage, $destName);
-    
+
     // destroy temp image buffers
-    imagedestroy($source);   
+    imagedestroy($source);
     imagedestroy($bwimage);
   }
   /**
    * Render a text to an image. Using the default parameters the text will
-   * be rendered into a box that fits the text. If the width parameter is not null and the 
+   * be rendered into a box that fits the text. If the width parameter is not null and the
    * text exceeds the width, the text will be wrapped and the height parameter will be
    * used as lineheight.
    * @param text The text to render
@@ -283,7 +283,7 @@ class GraphicsUtil
    * @note The image type will be determined by the file extension (gif, jpg or png). Default
    * is jpg if the extension is unknown.
    */
-  function renderTextPS($text, $fontfile, $encoding, $fontsize, $color, $bgcolor, $filename, 
+  function renderTextPS($text, $fontfile, $encoding, $fontsize, $color, $bgcolor, $filename,
     $width=null, $height=null, $x=null, $y=null, $space=0, $tightness=0, $angle=0)
   {
     if (!$this->checkImageSupport())
@@ -302,7 +302,7 @@ class GraphicsUtil
       $this->_errorMsg .= Message::get("Font file '%1%' not found.", array($fontfile));
       return false;
     }
-    
+
     $font = @imagepsloadfont($fontfile);
     if ($font === false)
     {
@@ -311,11 +311,11 @@ class GraphicsUtil
     }
     if ($encoding != null)
       imagepsencodefont($font, $encoding);
-    
+
     // create the image file
-    GraphicsUtil::createTextImage(FONTTYPE_PS, $text, $font, null, $fontsize, $color, $bgcolor, $filename, 
+    GraphicsUtil::createTextImage(FONTTYPE_PS, $text, $font, null, $fontsize, $color, $bgcolor, $filename,
       $width, $height, $x, $y, $space, $tightness, $angle);
-    
+
     // destroy font to free memory
     imagepsfreefont($font);
     return true;
@@ -323,7 +323,7 @@ class GraphicsUtil
 
   /**
    * Render a text to an image. Using the default parameters the text will
-   * be rendered into a box that fits the text. If the width parameter is not null and the 
+   * be rendered into a box that fits the text. If the width parameter is not null and the
    * text exceeds the width, the text will be wrapped and the height parameter will be
    * used as lineheight.
    * @param text The text to render
@@ -362,14 +362,14 @@ class GraphicsUtil
     }
 
     // create the image file
-    GraphicsUtil::createTextImage(FONTTYPE_TTF, $text, null, $fontfile, $fontsize, $color, $bgcolor, $filename, 
+    GraphicsUtil::createTextImage(FONTTYPE_TTF, $text, null, $fontfile, $fontsize, $color, $bgcolor, $filename,
       $width, $height, $x, $y, 0, 0, $angle);
 
     return true;
   }
 
   /**
-   * Render a text to an image. This method is used by GraphicsUtil::renderTextPS 
+   * Render a text to an image. This method is used by GraphicsUtil::renderTextPS
    * and GraphicsUtil::renderTextTTF.
    * Wrapping code is from http://de.php.net/manual/de/function.imagettfbbox.php#60673
    * @param fonttype One of the FONTTYPE constants
@@ -388,11 +388,11 @@ class GraphicsUtil
    * @param tightness The amount of white space between characters
    * @param angle The angle of the text
    */
-  function createTextImage($fonttype, $text, $font, $fontfile, $fontsize, $color, $bgcolor, $filename, 
+  function createTextImage($fonttype, $text, $font, $fontfile, $fontsize, $color, $bgcolor, $filename,
     $width, $height, $x, $y, $space, $tightness, $angle)
   {
     // the destination lines array
-    $dstLines = array(); 
+    $dstLines = array();
     $lineheight = $height;
 
     // if a width is given, we wrap the text if necessary
@@ -401,30 +401,30 @@ class GraphicsUtil
       // remove windows line-breaks
       $text = str_replace("\r", '', $text);
       // split text into "lines"
-      $srcLines = split ("\n", $text);
+      $srcLines = preg_split ('/\n/', $text);
       foreach ($srcLines as $currentL)
       {
         $line = '';
         // split line into words
-        $wordsTmp = split(" ", $currentL);
+        $wordsTmp = preg_split('/ /', $currentL);
         // split at hyphens
         $words = array();
         foreach ($wordsTmp as $word)
         {
-          $wordParts = split(' ', str_replace(array('-', '/'), array('- ', '/ '), $word));
+          $wordParts = preg_split('/ /', str_replace(array('-', '/'), array('- ', '/ '), $word));
           foreach ($wordParts as $wordPart)
             array_push($words, $wordPart);
         }
         for ($i=0; $i<sizeof($words); $i++)
         {
           $word = $words[$i];
-          
+
           // get the length of this line, if the word is to be included
-          list($linewidth, $lineheight) = GraphicsUtil::getTextDimension($fonttype, $line.$word, 
+          list($linewidth, $lineheight) = GraphicsUtil::getTextDimension($fonttype, $line.$word,
             $font, $fontfile, $fontsize, $space, $tightness, $angle);
-            
+
           // check if it is too big if the word was added, if so, then move on
-          if ($linewidth > $width && !empty($line)) 
+          if ($linewidth > $width && !empty($line))
           {
              // add the line like it was without spaces
             $dstLines[] = trim($line);
@@ -451,33 +451,33 @@ class GraphicsUtil
     {
       $dstLines[] = $text;
       // get the text dimensions
-      list($textwidth, $textheight) = GraphicsUtil::getTextDimension($fonttype, $text, $font, $fontfile, 
+      list($textwidth, $textheight) = GraphicsUtil::getTextDimension($fonttype, $text, $font, $fontfile,
         $fontsize, $space, $tightness, $angle);
-      
-      // add 5 pixels to the width. 
+
+      // add 5 pixels to the width.
       // @todo make this a parameter
       $textwidth += 5;
-      
+
       // calculate offset and dimensions
-      list($width, $height, $x, $y) = GraphicsUtil::calculateTextParams($width, $height, $x, $y, 
+      list($width, $height, $x, $y) = GraphicsUtil::calculateTextParams($width, $height, $x, $y,
         $textwidth, $textheight);
     }
 
     // create the image
     list($im, $foreground, $background) = GraphicsUtil::createImage($width, $height, $color, $bgcolor);
-    
+
     // render the text onto the image
     foreach ($dstLines as $nr => $line)
     {
       // calculate offset and dimensions
-      list($width, $height, $x, $y) = GraphicsUtil::calculateTextParams($width, $height, $x, $y, 
+      list($width, $height, $x, $y) = GraphicsUtil::calculateTextParams($width, $height, $x, $y,
         $textwidth, $textheight);
       // print the line
-      GraphicsUtil::renderText($fonttype, $im, $line, $font, $fontfile, $fontsize, $foreground, $background, 
+      GraphicsUtil::renderText($fonttype, $im, $line, $font, $fontfile, $fontsize, $foreground, $background,
         $x, $y, $space, $tightness, $angle);
       $y += $lineheight;
-    }        
-    
+    }
+
     // write the image
     $imageoutputFunction = GraphicsUtil::getImageOutputFunction($filename);
     $imageoutputFunction($im, $filename);
@@ -503,7 +503,7 @@ class GraphicsUtil
    * @param tightness The amount of white space between characters (optional, ignored when using FONTYPE_TTF) [default: null]
    * @param angle The angle of the characters (optional) [default: 0]
    */
-  function renderText($fonttype, $im, $text, $font, $fontfile, $fontsize, $foreground, $background, 
+  function renderText($fonttype, $im, $text, $font, $fontfile, $fontsize, $foreground, $background,
     $x, $y, $space, $tightness, $angle)
   {
     if ($fonttype == FONTTYPE_PS)
@@ -557,14 +557,14 @@ class GraphicsUtil
    */
   function calculateTextParams($width, $height, $x, $y, $textwidth, $textheight)
   {
-    // calculate dimensions    
+    // calculate dimensions
     if ($width === null) $width = $textwidth;
     if ($height === null) $height = $textheight;
 
     // calculate offset
     if ($x === null) $x = ($width-$textwidth)/2;
     if ($y === null) $y = $height;
-    
+
     return array($width, $height, $x, $y);
   }
 
@@ -580,7 +580,7 @@ class GraphicsUtil
   {
     // create the image
     $im = imagecreatetruecolor($width, $height);
-    
+
     // define the colors
     list($r, $g, $b) = GraphicsUtil::HEX2RGB($color);
     $foreground = imagecolorallocate($im, $r, $g, $b);
@@ -608,7 +608,7 @@ class GraphicsUtil
       $imageoutputFunction = "imagepng";
     return $imageoutputFunction;
   }
-  
+
   /**
    * Get the image creation function depending on the file to read from
    * @param filename The filename
@@ -635,25 +635,25 @@ class GraphicsUtil
    * Convert a HEX color value to an array containing the RGB components
    * @param hexColor The HEX color value
    * @return An array with Red, Green and Blue components
-   */  
+   */
   function HEX2RGB($hexColor)
   {
     $rgbValues = array();
-    
+
     // Split the HEX color representation
     $hexValues = chunk_split($hexColor, 2, "");
     $rh = substr($hexColor, 0, 2);
     $gh = substr($hexColor, 2, 2);
     $bh = substr($hexColor, 4, 2);
-    
+
     // Convert HEX values to DECIMAL
     $rgbValues[0] = hexdec("0x{$rh}");
     $rgbValues[1] = hexdec("0x{$gh}");
     $rgbValues[2] = hexdec("0x{$bh}");
-    
+
     return $rgbValues;
   }
-  
+
   /**
    * See if gd lib is installed. We assume the version is ok.
    * @return True/False wether the library is installed.

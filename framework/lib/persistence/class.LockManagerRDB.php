@@ -60,7 +60,7 @@ class LockManagerRDB extends LockManager
    */
   protected function releaseLockImpl(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null)
   {
-    $query = &PersistenceFacade::createObjectQuery('Locktable');
+    $query = PersistenceFacade::getInstance()->createObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     if ($sessid != null) {
       $tpl->setValue('sessionid', "= '".$sessid."'", DATATYPE_ATTRIBUTE);
@@ -70,7 +70,7 @@ class LockManagerRDB extends LockManager
     }
     if ($useroid != null)
     {
-      $user = &$this->getUserByOID($useroid);
+      $user = $this->getUserByOID($useroid);
       if ($user != null)
       {
         $userTpl = $query->getObjectTemplate(UserManager::getUserClassName());
@@ -101,10 +101,10 @@ class LockManagerRDB extends LockManager
     $parser->setValue('locking', false, 'cms');
 
     // load locks
-    $query = &PersistenceFacade::createObjectQuery(UserManager::getUserClassName());
+    $query = PersistenceFacade::getInstance()->createObjectQuery(UserManager::getUserClassName());
     $tpl1 = $query->getObjectTemplate(UserManager::getUserClassName());
     $tpl2 = $query->getObjectTemplate('Locktable');
-    $tpl2->setValue('objectid', "= '".$oid."'", DATATYPE_ATTRIBUTE);
+    $tpl2->setValue('objectid', "= '".$oid."'");
     $tpl1->addChild($tpl2);
     $users = $query->execute(1);
 
@@ -125,8 +125,8 @@ class LockManagerRDB extends LockManager
         $lock = $tpl2;
       }
       return new Lock($oid, $user->getOID(), $user->getLogin(),
-                  $lock->getValue('sessionid', DATATYPE_ATTRIBUTE),
-                  $lock->getValue('since', DATATYPE_ATTRIBUTE));
+                  $lock->getValue('sessionid'),
+                  $lock->getValue('since'));
     }
   }
 }

@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -38,32 +38,35 @@ class UserManagerRDB extends UserManager
   function initialize($params)
   {
     $userRepository = array();
-    
+
     // load the user/role instances
-    $query = &PersistenceFacade::createObjectQuery(UserManager::getUserClassName());
+    $query = PersistenceFacade::createObjectQuery(UserManager::getUserClassName());
     $users = $query->execute(1);
-    $query = &PersistenceFacade::createObjectQuery(UserManager::getRoleClassName());
+    $query = PersistenceFacade::createObjectQuery(UserManager::getRoleClassName());
     $roles = $query->execute(1);
 
     // add the user/role instances to the repository
     $userRepository['users'] = array();
-    for ($i=0; $i<sizeof($users); $i++)
-      if ($users[$i] != null)
+    for ($i=0; $i<sizeof($users); $i++) {
+      if ($users[$i] != null) {
         $userRepository['users'][sizeof($userRepository['users'])] = &$users[$i];
-    for ($i=0; $i<sizeof($roles); $i++)
-      if ($roles[$i] != null)
+      }
+    }
+    for ($i=0; $i<sizeof($roles); $i++) {
+      if ($roles[$i] != null) {
         $userRepository['roles'][sizeof($userRepository['roles'])] = &$roles[$i];
-
+      }
+    }
   	return $userRepository;
   }
 
   /**
    * @see UserManager::createUserImpl()
    */
-  function &createUserImpl($name, $firstname, $login, $password)
+  protected function createUserImpl($name, $firstname, $login, $password)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $user = &$persistenceFacade->create(UserManager::getUserClassName(), BUILDDEPTH_REQUIRED);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $user = $persistenceFacade->create(UserManager::getUserClassName(), BUILDDEPTH_REQUIRED);
     $user->setName($name);
     $user->setFirstname($firstname);
     $user->setLogin($login);
@@ -75,16 +78,16 @@ class UserManagerRDB extends UserManager
 
   /**
    * @see UserManager::removeUserImpl()
-   */  
-  function removeUserImpl(&$user)
+   */
+  protected function removeUserImpl(User $user)
   {
     $user->delete();
   }
 
   /**
    * @see UserManager::setUserPropertyImpl()
-   */  
-  function setUserPropertyImpl(&$user, $property, $value)
+   */
+  protected function setUserPropertyImpl(User $user, $property, $value)
   {
     $user->setValue($property, $value, DATATYPE_ATTRIBUTE);
     $user->save();
@@ -92,8 +95,8 @@ class UserManagerRDB extends UserManager
 
   /**
    * @see UserManager::createRoleImpl()
-   */  
-  function &createRoleImpl($name)
+   */
+  protected function createRoleImpl($name)
   {
     $persistenceFacade = &PersistenceFacade::getInstance();
     $role = &$persistenceFacade->create($this->getRoleClassName(), BUILDDEPTH_REQUIRED);
@@ -105,16 +108,16 @@ class UserManagerRDB extends UserManager
 
   /**
    * @see UserManager::removeRoleImpl()
-   */  
-  function removeRoleImpl(&$role)
+   */
+  protected function removeRoleImpl(Role $role)
   {
     $role->delete();
   }
 
   /**
    * @see UserManager::setRolePropertyImpl()
-   */  
-  function setRolePropertyImpl(&$role, $property, $value)
+   */
+  protected function setRolePropertyImpl(Role $role, $property, $value)
   {
     $role->setValue($property, $value, DATATYPE_ATTRIBUTE);
     $role->save();
@@ -122,16 +125,16 @@ class UserManagerRDB extends UserManager
 
   /**
    * @see UserManager::addUserToRoleImpl()
-   */  
-  function addUserToRoleImpl(&$role, &$user)
+   */
+  protected function addUserToRoleImpl(Role $role, User $user)
   {
     $user->addRole($role->getName(), true);
   }
 
   /**
    * @see UserManager::removeUserFromRoleImpl()
-   */  
-  function removeUserFromRoleImpl(&$role, &$user)
+   */
+  protected function removeUserFromRoleImpl(Role $role, User $user)
   {
     $user->removeRole($role->getName(), true);
   }

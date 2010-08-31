@@ -81,12 +81,12 @@ foreach($lines as $line)
 }
 
 // process table definitions
-$persistenceFacade = &PersistenceFacade::getInstance();
+$persistenceFacade = PersistenceFacade::getInstance();
 foreach ($tables as $tableDef)
 {
   Log::info(("processing table ".$tableDef['name']."..."), "dbupdate");
-  $mapper = &$persistenceFacade->getMapper($tableDef['entityType']);
-  $connection = &$mapper->getConnection();
+  $mapper = $persistenceFacade->getMapper($tableDef['entityType']);
+  $connection = $mapper->getConnection();
   $connection->beginTransaction();
 
   if (ensureUpdateTable($connection))
@@ -123,7 +123,7 @@ sort($sqlScripts);
 foreach ($sqlScripts as $script)
 {
   // extract the initSection from the filename
-  $initSection = array_shift(split('_', basename($script)));
+  $initSection = array_shift(preg_split('/_/', basename($script)));
   DBUtil::executeScript($script, $initSection);
 }
 
@@ -360,7 +360,7 @@ function processTableDef($tableDef, &$tables)
   // extract columns/pks
   $columns = array();
   $pks = array();
-  $columnDef = split("\n", $matches[4]);
+  $columnDef = preg_split('/\n/', $matches[4]);
   foreach ($columnDef as $columnDef)
   {
     if (strlen(trim($columnDef)) > 0)

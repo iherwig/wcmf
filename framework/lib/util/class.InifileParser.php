@@ -85,7 +85,8 @@ class InifileParser
   public function parseIniFile($filename, $processValues=true)
   {
     // do nothing, if the requested file was the last parsed file
-    if ($this->_parsedFiles[sizeof($this->_parsedFiles)-1] == $filename) {
+    $numParsedFiles = sizeof($this->_parsedFiles);
+    if ($numParsedFiles > 0 && $this->_parsedFiles[sizeof($this->_parsedFiles)-1] == $filename) {
       return true;
     }
 
@@ -249,7 +250,7 @@ class InifileParser
         return true;
       }
     }
-    return false;
+    return true;
   }
 
   /**

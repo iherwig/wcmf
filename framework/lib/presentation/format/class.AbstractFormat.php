@@ -27,7 +27,7 @@ require_once(BASE."wcmf/lib/presentation/format/class.IFormat.php");
  */
 abstract class AbstractFormat implements IFormat
 {
-  var $_deserializedNodes = null;
+  private $_deserializedNodes = array();
 
   /**
    * Get a node with the given oid to deserialize values from form fields into it.
@@ -35,20 +35,16 @@ abstract class AbstractFormat implements IFormat
    * @param oid The oid
    * @return A reference to the Node instance
    */
-  function getNode($oid)
+  protected function getNode(ObjectId $oid)
   {
-    if (!is_array($this->_deserializedNodes)) {
-      $this->_deserializedNodes = array();
-    }
     if (!isset($this->_deserializedNodes[$oid]))
     {
-      $persistenceFacade = &PersistenceFacade::getInstance();
-      $type = PersistenceFacade::getOIDParameter($oid, 'type');
+      $persistenceFacade = PersistenceFacade::getInstance();
       // don't create all values by default (-> don't use PersistenceFacade::create() directly, just for determining the class)
-      $class = get_class($persistenceFacade->create($type, BUILDDEPTH_SINGLE));
+      $class = get_class($persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE));
       $node = new $class;
       $node->setOID($oid);
-      $this->_deserializedNodes[$oid] = &$node;
+      $this->_deserializedNodes[$oid] = $node;
     }
     return $this->_deserializedNodes[$oid];
   }
@@ -57,7 +53,7 @@ abstract class AbstractFormat implements IFormat
    * Get all serialized nodes
    * @return An array of Node references
    */
-  function getNodes()
+  protected function getNodes()
   {
     return $this->_deserializedNodes;
   }

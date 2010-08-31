@@ -33,25 +33,25 @@ abstract class HierarchicalFormat extends AbstractFormat
   /**
    * @see IFormat::deserialize()
    */
-  public function deserialize(&$request)
+  public function deserialize(Request $request)
   {
     $data = &$request->getData();
 
     // deserialize Nodes
     $this->beforeDeserialize($data);
-    ArrayUtil::array_walk_recursive($data, array($this, 'processValues'), 'deserializeNode');
+    array_walk_recursive($data, array($this, 'processValues'), 'deserializeNode');
     $this->afterDeserialize($data);
   }
   /**
    * @see IFormat::serialize()
    */
-  public function serialize($response)
+  public function serialize(Response $response)
   {
     $data = &$response->getData();
 
     // serialize Nodes
     $this->beforeSerialize($data);
-    ArrayUtil::array_walk_recursive($data, array($this, 'processValues'), 'serializeNode');
+    array_walk_recursive($data, array($this, 'processValues'), 'serializeNode');
     $this->afterSerialize($data);
   }
   /**

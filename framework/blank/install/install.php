@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -42,20 +42,20 @@ if (!$parser->parseIniFile($configFile, true))
   Log::error($parser->getErrorMsg(), "install");
   exit();
 }
-    
+
 // message globals
 $GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'cms');
 $GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'cms');
-    
+
 // set locale
 if ($GLOBALS['MESSAGE_LANGUAGE'] !== false)
   setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
-    
+
 $rightsManager = &RightsManager::getInstance();
 $rightsManager->deactivate();
 
 // initialize database sequence, create default user/role
-$persistenceFacade = &PersistenceFacade::getInstance();
+$persistenceFacade = PersistenceFacade::getInstance();
 if(sizeof($persistenceFacade->getOIDs("Adodbseq")) == 0)
 {
   Log::info("initializing database sequence...", "install");
@@ -63,8 +63,8 @@ if(sizeof($persistenceFacade->getOIDs("Adodbseq")) == 0)
   $seq->setValue("id", 1);
   $seq->save();
 }
-$objectFactory = &ObjectFactory::getInstance();
-$userManager = &$objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+$objectFactory = ObjectFactory::getInstance();
+$userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
 $userManager->startTransaction();
 if (!$userManager->getRole("administrators"))
 {
@@ -91,7 +91,7 @@ sort($sqlScripts);
 foreach ($sqlScripts as $script)
 {
   // extract the initSection from the filename
-  $initSection = array_shift(split('_', basename($script)));
+  $initSection = array_shift(preg_split('/_/', basename($script)));
   DBUtil::executeScript($script, $initSection);
 }
 

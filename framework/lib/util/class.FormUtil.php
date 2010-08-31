@@ -33,8 +33,8 @@ require_once(BASE."wcmf/lib/i18n/class.Localization.php");
  */
 class FormUtil
 {
-  var $_language = null;
-  var $_controlRenderer = null;
+  private $_language = null;
+  private $_controlRenderer = null;
 
   /**
    * Constructor
@@ -46,8 +46,7 @@ class FormUtil
     $this->_language = $language;
 
     // create the control renderer instance
-    $objectFactory = &ObjectFactory::getInstance();
-    $this->_controlRenderer = &$objectFactory->createInstanceFromConfig('implementation', 'ControlRenderer');
+    $this->_controlRenderer = ObjectFactory::createInstanceFromConfig('implementation', 'ControlRenderer');
     if ($this->_controlRenderer == null) {
       throw new ConfigurationException('ControlRenderer not defined in section implementation.');
     }
@@ -95,7 +94,7 @@ class FormUtil
     // get definition and list from description
     if (strPos($inputType, '#'))
     {
-      list($def, $list) = split('#', $inputType, 2);
+      list($def, $list) = preg_split('/#/', $inputType, 2);
       $listMap = $this->getListMap($list, $value);
     }
     else {
@@ -107,7 +106,7 @@ class FormUtil
     if ($editable)
     {
       if ($list != '' && strPos($value, ',')) {
-        $value = split(",", $value);
+        $value = preg_split('/,/', $value);
       }
       else {
         $value = htmlspecialchars($value);
@@ -131,7 +130,7 @@ class FormUtil
       $name .= '[]';
     }
     // get error from session
-   	$session = &SessionData::getInstance();
+   	$session = SessionData::getInstance();
 
     // build input control
     return $this->_controlRenderer->renderControl($type, $editable, $name, $value, $session->getError($name), $attributes, $listMap, $inputType);
@@ -156,7 +155,7 @@ class FormUtil
       throw new ConfigurationException("No type found in list definition: ".$description);
     }
     else {
-      list($type, $list) = split(':', $description, 2);
+      list($type, $list) = preg_split('/:/', $description, 2);
     }
 
     // build list
@@ -168,7 +167,7 @@ class FormUtil
           $entries = $GLOBALS[subStr($list,1)];
         }
         else {
-          $entries = split('\|', $list);
+          $entries = preg_split('/\|/', $list);
         }
         if (!is_array($entries)) {
           throw new ConfigurationException($list." is no array.");
@@ -203,18 +202,18 @@ class FormUtil
         break;
       case 'fkt':
         // maybe there are '|' chars in parameters
-        $parts = split('\|', $list);
+        $parts = preg_split('/\|/', $list);
         $name = array_shift($parts);
         $params = join('|', $parts);
         if (function_exists($name)) {
-          $map = call_user_func_array($name, split(',', $params));
+          $map = call_user_func_array($name, preg_split('/,/', $params));
         }
         else {
           throw new ConfigurationException('Function '.$name.' is not defined globally!');
         }
         break;
       case 'config':
-        $parser = &InifileParser::getInstance();
+        $parser = InifileParser::getInstance();
         $map = $parser->getSection($list);
         if (($map = $parser->getSection($list, false)) === false) {
           throw new ConfigurationException($parser->getErrorMsg());
@@ -222,18 +221,18 @@ class FormUtil
         break;
       case 'async':
         // load the translated value only
-        $parts = split('\|', $list);
+        $parts = preg_split('/\|/', $list);
         $entityType = array_shift($parts);
         // since this may be a multivalue field, the ids may be separated by commas
-        $ids = split(',', $value);
+        $ids = preg_split('/,/', $value);
         foreach ($ids as $id)
         {
-          $oid = PersistenceFacade::composeOID(array('type' => $entityType, 'id' => $id));
-          if (PersistenceFacade::isValidOID($oid))
+          $oid = new ObjectId($entityType, $id);
+          if (ObjectId::isValidOID($oid->__toString()))
           {
-            $persistenceFacade = &PersistenceFacade::getInstance();
-            $localization = &Localization::getInstance();
-            $obj = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+            $persistenceFacade = PersistenceFacade::getInstance();
+            $localization = Localization::getInstance();
+            $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
             if ($obj != null) {
               // localize object if requested
               if ($this->_language != null) {
@@ -250,19 +249,19 @@ class FormUtil
         break;
       case 'asyncmult':
         // load the translated value only
-        $parts = split('\|', $list);
-        $persistenceFacade = &PersistenceFacade::getInstance();
+        $parts = preg_split('/\|/', $list);
+        $persistenceFacade = PersistenceFacade::getInstance();
         foreach($parts as $key=>$entityType)
         {
           // since this may be a multivalue field, the ids may be separated by commas
-          $ids = split(',', $value);
+          $ids = preg_split('/,/', $value);
           foreach ($ids as $id)
           {
-            $oid = PersistenceFacade::composeOID(array('type' => $entityType, 'id' => $id));
-            if (PersistenceFacade::isValidOID($oid))
+            $oid = new ObjectId($entityType, $id);
+            if (ObjectId::isValidOID($oid->__toString()))
             {
-              $localization = &Localization::getInstance();
-              $obj = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+              $localization = Localization::getInstance();
+              $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
               if ($obj != null) {
                 // localize object if requested
                 if ($this->_language != null) {
@@ -304,10 +303,10 @@ class FormUtil
     $translated = '';
     if (strPos($inputType, '#') && $value != '')
     {
-      list(,$list) = split('#', $inputType, 2);
+      list(,$list) = preg_split('/#/', $inputType, 2);
       $map = $this->getListMap($list, $value);
       if ($list != '' && strPos($value, ',')) {
-        $value = split(",", $value);
+        $value = preg_split('/,/', $value);
       }
       if (is_array($value))
       {
