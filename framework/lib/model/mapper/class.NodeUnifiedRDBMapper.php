@@ -70,7 +70,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
   /**
    * @see RDBMapper::getSelectSQL()
    */
-  protected function getSelectSQL($condStr, $alias=null, $orderStr=null, $attribs=null, $asArray=false)
+  public function getSelectSQL($condStr, $alias=null, $orderStr=null, $attribs=null, $asArray=false)
   {
     // replace application attribute/table names with sql names
     $condStr = $this->translateAppToDatabase($condStr, $alias);
@@ -123,7 +123,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     }
 
     // references
-    $refStrings = $this->getSQLForRefs($attribStr, $tableStr, $condStr, $orderStr, $attribs);
+    $refStrings = $this->getSQLForRefs($attribStr, $tableStr, $condStr, $orderStr, $attribs, $alias);
     $attribStr = $refStrings['attribStr'];
     $tableStr = $refStrings['tableStr'];
     $condStr = $refStrings['condStr'];
@@ -424,9 +424,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
    * @param condStr The SQL condition string to append to
    * @param orderStr The SQL order string to append to
    * @param attribs The attributes to select or null to select all
+   * @param alias The alias for the table name (default: null uses none).
    * @return An assoziative array with the following keys 'attribStr', 'tableStr', 'condStr', 'orderStr' which hold the updated strings
    */
-  protected function getSQLForRefs($attribStr, $tableStr, $condStr, $orderStr, $attribs=null)
+  protected function getSQLForRefs($attribStr, $tableStr, $condStr, $orderStr, $attribs=null, $alias=null)
   {
     // references
     $joinStr = '';
@@ -459,19 +460,23 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
                   // reference from parent
                   $thisAttr = $this->getAttribute($relationDesc->fkName);
                   $otherAttr = $otherMapper->getAttribute($relationDesc->idName);
-                  $joinStr .= " LEFT JOIN ".$this->_dbPrefix.$otherAttr->table." ON ".
-                          $this->_dbPrefix.$otherAttr->table.".".$otherAttr->name."=".
-                          $this->_dbPrefix.$thisAttr->table.".".$thisAttr->name;
                 }
                 else if ($relationDesc instanceof RDBOneToManyRelationDescription)
                 {
                   // reference from child
                   $thisAttr = $this->getAttribute($relationDesc->idName);
                   $otherAttr = $otherMapper->getAttribute($relationDesc->fkName);
-                  $joinStr .= " LEFT JOIN ".$this->_dbPrefix.$otherAttr->table." ON ".
-                            $this->_dbPrefix.$otherAttr->table.".".$otherAttr->name."=".
-                            $this->_dbPrefix.$thisAttr->table.".".$thisAttr->name;
-                  }
+                }
+
+                if ($alias != null) {
+                  $thisTable = $alias;
+                }
+                else {
+                  $thisTable = $thisAttr->table;
+                }
+                $joinStr .= " LEFT JOIN ".$this->_dbPrefix.$otherAttr->table." ON ".
+                          $this->_dbPrefix.$otherAttr->table.".".$otherAttr->name."=".
+                          $this->_dbPrefix.$thisTable.".".$thisAttr->name;
                 }
                 array_push($referencedTables, $otherAttributeDesc->table);
               }

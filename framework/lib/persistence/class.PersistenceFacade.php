@@ -147,7 +147,7 @@ abstract class PersistenceFacade
    * @return An array containing the objects
    */
   abstract function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-      array $buildAttribs=null, array $buildTypes=null);
+      array $buildAttribs=array(), array $buildTypes=array());
   /**
    * Load the first object matching a given condition. If a PagingInfo instance is passed it will be used and updated.
    * @param type The type of the object
@@ -163,7 +163,7 @@ abstract class PersistenceFacade
    * @return A reference to the object or null
    */
   abstract function loadFirstObject($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    array $buildAttribs=null, array $buildTypes=null);
+    array $buildAttribs=array(), array $buildTypes=array());
   /**
    * Start a transaction. Used for PersistenceMapper classes that need to explicitely start and commit transactions.
    * If this method is called, the startTransaction() method of every used PersistenceMapper will be called - until
@@ -198,6 +198,12 @@ abstract class PersistenceFacade
    * @param mapper A reference to the mapper
    */
   abstract function setMapper($type, PersistenceMapper $mapper);
+  /**
+   * Get a mapper for a given configuration section
+   * @param configSection The name of the configuration section (e.g. database)
+   * @param mapper A reference to the mapper
+   */
+  abstract function getMapperForConfigSection($configSection);
   /**
    * Enable logging using a given OutputStrategy to log insert/update/delete actions to a file.
    * @param logStrategy The OutputStrategy to use.

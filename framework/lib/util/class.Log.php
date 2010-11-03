@@ -17,6 +17,7 @@
  * $Id$
  */
 require_once(BASE."wcmf/3rdparty/log4php/Logger.php");
+Logger::configure(dirname($_SERVER['SCRIPT_FILENAME']).'/log4php.properties');
 
 /**
  * @class Log

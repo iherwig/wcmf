@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -27,13 +27,13 @@ require_once(BASE."wcmf/lib/visitor/class.CommitVisitor.php");
  * @class InsertController
  * @ingroup Controller
  * @brief InsertController is a controller that inserts Nodes.
- * 
+ *
  * <b>Input actions:</b>
  * - unspecified: Create Nodes of given type
  *
  * <b>Output actions:</b>
  * - @em ok In any case
- * 
+ *
  * @param[in] poid The oid of the Node to add the new type to (if needed)
  * @param[in] newtype The type of Node to create
  * @param[in] newrole The role of the created node in relation to the parent node (only used if poid is set)
@@ -70,9 +70,9 @@ class InsertController extends Controller
    */
   function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();    
+    $persistenceFacade = &PersistenceFacade::getInstance();
     $nodeUtil = new NodeUtil();
-      
+
     // start the persistence transaction
     $persistenceFacade->startTransaction();
 
@@ -87,12 +87,12 @@ class InsertController extends Controller
       $parentTemplate = &$persistenceFacade->create($poidParts['type'], 1);
       $possibleChildren = $nodeUtil->getPossibleChildren($parentNode, $parentTemplate);
     }
-      
+
     // construct child to insert
     $newType = $this->_request->getValue('newtype');
     $newRole = $this->_request->getValue('newrole');
     if ($parentNode != null)
-    {  
+    {
       // check insertion as child of another object
       if (!in_array($newRole, array_keys($possibleChildren)))
       {
@@ -108,7 +108,7 @@ class InsertController extends Controller
           return true;
         }
       }
-    }      
+    }
     $newNode = &$persistenceFacade->create($newType, BUILDDEPTH_REQUIRED);
 
     // look for a node template in the request parameters
@@ -118,38 +118,38 @@ class InsertController extends Controller
       if (PersistenceFacade::isValidOID($key) && PersistenceFacade::getOIDParameter($key, 'type') == $newType)
       {
         $tpl = &$value;
-        
+
         if ($this->isLocalizedRequest())
         {
           // copy values from the node template to the localization template for later use
           $localizationTpl = &$persistenceFacade->create($newType, BUIDLDEPTH_SINGLE);
-          $tpl->copyValues($localizationTpl, array(DATATYPE_ATTRIBUTE));
+          $tpl->copyValues($localizationTpl, false);
         }
         else
         {
           // copy values from the node template to the new node
-          $tpl->copyValues($newNode, array(DATATYPE_ATTRIBUTE));
+          $tpl->copyValues($newNode, false);
         }
         break;
       }
     }
-    
+
     if ($this->confirmInsert($newNode) && $parentNode != null) {
       $parentNode->addChild($newNode, $newRole);
     }
     $this->modify($newNode);
     $needCommit = true;
-    
+
     // commit changes
     if ($needCommit)
     {
-      // commit the new node and its descendants 
+      // commit the new node and its descendants
       // we need to use the CommitVisitor because many to many objects maybe included
       $nIter = new NodeIterator($newNode);
       $cv = new CommitVisitor();
       $cv->startIterator($nIter);
     }
-    
+
     // if the request is localized, use the localization template as translation
     if ($this->isLocalizedRequest() && $localizationTpl != null)
     {
@@ -157,16 +157,16 @@ class InsertController extends Controller
       $localization = Localization::getInstance();
       $localization->saveTranslation($localizationTpl, $this->_request->getValue('language'));
     }
-    
+
     // after insert
     $this->afterInsert($newNode);
-    
+
     // end the persistence transaction
     $persistenceFacade->commitTransaction();
 
     // return the oid of the inserted node
     $this->_response->setValue('oid', $newNode->getOID());
-      
+
     $this->_response->setAction('ok');
     return true;
   }
@@ -186,7 +186,7 @@ class InsertController extends Controller
    * @param node A reference to the Node to modify.
    * @return True/False whether the Node was modified [default: false].
    */
-  function modify(&$node) 
+  function modify(&$node)
   {
     return false;
   }

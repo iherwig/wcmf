@@ -379,8 +379,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       // set dependend objects of this object
       foreach ($relationDescs as $curRelationDesc)
       {
+        $t = $curRelationDesc->otherMinMultiplicity;
+        $s = $curRelationDesc->otherAggregationKind;
         if ( ($buildDepth != BUILDDEPTH_SINGLE) && (($buildDepth > 0) || ($buildDepth == BUILDDEPTH_INFINITE) ||
-          (($buildDepth == BUILDDEPTH_REQUIRED) && $curRelationDesc->minOccurs > 0 && $curRelationDesc->aggregation == true)) )
+          (($buildDepth == BUILDDEPTH_REQUIRED) && $curRelationDesc->otherMinMultiplicity > 0 && $curRelationDesc->otherAggregationKind != 'none')) )
         {
           if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
             $childObject = $persistenceFacade->create($curRelationDesc->otherType, BUILDDEPTH_SINGLE, $buildAttribs);
@@ -476,14 +478,14 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
               }
               else
               {
-                if (!$rs->fetchRow())
+                if (!$rs->fetch())
                 {
                   $nmObj = $persistenceFacade->create($relationDesc->thisEndRelation->otherType);
                   $nmObj->setValue($relationDesc->thisEndRelation->thisRole, array($object));
                   $nmObj->setValue($relationDesc->otherEndRelation->otherRole, array($relative));
                   $nmObj->save();
                 }
-                $rs->Close();
+                $rs->closeCursor();
               }
             }
           }
@@ -660,13 +662,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * @param data An associative array with the attribute names as keys and the attribute values as values [default: empty array]
    * @return A reference to the object
    */
-  protected function createObjectFromData(array $attribs=array(), array $data=array())
+  public function createObjectFromData(array $attribs=array(), array $data=array())
   {
     // determine if we are loading or creating
-    $createFromLoadedData = false;
-    if (sizeof($data) > 0) {
-      $createFromLoadedData = true;
-    }
+    $createFromLoadedData = (sizeof($data) > 0) ? true : false;
 
     // initialize data and oid
     if ($createFromLoadedData) {
@@ -695,7 +694,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * 			(given by getSelectSQL).
    * @param attribs The build attributes for the type of object (given in the buildAttribs parameter of the loadImpl method)
    */
-    protected function applyDataOnLoad(PersistentObject $object, array $objectData, array $attribs)
+  protected function applyDataOnLoad(PersistentObject $object, array $objectData, array $attribs)
   {
     // set object data
     $attributeDescriptions = $this->getAttributes();
@@ -742,7 +741,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * @param buildAttribs @see PersistenceFacade::loadObjects()
    * @param buildTypes @see PersistenceFacade::loadObjects()
    */
-  protected function appendRelationData(PersistentObject $object, $buildDepth, array $buildAttribs=array(), array $buildTypes=array())
+  public function appendRelationData(PersistentObject $object, $buildDepth, array $buildAttribs=array(), array $buildTypes=array())
   {
     $persistenceFacade = PersistenceFacade::getInstance();
 

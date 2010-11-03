@@ -62,7 +62,13 @@ abstract class UserManager
   {
     $this->_initParams = $params;
     $this->_userRepository = $this->initialize($this->_initParams);
-
+    if (!isset($this->_userRepository['users'])) {
+      $this->_userRepository['users'] = array();
+    }
+    if (!isset($this->_userRepository['roles'])) {
+      $this->_userRepository['roles'] = array();
+    }
+    
     // load role config if existing
     $parser = InifileParser::getInstance();
     if (($roleConfig = $parser->getSection('roleconfig')) !== false) {
@@ -174,7 +180,7 @@ abstract class UserManager
       throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
     }
     // get the repository user first, because the login may change
-    $user = &$this->getUser($login);
+    $user = $this->getUser($login);
 
     // validate the value
     $validationMsg = $user->validateValue($property, $value, DATATYPE_ATTRIBUTE);
@@ -258,7 +264,7 @@ abstract class UserManager
     if ($this->getRole($name) != null) {
       throw new IllegalArgumentException(Message::get("The role '%1%' already exists", array($name)));
     }
-    $role = &$this->createRoleImpl($name);
+    $role = $this->createRoleImpl($name);
 
     // update user repository
     $this->_userRepository['roles'][sizeof($this->_userRepository['roles'])] = &$role;

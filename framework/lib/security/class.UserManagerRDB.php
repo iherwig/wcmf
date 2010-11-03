@@ -40,21 +40,23 @@ class UserManagerRDB extends UserManager
     $userRepository = array();
 
     // load the user/role instances
-    $query = PersistenceFacade::createObjectQuery(UserManager::getUserClassName());
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $query = $persistenceFacade->createObjectQuery(UserManager::getUserClassName());
     $users = $query->execute(1);
-    $query = PersistenceFacade::createObjectQuery(UserManager::getRoleClassName());
+    $query = $persistenceFacade->createObjectQuery(UserManager::getRoleClassName());
     $roles = $query->execute(1);
 
     // add the user/role instances to the repository
     $userRepository['users'] = array();
     for ($i=0; $i<sizeof($users); $i++) {
       if ($users[$i] != null) {
-        $userRepository['users'][sizeof($userRepository['users'])] = &$users[$i];
+        $userRepository['users'][] = &$users[$i];
       }
     }
+    $userRepository['roles'] = array();
     for ($i=0; $i<sizeof($roles); $i++) {
       if ($roles[$i] != null) {
-        $userRepository['roles'][sizeof($userRepository['roles'])] = &$roles[$i];
+        $userRepository['roles'][] = &$roles[$i];
       }
     }
   	return $userRepository;
@@ -98,7 +100,7 @@ class UserManagerRDB extends UserManager
    */
   protected function createRoleImpl($name)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
     $role = &$persistenceFacade->create($this->getRoleClassName(), BUILDDEPTH_REQUIRED);
     $role->setName($name);
     $role->save();

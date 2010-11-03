@@ -390,17 +390,16 @@ class AuthUser extends User implements Storable
   public function getClassDefinitionFiles()
   {
     $parser = InifileParser::getInstance();
-    $objectFactory = ObjectFactory::getInstance();
 
     if (($userClassName = $parser->getValue('User', 'implementation')) === false) {
-      WCMFException::throwEx($parser->getErrorMsg());
+      throw new ConfigurationException($parser->getErrorMsg());
     }
-    $userClassFile = $objectFactory->getClassfileFromConfig($userClassName);
+    $userClassFile = ObjectFactory::getClassfileFromConfig($userClassName);
 
     if (($roleClassName = $parser->getValue('Role', 'implementation')) === false) {
-      WCMFException::throwEx($parser->getErrorMsg());
+      throw new ConfigurationException($parser->getErrorMsg());
     }
-    $roleClassName = $objectFactory->getClassfileFromConfig($roleClassName);
+    $roleClassName = ObjectFactory::getClassfileFromConfig($roleClassName);
 
     return array(__FILE__, BASE.$userClassFile, BASE.$roleClassName);
   }

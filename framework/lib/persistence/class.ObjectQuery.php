@@ -148,8 +148,7 @@ class ObjectQuery implements ChangeListener
     // if the requested template type is the same as the search type and it was not requested
     // before, we return the type node. this will make sure that the values set on the first
     // template are really selected by the query, even if more templates of the same type are involved.
-    if ($type == $this->_typeNode->getType() && $this->_typeNode->getNumParents() == 0)
-    {
+    if ($type == $this->_typeNode->getType() && $this->_typeNode->getNumParents() == 0) {
       $template = $this->_typeNode;
     }
     else
@@ -174,9 +173,9 @@ class ObjectQuery implements ChangeListener
     if ($template != null)
     {
       $mapper = self::getMapper($template);
-      if ($mapper == null)
+      if ($mapper == null) {
         return;
-
+      }
       $template->addChangeListener($this);
 
       // set the oid values so that they are used in the query
@@ -184,8 +183,9 @@ class ObjectQuery implements ChangeListener
       {
         $ids = $template->getOID()->getId();
         $i = 0;
-        foreach ($mapper->getPkNames() as $pkName)
+        foreach ($mapper->getPkNames() as $pkName) {
           $template->setValue($pkName, $ids[$i++], true);
+        }
       }
       // set the values so that they are used in the query
       $template->copyValues($template);
@@ -204,7 +204,7 @@ class ObjectQuery implements ChangeListener
    */
   public function makeGroup($templates, $preOperator=QUERYOP_AND, $interOperator=QUERYOP_OR)
   {
-    $this->groups[sizeof($this->groups)] = array('tpls' => $templates, 'object_query_pre_operator' => $preOperator,
+    $this->_groups[sizeof($this->_groups)] = array('tpls' => $templates, 'object_query_pre_operator' => $preOperator,
       'object_query_inter_operator' => $interOperator);
     // store grouped nodes in an extra array to separate them from the others
     for ($i=0; $i<sizeof($templates); $i++)
@@ -236,7 +236,7 @@ class ObjectQuery implements ChangeListener
    * @param attribs An array of attributes to load (null to load all, if buildDepth != false). [default: null]
    * @return A list of objects that match the given conditions or a list of oids
    */
-  function execute($buildDepth, $orderby=null, &$pagingInfo, $attribs=null)
+  function execute($buildDepth, $orderby=null, $pagingInfo=null, $attribs=null)
   {
     // build the query
     $this->_query = $this->buildQuery($buildDepth, $attribs);
@@ -254,7 +254,7 @@ class ObjectQuery implements ChangeListener
    * @param pagingInfo A reference paging info instance (optional, default null does not work in PHP4).
    * @return A list of objects that match the given conditions or a list of oids
    */
-  public function executeString($type, $query, $buildDepth, $orderby=null, &$pagingInfo)
+  public function executeString($type, $query, $buildDepth, $orderby=null, $pagingInfo)
   {
     $result = array();
 
@@ -271,7 +271,7 @@ class ObjectQuery implements ChangeListener
     $query .= self::getOrderby($type, $query, $orderby);
 
     // execute the query
-    $stmt = &$mapper->select($query, $pagingInfo);
+    $stmt = $mapper->select($query, $pagingInfo);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $stmt->closeCursor();
     foreach ($rows as $row)
@@ -285,8 +285,8 @@ class ObjectQuery implements ChangeListener
       else
       {
         $obj = $mapper->createObjectFromData($this->_typeNode->getValueNames(), $row);
-        $mapper->appendChildData($obj, $buildDepth);
-        $result[sizeof($result)] = $obj;
+        $mapper->appendRelationData($obj, $buildDepth);
+        $result[] = $obj;
       }
     }
     return $result;
@@ -310,9 +310,9 @@ class ObjectQuery implements ChangeListener
   protected function buildQuery($buildDepth, $attribs=null)
   {
     $mapper = self::getMapper($this->_typeNode);
-    if ($mapper == null)
+    if ($mapper == null) {
       return;
-
+    }
     // initialize query parts
     $attributeStr = '';
     $tableArray = array();
@@ -320,12 +320,22 @@ class ObjectQuery implements ChangeListener
     $conditionStr = '';
 
     // if no object template is created, we use the typeNode as object template
-    if ($this->_root->getNumChildren() == 0)
+    if ($this->_root->getNumChildren() == 0) {
       $this->_root->addChild($this->_typeNode);
-
+    }
     // create attribute string (use the default select from the mapper, since we are only interested in the attributes)
-    if ($buildDepth === false)
+    if ($buildDepth === false) {
       $attribs = array();
+    }
+    /* 
+    // call the mapper method through reflection
+    // NOTE: this will work from php 5.3 on. for now we have to set the method public
+    $mapperClass = get_class($mapper);
+    $mapperReflectionClass = new ReflectionClass($mapperClass);
+    $method = $mapperReflectionClass->getMethod('getSelectSQL');
+    $method->setAccessible(true);
+    $select = $method->invokeArgs($mapper, array('', $this->_typeNode->getValue('object_query_table_name'), null, $attribs, true));
+    */
     $select = $mapper->getSelectSQL('', $this->_typeNode->getValue('object_query_table_name'), null, $attribs, true);
     $attributeStr = $select['attributeStr'];
 
@@ -333,16 +343,17 @@ class ObjectQuery implements ChangeListener
     $iterator = new NodeIterator($this->_root);
     while(!($iterator->isEnd()))
     {
-      $currentObject = &$iterator->getCurrentObject();
-      if ($currentObject->getOID() != $this->_root->getOID() && !in_array($currentObject->getOID(), $this->_groupedOIDs))
+      $currentObject = $iterator->getCurrentObject();
+      if ($currentObject->getOID() != $this->_root->getOID() && !in_array($currentObject->getOID(), $this->_groupedOIDs)) {
         $this->processObjectTemplate($currentObject, $tableArray, $conditionStr, $relationArray);
+      }
       $iterator->proceed();
     }
 
     // process groups
-    for ($i=0; $i<sizeof($this->groups); $i++)
+    for ($i=0; $i<sizeof($this->_groups); $i++)
     {
-      $group = $this->groups[$i];
+      $group = $this->_groups[$i];
       $groupConditionStr = '';
       for ($j=0; $j<sizeof($group['tpls']); $j++)
       {
@@ -355,8 +366,9 @@ class ObjectQuery implements ChangeListener
 
         $this->processObjectTemplate($tpl, $tableArray, $groupConditionStr, $relationArray);
       }
-      if (strlen($conditionStr) > 0)
+      if (strlen($conditionStr) > 0) {
         $conditionStr .= ' '.$group['object_query_pre_operator'].' ';
+      }
       $conditionStr .= '('.$groupConditionStr.')';
     }
 
@@ -364,19 +376,22 @@ class ObjectQuery implements ChangeListener
     $tableStr = $select['tableStr'];
     foreach ($tableArray as $table)
     {
-      if (preg_match('/\b'.$table.'\b/', $tableStr) == 0)
+      if (preg_match('/\b'.$table.'\b/', $tableStr) == 0) {
         $tableStr = $table.", ".$tableStr;
+      }
     }
 
     // assemble the final query
     $query = 'SELECT DISTINCT '.$attributeStr.' FROM '.$tableStr;
-    if (strlen($conditionStr) > 0)
+    if (strlen($conditionStr) > 0) {
       $query .= ' WHERE '.$conditionStr;
-    else
+    }
+    else {
       $query .= ' WHERE 1';
-    if (sizeof($relationArray) > 0)
+    }
+    if (sizeof($relationArray) > 0) {
       $query .= ' AND '.join(' AND ', array_unique($relationArray));
-
+    }
     return $query;
   }
   /**
@@ -398,8 +413,9 @@ class ObjectQuery implements ChangeListener
     $curConditionStr = $tpl->getValue("object_query_query_condition");
     if (strlen($curConditionStr) > 0)
     {
-      if (strlen($conditionStr) > 0)
+      if (strlen($conditionStr) > 0) {
         $conditionStr .= ' '.$tpl->getValue("object_query_pre_operator").' ';
+      }
       $conditionStr .= '('.$curConditionStr.')';
     }
 
@@ -420,9 +436,9 @@ class ObjectQuery implements ChangeListener
   protected function getTableName(Node $tpl, $asAliasString=false)
   {
     $mapper = self::getMapper($tpl);
-    if ($mapper == null)
+    if ($mapper == null) {
       return '';
-
+    }
     $tablename = '';
     $mapperTablename = $mapper->getTableName();
 
@@ -484,7 +500,7 @@ class ObjectQuery implements ChangeListener
 
     // get default order if not given
     if ($orderby == null) {
-      $orderby = $mapper->getOrderBy();
+      $orderby = $mapper->getDefaultOrder();
     }
     // get the table/alias name from the query
     preg_match('/^SELECT DISTINCT ([^\.]+?)\./', $query, $matches);
@@ -519,42 +535,42 @@ class ObjectQuery implements ChangeListener
     {
       // check if the value is a foreign key and ignore it if true
       $mapper = self::getMapper($node);
-      if ($mapper && $mapper->isForeignKey($valueName))
+      if ($mapper && $mapper->isForeignKey($valueName)) {
         return;
-
+      }
       $currentCondition = $node->getValue("object_query_query_condition");
-      if (strlen($currentCondition))
+      if (strlen($currentCondition)) {
         $currentCondition .= ' '.$operator.' ';
-
+      }
       $value = $node->getValue($valueName);
 
       // set default LIKE '%...%' if no operator given
-        $parts = preg_split('/ /', $value);
-        if (sizeof($parts) == 1)
+      $parts = preg_split('/ /', $value);
+      if (sizeof($parts) == 1)
       {
         if (!in_array($valueName, $mapper->getPkNames())) {
           $value = "LIKE '%".$this->escapeValue($value)."%'";
       }
         else {
-        // don't search for pk names with LIKE
-        $value = "= '".$this->escapeValue($value)."'";
+          // don't search for pk names with LIKE
+          $value = "= '".$this->escapeValue($value)."'";
         }
       }
 
       $colName = $mapper->getColumnName($valueName);
-      if ($colName !== null)
-      {
+      if ($colName !== null) {
         $currentCondition .= self::getTableName($node).'.'.$colName.' '.$value;
       }
       else
       {
         // set neutral element if the column does not exist
-        if ($operator == QUERYOP_AND)
+        if ($operator == QUERYOP_AND) {
           $currentCondition .= "TRUE";
-        else
+        }
+        else {
           $currentCondition .= "FALSE";
+        }
       }
-
       $node->removeChangeListener($this);
       $node->setValue("object_query_query_condition", $currentCondition);
       $node->addChangeListener($this);
@@ -592,7 +608,7 @@ class ObjectQuery implements ChangeListener
    * @param mapper A reference to the PersistenceMapper
    * Throws an Exception
    */
-  protected function checkMapper(PersistentMapper $mapper)
+  protected function checkMapper(PersistenceMapper $mapper)
   {
     if (!($mapper instanceof NodeUnifiedRDBMapper)) {
       throw new PersistenceException(Message::get('%1% does only support PersistenceMappers of type NodeUnifiedRDBMapper.', array(get_class($this))));

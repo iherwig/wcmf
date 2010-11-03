@@ -103,7 +103,7 @@ class Application
         require_once(BASE.ObjectFactory::getClassfileFromConfig($implementationFile));
       }
       else {
-        throw new ConfigurationException("Implementation file ".$implementationFile." not found.", __FILE__, __LINE__);
+        throw new ConfigurationException("Implementation file ".$implementationFile." not found.");
       }
     }
 

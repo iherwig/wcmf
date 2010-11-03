@@ -143,7 +143,7 @@ abstract class User extends Node
       return;
     }
     // add the role if existing
-    $role = &$this->getRoleByName($rolename);
+    $role = $this->getRoleByName($rolename);
     if ($role != null) {
       $this->addChild($role);
     }
@@ -193,8 +193,11 @@ abstract class User extends Node
   {
     $roles = $this->getRoles();
     for ($i=0; $i<sizeof($roles); $i++)
-      if ($roles[$i]->getName() == $rolename)
+    {
+      if ($roles[$i]->getName() == $rolename) {
         return true;
+      }
+    }
     return false;
   }
 
@@ -252,7 +255,7 @@ abstract class User extends Node
    * an instance from the session, the cache is invalid and must be reseted using
    * this method.
    */
-  protected function resetRoleCache()
+  public function resetRoleCache()
   {
     $this->_cachedRoles = array();
     $this->_hasOwnRolesLoaded = false;

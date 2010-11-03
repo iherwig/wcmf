@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -36,36 +36,36 @@ define("MSG_FORMAT_SOAP", "SOAP");
  */
 class ControllerMessage
 {
-  var $_sender = null;
-  var $_context = null;
-  var $_action = null;
-  var $_format = null;
-  var $_data = array();
-  
+  private $_sender = null;
+  private $_context = null;
+  private $_action = null;
+  private $_format = null;
+  private $_data = array();
+
   /**
-   * Constructor 
+   * Constructor
    * @param sender The name of the controller that sent the message
    * @param context The name of the context of the message
    * @param action The name of the action that the message initiates
-   * @param data An associative array containing the message variables 
+   * @param data An associative array containing the message variables
    * together with their values.
    */
-  function ControllerMessage($sender, $context, $action, $data)
+  public function ControllerMessage($sender, $context, $action, $data)
   {
     if (func_num_args() != 4) {
-      WCMFWCMFException::throwEx("Message constructor called with wrong argument number: ", __FILE__, __LINE__);
-    }      
+      throw new ApplicationException("Message constructor called with wrong argument number: ");
+    }
     $this->_sender = $sender;
     $this->_context = $context;
     $this->_action = $action;
     $this->_data = $data;
   }
-  
+
   /**
    * Set the name of the sending Controller
    * @param sender The name of the Controller
-   */  
-  function setSender($sender)
+   */
+  public function setSender($sender)
   {
     $this->_sender = $sender;
   }
@@ -73,8 +73,8 @@ class ControllerMessage
   /**
    * Get the name of the sending Controller
    * @return The name of the Controller
-   */  
-  function getSender()
+   */
+  public function getSender()
   {
     return $this->_sender;
   }
@@ -82,7 +82,7 @@ class ControllerMessage
   /**
    * Set the name of the context
    * @param context The name of the context
-   */  
+   */
   function setContext($context)
   {
     $this->_context = $context;
@@ -91,8 +91,8 @@ class ControllerMessage
   /**
    * Get the name of the context
    * @return The name of the context
-   */  
-  function getContext()
+   */
+  public function getContext()
   {
     return $this->_context;
   }
@@ -100,8 +100,8 @@ class ControllerMessage
   /**
    * Set the name of the action
    * @param action The name of the action
-   */  
-  function setAction($action)
+   */
+  public function setAction($action)
   {
     $this->_action = $action;
   }
@@ -109,8 +109,8 @@ class ControllerMessage
   /**
    * Get the name of the action
    * @return The name of the action
-   */  
-  function getAction()
+   */
+  public function getAction()
   {
     return $this->_action;
   }
@@ -118,8 +118,8 @@ class ControllerMessage
   /**
    * Set the message format
    * @param format One of the MSG_FORMAT constants
-   */  
-  function setFormat($format)
+   */
+  public function setFormat($format)
   {
     $this->_format = $format;
   }
@@ -127,8 +127,8 @@ class ControllerMessage
   /**
    * Get the message format
    * @return format One of the MSG_FORMAT constants
-   */  
-  function getFormat()
+   */
+  public function getFormat()
   {
     return $this->_format;
   }
@@ -137,8 +137,8 @@ class ControllerMessage
    * Set a value
    * @param name The name of the variable
    * @param value The value of the variable
-   */  
-  function setValue($name, $value)
+   */
+  public function setValue($name, $value)
   {
     $this->_data[$name] = $value;
   }
@@ -147,18 +147,23 @@ class ControllerMessage
    * Append a value
    * @param name The name of the variable
    * @param value The value to append to the variable
-   */  
-  function appendValue($name, $value)
+   */
+  public function appendValue($name, $value)
   {
-    $this->_data[$name] .= $value;
+    if (!$this->hasValue($name)) {
+      $this->_data[$name] = $value;
+    }
+    else {
+      $this->_data[$name] .= $value;
+    }
   }
 
   /**
    * Check for existance of a value
    * @param name The name of the variable
    * @return True/False wether the value exists or not exist
-   */  
-  function hasValue($name)
+   */
+  public function hasValue($name)
   {
     return array_key_exists($name, $this->_data);
   }
@@ -168,8 +173,8 @@ class ControllerMessage
    * @param name The name of the variable
    * @param default The default value if the value is not defined [default: null]
    * @return The value or default, if it does not exist
-   */  
-  function getValue($name, $default=null)
+   */
+  public function getValue($name, $default=null)
   {
     if (!$this->hasValue($name)) {
       return $default;
@@ -184,8 +189,8 @@ class ControllerMessage
    * @param name The name of the variable
    * @param default The default value if the value is not defined [default: false]
    * @return The value or null if it does not exist
-   */  
-  function getBooleanValue($name, $default=false)
+   */
+  public function getBooleanValue($name, $default=false)
   {
     if (!$this->hasValue($name)) {
       return $default;
@@ -199,8 +204,8 @@ class ControllerMessage
   /**
    * Get all values as an associative array
    * @return A reference to an data array
-   */  
-  function &getData()
+   */
+  public function &getData()
   {
     return $this->_data;
   }
@@ -208,8 +213,8 @@ class ControllerMessage
   /**
    * Set all values at once
    * @param data A reference to the data
-   */  
-  function setData(&$data)
+   */
+  public function setData(&$data)
   {
     $this->_data = &$data;
   }
@@ -217,16 +222,16 @@ class ControllerMessage
   /**
    * Remove a value
    * @param name The name of the variable
-   */  
-  function clearValue($name)
+   */
+  public function clearValue($name)
   {
     unset($this->_data[$name]);
   }
 
   /**
    * Remove all values
-   */  
-  function clearValues()
+   */
+  public function clearValues()
   {
     $this->_data = array();
   }
@@ -234,8 +239,8 @@ class ControllerMessage
   /**
    * Get a string representation of the message
    * @return The string
-   */  
-  function toString()
+   */
+  public function __toString()
   {
     $str = 'sender='.$this->_sender.', ';
     $str .= 'context='.$this->_context.', ';

@@ -20,7 +20,6 @@ define("BASE", realpath ("../../")."/");
 error_reporting(E_ERROR | E_PARSE);
 
 require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/output/class.LogOutputStrategy.php");
 require_once(BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(BASE."wcmf/lib/util/class.FileUtil.php");
 require_once(BASE."wcmf/lib/util/class.DBUtil.php");
@@ -45,9 +44,9 @@ $GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'cms');
 $GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'cms');
 
 // set locale
-if ($GLOBALS['MESSAGE_LANGUAGE'] !== false)
+if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {
   setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
-
+}
 // parse tables.sql
 $tables = array();
 $readingTable = false;
@@ -59,14 +58,12 @@ foreach($lines as $line)
   if(strlen($line) > 0)
   {
     // check table start
-    if (preg_match('/CREATE\s+TABLE/', $line))
-    {
+    if (preg_match('/CREATE\s+TABLE/', $line)) {
       // table definition
       $readingTable = true;
     }
     // add line to table definition
-    if ($readingTable)
-    {
+    if ($readingTable) {
       $tableDef .= $line."\n";
     }
     // check table end
@@ -95,8 +92,7 @@ foreach ($tables as $tableDef)
     $oldColumns = getMetaData($connection, $tableDef['name']);
 
     // check if the table already has an update entry
-    if ($oldValue == null && $oldColumns === null)
-    {
+    if ($oldValue == null && $oldColumns === null) {
       // the table has no update entry and does not exist
       createTable($connection, $tableDef);
     }
@@ -118,13 +114,16 @@ foreach ($tables as $tableDef)
 }
 
 // execute custom scripts from the directory 'custom-dbupdate'
-$sqlScripts = FileUtil::getFiles('custom-dbupdate', '/[^_]+_.*\.sql$/', true);
-sort($sqlScripts);
-foreach ($sqlScripts as $script)
+if (is_dir('custom-dbupdate'))
 {
-  // extract the initSection from the filename
-  $initSection = array_shift(preg_split('/_/', basename($script)));
-  DBUtil::executeScript($script, $initSection);
+  $sqlScripts = FileUtil::getFiles('custom-dbupdate', '/[^_]+_.*\.sql$/', true);
+  sort($sqlScripts);
+  foreach ($sqlScripts as $script)
+  {
+    // extract the initSection from the filename
+    $initSection = array_shift(preg_split('/_/', basename($script)));
+    DBUtil::executeScript($script, $initSection);
+  }
 }
 
 Log::info("done.", "dbupdate");
@@ -169,14 +168,14 @@ function getOldValue(&$connection, $tableId, $columnId, $type)
   {
     // selection for columns
     $st = $connection->prepare('SELECT * FROM `dbupdate` WHERE `table_id`=? AND `column_id`=? AND `type`=\'column\'');
-    $st->execute($sql, array($tableId, $columnId));
+    $st->execute(array($tableId, $columnId));
     $result = $st->fetchAll(PDO::FETCH_ASSOC);
   }
   else
   {
     // selection for tables
     $st = $connection->prepare('SELECT * FROM `dbupdate` WHERE `table_id`=? AND `type`=\'table\'');
-    $st->execute($sql, array($tableId));
+    $st->execute(array($tableId));
     $result = $st->fetchAll(PDO::FETCH_ASSOC);
   }
   if (sizeof($result) > 0)
@@ -204,12 +203,12 @@ function updateValue(&$connection, $tableId, $columnId, $type, $table, $column)
     if ($oldValue === null)
     {
       $st = $connection->prepare('INSERT INTO `dbupdate` (`table_id`, `column_id`, `type`, `table`, `column`, `updated`) VALUES (?, ?, ?, ?, ?, ?)');
-      $result = $st->execute($sql, array($tableId, $columnId, $type, $table, $column, date("Y-m-d H:i:s")));
+      $result = $st->execute(array($tableId, $columnId, $type, $table, $column, date("Y-m-d H:i:s")));
     }
     else
     {
       $st = $connection->prepare('UPDATE `dbupdate` SET `table`=?, `column`=?, `updated`=? WHERE `table_id`=? AND `column_id`=? AND `type`=?');
-      $result = $st->execute($sql, array($table, $column, date("Y-m-d H:i:s"), $tableId, $columnId, $type));
+      $result = $st->execute(array($table, $column, date("Y-m-d H:i:s"), $tableId, $columnId, $type));
     }
   }
   catch (Exception $e) {
@@ -225,7 +224,8 @@ function updateValue(&$connection, $tableId, $columnId, $type, $table, $column)
 function updateEntry($connection, $tableDef)
 {
   updateValue($connection, $tableDef['id'], '-', 'table', $tableDef['name'], '-');
-  foreach ($tableDef['columns'] as $columnDef) {
+  foreach ($tableDef['columns'] as $columnDef)
+  {
     if ($columnDef['id']) {
       updateValue($connection, $tableDef['id'], $columnDef['id'], 'column', $tableDef['name'], $columnDef['name']);
     }
@@ -337,9 +337,9 @@ function updateColumns(&$connection, $tableDef, $oldColumnDefs)
     {
       // ignore changes in 'not null' for primary keys ('not null' is set anyway)
       $typeDiffersInNotNull = strtolower(trim(str_replace($columnDef['type'], "", $oldColumnDefTransl['type']))) == 'not null';
-      if ($typeDiffersInNotNull && in_array($columnDef['name'], $tableDef['pks']))
+      if ($typeDiffersInNotNull && in_array($columnDef['name'], $tableDef['pks'])) {
         continue;
-
+      }
       // the column has an update entry and does exist
       alterColumn($connection, $tableDef['name'], $oldColumnDefTransl, $columnDef);
     }
@@ -366,19 +366,30 @@ function processTableDef($tableDef, &$tables)
     if (strlen(trim($columnDef)) > 0)
     {
       preg_match_all('/`(.*?)`\s+(.*?),([^`]*)/', $columnDef, $matches);
-      $columnNames = $matches[1];
-      $columnTypes = $matches[2];
-      $comments = $matches[3];
-      for($i=0; $i<sizeof($columnNames); $i++)
+      if (isset($matches))
       {
-        preg_match('/columnId=([^\s]+)/', $comments[$i], $matches1);
-        if ($matches1[1] == 'UNDEFINED')
-          $matches1[1] = '';
-        array_push($columns, array('name' => $columnNames[$i], 'type' => $columnTypes[$i], 'id' => $matches1[1]));
+        $columnNames = $matches[1];
+        $columnTypes = $matches[2];
+        $comments = $matches[3];
+        for($i=0; $i<sizeof($columnNames); $i++)
+        {
+          preg_match('/columnId=([^\s]+)/', $comments[$i], $matches1);
+          if (isset($matches1[1]))
+          {
+            if ($matches1[1] == 'UNDEFINED') {
+              $matches1[1] = '';
+            }
+            array_push($columns, array('name' => $columnNames[$i], 'type' => $columnTypes[$i], 'id' => $matches1[1]));
+          }
+        }
       }
       preg_match_all('/PRIMARY KEY \(`(.*?)`\)/', $columnDef, $matches);
-      if (sizeof($matches[1]) > 0)
-        $pks = preg_split('/`\s*,\s*`/', $matches[1][0]);
+      if (isset($matches))
+      {
+        if (sizeof($matches[1]) > 0) {
+          $pks = preg_split('/`\s*,\s*`/', $matches[1][0]);
+        }
+      }
     }
   }
   $tables[$tableName]['pks'] = $pks;

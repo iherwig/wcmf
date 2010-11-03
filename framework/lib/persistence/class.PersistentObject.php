@@ -308,28 +308,15 @@ class PersistentObject
   /**
    * Copy all non-empty values to a given instance (ChangeListeners are triggered)
    * @param object A reference to the PersistentObject to copy the values to.
-   * @param dataTypes An array of datatypes. Only values of that datatypes will be copied.
-   * Empty array means all datatypes [default:empty array]
-   * @param copyPkValues True/False wether primary key values should be copied if their
-   * datatype is included or not [default: true]
+   * @param copyPkValues True/False wether primary key values should be copied
    */
-  public function copyValues(PersistentObject $object, array $dataTypes=array(), $copyPkValues=true)
+  public function copyValues(PersistentObject $object, $copyPkValues=true)
   {
     $valuesToIgnore = array();
     $mapper = $this->getMapper();
-    if ($mapper)
-    {
+    if ($mapper) {
       if (!$copyPkValues) {
         $valuesToIgnore = $mapper->getPkNames();
-      }
-      if (sizeof($dataTypes) > 0)
-      {
-        $attributesToCopy = $mapper->getAttributes($dataTypes);
-        $valuesToCopy = array();
-        foreach ($attributesToCopy as $attribute) {
-          $valuesToCopy[] = $attribute->name();
-        }
-        $valuesToIgnore = array_diff($this->getValueNames(), $valuesToCopy);
       }
     }
     $processor = new NodeProcessor('copyValueIntern', array($object, $valuesToIgnore), $this);
@@ -337,9 +324,6 @@ class PersistentObject
   }
   /**
    * Private callback for copying values
-   * @param targetnode The node to copy the value to
-   * @param dataTypes An array of datatypes. Only values of that datatypes will be copied.
-   * @param valuesToIgnore An associative array with the value names as keys and the types as values
    * @see NodeProcessor
    */
   private function copyValueIntern(Node $node, $valueName, PersistentObject $targetNode, array $valuesToIgnore)

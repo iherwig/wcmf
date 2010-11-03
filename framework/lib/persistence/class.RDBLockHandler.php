@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(BASE."wcmf/lib/persistence/class.ILockHandler.php");
 require_once(BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 
@@ -30,21 +30,21 @@ require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LockManagerRDB extends LockManager
+class RDBLockHandler implements ILockHandler
 {
   /**
    * Load the user with the given oid
    */
-  protected function getUserByOID(ObjectId $useroid)
+  public function getUserByOID(ObjectId $useroid)
   {
     // get the user with the given oid
     $persistenceFacade = PersistenceFacade::getInstance();
     return $persistenceFacade->load($useroid, BUILDDEPTH_SINGLE);
   }
   /**
-   * @see LockManager::aquireLockImpl();
+   * @see ILockHandler::aquireLock();
    */
-  protected function aquireLockImpl(ObjectId $useroid, $sessid, ObjectId $oid, $lockDate)
+  public function aquireLock(ObjectId $useroid, $sessid, ObjectId $oid, $lockDate)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $lock = $persistenceFacade->create('Locktable', BUILDDEPTH_REQUIRED);
@@ -56,9 +56,9 @@ class LockManagerRDB extends LockManager
     $lock->save();
   }
   /**
-   * @see LockManager::releaseLockImpl();
+   * @see ILockHandler::releaseLock();
    */
-  protected function releaseLockImpl(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null)
+  public function releaseLock(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null)
   {
     $query = PersistenceFacade::getInstance()->createObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
@@ -84,16 +84,16 @@ class LockManagerRDB extends LockManager
     }
   }
   /**
-   * @see LockManager::releaseAllLocksImpl();
+   * @see ILockHandler::releaseAllLocks();
    */
-  protected function releaseAllLocksImpl(ObjectId $useroid, $sessid)
+  public function releaseAllLocks(ObjectId $useroid, $sessid)
   {
     $this->releaseLockImpl($useroid, $sessid, null);
   }
   /**
-   * @see LockManager::getLockImpl();
+   * @see ILockHandler::getLock();
    */
-  protected function getLockImpl(ObjectId $oid)
+  public function getLock(ObjectId $oid)
   {
     // deactivate locking
     $parser = InifileParser::getInstance();

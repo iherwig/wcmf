@@ -20,7 +20,6 @@ define("BASE", realpath ("../../")."/");
 error_reporting(E_ERROR | E_PARSE);
 
 require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/output/class.LogOutputStrategy.php");
 require_once(BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(BASE."wcmf/lib/util/class.FileUtil.php");
 require_once(BASE."wcmf/lib/util/class.DBUtil.php");
@@ -36,7 +35,7 @@ Log::info("initializing wCMF database tables...", "install");
 $CONFIG_PATH = BASE.'application/include/';
 $configFile = $CONFIG_PATH.'config.ini';
 Log::info("configuration file: ".$configFile, "install");
-$parser = &InifileParser::getInstance();
+$parser = InifileParser::getInstance();
 if (!$parser->parseIniFile($configFile, true))
 {
   Log::error($parser->getErrorMsg(), "install");
@@ -48,10 +47,10 @@ $GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'cms');
 $GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'cms');
 
 // set locale
-if ($GLOBALS['MESSAGE_LANGUAGE'] !== false)
+if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {
   setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
-
-$rightsManager = &RightsManager::getInstance();
+}
+$rightsManager = RightsManager::getInstance();
 $rightsManager->deactivate();
 
 // initialize database sequence, create default user/role
@@ -63,8 +62,7 @@ if(sizeof($persistenceFacade->getOIDs("Adodbseq")) == 0)
   $seq->setValue("id", 1);
   $seq->save();
 }
-$objectFactory = ObjectFactory::getInstance();
-$userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+$userManager = ObjectFactory::createInstanceFromConfig('implementation', 'UserManager');
 $userManager->startTransaction();
 if (!$userManager->getRole("administrators"))
 {
@@ -86,13 +84,16 @@ if ($admin && !$admin->hasRole('administrators'))
 $userManager->commitTransaction();
 
 // execute custom scripts from the directory 'custom-install'
-$sqlScripts = FileUtil::getFiles('custom-install', '/[^_]+_.*\.sql$/', true);
-sort($sqlScripts);
-foreach ($sqlScripts as $script)
+if (is_dir('custom-install'))
 {
-  // extract the initSection from the filename
-  $initSection = array_shift(preg_split('/_/', basename($script)));
-  DBUtil::executeScript($script, $initSection);
+  $sqlScripts = FileUtil::getFiles('custom-install', '/[^_]+_.*\.sql$/', true);
+  sort($sqlScripts);
+  foreach ($sqlScripts as $script)
+  {
+    // extract the initSection from the filename
+    $initSection = array_shift(preg_split('/_/', basename($script)));
+    DBUtil::executeScript($script, $initSection);
+  }
 }
 
 Log::info("done.", "install");

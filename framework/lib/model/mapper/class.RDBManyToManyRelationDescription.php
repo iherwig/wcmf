@@ -54,8 +54,14 @@ class RDBManyToManyRelationDescription
     if (strpos($propName, 'this') === 0) {
       return $this->thisEndRelation->$propName;
     }
-    elseif (strpos($propName, 'other') === 0) {
-      return $this->otherEndRelation->$propName;
+    elseif (strpos($propName, 'other') === 0)
+    {
+      if ($propName == 'otherType' || $propName == 'otherRole') {
+        return $this->otherEndRelation->$propName;
+      }
+      else {
+        return $this->thisEndRelation->$propName;
+      }
     }
   }
 }

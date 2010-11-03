@@ -42,7 +42,7 @@ interface PersistenceMapper
    * Get the relations for this type
    * @param hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
-   * @return An array of RelationDefinition instances
+   * @return An array of RelationDescription instances
    */
   public function getRelations($hierarchyType='all');
 
@@ -56,7 +56,7 @@ interface PersistenceMapper
   /**
    * Get the definition for a relation
    * @param rolename The role name of the relation
-   * @return A RelationDefinition instance or null if the relation does not exist
+   * @return A RelationDescription instance or null if the relation does not exist
    */
   public function getRelation($roleName);
 
@@ -64,7 +64,7 @@ interface PersistenceMapper
    * PersistentObject values may be tagged with application specific data types.
    * This method gets the attributes belonging to the given data types.
    * @param dataTypes An array of data type names defined in the mapper. Empty array means all values [default:empty array]
-   * @return An array of AttributeDefinition instances
+   * @return An array of AttributeDescription instances
    */
   public function getAttributes(array $dataTypes=array());
 
@@ -78,7 +78,7 @@ interface PersistenceMapper
   /**
    * Get the definition for an attribute.
    * @param name The attribute name
-   * @return An AttributeDefinition instance or null if the attribute does not exist
+   * @return An AttributeDescription instance or null if the attribute does not exist
    */
   public function getAttribute($name);
 

@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Message.php");
 require_once(BASE."wcmf/lib/util/class.SessionData.php");
 require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
 require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 
 /**

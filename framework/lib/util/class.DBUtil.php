@@ -35,22 +35,20 @@ class DBUtil
    * @param initSection The name of the configuration section that defines the database connection
    * @return True/False wether execution succeeded or not.
    */
-  function executeScript($file, $initSection)
+  public static function executeScript($file, $initSection)
   {
     if (file_exists($file))
     {
       Log::info('Executing SQL script '.$file.' ...', __CLASS__);
 
       // find init params
-      $parser = &InifileParser::getInstance();
+      $parser = InifileParser::getInstance();
       $initParams = null;
-      if (($initParams = $parser->getSection($initSection)) === false)
-      {
-        WCMFException::throwEx("No '".$initSection."' section given in configfile.", __FILE__, __LINE__);
-        return false;
+      if (($initParams = $parser->getSection($initSection)) === false) {
+        throw new ConfigurationException("No '".$initSection."' section given in configfile.");
       }
       // connect to the database using a RDBMapper instance
-      $mapper = new RDBMapper($initParams);
+      $mapper = PersistenceFacade::getInstance()->getMapperForConfigSection($initSection);
       $connection = $mapper->getConnection();
 
       Log::debug('Starting transaction ...', __CLASS__);

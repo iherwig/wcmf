@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -31,19 +31,19 @@ require_once(BASE."wcmf/lib/util/class.Log.php");
  * @ingroup Controller
  * @brief DisplayController is a simple controller demonstrating how to display a Node
  * using the displaynode.tpl template.
- * 
+ *
  * <b>Input actions:</b>
  * - unspecified: Display given Node if an oid is given
  *
  * <b>Output actions:</b>
  * - @em failure If a fatal error occurs
  * - @em ok In any other case
- * 
+ *
  * @param[in,out] oid The oid of the Node to show
  * @param[in] depth The BUILDDEPTH used when loading the Node
- * @param[in] omitMetaData True/False. If true, only the parameters 'node' and 'lockMsg' will be returned. If not given, 
+ * @param[in] omitMetaData True/False. If true, only the parameters 'node' and 'lockMsg' will be returned. If not given,
  *                        all parameters will be returned.
- * @param[in] translateValues True/False. If true, list values will be translated using FormUtil::translateValue. If not given, 
+ * @param[in] translateValues True/False. If true, list values will be translated using FormUtil::translateValue. If not given,
  *                        all values will be returned as is.
  * @param[out] node The Node object to display
  * @param[out] lockMsg The lock message, if any
@@ -60,34 +60,34 @@ class DisplayController extends Controller
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
+  public function initialize(Request $request, Response $response)
   {
     if (strlen($request->getContext()) == 0)
     {
       $request->setContext('cms');
       $response->setContext('cms');
     }
-      
+
     // set rootType variable if a valid oid is given in data
-    $oid = $request->getValue('oid');
-    if (PersistenceFacade::isValidOID($oid))
+    $oid = ObjectId::parse($request->getValue('oid'));
+    if ($oid != null)
     {
-      $parts = PersistenceFacade::decomposeOID($oid);
-      $request->setValue('rootType', $parts['type']);
-      $request->setContext($parts['type']);
+      $type = $oid->getType();
+      $request->setValue('rootType', $type);
+      $request->setContext($type);
     }
     // set rootType to context, if it corresponds to an entity type
-    else if (PersistenceFacade::isKnownType($request->getContext()))
+    else if (PersistenceFacade::getInstance()->isKnownType($request->getContext()))
     {
       $request->setValue('rootType', $request->getContext());
     }
-      
+
     parent::initialize($request, $response);
   }
   /**
    * @see Controller::hasView()
    */
-  function hasView()
+  protected function hasView()
   {
     return true;
   }
@@ -98,47 +98,49 @@ class DisplayController extends Controller
    *         In case of 'failure' a detailed description is provided by getErrorMsg().
    * @see Controller::executeKernel()
    */
-  function executeKernel()
+  protected function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $rightsManager = &RightsManager::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $rightsManager = RightsManager::getInstance();
+    $request = $this->getRequest();
+    $response = $this->getResponse();
 
     // release all locks before edit
-    $lockManager = &LockManager::getInstance();
+    $lockManager = LockManager::getInstance();
     $lockManager->releaseAllLocks();
     $lockMsg = '';
 
     // get root types from ini file
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     $rootTypes = $parser->getValue('rootTypes', 'cms');
     if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '')
     {
       $this->setErrorMsg(Message::get("No root types defined."));
-      $this->_response->setAction('failure');
+      $response->setAction('failure');
       return true;
     }
 
     // load model
-    $oid = $this->_request->getValue('oid');
+    $oid = $request->getValue('oid');
     if (PersistenceFacade::isValidOID($this->_request->getValue('oid')) && $rightsManager->authorize($oid, '', ACTION_READ))
     {
       // an object id is given. load the data for editing the object
       $viewMode = 'detail';
-      
+
       // determine the builddepth
       $buildDepth = BUILDDEPTH_SINGLE;
       if ($this->_request->hasValue('depth')) {
         $buildDepth = $this->_request->getValue('depth');
       }
       $node = &$persistenceFacade->load($oid, $buildDepth);
-      
+
       if ($node == null)
       {
         $this->setErrorMsg(Message::get("A Node with object id %1% does not exist.", array($oid)));
         $this->_response->setAction('failure');
         return true;
       }
-    
+
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest())
       {
@@ -191,7 +193,7 @@ class DisplayController extends Controller
         }
         $this->_response->setValue('possiblechildren', $possibleChildren);
       }
-      
+
       // translate values if requested
       if ($this->_request->getBooleanValue('translateValues'))
       {
@@ -203,11 +205,11 @@ class DisplayController extends Controller
           NodeUtil::translateValues($nodes);
         }
       }
-      
+
       // assign node data
       $this->_response->setValue('node', $node);
       $this->_response->setValue('lockMsg', $lockMsg);
-    }          
+    }
     else
     {
       // no object id is given. load the data for the overview
@@ -232,7 +234,7 @@ class DisplayController extends Controller
     $this->_response->setAction('ok');
     return false;
   }
-  
+
   /**
    * Determine, if meta data is not requested
    * @return True/False

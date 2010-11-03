@@ -18,7 +18,6 @@
  */
 require_once("base_dir.php");
 
-require_once(BASE."wcmf/lib/core/class.WCMFException.php");
 require_once(BASE."wcmf/lib/util/class.FileUtil.php");
 require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
 require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
@@ -38,42 +37,45 @@ require_once(BASE."wcmf/lib/i18n/class.Localization.php");
  */
 function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $language=null)
 {
-  if (!PersistenceFacade::isKnownType($type))
-    WCMFException::throwEx("Illegal type given: ".$type, __FILE__, __LINE__);
-
-  $persistenceFacade = &PersistenceFacade::getInstance();
-  $localization = &Localization::getInstance();
+  if (!PersistenceFacade::isKnownType($type)) {
+    throw new IllegalArgumentException("Illegal type given: ".$type);
+  }
+  $persistenceFacade = PersistenceFacade::getInstance();
+  $localization = Localization::getInstance();
 
   // see if the type has a display value defined (via the 'display_value' property)
   $hasDisplayValue = false;
   $template = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
-  if ($template instanceof Node && $template->getProperty('display_value') != '')
+  if ($template instanceof Node && $template->getProperty('display_value') != '') {
     $hasDisplayValue = true;
-
+  }
   // create the array
   $result = array();
 
   // create the null entry
-  if ($realOIDs)
+  if ($realOIDs) {
     $result[PersistenceFacade::composeOID(array('type' => $type, 'id' => array('')))] = "";
-  else
+  }
+  else {
     $result[""] = "";
-
+  }
   // create the real entries
   $orderby = null;
-  if ($orderbyStr != null)
+  if ($orderbyStr != null) {
     $orderby = preg_split('/,/', $orderbyStr);
-
-  $query = &PersistenceFacade::createStringQuery();
+  }
+  $query = PersistenceFacade::createStringQuery();
   $pagingInfo = new PagingInfo();
   $nodes = $query->execute($type, $queryStr, BUILDDEPTH_SINGLE, $orderby, $pagingInfo);
   for($i=0; $i<sizeof($nodes); $i++)
   {
     $oid = $nodes[$i]->getOID();
-    if ($realOIDs)
+    if ($realOIDs) {
       $key = $oid;
-    else
-      $key = join(':', PersistenceFacade::getOIDParameter($oid, 'id'));
+    }
+    else {
+      $key = join(':', $oid->getId());
+    }
 
     // translate the node if requested
     if ($language != null) {
@@ -81,8 +83,9 @@ function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $la
     }
 
     $displayValue = $oid;
-    if ($hasDisplayValue)
+    if ($hasDisplayValue) {
       $displayValue = $nodes[$i]->getDisplayValue();
+    }
     $result[$key] = $displayValue;
   }
   return $result;
@@ -98,28 +101,28 @@ function g_getObjects($type, $parentOID)
 {
   $persistenceFacade = &PersistenceFacade::getInstance();
   $result = array();
-  if (!PersistenceFacade::isValidOID($parentOID))
-    WCMFException::throwEx("Illegal parent oid given: ".$parentOID, __FILE__, __LINE__);
-  if (!PersistenceFacade::isKnownType($type))
-    WCMFException::throwEx("Illegal type given: ".$type, __FILE__, __LINE__);
-
+  if (!PersistenceFacade::isValidOID($parentOID)) {
+    throw new IllegalArgumentException("Illegal parent oid given: ".$parentOID);
+  }
+  if (!PersistenceFacade::isKnownType($type)) {
+    throw new IllegalArgumentException("Illegal type given: ".$type, __FILE__, __LINE__);
+  }
   // collect children from parent
-  $parent = &$persistenceFacade->load($parentOID, 1);
+  $parent = $persistenceFacade->load($parentOID, 1);
   $children = $parent->getChildrenEx(null, $type, null, null);
   $childOIDs = array();
-  foreach($children as $child)
-  	$childOIDs[sizeof($childOIDs)] = $child->getOID();
-
+  foreach($children as $child) {
+    $childOIDs[sizeof($childOIDs)] = $child->getOID();
+  }
   // collect all possible objects
-  $query = &PersistenceFacade::createObjectQuery($type);
+  $query = PersistenceFacade::createObjectQuery($type);
   $nodes = $query->execute(BUILDDEPTH_SINGLE);
   $oids = $persistenceFacade->getOIDs($type);
   for($i=0; $i<sizeof($nodes); $i++)
   {
     $node = &$nodes[$i];
     $oid = $node->getOID();
-    if (!in_array($oid, $childOIDs))
-    {
+    if (!in_array($oid, $childOIDs)) {
       $result[$oid] = $node->getObjectDisplayName().": ".$node->getDisplayValue();
     }
   }
@@ -133,11 +136,11 @@ function g_getObjects($type, $parentOID)
  */
 function g_getTypes()
 {
-  $persistenceFacade = &PersistenceFacade::getInstance();
+  $persistenceFacade = PersistenceFacade::getInstance();
   $types = PersistenceFacade::getKnownTypes();
   foreach($types as $type)
   {
-    $node = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+    $node = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
     $result[$type] = $node->getObjectDisplayName();
   }
   asort($result);
@@ -152,27 +155,30 @@ function g_getTypes()
 $g_oidArray = array();
 function g_getOIDArray($oidStringList)
 {
-	global $g_oidArray;
-	if (!isset($g_oidArray[$oidStringList]))
-	{
-	  $persistenceFacade = &PersistenceFacade::getInstance();
-	  $result = array();
-	  if (strpos($oidStringList, '|') === false)
-	  	$oids = array($oidStringList);
-	 	else
-	  	$oids = preg_split('/\|/', $oidStringList);
-	  foreach($oids as $oid)
-	  {
-	  	if (PersistenceFacade::isValidOID($oid))
-	  	{
-		    $node = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
-		    $result[$node->getOID()] = DisplayController::getDisplayText($node);
-		  }
-		  else
-		    $result[$oid] = $oid;
-	  }
-	  $g_oidArray[$oidStringList] = $result;
-	}
+  global $g_oidArray;
+  if (!isset($g_oidArray[$oidStringList]))
+  {
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $result = array();
+    if (strpos($oidStringList, '|') === false) {
+      $oids = array($oidStringList);
+    }
+    else {
+      $oids = preg_split('/\|/', $oidStringList);
+    }
+    foreach($oids as $oid)
+    {
+      if (PersistenceFacade::isValidOID($oid))
+      {
+        $node = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+        $result[$node->getOID()] = DisplayController::getDisplayText($node);
+      }
+      else {
+        $result[$oid] = $oid;
+      }
+    }
+    $g_oidArray[$oidStringList] = $result;
+  }
   return $g_oidArray[$oidStringList];
 }
 
@@ -203,13 +209,14 @@ function g_getBackupNames()
   $result = array();
 
   $parser = &InifileParser::getInstance();
-  if (($backupDir = $parser->getValue('backupDir', 'cms')) === false)
-    WCMFException::throwEx($parser->getErrorMsg(), __FILE__, __LINE__);
-
+  if (($backupDir = $parser->getValue('backupDir', 'cms')) === false) {
+    throw new ConfigurationException($parser->getErrorMsg());
+  }
   $fileUtil = new FileUtil();
   $folders = $fileUtil->getFiles($backupDir, '/./');
-  foreach($folders as $folder)
+  foreach($folders as $folder) {
     $result[$folder] = $folder;
+  }
   $result[""] = "";
   return $result;
 }

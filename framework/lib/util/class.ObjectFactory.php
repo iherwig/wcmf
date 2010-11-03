@@ -91,7 +91,7 @@ class ObjectFactory
     {
       // find init parameters
       $initParams = null;
-      $parser = &InifileParser::getInstance();
+      $parser = InifileParser::getInstance();
       if (($initSection = $parser->getValue($className, 'initparams')) !== false)
       {
         if (($initParams = $parser->getSection($initSection)) === false) {

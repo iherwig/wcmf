@@ -132,8 +132,8 @@ class SessionData
         if ($classFiles == null)
         {
           // no class files given -> check for Storable interface
-          $classMethods = array_map(strtolower, get_class_methods($val));
-          if (!in_array('getclassdefinitionfiles', $classMethods)) {
+          $classMethods = get_class_methods($val);
+          if (!in_array('getClassDefinitionFiles', $classMethods)) {
             throw new IllegalArgumentException("Class ".get_class($val)." does not implement the Storable interface.");
           }
           else

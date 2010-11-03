@@ -150,7 +150,11 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     if ($this->_isReadOnly) {
       return true;
     }
-    $result = $object->save();
+    $result = false;
+    $mapper = $this->getMapper($object->getType());
+    if ($mapper != null) {
+      $result = $mapper->save($object);
+    }
     return $result;
   }
   /**
@@ -207,7 +211,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
    * @see PersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    array $buildAttribs=null, array $buildTypes=null)
+    array $buildAttribs=array(), array $buildTypes=array())
   {
     $result = array();
     $mapper = $this->getMapper($type);
@@ -220,7 +224,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
    * @see PersistenceFacade::loadFirstObject()
    */
   public function loadFirstObject($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    array $buildAttribs=null, array $buildTypes=null)
+    array $buildAttribs=array(), array $buildTypes=array())
   {
     $objects = $this->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
     if (sizeof($objects) > 0) {
@@ -386,6 +390,27 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   public function setMapper($type, PersistenceMapper $mapper)
   {
     $this->_mapperObjects[$type] = $mapper;
+  }
+  /**
+   * @see PersistenceFacade::getMapperForConfigSection()
+   */
+  public function getMapperForConfigSection($configSection)
+  {
+    $mapper = null;
+    $parser = InifileParser::getInstance();
+    $initParamSection = $parser->getSection('initparams');
+    $typeMappingSection = array_flip($parser->getSection('typemapping'));
+    foreach ($initParamSection as $mapperClass => $curConfigSection)
+    {
+      if ($curConfigSection == $configSection) {
+        $mapper = $this->getMapper($typeMappingSection[$mapperClass]);
+        break;
+      }
+    }
+    if ($mapper == null) {
+      throw new ConfigurationException("No PersistenceMapper found in configfile for config section '".$configSection."'");
+    }
+    return $mapper;
   }
   /**
    * @see PersistenceFacade::setMapper()

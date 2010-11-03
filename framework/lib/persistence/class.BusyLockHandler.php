@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(BASE."wcmf/lib/persistence/class.ILockHandler.php");
 
 /**
  * @class BusyLockManager
@@ -26,24 +26,24 @@ require_once(BASE."wcmf/lib/persistence/class.LockManager.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class BusyLockManager extends LockManager
+class BusyLockManager implements ILockHandler
 {
   /**
-   * @see LockManager::aquireLockImpl();
+   * @see ILockHandler::aquireLockImpl();
    */
-  protected function aquireLockImpl(ObjectId $useroid, $session, ObjectId $oid, $lockDate) {}
+  public function aquireLock(ObjectId $useroid, $session, ObjectId $oid, $lockDate) {}
   /**
-   * @see LockManager::releaseLockImpl();
+   * @see ILockHandler::releaseLockImpl();
    */
-  protected function releaseLockImpl(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null) {}
+  public function releaseLock(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null) {}
   /**
-   * @see LockManager::releaseAllLocksImpl();
+   * @see ILockHandler::releaseAllLocksImpl();
    */
-  protected function releaseAllLocksImpl(ObjectId $useroid, $sessid) {}
+  public function releaseAllLocks(ObjectId $useroid, $sessid) {}
   /**
-   * @see LockManager::getLockImpl();
+   * @see ILockHandler::getLockImpl();
    */
-  protected function getLockImpl(ObjectId $oid)
+  public function getLock(ObjectId $oid)
   {
     if (rand(0,1) > 0.5) {
     	return null;

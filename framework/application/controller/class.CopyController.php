@@ -347,7 +347,7 @@ class CopyController extends BatchController
     {
       // if not, create a copy
       $nodeCopy = &$persistenceFacade->create($node->getType(), BUILDDEPTH_SINGLE);
-      $node->copyValues($nodeCopy, array(), false);
+      $node->copyValues($nodeCopy, false);
     }
 
     // create the connections to already copied parents

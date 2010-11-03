@@ -17,9 +17,10 @@
  * $Id$
  */
 require_once(BASE."wcmf/lib/util/class.Message.php");
-if (file_exists(BASE."wcmf/lib/util/class.InifileParser.php")) {
-  require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-}
+require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(BASE."wcmf/lib/util/class.IOException.php");
+require_once(BASE."wcmf/lib/core/class.IllegalArgumentException.php");
+
 /**
  * @class FileUtil
  * @ingroup Util
@@ -75,16 +76,14 @@ class FileUtil
     }
     else
     {
-      throw new IOException(Message::get("Possible file upload attack: filename %1%.", array($mediaFile['name'])));
-      if (!file_exists(BASE."wcmf/lib/util/class.InifileParser.php"))
+      $msg = Message::get("Possible file upload attack: filename %1%.", array($mediaFile['name']));
+      $parser = InifileParser::getInstance();
+      if(($maxFileSize = $parser->getValue('maxFileSize', 'htmlform')) !== false)
       {
-        $parser = InifileParser::getInstance();
-        if(($maxFileSize = $parser->getValue('maxFileSize', 'htmlform')) !== false)
-        {
-          throw new IOException(Message::get("A possible reason is that the file size is too big (maximum allowed: %1%  bytes).",
-            array($maxFileSize)));
-        }
+        $msg += Message::get("A possible reason is that the file size is too big (maximum allowed: %1%  bytes).",
+          array($maxFileSize));
       }
+      throw new IOException($msg);
     }
     return $filename;
   }

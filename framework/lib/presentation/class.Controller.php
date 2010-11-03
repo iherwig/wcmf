@@ -126,7 +126,7 @@ abstract class Controller
     if (Log::isDebugEnabled(__CLASS__))
     {
       Log::debug('Executing: '.get_class($this), __CLASS__);
-      Log::debug('Request: '.$this->_request->toString(), __CLASS__);
+      Log::debug('Request: '.$this->_request, __CLASS__);
     }
 
     // validate controller data
@@ -190,7 +190,7 @@ abstract class Controller
 
     if (Log::isDebugEnabled(__CLASS__))
     {
-      Log::debug('Response: '.$this->_response->toString(), __CLASS__);
+      Log::debug('Response: '.$this->_response, __CLASS__);
     }
     return $result;
   }
