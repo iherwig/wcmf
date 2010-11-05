@@ -1,0 +1,12 @@
+AsyncPagingControllerTest.php
+DeleteControllerTest.php
+DisplayControllerTest.php
+InsertControllerTest.php
+LocalizationTest.php
+SaveControllerTest.php
+RoleTest.php
+ObjectIdTest.php
+//ManyToManyTest.php
+PersistentObjectTest.php
+PersistentObjectProxyTest.php
+NodeUtilTest.php

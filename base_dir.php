@@ -1,0 +1,3 @@
+<?php
+  define("BASE", realpath ("../")."/");
+?>
