@@ -93,5 +93,65 @@ class DBUtil
       Log::error('SQL script '.$file.' not found.', __CLASS__);
     }
   }
+
+  /**
+   * Duplicate a database on the same server (same user)
+   * @param srcName The name of the source database
+   * @param destName The name of the source database
+   * @param server The name of the database server
+   * @param user The user name
+   * @param password The password
+   */
+  public static function copyDatabase($srcName, $destName, $server, $user, $password)
+  {
+    if($srcName && $destName && $server && $user && $password)
+    {
+      // setup connections
+      $dbConnect = mysql_connect($server, $user, $password);
+      if (!$dbConnect) {
+      	throw new PersistenceException("Couldn't connect to MySql:".mysql_error());
+      }
+      
+      $sqlStatement = "CREATE DATABASE ".$destName;
+      $result = mysql_query($sqlStatement, $dbConnect);
+      if ($result)
+      {
+        // get table list from source database
+        $sqlStatement = "SHOW TABLES FROM ".$srcName;
+        $tables = mysql_query($sqlStatement, $dbConnect);
+        if ($tables)
+        {
+          while($row = mysql_fetch_row($tables))
+          {
+        	// create new table
+            $sqlStatement = "CREATE TABLE ".$destName.".".$row[0]." LIKE ".$srcName.".".$row[0];
+            Log::debug($sqlStatement, __CLASS__);
+            $result = mysql_query($sqlStatement, $dbConnect);
+	        if (!$result) {
+	          throw new PersistenceException("Couldn't create table:".mysql_error());
+	        }
+            mysql_free_result($result);
+
+            // insert data
+            $sqlStatement = "INSERT INTO ".$destName.".".$row[0]." SELECT * FROM ".$srcName.".".$row[0];
+            Log::debug($sqlStatement, __CLASS__);
+            $result = mysql_query($sqlStatement, $dbConnect);
+	        if (!$result) {
+	          throw new PersistenceException("Couldn't copy data:".mysql_error());
+	        }
+            mysql_free_result($result);
+          }
+          mysql_free_result($tables);
+          mysql_close($dbConnect);
+        }
+	    else {
+	      throw new PersistenceException("Couldn't select tables:".mysql_error());
+	    }
+      }
+	  else {
+	    throw new PersistenceException("Couldn't create database:".mysql_error());
+	  }
+    }
+  }
 }
 ?>

@@ -181,7 +181,7 @@ class ObjectId
    */
   public function __toString() {
     $oidStr = $this->_type.':'.join(':', $this->_id);
-    if (strlen($this->_prefix) > 0) {
+    if (strlen(trim($this->_prefix)) > 0) {
       $oidStr = $this->_prefix.':'.$oidStr;
     }
     return $oidStr;

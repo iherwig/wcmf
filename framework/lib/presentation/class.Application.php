@@ -46,7 +46,7 @@ class Application
   private function __construct()
   {
     // collect all request data
-    $this->_data = array_merge($_REQUEST, $_FILES);
+    $this->_data = array_merge($_GET, $_POST, $_COOKIE, $_FILES);
     $json = JSONUtil::decode(file_get_contents('php://input'), true);
     if (is_array($json))
     {

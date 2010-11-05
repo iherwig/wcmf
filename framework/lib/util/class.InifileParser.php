@@ -249,6 +249,9 @@ class InifileParser
       if (is_array($readonlySections) && in_array($section, $readonlySections)) {
         return true;
       }
+      else {
+        return false;
+      }
     }
     return true;
   }

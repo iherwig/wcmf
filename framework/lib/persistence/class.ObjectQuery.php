@@ -271,9 +271,7 @@ class ObjectQuery implements ChangeListener
     $query .= self::getOrderby($type, $query, $orderby);
 
     // execute the query
-    $stmt = $mapper->select($query, $pagingInfo);
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $stmt->closeCursor();
+    $rows = $mapper->select($query, $pagingInfo);
     foreach ($rows as $row)
     {
       // construct oids or objects depending on builddepth

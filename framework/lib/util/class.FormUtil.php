@@ -130,7 +130,7 @@ class FormUtil
       $name .= '[]';
     }
     // get error from session
-   	$session = SessionData::getInstance();
+     $session = SessionData::getInstance();
 
     // build input control
     return $this->_controlRenderer->renderControl($type, $editable, $name, $value, $session->getError($name), $attributes, $listMap, $inputType);
@@ -143,11 +143,12 @@ class FormUtil
    *        - fkt:name|param1,param2,... global function
    *        - config:section
    * @param value The selected value (maybe null, default: null)
+   * @param nodeOid Oid of the node containing this value (for determining remote oids) [default: null]
    * @return An assoziative array containing the key/value pairs
    * @note The method will try to translate values with Message::get().
    * Keys and values are encoded using htmlentities(string, ENT_QUOTES, 'UTF-8').
    */
-  private function getListMap($description, $value=null)
+  private function getListMap($description, $value=null, $nodeOid = null)
   {
     $map = array();
     // get type and list from description
@@ -223,22 +224,27 @@ class FormUtil
         // load the translated value only
         $parts = preg_split('/\|/', $list);
         $entityType = array_shift($parts);
-        // since this may be a multivalue field, the ids may be separated by commas
-        $ids = preg_split('/,/', $value);
-        foreach ($ids as $id)
+        // check for (remote) oid
+        if (ObjectId::isValid($nodeOid))
         {
-          $oid = new ObjectId($entityType, $id);
-          if (ObjectId::isValidOID($oid->__toString()))
+          $oid = ObjectId::parse($nodeOid);
+          $typeOid = new ObjectId($entityType, $value, $oid->getPrefix());
+
+          if (ObjectId::isValid($typeOid->_toString())) {
+            $map[$value] = $this->resolveByOid($typeOid);
+          }
+        }
+        else
+        {
+          // since this may be a multivalue field, the ids may be separated by commas
+          $ids = split(',', $value);
+          foreach ($ids as $id)
           {
-            $persistenceFacade = PersistenceFacade::getInstance();
-            $localization = Localization::getInstance();
-            $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
-            if ($obj != null) {
-              // localize object if requested
-              if ($this->_language != null) {
-                $localization->loadTranslation($obj, $this->_language);
-              }
-              $map[$id] = $obj->getDisplayValue();
+            // oid may be pre-set
+            $oid = new ObjectId($entityType, $id);
+            $resolvedValue = $this->resolveByOid($oid);
+            if ($resolvedValue) {
+              $map[$id] = $resolvedValue;
             }
           }
         }
@@ -290,21 +296,50 @@ class FormUtil
     return $result;
   }
   /**
+   * Resolves the display value of the given oid.
+   * @param oid The oid of the requested object.
+   * @return String The display value of oid, or null if oid is invalid.
+   */
+  private function resolveByOid(ObjectId $oid)
+  {
+    $result = null;
+    if (ObjectId::isValid($oid))
+    {
+      $persistenceFacade = PersistenceFacade::getInstance();
+      $localization = Localization::getInstance();
+      try {
+        $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+        if ($obj != null)
+        {
+          // localize object if requested
+          if ($this->_language != null) {
+            $localization->loadTranslation($obj, $this->_language);
+          }
+          $result = $obj->getDisplayValue();
+        }
+      } catch (Exception $ex) {
+        //do  nothing, $result stays null
+      }
+    }
+    return $result;
+  }
+  /**
    * Translate a value with use of it's assoziated input type e.g get the location string from a location id.
    * (this is only done when the input type has a list definition).
    * @param value The value to translate (maybe comma separated list for list controls)
    * @param inputType The description of the control as given in the input_type property of a value (see CMS getInputControl())
    * @param replaceBR True/False wether to replace html line breaks with spaces or not [default:false]
+   * @param nodeOid Oid of the node containing this value (for determining remote oids) [default: null]
    * @return The translated value
    */
-  public function translateValue($value, $inputType, $replaceBR=false)
+  public function translateValue($value, $inputType, $replaceBR=false, $nodeOid = null)
   {
     // get definition and list from description
     $translated = '';
     if (strPos($inputType, '#') && $value != '')
     {
       list(,$list) = preg_split('/#/', $inputType, 2);
-      $map = $this->getListMap($list, $value);
+      $map = $this->getListMap($list, $value, $nodeOid);
       if ($list != '' && strPos($value, ',')) {
         $value = preg_split('/,/', $value);
       }

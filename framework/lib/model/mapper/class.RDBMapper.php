@@ -148,16 +148,26 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   /**
    * Execute a query on the connection.
    * @param sql The sql command
-   * @return A PDOStatement instance
+   * @param isSelect True/False wether the statement is a select statement (default: false)
+   * @return If isSelect is true, an array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC),
+   * the number of affected rows else
    */
-  public function executeSql($sql)
+  public function executeSql($sql, $isSelect=false)
   {
     if ($this->_conn == null)
       $this->connect();
 
     try {
-      $result = $this->_conn->query($sql);
-      return $result;
+      if ($isSelect) {
+        $stmt = $this->_conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        return $result;
+      }
+      else {
+        return $this->_conn->exec($sql);
+      }
     }
     catch (Exception $ex) {
       Log::error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
@@ -168,7 +178,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * Execute a select query on the connection.
    * @param sql The sql command
    * @param pagingInfo An PagingInfo instance describing which page to load
-   * @return A PDOStatement instance
+   * @return An array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC)
    */
   public function select($sql, PagingInfo $pagingInfo=null)
   {
@@ -178,19 +188,22 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     try {
       if ($pagingInfo != null && $pagingInfo->getPageSize() > 0) {
         // make a count query
-        $countSql = preg_replace('/^\s*SELECT\s.*\s+FROM\s/Uis', 'SELECT COUNT(*) FROM ', $sql);
-        $nRows = $this->_conn->query($countSql)->fetchColumn();
+        $countSql = preg_replace('/^\s*SELECT\s.*\s+FROM\s/Uis', 'SELECT COUNT(*) AS nRows FROM ', $sql);
+        $result = $this->executeSql($countSql, true);
+        $nRows = $result[0]['nRows'];
         // update pagingInfo
         $pagingInfo->setTotalCount($nRows);
         // set the limit on the query (NOTE: not supported by all databases)
         $limit = $pagingInfo->getPageSize();
         $offset = ($pagingInfo->getPage()-1)*$limit;
+        $sql = preg_replace('/;$/', '', $sql);
         $sql .= ' LIMIT '.$limit;
         if ($offset > 0) {
           $sql .= ' OFFSET '.$offset;
         }
+        $sql .= ';';
       }
-      return $this->executeSql($sql);
+      return $this->executeSql($sql, true);
     }
     catch (Exception $ex) {
       Log::error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
@@ -471,21 +484,13 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
             {
               // check if the relation exists already
               $sqlStr = $this->getRelationObjectSelectSQL($object, $relative, $relationDesc);
-              $rs = $this->executeSql($sqlStr);
-              if (!$rs) {
-                Log::error($this->_conn->ErrorMsg().". Your query was: ".$sqlStr, __CLASS__);
-                throw new PersistenceException("Error loading relation object. See log file for details.");
-              }
-              else
+              $rows = $this->executeSql($sqlStr, true);
+              if (sizeof($rows) == 0)
               {
-                if (!$rs->fetch())
-                {
-                  $nmObj = $persistenceFacade->create($relationDesc->thisEndRelation->otherType);
-                  $nmObj->setValue($relationDesc->thisEndRelation->thisRole, array($object));
-                  $nmObj->setValue($relationDesc->otherEndRelation->otherRole, array($relative));
-                  $nmObj->save();
-                }
-                $rs->closeCursor();
+                $nmObj = $persistenceFacade->create($relationDesc->thisEndRelation->otherType);
+                $nmObj->setValue($relationDesc->thisEndRelation->thisRole, array($object));
+                $nmObj->setValue($relationDesc->otherEndRelation->otherRole, array($relative));
+                $nmObj->save();
               }
             }
           }
@@ -628,15 +633,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       $orderbyStr = join(', ', $orderby);
     }
     // create query
-    $data = array();
     $sqlStr = $this->getSelectSQL($attribCondStr, $orderbyStr);
-    $stmt = $this->select($sqlStr, $pagingInfo);
-
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-      $data[] = $row;
-    }
-    $stmt->closeCursor();
-
+    
+    $data = $this->select($sqlStr, $pagingInfo);
     if (sizeof($data) == 0) {
       return $objects;
     }

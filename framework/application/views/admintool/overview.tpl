@@ -99,6 +99,13 @@
   <div id="roleGrid" style="border:1px solid #99bbe8;overflow: hidden; width: 445px;"></div>
 </div>
 
+<div class="contentblock duplicatepanel">
+	<span class="spacer"></span>
+  <h2>{translate text="New instance"}</h2>
+  <span class="left"><input type="text" name="newInstanceName" class="wide"></span>
+  <span class="left"><a href="javascript:submitAction('newInstance');" class="cms">{translate text="Create new instance"}</a></span>
+</div>
+
 <div class="contentblock backuppanel">
 	<span class="spacer"></span>
   <h2>{translate text="Backup"}</h2>

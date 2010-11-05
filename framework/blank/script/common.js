@@ -70,11 +70,12 @@ function setClean(fieldName)
 
 function canLeavePage()
 {
-  var fields = getFormFields();
   var modified = false;
   for (var field in modifiedFields) {
+    // ignore fields with class ignoreDirty
+    var formField = getFormField(field);
+    if (formField && formField.className.indexOf('ignoreDirty') == -1) {
     if (modifiedFields[field] == true) {
-      if (!(field instanceof Function) && fields[field] === true) {
         modified = true;
         break;
       }
@@ -96,14 +97,14 @@ function canLeavePage()
   }
   return true;
 }
-function getFormFields()
+function getFormField(name)
 { 
   var form = getForm();
-  var fields = [];
   for (var i = 0; i < form.elements.length; i++) {
-    fields[form.elements[i].name] = true;
+    if (form.elements[i].name == name) {
+      return form.elements[i];
+    }
   }
-  return fields; 
 } 
 // -------------------------------------------------------------------------
 // CMS functions.

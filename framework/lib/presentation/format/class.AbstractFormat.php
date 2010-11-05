@@ -40,9 +40,16 @@ abstract class AbstractFormat implements IFormat
     if (!isset($this->_deserializedNodes[$oid]))
     {
       $persistenceFacade = PersistenceFacade::getInstance();
-      // don't create all values by default (-> don't use PersistenceFacade::create() directly, just for determining the class)
-      $class = get_class($persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE));
-      $node = new $class;
+      $type = $oid->getType();
+      if ($persistenceFacade->isKnownType($type))
+      {
+        // don't create all values by default (-> don't use PersistenceFacade::create() directly, just for determining the class)
+        $class = get_class($persistenceFacade->create($type, BUILDDEPTH_SINGLE));
+        $node = new $class;
+      }
+      else {
+        $node = new Node($type);
+      }
       $node->setOID($oid);
       $this->_deserializedNodes[$oid] = $node;
     }

@@ -409,36 +409,26 @@ class NodeUtil
    * wether the control should be enabled or not.
    * @param node A reference to the Node which contains the value
    * @param name The name of the value to construct the control for
-   * @param dataType The type of the value [optional]
-   *        (if type is omitted the first value of any type that matches will be used)
    * @param templateNode A Node which contains the value definition
    *        (if not given the definition will be taken from the node parameter) [optional]
    * @return The HTML control string (see FormUtil::getInputControl())
    */
-  public static function getInputControl(Node $node, $name, $dataType=null, Node $templateNode=null)
+  public static function getInputControl(Node $node, $name, Node $templateNode=null)
   {
-    // set the datatype if not given (to the fist one found)
-    if ($dataType == null)
-    {
-      $dataTypes = $node->getValueTypes($name);
-      if (sizeof($dataTypes) > 0) {
-        $dataType = $dataTypes[0];
-      }
-    }
-    $controlName = self::getInputControlName($node, $name, $dataType);
+    $controlName = self::getInputControlName($node, $name);
     if ($templateNode != null) {
-      $properties = $templateNode->getValueProperties($name, $dataType);
+      $properties = $templateNode->getValueProperties($name);
     }
     else {
-      $properties = $node->getValueProperties($name, $dataType);
+      $properties = $node->getValueProperties($name);
       if (!$properties)
       {
         $persistenceFacade = PersistenceFacade::getInstance();
         $templateNode = $persistenceFacade->create($node->getType(), BUILDDEPTH_SINGLE);
-        $properties = $templateNode->getValueProperties($name, $dataType);
+        $properties = $templateNode->getValueProperties($name);
       }
     }
-    $value = $node->getValue($name, $dataType);
+    $value = $node->getValue($name);
     $formUtil = new FormUtil();
     return $formUtil->getInputControl($controlName, $properties['input_type'], $value, $properties['is_editable']);
   }
@@ -446,20 +436,17 @@ class NodeUtil
    * Get a HTML input control name for a given node value (see FormUtil::getInputControl()).
    * @param node A reference to the Node which contains the value
    * @param name The name of the value to construct the control for
-   * @param dataType The type of the value [optional]
-   *        (if type is omitted the first value of any type that matches will be used)
-   * @return The HTML control name string in the form value-<datatype>-<name>-<oid>
+   * @return The HTML control name string in the form value-<name>-<oid>
    */
-  public static function getInputControlName(Node $node, $name, $dataType=null)
+  public static function getInputControlName(Node $node, $name)
   {
     $fieldDelimiter = FormUtil::getInputFieldDelimiter();
-    return 'value'.$fieldDelimiter.$dataType.$fieldDelimiter.$name.$fieldDelimiter.$node->getOID();
+    return 'value'.$fieldDelimiter.$name.$fieldDelimiter.$node->getOID();
   }
   /**
    * Get the node value definition from a HTML input control name.
    * @param name The name of input control in the format defined by getInputControlName
-   * @return An associative array with keys 'oid', 'name', 'dataType' or null if the name is not valid
-   * If the dataType is empty, it defaults to DATATYPE_ATTRIBUTE
+   * @return An associative array with keys 'oid', 'name' or null if the name is not valid
    */
   public static function getValueDefFromInputControlName($name)
   {
@@ -473,13 +460,6 @@ class NodeUtil
       return null;
     }
     $forget = array_shift($pieces);
-    $dataType = array_shift($pieces);
-    if (strlen($dataType) > 0) {
-      $def['dataType'] = intval($dataType);
-    }
-    else {
-      $def['dataType'] = DATATYPE_ATTRIBUTE;
-    }
     $def['name'] = array_shift($pieces);
     $def['oid'] = array_shift($pieces);
 
@@ -495,27 +475,27 @@ class NodeUtil
    */
   public static function setSortProperties(&$nodeList)
   {
-    if(sizeof($nodeList) > 0 && $nodeList[0]->hasValue('sortkey', DATATYPE_IGNORE)) {
+    if(sizeof($nodeList) > 0 && $nodeList[0]->hasValue('sortkey')) {
       $nodeList = Node::sort($nodeList, 'sortkey');
     }
     for ($i=0; $i<sizeof($nodeList); $i++)
     {
-      if ($nodeList[$i]->hasValue('sortkey', DATATYPE_IGNORE))
+      if ($nodeList[$i]->hasValue('sortkey'))
       {
-        $nodeList[$i]->setValue('hasSortUp', true, DATATYPE_IGNORE);
-        $nodeList[$i]->setValue('hasSortDown', true, DATATYPE_IGNORE);
+        $nodeList[$i]->setValue('hasSortUp', true);
+        $nodeList[$i]->setValue('hasSortDown', true);
 
         if ($i == 0) {
-          $nodeList[$i]->setValue('hasSortUp', false, DATATYPE_IGNORE);
+          $nodeList[$i]->setValue('hasSortUp', false);
         }
         else {
-          $nodeList[$i]->setValue('prevoid', $nodeList[$i-1]->getOID(), DATATYPE_IGNORE);
+          $nodeList[$i]->setValue('prevoid', $nodeList[$i-1]->getOID());
         }
         if ($i == sizeof($nodeList)-1) {
-          $nodeList[$i]->setValue('hasSortDown', false, DATATYPE_IGNORE);
+          $nodeList[$i]->setValue('hasSortDown', false);
         }
         else {
-          $nodeList[$i]->setValue('nextoid', $nodeList[$i+1]->getOID(), DATATYPE_IGNORE);
+          $nodeList[$i]->setValue('nextoid', $nodeList[$i+1]->getOID());
         }
       }
     }
@@ -537,12 +517,11 @@ class NodeUtil
    * Make the urls matching a given base url in a Node value relative.
    * @param node A reference to the Node the holds the value
    * @param valueName The name of the value
-   * @param dataType The dataType of the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
    */
-  public static function makeValueUrlsRelative(Node $node, $valueName, $dataType, $baseUrl)
+  public static function makeValueUrlsRelative(Node $node, $valueName, $baseUrl)
   {
-    $value = $node->getValue($valueName, $dataType);
+    $value = $node->getValue($valueName);
 
     // find urls in texts
     $urls = StringUtil::getUrls($value);
@@ -561,7 +540,7 @@ class NodeUtil
       // replace url
       $value = str_replace($url, $urlConv, $value);
     }
-    $node->setValue($valueName, $value, $dataType);
+    $node->setValue($valueName, $value);
   }
   /**
    * Render all values in a list of Nodes using the DefaultValueRenderer.
@@ -587,23 +566,20 @@ class NodeUtil
    * @see NodeProcessor
    * @note This method is used internally only
    */
-  public static function renderValue(Node $node, $valueName, $dataType, $formUtil)
+  public static function renderValue(Node $node, $valueName, $formUtil)
   {
-    if ($dataType == DATATYPE_ATTRIBUTE)
-    {
-      $value = $node->getValue($valueName, $dataType);
-      // translate list values
-      $value = $formUtil->translateValue($value, $node->getValueProperty($valueName, 'input_type', $dataType), true);
-      // render the value to html
-      $displayType = $node->getValueProperty($valueName, 'display_type', $dataType);
-      if (strlen($displayType) == 0) {
-        $displayType = 'text';
-      }
-      $renderer = new DefaultValueRenderer();
-      $value = $renderer->renderValue($displayType, $value, $renderAttribs);
-      // force set (the rendered value may not be satisfy validation rules)
-      $node->setValue($valueName, $value, $dataType, true);
+    $value = $node->getValue($valueName);
+    // translate list values
+    $value = $formUtil->translateValue($value, $node->getValueProperty($valueName, 'input_type'), true);
+    // render the value to html
+    $displayType = $node->getValueProperty($valueName, 'display_type');
+    if (strlen($displayType) == 0) {
+      $displayType = 'text';
     }
+    $renderer = new DefaultValueRenderer();
+    $value = $renderer->renderValue($displayType, $value, $renderAttribs);
+    // force set (the rendered value may not be satisfy validation rules)
+    $node->setValue($valueName, $value, true);
   }
   /**
    * Translate all values in a list of Nodes using the DefaultValueRenderer.
@@ -631,19 +607,16 @@ class NodeUtil
    * @see NodeProcessor
    * @note This method is used internally only
    */
-  public static function translateValue(Node $node, $valueName, $dataType, $formUtil)
+  public static function translateValue(Node $node, $valueName, $formUtil)
   {
-    if ($dataType == DATATYPE_ATTRIBUTE)
-    {
-      $value = $node->getValue($valueName, $dataType);
-      // translate list values
-      $value = $formUtil->translateValue($value, $node->getValueProperty($valueName, 'input_type', $dataType), true);
-      // force set (the rendered value may not be satisfy validation rules)
-      $node->setValue($valueName, $value, $dataType, true);
-    }
+    $value = $node->getValue($valueName);
+    // translate list values
+    $value = $formUtil->translateValue($value, $node->getValueProperty($valueName, 'input_type'), true);
+    // force set (the rendered value may not be satisfy validation rules)
+    $node->setValue($valueName, $value, true);
   }
   /**
-   * Remove all values from a Node that are not a display value and don't have DATATYPE_IGNORE.
+   * Remove all values from a Node that are not a display value.
    * @param node The Node instance
    */
   public static function removeNonDisplayValues(Node $node)

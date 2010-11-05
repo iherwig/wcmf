@@ -32,7 +32,7 @@ class URIUtil
    * @param abs_uri Absolute URI to convert
    * @param base Base URI
    */
-  function makeRelative($abs_uri, $base)
+  public static function makeRelative($abs_uri, $base)
   {
     $abs_uri = preg_replace("{^[^:]+://[^/]+}", '', $abs_uri);
     $base = preg_replace("{^[^:]+://[^/]+}", '', $base);
@@ -42,11 +42,12 @@ class URIUtil
     
     // remove trailing file names
     $fileName = '';
-    if (strrpos($abs_uri, '/') !== strlen($abs_uri))
+    if (strrpos($abs_uri, '/') !== strlen($abs_uri)) {
       $fileName = array_pop($abs_array);
-    if (strrpos($base, '/') !== strlen($base))
+    }
+    if (strrpos($base, '/') !== strlen($base)) {
       array_pop($base_array);
-
+    }
     // ignore common path    
     while ($abs_array[0] == $base_array[0] && sizeof($abs_array) > 0)
     {
@@ -65,20 +66,20 @@ class URIUtil
    * @param base Base URI
    * @param REMOVE_LEADING_DOTS True/False wether to remove leading dots or not [default: true]
    */
-  function makeAbsolute($rel_uri, $base, $REMOVE_LEADING_DOTS = true)
+  public static function makeAbsolute($rel_uri, $base, $REMOVE_LEADING_DOTS = true)
   {  
     preg_match("'^([^:]+://[^/]+)/'", $base, $m);
     $base_start = $m[1];
-    if (preg_match("'^/'", $rel_uri))
+    if (preg_match("'^/'", $rel_uri)) {
       return $base_start.$rel_uri;
-    
+    }
     $base = preg_replace("{[^/]+$}", '', $base);
     $base .= $rel_uri;
     $base = preg_replace("{^[^:]+://[^/]+}", '', $base);
     $base_array = explode('/', $base);
-    if (count($base_array) and !strlen($base_array[0]))
+    if (count($base_array) and !strlen($base_array[0])) {
       array_shift($base_array);
-    
+    }
     $i = 1;
     while ($i < count($base_array))
     {
@@ -93,19 +94,19 @@ class URIUtil
         if ($i > 1)
         {
           $i--;
-          if ($i == count($base_array))
+          if ($i == count($base_array)) {
             array_push($base_array, "");
+          }
         }
       }
-      else
-      {
+      else {
         $i++;
       }
     }
     
-    if (count($base_array) and $base_array[-1] == ".")
+    if (count($base_array) and $base_array[-1] == ".") {
       $base_array[-1] = "";
-      
+    }
     /* How do we treat the case where there are still some leading ../
        segments left? According to RFC2396 we are free to handle that
        any way we want. The default is to remove them. 
@@ -138,7 +139,7 @@ class URIUtil
    * @return An associtative array with keys 'absolute' and 'relative'
    * and the absolute and relative URI (as seen from the executed script) as values
    */
-  function translate($rel_uri, $base)
+  public static function translate($rel_uri, $base)
   {
     $self = UriUtil::getProtocolStr().$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
     $path = dirname($self).'/';
@@ -154,37 +155,41 @@ class URIUtil
    * @param timeout The timeout in seconds (default: 10)
    * @return True/False wether the url is available
    */
-  function validateUrl($url, $timeout=10)
+  public static function validateUrl($url, $timeout=10)
   {        
     $url_parts = @parse_url($url);
     if (empty($url_parts["host"])) 
     {
       // check local relative url
       $fh = @fopen($url, "r");
-      if ($fh === false)
+      if ($fh === false) {
         return(false);
-      else
+      }
+      else {
         return(true);
+      }
     }
        
-    if (!empty($url_parts["path"]))
+    if (!empty($url_parts["path"])) {
       $documentpath = $url_parts["path"];
-    else
+    }
+    else {
       $documentpath = "/";
-    
-    if (!empty($url_parts["query"]))
+    }
+    if (!empty($url_parts["query"])) {
       $documentpath .= "?" . $url_parts["query"];
-    
+    }
     $host = $url_parts["host"];
     $port = $url_parts["port"];
 
     // Now (HTTP-)GET $documentpath at $host";
-    if (empty($port)) 
+    if (empty($port)) {
       $port = "80";
-      
+    }
     $socket = @fsockopen($host, $port, $errno, $errstr, $timeout);
-    if (!$socket)
+    if (!$socket) {
       return(false);
+    }
     else
     {
       fwrite ($socket, "HEAD ".$documentpath." HTTP/1.0\r\nHost: $host\r\n\r\n");
@@ -192,13 +197,14 @@ class URIUtil
       preg_match('/.+ ([0-9]{3}) .+/', $http_response, $matches);
       if (intval($matches[1]) < 400)
       {
-        return(true);
         fclose($socket);
+        return(true);
       } 
       else
       {
-        if (Log::isDebugEnabled(__CLASS__))
+        if (Log::isDebugEnabled(__CLASS__)) {
           Log::debug("$url: HTTP-Response: $http_response", __CLASS__);
+        }
         return(false);
       }
     }
@@ -207,12 +213,29 @@ class URIUtil
    * Get the protocol string (http:// or https://)
    * @return The protocol string
    */
-  function getProtocolStr()
+  public static function getProtocolStr()
   {
-    if (strlen($_SERVER['HTTPS']) > 0 && $_SERVER['HTTPS'] != 'off')
+    if (strlen($_SERVER['HTTPS']) > 0 && $_SERVER['HTTPS'] != 'off') {
       return 'https://';
-    else
+    }
+    else {
       return 'http://';
+    }
+  }
+  /**
+   * Get the current page url
+   * @return The url of the page
+   */
+  public static function getPageURL()
+  {
+    $pageURL = URIUtil::getProtocolStr();
+    if ($_SERVER["SERVER_PORT"] != "80") {
+      $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+    } 
+    else {
+      $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+   }
+   return $pageURL;
   }
 }
 ?>
