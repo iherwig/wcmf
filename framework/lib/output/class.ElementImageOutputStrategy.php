@@ -77,7 +77,7 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
    */
   public function writeObject($obj)
   {
-    $properties = $obj->getValueProperties($obj->getType(), DATATYPE_ELEMENT);
+    $properties = $obj->getValueProperties($obj->getType());
     if (!strstr($obj->getType(), '->'))
     {
       $smallText = $obj->getType();
@@ -124,7 +124,7 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
                 "E: ".$properties['data_type'],
                 $color);
     // write attribs
-    $attribs = $obj->getValueNames(DATATYPE_ATTRIBUTE);
+    $attribs = $obj->getValueNames();
     $i = 0;
     if (is_array($attribs))
     {

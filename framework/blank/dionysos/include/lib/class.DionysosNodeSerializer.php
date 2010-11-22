@@ -68,9 +68,7 @@ class DionysosNodeSerializer
   function deserializeValue(&$node, $key, $value)
   {
     if (!is_array($value)) {
-      // since the node is not created by PersistenceFacade::create, the values
-      // are unknown. so we have to guess the datatype
-      $node->setValue($key, $value, DATATYPE_ATTRIBUTE);
+      $node->setValue($key, $value);
     }
     else
     {
@@ -101,7 +99,7 @@ class DionysosNodeSerializer
       $curResult['className'] = $curNode->getBaseType();
       $curResult['oid'] = $curNode->getBaseOID();
       $curResult['isReference'] = false;
-      $curResult['lastChange'] = strtotime($curNode->getValue('modified', DATATYPE_ATTRIBUTE));
+      $curResult['lastChange'] = strtotime($curNode->getValue('modified'));
 
       // use NodeProcessor to iterate over all Node values
       // and call the global convert function on each
@@ -192,9 +190,9 @@ class DionysosNodeSerializer
   /**
    * Callback function for NodeProcessor (see NodeProcessor).
    */
-  function serializeAttribute(&$node, $valueName, $dataType, &$result)
+  function serializeAttribute(&$node, $valueName, &$result)
   {
-    $result[$valueName] = $node->getValue($valueName, $dataType);
+    $result[$valueName] = $node->getValue($valueName);
   }
   /**
    * Serialize a oid as a reference.

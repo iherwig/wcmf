@@ -23,10 +23,9 @@ require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 /**
  * @class LockManagerRDB
  * @ingroup Persistence
- * @brief LockManagerRDB implements a LockManager for relational databases.
+ * @brief LockManagerRDB implements the ILockHandler interface for relational databases.
  * Locks are represented by the entity type 'Locktable' with attributes
- * 'sessionid', 'objectid', 'since' (all DATATYPE_ATTRIBUTE). Locktable
- * instances are children of the user entity.
+ * 'sessionid', 'objectid', 'since'. Locktable instances are children of the user entity.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -48,9 +47,9 @@ class RDBLockHandler implements ILockHandler
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $lock = $persistenceFacade->create('Locktable', BUILDDEPTH_REQUIRED);
-    $lock->setValue('sessionid', $sessid, DATATYPE_ATTRIBUTE);
-    $lock->setValue('objectid', $oid, DATATYPE_ATTRIBUTE);
-    $lock->setValue('since', $lockDate, DATATYPE_ATTRIBUTE);
+    $lock->setValue('sessionid', $sessid);
+    $lock->setValue('objectid', $oid);
+    $lock->setValue('since', $lockDate);
     $user = $this->getUserByOID($useroid);
     $user->addChild($lock);
     $lock->save();
@@ -63,10 +62,10 @@ class RDBLockHandler implements ILockHandler
     $query = PersistenceFacade::getInstance()->createObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     if ($sessid != null) {
-      $tpl->setValue('sessionid', "= '".$sessid."'", DATATYPE_ATTRIBUTE);
+      $tpl->setValue('sessionid', "= '".$sessid."'");
     }
     if ($oid != null) {
-      $tpl->setValue('objectid', "= '".$oid."'", DATATYPE_ATTRIBUTE);
+      $tpl->setValue('objectid', "= '".$oid."'");
     }
     if ($useroid != null)
     {
@@ -88,7 +87,7 @@ class RDBLockHandler implements ILockHandler
    */
   public function releaseAllLocks(ObjectId $useroid, $sessid)
   {
-    $this->releaseLockImpl($useroid, $sessid, null);
+    $this->releaseLock($useroid, $sessid, null);
   }
   /**
    * @see ILockHandler::getLock();

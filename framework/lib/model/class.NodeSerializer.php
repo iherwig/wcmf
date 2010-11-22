@@ -65,11 +65,8 @@ class NodeSerializer
             $relatives[$key] = $value;
           }
         }
-        foreach ($valueData as $dataType => $values)
-        {
-          foreach ($values as $key => $value) {
-            NodeSerializer::deserializeValue($node, $key, $value, $dataType, $hasFlattendedValues);
-          }
+        foreach ($valueData as $key => $value) {
+          NodeSerializer::deserializeValue($node, $key, $value, $hasFlattendedValues);
         }
         foreach ($properties as $key => $value) {
           $node->setProperty($key, $value);
@@ -86,7 +83,7 @@ class NodeSerializer
         // in case of not flattened values, the array only contains
         // value names and values (no data types)
         foreach($data as $key => $value)
-          self::deserializeValue($node, $key, $value, null, $hasFlattendedValues);
+          self::deserializeValue($node, $key, $value, $hasFlattendedValues);
       }
 
       if ($parent != null) {
@@ -102,13 +99,12 @@ class NodeSerializer
    * @param node A reference to the node
    * @param key The value name or type if value is an array
    * @param value The value or child data, if value is an array
-   * @param dataType The dataType of the value
    * @param hasFlattendedValues
    */
-  protected function deserializeValue(Node $node, $key, $value, $dataType, $hasFlattendedValues)
+  protected function deserializeValue(Node $node, $key, $value, $hasFlattendedValues)
   {
     if (!is_array($value)) {
-      $node->setValue($key, $value, $dataType);
+      $node->setValue($key, $value);
     }
     else
     {
@@ -174,16 +170,9 @@ class NodeSerializer
   /**
    * Callback function for NodeProcessor (see NodeProcessor).
    */
-  protected function serializeAttribute(Node $node, $valueName, $dataType, &$result, $flattenDataTypes)
+  protected function serializeAttribute(Node $node, $valueName, &$result)
   {
-    if (!$flattenDataTypes)
-    {
-      if (!isset($result[$dataType]))
-        $result[$dataType] = array();
-      $result[$dataType][$valueName] = $node->getValue($valueName, $dataType);
-    }
-    else
-      $result[$valueName] = $node->getValue($valueName, $dataType);
+    $result[$valueName] = $node->getValue($valueName);
   }
   /**
    */

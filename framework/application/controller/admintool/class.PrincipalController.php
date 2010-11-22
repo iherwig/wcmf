@@ -188,11 +188,11 @@ class PrincipalController extends Controller
           // properties
           foreach(array(USER_PROPERTY_LOGIN, USER_PROPERTY_NAME, USER_PROPERTY_FIRSTNAME, USER_PROPERTY_CONFIG) as $property)
           {
-            $value = $saveNode->getValue($property, DATATYPE_ATTRIBUTE);
-              if ($value != $principal->getValue($property, DATATYPE_ATTRIBUTE))
+            $value = $saveNode->getValue($property);
+              if ($value != $principal->getValue($property))
               {
                 $this->_userManager->setUserProperty($principal->getLogin(), $property, $value);
-                $principal->setValue($property, $value, DATATYPE_ATTRIBUTE);
+                $principal->setValue($property, $value);
               }
             }
           // password
@@ -218,11 +218,11 @@ class PrincipalController extends Controller
           // properties
           foreach(array(ROLE_PROPERTY_NAME) as $property)
           {
-            $value = $saveNode->getValue($property, DATATYPE_ATTRIBUTE);
-              if ($value != $principal->getValue($property, DATATYPE_ATTRIBUTE))
+            $value = $saveNode->getValue($property);
+              if ($value != $principal->getValue($property))
               {
                 $this->_userManager->setRoleProperty($principal->getName(), $property, $value);
-                $principal->setValue($property, $value, DATATYPE_ATTRIBUTE);
+                $principal->setValue($property, $value);
             }
           }
           // members

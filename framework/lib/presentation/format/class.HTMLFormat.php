@@ -24,7 +24,7 @@ require_once(BASE."wcmf/lib/presentation/format/class.AbstractFormat.php");
  * @brief HTMLFormat realizes the HTML request/response format. Since all data
  * from the external representation arrives in form fields, grouping of values
  * has to be done via the field names. So Nodes are represented by their values
- * whose field names are of the form value-<datatype>-<name>-<oid>. All of these
+ * whose field names are of the form value-<name>-<oid>. All of these
  * values will be removed from the request and replaced by Node instances
  * representing the data. The each node is stored under its oid in the data array.
  *
@@ -38,7 +38,7 @@ class HTMLFormat extends AbstractFormat
   public function deserialize(Request $request)
   {
     // construct nodes from values serialized as form fields
-    // nodes are encoded in separated fields with names value-<datatype>-<name>-<oid>
+    // nodes are encoded in separated fields with names value-<name>-<oid>
     $data = $request->getData();
     $nodeValues = array();
     foreach ($data as $key => $value)
@@ -47,7 +47,7 @@ class HTMLFormat extends AbstractFormat
       if ($valueDef != null && strlen($valueDef['oid']) > 0)
       {
         $node = &$this->getNode($valueDef['oid']);
-        $node->setValue($valueDef['name'], $value, $valueDef['dataType']);
+        $node->setValue($valueDef['name'], $value);
         array_push($nodeValues, $key);
       }
     }

@@ -67,34 +67,40 @@ if (is_array($rootTypes))
         $oid = $iter->getCurrentOID();
         $node = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
 
-        $dataTypes = $node->getDataTypes();
-        foreach($dataTypes as $dataType)
+        $valueNames = $node->getValueNames();
+        foreach($valueNames as $valueName)
         {
-          $valueNames = $node->getValueNames($dataType);
-          foreach($valueNames as $valueName)
+          $valueProperties = $node->getValueProperties($valueName);
+          $value = $node->getValue($valueName);
+          // find all uploaded files
+          if (strpos($valueProperties['input_type'], 'file') === 0)
           {
-            $valueProperties = $node->getValueProperties($valueName, $dataType);
-            $value = $node->getValue($valueName, $dataType);
-            // find all uploaded files
-            if (strpos($valueProperties['input_type'], 'file') === 0)
-              if (strlen($value) > 0)
-              {
-                if (!is_array($mediaFilesDB[$value]))
-                  $mediaFilesDB[$value] = array();
-                if (!in_array($node->getOID(), $mediaFilesDB[$value]))
-                  array_push($mediaFilesDB[$value], $node->getOID());
+            if (strlen($value) > 0)
+            {
+              if (!is_array($mediaFilesDB[$value])) {
+                $mediaFilesDB[$value] = array();
               }
-            // find links to media files embedded in textfields etc.
-            $embeddedURLs = StringUtil::getUrls($value);
-            if (sizeOf($embeddedURLs) > 0)
-              foreach($embeddedURLs as $url)
-                if (strpos($url, 'http://') === 0 && strpos($url, 'https://') === 0 && strpos($url, $mediaDir) === 0)
-                {
-                  if (!is_array($mediaFilesDB[basename($url)]))
-                    $mediaFilesDB[basename($url)] = array();
-                  if (!in_array($node->getOID(), $mediaFilesDB[basename($url)]))
-                    array_push($mediaFilesDB[basename($url)], $node->getOID());
+              if (!in_array($node->getOID(), $mediaFilesDB[$value])) {
+                array_push($mediaFilesDB[$value], $node->getOID());
+              }
+            }
+          }
+          // find links to media files embedded in textfields etc.
+          $embeddedURLs = StringUtil::getUrls($value);
+          if (sizeOf($embeddedURLs) > 0)
+          {
+            foreach($embeddedURLs as $url)
+            {
+              if (strpos($url, 'http://') === 0 && strpos($url, 'https://') === 0 && strpos($url, $mediaDir) === 0)
+              {
+                if (!is_array($mediaFilesDB[basename($url)])) {
+                  $mediaFilesDB[basename($url)] = array();
                 }
+                if (!in_array($node->getOID(), $mediaFilesDB[basename($url)])) {
+                  array_push($mediaFilesDB[basename($url)], $node->getOID());
+                }
+              }
+            }
           }
         }
         $iter->proceed();

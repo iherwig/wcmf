@@ -41,7 +41,7 @@ class RoleImpl extends Role
    */  
   function setName($name)
   {
-    $this->setValue('name', $name, DATATYPE_ATTRIBUTE);
+    $this->setValue('name', $name);
   }
 
   /**
@@ -50,7 +50,7 @@ class RoleImpl extends Role
    */  
   function getName()
   {
-    return $this->getValue('name', DATATYPE_ATTRIBUTE);
+    return $this->getValue('name');
   }
 }
 ?>

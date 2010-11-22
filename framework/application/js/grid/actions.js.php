@@ -90,31 +90,27 @@ Ext.extend(wcmf.grid.SortAction, wcmf.grid.Action, {
     },
 
     performAction: function(actionName, record) {
-      // DATATYPE_IGNORE values
-      var ignoreValues = record.data.DATATYPE_IGNORE;
       // sort up action
       if (actionName == 'sortUp') {
-        Action.perform('sortup', {sortoid:record['id'], prevoid:ignoreValues['prevoid']}, this.grid.actionPerformed, this);
+        Action.perform('sortup', {sortoid:record['id'], prevoid:record.data['prevoid']}, this.grid.actionPerformed, this);
       }
       // sort down action
       else if (actionName == 'sortDown') {
-        Action.perform('sortdown', {sortoid:record['id'], nextoid:ignoreValues['nextoid']}, this.grid.actionPerformed, this);
+        Action.perform('sortdown', {sortoid:record['id'], nextoid:record.data['nextoid']}, this.grid.actionPerformed, this);
       }    
     },
     
     renderer: function(v, p, record) {
       var actionNav = '';
-      // DATATYPE_IGNORE values
-      var ignoreValues = record.data.DATATYPE_IGNORE;
 
       // sort up action
-      if (ignoreValues['hasSortUp'] && ignoreValues['hasSortUp'])
+      if (record.data['hasSortUp'] && record.data['hasSortUp'])
         actionNav += wcmf.grid.Action.prototype.renderAction("sortUpAction", Message.get("Up"), "images/up.png");
       else
         actionNav += wcmf.grid.Action.prototype.renderAction("", Message.get("Up"), "images/up_grey.png");
 
       // sort down action
-      if (ignoreValues['hasSortDown'] && ignoreValues['hasSortDown'])
+      if (record.data['hasSortDown'] && record.data['hasSortDown'])
         actionNav += wcmf.grid.Action.prototype.renderAction("sortDownAction", Message.get("Down"), "images/down.png");
       else
         actionNav += wcmf.grid.Action.prototype.renderAction("", Message.get("Down"), "images/down_grey.png");

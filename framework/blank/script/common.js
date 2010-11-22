@@ -125,8 +125,7 @@ function getFormField(name)
 // action:   variablename:            value:         description:
 // =================================================================================
 // display   oid                      oid            display node with oid 'oid'.
-// save      value-datatype-name-oid  wert           change variable 'name' of
-//                                                   type 'datatype' at node with
+// save      value-name-oid           wert           change variable 'name'at node with
 //                                                   oid 'oid'. NOTE: the '-' in variablename
 //                                                   may be any application defined delimiter
 // new       poid                     oid            add a new node of type 
@@ -190,7 +189,7 @@ function doDelete(_oid, _confirm, _text)
 function doSave()
 {
   // nothing to do
-  // all information is edited in the 'value-datatype-name-id' variables
+  // all information is edited in the 'value-name-oid' variables
 }
 //
 // Post form data with given action

@@ -26,15 +26,6 @@ require_once(BASE."wcmf/lib/persistence/pdo/class.PDOConnection.php");
 require_once(BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
- * Some constants describing the data types
- * TODO: Should be removed later
- */
-define("DATATYPE_DONTCARE",  0);
-define("DATATYPE_ATTRIBUTE", 1);
-define("DATATYPE_ELEMENT",   2);
-define("DATATYPE_IGNORE",    3); // all data items >= DATATYPE_IGNORE wont be shown in human readable node discriptions
-
-/**
  * @class RDBMapper
  * @ingroup Mapper
  * @brief RDBMapper maps objects of one type to a relational database schema.
@@ -263,23 +254,23 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   /**
    * @see PersistenceMapper::getAttributes()
    */
-  public function getAttributes(array $dataTypes=array())
+  public function getAttributes(array $tags=array(), $matchMode='all')
   {
     $this->initAttributes();
-    if (sizeof($dataTypes) == 0) {
-      return array_values($this->_attributes['byname']);
+    $result = array();
+    if (sizeof($tags) == 0) {
+      $result = array_values($this->_attributes['byname']);
     }
     else
     {
-      $result = array();
       foreach ($this->_attributes['byname'] as $name => $desc)
       {
-        if (sizeof(array_diff($dataTypes, $desc->appDataTypes)) > 0) {
-          array_push($result, $desc);
+        if ($desc->matchTags($tags, $matchMode)) {
+          $result[] = $desc;
         }
       }
-      return $result;
     }
+    return $result;
   }
   /**
    * @see PersistenceMapper::getAttribute()

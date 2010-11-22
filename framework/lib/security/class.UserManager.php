@@ -183,7 +183,7 @@ abstract class UserManager
     $user = $this->getUser($login);
 
     // validate the value
-    $validationMsg = $user->validateValue($property, $value, DATATYPE_ATTRIBUTE);
+    $validationMsg = $user->validateValue($property, $value);
     if (strlen($validationMsg) > 0) {
       $this->onError($validationMsg, __FILE__, __LINE__);
     }
@@ -192,7 +192,7 @@ abstract class UserManager
     }
 
     // update user repository
-    $user->setValue($property, $value, DATATYPE_ATTRIBUTE);
+    $user->setValue($property, $value);
   }
 
   /**
@@ -316,7 +316,7 @@ abstract class UserManager
     $role = $this->getRole($name);
 
     // validate the value
-    $validationMsg = $role->validateValue($property, $value, DATATYPE_ATTRIBUTE);
+    $validationMsg = $role->validateValue($property, $value);
     if (strlen($validationMsg) > 0) {
       $this->onError($validationMsg, __FILE__, __LINE__);
     }
@@ -325,7 +325,7 @@ abstract class UserManager
     }
 
     // update user repository
-    $role->setValue($property, $value, DATATYPE_ATTRIBUTE);
+    $role->setValue($property, $value);
   }
 
   /**

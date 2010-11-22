@@ -21,7 +21,7 @@ require_once(BASE."wcmf/lib/persistence/class.ILockHandler.php");
 /**
  * @class NullLockManager
  * @ingroup Persistence
- * @brief NullLockManager acts as if no LockManager was installed.
+ * @brief NullLockManager acts as if no LockHandler was installed.
  * Use this to disable locking.
  *
  * @author ingo herwig <ingo@wemove.com>

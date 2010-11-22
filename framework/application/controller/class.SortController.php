@@ -64,7 +64,7 @@ require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
  * - @em ok In any case
  *
  * @param[in] sortoid The oid of the Node to change its sortkey. The Controller assumes
- *            that the given Node has a sortkey attribute (DATATYPE_IGNORE).
+ *            that the given Node has a sortkey attribute.
  * @param[in] prevoid The oid of the Node to swap with on sortup action.
  *            If not given, the Node with previous sortkey is taken.
  * @param[in] nextoid The oid of the Node to swap with on sortdown action.
@@ -77,7 +77,7 @@ require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
  * @param[in] poid As alternative to the filter parameter the entity list maybe defined
  *            by a parent oid, which means that all child nodes of that parent are
  *            contained in the list to sort.
- * @param[in] sortcol The name of the column to use for sorting (DATATYPE_IGNORE).
+ * @param[in] sortcol The name of the column to use for sorting.
  *            If not given it defaults to 'sortkey'.
  * @param[out] oid The oid of the Node that changed its sortkey (= sortoid).
  *
@@ -157,12 +157,12 @@ class SortController extends Controller
    * @param node2 second Node
    * @param doSave True/False wether to save the Nodes or not
    */
-  function swapNodes(&$node1, &$node2, $doSave)
+  function swapNodes($node1, $node2, $doSave)
   {
     $sortCol = $this->getSortColumn();
 
-    $sortkey1 = $node2->getValue($sortCol, DATATYPE_IGNORE);
-    $sortkey2 = $node1->getValue($sortCol, DATATYPE_IGNORE);
+    $sortkey1 = $node2->getValue($sortCol);
+    $sortkey2 = $node1->getValue($sortCol);
 
     // fallback sortkeys have never been set
     if (!$sortkey1 || !$sortkey2)
@@ -176,8 +176,8 @@ class SortController extends Controller
       $sortkey1++;
     }
     // actually swap sortkeys
-    $node1->setValue($sortCol, $sortkey1, DATATYPE_IGNORE);
-    $node2->setValue($sortCol, $sortkey2, DATATYPE_IGNORE);
+    $node1->setValue($sortCol, $sortkey1);
+    $node2->setValue($sortCol, $sortkey2);
 
     if ($doSave)
     {
@@ -236,7 +236,7 @@ class SortController extends Controller
     $sortkey = 1;
     for ($i=0; $i<sizeof($nodes); $i++)
     {
-      $nodes[$i]->setValue($sortCol, $sortkey, DATATYPE_IGNORE);
+      $nodes[$i]->setValue($sortCol, $sortkey);
       $rootNode->addChild($nodes[$i]);
       $sortkey++;
     }

@@ -61,12 +61,13 @@ interface PersistenceMapper
   public function getRelation($roleName);
 
   /**
-   * PersistentObject values may be tagged with application specific data types.
-   * This method gets the attributes belonging to the given data types.
-   * @param dataTypes An array of data type names defined in the mapper. Empty array means all values [default:empty array]
+   * PersistentObject values may be tagged with application specific tags.
+   * This method gets the attributes belonging to the given tags.
+   * @param tags An array of tags that the attribute should match. Empty array means all attributes independent of the given matchMode [default: empty array]
+   * @param matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags [default: 'all']
    * @return An array of AttributeDescription instances
    */
-  public function getAttributes(array $dataTypes=array());
+  public function getAttributes(array $tags=array(), $matchMode='all');
 
   /**
    * Check if a named attribute is defined.

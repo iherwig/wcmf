@@ -101,29 +101,25 @@ class SearchUtil
 
       foreach ($valueNames as $currValueName)
       {
-        list($valueType) = $obj->getValueTypes($currValueName);
         $properties = $obj->getValueProperties($currValueName);
 
-        if ($valueType == DATATYPE_ATTRIBUTE)
+        $value = $obj->getValue($currValueName);
+
+        switch($properties['input_type'])
         {
-          $value = $obj->getValue($currValueName, DATATYPE_ATTRIBUTE);
+          case 'text':
+            $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName, $encoding->convertIsoToCp1252Utf8($value), 'utf-8'));
+            break;
 
-          switch($properties['input_type'])
-          {
-            case 'text':
-              $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName, $encoding->convertIsoToCp1252Utf8($value), 'utf-8'));
-              break;
+          case 'fckeditor':
+            $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName,
+              html_entity_decode($encoding->convertIsoToCp1252Utf8(strip_tags($value)), ENT_QUOTES,'utf-8'), 'utf-8'));
+            break;
 
-            case 'fckeditor':
-              $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName,
-                html_entity_decode($encoding->convertIsoToCp1252Utf8(strip_tags($value)), ENT_QUOTES,'utf-8'), 'utf-8'));
-              break;
-
-            default:
-              $field = Zend_Search_Lucene_Field::keyword($currValueName, $value, 'utf-8');
-              $field->isStored = false;
-              $doc->addField($field);
-          }
+          default:
+            $field = Zend_Search_Lucene_Field::keyword($currValueName, $value, 'utf-8');
+            $field->isStored = false;
+            $doc->addField($field);
         }
       }
 

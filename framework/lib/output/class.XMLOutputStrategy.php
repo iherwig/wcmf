@@ -173,7 +173,7 @@ class XMLOutputStrategy implements OutputStrategy
       $this->writeToFile(' id="'.$obj->getOID().'"');
     }
     // write object attributes
-    $attributeNames = $obj->getValueNames(DATATYPE_ATTRIBUTE);
+    $attributeNames = $obj->getValueNames();
     foreach ($attributeNames as $curAttribute) {
       $this->writeAttribute(&$obj, $curAttribute);
     }
@@ -181,11 +181,6 @@ class XMLOutputStrategy implements OutputStrategy
     $this->writeToFile('>');
     if ($obj->getNumChildren() > 0) {
       $this->writeToFile($this->_linebreak);
-    }
-    // write object element
-    $elementNames = $obj->getValueNames(DATATYPE_ELEMENT);
-    foreach ($elementNames as $curElement) {
-      $this->writeElement(&$obj, $curElement);
     }
     return $elementName;
   }
@@ -197,21 +192,6 @@ class XMLOutputStrategy implements OutputStrategy
   protected function isWritingOIDs()
   {
   	return true;
-  }
-  /**
-   * Write an object value of type DATATYPE_ELEMENT.
-   * @note subclasses will override this to implement special application requirements.
-   * @param obj The object to write
-   * @param name The name of the value
-   */
-  protected function writeElement($obj, $name)
-  {
-    $value = $obj->getValue($name, DATATYPE_ELEMENT);
-    if ($value != '')
-    {
-      $value = $this->getElementValue($obj, $name, $value);
-      $this->writeToFile($value);
-    }
   }
   /**
    * Get the xml element name for an object. The default implementation returns the result of the getType() method.
@@ -237,14 +217,14 @@ class XMLOutputStrategy implements OutputStrategy
     return htmlspecialchars(preg_replace("/\r\n|\n\r|\n|\r/", "<br />", $value));
   }
   /**
-   * Write an object value of type DATATYPE_ATTRIBUTE.
+   * Write an object value.
    * @note subclasses will override this to implement special application requirements.
    * @param obj The object to write
    * @param name The name of the value
    */
   protected function writeAttribute($obj, $name)
   {
-    $value = $obj->getValue($name, DATATYPE_ATTRIBUTE);
+    $value = $obj->getValue($name);
     if ($value != '')
     {
       $value = $this->getAttributeValue($obj, $name, $value);

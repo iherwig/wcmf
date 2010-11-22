@@ -177,7 +177,7 @@ class PagingController extends Controller
       if ($rightsManager->authorize($curOID, '', ACTION_READ))
       {
         $node = &$persistenceFacade->load($curOID, BUILDDEPTH_SINGLE);
-        $node->setValue('displaytext', $this->getDisplayText($node), DATATYPE_IGNORE);
+        $node->setValue('displaytext', $this->getDisplayText($node));
         $nodes[sizeof($nodes)] = &$node;
       }
     }
@@ -217,7 +217,7 @@ class PagingController extends Controller
   }
   /**
    * Get the text to display for a given node in the list.
-   * This text will be assigned to the value 'displaytext' (DATATYPE_IGNORE) in the node.
+   * This text will be assigned to the value 'displaytext' in the node.
    * @return Display text
    * @note subclasses must implement this method.
    */

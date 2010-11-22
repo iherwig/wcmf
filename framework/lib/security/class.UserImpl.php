@@ -41,7 +41,7 @@ class UserImpl extends User
    */  
   function setLogin($login)
   {
-    $this->setValue('login', $login, DATATYPE_ATTRIBUTE);
+    $this->setValue('login', $login);
   }
 
   /**
@@ -50,7 +50,7 @@ class UserImpl extends User
    */  
   function getLogin()
   {
-    return $this->getValue('login', DATATYPE_ATTRIBUTE);
+    return $this->getValue('login');
   }
 
   /**
@@ -59,7 +59,7 @@ class UserImpl extends User
    */  
   function setPassword($password)
   {
-    $this->setValue('password', $password, DATATYPE_ATTRIBUTE);
+    $this->setValue('password', $password);
   }
 
   /**
@@ -68,7 +68,7 @@ class UserImpl extends User
    */  
   function getPassword()
   {
-    return $this->getValue('password', DATATYPE_ATTRIBUTE);
+    return $this->getValue('password');
   }
 
   /**
@@ -77,7 +77,7 @@ class UserImpl extends User
    */  
   function setName($name)
   {
-    $this->setValue('name', $name, DATATYPE_ATTRIBUTE);
+    $this->setValue('name', $name);
   }
 
   /**
@@ -86,7 +86,7 @@ class UserImpl extends User
    */  
   function getName()
   {
-    return $this->getValue('name', DATATYPE_ATTRIBUTE);
+    return $this->getValue('name');
   }
 
   /**
@@ -95,7 +95,7 @@ class UserImpl extends User
    */  
   function setFirstname($firstname)
   {
-    $this->setValue('firstname', $firstname, DATATYPE_ATTRIBUTE);
+    $this->setValue('firstname', $firstname);
   }
 
   /**
@@ -104,7 +104,7 @@ class UserImpl extends User
    */  
   function getFirstname()
   {
-    return $this->getValue('firstname', DATATYPE_ATTRIBUTE);
+    return $this->getValue('firstname');
   }
 
   /**
@@ -113,7 +113,7 @@ class UserImpl extends User
    */  
   function setConfig($config)
   {
-    $this->setValue('config', $config, DATATYPE_ATTRIBUTE);
+    $this->setValue('config', $config);
   }
 
   /**
@@ -122,7 +122,7 @@ class UserImpl extends User
    */  
   function getConfig()
   {
-    return $this->getValue('config', DATATYPE_ATTRIBUTE);
+    return $this->getValue('config');
   }
 }
 ?>

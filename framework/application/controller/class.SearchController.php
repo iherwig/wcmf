@@ -260,21 +260,17 @@ class SearchController extends AsyncPagingController
       $curNode = &$nodes[$i];
 
       // create hightlighted summary
-      $session = &SessionData::getInstance();
+      $session = SessionData::getInstance();
       $queryObj = Zend_Search_Lucene_Search_QueryParser::parse($session->get($this->FILTER_VARNAME));
       $summary = '';
       $valueNames = $curNode->getValueNames();
-      foreach($valueNames as $curValueName)
-      {
-        list($valueType) = $curNode->getValueTypes($curValueName);
-        if ($valueType == DATATYPE_ATTRIBUTE) {
-          $summary .= $curValueName.": ".$queryObj->htmlFragmentHighlightMatches($curNode->getValue($curValueName))."<br />";
-        }
+      foreach($valueNames as $curValueName) {
+        $summary .= $curValueName.": ".$queryObj->htmlFragmentHighlightMatches($curNode->getValue($curValueName))."<br />";
       }
-      $curNode->setValue('summary', $summary, DATATYPE_ATTRIBUTE);
+      $curNode->setValue('summary', $summary);
       
-      $curNode->setValue('type', $curNode->getType(), DATATYPE_ATTRIBUTE);
-      $curNode->setValue('displayValue', $curNode->getDisplayValue(), DATATYPE_ATTRIBUTE);      
+      $curNode->setValue('type', $curNode->getType());
+      $curNode->setValue('displayValue', $curNode->getDisplayValue());      
     }
   }
   /**
@@ -282,9 +278,9 @@ class SearchController extends AsyncPagingController
    * @param node The node to check
    * @return True/False
    */
-  function isSearchable(&$node)
+  function isSearchable($node)
   {
-    return (sizeof($node->getValueNames(DATATYPE_ATTRIBUTE)) > 0 && $node->getProperty('is_searchable') == true);
+    return ($node->getProperty('is_searchable') == true);
   }
 
   /**
@@ -295,14 +291,13 @@ class SearchController extends AsyncPagingController
    * Resets the value on each attribute to be searchable with LIKE
    * @param node A reference to the Node the holds the value (the template)
    * @param valueName The name of the value
-   * @param dataType The dataType of the value
    * @see NodeProcessor
    */
-  function setSearchValue(&$node, $valueName, $dataType)
+  function setSearchValue($node, $valueName)
   {
-    $value = $node->getValue($valueName, $dataType);
-    if ($dataType == DATATYPE_ATTRIBUTE && strlen($value) > 0) {
-      $node->setValue($valueName, "LIKE '%".$value."%'", $dataType);
+    $value = $node->getValue($valueName);
+    if (strlen($value) > 0) {
+      $node->setValue($valueName, "LIKE '%".$value."%'");
     }
   }
 }

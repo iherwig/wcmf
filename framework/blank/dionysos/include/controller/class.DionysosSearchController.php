@@ -154,18 +154,15 @@ class DionysosSearchController extends AsyncPagingController
 			// save words
 			$valueNames = $currNode->getValueNames();
 			foreach($valueNames as $currValueName) {
-				list($valueType) = $currNode->getValueTypes($curValueName);
-				if ($valueType == DATATYPE_ATTRIBUTE) {
-					HighlightWordExtractor::resetWordStorage();
-					$this->query->highlightMatches($currNode->getValue($curValueName), '', new HighlightWordExtractor());
-					$newWords = HighlightWordExtractor::getWordStorage();
-					$oldWords = array();
-					$searchDataPart = $this->searchData[$currNode->getOid()];
-					if (array_key_exists('matchingWords', $searchDataPart)) {
-						$oldWords = $searchDataPart['matchingWords'];
-					}
-					$this->searchData[$currNode->getOid()]['matchingWords'] = array_merge_recursive($oldWords, $newWords);
+				HighlightWordExtractor::resetWordStorage();
+				$this->query->highlightMatches($currNode->getValue($curValueName), '', new HighlightWordExtractor());
+				$newWords = HighlightWordExtractor::getWordStorage();
+				$oldWords = array();
+				$searchDataPart = $this->searchData[$currNode->getOid()];
+				if (array_key_exists('matchingWords', $searchDataPart)) {
+					$oldWords = $searchDataPart['matchingWords'];
 				}
+				$this->searchData[$currNode->getOid()]['matchingWords'] = array_merge_recursive($oldWords, $newWords);
 			}
 		}
 

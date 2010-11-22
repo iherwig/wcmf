@@ -25,19 +25,13 @@
 <div class="contentblock">
 	<h2>{$node->getObjectDisplayName()}&nbsp;</h2>
 	<span class="spacer"></span>
-{assign var="data_types" value=$node->getDataTypes()}
-{section name=data_type_index loop=$data_types}
-  {assign var="cur_data_type" value=$data_types[data_type_index]}
-  {if $cur_data_type != DATATYPE_IGNORE}
-    {assign var="value_names" value=$node->getValueNames($cur_data_type)}
-    {section name=value_name_index loop=$value_names}
-      {assign var="cur_value_name" value=$value_names[value_name_index]}
+{assign var="value_names" value=$node->getValueNames($cur_data_type)}
+{section name=value_name_index loop=$value_names}
+  {assign var="cur_value_name" value=$value_names[value_name_index]}
   <span class="dottedSeparator"></span>
   <span class="left">{translate text=$cur_value_name}</span>
 	<span class="right">{$formUtil->getInputControl($nodeUtil->getInputControlName($node, $cur_value_name, $cur_data_type), 
     $node->getValueProperty($cur_value_name, 'input_type', $cur_data_type), '', true)}</span>
-    {/section}
-  {/if}
 {/section}
 	<span class="spacer"></span>
 </div>

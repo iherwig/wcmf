@@ -4,11 +4,6 @@ Ext.MessageBox.buttonText.yes = Message.get("Yes");
 Ext.MessageBox.buttonText.no = Message.get("No");
 
 /**
- * Global datatype mapping from wcmf
- */
-dataTypeMapping = {DATATYPE_DONTCARE:0, DATATYPE_ATTRIBUTE:1, DATATYPE_ELEMENT:2, DATATYPE_IGNORE:3};
-
-/**
  * @class Action
  */
 Action = function() {};

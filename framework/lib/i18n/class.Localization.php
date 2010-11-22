@@ -31,7 +31,7 @@ require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
  * in the key 'translationType' in the configuration section 'i18n' (e.g. Translation).
  *
  * The translation entity type must have the attributes 'objectid',
- * 'attribute', 'translation', 'language' (all DATATYPE_ATTRIBUTE) with the
+ * 'attribute', 'translation', 'language' with the
  * appropriate getter and setter methods.
  *
  * Localization is done against a default language, which is defined
@@ -43,22 +43,16 @@ require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
  * section 'languages', where each language has it's own entry: e.g. en = English
  * or in an entity tyoe that is defined in the key 'languageType' in the
  * configuration section 'i18n' (e.g. Language).  The entity type must have the
- * attributes 'code' and 'name' (all DATATYPE_ATTRIBUTE) with the appropriate
- * getter and setter methods.
+ * attributes 'code' and 'name' with the appropriate getter and setter methods.
  * If entity type and configuration section are defined, the configuration section is preferred.
  * Language key names may conform to ISO 639 language codes, but this is not mandatory.
  * One of the keys must be equal to the value of defaultLanguage.
  *
- * Generally only values whose datatype does not equal DATATYPE_IGNORE are
- * translatable.
+ * Generally only values are translatable.
  * To exclude values of a special type (like date values) from the translation,
  * they may be omitted in the array that is given in the key 'inputTypes' in
  * the configuration section 'i18n'. This array lists all input_types whose
  * translations are stored.
- *
- * @note: Localization is not aware of value datatypes. That means if an
- * entity has two values with the same name, but different datatype, localization
- * behaviour is not defined for these two values.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -336,15 +330,15 @@ class Localization
    * Callback for setting translated values in the given object
    * @see NodeProcessor
    */
-  private function setTranslatedValue(&$obj, $valueName, $dataType, &$translations, $useDefaults)
+  private function setTranslatedValue(&$obj, $valueName, $translations, $useDefaults)
   {
-    $inputType = $obj->getValueProperty($valueName, 'input_type', $dataType);
+    $inputType = $obj->getValueProperty($valueName, 'input_type');
     $inputTypes = $this->getIncludedInputTypes();
-    if ($dataType != DATATYPE_IGNORE && in_array($inputType, $inputTypes))
+    if (in_array($inputType, $inputTypes))
     {
       // empty the value, if the default language values should not be used
       if (!$useDefaults) {
-        $obj->setValue($valueName, null, $dataType);
+        $obj->setValue($valueName, null);
       }
       // translate the value
       for ($i=0; $i<sizeof($translations); $i++)
@@ -354,7 +348,7 @@ class Localization
         {
           $translation = $translations[$i]->getTranslation();
           if (!($useDefaults && strlen($translation) == 0)) {
-            $obj->setValue($valueName, $translation, DATATYPE_ATTRIBUTE);
+            $obj->setValue($valueName, $translation);
           }
           break;
         }
@@ -365,13 +359,13 @@ class Localization
    * Callback for saving translated values for the given object
    * @see NodeProcessor
    */
-  private function saveTranslatedValue(&$obj, $valueName, $dataType, &$existingTranslations, $lang, $saveEmptyValues)
+  private function saveTranslatedValue(&$obj, $valueName, $existingTranslations, $lang, $saveEmptyValues)
   {
-    $inputType = $obj->getValueProperty($valueName, 'input_type', $dataType);
+    $inputType = $obj->getValueProperty($valueName, 'input_type');
     $inputTypes = $this->getIncludedInputTypes();
-    if ($dataType != DATATYPE_IGNORE && in_array($inputType, $inputTypes))
+    if (in_array($inputType, $inputTypes))
     {
-      $value = $obj->getValue($valueName, $dataType);
+      $value = $obj->getValue($valueName);
       if ($saveEmptyValues || strlen($value) > 0)
       {
         $translation = null;
@@ -397,7 +391,7 @@ class Localization
         // set all required properties and save
         $translation->setObjectid($obj->getOID());
         $translation->setAttribute($valueName);
-        $translation->setTranslation($obj->getValue($valueName, $dataType));
+        $translation->setTranslation($obj->getValue($valueName));
         $translation->setLanguage($lang);
         $translation->save();
       }

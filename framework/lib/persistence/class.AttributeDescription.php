@@ -29,7 +29,7 @@ class AttributeDescription
 {
   public $name = '';
   public $type = 'string';
-  public $appDataTypes = array();
+  public $tags = array();
   public $defaultValue = null;
   public $restrictionsMatch = '';
   public $restrictionsNotMatch = '';
@@ -42,7 +42,7 @@ class AttributeDescription
    * Constructor.
    * @param name The attribute name
    * @param type The attribute type. This may be used to decide on value conversions in the assoziated DataConverter class
-   * @param appDataTypes An array of application specific data types that this attribute is tagged with
+   * @param tags An array of application specific tags that this attribute is tagged with
    * @param defaultValue The default value (will be set when creating a blank object, see PersistenceMapper::create())
    * @param restrictionsMatch A regular expression that the value must match (e.g. '[0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]' for date values)
    * @param restrictionsNotMatch A regular expression that the value must NOT match
@@ -51,12 +51,12 @@ class AttributeDescription
    * @param inputType The HTML input type for the value, see FormUtil::getInputControl()
    * @param displayType The HTML display type for the value, see NodeUtil::getDisplayValue()
    */
-  public function __construct($name, $type, array $appDataTypes, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
+  public function __construct($name, $type, array $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
     $restrictionsDescription, $isEditable, $inputType, $displayType)
   {
     $this->name = $name;
     $this->type = $type;
-    $this->appDataTypes = $appDataTypes;
+    $this->tags = $tags;
     $this->defaultValue = $defaultValue;
     $this->restrictionsMatch = $restrictionsMatch;
     $this->restrictionsNotMatch = $restrictionsNotMatch;
@@ -67,19 +67,32 @@ class AttributeDescription
   }
 
   /**
-   * Check if this attribute has the given application specific data types
-   * @param dataTypes An array of data type names defined in the mapper. Empty array means all values [default:empty array]
+   * Check if this attribute is tagged with the given application specific tags
+   * @param tags An array of tags that the attribute should match. Empty array results in true the given matchMode [default: empty array]
+   * @param matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags [default: 'all']
    * @return True if the attribute has all data types, false else
    */
-  public function hasDataTypes(array $dataTypes=array())
+  public function matchTags(array $tags=array(), $matchMode='all')
   {
-    foreach ($dataTypes as $dataType)
-    {
-      if (!in_array($dataType, $this->appDataTypes)) {
-        return false;
-      }
+    $numGivenTags = sizeof($tags);
+    if (sizeof($numGivenTags) == 0) {
+      return true;
     }
-    return true;
+    $result = true;
+    $diff = sizeof(array_diff($tags, $this->tags));
+    switch ($matchMode)
+    {
+      case 'all':
+        $result = ($diff == 0);
+        break;
+      case 'none':
+        $result = ($diff == $numGivenTags);
+        break;
+      case 'any':
+        $result = ($diff < $numGivenTags);
+        break;
+    }    
+    return $result;
   }
 
   /**
@@ -88,7 +101,7 @@ class AttributeDescription
    */
   public function getPropertyNames()
   {
-    return array('name', 'type', 'appDataTypes', 'defaultValue', 'restrictionsMatch', 'restrictionsNotMatch',
+    return array('name', 'type', 'tags', 'defaultValue', 'restrictionsMatch', 'restrictionsNotMatch',
       'restrictionsDescription', 'isEditable', 'inputType', 'displayType');
   }
 

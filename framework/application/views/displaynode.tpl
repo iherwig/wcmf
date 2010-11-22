@@ -129,18 +129,12 @@
 <div class="contentblock">
   <h2 title="{translate text="object ID"}: {$oid|default:"-"}">{$node->getDisplayValue(true)}&nbsp;</h2>
   <span class="spacer"></span>
-{assign var="data_types" value=$node->getDataTypes()}
-{section name=data_type_index loop=$data_types}
-  {assign var="cur_data_type" value=$data_types[data_type_index]}
-  {if $cur_data_type != DATATYPE_IGNORE}
-    {assign var="value_names" value=$node->getValueNames($cur_data_type)}
-    {section name=value_name_index loop=$value_names}
-      {assign var="cur_value_name" value=$value_names[value_name_index]}
+{assign var="value_names" value=$node->getValueNames($cur_data_type)}
+{section name=value_name_index loop=$value_names}
+  {assign var="cur_value_name" value=$value_names[value_name_index]}
   <span class="dottedSeparator"></span>
   <span class="left" title="{$node->getValueDescription($cur_value_name, $cur_data_type)}">{$node->getValueDisplayName($cur_value_name, $cur_data_type)}</span>
   <span class="right">{$nodeUtil->getInputControl($node, $cur_value_name, $cur_data_type)}</span>
-    {/section}
-  {/if}
 {/section}
   <span class="spacer"></span>
 {foreach item=template from=$possibleparents}

@@ -50,8 +50,7 @@ wcmf.grid.Grid.prototype = {
     for (var i=0; i<columnDefs.length; i++)
       jsonMapping[i] = {name:columnDefs[i].id};
     // store generic node data in special record fields
-    jsonMapping.push({name:"DATATYPE_ATTRIBUTE", mapping:"values["+dataTypeMapping.DATATYPE_ATTRIBUTE+"]"});
-    jsonMapping.push({name:"DATATYPE_IGNORE", mapping:"values["+dataTypeMapping.DATATYPE_IGNORE+"]"});
+    jsonMapping.push({name:"values", mapping:"values"});
     jsonMapping.push({name:"_properties", mapping:"properties"});
     jsonMapping.push({name:"_type", mapping:"type"});
   
@@ -279,7 +278,7 @@ wcmf.grid.Grid.prototype = {
    */
   renderColumnDefault: function(value, cellMeta, record, rowIndex, colIndex, store) {
     // try to get the value from the object
-    var value = record.data.DATATYPE_ATTRIBUTE[cellMeta.id];
+    var value = record.data[cellMeta.id];
     if (value) {
       return value;
     }
@@ -287,7 +286,7 @@ wcmf.grid.Grid.prototype = {
       // or from the realSubject if given
       var realSubject = record.data._properties.realSubject;
       if (realSubject)
-        return realSubject.values[dataTypeMapping.DATATYPE_ATTRIBUTE][cellMeta.id];
+        return realSubject.values[cellMeta.id];
     }
     return '-'
   }

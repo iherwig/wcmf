@@ -47,34 +47,34 @@ require_once(BASE."wcmf/lib/util/class.FileUtil.php");
 class XMLExportController extends BatchController
 {
   // session name constants
-  var $ROOT_OIDS = 'XMLExportController.rootoids';
-  var $ITERATOR_ID = 'XMLExportController.iteratorid';
+  private $ROOT_OIDS = 'XMLExportController.rootoids';
+  private $ITERATOR_ID = 'XMLExportController.iteratorid';
 
   // documentInfo passes the current document info/status from one call to the next:
   // An assoziative array with keys 'docFile', 'doctype', 'dtd', 'docLinebreak', 'docIndent', 'nodesPerCall', 
   // 'lastIndent' and 'tagsToClose' where the latter is an array of assoziative arrays with keys 'indent', 'name'  
-  var $DOCUMENT_INFO = 'XMLExportController.documentinfo';  
+  private $DOCUMENT_INFO = 'XMLExportController.documentinfo';  
 
   // default values, maybe overriden by corresponding request values (see above)
-  var $_DOCFILE = "export.xml";
-  var $_DOCTYPE = "";
-  var $_DTD = "";
-  var $_DOCROOTELEMENT = "Root";
-  var $_DOCLINEBREAK = "\n";
-  var $_DOCINDENT = "  ";
-  var $_NODES_PER_CALL = 10;
+  private $_DOCFILE = "export.xml";
+  private $_DOCTYPE = "";
+  private $_DTD = "";
+  private $_DOCROOTELEMENT = "Root";
+  private $_DOCLINEBREAK = "\n";
+  private $_DOCINDENT = "  ";
+  private $_NODES_PER_CALL = 10;
 
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
+  public function initialize($request, $response)
   {
     parent::initialize($request, $response);
 
     // construct initial document info
     if ($request->getAction() != 'continue')
     {
-     	$session = &SessionData::getInstance();
+     	$session = SessionData::getInstance();
 
       $docFile = $this->_request->hasValue('docfile') ? $this->_request->getValue('docfile') : $this->_DOCFILE;
       $docType = $this->_request->hasValue('doctype') ? $this->_request->getValue('doctype') : $this->_DOCTYPE;
@@ -95,17 +95,19 @@ class XMLExportController extends BatchController
   /**
    * @see BatchController::getWorkPackage()
    */
-  function getWorkPackage($number)
+  public function getWorkPackage($number)
   {
-    if ($number == 0)
+    if ($number == 0) {
       return array('name' => Message::get('Initialization'), 'size' => 1, 'oids' => array(1), 'callback' => 'initExport');
-    else
+    }
+    else {
       return null;
+    }
   }
   /**
    * @see LongTaskController::getDisplayText()
    */
-  function getDisplayText($step)
+  public function getDisplayText($step)
   {
     return $this->_workPackages[$step-1]['name']." ...";
   }
@@ -114,9 +116,9 @@ class XMLExportController extends BatchController
    * @param oids The oids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
-  function initExport($oids)
+  public function initExport($oids)
   {
-   	$session = &SessionData::getInstance();
+   	$session = SessionData::getInstance();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -126,21 +128,23 @@ class XMLExportController extends BatchController
     // start document
     $fileHandle = fopen($documentInfo['docFile'], "a");
     FileUtil::fputsUnicode($fileHandle, '<?xml version="1.0" encoding="UTF-8"?>'.$documentInfo['docLinebreak']);
-    if ($documentInfo['docType'] != "")
+    if ($documentInfo['docType'] != "") {
       FileUtil::fputsUnicode($fileHandle, '<!DOCTYPE '.$documentInfo['docType'].' SYSTEM "'.$documentInfo['dtd'].'">'.$documentInfo['docLinebreak']);
+    }
     FileUtil::fputsUnicode($fileHandle, '<'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
     fclose($fileHandle);
 
     // get root types from ini file
     $rootOIDs = array();
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     $rootTypes = $parser->getValue('rootTypes', 'cms');
 
     if (is_array($rootTypes))
     {
       $persistenceFacade = &PersistenceFacade::getInstance();
-      foreach($rootTypes as $rootType)
+      foreach($rootTypes as $rootType) {
         $rootOIDs = array_merge($rootOIDs, $persistenceFacade->getOIDs($rootType));
+      }
     }
 
     // store root object ids in session
@@ -155,7 +159,7 @@ class XMLExportController extends BatchController
    * @param oids The oids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
-  function exportNodes($oids)
+  protected function exportNodes($oids)
   {
     // Export starts from root oids and iterates over all children.
     // On every call we have to decide what to do:
@@ -164,20 +168,20 @@ class XMLExportController extends BatchController
     // - If the oids array holds one value!=null this is assumed to be an root oid and a new iterator is constructed
     // - If there is no iterator and no oid given, we return
     
-   	$session = &SessionData::getInstance();
+   	$session = SessionData::getInstance();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
     // check for iterator in session
    	$iterator = null;
    	$iteratorID = $session->get($this->ITERATOR_ID);
-   	if ($iteratorID != null)
-      $iterator = &PersistentIterator::load($iteratorID);
-    
+   	if ($iteratorID != null) {
+      $iterator = PersistentIterator::load($iteratorID);
+   	}
     // no iterator but oid given, start with new root oid
-    if ($iterator == null && $oids[0] != null)
+    if ($iterator == null && $oids[0] != null) {
       $iterator = new PersistentIterator($oids[0]);
-  
+    }
     // no iterator, no oid, finish  
     if ($iterator == null)
     {
@@ -237,9 +241,9 @@ class XMLExportController extends BatchController
    * @param oids The oids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
-  function finishExport($oids)
+  protected function finishExport($oids)
   {
-   	$session = &SessionData::getInstance();
+   	$session = SessionData::getInstance();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -255,14 +259,14 @@ class XMLExportController extends BatchController
    	$session->set($this->ITERATOR_ID, $tmp);
    	$session->set($this->DOCUMENT_INFO, $tmp);
   }
-	/**
-	 * Ends all tags up to $curIndent level
-	 * @param fileHandle The file handle to write to
-	 * @param curIndent The depth of the node in the tree
-	 * @param documentInfo An assoziative array (see DOCUMENT_INFO)
-	 */
-	 function endTags($fileHandle, $curIndent, $documentInfo)
-	 {
+  /**
+   * Ends all tags up to $curIndent level
+   * @param fileHandle The file handle to write to
+   * @param curIndent The depth of the node in the tree
+   * @param documentInfo An assoziative array (see DOCUMENT_INFO)
+   */
+   protected function endTags($fileHandle, $curIndent, $documentInfo)
+   {
      $lastIndent = $documentInfo['lastIndent'];
 	   
 	   // write last opened and not closed tags
@@ -283,25 +287,25 @@ class XMLExportController extends BatchController
    * @param documentInfo An assoziative array (see DOCUMENT_INFO)
    * @return The updated document state
    */
-  function writeNode($fileHandle, $oid, $depth, $documentInfo)
+  protected function writeNode($fileHandle, $oid, $depth, $documentInfo)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $node = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $node = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
     $numChildren = sizeof($node->getChildOIDs());
 
     $lastIndent = $documentInfo['lastIndent'];
     $curIndent = $depth;
     $this->endTags($fileHandle, $curIndent, $documentInfo);
 	  
-	  if (!$documentInfo['endTag'])
-	  {
-		  if ($numChildren > 0)
-		  {
+    if (!$documentInfo['endTag'])
+    {
+      if ($numChildren > 0)
+      {
         $closeTag = array("name" => $node->getType(), "indent" => $curIndent);
         array_unshift($documentInfo['tagsToClose'], $closeTag);
-	      $documentInfo['endTag'] = true;
-		  }
+        $documentInfo['endTag'] = true;
 	  }
+	}
 
     // write object's content
     // open tag
@@ -309,20 +313,17 @@ class XMLExportController extends BatchController
     // write object id
     FileUtil::fputsUnicode($fileHandle, ' id="'.$node->getOID().'"');
     // write object attributes
-    $attributeNames = $node->getValueNames(DATATYPE_ATTRIBUTE);
+    $attributeNames = $node->getValueNames();
     foreach ($attributeNames as $curAttribute)
-      if ($node->getValue($curAttribute) != '')
-        FileUtil::fputsUnicode($fileHandle, ' '.$curAttribute.'="'.$this->formatValue($node->getValue($curAttribute, DATATYPE_ATTRIBUTE)).'"');
+    {
+      if ($node->getValue($curAttribute) != '') {
+        FileUtil::fputsUnicode($fileHandle, ' '.$curAttribute.'="'.$this->formatValue($node->getValue($curAttribute)).'"');
+      }
+    }
     // close tag
     FileUtil::fputsUnicode($fileHandle, '>');
-    if ($numChildren > 0)
+    if ($numChildren > 0) {
       FileUtil::fputsUnicode($fileHandle, $documentInfo['docLinebreak']);
-    // write object element
-    $elementNames = $node->getValueNames(DATATYPE_ELEMENT);
-    foreach ($elementNames as $curElement)
-    {
-      if ($node->getValue($curElement) != '')
-        FileUtil::fputsUnicode($fileHandle, $this->formatValue($node->getValue($curElement, DATATYPE_ELEMENT)));
     }
 
     // remember open tag if not closed
@@ -331,8 +332,9 @@ class XMLExportController extends BatchController
       $closeTag = array("name" => $node->getType(), "indent" => $curIndent);
       array_unshift($documentInfo['tagsToClose'], $closeTag);
     }
-    else
+    else {
       FileUtil::fputsUnicode($fileHandle, '</'.$node->getType().'>'.$documentInfo['docLinebreak']);
+    }
     // remember current indent
     $documentInfo['lastIndent'] = $curIndent;
 
@@ -345,7 +347,7 @@ class XMLExportController extends BatchController
    * @return The formatted value
    * @note Subclasses may overrite this for special application requirements
    */
-  function formatValue($value)
+  protected function formatValue($value)
   {
     return htmlentities(str_replace(array("\r", "\n"), array("", ""), nl2br($value)), ENT_QUOTES);
   }

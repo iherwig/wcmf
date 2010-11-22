@@ -91,7 +91,7 @@ class UserManagerRDB extends UserManager
    */
   protected function setUserPropertyImpl(User $user, $property, $value)
   {
-    $user->setValue($property, $value, DATATYPE_ATTRIBUTE);
+    $user->setValue($property, $value);
     $user->save();
   }
 
@@ -121,7 +121,7 @@ class UserManagerRDB extends UserManager
    */
   protected function setRolePropertyImpl(Role $role, $property, $value)
   {
-    $role->setValue($property, $value, DATATYPE_ATTRIBUTE);
+    $role->setValue($property, $value);
     $role->save();
   }
 

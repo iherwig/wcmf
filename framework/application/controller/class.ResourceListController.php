@@ -149,7 +149,7 @@ class ResourceListController extends Controller
       while ($this->_request->getValue('file:'.$i))
       {
         $node = $this->_request->getValue('file:'.$i);
-        $data = array('oid' => '', 'name' => '', 'dataType' => 0, 'value' => $node->getValue('upload_file'));
+        $data = array('oid' => '', 'name' => '', 'value' => $node->getValue('upload_file'));
         $result = $controller->saveUploadFile($data);
         if ($result === false)
           $this->appendErrorMsg($controller->getErrorMsg());
