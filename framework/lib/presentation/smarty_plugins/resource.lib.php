@@ -26,18 +26,18 @@
  * Purpose:  Fetches templates from lib directories
  * -------------------------------------------------------------
  */
-function smarty_resource_lib_source($tpl_name, &$tpl_source, &$smarty)
+function smarty_resource_lib_source($tpl_name, &$tpl_source, $smarty)
 {
   $file = get_path($tpl_name);
   if (is_file($file))
   {
-    $tpl_source = $smarty->_read_file($file);
+    $tpl_source = file_get_contents($file);
     return true;
   }
   return false;
 }
 
-function smarty_resource_lib_timestamp($tpl_name, &$tpl_timestamp, &$smarty)
+function smarty_resource_lib_timestamp($tpl_name, &$tpl_timestamp, $smarty)
 {
   $file = get_path($tpl_name);
   if (is_file($file))
@@ -48,12 +48,12 @@ function smarty_resource_lib_timestamp($tpl_name, &$tpl_timestamp, &$smarty)
   return false;
 }
 
-function smarty_resource_lib_secure($tpl_name, &$smarty)
+function smarty_resource_lib_secure($tpl_name, $smarty)
 {
   return true;
 }
 
-function smarty_resource_lib_trusted($tpl_name, &$smarty)
+function smarty_resource_lib_trusted($tpl_name, $smarty)
 {
   return true;
 }

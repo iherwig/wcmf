@@ -63,25 +63,27 @@ class View extends Smarty
     $this->plugins_dir = array('plugins', BASE.'wcmf/lib/presentation/smarty_plugins');
 
     // load filter
-    $this->load_filter('pre','removeprids');
-    $this->load_filter('output','trimwhitespace');
+    $this->loadFilter('pre','removeprids');
+    $this->loadFilter('output','trimwhitespace');
 
     // get template path
     if (($smartyPath = $parser->getValue('templateDir', 'smarty')) === false) {
       throw new ConfigurationException("No 'smarty.templateDir' given in configfile.");
     }
-    if (substr($smartyPath,-1) != '/')
+    if (substr($smartyPath,-1) != '/') {
       $smartyPath .= '/';
-
+    }
     $this->template_dir = $smartyPath;
     $this->compile_dir = $smartyPath.'smarty/templates_c/';
     $this->config_dir = $smartyPath.'smarty/configs/';
     $this->cache_dir = $smartyPath.'smarty/cache/';
 
-    if (!file_exists($this->compile_dir))
+    if (!file_exists($this->compile_dir)) {
       FileUtil::mkdirRec($this->compile_dir);
-    if (!file_exists($this->cache_dir))
+    }
+    if (!file_exists($this->cache_dir)) {
       FileUtil::mkdirRec($this->cache_dir);
+    }
   }
 
   /**
@@ -96,7 +98,7 @@ class View extends Smarty
   {
     $view = new View();
     $view->setup();
-    return $view->clear_all_cache();
+    return $view->clearAllCache();
   }
   /**
    * Clear parts of cache
@@ -106,7 +108,7 @@ class View extends Smarty
   {
     $view = new View();
     $view->setup();
-    return $view->clear_cache($tplFile, $cacheId);
+    return $view->clearCache($tplFile, $cacheId);
   }
   /**
    * Check if a view is cached. Returns also false, if caching is disabled
@@ -117,7 +119,7 @@ class View extends Smarty
   {
     $view = new View();
     $view->setup();
-    return ($view->caching && $view->is_cached($tplFile, $cacheId));
+    return ($view->caching && $view->isCached($tplFile, $cacheId));
   }
 }
 ?>

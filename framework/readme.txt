@@ -20,7 +20,7 @@ DESCRIPTION:
 
     The main features of wCMF are:
     
-    - persistence layer with adapters to RDBMs (ADOdb) and XML files
+    - persistence layer with adapter to RDBMs
     - presentation layer based on template mechanism (Smarty)
     - client side presentation layer in web 2.0 style (extjs)
     - configuration of the application flow through config files
