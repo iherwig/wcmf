@@ -39,6 +39,10 @@ if (!$parser->parseIniFile($configFile, true))
   exit();
 }
 
+if (!ensureDatabases($parser)) {
+  exit();
+}
+
 // message globals
 $GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'cms');
 $GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'cms');
@@ -128,6 +132,38 @@ if (is_dir('custom-dbupdate'))
 
 Log::info("done.", "dbupdate");
 
+
+/**
+ * Ensure the existance of the databases (only mysql)
+ * @param parser The inifile parser
+ * @return True/False
+ */
+function ensureDatabases($parser)
+{
+  $requiredInikeys = array('dbHostName', 'dbName', 'dbUserName', 'dbPassword', 'dbType');
+  $createdDatabases = array();
+  // check all initparams sections for database connections
+  $initSections = array_values($parser->getSection('initparams'));
+  foreach ($initSections as $sectionName)
+  {
+    $sectionData = $parser->getSection($sectionName);
+    if (sizeof(array_intersect($requiredInikeys, array_keys($sectionData))) == 5)
+    {
+      // the section contains the required database connection parameters
+      if (strtolower($sectionData['dbType']) == 'mysql')
+      {
+        $dbKey = join(':', array_values($sectionData));
+        if (!in_array($dbKey, $createdDatabases))
+        {
+          Log::info('Creating database '.$sectionData['dbName'], "dbupdate");
+          DBUtil::createDatabase($sectionData['dbName'], $sectionData['dbHostName'], $sectionData['dbUserName'], $sectionData['dbPassword']);
+          $createdDatabases[] = $dbKey;
+        }
+      }
+    }
+  }
+  return true;
+}
 
 /**
  * Ensure the existance of the update table 'dbupdate'

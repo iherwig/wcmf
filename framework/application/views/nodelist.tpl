@@ -9,7 +9,7 @@
 
 <div class="sublist">
 {include file="lib:application/views/include/list_navigation.tpl"}
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}
 
 <table width="600">
 {section name=node_index loop=$nodes}

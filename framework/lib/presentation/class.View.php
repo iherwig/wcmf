@@ -30,20 +30,11 @@ require_once(BASE."wcmf/lib/util/class.InifileParser.php");
 class View extends Smarty
 {
   /**
-   * Reimplementation of Smarty's error handling method.
-   * @see Smarty::trigger_error()
-   */
-  function trigger_error($error_msg, $error_type = E_USER_WARNING)
-  {
-    throw new ErrorException("View error: $error_msg");
-  }
-
-  /**
    * Setup the View for display (set directories, attributes, ...).
    */
-  function setup()
+  public function setup()
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     if (($debugView = $parser->getValue('debugView', 'cms')) === false) {
       $debugView = 0;
     }
@@ -60,8 +51,17 @@ class View extends Smarty
     $this->compile_check = $compileCheck;
     $this->caching = $caching;
     $this->cache_lifetime = $cacheLifetime;
-    $this->plugins_dir = array('plugins', BASE.'wcmf/lib/presentation/smarty_plugins');
-
+    $this->plugins_dir = array(
+      BASE.'wcmf/3rdparty/smarty/libs/plugins/', 
+      BASE.'wcmf/lib/presentation/smarty_plugins/'
+    );
+    if ($debugView) {
+      $this->error_reporting = E_ALL;
+    }
+    else {
+      $this->error_reporting = E_ALL & ~E_NOTICE;
+    }
+    
     // load filter
     $this->loadFilter('pre','removeprids');
     $this->loadFilter('output','trimwhitespace');
@@ -94,7 +94,7 @@ class View extends Smarty
    * Clear the complete cache
    * @see Smarty::clear_all_cache()
    */
-  function clearAllCache()
+  public function clearAllCache()
   {
     $view = new View();
     $view->setup();
@@ -104,7 +104,7 @@ class View extends Smarty
    * Clear parts of cache
    * @see Smarty::clear_cache()
    */
-  function clearCache($tplFile=null, $cacheId=null)
+  public function clearCache($tplFile=null, $cacheId=null)
   {
     $view = new View();
     $view->setup();
@@ -115,7 +115,7 @@ class View extends Smarty
    * to make sure that views get regenerated every time when expected.
    * @see Smarty::is_cached()
    */
-  function isCached($tplFile, $cacheId=null)
+  public function isCached($tplFile, $cacheId=null)
   {
     $view = new View();
     $view->setup();

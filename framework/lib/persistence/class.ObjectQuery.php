@@ -32,7 +32,7 @@ define("QUERYOP_OR", 'OR'); // the or operator
 /**
  * ObjectQuery attributes
  */
-$OQ_ATTRIBUTES = array(
+$GLOBALS['OQ_ATTRIBUTES'] = array(
   "object_query_pre_operator",
   "object_query_inter_operator",
   "object_query_query_condition",
@@ -510,7 +510,7 @@ class ObjectQuery implements ChangeListener
       // (referenced values must not get the table name)
       for($i=0; $i<sizeof($orderby); $i++)
       {
-        if (strpos($orderby[$i], '.') === false && $mapper->isAttribute($orderby[$i])) {
+        if (strpos($orderby[$i], '.') === false && $mapper->hasAttribute($orderby[$i])) {
           $orderby[$i] = $tablename.'.'.$orderby[$i];
         }
       }
@@ -529,7 +529,7 @@ class ObjectQuery implements ChangeListener
   protected function makeConditionStr(Node $node, $valueName, $operator)
   {
     // check if the value was set when building the query
-    if (isset($this->_conditions[$node->getOID()][$valueName]))
+    if (isset($this->_conditions[$node->getOID()->__toString()][$valueName]))
     {
       // check if the value is a foreign key and ignore it if true
       $mapper = self::getMapper($node);
@@ -631,7 +631,7 @@ class ObjectQuery implements ChangeListener
   {
     if ( !in_array($name, $GLOBALS['OQ_ATTRIBUTES']) )
     {
-      $oid = $object->getOID();
+      $oid = $object->getOID()->__toString();
       // store change in internal array to have it when constructing the query
       if (!isset($this->_conditions[$oid])) {
         $this->_conditions[$oid] = array();

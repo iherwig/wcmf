@@ -30,46 +30,48 @@ require_once(BASE."wcmf/lib/output/class.DefaultOutputStrategy.php");
  */
 class OutputVisitor extends Visitor
 {
-  var $_outputStrategy = null;
+  private $_outputStrategy = null;
   /**
    * Constructor.
    * @param outputStrategy A reference to an OutputStrategy to use (If 'null', a DefaultOutputStrategy will be used).
    */
-  function OutputVisitor($outputStrategy=null)
+  public function __construct($outputStrategy=null)
   {
-    if (get_class($outputStrategy) != '')
+    if (get_class($outputStrategy) != '') {
       $this->_outputStrategy = $outputStrategy;
-    else
+    }
+    else {
       $this->_outputStrategy = new DefaultOutputStrategy();
+    }
   } 
   /**
    * Set the PersistenceStrategy.
    * @param strategy A reference to an OutputStrategy to use.
    */
-  function setOutputStrategy(&$strategy)
+  public function setOutputStrategy($strategy)
   {   
-    $this->_outputStrategy = &$strategy;
+    $this->_outputStrategy = $strategy;
   } 
   /**
    * Visit the current object in iteration and output its content using
    * the configured OutputStrategy.
    * @param obj A reference to the current object.
    */
-  function visit(&$obj)
+  public function visit($obj)
   {
     $this->_outputStrategy->writeObject($obj);
   } 
   /**
    * Output the document header.
    */
-  function doPreVisit()
+  public function doPreVisit()
   {
     $this->_outputStrategy->writeHeader();
   } 
   /**
    * Output the document footer.
    */
-  function doPostVisit()
+  public function doPostVisit()
   {
     $this->_outputStrategy->writeFooter();
   } 

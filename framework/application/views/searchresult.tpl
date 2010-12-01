@@ -36,7 +36,7 @@
 </div>
 
 {include file="lib:application/views/include/navigation.tpl"}
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}
 
 <div class="contentblock resultpanel">
   <div id="resultGrid" style="border:1px solid #99bbe8;overflow: hidden; width: 665px;"></div>

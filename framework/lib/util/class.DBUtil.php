@@ -95,7 +95,7 @@ class DBUtil
   }
 
   /**
-   * Duplicate a database on the same server (same user)
+   * Duplicate a database on the same server (same user). This works only for MySQL databases.
    * @param srcName The name of the source database
    * @param destName The name of the source database
    * @param server The name of the database server
@@ -106,51 +106,75 @@ class DBUtil
   {
     if($srcName && $destName && $server && $user && $password)
     {
-      // setup connections
+      DBUtil::createDatabase($destName, $server, $user, $password);
+
+      // setup connection
       $dbConnect = mysql_connect($server, $user, $password);
       if (!$dbConnect) {
-      	throw new PersistenceException("Couldn't connect to MySql:".mysql_error());
+      	throw new PersistenceException("Couldn't connect to MySql: ".mysql_error());
       }
       
-      $sqlStatement = "CREATE DATABASE ".$destName;
-      $result = mysql_query($sqlStatement, $dbConnect);
-      if ($result)
+      // get table list from source database
+      $sqlStatement = "SHOW TABLES FROM ".$srcName;
+      $tables = mysql_query($sqlStatement, $dbConnect);
+      if ($tables)
       {
-        // get table list from source database
-        $sqlStatement = "SHOW TABLES FROM ".$srcName;
-        $tables = mysql_query($sqlStatement, $dbConnect);
-        if ($tables)
+        while($row = mysql_fetch_row($tables))
         {
-          while($row = mysql_fetch_row($tables))
-          {
-        	// create new table
-            $sqlStatement = "CREATE TABLE ".$destName.".".$row[0]." LIKE ".$srcName.".".$row[0];
-            Log::debug($sqlStatement, __CLASS__);
-            $result = mysql_query($sqlStatement, $dbConnect);
-	        if (!$result) {
-	          throw new PersistenceException("Couldn't create table:".mysql_error());
-	        }
-            mysql_free_result($result);
-
-            // insert data
-            $sqlStatement = "INSERT INTO ".$destName.".".$row[0]." SELECT * FROM ".$srcName.".".$row[0];
-            Log::debug($sqlStatement, __CLASS__);
-            $result = mysql_query($sqlStatement, $dbConnect);
-	        if (!$result) {
-	          throw new PersistenceException("Couldn't copy data:".mysql_error());
-	        }
-            mysql_free_result($result);
+      	// create new table
+          $sqlStatement = "CREATE TABLE ".$destName.".".$row[0]." LIKE ".$srcName.".".$row[0];
+          Log::debug($sqlStatement, __CLASS__);
+          $result = mysql_query($sqlStatement, $dbConnect);
+          if (!$result) {
+            throw new PersistenceException("Couldn't create table: ".mysql_error());
           }
-          mysql_free_result($tables);
-          mysql_close($dbConnect);
+          mysql_free_result($result);
+
+          // insert data
+          $sqlStatement = "INSERT INTO ".$destName.".".$row[0]." SELECT * FROM ".$srcName.".".$row[0];
+          Log::debug($sqlStatement, __CLASS__);
+          $result = mysql_query($sqlStatement, $dbConnect);
+          if (!$result) {
+            throw new PersistenceException("Couldn't copy data: ".mysql_error());
+          }
+          mysql_free_result($result);
         }
-	    else {
-	      throw new PersistenceException("Couldn't select tables:".mysql_error());
-	    }
+        mysql_free_result($tables);
+        mysql_close($dbConnect);
       }
-	  else {
-	    throw new PersistenceException("Couldn't create database:".mysql_error());
-	  }
+      else {
+        throw new PersistenceException("Couldn't select tables: ".mysql_error());
+      }
+    }
+  }
+  /**
+   * Crate a database on the server. This works only for MySQL databases.
+   * @param name The name of the source database
+   * @param server The name of the database server
+   * @param user The user name
+   * @param password The password
+   */
+  public static function createDatabase($name, $server, $user, $password)
+  {
+    $created = false;
+    if($name && $server && $user && $password)
+    {
+      // setup connection
+      $dbConnect = mysql_connect($server, $user, $password);
+      if (!$dbConnect) {
+      	throw new PersistenceException("Couldn't connect to MySql: ".mysql_error());
+      }
+      // create database
+      $sqlStatement = "CREATE DATABASE IF NOT EXISTS ".$name;
+      $result = mysql_query($sqlStatement, $dbConnect);
+      if ($result) {
+        $created = true;
+      }
+      mysql_free_result($result);
+      mysql_close($dbConnect);
+      if (!$created) {
+	    throw new PersistenceException("Couldn't create database: ".mysql_error());
+      }
     }
   }
 }

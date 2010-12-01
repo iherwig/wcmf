@@ -370,8 +370,7 @@ class NodeUtil
         // apply display type if desired
         if (!is_object($GLOBALS['gValueRenderer']))
         {
-          $objectFactory = ObjectFactory::getInstance();
-          $GLOBALS['gValueRenderer'] = $objectFactory->createInstanceFromConfig('implementation', 'ValueRenderer');
+          $GLOBALS['gValueRenderer'] = ObjectFactory::createInstanceFromConfig('implementation', 'ValueRenderer');
           if ($GLOBALS['gValueRenderer'] == null) {
             throw new ConfigurationException('ValueRenderer not defined in section implementation.');
           }

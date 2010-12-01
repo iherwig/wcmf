@@ -50,8 +50,8 @@ class LoginController extends Controller
   private $_anonymous = 0; // in anonymous mode all authorization requests answered positive
                        // and AuthUser is an instance of AnonymousUser
                        // The mode is set in configuration section 'cms' key 'anonymous'
-  private $NUM_LOGINTRIES_VARNAME = 'LoginController.logintries';
-  private $LOGINMESSAGE_VARNAME = 'LoginController.loginmessage';
+  private static $NUM_LOGINTRIES_VARNAME = 'LoginController.logintries';
+  private static $LOGINMESSAGE_VARNAME = 'LoginController.loginmessage';
 
   /**
    * @see Controller::initialize()
@@ -104,7 +104,7 @@ class LoginController extends Controller
   /**
    * If called with any usr_action except 'dologin' this Controller presents the login dialog else
    * if usr_action is 'dologin' it checks the login data ('login' & 'password') and creates AuthUser object in the Session on
-   * success (session variable name: auth_user).
+   * success.
    * @return Array of given context and action 'ok' on success, action 'failure' on failure.
    *         False if the login dialog is presented (Stop action processing chain).
    *         In case of 'failure' a detailed description is provided by getErrorMsg().
@@ -126,11 +126,11 @@ class LoginController extends Controller
     if ($request->getAction() == 'login')
     {
       // preserve login failure details
-      $loginTries = $session->get($this->NUM_LOGINTRIES_VARNAME);
-      $loginMessage = $session->get($this->LOGINMESSAGE_VARNAME);
+      $loginTries = $session->get(self::$NUM_LOGINTRIES_VARNAME);
+      $loginMessage = $session->get(self::$LOGINMESSAGE_VARNAME);
       $session->clear();
-      $session->set($this->NUM_LOGINTRIES_VARNAME, $loginTries);
-      $session->set($this->LOGINMESSAGE_VARNAME, $loginMessage);
+      $session->set(self::$NUM_LOGINTRIES_VARNAME, $loginTries);
+      $session->set(self::$LOGINMESSAGE_VARNAME, $loginMessage);
     }
 
     if ($request->getAction() == 'dologin')
@@ -146,7 +146,7 @@ class LoginController extends Controller
       {
         // login succeeded
         $session->clear();
-        $session->set('auth_user', $authUser);
+        $session->set(RightsManager::getAuthUserVarname(), $authUser);
 
         // did this user check the 'remember me' checkbox?
         if($request->getValue('remember_me'))
@@ -164,10 +164,10 @@ class LoginController extends Controller
       else
       {
         // login failed
-        $logintries = $session->get($this->NUM_LOGINTRIES_VARNAME)+1;
-        $session->set($this->NUM_LOGINTRIES_VARNAME, $logintries);
+        $logintries = $session->get(self::$NUM_LOGINTRIES_VARNAME)+1;
+        $session->set(self::$NUM_LOGINTRIES_VARNAME, $logintries);
         $this->setErrorMsg(Message::get("Login failed. Try again."));
-        $session->set($this->LOGINMESSAGE_VARNAME, $this->getErrorMsg());
+        $session->set(self::$LOGINMESSAGE_VARNAME, $this->getErrorMsg());
 
         $response->setAction('login');
         return true;
@@ -210,12 +210,12 @@ class LoginController extends Controller
       }
 
       // present login dialog
-      $loginMessage = $session->get($this->LOGINMESSAGE_VARNAME);
+      $loginMessage = $session->get(self::$LOGINMESSAGE_VARNAME);
       if (strlen($loginMessage) > 0)
       {
         $msg = $loginMessage;
-        if ($session->exist($this->NUM_LOGINTRIES_VARNAME))
-          $msg .= " (".Message::get("Attempt")." #".($session->get($this->NUM_LOGINTRIES_VARNAME)+1).")";
+        if ($session->exist(self::$NUM_LOGINTRIES_VARNAME))
+          $msg .= " (".Message::get("Attempt")." #".($session->get(self::$NUM_LOGINTRIES_VARNAME)+1).")";
         $response->setValue('loginmessage', $msg);
         $this->setErrorMsg($loginMessage);
       }

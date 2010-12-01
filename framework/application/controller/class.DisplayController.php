@@ -121,8 +121,8 @@ class DisplayController extends Controller
     }
 
     // load model
-    $oid = $request->getValue('oid');
-    if (PersistenceFacade::isValidOID($this->_request->getValue('oid')) && $rightsManager->authorize($oid, '', ACTION_READ))
+    $oid = ObjectId::parse($request->getValue('oid'));
+    if ($oid && $rightsManager->authorize($oid, '', ACTION_READ))
     {
       // an object id is given. load the data for editing the object
       $viewMode = 'detail';
@@ -132,7 +132,7 @@ class DisplayController extends Controller
       if ($this->_request->hasValue('depth')) {
         $buildDepth = $this->_request->getValue('depth');
       }
-      $node = &$persistenceFacade->load($oid, $buildDepth);
+      $node = $persistenceFacade->load($oid, $buildDepth);
 
       if ($node == null)
       {
@@ -162,7 +162,7 @@ class DisplayController extends Controller
         if (sizeof($pathData) > 0) {
           $rootOID = $pathData[0]['oid'];
         }
-        $rootType = PersistenceFacade::getOIDParameter($rootOID, 'type');
+        $rootType = $rootOID->getType();
 
         $template = &$persistenceFacade->create($node->getType(), 1);
 
@@ -216,7 +216,7 @@ class DisplayController extends Controller
       $viewMode = 'overview';
 
       // determine root type
-      $rootType = $this->_request->getValue('rootType');
+      $rootType = $request->getValue('rootType');
       if (strlen($rootType) == 0) {
         $rootType = $rootTypes[0];
       }
@@ -225,13 +225,13 @@ class DisplayController extends Controller
     // assign meta data
     if (!$this->isOmitMetaData())
     {
-      $this->_response->setValue('oid', $oid);
-      $this->_response->setValue('rootType', $rootType);
-      $this->_response->setValue('rootTemplateNode', $persistenceFacade->create($rootType, BUILDDEPTH_SINGLE));
-      $this->_response->setValue('viewMode', $viewMode);
+      $response->setValue('oid', $oid);
+      $response->setValue('rootType', $rootType);
+      $response->setValue('rootTemplateNode', $persistenceFacade->create($rootType, BUILDDEPTH_SINGLE));
+      $response->setValue('viewMode', $viewMode);
     }
     // success
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return false;
   }
 
@@ -241,7 +241,7 @@ class DisplayController extends Controller
    */
   function isOmitMetaData()
   {
-    return $this->_request->getValue('omitMetaData');
+    return $this->getRequest()->getValue('omitMetaData');
   }
 }
 ?>

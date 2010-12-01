@@ -38,8 +38,8 @@ class SessionData
    */
   private static function getClassDefinitionFile()
   {
-      $path = array_pop(preg_split('/;/', session_save_path()));
-      return $path."/sess_cd_".session_id();
+    $path = array_pop(preg_split('/;/', session_save_path()));
+    return $path."/sess_cd_".session_id().'_'.Application::getId();
   }
 
   /**

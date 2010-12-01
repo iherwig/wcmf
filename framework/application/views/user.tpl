@@ -10,7 +10,7 @@
 <div id="tabnav"></div>
 
 {include file="lib:application/views/include/navigation.tpl" hideTitle="false"}
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}
 
 <div id="leftcol">
 

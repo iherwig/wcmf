@@ -111,12 +111,14 @@ abstract class Controller
     }
   }
   /**
-   * Check if the Controller has a view.
-   * Subclasses must implement this method.
+   * Check if the Controller has a view. The default implementation
+   * returns true, if the response format is MSG_FORMAT_HTML.
    * @return True/False whether the Controller has a view or not.
-   * TODO: make decision based on response format and remove this from
    */
-  protected abstract function hasView();
+  protected function hasView()
+  {
+    return ($this->_response->getFormat() == MSG_FORMAT_HTML);
+  }
   /**
    * Execute the Controller resulting in its Action processed and/or its View beeing displayed.
    * @return True/False wether following Controllers should be executed or not.
@@ -150,8 +152,7 @@ abstract class Controller
       $this->_response->appendValue('errorMsg', $this->getErrorMsg());
     }
     // create the view if existing
-    // @todo move response format condition into hasView
-    if ($this->hasView() && $result === false && $this->_response->getFormat() == MSG_FORMAT_HTML)
+    if ($this->hasView() && $result === false)
     {
       // check if a view template is defined
       $viewTpl = $this->getViewTemplate($this->_response->getSender(), $this->_request->getContext(), $this->_request->getAction());
@@ -176,8 +177,7 @@ abstract class Controller
     Formatter::serialize($this->_response);
 
     // display the view if existing
-    // @todo move response format condition into hasView
-    if ($this->hasView() && $result === false && $this->_response->getFormat() == MSG_FORMAT_HTML)
+    if ($this->hasView() && $result === false)
     {
       $viewTpl = realpath(BASE.$this->getViewTemplate($this->_response->getSender(), $this->_request->getContext(), $this->_request->getAction()));
       if ($this->_view->caching && ($cacheId = $this->getCacheId()) !== null)
@@ -197,8 +197,7 @@ abstract class Controller
   /**
    * Do the work in execute(): Load and process model and maybe asign data to view.
    * Subclasses process their Action and assign the Model to the view.
-   * @return False or an an assoziative array with keys 'context' and 'action' describing how to proceed.
-   *         Return false to break the action processing chain.
+   * @return True/False wether ActionMapper should proceed with the next controller or not.
    */
   protected abstract function executeKernel();
   /**
@@ -317,7 +316,7 @@ abstract class Controller
     $view->assign('obfuscator', Obfuscator::getInstance());
     $view->assign('applicationTitle', $parser->getValue('applicationTitle', 'cms'));
     if ($authUser != null) {
-      $view->assign_by_ref('authUser', $authUser);
+      $view->assignByRef('authUser', $authUser);
     }
     if ($this->_delegate !== null) {
       $this->_delegate->assignAdditionalViewValues($this);

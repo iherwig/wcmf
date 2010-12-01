@@ -76,7 +76,7 @@ class HTMLFormat extends AbstractFormat
           $view->assign($variable, $data[$variable]);
         }
         else {
-          $view->assign_by_ref($variable, $data[$variable]);
+          $view->assignByRef($variable, $data[$variable]);
         }
       }
     }

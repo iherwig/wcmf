@@ -562,7 +562,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
    * @param alias The alias for the table name (default: null uses none).
    * @return The translated string
    */
-  protected function translateAppToDatabase($str, $alias=null)
+  public function translateAppToDatabase($str, $alias=null)
   {
     // replace application attribute/table names with sql names
     $attributeDescs = $this->getAttributes();
@@ -597,16 +597,5 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       return $conn->quote($value);
     }
   }
-
-  /**
-   * TEMPLATE METHODS
-   * Subclasses must implement this method to define their object type.
-   */
-
-  /**
-   * Get the name of the database table, where this type is mapped to
-   * @return The name of the table
-   */
-  abstract protected function getTableName();
 }
 ?>

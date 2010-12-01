@@ -71,6 +71,14 @@ class RightsManager
     return self::$_instance;
   }
   /**
+   * Get session variable name for the authenticated user.
+   * @return The variable name.
+   */
+  public static function getAuthUserVarname()
+  {
+    return 'auth_user_'.Application::getId();
+  }
+  /**
    * Get authenticated user.
    * @return AuthUser object or null if not logged in.
    */
@@ -85,9 +93,10 @@ class RightsManager
       require_once(BASE."wcmf/lib/security/class.AuthUser.php");
       $session = SessionData::getInstance();
       $user = null;
-      if ($session->exist('auth_user'))
+      $userVarname = self::getAuthUserVarname();
+      if ($session->exist($userVarname))
       {
-        $user = $session->get('auth_user');
+        $user = $session->get($userVarname);
         $user->resetRoleCache();
       }
       return $user;

@@ -11,7 +11,7 @@
   {$formUtil->getInputControl("type", "select[onchange=\"setTarget(''); submitAction('definesearch');\"]#fix:$listBoxStr", $type, true)}
 </div>
 
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}
 
 <div id="navcontent">
   <ul>

@@ -36,6 +36,8 @@ require_once(BASE."wcmf/lib/util/class.InifileParser.php");
  */
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
 {
+  private static $SEQUENCE_CLASS = 'Adodbseq';
+  
   private $_connParams = null; // database connection parameters
   private $_conn = null;     // database connection
   protected $_dbPrefix = '';   // database prefix (if given in the configuration file)
@@ -110,13 +112,13 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     try {
       $id = 0;
       if ($this->_idSelectStmt == null) {
-        $this->_idSelectStmt = $this->_conn->prepare("SELECT id FROM adodbseq");
+        $this->_idSelectStmt = $this->_conn->prepare("SELECT id FROM ".$this->getSequenceTablename());
       }
       if ($this->_idInsertStmt == null) {
-        $this->_idInsertStmt = $this->_conn->prepare("INSERT INTO adodbseq (id) VALUES (0)");
+        $this->_idInsertStmt = $this->_conn->prepare("INSERT INTO ".$this->getSequenceTablename()." (id) VALUES (0)");
       }
       if ($this->_idUpdateStmt == null) {
-        $this->_idUpdateStmt = $this->_conn->prepare("UPDATE adodbseq SET id=LAST_INSERT_ID(id+1);");
+        $this->_idUpdateStmt = $this->_conn->prepare("UPDATE ".$this->getSequenceTablename()." SET id=LAST_INSERT_ID(id+1);");
       }
       $this->_idSelectStmt->execute();
       $rows = $this->_idSelectStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -134,6 +136,22 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     catch (Exception $ex) {
       Log::error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
       throw new PersistenceException("Error in persistent operation. See log file for details.");
+    }
+  }
+  /**
+   * Get the name of the sequence table
+   * @return The name.
+   */
+  protected function getSequenceTablename()
+  {
+    
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $mapper = $persistenceFacade->getMapper(self::$SEQUENCE_CLASS);
+    if ($mapper instanceof RDBMapper) {
+      return $mapper->getTableName();
+    }
+    else {
+      throw new PersistenceException(self::$SEQUENCE_CLASS." is nor mapped by RDBMapper.");
     }
   }
   /**
@@ -949,5 +967,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * @return The string
    */
   abstract protected function createPKCondition(ObjectId $oid);
+  /**
+   * Get the name of the database table, where this type is mapped to
+   * @return The name of the table
+   */
+  abstract protected function getTableName();  
 }
 ?>

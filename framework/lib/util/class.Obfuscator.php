@@ -33,7 +33,7 @@ class Obfuscator
   private static $_instance = null;
 
   // session name constants
-  private $VALUES_VARNAME = 'Obfuscator.values';
+  private static $VALUES_VARNAME = 'Obfuscator.values';
 
   private function __construct() {}
 
@@ -65,9 +65,9 @@ class Obfuscator
 
     // create and store the value
     $obfuscated = md5($str);
-    $values = $session->get($obfuscator->VALUES_VARNAME);
+    $values = $session->get(self::$VALUES_VARNAME);
     $values[$obfuscated] = $str;
-    $session->set($obfuscator->VALUES_VARNAME, $values);
+    $session->set(self::$VALUES_VARNAME, $values);
 
     return $obfuscated;
   }
@@ -82,7 +82,7 @@ class Obfuscator
     $session = SessionData::getInstance();
     $obfuscator->ensureStorage();
 
-    $values = $session->get($obfuscator->VALUES_VARNAME);
+    $values = $session->get(self::$VALUES_VARNAME);
     $unveiled = $values[$str];
     return $unveiled;
   }
@@ -92,10 +92,10 @@ class Obfuscator
   private function ensureStorage()
   {
     $session = SessionData::getInstance();
-    if (!$session->exist($obfuscator->VALUES_VARNAME))
+    if (!$session->exist(self::$VALUES_VARNAME))
     {
       $values = array();
-      $session->set($obfuscator->VALUES_VARNAME, $values);
+      $session->set(self::$VALUES_VARNAME, $values);
     }
   }
 }

@@ -50,4 +50,4 @@
 {/if}
 {/foreach}
 </div>
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}

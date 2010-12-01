@@ -233,7 +233,8 @@ class DionysosControllerDelegate
 		$response = &$controller->_response;
 
 		// remove wcmf specific response values
-		$ignoreValues = array('controller');
+		// (don't remove controller because otherwise a longtask will not work)
+		$ignoreValues = array(/*'controller'*/);
 		foreach ($ignoreValues as $key) {
 			$response->clearValue($key);
 		}

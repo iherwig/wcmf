@@ -176,7 +176,7 @@ class Application
    * @param configPath The path where config files reside (as seen from main.php), maybe null [default: include/]
    * @param mainConfigFile The main configuration file to use, maybe null [default: config.ini]
    */
-  private function setupGlobals($configPath='include/', $mainConfigFile='config.ini')
+  public function setupGlobals($configPath='include/', $mainConfigFile='config.ini')
   {
     // globals
     $GLOBALS['CONFIG_PATH'] = $configPath;
@@ -225,6 +225,14 @@ class Application
     $trace = preg_replace ('/^#(\d+)/me', '\'#\' . ($1 - 1)', $trace);
 
     return $trace;
+  }
+  /**
+   * Get an unique id for the application based on the installation location.
+   * @return The id
+   */
+  public static function getId()
+  {
+    return md5($_SERVER['SERVER_ADDR'].__FILE__);
   }
 }
 ?>

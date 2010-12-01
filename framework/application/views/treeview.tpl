@@ -19,7 +19,7 @@
 <div id="page">
 {include file="lib:application/views/include/formheader.tpl"}
 {include file="lib:application/views/include/navigation.tpl" hideTitle="true"}
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}
 
 <div id="tree-div" style="overflow:auto; height:600px; width:630px"></div>
 

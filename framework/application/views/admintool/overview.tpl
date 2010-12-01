@@ -89,7 +89,7 @@
 <div id="tabnav"></div>
 
 {include file="lib:application/views/admintool/include/navigation.tpl"}
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}
 
 <div class="contentblock userspanel">
   <div id="userGrid" style="border:1px solid #99bbe8;overflow: hidden; width: 445px;"></div>

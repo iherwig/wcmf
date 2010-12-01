@@ -56,7 +56,7 @@ class AsyncPagingController extends Controller
   /**
    * @see Controller::hasView()
    */
-  function hasView()
+  protected function hasView()
   {
     return false;
   }
@@ -65,33 +65,34 @@ class AsyncPagingController extends Controller
    * @return False in every case.
    * @see Controller::executeKernel()
    */
-  function executeKernel()
+  protected function executeKernel()
   {
+    $request = $this->getRequest();
+    
     // unveil the filter value if it is ofuscated
-    $filter = $this->_request->getValue('filter');
+    $filter = $request->getValue('filter');
     $unveiled = Obfuscator::unveil($filter);
     if (strlen($filter) > 0 && strlen($unveiled) > 0) {
       $filter = $unveiled;
     }
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $rightsManager = &RightsManager::getInstance();
+    $rightsManager = RightsManager::getInstance();
     
     // get objects using the paging parameters
-    $pagingInfo = new PagingInfo($this->_request->getValue('limit'));
-    $pagingInfo->setOffset($this->_request->getValue('start'));
+    $pagingInfo = new PagingInfo($request->getValue('limit'));
+    $pagingInfo->setOffset($request->getValue('start'));
     
     // add sort term
     $sortArray = null;
-    $orderBy = $this->_request->getValue('sort');
+    $orderBy = $request->getValue('sort');
     if (strlen($orderBy) > 0) {
-      $sortArray = array($orderBy." ".$this->_request->getValue('dir'));
+      $sortArray = array($orderBy." ".$request->getValue('dir'));
     }
     // get the object ids
-    $objects = $this->getObjects($this->_request->getValue('type'), stripslashes($filter), $sortArray, $pagingInfo);
+    $objects = $this->getObjects($request->getValue('type'), stripslashes($filter), $sortArray, $pagingInfo);
     
     // collect the nodes
     $nodes = array();    
-    for($i=0; $i<sizeof($objects); $i++)
+    for($i=0,$count=sizeof($objects); $i<$count; $i++)
     {
       $curObject = &$objects[$i];
       
@@ -105,7 +106,7 @@ class AsyncPagingController extends Controller
     if ($this->isLocalizedRequest())
     {
       $localization = Localization::getInstance();
-      for ($i=0; $i<sizeof($nodes); $i++) {
+      for ($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         $localization->loadTranslation($nodes[$i], $this->_request->getValue('language'), true, true);
       }
     }
@@ -114,11 +115,12 @@ class AsyncPagingController extends Controller
     $this->modifyModel($nodes);
     
     // assign response values
-    $this->_response->setValue('totalCount', $pagingInfo->getTotalCount());
-    $this->_response->setValue('objects', $nodes);
+    $response = $this->getResponse();
+    $response->setValue('totalCount', $pagingInfo->getTotalCount());
+    $response->setValue('objects', $nodes);
     
     // success
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return false;
   }
   /**
@@ -131,9 +133,9 @@ class AsyncPagingController extends Controller
    * @param pagingInfo A reference to the current paging information (Paginginfo instance)
    * @return An array of object instances
    */
-  function getObjects($type, $filter, $sortArray, &$pagingInfo)
+  function getObjects($type, $filter, $sortArray, $pagingInfo)
   {
-    if(!PersistenceFacade::isKnownType($type)) {
+    if(!PersistenceFacade::getInstance()->isKnownType($type)) {
       return array();
     }
     // if no filter is given, we select all nodes of the given type
@@ -144,49 +146,45 @@ class AsyncPagingController extends Controller
     return $objects;
   }
   /**
-   * @deprecated
-   */
-  function getOIDs($type, $filter, $sortArray, &$pagingInfo)
-  {
-    WCMFException::throwEx("This method is deprecated. Implement getObjects instead.", __FILE__, __LINE__);
-  }
-  /**
    * Modify the model passed to the view.
    * @note subclasses will override this to implement special application requirements.
    * @param nodes A reference to the array of node references passed to the view
    */
-  function modifyModel(&$nodes)
+  function modifyModel($nodes)
   {
+    $request = $this->getRequest();
     // @todo put this into subclass AsyncPagingController
     
     // remove all attributes except for display_values
-    if ($this->_request->getBooleanValue('completeObjects', false) == false) {
-      for($i=0; $i<sizeof($nodes); $i++) {
+    if ($request->getBooleanValue('completeObjects', false) == false)
+    {
+      for($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         NodeUtil::removeNonDisplayValues($nodes[$i]);
       }
     }
     // render values
-    if ($this->_request->getBooleanValue('renderValues', false) == true) {
+    if ($request->getBooleanValue('renderValues', false) == true) {
       NodeUtil::renderValues($nodes);
     }
     // set sort properties
-    if (strlen($this->_request->getValue('sort')) == 0) {
+    if (strlen($request->getValue('sort')) == 0) {
       NodeUtil::setSortProperties($nodes);
     }
     // if the nodes are loaded as children of a parent, we set additional
     // properties describing the relation
-    if (PersistenceFacade::isValidOID($this->_request->getValue('poid')))
+    $poid = ObjectId::parse($request->getValue('poid'));
+    if ($poid != null)
     {
-      $parentType = PersistenceFacade::getOIDParameter($this->_request->getValue('poid'), 'type');
+      $parentType = $poid->getType();
       
-      $persistenceFacade = &PersistenceFacade::getInstance();
-      $parentTemplate = &$persistenceFacade->create($parentType, 1);
-      for ($i=0; $i<sizeof($nodes); $i++)
+      $persistenceFacade = PersistenceFacade::getInstance();
+      $parentTemplate = $persistenceFacade->create($parentType, 1);
+      for ($i=0,$count=sizeof($nodes); $i<$count; $i++)
       {
         $curNode = &$nodes[$i];
 
         // set the relation properties from childTemplate
-        $childTemplate = &$parentTemplate->getFirstChild($curNode->getType());
+        $childTemplate = $parentTemplate->getFirstChild($curNode->getType());
         // TODO: check which ones are necessary and do this explicitly
         foreach ($childTemplate->getPropertyNames() as $property)
         {
@@ -208,7 +206,7 @@ class AsyncPagingController extends Controller
           {
             if (PersistenceFacade::getOIDParameter($curParentOID, 'type') == $realSubjectType)
             {
-              $realSubject = &$persistenceFacade->load($curParentOID, BUILDDEPTH_SINGLE);
+              $realSubject = $persistenceFacade->load($curParentOID, BUILDDEPTH_SINGLE);
               // render values
               if ($this->_request->getValue('renderValues'))
               {

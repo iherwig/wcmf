@@ -1,4 +1,4 @@
-<form name="{$formName}" action="main.php" enctype="multipart/form-data" method="post" target="{$target}" onsubmit="{$onsubmit}">
+<form name="{$formName|default:""}" action="main.php" enctype="multipart/form-data" method="post" target="{$target|default:""}" onsubmit="{$onsubmit|default:""}">
 <input type="hidden" name="controller" value="{$_controller}" />
 <input type="hidden" name="context" value="{$_context}" />
 <input type="hidden" name="usr_action" value="{$_action}" />

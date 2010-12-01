@@ -112,7 +112,7 @@
 </div>
 
 {include file="lib:application/views/include/navigation.tpl"}
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}
 
 {if $lockMsg != ''}
 <div class="hint">{translate text="some objects are locked"} (<a href="javascript:displayMsg();">details</a>)</div>

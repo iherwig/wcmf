@@ -69,7 +69,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::afterSerialize()
    */
-  protected function afterSerialize(Request $data)
+  protected function afterSerialize(&$data)
   {
     // merge data into global data array
     // new values override old
