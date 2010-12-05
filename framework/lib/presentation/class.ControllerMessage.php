@@ -53,7 +53,7 @@ class ControllerMessage
   public function ControllerMessage($sender, $context, $action, $data)
   {
     if (func_num_args() != 4) {
-      throw new ApplicationException("Message constructor called with wrong argument number: ");
+      throw new ApplicationException("Message constructor called with wrong argument number.");
     }
     $this->_sender = $sender;
     $this->_context = $context;

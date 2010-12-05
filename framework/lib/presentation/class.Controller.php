@@ -16,17 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
 require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/util/class.FormUtil.php");
-require_once(BASE."wcmf/lib/util/class.FileUtil.php");
-require_once(BASE."wcmf/lib/presentation/class.View.php");
 require_once(BASE."wcmf/lib/presentation/format/class.Formatter.php");
-require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
-require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(BASE."wcmf/lib/presentation/class.ApplicationError.php");
 require_once(BASE."wcmf/lib/i18n/class.Localization.php");
-require_once(BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
 require_once(BASE."wcmf/lib/util/class.Log.php");
 
 /**
@@ -39,14 +32,17 @@ require_once(BASE."wcmf/lib/util/class.Log.php");
  *
  * Error Handling:
  * - throw an Exception or use action='failure' for fatal errors (displays FailureController)
- * - use field _errorMsg for non fatal errors (message will be appended to errorMsg-data
- *   which will be displayed in the next view)
+ * - add an ApplicationError for non fatal errors (the message will be displayed in the next view)
  *
- * @param[in] language The language of the requested data, optional
- * @param[out] sid The session id
- * @param[out] controller The name of the controller
- * @param[out] errorMsg Any message set with setErrorMsg or appendErrorMsg, optional
- * @param[out] success True, if errorMsg is empty or does not exist, False else
+ * @param[in/out] action The action to be executed
+ * @param[in/out] sid The session id of the current user session
+ * @param[in/out] language The language of the requested data, optional
+ * @param[out] controller The name of the executed controller
+ * @param[out] success True/False whether the action completed successfully or not
+ * @param[out] errorMessage An error message which is displayed to the user, if success == false
+ * @param[out] errorCode An error code, describing the type of error, if success == false
+ * @param[out] errorData Some error codes require to transmit further information to the client,
+ *                       if success == false
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -54,9 +50,9 @@ abstract class Controller
 {
   private $_request = null;
   private $_response = null;
-
-  private $_errorMsg = '';
-  private $_view = null;
+  private $_executionResult = false;
+  
+  private $_errors = array();
   private $_delegate = null;
 
   /**
@@ -85,12 +81,18 @@ abstract class Controller
    */
   public function initialize(Request $request, Response $response)
   {
+    $response->setController($this);
+    
     $this->_request = $request;
     $this->_response = $response;
 
     // restore the error message of a previous call
-    $this->appendErrorMsg($request->getValue('errorMsg'));
-
+    if ($request->hasValue('errorCode')) {
+      $error = new ApplicationError($request->getValue('errorCode'), 
+                          $request->getValue('errorMessage'),
+                          $request->getValue('errorData'));
+      $this->addError($error);
+    }
     if ($this->_delegate !== null) {
       $this->_delegate->postInitialize($this);
     }
@@ -99,25 +101,22 @@ abstract class Controller
    * Check if the data given by initialize() meet the requirements of the Controller.
    * Subclasses will override this method to validate against their special requirements.
    * @return True/False whether the data are ok or not.
-   *         In case of False a detailed description is provided by getErrorMsg().
+   *         In case of False a detailed description is provided by getErrors().
    */
   protected function validate()
   {
-    if ($this->_delegate !== null) {
-      return $this->_delegate->validate($this);
-    }
-    else {
-      return true;
-    }
+    return true;
   }
   /**
    * Check if the Controller has a view. The default implementation
-   * returns true, if the response format is MSG_FORMAT_HTML.
+   * returns true, if the execution result is false and the response format is MSG_FORMAT_HTML.
    * @return True/False whether the Controller has a view or not.
    */
-  protected function hasView()
+  public function hasView()
   {
-    return ($this->_response->getFormat() == MSG_FORMAT_HTML);
+    $hasView = $this->_executionResult === false && 
+      $this->_response->getFormat() == MSG_FORMAT_HTML;
+    return $hasView;
   }
   /**
    * Execute the Controller resulting in its Action processed and/or its View beeing displayed.
@@ -132,109 +131,77 @@ abstract class Controller
     }
 
     // validate controller data
-    if (!$this->validate()) {
-      throw new ApplicationException($this->_request, $this->_response,
-        Message::get("Validation failed for the following reason: %1%", array($this->_errorMsg)));
-    }
+    $validationFailed = false;
     if ($this->_delegate !== null) {
-      $this->_delegate->preExecute($this);
+      if (!$this->_delegate->preValidate($this)) {
+        $validationFailed = true;
+      }
     }
-    // set default values on response
-    $session = SessionData::getInstance();
-    $this->_response->setValue('sid', $session->getID());
-    $this->_response->setValue('controller', get_class($this));
+    if (!$validationFailed && !$this->validate()) {
+      $validationFailed = true;
+    }
 
     // execute controller logic
-    $result = $this->executeKernel();
-
-    // append current error message to errorMsg-data
-    if (strlen($this->getErrorMsg()) > 0) {
-      $this->_response->appendValue('errorMsg', $this->getErrorMsg());
-    }
-    // create the view if existing
-    if ($this->hasView() && $result === false)
+    if (!$validationFailed)
     {
-      // check if a view template is defined
-      $viewTpl = $this->getViewTemplate($this->_response->getSender(), $this->_request->getContext(), $this->_request->getAction());
-      if (!$viewTpl) {
-        throw new ConfigurationException("View definition missing for ".get_class($this).". Action key: ".$actionKey);
+      if ($this->_delegate !== null) {
+        $this->_delegate->preExecute($this);
       }
-      $this->_view = ObjectFactory::createInstanceFromConfig('implementation', 'View');
-      $this->_view->setup();
-      $this->_response->setView($this->_view);
-      $this->assignViewDefaults($this->_view);
+      $this->_executionResult = $this->executeKernel();
+      if ($this->_delegate !== null) {
+        $this->_executionResult = $this->_delegate->postExecute($this, $this->_executionResult);
+      }
     }
-
-    if ($this->_delegate !== null)
-      $result = $this->_delegate->postExecute($this, $result);
-
-    // add success flag
-    if (strlen($this->getErrorMsg()) > 0)
-      $this->_response->setValue('success', false);
-    else
-      $this->_response->setValue('success', true);
-
+    else {
+      // don't process further if validation failed
+      $this->_executionResult = false;
+    }
+    
+    // prepare the response
+    $this->assignResponseDefaults();
     Formatter::serialize($this->_response);
-
-    // display the view if existing
-    if ($this->hasView() && $result === false)
-    {
-      $viewTpl = realpath(BASE.$this->getViewTemplate($this->_response->getSender(), $this->_request->getContext(), $this->_request->getAction()));
-      if ($this->_view->caching && ($cacheId = $this->getCacheId()) !== null)
-      {
-        $this->_view->display($viewTpl, $cacheId);
-      }
-      else
-        $this->_view->display($viewTpl);
-    }
-
     if (Log::isDebugEnabled(__CLASS__))
     {
       Log::debug('Response: '.$this->_response, __CLASS__);
     }
-    return $result;
+    
+    return $this->_executionResult;
   }
   /**
-   * Do the work in execute(): Load and process model and maybe asign data to view.
-   * Subclasses process their Action and assign the Model to the view.
+   * Do the work in execute(): Load and process model and maybe assign data to response.
+   * Subclasses process their Action and assign the Model to the response.
    * @return True/False wether ActionMapper should proceed with the next controller or not.
    */
   protected abstract function executeKernel();
   /**
-   * Get a detailed description of the last error.
-   * @return The error message.
+   * Check if the controller has errors.
+   * @return True/False wether there are errors or not.
    */
-  protected function getErrorMsg()
+  protected function hasErrors()
   {
-    return $this->_errorMsg;
+    return sizeof($this->_errors) > 0;
   }
   /**
-   * Set a detailed description of the last error.
-   * @param msg The error message.
+   * Get all errors.
+   * @return An array of Error instances.
    */
-  protected function setErrorMsg($msg)
+  protected function getErrors()
   {
-    $this->_errorMsg = $msg;
+    return $this->_errors;
   }
   /**
-   * Append a detailed description of the last error to the existing errors.
-   * @param msg The error message.
+   * Add an error to the list of errors.
+   * @param error The error.
    */
-  protected function appendErrorMsg($msg)
+  protected function addError(ApplicationError $error)
   {
-    // ignore if the last message is the same as msg
-    if (preg_match("/".$msg."$/", $this->_errorMsg)) {
-      return;
-    }
-    if (strlen($this->_errorMsg) > 0)
-      $this->_errorMsg .= "\n";
-    $this->_errorMsg .= $msg;
+    $this->_errors[] = $error;
   }
   /**
    * Get the Request object.
    * @return A reference to the Request object
    */
-  protected function getRequest()
+  public function getRequest()
   {
     return $this->_request;
   }
@@ -242,84 +209,64 @@ abstract class Controller
    * Get the Response object.
    * @return A reference to the Response object
    */
-  protected function getResponse()
+  public function getResponse()
   {
     return $this->_response;
   }
   /**
-   * Get the controller view.
-   * @return A reference to the controller view / or null if none is existing
-   */
-  protected function getView()
-  {
-    return $this->_view;
-  }
-  /**
    * Get the controller delegate.
-   * @return A reference to the controller view / or null if none is existing
+   * @return A reference to the ControllerDelegate / or null if none is existing
    */
   protected function getDelegate()
   {
     return $this->_delegate;
   }
   /**
-   * Get the template filename for the view from the configfile.
-   * @note static method
-   * @param controller The name of the controller
-   * @param context The name of the context
-   * @param action The name of the action
-   * @return The filename of the template or false, if now view is defined
-   */
-  protected function getViewTemplate($controller, $context, $action)
-  {
-    $view = '';
-    $parser = WCMFInifileParser::getInstance();
-    $actionKey = $parser->getBestActionKey('views', $controller, $context, $action);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug('Controller::getViewTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
-    }
-    // get corresponding view
-    $view = $parser->getValue($actionKey, 'views', false);
-    return $view;
-  }
-  /**
-   * Get the id which should be used when caching the controllers view.
-   * This method will only be called, if the configuration entry smarty.caching is set to 1.
-   * The default implementation returns null. Subclasses should return an id that is unique
-   * to each different content of the same view.
+   * Get a string value that uniquely identifies the current request data. This value
+   * maybe used to compare two requests and return cached responses based on the result.
+   * The default implementation returns null. Subclasses should override this to
+   * return reasonable values based on the expected requests.
    * @return The id or null, if no cache id should be used.
    */
-  protected function getCacheId()
+  public function getCacheId()
   {
     return null;
   }
   /**
-   * Assign default variables to the view. This method is called after Controller execution.
-   * This method may be used by derived controller classes for convenient View setup.
-   * @param view A reference to the View to assign the variables to
+   * Assign default variables to the response. This method is called after Controller execution.
+   * This method may be used by derived controller classes for convenient response setup.
    * @attention Internal use only.
    */
-  protected function assignViewDefaults($view)
+  protected function assignResponseDefaults()
   {
-    $parser = InifileParser::getInstance();
-    $rightsManager = RightsManager::getInstance();
-    $authUser = $rightsManager->getAuthUser();
+    // set default values on the response
+    $session = SessionData::getInstance();
+    $this->_response->setValue('sid', $session->getID());
 
-    // assign current controller and context to smarty
-    $view->assign('_controller', $this->_response->getSender());
-    $view->assign('_context', $this->_response->getContext());
-    $view->assign('_action', $this->_response->getAction());
-    $view->assign('_responseFormat', $this->_response->getFormat());
-    $view->assign('messageObj', new Message());
-    $view->assign('formUtil', new FormUtil());
-    $view->assign('nodeUtil', new NodeUtil());
-    $view->assign('obfuscator', Obfuscator::getInstance());
-    $view->assign('applicationTitle', $parser->getValue('applicationTitle', 'cms'));
-    if ($authUser != null) {
-      $view->assignByRef('authUser', $authUser);
+    // return the first error
+    $errors = $this->getErrors();
+    if (sizeof($errors) > 0) {
+      $error = $errors[0];
+      $this->_response->setValue('errorCode', $error->getCode());
+      $this->_response->setValue('errorMessage', $error->getMessage());
+      $this->_response->setValue('errorData', $error->getData());
     }
+    // set the success flag
+    if (sizeof($errors) > 0) {
+      $this->_response->setValue('success', false);
+    }
+    else {
+      $this->_response->setValue('success', true);
+    }
+    
+    // set wCMF specific values
+    $this->_response->setValue('_controller', get_class($this));
+    $this->_response->setValue('_context', $this->_response->getContext());
+    $this->_response->setValue('_action', $this->_response->getAction());
+    $this->_response->setValue('_responseFormat', $this->_response->getFormat());
+
     if ($this->_delegate !== null) {
-      $this->_delegate->assignAdditionalViewValues($this);
+      $this->_delegate->assignAdditionalResponseValues($this);
     }
   }
   /**

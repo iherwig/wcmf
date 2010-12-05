@@ -17,6 +17,14 @@
  * $Id$
  */
 require_once(BASE."wcmf/lib/presentation/format/class.AbstractFormat.php");
+require_once(BASE."wcmf/lib/presentation/class.View.php");
+require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(BASE."wcmf/lib/security/class.RightsManager.php");
+require_once(BASE."wcmf/lib/util/class.FormUtil.php");
+require_once(BASE."wcmf/lib/util/class.FileUtil.php");
+require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
+require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
 
 /**
  * @class HTMLFormat
@@ -67,9 +75,23 @@ class HTMLFormat extends AbstractFormat
   public function serialize(Response $response)
   {
     // assign the data to the view if one exists
-    if (($view = $response->getView()) != null)
+    $controller = $response->getController();
+    if ($controller->hasView())
     {
-      $data = &$response->getData();
+      // check if a view template is defined
+      $request = $controller->getRequest();
+      $viewTpl = self::getViewTemplate($response->getSender(), 
+                    $request->getContext(), $request->getAction());
+      if (!$viewTpl) {
+        throw new ConfigurationException("View definition missing for ".
+                    get_class($this).". Action key: ".$actionKey);
+      }
+      // create the view
+      $view = ObjectFactory::createInstanceFromConfig('implementation', 'View');
+      $view->setup();
+      
+      // assign the response data to the view
+      $data = $response->getData();
       foreach (array_keys($data) as $variable)
       {
         if (is_scalar($data[$variable])) {
@@ -79,7 +101,45 @@ class HTMLFormat extends AbstractFormat
           $view->assignByRef($variable, $data[$variable]);
         }
       }
+      // assign additional values
+      $parser = InifileParser::getInstance();
+      $rightsManager = RightsManager::getInstance();
+      $authUser = $rightsManager->getAuthUser();
+      $view->assignByRef('formUtil', new FormUtil());
+      $view->assignByRef('nodeUtil', new NodeUtil());
+      $view->assignByRef('obfuscator', Obfuscator::getInstance());
+      $view->assign('applicationTitle', $parser->getValue('applicationTitle', 'cms'));
+      if ($authUser != null) {
+        $view->assignByRef('authUser', $authUser);
+      }
+      
+      // display the view
+      if ($view->caching && ($cacheId = $controller->getCacheId()) !== null) {
+        $view->display(BASE.$viewTpl, $cacheId);
+      }
+      else {
+        $view->display(BASE.$viewTpl);
+      }
     }
+  }
+  /**
+   * Get the template filename for the view from the configfile.
+   * @param controller The name of the controller
+   * @param context The name of the context
+   * @param action The name of the action
+   * @return The filename of the template or false, if no view is defined
+   */
+  protected static function getViewTemplate($controller, $context, $action)
+  {
+    $view = '';
+    $parser = WCMFInifileParser::getInstance();
+    $actionKey = $parser->getBestActionKey('views', $controller, $context, $action);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug('HTMLFormat::getViewTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
+    }
+    // get corresponding view
+    $view = $parser->getValue($actionKey, 'views', false);
+    return $view;
   }
 }
 ?>

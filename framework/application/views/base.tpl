@@ -18,9 +18,12 @@
   <meta name="revisit-after" content="30 days" />
   <meta name="robots" content="INDEX,FOLLOW" />
 
-  <script language="Javascript" src="script/common.js"></script>
+  <script type="text/javascript" src="script/common.js"></script>
   <link href="style/style.css" rel="stylesheet" type="text/css" />
-  
+
+  <script type="text/javascript" src="{$libDir}3rdparty/jquery/jquery.js"></script>
+  <script type="text/javascript" src="{$libDir}3rdparty/jquery/plugins/hotkeys/jquery.hotkeys.js"></script>
+
   <!-- EXT JS -->
   <script type="text/javascript" src="{$libDir}3rdparty/extjs/adapter/ext/ext-base.js"></script>
   <script type="text/javascript" src="{$libDir}3rdparty/extjs/ext-all.js"></script>
@@ -104,8 +107,8 @@
     
     <span class="separator"></span>
 
-{if $errorMsg != ''}
-    <div class="error">{translate text="Error"}: {$errorMsg}</div>
+{if $errorMessage != ''}
+<div class="error">{translate text="Error"}: {$errorMessage}</div>
 {/if}
 
 {block name=content}{/block}

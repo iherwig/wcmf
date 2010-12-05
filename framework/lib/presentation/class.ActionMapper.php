@@ -94,7 +94,7 @@ class ActionMapper
       {
         $login = $authUser->getName();
         Log::error("Authorization failed for '".$actionKey."' user '".$login."'", __CLASS__);
-        throw new ApplicationException($request, null, (Message::get("You don't have the permission to perform this action.")));
+        throw new ApplicationException($request, null, Message::get("You don't have the permission to perform this action."));
       }
     }
 

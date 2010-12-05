@@ -29,23 +29,23 @@ require_once(BASE."wcmf/lib/presentation/class.ControllerMessage.php");
  */
 class Response extends ControllerMessage
 {
-  var $_view = null;
+  private $_controller = null;
   
   /**
-   * Set the view for the output if necessary (e.g. for html response format)
-   * @param view A reference to a View instance
+   * Set the controller that returns this response
+   * @param controller A reference to the controller instance
    */
-  function setView(&$view)
+  public function setController($controller)
   {
-    $this->_view = &$view;
+    $this->_controller = $controller;
   }
   /**
-   * Get the view for the output
-   * @return A reference to a View instance
+   * Get the controller that returns this response
+   * @return A reference to the controller instance
    */
-  function &getView()
+  public function getController()
   {
-    return $this->_view;
+    return $this->_controller;
   }
 }
 ?>

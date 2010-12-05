@@ -1,9 +1,8 @@
-{include file="lib:application/views/include/docheader.tpl"}
-<head>
-{include file="lib:application/views/include/header.tpl"}
-<script>
-  function init()
-  {ldelim}
+{extends file="lib:application/views/main.tpl"}
+
+{block name=head}
+<script type="text/javascript">
+$(document).ready(function() {
     Ext.QuickTips.init();
 {if $viewMode == 'detail'}
     var grids = [];
@@ -12,14 +11,14 @@
     
   // parents
   {foreach item=template from=$possibleparents}
-    {assign var="role" value=$template->getRole($node->getOID())}
-    {assign var="parent" value=$template->getProperty('assignedParent')}
+    {$role=$template->getRole($node->getOID())}
+    {$parent=$template->getProperty('assignedParent')}
     {if $parent}
-      {assign var="parentid" value=$parent->getDBID()}
+      {$parentid=$parent->getDBID()}
     {else}
-      {assign var="parentid" value=''}
+      {$parentid=''}
     {/if}
-    {if $template->hasValue('sortkey')}{assign var="ddRows" value="true"}{else}{assign var="ddRows" value="false"}{/if}
+    {if $template->hasValue('sortkey')}{$ddRows="true"}{else}{$ddRows="false"}{/if}
 
     var grid = new wcmf.grid.Grid();
     grids['{$role}Parent'] = grid;
@@ -45,10 +44,10 @@
 
   // children
   {foreach item=template from=$possiblechildren}
-    {assign var="role" value=$template->getRole($node->getOID())}
-    {assign var="realSubject" value=$template}
+    {$role=$template->getRole($node->getOID())}
+    {$realSubject=$template}
     {if $template->getProperty('realSubject')}
-      {assign var="realSubject" value=$template->getProperty('realSubject')}
+      {$realSubject=$template->getProperty('realSubject')}
     {/if}
     {if $template->hasValue('sortkey')}{assign var="ddRows" value="true"}{else}{assign var="ddRows" value="false"}{/if}
 
@@ -64,7 +63,7 @@
 
     var curButtonDefs = [];
     {if $template->getProperty('canCreate')}
-      {assign var="poid" value=$node->getOID()}
+      {$poid=$node->getOID()}
       {if $template->getProperty('composition') || $template->getProperty('aggregation')}
       curButtonDefs.push({ldelim}icon:'images/new.png', cls:'x-btn-icon', tooltip:{ldelim}text:'{translate text="Create new %1%" r1=$nodeUtil->getDisplayNameFromType($realSubject->getType())}'{rdelim}, handler:function(){ldelim}doSetParent('{$poid}'); doNew('{$realSubject->getType()}'); setVariable('newrole', '{$role}'); setContext('{$realSubject->getType()}'); submitAction('new');{rdelim}{rdelim});
       {/if}
@@ -99,89 +98,84 @@
     grid.load();
   {/if}
 {/if}
-  {rdelim}
+});
 </script>
-</head>
-<body onload="init();">
-<div id="page">
-{include file="lib:application/views/include/formheader.tpl"}
+{/block}
+
+{block name=title}
 {include file="lib:application/views/include/title.tpl"}
-
 <div id="tabnav">
-{include file="lib:application/views/include/root_type_tabs.tpl" rootType=$rootType}
+  {include file="lib:application/views/include/root_type_tabs.tpl" rootType=$rootType}
 </div>
+{/block}
 
-{include file="lib:application/views/include/navigation.tpl"}
-{include file="lib:application/views/include/error.tpl"}
-
-{if $lockMsg != ''}
+{block name=content}
+  {if $lockMsg != ''}
 <div class="hint">{translate text="some objects are locked"} (<a href="javascript:displayMsg();">details</a>)</div>
 <div class="hint" id="msg">{$lockMsg}</div>
-{/if}
+  {/if}
 
-{if $viewMode == 'detail'}
-
-{*------------------------------- Detail View -------------------------------*}
+  {if $viewMode == 'detail'}
+  {*------------------------------- Detail View -------------------------------*}
 
 <div id="leftcol">
 
-{*------ Edit ------*}
+  {*------ Edit ------*}
 <div class="contentblock">
   <h2 title="{translate text="object ID"}: {$oid|default:"-"}">{$node->getDisplayValue(true)}&nbsp;</h2>
   <span class="spacer"></span>
-{assign var="value_names" value=$node->getValueNames($cur_data_type)}
-{section name=value_name_index loop=$value_names}
-  {assign var="cur_value_name" value=$value_names[value_name_index]}
+  {$value_names=$node->getValueNames($cur_data_type)}
+  {section name=value_name_index loop=$value_names}
+    {$cur_value_name=$value_names[value_name_index]}
   <span class="dottedSeparator"></span>
   <span class="left" title="{$node->getValueDescription($cur_value_name, $cur_data_type)}">{$node->getValueDisplayName($cur_value_name, $cur_data_type)}</span>
   <span class="right">{$nodeUtil->getInputControl($node, $cur_value_name, $cur_data_type)}</span>
-{/section}
+  {/section}
   <span class="spacer"></span>
-{foreach item=template from=$possibleparents}
-  {assign var="role" value=$template->getRole($node->getOID())}
-  {assign var="parent" value=$template->getProperty('assignedParent')}
-  {if $parent}
-    {assign var="parentoid" value=$parent->getOID()}
-    {assign var="parenttype" value=$nodeUtil->getDisplayNameFromType($parent->getType())}
-  {translate text="Create new '%1%' under '%2%'" r1=$nodeUtil->getDisplayNameFromType($node->getType()) r2=$parenttype varname="createText"}
+  {foreach item=template from=$possibleparents}
+    {$role=$template->getRole($node->getOID())}
+    {$parent=$template->getProperty('assignedParent')}
+    {if $parent}
+      {$parentoid=$parent->getOID()}
+      {$parenttype=$nodeUtil->getDisplayNameFromType($parent->getType())}
+      {translate text="Create new '%1%' under '%2%'" r1=$nodeUtil->getDisplayNameFromType($node->getType()) r2=$parenttype varname="createText"}
   <span class="all"><a href="javascript:doSetParent('{$parentoid}'); doNew('{$node->getType()}'); setContext('{$node->getType()}'); submitAction('new');"><img src="images/new.png" 
     alt="{$createText}" title="{$createText}" border="0"> {$createText}</a></span>
-  {/if}
-{foreachelse}
-  {translate text="Create new %1%" r1=$nodeUtil->getDisplayNameFromType($node->getType()) varname="createText"}
+    {/if}
+  {foreachelse}
+    {translate text="Create new %1%" r1=$nodeUtil->getDisplayNameFromType($node->getType()) varname="createText"}
   <span class="all"><a href="javascript:doSetParent(''); doNew('{$node->getType()}'); setContext('{$node->getType()}'); submitAction('new');"><img src="images/new.png" 
     alt="{$createText}" title="{$createText}" border="0"> {$createText}</a></span>
-{/foreach}
+  {/foreach}
 </div>
 
 </div>
 <div id="rightcol">
 
-{*------ Parents ------*}
-{foreach item=template from=$possibleparents}
-  {assign var="role" value=$template->getRole($node->getOID())}
+  {*------ Parents ------*}
+  {foreach item=template from=$possibleparents}
+    {$role=$template->getRole($node->getOID())}
 <div class="contentblock">
   <div id="{$role}ParentGrid" style="border:1px solid #99bbe8;overflow: hidden; width: 445px"></div>
 </div>
-{/foreach}
+  {/foreach}
 
-{*------ Children grouped by role ------*}
-{foreach item=template from=$possiblechildren}
-  {assign var="role" value=$template->getRole($node->getOID())}
+  {*------ Children grouped by role ------*}
+  {foreach item=template from=$possiblechildren}
+    {$role=$template->getRole($node->getOID())}
 <div class="contentblock">
   <div id="{$role}ChildGrid" style="border:1px solid #99bbe8;overflow: hidden; width: 445px"></div>
 </div>
-{/foreach}
+  {/foreach}
 
 </div>
 
-{else}
-{*------------------------------- Overview -------------------------------*}
+  {else}
+  {*------------------------------- Overview -------------------------------*}
 
 <div class="contentblock">
   <div id="{$rootType}Grid" style="border:1px solid #99bbe8;overflow: hidden; width: 665px;"></div>
 </div>
 
-{/if}
-
-{include file="lib:application/views/include/footer.tpl"}
+  {/if}
+{/block}

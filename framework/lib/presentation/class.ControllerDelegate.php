@@ -41,36 +41,27 @@
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ControllerDelegate
+interface ControllerDelegate
 {
   /**
    * This method is called after the base class initialize method.
    * @see Controller::initialize()
    * @param controller The currently executed controller
    */
-  function postInitialize(&$controller) 
-  {
-    WCMFException::throwEx("postInitialize() must be implemented by derived class: ".get_class($this), __FILE__, __LINE__);
-  }
+  function postInitialize(Controller $controller); 
   /**
-   * This method is called instead of the base class method.
+   * This method is called before the base class validate method.
    * @see Controller::validate()
    * @param controller The currently executed controller
    * @return The validation result.
    */
-  function validate(&$controller) 
-  { 
-    WCMFException::throwEx("validate() must be implemented by derived class: ".get_class($this), __FILE__, __LINE__);
-  }
+  function preValidate(Controller $controller);
   /**
    * This method is called after validation and before the base class execute method
    * @see Controller::execute()
    * @param controller The currently executed controller
    */
-  function preExecute(&$controller) 
-  {
-    WCMFException::throwEx("preExecute() must be implemented by derived class: ".get_class($this), __FILE__, __LINE__);
-  }
+  function preExecute(Controller $controller);
   /**
    * This method is called after the base class execute method.
    * @see Controller::execute()
@@ -78,18 +69,12 @@ class ControllerDelegate
    * @param result The result of Controller::executeKernel
    * @return The execution result.
    */
-  function postExecute(&$controller, $result) 
-  {
-    WCMFException::throwEx("postExecute() must be implemented by derived class: ".get_class($this), __FILE__, __LINE__);
-  }
+  function postExecute(Controller $controller, $result); 
   /**
-   * Assign additional variables to the view.
-   * This method is called after the base class assignViewDefaults method.
+   * Assign additional variables to the response.
+   * This method is called after the base class assignResponseDefaults method.
    * @param controller The currently executed controller
    */  
-  function assignAdditionalViewValues(&$controller) 
-  {
-    WCMFException::throwEx("assignAdditionalViewValues() must be implemented by derived class: ".get_class($this), __FILE__, __LINE__);
-  }
+  function assignAdditionalResponseValues(Controller $controller); 
 }
 ?>

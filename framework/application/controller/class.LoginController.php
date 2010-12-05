@@ -37,11 +37,10 @@ require_once(BASE."wcmf/lib/util/class.SessionData.php");
  * - @em ok If login succeeded
  * - @em login If login failed
  *
- * @param[in] login The users login name
+ * @param[in] user The user's login name
  * @param[in] password The user's password
  * @param[in] remember_me If given with any value a login cookie will be created in the browser
  * @param[in] password_is_encrypted True/False wether the given password is encrypted on not (default: false)
- * @param[out] loginmessage A message if login failed
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -50,8 +49,6 @@ class LoginController extends Controller
   private $_anonymous = 0; // in anonymous mode all authorization requests answered positive
                        // and AuthUser is an instance of AnonymousUser
                        // The mode is set in configuration section 'cms' key 'anonymous'
-  private static $NUM_LOGINTRIES_VARNAME = 'LoginController.logintries';
-  private static $LOGINMESSAGE_VARNAME = 'LoginController.loginmessage';
 
   /**
    * @see Controller::initialize()
@@ -75,14 +72,18 @@ class LoginController extends Controller
     $request = $this->getRequest();
     if ($request->getAction() == 'dologin' && !$this->_anonymous)
     {
-      if(!$request->hasValue('login'))
-      {
-        $this->setErrorMsg("No 'login' given in data.");
-        return false;
+      $invalidParameters = array();
+      if(!$request->hasValue('user')) {
+        $invalidParameters[] = 'user';
       }
-      if(!$request->hasValue('password'))
+      if(!$request->hasValue('password')) {
+        $invalidParameters[] = 'password';
+      }
+      
+      if (sizeof($invalidParameters) > 0)
       {
-        $this->setErrorMsg("No 'password' given in data.");
+        $this->addError(ApplicationError::get('PARAMETER_INVALID', 
+          array('invalidParameters' => $invalidParameters)));
         return false;
       }
     }
@@ -91,10 +92,11 @@ class LoginController extends Controller
   /**
    * @see Controller::hasView()
    */
-  protected function hasView()
+  public function hasView()
   {
     $request = $this->getRequest();
-    if ($request->getAction() == 'dologin' || $this->_anonymous || $this->isCookieLogin()) {
+    if (!$this->hasErrors() && 
+      ($request->getAction() == 'dologin' || $this->_anonymous || $this->isCookieLogin())) {
       return false;
     }
     else {
@@ -103,7 +105,7 @@ class LoginController extends Controller
   }
   /**
    * If called with any usr_action except 'dologin' this Controller presents the login dialog else
-   * if usr_action is 'dologin' it checks the login data ('login' & 'password') and creates AuthUser object in the Session on
+   * if usr_action is 'dologin' it checks the login data ('user' & 'password') and creates AuthUser object in the Session on
    * success.
    * @return Array of given context and action 'ok' on success, action 'failure' on failure.
    *         False if the login dialog is presented (Stop action processing chain).
@@ -123,14 +125,8 @@ class LoginController extends Controller
       return true;
     }
 
-    if ($request->getAction() == 'login')
-    {
-      // preserve login failure details
-      $loginTries = $session->get(self::$NUM_LOGINTRIES_VARNAME);
-      $loginMessage = $session->get(self::$LOGINMESSAGE_VARNAME);
+    if ($request->getAction() == 'login') {
       $session->clear();
-      $session->set(self::$NUM_LOGINTRIES_VARNAME, $loginTries);
-      $session->set(self::$LOGINMESSAGE_VARNAME, $loginMessage);
     }
 
     if ($request->getAction() == 'dologin')
@@ -142,7 +138,7 @@ class LoginController extends Controller
       if ($request->hasValue('password_is_encrypted')) {
         $isPasswordEncrypted = $request->getValue('password_is_encrypted');
       }
-      if ($authUser->login($request->getValue('login'), $request->getValue('password'), $isPasswordEncrypted))
+      if ($authUser->login($request->getValue('user'), $request->getValue('password'), $isPasswordEncrypted))
       {
         // login succeeded
         $session->clear();
@@ -155,7 +151,7 @@ class LoginController extends Controller
           $expire = time() + 1728000; // expire in 20 days
           $cookiePassword = UserManager::encryptPassword($request->getValue('password'));
 
-          setcookie('login', $request->getValue('login'), $expire);
+          setcookie('user', $request->getValue('user'), $expire);
           setcookie('password', $cookiePassword, $expire);
         }
         $response->setAction('ok');
@@ -164,10 +160,7 @@ class LoginController extends Controller
       else
       {
         // login failed
-        $logintries = $session->get(self::$NUM_LOGINTRIES_VARNAME)+1;
-        $session->set(self::$NUM_LOGINTRIES_VARNAME, $logintries);
-        $this->setErrorMsg(Message::get("Login failed. Try again."));
-        $session->set(self::$LOGINMESSAGE_VARNAME, $this->getErrorMsg());
+        $this->addError(ApplicationError::get('AUTHENTICATION_FAILED'));
 
         $response->setAction('login');
         return true;
@@ -180,11 +173,11 @@ class LoginController extends Controller
       $lockManager->releaseAllLocks();
 
       // delete cookies (also clientside)
-      setcookie('login', '', time()-3600, '/');
+      setcookie('user', '', time()-3600, '/');
       setcookie('password', '', time()-3600, '/');
       setcookie(session_name(), '', time()-3600, '/');
       print '<script type="text/javascript">
-      document.cookie = "login=; expires=Wed, 1 Mar 2006 00:00:00";
+      document.cookie = "user=; expires=Wed, 1 Mar 2006 00:00:00";
       document.cookie = "password=; expires=Wed, 1 Mar 2006 00:00:00";
       </script>';
 
@@ -197,29 +190,21 @@ class LoginController extends Controller
     }
     else
     {
-      // check if the login and password is stored in a cookie
+      // check if the user and password is stored in a cookie
       if ($this->isCookieLogin())
       {
         // if yes redirect to login process
-        $response->setValue('login', $_COOKIE['login']);
+        $response->setValue('user', $_COOKIE['user']);
         $response->setValue('password', $_COOKIE['password']);
         $response->setValue('password_is_encrypted', true);
 
         $response->setAction('dologin');
         return true;
       }
-
-      // present login dialog
-      $loginMessage = $session->get(self::$LOGINMESSAGE_VARNAME);
-      if (strlen($loginMessage) > 0)
-      {
-        $msg = $loginMessage;
-        if ($session->exist(self::$NUM_LOGINTRIES_VARNAME))
-          $msg .= " (".Message::get("Attempt")." #".($session->get(self::$NUM_LOGINTRIES_VARNAME)+1).")";
-        $response->setValue('loginmessage', $msg);
-        $this->setErrorMsg($loginMessage);
+      else {
+        // present the login dialog
+        return false;
       }
-      return false;
     }
   }
 
@@ -230,7 +215,7 @@ class LoginController extends Controller
   protected function isCookieLogin()
   {
     $request = $this->getRequest();
-    return ($request->getAction() == 'login' && isset($_COOKIE['login'], $_COOKIE['password']));
+    return ($request->getAction() == 'login' && isset($_COOKIE['user'], $_COOKIE['password']));
   }
 }
 ?>

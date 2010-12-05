@@ -56,7 +56,7 @@ class AsyncPagingController extends Controller
   /**
    * @see Controller::hasView()
    */
-  protected function hasView()
+  public function hasView()
   {
     return false;
   }

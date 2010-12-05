@@ -89,7 +89,7 @@ class Message
     if ($useGetText)
     {
       // see if gettext is installed
-      if (function_exists(bindtextdomain) && function_exists(textdomain) && function_exists(gettext))
+      if (function_exists('bindtextdomain') && function_exists('textdomain') && function_exists('gettext'))
       {
         // get localized message
         putenv("LANGUAGE=".$lang);
