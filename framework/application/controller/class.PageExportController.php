@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/application/controller/class.BatchController.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
-require_once(BASE."wcmf/lib/util/class.URIUtil.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.BatchController.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
 
 /**
  * @class PageExportController
@@ -267,7 +267,7 @@ class PageExportController extends BatchController
 
     // get corresponding view
     $actionKey = $parser->getBestActionKey('views', $this->_response->getSender(), $context, '');
-    if (($viewTemplate = BASE.$parser->getValue($actionKey, 'views')) === false)
+    if (($viewTemplate = WCMF_BASE.$parser->getValue($actionKey, 'views')) === false)
       WCMFException::throwEx("View definition missing for ".$this->_response->getSender()."?".$context.".", __FILE__, __LINE__);
 
     // assign datestamp to view

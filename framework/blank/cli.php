@@ -32,10 +32,10 @@
 error_reporting(E_ERROR | E_PARSE);
 
 require_once("base_dir.php");  
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/presentation/class.Request.php");
-require_once(BASE."wcmf/lib/presentation/class.Application.php");
-require_once(BASE."wcmf/lib/presentation/class.ActionMapper.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
 
 $arguments = $_SERVER['argv'];
 array_shift($arguments);

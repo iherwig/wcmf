@@ -16,11 +16,11 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/presentation/class.Controller.php");
-require_once(BASE."wcmf/lib/util/class.SessionData.php");
-require_once(BASE."wcmf/lib/output/class.ArrayOutputStrategy.php");
-require_once(BASE."wcmf/lib/visitor/class.OutputVisitor.php");
-require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.ArrayOutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/visitor/class.OutputVisitor.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Obfuscator.php");
 
 /**
  * @class AsyncPagingController

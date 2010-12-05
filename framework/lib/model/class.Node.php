@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistentObject.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
-require_once(BASE."wcmf/lib/util/class.ArrayUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistentObject.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ArrayUtil.php");
 
 /**
  * Some constants describing the build process

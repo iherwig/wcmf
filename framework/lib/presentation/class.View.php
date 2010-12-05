@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
  * @class View
@@ -52,8 +52,8 @@ class View extends Smarty
     $this->caching = $caching;
     $this->cache_lifetime = $cacheLifetime;
     $this->plugins_dir = array(
-      BASE.'wcmf/3rdparty/smarty/libs/plugins/', 
-      BASE.'wcmf/lib/presentation/smarty_plugins/'
+      WCMF_BASE.'wcmf/3rdparty/smarty/libs/plugins/', 
+      WCMF_BASE.'wcmf/lib/presentation/smarty_plugins/'
     );
     if ($debugView) {
       $this->error_reporting = E_ALL;

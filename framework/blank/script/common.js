@@ -5,54 +5,28 @@
 // -------------------------------------------------------------------------
 // Utility functions.
 // -------------------------------------------------------------------------
-function addToStringArray(val, strArray, delim)
-{
-  if (typeof(delim)=="undefined") delim = ",";
-  if (strArray != '')
-  {
-    var realArray = strArray.split(delim);
-    realArray[realArray.length] = val;  
-    return realArray.join(delim);
-  }
-  else
-    return val;
-}
-function deleteFromStringArray(val, strArray, delim)
-{
-  if (typeof(delim)=="undefined") delim = ",";
-  var realArray = strArray.split(delim);
-  var tmpArray = new Array();
-  for (i=0;i<realArray.length;i++)
-    if (realArray[i] != val)
-      tmpArray[tmpArray.length] = realArray[i];
-  return tmpArray.join(delim);
-}
-function getForm()
-{
-  return document.forms[0];
-}
 // Open new window without posting form data
-function newWindow(_controller, _context, _action, _name, _windowDef)
+function newWindow(controller, context, action, name, windowDef)
 {
-  newWindowEx(_controller, _context, _action, _name, _windowDef, '');
+  newWindowEx(controller, context, action, name, windowDef, '');
 }
 // Open new window without posting form data but with additional query string
-// _additionalQueryString: e.g. "&oid=...."
-function newWindowEx(_controller, _context, _action, _name, _windowDef, _additionalQueryString)
+// additionalQueryString: e.g. "&oid=...."
+function newWindowEx(controller, context, action, name, windowDef, additionalQueryString)
 {
-  _name = window.open(getForm().action+
-            "?controller="+_controller+
-            "&context="+_context+
-            "&usr_action="+_action+_additionalQueryString, 
-            _name, _windowDef);
-  if (window.focus) {_name.focus()}
+  name = window.open($('form').action+
+            "?controller="+controller+
+            "&context="+context+
+            "&action="+action+additionalQueryString, 
+            name, windowDef);
+  if (window.focus) {name.focus()}
 }
-function setController(_controller) { getForm().controller.value=_controller; }
-function setContext(_context) { getForm().context.value=_context; }
-function setAction(_action) { getForm().usr_action.value=_action; }
-function setVariable(_name, _val) { getForm()[_name].value = _val; }
-function getVariable(_name) { return getForm()[_name].value; }
-function setTarget(_target) { getForm().target=_target; }
+function setController(controller) { $('input[name=controller]').val(controller); }
+function setContext(context) { $('input[name=context]').val(context); }
+function setAction(action) { $('input[name=action]').val(action); }
+function setVariable(name, val) { $('input[name='+name+']').val(val); }
+function getVariable(name) { return $('input[name='+name+']').val(); }
+function setTarget(target) { $('form').target = target; }
 
 modifiedFields = [];
 function setDirty(fieldName)
@@ -68,12 +42,12 @@ function setClean(fieldName)
   }
 }
 
-function canLeavePage()
+function canLeavePage(confirm)
 {
   var modified = false;
   for (var field in modifiedFields) {
     // ignore fields with class ignoreDirty
-    var formField = getFormField(field);
+    var formField = getVariable(field);
     if (formField && formField.className.indexOf('ignoreDirty') == -1) {
     if (modifiedFields[field] == true) {
         modified = true;
@@ -84,28 +58,19 @@ function canLeavePage()
   // save reminder
   if (modified)
   {
-    if (typeof(_confirm)=="undefined") _confirm = true;
-    if (_confirm)
+    if (typeof(confirm)=="undefined") confirm = true;
+    if (confirm)
     {
-      _text = "There's possibly unsaved data in field '"+field+"' and you're about to leave this edit mask. If you continue, all unsaved data will be lost. Do you really want to continue?";
-      check = confirm(_text);
+      text = "There's possibly unsaved data in field '"+field+"' and you're about to leave this edit mask. If you continue, all unsaved data will be lost. Do you really want to continue?";
+      check = confirm(text);
     }
-    else
+    else {
       check = true;
-    
+    }
     return check;
   }
   return true;
 }
-function getFormField(name)
-{ 
-  var form = getForm();
-  for (var i = 0; i < form.elements.length; i++) {
-    if (form.elements[i].name == name) {
-      return form.elements[i];
-    }
-  }
-} 
 // -------------------------------------------------------------------------
 // CMS functions.
 //
@@ -142,44 +107,45 @@ function getFormField(name)
 //
 // Display node with oid 'oid'.
 //
-function doDisplay(_oid)
+function doDisplay(oid)
 {
-  getForm().oid.value=_oid;
+  setVariable('oid', oid);
 }
 //
 // Create a new node of type 'type'.
 // We actually only store the type of the node to create for later creation.
 // The parent node of the 'new' action is defined by using 'doSetParent'.
 //
-function doNew(_type)
+function doNew(type)
 {
-  getForm().newtype.value=_type;
+  setVariable('newtype', type);
 }
 //
 // Set the parent node for 'new' and 'paste' action to the node with oid 'poid'.
 //
-function doSetParent(_poid)
+function doSetParent(poid)
 {
-  getForm().poid.value=_poid;
+  setVariable('poid', poid);
 }
 //
 // Delete node with oid 'oid'.
 // We actually only store the oid of the node to delete for later deletion.
 //
-function doDelete(_oid, _confirm, _text)
+function doDelete(oid, confirm, text)
 {
-  if (typeof(_confirm)=="undefined") _confirm = true;
-  if (_confirm)
+  if (typeof(confirm)=="undefined") confirm = true;
+  if (confirm)
   {
-    if (typeof(_text)=="undefined")
-      _text = "Really Delete Node with OID "+_oid+"."
-    check = confirm(_text);
+    if (typeof(text)=="undefined") {
+      text = "Really Delete Node with OID "+oid+".";
+    }
+    check = confirm(text);
   }
-  else
+  else {
     check = true;
-  if (check==true)
-  {
-    getForm().deleteoids.value=addToStringArray(_oid, getForm().deleteoids.value);
+  }
+  if (check==true) {
+    setVariable('deleteoids', oid);
   }
   return check;
 }
@@ -194,14 +160,14 @@ function doSave()
 //
 // Post form data with given action
 //
-function submitAction(_action)
+function submitAction(action)
 {
   // display save reminder if necessary
-  if (_action == 'dologin' || _action.toLowerCase().indexOf('save') >= 0 || canLeavePage())
+  if (action == 'dologin' || action.toLowerCase().indexOf('save') >= 0 || canLeavePage())
   {
-    setAction(_action);
-    getForm().submit();
-    getForm().target = '';
+    setAction(action);
+    $('form').submit();
+    setTarget('');
   }
 }
 
@@ -211,10 +177,12 @@ function submitAction(_action)
 function displayMsg()
 {
   var layer = document.getElementById("msg");
-  if (!layer.style.display || layer.style.display == "none")
+  if (!layer.style.display || layer.style.display == "none") {
     layer.style.display = "block";
-  else
+  }
+  else {
     layer.style.display = "none";
+  }
 }
 function adjustIFrameSize(iframeId) 
 {

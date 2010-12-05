@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
 
 /**
  * @class XMLDataConverter

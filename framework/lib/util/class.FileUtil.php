@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/util/class.IOException.php");
-require_once(BASE."wcmf/lib/core/class.IllegalArgumentException.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.IOException.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.IllegalArgumentException.php");
 
 /**
  * @class FileUtil

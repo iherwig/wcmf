@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/output/pdf/class.PDF.php");
-require_once(BASE."wcmf/lib/core/class.WCMFException.php");
+require_once(WCMF_BASE."wcmf/lib/output/pdf/class.PDF.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.WCMFException.php");
 
 /**
  * @class PDFTemplate

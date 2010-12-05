@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/model/class.Node.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 
 /**
  * @class NullNode

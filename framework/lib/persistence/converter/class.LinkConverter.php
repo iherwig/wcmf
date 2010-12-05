@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/core/class.WCMFException.php");
-require_once(BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
-require_once(BASE."wcmf/lib/util/class.URIUtil.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.WCMFException.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 // this is stored in a global variable to allow static method calls
 $gLinkConverterBaseUrl = null;

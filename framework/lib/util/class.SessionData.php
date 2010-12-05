@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Storable.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Storable.php");
 
 /**
  * @class SessionData
@@ -58,7 +58,7 @@ class SessionData
 
       // Restore class definitions before session start
       $filename = SessionData::getClassDefinitionFile();
-      if (file_exists($filename) && strpos($filename, BASE) === 0)
+      if (file_exists($filename) && strpos($filename, WCMF_BASE) === 0)
       {
         $fp = fopen($filename, "r");
         $classDefs = fread($fp, filesize ($filename));

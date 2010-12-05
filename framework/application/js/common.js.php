@@ -17,7 +17,7 @@ Action = function() {};
  */
 Action.perform = function(action, customParams, callback, scope) {
   // define the call parameters
-  var callParams = {controller:'<?php echo $controller; ?>', context:'<?php echo $context; ?>', usr_action:action, sid:'<?php echo session_id() ?>'};
+  var callParams = {controller:'<?php echo $controller; ?>', context:'<?php echo $context; ?>', action:action, sid:'<?php echo session_id() ?>'};
   for (var i in customParams)
     callParams[i] = customParams[i];
     

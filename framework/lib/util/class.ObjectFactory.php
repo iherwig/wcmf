@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/core/class.ConfigurationException.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.ConfigurationException.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
  * @class ObjectFactory
@@ -63,9 +63,9 @@ class ObjectFactory
     $classFile = self::getClassfileFromConfig($className);
 
     // include class definition
-    if (file_exists(BASE.$classFile))
+    if (file_exists(WCMF_BASE.$classFile))
     {
-      require_once(BASE.$classFile);
+      require_once(WCMF_BASE.$classFile);
       return $className;
     }
     else {

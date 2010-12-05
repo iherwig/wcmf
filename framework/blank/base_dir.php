@@ -1,3 +1,3 @@
 <?php
-  define("BASE", realpath ("../")."/");
+  define("WCMF_BASE", realpath ("../")."/");
 ?>

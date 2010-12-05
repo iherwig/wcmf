@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/visitor/class.Visitor.php");
+require_once(WCMF_BASE."wcmf/lib/visitor/class.Visitor.php");
 /**
  * @class CommitVisitor
  * @ingroup Visitor

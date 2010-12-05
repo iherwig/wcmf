@@ -22,7 +22,7 @@ wcmf.tree.Tree = function(config) {
     config.root = root,
     config.loader = new wcmf.tree.TreeLoader({
       dataUrl:'<?php echo $APP_URL; ?>',
-      baseParams:{controller:'<?php echo $controller; ?>', context:'<?php echo $context; ?>', usr_action:'loadChildren', response_format:'JSON', sid:'<?php echo session_id() ?>'}
+      baseParams:{controller:'<?php echo $controller; ?>', context:'<?php echo $context; ?>', action:'loadChildren', response_format:'JSON', sid:'<?php echo session_id() ?>'}
     })
     
     wcmf.tree.Tree.superclass.constructor.call(this, config);

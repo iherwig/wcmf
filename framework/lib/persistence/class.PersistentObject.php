@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
-require_once(BASE."wcmf/lib/persistence/class.LockManager.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceException.php");
-require_once(BASE."wcmf/lib/persistence/class.ValidationException.php");
-require_once(BASE."wcmf/lib/util/class.SearchUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceException.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ValidationException.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
 /**
  * Some constants describing the state of the PersistentObject

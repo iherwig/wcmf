@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/security/class.AuthUser.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.AuthUser.php");
 
 /**
  * @class AnonymousUser

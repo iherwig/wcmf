@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/presentation/class.DefaultControlRenderer.php");
-require_once(BASE."wcmf/lib/util/class.SessionData.php");
-require_once(BASE."wcmf/lib/i18n/class.Localization.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.DefaultControlRenderer.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
+require_once(WCMF_BASE."wcmf/lib/i18n/class.Localization.php");
 
 /**
  * @class FormUtil

@@ -19,12 +19,12 @@
 error_reporting(E_ERROR | E_PARSE);
 
 require_once("base_dir.php");  
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/presentation/class.Request.php");
-require_once(BASE."wcmf/lib/presentation/class.Application.php");
-require_once(BASE."wcmf/lib/presentation/class.ActionMapper.php");
-require_once(BASE."wcmf/lib/util/class.SearchUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
 // read dionysos config
 $parser = &WCMFInifileParser::getInstance();
@@ -34,10 +34,10 @@ $parser->parseIniFile('include/config.ini', true);
 $action = Application::getCallParameter('action', 'login');
 $mappedAction = $parser->getValue($action, 'actionmap');
 if ($mappedAction !== false) {
-  $GLOBALS['data']['usr_action'] = $mappedAction;
+  $GLOBALS['data']['action'] = $mappedAction;
 }
 else {
-  $GLOBALS['data']['usr_action'] = $action;
+  $GLOBALS['data']['action'] = $action;
 }
 if ($action == 'login') {
   $GLOBALS['data']['controller'] = 'LoginController';
@@ -127,7 +127,7 @@ function onError($message, $file='', $line='')
     // get old controller/context/action triple to restore application status
     $controller = Application::getCallParameter('old_controller', $controller);
     $context = Application::getCallParameter('old_context', $context);
-    $action = Application::getCallParameter('old_usr_action', $action);
+    $action = Application::getCallParameter('old_action', $action);
     $responseFormat = Application::getCallParameter('old_response_format', $responseFormat);
   
     // process old action

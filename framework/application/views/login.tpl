@@ -1,6 +1,6 @@
 {extends file="lib:application/views/main.tpl"}
 
-{block name=head}
+{block name=head append}
 <script type="text/javascript">
 $(document).ready(function() {
   $(document).bind('keyup', 'return', function() {
@@ -9,6 +9,9 @@ $(document).ready(function() {
 });
 </script>
 {/block}
+
+{block name=metaNavigation}{/block}
+{block name=contentNavigation}{/block}
 
 {block name=content}
 <div class="contentblock">

@@ -4,13 +4,13 @@
  * by searching for parser method calls like parser->getValue
  */
 error_reporting(E_ERROR | E_PARSE);
-define("BASE", realpath ("../../../")."/");
+define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
-require_once(BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 
 // collect values
-$configValues = getConfigValues(BASE."wcmf/", "/\.php$|\.tpl$/");
+$configValues = getConfigValues(WCMF_BASE."wcmf/", "/\.php$|\.tpl$/");
 
 // known sections
 $sections = array

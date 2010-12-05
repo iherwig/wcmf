@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/presentation/class.Controller.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/model/class.Node.php");
-require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
-require_once(BASE."wcmf/lib/model/class.NodeIterator.php");
-require_once(BASE."wcmf/lib/visitor/class.CommitVisitor.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
+require_once(WCMF_BASE."wcmf/lib/visitor/class.CommitVisitor.php");
 
 /**
  * @class InsertController

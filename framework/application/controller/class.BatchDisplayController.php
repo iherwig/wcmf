@@ -16,11 +16,11 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/application/controller/class.BatchController.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/model/class.PersistentIterator.php");
-require_once(BASE."wcmf/lib/model/class.Node.php");
-require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.BatchController.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.PersistentIterator.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 
 /**
  * @class BatchDisplayController
@@ -74,7 +74,7 @@ class BatchDisplayController extends BatchController
       }
       
       // store request in session
-      $session->set($this->REQUEST, $request, array(BASE."wcmf/lib/presentation/class.ControllerMessage.php"));
+      $session->set($this->REQUEST, $request, array(WCMF_BASE."wcmf/lib/presentation/class.ControllerMessage.php"));
       $reg = array();
       $session->set($this->REGISTRY, $reg);
     }

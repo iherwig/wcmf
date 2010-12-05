@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/presentation/class.Controller.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/util/class.FileUtil.php");
-require_once(BASE."wcmf/lib/util/class.URIUtil.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
 
-require_once(BASE."wcmf/application/controller/class.SaveController.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.SaveController.php");
 
 /**
  * @class ResourceListController

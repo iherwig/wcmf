@@ -17,8 +17,8 @@
  * $Id$
  */
 // require file only if run in wcmf enviroment
-if (file_exists(BASE."wcmf/lib/util/class.InifileParser.php"))
-  require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+if (file_exists(WCMF_BASE."wcmf/lib/util/class.InifileParser.php"))
+  require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
  * @class Message
@@ -58,7 +58,7 @@ class Message
    */
   function get ($message, $parameters=null, $domain='', $lang='')
   {
-    if (!file_exists(BASE."wcmf/lib/util/class.InifileParser.php"))
+    if (!file_exists(WCMF_BASE."wcmf/lib/util/class.InifileParser.php"))
       return $message;
       
     global $MESSAGE_LANGUAGE;
@@ -140,7 +140,7 @@ class Message
    */
   function getAll ($lang='')
   {
-    if (!file_exists(BASE."wcmf/lib/util/class.InifileParser.php"))
+    if (!file_exists(WCMF_BASE."wcmf/lib/util/class.InifileParser.php"))
       return array();
       
     global $MESSAGE_LANGUAGE;

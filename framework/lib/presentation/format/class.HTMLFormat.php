@@ -16,15 +16,15 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/presentation/format/class.AbstractFormat.php");
-require_once(BASE."wcmf/lib/presentation/class.View.php");
-require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
-require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
-require_once(BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(BASE."wcmf/lib/util/class.FormUtil.php");
-require_once(BASE."wcmf/lib/util/class.FileUtil.php");
-require_once(BASE."wcmf/lib/util/class.Obfuscator.php");
-require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.AbstractFormat.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.View.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.FormUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Obfuscator.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
 
 /**
  * @class HTMLFormat
@@ -108,17 +108,16 @@ class HTMLFormat extends AbstractFormat
       $view->assignByRef('formUtil', new FormUtil());
       $view->assignByRef('nodeUtil', new NodeUtil());
       $view->assignByRef('obfuscator', Obfuscator::getInstance());
-      $view->assign('applicationTitle', $parser->getValue('applicationTitle', 'cms'));
       if ($authUser != null) {
         $view->assignByRef('authUser', $authUser);
       }
       
       // display the view
       if ($view->caching && ($cacheId = $controller->getCacheId()) !== null) {
-        $view->display(BASE.$viewTpl, $cacheId);
+        $view->display(WCMF_BASE.$viewTpl, $cacheId);
       }
       else {
-        $view->display(BASE.$viewTpl);
+        $view->display(WCMF_BASE.$viewTpl);
       }
     }
   }

@@ -16,14 +16,14 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
-require_once(BASE."wcmf/lib/persistence/class.AbstractMapper.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistentObjectProxy.php");
-require_once(BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
-require_once(BASE."wcmf/lib/persistence/pdo/class.PDOConnection.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.AbstractMapper.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistentObjectProxy.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/pdo/class.PDOConnection.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
  * @class RDBMapper

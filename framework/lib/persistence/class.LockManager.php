@@ -16,14 +16,14 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/util/class.SessionData.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/persistence/class.ILockHandler.php");
-require_once(BASE."wcmf/lib/persistence/class.Lock.php");
-require_once(BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ILockHandler.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.Lock.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
 
 /**
  * @class LockManager
@@ -57,7 +57,7 @@ class LockManager
         $anonymous = $parser->getValue('anonymous', 'cms');
         if ($anonymous)
         {
-          require_once(BASE."wcmf/lib/persistence/class.NullLockHandler.php");
+          require_once(WCMF_BASE."wcmf/lib/persistence/class.NullLockHandler.php");
           self::$_instance->_impl = new NullLockHandler();
         }
         else

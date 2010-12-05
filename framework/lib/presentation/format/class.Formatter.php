@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
-require_once(BASE."wcmf/lib/util/class.EncodingUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.EncodingUtil.php");
 
 /**
  * @class Formatter

@@ -16,11 +16,11 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.SessionData.php");
-require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
-require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
-require_once(BASE."wcmf/lib/persistence/class.ObjectId.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 
 /**
  * Some constants describing actions on PersistentObjects
@@ -55,7 +55,7 @@ class RightsManager
   private function __construct()
   {
     // include this later to avoid circular includes
-    require_once(BASE."wcmf/lib/security/class.AnonymousUser.php");
+    require_once(WCMF_BASE."wcmf/lib/security/class.AnonymousUser.php");
     $this->_anonymousUser = new AnonymousUser(new ObjectId('', ''));
   }
 
@@ -90,7 +90,7 @@ class RightsManager
     else
     {
       // include this later to avoid circular includes
-      require_once(BASE."wcmf/lib/security/class.AuthUser.php");
+      require_once(WCMF_BASE."wcmf/lib/security/class.AuthUser.php");
       $session = SessionData::getInstance();
       $user = null;
       $userVarname = self::getAuthUserVarname();

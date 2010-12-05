@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(BASE."wcmf/lib/util/class.ArrayUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ArrayUtil.php");
 
 /**
  * @class InifileParser

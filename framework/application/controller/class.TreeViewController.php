@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/model/class.Node.php");
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/presentation/class.Controller.php");
-require_once(BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/security/class.RightsManager.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
 
 /**
  * @class TreeViewController

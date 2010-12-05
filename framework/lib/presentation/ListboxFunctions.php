@@ -18,10 +18,10 @@
  */
 require_once("base_dir.php");
 
-require_once(BASE."wcmf/lib/util/class.FileUtil.php");
-require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/i18n/class.Localization.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/i18n/class.Localization.php");
 
 /**
  * Global function for id (oid) retrieval. For parameters see PersistenceFacade::getOIDs().

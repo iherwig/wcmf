@@ -37,7 +37,7 @@ function __autoload($className)
     $objectFactory = &ObjectFactory::getInstance();
     $classFile = $objectFactory->getClassfileFromConfig($className);
     if ($classFile !== false) {
-      $classMapping[$className] = BASE.$classFile;
+      $classMapping[$className] = WCMF_BASE.$classFile;
     }
     else
     {
@@ -65,7 +65,7 @@ function getFileName($className)
 }
 
 /**
- * Search a class definition in any subfolder of BASE
+ * Search a class definition in any subfolder of WCMF_BASE
  * Code from: http://php.net/manual/en/language.oop5.autoload.php
  *
  * @param className The name of the class
@@ -74,16 +74,16 @@ function getFileName($className)
  */
 function searchClass($className, $sub="/")
 {
-  if(file_exists(BASE.$sub.getFileName($className))) {
-    return BASE.$sub;
+  if(file_exists(WCMF_BASE.$sub.getFileName($className))) {
+    return WCMF_BASE.$sub;
   }
 
-  $dir = dir(BASE.$sub);
+  $dir = dir(WCMF_BASE.$sub);
   while(false !== ($folder = $dir->read()))
   {
     if($folder != "." && $folder != "..")
     {
-      if(is_dir(BASE.$sub.$folder))
+      if(is_dir(WCMF_BASE.$sub.$folder))
       {
         $subFolder = searchClass($className, $sub.$folder."/");
 

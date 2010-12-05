@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/persistence/class.ObjectQuery.php");
-require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectQuery.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 
 /**
  * @class StringQuery

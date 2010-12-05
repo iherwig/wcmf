@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/presentation/format/class.AbstractFormat.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.AbstractFormat.php");
 
 /**
  * @class HierarchicalFormat

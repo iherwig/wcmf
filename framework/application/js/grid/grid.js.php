@@ -60,7 +60,7 @@ wcmf.grid.Grid.prototype = {
         url:'<?php echo $APP_URL; ?>'
       }),
       
-      baseParams:{type:type, controller:'<?php echo $controller; ?>', context:'<?php echo $context; ?>', usr_action:'list', response_format:'JSON', sid:'<?php echo session_id() ?>', filter:filter, renderValues:true},
+      baseParams:{type:type, controller:'<?php echo $controller; ?>', context:'<?php echo $context; ?>', action:'list', response_format:'JSON', sid:'<?php echo session_id() ?>', filter:filter, renderValues:true},
 
       reader:new Ext.data.JsonReader({
         root:'objects',

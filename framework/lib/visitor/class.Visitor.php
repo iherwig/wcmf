@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/model/class.NodeIterator.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
 /**
  * @class Visitor
  * @ingroup Visitor

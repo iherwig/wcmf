@@ -16,16 +16,17 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/util/class.SessionData.php");
-require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
-require_once(BASE."wcmf/lib/presentation/class.Request.php");
-require_once(BASE."wcmf/lib/presentation/class.Response.php");
-require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
-require_once(BASE."wcmf/lib/presentation/format/class.Formatter.php");
-require_once(BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(BASE."wcmf/3rdparty/Bs_StopWatch.class.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.ConfigurationException.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
+require_once(WCMF_BASE."wcmf/3rdparty/Bs_StopWatch.class.php");
 
 /**
  * @class ActionMapper
@@ -136,9 +137,9 @@ class ActionMapper
     if (($classFile = $parser->getValue($controllerClass, 'classmapping')) === false) {
       throw new ConfigurationsException($parser->getErrorMsg());
     }
-    if (file_exists(BASE.$classFile))
+    if (file_exists(WCMF_BASE.$classFile))
     {
-      require_once(BASE.$classFile);
+      require_once(WCMF_BASE.$classFile);
       $controllerObj = new $controllerClass($actionMapper->_controllerDelegate);
     }
     else {

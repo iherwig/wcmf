@@ -16,9 +16,9 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/application/controller/class.BatchController.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/util/class.SearchUtil.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.BatchController.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
 /**
  * @class SearchIndexController

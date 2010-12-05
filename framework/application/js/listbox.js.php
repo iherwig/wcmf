@@ -32,7 +32,7 @@ Listbox.prototype = {
             url:'<?php echo $APP_URL; ?>'
         }),
         
-        baseParams:{type:type, controller:'<?php echo $controller; ?>', context:'<?php echo $context; ?>', usr_action:'listbox', response_format:'JSON', sid:'<?php echo session_id() ?>', filter:filter},
+        baseParams:{type:type, controller:'<?php echo $controller; ?>', context:'<?php echo $context; ?>', action:'listbox', response_format:'JSON', sid:'<?php echo session_id() ?>', filter:filter},
 
         reader:new Ext.data.JsonReader({
             root:'objects',

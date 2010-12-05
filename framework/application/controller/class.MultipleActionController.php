@@ -19,8 +19,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/presentation/class.Controller.php");
-require_once(BASE."wcmf/lib/presentation/class.ActionMapper.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
 
 /**
  * @class MultipleActionController
@@ -44,11 +44,11 @@ require_once(BASE."wcmf/lib/presentation/class.ActionMapper.php");
  * @code
     data: {
       action1: {
-        usr_action: "new",
+        action: "new",
         type: "ChiGoal"
       }
       action2: {
-        usr_action: "display",
+        action: "display",
         oid: {last_created_oid:ChiGoal},
         omitMetaData: true
       }
@@ -136,7 +136,7 @@ class MultipleActionController extends Controller
       $request = new Request(
         'TerminateController',
         $data[$action]['context'], 
-        $data[$action]['usr_action'], 
+        $data[$action]['action'], 
         $data[$action]
       );
       $request->setFormat($this->_request->getFormat());

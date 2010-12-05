@@ -24,9 +24,9 @@
   oFCKeditor.Config['BaseHref'] = '{$appDir}';
   oFCKeditor.Config['CustomConfigurationsPath'] = '{$appDir}script/fckconfig.js';
   oFCKeditor.Config['StylesXmlPath'] = '{$appDir}script/fckstyles.xml';
-  oFCKeditor.Config['LinkBrowserURL'] = '{$appDir}main.php?usr_action=browseresources&type=link&subtype=content&sid={$sid}';
-  oFCKeditor.Config['ImageBrowserURL'] = '{$appDir}main.php?usr_action=browseresources&type=image&subtype=resource&sid={$sid}';
-  oFCKeditor.Config['FlashBrowserURL'] = '{$appDir}main.php?usr_action=browseresources&type=image&subtype=resource&sid={$sid}';
+  oFCKeditor.Config['LinkBrowserURL'] = '{$appDir}main.php?action=browseresources&type=link&subtype=content&sid={$sid}';
+  oFCKeditor.Config['ImageBrowserURL'] = '{$appDir}main.php?action=browseresources&type=image&subtype=resource&sid={$sid}';
+  oFCKeditor.Config['FlashBrowserURL'] = '{$appDir}main.php?action=browseresources&type=image&subtype=resource&sid={$sid}';
   
   // add additional attributes
 {foreach key=listkey item=listvalue from=$attributeList}

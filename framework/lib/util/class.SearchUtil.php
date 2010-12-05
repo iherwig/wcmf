@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-set_include_path(get_include_path().PATH_SEPARATOR.BASE.'wcmf/3rdparty/zend');
+set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/3rdparty/zend');
 
-require_once BASE.'wcmf/3rdparty/zend/Zend/Search/Lucene.php';
-require_once BASE.'wcmf/lib/util/class.InifileParser.php';
+require_once(WCMF_BASE.'wcmf/3rdparty/zend/Zend/Search/Lucene.php');
+require_once(WCMF_BASE.'wcmf/lib/util/class.InifileParser.php');
 
 /**
  * @class SearchUtil
@@ -184,7 +184,7 @@ class SearchUtil
       $parser = InifileParser::getInstance();
       if (($path = $parser->getValue(self::INI_INDEX_PATH, self::INI_SECTION)) !== false)
       {
-        self::$indexPath = BASE . 'application/' . $path;
+        self::$indexPath = WCMF_BASE . 'application/' . $path;
 
         if (!file_exists(self::$indexPath)) {
           FileUtil::mkdirRec(self::$indexPath);

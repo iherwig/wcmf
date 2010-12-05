@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/presentation/class.Controller.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/security/class.AuthUser.php");
-require_once(BASE."wcmf/lib/security/class.UserManager.php");
-require_once(BASE."wcmf/lib/persistence/class.LockManager.php");
-require_once(BASE."wcmf/lib/util/class.SessionData.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.AuthUser.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.UserManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
 
 /**
  * @class LoginController
@@ -104,8 +104,8 @@ class LoginController extends Controller
     }
   }
   /**
-   * If called with any usr_action except 'dologin' this Controller presents the login dialog else
-   * if usr_action is 'dologin' it checks the login data ('user' & 'password') and creates AuthUser object in the Session on
+   * If called with any action except 'dologin' this Controller presents the login dialog else
+   * if action is 'dologin' it checks the login data ('user' & 'password') and creates AuthUser object in the Session on
    * success.
    * @return Array of given context and action 'ok' on success, action 'failure' on failure.
    *         False if the login dialog is presented (Stop action processing chain).
@@ -154,6 +154,15 @@ class LoginController extends Controller
           setcookie('user', $request->getValue('user'), $expire);
           setcookie('password', $cookiePassword, $expire);
         }
+        
+        // return role names of the user
+        $roleNames = array();
+        $roles = $authUser->getRoles();
+        for ($i=0, $count=sizeof($roles); $i<$count; $i++) {
+          $roleNames[] = $roles[$i]->getName();
+        }
+        $response->setValue('roles', $roleNames);
+        
         $response->setAction('ok');
         return true;
       }
@@ -161,9 +170,7 @@ class LoginController extends Controller
       {
         // login failed
         $this->addError(ApplicationError::get('AUTHENTICATION_FAILED'));
-
-        $response->setAction('login');
-        return true;
+        return false;
       }
     }
     elseif ($request->getAction() == 'logout')

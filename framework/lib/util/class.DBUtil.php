@@ -16,9 +16,9 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/model/mapper/class.RDBMapper.php");
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBMapper.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
  * @class DBUtil

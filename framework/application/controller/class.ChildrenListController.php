@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/application/controller/class.NodeListController.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
-require_once(BASE."wcmf/lib/presentation/ListboxFunctions.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.NodeListController.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
 
 /**
  * @class ChildrenListController

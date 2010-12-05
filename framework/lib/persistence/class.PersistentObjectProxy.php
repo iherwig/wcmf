@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/persistence/class.PersistentObject.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistentObject.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 
 /**
  * @class PersistentObjectProxy

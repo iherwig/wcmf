@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/core/class.WCMFException.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.WCMFException.php");
 
 /**
  * @class PDFPage

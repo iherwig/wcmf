@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/presentation/class.Request.php");
-require_once(BASE."wcmf/lib/presentation/class.Response.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
 
 /**
  * @class ApplicationException

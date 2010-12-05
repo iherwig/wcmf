@@ -16,11 +16,11 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/presentation/format/class.Formatter.php");
-require_once(BASE."wcmf/lib/presentation/class.ApplicationError.php");
-require_once(BASE."wcmf/lib/i18n/class.Localization.php");
-require_once(BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.ApplicationError.php");
+require_once(WCMF_BASE."wcmf/lib/i18n/class.Localization.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 
 /**
  * @class Controller
@@ -260,10 +260,10 @@ abstract class Controller
     }
     
     // set wCMF specific values
-    $this->_response->setValue('_controller', get_class($this));
-    $this->_response->setValue('_context', $this->_response->getContext());
-    $this->_response->setValue('_action', $this->_response->getAction());
-    $this->_response->setValue('_responseFormat', $this->_response->getFormat());
+    $this->_response->setValue('controller', get_class($this));
+    $this->_response->setValue('context', $this->_response->getContext());
+    $this->_response->setValue('action', $this->_response->getAction());
+    $this->_response->setValue('responseFormat', $this->_response->getFormat());
 
     if ($this->_delegate !== null) {
       $this->_delegate->assignAdditionalResponseValues($this);

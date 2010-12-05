@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/visitor/class.Visitor.php");
-require_once(BASE."wcmf/lib/output/class.DefaultOutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/visitor/class.Visitor.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.DefaultOutputStrategy.php");
 /**
  * @class OutputVisitor
  * @ingroup Visitor

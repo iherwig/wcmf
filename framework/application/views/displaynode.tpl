@@ -1,6 +1,6 @@
 {extends file="lib:application/views/main.tpl"}
 
-{block name=head}
+{block name=head append}
 <script type="text/javascript">
 $(document).ready(function() {
     Ext.QuickTips.init();
@@ -102,8 +102,7 @@ $(document).ready(function() {
 </script>
 {/block}
 
-{block name=title}
-{include file="lib:application/views/include/title.tpl"}
+{block name=title append}
 <div id="tabnav">
   {include file="lib:application/views/include/root_type_tabs.tpl" rootType=$rootType}
 </div>

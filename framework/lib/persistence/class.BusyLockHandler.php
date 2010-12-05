@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/persistence/class.ILockHandler.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ILockHandler.php");
 
 /**
  * @class BusyLockManager

@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."application/dionysos/include/lib/class.DionysosException.php");
-require_once(BASE."wcmf/lib/model/class.NodeIterator.php");
-require_once(BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."application/dionysos/include/lib/class.DionysosException.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 
 /**
  * @class DionysosControllerDelegate
@@ -49,7 +49,7 @@ class DionysosControllerDelegate
 		}
 
 		// remove wcmf specific response values
-		$ignoreValues = array('usr_action');
+		$ignoreValues = array('action');
 		foreach ($ignoreValues as $key) {
 			$response->clearValue($key);
 		}
@@ -174,7 +174,7 @@ class DionysosControllerDelegate
 				for($i=0, $actions=array_keys($data), $numActions=sizeof($actions); $i<$numActions; $i++)
 				{
 					$action = $data['action'.$i]['action'];
-					$data['action'.$i]['usr_action'] = $actionMap[$action];
+					$data['action'.$i]['action'] = $actionMap[$action];
 				}
 
 				$request->setValue('data', $data);

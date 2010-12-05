@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/application/controller/class.BatchController.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.BatchController.php");
 
 /**
  * @class SimpleBatchController

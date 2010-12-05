@@ -3,11 +3,11 @@
  * This script converts a word into a wCMF password
  */
 error_reporting(E_ERROR | E_PARSE);
-define("BASE", realpath ("../../../")."/");
+define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/security/class.UserManager.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.UserManager.php");
 
 ?>
 <html>

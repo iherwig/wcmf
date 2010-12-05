@@ -16,11 +16,11 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/application/controller/class.BatchController.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/model/class.PersistentIterator.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/util/class.FileUtil.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.BatchController.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.PersistentIterator.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
 
 /**
  * @class XMLExportController

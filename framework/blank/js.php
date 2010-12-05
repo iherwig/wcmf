@@ -27,13 +27,13 @@ error_reporting(E_ERROR | E_PARSE);
  *          etc. using php inside the js file
  */
 require_once("base_dir.php");
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/util/class.URIUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
 
 if ($_GET['initApp'] == 1)
 {
   // initialize the application
-  require_once(BASE."wcmf/lib/presentation/class.Application.php");
+  require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
   $application = &Application::getInstance();
   $application->setupGlobals();
 }

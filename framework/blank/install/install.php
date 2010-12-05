@@ -16,23 +16,23 @@
  *
  * $Id$
  */
-define("BASE", realpath ("../../")."/");
+define("WCMF_BASE", realpath ("../../")."/");
 error_reporting(E_ERROR | E_PARSE);
 
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/util/class.FileUtil.php");
-require_once(BASE."wcmf/lib/util/class.DBUtil.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(BASE."wcmf/lib/security/class.UserManager.php");
-require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
-require_once(BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.DBUtil.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.UserManager.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 
 Log::info("initializing wCMF database tables...", "install");
 
 // get configuration from file
-$CONFIG_PATH = BASE.'application/include/';
+$CONFIG_PATH = WCMF_BASE.'application/include/';
 $configFile = $CONFIG_PATH.'config.ini';
 Log::info("configuration file: ".$configFile, "install");
 $parser = InifileParser::getInstance();

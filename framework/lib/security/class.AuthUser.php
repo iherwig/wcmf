@@ -16,11 +16,11 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/security/class.User.php");
-require_once(BASE."wcmf/lib/security/class.UserManager.php");
-require_once(BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(BASE."wcmf/lib/util/class.ObjectFactory.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.User.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.UserManager.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
  * @class AuthUser
@@ -401,7 +401,7 @@ class AuthUser extends User implements Storable
     }
     $roleClassName = ObjectFactory::getClassfileFromConfig($roleClassName);
 
-    return array(__FILE__, BASE.$userClassFile, BASE.$roleClassName);
+    return array(__FILE__, WCMF_BASE.$userClassFile, WCMF_BASE.$roleClassName);
   }
 
   /**

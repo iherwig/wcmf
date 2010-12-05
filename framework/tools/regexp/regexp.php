@@ -3,10 +3,10 @@
  * This script tests regular expressions
  */
 error_reporting(E_ERROR | E_PARSE);
-define("BASE", realpath ("../../../")."/");
+define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
-require_once(BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 ?>
 <html>
 <body>

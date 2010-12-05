@@ -16,11 +16,11 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/util/class.URIUtil.php");
-require_once(BASE."wcmf/lib/presentation/class.View.php");
-require_once(BASE."wcmf/lib/presentation/class.Controller.php");
-require_once(BASE."wcmf/lib/presentation/class.InternalLink.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.View.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.InternalLink.php");
 
 /**
  * @class DefaultControlRenderer
@@ -119,7 +119,7 @@ class DefaultControlRenderer
       throw new ConfigurationException("Unknown input control '".$type."'");
     }
 
-    $htmlString = $view->fetch(BASE.$parser->getValue($type, 'htmlform'));
+    $htmlString = $view->fetch(WCMF_BASE.$parser->getValue($type, 'htmlform'));
     return $htmlString;
   }
   /**

@@ -16,9 +16,9 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/util/class.FileUtil.php");
-require_once(BASE."wcmf/lib/util/class.DBUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.DBUtil.php");
 
 /**
  * @class CreateInstanceController

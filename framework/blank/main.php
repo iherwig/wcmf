@@ -19,13 +19,13 @@
 error_reporting(E_ALL | E_PARSE);
 
 require_once("base_dir.php");
-require_once(BASE."wcmf/lib/core/AutoLoader.php");
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/util/class.Message.php");
-require_once(BASE."wcmf/lib/presentation/class.Request.php");
-require_once(BASE."wcmf/lib/presentation/class.Application.php");
-require_once(BASE."wcmf/lib/presentation/class.ActionMapper.php");
-require_once(BASE."wcmf/lib/util/class.SearchUtil.php");
+require_once(WCMF_BASE."wcmf/lib/core/AutoLoader.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
 // initialize the application
 $application = Application::getInstance();
@@ -58,7 +58,7 @@ function onError($message, $file='', $line='')
   global $controller, $context, $action, $data, $responseFormat;
   static $numCalled = 0;
 
-  $data['errorMsg'] = $message;
+  $data['errorMessage'] = $message;
   Log::error($message."\n".Application::getStackTrace(), 'main');
 
   // rollback current transaction
@@ -76,7 +76,7 @@ function onError($message, $file='', $line='')
   {
     // make sure that no error can happen in this stage
     if ($responseFormat == MSG_FORMAT_JSON)
-      print JSONUtil::encode(array('success' => false, 'errorMsg' => $message));
+      print JSONUtil::encode(array('success' => false, 'errorMessage' => $message));
     else
       Log::fatal($message, 'main');
   }
@@ -85,7 +85,7 @@ function onError($message, $file='', $line='')
     // get old controller/context/action triple to restore application status
     $controller = Application::getCallParameter('old_controller', $controller);
     $context = Application::getCallParameter('old_context', $context);
-    $action = Application::getCallParameter('old_usr_action', $action);
+    $action = Application::getCallParameter('old_action', $action);
     $responseFormat = Application::getCallParameter('old_response_format', $responseFormat);
 
     // process old action

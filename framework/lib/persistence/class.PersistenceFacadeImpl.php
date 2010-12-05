@@ -16,16 +16,16 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/output/class.OutputStrategy.php");
-require_once(BASE."wcmf/lib/persistence/class.ObjectId.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
-require_once(BASE."wcmf/lib/persistence/class.ObjectQuery.php");
-require_once(BASE."wcmf/lib/persistence/class.StringQuery.php");
-require_once(BASE."wcmf/lib/persistence/class.PagingInfo.php");
-require_once(BASE."wcmf/lib/persistence/class.ChangeListener.php");
-require_once(BASE."wcmf/lib/core/class.ConfigurationException.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectQuery.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.StringQuery.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PagingInfo.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ChangeListener.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.ConfigurationException.php");
 
 /**
  * @class PersistenceFacadeImpl
@@ -335,9 +335,9 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
       // instantiate class if needed
       if (!$isAlreadyInUse)
       {
-        if (file_exists(BASE.$classFile))
+        if (file_exists(WCMF_BASE.$classFile))
         {
-          require_once(BASE.$classFile);
+          require_once(WCMF_BASE.$classFile);
           if ($initParams) {
             $mapperObj = new $mapperClass($initParams);
           }
@@ -358,9 +358,9 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
           if ($classFile != null)
           {
             // instatiate class
-            if (file_exists(BASE.$classFile))
+            if (file_exists(WCMF_BASE.$classFile))
             {
-              require_once(BASE.$classFile);
+              require_once(WCMF_BASE.$classFile);
               $converterObj = new $converterClass;
               $mapperObj->setDataConverter($converterObj);
             }

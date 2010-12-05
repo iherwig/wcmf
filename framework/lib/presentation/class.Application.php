@@ -18,14 +18,14 @@
  */
 require_once("base_dir.php");
 
-require_once(BASE."wcmf/lib/util/class.SessionData.php");
-require_once(BASE."wcmf/lib/output/class.LogOutputStrategy.php");
-require_once(BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/security/class.AuthUser.php");
-require_once(BASE."wcmf/lib/util/class.JSONUtil.php");
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/core/class.ErrorHandler.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.LogOutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.AuthUser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.JSONUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.ErrorHandler.php");
 
 /**
  * @class Application
@@ -98,9 +98,9 @@ class Application
     $implementationFiles = array_values($parser->getSection("implementation"));
     foreach($implementationFiles as $implementationFile)
     {
-      $impl = BASE.ObjectFactory::getClassfileFromConfig($implementationFile);
+      $impl = WCMF_BASE.ObjectFactory::getClassfileFromConfig($implementationFile);
       if (is_file($impl)) {
-        require_once(BASE.ObjectFactory::getClassfileFromConfig($implementationFile));
+        require_once(WCMF_BASE.ObjectFactory::getClassfileFromConfig($implementationFile));
       }
       else {
         throw new ConfigurationException("Implementation file ".$implementationFile." not found.");
@@ -123,7 +123,7 @@ class Application
     // (defaults to /LoginController//login in this application)
     $controller = Application::getCallParameter('controller', $defaultController);
     $context = Application::getCallParameter('context', $defaultContext);
-    $action = Application::getCallParameter('usr_action', $defaultAction);
+    $action = Application::getCallParameter('action', $defaultAction);
     $readonly = Application::getCallParameter('readonly', false);
     $requestFormat = Application::getCallParameter('request_format', $defaultResponseFormat);
     $responseFormat = Application::getCallParameter('response_format', $defaultResponseFormat);

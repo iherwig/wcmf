@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/visitor/class.Visitor.php");
-require_once(BASE."wcmf/lib/util/class.Position.php");
+require_once(WCMF_BASE."wcmf/lib/visitor/class.Visitor.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Position.php");
 /**
  * Some constants describing the map type
  */

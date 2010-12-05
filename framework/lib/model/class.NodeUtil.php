@@ -16,13 +16,13 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(BASE."wcmf/lib/util/class.FormUtil.php");
-require_once(BASE."wcmf/lib/model/class.Node.php");
-require_once(BASE."wcmf/lib/model/class.NodeIterator.php");
-require_once(BASE."wcmf/lib/model/class.NodeProcessor.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.FormUtil.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeProcessor.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 
 /**
  * Globals .

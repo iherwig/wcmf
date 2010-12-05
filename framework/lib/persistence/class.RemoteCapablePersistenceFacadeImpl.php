@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacadeImpl.php");
-require_once(BASE."wcmf/lib/remoting/class.RemotingFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacadeImpl.php");
+require_once(WCMF_BASE."wcmf/lib/remoting/class.RemotingFacade.php");
 
 /**
  * @class RemoteCapablePersistenceFacade
@@ -356,8 +356,8 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
 
     // register class definitions in session
     $objectFactory = ObjectFactory::getInstance();
-    $classFile = BASE.$objectFactory->getClassfileFromConfig(get_class($obj));
-    $mapperClassFile = BASE.$objectFactory->getClassfileFromConfig(get_class($obj->getMapper()));
+    $classFile = WCMF_BASE.$objectFactory->getClassfileFromConfig(get_class($obj));
+    $mapperClassFile = WCMF_BASE.$objectFactory->getClassfileFromConfig(get_class($obj->getMapper()));
     $session->addClassDefinitions(array($classFile, $mapperClassFile));
   }
 

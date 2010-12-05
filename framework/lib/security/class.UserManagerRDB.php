@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/security/class.UserManager.php");
-require_once(BASE."wcmf/lib/security/class.User.php");
-require_once(BASE."wcmf/lib/security/class.Role.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.UserManager.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.User.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.Role.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 
 /**
  * @class UserManagerRDB

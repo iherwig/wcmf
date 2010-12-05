@@ -1,5 +1,5 @@
 <?php
-define("BASE", realpath ("../../../")."/");
+define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
 define("IDLE", 1);
@@ -8,8 +8,8 @@ define("ID", 3);
 define("STR", 4);
 define("APPEND", 5);
 
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 // read config file
 $parser = &InifileParser::getInstance();

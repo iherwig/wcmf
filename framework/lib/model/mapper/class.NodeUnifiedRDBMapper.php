@@ -16,14 +16,14 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(BASE."wcmf/lib/model/class.Node.php");
-require_once(BASE."wcmf/lib/model/mapper/class.RDBMapper.php");
-require_once(BASE."wcmf/lib/model/mapper/class.RDBAttributeDescription.php");
-require_once(BASE."wcmf/lib/model/mapper/class.RDBManyToManyRelationDescription.php");
-require_once(BASE."wcmf/lib/model/mapper/class.RDBManyToOneRelationDescription.php");
-require_once(BASE."wcmf/lib/model/mapper/class.RDBOneToManyRelationDescription.php");
-require_once(BASE."wcmf/lib/model/mapper/class.ReferenceDescription.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBMapper.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBAttributeDescription.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBManyToManyRelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBManyToOneRelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBOneToManyRelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/class.ReferenceDescription.php");
 
 /**
  * @class NodeUnifiedRDBMapper

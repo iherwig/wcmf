@@ -16,10 +16,10 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/core/class.ConfigurationException.php");
-require_once(BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(BASE."wcmf/lib/presentation/class.View.php");
-require_once(BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/core/class.ConfigurationException.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.View.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
 
 /**
  * @class DefaultValueRenderer
@@ -84,7 +84,7 @@ class DefaultValueRenderer
     if ($viewTpl = $parser->getValue($type, 'htmldisplay') === false) {
       throw new ConfigurationException("Unknown value display '".$type."'");
     }
-    $htmlString = $view->fetch(BASE.$parser->getValue($type, 'htmldisplay'));
+    $htmlString = $view->fetch(WCMF_BASE.$parser->getValue($type, 'htmldisplay'));
     return $htmlString;
   }
   /**

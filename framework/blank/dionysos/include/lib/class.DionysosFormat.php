@@ -16,9 +16,9 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/util/class.JSONUtil.php");
-require_once(BASE."wcmf/lib/presentation/format/class.HierarchicalFormat.php");
-require_once(BASE."application/dionysos/include/lib/class.DionysosNodeSerializer.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.JSONUtil.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.HierarchicalFormat.php");
+require_once(WCMF_BASE."application/dionysos/include/lib/class.DionysosNodeSerializer.php");
 
 /**
  * DionysosFormatter collects the response data from all executed controllers

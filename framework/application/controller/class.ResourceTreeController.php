@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/application/controller/class.TreeViewController.php");
-require_once(BASE."wcmf/lib/presentation/class.InternalLink.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.TreeViewController.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.InternalLink.php");
 
 /**
  * @class ResourceTreeController

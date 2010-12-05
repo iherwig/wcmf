@@ -16,9 +16,9 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/application/controller/class.PagingController.php");
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.PagingController.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 
 /**
  * @class NodeListController

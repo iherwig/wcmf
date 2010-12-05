@@ -29,13 +29,15 @@
 *           {configvalue key="exportDir" section="cms" varname="exportDir"}
 * -------------------------------------------------------------
 */
-function smarty_function_configvalue($params, &$smarty)
+function smarty_function_configvalue($params, $smarty)
 {
-  $parser = &InifileParser::getInstance();
+  $parser = InifileParser::getInstance();
   $value = $parser->getValue($params['key'], $params['section'], false);
-  if (isset($params['varname']))
+  if (isset($params['varname'])) {
     $smarty->assign($params['varname'], $value);
-  else
+  }
+  else {
   	echo $value;
+  }
 }
 ?>

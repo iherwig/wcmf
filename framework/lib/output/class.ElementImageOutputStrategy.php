@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(BASE."wcmf/lib/output/class.ImageOutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.ImageOutputStrategy.php");
 /**
  * @class ElementImageOutputStrategy
  * @ingroup Output
