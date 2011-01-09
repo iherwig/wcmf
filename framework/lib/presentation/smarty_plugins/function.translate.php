@@ -36,7 +36,7 @@ function smarty_function_translate($params, &$smarty)
       array_push($variables, $params[$key]);
     }
   }
-  $value = Message::get($params['text'], $variables, $params['domain'], $params['lang']);
+  $value = Message::get($params['text'], $variables, $params['lang']);
   if (isset($params['varname'])) {
     $smarty->assign($params['varname'], $value);
   }

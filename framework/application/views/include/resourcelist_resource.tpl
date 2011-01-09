@@ -2,15 +2,15 @@
   <h2>{translate text="Content to link"}</h2>
 	<span class="spacer"></span>
   <span>
-    {$formUtil->getInputControl("value-1-upload_file-file:0", "file[style=\"width:250px; height:20px; line-height:20px; \"]", "", true)}<br />
-    {$formUtil->getInputControl("value-1-upload_file-file:1", "file[style=\"width:250px; height:20px; line-height:20px; \"]", "", true)}<br />
-    {$formUtil->getInputControl("value-1-upload_file-file:2", "file[style=\"width:250px; height:20px; line-height:20px; \"]", "", true)}<br />
+    {input name="value-upload_file-file:0" type="file[style=\"width:250px; height:20px; line-height:20px; \"]" value="" editable=true}<br />
+    {input name="value-1-upload_file-file:1" type="file[style=\"width:250px; height:20px; line-height:20px; \"]" value="" editable=true}<br />
+    {input name="value-1-upload_file-file:2" type="file[style=\"width:250px; height:20px; line-height:20px; \"]" value="" editable=true}<br />
   </span>
   <span class="left"><a href="javascript:setContext('resourcelist'); submitAction('save');">{translate text="Upload selected file(s)"}</a></span>
   <span class="left note">{translate text="Please note: Special characters like %1% are not allowed in the filename." r1="*?[]$|><&;()/\#'`:\""}</span>
 	<span class="spacer"></span>
   <h2>{translate text="Directories"}</h2>
-  <span>{$formUtil->getInputControl("newDir", "text[style=\"width:245px\"]", "", true)}<br />
+  <span>{input name="newDir" type="text[style=\"width:245px\"]" value="" editable=true}<br />
     <a href="javascript:submitAction('createDir');">{translate text="Create directory"}</a></span>
 	<span class="spacer"></span>
   <span>

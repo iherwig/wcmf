@@ -107,7 +107,7 @@ class SearchController extends AsyncPagingController
         if (PersistenceFacade::isKnownType($type))
         {
           $tpl = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
-          if ($this->isSearchable($tpl))
+          if ($tpl->getProperty('is_searchable') == true)
           {
             array_push($types, $type);
             $listBoxStr .= $type.'['.$tpl->getObjectDisplayName().']|';
@@ -151,8 +151,17 @@ class SearchController extends AsyncPagingController
         {
           $tpl = &$value;
           // modify values to be searchable with LIKE
-          $processor = new NodeProcessor('setSearchValue', array(), $this);
-          $processor->run($tpl, false);
+          $iter = new NodeValueIterator($tpl, false);
+          while (!$iter->isEnd())
+          {
+            $curNode = $iter->getCurrentNode();
+            $valueName = $iter->getCurrentAttribute();
+            $value = $curNode->getValue($valueName);
+            if (strlen($value) > 0) {
+              $curNode->setValue($valueName, "LIKE '%".$value."%'");
+            }
+            $iter->proceed();            
+          }
           break;
         }
       }
@@ -271,33 +280,6 @@ class SearchController extends AsyncPagingController
       
       $curNode->setValue('type', $curNode->getType());
       $curNode->setValue('displayValue', $curNode->getDisplayValue());      
-    }
-  }
-  /**
-   * Determine if a node represents a seachable type
-   * @param node The node to check
-   * @return True/False
-   */
-  function isSearchable($node)
-  {
-    return ($node->getProperty('is_searchable') == true);
-  }
-
-  /**
-   * NodeProcessor callbacks
-   */ 
-   
-  /**
-   * Resets the value on each attribute to be searchable with LIKE
-   * @param node A reference to the Node the holds the value (the template)
-   * @param valueName The name of the value
-   * @see NodeProcessor
-   */
-  function setSearchValue($node, $valueName)
-  {
-    $value = $node->getValue($valueName);
-    if (strlen($value) > 0) {
-      $node->setValue($valueName, "LIKE '%".$value."%'");
     }
   }
 }

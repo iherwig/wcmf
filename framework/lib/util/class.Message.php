@@ -16,9 +16,6 @@
  *
  * $Id$
  */
-// require file only if run in wcmf enviroment
-if (file_exists(WCMF_BASE."wcmf/lib/util/class.InifileParser.php"))
-  require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
  * @class Message
@@ -35,139 +32,114 @@ class Message
 {
   /**
    * The get() method is used to get a localized string.
-   * This method uses the GNU gettext (see PHP manual), 
-   * the localization directory must be given in the global variable $MESSAGE_LOCALE_DIR (configuration value 'localeDir' in section 'cms')
+   * The localization directory must be given in the global variable $MESSAGE_LOCALE_DIR 
+   * (configuration value 'localeDir' in section 'cms').
+   * Inside this directory there must be a messages_$lang.php files for each language 
+   * defining the translation for each message.
+   * For example the messages_de_DE file could have the following content:
+   * @code
+   * $messages_de_DE = array(
+   *   'up' => 'hoch',
+   *   'down' => 'runter',
+   *   ...
+   * );
+   * @endcode
    * @note The language is determined in one of 3 ways (in this order):
    * -# use the value of the global variable $MESSAGE_LANGUAGE (configuration value 'language' in section 'cms')
    * -# use the value of the global variable $_SERVER['HTTP_ACCEPT_LANGUAGE']
    * -# use the value of the given lang parameter
    * @param message The message to translate (\%0%, \%1%, ... will be replaced by given parameters).
    * @param parameters An array of values for parameter substitution in the message.
-   * @param domain The domain to get the text from, optional, default: 'main'.
    * @param lang The language, optional, default: ''.
    * @return The localized string
    * @note It is not recommended to use this method with concatenated strings because this
    * restricts the positions of words in translations. E.g. 'She was born in %1% on %2%'
    * translates to the german sentance 'Sie wurde am \%2% in \%1% geboren' with the variables
    * flipped.
-   * @note since gettext sometimes is not reliable (caching problem), it is possible to 
-   * use custom php arrays created from .po files. use wcmf/tools/po2array.php to create
-   * the appropriate messages_$lang.php files in the locale directories. the usage of these arrays
-   * is configurable by the ini file option 'usegettext' in section 'cms' if this option is set
-   * to 0 the method tries to search for the appropriate array definition.
    */
-  function get ($message, $parameters=null, $domain='', $lang='')
+  public static function get($message, $parameters=null, $lang='')
   {
-    if (!file_exists(WCMF_BASE."wcmf/lib/util/class.InifileParser.php"))
-      return $message;
-      
-    global $MESSAGE_LANGUAGE;
-    global $MESSAGE_LOCALE_DIR;
-    
-    // select language
-    if ($lang == '')
-    {
-      if ($MESSAGE_LANGUAGE != '')
-        $lang = $MESSAGE_LANGUAGE;
-      else if ($lang == '')
-        $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-    }      
-    if ($domain == '')
-      $domain = 'main';
-
-    // convert lang to language_COUNTRY format if not already done
-    $lang = preg_replace("/\-/", "_", $lang);
-    $lang = preg_replace("/(\w+)_(\w+)/e", "'\\1_'.strtoupper('\\2')", $lang);
-    // if _COUNTRY is missing, use language as country
-    if (strpos($lang, '_') === false)
-      $lang = $lang.'_'.strtoupper($lang);
-
-    $parser = &InifileParser::getInstance();
-    if (($useGetText = $parser->getValue('usegettext', 'cms')) === false)
-      $useGetText = 1;
-    
-    if ($useGetText)
-    {
-      // see if gettext is installed
-      if (function_exists('bindtextdomain') && function_exists('textdomain') && function_exists('gettext'))
-      {
-        // get localized message
-        putenv("LANGUAGE=".$lang);
-        putenv("LANG=".$lang);
-        putenv("LC_ALL=".$lang);
-        setlocale(LC_ALL, $lang);
-        bindtextdomain($domain, $MESSAGE_LOCALE_DIR);
-        textdomain($domain);
-        $localizedMessage = gettext($message);
-      }
-      else
-        $localizedMessage = $message;
+    // get the translations
+    $translations = self::getTranslations($lang);
+    if (isset($translations[$message])) {
+      $localizedMessage = $translations[$message];
     }
-    else 
-    {
-      // try to use custom array definitions as dictionary
-      $messageFile = $MESSAGE_LOCALE_DIR.$lang."/LC_MESSAGES/messages_".$lang.".php";
-      if (file_exists($messageFile))
-      {
-        require($messageFile); // require_once does not work here !!!
-        if (${"messages_$lang"}[$message] != "")
-          $localizedMessage = ${"messages_$lang"}[$message];
-        else
-          $localizedMessage = $message;
-      }
-      else
-        $localizedMessage = $message;
+    else {
+      $localizedMessage = $message;
     }
 
     // replace parameters
     preg_match_all("/%([0-9]+)%/", $localizedMessage, $matches);
     $matches = $matches[1];
-    for ($i=0; $i<sizeof($matches);$i++)
+    for ($i=0; $i<sizeof($matches);$i++) {
       $matches[$i] = '/\%'.$matches[$i].'\%/';
+    }
     sort($matches);
-    if (sizeof($matches) > 0 && is_array($parameters))
+    if (sizeof($matches) > 0 && is_array($parameters)) {
       $localizedMessage = preg_replace($matches, $parameters, $localizedMessage);
-    
+    }
     return $localizedMessage;
   }
   /**
    * The getAll() method is used to get a localized list of all defined strings.
    * See Message::get() for more information.
-   * This function only returns results if the ini file option 'usegettext' in section 'cms' is set
-   * to 0.
    * @param lang The language, optional, default: ''.
    * @return An array of localized string
    */
-  function getAll ($lang='')
+  public static function getAll($lang='')
   {
-    if (!file_exists(WCMF_BASE."wcmf/lib/util/class.InifileParser.php"))
-      return array();
-      
+    // get the translations
+    $translations = self::getTranslations($lang);
+    return $translations;
+  }
+  
+  /**
+   * Get the requested language in the language_COUNTRY format
+   * @param lang The language, optional, default: ''.
+   * @return The language code
+   */
+  private static function getLanguage($lang)
+  {
     global $MESSAGE_LANGUAGE;
-    global $MESSAGE_LOCALE_DIR;
     
     // select language
     if ($lang == '')
     {
-      if ($MESSAGE_LANGUAGE != '')
+      if ($MESSAGE_LANGUAGE != '') {
         $lang = $MESSAGE_LANGUAGE;
-      else if ($lang == '')
+      }
+      else if ($lang == '') {
         $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-    }      
-
+      }
+    }
+    
     // convert lang to language_COUNTRY format if not already done
     $lang = preg_replace("/\-/", "_", $lang);
     $lang = preg_replace("/(\w+)_(\w+)/e", "'\\1_'.strtoupper('\\2')", $lang);
     // if _COUNTRY is missing, use language as country
-    if (strpos($lang, '_') === false)
+    if (strpos($lang, '_') === false) {
       $lang = $lang.'_'.strtoupper($lang);
+    }
+    
+    return $lang;
+  }
 
-    $parser = &InifileParser::getInstance();
-    // try to use custom array definitions as dictionary
-    $messageFile = $MESSAGE_LOCALE_DIR.$lang."/LC_MESSAGES/messages_".$lang.".php";
+  /**
+   * Get all translations for a language.
+   * @param lang The language, optional, default: ''.
+   * @return The translations as associative array
+   */
+  private static function getTranslations($lang)
+  {
+    $lang = self::getLanguage($lang);
+    
+    global $MESSAGE_LOCALE_DIR;
+    global ${"messages_$lang"};
+    
+    $messageFile = $MESSAGE_LOCALE_DIR."/messages_".$lang.".php";
     if (file_exists($messageFile))
     {
-      require($messageFile); // require_once does not work here !!!
+      require_once($messageFile);
       return ${"messages_$lang"};
     }
     return array();

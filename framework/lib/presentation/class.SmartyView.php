@@ -14,10 +14,11 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id$
+ * $Id: class.View.php 1250 2010-12-05 23:02:43Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.IView.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
 
 /**
  * @class View
@@ -27,7 +28,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class View extends Smarty
+class SmartyView extends Smarty implements IView
 {
   /**
    * Setup the View for display (set directories, attributes, ...).
@@ -92,34 +93,28 @@ class View extends Smarty
 
   /**
    * Clear the complete cache
-   * @see Smarty::clear_all_cache()
+   * @see Smarty::clearAllCache()
    */
   public function clearAllCache()
   {
-    $view = new View();
-    $view->setup();
-    return $view->clearAllCache();
+    return $this->clearAllCache();
   }
   /**
    * Clear parts of cache
-   * @see Smarty::clear_cache()
+   * @see Smarty::clearCache()
    */
   public function clearCache($tplFile=null, $cacheId=null)
   {
-    $view = new View();
-    $view->setup();
-    return $view->clearCache($tplFile, $cacheId);
+    return $this->clearCache($tplFile, $cacheId);
   }
   /**
    * Check if a view is cached. Returns also false, if caching is disabled
    * to make sure that views get regenerated every time when expected.
-   * @see Smarty::is_cached()
+   * @see Smarty::isCached()
    */
   public function isCached($tplFile, $cacheId=null)
   {
-    $view = new View();
-    $view->setup();
-    return ($view->caching && $view->isCached($tplFile, $cacheId));
+    return ($this->caching && $this->isCached($tplFile, $cacheId));
   }
 }
 ?>

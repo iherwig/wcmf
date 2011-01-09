@@ -43,7 +43,7 @@ abstract class Visitor
     $this->doPreVisit();
     while(!($iterator->isEnd()))
     {
-      $currentObject = & $iterator->getCurrentObject();
+      $currentObject = & $iterator->getCurrentNode();
       $currentObject->acceptVisitor($this);
       $iterator->proceed();
     }

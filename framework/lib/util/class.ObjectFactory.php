@@ -34,7 +34,7 @@ class ObjectFactory
    * @param className The name of the class.
    * @return The class filename
    */
-  public static function getClassfileFromConfig($className)
+  public static function getClassfile($className)
   {
     // find class file
     $parser = InifileParser::getInstance();
@@ -42,6 +42,25 @@ class ObjectFactory
       throw new ConfigurationException($parser->getErrorMsg());
     }
     return $classFile;
+  }
+  /**
+   * Load a class definition from the 'classmapping' section.
+   * This method looks up the class name as key in the 'classmapping' section of the main
+   * configuration file and includes the desired class definition.
+   * @param className The name of the key in the 'classmapping' section.
+   */
+  public static function loadClassDefinition($className)
+  {
+    // find class file
+    $classFile = self::getClassfile($className);
+
+    // include class definition
+    if (file_exists(WCMF_BASE.$classFile)) {
+      require_once(WCMF_BASE.$classFile);
+    }
+    else {
+      throw new ConfigurationException("Classfile ".$classFile." not found.");
+    }
   }
   /**
    * Load a class definition from a configuration entry.
@@ -55,22 +74,48 @@ class ObjectFactory
   public static function loadClassDefinitionFromConfig($section, $classEntry)
   {
     // find class name
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     if (($className = $parser->getValue($classEntry, $section)) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
     }
-    // find class file
-    $classFile = self::getClassfileFromConfig($className);
-
     // include class definition
-    if (file_exists(WCMF_BASE.$classFile))
+    self::loadClassDefinition($className);
+    return $className;
+  }
+  /**
+   * Create an object from a classmapping entry.
+   * This method looks up the class name as key in the 'classmapping' section of the main
+   * configuration file and takes - if given - constructor parameters from the 'initparams'
+   * section. With this information it constructs the desired object.
+   * @param className The name of the key in the 'classmapping' section.
+   * @return A reference to an instance of the class.
+   */
+  public static function createInstance($className)
+  {
+    $obj = null;
+
+    // load class definition
+    self::loadClassDefinition($className);
+    
+    // find init parameters
+    $initParams = null;
+    $parser = InifileParser::getInstance();
+    if (($initSection = $parser->getValue($className, 'initparams')) !== false)
     {
-      require_once(WCMF_BASE.$classFile);
-      return $className;
+      if (($initParams = $parser->getSection($initSection)) === false) {
+        $initParams = null;
+      }
+    }
+    if ($initParams != null) {
+      $obj = new $className($initParams);
+    }
+    else if (class_exists($className)) {
+      $obj = new $className;
     }
     else {
-      throw new ConfigurationException("Classfile ".$classFile." not found.");
+      throw new ConfigurationException("Class ".$className." is not found defined.");
     }
+    return $obj;
   }
   /**
    * Create an object from a configuration entry.
@@ -84,31 +129,12 @@ class ObjectFactory
    */
   public static function createInstanceFromConfig($section, $classEntry)
   {
-    $obj = null;
-
     // load class definition
-    if (($className = self::loadClassDefinitionFromConfig($section, $classEntry)) !== false)
-    {
-      // find init parameters
-      $initParams = null;
-      $parser = InifileParser::getInstance();
-      if (($initSection = $parser->getValue($className, 'initparams')) !== false)
-      {
-        if (($initParams = $parser->getSection($initSection)) === false) {
-          $initParams = null;
-        }
-      }
-      if ($initParams != null) {
-        $obj = new $className($initParams);
-      }
-      else if (class_exists($className)) {
-        $obj = new $className;
-      }
-      else {
-        throw new ConfigurationException("Class ".$className." is not found defined.");
-      }
+    $parser = InifileParser::getInstance();
+    if (($className = $parser->getValue($classEntry, $section)) === false) {
+      throw new ConfigurationException($parser->getErrorMsg());
     }
-    return $obj;
+    return self::createInstance($className);
   }
 }
 ?>

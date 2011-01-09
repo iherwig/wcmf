@@ -8,7 +8,7 @@
 
 <div class="contentblock">
   <h3>{translate text="search for"}</h3>
-  {$formUtil->getInputControl("type", "select[onchange=\"setTarget(''); submitAction('definesearch');\"]#fix:$listBoxStr", $type, true)}
+  {input name="type" type="select[onchange=\"setTarget(''); submitAction('definesearch');\"]#fix:$listBoxStr" value=$type editable=true}
 </div>
 
 {include file="lib:application/views/include/error.tpl"}
@@ -25,13 +25,12 @@
 <div class="contentblock">
 	<h2>{$node->getObjectDisplayName()}&nbsp;</h2>
 	<span class="spacer"></span>
-{assign var="value_names" value=$node->getValueNames($cur_data_type)}
+{assign var="value_names" value=$node->getValueNames()}
 {section name=value_name_index loop=$value_names}
   {assign var="cur_value_name" value=$value_names[value_name_index]}
   <span class="dottedSeparator"></span>
   <span class="left">{translate text=$cur_value_name}</span>
-	<span class="right">{$formUtil->getInputControl($nodeUtil->getInputControlName($node, $cur_value_name, $cur_data_type), 
-    $node->getValueProperty($cur_value_name, 'input_type', $cur_data_type), '', true)}</span>
+	<span class="right">{input node=$node property=$cur_value_name value='' editable=true}</span>
 {/section}
 	<span class="spacer"></span>
 </div>

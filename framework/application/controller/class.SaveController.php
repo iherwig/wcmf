@@ -26,7 +26,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.GraphicsUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.FormUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Control.php");
 
 /**
  * @class SaveController
@@ -74,7 +74,7 @@ class SaveController extends Controller
     $nodeUtil = new NodeUtil();
 
     // get field name delimiter
-    $fieldDelimiter = FormUtil::getInputFieldDelimiter();
+    $fieldDelimiter = Control::getInputFieldDelimiter();
 
     // for saving existing nodes we need not know the correct relations between the nodes
     // so we store the nodes to save in an assoziative array (with their oids as keys) and iterate over it when saving

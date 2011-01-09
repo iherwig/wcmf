@@ -35,7 +35,7 @@ function __autoload($className)
   {
     // ask ObjectFactory first
     $objectFactory = &ObjectFactory::getInstance();
-    $classFile = $objectFactory->getClassfileFromConfig($className);
+    $classFile = $objectFactory->getClassfile($className);
     if ($classFile !== false) {
       $classMapping[$className] = WCMF_BASE.$classFile;
     }

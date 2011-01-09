@@ -308,16 +308,6 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
           throw new ConfigurationException("No PersistenceMapper found in configfile for type '".$type."' in section 'typemapping'");
         }
       }
-      // find mapper class file
-      $classFile = ObjectFactory::getClassfileFromConfig($mapperClass);
-      // find mapper params
-      $initParams = null;
-      if (($initSection = $parser->getValue($mapperClass, 'initparams')) !== false)
-      {
-        if (($initParams = $parser->getSection($initSection)) === false) {
-          throw new ConfigurationException("No '".$initSection."' section given in configfile.");
-        }
-      }
 
       // see if class is already instantiated and reuse it if possible
       $isAlreadyInUse = false;
@@ -335,39 +325,15 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
       // instantiate class if needed
       if (!$isAlreadyInUse)
       {
-        if (file_exists(WCMF_BASE.$classFile))
-        {
-          require_once(WCMF_BASE.$classFile);
-          if ($initParams) {
-            $mapperObj = new $mapperClass($initParams);
-          }
-          else {
-            $mapperObj = new $mapperClass;
-          }
-          $this->_mapperObjects[$type] = &$mapperObj;
-        }
-        else {
-          throw new ConfigurationException("Definition of PersistanceMapper ".$mapperClass." in '".$classFile."' not found.");
-        }
+        $mapperObj = ObjectFactory::createInstance($mapperClass);
+        $this->_mapperObjects[$type] = &$mapperObj;
 
-        // lookup converter
+        // lookup converter (optional)
         if (($converterClass = $parser->getValue($type, 'converter')) !== false ||
             ($converterClass = $parser->getValue('*', 'converter')) !== false)
         {
-          $classFile = ObjectFactory::getClassfileFromConfig($converterClass);
-          if ($classFile != null)
-          {
-            // instatiate class
-            if (file_exists(WCMF_BASE.$classFile))
-            {
-              require_once(WCMF_BASE.$classFile);
-              $converterObj = new $converterClass;
-              $mapperObj->setDataConverter($converterObj);
-            }
-            else {
-              throw new ConfigurationException("Definition of DataConverter ".$converterClass." in '".$classFile."' not found.");
-            }
-          }
+          $converterObj = ObjectFactory::createInstance($converterClass);
+          $mapperObj->setDataConverter($converterObj);
         }
       }
     }

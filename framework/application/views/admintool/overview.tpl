@@ -110,9 +110,9 @@
 	<span class="spacer"></span>
   <h2>{translate text="Backup"}</h2>
   {assign var="defaultBackupName" value=$smarty.now|date_format:"%Y-%m-%d"}
-  <span class="left">{$formUtil->getInputControl("makeBackupName", 'text[class="wide"]', $defaultBackupName, true)}</span>
+  <span class="left">{input name="makeBackupName" type='text[class="wide"]' value=$defaultBackupName editable=true}</span>
   <span class="left"><a href="javascript:newWindowEx('AdminController', '', 'makebackup', 'backupWindow', 'width=360,height=120,scrollbars=no,locationbar=no', '&backupName='+getVariable('makeBackupName')+'&paramsSection=database&sourceDir=include/');" class="cms">{translate text="Create Backup"}</a></span>
-  <span class="left">{$formUtil->getInputControl("restoreBackupName", 'select[class="wide"]#fkt:g_getBackupNames', "", true)}</span>
+  <span class="left">{input name="restoreBackupName" type='select[class="wide"]#fkt:g_getBackupNames' value="" editable=true}</span>
   <span class="left"><a href="javascript:newWindowEx('AdminController', '', 'restorebackup', 'backupWindow', 'width=360,height=120,scrollbars=no,locationbar=no', '&backupName='+getVariable('restoreBackupName')+'&paramsSection=database&sourceDir=include/');" class="cms">{translate text="Restore Backup"}</a></span>  
 </div>
 

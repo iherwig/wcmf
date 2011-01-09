@@ -33,7 +33,7 @@ require_once(WCMF_BASE."wcmf/lib/i18n/class.Localization.php");
  * @param realOIDs True/False indicates wether to fetch ids (false) or oids (true) [default: false]
  * @param language A language code if the returned data should be localized, optional [default: null]
  * @return An assoziative array with the database ids (or object ids depending on the last parameter) as keys and the display values as values
- * @note This function is especially useful as fkt parameter for list input type see FormUtil::getInputControl()
+ * @note This function is especially useful as fkt parameter for list input type see Control::render()
  */
 function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $language=null)
 {

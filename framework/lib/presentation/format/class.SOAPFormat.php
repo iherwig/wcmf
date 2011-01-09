@@ -20,6 +20,11 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeSerializer.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.HierarchicalFormat.php");
 
 /**
+ * Define the message format
+ */
+define("MSG_FORMAT_SOAP", "SOAP");
+
+/**
  * @class SOAPFormat
  * @ingroup Format
  * @brief SOAPFormat realizes the SOAP request/response format. Nodes are serialized
@@ -57,4 +62,7 @@ class SOAPFormat extends HierarchicalFormat
     return $node;
   }
 }
+
+// register this format
+Formatter::registerFormat(MSG_FORMAT_SOAP, "SOAPFormat");
 ?>

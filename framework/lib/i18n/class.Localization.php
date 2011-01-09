@@ -208,8 +208,13 @@ class Localization
       $translations = $query->execute(BUILDDEPTH_SINGLE);
 
       // set the translated values in the object
-      $processor = new NodeProcessor('setTranslatedValue', array(&$translations, $useDefaults), new Localization());
-      $processor->run($object, false);
+      $iter = new NodeValueIterator($object, false);
+      while(!$iter->isEnd())
+      {
+        $this->setTranslatedValue($iter->getCurrentNode(), $iter->getCurrentAttribute(), 
+          $translations, $useDefaults);
+        $iter->proceed();                    
+      }
     }
 
     // recurse if requested
@@ -252,9 +257,13 @@ class Localization
       $translations = $query->execute(BUILDDEPTH_SINGLE);
 
       // save the translations
-      $processor = new NodeProcessor('saveTranslatedValue', array(&$translations, $lang, $saveEmptyValues),
-        new Localization());
-      $processor->run($object, false);
+      $iter = new NodeValueIterator($object, false);
+      while(!$iter->isEnd())
+      {
+        $this->saveTranslatedValue($iter->getCurrentNode(), $iter->getCurrentAttribute(), 
+          $translations, $lang, $saveEmptyValues);
+        $iter->proceed();                    
+      }
     }
 
     // recurse if requested
@@ -327,28 +336,33 @@ class Localization
     }
   }
   /**
-   * Callback for setting translated values in the given object
-   * @see NodeProcessor
+   * Set a translated value in the given PersistentObject instance.
+   * @param object The object to set the value on. The object
+   *    is supposed to have it's values in the default language.
+   * @param valueName The name of the value to translate
+   * @param translations An array of translation instances for the object.
+   * @param useDefaults True/False wether to use the default language if no translation is
+   *    found or not.
    */
-  private function setTranslatedValue(&$obj, $valueName, $translations, $useDefaults)
+  private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults)
   {
-    $inputType = $obj->getValueProperty($valueName, 'input_type');
+    $inputType = $object->getValueProperty($valueName, 'input_type');
     $inputTypes = $this->getIncludedInputTypes();
     if (in_array($inputType, $inputTypes))
     {
       // empty the value, if the default language values should not be used
       if (!$useDefaults) {
-        $obj->setValue($valueName, null);
+        $object->setValue($valueName, null);
       }
       // translate the value
-      for ($i=0; $i<sizeof($translations); $i++)
+      for ($i=0, $count=sizeof($translations); $i<$count; $i++)
       {
         $curValueName = $translations[$i]->getAttribute();
         if ($curValueName == $valueName)
         {
           $translation = $translations[$i]->getTranslation();
           if (!($useDefaults && strlen($translation) == 0)) {
-            $obj->setValue($valueName, $translation);
+            $object->setValue($valueName, $translation);
           }
           break;
         }
@@ -356,22 +370,26 @@ class Localization
     }
   }
   /**
-   * Callback for saving translated values for the given object
-   * @see NodeProcessor
+   * Save translated values for the given object
+   * @param object The object to save the translations on
+   * @param valueName The name of the value to translate
+   * @param existingTranslations An array of already existing translation instances for the object.
+   * @param lang The language of the translations.
+   * @param saveEmptyValues True/False wether to also save empty translations or not.
    */
-  private function saveTranslatedValue(&$obj, $valueName, $existingTranslations, $lang, $saveEmptyValues)
+  private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang, $saveEmptyValues)
   {
-    $inputType = $obj->getValueProperty($valueName, 'input_type');
+    $inputType = $object->getValueProperty($valueName, 'input_type');
     $inputTypes = $this->getIncludedInputTypes();
     if (in_array($inputType, $inputTypes))
     {
-      $value = $obj->getValue($valueName);
+      $value = $object->getValue($valueName);
       if ($saveEmptyValues || strlen($value) > 0)
       {
         $translation = null;
 
         // check if a translation already exists
-        for ($i=0; $i<sizeof($existingTranslations); $i++)
+        for ($i=0, $count=sizeof($existingTranslations); $i<$count; $i++)
         {
           $curValueName = $existingTranslations[$i]->getAttribute();
           if ($curValueName == $valueName)
@@ -389,9 +407,9 @@ class Localization
         }
 
         // set all required properties and save
-        $translation->setObjectid($obj->getOID());
+        $translation->setObjectid($object->getOID());
         $translation->setAttribute($valueName);
-        $translation->setTranslation($obj->getValue($valueName));
+        $translation->setTranslation($object->getValue($valueName));
         $translation->setLanguage($lang);
         $translation->save();
       }

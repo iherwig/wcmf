@@ -19,9 +19,9 @@
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ChangeListener.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeProcessor.php");
 
 /**
  * Some constants describing the build process
@@ -341,7 +341,7 @@ class ObjectQuery implements ChangeListener
     $iterator = new NodeIterator($this->_root);
     while(!($iterator->isEnd()))
     {
-      $currentObject = $iterator->getCurrentObject();
+      $currentObject = $iterator->getCurrentNode();
       if ($currentObject->getOID() != $this->_root->getOID() && !in_array($currentObject->getOID(), $this->_groupedOIDs)) {
         $this->processObjectTemplate($currentObject, $tableArray, $conditionStr, $relationArray);
       }
@@ -406,8 +406,13 @@ class ObjectQuery implements ChangeListener
     array_push($tableArray, self::getTableName($tpl, true));
 
     // add conditions
-    $processor = new NodeProcessor('makeConditionStr', array($tpl->getValue("object_query_inter_operator")), $this);
-    $processor->run($tpl, false);
+    $iter = new NodeValueIterator($tpl, false);
+    while(!$iter->isEnd())
+    {
+      $this->makeConditionStr($iter->getCurrentNode(), $iter->getCurrentAttribute(), 
+        $tpl->getValue("object_query_inter_operator"));
+      $iter->proceed();
+    }
     $curConditionStr = $tpl->getValue("object_query_query_condition");
     if (strlen($curConditionStr) > 0)
     {
@@ -519,12 +524,11 @@ class ObjectQuery implements ChangeListener
     return '';
   }
   /**
-   * Build a condition string from an object template. Used as a callback for a NodeProcessor.
+   * Build a condition string from an object template.
    * Adds each value condition to the "object_query_query_condition" value
    * @param node A reference to the Node the holds the value (the template)
    * @param valueName The name of the value
    * @param operator The operator to connect the value conditions with
-   * @see NodeProcessor
    */
   protected function makeConditionStr(Node $node, $valueName, $operator)
   {

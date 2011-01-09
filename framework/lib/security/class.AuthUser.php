@@ -394,12 +394,12 @@ class AuthUser extends User implements Storable
     if (($userClassName = $parser->getValue('User', 'implementation')) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
     }
-    $userClassFile = ObjectFactory::getClassfileFromConfig($userClassName);
+    $userClassFile = ObjectFactory::getClassfile($userClassName);
 
     if (($roleClassName = $parser->getValue('Role', 'implementation')) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
     }
-    $roleClassName = ObjectFactory::getClassfileFromConfig($roleClassName);
+    $roleClassName = ObjectFactory::getClassfile($roleClassName);
 
     return array(__FILE__, WCMF_BASE.$userClassFile, WCMF_BASE.$roleClassName);
   }

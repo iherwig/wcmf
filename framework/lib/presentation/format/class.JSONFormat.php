@@ -21,6 +21,11 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeSerializer.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.HierarchicalFormat.php");
 
 /**
+ * Define the message format
+ */
+define("MSG_FORMAT_JSON", "JSON");
+
+/**
  * JSONFormatter collects the response data from all executed controllers
  * into one response array and returns it all at once at the end of
  * script execution. This prevents from having multiple junks of json
@@ -36,6 +41,12 @@ function gPrintJSONResult()
     if ($data != null)
     {
       $encoded = JSONUtil::encode($data);
+      if (Log::isDebugEnabled('JSONFormat'))
+      {
+        Log::debug($data, 'JSONFormat');
+        Log::debug($encoded, 'JSONFormat');
+      }
+      header("Content-Type: application/json");
       print($encoded);
     }
   }
@@ -46,10 +57,9 @@ register_shutdown_function('gPrintJSONResult');
  * @class JSONFormat
  * @ingroup Format
  * @brief JSONFormat realizes the JSON request/response format. All data will
- * be de-/serialized using the json_encode/json_encode method if avalaible or
- * JSON.php as fallback, except for Nodes. Nodes are serialized into an array
- * before encoding (see JSONFormat::serializeValue). On serialization the data
- * will be outputted directly using the print command.
+ * be de-/serialized using the json_encode/json_encode method except for Nodes.
+ * Nodes are serialized into an array before encoding (see JSONFormat::serializeValue). 
+ * On serialization the data will be outputted directly using the print command.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -82,7 +92,13 @@ class JSONFormat extends HierarchicalFormat
    */
   protected function isSerializedNode($key, &$value)
   {
-    return ((is_object($value) || is_array($value)) && isset($value['oid']) && isset($value['type']));
+    $syntaxOk = ((is_object($value) || is_array($value)) && 
+      isset($value['className']) && isset($value['oid']) && isset($value['attributes']));
+    // check for oid variables
+    if ($syntaxOk && preg_match('/^\{.+\}$/', $value['oid'])) {
+      $syntaxOk = false;
+    }
+    return $syntaxOk;
   }
 
   /**
@@ -91,7 +107,7 @@ class JSONFormat extends HierarchicalFormat
   protected function serializeNode($key, &$value)
   {
     // use NodeSerializer to serialize
-    return NodeSerializer::serializeNode($value, false);
+    return NodeSerializer::serializeNode($value);
   }
 
   /**
@@ -100,14 +116,26 @@ class JSONFormat extends HierarchicalFormat
   protected function deserializeNode($key, &$value)
   {
     if (is_array($value)) {
-      $type = $value['type'];
+      $oidStr = $value['oid'];
     }
     if (is_object($value)) {
-      $type = $value->type;
+      $oidStr = $value->oid;
     }
+    $oid = ObjectId::parse($oidStr);
+    if ($oid == null) {
+      throw new IllegalArgumentException("The object id '".$oid."' is invalid");
+    }
+
     // use NodeSerializer to deserialize
     $node = NodeSerializer::deserializeNode($type, $value, false);
+    $node->setOID($oid);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug($node->toString(), __CLASS__);
+    }
     return $node;
   }
 }
+
+// register this format
+Formatter::registerFormat(MSG_FORMAT_JSON, "JSONFormat");
 ?>

@@ -30,12 +30,29 @@ require_once(WCMF_BASE."wcmf/lib/util/class.EncodingUtil.php");
  */
 class Formatter
 {
+  private static $_formats = array();
+  
+  /**
+   * Register a IFormat implementation for formatting messages.
+   * This method must be called for all IFormat implementations in order
+   * to be usable.
+   * @param formatName The name of the format as used in requests/responses (case insensitive)
+   * @param className The name of the implementation class
+   */
+  public static function registerFormat($formatName, $className)
+  {
+    $impl = new $className;
+    if (!($impl instanceof IFormat)) {
+      throw new ConfigurationException($className." must implement IFormat.");
+    }
+    self::$_formats[strtolower($formatName)] = $className;
+  }
   /**
    * Deserialize Request data into objects.
    * @note UTF-8 encoded request data is decoded automatically
    * @param request A reference to the Request instance
    */
-  public function deserialize(Request $request)
+  public static function deserialize(Request $request)
   {
     // get the formatter that should be used for this request format
     $format = $request->getFormat();
@@ -44,9 +61,10 @@ class Formatter
       // default to html (POST/GET variables) format
       $format = MSG_FORMAT_HTML;
     }
-    $formatter = ObjectFactory::createInstanceFromConfig('implementation', $format.'Format');
+    $formatter = self::getFormatImplementation($format);
     if ($formatter === null) {
-      throw new ConfigurationException($objectFactory->getErrorMsg()."\nRequest: ".$request->toString());
+      throw new ConfigurationException("No IFormat implementation registered for ".$format.
+      	".\nRequest: ".$request->__toString());
     }
     // decode UTF-8
     $data = $request->getData();
@@ -64,20 +82,34 @@ class Formatter
    * Serialize Response according to the output format.
    * @param response A reference to the Response instance
    */
-  public function serialize(Response $response)
+  public static function serialize(Response $response)
   {
     // get the formatter that should be used for this response format
     $format = $response->getFormat();
     if ($format == null)
     {
       // the response format must be given!
-      throw new ConfigurationException("No response format defined for ".$response->toString());
+      throw new ConfigurationException("No response format defined for ".$response->__toString());
     }
-    $formatter = ObjectFactory::createInstanceFromConfig('implementation', $format.'Format');
+    $formatter = self::getFormatImplementation($format);
     if ($formatter === null) {
-      throw new ConfigurationException($objectFactory->getErrorMsg()."\nResponse: ".$response->toString());
+      throw new ConfigurationException("No IFormat implementation registered for ".$format.
+      	".\nResponse: ".$response->__toString());
     }
     $formatter->serialize($response);
+  }
+  /**
+   * Get the format implementation
+   * @param formatName The name of the format
+   * @return An instance of an IFormat implementation
+   */
+  private static function getFormatImplementation($formatName)
+  {
+    $formatName = strtolower($formatName);
+    if (isset(self::$_formats[$formatName])) {
+      return new self::$_formats[$formatName];
+    }
+    return null;
   }
 }
 ?>

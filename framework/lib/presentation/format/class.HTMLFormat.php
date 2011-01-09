@@ -17,14 +17,18 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.AbstractFormat.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/class.View.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.IView.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/control/class.Control.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.FormUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.Obfuscator.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
+
+/**
+ * Define the message format
+ */
+define("MSG_FORMAT_HTML", "HTML");
 
 /**
  * @class HTMLFormat
@@ -51,7 +55,7 @@ class HTMLFormat extends AbstractFormat
     $nodeValues = array();
     foreach ($data as $key => $value)
     {
-      $valueDef = NodeUtil::getValueDefFromInputControlName($key);
+      $valueDef = Control::getValueDefFromInputControlName($key);
       if ($valueDef != null && strlen($valueDef['oid']) > 0)
       {
         $node = &$this->getNode($valueDef['oid']);
@@ -105,8 +109,6 @@ class HTMLFormat extends AbstractFormat
       $parser = InifileParser::getInstance();
       $rightsManager = RightsManager::getInstance();
       $authUser = $rightsManager->getAuthUser();
-      $view->assignByRef('formUtil', new FormUtil());
-      $view->assignByRef('nodeUtil', new NodeUtil());
       $view->assignByRef('obfuscator', Obfuscator::getInstance());
       if ($authUser != null) {
         $view->assignByRef('authUser', $authUser);
@@ -141,4 +143,7 @@ class HTMLFormat extends AbstractFormat
     return $view;
   }
 }
+
+// register this format
+Formatter::registerFormat(MSG_FORMAT_HTML, "HTMLFormat");
 ?>

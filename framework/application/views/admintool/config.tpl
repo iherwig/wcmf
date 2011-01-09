@@ -25,7 +25,7 @@
 {if $ismainconfigfile}
 	<span class="right">{$configFilenameNoExtension}.ini</span>
 {else}
-  <span class="right">{$formUtil->getInputControl("name", "text", $configFilenameNoExtension, true)}.ini</span>
+  <span class="right">{input name="name" type="text" value=$configFilenameNoExtension editable=true}.ini</span>
 {/if}
 	<span class="spacer"></span>
 </div>
@@ -40,7 +40,7 @@
 {cycle name=section_cycle values=light,dark assign=style}
 {if $configfile->isEditable($sectionname)}
   <div class="row{$style}">
-  	<span class="left">{$formUtil->getInputControl("$controlnamesection", "text[class=\"small$style\"]", $sectionname, true)}</span>
+  	<span class="left">{input name=$controlnamesection type="text[class=\"small$style\"]" value=$sectionname editable=true}</span>
   	<span class="right"><a href="#{$sectionname}" class="{$style}"><img src="images/edit.png" alt="{translate text="Edit %1%" r1=$sectionname}" title="{translate text="Edit %1%" r1=$sectionname}" border="0"></a> <a href="javascript:if(doDelete('{$controlnamesection}', true, '{translate text="Really delete section %1%?" r1=$sectionname}')) submitAction('delsection');" class="{$style}"><img src="images/delete.png" alt="{translate text="Delete section %1%" r1=$sectionname}" title="{translate text="Delete section %1%" r1=$sectionname}" border="0"></a></span>
   </div>
 {else}
@@ -68,7 +68,7 @@
 		{if $configfile->isEditable($sectionname)}
 			{cycle name=section_cycle values=light,dark assign=style}
   <div class="row{$style}">
-  	<span class="left wide">{$formUtil->getInputControl("$controlnameoption", "text[class=\"small$style\"]", $option, true)}<a name="{$sectionname|cat:"_"|cat:$option}">&nbsp;</a> {$formUtil->getInputControl("$controlnamevalue", "text[class=\"small$style\"]", $value, true)}</span>
+  	<span class="left wide">control name=$controlnameoption type="text[class=\"small$style\"]" value=$option editable=true}<a name="{$sectionname|cat:"_"|cat:$option}">&nbsp;</a> {input name=$controlnamevalue type="text[class=\"small$style\"]" value=$value editable=true}</span>
   	<span class="right"><a href="javascript:if(doDelete('{$controlnameoption}', true, '{translate text="Really delete option %1%?" r1=$option}')) submitAction('deloption');" class="{$style}"><img src="images/delete.png" alt="{translate text="Delete option %1%" r1=$option"}" border="0"></a></span>
   </div>
 		{else}

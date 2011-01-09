@@ -27,10 +27,10 @@
 {assign var="configname" value=$configfiles[configindex]}
   	<span class="all">{translate text="File"}: {$configname}</span>
 {assign var="controlname" value=$rightname|cat:"_allow_"|cat:$configname|regex_replace:"/[ \.]/":""}
-    <span class="left">{$formUtil->getInputControl("$controlname", "select[class='multiselect' multiple]#fix:$allroles", $rights.$configname.$rightname.allow, true)}<br />
+    <span class="left">{input name=$controlname type="select[class='multiselect' multiple]#fix:$allroles" value=$rights.$configname.$rightname.allow editable=true}<br />
       <a href="#" onclick="javascript:document.forms[0].elements['{$controlname}[]'].selectedIndex=-1">remove all</a></span>
 {assign var="controlname" value=$rightname|cat:"_deny_"|cat:$configname|regex_replace:"/[ \.]/":""}
-    <span class="right">{$formUtil->getInputControl("$controlname", "select[class='multiselect' multiple]#fix:$allroles", $rights.$configname.$rightname.deny, true)}<br />
+    <span class="right">{input name=$controlname type="select[class='multiselect' multiple]#fix:$allroles" value=$rights.$configname.$rightname.deny editable=true}<br />
       <a href="#" onclick="javascript:document.forms[0].elements['{$controlname}[]'].selectedIndex=-1">remove all</a></span>
 {/section}
    	<span class="spacer"></span>

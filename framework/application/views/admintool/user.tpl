@@ -25,24 +25,24 @@
   {if $cur_value_name != "password"}
   <span class="dottedSeparator"></span>
   <span class="left" title="{$principal->getValueDescription($cur_value_name, $cur_data_type)}">{$principal->getValueDisplayName($cur_value_name, $cur_data_type)}</span>
-  <span class="right">{$nodeUtil->getInputControl($principal, $cur_value_name, $cur_data_type)}</span>
+  <span class="right">{input node=$principal property=$cur_value_name}</span>
   {/if}
 {/section}
   <span class="spacer"></span>
   {* password *}
-  <span class="all">{$formUtil->getInputControl("changepassword", "checkbox[class=\"check\"]#fix:", "no", true)} {translate text="Change Password"}</span>
+  <span class="all">{input name="changepassword" type="checkbox[class=\"check\"]#fix:" value="no" editable=true} {translate text="Change Password"}</span>
   <span class="dottedSeparator"></span>
   <span class="left">{translate text="New Password"}</span>
-  <span class="right">{$formUtil->getInputControl("newpassword1", "password", "", true)}</span>
+  <span class="right">{input name="newpassword1" type="password" value="" editable=true}</span>
   <span class="dottedSeparator"></span>
   <span class="left">{translate text="New Password Repeated"}</span>
-  <span class="right">{$formUtil->getInputControl("newpassword2", "password", "", true)}</span>
+  <span class="right">{input name="newpassword2" type="password" value="" editable=true}</span>
   <span class="spacer"></span>
   {* roles *}
   <span class="spacer"></span>
   <h2>{translate text="Roles"}</h2>
   <span class="dottedSeparator"></span>
-  <span class="all">{$formUtil->getInputControl("principals", "checkbox[class=\"check\"]#fix:$principalBaseList", $principalList, true)}</span>
+  <span class="all">{input name="principals" type="checkbox[class=\"check\"]#fix:$principalBaseList" value=$principalList editable=true}</span>
   <span class="spacer"></span>
 </div>
 

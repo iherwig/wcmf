@@ -115,7 +115,7 @@ class LayoutVisitor extends Visitor
   			$nIter = new NodeIterator($leftSibling);
             while(!($nIter->isEnd()))
   			{
-  			  $curObject = $nIter->getCurrentObject();
+  			  $curObject = $nIter->getCurrentNode();
   			  $curPosition = $this->_map[$curObject->getOID()];
   			  if ($curPosition->x >= $maxX) {
   			    $maxX = $curPosition->x;

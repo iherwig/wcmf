@@ -2,8 +2,8 @@
 
 {block name=head append}
 <script type="text/javascript">
+<!--
 $(document).ready(function() {
-    Ext.QuickTips.init();
 {if $viewMode == 'detail'}
     var grids = [];
     var columDefs = [];
@@ -99,6 +99,7 @@ $(document).ready(function() {
   {/if}
 {/if}
 });
+-->
 </script>
 {/block}
 
@@ -128,7 +129,7 @@ $(document).ready(function() {
     {$cur_value_name=$value_names[value_name_index]}
   <span class="dottedSeparator"></span>
   <span class="left" title="{$node->getValueDescription($cur_value_name, $cur_data_type)}">{$node->getValueDisplayName($cur_value_name, $cur_data_type)}</span>
-  <span class="right">{$nodeUtil->getInputControl($node, $cur_value_name, $cur_data_type)}</span>
+  <span class="right">{input node=$node property=$cur_value_name}</span>
   {/section}
   <span class="spacer"></span>
   {foreach item=template from=$possibleparents}

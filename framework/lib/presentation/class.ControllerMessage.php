@@ -18,13 +18,6 @@
  */
 
 /**
- * Some constants describing the different message formats
- */
-define("MSG_FORMAT_HTML", "HTML");
-define("MSG_FORMAT_JSON", "JSON");
-define("MSG_FORMAT_SOAP", "SOAP");
-
-/**
  * @class ControllerMessage
  * @ingroup Presentation
  * @brief ControllerMessages are sent between Controllers and are used to transfer data

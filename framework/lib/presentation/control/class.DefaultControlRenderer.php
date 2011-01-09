@@ -71,7 +71,7 @@ class DefaultControlRenderer
    * @param error The input validation error if existing
    * @param attributes An attribute string to be placed in the input control tag (defining its appearance)
    * @param listMap An assoziative array defining the possible values for list controls
-   *        (e.g. select control) see FormUtil::getListMap
+   *        (e.g. select control) see Control::getListMap
    * @param inputType The original control definition string
    * @return The HMTL definition string of the input control
    */
@@ -167,7 +167,7 @@ class DefaultControlRenderer
   {
     $parser = InifileParser::getInstance();
     $view->assign('maxFileSize', DefaultControlRenderer::getMaxFileSize());
-    $view->assign('fieldDelimiter', FormUtil::getInputFieldDelimiter());
+    $view->assign('fieldDelimiter', Control::getInputFieldDelimiter());
     $view->assign('uploadDir', $parser->getValue('uploadDir', 'media'));
   }
   /**

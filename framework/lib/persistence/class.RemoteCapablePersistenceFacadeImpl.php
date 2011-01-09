@@ -257,7 +257,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
         $iter = new NodeIterator($obj);
         while (!$iter->isEnd())
         {
-          $curNode = $iter->getCurrentObject();
+          $curNode = $iter->getCurrentNode();
           $oids = $this->makeUmis(array($curNode->getOID()), $umiPrefix);
           $curNode->setOID($oids[0]);
           // TODO implement this for new Node class
@@ -355,9 +355,8 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     $session->set($varName, $objects);
 
     // register class definitions in session
-    $objectFactory = ObjectFactory::getInstance();
-    $classFile = WCMF_BASE.$objectFactory->getClassfileFromConfig(get_class($obj));
-    $mapperClassFile = WCMF_BASE.$objectFactory->getClassfileFromConfig(get_class($obj->getMapper()));
+    $classFile = WCMF_BASE.ObjectFactory::getClassfile(get_class($obj));
+    $mapperClassFile = WCMF_BASE.ObjectFactory::getClassfile(get_class($obj->getMapper()));
     $session->addClassDefinitions(array($classFile, $mapperClassFile));
   }
 

@@ -30,17 +30,20 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
  *
  * <b>Input actions:</b>
  * - @em login Present the login dialog
- * - @em dologin Try to login the user with the given credentials
+ * - @em dologin Try to login the user with the given user/password parameters
  * - @em logout Terminate the user session
  *
  * <b>Output actions:</b>
  * - @em ok If login succeeded
  * - @em login If login failed
  *
- * @param[in] user The user's login name
- * @param[in] password The user's password
- * @param[in] remember_me If given with any value a login cookie will be created in the browser
- * @param[in] password_is_encrypted True/False wether the given password is encrypted on not (default: false)
+ * @param[in] user The name of the user to log in
+ * @param[in] password The password the user is authenticated with
+ * 
+ * @param[in] remember_me If given with any value a login cookie will be created in the browser [optional]
+ * @param[in] password_is_encrypted True/False wether the given password is encrypted on not [optional, default: false]
+ * @param[out] sid The newly established session id
+ * @param[out] roles All roles assigned to the logged in user
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -162,6 +165,7 @@ class LoginController extends Controller
           $roleNames[] = $roles[$i]->getName();
         }
         $response->setValue('roles', $roleNames);
+        $response->setValue('sid', $session->getID());
         
         $response->setAction('ok');
         return true;

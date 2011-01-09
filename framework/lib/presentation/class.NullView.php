@@ -16,6 +16,7 @@
  *
  * $Id$
  */
+require_once(WCMF_BASE."wcmf/lib/presentation/class.IView.php");
 
 /**
  * @class NullView
@@ -24,33 +25,28 @@
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullView
+class NullView implements IView
 {
-  function trigger_error($error_msg, $error_type = E_USER_WARNING)
-  {
-    WCMFException::throwEx("View error: $error_msg", __FILE__, __LINE__);
-  }
-  
-  function setup() {}
+  public function setup() {}
 
-  function clearAllCache() 
+  public function clearAllCache() 
   {
     return true;
   }
-  function clearCache($tplFile=null, $cacheId=null)
+  public function clearCache($tplFile=null, $cacheId=null)
   {
     return true;
   }
-  function isCached($tplFile, $cacheId=null)
+  public function isCached($tplFile, $cacheId=null)
   {
     return false;
   }
   
-  function assign($tpl_var, $value=null) {}
-  function assign_by_ref($tpl_var, &$value) {}
-  function display($resource_name, $cache_id=null, $compile_id=null) {}
-  function fetch($resource_name, $cache_id=null, $compile_id=null, $display=false) {}
-  function &get_template_vars($name=null) {}
-  function clear_all_assign() {}
+  public function assign($tpl_var, $value=null) {}
+  public function assignByRef($tpl_var, &$value) {}
+  public function display($resource_name, $cache_id=null, $compile_id=null) {}
+  public function fetch($resource_name, $cache_id=null, $compile_id=null, $display=false) {}
+  public function getTemplateVars($name=null) {}
+  public function clearAllAssign() {}
 }
 ?>

@@ -21,12 +21,11 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
-require_once(WCMF_BASE."wcmf/application/controller/class.SearchController.php");
 
 /**
  * @class SOAPController
  * @ingroup Controller
- * @brief SOAPController is a controller that handles SOAPRequests.
+ * @brief SOAPController is a controller that handles SOAP requests.
  *
  * <b>Input actions:</b>
  * - @em soapSearch Search for objects that match a searchterm in any attribute
@@ -82,20 +81,28 @@ class SOAPController extends Controller
     // get all known types from configuration file
     $parser = &InifileParser::getInstance();
     $types = array_keys($parser->getSection('typemapping'));
-    $searchController = new SearchController();
   
     // query for each type
-		$objectList = array();
+    $objectList = array();
     foreach ($types as $type)
     {
       $query = &PersistenceFacade::createObjectQuery($type);
       $tpl = &$query->getObjectTemplate($type, QUERYOP_OR, QUERYOP_OR);
       
       // only search types with attributes and which are searchable
-      if ($searchController->isSearchable($tpl))
+      if ($tpl->getProperty('is_searchable') == true)
       {
-        $processor = new NodeProcessor('setSearchTerm', array($searchTerm), $searchController);
-        $processor->run($tpl, false);
+        $iter = new NodeValueIterator($tpl, false);
+        while (!$iter->isEnd())
+        {
+          $curNode = $iter->getCurrentNode();
+          $valueName = $iter->getCurrentAttribute();
+          $value = $curNode->getValue($valueName);
+          if (strlen($value) > 0) {
+            $curNode->setValue($valueName, "LIKE '%".$value."%'");
+          }
+          $iter->proceed();            
+        }
   
         $nodes = $query->execute(BUILDDEPTH_SINGLE);
         foreach ($nodes as $node)

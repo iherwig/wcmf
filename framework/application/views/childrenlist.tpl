@@ -19,7 +19,7 @@
     <a href="javascript:doSetParent('{$poid}'); doNew('{$subjectType}'); setContext('{$subjectType}'); submitAction('new');" target="_parent" title="{translate text="Create"}"><img src="images/new.png" alt="{translate text="Create new %1%" r1=$nodeUtil->getDisplayNameFromType($subjectType)}" title="{translate text="Create new %1%" r1=$nodeUtil->getDisplayNameFromType($subjectType)}" border="0"></a></span>
     {/if}
     {if !$composition}
-		{$formUtil->getInputControl("associateTo", "select#fkt:g_getObjects|$subjectType,$poid", "", true)}
+		{input name="associateTo" type="select#fkt:g_getObjects|$subjectType,$poid" value="" editable=true}
 		<a href="javascript:setVariable('associateoids', document.getElementById('{$type}ChildrenIFrame').contentWindow.document.forms[0].associateTo.value); submitAction('associate');" target="_parent" title="{translate text="Associate selected"}"><img src="images/link.png" alt="{translate text="Associate selected"}" title="{translate text="Associate selected"}" border="0"></a>
     {else}
     &nbsp;

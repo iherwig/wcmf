@@ -47,8 +47,8 @@ class AttributeDescription
    * @param restrictionsMatch A regular expression that the value must match (e.g. '[0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]' for date values)
    * @param restrictionsNotMatch A regular expression that the value must NOT match
    * @param restrictionsDescription A description of the resticitions
-   * @param isEditable True/False whether the attribute should be editable, see FormUtil::getInputControl()
-   * @param inputType The HTML input type for the value, see FormUtil::getInputControl()
+   * @param isEditable True/False whether the attribute should be editable, see Control::render()
+   * @param inputType The HTML input type for the value, see Control::render()
    * @param displayType The HTML display type for the value, see NodeUtil::getDisplayValue()
    */
   public function __construct($name, $type, array $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,

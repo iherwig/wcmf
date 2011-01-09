@@ -19,11 +19,11 @@
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeProcessor.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 
 /**
  * @class NodeSerializer
- * @ingroup Util
+ * @ingroup Model
  * @brief NodeSerializer provides helper functions to de-/serialize Nodes.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -44,64 +44,29 @@ class NodeSerializer
     $persistenceFacade = PersistenceFacade::getInstance();
     if ($persistenceFacade->isKnownType($type))
     {
-      $node = $persistenceFacade->create($type, BUILDEPTH_SINGLE);
-      // remove default values
-      $node->clearValues();
-
-      if (!$hasFlattendedValues)
-      {
-        $valueData = array();
-        $properties = array();
-        $relatives = array();
-        foreach($data as $key => $value)
-        {
-          if ($key == 'values') {
-            $valueData = $value;
-          }
-          elseif ($key == 'properties') {
-            $properties = $value;
-          }
-          elseif ($key != 'oid' && $key != 'type') {
-            $relatives[$key] = $value;
-          }
-        }
-        foreach ($valueData as $key => $value) {
-          NodeSerializer::deserializeValue($node, $key, $value, $hasFlattendedValues);
-        }
-        foreach ($properties as $key => $value) {
-          $node->setProperty($key, $value);
-        }
-        foreach ($relatives as $type => $objects)
-        {
-          foreach ($objects as $object) {
-            self::deserializeNode($type, $object, $hasFlattendedValues, $node);
-          }
-        }
+      // don't create all values by default (-> don't use PersistenceFacade::create() directly, just for determining the class)
+      $class = get_class($persistenceFacade->create($type, BUILDDEPTH_SINGLE));
+      $node = new $class;
+      
+      foreach($data['attributes'] as $key => $value) {
+        self::deserializeValue($node, $key, $value, $hasFlattendedValues);
       }
-      else
-      {
-        // in case of not flattened values, the array only contains
-        // value names and values (no data types)
-        foreach($data as $key => $value)
-          self::deserializeValue($node, $key, $value, $hasFlattendedValues);
-      }
-
       if ($parent != null) {
         $parent->addChild($node);
       }
       return $node;
     }
-    else
+    else {
       return null;
+    }
   }
   /**
    * Deserialize an node value
    * @param node A reference to the node
    * @param key The value name or type if value is an array
    * @param value The value or child data, if value is an array
-   * @param hasFlattendedValues
    */
-  protected function deserializeValue(Node $node, $key, $value, $hasFlattendedValues)
+  protected function deserializeValue(Node $node, $key, $value)
   {
     if (!is_array($value)) {
       $node->setValue($key, $value);
@@ -110,81 +75,210 @@ class NodeSerializer
     {
       // deserialize children
       foreach($value as $childData) {
-        self::deserializeNode($key, $childData, $hasFlattendedValues, $node);
+        self::deserializeNode($key, $childData, $node);
       }
     }
   }
   /**
    * Serialize a Node into an array
    * @param node A reference to the node to serialize
-   * @param flattenValues True if all node data should be serialized into one array, false if
-   *                      there should be an extra array 'values', that holds the data types and inside these the values
    * @return The node serialized into an associated array
    */
-  public function serializeNode(Node $obj, $flattenValues)
+  public function serializeNode(Node $obj)
   {
     $result = array();
     $rightsManager = RightsManager::getInstance();
+    $serializedOids = array();
 
     $iter = new NodeIterator($obj);
     while (!$iter->isEnd())
     {
-      $curNode = $iter->getCurrentObject();
+      $curNode = $iter->getCurrentNode();
       $curResult = array();
 
-      // use NodeProcessor to iterate over all Node values
-      // and call the global convert function on each
-      $values = array();
-      $processor = new NodeProcessor('serializeAttribute', array(&$values, $flattenValues), new NodeSerializer());
-      $processor->run($curNode, false);
-
-      if ($flattenValues) {
-        $curResult = $values;
-      }
-      else {
-        $curResult['values'] = $values;
-      }
-
-      // add oid, type, parentoids, childoids
+      // add className, oid, isReference, lastChange
+      $curResult['className'] = $curNode->getType();
       $curResult['oid'] = $curNode->getOID();
-      $curResult['type'] = $curNode->getType();
-      $curResult['properties'] = array();
-      foreach($curNode->getPropertyNames() as $name) {
-        $curResult['properties'][$name] = $curNode->getProperty($name);
+      $curResult['isReference'] = false;
+      $curResult['lastChange'] = strtotime($curNode->getValue('modified'));
+
+      // use NodeValueIterator to iterate over all Node values
+      $values = array();
+      $valueIter = new NodeValueIterator($curNode, false);
+      while (!$valueIter->isEnd())
+      {
+        $curIterNode = $valueIter->getCurrentNode();
+        $valueName = $valueIter->getCurrentAttribute();
+        $values[$valueName] = $curIterNode->getValue($valueName);
+        $valueIter->proceed();            
       }
+      $curResult['attributes'] = $values;
+      //Log::error($curResult['attributes'], __CLASS__);
+      $serializedOids[] = $curNode->getOID();
+
+      // resolve parentoids as references (they are all loaded and serialized already)
+      /*
+      $parentOIDs = $curNode->getProperty('parentoids');
+      foreach($parentOIDs as $oid)
+      {
+        $ref = self::serializeAsReference($oid);
+        if ($ref != null)
+        {
+          // references to parents are single valued
+          $type = $ref['type'];
+          $nodeRef = array('className' => $ref['baseType'], 'oid' => $ref['baseOID'], 'isReference' => true);
+          $curResult['attributes'][$type] = $nodeRef;
+        }
+      }*/
+
+      // resolve childoids as references (if they are not loaded)
+      /*
+      $childOIDs = $curNode->getProperty('childoids');
+      $children = $curNode->getChildren();
+      foreach($childOIDs as $oid)
+      {
+        // add only if no child object with this oid is loaded and will be serialized as full object later
+        $ignoreChild = false;
+        $child = &PersistenceFacade::getInstance()->create(PersistenceFacade::getOIDParameter($oid, 'type'), BUILDDEPTH_SINGLE);
+        if (in_array($oid, $serializedOids) || $child->isManyToManyObject()) {
+          $ignoreChild = true;
+        }
+        else
+        {
+          foreach($children as $child)
+          {
+            if ($child->getOID() == $oid) {
+              $ignoreChild = true;
+              break;
+            }
+          }
+        }
+        if (!$ignoreChild)
+        {
+          $ref = self::serializeAsReference($oid, $curNode->getType());
+          if ($ref != null)
+          {
+            $type = $ref['type'];
+            $nodeRef = array('className' => $ref['baseType'], 'oid' => $ref['baseOID'], 'isReference' => true);
+            if ($ref['isMultiValued'])
+            {
+              if (!isset($curResult['attributes'][$type])) {
+                $curResult['attributes'][$type] = array();
+              }
+              $curResult['attributes'][$type][] = $nodeRef;
+            }
+            else {
+              $curResult['attributes'][$type] = $nodeRef;
+            }
+          }
+        }
+      }*/
+
       // add current result to result
       $path = preg_split('/\//', $curNode->getPath());
-      if (sizeof($path) == 1) {
-        $result = $curResult;
+      if (sizeof($path) == 1)
+      {
+        $result = &$curResult;
       }
       else
       {
-        array_shift($path);
-        $array = self::getPathArray($result, $path, 0);
-        $array[sizeof($array)] = $curResult;
+        $isMultiValued = self::isMultiValued($path[0], $path[1]);
+        $array = &self::getPathArray($result, $path, 1);
+        if ($isMultiValued) {
+          $array[] = $curResult;
+        }
+        else {
+          $array = $curResult;
+        }
       }
       $iter->proceed();
     }
+
     return $result;
   }
   /**
-   * Callback function for NodeProcessor (see NodeProcessor).
+   * Serialize a oid as a reference.
+   * @param oid The oid
+   * @param parentType The parent node type (optional, default: null)
+   * @return An associative array with keys 'baseType', 'baseOID', 'type', 'isMultiValued' or null,
+   * if the oid is a dummy id
    */
-  protected function serializeAttribute(Node $node, $valueName, &$result)
+  protected function serializeAsReference($oid, $parentType=null)
   {
-    $result[$valueName] = $node->getValue($valueName);
+    $oidParts = PersistenceFacade::decomposeOID($oid);
+    if (!PersistenceFacade::isDummyId(join('', $oidParts['id'])))
+    {
+      $type = $oidParts['type'];
+      $persistenceFacade = &PersistenceFacade::getInstance();
+      $relativeNode = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+      $baseType = $relativeNode->getBaseType();
+      $baseOID = PersistenceFacade::composeOID(array('type' => $baseType, 'id' => $oidParts['id']));
+
+      $isMultiValued = false;
+      if ($parentType) {
+        $isMultiValued = self::isMultiValued($parentType, $type);
+      }
+      return array('baseType' => $baseType, 'baseOID' => $baseOID, 'type' => $type, 'isMultiValued' => $isMultiValued);
+    }
+    else {
+      return null;
+    }
+  }
+  protected function isMultiValued($parentType, $childType)
+  {
+    $isMultiValued = false;
+    $persistenceFacade = &PersistenceFacade::getInstance();
+    $parentNode = &$persistenceFacade->create($parentType, BUILDDEPTH_SINGLE);
+    if ($parentNode)
+    {
+      $mapper = $parentNode->getMapper();
+      $objectData = $mapper->getObjectDefinition();
+      $found = false;
+      foreach ($objectData['_children'] as $childData)
+      {
+        if ($childData['type'] == $childType) {
+          $found = true;
+          if ($childData['maxOccurs'] > 1 || $childData['maxOccurs'] == 'unbounded') {
+            $isMultiValued = true;
+          }
+        }
+      }
+      if (!$found) {
+        // fallback: assume that the connetion is established by a many to many object
+        $isMultiValued = true;
+      }
+    }
+    return $isMultiValued;
   }
   /**
+   * Get the array, to which an object with the given path should be added.
+   * @param array A reference to the current result array
+   * @param path An array of path elements, describing the location of the object to add
+   * @param curDepth The depth to start searching for
+   * @return A reference to the array to which the object should be added
    */
   protected function getPathArray(&$array, $path, $curDepth)
   {
-    if (!isset($array[$path[$curDepth]]))
-      $array[$path[$curDepth]] = array();
+    $isMultiValued = false;
+    if ($curDepth > 0) {
+      $isMultiValued = self::isMultiValued($path[$curDepth-1], $path[$curDepth]);
+    }
 
-    if ($curDepth < sizeof($path)-1)
-      return self::getPathArray($array[$path[$curDepth]][0], $path, ++$curDepth);
-    else
-      return $array[$path[$curDepth]];
+    // if there is no entry for the current type in the attributes array, create it
+    if (!isset($array['attributes'][$path[$curDepth]])) {
+      $array['attributes'][$path[$curDepth]] = array();
+    }
+    if ($curDepth < sizeof($path)-1) {
+      if ($isMultiValued) {
+        return self::getPathArray($array['attributes'][$path[$curDepth]][0], $path, ++$curDepth);
+      }
+      else {
+        return self::getPathArray($array['attributes'][$path[$curDepth]], $path, ++$curDepth);
+      }
+    }
+    else {
+      return $array['attributes'][$path[$curDepth]];
+    }
   }
 }
 ?>

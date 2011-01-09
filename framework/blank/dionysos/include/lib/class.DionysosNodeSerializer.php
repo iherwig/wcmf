@@ -19,7 +19,7 @@
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeProcessor.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 
 /**
  * @class DionysosNodeSerializer
@@ -92,7 +92,7 @@ class DionysosNodeSerializer
     $iter = new NodeIterator($obj);
     while (!$iter->isEnd())
     {
-      $curNode = &$iter->getCurrentObject();
+      $curNode = &$iter->getCurrentNode();
       $curResult = &DionysosNodeSerializer::getArray();
 
       // add className, oid, isReference, lastChange
@@ -101,11 +101,17 @@ class DionysosNodeSerializer
       $curResult['isReference'] = false;
       $curResult['lastChange'] = strtotime($curNode->getValue('modified'));
 
-      // use NodeProcessor to iterate over all Node values
-      // and call the global convert function on each
+      // use NodeValueIterator to iterate over all Node values
       $values = &DionysosNodeSerializer::getArray();
-      $processor = new NodeProcessor('serializeAttribute', array(&$values), new DionysosNodeSerializer());
-      $processor->run($curNode, false);
+      $valueIter = new NodeValueIterator($tpl, false);
+      while (!$valueIter->isEnd())
+      {
+        $curIterNode = $valueIter->getCurrentNode();
+        $valueName = $valueIter->getCurrentAttribute();
+        $value = $curIterNode->getValue($valueName);
+        $values[$valueName] = $curIterNode->getValue($valueName);
+        $valueIter->proceed();            
+      }
       $curResult['attributes'] = $values;
       $serializedOids[] = $curNode->getOID();
 
@@ -186,13 +192,6 @@ class DionysosNodeSerializer
     }
 
     return $result;
-  }
-  /**
-   * Callback function for NodeProcessor (see NodeProcessor).
-   */
-  function serializeAttribute(&$node, $valueName, &$result)
-  {
-    $result[$valueName] = $node->getValue($valueName);
   }
   /**
    * Serialize a oid as a reference.

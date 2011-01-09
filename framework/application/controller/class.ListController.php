@@ -23,9 +23,9 @@ require_once(WCMF_BASE."wcmf/lib/visitor/class.OutputVisitor.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.Obfuscator.php");
 
 /**
- * @class AsyncPagingController
+ * @class ListController
  * @ingroup Controller
- * @brief AsyncPagingController is a controller that allows to navigate lists.
+ * @brief ListController is a controller that allows to navigate lists.
  * 
  * <b>Input actions:</b>
  * - unspecified: List nodes
@@ -33,25 +33,34 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Obfuscator.php");
  * <b>Output actions:</b>
  * - @em ok In any case
  * 
- * @param[in] type The entity type to list
- * @param[in] filter A query passed to ObjectQuery::executeString()
- * @param[in] limit The page size of the used PagingInfo
- * @param[in] start The start index used to initialize the used PagingInfo 
- * @param[in] sort The attribute to order the entities by
- * @param[in] dir The direction to use to order (ASC|DESC)
+ * @param[in] className The entity type to list instances of
+ * @param[in] limit The maximum number of instances to return. If omitted, all instances 
+ *             (beginning at the offset parameter) will be returned [optional]
+ * @param[in] offset The index of the first instance to return, based on the current sorting. 
+ *              The index is 0-based. If omitted, 0 is assumed [optional]
+ * @param[in] sortFieldName The field name to sort the list by. Must be one of the fields of 
+ *              the type selected by the className parameter. If omitted, the sorting is undefined [optional]
+ * @param[in] sortDirection The direction to sort the list. Must be either "asc" for ascending or "desc" 
+ *              for descending. If omitted, "asc" is assumed [optional]
+ * @param[in] attributes The list of attributes of the entity type to return. If omitted,
+ *              all attributes will be returned [optional]
+ *              
  * @param[in] poid The parent object id of the entities if any (this is used to set relation information on the result)
+ * @param[in] filter A query passed to ObjectQuery::executeString()
  * @param[in] renderValues True/False wether to render the values using NodeUtil::renderValues or not
  *              (optional, default: false)
  * @param[in] completeObjects True/False wether to return all object attributes objects or only the display values
  *              using NodeUtil::removeNonDisplayValues (optional, default: false)
- * @param[out] totalCount The total number of all entities that match the criteria
- * @param[out] objects An array of entities of the specified type
+
+ * @param[out] list The list of objects according to the given input parameters
+ * @param[out] totalCount The total number of instances matching the passed parameters
+ * 
  * Additional properties are 'realSubject', 'realSubjectType' and 'composition' for many-to-many entities
  * and 'clientOID'
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AsyncPagingController extends Controller
+class ListController extends Controller
 {
   /**
    * @see Controller::hasView()
@@ -68,27 +77,38 @@ class AsyncPagingController extends Controller
   protected function executeKernel()
   {
     $request = $this->getRequest();
-    
-    // unveil the filter value if it is ofuscated
-    $filter = $request->getValue('filter');
-    $unveiled = Obfuscator::unveil($filter);
-    if (strlen($filter) > 0 && strlen($unveiled) > 0) {
-      $filter = $unveiled;
-    }
     $rightsManager = RightsManager::getInstance();
     
+    // unveil the filter value if it is ofuscated
+    $filter = null;
+    if ($request->hasValue('filter'))
+    {
+      $filter = $request->getValue('filter');
+      if (strlen($filter) > 0)
+      {
+        $unveiled = Obfuscator::unveil($filter);
+        if (strlen($unveiled) > 0) {
+          $filter = stripslashes($unveiled);
+        }
+      }
+    }
+    
     // get objects using the paging parameters
-    $pagingInfo = new PagingInfo($request->getValue('limit'));
-    $pagingInfo->setOffset($request->getValue('start'));
+    $pagingInfo = null;
+    if ($request->hasValue('limit')) {
+      $pagingInfo = new PagingInfo($request->getValue('limit'));
+      $pagingInfo->setOffset($request->getValue('offset'));
+    }
     
     // add sort term
     $sortArray = null;
-    $orderBy = $request->getValue('sort');
+    $orderBy = $request->getValue('sortFieldName');
     if (strlen($orderBy) > 0) {
-      $sortArray = array($orderBy." ".$request->getValue('dir'));
+      $sortArray = array($orderBy." ".$request->getValue('sortDirection'));
     }
     // get the object ids
-    $objects = $this->getObjects($request->getValue('type'), stripslashes($filter), $sortArray, $pagingInfo);
+    $objects = $this->getObjects($request->getValue('className'), $filter, $sortArray, $pagingInfo);
+    Log::error(sizeof($objects), __CLASS__);
     
     // collect the nodes
     $nodes = array();    
@@ -98,10 +118,11 @@ class AsyncPagingController extends Controller
       
       // check if we can read the object
       if ($rightsManager->authorize($curObject->getOID(), '', ACTION_READ)) {
-        $nodes[sizeof($nodes)] = &$curObject;
+        $nodes[] = &$curObject;
       }
     }
-
+    $totalCount = $pagingInfo != null ? $pagingInfo->getTotalCount() : sizeof($nodes);
+    
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest())
     {
@@ -112,12 +133,12 @@ class AsyncPagingController extends Controller
     }
     
     // allow subclasses to modify the model
-    $this->modifyModel($nodes);
+    //$this->modifyModel($nodes);
     
     // assign response values
     $response = $this->getResponse();
-    $response->setValue('totalCount', $pagingInfo->getTotalCount());
-    $response->setValue('objects', $nodes);
+    $response->setValue('list', $nodes);
+    $response->setValue('totalCount', $totalCount);
     
     // success
     $response->setAction('ok');
@@ -153,7 +174,7 @@ class AsyncPagingController extends Controller
   function modifyModel($nodes)
   {
     $request = $this->getRequest();
-    // @todo put this into subclass AsyncPagingController
+    // @todo put this into subclass ListController
     
     // remove all attributes except for display_values
     if ($request->getBooleanValue('completeObjects', false) == false)
@@ -167,7 +188,7 @@ class AsyncPagingController extends Controller
       NodeUtil::renderValues($nodes);
     }
     // set sort properties
-    if (strlen($request->getValue('sort')) == 0) {
+    if (strlen($request->getValue('sortFieldName')) == 0) {
       NodeUtil::setSortProperties($nodes);
     }
     // if the nodes are loaded as children of a parent, we set additional

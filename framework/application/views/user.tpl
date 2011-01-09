@@ -22,13 +22,13 @@
   <input type="hidden" name="changepassword" value="yes" />
   <span class="dottedSeparator"></span>
   <span class="left">{translate text="Old Password"}</span>
-	<span class="right">{$formUtil->getInputControl("oldpassword", "password", "", true)}</span>
+	<span class="right">{input name="oldpassword" type="password" value="" editable=true}</span>
   <span class="dottedSeparator"></span>
   <span class="left">{translate text="New Password"}</span>
-	<span class="right">{$formUtil->getInputControl("newpassword1", "password", "", true)}</span>
+	<span class="right">{input name="newpassword1" type="password" value="" editable=true}</span>
   <span class="dottedSeparator"></span>
   <span class="left">{translate text="New Password Repeated"}</span>
-	<span class="right">{$formUtil->getInputControl("newpassword2", "password", "", true)}</span>
+	<span class="right">{input name="newpassword2" type="password" value="" editable=true}</span>
 	<span class="spacer"></span>
   <span class="all">{$message}</span>
 </div>

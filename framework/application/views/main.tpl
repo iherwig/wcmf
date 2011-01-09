@@ -1,10 +1,37 @@
 {extends file="lib:application/views/base.tpl"}
 
-{block name=title}
-<a name="top">&nbsp;</a>
-<div id="head">
-  <span><a href="http://wcmf.sourceforge.net" target="_blank"><img src="images/wcmf_logo.gif" width="180" height="54" alt="wcmf logo" border="0" /></a></span>
-  <span id="title">{configvalue key="applicationTitle" section="cms"}</span>
-  <span id="logininfo">{if $authUser != null}{translate text="Logged in as %1% since %2%" r0=$authUser->getLogin() r1=$authUser->getLoginTime()}{/if}</span>
-</div>
+{block name=navigation}
+    <div dojoType="dijit.MenuBar" id="navMenu">
+      <div dojoType="dijit.MenuBarItem" 
+        onClick="doSave(); submitAction('save');">
+        <span>{translate text="Save"}</span>
+      </div>
+      <div dojoType="dijit.MenuBarItem" 
+        onClick="newWindowEx('DisplayController', '', 'treeview', 'treeviewWindow', 'width=800,height=700,resizable=no,scrollbars=no,locationbar=no', '&sid={$sid}');">
+        <span>{translate text="Content Tree"}</span>
+      </div>
+      <div dojoType="dijit.MenuBarItem" 
+        onClick="newWindowEx('', '', 'browseresources', 'browseWindow', 'width=800,height=700,resizable=yes,scrollbars=yes,status=yes,locationbar=no', '&type=link&subtype=resource');">
+        <span>{translate text="Media Pool"}</span>
+      </div>
+      <div dojoType="dijit.MenuBarItem" 
+        onClick="newWindowEx('', '', 'export', 'exportWindow', 'width=360,height=120,scrollbars=no,resizable=yes,locationbar=no', '&sid={$sid}');">
+        <span>{translate text="Export"}</span>
+      </div>
+      <div dojoType="dijit.MenuBarItem" onClick="submitAction('search');">
+        <span>{translate text="Search"}</span>
+      </div>
+      <div dojoType="dijit.MenuBarItem" onClick="newWindowEx('{$controller}', '', 'definesearch', 'definesearchWindow', 'width=600,height=600,scrollbars=yes,locationbar=no,resizable=yes', '&sid={$sid}');">
+        <span>{translate text="Advanced Search"}</span>
+      </div>
+      <div dojoType="dijit.MenuBarItem" onClick="setContext('admin'); submitAction('administration');">
+        <span>{translate text="Administration"}</span>
+      </div>
+      <div dojoType="dijit.MenuBarItem" onClick="submitAction('edituser');">
+        <span>{translate text="User data"}</span>
+      </div>
+      <div dojoType="dijit.MenuBarItem" onClick="wcmf.Action.logout()">
+        <span>{translate text="Logout"}</span>
+      </div>
+    </div>
 {/block}

@@ -297,7 +297,7 @@ class DionysosControllerDelegate
 					$iter = new NodeIterator($response->getValue('object'));
 					while(!$iter->isEnd())
 					{
-						$curObj = &$iter->getCurrentObject();
+						$curObj = &$iter->getCurrentNode();
 						$children = $curObj->getChildren();
 						for ($i=0, $numChildren=sizeof($children); $i<$numChildren; $i++)
 						{

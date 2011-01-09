@@ -260,6 +260,8 @@ class SessionData
       unlink($filename);
     }
     $_SESSION = array();
-    session_destroy();
+    if (strlen(session_id()) > 0) {
+      session_destroy();
+    }
   }
 }

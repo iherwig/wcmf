@@ -19,6 +19,11 @@
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.IFormat.php");
 
 /**
+ * Define the message format
+ */
+define("MSG_FORMAT_NULL", "NULL");
+
+/**
  * @class NullFormat
  * @ingroup Format
  * @brief NullFormat passes through the original request and response objects
@@ -38,4 +43,7 @@ class NullFormat extends IFormat
    */
   public function serialize(Response $response) {}
 }
+
+// register this format
+Formatter::registerFormat(MSG_FORMAT_NULL, "NullFormat");
 ?>

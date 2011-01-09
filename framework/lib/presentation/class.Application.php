@@ -81,32 +81,33 @@ class Application
    * @param defaultController The controller to call if none is given in request parameters, optional [default: 'LoginController']
    * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
    * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
-   * @param defaultResponseFormat The response format if none is given in request parameters, optional [default: MSG_FORMAT_HTML]
+   * @param defaultResponseFormat The response format if none is given in request parameters, optional [default: HTML]
    * @return An associative array with keys 'action', 'context', 'controller', 'data'
    * TODO: return request instance, maybe use default parameters from a config section?
    * TODO: allow configPath array to search from different locations, simplifies inclusion
    */
   public function initialize($configPath='include/', $mainConfigFile='config.ini',
     $defaultController='LoginController', $defaultContext='', $defaultAction='login',
-    $defaultResponseFormat=MSG_FORMAT_HTML)
+    $defaultResponseFormat='HTML')
   {
     Application::setupGlobals($configPath, $mainConfigFile);
     $parser = WCMFInifileParser::getInstance();
 
     // include files from implementation section
     // NOTE: this must be done before the session is started to avoid incomplete object definitions
-    $implementationFiles = array_values($parser->getSection("implementation"));
-    foreach($implementationFiles as $implementationFile)
+    $values = array_values($parser->getSection("implementation"));
+    foreach($values as $class)
     {
-      $impl = WCMF_BASE.ObjectFactory::getClassfileFromConfig($implementationFile);
-      if (is_file($impl)) {
-        require_once(WCMF_BASE.ObjectFactory::getClassfileFromConfig($implementationFile));
+      if (is_array($class)) {
+        foreach ($class as $c) {
+          ObjectFactory::loadClassDefinition($c);
+        }
       }
       else {
-        throw new ConfigurationException("Implementation file ".$implementationFile." not found.");
+        ObjectFactory::loadClassDefinition($class);
       }
     }
-
+        
     // initialize session with session id if given
     $sessionId = Application::getCallParameter('sid', false);
     if ($sessionId === false) {
@@ -125,9 +126,25 @@ class Application
     $context = Application::getCallParameter('context', $defaultContext);
     $action = Application::getCallParameter('action', $defaultAction);
     $readonly = Application::getCallParameter('readonly', false);
-    $requestFormat = Application::getCallParameter('request_format', $defaultResponseFormat);
-    $responseFormat = Application::getCallParameter('response_format', $defaultResponseFormat);
-
+    
+    // determine message formats based in request headers
+    if (isset($_SERVER['CONTENT_TYPE'])) {
+      $requestFormat = self::getMessageFormatFromHeader(
+        strtolower($_SERVER['CONTENT_TYPE']), $defaultResponseFormat);
+      $requestFormat = Application::getCallParameter('requestFormat', $requestFormat);
+    }
+    else {
+      $requestFormat = Application::getCallParameter('requestFormat', $defaultResponseFormat);
+    }    
+    if (isset($_SERVER['HTTP_ACCEPT'])) {
+      $responseFormat = self::getMessageFormatFromHeader(
+        strtolower($_SERVER['HTTP_ACCEPT']), $defaultResponseFormat);
+      $responseFormat = Application::getCallParameter('responseFormat', $responseFormat);
+    }
+    else {
+      $responseFormat = Application::getCallParameter('responseFormat', $defaultResponseFormat);
+    }    
+      
     // load user configuration
     $rightsManager = RightsManager::getInstance();
     $authUser = $rightsManager->getAuthUser();
@@ -232,7 +249,24 @@ class Application
    */
   public static function getId()
   {
-    return md5($_SERVER['SERVER_ADDR'].__FILE__);
+    return md5(__FILE__);
+  }
+  /**
+   * Determine the message format from a HTTP header value
+   * @param header The header value
+   * @param defaultFormat The default format to be used if no other can be determined
+   * @return One of the message formats (JSON, SOAP, ...)
+   */
+  protected static function getMessageFormatFromHeader($header, $defaultFormat)
+  {
+    $format = $defaultFormat;
+    if (strpos($header, 'application/json') !== false) {
+      $format = 'JSON';
+    }
+    else if (strpos($header, 'application/soap') !== false) {
+      $format = 'SOAP';
+    }
+    return $format;
   }
 }
 ?>

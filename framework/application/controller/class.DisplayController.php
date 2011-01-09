@@ -23,7 +23,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/control/ListboxFunctions.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 
 /**
@@ -43,7 +43,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  * @param[in] depth The BUILDDEPTH used when loading the Node
  * @param[in] omitMetaData True/False. If true, only the parameters 'node' and 'lockMsg' will be returned. If not given,
  *                        all parameters will be returned.
- * @param[in] translateValues True/False. If true, list values will be translated using FormUtil::translateValue. If not given,
+ * @param[in] translateValues True/False. If true, list values will be translated using Control::translateValue. If not given,
  *                        all values will be returned as is.
  * @param[out] node The Node object to display
  * @param[out] lockMsg The lock message, if any

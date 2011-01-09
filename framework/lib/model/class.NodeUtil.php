@@ -18,17 +18,12 @@
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.FormUtil.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeProcessor.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-
-/**
- * Globals .
- */
-// create only one instance of ValueRenderer
-$gValueRenderer = null;
+require_once(WCMF_BASE."wcmf/lib/presentation/control/class.Control.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/renderer/class.ValueRenderer.php");
 
 /**
  * @class NodeUtil
@@ -237,17 +232,17 @@ class NodeUtil
    * @param values An assoziative array holding key value pairs that the display node's values should match [maybe null].
    * @note The display type is configured via the display_type property of a value. It describes how the value should be displayed.
    *       The description is of the form @code type @endcode or @code type[attributes] @endcode
-   *       - type: text|image
+   *       - type: text|image|link
    *       - attributes: a string of attributes used in the HTML definition (e.g. 'height="50"')
    * @return The display string
-   * @see DefaultValueRenderer::renderValue
+   * @see ValueRenderer::render
    */
   public static function getDisplayValue(Node $node, $useDisplayType=false, $language=null, $values=null)
   {
     return join(' - ', array_values(self::getDisplayValues($node, $useDisplayType, $language, $values)));
   }
   /**
-   * Does the same as DefaultValueRenderer::getDisplayValue() but returns the display value as associative array
+   * Does the same as NodeUtil::getDisplayValue but returns the display value as associative array
    * @param node A reference to the Node to display
    * @param useDisplayType True/False wether to use the display types that are associated with the values which the display value contains [default: false]
    * @param language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
@@ -264,7 +259,6 @@ class NodeUtil
 
     $displayArray = array();
     $persistenceFacade = PersistenceFacade::getInstance();
-    $formUtil = new FormUtil($language);
     $pathToShow = $node->getProperty('display_value');
     if (!strPos($pathToShow, '|')) {
       $pathToShowPieces = array($pathToShow);
@@ -361,30 +355,21 @@ class NodeUtil
           }
         }
       }
-      $tmpDisplay = $formUtil->translateValue($tmpDisplay, $inputType);
+      $tmpDisplay = Control::translateValue($tmpDisplay, $inputType, false, null, $language);
       if (strlen($tmpDisplay) == 0) {
         $tmpDisplay = $node->getOID();
       }
       if ($useDisplayType)
       {
-        // apply display type if desired
-        if (!is_object($GLOBALS['gValueRenderer']))
-        {
-          $GLOBALS['gValueRenderer'] = ObjectFactory::createInstanceFromConfig('implementation', 'ValueRenderer');
-          if ($GLOBALS['gValueRenderer'] == null) {
-            throw new ConfigurationException('ValueRenderer not defined in section implementation.');
-          }
-        }
-
         // get type and attributes from definition
         preg_match_all("/[\w][^\[\]]+/", $displayType, $matches);
         if (sizeOf($matches[0]) > 0) {
-          list($type, $attributes) = $matches[0];
+          list($displayType, $attributes) = $matches[0];
         }
-        if (!$type || $type == '') {
-          $type = 'text';
+        if (!$displayType || $displayType == '') {
+          $displayType = 'text';
         }
-        $tmpDisplay = $GLOBALS['gValueRenderer']->renderValue($type, $tmpDisplay, $attributes);
+        $tmpDisplay = ValueRenderer::render($displayType, $tmpDisplay, $attributes);
       }
 
       $displayArray[$pathToShowPiece] = $tmpDisplay;
@@ -401,68 +386,6 @@ class NodeUtil
     $persistenceFacade = PersistenceFacade::getInstance();
     $typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
     return $typeNode->getObjectDisplayName();
-  }
-  /**
-   * Get a HTML input control for a given node value. The control is defined by the
-   * 'input_type' property of the value. The property 'is_editable' is used to determine
-   * wether the control should be enabled or not.
-   * @param node A reference to the Node which contains the value
-   * @param name The name of the value to construct the control for
-   * @param templateNode A Node which contains the value definition
-   *        (if not given the definition will be taken from the node parameter) [optional]
-   * @return The HTML control string (see FormUtil::getInputControl())
-   */
-  public static function getInputControl(Node $node, $name, Node $templateNode=null)
-  {
-    $controlName = self::getInputControlName($node, $name);
-    if ($templateNode != null) {
-      $properties = $templateNode->getValueProperties($name);
-    }
-    else {
-      $properties = $node->getValueProperties($name);
-      if (!$properties)
-      {
-        $persistenceFacade = PersistenceFacade::getInstance();
-        $templateNode = $persistenceFacade->create($node->getType(), BUILDDEPTH_SINGLE);
-        $properties = $templateNode->getValueProperties($name);
-      }
-    }
-    $value = $node->getValue($name);
-    $formUtil = new FormUtil();
-    return $formUtil->getInputControl($controlName, $properties['input_type'], $value, $properties['is_editable']);
-  }
-  /**
-   * Get a HTML input control name for a given node value (see FormUtil::getInputControl()).
-   * @param node A reference to the Node which contains the value
-   * @param name The name of the value to construct the control for
-   * @return The HTML control name string in the form value-<name>-<oid>
-   */
-  public static function getInputControlName(Node $node, $name)
-  {
-    $fieldDelimiter = FormUtil::getInputFieldDelimiter();
-    return 'value'.$fieldDelimiter.$name.$fieldDelimiter.$node->getOID();
-  }
-  /**
-   * Get the node value definition from a HTML input control name.
-   * @param name The name of input control in the format defined by getInputControlName
-   * @return An associative array with keys 'oid', 'name' or null if the name is not valid
-   */
-  public static function getValueDefFromInputControlName($name)
-  {
-    if (!(strpos($name, 'value') === 0)) {
-      return null;
-    }
-    $def = array();
-    $fieldDelimiter = StringUtil::escapeForRegex(FormUtil::getInputFieldDelimiter());
-    $pieces = preg_split('/'.$fieldDelimiter.'/', $name);
-    if (!sizeof($pieces) == 4) {
-      return null;
-    }
-    $forget = array_shift($pieces);
-    $def['name'] = array_shift($pieces);
-    $def['oid'] = array_shift($pieces);
-
-    return $def;
   }
   /**
    * Sort a list of Nodes and set the sort properties on Nodes of a given list. The two attributes (DATATPE_IGNORE)
@@ -507,20 +430,24 @@ class NodeUtil
    */
   public static function makeNodeUrlsRelative(Node $node, $baseUrl, $recursive=true)
   {
-    // use NodeProcessor to iterate over all Node values
+    // use NodeValueIterator to iterate over all Node values
     // and call the global convert function on each
-    $processor = new NodeProcessor('makeValueUrlsRelative', array($baseUrl), new NodeUtil());
-    $processor->run($node, $recursive);
+    $iter = new NodeValueIterator($node, $recursive);
+    while (!$iter->isEnd())
+    {
+      self::makeValueUrlsRelative($iter->getCurrentNode(), $iter->getCurrentAttribute(), $baseUrl);
+      $iter->proceed();
+    }
   }
   /**
-   * Make the urls matching a given base url in a Node value relative.
+   * Make the urls matching a given base url in a PersistentObject value relative.
    * @param node A reference to the Node the holds the value
    * @param valueName The name of the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
    */
-  public static function makeValueUrlsRelative(Node $node, $valueName, $baseUrl)
+  private static function makeValueUrlsRelative(Node $node, $valueName, $baseUrl)
   {
-    $value = $node->getValue($valueName);
+    $value = $object->getValue($valueName);
 
     // find urls in texts
     $urls = StringUtil::getUrls($value);
@@ -539,11 +466,11 @@ class NodeUtil
       // replace url
       $value = str_replace($url, $urlConv, $value);
     }
-    $node->setValue($valueName, $value);
+    $object->setValue($valueName, $value);
   }
   /**
-   * Render all values in a list of Nodes using the DefaultValueRenderer.
-   * @note Values will be translated before rendering using FormUtil::translateValue
+   * Render all values in a list of Nodes using the appropriate ValueRenderer.
+   * @note Values will be translated before rendering using Control::translateValue
    * @param nodes A reference to the array of Nodes
    * @param language The language code, if the translated values should be localized.
    *                 Optional, default is Localization::getDefaultLanguage()
@@ -551,68 +478,72 @@ class NodeUtil
   public static function renderValues(&$nodes, $language=null)
   {
     // render the node values
-    $nodeUtil = new NodeUtil();
-    $formUtil = new FormUtil($language);
-    $processor = new NodeProcessor('renderValue', array($formUtil), $nodeUtil);
-    for($i=0; $i<sizeof($nodes); $i++)
+    for($i=0, $count=sizeof($nodes); $i<$count; $i++)
     {
-      // render values
-      $processor->run($nodes[$i], false);
+      $iter = new NodeValueIterator($nodes[$i], false);
+      while (!$iter->isEnd())
+      {
+        self::renderValue($iter->getCurrentNode(), $iter->getCurrentAttribute(), $language);
+        $iter->proceed();
+      }
     }
   }
   /**
-   * Callback to render a Node value
-   * @see NodeProcessor
-   * @note This method is used internally only
+   * Render a PersistentObject value
+   * @param object The object whose value to render
+   * @param valueName The name of the value to render
+   * @param language The language to use
    */
-  public static function renderValue(Node $node, $valueName, $formUtil)
+  private static function renderValue(PersistentObject $object, $valueName, $language)
   {
-    $value = $node->getValue($valueName);
+    $value = $object->getValue($valueName);
     // translate list values
-    $value = $formUtil->translateValue($value, $node->getValueProperty($valueName, 'input_type'), true);
+    $value = Control::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
+    
     // render the value to html
-    $displayType = $node->getValueProperty($valueName, 'display_type');
+    $displayType = $object->getValueProperty($valueName, 'display_type');
     if (strlen($displayType) == 0) {
       $displayType = 'text';
     }
-    $renderer = new DefaultValueRenderer();
-    $value = $renderer->renderValue($displayType, $value, $renderAttribs);
+    $value = ValueRenderer::render($displayType, $value, $renderAttribs);
     // force set (the rendered value may not be satisfy validation rules)
-    $node->setValue($valueName, $value, true);
+    $object->setValue($valueName, $value, true);
   }
   /**
-   * Translate all values in a list of Nodes using the DefaultValueRenderer.
+   * Translate all list values in a list of Nodes.
    * @note Translation in this case refers to mapping list values from the key to the value
    * and should not be confused with localization, although values maybe localized using the
    * language parameter.
    * @param nodes A reference to the array of Nodes
    * @param language The language code, if the translated values should be localized.
-   *                 Optional, default is Localization::getDefaultLanguage()
+   *                 Optional, default is Localizat$objectgetDefaultLanguage()
    */
   public static function translateValues(&$nodes, $language=null)
   {
     // translate the node values
-    $nodeUtil = new NodeUtil();
-    $formUtil = new FormUtil($language);
-    $processor = new NodeProcessor('translateValue', array($formUtil), $nodeUtil);
     for($i=0; $i<sizeof($nodes); $i++)
     {
-      // render values
-      $processor->run($nodes[$i], false);
+      $iter = new NodeValueIterator($nodes[$i], false);
+      while (!$iter->isEnd())
+      {
+        self::translateValue($iter->getCurrentNode(), $iter->getCurrentAttribute(), $language);
+        $iter->proceed();
+      }
     }
   }
   /**
-   * Callback to translate a Node value
-   * @see NodeProcessor
-   * @note This method is used internally only
+   * Translate a PersistentObject list value.
+   * @param object The object whose value to translate
+   * @param valueName The name of the value to translate
+   * @param language The language to use
    */
-  public static function translateValue(Node $node, $valueName, $formUtil)
+  private static function translateValue(PersistentObject $object, $valueName, $language)
   {
-    $value = $node->getValue($valueName);
+    $value = $object->getValue($valueName);
     // translate list values
-    $value = $formUtil->translateValue($value, $node->getValueProperty($valueName, 'input_type'), true);
+    $value = Control::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
     // force set (the rendered value may not be satisfy validation rules)
-    $node->setValue($valueName, $value, true);
+    $object->setValue($valueName, $value, true);
   }
   /**
    * Remove all values from a Node that are not a display value.

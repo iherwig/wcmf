@@ -24,6 +24,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.ApplicationException.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
 require_once(WCMF_BASE."wcmf/3rdparty/Bs_StopWatch.class.php");
@@ -71,7 +72,8 @@ class ActionMapper
     $referrer = $request->getSender();
     $context = $request->getContext();
     $action = $request->getAction();
-
+    $response = new Response($referrer, $context, $action, array());
+    
     // this array stores all controllers executed since the last view displayed (the last call of main.php)
 
     // store last controller
@@ -88,14 +90,14 @@ class ActionMapper
       $authUser = $rightsManager->getAuthUser();
       if (!$authUser)
       {
-        Log::error("The request was: ".$request->toString(), __CLASS__);
-        throw new ApplicationException($request, null, Message::get("Authorization failed: no valid user. Maybe your session has expired."));
+        Log::error("The request was: ".$request->__toString(), __CLASS__);
+        throw new ApplicationException($request, $response, Message::get("Authorization failed: no valid user. Maybe your session has expired."));
       }
       else
       {
         $login = $authUser->getName();
         Log::error("Authorization failed for '".$actionKey."' user '".$login."'", __CLASS__);
-        throw new ApplicationException($request, null, Message::get("You don't have the permission to perform this action."));
+        throw new ApplicationException($request, $response, Message::get("You don't have the permission to perform this action."));
       }
     }
 
@@ -116,11 +118,11 @@ class ActionMapper
     {
       // get next controller
       if (($controllerClass = $parser->getValue($actionKey, 'actionmapping')) === false) {
-        throw new ConfigurationsException($parser->getErrorMsg());
+        throw new ConfigurationException($parser->getErrorMsg());
       }
     }
     if (strlen($controllerClass) == 0) {
-      throw new ConfigurationsException($request, null, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
+      throw new ConfigurationException($request, null, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
     }
 
     // create controller delegate instance if configured
@@ -135,7 +137,7 @@ class ActionMapper
 
     // instantiate controller
     if (($classFile = $parser->getValue($controllerClass, 'classmapping')) === false) {
-      throw new ConfigurationsException($parser->getErrorMsg());
+      throw new ConfigurationException($parser->getErrorMsg());
     }
     if (file_exists(WCMF_BASE.$classFile))
     {
@@ -143,14 +145,14 @@ class ActionMapper
       $controllerObj = new $controllerClass($actionMapper->_controllerDelegate);
     }
     else {
-      throw new ConfigurationsException("Definition of Controller ".$controllerClass." in '".$classFile."' not found.");
+      throw new ConfigurationException("Definition of Controller ".$controllerClass." in '".$classFile."' not found.");
     }
 
     // everything is right in place, start processing
     Formatter::deserialize($request);
 
     // create the response
-    $response = new Response($controllerClass, $context, $action, array());
+    $response->setSender($controllerClass);
     $response->setFormat($request->getResponseFormat());
 
     // initialize controller

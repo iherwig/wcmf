@@ -1,30 +1,42 @@
-{extends file="lib:application/views/main.tpl"}
+{extends file="lib:application/views/base.tpl"}
 
 {block name=head append}
 <script type="text/javascript">
-$(document).ready(function() {
-  $(document).bind('keyup', 'return', function() {
-    submitAction('dologin');
+{literal}
+  dojo.addOnLoad(function() {
+    dojo.connect(null, "onkeyup", function(e) {
+      if (e.keyCode == dojo.keys.ENTER) {
+        wcmf.Action.login();
+      }
+    });
   });
-});
+{/literal}
 </script>
 {/block}
 
-{block name=metaNavigation}{/block}
-{block name=contentNavigation}{/block}
-
 {block name=content}
 <div class="contentblock">
-  <span class="spacer"></span>
-  <span class="left">{translate text="Login"}</span>
-  <span class="right">{$formUtil->getInputControl("user", "text", "", true)}</span>
-  <span class="left">{translate text="Password"}</span>
-  <span class="right">{$formUtil->getInputControl("password", "password", "", true)}</span>
-  <span class="spacer"></span>
-  <span class="left">{translate text="Remember me"}</span>
-  <span class="right">{$formUtil->getInputControl("remember_me", "checkbox[class='check']#fix:1[ ]", "", true)}</span>
-  <span class="spacer"></span>
-  <span class="left">&nbsp;</span>
-  <span class="right"><a href="javascript:submitAction('dologin');">{translate text="Log in"}</a></span>
+  <fieldset>
+    <legend>{translate text="Login"}</legend>
+    <ol>
+      <li>
+        <label for="user">{translate text="Login"}</label>
+        <input type="text" id="user" name="user" required="true" dojoType="dijit.form.ValidationTextBox"/>
+      </li>
+      <li>
+        <label for="password">{translate text="Password"}</label>
+        <input type="text" id="password" name="password" required="true" dojoType="dijit.form.ValidationTextBox"/>
+      </li>
+      <li>
+        <label for="remember_me">{translate text="Remember me"}</label>
+        <input id="remember_me" name="remember_me" dojoType="dijit.form.CheckBox" value="1" checked="false">
+      </li>
+    </ol>
+  </fieldset>
+  <p>  
+    <button dojoType="dijit.form.Button" type="button">{translate text="Log in"}
+      <script type="dojo/method" event="onClick" args="evt">wcmf.Action.login();</script>
+    </button>
+  </p>
 </div>
 {/block}

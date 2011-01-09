@@ -36,7 +36,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
  * - see BatchController
  * 
  * @param[in,out] oid The oid of the Node to start loading from
- * @param[in] translateValues True/False. If true, list values will be translated using FormUtil::translateValue. If not given, 
+ * @param[in] translateValues True/False. If true, list values will be translated using Control::translateValue. If not given, 
  *                        all values will be returned as is, default: true
  * @param[in] nodes_per_call The number of nodes to process in one call, default: 50
  * @param[out] objects An array of Nodes

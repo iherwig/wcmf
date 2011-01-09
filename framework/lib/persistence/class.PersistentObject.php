@@ -319,21 +319,19 @@ class PersistentObject
         $valuesToIgnore = $mapper->getPkNames();
       }
     }
-    $processor = new NodeProcessor('copyValueIntern', array($object, $valuesToIgnore), $this);
-    $processor->run($this, false);
-  }
-  /**
-   * Private callback for copying values
-   * @see NodeProcessor
-   */
-  private function copyValueIntern(Node $node, $valueName, PersistentObject $targetNode, array $valuesToIgnore)
-  {
-    if (!isset($valuesToIgnore[$valueName]))
+    $iter = new NodeValueIterator($this, false);
+    while(!$iter->isEnd())
     {
-      $value = $node->getValue($valueName);
-      if (strlen($value) > 0) {
-        $targetNode->setValue($valueName, $value, true);
+      $curNode = $iter->getCurrentNode();
+      $valueName = $iter->getCurrentAttribute();
+      if (!isset($valuesToIgnore[$valueName]))
+      {
+        $value = $curNode->getValue($valueName);
+        if (strlen($value) > 0) {
+          $object->setValue($valueName, $value, true);
+        }
       }
+      $iter->proceed();
     }
   }
   /**
@@ -341,16 +339,13 @@ class PersistentObject
    */
   public function clearValues()
   {
-    $processor = new NodeProcessor('clearValueIntern', array(), $this);
-    $processor->run($this, false);
-  }
-  /**
-   * Private callback for clearing values
-   * @see NodeProcessor
-   */
-  private function clearValueIntern(Node $node, $valueName)
-  {
-    $node->setValue($valueName, null);
+    $iter = new NodeValueIterator($this, false);
+    while(!$iter->isEnd())
+    {
+      $curNode = $iter->getCurrentNode();
+      $curNode->setValue($iter->getCurrentAttribute(), null);
+      $iter->proceed();
+    }
   }
   /**
    * Recalculate the object id
@@ -482,22 +477,19 @@ class PersistentObject
    */
   public function validateValues()
   {
-    $result = '';
-    $processor = new NodeProcessor('validateValueIntern', array(&$result), $this);
-    $processor->run($this, false);
-    return $result;
-  }
-  /**
-   * Private callback for validating values
-   * @param errorMsg A string to append error messages to
-   * @see NodeProcessor
-   */
-  private function validateValueIntern(PersistentObject $object, $valueName, &$errorMsg)
-  {
-    $error = $object->validateValue($valueName, $value);
-    if (strlen($error) > 0) {
-      $errorMsg .= $error."\n";
+    $errorMsg = '';
+    $iter = new NodeValueIterator($this, false);
+    while(!$iter->isEnd())
+    {
+      $curNode = $iter->getCurrentNode();
+      $valueName = $iter->getCurrentAttribute();
+      $error = $curNode->validateValue($valueName, $value);
+      if (strlen($error) > 0) {
+        $errorMsg .= $error."\n";
+      }
+      $iter->proceed();
     }
+    return $errorMsg;
   }
   /**
    * Check if data may be set. The method is also called, when setting a value.
@@ -646,8 +638,25 @@ class PersistentObject
     return array_merge($result, array_keys($this->_data[$name]['properties']));
   }
   /**
+   * Get the names of all persistent items.
+   * @return An array of item names.
+   */
+  public function getPersistentValueNames()
+  {
+    $names = array();
+    $mapper = $this->getMapper();
+    if ($mapper)
+    {
+      $attributes = $mapper->getAttributes();
+      foreach ($attributes as $attribute) {
+        $names[] = $attribute->name;
+      }
+    }
+    return $names;
+  }
+  /**
    * Get the names of all items.
-   * @return An array of all item names.
+   * @return An array of item names.
    */
   public function getValueNames()
   {
