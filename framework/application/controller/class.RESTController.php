@@ -50,10 +50,11 @@ class RESTController extends Controller
   function validate()
   {
     $request = $this->getRequest();
+    $response = $this->getResponse();
     if (!$request->hasValue('className') || 
       !PersistenceFacade::getInstance()->isKnownType($request->getValue('className')))
     {
-      $this->addError(ApplicationError::get('PARAMETER_INVALID', 
+      $response->addError(ApplicationError::get('PARAMETER_INVALID', 
         array('invalidParameters' => array('className'))));
       return false;
     }

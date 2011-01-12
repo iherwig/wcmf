@@ -26,7 +26,8 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
     
     dojo.mixin(this, {
       target: "rest/"+this.modelClass.type+"/",
-      service: new wcmf.persistence.Service(this.modelClass)
+      service: new wcmf.persistence.Service(this.modelClass),
+      cacheByDefault: true
     }, options);
     
     this.inherited(arguments);
@@ -39,33 +40,26 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
 });
 
 /**
- * Create a store for a given model class
- * @param modelClass The model class to create the store for.
- */
-wcmf.persistence.Store.create = function(modelClass) {
-  var type = modelClass.type;
-  var store = wcmf.persistence.Store.stores[type];
-  if (store != undefined) {
-    throw ("A store for '"+type+"' already exists.");
-  }
-  store = new wcmf.persistence.Store({
-    modelClass: modelClass
-  });
-  wcmf.persistence.Store.stores[type] = store;
-  return store;
-}
-
-/**
- * Get the store for a given model class
- * @param type The classname
+ * Get the store for a given model class. If the store is
+ * not created already, it will be created.
+ * @param modelClass The model class to get the store for (subclass of wcmf.model.base.Class)
  * @return An instance of wcmf.Store
  */ 
-wcmf.persistence.Store.getStore = function(type) {
-  var store = wcmf.persistence.Store.stores[type];
-  if (store == undefined) {
-    throw ("A store for '"+type+"' does not exist.");
+wcmf.persistence.Store.getStore = function(modelClass ) {
+  if (modelClass instanceof wcmf.model.base.Class) {
+    var store = wcmf.persistence.Store.stores[modelClass.type];
+    if (store == undefined) {
+      // create stores only for known model classes
+      store = new wcmf.persistence.Store({
+        modelClass: modelClass
+      });
+      wcmf.persistence.Store.stores[modelClass.type] = store;
+    }
+    return store;
   }
-  return store;
+  else {
+    throw ("Unknown modelClass: "+dojo.toJson(modelClass));
+  }
 }
 
 /**

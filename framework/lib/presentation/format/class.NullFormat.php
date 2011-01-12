@@ -31,7 +31,7 @@ define("MSG_FORMAT_NULL", "NULL");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullFormat extends IFormat
+class NullFormat implements IFormat
 {
   /**
    * @see IFormat::deserialize()

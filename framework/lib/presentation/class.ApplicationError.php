@@ -119,7 +119,7 @@ class ApplicationError
       return new ApplicationError($def[0], $def[1], $def[2], $data);
     }
     else {
-      throw new ApplicationException("The error code '".$code."' is not defined");
+      throw new IllegalArgumentException("The error code '".$code."' is not defined");
     }
   }  
 }
@@ -190,4 +190,7 @@ define('CLASSES_DO_NOT_MATCH', serialize(array('CLASSES_DO_NOT_MATCH',
   
 define('HISTORY_NOT_SUPPORTED', serialize(array('HISTORY_NOT_SUPPORTED', 
   Message::get('There selected class does not support history.'), ERROR_LEVEL_ERROR)));
+
+define('PERMISSION_DENIED', serialize(array('PERMISSION_DENIED', 
+  Message::get('The user does not have the permission to perform this action.'), ERROR_LEVEL_ERROR)));
 ?>

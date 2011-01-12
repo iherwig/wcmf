@@ -28,20 +28,51 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  * @brief WCMFFrontendController is used to display the wCMF frontend.
  *
  * <b>Input actions:</b>
+ * - getModel: Get a list of template instances of all known model entities
+ * - getDetail: Get a template instance of a given type and optional an object
  * - unspecified: Display the frontend
- * - model: Get a list of template instances of all known model entities
  *
  * <b>Output actions:</b>
  * - @em failure If a fatal error occurs
  * - @em ok In any other case
  *
- * @param[out] rootNodeTemplates A list of instances of all root types
- * @param[out] nodeTemplates A list of instances of all known types (action: model)
+ * @param[in] type The type to display get the instance for (action: node)
+ * @param[in] oid The object id of the node to read (action: node)
+ * @param[out] typeTemplate An instance of the requested type (action: node)
+ * @param[out] object The requested object loaded with BUILDDEPTH_SINGLE, if an oid is given (action: node)
+ * @param[out] typeTemplates A list of instances of all known types (action: model)
+ * @param[out] rootTypeTemplates A list of instances of all root types
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class WCMFFrontendController extends Controller
 {
+  /**
+   * @see Controller::validate()
+   */
+  protected function validate()
+  {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    if($request->getAction() == 'getDetail')
+    {
+      if ($request->hasValue('type')) {
+        $type = $request->getValue('type');
+        if (!PersistenceFacade::getInstance()->isKnownType($type)) {
+          $response->addError(ApplicationError::get('CLASS_NAME_INVALID'));
+          return false;
+        }
+      }
+      if ($request->hasValue('oid')) {
+        $oid = ObjectId::parse($request->getValue('oid'));
+        if (!$oid) {
+          $response->addError(ApplicationError::get('OID_INVALID'));
+          return false;
+        }
+      }
+    }
+    return true;
+  }
   /**
    * @see Controller::executeKernel()
    */
@@ -52,18 +83,43 @@ class WCMFFrontendController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
     
-    if ($request->getAction() == 'model')
+    if ($request->getAction() == 'getModel')
     {
       // get all known types
       $knownTypes = $persistenceFacade->getKnownTypes();
 
       // create type templates
-      $nodeTemplates = array();
+      $typeTemplates = array();
       foreach ($knownTypes as $type) {
-        $nodeTemplates[] = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+        $typeTemplates[] = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
       }
       // set response values
-      $response->setValue('nodeTemplates', $nodeTemplates);
+      $response->setValue('typeTemplates', $typeTemplates);
+    }
+    else if ($request->getAction() == 'getDetail')
+    {
+      // called with type parameter
+      if ($request->hasValue('type')) {
+        $typeTemplate = $persistenceFacade->create($request->getValue('type'), BUILDDEPTH_SINGLE);
+        $response->setValue('typeTemplate', $typeTemplate);
+      }
+      // called with oid parameter
+      if ($request->hasValue('oid'))
+      {
+        $oid = ObjectId::parse($request->getValue('oid'));
+        
+        // call DisplayController to read the requested node 
+        // and merge the responses
+        $readRequest = new Request('TerminateController', $request->getContext(), 'display',
+          array('oid' => $oid->__toString(), 'depth' => 0, 'sid' => SessionData::getInstance()->getID()));
+        $readRequest->setFormat('NULL');
+        $readRequest->setResponseFormat('NULL');
+        $readResponse = ActionMapper::getInstance()->processAction($readRequest);
+        $response->setValue('object', $readResponse->getValue('object'));
+        
+        $typeTemplate = $persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE);
+        $response->setValue('typeTemplate', $typeTemplate);
+      }
     }
     else
     {
@@ -78,15 +134,15 @@ class WCMFFrontendController extends Controller
       }
   
       // create root type templates
-      $rootNodeTemplates = array();
+      $rootTypeTemplates = array();
       foreach ($rootTypes as $rootType)
       {
         if ($rightsManager->authorize($rootType, '', ACTION_READ)) {
-          $rootNodeTemplates[] = $persistenceFacade->create($rootType, BUILDDEPTH_SINGLE);
+          $rootTypeTemplates[] = $persistenceFacade->create($rootType, BUILDDEPTH_SINGLE);
         }
       }
       // set response values
-      $response->setValue('rootNodeTemplates', $rootNodeTemplates);
+      $response->setValue('rootTypeTemplates', $rootTypeTemplates);
     }
     // success
     $response->setAction('ok');

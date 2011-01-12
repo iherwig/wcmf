@@ -1,19 +1,20 @@
 {extends file="lib:application/views/main.tpl"}
 
 {block name=head append}
-<script type="text/javascript" src="main.php?action=model"></script>
+<script type="text/javascript" src="main.php?action=getModel"></script>
 <script type="text/javascript">
 dojo.addOnLoad(function() {
   /**
-   * Create stores and grids for each root node
+   * Create a grid for each root type
    */
-{foreach $rootNodeTemplates as $node}
-{$type=$node->getType()}
-  wcmf.persistence.Store.create(wcmf.model.{$type});
-  new wcmf.ui.Grid({
+{foreach $rootTypeTemplates as $tpl}
+{$type=$tpl->getType()}
+  var {$type}Grid = new wcmf.ui.Grid({
     modelClass: wcmf.model.{$type}
-  }, dojo.byId("grid{$node->getType()}Div")).startup();
-  
+  }, dojo.byId("grid{$type}Div"));
+  {$type}Grid.startup();
+  {$type}Grid.initEvents();
+
 {/foreach}
 });
 
@@ -32,16 +33,18 @@ function test() {
 
 {block name=content}
 <div id="modeTabContainer" dojoType="dijit.layout.TabContainer" style="width:100%; height:100%;">
-{foreach $rootNodeTemplates as $node}
-  <div dojoType="dijit.layout.ContentPane" title="{$node->getObjectDisplayName()}" selected="true">
+{foreach $rootTypeTemplates as $tpl}
+{$type=$tpl->getType()}
+{$displayName=$tpl->getObjectDisplayName()}
+  <div dojoType="dijit.layout.ContentPane" title="{$displayName}" selected="true">
     <div dojoType="dijit.layout.BorderContainer" style="width:100%; height:100%" gutters="false">
       <div dojoType="dijit.layout.ContentPane" region="top">
-        <button dojoType="dijit.form.Button" type="button">{translate text="Create %1%" r0=$node->getObjectDisplayName()}
-          <script type="dojo/method" event="onClick" args="evt">wcmf.Action.create('{$node->getType()}')</script>
+        <button dojoType="dijit.form.Button" type="button">{translate text="Create %1%" r0=$displayName}
+          <script type="dojo/method" event="onClick" args="evt">wcmf.Action.create('{$type}')</script>
         </button>
       </div>
       <div dojoType="dijit.layout.ContentPane" region="center">
-	    <div id="grid{$node->getType()}Div" style="width:100%; height:100%;"></div>
+	    <div id="grid{$type}Div" style="width:100%; height:100%;"></div>
       </div>
     </div>
   </div>

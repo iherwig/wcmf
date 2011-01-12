@@ -30,5 +30,7 @@ dojo.addOnLoad(function() {
     showDuration: 500,
     hideDuration: 10
   });
-  dojo.style("error", "visibility", "hidden");
+  if (dojo.byId('errorMessage').innerHTML.length == 0) {
+    dojo.style("error", "visibility", "hidden");
+  }
 });

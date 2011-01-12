@@ -27,36 +27,51 @@ require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
-// initialize the application
-$application = Application::getInstance();
-$callParams = $application->initialize();
+try {
+  // initialize the application
+  $application = Application::getInstance();
+  $callParams = $application->initialize();
 
-// process the requested action (we don't use the result here)
-$request = new Request(
+  // process the requested action (we don't use the result here)
+  $request = new Request(
   $callParams['controller'],
   $callParams['context'],
   $callParams['action'],
   $callParams['data']
-);
-$request->setFormat($callParams['requestFormat']);
-$request->setResponseFormat($callParams['responseFormat']);
-$result = ActionMapper::processAction($request);
+  );
+  $request->setFormat($callParams['requestFormat']);
+  $request->setResponseFormat($callParams['responseFormat']);
+  $result = ActionMapper::processAction($request);
 
-register_shutdown_function('shutdown');
-exit;
+  register_shutdown_function('shutdown');
+  exit;
+}
+catch (Exception $ex) {
+  handleException($ex);
+}
 
 /**
- * Global error handling function. Assigned to EXCEPTION_HANDLER
- * which means it is called by WCMFException::throwEx()
- * @param message The error message
- * @param file The php file in which the error occured (optional)
- * @param line The line in the php file in which the error occured (optional)
- * @return The value
+ * Global exception handling function.
+ * @param exception The exception
  */
-function onError($message, $file='', $line='')
+function handleException(Exception $exception)
 {
   global $controller, $context, $action, $data, $responseFormat;
   static $numCalled = 0;
+
+  if ($exception instanceof ApplicationException)
+  {
+    $error = $exception->getError();
+    if ($error->getCode() == 'SESSION_INVALID') {
+      $request = $exception->getRequest();
+      $request->setAction('logout');
+      $request->addError($error);
+      ActionMapper::processAction($request);
+    }
+  }
+  
+  
+  $message = $exception->getMessage();
 
   $data['errorMessage'] = $message;
   Log::error($message."\n".Application::getStackTrace(), 'main');

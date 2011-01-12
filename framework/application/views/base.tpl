@@ -61,6 +61,7 @@
   <script type="text/javascript" src="{$libDir}application/js/persistence/Service.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/Store.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/Grid.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/ui/DetailPane.js"></script>
 {/block}
 </head>
 <body class="claro">
@@ -78,7 +79,7 @@
     </div>
 {/block}
     <div id="error">
-      <span id="errorMessage"></span>
+      <span id="errorMessage">{$errorMessage}</span>
     </div>
 {block name=navigation}{/block}
   </div>

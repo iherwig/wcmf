@@ -28,21 +28,22 @@ class ApplicationException extends Exception
 {
   private $_request = null;
   private $_response = null;
+  private $_error = null;
   
   /**
    * Constructor
    * @param request The current request
    * @param response The current response
-   * @param message The exception message
-   * @param code The exception code
-   * @param previous The previous exception
+   * @param error An ApplicationError instance
    */
-  public function __construct(Request $request, Response $response, $message=null, $code=0)
+  public function __construct(Request $request, Response $response, 
+    ApplicationError $error)
   {
     $this->_request = $request;
     $this->_response = $response;
+    $this->_error = $error;
     
-    parent::__construct($message, $code);
+    parent::__construct($error->getMessage());
   }
   
   /**
@@ -64,20 +65,12 @@ class ApplicationException extends Exception
   }
 
   /**
-   * Get the string representation of the exception code.
-   * Exception codes are defined as constants of the form: const CODE_STRING = CODE_NUMBER
-   * @return The exception code string
+   * Get the error
+   * @return The ApplicationError instance
    */
-  public function getCodeString()
+  public function getError()
   {
-    $class = new ReflectionClass(get_class($this));
-    $codeMap = array_flip($class->getConstants());
-    if (isset($codeMap[$this->getCode()])) {
-      return $codeMap[$this->getCode()];
-    }
-    else {
-      return '';
-    }
+    return $this->_error;
   }
 }
 ?>

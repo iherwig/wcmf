@@ -17,7 +17,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       dnd: true
   },
   rowSelector: "0px",
-  singleClickEdit: true,
+  //singleClickEdit: true,
 
   /**
    * Constructor
@@ -29,10 +29,30 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     this.modelClass = options.modelClass;
 
     dojo.mixin(this, {
-      store: wcmf.persistence.Store.getStore(this.modelClass.type),
-      structure: this.getDefaultLayout()
+      // default options
+      store: wcmf.persistence.Store.getStore(this.modelClass),
+      structure: this.getDefaultLayout(),
+      formatterScope: this
     }, options);
 
+    dojo.connect(this, 'onShow', this, this.initListeners);    
+  },
+  
+  initEvents: function() {
+    dojo.connect(this, "onCellClick", this, function(event) {
+      var item = this.getItem(event.rowIndex);
+      
+      // edit action
+      if (event.cell.field == '_edit') {
+        wcmf.Action.edit(item.oid);
+      }
+      // delete action
+      if (event.cell.field == '_delete') {
+    	if (confirm(wcmf.Message.get('Are you sure?'))) {
+          this.store.deleteItem(this.store.fetchItemByIdentity({identity:item}));
+    	}
+      }
+    });
     dojo.connect(this, "onApplyCellEdit", this, function(value, rowIndex, fieldIndex) {
       var item = this.getItem(rowIndex);
       this.store.setValue(item, fieldIndex, value);
@@ -45,45 +65,43 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
   getDefaultLayout: function() {
     var layout = [];
     dojo.forEach(this.modelClass.attributes, function(item) {
-      layout.push({
-        field: item.name,
-        name: item.name,
-        width: "100px",
-        editable:true
-      });
+      if (dojo.some(item.tags, "return item == 'DATATYPE_ATTRIBUTE';")) {
+        layout.push({
+          field: item.name,
+          name: item.name,
+          width: "100px",
+          editable: item.isEditable
+        });
+      }
     });
     layout.push({
       field: "_edit",
       name: " ",
       width: "26px",
-      formatter: wcmf.ui.Grid.getEdit,
+      formatter: this.formatEdit,
       styles: "text-align:center;vertical-align:middle;"
     });
     layout.push({
       field: "_delete",
       name: " ",
       width: "26px",
-      formatter: wcmf.ui.Grid.getDelete,
+      formatter: this.formatDelete,
       styles: "text-align:center;vertical-align:middle;"
     });
     return layout;
+  },
+
+  /**
+   * Formatter for the edit column
+   */
+  formatEdit: function(item) {
+    return '<img src="images/edit.png" />';
+  },
+
+  /**
+   * Formatter for the delete column
+   */
+  formatDelete: function(item) {
+    return '<img src="images/delete.png" />';
   }
 });
-
-/**
- * Static function used as Formatter for the edit column
- */
-wcmf.ui.Grid.getEdit = function(item) {
-  var url = "";
-  return '<img onclick="'+url+'" src="images/edit.png" />';
-}
-
-/**
- * Static function used as Formatter for the delete column
- */
-wcmf.ui.Grid.getDelete = function(item) {
-//  var url = "if (confirm('Are you sure?')) { store{$type}.deleteItem(store{$type}.fetchItemByIdentity({identity: '"+item+"'})); *}";
-  var url = "";
-  return '<img onclick="'+url+'" src="images/delete.png" />';
-}
-

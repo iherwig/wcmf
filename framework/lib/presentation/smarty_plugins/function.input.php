@@ -58,7 +58,7 @@ function smarty_function_input($params, $smarty)
     $inputType = $params['type'];
     $value = $params['value'];
     $editable = $params['editable'];
-    $control = Control::getControl($inputType);
+    $control = Control::getControl($params['inputType']);
     $html = $control->render($name, $inputType, $value, $editable, $language, $smarty);  
   }
   echo $html;

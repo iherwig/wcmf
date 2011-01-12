@@ -31,8 +31,10 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  * subdirectory of the template directory named 'smarty'.
  *
  * Error Handling:
- * - throw an Exception or use action='failure' for fatal errors (displays FailureController)
- * - add an ApplicationError for non fatal errors (the message will be displayed in the next view)
+ * - throw an Exception or use action='failure' to signal fatal errors 
+ *    (displays FailureController)
+ * - add an ApplicationError to the response to signal non fatal errors 
+ *    (the message will be displayed in the next view)
  *
  * @param[in/out] action The action to be executed
  * @param[in/out] sid The session id of the current user session
@@ -52,7 +54,6 @@ abstract class Controller
   private $_response = null;
   private $_executionResult = false;
   
-  private $_errors = array();
   private $_delegate = null;
 
   /**
@@ -86,12 +87,11 @@ abstract class Controller
     $this->_request = $request;
     $this->_response = $response;
 
-    // restore the error message of a previous call
-    if ($request->hasValue('errorCode')) {
-      $error = new ApplicationError($request->getValue('errorCode'), 
-                          $request->getValue('errorMessage'),
-                          $request->getValue('errorData'));
-      $this->addError($error);
+    // restore the error messages of a previous call
+    if ($request->hasErrors()) {
+      foreach ($request->getErrors() as $error) {
+        $response->addError($error);
+      }
     }
     if ($this->_delegate !== null) {
       $this->_delegate->postInitialize($this);
@@ -101,7 +101,6 @@ abstract class Controller
    * Check if the data given by initialize() meet the requirements of the Controller.
    * Subclasses will override this method to validate against their special requirements.
    * @return True/False whether the data are ok or not.
-   *         In case of False a detailed description is provided by getErrors().
    */
   protected function validate()
   {
@@ -174,30 +173,6 @@ abstract class Controller
    */
   protected abstract function executeKernel();
   /**
-   * Check if the controller has errors.
-   * @return True/False wether there are errors or not.
-   */
-  protected function hasErrors()
-  {
-    return sizeof($this->_errors) > 0;
-  }
-  /**
-   * Get all errors.
-   * @return An array of Error instances.
-   */
-  protected function getErrors()
-  {
-    return $this->_errors;
-  }
-  /**
-   * Add an error to the list of errors.
-   * @param error The error.
-   */
-  protected function addError(ApplicationError $error)
-  {
-    $this->_errors[] = $error;
-  }
-  /**
    * Get the Request object.
    * @return A reference to the Request object
    */
@@ -244,7 +219,7 @@ abstract class Controller
     $this->_response->setValue('sid', $session->getID());
 
     // return the first error
-    $errors = $this->getErrors();
+    $errors = $this->_response->getErrors();
     if (sizeof($errors) > 0) {
       $error = $errors[0];
       $this->_response->setValue('errorCode', $error->getCode());

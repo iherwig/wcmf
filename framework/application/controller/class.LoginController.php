@@ -73,6 +73,7 @@ class LoginController extends Controller
   protected function validate()
   {
     $request = $this->getRequest();
+    $response = $this->getResponse();
     if ($request->getAction() == 'dologin' && !$this->_anonymous)
     {
       $invalidParameters = array();
@@ -85,7 +86,7 @@ class LoginController extends Controller
       
       if (sizeof($invalidParameters) > 0)
       {
-        $this->addError(ApplicationError::get('PARAMETER_INVALID', 
+        $response->addError(ApplicationError::get('PARAMETER_INVALID', 
           array('invalidParameters' => $invalidParameters)));
         return false;
       }
@@ -98,7 +99,7 @@ class LoginController extends Controller
   public function hasView()
   {
     $request = $this->getRequest();
-    if (!$this->hasErrors() && 
+    if (!$request->hasErrors() && 
       ($request->getAction() == 'dologin' || $this->_anonymous || $this->isCookieLogin())) {
       return false;
     }
@@ -173,7 +174,7 @@ class LoginController extends Controller
       else
       {
         // login failed
-        $this->addError(ApplicationError::get('AUTHENTICATION_FAILED'));
+        $response->addError(ApplicationError::get('AUTHENTICATION_FAILED'));
         return false;
       }
     }

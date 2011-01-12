@@ -25,6 +25,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.ApplicationException.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.ApplicationError.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
 require_once(WCMF_BASE."wcmf/3rdparty/Bs_StopWatch.class.php");
@@ -90,14 +91,14 @@ class ActionMapper
       $authUser = $rightsManager->getAuthUser();
       if (!$authUser)
       {
-        Log::error("The request was: ".$request->__toString(), __CLASS__);
-        throw new ApplicationException($request, $response, Message::get("Authorization failed: no valid user. Maybe your session has expired."));
+        Log::error("Session invalid. The request was: ".$request->__toString(), __CLASS__);
+        throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
       }
       else
       {
         $login = $authUser->getName();
         Log::error("Authorization failed for '".$actionKey."' user '".$login."'", __CLASS__);
-        throw new ApplicationException($request, $response, Message::get("You don't have the permission to perform this action."));
+        throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
       }
     }
 
@@ -179,6 +180,9 @@ class ActionMapper
       // proceed based on the result
       $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction(), $response->getData());
       $nextRequest->setResponseFormat($request->getResponseFormat());
+      foreach ($request->getErrors() as $error) {
+        $nextRequest->addError($error);
+      }
       $response = ActionMapper::processAction($nextRequest);
     }
     else {

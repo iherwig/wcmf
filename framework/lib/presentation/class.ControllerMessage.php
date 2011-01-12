@@ -34,7 +34,8 @@ class ControllerMessage
   private $_action = null;
   private $_format = null;
   private $_data = array();
-
+  private $_errors = array();
+  
   /**
    * Constructor
    * @param sender The name of the controller that sent the message
@@ -46,7 +47,7 @@ class ControllerMessage
   public function ControllerMessage($sender, $context, $action, $data)
   {
     if (func_num_args() != 4) {
-      throw new ApplicationException("Message constructor called with wrong argument number.");
+      throw new IllegalArgumentException("Message constructor called with wrong argument number.");
     }
     $this->_sender = $sender;
     $this->_context = $context;
@@ -230,6 +231,33 @@ class ControllerMessage
   }
 
   /**
+   * Add an error to the list of errors.
+   * @param error The error.
+   */
+  public function addError(ApplicationError $error)
+  {
+    $this->_errors[] = $error;
+  }
+  
+  /**
+   * Check if errors exist.
+   * @return True/False wether there are errors or not.
+   */
+  public function hasErrors()
+  {
+    return sizeof($this->_errors) > 0;
+  }
+  
+  /**
+   * Get all errors.
+   * @return An array of Error instances.
+   */
+  public function getErrors()
+  {
+    return $this->_errors;
+  }
+  
+  /**
    * Get a string representation of the message
    * @return The string
    */
@@ -240,6 +268,7 @@ class ControllerMessage
     $str .= 'action='.$this->_action.', ';
     $str .= 'format='.$this->_format.', ';
     $str .= 'data='.StringUtil::getDump($this->_data);
+    $str .= 'errors='.StringUtil::getDump($this->_errors);
     return $str;
   }
 }

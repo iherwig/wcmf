@@ -63,11 +63,31 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Obfuscator.php");
 class ListController extends Controller
 {
   /**
-   * @see Controller::hasView()
+   * @see Controller::validate()
    */
-  public function hasView()
+  protected function validate()
   {
-    return false;
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    if($request->hasValue('limit') && intval($request->getValue('limit')) < 0) {
+      Log::warn(ApplicationError::get('LIMIT_NEGATIVE'), __CLASS__);
+    }
+    if($request->hasValue('sortFieldName')) {
+      $sortFieldName = $request->getValue('sortFieldName');
+      $mapper = PersistenceFacade::getInstance()->getMapper($request->getValue('className'));
+      if (!$mapper->hasAttribute($sortFieldName)) {
+        $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));
+        return false;
+      }
+    }
+    if($request->hasValue('sortDirection')) {
+      $sortDirection = $request->getValue('sortDirection');
+      if (strtolower($sortDirection) != 'asc' && strtolower($sortDirection) != 'desc') {
+        $response->addError(ApplicationError::get('SORT_DIRECTION_UNKNOWN'));
+      }
+    }
+    // we can't check for offset out of bounds here
+    return true;
   }
   /**
    * Do processing and assign Node data to View.
@@ -108,7 +128,6 @@ class ListController extends Controller
     }
     // get the object ids
     $objects = $this->getObjects($request->getValue('className'), $filter, $sortArray, $pagingInfo);
-    Log::error(sizeof($objects), __CLASS__);
     
     // collect the nodes
     $nodes = array();    
@@ -190,65 +209,6 @@ class ListController extends Controller
     // set sort properties
     if (strlen($request->getValue('sortFieldName')) == 0) {
       NodeUtil::setSortProperties($nodes);
-    }
-    // if the nodes are loaded as children of a parent, we set additional
-    // properties describing the relation
-    $poid = ObjectId::parse($request->getValue('poid'));
-    if ($poid != null)
-    {
-      $parentType = $poid->getType();
-      
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $parentTemplate = $persistenceFacade->create($parentType, 1);
-      for ($i=0,$count=sizeof($nodes); $i<$count; $i++)
-      {
-        $curNode = &$nodes[$i];
-
-        // set the relation properties from childTemplate
-        $childTemplate = $parentTemplate->getFirstChild($curNode->getType());
-        // TODO: check which ones are necessary and do this explicitly
-        foreach ($childTemplate->getPropertyNames() as $property)
-        {
-          if ($property != 'childoids' && $property != 'parentoids') {
-            $curNode->setProperty($property, $childTemplate->getProperty($property));
-          }
-        }
-
-        // as manyToMany objects act as a proxy, we set a property 'realSubject',
-        // which holds to the real subject.
-        // we assume that the proxy connects exactly two objects, the client and the real subject
-        if (in_array('manyToMany', $curNode->getPropertyNames()))
-        {
-          $realSubjectType = NodeUtil::getRealSubjectType($curNode, $parentType);
-          // get the real subject from the parentoids property
-          $realSubject = null;
-          $clientOID = null;
-          foreach($curNode->getParentOIDs() as $curParentOID)
-          {
-            if (PersistenceFacade::getOIDParameter($curParentOID, 'type') == $realSubjectType)
-            {
-              $realSubject = $persistenceFacade->load($curParentOID, BUILDDEPTH_SINGLE);
-              // render values
-              if ($this->_request->getValue('renderValues'))
-              {
-                $subjectList = array(&$realSubject);
-                NodeUtil::renderValues($subjectList);
-              }
-            }
-            else
-              $clientOID = $curParentOID;
-          }
-          $curNode->setProperty('realSubject', $realSubject);
-          $curNode->setProperty('realSubjectType', $realSubjectType);
-          $curNode->setProperty('clientOID', $clientOID);
-          $curNode->setProperty('composition', false);
-        }
-        // for normal nodes we set the clientOID parameter, to know the parent later
-        else
-        {
-          $curNode->setProperty('clientOID', $this->_request->getValue('poid'));
-        }
-      }
     }
   }
 }
