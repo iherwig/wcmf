@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -32,9 +32,9 @@ class Message
 {
   /**
    * The get() method is used to get a localized string.
-   * The localization directory must be given in the global variable $MESSAGE_LOCALE_DIR 
+   * The localization directory must be given in the global variable $MESSAGE_LOCALE_DIR
    * (configuration value 'localeDir' in section 'cms').
-   * Inside this directory there must be a messages_$lang.php files for each language 
+   * Inside this directory there must be a messages_$lang.php files for each language
    * defining the translation for each message.
    * For example the messages_de_DE file could have the following content:
    * @code
@@ -92,7 +92,7 @@ class Message
     $translations = self::getTranslations($lang);
     return $translations;
   }
-  
+
   /**
    * Get the requested language in the language_COUNTRY format
    * @param lang The language, optional, default: ''.
@@ -101,18 +101,18 @@ class Message
   private static function getLanguage($lang)
   {
     global $MESSAGE_LANGUAGE;
-    
+
     // select language
     if ($lang == '')
     {
       if ($MESSAGE_LANGUAGE != '') {
         $lang = $MESSAGE_LANGUAGE;
       }
-      else if ($lang == '') {
+      else if ($lang == '' && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
         $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
       }
     }
-    
+
     // convert lang to language_COUNTRY format if not already done
     $lang = preg_replace("/\-/", "_", $lang);
     $lang = preg_replace("/(\w+)_(\w+)/e", "'\\1_'.strtoupper('\\2')", $lang);
@@ -120,7 +120,7 @@ class Message
     if (strpos($lang, '_') === false) {
       $lang = $lang.'_'.strtoupper($lang);
     }
-    
+
     return $lang;
   }
 
@@ -132,10 +132,10 @@ class Message
   private static function getTranslations($lang)
   {
     $lang = self::getLanguage($lang);
-    
+
     global $MESSAGE_LOCALE_DIR;
     global ${"messages_$lang"};
-    
+
     $messageFile = $MESSAGE_LOCALE_DIR."/messages_".$lang.".php";
     if (file_exists($messageFile))
     {

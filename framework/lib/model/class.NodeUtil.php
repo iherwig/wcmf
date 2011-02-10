@@ -181,29 +181,6 @@ class NodeUtil
     return $query->toString();
   }
   /**
-   * Get the real subject type for a proxy node, that is a many to many instance. A many to many instance
-   * serves as proxy between a client and a real subject, where the client is the parent node in this case
-   * and the proxy is the child node.
-   * @param proxy The (many to many) proxy node
-   * @param parentType The parent type
-   * @return The type
-   */
-  public static function getRealSubjectType(Node $proxy, $parentType)
-  {
-    $manyToMany = $proxy->getProperty('manyToMany');
-    if (is_array($manyToMany) && sizeof($manyToMany) == 2)
-    {
-      // get the type of the real subject from the manyToMany property
-      foreach($proxy->getProperty('manyToMany') as $curParentType)
-      {
-        if ($curParentType != $parentType) {
-          return $curParentType;
-        }
-      }
-    }
-    return null;
-  }
-  /**
    * Get the display value names of a Node.
    * @param node The Node instance
    * @return An array of value names

@@ -1,22 +1,53 @@
+{* This template is assumed to be loaded as content of a wcmf.ui.DetailPane *}
+
 {$mapper=$typeTemplate->getMapper()}
-<div id="leftcol">
-  <div class="contentblock">
-    <fieldset>
-      <legend>{if $object}{$object->getDisplayValue()}{else}{$typeTemplate->getDisplayValue(true)}{/if}</legend>
-      <ol>
-    {foreach item=attribute from=$mapper->getAttributes(array('DATATYPE_IGNORE'), 'none')}
-        <li>
-	      <label for="{$attribute->name}" title="{$typeTemplate->getValueDescription($attribute->name)}">{$typeTemplate->getValueDisplayName($attribute->name)}</label>
-    	  {input name=$attribute->name inputType=$attribute->inputType value="{if $object}{$object->getValue($attribute->name)}{/if}" editable=$attribute->isEditable}
-        </li>
-    {/foreach}
-     </ol>
-   </div>
-</div>
-<div id="rightcol">
-  {foreach item=relation from=$mapper->getRelations()}
-  <div class="contentblock">
-    <div id="{$relation->otherRole}Grid" style="border:1px solid #99bbe8;overflow: hidden; width: 445px"></div>
+<script type="text/javascript">
+dojo.addOnLoad(function() {
+
+  var detailNode = dojo.byId("detail{$object->getOID()}");
+  var detailPane = dijit.getEnclosingWidget(detailNode.parentNode);
+  if (detailPane.oid) {
+    detailPane.set("title", "{$object->getDisplayValue()}");
+  }
+  
+  /**
+   * Create a grid for each related type
+   */
+{foreach item=relation from=$mapper->getRelations()}
+{$type=$relation->otherType}
+{$role=$relation->otherRole}
+  var {$role}Grid = new wcmf.ui.Grid({
+    modelClass: wcmf.model.{$type},
+    autoHeight: 10,
+    rowsPerPage: 10,
+    rowCount: 10
+  }, dojo.byId("grid{$object->getOID()}{$role}Div"));
+  {$role}Grid.startup();
+  {$role}Grid.initEvents();
+
+{/foreach}
+});
+</script>
+
+<div id="detail{$object->getOID()}">
+  <div class="leftcol">
+    <div class="contentblock">
+      <fieldset>
+        <legend>{$object->getDisplayValue()}</legend>
+        <ol>
+      {foreach item=attribute from=$mapper->getAttributes(array('DATATYPE_IGNORE'), 'none')}
+          <li>
+	        <label for="{$attribute->name}" title="{$typeTemplate->getValueDescription($attribute->name)}">{$typeTemplate->getValueDisplayName($attribute->name)}</label>
+    	    {input object=$object name=$attribute->name}
+          </li>
+      {/foreach}
+       </ol>
+     </div>
   </div>
-  {/foreach}
+  <div class="rightcol">
+    {foreach item=relation from=$mapper->getRelations()}
+    <h2>{$relation->otherRole}</h2>
+    <div id="grid{$object->getOID()}{$relation->otherRole}Div" style="width:445px; height:200px;"></div>
+    {/foreach}
+  </div>
 </div>

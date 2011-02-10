@@ -30,19 +30,14 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 try {
   // initialize the application
   $application = Application::getInstance();
-  $callParams = $application->initialize();
+  $request = $application->initialize();
 
-  // process the requested action (we don't use the result here)
-  $request = new Request(
-  $callParams['controller'],
-  $callParams['context'],
-  $callParams['action'],
-  $callParams['data']
-  );
-  $request->setFormat($callParams['requestFormat']);
-  $request->setResponseFormat($callParams['responseFormat']);
+  // process the requested action
   $result = ActionMapper::processAction($request);
 
+  // store the last successful request
+  SessionData::getInstance()->set('lastRequest', $request);
+  
   register_shutdown_function('shutdown');
   exit;
 }
@@ -56,7 +51,7 @@ catch (Exception $ex) {
  */
 function handleException(Exception $exception)
 {
-  global $controller, $context, $action, $data, $responseFormat;
+  global $request;
   static $numCalled = 0;
 
   if ($exception instanceof ApplicationException)
@@ -70,11 +65,7 @@ function handleException(Exception $exception)
     }
   }
   
-  
-  $message = $exception->getMessage();
-
-  $data['errorMessage'] = $message;
-  Log::error($message."\n".Application::getStackTrace(), 'main');
+  Log::error( $exception->getMessage()."\n".Application::getStackTrace(), 'main');
 
   // rollback current transaction
   $persistenceFacade = PersistenceFacade::getInstance();
@@ -83,12 +74,14 @@ function handleException(Exception $exception)
   // prevent recursive calls
   $numCalled++;
   if ($numCalled == 2) {
-    $request = new Request('FailureController', '', 'fatal', $data);
-    $request->setResponseFormat($responseFormat);
+    $request->setAction('fatal');
+    $request->addError(ApplicationError::get('GENERAL_FATAL', 
+          array('exception' => $exception)));
     ActionMapper::processAction($request);
   }
   else if ($numCalled == 3)
   {
+    $message = $exception->getMessage();
     // make sure that no error can happen in this stage
     if ($responseFormat == MSG_FORMAT_JSON)
       print JSONUtil::encode(array('success' => false, 'errorMessage' => $message));
@@ -97,16 +90,14 @@ function handleException(Exception $exception)
   }
   else
   {
-    // get old controller/context/action triple to restore application status
-    $controller = Application::getCallParameter('old_controller', $controller);
-    $context = Application::getCallParameter('old_context', $context);
-    $action = Application::getCallParameter('old_action', $action);
-    $responseFormat = Application::getCallParameter('old_response_format', $responseFormat);
-
-    // process old action
-    $request = new Request($controller, $context, $action, $data);
-    $request->setResponseFormat($responseFormat);
-    ActionMapper::processAction($request);
+    // process last successful request
+    $lastRequest = SessionData::getInstance()->get('lastRequest');
+    if ($lastRequest) {
+      ActionMapper::processAction($lastRequest);
+    }
+    else {
+      print $exception;
+    }
   }
   exit;
 }

@@ -236,6 +236,14 @@ class AuthUser extends User implements Storable
    */
 
   /**
+   * Get the type
+   */
+  function getType()
+  {
+    return UserManager::getUserClassName();
+  }
+
+  /**
    * @see User::setLogin()
    */
   public function setLogin($login)
@@ -391,17 +399,10 @@ class AuthUser extends User implements Storable
   {
     $parser = InifileParser::getInstance();
 
-    if (($userClassName = $parser->getValue('User', 'implementation')) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
-    }
-    $userClassFile = ObjectFactory::getClassfile($userClassName);
+    $userClassFile = ObjectFactory::getClassfile(UserManager::getUserClassName());
+    $roleClassFile = ObjectFactory::getClassfile(UserManager::getRoleClassName());
 
-    if (($roleClassName = $parser->getValue('Role', 'implementation')) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
-    }
-    $roleClassName = ObjectFactory::getClassfile($roleClassName);
-
-    return array(__FILE__, WCMF_BASE.$userClassFile, WCMF_BASE.$roleClassName);
+    return array(__FILE__, WCMF_BASE.$userClassFile, WCMF_BASE.$roleClassFile);
   }
 
   /**

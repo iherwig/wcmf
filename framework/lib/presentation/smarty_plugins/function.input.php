@@ -48,8 +48,8 @@ function smarty_function_input($params, $smarty)
   {
     $object = $params['object'];
     $name = $params['name'];
-    $properties = $object->getValueProperties($name);
-    $control = Control::getControl($properties['input_type']);
+    $inputType = $object->getValueProperty($name, 'input_type');
+    $control = Control::getControl($inputType);
     $html = $control->renderFromProperty($object, $name, $language, $smarty);  
   }
   else

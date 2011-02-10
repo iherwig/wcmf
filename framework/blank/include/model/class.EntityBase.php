@@ -52,7 +52,7 @@ class EntityBase extends EntityBaseBase
     if (in_array('last_editor', $this->getValueNames()))
     {
       $rightsManager = RightsManager::getInstance();
-      $authUser = &$rightsManager->getAuthUser();
+      $authUser = $rightsManager->getAuthUser();
       $this->setValue('last_editor', $authUser->getLogin());
     }
   }

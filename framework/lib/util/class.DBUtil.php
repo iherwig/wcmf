@@ -104,7 +104,7 @@ class DBUtil
    */
   public static function copyDatabase($srcName, $destName, $server, $user, $password)
   {
-    if($srcName && $destName && $server && $user && $password)
+    if($srcName && $destName && $server && $user)
     {
       DBUtil::createDatabase($destName, $server, $user, $password);
 
@@ -157,7 +157,7 @@ class DBUtil
   public static function createDatabase($name, $server, $user, $password)
   {
     $created = false;
-    if($name && $server && $user && $password)
+    if($name && $server && $user)
     {
       // setup connection
       $dbConnect = mysql_connect($server, $user, $password);

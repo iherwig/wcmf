@@ -206,16 +206,18 @@ class GraphicsUtil
     return $created;
   }
   /**
-   * Crop an image to the given size starting from the middle.
+   * Crop an image to the given size starting from the middle of a given start point.
    * @param srcName The source file name
    * @param destName The destination file name
    * @param width The width of the cropped image (maybe null)
    * @param height The height of the cropped image (maybe null)
+   * @param x The start point x coordinate (maybe null, default null)
+   * @param y The start point y coordinate (maybe null, default null)
    * @return True/False whether the operation succeeded
    * @note: supported image formats are GIF, JPG, PNG
    *        if only width or height are given the other dimension is taken from the original image
    */
-  public static function cropImage($srcName, $destName, $width, $height)
+  public static function cropImage($srcName, $destName, $width, $height, $x=null, $y=null)
   {
     self::checkImageSupport();
       
@@ -259,7 +261,11 @@ class GraphicsUtil
       return self::exitThumbnail($srcImg, $destImg, Message::get("Could not open source image %1%.", array($srcName)),
         false, $oldErrorLevel);
     }
-    imagecopyresampled ($destImg, $srcImg, 0, 0, $srcData[0]/2, $srcData[1]/2, $width, $height, $width, $height);
+    if ($x === null)
+      $x = $srcData[0]/2;
+    if ($y === null)
+      $y = $srcData[1]/2;
+    imagecopyresampled ($destImg, $srcImg, 0, 0, $x, $y, $width, $height, $width, $height);
     // the last parameter gives the quality and will only be used with imagejpeg
     if ($imageoutputFunction == "imagejpeg") {
       $imageoutputFunction ($destImg, $destName, 100);

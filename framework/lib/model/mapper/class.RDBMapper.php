@@ -434,10 +434,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     {
       if (!$this->isPkValue($valueName))
       {
-        $properties = $object->getValueProperties($valueName);
         $value = $object->getValue($valueName);
         $appValues[$valueName] = $value;
-        $convertedValue = $this->_dataConverter->convertApplicationToStorage($value, $object->getPropertyValue($valueName, 'type'), $valueName);
+        $convertedValue = $this->_dataConverter->convertApplicationToStorage($value, $object->getValueProperty($valueName, 'type'), $valueName);
         $object->setValue($valueName, $convertedValue);
       }
     }
@@ -642,7 +641,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       $orderbyStr = join(', ', $orderby);
     }
     // create query
-    $sqlStr = $this->getSelectSQL($attribCondStr, $orderbyStr);
+    $sqlStr = $this->getSelectSQL($attribCondStr, null, $orderbyStr, $attribs);
     
     $data = $this->select($sqlStr, $pagingInfo);
     if (sizeof($data) == 0) {

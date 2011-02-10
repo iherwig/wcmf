@@ -193,4 +193,7 @@ define('HISTORY_NOT_SUPPORTED', serialize(array('HISTORY_NOT_SUPPORTED',
 
 define('PERMISSION_DENIED', serialize(array('PERMISSION_DENIED', 
   Message::get('The user does not have the permission to perform this action.'), ERROR_LEVEL_ERROR)));
+  
+define('OBJECT_IS_LOCKED', serialize(array('OBJECT_IS_LOCKED', 
+  Message::get('The object is currently locked by another user.'), ERROR_LEVEL_ERROR)));
 ?>

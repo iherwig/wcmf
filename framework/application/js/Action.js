@@ -26,6 +26,20 @@ wcmf.Action.logout = function() {
 };
 
 /**
+ * The save action
+ */
+wcmf.Action.save = function() {
+  var tabContainer = dijit.byId("modeTabContainer");
+  if (tabContainer) {
+	// save the current DetailPane
+	var pane = tabContainer.selectedChildWidget;
+	if (pane instanceof wcmf.ui.DetailPane) {
+	  pane.save();
+	}
+  }
+};
+
+/**
  * The create action
  */
 wcmf.Action.create = function(type) {
@@ -33,14 +47,9 @@ wcmf.Action.create = function(type) {
   if (tabContainer) {
 	var pane = new wcmf.ui.DetailPane({
       title: wcmf.Message.get("New %1%", [type]),
+      oid: null,
       modelClass: wcmf.model[type],
-      href: '?action=getDetail&type='+type,
-      closable: true,
-      onClose: function() {
-        // confirm() returns true or false, so return that.
-        //return confirm(wcmf.Message.get("Do you really want to close this?"));
-    	return true;
-      }
+      href: '?action=getDetail&type='+type
     });
 	tabContainer.addChild(pane);
 	tabContainer.selectChild(pane);
@@ -50,20 +59,15 @@ wcmf.Action.create = function(type) {
 /**
  * The edit action
  */
-wcmf.Action.edit = function(oid) {
+wcmf.Action.edit = function(type, oid) {
   var tabContainer = dijit.byId("modeTabContainer");
   if (tabContainer) {
 	var pane = new wcmf.ui.DetailPane({
       title: oid,
       oid: oid,
-      href: '?action=getDetail&oid='+oid,
-      closable: true,
-      onClose: function() {
-        // confirm() returns true or false, so return that.
-        //return confirm(wcmf.Message.get("Do you really want to close this?"));
-    	return true;
-      }
-    });
+      modelClass: wcmf.model[type],
+      href: '?action=getDetail&oid='+oid
+	});
 	tabContainer.addChild(pane);
 	tabContainer.selectChild(pane);
   }

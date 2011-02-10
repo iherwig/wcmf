@@ -46,16 +46,24 @@ dojo.provide("com.ibm.developerworks.EasyRestService");
         headers : { Accept : "application/json,application/javascript" }
       };
       
-      // Transform the arguments
-      // NOTE: argumentsTransformer has a reference to "service"
-      serviceArgs = argumentsTransformer(serviceArgs, arguments);
-
       // Copy the content into the appropriate *Data arg
       // getData, putData, postData, deleteData
       // NOTE: If you want your arguments transformer to edit the *Data arg directly, 
       // move the arguments transformer invocation to after this call 
-      serviceArgs[methodLowerCase + 'Data'] = content;
+      // edit ih: use *Data arg only for PUT and POST, content otherwise
+      if (methodLowerCase == 'put' || methodLowerCase == 'post') {
+        serviceArgs[methodLowerCase + 'Data'] = content;
+      }
+      else {
+        serviceArgs['content'] = content;
+      }
+      
             
+      // Transform the arguments
+      // NOTE: argumentsTransformer has a reference to "service"
+      // edit ih: swaped this statement with the statement before
+      serviceArgs = argumentsTransformer(serviceArgs, arguments);
+
       // Kick off the call
       var xhrFunction = dojo['xhr' + methodCapitalised];
       var deferred = xhrFunction(serviceArgs);

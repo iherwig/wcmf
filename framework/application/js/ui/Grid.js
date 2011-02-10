@@ -16,7 +16,13 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       indirectSelection: true,
       dnd: true
   },
+  delayScroll: true,
+  //elasticView: "2",
   rowSelector: "0px",
+  autoWidth: true,
+  autoHeight: false,
+  rowsPerPage: 25,
+  rowCount: 25,
   //singleClickEdit: true,
 
   /**
@@ -44,7 +50,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       
       // edit action
       if (event.cell.field == '_edit') {
-        wcmf.Action.edit(item.oid);
+        wcmf.Action.edit(this.modelClass.type, item.oid);
       }
       // delete action
       if (event.cell.field == '_delete') {
@@ -60,28 +66,37 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     dojo.connect(this, "onSelected", this, function(item, attribute, oldValue, newValue) {
       this.store.save();
     });
+	dojo.connect(this, "onShow", this, this.resizeGrid);
   },
   
+  resizeGrid: function() {
+    // do whatever you need here, e.g.:
+	this.resize();
+    this.update();
+  },
+
   getDefaultLayout: function() {
-    var layout = [];
+    var layout = {};
+    layout.defaultCell = { width: "100px" };
+	layout.cells = [];
     dojo.forEach(this.modelClass.attributes, function(item) {
-      if (dojo.some(item.tags, "return item == 'DATATYPE_ATTRIBUTE';")) {
-        layout.push({
+    if (dojo.some(item.tags, "return item == 'DATATYPE_ATTRIBUTE';")) {
+        layout.cells.push({
           field: item.name,
           name: item.name,
-          width: "100px",
+          //width: "10%",
           editable: item.isEditable
         });
       }
     });
-    layout.push({
+    layout.cells.push({
       field: "_edit",
       name: " ",
       width: "26px",
       formatter: this.formatEdit,
       styles: "text-align:center;vertical-align:middle;"
     });
-    layout.push({
+    layout.cells.push({
       field: "_delete",
       name: " ",
       width: "26px",

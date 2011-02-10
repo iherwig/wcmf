@@ -279,13 +279,14 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
           $obj->setValue('_proxyOid', $proxyOID);
 
           // add proxy relations to the remote object
-          // TODO implement this for new Node class
-          /*
-          $parentOIDs = $this->mergeOIDs($obj->getProperty('parentoids'), $proxy->getProperty('parentoids'));
-          $obj->setProperty('parentoids', $parentOIDs);
-          $childOIDs = $this->mergeOIDs($obj->getProperty('childoids'), $proxy->getProperty('childoids'));
-          $obj->setProperty('childoids', $childOIDs);
-          */
+          $children = $proxy->getChildren();
+          for($i=0, $count=sizeof($children); $i<$count; $i++) {
+            $obj->addChild($children[$i]);
+          }
+          $parents = $proxy->getParents();
+          for($i=0, $count=sizeof($parents); $i<$count; $i++) {
+            $obj->addParent($parents[$i]);
+          }
         }
         $this->registerRemoteObject($umi, $obj, $buildDepth);
       }
@@ -336,10 +337,10 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * Save a object in the given session variable.
    * @param umi The universal model id (oid with server prefix)
    * @param obj The object to register.
-   * @param buildDepth The depth the object was loaded [default: BUILDDEPTH_SINGLE].
+   * @param buildDepth The depth the object was loaded.
    * @param varName The session variable name.
    */
-  protected function registerObject(ObjectId $umi, PersistentObject $obj, $buildDepth=BUILDDEPTH_SINGLE, $varName)
+  protected function registerObject(ObjectId $umi, PersistentObject $obj, $buildDepth, $varName)
   {
     if ($buildDepth == 0) {
       $buildDepth=BUILDDEPTH_SINGLE;
@@ -387,10 +388,10 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
   /**
    * Get a object from the given session variable.
    * @param umi The universal model id (oid with server prefix)
-   * @param buildDepth The requested build depth [default: BUILDDEPTH_SINGLE].
+   * @param buildDepth The requested build depth.
    * @return The object or null if not found.
    */
-  protected function getRegisteredObject(ObjectId $umi, $buildDepth=BUILDDEPTH_SINGLE, $varName)
+  protected function getRegisteredObject(ObjectId $umi, $buildDepth, $varName)
   {
     if ($buildDepth == 0) {
       $buildDepth=BUILDDEPTH_SINGLE;
@@ -411,23 +412,6 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
       }
     }
     return null;
-  }
-  /**
-   * Merge two oid arrays, remove dummy oids
-   * @param list1 The first array
-   * @param list2 The second array
-   * @return The merged array
-   */
-  protected function mergeOIDs($list1, $list2)
-  {
-    $result = array();
-    foreach (array_merge($list1, $list2) as $oid) {
-      $ids = $oid->getId();
-      if (!ObjectId::isDummyId($ids[0])) {
-        $result[] = $oid;
-      }
-    }
-    return array_unique($result);
   }
   /**
    * Replace all object ids in an array with the umis according to

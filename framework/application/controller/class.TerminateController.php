@@ -39,7 +39,7 @@ class TerminateController extends Controller
   /**
    * @see Controller::hasView()
    */
-  function hasView()
+  public function hasView()
   {
     return false;
   }
@@ -47,9 +47,12 @@ class TerminateController extends Controller
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  function executeKernel()
+  public function executeKernel()
   {
-    $this->_response->setData($this->_request->getData());
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    Log::error(array_keys($request->getData()), __CLASS__);
+    $response->setData($request->getData());
     return false;
   }
 }

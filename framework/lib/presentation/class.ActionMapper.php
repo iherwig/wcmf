@@ -28,7 +28,6 @@ require_once(WCMF_BASE."wcmf/lib/presentation/class.ApplicationException.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.ApplicationError.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(WCMF_BASE."wcmf/3rdparty/Bs_StopWatch.class.php");
 
 /**
  * @class ActionMapper
@@ -73,7 +72,7 @@ class ActionMapper
     $referrer = $request->getSender();
     $context = $request->getContext();
     $action = $request->getAction();
-    $response = new Response($referrer, $context, $action, array());
+    $response = new Response($referrer, $context, $action);
     
     // this array stores all controllers executed since the last view displayed (the last call of main.php)
 
@@ -82,8 +81,6 @@ class ActionMapper
 
     $parser = WCMFInifileParser::getInstance();
     $rightsManager = RightsManager::getInstance();
-
-    $logExecutionTime = $parser->getValue('logExecuteTime', 'cms');
 
     // check authorization for controller/context/action triple
     if (!$rightsManager->authorize($referrer, $context, $action))
@@ -123,7 +120,7 @@ class ActionMapper
       }
     }
     if (strlen($controllerClass) == 0) {
-      throw new ConfigurationException($request, null, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
+      throw new ApplicationException($request, $response, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
     }
 
     // create controller delegate instance if configured
@@ -160,16 +157,8 @@ class ActionMapper
     $controllerObj->initialize($request, $response);
 
     // execute controller
-    if ($logExecutionTime)
-    {
-      $stopWatch = new Bs_StopWatch();
-      $stopWatch->reset();
-    }
     $result = $controllerObj->execute();
-
-    if ($logExecutionTime && Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($controllerClass." execution time: ".$stopWatch->getTime()." ms", __CLASS__);
-    }
+    Formatter::serialize($response);
     if ($result === false)
     {
       // stop processing
@@ -178,11 +167,11 @@ class ActionMapper
     else if ($result === true)
     {
       // proceed based on the result
-      $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction(), $response->getData());
+      $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction());
+      $nextRequest->setValues($response->getValues());
+      $nextRequest->setData($response->getData());
+      $nextRequest->setErrors($request->getErrors());
       $nextRequest->setResponseFormat($request->getResponseFormat());
-      foreach ($request->getErrors() as $error) {
-        $nextRequest->addError($error);
-      }
       $response = ActionMapper::processAction($nextRequest);
     }
     else {

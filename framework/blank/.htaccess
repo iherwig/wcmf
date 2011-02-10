@@ -3,6 +3,6 @@ RewriteEngine On
 RewriteBase /ingo/wCMF/framework/new_roles/cms/application
 
 # rest
-#RewriteCond %{QUERY_STRING} .
-RewriteRule ^.*rest\/([^\/]+)\/?$ main.php?action=restAction&className=$1
-RewriteRule ^.*rest\/([^\/]+)\/([A-Za-z0-9\:]+)$ main.php?action=restAction&className=$1&id=$2
+RewriteRule ^.*rest\/([^\/]+)\/?$ main.php?action=restAction&className=$1 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([0-9]+)$ main.php?action=restAction&className=$1&id=$2 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([A-Za-z0-9\:]+)$ main.php?action=restAction&className=$1&oid=$2 [QSA,L]

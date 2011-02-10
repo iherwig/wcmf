@@ -21,6 +21,7 @@ require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
 require_once(WCMF_BASE."wcmf/lib/output/class.LogOutputStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.AuthUser.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.JSONUtil.php");
@@ -37,7 +38,10 @@ require_once(WCMF_BASE."wcmf/lib/core/class.ErrorHandler.php");
 class Application
 {
   private static $_instance = null;
-  private $_data = null;
+
+  private $_requestValues = array();
+  private $_rawPostBody = null;
+  private $_rawPostBodyIsJson = false;
   private $_errorHandler = null;
 
   /**
@@ -46,16 +50,17 @@ class Application
   private function __construct()
   {
     // collect all request data
-    $this->_data = array_merge($_GET, $_POST, $_COOKIE, $_FILES);
-    $json = JSONUtil::decode(file_get_contents('php://input'), true);
+    $this->_requestValues = array_merge($_GET, $_POST, $_FILES);
+    $this->_rawPostBody = file_get_contents('php://input');
+    // add the raw post data if they are json encoded
+    $json = JSONUtil::decode($this->_rawPostBody, true);
     if (is_array($json))
     {
+      $this->_rawPostBodyIsJson = true;
       foreach ($json as $key => $value) {
-        $this->_data[$key] = $value;
+        $this->_requestValues[$key] = $value;
       }
     }
-    // store data in global variables to make them accessible by error handlers
-    $GLOBALS['data'] = &$this->_data;
   }
 
   /**
@@ -82,7 +87,7 @@ class Application
    * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
    * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
    * @param defaultResponseFormat The response format if none is given in request parameters, optional [default: HTML]
-   * @return An associative array with keys 'action', 'context', 'controller', 'data'
+   * @return The Request instance representing the current HTTP request
    * TODO: return request instance, maybe use default parameters from a config section?
    * TODO: allow configPath array to search from different locations, simplifies inclusion
    */
@@ -90,7 +95,7 @@ class Application
     $defaultController='LoginController', $defaultContext='', $defaultAction='login',
     $defaultResponseFormat='HTML')
   {
-    Application::setupGlobals($configPath, $mainConfigFile);
+    self::setupGlobals($configPath, $mainConfigFile);
     $parser = WCMFInifileParser::getInstance();
 
     // include files from implementation section
@@ -107,44 +112,54 @@ class Application
         ObjectFactory::loadClassDefinition($class);
       }
     }
-        
+    
+    // get controller/context/action triple
+    // (defaults to /LoginController//login in this application)
+    $controller = $this->getRequestValue('controller', $defaultController);
+    $context = $this->getRequestValue('context', $defaultContext);
+    $action = $this->getRequestValue('action', $defaultAction);
+    $readonly = $this->getRequestValue('readonly', false);
+
+    // determine message formats based on request headers
+    if (isset($_SERVER['CONTENT_TYPE'])) {
+      $requestFormat = self::getMessageFormatFromHeader(
+        strtolower($_SERVER['CONTENT_TYPE']), $defaultResponseFormat);
+      $requestFormat = $this->getRequestValue('requestFormat', $requestFormat);
+    }
+    else {
+      $requestFormat = $this->getRequestValue('requestFormat', $defaultResponseFormat);
+    }
+    if (isset($_SERVER['HTTP_ACCEPT'])) {
+      $responseFormat = self::getMessageFormatFromHeader(
+        strtolower($_SERVER['HTTP_ACCEPT']), $defaultResponseFormat);
+      $responseFormat = $this->getRequestValue('responseFormat', $responseFormat);
+    }
+    else {
+      $responseFormat = $this->getRequestValue('responseFormat', $defaultResponseFormat);
+    }
+
+    // create the Request instance
+    $request = new Request($controller, $context, $action);
+    $request->setFormat($requestFormat);
+    $request->setResponseFormat($responseFormat);
+    $request->setValues($this->_requestValues);
+    if (!$this->_rawPostBodyIsJson) {
+      $request->addData($this->_rawPostBody);
+    }
+  // TODO: 
+  // - request headers should be added to the Request class
+  //   foreach (getallheaders() as $name => $value) {
+  //     Log::error("$name: $value", __CLASS__);
+  //   }
+
     // initialize session with session id if given
-    $sessionId = Application::getCallParameter('sid', false);
-    if ($sessionId === false) {
-      $sessionId = Application::getCallParameter('PHPSESSID', false);
-    }
-    if ($sessionId !== false) {
-      SessionData::init($sessionId);
-    }
+    $sessionId = $request->getValue('sid', null);
+    SessionData::init($sessionId);
+
     // clear errors
     $session = SessionData::getInstance();
     $session->clearErrors();
 
-    // get controller/context/action triple
-    // (defaults to /LoginController//login in this application)
-    $controller = Application::getCallParameter('controller', $defaultController);
-    $context = Application::getCallParameter('context', $defaultContext);
-    $action = Application::getCallParameter('action', $defaultAction);
-    $readonly = Application::getCallParameter('readonly', false);
-    
-    // determine message formats based in request headers
-    if (isset($_SERVER['CONTENT_TYPE'])) {
-      $requestFormat = self::getMessageFormatFromHeader(
-        strtolower($_SERVER['CONTENT_TYPE']), $defaultResponseFormat);
-      $requestFormat = Application::getCallParameter('requestFormat', $requestFormat);
-    }
-    else {
-      $requestFormat = Application::getCallParameter('requestFormat', $defaultResponseFormat);
-    }    
-    if (isset($_SERVER['HTTP_ACCEPT'])) {
-      $responseFormat = self::getMessageFormatFromHeader(
-        strtolower($_SERVER['HTTP_ACCEPT']), $defaultResponseFormat);
-      $responseFormat = Application::getCallParameter('responseFormat', $responseFormat);
-    }
-    else {
-      $responseFormat = Application::getCallParameter('responseFormat', $defaultResponseFormat);
-    }    
-      
     // load user configuration
     $rightsManager = RightsManager::getInstance();
     $authUser = $rightsManager->getAuthUser();
@@ -161,30 +176,21 @@ class Application
       $persistenceFacade->setReadOnly(true);
     }
 
-    // store data in global variables to make them accessible by error handlers
-    // TODO: get rid if these. better store the old request in the session for error handling
-    $GLOBALS['controller'] = $controller;
-    $GLOBALS['context'] = $context;
-    $GLOBALS['action'] = $action;
-    $GLOBALS['requestFormat'] = $requestFormat;
-    $GLOBALS['responseFormat'] = $responseFormat;
-
-    // return the parameters needed to process the requested action
-    return array('action' => $action, 'context' => $context, 'controller' => $controller,
-      'data' => &$this->_data, 'requestFormat' => $requestFormat, 'responseFormat' => $responseFormat);
+    // return the request
+    return $request;
   }
   /**
-   * Get a value from the call parameters (GET, POST variables)
+   * Get a value from the request parameters (GET, POST variables)
    * @param name The name of the parameter
    * @param default The value to return, if no value is given
    * @return The value
    */
-  public static function getCallParameter($name, $default)
+  protected function getRequestValue($name, $default)
   {
     $value = $default;
-    $application = Application::getInstance();
-    if (array_key_exists($name, $application->_data))
-      $value = $application->_data[$name];
+    if (array_key_exists($name, $this->_requestValues)) {
+      $value = $this->_requestValues[$name];
+    }
     return $value;
   }
   /**

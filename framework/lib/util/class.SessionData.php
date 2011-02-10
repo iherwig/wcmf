@@ -49,28 +49,26 @@ class SessionData
    */
   public function init($sessionID)
   {
-    if ($sessionID != null)
-    {
-      // We have a custom session id so we can automatically restore class definitions.
-
-      // Set custom session id
+    // Set custom session id
+    if ($sessionID !== null) {
       session_id($sessionID);
+    }
 
-      // Restore class definitions before session start
-      $filename = SessionData::getClassDefinitionFile();
-      if (file_exists($filename) && strpos($filename, WCMF_BASE) === 0)
+    // Restore class definitions before session start
+    $filename = SessionData::getClassDefinitionFile();
+    if (file_exists($filename) && strpos($filename, WCMF_BASE) === 0)
+    {
+      $fp = fopen($filename, "r");
+      $classDefs = fread($fp, filesize ($filename));
+      fclose($fp);
+      foreach (preg_split('/\n/', $classDefs) as $classDef)
       {
-        $fp = fopen($filename, "r");
-        $classDefs = fread($fp, filesize ($filename));
-        fclose($fp);
-        foreach (preg_split('/\n/', $classDefs) as $classDef)
-        {
-          if ($classDef != '') {
-            require_once($classDef);
-          }
+        if ($classDef != '') {
+          require_once($classDef);
         }
       }
     }
+
     session_start();
   }
   /**
@@ -100,57 +98,57 @@ class SessionData
    */
   public function get($key)
   {
-    $val = null;
+    $value = null;
     if (isset($_SESSION) && array_key_exists($key, $_SESSION))
     {
-      $val = $_SESSION[$key];
-      if (is_object($val))
+      $value = $_SESSION[$key];
+      if (is_object($value))
       {
-        $classMethods = array_map("strtolower", get_class_methods($val));
+        $classMethods = array_map("strtolower", get_class_methods($value));
         if (in_array('loadFromSession', $classMethods)) {
-          $val->loadFromSession();
+          $value->loadFromSession();
         }
       }
     }
-    return $val;
+    return $value;
   }
   /**
-   * Sets the value of an session variable. If the value is an object it must eiter implement the Storable interface
-   * or the classFiles parameter must not be null.
+   * Sets the value of an session variable. If the value is an object, the class definition will
+   * be retrieved in one of the following ways, when the session is picked up again:
+   * - calling Storable::getClassDefinitionFiles() if the object's class implements the Storable interface
+   * - from the classFiles parameter, if not null
+   * - the object's class by default
    * @param key The key (name) of the session vaiable.
-   * @param val The value of the session variable.
-   * @param classFiles An array of definition files needed to be included for rebuilding val from the session [default: null].
+   * @param value The value of the session variable.
+   * @param classFiles An array of definition files needed to be included for rebuilding value from the session [default: null].
    * @return A reference to the session var
    */
-  public function set($key, $val, array $classFiles=null)
+  public function set($key, $value, array $classFiles=null)
   {
     // try to store class definition
     if (isset($_SESSION))
     {
-      if (is_object($val))
+      if (is_object($value))
       {
         if ($classFiles == null)
         {
           // no class files given -> check for Storable interface
-          $classMethods = get_class_methods($val);
-          if (!in_array('getClassDefinitionFiles', $classMethods)) {
-            throw new IllegalArgumentException("Class ".get_class($val)." does not implement the Storable interface.");
-          }
-          else
+          if (is_a($value, 'Storable'))
           {
             // Store class definitions of session object
-            $classFiles = $val->getClassDefinitionFiles();
-
-            if (in_array('saveToSession', $classMethods)) {
-              $val->saveToSession();
-            }
+            $classFiles = $value->getClassDefinitionFiles();
+            $value->saveToSession();
+          }
+          else {
+            // default to object's class definition
+            $classFiles = array(get_class($value));
           }
         }
 
         // Store class definitions of session object
         $this->addClassDefinitions($classFiles);
       }
-      $_SESSION[$key] = $val;
+      $_SESSION[$key] = $value;
     }
   }
   /**

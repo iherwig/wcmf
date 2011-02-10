@@ -276,9 +276,9 @@ abstract class Control
   public function renderFromProperty(PersistentObject $obj, $name, $language=null, $parentView=null)
   {
     $controlName = self::getControlName($obj, $name);
-    $properties = $obj->getValueProperties($name);
     $value = $obj->getValue($name);
-    return $this->render($controlName, $properties['input_type'], $value, $properties['is_editable'],
+    return $this->render($controlName, $obj->getValueProperty($name, 'input_type'), 
+      $value, $obj->getValueProperty($name, 'is_editable'),
       $language, $parentView);
   }
   /**

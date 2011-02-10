@@ -185,9 +185,8 @@ class ResourceListController extends Controller
         FileUtil::mkdirRec($this->_directory.'/'.$newDir);
     }
 
-    $resourceList = $this->$listFunction();
     $directories = FileUtil::getDirectories($this->_directory, '/./', true);
-    natsort($directories);
+    sort($directories);
 
     // make link list from path
     $pathPartsStr = str_replace($this->getResourceBaseDir(), '', $this->_directory);
@@ -319,7 +318,7 @@ class ResourceListController extends Controller
         }
       }
     }
-    natsort($resourceList);
+    ksort($resourceList);
     $resourceList[''] = '';
     return $resourceList;
   }

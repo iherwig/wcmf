@@ -66,15 +66,16 @@ class Formatter
       throw new ConfigurationException("No IFormat implementation registered for ".$format.
       	".\nRequest: ".$request->__toString());
     }
+
     // decode UTF-8
-    $data = $request->getData();
+    $data = $request->getValues();
     foreach ($data as $key => $value)
     {
       if (is_string($value) && EncodingUtil::isUtf8($value)) {
         $data[$key] = EncodingUtil::convertCp1252Utf8ToIso($value);
       }
     }
-    $request->setData($data);
+    $request->setValues($data);
 
     $formatter->deserialize($request);
   }

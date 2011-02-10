@@ -174,7 +174,7 @@ Ext.extend(wcmf.grid.DuplicateAction, wcmf.grid.Action, {
 
     performAction: function(actionName, record) {
       // duplicate action
-      var params = {oid:record['id']};
+      var params = {oid:record['id'], oneCall:true};
       if (this.grid.store.baseParams && this.grid.store.baseParams['poid'])
         params.targetoid = this.grid.store.baseParams['poid'];
       Action.perform('copy', params, this.grid.actionPerformed, this);

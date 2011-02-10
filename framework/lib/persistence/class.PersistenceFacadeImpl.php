@@ -54,17 +54,19 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     if ($this->_knownTypes == null)
     {
       $parser = InifileParser::getInstance();
-      $this->_knownTypes = array_keys($parser->getSection('typemapping'));
+      $this->_knownTypes = $parser->getSection('typemapping');
     }
-    return $this->_knownTypes;
+    return array_keys($this->_knownTypes);
   }
   /**
    * @see PersistenceFacade::isKnownType()
    */
   public function isKnownType($type)
   {
-    $_knownTypes = $this->getKnownTypes();
-    return (in_array($type, $_knownTypes) || in_array('*', $_knownTypes));
+    if ($this->_knownTypes == null) {
+      self::getKnownTypes();
+    }
+    return (isset($this->_knownTypes[$type]) || isset($this->_knownTypes['*']));
   }
   /**
    * @see PersistenceFacade::createObjectQuery()

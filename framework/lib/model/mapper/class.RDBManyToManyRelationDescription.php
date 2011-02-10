@@ -64,5 +64,13 @@ class RDBManyToManyRelationDescription
       }
     }
   }
+
+  /**
+   * @see RelationDescription::isMultiValued
+   */
+  public function isMultiValued()
+  {
+    return $this->thisEndRelation->isMultiValued();
+  }
 }
 ?>

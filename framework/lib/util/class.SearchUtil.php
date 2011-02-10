@@ -194,7 +194,7 @@ class SearchUtil
           Log::error("Index path '".self::$indexPath."' is not writeable.", __CLASS__);
         }
 
-        Log::info("Lucene index location: ".self::$indexPath, __CLASS__);
+        Log::debug("Lucene index location: ".self::$indexPath, __CLASS__);
       }
       else
       {

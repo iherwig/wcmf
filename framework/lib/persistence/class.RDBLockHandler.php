@@ -121,7 +121,7 @@ class RDBLockHandler implements ILockHandler
         $lock = &$locks[0];
       }
       else {
-        $lock = $tpl2;
+        return null;
       }
       return new Lock($oid, $user->getOID(), $user->getLogin(),
                   $lock->getValue('sessionid'),

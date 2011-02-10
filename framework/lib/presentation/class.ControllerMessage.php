@@ -29,11 +29,34 @@
  */
 class ControllerMessage
 {
+  /**
+   * The name of the controller from which the message origins.
+   */
   private $_sender = null;
+  /**
+   * The name of the context of the message.
+   */
   private $_context = null;
+  /**
+   * The name of the action that should be executed with this message.
+   */
   private $_action = null;
+  /**
+   * The format of the message (used for de-, serialization).
+   */
   private $_format = null;
-  private $_data = array();
+  /**
+   * Key value pairs of data contained in this message.
+   */
+  private $_values = array();
+  /**
+   * Data contained in this message that is not related to a key and therefor
+   * not stored in _values.
+   */
+  private $_data = null;
+  /**
+   * A list of errors associated with this message.
+   */
   private $_errors = array();
   
   /**
@@ -41,18 +64,16 @@ class ControllerMessage
    * @param sender The name of the controller that sent the message
    * @param context The name of the context of the message
    * @param action The name of the action that the message initiates
-   * @param data An associative array containing the message variables
    * together with their values.
    */
-  public function ControllerMessage($sender, $context, $action, $data)
+  public function ControllerMessage($sender, $context, $action)
   {
-    if (func_num_args() != 4) {
+    if (func_num_args() != 3) {
       throw new IllegalArgumentException("Message constructor called with wrong argument number.");
     }
     $this->_sender = $sender;
     $this->_context = $context;
     $this->_action = $action;
-    $this->_data = $data;
   }
 
   /**
@@ -134,21 +155,22 @@ class ControllerMessage
    */
   public function setValue($name, $value)
   {
-    $this->_data[$name] = $value;
+    $this->_values[$name] = $value;
   }
 
   /**
-   * Append a value
+   * Append a value to an existing variable or set it
+   * if it does not exist
    * @param name The name of the variable
    * @param value The value to append to the variable
    */
   public function appendValue($name, $value)
   {
     if (!$this->hasValue($name)) {
-      $this->_data[$name] = $value;
+      $this->_values[$name] = $value;
     }
     else {
-      $this->_data[$name] .= $value;
+      $this->_values[$name] .= $value;
     }
   }
 
@@ -159,7 +181,7 @@ class ControllerMessage
    */
   public function hasValue($name)
   {
-    return array_key_exists($name, $this->_data);
+    return array_key_exists($name, $this->_values);
   }
 
   /**
@@ -170,11 +192,11 @@ class ControllerMessage
    */
   public function getValue($name, $default=null)
   {
-    if (!$this->hasValue($name)) {
-      return $default;
+    if ($this->hasValue($name)) {
+      return $this->_values[$name];
     }
     else {
-      return $this->_data[$name];
+      return $default;
     }
   }
 
@@ -186,31 +208,31 @@ class ControllerMessage
    */
   public function getBooleanValue($name, $default=false)
   {
-    if (!$this->hasValue($name)) {
-      return $default;
+    if ($this->hasValue($name)) {
+       return ($this->_values[$name] === true || strtolower($this->_values[$name]) === "true"
+        || intval($this->_values[$name]) === 1);
     }
     else {
-      return ($this->_data[$name] === true || strtolower($this->_data[$name]) === "true"
-        || intval($this->_data[$name]) === 1);
+      return $default;
     }
   }
 
   /**
-   * Get all values as an associative array
-   * @return A reference to an data array
+   * Get all key value pairs
+   * @return An associative array
    */
-  public function &getData()
+  public function getValues()
   {
-    return $this->_data;
+    return $this->_values;
   }
 
   /**
-   * Set all values at once
-   * @param data A reference to the data
+   * Set all key value pairs at once
+   * @param values The associative array
    */
-  public function setData(&$data)
+  public function setValues(array $values)
   {
-    $this->_data = &$data;
+    $this->_values = $values;
   }
 
   /**
@@ -219,7 +241,7 @@ class ControllerMessage
    */
   public function clearValue($name)
   {
-    unset($this->_data[$name]);
+    unset($this->_values[$name]);
   }
 
   /**
@@ -227,7 +249,33 @@ class ControllerMessage
    */
   public function clearValues()
   {
-    $this->_data = array();
+    $this->_values = array();
+  }
+
+  /**
+   * Get the data, that are not related to values
+   * @return The data.
+   */
+  public function getData()
+  {
+    return $this->_data;
+  }
+  
+  /**
+   * Set the data, that are not related to values
+   * @param data The data
+   */
+  public function setData($data)
+  {
+    $this->_values = $data;
+  }
+
+  /**
+   * Remove all data, that are not related to values
+   */
+  public function clearData()
+  {
+    $this->_data = null;
   }
 
   /**
@@ -258,6 +306,23 @@ class ControllerMessage
   }
   
   /**
+   * Set all errors at once
+   * @param errora The errors array
+   */
+  public function setErrors(array $errors)
+  {
+    $this->_errors = $errors;
+  }
+
+ /**
+   * Remove all errors
+   */
+  public function clearErrors()
+  {
+    $this->_errors = array();
+  }
+
+  /**
    * Get a string representation of the message
    * @return The string
    */
@@ -267,6 +332,7 @@ class ControllerMessage
     $str .= 'context='.$this->_context.', ';
     $str .= 'action='.$this->_action.', ';
     $str .= 'format='.$this->_format.', ';
+    $str .= 'values='.StringUtil::getDump($this->_values);
     $str .= 'data='.StringUtil::getDump($this->_data);
     $str .= 'errors='.StringUtil::getDump($this->_errors);
     return $str;

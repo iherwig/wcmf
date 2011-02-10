@@ -73,41 +73,53 @@ class Node extends PersistentObject
     return $this->getNumRelatives('child', $memOnly);
   }
   /**
-   * Add a Node to the Nodes childrenlist.
+   * Add a Node to the given relation.
    * @param child The Node to add.
    * @param role The role of the Node in the created relation. If null, the role will be
    *        the Node's type. [default: null]
+   * @param strict True/False wether to add the Node according to an existing RelationDescription or not.
+   *        If true, the value for the relation will be an array, if the multiplicity is > 1 and
+   *        a single value otherwise. If false, the value will always be an array [default: true]
    * @param addtype One of the ADDCHILD constants
    */
-  public function addChild(PersistentObject $child, $role=null, $addtype=ADDCHILD_BACK)
+  public function addChild(PersistentObject $child, $role=null, $strict=true, $addtype=ADDCHILD_BACK)
   {
     if ($role == null) {
       $role = $child->getType();
     }
-    $children = $this->getValue($role);
-    if (!is_array($children)) {
-      $children = array();
+
+    // get the relation description
+    $relDesc = null;
+    $mapper = $this->getMapper();
+    if ($mapper && $mapper->hasRelation($role)) {
+      $relDesc = $mapper->getRelation($role);
     }
-    if ($addtype == ADDCHILD_BACK || $addtype == ADDCHILD_FRONT)
-    {
-      if ($addtype == ADDCHILD_BACK) {
-        ArrayUtil::array_insert($children, sizeof($children), $child);
-      }
-      elseif ($addtype == ADDCHILD_FRONT) {
-        ArrayUtil::array_insert($children, 0, $child);
-      }
+
+    if ($strict && $relDesc && !$relDesc->isMultiValued()) {
+      // just set the value if strict and not multivalued
+      $this->setValue($role, $child);
     }
     else {
-      throw new IllegalArgumentException("Unknown ADDTYPE.");
+      // make sure that the value is an array if multivalued or not strict
+      $children = $this->getValue($role);
+      if (!is_array($children)) {
+        $children = array();
+      }
+      if ($addtype === ADDCHILD_BACK) {
+        $children[] = &$child;
+      }
+      elseif ($addtype === ADDCHILD_FRONT) {
+        ArrayUtil::array_insert($children, 0, $child);
+      }
+      else {
+        throw new IllegalArgumentException("Unknown ADDTYPE.");
+      }
+      $this->setValue($role, $children);
     }
-    $this->setValue($role, $children);
-
+    
     // propagate add action to the other object
     $thisRole = $this->getType();
-    $mapper = $this->getMapper();
-    if ($mapper && $mapper->hasRelation($role))
-    {
-      $relDesc = $mapper->getRelation($role);
+    if ($relDesc) {
       $thisRole = $relDesc->thisRole;
     }
     $child->updateParent($this, $thisRole);

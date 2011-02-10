@@ -17,6 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeSerializer.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.HierarchicalFormat.php");
 
 /**
@@ -37,28 +38,36 @@ class SOAPFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::isSerializedNode()
    */
-  protected function isSerializedNode($key, &$value)
+  protected function isSerializedNode($value)
   {
-    return (PersistenceFacade::isValidOID($key) &&
-      PersistenceFacade::isKnownType(PersistenceFacade::getOIDParameter($key, 'type')));
+    return ObjectID::isValid($value);
   }
 
   /**
    * @see HierarchicalFormat::serializeNode()
    */
-  protected function serializeNode($key, &$value)
+  protected function serializeNode($value)
   {
     // use NodeSerializer to serialize
-    return NodeSerializer::serializeNode($value, true);
+    return NodeSerializer::serializeNode($value);
   }
   /**
    * @see HierarchicalFormat::deserializeNode()
    */
-  protected function deserializeNode($key, &$value)
+  protected function deserializeNode($value)
   {
+    $oidStr = $key;
+    $oid = ObjectId::parse($oidStr);
+    if ($oid == null) {
+      throw new IllegalArgumentException("The object id '".$oid."' is invalid");
+    }
+
     // use NodeSerializer to deserialize
-    $type = PersistenceFacade::getOIDParameter($key, 'type');
-    $node = NodeSerializer::deserializeNode($type, $value, true);
+    $node = NodeSerializer::deserializeNode($value);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug($node->toString(), __CLASS__);
+    }
+    
     return $node;
   }
 }

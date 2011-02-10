@@ -35,43 +35,88 @@ abstract class HierarchicalFormat extends AbstractFormat
    */
   public function deserialize(Request $request)
   {
-    $data = &$request->getData();
-
-    // deserialize Nodes
-    $this->beforeDeserialize($data);
-    array_walk_recursive($data, array($this, 'processValues'), 'deserializeNode');
-    $this->afterDeserialize($data);
+    $values = $request->getValues();
+    $values = $this->beforeDeserialize($values);
+    $values = $this->deserializeValues($values);
+    $values = $this->afterDeserialize($values);
+    $request->setValues($values);
   }
   /**
    * @see IFormat::serialize()
    */
   public function serialize(Response $response)
   {
-    $data = &$response->getData();
-
-    // serialize Nodes
-    $this->beforeSerialize($data);
-    array_walk_recursive($data, array($this, 'processValues'), 'serializeNode');
-    $this->afterSerialize($data);
+    $values = $response->getValues();
+    $values = $this->beforeSerialize($values);
+    $values = $this->serializeValues($values);
+    $values = $this->afterSerialize($values);
+    $response->setValues($values);
   }
   /**
-   * Callback function for array_walk_recursive. De-/Serializes any Node instances
-   * using the function given in method parameter.
-   * @param value The array value
-   * @param key The array key
-   * @param method The method to apply to each value
+   * Deserialize an array of values.
+   * @param values The array/object of values
+   * 
    */
-  protected function processValues(&$value, $key, $method)
+  protected function deserializeValues(array $values)
   {
-    if (is_string($value) && EncodingUtil::isUtf8($value)) {
-      $value = EncodingUtil::convertCp1252Utf8ToIso($value);
+    if ($this->isSerializedNode($values)) {
+      // the values represent a node
+      $result = $this->deserializeNode($values);
+      $node = $result['node'];
+      $values = $result['data'];
+      $values[$node->getOID()->__toString()] = $node;
     }
-    if ( (strpos($method, 'deserialize') === 0 && $this->isSerializedNode($key, $value)) ||
-      (strpos($method, 'serialize') === 0 && $this->isDeserializedNode($key, $value)) )
-    {
-      $value = $this->$method($key, $value);
+    else {
+      foreach ($values as $key => $value) {
+        if (is_array($value) || is_object($value)) {
+          // array/object value
+          $result = $this->deserializeValues($value);
+          // flatten the array, if the deserialization result is only an array
+          // with size 1 (e.g. if a node was deserialized)
+          if (is_array($result) && sizeof($result) == 1) {
+            $values[key($result)] = current($result);
+            unset($values[$key]);
+          }
+          else {
+            $values[$key] = $result;
+          }
+        }
+        else {
+          // string value
+          if (is_string($value) && EncodingUtil::isUtf8($value)) {
+            $values[$key] = EncodingUtil::convertCp1252Utf8ToIso($value);
+          }
+        }
+      }
     }
+    return $values;
   }
+  /**
+   * Serialize an array of values.
+   * @param values The array/object of values
+   */
+  protected function serializeValues($values)
+  {
+    if ($this->isDeserializedNode($values)) {
+      // the values represent a node
+      $values = $this->serializeNode($values);
+    }
+    else {
+      foreach ($values as $key => $value) {
+        if (is_array($value) || is_object($value)) {
+          // array/object value
+          $values[$key] = $this->serializeValues($value);
+        }
+        else {
+          // string value
+          if (is_string($value) && EncodingUtil::isUtf8($value)) {
+            $values[$key] = EncodingUtil::convertCp1252Utf8ToIso($value);
+          }
+        }
+      }
+    }
+    return $values;
+}
 
   /**
    * Template methods
@@ -79,69 +124,82 @@ abstract class HierarchicalFormat extends AbstractFormat
 
   /**
    * Modify data before deserialization. The default implementation does nothing.
-   * @param data A reference to the data array
+   * @param values The request values
+   * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function beforeDeserialize(&$data) {}
+  protected function beforeDeserialize(array $values)
+  {
+    return $values;
+  }
   /**
    * Modify data after deserialization. The default implementation does nothing.
-   * @param data A reference to the data array
+   * @param values The request values
+   * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function afterDeserialize(&$data) {}
-
+  protected function afterDeserialize(array $values)
+  {
+    return $values;
+  }
   /**
    * Modify data before serialization. The default implementation does nothing.
-   * @param data A reference to the data array
+   * @param values The response values
+   * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function beforeSerialize(&$data) {}
+  protected function beforeSerialize(array $values) 
+  {
+    return $values;
+  }
   /**
    * Modify data after serialization. The default implementation does nothing.
-   * @param data A reference to the data array
+   * @param values The response values
+   * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function afterSerialize(&$data) {}
+  protected function afterSerialize(array $values)
+  {
+    return $values;
+  }
 
   /**
    * Determine if the value is a serialized Node. The default
    * implementation returns false.
-   * @param key The data key
-   * @param value A reference to the data value
+   * @param value The data value
    * @return True/False
    * @note Subclasses override this if necessary
    */
-  protected function isSerializedNode($key, &$value)
+  protected function isSerializedNode($value)
   {
     return false;
   }
   /**
    * Determine if the value is a deserialized Node. The default
    * implementation checks if the value is an object of type Node.
-   * @param key The data key
-   * @param value A reference to the data value
+   * @param value The data value
    * @return True/False
    * @note Subclasses override this if necessary
    */
-  protected function isDeserializedNode($key, &$value)
+  protected function isDeserializedNode($value)
   {
     return ($value instanceof Node);
   }
 
   /**
    * Serialize a Node
-   * @param key The data key
-   * @param value A reference to the data value
+   * @param value The data value
    * @return The serialized Node
    */
-  protected abstract function serializeNode($key, &$value);
+  protected abstract function serializeNode($value);
 
   /**
    * Deserialize a Node
-   * @param key The data key
-   * @param value A reference to the data value
-   * @return The deserialized Node
+   * @param value The data value
+   * @return An array with keys 'node' and 'data' where the node
+   * value is the Node instance and the data value is the
+   * remaining part of data, that is not used for deserializing the Node
    */
-  protected abstract function deserializeNode($key, &$value);
+  protected abstract function deserializeNode($value);
 }
 ?>

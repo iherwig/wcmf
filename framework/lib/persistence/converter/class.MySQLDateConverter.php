@@ -48,7 +48,7 @@ class MySQLDateConverter extends DataConverter
         // we don't rely on setLocale, strftime and strtotime
         $convertFunction = "storageTo_".$locale;
         $methods = get_class_methods($this);
-        if (in_array(strtolower($convertFunction), $methods) || in_array($convertFunction, $methods))
+        if (in_array($convertFunction, $methods))
           $data = $this->$convertFunction($data, $type);
     }
     return $data;
@@ -73,7 +73,7 @@ class MySQLDateConverter extends DataConverter
         // convert localized date/time to english format
         $convertFunction = $locale."ToEnglish";
         $methods = get_class_methods($this);
-        if (in_array(strtolower($convertFunction), $methods) || in_array($convertFunction, $methods))
+        if (in_array($convertFunction, $methods))
           $date = $this->$convertFunction($data, $type);
 
         // convert date/time to mysql      

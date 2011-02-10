@@ -2,8 +2,7 @@
 
 {block name=navigation}
     <div dojoType="dijit.MenuBar" id="navMenu">
-      <div dojoType="dijit.MenuBarItem" 
-        onClick="doSave(); submitAction('save');">
+      <div dojoType="dijit.MenuBarItem" onClick="wcmf.Action.save()">
         <span>{translate text="Save"}</span>
       </div>
       <div dojoType="dijit.MenuBarItem" 

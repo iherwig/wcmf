@@ -298,7 +298,7 @@ class PersistentObject
     $copy = new $class;
     $copy->_oid = $this->_oid;
     $copy->_type = $this->_type;
-    $copy->_data = $this->_data;
+    $copy->_requestData = $this->_data;
     $copy->_properties = $this->_properties;
     $copy->_state = $this->_state;
     $copy->_isImmutable = $this->_isImmutable;
@@ -424,7 +424,7 @@ class PersistentObject
    */
   public function getValue($name)
   {
-    if ($this->hasValue($name)) {
+    if (isset($this->_data[$name])) {
       return $this->_data[$name]['value'];
     }
     else {
@@ -578,7 +578,7 @@ class PersistentObject
   /**
    * Get the value of one property of a named item.
    * @param name The name of the item to get its properties.
-   * @param property The name of the property to set.
+   * @param property The name of the property to get.
    * @return The value property/null if not found.
    */
   public function getValueProperty($name, $property)
@@ -698,16 +698,22 @@ class PersistentObject
     $this->propagatePropertyChange($name, $oldValue, $value);
   }
   /**
-   * Get the names of all properties in the object.
+   * Get the names of all properties in the object. Properties are 
+   * either defined by using the PersistentObject::setProperty() method
+   * or by the PersistentMapper.
+   * @param excludeDefaultProperties True/False wether to only return the
+   *   properties defined by the PersistentObject::setProperty() method or
+   *   also the properties defined by the mapper [default: false]
    * @return An array consisting of the names.
    */
-  public function getPropertyNames()
+  public function getPropertyNames($excludeDefaultProperties=false)
   {
     $result = array();
-    $mapper = $this->getMapper();
-    if ($mapper)
-    {
-      $result = array_keys($mapper->getProperties());
+    if (!$excludeDefaultProperties) {
+      $mapper = $this->getMapper();
+      if ($mapper) {
+        $result = array_keys($mapper->getProperties());
+      }
     }
     return array_merge($result, array_keys($this->_properties));
   }
@@ -730,8 +736,7 @@ class PersistentObject
    */
   public function removeChangeListener(ChangeListener $listener)
   {
-    for ($i=0; $i<sizeof($this->_changeListeners); $i++)
-    {
+    for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
       if ($this->_changeListeners[$i]->getId() == $listener->getId()) {
         unset($this->_changeListeners[$i]);
       }
@@ -745,7 +750,7 @@ class PersistentObject
    */
   private function propagateValueChange($name, $oldValue, $newValue)
   {
-    for ($i=0; $i<sizeof($this->_changeListeners); $i++) {
+    for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
       if(method_exists($this->_changeListeners[$i], 'valueChanged')) {
         $this->_changeListeners[$i]->valueChanged($this, $name, $oldValue, $newValue);
       }
@@ -759,7 +764,7 @@ class PersistentObject
    */
   private function propagatePropertyChange($name, $oldValue, $newValue)
   {
-    for ($i=0; $i<sizeof($this->_changeListeners); $i++) {
+    for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
       if(method_exists($this->_changeListeners[$i], 'propertyChanged')) {
         $this->_changeListeners[$i]->propertyChanged($this, $name, $oldValue, $newValue);
       }
@@ -772,7 +777,7 @@ class PersistentObject
    */
   private function propagateStateChange($oldValue, $newValue)
   {
-    for ($i=0; $i<sizeof($this->_changeListeners); $i++) {
+    for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
       if(method_exists($this->_changeListeners[$i], 'stateChanged')) {
         $this->_changeListeners[$i]->stateChanged($this, $oldValue, $newValue);
       }

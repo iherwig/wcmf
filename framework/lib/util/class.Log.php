@@ -142,5 +142,14 @@ class Log
     $logger = Logger::getLogger($category);
     return $logger;
   }
+
+  /**
+   * Explicitly configure the Log with the given property file
+   * @param file The name of the property file
+   */
+  public static function configure($file)
+  {
+    Logger::configure($file);
+  }
 }
 ?>

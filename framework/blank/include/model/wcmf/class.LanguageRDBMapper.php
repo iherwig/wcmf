@@ -4,24 +4,24 @@
  * Manual modifications should be placed inside the protected regions.
  */
 require_once(WCMF_BASE."wcmf/lib/model/mapper/class.NodeUnifiedRDBMapper.php");
-require_once(WCMF_BASE."application/include/model/wcmf/class.RoleRDB.php");
+require_once(WCMF_BASE."application/include/model/wcmf/class.Language.php");
 
 /**
- * @class RoleRDBRDBMapper
- * RoleRDBRDBMapper maps RoleRDB Nodes to the database.
- * RoleRDB description: 
+ * @class LanguageRDBMapper
+ * LanguageRDBMapper maps Language Nodes to the database.
+ * Language description: 
  *
  * @author 
  * @version 1.0
  */
-class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
+class LanguageRDBMapper extends NodeUnifiedRDBMapper
 {
   /**
    * @see RDBMapper::getType()
    */
   public function getType()
   {
-    return 'RoleRDB';
+    return 'Language';
   }
   /**
    * @see PersistenceMapper::getPkNames()
@@ -37,8 +37,7 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
   {
   	return array(
       'is_searchable' => true,
-      'display_value' => 'name',
-// PROTECTED REGION ID(application/include/model/wcmf/class.RoleRDBRDBMapper.php/Properties) ENABLED START
+// PROTECTED REGION ID(application/include/model/wcmf/class.LanguageRDBMapper.php/Properties) ENABLED START
 // PROTECTED REGION END
 	);
   }
@@ -55,10 +54,6 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
   protected function getRelationDescriptions()
   {
     return array(
-      'UserRDB' => new RDBManyToManyRelationDescription(
-        /* this -> nm  */ new RDBOneToManyRelationDescription('RoleRDB', 'RoleRDB', 'NMUserRole', 'NMUserRole', '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_role_id'),
-        /* nm -> other */ new RDBManyToOneRelationDescription('NMUserRole', 'NMUserRole', 'UserRDB', 'UserRDB', '0', 'unbounded', '1', '1', 'none', 'composite', 'true', 'true', 'parent', 'id', 'fk_user_id')
-      ),
     );
   }
   /**
@@ -70,11 +65,7 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'role', 'id'),
-     /**
-      * Value description: 
-      */
-      'name' => new RDBAttributeDescription('name', 'string', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'role', 'name'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'adodbseq', 'id'),
     );
   }
   /**
@@ -82,14 +73,14 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
    */
   protected function createObject(ObjectId $oid=null)
   {
-    return new RoleRDB($oid);
+    return new Language($oid);
   }
   /**
    * @see NodeUnifiedRDBMapper::getTableName()
    */
   protected function getTableName()
   {
-    return 'role';
+    return 'adodbseq';
   }
 }
 ?>

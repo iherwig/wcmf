@@ -17,6 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.IFormat.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
 
 /**
  * Define the message format

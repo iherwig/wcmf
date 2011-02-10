@@ -39,6 +39,8 @@ class ObjectId
 
   private static $_dummyIdPattern = 'wcmf[A-Za-z0-9]{32}';
   private static $_idPattern = null;
+  private static $_numPkKeys = array();
+
 
   /**
    * Constructor.
@@ -73,10 +75,6 @@ class ObjectId
     $numPKs = self::getNumberOfPKs($type);
     while (sizeof($this->_id) < $numPKs) {
       array_push($this->_id, self::getDummyId());
-    }
-
-    if (self::$_idPattern == null) {
-      self::$_idPattern = '/^[0-9]+$|^'.self::$_dummyIdPattern.'$/';
     }
   }
 
@@ -147,12 +145,22 @@ class ObjectId
       return null;
     }
 
+    if (self::$_idPattern == null) {
+      self::$_idPattern = '/^[0-9]*$|^'.self::$_dummyIdPattern.'$/';
+    }
+
     // get the ids from the oid
     $ids = array();
     $nextPart = array_pop($oidParts);
     while($nextPart !== null && preg_match(self::$_idPattern, $nextPart) == 1)
     {
-      $ids[] = $nextPart;
+      $intNextPart = (int)$nextPart;
+      if ($nextPart == $intNextPart) {
+        $ids[] = $intNextPart;
+      }
+      else {
+        $ids[] = $nextPart;
+      }
       $nextPart = array_pop($oidParts);
     }
     $ids = array_reverse($ids);
@@ -207,19 +215,37 @@ class ObjectId
   }
 
   /**
+   * Check if a given object id contains a dummy id.
+   * @return Boolean
+   */
+  public function containsDummyIds()
+  {
+    foreach ($this->getId() as $id) {
+      if (self::isDummyId($id)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Get the number of primary keys a type has.
    * @param type The type
    * @return Integer (1 if the type is unknown)
    */
   private static function getNumberOfPKs($type)
   {
-    $numPKs = 1;
-    if (PersistenceFacade::getInstance()->isKnownType($type))
+    if (!isset(self::$_numPkKeys[$type]))
     {
-      $mapper = PersistenceFacade::getInstance()->getMapper($type);
-      $numPKs = sizeof($mapper->getPKNames());
+      $numPKs = 1;
+      if (PersistenceFacade::getInstance()->isKnownType($type))
+      {
+        $mapper = PersistenceFacade::getInstance()->getMapper($type);
+        $numPKs = sizeof($mapper->getPKNames());
+      }
+      self::$_numPkKeys[$type] = $numPKs;
     }
-    return $numPKs;
+    return self::$_numPkKeys[$type];
   }
 }
 ?>

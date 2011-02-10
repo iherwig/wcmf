@@ -19,6 +19,7 @@
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
+require_once(BASE."wcmf/lib/model/class.NodeUtil.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NullNode.php");
 
 /**
@@ -212,10 +213,20 @@ class AssociateController extends Controller
   function isDirectAssociation(&$parent, &$child)
   {
     $childTypeChildren = $parent->getChildrenEx(null, $child->getType(), null, null);
-    if (sizeof($childTypeChildren) > 0)
+    if (sizeof($childTypeChildren) > 0) {
+      // the relation is navigable from parent to child
       return true;
-    else
-      return false;
+    }
+    else {
+      // maybe the relation is only navigable from child to parent
+      $parents = NodeUtil::getPossibleParents($child, $child);
+      foreach ($parents as $tmpParent) {
+        if ($parent->getType() == $tmpParent->getType()) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**

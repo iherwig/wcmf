@@ -101,6 +101,7 @@ class WCMFFrontendController extends Controller
       // called with type parameter
       if ($request->hasValue('type')) {
         $typeTemplate = $persistenceFacade->create($request->getValue('type'), BUILDDEPTH_SINGLE);
+        $response->setValue('object', $typeTemplate);
         $response->setValue('typeTemplate', $typeTemplate);
       }
       // called with oid parameter
@@ -110,7 +111,7 @@ class WCMFFrontendController extends Controller
         
         // call DisplayController to read the requested node 
         // and merge the responses
-        $readRequest = new Request('TerminateController', $request->getContext(), 'display',
+        $readRequest = new Request('TerminateController', $request->getContext(), 'read',
           array('oid' => $oid->__toString(), 'depth' => 0, 'sid' => SessionData::getInstance()->getID()));
         $readRequest->setFormat('NULL');
         $readRequest->setResponseFormat('NULL');
@@ -147,6 +148,22 @@ class WCMFFrontendController extends Controller
     // success
     $response->setAction('ok');
     return false;
+  }
+  
+  function createRandom() {
+    $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
+    $pf = PersistenceFacade::getInstance();
+    for ($i=0; $i<10000; $i++) {
+      $doc = $pf->create('Document', BUILDDEPTH_SINGLE);
+      $inc = 1;
+      while ($inc < 5){
+        $alphanum = $alphanum.'abcdefghijkmnpqrstuvwxyz23456789';
+        $inc++;
+      }    
+      $title = substr(str_shuffle($alphanum), 0, 5);      
+      $doc->setTitle($title);
+      $doc->save();
+    }
   }
 }
 ?>

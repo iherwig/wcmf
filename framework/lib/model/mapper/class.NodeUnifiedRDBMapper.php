@@ -353,7 +353,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     {
       $fkDesc = $fkDescs[$i];
       $parents = $object->getValue($fkDesc->otherRole);
-      if (is_array($parents))
+      if (is_array($parents) && sizeof($parents) == 1)
       {
         // in a ManyToOneRelation only one parent is possible
         $parent = $parents[0];

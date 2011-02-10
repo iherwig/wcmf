@@ -18,6 +18,7 @@
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.JSONUtil.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeSerializer.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.HierarchicalFormat.php");
 
 /**
@@ -26,7 +27,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/format/class.HierarchicalFormat.ph
 define("MSG_FORMAT_JSON", "JSON");
 
 /**
- * JSONFormatter collects the response data from all executed controllers
+ * JSONFormat collects the response data from all executed controllers
  * into one response array and returns it all at once at the end of
  * script execution. This prevents from having multiple junks of json
  * from each controller response that can't be decoded by clients.
@@ -57,8 +58,9 @@ register_shutdown_function('gPrintJSONResult');
  * @class JSONFormat
  * @ingroup Format
  * @brief JSONFormat realizes the JSON request/response format. All data will
- * be de-/serialized using the json_encode/json_encode method except for Nodes.
- * Nodes are serialized into an array before encoding (see JSONFormat::serializeValue). 
+ * be serialized using the json_encode method except for Nodes.
+ * Nodes are serialized into an array before encoding (see JSONFormat::serializeValue)
+ * using the NodeSerializer class.
  * On serialization the data will be outputted directly using the print command.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -66,73 +68,48 @@ register_shutdown_function('gPrintJSONResult');
 class JSONFormat extends HierarchicalFormat
 {
   /**
-   * @see HierarchicalFormat::beforeDeserialize()
-   */
-  protected function beforeDeserialize(&$data)
-  {
-    // decode the json data into an array
-    foreach(array_keys($data) as $key) {
-      $data[$key] = &JSONUtil::decode($data[$key], true);
-    }
-  }
-
-  /**
    * @see HierarchicalFormat::afterSerialize()
    */
-  protected function afterSerialize(&$data)
+  protected function afterSerialize(array $values)
   {
+    // TODO: check if merging is required for multiple actions
+    /*
     // merge data into global data array
     // new values override old
     $GLOBALS['gJSONData'] = array_merge($GLOBALS['gJSONData'], $data);
+     */
+    $GLOBALS['gJSONData'] = $values;
     $GLOBALS['gJSONUsed'] = true;
+    return $values;
   }
 
   /**
    * @see HierarchicalFormat::isSerializedNode()
    */
-  protected function isSerializedNode($key, &$value)
+  protected function isSerializedNode($value)
   {
-    $syntaxOk = ((is_object($value) || is_array($value)) && 
-      isset($value['className']) && isset($value['oid']) && isset($value['attributes']));
-    // check for oid variables
-    if ($syntaxOk && preg_match('/^\{.+\}$/', $value['oid'])) {
-      $syntaxOk = false;
-    }
-    return $syntaxOk;
+    // use NodeSerializer to test
+    return NodeSerializer::isSerializedNode($value);
   }
 
   /**
    * @see HierarchicalFormat::serializeNode()
    */
-  protected function serializeNode($key, &$value)
+  protected function serializeNode($value)
   {
     // use NodeSerializer to serialize
-    return NodeSerializer::serializeNode($value);
+    $node = NodeSerializer::serializeNode($value);
+    return $node;
   }
 
   /**
    * @see HierarchicalFormat::deserializeNode()
    */
-  protected function deserializeNode($key, &$value)
+  protected function deserializeNode($value)
   {
-    if (is_array($value)) {
-      $oidStr = $value['oid'];
-    }
-    if (is_object($value)) {
-      $oidStr = $value->oid;
-    }
-    $oid = ObjectId::parse($oidStr);
-    if ($oid == null) {
-      throw new IllegalArgumentException("The object id '".$oid."' is invalid");
-    }
-
     // use NodeSerializer to deserialize
-    $node = NodeSerializer::deserializeNode($type, $value, false);
-    $node->setOID($oid);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($node->toString(), __CLASS__);
-    }
-    return $node;
+    $result = NodeSerializer::deserializeNode($value);
+    return $result;
   }
 }
 

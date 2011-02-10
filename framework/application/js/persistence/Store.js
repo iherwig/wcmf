@@ -1,6 +1,6 @@
 /**
  * @class Store This class represents the client side object repository.
- * There is one store for each type. Store uses wcmf.Service to exchange
+ * There is one store for each type. Store uses wcmf.DionysosService to exchange
  * objects and their modifications with the server.
  */
 dojo.provide("wcmf.persistence");
@@ -26,7 +26,7 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
     
     dojo.mixin(this, {
       target: "rest/"+this.modelClass.type+"/",
-      service: new wcmf.persistence.Service(this.modelClass),
+      service: new wcmf.persistence.DionysosService(this.modelClass),
       cacheByDefault: true
     }, options);
     

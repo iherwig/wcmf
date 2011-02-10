@@ -63,3 +63,18 @@ form.wcmf_form fieldset fieldset label {
   padding: 5px; 
   margin:5px; 
 }
+
+div.leftcol { 
+  clear: both;
+  width: 450px;
+  float: left; 
+  height: auto; 
+}
+
+div.rightcol {
+  margin-left: 20px;
+  width: 500px;
+  float: left;
+  height: auto;
+}
+

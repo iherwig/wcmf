@@ -16,6 +16,7 @@
  *
  * $Id$
  */
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.Formatter.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.AbstractFormat.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.IView.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
@@ -88,7 +89,7 @@ class HTMLFormat extends AbstractFormat
                     $request->getContext(), $request->getAction());
       if (!$viewTpl) {
         throw new ConfigurationException("View definition missing for ".
-                    get_class($this).". Action key: ".$actionKey);
+                    "request: ".$request->__toString());
       }
       // create the view
       $view = ObjectFactory::createInstanceFromConfig('implementation', 'View');

@@ -62,8 +62,8 @@ abstract class Controller
    */
   public function __construct($delegate)
   {
-    $this->_request = new Request(null, null, null, array());
-    $this->_response = new Response(null, null, null, array());
+    $this->_request = new Request(null, null, null);
+    $this->_response = new Response(null, null, null);
     $this->_delegate = $delegate;
   }
   /**
@@ -158,12 +158,9 @@ abstract class Controller
     
     // prepare the response
     $this->assignResponseDefaults();
-    Formatter::serialize($this->_response);
-    if (Log::isDebugEnabled(__CLASS__))
-    {
+    if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug('Response: '.$this->_response, __CLASS__);
     }
-    
     return $this->_executionResult;
   }
   /**

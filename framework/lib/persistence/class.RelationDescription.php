@@ -85,5 +85,20 @@ class RelationDescription
 
     $this->hierarchyType = $hierarchyType;
   }
+
+  /**
+   * Determine if there may more than one objects at the other side of the relation
+   * @return boolean
+   */
+  public function isMultiValued()
+  {
+    $maxMultiplicity = $this->otherMaxMultiplicity;
+    if ($maxMultiplicity > 1 || $maxMultiplicity == 'unbounded') {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
 }
 ?>

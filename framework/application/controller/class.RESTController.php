@@ -51,7 +51,7 @@ class RESTController extends Controller
   {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if (!$request->hasValue('className') || 
+    if ($request->hasValue('className') && 
       !PersistenceFacade::getInstance()->isKnownType($request->getValue('className')))
     {
       $response->addError(ApplicationError::get('PARAMETER_INVALID', 
@@ -68,26 +68,26 @@ class RESTController extends Controller
   public function executeKernel()
   {
     $method = $_SERVER['REQUEST_METHOD'];
-    
+    $result = false;
     switch ($method)
     {
       case 'GET':
-        $this->handleGet();
+        $result = $this->handleGet();
         break;
       case 'POST':
-        $this->handlePost();
+        $result = $this->handlePost();
         break;
       case 'PUT':
-        $this->handlePut();
+        $result = $this->handlePut();
         break;
       case 'DELETE':
-        $this->handleDelete();
+        $result = $this->handleDelete();
         break;
       default:
-        $this->handleGet();
+        $result = $this->handleGet();
         break;
     }
-    return true;
+    return $result;
   }
   /**
    * Handle a GET request (read object(s) of a given type)
@@ -96,34 +96,52 @@ class RESTController extends Controller
   {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $type = $request->getValue('className');
     
-    if ($request->hasValue('id')) {
+    // construct oid from className and id
+    if ($request->hasValue('className') && $request->hasValue('id')) {
+      $oid = new ObjectId($request->getValue('className'), $request->hasValue('id'));
+      $request->setValue('oid', $oid->__toString());
+    }
+    
+    if ($request->hasValue('oid')) {
       // read a specific object
       // delegate further processing to DisplayController
-      $oid = new ObjectId($type, $request->getValue('id'));
-      $response->setValue('oid', $oid->__toString());
+      $response->setData($request->getData());
       $response->setAction('display');
     }
     else {
       // read all objects of the given type
       // delegate further processing to AsyncPagingController
-      $response->setValue('className', $type);
+      $response->setData($request->getData());
       $response->setAction('list');
     }
     return true;
   }
   /**
-   * Handle a POST request (update an object of a given type)
+   * Handle a POST request (create/update an object of a given type)
    */
   protected function handlePost()
   {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+
+    $response->setData($request->getData());
+    $response->setAction('save');
+    
+    return true;
   }
   /**
-   * Handle a PUT request (create an object of a given type)
+   * Handle a PUT request (create/update an object of a given type)
    */
   protected function handlePut()
   {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+
+    $response->setData($request->getData());
+    $response->setAction('save');
+    
+    return true;
   }
   /**
    * Handle a DELETE request (delete an object of a given type)

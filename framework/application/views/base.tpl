@@ -58,7 +58,7 @@
   <script type="text/javascript" src="{$libDir}application/js/Error.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/EasyRestService.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/Request.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/persistence/Service.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/persistence/DionysosService.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/Store.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/Grid.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/DetailPane.js"></script>
