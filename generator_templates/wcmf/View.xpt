@@ -140,7 +140,7 @@
 </div>
 
 {include file="lib:application/views/include/navigation.tpl"}
-{include file="lib:application/views/include/error.tpl" displayMessageDialog="false"}
+{include file="lib:application/views/include/error.tpl"}
 
 {if $lockMsg != ''}
 <div class="hint">{translate text="some objects are locked"} (<a href="javascript:displayMsg();">details</a>)</div>
@@ -158,16 +158,16 @@
 	<h2 title="{translate text="object ID"}: {$oid|default:"-"}">{$nodeUtil->getDisplayValue($node, true)}&nbsp;</h2>
 	<span class="spacer"></span>
 «FOREACH curNode.getWCMFValuesRecursive() AS curValue-»
-	«IF curValue.app_data_type != "DATATYPE_IGNORE"-»
+	«IF true-»
 	<span class="dottedSeparator"></span>
 	<span class="left" title="{$node->getValueDescription('«curValue.name»')}">{$node->getValueDisplayName('«curValue.name»')}</span>
-	<span class="right">{$nodeUtil->getInputControl($node, '«curValue.name»')}</span>
+	<span class="right">{input node=$node property='«curValue.name»')}</span>
 	«ENDIF-»
 «ENDFOREACH-»
 «FOREACH curNode.getWCMFValueRefs() AS curReference-»
 	<span class="dottedSeparator"></span>
 	<span class="left" title="{$node->getValueDescription('«curReference.name»')}">{$node->getValueDisplayName('«curReference.name»')}</span>
-	<span class="right">{$nodeUtil->getInputControl($node, '«curReference.name»')}</span>
+	<span class="right">{input node=$node property='«curReference.name»')}</span>
 «ENDFOREACH-»
 	<span class="spacer"></span>
 «FOREACH curNode.getParentNodesRecursive() AS curParent-»

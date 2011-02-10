@@ -53,7 +53,7 @@ CREATE TABLE `«this.getTableName()»` # entityType=«name» tableId=«this.getId()»
   ,KEY `«curValue.getColumnName()»` (`«curValue.getColumnName()»`)
 		«ENDIF-»
 	«ENDFOREACH-»
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 «ENDIF-»
 «ENDDEFINE»
 

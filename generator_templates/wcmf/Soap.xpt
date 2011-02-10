@@ -19,12 +19,12 @@
  *       ensure that everything is working correctly
  */
 require_once("base_dir.php");  
-require_once(BASE."wcmf/lib/presentation/class.Application.php");
-require_once(BASE."wcmf/lib/security/class.AuthUser.php");
-require_once(BASE."wcmf/3rdparty/nusoap/lib/nusoap.php");
-require_once(BASE."wcmf/lib/util/class.Log.php");
-require_once(BASE."wcmf/lib/presentation/class.ActionMapper.php");
-require_once(BASE."wcmf/lib/presentation/class.Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
+require_once(WCMF_BASE."wcmf/lib/security/class.AuthUser.php");
+require_once(WCMF_BASE."wcmf/3rdparty/nusoap/lib/nusoap.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
 «PROTECT CSTART "// " CEND "" ID "/soap/Import"»
 «ENDPROTECT»
 
@@ -79,7 +79,7 @@ $server->register('search',
  */  
 function search($login, $password, $searchterm)  
 {
-  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'searchterm' => $searchterm, 'usr_action' => 'soapSearch'));
+  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'searchterm' => $searchterm, 'action' => 'soapSearch'));
   $result = doSoapCall();
   return $result->getValue('soapResult');
 }  
@@ -99,7 +99,7 @@ $server->register('advancedSearch',
  */  
 function advancedSearch($login, $password, $type, $query)  
 {
-  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'type' => $type, 'query' => $query, 'usr_action' => 'soapAdvancedSearch'));
+  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'type' => $type, 'query' => $query, 'action' => 'soapAdvancedSearch'));
   $result = doSoapCall();
   return $result->getValue('soapResult');
 }  
@@ -118,39 +118,42 @@ $server->service($HTTP_RAW_POST_DATA);
 function doSoapCall()
 {
   // initialize the application
-  $application = &Application::getInstance();
+  $application = Application::getInstance();
   $application->setErrorHandler();
-  $callParams = &$application->initialize('include/', 'config.ini', 'ExitController', '', $_GET['usr_action'], MSG_FORMAT_SOAP);
+  $callParams = $application->initialize('include/', 'config.ini', 'ExitController', '', $_GET['action'], MSG_FORMAT_SOAP);
 
+  // process the requested action
+  $request = new Request(
+    $callParams['controller'], 
+    $callParams['context'], 
+    $callParams['action'], 
+    $callParams['data']
+  );
+  
   // login with the data given in the request
   $session = &SessionData::getInstance();
   $objectFactory = &ObjectFactory::getInstance();
   $authUser = new AuthUser();
-  if ($authUser->login($_GET['login'], $_GET['password']))
+  if ($authUser->login($request->getValue('login'), $request->getValue('password')))
   {
     // login succeeded, store the user in the session
     $session->set('auth_user', $authUser);
   
-    // process the requested action
-    $request = new Request(
-      $callParams['controller'], 
-      $callParams['context'], 
-      $callParams['action'], 
-      $callParams['data']
-    );
     $request->setFormat(MSG_FORMAT_SOAP);
     $request->setResponseFormat(MSG_FORMAT_SOAP);
-    $response = &ActionMapper::processAction($request);
-    $error = $response->getValue('errorMsg');
+    $response = ActionMapper::processAction($request);
+    $error = $response->getValue('errorMessage');
     if (strlen($error) > 0) {
-      trow new ApplicationException($error);
+      throw new ApplicationException($request, $response, 
+        ApplicationError::get('GENERAL_ERROR', array('message' => $error)));
     }
   }
   else {
-    trow new ApplicationException("Login failed");
+    throw new ApplicationException($request, null, 
+      ApplicationError::get('AUTHENTICATION_FAILED'));
   }
   // cleanup
-  $lockManager = &LockManager::getInstance();
+  $lockManager = LockManager::getInstance();
   $lockManager->releaseAllLocks();
   $session->destroy();
       
@@ -240,7 +243,7 @@ $server->register('delete«this.name.asType()»',
  */  
 function get«this.name.asType()»List($login, $password)  
 {
-  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'usr_action' => 'list', 'type' => '«this.name.asType()»'));
+  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'action' => 'list', 'type' => '«this.name.asType()»'));
 «PROTECT CSTART "// " CEND "" ID "soap/Methods/get"+this.name.asType()+"List"»
   $result = doSoapCall();
   return $result->getValue('objects');
@@ -257,7 +260,7 @@ function get«this.name.asType()»List($login, $password)
  */  
 function create«this.name.asType()»($login, $password, $«this.name», $parentoid)  
 {
-  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'usr_action' => 'new', 'newtype' => '«this.name.asType()»',  PersistenceFacade::composeOID(array('type' => '«this.name.asType()»')) => $«this.name», 'poid' => $parentoid));
+  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'action' => 'new', 'newtype' => '«this.name.asType()»',  PersistenceFacade::composeOID(array('type' => '«this.name.asType()»')) => $«this.name», 'poid' => $parentoid));
 «PROTECT CSTART "// " CEND "" ID "soap/Methods/create"+this.name.asType()»
   $result = doSoapCall();
   return $result->getValue('oid');
@@ -274,7 +277,7 @@ function create«this.name.asType()»($login, $password, $«this.name», $parentoid)
  */  
 function read«this.name.asType()»($login, $password, $oid, $depth)  
 {
-  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'usr_action' => 'display', 'oid' => $oid, 'depth' => $depth));
+  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'action' => 'display', 'oid' => $oid, 'depth' => $depth));
 «PROTECT CSTART "// " CEND "" ID "soap/Methods/read"+this.name.asType()»
   $result = doSoapCall();
   return $result->getValue('node');
@@ -291,7 +294,7 @@ function read«this.name.asType()»($login, $password, $oid, $depth)
  */  
 function update«this.name.asType()»($login, $password, $«this.name», $oid)  
 {
-  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'usr_action' => 'save', $oid => $«this.name», 'oid' => $oid));
+  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'action' => 'save', $oid => $«this.name», 'oid' => $oid));
 «PROTECT CSTART "// " CEND "" ID "soap/Methods/update"+this.name.asType()»
   $result = doSoapCall();
   return $result;
@@ -307,7 +310,7 @@ function update«this.name.asType()»($login, $password, $«this.name», $oid)
  */  
 function delete«this.name.asType()»($login, $password, $oid)  
 {
-  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'usr_action' => 'delete', 'deleteoids' => $oid));
+  $_GET = array_merge($_GET, array('login' => $login, 'password' => $password, 'action' => 'delete', 'deleteoids' => $oid));
 «PROTECT CSTART "// " CEND "" ID "soap/Methods/delete"+this.name.asType()»
   $result = doSoapCall();
   return $result;

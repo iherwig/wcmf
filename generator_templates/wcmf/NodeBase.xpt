@@ -16,7 +16,7 @@
  * Manual modifications should be placed inside the protected regions.
  */
 «IF this.hasSuperClass()-»
-require_once(BASE."«getSuperClass().getFullPackageName().asPath()»/«getSuperClass().name.asClassFile()»");
+require_once(WCMF_BASE."«getSuperClass().getFullPackageName().asPath()»/«getSuperClass().name.asClassFile()»");
 «ENDIF-»
 
 /**
@@ -95,11 +95,11 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
   «IF getOrderByName() == "sortkey"-»
     function getSortkey()
     {
-      return $this->getValue('sortkey', DATATYPE_IGNORE);
+      return $this->getValue('sortkey');
     }
     function setSortkey($sortkey)
     {
-      return $this->setValue('sortkey', $sortkey, DATATYPE_IGNORE);
+      return $this->setValue('sortkey', $sortkey);
     }
   «ENDIF-»
   «EXPAND references FOR this-»
@@ -125,15 +125,15 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
     function «curValue.name.asGetter()»($unconverted=false)
     {
       if ($unconverted) {
-        return $this->getUnconvertedValue('«curValue.name»', «curValue.app_data_type»);
+        return $this->getUnconvertedValue('«curValue.name»');
       }
       else {
-        return $this->getValue('«curValue.name»', «curValue.app_data_type»);
+        return $this->getValue('«curValue.name»');
       }
     }
     function «curValue.name.asSetter()»($«curValue.name»)
     {
-      return $this->setValue('«curValue.name»', $«curValue.name», «curValue.app_data_type»);
+      return $this->setValue('«curValue.name»', $«curValue.name»);
     }
   «ENDFOREACH-»
 «ENDDEFINE»
@@ -157,7 +157,7 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
   «FOREACH this.getWCMFValueRefs() AS curReference-»
     function «curReference.name.asGetter()»()
     {
-      return $this->getValue('«curReference.name»', DATATYPE_ATTRIBUTE);
+      return $this->getValue('«curReference.name»');
     }
   «ENDFOREACH-»
 «ENDDEFINE»
@@ -168,7 +168,7 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
       // foreign key: «curParent.getRoleName()»
       if ($name == '«curParent.getRoleName().asGetter()»OID')
       {
-        $fkValue = $this->getValue('«curParent.getFKName()»', DATATYPE_IGNORE);
+        $fkValue = $this->getValue('«curParent.getFKName()»');
         if ($fkValue != null) {
           return PersistenceFacade::composeOID(array('type' => '«curParent.type.name»', 'id' => array($fkValue)));
         }
@@ -187,7 +187,7 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
     «IF this.getParentNodesRecursive().size == 1-»
               $node->addChild($this);
     «ELSE-»
-              $this->setValue('«curParent.getFKName()»', $node->getDBID(), DATATYPE_IGNORE);
+              $this->setValue('«curParent.getFKName()»', $node->getDBID());
     «ENDIF-»
             }
           }
