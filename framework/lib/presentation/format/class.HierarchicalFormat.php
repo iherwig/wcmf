@@ -55,7 +55,7 @@ abstract class HierarchicalFormat extends AbstractFormat
   /**
    * Deserialize an array of values.
    * @param values The array/object of values
-   * 
+   *
    */
   protected function deserializeValues(array $values)
   {
@@ -105,7 +105,13 @@ abstract class HierarchicalFormat extends AbstractFormat
       foreach ($values as $key => $value) {
         if (is_array($value) || is_object($value)) {
           // array/object value
-          $values[$key] = $this->serializeValues($value);
+          $result = $this->serializeValues($value);
+          if (ObjectId::isValid($key)) {
+            $values = $result;
+          }
+          else {
+            $values[$key] = $result;
+          }
         }
         else {
           // string value
@@ -148,7 +154,7 @@ abstract class HierarchicalFormat extends AbstractFormat
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function beforeSerialize(array $values) 
+  protected function beforeSerialize(array $values)
   {
     return $values;
   }

@@ -103,7 +103,7 @@ class NodeSerializer
       if ($parent != null) {
         $parent->addChild($node, $role);
       }
-      
+
       // get remaining part of data
       foreach ($data as $key => $value) {
         if (in_array($key, self::$NODE_KEYS)) {
@@ -159,7 +159,7 @@ class NodeSerializer
   {
     $curResult = array();
     $curResult['className'] = $node->getType();
-    $curResult['oid'] = $node->getOID();
+    $curResult['oid'] = $node->getOID()->__toString();
     $curResult['lastChange'] = strtotime($node->getValue('modified'));
 
     $oid = $node->getOID();
@@ -260,7 +260,7 @@ class NodeSerializer
       return null;
     }
   }
-  
+
   /**
    * Check if a relation is multi valued
    * @param type The type that has the relation
