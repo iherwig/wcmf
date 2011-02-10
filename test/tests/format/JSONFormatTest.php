@@ -203,10 +203,10 @@ class JSONFormatTest extends WCMFTestCase {
     $this->assertTrue($pages['Page:3']->getOID()->__toString() === 'Page:3');
     $this->runAnonymous(false);
   }
-  
+
   public function testSerializeNodeSimple() {
     $this->runAnonymous(true);
-    
+
     $node = new Document();
     $node->setOID(new ObjectId('Document', array(123)));
     $node->setValue('title', 'Matrix - The Original');
@@ -222,7 +222,15 @@ class JSONFormatTest extends WCMFTestCase {
     // test
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
-  }  
+    $this->assertTrue($data['sid'] === 'cd65fec9bce4d7ec74e341a9031f8966');
+    $this->assertTrue($data['oid'] === 'Document:123');
+    $this->assertTrue($data['className'] === 'Document');
+    $this->assertTrue($data['isReference'] === false);
+
+    $attributes = $data['attributes'];
+    $this->assertTrue(is_array($attributes));
+    $this->assertTrue($attributes['title'] === 'Matrix - The Original');
+  }
 
 }
 
