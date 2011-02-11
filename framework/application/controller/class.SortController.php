@@ -237,7 +237,7 @@ class SortController extends Controller
     for ($i=0; $i<sizeof($nodes); $i++)
     {
       $nodes[$i]->setValue($sortCol, $sortkey);
-      $rootNode->addChild($nodes[$i]);
+      $rootNode->addNode($nodes[$i]);
       $sortkey++;
     }
 

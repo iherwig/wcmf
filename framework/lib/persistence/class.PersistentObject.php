@@ -576,6 +576,34 @@ class PersistentObject
     return false;
   }
   /**
+   * Add a value to an array value. If the value is not set yet, an array will
+   * be created. If the value is set already and it is no array a warning will be
+   * logged without setting the value.
+   * @param name The name of the item to add the value to.
+   * @param value The value to add.
+   * @param forceSet Add the value even if it is already set and validation would fail (used to notify listeners) [default: false]
+   * @return true if operation succeeds / false else
+   */
+  public function addValue($name, $value, $forceSet=false)
+  {
+    $existingValue = $this->getValue($name);
+    $isEmpty = empty($existingValue);
+    if (!$isEmpty && !is_array($existingValue)) {
+      Log::warn("Can't add to the non-array value '".$name."'", __CLASS__);
+    }
+    else {
+      if ($isEmpty) {
+        $newValue = array($value);
+      }
+      else {
+        $existingValue[] = $value;
+        $newValue = $existingValue;
+      }
+      return $this->setValue($name, $newValue, $forceSet);
+    }
+    return false;
+  }
+  /**
    * Get the value of one property of a named item.
    * @param name The name of the item to get its properties.
    * @param property The name of the property to get.
@@ -698,7 +726,7 @@ class PersistentObject
     $this->propagatePropertyChange($name, $oldValue, $value);
   }
   /**
-   * Get the names of all properties in the object. Properties are 
+   * Get the names of all properties in the object. Properties are
    * either defined by using the PersistentObject::setProperty() method
    * or by the PersistentMapper.
    * @param excludeDefaultProperties True/False wether to only return the

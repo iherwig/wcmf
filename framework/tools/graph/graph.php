@@ -38,7 +38,7 @@ $rootNode = new Node("root");
 foreach($oids as $oid)
 {
   $node = $persistenceFacade->load($oid, BUILDDEPTH_INFINITE);
-  $rootNode->addChild($node);
+  $rootNode->addNode($node);
 }
 
 // output tree to dot

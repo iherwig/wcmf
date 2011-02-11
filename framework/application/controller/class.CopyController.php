@@ -198,7 +198,7 @@ class CopyController extends BatchController
       {
         // attach the node to the target node
         $parentNode = &$this->getTargetNode($targetOID);
-        $parentNode->addChild($nodeCopy);
+        $parentNode->addNode($nodeCopy);
 
         // save changes
         $this->modify($nodeCopy);
@@ -226,7 +226,7 @@ class CopyController extends BatchController
       {
         // attach the copy to the target node
         $parentNode = &$this->getTargetNode($targetOID);
-        $parentNode->addChild($nodeCopy);
+        $parentNode->addNode($nodeCopy);
 
         // save changes
         $this->modify($nodeCopy);
@@ -358,7 +358,7 @@ class CopyController extends BatchController
     {
       $copiedParent = &$this->getCopy($parentOID);
       if ($copiedParent != null) {
-        $copiedParent->addChild($nodeCopy);
+        $copiedParent->addNode($nodeCopy);
         if (Log::isDebugEnabled(__CLASS__)) {
           Log::debug("Added ".$nodeCopy->getOID()." to ".$copiedParent->getOID(), __CLASS__);
         }
@@ -385,7 +385,7 @@ class CopyController extends BatchController
     {
       $copiedChild = &$this->getCopy($childOID);
       if ($copiedChild != null) {
-        $nodeCopy->addChild($copiedChild);
+        $nodeCopy->addNode($copiedChild);
         $this->saveToTarget($copiedChild);
         if (Log::isDebugEnabled(__CLASS__)) {
           Log::debug("Added ".$copiedChild->getOID()." to ".$nodeCopy->getOID(), __CLASS__);

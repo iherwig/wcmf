@@ -109,14 +109,14 @@ class AssociateController extends Controller
           // check if we can directly associate child to parent
           if ($this->_request->getValue('associateAs') == 'child' && $this->isDirectAssociation($parentTemplate, $childTemplate))
           {
-            $parentNode->addChild($childNode);
+            $parentNode->addNode($childNode);
             $parentNode->setType($parentNode->getType());
             $childNode->save();
           }
           // check if we can directly associate parent to child
           else if ($this->_request->getValue('associateAs') == 'parent' && $this->isDirectAssociation($childTemplate, $parentTemplate))
           {
-            $childNode->addChild($parentNode);
+            $childNode->addNode($parentNode);
             $parentNode->save();
           }
           else
@@ -126,10 +126,10 @@ class AssociateController extends Controller
             if ($linkType != null)
             {
               $link = &$persistenceFacade->create($linkType, BUILDTYPE_SINGLE);
-              $parentNode->addChild($link);
+              $parentNode->addNode($link);
               $link->save();
               $link = &$persistenceFacade->load($link->getOID(), BUILDTYPE_SINGLE);
-              $childNode->addChild($link);
+              $childNode->addNode($link);
               $link->save();
               $this->_response->setValue("manyToMany", $link);
             }
@@ -147,7 +147,7 @@ class AssociateController extends Controller
           {
             // use a NullNode to empty foreign key
             $parentNode = new NullNode($parentTemplate->getType());
-            $parentNode->addChild($childNode);
+            $parentNode->addNode($childNode);
             $childNode->save();
           }
           // check if it is a direct association from parent to child
@@ -155,7 +155,7 @@ class AssociateController extends Controller
           {
             // use a NullNode to empty foreign key
             $childNode = new NullNode($childTemplate->getType());
-            $childNode->addChild($parentNode);
+            $childNode->addNode($parentNode);
             $parentNode->save();
           }
           else

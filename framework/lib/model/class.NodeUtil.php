@@ -154,7 +154,7 @@ class NodeUtil
     foreach ($mapper->getPkNames() as $pkName) {
       $cTpl->setValue($pkName, '= '.$childNode->getValue($pkName));
     }
-    $tpl->addChild($cTpl, $childNode->getOppositeRole($parentRole));
+    $tpl->addNode($cTpl, $childNode->getOppositeRole($parentRole));
   //Log::error($query->toString(), __CLASS__);
     return $query->toString();
   }
@@ -176,7 +176,7 @@ class NodeUtil
     foreach ($mapper->getPkNames() as $pkName) {
       $pTpl->setValue($pkName, '= '.$parentNode->getValue($pkName));
     }
-    $pTpl->addChild($tpl);
+    $pTpl->addNode($tpl);
   //Log::error($query->toString(), __CLASS__);
     return $query->toString();
   }
@@ -476,7 +476,7 @@ class NodeUtil
     $value = $object->getValue($valueName);
     // translate list values
     $value = Control::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
-    
+
     // render the value to html
     $displayType = $object->getValueProperty($valueName, 'display_type');
     if (strlen($displayType) == 0) {

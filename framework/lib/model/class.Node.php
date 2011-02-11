@@ -24,11 +24,6 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.ArrayUtil.php");
 
 /**
- * Some constants describing the build process
- */
-define("ADDCHILD_FRONT", -1); // add child at front of children list
-define("ADDCHILD_BACK",  -2);  // add child at back of children list
-/**
  * Some constants describing the sort process
  */
 define("SORTTYPE_ASC",  -1); // sort children ascending
@@ -44,7 +39,7 @@ define("TYPE", -4); // sort by type
  * is performed using the Node interface.
  * Subclasses for specialized Nodes must implement this interface so that clients don't have to know
  * about special Node classes.
- * Use the methods addChild(), deleteChild() to build/modify trees.
+ * Use the methods addNode(), deleteNode() to build/modify trees.
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
@@ -74,18 +69,18 @@ class Node extends PersistentObject
   }
   /**
    * Add a Node to the given relation.
-   * @param child The Node to add.
+   * @param other The Node to add.
    * @param role The role of the Node in the created relation. If null, the role will be
    *        the Node's type. [default: null]
    * @param strict True/False wether to add the Node according to an existing RelationDescription or not.
    *        If true, the value for the relation will be an array, if the multiplicity is > 1 and
    *        a single value otherwise. If false, the value will always be an array [default: true]
-   * @param addtype One of the ADDCHILD constants
+   * @param updateOtherSide True/False wether to update also the other side of the relation [default: true]
    */
-  public function addChild(PersistentObject $child, $role=null, $strict=true, $addtype=ADDCHILD_BACK)
+  public function addNode(PersistentObject $other, $role=null, $strict=true, $updateOtherSide=true)
   {
     if ($role == null) {
-      $role = $child->getType();
+      $role = $other->getType();
     }
 
     // get the relation description
@@ -97,90 +92,74 @@ class Node extends PersistentObject
 
     if ($strict && $relDesc && !$relDesc->isMultiValued()) {
       // just set the value if strict and not multivalued
-      $this->setValue($role, $child);
+      $this->setValue($role, $other);
     }
     else {
       // make sure that the value is an array if multivalued or not strict
-      $children = $this->getValue($role);
-      if (!is_array($children)) {
-        $children = array();
-      }
-      if ($addtype === ADDCHILD_BACK) {
-        $children[] = &$child;
-      }
-      elseif ($addtype === ADDCHILD_FRONT) {
-        ArrayUtil::array_insert($children, 0, $child);
-      }
-      else {
-        throw new IllegalArgumentException("Unknown ADDTYPE.");
-      }
-      $this->setValue($role, $children);
-    }
-    
-    // propagate add action to the other object
-    $thisRole = $this->getType();
-    if ($relDesc) {
-      $thisRole = $relDesc->thisRole;
-    }
-    $child->updateParent($this, $thisRole);
-  }
-  /**
-   * Set a given parent. Works recursively.
-   * @param parent A reference to the Node to set the parent to.
-   */
-  private function updateParent(PersistentObject $parent, $role)
-  {
-    $parents = $this->getValue($role);
-    if (!is_array($parents)) {
-      $parents = array();
-    }
-    else {
-      // check if the parent already exists
-      foreach ($parents as $curParent)
-      {
-        if ($curParent->getOID() == $parent->getOID()) {
-          // no need to update
-          return;
-        }
-      }
+      $this->addValue($role, $other);
     }
 
-    // add the new parent
-    $parents[] = $parent;
-    $this->setValue($role, $parents);
+    // propagate add action to the other object
+    if ($updateOtherSide)
+    {
+      $thisRole = $this->getType();
+      if ($relDesc) {
+        $thisRole = $relDesc->thisRole;
+      }
+      $other->addNode($this, $thisRole, $strict, false);
+    }
   }
   /**
-   * Delete a Node's child.
-   * @param childOID The object id of the child Node to delete.
-   * @param role The role of the child. If null, the role is the child's type. [default: null]
+   * Delete a Node from the given relation.
+   * @param oid The object id of the Node to delete.
+   * @param role The role of the Node. If null, the role is the Node's type. [default: null]
    * @param reallyDelete True/false [default: false].
    * (if reallyDelete==false mark it and it's descendants as deleted).
    */
-  public function deleteChild(ObjectId $childOID, $role=null, $reallyDelete=false)
+  public function deleteNode(ObjectId $oid, $role=null, $reallyDelete=false)
   {
     if ($role == null) {
-      $role = $childOID->getType();
+      $role = $oid->getType();
     }
-    $children = $this->getValue($role);
-    for($i=0, $count=sizeOf($children); $i<$count; $i++)
+    $nodes = $this->getValue($role);
+    if (empty($nodes)) {
+      return;
+    }
+
+    if (is_array($nodes))
     {
-      if ($children[$i]->getOID() == $childOID)
+      for($i=0, $count=sizeof($nodes); $i<$count; $i++)
       {
-        if (!$reallyDelete)
+        if ($nodes[$i]->getOID() == $oid)
         {
-          // mark child as deleted
-          $children[$i]->setState(STATE_DELETED);
-          break;
-        }
-        else
-        {
-          // remove child
-          array_splice($children, $i, 1);
-          break;
+          if (!$reallyDelete) {
+            // mark child as deleted
+            $nodes[$i]->setState(STATE_DELETED);
+            break;
+          }
+          else {
+            // remove child
+            array_splice($nodes, $i, 1);
+            break;
+          }
         }
       }
     }
-    $this->setValue($role, $children);
+    else
+    {
+      if ($nodes->getOID() == $oid)
+      {
+        if (!$reallyDelete) {
+          // mark child as deleted
+          $nodes->setState(STATE_DELETED);
+        }
+        else {
+          // remove child
+          $nodes = null;
+        }
+      }
+    }
+    $this->setValue($role, $nodes);
   }
   /**
    * Load the children of a given role and add them. If all children should be

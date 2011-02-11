@@ -97,10 +97,10 @@ $GLOBALS['OQ_ATTRIBUTES'] = array(
  * $recipeTpl4->setValue("portions", "= 4");
  * $query->makeGroup(array(&$recipeTpl3, &$recipeTpl4), QUERYOP_AND, QUERYOP_OR);
  *
- * $authorTpl1->addChild($recipeTpl1);
- * $authorTpl1->addChild($recipeTpl2);
- * $authorTpl1->addChild($recipeTpl3);
- * $authorTpl1->addChild($recipeTpl4);
+ * $authorTpl1->addNode($recipeTpl1, 'Recipe');
+ * $authorTpl1->addNode($recipeTpl2, 'Recipe');
+ * $authorTpl1->addNode($recipeTpl3, 'Recipe');
+ * $authorTpl1->addNode($recipeTpl4, 'Recipe');
  * $authorList = $query->execute(BUILDDEPTH_SINGLE);
  * @endcode
  *
@@ -117,7 +117,7 @@ class ObjectQuery implements ChangeListener
 {
   private $_id = '';
   private $_typeNode = null;
-  private $_root = null;
+  private $_rootNodes = array();
   private $_conditions = array();
   private $_groups = array();
   private $_groupedOIDs = array();
@@ -132,8 +132,7 @@ class ObjectQuery implements ChangeListener
     $persistenceFacade = PersistenceFacade::getInstance();
     $this->_typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
     $this->_typeNode->setValue("object_query_table_name", "SearchNode");
-    $this->_root = new Node('ROOT');
-    $this->_id = $this->_root->getOID();
+    $this->_id = ObjectId::getDummyId();
   }
   /**
    * Get an object template for a given type.
@@ -159,7 +158,7 @@ class ObjectQuery implements ChangeListener
     $template->setValue("object_query_pre_operator", $preOperator);
     $template->setValue("object_query_inter_operator", $interOperator);
     $template->addChangeListener($this);
-    $this->_root->addChild($template);
+    $this->_rootNodes[] = $template;
     return $template;
   }
   /**
@@ -192,7 +191,7 @@ class ObjectQuery implements ChangeListener
 
       $template->setValue("object_query_pre_operator", $preOperator);
       $template->setValue("object_query_inter_operator", $interOperator);
-      $this->_root->addChild($template);
+      $this->_rootNodes[] = $template;
     }
   }
   /**
@@ -318,14 +317,14 @@ class ObjectQuery implements ChangeListener
     $conditionStr = '';
 
     // if no object template is created, we use the typeNode as object template
-    if ($this->_root->getNumChildren() == 0) {
-      $this->_root->addChild($this->_typeNode);
+    if (sizeof($this->_rootNodes) == 0) {
+      $this->_rootNodes[] = $this->_typeNode;
     }
     // create attribute string (use the default select from the mapper, since we are only interested in the attributes)
     if ($buildDepth === false) {
       $attribs = array();
     }
-    /* 
+    /*
     // call the mapper method through reflection
     // NOTE: this will work from php 5.3 on. for now we have to set the method public
     $mapperClass = get_class($mapper);
@@ -338,14 +337,17 @@ class ObjectQuery implements ChangeListener
     $attributeStr = $select['attributeStr'];
 
     // process all nodes in the tree except for root and grouped nodes
-    $iterator = new NodeIterator($this->_root);
-    while(!($iterator->isEnd()))
+    foreach ($this->_rootNodes as $curNode)
     {
-      $currentObject = $iterator->getCurrentNode();
-      if ($currentObject->getOID() != $this->_root->getOID() && !in_array($currentObject->getOID(), $this->_groupedOIDs)) {
-        $this->processObjectTemplate($currentObject, $tableArray, $conditionStr, $relationArray);
+      $iterator = new NodeIterator($curNode);
+      while(!($iterator->isEnd()))
+      {
+        $currentObject = $iterator->getCurrentNode();
+        if (!in_array($currentObject->getOID(), $this->_groupedOIDs)) {
+          $this->processObjectTemplate($currentObject, $tableArray, $conditionStr, $relationArray);
+        }
+        $iterator->proceed();
       }
-      $iterator->proceed();
     }
 
     // process groups
@@ -409,7 +411,7 @@ class ObjectQuery implements ChangeListener
     $iter = new NodeValueIterator($tpl, false);
     while(!$iter->isEnd())
     {
-      $this->makeConditionStr($iter->getCurrentNode(), $iter->getCurrentAttribute(), 
+      $this->makeConditionStr($iter->getCurrentNode(), $iter->getCurrentAttribute(),
         $tpl->getValue("object_query_inter_operator"));
       $iter->proceed();
     }

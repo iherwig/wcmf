@@ -51,7 +51,7 @@ class RDBLockHandler implements ILockHandler
     $lock->setValue('objectid', $oid);
     $lock->setValue('since', $lockDate);
     $user = $this->getUserByOID($useroid);
-    $user->addChild($lock);
+    $user->addNode($lock);
     $lock->save();
   }
   /**
@@ -74,7 +74,7 @@ class RDBLockHandler implements ILockHandler
       {
         $userTpl = $query->getObjectTemplate(UserManager::getUserClassName());
         $userTpl->setOID($useroid);
-        $userTpl->addChild($tpl);
+        $userTpl->addNode($tpl);
       }
     }
     $locks = $query->execute(BUILDDEPTH_SINGLE);
@@ -104,7 +104,7 @@ class RDBLockHandler implements ILockHandler
     $tpl1 = $query->getObjectTemplate(UserManager::getUserClassName());
     $tpl2 = $query->getObjectTemplate('Locktable');
     $tpl2->setValue('objectid', "= '".$oid."'");
-    $tpl1->addChild($tpl2);
+    $tpl1->addNode($tpl2);
     $users = $query->execute(1);
 
     // reactivate locking

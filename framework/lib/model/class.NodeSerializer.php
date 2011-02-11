@@ -101,7 +101,7 @@ class NodeSerializer
         }
       }
       if ($parent != null) {
-        $parent->addChild($node, $role);
+        $parent->addNode($node, $role);
       }
 
       // get remaining part of data
@@ -127,7 +127,7 @@ class NodeSerializer
     else
     {
       $role = $key;
-      if (self::isMultiValued($node->getType(), $role)) {
+      if (self::isMultiValued($node, $role)) {
         // deserialize children
         foreach($value as $childData) {
           self::deserializeNode($childData, $node, $role);
@@ -162,8 +162,8 @@ class NodeSerializer
     $curResult['oid'] = $node->getOID()->__toString();
     $curResult['lastChange'] = strtotime($node->getValue('modified'));
 
-    $oid = $node->getOID();
-    if (in_array($oid, self::$_serializedOIDs))
+    $oidStr = $node->getOID()->__toString();
+    if (in_array($oidStr, self::$_serializedOIDs))
     {
       // the node is serialized already
       $curResult['isReference'] = true;
@@ -172,7 +172,7 @@ class NodeSerializer
     {
       // the node is not serialized yet
       $curResult['isReference'] = false;
-      self::$_serializedOIDs[] = $node->getOID();
+      self::$_serializedOIDs[] = $oidStr;
 
       // serialize attributes
       // use NodeValueIterator to iterate over all Node values
@@ -186,114 +186,53 @@ class NodeSerializer
         $valueIter->proceed();
       }
       $curResult['attributes'] = $values;
-/*
+
       // add related objects by creating an attribute that is named as the role of the object
       // multivalued relations will be serialized into an array
       $mapper = $node->getMapper();
-      $relations = $mapper->getRelations();
-      foreach ($relations as $relation)
+      foreach ($mapper->getRelations() as $relation)
       {
         $role = $relation->otherRole;
-        if ($node->hasValue($role)) {
-          // create the relation attribute
-          $values = $node->getValue($role);
-
-        }
-      }
-      $lastRole = null;
-      $relatedOIDs = array_merge((array)$node->getProperty('parentoids'), (array)$node->getProperty('childoids'));
-      $relatedObjects = array_merge((array)$node->getChildren(), (array)$node->getParents());
-      foreach($relatedOIDs as $oid)
-      {
-        // get the oid serialized as reference
-        $ref = array($oid, $node->getType());
-        $role = $ref['type'];
-
-        // create the relation attribute on first appearance
-        if ($role != $lastRole) {
-          if ($ref['isMultiValued']) {
+        $relatedNodes = $node->getValue($role);
+        if ($relatedNodes)
+        {
+          // serialize the nodes
+          $isMultiValued = $relation->isMultiValued();
+          if ($isMultiValued)
+          {
             $curResult['attributes'][$role] = array();
+            foreach ($relatedNodes as $relatedNode)
+            {
+              $data = self::serializeNodeImpl($relatedNode);
+              // add the data to the relation attribute
+              $curResult['attributes'][$role][] = $data;
+            }
+          }
+          else {
+              $data = self::serializeNodeImpl($relatedNodes);
+              // add the data to the relation attribute
+              $curResult['attributes'][$role] = $data;
           }
         }
-
-        // serialize the node as complete object or as reference
-        $relatedNode = self::getFromNodelist($relatedObjects, $oid);
-	if ($relatedNode && !in_array($oid, self::$_serializedOIDs)) {
-          $data = self::serializeNodeImpl($relatedNode);
-	}
-        else {
-          $data = array('className' => $ref['baseType'], 'oid' => $oid, 'isReference' => true);
-        }
-
-        // add the data to the relation attribute
-        if ($ref['isMultiValued']) {
-          $curResult['attributes'][$role][] = $data;
-        }
-        else {
-          $curResult['attributes'][$role] = $data;
-        }
       }
- */
     }
     return $curResult;
   }
 
   /**
-   * Serialize a oid as a reference.
-   * @param oid The ObjectId
-   * @param parentType The parent node type (optional, default: null)
-   * @return An associative array with keys 'type', 'oid', 'isMultiValued' or null,
-   * if the oid is a dummy id
-   */
-  protected static function serializeOid(ObjectId $oid, $parentType=null)
-  {
-    if (!$oid->containsDummyIds())
-    {
-      $isMultiValued = false;
-      if ($parentType) {
-        $isMultiValued = self::isMultiValued($parentType, $oid->getType());
-      }
-      return array('baseType' => $baseType, 'baseOID' => $baseOID, 'type' => $type,
-        'isMultiValued' => $isMultiValued);
-    }
-    else {
-      return null;
-    }
-  }
-
-  /**
    * Check if a relation is multi valued
-   * @param type The type that has the relation
+   * @param node The Node that has the relation
    * @param role The role of the relation
    */
-  protected static function isMultiValued($type, $role)
+  protected static function isMultiValued(Node $node, $role)
   {
     $isMultiValued = false;
-    $persistenceFacade = PersistenceFacade::getInstance();
-    if ($persistenceFacade->isKnownType($type)) {
-      $mapper = $persistenceFacade->getMapper($type);
-      if ($mapper->hasRelation($role)) {
-        $relation = $mapper->getRelation($role);
-        $isMultiValued = $relation->isMultiValued();
-      }
+    $mapper = $node->getMapper();
+    if ($mapper->hasRelation($role)) {
+      $relation = $mapper->getRelation($role);
+      $isMultiValued = $relation->isMultiValued();
     }
     return $isMultiValued;
-  }
-
-  /**
-   * Get the node with oid from a list of nodes.
-   * @param nodes An array of nodes
-   * @param oid The oid to look for
-   * @return The node or null, if not found
-   */
-  function getFromNodelist($nodes, $oid)
-  {
-    foreach($nodes as $node) {
-      if ($node->getOID() == $oid) {
-        return $node;
-      }
-    }
-    return null;
   }
 }
 ?>

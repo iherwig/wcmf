@@ -145,7 +145,7 @@ abstract class User extends Node
     // add the role if existing
     $role = $this->getRoleByName($rolename);
     if ($role != null) {
-      $this->addChild($role);
+      $this->addNode($role);
     }
     // commit the changes if requested
     if ($commit)

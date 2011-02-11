@@ -281,7 +281,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
           // add proxy relations to the remote object
           $children = $proxy->getChildren();
           for($i=0, $count=sizeof($children); $i<$count; $i++) {
-            $obj->addChild($children[$i]);
+            $obj->addNode($children[$i]);
           }
           $parents = $proxy->getParents();
           for($i=0, $count=sizeof($parents); $i<$count; $i++) {

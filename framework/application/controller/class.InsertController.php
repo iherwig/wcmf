@@ -135,7 +135,7 @@ class InsertController extends Controller
     }
 
     if ($this->confirmInsert($newNode) && $parentNode != null) {
-      $parentNode->addChild($newNode, $newRole);
+      $parentNode->addNode($newNode, $newRole);
     }
     $this->modify($newNode);
     $needCommit = true;
