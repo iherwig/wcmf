@@ -9,7 +9,7 @@ class JSONFormatTest extends WCMFTestCase {
 
   public function testDeserializeSimple() {
     $this->runAnonymous(true);
-    $message = new Request('TerminateController', '', 'update');
+    $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'string' => 'abc',
                 'integer' => 123,
@@ -51,7 +51,7 @@ class JSONFormatTest extends WCMFTestCase {
 
   public function testDeserializeNodeSimple() {
     $this->runAnonymous(true);
-    $message = new Request('TerminateController', '', 'update');
+    $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'oid' => 'Document:123',
@@ -79,7 +79,7 @@ class JSONFormatTest extends WCMFTestCase {
 
   public function testDeserializeNodeHierarchy() {
     $this->runAnonymous(true);
-    $message = new Request('TerminateController', '', 'update');
+    $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'oid' => 'Document:123',
@@ -156,7 +156,7 @@ class JSONFormatTest extends WCMFTestCase {
 
   public function testDeserializeNodeList() {
     $this->runAnonymous(true);
-    $message = new Request('TerminateController', '', 'update');
+    $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'list' => array(
@@ -204,15 +204,57 @@ class JSONFormatTest extends WCMFTestCase {
     $this->runAnonymous(false);
   }
 
+  public function testSerializeSimple() {
+    $this->runAnonymous(true);
+    $message = new Response('controller', 'context', 'action');
+    $message->setValues(array(
+                'string' => 'abc',
+                'integer' => 123,
+                'boolean' => true,
+                'array' => array(
+                    'string' => 'def',
+                    'integer' => 456,
+                    'boolean' => false,
+                    'array' => array(
+                        'string' => 'ghi',
+                        'integer' => 789
+                    )
+                )
+            ));
+
+    $format = new JSONFormat();
+    $format->serialize($message);
+
+    // test
+    $data = $message->getValues();
+    $this->assertTrue(is_array($data));
+
+    $this->assertTrue($data['string'] === 'abc');
+    $this->assertTrue($data['integer'] === 123);
+    $this->assertTrue($data['boolean'] === true);
+    $this->assertTrue(is_array($data['array']));
+
+    $array1 = $data['array'];
+    $this->assertTrue($array1['string'] === 'def');
+    $this->assertTrue($array1['integer'] === 456);
+    $this->assertTrue($array1['boolean'] === false);
+    $this->assertTrue(is_array($array1['array']));
+
+    $array2 = $array1['array'];
+    $this->assertTrue($array2['string'] === 'ghi');
+    $this->assertTrue($array2['integer'] === 789);
+    $this->runAnonymous(false);
+  }
+
   public function testSerializeNodeSimple() {
     $this->runAnonymous(true);
 
-    $node = new Document();
-    $node->setOID(new ObjectId('Document', array(123)));
-    $node->setValue('title', 'Matrix - The Original');
-    $message = new Response('TerminateController', '', 'update');
+    $document = new Document(new ObjectId('Document', array(123)));
+    $document->setValue('title', 'Matrix - The Original');
+
+    $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
-                'Document:123' => $node,
+                'Document:123' => $document,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
             ));
 
@@ -232,6 +274,80 @@ class JSONFormatTest extends WCMFTestCase {
     $this->assertTrue($attributes['title'] === 'Matrix - The Original');
   }
 
+  public function testSerializeNodeHierarchy() {
+    $this->runAnonymous(true);
+
+    $document = new Document(new ObjectId('Document', array(123)));
+    $document->setValue('title', 'Matrix - The Original');
+    $document->setValue('modified', 1234567890);
+
+    $page1 = new Page(new ObjectId('Page', array(1)));
+    $page1->setValue('name', 'Page 1');
+    $page2 = new Page(new ObjectId('Page', array(2)));
+    $page2->setValue('name', 'Page 2');
+    $page3 = new Page(new ObjectId('Page', array(3)));
+    $page3->setValue('name', 'Page 3');
+
+    $image = new Image(new ObjectId('Image', array(12)));
+    $image->setValue('file', 'image.png');
+
+    $author = new Author(new ObjectId('Author', array(1)));
+    $author->setValue('name', 'Unknown');
+
+    $page1->addNode($page3, 'ChildPage');
+    $page2->addNode($image, 'NormalImage');
+    $page2->addNode($author, 'Author');
+
+    $document->addNode($page1, 'Page');
+    $document->addNode($page2, 'Page');
+
+    $message = new Response('controller', 'context', 'action');
+    $message->setValues(array(
+                'Document:123' => $document,
+                'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
+        ));
+
+    $format = new JSONFormat();
+    $format->serialize($message);
+
+    // test
+    $data = $message->getValues();
+    $this->assertTrue(is_array($data));
+    $this->assertTrue($data['sid'] === 'cd65fec9bce4d7ec74e341a9031f8966');
+    $this->assertTrue($data['oid'] === 'Document:123');
+    $this->assertTrue($data['className'] === 'Document');
+    $this->assertTrue($data['isReference'] === false);
+
+    $documentAttributes = $data['attributes'];
+    $this->assertTrue(is_array($documentAttributes));
+    $this->assertTrue($documentAttributes['title'] === 'Matrix - The Original');
+
+    $pages = $documentAttributes['Page'];
+    $this->assertTrue(is_array($pages));
+    $this->assertTrue(sizeof($pages) == 2);
+
+    $page1 = $pages[0];
+    $this->assertTrue($page1['oid'] === 'Page:1');
+    $page1Attributes = $page1['attributes'];
+    $this->assertTrue($page1Attributes['name'] === 'Page 1');
+
+    $childPages = $page1Attributes['ChildPage'];
+    $this->assertTrue(sizeof($childPages) == 1);
+    $childPage = $childPages[0];
+    $this->assertTrue($childPage['oid'] === 'Page:3');
+    $childPageAttributes = $childPage['attributes'];
+    $this->assertTrue($childPageAttributes['name'] === 'Page 3');
+
+    $page2 = $pages[1];
+    $this->assertTrue($page2['oid'] === 'Page:2');
+    $page2Attributes = $page2['attributes'];
+    $this->assertTrue($page2Attributes['name'] === 'Page 2');
+
+    $author = $page2Attributes['Author'];
+    $this->assertTrue($author['oid'] === 'Author:1');
+    $authorAttributes = $author['attributes'];
+    $this->assertTrue($authorAttributes['name'] === 'Unknown');
+  }
 }
 
 ?>

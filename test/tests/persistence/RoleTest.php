@@ -15,7 +15,7 @@ class RoleTest extends WCMFTestCase
     //Log::info($ptpl->toString(), "Test");
     //Log::info($ctpl->toString(), "Test");
 
-    $ptpl->addChild($ctpl);
+    $ptpl->addNode($ctpl);
     //Log::info($ptpl->toString(), "Test");
     //Log::info($ctpl->toString(), "Test");
 

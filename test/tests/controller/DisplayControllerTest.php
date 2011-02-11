@@ -88,7 +88,7 @@ class DisplayControllerTest extends ControllerTestCase
     $oid2 = ObjectId::parse(DisplayControllerTest::TEST_OID2);
     $testObj1 = &$this->createTestObject($oid1, array('name' => 'Administrator'));
     $testObj2 = &$this->createTestObject($oid2, array('sessionid' => 'Session Id'));
-    $testObj1->addChild($testObj2);
+    $testObj1->addNode($testObj2);
     $testObj2->save();
 
     // store a translations

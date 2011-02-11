@@ -16,10 +16,10 @@ class ManyToManyTest extends WCMFTestCase
     $this->assertTrue($relationDescription->otherRole == 'RoleRDB', "The role is RoleRDB");
     $this->assertTrue($relationDescription->otherMinMultiplicity == '0', "The minimum multiplicity is 0");
     $this->assertTrue($relationDescription->otherAggregationKind == 'none', "The aggregation kind is none");
-    
+
     $this->runAnonymous(false);
   }
-  
+
   public function testLoad()
   {
     $this->runAnonymous(true);
@@ -68,7 +68,7 @@ class ManyToManyTest extends WCMFTestCase
     $this->assertTrue(sizeof($user->getFirstChild('RoleRDB', null, null)) == 0, "No connection yet");
     $this->assertTrue(sizeof($role->getFirstChild('UserRDB', null, null)) == 0, "No connection yet");
 
-    $user->addChild($role);
+    $user->addNode($role);
     $user->save();
 
     $oids = $persistenceFacade->getOids('NMUserRole',
