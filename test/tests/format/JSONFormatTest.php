@@ -251,6 +251,7 @@ class JSONFormatTest extends WCMFTestCase {
 
     $document = new Document(new ObjectId('Document', array(123)));
     $document->setValue('title', 'Matrix - The Original');
+    $document->setValue('modified', '2011-10-01 00:01:01');
 
     $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
@@ -268,6 +269,7 @@ class JSONFormatTest extends WCMFTestCase {
     $this->assertTrue($data['oid'] === 'Document:123');
     $this->assertTrue($data['className'] === 'Document');
     $this->assertTrue($data['isReference'] === false);
+    $this->assertTrue($data['lastChange'] === 1317420061);
 
     $attributes = $data['attributes'];
     $this->assertTrue(is_array($attributes));
@@ -348,6 +350,48 @@ class JSONFormatTest extends WCMFTestCase {
     $authorAttributes = $author['attributes'];
     $this->assertTrue($authorAttributes['name'] === 'Unknown');
   }
+
+  public function testSerializeNodeList() {
+    $this->runAnonymous(true);
+    
+    $page1 = new Page(new ObjectId('Page', array(1)));
+    $page1->setValue('name', 'Page 1');
+    $page2 = new Page(new ObjectId('Page', array(2)));
+    $page2->setValue('name', 'Page 2');
+    $page3 = new Page(new ObjectId('Page', array(3)));
+    $page3->setValue('name', 'Page 3');
+    
+    $list = array('type' => 'Page', 
+        'content' => array('contentType' => 'Page', $page1, $page2, $page3));
+    
+    $message = new Response('controller', 'context', 'action');
+    $message->setValues(array(
+                'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
+                'list' => $list));
+
+    $format = new JSONFormat();
+    $format->serialize($message);
+
+    // test
+    $data = $message->getValues();
+    $this->assertTrue(is_array($data));
+
+    $list = $data['list'];
+    $this->assertTrue(is_array($list));
+    $this->assertTrue(sizeof(array_keys($list)) == 2);
+
+    $pages = $list['content'];
+    $this->assertTrue(sizeof($pages) == 4);
+    $this->assertTrue($pages['contentType'] === 'Page');
+    
+    $this->assertTrue($pages[0]['className'] === 'Page');
+    $this->assertTrue($pages[0]['oid'] === 'Page:1');
+    $this->assertTrue($pages[1]['className'] === 'Page');
+    $this->assertTrue($pages[1]['oid'] === 'Page:2');
+    $this->assertTrue($pages[2]['className'] === 'Page');
+    $this->assertTrue($pages[2]['oid'] === 'Page:3');
+    $this->runAnonymous(false);
+  }  
 }
 
 ?>
