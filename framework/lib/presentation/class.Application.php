@@ -18,6 +18,8 @@
  */
 require_once("base_dir.php");
 
+set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/3rdparty/zend');
+
 require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
 require_once(WCMF_BASE."wcmf/lib/output/class.LogOutputStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.WCMFInifileParser.php");
@@ -143,9 +145,7 @@ class Application
     $request->setFormat($requestFormat);
     $request->setResponseFormat($responseFormat);
     $request->setValues($this->_requestValues);
-    if (!$this->_rawPostBodyIsJson) {
-      $request->addData($this->_rawPostBody);
-    }
+
   // TODO: 
   // - request headers should be added to the Request class
   //   foreach (getallheaders() as $name => $value) {

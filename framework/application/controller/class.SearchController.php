@@ -145,7 +145,7 @@ class SearchController extends AsyncPagingController
     {
       $tpl = null;
       // look for the object template in the request parameters
-      foreach($this->_request->getData() as $key => $value)
+      foreach($this->_request->getValues() as $key => $value)
       {
         if (PersistenceFacade::isValidOID($key) && PersistenceFacade::getOIDParameter($key, 'type') == $type)
         {

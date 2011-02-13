@@ -24,14 +24,6 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.ArrayUtil.php");
 
 /**
- * Some constants describing the sort process
- */
-define("SORTTYPE_ASC",  -1); // sort children ascending
-define("SORTTYPE_DESC", -2); // sort children descending
-define("OID",  -3); // sort by oid
-define("TYPE", -4); // sort by type
-
-/**
  * @class Node
  * @ingroup Model
  * @brief Node is the basic component for building trees (although a Node can have one than more parents).
@@ -45,9 +37,19 @@ define("TYPE", -4); // sort by type
  */
 class Node extends PersistentObject
 {
+  const SORTTYPE_ASC = -1;  // sort children ascending
+  const SORTTYPE_DESC = -2; // sort children descending
+  const SORTBY_OID = -3;  // sort by oid
+  const SORTBY_TYPE = -4; // sort by type
+  
+  const RELATION_STATE_UNINITIALIZED = -1;
+  const RELATION_STATE_INITIALIZING = -2;
+  const RELATION_STATE_INITIALIZED = -3;
+  
   private static $_sortCriteria;
   private $_depth = -1;
   private $_path = '';
+  private $_relationStates = array();
 
   /**
    * Constructor.
@@ -57,6 +59,27 @@ class Node extends PersistentObject
   public function __construct($type, ObjectId $oid=null)
   {
     parent::__construct($type, $oid);
+  }
+  /**
+   * @see PersistentObject::getValue
+   */
+  public function getValue($name)
+  {
+    // initialize a relation value if not done before
+    $value = parent::getValue($name);
+    if (isset($this->_relationStates[$name]) && 
+            $this->_relationStates[$name] == Node::RELATION_STATE_UNINITIALIZED)
+    {
+      $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZING;
+      $mapper = $this->getMapper();
+      if ($mapper && ($relDesc = $mapper->getRelation($name)) !== null)
+      {
+        $mapper->initializeRelation($this, $relDesc);
+        $value = parent::getValue($name);
+        $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZED;
+      }
+    }
+    return $value;
   }
   /**
    * Get the number of children of the Node.
@@ -86,7 +109,7 @@ class Node extends PersistentObject
     // get the relation description
     $relDesc = null;
     $mapper = $this->getMapper();
-    if ($mapper && $mapper->hasRelation($role)) {
+    if ($mapper) {
       $relDesc = $mapper->getRelation($role);
     }
 
@@ -239,9 +262,9 @@ class Node extends PersistentObject
   /**
    * Sort children by a given criteria.
    * @param criteria An assoziative array of criteria - SORTTYPE constant pairs OR a single criteria string.
-   *        possible criteria: OID, TYPE or any value/property name
-   *        (e.g. array(OID => SORTTYPE_ASC, 'sortkey' => SORTTYPE_DESC) OR 'sortkey')
-   *        @note If criteria is only a string we will sort by this criteria with SORTTYPE_ASC
+   *        possible criteria: Node::OID, Node::TYPE or any value/property name
+   *        (e.g. array(Node::OID => Node::SORTTYPE_ASC, 'sortkey' => Node::SORTTYPE_DESC) OR 'sortkey')
+   *        @note If criteria is only a string we will sort by this criteria with Node::SORTTYPE_ASC
    * @param recursive True/False whether the descendants of the children schould be sorted too (default: false)
    * @param changeSortkey True/False whether the sortkey should be changed according to the new order (default: false)
    * @param sortFunction The name of a global compare function to use. If given criteria will be ignored (default: "")
@@ -258,9 +281,9 @@ class Node extends PersistentObject
    * @note static method
    * @param nodeList A reference to an array of Nodes
    * @param criteria An assoziative array of criteria - SORTTYPE constant pairs OR a single criteria string.
-   *        possible criteria: OID, TYPE or any value/property name
-   *        (e.g. array(OID => SORTTYPE_ASC, 'sortkey' => SORTTYPE_DESC) OR 'sortkey')
-   *        @note If criteria is only a string we will sort by this criteria with SORTTYPE_ASC
+   *        possible criteria: Node::OID, Node::TYPE or any value/property name
+   *        (e.g. array(Node::OID => Node::SORTTYPE_ASC, 'sortkey' => Node::SORTTYPE_DESC) OR 'sortkey')
+   *        @note If criteria is only a string we will sort by this criteria with Node::SORTTYPE_ASC
    * @param changeSortkey True/False whether the sortkey should be changed according to the new order (default: false)
    * @param sortFunction The name of a global compare function to use. If given criteria will be ignored (default: "")
    * @return The sorted array of Nodes
@@ -271,7 +294,7 @@ class Node extends PersistentObject
     {
       // sort with internal sort function
       if (!is_array($criteria)) {
-        self::$_sortCriteria = array($criteria => SORTTYPE_ASC);
+        self::$_sortCriteria = array($criteria => Node::SORTTYPE_ASC);
       }
       else {
         self::$_sortCriteria = $criteria;
@@ -626,14 +649,14 @@ class Node extends PersistentObject
       $weightedValue = ($maxWeight-$i)*($maxWeight-$i);
       $AGreaterB = 0;
       // sort by id
-      if ($criteria == OID)
+      if ($criteria == Node::SORTBY_OID)
       {
         if ($a->getOID() != $b->getOID()) {
           ($a->getOID() > $b->getOID()) ? $AGreaterB = 1 : $AGreaterB = -1;
         }
       }
       // sort by type
-      else if ($criteria == TYPE)
+      else if ($criteria == Node::SORTBY_TYPE)
       {
         if ($a->getType() != $b->getType()) {
           ($a->getType() > $b->getType()) ? $AGreaterB = 1 : $AGreaterB = -1;
@@ -658,12 +681,12 @@ class Node extends PersistentObject
         }
       }
       // calculate result of current criteria depending on current sorttype
-      if ($sortType == SORTTYPE_ASC)
+      if ($sortType == Node::SORTTYPE_ASC)
       {
         if ($AGreaterB == 1) { $sumA += $weightedValue; }
         else if ($AGreaterB == -1) { $sumB += $weightedValue; }
       }
-      else if ($sortType == SORTTYPE_DESC)
+      else if ($sortType == Node::SORTTYPE_DESC)
       {
         if ($AGreaterB == 1) { $sumB += $weightedValue; }
         else if ($AGreaterB == -1) { $sumA += $weightedValue; }
@@ -729,6 +752,15 @@ class Node extends PersistentObject
         $children[$i]->setState($state, $recursive);
       }
     }
+  }
+  /**
+   * Set the state of a relation
+   * @param name The relation name (= role)
+   * @param state One of the Node::RELATION_STATE consants
+   */
+  public function setRelationState($name, $state)
+  {
+    $this->_relationStates[$name] = $state;
   }
 
   /**

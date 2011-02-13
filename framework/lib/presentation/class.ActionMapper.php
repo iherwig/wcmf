@@ -169,7 +169,6 @@ class ActionMapper
       // proceed based on the result
       $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction());
       $nextRequest->setValues($response->getValues());
-      $nextRequest->setData($response->getData());
       $nextRequest->setErrors($request->getErrors());
       $nextRequest->setResponseFormat($request->getResponseFormat());
       $response = ActionMapper::processAction($nextRequest);

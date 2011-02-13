@@ -106,13 +106,13 @@ class RESTController extends Controller
     if ($request->hasValue('oid')) {
       // read a specific object
       // delegate further processing to DisplayController
-      $response->setData($request->getData());
+      $response->setValues($request->getValues());
       $response->setAction('display');
     }
     else {
       // read all objects of the given type
       // delegate further processing to AsyncPagingController
-      $response->setData($request->getData());
+      $response->setValues($request->getValues());
       $response->setAction('list');
     }
     return true;
@@ -125,7 +125,7 @@ class RESTController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    $response->setData($request->getData());
+    $response->setValues($request->getValues());
     $response->setAction('save');
     
     return true;
@@ -138,7 +138,7 @@ class RESTController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    $response->setData($request->getData());
+    $response->setValues($request->getValues());
     $response->setAction('save');
     
     return true;

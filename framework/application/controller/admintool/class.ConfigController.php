@@ -159,7 +159,7 @@ class ConfigController extends Controller
       // save changes
       if ($this->_request->getAction() == 'save')
       {
-        $data = &$this->_request->getData();
+        $data = &$this->_request->getValues();
         foreach($data as $control => $value)
         {
           // unescape double quotes
@@ -297,13 +297,13 @@ class ConfigController extends Controller
     return $controlName;
   }
   /**
-   * Rename all control names in $this->_request->getData().
+   * Rename all control names in $this->_request->getValues().
    * @param key An assoziative array as provided by getKeyFromControlName() describing the entry that has changed
    * @param value The new value of the entry to construct the control name from
    */
   function renameControlNames($key, $value)
   {
-    $data = &$this->_request->getData();
+    $data = &$this->_request->getValues();
     foreach(array_keys($data) as $oldControlName)
     {
       $oldKey = $this->getKeyFromControlName($oldControlName);

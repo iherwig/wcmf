@@ -111,8 +111,12 @@ class WCMFFrontendController extends Controller
         
         // call DisplayController to read the requested node 
         // and merge the responses
-        $readRequest = new Request('TerminateController', $request->getContext(), 'read',
-          array('oid' => $oid->__toString(), 'depth' => 0, 'sid' => SessionData::getInstance()->getID()));
+        $readRequest = new Request('TerminateController', $request->getContext(), 'read');
+        $readRequest->setValues(array(
+            'oid' => $oid->__toString(), 
+            'depth' => 0, 
+            'sid' => SessionData::getInstance()->getID()
+        ));
         $readRequest->setFormat('NULL');
         $readRequest->setResponseFormat('NULL');
         $readResponse = ActionMapper::getInstance()->processAction($readRequest);

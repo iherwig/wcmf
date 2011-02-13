@@ -39,6 +39,14 @@ interface PersistenceMapper
   public function getPkNames();
 
   /**
+   * Add quotation to a given identifier (like column name). If the delimiter
+   * is added already, nothing happens.
+   * @param identifier The identifier string
+   * @return The quoted string
+   */
+  public function quoteIdentifier($identifier);
+
+  /**
    * Get the relations for this type
    * @param hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
@@ -60,6 +68,14 @@ interface PersistenceMapper
    */
   public function getRelation($roleName);
 
+  /**
+   * Load the PersistentObjectProxy instances for objects in the given relation
+   * and set the appropriate value in the given object
+   * @param object The object that has the relation
+   * @param relationDescription The RelationDescription describing the relation
+   */
+  public function initializeRelation(PersistentObject $object, $relationDescription);
+  
   /**
    * PersistentObject values may be tagged with application specific tags.
    * This method gets the attributes belonging to the given tags.

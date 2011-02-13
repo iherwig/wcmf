@@ -148,7 +148,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @see PersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    array $buildAttribs=null, array $buildTypes=null)
+    array $buildAttribs=array(), array $buildTypes=array())
   {
     $tmpResult = parent::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
     $result = array();

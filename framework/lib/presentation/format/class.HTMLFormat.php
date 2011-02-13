@@ -52,7 +52,7 @@ class HTMLFormat extends AbstractFormat
   {
     // construct nodes from values serialized as form fields
     // nodes are encoded in separated fields with names value-<name>-<oid>
-    $data = $request->getData();
+    $data = $request->getValues();
     $nodeValues = array();
     foreach ($data as $key => $value)
     {
@@ -96,7 +96,7 @@ class HTMLFormat extends AbstractFormat
       $view->setup();
       
       // assign the response data to the view
-      $data = $response->getData();
+      $data = $response->getValues();
       foreach (array_keys($data) as $variable)
       {
         if (is_scalar($data[$variable])) {

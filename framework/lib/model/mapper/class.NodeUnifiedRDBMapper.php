@@ -78,28 +78,28 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
 
     // construct query parts
     $attribStr = '';
-    $tableName = $this->getTableName();
-    $tableStr = $tableName;
+    $tableName = $this->getRealTableName();
+    $tableStr = $this->quoteIdentifier($tableName);
 
     // map to alias if requested
     if ($alias != null)
     {
       $tableName = $alias;
-      $tableStr .= ' as '.$alias;
+      $tableStr .= ' AS '.$this->quoteIdentifier($alias);
     }
 
-    // parents
+    // parents (columns ptype+i, prole+i, pid+i)
     $parentStr = '';
     $i=0;
     $parentDescs = $this->getRelations('parent');
-    $persistenceFacade = PersistenceFacade::getInstance();
     foreach($parentDescs as $curParentDesc)
     {
       if ($curParentDesc->otherNavigability)
       {
         $fkAttr = $this->getAttribute($curParentDesc->fkName);
-        $parentStr .= $this->quote($curParentDesc->otherType)." AS ptype$i, ".$this->quote($curParentDesc->otherRole)." AS prole$i, ".
-                        $tableName.".".$fkAttr->name." AS pid$i, ";
+        $parentStr .= "'".$curParentDesc->otherType."' AS ".$this->quoteIdentifier("ptype".$i).", ".
+          "'".$curParentDesc->otherRole."' AS ".$this->quoteIdentifier("prole".$i).", ".
+          $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($fkAttr->name)." AS ".$this->quoteIdentifier("pid".$i).", ";
         $i++;
       }
     }
@@ -107,7 +107,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       $parentStr = StringUtil::removeTrailingComma($parentStr);
     }
     else {
-      $parentStr = "'' AS ptype0, '' AS prole0, null AS pid0";
+      $parentStr = "'' AS ".$this->quoteIdentifier("ptype0").", ".
+        "'' AS ".$this->quoteIdentifier("prole0").", null AS ".$this->quoteIdentifier("pid0");
     }
 
     // attributes
@@ -117,7 +118,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       if (!($curAttributeDesc instanceof ReferenceDescription))
       {
         if ($attribs == null || in_array($curAttributeDesc->name, $attribs)) {
-          $attribStr .= $tableName.".".$curAttributeDesc->column." AS ".$this->quote($curAttributeDesc->name).", ";
+          $attribStr .= $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($curAttributeDesc->column).
+            " AS ".$this->quoteIdentifier($curAttributeDesc->name).", ";
         }
       }
     }
@@ -148,7 +150,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
         foreach($orderByNames as $orderByName)
         {
           if (strlen(trim($orderByName)) > 0) {
-            $completeOrderStr .= $this->translateAppToDatabase($this->getTableName().".".$orderByName.", ");
+            $orderByName = $this->translateAppToDatabase($orderByName);
+            $completeOrderStr .= $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($orderByName).", ";
           }
         }
         if (strlen($completeOrderStr) > 0) {
@@ -160,60 +163,57 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     if ($asArray) {
       return array(
         'attributeStr' => $attribStr." ".$parentStr,
-        'tableStr' => $this->_dbPrefix.$tableStr,
+        'tableStr' => $tableStr,
         'conditionStr' => $condStr,
         'orderStr' => $orderStr
       );
     }
     else {
-      return "SELECT ".$attribStr." ".$parentStr." FROM ".$this->_dbPrefix.$tableStr." WHERE ".$condStr.$completeOrderStr.";";
+      return "SELECT ".$attribStr." ".$parentStr." FROM ".$tableStr." WHERE ".$condStr.$completeOrderStr.";";
     }
   }
   /**
    * @see RDBMapper::getRelationSelectSQL()
    */
-  protected function getRelationSelectSQL(PersistentObjectProxy $object, $hierarchyType='all', $compositionOnly=false)
+  protected function getRelationSelectSQL(PersistentObjectProxy $object, $relationDescription, $compositionOnly=false)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
-    $sqlArray = array();
+    $result = array();
     $oid = $object->getOID();
-    $relDescs = $this->getRelations($hierarchyType);
-    foreach($relDescs as $relDesc)
-    {
-      if ($relDesc->otherNavigability)
-      {
-        if (!$compositionOnly || ($compositionOnly && $relDesc->thisAggregationKind == 'composite'))
-        {
-          if ($relDesc instanceof RDBOneToManyRelationDescription)
-          {
-            $dbid = $oid->getFirstId();
-            $otherMapper = $persistenceFacade->getMapper($relDesc->otherType);
-            $otherAttr = $otherMapper->getAttribute($relDesc->fkName);
-            $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($dbid);
-            $sqlArray[$relDesc->otherRole] = array('type' => $relDesc->otherType, 'criteria' => $sqlStr);
-          }
-          elseif ($relDesc instanceof RDBManyToOneRelationDescription)
-          {
-            $otherMapper = $persistenceFacade->getMapper($relDesc->otherType);
-            $otherAttr = $otherMapper->getAttribute($relDesc->idName);
-            $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($object->getValue($relDesc->fkName));
-            $sqlArray[$relDesc->otherRole] = array('type' => $relDesc->otherType, 'criteria' => $sqlStr);
-          }
-          elseif ($relDesc instanceof RDBManyToManyRelationDescription)
-          {
-            $thisRelDesc = $relDesc->thisEndRelation;
-            $otherRelDesc = $relDesc->otherEndRelation;
 
-            $dbid = $oid->getFirstId();
-            $otherMapper = $persistenceFacade->getMapper($thisRelDesc->otherType);
-            $otherAttr = $otherMapper->getAttribute($thisRelDesc->fkName);
-            $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($dbid);
-            $sqlArray[$otherRelDesc->otherRole] = array('type' => $thisRelDesc->otherType, 'criteria' => $sqlStr);
-          }
+    if ($relationDescription->otherNavigability)
+    {
+      if (!$compositionOnly || ($compositionOnly && $relationDescription->thisAggregationKind == 'composite'))
+      {
+        if ($relationDescription instanceof RDBOneToManyRelationDescription)
+        {
+          $dbid = $oid->getFirstId();
+          $otherMapper = $persistenceFacade->getMapper($relationDescription->otherType);
+          $otherAttr = $otherMapper->getAttribute($relationDescription->fkName);
+          $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($dbid);
+          $result = array('role' => $relationDescription->otherRole, 'type' => $relationDescription->otherType, 'criteria' => $sqlStr);
+        }
+        elseif ($relationDescription instanceof RDBManyToOneRelationDescription)
+        {
+          $otherMapper = $persistenceFacade->getMapper($relationDescription->otherType);
+          $otherAttr = $otherMapper->getAttribute($relationDescription->idName);
+          $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($object->getValue($relationDescription->fkName));
+          $result = array('role' => $relationDescription->otherRole, 'type' => $relationDescription->otherType, 'criteria' => $sqlStr);
+        }
+        elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
+        {
+          $thisRelDesc = $relationDescription->thisEndRelation;
+          $otherRelDesc = $relationDescription->otherEndRelation;
+
+          $dbid = $oid->getFirstId();
+          $otherMapper = $persistenceFacade->getMapper($thisRelDesc->otherType);
+          $otherAttr = $otherMapper->getAttribute($thisRelDesc->fkName);
+          $sqlStr = $otherAttr->table.".".$otherAttr->name."=".$this->quote($dbid);
+          $result = array('role' => $otherRelDesc->otherRole, 'type' => $thisRelDesc->otherType, 'criteria' => $sqlStr);
         }
       }
     }
-    return $sqlArray;
+    return $result;
   }
   /**
    * @see RDBMapper::getRelationObjectSelectSQL()
@@ -249,7 +249,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       {
         $childMapper = $persistenceFacade->getMapper($curChildDesc->otherType);
         $fkAttr = $childMapper->getAttribute($curChildDesc->fkName);
-        array_push($sqlArray, "UPDATE ".$this->_dbPrefix.$fkAttr->table." SET ".$fkAttr->name."=NULL WHERE ".
+        array_push($sqlArray, "UPDATE ".$childMapper->getRealTableName()." SET ".$fkAttr->name."=NULL WHERE ".
           $fkAttr->name."=".$this->quote($dbid).";");
       }
     }
@@ -263,7 +263,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     $insertedAttributes = array();
     $attribNameStr = '';
     $attribValueStr = '';
-    $tableName = $this->getTableName();
+    $tableName = $this->getRealTableName();
 
     // primary key definition
     $oid = $object->getOID();
@@ -331,7 +331,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     // query
     $sqlArray = array
     (
-      "INSERT INTO ".$this->_dbPrefix.$tableName." (".$attribNameStr.") VALUES (".$attribValueStr.");"
+      "INSERT INTO ".$tableName." (".$attribNameStr.") VALUES (".$attribValueStr.");"
     );
     return $sqlArray;
   }
@@ -342,7 +342,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
   {
     $updatedAttributes = array();
     $attribStr = '';
-    $tableName = $this->getTableName();
+    $tableName = $this->getRealTableName();
 
     // primary key definition
     $pkStr = $this->createPKCondition($object->getOID());
@@ -395,7 +395,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     if (strlen($attribStr) > 0) {
       $sqlArray = array
       (
-        "UPDATE ".$this->_dbPrefix.$tableName." SET ".$attribStr." WHERE ".$pkStr.";"
+        "UPDATE ".$tableName." SET ".$attribStr." WHERE ".$pkStr.";"
       );
     }
     else {
@@ -413,7 +413,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
 
     $sqlArray = array
     (
-      "DELETE FROM ".$this->_dbPrefix.$this->getTableName()." WHERE ".$pkStr.";"
+      "DELETE FROM ".$this->getRealTableName()." WHERE ".$pkStr.";"
     );
     return $sqlArray;
   }
@@ -432,7 +432,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     // references
     $joinStr = '';
     $aliasIndex = 0;
-    $tableName = $this->getTableName();
+    $tableName = $this->getRealTableName();
     $referencedTables = array();
 
     $attributeDescs = $this->getAttributes();
@@ -472,11 +472,12 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
                   $thisTable = $alias;
                 }
                 else {
-                  $thisTable = $thisAttr->table;
+                  $thisTable = $this->getRealTableName();
                 }
-                $joinStr .= " LEFT JOIN ".$this->_dbPrefix.$otherAttr->table." ON ".
-                          $this->_dbPrefix.$otherAttr->table.".".$otherAttr->name."=".
-                          $this->_dbPrefix.$thisTable.".".$thisAttr->name;
+                $otherTable = $otherMapper->getRealTableName();
+                $joinStr .= " LEFT JOIN ".$otherTable." ON ".
+                          $otherTable.".".$otherAttr->name."=".
+                          $thisTable.".".$thisAttr->name;
                 }
                 array_push($referencedTables, $otherAttributeDesc->table);
               }
@@ -511,7 +512,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
   protected function createPKCondition(ObjectId $oid)
   {
     $str = '';
-    $tableName = $this->getTableName();
+    $tableName = $this->getRealTableName();
     $pkNames = $this->getPKNames();
     $ids = $oid->getId();
     for ($i=0, $count=sizeof($pkNames); $i<$count; $i++)
@@ -525,7 +526,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
    * Get all foreign key relations (used to reference a parent)
    * @return An array of RDBManyToOneRelationDescription instances
    */
-  protected function getForeignKeyRelations()
+  public function getForeignKeyRelations()
   {
     if ($this->_fkRelations == null)
     {
@@ -545,7 +546,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
    * @param name The attribute name
    * @return True/False
    */
-  protected function isForeignKey($name)
+  public function isForeignKey($name)
   {
     $fkDescs = $this->getForeignKeyRelations();
     foreach($fkDescs as $fkDesc)
@@ -569,16 +570,18 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     foreach($attributeDescs as $curAttributeDesc)
     {
       if (!($curAttributeDesc instanceof ReferenceDescription)) {
-        $str = preg_replace('/\b'.$curAttributeDesc->name.'\b/', $curAttributeDesc->column, $str);
+        $str = preg_replace('/'.$this->quoteIdentifier($curAttributeDesc->name).'/', 
+                $this->quoteIdentifier($curAttributeDesc->column), $str);
       }
     }
     if ($alias != null) {
       $tableName = $alias;
     }
     else {
-      $tableName = $this->getTableName();
+      $tableName = $this->getRealTableName();
     }
-    $str = preg_replace('/\b'.$this->getType().'\b/', $tableName, $str);
+    $str = preg_replace('/'.$this->quoteIdentifier($this->getType()).'/',
+            $this->quoteIdentifier($tableName), $str);
     return $str;
   }
   /**

@@ -19,9 +19,8 @@
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
-require_once WCMF_BASE.'wcmf/3rdparty/zend/Zend/Http/Client.php';
 
-set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/3rdparty/zend');
+require_once 'Zend/Http/Client.php';
 
 /**
  * @class HTTPClient
@@ -83,7 +82,7 @@ class HTTPClient
     $this->_client->setParameterPost('action', $request->getAction());
     $this->_client->setParameterPost('request_format', $request->getFormat());
     $this->_client->setParameterPost('response_format', $request->getResponseFormat());
-    $this->_client->setParameterPost($request->getData());
+    $this->_client->setParameterPost($request->getValues());
     try {
       $httpResponse = $this->_client->request();
     } 

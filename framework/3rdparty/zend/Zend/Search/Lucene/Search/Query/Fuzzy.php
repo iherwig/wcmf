@@ -15,23 +15,21 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id$
  */
 
 
 /** Zend_Search_Lucene_Search_Query */
 require_once 'Zend/Search/Lucene/Search/Query.php';
 
-/** Zend_Search_Lucene_Search_Query_MultiTerm */
-require_once 'Zend/Search/Lucene/Search/Query/MultiTerm.php';
-
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_Query_Fuzzy extends Zend_Search_Lucene_Search_Query
@@ -195,6 +193,7 @@ class Zend_Search_Lucene_Search_Query_Fuzzy extends Zend_Search_Lucene_Search_Qu
             $fields = array($this->_term->field);
         }
 
+        require_once 'Zend/Search/Lucene/Index/Term.php';
         $prefix           = Zend_Search_Lucene_Index_Term::getPrefix($this->_term->text, $this->_prefixLength);
         $prefixByteLength = strlen($prefix);
         $prefixUtf8Length = Zend_Search_Lucene_Index_Term::getLength($prefix);
@@ -207,10 +206,12 @@ class Zend_Search_Lucene_Search_Query_Fuzzy extends Zend_Search_Lucene_Search_Qu
 
         $scaleFactor = 1/(1 - $this->_minimumSimilarity);
 
+        require_once 'Zend/Search/Lucene.php';
         $maxTerms = Zend_Search_Lucene::getTermsPerQueryLimit();
         foreach ($fields as $field) {
             $index->resetTermsStream();
 
+            require_once 'Zend/Search/Lucene/Index/Term.php';
             if ($prefix != '') {
                 $index->skipTo(new Zend_Search_Lucene_Index_Term($prefix, $field));
 
@@ -297,10 +298,13 @@ class Zend_Search_Lucene_Search_Query_Fuzzy extends Zend_Search_Lucene_Search_Qu
         }
 
         if (count($this->_matches) == 0) {
+            require_once 'Zend/Search/Lucene/Search/Query/Empty.php';
             return new Zend_Search_Lucene_Search_Query_Empty();
         } else if (count($this->_matches) == 1) {
+            require_once 'Zend/Search/Lucene/Search/Query/Term.php';
             return new Zend_Search_Lucene_Search_Query_Term(reset($this->_matches));
         } else {
+            require_once 'Zend/Search/Lucene/Search/Query/Boolean.php';
             $rewrittenQuery = new Zend_Search_Lucene_Search_Query_Boolean();
 
             array_multisort($this->_scores,   SORT_DESC, SORT_NUMERIC,
@@ -308,6 +312,7 @@ class Zend_Search_Lucene_Search_Query_Fuzzy extends Zend_Search_Lucene_Search_Qu
                             $this->_matches);
 
             $termCount = 0;
+            require_once 'Zend/Search/Lucene/Search/Query/Term.php';
             foreach ($this->_matches as $id => $matchedTerm) {
                 $subquery = new Zend_Search_Lucene_Search_Query_Term($matchedTerm);
                 $subquery->setBoost($this->_scores[$id]);
@@ -417,6 +422,7 @@ class Zend_Search_Lucene_Search_Query_Fuzzy extends Zend_Search_Lucene_Search_Qu
     {
         $words = array();
 
+        require_once 'Zend/Search/Lucene/Index/Term.php';
         $prefix           = Zend_Search_Lucene_Index_Term::getPrefix($this->_term->text, $this->_prefixLength);
         $prefixByteLength = strlen($prefix);
         $prefixUtf8Length = Zend_Search_Lucene_Index_Term::getLength($prefix);
@@ -429,13 +435,13 @@ class Zend_Search_Lucene_Search_Query_Fuzzy extends Zend_Search_Lucene_Search_Qu
 
         $scaleFactor = 1/(1 - $this->_minimumSimilarity);
 
-
         $docBody = $highlighter->getDocument()->getFieldUtf8Value('body');
+        require_once 'Zend/Search/Lucene/Analysis/Analyzer.php';
         $tokens = Zend_Search_Lucene_Analysis_Analyzer::getDefault()->tokenize($docBody, 'UTF-8');
         foreach ($tokens as $token) {
-        	$termText = $token->getTermText();
+            $termText = $token->getTermText();
 
-        	if (substr($termText, 0, $prefixByteLength) == $prefix) {
+            if (substr($termText, 0, $prefixByteLength) == $prefix) {
                 // Calculate similarity
                 $target = substr($termText, $prefixByteLength);
 

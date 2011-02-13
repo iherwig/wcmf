@@ -147,6 +147,7 @@ class ObjectQuery implements ChangeListener
     // if the requested template type is the same as the search type and it was not requested
     // before, we return the type node. this will make sure that the values set on the first
     // template are really selected by the query, even if more templates of the same type are involved.
+    $template = null;
     if ($type == $this->_typeNode->getType() && $this->_typeNode->getNumParents() == 0) {
       $template = $this->_typeNode;
     }
@@ -250,10 +251,10 @@ class ObjectQuery implements ChangeListener
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BUILDDEPTH_REQUIRED)
    *        or false if only oids should be returned
    * @param orderby An array holding names of attributes to ORDER by (maybe null). [default: null]
-   * @param pagingInfo A reference paging info instance (optional, default null does not work in PHP4).
+   * @param pagingInfo A reference paging info instance. [default: null]
    * @return A list of objects that match the given conditions or a list of oids
    */
-  public function executeString($type, $query, $buildDepth, $orderby=null, $pagingInfo)
+  public function executeString($type, $query, $buildDepth, $orderby=null, PagingInfo $pagingInfo=null)
   {
     $result = array();
 
@@ -444,30 +445,30 @@ class ObjectQuery implements ChangeListener
     if ($mapper == null) {
       return '';
     }
-    $tablename = '';
-    $mapperTablename = $mapper->getTableName();
+    $tableName = '';
+    $mapperTableName = $mapper->getRealTableName();
 
     if ($tpl->hasValue("object_query_table_name")) {
-      $tablename = $tpl->getValue("object_query_table_name");
+      $tableName = $tpl->getValue("object_query_table_name");
     }
     else
     {
-      $tablename = $mapperTablename;
+      $tableName = $mapperTableName;
 
       // if the template is the child of another node of the same type,
       // we must use a table alias
-      if (sizeof($tpl->getParentsEx(null, $tpl->getType(), null, null)) > 0)
-        $tablename .= time();
-
+      if (sizeof($tpl->getParentsEx(null, $tpl->getType(), null, null)) > 0) {
+        $tableName .= time();
+      }
       // set the table name for later reference
-      $tpl->setValue("object_query_table_name", $tablename);
+      $tpl->setValue("object_query_table_name", $tableName);
     }
 
-    if ($asAliasString && $tablename != $mapperTablename) {
-      return $mapperTablename.' as '.$tablename;
+    if ($asAliasString && $tableName != $mapperTableName) {
+      return $mapper->quoteIdentifier($mapperTableName).' as '.$mapper->quoteIdentifier($tableName);
     }
     else {
-      return $tablename;
+      return $mapper->quoteIdentifier($tableName);
     }
   }
   /**
@@ -483,7 +484,7 @@ class ObjectQuery implements ChangeListener
     if ($parentMapper != null && $childMapper != null)
     {
       // foreign key names are defined by NodeUnifiedRDBMapper
-      $pkColumns = $parentMapper->getPKColumnNames();
+      $pkNames = $parentMapper->getPKNames();
       $fkColumn = $childMapper->getFKColumnName($parentTpl->getType(), $childTpl->getRole($parentTpl->getOID()), false);
       $relationStr = self::getTableName($childTpl).'.'.$fkColumn.' = '.self::getTableName($parentTpl).'.'.$pkColumns[0];
       return $relationStr;
@@ -508,6 +509,7 @@ class ObjectQuery implements ChangeListener
       $orderby = $mapper->getDefaultOrder();
     }
     // get the table/alias name from the query
+    $matches = array();
     preg_match('/^SELECT DISTINCT ([^\.]+?)\./', $query, $matches);
     $tablename = $matches[1];
 
@@ -561,7 +563,8 @@ class ObjectQuery implements ChangeListener
         }
       }
 
-      $colName = $mapper->getColumnName($valueName);
+      $attr = $mapper->getAttribute($valueName);
+      $colName = $attr->column;
       if ($colName !== null) {
         $currentCondition .= self::getTableName($node).'.'.$colName.' '.$value;
       }

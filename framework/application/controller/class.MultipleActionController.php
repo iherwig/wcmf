@@ -146,7 +146,7 @@ class MultipleActionController extends Controller
       $response = &ActionMapper::processAction($request);
       
       // collect the result
-      $results[$action] = &$response->getData();
+      $results[$action] = &$response->getValues();
     }
     if (Log::isDebugEnabled(__CLASS__))
       Log::debug($results, __CLASS__);

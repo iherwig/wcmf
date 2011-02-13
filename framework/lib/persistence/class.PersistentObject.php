@@ -89,6 +89,18 @@ class PersistentObject
     }
   }
   /**
+   * Initialize the object with a set of data. This method does not change the
+   * object's state and does not call any listeners. Any existing data will
+   * be overwritten.
+   * @param data An associative array with the data to set.
+   */
+  public function initialize(array $data)
+  {
+    foreach ($data as $name => $value) {
+      $this->_data[$name] = array('value' => $value);
+    }
+  }
+  /**
    * Get the type of the object.
    * @return The objects type.
    */
@@ -543,7 +555,8 @@ class PersistentObject
    * Set the value of a named item if it exists.
    * @param name The name of the item to set.
    * @param value The value of the item.
-   * @param forceSet Set the value even if it is already set and validation would fail (used to notify listeners) [default: false]
+   * @param forceSet True/False wether to set the value even if it is already set 
+   *   and validation would fail (used to notify listeners) [default: false]
    * @return true if operation succeeds / false else
    */
   public function setValue($name, $value, $forceSet=false)
@@ -561,11 +574,11 @@ class PersistentObject
         throw new ValidationException($msg);
       }
     }
-    $oldValue = $this->getValue($name);
-    if ($this->_data[$name]['value'] !== $value || $forceSet)
+    $oldValue = $this->_data[$name]['value'];
+    if ($oldValue !== $value || $forceSet)
     {
       $this->_data[$name]['value'] = $value;
-      PersistentObject::setState(STATE_DIRTY);
+      self::setState(STATE_DIRTY);
       $mapper = $this->getMapper();
       if ($mapper != null && in_array($name, $mapper->getPKNames())) {
         $this->updateOID();

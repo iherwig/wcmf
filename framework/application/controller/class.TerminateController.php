@@ -51,8 +51,8 @@ class TerminateController extends Controller
   {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    Log::error(array_keys($request->getData()), __CLASS__);
-    $response->setData($request->getData());
+    Log::error(array_keys($request->getValues()), __CLASS__);
+    $response->setValues($request->getValues());
     return false;
   }
 }

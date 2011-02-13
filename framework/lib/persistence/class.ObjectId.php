@@ -199,7 +199,7 @@ class ObjectId
    * Get a dummy id ("wcmf" + unique 32 character string).
    * @return String
    */
-  private static function getDummyId()
+  public static function getDummyId()
   {
     return 'wcmf'.md5(uniqid(ip2long(@$_SERVER['REMOTE_ADDR']) ^ (int)@$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space(sys_get_temp_dir()), 1));
   }

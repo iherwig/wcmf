@@ -84,7 +84,7 @@ class SaveController extends Controller
     $invalidAttributeValues = array();
 
     // make request data an array if it's not
-    $saveData = $request->getData();
+    $saveData = $request->getValues();
     Log::error($saveData, __CLASS__);
 
     foreach ($saveData as $curRequestObject)
@@ -240,7 +240,7 @@ class SaveController extends Controller
       }
     }
     // return the saved nodes
-    $response->setData(array_values($nodeArray));
+    $response->setValues(array_values($nodeArray));
     Log::error("size: ".sizeof($nodeArray), __CLASS__);
 
     // end the persistence transaction

@@ -50,11 +50,6 @@ class ControllerMessage
    */
   private $_values = array();
   /**
-   * Data contained in this message that is not related to a key and therefor
-   * not stored in _values.
-   */
-  private $_data = null;
-  /**
    * A list of errors associated with this message.
    */
   private $_errors = array();
@@ -250,32 +245,6 @@ class ControllerMessage
   public function clearValues()
   {
     $this->_values = array();
-  }
-
-  /**
-   * Get the data, that are not related to values
-   * @return The data.
-   */
-  public function getData()
-  {
-    return $this->_data;
-  }
-  
-  /**
-   * Set the data, that are not related to values
-   * @param data The data
-   */
-  public function setData($data)
-  {
-    $this->_values = $data;
-  }
-
-  /**
-   * Remove all data, that are not related to values
-   */
-  public function clearData()
-  {
-    $this->_data = null;
   }
 
   /**
