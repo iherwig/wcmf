@@ -82,7 +82,7 @@ class WCMFFrontendController extends Controller
     $rightsManager = RightsManager::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
-    
+
     if ($request->getAction() == 'getModel')
     {
       // get all known types
@@ -108,20 +108,20 @@ class WCMFFrontendController extends Controller
       if ($request->hasValue('oid'))
       {
         $oid = ObjectId::parse($request->getValue('oid'));
-        
-        // call DisplayController to read the requested node 
+
+        // call DisplayController to read the requested node
         // and merge the responses
         $readRequest = new Request('TerminateController', $request->getContext(), 'read');
         $readRequest->setValues(array(
-            'oid' => $oid->__toString(), 
-            'depth' => 0, 
+            'oid' => $oid->__toString(),
+            'depth' => 0,
             'sid' => SessionData::getInstance()->getID()
         ));
         $readRequest->setFormat('NULL');
         $readRequest->setResponseFormat('NULL');
         $readResponse = ActionMapper::getInstance()->processAction($readRequest);
         $response->setValue('object', $readResponse->getValue('object'));
-        
+
         $typeTemplate = $persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE);
         $response->setValue('typeTemplate', $typeTemplate);
       }
@@ -137,7 +137,7 @@ class WCMFFrontendController extends Controller
         $response->setAction('failure');
         return true;
       }
-  
+
       // create root type templates
       $rootTypeTemplates = array();
       foreach ($rootTypes as $rootType)
@@ -152,22 +152,6 @@ class WCMFFrontendController extends Controller
     // success
     $response->setAction('ok');
     return false;
-  }
-  
-  function createRandom() {
-    $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
-    $pf = PersistenceFacade::getInstance();
-    for ($i=0; $i<10000; $i++) {
-      $doc = $pf->create('Document', BUILDDEPTH_SINGLE);
-      $inc = 1;
-      while ($inc < 5){
-        $alphanum = $alphanum.'abcdefghijkmnpqrstuvwxyz23456789';
-        $inc++;
-      }    
-      $title = substr(str_shuffle($alphanum), 0, 5);      
-      $doc->setTitle($title);
-      $doc->save();
-    }
   }
 }
 ?>

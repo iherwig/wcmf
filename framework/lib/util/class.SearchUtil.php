@@ -18,6 +18,10 @@
  */
 require_once(WCMF_BASE.'wcmf/lib/util/class.InifileParser.php');
 
+$includePath = get_include_path();
+if (strpos($includePath, 'Zend') === false) {
+  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/3rdparty/zend');
+}
 require_once('Zend/Search/Lucene.php');
 
 /**

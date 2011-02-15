@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -20,7 +20,11 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
 
-require_once 'Zend/Http/Client.php';
+$includePath = get_include_path();
+if (strpos($includePath, 'Zend') === false) {
+  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/3rdparty/zend');
+}
+require_once('Zend/Http/Client.php');
 
 /**
  * @class HTTPClient
@@ -33,7 +37,7 @@ class HTTPClient
 {
   private $_client = null;
   private $_user = null;
-  
+
   /**
    * Constructor
    * @param serverUrl The url of the other server instance.
@@ -49,7 +53,7 @@ class HTTPClient
     $this->_client->setMethod(Zend_Http_Client::POST);
     $this->_client->setCookieJar();
     $this->_user = $user;
-  } 
+  }
   /**
    * Do a call to the remote server.
    * @param request A Request instance
@@ -73,7 +77,7 @@ class HTTPClient
     if (!$isLogin && sizeof($cookyJar->getAllCookies()) == 0) {
       $response = $this->doLogin();
     }
-    
+
     // do the request
     $request->setResponseFormat(MSG_FORMAT_JSON);
     $this->_client->resetParameters();
@@ -85,18 +89,18 @@ class HTTPClient
     $this->_client->setParameterPost($request->getValues());
     try {
       $httpResponse = $this->_client->request();
-    } 
+    }
     catch (Exception $ex) {
       Log::error("Error in remote call to ".$url.":\n".$ex, __FILE__, __LINE__);
       throw new Exception("Error in remote call to ".$url.": ".$ex->getMessage());
     }
-    
+
     // deserialize the response
     $responseData = JSONUtil::decode($httpResponse->getBody(), true);
     $response = new ControllerMessage('', '', '', $responseData);
     $response->setFormat(MSG_FORMAT_JSON);
     Formatter::deserialize($response);
-    
+
     // handle errors
     if (!$response->getValue('success'))
     {
@@ -121,15 +125,15 @@ class HTTPClient
     if ($this->_user)
     {
       $request = new Request(
-        'LoginController', 
-        '', 
-        'dologin', 
+        'LoginController',
+        '',
+        'dologin',
         array(
-          'login' => $this->_user->getLogin(), 
-          'password' => $this->_user->getPassword(), 
+          'login' => $this->_user->getLogin(),
+          'password' => $this->_user->getPassword(),
           'password_is_encrypted' => true
         )
-      );    
+      );
       $response = $this->doRemoteCall($request, true);
       if ($response->getValue('success')) {
         $this->_sessionId = $response->getValue('sid');
