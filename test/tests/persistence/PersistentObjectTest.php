@@ -11,12 +11,14 @@ class PersistentObjectTest extends WCMFTestCase
 
     $page = $persistenceFacade->load(new ObjectId('Page', array(1)), BUILDDEPTH_SINGLE);
     $page->loadChildren('Document', 1);
-    /*
+    $document = $page->getFirstChild('Document');
+    echo "title: ".$document->getTitle()."\n";
+    //*
     foreach($page->getValueNames() as $name) {
       $value = $page->getValue($name);
       echo $name.": ".$value."(".sizeof($value).")\n";
     }
-    */
+    //*/
     $this->runAnonymous(false);
   }
 
@@ -38,13 +40,14 @@ class PersistentObjectTest extends WCMFTestCase
     $this->runAnonymous(false);
   }
 
-  public function _testLoadMany()
+  public function testLoadMany()
   {
     $this->runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
     $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE);
     echo sizeof($documents)."\n";
+    /*
     foreach($documents as $document) {
       if($document->getId() == 3) {
         foreach($document->getValueNames() as $name) {
@@ -53,7 +56,7 @@ class PersistentObjectTest extends WCMFTestCase
         }
       }
     }
-
+    //*/
     $this->runAnonymous(false);
   }
 

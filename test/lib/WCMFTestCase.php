@@ -157,5 +157,26 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
     $parser = InifileParser::getInstance();
     $parser->setValue($key, $value, $section);
   }
+
+  /**
+   * Call a protected/private method of an instance (PHP >= 5.3.2)
+   * @param instance The instance
+   * @param methodName The method name
+   * @param args An array of method arguments
+   */
+  protected function callProtectedMethod($instance, $methodName, $args=null)
+  {
+    $className = get_class($instance);
+    $class = new ReflectionClass($className);
+    $method = $class->getMethod($methodName);
+    $method->setAccessible(true);
+
+    if ($args != null) {
+      return $method->invokeArgs($instance, $args);
+    }
+    else {
+      return $method->invoke($instance);
+    }
+  }
 }
 ?>

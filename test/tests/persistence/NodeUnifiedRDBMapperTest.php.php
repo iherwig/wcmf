@@ -1,88 +1,169 @@
 <?php
 
 require_once(WCMF_BASE . "application/include/model/class.PageRDBMapper.php");
+require_once(WCMF_BASE . "application/include/model/class.AuthorRDBMapper.php");
+require_once(WCMF_BASE . "application/include/model/class.ImageRDBMapper.php");
+require_once(WCMF_BASE . "application/include/model/class.DocumentRDBMapper.php");
 require_once(WCMF_BASE . "test/lib/WCMFTestCase.php");
 
 class NodeUnifiedRDBMapperTest extends WCMFTestCase {
 
-  public function testSelect() {
-    $mapper = new PageRDBMapper(array('dbType' => 'mysql', 'dbHostName' => 'localhost',
-        'dbUserName' => 'root', 'dbPassword' => '', 'dbName' => 'wcmf_newroles', 'dbPrefix' => ''));
+  protected $dbParams;
 
-    // condition
-    $sql = $mapper->getSelectSQL($mapper->quoteIdentifier('Page').".".$mapper->quoteIdentifier('name')." = 'Page 1'");
+  protected function setUp()
+  {
+    $this->dbParams = array('dbType' => 'mysql', 'dbHostName' => 'localhost',
+        'dbUserName' => 'root', 'dbPassword' => '', 'dbName' => 'wcmf_newroles', 'dbPrefix' => '');
+  }
+
+  public function testSelectSQL() {
+    $mapper = new PageRDBMapper($this->dbParams);
+    $criteria = new Criteria('Page', 'name', '=', 'Page 1');
+
+    // condition 1
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL')->__toString();
     $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
       "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` ".
-      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = 'Page 1') ".
+      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
+      "ORDER BY `Page`.`sortkey` ASC";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    // condition 2
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL', array(array($criteria)))->__toString();
+    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` ".
+      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = ('Page 1')) ".
       "ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     // alias
-    $sql = $mapper->getSelectSQL($mapper->quoteIdentifier('Page').".".$mapper->quoteIdentifier('name')." = 'Page 1'",
-            "PageAlias");
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL', array(array($criteria), "PageAlias"))->__toString();
     $expected = "SELECT `PageAlias`.`id`, `PageAlias`.`fk_page_id`, `PageAlias`.`fk_author_id`, `PageAlias`.`name`, ".
       "`PageAlias`.`created`, `PageAlias`.`creator`, `PageAlias`.`modified`, `PageAlias`.`last_editor`, ".
       "`PageAlias`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` AS `PageAlias` ".
-      "LEFT JOIN `Author` ON `PageAlias`.`fk_author_id`=`Author`.`id` WHERE (`PageAlias`.`name` = 'Page 1') ".
+      "LEFT JOIN `Author` ON `PageAlias`.`fk_author_id`=`Author`.`id` WHERE (`PageAlias`.`name` = ('Page 1')) ".
       "ORDER BY `PageAlias`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
-    // order
-    $sql = $mapper->getSelectSQL($mapper->quoteIdentifier('Page').".".$mapper->quoteIdentifier('name')." = 'Page 1'",
-            null, "Page.name ASC");
+    // order 1
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL',
+            array(array($criteria), null, array("name ASC")))->__toString();
     $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
       "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` ".
-      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = 'Page 1') ".
+      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = ('Page 1')) ".
+      "ORDER BY `Page`.`name` ASC";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    // order 2
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL',
+            array(array($criteria), null, array("Page.name ASC")))->__toString();
+    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` ".
+      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = ('Page 1')) ".
       "ORDER BY `Page`.`name` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     // attribs 1
-    $sql = $mapper->getSelectSQL($mapper->quoteIdentifier('Page').".".$mapper->quoteIdentifier('name')." = 'Page 1'",
-            null, null, array('id', 'name'));
-    $expected = "SELECT `Page`.`id`, `Page`.`name` FROM `Page` WHERE (`Page`.`name` = 'Page 1') ".
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL',
+            array(array($criteria), null, null, array('id', 'name')))->__toString();
+    $expected = "SELECT `Page`.`id`, `Page`.`name` FROM `Page` WHERE (`Page`.`name` = ('Page 1')) ".
       "ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     // attribs 2
-    $sql = $mapper->getSelectSQL($mapper->quoteIdentifier('Page').".".$mapper->quoteIdentifier('name')." = 'Page 1'",
-            null, null, array('id', 'name', 'author_name'));
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL',
+            array(array($criteria), null, null, array('id', 'name', 'author_name')))->__toString();
     $expected = "SELECT `Page`.`id`, `Page`.`name`, `Author`.`name` AS `author_name` FROM `Page` ".
-      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = 'Page 1') ".
+      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = ('Page 1')) ".
+      "ORDER BY `Page`.`sortkey` ASC";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    // attribs 3
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL',
+            array(array($criteria), null, null, array()))->__toString();
+    $expected = "SELECT `Page`.`id` FROM `Page` WHERE (`Page`.`name` = ('Page 1')) ".
       "ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     // dbprefix
-    $mapper = new PageRDBMapper(array('dbType' => 'mysql', 'dbHostName' => 'localhost',
-        'dbUserName' => 'root', 'dbPassword' => '', 'dbName' => 'wcmf_newroles', 'dbPrefix' => 'WCMF_'));
+    $this->dbParams['dbPrefix'] = 'WCMF_';
+    $mapper = new PageRDBMapper($this->dbParams);
 
     // condition
-    $sql = $mapper->getSelectSQL($mapper->quoteIdentifier('Page').".".$mapper->quoteIdentifier('name')." = 'Page 1'");
+    $sql = $this->callProtectedMethod($mapper, 'getSelectSQL', array(array($criteria)))->__toString();
     $expected = "SELECT `WCMF_Page`.`id`, `WCMF_Page`.`fk_page_id`, `WCMF_Page`.`fk_author_id`, `WCMF_Page`.`name`, ".
       "`WCMF_Page`.`created`, `WCMF_Page`.`creator`, `WCMF_Page`.`modified`, `WCMF_Page`.`last_editor`, `WCMF_Page`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `WCMF_Page` LEFT JOIN `Author` ON `WCMF_Page`.`fk_author_id`=`Author`.`id` ".
-      "WHERE (`WCMF_Page`.`name` = 'Page 1') ORDER BY `WCMF_Page`.`sortkey` ASC";
+      "WHERE (`WCMF_Page`.`name` = ('Page 1')) ORDER BY `WCMF_Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
   }
 
-  public function testRelation() {
-    // parent
+  public function testRelationSQL() {
+    $mapper = new PageRDBMapper($this->dbParams);
 
-    // child
+    $page = new Page(new ObjectId('Page', array(1)));
+    $page->setFkAuthorId(12);
 
-    // many to many
+    // parent (pk only)
+    $relationDescription = $mapper->getRelation('Author');
+    $otherMapper = new AuthorRDBMapper($this->dbParams);
+    $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
+            array($page, $relationDescription->getThisRole(), array()))->__toString();
+    $expected = "SELECT `Author`.`id` FROM `Author` WHERE (`Author`.`id`= 12)";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
+    // parent (complets)
+    $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
+            array($page, $relationDescription->getThisRole()))->__toString();
+    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
+      "`Author`.`modified`, `Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`id`= 12)";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    // child (pk only)
+    $relationDescription = $mapper->getRelation('NormalImage');
+    $otherMapper = new ImageRDBMapper($this->dbParams);
+    $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
+            array($page, $relationDescription->getThisRole(), array()))->__toString();
+    $expected = "SELECT `Image`.`id` FROM `Image` WHERE (`Image`.`fk_page_id`= 1)";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    // child (complete)
+    $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
+            array($page, $relationDescription->getThisRole()))->__toString();
+    $expected = "SELECT `Image`.`id`, `Image`.`fk_page_id`, `Image`.`fk_titlepage_id`, `Image`.`file`, ".
+      "`Image`.`created`, `Image`.`creator`, `Image`.`modified`, `Image`.`last_editor` ".
+      "FROM `Image` WHERE (`Image`.`fk_page_id`= 1)";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    // many to many (pk only)
+    $relationDescription = $mapper->getRelation('Document');
+    $otherMapper = new DocumentRDBMapper($this->dbParams);
+    $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
+            array($page, $relationDescription->getThisRole(), array()))->__toString();
+    $expected = "SELECT `Document`.`id` FROM `Document` INNER JOIN `NMPageDocument` ON ".
+      "`NMPageDocument`.`fk_document_id`=`Document`.`id` WHERE (`NMPageDocument`.`fk_page_id`= 1)";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    // many to many (complete)
+    $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
+            array($page, $relationDescription->getThisRole()))->__toString();
+    $expected = "SELECT `Document`.`id`, `Document`.`title`, `Document`.`created`, `Document`.`creator`, ".
+      "`Document`.`modified`, `Document`.`last_editor`, `Document`.`sortkey` FROM `Document` ".
+      "INNER JOIN `NMPageDocument` ON `NMPageDocument`.`fk_document_id`=`Document`.`id` ".
+      "WHERE (`NMPageDocument`.`fk_page_id`= 1)";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
   }
 
-  public function testDisassociate() {
+  public function testDisassociateSQL() {
   }
 
-  public function testInsert() {
+  public function testInsertSQL() {
   }
 
-  public function testUpdate() {
+  public function testUpdateSQL() {
   }
 
-  public function testDelete() {
+  public function testDeleteSQL() {
   }
 
   public function testReference() {
