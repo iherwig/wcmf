@@ -27,25 +27,23 @@
  */
 class RelationDescription
 {
-  public $thisType = '';
-  public $thisRole = '';
-  public $otherType = '';
-  public $otherRole = '';
+  protected $thisType = '';
+  protected $thisRole = '';
+  protected $otherType = '';
+  protected $otherRole = '';
 
-  public $thisMinMultiplicity = '0';
-  public $thisMaxMultiplicity = 'unbound';
-  public $otherMinMultiplicity = '0';
-  public $otherMaxMultiplicity = 'unbound';
+  protected $thisMinMultiplicity = '0';
+  protected $thisMaxMultiplicity = 'unbound';
+  protected $otherMinMultiplicity = '0';
+  protected $otherMaxMultiplicity = 'unbound';
 
-  public $thisAggregationKind = 'none';
-  public $otherAggregationKind = 'none';
+  protected $thisAggregationKind = 'none';
+  protected $otherAggregationKind = 'none';
 
-  public $thisNavigability = true;
-  public $otherNavigability = true;
+  protected $thisNavigability = true;
+  protected $otherNavigability = true;
 
-  public $defaultOrder = '';
-
-  public $hierarchyType = 'undefined';
+  protected $hierarchyType = 'undefined';
 
   /**
    * Constructor.
@@ -88,7 +86,7 @@ class RelationDescription
 
   /**
    * Determine if there may more than one objects at the other side of the relation
-   * @return boolean
+   * @return Boolean
    */
   public function isMultiValued()
   {
@@ -99,6 +97,123 @@ class RelationDescription
     else {
       return false;
     }
+  }
+
+  /**
+   * Get the PersistentObject type at this end
+   * @return String
+   */
+  public function getThisType()
+  {
+    return $this->thisType;
+  }
+
+  /**
+   * Get the role name at this end
+   * @return String
+   */
+  public function getThisRole()
+  {
+    return $this->thisRole;
+  }
+
+  /**
+   * Get the PersistentObject type at the other end
+   * @return String
+   */
+  public function getOtherType()
+  {
+    return $this->otherType;
+  }
+
+  /**
+   * Get the role name at the other end
+   * @return String
+   */
+  public function getOtherRole()
+  {
+    return $this->otherRole;
+  }
+
+  /**
+   * Get the minimum number of instances at this end
+   * @return Number or 'unbound'
+   */
+  public function getThisMinMultiplicity()
+  {
+    return $this->thisMinMultiplicity;
+  }
+
+  /**
+   * Get the maximum number of instances at this end
+   * @return Number or 'unbound'
+   */
+  public function getThisMaxMultiplicity()
+  {
+    return $this->thisMaxMultiplicity;
+  }
+
+  /**
+   * Get the minimum number of instances at the other end
+   * @return Number or 'unbound'
+   */
+  public function getOtherMinMultiplicity()
+  {
+    return $this->otherMinMultiplicity;
+  }
+
+  /**
+   * Get the maximum number of instances at the other end
+   * @return Number or 'unbound'
+   */
+  public function getOtherMaxMultiplicity()
+  {
+    return $this->otherMaxMultiplicity;
+  }
+
+  /**
+   * Get the aggregation kind at this end
+   * @return String 'none', 'shared' or 'composite'
+   */
+  public function getThisAggregationKind()
+  {
+    return $this->thisAggregationKind;
+  }
+
+  /**
+   * Get the aggregation kind at the other end
+   * @return String 'none', 'shared' or 'composite'
+   */
+  public function getOtherAggregationKind()
+  {
+    return $this->otherAggregationKind;
+  }
+
+  /**
+   * Check wether this end is navigable from the other end or not
+   * @return Boolean
+   */
+  public function getThisNavigability()
+  {
+    return $this->thisNavigability;
+  }
+
+  /**
+   * Check wether the other end is navigable from this end or not
+   * @return Boolean
+   */
+  public function getOtherNavigability()
+  {
+    return $this->otherNavigability;
+  }
+
+  /**
+   * Get the hierarchy type that the other end has in relation to this end
+   * @return String 'parent', 'child', 'undefined'
+   */
+  public function getHierarchyType()
+  {
+    return $this->hierarchyType;
   }
 }
 ?>

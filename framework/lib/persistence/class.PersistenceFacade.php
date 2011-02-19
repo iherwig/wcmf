@@ -17,14 +17,21 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.Criteria.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.RelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.AttributeDescription.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.ReferenceDescription.php");
 
 /**
  * Some constants describing the build process
  */
-define("BUILDDEPTH_INFINITE", -1); // build complete tree from given root on
-define("BUILDDEPTH_SINGLE",   -2); // build only given object
-define("BUILDDEPTH_REQUIRED", -4); // build tree from given root on respecting the required property defined in element relations
-define("BUILDDEPTH_MAX", 10);      // maximum possible creation depth in one call
+// TODO: make them constants in PersistenceFacade
+define("BUILDDEPTH_INFINITE", -1);     // build complete tree from given root on
+define("BUILDDEPTH_SINGLE",   -2);     // build only given object
+define("BUILDDEPTH_REQUIRED", -4);     // build tree from given root on respecting the required property defined in element relations
+define("BUILDDEPTH_PROXIES_ONLY", -8); // build only proxies
+define("BUILDDEPTH_MAX", 10);          // maximum possible creation depth in one call
 
 /**
  * @class PersistenceFacade
@@ -75,18 +82,20 @@ abstract class PersistenceFacade
   /**
    * Load an object from the database.
    * @param oid The object id of the object to construct
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BUILDDEPTH_REQUIRED)
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
    * @param buildAttribs An assoziative array listing the attributes to load (default: empty array, loads all attributes)
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include (default: empty array, includes all types)
    * @return A reference to the object, null if oid does not exist or a given condition prevents loading.
    */
-  abstract function load(ObjectId $oid, $buildDepth, array $buildAttribs=array(), array $buildTypes=array());
+  abstract function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array(), array $buildTypes=array());
   /**
    * Construct the template of an Object of a given type.
    * @param type The type of object to build
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (default: BUILDDEPTH_SINGLE)
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
    * @param buildAttribs An assoziative array listing the attributes to create (default: empty array, creates all attributes)
    *        (keys: the types, values: an array of attributes of the type to create)
    *        Use this to create only a subset of attributes
@@ -115,8 +124,7 @@ abstract class PersistenceFacade
   /**
    * Get the object ids of objects matching a given criteria. If a PagingInfo instance is passed it will be used and updated.
    * @param type The type of the object
-   * @param criteria An assoziative array holding name value pairs of attributes for selecting objects or a single string
-   *        representing a (mapper specific) query condition (maybe null). [default: null]
+   * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance. [default: null]
    * @return An array containing the objects ids
@@ -125,8 +133,7 @@ abstract class PersistenceFacade
   /**
    * Get the first object id of objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.
    * @param type The type of the object
-   * @param criteria An assoziative array holding name value pairs of attributes for selecting objects or a single string
-   *        representing a (mapper specific) query condition (maybe null). [default: null]
+   * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to ORDER by (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance. [default: null]
    * @return An object id or null
@@ -135,34 +142,34 @@ abstract class PersistenceFacade
   /**
    * Load the objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.
    * @param type The type of the object
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BUILDDEPTH_REQUIRED)
-   * @param criteria An assoziative array holding name value pairs of attributes for selecting objects or a single string
-   *        representing a (mapper specific) query condition (maybe null). [default: null]
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to ORDER by (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
-   * @param buildAttribs An assoziative array listing the attributes to load (default: null loads all attributes)
+   * @param buildAttribs An assoziative array listing the attributes to load [default: empty array, loads all attributes]
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
-   * @param buildTypes An array listing the (sub-)types to include
+   * @param buildTypes An array listing the (sub-)types to include [default: empty array, loads all types]
    * @return An array containing the objects
    */
-  abstract function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  abstract function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
       array $buildAttribs=array(), array $buildTypes=array());
   /**
    * Load the first object matching a given condition. If a PagingInfo instance is passed it will be used and updated.
    * @param type The type of the object
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BUILDDEPTH_REQUIRED)
-   * @param criteria An assoziative array holding name value pairs of attributes for selecting objects or a single string
-   *        representing a (mapper specific) query condition (maybe null). [default: null]
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to ORDER by (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance. [default: null]
-   * @param buildAttribs An assoziative array listing the attributes to load (default: null loads all attributes)
+   * @param buildAttribs An assoziative array listing the attributes to load [default: empty array, loads all attributes]
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
-   * @param buildTypes An array listing the (sub-)types to include
+   * @param buildTypes An array listing the (sub-)types to include [default: empty array, loads all types]
    * @return A reference to the object or null
    */
-  abstract function loadFirstObject($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  abstract function loadFirstObject($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     array $buildAttribs=array(), array $buildTypes=array());
   /**
    * Start a transaction. Used for PersistenceMapper classes that need to explicitely start and commit transactions.

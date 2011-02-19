@@ -27,16 +27,16 @@ require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
  */
 class AttributeDescription
 {
-  public $name = '';
-  public $type = 'string';
-  public $tags = array();
-  public $defaultValue = null;
-  public $restrictionsMatch = '';
-  public $restrictionsNotMatch = '';
-  public $restrictionsDescription = '';
-  public $isEditable = true;
-  public $inputType = 'text';
-  public $displayType = 'text';
+  protected $name = '';
+  protected $type = 'string';
+  protected $tags = array();
+  protected $defaultValue = null;
+  protected $restrictionsMatch = '';
+  protected $restrictionsNotMatch = '';
+  protected $restrictionsDescription = '';
+  protected $isEditable = true;
+  protected $inputType = 'text';
+  protected $displayType = 'text';
 
   /**
    * Constructor.
@@ -48,8 +48,8 @@ class AttributeDescription
    * @param restrictionsNotMatch A regular expression that the value must NOT match
    * @param restrictionsDescription A description of the resticitions
    * @param isEditable True/False whether the attribute should be editable, see Control::render()
-   * @param inputType The HTML input type for the value, see Control::render()
-   * @param displayType The HTML display type for the value, see NodeUtil::getDisplayValue()
+   * @param inputType The input type for the value, see Control::render()
+   * @param displayType The display type for the value, see NodeUtil::getDisplayValue()
    */
   public function __construct($name, $type, array $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
     $restrictionsDescription, $isEditable, $inputType, $displayType)
@@ -91,7 +91,7 @@ class AttributeDescription
       case 'any':
         $result = ($diff < $numGivenTags);
         break;
-    }    
+    }
     return $result;
   }
 
@@ -106,15 +106,93 @@ class AttributeDescription
   }
 
   /**
-   * Allow to get properties that are given in an underscore notation.
-   * For example this->input_type will return the inputType property value.
+   * Get the attribute name
+   * @return String
    */
-  public function __get($name)
+  public function getName()
   {
-    $propName = StringUtil::underScoreToCamelCase($name, true);
-    if(strlen($propName) > 0) {
-      return $this->$propName;
-    }
+    return $this->name;
+  }
+
+  /**
+   * Get the attribute type
+   * @return String
+   */
+  public function getType()
+  {
+    return $this->type;
+  }
+
+  /**
+   * Get the application specific tags that this attribute is tagged with
+   * @return Array of String
+   */
+  public function getTags()
+  {
+    return $this->tags;
+  }
+
+  /**
+   * Get the default value
+   * @return Mixed
+   */
+  public function getDefaultValue()
+  {
+    return $this->defaultValue;
+  }
+
+  /**
+   * Get the regular expression that the value must match
+   * @return String
+   */
+  public function getRestrictionsMatch()
+  {
+    return $this->restrictionsMatch;
+  }
+
+  /**
+   * Get the regular expression that the value must NOT match
+   * @return String
+   */
+  public function getRestrictionsNotMatch()
+  {
+    return $this->restrictionsNotMatch;
+  }
+
+  /**
+   * Get the description of the resticitions
+   * @return String
+   */
+  public function getRestrictionsDescription()
+  {
+    return $this->restrictionsDescription;
+  }
+
+  /**
+   * Check whether the attribute should be editable
+   * @return Boolean
+   */
+  public function getIsEditable()
+  {
+    return $this->isEditable;
+  }
+
+  /**
+   * Get the input type for the value
+   * @return String
+   */
+  public function getInputType()
+  {
+    return $this->inputType;
+  }
+
+  /**
+   * Get the display type for the value
+   * @return String
+   */
+  public function getDisplayType()
+  {
+    return $this->displayType;
   }
 }
 ?>

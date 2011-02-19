@@ -110,7 +110,7 @@ class RightsManager
    */
   public function isAnonymous()
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     return $parser->getValue('anonymous', 'cms');
   }
   /**
@@ -118,7 +118,7 @@ class RightsManager
    */
   public function deactivate()
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     $parser->setValue('anonymous', 1, 'cms');
   }
   /**
@@ -126,7 +126,7 @@ class RightsManager
    */
   public function activate()
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     $parser->setValue('anonymous', 0, 'cms');
   }
   /**

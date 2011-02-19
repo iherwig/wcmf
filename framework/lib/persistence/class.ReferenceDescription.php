@@ -27,10 +27,10 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.AttributeDescription.php");
  */
 class ReferenceDescription extends AttributeDescription
 {
-  private $_attributeDescription = null;
+  protected $_isInitialized = false;
 
-  public $otherType = '';
-  public $otherName = '';
+  protected $otherType = '';
+  protected $otherName = '';
 
   /**
    * Constructor.
@@ -50,13 +50,43 @@ class ReferenceDescription extends AttributeDescription
    */
   public function __get($propName)
   {
-    if ($this->_attributeDescription == null)
+    if (!$this->_isInitialized)
     {
       // get the AttributeDescription of the referenced attribute and fill in the missing attributes
       $mapper = PersistenceFacade::getInstance()->getMapper($this->otherType);
-      $this->_attributeDescription = $mapper->getAttribute($this->otherName);
+      $attributeDescription = $mapper->getAttribute($this->otherName);
+
+      $this->type = $attributeDescription->getType();
+      $this->tags = $attributeDescription->getTags();
+      $this->defaultValue = $attributeDescription->getDefaultValue();
+      $this->restrictionsMatch = $attributeDescription->getRestrictionsMatch();
+      $this->restrictionsNotMatch = $attributeDescription->getRestrictionsNotMatch();
+      $this->restrictionsDescription = $attributeDescription->getRestrictionsDescription();
+      $this->isEditable = $attributeDescription->getIsEditable();
+      $this->inputType = $attributeDescription->getInputType();
+      $this->displayType = $attributeDescription->getDisplayType();
+
+      $this->_isInitialized = true;
     }
-    return $this->_attributeDescription->$propName;
+    return parent::__get($propName);
+  }
+
+  /**
+   * Get the name of the referenced type
+   * @return String
+   */
+  public function getOtherType()
+  {
+    return $this->otherType;
+  }
+
+  /**
+   * Get the name of the referenced attribute in the referenced type
+   * @return String
+   */
+  public function getOtherName()
+  {
+    return $this->otherName;
   }
 }
 ?>

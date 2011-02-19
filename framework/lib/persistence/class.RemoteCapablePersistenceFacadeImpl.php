@@ -39,7 +39,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
   /**
    * Constructor
    */
-  public function RemoteCapablePersistenceFacadeImpl()
+  public function __construct()
   {
     // initialize session variables
     $session = SessionData::getInstance();
@@ -51,6 +51,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
       $objs = array();
       $session->set(self::REMOTE_OBJECTS_SESSION_VARNAME, $objs);
     }
+    parent::__construct();
   }
   /**
    * Tell the PersistenceFacade implementation to resolve proxies or not.
@@ -87,7 +88,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
   /**
    * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth, array $buildAttribs=array(), array $buildTypes=array())
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array(), array $buildTypes=array())
   {
     if ($this->isResolvingProxies() && strlen($oid->getPrefix()) > 0) {
       // load real subject
@@ -147,7 +148,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
   /**
    * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     array $buildAttribs=array(), array $buildTypes=array())
   {
     $tmpResult = parent::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);

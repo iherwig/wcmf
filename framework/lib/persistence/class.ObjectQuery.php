@@ -282,8 +282,8 @@ class ObjectQuery implements ChangeListener
       }
       else
       {
-        $obj = $mapper->createObjectFromData($this->_typeNode->getValueNames(), $row);
-        $mapper->appendRelationData($obj, $buildDepth);
+        $obj = $mapper->createObjectFromData($row);
+        $mapper->loadRelatedObjects($obj, $buildDepth);
         $result[] = $obj;
       }
     }

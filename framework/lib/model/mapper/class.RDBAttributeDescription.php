@@ -28,8 +28,8 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.AttributeDescription.php");
  */
 class RDBAttributeDescription extends AttributeDescription
 {
-  public $table = '';
-  public $column = '';
+  protected $table = '';
+  protected $column = '';
 
   /**
    * Constructor.
@@ -45,6 +45,24 @@ class RDBAttributeDescription extends AttributeDescription
 
     $this->table = $table;
     $this->column = $column;
+  }
+
+  /**
+   * Get the table name
+   * @return String
+   */
+  public function getTable()
+  {
+    return $this->table;
+  }
+
+  /**
+   * Get the column name
+   * @return String
+   */
+  public function getColumn()
+  {
+    return $this->column;
   }
 }
 ?>

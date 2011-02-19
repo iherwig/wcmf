@@ -555,7 +555,7 @@ class PersistentObject
    * Set the value of a named item if it exists.
    * @param name The name of the item to set.
    * @param value The value of the item.
-   * @param forceSet True/False wether to set the value even if it is already set 
+   * @param forceSet True/False wether to set the value even if it is already set
    *   and validation would fail (used to notify listeners) [default: false]
    * @return true if operation succeeds / false else
    */
@@ -577,7 +577,7 @@ class PersistentObject
     $oldValue = $this->_data[$name]['value'];
     if ($oldValue !== $value || $forceSet)
     {
-      $this->_data[$name]['value'] = $value;
+      $this->setValueInternal($name, $value);
       self::setState(STATE_DIRTY);
       $mapper = $this->getMapper();
       if ($mapper != null && in_array($name, $mapper->getPKNames())) {
@@ -587,6 +587,16 @@ class PersistentObject
       return true;
     }
     return false;
+  }
+  /**
+   * Internal (fast) version to set a value without any validation, state change,
+   * listener notification etc.
+   * @param name The name of the value
+   * @param value The value
+   */
+  protected function setValueInternal($name, $value)
+  {
+    $this->_data[$name]['value'] = $value;
   }
   /**
    * Add a value to an array value. If the value is not set yet, an array will
@@ -633,7 +643,8 @@ class PersistentObject
         {
           $attr = $mapper->getAttribute($name);
           if ($attr) {
-            return $attr->$property;
+            $getter = "get".ucfirst(StringUtil::underScoreToCamelCase($property, true));
+            return $attr->$getter();
           }
         }
       }
@@ -690,7 +701,7 @@ class PersistentObject
     {
       $attributes = $mapper->getAttributes();
       foreach ($attributes as $attribute) {
-        $names[] = $attribute->name;
+        $names[] = $attribute->getName();
       }
     }
     return $names;

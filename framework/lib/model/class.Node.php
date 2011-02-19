@@ -26,7 +26,8 @@ require_once(WCMF_BASE."wcmf/lib/util/class.ArrayUtil.php");
 /**
  * @class Node
  * @ingroup Model
- * @brief Node is the basic component for building trees (although a Node can have one than more parents).
+ * @brief Node adds the concept of relations to PersistentObject. It is the basic component for
+ * building object trees (although a Node can have one than more parents).
  * The Node class implements the 'Composite Pattern', so no special tree class is required, all interaction
  * is performed using the Node interface.
  * Subclasses for specialized Nodes must implement this interface so that clients don't have to know
@@ -41,11 +42,12 @@ class Node extends PersistentObject
   const SORTTYPE_DESC = -2; // sort children descending
   const SORTBY_OID = -3;  // sort by oid
   const SORTBY_TYPE = -4; // sort by type
-  
+
   const RELATION_STATE_UNINITIALIZED = -1;
   const RELATION_STATE_INITIALIZING = -2;
   const RELATION_STATE_INITIALIZED = -3;
-  
+  const RELATION_STATE_LOADED = -4;
+
   private static $_sortCriteria;
   private $_depth = -1;
   private $_path = '';
@@ -67,15 +69,15 @@ class Node extends PersistentObject
   {
     // initialize a relation value if not done before
     $value = parent::getValue($name);
-    if (isset($this->_relationStates[$name]) && 
+    if (isset($this->_relationStates[$name]) &&
             $this->_relationStates[$name] == Node::RELATION_STATE_UNINITIALIZED)
     {
       $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZING;
       $mapper = $this->getMapper();
-      if ($mapper && ($relDesc = $mapper->getRelation($name)) !== null)
+      if ($mapper)
       {
-        $mapper->initializeRelation($this, $relDesc);
-        $value = parent::getValue($name);
+        $value = $mapper->loadRelation($this, $name, BUILDDEPTH_PROXIES_ONLY);
+        $this->setValueInternal($name, $value);
         $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZED;
       }
     }
@@ -127,7 +129,7 @@ class Node extends PersistentObject
     {
       $thisRole = $this->getType();
       if ($relDesc) {
-        $thisRole = $relDesc->thisRole;
+        $thisRole = $relDesc->getThisRole();
       }
       $other->addNode($this, $thisRole, $strict, false);
     }
@@ -194,10 +196,10 @@ class Node extends PersistentObject
   public function loadChildren($role=null, $buildDepth=BUILDDEPTH_SINGLE)
   {
     if ($role != null) {
-      $this->resolveProxies(array($role), $buildDepth);
+      $this->loadRelations(array($role), $buildDepth);
     }
     else {
-      $this->resolveProxies(array_keys($this->getPossibleChildren()), $buildDepth);
+      $this->loadRelations(array_keys($this->getPossibleChildren()), $buildDepth);
     }
   }
   /**
@@ -240,10 +242,10 @@ class Node extends PersistentObject
   {
     if ($roleOrType != null && $this->hasValue($roleOrType)) {
       // nodes of a given role are requested
-      return Node::filter($this->getValue($roleOrType), $oid, null, $values, $properties, $useRegExp);
+      return self::filter($this->getValue($roleOrType), $oid, $roleOrType, $values, $properties, $useRegExp);
     }
     else {
-      return Node::filter($this->getChildren(), $oid, $roleOrType, $values, $properties, $useRegExp);
+      return self::filter($this->getChildren(), $oid, $roleOrType, $values, $properties, $useRegExp);
     }
   }
   /**
@@ -255,7 +257,7 @@ class Node extends PersistentObject
     $result = array();
     $relations = $this->getRelations('child');
     foreach ($relations as $curRelation) {
-      $result[$curRelation->otherRole] = $curRelation;
+      $result[$curRelation->getOtherRole()] = $curRelation;
     }
     return $result;
   }
@@ -372,7 +374,7 @@ class Node extends PersistentObject
           }
         }
         if ($match) {
-          $returnArray[sizeof($returnArray)] = $curNode;
+          $returnArray[] = $curNode;
         }
       }
       else {
@@ -442,10 +444,10 @@ class Node extends PersistentObject
   public function loadParents($role=null, $buildDepth=BUILDDEPTH_SINGLE)
   {
     if ($role != null) {
-      $this->resolveProxies(array($role), $buildDepth);
+      $this->loadRelations(array($role), $buildDepth);
     }
     else {
-      $this->resolveProxies(array_keys($this->getPossibleParents()), $buildDepth);
+      $this->loadRelations(array_keys($this->getPossibleParents()), $buildDepth);
     }
   }
   /**
@@ -512,10 +514,10 @@ class Node extends PersistentObject
   {
     if ($roleOrType != null && $this->hasValue($roleOrType)) {
       // nodes of a given role are requested
-      return Node::filter($this->getValue($roleOrType), $oid, null, $values, $properties, $useRegExp);
+      return self::filter($this->getValue($roleOrType), $oid, null, $values, $properties, $useRegExp);
     }
     else {
-      return Node::filter($this->getParents(), $oid, $roleOrType, $values, $properties, $useRegExp);
+      return self::filter($this->getParents(), $oid, $roleOrType, $values, $properties, $useRegExp);
     }
   }
   /**
@@ -527,47 +529,64 @@ class Node extends PersistentObject
     $result = array();
     $relations = $this->getRelations('parent');
     foreach ($relations as $curRelation) {
-      $result[$curRelation->otherRole] = $curRelation;
+      $result[$curRelation->getOtherRole()] = $curRelation;
     }
     return $result;
   }
   /**
-   * Resolve all PersistentObjectProxies of a given set of roles.
-   * @param roles An array of role names
+   * Load all objects in the given set of relations
+   * @param roles An array of relation (=role) names
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        [default: BUILDDEPTH_SINGLE)]
    */
-  protected function resolveProxies(array $roles, $buildDepth=BUILDDEPTH_SINGLE)
+  protected function loadRelations(array $roles, $buildDepth=BUILDDEPTH_SINGLE)
   {
     $oldState = $this->getState();
     foreach ($roles as $curRole)
     {
-      $relatives = $this->getValue($curRole);
-      if (is_array($relatives))
+      if ($this->_relationStates[$curRole] != Node::RELATION_STATE_LOADED)
       {
-        $resolvedRelatives = array();
-        foreach ($relatives as $curRelative)
+        $relatives = array();
+
+        // resolve proxies if the relation is already initialized
+        if ($this->_relationStates[$curRole] == Node::RELATION_STATE_INITIALIZED)
         {
-          if ($curRelative instanceof PersistentObjectProxy)
+          $proxies = $this->getValue($curRole);
+          if (is_array($proxies))
           {
-            $curRelative->resolve($buildDepth);
-            $resolvedRelatives[] = $curRelative->getRealSubject();
-          }
-          else {
-            $resolvedRelatives[] = $curRelative;
+            foreach ($proxies as $curRelative)
+            {
+              if ($curRelative instanceof PersistentObjectProxy)
+              {
+                $curRelative->resolve($buildDepth);
+                $relatives[] = $curRelative->getRealSubject();
+              }
+              else {
+                $relatives[] = $curRelative;
+              }
+            }
           }
         }
-        $this->setValue($curRole, $resolvedRelatives);
+        // otherwise load the objects directly
+        else
+        {
+          $mapper = $this->getMapper();
+          if ($mapper) {
+            $relatives = $mapper->loadRelation($this, $curRole, $buildDepth);
+          }
+        }
+        $this->setValueInternal($curRole, $relatives);
+        $this->_relationStates[$curRole] = Node::RELATION_STATE_LOADED;
       }
     }
     $this->setState($oldState);
   }
   /**
    * Get the relation descriptions of a given hierarchyType.
-   * @param hierarchyType @see PersistenceMapper::getRelations
+   * @param hierarchyType @see PersistenceMapper::getRelations [default: 'all']
    * @return An array containing the RelationDescription instances.
    */
-  protected function getRelations($hierarchyType)
+  protected function getRelations($hierarchyType='all')
   {
     $mapper = $this->getMapper();
     if ($mapper != null) {
@@ -587,7 +606,7 @@ class Node extends PersistentObject
     $relations = $this->getRelations($hierarchyType);
     foreach ($relations as $curRelation)
     {
-      $curRelatives = $this->getValue($curRelation->otherRole);
+      $curRelatives = $this->getValue($curRelation->getOtherRole());
       if (is_array($curRelatives))
       {
         foreach ($curRelatives as $curRelative)
@@ -615,7 +634,7 @@ class Node extends PersistentObject
     $relations = $this->getRelations($hierarchyType);
     foreach ($relations as $curRelation)
     {
-      $relatives = $this->getValue($curRelation->otherRole);
+      $relatives = $this->getValue($curRelation->getOtherRole());
       if (is_array($relatives))
       {
         foreach ($relatives as $curRelative)
@@ -754,13 +773,15 @@ class Node extends PersistentObject
     }
   }
   /**
-   * Set the state of a relation
+   * Add an uninitialized relation. The relation will be
+   * initialized (proxies for related objects will be added)
+   * on first access.
    * @param name The relation name (= role)
-   * @param state One of the Node::RELATION_STATE consants
    */
-  public function setRelationState($name, $state)
+  public function addRelation($name)
   {
-    $this->_relationStates[$name] = $state;
+    $this->_relationStates[$name] = Node::RELATION_STATE_UNINITIALIZED;
+    $this->setValueInternal($name, null);
   }
 
   /**

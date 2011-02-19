@@ -47,6 +47,13 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   private $_inTransaction = false;
 
   /**
+   * Constructor
+   */
+  public function __construct()
+  {
+  }
+
+  /**
    * @see PersistenceFacade::getKnownTypes()
    */
   public function getKnownTypes()
@@ -85,7 +92,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   /**
    * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth, array $buildAttribs=array(), array $buildTypes=array())
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array(), array $buildTypes=array())
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
@@ -201,6 +208,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
    */
   public function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
   {
+    // TODO: use paging info to narrow result
     $oids = $this->getOIDs($type, $criteria, $orderby, $pagingInfo);
     if (sizeof($oids) > 0) {
       return $oids[0];
@@ -212,7 +220,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   /**
    * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     array $buildAttribs=array(), array $buildTypes=array())
   {
     $result = array();
@@ -225,9 +233,10 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   /**
    * @see PersistenceFacade::loadFirstObject()
    */
-  public function loadFirstObject($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  public function loadFirstObject($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     array $buildAttribs=array(), array $buildTypes=array())
   {
+    // TODO: use paging info to narrow result
     $objects = $this->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
     if (sizeof($objects) > 0) {
       return $objects[0];

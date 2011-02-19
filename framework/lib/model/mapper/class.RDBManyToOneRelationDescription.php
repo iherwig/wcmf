@@ -28,8 +28,8 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.RelationDescription.php");
  */
 class RDBManyToOneRelationDescription extends RelationDescription
 {
-  public $idName = '';
-  public $fkName = '';
+  protected $idName = '';
+  protected $fkName = '';
 
   /**
    * Constructor.
@@ -47,6 +47,25 @@ class RDBManyToOneRelationDescription extends RelationDescription
 
     $this->idName = $idName;
     $this->fkName = $fkName;
+  }
+
+  /**
+   * Get the name of the attribute in the 'other' end's type, that is referenced
+   * by the foreign key attribute in 'this' end's type
+   * @return String
+   */
+  public function getIdName()
+  {
+    return $this->idName;
+  }
+
+  /**
+   * Get the name of the foreign key attribute in 'this' end's type
+   * @return String
+   */
+  public function getFkName()
+  {
+    return $this->fkName;
   }
 }
 ?>

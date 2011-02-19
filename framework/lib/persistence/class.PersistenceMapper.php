@@ -69,14 +69,6 @@ interface PersistenceMapper
   public function getRelation($roleName);
 
   /**
-   * Load the PersistentObjectProxy instances for objects in the given relation
-   * and set the appropriate value in the given object
-   * @param object The object that has the relation
-   * @param relationDescription The RelationDescription describing the relation
-   */
-  public function initializeRelation(PersistentObject $object, $relationDescription);
-  
-  /**
    * PersistentObject values may be tagged with application specific tags.
    * This method gets the attributes belonging to the given tags.
    * @param tags An array of tags that the attribute should match. Empty array means all attributes independent of the given matchMode [default: empty array]
@@ -143,19 +135,21 @@ interface PersistenceMapper
   /**
    * Load an object from the database.
    * @param oid The object id of the object to construct
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BUILDDEPTH_REQUIRED)
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
    * @param buildAttribs An assoziative array listing the attributes to load (default: empty array, loads all attributes)
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include (default: empty array, includes all types)
    * @return A reference to the object, null if oid does not exist or a given condition prevents loading.
    */
-  public function load(ObjectId $oid, $buildDepth, array $buildAttribs=array(), array $buildTypes=array());
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array(), array $buildTypes=array());
 
   /**
    * Construct the template of an Object of a given type.
    * @param type The type of object to build
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (default: BUILDDEPTH_SINGLE)
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
    * @param buildAttribs An assoziative array listing the attributes to create (default: empty array, creates all attributes)
    *        (keys: the types, values: an array of attributes of the type to create)
    *        Use this to create only a subset of attributes
@@ -186,10 +180,40 @@ interface PersistenceMapper
   /**
    * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($type, $buildDepth, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    array $buildAttribs=null, array $buildTypes=null);
+  public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null,
+    PagingInfo $pagingInfo=null, array $buildAttribs=array(), array $buildTypes=array());
 
-    /**
+  /**
+   * Load the objects of the specified role.
+   * @param object The object for which the objects are loaded
+   * @param role The role of the objects in relation to the given object
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   * @param buildAttribs An assoziative array listing the attributes to load [default: empty array, loads all attributes]
+   *        (keys: the types, values: an array of attributes of the type to load)
+   *        Use this to load only a subset of attributes
+   * @param buildTypes An array listing the (sub-)types to include [default: empty array, loads all types]
+   * @return An array of PersistentObject instances
+   */
+  public function loadRelation(PersistentObject $object, $role, $buildDepth=BUILDDEPTH_SINGLE,
+    array $buildAttribs=array(), array $buildTypes=array());
+
+  /**
+   * Load the objects of the own type that are related to a given object.
+   * @param otherObject The object that the objects to load are related to
+   * @param otherRole The role of the other object in relation to the objects to load
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   * @param buildAttribs An assoziative array listing the attributes to load [default: empty array, loads all attributes]
+   *        (keys: the types, values: an array of attributes of the type to load)
+   *        Use this to load only a subset of attributes
+   * @param buildTypes An array listing the (sub-)types to include [default: empty array, loads all types]
+   * @return An array of PersistentObject instances
+   */
+  public function loadRelatedObjects(PersistentObject $otherObject, $otherRole, $buildDepth=BUILDDEPTH_SINGLE,
+    array $buildAttribs=array(), array $buildTypes=array());
+
+  /**
    * @see PersistenceFacade::startTransaction()
    */
   public function startTransaction();

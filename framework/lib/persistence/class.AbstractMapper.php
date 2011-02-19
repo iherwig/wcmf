@@ -43,7 +43,7 @@ abstract class AbstractMapper
   {
     $relations = $this->getRelations();
     foreach ($relations as $relation) {
-      if ($relation->otherRole == $roleName) {
+      if ($relation->getOtherRole() == $roleName) {
         return true;
       }
     }
@@ -57,7 +57,7 @@ abstract class AbstractMapper
   {
     $attributes = $this->getAttributes();
     foreach ($attributes as $attribute) {
-      if ($attribute->name == $name) {
+      if ($attribute->getName() == $name) {
         return true;
       }
     }
@@ -112,7 +112,7 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::load()
    */
-  public function load(ObjectId $oid, $buildDepth, array $buildAttribs=array(), array $buildTypes=array())
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array(), array $buildTypes=array())
   {
     if (!$this->checkAuthorization($oid, ACTION_READ))
     {
@@ -231,14 +231,14 @@ abstract class AbstractMapper
    * Remember to always call parent::initialize().
    * @param object A reference to the object
    */
-  protected function initialize(PersistenceFacade $object) {}
+  protected function initialize(PersistentObject $object) {}
 
   /**
    * @see PersistenceFacade::load()
    * @note Precondition: Object rights have been checked already
    *
    */
-  abstract protected function loadImpl(ObjectId $oid, $buildDepth, array $buildAttribs=null, array $buildTypes=null);
+  abstract protected function loadImpl(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=null, array $buildTypes=null);
   /**
    * @see PersistenceFacade::create()
    * @note Precondition: Object rights have been checked already

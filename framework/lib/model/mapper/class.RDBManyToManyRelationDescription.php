@@ -16,6 +16,7 @@
  *
  * $Id$
  */
+require_once(WCMF_BASE."wcmf/lib/persistence/class.RelationDescription.php");
 
 /**
  * @class RDBManyToManyRelationDescription
@@ -28,11 +29,10 @@
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RDBManyToManyRelationDescription
+class RDBManyToManyRelationDescription extends RelationDescription
 {
-  public $thisEndRelation = '';
-  public $otherEndRelation = '';
-  public $hierarchyType = 'child';
+  protected $thisEndRelation = '';
+  protected $otherEndRelation = '';
 
   /**
    * Constructor.
@@ -47,22 +47,23 @@ class RDBManyToManyRelationDescription
   }
 
   /**
-   * Delegate property access to contained relation descriptions.
+   * Get the RDBOneToManyRelationDescription describing the relation between
+   * 'this' end and the connecting type
+   * @return RelationDescription
    */
-  public function __get($propName)
+  public function getThisEndRelation()
   {
-    if (strpos($propName, 'this') === 0) {
-      return $this->thisEndRelation->$propName;
-    }
-    elseif (strpos($propName, 'other') === 0)
-    {
-      if ($propName == 'otherType' || $propName == 'otherRole') {
-        return $this->otherEndRelation->$propName;
-      }
-      else {
-        return $this->thisEndRelation->$propName;
-      }
-    }
+    return $this->thisEndRelation;
+  }
+
+  /**
+   * Get the RDBManyToOneRelationDescription describing the relation between
+   * the connecting type and the 'other' end
+   * @return RelationDescription
+   */
+  public function getOtherEndRelation()
+  {
+    return $this->otherEndRelation;
   }
 
   /**
@@ -70,7 +71,124 @@ class RDBManyToManyRelationDescription
    */
   public function isMultiValued()
   {
-    return $this->thisEndRelation->isMultiValued();
+    return true;
+  }
+
+  /**
+   * Get the PersistentObject type at this end
+   * @return String
+   */
+  public function getThisType()
+  {
+    return $this->thisEndRelation->thisType;
+  }
+
+  /**
+   * Get the role name at this end
+   * @return String
+   */
+  public function getThisRole()
+  {
+    return $this->thisEndRelation->thisRole;
+  }
+
+  /**
+   * Get the PersistentObject type at the other end
+   * @return String
+   */
+  public function getOtherType()
+  {
+    return $this->otherEndRelation->otherType;
+  }
+
+  /**
+   * Get the role name at the other end
+   * @return String
+   */
+  public function getOtherRole()
+  {
+    return $this->otherEndRelation->otherRole;
+  }
+
+  /**
+   * Get the minimum number of instances at this end
+   * @return Number or 'unbound'
+   */
+  public function getThisMinMultiplicity()
+  {
+    return $this->thisEndRelation->thisMinMultiplicity;
+  }
+
+  /**
+   * Get the maximum number of instances at this end
+   * @return Number or 'unbound'
+   */
+  public function getThisMaxMultiplicity()
+  {
+    return $this->thisEndRelation->thisMaxMultiplicity;
+  }
+
+  /**
+   * Get the minimum number of instances at the other end
+   * @return Number or 'unbound'
+   */
+  public function getOtherMinMultiplicity()
+  {
+    return $this->thisEndRelation->otherMinMultiplicity;
+  }
+
+  /**
+   * Get the maximum number of instances at the other end
+   * @return Number or 'unbound'
+   */
+  public function getOtherMaxMultiplicity()
+  {
+    return $this->thisEndRelation->otherMaxMultiplicity;
+  }
+
+  /**
+   * Get the aggregation kind at this end
+   * @return String 'none', 'shared' or 'composite'
+   */
+  public function getThisAggregationKind()
+  {
+    return $this->thisEndRelation->thisAggregationKind;
+  }
+
+  /**
+   * Get the aggregation kind at the other end
+   * @return String 'none', 'shared' or 'composite'
+   */
+  public function getOtherAggregationKind()
+  {
+    return $this->thisEndRelation->otherAggregationKind;
+  }
+
+  /**
+   * Check wether this end is navigable from the other end or not
+   * @return Boolean
+   */
+  public function getThisNavigability()
+  {
+    return $this->thisEndRelation->thisNavigability;
+  }
+
+  /**
+   * Check wether the other end is navigable from this end or not
+   * @return Boolean
+   */
+  public function getOtherNavigability()
+  {
+    return $this->thisEndRelation->otherNavigability;
+  }
+
+  /**
+   * Get the hierarchy type that the other end has in relation to this end
+   * @return String 'parent', 'child', 'undefined'
+   */
+  public function getHierarchyType()
+  {
+    return 'child';
   }
 }
 ?>
