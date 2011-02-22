@@ -1,6 +1,7 @@
 <?php
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistentObjectProxy.php");
+require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
 class PersistentObjectProxyTest extends WCMFTestCase
 {
@@ -8,11 +9,18 @@ class PersistentObjectProxyTest extends WCMFTestCase
   {
     $this->runAnonymous(true);
 
-    $proxy = new PersistentObjectProxy(new ObjectId('UserRDB', 3));
+    $oid = new ObjectId('UserRDB', 300);
+    $this->createTestObject($oid, array("name" => "admin"));
 
+    $proxy = new PersistentObjectProxy($oid);
     $this->assertTrue($proxy->getLogin() == "admin", "The user's name is admin");
     $this->assertTrue($proxy->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
 
+    $proxy = PersistentObjectProxy::fromObject($proxy->getRealSubject());
+    $this->assertTrue($proxy->getLogin() == "admin", "The user's name is admin");
+    $this->assertTrue($proxy->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
+
+    $this->deleteTestObject($oid);
     $this->runAnonymous(false);
   }
 }

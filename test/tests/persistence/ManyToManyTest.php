@@ -2,6 +2,7 @@
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
 class ManyToManyTest extends WCMFTestCase
 {
@@ -12,10 +13,10 @@ class ManyToManyTest extends WCMFTestCase
 
     $userMapper = $persistenceFacade->getMapper('UserRDB');
     $relationDescription = $userMapper->getRelation('RoleRDB');
-    $this->assertTrue($relationDescription->otherType == 'RoleRDB', "The type is RoleRDB");
-    $this->assertTrue($relationDescription->otherRole == 'RoleRDB', "The role is RoleRDB");
-    $this->assertTrue($relationDescription->otherMinMultiplicity == '0', "The minimum multiplicity is 0");
-    $this->assertTrue($relationDescription->otherAggregationKind == 'none', "The aggregation kind is none");
+    $this->assertTrue($relationDescription->getOtherType() == 'RoleRDB', "The type is RoleRDB");
+    $this->assertTrue($relationDescription->getOtherRole() == 'RoleRDB', "The role is RoleRDB");
+    $this->assertTrue($relationDescription->getOtherMinMultiplicity() == '0', "The minimum multiplicity is 0");
+    $this->assertTrue($relationDescription->getOtherAggregationKind() == 'none', "The aggregation kind is none");
 
     $this->runAnonymous(false);
   }
