@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,27 +11,27 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
 
 /**
  * @class ConcurrencyController
  * @ingroup Controller
  * @brief ConcurrencyController is a controller that allows to lock/unlock objects.
- * 
+ *
  * <b>Input actions:</b>
  * - @em lock Lock an entity
  * - @em unlock Unlock an entity
  *
  * <b>Output actions:</b>
  * - @em ok In any case
- * 
+ *
  * @param[in] oid The object id of the entity to lock/unlock
  * @param[out] oid The object id of the entity to lock/unlock
  *
@@ -84,7 +84,7 @@ class ConcurrencyController extends Controller
     {
       $lockManager->releaseLock($oid);
     }
-    
+
     $this->_response->setValue('oid', $oid);
     $this->_response->setAction('ok');
     return true;

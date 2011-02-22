@@ -37,22 +37,41 @@ class PersistentObjectProxy
    * @param object The PersistentObject instance [optional]. This parameter is useful
    * if you want to prevent automatic loading of the subject if it is already loaded.
    */
-  public function __construct(ObjectId $oid, PersistentObject $object=null)
+  public function __construct(ObjectId $oid)
   {
-    $this->_realSubject = $object;
     $this->_oid = $oid;
   }
   /**
+   * Create a PersistenceProxy instance from a PersistentObject. This is useful
+   * if you want to prevent automatic loading of the subject if it is already loaded.
+   * @param object The PersistentObject
+   * @return PersistentObjectProxy
+   */
+  public static function fromObject(PersistentObject $object)
+  {
+    $proxy = new PersistentObjectProxy($object->getOID());
+    $proxy->_realSubject = $object;
+    return $proxy;
+  }
+  /**
    * Get the object id of the PersistentObject.
-   * @return The PersistentObject's ObjectId.
+   * @return ObjectId
    */
   public function getOID()
   {
     return $this->_oid;
   }
   /**
+   * Get the type of the PersistentObject.
+   * @return String
+   */
+  public function getType()
+  {
+    return $this->_oid->getType();
+  }
+  /**
    * Get the PersistentObject instance.
-   * @return The PersistentObject instance.
+   * @return PersistentObject
    */
   public function getRealSubject()
   {
@@ -86,7 +105,7 @@ class PersistentObjectProxy
   }
   /**
    * Get a string representation of the instance.
-   * @return The string representation of the instance.
+   * @return String
    */
   function __toString()
   {

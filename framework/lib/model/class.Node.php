@@ -135,13 +135,11 @@ class Node extends PersistentObject
     }
   }
   /**
-   * Delete a Node from the given relation.
+   * Delete a Node from the given relation and add it to a NullNode.
    * @param oid The object id of the Node to delete.
    * @param role The role of the Node. If null, the role is the Node's type. [default: null]
-   * @param reallyDelete True/false [default: false].
-   * (if reallyDelete==false mark it and it's descendants as deleted).
    */
-  public function deleteNode(ObjectId $oid, $role=null, $reallyDelete=false)
+  public function deleteNode(ObjectId $oid, $role=null)
   {
     if ($role == null) {
       $role = $oid->getType();
@@ -157,16 +155,12 @@ class Node extends PersistentObject
       {
         if ($nodes[$i]->getOID() == $oid)
         {
-          if (!$reallyDelete) {
-            // mark child as deleted
-            $nodes[$i]->setState(STATE_DELETED);
-            break;
-          }
-          else {
-            // remove child
-            array_splice($nodes, $i, 1);
-            break;
-          }
+          $nullNode = new NullNode($this->getType());
+          $nullNode->addNode($nodes[$i], $role);
+
+          // remove child
+          array_splice($nodes, $i, 1);
+          break;
         }
       }
     }
@@ -174,14 +168,11 @@ class Node extends PersistentObject
     {
       if ($nodes->getOID() == $oid)
       {
-        if (!$reallyDelete) {
-          // mark child as deleted
-          $nodes->setState(STATE_DELETED);
-        }
-        else {
-          // remove child
-          $nodes = null;
-        }
+        $nullNode = new NullNode($this->getType());
+        $nullNode->addNode($nodes, $role);
+
+        // remove child
+        $nodes = null;
       }
     }
     $this->setValue($role, $nodes);
@@ -204,15 +195,16 @@ class Node extends PersistentObject
   }
   /**
    * Get the first child that matches given conditions.
-   * @param roleOrType The role or type that the child should match [maybe null, default: null].
+   * @param role The role that the child should match [maybe null, default: null].
+   * @param type The type that the child should match [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the child values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the child properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
    * @return An reference to the first child that matched or null.
    */
-  public function getFirstChild($roleOrType=null, $values=null, $properties=null, $useRegExp=true)
+  public function getFirstChild($role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
-    $children = $this->getChildrenEx(null, $roleOrType, $values, $properties, $useRegExp);
+    $children = $this->getChildrenEx(null, $role, $type, $values, $properties, $useRegExp);
     if (sizeof($children) > 0) {
       return $children[0];
     }
@@ -232,20 +224,25 @@ class Node extends PersistentObject
   /**
    * Get the children that match given conditions.
    * @param oid The object id that the children should match [maybe null, default: null].
-   * @param roleOrType The role or type that the children should match [maybe null, default: null].
+   * @param role The role that the children should match [maybe null, default: null].
+   * @param type The type that the children should match [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the children values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the children properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
    * @return An Array holding references to the children that matched.
    */
-  public function getChildrenEx(ObjectId $oid=null, $roleOrType=null, $values=null, $properties=null, $useRegExp=true)
+  public function getChildrenEx(ObjectId $oid=null, $role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
-    if ($roleOrType != null && $this->hasValue($roleOrType)) {
+    if ($role != null && $this->hasValue($role)) {
       // nodes of a given role are requested
-      return self::filter($this->getValue($roleOrType), $oid, $roleOrType, $values, $properties, $useRegExp);
+      $nodes = $this->getValue($role);
+      if (!is_array($nodes)) {
+        $nodes = array($nodes);
+      }
+      return self::filter($nodes, $oid, $type, $values, $properties, $useRegExp);
     }
     else {
-      return self::filter($this->getChildren(), $oid, $roleOrType, $values, $properties, $useRegExp);
+      return self::filter($this->getChildren(), $oid, $type, $values, $properties, $useRegExp);
     }
   }
   /**
@@ -320,7 +317,7 @@ class Node extends PersistentObject
   }
   /**
    * Get Nodes that match given conditions from a list.
-   * @param nodeList An reference to an array of nodes to filter.
+   * @param nodeList An array of nodes to filter or a single Node.
    * @param oid The object id that the Nodes should match [maybe null, default: null].
    * @param type The type that the Nodes should match [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the Node values should match
@@ -336,7 +333,7 @@ class Node extends PersistentObject
     for($i=0, $count=sizeof($nodeList); $i<$count; $i++)
     {
       $curNode = $nodeList[$i];
-      if ($curNode instanceof Node)
+      if ($curNode instanceof PersistentObject)
       {
         $match = true;
         // check oid
@@ -378,7 +375,7 @@ class Node extends PersistentObject
         }
       }
       else {
-        Log::warn(StringUtil::getDump($curNode)." found, where a Node was expected.\n".Application::getStackTrace(),
+        Log::warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".Application::getStackTrace(),
           __CLASS__);
       }
     }
@@ -476,15 +473,16 @@ class Node extends PersistentObject
   }
   /**
    * Get the first parent that matches given conditions.
-   * @param roleOrType The role or type that the parent should match [maybe null, default: null].
+   * @param role The role that the parent should match [maybe null, default: null].
+   * @param type The type that the parent should match [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
    * @return An reference to the first parent that matched or null.
    */
-  public function getFirstParent($roleOrType=null, $values=null, $properties=null, $useRegExp=true)
+  public function getFirstParent($role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
-    $parents = $this->getParentsEx(null, $roleOrType, $values, $properties, $useRegExp);
+    $parents = $this->getParentsEx(null, $role, $type, $values, $properties, $useRegExp);
     if (sizeof($parents) > 0) {
       return $parents[0];
     }
@@ -504,20 +502,25 @@ class Node extends PersistentObject
   /**
    * Get the parents that match given conditions.
    * @param oid The object id that the parent should match [maybe null, default: null].
-   * @param roleOrType The role or type that the parents should match [maybe null, default: null].
+   * @param role The role that the parents should match [maybe null, default: null].
+   * @param type The type that the parents should match [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
    * @return An Array holding references to the parents that matched.
    */
-  public function getParentsEx(ObjectId $oid=null, $roleOrType=null, $values=null, $properties=null, $useRegExp=true)
+  public function getParentsEx(ObjectId $oid=null, $role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
-    if ($roleOrType != null && $this->hasValue($roleOrType)) {
+    if ($role != null && $this->hasValue($role)) {
       // nodes of a given role are requested
-      return self::filter($this->getValue($roleOrType), $oid, null, $values, $properties, $useRegExp);
+      $nodes = $this->getValue($role);
+      if (!is_array($nodes)) {
+        $nodes = array($nodes);
+      }
+      return self::filter($nodes, $oid, $type, $values, $properties, $useRegExp);
     }
     else {
-      return self::filter($this->getParents(), $oid, $roleOrType, $values, $properties, $useRegExp);
+      return self::filter($this->getParents(), $oid, $type, $values, $properties, $useRegExp);
     }
   }
   /**
@@ -607,16 +610,19 @@ class Node extends PersistentObject
     foreach ($relations as $curRelation)
     {
       $curRelatives = $this->getValue($curRelation->getOtherRole());
-      if (is_array($curRelatives))
+      if (!$curRelatives) {
+        continue;
+      }
+      if (!is_array($curRelatives)) {
+        $curRelatives = array($curRelatives);
+      }
+      foreach ($curRelatives as $curRelative)
       {
-        foreach ($curRelatives as $curRelative)
-        {
-          if ($curRelative instanceof PersistentObjectProxy && $memOnly) {
-            continue;
-          }
-          else {
-            $relatives[] = $curRelative;
-          }
+        if ($curRelative instanceof PersistentObjectProxy && $memOnly) {
+          continue;
+        }
+        else {
+          $relatives[] = $curRelative;
         }
       }
     }
@@ -630,25 +636,7 @@ class Node extends PersistentObject
    */
   protected function getNumRelatives($hierarchyType, $memOnly=true)
   {
-    $count = 0;
-    $relations = $this->getRelations($hierarchyType);
-    foreach ($relations as $curRelation)
-    {
-      $relatives = $this->getValue($curRelation->getOtherRole());
-      if (is_array($relatives))
-      {
-        foreach ($relatives as $curRelative)
-        {
-          if ($curRelative instanceof PersistentObjectProxy && $memOnly) {
-            continue;
-          }
-          else {
-            $count++;
-          }
-        }
-      }
-    }
-    return $count;
+    return sizeof($this->getRelatives($hierarchyType, $memOnly));
   }
   /**
    * Compare function for sorting Nodes by a given criteria.

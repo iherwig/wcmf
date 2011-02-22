@@ -18,7 +18,7 @@
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceException.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ValidationException.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
@@ -79,13 +79,13 @@ class PersistentObject
     {
       // no oid is given -> new node
       $this->setOID(new ObjectId($type));
-      $this->setState(STATE_NEW);
+      $this->setState(STATE_NEW, false);
     }
     else
     {
       // old node
       $this->setOID($oid);
-      $this->setState(STATE_CLEAN);
+      $this->setState(STATE_CLEAN, false);
     }
   }
   /**

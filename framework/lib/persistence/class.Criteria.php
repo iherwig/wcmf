@@ -97,5 +97,15 @@ class Criteria
   {
     return $this->value;
   }
+
+  /**
+   * Get a string representation of the operation
+   * @return String
+   */
+  public function __toString()
+  {
+    $str = $this->type.".".$this->attribute." ".$this->operator." ".$this->value;
+    return $str;
+  }
 }
 ?>

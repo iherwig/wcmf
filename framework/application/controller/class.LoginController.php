@@ -20,7 +20,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.AuthUser.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.UserManager.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
 
 /**
@@ -39,7 +39,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
  *
  * @param[in] user The name of the user to log in
  * @param[in] password The password the user is authenticated with
- * 
+ *
  * @param[in] remember_me If given with any value a login cookie will be created in the browser [optional]
  * @param[in] password_is_encrypted True/False wether the given password is encrypted on not [optional, default: false]
  * @param[out] sid The newly established session id
@@ -83,10 +83,10 @@ class LoginController extends Controller
       if(!$request->hasValue('password')) {
         $invalidParameters[] = 'password';
       }
-      
+
       if (sizeof($invalidParameters) > 0)
       {
-        $response->addError(ApplicationError::get('PARAMETER_INVALID', 
+        $response->addError(ApplicationError::get('PARAMETER_INVALID',
           array('invalidParameters' => $invalidParameters)));
         return false;
       }
@@ -99,7 +99,7 @@ class LoginController extends Controller
   public function hasView()
   {
     $request = $this->getRequest();
-    if (!$request->hasErrors() && 
+    if (!$request->hasErrors() &&
       ($request->getAction() == 'dologin' || $this->_anonymous || $this->isCookieLogin())) {
       return false;
     }
@@ -158,7 +158,7 @@ class LoginController extends Controller
           setcookie('user', $request->getValue('user'), $expire);
           setcookie('password', $cookiePassword, $expire);
         }
-        
+
         // return role names of the user
         $roleNames = array();
         $roles = $authUser->getRoles();
@@ -167,7 +167,7 @@ class LoginController extends Controller
         }
         $response->setValue('roles', $roleNames);
         $response->setValue('sid', $session->getID());
-        
+
         $response->setAction('ok');
         return true;
       }

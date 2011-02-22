@@ -19,7 +19,7 @@
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.AuthorizationException.php");
 

@@ -16,43 +16,36 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ILockHandler.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.ILockHandler.php");
 
 /**
- * @class BusyLockManager
+ * @class NullLockManager
  * @ingroup Persistence
- * @brief BusyLockManager acts as if half of the resources are locked.
- * Use this to simulate heavy concurrency.
+ * @brief NullLockManager acts as if no LockHandler was installed.
+ * Use this to disable locking.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class BusyLockManager implements ILockHandler
+class NullLockHandler implements ILockHandler
 {
   /**
-   * @see ILockHandler::aquireLockImpl();
+   * @see ILockHandler::aquireLock();
    */
   public function aquireLock(ObjectId $useroid, $session, ObjectId $oid, $lockDate) {}
   /**
-   * @see ILockHandler::releaseLockImpl();
+   * @see ILockHandler::releaseLock();
    */
   public function releaseLock(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null) {}
   /**
-   * @see ILockHandler::releaseAllLocksImpl();
+   * @see ILockHandler::releaseAllLocks();
    */
-  public function releaseAllLocks(ObjectId $useroid, $sessid) {}
+  public function releaseAllLocks(ObjectId $useroid, $session) {}
   /**
-   * @see ILockHandler::getLockImpl();
+   * @see ILockHandler::getLock();
    */
   public function getLock(ObjectId $oid)
   {
-    if (rand(0,1) > 0.5) {
-    	return null;
-    }
-    else
-    {
-      $lockDate = date("Y-m-d H:i:s", mktime(date("H"), date("i")-1, date("s"), date("m"), date("d"), date("Y"))); // one minute ago
-    	return array('oid' => $oid, 'userid' => 0, 'login' => 'BusyLockManager', 'since' => $lockDate, 'sessid' => uniqid(""));
-    }
+    return null;
   }
 }
 ?>

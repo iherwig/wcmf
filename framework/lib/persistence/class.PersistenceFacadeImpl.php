@@ -103,7 +103,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     if ($this->_isCaching)
     {
       $cacheKey = $this->getCacheKey($oid, $buildDepth, $buildAttribs, $buildTypes);
-      if (array_key_exists($cacheKey, $this->_cache)) {
+      if (isset($this->_cache[$cacheKey])) {
         $obj = $this->_cache[$cacheKey];
       }
     }

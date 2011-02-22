@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,14 +11,14 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 
@@ -38,7 +38,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
  * @param [in] type The entity type to search for (needed for the action soapAdvancedSearch)
  * @param [in] query The query string to use, see StringQuery (needed for the action soapAdvancedSearch)
  * @param [out] soapResult The result of the processed action
- * 
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
 class SOAPController extends Controller
@@ -75,20 +75,20 @@ class SOAPController extends Controller
   /**
    * Search all searchable types for a given term.
    * @param searchTerm The term to search for
-   */ 
+   */
   function soapSearch($searchTerm)
   {
     // get all known types from configuration file
     $parser = &InifileParser::getInstance();
     $types = array_keys($parser->getSection('typemapping'));
-  
+
     // query for each type
     $objectList = array();
     foreach ($types as $type)
     {
       $query = &PersistenceFacade::createObjectQuery($type);
       $tpl = &$query->getObjectTemplate($type, QUERYOP_OR, QUERYOP_OR);
-      
+
       // only search types with attributes and which are searchable
       if ($tpl->getProperty('is_searchable') == true)
       {
@@ -101,9 +101,9 @@ class SOAPController extends Controller
           if (strlen($value) > 0) {
             $curNode->setValue($valueName, "LIKE '%".$value."%'");
           }
-          $iter->proceed();            
+          $iter->proceed();
         }
-  
+
         $nodes = $query->execute(BUILDDEPTH_SINGLE);
         foreach ($nodes as $node)
         {
@@ -122,7 +122,7 @@ class SOAPController extends Controller
    * Search for instances of a given type, that satisfy the given query.
    * @param type The type to search for
    * @param queryStr The query string to satisfy
-   */ 
+   */
   function soapAdvancedSearch($type, $queryStr)
   {
     $query = &PersistenceFacade::createStringQuery();

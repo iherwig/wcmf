@@ -18,7 +18,7 @@
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
@@ -77,7 +77,7 @@ class SaveController extends Controller
 
     // start the persistence transaction
     $persistenceFacade->startTransaction();
-    
+
     // store all invalid parameters for later reference
     $lockedOids = array();
     $invalidOids = array();
@@ -93,10 +93,10 @@ class SaveController extends Controller
       {
         $curOid = $curRequestObject->getOID();
         $curOidStr = $curOid->__toString();
-        
+
         // if the current user has a lock on the object, release it
         $lockManager->releaseLock($curOid);
-  
+
         // check if the object is locked and continue with next if so
         $lock = $lockManager->getLock($curOid);
         if ($lock != null)
@@ -104,12 +104,12 @@ class SaveController extends Controller
           $lockedOids[] = $curOidStr;
           continue;
         }
-      
+
         // iterate over all values given in the node
         foreach ($curRequestObject->getValueNames() as $curValueName)
         {
           $curRequestValue = $curRequestObject->getValue($curValueName);
-          
+
           // save uploaded file/ process array values
           $isFile = false;
           if (is_array($curRequestValue))
@@ -185,7 +185,7 @@ class SaveController extends Controller
               }
               else
               {
-                $invalidAttributeValues[] = array('oid' => $curOidStr, 
+                $invalidAttributeValues[] = array('oid' => $curOidStr,
                   'parameter' => $curValueName, 'message' => $validationMsg);
                 // add error to session
                 $session->addError($curOidStr, $validationMsg);
@@ -207,17 +207,17 @@ class SaveController extends Controller
 
     // add errors to the response
     if (sizeof($lockedOids) > 0) {
-      $response->addError(ApplicationError::get('OBJECT_IS_LOCKED', 
+      $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
         array('lockedOids' => $lockedOids)));
     }
     if (sizeof($invalidOids) > 0) {
-      $response->addError(ApplicationError::get('OID_INVALID', 
+      $response->addError(ApplicationError::get('OID_INVALID',
         array('invalidOids' => $invalidOids)));
     }
     if (sizeof($invalidAttributeValues) > 0) {
-      $response->addError(ApplicationError::get('ATTRIBUTE_VALUE_INVALID', 
+      $response->addError(ApplicationError::get('ATTRIBUTE_VALUE_INVALID',
         array('invalidAttributeValues' => $invalidAttributeValues)));
-    }            
+    }
 
     // commit changes
     if ($needCommit)
@@ -302,7 +302,7 @@ class SaveController extends Controller
         $filename = $this->_fileUtil->uploadFile($data, $uploadFilename, null, $maxFileSize, $override);
         if (!$filename)
         {
-          $response->addError(ApplicationError::get('GENERAL_ERROR', 
+          $response->addError(ApplicationError::get('GENERAL_ERROR',
             array('message' => $this->_fileUtil->getErrorMsg())));
           return false;
         }
@@ -312,7 +312,7 @@ class SaveController extends Controller
       }
       else
       {
-        $response->addError(ApplicationError::get('GENERAL_ERROR', 
+        $response->addError(ApplicationError::get('GENERAL_ERROR',
           array('message' => Message::get("Upload failed for %1%.", array($data['name'])))));
         return false;
       }
@@ -336,14 +336,14 @@ class SaveController extends Controller
   protected function checkFile(ObjectId $oid, $valueName, $filename, $mimeType=null)
   {
     $response = $this->getResponse();
-    
+
     // check mime type
     if ($mimeType != null)
     {
       $mimeTypes = $this->getMimeTypes($oid, $valueName);
       if ($mimeTypes != null && !in_array($mimeType, $mimeTypes))
       {
-        $response->addError(ApplicationError::get('GENERAL_ERROR', 
+        $response->addError(ApplicationError::get('GENERAL_ERROR',
           array('message' => Message::get("File '%1%' has wrong mime type: %2%. Allowed types: %3%.", array($filename, $mimeType, join(", ", $mimeTypes))))));
         return false;
       }
@@ -376,7 +376,7 @@ class SaveController extends Controller
     }
     if(!($checkWidth && $checkHeight))
     {
-      $response->addError(ApplicationError::get('GENERAL_ERROR', 
+      $response->addError(ApplicationError::get('GENERAL_ERROR',
         array('message' => $this->_graphicsUtil->getErrorMsg())));
       return false;
     }

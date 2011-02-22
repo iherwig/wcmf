@@ -200,7 +200,7 @@ interface PersistenceMapper
 
   /**
    * Load the objects of the own type that are related to a given object.
-   * @param otherObject The object that the objects to load are related to
+   * @param otherObjectProxy A PersistentObjectProxy for the object that the objects to load are related to
    * @param otherRole The role of the other object in relation to the objects to load
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
@@ -210,8 +210,15 @@ interface PersistenceMapper
    * @param buildTypes An array listing the (sub-)types to include [default: empty array, loads all types]
    * @return An array of PersistentObject instances
    */
-  public function loadRelatedObjects(PersistentObject $otherObject, $otherRole, $buildDepth=BUILDDEPTH_SINGLE,
+  public function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BUILDDEPTH_SINGLE,
     array $buildAttribs=array(), array $buildTypes=array());
+
+  /**
+   * Execute a PersistenceOperation. PersistenceOperation.type must be the type that
+   * is mapped by this mapper.
+   * @param operation The operation
+   */
+  public function executeOperation(PersistenceOperation $operation);
 
   /**
    * @see PersistenceFacade::startTransaction()
