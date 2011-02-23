@@ -178,5 +178,49 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
       return $method->invoke($instance);
     }
   }
+
+  /**
+   * Enable the Zend_Db_Profiler for a given entity type.
+   * @param type The entity type
+   */
+  protected function enableProfiler($type)
+  {
+    $mapper = PersistenceFacade::getInstance()->getMapper($type);
+    if ($mapper instanceof RDBMapper) {
+      $mapper->enableProfiler();
+    }
+  }
+
+  /**
+   * Print the profile of the operations on a given entity type.
+   * The profiler must have been enabled first
+   * @param type The entity type
+   */
+  protected function printProfile($type)
+  {
+    $mapper = PersistenceFacade::getInstance()->getMapper($type);
+    $profiler = $mapper->getProfiler();
+
+    foreach ($profiler->getQueryProfiles() as $query) {
+      echo $query->getElapsedSecs()."s: ".$query->getQuery()."\n";
+    }
+
+    $totalTime = $profiler->getTotalElapsedSecs();
+    $queryCount = $profiler->getTotalNumQueries();
+    $longestTime = 0;
+    $longestQuery = null;
+    foreach ($profiler->getQueryProfiles() as $query) {
+      if ($query->getElapsedSecs() > $longestTime) {
+        $longestTime  = $query->getElapsedSecs();
+        $longestQuery = $query->getQuery();
+      }
+    }
+    echo "\n";
+    echo 'Executed '.$queryCount.' queries in '.$totalTime.' seconds'."\n";
+    echo 'Average query length: '.$totalTime/$queryCount.' seconds'."\n";
+    echo 'Queries per second: '.$queryCount/$totalTime."\n";
+    echo 'Longest query length: '.$longestTime."\n";
+    echo "Longest query: \n".$longestQuery."\n";
+  }
 }
 ?>
