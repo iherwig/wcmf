@@ -160,12 +160,14 @@ abstract class AbstractMapper
    */
   public function save(PersistentObject $object)
   {
-    if ( ($object->getState() == STATE_DIRTY) && !$this->checkAuthorization($object->getOID(), ACTION_MODIFY) )
+    if ( ($object->getState() == PersistentObject::STATE_DIRTY) &&
+            !$this->checkAuthorization($object->getOID(), ACTION_MODIFY) )
     {
       $this->authorizationFailedError($object->getOID(), ACTION_MODIFY);
       return;
     }
-    else if ( ($object->getState() == STATE_NEW) && !$this->checkAuthorization($object->getOID(), ACTION_CREATE) )
+    else if ( ($object->getState() == PersistentObject::STATE_NEW) &&
+            !$this->checkAuthorization($object->getOID(), ACTION_CREATE) )
     {
       $this->authorizationFailedError($object->getOID(), ACTION_CREATE);
       return;
@@ -189,7 +191,7 @@ abstract class AbstractMapper
       return false;
     }
     // delete oid
-    $result = $this->deleteImpl($oid, $recursive);
+    $result = $this->deleteImpl($oid);
     if ($result === true)
     {
       // release any locks on the object
@@ -253,7 +255,7 @@ abstract class AbstractMapper
    * @see PersistenceFacade::delete()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function deleteImpl(ObjectId $oid, $recursive=true);
+  abstract protected function deleteImpl(ObjectId $oid);
 
   /**
    * @see PersistenceFacade::startTransaction()

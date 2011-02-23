@@ -129,12 +129,12 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
   /**
    * @see PersistenceFacade::delete()
    */
-  public function delete(ObjectId $oid, $recursive=true)
+  public function delete(ObjectId $oid)
   {
     if (strlen($oid->getPrefix()) > 0) {
       throw new PersistenceException("The remote object '".$oid."' is immutable.");
     }
-    $result = parent::delete($oid, $recursive);
+    $result = parent::delete($oid);
     return $result;
   }
   /**

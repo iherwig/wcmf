@@ -56,11 +56,11 @@ class LogOutputStrategy implements OutputStrategy
     switch ($state = $obj->getState())
     {
       // log insert action
-      case STATE_NEW:
+      case PersistentObject::STATE_NEW:
         Log::info('INSERT '.$obj->getOID().': '.str_replace("\n", " ", $obj->toString()).' USER: '.$user->getLogin(), __CLASS__);
         break;
       // log update action
-      case STATE_DIRTY:
+      case PersistentObject::STATE_DIRTY:
         // get old object from storage
         $oldObj = $persistenceFacade->load($obj->getOID(), BUILDDEPTH_SINGLE);
         // collect differences
@@ -83,7 +83,7 @@ class LogOutputStrategy implements OutputStrategy
         Log::info('SAVE '.$obj->getOID().': '.$diff.' USER: '.$user->getLogin(), __CLASS__);
         break;
       // log delete action
-      case STATE_DELETE:
+      case PersistentObject::STATE_DELETED:
         // get old object from storage
         Log::info('DELETE '.$obj->getOID().': '.str_replace("\n", " ", $obj->toString()).' USER: '.$user->getLogin(), __CLASS__);
         break;

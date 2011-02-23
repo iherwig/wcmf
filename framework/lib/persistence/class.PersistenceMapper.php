@@ -217,6 +217,7 @@ interface PersistenceMapper
    * Execute a PersistenceOperation. PersistenceOperation.type must be the type that
    * is mapped by this mapper.
    * @param operation The operation
+   * @return int The number of affected rows.
    */
   public function executeOperation(PersistenceOperation $operation);
 

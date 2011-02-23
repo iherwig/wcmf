@@ -353,7 +353,7 @@ class AuthUser extends User implements Storable
   /**
    * @see User::addRole()
    */
-  public function addRole($rolename, $commit=false)
+  public function addRole($rolename)
   {
     // not supported by AuthUser
   }
@@ -361,7 +361,7 @@ class AuthUser extends User implements Storable
   /**
    * @see User::removeRole()
    */
-  public function removeRole($rolename, $commit=false)
+  public function removeRole($rolename)
   {
     // not supported by AuthUser
   }

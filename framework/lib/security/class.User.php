@@ -135,9 +135,8 @@ abstract class User extends Node
   /**
    * Assign a role to the user.
    * @param rolename The role name. e.g. "administrators"
-   * @param commit True/False wether to commit the changes or not [default: false].
    */
-  public function addRole($rolename, $commit=false)
+  public function addRole($rolename)
   {
     if ($this->hasRole($rolename)) {
       return;
@@ -146,22 +145,16 @@ abstract class User extends Node
     $role = $this->getRoleByName($rolename);
     if ($role != null) {
       $this->addNode($role);
-    }
-    // commit the changes if requested
-    if ($commit)
-    {
-      $nIter = new NodeIterator($this);
-      $cv = new CommitVisitor();
-      $cv->startIterator($nIter);
+      // commit the changes
+      $this->save();
     }
   }
 
   /**
    * Remove a role from the user.
    * @param rolename The role name. e.g. "administrators"
-   * @param commit True/False wether to commit the changes or not [default: false].
    */
-  public function removeRole($rolename, $commit=false)
+  public function removeRole($rolename)
   {
     if (!$this->hasRole($rolename)) {
       return;
@@ -170,17 +163,9 @@ abstract class User extends Node
     $role = $this->getRoleByName($rolename);
     if ($role != null)
     {
-      // commit the changes if requested
-      if ($commit)
-      {
-        // mark the child deleted first
-        $this->deleteChild($role->getOID());
-        $nIter = new NodeIterator($this);
-        $cv = new CommitVisitor();
-        $cv->startIterator($nIter);
-      }
-
-      $this->deleteChild($role->getOID(), true);
+      $this->deleteNode($role);
+      // commit the changes
+      $this->save();
     }
   }
 

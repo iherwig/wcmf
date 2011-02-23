@@ -142,13 +142,13 @@ class ImageOutputStrategy implements OutputStrategy
     $y = $this->_map[$oid]->y * $this->_yscale - $this->_labelDim['top'] +  $this->_border;
 
     $statusStr = '';
-    if ($obj->getState() == STATE_DIRTY) {
+    if ($obj->getState() == PersistentObject::STATE_DIRTY) {
       $statusStr = 'M';
     }
-    if ($obj->getState() == STATE_NEW) {
+    if ($obj->getState() == PersistentObject::STATE_NEW) {
       $statusStr = 'N';
     }
-    if ($obj->getState() == STATE_DELETED) {
+    if ($obj->getState() == PersistentObject::STATE_DELETED) {
       $statusStr = 'D';
     }
 

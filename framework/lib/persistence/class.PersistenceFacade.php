@@ -111,10 +111,9 @@ abstract class PersistenceFacade
   /**
    * Delete an object from the database (together with all of its children).
    * @param oid The object id of the object to delete
-   * @param recursive True/False whether to physically delete it's children too [default: true]
    * @return True/False depending on success of operation
    */
-  abstract function delete(ObjectId $oid, $recursive=true);
+  abstract function delete(ObjectId $oid);
   /**
    * Get the object id of the last created object of a given type.
    * @param type The type of the object

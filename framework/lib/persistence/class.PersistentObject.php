@@ -24,14 +24,6 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.ValidationException.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
 /**
- * Some constants describing the state of the PersistentObject
- */
-define("STATE_CLEAN",   0);
-define("STATE_DIRTY",   1);
-define("STATE_NEW",     2);
-define("STATE_DELETED", 3);
-
-/**
  * @class PersistentObject
  * @ingroup Persistence
  * @brief PersistentObject is the base class of all persistent objects.
@@ -56,11 +48,16 @@ define("STATE_DELETED", 3);
  */
 class PersistentObject
 {
+  const STATE_CLEAN = 0;
+  const STATE_DIRTY = 1;
+  const STATE_NEW = 2;
+  const STATE_DELETED = 3;
+
   private $_oid = null;                // object identifier
   private $_type = '';                 // the object type
   private $_data = array();            // associative array holding the data
   private $_properties = array();      // associative array holding the properties
-  private $_state = STATE_CLEAN;       // the state of the PersistentObject
+  private $_state = self::STATE_CLEAN;       // the state of the PersistentObject
   private $_isImmutable = false;       // immutable state
   private $_changeListeners = array(); // the change listeners
 
@@ -79,13 +76,13 @@ class PersistentObject
     {
       // no oid is given -> new node
       $this->setOID(new ObjectId($type));
-      $this->setState(STATE_NEW, false);
+      $this->setState(self::STATE_NEW, false);
     }
     else
     {
       // old node
       $this->setOID($oid);
-      $this->setState(STATE_CLEAN, false);
+      $this->setState(self::STATE_CLEAN, false);
     }
   }
   /**
@@ -179,10 +176,10 @@ class PersistentObject
     {
       $oldState = $this->getState();
       // call before hook method
-      if ($oldState == STATE_NEW) {
+      if ($oldState == self::STATE_NEW) {
         $this->beforeInsert();
       }
-      elseif ($oldState == STATE_DIRTY) {
+      elseif ($oldState == self::STATE_DIRTY) {
         $this->beforeUpdate();
       }
       // save the object
@@ -193,10 +190,10 @@ class PersistentObject
       SearchUtil::indexInSearch($this);
 
       // call after hook method
-      if ($oldState == STATE_NEW) {
+      if ($oldState == self::STATE_NEW) {
         $this->afterInsert();
       }
-      elseif ($oldState == STATE_DIRTY) {
+      elseif ($oldState == self::STATE_DIRTY) {
         $this->afterUpdate();
       }
     }
@@ -206,9 +203,8 @@ class PersistentObject
   }
   /**
    * Delete data. This call will be delegated to the PersistenceFacade class.
-   * @param recursive True/False whether to physically delete it's children too [default: true]
    */
-  public function delete($recursive=true)
+  public function delete()
   {
     if (!$this->_isImmutable)
     {
@@ -217,7 +213,7 @@ class PersistentObject
 
       // delete the object
       $persistenceFacade = PersistenceFacade::getInstance();
-      $persistenceFacade->delete($this->getOID(), $recursive);
+      $persistenceFacade->delete($this->getOID());
 
       // remove from index
       SearchUtil::deleteFromSearch($this);
@@ -248,11 +244,11 @@ class PersistentObject
     switch ($this->_state)
     {
       // new object must stay new when it's modified
-      case STATE_NEW:
+      case self::STATE_NEW:
         switch ($state)
         {
-          case STATE_DIRTY:
-            $this->_state = STATE_NEW;
+          case self::STATE_DIRTY:
+            $this->_state = self::STATE_NEW;
             break;
 
           default:
@@ -261,8 +257,8 @@ class PersistentObject
         break;
 
         // deleted object must stay deleted in every case
-      case STATE_DELETED:
-        $this->_state = STATE_DELETED;
+      case self::STATE_DELETED:
+        $this->_state = self::STATE_DELETED;
         break;
 
       default:
@@ -574,11 +570,11 @@ class PersistentObject
         throw new ValidationException($msg);
       }
     }
-    $oldValue = $this->_data[$name]['value'];
+    $oldValue = $this->getValue($name);
     if ($oldValue !== $value || $forceSet)
     {
       $this->setValueInternal($name, $value);
-      self::setState(STATE_DIRTY);
+      self::setState(self::STATE_DIRTY);
       $mapper = $this->getMapper();
       if ($mapper != null && in_array($name, $mapper->getPKNames())) {
         $this->updateOID();

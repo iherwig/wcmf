@@ -169,7 +169,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   /**
    * @see PersistenceFacade::delete()
    */
-  public function delete(ObjectId $oid, $recursive=true)
+  public function delete(ObjectId $oid)
   {
     if ($this->_isReadOnly) {
       return true;
@@ -177,7 +177,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     $result = false;
     $mapper = $this->getMapper($oid->getType());
     if ($mapper != null) {
-      $result = $mapper->delete($oid, $recursive);
+      $result = $mapper->delete($oid);
     }
     return $result;
   }
@@ -475,7 +475,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   public function stateChanged(PersistentObject $object, $oldValue, $newValue)
   {
     // store the object id in the internal registry if the object was saved after creation
-    if ($oldValue == STATE_NEW && $newValue == STATE_CLEAN)
+    if ($oldValue == PersistentObject::STATE_NEW && $newValue == PersistentObject::STATE_CLEAN)
     {
       $type = $object->getType();
       if (!array_key_exists($type, $this->_createdOIDs)) {

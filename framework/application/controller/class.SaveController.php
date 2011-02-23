@@ -197,7 +197,7 @@ class SaveController extends Controller
           if (!isset($nodeArray[$curOidStr])) {
             $nodeArray[$curOidStr] = &$curNode;
           }
-          if ($curNode->getState() == STATE_DIRTY) {
+          if ($curNode->getState() == PersistentObject::STATE_DIRTY) {
             // associative array to asure uniqueness
             $saveOids[$curOidStr] = $curOidStr;
           }

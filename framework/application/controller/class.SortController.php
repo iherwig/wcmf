@@ -266,7 +266,7 @@ class SortController extends Controller
     }
 
     // don't save the root node
-    $rootNode->setState(STATE_CLEAN, false);
+    $rootNode->setState(PersistentObject::STATE_CLEAN, false);
 
     // commit changes
     $nIter = new NodeIterator($rootNode);

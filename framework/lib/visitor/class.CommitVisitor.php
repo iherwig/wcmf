@@ -38,13 +38,13 @@ class CommitVisitor extends Visitor
     $oldState = $obj->getState();
     switch($oldState)
     {
-      case STATE_DIRTY:
-      case STATE_NEW:
+      case PersistentObject::STATE_DIRTY:
+      case PersistentObject::STATE_NEW:
         // save changes / insert
         $obj->save();
         break;
 
-      case STATE_DELETED:
+      case PersistentObject::STATE_DELETED:
         // delete object
         $obj->delete();
         break;

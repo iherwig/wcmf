@@ -68,25 +68,92 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
         }
       }
     }
-    // foreign key definitions (maybe only defined by attached parents yet)
-    // NOTE: compound foreign keys are not supported
-    $fkDescs = $this->getForeignKeyRelations();
-    for ($i=0, $count=sizeof($fkDescs); $i<$count; $i++)
+
+    // handle relations
+    if ($object instanceof Node)
     {
-      $fkDesc = $fkDescs[$i];
-      // in a ManyToOneRelation only one parent is possible
-      $parent = $object->getValue($fkDesc->getOtherRole());
-      if($parent instanceof PersistentObject)
+      $persistenceFacade = PersistenceFacade::getInstance();
+
+      // added nodes
+      $addedNodes = $object->getAddedNodes();
+      foreach ($addedNodes as $role => $oids)
       {
-        $poid = $parent->getOID();
-        if (ObjectId::isValid($poid))
+        $relationDesc = $this->getRelation($role);
+        // for a many to one relation, we need to update the appropriate
+        // foreign key in the object
+        if ($relationDesc instanceof RDBManyToOneRelationDescription)
         {
-          $fkAttr = $this->getAttribute($fkDesc->getFkName());
-          $object->setValue($fkAttr->getName(), $poid->getFirstId());
+          // in a many to one only one parent is possible
+          // so we take the last oid
+          $poid = array_pop($oids);
+          if (ObjectId::isValid($poid))
+          {
+            // set the foreign key to the parent id value
+            $fkAttr = $this->getAttribute($relationDesc->getFkName());
+            $object->setValue($fkAttr->getName(), $poid->getFirstId());
+          }
+        }
+        elseif ($relationDesc instanceof RDBManyToManyRelationDescription)
+        {
+          // in a many to many relation we have to create the relation object
+          // if it does not exist
+          $relatives = $object->getChildrenEx(null, $relationDesc->getOtherRole());
+          foreach ($relatives as $relative)
+          {
+            // check if the relation already exists
+            $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
+                PersistentObjectProxy::fromObject($relative), $relationDesc);
+            if (sizeof($nmObjects) == 0)
+            {
+              $thisEndRelation = $relationDesc->getThisEndRelation();
+              $otherEndRelation = $relationDesc->getOtherEndRelation();
+              $nmObj = $persistenceFacade->create($thisEndRelation->getOtherType());
+              // add the parent nodes to the many to many object, don't
+              // update the other side of the relation, because there may be no
+              // relation defined to the many to many object
+              $nmObj->addNode($object, $thisEndRelation->getThisRole(), true, false);
+              $nmObj->addNode($relative, $otherEndRelation->getOtherRole(), true, false);
+              $nmObj->save();
+            }
+          }
+        }
+      }
+
+      // deleted nodes
+      $deletedNodes = $object->getDeletedNodes();
+      foreach ($deletedNodes as $role => $oids)
+      {
+        $relationDesc = $this->getRelation($role);
+        // for a many to one relation, we need to update the appropriate
+        // foreign key in the object
+        if ($relationDesc instanceof RDBManyToOneRelationDescription)
+        {
+          // in a many to one only one parent is possible
+          // so we take the last oid
+          $poid = array_pop($oids);
+          if (ObjectId::isValid($poid))
+          {
+            // set the foreign key to the null
+            $fkAttr = $this->getAttribute($relationDesc->getFkName());
+            $object->setValue($fkAttr->getName(), new Zend_Db_Expr('NULL'));
+          }
+        }
+        elseif ($relationDesc instanceof RDBManyToManyRelationDescription)
+        {
+          // in a many to many relation we have to delete the relation object
+          // if it does exist
+          foreach ($oids as $relativeOid)
+          {
+            // check if the relation exists
+            $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
+                    new PersistentObjectProxy($relativeOid), $relationDesc);
+            foreach ($nmObjects as $nmObj) {
+              $nmObj->delete();
+            }
+          }
         }
       }
     }
-
     $object->setState($oldState, false);
   }
   /**
@@ -157,8 +224,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
 
       if ($relationDescription instanceof RDBManyToOneRelationDescription)
       {
-        $dbid = $oid->getFirstId();
         $thisAttr = $this->getAttribute($relationDescription->getFkName());
+        $dbid = $oid->getFirstId();
+        if ($dbid === null) {
+          $dbid = new Zend_Db_Expr('NULL');
+        }
 
         $selectStmt->from($tableName, '');
         $this->addColumns($selectStmt, $attribs, $tableName);
@@ -168,23 +238,29 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       elseif ($relationDescription instanceof RDBOneToManyRelationDescription)
       {
         $thisAttr = $this->getAttribute($relationDescription->getIdName());
+        $fkValue = $otherObjectProxy->getValue($relationDescription->getFkName());
+        if ($fkValue === null) {
+          $fkValue = new Zend_Db_Expr('NULL');
+        }
 
         $selectStmt->from($this->getRealTableName(), '');
         $this->addColumns($selectStmt, $attribs, $tableName);
         $selectStmt->where($this->quoteIdentifier($tableName).".".
-                $this->quoteIdentifier($thisAttr->getName())."= ?",
-                $otherObjectProxy->getValue($relationDescription->getFkName()));
+                $this->quoteIdentifier($thisAttr->getName())."= ?", $fkValue);
       }
       elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
       {
-        $thisRelDesc = $relationDescription->getThisEndRelation();
-        $otherRelDesc = $relationDescription->getOtherEndRelation();
+        $thisRelationDesc = $relationDescription->getThisEndRelation();
+        $otherRelationDesc = $relationDescription->getOtherEndRelation();
 
         $dbid = $oid->getFirstId();
-        $nmMapper = $persistenceFacade->getMapper($thisRelDesc->getOtherType());
-        $otherFkAttr = $nmMapper->getAttribute($otherRelDesc->getFkName());
-        $thisFkAttr = $nmMapper->getAttribute($thisRelDesc->getFkName());
-        $thisIdAttr = $this->getAttribute($thisRelDesc->getIdName());
+        if ($dbid === null) {
+          $dbid = new Zend_Db_Expr('NULL');
+        }
+        $nmMapper = $persistenceFacade->getMapper($thisRelationDesc->getOtherType());
+        $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
+        $thisFkAttr = $nmMapper->getAttribute($thisRelationDesc->getFkName());
+        $thisIdAttr = $this->getAttribute($thisRelationDesc->getIdName());
 
         $selectStmt->from($this->getRealTableName(), '');
         $this->addColumns($selectStmt, $attribs, $tableName);
@@ -197,64 +273,6 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       }
     }
     return $selectStmt;
-  }
-  /**
-   * @see RDBMapper::getRelationObjectSelectSQL()
-   */
-  protected function getRelationObjectSelectSQL(PersistentObject $object, PersistentObject $relative,
-    RDBManyToManyRelationDescription $relationDesc)
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
-
-    $nmMapper = $persistenceFacade->getMapper($relationDesc->getThisEndRelation()->getOtherType());
-
-    $thisId = $object->getOID()->getFirstId();
-    $otherId = $relative->getOID()->getFirstId();
-    $thisFkAttr = $nmMapper->getAttribute($relationDesc->getThisEndRelation()->getFkName());
-    $otherFkAttr = $nmMapper->getAttribute($relationDesc->getOtherEndRelation()->getFkName());
-
-    $criteria1 = new Criteria($nmMapper->getType(), $thisFkAttr->getName(), "=", $thisId);
-    $criteria2 = new Criteria($nmMapper->getType(), $otherFkAttr->getName(), "=", $otherId);
-    return $nmMapper->getSelectSQL(array($criteria1, $criteria2));
-  }
-  /**
-   * @see RDBMapper::getChildrenDisassociateSQL()
-   */
-  protected function getChildrenDisassociateSQL(ObjectId $oid)
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $statements = array();
-    $dbid = $oid->getFirstId();
-    $childDescs = $this->getRelations('child');
-    foreach($childDescs as $curChildDesc)
-    {
-      if ($curChildDesc->getThisAggregationKind() != 'composite')
-      {
-        if ($curChildDesc instanceof RDBManyToManyRelationDescription)
-        {
-          // in a many to many relation we have to delete the relation instances
-          $curChildDesc = $curChildDesc->getThisEndRelation();
-          $childMapper = $persistenceFacade->getMapper($curChildDesc->getOtherType());
-          $fkAttr = $childMapper->getAttribute($curChildDesc->getFkName());
-
-          $criteria = new Criteria($childMapper->getType(), $fkAttr->getName(), "=", $dbid);
-          $statement = new DeleteOperation($childMapper->getType(), array($criteria));
-          $statements[] = $statement;
-        }
-        else
-        {
-          // in a one to many relation we set the other foreign key to null
-          $childMapper = $persistenceFacade->getMapper($curChildDesc->getOtherType());
-          $fkAttr = $childMapper->getAttribute($curChildDesc->getFkName());
-
-          $criteria = new Criteria($childMapper->getType(), $fkAttr->getName(), "=", $dbid);
-          $statement = new UpdateOperation($childMapper->getType(),
-                  array($fkAttr->getName() => null), array($criteria));
-          $statements[] = $statement;
-        }
-      }
-    }
-    return $statements;
   }
   /**
    * @see RDBMapper::getInsertSQL()
@@ -430,6 +448,31 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     return $values;
   }
   /**
+   * Load the relation objects in a many to many relation from the database.
+   * @param objectProxy The proxy at this end of the relation.
+   * @param relativeProxy The proxy at the other end of the relation.
+   * @param relationDesc The RDBManyToManyRelationDescription instance describing the relation.
+   * @return Array of PersistentObject instances
+   */
+  protected function loadRelationObjects(PersistentObjectProxy $objectProxy,
+          PersistentObjectProxy $relativeProxy, RDBManyToManyRelationDescription $relationDesc)
+  {
+    $persistenceFacade = PersistenceFacade::getInstance();
+
+    $nmMapper = $persistenceFacade->getMapper($relationDesc->getThisEndRelation()->getOtherType());
+
+    $thisId = $objectProxy->getOID()->getFirstId();
+    $otherId = $relativeProxy->getOID()->getFirstId();
+    $thisFkAttr = $nmMapper->getAttribute($relationDesc->getThisEndRelation()->getFkName());
+    $otherFkAttr = $nmMapper->getAttribute($relationDesc->getOtherEndRelation()->getFkName());
+
+    $criteria1 = new Criteria($nmMapper->getType(), $thisFkAttr->getName(), "=", $thisId);
+    $criteria2 = new Criteria($nmMapper->getType(), $otherFkAttr->getName(), "=", $otherId);
+    $criteria = array($criteria1, $criteria2);
+    $nmObjects = $nmMapper->loadObjects($nmMapper->getType(), BUILDDEPTH_SINGLE, $criteria);
+    return $nmObjects;
+  }
+  /**
    * @see RDBMapper::createPKCondition()
    */
   protected function createPKCondition(ObjectId $oid)
@@ -449,7 +492,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
    * Get all foreign key relations (used to reference a parent)
    * @return An array of RDBManyToOneRelationDescription instances
    */
-  public function getForeignKeyRelations()
+  protected function getForeignKeyRelations()
   {
     if ($this->_fkRelations == null)
     {
@@ -469,7 +512,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
    * @param name The attribute name
    * @return True/False
    */
-  public function isForeignKey($name)
+  protected function isForeignKey($name)
   {
     $fkDescs = $this->getForeignKeyRelations();
     foreach($fkDescs as $fkDesc)

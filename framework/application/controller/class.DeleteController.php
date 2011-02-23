@@ -87,7 +87,7 @@ class DeleteController extends Controller
         {
           $poids = $doomedChild->getParentOIDs();
           $removedOIDs[$doid] = $poids;
-          $doomedChild->setState(STATE_DELETED);
+          $doomedChild->setState(PersistentObject::STATE_DELETED);
           $deleteArray[sizeof($deleteArray)] = &$doomedChild;
         }
       }

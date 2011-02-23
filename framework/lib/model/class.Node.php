@@ -53,6 +53,9 @@ class Node extends PersistentObject
   private $_path = '';
   private $_relationStates = array();
 
+  private $_addedNodes = array();
+  private $_deletedNodes = array();
+
   /**
    * Constructor.
    * @param type The Nodes type.
@@ -124,6 +127,13 @@ class Node extends PersistentObject
       $this->addValue($role, $other);
     }
 
+    // remember the addition
+    if (!isset($this->_addedNodes[$role])) {
+      $this->_addedNodes[$role] = array();
+    }
+    $this->_addedNodes[$role][] = $other->getOID();
+    $this->setState(PersistentOBject::STATE_DIRTY, false);
+
     // propagate add action to the other object
     if ($updateOtherSide)
     {
@@ -135,29 +145,47 @@ class Node extends PersistentObject
     }
   }
   /**
-   * Delete a Node from the given relation and add it to a NullNode.
+   * Get the object ids of the nodes that were added since the node was loaded.
+   * @return Associative array with the roles as keys and an array of ObjectId instances
+   *  as values
+   */
+  public function getAddedNodes()
+  {
+    return $this->_addedNodes;
+  }
+  /**
+   * Delete a Node from the given relation.
    * @param oid The object id of the Node to delete.
    * @param role The role of the Node. If null, the role is the Node's type. [default: null]
+   * @param updateOtherSide True/False wether to update also the other side of the relation [default: true]
    */
-  public function deleteNode(ObjectId $oid, $role=null)
+  public function deleteNode(PersistentObject $other, $role=null, $updateOtherSide=true)
   {
     if ($role == null) {
-      $role = $oid->getType();
+      $role = $other->getType();
     }
+
     $nodes = $this->getValue($role);
     if (empty($nodes)) {
+      // nothing to delete
       return;
     }
 
+    // get the relation description
+    $relDesc = null;
+    $mapper = $this->getMapper();
+    if ($mapper) {
+      $relDesc = $mapper->getRelation($role);
+    }
+
+    $oid = $other->getOID();
     if (is_array($nodes))
     {
+      // multi valued relation
       for($i=0, $count=sizeof($nodes); $i<$count; $i++)
       {
         if ($nodes[$i]->getOID() == $oid)
         {
-          $nullNode = new NullNode($this->getType());
-          $nullNode->addNode($nodes[$i], $role);
-
           // remove child
           array_splice($nodes, $i, 1);
           break;
@@ -166,16 +194,40 @@ class Node extends PersistentObject
     }
     else
     {
+      // single valued relation
       if ($nodes->getOID() == $oid)
       {
-        $nullNode = new NullNode($this->getType());
-        $nullNode->addNode($nodes, $role);
-
         // remove child
         $nodes = null;
       }
     }
     $this->setValue($role, $nodes);
+
+    // remember the deletion
+    if (!isset($this->_deletedNodes[$role])) {
+      $this->_deletedNodes[$role] = array();
+    }
+    $this->_deletedNodes[$role][] = $other->getOID();
+    $this->setState(PersistentOBject::STATE_DIRTY, false);
+
+    // propagate add action to the other object
+    if ($updateOtherSide)
+    {
+      $thisRole = $this->getType();
+      if ($relDesc) {
+        $thisRole = $relDesc->getThisRole();
+      }
+      $other->deleteNode($this, $thisRole, false);
+    }
+  }
+  /**
+   * Get the object ids of the nodes that were deleted since the node was loaded.
+   * @return Associative array with the roles as keys and an array of ObjectId instances
+   *  as values
+   */
+  public function getDeletedNodes()
+  {
+    return $this->_deletedNodes;
   }
   /**
    * Load the children of a given role and add them. If all children should be

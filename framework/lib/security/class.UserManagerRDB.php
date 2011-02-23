@@ -130,7 +130,7 @@ class UserManagerRDB extends UserManager
    */
   protected function addUserToRoleImpl(Role $role, User $user)
   {
-    $user->addRole($role->getName(), true);
+    $user->addRole($role->getName());
   }
 
   /**
@@ -138,7 +138,7 @@ class UserManagerRDB extends UserManager
    */
   protected function removeUserFromRoleImpl(Role $role, User $user)
   {
-    $user->removeRole($role->getName(), true);
+    $user->removeRole($role->getName());
   }
 }
 ?>
