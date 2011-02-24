@@ -2,7 +2,7 @@
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
-class PersistentObjectTest extends WCMFTestCase
+class NodeRelationTest extends WCMFTestCase
 {
   private $oids = array();
   private $objects = array();

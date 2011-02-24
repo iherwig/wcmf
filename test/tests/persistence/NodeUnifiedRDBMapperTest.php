@@ -154,30 +154,6 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
   }
 
-  public function testDisassociateSQL() {
-    $mapper = new PageRDBMapper($this->dbParams);
-
-    $operations = $this->callProtectedMethod($mapper, 'getChildrenDisassociateSQL',
-            array(new ObjectId('Page', 1)));
-    $this->assertTrue(sizeof($operations) == 4);
-
-    $op = $operations[0];
-    $str = $op->__toString();
-    $this->assertTrue($str == 'UpdateOperation:type=Image,values=(fk_titlepage_id=),criteria=(Image.fk_titlepage_id = 1)');
-
-    $op = $operations[1];
-    $str = $op->__toString();
-    $this->assertTrue($str == 'UpdateOperation:type=Image,values=(fk_page_id=),criteria=(Image.fk_page_id = 1)');
-
-    $op = $operations[2];
-    $str = $op->__toString();
-    $this->assertTrue($str == 'DeleteOperation:type=NMPageDocument,values=(),criteria=(NMPageDocument.fk_page_id = 1)');
-
-    $op = $operations[3];
-    $str = $op->__toString();
-    $this->assertTrue($str == 'UpdateOperation:type=Page,values=(fk_page_id=),criteria=(Page.fk_page_id = 1)');
-  }
-
   public function testInsertSQL() {
     $mapper = new PageRDBMapper($this->dbParams);
 

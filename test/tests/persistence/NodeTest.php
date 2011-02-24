@@ -2,7 +2,7 @@
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
-class PersistentObjectTest extends WCMFTestCase
+class NodeTest extends WCMFTestCase
 {
   public function _testCaching()
   {
