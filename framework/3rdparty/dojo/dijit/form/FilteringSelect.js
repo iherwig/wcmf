@@ -9,8 +9,10 @@ if(!dojo._hasResource["dijit.form.FilteringSelect"]){
 dojo._hasResource["dijit.form.FilteringSelect"]=true;
 dojo.provide("dijit.form.FilteringSelect");
 dojo.require("dijit.form.ComboBox");
-dojo.declare("dijit.form.FilteringSelect",[dijit.form.MappedTextBox,dijit.form.ComboBoxMixin],{_isvalid:true,required:true,_lastDisplayedValue:"",isValid:function(){
-return this._isvalid||(!this.required&&this.get("displayedValue")=="");
+dojo.declare("dijit.form.FilteringSelect",[dijit.form.MappedTextBox,dijit.form.ComboBoxMixin],{required:true,_lastDisplayedValue:"",_isValidSubset:function(){
+return this._opened;
+},isValid:function(){
+return this.item||(!this.required&&this.get("displayedValue")=="");
 },_refreshState:function(){
 if(!this.searchTimer){
 this.inherited(arguments);
@@ -22,9 +24,8 @@ return;
 if(!_1.length){
 this.valueNode.value="";
 dijit.form.TextBox.superclass._setValueAttr.call(this,"",_3||(_3===undefined&&!this._focused));
-this._isvalid=false;
+this._set("item",null);
 this.validate(this._focused);
-this.item=null;
 }else{
 this.set("item",_1[0],_3);
 }
@@ -32,11 +33,10 @@ this.set("item",_1[0],_3);
 if(_5.query[this.searchAttr]!=this._lastQuery){
 return;
 }
+dijit.form.ComboBoxMixin.prototype._openResultList.apply(this,arguments);
 if(this.item===undefined){
-this._isvalid=_4.length!=0||this._maxOptions!=0;
 this.validate(true);
 }
-dijit.form.ComboBoxMixin.prototype._openResultList.apply(this,arguments);
 },_getValueAttr:function(){
 return this.valueNode.value;
 },_getValueField:function(){
@@ -55,20 +55,25 @@ this.store.fetchItemByIdentity({identity:_6,onItem:function(_9){
 _8._callbackSetLabel(_9?[_9]:[],undefined,_7);
 }});
 },_setItemAttr:function(_a,_b,_c){
-this._isvalid=true;
 this.inherited(arguments);
 this.valueNode.value=this.value;
 this._lastDisplayedValue=this.textbox.value;
 },_getDisplayQueryString:function(_d){
 return _d.replace(/([\\\*\?])/g,"\\$1");
 },_setDisplayedValueAttr:function(_e,_f){
+if(_e==null){
+_e="";
+}
 if(!this._created){
+if(!("displayedValue" in this.params)){
+return;
+}
 _f=false;
 }
 if(this.store){
-this._hideResultList();
+this.closeDropDown();
 var _10=dojo.clone(this.query);
-this._lastQuery=_10[this.searchAttr]=this._getDisplayQueryString(_e);
+this._lastQuery=_10[this.labelAttr||this.searchAttr]=this._getDisplayQueryString(_e);
 this.textbox.value=_e;
 this._lastDisplayedValue=_e;
 var _11=this;
@@ -83,9 +88,6 @@ dojo.hitch(_11,"_callbackSetLabel")([],undefined,false);
 dojo.mixin(_12,this.fetchProperties);
 this._fetchHandle=this.store.fetch(_12);
 }
-},postMixInProperties:function(){
-this.inherited(arguments);
-this._isvalid=!this.required;
 },undo:function(){
 this.set("displayedValue",this._lastDisplayedValue);
 }});

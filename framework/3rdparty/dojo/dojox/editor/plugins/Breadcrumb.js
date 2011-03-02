@@ -8,18 +8,18 @@
 if(!dojo._hasResource["dojox.editor.plugins.Breadcrumb"]){
 dojo._hasResource["dojox.editor.plugins.Breadcrumb"]=true;
 dojo.provide("dojox.editor.plugins.Breadcrumb");
-dojo.require("dijit._editor._Plugin");
-dojo.require("dijit._editor.range");
-dojo.require("dojo.i18n");
 dojo.require("dojo.string");
 dojo.require("dijit.Toolbar");
-dojo.require("dijit.form.Button");
-dojo.require("dijit._editor.selection");
 dojo.require("dijit.Menu");
 dojo.require("dijit.MenuItem");
 dojo.require("dijit.MenuSeparator");
+dojo.require("dijit._editor.range");
+dojo.require("dijit._editor.selection");
+dojo.require("dijit._editor._Plugin");
+dojo.require("dijit.form.Button");
+dojo.require("dojo.i18n");
+dojo.requireLocalization("dojox.editor.plugins","Breadcrumb",null,"ROOT,cs,de,es,fr,hu,it,ja,kk,ko,pl,pt,ro,ru,zh,zh-tw");
 dojo.experimental("dojox.editor.plugins.Breadcrumb");
-dojo.requireLocalization("dojox.editor.plugins","Breadcrumb",null,"ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ro,ru,zh,zh-tw");
 dojo.declare("dojox.editor.plugins._BreadcrumbMenuTitle",[dijit._Widget,dijit._Templated,dijit._Contained],{templateString:"<tr><td dojoAttachPoint=\"title\" colspan=\"4\" class=\"dijitToolbar\" style=\"font-weight: bold; padding: 3px;\"></td></tr>",menuTitle:"",postCreate:function(){
 dojo.setSelectable(this.domNode,false);
 var _1=this.id+"_text";
@@ -210,7 +210,7 @@ this.breadcrumbBar.domNode.className=this.breadcrumbBar.domNode.className;
 }
 }
 },updateState:function(){
-if(dojo.style(this.editor.iframe,"display")==="none"){
+if(dojo.style(this.editor.iframe,"display")==="none"||this.get("disabled")){
 dojo.style(this.breadcrumbBar.domNode,"display","none");
 }else{
 if(dojo.style(this.breadcrumbBar.domNode,"display")==="none"){
@@ -222,8 +222,12 @@ this.editor.resize({h:_10.h});
 }
 },destroy:function(){
 if(this.breadcrumbBar){
-this.breadcrumbBar.destroy();
+this.breadcrumbBar.destroyRecursive();
 this.breadcrumbBar=null;
+}
+if(this._menu){
+this._menu.destroyRecursive();
+delete this._menu;
 }
 this._buttons=null;
 delete this.editor.breadcrumbBar;

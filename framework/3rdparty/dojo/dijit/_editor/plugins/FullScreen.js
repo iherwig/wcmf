@@ -12,7 +12,7 @@ dojo.require("dojo.window");
 dojo.require("dojo.i18n");
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
-dojo.requireLocalization("dijit._editor","commands",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit._editor","commands",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{zIndex:500,_origState:null,_origiFrameState:null,_resizeHandle:null,isFullscreen:false,toggle:function(){
 this.button.set("checked",!this.button.get("checked"));
 },_initButton:function(){
@@ -205,6 +205,8 @@ ed.resize({h:mb.h});
 dojo.window.scrollIntoView(_13.editor.toolbar.domNode);
 },100);
 }
+},updateState:function(){
+this.button.set("disabled",this.get("disabled"));
 },destroy:function(){
 if(this._resizeHandle){
 dojo.disconnect(this._resizeHandle);

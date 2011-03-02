@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.dnd.common"]){
 dojo._hasResource["dojo.dnd.common"]=true;
 dojo.provide("dojo.dnd.common");
+dojo.getObject("dnd",true,dojo);
 dojo.dnd.getCopyKeyState=dojo.isCopyKey;
 dojo.dnd._uniqueId=0;
 dojo.dnd.getUniqueId=function(){

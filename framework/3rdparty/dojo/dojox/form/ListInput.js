@@ -12,7 +12,7 @@ dojo.provide("dojox.form.ListInput");
 dojo.require("dijit.form._FormWidget");
 dojo.require("dijit.form.ValidationTextBox");
 dojo.require("dijit.InlineEditBox");
-dojo.requireLocalization("dijit","common",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit","common",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.declare("dojox.form.ListInput",[dijit.form._FormValueWidget],{constructor:function(){
 this._items=[];
 if(!dojo.isArray(this.delimiter)){
@@ -24,7 +24,6 @@ this.regExp="^"+this.regExp+r+"$";
 this.inherited(arguments);
 this._createInputBox();
 },_setReadOnlyInputAttr:function(_1){
-console.warn("_setReadOnlyInputAttr",this.id,_1);
 if(!this._started){
 return this._createInputBox();
 }
@@ -35,11 +34,10 @@ if(!this._started){
 return;
 }
 for(var i in this._items){
-this._items[i].attr("readOnlyItem",_2);
+this._items[i].set("readOnlyItem",_2);
 }
 },_createInputBox:function(){
-console.warn("_createInputBox",this.id,this.readOnlyInput);
-dojo[(this.readOnlyInput?"add":"remove")+"Class"](this._inputNode,"dijitHidden");
+dojo.toggleClass(this._inputNode,"dijitHidden",this.readOnlyInput);
 if(this.readOnlyInput){
 return;
 }
@@ -47,7 +45,8 @@ if(this._input){
 return;
 }
 if(this.inputHandler===null){
-return !console.warn("you must add some handler to connect to input field");
+console.warn("you must add some handler to connect to input field");
+return false;
 }
 if(dojo.isString(this.inputHandler)){
 this.inputHandler=this.inputHandler.split(",");
@@ -119,7 +118,7 @@ if(this._lastValueReported.length==0){
 this._lastValueReported=this.value;
 }
 if(!this.readOnlyInput){
-this._input.attr("value","");
+this._input.set("value","");
 }
 if(this._onChangeActive){
 this.onChange(this.value);
@@ -192,21 +191,17 @@ this._focusInput();
 }
 }
 },_onItemChange:function(_14,_15){
-if(!_15){
-_15=_14.attr("value");
-}
+_15=_15||_14.get("value");
 this._testItem(_14,_15);
 this._updateValues();
 },_onItemEdit:function(_16){
-dojo.removeClass(_16.domNode,"dijitError");
-dojo.removeClass(_16.domNode,this.baseClass+"Match");
-dojo.removeClass(_16.domNode,this.baseClass+"Mismatch");
+dojo.removeClass(_16.domNode,["dijitError",this.baseClass+"Match",this.baseClass+"Mismatch"]);
 },_testItem:function(_17,_18){
 var re=new RegExp(this.regExpGen(this.constraints));
 var _19=_18.match(re);
 dojo.removeClass(_17.domNode,this.baseClass+(!_19?"Match":"Mismatch"));
 dojo.addClass(_17.domNode,this.baseClass+(_19?"Match":"Mismatch"));
-dojo[(!_19?"add":"remove")+"Class"](_17.domNode,"dijitError");
+dojo.toggleClass(_17.domNode,"dijitError",!_19);
 if((this.showCloseButtonWhenValid&&_19)||(this.showCloseButtonWhenInvalid&&!_19)){
 dojo.addClass(_17.domNode,this.baseClass+"Closable");
 }else{
@@ -234,11 +229,11 @@ return this.regExp;
 },_setDisabledAttr:function(_1d){
 if(!this.readOnlyItem){
 for(var i in this._items){
-this._items[i].attr("disabled",_1d);
+this._items[i].set("disabled",_1d);
 }
 }
 if(!this.readOnlyInput){
-this._input.attr("disabled",_1d);
+this._input.set("disabled",_1d);
 }
 this.inherited(arguments);
 },_onHandler:function(_1e){
@@ -254,11 +249,12 @@ this._input.focus();
 }
 },_inputOnKeyDown:function(e){
 this._currentItem=null;
-if(e.keyCode==dojo.keys.BACKSPACE&&this._input.attr("value")==""&&this.get("lastItem")){
+var val=this._input.get("value");
+if(e.keyCode==dojo.keys.BACKSPACE&&val==""&&this.get("lastItem")){
 this._destroyItem(this.get("lastItem"));
 }else{
-if(e.keyCode==dojo.keys.ENTER&&this._input.attr("value")!=""){
-this.add(this._input.attr("value"));
+if(e.keyCode==dojo.keys.ENTER&&val!=""){
+this.add(val);
 }else{
 if(e.keyCode==dojo.keys.LEFT_ARROW&&this._getCursorPos(this._input.focusNode)==0&&!this.readOnlyItem&&this.useArrowForEdit){
 this._editBefore();
@@ -266,8 +262,9 @@ this._editBefore();
 }
 }
 },_inputOnBlur:function(){
-if(this.useOnBlur&&this._input.attr("value")!=""){
-this.add(this._input.attr("value"));
+var val=this._input.get("value");
+if(this.useOnBlur&&val!=""){
+this.add(val);
 }
 },_getMatchedValueAttr:function(){
 return this._getValues(dojo.hitch(this,this._matchValidator));
@@ -281,7 +278,7 @@ var _22=this._items[i];
 if(_22===null){
 continue;
 }
-var _23=_22.attr("value");
+var _23=_22.get("value");
 if(_20(_23)){
 _21.push(_23);
 }
@@ -374,7 +371,7 @@ if(!_30){
 this._createInlineEditBox();
 }else{
 if(this._editBox){
-this._editBox.attr("disabled",true);
+this._editBox.set("disabled",true);
 }
 }
 },_createInlineEditBox:function(){
@@ -385,7 +382,7 @@ if(!this._started){
 return;
 }
 if(this._editBox){
-this._editBox.attr("disabled",false);
+this._editBox.set("disabled",false);
 return;
 }
 this._editBox=new dijit.InlineEditBox({value:this.value,editor:"dijit.form.ValidationTextBox",editorParams:{regExp:this.regExp}},this.labelNode);
@@ -406,10 +403,10 @@ this._handleKeyDown=dojo.connect(this._editBox.editWidget,"_onKeyPress",this,"on
 this.onEdit();
 },_setDisabledAttr:function(_32){
 if(!this.readOnlyItem){
-this._editBox.attr("disabled",_32);
+this._editBox.set("disabled",_32);
 }
 },_getValueAttr:function(){
-return (!this.readOnlyItem&&this._started?this._editBox.attr("value"):this.value);
+return (!this.readOnlyItem&&this._started?this._editBox.get("value"):this.value);
 },destroy:function(){
 if(this._editBox){
 this._editBox.destroy();

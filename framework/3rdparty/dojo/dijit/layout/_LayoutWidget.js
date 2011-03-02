@@ -11,9 +11,9 @@ dojo.provide("dijit.layout._LayoutWidget");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Container");
 dojo.require("dijit._Contained");
-dojo.declare("dijit.layout._LayoutWidget",[dijit._Widget,dijit._Container,dijit._Contained],{baseClass:"dijitLayoutContainer",isLayoutContainer:true,postCreate:function(){
-dojo.addClass(this.domNode,"dijitContainer");
+dojo.declare("dijit.layout._LayoutWidget",[dijit._Widget,dijit._Container,dijit._Contained],{baseClass:"dijitLayoutContainer",isLayoutContainer:true,buildRendering:function(){
 this.inherited(arguments);
+dojo.addClass(this.domNode,"dijitContainer");
 },startup:function(){
 if(this._started){
 return;
@@ -51,72 +51,74 @@ this._contentBox={l:dojo._toPixelValue(_4,cs.paddingLeft),t:dojo._toPixelValue(_
 this.layout();
 },layout:function(){
 },_setupChild:function(_5){
-dojo.addClass(_5.domNode,this.baseClass+"-child");
-if(_5.baseClass){
-dojo.addClass(_5.domNode,this.baseClass+"-"+_5.baseClass);
-}
-},addChild:function(_6,_7){
+var _6=this.baseClass+"-child "+(_5.baseClass?this.baseClass+"-"+_5.baseClass:"");
+dojo.addClass(_5.domNode,_6);
+},addChild:function(_7,_8){
 this.inherited(arguments);
 if(this._started){
-this._setupChild(_6);
+this._setupChild(_7);
 }
-},removeChild:function(_8){
-dojo.removeClass(_8.domNode,this.baseClass+"-child");
-if(_8.baseClass){
-dojo.removeClass(_8.domNode,this.baseClass+"-"+_8.baseClass);
-}
+},removeChild:function(_9){
+var _a=this.baseClass+"-child"+(_9.baseClass?" "+this.baseClass+"-"+_9.baseClass:"");
+dojo.removeClass(_9.domNode,_a);
 this.inherited(arguments);
 }});
-dijit.layout.marginBox2contentBox=function(_9,mb){
-var cs=dojo.getComputedStyle(_9);
-var me=dojo._getMarginExtents(_9,cs);
-var pb=dojo._getPadBorderExtents(_9,cs);
-return {l:dojo._toPixelValue(_9,cs.paddingLeft),t:dojo._toPixelValue(_9,cs.paddingTop),w:mb.w-(me.w+pb.w),h:mb.h-(me.h+pb.h)};
+dijit.layout.marginBox2contentBox=function(_b,mb){
+var cs=dojo.getComputedStyle(_b);
+var me=dojo._getMarginExtents(_b,cs);
+var pb=dojo._getPadBorderExtents(_b,cs);
+return {l:dojo._toPixelValue(_b,cs.paddingLeft),t:dojo._toPixelValue(_b,cs.paddingTop),w:mb.w-(me.w+pb.w),h:mb.h-(me.h+pb.h)};
 };
 (function(){
-var _a=function(_b){
-return _b.substring(0,1).toUpperCase()+_b.substring(1);
+var _c=function(_d){
+return _d.substring(0,1).toUpperCase()+_d.substring(1);
 };
-var _c=function(_d,_e){
-_d.resize?_d.resize(_e):dojo.marginBox(_d.domNode,_e);
-dojo.mixin(_d,dojo.marginBox(_d.domNode));
-dojo.mixin(_d,_e);
+var _e=function(_f,dim){
+_f.resize?_f.resize(dim):dojo.marginBox(_f.domNode,dim);
+dojo.mixin(_f,dojo.marginBox(_f.domNode));
+dojo.mixin(_f,dim);
 };
-dijit.layout.layoutChildren=function(_f,dim,_10){
+dijit.layout.layoutChildren=function(_10,dim,_11,_12,_13){
 dim=dojo.mixin({},dim);
-dojo.addClass(_f,"dijitLayoutContainer");
-_10=dojo.filter(_10,function(_11){
-return _11.layoutAlign!="client";
-}).concat(dojo.filter(_10,function(_12){
-return _12.layoutAlign=="client";
+dojo.addClass(_10,"dijitLayoutContainer");
+_11=dojo.filter(_11,function(_14){
+return _14.region!="center"&&_14.layoutAlign!="client";
+}).concat(dojo.filter(_11,function(_15){
+return _15.region=="center"||_15.layoutAlign=="client";
 }));
-dojo.forEach(_10,function(_13){
-var elm=_13.domNode,pos=_13.layoutAlign;
-var _14=elm.style;
-_14.left=dim.l+"px";
-_14.top=dim.t+"px";
-_14.bottom=_14.right="auto";
-dojo.addClass(elm,"dijitAlign"+_a(pos));
+dojo.forEach(_11,function(_16){
+var elm=_16.domNode,pos=(_16.region||_16.layoutAlign);
+var _17=elm.style;
+_17.left=dim.l+"px";
+_17.top=dim.t+"px";
+_17.bottom=_17.right="auto";
+dojo.addClass(elm,"dijitAlign"+_c(pos));
+var _18={};
+if(_12&&_12==_16.id){
+_18[_16.region=="top"||_16.region=="bottom"?"h":"w"]=_13;
+}
 if(pos=="top"||pos=="bottom"){
-_c(_13,{w:dim.w});
-dim.h-=_13.h;
+_18.w=dim.w;
+_e(_16,_18);
+dim.h-=_16.h;
 if(pos=="top"){
-dim.t+=_13.h;
+dim.t+=_16.h;
 }else{
-_14.top=dim.t+dim.h+"px";
+_17.top=dim.t+dim.h+"px";
 }
 }else{
 if(pos=="left"||pos=="right"){
-_c(_13,{h:dim.h});
-dim.w-=_13.w;
+_18.h=dim.h;
+_e(_16,_18);
+dim.w-=_16.w;
 if(pos=="left"){
-dim.l+=_13.w;
+dim.l+=_16.w;
 }else{
-_14.left=dim.l+dim.w+"px";
+_17.left=dim.l+dim.w+"px";
 }
 }else{
-if(pos=="client"){
-_c(_13,dim);
+if(pos=="client"||pos=="center"){
+_e(_16,dim);
 }
 }
 }

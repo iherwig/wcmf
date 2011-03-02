@@ -79,5 +79,8 @@ if(dojo.indexOf(this.root.children,_1c)!=-1){
 this._requeryTop();
 }
 this.inherited(arguments);
+},onSetItem:function(_1d,_1e,_1f,_20){
+this._requeryTop();
+this.inherited(arguments);
 }});
 }

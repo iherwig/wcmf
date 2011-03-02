@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.math.curves"]){
 dojo._hasResource["dojox.math.curves"]=true;
 dojo.provide("dojox.math.curves");
+dojo.getObject("math.curves",true,dojox);
 dojo.mixin(dojox.math.curves,{Line:function(_1,_2){
 this.start=_1;
 this.end=_2;

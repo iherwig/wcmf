@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.JsonRestStore"]){
 dojo._hasResource["dojox.data.JsonRestStore"]=true;
 dojo.provide("dojox.data.JsonRestStore");
-dojo.require("dojox.data.ServiceStore");
 dojo.require("dojox.rpc.JsonRest");
+dojo.require("dojox.data.ServiceStore");
 dojo.declare("dojox.data.JsonRestStore",dojox.data.ServiceStore,{constructor:function(_1){
 dojo.connect(dojox.rpc.Rest._index,"onUpdate",this,function(_2,_3,_4,_5){
 var _6=this.service.servicePath;

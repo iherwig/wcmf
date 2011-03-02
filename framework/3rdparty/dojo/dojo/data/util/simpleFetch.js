@@ -9,6 +9,7 @@ if(!dojo._hasResource["dojo.data.util.simpleFetch"]){
 dojo._hasResource["dojo.data.util.simpleFetch"]=true;
 dojo.provide("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.sorter");
+dojo.getObject("data.util.simpleFetch",true,dojo);
 dojo.data.util.simpleFetch.fetch=function(_1){
 _1=_1||{};
 if(!_1.store){

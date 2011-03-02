@@ -25,10 +25,12 @@ if(!dojo.hasClass(_2.target,"dojoxCalendarMonthLabel")){
 dojo.stopEvent(_2);
 return;
 }
-var _3=_2.target.parentNode.cellIndex+(_2.target.parentNode.parentNode.rowIndex*4);
-var _4=this.get("value");
-_4.setMonth(_3);
-this.onValueSelected(_4,_3);
+var _3=_2.target.parentNode;
+var _4=_3.cellIndex+(_3.parentNode.rowIndex*4);
+var _5=this.get("value");
+_5.setMonth(_4);
+_5.setMonth(_4);
+this.onValueSelected(_5,_4);
 }});
 dojo.declare("dojox.widget._CalendarYear",null,{parent:null,constructor:function(){
 this._addView(dojox.widget._CalendarYearView);
@@ -38,21 +40,29 @@ this.cloneClass(".dojoxCalendarYearTemplate",3);
 this.cloneClass(".dojoxCalendarYearGroupTemplate",2);
 this._populateYears();
 this.addFx(".dojoxCalendarYearLabel",this.domNode);
-},_setValueAttr:function(_5){
-this._populateYears(_5.getFullYear());
-},_populateYears:dojox.widget._CalendarMonthYearView.prototype._populateYears,adjustDate:function(_6,_7){
-return dojo.date.add(_6,"year",_7*12);
-},onClick:function(_8){
-if(!dojo.hasClass(_8.target,"dojoxCalendarYearLabel")){
-dojo.stopEvent(_8);
+},_setValueAttr:function(_6){
+this._populateYears(_6.getFullYear());
+},_populateYears:dojox.widget._CalendarMonthYearView.prototype._populateYears,adjustDate:function(_7,_8){
+return dojo.date.add(_7,"year",_8*12);
+},onClick:function(_9){
+if(!dojo.hasClass(_9.target,"dojoxCalendarYearLabel")){
+dojo.stopEvent(_9);
 return;
 }
-var _9=Number(_8.target.innerHTML);
-var _a=this.get("value");
-_a.setYear(_9);
-this.onValueSelected(_a,_9);
+var _a=Number(_9.target.innerHTML);
+var _b=this.get("value");
+_b.setYear(_a);
+this.onValueSelected(_b,_a);
 }});
 dojo.declare("dojox.widget.Calendar3Pane",[dojox.widget._CalendarBase,dojox.widget._CalendarDay,dojox.widget._CalendarMonth,dojox.widget._CalendarYear],{});
-dojo.declare("dojox.widget.MonthlyCalendar",[dojox.widget._CalendarBase,dojox.widget._CalendarMonth],{});
-dojo.declare("dojox.widget.YearlyCalendar",[dojox.widget._CalendarBase,dojox.widget._CalendarYear],{});
+dojo.declare("dojox.widget.MonthlyCalendar",[dojox.widget._CalendarBase,dojox.widget._CalendarMonth],{_makeDate:function(_c){
+var _d=new Date();
+_d.setMonth(_c);
+return _d;
+}});
+dojo.declare("dojox.widget.YearlyCalendar",[dojox.widget._CalendarBase,dojox.widget._CalendarYear],{_makeDate:function(_e){
+var _f=new Date();
+_f.setFullYear(_e);
+return _f;
+}});
 }

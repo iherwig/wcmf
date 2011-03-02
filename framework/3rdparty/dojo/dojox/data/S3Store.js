@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.S3Store"]){
 dojo._hasResource["dojox.data.S3Store"]=true;
 dojo.provide("dojox.data.S3Store");
-dojo.require("dojox.rpc.ProxiedPath");
 dojo.require("dojox.data.JsonRestStore");
+dojo.require("dojox.rpc.ProxiedPath");
 dojo.declare("dojox.data.S3Store",dojox.data.JsonRestStore,{_processResults:function(_1){
 var _2=_1.getElementsByTagName("Key");
 var _3=[];

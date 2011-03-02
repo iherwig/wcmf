@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.math.BigInteger-ext"]){
 dojo._hasResource["dojox.math.BigInteger-ext"]=true;
 dojo.provide("dojox.math.BigInteger-ext");
-dojo.experimental("dojox.math.BigInteger-ext");
 dojo.require("dojox.math.BigInteger");
+dojo.experimental("dojox.math.BigInteger-ext");
 (function(){
 var _1=dojox.math.BigInteger,_2=_1._nbi,_3=_1._nbv,_4=_1._nbits,_5=_1._Montgomery;
 function _6(){

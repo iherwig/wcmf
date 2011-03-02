@@ -9,7 +9,6 @@ if(!dojo._hasResource["dojox.html.format"]){
 dojo._hasResource["dojox.html.format"]=true;
 dojo.provide("dojox.html.format");
 dojo.require("dojox.html.entities");
-(function(){
 dojox.html.format.prettyPrint=function(_1,_2,_3,_4,_5){
 var _6=[];
 var _7=0;
@@ -20,7 +19,7 @@ var _b=[];
 var i;
 var _c=/[=]([^"']+?)(\s|>)/g;
 var _d=/style=("[^"]*"|'[^']*'|\S*)/gi;
-var _e=/\s\w+=("[^"]*"|'[^']*'|\S*)/gi;
+var _e=/[\w-]+=("[^"]*"|'[^']*'|\S*)/gi;
 if(_2&&_2>0&&_2<10){
 _9="";
 for(i=0;i<_2;i++){
@@ -340,5 +339,4 @@ _a="";
 }
 return _6.join("");
 };
-})();
 }

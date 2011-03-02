@@ -101,13 +101,9 @@
 .tundra .dijitTooltipLeft {
 	padding-right: 14px;
 }
-.dj_ie6 .tundra .dijitTooltipLeft {
-	padding-left: 15px;
-}
 .tundra .dijitTooltipLeft .dijitTooltipConnector {
 	
 	right: 0px;
-	bottom: 3px;
 	background:url("images/tooltipConnectorRight.png") no-repeat top left;
 	width:16px;
 	height:14px;
@@ -121,7 +117,6 @@
 .tundra .dijitTooltipRight .dijitTooltipConnector {
 	
 	left: 0px;
-	bottom: 3px;
 	background:url("images/tooltipConnectorLeft.png") no-repeat top left;
 	width:16px;
 	height:14px;

@@ -12,25 +12,16 @@ dojo.require("dojox.gfx");
 dojo.require("dojox.widget.gauge._Gauge");
 dojo.experimental("dojox.widget.AnalogGauge");
 dojo.declare("dojox.widget.gauge.AnalogLineIndicator",[dojox.widget.gauge._Indicator],{_getShapes:function(){
-var _1=[];
-_1[0]=this._gauge.surface.createLine({x1:0,y1:-this.offset,x2:0,y2:-this.length-this.offset}).setStroke({color:this.color,width:this.width});
-return _1;
-},draw:function(_2){
+return [this._gauge.surface.createLine({x1:0,y1:-this.offset,x2:0,y2:-this.length-this.offset}).setStroke({color:this.color,width:this.width})];
+},draw:function(_1){
 if(this.shapes){
-this._move(_2);
+this._move(_1);
 }else{
 if(this.text){
 this._gauge.surface.rawNode.removeChild(this.text);
 this.text=null;
 }
-var v=this.value;
-if(v<this._gauge.min){
-v=this._gauge.min;
-}
-if(v>this._gauge.max){
-v=this._gauge.max;
-}
-var a=this._gauge._getAngle(v);
+var a=this._gauge._getAngle(Math.min(Math.max(this.value,this._gauge.min),this._gauge.max));
 this.color=this.color||"#000000";
 this.length=this.length||this._gauge.radius;
 this.width=this.width||1;
@@ -50,18 +41,15 @@ this.shapes[s].getEventSource().style.cursor="pointer";
 }
 }
 if(this.label){
-var _3=this.length+this.offset;
-var x=this._gauge.cx+(_3+5)*Math.sin(this._gauge._getRadians(a));
-var y=this._gauge.cy-(_3+5)*Math.cos(this._gauge._getRadians(a));
-var _4="start";
+var _2=this.length+this.offset,_3=this._gauge._getRadians(a),x=this._gauge.cx+(_2+5)*Math.sin(_3),y=this._gauge.cy-(_2+5)*Math.cos(_3),_4="start",aa=Math.abs(a);
 if(a<=-10){
 _4="end";
 }
-if(a>-10&&a<10){
+if(aa<10){
 _4="middle";
 }
 var _5="bottom";
-if((a<-90)||(a>90)){
+if(aa>90){
 _5="top";
 }
 this.text=this._gauge.drawText(""+this.label,x,y,_4,_5,this.color,this.font);
@@ -69,14 +57,7 @@ this.text=this._gauge.drawText(""+this.label,x,y,_4,_5,this.color,this.font);
 this.currentValue=this.value;
 }
 },_move:function(_6){
-var v=this.value;
-if(v<this._gauge.min){
-v=this._gauge.min;
-}
-if(v>this._gauge.max){
-v=this._gauge.max;
-}
-var c=this.currentValue;
+var v=Math.min(Math.max(this.value,this._gauge.min),this._gauge.max),c=this.currentValue;
 if(_6){
 var _7=this._gauge._getAngle(v);
 for(var i in this.shapes){
@@ -155,18 +136,13 @@ if(_f.shape){
 this.surface.remove(_f.shape);
 _f.shape=null;
 }
-var a1;
-var a2;
+var a1,a2;
 if((_f.low==this.min)&&(_f.high==this.max)&&((this.endAngle-this.startAngle)==360)){
 _10=this.surface.createCircle({cx:this.cx,cy:this.cy,r:this.radius});
 }else{
 a1=this._getRadians(this._getAngle(_f.low));
 a2=this._getRadians(this._getAngle(_f.high));
-var x1=this.cx+this.radius*Math.sin(a1);
-var y1=this.cy-this.radius*Math.cos(a1);
-var x2=this.cx+this.radius*Math.sin(a2);
-var y2=this.cy-this.radius*Math.cos(a2);
-var big=0;
+var x1=this.cx+this.radius*Math.sin(a1),y1=this.cy-this.radius*Math.cos(a1),x2=this.cx+this.radius*Math.sin(a2),y2=this.cy-this.radius*Math.cos(a2),big=0;
 if((a2-a1)>Math.PI){
 big=1;
 }
@@ -208,14 +184,9 @@ _10.getEventSource().setAttribute("hover",_f.hover);
 }
 _f.shape=_10;
 },getRangeUnderMouse:function(_11){
-var _12=null;
-var pos=dojo.coords(this.gaugeContent);
-var x=_11.clientX-pos.x;
-var y=_11.clientY-pos.y;
-var r=Math.sqrt((y-this.cy)*(y-this.cy)+(x-this.cx)*(x-this.cx));
+var _12=null,pos=dojo.coords(this.gaugeContent),x=_11.clientX-pos.x,y=_11.clientY-pos.y,r=Math.sqrt((y-this.cy)*(y-this.cy)+(x-this.cx)*(x-this.cx));
 if(r<this.radius){
-var _13=this._getDegrees(Math.atan2(y-this.cy,x-this.cx)+Math.PI/2);
-var _14=this._getValueForAngle(_13);
+var _13=this._getDegrees(Math.atan2(y-this.cy,x-this.cx)+Math.PI/2),_14=this._getValueForAngle(_13);
 if(this._rangeData){
 for(var i=0;(i<this._rangeData.length)&&!_12;i++){
 if((Number(this._rangeData[i].low)<=_14)&&(Number(this._rangeData[i].high)>=_14)){
@@ -226,19 +197,9 @@ _12=this._rangeData[i];
 }
 return _12;
 },_dragIndicator:function(_15,_16){
-var pos=dojo.coords(_15.gaugeContent);
-var x=_16.clientX-pos.x;
-var y=_16.clientY-pos.y;
-var _17=_15._getDegrees(Math.atan2(y-_15.cy,x-_15.cx)+Math.PI/2);
-var _18=_15._getValueForAngle(_17);
-if(_18<_15.min){
-_18=_15.min;
-}
-if(_18>_15.max){
-_18=_15.max;
-}
-_15._drag.value=_18;
-_15._drag.currentValue=_18;
+var pos=dojo.coords(_15.gaugeContent),x=_16.clientX-pos.x,y=_16.clientY-pos.y,_17=_15._getDegrees(Math.atan2(y-_15.cy,x-_15.cx)+Math.PI/2),_18=_15._getValueForAngle(_17);
+_18=Math.min(Math.max(_18,_15.min),_15.max);
+_15._drag.value=_15._drag.currentValue=_18;
 _15._drag.onDragMove(_15._drag);
 _15._drag.draw(true);
 dojo.stopEvent(_16);

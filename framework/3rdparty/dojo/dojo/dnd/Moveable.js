@@ -21,7 +21,7 @@ this.handle=this.node;
 this.delay=_2.delay>0?_2.delay:0;
 this.skip=_2.skip;
 this.mover=_2.mover?_2.mover:dojo.dnd.Mover;
-this.events=[dojo.connect(this.handle,"onmousedown",this,"onMouseDown"),dojo.connect(this.handle,"ondragstart",this,"onSelectStart"),dojo.connect(this.handle,"onselectstart",this,"onSelectStart")];
+this.events=[dojo.connect(this.handle,"onmousedown",this,"onMouseDown"),dojo.connect(this.handle,"ontouchstart",this,"onMouseDown"),dojo.connect(this.handle,"ondragstart",this,"onSelectStart"),dojo.connect(this.handle,"onselectstart",this,"onSelectStart")];
 },markupFactory:function(_3,_4){
 return new dojo.dnd.Moveable(_4,_3);
 },destroy:function(){
@@ -32,15 +32,17 @@ if(this.skip&&dojo.dnd.isFormElement(e)){
 return;
 }
 if(this.delay){
-this.events.push(dojo.connect(this.handle,"onmousemove",this,"onMouseMove"),dojo.connect(this.handle,"onmouseup",this,"onMouseUp"));
-this._lastX=e.pageX;
-this._lastY=e.pageY;
+this.events.push(dojo.connect(this.handle,"onmousemove",this,"onMouseMove"),dojo.connect(this.handle,"ontouchmove",this,"onMouseMove"),dojo.connect(this.handle,"onmouseup",this,"onMouseUp"),dojo.connect(this.handle,"ontouchend",this,"onMouseUp"));
+var _5=e.touches?e.touches[0]:e;
+this._lastX=_5.pageX;
+this._lastY=_5.pageY;
 }else{
 this.onDragDetected(e);
 }
 dojo.stopEvent(e);
 },onMouseMove:function(e){
-if(Math.abs(e.pageX-this._lastX)>this.delay||Math.abs(e.pageY-this._lastY)>this.delay){
+var _6=e.touches?e.touches[0]:e;
+if(Math.abs(_6.pageX-this._lastX)>this.delay||Math.abs(_6.pageY-this._lastY)>this.delay){
 this.onMouseUp(e);
 this.onDragDetected(e);
 }
@@ -56,22 +58,22 @@ dojo.stopEvent(e);
 }
 },onDragDetected:function(e){
 new this.mover(this.node,e,this);
-},onMoveStart:function(_5){
-dojo.publish("/dnd/move/start",[_5]);
+},onMoveStart:function(_7){
+dojo.publish("/dnd/move/start",[_7]);
 dojo.addClass(dojo.body(),"dojoMove");
 dojo.addClass(this.node,"dojoMoveItem");
-},onMoveStop:function(_6){
-dojo.publish("/dnd/move/stop",[_6]);
+},onMoveStop:function(_8){
+dojo.publish("/dnd/move/stop",[_8]);
 dojo.removeClass(dojo.body(),"dojoMove");
 dojo.removeClass(this.node,"dojoMoveItem");
-},onFirstMove:function(_7,e){
-},onMove:function(_8,_9,e){
-this.onMoving(_8,_9);
-var s=_8.node.style;
-s.left=_9.l+"px";
-s.top=_9.t+"px";
-this.onMoved(_8,_9);
-},onMoving:function(_a,_b){
-},onMoved:function(_c,_d){
+},onFirstMove:function(_9,e){
+},onMove:function(_a,_b,e){
+this.onMoving(_a,_b);
+var s=_a.node.style;
+s.left=_b.l+"px";
+s.top=_b.t+"px";
+this.onMoved(_a,_b);
+},onMoving:function(_c,_d){
+},onMoved:function(_e,_f){
 }});
 }

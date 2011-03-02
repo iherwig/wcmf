@@ -8,16 +8,16 @@
 if(!dojo._hasResource["dojox.editor.plugins.FindReplace"]){
 dojo._hasResource["dojox.editor.plugins.FindReplace"]=true;
 dojo.provide("dojox.editor.plugins.FindReplace");
-dojo.require("dijit._editor._Plugin");
-dojo.require("dijit.Toolbar");
-dojo.require("dijit.form.TextBox");
-dojo.require("dijit.form.CheckBox");
-dojo.require("dijit.form.Button");
+dojo.require("dojo.string");
 dojo.require("dijit.TooltipDialog");
+dojo.require("dijit.Toolbar");
+dojo.require("dijit.form.CheckBox");
+dojo.require("dijit.form.TextBox");
+dojo.require("dijit._editor._Plugin");
+dojo.require("dijit.form.Button");
 dojo.require("dojox.editor.plugins.ToolbarLineBreak");
 dojo.require("dojo.i18n");
-dojo.require("dojo.string");
-dojo.requireLocalization("dojox.editor.plugins","FindReplace",null,"ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ro,ru,zh,zh-tw");
+dojo.requireLocalization("dojox.editor.plugins","FindReplace",null,"ROOT,cs,de,es,fr,hu,it,ja,kk,ko,pl,pt,ro,ru,zh,zh-tw");
 dojo.experimental("dojox.editor.plugins.FindReplace");
 dojo.declare("dojox.editor.plugins._FindReplaceCloseBox",[dijit._Widget,dijit._Templated],{btnId:"",widget:null,widgetsInTemplate:true,templateString:"<span style='float: right' class='dijitInline' tabindex='-1'>"+"<button class='dijit dijitReset dijitInline' "+"id='${btnId}' dojoAttachPoint='button' dojoType='dijit.form.Button' tabindex='-1' iconClass='dijitEditorIconsFindReplaceClose' showLabel='false'>X</button>"+"</span>",postMixInProperties:function(){
 this.id=dijit.getUniqueId(this.declaredClass.replace(/\./g,"_"));
@@ -156,7 +156,7 @@ this._findField=new dojox.editor.plugins._FindReplaceTextBox({label:this._string
 _15.addChild(this._findField);
 this._replaceField=new dojox.editor.plugins._FindReplaceTextBox({label:this._strings["replaceLabel"],tooltip:this._strings["replaceTooltip"]});
 _15.addChild(this._replaceField);
-_15.addChild(new dojox.editor.plugins._ToolbarLineBreak());
+_15.addChild(new dojox.editor.plugins.ToolbarLineBreak());
 this._findButton=new dijit.form.Button({label:this._strings["findButton"],showLabel:true,iconClass:this.iconClassPrefix+" dijitEditorIconFind"});
 this._findButton.titleNode.title=this._strings["findButtonTooltip"];
 _15.addChild(this._findButton);
@@ -265,6 +265,7 @@ this.editor.focus();
 }
 return _1c;
 }
+return null;
 },_replaceAll:function(_22){
 var _23=0;
 var _24=this._backwards.get("value");
@@ -363,6 +364,8 @@ return new RegExp(rxp,"mi");
 }else{
 return new RegExp(rxp,"m");
 }
+},updateState:function(){
+this.button.set("disabled",this.get("disabled"));
 },destroy:function(){
 this.inherited(arguments);
 if(this._promDialogTimeout){

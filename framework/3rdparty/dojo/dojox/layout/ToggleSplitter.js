@@ -10,7 +10,7 @@ dojo._hasResource["dojox.layout.ToggleSplitter"]=true;
 dojo.provide("dojox.layout.ToggleSplitter");
 dojo.experimental("dojox.layout.ToggleSplitter");
 dojo.require("dijit.layout.BorderContainer");
-dojo.declare("dojox.layout.ToggleSplitter",[dijit.layout._Splitter],{open:true,closedThreshold:5,openSize:"",_closedSize:"0",templateString:"<div class=\"dijitSplitter dojoxToggleSplitter\" dojoAttachEvent=\"onkeypress:_onKeyPress,onmousedown:_onMouseDown\" tabIndex=\"0\" waiRole=\"separator\"><div dojoAttachPoint=\"toggleNode\" class=\"dijitSplitterThumb dojoxToggleSplitterIcon\"></div></div>",postCreate:function(){
+dojo.declare("dojox.layout.ToggleSplitter",[dijit.layout._Splitter],{open:true,closedThreshold:5,openSize:"",_closedSize:"0",templateString:"<div class=\"dijitSplitter dojoxToggleSplitter\" dojoAttachEvent=\"onkeypress:_onKeyPress,onmousedown:_onMouseDown\" tabIndex=\"0\" role=\"separator\"><div dojoAttachPoint=\"toggleNode\" class=\"dijitSplitterThumb dojoxToggleSplitterIcon\"></div></div>",postCreate:function(){
 this._started=false;
 this.inherited(arguments);
 var _1=this.region;

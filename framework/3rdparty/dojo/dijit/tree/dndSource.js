@@ -49,37 +49,37 @@ this.inherited("destroy",arguments);
 dojo.forEach(this.topics,dojo.unsubscribe);
 this.targetAnchor=null;
 },_onDragMouse:function(e){
-var m=dojo.dnd.manager(),_7=this.targetAnchor,_8=this.current,_9=this.currentWidget,_a=this.dropPosition;
-var _b="Over";
+var m=dojo.dnd.manager(),_7=this.targetAnchor,_8=this.current,_9=this.dropPosition;
+var _a="Over";
 if(_8&&this.betweenThreshold>0){
 if(!this.targetBox||_7!=_8){
-this.targetBox=dojo.position(_8,true);
+this.targetBox=dojo.position(_8.rowNode,true);
 }
 if((e.pageY-this.targetBox.y)<=this.betweenThreshold){
-_b="Before";
+_a="Before";
 }else{
 if((e.pageY-this.targetBox.y)>=(this.targetBox.h-this.betweenThreshold)){
-_b="After";
+_a="After";
 }
 }
 }
-if(_8!=_7||_b!=_a){
+if(_8!=_7||_a!=_9){
 if(_7){
-this._removeItemClass(_7,_a);
+this._removeItemClass(_7.rowNode,_9);
 }
 if(_8){
-this._addItemClass(_8,_b);
+this._addItemClass(_8.rowNode,_a);
 }
 if(!_8){
 m.canDrop(false);
 }else{
-if(_9==this.tree.rootNode&&_b!="Over"){
+if(_8==this.tree.rootNode&&_a!="Over"){
 m.canDrop(false);
 }else{
 if(m.source==this&&(_8.id in this.selection)){
 m.canDrop(false);
 }else{
-if(this.checkItemAcceptance(_8,m.source,_b.toLowerCase())&&!this._isParentChildDrop(m.source,_8)){
+if(this.checkItemAcceptance(_8.rowNode,m.source,_a.toLowerCase())&&!this._isParentChildDrop(m.source,_8.rowNode)){
 m.canDrop(true);
 }else{
 m.canDrop(false);
@@ -88,7 +88,7 @@ m.canDrop(false);
 }
 }
 this.targetAnchor=_8;
-this.dropPosition=_b;
+this.dropPosition=_a;
 }
 },onMouseMove:function(e){
 if(this.isDragging&&this.targetState=="Disabled"){
@@ -100,13 +100,25 @@ if(this.isDragging){
 this._onDragMouse(e);
 }else{
 if(this.mouseDown&&this.isSource&&(Math.abs(e.pageX-this._lastX)>=this.dragThreshold||Math.abs(e.pageY-this._lastY)>=this.dragThreshold)){
-var n=this.getSelectedNodes();
-var _c=[];
-for(var i in n){
-_c.push(n[i]);
+var _b=this.getSelectedTreeNodes();
+if(_b.length){
+if(_b.length>1){
+var _c=this.selection,i=0,r=[],n,p;
+nextitem:
+while((n=_b[i++])){
+for(p=n.getParent();p&&p!==this.tree;p=p.getParent()){
+if(_c[p.id]){
+continue nextitem;
 }
-if(_c.length){
-m.startDrag(this,_c,this.copyState(dojo.isCopyKey(e)));
+}
+r.push(n);
+}
+_b=r;
+}
+_b=dojo.map(_b,function(n){
+return n.domNode;
+});
+m.startDrag(this,_b,this.copyState(dojo.isCopyKey(e)));
 }
 }
 }
@@ -115,11 +127,11 @@ this.mouseDown=true;
 this.mouseButton=e.button;
 this._lastX=e.pageX;
 this._lastY=e.pageY;
-this.inherited("onMouseDown",arguments);
+this.inherited(arguments);
 },onMouseUp:function(e){
 if(this.mouseDown){
 this.mouseDown=false;
-this.inherited("onMouseUp",arguments);
+this.inherited(arguments);
 }
 },onMouseOut:function(){
 this.inherited(arguments);
@@ -154,7 +166,7 @@ return {"id":_18.id,"name":_18.textContent||_18.innerText||""};
 if(this.containerState=="Over"){
 var _1c=this.tree,_1d=_1c.model,_1e=this.targetAnchor,_1f=false;
 this.isDragging=false;
-var _20=dijit.getEnclosingWidget(_1e);
+var _20=_1e;
 var _21;
 var _22;
 _21=(_20&&_20.item)||_1c.item;
@@ -185,7 +197,7 @@ if(_1d.isItem(_27)){
 _1d.pasteItem(_27,_28,_21,_1b,_22);
 }else{
 if(!_23){
-_23=this.itemCreator(_1a,_1e,_19);
+_23=this.itemCreator(_1a,_1e.rowNode,_19);
 }
 _1d.newItem(_23[idx],_21,_22);
 }
@@ -217,12 +229,9 @@ if(!_29.tree||_29.tree!=this.tree){
 return false;
 }
 var _2b=_29.tree.domNode;
-var ids={};
-for(var x in _29.selection){
-ids[_29.selection[x].parentNode.id]=true;
-}
+var ids=_29.selection;
 var _2c=_2a.parentNode;
-while(_2c!=_2b&&(!_2c.id||!ids[_2c.id])){
+while(_2c!=_2b&&!ids[_2c.id]){
 _2c=_2c.parentNode;
 }
 return _2c.id&&ids[_2c.id];
@@ -230,7 +239,7 @@ return _2c.id&&ids[_2c.id];
 if(!this.targetAnchor){
 return;
 }
-this._removeItemClass(this.targetAnchor,this.dropPosition);
+this._removeItemClass(this.targetAnchor.rowNode,this.dropPosition);
 this.targetAnchor=null;
 this.targetBox=null;
 this.dropPosition=null;

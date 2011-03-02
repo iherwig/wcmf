@@ -9,9 +9,10 @@ if(!dojo._hasResource["dojo.number"]){
 dojo._hasResource["dojo.number"]=true;
 dojo.provide("dojo.number");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dojo.cldr","number",null,"ROOT,ar,ca,cs,da,de,el,en,en-au,en-gb,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh");
+dojo.requireLocalization("dojo.cldr","number",null,"ROOT,ar,ca,cs,da,de,el,en,en-au,en-gb,es,fi,fr,fr-ch,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-hant,zh-hk");
 dojo.require("dojo.string");
 dojo.require("dojo.regexp");
+dojo.getObject("number",true,dojo);
 dojo.number.format=function(_1,_2){
 _2=dojo.mixin({},_2||{});
 var _3=dojo.i18n.normalizeLocale(_2.locale),_4=dojo.i18n.getLocalization("dojo.cldr","number",_3);

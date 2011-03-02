@@ -14,7 +14,7 @@ dojo.require("dijit.layout.BorderContainer");
 dojo.require("dijit.layout.ContentPane");
 dojo.declare("dojox.data.StoreExplorer",dijit.layout.BorderContainer,{constructor:function(_1){
 dojo.mixin(this,_1);
-},store:null,stringQueries:false,postCreate:function(){
+},store:null,columnWidth:"",stringQueries:false,showAllColumns:false,postCreate:function(){
 var _2=this;
 this.inherited(arguments);
 var _3=new dijit.layout.ContentPane({region:"top"}).placeAt(this);
@@ -118,16 +118,18 @@ _23.push({field:key,name:key,_score:1,formatter:_1f,styles:"white-space:nowrap; 
 }
 }
 _23=_23.sort(function(a,b){
-return a._score>b._score?-1:1;
+return b._score-a._score;
 });
+if(!_1d.showAllColumns){
 for(j=0;_24=_23[j];j++){
 if(_24._score<_22.length/40*j){
 _23.splice(j,_23.length-j);
 break;
 }
 }
+}
 for(j=0;_24=_23[j++];){
-_24.width=Math.round(100/_23.length)+"%";
+_24.width=_1d.columnWidth||Math.round(100/_23.length)+"%";
 }
 _1e._onFetchComplete=_21;
 _1e.attr("structure",_23);

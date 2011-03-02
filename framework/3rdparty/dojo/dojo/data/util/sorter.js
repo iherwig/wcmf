@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.data.util.sorter"]){
 dojo._hasResource["dojo.data.util.sorter"]=true;
 dojo.provide("dojo.data.util.sorter");
+dojo.getObject("data.util.sorter",true,dojo);
 dojo.data.util.sorter.basicComparator=function(a,b){
 var r=-1;
 if(a===null){

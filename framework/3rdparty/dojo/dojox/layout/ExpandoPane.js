@@ -133,10 +133,11 @@ setTimeout(dojo.hitch(this._container,"layout"),25);
 this._previewShowing=false;
 }
 this._isonlypreview=false;
-},resize:function(_a,_b){
+},resize:function(_a){
 if(!this._hasSizes){
 this._startupSizes(_a);
 }
+var _b=dojo.marginBox(this.domNode);
 this._contentBox={w:_a&&"w" in _a?_a.w:_b.w,h:(_a&&"h" in _a?_a.h:_b.h)-this._titleHeight};
 dojo.style(this.containerNode,"height",this._contentBox.h+"px");
 if(_a){

@@ -21,7 +21,7 @@ this._subs=[];
 this._cons=[];
 this.mediaUrl=this._normalizeUrl(this.mediaUrl);
 this.initialVolume=this._normalizeVolume(this.initialVolume);
-var _2={path:this._swfPath.uri,width:"100%",height:"100%",minimumVersion:9,expressInstall:true,params:{allowFullScreen:true,wmode:"transparent"},vars:{videoUrl:this.mediaUrl,id:this.id,autoPlay:this.autoPlay,volume:this.initialVolume,isDebug:this.isDebug}};
+var _2={path:this._swfPath.uri,width:"100%",height:"100%",minimumVersion:9,expressInstall:true,params:{allowFullScreen:this.allowFullScreen,wmode:this.wmode,allowScriptAccess:this.allowScriptAccess,allowNetworking:this.allowNetworking},vars:{videoUrl:this.mediaUrl,id:this.id,autoPlay:this.autoPlay,volume:this.initialVolume,isDebug:this.isDebug}};
 this._sub("stageClick","onClick");
 this._sub("stageSized","onSwfSized");
 this._sub("mediaStatus","onPlayerStatus");
@@ -95,6 +95,10 @@ this.onPosition(_b);
 if(this.duration){
 this._checkBuffer(_b,_c.buffer);
 }
-setTimeout(dojo.hitch(this,"_update"),this.updateTime);
+this._updateHandle=setTimeout(dojo.hitch(this,"_update"),this.updateTime);
+},destroy:function(){
+clearTimeout(this._updateHandle);
+dojo.disconnect(this._positionHandle);
+this.inherited(arguments);
 }});
 }

@@ -9,8 +9,8 @@ if(!dojo._hasResource["dojox.widget.ColorPicker"]){
 dojo._hasResource["dojox.widget.ColorPicker"]=true;
 dojo.provide("dojox.widget.ColorPicker");
 dojo.experimental("dojox.widget.ColorPicker");
-dojo.requireLocalization("dojox.widget","ColorPicker",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.requireLocalization("dojo.cldr","number",null,"ROOT,ar,ca,cs,da,de,el,en,en-au,en-gb,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh");
+dojo.requireLocalization("dojox.widget","ColorPicker",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dojo.cldr","number",null,"ROOT,ar,ca,cs,da,de,el,en,en-au,en-gb,es,fi,fr,fr-ch,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-hant,zh-hk");
 dojo.require("dijit.form._FormWidget");
 dojo.require("dojo.dnd.move");
 dojo.require("dojo.fx");

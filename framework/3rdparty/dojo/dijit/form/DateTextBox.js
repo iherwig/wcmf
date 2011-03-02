@@ -10,5 +10,5 @@ dojo._hasResource["dijit.form.DateTextBox"]=true;
 dojo.provide("dijit.form.DateTextBox");
 dojo.require("dijit.Calendar");
 dojo.require("dijit.form._DateTimeTextBox");
-dojo.declare("dijit.form.DateTextBox",dijit.form._DateTimeTextBox,{baseClass:"dijitTextBox dijitDateTextBox",popupClass:"dijit.Calendar",_selector:"date",value:new Date("")});
+dojo.declare("dijit.form.DateTextBox",dijit.form._DateTimeTextBox,{baseClass:"dijitTextBox dijitComboBox dijitDateTextBox",popupClass:"dijit.Calendar",_selector:"date",value:new Date("")});
 }

@@ -11,8 +11,8 @@ dojo.provide("dijit.form.ValidationTextBox");
 dojo.require("dojo.i18n");
 dojo.require("dijit.form.TextBox");
 dojo.require("dijit.Tooltip");
-dojo.requireLocalization("dijit.form","validate",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.declare("dijit.form.ValidationTextBox",dijit.form.TextBox,{templateString:dojo.cache("dijit.form","templates/ValidationTextBox.html","<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\" waiRole=\"presentation\"\n\t><div class='dijitReset dijitValidationContainer'\n\t\t><input class=\"dijitReset dijitInputField dijitValidationIcon dijitValidationInner\" value=\"&Chi; \" type=\"text\" tabIndex=\"-1\" readOnly waiRole=\"presentation\"\n\t/></div\n\t><div class=\"dijitReset dijitInputField dijitInputContainer\"\n\t\t><input class=\"dijitReset dijitInputInner\" dojoAttachPoint='textbox,focusNode' autocomplete=\"off\"\n\t\t\t${!nameAttrSetting} type='${type}'\n\t/></div\n></div>\n"),baseClass:"dijitTextBox dijitValidationTextBox",required:false,promptMessage:"",invalidMessage:"$_unset_$",missingMessage:"$_unset_$",constraints:{},regExp:".*",regExpGen:function(_1){
+dojo.requireLocalization("dijit.form","validate",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.declare("dijit.form.ValidationTextBox",dijit.form.TextBox,{templateString:dojo.cache("dijit.form","templates/ValidationTextBox.html","<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\" role=\"presentation\"\n\t><div class='dijitReset dijitValidationContainer'\n\t\t><input class=\"dijitReset dijitInputField dijitValidationIcon dijitValidationInner\" value=\"&#935;\" type=\"text\" tabIndex=\"-1\" readonly=\"readonly\" role=\"presentation\"\n\t/></div\n\t><div class=\"dijitReset dijitInputField dijitInputContainer\"\n\t\t><input class=\"dijitReset dijitInputInner\" dojoAttachPoint='textbox,focusNode' autocomplete=\"off\"\n\t\t\t${!nameAttrSetting} type='${type}'\n\t/></div\n></div>\n"),baseClass:"dijitTextBox dijitValidationTextBox",required:false,promptMessage:"",invalidMessage:"$_unset_$",missingMessage:"$_unset_$",message:"",constraints:{},regExp:".*",regExpGen:function(_1){
 return this.regExp;
 },state:"",tooltipPosition:[],_setValueAttr:function(){
 this.inherited(arguments);
@@ -24,7 +24,7 @@ return this.textbox.value.search(this._partialre)==0;
 },isValid:function(_4){
 return this.validator(this.textbox.value,this.constraints);
 },_isEmpty:function(_5){
-return /^\s*$/.test(_5);
+return (this.trim?/^\s*$/:/^$/).test(_5);
 },getErrorMessage:function(_6){
 return (this.required&&this._isEmpty(this.textbox.value))?this.missingMessage:this.invalidMessage;
 },getPromptMessage:function(_7){
@@ -36,30 +36,25 @@ if(_a){
 this._maskValidSubsetError=true;
 }
 var _b=this._isEmpty(this.textbox.value);
-var _c=!_a&&!_b&&_8&&this._isValidSubset();
-this.state=((_a||((!this._hasBeenBlurred||_8)&&_b)||_c)&&this._maskValidSubsetError)?"":"Error";
-if(this.state=="Error"){
-this._maskValidSubsetError=_8;
-}
-this._setStateClass();
+var _c=!_a&&_8&&this._isValidSubset();
+this._set("state",_a?"":(((((!this._hasBeenBlurred||_8)&&_b)||_c)&&this._maskValidSubsetError)?"Incomplete":"Error"));
 dijit.setWaiState(this.focusNode,"invalid",_a?"false":"true");
-if(_8){
 if(this.state=="Error"){
+this._maskValidSubsetError=_8&&_c;
 _9=this.getErrorMessage(true);
+}else{
+if(this.state=="Incomplete"){
+_9=this.getPromptMessage(true);
+this._maskValidSubsetError=!this._hasBeenBlurred||_8;
 }else{
 _9=this.getPromptMessage(true);
 }
-this._maskValidSubsetError=true;
 }
-this.displayMessage(_9);
+this.set("message",_9);
 return _a;
-},_message:"",displayMessage:function(_d){
-if(this._message==_d){
-return;
-}
-this._message=_d;
+},displayMessage:function(_d){
 dijit.hideTooltip(this.domNode);
-if(_d){
+if(_d&&this._focused){
 dijit.showTooltip(_d,this.domNode,this.tooltipPosition,!this.isLeftToRight());
 }
 },_refreshState:function(){
@@ -71,7 +66,7 @@ this.constraints={};
 if(!_e.locale&&this.lang){
 _e.locale=this.lang;
 }
-this.constraints=_e;
+this._set("constraints",_e);
 this._computePartialRE();
 },_computePartialRE:function(){
 var p=this.regExpGen(this.constraints);
@@ -127,9 +122,12 @@ this._setConstraintsAttr(this.constraints);
 this.inherited(arguments);
 this._refreshState();
 },_setRequiredAttr:function(_11){
-this.required=_11;
+this._set("required",_11);
 dijit.setWaiState(this.focusNode,"required",_11);
 this._refreshState();
+},_setMessageAttr:function(_12){
+this._set("message",_12);
+this.displayMessage(_12);
 },reset:function(){
 this._maskValidSubsetError=true;
 this.inherited(arguments);
@@ -140,7 +138,7 @@ this.inherited(arguments);
 dojo.declare("dijit.form.MappedTextBox",dijit.form.ValidationTextBox,{postMixInProperties:function(){
 this.inherited(arguments);
 this.nameAttrSetting="";
-},serialize:function(val,_12){
+},serialize:function(val,_13){
 return val.toString?val.toString():"";
 },toString:function(){
 var val=this.filter(this.get("value"));
@@ -150,37 +148,37 @@ this.valueNode.value=this.toString();
 return this.inherited(arguments);
 },buildRendering:function(){
 this.inherited(arguments);
-this.valueNode=dojo.place("<input type='hidden'"+(this.name?" name='"+this.name+"'":"")+">",this.textbox,"after");
+this.valueNode=dojo.place("<input type='hidden'"+(this.name?" name='"+this.name.replace(/'/g,"&quot;")+"'":"")+"/>",this.textbox,"after");
 },reset:function(){
 this.valueNode.value="";
 this.inherited(arguments);
 }});
-dojo.declare("dijit.form.RangeBoundTextBox",dijit.form.MappedTextBox,{rangeMessage:"",rangeCheck:function(_13,_14){
-return ("min" in _14?(this.compare(_13,_14.min)>=0):true)&&("max" in _14?(this.compare(_13,_14.max)<=0):true);
-},isInRange:function(_15){
+dojo.declare("dijit.form.RangeBoundTextBox",dijit.form.MappedTextBox,{rangeMessage:"",rangeCheck:function(_14,_15){
+return ("min" in _15?(this.compare(_14,_15.min)>=0):true)&&("max" in _15?(this.compare(_14,_15.max)<=0):true);
+},isInRange:function(_16){
 return this.rangeCheck(this.get("value"),this.constraints);
 },_isDefinitelyOutOfRange:function(){
 var val=this.get("value");
-var _16=false;
 var _17=false;
+var _18=false;
 if("min" in this.constraints){
 var min=this.constraints.min;
 min=this.compare(val,((typeof min=="number")&&min>=0&&val!=0)?0:min);
-_16=(typeof min=="number")&&min<0;
+_17=(typeof min=="number")&&min<0;
 }
 if("max" in this.constraints){
 var max=this.constraints.max;
 max=this.compare(val,((typeof max!="number")||max>0)?max:0);
-_17=(typeof max=="number")&&max>0;
+_18=(typeof max=="number")&&max>0;
 }
-return _16||_17;
+return _17||_18;
 },_isValidSubset:function(){
 return this.inherited(arguments)&&!this._isDefinitelyOutOfRange();
-},isValid:function(_18){
-return this.inherited(arguments)&&((this._isEmpty(this.textbox.value)&&!this.required)||this.isInRange(_18));
-},getErrorMessage:function(_19){
+},isValid:function(_19){
+return this.inherited(arguments)&&((this._isEmpty(this.textbox.value)&&!this.required)||this.isInRange(_19));
+},getErrorMessage:function(_1a){
 var v=this.get("value");
-if(v!==null&&v!==""&&v!==undefined&&(typeof v!="number"||!isNaN(v))&&!this.isInRange(_19)){
+if(v!==null&&v!==""&&v!==undefined&&(typeof v!="number"||!isNaN(v))&&!this.isInRange(_1a)){
 return this.rangeMessage;
 }
 return this.inherited(arguments);
@@ -190,7 +188,7 @@ if(!this.rangeMessage){
 this.messages=dojo.i18n.getLocalization("dijit.form","validate",this.lang);
 this.rangeMessage=this.messages.rangeMessage;
 }
-},_setConstraintsAttr:function(_1a){
+},_setConstraintsAttr:function(_1b){
 this.inherited(arguments);
 if(this.focusNode){
 if(this.constraints.min!==undefined){
@@ -204,8 +202,8 @@ dijit.setWaiState(this.focusNode,"valuemax",this.constraints.max);
 dijit.removeWaiState(this.focusNode,"valuemax");
 }
 }
-},_setValueAttr:function(_1b,_1c){
-dijit.setWaiState(this.focusNode,"valuenow",_1b);
+},_setValueAttr:function(_1c,_1d){
+dijit.setWaiState(this.focusNode,"valuenow",_1c);
 this.inherited(arguments);
 }});
 }

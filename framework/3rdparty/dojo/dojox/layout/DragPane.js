@@ -10,8 +10,8 @@ dojo._hasResource["dojox.layout.DragPane"]=true;
 dojo.provide("dojox.layout.DragPane");
 dojo.require("dijit._Widget");
 dojo.declare("dojox.layout.DragPane",dijit._Widget,{invert:true,postCreate:function(){
-this.inherited(arguments);
 this.connect(this.domNode,"onmousedown","_down");
+this.connect(this.domNode,"onmouseleave","_up");
 this.connect(this.domNode,"onmouseup","_up");
 },_down:function(e){
 var t=this.domNode;
@@ -25,7 +25,8 @@ this._mover=this.connect(t,"onmousemove","_move");
 },_up:function(e){
 dojo.setSelectable(this.domNode,true);
 dojo.style(this.domNode,"cursor","pointer");
-this.disconnect(this._mover);
+this._mover&&this.disconnect(this._mover);
+delete this._mover;
 },_move:function(e){
 var _1=this.invert?1:-1;
 this.domNode.scrollTop+=(this._y-e.pageY)*_1;

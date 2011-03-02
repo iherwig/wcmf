@@ -8,9 +8,9 @@
 if(!dojo._hasResource["dojox.av._Media"]){
 dojo._hasResource["dojox.av._Media"]=true;
 dojo.provide("dojox.av._Media");
-dojo.declare("dojox.av._Media",null,{mediaUrl:"",initialVolume:1,autoPlay:false,bufferTime:2000,minBufferTime:300,updateTime:100,id:"",isDebug:false,percentDownloaded:0,_flashObject:null,flashMedia:null,_initStatus:function(){
+dojo.declare("dojox.av._Media",null,{mediaUrl:"",initialVolume:1,autoPlay:false,bufferTime:2000,minBufferTime:300,updateTime:100,id:"",isDebug:false,percentDownloaded:0,_flashObject:null,flashMedia:null,allowScriptAccess:"always",allowNetworking:"all",wmode:"transparent",allowFullScreen:true,_initStatus:function(){
 this.status="ready";
-dojo.connect(this,"onPosition",this,"_figureStatus");
+this._positionHandle=dojo.connect(this,"onPosition",this,"_figureStatus");
 },getTime:function(){
 return this.flashMedia.getTime();
 },onLoad:function(_1){

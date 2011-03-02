@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.encoding.easy64"]){
 dojo._hasResource["dojox.encoding.easy64"]=true;
 dojo.provide("dojox.encoding.easy64");
+dojo.getObject("encoding.easy64",true,dojox);
 (function(){
 var c=function(_1,_2,_3){
 for(var i=0;i<_2;i+=3){

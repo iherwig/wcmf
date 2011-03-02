@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.regexp"]){
 dojo._hasResource["dojo.regexp"]=true;
 dojo.provide("dojo.regexp");
+dojo.getObject("regexp",true,dojo);
 dojo.regexp.escapeString=function(_1,_2){
 return _1.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,function(ch){
 if(_2&&_2.indexOf(ch)!=-1){

@@ -16,7 +16,7 @@ var _2=Object.freeze||function(){
 };
 dojo.Deferred=function(_3){
 var _4,_5,_6,_7,_8;
-var _9=this.promise={};
+var _9=(this.promise={});
 function _a(_b){
 if(_5){
 throw new Error("This deferred has already been resolved");
@@ -30,7 +30,7 @@ var _d;
 while(!_d&&_8){
 var _e=_8;
 _8=_8.next;
-if(_d=(_e.progress==_1)){
+if((_d=(_e.progress==_1))){
 _5=false;
 }
 var _f=(_6?_e.error:_e.resolved);
@@ -42,6 +42,9 @@ _10.then(dojo.hitch(_e.deferred,"resolve"),dojo.hitch(_e.deferred,"reject"));
 continue;
 }
 var _11=_d&&_10===undefined;
+if(_d&&!_11){
+_6=_10 instanceof Error;
+}
 _e.deferred[_11&&_6?"reject":"resolve"](_11?_4:_10);
 }
 catch(e){

@@ -172,7 +172,7 @@ this._jsonFileUrl=this.url;
 this._ccUrl=this.url;
 }
 }
-if(this.data!=null&&this._jsonData==null){
+if(this.data!=null){
 this._jsonData=this.data;
 this.data=null;
 }
@@ -334,7 +334,7 @@ for(i=0;i<this._arrayOfAllItems.length;++i){
 _42=this._arrayOfAllItems[i];
 _45=_42[_46];
 var _47=_45[0];
-if(!this._itemsByIdentity[_47]){
+if(!Object.hasOwnProperty.call(this._itemsByIdentity,_47)){
 this._itemsByIdentity[_47]=_42;
 }else{
 if(this._jsonFileUrl){
@@ -497,10 +497,12 @@ _55.onItem.call(_57,_56);
 }
 },_getItemByIdentity:function(_5f){
 var _60=null;
-if(this._itemsByIdentity){
+if(this._itemsByIdentity&&Object.hasOwnProperty.call(this._itemsByIdentity,_5f)){
 _60=this._itemsByIdentity[_5f];
 }else{
+if(Object.hasOwnProperty.call(this._arrayOfAllItems,_5f)){
 _60=this._arrayOfAllItems[_5f];
+}
 }
 if(_60===undefined){
 _60=null;
@@ -525,7 +527,7 @@ this._jsonFileUrl=this.url;
 this._ccUrl=this.url;
 }
 }
-if(this.data!=null&&this._jsonData==null){
+if(this.data!=null){
 this._jsonData=this.data;
 this.data=null;
 }

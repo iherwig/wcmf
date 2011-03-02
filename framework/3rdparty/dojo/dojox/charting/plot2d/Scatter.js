@@ -19,6 +19,7 @@ var df=dojox.lang.functional,du=dojox.lang.utils,dc=dojox.charting.plot2d.common
 dojo.declare("dojox.charting.plot2d.Scatter",dojox.charting.plot2d.Base,{defaultParams:{hAxis:"x",vAxis:"y",shadows:null,animate:null},optionalParams:{markerStroke:{},markerOutline:{},markerShadow:{},markerFill:{},markerFont:"",markerFontColor:""},constructor:function(_2,_3){
 this.opt=dojo.clone(this.defaultParams);
 du.updateWithObject(this.opt,_3);
+du.updateWithPattern(this.opt,_3,this.optionalParams);
 this.series=[];
 this.hAxis=this.opt.hAxis;
 this.vAxis=this.opt.vAxis;

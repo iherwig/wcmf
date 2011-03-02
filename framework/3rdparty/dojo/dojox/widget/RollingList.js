@@ -18,7 +18,7 @@ dojo.require("dijit.Menu");
 dojo.require("dijit.form.Button");
 dojo.require("dojox.html.metrics");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dijit","common",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit","common",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.declare("dojox.widget._RollingListPane",[dijit.layout.ContentPane,dijit._Templated,dijit._Contained],{templateString:"<div class=\"dojoxRollingListPane\"><table><tbody><tr><td dojoAttachPoint=\"containerNode\"></td></tr></tbody></div>",parentWidget:null,parentPane:null,store:null,items:null,query:null,queryOptions:null,_focusByNode:true,minWidth:0,_setContentAndScroll:function(_1,_2){
 this._setContent(_1,_2);
 this.parentWidget.scrollIntoView(this);

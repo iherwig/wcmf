@@ -394,6 +394,8 @@ off+=_23(_4b.zone[1]);
 }
 var _4d=_44(tz,_4b,_4c);
 return {tzOffset:off,tzAbbr:_4d};
+},loadZoneData:function(_4e){
+_13(_4e);
 },getAllZones:function(){
 var arr=[];
 for(var z in _7){
@@ -410,23 +412,23 @@ _1.forEach(_c,function(f){
 _16(f);
 });
 }
-var _4e=_1.date.locale.format,_4f=_1.date.locale._getZone;
-_1.date.locale.format=function(_50,_51){
-_51=_51||{};
-if(_51.timezone&&!_51._tzInfo){
-_51._tzInfo=dojox.date.timezone.getTzInfo(_50,_51.timezone);
+var _4f=_1.date.locale.format,_50=_1.date.locale._getZone;
+_1.date.locale.format=function(_51,_52){
+_52=_52||{};
+if(_52.timezone&&!_52._tzInfo){
+_52._tzInfo=dojox.date.timezone.getTzInfo(_51,_52.timezone);
 }
-if(_51._tzInfo){
-var _52=_50.getTimezoneOffset()-_51._tzInfo.tzOffset;
-_50=new Date(_50.getTime()+(_52*60*1000));
+if(_52._tzInfo){
+var _53=_51.getTimezoneOffset()-_52._tzInfo.tzOffset;
+_51=new Date(_51.getTime()+(_53*60*1000));
 }
-return _4e.call(this,_50,_51);
+return _4f.call(this,_51,_52);
 };
-_1.date.locale._getZone=function(_53,_54,_55){
-if(_55._tzInfo){
-return _54?_55._tzInfo.tzAbbr:_55._tzInfo.tzOffset;
+_1.date.locale._getZone=function(_54,_55,_56){
+if(_56._tzInfo){
+return _55?_56._tzInfo.tzAbbr:_56._tzInfo.tzOffset;
 }
-return _4f.call(this,_53,_54,_55);
+return _50.call(this,_54,_55,_56);
 };
 })(dojo);
 }

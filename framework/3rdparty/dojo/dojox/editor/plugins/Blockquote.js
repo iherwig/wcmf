@@ -11,7 +11,7 @@ dojo.provide("dojox.editor.plugins.Blockquote");
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dojox.editor.plugins","Blockquote",null,"ROOT,ro");
+dojo.requireLocalization("dojox.editor.plugins","Blockquote",null,"ROOT,kk,ro");
 dojo.declare("dojox.editor.plugins.Blockquote",dijit._editor._Plugin,{iconClassPrefix:"dijitAdditionalEditorIcon",_initButton:function(){
 this._nlsResources=dojo.i18n.getLocalization("dojox.editor.plugins","Blockquote");
 this.button=new dijit.form.ToggleButton({label:this._nlsResources["blockquote"],showLabel:false,iconClass:this.iconClassPrefix+" "+this.iconClassPrefix+"Blockquote",tabIndex:"-1",onClick:dojo.hitch(this,"_toggleQuote")});
@@ -214,105 +214,110 @@ catch(e){
 }
 },updateState:function(){
 var ed=this.editor;
+var _12=this.get("disabled");
 if(!ed||!ed.isLoaded){
 return;
 }
 if(this.button){
-var _12;
-var _13=false;
+this.button.set("disabled",_12);
+if(_12){
+return;
+}
+var _13;
+var _14=false;
 var sel=dijit.range.getSelection(ed.window);
 if(sel&&sel.rangeCount>0){
-var _14=sel.getRangeAt(0);
-if(_14){
-_12=_14.endContainer;
+var _15=sel.getRangeAt(0);
+if(_15){
+_13=_15.endContainer;
 }
 }
-while(_12&&_12!==ed.editNode&&_12!==ed.document){
-var tg=_12.tagName?_12.tagName.toLowerCase():"";
+while(_13&&_13!==ed.editNode&&_13!==ed.document){
+var tg=_13.tagName?_13.tagName.toLowerCase():"";
 if(tg==="blockquote"){
-_13=true;
+_14=true;
 break;
 }
-_12=_12.parentNode;
+_13=_13.parentNode;
 }
-this.button.set("checked",_13);
+this.button.set("checked",_14);
 }
-},_findBlockQuotes:function(_15){
-var _16=[];
-if(_15){
+},_findBlockQuotes:function(_16){
+var _17=[];
+if(_16){
 var i;
-for(i=0;i<_15.length;i++){
-var _17=_15[i];
-if(_17.nodeType===1){
-if(this._getTagName(_17)==="blockquote"){
-_16.push(_17);
+for(i=0;i<_16.length;i++){
+var _18=_16[i];
+if(_18.nodeType===1){
+if(this._getTagName(_18)==="blockquote"){
+_17.push(_18);
 }
-if(_17.childNodes&&_17.childNodes.length>0){
-_16=_16.concat(this._findBlockQuotes(_17.childNodes));
-}
-}
+if(_18.childNodes&&_18.childNodes.length>0){
+_17=_17.concat(this._findBlockQuotes(_18.childNodes));
 }
 }
-return _16;
-},_getTagName:function(_18){
+}
+}
+return _17;
+},_getTagName:function(_19){
 var tag="";
-if(_18&&_18.nodeType===1){
-tag=_18.tagName?_18.tagName.toLowerCase():"";
+if(_19&&_19.nodeType===1){
+tag=_19.tagName?_19.tagName.toLowerCase():"";
 }
 return tag;
-},_isRootInline:function(_19){
+},_isRootInline:function(_1a){
 var ed=this.editor;
-if(this._isTextElement(_19)&&_19.parentNode===ed.editNode){
+if(this._isTextElement(_1a)&&_1a.parentNode===ed.editNode){
 return true;
 }else{
-if(_19.nodeType===1&&this._isInlineFormat(_19)&&_19.parentNode===ed.editNode){
+if(_1a.nodeType===1&&this._isInlineFormat(_1a)&&_1a.parentNode===ed.editNode){
 return true;
 }else{
-if(this._isTextElement(_19)&&this._isInlineFormat(this._getTagName(_19.parentNode))){
-_19=_19.parentNode;
-while(_19&&_19!==ed.editNode&&this._isInlineFormat(this._getTagName(_19))){
-_19=_19.parentNode;
+if(this._isTextElement(_1a)&&this._isInlineFormat(this._getTagName(_1a.parentNode))){
+_1a=_1a.parentNode;
+while(_1a&&_1a!==ed.editNode&&this._isInlineFormat(this._getTagName(_1a))){
+_1a=_1a.parentNode;
 }
-if(_19===ed.editNode){
+if(_1a===ed.editNode){
 return true;
 }
 }
 }
 }
 return false;
-},_isTextElement:function(_1a){
-if(_1a&&_1a.nodeType===3||_1a.nodeType===4){
+},_isTextElement:function(_1b){
+if(_1b&&_1b.nodeType===3||_1b.nodeType===4){
 return true;
 }
 return false;
-},_isEmpty:function(_1b){
-if(_1b.childNodes){
-var _1c=true;
+},_isEmpty:function(_1c){
+if(_1c.childNodes){
+var _1d=true;
 var i;
-for(i=0;i<_1b.childNodes.length;i++){
-var n=_1b.childNodes[i];
+for(i=0;i<_1c.childNodes.length;i++){
+var n=_1c.childNodes[i];
 if(n.nodeType===1){
 if(this._getTagName(n)==="p"){
 if(!dojo.trim(n.innerHTML)){
 continue;
 }
 }
-_1c=false;
+_1d=false;
 break;
 }else{
 if(this._isTextElement(n)){
 var nv=dojo.trim(n.nodeValue);
 if(nv&&nv!=="&nbsp;"&&nv!==" "){
-_1c=false;
+_1d=false;
 break;
 }
 }else{
-_1c=false;
+_1d=false;
 break;
 }
 }
 }
-return _1c;
+return _1d;
 }else{
 return true;
 }
@@ -344,8 +349,8 @@ dojo.subscribe(dijit._scopeName+".Editor.getPlugin",null,function(o){
 if(o.plugin){
 return;
 }
-var _1d=o.args.name.toLowerCase();
-if(_1d==="blockquote"){
+var _1e=o.args.name.toLowerCase();
+if(_1e==="blockquote"){
 o.plugin=new dojox.editor.plugins.Blockquote({});
 }
 });

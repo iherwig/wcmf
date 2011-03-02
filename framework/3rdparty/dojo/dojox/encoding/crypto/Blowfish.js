@@ -10,6 +10,7 @@ dojo._hasResource["dojox.encoding.crypto.Blowfish"]=true;
 dojo.provide("dojox.encoding.crypto.Blowfish");
 dojo.require("dojox.encoding.base64");
 dojo.require("dojox.encoding.crypto._base");
+dojo.getObject("encoding.crypto.Blowfish",true,dojox);
 dojox.encoding.crypto.Blowfish=new function(){
 var _1=Math.pow(2,2);
 var _2=Math.pow(2,3);

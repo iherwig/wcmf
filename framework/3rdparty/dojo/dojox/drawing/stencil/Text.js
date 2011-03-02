@@ -10,9 +10,9 @@ dojo._hasResource["dojox.drawing.stencil.Text"]=true;
 dojo.provide("dojox.drawing.stencil.Text");
 dojox.drawing.stencil.Text=dojox.drawing.util.oo.declare(dojox.drawing.stencil._Base,function(_1){
 },{type:"dojox.drawing.stencil.Text",anchorType:"none",baseRender:true,align:"start",valign:"top",_lineHeight:1,typesetter:function(_2){
-if(dojox.drawing.stencil.Text.typeset){
+if(dojox.drawing.util.typeset){
 this._rawText=_2;
-return dojox.drawing.stencil.Text.typeset(_2);
+return dojox.drawing.util.typeset.convertLaTeX(_2);
 }
 return _2;
 },setText:function(_3){
@@ -39,7 +39,7 @@ return this.data;
 },render:function(_4){
 this.remove(this.shape,this.hit);
 !this.annotation&&this.renderHit&&this._renderOutline();
-if(_4){
+if(_4!=undefined){
 this._text=_4;
 this._textArray=this._text.split("\n");
 }

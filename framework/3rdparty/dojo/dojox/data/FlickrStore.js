@@ -12,8 +12,6 @@ dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.io.script");
 dojo.require("dojo.date.stamp");
 dojo.require("dojo.AdapterRegistry");
-(function(){
-var d=dojo;
 dojo.declare("dojox.data.FlickrStore",null,{constructor:function(_1){
 if(_1&&_1.label){
 this.label=_1.label;
@@ -135,17 +133,16 @@ return _22;
 return str.replace(/&amp;/gm,"&").replace(/&lt;/gm,"<").replace(/&gt;/gm,">").replace(/&quot;/gm,"\"").replace(/&#39;/gm,"'");
 }});
 dojo.extend(dojox.data.FlickrStore,dojo.data.util.simpleFetch);
-var _24="http://api.flickr.com/services/feeds/";
+var feedsUrl="http://api.flickr.com/services/feeds/";
 var reg=dojox.data.FlickrStore.urlRegistry=new d.AdapterRegistry(true);
-reg.register("group pool",function(_25){
-return !!_25.query["groupid"];
-},_24+"groups_pool.gne");
-reg.register("default",function(_26){
+reg.register("group pool",function(_24){
+return !!_24.query["groupid"];
+},feedsUrl+"groups_pool.gne");
+reg.register("default",function(_25){
 return true;
-},_24+"photos_public.gne");
-})();
+},feedsUrl+"photos_public.gne");
 if(!jsonFlickrFeed){
-var jsonFlickrFeed=function(_27){
+var jsonFlickrFeed=function(_26){
 };
 }
 }

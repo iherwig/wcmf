@@ -8,9 +8,9 @@
 if(!dojo._hasResource["dijit._editor.plugins.TabIndent"]){
 dojo._hasResource["dijit._editor.plugins.TabIndent"]=true;
 dojo.provide("dijit._editor.plugins.TabIndent");
-dojo.experimental("dijit._editor.plugins.TabIndent");
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.ToggleButton");
+dojo.experimental("dijit._editor.plugins.TabIndent");
 dojo.declare("dijit._editor.plugins.TabIndent",dijit._editor._Plugin,{useDefaultCommand:false,buttonClass:dijit.form.ToggleButton,command:"tabIndent",_initButton:function(){
 this.inherited(arguments);
 var e=this.editor;
@@ -19,6 +19,11 @@ e.set("isTabIndent",_1);
 });
 this.updateState();
 },updateState:function(){
+var _2=this.get("disabled");
+this.button.set("disabled",_2);
+if(_2){
+return;
+}
 this.button.set("checked",this.editor.isTabIndent,false);
 }});
 dojo.subscribe(dijit._scopeName+".Editor.getPlugin",null,function(o){

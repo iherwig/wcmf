@@ -21,11 +21,11 @@ this.connect(this.master,"destroy",this,"destroy");
 if(this.style.labelSameColor){
 this.connect(this.master,"attr",this,"beforeAttr");
 }
-},{_align:"start",setLabelCustom:function(_2){
+},{_align:"start",drawingType:"label",setLabelCustom:function(_2){
 var d=dojo.hitch(this.master,this.labelPosition)();
 this.setData({x:d.x,y:d.y,width:d.w||this.style.text.minWidth,height:d.h||this._lineHeight});
 if(_2&&!_2.split){
-_2=null;
+_2=this.getText();
 }
 this.render(this.typesetter(_2));
 },setLabel:function(_3){

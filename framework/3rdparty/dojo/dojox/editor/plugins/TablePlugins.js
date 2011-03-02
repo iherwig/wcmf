@@ -8,11 +8,17 @@
 if(!dojo._hasResource["dojox.editor.plugins.TablePlugins"]){
 dojo._hasResource["dojox.editor.plugins.TablePlugins"]=true;
 dojo.provide("dojox.editor.plugins.TablePlugins");
+dojo.require("dijit.form.Button");
+dojo.require("dijit.Dialog");
+dojo.require("dijit.form.TextBox");
+dojo.require("dijit.form.FilteringSelect");
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit._editor.selection");
 dojo.require("dijit.Menu");
+dojo.require("dijit.ColorPalette");
+dojo.require("dojox.widget.ColorPicker");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dojox.editor.plugins","TableDialog",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dojox.editor.plugins","TableDialog",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.experimental("dojox.editor.plugins.TablePlugins");
 dojo.declare("dojox.editor.plugins._TableHandler",dijit._editor._Plugin,{tablesConnected:false,currentlyAvailable:false,alwaysAvailable:false,availableCurrentlySet:false,initialized:false,tableData:null,shiftKeyDown:false,editorDomNode:null,undoEnabled:true,refCount:0,doMixins:function(){
 dojo.mixin(this.editor,{getAncestorElement:function(_1){
@@ -127,7 +133,7 @@ td.id="tdid"+i+this.getTimeStamp();
 }
 return tds;
 },getTimeStamp:function(){
-return Math.floor(new Date().getTime()*1e-8);
+return new Date().getTime();
 },_tempStoreTableData:function(_11){
 if(_11===true){
 }else{
@@ -390,6 +396,14 @@ _1f=_1f.parentNode;
 }
 }
 return _1c;
+},updateState:function(){
+if(this.button){
+if((this.available||this.alwaysAvailable)&&!this.get("disabled")){
+this.button.set("disabled",false);
+}else{
+this.button.set("disabled",true);
+}
+}
 },destroy:function(){
 this.inherited(arguments);
 dojo.unsubscribe(this._availableTopic);
@@ -402,6 +416,12 @@ this._createContextMenu();
 }));
 this.button.domNode.style.display="none";
 });
+},destroy:function(){
+if(this.menu){
+this.menu.destroyRecursive();
+delete this.menu;
+}
+this.inherited(arguments);
 },_initButton:function(){
 this.inherited(arguments);
 if(this.commandName=="tableContextMenu"){
@@ -441,11 +461,63 @@ var o=this.getTableInfo();
 dojo.attr(o.td,"bgcolor",_23);
 });
 }});
+dojo.declare("dojox.editor.plugins._CellColorDropDown",[dijit._Widget,dijit._Templated],{templateString:"<div style='display: none; position: absolute; top: -10000; z-index: -10000'>"+"<div dojoType='dijit.TooltipDialog' dojoAttachPoint='dialog' class='dojoxEditorColorPicker'>"+"<div dojoType='dojox.widget.ColorPicker' dojoAttachPoint='_colorPicker'></div>"+"<div style='margin: 0.5em 0em 0em 0em'>"+"<button dojoType='dijit.form.Button' type='button' dojoAttachPoint='_setButton'>${buttonSet}</button>"+"&nbsp;"+"<button dojoType='dijit.form.Button' type='button' dojoAttachPoint='_cancelButton'>${buttonCancel}</button>"+"</div>"+"</div>"+"</div>",widgetsInTemplate:true,constructor:function(){
+var _24=dojo.i18n.getLocalization("dojox.editor.plugins","TableDialog");
+dojo.mixin(this,_24);
+},startup:function(){
+if(!this._started){
+this.inherited(arguments);
+this.connect(this._setButton,"onClick",function(){
+this.onChange(this.get("value"));
+});
+this.connect(this._cancelButton,"onClick",function(){
+dijit.popup.close(this.dialog);
+this.onCancel();
+});
+dojo.style(this.domNode,"display","block");
+}
+},_setValueAttr:function(_25,_26){
+this._colorPicker.set("value",_25,_26);
+},_getValueAttr:function(){
+return this._colorPicker.get("value");
+},setColor:function(_27){
+this._colorPicker.setColor(_27,false);
+},onChange:function(_28){
+},onCancel:function(){
+}});
 dojo.declare("dojox.editor.plugins.ColorTableCell",dojox.editor.plugins.TablePlugins,{constructor:function(){
+this.closable=true;
 this.buttonClass=dijit.form.DropDownButton;
-this.dropDown=new dijit.ColorPalette();
-this.connect(this.dropDown,"onChange",function(_24){
-this.modTable(null,_24);
+var _29=new dojox.editor.plugins._CellColorDropDown();
+dojo.body().appendChild(_29.domNode);
+_29.startup();
+this.dropDown=_29.dialog;
+this.connect(_29,"onChange",function(_2a){
+this.modTable(null,_2a);
+this.editor.focus();
+});
+this.connect(_29,"onCancel",function(_2b){
+this.editor.focus();
+});
+this.connect(_29.dialog,"onOpen",function(){
+var o=this.getTableInfo(),tds=this.getSelectedCells(o.tbl);
+if(tds&&tds.length>0){
+var t=tds[0]==this.lastObject?tds[0]:tds[tds.length-1],_2c;
+while(t&&((_2c=dojo.style(t,"backgroundColor"))=="transparent"||_2c.indexOf("rgba")==0)){
+t=t.parentNode;
+}
+_2c=dojo.style(t,"backgroundColor");
+if(_2c!="transparent"&&_2c.indexOf("rgba")!=0){
+_29.setColor(_2c);
+}
+}
+});
+this.connect(this,"setEditor",function(_2d){
+_2d.onLoadDeferred.addCallback(dojo.hitch(this,function(){
+this.connect(this.editor.editNode,"onmouseup",function(evt){
+this.lastObject=evt.target;
+});
+}));
 });
 },_initButton:function(){
 this.command=this.commandName;
@@ -453,70 +525,63 @@ this.label=this.editor.commands[this.command]=this._makeTitle(this.command);
 this.inherited(arguments);
 delete this.command;
 this.onDisplayChanged(false);
-},modTable:function(cmd,_25){
+},modTable:function(cmd,_2e){
 this.begEdit();
 var o=this.getTableInfo();
 var tds=this.getSelectedCells(o.tbl);
 dojo.forEach(tds,function(td){
-dojo.style(td,"backgroundColor",_25);
+dojo.style(td,"backgroundColor",_2e);
 });
 this.endEdit();
 }});
-dojo.provide("dojox.editor.plugins.EditorTableDialog");
-dojo.require("dijit.Dialog");
-dojo.require("dijit.form.TextBox");
-dojo.require("dijit.form.FilteringSelect");
-dojo.require("dijit.form.Button");
-dojo.declare("dojox.editor.plugins.EditorTableDialog",[dijit.Dialog],{baseClass:"EditorTableDialog",widgetsInTemplate:true,templateString:dojo.cache("dojox.editor.plugins","resources/insertTable.html","<div class=\"dijitDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dijitDialogTitleBar\">\n\t<span dojoAttachPoint=\"titleNode\" class=\"dijitDialogTitle\" id=\"${id}_title\">${insertTableTitle}</span>\n\t<span dojoAttachPoint=\"closeButtonNode\" class=\"dijitDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\" title=\"${buttonCancel}\">\n\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\" title=\"${buttonCancel}\">x</span>\n\t</span>\n\t</div>\n    <div dojoAttachPoint=\"containerNode\" class=\"dijitDialogPaneContent\">\n        <table class=\"etdTable\"><tr>\n            <td class=\"left\">\n                <span dojoAttachPoint=\"selectRow\" dojoType=\"dijit.form.TextBox\" value=\"2\"></span>\n                <label>${rows}</label>\n            </td><td class=\"right\">\n                <span dojoAttachPoint=\"selectCol\" dojoType=\"dijit.form.TextBox\" value=\"2\"></span>\n                <label>${columns}</label>\n            </td></tr><tr><td>\n                <span dojoAttachPoint=\"selectWidth\" dojoType=\"dijit.form.TextBox\" value=\"100\"></span>\n                <label>${tableWidth}</label>\n            </td><td>\n                <select dojoAttachPoint=\"selectWidthType\" hasDownArrow=\"true\" dojoType=\"dijit.form.FilteringSelect\">\n                  <option value=\"percent\">${percent}</option>\n                  <option value=\"pixels\">${pixels}</option>\n                </select></td></tr>\n          <tr><td>\n                <span dojoAttachPoint=\"selectBorder\" dojoType=\"dijit.form.TextBox\" value=\"1\"></span>\n                <label>${borderThickness}</label></td>\n            <td>\n                ${pixels}\n            </td></tr><tr><td>\n                <span dojoAttachPoint=\"selectPad\" dojoType=\"dijit.form.TextBox\" value=\"0\"></span>\n                <label>${cellPadding}</label></td>\n            <td class=\"cellpad\"></td></tr><tr><td>\n                <span dojoAttachPoint=\"selectSpace\" dojoType=\"dijit.form.TextBox\" value=\"0\"></span>\n                <label>${cellSpacing}</label>\n            </td><td class=\"cellspace\"></td></tr></table>\n        <div class=\"dialogButtonContainer\">\n            <div dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick: onInsert\">${buttonInsert}</div>\n            <div dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick: onCancel\">${buttonCancel}</div>\n        </div>\n\t</div>\n</div>\n"),postMixInProperties:function(){
-var _26=dojo.i18n.getLocalization("dojox.editor.plugins","TableDialog",this.lang);
-dojo.mixin(this,_26);
+dojo.declare("dojox.editor.plugins.EditorTableDialog",[dijit.Dialog],{baseClass:"EditorTableDialog",widgetsInTemplate:true,templateString:dojo.cache("dojox.editor.plugins","resources/insertTable.html","<div class=\"dijitDialog\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dijitDialogTitleBar\">\n\t<span dojoAttachPoint=\"titleNode\" class=\"dijitDialogTitle\" id=\"${id}_title\">${insertTableTitle}</span>\n\t<span dojoAttachPoint=\"closeButtonNode\" class=\"dijitDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\" title=\"${buttonCancel}\">\n\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\" title=\"${buttonCancel}\">x</span>\n\t</span>\n\t</div>\n    <div dojoAttachPoint=\"containerNode\" class=\"dijitDialogPaneContent\">\n        <table class=\"etdTable\"><tr>\n            <td class=\"left\">\n                <span dojoAttachPoint=\"selectRow\" dojoType=\"dijit.form.TextBox\" value=\"2\"></span>\n                <label>${rows}</label>\n            </td><td class=\"right\">\n                <span dojoAttachPoint=\"selectCol\" dojoType=\"dijit.form.TextBox\" value=\"2\"></span>\n                <label>${columns}</label>\n            </td></tr><tr><td>\n                <span dojoAttachPoint=\"selectWidth\" dojoType=\"dijit.form.TextBox\" value=\"100\"></span>\n                <label>${tableWidth}</label>\n            </td><td>\n                <select dojoAttachPoint=\"selectWidthType\" hasDownArrow=\"true\" dojoType=\"dijit.form.FilteringSelect\">\n                  <option value=\"percent\">${percent}</option>\n                  <option value=\"pixels\">${pixels}</option>\n                </select></td></tr>\n          <tr><td>\n                <span dojoAttachPoint=\"selectBorder\" dojoType=\"dijit.form.TextBox\" value=\"1\"></span>\n                <label>${borderThickness}</label></td>\n            <td>\n                ${pixels}\n            </td></tr><tr><td>\n                <span dojoAttachPoint=\"selectPad\" dojoType=\"dijit.form.TextBox\" value=\"0\"></span>\n                <label>${cellPadding}</label></td>\n            <td class=\"cellpad\"></td></tr><tr><td>\n                <span dojoAttachPoint=\"selectSpace\" dojoType=\"dijit.form.TextBox\" value=\"0\"></span>\n                <label>${cellSpacing}</label>\n            </td><td class=\"cellspace\"></td></tr></table>\n        <div class=\"dialogButtonContainer\">\n            <div dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick: onInsert\">${buttonInsert}</div>\n            <div dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick: onCancel\">${buttonCancel}</div>\n        </div>\n\t</div>\n</div>\n"),postMixInProperties:function(){
+var _2f=dojo.i18n.getLocalization("dojox.editor.plugins","TableDialog",this.lang);
+dojo.mixin(this,_2f);
 this.inherited(arguments);
 },postCreate:function(){
 dojo.addClass(this.domNode,this.baseClass);
 this.inherited(arguments);
 },onInsert:function(){
-var _27=this.selectRow.get("value")||1,_28=this.selectCol.get("value")||1,_29=this.selectWidth.get("value"),_2a=this.selectWidthType.get("value"),_2b=this.selectBorder.get("value"),pad=this.selectPad.get("value"),_2c=this.selectSpace.get("value"),_2d="tbl_"+(new Date().getTime()),t="<table id=\""+_2d+"\"width=\""+_29+((_2a=="percent")?"%":"")+"\" border=\""+_2b+"\" cellspacing=\""+_2c+"\" cellpadding=\""+pad+"\">\n";
-for(var r=0;r<_27;r++){
+var _30=this.selectRow.get("value")||1,_31=this.selectCol.get("value")||1,_32=this.selectWidth.get("value"),_33=this.selectWidthType.get("value"),_34=this.selectBorder.get("value"),pad=this.selectPad.get("value"),_35=this.selectSpace.get("value"),_36="tbl_"+(new Date().getTime()),t="<table id=\""+_36+"\"width=\""+_32+((_33=="percent")?"%":"")+"\" border=\""+_34+"\" cellspacing=\""+_35+"\" cellpadding=\""+pad+"\">\n";
+for(var r=0;r<_30;r++){
 t+="\t<tr>\n";
-for(var c=0;c<_28;c++){
-t+="\t\t<td width=\""+(Math.floor(100/_28))+"%\">&nbsp;</td>\n";
+for(var c=0;c<_31;c++){
+t+="\t\t<td width=\""+(Math.floor(100/_31))+"%\">&nbsp;</td>\n";
 }
 t+="\t</tr>\n";
 }
 t+="</table>";
-this.onBuildTable({htmlText:t,id:_2d});
+this.onBuildTable({htmlText:t,id:_36});
 var cl=dojo.connect(this,"onHide",function(){
 dojo.disconnect(cl);
-var _2e=this;
+var _37=this;
 setTimeout(function(){
-_2e.destroyRecursive();
+_37.destroyRecursive();
 },10);
 });
 this.hide();
 },onCancel:function(){
 var c=dojo.connect(this,"onHide",function(){
 dojo.disconnect(c);
-var _2f=this;
+var _38=this;
 setTimeout(function(){
-_2f.destroyRecursive();
+_38.destroyRecursive();
 },10);
 });
-},onBuildTable:function(_30){
+},onBuildTable:function(_39){
 }});
-dojo.provide("dojox.editor.plugins.EditorModifyTableDialog");
-dojo.require("dijit.ColorPalette");
-dojo.declare("dojox.editor.plugins.EditorModifyTableDialog",[dijit.Dialog],{baseClass:"EditorTableDialog",widgetsInTemplate:true,table:null,tableAtts:{},templateString:dojo.cache("dojox.editor.plugins","resources/modifyTable.html","<div class=\"dijitDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dijitDialogTitleBar\">\n\t<span dojoAttachPoint=\"titleNode\" class=\"dijitDialogTitle\" id=\"${id}_title\">${modifyTableTitle}</span>\n\t<span dojoAttachPoint=\"closeButtonNode\" class=\"dijitDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\" title=\"${buttonCancel}\">\n\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\" title=\"${buttonCancel}\">x</span>\n\t</span>\n\t</div>\n    <div dojoAttachPoint=\"containerNode\" class=\"dijitDialogPaneContent\">\n        <table class=\"etdTable\">\n          <tr><td class=\"left\">\n                <span class=\"colorSwatchBtn\" dojoAttachPoint=\"backgroundCol\"></span>\n                <label>${backgroundColor}</label>\n            </td><td class=\"right\">\n                <span class=\"colorSwatchBtn\" dojoAttachPoint=\"borderCol\"></span>\n                <label>${borderColor}</label>\n            </td></tr><tr><td>\n                <span dojoAttachPoint=\"selectBorder\" dojoType=\"dijit.form.TextBox\" value=\"1\"></span>\n                <label>${borderThickness}</label>\n            </td><td>\n            ${pixels}\n            </td></tr><tr><td>\n                <select class=\"floatDijit\" dojoAttachPoint=\"selectAlign\" dojoType=\"dijit.form.FilteringSelect\">\n                  <option value=\"default\">${default}</option>\n                  <option value=\"left\">${left}</option>\n                  <option value=\"center\">${center}</option>\n                  <option value=\"right\">${right}</option>\n                </select>\n                <label>${align}</label>\n            </td><td></td></tr><tr><td>\n                <span dojoAttachPoint=\"selectWidth\" dojoType=\"dijit.form.TextBox\" value=\"100\"></span>\n                <label>${tableWidth}</label>\n            </td><td>\n                <select dojoAttachPoint=\"selectWidthType\" hasDownArrow=\"true\" dojoType=\"dijit.form.FilteringSelect\">\n                  <option value=\"percent\">${percent}</option>\n                  <option value=\"pixels\">${pixels}</option>\n                </select>\n                </td></tr><tr><td>\n                <span dojoAttachPoint=\"selectPad\" dojoType=\"dijit.form.TextBox\" value=\"0\"></span>\n                <label>${cellPadding}</label></td>\n            <td class=\"cellpad\"></td></tr><tr><td>\n                <span dojoAttachPoint=\"selectSpace\" dojoType=\"dijit.form.TextBox\" value=\"0\"></span>\n                <label>${cellSpacing}</label>\n            </td><td class=\"cellspace\"></td></tr>\n        </table>\n        <div class=\"dialogButtonContainer\">\n            <div dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick: onSet\">${buttonSet}</div>\n            <div dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick: onCancel\">${buttonCancel}</div>\n        </div>\n\t</div>\n</div>\n"),postMixInProperties:function(){
-var _31=dojo.i18n.getLocalization("dojox.editor.plugins","TableDialog",this.lang);
-dojo.mixin(this,_31);
+dojo.declare("dojox.editor.plugins.EditorModifyTableDialog",[dijit.Dialog],{baseClass:"EditorTableDialog",widgetsInTemplate:true,table:null,tableAtts:{},templateString:dojo.cache("dojox.editor.plugins","resources/modifyTable.html","<div class=\"dijitDialog\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dijitDialogTitleBar\">\n\t<span dojoAttachPoint=\"titleNode\" class=\"dijitDialogTitle\" id=\"${id}_title\">${modifyTableTitle}</span>\n\t<span dojoAttachPoint=\"closeButtonNode\" class=\"dijitDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\" title=\"${buttonCancel}\">\n\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\" title=\"${buttonCancel}\">x</span>\n\t</span>\n\t</div>\n    <div dojoAttachPoint=\"containerNode\" class=\"dijitDialogPaneContent\">\n        <table class=\"etdTable\">\n          <tr><td class=\"left\">\n                <span class=\"colorSwatchBtn\" dojoAttachPoint=\"backgroundCol\"></span>\n                <label>${backgroundColor}</label>\n            </td><td class=\"right\">\n                <span class=\"colorSwatchBtn\" dojoAttachPoint=\"borderCol\"></span>\n                <label>${borderColor}</label>\n            </td></tr><tr><td>\n                <span dojoAttachPoint=\"selectBorder\" dojoType=\"dijit.form.TextBox\" value=\"1\"></span>\n                <label>${borderThickness}</label>\n            </td><td>\n            ${pixels}\n            </td></tr><tr><td>\n                <select class=\"floatDijit\" dojoAttachPoint=\"selectAlign\" dojoType=\"dijit.form.FilteringSelect\">\n                  <option value=\"default\">${default}</option>\n                  <option value=\"left\">${left}</option>\n                  <option value=\"center\">${center}</option>\n                  <option value=\"right\">${right}</option>\n                </select>\n                <label>${align}</label>\n            </td><td></td></tr><tr><td>\n                <span dojoAttachPoint=\"selectWidth\" dojoType=\"dijit.form.TextBox\" value=\"100\"></span>\n                <label>${tableWidth}</label>\n            </td><td>\n                <select dojoAttachPoint=\"selectWidthType\" hasDownArrow=\"true\" dojoType=\"dijit.form.FilteringSelect\">\n                  <option value=\"percent\">${percent}</option>\n                  <option value=\"pixels\">${pixels}</option>\n                </select>\n                </td></tr><tr><td>\n                <span dojoAttachPoint=\"selectPad\" dojoType=\"dijit.form.TextBox\" value=\"0\"></span>\n                <label>${cellPadding}</label></td>\n            <td class=\"cellpad\"></td></tr><tr><td>\n                <span dojoAttachPoint=\"selectSpace\" dojoType=\"dijit.form.TextBox\" value=\"0\"></span>\n                <label>${cellSpacing}</label>\n            </td><td class=\"cellspace\"></td></tr>\n        </table>\n        <div class=\"dialogButtonContainer\">\n            <div dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick: onSet\">${buttonSet}</div>\n            <div dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick: onCancel\">${buttonCancel}</div>\n        </div>\n\t</div>\n</div>\n"),postMixInProperties:function(){
+var _3a=dojo.i18n.getLocalization("dojox.editor.plugins","TableDialog",this.lang);
+dojo.mixin(this,_3a);
 this.inherited(arguments);
 },postCreate:function(){
 dojo.addClass(this.domNode,this.baseClass);
 this.inherited(arguments);
 this._cleanupWidgets=[];
 var w1=new dijit.ColorPalette({});
-this.connect(w1,"onChange",function(_32){
+this.connect(w1,"onChange",function(_3b){
 dijit.popup.close(w1);
-this.setBrdColor(_32);
+this.setBrdColor(_3b);
 });
 this.connect(w1,"onBlur",function(){
 dijit.popup.close(w1);
@@ -526,9 +591,9 @@ dijit.popup.open({popup:w1,around:this.borderCol});
 w1.focus();
 });
 var w2=new dijit.ColorPalette({});
-this.connect(w2,"onChange",function(_33){
+this.connect(w2,"onChange",function(_3c){
 dijit.popup.close(w2);
-this.setBkColor(_33);
+this.setBkColor(_3c);
 });
 this.connect(w2,"onBlur",function(){
 dijit.popup.close(w2);
@@ -561,12 +626,12 @@ this.selectBorder.set("value",dojo.attr(this.table,"border"));
 this.selectPad.set("value",dojo.attr(this.table,"cellPadding"));
 this.selectSpace.set("value",dojo.attr(this.table,"cellSpacing"));
 this.selectAlign.set("value",dojo.attr(this.table,"align"));
-},setBrdColor:function(_34){
-this.brdColor=_34;
-dojo.style(this.borderCol,"backgroundColor",_34);
-},setBkColor:function(_35){
-this.bkColor=_35;
-dojo.style(this.backgroundCol,"backgroundColor",_35);
+},setBrdColor:function(_3d){
+this.brdColor=_3d;
+dojo.style(this.borderCol,"backgroundColor",_3d);
+},setBkColor:function(_3e){
+this.bkColor=_3e;
+dojo.style(this.backgroundCol,"backgroundColor",_3e);
 },onSet:function(){
 dojo.attr(this.table,"borderColor",this.brdColor);
 dojo.attr(this.table,"bgColor",this.bkColor);
@@ -580,21 +645,21 @@ dojo.attr(this.table,"cellSpacing",this.selectSpace.get("value"));
 dojo.attr(this.table,"align",this.selectAlign.get("value"));
 var c=dojo.connect(this,"onHide",function(){
 dojo.disconnect(c);
-var _36=this;
+var _3f=this;
 setTimeout(function(){
-_36.destroyRecursive();
+_3f.destroyRecursive();
 },10);
 });
 this.hide();
 },onCancel:function(){
 var c=dojo.connect(this,"onHide",function(){
 dojo.disconnect(c);
-var _37=this;
+var _40=this;
 setTimeout(function(){
-_37.destroyRecursive();
+_40.destroyRecursive();
 },10);
 });
-},onSetTable:function(_38){
+},onSetTable:function(_41){
 },destroy:function(){
 this.inherited(arguments);
 dojo.forEach(this._cleanupWidgets,function(w){

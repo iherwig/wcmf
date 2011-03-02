@@ -8,18 +8,19 @@
 if(!dojo._hasResource["dojox.editor.plugins.InsertAnchor"]){
 dojo._hasResource["dojox.editor.plugins.InsertAnchor"]=true;
 dojo.provide("dojox.editor.plugins.InsertAnchor");
+dojo.require("dojo.string");
 dojo.require("dijit._Widget");
+dojo.require("dijit._editor.range");
 dojo.require("dijit._Templated");
-dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.TooltipDialog");
-dojo.require("dijit.form.Button");
 dojo.require("dijit.form.ValidationTextBox");
 dojo.require("dijit.form.Select");
-dojo.require("dijit._editor.range");
+dojo.require("dijit._editor._Plugin");
+dojo.require("dijit.form.Button");
+dojo.require("dojox.editor.plugins.ToolbarLineBreak");
 dojo.require("dojo.i18n");
-dojo.require("dojo.string");
-dojo.requireLocalization("dijit","common",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.requireLocalization("dojox.editor.plugins","InsertAnchor",null,"ROOT,ro");
+dojo.requireLocalization("dojox.editor.plugins","InsertAnchor",null,"ROOT,kk,ro");
+dojo.requireLocalization("dijit","common",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.declare("dojox.editor.plugins.InsertAnchor",dijit._editor._Plugin,{htmlTemplate:"<a name=\"${anchorInput}\" class=\"dijitEditorPluginInsertAnchorStyle\">${textInput}</a>",iconClassPrefix:"dijitAdditionalEditorIcon",_template:["<table><tr><td>","<label for='${id}_anchorInput'>${anchor}</label>","</td><td>","<input dojoType='dijit.form.ValidationTextBox' required='true' "+"id='${id}_anchorInput' name='anchorInput' intermediateChanges='true'>","</td></tr><tr><td>","<label for='${id}_textInput'>${text}</label>","</td><td>","<input dojoType='dijit.form.ValidationTextBox' required='true' id='${id}_textInput' "+"name='textInput' intermediateChanges='true'>","</td></tr>","<tr><td colspan='2'>","<button dojoType='dijit.form.Button' type='submit' id='${id}_setButton'>${set}</button>","<button dojoType='dijit.form.Button' type='button' id='${id}_cancelButton'>${cancel}</button>","</td></tr></table>"].join(""),_initButton:function(){
 var _1=this;
 var _2=dojo.i18n.getLocalization("dojox.editor.plugins","InsertAnchor",this.lang);
@@ -49,6 +50,8 @@ this.connect(this._anchorInput,"onChange","_checkInput");
 this.editor.contentDomPreFilters.push(dojo.hitch(this,this._preDomFilter));
 this.editor.contentDomPostFilters.push(dojo.hitch(this,this._postDomFilter));
 this._setup();
+},updateState:function(){
+this.button.set("disabled",this.get("disabled"));
 },setEditor:function(_4){
 this.editor=_4;
 this._initButton();

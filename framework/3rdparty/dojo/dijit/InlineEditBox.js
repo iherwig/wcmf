@@ -13,8 +13,8 @@ dojo.require("dijit._Widget");
 dojo.require("dijit._Container");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.form.TextBox");
-dojo.requireLocalization("dijit","common",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.declare("dijit.InlineEditBox",dijit._Widget,{editing:false,autoSave:true,buttonSave:"",buttonCancel:"",renderAsHtml:false,editor:"dijit.form.TextBox",editorWrapper:"dijit._InlineEditor",editorParams:{},onChange:function(_1){
+dojo.requireLocalization("dijit","common",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.declare("dijit.InlineEditBox",dijit._Widget,{editing:false,autoSave:true,buttonSave:"",buttonCancel:"",renderAsHtml:false,editor:"dijit.form.TextBox",editorWrapper:"dijit._InlineEditor",editorParams:{},disabled:false,onChange:function(_1){
 },onCancel:function(){
 },width:"100%",value:"",noValueIndicator:dojo.isIE<=6?"<span style='font-family: wingdings; text-decoration: underline;'>&nbsp;&nbsp;&nbsp;&nbsp;&#x270d;&nbsp;&nbsp;&nbsp;&nbsp;</span>":"<span style='text-decoration: underline;'>&nbsp;&nbsp;&nbsp;&nbsp;&#x270d;&nbsp;&nbsp;&nbsp;&nbsp;</span>",constructor:function(){
 this.editorParams={};
@@ -40,7 +40,6 @@ dojo.addClass(this.displayNode,"dijitInlineEditBoxDisplayMode");
 dojo.deprecated("dijit.InlineEditBox.setDisabled() is deprecated.  Use set('disabled', bool) instead.","","2.0");
 this.set("disabled",_4);
 },_setDisabledAttr:function(_5){
-this.disabled=_5;
 dijit.setWaiState(this.domNode,"disabled",_5);
 if(_5){
 this.displayNode.removeAttribute("tabIndex");
@@ -48,6 +47,7 @@ this.displayNode.removeAttribute("tabIndex");
 this.displayNode.setAttribute("tabIndex",0);
 }
 dojo.toggleClass(this.displayNode,"dijitInlineEditBoxDisplayModeDisabled",_5);
+this._set("disabled",_5);
 },_onMouseOver:function(){
 if(!this.disabled){
 dojo.addClass(this.displayNode,"dijitInlineEditBoxDisplayModeHover");
@@ -76,7 +76,7 @@ var ew=this.wrapperWidget.editWidget;
 ew.set("displayedValue" in ew?"displayedValue":"value",this.value);
 }else{
 var _6=dojo.create("span",null,this.domNode,"before");
-var _7=dojo.getObject(this.editorWrapper);
+var _7=typeof this.editorWrapper=="string"?dojo.getObject(this.editorWrapper):this.editorWrapper;
 this.wrapperWidget=new _7({value:this.value,buttonSave:this.buttonSave,buttonCancel:this.buttonCancel,dir:this.dir,lang:this.lang,tabIndex:this._savedTabIndex,editor:this.editor,inlineEditBox:this,sourceStyle:dojo.getComputedStyle(this.displayNode),save:dojo.hitch(this,"save"),cancel:dojo.hitch(this,"cancel")},_6);
 }
 var ww=this.wrapperWidget;
@@ -95,7 +95,7 @@ this.inherited(arguments);
 if(!this.editing){
 }
 },destroy:function(){
-if(this.wrapperWidget){
+if(this.wrapperWidget&&!this.wrapperWidget._destroyed){
 this.wrapperWidget.destroy();
 delete this.wrapperWidget;
 }
@@ -116,38 +116,40 @@ this.editing=false;
 var ww=this.wrapperWidget;
 var _a=ww.getValue();
 this.set("value",_a);
-setTimeout(dojo.hitch(this,"onChange",_a),0);
 this._showText(_9);
 },setValue:function(_b){
 dojo.deprecated("dijit.InlineEditBox.setValue() is deprecated.  Use set('value', ...) instead.","","2.0");
 return this.set("value",_b);
 },_setValueAttr:function(_c){
-this.value=_c=dojo.trim(_c);
-if(!this.renderAsHtml){
-_c=_c.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;").replace(/"/gm,"&quot;").replace(/\n/g,"<br>");
+_c=dojo.trim(_c);
+var _d=this.renderAsHtml?_c:_c.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;").replace(/"/gm,"&quot;").replace(/\n/g,"<br>");
+this.displayNode.innerHTML=_d||this.noValueIndicator;
+this._set("value",_c);
+if(this._started){
+setTimeout(dojo.hitch(this,"onChange",_c),0);
 }
-this.displayNode.innerHTML=_c||this.noValueIndicator;
 },getValue:function(){
 dojo.deprecated("dijit.InlineEditBox.getValue() is deprecated.  Use get('value') instead.","","2.0");
 return this.get("value");
-},cancel:function(_d){
+},cancel:function(_e){
 if(this.disabled||!this.editing){
 return;
 }
 this.editing=false;
 setTimeout(dojo.hitch(this,"onCancel"),0);
-this._showText(_d);
+this._showText(_e);
 }});
-dojo.declare("dijit._InlineEditor",[dijit._Widget,dijit._Templated],{templateString:dojo.cache("dijit","templates/InlineEditBox.html","<span dojoAttachPoint=\"editNode\" waiRole=\"presentation\" style=\"position: absolute; visibility:hidden\" class=\"dijitReset dijitInline\"\n\tdojoAttachEvent=\"onkeypress: _onKeyPress\"\n\t><span dojoAttachPoint=\"editorPlaceholder\"></span\n\t><span dojoAttachPoint=\"buttonContainer\"\n\t\t><button class='saveButton' dojoAttachPoint=\"saveButton\" dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick:save\" label=\"${buttonSave}\"></button\n\t\t><button class='cancelButton' dojoAttachPoint=\"cancelButton\" dojoType=\"dijit.form.Button\" dojoAttachEvent=\"onClick:cancel\" label=\"${buttonCancel}\"></button\n\t></span\n></span>\n"),widgetsInTemplate:true,postMixInProperties:function(){
+dojo.declare("dijit._InlineEditor",[dijit._Widget,dijit._Templated],{templateString:dojo.cache("dijit","templates/InlineEditBox.html","<span data-dojo-attach-point=\"editNode\" role=\"presentation\" style=\"position: absolute; visibility:hidden\" class=\"dijitReset dijitInline\"\n\tdata-dojo-attach-event=\"onkeypress: _onKeyPress\"\n\t><span data-dojo-attach-point=\"editorPlaceholder\"></span\n\t><span data-dojo-attach-point=\"buttonContainer\"\n\t\t><button data-dojo-type=\"dijit.form.Button\" data-dojo-props=\"label: '${buttonSave}', 'class': 'saveButton'\"\n\t\t\tdata-dojo-attach-point=\"saveButton\" data-dojo-attach-event=\"onClick:save\"></button\n\t\t><button data-dojo-type=\"dijit.form.Button\"  data-dojo-props=\"label: '${buttonCancel}', 'class': 'cancelButton'\"\n\t\t\tdata-dojo-attach-point=\"cancelButton\" data-dojo-attach-event=\"onClick:cancel\"></button\n\t></span\n></span>\n"),widgetsInTemplate:true,postMixInProperties:function(){
 this.inherited(arguments);
 this.messages=dojo.i18n.getLocalization("dijit","common",this.lang);
-dojo.forEach(["buttonSave","buttonCancel"],function(_e){
-if(!this[_e]){
-this[_e]=this.messages[_e];
+dojo.forEach(["buttonSave","buttonCancel"],function(_f){
+if(!this[_f]){
+this[_f]=this.messages[_f];
 }
 },this);
-},postCreate:function(){
-var _f=dojo.getObject(this.editor);
+},buildRendering:function(){
+this.inherited(arguments);
+var cls=typeof this.editor=="string"?dojo.getObject(this.editor):this.editor;
 var _10=this.sourceStyle,_11="line-height:"+_10.lineHeight+";",_12=dojo.getComputedStyle(this.domNode);
 dojo.forEach(["Weight","Family","Size","Style"],function(_13){
 var _14=_10["font"+_13],_15=_12["font"+_13];
@@ -166,14 +168,19 @@ this.domNode.style.display="block";
 _11+="width:"+(_17+(Number(_17)==_17?"px":""))+";";
 }
 var _18=dojo.delegate(this.inlineEditBox.editorParams,{style:_11,dir:this.dir,lang:this.lang});
-_18["displayedValue" in _f.prototype?"displayedValue":"value"]=this.value;
-var ew=(this.editWidget=new _f(_18,this.editorPlaceholder));
+_18["displayedValue" in cls.prototype?"displayedValue":"value"]=this.value;
+this.editWidget=new cls(_18,this.editorPlaceholder);
 if(this.inlineEditBox.autoSave){
 dojo.destroy(this.buttonContainer);
+}
+},postCreate:function(){
+this.inherited(arguments);
+var ew=this.editWidget;
+if(this.inlineEditBox.autoSave){
 this.connect(ew,"onChange","_onChange");
 this.connect(ew,"onKeyPress","_onKeyPress");
 }else{
-if("intermediateChanges" in _f.prototype){
+if("intermediateChanges" in ew){
 ew.set("intermediateChanges",true);
 this.connect(ew,"onChange","_onIntermediateChange");
 this.saveButton.set("disabled",true);

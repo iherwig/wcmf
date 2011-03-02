@@ -62,7 +62,7 @@ return "";
 };
 var _27=dojox.html._snarfScripts=function(_28,_29){
 _29.code="";
-_28=_28.replace(/<[!][-][-](.|\s){5,}?[-][-]>/g,function(_2a){
+_28=_28.replace(/<[!][-][-](.|\s)*?[-][-]>/g,function(_2a){
 return _2a.replace(/<(\/?)script\b/ig,"&lt;$1Script");
 });
 function _2b(src){

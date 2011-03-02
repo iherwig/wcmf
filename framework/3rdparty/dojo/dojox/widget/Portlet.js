@@ -187,6 +187,11 @@ this.inherited(arguments);
 if(this._settingsWidget){
 this._settingsWidget.destroyRecursive(_15);
 }
+},destroy:function(){
+if(this._timer){
+clearTimeout(this._timer);
+}
+this.inherited(arguments);
 },_setCss:function(){
 this.inherited(arguments);
 dojo.style(this.arrowNode,"display",this.toggleable?"":"none");

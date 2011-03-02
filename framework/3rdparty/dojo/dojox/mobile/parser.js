@@ -75,7 +75,7 @@ _e.push(_d[i]);
 }
 return this.instantiate(_e,_c);
 };
-};
+}();
 dojo._loaders.unshift(function(){
 if(dojo.config.parseOnLoad){
 dojox.mobile.parser.parse();

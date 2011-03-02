@@ -21,6 +21,7 @@ this.strTools=_1.tools;
 this.strPlugs=_1.plugs;
 this._mixprops(["padding","margin","size","radius"],_1);
 this.addBack();
+this.orient=_1.orient?_1.orient:false;
 }else{
 var _3=dojo.marginBox(_2);
 this.width=_3.w;
@@ -30,8 +31,9 @@ this.strTools=dojo.attr(_2,"tools");
 this.strPlugs=dojo.attr(_2,"plugs");
 this._mixprops(["padding","margin","size","radius"],_2);
 this.toolDrawing=new dojox.drawing.Drawing({mode:"ui"},_2);
+this.orient=dojo.attr(_2,"orient");
 }
-this.horizontal=this.width>this.height;
+this.horizontal=this.orient?this.orient=="H":this.width>this.height;
 if(this.toolDrawing.ready){
 this.makeButtons();
 if(!this.strSelected&&this.drawing.defaults.clickMode){
@@ -107,8 +109,7 @@ this.selected=btn;
 this.drawing.setTool(btn.toolType);
 }
 if(this.horizontal){
-var _11=_d?h/2+g:h+g;
-y+=_11;
+x+=h+g;
 }else{
 var _11=_d?h/2+g:h+g;
 y+=_11;
@@ -116,7 +117,7 @@ y+=_11;
 },this);
 }
 if(this.horizontal){
-y+=this.toolPlugGap;
+x+=this.toolPlugGap;
 }else{
 y+=this.toolPlugGap;
 }
@@ -144,7 +145,7 @@ var btn=this.toolDrawing.addUI("button",{data:{x:x,y:y,width:w,height:h,r:r},too
 dojox.drawing.register(btn,"button");
 this.plugins.push(btn);
 if(this.horizontal){
-y+=h+g;
+x+=h+g;
 }else{
 y+=h+g;
 }

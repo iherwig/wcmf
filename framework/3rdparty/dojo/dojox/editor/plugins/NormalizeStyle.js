@@ -8,9 +8,8 @@
 if(!dojo._hasResource["dojox.editor.plugins.NormalizeStyle"]){
 dojo._hasResource["dojox.editor.plugins.NormalizeStyle"]=true;
 dojo.provide("dojox.editor.plugins.NormalizeStyle");
-dojo.require("dijit._editor._Plugin");
 dojo.require("dijit._editor.html");
-dojo.experimental("dojox.editor.plugins.NormalizeStyle");
+dojo.require("dijit._editor._Plugin");
 dojo.declare("dojox.editor.plugins.NormalizeStyle",dijit._editor._Plugin,{mode:"semantic",condenseSpans:true,setEditor:function(_1){
 this.editor=_1;
 _1.customUndo=true;

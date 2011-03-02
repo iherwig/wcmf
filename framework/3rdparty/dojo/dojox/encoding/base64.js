@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.encoding.base64"]){
 dojo._hasResource["dojox.encoding.base64"]=true;
 dojo.provide("dojox.encoding.base64");
+dojo.getObject("encoding.base64",true,dojox);
 (function(){
 var p="=";
 var _1="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

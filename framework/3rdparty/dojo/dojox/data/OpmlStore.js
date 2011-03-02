@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.OpmlStore"]){
 dojo._hasResource["dojox.data.OpmlStore"]=true;
 dojo.provide("dojox.data.OpmlStore");
-dojo.require("dojo.data.util.filter");
 dojo.require("dojo.data.util.simpleFetch");
+dojo.require("dojo.data.util.filter");
 dojo.declare("dojox.data.OpmlStore",null,{constructor:function(_1){
 this._xmlData=null;
 this._arrayOfTopLevelItems=[];

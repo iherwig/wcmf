@@ -11,80 +11,75 @@ dojo.provide("dijit.layout.ContentPane");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Contained");
 dojo.require("dijit.layout._LayoutWidget");
-dojo.require("dojo.parser");
+dojo.require("dijit.layout._ContentPaneResizeMixin");
 dojo.require("dojo.string");
 dojo.require("dojo.html");
-dojo.requireLocalization("dijit","loading",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.declare("dijit.layout.ContentPane",dijit._Widget,{href:"",extractContent:false,parseOnLoad:true,preventCache:false,preload:false,refreshOnShow:false,loadingMessage:"<span class='dijitContentPaneLoading'>${loadingState}</span>",errorMessage:"<span class='dijitContentPaneError'>${errorState}</span>",isLoaded:false,baseClass:"dijitContentPane",doLayout:true,ioArgs:{},isContainer:true,isLayoutContainer:true,onLoadDeferred:null,attributeMap:dojo.delegate(dijit._Widget.prototype.attributeMap,{title:[]}),postMixInProperties:function(){
-this.inherited(arguments);
-var _1=dojo.i18n.getLocalization("dijit","loading",this.lang);
-this.loadingMessage=dojo.string.substitute(this.loadingMessage,_1);
-this.errorMessage=dojo.string.substitute(this.errorMessage,_1);
-if(!this.href&&this.srcNodeRef&&this.srcNodeRef.innerHTML){
-this.isLoaded=true;
+dojo.requireLocalization("dijit","loading",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.declare("dijit.layout.ContentPane",[dijit._Widget,dijit.layout._ContentPaneResizeMixin],{href:"",extractContent:false,parseOnLoad:true,parserScope:dojo._scopeName,preventCache:false,preload:false,refreshOnShow:false,loadingMessage:"<span class='dijitContentPaneLoading'>${loadingState}</span>",errorMessage:"<span class='dijitContentPaneError'>${errorState}</span>",isLoaded:false,baseClass:"dijitContentPane",ioArgs:{},isContainer:true,onLoadDeferred:null,attributeMap:dojo.delegate(dijit._Widget.prototype.attributeMap,{title:[]}),stopParser:true,template:false,create:function(_1,_2){
+if((!_1||!_1.template)&&_2&&!("href" in _1)&&!("content" in _1)){
+var df=dojo.doc.createDocumentFragment();
+_2=dojo.byId(_2);
+while(_2.firstChild){
+df.appendChild(_2.firstChild);
 }
+_1=dojo.delegate(_1,{content:df});
+}
+this.inherited(arguments,[_1,_2]);
+},postMixInProperties:function(){
+this.inherited(arguments);
+var _3=dojo.i18n.getLocalization("dijit","loading",this.lang);
+this.loadingMessage=dojo.string.substitute(this.loadingMessage,_3);
+this.errorMessage=dojo.string.substitute(this.errorMessage,_3);
 },buildRendering:function(){
 this.inherited(arguments);
 if(!this.containerNode){
 this.containerNode=this.domNode;
 }
-},postCreate:function(){
 this.domNode.title="";
 if(!dojo.attr(this.domNode,"role")){
 dijit.setWaiRole(this.domNode,"group");
 }
-dojo.addClass(this.domNode,this.baseClass);
 },startup:function(){
 if(this._started){
 return;
 }
-var _2=dijit._Contained.prototype.getParent.call(this);
-this._childOfLayoutWidget=_2&&_2.isLayoutContainer;
+var _4=dijit._Contained.prototype.getParent.call(this);
+this._childOfLayoutWidget=_4&&_4.isLayoutContainer;
 this._needLayout=!this._childOfLayoutWidget;
 if(this.isLoaded){
-dojo.forEach(this.getChildren(),function(_3){
-_3.startup();
+dojo.forEach(this.getChildren(),function(_5){
+_5.startup();
 });
 }
 if(this._isShown()||this.preload){
 this._onShow();
 }
 this.inherited(arguments);
-},_checkIfSingleChild:function(){
-var _4=dojo.query("> *",this.containerNode).filter(function(_5){
-return _5.tagName!=="SCRIPT";
-}),_6=_4.filter(function(_7){
-return dojo.hasAttr(_7,"dojoType")||dojo.hasAttr(_7,"widgetId");
-}),_8=dojo.filter(_6.map(dijit.byNode),function(_9){
-return _9&&_9.domNode&&_9.resize;
-});
-if(_4.length==_6.length&&_8.length==1){
-this._singleChild=_8[0];
-}else{
-delete this._singleChild;
-}
-dojo.toggleClass(this.containerNode,this.baseClass+"SingleChild",!!this._singleChild);
-},setHref:function(_a){
+},setHref:function(_6){
 dojo.deprecated("dijit.layout.ContentPane.setHref() is deprecated. Use set('href', ...) instead.","","2.0");
-return this.set("href",_a);
-},_setHrefAttr:function(_b){
+return this.set("href",_6);
+},_setHrefAttr:function(_7){
 this.cancel();
 this.onLoadDeferred=new dojo.Deferred(dojo.hitch(this,"cancel"));
-this.href=_b;
+this.onLoadDeferred.addCallback(dojo.hitch(this,"onLoad"));
+this._set("href",_7);
 if(this._created&&(this.preload||this._isShown())){
 this._load();
 }else{
 this._hrefChanged=true;
 }
 return this.onLoadDeferred;
-},setContent:function(_c){
+},setContent:function(_8){
 dojo.deprecated("dijit.layout.ContentPane.setContent() is deprecated.  Use set('content', ...) instead.","","2.0");
-this.set("content",_c);
-},_setContentAttr:function(_d){
-this.href="";
+this.set("content",_8);
+},_setContentAttr:function(_9){
+this._set("href","");
 this.cancel();
 this.onLoadDeferred=new dojo.Deferred(dojo.hitch(this,"cancel"));
-this._setContent(_d||"");
+if(this._created){
+this.onLoadDeferred.addCallback(dojo.hitch(this,"onLoad"));
+}
+this._setContent(_9||"");
 this._isDownloaded=false;
 return this.onLoadDeferred;
 },_getContentAttr:function(){
@@ -100,31 +95,17 @@ if(this._beingDestroyed){
 this.cancel();
 }
 this.inherited(arguments);
-},destroyRecursive:function(_e){
+},destroyRecursive:function(_a){
 if(this._beingDestroyed){
 return;
 }
 this.inherited(arguments);
-},resize:function(_f,_10){
-if(!this._wasShown){
+},resize:function(_b,_c){
+if(!this._wasShown&&this.open!==false){
 this._onShow();
 }
 this._resizeCalled=true;
-if(_f){
-dojo.marginBox(this.domNode,_f);
-}
-var cn=this.containerNode;
-if(cn===this.domNode){
-var mb=_10||{};
-dojo.mixin(mb,_f||{});
-if(!("h" in mb)||!("w" in mb)){
-mb=dojo.mixin(dojo.marginBox(cn),mb);
-}
-this._contentBox=dijit.layout.marginBox2contentBox(cn,mb);
-}else{
-this._contentBox=dojo.contentBox(cn);
-}
-this._layoutChildren();
+this._scheduleLayout(_b,_c);
 },_isShown:function(){
 if(this._childOfLayoutWidget){
 if(this._resizeCalled&&"open" in this){
@@ -135,66 +116,67 @@ return this._resizeCalled;
 if("open" in this){
 return this.open;
 }else{
-var _11=this.domNode;
-return (_11.style.display!="none")&&(_11.style.visibility!="hidden")&&!dojo.hasClass(_11,"dijitHidden");
+var _d=this.domNode;
+return (_d.style.display!="none")&&(_d.style.visibility!="hidden")&&!dojo.hasClass(_d,"dijitHidden");
 }
 }
 },_onShow:function(){
 if(this.href){
 if(!this._xhrDfd&&(!this.isLoaded||this._hrefChanged||this.refreshOnShow)){
-this.refresh();
+var d=this.refresh();
 }
 }else{
-if(!this._childOfLayoutWidget&&this._needLayout){
-this._layoutChildren();
+if(this._needLayout){
+this._layout(this._changeSize,this._resultSize);
 }
 }
 this.inherited(arguments);
 this._wasShown=true;
+return d;
 },refresh:function(){
 this.cancel();
 this.onLoadDeferred=new dojo.Deferred(dojo.hitch(this,"cancel"));
+this.onLoadDeferred.addCallback(dojo.hitch(this,"onLoad"));
 this._load();
 return this.onLoadDeferred;
 },_load:function(){
 this._setContent(this.onDownloadStart(),true);
-var _12=this;
-var _13={preventCache:(this.preventCache||this.refreshOnShow),url:this.href,handleAs:"text"};
+var _e=this;
+var _f={preventCache:(this.preventCache||this.refreshOnShow),url:this.href,handleAs:"text"};
 if(dojo.isObject(this.ioArgs)){
-dojo.mixin(_13,this.ioArgs);
+dojo.mixin(_f,this.ioArgs);
 }
-var _14=(this._xhrDfd=(this.ioMethod||dojo.xhrGet)(_13));
-_14.addCallback(function(_15){
+var _10=(this._xhrDfd=(this.ioMethod||dojo.xhrGet)(_f));
+_10.addCallback(function(_11){
 try{
-_12._isDownloaded=true;
-_12._setContent(_15,false);
-_12.onDownloadEnd();
+_e._isDownloaded=true;
+_e._setContent(_11,false);
+_e.onDownloadEnd();
 }
 catch(err){
-_12._onError("Content",err);
+_e._onError("Content",err);
 }
-delete _12._xhrDfd;
-return _15;
+delete _e._xhrDfd;
+return _11;
 });
-_14.addErrback(function(err){
-if(!_14.canceled){
-_12._onError("Download",err);
+_10.addErrback(function(err){
+if(!_10.canceled){
+_e._onError("Download",err);
 }
-delete _12._xhrDfd;
+delete _e._xhrDfd;
 return err;
 });
 delete this._hrefChanged;
-},_onLoadHandler:function(_16){
-this.isLoaded=true;
+},_onLoadHandler:function(_12){
+this._set("isLoaded",true);
 try{
-this.onLoadDeferred.callback(_16);
-this.onLoad(_16);
+this.onLoadDeferred.callback(_12);
 }
 catch(e){
 console.error("Error "+this.widgetId+" running custom onLoad code: "+e.message);
 }
 },_onUnloadHandler:function(){
-this.isLoaded=false;
+this._set("isLoaded",false);
 try{
 this.onUnload();
 }
@@ -205,86 +187,75 @@ console.error("Error "+this.widgetId+" running custom onUnload code: "+e.message
 if(this.isLoaded){
 this._onUnloadHandler();
 }
-var _17=this._contentSetter;
-dojo.forEach(this.getChildren(),function(_18){
-if(_18.destroyRecursive){
-_18.destroyRecursive();
+var _13=this._contentSetter;
+dojo.forEach(this.getChildren(),function(_14){
+if(_14.destroyRecursive){
+_14.destroyRecursive();
 }
 });
-if(_17){
-dojo.forEach(_17.parseResults,function(_19){
-if(_19.destroyRecursive&&_19.domNode&&_19.domNode.parentNode==dojo.body()){
-_19.destroyRecursive();
+if(_13){
+dojo.forEach(_13.parseResults,function(_15){
+if(_15.destroyRecursive&&_15.domNode&&_15.domNode.parentNode==dojo.body()){
+_15.destroyRecursive();
 }
 });
-delete _17.parseResults;
+delete _13.parseResults;
 }
 dojo.html._emptyNode(this.containerNode);
 delete this._singleChild;
-},_setContent:function(_1a,_1b){
+},_setContent:function(_16,_17){
 this.destroyDescendants();
-var _1c=this._contentSetter;
-if(!(_1c&&_1c instanceof dojo.html._ContentSetter)){
-_1c=this._contentSetter=new dojo.html._ContentSetter({node:this.containerNode,_onError:dojo.hitch(this,this._onError),onContentError:dojo.hitch(this,function(e){
-var _1d=this.onContentError(e);
+var _18=this._contentSetter;
+if(!(_18&&_18 instanceof dojo.html._ContentSetter)){
+_18=this._contentSetter=new dojo.html._ContentSetter({node:this.containerNode,_onError:dojo.hitch(this,this._onError),onContentError:dojo.hitch(this,function(e){
+var _19=this.onContentError(e);
 try{
-this.containerNode.innerHTML=_1d;
+this.containerNode.innerHTML=_19;
 }
 catch(e){
 console.error("Fatal "+this.id+" could not change content due to "+e.message,e);
 }
 })});
 }
-var _1e=dojo.mixin({cleanContent:this.cleanContent,extractContent:this.extractContent,parseContent:this.parseOnLoad,dir:this.dir,lang:this.lang},this._contentSetterParams||{});
-dojo.mixin(_1c,_1e);
-_1c.set((dojo.isObject(_1a)&&_1a.domNode)?_1a.domNode:_1a);
+var _1a=dojo.mixin({cleanContent:this.cleanContent,extractContent:this.extractContent,parseContent:this.parseOnLoad,parserScope:this.parserScope,startup:false,dir:this.dir,lang:this.lang},this._contentSetterParams||{});
+_18.set((dojo.isObject(_16)&&_16.domNode)?_16.domNode:_16,_1a);
 delete this._contentSetterParams;
-if(!_1b){
-dojo.forEach(this.getChildren(),function(_1f){
-if(!this.parseOnLoad||_1f.getParent){
-_1f.startup();
-}
-},this);
-this._scheduleLayout();
-this._onLoadHandler(_1a);
-}
-},_onError:function(_20,err,_21){
-this.onLoadDeferred.errback(err);
-var _22=this["on"+_20+"Error"].call(this,err);
-if(_21){
-console.error(_21,err);
-}else{
-if(_22){
-this._setContent(_22,true);
-}
-}
-},_scheduleLayout:function(){
-if(this._isShown()){
-this._layoutChildren();
-}else{
-this._needLayout=true;
-}
-},_layoutChildren:function(){
 if(this.doLayout){
 this._checkIfSingleChild();
 }
-if(this._singleChild&&this._singleChild.resize){
-var cb=this._contentBox||dojo.contentBox(this.containerNode);
-this._singleChild.resize({w:cb.w,h:cb.h});
+if(!_17){
+if(this._started){
+dojo.forEach(this.getChildren(),function(_1b){
+_1b.startup();
+},this);
+this._scheduleLayout();
+}
+this._onLoadHandler(_16);
+}
+},_onError:function(_1c,err,_1d){
+this.onLoadDeferred.errback(err);
+var _1e=this["on"+_1c+"Error"].call(this,err);
+if(_1d){
+console.error(_1d,err);
 }else{
-dojo.forEach(this.getChildren(),function(_23){
-if(_23.resize){
-_23.resize();
+if(_1e){
+this._setContent(_1e,true);
 }
-});
 }
-delete this._needLayout;
-},onLoad:function(_24){
+},_scheduleLayout:function(_1f,_20){
+if(this._isShown()){
+this._layout(_1f,_20);
+}else{
+this._needLayout=true;
+this._changeSize=_1f;
+this._resultSize=_20;
+}
+},onLoad:function(_21){
 },onUnload:function(){
 },onDownloadStart:function(){
 return this.loadingMessage;
-},onContentError:function(_25){
-},onDownloadError:function(_26){
+},onContentError:function(_22){
+},onDownloadError:function(_23){
 return this.errorMessage;
 },onDownloadEnd:function(){
 }});

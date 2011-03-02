@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.KeyValueStore"]){
 dojo._hasResource["dojox.data.KeyValueStore"]=true;
 dojo.provide("dojox.data.KeyValueStore");
-dojo.require("dojo.data.util.filter");
 dojo.require("dojo.data.util.simpleFetch");
+dojo.require("dojo.data.util.filter");
 dojo.declare("dojox.data.KeyValueStore",null,{constructor:function(_1){
 if(_1.url){
 this.url=_1.url;

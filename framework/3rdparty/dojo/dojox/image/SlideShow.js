@@ -282,7 +282,7 @@ dijit.byId(id).showNextImage(true);
 },_calcNavDimensions:function(){
 dojo.style(this.navNode,"position","absolute");
 dojo.style(this.navNode,"top","-10000px");
-dojo._setOpacity(this.navNode,99);
+dojo._setOpacity(this.navNode,1);
 this.navPlay._size=dojo.marginBox(this.navPlay);
 this.navPrev._size=dojo.marginBox(this.navPrev);
 this.navNext._size=dojo.marginBox(this.navNext);

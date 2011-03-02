@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.encoding.crypto._base"]){
 dojo._hasResource["dojox.encoding.crypto._base"]=true;
 dojo.provide("dojox.encoding.crypto._base");
+dojo.getObject("encoding.crypto",true,dojox);
 (function(){
 var c=dojox.encoding.crypto;
 c.cipherModes={ECB:0,CBC:1,PCBC:2,CFB:3,OFB:4,CTR:5};

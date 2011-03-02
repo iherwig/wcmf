@@ -12,21 +12,24 @@ dojo.require("dojo.fx");
 dojo.require("dojo.number");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
-dojo.declare("dijit.ProgressBar",[dijit._Widget,dijit._Templated],{progress:"0",maximum:100,places:0,indeterminate:false,name:"",templateString:dojo.cache("dijit","templates/ProgressBar.html","<div class=\"dijitProgressBar dijitProgressBarEmpty\"\n\t><div waiRole=\"progressbar\" dojoAttachPoint=\"internalProgress\" class=\"dijitProgressBarFull\"\n\t\t><div class=\"dijitProgressBarTile\"></div\n\t\t><span style=\"visibility:hidden\">&nbsp;</span\n\t></div\n\t><div dojoAttachPoint=\"label\" class=\"dijitProgressBarLabel\" id=\"${id}_label\">&nbsp;</div\n\t><img dojoAttachPoint=\"indeterminateHighContrastImage\" class=\"dijitProgressBarIndeterminateHighContrastImage\" alt=\"\"\n/></div>\n"),_indeterminateHighContrastImagePath:dojo.moduleUrl("dijit","themes/a11y/indeterminate_progress.gif"),postCreate:function(){
+dojo.declare("dijit.ProgressBar",[dijit._Widget,dijit._Templated],{progress:"0",value:"",maximum:100,places:0,indeterminate:false,label:"",name:"",templateString:dojo.cache("dijit","templates/ProgressBar.html","<div class=\"dijitProgressBar dijitProgressBarEmpty\" role=\"progressbar\"\n\t><div  dojoAttachPoint=\"internalProgress\" class=\"dijitProgressBarFull\"\n\t\t><div class=\"dijitProgressBarTile\" role=\"presentation\"></div\n\t\t><span style=\"visibility:hidden\">&nbsp;</span\n\t></div\n\t><div dojoAttachPoint=\"labelNode\" class=\"dijitProgressBarLabel\" id=\"${id}_label\"></div\n\t><img dojoAttachPoint=\"indeterminateHighContrastImage\" class=\"dijitProgressBarIndeterminateHighContrastImage\" alt=\"\"\n/></div>\n"),_indeterminateHighContrastImagePath:dojo.moduleUrl("dijit","themes/a11y/indeterminate_progress.gif"),postMixInProperties:function(){
+this.inherited(arguments);
+if(!("value" in this.params)){
+this.value=this.indeterminate?Infinity:this.progress;
+}
+},buildRendering:function(){
 this.inherited(arguments);
 this.indeterminateHighContrastImage.setAttribute("src",this._indeterminateHighContrastImagePath.toString());
 this.update();
 },update:function(_1){
 dojo.mixin(this,_1||{});
-var _2=this.internalProgress;
-var _3=1,_4;
+var _2=this.internalProgress,ap=this.domNode;
+var _3=1;
 if(this.indeterminate){
-_4="addClass";
-dijit.removeWaiState(_2,"valuenow");
-dijit.removeWaiState(_2,"valuemin");
-dijit.removeWaiState(_2,"valuemax");
+dijit.removeWaiState(ap,"valuenow");
+dijit.removeWaiState(ap,"valuemin");
+dijit.removeWaiState(ap,"valuemax");
 }else{
-_4="removeClass";
 if(String(this.progress).indexOf("%")!=-1){
 _3=Math.min(parseFloat(this.progress)/100,1);
 this.progress=_3*this.maximum;
@@ -34,26 +37,30 @@ this.progress=_3*this.maximum;
 this.progress=Math.min(this.progress,this.maximum);
 _3=this.progress/this.maximum;
 }
-var _5=this.report(_3);
-this.label.firstChild.nodeValue=_5;
-dijit.setWaiState(_2,"describedby",this.label.id);
-dijit.setWaiState(_2,"valuenow",this.progress);
-dijit.setWaiState(_2,"valuemin",0);
-dijit.setWaiState(_2,"valuemax",this.maximum);
+dijit.setWaiState(ap,"describedby",this.labelNode.id);
+dijit.setWaiState(ap,"valuenow",this.progress);
+dijit.setWaiState(ap,"valuemin",0);
+dijit.setWaiState(ap,"valuemax",this.maximum);
 }
-dojo[_4](this.domNode,"dijitProgressBarIndeterminate");
+this.labelNode.innerHTML=this.report(_3);
+dojo.toggleClass(this.domNode,"dijitProgressBarIndeterminate",this.indeterminate);
 _2.style.width=(_3*100)+"%";
 this.onChange();
 },_setValueAttr:function(v){
+this._set("value",v);
 if(v==Infinity){
 this.update({indeterminate:true});
 }else{
 this.update({indeterminate:false,progress:v});
 }
-},_getValueAttr:function(){
-return this.progress;
+},_setLabelAttr:function(_4){
+this._set("label",_4);
+this.update();
+},_setIndeterminateAttr:function(_5){
+this.indeterminate=_5;
+this.update();
 },report:function(_6){
-return dojo.number.format(_6,{type:"percent",places:this.places,locale:this.lang});
+return this.label?this.label:(this.indeterminate?"&nbsp;":dojo.number.format(_6,{type:"percent",places:this.places,locale:this.lang}));
 },onChange:function(){
 }});
 }

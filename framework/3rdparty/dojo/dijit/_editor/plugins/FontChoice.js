@@ -14,8 +14,8 @@ dojo.require("dijit._editor.selection");
 dojo.require("dijit.form.FilteringSelect");
 dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dijit._editor","FontChoice",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.declare("dijit._editor.plugins._FontDropDown",[dijit._Widget,dijit._Templated],{label:"",widgetsInTemplate:true,plainText:false,templateString:"<span style='white-space: nowrap' class='dijit dijitReset dijitInline'>"+"<label class='dijitLeft dijitInline' for='${selectId}'>${label}</label>"+"<input dojoType='dijit.form.FilteringSelect' required=false labelType=html labelAttr=label searchAttr=name "+"tabIndex='-1' id='${selectId}' dojoAttachPoint='select' value=''/>"+"</span>",postMixInProperties:function(){
+dojo.requireLocalization("dijit._editor","FontChoice",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.declare("dijit._editor.plugins._FontDropDown",[dijit._Widget,dijit._Templated],{label:"",widgetsInTemplate:true,plainText:false,templateString:"<span style='white-space: nowrap' class='dijit dijitReset dijitInline'>"+"<label class='dijitLeft dijitInline' for='${selectId}'>${label}</label>"+"<input dojoType='dijit.form.FilteringSelect' required='false' labelType='html' labelAttr='label' searchAttr='name' "+"tabIndex='-1' id='${selectId}' dojoAttachPoint='select' value=''/>"+"</span>",postMixInProperties:function(){
 this.inherited(arguments);
 this.strings=dojo.i18n.getLocalization("dijit._editor","FontChoice");
 this.label=this.strings[this.command];
@@ -81,7 +81,7 @@ dojo.declare("dijit._editor.plugins._FormatBlockDropDown",dijit._editor.plugins.
 this.inherited(arguments);
 this.set("value","noFormat",false);
 },getLabel:function(_11,_12){
-if(this.plainText){
+if(this.plainText||_11=="noFormat"){
 return _12;
 }else{
 return "<"+_11+">"+_12+"</"+_11+">";
@@ -198,7 +198,6 @@ this.button._execCommand(this.editor,this.command,_26);
 }else{
 this.editor.execCommand(this.command,_26);
 }
-this.editor.customUndo=this.editor.customUndo||dojo.isWebKit;
 });
 },updateState:function(){
 var _27=this.editor;
@@ -207,47 +206,52 @@ if(!_27||!_27.isLoaded||!_28.length){
 return;
 }
 if(this.button){
-var _29;
+var _29=this.get("disabled");
+this.button.set("disabled",_29);
+if(_29){
+return;
+}
+var _2a;
 try{
-_29=_27.queryCommandValue(_28)||"";
+_2a=_27.queryCommandValue(_28)||"";
 }
 catch(e){
-_29="";
+_2a="";
 }
-var _2a=dojo.isString(_29)&&_29.match(/'([^']*)'/);
-if(_2a){
-_29=_2a[1];
+var _2b=dojo.isString(_2a)&&_2a.match(/'([^']*)'/);
+if(_2b){
+_2a=_2b[1];
 }
 if(_28==="formatBlock"){
-if(!_29||_29=="p"){
-_29=null;
-var _2b;
+if(!_2a||_2a=="p"){
+_2a=null;
+var _2c;
 var sel=dijit.range.getSelection(this.editor.window);
 if(sel&&sel.rangeCount>0){
-var _2c=sel.getRangeAt(0);
-if(_2c){
-_2b=_2c.endContainer;
+var _2d=sel.getRangeAt(0);
+if(_2d){
+_2c=_2d.endContainer;
 }
 }
-while(_2b&&_2b!==_27.editNode&&_2b!==_27.document){
-var tg=_2b.tagName?_2b.tagName.toLowerCase():"";
+while(_2c&&_2c!==_27.editNode&&_2c!==_27.document){
+var tg=_2c.tagName?_2c.tagName.toLowerCase():"";
 if(tg&&dojo.indexOf(this.button.values,tg)>-1){
-_29=tg;
+_2a=tg;
 break;
 }
-_2b=_2b.parentNode;
+_2c=_2c.parentNode;
 }
-if(!_29){
-_29="noFormat";
+if(!_2a){
+_2a="noFormat";
 }
 }else{
-if(dojo.indexOf(this.button.values,_29)<0){
-_29="noFormat";
+if(dojo.indexOf(this.button.values,_2a)<0){
+_2a="noFormat";
 }
 }
 }
-if(_29!==this.button.get("value")){
-this.button.set("value",_29,false);
+if(_2a!==this.button.get("value")){
+this.button.set("value",_2a,false);
 }
 }
 }});

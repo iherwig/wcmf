@@ -13,6 +13,7 @@ dojo.require("dijit.Calendar");
 dojo.require("dijit._Container");
 dojo.declare("dojox.widget._CalendarBase",[dijit._Widget,dijit._Templated,dijit._Container],{templateString:dojo.cache("dojox.widget","Calendar/Calendar.html","<div class=\"dojoxCalendar\">\n    <div tabindex=\"0\" class=\"dojoxCalendarContainer\" style=\"visibility: visible;\" dojoAttachPoint=\"container\">\n\t\t<div style=\"display:none\">\n\t\t\t<div dojoAttachPoint=\"previousYearLabelNode\"></div>\n\t\t\t<div dojoAttachPoint=\"nextYearLabelNode\"></div>\n\t\t\t<div dojoAttachPoint=\"monthLabelSpacer\"></div>\n\t\t</div>\n        <div class=\"dojoxCalendarHeader\">\n            <div>\n                <div class=\"dojoxCalendarDecrease\" dojoAttachPoint=\"decrementMonth\"></div>\n            </div>\n            <div class=\"\">\n                <div class=\"dojoxCalendarIncrease\" dojoAttachPoint=\"incrementMonth\"></div>\n            </div>\n            <div class=\"dojoxCalendarTitle\" dojoAttachPoint=\"header\" dojoAttachEvent=\"onclick: onHeaderClick\">\n            </div>\n        </div>\n        <div class=\"dojoxCalendarBody\" dojoAttachPoint=\"containerNode\"></div>\n        <div class=\"\">\n            <div class=\"dojoxCalendarFooter\" dojoAttachPoint=\"footer\">                        \n            </div>\n        </div>\n    </div>\n</div>\n"),_views:null,useFx:true,widgetsInTemplate:true,value:new Date(),constraints:null,footerFormat:"medium",constructor:function(){
 this._views=[];
+this.value=new Date();
 },postMixInProperties:function(){
 var c=this.constraints;
 if(c){
@@ -24,9 +25,31 @@ if(typeof c.max=="string"){
 c.max=_1(c.max);
 }
 }
+this.value=this.parseInitialValue(this.value);
+},parseInitialValue:function(_2){
+if(!_2||_2===-1){
+return new Date();
+}else{
+if(_2.getFullYear){
+return _2;
+}else{
+if(!isNaN(_2)){
+if(typeof this.value=="string"){
+_2=parseInt(_2);
+}
+_2=this._makeDate(_2);
+}
+}
+}
+return _2;
+},_makeDate:function(_3){
+return _3;
 },postCreate:function(){
 this.displayMonth=new Date(this.get("value"));
-var _2={parent:this,_getValueAttr:dojo.hitch(this,function(){
+if(this._isInvalidDate(this.displayMonth)){
+this.displayMonth=new Date();
+}
+var _4={parent:this,_getValueAttr:dojo.hitch(this,function(){
 return new Date(this._internalValue||this.value);
 }),_getDisplayMonthAttr:dojo.hitch(this,function(){
 return new Date(this.displayMonth);
@@ -36,17 +59,17 @@ return this.constraints;
 return this.lang;
 }),isDisabledDate:dojo.hitch(this,this.isDisabledDate),getClassForDate:dojo.hitch(this,this.getClassForDate),addFx:this.useFx?dojo.hitch(this,this.addFx):function(){
 }};
-dojo.forEach(this._views,function(_3){
-var _4=new _3(_2,dojo.create("div"));
-this.addChild(_4);
-var _5=_4.getHeader();
-if(_5){
-this.header.appendChild(_5);
-dojo.style(_5,"display","none");
+dojo.forEach(this._views,function(_5){
+var _6=new _5(_4,dojo.create("div"));
+this.addChild(_6);
+var _7=_6.getHeader();
+if(_7){
+this.header.appendChild(_7);
+dojo.style(_7,"display","none");
 }
-dojo.style(_4.domNode,"visibility","hidden");
-dojo.connect(_4,"onValueSelected",this,"_onDateSelected");
-_4.attr("value",this.get("value"));
+dojo.style(_6.domNode,"visibility","hidden");
+dojo.connect(_6,"onValueSelected",this,"_onDateSelected");
+_6.set("value",this.get("value"));
 },this);
 if(this._views.length<2){
 dojo.style(this.header,"cursor","auto");
@@ -54,148 +77,158 @@ dojo.style(this.header,"cursor","auto");
 this.inherited(arguments);
 this._children=this.getChildren();
 this._currentChild=0;
-var _6=new Date();
-this.footer.innerHTML="Today: "+dojo.date.locale.format(_6,{formatLength:this.footerFormat,selector:"date",locale:this.lang});
+var _8=new Date();
+this.footer.innerHTML="Today: "+dojo.date.locale.format(_8,{formatLength:this.footerFormat,selector:"date",locale:this.lang});
 dojo.connect(this.footer,"onclick",this,"goToToday");
-var _7=this._children[0];
-dojo.style(_7.domNode,"top","0px");
-dojo.style(_7.domNode,"visibility","visible");
-var _8=_7.getHeader();
-if(_8){
-dojo.style(_7.getHeader(),"display","");
+var _9=this._children[0];
+dojo.style(_9.domNode,"top","0px");
+dojo.style(_9.domNode,"visibility","visible");
+var _a=_9.getHeader();
+if(_a){
+dojo.style(_9.getHeader(),"display","");
 }
-dojo[_7.useHeader?"removeClass":"addClass"](this.container,"no-header");
-_7.onDisplay();
-var _9=this;
-var _a=function(_b,_c,_d){
-dijit.typematic.addMouseListener(_9[_b],_9,function(_e){
-if(_e>=0){
-_9._adjustDisplay(_c,_d);
+dojo[_9.useHeader?"removeClass":"addClass"](this.container,"no-header");
+_9.onDisplay();
+var _b=this;
+var _c=function(_d,_e,_f){
+dijit.typematic.addMouseListener(_b[_d],_b,function(_10){
+if(_10>=0){
+_b._adjustDisplay(_e,_f);
 }
 },0.8,500);
 };
-_a("incrementMonth","month",1);
-_a("decrementMonth","month",-1);
+_c("incrementMonth","month",1);
+_c("decrementMonth","month",-1);
 this._updateTitleStyle();
-},addFx:function(_f,_10){
-},_setValueAttr:function(_11){
-if(!_11["getFullYear"]){
-_11=dojo.date.stamp.fromISOString(_11+"");
+},addFx:function(_11,_12){
+},_isInvalidDate:function(_13){
+return !_13||isNaN(_13)||typeof _13!="object"||_13.toString()==this._invalidDate;
+},_setValueAttr:function(_14){
+if(!_14){
+_14=new Date();
 }
-if(!this.value||dojo.date.compare(_11,this.value)){
-_11=new Date(_11);
-this.displayMonth=new Date(_11);
-this._internalValue=_11;
-if(!this.isDisabledDate(_11,this.lang)&&this._currentChild==0){
-this.value=_11;
-this.onChange(_11);
+if(!_14["getFullYear"]){
+_14=dojo.date.stamp.fromISOString(_14+"");
 }
-this._children[this._currentChild].attr("value",this.value);
+if(this._isInvalidDate(_14)){
+return false;
+}
+if(!this.value||dojo.date.compare(_14,this.value)){
+_14=new Date(_14);
+this.displayMonth=new Date(_14);
+this._internalValue=_14;
+if(!this.isDisabledDate(_14,this.lang)&&this._currentChild==0){
+this.value=_14;
+this.onChange(_14);
+}
+if(this._children&&this._children.length>0){
+this._children[this._currentChild].set("value",this.value);
+}
 return true;
 }
 return false;
-},isDisabledDate:function(_12,_13){
+},isDisabledDate:function(_15,_16){
 var c=this.constraints;
-var _14=dojo.date.compare;
-return c&&(c.min&&(_14(c.min,_12,"date")>0)||(c.max&&_14(c.max,_12,"date")<0));
-},onValueSelected:function(_15){
-},_onDateSelected:function(_16,_17,_18){
-this.displayMonth=_16;
-this.set("value",_16);
+var _17=dojo.date.compare;
+return c&&(c.min&&(_17(c.min,_15,"date")>0)||(c.max&&_17(c.max,_15,"date")<0));
+},onValueSelected:function(_18){
+},_onDateSelected:function(_19,_1a,_1b){
+this.displayMonth=_19;
+this.set("value",_19);
 if(!this._transitionVert(-1)){
-if(!_17&&_17!==0){
-_17=this.get("value");
+if(!_1a&&_1a!==0){
+_1a=this.get("value");
 }
-this.onValueSelected(_17);
+this.onValueSelected(_1a);
 }
-},onChange:function(_19){
+},onChange:function(_1c){
 },onHeaderClick:function(e){
 this._transitionVert(1);
 },goToToday:function(){
 this.set("value",new Date());
 this.onValueSelected(this.get("value"));
-},_transitionVert:function(_1a){
-var _1b=this._children[this._currentChild];
-var _1c=this._children[this._currentChild+_1a];
-if(!_1c){
+},_transitionVert:function(_1d){
+var _1e=this._children[this._currentChild];
+var _1f=this._children[this._currentChild+_1d];
+if(!_1f){
 return false;
 }
-dojo.style(_1c.domNode,"visibility","visible");
-var _1d=dojo.style(this.containerNode,"height");
-_1c.attr("value",this.displayMonth);
-if(_1b.header){
-dojo.style(_1b.header,"display","none");
+dojo.style(_1f.domNode,"visibility","visible");
+var _20=dojo.style(this.containerNode,"height");
+_1f.set("value",this.displayMonth);
+if(_1e.header){
+dojo.style(_1e.header,"display","none");
 }
-if(_1c.header){
-dojo.style(_1c.header,"display","");
+if(_1f.header){
+dojo.style(_1f.header,"display","");
 }
-dojo.style(_1c.domNode,"top",(_1d*-1)+"px");
-dojo.style(_1c.domNode,"visibility","visible");
-this._currentChild+=_1a;
-var _1e=_1d*_1a;
-var _1f=0;
-dojo.style(_1c.domNode,"top",(_1e*-1)+"px");
-var _20=dojo.animateProperty({node:_1b.domNode,properties:{top:_1e},onEnd:function(){
-dojo.style(_1b.domNode,"visibility","hidden");
+dojo.style(_1f.domNode,"top",(_20*-1)+"px");
+dojo.style(_1f.domNode,"visibility","visible");
+this._currentChild+=_1d;
+var _21=_20*_1d;
+var _22=0;
+dojo.style(_1f.domNode,"top",(_21*-1)+"px");
+var _23=dojo.animateProperty({node:_1e.domNode,properties:{top:_21},onEnd:function(){
+dojo.style(_1e.domNode,"visibility","hidden");
 }});
-var _21=dojo.animateProperty({node:_1c.domNode,properties:{top:_1f},onEnd:function(){
-_1c.onDisplay();
+var _24=dojo.animateProperty({node:_1f.domNode,properties:{top:_22},onEnd:function(){
+_1f.onDisplay();
 }});
-dojo[_1c.useHeader?"removeClass":"addClass"](this.container,"no-header");
-_20.play();
-_21.play();
-_1b.onBeforeUnDisplay();
-_1c.onBeforeDisplay();
+dojo[_1f.useHeader?"removeClass":"addClass"](this.container,"no-header");
+_23.play();
+_24.play();
+_1e.onBeforeUnDisplay();
+_1f.onBeforeDisplay();
 this._updateTitleStyle();
 return true;
 },_updateTitleStyle:function(){
 dojo[this._currentChild<this._children.length-1?"addClass":"removeClass"](this.header,"navToPanel");
-},_slideTable:function(_22,_23,_24){
-var _25=_22.domNode;
-var _26=_25.cloneNode(true);
-var _27=dojo.style(_25,"width");
-_25.parentNode.appendChild(_26);
-dojo.style(_25,"left",(_27*_23)+"px");
-_24();
-var _28=dojo.animateProperty({node:_26,properties:{left:_27*_23*-1},duration:500,onEnd:function(){
-_26.parentNode.removeChild(_26);
+},_slideTable:function(_25,_26,_27){
+var _28=_25.domNode;
+var _29=_28.cloneNode(true);
+var _2a=dojo.style(_28,"width");
+_28.parentNode.appendChild(_29);
+dojo.style(_28,"left",(_2a*_26)+"px");
+_27();
+var _2b=dojo.animateProperty({node:_29,properties:{left:_2a*_26*-1},duration:500,onEnd:function(){
+_29.parentNode.removeChild(_29);
 }});
-var _29=dojo.animateProperty({node:_25,properties:{left:0},duration:500});
-_28.play();
-_29.play();
-},_addView:function(_2a){
-this._views.push(_2a);
-},getClassForDate:function(_2b,_2c){
-},_adjustDisplay:function(_2d,_2e,_2f){
-var _30=this._children[this._currentChild];
-var _31=this.displayMonth=_30.adjustDate(this.displayMonth,_2e);
-this._slideTable(_30,_2e,function(){
-_30.attr("value",_31);
+var _2c=dojo.animateProperty({node:_28,properties:{left:0},duration:500});
+_2b.play();
+_2c.play();
+},_addView:function(_2d){
+this._views.push(_2d);
+},getClassForDate:function(_2e,_2f){
+},_adjustDisplay:function(_30,_31,_32){
+var _33=this._children[this._currentChild];
+var _34=this.displayMonth=_33.adjustDate(this.displayMonth,_31);
+this._slideTable(_33,_31,function(){
+_33.set("value",_34);
 });
 }});
-dojo.declare("dojox.widget._CalendarView",dijit._Widget,{headerClass:"",useHeader:true,cloneClass:function(_32,n,_33){
-var _34=dojo.query(_32,this.domNode)[0];
+dojo.declare("dojox.widget._CalendarView",dijit._Widget,{headerClass:"",useHeader:true,cloneClass:function(_35,n,_36){
+var _37=dojo.query(_35,this.domNode)[0];
 var i;
-if(!_33){
+if(!_36){
 for(i=0;i<n;i++){
-_34.parentNode.appendChild(_34.cloneNode(true));
+_37.parentNode.appendChild(_37.cloneNode(true));
 }
 }else{
-var _35=dojo.query(_32,this.domNode)[0];
+var _38=dojo.query(_35,this.domNode)[0];
 for(i=0;i<n;i++){
-_34.parentNode.insertBefore(_34.cloneNode(true),_35);
+_37.parentNode.insertBefore(_37.cloneNode(true),_38);
 }
 }
-},_setText:function(_36,_37){
-if(_36.innerHTML!=_37){
-dojo.empty(_36);
-_36.appendChild(dojo.doc.createTextNode(_37));
+},_setText:function(_39,_3a){
+if(_39.innerHTML!=_3a){
+dojo.empty(_39);
+_39.appendChild(dojo.doc.createTextNode(_3a));
 }
 },getHeader:function(){
 return this.header||(this.header=this.header=dojo.create("span",{"class":this.headerClass}));
-},onValueSelected:function(_38){
-},adjustDate:function(_39,_3a){
-return dojo.date.add(_39,this.datePart,_3a);
+},onValueSelected:function(_3b){
+},adjustDate:function(_3c,_3d){
+return dojo.date.add(_3c,this.datePart,_3d);
 },onDisplay:function(){
 },onBeforeDisplay:function(){
 },onBeforeUnDisplay:function(){
@@ -207,10 +240,10 @@ dojo.declare("dojox.widget._CalendarDayView",[dojox.widget._CalendarView,dijit._
 this.cloneClass(".dijitCalendarDayLabelTemplate",6);
 this.cloneClass(".dijitCalendarDateTemplate",6);
 this.cloneClass(".dijitCalendarWeekTemplate",5);
-var _3b=dojo.date.locale.getNames("days",this.dayWidth,"standAlone",this.getLang());
-var _3c=dojo.cldr.supplemental.getFirstDayOfWeek(this.getLang());
-dojo.query(".dijitCalendarDayLabel",this.domNode).forEach(function(_3d,i){
-this._setText(_3d,_3b[(i+_3c)%7]);
+var _3e=dojo.date.locale.getNames("days",this.dayWidth,"standAlone",this.getLang());
+var _3f=dojo.cldr.supplemental.getFirstDayOfWeek(this.getLang());
+dojo.query(".dijitCalendarDayLabel",this.domNode).forEach(function(_40,i){
+this._setText(_40,_3e[(i+_3f)%7]);
 },this);
 },onDisplay:function(){
 if(!this._addedFx){
@@ -221,89 +254,89 @@ this.addFx(".dijitCalendarDateTemplate div",this.domNode);
 if(typeof (e.target._date)=="undefined"){
 return;
 }
-var _3e=new Date(this.get("displayMonth"));
+var _41=new Date(this.get("displayMonth"));
 var p=e.target.parentNode;
 var c="dijitCalendar";
 var d=dojo.hasClass(p,c+"PreviousMonth")?-1:(dojo.hasClass(p,c+"NextMonth")?1:0);
 if(d){
-_3e=dojo.date.add(_3e,"month",d);
+_41=dojo.date.add(_41,"month",d);
 }
-_3e.setDate(e.target._date);
-if(this.isDisabledDate(_3e)){
+_41.setDate(e.target._date);
+if(this.isDisabledDate(_41)){
 dojo.stopEvent(e);
 return;
 }
-this.parent._onDateSelected(_3e);
-},_setValueAttr:function(_3f){
+this.parent._onDateSelected(_41);
+},_setValueAttr:function(_42){
 this._populateDays();
 },_populateDays:function(){
-var _40=new Date(this.get("displayMonth"));
-_40.setDate(1);
-var _41=_40.getDay();
-var _42=dojo.date.getDaysInMonth(_40);
-var _43=dojo.date.getDaysInMonth(dojo.date.add(_40,"month",-1));
-var _44=new Date();
-var _45=this.get("value");
-var _46=dojo.cldr.supplemental.getFirstDayOfWeek(this.getLang());
-if(_46>_41){
-_46-=7;
+var _43=new Date(this.get("displayMonth"));
+_43.setDate(1);
+var _44=_43.getDay();
+var _45=dojo.date.getDaysInMonth(_43);
+var _46=dojo.date.getDaysInMonth(dojo.date.add(_43,"month",-1));
+var _47=new Date();
+var _48=this.get("value");
+var _49=dojo.cldr.supplemental.getFirstDayOfWeek(this.getLang());
+if(_49>_44){
+_49-=7;
 }
-var _47=dojo.date.compare;
-var _48=".dijitCalendarDateTemplate";
-var _49="dijitCalendarSelectedDate";
-var _4a=this._lastDate;
-var _4b=_4a==null||_4a.getMonth()!=_40.getMonth()||_4a.getFullYear()!=_40.getFullYear();
-this._lastDate=_40;
-if(!_4b){
-dojo.query(_48,this.domNode).removeClass(_49).filter(function(_4c){
-return _4c.className.indexOf("dijitCalendarCurrent")>-1&&_4c._date==_45.getDate();
-}).addClass(_49);
+var _4a=dojo.date.compare;
+var _4b=".dijitCalendarDateTemplate";
+var _4c="dijitCalendarSelectedDate";
+var _4d=this._lastDate;
+var _4e=_4d==null||_4d.getMonth()!=_43.getMonth()||_4d.getFullYear()!=_43.getFullYear();
+this._lastDate=_43;
+if(!_4e){
+dojo.query(_4b,this.domNode).removeClass(_4c).filter(function(_4f){
+return _4f.className.indexOf("dijitCalendarCurrent")>-1&&_4f._date==_48.getDate();
+}).addClass(_4c);
 return;
 }
-dojo.query(_48,this.domNode).forEach(function(_4d,i){
-i+=_46;
-var _4e=new Date(_40);
-var _4f,_50="dijitCalendar",adj=0;
-if(i<_41){
-_4f=_43-_41+i+1;
+dojo.query(_4b,this.domNode).forEach(function(_50,i){
+i+=_49;
+var _51=new Date(_43);
+var _52,_53="dijitCalendar",adj=0;
+if(i<_44){
+_52=_46-_44+i+1;
 adj=-1;
-_50+="Previous";
+_53+="Previous";
 }else{
-if(i>=(_41+_42)){
-_4f=i-_41-_42+1;
+if(i>=(_44+_45)){
+_52=i-_44-_45+1;
 adj=1;
-_50+="Next";
+_53+="Next";
 }else{
-_4f=i-_41+1;
-_50+="Current";
+_52=i-_44+1;
+_53+="Current";
 }
 }
 if(adj){
-_4e=dojo.date.add(_4e,"month",adj);
+_51=dojo.date.add(_51,"month",adj);
 }
-_4e.setDate(_4f);
-if(!_47(_4e,_44,"date")){
-_50="dijitCalendarCurrentDate "+_50;
+_51.setDate(_52);
+if(!_4a(_51,_47,"date")){
+_53="dijitCalendarCurrentDate "+_53;
 }
-if(!_47(_4e,_45,"date")&&!_47(_4e,_45,"month")&&!_47(_4e,_45,"year")){
-_50=_49+" "+_50;
+if(!_4a(_51,_48,"date")&&!_4a(_51,_48,"month")&&!_4a(_51,_48,"year")){
+_53=_4c+" "+_53;
 }
-if(this.isDisabledDate(_4e,this.getLang())){
-_50=" dijitCalendarDisabledDate "+_50;
+if(this.isDisabledDate(_51,this.getLang())){
+_53=" dijitCalendarDisabledDate "+_53;
 }
-var _51=this.getClassForDate(_4e,this.getLang());
-if(_51){
-_50+=_51+" "+_50;
+var _54=this.getClassForDate(_51,this.getLang());
+if(_54){
+_53=_54+" "+_53;
 }
-_4d.className=_50+"Month dijitCalendarDateTemplate";
-_4d.dijitDateValue=_4e.valueOf();
-var _52=dojo.query(".dijitCalendarDateLabel",_4d)[0];
-this._setText(_52,_4e.getDate());
-_52._date=_52.parentNode._date=_4e.getDate();
+_50.className=_53+"Month dijitCalendarDateTemplate";
+_50.dijitDateValue=_51.valueOf();
+var _55=dojo.query(".dijitCalendarDateLabel",_50)[0];
+this._setText(_55,_51.getDate());
+_55._date=_55.parentNode._date=_51.getDate();
 },this);
-var _53=dojo.date.locale.getNames("months","wide","standAlone",this.getLang());
-this._setText(this.monthLabelNode,_53[_40.getMonth()]);
-this._setText(this.yearLabelNode,_40.getFullYear());
+var _56=dojo.date.locale.getNames("months","wide","standAlone",this.getLang());
+this._setText(this.monthLabelNode,_56[_43.getMonth()]);
+this._setText(this.yearLabelNode,_43.getFullYear());
 }});
 dojo.declare("dojox.widget._CalendarMonthYear",null,{constructor:function(){
 this._addView(dojox.widget._CalendarMonthYearView);
@@ -311,24 +344,24 @@ this._addView(dojox.widget._CalendarMonthYearView);
 dojo.declare("dojox.widget._CalendarMonthYearView",[dojox.widget._CalendarView,dijit._Templated],{templateString:dojo.cache("dojox.widget","Calendar/CalendarMonthYear.html","<div class=\"dojoxCal-MY-labels\" style=\"left: 0px;\"\t\n\tdojoAttachPoint=\"myContainer\" dojoAttachEvent=\"onclick: onClick\">\n\t\t<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: auto;\">\n\t\t\t\t<tbody>\n\t\t\t\t\t\t<tr class=\"dojoxCal-MY-G-Template\">\n\t\t\t\t\t\t\t\t<td class=\"dojoxCal-MY-M-Template\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"dojoxCalendarMonthLabel\"></div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"dojoxCal-MY-M-Template\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"dojoxCalendarMonthLabel\"></div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"dojoxCal-MY-Y-Template\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"dojoxCalendarYearLabel\"></div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"dojoxCal-MY-Y-Template\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"dojoxCalendarYearLabel\"></div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t </tr>\n\t\t\t\t\t\t <tr class=\"dojoxCal-MY-btns\">\n\t\t\t\t\t\t \t <td class=\"dojoxCal-MY-btns\" colspan=\"4\">\n\t\t\t\t\t\t \t\t <span class=\"dijitReset dijitInline dijitButtonNode ok-btn\" dojoAttachEvent=\"onclick: onOk\" dojoAttachPoint=\"okBtn\">\n\t\t\t\t\t\t \t \t \t <button\tclass=\"dijitReset dijitStretch dijitButtonContents\">OK</button>\n\t\t\t\t\t\t\t\t </span>\n\t\t\t\t\t\t\t\t <span class=\"dijitReset dijitInline dijitButtonNode cancel-btn\" dojoAttachEvent=\"onclick: onCancel\" dojoAttachPoint=\"cancelBtn\">\n\t\t\t\t\t\t \t \t\t <button\tclass=\"dijitReset dijitStretch dijitButtonContents\">Cancel</button>\n\t\t\t\t\t\t\t\t </span>\n\t\t\t\t\t\t \t </td>\n\t\t\t\t\t\t </tr>\n\t\t\t\t</tbody>\n\t\t</table>\n</div>\n"),datePart:"year",displayedYears:10,useHeader:false,postCreate:function(){
 this.cloneClass(".dojoxCal-MY-G-Template",5,".dojoxCal-MY-btns");
 this.monthContainer=this.yearContainer=this.myContainer;
-var _54="dojoxCalendarYearLabel";
-var _55="dojoxCalendarDecrease";
-var _56="dojoxCalendarIncrease";
-dojo.query("."+_54,this.myContainer).forEach(function(_57,idx){
-var _58=_56;
+var _57="dojoxCalendarYearLabel";
+var _58="dojoxCalendarDecrease";
+var _59="dojoxCalendarIncrease";
+dojo.query("."+_57,this.myContainer).forEach(function(_5a,idx){
+var _5b=_59;
 switch(idx){
 case 0:
-_58=_55;
+_5b=_58;
 case 1:
-dojo.removeClass(_57,_54);
-dojo.addClass(_57,_58);
+dojo.removeClass(_5a,_57);
+dojo.addClass(_5a,_5b);
 break;
 }
 });
-this._decBtn=dojo.query("."+_55,this.myContainer)[0];
-this._incBtn=dojo.query("."+_56,this.myContainer)[0];
-dojo.query(".dojoxCal-MY-M-Template",this.domNode).filter(function(_59){
-return _59.cellIndex==1;
+this._decBtn=dojo.query("."+_58,this.myContainer)[0];
+this._incBtn=dojo.query("."+_59,this.myContainer)[0];
+dojo.query(".dojoxCal-MY-M-Template",this.domNode).filter(function(_5c){
+return _5c.cellIndex==1;
 }).addClass("dojoxCal-MY-M-last");
 dojo.connect(this,"onBeforeDisplay",dojo.hitch(this,function(){
 this._cachedDate=new Date(this.get("value").getTime());
@@ -347,106 +380,108 @@ this._cachedDate=this.get("value");
 this._populateYears();
 this._populateMonths();
 this.addFx(".dojoxCalendarMonthLabel,.dojoxCalendarYearLabel ",this.myContainer);
-},_setValueAttr:function(_5a){
-this._populateYears(_5a.getFullYear());
+},_setValueAttr:function(_5d){
+if(_5d&&_5d.getFullYear()){
+this._populateYears(_5d.getFullYear());
+}
 },getHeader:function(){
 return null;
-},_getMonthNames:function(_5b){
-this._monthNames=this._monthNames||dojo.date.locale.getNames("months",_5b,"standAlone",this.getLang());
+},_getMonthNames:function(_5e){
+this._monthNames=this._monthNames||dojo.date.locale.getNames("months",_5e,"standAlone",this.getLang());
 return this._monthNames;
 },_populateMonths:function(){
-var _5c=this._getMonthNames("abbr");
-dojo.query(".dojoxCalendarMonthLabel",this.monthContainer).forEach(dojo.hitch(this,function(_5d,cnt){
-this._setText(_5d,_5c[cnt]);
+var _5f=this._getMonthNames("abbr");
+dojo.query(".dojoxCalendarMonthLabel",this.monthContainer).forEach(dojo.hitch(this,function(_60,cnt){
+this._setText(_60,_5f[cnt]);
 }));
-var _5e=this.get("constraints");
-if(_5e){
-var _5f=new Date();
-_5f.setFullYear(this._year);
+var _61=this.get("constraints");
+if(_61){
+var _62=new Date();
+_62.setFullYear(this._year);
 var min=-1,max=12;
-if(_5e.min){
-var _60=_5e.min.getFullYear();
-if(_60>this._year){
+if(_61.min){
+var _63=_61.min.getFullYear();
+if(_63>this._year){
 min=12;
 }else{
-if(_60==this._year){
-min=_5e.min.getMonth();
+if(_63==this._year){
+min=_61.min.getMonth();
 }
 }
 }
-if(_5e.max){
-var _61=_5e.max.getFullYear();
-if(_61<this._year){
+if(_61.max){
+var _64=_61.max.getFullYear();
+if(_64<this._year){
 max=-1;
 }else{
-if(_61==this._year){
-max=_5e.max.getMonth();
+if(_64==this._year){
+max=_61.max.getMonth();
 }
 }
 }
-dojo.query(".dojoxCalendarMonthLabel",this.monthContainer).forEach(dojo.hitch(this,function(_62,cnt){
-dojo[(cnt<min||cnt>max)?"addClass":"removeClass"](_62,"dijitCalendarDisabledDate");
+dojo.query(".dojoxCalendarMonthLabel",this.monthContainer).forEach(dojo.hitch(this,function(_65,cnt){
+dojo[(cnt<min||cnt>max)?"addClass":"removeClass"](_65,"dijitCalendarDisabledDate");
 }));
 }
 var h=this.getHeader();
 if(h){
 this._setText(this.getHeader(),this.get("value").getFullYear());
 }
-},_populateYears:function(_63){
-var _64=this.get("constraints");
-var _65=_63||this.get("value").getFullYear();
-var _66=_65-Math.floor(this.displayedYears/2);
-var min=_64&&_64.min?_64.min.getFullYear():_66-10000;
-_66=Math.max(min,_66);
-this._displayedYear=_65;
-var _67=dojo.query(".dojoxCalendarYearLabel",this.yearContainer);
-var max=_64&&_64.max?_64.max.getFullYear()-_66:_67.length;
-var _68="dijitCalendarDisabledDate";
-_67.forEach(dojo.hitch(this,function(_69,cnt){
+},_populateYears:function(_66){
+var _67=this.get("constraints");
+var _68=_66||this.get("value").getFullYear();
+var _69=_68-Math.floor(this.displayedYears/2);
+var min=_67&&_67.min?_67.min.getFullYear():_69-10000;
+_69=Math.max(min,_69);
+this._displayedYear=_68;
+var _6a=dojo.query(".dojoxCalendarYearLabel",this.yearContainer);
+var max=_67&&_67.max?_67.max.getFullYear()-_69:_6a.length;
+var _6b="dijitCalendarDisabledDate";
+_6a.forEach(dojo.hitch(this,function(_6c,cnt){
 if(cnt<=max){
-this._setText(_69,_66+cnt);
-dojo.removeClass(_69,_68);
+this._setText(_6c,_69+cnt);
+dojo.removeClass(_6c,_6b);
 }else{
-dojo.addClass(_69,_68);
+dojo.addClass(_6c,_6b);
 }
 }));
 if(this._incBtn){
-dojo[max<_67.length?"addClass":"removeClass"](this._incBtn,_68);
+dojo[max<_6a.length?"addClass":"removeClass"](this._incBtn,_6b);
 }
 if(this._decBtn){
-dojo[min>=_66?"addClass":"removeClass"](this._decBtn,_68);
+dojo[min>=_69?"addClass":"removeClass"](this._decBtn,_6b);
 }
 var h=this.getHeader();
 if(h){
-this._setText(this.getHeader(),_66+" - "+(_66+11));
+this._setText(this.getHeader(),_69+" - "+(_69+11));
 }
 },_updateSelectedYear:function(){
 this._year=String((this._cachedDate||this.get("value")).getFullYear());
-this._updateSelectedNode(".dojoxCalendarYearLabel",dojo.hitch(this,function(_6a,idx){
-return this._year!==null&&_6a.innerHTML==this._year;
+this._updateSelectedNode(".dojoxCalendarYearLabel",dojo.hitch(this,function(_6d,idx){
+return this._year!==null&&_6d.innerHTML==this._year;
 }));
 },_updateSelectedMonth:function(){
-var _6b=(this._cachedDate||this.get("value")).getMonth();
-this._month=_6b;
-this._updateSelectedNode(".dojoxCalendarMonthLabel",function(_6c,idx){
-return idx==_6b;
+var _6e=(this._cachedDate||this.get("value")).getMonth();
+this._month=_6e;
+this._updateSelectedNode(".dojoxCalendarMonthLabel",function(_6f,idx){
+return idx==_6e;
 });
-},_updateSelectedNode:function(_6d,_6e){
+},_updateSelectedNode:function(_70,_71){
 var sel="dijitCalendarSelectedDate";
-dojo.query(_6d,this.domNode).forEach(function(_6f,idx,_70){
-dojo[_6e(_6f,idx,_70)?"addClass":"removeClass"](_6f.parentNode,sel);
+dojo.query(_70,this.domNode).forEach(function(_72,idx,_73){
+dojo[_71(_72,idx,_73)?"addClass":"removeClass"](_72.parentNode,sel);
 });
-var _71=dojo.query(".dojoxCal-MY-M-Template div",this.myContainer).filter(function(_72){
-return dojo.hasClass(_72.parentNode,sel);
+var _74=dojo.query(".dojoxCal-MY-M-Template div",this.myContainer).filter(function(_75){
+return dojo.hasClass(_75.parentNode,sel);
 })[0];
-if(!_71){
+if(!_74){
 return;
 }
-var _73=dojo.hasClass(_71,"dijitCalendarDisabledDate");
-dojo[_73?"addClass":"removeClass"](this.okBtn,"dijitDisabled");
+var _76=dojo.hasClass(_74,"dijitCalendarDisabledDate");
+dojo[_76?"addClass":"removeClass"](this.okBtn,"dijitDisabled");
 },onClick:function(evt){
-var _74;
-var _75=this;
+var _77;
+var _78=this;
 var sel="dijitCalendarSelectedDate";
 function hc(c){
 return dojo.hasClass(evt.target,c);
@@ -456,13 +491,13 @@ dojo.stopEvent(evt);
 return false;
 }
 if(hc("dojoxCalendarMonthLabel")){
-_74="dojoxCal-MY-M-Template";
+_77="dojoxCal-MY-M-Template";
 this._month=evt.target.parentNode.cellIndex+(evt.target.parentNode.parentNode.rowIndex*2);
 this._cachedDate.setMonth(this._month);
 this._updateSelectedMonth();
 }else{
 if(hc("dojoxCalendarYearLabel")){
-_74="dojoxCal-MY-Y-Template";
+_77="dojoxCal-MY-Y-Template";
 this._year=Number(evt.target.innerHTML);
 this._cachedDate.setYear(this._year);
 this._populateMonths();
@@ -497,6 +532,10 @@ return false;
 }});
 dojo.declare("dojox.widget.Calendar2Pane",[dojox.widget._CalendarBase,dojox.widget._CalendarDay,dojox.widget._CalendarMonthYear],{});
 dojo.declare("dojox.widget.Calendar",[dojox.widget._CalendarBase,dojox.widget._CalendarDay,dojox.widget._CalendarMonthYear],{});
-dojo.declare("dojox.widget.DailyCalendar",[dojox.widget._CalendarBase,dojox.widget._CalendarDay],{});
+dojo.declare("dojox.widget.DailyCalendar",[dojox.widget._CalendarBase,dojox.widget._CalendarDay],{_makeDate:function(_79){
+var now=new Date();
+now.setDate(_79);
+return now;
+}});
 dojo.declare("dojox.widget.MonthAndYearlyCalendar",[dojox.widget._CalendarBase,dojox.widget._CalendarMonthYear],{});
 }

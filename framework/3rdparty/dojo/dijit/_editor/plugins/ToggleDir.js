@@ -8,6 +8,8 @@
 if(!dojo._hasResource["dijit._editor.plugins.ToggleDir"]){
 dojo._hasResource["dijit._editor.plugins.ToggleDir"]=true;
 dojo.provide("dijit._editor.plugins.ToggleDir");
+dojo.require("dijit._editor._Plugin");
+dojo.require("dijit.form.ToggleButton");
 dojo.experimental("dijit._editor.plugins.ToggleDir");
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.ToggleButton");
@@ -21,6 +23,7 @@ this.button.set("checked",!_2);
 this.connect(this.button,"onChange","_setRtl");
 }));
 },updateState:function(){
+this.button.set("disabled",this.get("disabled"));
 },_setRtl:function(_3){
 var _4="ltr";
 if(_3){

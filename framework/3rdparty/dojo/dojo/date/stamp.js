@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.date.stamp"]){
 dojo._hasResource["dojo.date.stamp"]=true;
 dojo.provide("dojo.date.stamp");
+dojo.getObject("date.stamp",true,dojo);
 dojo.date.stamp.fromISOString=function(_1,_2){
 if(!dojo.date.stamp._isoRegExp){
 dojo.date.stamp._isoRegExp=/^(?:(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(.\d+)?)?((?:[+-](\d{2}):(\d{2}))|Z)?)?$/;

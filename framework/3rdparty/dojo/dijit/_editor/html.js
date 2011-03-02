@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dijit._editor.html"]){
 dojo._hasResource["dijit._editor.html"]=true;
 dojo.provide("dijit._editor.html");
+dojo.getObject("_editor",true,dijit);
 dijit._editor.escapeXml=function(_1,_2){
 _1=_1.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;").replace(/"/gm,"&quot;");
 if(!_2){

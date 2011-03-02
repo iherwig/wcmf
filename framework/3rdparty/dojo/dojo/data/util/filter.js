@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.data.util.filter"]){
 dojo._hasResource["dojo.data.util.filter"]=true;
 dojo.provide("dojo.data.util.filter");
+dojo.getObject("data.util.filter",true,dojo);
 dojo.data.util.filter.patternToRegExp=function(_1,_2){
 var _3="^";
 var c=null;

@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.math.matrix"]){
 dojo._hasResource["dojox.math.matrix"]=true;
 dojo.provide("dojox.math.matrix");
+dojo.getObject("math.matrix",true,dojox);
 dojo.mixin(dojox.math.matrix,{iDF:0,ALMOST_ZERO:1e-10,multiply:function(a,b){
 var ay=a.length,ax=a[0].length,by=b.length,bx=b[0].length;
 if(ax!=by){

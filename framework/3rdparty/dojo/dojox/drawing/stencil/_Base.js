@@ -392,7 +392,7 @@ this.shadow.destroy();
 if(!this._label){
 this._label=new dojox.drawing.annotations.Label({text:_22,util:this.util,mouse:this.mouse,stencil:this,annotation:true,container:this.container,labelPosition:this.labelPosition});
 }else{
-if(_22){
+if(_22!=undefined){
 this._label.setLabel(_22);
 }
 }
@@ -478,7 +478,7 @@ this._prevData=dojo.clone(this.data);
 }
 }
 },_setNodeAtts:function(_29){
-var att=this.enabled&&!this.annotation?this.drawingType:"";
+var att=this.enabled&&(!this.annotation||this.drawingType=="label")?this.drawingType:"";
 this.util.attr(_29,"drawingType",att);
 },destroy:function(){
 if(this.destroyed){

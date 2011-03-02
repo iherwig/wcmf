@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.math.BigInteger"]){
 dojo._hasResource["dojox.math.BigInteger"]=true;
 dojo.provide("dojox.math.BigInteger");
+dojo.getObject("math.BigInteger",true,dojox);
 dojo.experimental("dojox.math.BigInteger");
 (function(){
 var _1;

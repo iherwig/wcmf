@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.gears"]){
 dojo._hasResource["dojo.gears"]=true;
 dojo.provide("dojo.gears");
+dojo.getObject("gears",true,dojo);
 dojo.gears._gearsObject=function(){
 var _1;
 var _2;

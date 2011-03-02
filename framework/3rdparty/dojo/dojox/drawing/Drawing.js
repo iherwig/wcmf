@@ -177,16 +177,24 @@ return this.stencils.exporter();
 dojo.forEach(_17,function(m){
 this.addStencil(m.type,m);
 },this);
-},changeDefaults:function(_18){
+},changeDefaults:function(_18,_19){
+if(_19!=undefined&&_19){
+for(var nm in _18){
+this.defaults[nm]=_18[nm];
+}
+}else{
 for(var nm in _18){
 for(var n in _18[nm]){
 this.defaults[nm][n]=_18[nm][n];
 }
 }
+}
+if(this.currentStencil!=undefined&&(!this.currentStencil.created||this.defaults.clickMode)){
 this.unSetTool();
 this.setTool(this.currentType);
-},onRenderStencil:function(_19){
-this.stencils.register(_19);
+}
+},onRenderStencil:function(_1a){
+this.stencils.register(_1a);
 this.unSetTool();
 if(!this.defaults.clickMode){
 this.setTool(this.currentType);
@@ -195,34 +203,34 @@ if(this.defaults.clickMode){
 this.defaults.clickable=true;
 }
 }
-},onDeleteStencil:function(_1a){
-this.stencils.unregister(_1a);
-},registerTool:function(_1b){
-if(this.tools[_1b]){
+},onDeleteStencil:function(_1b){
+this.stencils.unregister(_1b);
+},registerTool:function(_1c){
+if(this.tools[_1c]){
 return;
 }
-var _1c=dojo.getObject(_1b);
-this.tools[_1b]=_1c;
-var _1d=this.util.abbr(_1b);
-this.stencilTypes[_1d]=_1c;
-this.stencilTypeMap[_1d]=_1b;
-},getConstructor:function(_1e){
-return this.stencilTypes[_1e];
-},setTool:function(_1f){
+var _1d=dojo.getObject(_1c);
+this.tools[_1c]=_1d;
+var _1e=this.util.abbr(_1c);
+this.stencilTypes[_1e]=_1d;
+this.stencilTypeMap[_1e]=_1c;
+},getConstructor:function(_1f){
+return this.stencilTypes[_1f];
+},setTool:function(_20){
 if(this.mode=="ui"){
 return;
 }
 if(!this.canvas||!this.canvas.surface){
 var c=dojo.connect(this,"onSurfaceReady",this,function(){
 dojo.disconnect(c);
-this.setTool(_1f);
+this.setTool(_20);
 });
 return;
 }
 if(this.currentStencil){
 this.unSetTool();
 }
-this.currentType=this.tools[_1f]?_1f:this.stencilTypeMap[_1f];
+this.currentType=this.tools[_20]?_20:this.stencilTypeMap[_20];
 try{
 this.currentStencil=new this.tools[this.currentType]({container:this.canvas.surface.createGroup(),util:this.util,mouse:this.mouse,keys:this.keys});
 if(this.defaults.clickMode){

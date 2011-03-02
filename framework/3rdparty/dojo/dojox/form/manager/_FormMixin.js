@@ -56,7 +56,7 @@ this.domNode.submit();
 for(var _6 in this.formWidgets){
 var _7=false;
 aa(function(_8,_9){
-if(!_9.attr("disabled")&&_9.isValid&&!_9.isValid()){
+if(!_9.get("disabled")&&_9.isValid&&!_9.isValid()){
 _7=true;
 }
 }).call(this,null,this.formWidgets[_6].widget);

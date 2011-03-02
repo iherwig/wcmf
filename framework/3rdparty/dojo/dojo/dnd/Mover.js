@@ -12,17 +12,18 @@ dojo.require("dojo.dnd.common");
 dojo.require("dojo.dnd.autoscroll");
 dojo.declare("dojo.dnd.Mover",null,{constructor:function(_1,e,_2){
 this.node=dojo.byId(_1);
-this.marginBox={l:e.pageX,t:e.pageY};
+var _3=e.touches?e.touches[0]:e;
+this.marginBox={l:_3.pageX,t:_3.pageY};
 this.mouseButton=e.button;
-var h=this.host=_2,d=_1.ownerDocument,_3=dojo.connect(d,"onmousemove",this,"onFirstMove");
-this.events=[dojo.connect(d,"onmousemove",this,"onMouseMove"),dojo.connect(d,"onmouseup",this,"onMouseUp"),dojo.connect(d,"ondragstart",dojo.stopEvent),dojo.connect(d.body,"onselectstart",dojo.stopEvent),_3];
+var h=(this.host=_2),d=_1.ownerDocument;
+this.events=[dojo.connect(d,"onmousemove",this,"onFirstMove"),dojo.connect(d,"ontouchmove",this,"onFirstMove"),dojo.connect(d,"onmousemove",this,"onMouseMove"),dojo.connect(d,"ontouchmove",this,"onMouseMove"),dojo.connect(d,"onmouseup",this,"onMouseUp"),dojo.connect(d,"ontouchend",this,"onMouseUp"),dojo.connect(d,"ondragstart",dojo.stopEvent),dojo.connect(d.body,"onselectstart",dojo.stopEvent)];
 if(h&&h.onMoveStart){
 h.onMoveStart(this);
 }
 },onMouseMove:function(e){
 dojo.dnd.autoScroll(e);
-var m=this.marginBox;
-this.host.onMove(this,{l:m.l+e.pageX,t:m.t+e.pageY},e);
+var m=this.marginBox,_4=e.touches?e.touches[0]:e;
+this.host.onMove(this,{l:m.l+_4.pageX,t:m.t+_4.pageY},e);
 dojo.stopEvent(e);
 },onMouseUp:function(e){
 if(dojo.isWebKit&&dojo.isMac&&this.mouseButton==2?e.button==0:this.mouseButton==e.button){
@@ -53,7 +54,8 @@ this.marginBox.t=t-this.marginBox.t;
 if(h&&h.onFirstMove){
 h.onFirstMove(this,e);
 }
-dojo.disconnect(this.events.pop());
+dojo.disconnect(this.events.shift());
+dojo.disconnect(this.events.shift());
 },destroy:function(){
 dojo.forEach(this.events,dojo.disconnect);
 var h=this.host;

@@ -10,7 +10,7 @@ dojo._hasResource["dojox.widget.DynamicTooltip"]=true;
 dojo.provide("dojox.widget.DynamicTooltip");
 dojo.experimental("dojox.widget.DynamicTooltip");
 dojo.require("dijit.Tooltip");
-dojo.requireLocalization("dijit","loading",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit","loading",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.declare("dojox.widget.DynamicTooltip",dijit.Tooltip,{hasLoaded:false,href:"",label:"",preventCache:false,postMixInProperties:function(){
 this.inherited(arguments);
 this._setLoadingLabel();

@@ -8,12 +8,12 @@
 if(!dojo._hasResource["dojox.editor.plugins.TextColor"]){
 dojo._hasResource["dojox.editor.plugins.TextColor"]=true;
 dojo.provide("dojox.editor.plugins.TextColor");
-dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.TooltipDialog");
 dojo.require("dijit.form.Button");
+dojo.require("dijit._editor._Plugin");
 dojo.require("dojox.widget.ColorPicker");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dojox.editor.plugins","TextColor",null,"ROOT,ro");
+dojo.requireLocalization("dojox.editor.plugins","TextColor",null,"ROOT,kk,ro");
 dojo.experimental("dojox.editor.plugins.TextColor");
 dojo.declare("dojox.editor.plugins._TextColorDropDown",[dijit._Widget,dijit._Templated],{templateString:"<div style='display: none; position: absolute; top: -10000; z-index: -10000'>"+"<div dojoType='dijit.TooltipDialog' dojoAttachPoint='dialog' class='dojoxEditorColorPicker'>"+"<div dojoType='dojox.widget.ColorPicker' dojoAttachPoint='_colorPicker'></div>"+"<br>"+"<center>"+"<button dojoType='dijit.form.Button' type='button' dojoAttachPoint='_setButton'>${setButtonText}</button>"+"&nbsp;"+"<button dojoType='dijit.form.Button' type='button' dojoAttachPoint='_cancelButton'>${cancelButtonText}</button>"+"</center>"+"</div>"+"</div>",widgetsInTemplate:true,constructor:function(){
 var _1=dojo.i18n.getLocalization("dojox.editor.plugins","TextColor");
@@ -54,32 +54,37 @@ var _7=this.command;
 if(!_6||!_6.isLoaded||!_7.length){
 return;
 }
-var _8;
+var _8=this.get("disabled");
+var _9;
 if(this.button){
+this.button.set("disabled",_8);
+if(_8){
+return;
+}
 try{
-_8=_6.queryCommandValue(_7)||"";
+_9=_6.queryCommandValue(_7)||"";
 }
 catch(e){
-_8="";
+_9="";
 }
 }
-if(_8==""){
-_8="#000000";
+if(_9==""){
+_9="#000000";
 }
-if(_8=="transparent"){
-_8="#ffffff";
+if(_9=="transparent"){
+_9="#ffffff";
 }
-if(typeof _8=="string"){
-if(_8.indexOf("rgb")>-1){
-_8=dojo.colorFromRgb(_8).toHex();
+if(typeof _9=="string"){
+if(_9.indexOf("rgb")>-1){
+_9=dojo.colorFromRgb(_9).toHex();
 }
 }else{
-_8=((_8&255)<<16)|(_8&65280)|((_8&16711680)>>>16);
-_8=_8.toString(16);
-_8="#000000".slice(0,7-_8.length)+_8;
+_9=((_9&255)<<16)|(_9&65280)|((_9&16711680)>>>16);
+_9=_9.toString(16);
+_9="#000000".slice(0,7-_9.length)+_9;
 }
-if(_8!==this._picker.get("value")){
-this._picker.set("value",_8,false);
+if(_9!==this._picker.get("value")){
+this._picker.set("value",_9,false);
 }
 },destroy:function(){
 this.inherited(arguments);

@@ -5,6 +5,7 @@
 */
 
 
+define("dojo/_base/_loader/hostenv_browser",["./loader"],function(){
 if(typeof window!="undefined"){
 dojo.isBrowser=true;
 dojo._name="browser";
@@ -23,7 +24,7 @@ if(m){
 if(!d.config.baseUrl){
 d.config.baseUrl=_3.substring(0,m.index);
 }
-var _4=_1[i].getAttribute("djConfig");
+var _4=(_1[i].getAttribute("djConfig")||_1[i].getAttribute("data-dojo-config"));
 if(_4){
 var _5=eval("({ "+_4+" })");
 for(var x in _5){
@@ -103,8 +104,8 @@ throw new Error("XMLHTTP not available: "+_b);
 return _a;
 };
 d._isDocumentOk=function(_d){
-var _e=_d.status||0,lp=location.protocol;
-return (_e>=200&&_e<300)||_e==304||_e==1223||(!_e&&(lp=="file:"||lp=="chrome:"||lp=="chrome-extension:"||lp=="app:"));
+var _e=_d.status||0;
+return (_e>=200&&_e<300)||_e==304||_e==1223||!_e;
 };
 var _f=window.location+"";
 var _10=document.getElementsByTagName("base");
@@ -237,8 +238,7 @@ if(dojo.config.isDebug){
 dojo.require("dojo._firebug.firebug");
 }
 if(dojo.config.debugAtAllCosts){
-dojo.config.useXDomain=true;
-dojo.require("dojo._base._loader.loader_xd");
 dojo.require("dojo._base._loader.loader_debug");
 dojo.require("dojo.i18n");
 }
+});

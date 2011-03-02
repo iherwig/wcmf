@@ -12,6 +12,10 @@ dojo.require("dojo.window");
 dojo.require("dijit._Widget");
 dojo.require("dijit._KeyNavContainer");
 dojo.require("dijit._Templated");
+dojo.require("dijit.MenuItem");
+dojo.require("dijit.PopupMenuItem");
+dojo.require("dijit.CheckedMenuItem");
+dojo.require("dijit.MenuSeparator");
 dojo.declare("dijit._MenuBase",[dijit._Widget,dijit._Templated,dijit._KeyNavContainer],{parentMenu:null,popupDelay:500,startup:function(){
 if(this._started){
 return;
@@ -140,15 +144,13 @@ this.focus();
 }
 },_markActive:function(){
 this.isActive=true;
-dojo.addClass(this.domNode,"dijitMenuActive");
-dojo.removeClass(this.domNode,"dijitMenuPassive");
+dojo.replaceClass(this.domNode,"dijitMenuActive","dijitMenuPassive");
 },onOpen:function(e){
 this.isShowingNow=true;
 this._markActive();
 },_markInactive:function(){
 this.isActive=false;
-dojo.removeClass(this.domNode,"dijitMenuActive");
-dojo.addClass(this.domNode,"dijitMenuPassive");
+dojo.replaceClass(this.domNode,"dijitMenuPassive","dijitMenuActive");
 },onClose:function(){
 this._stopFocusTimer();
 this._markInactive();
@@ -180,7 +182,7 @@ this._markInactive();
 }});
 dojo.declare("dijit.Menu",dijit._MenuBase,{constructor:function(){
 this._bindings=[];
-},templateString:dojo.cache("dijit","templates/Menu.html","<table class=\"dijit dijitMenu dijitMenuPassive dijitReset dijitMenuTable\" waiRole=\"menu\" tabIndex=\"${tabIndex}\" dojoAttachEvent=\"onkeypress:_onKeyPress\" cellspacing=0>\n\t<tbody class=\"dijitReset\" dojoAttachPoint=\"containerNode\"></tbody>\n</table>\n"),baseClass:"dijitMenu",targetNodeIds:[],contextMenuForWindow:false,leftClickToOpen:false,refocus:true,postCreate:function(){
+},templateString:dojo.cache("dijit","templates/Menu.html","<table class=\"dijit dijitMenu dijitMenuPassive dijitReset dijitMenuTable\" role=\"menu\" tabIndex=\"${tabIndex}\" dojoAttachEvent=\"onkeypress:_onKeyPress\" cellspacing=\"0\">\n\t<tbody class=\"dijitReset\" dojoAttachPoint=\"containerNode\"></tbody>\n</table>\n"),baseClass:"dijitMenu",targetNodeIds:[],contextMenuForWindow:false,leftClickToOpen:false,refocus:true,postCreate:function(){
 if(this.contextMenuForWindow){
 this.bindDomNode(dojo.body());
 }else{
@@ -318,8 +320,4 @@ this.unBindDomNode(b.node);
 },this);
 this.inherited(arguments);
 }});
-dojo.require("dijit.MenuItem");
-dojo.require("dijit.PopupMenuItem");
-dojo.require("dijit.CheckedMenuItem");
-dojo.require("dijit.MenuSeparator");
 }

@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.window"]){
 dojo._hasResource["dojo.window"]=true;
 dojo.provide("dojo.window");
+dojo.getObject("window",true,dojo);
 dojo.window.getBox=function(){
 var _1=(dojo.doc.compatMode=="BackCompat")?dojo.body():dojo.doc.documentElement;
 var _2=dojo._docScroll();

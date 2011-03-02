@@ -14,6 +14,7 @@ this.grid=_1;
 this.cell=null;
 this.rowIndex=-1;
 this._connects=[];
+this._headerConnects=[];
 this.headerMenu=this.grid.headerMenu;
 this._connects.push(dojo.connect(this.grid.domNode,"onfocus",this,"doFocus"));
 this._connects.push(dojo.connect(this.grid.domNode,"onblur",this,"doBlur"));
@@ -24,6 +25,7 @@ this._connects.push(dojo.connect(this.grid,"_onFetchComplete",this,"_delayedCell
 this._connects.push(dojo.connect(this.grid,"postrender",this,"_delayedHeaderFocus"));
 },destroy:function(){
 dojo.forEach(this._connects,dojo.disconnect);
+dojo.forEach(this._headerConnects,dojo.disconnect);
 delete this.grid;
 delete this.cell;
 },_colHeadNode:null,_colHeadFocusIdx:null,_contextMenuBindNode:null,tabbingOut:false,focusClass:"dojoxGridCellFocus",focusView:null,initFocusView:function(){
@@ -91,10 +93,12 @@ this.focusHeader();
 this.grid.domNode.focus();
 }
 },_initColumnHeaders:function(){
+dojo.forEach(this._headerConnects,dojo.disconnect);
+this._headerConnects=[];
 var _5=this._findHeaderCells();
 for(var i=0;i<_5.length;i++){
-this._connects.push(dojo.connect(_5[i],"onfocus",this,"doColHeaderFocus"));
-this._connects.push(dojo.connect(_5[i],"onblur",this,"doColHeaderBlur"));
+this._headerConnects.push(dojo.connect(_5[i],"onfocus",this,"doColHeaderFocus"));
+this._headerConnects.push(dojo.connect(_5[i],"onblur",this,"doColHeaderBlur"));
 }
 },_findHeaderCells:function(){
 var _6=dojo.query("th",this.grid.viewsHeaderNode);

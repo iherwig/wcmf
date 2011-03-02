@@ -9,10 +9,9 @@ if(!dojo._hasResource["dojox.editor.plugins._SmileyPalette"]){
 dojo._hasResource["dojox.editor.plugins._SmileyPalette"]=true;
 dojo.provide("dojox.editor.plugins._SmileyPalette");
 dojo.require("dijit._Widget");
-dojo.require("dijit._Templated");
-dojo.require("dojo.i18n");
 dojo.require("dijit._PaletteMixin");
-dojo.requireLocalization("dojox.editor.plugins","Smiley",null,"ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ro,ru,zh,zh-tw");
+dojo.require("dojo.i18n");
+dojo.requireLocalization("dojox.editor.plugins","Smiley",null,"ROOT,cs,de,es,fr,hu,it,ja,kk,ko,pl,pt,ro,ru,zh,zh-tw");
 dojo.experimental("dojox.editor.plugins._SmileyPalette");
 dojo.declare("dojox.editor.plugins._SmileyPalette",[dijit._Widget,dijit._Templated,dijit._PaletteMixin],{templateString:"<table class=\"dijitInline dijitEditorSmileyPalette dijitPaletteTable\""+" cellSpacing=0 cellPadding=0><tbody dojoAttachPoint=\"gridNode\"></tbody></table>",baseClass:"dijitEditorSmileyPalette",_palette:[["smile","laughing","wink","grin"],["cool","angry","half","eyebrow"],["frown","shy","goofy","oops"],["tongue","idea","angel","happy"],["yes","no","crying",""]],dyeClass:"dojox.editor.plugins.Emoticon",buildRendering:function(){
 this.inherited(arguments);

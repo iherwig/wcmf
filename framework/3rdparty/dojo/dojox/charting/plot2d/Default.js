@@ -20,6 +20,7 @@ var _2=1200;
 dojo.declare("dojox.charting.plot2d.Default",dojox.charting.plot2d.Base,{defaultParams:{hAxis:"x",vAxis:"y",lines:true,areas:false,markers:false,tension:"",animate:false},optionalParams:{stroke:{},outline:{},shadow:{},fill:{},font:"",fontColor:"",markerStroke:{},markerOutline:{},markerShadow:{},markerFill:{},markerFont:"",markerFontColor:""},constructor:function(_3,_4){
 this.opt=dojo.clone(this.defaultParams);
 du.updateWithObject(this.opt,_4);
+du.updateWithPattern(this.opt,_4,this.optionalParams);
 this.series=[];
 this.hAxis=this.opt.hAxis;
 this.vAxis=this.opt.vAxis;

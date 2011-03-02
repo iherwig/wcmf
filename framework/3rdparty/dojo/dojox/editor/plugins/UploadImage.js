@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.editor.plugins.UploadImage"]){
 dojo._hasResource["dojox.editor.plugins.UploadImage"]=true;
 dojo.provide("dojox.editor.plugins.UploadImage");
-dojo.require("dijit._editor._Plugin");
 dojo.require("dojox.form.FileUploader");
+dojo.require("dijit._editor._Plugin");
 dojo.experimental("dojox.editor.plugins.UploadImage");
 dojo.declare("dojox.editor.plugins.UploadImage",dijit._editor._Plugin,{tempImageUrl:"",iconClassPrefix:"editorIcon",useDefaultCommand:false,uploadUrl:"",button:null,label:"Upload",setToolbar:function(_1){
 this.button.destroy();
@@ -20,6 +20,8 @@ this.command="uploadImage";
 this.editor.commands[this.command]="Upload Image";
 this.inherited("_initButton",arguments);
 delete this.command;
+},updateState:function(){
+this.button.set("disabled",this.get("disabled"));
 },createFileInput:function(){
 var _2=dojo.create("span",{innerHTML:"."},document.body);
 dojo.style(_2,{width:"40px",height:"20px",paddingLeft:"8px",paddingRight:"8px"});

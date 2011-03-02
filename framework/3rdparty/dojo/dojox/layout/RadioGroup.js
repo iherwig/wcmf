@@ -23,8 +23,8 @@ if(this.hasButtons){
 dojo.style(this.buttonHolder,"display","block");
 }
 },_setupChild:function(_1){
-if(this.hasButtons){
 dojo.style(_1.domNode,"position","absolute");
+if(this.hasButtons){
 var _2=this.buttonNode.appendChild(dojo.create("td"));
 var n=dojo.create("div",null,_2),_3=dojo.getObject(this.buttonClass),_4=new _3({label:_1.title,page:_1},n);
 dojo.mixin(_1,{_radioButton:_4});

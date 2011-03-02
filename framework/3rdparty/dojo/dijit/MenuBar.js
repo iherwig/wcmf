@@ -9,7 +9,7 @@ if(!dojo._hasResource["dijit.MenuBar"]){
 dojo._hasResource["dijit.MenuBar"]=true;
 dojo.provide("dijit.MenuBar");
 dojo.require("dijit.Menu");
-dojo.declare("dijit.MenuBar",dijit._MenuBase,{templateString:dojo.cache("dijit","templates/MenuBar.html","<div class=\"dijitMenuBar dijitMenuPassive\" dojoAttachPoint=\"containerNode\"  waiRole=\"menubar\" tabIndex=\"${tabIndex}\" dojoAttachEvent=\"onkeypress: _onKeyPress\"></div>\n"),baseClass:"dijitMenuBar",_isMenuBar:true,postCreate:function(){
+dojo.declare("dijit.MenuBar",dijit._MenuBase,{templateString:dojo.cache("dijit","templates/MenuBar.html","<div class=\"dijitMenuBar dijitMenuPassive\" dojoAttachPoint=\"containerNode\"  role=\"menubar\" tabIndex=\"${tabIndex}\" dojoAttachEvent=\"onkeypress: _onKeyPress\"></div>\n"),baseClass:"dijitMenuBar",_isMenuBar:true,postCreate:function(){
 var k=dojo.keys,l=this.isLeftToRight();
 this.connectKeyNavHandlers(l?[k.LEFT_ARROW]:[k.RIGHT_ARROW],l?[k.RIGHT_ARROW]:[k.LEFT_ARROW]);
 this._orient=this.isLeftToRight()?{BL:"TL"}:{BR:"TR"};

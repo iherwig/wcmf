@@ -11,7 +11,10 @@ dojo.provide("dojox.editor.plugins.ToolbarLineBreak");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dijit._editor._Plugin");
-dojo.declare("dojox.editor.plugins._ToolbarLineBreak",[dijit._Widget,dijit._Templated],{templateString:"<span class='dijit dijitReset'><br></span>",postCreate:function(){
+dojo.require("dijit._Widget");
+dojo.require("dijit._Templated");
+dojo.require("dijit._editor._Plugin");
+dojo.declare("dojox.editor.plugins.ToolbarLineBreak",[dijit._Widget,dijit._Templated],{templateString:"<span class='dijit dijitReset'><br></span>",postCreate:function(){
 dojo.setSelectable(this.domNode,false);
 },isFocusable:function(){
 return false;
@@ -22,7 +25,7 @@ return;
 }
 var _1=o.args.name.toLowerCase();
 if(_1==="||"||_1==="toolbarlinebreak"){
-o.plugin=new dijit._editor._Plugin({button:new dojox.editor.plugins._ToolbarLineBreak(),setEditor:function(_2){
+o.plugin=new dijit._editor._Plugin({button:new dojox.editor.plugins.ToolbarLineBreak(),setEditor:function(_2){
 this.editor=_2;
 }});
 }

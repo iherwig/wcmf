@@ -123,12 +123,14 @@ _14.hmin=Math.min(_14.hmin,1);
 _14.hmax=df.foldl(_13,"seed, run -> Math.max(seed, run.data.length)",_14.hmax);
 for(var i=0;i<_14.hmax;++i){
 var v=_13[0].data[i];
+v=v&&(typeof v=="number"?v:v.y);
 if(isNaN(v)){
 v=0;
 }
 _14.vmin=Math.min(_14.vmin,v);
 for(var j=1;j<_13.length;++j){
 var t=_13[j].data[i];
+t=t&&(typeof t=="number"?t:t.y);
 if(isNaN(t)){
 t=0;
 }

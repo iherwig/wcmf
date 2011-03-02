@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.CssRuleStore"]){
 dojo._hasResource["dojox.data.CssRuleStore"]=true;
 dojo.provide("dojox.data.CssRuleStore");
-dojo.require("dojo.data.util.filter");
 dojo.require("dojo.data.util.sorter");
+dojo.require("dojo.data.util.filter");
 dojo.require("dojox.data.css");
 dojo.declare("dojox.data.CssRuleStore",null,{_storeRef:"_S",_labelAttribute:"selector",_cache:null,_browserMap:null,_cName:"dojox.data.CssRuleStore",constructor:function(_1){
 if(_1){

@@ -63,7 +63,6 @@ if(_12){
 dojo.attr(_12,"tabIndex",this.tabIndex);
 }
 },_setValueAttr:function(_13,_14){
-this.value=null;
 if(this._selectedCell>=0){
 dojo.removeClass(this._cells[this._selectedCell].node,"dijitPaletteCellSelected");
 }
@@ -72,7 +71,6 @@ if(_13){
 for(var i=0;i<this._cells.length;i++){
 if(_13==this._cells[i].dye.getValue()){
 this._selectedCell=i;
-this.value=_13;
 dojo.addClass(this._cells[i].node,"dijitPaletteCellSelected");
 if(_14||_14===undefined){
 this.onChange(_13);
@@ -81,6 +79,7 @@ break;
 }
 }
 }
+this._set("value",this._selectedCell>=0?_13:null);
 },onChange:function(_15){
 },_navigateByKey:function(_16,_17){
 if(_17==-1){

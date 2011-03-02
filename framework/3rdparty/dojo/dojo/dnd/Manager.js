@@ -54,8 +54,7 @@ this.canDropFlag=_7;
 this.avatar.update();
 }
 },stopDrag:function(){
-dojo.removeClass(dojo.body(),"dojoDndCopy");
-dojo.removeClass(dojo.body(),"dojoDndMove");
+dojo.removeClass(dojo.body(),["dojoDndCopy","dojoDndMove"]);
 dojo.forEach(this.events,dojo.disconnect);
 this.events=[];
 this.avatar.destroy();
@@ -115,8 +114,7 @@ this._setCopyStatus(_c);
 this.copy=_d;
 this.source._markDndStatus(this.copy);
 this.updateAvatar();
-dojo.removeClass(dojo.body(),"dojoDnd"+(this.copy?"Move":"Copy"));
-dojo.addClass(dojo.body(),"dojoDnd"+(this.copy?"Copy":"Move"));
+dojo.replaceClass(dojo.body(),"dojoDnd"+(this.copy?"Copy":"Move"),"dojoDnd"+(this.copy?"Move":"Copy"));
 }});
 dojo.dnd._manager=null;
 dojo.dnd.manager=function(){

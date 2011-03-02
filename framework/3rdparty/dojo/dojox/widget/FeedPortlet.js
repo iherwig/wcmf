@@ -153,8 +153,9 @@ dojo.toggleClass(li,_16,_1d);
 }));
 }});
 dojo.declare("dojox.widget.PortletFeedSettings",dojox.widget.PortletSettings,{"class":"dojoxPortletFeedSettings",urls:null,selectedIndex:0,buildRendering:function(){
+var s;
 if(this.urls&&this.urls.length>0){
-var s=dojo.create("select");
+s=dojo.create("select");
 if(this.srcNodeRef){
 dojo.place(s,this.srcNodeRef,"before");
 dojo.destroy(this.srcNodeRef);
@@ -171,10 +172,14 @@ div.appendChild(this.text);
 this.srcNodeRef=div;
 dojo.query("option",this.text).filter("return !item.value;").forEach("item.value = item.innerHTML");
 if(!this.text.value){
+if(this.content&&this.text.options.length==0){
+this.text.appendChild(this.content);
+}
 dojo.attr(s||this.text,"value",this.text.options[this.selectedIndex].value);
 }
 }
 this.inherited(arguments);
+},_setContentAttr:function(){
 },postCreate:function(){
 if(!this.text){
 var _1e=this.text=new dijit.form.TextBox({});

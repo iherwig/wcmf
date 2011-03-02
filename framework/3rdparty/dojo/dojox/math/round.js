@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.math.round"]){
 dojo._hasResource["dojox.math.round"]=true;
 dojo.provide("dojox.math.round");
+dojo.getObject("math.round",true,dojox);
 dojo.experimental("dojox.math.round");
 dojox.math.round=function(_1,_2,_3){
 var _4=Math.log(Math.abs(_1))/Math.log(10);

@@ -86,16 +86,18 @@ if(dojo.isIE==8){
 this.date=new Date();
 }
 },onMouseUp:function(e){
+if(this._isDragging){
 dojo.stopEvent(e);
 this._isDragging=false;
 if(this.autoScroll){
 this.autoScroll.stopAutoScroll();
 }
-dojo.disconnect(this.events.pop());
-dojo.disconnect(this.events.pop());
 delete this.onMove;
 this.onDragEnd(this.node);
 this.node.focus();
+}
+dojo.disconnect(this.events.pop());
+dojo.disconnect(this.events.pop());
 },onDragStart:function(_7,_8,_9){
 },onDragEnd:function(_a){
 },onDrag:function(_b,_c,_d,_e){

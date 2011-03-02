@@ -9,7 +9,7 @@ if(!dojo._hasResource["dojox.date.islamic.Date"]){
 dojo._hasResource["dojox.date.islamic.Date"]=true;
 dojo.provide("dojox.date.islamic.Date");
 dojo.require("dojo.date");
-dojo.requireLocalization("dojo.cldr","islamic",null,"ROOT,ar,he");
+dojo.requireLocalization("dojo.cldr","islamic",null,"ROOT,ar,da,de,en,en-gb,es,fi,he,zh-hant");
 dojo.declare("dojox.date.islamic.Date",null,{_date:0,_month:0,_year:0,_hours:0,_minutes:0,_seconds:0,_milliseconds:0,_day:0,_GREGORIAN_EPOCH:1721425.5,_ISLAMIC_EPOCH:1948439.5,constructor:function(){
 var _1=arguments.length;
 if(!_1){
@@ -226,7 +226,7 @@ return _21;
 },fromGregorian:function(_22){
 var _23=new Date(_22);
 var _24=_23.getFullYear(),_25=_23.getMonth(),_26=_23.getDate();
-var _27=(this._GREGORIAN_EPOCH-1)+(365*(_24-1))+Math.floor((_24-1)/4)+(-Math.floor((_24-1)/100))+Math.floor((_24-1)/400)+Math.floor((((367*(_25+1))-362)/12)+(((_25+1)<=2)?0:(dojo.date.isLeapYear(_23)?-1:-2))+_26)+(Math.floor(_23.getSeconds()+60*(_23.getMinutes()+60*_23.getHours())+0.5)/86400);
+var _27=(this._GREGORIAN_EPOCH-1)+(365*(_24-1))+Math.floor((_24-1)/4)+(-Math.floor((_24-1)/100))+Math.floor((_24-1)/400)+Math.floor((((367*(_25+1))-362)/12)+(((_25+1)<=2)?0:(dojo.date.isLeapYear(_23)?-1:-2))+_26);
 _27=Math.floor(_27)+0.5;
 var _28=_27-this._ISLAMIC_EPOCH;
 var _29=Math.floor((30*_28+10646)/10631);

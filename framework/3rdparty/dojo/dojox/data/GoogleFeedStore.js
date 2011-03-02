@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.GoogleFeedStore"]){
 dojo._hasResource["dojox.data.GoogleFeedStore"]=true;
 dojo.provide("dojox.data.GoogleFeedStore");
-dojo.experimental("dojox.data.GoogleFeedStore");
 dojo.require("dojox.data.GoogleSearchStore");
+dojo.experimental("dojox.data.GoogleFeedStore");
 dojo.declare("dojox.data.GoogleFeedStore",dojox.data.GoogleSearchStore,{_type:"",_googleUrl:"http://ajax.googleapis.com/ajax/services/feed/load",_attributes:["title","link","author","published","content","summary","categories"],_queryAttrs:{"url":"q"},getFeedValue:function(_1,_2){
 var _3=this.getFeedValues(_1,_2);
 if(dojo.isArray(_3)){

@@ -132,7 +132,9 @@ document.write("<div style=\"top:"+top+";left:0;width:"+_10+";height:"+_10+";ove
 _11();
 }else{
 if(d.isIE&&_3){
+setTimeout(function(){
 dojox.embed.Quicktime.onInitialize();
+},10);
 }
 }
 })(dojo);

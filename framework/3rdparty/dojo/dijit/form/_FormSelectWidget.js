@@ -59,7 +59,7 @@ var _7=this.getOptions(_6);
 dojo.forEach(_7,function(i){
 if(i){
 this.options=dojo.filter(this.options,function(_8,_9){
-return (_8.value!==i.value);
+return (_8.value!==i.value||_8.label!==i.label);
 });
 this._removeOptionItem(i);
 }
@@ -87,25 +87,26 @@ delete this._notifyConnections;
 if(_c&&_c.getFeatures()["dojo.data.api.Notification"]){
 this._notifyConnections=[dojo.connect(_c,"onNew",this,"_onNewItem"),dojo.connect(_c,"onDelete",this,"_onDeleteItem"),dojo.connect(_c,"onSet",this,"_onSetItem")];
 }
-this.store=_c;
+this._set("store",_c);
 }
 this._onChangeActive=false;
 if(this.options&&this.options.length){
 this.removeOption(this.options);
 }
 if(_c){
-var cb=function(_10){
+this._loadingStore=true;
+_c.fetch(dojo.delegate(_e,{onComplete:function(_10,_11){
 if(this.sortByLabel&&!_e.sort&&_10.length){
 _10.sort(dojo.data.util.sorter.createSortFunction([{attribute:_c.getLabelAttributes(_10[0])[0]}],_c));
 }
 if(_e.onFetch){
-_10=_e.onFetch(_10);
+_10=_e.onFetch.call(this,_10,_11);
 }
 dojo.forEach(_10,function(i){
 this._addOptionForItem(i);
 },this);
 this._loadingStore=false;
-this.set("value",(("_pendingValue" in this)?this._pendingValue:_d));
+this.set("value","_pendingValue" in this?this._pendingValue:_d);
 delete this._pendingValue;
 if(!this.loadChildrenOnOpen){
 this._loadChildren();
@@ -117,10 +118,7 @@ this._lastValueReported=this.multiple?[]:null;
 this._onChangeActive=true;
 this.onSetStore();
 this._handleOnChange(this.value);
-};
-var _11=dojo.mixin({onComplete:cb,scope:this},_e);
-this._loadingStore=true;
-_c.fetch(_11);
+},scope:this}));
 }else{
 delete this._fetchedWith;
 }
@@ -160,7 +158,7 @@ return i.value;
 }),_16=dojo.map(_12,function(i){
 return i.label;
 });
-this.value=this.multiple?val:val[0];
+this._set("value",this.multiple?val:val[0]);
 this._setDisplay(this.multiple?_16:_16[0]);
 this._updateSelection();
 this._handleOnChange(this.value,_13);
@@ -180,10 +178,6 @@ return v.value;
 return null;
 },this);
 return this.multiple?ret:ret[0];
-},_getValueDeprecated:false,getValue:function(){
-return this._lastValue;
-},undo:function(){
-this._setValueAttr(this._lastValueReported,false);
 },_loadChildren:function(){
 if(this._loadingStore){
 return;
@@ -194,7 +188,7 @@ _17.destroyRecursive();
 dojo.forEach(this.options,this._addOptionItem,this);
 this._updateSelection();
 },_updateSelection:function(){
-this.value=this._getValueFromOpts();
+this._set("value",this._getValueFromOpts());
 var val=this.value;
 if(!dojo.isArray(val)){
 val=[val];
@@ -208,7 +202,6 @@ dojo.toggleClass(_18.domNode,this.baseClass+"SelectedOption",_19);
 dijit.setWaiState(_18.domNode,"selected",_19);
 },this);
 }
-this._handleOnChange(this.value);
 },_getValueFromOpts:function(){
 var _1a=this.getOptions()||[];
 if(!this.multiple&&_1a.length){
@@ -255,6 +248,9 @@ var _26=this._getOptionObjForItem(_24);
 this.addOption(_26);
 },constructor:function(_27){
 this._oValue=(_27||{}).value||null;
+},buildRendering:function(){
+this.inherited(arguments);
+dojo.setSelectable(this.focusNode,false);
 },_fillContent:function(){
 var _28=this.options;
 if(!_28){
@@ -262,18 +258,17 @@ _28=this.options=this.srcNodeRef?dojo.query(">",this.srcNodeRef).map(function(_2
 if(_29.getAttribute("type")==="separator"){
 return {value:"",label:"",selected:false,disabled:false};
 }
-return {value:_29.getAttribute("value"),label:String(_29.innerHTML),selected:_29.getAttribute("selected")||false,disabled:_29.getAttribute("disabled")||false};
+return {value:(_29.getAttribute("data-"+dojo._scopeName+"-value")||_29.getAttribute("value")),label:String(_29.innerHTML),selected:_29.getAttribute("selected")||false,disabled:_29.getAttribute("disabled")||false};
 },this):[];
 }
 if(!this.value){
-this.value=this._getValueFromOpts();
+this._set("value",this._getValueFromOpts());
 }else{
 if(this.multiple&&typeof this.value=="string"){
-this.value=this.value.split(",");
+this_set("value",this.value.split(","));
 }
 }
 },postCreate:function(){
-dojo.setSelectable(this.focusNode,false);
 this.inherited(arguments);
 this.connect(this,"onChange","_updateSelection");
 this.connect(this,"startup","_loadChildren");

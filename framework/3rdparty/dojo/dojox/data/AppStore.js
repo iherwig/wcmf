@@ -8,9 +8,9 @@
 if(!dojo._hasResource["dojox.data.AppStore"]){
 dojo._hasResource["dojox.data.AppStore"]=true;
 dojo.provide("dojox.data.AppStore");
-dojo.require("dojox.atom.io.Connection");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
+dojo.require("dojox.atom.io.Connection");
 dojo.experimental("dojox.data.AppStore");
 dojo.declare("dojox.data.AppStore",null,{url:"",urlPreventCache:false,xmethod:false,_atomIO:null,_feed:null,_requests:null,_processing:null,_updates:null,_adds:null,_deletes:null,constructor:function(_1){
 if(_1&&_1.url){

@@ -8,9 +8,9 @@
 if(!dojo._hasResource["dojox.data.HtmlTableStore"]){
 dojo._hasResource["dojox.data.HtmlTableStore"]=true;
 dojo.provide("dojox.data.HtmlTableStore");
-dojo.require("dojox.xml.parser");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
+dojo.require("dojox.xml.parser");
 dojo.declare("dojox.data.HtmlTableStore",null,{constructor:function(_1){
 dojo.deprecated("dojox.data.HtmlTableStore","Please use dojox.data.HtmlStore");
 if(_1.url){

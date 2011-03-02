@@ -22,7 +22,7 @@ this.templateString=dojo.string.substitute(_2,{stars:_4});
 this.inherited(arguments);
 this._renderStars(this.value);
 },_onMouse:function(_5){
-if(this._hovering){
+if(this.hovering){
 var _6=+dojo.attr(_5.target,"value");
 this.onMouseOver(_5,_6);
 this._renderStars(_6,true);

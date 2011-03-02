@@ -18,7 +18,7 @@ dojo.require("dijit._Container");
 dojo.require("dojo.i18n");
 dojo.require("dijit.layout._LayoutWidget");
 dojo.require("dijit._editor.range");
-dojo.requireLocalization("dijit._editor","commands",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit._editor","commands",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.declare("dijit.Editor",dijit._editor.RichText,{plugins:null,extraPlugins:null,constructor:function(){
 if(!dojo.isArray(this.plugins)){
 this.plugins=["undo","redo","|","cut","copy","paste","|","bold","italic","underline","strikethrough","|","insertOrderedList","insertUnorderedList","indent","outdent","|","justifyLeft","justifyRight","justifyCenter","justifyFull","dijit._editor.plugins.EnterKeyHandling"];
@@ -29,13 +29,15 @@ if(dojo.isIE){
 this.events.push("onBeforeDeactivate");
 this.events.push("onBeforeActivate");
 }
+},postMixInProperties:function(){
+this.setValueDeferred=new dojo.Deferred();
+this.inherited(arguments);
 },postCreate:function(){
 this._steps=this._steps.slice(0);
 this._undoedSteps=this._undoedSteps.slice(0);
 if(dojo.isArray(this.extraPlugins)){
 this.plugins=this.plugins.concat(this.extraPlugins);
 }
-this.setValueDeferred=new dojo.Deferred();
 this.inherited(arguments);
 this.commands=dojo.i18n.getLocalization("dijit._editor","commands",this.lang);
 if(!this.toolbar){
@@ -141,7 +143,7 @@ this.endEditing(true);
 if(e.target.tagName!="BODY"){
 this._saveSelection();
 }
-},customUndo:dojo.isIE||dojo.isWebKit,editActionInterval:3,beginEditing:function(_d){
+},customUndo:true,editActionInterval:3,beginEditing:function(_d){
 if(!this._inEditing){
 this._inEditing=true;
 this._beginEditing(_d);
@@ -161,16 +163,17 @@ this.endEditing();
 this._beginEditing();
 }
 var r;
+var _f=/copy|cut|paste/.test(_e);
 try{
-r=this.inherited("execCommand",arguments);
-if(dojo.isWebKit&&_e=="paste"&&!r){
+r=this.inherited(arguments);
+if(dojo.isWebKit&&_f&&!r){
 throw {code:1011};
 }
 }
 catch(e){
-if(e.code==1011&&/copy|cut|paste/.test(_e)){
-var _f=dojo.string.substitute,_10={cut:"X",copy:"C",paste:"V"};
-alert(_f(this.commands.systemShortcut,[this.commands[_e],_f(this.commands[dojo.isMac?"appleKey":"ctrlKey"],[_10[_e]])]));
+if(e.code==1011&&_f){
+var sub=dojo.string.substitute,_10={cut:"X",copy:"C",paste:"V"};
+alert(sub(this.commands.systemShortcut,[this.commands[_e],sub(this.commands[dojo.isMac?"appleKey":"ctrlKey"],[_10[_e]])]));
 }
 r=false;
 }
@@ -183,7 +186,7 @@ return r;
 if(this.customUndo&&(cmd=="undo"||cmd=="redo")){
 return cmd=="undo"?(this._steps.length>1):(this._undoedSteps.length>0);
 }else{
-return this.inherited("queryCommandEnabled",arguments);
+return this.inherited(arguments);
 }
 },_moveToBookmark:function(b){
 var _11=b.mark;
@@ -388,10 +391,14 @@ case ks.TAB:
 break;
 }
 },_onBlur:function(){
-this.inherited("_onBlur",arguments);
+this.inherited(arguments);
 this.endEditing(true);
 },_saveSelection:function(){
+try{
 this._savedSelection=this._getBookmark();
+}
+catch(e){
+}
 },_restoreSelection:function(){
 if(this._savedSelection){
 delete this._cursorToStart;
@@ -403,38 +410,55 @@ delete this._savedSelection;
 },onClick:function(){
 this.endEditing(true);
 this.inherited(arguments);
-},_setDisabledAttr:function(_1a){
-if(!this.disabled&&_1a){
-this._buttonEnabledPlugins=dojo.filter(this._plugins,function(p){
-if(p&&p.button&&!p.button.get("disabled")){
-p.button.set("disabled",true);
-return true;
+},replaceValue:function(_1a){
+if(!this.customUndo){
+this.inherited(arguments);
+}else{
+if(this.isClosed){
+this.setValue(_1a);
+}else{
+this.beginEditing();
+if(!_1a){
+_1a="&nbsp;";
 }
-return false;
+this.setValue(_1a);
+this.endEditing();
+}
+}
+},_setDisabledAttr:function(_1b){
+var _1c=dojo.hitch(this,function(){
+if((!this.disabled&&_1b)||(!this._buttonEnabledPlugins&&_1b)){
+dojo.forEach(this._plugins,function(p){
+p.set("disabled",true);
 });
 }else{
-if(this.disabled&&!_1a){
-dojo.forEach(this._buttonEnabledPlugins,function(p){
-p.button.attr("disabled",false);
-p.updateState&&p.updateState();
+if(this.disabled&&!_1b){
+dojo.forEach(this._plugins,function(p){
+p.set("disabled",false);
 });
 }
 }
+});
+this.setValueDeferred.addCallback(_1c);
 this.inherited(arguments);
 },_setStateClass:function(){
+try{
 this.inherited(arguments);
 if(this.document&&this.document.body){
 dojo.style(this.document.body,"color",dojo.style(this.iframe,"color"));
+}
+}
+catch(e){
 }
 }});
 dojo.subscribe(dijit._scopeName+".Editor.getPlugin",null,function(o){
 if(o.plugin){
 return;
 }
-var _1b=o.args,p;
-var _1c=dijit._editor._Plugin;
-var _1d=_1b.name;
-switch(_1d){
+var _1d=o.args,p;
+var _1e=dijit._editor._Plugin;
+var _1f=_1d.name;
+switch(_1f){
 case "undo":
 case "redo":
 case "cut":
@@ -453,7 +477,7 @@ case "selectAll":
 case "removeFormat":
 case "unlink":
 case "insertHorizontalRule":
-p=new _1c({command:_1d});
+p=new _1e({command:_1f});
 break;
 case "bold":
 case "italic":
@@ -461,11 +485,11 @@ case "underline":
 case "strikethrough":
 case "subscript":
 case "superscript":
-p=new _1c({buttonClass:dijit.form.ToggleButton,command:_1d});
+p=new _1e({buttonClass:dijit.form.ToggleButton,command:_1f});
 break;
 case "|":
-p=new _1c({button:new dijit.ToolbarSeparator(),setEditor:function(_1e){
-this.editor=_1e;
+p=new _1e({button:new dijit.ToolbarSeparator(),setEditor:function(_20){
+this.editor=_20;
 }});
 }
 o.plugin=p;

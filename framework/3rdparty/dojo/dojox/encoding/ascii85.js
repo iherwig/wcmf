@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.encoding.ascii85"]){
 dojo._hasResource["dojox.encoding.ascii85"]=true;
 dojo.provide("dojox.encoding.ascii85");
+dojo.getObject("encoding.ascii85",true,dojox);
 (function(){
 var c=function(_1,_2,_3){
 var i,j,n,b=[0,0,0,0,0];

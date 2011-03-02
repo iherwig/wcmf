@@ -8,9 +8,9 @@
 if(!dojo._hasResource["dojo.robot"]){
 dojo._hasResource["dojo.robot"]=true;
 dojo.provide("dojo.robot");
-dojo.experimental("dojo.robot");
 dojo.require("doh.robot");
 dojo.require("dojo.window");
+dojo.experimental("dojo.robot");
 (function(){
 dojo.mixin(doh.robot,{_resolveNode:function(n){
 if(typeof n=="function"){

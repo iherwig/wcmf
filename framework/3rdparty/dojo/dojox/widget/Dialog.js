@@ -10,10 +10,9 @@ dojo._hasResource["dojox.widget.Dialog"]=true;
 dojo.provide("dojox.widget.Dialog");
 dojo.experimental("dojox.widget.Dialog");
 dojo.require("dojo.window");
-dojo.require("dijit.Dialog");
-dojo.require("dojox.layout.ContentPane");
 dojo.require("dojox.fx");
-dojo.declare("dojox.widget.Dialog",[dojox.layout.ContentPane,dijit._DialogBase],{templateString:dojo.cache("dojox.widget","Dialog/Dialog.html","<div class=\"dojoxDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dojoxDialogTitleBar\">\n\t\t<span dojoAttachPoint=\"titleNode\" class=\"dojoxDialogTitle\" id=\"${id}_title\">${title}</span>\n\t</div>\n\t<div dojoAttachPoint=\"dojoxDialogWrapper\">\n\t\t<div dojoAttachPoint=\"containerNode\" class=\"dojoxDialogPaneContent\"></div>\n\t</div>\n\t<div dojoAttachPoint=\"closeButtonNode\" class=\"dojoxDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\">\n\t\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\">x</span>\n\t</div>\n</div>\n"),sizeToViewport:false,viewportPadding:35,dimensions:null,easing:null,sizeDuration:dijit._defaultDuration,sizeMethod:"chain",showTitle:false,draggable:false,modal:false,constructor:function(_1,_2){
+dojo.require("dojox.widget.DialogSimple");
+dojo.declare("dojox.widget.Dialog",dojox.widget.DialogSimple,{templateString:dojo.cache("dojox.widget","Dialog/Dialog.html","<div class=\"dojoxDialog\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dojoxDialogTitleBar\">\n\t\t<span dojoAttachPoint=\"titleNode\" class=\"dojoxDialogTitle\" id=\"${id}_title\">${title}</span>\n\t</div>\n\t<div dojoAttachPoint=\"dojoxDialogWrapper\">\n\t\t<div dojoAttachPoint=\"containerNode\" class=\"dojoxDialogPaneContent\"></div>\n\t</div>\n\t<div dojoAttachPoint=\"closeButtonNode\" class=\"dojoxDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\">\n\t\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\">x</span>\n\t</div>\n</div>\n"),sizeToViewport:false,viewportPadding:35,dimensions:null,easing:null,sizeDuration:dijit._defaultDuration,sizeMethod:"chain",showTitle:false,draggable:false,modal:false,constructor:function(_1,_2){
 this.easing=_1.easing||dojo._defaultEasing;
 this.dimensions=_1.dimensions||[300,300];
 },_setup:function(){

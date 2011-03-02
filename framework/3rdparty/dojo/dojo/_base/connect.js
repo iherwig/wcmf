@@ -11,10 +11,7 @@ dojo.provide("dojo._base.connect");
 dojo.require("dojo._base.lang");
 dojo._listener={getDispatcher:function(){
 return function(){
-var ap=Array.prototype,c=arguments.callee,ls=c._listeners,t=c.target;
-var r=t&&t.apply(this,arguments);
-var i,_1;
-_1=[].concat(ls);
+var ap=Array.prototype,c=arguments.callee,ls=c._listeners,t=c.target,r=t&&t.apply(this,arguments),i,_1=[].concat(ls);
 for(i in _1){
 if(!(i in ap)){
 _1[i].apply(this,arguments);

@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.AtomReadStore"]){
 dojo._hasResource["dojox.data.AtomReadStore"]=true;
 dojo.provide("dojox.data.AtomReadStore");
-dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
+dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.date.stamp");
 dojo.experimental("dojox.data.AtomReadStore");
 dojo.declare("dojox.data.AtomReadStore",null,{constructor:function(_1){

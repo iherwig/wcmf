@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dijit._editor.selection"]){
 dojo._hasResource["dijit._editor.selection"]=true;
 dojo.provide("dijit._editor.selection");
+dojo.getObject("_editor.selection",true,dijit);
 dojo.mixin(dijit._editor.selection,{getType:function(){
 if(dojo.isIE){
 return dojo.doc.selection.type.toLowerCase();

@@ -13,7 +13,7 @@ dojo.require("dojox.form.manager._Mixin");
 var fm=dojox.form.manager,aa=fm.actionAdapter,ia=fm.inspectorAdapter;
 dojo.declare("dojox.form.manager._EnableMixin",null,{gatherEnableState:function(_1){
 var _2=this.inspectFormWidgets(ia(function(_3,_4){
-return !_4.attr("disabled");
+return !_4.get("disabled");
 }),_1);
 if(this.inspectFormNodes){
 dojo.mixin(_2,this.inspectFormNodes(ia(function(_5,_6){
@@ -26,7 +26,7 @@ if(arguments.length<2||_8===undefined){
 _8=true;
 }
 this.inspectFormWidgets(aa(function(_9,_a,_b){
-_a.attr("disabled",!_b);
+_a.set("disabled",!_b);
 }),_7,_8);
 if(this.inspectFormNodes){
 this.inspectFormNodes(aa(function(_c,_d,_e){

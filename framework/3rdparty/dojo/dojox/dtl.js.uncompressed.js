@@ -1469,6 +1469,8 @@ if(!dojo._hasResource["dojo.date"]){ //_hasResource checks added by build. Do no
 dojo._hasResource["dojo.date"] = true;
 dojo.provide("dojo.date");
 
+dojo.getObject("date", true, dojo);
+
 /*=====
 dojo.date = {
 	// summary: Date manipulation utilities
@@ -1482,7 +1484,7 @@ dojo.date.getDaysInMonth = function(/*Date*/dateObject){
 	var days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	if(month == 1 && dojo.date.isLeapYear(dateObject)){ return 29; } // Number
 	return days[month]; // Number
-}
+};
 
 dojo.date.isLeapYear = function(/*Date*/dateObject){
 	//	summary:
@@ -1496,7 +1498,7 @@ dojo.date.isLeapYear = function(/*Date*/dateObject){
 
 	var year = dateObject.getFullYear();
 	return !(year%400) || (!(year%4) && !!(year%100)); // Boolean
-}
+};
 
 // FIXME: This is not localized
 dojo.date.getTimezoneName = function(/*Date*/dateObject){
@@ -1541,7 +1543,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 
 	// Make sure it doesn't somehow end up return AM or PM
 	return (tz == 'AM' || tz == 'PM') ? '' : tz; // String
-}
+};
 
 // Utility methods to do arithmetic calculations with Dates
 

@@ -8,9 +8,9 @@
 if(!dojo._hasResource["dojox.encoding.crypto.RSAKey"]){
 dojo._hasResource["dojox.encoding.crypto.RSAKey"]=true;
 dojo.provide("dojox.encoding.crypto.RSAKey");
-dojo.experimental("dojox.encoding.crypto.RSAKey");
 dojo.require("dojox.math.BigInteger");
 dojo.require("dojox.math.random.Simple");
+dojo.experimental("dojox.encoding.crypto.RSAKey");
 (function(){
 var dm=dojox.math,_1=dm.BigInteger,_2=dm.random.Simple,_3=function(){
 return new _2();

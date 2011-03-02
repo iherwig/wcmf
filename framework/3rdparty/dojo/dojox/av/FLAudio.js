@@ -11,7 +11,7 @@ dojo.provide("dojox.av.FLAudio");
 dojo.experimental("dojox.av.FLAudio");
 dojo.require("dojox.embed.Flash");
 dojo.require("dojox.timing.doLater");
-dojo.declare("dojox.av.FLAudio",null,{id:"",initialVolume:0.7,initialPan:0,isDebug:false,statusInterval:200,_swfPath:dojo.moduleUrl("dojox.av","resources/audio.swf"),constructor:function(_1){
+dojo.declare("dojox.av.FLAudio",null,{id:"",initialVolume:0.7,initialPan:0,isDebug:false,statusInterval:200,_swfPath:dojo.moduleUrl("dojox.av","resources/audio.swf"),allowScriptAccess:"always",allowNetworking:"all",constructor:function(_1){
 dojo.global.swfIsInHTML=function(){
 return true;
 };
@@ -20,13 +20,13 @@ if(!this.id){
 this.id="flaudio_"+new Date().getTime();
 }
 this.domNode=dojo.doc.createElement("div");
-dojo.style(this.domNode,{postion:"relative",width:"1px",height:"1px",top:"1px",left:"1px"});
+dojo.style(this.domNode,{position:"relative",width:"1px",height:"1px",top:"1px",left:"1px"});
 dojo.body().appendChild(this.domNode);
 this.init();
 },init:function(){
 this._subs=[];
 this.initialVolume=this._normalizeVolume(this.initialVolume);
-var _2={path:this._swfPath.uri,width:"1px",height:"1px",minimumVersion:9,expressInstall:true,params:{wmode:"transparent"},vars:{id:this.id,autoPlay:this.autoPlay,initialVolume:this.initialVolume,initialPan:this.initialPan,statusInterval:this.statusInterval,isDebug:this.isDebug}};
+var _2={path:this._swfPath.uri,width:"1px",height:"1px",minimumVersion:9,expressInstall:true,params:{wmode:"transparent",allowScriptAccess:this.allowScriptAccess,allowNetworking:this.allowNetworking},vars:{id:this.id,autoPlay:this.autoPlay,initialVolume:this.initialVolume,initialPan:this.initialPan,statusInterval:this.statusInterval,isDebug:this.isDebug}};
 this._sub("mediaError","onError");
 this._sub("filesProgress","onLoadStatus");
 this._sub("filesAllLoaded","onAllLoaded");
@@ -36,7 +36,6 @@ this._sub("mediaMeta","onID3");
 this._flashObject=new dojox.embed.Flash(_2,this.domNode);
 this._flashObject.onError=function(_3){
 console.warn("Flash Error:",_3);
-alert(_3);
 };
 this._flashObject.onLoad=dojo.hitch(this,function(_4){
 this.flashMedia=_4;

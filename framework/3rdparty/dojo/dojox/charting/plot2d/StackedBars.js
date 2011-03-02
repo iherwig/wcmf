@@ -12,6 +12,7 @@ dojo.require("dojox.charting.plot2d.common");
 dojo.require("dojox.charting.plot2d.Bars");
 dojo.require("dojox.lang.functional");
 dojo.require("dojox.lang.functional.reversed");
+dojo.require("dojox.lang.functional.sequence");
 (function(){
 var df=dojox.lang.functional,dc=dojox.charting.plot2d.common,_1=df.lambda("item.purgeGroup()");
 dojo.declare("dojox.charting.plot2d.StackedBars",dojox.charting.plot2d.Bars,{getSeriesStats:function(){

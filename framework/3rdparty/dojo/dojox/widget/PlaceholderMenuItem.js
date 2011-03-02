@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.widget.PlaceholderMenuItem"]){
 dojo._hasResource["dojox.widget.PlaceholderMenuItem"]=true;
 dojo.provide("dojox.widget.PlaceholderMenuItem");
+dojo.experimental("dojox.widget.PlaceholderMenuItem");
 dojo.require("dijit.Menu");
 dojo.declare("dojox.widget.PlaceholderMenuItem",dijit.MenuItem,{_replaced:false,_replacedWith:null,_isPlaceholder:true,postCreate:function(){
 this.domNode.style.display="none";
@@ -43,7 +44,7 @@ var r=this._replacedWith;
 dojo.forEach(this._replacedWith,function(_5){
 p.removeChild(_5);
 if(_4){
-_5.destroy();
+_5.destroyRecursive();
 }
 });
 this._replacedWith=[];
@@ -53,7 +54,7 @@ return r;
 dojo.extend(dijit.Menu,{getPlaceholders:function(_6){
 var r=[];
 var _7=this.getChildren();
-_7.forEach(function(_8){
+dojo.forEach(_7,function(_8){
 if(_8._isPlaceholder&&(!_6||_8.label==_6)){
 r.push(_8);
 }else{

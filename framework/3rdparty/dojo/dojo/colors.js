@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.colors"]){
 dojo._hasResource["dojo.colors"]=true;
 dojo.provide("dojo.colors");
+dojo.getObject("colors",true,dojo);
 (function(){
 var _1=function(m1,m2,h){
 if(h<0){

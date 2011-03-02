@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.QueryReadStore"]){
 dojo._hasResource["dojox.data.QueryReadStore"]=true;
 dojo.provide("dojox.data.QueryReadStore");
-dojo.require("dojo.string");
 dojo.require("dojo.data.util.sorter");
+dojo.require("dojo.string");
 dojo.declare("dojox.data.QueryReadStore",null,{url:"",requestMethod:"get",_className:"dojox.data.QueryReadStore",_items:[],_lastServerQuery:null,_numRows:-1,lastRequestHash:null,doClientPaging:false,doClientSorting:false,_itemsByIdentity:null,_identifier:null,_features:{"dojo.data.api.Read":true,"dojo.data.api.Identity":true},_labelAttr:"label",constructor:function(_1){
 dojo.mixin(this,_1);
 },getValue:function(_2,_3,_4){

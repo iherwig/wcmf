@@ -1,6 +1,16 @@
 
-.dijitDialogUnderlay {
+.tundra .dijitDialogUnderlay, 
+.nihilo .dijitDialogUnderlay,
+.soria .dijitDialogUnderlay {
 	background-color:#000; 
+}
+.claro .dojoxLightbox .dijitDialogCloseIconHover,
+.nihilo .dojoxLightbox .dijitDialogCloseIconHover,
+.tundra .dojoxLightbox .dijitDialogCloseIconHover, 
+.tundra .dojoxLightbox .dijitDialogCloseIconActive,
+.nihilo .dojoxLightbox .dijitDialogCloseIconActive,
+.claro .dojoxLightbox .dijitDialogCloseIconActive {
+    background:url('images/close.png') no-repeat 0 0;
 }
 .claro .dojoxLightbox,
 .soria .dojoxLightbox,
@@ -11,7 +21,7 @@
 	overflow:hidden;
 	width:100px;
 	height:100px; 
-	border:11px solid #fff;
+	border:11px solid #fff !important; 
 	background:#fff url('images/loading.gif') no-repeat center center;
 	
 	-webkit-box-shadow: 0px 6px 10px #636363; 
@@ -21,7 +31,8 @@
 }
 .dojoxLightboxContainer {
 	position:absolute;
-	top:0; left:0; 
+	top:0; left:0;
+	background-color:#fff;
 }
 .dojoxLightboxFooter {
 	padding-bottom:5px;
@@ -45,26 +56,32 @@
 	height:16px;
 	cursor:pointer;
 }
+.claro .LightboxClose,
 .nihilo .LightboxClose,
 .tundra .LightboxClose {
 	background:url('images/close.png') no-repeat center center;
 }
+.di_ie6 .claro .LightboxClose,
 .di_ie6 .nihilo .LightboxClose,
 .dj_ie6 .tundra .LightboxClose {
 	background:url('images/close.gif') no-repeat center center;
 }
+.claro .LightboxNext, 
 .nihilo .LightboxNext,
 .tundra .LightboxNext {
 	background:url('images/right.png') no-repeat center center;
 }
+.dj_ie6 .claro .LightboxNext,
 .dj_ie6 .nihilo .LightboxNext,
 .dj_ie6 .tundra .LightboxNext {
 	background:url('images/right.gif') no-repeat center center;
 }
+.claro .LightboxPrev,
 .nihilo .LightboxPrev,
 .tundra .LightboxPrev {
 	background:url('images/left.png') no-repeat center center;
 }
+.dj_ie6 .claro .LightboxPrev,
 .dj_ie6 .nihilo .LightboxPrev,
 .dj_ie6 .tundra .LightboxPrev {
 	background:url('images/left.gif') no-repeat center center;

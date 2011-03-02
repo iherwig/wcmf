@@ -8,10 +8,10 @@
 if(!dojo._hasResource["dojox.data.XmlStore"]){
 dojo._hasResource["dojox.data.XmlStore"]=true;
 dojo.provide("dojox.data.XmlStore");
-dojo.provide("dojox.data.XmlItem");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
 dojo.require("dojox.xml.parser");
+dojo.provide("dojox.data.XmlItem");
 dojo.declare("dojox.data.XmlStore",null,{constructor:function(_1){
 if(_1){
 this.url=_1.url;

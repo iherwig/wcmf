@@ -12,7 +12,8 @@ dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.declare("dijit.form.HorizontalRule",[dijit._Widget,dijit._Templated],{templateString:"<div class=\"dijitRuleContainer dijitRuleContainerH\"></div>",count:3,container:"containerNode",ruleStyle:"",_positionPrefix:"<div class=\"dijitRuleMark dijitRuleMarkH\" style=\"left:",_positionSuffix:"%;",_suffix:"\"></div>",_genHTML:function(_1,_2){
 return this._positionPrefix+_1+this._positionSuffix+this.ruleStyle+this._suffix;
-},_isHorizontal:true,postCreate:function(){
+},_isHorizontal:true,buildRendering:function(){
+this.inherited(arguments);
 var _3;
 if(this.count==1){
 _3=this._genHTML(50,0);

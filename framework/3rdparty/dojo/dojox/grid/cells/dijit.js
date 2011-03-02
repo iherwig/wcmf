@@ -63,7 +63,8 @@ this.widget=this.createWidget.apply(this,arguments);
 this.attachWidget.apply(this,arguments);
 }
 this.sizeWidget.apply(this,arguments);
-this.grid.rowHeightChanged(_12);
+this.grid.views.renormalizeRow(_12);
+this.grid.scroller.rowHeightChanged(_12,true);
 this.focus();
 return undefined;
 },sizeWidget:function(_13,_14,_15){
@@ -78,6 +79,9 @@ dojox.grid.util.fire(this,"focus");
 },_finish:function(_18){
 this.inherited(arguments);
 dojox.grid.util.removeNode(this.widget.domNode);
+if(dojo.isIE){
+dojo.setSelectable(this.widget.domNode,true);
+}
 }});
 _1._Widget.markupFactory=function(_19,_1a){
 _1._Base.markupFactory(_19,_1a);

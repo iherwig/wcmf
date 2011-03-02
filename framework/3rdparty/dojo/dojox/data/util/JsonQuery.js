@@ -55,6 +55,7 @@ for(i=0;i<_d.length;i++){
 _1.queryStr+=(_3?"[":",")+(_d[i].descending?"\\":"/")+"@["+dojo._escapeString(_d[i].attribute)+"]";
 _3=false;
 }
+_1.queryStr+="]";
 }
 if(_2&&(_1.start||_1.count)){
 _1.queryStr=(_1.queryStr||(typeof _1.query=="string"?_1.query:""))+"["+(_1.start||"")+":"+(_1.count?(_1.start||0)+_1.count:"")+"]";

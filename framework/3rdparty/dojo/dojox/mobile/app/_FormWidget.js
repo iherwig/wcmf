@@ -23,10 +23,6 @@ dojo.attr(this.focusNode,"disabled",_1);
 if(this.valueNode){
 dojo.attr(this.valueNode,"disabled",_1);
 }
-if(_1){
-this._hovering=false;
-this._active=false;
-}
 },_onFocus:function(e){
 if(this.scrollOnFocus){
 dojo.window.scrollIntoView(this.domNode);

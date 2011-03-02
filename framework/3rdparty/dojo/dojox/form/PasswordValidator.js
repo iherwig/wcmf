@@ -10,7 +10,7 @@ dojo._hasResource["dojox.form.PasswordValidator"]=true;
 dojo.provide("dojox.form.PasswordValidator");
 dojo.require("dijit.form._FormWidget");
 dojo.require("dijit.form.ValidationTextBox");
-dojo.requireLocalization("dojox.form","PasswordValidator",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dojox.form","PasswordValidator",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.declare("dojox.form._ChildTextBox",dijit.form.ValidationTextBox,{containerWidget:null,type:"password",reset:function(){
 dijit.form.ValidationTextBox.prototype._setValueAttr.call(this,"",true);
 this._hasBeenBlurred=false;
@@ -33,7 +33,7 @@ if(_2!==null){
 this._isPWValid=this.containerWidget.pwCheck(_1);
 }
 this.inherited(arguments);
-this.containerWidget._childValueAttr(this.containerWidget._inputWidgets[1].attr("value"));
+this.containerWidget._childValueAttr(this.containerWidget._inputWidgets[1].get("value"));
 },isValid:function(_3){
 return this.inherited("isValid",arguments)&&this._isPWValid;
 },_update:function(e){
@@ -55,7 +55,7 @@ this.containerWidget._inputWidgets[2].validate(false);
 this.inherited(arguments);
 }});
 dojo.declare("dojox.form._VerifyPWBox",dojox.form._ChildTextBox,{isValid:function(_5){
-return this.inherited("isValid",arguments)&&(this.get("value")==this.containerWidget._inputWidgets[1].attr("value"));
+return this.inherited("isValid",arguments)&&(this.get("value")==this.containerWidget._inputWidgets[1].get("value"));
 }});
 dojo.declare("dojox.form.PasswordValidator",dijit.form._FormValueWidget,{required:true,_inputWidgets:null,oldName:"",templateString:dojo.cache("dojox.form","resources/PasswordValidator.html","<div dojoAttachPoint=\"containerNode\">\n\t<input type=\"hidden\" name=\"${name}\" value=\"\" dojoAttachPoint=\"focusNode\" />\n</div>\n"),_hasBeenBlurred:false,isValid:function(_6){
 return dojo.every(this._inputWidgets,function(i){
@@ -125,8 +125,8 @@ this.set("value",this.isValid()?v:"");
 },_setDisabledAttr:function(_d){
 this.inherited(arguments);
 dojo.forEach(this._inputWidgets,function(i){
-if(i&&i.attr){
-i.attr("disabled",_d);
+if(i&&i.set){
+i.set("disabled",_d);
 }
 });
 },_setRequiredAttribute:function(_e){
@@ -135,8 +135,8 @@ dojo.attr(this.focusNode,"required",_e);
 dijit.setWaiState(this.focusNode,"required",_e);
 this._refreshState();
 dojo.forEach(this._inputWidgets,function(i){
-if(i&&i.attr){
-i.attr("required",_e);
+if(i&&i.set){
+i.set("required",_e);
 }
 });
 },_setValueAttr:function(v){

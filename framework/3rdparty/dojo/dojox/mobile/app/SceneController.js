@@ -13,12 +13,16 @@ dojo.require("dojox.mobile._base");
 (function(){
 var _1=dojox.mobile.app;
 var _2={};
-dojo.declare("dojox.mobile.app.SceneController",dojox.mobile.View,{stageController:null,init:function(_3,_4){
+dojo.declare("dojox.mobile.app.SceneController",dojox.mobile.View,{stageController:null,keepScrollPos:false,init:function(_3,_4){
 this.sceneName=_3;
 this.params=_4;
 var _5=_1.resolveTemplate(_3);
 this._deferredInit=new dojo.Deferred();
+if(_2[_3]){
+this._setContents(_2[_3]);
+}else{
 dojo.xhrGet({url:_5,handleAs:"text"}).addCallback(dojo.hitch(this,this._setContents));
+}
 return this._deferredInit;
 },_setContents:function(_6){
 _2[this.sceneName]=_6;
@@ -33,12 +37,17 @@ this.sceneAssistantName=_7;
 var _9=this;
 dojox.mobile.app.loadResourcesForScene(this.sceneName,function(){
 var _a;
-if(typeof (window[_7])!="undefined"){
+if(typeof (dojo.global[_7])!="undefined"){
 _9._initAssistant();
 }else{
 var _b=_1.resolveAssistant(_9.sceneName);
 dojo.xhrGet({url:_b,handleAs:"text"}).addCallback(function(_c){
+try{
 dojo.eval(_c);
+}
+catch(e){
+throw e;
+}
 _9._initAssistant();
 });
 }
@@ -61,7 +70,7 @@ for(var i=0;i<_11.length;i++){
 _11[i].attr("controller",this);
 }
 },getWindowSize:function(){
-return {w:window.innerWidth,h:window.innerHeight};
+return {w:dojo.global.innerWidth,h:dojo.global.innerHeight};
 },showAlertDialog:function(_12){
 var _13=dojo.marginBox(this.assistant.domNode);
 var _14=new dojox.mobile.app.AlertDialog(dojo.mixin(_12,{controller:this}));

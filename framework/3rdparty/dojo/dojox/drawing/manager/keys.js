@@ -142,8 +142,8 @@ if(x||y){
 evt.x=x;
 evt.y=y;
 evt.shift=this.shift;
-this.onArrow(evt);
 if(!_1){
+this.onArrow(evt);
 dojo.stopEvent(evt);
 }
 }

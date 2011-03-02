@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.fx.easing"]){
 dojo._hasResource["dojo.fx.easing"]=true;
 dojo.provide("dojo.fx.easing");
+dojo.getObject("fx.easing",true,dojo);
 dojo.fx.easing={linear:function(n){
 return n;
 },quadIn:function(n){

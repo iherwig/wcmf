@@ -24,7 +24,7 @@ var c=this.constraintBox=this.constraints.call(this,_5);
 c.r=c.l+c.w;
 c.b=c.t+c.h;
 if(this.within){
-var mb=dojo.marginBox(_5.node);
+var mb=dojo._getMarginSize(_5.node);
 c.r-=mb.w;
 c.b-=mb.h;
 }
@@ -83,7 +83,7 @@ var c=this.constraintBox=fun.call(this);
 c.r=c.l+c.w;
 c.b=c.t+c.h;
 if(_12){
-var mb=dojo.marginBox(this.node);
+var mb=dojo._getMarginSize(this.node);
 c.r-=mb.w;
 c.b-=mb.h;
 }

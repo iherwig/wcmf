@@ -102,13 +102,13 @@ return (_d.length?_d:null);
 dojo._xdIsXDomainPath=function(_13){
 var _14=_13.indexOf(":");
 var _15=_13.indexOf("/");
-if(_14>0&&_14<_15){
+if(_14>0&&_14<_15||_13.indexOf("//")===0){
 return true;
 }else{
 var url=dojo.baseUrl;
 _14=url.indexOf(":");
 _15=url.indexOf("/");
-if(_14>0&&_14<_15&&(!location.host||url.indexOf("http://"+location.host)!=0)){
+if(url.indexOf("//")===0||(_14>0&&_14<_15&&(!location.host||url.indexOf("http://"+location.host)!=0))){
 return true;
 }
 }

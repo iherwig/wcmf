@@ -8,31 +8,15 @@
 if(!dojo._hasResource["dojo.dnd.autoscroll"]){
 dojo._hasResource["dojo.dnd.autoscroll"]=true;
 dojo.provide("dojo.dnd.autoscroll");
-dojo.dnd.getViewport=function(){
-var d=dojo.doc,dd=d.documentElement,w=window,b=dojo.body();
-if(dojo.isMozilla){
-return {w:dd.clientWidth,h:w.innerHeight};
-}else{
-if(!dojo.isOpera&&w.innerWidth){
-return {w:w.innerWidth,h:w.innerHeight};
-}else{
-if(!dojo.isOpera&&dd&&dd.clientWidth){
-return {w:dd.clientWidth,h:dd.clientHeight};
-}else{
-if(b.clientWidth){
-return {w:b.clientWidth,h:b.clientHeight};
-}
-}
-}
-}
-return null;
-};
+dojo.require("dojo.window");
+dojo.getObject("dnd",true,dojo);
+dojo.dnd.getViewport=dojo.window.getBox;
 dojo.dnd.V_TRIGGER_AUTOSCROLL=32;
 dojo.dnd.H_TRIGGER_AUTOSCROLL=32;
 dojo.dnd.V_AUTOSCROLL_VALUE=16;
 dojo.dnd.H_AUTOSCROLL_VALUE=16;
 dojo.dnd.autoScroll=function(e){
-var v=dojo.dnd.getViewport(),dx=0,dy=0;
+var v=dojo.window.getBox(),dx=0,dy=0;
 if(e.clientX<dojo.dnd.H_TRIGGER_AUTOSCROLL){
 dx=-dojo.dnd.H_AUTOSCROLL_VALUE;
 }else{
@@ -59,7 +43,8 @@ if(s.overflow.toLowerCase() in dojo.dnd._validOverflow){
 var b=dojo._getContentBox(n,s),t=dojo.position(n,true);
 var w=Math.min(dojo.dnd.H_TRIGGER_AUTOSCROLL,b.w/2),h=Math.min(dojo.dnd.V_TRIGGER_AUTOSCROLL,b.h/2),rx=e.pageX-t.x,ry=e.pageY-t.y,dx=0,dy=0;
 if(dojo.isWebKit||dojo.isOpera){
-rx+=dojo.body().scrollLeft,ry+=dojo.body().scrollTop;
+rx+=dojo.body().scrollLeft;
+ry+=dojo.body().scrollTop;
 }
 if(rx>0&&rx<b.w){
 if(rx<w){

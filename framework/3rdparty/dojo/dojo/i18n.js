@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.i18n"]){
 dojo._hasResource["dojo.i18n"]=true;
 dojo.provide("dojo.i18n");
+dojo.getObject("i18n",true,dojo);
 dojo.i18n.getLocalization=function(_1,_2,_3){
 _3=dojo.i18n.normalizeLocale(_3);
 var _4=_3.split("-");
@@ -87,6 +88,7 @@ _1f.push(loc);
 _1f.push(_d);
 var _20=_1f.join("/")+".js";
 _1e=dojo._loadPath(_20,null,function(_21){
+_21=_21.root||_21;
 var _22=function(){
 };
 _22.prototype=_1b;

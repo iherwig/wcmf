@@ -9,6 +9,7 @@ if(!dojo._hasResource["dojox.encoding.compression.splay"]){
 dojo._hasResource["dojox.encoding.compression.splay"]=true;
 dojo.provide("dojox.encoding.compression.splay");
 dojo.require("dojox.encoding.bits");
+dojo.getObject("encoding.compression.splay",true,dojox);
 dojox.encoding.compression.Splay=function(n){
 this.up=new Array(2*n+1);
 this.left=new Array(n);

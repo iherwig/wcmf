@@ -11,7 +11,8 @@ dojo.provide("dijit.form.Form");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dijit.form._FormMixin");
-dojo.declare("dijit.form.Form",[dijit._Widget,dijit._Templated,dijit.form._FormMixin],{name:"",action:"",method:"",encType:"","accept-charset":"",accept:"",target:"",templateString:"<form dojoAttachPoint='containerNode' dojoAttachEvent='onreset:_onReset,onsubmit:_onSubmit' ${!nameAttrSetting}></form>",attributeMap:dojo.delegate(dijit._Widget.prototype.attributeMap,{action:"",method:"",encType:"","accept-charset":"",accept:"",target:""}),postMixInProperties:function(){
+dojo.require("dijit.layout._ContentPaneResizeMixin");
+dojo.declare("dijit.form.Form",[dijit._Widget,dijit._Templated,dijit.form._FormMixin,dijit.layout._ContentPaneResizeMixin],{name:"",action:"",method:"",encType:"","accept-charset":"",accept:"",target:"",templateString:"<form dojoAttachPoint='containerNode' dojoAttachEvent='onreset:_onReset,onsubmit:_onSubmit' ${!nameAttrSetting}></form>",attributeMap:dojo.delegate(dijit._Widget.prototype.attributeMap,{action:"",method:"",encType:"","accept-charset":"",accept:"",target:""}),postMixInProperties:function(){
 this.nameAttrSetting=this.name?("name='"+this.name+"'"):"";
 this.inherited(arguments);
 },execute:function(_1){

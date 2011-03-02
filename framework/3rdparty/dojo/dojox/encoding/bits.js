@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.encoding.bits"]){
 dojo._hasResource["dojox.encoding.bits"]=true;
 dojo.provide("dojox.encoding.bits");
+dojo.getObject("encoding.bits",true,dojox);
 dojox.encoding.bits.OutputStream=function(){
 this.reset();
 };

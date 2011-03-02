@@ -11,9 +11,10 @@ dojo.provide("dijit.Toolbar");
 dojo.require("dijit._Widget");
 dojo.require("dijit._KeyNavContainer");
 dojo.require("dijit._Templated");
-dojo.declare("dijit.Toolbar",[dijit._Widget,dijit._Templated,dijit._KeyNavContainer],{templateString:"<div class=\"dijit\" waiRole=\"toolbar\" tabIndex=\"${tabIndex}\" dojoAttachPoint=\"containerNode\">"+"</div>",baseClass:"dijitToolbar",postCreate:function(){
-this.connectKeyNavHandlers(this.isLeftToRight()?[dojo.keys.LEFT_ARROW]:[dojo.keys.RIGHT_ARROW],this.isLeftToRight()?[dojo.keys.RIGHT_ARROW]:[dojo.keys.LEFT_ARROW]);
+dojo.require("dijit.ToolbarSeparator");
+dojo.declare("dijit.Toolbar",[dijit._Widget,dijit._Templated,dijit._KeyNavContainer],{templateString:"<div class=\"dijit\" role=\"toolbar\" tabIndex=\"${tabIndex}\" dojoAttachPoint=\"containerNode\">"+"</div>",baseClass:"dijitToolbar",postCreate:function(){
 this.inherited(arguments);
+this.connectKeyNavHandlers(this.isLeftToRight()?[dojo.keys.LEFT_ARROW]:[dojo.keys.RIGHT_ARROW],this.isLeftToRight()?[dojo.keys.RIGHT_ARROW]:[dojo.keys.LEFT_ARROW]);
 },startup:function(){
 if(this._started){
 return;
@@ -21,5 +22,4 @@ return;
 this.startupKeyNavChildren();
 this.inherited(arguments);
 }});
-dojo.require("dijit.ToolbarSeparator");
 }

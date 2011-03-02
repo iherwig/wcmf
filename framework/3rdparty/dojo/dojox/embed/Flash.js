@@ -95,7 +95,7 @@ a.push(p+"="+_f.vars[p]);
 _f.params.flashVars=a.join("&");
 delete _f.vars;
 }
-var s="<embed type=\"application/x-shockwave-flash\" "+"src=\""+_10+"\" "+"id=\""+_f.id+"\" "+"width=\""+_f.width+"\" "+"height=\""+_f.height+"\""+((_f.style)?" style=\""+_f.style+"\" ":"")+"swLiveConnect=\""+_f.swLiveConnect+"\" "+"allowScriptAccess=\""+_f.allowScriptAccess+"\" "+"allowNetworking=\""+_f.allowNetworking+"\" "+"pluginspage=\""+window.location.protocol+"//www.adobe.com/go/getflashplayer\" ";
+var s="<embed type=\"application/x-shockwave-flash\" "+"src=\""+_10+"\" "+"id=\""+_f.id+"\" "+"width=\""+_f.width+"\" "+"height=\""+_f.height+"\""+((_f.style)?" style=\""+_f.style+"\" ":"")+"pluginspage=\""+window.location.protocol+"//www.adobe.com/go/getflashplayer\" ";
 if(_f.params){
 for(p in _f.params){
 s+=" "+p+"=\""+_f.params[p]+"\"";

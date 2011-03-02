@@ -57,6 +57,9 @@ _c();
 };
 function _10(){
 var ifr=document.createElement("iframe"),_11="dojo-hash-iframe",_12=dojo.config.dojoBlankHtmlUrl||dojo.moduleUrl("dojo","resources/blank.html");
+if(dojo.config.useXDomain&&!dojo.config.dojoBlankHtmlUrl){
+console.warn("dojo.hash: When using cross-domain Dojo builds,"+" please save dojo/resources/blank.html to your domain and set djConfig.dojoBlankHtmlUrl"+" to the path on your domain to blank.html");
+}
 ifr.id=_11;
 ifr.src=_12+"?"+_3();
 ifr.style.display="none";

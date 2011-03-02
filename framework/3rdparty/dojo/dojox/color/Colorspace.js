@@ -412,17 +412,17 @@ var r=_2.multiply([[_93.color.X,_93.color.Y,_93.color.Z]],m)[0];
 return {X:r[0],Y:r[1],Z:r[2]};
 };
 this.matrix=function(to,_97){
-var wp=this.whitepoint(_97.whitepoint);
+var p=_97,wp=this.whitepoint(p.whitepoint);
 var Xr=p.xr/p.yr,Yr=1,Zr=(1-p.xr-p.yr)/p.yr;
 var Xg=p.xg/p.yg,Yg=1,Zg=(1-p.xg-p.yg)/p.yg;
-var Xb=p.xb/p.yb,Yb=1,Zr=(1-p.xb-p.yb)/p.yb;
+var Xb=p.xb/p.yb,Yb=1,Zb=(1-p.xb-p.yb)/p.yb;
 var m1=[[Xr,Yr,Zr],[Xg,Yg,Zg],[Xb,Yb,Zb]];
 var m2=[[wp.X,wp.Y,wp.Z]];
-var sm=dojox.math.matrix.multiply(m2,dojox.math.matrix.inverse(m1));
+var sm=_2.multiply(m2,_2.inverse(m1));
 var Sr=sm[0][0],Sg=sm[0][1],Sb=sm[0][2];
 var _98=[[Sr*Xr,Sr*Yr,Sr*Zr],[Sg*Xg,Sg*Yg,Sg*Zg],[Sb*Xb,Sb*Yb,Sb*Zb]];
 if(to=="RGB"){
-return dojox.math.inverse(_98);
+return _2.inverse(_98);
 }
 return _98;
 };
@@ -434,7 +434,7 @@ return (_9a||typeof (_9a)=="undefined")?903.3:24389/27;
 };
 this.convert=function(_9b,_9c,to,_9d){
 if(_1d[_9c]&&_1d[_9c][to]){
-return _1d[_9c][to](obj,_9d);
+return _1d[_9c][to](_9b,_9d);
 }
 console.warn("dojox.color.Colorspace::convert: Can't convert ",_9b," from ",_9c," to ",to,".");
 };
@@ -443,7 +443,7 @@ dojo.mixin(dojox.color,{fromXYZ:function(xyz,_9e){
 _9e=_9e||{};
 var p=dojox.color.Colorspace.primaries(_9e);
 var m=dojox.color.Colorspace.matrix("RGB",p);
-var rgb=dojox.math.matrix.mutliply([[xyz.X,xyz.Y,xyz.Z]],m);
+var rgb=dojox.math.matrix.multiply([[xyz.X,xyz.Y,xyz.Z]],m);
 var r=rgb[0][0],g=rgb[0][1],b=rgb[0][2];
 if(p.profile=="sRGB"){
 var R=(r>0.0031308)?(1.055*Math.pow(r,1/2.4))-0.055:12.92*r;

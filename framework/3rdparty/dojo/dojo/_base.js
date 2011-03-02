@@ -15,5 +15,5 @@ dojo.require("dojo._base.connect");
 dojo.require("dojo._base.Deferred");
 dojo.require("dojo._base.json");
 dojo.require("dojo._base.Color");
-dojo.requireIf(dojo.isBrowser,"dojo._base.browser");
+dojo.require("dojo._base.browser");
 }

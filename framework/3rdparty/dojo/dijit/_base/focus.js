@@ -269,6 +269,7 @@ for(var i=_21.length-1;i>=_22;i--){
 _23=dijit.byId(_21[i]);
 if(_23){
 _23._focused=false;
+_23.set("focused",false);
 _23._hasBeenBlurred=true;
 if(_23._onBlur){
 _23._onBlur(by);
@@ -280,6 +281,7 @@ for(i=_22;i<_20.length;i++){
 _23=dijit.byId(_20[i]);
 if(_23){
 _23._focused=true;
+_23.set("focused",true);
 if(_23._onFocus){
 _23._onFocus(by);
 }

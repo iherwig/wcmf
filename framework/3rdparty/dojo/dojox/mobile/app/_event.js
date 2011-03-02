@@ -57,14 +57,15 @@ _3(_13);
 }});
 dojox.mobile.app.isIPhone=(dojo.isSafari&&(navigator.userAgent.indexOf("iPhone")>-1||navigator.userAgent.indexOf("iPod")>-1));
 dojox.mobile.app.isWebOS=(navigator.userAgent.indexOf("webOS")>-1);
-if(dojox.mobile.app.isIPhone){
+dojox.mobile.app.isAndroid=(navigator.userAgent.toLowerCase().indexOf("android")>-1);
+if(dojox.mobile.app.isIPhone||dojox.mobile.app.isAndroid){
 dojox.mobile.app.eventMap={onmousedown:"ontouchstart",mousedown:"ontouchstart",onmouseup:"ontouchend",mouseup:"ontouchend",onmousemove:"ontouchmove",mousemove:"ontouchmove"};
 }
 dojo._oldConnect=dojo._connect;
 dojo._connect=function(obj,_14,_15,_16,_17){
 _14=dojox.mobile.app.eventMap[_14]||_14;
 if(_14=="flick"||_14=="onflick"){
-if(window["Mojo"]){
+if(dojo.global["Mojo"]){
 _14=Mojo.Event.flick;
 }else{
 return dojox.mobile.app.connectFlick(obj,_15,_16);

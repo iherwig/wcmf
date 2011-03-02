@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.math.stats"]){
 dojo._hasResource["dojox.math.stats"]=true;
 dojo.provide("dojox.math.stats");
+dojo.getObject("math.stats",true,dojox);
 (function(){
 var st=dojox.math.stats;
 dojo.mixin(st,{sd:function(a){

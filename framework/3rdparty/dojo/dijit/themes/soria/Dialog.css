@@ -10,7 +10,7 @@
 	font-weight: bold;
 	padding: 0px 4px;
 	font-size: 0.9em;
-	color: #3243C5F;
+	color: #243C5F;
 }
 .soria .dijitDialog .dijitDialogPaneContent {
 	background: #ffffff;
@@ -101,13 +101,9 @@
 .soria .dijitTooltipLeft {
 	padding-right: 10px;
 }
-.dj_ie6 .soria .dijitTooltipLeft {
-	padding-left: 11px;
-}
 .soria .dijitTooltipLeft .dijitTooltipConnector {
 	
 	right: 0px;
-	bottom: 3px;
 	background:url("images/tooltipConnectorRight.png") no-repeat top left;
 	width:11px;
 	height:17px;
@@ -121,7 +117,6 @@
 .soria .dijitTooltipRight .dijitTooltipConnector {
 	
 	left: 0px;
-	bottom: 3px;
 	background:url("images/tooltipConnectorLeft.png") no-repeat top left;
 	width:11px;
 	height:17px;

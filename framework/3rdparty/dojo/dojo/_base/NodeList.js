@@ -10,6 +10,8 @@ dojo._hasResource["dojo._base.NodeList"]=true;
 dojo.provide("dojo._base.NodeList");
 dojo.require("dojo._base.lang");
 dojo.require("dojo._base.array");
+dojo.require("dojo._base.connect");
+dojo.require("dojo._base.html");
 (function(){
 var d=dojo;
 var ap=Array.prototype,_1=ap.slice,_2=ap.concat;
@@ -91,7 +93,7 @@ return f.apply(d,[this].concat(_1.call(arguments,0)));
 d.forEach(["attr","style"],function(_13){
 nlp[_13]=_c(d[_13],_e);
 });
-d.forEach(["connect","addClass","removeClass","toggleClass","empty","removeAttr"],function(_14){
+d.forEach(["connect","addClass","removeClass","replaceClass","toggleClass","empty","removeAttr"],function(_14){
 nlp[_14]=_9(d[_14]);
 });
 dojo.extend(dojo.NodeList,{_normalize:function(_15,_16){
@@ -199,7 +201,7 @@ _33=1;
 return this._wrap(d.filter(_32,a[_33],a[_33+1]),this);
 },addContent:function(_34,_35){
 _34=this._normalize(_34,this[0]);
-for(var i=0,_36;_36=this[i];i++){
+for(var i=0,_36;(_36=this[i]);i++){
 this._place(_34,_36,_35,i>0);
 }
 return this;

@@ -13,7 +13,7 @@ dojo.require("dojo.regexp");
 dojo.require("dojo.string");
 dojo.require("dojo.i18n");
 dojo.require("dojo.date");
-dojo.requireLocalization("dojo.cldr","islamic",null,"ROOT,ar,he");
+dojo.requireLocalization("dojo.cldr","islamic",null,"ROOT,ar,da,de,en,en-gb,es,fi,he,zh-hant");
 (function(){
 function _1(_2,_3,_4,_5,_6){
 return _6.replace(/([a-z])\1*/ig,function(_7){
@@ -371,17 +371,17 @@ return _49;
 dojox.date.islamic.locale.addCustomFormats("dojo.cldr","islamic");
 dojox.date.islamic.locale.getNames=function(_4c,_4d,_4e,_4f,_50){
 var _51;
-var _52=dojox.date.islamic.locale._getIslamicBundle;
+var _52=dojox.date.islamic.locale._getIslamicBundle(_4f);
 var _53=[_4c,_4e,_4d];
 if(_4e=="standAlone"){
 var key=_53.join("-");
-_51=_52(_4f)[key];
-if(_51===_52("ROOT")[key]){
+_51=_52[key];
+if(_51[0]==1){
 _51=undefined;
 }
 }
 _53[1]="format";
-return (_51||_52(_4f)[_53.join("-")]).concat();
+return (_51||_52[_53.join("-")]).concat();
 };
 dojox.date.islamic.locale.weekDays=dojox.date.islamic.locale.getNames("days","wide","format");
 dojox.date.islamic.locale.months=dojox.date.islamic.locale.getNames("months","wide","format");

@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.io.iframe"]){
 dojo._hasResource["dojo.io.iframe"]=true;
 dojo.provide("dojo.io.iframe");
+dojo.getObject("io",true,dojo);
 dojo.io.iframe={create:function(_1,_2,_3){
 if(window[_1]){
 return window[_1];
@@ -33,9 +34,7 @@ id=_1;
 dojo.body().appendChild(_4);
 window[_1]=_4;
 with(_4.style){
-if(!(dojo.isSafari<3)){
 position="absolute";
-}
 left=top="1px";
 height=width="1px";
 visibility="hidden";
@@ -55,14 +54,10 @@ frames[_7.name].location=_8;
 }
 }else{
 var _a;
-if(dojo.isIE||dojo.isWebKit>521){
+if(dojo.isIE||dojo.isWebKit){
 _a=_7.contentWindow.document;
 }else{
-if(dojo.isSafari){
-_a=_7.document;
-}else{
 _a=_7.contentWindow;
-}
 }
 if(!_a){
 _7.location=_8;

@@ -12,10 +12,10 @@ dojo.require("dojo.currency");
 dojo.require("dijit.form.NumberTextBox");
 dojo.declare("dijit.form.CurrencyTextBox",dijit.form.NumberTextBox,{currency:"",baseClass:"dijitTextBox dijitCurrencyTextBox",regExpGen:function(_1){
 return "("+(this._focused?this.inherited(arguments,[dojo.mixin({},_1,this.editOptions)])+"|":"")+dojo.currency.regexp(_1)+")";
-},_formatter:dojo.currency.format,parse:function(_2,_3){
-var v=dojo.currency.parse(_2,_3);
+},_formatter:dojo.currency.format,_parser:dojo.currency.parse,parse:function(_2,_3){
+var v=this.inherited(arguments);
 if(isNaN(v)&&/\d+/.test(_2)){
-return this.inherited(arguments,[_2,dojo.mixin({},_3,this.editOptions)]);
+v=dojo.hitch(dojo.mixin({},this,{_parser:dijit.form.NumberTextBox.prototype._parser}),"inherited")(arguments);
 }
 return v;
 },_setConstraintsAttr:function(_4){

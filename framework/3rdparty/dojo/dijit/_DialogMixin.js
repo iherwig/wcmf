@@ -15,13 +15,9 @@ dojo.declare("dijit._DialogMixin",null,{attributeMap:dijit._Widget.prototype.att
 },_onSubmit:function(){
 this.onExecute();
 this.execute(this.get("value"));
-},_getFocusItems:function(_2){
-var _3=dijit._getTabNavigable(dojo.byId(_2));
-this._firstFocusItem=_3.lowest||_3.first||_2;
-this._lastFocusItem=_3.last||_3.highest||this._firstFocusItem;
-if(dojo.isMoz&&this._firstFocusItem.tagName.toLowerCase()=="input"&&dojo.getNodeProp(this._firstFocusItem,"type").toLowerCase()=="file"){
-dojo.attr(_2,"tabIndex","0");
-this._firstFocusItem=_2;
-}
+},_getFocusItems:function(){
+var _2=dijit._getTabNavigable(this.containerNode);
+this._firstFocusItem=_2.lowest||_2.first||this.closeButtonNode||this.domNode;
+this._lastFocusItem=_2.last||_2.highest||this._firstFocusItem;
 }});
 }

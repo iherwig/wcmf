@@ -14,7 +14,7 @@ dojo.declare("dijit.layout._TabContainerBase",[dijit.layout.StackContainer,dijit
 this.baseClass+=this.tabPosition.charAt(0).toUpperCase()+this.tabPosition.substr(1).replace(/-.*/,"");
 this.srcNodeRef&&dojo.style(this.srcNodeRef,"visibility","hidden");
 this.inherited(arguments);
-},postCreate:function(){
+},buildRendering:function(){
 this.inherited(arguments);
 this.tablist=this._makeController(this.tablistNode);
 if(!this.doLayout){
@@ -53,7 +53,11 @@ sc.resize(this._containerContentBox);
 }
 }else{
 if(this.tablist.resize){
-this.tablist.resize({w:dojo.contentBox(this.domNode).w});
+var s=this.tablist.domNode.style;
+s.width="0";
+var _4=dojo.contentBox(this.domNode).w;
+s.width="";
+this.tablist.resize({w:_4});
 }
 if(sc&&sc.resize){
 sc.resize();

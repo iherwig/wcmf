@@ -11,7 +11,9 @@ dojo.provide("dojox.editor.plugins.CollapsibleToolbar");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dijit._editor._Plugin");
-dojo.requireLocalization("dojox.editor.plugins","CollapsibleToolbar",null,"ROOT,ro");
+dojo.require("dijit.form.Button");
+dojo.require("dojo.i18n");
+dojo.requireLocalization("dojox.editor.plugins","CollapsibleToolbar",null,"ROOT,kk,ro");
 dojo.declare("dojox.editor.plugins._CollapsibleToolbarButton",[dijit._Widget,dijit._Templated],{templateString:"<div tabindex='0' role='button' title='${title}' class='${buttonClass}' "+"dojoAttachEvent='ondijitclick: onClick'><span class='${textClass}'>${text}</span></div>",title:"",buttonClass:"",text:"",textClass:"",onClick:function(e){
 }});
 dojo.declare("dojox.editor.plugins.CollapsibleToolbar",dijit._editor._Plugin,{_myWidgets:null,setEditor:function(_1){

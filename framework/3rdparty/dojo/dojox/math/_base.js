@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.math._base"]){
 dojo._hasResource["dojox.math._base"]=true;
 dojo.provide("dojox.math._base");
+dojo.getObject("math",true,dojox);
 (function(){
 var m=dojox.math;
 dojo.mixin(dojox.math,{toRadians:function(n){

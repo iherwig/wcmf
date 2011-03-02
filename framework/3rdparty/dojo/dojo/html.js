@@ -9,6 +9,7 @@ if(!dojo._hasResource["dojo.html"]){
 dojo._hasResource["dojo.html"]=true;
 dojo.provide("dojo.html");
 dojo.require("dojo.parser");
+dojo.getObject("html",true,dojo);
 (function(){
 var _1=0,d=dojo;
 dojo.html._secureForInnerHtml=function(_2){
@@ -31,7 +32,7 @@ d.place(_4,_3,"last");
 }
 return _3;
 };
-dojo.declare("dojo.html._ContentSetter",null,{node:"",content:"",id:"",cleanContent:false,extractContent:false,parseContent:false,constructor:function(_6,_7){
+dojo.declare("dojo.html._ContentSetter",null,{node:"",content:"",id:"",cleanContent:false,extractContent:false,parseContent:false,parserScope:dojo._scopeName,startup:true,constructor:function(_6,_7){
 dojo.mixin(this,_6||{});
 _7=this.node=dojo.byId(this.node||_7);
 if(!this.id){
@@ -114,7 +115,7 @@ this[key]=_f[key];
 },_parse:function(){
 var _11=this.node;
 try{
-this.parseResults=dojo.parser.parse({rootNode:_11,dir:this.dir,lang:this.lang});
+this.parseResults=dojo.parser.parse({rootNode:_11,noStart:!this.startup,inherited:{dir:this.dir,lang:this.lang},scope:this.parserScope});
 }
 catch(e){
 this._onError("Content",e,"Error parsing in _ContentSetter#"+this.id);

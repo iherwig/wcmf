@@ -11,10 +11,10 @@ dojo.provide("dojox.mobile.app._Widget");
 dojo.experimental("dojox.mobile.app._Widget");
 dojo.require("dijit._Widget");
 dojo.declare("dojox.mobile.app._Widget",dijit._Widget,{getScroll:function(){
-return {x:window.scrollX,y:window.scrollY};
+return {x:dojo.global.scrollX,y:dojo.global.scrollY};
 },connect:function(_1,_2,fn){
 if(_2.toLowerCase()=="dblclick"||_2.toLowerCase()=="ondblclick"){
-if(window["Mojo"]){
+if(dojo.global["Mojo"]){
 return this.connect(_1,Mojo.Event.tap,fn);
 }
 }

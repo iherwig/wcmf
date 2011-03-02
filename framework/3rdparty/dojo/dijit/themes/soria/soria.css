@@ -35,7 +35,9 @@
 	#zoom: 1;
 	overflow: hidden;
 	float: none !important; 
-	position:relative;
+	position: relative;
+	vertical-align: middle;
+	#display: inline;
 }
 .dj_ie INPUT.dijitTextBox,
 .dj_ie .dijitTextBox INPUT {
@@ -81,12 +83,6 @@
 	margin: 0;
 	border: 0;
 	padding: 0;
-}
-.dijit_a11y .dijitPopup,
-.dijit_ally .dijitPopup DIV,
-.dijit_a11y .dijitPopup TABLE,
-.dijit_a11y .dijitTooltipContainer {
-	background-color: white !important;
 }
 .dijitPositionOnly {
 	
@@ -158,9 +154,9 @@
 	color:black !important;
 }
 .dijit_a11y .dijitButtonNode {
-	border-color: black!important;
-	border-style: outset!important;
-	border-width: medium!important;
+	border: black outset medium !important;
+	
+	padding: 0 !important;
 }
 .dijit_a11y .dijitTextBoxReadOnly .dijitInputField,
 .dijit_a11y .dijitTextBoxReadOnly .dijitButtonNode {
@@ -201,6 +197,7 @@
 .dijitComboButton {
 	
 	margin: 0.2em;
+	vertical-align: middle;
 }
 .dijitButtonContents {
 	display: block;		
@@ -212,13 +209,6 @@ td.dijitButtonContents {
 	
 	vertical-align:middle;
 	
-}
-TABLE.dijitComboButton { 
-	
-	border-collapse: collapse;
-	border:0;
-	padding:0;
-	margin:0;
 }
 .dijitToolbar .dijitComboButton {
 	
@@ -233,10 +223,6 @@ TABLE.dijitComboButton {
 .dijitToolbar .dijitButtonContents {
 	
 	padding: 1px 2px;
-}
-.dj_ie .dijitComboButton {
-	
-	margin-bottom: -3px;
 }
 .dj_webkit .dijitToolbar .dijitDropDownButton {
 	padding-left: 0.3em;
@@ -281,7 +267,6 @@ DIV.dijitArrowButton {
 	#overflow: hidden; 
 	width: 15em;	
 	vertical-align: middle;
-	#vertical-align: auto;
 }
 .dijitTextBoxReadOnly,
 .dijitTextBoxDisabled {
@@ -293,7 +278,7 @@ DIV.dijitArrowButton {
 .dj_webkit TEXTAREA.dijitTextAreaDisabled {
 	color: #333; 
 }
-.dj_gecko .dijitTextBoxReadOnly INPUT,
+.dj_gecko .dijitTextBoxReadOnly INPUT.dijitInputField, 
 .dj_gecko .dijitTextBoxDisabled INPUT {
 	-moz-user-input: none; 
 }
@@ -377,6 +362,10 @@ DIV.dijitArrowButton {
 .dijitComboBox .dijitArrowButtonContainer {
 	
 	border-width: 0 0 0 1px !important; 
+}
+.dijitComboBoxMenu {
+	
+	list-style-type: none;
 }
 .dijitSpinner .dijitSpinnerButtonContainer .dijitButtonNode {
 	
@@ -598,9 +587,6 @@ DIV.dijitArrowButton {
 	
 	height:1.6em;
 }
-.dijitProgressBarIndeterminate .dijitProgressBarLabel {
-	visibility:hidden;
-}
 .dijitProgressBarIndeterminate .dijitProgressBarTile {
 	
 }
@@ -629,7 +615,7 @@ DIV.dijitArrowButton {
 	z-index: 2000;
 	display: block;
 	
-	left: 50%;
+	left: 0px;
 	top: -10000px;
 	overflow: visible;
 }
@@ -795,7 +781,7 @@ body .dijitAlignClient { position: absolute; }
 .dijitTitlePaneTitle {
 	cursor: pointer;
 }
-.dijitFixedOpen {
+.dijitFixedOpen, .dijitFixedClosed {
 	
 	cursor: default;
 }
@@ -854,6 +840,7 @@ img.dijitColorPaletteUnder {
 	font-size: 1px;
 	vertical-align: middle;
 	text-align: center;
+	background: none;
 }
 .dijitColorPalette .dijitPaletteImg {
 	
@@ -912,16 +899,16 @@ img.dijitColorPaletteUnder {
 .dijit_a11y .dijitAccordionTitleSelected .arrowTextUp {
 	display: none;
 }
-.dj_ie6 .dijitAccordionTitle,
-.dj_iequirks .dijitAccordionTitle {
+.dijitAccordionChildWrapper {
 	
-	zoom: 1;
+	overflow: hidden;
 }
 .dijitCalendarContainer {
 	width: auto;	
 }
 .dijitCalendarContainer th, .dijitCalendarContainer td {
 	padding: 0;
+	vertical-align: middle;
 }
 .dijitCalendarNextYear {
 	margin:0 0 0 0.55em;
@@ -950,6 +937,9 @@ img.dijitColorPaletteUnder {
   	height: 1px;
   	overflow: hidden;
   	visibility: hidden;
+}
+.dijitCalendarMonthMenu .dijitCalendarMonthLabel {
+	text-align:center;
 }
 .dijitMenu {
 	border:1px solid black;
@@ -1167,13 +1157,6 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 .dijit_a11y .dijitTabCloseText {
 	display: inline;
 }
-.dijit_a11y .dijitTabChecked {
-	
-	border-style:dashed !important;
-}
-.dijit_a11y .dijitTabInnerDiv {
-	border-left:none !important;
- }
 .dijitTabPane,
 .dijitStackContainer-child,
 .dijitAccordionContainer-child {
@@ -1390,7 +1373,8 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 .dijitSliderDecoration {
 	text-align:center;
 }
-.dijitSliderV TD {
+.dijitSliderDecorationC,
+.dijitSliderDecorationV {
 	position: relative; 
 }
 .dijitSliderDecorationH {
@@ -1507,6 +1491,10 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 }
 .dj_ie .dijitTextAreaCols {
 	width:auto;
+}
+.dijitExpandingTextArea {
+	
+	resize: none;
 }
 .dijitToolbarSeparator {
 	height: 18px;
@@ -2721,7 +2709,7 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
     background : url(images/treeI.gif) no-repeat;
     background-position : top left;
     background-repeat : repeat-y;
-    zoom: 1;	
+    zoom: 1;
 }
 .soria .dijitTreeRowHover {
 	
@@ -2918,6 +2906,7 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 .soria .dijitCalendarMonthLabel {
 	color:#293a4b;
 	font-weight: bold;
+	padding: 0px 4px;
 }
 .soria .dijitCalendarDateTemplate {
 	
@@ -2979,6 +2968,21 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 	
 	color:black !important;
 	font-weight:normal;
+}
+.soria .dijitCalendar .dijitDropDownButton {
+	margin: 0px;
+}
+.soria .dijitCalendar .dijitButtonText {
+	padding: 0px;
+}
+.soria .dijitCalendar .dijitDropDownButton .dijitButtonNode {
+	background-color: transparent;
+	background-image: none;
+	padding: 0px;
+}
+.soria .dijitCalendarMonthMenu .dijitCalendarMonthLabelHover {
+	background-color: #d9e6f9;
+	color: #243C5F;
 }
 .soria .dijitTimePickerTick,
 .soria .dijitTimePickerMarker {
@@ -3088,7 +3092,7 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 	font-weight: bold;
 	padding: 0px 4px;
 	font-size: 0.9em;
-	color: #3243C5F;
+	color: #243C5F;
 }
 .soria .dijitDialog .dijitDialogPaneContent {
 	background: #ffffff;
@@ -3179,13 +3183,9 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 .soria .dijitTooltipLeft {
 	padding-right: 10px;
 }
-.dj_ie6 .soria .dijitTooltipLeft {
-	padding-left: 11px;
-}
 .soria .dijitTooltipLeft .dijitTooltipConnector {
 	
 	right: 0px;
-	bottom: 3px;
 	background:url(images/tooltipConnectorRight.png) no-repeat top left;
 	width:11px;
 	height:17px;
@@ -3199,7 +3199,6 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 .soria .dijitTooltipRight .dijitTooltipConnector {
 	
 	left: 0px;
-	bottom: 3px;
 	background:url(images/tooltipConnectorLeft.png) no-repeat top left;
 	width:11px;
 	height:17px;

@@ -14,16 +14,16 @@ if(!this.value&&this.srcNodeRef){
 this.value=this.srcNodeRef.value;
 }
 this.inherited(arguments);
+},buildRendering:function(){
+this.inherited(arguments);
+if(dojo.isIE&&this.cols){
+dojo.addClass(this.textbox,"dijitTextAreaCols");
+}
 },filter:function(_1){
 if(_1){
 _1=_1.replace(/\r/g,"");
 }
 return this.inherited(arguments);
-},postCreate:function(){
-this.inherited(arguments);
-if(dojo.isIE&&this.cols){
-dojo.addClass(this.textbox,"dijitTextAreaCols");
-}
 },_previousValue:"",_onInput:function(e){
 if(this.maxLength){
 var _2=parseInt(this.maxLength);

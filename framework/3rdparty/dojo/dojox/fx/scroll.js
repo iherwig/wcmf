@@ -12,7 +12,7 @@ dojo.experimental("dojox.fx.scroll");
 dojo.require("dojox.fx._core");
 dojox.fx.smoothScroll=function(_1){
 if(!_1.target){
-_1.target=dojo.position(_1.node,true);
+_1.target=dojo.position(_1.node);
 }
 var _2=dojo[(dojo.isIE?"isObject":"isFunction")](_1["win"].scrollTo),_3={x:_1.target.x,y:_1.target.y};
 if(!_2){
@@ -31,7 +31,7 @@ if(this.curve){
 delete this.curve;
 }
 var _9=_2?dojo._docScroll():{x:_1.win.scrollLeft,y:_1.win.scrollTop};
-_8.curve=new dojox.fx._Line([_9.x,_9.y],[_3.x,_3.y]);
+_8.curve=new dojox.fx._Line([_9.x,_9.y],[_9.x+_3.x,_9.y+_3.y]);
 },onAnimate:_5},_1));
 return _8;
 };

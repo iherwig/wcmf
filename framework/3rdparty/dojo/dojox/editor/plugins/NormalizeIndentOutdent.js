@@ -8,9 +8,8 @@
 if(!dojo._hasResource["dojox.editor.plugins.NormalizeIndentOutdent"]){
 dojo._hasResource["dojox.editor.plugins.NormalizeIndentOutdent"]=true;
 dojo.provide("dojox.editor.plugins.NormalizeIndentOutdent");
-dojo.require("dijit._editor._Plugin");
 dojo.require("dijit._editor.selection");
-dojo.experimental("dojox.editor.plugins.NormalizeIndentOutdent");
+dojo.require("dijit._editor._Plugin");
 dojo.declare("dojox.editor.plugins.NormalizeIndentOutdent",dijit._editor._Plugin,{indentBy:40,indentUnits:"px",setEditor:function(_1){
 this.editor=_1;
 _1._indentImpl=dojo.hitch(this,this._indentImpl);

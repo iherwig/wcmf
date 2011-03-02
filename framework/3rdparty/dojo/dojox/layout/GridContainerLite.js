@@ -58,6 +58,7 @@ var _7=dijit.byNode(_4);
 if(_7.resize&&dojo.isFunction(_7.resize)){
 _7.resize();
 }
+_7.set("column",_4.parentNode.cellIndex);
 if(this.doLayout){
 var _8=this._contentBox.h,_9=dojo.contentBox(this.gridContainerDiv).h;
 if(_9>=_8){
@@ -136,6 +137,8 @@ while(i<this.nbZones){
 this._grid.push({"node":dojo.create("td",{"class":"gridContainerZone","accept":_12,"id":this.id+"_dz"+i,"style":{"width":_14[i]+"%"}},this.gridNode)});
 i++;
 }
+},_getZonesAttr:function(){
+return dojo.query(".gridContainerZone",this.containerNode);
 },enableDnd:function(){
 var m=this._dragManager;
 dojo.forEach(this._grid,function(_17){
@@ -200,6 +203,7 @@ dojo.place(_1f.domNode,_21,p);
 dojo.attr(_1f.domNode,"tabIndex","0");
 }
 }
+_1f.set("column",_20);
 return _1f;
 },removeChild:function(_23){
 if(this._disabled){

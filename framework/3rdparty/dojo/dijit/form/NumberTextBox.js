@@ -52,34 +52,43 @@ if(this.editOptions&&this._focused){
 _6=dojo.mixin({},_6,this.editOptions);
 }
 return this._formatter(_5,_6);
-},parse:dojo.number.parse,_getDisplayedValueAttr:function(){
+},_parser:dojo.number.parse,parse:function(_8,_9){
+var v=this._parser(_8,dojo.mixin({},_9,(this.editOptions&&this._focused)?this.editOptions:{}));
+if(this.editOptions&&this._focused&&isNaN(v)){
+v=this._parser(_8,_9);
+}
+return v;
+},_getDisplayedValueAttr:function(){
 var v=this.inherited(arguments);
 return isNaN(v)?this.textbox.value:v;
-},filter:function(_8){
-return (_8===null||_8===""||_8===undefined)?NaN:this.inherited(arguments);
-},serialize:function(_9,_a){
-return (typeof _9!="number"||isNaN(_9))?"":this.inherited(arguments);
-},_setValueAttr:function(_b,_c,_d){
-if(_b!==undefined&&_d===undefined){
-_d=String(_b);
-if(typeof _b=="number"){
-if(isNaN(_b)){
-_d="";
+},filter:function(_a){
+return (_a===null||_a===""||_a===undefined)?NaN:this.inherited(arguments);
+},serialize:function(_b,_c){
+return (typeof _b!="number"||isNaN(_b))?"":this.inherited(arguments);
+},_setBlurValue:function(){
+var _d=dojo.hitch(dojo.mixin({},this,{_focused:true}),"get")("value");
+this._setValueAttr(_d,true);
+},_setValueAttr:function(_e,_f,_10){
+if(_e!==undefined&&_10===undefined){
+_10=String(_e);
+if(typeof _e=="number"){
+if(isNaN(_e)){
+_10="";
 }else{
-if(("rangeCheck" in this&&this.rangeCheck(_b,this.constraints))||this.constraints.exponent===false||!/\de[-+]?\d/i.test(_d)){
-_d=undefined;
+if(("rangeCheck" in this&&this.rangeCheck(_e,this.constraints))||this.constraints.exponent===false||!/\de[-+]?\d/i.test(_10)){
+_10=undefined;
 }
 }
 }else{
-if(!_b){
-_d="";
-_b=NaN;
+if(!_e){
+_10="";
+_e=NaN;
 }else{
-_b=undefined;
+_e=undefined;
 }
 }
 }
-this.inherited(arguments,[_b,_c,_d]);
+this.inherited(arguments,[_e,_f,_10]);
 },_getValueAttr:function(){
 var v=this.inherited(arguments);
 if(isNaN(v)&&this.textbox.value!==""){
@@ -92,7 +101,7 @@ return undefined;
 }else{
 return v;
 }
-},isValid:function(_e){
+},isValid:function(_11){
 if(!this._focused||this._isEmpty(this.textbox.value)){
 return this.inherited(arguments);
 }else{

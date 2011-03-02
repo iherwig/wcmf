@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.string"]){
 dojo._hasResource["dojo.string"]=true;
 dojo.provide("dojo.string");
+dojo.getObject("string",true,dojo);
 dojo.string.rep=function(_1,_2){
 if(_2<=0||!_1){
 return "";

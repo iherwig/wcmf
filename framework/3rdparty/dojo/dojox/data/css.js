@@ -8,7 +8,7 @@
 if(!dojo._hasResource["dojox.data.css"]){
 dojo._hasResource["dojox.data.css"]=true;
 dojo.provide("dojox.data.css");
-dojo.provide("dojox.data.css.rules");
+dojox.data.css.rules={};
 dojox.data.css.rules.forEach=function(fn,_1,_2){
 if(_2){
 var _3=function(_4){

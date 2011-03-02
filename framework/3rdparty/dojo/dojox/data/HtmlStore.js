@@ -8,9 +8,9 @@
 if(!dojo._hasResource["dojox.data.HtmlStore"]){
 dojo._hasResource["dojox.data.HtmlStore"]=true;
 dojo.provide("dojox.data.HtmlStore");
-dojo.require("dojox.xml.parser");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
+dojo.require("dojox.xml.parser");
 dojo.declare("dojox.data.HtmlStore",null,{constructor:function(_1){
 if(_1&&"urlPreventCache" in _1){
 this.urlPreventCache=_1.urlPreventCache?true:false;

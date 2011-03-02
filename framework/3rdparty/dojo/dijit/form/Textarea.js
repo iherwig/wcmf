@@ -9,7 +9,7 @@ if(!dojo._hasResource["dijit.form.Textarea"]){
 dojo._hasResource["dijit.form.Textarea"]=true;
 dojo.provide("dijit.form.Textarea");
 dojo.require("dijit.form.SimpleTextarea");
-dojo.declare("dijit.form.Textarea",dijit.form.SimpleTextarea,{cols:"",_previousNewlines:0,_strictMode:(dojo.doc.compatMode!="BackCompat"),_getHeight:function(_1){
+dojo.declare("dijit.form.Textarea",dijit.form.SimpleTextarea,{baseClass:"dijitTextBox dijitTextArea dijitExpandingTextArea",cols:"",_previousNewlines:0,_strictMode:(dojo.doc.compatMode!="BackCompat"),_getHeight:function(_1){
 var _2=_1.scrollHeight;
 if(dojo.isIE){
 _2+=_1.offsetHeight-_1.clientHeight-((dojo.isIE<8&&this._strictMode)?dojo._getPadBorderExtents(_1).h:0);
@@ -17,7 +17,7 @@ _2+=_1.offsetHeight-_1.clientHeight-((dojo.isIE<8&&this._strictMode)?dojo._getPa
 if(dojo.isMoz){
 _2+=_1.offsetHeight-_1.clientHeight;
 }else{
-if(dojo.isWebKit&&!(dojo.isSafari<4)){
+if(dojo.isWebKit){
 _2+=dojo._getBorderExtents(_1).h;
 }else{
 _2+=dojo._getPadBorderExtents(_1).h;
@@ -87,12 +87,14 @@ this._onInput();
 },_setValueAttr:function(){
 this.inherited(arguments);
 this.resize();
-},postCreate:function(){
+},buildRendering:function(){
 this.inherited(arguments);
 dojo.style(this.textbox,{overflowY:"hidden",overflowX:"auto",boxSizing:"border-box",MsBoxSizing:"border-box",WebkitBoxSizing:"border-box",MozBoxSizing:"border-box"});
-this.connect(this.textbox,"onscroll",this._onInput);
-this.connect(this.textbox,"onresize",this._onInput);
-this.connect(this.textbox,"onfocus",this._onInput);
+},postCreate:function(){
+this.inherited(arguments);
+this.connect(this.textbox,"onscroll","_onInput");
+this.connect(this.textbox,"onresize","_onInput");
+this.connect(this.textbox,"onfocus","_onInput");
 this._setTimeoutHandle=setTimeout(dojo.hitch(this,"resize"),0);
 },uninitialize:function(){
 if(this._setTimeoutHandle){

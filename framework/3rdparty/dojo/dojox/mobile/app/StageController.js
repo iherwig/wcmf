@@ -26,7 +26,7 @@ this._opInProgress=true;
 var _4=dojo.create("div",{"class":"scene-wrapper",style:{visibility:"hidden"}},this.domNode);
 var _5=new dojox.mobile.app.SceneController({},_4);
 if(this.scenes.length>0){
-this.scenes[0].assistant.deactivate();
+this.scenes[this.scenes.length-1].assistant.deactivate();
 }
 this.scenes.push(_5);
 var _6=this;

@@ -122,7 +122,7 @@ this.children[i].effectRangeRght=_8/_3;
 }
 this.domNode.style.width=this.barWidth+"px";
 this.domNode.style.height=this.barHeight+"px";
-for(var i=0;i<this.children.length;i++){
+for(i=0;i<this.children.length;i++){
 var _9=this.children[i];
 var _a=_9.domNode;
 _a.style.left=_9.posX+"px";
@@ -203,21 +203,21 @@ var _12=(sim/siz)-0.5;
 if(_12>this.effectUnits){
 _12=this.effectUnits;
 }
-var _13=0;
+var _13=0,_14;
 if(this.anchorEdge==this.EDGE.BOTTOM){
-var _14=(y-this.proximityTop)/this.itemHeight;
+_14=(y-this.proximityTop)/this.itemHeight;
 _13=(_14>0.5)?1:y/(this.proximityTop+(this.itemHeight/2));
 }
 if(this.anchorEdge==this.EDGE.TOP){
-var _14=(y-this.proximityTop)/this.itemHeight;
+_14=(y-this.proximityTop)/this.itemHeight;
 _13=(_14<0.5)?1:(this.totalHeight-y)/(this.proximityBottom+(this.itemHeight/2));
 }
 if(this.anchorEdge==this.EDGE.RIGHT){
-var _14=(x-this.proximityLeft)/this.itemWidth;
+_14=(x-this.proximityLeft)/this.itemWidth;
 _13=(_14>0.5)?1:x/(this.proximityLeft+(this.itemWidth/2));
 }
 if(this.anchorEdge==this.EDGE.LEFT){
-var _14=(x-this.proximityLeft)/this.itemWidth;
+_14=(x-this.proximityLeft)/this.itemWidth;
 _13=(_14<0.5)?1:(this.totalWidth-x)/(this.proximityRight+(this.itemWidth/2));
 }
 if(this.anchorEdge==this.EDGE.CENTER){
@@ -255,6 +255,10 @@ var _18=Math.abs(cen-i);
 var _19=((cen-i)>0)?this.children[i].effectRangeRght:this.children[i].effectRangeLeft;
 return (_18>_19)?0:(1-_18/_19);
 },_setItemSize:function(p,_1a){
+if(this.children[p].scale==_1a){
+return;
+}
+this.children[p].scale=_1a;
 _1a*=this.timerScale;
 var w=Math.round(this.itemWidth+((this.itemMaxWidth-this.itemWidth)*_1a));
 var h=Math.round(this.itemHeight+((this.itemMaxHeight-this.itemHeight)*_1a));
@@ -302,33 +306,34 @@ this.children[p].svgNode.setSize(w,h);
 }
 },_positionElementsFrom:function(p,_1b){
 var pos=0;
+var _1c,_1d;
 if(this.isHorizontal){
-pos=Math.round(this.children[p].usualX+_1b);
-this.children[p].domNode.style.left=pos+"px";
+_1c="usualX";
+_1d="left";
 }else{
-pos=Math.round(this.children[p].usualY+_1b);
-this.children[p].domNode.style.top=pos+"px";
+_1c="usualY";
+_1d="top";
 }
+pos=Math.round(this.children[p][_1c]+_1b);
+if(this.children[p].domNode.style[_1d]!=(pos+"px")){
+this.children[p].domNode.style[_1d]=pos+"px";
 this._positionLabel(this.children[p]);
-var _1c=pos;
+}
+var _1e=pos;
 for(var i=p-1;i>=0;i--){
-_1c-=this.children[i].sizeMain;
-if(this.isHorizontal){
-this.children[i].domNode.style.left=_1c+"px";
-}else{
-this.children[i].domNode.style.top=_1c+"px";
-}
+_1e-=this.children[i].sizeMain;
+if(this.children[p].domNode.style[_1d]!=(_1e+"px")){
+this.children[i].domNode.style[_1d]=_1e+"px";
 this._positionLabel(this.children[i]);
 }
-var _1d=pos;
-for(var i=p+1;i<this.itemCount;i++){
-_1d+=this.children[i-1].sizeMain;
-if(this.isHorizontal){
-this.children[i].domNode.style.left=_1d+"px";
-}else{
-this.children[i].domNode.style.top=_1d+"px";
 }
+var _1f=pos;
+for(i=p+1;i<this.itemCount;i++){
+_1f+=this.children[i-1].sizeMain;
+if(this.children[p].domNode.style[_1d]!=(_1f+"px")){
+this.children[i].domNode.style[_1d]=_1f+"px";
 this._positionLabel(this.children[i]);
+}
 }
 },_positionLabel:function(itm){
 var x=0;
@@ -389,20 +394,22 @@ catch(e){
 }else{
 return wh&&!isNaN(wh.nodeType);
 }
-},_hasParent:function(_1e){
-return Boolean(_1e&&_1e.parentNode&&this._isNode(_1e.parentNode));
+return false;
+},_hasParent:function(_20){
+return Boolean(_20&&_20.parentNode&&this._isNode(_20.parentNode));
 },postCreate:function(){
+var _21;
 if((this.iconSrc.toLowerCase().substring(this.iconSrc.length-4)==".png")&&dojo.isIE<7){
 if(this._hasParent(this.imgNode)&&this.id!=""){
-var _1f=this.imgNode.parentNode;
-_1f.setAttribute("id",this.id);
+_21=this.imgNode.parentNode;
+_21.setAttribute("id",this.id);
 }
 this.imgNode.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"+this.iconSrc+"', sizingMethod='scale')";
 this.imgNode.src=this._blankGif.toString();
 }else{
 if(this._hasParent(this.imgNode)&&this.id!=""){
-var _1f=this.imgNode.parentNode;
-_1f.setAttribute("id",this.id);
+_21=this.imgNode.parentNode;
+_21.setAttribute("id",this.id);
 }
 this.imgNode.src=this.iconSrc;
 }

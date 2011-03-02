@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.charting.axis2d.Default"]){
 dojo._hasResource["dojox.charting.axis2d.Default"]=true;
 dojo.provide("dojox.charting.axis2d.Default");
+dojo.require("dijit.Tooltip");
 dojo.require("dojox.charting.axis2d.Invisible");
 dojo.require("dojox.charting.scaler.linear");
 dojo.require("dojox.charting.axis2d.common");
@@ -18,163 +19,164 @@ dojo.require("dojox.lang.functional");
 dojo.require("dojox.lang.utils");
 (function(){
 var dc=dojox.charting,du=dojox.lang.utils,g=dojox.gfx,_1=dc.scaler.linear,_2=4,_3=45;
-dojo.declare("dojox.charting.axis2d.Default",dojox.charting.axis2d.Invisible,{defaultParams:{vertical:false,fixUpper:"none",fixLower:"none",natural:false,leftBottom:true,includeZero:false,fixed:true,majorLabels:true,minorTicks:true,minorLabels:true,microTicks:false,rotation:0,htmlLabels:true},optionalParams:{min:0,max:1,from:0,to:1,majorTickStep:4,minorTickStep:2,microTickStep:1,labels:[],labelFunc:null,maxLabelSize:0,stroke:{},majorTick:{},minorTick:{},microTick:{},tick:{},font:"",fontColor:""},constructor:function(_4,_5){
-this.opt=dojo.delegate(this.defaultParams,_5);
+dojo.declare("dojox.charting.axis2d.Default",dojox.charting.axis2d.Invisible,{defaultParams:{vertical:false,fixUpper:"none",fixLower:"none",natural:false,leftBottom:true,includeZero:false,fixed:true,majorLabels:true,minorTicks:true,minorLabels:true,microTicks:false,rotation:0,htmlLabels:true},optionalParams:{min:0,max:1,from:0,to:1,majorTickStep:4,minorTickStep:2,microTickStep:1,labels:[],labelFunc:null,maxLabelSize:0,maxLabelCharCount:0,trailingSymbol:null,stroke:{},majorTick:{},minorTick:{},microTick:{},tick:{},font:"",fontColor:"",title:null,titleGap:0,titleFont:"",titleFontColor:"",titleOrientation:""},constructor:function(_4,_5){
+this.opt=dojo.clone(this.defaultParams);
+du.updateWithObject(this.opt,_5);
 du.updateWithPattern(this.opt,_5,this.optionalParams);
 },getOffsets:function(){
 var s=this.scaler,_6={l:0,r:0,t:0,b:0};
 if(!s){
 return _6;
 }
-var o=this.opt,_7=0,a,b,c,d,gl=dc.scaler.common.getNumericLabel,_8=0,ma=s.major,mi=s.minor,ta=this.chart.theme.axis,_9=o.font||(ta.majorTick&&ta.majorTick.font)||(ta.tick&&ta.tick.font),_a=this.chart.theme.getTick("major",o),_b=this.chart.theme.getTick("minor",o),_c=_9?g.normalizedLength(g.splitFontString(_9).size):0,_d=o.rotation%360,_e=o.leftBottom,_f=Math.abs(Math.cos(_d*Math.PI/180)),_10=Math.abs(Math.sin(_d*Math.PI/180));
-if(_d<0){
-_d+=360;
+var o=this.opt,_7=0,a,b,c,d,gl=dc.scaler.common.getNumericLabel,_8=0,ma=s.major,mi=s.minor,ta=this.chart.theme.axis,_9=o.font||(ta.majorTick&&ta.majorTick.font)||(ta.tick&&ta.tick.font),_a=o.titleFont||(ta.tick&&ta.tick.titleFont),_b=(o.titleGap==0)?0:o.titleGap||(ta.tick&&ta.tick.titleGap)||15,_c=this.chart.theme.getTick("major",o),_d=this.chart.theme.getTick("minor",o),_e=_9?g.normalizedLength(g.splitFontString(_9).size):0,_f=_a?g.normalizedLength(g.splitFontString(_a).size):0,_10=o.rotation%360,_11=o.leftBottom,_12=Math.abs(Math.cos(_10*Math.PI/180)),_13=Math.abs(Math.sin(_10*Math.PI/180));
+this.trailingSymbol=(o.trailingSymbol===undefined||o.trailingSymbol===null)?this.trailingSymbol:o.trailingSymbol;
+if(_10<0){
+_10+=360;
 }
-if(_c){
-if(o.maxLabelSize){
-_7=o.maxLabelSize;
-}else{
+if(_e){
 if(this.labels){
-_7=this._groupLabelWidth(this.labels,_9);
+_7=this._groupLabelWidth(this.labels,_9,o.maxLabelCharCount);
 }else{
-_7=this._groupLabelWidth([gl(ma.start,ma.prec,o),gl(ma.start+ma.count*ma.tick,ma.prec,o),gl(mi.start,mi.prec,o),gl(mi.start+mi.count*mi.tick,mi.prec,o)],_9);
+_7=this._groupLabelWidth([gl(ma.start,ma.prec,o),gl(ma.start+ma.count*ma.tick,ma.prec,o),gl(mi.start,mi.prec,o),gl(mi.start+mi.count*mi.tick,mi.prec,o)],_9,o.maxLabelCharCount);
 }
-}
+_7=o.maxLabelSize?Math.min(o.maxLabelSize,_7):_7;
 if(this.vertical){
-var _11=_e?"l":"r";
-switch(_d){
+var _14=_11?"l":"r";
+switch(_10){
 case 0:
 case 180:
-_6[_11]=_7;
-_6.t=_6.b=_c/2;
+_6[_14]=_7;
+_6.t=_6.b=_e/2;
 break;
 case 90:
 case 270:
-_6[_11]=_c;
+_6[_14]=_e;
 _6.t=_6.b=_7/2;
 break;
 default:
-if(_d<=_3||(180<_d&&_d<=(180+_3))){
-_6[_11]=_c*_10/2+_7*_f;
-_6[_e?"t":"b"]=_c*_f/2+_7*_10;
-_6[_e?"b":"t"]=_c*_f/2;
+if(_10<=_3||(180<_10&&_10<=(180+_3))){
+_6[_14]=_e*_13/2+_7*_12;
+_6[_11?"t":"b"]=_e*_12/2+_7*_13;
+_6[_11?"b":"t"]=_e*_12/2;
 }else{
-if(_d>(360-_3)||(180>_d&&_d>(180-_3))){
-_6[_11]=_c*_10/2+_7*_f;
-_6[_e?"b":"t"]=_c*_f/2+_7*_10;
-_6[_e?"t":"b"]=_c*_f/2;
+if(_10>(360-_3)||(180>_10&&_10>(180-_3))){
+_6[_14]=_e*_13/2+_7*_12;
+_6[_11?"b":"t"]=_e*_12/2+_7*_13;
+_6[_11?"t":"b"]=_e*_12/2;
 }else{
-if(_d<90||(180<_d&&_d<270)){
-_6[_11]=_c*_10+_7*_f;
-_6[_e?"t":"b"]=_c*_f+_7*_10;
+if(_10<90||(180<_10&&_10<270)){
+_6[_14]=_e*_13+_7*_12;
+_6[_11?"t":"b"]=_e*_12+_7*_13;
 }else{
-_6[_11]=_c*_10+_7*_f;
-_6[_e?"b":"t"]=_c*_f+_7*_10;
+_6[_14]=_e*_13+_7*_12;
+_6[_11?"b":"t"]=_e*_12+_7*_13;
 }
 }
 }
 break;
 }
-_6[_11]+=_2+Math.max(_a.length,_b.length);
+_6[_14]+=_2+Math.max(_c.length,_d.length)+(o.title?(_f+_b):0);
 }else{
-var _11=_e?"b":"t";
-switch(_d){
+var _14=_11?"b":"t";
+switch(_10){
 case 0:
 case 180:
-_6[_11]=_c;
+_6[_14]=_e;
 _6.l=_6.r=_7/2;
 break;
 case 90:
 case 270:
-_6[_11]=_7;
-_6.l=_6.r=_c/2;
+_6[_14]=_7;
+_6.l=_6.r=_e/2;
 break;
 default:
-if((90-_3)<=_d&&_d<=90||(270-_3)<=_d&&_d<=270){
-_6[_11]=_c*_10/2+_7*_f;
-_6[_e?"r":"l"]=_c*_f/2+_7*_10;
-_6[_e?"l":"r"]=_c*_f/2;
+if((90-_3)<=_10&&_10<=90||(270-_3)<=_10&&_10<=270){
+_6[_14]=_e*_13/2+_7*_12;
+_6[_11?"r":"l"]=_e*_12/2+_7*_13;
+_6[_11?"l":"r"]=_e*_12/2;
 }else{
-if(90<=_d&&_d<=(90+_3)||270<=_d&&_d<=(270+_3)){
-_6[_11]=_c*_10/2+_7*_f;
-_6[_e?"l":"r"]=_c*_f/2+_7*_10;
-_6[_e?"r":"l"]=_c*_f/2;
+if(90<=_10&&_10<=(90+_3)||270<=_10&&_10<=(270+_3)){
+_6[_14]=_e*_13/2+_7*_12;
+_6[_11?"l":"r"]=_e*_12/2+_7*_13;
+_6[_11?"r":"l"]=_e*_12/2;
 }else{
-if(_d<_3||(180<_d&&_d<(180-_3))){
-_6[_11]=_c*_10+_7*_f;
-_6[_e?"r":"l"]=_c*_f+_7*_10;
+if(_10<_3||(180<_10&&_10<(180-_3))){
+_6[_14]=_e*_13+_7*_12;
+_6[_11?"r":"l"]=_e*_12+_7*_13;
 }else{
-_6[_11]=_c*_10+_7*_f;
-_6[_e?"l":"r"]=_c*_f+_7*_10;
+_6[_14]=_e*_13+_7*_12;
+_6[_11?"l":"r"]=_e*_12+_7*_13;
 }
 }
 }
 break;
 }
-_6[_11]+=_2+Math.max(_a.length,_b.length);
+_6[_14]+=_2+Math.max(_c.length,_d.length)+(o.title?(_f+_b):0);
 }
 }
 if(_7){
 this._cachedLabelWidth=_7;
 }
 return _6;
-},render:function(dim,_12){
+},render:function(dim,_15){
 if(!this.dirty){
 return this;
 }
-var o=this.opt,ta=this.chart.theme.axis,_13=o.leftBottom,_14=o.rotation%360,_15,_16,_17,_18,_19,_1a,_1b,_1c=o.font||(ta.majorTick&&ta.majorTick.font)||(ta.tick&&ta.tick.font),_1d=o.fontColor||(ta.majorTick&&ta.majorTick.fontColor)||(ta.tick&&ta.tick.fontColor)||"black",_1e=this.chart.theme.getTick("major",o),_1f=this.chart.theme.getTick("minor",o),_20=this.chart.theme.getTick("micro",o),_21=Math.max(_1e.length,_1f.length,_20.length),_22="stroke" in o?o.stroke:ta.stroke,_23=_1c?g.normalizedLength(g.splitFontString(_1c).size):0;
-if(_14<0){
-_14+=360;
+var o=this.opt,ta=this.chart.theme.axis,_16=o.leftBottom,_17=o.rotation%360,_18,_19,_1a,_1b=0,_1c,_1d,_1e,_1f,_20,_21,_22=o.font||(ta.majorTick&&ta.majorTick.font)||(ta.tick&&ta.tick.font),_23=o.titleFont||(ta.tick&&ta.tick.titleFont),_24=o.fontColor||(ta.majorTick&&ta.majorTick.fontColor)||(ta.tick&&ta.tick.fontColor)||"black",_25=o.titleFontColor||(ta.tick&&ta.tick.titleFontColor)||"black",_26=(o.titleGap==0)?0:o.titleGap||(ta.tick&&ta.tick.titleGap)||15,_27=o.titleOrientation||(ta.tick&&ta.tick.titleOrientation)||"axis",_28=this.chart.theme.getTick("major",o),_29=this.chart.theme.getTick("minor",o),_2a=this.chart.theme.getTick("micro",o),_2b=Math.max(_28.length,_29.length,_2a.length),_2c="stroke" in o?o.stroke:ta.stroke,_2d=_22?g.normalizedLength(g.splitFontString(_22).size):0,_2e=Math.abs(Math.cos(_17*Math.PI/180)),_2f=Math.abs(Math.sin(_17*Math.PI/180)),_30=_23?g.normalizedLength(g.splitFontString(_23).size):0;
+if(_17<0){
+_17+=360;
 }
 if(this.vertical){
-_15={y:dim.height-_12.b};
-_16={y:_12.t};
-_17={x:0,y:-1};
-_1a={x:0,y:0};
-_18={x:1,y:0};
-_19={x:_2,y:0};
-switch(_14){
+_18={y:dim.height-_15.b};
+_19={y:_15.t};
+_1a={y:(dim.height-_15.b+_15.t)/2};
+_1c=_2d*_2f+(this._cachedLabelWidth||0)*_2e+_2+Math.max(_28.length,_29.length)+_30+_26;
+_1d={x:0,y:-1};
+_20={x:0,y:0};
+_1e={x:1,y:0};
+_1f={x:_2,y:0};
+switch(_17){
 case 0:
-_1b="end";
-_1a.y=_23*0.4;
+_21="end";
+_20.y=_2d*0.4;
 break;
 case 90:
-_1b="middle";
-_1a.x=-_23;
+_21="middle";
+_20.x=-_2d;
 break;
 case 180:
-_1b="start";
-_1a.y=-_23*0.4;
+_21="start";
+_20.y=-_2d*0.4;
 break;
 case 270:
-_1b="middle";
+_21="middle";
 break;
 default:
-if(_14<_3){
-_1b="end";
-_1a.y=_23*0.4;
+if(_17<_3){
+_21="end";
+_20.y=_2d*0.4;
 }else{
-if(_14<90){
-_1b="end";
-_1a.y=_23*0.4;
+if(_17<90){
+_21="end";
+_20.y=_2d*0.4;
 }else{
-if(_14<(180-_3)){
-_1b="start";
+if(_17<(180-_3)){
+_21="start";
 }else{
-if(_14<(180+_3)){
-_1b="start";
-_1a.y=-_23*0.4;
+if(_17<(180+_3)){
+_21="start";
+_20.y=-_2d*0.4;
 }else{
-if(_14<270){
-_1b="start";
-_1a.x=_13?0:_23*0.4;
+if(_17<270){
+_21="start";
+_20.x=_16?0:_2d*0.4;
 }else{
-if(_14<(360-_3)){
-_1b="end";
-_1a.x=_13?0:_23*0.4;
+if(_17<(360-_3)){
+_21="end";
+_20.x=_16?0:_2d*0.4;
 }else{
-_1b="end";
-_1a.y=_23*0.4;
+_21="end";
+_20.y=_2d*0.4;
 }
 }
 }
@@ -182,141 +184,213 @@ _1a.y=_23*0.4;
 }
 }
 }
-if(_13){
-_15.x=_16.x=_12.l;
-_18.x=-1;
-_19.x=-_19.x;
+if(_16){
+_18.x=_19.x=_15.l;
+_1b=(_27&&_27=="away")?90:270;
+_1a.x=_15.l-_1c+(_1b==270?_30:0);
+_1e.x=-1;
+_1f.x=-_1f.x;
 }else{
-_15.x=_16.x=dim.width-_12.r;
-switch(_1b){
+_18.x=_19.x=dim.width-_15.r;
+_1b=(_27&&_27=="axis")?90:270;
+_1a.x=dim.width-_15.r+_1c-(_1b==270?0:_30);
+switch(_21){
 case "start":
-_1b="end";
+_21="end";
 break;
 case "end":
-_1b="start";
+_21="start";
 break;
 case "middle":
-_1a.x+=_23;
+_20.x+=_2d;
 break;
 }
 }
 }else{
-_15={x:_12.l};
-_16={x:dim.width-_12.r};
-_17={x:1,y:0};
-_1a={x:0,y:0};
-_18={x:0,y:1};
-_19={x:0,y:_2};
-switch(_14){
+_18={x:_15.l};
+_19={x:dim.width-_15.r};
+_1a={x:(dim.width-_15.r+_15.l)/2};
+_1c=_2d*_2e+(this._cachedLabelWidth||0)*_2f+_2+Math.max(_28.length,_29.length)+_30+_26;
+_1d={x:1,y:0};
+_20={x:0,y:0};
+_1e={x:0,y:1};
+_1f={x:0,y:_2};
+switch(_17){
 case 0:
-_1b="middle";
-_1a.y=_23;
+_21="middle";
+_20.y=_2d;
 break;
 case 90:
-_1b="start";
-_1a.x=-_23*0.4;
+_21="start";
+_20.x=-_2d*0.4;
 break;
 case 180:
-_1b="middle";
+_21="middle";
 break;
 case 270:
-_1b="end";
-_1a.x=_23*0.4;
+_21="end";
+_20.x=_2d*0.4;
 break;
 default:
-if(_14<(90-_3)){
-_1b="start";
-_1a.y=_13?_23:0;
+if(_17<(90-_3)){
+_21="start";
+_20.y=_16?_2d:0;
 }else{
-if(_14<(90+_3)){
-_1b="start";
-_1a.x=-_23*0.4;
+if(_17<(90+_3)){
+_21="start";
+_20.x=-_2d*0.4;
 }else{
-if(_14<180){
-_1b="start";
-_1a.y=_13?0:-_23;
+if(_17<180){
+_21="start";
+_20.y=_16?0:-_2d;
 }else{
-if(_14<(270-_3)){
-_1b="end";
-_1a.y=_13?0:-_23;
+if(_17<(270-_3)){
+_21="end";
+_20.y=_16?0:-_2d;
 }else{
-if(_14<(270+_3)){
-_1b="end";
-_1a.y=_13?_23*0.4:0;
+if(_17<(270+_3)){
+_21="end";
+_20.y=_16?_2d*0.4:0;
 }else{
-_1b="end";
-_1a.y=_13?_23:0;
+_21="end";
+_20.y=_16?_2d:0;
 }
 }
 }
 }
 }
 }
-if(_13){
-_15.y=_16.y=dim.height-_12.b;
+if(_16){
+_18.y=_19.y=dim.height-_15.b;
+_1b=(_27&&_27=="axis")?180:0;
+_1a.y=dim.height-_15.b+_1c-(_1b?_30:0);
 }else{
-_15.y=_16.y=_12.t;
-_18.y=-1;
-_19.y=-_19.y;
-switch(_1b){
+_18.y=_19.y=_15.t;
+_1b=(_27&&_27=="away")?180:0;
+_1a.y=_15.t-_1c+(_1b?0:_30);
+_1e.y=-1;
+_1f.y=-_1f.y;
+switch(_21){
 case "start":
-_1b="end";
+_21="end";
 break;
 case "end":
-_1b="start";
+_21="start";
 break;
 case "middle":
-_1a.y-=_23;
+_20.y-=_2d;
 break;
 }
 }
 }
 this.cleanGroup();
 try{
-var s=this.group,c=this.scaler,t=this.ticks,_24,f=_1.getTransformerFromModel(this.scaler),_25=(dojox.gfx.renderer=="canvas"),_26=_25||!_14&&this.opt.htmlLabels&&!dojo.isIE&&!dojo.isOpera?"html":"gfx",dx=_18.x*_1e.length,dy=_18.y*_1e.length;
-s.createLine({x1:_15.x,y1:_15.y,x2:_16.x,y2:_16.y}).setStroke(_22);
-dojo.forEach(t.major,function(_27){
-var _28=f(_27.value),_29,x=_15.x+_17.x*_28,y=_15.y+_17.y*_28;
-s.createLine({x1:x,y1:y,x2:x+dx,y2:y+dy}).setStroke(_1e);
-if(_27.label){
-_29=dc.axis2d.common.createText[_26](this.chart,s,x+dx+_19.x+(_14?0:_1a.x),y+dy+_19.y+(_14?0:_1a.y),_1b,_27.label,_1c,_1d);
-if(_26=="html"){
-this.htmlElements.push(_29);
+var s=this.group,c=this.scaler,t=this.ticks,_31,f=_1.getTransformerFromModel(this.scaler),_32=(dojox.gfx.renderer=="canvas"),_33=_32||!_1b&&!_17&&this.opt.htmlLabels&&!dojo.isIE&&!dojo.isOpera?"html":"gfx",dx=_1e.x*_28.length,dy=_1e.y*_28.length;
+s.createLine({x1:_18.x,y1:_18.y,x2:_19.x,y2:_19.y}).setStroke(_2c);
+if(o.title){
+var _34=dc.axis2d.common.createText[_33](this.chart,s,_1a.x,_1a.y,"middle",o.title,_23,_25);
+if(_33=="html"){
+if(_1b){
+var _35=dojo.coords(_34.firstChild,true),tw=dojox.gfx._base._getTextBox(o.title,{font:_23}).w;
+dojo.addClass(_34.firstChild,"axisTitleRotation"+_1b);
+titlePosOffset={top:0,left:0};
+switch(_1b){
+case 90:
+titlePosOffset.top=_30/2-tw/2,titlePosOffset.left=tw/2+_30/2;
+break;
+case 180:
+titlePosOffset.top=_30,titlePosOffset.left=tw;
+break;
+case 270:
+titlePosOffset.top=_30/2+tw/2,titlePosOffset.left=tw/2-_30/2;
+break;
+default:
+break;
+}
+dojo.style(_34.firstChild,{top:_35.t+titlePosOffset.top+"px",left:_35.l+titlePosOffset.left+"px"});
+}
+this.htmlElements.push(_34);
 }else{
-if(_14){
-_29.setTransform([{dx:_1a.x,dy:_1a.y},g.matrix.rotategAt(_14,x+dx+_19.x,y+dy+_19.y)]);
+_34.setTransform(g.matrix.rotategAt(_1b,_1a.x,_1a.y));
+}
+}
+dojo.forEach(t.major,function(_36){
+var _37=f(_36.value),_38,x=_18.x+_1d.x*_37,y=_18.y+_1d.y*_37;
+s.createLine({x1:x,y1:y,x2:x+dx,y2:y+dy}).setStroke(_28);
+if(_36.label){
+var _39=o.maxLabelCharCount?this.getTextWithLimitCharCount(_36.label,_22,o.maxLabelCharCount):{text:_36.label,truncated:false};
+_39=o.maxLabelSize?this.getTextWithLimitLength(_39.text,_22,o.maxLabelSize,_39.truncated):_39;
+_38=dc.axis2d.common.createText[_33](this.chart,s,x+dx+_1f.x+(_17?0:_20.x),y+dy+_1f.y+(_17?0:_20.y),_21,_39.text,_22,_24);
+_39.truncated&&this.labelTooltip(_38,this.chart,_36.label,_39.text,_22,_33);
+if(_33=="html"){
+this.htmlElements.push(_38);
+}else{
+if(_17){
+_38.setTransform([{dx:_20.x,dy:_20.y},g.matrix.rotategAt(_17,x+dx+_1f.x,y+dy+_1f.y)]);
 }
 }
 }
 },this);
-dx=_18.x*_1f.length;
-dy=_18.y*_1f.length;
-_24=c.minMinorStep<=c.minor.tick*c.bounds.scale;
-dojo.forEach(t.minor,function(_2a){
-var _2b=f(_2a.value),_2c,x=_15.x+_17.x*_2b,y=_15.y+_17.y*_2b;
-s.createLine({x1:x,y1:y,x2:x+dx,y2:y+dy}).setStroke(_1f);
-if(_24&&_2a.label){
-_2c=dc.axis2d.common.createText[_26](this.chart,s,x+dx+_19.x+(_14?0:_1a.x),y+dy+_19.y+(_14?0:_1a.y),_1b,_2a.label,_1c,_1d);
-if(_26=="html"){
-this.htmlElements.push(_2c);
+dx=_1e.x*_29.length;
+dy=_1e.y*_29.length;
+_31=c.minMinorStep<=c.minor.tick*c.bounds.scale;
+dojo.forEach(t.minor,function(_3a){
+var _3b=f(_3a.value),_3c,x=_18.x+_1d.x*_3b,y=_18.y+_1d.y*_3b;
+s.createLine({x1:x,y1:y,x2:x+dx,y2:y+dy}).setStroke(_29);
+if(_31&&_3a.label){
+var _3d=o.maxLabelCharCount?this.getTextWithLimitCharCount(_3a.label,_22,o.maxLabelCharCount):{text:_3a.label,truncated:false};
+_3d=o.maxLabelSize?this.getTextWithLimitLength(_3d.text,_22,o.maxLabelSize,_3d.truncated):_3d;
+_3c=dc.axis2d.common.createText[_33](this.chart,s,x+dx+_1f.x+(_17?0:_20.x),y+dy+_1f.y+(_17?0:_20.y),_21,_3d.text,_22,_24);
+_3d.truncated&&this.labelTooltip(_3c,this.chart,_3a.label,_3d.text,_22,_33);
+if(_33=="html"){
+this.htmlElements.push(_3c);
 }else{
-if(_14){
-_2c.setTransform([{dx:_1a.x,dy:_1a.y},g.matrix.rotategAt(_14,x+dx+_19.x,y+dy+_19.y)]);
+if(_17){
+_3c.setTransform([{dx:_20.x,dy:_20.y},g.matrix.rotategAt(_17,x+dx+_1f.x,y+dy+_1f.y)]);
 }
 }
 }
 },this);
-dx=_18.x*_20.length;
-dy=_18.y*_20.length;
-dojo.forEach(t.micro,function(_2d){
-var _2e=f(_2d.value),_2f,x=_15.x+_17.x*_2e,y=_15.y+_17.y*_2e;
-s.createLine({x1:x,y1:y,x2:x+dx,y2:y+dy}).setStroke(_20);
+dx=_1e.x*_2a.length;
+dy=_1e.y*_2a.length;
+dojo.forEach(t.micro,function(_3e){
+var _3f=f(_3e.value),_40,x=_18.x+_1d.x*_3f,y=_18.y+_1d.y*_3f;
+s.createLine({x1:x,y1:y,x2:x+dx,y2:y+dy}).setStroke(_2a);
 },this);
 }
 catch(e){
 }
 this.dirty=false;
 return this;
+},labelTooltip:function(_41,_42,_43,_44,_45,_46){
+var _47={type:"rect"},_48=["above","below"],_49=dojox.gfx._base._getTextBox(_44,{font:_45}).w||0;
+fontHeight=_45?g.normalizedLength(g.splitFontString(_45).size):0;
+if(_46=="html"){
+dojo.mixin(_47,dojo.coords(_41.firstChild,true));
+_47.width=Math.ceil(_49);
+_47.height=Math.ceil(fontHeight);
+this._events.push({shape:dojo,handle:dojo.connect(_41.firstChild,"onmouseover",this,function(e){
+dijit.showTooltip(_43,_47,_48);
+})});
+this._events.push({shape:dojo,handle:dojo.connect(_41.firstChild,"onmouseout",this,function(e){
+dijit.hideTooltip(_47);
+})});
+}else{
+var shp=_41.getShape(),lt=dojo.coords(_42.node,true);
+_47=dojo.mixin(_47,{x:shp.x-_49/2,y:shp.y});
+_47.x+=lt.x;
+_47.y+=lt.y;
+_47.x=Math.round(_47.x);
+_47.y=Math.round(_47.y);
+_47.width=Math.ceil(_49);
+_47.height=Math.ceil(fontHeight);
+this._events.push({shape:_41,handle:_41.connect("onmouseenter",this,function(e){
+dijit.showTooltip(_43,_47,_48);
+})});
+this._events.push({shape:_41,handle:_41.connect("onmouseleave",this,function(e){
+dijit.hideTooltip(_47);
+})});
+}
 }});
 })();
 }

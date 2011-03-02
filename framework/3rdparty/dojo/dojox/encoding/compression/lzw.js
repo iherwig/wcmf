@@ -9,6 +9,7 @@ if(!dojo._hasResource["dojox.encoding.compression.lzw"]){
 dojo._hasResource["dojox.encoding.compression.lzw"]=true;
 dojo.provide("dojox.encoding.compression.lzw");
 dojo.require("dojox.encoding.bits");
+dojo.getObject("encoding.compression.lzw",true,dojox);
 (function(){
 var _1=function(x){
 var w=1;

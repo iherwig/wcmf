@@ -166,8 +166,7 @@ dojo.stopEvent(e);
 },_changeState:function(_11,_12){
 var _13="dojoDnd"+_11;
 var _14=_11.toLowerCase()+"State";
-dojo.removeClass(this.node,_13+this[_14]);
-dojo.addClass(this.node,_13+_12);
+dojo.replaceClass(this.node,_13+_12,_13+this[_14]);
 this[_14]=_12;
 },_addItemClass:function(_15,_16){
 dojo.addClass(_15,"dojoDndItem"+_16);
