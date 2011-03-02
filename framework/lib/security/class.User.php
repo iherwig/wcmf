@@ -51,11 +51,14 @@ abstract class User extends Node
   public function getUser($login, $password)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
-    $oid = $persistenceFacade->getFirstOID(UserManager::getUserClassName(),
-                  array('login' => $login, 'password' => $password), null);
-    if ($oid != null)
+    $userType = UserManager::getUserClassName();
+    $user = $persistenceFacade->loadFirstObject($userType, BUILDDEPTH_SINGLE,
+                  array(
+                      new Criteria($userType, 'login', '=', $login),
+                      new Criteria($userType, 'password', '=', $password)
+                  ), null);
+    if ($user != null)
     {
-      $user = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
       // initially load roles
       $user->getRoles();
       return $user;

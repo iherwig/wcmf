@@ -21,8 +21,7 @@
 
   <!-- link rel="stylesheet" type="text/css" href="style/style.css" /-->
   <link rel="stylesheet" type="text/css" href="style/wcmf.css" />
-  <link rel="stylesheet" type="text/css" href="{$libDir}3rdparty/dojo/dijit/themes/claro/claro.css" />
-  <link rel="stylesheet" type="text/css" href="{$libDir}3rdparty/dojo/dojox/grid/enhanced/resources/tundraEnhancedGrid.css" />
+  <link rel="stylesheet" type="text/css" href="style/dojo_theme/wcmf.css" />
 
   <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
 
@@ -39,12 +38,12 @@
     dojo.require("dijit.Menu");
     dojo.require("dijit.MenuItem");
     dojo.require("dijit.PopupMenuItem");
-    
+
     dojo.require("dojo.fx");
 
     /**
      * Some global variables in the wcmf namespace
-     */ 
+     */
     dojo.provide("wcmf");
     wcmf.appURL = '{$smarty.server.PHP_SELF}';
     wcmf.sid = '{$sid}';
@@ -64,7 +63,7 @@
   <script type="text/javascript" src="{$libDir}application/js/ui/DetailPane.js"></script>
 {/block}
 </head>
-<body class="claro">
+<body class="wcmf">
 <div id="mainDiv">
 <div dojoType="dijit.layout.BorderContainer" style="width:100%; height:100%" gutters="false">
   <!-- TOP Pane -->

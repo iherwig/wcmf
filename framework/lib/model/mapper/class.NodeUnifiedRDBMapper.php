@@ -182,12 +182,18 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     {
       foreach ($criteria as $curCriteria)
       {
-        $condition = $this->renderCriteria($curCriteria, true, $tableName);
-        if ($curCriteria->getCombineOperator() == Criteria::OPERATOR_AND) {
-          $selectStmt->where($condition, $curCriteria->getValue());
+        if ($curCriteria instanceof Criteria)
+        {
+          $condition = $this->renderCriteria($curCriteria, true, $tableName);
+          if ($curCriteria->getCombineOperator() == Criteria::OPERATOR_AND) {
+            $selectStmt->where($condition, $curCriteria->getValue());
+          }
+          else {
+            $selectStmt->orWhere($condition, $curCriteria->getValue());
+          }
         }
         else {
-          $selectStmt->orWhere($condition, $curCriteria->getValue());
+          throw new IllegalArgumentException("The select condition must be an instance of Criteria");
         }
       }
     }

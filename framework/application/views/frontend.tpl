@@ -1,7 +1,7 @@
 {extends file="lib:application/views/main.tpl"}
 
 {block name=head append}
-<script type="text/javascript" src="main.php?action=getModel"></script>
+<script type="text/javascript" src="main.php?action=model"></script>
 <script type="text/javascript">
 dojo.addOnLoad(function() {
   /**

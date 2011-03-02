@@ -28,8 +28,8 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  * @brief WCMFFrontendController is used to display the wCMF frontend.
  *
  * <b>Input actions:</b>
- * - getModel: Get a list of template instances of all known model entities
- * - getDetail: Get a template instance of a given type and optional an object
+ * - model: Get a list of template instances of all known model entities
+ * - detail: Get a template instance of a given type and optional an object
  * - unspecified: Display the frontend
  *
  * <b>Output actions:</b>
@@ -54,7 +54,7 @@ class WCMFFrontendController extends Controller
   {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if($request->getAction() == 'getDetail')
+    if($request->getAction() == 'detail')
     {
       if ($request->hasValue('type')) {
         $type = $request->getValue('type');
@@ -83,7 +83,7 @@ class WCMFFrontendController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    if ($request->getAction() == 'getModel')
+    if ($request->getAction() == 'model')
     {
       // get all known types
       $knownTypes = $persistenceFacade->getKnownTypes();
@@ -96,7 +96,7 @@ class WCMFFrontendController extends Controller
       // set response values
       $response->setValue('typeTemplates', $typeTemplates);
     }
-    else if ($request->getAction() == 'getDetail')
+    else if ($request->getAction() == 'detail')
     {
       // called with type parameter
       if ($request->hasValue('type')) {

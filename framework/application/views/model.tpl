@@ -19,14 +19,14 @@ dojo.declare("wcmf.model.{$type}Class", wcmf.model.base.Class, {
   'type': '{$type}',
   'attributes': [
 {foreach $mapper->getAttributes() as $attribute}
-    { name: "{$attribute->name}", isEditable: {if $attribute->isEditable}true{else}false{/if}, tags: [{if sizeof($attribute->tags) > 0}"{join('","',$attribute->tags)}"{/if}] }{if !$attribute@last},
+    { name: "{$attribute->getName()}", isEditable: {if $attribute->getIsEditable()}true{else}false{/if}, tags: [{if sizeof($attribute->getTags()) > 0}"{join('","',$attribute->getTags())}"{/if}] }{if !$attribute@last},
 {/if}
 {/foreach}
 
   ],
   'relations': [
 {foreach $mapper->getRelations() as $relation}
-    { name: "{$relation->otherRole}", type: "{$relation->otherType}" }{if !$relation@last},
+    { name: "{$relation->getOtherRole()}", type: "{$relation->getOtherType()}" }{if !$relation@last},
 {/if}
 {/foreach}
 

@@ -138,7 +138,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       }
     }
     else {
-      throw new InvalidArgumentException("Wrong parameters for constructor.", __FILE__, __LINE__);
+      throw new InvalidArgumentException("Wrong parameters for constructor.");
     }
   }
   /**
@@ -555,7 +555,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE, BUILDDEPTH_REQUIRED))) {
-      throw new InvalidArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
+      throw new InvalidArgumentException("Build depth not supported: $buildDepth");
     }
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -785,7 +785,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     $buildAttribs=null, $buildTypes=null)
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE))) {
-      throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
+      throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
     $objects = array();
     $type = $this->getType();
@@ -825,7 +825,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     $buildAttribs=null, $buildTypes=null)
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE))) {
-      throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
+      throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
     $objects = array();
 
@@ -979,11 +979,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    */
   protected function addRelatedObjects(PersistentObject $object, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
   {
-    $persistenceFacade = PersistenceFacade::getInstance();
-
     // recalculate build depth for the next generation
     $newBuildDepth = $buildDepth;
     if ($buildDepth != BUILDDEPTH_SINGLE && $buildDepth != BUILDDEPTH_INFINITE && $buildDepth > 0) {
+      Log::error($buildDepth, __CLASS__);
       $newBuildDepth = $buildDepth-1;
     }
     $loadNextGeneration = (($buildDepth != BUILDDEPTH_SINGLE) && ($buildDepth > 0 || $buildDepth == BUILDDEPTH_INFINITE));

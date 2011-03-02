@@ -601,7 +601,7 @@ class Node extends PersistentObject
     $oldState = $this->getState();
     foreach ($roles as $curRole)
     {
-      if ($this->_relationStates[$curRole] != Node::RELATION_STATE_LOADED)
+      if (isset($this->_relationStates[$curRole]) && $this->_relationStates[$curRole] != Node::RELATION_STATE_LOADED)
       {
         $relatives = array();
 

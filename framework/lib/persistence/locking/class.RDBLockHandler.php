@@ -17,8 +17,9 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.ILockHandler.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.ObjectQuery.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
  * @class LockManagerRDB
