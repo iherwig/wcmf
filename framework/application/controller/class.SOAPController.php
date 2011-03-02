@@ -86,8 +86,8 @@ class SOAPController extends Controller
     $objectList = array();
     foreach ($types as $type)
     {
-      $query = &PersistenceFacade::createObjectQuery($type);
-      $tpl = &$query->getObjectTemplate($type, QUERYOP_OR, QUERYOP_OR);
+      $query = new ObjectQuery($type);
+      $tpl = &$query->getObjectTemplate($type, ObjectQuery::QUERYOP_OR, ObjectQuery::QUERYOP_OR);
 
       // only search types with attributes and which are searchable
       if ($tpl->getProperty('is_searchable') == true)
@@ -125,8 +125,9 @@ class SOAPController extends Controller
    */
   function soapAdvancedSearch($type, $queryStr)
   {
-    $query = &PersistenceFacade::createStringQuery();
-    $nodes = $query->execute($type, $queryStr, BUILDDEPTH_SINGLE);
+    $query = new StringQuery($type);
+    $query->setConditionString($queryStr);
+    $nodes = $query->execute(BUILDDEPTH_SINGLE);
 		$objectList = array();
     foreach ($nodes as $node)
     {

@@ -41,9 +41,9 @@ class UserManagerRDB extends UserManager
 
     // load the user/role instances
     $persistenceFacade = PersistenceFacade::getInstance();
-    $query = $persistenceFacade->createObjectQuery(UserManager::getUserClassName());
+    $query = new ObjectQuery(UserManager::getUserClassName());
     $users = $query->execute(1);
-    $query = $persistenceFacade->createObjectQuery(UserManager::getRoleClassName());
+    $query = new ObjectQuery(UserManager::getRoleClassName());
     $roles = $query->execute(1);
 
     // add the user/role instances to the repository

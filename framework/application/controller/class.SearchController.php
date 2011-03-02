@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,14 +11,14 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/application/controller/class.AsyncPagingController.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectQuery.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.ObjectQuery.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
@@ -27,11 +27,11 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
  * @ingroup Controller
  * @brief SearchController is a controller that exectutes a search for oids and
  * displays them in a paged list. If a type is given in the parameters, it will search
- * for oids of that type where the attribute values match the given ones (advanced search). 
+ * for oids of that type where the attribute values match the given ones (advanced search).
  * Otherwise it searches for a given searchterm in all nodes and displays the result in a list (simple search).
  * If the action is definesearch, it will display an input form for node values to
  * search for.
- * 
+ *
  * <b>Input actions:</b>
  * - @em definesearch Show the detail search screen
  * - @em list Actually do the search
@@ -43,7 +43,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
  *
  * @param [in,out] searchterm The term to search for (The actual searchterm in simple search, empty in advanced search)
  * @param[in,out] type The type to search for (advanced search only)
- * @param[in] <type:...> A Node instance used as search template 
+ * @param[in] <type:...> A Node instance used as search template
  *            (advanced search only, oid maybe a dummy oid)
  * @param[out] searchdef The search definition (The searchterm in simple search, a json serialize node used
  *            to search as ObjectQuery search template in advanced search)
@@ -56,19 +56,19 @@ class SearchController extends AsyncPagingController
   // session name constants
   var $OIDS_VARNAME = 'SearchController.oids';
   var $FILTER_VARNAME = 'SearchController.filter';
-  
+
   /**
    * @see Controller::initialize()
    */
   function initialize(&$request, &$response)
-  {    
+  {
     // check if this is a new call and the stored oids should be deleted
     if ($request->getAction() != 'list')
     {
       $session = &SessionData::getInstance();
       $session->remove($this->OIDS_VARNAME);
     }
-    
+
     // don't initialize paging, when defining a search
     if ($request->getAction() == 'definesearch') {
       Controller::initialize($request, $response);
@@ -115,7 +115,7 @@ class SearchController extends AsyncPagingController
         }
       }
       $listBoxStr = substr($listBoxStr, 0, -1);
-    
+
       // default selection if unknown type is given
       $type = $this->_request->getValue('type');
       if (!PersistenceFacade::isKnownType($type)) {
@@ -128,7 +128,7 @@ class SearchController extends AsyncPagingController
       $this->_response->setValue('node', $node);
       $this->_response->setValue('type', $type);
       $this->_response->setValue('listBoxStr', $listBoxStr);
-      
+
       $this->_response->setAction('ok');
       return false;
     }
@@ -137,7 +137,7 @@ class SearchController extends AsyncPagingController
     {
       return parent::executeKernel();
     }
-    
+
     // if a type is given, we have to perform an advanced search
     // encode search parameters from advanced search into filter value (as json serialized node)
     $type = $this->_request->getValue('type');
@@ -160,7 +160,7 @@ class SearchController extends AsyncPagingController
             if (strlen($value) > 0) {
               $curNode->setValue($valueName, "LIKE '%".$value."%'");
             }
-            $iter->proceed();            
+            $iter->proceed();
           }
           break;
         }
@@ -189,21 +189,21 @@ class SearchController extends AsyncPagingController
   {
     $rightsManager = RightsManager::getInstance();
     $session = &SessionData::getInstance();
-    
+
     if (!$session->exist($this->OIDS_VARNAME))
     {
       $allOIDs = array();
-      
+
       // if a type is give, we have to perform an advanced search
       $type = $this->_request->getValue('type');
       if (strlen($type) > 0)
       {
-        // get search parameters from filter value 
+        // get search parameters from filter value
         // (json serialized node construced as searchdef parameter)
         $formatter = new JSONFormat();
         $tpl = $formatter->deserializeNode(null, JSONUtil::decode($filter));
-        
-        $query = &PersistenceFacade::createObjectQuery($type);
+
+        $query = new ObjectQuery($type);
         $query->registerObjectTemplate($tpl);
         $allOIDs = $query->execute(false);
       }
@@ -222,10 +222,10 @@ class SearchController extends AsyncPagingController
       $session->set($this->FILTER_VARNAME, $filter);
     }
     $allOIDs = $session->get($this->OIDS_VARNAME);
-    
+
     // update pagingInfo
     $pagingInfo->setTotalCount(sizeof($allOIDs));
-    
+
     // select the requested slice
     if ($pagingInfo->getPageSize() == -1) {
       $size = $pagingInfo->getTotalCount();
@@ -234,7 +234,7 @@ class SearchController extends AsyncPagingController
       $size = $pagingInfo->getPageSize();
     }
     $oids = array_slice($allOIDs, ($pagingInfo->getPage()-1)*$size, $size);
-    
+
     // load the objects
     $persistenceFacade = &PersistenceFacade::getInstance();
     $objects = array();
@@ -277,9 +277,9 @@ class SearchController extends AsyncPagingController
         $summary .= $curValueName.": ".$queryObj->htmlFragmentHighlightMatches($curNode->getValue($curValueName))."<br />";
       }
       $curNode->setValue('summary', $summary);
-      
+
       $curNode->setValue('type', $curNode->getType());
-      $curNode->setValue('displayValue', $curNode->getDisplayValue());      
+      $curNode->setValue('displayValue', $curNode->getDisplayValue());
     }
   }
 }

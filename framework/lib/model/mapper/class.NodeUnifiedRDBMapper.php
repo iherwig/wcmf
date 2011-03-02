@@ -159,7 +159,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
   /**
    * @see RDBMapper::getSelectSQL()
    */
-  protected function getSelectSQL($criteria=null, $alias=null, $orderby=null, $attribs=null)
+  public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $attribs=null)
   {
     $connection = $this->getConnection();
     $selectStmt = $connection->select();
@@ -180,9 +180,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     // condition
     if ($criteria != null)
     {
-      foreach ($criteria as $curCriteria) {
-        $selectStmt->where($this->quoteIdentifier($tableName).".".$this->quoteIdentifier($curCriteria->getAttribute()).
-                " ".$curCriteria->getOperator()." (?)", $curCriteria->getValue());
+      foreach ($criteria as $curCriteria)
+      {
+        $condition = $this->renderCriteria($curCriteria, true, $tableName);
+        if ($curCriteria->getCombineOperator() == Criteria::OPERATOR_AND) {
+          $selectStmt->where($condition, $curCriteria->getValue());
+        }
+        else {
+          $selectStmt->orWhere($condition, $curCriteria->getValue());
+        }
       }
     }
 
@@ -511,8 +517,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
    * Check if a given attribute is a foreign key (used to reference a parent)
    * @param name The attribute name
    * @return True/False
+   * @note Public in order to be callable by ObjectQuery
    */
-  protected function isForeignKey($name)
+  public function isForeignKey($name)
   {
     $fkDescs = $this->getForeignKeyRelations();
     foreach($fkDescs as $fkDesc)

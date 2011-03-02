@@ -27,25 +27,32 @@
  */
 class Criteria
 {
+  const OPERATOR_AND = 'AND'; // the and operator
+  const OPERATOR_OR = 'OR'; // the or operator
+
   protected $type = null;
   protected $attribute = null;
   protected $operator = null;
   protected $value = null;
+  protected $combineOperator = Criteria::OPERATOR_AND;
 
   /**
    * Constructor.
    * @param type The PersistentObject type that has the attribute
    * @param attribute The name of the attribute
    * @param operator The comparison operator used to compare the giben value with
-   *  the attribute's value
+   *   the attribute's value
    * @param value The value to compare the object with
+   * @param combineOperator The Criteria::OPERATOR to use, when this criteria is
+   *   combined with other criteria, optional [default: Criteria::OPERATOR_AND]
    */
-  public function __construct($type, $attribute, $operator, $value)
+  public function __construct($type, $attribute, $operator, $value, $combineOperator=Criteria::OPERATOR_AND)
   {
     $this->type = $type;
     $this->attribute = $attribute;
     $this->operator = $operator;
     $this->value = $value;
+    $this->combineOperator = $combineOperator;
   }
 
   /**
@@ -54,11 +61,20 @@ class Criteria
    * @param operator The comparison operator used to compare the giben value with
    *  the attribute's value
    * @param value The value to compare the object with
+   * @return Criteria
    */
   public static function asValue($operator, $value)
   {
-    $this->operator = $operator;
-    $this->value = $value;
+    return new Criteria(null, null, $operator, $value);
+  }
+
+  /**
+   * Set the PersistentObject type that has the attribute
+   * @param type The type name
+   */
+  public function setType($type)
+  {
+    $this->type = $type;
   }
 
   /**
@@ -71,12 +87,31 @@ class Criteria
   }
 
   /**
+   * Set the name of the attribute
+   * @param attribute The attribute name
+   */
+  public function setAttribute($attribute)
+  {
+    $this->attribute = $attribute;
+  }
+
+  /**
    * Get the name of the attribute
    * @return String
    */
   public function getAttribute()
   {
     return $this->attribute;
+  }
+
+  /**
+   * Set the comparison operator used to compare the giben value with
+   * the attribute's value
+   * @param operator The operator
+   */
+  public function setOperator($operator)
+  {
+    $this->operator = $operator;
   }
 
   /**
@@ -90,6 +125,15 @@ class Criteria
   }
 
   /**
+   * Set the value to compare the object with
+   * @param value The value
+   */
+  public function setValue($value)
+  {
+    $this->value = $value;
+  }
+
+  /**
    * Get the value to compare the object with
    * @return Mixed
    */
@@ -99,12 +143,31 @@ class Criteria
   }
 
   /**
+   * Set the Criteria::OPERATOR to use, when this criteria is combined with other criteria
+   * @param combineOperator One of the Criteria::OPERATOR constants
+   */
+  public function setCombineOperator($combineOperator)
+  {
+    $this->combineOperator = $combineOperator;
+  }
+
+  /**
+   * Get the Criteria::OPERATOR to use, when this criteria is combined with other criteria
+   * @return One of the Criteria::OPERATOR constants
+   */
+  public function getCombineOperator()
+  {
+    return $this->combineOperator;
+  }
+
+  /**
    * Get a string representation of the operation
    * @return String
    */
   public function __toString()
   {
-    $str = $this->type.".".$this->attribute." ".$this->operator." ".$this->value;
+    $str = "[".$this->combineOperator."] ".$this->type.".".$this->attribute.
+            " ".$this->operator." ".$this->value;
     return $str;
   }
 }

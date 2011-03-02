@@ -192,7 +192,7 @@ class NodeSerializer
       $mapper = $node->getMapper();
       foreach ($mapper->getRelations() as $relation)
       {
-        $role = $relation->otherRole;
+        $role = $relation->getOtherRole();
         $relatedNodes = $node->getValue($role);
         if ($relatedNodes)
         {

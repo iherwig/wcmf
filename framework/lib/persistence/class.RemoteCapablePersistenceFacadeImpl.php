@@ -88,8 +88,9 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
   /**
    * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array(), array $buildTypes=array())
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
   {
+    $obj = null;
     if ($this->isResolvingProxies() && strlen($oid->getPrefix()) > 0) {
       // load real subject
       $obj = $this->loadRemoteObject($oid, $buildDepth);
@@ -109,7 +110,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
   /**
    * @see PersistenceFacade::create()
    */
-  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array())
+  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
   {
     $obj = parent::create($type, $buildDepth, $buildAttribs);
     return $obj;
@@ -149,7 +150,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @see PersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    array $buildAttribs=array(), array $buildTypes=array())
+    $buildAttribs=null, $buildTypes=null)
   {
     $tmpResult = parent::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
     $result = array();
@@ -191,12 +192,14 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     if (!$proxy)
     {
       $persistenceFacade = PersistenceFacade::getInstance();
-      if ($persistenceFacade instanceof RemoteCapablePersistenceFacadeImpl) {
+      $isRemoteCapableFacade = ($persistenceFacade instanceof RemoteCapablePersistenceFacadeImpl);
+      $oldState = true;
+      if ($isRemoteCapableFacade) {
         $oldState = $persistenceFacade->isResolvingProxies();
         $persistenceFacade->setResolveProxies(false);
       }
       $proxy = $persistenceFacade->loadFirstObject($umi->getType(), $buildDepth, array($umi->getType().'.umi' => $umi->toString()));
-      if ($persistenceFacade instanceof RemoteCapablePersistenceFacadeImpl) {
+      if ($isRemoteCapableFacade) {
         $persistenceFacade->setResolveProxies($oldState);
       }
       if (!$proxy) {

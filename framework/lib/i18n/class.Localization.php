@@ -201,7 +201,7 @@ class Localization
     else
     {
       $type = $this->getTranslationType();
-      $query = PersistenceFacade::createObjectQuery($type);
+      $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
       $tpl->setObjectid("= '".$object->getOID()."'");
       $tpl->setLanguage("= '".$lang."'");
@@ -211,9 +211,9 @@ class Localization
       $iter = new NodeValueIterator($object, false);
       while(!$iter->isEnd())
       {
-        $this->setTranslatedValue($iter->getCurrentNode(), $iter->getCurrentAttribute(), 
+        $this->setTranslatedValue($iter->getCurrentNode(), $iter->getCurrentAttribute(),
           $translations, $useDefaults);
-        $iter->proceed();                    
+        $iter->proceed();
       }
     }
 
@@ -250,7 +250,7 @@ class Localization
     {
       // get the existing translations for the requested language
       $type = $this->getTranslationType();
-      $query = PersistenceFacade::createObjectQuery($type);
+      $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
       $tpl->setObjectid("= '".$object->getOID()."'");
       $tpl->setLanguage("= '".$lang."'");
@@ -260,9 +260,9 @@ class Localization
       $iter = new NodeValueIterator($object, false);
       while(!$iter->isEnd())
       {
-        $this->saveTranslatedValue($iter->getCurrentNode(), $iter->getCurrentAttribute(), 
+        $this->saveTranslatedValue($iter->getCurrentNode(), $iter->getCurrentAttribute(),
           $translations, $lang, $saveEmptyValues);
-        $iter->proceed();                    
+        $iter->proceed();
       }
     }
 
@@ -293,7 +293,7 @@ class Localization
     {
       // get the existing translations for the requested language or all languages
       $type = $this->getTranslationType();
-      $query = PersistenceFacade::createObjectQuery($type);
+      $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
       $tpl->setObjectid("= '".$oid."'");
       if ($lang != null) {
@@ -323,7 +323,7 @@ class Localization
     {
       // get the existing translations for the requested language
       $type = $this->getTranslationType();
-      $query = PersistenceFacade::createObjectQuery($type);
+      $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
       $tpl->setLanguage("= '".$lang."'");
       $translationOIDs = $query->execute(false);

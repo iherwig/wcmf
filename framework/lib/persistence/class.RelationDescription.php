@@ -215,5 +215,24 @@ class RelationDescription
   {
     return $this->hierarchyType;
   }
+
+  /**
+   * Check if another RelationDescription instance describes the same relation as
+   * this one. This is true if they connect the same types using the same role names
+   * (independent from the direction). All other attributes are not compared.
+   * @param other The other RelationDescription
+   * @return Boolean
+   */
+  public function isSameRelation(RelationDescription $other)
+  {
+    if (($this->thisType == $other->thisType && $this->otherType == $other->otherType
+            && $this->thisRole == $other->thisRole && $this->otherRole == $other->otherRole) ||
+        ($this->thisType == $other->otherType && $this->otherType == $other->thisType
+            && $this->thisRole == $other->otherRole && $this->otherRole == $other->thisRole)
+       ) {
+      return true;
+    }
+    return false;
+  }
 }
 ?>

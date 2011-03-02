@@ -64,9 +64,10 @@ function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $la
   if ($orderbyStr != null) {
     $orderby = preg_split('/,/', $orderbyStr);
   }
-  $query = PersistenceFacade::createStringQuery();
+  $query = new StringQuery($type);
+  $query->setConditionString($queryStr);
   $pagingInfo = new PagingInfo();
-  $nodes = $query->execute($type, $queryStr, BUILDDEPTH_SINGLE, $orderby, $pagingInfo);
+  $nodes = $query->execute(BUILDDEPTH_SINGLE, $orderby, $pagingInfo);
   for($i=0; $i<sizeof($nodes); $i++)
   {
     $oid = $nodes[$i]->getOID();
@@ -115,7 +116,7 @@ function g_getObjects($type, $parentOID)
     $childOIDs[sizeof($childOIDs)] = $child->getOID();
   }
   // collect all possible objects
-  $query = PersistenceFacade::createObjectQuery($type);
+  $query = new ObjectQuery($type);
   $nodes = $query->execute(BUILDDEPTH_SINGLE);
   $oids = $persistenceFacade->getOIDs($type);
   for($i=0; $i<sizeof($nodes); $i++)

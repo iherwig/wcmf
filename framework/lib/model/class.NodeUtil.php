@@ -22,6 +22,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.PathDescription.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/control/class.Control.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/renderer/class.ValueRenderer.php");
 
@@ -35,78 +36,87 @@ require_once(WCMF_BASE."wcmf/lib/presentation/renderer/class.ValueRenderer.php")
 class NodeUtil
 {
   /**
-   * Get the path to a given Node (from a root node).
-   * @param node The Node to find the path for
-   * @return An array containing the nodes in the path
+   * Get the shortest paths that connect a type to another type.
+   * @param type The type to start from
+   * @param otherRole The role of the type at the other end (maybe null, if only type shoudl match)
+   * @param otherType The type at the other end (maybe null, if only role shoudl match)
+   * @param hierarchyType The hierarchy type that the other type has in relation to this type
+   *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
+   * @return An array of PathDescription instances
    */
-  public static function getPath(Node $node)
+  public static function getConnections($type, $otherRole, $otherType, $hierarchyType='all')
   {
-    $path = array();
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $parents = $node->getParents(false);
-    if (sizeof($parents) > 0)
+    $paths = array();
+    self::getConnectionsImpl($type, $otherRole, $otherType, $hierarchyType, $paths);
+    $minLength = -1;
+    $shortestPaths = array();
+    foreach ($paths as $curPath)
     {
-      $parentOID = $parents[0]->getOID();
-      while (ObjectId::isValid($parentOID))
-      {
-        $nodeInPath = $persistenceFacade->load($parentOID, BUILDDEPTH_SINGLE);
-        if ($nodeInPath)
-        {
-          array_push($path, $nodeInPath);
-          $parents = $nodeInPath->getParents(false);
-          if (sizeof($parents) > 0) {
-            $parentOID = $parents[0]->getOID();
-            continue;
-          }
-        }
-        break;
+      $curLength = $curPath->getPathLength();
+      if ($minLength == -1 || $minLength > $curLength) {
+        $minLength = $curLength;
+        $shortestPaths = array($curPath);
+      }
+      elseif ($curLength == $minLength) {
+        $shortestPaths[] = $curPath;
       }
     }
-    return $path;
+    return $shortestPaths;
   }
+
   /**
    * Get the relations that connect a type to another type.
    * @param type The type to start from
-   * @param otherType The type to connect to
+   * @param otherRole The role of the type at the other end (maybe null, if only type shoudl match)
+   * @param otherType The type at the other end (maybe null, if only role shoudl match)
    * @param hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
-   * @param relations Internal use only
-   * @return An array of RelationDescription instances, empty if no connection exists
+   * @param result Array of PathDescriptions after execution
+   * @param currentPath Internal use only
    */
-  public static function getConnection($type, $otherType, $hierarchyType, $relations=null)
+  protected static function getConnectionsImpl($type, $otherRole, $otherType, $hierarchyType, array &$result=array(), array $currentPath=array())
   {
-    if ($relations == null) {
-      $relations = array();
-    }
     $persistenceFacade = PersistenceFacade::getInstance();
     $mapper = $persistenceFacade->getMapper($type);
+
+    // check relations
     $relationDescs = $mapper->getRelations($hierarchyType);
-    if (sizeof($relationDescs) > 0)
+    foreach ($relationDescs as $relationDesc)
     {
-      // check relations
-      foreach ($relationDescs as $relationDesc)
+      // loop detection
+      $loopDetected = false;
+      foreach ($currentPath as $pathPart)
       {
-        // prevent recursion
-        if ($type == $otherType || $relationDesc->otherType != $type)
-        {
-          if ($relationDesc->otherType == $otherType) {
-            // found -> return
-            $relations[] = $relationDesc;
-            return $relations;
-          }
-          else {
-            // nothing found -> proceed with next generation
-            $nextRelations = $relations;
-            $nextRelations[] = $relationDesc;
-            $result = NodeUtil::getConnection($relationDesc->otherType, $otherType, $hierarchyType, $nextRelations);
-            if (sizeof($result) > 0) {
-              return $result;
-            }
-          }
+        if ($relationDesc->isSameRelation($pathPart)) {
+          $loopDetected = true;
+          break;
         }
       }
+      if ($loopDetected) {
+        // continue with next relation
+        continue;
+      }
+
+      $pathFound = null;
+      $nextType = $relationDesc->getOtherType();
+      $nextRole = $relationDesc->getOtherRole();
+      if (($otherRole != null && $nextRole == $otherRole) || ($otherType != null && $nextType == $otherType)) {
+        // other end found -> terminate
+        $pathFound = $currentPath;
+        $pathFound[] = $relationDesc;
+      }
+      else {
+        // nothing found -> proceed with next generation
+        $nextCurrentPath = $currentPath;
+        $nextCurrentPath[] = $relationDesc;
+        self::getConnectionsImpl($nextType, $otherRole, $otherType, $hierarchyType, $result, $nextCurrentPath);
+      }
+
+      // if a path is found, add it to the result
+      if ($pathFound) {
+        $result[] = new PathDescription($pathFound);
+      }
     }
-    return array();
   }
   /**
    * Get the query used to select all Nodes of a type.
@@ -115,7 +125,7 @@ class NodeUtil
    */
   public static function getNodeQuery($nodeType)
   {
-    $query = PersistenceFacade::getInstance()->createObjectQuery($nodeType);
+    $query = new ObjectQuery($nodeType);
     return $query->toString();
   }
   /**
@@ -126,7 +136,7 @@ class NodeUtil
    */
   public static function getSelfQuery($nodeType, ObjectId $oid)
   {
-    $query = PersistenceFacade::getInstance()->createObjectQuery($nodeType);
+    $query = new ObjectQuery($nodeType);
     $tpl = $query->getObjectTemplate($nodeType);
     $mapper = $tpl->getMapper();
     $ids = $oid->getId();
@@ -146,7 +156,7 @@ class NodeUtil
   {
     $parentType = $childNode->getTypeForRole($parentRole);
   //Log::error($parentRole." ".$parentType." ".$childNode->toString(), __CLASS__);
-    $query = PersistenceFacade::getInstance()->createObjectQuery($parentType);
+    $query = new ObjectQuery($parentType);
     $tpl = $query->getObjectTemplate($parentType);
     // prepare the child: use a new one and set the primary key values
     $cTpl = $query->getObjectTemplate($childNode->getType());
@@ -168,7 +178,7 @@ class NodeUtil
   {
     $childType = $parentNode->getTypeForRole($childRole);
   //Log::error($childRole." ".$childType." ".$parentNode->toString(), __CLASS__);
-    $query = PersistenceFacade::getInstance()->createObjectQuery($childType);
+    $query = new ObjectQuery($childType);
     $tpl = $query->getObjectTemplate($childType);
     // prepare the parent: use a new one and set the primary key values
     $pTpl = $query->getObjectTemplate($parentNode->getType());

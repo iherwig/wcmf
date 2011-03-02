@@ -21,8 +21,6 @@ require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectQuery.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.StringQuery.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PagingInfo.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ChangeListener.php");
 require_once(WCMF_BASE."wcmf/lib/core/class.ConfigurationException.php");
@@ -76,23 +74,9 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return (isset($this->_knownTypes[$type]) || isset($this->_knownTypes['*']));
   }
   /**
-   * @see PersistenceFacade::createObjectQuery()
-   */
-  public function createObjectQuery($type)
-  {
-    return new ObjectQuery($type);
-  }
-  /**
-   * @see PersistenceFacade::createStringQuery()
-   */
-  public function createStringQuery()
-  {
-    return new StringQuery();
-  }
-  /**
    * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array(), array $buildTypes=array())
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
@@ -134,7 +118,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   /**
    * @see PersistenceFacade::create()
    */
-  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array())
+  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE, BUILDDEPTH_REQUIRED))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
@@ -221,7 +205,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
    * @see PersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    array $buildAttribs=array(), array $buildTypes=array())
+    $buildAttribs=null, $buildTypes=null)
   {
     $result = array();
     $mapper = $this->getMapper($type);
@@ -234,7 +218,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
    * @see PersistenceFacade::loadFirstObject()
    */
   public function loadFirstObject($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    array $buildAttribs=array(), array $buildTypes=array())
+    $buildAttribs=null, $buildTypes=null)
   {
     // TODO: use paging info to narrow result
     $objects = $this->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);

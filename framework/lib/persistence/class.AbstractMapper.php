@@ -112,7 +112,7 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array(), array $buildTypes=array())
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
   {
     if (!$this->checkAuthorization($oid, ACTION_READ))
     {
@@ -141,7 +141,7 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::create()
    */
-  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=array())
+  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
   {
     // Don't check rights here, because object creation may be needed
     // for internal purposes. That newly created objects may not be saved
@@ -240,12 +240,12 @@ abstract class AbstractMapper
    * @note Precondition: Object rights have been checked already
    *
    */
-  abstract protected function loadImpl(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=null, array $buildTypes=null);
+  abstract protected function loadImpl(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
   /**
    * @see PersistenceFacade::create()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, array $buildAttribs=null);
+  abstract protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
   /**
    * @see PersistenceFacade::save()
    * @note Precondition: Object rights have been checked already

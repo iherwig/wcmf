@@ -59,7 +59,7 @@ class RDBLockHandler implements ILockHandler
    */
   public function releaseLock(ObjectId $useroid=null, $sessid=null, ObjectId $oid=null)
   {
-    $query = PersistenceFacade::getInstance()->createObjectQuery('Locktable');
+    $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     if ($sessid != null) {
       $tpl->setValue('sessionid', "= '".$sessid."'");
@@ -100,7 +100,7 @@ class RDBLockHandler implements ILockHandler
     $parser->setValue('locking', false, 'cms');
 
     // load locks
-    $query = PersistenceFacade::getInstance()->createObjectQuery(UserManager::getUserClassName());
+    $query = new ObjectQuery(UserManager::getUserClassName());
     $tpl1 = $query->getObjectTemplate(UserManager::getUserClassName());
     $tpl2 = $query->getObjectTemplate('Locktable');
     $tpl2->setValue('objectid', "= '".$oid."'");

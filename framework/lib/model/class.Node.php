@@ -285,7 +285,8 @@ class Node extends PersistentObject
    */
   public function getChildrenEx(ObjectId $oid=null, $role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
-    if ($role != null && $this->hasValue($role)) {
+    if ($role != null)
+    {
       // nodes of a given role are requested
       $nodes = $this->getValue($role);
       if (!is_array($nodes)) {
@@ -563,7 +564,8 @@ class Node extends PersistentObject
    */
   public function getParentsEx(ObjectId $oid=null, $role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
-    if ($role != null && $this->hasValue($role)) {
+    if ($role != null)
+    {
       // nodes of a given role are requested
       $nodes = $this->getValue($role);
       if (!is_array($nodes)) {

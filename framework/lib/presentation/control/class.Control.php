@@ -29,11 +29,11 @@ require_once(WCMF_BASE."wcmf/lib/i18n/class.Localization.php");
  * @brief Control is the base class for html controls. Each Control
  * instance has a view template assigned, which defines the actual
  * representation of the control in html. A Control class may use
- * several view templates to render different html controls. The main 
- * purpose of Control classes is the assignment of control specific 
- * values to the associated view before it will be rendered 
+ * several view templates to render different html controls. The main
+ * purpose of Control classes is the assignment of control specific
+ * values to the associated view before it will be rendered
  * (@see Control::assignViewValues()).
- * 
+ *
  * Controls are be bound to input types in the configuration section
  * named 'htmlform' in the following way:
  * @code
@@ -48,10 +48,10 @@ abstract class Control
 {
   const CONTROL_SECTION_NAME = 'htmlform';
   private static $_listStrategies = array();
-  
+
   private $_controlIndex = array();
   private $_viewTpl = null;
-  
+
   /**
    * Register a IListStrategy implementation for resolving list values.
    * This method must be called for all IListStrategy implementations in order
@@ -119,7 +119,7 @@ abstract class Control
   }
   /**
    * Get an instance of the control class that matches the given inputType.
-   * The implementation searches in the configuration section 'htmlform' for the 
+   * The implementation searches in the configuration section 'htmlform' for the
    * most specific key that matches the inputType.
    * @param inputType The input type to get the control for
    * @return A Control instance
@@ -150,11 +150,11 @@ abstract class Control
       $viewTpl = $controlDef[1];
       $control = ObjectFactory::createInstance($controlClass);
       if (!$control instanceof Control) {
-        throw new ConfigurationException($controlClass." does not inherit from Control");        
+        throw new ConfigurationException($controlClass." does not inherit from Control");
       }
       $control->_viewTpl = $viewTpl;
       return $control;
-    }    
+    }
     // no match found
     throw new ConfigurationException("No control found for input type '".
       $inputType."' in section '".self::CONTROL_SECTION_NAME."'");
@@ -180,7 +180,7 @@ abstract class Control
   public function render($name, $inputType, $value, $editable=true, $language=null, $parentView=null)
   {
     $value = strval($value);
-    
+
     // get definition and list from description
     if (strPos($inputType, '#'))
     {
@@ -219,7 +219,7 @@ abstract class Control
     if (strPos($attributes, 'multiple')) {
       $name .= '[]';
     }
-    
+
     // get error from session
     $session = SessionData::getInstance();
     $error = $session->getError($name);
@@ -237,11 +237,11 @@ abstract class Control
         $attributeList[$key] = $value;
       }
     }
-    
+
     // setup the control view
     $view = ObjectFactory::createInstanceFromConfig('implementation', 'View');
     $view->setup();
-    
+
     // assign view values
     $view->assign('enabled', $editable);
     $view->assign('name', $name);
@@ -252,10 +252,10 @@ abstract class Control
     $view->assign('controlIndex', $this->getControlIndex($parentView));
     $view->assign('attributes', $attributes);
     $view->assign('attributeList', $attributeList);
-    
+
     // add subclass parameters
     $this->assignViewValues($view);
-    
+
     // render the view
     $htmlString = $view->fetch(WCMF_BASE.$this->_viewTpl);
     $this->registerWithView($parentView);
@@ -277,20 +277,20 @@ abstract class Control
   {
     $controlName = self::getControlName($obj, $name);
     $value = $obj->getValue($name);
-    return $this->render($controlName, $obj->getValueProperty($name, 'input_type'), 
+    return $this->render($controlName, $obj->getValueProperty($name, 'input_type'),
       $value, $obj->getValueProperty($name, 'is_editable'),
       $language, $parentView);
   }
   /**
    * Assign the control specific values to the view. Parameters assigned by default
-   * may be retrieved by $view->getTemplateVars($paramName) 
+   * may be retrieved by $view->getTemplateVars($paramName)
    * @param view The view instance
    */
   protected abstract function assignViewValues(IView $view);
   /**
    * Get a list of key/value pairs defined by description.
    * @param definition A list definition for which a ListStrategy is registered
-   *                 (@see Control::render) 
+   *                 (@see Control::render)
    * @param value The selected value (maybe null, default: null)
    * @param nodeOid Serialized oid of the node containing this value (for determining remote oids) [default: null]
    * @param language The lanugage if Control should be localization aware. Optional,
@@ -342,7 +342,7 @@ abstract class Control
    *                 default is Localization::getDefaultLanguage()
    * @return The translated value
    */
-  public function translateValue($value, $inputType, $replaceBR=false, $nodeOid = null, $language=null)
+  public static function translateValue($value, $inputType, $replaceBR=false, $nodeOid = null, $language=null)
   {
     // get definition and list from description
     $translated = '';
