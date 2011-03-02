@@ -360,7 +360,7 @@ class LocalizationTest extends WCMFTestCase
 
     // delete translations
     $persistenceFacade = PersistenceFacade::getInstance();
-    $query = PersistenceFacade::createObjectQuery(Localization::getTranslationType());
+    $query = new ObjectQuery(Localization::getTranslationType());
     $tpl = $query->getObjectTemplate(Localization::getTranslationType());
     $tpl->setObjectid($oid);
     $oids = $query->execute(false);

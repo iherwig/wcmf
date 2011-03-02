@@ -3,6 +3,7 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeSerializer.php");
+require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
 class IteratorTest extends WCMFTestCase
 {
@@ -21,11 +22,11 @@ class IteratorTest extends WCMFTestCase
       echo($curIterNode->getOID()."\n");
       var_dump(NodeSerializer::serializeNode($curIterNode));
       $count++;
-      $nodeIter->proceed();            
+      $nodeIter->proceed();
     }
-    
+
     $this->assertTrue($count == 1, "");
-    
+
     $this->runAnonymous(false);
   }
   public function testValueIterater()
@@ -46,11 +47,11 @@ class IteratorTest extends WCMFTestCase
       echo($curIterNode->getOID().":".$valueName."=".$value."\n");
       $allNames += $valueName;
       $count++;
-      $valueIter->proceed();            
+      $valueIter->proceed();
     }
-    
-    $this->assertTrue($count == 9, "The node has 9 attributes");
-    
+
+    $this->assertTrue($count == 10, "The node has 10 attributes");
+
     $this->runAnonymous(false);
   }
 }

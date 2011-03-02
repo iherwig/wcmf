@@ -99,7 +99,7 @@ class NodeRelationTest extends WCMFTestCase
   public function testDeleteNode()
   {
     $this->runAnonymous(true);
-    $this->enableProfiler('Page');
+    //$this->enableProfiler('Page');
 
     // delete all relations
     $page = $this->objects['page'];
@@ -141,7 +141,7 @@ class NodeRelationTest extends WCMFTestCase
     $normalImage = $persistenceFacade->load($this->oids['normalImage'], 1);
     $this->assertTrue(sizeof($normalImage->getParentEx(null, 'NormalPage', null)) == 0);
 
-    $this->printProfile('Page');
+    //$this->printProfile('Page');
     $this->runAnonymous(false);
   }
 

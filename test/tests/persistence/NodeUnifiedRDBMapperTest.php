@@ -32,7 +32,7 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
     $sql = $this->callProtectedMethod($mapper, 'getSelectSQL', array(array($criteria)))->__toString();
     $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
       "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` ".
-      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = ('Page 1')) ".
+      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = 'Page 1') ".
       "ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
@@ -41,7 +41,7 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
     $expected = "SELECT `PageAlias`.`id`, `PageAlias`.`fk_page_id`, `PageAlias`.`fk_author_id`, `PageAlias`.`name`, ".
       "`PageAlias`.`created`, `PageAlias`.`creator`, `PageAlias`.`modified`, `PageAlias`.`last_editor`, ".
       "`PageAlias`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` AS `PageAlias` ".
-      "LEFT JOIN `Author` ON `PageAlias`.`fk_author_id`=`Author`.`id` WHERE (`PageAlias`.`name` = ('Page 1')) ".
+      "LEFT JOIN `Author` ON `PageAlias`.`fk_author_id`=`Author`.`id` WHERE (`PageAlias`.`name` = 'Page 1') ".
       "ORDER BY `PageAlias`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
@@ -50,7 +50,7 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
             array(array($criteria), null, array("name ASC")))->__toString();
     $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
       "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` ".
-      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = ('Page 1')) ".
+      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = 'Page 1') ".
       "ORDER BY `Page`.`name` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
@@ -59,14 +59,14 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
             array(array($criteria), null, array("Page.name ASC")))->__toString();
     $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
       "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` ".
-      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = ('Page 1')) ".
+      "FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = 'Page 1') ".
       "ORDER BY `Page`.`name` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     // attribs 1
     $sql = $this->callProtectedMethod($mapper, 'getSelectSQL',
             array(array($criteria), null, null, array('id', 'name')))->__toString();
-    $expected = "SELECT `Page`.`id`, `Page`.`name` FROM `Page` WHERE (`Page`.`name` = ('Page 1')) ".
+    $expected = "SELECT `Page`.`id`, `Page`.`name` FROM `Page` WHERE (`Page`.`name` = 'Page 1') ".
       "ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
@@ -74,14 +74,14 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
     $sql = $this->callProtectedMethod($mapper, 'getSelectSQL',
             array(array($criteria), null, null, array('id', 'name', 'author_name')))->__toString();
     $expected = "SELECT `Page`.`id`, `Page`.`name`, `Author`.`name` AS `author_name` FROM `Page` ".
-      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = ('Page 1')) ".
+      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` WHERE (`Page`.`name` = 'Page 1') ".
       "ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     // attribs 3
     $sql = $this->callProtectedMethod($mapper, 'getSelectSQL',
             array(array($criteria), null, null, array()))->__toString();
-    $expected = "SELECT `Page`.`id` FROM `Page` WHERE (`Page`.`name` = ('Page 1')) ".
+    $expected = "SELECT `Page`.`id` FROM `Page` WHERE (`Page`.`name` = 'Page 1') ".
       "ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
@@ -94,7 +94,7 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
     $expected = "SELECT `WCMF_Page`.`id`, `WCMF_Page`.`fk_page_id`, `WCMF_Page`.`fk_author_id`, `WCMF_Page`.`name`, ".
       "`WCMF_Page`.`created`, `WCMF_Page`.`creator`, `WCMF_Page`.`modified`, `WCMF_Page`.`last_editor`, `WCMF_Page`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `WCMF_Page` LEFT JOIN `Author` ON `WCMF_Page`.`fk_author_id`=`Author`.`id` ".
-      "WHERE (`WCMF_Page`.`name` = ('Page 1')) ORDER BY `WCMF_Page`.`sortkey` ASC";
+      "WHERE (`WCMF_Page`.`name` = 'Page 1') ORDER BY `WCMF_Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
   }
 
@@ -195,7 +195,7 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertTrue($str == 'UpdateOperation:type=Page,values=(id=1,fk_page_id=3,fk_author_id=2,name=Page 1,created=2010-02-21,creator=admin),criteria=(Page.id = 1)');
+    $this->assertTrue($str == 'UpdateOperation:type=Page,values=(id=1,fk_page_id=3,fk_author_id=2,name=Page 1,created=2010-02-21,creator=admin),criteria=([AND] Page.id = 1)');
   }
 
   public function testDeleteSQL() {
@@ -206,7 +206,7 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertTrue($str == 'DeleteOperation:type=Page,values=(),criteria=(Page.id = 1)');
+    $this->assertTrue($str == 'DeleteOperation:type=Page,values=(),criteria=([AND] Page.id = 1)');
   }
 }
 
