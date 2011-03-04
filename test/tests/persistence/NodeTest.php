@@ -20,7 +20,7 @@ class NodeTest extends WCMFTestCase
     $this->runAnonymous(false);
   }
 
-  function _testCreateRandom()
+  function testCreateRandom()
   {
     $this->runAnonymous(true);
     $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
@@ -39,7 +39,19 @@ class NodeTest extends WCMFTestCase
     $this->runAnonymous(false);
   }
 
-  public function testLoadMany()
+  public function testLoadPaging()
+  {
+    $this->runAnonymous(true);
+    $persistenceFacade = PersistenceFacade::getInstance();
+
+    $pagingInfo = new PagingInfo(10);
+    $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $this->assertTrue(sizeof($documents) == 10);
+
+    $this->runAnonymous(false);
+  }
+
+  public function _testLoadMany()
   {
     $this->runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();

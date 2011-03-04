@@ -74,6 +74,9 @@ class JSONFormatTest extends WCMFTestCase {
     $this->assertTrue($document->getValue('title') === 'Matrix - The Original');
 
     $this->assertTrue($data['sid'] === 'cd65fec9bce4d7ec74e341a9031f8966');
+    $this->assertFalse(isset($data['attributes']));
+    $this->assertFalse(isset($data['oid']));
+    $this->assertFalse(isset($data['lastChange']));
     $this->runAnonymous(false);
   }
 
@@ -353,17 +356,17 @@ class JSONFormatTest extends WCMFTestCase {
 
   public function testSerializeNodeList() {
     $this->runAnonymous(true);
-    
+
     $page1 = new Page(new ObjectId('Page', array(1)));
     $page1->setValue('name', 'Page 1');
     $page2 = new Page(new ObjectId('Page', array(2)));
     $page2->setValue('name', 'Page 2');
     $page3 = new Page(new ObjectId('Page', array(3)));
     $page3->setValue('name', 'Page 3');
-    
-    $list = array('type' => 'Page', 
+
+    $list = array('type' => 'Page',
         'content' => array('contentType' => 'Page', $page1, $page2, $page3));
-    
+
     $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
@@ -383,7 +386,7 @@ class JSONFormatTest extends WCMFTestCase {
     $pages = $list['content'];
     $this->assertTrue(sizeof($pages) == 4);
     $this->assertTrue($pages['contentType'] === 'Page');
-    
+
     $this->assertTrue($pages[0]['className'] === 'Page');
     $this->assertTrue($pages[0]['oid'] === 'Page:1');
     $this->assertTrue($pages[1]['className'] === 'Page');
@@ -391,7 +394,7 @@ class JSONFormatTest extends WCMFTestCase {
     $this->assertTrue($pages[2]['className'] === 'Page');
     $this->assertTrue($pages[2]['oid'] === 'Page:3');
     $this->runAnonymous(false);
-  }  
+  }
 }
 
 ?>

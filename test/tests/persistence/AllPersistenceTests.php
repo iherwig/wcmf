@@ -8,6 +8,7 @@ require_once("tests/persistence/RelationDescriptionTest.php");
 require_once("tests/persistence/ManyToManyTest.php");
 require_once("tests/persistence/ObjectQueryTest.php");
 require_once("tests/persistence/StringQueryTest.php");
+require_once("tests/persistence/TransactionTest.php");
 
 class AllPersistenceTests
 {
@@ -23,6 +24,7 @@ class AllPersistenceTests
     //$suite->addTestSuite('ManyToManyTest');
     $suite->addTestSuite('ObjectQueryTest');
     $suite->addTestSuite('StringQueryTest');
+    $suite->addTestSuite('TransactionTest');
     return $suite;
   }
 }

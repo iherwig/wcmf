@@ -19,6 +19,19 @@ class StringQueryTest extends WCMFTestCase
     $this->runAnonymous(false);
   }
 
+  public function testNoCondition()
+  {
+    $this->runAnonymous(true);
+
+    $query = new StringQuery('Author');
+    $sql = $query->getQueryString();
+    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor`, ".
+      "`Author`.`sortkey` FROM `Author` ORDER BY `Author`.`sortkey` ASC";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    $this->runAnonymous(false);
+  }
+
   public function testParentChild()
   {
     $this->runAnonymous(true);

@@ -15,6 +15,7 @@ class ObjectQueryTest extends WCMFTestCase
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
       "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` ORDER BY `Author`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
     $this->runAnonymous(false);
   }
 
@@ -31,6 +32,7 @@ class ObjectQueryTest extends WCMFTestCase
       "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
       "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
     $this->runAnonymous(false);
   }
 
@@ -49,6 +51,7 @@ class ObjectQueryTest extends WCMFTestCase
     $expected = "SELECT `Author`.`id`, `Author`.`name` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' AND ".
       "`Author`.`creator` IN ('admin', 'ingo')) ORDER BY `Author`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
     $this->runAnonymous(false);
   }
 
@@ -63,6 +66,7 @@ class ObjectQueryTest extends WCMFTestCase
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id` FROM `Author` ORDER BY `Author`.`name` ASC, `Author`.`created` DESC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
     $this->runAnonymous(false);
   }
 
@@ -82,6 +86,7 @@ class ObjectQueryTest extends WCMFTestCase
       "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
       "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
     $this->runAnonymous(false);
   }
 
@@ -100,6 +105,7 @@ class ObjectQueryTest extends WCMFTestCase
       "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` INNER JOIN `Page` ON `Page`.`fk_author_id` = `Author`.`id` ".
       "WHERE (`Author`.`name` LIKE '%ingo%') AND (`Page`.`name` LIKE 'Page 1%') ORDER BY `Author`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
     $this->runAnonymous(false);
   }
 
@@ -119,6 +125,7 @@ class ObjectQueryTest extends WCMFTestCase
       "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page_1` ON `Page_1`.`fk_page_id` = `Page`.`id` ".
       "WHERE (`Page`.`creator` LIKE '%ingo%') AND (`Page_1`.`name` LIKE 'Page 1%') ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
     $this->runAnonymous(false);
   }
 
@@ -139,6 +146,25 @@ class ObjectQueryTest extends WCMFTestCase
       "INNER JOIN `NMPageDocument` ON `NMPageDocument`.`fk_page_id` = `Page`.`id` INNER JOIN `Document` ON `Document`.`id` = `NMPageDocument`.`fk_document_id` ".
       "WHERE (`Page`.`name` LIKE '%Page 1%') AND (`Document`.`title` = 'Document') ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    $this->runAnonymous(false);
+  }
+
+  public function testColumnNotEqualsAttribute()
+  {
+    $this->runAnonymous(true);
+
+    $oid = new ObjectId('UserRDB', array(2));
+    $query = new ObjectQuery('Locktable');
+    $tpl = $query->getObjectTemplate('Locktable');
+    $tpl->setValue('sessionid', Criteria::asValue("=", "7pkt0i3ojm67s9qb66dih5nd60"));
+    $tpl->setValue('objectid', Criteria::asValue("=", $oid));
+    $sql = $query->getQueryString();
+    $expected = "SELECT `locktable`.`id`, `locktable`.`fk_user_id`, `locktable`.`oid` AS `objectid`, `locktable`.`sid` AS `sessionid`, ".
+      "`locktable`.`since`, `user`.`login` AS `loginname` FROM `locktable` LEFT JOIN `user` ON `locktable`.`fk_user_id`=`user`.`id` ".
+      "WHERE (`locktable`.`oid` = 'UserRDB:2' AND `locktable`.`sid` = '7pkt0i3ojm67s9qb66dih5nd60')";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
     $this->runAnonymous(false);
   }
 
