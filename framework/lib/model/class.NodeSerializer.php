@@ -153,10 +153,14 @@ class NodeSerializer
   /**
    * Actually serialize a Node into an array
    * @param node A reference to the node to serialize
-   * @return The node serialized into an associated array
+   * @return The node serialized into an associated array or null, if
+   *  the node parameter is not a Node instance (e.g. PersistentObjectProxy)
    */
-  protected static function serializeNodeImpl(Node $node)
+  protected static function serializeNodeImpl($node)
   {
+    if (!($node instanceof Node)) {
+      return null;
+    }
     $curResult = array();
     $curResult['className'] = $node->getType();
     $curResult['oid'] = $node->getOID()->__toString();
@@ -204,14 +208,18 @@ class NodeSerializer
             foreach ($relatedNodes as $relatedNode)
             {
               $data = self::serializeNodeImpl($relatedNode);
-              // add the data to the relation attribute
-              $curResult['attributes'][$role][] = $data;
+              if ($data != null) {
+                // add the data to the relation attribute
+                $curResult['attributes'][$role][] = $data;
+              }
             }
           }
           else {
-              $data = self::serializeNodeImpl($relatedNodes);
+            $data = self::serializeNodeImpl($relatedNodes);
+            if ($data != null) {
               // add the data to the relation attribute
               $curResult['attributes'][$role] = $data;
+            }
           }
         }
       }

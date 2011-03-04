@@ -46,9 +46,11 @@ require_once('Zend/Db.php');
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
 {
   private static $SEQUENCE_CLASS = 'Adodbseq';
-  private static $connections = array();
+  private static $connections = array();   // registry for connections, key: connId
+  private static $inTransaction = array(); // registry for transaction status (boolean), key: connId
 
   private $_connParams = null; // database connection parameters
+  private $_connId = null;     // a connection identifier composed of the connection parameters
   private $_conn = null;       // database connection
   private $_dbPrefix = '';     // database prefix (if given in the configuration file)
 
@@ -92,12 +94,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
       isset($this->_connParams['dbUserName']) && isset($this->_connParams['dbPassword']) &&
       isset($this->_connParams['dbName']))
     {
-      $connectionKey = join(',', array($this->_connParams['dbType'], $this->_connParams['dbHostName'],
+      $this->_connId = join(',', array($this->_connParams['dbType'], $this->_connParams['dbHostName'],
           $this->_connParams['dbUserName'], $this->_connParams['dbPassword'], $this->_connParams['dbName']));
 
       // reuse an existing connection if possible
-      if (isset(self::$connections[$connectionKey])) {
-        $this->_conn = self::$connections[$connectionKey];
+      if (isset(self::$connections[$this->_connId])) {
+        $this->_conn = self::$connections[$this->_connId];
       }
       else
       {
@@ -125,7 +127,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
           $this->_conn->setFetchMode(Zend_Db::FETCH_ASSOC);
 
           // store the connection for reuse
-          self::$connections[$connectionKey] = $this->_conn;
+          self::$connections[$this->_connId] = $this->_conn;
         }
         catch(Exception $ex) {
           throw new PersistenceException("Connection to ".$this->_connParams['dbHostName'].".".
@@ -272,7 +274,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
         return $result;
       }
       else {
-        // maybe use insert, update, delete methods from Zend_Db_Adapter
         return $this->_conn->exec($sql);
       }
     }
@@ -300,8 +301,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
           $columnPart = $selectStmt->getPart(Zend_Db_Select::COLUMNS);
           $selectStmt->reset(Zend_Db_Select::COLUMNS);
           $selectStmt->columns(array('nRows' => new Zend_Db_Expr('COUNT(*)')));
-          $result = $selectStmt->query();
-          $row = $result->fetchRow();
+          $row = $selectStmt->getAdapter()->fetchRow($selectStmt);
           $nRows = $row['nRows'];
           // update pagingInfo
           $pagingInfo->setTotalCount($nRows);
@@ -509,15 +509,25 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * @param columnName The column name to use (may differ from criteria's attribute attribute), optional
    * @return String
    */
-  public function renderCriteria(Criteria $criteria, $usePlaceholder=falses, $tableName=null, $columnName=null)
+  public function renderCriteria(Criteria $criteria, $usePlaceholder=false, $tableName=null, $columnName=null)
   {
+    $type = $criteria->getType();
+    $persistenceFacade = PersistenceFacade::getInstance();
+    if (!$persistenceFacade->isKnownType($type)) {
+      throw new InvalidArgumentException("Unknown type referenced in Criteria: $type");
+    }
+
+    // map type and attribute, if necessary
+    $mapper = $persistenceFacade->getMapper($type);
     if ($tableName === null) {
-      $tableName = $criteria->getType();
+      $tableName = $mapper->getRealTableName();
     }
     if ($columnName === null) {
-      $columnName = $criteria->getAttribute();
+      $attrDesc = $mapper->getAttribute($criteria->getAttribute());
+      $columnName = $attrDesc->getColumn();
     }
-    $result = $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($criteria->getAttribute()).
+
+    $result = $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($columnName).
                 " ".$criteria->getOperator()." ";
     $value = $criteria->getValue();
     $valueStr = '?';
@@ -1065,7 +1075,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     if ($this->_conn == null) {
       $this->connect();
     }
-    $this->_conn->beginTransaction();
+    if (!$this->isInTransaction())
+    {
+      $this->_conn->beginTransaction();
+      $this->setIsInTransaction(true);
+    }
   }
   /**
    * @see PersistenceMapper::commitTransaction()
@@ -1075,7 +1089,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     if ($this->_conn == null) {
       $this->connect();
     }
-    $this->_conn->commit();
+    if ($this->isInTransaction())
+    {
+      $this->_conn->commit();
+      $this->setIsInTransaction(false);
+    }
   }
   /**
    * @see PersistenceMapper::rollbackTransaction()
@@ -1086,7 +1104,27 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     if ($this->_conn == null) {
       $this->connect();
     }
-    $this->_conn->rollBack();
+    if ($this->isInTransaction())
+    {
+      $this->_conn->rollBack();
+      $this->setIsInTransaction(false);
+    }
+  }
+  /**
+   * Check if a connection is currently in a transaction
+   * @param isInTransaction True/False wether the mapper is in a transaction or not
+   */
+  protected function setIsInTransaction($isInTransaction)
+  {
+    self::$inTransaction[$this->_connId] = $isInTransaction;
+  }
+  /**
+   * Check if a connection is currently in a transaction
+   * @return Boolean
+   */
+  protected function isInTransaction()
+  {
+    return isset(self::$inTransaction[$this->_connId]) && self::$inTransaction[$this->_connId] === true;
   }
 
   /**

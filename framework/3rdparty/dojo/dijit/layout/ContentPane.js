@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -9,7 +9,6 @@ if(!dojo._hasResource["dijit.layout.ContentPane"]){
 dojo._hasResource["dijit.layout.ContentPane"]=true;
 dojo.provide("dijit.layout.ContentPane");
 dojo.require("dijit._Widget");
-dojo.require("dijit._Contained");
 dojo.require("dijit.layout._LayoutWidget");
 dojo.require("dijit.layout._ContentPaneResizeMixin");
 dojo.require("dojo.string");
@@ -43,43 +42,35 @@ dijit.setWaiRole(this.domNode,"group");
 if(this._started){
 return;
 }
-var _4=dijit._Contained.prototype.getParent.call(this);
-this._childOfLayoutWidget=_4&&_4.isLayoutContainer;
-this._needLayout=!this._childOfLayoutWidget;
-if(this.isLoaded){
-dojo.forEach(this.getChildren(),function(_5){
-_5.startup();
-});
-}
+this.inherited(arguments);
 if(this._isShown()||this.preload){
 this._onShow();
 }
-this.inherited(arguments);
-},setHref:function(_6){
+},setHref:function(_4){
 dojo.deprecated("dijit.layout.ContentPane.setHref() is deprecated. Use set('href', ...) instead.","","2.0");
-return this.set("href",_6);
-},_setHrefAttr:function(_7){
+return this.set("href",_4);
+},_setHrefAttr:function(_5){
 this.cancel();
 this.onLoadDeferred=new dojo.Deferred(dojo.hitch(this,"cancel"));
 this.onLoadDeferred.addCallback(dojo.hitch(this,"onLoad"));
-this._set("href",_7);
+this._set("href",_5);
 if(this._created&&(this.preload||this._isShown())){
 this._load();
 }else{
 this._hrefChanged=true;
 }
 return this.onLoadDeferred;
-},setContent:function(_8){
+},setContent:function(_6){
 dojo.deprecated("dijit.layout.ContentPane.setContent() is deprecated.  Use set('content', ...) instead.","","2.0");
-this.set("content",_8);
-},_setContentAttr:function(_9){
+this.set("content",_6);
+},_setContentAttr:function(_7){
 this._set("href","");
 this.cancel();
 this.onLoadDeferred=new dojo.Deferred(dojo.hitch(this,"cancel"));
 if(this._created){
 this.onLoadDeferred.addCallback(dojo.hitch(this,"onLoad"));
 }
-this._setContent(_9||"");
+this._setContent(_7||"");
 this._isDownloaded=false;
 return this.onLoadDeferred;
 },_getContentAttr:function(){
@@ -95,17 +86,17 @@ if(this._beingDestroyed){
 this.cancel();
 }
 this.inherited(arguments);
-},destroyRecursive:function(_a){
+},destroyRecursive:function(_8){
 if(this._beingDestroyed){
 return;
 }
 this.inherited(arguments);
-},resize:function(_b,_c){
+},resize:function(_9,_a){
 if(!this._wasShown&&this.open!==false){
 this._onShow();
 }
 this._resizeCalled=true;
-this._scheduleLayout(_b,_c);
+this._scheduleLayout(_9,_a);
 },_isShown:function(){
 if(this._childOfLayoutWidget){
 if(this._resizeCalled&&"open" in this){
@@ -116,8 +107,8 @@ return this._resizeCalled;
 if("open" in this){
 return this.open;
 }else{
-var _d=this.domNode;
-return (_d.style.display!="none")&&(_d.style.visibility!="hidden")&&!dojo.hasClass(_d,"dijitHidden");
+var _b=this.domNode;
+return (_b.style.display!="none")&&(_b.style.visibility!="hidden")&&!dojo.hasClass(_b,"dijitHidden");
 }
 }
 },_onShow:function(){
@@ -141,36 +132,36 @@ this._load();
 return this.onLoadDeferred;
 },_load:function(){
 this._setContent(this.onDownloadStart(),true);
-var _e=this;
-var _f={preventCache:(this.preventCache||this.refreshOnShow),url:this.href,handleAs:"text"};
+var _c=this;
+var _d={preventCache:(this.preventCache||this.refreshOnShow),url:this.href,handleAs:"text"};
 if(dojo.isObject(this.ioArgs)){
-dojo.mixin(_f,this.ioArgs);
+dojo.mixin(_d,this.ioArgs);
 }
-var _10=(this._xhrDfd=(this.ioMethod||dojo.xhrGet)(_f));
-_10.addCallback(function(_11){
+var _e=(this._xhrDfd=(this.ioMethod||dojo.xhrGet)(_d));
+_e.addCallback(function(_f){
 try{
-_e._isDownloaded=true;
-_e._setContent(_11,false);
-_e.onDownloadEnd();
+_c._isDownloaded=true;
+_c._setContent(_f,false);
+_c.onDownloadEnd();
 }
 catch(err){
-_e._onError("Content",err);
+_c._onError("Content",err);
 }
-delete _e._xhrDfd;
-return _11;
+delete _c._xhrDfd;
+return _f;
 });
-_10.addErrback(function(err){
-if(!_10.canceled){
-_e._onError("Download",err);
+_e.addErrback(function(err){
+if(!_e.canceled){
+_c._onError("Download",err);
 }
-delete _e._xhrDfd;
+delete _c._xhrDfd;
 return err;
 });
 delete this._hrefChanged;
-},_onLoadHandler:function(_12){
+},_onLoadHandler:function(_10){
 this._set("isLoaded",true);
 try{
-this.onLoadDeferred.callback(_12);
+this.onLoadDeferred.callback(_10);
 }
 catch(e){
 console.error("Error "+this.widgetId+" running custom onLoad code: "+e.message);
@@ -187,75 +178,75 @@ console.error("Error "+this.widgetId+" running custom onUnload code: "+e.message
 if(this.isLoaded){
 this._onUnloadHandler();
 }
-var _13=this._contentSetter;
-dojo.forEach(this.getChildren(),function(_14){
-if(_14.destroyRecursive){
-_14.destroyRecursive();
+var _11=this._contentSetter;
+dojo.forEach(this.getChildren(),function(_12){
+if(_12.destroyRecursive){
+_12.destroyRecursive();
 }
 });
-if(_13){
-dojo.forEach(_13.parseResults,function(_15){
-if(_15.destroyRecursive&&_15.domNode&&_15.domNode.parentNode==dojo.body()){
-_15.destroyRecursive();
+if(_11){
+dojo.forEach(_11.parseResults,function(_13){
+if(_13.destroyRecursive&&_13.domNode&&_13.domNode.parentNode==dojo.body()){
+_13.destroyRecursive();
 }
 });
-delete _13.parseResults;
+delete _11.parseResults;
 }
 dojo.html._emptyNode(this.containerNode);
 delete this._singleChild;
-},_setContent:function(_16,_17){
+},_setContent:function(_14,_15){
 this.destroyDescendants();
-var _18=this._contentSetter;
-if(!(_18&&_18 instanceof dojo.html._ContentSetter)){
-_18=this._contentSetter=new dojo.html._ContentSetter({node:this.containerNode,_onError:dojo.hitch(this,this._onError),onContentError:dojo.hitch(this,function(e){
-var _19=this.onContentError(e);
+var _16=this._contentSetter;
+if(!(_16&&_16 instanceof dojo.html._ContentSetter)){
+_16=this._contentSetter=new dojo.html._ContentSetter({node:this.containerNode,_onError:dojo.hitch(this,this._onError),onContentError:dojo.hitch(this,function(e){
+var _17=this.onContentError(e);
 try{
-this.containerNode.innerHTML=_19;
+this.containerNode.innerHTML=_17;
 }
 catch(e){
 console.error("Fatal "+this.id+" could not change content due to "+e.message,e);
 }
 })});
 }
-var _1a=dojo.mixin({cleanContent:this.cleanContent,extractContent:this.extractContent,parseContent:this.parseOnLoad,parserScope:this.parserScope,startup:false,dir:this.dir,lang:this.lang},this._contentSetterParams||{});
-_18.set((dojo.isObject(_16)&&_16.domNode)?_16.domNode:_16,_1a);
+var _18=dojo.mixin({cleanContent:this.cleanContent,extractContent:this.extractContent,parseContent:this.parseOnLoad,parserScope:this.parserScope,startup:false,dir:this.dir,lang:this.lang},this._contentSetterParams||{});
+_16.set((dojo.isObject(_14)&&_14.domNode)?_14.domNode:_14,_18);
 delete this._contentSetterParams;
 if(this.doLayout){
 this._checkIfSingleChild();
 }
-if(!_17){
+if(!_15){
 if(this._started){
-dojo.forEach(this.getChildren(),function(_1b){
-_1b.startup();
+dojo.forEach(this.getChildren(),function(_19){
+_19.startup();
 },this);
 this._scheduleLayout();
 }
-this._onLoadHandler(_16);
+this._onLoadHandler(_14);
 }
-},_onError:function(_1c,err,_1d){
+},_onError:function(_1a,err,_1b){
 this.onLoadDeferred.errback(err);
-var _1e=this["on"+_1c+"Error"].call(this,err);
-if(_1d){
-console.error(_1d,err);
+var _1c=this["on"+_1a+"Error"].call(this,err);
+if(_1b){
+console.error(_1b,err);
 }else{
-if(_1e){
-this._setContent(_1e,true);
+if(_1c){
+this._setContent(_1c,true);
 }
 }
-},_scheduleLayout:function(_1f,_20){
+},_scheduleLayout:function(_1d,_1e){
 if(this._isShown()){
-this._layout(_1f,_20);
+this._layout(_1d,_1e);
 }else{
 this._needLayout=true;
-this._changeSize=_1f;
-this._resultSize=_20;
+this._changeSize=_1d;
+this._resultSize=_1e;
 }
-},onLoad:function(_21){
+},onLoad:function(_1f){
 },onUnload:function(){
 },onDownloadStart:function(){
 return this.loadingMessage;
-},onContentError:function(_22){
-},onDownloadError:function(_23){
+},onContentError:function(_20){
+},onDownloadError:function(_21){
 return this.errorMessage;
 },onDownloadEnd:function(){
 }});

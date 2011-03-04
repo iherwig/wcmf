@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -172,7 +172,7 @@ this.scroller.setContentNodes(this.views.getContentNodes());
 },_setStructureAttr:function(_7){
 var s=_7;
 if(s&&dojo.isString(s)){
-dojo.deprecated("dojox.grid._Grid.attr('structure', 'objVar')","use dojox.grid._Grid.attr('structure', objVar) instead","2.0");
+dojo.deprecated("dojox.grid._Grid.set('structure', 'objVar')","use dojox.grid._Grid.set('structure', objVar) instead","2.0");
 s=dojo.getObject(s);
 }
 this.structure=s;
@@ -189,7 +189,7 @@ this.layout.setStructure(s);
 }
 this._structureChanged();
 },setStructure:function(_8){
-dojo.deprecated("dojox.grid._Grid.setStructure(obj)","use dojox.grid._Grid.attr('structure', obj) instead.","2.0");
+dojo.deprecated("dojox.grid._Grid.setStructure(obj)","use dojox.grid._Grid.set('structure', obj) instead.","2.0");
 this._setStructureAttr(_8);
 },getColumnTogglingItems:function(){
 return dojo.map(this.layout.cells,function(_9){
@@ -209,14 +209,14 @@ _e.setAttribute("checked",_c);
 }
 _c=dojo.filter(_a.layout.cells,function(c){
 if(c.menuItems.length>1){
-dojo.forEach(c.menuItems,"item.attr('disabled', false);");
+dojo.forEach(c.menuItems,"item.set('disabled', false);");
 }else{
-c.menuItems[0].attr("disabled",false);
+c.menuItems[0].set("disabled",false);
 }
 return !c.hidden;
 });
 if(_c.length==1){
-dojo.forEach(_c[0].menuItems,"item.attr('disabled', true);");
+dojo.forEach(_c[0].menuItems,"item.set('disabled', true);");
 }
 }
 },destroy:function(){
@@ -247,7 +247,7 @@ if(this.headerMenu.getPlaceholders){
 this._placeholders=this.headerMenu.getPlaceholders(this.placeholderLabel);
 }
 },setHeaderMenu:function(_11){
-dojo.deprecated("dojox.grid._Grid.setHeaderMenu(obj)","use dojox.grid._Grid.attr('headerMenu', obj) instead.","2.0");
+dojo.deprecated("dojox.grid._Grid.setHeaderMenu(obj)","use dojox.grid._Grid.set('headerMenu', obj) instead.","2.0");
 this._setHeaderMenuAttr(_11);
 },setupHeaderMenu:function(){
 if(this._placeholders&&this._placeholders.length){
@@ -705,7 +705,7 @@ if(d.hasAttr(th,"relWidth")){
 _4f.relWidth=window.parseInt(dojo.attr(th,"relWidth"),10);
 }
 if(d.hasAttr(th,"hidden")){
-_4f.hidden=d.attr(th,"hidden")=="true";
+_4f.hidden=(d.attr(th,"hidden")=="true"||d.attr(th,"hidden")===true);
 }
 if(_47){
 _47(th,_4f);

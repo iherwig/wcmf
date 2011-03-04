@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -137,7 +137,8 @@ var _1f=this.grid.layout.cells,_20=_1f.length;
 return (dojo.isObject(_1e)&&("row" in _1e)&&("start" in _1e)&&("end" in _1e)&&_1e.start>=0&&_1e.start<_20&&_1e.end>_1e.start&&_1e.end<_20&&_1f[_1e.start].view.index==_1f[_1e.end].view.index&&_1f[_1e.start].subrow==_1f[_1e.end].subrow&&!(typeof _1e.major=="number"&&(_1e.major<_1e.start||_1e.major>_1e.end)));
 },_updateRows:function(_21){
 for(var i=0,_22=this.grid.rowCount;i<_22;++i){
-if(_21.row(i)&&this.grid._by_idx[i]){
+var _23=this.grid._by_idx[i];
+if(_23&&_21.row(i,_23&&_23.item,this.grid.store)){
 this.grid.views.updateRow(i);
 }
 }

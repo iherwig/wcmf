@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -10,9 +10,10 @@ dojo._hasResource["dojox.grid.enhanced.plugins.exporter.CSVWriter"]=true;
 dojo.provide("dojox.grid.enhanced.plugins.exporter.CSVWriter");
 dojo.require("dojox.grid.enhanced.plugins.exporter._ExportWriter");
 dojox.grid.enhanced.plugins.Exporter.registerWriter("csv","dojox.grid.enhanced.plugins.exporter.CSVWriter");
-dojo.declare("dojox.grid.enhanced.plugins.exporter.CSVWriter",dojox.grid.enhanced.plugins.exporter._ExportWriter,{_separator:",",constructor:function(_1){
-if(_1&&_1.separator){
-this._separator=_1.separator;
+dojo.declare("dojox.grid.enhanced.plugins.exporter.CSVWriter",dojox.grid.enhanced.plugins.exporter._ExportWriter,{_separator:",",_newline:"\r\n",constructor:function(_1){
+if(_1){
+this._separator=_1.separator?_1.separator:this._separator;
+this._newline=_1.newline?_1.newline:this._newline;
 }
 this._headers=[];
 this._dataRows=[];
@@ -21,7 +22,7 @@ if(!_2){
 return "";
 }
 var _3=String(_2).replace(/"/g,"\"\"");
-if(_3.indexOf(this._separator)>=0||_3.search(/[" \t\n]/)>=0){
+if(_3.indexOf(this._separator)>=0||_3.search(/[" \t\r\n]/)>=0){
 _3="\""+_3+"\"";
 }
 return _3;
@@ -40,10 +41,10 @@ if(_8.isHeader&&!_9.hidden&&dojo.indexOf(_8.spCols,_9.index)<0){
 this._headers.push(_9.name||_9.field);
 }
 },toString:function(){
-var _a=this._headers.join(this._separator),_b="\n";
+var _a=this._headers.join(this._separator);
 for(var i=this._dataRows.length-1;i>=0;--i){
 this._dataRows[i]=this._dataRows[i].join(this._separator);
 }
-return _a+_b+this._dataRows.join(_b);
+return _a+this._newline+this._dataRows.join(this._newline);
 }});
 }

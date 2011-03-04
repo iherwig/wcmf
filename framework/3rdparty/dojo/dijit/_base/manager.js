@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -194,49 +194,59 @@ return dijit.hasDefaultTabStop(_26);
 }
 });
 dijit._getTabNavigable=function(_27){
-var _28,_29,_2a,_2b,_2c,_2d;
-var _2e=function(_2f){
-dojo.query("> *",_2f).forEach(function(_30){
-if((dojo.isIE&&_30.scopeName!=="HTML")||!_20(_30)){
+var _28,_29,_2a,_2b,_2c,_2d,_2e={};
+function _2f(_30){
+return _30&&_30.tagName.toLowerCase()=="input"&&_30.type&&_30.type.toLowerCase()=="radio"&&_30.name&&_30.name.toLowerCase();
+};
+var _31=function(_32){
+dojo.query("> *",_32).forEach(function(_33){
+if((dojo.isIE&&_33.scopeName!=="HTML")||!_20(_33)){
 return;
 }
-if(_25(_30)){
-var _31=_11(_30,"tabIndex");
-if(!_12(_30,"tabIndex")||_31==0){
+if(_25(_33)){
+var _34=_11(_33,"tabIndex");
+if(!_12(_33,"tabIndex")||_34==0){
 if(!_28){
-_28=_30;
+_28=_33;
 }
-_29=_30;
+_29=_33;
 }else{
-if(_31>0){
-if(!_2a||_31<_2b){
-_2b=_31;
-_2a=_30;
+if(_34>0){
+if(!_2a||_34<_2b){
+_2b=_34;
+_2a=_33;
 }
-if(!_2c||_31>=_2d){
-_2d=_31;
-_2c=_30;
-}
-}
+if(!_2c||_34>=_2d){
+_2d=_34;
+_2c=_33;
 }
 }
-if(_30.nodeName.toUpperCase()!="SELECT"){
-_2e(_30);
+}
+var rn=_2f(_33);
+if(dojo.attr(_33,"checked")&&rn){
+_2e[rn]=_33;
+}
+}
+if(_33.nodeName.toUpperCase()!="SELECT"){
+_31(_33);
 }
 });
 };
 if(_20(_27)){
-_2e(_27);
+_31(_27);
 }
-return {first:_28,last:_29,lowest:_2a,highest:_2c};
+function rs(_35){
+return _2e[_2f(_35)]||_35;
 };
-dijit.getFirstInTabbingOrder=function(_32){
-var _33=dijit._getTabNavigable(dojo.byId(_32));
-return _33.lowest?_33.lowest:_33.first;
+return {first:rs(_28),last:rs(_29),lowest:rs(_2a),highest:rs(_2c)};
 };
-dijit.getLastInTabbingOrder=function(_34){
-var _35=dijit._getTabNavigable(dojo.byId(_34));
-return _35.last?_35.last:_35.highest;
+dijit.getFirstInTabbingOrder=function(_36){
+var _37=dijit._getTabNavigable(dojo.byId(_36));
+return _37.lowest?_37.lowest:_37.first;
+};
+dijit.getLastInTabbingOrder=function(_38){
+var _39=dijit._getTabNavigable(dojo.byId(_38));
+return _39.last?_39.last:_39.highest;
 };
 dijit.defaultDuration=dojo.config["defaultDuration"]||200;
 })();

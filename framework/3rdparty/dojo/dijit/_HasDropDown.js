@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,7 +8,6 @@
 if(!dojo._hasResource["dijit._HasDropDown"]){
 dojo._hasResource["dijit._HasDropDown"]=true;
 dojo.provide("dijit._HasDropDown");
-dojo.require("dijit._base.place");
 dojo.require("dijit._Widget");
 dojo.declare("dijit._HasDropDown",null,{_buttonNode:null,_arrowWrapperNode:null,_popupStateNode:null,_aroundNode:null,dropDown:null,autoWidth:true,forceWidth:false,maxHeight:0,dropDownPosition:["below","above"],_stopClickEvents:true,_onDropDownMouseDown:function(e){
 if(this.disabled||this.readOnly){

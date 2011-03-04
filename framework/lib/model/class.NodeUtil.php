@@ -126,7 +126,7 @@ class NodeUtil
   public static function getNodeQuery($nodeType)
   {
     $query = new ObjectQuery($nodeType);
-    return $query->toString();
+    return $query->getQueryString();
   }
   /**
    * Get the query used to select a special Node.
@@ -144,7 +144,7 @@ class NodeUtil
     foreach ($mapper->getPkNames() as $pkName) {
       $tpl->setValue($pkName, '= '.$ids[$i++]);
     }
-    return $query->toString();
+    return $query->getQueryString();
   }
   /**
    * Get the query used to select all parent Nodes of a given role.
@@ -165,8 +165,8 @@ class NodeUtil
       $cTpl->setValue($pkName, '= '.$childNode->getValue($pkName));
     }
     $tpl->addNode($cTpl, $childNode->getOppositeRole($parentRole));
-  //Log::error($query->toString(), __CLASS__);
-    return $query->toString();
+  //Log::error($query->getQueryString(), __CLASS__);
+    return $query->getQueryString();
   }
   /**
    * Get the query used to select all child Nodes of a given role.
@@ -187,8 +187,8 @@ class NodeUtil
       $pTpl->setValue($pkName, '= '.$parentNode->getValue($pkName));
     }
     $pTpl->addNode($tpl);
-  //Log::error($query->toString(), __CLASS__);
-    return $query->toString();
+  //Log::error($query->getQueryString(), __CLASS__);
+    return $query->getQueryString();
   }
   /**
    * Get the display value names of a Node.

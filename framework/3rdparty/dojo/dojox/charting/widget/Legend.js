@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -12,7 +12,7 @@ dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dojox.lang.functional.array");
 dojo.require("dojox.lang.functional.fold");
-dojo.declare("dojox.charting.widget.Legend",[dijit._Widget,dijit._Templated],{chartRef:"",horizontal:true,swatchSize:18,templateString:"<table dojoAttachPoint='legendNode' class='dojoxLegendNode'><tbody dojoAttachPoint='legendBody'></tbody></table>",legendNode:null,legendBody:null,postCreate:function(){
+dojo.declare("dojox.charting.widget.Legend",[dijit._Widget,dijit._Templated],{chartRef:"",horizontal:true,swatchSize:18,templateString:"<table dojoAttachPoint='legendNode' class='dojoxLegendNode' role='group' aria-label='chart legend'><tbody dojoAttachPoint='legendBody'></tbody></table>",legendNode:null,legendBody:null,postCreate:function(){
 if(!this.chart){
 if(!this.chartRef){
 return;
@@ -73,7 +73,9 @@ this._addLabel(x.dyn,x.legend||x.name);
 },this);
 }
 },_addLabel:function(_5,_6){
-var _7=dojo.create("td"),_8=dojo.create("div",{className:"dojoxLegendIcon dijitInline"},_7),_9=dojo.create("label",{className:"dojoxLegendText"},_7),_a=dojo.create("div",{style:{"width":this.swatchSize+"px","height":this.swatchSize+"px","float":"left"}},_8);
+var _7=dojo.create("td"),_8=dojo.create("div",null,_7),_9=dojo.create("label",null,_7),_a=dojo.create("div",{style:{"width":this.swatchSize+"px","height":this.swatchSize+"px","float":"left"}},_8);
+dojo.addClass(_8,"dojoxLegendIcon dijitInline");
+dojo.addClass(_9,"dojoxLegendText");
 if(this._tr){
 this._tr.appendChild(_7);
 if(++this._inrow===this.horizontal){

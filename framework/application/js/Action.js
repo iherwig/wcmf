@@ -14,7 +14,7 @@ wcmf.Action.login = function() {
     responseFormat:'json'
   }, 'mainForm').addCallback(function(data) {
     // redirect on success
-    top.location.href = wcmf.appURL+'?action=ok';    
+    top.location.href = wcmf.appURL+'?action=ok';
   });
 };
 
@@ -49,7 +49,7 @@ wcmf.Action.create = function(type) {
       title: wcmf.Message.get("New %1%", [type]),
       oid: null,
       modelClass: wcmf.model[type],
-      href: '?action=getDetail&type='+type
+      href: '?action=detail&type='+type
     });
 	tabContainer.addChild(pane);
 	tabContainer.selectChild(pane);
@@ -66,7 +66,7 @@ wcmf.Action.edit = function(type, oid) {
       title: oid,
       oid: oid,
       modelClass: wcmf.model[type],
-      href: '?action=getDetail&oid='+oid
+      href: '?action=detail&oid='+oid
 	});
 	tabContainer.addChild(pane);
 	tabContainer.selectChild(pane);

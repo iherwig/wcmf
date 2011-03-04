@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -77,7 +77,7 @@ aa(function(_f,n){
 var _10=ce(n);
 dojo.forEach(_e,function(o){
 c.push(dojo.connect(n,_10,this,function(evt){
-if(this.watch){
+if(this.watching){
 this[o](this.formNodeValue(_d),_d,n,evt);
 }
 }));

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -22,10 +22,9 @@ _1.parentNode.removeChild(_1);
 dojox.drawing.tools.TextBlock=dojox.drawing.util.oo.declare(dojox.drawing.stencil.Text,function(_2){
 if(_2.data){
 var d=_2.data;
-var _3=d.text;
+var _3=d.text?this.typesetter(d.text):d.text;
 var w=!d.width?this.style.text.minWidth:d.width=="auto"?"auto":Math.max(d.width,this.style.text.minWidth);
 var h=this._lineHeight;
-_3=this.typesetter(_3);
 if(_3&&w=="auto"){
 var o=this.measureText(this.cleanText(_3,false),w);
 w=o.w;
@@ -55,6 +54,8 @@ this.render(_3);
 setTimeout(dojo.hitch(this,function(){
 this.editMode=false;
 }),100);
+}else{
+this.render();
 }
 }else{
 this.connectMouse();

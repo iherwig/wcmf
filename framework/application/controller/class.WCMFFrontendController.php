@@ -36,10 +36,10 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  * - @em failure If a fatal error occurs
  * - @em ok In any other case
  *
- * @param[in] type The type to display get the instance for (action: node)
- * @param[in] oid The object id of the node to read (action: node)
- * @param[out] typeTemplate An instance of the requested type (action: node)
- * @param[out] object The requested object loaded with BUILDDEPTH_SINGLE, if an oid is given (action: node)
+ * @param[in] type The type to display get the instance for (action: detail)
+ * @param[in] oid The object id of the node to read (action: detail)
+ * @param[out] typeTemplate An instance of the requested type (action: detail)
+ * @param[out] object The requested object loaded with BUILDDEPTH_SINGLE, if an oid is given (action: detail)
  * @param[out] typeTemplates A list of instances of all known types (action: model)
  * @param[out] rootTypeTemplates A list of instances of all root types
  *
@@ -117,8 +117,8 @@ class WCMFFrontendController extends Controller
             'depth' => 0,
             'sid' => SessionData::getInstance()->getID()
         ));
-        $readRequest->setFormat('NULL');
-        $readRequest->setResponseFormat('NULL');
+        $readRequest->setFormat(MSG_FORMAT_NULL);
+        $readRequest->setResponseFormat(MSG_FORMAT_NULL);
         $readResponse = ActionMapper::getInstance()->processAction($readRequest);
         $response->setValue('object', $readResponse->getValue('object'));
 

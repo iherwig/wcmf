@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -13,11 +13,11 @@ dojo.require("dijit.layout._LayoutWidget");
 dojo.declare("dojox.layout.TableContainer",dijit.layout._LayoutWidget,{cols:1,labelWidth:"100",showLabels:true,orientation:"horiz",spacing:1,customClass:"",postCreate:function(){
 this.inherited(arguments);
 this._children=[];
-dojo.connect(this,"attr",dojo.hitch(this,function(_1,_2){
+this.connect(this,"set",function(_1,_2){
 if(_2&&(_1=="orientation"||_1=="customClass"||_1=="cols")){
 this.layout();
 }
-}));
+});
 },startup:function(){
 if(this._started){
 return;
@@ -95,12 +95,12 @@ if(_18.spanLabel){
 dojo.attr(_1b,this.orientation=="vert"?"rowspan":"colspan",2);
 }else{
 _9(_1b,"labelCell");
-var _1c={"for":_18.attr("id")};
+var _1c={"for":_18.get("id")};
 var _1d=dojo.create("label",_1c,_1b);
 if(Number(this.labelWidth)>-1||String(this.labelWidth).indexOf("%")>-1){
 dojo.style(_1b,"width",String(this.labelWidth).indexOf("%")<0?this.labelWidth+"px":this.labelWidth);
 }
-_1d.innerHTML=_18.attr("label")||_18.attr("title");
+_1d.innerHTML=_18.get("label")||_18.get("title");
 }
 }
 var _1e;

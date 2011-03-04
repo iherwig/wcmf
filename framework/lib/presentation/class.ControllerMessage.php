@@ -53,7 +53,7 @@ class ControllerMessage
    * A list of errors associated with this message.
    */
   private $_errors = array();
-  
+
   /**
    * Constructor
    * @param sender The name of the controller that sent the message
@@ -255,7 +255,7 @@ class ControllerMessage
   {
     $this->_errors[] = $error;
   }
-  
+
   /**
    * Check if errors exist.
    * @return True/False wether there are errors or not.
@@ -264,7 +264,7 @@ class ControllerMessage
   {
     return sizeof($this->_errors) > 0;
   }
-  
+
   /**
    * Get all errors.
    * @return An array of Error instances.
@@ -273,7 +273,7 @@ class ControllerMessage
   {
     return $this->_errors;
   }
-  
+
   /**
    * Set all errors at once
    * @param errora The errors array
@@ -302,7 +302,6 @@ class ControllerMessage
     $str .= 'action='.$this->_action.', ';
     $str .= 'format='.$this->_format.', ';
     $str .= 'values='.StringUtil::getDump($this->_values);
-    $str .= 'data='.StringUtil::getDump($this->_data);
     $str .= 'errors='.StringUtil::getDump($this->_errors);
     return $str;
   }

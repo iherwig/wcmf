@@ -63,7 +63,6 @@ class StringQuery extends ObjectQuery
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $tableName = $mapper->getRealTableName();
     $selectStmt = $mapper->getSelectSQL(null, null, $orderby, $attribs);
 
     // get all referenced types/roles from the condition and translate
@@ -134,7 +133,9 @@ class StringQuery extends ObjectQuery
         }
       }
     }
-    $selectStmt->where($conditionString);
+    if (strlen($conditionString)) {
+      $selectStmt->where($conditionString);
+    }
 
     // get relation conditions
     $persistenceFacade = PersistenceFacade::getInstance();

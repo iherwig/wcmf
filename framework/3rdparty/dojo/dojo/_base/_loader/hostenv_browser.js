@@ -1,11 +1,10 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
 
 
-define("dojo/_base/_loader/hostenv_browser",["./loader"],function(){
 if(typeof window!="undefined"){
 dojo.isBrowser=true;
 dojo._name="browser";
@@ -241,4 +240,3 @@ if(dojo.config.debugAtAllCosts){
 dojo.require("dojo._base._loader.loader_debug");
 dojo.require("dojo.i18n");
 }
-});

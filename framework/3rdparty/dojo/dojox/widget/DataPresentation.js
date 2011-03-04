@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -220,7 +220,7 @@ var _4b=function(_4c,_4d){
 var _4e=_4c;
 if(_4d){
 var _4f=_4d.split(/[.\[\]]+/);
-for(var _50 in _4f){
+for(var _50=0,l=_4f.length;_50<l;_50++){
 if(_4e){
 _4e=_4e[_4f[_50]];
 }

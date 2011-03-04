@@ -1,1 +1,1 @@
-({"descending":"تنازلي","ascending":"تصاعدي","nestedSort":"فرز متداخل","unsorted":"عدم فرز هذا العمود","singleSort":"فرز منفرد","sortingState":"${0} - ${1}"})
+({"descending":"تنازلي","ascending":"تصاعدي","nestedSort":"فرز متداخل","unsorted":"عدم فرز هذا العمود","singleSort":"فرز منفرد","indirectSelectionRadio":"Row ${0}, single selection, radio box","indirectSelectionCheckBox":"Row ${0}, multiple selection, check box","selectAll":"Select all","sortingState":"${0} - ${1}"})

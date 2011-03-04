@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -16,7 +16,7 @@ this.reset();
 var _3=_2._clearData;
 var _4=this;
 _2._clearData=function(){
-_4._updateMapping(true);
+_4._updateMapping(!_2._noInternalMapping);
 _4._trustSelection=[];
 _3.apply(_2,arguments);
 };
@@ -24,8 +24,9 @@ this.connect(_2,"_setStore","reset");
 this.connect(_2,"_addItem","_reSelectById");
 this.connect(_1,"addToSelection",dojo.hitch(this,"_selectById",true));
 this.connect(_1,"deselect",dojo.hitch(this,"_selectById",false));
-this.connect(_1,"_range",dojo.hitch(this,"_updateMapping",true,false));
-this.connect(_1,"deselectAll",dojo.hitch(this,"_updateMapping",true,true));
+this.connect(_1,"selectRange",dojo.hitch(this,"_updateMapping",true,true,false));
+this.connect(_1,"deselectRange",dojo.hitch(this,"_updateMapping",true,false,false));
+this.connect(_1,"deselectAll",dojo.hitch(this,"_updateMapping",true,false,true));
 },destroy:function(){
 this.reset();
 dojo.forEach(this._connects,dojo.disconnect);
@@ -69,12 +70,12 @@ this._selectedById[id]=!!_b;
 this._trustSelection[_c]=true;
 }
 },onSelectedById:function(id,_f,_10){
-},_updateMapping:function(_11,_12){
-var s=this.selection,g=this.grid,_13=0,_14=0,i,id;
+},_updateMapping:function(_11,_12,_13,_14,to){
+var s=this.selection,g=this.grid,_15=0,_16=0,i,id;
 for(i=g.rowCount-1;i>=0;--i){
 if(!g._by_idx[i]){
-++_14;
-_13+=s.selected[i]?1:-1;
+++_16;
+_15+=s.selected[i]?1:-1;
 }else{
 id=g._by_idx[i].idty;
 if(id&&(_11||this._selectedById[id]===undefined)){
@@ -82,12 +83,15 @@ this._selectedById[id]=!!s.selected[i];
 }
 }
 }
-if(_14){
-this._defaultSelected=_13>0;
+if(_16){
+this._defaultSelected=_15>0;
 }
-if(_12&&!g.usingPagination){
+if(!_13&&_14!==undefined&&to!==undefined){
+_13=!g.usingPagination&&Math.abs(to-_14+1)===g.rowCount;
+}
+if(_13&&!g.usingPagination){
 for(i=this._idMap.length;i>=0;--i){
-this._selectedById[this._idMap[i]]=false;
+this._selectedById[this._idMap[i]]=_12;
 }
 }
 }});

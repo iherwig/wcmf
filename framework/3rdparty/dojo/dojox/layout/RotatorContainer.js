@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -176,8 +176,8 @@ dojo.forEach(this._subscriptions,dojo.unsubscribe);
 this.inherited(arguments);
 },_state:function(_10){
 if(this.playPause&&this.playPause.checked!=_10){
-this.playPause.attr("label",_10?"Pause":"Play");
-this.playPause.attr("checked",_10);
+this.playPause.set("label",_10?"Pause":"Play");
+this.playPause.set("checked",_10);
 }
 },_update:function(_11,_12,_13){
 this._state(_11);

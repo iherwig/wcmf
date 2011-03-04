@@ -15,7 +15,7 @@
   width: 14px;
   height: 14px;
   margin-left: 5px;
-  margin-right: -3px;
+  margin-right: -5px;
 }
 .claro .dijitTabCloseButtonHover {
   background-position: -14px;
@@ -76,8 +76,8 @@
   top: 3px;
 }
 .claro .dijitTabContainerTop-tabs .dijitTabContent {
-  padding: 3px 8px 3px 4px;
-  border-bottom: 1px;
+  padding: 3px 6px;
+  border-bottom-width: 0px;
   background-image: url("images/tabTop.png");
   background-position: 0px 0px;
   background-repeat: repeat-x;
@@ -87,9 +87,6 @@
 .claro .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
   padding-bottom: 4px;
   padding-top: 6px;
-}
-.dj_ie .claro .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
-  border-bottom: none;
 }
 .claro .dijitTabContainerTop-tabs .dijitTabInnerDiv {
   background-image: url("images/tabTop.png");
@@ -117,7 +114,7 @@
 }
 .claro .dijitTabContainerBottom-tabs .dijitTabContent {
   padding: 3px 8px 4px 4px;
-  border-top: none;
+  border-top-width: 0px;
   background-image: url("images/tabBottom.png");
   background-position: 0px -249px;
   background-repeat: repeat-x;
@@ -151,6 +148,7 @@
   -moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
 }
 .claro .dijitTabContainerLeft-tabs .dijitTab {
+  border-right-width: 0px;
   left: 1px;
   
   margin-bottom: 1px;
@@ -179,6 +177,7 @@
   -moz-box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.05);
 }
 .claro .dijitTabContainerRight-tabs .dijitTab {
+  border-left-width: 0px;
   left: -1px;
   
   margin-bottom: 1px;
@@ -294,6 +293,9 @@
   border-color: rgba(118, 157, 192, 0);
   -webkit-transition-property: background-color, border-color;
   -webkit-transition-duration: .3s;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
 }
 .claro .dijitTabContainerTabListNested .dijitTab .dijitTabInnerDiv {
   
@@ -307,9 +309,6 @@
 }
 .claro .dijitTabContainerTabListNested .dijitTabHover .dijitTabContent {
   background-color: #e9f4fe;
-  border-radius: 2px 2px 2px 2px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px;
   border: solid 1px #cfe5fa;
   padding: 3px;
   webkit-transition-duration: .2s;
@@ -318,18 +317,12 @@
   text-decoration: none;
 }
 .claro .dijitTabContainerTabListNested .dijitTabActive .dijitTabContent {
-  border-radius: 2px 2px 2px 2px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px;
   border: solid 1px #769dc0;
   padding: 3px;
   background: #abd6ff url("images/tabNested.png") repeat-x;
   -webkit-transition-duration: .1s;
 }
 .claro .dijitTabContainerTabListNested .dijitTabChecked .dijitTabContent {
-  border-radius: 2px 2px 2px 2px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px;
   padding: 3px;
   border: solid 1px #769dc0;
   background-position: 0px 105px;

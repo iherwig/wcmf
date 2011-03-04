@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -557,7 +557,13 @@ dojo.declare("dijit.WidgetSet", null, {
 		//		  positive tabIndex value
 		//		* the last element in document order with the highest
 		//		  positive tabIndex value
-		var first, last, lowest, lowestTabindex, highest, highestTabindex;
+		var first, last, lowest, lowestTabindex, highest, highestTabindex, radioSelected = {};
+		function radioName(node) {
+			// If this element is part of a radio button group, return the name for that group.
+			return node && node.tagName.toLowerCase() == "input" &&
+				node.type && node.type.toLowerCase() == "radio" &&
+				node.name && node.name.toLowerCase();
+		}
 		var walkTree = function(/*DOMNode*/parent){
 			dojo.query("> *", parent).forEach(function(child){
 				// Skip hidden elements, and also non-HTML elements (those in custom namespaces) in IE,
@@ -581,6 +587,10 @@ dojo.declare("dijit.WidgetSet", null, {
 							highest = child;
 						}
 					}
+					var rn = radioName(child);
+					if(dojo.attr(child, "checked") && rn) {
+						radioSelected[rn] = child;
+					}
 				}
 				if(child.nodeName.toUpperCase() != 'SELECT'){
 					walkTree(child);
@@ -588,7 +598,11 @@ dojo.declare("dijit.WidgetSet", null, {
 			});
 		};
 		if(shown(root)){ walkTree(root) }
-		return { first: first, last: last, lowest: lowest, highest: highest };
+		function rs(node) {
+			// substitute checked radio button for unchecked one, if there is a checked one with the same name.
+			return radioSelected[radioName(node)] || node;
+		}
+		return { first: rs(first), last: rs(last), lowest: rs(lowest), highest: rs(highest) };
 	}
 	dijit.getFirstInTabbingOrder = function(/*String|DOMNode*/ root){
 		// summary:
@@ -2585,11 +2599,14 @@ dojo.declare("dojo.Stateful", null, {
 			var self = this;
 			callbacks = this._watchCallbacks = function(name, oldValue, value, ignoreCatchall){
 				var notify = function(propertyCallbacks){
-					for(var i = 0, l = propertyCallbacks && propertyCallbacks.length; i < l; i++){
-						try{
-							propertyCallbacks[i].call(self, name, oldValue, value);
-						}catch(e){
-							console.error(e);
+					if(propertyCallbacks){
+                        propertyCallbacks = propertyCallbacks.slice();
+						for(var i = 0, l = propertyCallbacks.length; i < l; i++){
+							try{
+								propertyCallbacks[i].call(self, name, oldValue, value);
+							}catch(e){
+								console.error(e);
+							}
 						}
 					}
 				};
@@ -4348,20 +4365,19 @@ dojo.provide("dojox.gfx._base");
 		}
 
 		//	set up the measuring node.
-		var div = dojo.doc.createElement("div");
-		var s = div.style;
-		s.position = "absolute";
-		s.left = "-100px";
-		s.top = "0px";
-		s.width = "30px";
-		s.height = "1000em";
-		s.borderWidth = "0px";
-		s.margin = "0px";
-		s.padding = "0px";
-		s.outline = "none";
-		s.lineHeight = "1";
-		s.overflow = "hidden";
-		dojo.body().appendChild(div);
+		var div = dojo.create("div", {style: {
+				position: "absolute",
+				left: "0",
+				top: "-100px",
+				width: "30px",
+				height: "1000em",
+				borderWidth: "0",
+				margin: "0",
+				padding: "0",
+				outline: "none",
+				lineHeight: "1",
+				overflow: "hidden"
+			}}, dojo.body());
 
 		//	do the measurements.
 		for(var p in heights){
@@ -4370,7 +4386,6 @@ dojo.provide("dojox.gfx._base");
 		}
 
 		dojo.body().removeChild(div);
-		div = null;
 		return heights; 	//	object
 	};
 
@@ -4391,18 +4406,16 @@ dojo.provide("dojox.gfx._base");
 								/*String?*/ className){
 		var m, s, al = arguments.length;
 		if(!measuringNode){
-			m = measuringNode = dojo.doc.createElement("div");
-			s = m.style;
-			s.position = "absolute";
-			s.left = "-10000px";
-			s.top = "0";
-			dojo.body().appendChild(m);
-		}else{
-			m = measuringNode;
-			s = m.style;
+			measuringNode = dojo.create("div", {style: {
+				position: "absolute",
+				top: "-10000px",
+				left: "0"
+			}}, dojo.body());
 		}
+		m = measuringNode;
 		// reset styles
 		m.className = "";
+		s = m.style;
 		s.borderWidth = "0";
 		s.margin = "0";
 		s.padding = "0";
@@ -8812,6 +8825,274 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 
 }
 
+if(!dojo._hasResource["dojox.charting.widget.Chart"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.widget.Chart"] = true;
+dojo.provide("dojox.charting.widget.Chart");
+
+
+
+
+
+(function(){
+	var collectParams, collectAxisParams, collectPlotParams,
+		collectActionParams, collectDataParams,
+		notNull = function(o){ return o; },
+		df = dojox.lang.functional,
+		du = dojox.lang.utils,
+		dc = dojox.charting,
+		d = dojo;
+	
+	dojo.declare("dojox.charting.widget.Chart", dijit._Widget, {
+		// parameters for the markup
+		
+		// theme for the chart
+		theme: null,
+		
+		// margins for the chart: {l: 10, r: 10, t: 10, b: 10}
+		margins: null,
+		
+		// chart area
+		stroke: null,
+		fill:   null,
+		
+		// methods
+		
+		buildRendering: function(){
+			var n = this.domNode = this.srcNodeRef;
+			
+			// collect chart parameters
+			var axes    = d.query("> .axis", n).map(collectAxisParams).filter(notNull),
+				plots   = d.query("> .plot", n).map(collectPlotParams).filter(notNull),
+				actions = d.query("> .action", n).map(collectActionParams).filter(notNull),
+				series  = d.query("> .series", n).map(collectDataParams).filter(notNull);
+			
+			// build the chart
+			n.innerHTML = "";
+			var c = this.chart = new dc.Chart(n, {
+				margins: this.margins, 
+				stroke:  this.stroke,
+				fill:    this.fill
+			});
+			
+			// add collected parameters
+			if(this.theme){
+				c.setTheme(this.theme);
+			}
+			axes.forEach(function(axis){
+				c.addAxis(axis.name, axis.kwArgs);
+			});
+			plots.forEach(function(plot){
+				c.addPlot(plot.name, plot.kwArgs);
+			});
+			
+			this.actions = actions.map(function(action){
+				return new action.action(c, action.plot, action.kwArgs)
+			});
+			
+			var render = df.foldl(series, function(render, series){
+				if(series.type == "data"){
+					c.addSeries(series.name, series.data, series.kwArgs);
+					render = true;
+				}else{
+					c.addSeries(series.name, [0], series.kwArgs);
+					var kw = {};
+					du.updateWithPattern(
+						kw, 
+						series.kwArgs, 
+						{
+							"query": "", 
+							"queryOptions": null, 
+							"start": 0, 
+							"count": 1 //, 
+							// "sort": []
+						}, 
+						true
+					);
+					if(series.kwArgs.sort){
+						// sort is a complex object type and doesn't survive coercian
+						kw.sort = dojo.clone(series.kwArgs.sort);
+					}
+					d.mixin(kw, {
+						onComplete: function(data){
+							var values;
+							if("valueFn" in series.kwArgs){
+								var fn = series.kwArgs.valueFn;
+								values = d.map(data, function(x){
+									return fn(series.data.getValue(x, series.field, 0));
+								});
+							}else{
+								values = d.map(data, function(x){
+									return series.data.getValue(x, series.field, 0);
+								});
+							}
+							c.addSeries(series.name, values, series.kwArgs).render();
+						}
+					});
+					series.data.fetch(kw);
+				}
+				return render;
+			}, false);
+			if(render){ c.render(); }
+		},
+		destroy: function(){
+			// summary: properly destroy the widget
+			this.chart.destroy();
+			this.inherited(arguments);
+		},
+		resize: function(box){
+			// summary: resize the widget
+			if(box.w > 0 && box.h > 0){
+				dojo.marginBox(this.domNode, box);
+				this.chart.resize();
+			}
+		}
+	});
+	
+	collectParams = function(node, type, kw){
+		var dp = eval("(" + type + ".prototype.defaultParams)");
+		var x, attr;
+		for(x in dp){
+			if(x in kw){ continue; }
+			attr = node.getAttribute(x);
+			kw[x] = du.coerceType(dp[x], attr == null || typeof attr == "undefined" ? dp[x] : attr);
+		}
+		var op = eval("(" + type + ".prototype.optionalParams)");
+		for(x in op){
+			if(x in kw){ continue; }
+			attr = node.getAttribute(x);
+			if(attr != null){
+				kw[x] = du.coerceType(op[x], attr);
+			}
+		}
+	};
+	
+	collectAxisParams = function(node){
+		var name = node.getAttribute("name"), type = node.getAttribute("type");
+		if(!name){ return null; }
+		var o = {name: name, kwArgs: {}}, kw = o.kwArgs;
+		if(type){
+			if(dc.axis2d[type]){
+				type = dojox._scopeName + ".charting.axis2d." + type;
+			}
+			var axis = eval("(" + type + ")");
+			if(axis){ kw.type = axis; } 
+		}else{
+			type = dojox._scopeName + ".charting.axis2d.Default";
+		}
+		collectParams(node, type, kw);
+		// compatibility conversions
+		if(kw.font || kw.fontColor){
+			if(!kw.tick){
+				kw.tick = {};
+			}
+			if(kw.font){
+				kw.tick.font = kw.font;
+			}
+			if(kw.fontColor){
+				kw.tick.fontColor = kw.fontColor;
+			}
+		}
+		return o;
+	};
+	
+	collectPlotParams = function(node){
+		// var name = d.attr(node, "name"), type = d.attr(node, "type");
+		var name = node.getAttribute("name"), type = node.getAttribute("type");
+		if(!name){ return null; }
+		var o = {name: name, kwArgs: {}}, kw = o.kwArgs;
+		if(type){
+			if(dc.plot2d && dc.plot2d[type]){
+				type = dojox._scopeName + ".charting.plot2d." + type;
+			}
+			var plot = eval("(" + type + ")");
+			if(plot){ kw.type = plot; } 
+		}else{
+			type = dojox._scopeName + ".charting.plot2d.Default";
+		}
+		collectParams(node, type, kw);
+		return o;
+	};
+	
+	collectActionParams = function(node){
+		// var plot = d.attr(node, "plot"), type = d.attr(node, "type");
+		var plot = node.getAttribute("plot"), type = node.getAttribute("type");
+		if(!plot){ plot = "default"; }
+		var o = {plot: plot, kwArgs: {}}, kw = o.kwArgs;
+		if(type){
+			if(dc.action2d[type]){
+				type = dojox._scopeName + ".charting.action2d." + type;
+			}
+			var action = eval("(" + type + ")");
+			if(!action){ return null; }
+			o.action = action;
+		}else{
+			return null;
+		}
+		collectParams(node, type, kw);
+		return o;
+	};
+
+	collectDataParams = function(node){
+		var ga = d.partial(d.attr, node);
+		var name = ga("name");
+		if(!name){ return null; }
+		var o = { name: name, kwArgs: {} }, kw = o.kwArgs, t;
+		t = ga("plot");
+		if(t != null){ kw.plot = t; }
+		t = ga("marker");
+		if(t != null){ kw.marker = t; }
+		t = ga("stroke");
+		if(t != null){ kw.stroke = eval("(" + t + ")"); }
+		t = ga("outline");
+		if(t != null){ kw.outline = eval("(" + t + ")"); }
+		t = ga("shadow");
+		if(t != null){ kw.shadow = eval("(" + t + ")"); }
+		t = ga("fill");
+		if(t != null){ kw.fill = eval("(" + t + ")"); }
+		t = ga("font");
+		if(t != null){ kw.font = t; }
+		t = ga("fontColor");
+		if(t != null){ kw.fontColor = eval("(" + t + ")"); }
+		t = ga("legend");
+		if(t != null){ kw.legend = t; }
+		t = ga("data");
+		if(t != null){
+			o.type = "data";
+			o.data = t ? dojo.map(String(t).split(','), Number) : [];
+			return o;
+		}
+		t = ga("array");
+		if(t != null){
+			o.type = "data";
+			o.data = eval("(" + t + ")");
+			return o;
+		}
+		t = ga("store");
+		if(t != null){
+			o.type = "store";
+			o.data = eval("(" + t + ")");
+			t = ga("field");
+			o.field = t != null ? t : "value";
+			t = ga("query");
+			if(!!t){ kw.query = t; }
+			t = ga("queryOptions");
+			if(!!t){ kw.queryOptions = eval("(" + t + ")"); }
+			t = ga("start");
+			if(!!t){ kw.start = Number(t); }
+			t = ga("count");
+			if(!!t){ kw.count = Number(t); }
+			t = ga("sort");
+			if(!!t){ kw.sort = eval("("+t+")"); }
+			t = ga("valueFn");
+			if(!!t){ kw.valueFn = df.lambda(t); }
+			return o;
+		}
+		return null;
+	};
+})();
+
+}
+
 if(!dojo._hasResource["dojo.fx.easing"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojo.fx.easing"] = true;
 dojo.provide("dojo.fx.easing");
@@ -12111,7 +12392,7 @@ dojo.declare(
 		// connectId: String|String[]
 		//		Id of domNode(s) to attach the tooltip to.
 		//		When user hovers over specified dom node, the tooltip will appear.
-		connectId: "",
+		connectId: [],
 
 		// position: String[]
 		//		See description of `dijit.Tooltip.defaultPosition` for details on position parameter.
@@ -12130,12 +12411,12 @@ dojo.declare(
 			var ary = dojo.isArrayLike(newId) ? newId : (newId ? [newId] : []);
 			this._connections = dojo.map(ary, function(id){
 				var node = dojo.byId(id);
-				return [
+				return node ? [
 					this.connect(node, "onmouseenter", "_onTargetMouseEnter"),
 					this.connect(node, "onmouseleave", "_onTargetMouseLeave"),
 					this.connect(node, "onfocus", "_onTargetFocus"),
 					this.connect(node, "onblur", "_onTargetBlur")
-				];
+				] : [];
 			}, this);
 	
 			this._set("connectId", newId);
@@ -12405,8 +12686,12 @@ dojo.declare("dojox.charting.action2d.__TooltipCtorArgs", dojox.charting.action2
 			if(o.type === "onplotreset" || o.type === "onmouseout"){
                 dijit.hideTooltip(this.aroundRect);
 				this.aroundRect = null;
+				if(o.type === "onplotreset"){
+					delete this.angles;
+				}
 				return;
 			}
+			
 			
 			if(!o.shape || o.type !== "onmouseover"){ return; }
 			
@@ -12487,289 +12772,1408 @@ dojo.declare("dojox.charting.action2d.__TooltipCtorArgs", dojox.charting.action2
 
 }
 
-if(!dojo._hasResource["dojox.charting.widget.Chart2D"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.widget.Chart2D"] = true;
-dojo.provide("dojox.charting.widget.Chart2D");
-
-
-
-
-
-// require all actions to support references by name
-
-
-
-
-
+if(!dojo._hasResource["dojox.charting.scaler.common"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.scaler.common"] = true;
+dojo.provide("dojox.charting.scaler.common");
 
 (function(){
-	var collectParams, collectAxisParams, collectPlotParams,
-		collectActionParams, collectDataParams,
-		notNull = function(o){ return o; },
-		df = dojox.lang.functional,
-		du = dojox.lang.utils,
-		dc = dojox.charting,
-		d = dojo;
+	var eq = function(/*Number*/ a, /*Number*/ b){
+		// summary: compare two FP numbers for equality
+		return Math.abs(a - b) <= 1e-6 * (Math.abs(a) + Math.abs(b));	// Boolean
+	};
 	
-	dojo.declare("dojox.charting.widget.Chart2D", dijit._Widget, {
-		// parameters for the markup
-		
-		// theme for the chart
-		theme: null,
-		
-		// margins for the chart: {l: 10, r: 10, t: 10, b: 10}
-		margins: null,
-		
-		// chart area
-		stroke: null,
-		fill:   null,
-		
-		// methods
-		
-		buildRendering: function(){
-			var n = this.domNode = this.srcNodeRef;
-			
-			// collect chart parameters
-			var axes    = d.query("> .axis", n).map(collectAxisParams).filter(notNull),
-				plots   = d.query("> .plot", n).map(collectPlotParams).filter(notNull),
-				actions = d.query("> .action", n).map(collectActionParams).filter(notNull),
-				series  = d.query("> .series", n).map(collectDataParams).filter(notNull);
-			
-			// build the chart
-			n.innerHTML = "";
-			var c = this.chart = new dc.Chart(n, {
-				margins: this.margins, 
-				stroke:  this.stroke,
-				fill:    this.fill
-			});
-			
-			// add collected parameters
-			if(this.theme){
-				c.setTheme(this.theme);
+	dojo.mixin(dojox.charting.scaler.common, {
+		findString: function(/*String*/ val, /*Array*/ text){
+			val = val.toLowerCase();
+			for(var i = 0; i < text.length; ++i){
+				if(val == text[i]){ return true; }
 			}
-			axes.forEach(function(axis){
-				c.addAxis(axis.name, axis.kwArgs);
-			});
-			plots.forEach(function(plot){
-				c.addPlot(plot.name, plot.kwArgs);
-			});
-			
-			this.actions = actions.map(function(action){
-				return new action.action(c, action.plot, action.kwArgs)
-			});
-			
-			var render = df.foldl(series, function(render, series){
-				if(series.type == "data"){
-					c.addSeries(series.name, series.data, series.kwArgs);
-					render = true;
-				}else{
-					c.addSeries(series.name, [0], series.kwArgs);
-					var kw = {};
-					du.updateWithPattern(
-						kw, 
-						series.kwArgs, 
-						{
-							"query": "", 
-							"queryOptions": null, 
-							"start": 0, 
-							"count": 1 //, 
-							// "sort": []
-						}, 
-						true
-					);
-					if(series.kwArgs.sort){
-						// sort is a complex object type and doesn't survive coercian
-						kw.sort = dojo.clone(series.kwArgs.sort);
+			return false;
+		},
+		getNumericLabel: function(/*Number*/ number, /*Number*/ precision, /*Object*/ kwArgs){
+			var def = kwArgs.fixed ? 
+						number.toFixed(precision < 0 ? -precision : 0) : 
+						number.toString();
+			if(kwArgs.labelFunc){
+				var r = kwArgs.labelFunc(def, number, precision);
+				if(r){ return r; }
+				// else fall through to the regular labels search
+			}
+			if(kwArgs.labels){
+				// classic binary search
+				var l = kwArgs.labels, lo = 0, hi = l.length;
+				while(lo < hi){
+					var mid = Math.floor((lo + hi) / 2), val = l[mid].value;
+					if(val < number){
+						lo = mid + 1;
+					}else{
+						hi = mid;
 					}
-					d.mixin(kw, {
-						onComplete: function(data){
-							var values;
-							if("valueFn" in series.kwArgs){
-								var fn = series.kwArgs.valueFn;
-								values = d.map(data, function(x){
-									return fn(series.data.getValue(x, series.field, 0));
-								});
-							}else{
-								values = d.map(data, function(x){
-									return series.data.getValue(x, series.field, 0);
-								});
-							}
-							c.addSeries(series.name, values, series.kwArgs).render();
-						}
-					});
-					series.data.fetch(kw);
 				}
-				return render;
-			}, false);
-			if(render){ c.render(); }
-		},
-		destroy: function(){
-			// summary: properly destroy the widget
-			this.chart.destroy();
-			this.inherited(arguments);
-		},
-		resize: function(box){
-			// summary: resize the widget
-			if(box.w > 0 && box.h > 0){
-				dojo.marginBox(this.domNode, box);
-				this.chart.resize();
+				// lets take into account FP errors
+				if(lo < l.length && eq(l[lo].value, number)){
+					return l[lo].text;
+				}
+				--lo;
+				if(lo >= 0 && lo < l.length && eq(l[lo].value, number)){
+					return l[lo].text;
+				}
+				lo += 2;
+				if(lo < l.length && eq(l[lo].value, number)){
+					return l[lo].text;
+				}
+				// otherwise we will produce a number
 			}
+			return def;
 		}
 	});
-	
-	collectParams = function(node, type, kw){
-		var dp = eval("(" + type + ".prototype.defaultParams)");
-		var x, attr;
-		for(x in dp){
-			if(x in kw){ continue; }
-			attr = node.getAttribute(x);
-			kw[x] = du.coerceType(dp[x], attr == null || typeof attr == "undefined" ? dp[x] : attr);
-		}
-		var op = eval("(" + type + ".prototype.optionalParams)");
-		for(x in op){
-			if(x in kw){ continue; }
-			attr = node.getAttribute(x);
-			if(attr != null){
-				kw[x] = du.coerceType(op[x], attr);
-			}
-		}
-	};
-	
-	collectAxisParams = function(node){
-		var name = node.getAttribute("name"), type = node.getAttribute("type");
-		if(!name){ return null; }
-		var o = {name: name, kwArgs: {}}, kw = o.kwArgs;
-		if(type){
-			if(dc.axis2d[type]){
-				type = dojox._scopeName + ".charting.axis2d." + type;
-			}
-			var axis = eval("(" + type + ")");
-			if(axis){ kw.type = axis; } 
-		}else{
-			type = dojox._scopeName + ".charting.axis2d.Default";
-		}
-		collectParams(node, type, kw);
-		// compatibility conversions
-		if(kw.font || kw.fontColor){
-			if(!kw.tick){
-				kw.tick = {};
-			}
-			if(kw.font){
-				kw.tick.font = kw.font;
-			}
-			if(kw.fontColor){
-				kw.tick.fontColor = kw.fontColor;
-			}
-		}
-		return o;
-	};
-	
-	collectPlotParams = function(node){
-		// var name = d.attr(node, "name"), type = d.attr(node, "type");
-		var name = node.getAttribute("name"), type = node.getAttribute("type");
-		if(!name){ return null; }
-		var o = {name: name, kwArgs: {}}, kw = o.kwArgs;
-		if(type){
-			if(dc.plot2d && dc.plot2d[type]){
-				type = dojox._scopeName + ".charting.plot2d." + type;
-			}
-			var plot = eval("(" + type + ")");
-			if(plot){ kw.type = plot; } 
-		}else{
-			type = dojox._scopeName + ".charting.plot2d.Default";
-		}
-		collectParams(node, type, kw);
-		return o;
-	};
-	
-	collectActionParams = function(node){
-		// var plot = d.attr(node, "plot"), type = d.attr(node, "type");
-		var plot = node.getAttribute("plot"), type = node.getAttribute("type");
-		if(!plot){ plot = "default"; }
-		var o = {plot: plot, kwArgs: {}}, kw = o.kwArgs;
-		if(type){
-			if(dc.action2d[type]){
-				type = dojox._scopeName + ".charting.action2d." + type;
-			}
-			var action = eval("(" + type + ")");
-			if(!action){ return null; }
-			o.action = action;
-		}else{
-			return null;
-		}
-		collectParams(node, type, kw);
-		return o;
-	};
-
-	collectDataParams = function(node){
-		var ga = d.partial(d.attr, node);
-		var name = ga("name");
-		if(!name){ return null; }
-		var o = { name: name, kwArgs: {} }, kw = o.kwArgs, t;
-		t = ga("plot");
-		if(t != null){ kw.plot = t; }
-		t = ga("marker");
-		if(t != null){ kw.marker = t; }
-		t = ga("stroke");
-		if(t != null){ kw.stroke = eval("(" + t + ")"); }
-		t = ga("outline");
-		if(t != null){ kw.outline = eval("(" + t + ")"); }
-		t = ga("shadow");
-		if(t != null){ kw.shadow = eval("(" + t + ")"); }
-		t = ga("fill");
-		if(t != null){ kw.fill = eval("(" + t + ")"); }
-		t = ga("font");
-		if(t != null){ kw.font = t; }
-		t = ga("fontColor");
-		if(t != null){ kw.fontColor = eval("(" + t + ")"); }
-		t = ga("legend");
-		if(t != null){ kw.legend = t; }
-		t = ga("data");
-		if(t != null){
-			o.type = "data";
-			o.data = t ? dojo.map(String(t).split(','), Number) : [];
-			return o;
-		}
-		t = ga("array");
-		if(t != null){
-			o.type = "data";
-			o.data = eval("(" + t + ")");
-			return o;
-		}
-		t = ga("store");
-		if(t != null){
-			o.type = "store";
-			o.data = eval("(" + t + ")");
-			t = ga("field");
-			o.field = t != null ? t : "value";
-			t = ga("query");
-			if(!!t){ kw.query = t; }
-			t = ga("queryOptions");
-			if(!!t){ kw.queryOptions = eval("(" + t + ")"); }
-			t = ga("start");
-			if(!!t){ kw.start = Number(t); }
-			t = ga("count");
-			if(!!t){ kw.count = Number(t); }
-			t = ga("sort");
-			if(!!t){ kw.sort = eval("("+t+")"); }
-			t = ga("valueFn");
-			if(!!t){ kw.valueFn = df.lambda(t); }
-			return o;
-		}
-		return null;
-	};
 })();
 
 }
 
-if(!dojo._hasResource["dojox.charting.themes.GreySkies"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.themes.GreySkies"] = true;
-dojo.provide("dojox.charting.themes.GreySkies");
+if(!dojo._hasResource["dojox.charting.scaler.linear"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.scaler.linear"] = true;
+dojo.provide("dojox.charting.scaler.linear");
 
 
 (function(){
-	var dxc=dojox.charting;
-	dxc.themes.GreySkies=new dxc.Theme(dxc.Theme._def);
+	var deltaLimit = 3,	// pixels
+		dc = dojox.charting, dcs = dc.scaler, dcsc = dcs.common,
+		findString = dcsc.findString,
+		getLabel = dcsc.getNumericLabel;
+	
+	var calcTicks = function(min, max, kwArgs, majorTick, minorTick, microTick, span){
+		kwArgs = dojo.delegate(kwArgs);
+		if(!majorTick){
+			if(kwArgs.fixUpper == "major"){ kwArgs.fixUpper = "minor"; }
+			if(kwArgs.fixLower == "major"){ kwArgs.fixLower = "minor"; }
+		}
+		if(!minorTick){
+			if(kwArgs.fixUpper == "minor"){ kwArgs.fixUpper = "micro"; }
+			if(kwArgs.fixLower == "minor"){ kwArgs.fixLower = "micro"; }
+		}
+		if(!microTick){
+			if(kwArgs.fixUpper == "micro"){ kwArgs.fixUpper = "none"; }
+			if(kwArgs.fixLower == "micro"){ kwArgs.fixLower = "none"; }
+		}
+		var lowerBound = findString(kwArgs.fixLower, ["major"]) ?
+				Math.floor(kwArgs.min / majorTick) * majorTick :
+					findString(kwArgs.fixLower, ["minor"]) ?
+						Math.floor(kwArgs.min / minorTick) * minorTick :
+							findString(kwArgs.fixLower, ["micro"]) ?
+								Math.floor(kwArgs.min / microTick) * microTick : kwArgs.min,
+			upperBound = findString(kwArgs.fixUpper, ["major"]) ?
+				Math.ceil(kwArgs.max / majorTick) * majorTick :
+					findString(kwArgs.fixUpper, ["minor"]) ?
+						Math.ceil(kwArgs.max / minorTick) * minorTick :
+							findString(kwArgs.fixUpper, ["micro"]) ?
+								Math.ceil(kwArgs.max / microTick) * microTick : kwArgs.max;
+								
+		if(kwArgs.useMin){ min = lowerBound; }
+		if(kwArgs.useMax){ max = upperBound; }
+		
+		var majorStart = (!majorTick || kwArgs.useMin && findString(kwArgs.fixLower, ["major"])) ?
+				min : Math.ceil(min / majorTick) * majorTick,
+			minorStart = (!minorTick || kwArgs.useMin && findString(kwArgs.fixLower, ["major", "minor"])) ?
+				min : Math.ceil(min / minorTick) * minorTick,
+			microStart = (! microTick || kwArgs.useMin && findString(kwArgs.fixLower, ["major", "minor", "micro"])) ?
+				min : Math.ceil(min / microTick) * microTick,
+			majorCount = !majorTick ? 0 : (kwArgs.useMax && findString(kwArgs.fixUpper, ["major"]) ?
+				Math.round((max - majorStart) / majorTick) :
+				Math.floor((max - majorStart) / majorTick)) + 1,
+			minorCount = !minorTick ? 0 : (kwArgs.useMax && findString(kwArgs.fixUpper, ["major", "minor"]) ?
+				Math.round((max - minorStart) / minorTick) :
+				Math.floor((max - minorStart) / minorTick)) + 1,
+			microCount = !microTick ? 0 : (kwArgs.useMax && findString(kwArgs.fixUpper, ["major", "minor", "micro"]) ?
+				Math.round((max - microStart) / microTick) :
+				Math.floor((max - microStart) / microTick)) + 1,
+			minorPerMajor  = minorTick ? Math.round(majorTick / minorTick) : 0,
+			microPerMinor  = microTick ? Math.round(minorTick / microTick) : 0,
+			majorPrecision = majorTick ? Math.floor(Math.log(majorTick) / Math.LN10) : 0,
+			minorPrecision = minorTick ? Math.floor(Math.log(minorTick) / Math.LN10) : 0,
+			scale = span / (max - min);	
+		if(!isFinite(scale)){ scale = 1; }
+		
+		return {
+			bounds: {
+				lower:	lowerBound,
+				upper:	upperBound,
+				from:	min,
+				to:		max,
+				scale:	scale,
+				span:	span
+			},
+			major: {
+				tick:	majorTick,
+				start:	majorStart,
+				count:	majorCount,
+				prec:	majorPrecision
+			},
+			minor: {
+				tick:	minorTick,
+				start:	minorStart,
+				count:	minorCount,
+				prec:	minorPrecision
+			},
+			micro: {
+				tick:	microTick,
+				start:	microStart,
+				count:	microCount,
+				prec:	0
+			},
+			minorPerMajor:	minorPerMajor,
+			microPerMinor:	microPerMinor,
+			scaler:			dcs.linear
+		};
+	};
+	
+	dojo.mixin(dojox.charting.scaler.linear, {
+		buildScaler: function(/*Number*/ min, /*Number*/ max, /*Number*/ span, /*Object*/ kwArgs){
+			var h = {fixUpper: "none", fixLower: "none", natural: false};
+			if(kwArgs){
+				if("fixUpper" in kwArgs){ h.fixUpper = String(kwArgs.fixUpper); }
+				if("fixLower" in kwArgs){ h.fixLower = String(kwArgs.fixLower); }
+				if("natural"  in kwArgs){ h.natural  = Boolean(kwArgs.natural); }
+			}
+			
+			// update bounds
+			if("min" in kwArgs){ min = kwArgs.min; }
+			if("max" in kwArgs){ max = kwArgs.max; }
+			if(kwArgs.includeZero){
+				if(min > 0){ min = 0; }
+				if(max < 0){ max = 0; }
+			}
+			h.min = min;
+			h.useMin = true;
+			h.max = max;
+			h.useMax = true;
+			
+			if("from" in kwArgs){
+				min = kwArgs.from;
+				h.useMin = false;
+			}
+			if("to" in kwArgs){
+				max = kwArgs.to;
+				h.useMax = false;
+			}
+			
+			// check for erroneous condition
+			if(max <= min){
+				return calcTicks(min, max, h, 0, 0, 0, span);	// Object
+			}
+			
+			var mag = Math.floor(Math.log(max - min) / Math.LN10),
+				major = kwArgs && ("majorTickStep" in kwArgs) ? kwArgs.majorTickStep : Math.pow(10, mag), 
+				minor = 0, micro = 0, ticks;
+				
+			// calculate minor ticks
+			if(kwArgs && ("minorTickStep" in kwArgs)){
+				minor = kwArgs.minorTickStep;
+			}else{
+				do{
+					minor = major / 10;
+					if(!h.natural || minor > 0.9){
+						ticks = calcTicks(min, max, h, major, minor, 0, span);
+						if(ticks.bounds.scale * ticks.minor.tick > deltaLimit){ break; }
+					}
+					minor = major / 5;
+					if(!h.natural || minor > 0.9){
+						ticks = calcTicks(min, max, h, major, minor, 0, span);
+						if(ticks.bounds.scale * ticks.minor.tick > deltaLimit){ break; }
+					}
+					minor = major / 2;
+					if(!h.natural || minor > 0.9){
+						ticks = calcTicks(min, max, h, major, minor, 0, span);
+						if(ticks.bounds.scale * ticks.minor.tick > deltaLimit){ break; }
+					}
+					return calcTicks(min, max, h, major, 0, 0, span);	// Object
+				}while(false);
+			}
+	
+			// calculate micro ticks
+			if(kwArgs && ("microTickStep" in kwArgs)){
+				micro = kwArgs.microTickStep;
+				ticks = calcTicks(min, max, h, major, minor, micro, span);
+			}else{
+				do{
+					micro = minor / 10;
+					if(!h.natural || micro > 0.9){
+						ticks = calcTicks(min, max, h, major, minor, micro, span);
+						if(ticks.bounds.scale * ticks.micro.tick > deltaLimit){ break; }
+					}
+					micro = minor / 5;
+					if(!h.natural || micro > 0.9){
+						ticks = calcTicks(min, max, h, major, minor, micro, span);
+						if(ticks.bounds.scale * ticks.micro.tick > deltaLimit){ break; }
+					}
+					micro = minor / 2;
+					if(!h.natural || micro > 0.9){
+						ticks = calcTicks(min, max, h, major, minor, micro, span);
+						if(ticks.bounds.scale * ticks.micro.tick > deltaLimit){ break; }
+					}
+					micro = 0;
+				}while(false);
+			}
+	
+			return micro ? ticks : calcTicks(min, max, h, major, minor, 0, span);	// Object
+		},
+		buildTicks: function(/*Object*/ scaler, /*Object*/ kwArgs){
+			var step, next, tick,
+				nextMajor = scaler.major.start, 
+				nextMinor = scaler.minor.start, 
+				nextMicro = scaler.micro.start;
+			if(kwArgs.microTicks && scaler.micro.tick){
+				step = scaler.micro.tick, next = nextMicro;
+			}else if(kwArgs.minorTicks && scaler.minor.tick){
+				step = scaler.minor.tick, next = nextMinor;
+			}else if(scaler.major.tick){
+				step = scaler.major.tick, next = nextMajor;
+			}else{
+				// no ticks
+				return null;
+			}
+			// make sure that we have finite bounds
+			var revScale = 1 / scaler.bounds.scale;
+			if(scaler.bounds.to <= scaler.bounds.from || isNaN(revScale) || !isFinite(revScale) ||
+					step <= 0 || isNaN(step) || !isFinite(step)){
+				// no ticks
+				return null;
+			}
+			// loop over all ticks
+			var majorTicks = [], minorTicks = [], microTicks = [];
+			while(next <= scaler.bounds.to + revScale){
+				if(Math.abs(nextMajor - next) < step / 2){
+					// major tick
+					tick = {value: nextMajor};
+					if(kwArgs.majorLabels){
+						tick.label = getLabel(nextMajor, scaler.major.prec, kwArgs);
+					}
+					majorTicks.push(tick);
+					nextMajor += scaler.major.tick;
+					nextMinor += scaler.minor.tick;
+					nextMicro += scaler.micro.tick;
+				}else if(Math.abs(nextMinor - next) < step / 2){
+					// minor tick
+					if(kwArgs.minorTicks){
+						tick = {value: nextMinor};
+						if(kwArgs.minorLabels && (scaler.minMinorStep <= scaler.minor.tick * scaler.bounds.scale)){
+							tick.label = getLabel(nextMinor, scaler.minor.prec, kwArgs);
+						}
+						minorTicks.push(tick);
+					}
+					nextMinor += scaler.minor.tick;
+					nextMicro += scaler.micro.tick;
+				}else{
+					// micro tick
+					if(kwArgs.microTicks){
+						microTicks.push({value: nextMicro});
+					}
+					nextMicro += scaler.micro.tick;
+				}
+				next += step;
+			}
+			return {major: majorTicks, minor: minorTicks, micro: microTicks};	// Object
+		},
+		getTransformerFromModel: function(/*Object*/ scaler){
+			var offset = scaler.bounds.from, scale = scaler.bounds.scale;
+			return function(x){ return (x - offset) * scale; };	// Function
+		},
+		getTransformerFromPlot: function(/*Object*/ scaler){
+			var offset = scaler.bounds.from, scale = scaler.bounds.scale;
+			return function(x){ return x / scale + offset; };	// Function
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.axis2d.Base"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.axis2d.Base"] = true;
+dojo.provide("dojox.charting.axis2d.Base");
+
+
+
+dojo.declare("dojox.charting.axis2d.Base", dojox.charting.Element, {
+	//	summary:
+	//		The base class for any axis.  This is more of an interface/API
+	//		definition than anything else; see dojox.charting.axis2d.Default
+	//		for more details.
+	constructor: function(chart, kwArgs){
+		//	summary:
+		//		Return a new base axis.
+		//	chart: dojox.charting.Chart2D
+		//		The chart this axis belongs to.
+		//	kwArgs: dojox.charting.axis2d.__AxisCtorArgs?
+		//		An optional arguments object to define the axis parameters.
+		this.vertical = kwArgs && kwArgs.vertical;
+	},
+	clear: function(){
+		//	summary:
+		//		Stub function for clearing the axis.
+		//	returns: dojox.charting.axis2d.Base
+		//		A reference to the axis for functional chaining.
+		return this;	//	dojox.charting.axis2d.Base
+	},
+	initialized: function(){
+		//	summary:
+		//		Return a flag as to whether or not this axis has been initialized.
+		//	returns: Boolean
+		//		If the axis is initialized or not.
+		return false;	//	Boolean
+	},
+	calculate: function(min, max, span){
+		//	summary:
+		//		Stub function to run the calcuations needed for drawing this axis.
+		//	returns: dojox.charting.axis2d.Base
+		//		A reference to the axis for functional chaining.
+		return this;	//	dojox.charting.axis2d.Base
+	},
+	getScaler: function(){
+		//	summary:
+		//		A stub function to return the scaler object created during calculate.
+		//	returns: Object
+		//		The scaler object (see dojox.charting.scaler.linear for more information)
+		return null;	//	Object
+	},
+	getTicks: function(){
+		//	summary:
+		//		A stub function to return the object that helps define how ticks are rendered.
+		//	returns: Object
+		//		The ticks object.
+		return null;	//	Object
+	},
+	getOffsets: function(){
+		//	summary:
+		//		A stub function to return any offsets needed for axis and series rendering.
+		//	returns: Object
+		//		An object of the form { l, r, t, b }.
+		return {l: 0, r: 0, t: 0, b: 0};	//	Object
+	},
+	render: function(dim, offsets){
+		//	summary:
+		//		Stub function to render this axis.
+		//	returns: dojox.charting.axis2d.Base
+		//		A reference to the axis for functional chaining.
+		this.dirty = false;
+		return this;	//	dojox.charting.axis2d.Base
+	}
+});
+
+}
+
+if(!dojo._hasResource["dojox.charting.axis2d.Invisible"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.axis2d.Invisible"] = true;
+dojo.provide("dojox.charting.axis2d.Invisible");
+
+
+
+
+
+
+
+
+
+
+(function(){
+	var dc = dojox.charting,
+		df = dojox.lang.functional,
+		du = dojox.lang.utils,
+		g = dojox.gfx,
+		lin = dc.scaler.linear,
+		merge = du.merge,
+		labelGap = 4,			// in pixels
+		centerAnchorLimit = 45;	// in degrees
+
+	dojo.declare("dojox.charting.axis2d.Invisible", dojox.charting.axis2d.Base, {
+		//	summary:
+		//		The default axis object used in dojox.charting.  See dojox.charting.Chart2D.addAxis for details.
+		//
+		//	defaultParams: Object
+		//		The default parameters used to define any axis.
+		//	optionalParams: Object
+		//		Any optional parameters needed to define an axis.
+
+		/*
+		//	TODO: the documentation tools need these to be pre-defined in order to pick them up
+		//	correctly, but the code here is partially predicated on whether or not the properties
+		//	actually exist.  For now, we will leave these undocumented but in the code for later. -- TRT
+
+		//	opt: Object
+		//		The actual options used to define this axis, created at initialization.
+		//	scalar: Object
+		//		The calculated helper object to tell charts how to draw an axis and any data.
+		//	ticks: Object
+		//		The calculated tick object that helps a chart draw the scaling on an axis.
+		//	dirty: Boolean
+		//		The state of the axis (whether it needs to be redrawn or not)
+		//	scale: Number
+		//		The current scale of the axis.
+		//	offset: Number
+		//		The current offset of the axis.
+
+		opt: null,
+		scalar: null,
+		ticks: null,
+		dirty: true,
+		scale: 1,
+		offset: 0,
+		*/
+		defaultParams: {
+			vertical:    false,		// true for vertical axis
+			fixUpper:    "none",	// align the upper on ticks: "major", "minor", "micro", "none"
+			fixLower:    "none",	// align the lower on ticks: "major", "minor", "micro", "none"
+			natural:     false,		// all tick marks should be made on natural numbers
+			leftBottom:  true,		// position of the axis, used with "vertical"
+			includeZero: false,		// 0 should be included
+			fixed:       true,		// all labels are fixed numbers
+			majorLabels: true,		// draw major labels
+			minorTicks:  true,		// draw minor ticks
+			minorLabels: true,		// draw minor labels
+			microTicks:  false,		// draw micro ticks
+			rotation:    0			// label rotation angle in degrees
+		},
+		optionalParams: {
+			min:			0,	// minimal value on this axis
+			max:			1,	// maximal value on this axis
+			from:			0,	// visible from this value
+			to:				1,	// visible to this value
+			majorTickStep:	4,	// major tick step
+			minorTickStep:	2,	// minor tick step
+			microTickStep:	1,	// micro tick step
+			labels:			[],	// array of labels for major ticks
+								// with corresponding numeric values
+								// ordered by values
+			labelFunc:		null, // function to compute label values
+			maxLabelSize:	0,	// size in px. For use with labelFunc
+			maxLabelCharCount:	0,	// size in word count.
+			trailingSymbol:			null
+
+			// TODO: add support for minRange!
+			// minRange:		1,	// smallest distance from min allowed on the axis
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		The constructor for an axis.
+			//	chart: dojox.charting.Chart2D
+			//		The chart the axis belongs to.
+			//	kwArgs: dojox.charting.axis2d.__AxisCtorArgs?
+			//		Any optional keyword arguments to be used to define this axis.
+			this.opt = dojo.clone(this.defaultParams);
+            du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+		},
+		dependOnData: function(){
+			//	summary:
+			//		Find out whether or not the axis options depend on the data in the axis.
+			return !("min" in this.opt) || !("max" in this.opt);	//	Boolean
+		},
+		clear: function(){
+			//	summary:
+			//		Clear out all calculated properties on this axis;
+			//	returns: dojox.charting.axis2d.Default
+			//		The reference to the axis for functional chaining.
+			delete this.scaler;
+			delete this.ticks;
+			this.dirty = true;
+			return this;	//	dojox.charting.axis2d.Default
+		},
+		initialized: function(){
+			//	summary:
+			//		Finds out if this axis has been initialized or not.
+			//	returns: Boolean
+			//		Whether a scaler has been calculated and if the axis is not dirty.
+			return "scaler" in this && !(this.dirty && this.dependOnData());
+		},
+		setWindow: function(scale, offset){
+			//	summary:
+			//		Set the drawing "window" for the axis.
+			//	scale: Number
+			//		The new scale for the axis.
+			//	offset: Number
+			//		The new offset for the axis.
+			//	returns: dojox.charting.axis2d.Default
+			//		The reference to the axis for functional chaining.
+			this.scale  = scale;
+			this.offset = offset;
+			return this.clear();	//	dojox.charting.axis2d.Default
+		},
+		getWindowScale: function(){
+			//	summary:
+			//		Get the current windowing scale of the axis.
+			return "scale" in this ? this.scale : 1;	//	Number
+		},
+		getWindowOffset: function(){
+			//	summary:
+			//		Get the current windowing offset for the axis.
+			return "offset" in this ? this.offset : 0;	//	Number
+		},
+		_groupLabelWidth: function(labels, font, wcLimit){
+			if(!labels.length){
+				return 0;
+			}
+			if(dojo.isObject(labels[0])){
+				labels = df.map(labels, function(label){ return label.text; });
+			}
+			if (wcLimit) {
+				labels = df.map(labels, function(label){
+					return dojo.trim(label).length == 0 ? "" : label.substring(0, wcLimit) + this.trailingSymbol;
+				}, this);
+			}
+			var s = labels.join("<br>");
+			return dojox.gfx._base._getTextBox(s, {font: font}).w || 0;
+		},
+		calculate: function(min, max, span, labels){
+			//	summary:
+			//		Perform all calculations needed to render this axis.
+			//	min: Number
+			//		The smallest value represented on this axis.
+			//	max: Number
+			//		The largest value represented on this axis.
+			//	span: Number
+			//		The span in pixels over which axis calculations are made.
+			//	labels: String[]
+			//		Optional list of labels.
+			//	returns: dojox.charting.axis2d.Default
+			//		The reference to the axis for functional chaining.
+			if(this.initialized()){
+				return this;
+			}
+			var o = this.opt;
+			this.labels = "labels" in o  ? o.labels : labels;
+			this.scaler = lin.buildScaler(min, max, span, o);
+			var tsb = this.scaler.bounds;
+			if("scale" in this){
+				// calculate new range
+				o.from = tsb.lower + this.offset;
+				o.to   = (tsb.upper - tsb.lower) / this.scale + o.from;
+				// make sure that bounds are correct
+				if( !isFinite(o.from) ||
+					isNaN(o.from) ||
+					!isFinite(o.to) ||
+					isNaN(o.to) ||
+					o.to - o.from >= tsb.upper - tsb.lower
+				){
+					// any error --- remove from/to bounds
+					delete o.from;
+					delete o.to;
+					delete this.scale;
+					delete this.offset;
+				}else{
+					// shift the window, if we are out of bounds
+					if(o.from < tsb.lower){
+						o.to += tsb.lower - o.from;
+						o.from = tsb.lower;
+					}else if(o.to > tsb.upper){
+						o.from += tsb.upper - o.to;
+						o.to = tsb.upper;
+					}
+					// update the offset
+					this.offset = o.from - tsb.lower;
+				}
+				// re-calculate the scaler
+				this.scaler = lin.buildScaler(min, max, span, o);
+				tsb = this.scaler.bounds;
+				// cleanup
+				if(this.scale == 1 && this.offset == 0){
+					delete this.scale;
+					delete this.offset;
+				}
+			}
+
+			var ta = this.chart.theme.axis, labelWidth = 0, rotation = o.rotation % 360,
+				// TODO: we use one font --- of major tick, we need to use major and minor fonts
+				taFont = o.font || (ta.majorTick && ta.majorTick.font) || (ta.tick && ta.tick.font),
+				size = taFont ? g.normalizedLength(g.splitFontString(taFont).size) : 0,
+				cosr = Math.abs(Math.cos(rotation * Math.PI / 180)),
+				sinr = Math.abs(Math.sin(rotation * Math.PI / 180));
+
+			if(rotation < 0){
+				rotation += 360;
+			}
+
+			if(size){
+				if(this.vertical ? rotation != 0 && rotation != 180 : rotation != 90 && rotation != 270){
+					// we need width of all labels
+					if(this.labels){
+						labelWidth = this._groupLabelWidth(this.labels, taFont, o.maxLabelCharCount);
+					}else{
+						var labelLength = Math.ceil(
+								Math.log(
+									Math.max(
+										Math.abs(tsb.from),
+										Math.abs(tsb.to)
+									)
+								) / Math.LN10
+							),
+							t = [];
+						if(tsb.from < 0 || tsb.to < 0){
+							t.push("-");
+						}
+						t.push(dojo.string.rep("9", labelLength));
+						var precision = Math.floor(
+							Math.log( tsb.to - tsb.from ) / Math.LN10
+						);
+						if(precision > 0){
+							t.push(".");
+							t.push(dojo.string.rep("9", precision));
+						}
+						labelWidth = dojox.gfx._base._getTextBox(
+							t.join(""),
+							{ font: taFont }
+						).w;
+					}
+					labelWidth = o.maxLabelSize ? Math.min(o.maxLabelSize, labelWidth) : labelWidth;
+				}else{
+					labelWidth = size;
+				}
+				switch(rotation){
+					case 0:
+					case 90:
+					case 180:
+					case 270:
+						// trivial cases: use labelWidth
+						break;
+					default:
+						// rotated labels
+						var gap1 = Math.sqrt(labelWidth * labelWidth + size * size),									// short labels
+							gap2 = this.vertical ? size * cosr + labelWidth * sinr : labelWidth * cosr + size * sinr;	// slanted labels
+						labelWidth = Math.min(gap1, gap2);
+						break;
+				}
+			}
+
+			this.scaler.minMinorStep = labelWidth + labelGap;
+			this.ticks = lin.buildTicks(this.scaler, o);
+			return this;	//	dojox.charting.axis2d.Default
+		},
+		getScaler: function(){
+			//	summary:
+			//		Get the pre-calculated scaler object.
+			return this.scaler;	//	Object
+		},
+		getTicks: function(){
+			//	summary:
+			//		Get the pre-calculated ticks object.
+			return this.ticks;	//	Object
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.axis2d.Default"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.axis2d.Default"] = true;
+dojo.provide("dojox.charting.axis2d.Default");
+
+
+
+
+
+
+
+
+
+
+
+
+/*=====
+	dojox.charting.axis2d.__AxisCtorArgs = function(
+		vertical, fixUpper, fixLower, natural, leftBottom,
+		includeZero, fixed, majorLabels, minorTicks, minorLabels, microTicks, htmlLabels,
+		min, max, from, to, majorTickStep, minorTickStep, microTickStep,
+		labels, labelFunc, maxLabelSize,
+		stroke, majorTick, minorTick, microTick, tick,
+		font, fontColor
+	){
+	//	summary:
+	//		Optional arguments used in the definition of an axis.
+	//
+	//	vertical: Boolean?
+	//		A flag that says whether an axis is vertical (i.e. y axis) or horizontal. Default is false (horizontal).
+	//	fixUpper: String?
+	//		Align the greatest value on the axis with the specified tick level. Options are "major", "minor", "micro", or "none".  Defaults to "none".
+	//	fixLower: String?
+	//		Align the smallest value on the axis with the specified tick level. Options are "major", "minor", "micro", or "none".  Defaults to "none".
+	//	natural: Boolean?
+	//		Ensure tick marks are made on "natural" numbers. Defaults to false.
+	//	leftBottom: Boolean?
+	//		The position of a vertical axis; if true, will be placed against the left-bottom corner of the chart.  Defaults to true.
+	//	includeZero: Boolean?
+	//		Include 0 on the axis rendering.  Default is false.
+	//	fixed: Boolean?
+	//		Force all axis labels to be fixed numbers.  Default is true.
+	//	majorLabels: Boolean?
+	//		Flag to draw all labels at major ticks. Default is true.
+	//	minorTicks: Boolean?
+	//		Flag to draw minor ticks on an axis.  Default is true.
+	//	minorLabels: Boolean?
+	//		Flag to draw labels on minor ticks. Default is true.
+	//	microTicks: Boolean?
+	//		Flag to draw micro ticks on an axis. Default is false.
+	//	htmlLabels: Boolean?
+	//		Flag to use HTML (as opposed to the native vector graphics engine) to draw labels. Default is true.
+	//	min: Number?
+	//		The smallest value on an axis. Default is 0.
+	//	max: Number?
+	//		The largest value on an axis. Default is 1.
+	//	from: Number?
+	//		Force the chart to render data visible from this value. Default is 0.
+	//	to: Number?
+	//		Force the chart to render data visible to this value. Default is 1.
+	//	majorTickStep: Number?
+	//		The amount to skip before a major tick is drawn.  Default is 4.
+	//	minorTickStep: Number?
+	//		The amount to skip before a minor tick is drawn. Default is 2.
+	//	microTickStep: Number?
+	//		The amount to skip before a micro tick is drawn. Default is 1.
+	//	labels: Object[]?
+	//		An array of labels for major ticks, with corresponding numeric values, ordered by value.
+	//	labelFunc: Function?
+	//		An optional function used to compute label values.
+	//	maxLabelSize: Number?
+	//		The maximum size, in pixels, for a label.  To be used with the optional label function.
+	//	stroke: dojox.gfx.Stroke?
+	//		An optional stroke to be used for drawing an axis.
+	//	majorTick: Object?
+	//		An object containing a dojox.gfx.Stroke, and a length (number) for a major tick.
+	//	minorTick: Object?
+	//		An object containing a dojox.gfx.Stroke, and a length (number) for a minor tick.
+	//	microTick: Object?
+	//		An object containing a dojox.gfx.Stroke, and a length (number) for a micro tick.
+	//	tick: Object?
+	//		An object containing a dojox.gfx.Stroke, and a length (number) for a tick.
+	//	font: String?
+	//		An optional font definition (as used in the CSS font property) for labels.
+	//	fontColor: String|dojo.Color?
+	//		An optional color to be used in drawing labels.
+
+	this.vertical = vertical;
+	this.fixUpper = fixUpper;
+	this.fixLower = fixLower;
+	this.natural = natural;
+	this.leftBottom = leftBottom;
+	this.includeZero = includeZero;
+	this.fixed = fixed;
+	this.majorLabels = majorLabels;
+	this.minorTicks = minorTicks;
+	this.minorLabels = minorLabels;
+	this.microTicks = microTicks;
+	this.htmlLabels = htmlLabels;
+	this.min = min;
+	this.max = max;
+	this.from = from;
+	this.to = to;
+	this.majorTickStep = majorTickStep;
+	this.minorTickStep = minorTickStep;
+	this.microTickStep = microTickStep;
+	this.labels = labels;
+	this.labelFunc = labelFunc;
+	this.maxLabelSize = maxLabelSize;
+	this.stroke = stroke;
+	this.majorTick = majorTick;
+	this.minorTick = minorTick;
+	this.microTick = microTick;
+	this.tick = tick;
+	this.font = font;
+	this.fontColor = fontColor;
+}
+=====*/
+(function(){
+	var dc = dojox.charting,
+		du = dojox.lang.utils,
+		g = dojox.gfx,
+		lin = dc.scaler.linear,
+		labelGap = 4,			// in pixels
+		centerAnchorLimit = 45;	// in degrees
+
+	dojo.declare("dojox.charting.axis2d.Default", dojox.charting.axis2d.Invisible, {
+		//	summary:
+		//		The default axis object used in dojox.charting.  See dojox.charting.Chart.addAxis for details.
+		//
+		//	defaultParams: Object
+		//		The default parameters used to define any axis.
+		//	optionalParams: Object
+		//		Any optional parameters needed to define an axis.
+
+		/*
+		//	TODO: the documentation tools need these to be pre-defined in order to pick them up
+		//	correctly, but the code here is partially predicated on whether or not the properties
+		//	actually exist.  For now, we will leave these undocumented but in the code for later. -- TRT
+
+		//	opt: Object
+		//		The actual options used to define this axis, created at initialization.
+		//	scalar: Object
+		//		The calculated helper object to tell charts how to draw an axis and any data.
+		//	ticks: Object
+		//		The calculated tick object that helps a chart draw the scaling on an axis.
+		//	dirty: Boolean
+		//		The state of the axis (whether it needs to be redrawn or not)
+		//	scale: Number
+		//		The current scale of the axis.
+		//	offset: Number
+		//		The current offset of the axis.
+
+		opt: null,
+		scalar: null,
+		ticks: null,
+		dirty: true,
+		scale: 1,
+		offset: 0,
+		*/
+		defaultParams: {
+			vertical:    false,		// true for vertical axis
+			fixUpper:    "none",	// align the upper on ticks: "major", "minor", "micro", "none"
+			fixLower:    "none",	// align the lower on ticks: "major", "minor", "micro", "none"
+			natural:     false,		// all tick marks should be made on natural numbers
+			leftBottom:  true,		// position of the axis, used with "vertical"
+			includeZero: false,		// 0 should be included
+			fixed:       true,		// all labels are fixed numbers
+			majorLabels: true,		// draw major labels
+			minorTicks:  true,		// draw minor ticks
+			minorLabels: true,		// draw minor labels
+			microTicks:  false,		// draw micro ticks
+			rotation:    0,			// label rotation angle in degrees
+			htmlLabels:  true		// use HTML to draw labels
+		},
+		optionalParams: {
+			min:			0,	// minimal value on this axis
+			max:			1,	// maximal value on this axis
+			from:			0,	// visible from this value
+			to:				1,	// visible to this value
+			majorTickStep:	4,	// major tick step
+			minorTickStep:	2,	// minor tick step
+			microTickStep:	1,	// micro tick step
+			labels:			[],	// array of labels for major ticks
+								// with corresponding numeric values
+								// ordered by values
+			labelFunc:		null, // function to compute label values
+			maxLabelSize:	0,	// size in px. For use with labelFunc
+			maxLabelCharCount:	0,	// size in word count.
+			trailingSymbol:	null,
+
+			// TODO: add support for minRange!
+			// minRange:		1,	// smallest distance from min allowed on the axis
+
+			// theme components
+			stroke:			{},	// stroke for an axis
+			majorTick:		{},	// stroke + length for a tick
+			minorTick:		{},	// stroke + length for a tick
+			microTick:		{},	// stroke + length for a tick
+			tick:           {},	// stroke + length for a tick
+			font:			"",	// font for labels
+			fontColor:		"",	// color for labels as a string
+			title:		 		null,	// axis title
+			titleGap:	 		0,		// gap between axis title and axis label
+			titleFont:	 		"",		// axis title font
+			titleFontColor:	 	"",		// axis title font color
+			titleOrientation: 	""		// "axis" means the title facing the axis, "away" means facing away
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		The constructor for an axis.
+			//	chart: dojox.charting.Chart2D
+			//		The chart the axis belongs to.
+			//	kwArgs: dojox.charting.axis2d.__AxisCtorArgs?
+			//		Any optional keyword arguments to be used to define this axis.
+			this.opt = dojo.clone(this.defaultParams);
+            du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+		},
+		getOffsets: function(){
+			//	summary:
+			//		Get the physical offset values for this axis (used in drawing data series).
+			//	returns: Object
+			//		The calculated offsets in the form of { l, r, t, b } (left, right, top, bottom).
+			var s = this.scaler, offsets = { l: 0, r: 0, t: 0, b: 0 };
+			if(!s){
+				return offsets;
+			}
+			var o = this.opt, labelWidth = 0, a, b, c, d,
+				gl = dc.scaler.common.getNumericLabel,
+				offset = 0, ma = s.major, mi = s.minor,
+				ta = this.chart.theme.axis,
+				// TODO: we use one font --- of major tick, we need to use major and minor fonts
+				taFont = o.font || (ta.majorTick && ta.majorTick.font) || (ta.tick && ta.tick.font),
+				taTitleFont = o.titleFont || (ta.tick && ta.tick.titleFont),
+				taTitleGap = (o.titleGap==0) ? 0 : o.titleGap || (ta.tick && ta.tick.titleGap) || 15,
+				taMajorTick = this.chart.theme.getTick("major", o),
+				taMinorTick = this.chart.theme.getTick("minor", o),
+				size = taFont ? g.normalizedLength(g.splitFontString(taFont).size) : 0,
+				tsize = taTitleFont ? g.normalizedLength(g.splitFontString(taTitleFont).size) : 0,
+				rotation = o.rotation % 360, leftBottom = o.leftBottom,
+				cosr = Math.abs(Math.cos(rotation * Math.PI / 180)),
+				sinr = Math.abs(Math.sin(rotation * Math.PI / 180));
+			this.trailingSymbol = (o.trailingSymbol === undefined || o.trailingSymbol === null) ? this.trailingSymbol : o.trailingSymbol;
+			if(rotation < 0){
+				rotation += 360;
+			}
+
+			if(size){
+				// we need width of all labels
+				if(this.labels){
+					labelWidth = this._groupLabelWidth(this.labels, taFont, o.maxLabelCharCount);
+				}else{
+					labelWidth = this._groupLabelWidth([
+						gl(ma.start, ma.prec, o),
+						gl(ma.start + ma.count * ma.tick, ma.prec, o),
+						gl(mi.start, mi.prec, o),
+						gl(mi.start + mi.count * mi.tick, mi.prec, o)
+					], taFont, o.maxLabelCharCount);
+				}
+				labelWidth = o.maxLabelSize ? Math.min(o.maxLabelSize, labelWidth) : labelWidth;
+				if(this.vertical){
+					var side = leftBottom ? "l" : "r";
+					switch(rotation){
+						case 0:
+						case 180:
+							offsets[side] = labelWidth;
+							offsets.t = offsets.b = size / 2;
+							break;
+						case 90:
+						case 270:
+							offsets[side] = size;
+							offsets.t = offsets.b = labelWidth / 2;
+							break;
+						default:
+							if(rotation <= centerAnchorLimit || (180 < rotation && rotation <= (180 + centerAnchorLimit))){
+								offsets[side] = size * sinr / 2 + labelWidth * cosr;
+								offsets[leftBottom ? "t" : "b"] = size * cosr / 2 + labelWidth * sinr;
+								offsets[leftBottom ? "b" : "t"] = size * cosr / 2;
+							}else if(rotation > (360 - centerAnchorLimit) || (180 > rotation && rotation > (180 - centerAnchorLimit))){
+								offsets[side] = size * sinr / 2 + labelWidth * cosr;
+								offsets[leftBottom ? "b" : "t"] = size * cosr / 2 + labelWidth * sinr;
+								offsets[leftBottom ? "t" : "b"] = size * cosr / 2;
+							}else if(rotation < 90 || (180 < rotation && rotation < 270)){
+								offsets[side] = size * sinr + labelWidth * cosr;
+								offsets[leftBottom ? "t" : "b"] = size * cosr + labelWidth * sinr;
+							}else{
+								offsets[side] = size * sinr + labelWidth * cosr;
+								offsets[leftBottom ? "b" : "t"] = size * cosr + labelWidth * sinr;
+							}
+							break;
+					}
+					offsets[side] += labelGap + Math.max(taMajorTick.length, taMinorTick.length) + (o.title ? (tsize + taTitleGap) : 0);
+				}else{
+					var side = leftBottom ? "b" : "t";
+					switch(rotation){
+						case 0:
+						case 180:
+							offsets[side] = size;
+							offsets.l = offsets.r = labelWidth / 2;
+							break;
+						case 90:
+						case 270:
+							offsets[side] = labelWidth;
+							offsets.l = offsets.r = size / 2;
+							break;
+						default:
+							if((90 - centerAnchorLimit) <= rotation && rotation <= 90 || (270 - centerAnchorLimit) <= rotation && rotation <= 270){
+								offsets[side] = size * sinr / 2 + labelWidth * cosr;
+								offsets[leftBottom ? "r" : "l"] = size * cosr / 2 + labelWidth * sinr;
+								offsets[leftBottom ? "l" : "r"] = size * cosr / 2;
+							}else if(90 <= rotation && rotation <= (90 + centerAnchorLimit) || 270 <= rotation && rotation <= (270 + centerAnchorLimit)){
+								offsets[side] = size * sinr / 2 + labelWidth * cosr;
+								offsets[leftBottom ? "l" : "r"] = size * cosr / 2 + labelWidth * sinr;
+								offsets[leftBottom ? "r" : "l"] = size * cosr / 2;
+							}else if(rotation < centerAnchorLimit || (180 < rotation && rotation < (180 - centerAnchorLimit))){
+								offsets[side] = size * sinr + labelWidth * cosr;
+								offsets[leftBottom ? "r" : "l"] = size * cosr + labelWidth * sinr;
+							}else{
+								offsets[side] = size * sinr + labelWidth * cosr;
+								offsets[leftBottom ? "l" : "r"] = size * cosr + labelWidth * sinr;
+							}
+							break;
+					}
+					offsets[side] += labelGap + Math.max(taMajorTick.length, taMinorTick.length) + (o.title ? (tsize + taTitleGap) : 0);
+				}
+			}
+			if(labelWidth){
+				this._cachedLabelWidth = labelWidth;
+			}
+			return offsets;	//	Object
+		},
+		render: function(dim, offsets){
+			//	summary:
+			//		Render/draw the axis.
+			//	dim: Object
+			//		An object of the form { width, height}.
+			//	offsets: Object
+			//		An object of the form { l, r, t, b }.
+			//	returns: dojox.charting.axis2d.Default
+			//		The reference to the axis for functional chaining.
+			if(!this.dirty){
+				return this;	//	dojox.charting.axis2d.Default
+			}
+			// prepare variable
+			var o = this.opt, ta = this.chart.theme.axis, leftBottom = o.leftBottom, rotation = o.rotation % 360,
+				start, stop, titlePos, titleRotation=0, titleOffset, axisVector, tickVector, anchorOffset, labelOffset, labelAlign,
+
+				// TODO: we use one font --- of major tick, we need to use major and minor fonts
+				taFont = o.font || (ta.majorTick && ta.majorTick.font) || (ta.tick && ta.tick.font),
+				taTitleFont = o.titleFont || (ta.tick && ta.tick.titleFont),
+				// TODO: we use one font color --- we need to use different colors
+				taFontColor = o.fontColor || (ta.majorTick && ta.majorTick.fontColor) || (ta.tick && ta.tick.fontColor) || "black",
+				taTitleFontColor = o.titleFontColor || (ta.tick && ta.tick.titleFontColor) || "black",
+				taTitleGap = (o.titleGap==0) ? 0 : o.titleGap || (ta.tick && ta.tick.titleGap) || 15,
+				taTitleOrientation = o.titleOrientation || (ta.tick && ta.tick.titleOrientation) || "axis",
+				taMajorTick = this.chart.theme.getTick("major", o),
+				taMinorTick = this.chart.theme.getTick("minor", o),
+				taMicroTick = this.chart.theme.getTick("micro", o),
+
+				tickSize = Math.max(taMajorTick.length, taMinorTick.length, taMicroTick.length),
+				taStroke = "stroke" in o ? o.stroke : ta.stroke,
+				size = taFont ? g.normalizedLength(g.splitFontString(taFont).size) : 0,
+				cosr = Math.abs(Math.cos(rotation * Math.PI / 180)),
+				sinr = Math.abs(Math.sin(rotation * Math.PI / 180)),
+				tsize = taTitleFont ? g.normalizedLength(g.splitFontString(taTitleFont).size) : 0;
+			if(rotation < 0){
+				rotation += 360;
+			}
+			if(this.vertical){
+				start = {y: dim.height - offsets.b};
+				stop  = {y: offsets.t};
+				titlePos = {y: (dim.height - offsets.b + offsets.t)/2};
+				titleOffset = size * sinr + (this._cachedLabelWidth || 0) * cosr + labelGap + Math.max(taMajorTick.length, taMinorTick.length) + tsize + taTitleGap;
+				axisVector = {x: 0, y: -1};
+				labelOffset = {x: 0, y: 0};
+				tickVector = {x: 1, y: 0};
+				anchorOffset = {x: labelGap, y: 0};
+				switch(rotation){
+					case 0:
+						labelAlign = "end";
+						labelOffset.y = size * 0.4;
+						break;
+					case 90:
+						labelAlign = "middle";
+						labelOffset.x = -size;
+						break;
+					case 180:
+						labelAlign = "start";
+						labelOffset.y = -size * 0.4;
+						break;
+					case 270:
+						labelAlign = "middle";
+						break;
+					default:
+						if(rotation < centerAnchorLimit){
+							labelAlign = "end";
+							labelOffset.y = size * 0.4;
+						}else if(rotation < 90){
+							labelAlign = "end";
+							labelOffset.y = size * 0.4;
+						}else if(rotation < (180 - centerAnchorLimit)){
+							labelAlign = "start";
+						}else if(rotation < (180 + centerAnchorLimit)){
+							labelAlign = "start";
+							labelOffset.y = -size * 0.4;
+						}else if(rotation < 270){
+							labelAlign = "start";
+							labelOffset.x = leftBottom ? 0 : size * 0.4;
+						}else if(rotation < (360 - centerAnchorLimit)){
+							labelAlign = "end";
+							labelOffset.x = leftBottom ? 0 : size * 0.4;
+						}else{
+							labelAlign = "end";
+							labelOffset.y = size * 0.4;
+						}
+				}
+				if(leftBottom){
+					start.x = stop.x = offsets.l;
+					titleRotation = (taTitleOrientation && taTitleOrientation == "away") ? 90 : 270;
+					titlePos.x = offsets.l - titleOffset + (titleRotation == 270 ? tsize : 0);
+					tickVector.x = -1;
+					anchorOffset.x = -anchorOffset.x;
+				}else{
+					start.x = stop.x = dim.width - offsets.r;
+					titleRotation = (taTitleOrientation && taTitleOrientation == "axis") ? 90 : 270;
+					titlePos.x = dim.width - offsets.r + titleOffset - (titleRotation == 270 ? 0 : tsize);
+					switch(labelAlign){
+						case "start":
+							labelAlign = "end";
+							break;
+						case "end":
+							labelAlign = "start";
+							break;
+						case "middle":
+							labelOffset.x += size;
+							break;
+					}
+				}
+			}else{
+				start = {x: offsets.l};
+				stop  = {x: dim.width - offsets.r};
+				titlePos = {x: (dim.width - offsets.r + offsets.l)/2};
+				titleOffset = size * cosr + (this._cachedLabelWidth || 0) * sinr + labelGap + Math.max(taMajorTick.length, taMinorTick.length) + tsize + taTitleGap;
+				axisVector = {x: 1, y: 0};
+				labelOffset = {x: 0, y: 0};
+				tickVector = {x: 0, y: 1};
+				anchorOffset = {x: 0, y: labelGap};
+				switch(rotation){
+					case 0:
+						labelAlign = "middle";
+						labelOffset.y = size;
+						break;
+					case 90:
+						labelAlign = "start";
+						labelOffset.x = -size * 0.4;
+						break;
+					case 180:
+						labelAlign = "middle";
+						break;
+					case 270:
+						labelAlign = "end";
+						labelOffset.x = size * 0.4;
+						break;
+					default:
+						if(rotation < (90 - centerAnchorLimit)){
+							labelAlign = "start";
+							labelOffset.y = leftBottom ? size : 0;
+						}else if(rotation < (90 + centerAnchorLimit)){
+							labelAlign = "start";
+							labelOffset.x = -size * 0.4;
+						}else if(rotation < 180){
+							labelAlign = "start";
+							labelOffset.y = leftBottom ? 0 : -size;
+						}else if(rotation < (270 - centerAnchorLimit)){
+							labelAlign = "end";
+							labelOffset.y = leftBottom ? 0 : -size;
+						}else if(rotation < (270 + centerAnchorLimit)){
+							labelAlign = "end";
+							labelOffset.y = leftBottom ? size * 0.4 : 0;
+						}else{
+							labelAlign = "end";
+							labelOffset.y = leftBottom ? size : 0;
+						}
+				}
+				if(leftBottom){
+					start.y = stop.y = dim.height - offsets.b;
+					titleRotation = (taTitleOrientation && taTitleOrientation == "axis") ? 180 : 0;
+					titlePos.y = dim.height - offsets.b + titleOffset - (titleRotation ? tsize : 0);
+				}else{
+					start.y = stop.y = offsets.t;
+					titleRotation = (taTitleOrientation && taTitleOrientation == "away") ? 180 : 0;
+					titlePos.y = offsets.t - titleOffset + (titleRotation ? 0 : tsize);
+					tickVector.y = -1;
+					anchorOffset.y = -anchorOffset.y;
+					switch(labelAlign){
+						case "start":
+							labelAlign = "end";
+							break;
+						case "end":
+							labelAlign = "start";
+							break;
+						case "middle":
+							labelOffset.y -= size;
+							break;
+					}
+				}
+			}
+
+			// render shapes
+
+			this.cleanGroup();
+
+			try{
+				var s = this.group,
+					c = this.scaler,
+					t = this.ticks,
+					canLabel,
+					f = lin.getTransformerFromModel(this.scaler),
+					// GFX Canvas now supports labels, so let's _not_ fallback to HTML anymore on canvas, just use
+					// HTML labels if explicitly asked + no rotation + no IE + no Opera
+					labelType = !titleRotation && !rotation && this.opt.htmlLabels && !dojo.isIE && !dojo.isOpera ? "html" : "gfx",
+					dx = tickVector.x * taMajorTick.length,
+					dy = tickVector.y * taMajorTick.length;
+
+				s.createLine({
+					x1: start.x,
+					y1: start.y,
+					x2: stop.x,
+					y2: stop.y
+				}).setStroke(taStroke);
+				
+				//create axis title
+				if(o.title){
+					var axisTitle = dc.axis2d.common.createText[labelType](
+						this.chart,
+						s,
+						titlePos.x,
+						titlePos.y,
+						"middle",
+						o.title,
+						taTitleFont,
+						taTitleFontColor
+					);
+					if(labelType == "html"){
+						this.htmlElements.push(axisTitle);
+					}else{
+						//as soon as rotation is provided, labelType won't be "html"
+						//rotate gfx labels
+						axisTitle.setTransform(g.matrix.rotategAt(titleRotation, titlePos.x, titlePos.y));
+					}
+				}
+
+				dojo.forEach(t.major, function(tick){
+					var offset = f(tick.value), elem,
+						x = start.x + axisVector.x * offset,
+						y = start.y + axisVector.y * offset;
+						s.createLine({
+							x1: x, y1: y,
+							x2: x + dx,
+							y2: y + dy
+						}).setStroke(taMajorTick);
+						if(tick.label){
+							var label = o.maxLabelCharCount ? this.getTextWithLimitCharCount(tick.label, taFont, o.maxLabelCharCount) : {
+								text: tick.label,
+								truncated: false
+							};
+							label = o.maxLabelSize ? this.getTextWithLimitLength(label.text, taFont, o.maxLabelSize, label.truncated) : label;
+							elem = dc.axis2d.common.createText[labelType](
+								this.chart,
+								s,
+								x + dx + anchorOffset.x + (rotation ? 0 : labelOffset.x),
+								y + dy + anchorOffset.y + (rotation ? 0 : labelOffset.y),
+								labelAlign,
+								label.text,
+								taFont,
+								taFontColor
+								//this._cachedLabelWidth
+							);
+							label.truncated && this.labelTooltip(elem, this.chart, tick.label, label.text, taFont, labelType);
+							if(labelType == "html"){
+								this.htmlElements.push(elem);
+							}else if(rotation){
+								elem.setTransform([
+									{dx: labelOffset.x, dy: labelOffset.y},
+									g.matrix.rotategAt(
+										rotation,
+										x + dx + anchorOffset.x,
+										y + dy + anchorOffset.y
+									)
+								]);
+							}
+						}
+				}, this);
+
+				dx = tickVector.x * taMinorTick.length;
+				dy = tickVector.y * taMinorTick.length;
+				canLabel = c.minMinorStep <= c.minor.tick * c.bounds.scale;
+				dojo.forEach(t.minor, function(tick){
+					var offset = f(tick.value), elem,
+						x = start.x + axisVector.x * offset,
+						y = start.y + axisVector.y * offset;
+						s.createLine({
+							x1: x, y1: y,
+							x2: x + dx,
+							y2: y + dy
+						}).setStroke(taMinorTick);
+						if(canLabel && tick.label){
+							var label = o.maxLabelCharCount ? this.getTextWithLimitCharCount(tick.label, taFont, o.maxLabelCharCount) : {
+								text: tick.label,
+								truncated: false
+							};
+							label = o.maxLabelSize ? this.getTextWithLimitLength(label.text, taFont, o.maxLabelSize, label.truncated) : label;
+							elem = dc.axis2d.common.createText[labelType](
+								this.chart,
+								s,
+								x + dx + anchorOffset.x + (rotation ? 0 : labelOffset.x),
+								y + dy + anchorOffset.y + (rotation ? 0 : labelOffset.y),
+								labelAlign,
+								label.text,
+								taFont,
+								taFontColor
+								//this._cachedLabelWidth
+							);
+							label.truncated && this.labelTooltip(elem, this.chart, tick.label, label.text, taFont, labelType);
+							if(labelType == "html"){
+								this.htmlElements.push(elem);
+							}else if(rotation){
+								elem.setTransform([
+									{dx: labelOffset.x, dy: labelOffset.y},
+									g.matrix.rotategAt(
+										rotation,
+										x + dx + anchorOffset.x,
+										y + dy + anchorOffset.y
+									)
+								]);
+							}
+						}
+				}, this);
+
+				dx = tickVector.x * taMicroTick.length;
+				dy = tickVector.y * taMicroTick.length;
+				dojo.forEach(t.micro, function(tick){
+					var offset = f(tick.value), elem,
+						x = start.x + axisVector.x * offset,
+						y = start.y + axisVector.y * offset;
+						s.createLine({
+							x1: x, y1: y,
+							x2: x + dx,
+							y2: y + dy
+						}).setStroke(taMicroTick);
+				}, this);
+			}catch(e){
+				// squelch
+			}
+
+			this.dirty = false;
+			return this;	//	dojox.charting.axis2d.Default
+		},
+		labelTooltip: function(elem, chart, label, truncatedLabel, font, elemType){
+			// to avoid requiring dijit module for that feature, let's test that
+			// dynamically and return if we can't do it
+			if(!dijit || !dijit.Tooltip){
+				return;
+			}
+			var aroundRect = {type: "rect"}, position = ["above", "below"],
+				fontWidth = dojox.gfx._base._getTextBox(truncatedLabel, {font: font}).w || 0;
+				fontHeight = font ? g.normalizedLength(g.splitFontString(font).size) : 0;
+			if(elemType == "html"){
+				dojo.mixin(aroundRect, dojo.coords(elem.firstChild, true));
+				aroundRect.width = Math.ceil(fontWidth);
+				aroundRect.height = Math.ceil(fontHeight);
+				this._events.push({
+					shape:  dojo,
+					handle: dojo.connect(elem.firstChild, "onmouseover", this, function(e){
+						dijit.showTooltip(label, aroundRect, position);
+					})
+				});
+				this._events.push({
+					shape:  dojo,
+					handle: dojo.connect(elem.firstChild, "onmouseout", this, function(e){
+						dijit.hideTooltip(aroundRect);
+					})
+				});
+			}else{
+				var shp = elem.getShape(),
+					lt = dojo.coords(chart.node, true);
+				aroundRect = dojo.mixin(aroundRect, {
+					x: shp.x - fontWidth / 2,
+					y: shp.y
+				});
+				aroundRect.x += lt.x;
+				aroundRect.y += lt.y;
+				aroundRect.x = Math.round(aroundRect.x);
+				aroundRect.y = Math.round(aroundRect.y);
+				aroundRect.width = Math.ceil(fontWidth);
+				aroundRect.height = Math.ceil(fontHeight);
+				this._events.push({
+					shape:  elem,
+					handle: elem.connect("onmouseenter", this, function(e){
+						dijit.showTooltip(label, aroundRect, position);
+					})
+				});
+				this._events.push({
+					shape:  elem,
+					handle: elem.connect("onmouseleave", this, function(e){
+						dijit.hideTooltip(aroundRect);
+					})
+				});
+			}
+		}
+	});
 })();
 
 }
@@ -12815,8 +14219,8 @@ dojo.provide("dojox.charting.plot2d.common");
 		},
 
 		defaultStats: {
-			hmin: Number.POSITIVE_INFINITY, hmax: Number.NEGATIVE_INFINITY,
-			vmin: Number.POSITIVE_INFINITY, vmax: Number.NEGATIVE_INFINITY
+			vmin: Number.POSITIVE_INFINITY, vmax: Number.NEGATIVE_INFINITY,
+			hmin: Number.POSITIVE_INFINITY, hmax: Number.NEGATIVE_INFINITY
 		},
 
 		collectSimpleStats: function(series){
@@ -13726,9 +15130,68 @@ dojo.declare("dojox.charting.plot2d.Lines", dojox.charting.plot2d.Default, {
 
 }
 
-if(!dojo._hasResource["dojox.charting.widget.Sparkline"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.widget.Sparkline"] = true;
-dojo.provide("dojox.charting.widget.Sparkline");
+if(!dojo._hasResource["dojox.charting.plot2d.Areas"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Areas"] = true;
+dojo.provide("dojox.charting.plot2d.Areas");
+
+
+
+dojo.declare("dojox.charting.plot2d.Areas", dojox.charting.plot2d.Default, {
+	//	summary:
+	//		Represents an area chart.  See dojox.charting.plot2d.Default for details.
+	constructor: function(){
+		this.opt.lines = true;
+		this.opt.areas = true;
+	}
+});
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Markers"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Markers"] = true;
+dojo.provide("dojox.charting.plot2d.Markers");
+
+
+
+dojo.declare("dojox.charting.plot2d.Markers", dojox.charting.plot2d.Default, {
+	//	summary:
+	//		A convenience plot to draw a line chart with markers.
+	constructor: function(){
+		//	summary:
+		//		Set up the plot for lines and markers.
+		this.opt.markers = true;
+	}
+});
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.MarkersOnly"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.MarkersOnly"] = true;
+dojo.provide("dojox.charting.plot2d.MarkersOnly");
+
+
+
+dojo.declare("dojox.charting.plot2d.MarkersOnly", dojox.charting.plot2d.Default, {
+	//	summary:
+	//		A convenience object to draw only markers (like a scatter but not quite).
+	constructor: function(){
+		//	summary:
+		//		Set up our default plot to only have markers and no lines.
+		this.opt.lines   = false;
+		this.opt.markers = true;
+	}
+});
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Scatter"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Scatter"] = true;
+dojo.provide("dojox.charting.plot2d.Scatter");
+
+
+
+
+
 
 
 
@@ -13736,62 +15199,3702 @@ dojo.provide("dojox.charting.widget.Sparkline");
 
 
 (function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
 
-	var d = dojo;
+	dojo.declare("dojox.charting.plot2d.Scatter", dojox.charting.plot2d.Base, {
+		//	summary:
+		//		A plot object representing a typical scatter chart.
+		defaultParams: {
+			hAxis: "x",		// use a horizontal axis named "x"
+			vAxis: "y",		// use a vertical axis named "y"
+			shadows: null,	// draw shadows
+			animate: null	// animate chart to place
+		},
+		optionalParams: {
+			// theme component
+			markerStroke:		{},
+			markerOutline:		{},
+			markerShadow:		{},
+			markerFill:			{},
+			markerFont:			"",
+			markerFontColor:	""
+		},
 
-	dojo.declare("dojox.charting.widget.Sparkline",
-		dojox.charting.widget.Chart2D,
-		{
-			theme: dojox.charting.themes.GreySkies,
-			margins: { l: 0, r: 0, t: 0, b: 0 },
-			type: "Lines",
-			valueFn: "Number(x)",
-			store: "",
-			field: "",
-			query: "",
-			queryOptions: "",
-			start: "0",
-			count: "Infinity",
-			sort: "",
-			data: "",
-			name: "default",
-			buildRendering: function(){
-				var n = this.srcNodeRef;
-				if(	!n.childNodes.length || // shortcut the query
-					!d.query("> .axis, > .plot, > .action, > .series", n).length){
-					var plot = document.createElement("div");
-					d.attr(plot, {
-						"class": "plot",
-						"name": "default",
-						"type": this.type
-					});
-					n.appendChild(plot);
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		Create the scatter plot.
+			//	chart: dojox.charting.Chart2D
+			//		The chart this plot belongs to.
+			//	kwArgs: dojox.charting.plot2d.__DefaultCtorArgs?
+			//		An optional keyword arguments object to help define this plot's parameters.
+			this.opt = dojo.clone(this.defaultParams);
+            du.updateWithObject(this.opt, kwArgs);
+            du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+			this.series = [];
+			this.hAxis = this.opt.hAxis;
+			this.vAxis = this.opt.vAxis;
+			this.animate = this.opt.animate;
+		},
 
-					var series = document.createElement("div");
-					d.attr(series, {
-						"class": "series",
-						plot: "default",
-						name: this.name,
-						start: this.start,
-						count: this.count,
-						valueFn: this.valueFn
-					});
-					d.forEach(
-						["store", "field", "query", "queryOptions", "sort", "data"],
-						function(i){
-							if(this[i].length){
-								d.attr(series, i, this[i]);
-							}
-						},
-						this
-					);
-					n.appendChild(series);
-				}
-				this.inherited(arguments);
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.Scatter
+			//		A reference to this plot for functional chaining.
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
 			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, events = this.events();
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				if(!run.data.length){
+					run.dirty = false;
+					t.skip();
+					continue;
+				}
+
+				var theme = t.next("marker", [this.opt, run]), s = run.group, lpoly,
+					ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+					vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler);
+				if(typeof run.data[0] == "number"){
+					lpoly = dojo.map(run.data, function(v, i){
+						return {
+							x: ht(i + 1) + offsets.l,
+							y: dim.height - offsets.b - vt(v)
+						};
+					}, this);
+				}else{
+					lpoly = dojo.map(run.data, function(v, i){
+						return {
+							x: ht(v.x) + offsets.l,
+							y: dim.height - offsets.b - vt(v.y)
+						};
+					}, this);
+				}
+
+				var shadowMarkers  = new Array(lpoly.length),
+					frontMarkers   = new Array(lpoly.length),
+					outlineMarkers = new Array(lpoly.length);
+
+				dojo.forEach(lpoly, function(c, i){
+					var finalTheme = typeof run.data[i] == "number" ?
+							t.post(theme, "marker") :
+							t.addMixin(theme, "marker", run.data[i], true),
+						path = "M" + c.x + " " + c.y + " " + finalTheme.symbol;
+					if(finalTheme.marker.shadow){
+						shadowMarkers[i] = s.createPath("M" + (c.x + finalTheme.marker.shadow.dx) + " " +
+							(c.y + finalTheme.marker.shadow.dy) + " " + finalTheme.symbol).
+							setStroke(finalTheme.marker.shadow).setFill(finalTheme.marker.shadow.color);
+						if(this.animate){
+							this._animateScatter(shadowMarkers[i], dim.height - offsets.b);
+						}
+					}
+					if(finalTheme.marker.outline){
+						var outline = dc.makeStroke(finalTheme.marker.outline);
+						outline.width = 2 * outline.width + finalTheme.marker.stroke.width;
+						outlineMarkers[i] = s.createPath(path).setStroke(outline);
+						if(this.animate){
+							this._animateScatter(outlineMarkers[i], dim.height - offsets.b);
+						}
+					}
+					var stroke = dc.makeStroke(finalTheme.marker.stroke),
+						fill = this._plotFill(finalTheme.marker.fill, dim, offsets);
+					if(fill && (fill.type === "linear" || fill.type == "radial")){
+						var color = dojox.gfx.gradutils.getColor(fill, {x: c.x, y: c.y});
+						if(stroke){
+							stroke.color = color;
+						}
+						frontMarkers[i] = s.createPath(path).setStroke(stroke).setFill(color);
+					}else{
+						frontMarkers[i] = s.createPath(path).setStroke(stroke).setFill(fill);
+					}
+					if(this.animate){
+						this._animateScatter(frontMarkers[i], dim.height - offsets.b);
+					}
+				}, this);
+				if(frontMarkers.length){
+					run.dyn.stroke = frontMarkers[frontMarkers.length - 1].getStroke();
+					run.dyn.fill   = frontMarkers[frontMarkers.length - 1].getFill();
+				}
+
+				if(events){
+					var eventSeries = new Array(frontMarkers.length);
+					dojo.forEach(frontMarkers, function(s, i){
+						var o = {
+							element: "marker",
+							index:   i,
+							run:     run,
+							shape:   s,
+							outline: outlineMarkers && outlineMarkers[i] || null,
+							shadow:  shadowMarkers && shadowMarkers[i] || null,
+							cx:      lpoly[i].x,
+							cy:      lpoly[i].y
+						};
+						if(typeof run.data[0] == "number"){
+							o.x = i + 1;
+							o.y = run.data[i];
+						}else{
+							o.x = run.data[i].x;
+							o.y = run.data[i].y;
+						}
+						this._connectEvents(o);
+						eventSeries[i] = o;
+					}, this);
+					this._eventSeries[run.name] = eventSeries;
+				}else{
+					delete this._eventSeries[run.name];
+				}
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.Scatter
+		},
+		_animateScatter: function(shape, offset){
+			dojox.gfx.fx.animateTransform(dojo.delegate({
+				shape: shape,
+				duration: 1200,
+				transform: [
+					{name: "translate", start: [0, offset], end: [0, 0]},
+					{name: "scale", start: [0, 0], end: [1, 1]},
+					{name: "original"}
+				]
+			}, this.animate)).play();
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.lang.functional.sequence"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.lang.functional.sequence"] = true;
+dojo.provide("dojox.lang.functional.sequence");
+
+
+
+// This module adds high-level functions and related constructs:
+//	- sequence generators
+
+// If you want more general sequence builders check out listcomp.js and
+// unfold() (in fold.js).
+
+// Defined methods:
+//	- take any valid lambda argument as the functional argument
+
+(function(){
+	var d = dojo, df = dojox.lang.functional;
+
+	d.mixin(df, {
+		// sequence generators
+		repeat: function(/*Number*/ n, /*Function|String|Array*/ f, /*Object*/ z, /*Object?*/ o){
+			// summary: builds an array by repeatedly applying a unary function N times
+			//	with a seed value Z. N should be greater than 0.
+			o = o || d.global; f = df.lambda(f);
+			var t = new Array(n), i = 1;
+			t[0] = z;
+			for(; i < n; t[i] = z = f.call(o, z), ++i);
+			return t;	// Array
+		},
+		until: function(/*Function|String|Array*/ pr, /*Function|String|Array*/ f, /*Object*/ z, /*Object?*/ o){
+			// summary: builds an array by repeatedly applying a unary function with
+			//	a seed value Z until the predicate is satisfied.
+			o = o || d.global; f = df.lambda(f); pr = df.lambda(pr);
+			var t = [];
+			for(; !pr.call(o, z); t.push(z), z = f.call(o, z));
+			return t;	// Array
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Stacked"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Stacked"] = true;
+dojo.provide("dojox.charting.plot2d.Stacked");
+
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.Stacked", dojox.charting.plot2d.Default, {
+		//	summary:
+		//		Like the default plot, Stacked sets up lines, areas and markers
+		//		in a stacked fashion (values on the y axis added to each other)
+		//		as opposed to a direct one.
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			var stats = dc.collectStackedStats(this.series);
+			this._maxRunLength = stats.hmax;
+			return stats;
+		},
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.Stacked
+			//		A reference to this plot for functional chaining.
+			if(this._maxRunLength <= 0){
+				return this;
+			}
+
+			// stack all values
+			var acc = df.repeat(this._maxRunLength, "-> 0", 0);
+			for(var i = 0; i < this.series.length; ++i){
+				var run = this.series[i];
+				for(var j = 0; j < run.data.length; ++j){
+					var v = run.data[j];
+					if(v !== null){
+						if(isNaN(v)){ v = 0; }
+						acc[j] += v;
+					}
+				}
+			}
+			// draw runs in backwards
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+
+			var t = this.chart.theme, events = this.events(),
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler);
+
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next(this.opt.areas ? "area" : "line", [this.opt, run], true),
+					s = run.group, outline,
+					lpoly = dojo.map(acc, function(v, i){
+						return {
+							x: ht(i + 1) + offsets.l,
+							y: dim.height - offsets.b - vt(v)
+						};
+					}, this);
+
+				var lpath = this.opt.tension ? dc.curve(lpoly, this.opt.tension) : "";
+
+				if(this.opt.areas){
+					var apoly = dojo.clone(lpoly);
+					if(this.opt.tension){
+						var p=dc.curve(apoly, this.opt.tension);
+						p += " L" + lpoly[lpoly.length - 1].x + "," + (dim.height - offsets.b) +
+							" L" + lpoly[0].x + "," + (dim.height - offsets.b) +
+							" L" + lpoly[0].x + "," + lpoly[0].y;
+						run.dyn.fill = s.createPath(p).setFill(theme.series.fill).getFill();
+					} else {
+						apoly.push({x: lpoly[lpoly.length - 1].x, y: dim.height - offsets.b});
+						apoly.push({x: lpoly[0].x, y: dim.height - offsets.b});
+						apoly.push(lpoly[0]);
+						run.dyn.fill = s.createPolyline(apoly).setFill(theme.series.fill).getFill();
+					}
+				}
+				if(this.opt.lines || this.opt.markers){
+					if(theme.series.outline){
+						outline = dc.makeStroke(theme.series.outline);
+						outline.width = 2 * outline.width + theme.series.stroke.width;
+					}
+				}
+				if(this.opt.markers){
+					run.dyn.marker = theme.symbol;
+				}
+				var frontMarkers, outlineMarkers, shadowMarkers;
+				if(theme.series.shadow && theme.series.stroke){
+					var shadow = theme.series.shadow,
+						spoly = dojo.map(lpoly, function(c){
+							return {x: c.x + shadow.dx, y: c.y + shadow.dy};
+						});
+					if(this.opt.lines){
+						if(this.opt.tension){
+							run.dyn.shadow = s.createPath(dc.curve(spoly, this.opt.tension)).setStroke(shadow).getStroke();
+						} else {
+							run.dyn.shadow = s.createPolyline(spoly).setStroke(shadow).getStroke();
+						}
+					}
+					if(this.opt.markers){
+						shadow = theme.marker.shadow;
+						shadowMarkers = dojo.map(spoly, function(c){
+							return s.createPath("M" + c.x + " " + c.y + " " + theme.symbol).
+								setStroke(shadow).setFill(shadow.color);
+						}, this);
+					}
+				}
+				if(this.opt.lines){
+					if(outline){
+						if(this.opt.tension){
+							run.dyn.outline = s.createPath(lpath).setStroke(outline).getStroke();
+						} else {
+							run.dyn.outline = s.createPolyline(lpoly).setStroke(outline).getStroke();
+						}
+					}
+					if(this.opt.tension){
+						run.dyn.stroke = s.createPath(lpath).setStroke(theme.series.stroke).getStroke();
+					} else {
+						run.dyn.stroke = s.createPolyline(lpoly).setStroke(theme.series.stroke).getStroke();
+					}
+				}
+				if(this.opt.markers){
+					frontMarkers = new Array(lpoly.length);
+					outlineMarkers = new Array(lpoly.length);
+					outline = null;
+					if(theme.marker.outline){
+						outline = dc.makeStroke(theme.marker.outline);
+						outline.width = 2 * outline.width + (theme.marker.stroke ? theme.marker.stroke.width : 0);
+					}
+					dojo.forEach(lpoly, function(c, i){
+						var path = "M" + c.x + " " + c.y + " " + theme.symbol;
+						if(outline){
+							outlineMarkers[i] = s.createPath(path).setStroke(outline);
+						}
+						frontMarkers[i] = s.createPath(path).setStroke(theme.marker.stroke).setFill(theme.marker.fill);
+					}, this);
+					if(events){
+						var eventSeries = new Array(frontMarkers.length);
+						dojo.forEach(frontMarkers, function(s, i){
+							var o = {
+								element: "marker",
+								index:   i,
+								run:     run,
+								shape:   s,
+								outline: outlineMarkers[i] || null,
+								shadow:  shadowMarkers && shadowMarkers[i] || null,
+								cx:      lpoly[i].x,
+								cy:      lpoly[i].y,
+								x:       i + 1,
+								y:       run.data[i]
+							};
+							this._connectEvents(o);
+							eventSeries[i] = o;
+						}, this);
+						this._eventSeries[run.name] = eventSeries;
+					}else{
+						delete this._eventSeries[run.name];
+					}
+				}
+				run.dirty = false;
+				// update the accumulator
+				for(var j = 0; j < run.data.length; ++j){
+					var v = run.data[j];
+					if(v !== null){
+						if(isNaN(v)){ v = 0; }
+						acc[j] -= v;
+					}
+				}
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.Stacked
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.StackedLines"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.StackedLines"] = true;
+dojo.provide("dojox.charting.plot2d.StackedLines");
+
+
+
+dojo.declare("dojox.charting.plot2d.StackedLines", dojox.charting.plot2d.Stacked, {
+	//	summary:
+	//		A convenience object to create a stacked line chart.
+	constructor: function(){
+		//	summary:
+		//		Force our Stacked base to be lines only.
+		this.opt.lines = true;
+	}
+});
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.StackedAreas"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.StackedAreas"] = true;
+dojo.provide("dojox.charting.plot2d.StackedAreas");
+
+
+
+dojo.declare("dojox.charting.plot2d.StackedAreas", dojox.charting.plot2d.Stacked, {
+	//	summary:
+	//		A convenience object to set up a stacked area plot.
+	constructor: function(){
+		//	summary:
+		//		Force our Stacked plotter to include both lines and areas.
+		this.opt.lines = true;
+		this.opt.areas = true;
+	}
+});
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Columns"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Columns"] = true;
+dojo.provide("dojox.charting.plot2d.Columns");
+
+
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.Columns", dojox.charting.plot2d.Base, {
+		//	summary:
+		//		The plot object representing a column chart (vertical bars).
+		defaultParams: {
+			hAxis: "x",		// use a horizontal axis named "x"
+			vAxis: "y",		// use a vertical axis named "y"
+			gap:	0,		// gap between columns in pixels
+			animate: null   // animate bars into place
+		},
+		optionalParams: {
+			minBarSize:	1,	// minimal column width in pixels
+			maxBarSize:	1,	// maximal column width in pixels
+			// theme component
+			stroke:		{},
+			outline:	{},
+			shadow:		{},
+			fill:		{},
+			font:		"",
+			fontColor:	""
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		The constructor for a columns chart.
+			//	chart: dojox.charting.Chart2D
+			//		The chart this plot belongs to.
+			//	kwArgs: dojox.charting.plot2d.__BarCtorArgs?
+			//		An optional keyword arguments object to help define the plot.
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+			this.series = [];
+			this.hAxis = this.opt.hAxis;
+			this.vAxis = this.opt.vAxis;
+			this.animate = this.opt.animate;
+		},
+
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			var stats = dc.collectSimpleStats(this.series);
+			stats.hmin -= 0.5;
+			stats.hmax += 0.5;
+			return stats;
+		},
+
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.Columns
+			//		A reference to this plot for functional chaining.
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, f, gap, width,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				baseline = Math.max(0, this._vScaler.bounds.lower),
+				baselineHeight = vt(baseline),
+				events = this.events();
+			f = dc.calculateBarSize(this._hScaler.bounds.scale, this.opt);
+			gap = f.gap;
+			width = f.size;
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next("column", [this.opt, run]), s = run.group,
+					eventSeries = new Array(run.data.length);
+				for(var j = 0; j < run.data.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = typeof value == "number" ? value : value.y,
+							vv = vt(v),
+							height = vv - baselineHeight,
+							h = Math.abs(height),
+							finalTheme = typeof value != "number" ?
+								t.addMixin(theme, "column", value, true) :
+								t.post(theme, "column");
+						if(width >= 1 && h >= 1){
+							var rect = {
+								x: offsets.l + ht(j + 0.5) + gap,
+								y: dim.height - offsets.b - (v > baseline ? vv : baselineHeight),
+								width: width, height: h
+							};
+							var specialFill = this._plotFill(finalTheme.series.fill, dim, offsets);
+							specialFill = this._shapeFill(specialFill, rect);
+							var shape = s.createRect(rect).setFill(specialFill).setStroke(finalTheme.series.stroke);
+							run.dyn.fill   = shape.getFill();
+							run.dyn.stroke = shape.getStroke();
+							if(events){
+								var o = {
+									element: "column",
+									index:   j,
+									run:     run,
+									shape:   shape,
+									x:       j + 0.5,
+									y:       v
+								};
+								this._connectEvents(o);
+								eventSeries[j] = o;
+							}
+							if(this.animate){
+								this._animateColumn(shape, dim.height - offsets.b - baselineHeight, h);
+							}
+						}
+					}
+				}
+				this._eventSeries[run.name] = eventSeries;
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.Columns
+		},
+		_animateColumn: function(shape, voffset, vsize){
+			dojox.gfx.fx.animateTransform(dojo.delegate({
+				shape: shape,
+				duration: 1200,
+				transform: [
+					{name: "translate", start: [0, voffset - (voffset/vsize)], end: [0, 0]},
+					{name: "scale", start: [1, 1/vsize], end: [1, 1]},
+					{name: "original"}
+				]
+			}, this.animate)).play();
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.StackedColumns"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.StackedColumns"] = true;
+dojo.provide("dojox.charting.plot2d.StackedColumns");
+
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.StackedColumns", dojox.charting.plot2d.Columns, {
+		//	summary:
+		//		The plot object representing a stacked column chart (vertical bars).
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			var stats = dc.collectStackedStats(this.series);
+			this._maxRunLength = stats.hmax;
+			stats.hmin -= 0.5;
+			stats.hmax += 0.5;
+			return stats;
+		},
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.StackedColumns
+			//		A reference to this plot for functional chaining.
+			if(this._maxRunLength <= 0){
+				return this;
+			}
+
+			// stack all values
+			var acc = df.repeat(this._maxRunLength, "-> 0", 0);
+			for(var i = 0; i < this.series.length; ++i){
+				var run = this.series[i];
+				for(var j = 0; j < run.data.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = typeof value == "number" ? value : value.y;
+						if(isNaN(v)){ v = 0; }
+						acc[j] += v;
+					}
+				}
+			}
+			// draw runs in backwards
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, f, gap, width,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				events = this.events();
+			f = dc.calculateBarSize(this._hScaler.bounds.scale, this.opt);
+			gap = f.gap;
+			width = f.size;
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next("column", [this.opt, run]), s = run.group,
+					eventSeries = new Array(acc.length);
+				for(var j = 0; j < acc.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = acc[j],
+							height = vt(v),
+							finalTheme = typeof value != "number" ?
+								t.addMixin(theme, "column", value, true) :
+								t.post(theme, "column");
+						if(width >= 1 && height >= 1){
+							var rect = {
+								x: offsets.l + ht(j + 0.5) + gap,
+								y: dim.height - offsets.b - vt(v),
+								width: width, height: height
+							};
+							var specialFill = this._plotFill(finalTheme.series.fill, dim, offsets);
+							specialFill = this._shapeFill(specialFill, rect);
+							var shape = s.createRect(rect).setFill(specialFill).setStroke(finalTheme.series.stroke);
+							run.dyn.fill   = shape.getFill();
+							run.dyn.stroke = shape.getStroke();
+							if(events){
+								var o = {
+									element: "column",
+									index:   j,
+									run:     run,
+									shape:   shape,
+									x:       j + 0.5,
+									y:       v
+								};
+								this._connectEvents(o);
+								eventSeries[j] = o;
+							}
+							if(this.animate){
+								this._animateColumn(shape, dim.height - offsets.b, height);
+							}
+						}
+					}
+				}
+				this._eventSeries[run.name] = eventSeries;
+				run.dirty = false;
+				// update the accumulator
+				for(var j = 0; j < run.data.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = typeof value == "number" ? value : value.y;
+						if(isNaN(v)){ v = 0; }
+						acc[j] -= v;
+					}
+				}
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.StackedColumns
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.ClusteredColumns"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.ClusteredColumns"] = true;
+dojo.provide("dojox.charting.plot2d.ClusteredColumns");
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.ClusteredColumns", dojox.charting.plot2d.Columns, {
+		//	summary:
+		//		A plot representing grouped or clustered columns (vertical bars).
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.ClusteredColumns
+			//		A reference to this plot for functional chaining.
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, f, gap, width, thickness,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				baseline = Math.max(0, this._vScaler.bounds.lower),
+				baselineHeight = vt(baseline),
+				events = this.events();
+			f = dc.calculateBarSize(this._hScaler.bounds.scale, this.opt, this.series.length);
+			gap = f.gap;
+			width = thickness = f.size;
+			for(var i = 0; i < this.series.length; ++i){
+				var run = this.series[i], shift = thickness * i;
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next("column", [this.opt, run]), s = run.group,
+					eventSeries = new Array(run.data.length);
+				for(var j = 0; j < run.data.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = typeof value == "number" ? value : value.y,
+							vv = vt(v),
+							height = vv - baselineHeight,
+							h = Math.abs(height),
+							finalTheme = typeof value != "number" ?
+								t.addMixin(theme, "column", value, true) :
+								t.post(theme, "column");
+						if(width >= 1 && h >= 1){
+							var rect = {
+								x: offsets.l + ht(j + 0.5) + gap + shift,
+								y: dim.height - offsets.b - (v > baseline ? vv : baselineHeight),
+								width: width, height: h
+							};
+							var specialFill = this._plotFill(finalTheme.series.fill, dim, offsets);
+							specialFill = this._shapeFill(specialFill, rect);
+							var shape = s.createRect(rect).setFill(specialFill).setStroke(finalTheme.series.stroke);
+							run.dyn.fill   = shape.getFill();
+							run.dyn.stroke = shape.getStroke();
+							if(events){
+								var o = {
+									element: "column",
+									index:   j,
+									run:     run,
+									shape:   shape,
+									x:       j + 0.5,
+									y:       v
+								};
+								this._connectEvents(o);
+								eventSeries[j] = o;
+							}
+							if(this.animate){
+								this._animateColumn(shape, dim.height - offsets.b - baselineHeight, h);
+							}
+						}
+					}
+				}
+				this._eventSeries[run.name] = eventSeries;
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.ClusteredColumns
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Bars"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Bars"] = true;
+dojo.provide("dojox.charting.plot2d.Bars");
+
+
+
+
+
+
+
+
+/*=====
+dojo.declare("dojox.charting.plot2d.__BarCtorArgs", dojox.charting.plot2d.__DefaultCtorArgs, {
+	//	summary:
+	//		Additional keyword arguments for bar charts.
+
+	//	minBarSize: Number?
+	//		The minimum size for a bar in pixels.  Default is 1.
+	minBarSize: 1,
+
+	//	maxBarSize: Number?
+	//		The maximum size for a bar in pixels.  Default is 1.
+	maxBarSize: 1
+});
+=====*/
+(function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.Bars", dojox.charting.plot2d.Base, {
+		//	summary:
+		//		The plot object representing a bar chart (horizontal bars).
+		defaultParams: {
+			hAxis: "x",		// use a horizontal axis named "x"
+			vAxis: "y",		// use a vertical axis named "y"
+			gap:	0,		// gap between columns in pixels
+			animate: null   // animate bars into place
+		},
+		optionalParams: {
+			minBarSize:	1,	// minimal bar width in pixels
+			maxBarSize:	1,	// maximal bar width in pixels
+			// theme component
+			stroke:		{},
+			outline:	{},
+			shadow:		{},
+			fill:		{},
+			font:		"",
+			fontColor:	""
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		The constructor for a bar chart.
+			//	chart: dojox.charting.Chart2D
+			//		The chart this plot belongs to.
+			//	kwArgs: dojox.charting.plot2d.__BarCtorArgs?
+			//		An optional keyword arguments object to help define the plot.
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+			this.series = [];
+			this.hAxis = this.opt.hAxis;
+			this.vAxis = this.opt.vAxis;
+			this.animate = this.opt.animate;
+		},
+
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			var stats = dc.collectSimpleStats(this.series), t;
+			stats.hmin -= 0.5;
+			stats.hmax += 0.5;
+			t = stats.hmin, stats.hmin = stats.vmin, stats.vmin = t;
+			t = stats.hmax, stats.hmax = stats.vmax, stats.vmax = t;
+			return stats;
+		},
+
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.Bars
+			//		A reference to this plot for functional chaining.
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.dirty = this.isDirty();
+			this.resetEvents();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, f, gap, height,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				baseline = Math.max(0, this._hScaler.bounds.lower),
+				baselineWidth = ht(baseline),
+				events = this.events();
+			f = dc.calculateBarSize(this._vScaler.bounds.scale, this.opt);
+			gap = f.gap;
+			height = f.size;
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next("bar", [this.opt, run]), s = run.group,
+					eventSeries = new Array(run.data.length);
+				for(var j = 0; j < run.data.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = typeof value == "number" ? value : value.y,
+							hv = ht(v),
+							width = hv - baselineWidth,
+							w = Math.abs(width),
+							finalTheme = typeof value != "number" ?
+								t.addMixin(theme, "bar", value, true) :
+								t.post(theme, "bar");
+						if(w >= 1 && height >= 1){
+							var rect = {
+								x: offsets.l + (v < baseline ? hv : baselineWidth),
+								y: dim.height - offsets.b - vt(j + 1.5) + gap,
+								width: w, height: height
+							};
+							var specialFill = this._plotFill(finalTheme.series.fill, dim, offsets);
+							specialFill = this._shapeFill(specialFill, rect);
+							var shape = s.createRect(rect).setFill(specialFill).setStroke(finalTheme.series.stroke);
+							run.dyn.fill   = shape.getFill();
+							run.dyn.stroke = shape.getStroke();
+							if(events){
+								var o = {
+									element: "bar",
+									index:   j,
+									run:     run,
+									shape:   shape,
+									x:       v,
+									y:       j + 1.5
+								};
+								this._connectEvents(o);
+								eventSeries[j] = o;
+							}
+							if(this.animate){
+								this._animateBar(shape, offsets.l + baselineWidth, -w);
+							}
+						}
+					}
+				}
+				this._eventSeries[run.name] = eventSeries;
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.Bars
+		},
+		_animateBar: function(shape, hoffset, hsize){
+			dojox.gfx.fx.animateTransform(dojo.delegate({
+				shape: shape,
+				duration: 1200,
+				transform: [
+					{name: "translate", start: [hoffset - (hoffset/hsize), 0], end: [0, 0]},
+					{name: "scale", start: [1/hsize, 1], end: [1, 1]},
+					{name: "original"}
+				]
+			}, this.animate)).play();
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.StackedBars"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.StackedBars"] = true;
+dojo.provide("dojox.charting.plot2d.StackedBars");
+
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.StackedBars", dojox.charting.plot2d.Bars, {
+		//	summary:
+		//		The plot object representing a stacked bar chart (horizontal bars).
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			var stats = dc.collectStackedStats(this.series), t;
+			this._maxRunLength = stats.hmax;
+			stats.hmin -= 0.5;
+			stats.hmax += 0.5;
+			t = stats.hmin, stats.hmin = stats.vmin, stats.vmin = t;
+			t = stats.hmax, stats.hmax = stats.vmax, stats.vmax = t;
+			return stats;
+		},
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.StackedBars
+			//		A reference to this plot for functional chaining.
+			if(this._maxRunLength <= 0){
+				return this;
+			}
+
+			// stack all values
+			var acc = df.repeat(this._maxRunLength, "-> 0", 0);
+			for(var i = 0; i < this.series.length; ++i){
+				var run = this.series[i];
+				for(var j = 0; j < run.data.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = typeof value == "number" ? value : value.y;
+						if(isNaN(v)){ v = 0; }
+						acc[j] += v;
+					}
+				}
+			}
+			// draw runs in backwards
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, f, gap, height,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				events = this.events();
+			f = dc.calculateBarSize(this._vScaler.bounds.scale, this.opt);
+			gap = f.gap;
+			height = f.size;
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next("bar", [this.opt, run]), s = run.group,
+					eventSeries = new Array(acc.length);
+				for(var j = 0; j < acc.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = acc[j],
+							width = ht(v),
+							finalTheme = typeof value != "number" ?
+								t.addMixin(theme, "bar", value, true) :
+								t.post(theme, "bar");
+						if(width >= 1 && height >= 1){
+							var rect = {
+								x: offsets.l,
+								y: dim.height - offsets.b - vt(j + 1.5) + gap,
+								width: width, height: height
+							};
+							var specialFill = this._plotFill(finalTheme.series.fill, dim, offsets);
+							specialFill = this._shapeFill(specialFill, rect);
+							var shape = s.createRect(rect).setFill(specialFill).setStroke(finalTheme.series.stroke);
+							run.dyn.fill   = shape.getFill();
+							run.dyn.stroke = shape.getStroke();
+							if(events){
+								var o = {
+									element: "bar",
+									index:   j,
+									run:     run,
+									shape:   shape,
+									x:       v,
+									y:       j + 1.5
+								};
+								this._connectEvents(o);
+								eventSeries[j] = o;
+							}
+							if(this.animate){
+								this._animateBar(shape, offsets.l, -width);
+							}
+						}
+					}
+				}
+				this._eventSeries[run.name] = eventSeries;
+				run.dirty = false;
+				// update the accumulator
+				for(var j = 0; j < run.data.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = typeof value == "number" ? value : value.y;
+						if(isNaN(v)){ v = 0; }
+						acc[j] -= v;
+					}
+				}
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.StackedBars
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.ClusteredBars"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.ClusteredBars"] = true;
+dojo.provide("dojox.charting.plot2d.ClusteredBars");
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.ClusteredBars", dojox.charting.plot2d.Bars, {
+		//	summary:
+		//		A plot representing grouped or clustered bars (horizontal bars)
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.ClusteredBars
+			//		A reference to this plot for functional chaining.
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, f, gap, height, thickness,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				baseline = Math.max(0, this._hScaler.bounds.lower),
+				baselineWidth = ht(baseline),
+				events = this.events();
+			f = dc.calculateBarSize(this._vScaler.bounds.scale, this.opt, this.series.length);
+			gap = f.gap;
+			height = thickness = f.size;
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i], shift = thickness * (this.series.length - i - 1);
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next("bar", [this.opt, run]), s = run.group,
+					eventSeries = new Array(run.data.length);
+				for(var j = 0; j < run.data.length; ++j){
+					var value = run.data[j];
+					if(value !== null){
+						var v = typeof value == "number" ? value : value.y,
+							hv = ht(v),
+							width = hv - baselineWidth,
+							w = Math.abs(width),
+							finalTheme = typeof value != "number" ?
+								t.addMixin(theme, "bar", value, true) :
+								t.post(theme, "bar");
+						if(w >= 1 && height >= 1){
+							var rect = {
+								x: offsets.l + (v < baseline ? hv : baselineWidth),
+								y: dim.height - offsets.b - vt(j + 1.5) + gap + shift,
+								width: w, height: height
+							};
+							var specialFill = this._plotFill(finalTheme.series.fill, dim, offsets);
+							specialFill = this._shapeFill(specialFill, rect);
+							var shape = s.createRect(rect).setFill(specialFill).setStroke(finalTheme.series.stroke);
+							run.dyn.fill   = shape.getFill();
+							run.dyn.stroke = shape.getStroke();
+							if(events){
+								var o = {
+									element: "bar",
+									index:   j,
+									run:     run,
+									shape:   shape,
+									x:       v,
+									y:       j + 1.5
+								};
+								this._connectEvents(o);
+								eventSeries[j] = o;
+							}
+							if(this.animate){
+								this._animateBar(shape, offsets.l + baselineWidth, -width);
+							}
+						}
+					}
+				}
+				this._eventSeries[run.name] = eventSeries;
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.ClusteredBars
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Grid"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Grid"] = true;
+dojo.provide("dojox.charting.plot2d.Grid");
+
+
+
+
+
+
+/*=====
+dojo.declare("dojox.charting.plot2d.__GridCtorArgs", dojox.charting.plot2d.__DefaultCtorArgs, {
+	//	summary:
+	//		A special keyword arguments object that is specific to a grid "plot".
+
+	//	hMajorLines: Boolean?
+	//		Whether to show lines at the major ticks along the horizontal axis. Default is true.
+	hMajorLines: true,
+
+	//	hMinorLines: Boolean?
+	//		Whether to show lines at the minor ticks along the horizontal axis. Default is false.
+	hMinorLines: false,
+
+	//	vMajorLines: Boolean?
+	//		Whether to show lines at the major ticks along the vertical axis. Default is true.
+	vMajorLines: true,
+
+	//	vMinorLines: Boolean?
+	//		Whether to show lines at the major ticks along the vertical axis. Default is false.
+	vMinorLines: false,
+
+	//	hStripes: String?
+	//		Whether or not to show stripes (alternating fills) along the horizontal axis. Default is "none".
+	hStripes: "none",
+
+	//	vStripes: String?
+	//		Whether or not to show stripes (alternating fills) along the vertical axis. Default is "none".
+	vStripes: "none"
+});
+=====*/
+(function(){
+	var du = dojox.lang.utils, dc = dojox.charting.plot2d.common;
+
+	dojo.declare("dojox.charting.plot2d.Grid", dojox.charting.Element, {
+		//	summary:
+		//		A "faux" plot that can be placed behind other plots to represent
+		//		a grid against which other plots can be easily measured.
+		defaultParams: {
+			hAxis: "x",			// use a horizontal axis named "x"
+			vAxis: "y",			// use a vertical axis named "y"
+			hMajorLines: true,	// draw horizontal major lines
+			hMinorLines: false,	// draw horizontal minor lines
+			vMajorLines: true,	// draw vertical major lines
+			vMinorLines: false,	// draw vertical minor lines
+			hStripes: "none",	// TBD
+			vStripes: "none",	// TBD
+			animate: null   // animate bars into place
+		},
+		optionalParams: {},	// no optional parameters
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		Create the faux Grid plot.
+			//	chart: dojox.charting.Chart2D
+			//		The chart this plot belongs to.
+			//	kwArgs: dojox.charting.plot2d.__GridCtorArgs?
+			//		An optional keyword arguments object to help define the parameters of the underlying grid.
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			this.hAxis = this.opt.hAxis;
+			this.vAxis = this.opt.vAxis;
+			this.dirty = true;
+			this.animate = this.opt.animate;
+			this.zoom = null,
+			this.zoomQueue = [];	// zooming action task queue
+			this.lastWindow = {vscale: 1, hscale: 1, xoffset: 0, yoffset: 0};
+		},
+		clear: function(){
+			//	summary:
+			//		Clear out any parameters set on this plot.
+			//	returns: dojox.charting.plot2d.Grid
+			//		The reference to this plot for functional chaining.
+			this._hAxis = null;
+			this._vAxis = null;
+			this.dirty = true;
+			return this;	//	dojox.charting.plot2d.Grid
+		},
+		setAxis: function(axis){
+			//	summary:
+			//		Set an axis for this plot.
+			//	returns: dojox.charting.plot2d.Grid
+			//		The reference to this plot for functional chaining.
+			if(axis){
+				this[axis.vertical ? "_vAxis" : "_hAxis"] = axis;
+			}
+			return this;	//	dojox.charting.plot2d.Grid
+		},
+		addSeries: function(run){
+			//	summary:
+			//		Ignored but included as a dummy method.
+			//	returns: dojox.charting.plot2d.Grid
+			//		The reference to this plot for functional chaining.
+			return this;	//	dojox.charting.plot2d.Grid
+		},
+		getSeriesStats: function(){
+			//	summary:
+			//		Returns default stats (irrelevant for this type of plot).
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			return dojo.delegate(dc.defaultStats);
+		},
+		initializeScalers: function(){
+			//	summary:
+			//		Does nothing (irrelevant for this type of plot).
+			return this;
+		},
+		isDirty: function(){
+			//	summary:
+			//		Return whether or not this plot needs to be redrawn.
+			//	returns: Boolean
+			//		If this plot needs to be rendered, this will return true.
+			return this.dirty || this._hAxis && this._hAxis.dirty || this._vAxis && this._vAxis.dirty;	//	Boolean
+		},
+		performZoom: function(dim, offsets){
+			//	summary:
+			//		Create/alter any zooming windows on this plot.
+			//	dim: Object
+			//		An object of the form { width, height }.
+			//	offsets: Object
+			//		An object of the form { l, r, t, b }.
+			//	returns: dojox.charting.plot2d.Grid
+			//		A reference to this plot for functional chaining.
+
+			// get current zooming various
+			var vs = this._vAxis.scale || 1,
+				hs = this._hAxis.scale || 1,
+				vOffset = dim.height - offsets.b,
+				hBounds = this._hAxis.getScaler().bounds,
+				xOffset = (hBounds.from - hBounds.lower) * hBounds.scale,
+				vBounds = this._vAxis.getScaler().bounds,
+				yOffset = (vBounds.from - vBounds.lower) * vBounds.scale;
+				// get incremental zooming various
+				rVScale = vs / this.lastWindow.vscale,
+				rHScale = hs / this.lastWindow.hscale,
+				rXOffset = (this.lastWindow.xoffset - xOffset)/
+					((this.lastWindow.hscale == 1)? hs : this.lastWindow.hscale),
+				rYOffset = (yOffset - this.lastWindow.yoffset)/
+					((this.lastWindow.vscale == 1)? vs : this.lastWindow.vscale),
+
+				shape = this.group,
+				anim = dojox.gfx.fx.animateTransform(dojo.delegate({
+					shape: shape,
+					duration: 1200,
+					transform:[
+						{name:"translate", start:[0, 0], end: [offsets.l * (1 - rHScale), vOffset * (1 - rVScale)]},
+						{name:"scale", start:[1, 1], end: [rHScale, rVScale]},
+						{name:"original"},
+						{name:"translate", start: [0, 0], end: [rXOffset, rYOffset]}
+					]}, this.zoom));
+
+			dojo.mixin(this.lastWindow, {vscale: vs, hscale: hs, xoffset: xOffset, yoffset: yOffset});
+			//add anim to zooming action queue,
+			//in order to avoid several zooming action happened at the same time
+			this.zoomQueue.push(anim);
+			//perform each anim one by one in zoomQueue
+			dojo.connect(anim, "onEnd", this, function(){
+				this.zoom = null;
+				this.zoomQueue.shift();
+				if(this.zoomQueue.length > 0){
+					this.zoomQueue[0].play();
+				}
+			});
+			if(this.zoomQueue.length == 1){
+				this.zoomQueue[0].play();
+			}
+			return this;	//	dojox.charting.plot2d.Grid
+		},
+		getRequiredColors: function(){
+			//	summary:
+			//		Ignored but included as a dummy method.
+			//	returns: Number
+			//		Returns 0, since there are no series associated with this plot type.
+			return 0;	//	Number
+		},
+		render: function(dim, offsets){
+			//	summary:
+			//		Render the plot on the chart.
+			//	dim: Object
+			//		An object of the form { width, height }.
+			//	offsets: Object
+			//		An object of the form { l, r, t, b }.
+			//	returns: dojox.charting.plot2d.Grid
+			//		A reference to this plot for functional chaining.
+			if(this.zoom){
+				return this.performZoom(dim, offsets);
+			}
+			this.dirty = this.isDirty();
+			if(!this.dirty){ return this; }
+			this.cleanGroup();
+			var s = this.group, ta = this.chart.theme.axis;
+			// draw horizontal stripes and lines
+			try{
+				var vScaler = this._vAxis.getScaler(),
+					vt = vScaler.scaler.getTransformerFromModel(vScaler),
+					ticks = this._vAxis.getTicks();
+				if(this.opt.hMinorLines){
+					dojo.forEach(ticks.minor, function(tick){
+						var y = dim.height - offsets.b - vt(tick.value);
+						var hMinorLine = s.createLine({
+							x1: offsets.l,
+							y1: y,
+							x2: dim.width - offsets.r,
+							y2: y
+						}).setStroke(ta.minorTick);
+						if(this.animate){
+							this._animateGrid(hMinorLine, "h", offsets.l, offsets.r + offsets.l - dim.width);
+						}
+					}, this);
+				}
+				if(this.opt.hMajorLines){
+					dojo.forEach(ticks.major, function(tick){
+						var y = dim.height - offsets.b - vt(tick.value);
+						var hMajorLine = s.createLine({
+							x1: offsets.l,
+							y1: y,
+							x2: dim.width - offsets.r,
+							y2: y
+						}).setStroke(ta.majorTick);
+						if(this.animate){
+							this._animateGrid(hMajorLine, "h", offsets.l, offsets.r + offsets.l - dim.width);
+						}
+					}, this);
+				}
+			}catch(e){
+				// squelch
+			}
+			// draw vertical stripes and lines
+			try{
+				var hScaler = this._hAxis.getScaler(),
+					ht = hScaler.scaler.getTransformerFromModel(hScaler),
+					ticks = this._hAxis.getTicks();
+				if(ticks && this.opt.vMinorLines){
+					dojo.forEach(ticks.minor, function(tick){
+						var x = offsets.l + ht(tick.value);
+						var vMinorLine = s.createLine({
+							x1: x,
+							y1: offsets.t,
+							x2: x,
+							y2: dim.height - offsets.b
+						}).setStroke(ta.minorTick);
+						if(this.animate){
+							this._animateGrid(vMinorLine, "v", dim.height - offsets.b, dim.height - offsets.b - offsets.t);
+						}
+					}, this);
+				}
+				if(ticks && this.opt.vMajorLines){
+					dojo.forEach(ticks.major, function(tick){
+						var x = offsets.l + ht(tick.value);
+						var vMajorLine = s.createLine({
+							x1: x,
+							y1: offsets.t,
+							x2: x,
+							y2: dim.height - offsets.b
+						}).setStroke(ta.majorTick);
+						if(this.animate){
+							this._animateGrid(vMajorLine, "v", dim.height - offsets.b, dim.height - offsets.b - offsets.t);
+						}
+					}, this);
+				}
+			}catch(e){
+				// squelch
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.Grid
+		},
+		_animateGrid: function(shape, type, offset, size){
+			var transStart = type == "h" ? [offset, 0] : [0, offset];
+			var scaleStart = type == "h" ? [1/size, 1] : [1, 1/size];
+			dojox.gfx.fx.animateTransform(dojo.delegate({
+				shape: shape,
+				duration: 1200,
+				transform: [
+					{name: "translate", start: transStart, end: [0, 0]},
+					{name: "scale", start: scaleStart, end: [1, 1]},
+					{name: "original"}
+				]
+			}, this.animate)).play();
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojo.i18n"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojo.i18n"] = true;
+dojo.provide("dojo.i18n");
+
+dojo.getObject("i18n", true, dojo);
+
+/*=====
+dojo.i18n = {
+	// summary: Utility classes to enable loading of resources for internationalization (i18n)
+};
+=====*/
+
+// when using a real AMD loader, dojo.i18n.getLocalization is already defined by dojo/lib/backCompat
+dojo.i18n.getLocalization = dojo.i18n.getLocalization || function(/*String*/packageName, /*String*/bundleName, /*String?*/locale){
+	//	summary:
+	//		Returns an Object containing the localization for a given resource
+	//		bundle in a package, matching the specified locale.
+	//	description:
+	//		Returns a hash containing name/value pairs in its prototypesuch
+	//		that values can be easily overridden.  Throws an exception if the
+	//		bundle is not found.  Bundle must have already been loaded by
+	//		`dojo.requireLocalization()` or by a build optimization step.  NOTE:
+	//		try not to call this method as part of an object property
+	//		definition (`var foo = { bar: dojo.i18n.getLocalization() }`).  In
+	//		some loading situations, the bundle may not be available in time
+	//		for the object definition.  Instead, call this method inside a
+	//		function that is run after all modules load or the page loads (like
+	//		in `dojo.addOnLoad()`), or in a widget lifecycle method.
+	//	packageName:
+	//		package which is associated with this resource
+	//	bundleName:
+	//		the base filename of the resource bundle (without the ".js" suffix)
+	//	locale:
+	//		the variant to load (optional).  By default, the locale defined by
+	//		the host environment: dojo.locale
+
+	locale = dojo.i18n.normalizeLocale(locale);
+
+	// look for nearest locale match
+	var elements = locale.split('-');
+	var module = [packageName,"nls",bundleName].join('.');
+		var bundle = dojo._loadedModules[module];
+	if(bundle){
+		var localization;
+		for(var i = elements.length; i > 0; i--){
+			var loc = elements.slice(0, i).join('_');
+			if(bundle[loc]){
+				localization = bundle[loc];
+				break;
+			}
+		}
+		if(!localization){
+			localization = bundle.ROOT;
+		}
+
+		// make a singleton prototype so that the caller won't accidentally change the values globally
+		if(localization){
+			var clazz = function(){};
+			clazz.prototype = localization;
+			return new clazz(); // Object
+		}
+	}
+
+	throw new Error("Bundle not found: " + bundleName + " in " + packageName+" , locale=" + locale);
+};
+
+dojo.i18n.normalizeLocale = function(/*String?*/locale){
+	//	summary:
+	//		Returns canonical form of locale, as used by Dojo.
+	//
+	//  description:
+	//		All variants are case-insensitive and are separated by '-' as specified in [RFC 3066](http://www.ietf.org/rfc/rfc3066.txt).
+	//		If no locale is specified, the dojo.locale is returned.  dojo.locale is defined by
+	//		the user agent's locale unless overridden by djConfig.
+
+	var result = locale ? locale.toLowerCase() : dojo.locale;
+	if(result == "root"){
+		result = "ROOT";
+	}
+	return result; // String
+};
+
+dojo.i18n._requireLocalization = function(/*String*/moduleName, /*String*/bundleName, /*String?*/locale, /*String?*/availableFlatLocales){
+	//	summary:
+	//		See dojo.requireLocalization()
+	//	description:
+	// 		Called by the bootstrap, but factored out so that it is only
+	// 		included in the build when needed.
+
+	var targetLocale = dojo.i18n.normalizeLocale(locale);
+ 	var bundlePackage = [moduleName, "nls", bundleName].join(".");
+	// NOTE:
+	//		When loading these resources, the packaging does not match what is
+	//		on disk.  This is an implementation detail, as this is just a
+	//		private data structure to hold the loaded resources.  e.g.
+	//		`tests/hello/nls/en-us/salutations.js` is loaded as the object
+	//		`tests.hello.nls.salutations.en_us={...}` The structure on disk is
+	//		intended to be most convenient for developers and translators, but
+	//		in memory it is more logical and efficient to store in a different
+	//		order.  Locales cannot use dashes, since the resulting path will
+	//		not evaluate as valid JS, so we translate them to underscores.
+
+	//Find the best-match locale to load if we have available flat locales.
+	var bestLocale = "";
+	if(availableFlatLocales){
+		var flatLocales = availableFlatLocales.split(",");
+		for(var i = 0; i < flatLocales.length; i++){
+			//Locale must match from start of string.
+			//Using ["indexOf"] so customBase builds do not see
+			//this as a dojo._base.array dependency.
+			if(targetLocale["indexOf"](flatLocales[i]) == 0){
+				if(flatLocales[i].length > bestLocale.length){
+					bestLocale = flatLocales[i];
+				}
+			}
+		}
+		if(!bestLocale){
+			bestLocale = "ROOT";
+		}
+	}
+
+	//See if the desired locale is already loaded.
+	var tempLocale = availableFlatLocales ? bestLocale : targetLocale;
+	var bundle = dojo._loadedModules[bundlePackage];
+	var localizedBundle = null;
+	if(bundle){
+		if(dojo.config.localizationComplete && bundle._built){return;}
+		var jsLoc = tempLocale.replace(/-/g, '_');
+		var translationPackage = bundlePackage+"."+jsLoc;
+		localizedBundle = dojo._loadedModules[translationPackage];
+	}
+
+	if(!localizedBundle){
+		bundle = dojo["provide"](bundlePackage);
+		var syms = dojo._getModuleSymbols(moduleName);
+		var modpath = syms.concat("nls").join("/");
+		var parent;
+
+		dojo.i18n._searchLocalePath(tempLocale, availableFlatLocales, function(loc){
+			var jsLoc = loc.replace(/-/g, '_');
+			var translationPackage = bundlePackage + "." + jsLoc;
+			var loaded = false;
+			if(!dojo._loadedModules[translationPackage]){
+				// Mark loaded whether it's found or not, so that further load attempts will not be made
+				dojo["provide"](translationPackage);
+				var module = [modpath];
+				if(loc != "ROOT"){module.push(loc);}
+				module.push(bundleName);
+				var filespec = module.join("/") + '.js';
+				loaded = dojo._loadPath(filespec, null, function(hash){
+					hash = hash.root || hash;
+					// Use singleton with prototype to point to parent bundle, then mix-in result from loadPath
+					var clazz = function(){};
+					clazz.prototype = parent;
+					bundle[jsLoc] = new clazz();
+					for(var j in hash){ bundle[jsLoc][j] = hash[j]; }
+				});
+			}else{
+				loaded = true;
+			}
+			if(loaded && bundle[jsLoc]){
+				parent = bundle[jsLoc];
+			}else{
+				bundle[jsLoc] = parent;
+			}
+
+			if(availableFlatLocales){
+				//Stop the locale path searching if we know the availableFlatLocales, since
+				//the first call to this function will load the only bundle that is needed.
+				return true;
+			}
+		});
+	}
+
+	//Save the best locale bundle as the target locale bundle when we know the
+	//the available bundles.
+	if(availableFlatLocales && targetLocale != bestLocale){
+		bundle[targetLocale.replace(/-/g, '_')] = bundle[bestLocale.replace(/-/g, '_')];
+	}
+};
+
+(function(){
+	// If other locales are used, dojo.requireLocalization should load them as
+	// well, by default.
+	//
+	// Override dojo.requireLocalization to do load the default bundle, then
+	// iterate through the extraLocale list and load those translations as
+	// well, unless a particular locale was requested.
+
+	var extra = dojo.config.extraLocale;
+	if(extra){
+		if(!extra instanceof Array){
+			extra = [extra];
+		}
+
+		var req = dojo.i18n._requireLocalization;
+		dojo.i18n._requireLocalization = function(m, b, locale, availableFlatLocales){
+			req(m,b,locale, availableFlatLocales);
+			if(locale){return;}
+			for(var i=0; i<extra.length; i++){
+				req(m,b,extra[i], availableFlatLocales);
+			}
+		};
+	}
+})();
+
+dojo.i18n._searchLocalePath = function(/*String*/locale, /*Boolean*/down, /*Function*/searchFunc){
+	//	summary:
+	//		A helper method to assist in searching for locale-based resources.
+	//		Will iterate through the variants of a particular locale, either up
+	//		or down, executing a callback function.  For example, "en-us" and
+	//		true will try "en-us" followed by "en" and finally "ROOT".
+
+	locale = dojo.i18n.normalizeLocale(locale);
+
+	var elements = locale.split('-');
+	var searchlist = [];
+	for(var i = elements.length; i > 0; i--){
+		searchlist.push(elements.slice(0, i).join('-'));
+	}
+	searchlist.push(false);
+	if(down){searchlist.reverse();}
+
+	for(var j = searchlist.length - 1; j >= 0; j--){
+		var loc = searchlist[j] || "ROOT";
+		var stop = searchFunc(loc);
+		if(stop){ break; }
+	}
+};
+
+dojo.i18n._preloadLocalizations = function(/*String*/bundlePrefix, /*Array*/localesGenerated){
+	//	summary:
+	//		Load built, flattened resource bundles, if available for all
+	//		locales used in the page. Only called by built layer files.
+
+	function preload(locale){
+		locale = dojo.i18n.normalizeLocale(locale);
+		dojo.i18n._searchLocalePath(locale, true, function(loc){
+			for(var i=0; i<localesGenerated.length;i++){
+				if(localesGenerated[i] == loc){
+					dojo["require"](bundlePrefix+"_"+loc);
+					return true; // Boolean
+				}
+			}
+			return false; // Boolean
+		});
+	}
+	preload();
+	var extra = dojo.config.extraLocale||[];
+	for(var i=0; i<extra.length; i++){
+		preload(extra[i]);
+	}
+};
+
+}
+
+if(!dojo._hasResource["dojo.regexp"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojo.regexp"] = true;
+dojo.provide("dojo.regexp");
+
+dojo.getObject("regexp", true, dojo);
+
+/*=====
+dojo.regexp = {
+	// summary: Regular expressions and Builder resources
+};
+=====*/
+
+dojo.regexp.escapeString = function(/*String*/str, /*String?*/except){
+	//	summary:
+	//		Adds escape sequences for special characters in regular expressions
+	// except:
+	//		a String with special characters to be left unescaped
+
+	return str.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, function(ch){
+		if(except && except.indexOf(ch) != -1){
+			return ch;
+		}
+		return "\\" + ch;
+	}); // String
+};
+
+dojo.regexp.buildGroupRE = function(/*Object|Array*/arr, /*Function*/re, /*Boolean?*/nonCapture){
+	//	summary:
+	//		Builds a regular expression that groups subexpressions
+	//	description:
+	//		A utility function used by some of the RE generators. The
+	//		subexpressions are constructed by the function, re, in the second
+	//		parameter.  re builds one subexpression for each elem in the array
+	//		a, in the first parameter. Returns a string for a regular
+	//		expression that groups all the subexpressions.
+	// arr:
+	//		A single value or an array of values.
+	// re:
+	//		A function. Takes one parameter and converts it to a regular
+	//		expression. 
+	// nonCapture:
+	//		If true, uses non-capturing match, otherwise matches are retained
+	//		by regular expression. Defaults to false
+
+	// case 1: a is a single value.
+	if(!(arr instanceof Array)){
+		return re(arr); // String
+	}
+
+	// case 2: a is an array
+	var b = [];
+	for(var i = 0; i < arr.length; i++){
+		// convert each elem to a RE
+		b.push(re(arr[i]));
+	}
+
+	 // join the REs as alternatives in a RE group.
+	return dojo.regexp.group(b.join("|"), nonCapture); // String
+};
+
+dojo.regexp.group = function(/*String*/expression, /*Boolean?*/nonCapture){
+	// summary:
+	//		adds group match to expression
+	// nonCapture:
+	//		If true, uses non-capturing match, otherwise matches are retained
+	//		by regular expression. 
+	return "(" + (nonCapture ? "?:":"") + expression + ")"; // String
+};
+
+}
+
+if(!dojo._hasResource["dojo.number"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojo.number"] = true;
+dojo.provide("dojo.number");
+
+
+
+
+
+dojo.getObject("number", true, dojo);
+
+/*=====
+dojo.number = {
+	// summary: localized formatting and parsing routines for Number
+}
+
+dojo.number.__FormatOptions = function(){
+	//	pattern: String?
+	//		override [formatting pattern](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
+	//		with this string.  Default value is based on locale.  Overriding this property will defeat
+	//		localization.  Literal characters in patterns are not supported.
+	//	type: String?
+	//		choose a format type based on the locale from the following:
+	//		decimal, scientific (not yet supported), percent, currency. decimal by default.
+	//	places: Number?
+	//		fixed number of decimal places to show.  This overrides any
+	//		information in the provided pattern.
+	//	round: Number?
+	//		5 rounds to nearest .5; 0 rounds to nearest whole (default). -1
+	//		means do not round.
+	//	locale: String?
+	//		override the locale used to determine formatting rules
+	//	fractional: Boolean?
+	//		If false, show no decimal places, overriding places and pattern settings.
+	this.pattern = pattern;
+	this.type = type;
+	this.places = places;
+	this.round = round;
+	this.locale = locale;
+	this.fractional = fractional;
+}
+=====*/
+
+dojo.number.format = function(/*Number*/value, /*dojo.number.__FormatOptions?*/options){
+	// summary:
+	//		Format a Number as a String, using locale-specific settings
+	// description:
+	//		Create a string from a Number using a known localized pattern.
+	//		Formatting patterns appropriate to the locale are chosen from the
+	//		[Common Locale Data Repository](http://unicode.org/cldr) as well as the appropriate symbols and
+	//		delimiters.
+	//		If value is Infinity, -Infinity, or is not a valid JavaScript number, return null.
+	// value:
+	//		the number to be formatted
+
+	options = dojo.mixin({}, options || {});
+	var locale = dojo.i18n.normalizeLocale(options.locale),
+		bundle = dojo.i18n.getLocalization("dojo.cldr", "number", locale);
+	options.customs = bundle;
+	var pattern = options.pattern || bundle[(options.type || "decimal") + "Format"];
+	if(isNaN(value) || Math.abs(value) == Infinity){ return null; } // null
+	return dojo.number._applyPattern(value, pattern, options); // String
+};
+
+//dojo.number._numberPatternRE = /(?:[#0]*,?)*[#0](?:\.0*#*)?/; // not precise, but good enough
+dojo.number._numberPatternRE = /[#0,]*[#0](?:\.0*#*)?/; // not precise, but good enough
+
+dojo.number._applyPattern = function(/*Number*/value, /*String*/pattern, /*dojo.number.__FormatOptions?*/options){
+	// summary:
+	//		Apply pattern to format value as a string using options. Gives no
+	//		consideration to local customs.
+	// value:
+	//		the number to be formatted.
+	// pattern:
+	//		a pattern string as described by
+	//		[unicode.org TR35](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
+	// options: dojo.number.__FormatOptions?
+	//		_applyPattern is usually called via `dojo.number.format()` which
+	//		populates an extra property in the options parameter, "customs".
+	//		The customs object specifies group and decimal parameters if set.
+
+	//TODO: support escapes
+	options = options || {};
+	var group = options.customs.group,
+		decimal = options.customs.decimal,
+		patternList = pattern.split(';'),
+		positivePattern = patternList[0];
+	pattern = patternList[(value < 0) ? 1 : 0] || ("-" + positivePattern);
+
+	//TODO: only test against unescaped
+	if(pattern.indexOf('%') != -1){
+		value *= 100;
+	}else if(pattern.indexOf('\u2030') != -1){
+		value *= 1000; // per mille
+	}else if(pattern.indexOf('\u00a4') != -1){
+		group = options.customs.currencyGroup || group;//mixins instead?
+		decimal = options.customs.currencyDecimal || decimal;// Should these be mixins instead?
+		pattern = pattern.replace(/\u00a4{1,3}/, function(match){
+			var prop = ["symbol", "currency", "displayName"][match.length-1];
+			return options[prop] || options.currency || "";
+		});
+	}else if(pattern.indexOf('E') != -1){
+		throw new Error("exponential notation not supported");
+	}
+	
+	//TODO: support @ sig figs?
+	var numberPatternRE = dojo.number._numberPatternRE;
+	var numberPattern = positivePattern.match(numberPatternRE);
+	if(!numberPattern){
+		throw new Error("unable to find a number expression in pattern: "+pattern);
+	}
+	if(options.fractional === false){ options.places = 0; }
+	return pattern.replace(numberPatternRE,
+		dojo.number._formatAbsolute(value, numberPattern[0], {decimal: decimal, group: group, places: options.places, round: options.round}));
+};
+
+dojo.number.round = function(/*Number*/value, /*Number?*/places, /*Number?*/increment){
+	//	summary:
+	//		Rounds to the nearest value with the given number of decimal places, away from zero
+	//	description:
+	//		Rounds to the nearest value with the given number of decimal places, away from zero if equal.
+	//		Similar to Number.toFixed(), but compensates for browser quirks. Rounding can be done by
+	//		fractional increments also, such as the nearest quarter.
+	//		NOTE: Subject to floating point errors.  See dojox.math.round for experimental workaround.
+	//	value:
+	//		The number to round
+	//	places:
+	//		The number of decimal places where rounding takes place.  Defaults to 0 for whole rounding.
+	//		Must be non-negative.
+	//	increment:
+	//		Rounds next place to nearest value of increment/10.  10 by default.
+	//	example:
+	//		>>> dojo.number.round(-0.5)
+	//		-1
+	//		>>> dojo.number.round(162.295, 2)
+	//		162.29  // note floating point error.  Should be 162.3
+	//		>>> dojo.number.round(10.71, 0, 2.5)
+	//		10.75
+	var factor = 10 / (increment || 10);
+	return (factor * +value).toFixed(places) / factor; // Number
+};
+
+if((0.9).toFixed() == 0){
+	// (isIE) toFixed() bug workaround: Rounding fails on IE when most significant digit
+	// is just after the rounding place and is >=5
+	(function(){
+		var round = dojo.number.round;
+		dojo.number.round = function(v, p, m){
+			var d = Math.pow(10, -p || 0), a = Math.abs(v);
+			if(!v || a >= d || a * Math.pow(10, p + 1) < 5){
+				d = 0;
+			}
+			return round(v, p, m) + (v > 0 ? d : -d);
+		};
+	})();
+}
+
+/*=====
+dojo.number.__FormatAbsoluteOptions = function(){
+	//	decimal: String?
+	//		the decimal separator
+	//	group: String?
+	//		the group separator
+	//	places: Number?|String?
+	//		number of decimal places.  the range "n,m" will format to m places.
+	//	round: Number?
+	//		5 rounds to nearest .5; 0 rounds to nearest whole (default). -1
+	//		means don't round.
+	this.decimal = decimal;
+	this.group = group;
+	this.places = places;
+	this.round = round;
+}
+=====*/
+
+dojo.number._formatAbsolute = function(/*Number*/value, /*String*/pattern, /*dojo.number.__FormatAbsoluteOptions?*/options){
+	// summary: 
+	//		Apply numeric pattern to absolute value using options. Gives no
+	//		consideration to local customs.
+	// value:
+	//		the number to be formatted, ignores sign
+	// pattern:
+	//		the number portion of a pattern (e.g. `#,##0.00`)
+	options = options || {};
+	if(options.places === true){options.places=0;}
+	if(options.places === Infinity){options.places=6;} // avoid a loop; pick a limit
+
+	var patternParts = pattern.split("."),
+		comma = typeof options.places == "string" && options.places.indexOf(","),
+		maxPlaces = options.places;
+	if(comma){
+		maxPlaces = options.places.substring(comma + 1);
+	}else if(!(maxPlaces >= 0)){
+		maxPlaces = (patternParts[1] || []).length;
+	}
+	if(!(options.round < 0)){
+		value = dojo.number.round(value, maxPlaces, options.round);
+	}
+
+	var valueParts = String(Math.abs(value)).split("."),
+		fractional = valueParts[1] || "";
+	if(patternParts[1] || options.places){
+		if(comma){
+			options.places = options.places.substring(0, comma);
+		}
+		// Pad fractional with trailing zeros
+		var pad = options.places !== undefined ? options.places : (patternParts[1] && patternParts[1].lastIndexOf("0") + 1);
+		if(pad > fractional.length){
+			valueParts[1] = dojo.string.pad(fractional, pad, '0', true);
+		}
+
+		// Truncate fractional
+		if(maxPlaces < fractional.length){
+			valueParts[1] = fractional.substr(0, maxPlaces);
+		}
+	}else{
+		if(valueParts[1]){ valueParts.pop(); }
+	}
+
+	// Pad whole with leading zeros
+	var patternDigits = patternParts[0].replace(',', '');
+	pad = patternDigits.indexOf("0");
+	if(pad != -1){
+		pad = patternDigits.length - pad;
+		if(pad > valueParts[0].length){
+			valueParts[0] = dojo.string.pad(valueParts[0], pad);
+		}
+
+		// Truncate whole
+		if(patternDigits.indexOf("#") == -1){
+			valueParts[0] = valueParts[0].substr(valueParts[0].length - pad);
+		}
+	}
+
+	// Add group separators
+	var index = patternParts[0].lastIndexOf(','),
+		groupSize, groupSize2;
+	if(index != -1){
+		groupSize = patternParts[0].length - index - 1;
+		var remainder = patternParts[0].substr(0, index);
+		index = remainder.lastIndexOf(',');
+		if(index != -1){
+			groupSize2 = remainder.length - index - 1;
+		}
+	}
+	var pieces = [];
+	for(var whole = valueParts[0]; whole;){
+		var off = whole.length - groupSize;
+		pieces.push((off > 0) ? whole.substr(off) : whole);
+		whole = (off > 0) ? whole.slice(0, off) : "";
+		if(groupSize2){
+			groupSize = groupSize2;
+			delete groupSize2;
+		}
+	}
+	valueParts[0] = pieces.reverse().join(options.group || ",");
+
+	return valueParts.join(options.decimal || ".");
+};
+
+/*=====
+dojo.number.__RegexpOptions = function(){
+	//	pattern: String?
+	//		override [formatting pattern](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
+	//		with this string.  Default value is based on locale.  Overriding this property will defeat
+	//		localization.
+	//	type: String?
+	//		choose a format type based on the locale from the following:
+	//		decimal, scientific (not yet supported), percent, currency. decimal by default.
+	//	locale: String?
+	//		override the locale used to determine formatting rules
+	//	strict: Boolean?
+	//		strict parsing, false by default.  Strict parsing requires input as produced by the format() method.
+	//		Non-strict is more permissive, e.g. flexible on white space, omitting thousands separators
+	//	places: Number|String?
+	//		number of decimal places to accept: Infinity, a positive number, or
+	//		a range "n,m".  Defined by pattern or Infinity if pattern not provided.
+	this.pattern = pattern;
+	this.type = type;
+	this.locale = locale;
+	this.strict = strict;
+	this.places = places;
+}
+=====*/
+dojo.number.regexp = function(/*dojo.number.__RegexpOptions?*/options){
+	//	summary:
+	//		Builds the regular needed to parse a number
+	//	description:
+	//		Returns regular expression with positive and negative match, group
+	//		and decimal separators
+	return dojo.number._parseInfo(options).regexp; // String
+};
+
+dojo.number._parseInfo = function(/*Object?*/options){
+	options = options || {};
+	var locale = dojo.i18n.normalizeLocale(options.locale),
+		bundle = dojo.i18n.getLocalization("dojo.cldr", "number", locale),
+		pattern = options.pattern || bundle[(options.type || "decimal") + "Format"],
+//TODO: memoize?
+		group = bundle.group,
+		decimal = bundle.decimal,
+		factor = 1;
+
+	if(pattern.indexOf('%') != -1){
+		factor /= 100;
+	}else if(pattern.indexOf('\u2030') != -1){
+		factor /= 1000; // per mille
+	}else{
+		var isCurrency = pattern.indexOf('\u00a4') != -1;
+		if(isCurrency){
+			group = bundle.currencyGroup || group;
+			decimal = bundle.currencyDecimal || decimal;
+		}
+	}
+
+	//TODO: handle quoted escapes
+	var patternList = pattern.split(';');
+	if(patternList.length == 1){
+		patternList.push("-" + patternList[0]);
+	}
+
+	var re = dojo.regexp.buildGroupRE(patternList, function(pattern){
+		pattern = "(?:"+dojo.regexp.escapeString(pattern, '.')+")";
+		return pattern.replace(dojo.number._numberPatternRE, function(format){
+			var flags = {
+				signed: false,
+				separator: options.strict ? group : [group,""],
+				fractional: options.fractional,
+				decimal: decimal,
+				exponent: false
+				},
+
+				parts = format.split('.'),
+				places = options.places;
+
+			// special condition for percent (factor != 1)
+			// allow decimal places even if not specified in pattern
+			if(parts.length == 1 && factor != 1){
+			    parts[1] = "###";
+			}
+			if(parts.length == 1 || places === 0){
+				flags.fractional = false;
+			}else{
+				if(places === undefined){ places = options.pattern ? parts[1].lastIndexOf('0') + 1 : Infinity; }
+				if(places && options.fractional == undefined){flags.fractional = true;} // required fractional, unless otherwise specified
+				if(!options.places && (places < parts[1].length)){ places += "," + parts[1].length; }
+				flags.places = places;
+			}
+			var groups = parts[0].split(',');
+			if(groups.length > 1){
+				flags.groupSize = groups.pop().length;
+				if(groups.length > 1){
+					flags.groupSize2 = groups.pop().length;
+				}
+			}
+			return "("+dojo.number._realNumberRegexp(flags)+")";
+		});
+	}, true);
+
+	if(isCurrency){
+		// substitute the currency symbol for the placeholder in the pattern
+		re = re.replace(/([\s\xa0]*)(\u00a4{1,3})([\s\xa0]*)/g, function(match, before, target, after){
+			var prop = ["symbol", "currency", "displayName"][target.length-1],
+				symbol = dojo.regexp.escapeString(options[prop] || options.currency || "");
+			before = before ? "[\\s\\xa0]" : "";
+			after = after ? "[\\s\\xa0]" : "";
+			if(!options.strict){
+				if(before){before += "*";}
+				if(after){after += "*";}
+				return "(?:"+before+symbol+after+")?";
+			}
+			return before+symbol+after;
+		});
+	}
+
+//TODO: substitute localized sign/percent/permille/etc.?
+
+	// normalize whitespace and return
+	return {regexp: re.replace(/[\xa0 ]/g, "[\\s\\xa0]"), group: group, decimal: decimal, factor: factor}; // Object
+};
+
+/*=====
+dojo.number.__ParseOptions = function(){
+	//	pattern: String?
+	//		override [formatting pattern](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
+	//		with this string.  Default value is based on locale.  Overriding this property will defeat
+	//		localization.  Literal characters in patterns are not supported.
+	//	type: String?
+	//		choose a format type based on the locale from the following:
+	//		decimal, scientific (not yet supported), percent, currency. decimal by default.
+	//	locale: String?
+	//		override the locale used to determine formatting rules
+	//	strict: Boolean?
+	//		strict parsing, false by default.  Strict parsing requires input as produced by the format() method.
+	//		Non-strict is more permissive, e.g. flexible on white space, omitting thousands separators
+	//	fractional: Boolean?|Array?
+	//		Whether to include the fractional portion, where the number of decimal places are implied by pattern
+	//		or explicit 'places' parameter.  The value [true,false] makes the fractional portion optional.
+	this.pattern = pattern;
+	this.type = type;
+	this.locale = locale;
+	this.strict = strict;
+	this.fractional = fractional;
+}
+=====*/
+dojo.number.parse = function(/*String*/expression, /*dojo.number.__ParseOptions?*/options){
+	// summary:
+	//		Convert a properly formatted string to a primitive Number, using
+	//		locale-specific settings.
+	// description:
+	//		Create a Number from a string using a known localized pattern.
+	//		Formatting patterns are chosen appropriate to the locale
+	//		and follow the syntax described by
+	//		[unicode.org TR35](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
+    	//		Note that literal characters in patterns are not supported.
+	// expression:
+	//		A string representation of a Number
+	var info = dojo.number._parseInfo(options),
+		results = (new RegExp("^"+info.regexp+"$")).exec(expression);
+	if(!results){
+		return NaN; //NaN
+	}
+	var absoluteMatch = results[1]; // match for the positive expression
+	if(!results[1]){
+		if(!results[2]){
+			return NaN; //NaN
+		}
+		// matched the negative pattern
+		absoluteMatch =results[2];
+		info.factor *= -1;
+	}
+
+	// Transform it to something Javascript can parse as a number.  Normalize
+	// decimal point and strip out group separators or alternate forms of whitespace
+	absoluteMatch = absoluteMatch.
+		replace(new RegExp("["+info.group + "\\s\\xa0"+"]", "g"), "").
+		replace(info.decimal, ".");
+	// Adjust for negative sign, percent, etc. as necessary
+	return absoluteMatch * info.factor; //Number
+};
+
+/*=====
+dojo.number.__RealNumberRegexpFlags = function(){
+	//	places: Number?
+	//		The integer number of decimal places or a range given as "n,m".  If
+	//		not given, the decimal part is optional and the number of places is
+	//		unlimited.
+	//	decimal: String?
+	//		A string for the character used as the decimal point.  Default
+	//		is ".".
+	//	fractional: Boolean?|Array?
+	//		Whether decimal places are used.  Can be true, false, or [true,
+	//		false].  Default is [true, false] which means optional.
+	//	exponent: Boolean?|Array?
+	//		Express in exponential notation.  Can be true, false, or [true,
+	//		false]. Default is [true, false], (i.e. will match if the
+	//		exponential part is present are not).
+	//	eSigned: Boolean?|Array?
+	//		The leading plus-or-minus sign on the exponent.  Can be true,
+	//		false, or [true, false].  Default is [true, false], (i.e. will
+	//		match if it is signed or unsigned).  flags in regexp.integer can be
+	//		applied.
+	this.places = places;
+	this.decimal = decimal;
+	this.fractional = fractional;
+	this.exponent = exponent;
+	this.eSigned = eSigned;
+}
+=====*/
+
+dojo.number._realNumberRegexp = function(/*dojo.number.__RealNumberRegexpFlags?*/flags){
+	// summary:
+	//		Builds a regular expression to match a real number in exponential
+	//		notation
+
+	// assign default values to missing parameters
+	flags = flags || {};
+	//TODO: use mixin instead?
+	if(!("places" in flags)){ flags.places = Infinity; }
+	if(typeof flags.decimal != "string"){ flags.decimal = "."; }
+	if(!("fractional" in flags) || /^0/.test(flags.places)){ flags.fractional = [true, false]; }
+	if(!("exponent" in flags)){ flags.exponent = [true, false]; }
+	if(!("eSigned" in flags)){ flags.eSigned = [true, false]; }
+
+	var integerRE = dojo.number._integerRegexp(flags),
+		decimalRE = dojo.regexp.buildGroupRE(flags.fractional,
+		function(q){
+			var re = "";
+			if(q && (flags.places!==0)){
+				re = "\\" + flags.decimal;
+				if(flags.places == Infinity){ 
+					re = "(?:" + re + "\\d+)?"; 
+				}else{
+					re += "\\d{" + flags.places + "}"; 
+				}
+			}
+			return re;
+		},
+		true
+	);
+
+	var exponentRE = dojo.regexp.buildGroupRE(flags.exponent,
+		function(q){ 
+			if(q){ return "([eE]" + dojo.number._integerRegexp({ signed: flags.eSigned}) + ")"; }
+			return ""; 
 		}
 	);
 
+	var realRE = integerRE + decimalRE;
+	// allow for decimals without integers, e.g. .25
+	if(decimalRE){realRE = "(?:(?:"+ realRE + ")|(?:" + decimalRE + "))";}
+	return realRE + exponentRE; // String
+};
+
+/*=====
+dojo.number.__IntegerRegexpFlags = function(){
+	//	signed: Boolean?
+	//		The leading plus-or-minus sign. Can be true, false, or `[true,false]`.
+	//		Default is `[true, false]`, (i.e. will match if it is signed
+	//		or unsigned).
+	//	separator: String?
+	//		The character used as the thousands separator. Default is no
+	//		separator. For more than one symbol use an array, e.g. `[",", ""]`,
+	//		makes ',' optional.
+	//	groupSize: Number?
+	//		group size between separators
+	//	groupSize2: Number?
+	//		second grouping, where separators 2..n have a different interval than the first separator (for India)
+	this.signed = signed;
+	this.separator = separator;
+	this.groupSize = groupSize;
+	this.groupSize2 = groupSize2;
+}
+=====*/
+
+dojo.number._integerRegexp = function(/*dojo.number.__IntegerRegexpFlags?*/flags){
+	// summary: 
+	//		Builds a regular expression that matches an integer
+
+	// assign default values to missing parameters
+	flags = flags || {};
+	if(!("signed" in flags)){ flags.signed = [true, false]; }
+	if(!("separator" in flags)){
+		flags.separator = "";
+	}else if(!("groupSize" in flags)){
+		flags.groupSize = 3;
+	}
+
+	var signRE = dojo.regexp.buildGroupRE(flags.signed,
+		function(q){ return q ? "[-+]" : ""; },
+		true
+	);
+
+	var numberRE = dojo.regexp.buildGroupRE(flags.separator,
+		function(sep){
+			if(!sep){
+				return "(?:\\d+)";
+			}
+
+			sep = dojo.regexp.escapeString(sep);
+			if(sep == " "){ sep = "\\s"; }
+			else if(sep == "\xa0"){ sep = "\\s\\xa0"; }
+
+			var grp = flags.groupSize, grp2 = flags.groupSize2;
+			//TODO: should we continue to enforce that numbers with separators begin with 1-9?  See #6933
+			if(grp2){
+				var grp2RE = "(?:0|[1-9]\\d{0," + (grp2-1) + "}(?:[" + sep + "]\\d{" + grp2 + "})*[" + sep + "]\\d{" + grp + "})";
+				return ((grp-grp2) > 0) ? "(?:" + grp2RE + "|(?:0|[1-9]\\d{0," + (grp-1) + "}))" : grp2RE;
+			}
+			return "(?:0|[1-9]\\d{0," + (grp-1) + "}(?:[" + sep + "]\\d{" + grp + "})*)";
+		},
+		true
+	);
+
+	return signRE + numberRE; // String
+};
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Pie"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Pie"] = true;
+dojo.provide("dojox.charting.plot2d.Pie");
+
+
+
+
+
+
+
+
+
+
+
+
+/*=====
+dojo.declare("dojox.charting.plot2d.__PieCtorArgs", dojox.charting.plot2d.__DefaultCtorArgs, {
+	//	summary:
+	//		Specialized keyword arguments object for use in defining parameters on a Pie chart.
+
+	//	labels: Boolean?
+	//		Whether or not to draw labels within each pie slice.  Default is true.
+	labels:			true,
+
+	//	ticks: Boolean?
+	//		Whether or not to draw ticks to labels within each slice. Default is false.
+	ticks:			false,
+
+	//	fixed: Boolean?
+	//		TODO
+	fixed:			true,
+
+	//	precision: Number?
+	//		The precision at which to sum/add data values. Default is 1.
+	precision:		1,
+
+	//	labelOffset: Number?
+	//		The amount in pixels by which to offset labels.  Default is 20.
+	labelOffset:	20,
+
+	//	labelStyle: String?
+	//		Options as to where to draw labels.  Values include "default", "rows", and "auto". Default is "default".
+	labelStyle:		"default",	// default/rows/auto
+
+	//	htmlLabels: Boolean?
+	//		Whether or not to use HTML to render slice labels. Default is true.
+	htmlLabels:		true,
+
+	//	radGrad: String?
+	//		The type of radial gradient to use in rendering.  Default is "native".
+	radGrad:        "native",
+
+	//	fanSize: Number?
+	//		The amount for a radial gradient.  Default is 5.
+	fanSize:		5,
+
+	//	startAngle: Number?
+	//		Where to being rendering gradients in slices, in degrees.  Default is 0.
+	startAngle:     0,
+
+	//	radius: Number?
+	//		The size of the radial gradient.  Default is 0.
+	radius:		0
+});
+=====*/
+(function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		da = dojox.charting.axis2d.common,
+		g = dojox.gfx, m = g.matrix,
+		FUDGE_FACTOR = 0.2; // use to overlap fans
+
+	dojo.declare("dojox.charting.plot2d.Pie", [dojox.charting.Element, dojox.charting.plot2d._PlotEvents], {
+		//	summary:
+		//		The plot that represents a typical pie chart.
+		defaultParams: {
+			labels:			true,
+			ticks:			false,
+			fixed:			true,
+			precision:		1,
+			labelOffset:	20,
+			labelStyle:		"default",	// default/rows/auto/columns
+			htmlLabels:		true,		// use HTML to draw labels
+			radGrad:        "native",	// or "linear", or "fan"
+			fanSize:		5,			// maximum fan size in degrees
+			startAngle:     0			// start angle for slices in degrees
+		},
+		optionalParams: {
+			radius:		0,
+			// theme components
+			stroke:		{},
+			outline:	{},
+			shadow:		{},
+			fill:		{},
+			font:		"",
+			fontColor:	"",
+			labelWiring: {}
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		Create a pie plot.
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+			this.run = null;
+			this.dyn = [];
+		},
+		clear: function(){
+			//	summary:
+			//		Clear out all of the information tied to this plot.
+			//	returns: dojox.charting.plot2d.Pie
+			//		A reference to this plot for functional chaining.
+			this.dirty = true;
+			this.dyn = [];
+			this.run = null;
+			return this;	//	dojox.charting.plot2d.Pie
+		},
+		setAxis: function(axis){
+			//	summary:
+			//		Dummy method, since axes are irrelevant with a Pie chart.
+			//	returns: dojox.charting.plot2d.Pie
+			//		The reference to this plot for functional chaining.
+			return this;	//	dojox.charting.plot2d.Pie
+		},
+		addSeries: function(run){
+			//	summary:
+			//		Add a series of data to this plot.
+			//	returns: dojox.charting.plot2d.Pie
+			//		The reference to this plot for functional chaining.
+			this.run = run;
+			return this;	//	dojox.charting.plot2d.Pie
+		},
+		getSeriesStats: function(){
+			//	summary:
+			//		Returns default stats (irrelevant for this type of plot).
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			return dojo.delegate(dc.defaultStats);
+		},
+		initializeScalers: function(){
+			//	summary:
+			//		Does nothing (irrelevant for this type of plot).
+			return this;
+		},
+		getRequiredColors: function(){
+			//	summary:
+			//		Return the number of colors needed to draw this plot.
+			return this.run ? this.run.data.length : 0;
+		},
+
+		render: function(dim, offsets){
+			//	summary:
+			//		Render the plot on the chart.
+			//	dim: Object
+			//		An object of the form { width, height }.
+			//	offsets: Object
+			//		An object of the form { l, r, t, b }.
+			//	returns: dojox.charting.plot2d.Pie
+			//		A reference to this plot for functional chaining.
+			if(!this.dirty){ return this; }
+			this.resetEvents();
+			this.dirty = false;
+			this._eventSeries = {};
+			this.cleanGroup();
+			var s = this.group, t = this.chart.theme;
+
+			if(!this.run || !this.run.data.length){
+				return this;
+			}
+
+			// calculate the geometry
+			var rx = (dim.width  - offsets.l - offsets.r) / 2,
+				ry = (dim.height - offsets.t - offsets.b) / 2,
+				r  = Math.min(rx, ry),
+				taFont = "font" in this.opt ? this.opt.font : t.axis.font,
+				size = taFont ? g.normalizedLength(g.splitFontString(taFont).size) : 0,
+				taFontColor = "fontColor" in this.opt ? this.opt.fontColor : t.axis.fontColor,
+				startAngle = m._degToRad(this.opt.startAngle),
+				start = startAngle, step, filteredRun, slices, labels, shift, labelR,
+				run = this.run.data,
+				events = this.events();
+			if(typeof run[0] == "number"){
+				filteredRun = df.map(run, "x ? Math.max(x, 0) : 0");
+				if(df.every(filteredRun, "<= 0")){
+					return this;
+				}
+				slices = df.map(filteredRun, "/this", df.foldl(filteredRun, "+", 0));
+				if(this.opt.labels){
+					labels = dojo.map(slices, function(x){
+						return x > 0 ? this._getLabel(x * 100) + "%" : "";
+					}, this);
+				}
+			}else{
+				filteredRun = df.map(run, "x ? Math.max(x.y, 0) : 0");
+				if(df.every(filteredRun, "<= 0")){
+					return this;
+				}
+				slices = df.map(filteredRun, "/this", df.foldl(filteredRun, "+", 0));
+				if(this.opt.labels){
+					labels = dojo.map(slices, function(x, i){
+						if(x <= 0){ return ""; }
+						var v = run[i];
+						return "text" in v ? v.text : this._getLabel(x * 100) + "%";
+					}, this);
+				}
+			}
+			var themes = df.map(run, function(v, i){
+				if(v === null || typeof v == "number"){
+					return t.next("slice", [this.opt, this.run], true);
+				}
+				return t.next("slice", [this.opt, this.run, v], true);
+			}, this);
+			if(this.opt.labels){
+				shift = df.foldl1(df.map(labels, function(label, i){
+					var font = themes[i].series.font;
+					return dojox.gfx._base._getTextBox(label, {font: font}).w;
+				}, this), "Math.max(a, b)") / 2;
+				if(this.opt.labelOffset < 0){
+					r = Math.min(rx - 2 * shift, ry - size) + this.opt.labelOffset;
+				}
+				labelR = r - this.opt.labelOffset;
+			}
+			if("radius" in this.opt){
+				r = this.opt.radius;
+				labelR = r - this.opt.labelOffset;
+			}
+			var	circle = {
+					cx: offsets.l + rx,
+					cy: offsets.t + ry,
+					r:  r
+				};
+
+			this.dyn = [];
+			// draw slices
+			var eventSeries = new Array(slices.length);
+			dojo.some(slices, function(slice, i){
+				if(slice <= 0){
+					// degenerated slice
+					return false;	// continue
+				}
+				var v = run[i], theme = themes[i], specialFill;
+				if(slice >= 1){
+					// whole pie
+					specialFill = this._plotFill(theme.series.fill, dim, offsets);
+					specialFill = this._shapeFill(specialFill,
+						{
+							x: circle.cx - circle.r, y: circle.cy - circle.r,
+							width: 2 * circle.r, height: 2 * circle.r
+						});
+					specialFill = this._pseudoRadialFill(specialFill, {x: circle.cx, y: circle.cy}, circle.r);
+					var shape = s.createCircle(circle).setFill(specialFill).setStroke(theme.series.stroke);
+					this.dyn.push({fill: specialFill, stroke: theme.series.stroke});
+
+					if(events){
+						var o = {
+							element: "slice",
+							index:   i,
+							run:     this.run,
+							shape:   shape,
+							x:       i,
+							y:       typeof v == "number" ? v : v.y,
+							cx:      circle.cx,
+							cy:      circle.cy,
+							cr:      r
+						};
+						this._connectEvents(o);
+						eventSeries[i] = o;
+					}
+
+					return true;	// stop iteration
+				}
+				// calculate the geometry of the slice
+				var end = start + slice * 2 * Math.PI;
+				if(i + 1 == slices.length){
+					end = startAngle + 2 * Math.PI;
+				}
+				var	step = end - start,
+					x1 = circle.cx + r * Math.cos(start),
+					y1 = circle.cy + r * Math.sin(start),
+					x2 = circle.cx + r * Math.cos(end),
+					y2 = circle.cy + r * Math.sin(end);
+				// draw the slice
+				var fanSize = m._degToRad(this.opt.fanSize);
+				if(theme.series.fill && theme.series.fill.type === "radial" && this.opt.radGrad === "fan" && step > fanSize){
+					var group = s.createGroup(), nfans = Math.ceil(step / fanSize), delta = step / nfans;
+					specialFill = this._shapeFill(theme.series.fill,
+						{x: circle.cx - circle.r, y: circle.cy - circle.r, width: 2 * circle.r, height: 2 * circle.r});
+					for(var j = 0; j < nfans; ++j){
+						var fansx = j == 0 ? x1 : circle.cx + r * Math.cos(start + (j - FUDGE_FACTOR) * delta),
+							fansy = j == 0 ? y1 : circle.cy + r * Math.sin(start + (j - FUDGE_FACTOR) * delta),
+							fanex = j == nfans - 1 ? x2 : circle.cx + r * Math.cos(start + (j + 1 + FUDGE_FACTOR) * delta),
+							faney = j == nfans - 1 ? y2 : circle.cy + r * Math.sin(start + (j + 1 + FUDGE_FACTOR) * delta),
+							fan = group.createPath({}).
+								moveTo(circle.cx, circle.cy).
+								lineTo(fansx, fansy).
+								arcTo(r, r, 0, delta > Math.PI, true, fanex, faney).
+								lineTo(circle.cx, circle.cy).
+								closePath().
+								setFill(this._pseudoRadialFill(specialFill, {x: circle.cx, y: circle.cy}, r, start + (j + 0.5) * delta, start + (j + 0.5) * delta));
+					}
+					group.createPath({}).
+						moveTo(circle.cx, circle.cy).
+						lineTo(x1, y1).
+						arcTo(r, r, 0, step > Math.PI, true, x2, y2).
+						lineTo(circle.cx, circle.cy).
+						closePath().
+						setStroke(theme.series.stroke);
+					shape = group;
+				}else{
+					shape = s.createPath({}).
+						moveTo(circle.cx, circle.cy).
+						lineTo(x1, y1).
+						arcTo(r, r, 0, step > Math.PI, true, x2, y2).
+						lineTo(circle.cx, circle.cy).
+						closePath().
+						setStroke(theme.series.stroke);
+					var specialFill = theme.series.fill;
+					if(specialFill && specialFill.type === "radial"){
+						specialFill = this._shapeFill(specialFill, {x: circle.cx - circle.r, y: circle.cy - circle.r, width: 2 * circle.r, height: 2 * circle.r});
+						if(this.opt.radGrad === "linear"){
+							specialFill = this._pseudoRadialFill(specialFill, {x: circle.cx, y: circle.cy}, r, start, end);
+						}
+					}else if(specialFill && specialFill.type === "linear"){
+						specialFill = this._plotFill(specialFill, dim, offsets);
+						specialFill = this._shapeFill(specialFill, shape.getBoundingBox());
+					}
+					shape.setFill(specialFill);
+				}
+				this.dyn.push({fill: specialFill, stroke: theme.series.stroke});
+
+				if(events){
+					var o = {
+						element: "slice",
+						index:   i,
+						run:     this.run,
+						shape:   shape,
+						x:       i,
+						y:       typeof v == "number" ? v : v.y,
+						cx:      circle.cx,
+						cy:      circle.cy,
+						cr:      r
+					};
+					this._connectEvents(o);
+					eventSeries[i] = o;
+				}
+
+				start = end;
+
+				return false;	// continue
+			}, this);
+			// draw labels
+			if(this.opt.labels){
+				if(this.opt.labelStyle == "default"){
+					start = startAngle;
+					dojo.some(slices, function(slice, i){
+						if(slice <= 0){
+							// degenerated slice
+							return false;	// continue
+						}
+						var theme = themes[i];
+						if(slice >= 1){
+							// whole pie
+							var v = run[i], elem = da.createText[this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx"](
+									this.chart, s, circle.cx, circle.cy + size / 2, "middle", labels[i],
+									theme.series.font, theme.series.fontColor);
+							if(this.opt.htmlLabels){
+								this.htmlElements.push(elem);
+							}
+							return true;	// stop iteration
+						}
+						// calculate the geometry of the slice
+						var end = start + slice * 2 * Math.PI, v = run[i];
+						if(i + 1 == slices.length){
+							end = startAngle + 2 * Math.PI;
+						}
+						var	labelAngle = (start + end) / 2,
+							x = circle.cx + labelR * Math.cos(labelAngle),
+							y = circle.cy + labelR * Math.sin(labelAngle) + size / 2;
+						// draw the label
+						var elem = da.createText[this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx"]
+								(this.chart, s, x, y, "middle", labels[i], theme.series.font, theme.series.fontColor);
+						if(this.opt.htmlLabels){
+							this.htmlElements.push(elem);
+						}
+						start = end;
+						return false;	// continue
+					}, this);
+				}else if(this.opt.labelStyle == "columns"){
+					start = startAngle;
+					//calculate label angles
+					var labeledSlices = [];
+					dojo.forEach(slices, function(slice, i){
+						var end = start + slice * 2 * Math.PI;
+						if(i + 1 == slices.length){
+							end = startAngle + 2 * Math.PI;
+						}
+						var labelAngle = (start + end) / 2;
+						labeledSlices.push({
+							angle: labelAngle,
+							left: Math.cos(labelAngle) < 0,
+							theme: themes[i],
+							index: i,
+							omit: end - start < 0.001
+						});
+						start = end;
+					});
+					//calculate label radius to each slice
+					var labelHeight = dojox.gfx._base._getTextBox("a",{font:taFont}).h;
+					this._getProperLabelRadius(labeledSlices, labelHeight, circle.r * 1.1);
+					//draw label and wiring
+					dojo.forEach(labeledSlices, function(slice, i){
+						if (!slice.omit) {
+							var leftColumn = circle.cx - circle.r * 2, 
+								rightColumn = circle.cx + circle.r * 2, 
+								labelWidth = dojox.gfx._base._getTextBox(labels[i], {font: taFont}).w, 
+								x = circle.cx + slice.labelR * Math.cos(slice.angle), 
+								y = circle.cy + slice.labelR * Math.sin(slice.angle),
+								jointX = (slice.left) ? (leftColumn + labelWidth) : (rightColumn - labelWidth), 
+								labelX = (slice.left) ? leftColumn : jointX;
+							var wiring = s.createPath().moveTo(circle.cx + circle.r * Math.cos(slice.angle), circle.cy + circle.r * Math.sin(slice.angle))
+							if (Math.abs(slice.labelR * Math.cos(slice.angle)) < circle.r * 2 - labelWidth) {
+								wiring.lineTo(x, y);
+							}
+							wiring.lineTo(jointX, y).setStroke(slice.theme.series.labelWiring);
+							var elem = da.createText[this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx"](
+								this.chart, s, labelX, y, "left", labels[i], slice.theme.series.font, slice.theme.series.fontColor);
+							if (this.opt.htmlLabels) {
+								this.htmlElements.push(elem);
+							}
+						}
+					},this);
+				}
+			}
+			// post-process events to restore the original indexing
+			var esi = 0;
+			this._eventSeries[this.run.name] = df.map(run, function(v){
+				return v <= 0 ? null : eventSeries[esi++];
+			});
+			return this;	//	dojox.charting.plot2d.Pie
+		},
+		
+		_getProperLabelRadius: function(slices, labelHeight, minRidius){
+			var leftCenterSlice = {},rightCenterSlice = {},leftMinSIN = 1, rightMinSIN = 1;
+			if (slices.length == 1) {
+				slices[0].labelR = minRidius;
+				return;
+			}
+			for(var i = 0;i<slices.length;i++){
+				var tempSIN = Math.abs(Math.sin(slices[i].angle));
+				if(slices[i].left){
+					if(leftMinSIN > tempSIN){
+						leftMinSIN = tempSIN;
+						leftCenterSlice = slices[i];
+					}
+				}else{
+					if(rightMinSIN > tempSIN){
+						rightMinSIN = tempSIN;
+						rightCenterSlice = slices[i];
+					}
+				}
+			}
+			leftCenterSlice.labelR = rightCenterSlice.labelR = minRidius;
+			this._caculateLabelR(leftCenterSlice,slices,labelHeight);
+			this._caculateLabelR(rightCenterSlice,slices,labelHeight);
+		},
+		_caculateLabelR: function(firstSlice,slices,labelHeight){
+			var i = firstSlice.index,length = slices.length,
+				currentLabelR = firstSlice.labelR;
+			while(!(slices[i%length].left ^ slices[(i+1)%length].left)){
+				if (!slices[(i + 1) % length].omit) {
+					var nextLabelR = (Math.sin(slices[i % length].angle) * currentLabelR + ((slices[i % length].left) ? (-labelHeight) : labelHeight)) /
+					Math.sin(slices[(i + 1) % length].angle);
+					currentLabelR = (nextLabelR < firstSlice.labelR) ? firstSlice.labelR : nextLabelR;
+					slices[(i + 1) % length].labelR = currentLabelR;
+				}
+				i++;
+			}
+			i = firstSlice.index,j = (i == 0)?length-1 : i - 1; 
+			while(!(slices[i].left ^ slices[j].left)){
+				if (!slices[j].omit) {
+					var nextLabelR = (Math.sin(slices[i].angle) * currentLabelR + ((slices[i].left) ? labelHeight : (-labelHeight))) /
+					Math.sin(slices[j].angle);
+					currentLabelR = (nextLabelR < firstSlice.labelR) ? firstSlice.labelR : nextLabelR;
+					slices[j].labelR = currentLabelR;
+				}
+				i--;j--;
+				i = (i < 0)?i+slices.length:i;
+				j = (j < 0)?j+slices.length:j;
+			}
+		},
+		// utilities
+		_getLabel: function(number){
+			return this.opt.fixed ? dojo.number.format(number, {places: this.opt.precision}) : number.toString();
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Bubble"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Bubble"] = true;
+dojo.provide("dojox.charting.plot2d.Bubble");
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.Bubble", dojox.charting.plot2d.Base, {
+		//	summary:
+		//		A plot representing bubbles.  Note that data for Bubbles requires 3 parameters,
+		//		in the form of:  { x, y, size }, where size determines the size of the bubble.
+		defaultParams: {
+			hAxis: "x",		// use a horizontal axis named "x"
+			vAxis: "y",		// use a vertical axis named "y"
+			animate: null   // animate bars into place
+		},
+		optionalParams: {
+			// theme component
+			stroke:		{},
+			outline:	{},
+			shadow:		{},
+			fill:		{},
+			font:		"",
+			fontColor:	""
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		Create a plot of bubbles.
+			//	chart: dojox.charting.Chart2D
+			//		The chart this plot belongs to.
+			//	kwArgs: dojox.charting.plot2d.__DefaultCtorArgs?
+			//		Optional keyword arguments object to help define plot parameters.
+			this.opt = dojo.clone(this.defaultParams);
+            du.updateWithObject(this.opt, kwArgs);
+            du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+            this.series = [];
+			this.hAxis = this.opt.hAxis;
+			this.vAxis = this.opt.vAxis;
+			this.animate = this.opt.animate;
+		},
+
+		//	override the render so that we are plotting only circles.
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.Bubble
+			//		A reference to this plot for functional chaining.
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+
+			var t = this.chart.theme,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				events = this.events();
+
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				if(!run.data.length){
+					run.dirty = false;
+					t.skip();
+					continue;
+				}
+
+				if(typeof run.data[0] == "number"){
+					console.warn("dojox.charting.plot2d.Bubble: the data in the following series cannot be rendered as a bubble chart; ", run);
+					continue;
+				}
+
+				var theme = t.next("circle", [this.opt, run]), s = run.group,
+					points = dojo.map(run.data, function(v, i){
+						return v ? {
+							x: ht(v.x) + offsets.l,
+							y: dim.height - offsets.b - vt(v.y),
+							radius: this._vScaler.bounds.scale * (v.size / 2)
+						} : null;
+					}, this);
+
+				var frontCircles = null, outlineCircles = null, shadowCircles = null;
+
+				// make shadows if needed
+				if(theme.series.shadow){
+					shadowCircles = dojo.map(points, function(item){
+						if(item !== null){
+							var finalTheme = t.addMixin(theme, "circle", item, true),
+								shadow = finalTheme.series.shadow;
+							var shape = s.createCircle({
+								cx: item.x + shadow.dx, cy: item.y + shadow.dy, r: item.radius
+							}).setStroke(shadow).setFill(shadow.color);
+							if(this.animate){
+								this._animateBubble(shape, dim.height - offsets.b, item.radius);
+							}
+							return shape;
+						}
+						return null;
+					}, this);
+					if(shadowCircles.length){
+						run.dyn.shadow = shadowCircles[shadowCircles.length - 1].getStroke();
+					}
+				}
+
+				// make outlines if needed
+				if(theme.series.outline){
+					outlineCircles = dojo.map(points, function(item){
+						if(item !== null){
+							var finalTheme = t.addMixin(theme, "circle", item, true),
+								outline = dc.makeStroke(finalTheme.series.outline);
+							outline.width = 2 * outline.width + theme.series.stroke.width;
+							var shape = s.createCircle({
+								cx: item.x, cy: item.y, r: item.radius
+							}).setStroke(outline);
+							if(this.animate){
+								this._animateBubble(shape, dim.height - offsets.b, item.radius);
+							}
+							return shape;
+						}
+						return null;
+					}, this);
+					if(outlineCircles.length){
+						run.dyn.outline = outlineCircles[outlineCircles.length - 1].getStroke();
+					}
+				}
+
+				//	run through the data and add the circles.
+				frontCircles = dojo.map(points, function(item){
+					if(item !== null){
+						var finalTheme = t.addMixin(theme, "circle", item, true),
+							rect = {
+								x: item.x - item.radius,
+								y: item.y - item.radius,
+								width:  2 * item.radius,
+								height: 2 * item.radius
+							};
+						var specialFill = this._plotFill(finalTheme.series.fill, dim, offsets);
+						specialFill = this._shapeFill(specialFill, rect);
+						var shape = s.createCircle({
+							cx: item.x, cy: item.y, r: item.radius
+						}).setFill(specialFill).setStroke(finalTheme.series.stroke);
+						if(this.animate){
+							this._animateBubble(shape, dim.height - offsets.b, item.radius);
+						}
+						return shape;
+					}
+					return null;
+				}, this);
+				if(frontCircles.length){
+					run.dyn.fill   = frontCircles[frontCircles.length - 1].getFill();
+					run.dyn.stroke = frontCircles[frontCircles.length - 1].getStroke();
+				}
+
+				if(events){
+					var eventSeries = new Array(frontCircles.length);
+					dojo.forEach(frontCircles, function(s, i){
+						if(s !== null){
+							var o = {
+								element: "circle",
+								index:   i,
+								run:     run,
+								shape:   s,
+								outline: outlineCircles && outlineCircles[i] || null,
+								shadow:  shadowCircles && shadowCircles[i] || null,
+								x:       run.data[i].x,
+								y:       run.data[i].y,
+								r:       run.data[i].size / 2,
+								cx:      points[i].x,
+								cy:      points[i].y,
+								cr:      points[i].radius
+							};
+							this._connectEvents(o);
+							eventSeries[i] = o;
+						}
+					}, this);
+					this._eventSeries[run.name] = eventSeries;
+				}else{
+					delete this._eventSeries[run.name];
+				}
+
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.Bubble
+		},
+		_animateBubble: function(shape, offset, size){
+			dojox.gfx.fx.animateTransform(dojo.delegate({
+				shape: shape,
+				duration: 1200,
+				transform: [
+					{name: "translate", start: [0, offset], end: [0, 0]},
+					{name: "scale", start: [0, 1/size], end: [1, 1]},
+					{name: "original"}
+				]
+			}, this.animate)).play();
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.Candlesticks"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Candlesticks"] = true;
+dojo.provide("dojox.charting.plot2d.Candlesticks");
+
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	//	Candlesticks are based on the Bars plot type; we expect the following passed
+	//	as values in a series:
+	//	{ x?, open, close, high, low, mid? }
+	//	if x is not provided, the array index is used.
+	//	failing to provide the OHLC values will throw an error.
+	dojo.declare("dojox.charting.plot2d.Candlesticks", dojox.charting.plot2d.Base, {
+		//	summary:
+		//		A plot that represents typical candlesticks (financial reporting, primarily).
+		//		Unlike most charts, the Candlestick expects data points to be represented by
+		//		an object of the form { x?, open, close, high, low, mid? }, where both
+		//		x and mid are optional parameters.  If x is not provided, the index of the
+		//		data array is used.
+		defaultParams: {
+			hAxis: "x",		// use a horizontal axis named "x"
+			vAxis: "y",		// use a vertical axis named "y"
+			gap:	2,		// gap between columns in pixels
+			animate: null   // animate bars into place
+		},
+		optionalParams: {
+			minBarSize:	1,	// minimal candle width in pixels
+			maxBarSize:	1,	// maximal candle width in pixels
+			// theme component
+			stroke:		{},
+			outline:	{},
+			shadow:		{},
+			fill:		{},
+			font:		"",
+			fontColor:	""
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		The constructor for a candlestick chart.
+			//	chart: dojox.charting.Chart2D
+			//		The chart this plot belongs to.
+			//	kwArgs: dojox.charting.plot2d.__BarCtorArgs?
+			//		An optional keyword arguments object to help define the plot.
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+			this.series = [];
+			this.hAxis = this.opt.hAxis;
+			this.vAxis = this.opt.vAxis;
+			this.animate = this.opt.animate;
+		},
+
+		collectStats: function(series){
+			//	summary:
+			//		Collect all statistics for drawing this chart.  Since the common
+			//		functionality only assumes x and y, Candlesticks must create it's own
+			//		stats (since data has no y value, but open/close/high/low instead).
+			//	series: dojox.charting.Series[]
+			//		The data series array to be drawn on this plot.
+			//	returns: Object
+			//		Returns an object in the form of { hmin, hmax, vmin, vmax }.
+
+			//	we have to roll our own, since we need to use all four passed
+			//	values to figure out our stats, and common only assumes x and y.
+			var stats = dojo.delegate(dc.defaultStats);
+			for(var i=0; i<series.length; i++){
+				var run = series[i];
+				if(!run.data.length){ continue; }
+				var old_vmin = stats.vmin, old_vmax = stats.vmax;
+				if(!("ymin" in run) || !("ymax" in run)){
+					dojo.forEach(run.data, function(val, idx){
+						if(val !== null){
+							var x = val.x || idx + 1;
+							stats.hmin = Math.min(stats.hmin, x);
+							stats.hmax = Math.max(stats.hmax, x);
+							stats.vmin = Math.min(stats.vmin, val.open, val.close, val.high, val.low);
+							stats.vmax = Math.max(stats.vmax, val.open, val.close, val.high, val.low);
+						}
+					});
+				}
+				if("ymin" in run){ stats.vmin = Math.min(old_vmin, run.ymin); }
+				if("ymax" in run){ stats.vmax = Math.max(old_vmax, run.ymax); }
+			}
+			return stats;	//	Object
+		},
+
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			var stats = this.collectStats(this.series);
+			stats.hmin -= 0.5;
+			stats.hmax += 0.5;
+			return stats;
+		},
+
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.Candlesticks
+			//		A reference to this plot for functional chaining.
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, f, gap, width,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				baseline = Math.max(0, this._vScaler.bounds.lower),
+				baselineHeight = vt(baseline),
+				events = this.events();
+			f = dc.calculateBarSize(this._hScaler.bounds.scale, this.opt);
+			gap = f.gap;
+			width = f.size;
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next("candlestick", [this.opt, run]), s = run.group,
+					eventSeries = new Array(run.data.length);
+				for(var j = 0; j < run.data.length; ++j){
+					var v = run.data[j];
+					if(v !== null){
+						var finalTheme = t.addMixin(theme, "candlestick", v, true);
+
+						//	calculate the points we need for OHLC
+						var x = ht(v.x || (j+0.5)) + offsets.l + gap,
+							y = dim.height - offsets.b,
+							open = vt(v.open),
+							close = vt(v.close),
+							high = vt(v.high),
+							low = vt(v.low);
+						if("mid" in v){
+							var mid = vt(v.mid);
+						}
+						if(low > high){
+							var tmp = high;
+							high = low;
+							low = tmp;
+						}
+
+						if(width >= 1){
+							//	draw the line and rect, set up as a group and pass that to the events.
+							var doFill = open > close;
+							var line = { x1: width/2, x2: width/2, y1: y - high, y2: y - low },
+								rect = {
+									x: 0, y: y-Math.max(open, close),
+									width: width, height: Math.max(doFill ? open-close : close-open, 1)
+								};
+							shape = s.createGroup();
+							shape.setTransform({dx: x, dy: 0 });
+							var inner = shape.createGroup();
+							inner.createLine(line).setStroke(finalTheme.series.stroke);
+							inner.createRect(rect).setStroke(finalTheme.series.stroke).
+								setFill(doFill ? finalTheme.series.fill : "white");
+							if("mid" in v){
+								//	add the mid line.
+								inner.createLine({
+									x1: (finalTheme.series.stroke.width||1), x2: width - (finalTheme.series.stroke.width || 1),
+									y1: y - mid, y2: y - mid
+								}).setStroke(doFill ? "white" : finalTheme.series.stroke);
+							}
+
+							//	TODO: double check this.
+							run.dyn.fill   = finalTheme.series.fill;
+							run.dyn.stroke = finalTheme.series.stroke;
+							if(events){
+								var o = {
+									element: "candlestick",
+									index:   j,
+									run:     run,
+									shape:   inner,
+									x:       x,
+									y:       y-Math.max(open, close),
+									cx:		 width/2,
+									cy:		 (y-Math.max(open, close)) + (Math.max(doFill ? open-close : close-open, 1)/2),
+									width:	 width,
+									height:  Math.max(doFill ? open-close : close-open, 1),
+									data:	 v
+								};
+								this._connectEvents(o);
+								eventSeries[j] = o;
+							}
+						}
+						if(this.animate){
+							this._animateCandlesticks(shape, y - low, high - low);
+						}
+					}
+				}
+				this._eventSeries[run.name] = eventSeries;
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.Candlesticks
+		},
+		_animateCandlesticks: function(shape, voffset, vsize){
+			dojox.gfx.fx.animateTransform(dojo.delegate({
+				shape: shape,
+				duration: 1200,
+				transform: [
+					{name: "translate", start: [0, voffset - (voffset/vsize)], end: [0, 0]},
+					{name: "scale", start: [1, 1/vsize], end: [1, 1]},
+					{name: "original"}
+				]
+			}, this.animate)).play();
+		}
+	});
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.plot2d.OHLC"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.OHLC"] = true;
+dojo.provide("dojox.charting.plot2d.OHLC");
+
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	//	Candlesticks are based on the Bars plot type; we expect the following passed
+	//	as values in a series:
+	//	{ x?, open, close, high, low }
+	//	if x is not provided, the array index is used.
+	//	failing to provide the OHLC values will throw an error.
+	dojo.declare("dojox.charting.plot2d.OHLC", dojox.charting.plot2d.Base, {
+		//	summary:
+		//		A plot that represents typical open/high/low/close (financial reporting, primarily).
+		//		Unlike most charts, the Candlestick expects data points to be represented by
+		//		an object of the form { x?, open, close, high, low, mid? }, where both
+		//		x and mid are optional parameters.  If x is not provided, the index of the
+		//		data array is used.
+		defaultParams: {
+			hAxis: "x",		// use a horizontal axis named "x"
+			vAxis: "y",		// use a vertical axis named "y"
+			gap:	2,		// gap between columns in pixels
+			animate: null	// animate chart to place
+		},
+		optionalParams: {
+			minBarSize: 1,	// minimal bar size in pixels
+			maxBarSize: 1,	// maximal bar size in pixels
+			// theme component
+			stroke:		{},
+			outline:	{},
+			shadow:		{},
+			fill:		{},
+			font:		"",
+			fontColor:	""
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		The constructor for a candlestick chart.
+			//	chart: dojox.charting.Chart2D
+			//		The chart this plot belongs to.
+			//	kwArgs: dojox.charting.plot2d.__BarCtorArgs?
+			//		An optional keyword arguments object to help define the plot.
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+			this.series = [];
+			this.hAxis = this.opt.hAxis;
+			this.vAxis = this.opt.vAxis;
+			this.animate = this.opt.animate;
+		},
+
+		collectStats: function(series){
+			//	summary:
+			//		Collect all statistics for drawing this chart.  Since the common
+			//		functionality only assumes x and y, OHLC must create it's own
+			//		stats (since data has no y value, but open/close/high/low instead).
+			//	series: dojox.charting.Series[]
+			//		The data series array to be drawn on this plot.
+			//	returns: Object
+			//		Returns an object in the form of { hmin, hmax, vmin, vmax }.
+
+			//	we have to roll our own, since we need to use all four passed
+			//	values to figure out our stats, and common only assumes x and y.
+			var stats = dojo.delegate(dc.defaultStats);
+			for(var i=0; i<series.length; i++){
+				var run = series[i];
+				if(!run.data.length){ continue; }
+				var old_vmin = stats.vmin, old_vmax = stats.vmax;
+				if(!("ymin" in run) || !("ymax" in run)){
+					dojo.forEach(run.data, function(val, idx){
+						if(val !== null){
+							var x = val.x || idx + 1;
+							stats.hmin = Math.min(stats.hmin, x);
+							stats.hmax = Math.max(stats.hmax, x);
+							stats.vmin = Math.min(stats.vmin, val.open, val.close, val.high, val.low);
+							stats.vmax = Math.max(stats.vmax, val.open, val.close, val.high, val.low);
+						}
+					});
+				}
+				if("ymin" in run){ stats.vmin = Math.min(old_vmin, run.ymin); }
+				if("ymax" in run){ stats.vmax = Math.max(old_vmax, run.ymax); }
+			}
+			return stats;
+		},
+
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			var stats = this.collectStats(this.series);
+			stats.hmin -= 0.5;
+			stats.hmax += 0.5;
+			return stats;
+		},
+
+		render: function(dim, offsets){
+			//	summary:
+			//		Run the calculations for any axes for this plot.
+			//	dim: Object
+			//		An object in the form of { width, height }
+			//	offsets: Object
+			//		An object of the form { l, r, t, b}.
+			//	returns: dojox.charting.plot2d.OHLC
+			//		A reference to this plot for functional chaining.
+			if(this.zoom && !this.isDataDirty()){
+				return this.performZoom(dim, offsets);
+			}
+			this.resetEvents();
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this._eventSeries = {};
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, f, gap, width,
+				ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+				vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler),
+				baseline = Math.max(0, this._vScaler.bounds.lower),
+				baselineHeight = vt(baseline),
+				events = this.events();
+			f = dc.calculateBarSize(this._hScaler.bounds.scale, this.opt);
+			gap = f.gap;
+			width = f.size;
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){
+					t.skip();
+					this._reconnectEvents(run.name);
+					continue;
+				}
+				run.cleanGroup();
+				var theme = t.next("candlestick", [this.opt, run]), s = run.group,
+					eventSeries = new Array(run.data.length);
+				for(var j = 0; j < run.data.length; ++j){
+					var v = run.data[j];
+					if(v !== null){
+						var finalTheme = t.addMixin(theme, "candlestick", v, true);
+
+						//	calculate the points we need for OHLC
+						var x = ht(v.x || (j+0.5)) + offsets.l + gap,
+							y = dim.height - offsets.b,
+							open = vt(v.open),
+							close = vt(v.close),
+							high = vt(v.high),
+							low = vt(v.low);
+						if(low > high){
+							var tmp = high;
+							high = low;
+							low = tmp;
+						}
+
+						if(width >= 1){
+							var hl = {x1: width/2, x2: width/2, y1: y - high, y2: y - low},
+								op = {x1: 0, x2: ((width/2) + ((finalTheme.series.stroke.width||1)/2)), y1: y-open, y2: y-open},
+								cl = {x1: ((width/2) - ((finalTheme.series.stroke.width||1)/2)), x2: width, y1: y-close, y2: y-close};
+							shape = s.createGroup();
+							shape.setTransform({dx: x, dy: 0});
+							var inner = shape.createGroup();
+							inner.createLine(hl).setStroke(finalTheme.series.stroke);
+							inner.createLine(op).setStroke(finalTheme.series.stroke);
+							inner.createLine(cl).setStroke(finalTheme.series.stroke);
+
+							//	TODO: double check this.
+							run.dyn.stroke = finalTheme.series.stroke;
+							if(events){
+								var o = {
+									element: "candlestick",
+									index:   j,
+									run:     run,
+									shape:	 inner,
+									x:       x,
+									y:       y-Math.max(open, close),
+									cx:		 width/2,
+									cy:		 (y-Math.max(open, close)) + (Math.max(open > close ? open-close : close-open, 1)/2),
+									width:	 width,
+									height:  Math.max(open > close ? open-close : close-open, 1),
+									data:	 v
+								};
+								this._connectEvents(o);
+								eventSeries[j] = o;
+							}
+						}
+						if(this.animate){
+							this._animateOHLC(shape, y - low, high - low);
+						}
+					}
+				}
+				this._eventSeries[run.name] = eventSeries;
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;	//	dojox.charting.plot2d.OHLC
+		},
+		_animateOHLC: function(shape, voffset, vsize){
+			dojox.gfx.fx.animateTransform(dojo.delegate({
+				shape: shape,
+				duration: 1200,
+				transform: [
+					{name: "translate", start: [0, voffset - (voffset/vsize)], end: [0, 0]},
+					{name: "scale", start: [1, 1/vsize], end: [1, 1]},
+					{name: "original"}
+				]
+			}, this.animate)).play();
+		}
+	});
 })();
 
 }
@@ -13824,7 +18927,7 @@ dojo.declare("dojox.charting.widget.Legend", [dijit._Widget, dijit._Templated], 
 	horizontal: true,
 	swatchSize: 18,
 	
-	templateString: "<table dojoAttachPoint='legendNode' class='dojoxLegendNode'><tbody dojoAttachPoint='legendBody'></tbody></table>",
+	templateString: "<table dojoAttachPoint='legendNode' class='dojoxLegendNode' role='group' aria-label='chart legend'><tbody dojoAttachPoint='legendBody'></tbody></table>",
 	
 	legendNode: null,
 	legendBody: null,
@@ -13901,8 +19004,8 @@ dojo.declare("dojox.charting.widget.Legend", [dijit._Widget, dijit._Templated], 
 	_addLabel: function(dyn, label){
 		// create necessary elements
 		var wrapper = dojo.create("td"),
-			icon = dojo.create("div", {className: "dojoxLegendIcon dijitInline"}, wrapper),
-			text = dojo.create("label", {className: "dojoxLegendText"}, wrapper),
+			icon = dojo.create("div", null, wrapper),
+			text = dojo.create("label", null, wrapper),
 			div  = dojo.create("div", {
 				style: {
 					"width": this.swatchSize + "px",
@@ -13910,6 +19013,8 @@ dojo.declare("dojox.charting.widget.Legend", [dijit._Widget, dijit._Templated], 
 					"float": "left"
 				}
 			}, icon);
+		dojo.addClass(icon, "dojoxLegendIcon dijitInline");
+		dojo.addClass(text, "dojoxLegendText");
 		// create a skeleton
 		if(this._tr){
 			// horizontal
@@ -13966,3 +19071,794 @@ dojo.declare("dojox.charting.widget.Legend", [dijit._Widget, dijit._Templated], 
 
 }
 
+if(!dojo._hasResource["dojox.charting.plot2d.Spider"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Spider"] = true;
+dojo.provide("dojox.charting.plot2d.Spider");
+
+dojo.experimental("dojox.charting.plot2d.Spider");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		da = dojox.charting.axis2d.common,
+		g = dojox.gfx, m = g.matrix,
+		FUDGE_FACTOR = 0.2; // use to overlap fans
+
+	dojo.declare("dojox.charting.plot2d.Spider", [dojox.charting.Element, dojox.charting.plot2d._PlotEvents], {
+		//	summary:
+		//		The plot that represents a typical Spider chart.
+		defaultParams: {
+			labels:			true,
+			ticks:			false,
+			fixed:			true,
+			precision:		1,
+			labelOffset:	-10,
+			labelStyle:		"default",	// default/rows/auto
+			htmlLabels:		true,		// use HTML to draw labels
+			startAngle:     -90,		// start angle for slices in degrees
+            divisions:       3,			// radius tick count
+            axisColor:       "",		// spider axis color
+            axisWidth:       0,			// spider axis stroke width
+            spiderColor:     "",		// spider web color
+            spiderWidth:     0,			// spider web stroke width
+            seriesWidth:     0,			// plot border with
+            seriesFillAlpha: 0.2,		// plot fill alpha
+			spiderOrigin:	 0.16,		
+			markerSize:  	 3,			// radius of plot vertex (px)
+			spiderType:		 "polygon", //"circle"
+			animationType:	 dojo.fx.easing.backOut,
+			axisTickFont:	 	"",
+			axisTickFontColor:	"",
+			axisFont:		 	"",
+			axisFontColor:	 	""
+		},
+		optionalParams: {
+			radius:		0,
+			font:		"",
+			fontColor:	""
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		Create a Spider plot.
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+			this.series = [];
+			this.dyn = [];
+			this.datas = {};
+			this.labelKey = [];
+			this.oldSeriePoints = {};
+			this.animations = {};
+		},
+		clear: function(){
+			//	summary:
+			//		Clear out all of the information tied to this plot.
+			//	returns: dojox.charting.plot2d.Spider
+			//		A reference to this plot for functional chaining.
+			this.dirty = true;
+			this.dyn = [];
+			this.series = [];
+			this.datas = {};
+			this.labelKey = [];
+			this.oldSeriePoints = {};
+			this.animations = {};
+			return this;	//	dojox.charting.plot2d.Spider
+		},
+		setAxis: function(axis){
+			//	summary:
+			//		Dummy method, since axes are irrelevant with a Spider chart.
+			//	returns: dojox.charting.plot2d.Spider
+			//		The reference to this plot for functional chaining.
+			return this;	//	dojox.charting.plot2d.Spider
+		},
+		addSeries: function(run){
+			//	summary:
+			//		Add a data series to this plot.
+			//	run: dojox.charting.Series
+			//		The series to be added.
+			//	returns: dojox.charting.plot2d.Base
+			//		A reference to this plot for functional chaining.
+			var matched = false;
+			this.series.push(run);
+			for(var key in run.data){
+				var val = run.data[key],
+					data = this.datas[key];
+				if(data){
+					data.vlist.push(val);
+					data.min = Math.min(data.min, val);
+					data.max = Math.max(data.max, val);
+				}else{
+					this.datas[key] = {min: val, max: val, vlist: [val]};
+				}
+			}
+			if (this.labelKey.length <= 0) {
+				for (var key in run.data) {
+					this.labelKey.push(key);
+				}
+			}
+			return this;	//	dojox.charting.plot2d.Base
+		},
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			return dojox.charting.plot2d.common.collectSimpleStats(this.series);
+		},
+		calculateAxes: function(dim){
+			//	summary:
+			//		Stub function for running the axis calculations (depricated).
+			//	dim: Object
+			//		An object of the form { width, height }
+			//	returns: dojox.charting.plot2d.Base
+			//		A reference to this plot for functional chaining.
+			this.initializeScalers(dim, this.getSeriesStats());
+			return this;	//	dojox.charting.plot2d.Base
+		},
+		getRequiredColors: function(){
+			//	summary:
+			//		Get how many data series we have, so we know how many colors to use.
+			//	returns: Number
+			//		The number of colors needed.
+			return this.series.length;	//	Number
+		},
+		initializeScalers: function(dim, stats){
+			//	summary:
+			//		Initializes scalers using attached axes.
+			//	dim: Object:
+			//		Size of a plot area in pixels as {width, height}.
+			//	stats: Object:
+			//		Min/max of data in both directions as {hmin, hmax, vmin, vmax}.
+			//	returns: dojox.charting.plot2d.Base
+			//		A reference to this plot for functional chaining.
+			if(this._hAxis){
+				if(!this._hAxis.initialized()){
+					this._hAxis.calculate(stats.hmin, stats.hmax, dim.width);
+				}
+				this._hScaler = this._hAxis.getScaler();
+			}else{
+				this._hScaler = dojox.charting.scaler.primitive.buildScaler(stats.hmin, stats.hmax, dim.width);
+			}
+			if(this._vAxis){
+				if(!this._vAxis.initialized()){
+					this._vAxis.calculate(stats.vmin, stats.vmax, dim.height);
+				}
+				this._vScaler = this._vAxis.getScaler();
+			}else{
+				this._vScaler = dojox.charting.scaler.primitive.buildScaler(stats.vmin, stats.vmax, dim.height);
+			}
+			return this;	//	dojox.charting.plot2d.Base
+		},
+		render: function(dim, offsets){
+			//	summary:
+			//		Render the plot on the chart.
+			//	dim: Object
+			//		An object of the form { width, height }.
+			//	offsets: Object
+			//		An object of the form { l, r, t, b }.
+			//	returns: dojox.charting.plot2d.Spider
+			//		A reference to this plot for functional chaining.
+			if(!this.dirty){ return this; }
+			this.dirty = false;
+			this.cleanGroup();
+			var s = this.group, t = this.chart.theme;
+			this.resetEvents();
+
+			if(!this.series || !this.series.length){
+				return this;
+			}
+
+			// calculate the geometry
+			var o = this.opt, ta = t.axis,
+				rx = (dim.width  - offsets.l - offsets.r) / 2,
+				ry = (dim.height - offsets.t - offsets.b) / 2,
+				r  = Math.min(rx, ry),
+				axisTickFont = o.font || (ta.majorTick && ta.majorTick.font) || (ta.tick && ta.tick.font) || "normal normal normal 7pt Tahoma",
+				axisFont = o.axisFont || (ta.tick && ta.tick.titleFont) || "normal normal normal 11pt Tahoma",
+				axisTickFontColor = o.axisTickFontColor || (ta.majorTick && ta.majorTick.fontColor) || (ta.tick && ta.tick.fontColor) || "silver",
+				axisFontColor = o.axisFontColor || (ta.tick && ta.tick.titleFontColor) || "black",
+				axisColor = o.axisColor || (ta.tick && ta.tick.axisColor) || "silver",
+				spiderColor = o.spiderColor || (ta.tick && ta.tick.spiderColor) || "silver",
+				axisWidth = o.axisWidth || (ta.stroke && ta.stroke.width) || 2,
+				spiderWidth = o.spiderWidth || (ta.stroke && ta.stroke.width) || 2,
+				seriesWidth = o.seriesWidth || (ta.stroke && ta.stroke.width) || 2,
+				asize = g.normalizedLength(g.splitFontString(axisFont).size),
+				startAngle = m._degToRad(o.startAngle),
+				start = startAngle, step, filteredRun, slices, labels, shift, labelR, 
+				outerPoints, innerPoints, divisionPoints, divisionRadius, labelPoints,
+				ro = o.spiderOrigin, dv = o.divisions >= 3 ? o.divisions : 3, ms = o.markerSize,
+				spt = o.spiderType, at = o.animationType, lboffset = o.labelOffset < -10 ? o.labelOffset : -10,
+				axisExtra = 0.2;
+			
+			if(o.labels){
+				labels = dojo.map(this.series, function(s){
+					return s.name;
+				}, this);
+				shift = df.foldl1(df.map(labels, function(label, i){
+					var font = t.series.font;
+					return dojox.gfx._base._getTextBox(label, {
+						font: font
+					}).w;
+				}, this), "Math.max(a, b)") / 2;
+				r = Math.min(rx - 2 * shift, ry - asize) + lboffset;
+				labelR = r - lboffset;
+			}
+			if ("radius" in o) {
+				r = o.radius;
+				labelR = r - lboffset;
+			}
+			r /= (1+axisExtra);
+			var circle = {
+				cx: offsets.l + rx,
+				cy: offsets.t + ry,
+				r: r
+			};
+			
+			for (var i = this.series.length - 1; i >= 0; i--) {
+				var serieEntry = this.series[i];
+				if (!this.dirty && !serieEntry.dirty) {
+					t.skip();
+					continue;
+				}
+				serieEntry.cleanGroup();
+				var run = serieEntry.data;
+				if (run !== null) {
+					var len = this._getObjectLength(run);
+					//construct connect points
+					if (!outerPoints || outerPoints.length <= 0) {
+						outerPoints = [], innerPoints = [], labelPoints = [];
+						this._buildPoints(outerPoints, len, circle, r, start, true);
+						this._buildPoints(innerPoints, len, circle, r*ro, start, true);
+						this._buildPoints(labelPoints, len, circle, labelR, start);
+						if(dv > 2){
+							divisionPoints = [], divisionRadius = [];
+							for (var j = 0; j < dv - 2; j++) {
+								divisionPoints[j] = [];
+								this._buildPoints(divisionPoints[j], len, circle, r*(ro + (1-ro)*(j+1)/(dv-1)), start, true);
+								divisionRadius[j] = r*(ro + (1-ro)*(j+1)/(dv-1));
+							}
+						}
+					}
+				}
+			}
+			
+			//draw Spider
+			//axis
+			var axisGroup = s.createGroup(), axisStroke = {color: axisColor, width: axisWidth},
+				spiderStroke = {color: spiderColor, width: spiderWidth};
+			for (var j = outerPoints.length - 1; j >= 0; --j) {
+				var point = outerPoints[j],
+					st = {
+						x: point.x + (point.x - circle.cx) * axisExtra,
+						y: point.y + (point.y - circle.cy) * axisExtra
+					},
+					nd = {
+						x: point.x + (point.x - circle.cx) * axisExtra / 2,
+						y: point.y + (point.y - circle.cy) * axisExtra / 2
+					};
+				axisGroup.createLine({
+					x1: circle.cx,
+					y1: circle.cy,
+					x2: st.x,
+					y2: st.y
+				}).setStroke(axisStroke);
+				//arrow
+				this._drawArrow(axisGroup, st, nd, axisStroke);
+			}
+			
+			// draw the label
+			var labelGroup = s.createGroup();
+			for (var j = labelPoints.length - 1; j >= 0; --j) {
+				var point = labelPoints[j],
+					fontWidth = dojox.gfx._base._getTextBox(this.labelKey[j], {font: axisFont}).w || 0,
+					render = this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx";
+					elem = da.createText[render](this.chart, labelGroup, (!dojo._isBodyLtr() && render == "html") ? (point.x + fontWidth - dim.width) : point.x, point.y, 
+							"middle", this.labelKey[j], axisFont, axisFontColor);
+				if (this.opt.htmlLabels) {
+					this.htmlElements.push(elem);
+				}
+			}
+			
+			//spider web: polygon or circle
+			var spiderGroup = s.createGroup();
+			if(spt == "polygon"){
+				spiderGroup.createPolyline(outerPoints).setStroke(spiderStroke);
+				spiderGroup.createPolyline(innerPoints).setStroke(spiderStroke);
+				if (divisionPoints.length > 0) {
+					for (var j = divisionPoints.length - 1; j >= 0; --j) {
+						spiderGroup.createPolyline(divisionPoints[j]).setStroke(spiderStroke);
+					}
+				}
+			}else{//circle
+				var ccount = this._getObjectLength(this.datas);
+				spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: r}).setStroke(spiderStroke);
+				spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: r*ro}).setStroke(spiderStroke);
+				if (divisionRadius.length > 0) {
+					for (var j = divisionRadius.length - 1; j >= 0; --j) {
+						spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: divisionRadius[j]}).setStroke(spiderStroke);
+					}
+				}
+			}
+			//text
+			var textGroup = s.createGroup(), len = this._getObjectLength(this.datas), k = 0;
+			for(var key in this.datas){
+				var data = this.datas[key], min = data.min, max = data.max, distance = max - min, 
+					end = start + 2 * Math.PI * k / len;
+				for (var i = 0; i < dv; i++) {
+					var text = min + distance*i/(dv-1), point = this._getCoordinate(circle, r*(ro + (1-ro)*i/(dv-1)), end);
+					text = this._getLabel(text);
+					var fontWidth = dojox.gfx._base._getTextBox(text, {font: axisTickFont}).w || 0,
+						render = this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx";
+					if (this.opt.htmlLabels) {
+						this.htmlElements.push(da.createText[render]
+							(this.chart, textGroup, (!dojo._isBodyLtr() && render == "html") ? (point.x + fontWidth - dim.width) : point.x, point.y, 
+								"start", text, axisTickFont, axisTickFontColor));
+					}
+				}
+				k++;
+			}
+			
+			//draw series (animation)
+			this.chart.seriesShapes = {};
+			var animationConnections = [];
+			for (var i = this.series.length - 1; i >= 0; i--) {
+				var serieEntry = this.series[i], run = serieEntry.data;
+				if (run !== null) {
+					//series polygon
+					var seriePoints = [], k = 0, tipData = [];
+					for(var key in run){
+						var data = this.datas[key], min = data.min, max = data.max, distance = max - min,
+							entry = run[key], end = start + 2 * Math.PI * k / len,
+							point = this._getCoordinate(circle, r*(ro + (1-ro)*(entry-min)/distance), end);
+						seriePoints.push(point);
+						tipData.push({sname: serieEntry.name, key: key, data: entry});
+						k++;
+					}
+					seriePoints[seriePoints.length] = seriePoints[0];
+					tipData[tipData.length] = tipData[0];
+					var polygonBoundRect = this._getBoundary(seriePoints),
+						theme = t.next("spider", [o, serieEntry]), ts = serieEntry.group,
+						f = g.normalizeColor(theme.series.fill), sk = {color: theme.series.fill, width: seriesWidth};
+					f.a = o.seriesFillAlpha;
+					serieEntry.dyn = {fill: f, stroke: sk};
+					
+					var osps = this.oldSeriePoints[serieEntry.name];
+					var cs = this._createSeriesEntry(ts, (osps || innerPoints), seriePoints, f, sk, r, ro, ms, at);
+					this.chart.seriesShapes[serieEntry.name] = cs;
+					this.oldSeriePoints[serieEntry.name] = seriePoints;
+					
+					var po = {
+						element: "spider_poly",
+						index:   i,
+						id:	 	 "spider_poly_"+serieEntry.name,
+						run:     serieEntry,
+						plot:    this,
+						shape:   cs.poly,
+						parent:	 ts,
+						brect:	 polygonBoundRect,
+						cx:      circle.cx,
+						cy:      circle.cy,
+						cr:      r,
+						f:		 f,
+						s: 		 s
+					};
+					this._connectEvents(po);
+					
+					var so = {
+						element: "spider_plot",
+						index:   i,
+						id:	 	 "spider_plot_"+serieEntry.name,
+						run:     serieEntry,
+						plot:    this,
+						shape:   serieEntry.group
+					};
+					this._connectEvents(so);
+					
+					dojo.forEach(cs.circles, function(c, i){
+						var shape = c.getShape(),
+							co = {
+								element: "spider_circle",
+								index:   i,
+								id:	 	 "spider_circle_"+serieEntry.name+i,
+								run:     serieEntry,
+								plot:    this,
+								shape:   c,
+								parent:	 ts,
+								tdata:	 tipData[i],
+								cx:      seriePoints[i].x,
+								cy:      seriePoints[i].y,
+								f:		 f,
+								s:		 s
+							};
+						this._connectEvents(co);
+					}, this);
+				}
+			}
+			return this;	//	dojox.charting.plot2d.Spider
+		},
+		_createSeriesEntry: function(ts, osps, sps, f, sk, r, ro, ms, at){
+			//polygon
+			var spoly = ts.createPolyline(osps).setFill(f).setStroke(sk), scircle = [];
+			for (var j = 0; j < osps.length; j++) {
+				var point = osps[j], cr = ms;
+				var circle = ts.createCircle({cx: point.x, cy: point.y, r: cr}).setFill(f).setStroke(sk);
+				scircle.push(circle);
+			}
+			
+			var anims = dojo.map(sps, function(np, j){
+                // create animation
+				var sp = osps[j],
+                	anim = new dojo._Animation({
+                    duration: 1000,
+                    easing:   at,
+                    curve:    [sp.y, np.y]
+                });
+				var spl = spoly, sc = scircle[j];
+                dojo.connect(anim, "onAnimate", function(y){
+                    //apply poly
+					var pshape = spl.getShape();
+					pshape.points[j].y = y;
+                    spl.setShape(pshape);
+					//apply circle
+					var cshape = sc.getShape();
+					cshape.cy = y;
+					sc.setShape(cshape);
+                });
+				return anim;
+            });
+			
+			var anims1 = dojo.map(sps, function(np, j){
+                // create animation
+				var sp = osps[j],
+                	anim = new dojo._Animation({
+                    duration: 1000,
+                    easing:   at,
+                    curve:    [sp.x, np.x]
+                });
+				var spl = spoly, sc = scircle[j];
+                dojo.connect(anim, "onAnimate", function(x){
+                    //apply poly
+					var pshape = spl.getShape();
+					pshape.points[j].x = x;
+                    spl.setShape(pshape);
+					//apply circle
+					var cshape = sc.getShape();
+					cshape.cx = x;
+					sc.setShape(cshape);
+                });
+				return anim;
+            });
+            var masterAnimation = dojo.fx.combine(anims.concat(anims1)); //dojo.fx.chain(anims);
+			masterAnimation.play();
+			return {group :ts, poly: spoly, circles: scircle};
+		},
+		plotEvent: function(o){
+			//	summary:
+			//		Stub function for use by specific plots.
+			//	o: Object
+			//		An object intended to represent event parameters.
+			var runName = o.id ? o.id : "default", a;
+			if (runName in this.animations) {
+				a = this.animations[runName];
+				a.anim && a.anim.stop(true);
+			} else {
+				a = this.animations[runName] = {};
+			}
+			if(o.element == "spider_poly"){
+				if(!a.color){
+					var color = o.shape.getFill();
+					if(!color || !(color instanceof dojo.Color)){
+						return;
+					}
+					a.color = {
+						start: color,
+						end:   transColor(color)
+					};
+				}
+				var start = a.color.start, end = a.color.end; 
+				if(o.type == "onmouseout"){
+					// swap colors
+					var t = start; start = end; end = t;
+				}
+				a.anim = dojox.gfx.fx.animateFill({
+					shape:    o.shape,
+					duration: 800,
+					easing:   dojo.fx.easing.backOut,
+					color:    {start: start, end: end}
+				});
+				a.anim.play();
+			}else if(o.element == "spider_circle"){
+				var init, scale, defaultScale = 1.5;
+				if(o.type == "onmouseover"){
+					init  = dojox.gfx.matrix.identity;
+					scale = defaultScale;
+					//show tooltip
+					var aroundRect = {type: "rect"};
+					aroundRect.x = o.cx;
+					aroundRect.y = o.cy;
+					aroundRect.width = aroundRect.height = 1;
+					var lt = dojo.coords(this.chart.node, true);
+					aroundRect.x += lt.x;
+					aroundRect.y += lt.y;
+					aroundRect.x = Math.round(aroundRect.x);
+					aroundRect.y = Math.round(aroundRect.y);
+					aroundRect.width = Math.ceil(aroundRect.width);
+					aroundRect.height = Math.ceil(aroundRect.height);
+					this.aroundRect = aroundRect;
+					var position = ["after", "before"];
+					dijit.showTooltip(o.tdata.sname + "<br/>" + o.tdata.key + "<br/>" + o.tdata.data, this.aroundRect, position);
+				}else{
+					init  = dojox.gfx.matrix.scaleAt(defaultScale, o.cx, o.cy);
+					scale = 1/defaultScale;
+					//hide tooltip
+					this.aroundRect && dijit.hideTooltip(this.aroundRect);
+				}
+				var cs = o.shape.getShape(),
+					init = m.scaleAt(defaultScale, cs.cx, cs.cy),
+					kwArgs = {
+						shape: o.shape,
+						duration: 200,
+						easing:   dojo.fx.easing.backOut,
+						transform: [
+							{name: "scaleAt", start: [1, cs.cx, cs.cy], end: [scale, cs.cx, cs.cy]},
+							init
+						]
+					};
+				a.anim = dojox.gfx.fx.animateTransform(kwArgs);
+				a.anim.play();
+			}else if(o.element == "spider_plot"){
+				//dojo gfx function "moveToFront" not work in IE 
+				if (o.type == "onmouseover" && !dojo.isIE) {
+					o.shape.moveToFront();
+				}
+			}
+		},
+		_getBoundary: function(points){
+			var xmax = points[0].x,
+				xmin = points[0].x,
+				ymax = points[0].y,
+				ymin = points[0].y;
+			for(var i = 0; i < points.length; i++){
+				var point = points[i];
+				xmax = Math.max(point.x, xmax);
+				ymax = Math.max(point.y, ymax);
+				xmin = Math.min(point.x, xmin);
+				ymin = Math.min(point.y, ymin);
+			}
+			return {
+				x: xmin,
+				y: ymin,
+				width: xmax - xmin,
+				height: ymax - ymin
+			};
+		},
+		
+		_drawArrow: function(s, start, end, stroke){
+			var len = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)),
+				sin = (end.y - start.y)/len, cos = (end.x - start.x)/len,
+				point2 = {x: end.x + (len/3)*(-sin), y: end.y + (len/3)*cos},
+				point3 = {x: end.x + (len/3)*sin, y: end.y + (len/3)*(-cos)};
+			s.createPolyline([start, point2, point3]).setFill(stroke.color).setStroke(stroke);
+		},
+		
+		_buildPoints: function(points, count, circle, radius, angle, recursive){
+			for (var i = 0; i < count; i++) {
+				var end = angle + 2 * Math.PI * i / count;
+				points.push(this._getCoordinate(circle, radius, end));
+			}
+			if(recursive){
+				points.push(this._getCoordinate(circle, radius, angle + 2 * Math.PI));
+			}
+		},
+		
+		_getCoordinate: function(circle, radius, angle){
+			return {
+				x: circle.cx + radius * Math.cos(angle),
+				y: circle.cy + radius * Math.sin(angle)
+			}
+		},
+		
+		_getObjectLength: function(obj){
+			var count = 0;
+			if(dojo.isObject(obj)){
+				for(var key in obj){
+					count++;
+				}
+			}
+			return count;
+		},
+
+		// utilities
+		_getLabel: function(number){
+			return this.opt.fixed ? dojo.number.format(number, {places: this.opt.precision}) : number.toString();
+		}
+	});
+	
+	function transColor(color){
+		var a = new dojox.color.Color(color),
+			x = a.toHsl();
+		if(x.s == 0){
+			x.l = x.l < 50 ? 100 : 0;
+		}else{
+			x.s = 100;
+			if(x.l < 50){
+				x.l = 75;
+			}else if(x.l > 75){
+				x.l = 50;
+			}else{
+				x.l = x.l - 50 > 75 - x.l ?
+					50 : 75;
+			}
+		}
+		var color = dojox.color.fromHsl(x);
+		color.a = 0.7;
+		return color;
+	};
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.Chart2D"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.Chart2D"] = true;
+dojo.provide("dojox.charting.Chart2D");
+
+dojo.deprecated("dojox.charting.Chart2D", "Use dojo.charting.Chart instead and require all other components explicitly", "2.0");
+
+// require all axes to support references by name
+
+
+
+// require all plots to support references by name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// require the main file
+
+
+dojox.charting.Chart2D = dojox.charting.Chart;
+
+}
+
+if(!dojo._hasResource["dojox.charting.widget.Chart2D"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.widget.Chart2D"] = true;
+dojo.provide("dojox.charting.widget.Chart2D");
+
+dojo.deprecated("dojox.charting.widget.Chart2D", "Use dojo.charting.widget.Chart instead and require all other components explicitly", "2.0");
+
+
+
+// require all actions to support references by name
+
+
+
+
+
+
+// require Chart2D to get compatibility on chart type reference by name
+
+
+dojox.charting.widget.Chart2D =  dojox.charting.widget.Chart;
+
+}
+
+if(!dojo._hasResource["dojox.charting.themes.GreySkies"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.themes.GreySkies"] = true;
+dojo.provide("dojox.charting.themes.GreySkies");
+
+
+(function(){
+	var dxc=dojox.charting;
+	dxc.themes.GreySkies=new dxc.Theme(dxc.Theme._def);
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.widget.Sparkline"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.widget.Sparkline"] = true;
+dojo.provide("dojox.charting.widget.Sparkline");
+
+
+
+
+
+
+(function(){
+
+	var d = dojo;
+
+	dojo.declare("dojox.charting.widget.Sparkline",
+		dojox.charting.widget.Chart2D,
+		{
+			theme: dojox.charting.themes.GreySkies,
+			margins: { l: 0, r: 0, t: 0, b: 0 },
+			type: "Lines",
+			valueFn: "Number(x)",
+			store: "",
+			field: "",
+			query: "",
+			queryOptions: "",
+			start: "0",
+			count: "Infinity",
+			sort: "",
+			data: "",
+			name: "default",
+			buildRendering: function(){
+				var n = this.srcNodeRef;
+				if(	!n.childNodes.length || // shortcut the query
+					!d.query("> .axis, > .plot, > .action, > .series", n).length){
+					var plot = document.createElement("div");
+					d.attr(plot, {
+						"class": "plot",
+						"name": "default",
+						"type": this.type
+					});
+					n.appendChild(plot);
+
+					var series = document.createElement("div");
+					d.attr(series, {
+						"class": "series",
+						plot: "default",
+						name: this.name,
+						start: this.start,
+						count: this.count,
+						valueFn: this.valueFn
+					});
+					d.forEach(
+						["store", "field", "query", "queryOptions", "sort", "data"],
+						function(i){
+							if(this[i].length){
+								d.attr(series, i, this[i]);
+							}
+						},
+						this
+					);
+					n.appendChild(series);
+				}
+				this.inherited(arguments);
+			}
+		}
+	);
+
+})();
+
+}
+
+
+dojo.i18n._preloadLocalizations("dojox.charting.widget.nls.Chart2D", ["ROOT","ar","ca","cs","da","de","de-de","el","en","en-gb","en-us","es","es-es","fi","fi-fi","fr","fr-fr","he","he-il","hu","it","it-it","ja","ja-jp","ko","ko-kr","nb","nl","nl-nl","pl","pt","pt-br","pt-pt","ru","sk","sl","sv","th","tr","xx","zh","zh-cn","zh-tw"]);

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -11,7 +11,7 @@ dojo.provide("dojox.grid._EditManager");
 dojo.require("dojox.grid.util");
 dojo.declare("dojox.grid._EditManager",null,{constructor:function(_1){
 this.grid=_1;
-this.connections=[];
+this.connections=[dojo.connect(this.grid,"onBlur",this,"apply")];
 if(dojo.isIE){
 this.connections.push(dojo.connect(document.body,"onfocus",dojo.hitch(this,"_boomerangFocus")));
 }

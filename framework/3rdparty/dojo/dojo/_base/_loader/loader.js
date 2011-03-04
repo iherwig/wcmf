@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -7,7 +7,7 @@
 
 if(!dojo._hasResource["dojo.foo"]){
 dojo._hasResource["dojo.foo"]=true;
-define("dojo/_base/_loader/loader",["./bootstrap"],function(){
+(function(){
 var d=dojo,_1;
 d.mixin(d,{_loadedModules:{},_inFlightCount:0,_hasResource:{},_modulePrefixes:{dojo:{name:"dojo",value:"."},doh:{name:"doh",value:"../util/doh"},tests:{name:"tests",value:"tests"}},_moduleHasPrefix:function(_2){
 var mp=d._modulePrefixes;
@@ -300,87 +300,5 @@ loc=d.baseUrl+loc;
 }
 return new d._Url(loc,url);
 };
-var _31=this.define;
-define=!_31.dojo?function(_32,obj){
-if(typeof _32=="string"){
-if(/dojo|dijit/.test(_32)){
-dojo.provide(_32.replace(/\//g,"."));
-}
-}
-return _31.apply(this,arguments);
-}:function(_33,_34,def){
-if(!def){
-if(_34){
-def=_34;
-_34=_33;
-}else{
-def=_33;
-_34=["require","exports","module"];
-}
-_33=_1?_1.replace(/\./g,"/"):"anon";
-}
-var _35=_33.replace(/\//g,".");
-var _36=dojo.provide(_35);
-function _37(_38){
-if(_38.charAt(0)==="."){
-_38=_33.substring(0,_33.lastIndexOf("/")+1)+_38;
-while(_39!==_38){
-var _39=_38;
-_38=_38.replace(/\/[^\/]*\/\.\.\//,"/");
-}
-_38=_38.replace(/\/\.\//g,"/");
-}
-return _38.replace(/\//g,".");
-};
-if(typeof def=="function"){
-for(var _3a=[],_3b,i=0;i<_34.length;i++){
-_3b=_37(_34[i]);
-var _3c=_3b.indexOf("!");
-if(_3c>-1){
-if(_3b.substring(0,_3c)=="i18n"){
-var _3d=_3b.match(/^i18n\!(.+)\.nls\.([^\.]+)$/);
-dojo["requireLocalization"](_3d[1],_3d[2]);
-}
-arg=null;
-}else{
-var arg;
-switch(_3b){
-case "require":
-arg=function(_3e){
-return dojo.require(_37(_3e));
-};
-break;
-case "exports":
-arg=_36;
-break;
-case "module":
-var _3f=arg={exports:_36};
-break;
-case "dojox":
-arg=dojo.getObject(_3b);
-break;
-default:
-arg=dojo.require(_3b);
-}
-}
-_3a.push(arg);
-}
-var _40=def.apply(null,_3a);
-}else{
-_40=def;
-}
-if(_40){
-dojo._loadedModules[_35]=_40;
-dojo.setObject(_35,_40);
-}
-if(_3f){
-dojo._loadedModules[_35]=_3f.exports;
-}
-return _40;
-};
-define("dojo",[],d);
-define("dijit",[],this.dijit||(this.dijit={}));
-define("dojo/_base/_loader/loader",[],{});
-dojo.simulatedLoading=1;
-});
+})();
 }

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -41,13 +41,15 @@ this._set("state",_a?"":(((((!this._hasBeenBlurred||_8)&&_b)||_c)&&this._maskVal
 dijit.setWaiState(this.focusNode,"invalid",_a?"false":"true");
 if(this.state=="Error"){
 this._maskValidSubsetError=_8&&_c;
-_9=this.getErrorMessage(true);
+_9=this.getErrorMessage(_8);
 }else{
 if(this.state=="Incomplete"){
-_9=this.getPromptMessage(true);
+_9=this.getPromptMessage(_8);
 this._maskValidSubsetError=!this._hasBeenBlurred||_8;
 }else{
-_9=this.getPromptMessage(true);
+if(_b){
+_9=this.getPromptMessage(_8);
+}
 }
 }
 this.set("message",_9);

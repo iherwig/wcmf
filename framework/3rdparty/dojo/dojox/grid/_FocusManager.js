@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -29,7 +29,7 @@ dojo.forEach(this._headerConnects,dojo.disconnect);
 delete this.grid;
 delete this.cell;
 },_colHeadNode:null,_colHeadFocusIdx:null,_contextMenuBindNode:null,tabbingOut:false,focusClass:"dojoxGridCellFocus",focusView:null,initFocusView:function(){
-this.focusView=this.grid.views.getFirstScrollingView()||this.focusView;
+this.focusView=this.grid.views.getFirstScrollingView()||this.focusView||this.grid.views.views[0];
 this._initColumnHeaders();
 },isFocusCell:function(_2,_3){
 return (this.cell==_2)&&(this.rowIndex==_3);
@@ -243,7 +243,7 @@ row=rc;
 }
 if(this.grid.edit.isEditing()){
 var _25=this.grid.getCell(col);
-if(!this.isLastFocusCell()&&!_25.editable){
+if(!this.isLastFocusCell()&&(!_25.editable||this.grid.canEdit&&!this.grid.canEdit(_25,row))){
 this.cell=_25;
 this.rowIndex=row;
 this.next();

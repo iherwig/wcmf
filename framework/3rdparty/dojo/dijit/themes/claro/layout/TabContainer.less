@@ -17,17 +17,17 @@
  * 		.tabStripButtonDisabled - styles for disabled tab strip buttons
  * 
  * Tab Button:
- * 		.dijitTabContainerTop-tabs .dijitTabInnerDiv/.dijitTabContent     - styles for top tab botton container
- * 		.dijitTabContainerBottom-tabs .dijitTabInnerDiv/.dijitTabContent  - styles for bottom tab botton container
- * 		.dijitTabContainerLeft-tabs .dijitTabInnerDiv/.dijitTabContent    - styles for left tab botton container
- * 		.dijitTabContainerRight-tabs .dijitTabInnerDiv/.dijitTabContent   - styles for right tab botton container
+ * 		.dijitTabContainerTop-tabs .dijitTabInnerDiv/.dijitTabContent     - styles for top tab button container
+ * 		.dijitTabContainerBottom-tabs .dijitTabInnerDiv/.dijitTabContent  - styles for bottom tab button container
+ * 		.dijitTabContainerLeft-tabs .dijitTabInnerDiv/.dijitTabContent    - styles for left tab button container
+ * 		.dijitTabContainerRight-tabs .dijitTabInnerDiv/.dijitTabContent   - styles for right tab button container
  * 
  * 		.dijitTabContainerTop-tabs .dijitTabChecked .dijitTabInnerDiv/.dijitTabContent    
- * 				- styles for selected status of top tab botton
+ * 				- styles for selected status of top tab button
  * 		same to Bottom, Left, Right Tabs
  * 
- * 		.dijitTabHover .dijitTabInnerDiv   - styles when mouse hover on tab bottons
- * 		.dijitTabActive .dijitTabInnerDiv  - styles when mouse down on tab bottons
+ * 		.dijitTabHover .dijitTabInnerDiv   - styles when mouse hover on tab buttons
+ * 		.dijitTabActive .dijitTabInnerDiv  - styles when mouse down on tab buttons
  * 		.dijitTabChecked .dijitTabInnerDiv  - styles when on buttons of selected tab		
  * 
  * 		.dijitTabCloseButton - the close action buttons lie at the right top of each tab button on closable tabs
@@ -66,7 +66,7 @@
 	width: 14px;
 	height: 14px;
 	margin-left: 5px;
-	margin-right:-3px;
+	margin-right:-5px;
 }
 .claro .dijitTabCloseButtonHover {
 	background-position:-14px;
@@ -133,8 +133,8 @@
 }
 /* for top tab padding. change height when status changes */
 .claro .dijitTabContainerTop-tabs .dijitTabContent {
-	padding:3px 8px 3px 4px;
-	border-bottom: 1px;
+	padding:3px 6px;
+	border-bottom-width: 0px;
 	background-image:url("images/tabTop.png");
 	background-position:0px 0px;
 	background-repeat:repeat-x;
@@ -144,9 +144,6 @@
 .claro .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
 	padding-bottom: 4px;
 	padding-top: 6px;
-}
-.dj_ie .claro .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
-	border-bottom: none;
 }
 
 /* normal status */
@@ -181,8 +178,8 @@
 }
 /* calculate the position and size */
 .claro .dijitTabContainerBottom-tabs .dijitTabContent {
-	padding:3px 8px 4px 4px;
-	border-top: none;
+	padding:3px 6px;
+	border-top-width: 0px;
 	background-image: url("images/tabBottom.png");
 	background-position:0px -249px;
 	background-repeat: repeat-x;
@@ -223,6 +220,7 @@
 
 /*************** left tab ***************/
 .claro .dijitTabContainerLeft-tabs .dijitTab {
+	border-right-width: 0px;
 	left: 1px;	/* used for overlap */
 	margin-bottom: 1px;
 }
@@ -255,6 +253,7 @@
 
 /*************** right tab ***************/
 .claro .dijitTabContainerRight-tabs .dijitTab {
+	border-left-width: 0px;
 	left: -1px;	/* used for overlap */
 	margin-bottom: 1px;
 }
@@ -384,6 +383,9 @@
 	border-color: rgba(118,157,192,0);
 	-webkit-transition-property:background-color, border-color;
  	-webkit-transition-duration:.3s;
+	border-radius: 2px;
+  	-moz-border-radius: 2px;
+  	-webkit-border-radius: 2px;
 }
 .claro .dijitTabContainerTabListNested .dijitTab .dijitTabInnerDiv {
 	/* 4 element selector to override box-shadow setting from above rule:
@@ -398,9 +400,6 @@
 }
 .claro .dijitTabContainerTabListNested .dijitTabHover .dijitTabContent {
 	background-color: @nestedtab-hovered-background-color;
-	border-radius: 2px 2px 2px 2px;
-	-moz-border-radius: 2px 2px 2px 2px;
-	-webkit-border-radius:2px;
 	border:solid 1px @nestedtab-hovered-border-color;
 	padding: 3px;
 	webkit-transition-duration:.2s;
@@ -409,18 +408,12 @@
 	text-decoration: none;
 }
 .claro .dijitTabContainerTabListNested .dijitTabActive .dijitTabContent {
-	border-radius: 2px 2px 2px 2px;
-	-moz-border-radius: 2px 2px 2px 2px;
-	-webkit-border-radius:2px;
 	border:solid 1px @nestedtab-selected-border-color;
 	padding: 3px;
 	background: @nestedtab-selected-background-color url("images/tabNested.png") repeat-x;
 	-webkit-transition-duration:.1s;
 }
 .claro .dijitTabContainerTabListNested .dijitTabChecked .dijitTabContent {
-	border-radius: 2px 2px 2px 2px;
-	-moz-border-radius: 2px 2px 2px 2px;
-	-webkit-border-radius:2px;
 	padding: 3px;
 	border:solid 1px @selected-border-color;
 	background-position: 0px 105px;

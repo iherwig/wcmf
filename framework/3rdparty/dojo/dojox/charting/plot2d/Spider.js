@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -207,6 +207,7 @@ _3a[_3a.length]=_3a[0];
 _3b[_3b.length]=_3b[0];
 var _3d=this._getBoundary(_3a),_3e=t.next("spider",[o,_2b]),ts=_2b.group,f=g.normalizeColor(_3e.series.fill),sk={color:_3e.series.fill,width:_17};
 f.a=o.seriesFillAlpha;
+_2b.dyn={fill:f,stroke:sk};
 var _3f=this.oldSeriePoints[_2b.name];
 var cs=this._createSeriesEntry(ts,(_3f||_22),_3a,f,sk,r,ro,ms,at);
 this.chart.seriesShapes[_2b.name]=cs;
@@ -282,7 +283,6 @@ end=t;
 }
 a.anim=dojox.gfx.fx.animateFill({shape:o.shape,duration:800,easing:dojo.fx.easing.backOut,color:{start:_52,end:end}});
 a.anim.play();
-dojo[o.type=="onmouseout"?"removeClass":"addClass"](this.chart.legend.selectedLegends[o.run.name],"dojoxLegendHover");
 }else{
 if(o.element=="spider_circle"){
 var _53,_54,_55=1.5;
@@ -373,111 +373,5 @@ var _6e=dojox.color.fromHsl(x);
 _6e.a=0.7;
 return _6e;
 };
-dojo.declare("dojox.charting.plot2d.SpiderLegend",[dojox.charting.widget.Legend],{selectedLegends:false,postCreate:function(){
-this.chart.legend=this;
-this.selectedLegends&&(this.selectedLegends={});
-this.inherited(arguments);
-},refresh:function(){
-if(this._surfaces){
-dojo.forEach(this._surfaces,function(_6f){
-_6f.destroy();
-});
-}
-this._surfaces=[];
-while(this.legendBody.lastChild){
-dojo.destroy(this.legendBody.lastChild);
-}
-if(this.horizontal){
-dojo.addClass(this.legendNode,"dojoxLegendHorizontal");
-this._tr=dojo.doc.createElement("tr");
-this.legendBody.appendChild(this._tr);
-this._inrow=0;
-}
-var s=this.series;
-if(s.length==0){
-return;
-}
-dojo.forEach(this.series,function(p){
-p.selected=false;
-});
-if(s[0].chart.stack[0].declaredClass=="dojox.charting.plot2d.Spider"){
-dojo.forEach(s,function(x,i){
-this._addSpiderLabel({fill:x.fill,stroke:x.stroke,marker:x.marker},x.legend||x.name,x);
-},this);
-}
-},_addSpiderLabel:function(dyn,_70,x){
-var _71=dojo.doc.createElement("td"),_72=dojo.doc.createElement("span"),_73=dojo.doc.createElement("span");
-dojo.addClass(_71,(!dojo._isBodyLtr())?"dojoxLegendItemRtl":"dojoxLegendItem");
-dojo.addClass(_72,"dojoxLegendText");
-dojo.addClass(_73,"dojoxLegendIcon");
-_73.style.width=this.swatchSize+"px";
-_73.style.height=this.swatchSize+"px";
-_71.appendChild(_73);
-dojo.attr(_71,"tabIndex",0);
-dijit.setWaiState(_71,"labelledby",_70);
-if(this._tr){
-this._tr.appendChild(_71);
-_72.innerHTML=_70;
-_71.appendChild(_72);
-this.selectedLegends&&(this.selectedLegends[_70]=_71);
-if(++this._inrow===this.horizontal){
-this._tr=dojo.doc.createElement("tr");
-this.legendBody.appendChild(this._tr);
-this._inrow=0;
-}
-}else{
-var tr=dojo.doc.createElement("tr");
-this.legendBody.appendChild(tr);
-tr.appendChild(_71);
-_72.innerHTML=_70;
-_71.appendChild(_72);
-this.selectedLegends&&(this.selectedLegends[_70]=_71);
-}
-this._makeIcon(_73,dyn);
-_72.innerHTML=String(_70);
-var s=this.series,ss=this.chart.seriesShapes;
-this.selectedLegends&&dojo.forEach(["onmousedown","onkeydown"],function(e){
-this.selectedLegends&&this.connect(this.selectedLegends[_70],e,function(evt){
-if(e=="onkeydown"&&evt.keyCode!=dojo.keys.ENTER){
-return;
-}
-x.selected=!(x.selected);
-for(var j=0;j<s.length;j++){
-if(!s[j].selected){
-var _74=ss[s[j].name];
-_74.group.remove(_74.poly);
-for(var k=0;k<_74.circles.length;k++){
-_74.group.remove(_74.circles[k]);
-}
-}else{
-var _74=ss[s[j].name];
-_74.group.add(_74.poly);
-for(var k=0;k<_74.circles.length;k++){
-_74.group.add(_74.circles[k]);
-}
-}
-dojo.toggleClass(this.selectedLegends[s[j].name],"dojoxLegendActive",!!s[j].selected);
-}
-});
-},this);
-this.selectedLegends&&dojo.forEach(["onmouseenter","onmouseleave","onmouseup"],function(e){
-var _75=this.selectedLegends[_70];
-this.connect(_75,e,function(){
-dojo.toggleClass(_75,"dojoxLegendHover",e=="onmouseenter");
-var g=ss[_70].group,p=ss[_70].poly;
-if(g&&p){
-!dojo.isIE&&g.moveToFront();
-if(e=="onmouseenter"){
-p.polyOldColor=p.getFill();
-p.setFill(_51(p.polyOldColor));
-}else{
-if(e=="onmouseleave"){
-p.setFill(p.polyOldColor);
-}
-}
-}
-});
-},this);
-}});
 })();
 }

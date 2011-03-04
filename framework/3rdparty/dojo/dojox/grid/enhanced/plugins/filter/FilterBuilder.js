@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -26,7 +26,7 @@ return this.supportedOps[_a.op.toLowerCase()](dojo.map(_a.data,this.buildExpress
 var _b=dojo.mixin(this.defaultArgs[_a.datatype],_a.args||{});
 return new this.supportedTypes[_a.datatype](_a.data,_a.isColumn,_b);
 }
-},supportedOps:{"equalto":_2("EqualTo"),"lessthan":_2("LessThan"),"lessthanorequalto":_2("LessThanOrEqualTo"),"largerthan":_2("LargerThan"),"largerthanorequalto":_2("LargerThanOrEqualTo"),"contains":_2("Contains"),"startswith":_2("StartsWith"),"endswith":_2("EndsWith"),"notequalto":_6("EqualTo"),"notcontains":_6("Contains"),"notstartswith":_6("StartsWith"),"notendswith":_6("EndsWith"),"range":function(_c){
+},supportedOps:{"equalto":_2("EqualTo"),"lessthan":_2("LessThan"),"lessthanorequalto":_2("LessThanOrEqualTo"),"largerthan":_2("LargerThan"),"largerthanorequalto":_2("LargerThanOrEqualTo"),"contains":_2("Contains"),"startswith":_2("StartsWith"),"endswith":_2("EndsWith"),"notequalto":_6("EqualTo"),"notcontains":_6("Contains"),"notstartswith":_6("StartsWith"),"notendswith":_6("EndsWith"),"isempty":_2("IsEmpty"),"range":function(_c){
 return new _1.LogicALL(new _1.LargerThanOrEqualTo(_c.slice(0,2)),new _1.LessThanOrEqualTo(_c[0],_c[2]));
 },"logicany":_2("LogicANY"),"logicall":_2("LogicALL")},supportedTypes:{"number":_1.NumberExpr,"string":_1.StringExpr,"boolean":_1.BooleanExpr,"date":_1.DateExpr,"time":_1.TimeExpr},defaultArgs:{"boolean":{"falseValue":"false","convert":function(_d,_e){
 var _f=_e.falseValue;

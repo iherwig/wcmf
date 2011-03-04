@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -839,13 +839,10 @@ return arr;
 return acme;
 };
 if(this["dojo"]){
-var _c4=0;
-if(!_c4){
 dojo.provide("dojo._base.query");
 dojo.require("dojo._base.NodeList");
 dojo.require("dojo._base.lang");
 _1(this["queryPortability"]||this["acme"]||dojo);
-}
 }else{
 _1(this["queryPortability"]||this["acme"]||_c0());
 }

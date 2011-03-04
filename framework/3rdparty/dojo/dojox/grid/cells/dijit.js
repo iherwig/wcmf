@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -32,16 +32,16 @@ this.widgetClass=dojo.getObject(this.widgetClass);
 this.needFormatNode(_3,_4);
 return "<div></div>";
 },getValue:function(_5){
-return this.widget.attr("value");
+return this.widget.get("value");
 },setValue:function(_6,_7){
-if(this.widget&&this.widget.attr){
+if(this.widget&&this.widget.set){
 if(this.widget.onLoadDeferred){
 var _8=this;
 this.widget.onLoadDeferred.addCallback(function(){
-_8.widget.attr("value",_7===null?"":_7);
+_8.widget.set("value",_7===null?"":_7);
 });
 }else{
-this.widget.attr("value",_7);
+this.widget.set("value",_7);
 }
 }else{
 this.inherited(arguments);
@@ -108,8 +108,8 @@ var _20=new dojo.data.ItemFileReadStore({data:{identifier:"name",items:_1f}});
 return dojo.mixin({},this.widgetProps||{},{value:_1e,store:_20});
 },getValue:function(){
 var e=this.widget;
-e.attr("displayedValue",e.attr("displayedValue"));
-return e.attr("value");
+e.set("displayedValue",e.get("displayedValue"));
+return e.get("value");
 }});
 _1.ComboBox.markupFactory=function(_21,_22){
 _1._Widget.markupFactory(_21,_22);
@@ -124,7 +124,7 @@ _22.options=o;
 };
 dojo.declare("dojox.grid.cells.DateTextBox",_1._Widget,{widgetClass:dijit.form.DateTextBox,setValue:function(_24,_25){
 if(this.widget){
-this.widget.attr("value",new Date(_25));
+this.widget.set("value",new Date(_25));
 }else{
 this.inherited(arguments);
 }
@@ -138,7 +138,7 @@ dojo.declare("dojox.grid.cells.CheckBox",_1._Widget,{widgetClass:dijit.form.Chec
 return this.widget.checked;
 },setValue:function(_29,_2a){
 if(this.widget&&this.widget.attributeMap.checked){
-this.widget.attr("checked",_2a);
+this.widget.set("checked",_2a);
 }else{
 this.inherited(arguments);
 }
@@ -165,7 +165,7 @@ dojo.place(e.toolbar.domNode,e.editingArea,"before");
 }
 }
 },populateEditor:function(){
-this.widget.attr("value",this.content);
+this.widget.set("value",this.content);
 this.widget.placeCursorAtEnd();
 }});
 _1.Editor.markupFactory=function(_38,_39){

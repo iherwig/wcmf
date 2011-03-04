@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -86,9 +86,6 @@ var _6=this.srcNodeRef;
 this._hiddenNode=this.getHiddenNode(_6);
 if(this._hiddenNode){
 dojo.style(this._hiddenNode,"display","block");
-}
-if(this.button){
-console.warn("DEPRECATED: FileUploader.button - will be removed in 1.5. FileUploader should be created as widget.");
 }
 if(!_6&&this.button&&this.button.domNode){
 var _7=true;

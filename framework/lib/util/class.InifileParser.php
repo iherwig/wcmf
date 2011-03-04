@@ -166,12 +166,12 @@ class InifileParser
 
     if (!isset($this->_iniArray[$section]))
     {
-  	  $this->_errorMsg = "Section '".$section."' not found!";
+      $this->_errorMsg = "Section '".$section."' not found!";
       return false;
     }
-  	else {
-  	  return $this->_iniArray[$section];
-  	}
+    else {
+      return $this->_iniArray[$section];
+    }
   }
 
   /**
@@ -197,12 +197,12 @@ class InifileParser
     }
     if (!array_key_exists($key, $sectionArray))
     {
-  	  $this->_errorMsg = "Key '".$key."' not found in section '".$section."'!";
+      $this->_errorMsg = "Key '".$key."' not found in section '".$section."'!";
       return false;
-  	}
-  	else {
+    }
+    else {
       return $sectionArray[$key];
-  	}
+    }
   }
 
   /**
@@ -266,12 +266,12 @@ class InifileParser
     $section = trim($section);
     if ($this->getSection($section) !== false)
     {
-  	  $this->_errorMsg = "Section '".$section."' already exists!";
+      $this->_errorMsg = "Section '".$section."' already exists!";
       return false;
     }
     if ($section == '')
     {
-  	  $this->_errorMsg = "Empty section names are not allowed!";
+      $this->_errorMsg = "Empty section names are not allowed!";
       return false;
     }
     $this->_iniArray[$section] = '';
@@ -288,7 +288,7 @@ class InifileParser
   {
     if (!$this->isEditable($section))
     {
-  	  $this->_errorMsg = "Section ".$section." is not editable!";
+      $this->_errorMsg = "Section ".$section." is not editable!";
       return false;
     }
     if ($this->getSection($section) === false) {
@@ -309,7 +309,7 @@ class InifileParser
   {
     if (!$this->isEditable($oldname))
     {
-  	  $this->_errorMsg = "Section ".$oldname." is not editable!";
+      $this->_errorMsg = "Section ".$oldname." is not editable!";
       return false;
     }
     $newname = trim($newname);
@@ -318,12 +318,12 @@ class InifileParser
     }
     if ($this->getSection($newname) !== false)
     {
-  	  $this->_errorMsg = "Section '".$newname."' already exists!";
+      $this->_errorMsg = "Section '".$newname."' already exists!";
       return false;
     }
     if ($newname == '')
     {
-  	  $this->_errorMsg = "Empty section names are not allowed!";
+      $this->_errorMsg = "Empty section names are not allowed!";
       return false;
     }
     ArrayUtil::key_array_rename($this->_iniArray, $oldname, $newname);
@@ -343,7 +343,7 @@ class InifileParser
   {
     if (!$this->isEditable($section))
     {
-  	  $this->_errorMsg = "Section ".$section." is not editable!";
+      $this->_errorMsg = "Section ".$section." is not editable!";
       return false;
     }
     $key = trim($key);
@@ -352,7 +352,7 @@ class InifileParser
     }
     if ($key == '')
     {
-  	  $this->_errorMsg = "Empty key names are not allowed!";
+      $this->_errorMsg = "Empty key names are not allowed!";
       return false;
     }
     $this->_iniArray[$section][$key] = $value;
@@ -370,7 +370,7 @@ class InifileParser
   {
     if (!$this->isEditable($section))
     {
-  	  $this->_errorMsg = "Section ".$section." is not editable!";
+      $this->_errorMsg = "Section ".$section." is not editable!";
       return false;
     }
     if ($this->getValue($key, $section) === false) {
@@ -392,7 +392,7 @@ class InifileParser
   {
     if (!$this->isEditable($section))
     {
-  	  $this->_errorMsg = "Section ".$section." is not editable!";
+      $this->_errorMsg = "Section ".$section." is not editable!";
       return false;
     }
     $newname = trim($newname);
@@ -401,12 +401,12 @@ class InifileParser
     }
     if ($this->getValue($newname, $section) !== false)
     {
-  	  $this->_errorMsg = "Key '".$newname."' already exists in section '".$section."'!";
+      $this->_errorMsg = "Key '".$newname."' already exists in section '".$section."'!";
       return false;
     }
     if ($newname == '')
     {
-  	  $this->_errorMsg = "Empty key names are not allowed!";
+      $this->_errorMsg = "Empty key names are not allowed!";
       return false;
     }
     ArrayUtil::key_array_rename($this->_iniArray[$section], $oldname, $newname);
@@ -448,13 +448,13 @@ class InifileParser
 
     if (!$fh = fopen($filename, 'w'))
     {
-  	  $this->_errorMsg = "Can't open ini file '".$filename."'!";
+      $this->_errorMsg = "Can't open ini file '".$filename."'!";
       return false;
     }
 
     if (!fwrite($fh, $content))
     {
-  	  $this->_errorMsg = "Can't write ini file '".$filename."'!";
+      $this->_errorMsg = "Can't write ini file '".$filename."'!";
       return false;
     }
     fclose($fh);

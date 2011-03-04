@@ -63,10 +63,10 @@ class RDBLockHandler implements ILockHandler
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     if ($sessid != null) {
-      $tpl->setValue('sessionid', "= '".$sessid."'");
+      $tpl->setValue('sessionid', Criteria::asValue("=", $sessid));
     }
     if ($oid != null) {
-      $tpl->setValue('objectid', "= '".$oid."'");
+      $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     }
     if ($useroid != null)
     {

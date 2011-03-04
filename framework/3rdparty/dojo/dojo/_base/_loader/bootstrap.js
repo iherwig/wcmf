@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -28,22 +28,7 @@ console[_1]._fake=true;
 }
 }
 if(typeof dojo=="undefined"){
-if(typeof require=="function"){
-dojo=require("dojo");
-define("dojo/_base/_loader/bootstrap",[],dojo);
-}else{
-define=function(id,_2,_3){
-_3(dojo);
-};
-define.dojo=true;
-dojo={};
-}
-dojo._scopeName="dojo";
-dojo._scopePrefix="";
-dojo._scopePrefixArgs="";
-dojo._scopeSuffix="";
-dojo._scopeMap={};
-dojo._scopeMapRev={};
+dojo={_scopeName:"dojo",_scopePrefix:"",_scopePrefixArgs:"",_scopeSuffix:"",_scopeMap:{},_scopeMapRev:{}};
 }
 var d=dojo;
 if(typeof dijit=="undefined"){
@@ -57,15 +42,15 @@ d._scopeArgs=[dojo,dijit,dojox];
 }
 d.global=this;
 d.config={isDebug:false,debugAtAllCosts:false};
-var _4=typeof djConfig!="undefined"?djConfig:typeof dojoConfig!="undefined"?dojoConfig:null;
-if(_4){
-for(var c in _4){
-d.config[c]=_4[c];
+var _2=typeof djConfig!="undefined"?djConfig:typeof dojoConfig!="undefined"?dojoConfig:null;
+if(_2){
+for(var c in _2){
+d.config[c]=_2[c];
 }
 }
 dojo.locale=d.config.locale;
-var _5="$Rev: 23552 $".match(/\d+/);
-dojo.version={major:1,minor:6,patch:0,flag:"b1",revision:_5?+_5[0]:NaN,toString:function(){
+var _3="$Rev: 23713 $".match(/\d+/);
+dojo.version={major:1,minor:6,patch:0,flag:"b2",revision:_3?+_3[0]:NaN,toString:function(){
 with(d.version){
 return major+"."+minor+"."+patch+flag+" ("+revision+")";
 }
@@ -73,63 +58,63 @@ return major+"."+minor+"."+patch+flag+" ("+revision+")";
 if(typeof OpenAjax!="undefined"){
 OpenAjax.hub.registerLibrary(dojo._scopeName,"http://dojotoolkit.org",d.version.toString());
 }
-var _6,_7,_8={};
+var _4,_5,_6={};
 for(var i in {toString:1}){
-_6=[];
+_4=[];
 break;
 }
-dojo._extraNames=_6=_6||["hasOwnProperty","valueOf","isPrototypeOf","propertyIsEnumerable","toLocaleString","toString","constructor"];
-_7=_6.length;
-dojo._mixin=function(_9,_a){
-var _b,s,i;
-for(_b in _a){
-s=_a[_b];
-if(!(_b in _9)||(_9[_b]!==s&&(!(_b in _8)||_8[_b]!==s))){
-_9[_b]=s;
+dojo._extraNames=_4=_4||["hasOwnProperty","valueOf","isPrototypeOf","propertyIsEnumerable","toLocaleString","toString","constructor"];
+_5=_4.length;
+dojo._mixin=function(_7,_8){
+var _9,s,i;
+for(_9 in _8){
+s=_8[_9];
+if(!(_9 in _7)||(_7[_9]!==s&&(!(_9 in _6)||_6[_9]!==s))){
+_7[_9]=s;
 }
 }
-if(_7&&_a){
-for(i=0;i<_7;++i){
-_b=_6[i];
-s=_a[_b];
-if(!(_b in _9)||(_9[_b]!==s&&(!(_b in _8)||_8[_b]!==s))){
-_9[_b]=s;
+if(_5&&_8){
+for(i=0;i<_5;++i){
+_9=_4[i];
+s=_8[_9];
+if(!(_9 in _7)||(_7[_9]!==s&&(!(_9 in _6)||_6[_9]!==s))){
+_7[_9]=s;
 }
 }
 }
-return _9;
+return _7;
 };
-dojo.mixin=function(_c,_d){
-if(!_c){
-_c={};
+dojo.mixin=function(_a,_b){
+if(!_a){
+_a={};
 }
 for(var i=1,l=arguments.length;i<l;i++){
-d._mixin(_c,arguments[i]);
+d._mixin(_a,arguments[i]);
 }
-return _c;
+return _a;
 };
-dojo._getProp=function(_e,_f,_10){
-var obj=_10||d.global;
-for(var i=0,p;obj&&(p=_e[i]);i++){
+dojo._getProp=function(_c,_d,_e){
+var _f=_e||d.global;
+for(var i=0,p;_f&&(p=_c[i]);i++){
 if(i==0&&d._scopeMap[p]){
 p=d._scopeMap[p];
 }
-obj=(p in obj?obj[p]:(_f?obj[p]={}:undefined));
+_f=(p in _f?_f[p]:(_d?_f[p]={}:undefined));
 }
-return obj;
+return _f;
 };
-dojo.setObject=function(_11,_12,_13){
-var _14=_11.split("."),p=_14.pop(),obj=d._getProp(_14,true,_13);
-return obj&&p?(obj[p]=_12):undefined;
+dojo.setObject=function(_10,_11,_12){
+var _13=_10.split("."),p=_13.pop(),obj=d._getProp(_13,true,_12);
+return obj&&p?(obj[p]=_11):undefined;
 };
-dojo.getObject=function(_15,_16,_17){
-return d._getProp(_15.split("."),_16,_17);
+dojo.getObject=function(_14,_15,_16){
+return d._getProp(_14.split("."),_15,_16);
 };
-dojo.exists=function(_18,obj){
-return d.getObject(_18,false,obj)!==undefined;
+dojo.exists=function(_17,obj){
+return d.getObject(_17,false,obj)!==undefined;
 };
-dojo["eval"]=function(_19){
-return d.global.eval?d.global.eval(_19):eval(_19);
+dojo["eval"]=function(_18){
+return d.global.eval?d.global.eval(_18):eval(_18);
 };
 d.deprecated=d.experimental=function(){
 };

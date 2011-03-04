@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -21,24 +21,24 @@ this.label=dojo.i18n.getLocalization("dijit","loading",this.lang).loadingState;
 },_setHrefAttr:function(_1){
 this.href=_1;
 this.hasLoaded=false;
-},loadContent:function(){
+},loadContent:function(_2){
 if(!this.hasLoaded&&this.href){
 this._setLoadingLabel();
 this.hasLoaded=true;
-dojo.xhrGet({url:this.href,handleAs:"text",tooltipWidget:this,load:function(_2,_3){
-this.tooltipWidget.label=_2;
+dojo.xhrGet({url:this.href,handleAs:"text",tooltipWidget:this,load:function(_3,_4){
+this.tooltipWidget.label=_3;
 this.tooltipWidget.close();
-this.tooltipWidget.open();
+this.tooltipWidget.open(_2);
 },preventCache:this.preventCache});
 }
 },refresh:function(){
 this.hasLoaded=false;
-},open:function(_4){
-_4=_4||this._connectNodes[0];
-if(!_4){
+},open:function(_5){
+_5=_5||(this._connectNodes&&this._connectNodes[0]);
+if(!_5){
 return;
 }
-this.loadContent();
+this.loadContent(_5);
 this.inherited(arguments);
 }});
 }

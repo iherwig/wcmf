@@ -163,16 +163,6 @@
 .dj_ie6 .nihilo .dijitTabCloseButtonHover {
 	background: url("../images/spriteRoundedIconsSmall.gif") no-repeat -60px -15px;
 }
-.nihilo .dijitTab .tabLabel {
-	
-	min-height: 15px;
-	display: inline-block;
-}
-.dj_ie6 .nihilo .dijitTabButtonIcon {
-	
-	height: 18px;
-	width: 1px;
-}
 .nihilo .dijitTabContainerTop-tabs {
 	border-bottom: none;
 	padding-bottom: 1px;

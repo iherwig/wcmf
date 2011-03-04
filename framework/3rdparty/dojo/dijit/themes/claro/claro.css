@@ -120,14 +120,12 @@
 	
 	overflow: hidden;	
 }
-.dijit_a11y * {
-	background-image:none !important;
-}
 .dijit_a11y .dijitIcon,
 .dijit_a11y DIV.dijitArrowButtonInner, 
 .dijit_a11y SPAN.dijitArrowButtonInner,
 .dijit_a11y IMG.dijitArrowButtonInner,
-.dijit_a11y .dijitCalendarIncrementControl {
+.dijit_a11y .dijitCalendarIncrementControl,
+.dijit_a11y .dijitTreeExpando {
 	
 	display: none;
 }
@@ -148,10 +146,6 @@
 }
 .dijit_a11y .dijitCalendarDateTemplate {
 	padding-bottom: 0.1em !important;	
-}
-.dijit_a11y .dijit * {
-	background:white !important;
-	color:black !important;
 }
 .dijit_a11y .dijitButtonNode {
 	border: black outset medium !important;
@@ -1144,6 +1138,21 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 }
 .dijitTabCloseText {
 	display:none;
+}
+.dijitTab .tabLabel {
+	
+	min-height: 15px;
+	display: inline-block;
+}
+.dijitNoIcon {
+	
+	display: none;
+}
+.dj_ie6 .dijitTab .dijitNoIcon {
+	
+	display: inline;
+	height: 15px;
+	width: 1px;
 }
 .dijit_a11y .dijitTabCloseButton {
 	background-image: none !important;
@@ -2293,7 +2302,7 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
   width: 14px;
   height: 14px;
   margin-left: 5px;
-  margin-right: -3px;
+  margin-right: -5px;
 }
 .claro .dijitTabCloseButtonHover {
   background-position: -14px;
@@ -2354,8 +2363,8 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
   top: 3px;
 }
 .claro .dijitTabContainerTop-tabs .dijitTabContent {
-  padding: 3px 8px 3px 4px;
-  border-bottom: 1px;
+  padding: 3px 6px;
+  border-bottom-width: 0px;
   background-image: url(layout/images/tabTop.png);
   background-position: 0px 0px;
   background-repeat: repeat-x;
@@ -2365,9 +2374,6 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 .claro .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
   padding-bottom: 4px;
   padding-top: 6px;
-}
-.dj_ie .claro .dijitTabContainerTop-tabs .dijitTabChecked .dijitTabContent {
-  border-bottom: none;
 }
 .claro .dijitTabContainerTop-tabs .dijitTabInnerDiv {
   background-image: url(layout/images/tabTop.png);
@@ -2395,7 +2401,7 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 }
 .claro .dijitTabContainerBottom-tabs .dijitTabContent {
   padding: 3px 8px 4px 4px;
-  border-top: none;
+  border-top-width: 0px;
   background-image: url(layout/images/tabBottom.png);
   background-position: 0px -249px;
   background-repeat: repeat-x;
@@ -2429,6 +2435,7 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
   -moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
 }
 .claro .dijitTabContainerLeft-tabs .dijitTab {
+  border-right-width: 0px;
   left: 1px;
   
   margin-bottom: 1px;
@@ -2457,6 +2464,7 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
   -moz-box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.05);
 }
 .claro .dijitTabContainerRight-tabs .dijitTab {
+  border-left-width: 0px;
   left: -1px;
   
   margin-bottom: 1px;
@@ -2572,6 +2580,9 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
   border-color: rgba(118, 157, 192, 0);
   -webkit-transition-property: background-color, border-color;
   -webkit-transition-duration: .3s;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
 }
 .claro .dijitTabContainerTabListNested .dijitTab .dijitTabInnerDiv {
   
@@ -2585,9 +2596,6 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 }
 .claro .dijitTabContainerTabListNested .dijitTabHover .dijitTabContent {
   background-color: #e9f4fe;
-  border-radius: 2px 2px 2px 2px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px;
   border: solid 1px #cfe5fa;
   padding: 3px;
   webkit-transition-duration: .2s;
@@ -2596,18 +2604,12 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
   text-decoration: none;
 }
 .claro .dijitTabContainerTabListNested .dijitTabActive .dijitTabContent {
-  border-radius: 2px 2px 2px 2px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px;
   border: solid 1px #769dc0;
   padding: 3px;
   background: #abd6ff url(layout/images/tabNested.png) repeat-x;
   -webkit-transition-duration: .1s;
 }
 .claro .dijitTabContainerTabListNested .dijitTabChecked .dijitTabContent {
-  border-radius: 2px 2px 2px 2px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px;
   padding: 3px;
   border: solid 1px #769dc0;
   background-position: 0px 105px;

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -117,14 +117,19 @@ for(v=_17.length-1;v>=0;--v){
 dojo.style(_1a[v][i],"height",_1d+"px");
 }
 }
-},_formalizeArgs:function(_1e){
-_1e=(_1e&&dojo.isObject(_1e))?_1e:{};
-_1e.title=String(_1e.title)||"";
-if(!dojo.isArray(_1e.cssFiles)){
-_1e.cssFiles=[_1e.cssFiles];
+var _1e=0;
+for(v=0;v<_17.length;++v){
+dojo.style(_17[v],"left",_1e+"px");
+_1e+=dojo.marginBox(_17[v]).w;
 }
-_1e.titleInBody=_1e.title?["<h1>",_1e.title,"</h1>"].join(""):"";
-return _1e;
+},_formalizeArgs:function(_1f){
+_1f=(_1f&&dojo.isObject(_1f))?_1f:{};
+_1f.title=String(_1f.title)||"";
+if(!dojo.isArray(_1f.cssFiles)){
+_1f.cssFiles=[_1f.cssFiles];
+}
+_1f.titleInBody=_1f.title?["<h1>",_1f.title,"</h1>"].join(""):"";
+return _1f;
 }});
 dojox.grid.EnhancedGrid.registerPlugin(dojox.grid.enhanced.plugins.Printer,{"dependency":["exporter"]});
 }

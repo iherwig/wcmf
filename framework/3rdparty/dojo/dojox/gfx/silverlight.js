@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -262,7 +262,15 @@ this._delay=window.setTimeout(dojo.hitch(this,"_delayAlignment"),10);
 }
 return this;
 },_delayAlignment:function(){
-var r=this.rawNode,s=this.shape,w=r.actualWidth,h=r.actualHeight,x=s.x,y=s.y-h*0.75;
+var r=this.rawNode,s=this.shape,w,h;
+try{
+w=r.actualWidth;
+h=r.actualHeight;
+}
+catch(e){
+return;
+}
+var x=s.x,y=s.y-h*0.75;
 switch(s.align){
 case "middle":
 x-=w/2;
@@ -319,7 +327,7 @@ dojo.declare("dojox.gfx.Surface",dojox.gfx.shape.Surface,{constructor:function()
 dojox.gfx.silverlight.Container._init.call(this);
 },destroy:function(){
 window[this._onLoadName]=dojox.gfx.silverlight.nullFunc;
-delete dojox.gfx.silverlight.surfaces[this.rawNode.name];
+delete dojox.gfx.silverlight.surfaces[this._nodeName];
 this.inherited(arguments);
 },setDimensions:function(_19,_1a){
 this.width=dojox.gfx.normalizedLength(_19);
@@ -356,10 +364,11 @@ _1d=_1d+"px";
 var s=new dojox.gfx.Surface();
 _1b=dojo.byId(_1b);
 s._parent=_1b;
+s._nodeName=dojox.gfx._base._getUniqueId();
 var t=_1b.ownerDocument.createElement("script");
 t.type="text/xaml";
 t.id=dojox.gfx._base._getUniqueId();
-t.text="<?xml version='1.0'?><Canvas xmlns='http://schemas.microsoft.com/client/2007' Name='"+dojox.gfx._base._getUniqueId()+"'/>";
+t.text="<?xml version='1.0'?><Canvas xmlns='http://schemas.microsoft.com/client/2007' Name='"+s._nodeName+"'/>";
 _1b.parentNode.insertBefore(t,_1b);
 s._nodes.push(t);
 var obj,_1e=dojox.gfx._base._getUniqueId(),_1f="__"+dojox.gfx._base._getUniqueId()+"_onLoad";
@@ -367,7 +376,7 @@ s._onLoadName=_1f;
 window[_1f]=function(_20){
 if(!s.rawNode){
 s.rawNode=dojo.byId(_1e).content.root;
-dojox.gfx.silverlight.surfaces[s.rawNode.name]=_1b;
+dojox.gfx.silverlight.surfaces[s._nodeName]=_1b;
 s.onLoad(s);
 }
 };
@@ -380,7 +389,7 @@ _1b.innerHTML=obj;
 var _21=dojo.byId(_1e);
 if(_21.content&&_21.content.root){
 s.rawNode=_21.content.root;
-dojox.gfx.silverlight.surfaces[s.rawNode.name]=_1b;
+dojox.gfx.silverlight.surfaces[s._nodeName]=_1b;
 }else{
 s.rawNode=null;
 s.isLoaded=false;
@@ -458,6 +467,13 @@ var _2c=function(s,a){
 var ev={target:s,currentTarget:s,preventDefault:function(){
 },stopPropagation:function(){
 }};
+try{
+if(a.source){
+ev.target=a.source;
+}
+}
+catch(e){
+}
 if(a){
 try{
 ev.ctrlKey=a.ctrl;
@@ -477,6 +493,13 @@ return ev;
 };
 var _2e=function(s,a){
 var ev={keyCode:a.platformKeyCode,ctrlKey:a.ctrl,shiftKey:a.shift};
+try{
+if(a.source){
+ev.target=a.source;
+}
+}
+catch(e){
+}
 return ev;
 };
 var _2f={onclick:{name:"MouseLeftButtonUp",fix:_2c},onmouseenter:{name:"MouseEnter",fix:_2c},onmouseleave:{name:"MouseLeave",fix:_2c},onmouseover:{name:"MouseEnter",fix:_2c},onmouseout:{name:"MouseLeave",fix:_2c},onmousedown:{name:"MouseLeftButtonDown",fix:_2c},onmouseup:{name:"MouseLeftButtonUp",fix:_2c},onmousemove:{name:"MouseMove",fix:_2c},onkeydown:{name:"KeyDown",fix:_2e},onkeyup:{name:"KeyUp",fix:_2e}};
@@ -495,7 +518,11 @@ _32(n.fix(s,a));
 }
 return {name:n.name,token:_34};
 },disconnect:function(_35){
+try{
 this.getEventSource().removeEventListener(_35.name,_35.token);
+}
+catch(e){
+}
 }};
 dojo.extend(dojox.gfx.Shape,_30);
 dojo.extend(dojox.gfx.Surface,_30);

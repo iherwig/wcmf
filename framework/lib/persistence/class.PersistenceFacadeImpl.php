@@ -241,9 +241,9 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
         Log::debug("Start Transaction", __CLASS__);
       }
       // end transaction for every mapper
-      $mapperEntries = array_keys($this->_mapperObjects);
-      for ($i=0; $i<sizeof($mapperEntries); $i++) {
-        $this->_mapperObjects[$mapperEntries[$i]]->startTransaction();
+      foreach ($this->getKnownTypes() as $type) {
+        $mapper = $this->getMapper($type);
+        $mapper->startTransaction();
       }
       $this->_inTransaction = true;
     }
@@ -260,9 +260,9 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
         Log::debug("Commit Transaction", __CLASS__);
       }
       // commit transaction for every mapper
-      $mapperEntries = array_keys($this->_mapperObjects);
-      for ($i=0; $i<sizeof($mapperEntries); $i++) {
-        $this->_mapperObjects[$mapperEntries[$i]]->commitTransaction();
+      foreach ($this->getKnownTypes() as $type) {
+        $mapper = $this->getMapper($type);
+        $mapper->commitTransaction();
       }
       $this->_inTransaction = false;
     }
@@ -278,9 +278,9 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
         Log::debug("Rollback Transaction", __CLASS__);
       }
       // rollback transaction for every mapper
-      $mapperEntries = array_keys($this->_mapperObjects);
-      for ($i=0; $i<sizeof($mapperEntries); $i++) {
-        $this->_mapperObjects[$mapperEntries[$i]]->rollbackTransaction();
+      foreach ($this->getKnownTypes() as $type) {
+        $mapper = $this->getMapper($type);
+        $mapper->rollbackTransaction();
       }
       $this->_inTransaction = false;
     }
@@ -321,7 +321,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
       if (!$isAlreadyInUse)
       {
         $mapperObj = ObjectFactory::createInstance($mapperClass);
-        $this->_mapperObjects[$type] = &$mapperObj;
+        $this->_mapperObjects[$type] = $mapperObj;
 
         // lookup converter (optional)
         if (($converterClass = $parser->getValue($type, 'converter')) !== false ||

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -35,9 +35,6 @@ _2.onFilterDefined=function(){
 };
 this.connect(_2.layer("filter"),"onFilterDefined",function(_5){
 _2.onFilterDefined(_2.getFilter(),_2.getFilterRelation());
-});
-this.connect(_2,"_onNew",function(){
-this.filterDefDialog.clearFilter();
 });
 },destroy:function(){
 this.inherited(arguments);

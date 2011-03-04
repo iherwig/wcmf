@@ -13,7 +13,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
   modelClass: null,
   plugins: {
       nestedSorting: true,
-      indirectSelection: true,
+      //indirectSelection: true,
       dnd: true
   },
   delayScroll: true,
@@ -41,13 +41,13 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       formatterScope: this
     }, options);
 
-    dojo.connect(this, 'onShow', this, this.initListeners);    
+    dojo.connect(this, 'onShow', this, this.initListeners);
   },
-  
+
   initEvents: function() {
     dojo.connect(this, "onCellClick", this, function(event) {
       var item = this.getItem(event.rowIndex);
-      
+
       // edit action
       if (event.cell.field == '_edit') {
         wcmf.Action.edit(this.modelClass.type, item.oid);
@@ -68,17 +68,17 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     });
 	dojo.connect(this, "onShow", this, this.resizeGrid);
   },
-  
+
   resizeGrid: function() {
     // do whatever you need here, e.g.:
-	this.resize();
+    this.resize();
     this.update();
   },
 
   getDefaultLayout: function() {
     var layout = {};
     layout.defaultCell = { width: "100px" };
-	layout.cells = [];
+    layout.cells = [];
     dojo.forEach(this.modelClass.attributes, function(item) {
     if (dojo.some(item.tags, "return item == 'DATATYPE_ATTRIBUTE';")) {
         layout.cells.push({

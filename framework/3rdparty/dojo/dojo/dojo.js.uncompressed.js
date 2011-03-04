@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -214,23 +214,14 @@ djConfig = {
 	//TODOC:  HOW TO DOC THIS?
 	// dojo is the root variable of (almost all) our public symbols -- make sure it is defined.
 	if(typeof dojo == "undefined"){
-		if(typeof require == "function"){
-			// loaded by another module loader like RequireJS
-			dojo = require("dojo");
-			define("dojo/_base/_loader/bootstrap", [], dojo);
-		}else{
-			// Dojo is the module loader
-			define = function(id, deps, factory){factory(dojo)};
-			define.dojo = true;
-			dojo = {};
-		}
-		dojo._scopeName = "dojo";
-		dojo._scopePrefix = "";
-		dojo._scopePrefixArgs = "";
-		dojo._scopeSuffix = "";
-		dojo._scopeMap = {};
-		dojo._scopeMapRev = {};
-
+		dojo = {
+			_scopeName: "dojo",
+			_scopePrefix: "",
+			_scopePrefixArgs: "",
+			_scopeSuffix: "",
+			_scopeMap: {},
+			_scopeMapRev: {}
+		};
 	}
 
 	var d = dojo;
@@ -282,7 +273,7 @@ dojo.global = {
 =====*/
 	dojo.locale = d.config.locale;
 
-	var rev = "$Rev: 23552 $".match(/\d+/);
+	var rev = "$Rev: 23713 $".match(/\d+/);
 
 /*=====
 	dojo.version = function(){
@@ -306,7 +297,7 @@ dojo.global = {
 	}
 =====*/
 	dojo.version = {
-		major: 1, minor: 6, patch: 0, flag: "b1",
+		major: 1, minor: 6, patch: 0, flag: "b2",
 		revision: rev ? +rev[0] : NaN,
 		toString: function(){
 			with(d.version){
@@ -563,7 +554,7 @@ dojo.global = {
  * loader.js - A bootstrap module.  Runs before the hostenv_*.js file. Contains
  * all of the package loading methods.
  */
-define("dojo/_base/_loader/loader", ["./bootstrap"], function(){
+(function(){
 	var d = dojo, currentModule;
 
 	d.mixin(d, {
@@ -1359,98 +1350,11 @@ define("dojo/_base/_loader/loader", ["./bootstrap"], function(){
 		}
 
 		return new d._Url(loc, url); // dojo._Url
-	}
-
-	//addition to support script-inject module format
-	var originalDefine = this.define;
-	define = !originalDefine.dojo ?
-	function(name, obj){
-		// an existing define is already defined, need to hook into define callbacks
-		if(typeof name == "string"){
-			if(/dojo|dijit/.test(name)){
-				dojo.provide(name.replace(/\//g, "."));
-			}
-		}
-		return originalDefine.apply(this, arguments);
-	} :
-	function(name, deps, def){
-		if(!def){
-			// less than 3 args
-			if(deps){
-				// 2 args
-				def = deps;
-				deps = name;
-			}else{
-				// one arg
-				def = name;
-				deps = ["require", "exports", "module"];
-			}
-			name = currentModule ? currentModule.replace(/\./g,'/') : "anon";
-		}
-		var dottedName = name.replace(/\//g, ".");
-		var exports = dojo.provide(dottedName);
-
-		function resolvePath(relativeId){
-			// do relative path resolution
-			if(relativeId.charAt(0) === '.'){
-				relativeId = name.substring(0, name.lastIndexOf('/') + 1) + relativeId;
-				while(lastId !== relativeId){
-					var lastId = relativeId;
-					relativeId = relativeId.replace(/\/[^\/]*\/\.\.\//,'/');
-				}
-				relativeId = relativeId.replace(/\/\.\//g,'/');
-			}
-			return relativeId.replace(/\//g, ".");
-		}
-		if(typeof def == "function"){
-			for(var args= [], depName, i= 0; i<deps.length; i++){
-				depName= resolvePath(deps[i]);
-				// look for i18n! followed by anything followed by "/nls/" followed by anything without "/" followed by eos.
-				var exclamationIndex = depName.indexOf("!");
-				if(exclamationIndex > -1){
-					//fool the build system
-					if(depName.substring(0, exclamationIndex) == "i18n"){
-						var match = depName.match(/^i18n\!(.+)\.nls\.([^\.]+)$/);
-						dojo["requireLocalization"](match[1], match[2]);
-					}
-					arg = null; 
-				}else{
-					var arg;
-					switch(depName){
-						case "require": arg = function(relativeId){
-							return dojo.require(resolvePath(relativeId));
-						}; break;
-						case "exports": arg = exports; break;
-						case "module": var module = arg = {exports: exports}; break;
-						case "dojox": 
-							arg = dojo.getObject(depName);
-							break; 
-						default: arg = dojo.require(depName);
-					}
-				}
-				args.push(arg);
-			}
-			var returned = def.apply(null, args);
-		}else{
-			returned = def;
-		}
-		
-		if(returned){
-			dojo._loadedModules[dottedName] = returned;
-			dojo.setObject(dottedName, returned);
-		}
-		if(module){
-			dojo._loadedModules[dottedName] = module.exports;
-		}
-		return returned;
-		
 	};
-	define("dojo", [], d);
-	define("dijit", [], this.dijit || (this.dijit = {}));
-	define("dojo/_base/_loader/loader",[],{});
-	dojo.simulatedLoading = 1;
-	
-});
+
+
+
+})();
 
 /*=====
 dojo.isBrowser = {
@@ -1518,7 +1422,6 @@ dojo = {
 	//		True if the client runs on Mac
 }
 =====*/
-define("dojo/_base/_loader/hostenv_browser", ["./loader"], function(){
 if(typeof window != 'undefined'){
 	dojo.isBrowser = true;
 	dojo._name = "browser";
@@ -1920,7 +1823,7 @@ if(dojo.config.debugAtAllCosts){
 	dojo.require("dojo._base._loader.loader_debug");
 	dojo.require("dojo.i18n");
 }
-});
+
 
 if(!dojo._hasResource["dojo._base.lang"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojo._base.lang"] = true;
@@ -7159,7 +7062,7 @@ if(dojo.isIE){
 
         node = byId(node);
 		fakeNode.className = node.className;
-		dojo.removeClass(fakeNode, removeClassStr)
+		dojo.removeClass(fakeNode, removeClassStr);
 		dojo.addClass(fakeNode, addClassStr);
 		if(node.className !== fakeNode.className){
 			node.className = fakeNode.className;
@@ -8203,7 +8106,7 @@ dojo.provide("dojo._base.NodeList");
 
 if(!dojo._hasResource["dojo._base.query"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojo._base.query"] = true;
-(function() {
+(function(){
 
 /*
 	dojo.query() architectural overview:
@@ -9779,19 +9682,15 @@ var defineAcme= function(){
   return acme;
 };
 
-//prefers queryPortability, then acme, then dojo
-if (this["dojo"]) {
-  var defined= 0;
-  if (!defined) {
-    // must be in a built version that stripped out the define above
-  	dojo.provide("dojo._base.query");
-    
-    
-    defineQuery(this["queryPortability"]||this["acme"]||dojo);
-  } // else must be in a source version (or a build that likes define)
-} else {
-  defineQuery(this["queryPortability"]||this["acme"]||defineAcme());
-}
+	//prefers queryPortability, then acme, then dojo
+	if(this["dojo"]){
+		dojo.provide("dojo._base.query");
+		
+		
+		defineQuery(this["queryPortability"]||this["acme"]||dojo);
+	}else{
+		defineQuery(this["queryPortability"]||this["acme"]||defineAcme());
+	}
 
 })();
 

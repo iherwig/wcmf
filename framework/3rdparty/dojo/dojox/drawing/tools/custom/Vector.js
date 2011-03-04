@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -13,11 +13,7 @@ dojo.require("dojox.drawing.util.positioning");
 dojox.drawing.tools.custom.Vector=dojox.drawing.util.oo.declare(dojox.drawing.tools.Arrow,function(_1){
 this.minimumSize=this.style.arrows.length;
 this.addShadow({size:3,mult:2});
-},{draws:true,type:"dojox.drawing.tools.custom.Vector",minimumSize:30,showAngle:true,labelPosition:function(){
-var d=this.data;
-var pt=dojox.drawing.util.positioning.label({x:d.x1,y:d.y1},{x:d.x2,y:d.y2});
-return {x:pt.x,y:pt.y};
-},changeAxis:function(_2){
+},{draws:true,type:"dojox.drawing.tools.custom.Vector",minimumSize:30,showAngle:true,changeAxis:function(_2){
 _2=_2!==undefined?_2:this.style.zAxis?0:1;
 if(_2==0){
 this.style.zAxis=false;

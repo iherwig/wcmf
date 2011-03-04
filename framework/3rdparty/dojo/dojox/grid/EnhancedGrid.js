@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -105,7 +105,7 @@ var _1a=_12.header.getCellX;
 _12.header.getCellX=function(e){
 var x=_1a.call(_12.header,e);
 var n=_13(e.target,_16("th"));
-if(e.target==n.firstChild){
+if(n&&e.target==n.firstChild){
 x+=n.firstChild.offsetLeft;
 }
 return x;

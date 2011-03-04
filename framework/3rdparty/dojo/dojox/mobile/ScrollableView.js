@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -45,34 +45,25 @@ for(i=0,_2=this.domNode.parentNode.childNodes.length;i<_2;i++){
 c=this.domNode.parentNode.childNodes[i];
 this._checkFixedBar(c,false);
 }
-if(this.isLocalHeader!==false&&dojox.mobile.hasTouch&&!dojox.mobile._magic){
-dojox.mobile._magic=dojo.create("DIV",{className:"magic"},dojo.body(),"first");
-dojo.style(dojox.mobile._magic,{position:"absolute",top:"-1px",height:"1px",width:"100%"});
-}
-},_checkFixedBar:function(_3,_4){
+},_checkFixedBar:function(_3){
 if(_3.nodeType==1){
-var _5=_3.getAttribute("fixed");
-if(_5){
+var _4=_3.getAttribute("fixed");
+if(_4){
 dojo.style(_3,{position:"absolute",width:"100%",zIndex:1});
 }
-if(_5=="top"){
+if(_4=="top"){
 _3.style.top="0px";
 this.fixedHeader=_3;
-this.isLocalHeader=_4;
-return _5;
+return _4;
 }else{
-if(_5=="bottom"){
-if(_4){
-_3.style.bottom="0px";
-}
+if(_4=="bottom"){
 this.fixedFooter=_3;
-this.isLocalFooter=_4;
-return _5;
+return _4;
 }
 }
 }
 return null;
-},onAfterTransitionIn:function(_6,_7,_8,_9,_a){
+},onAfterTransitionIn:function(_5,_6,_7,_8,_9){
 this.flashScrollBar();
 }});
 }

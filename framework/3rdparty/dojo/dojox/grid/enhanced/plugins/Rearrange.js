@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -25,114 +25,124 @@ this.inherited(arguments);
 this.grid.unwrap("rowmap");
 },onSetStore:function(_5){
 this.grid.layer("rowmap").clearMapping();
-},moveColumns:function(_6,_7){
-var g=this.grid,_8=g.layout,_9=_8.cells,_a,i,_b=0,_c=true,_d={},_e={};
-_6.sort(function(a,b){
+},_hasIdentity:function(_6){
+var g=this.grid,s=g.store,_7=g.layout.cells;
+if(s.getFeatures()["dojo.data.api.Identity"]){
+if(dojo.some(_6,function(_8){
+return s.getIdentityAttributes(g._by_idx[_8.r].item)==_7[_8.c].field;
+})){
+return true;
+}
+}
+return false;
+},moveColumns:function(_9,_a){
+var g=this.grid,_b=g.layout,_c=_b.cells,_d,i,_e=0,_f=true,tmp={},_10={};
+_9.sort(function(a,b){
 return a-b;
 });
-for(i=0;i<_6.length;++i){
-_d[_6[i]]=i;
-if(_6[i]<_7){
-++_b;
+for(i=0;i<_9.length;++i){
+tmp[_9[i]]=i;
+if(_9[i]<_a){
+++_e;
 }
 }
-var _f=0;
-var _10=0;
-var _11=Math.max(_6[_6.length-1],_7);
-if(_11==_9.length){
---_11;
+var _11=0;
+var _12=0;
+var _13=Math.max(_9[_9.length-1],_a);
+if(_13==_c.length){
+--_13;
 }
-for(i=_6[0];i<=_11;++i){
-var j=_d[i];
+for(i=_9[0];i<=_13;++i){
+var j=tmp[i];
 if(j>=0){
-if(i!=_7-_b+j){
-_e[i]=_7-_b+j;
+if(i!=_a-_e+j){
+_10[i]=_a-_e+j;
 }
-_f=j+1;
-_10=_6.length-j-1;
+_11=j+1;
+_12=_9.length-j-1;
 }else{
-if(i<_7&&_f>0){
-_e[i]=i-_f;
+if(i<_a&&_11>0){
+_10[i]=i-_11;
 }else{
-if(i>=_7&&_10>0){
-_e[i]=i+_10;
+if(i>=_a&&_12>0){
+_10[i]=i+_12;
 }
 }
 }
 }
-_b=0;
-if(_7==_9.length){
---_7;
-_c=false;
+_e=0;
+if(_a==_c.length){
+--_a;
+_f=false;
 }
 g._notRefreshSelection=true;
-for(i=0;i<_6.length;++i){
-_a=_6[i];
-if(_a<_7){
-_a-=_b;
+for(i=0;i<_9.length;++i){
+_d=_9[i];
+if(_d<_a){
+_d-=_e;
 }
-++_b;
-if(_a!=_7){
-_8.moveColumn(_9[_a].view.idx,_9[_7].view.idx,_a,_7,_c);
-_9=_8.cells;
+++_e;
+if(_d!=_a){
+_b.moveColumn(_c[_d].view.idx,_c[_a].view.idx,_d,_a,_f);
+_c=_b.cells;
 }
-if(_7<=_a){
-++_7;
+if(_a<=_d){
+++_a;
 }
 }
 delete g._notRefreshSelection;
-dojo.publish("dojox/grid/rearrange/move/"+g.id,["col",_e]);
-},moveRows:function(_12,_13){
-var g=this.grid,_14={},_15=[],_16=[],len=_12.length,i,r,k,arr,_17,_18;
+dojo.publish("dojox/grid/rearrange/move/"+g.id,["col",_10]);
+},moveRows:function(_14,_15){
+var g=this.grid,_16={},_17=[],_18=[],len=_14.length,i,r,k,arr,_19,_1a;
 for(i=0;i<len;++i){
-r=_12[i];
-if(r>=_13){
+r=_14[i];
+if(r>=_15){
 break;
 }
-_15.push(r);
+_17.push(r);
 }
-_16=_12.slice(i);
-arr=_15;
+_18=_14.slice(i);
+arr=_17;
 len=arr.length;
 if(len){
-_17={};
+_19={};
 dojo.forEach(arr,function(r){
-_17[r]=true;
+_19[r]=true;
 });
-_14[arr[0]]=_13-len;
-for(k=0,i=arr[k]+1,_18=i-1;i<_13;++i){
-if(!_17[i]){
-_14[i]=_18;
-++_18;
+_16[arr[0]]=_15-len;
+for(k=0,i=arr[k]+1,_1a=i-1;i<_15;++i){
+if(!_19[i]){
+_16[i]=_1a;
+++_1a;
 }else{
 ++k;
-_14[i]=_13-len+k;
+_16[i]=_15-len+k;
 }
 }
 }
-arr=_16;
+arr=_18;
 len=arr.length;
 if(len){
-_17={};
+_19={};
 dojo.forEach(arr,function(r){
-_17[r]=true;
+_19[r]=true;
 });
-_14[arr[len-1]]=_13+len-1;
-for(k=len-1,i=arr[k]-1,_18=i+1;i>=_13;--i){
-if(!_17[i]){
-_14[i]=_18;
---_18;
+_16[arr[len-1]]=_15+len-1;
+for(k=len-1,i=arr[k]-1,_1a=i+1;i>=_15;--i){
+if(!_19[i]){
+_16[i]=_1a;
+--_1a;
 }else{
 --k;
-_14[i]=_13+k;
+_16[i]=_15+k;
 }
 }
 }
-var _19=dojo.clone(_14);
-g.layer("rowmap").setMapping(_14);
-g.forEachLayer(function(_1a){
-if(_1a.name()!="rowmap"){
-_1a.invalidate();
+var _1b=dojo.clone(_16);
+g.layer("rowmap").setMapping(_16);
+g.forEachLayer(function(_1c){
+if(_1c.name()!="rowmap"){
+_1c.invalidate();
 return true;
 }else{
 return false;
@@ -143,47 +153,39 @@ g._noInternalMapping=true;
 g._refresh();
 g._noInternalMapping=false;
 setTimeout(function(){
-dojo.publish("dojox/grid/rearrange/move/"+g.id,["row",_19]);
+dojo.publish("dojox/grid/rearrange/move/"+g.id,["row",_1b]);
 },0);
-},moveCells:function(_1b,_1c){
+},moveCells:function(_1d,_1e){
 var g=this.grid,s=g.store;
 if(s.getFeatures()["dojo.data.api.Write"]){
-if(_1b.min.row==_1c.min.row&&_1b.min.col==_1c.min.col){
+if(_1d.min.row==_1e.min.row&&_1d.min.col==_1e.min.col){
 return;
 }
-var _1d=g.layout.cells,cnt=_1b.max.row-_1b.min.row+1,r,c,tr,tc,_1e=[],_1f=[];
-for(r=_1b.min.row,tr=_1c.min.row;r<=_1b.max.row;++r,++tr){
-for(c=_1b.min.col,tc=_1c.min.col;c<=_1b.max.col;++c,++tc){
-while(_1d[c]&&_1d[c].hidden){
+var _1f=g.layout.cells,cnt=_1d.max.row-_1d.min.row+1,r,c,tr,tc,_20=[],_21=[];
+for(r=_1d.min.row,tr=_1e.min.row;r<=_1d.max.row;++r,++tr){
+for(c=_1d.min.col,tc=_1e.min.col;c<=_1d.max.col;++c,++tc){
+while(_1f[c]&&_1f[c].hidden){
 ++c;
 }
-while(_1d[tc]&&_1d[tc].hidden){
+while(_1f[tc]&&_1f[tc].hidden){
 ++tc;
 }
-_1e.push({"r":r,"c":c});
-_1f.push({"r":tr,"c":tc,"v":_1d[c].get(r,g._by_idx[r].item)});
+_20.push({"r":r,"c":c});
+_21.push({"r":tr,"c":tc,"v":_1f[c].get(r,g._by_idx[r].item)});
 }
 }
-dojo.forEach(_1e,function(_20){
-s.setValue(g._by_idx[_20.r].item,_1d[_20.c].field,"");
+if(this._hasIdentity(_20.concat(_21))){
+console.warn("Can not write to identity!");
+return;
+}
+dojo.forEach(_20,function(_22){
+s.setValue(g._by_idx[_22.r].item,_1f[_22.c].field,"");
 });
-dojo.forEach(_1f,function(_21){
-s.setValue(g._by_idx[_21.r].item,_1d[_21.c].field,_21.v);
+dojo.forEach(_21,function(_23){
+s.setValue(g._by_idx[_23.r].item,_1f[_23.c].field,_23.v);
 });
 s.save({onComplete:function(){
-g._storeLayerFetch({start:_1b.min.row,count:cnt,onComplete:function(_22){
-for(var i=0;i<cnt;++i){
-g._addItem(_22[i],i+_1b.min.row);
-}
-}});
-g._storeLayerFetch({start:_1c.min.row,count:cnt,onComplete:function(_23){
-for(var i=0;i<cnt;++i){
-g._addItem(_23[i],i+_1c.min.row);
-}
-setTimeout(function(){
-dojo.publish("dojox/grid/rearrange/move/"+g.id,["cell",{"from":_1b,"to":_1c}]);
-},0);
-}});
+dojo.publish("dojox/grid/rearrange/move/"+g.id,["cell",{"from":_1d,"to":_1e}]);
 }});
 }
 },copyCells:function(_24,_25){
@@ -204,115 +206,111 @@ while(_26[tc]&&_26[tc].hidden){
 _27.push({"r":tr,"c":tc,"v":_26[c].get(r,g._by_idx[r].item)});
 }
 }
+if(this._hasIdentity(_27)){
+console.warn("Can not write to identity!");
+return;
+}
 dojo.forEach(_27,function(_28){
 s.setValue(g._by_idx[_28.r].item,_26[_28.c].field,_28.v);
 });
 s.save({onComplete:function(){
-g._storeLayerFetch({start:_25.min.row,count:cnt,onComplete:function(_29){
-for(var i=0;i<cnt;++i){
-g._addItem(_29[i],i+_25.min.row);
-}
 setTimeout(function(){
 dojo.publish("dojox/grid/rearrange/copy/"+g.id,["cell",{"from":_24,"to":_25}]);
 },0);
 }});
-}});
 }
-},changeCells:function(_2a,_2b,_2c){
+},changeCells:function(_29,_2a,_2b){
 var g=this.grid,s=g.store;
 if(s.getFeatures()["dojo.data.api.Write"]){
-var _2d=_2a,_2e=g.layout.cells,_2f=_2d.layout.cells,cnt=_2b.max.row-_2b.min.row+1,r,c,tr,tc,_30=[];
-for(r=_2b.min.row,tr=_2c.min.row;r<=_2b.max.row;++r,++tr){
-for(c=_2b.min.col,tc=_2c.min.col;c<=_2b.max.col;++c,++tc){
-while(_2f[c]&&_2f[c].hidden){
+var _2c=_29,_2d=g.layout.cells,_2e=_2c.layout.cells,cnt=_2a.max.row-_2a.min.row+1,r,c,tr,tc,_2f=[];
+for(r=_2a.min.row,tr=_2b.min.row;r<=_2a.max.row;++r,++tr){
+for(c=_2a.min.col,tc=_2b.min.col;c<=_2a.max.col;++c,++tc){
+while(_2e[c]&&_2e[c].hidden){
 ++c;
 }
-while(_2e[tc]&&_2e[tc].hidden){
+while(_2d[tc]&&_2d[tc].hidden){
 ++tc;
 }
-_30.push({"r":tr,"c":tc,"v":_2f[c].get(r,_2d._by_idx[r].item)});
+_2f.push({"r":tr,"c":tc,"v":_2e[c].get(r,_2c._by_idx[r].item)});
 }
 }
-dojo.forEach(_30,function(_31){
-s.setValue(g._by_idx[_31.r].item,_2e[_31.c].field,_31.v);
+if(this._hasIdentity(_2f)){
+console.warn("Can not write to identity!");
+return;
+}
+dojo.forEach(_2f,function(_30){
+s.setValue(g._by_idx[_30.r].item,_2d[_30.c].field,_30.v);
 });
 s.save({onComplete:function(){
-g._storeLayerFetch({start:_2c.min.row,count:cnt,onComplete:function(_32){
-for(var i=0;i<cnt;++i){
-g._addItem(_32[i],i+_2c.min.row);
-}
-setTimeout(function(){
-dojo.publish("dojox/grid/rearrange/change/"+g.id,["cell",_2c]);
-},0);
-}});
+dojo.publish("dojox/grid/rearrange/change/"+g.id,["cell",_2b]);
 }});
 }
-},clearCells:function(_33){
+},clearCells:function(_31){
 var g=this.grid,s=g.store;
 if(s.getFeatures()["dojo.data.api.Write"]){
-var _34=g.layout.cells,cnt=_33.max.row-_33.min.row+1,r,c;
-for(r=_33.min.row;r<=_33.max.row;++r){
-for(c=_33.min.col;c<=_33.max.col;++c){
-while(_34[c]&&_34[c].hidden){
+var _32=g.layout.cells,cnt=_31.max.row-_31.min.row+1,r,c,_33=[];
+for(r=_31.min.row;r<=_31.max.row;++r){
+for(c=_31.min.col;c<=_31.max.col;++c){
+while(_32[c]&&_32[c].hidden){
 ++c;
 }
-s.setValue(g._by_idx[r].item,_34[c].field,"");
+_33.push({"r":r,"c":c});
 }
 }
+if(this._hasIdentity(_33)){
+console.warn("Can not write to identity!");
+return;
+}
+dojo.forEach(_33,function(_34){
+s.setValue(g._by_idx[_34.r].item,_32[_34.c].field,"");
+});
 s.save({onComplete:function(){
-g._storeLayerFetch({start:_33.min.row,count:cnt,onComplete:function(_35){
-for(var i=0;i<cnt;++i){
-g._addItem(_35[i],i+_33.min.row);
-}
-setTimeout(function(){
-dojo.publish("dojox/grid/rearrange/change/"+g.id,["cell",_33]);
-},0);
-}});
+dojo.publish("dojox/grid/rearrange/change/"+g.id,["cell",_31]);
 }});
 }
-},insertRows:function(_36,_37,_38){
+},insertRows:function(_35,_36,_37){
 try{
-var g=this.grid,s=g.store,_39=g.rowCount,_3a={},obj={idx:0},_3b=[],i,_3c=this;
-var len=_37.length;
-for(i=_38;i<g.rowCount;++i){
-_3a[i]=i+len;
+var g=this.grid,s=g.store,_38=g.rowCount,_39={},obj={idx:0},_3a=[],i,_3b=this;
+var len=_36.length;
+for(i=_37;i<g.rowCount;++i){
+_39[i]=i+len;
 }
 if(s.getFeatures()["dojo.data.api.Write"]){
-if(_36){
-var _3d=_36,_3e=_3d.store,_3f;
-for(i=0;!_3f;++i){
-_3f=g._by_idx[i];
+if(_35){
+var _3c=_35,_3d=_3c.store,_3e;
+for(i=0;!_3e;++i){
+_3e=g._by_idx[i];
 }
-var _40=s.getAttributes(_3f.item);
-var _41=[];
-dojo.forEach(_37,function(_42,i){
-var _43={};
-var _44=_3d._by_idx[_42];
-if(_44){
-dojo.forEach(_40,function(_45){
-_43[_45]=_3e.getValue(_44.item,_45);
+var _3f=s.getAttributes(_3e.item);
+var _40=[];
+dojo.forEach(_36,function(_41,i){
+var _42={};
+var _43=_3c._by_idx[_41];
+if(_43){
+dojo.forEach(_3f,function(_44){
+_42[_44]=_3d.getValue(_43.item,_44);
 });
-_43=_3c.args.setIdentifierForNewItem(_43,s,_39+obj.idx)||_43;
+_42=_3b.args.setIdentifierForNewItem(_42,s,_38+obj.idx)||_42;
 try{
-s.newItem(_43);
-_3b.push(_38+i);
-_3a[_39+obj.idx]=_38+i;
+s.newItem(_42);
+_3a.push(_37+i);
+_39[_38+obj.idx]=_37+i;
 ++obj.idx;
 }
 catch(e){
 }
 }else{
-_41.push(_42);
+_40.push(_41);
 }
 });
 }else{
-if(_37.length&&dojo.isObject(_37[0])){
-dojo.forEach(_37,function(_46,i){
-var _47=_3c.args.setIdentifierForNewItem(_46,s,_39+obj.idx)||_46;
+if(_36.length&&dojo.isObject(_36[0])){
+dojo.forEach(_36,function(_45,i){
+var _46=_3b.args.setIdentifierForNewItem(_45,s,_38+obj.idx)||_45;
 try{
-s.newItem(_47);
-_3b.push(_38+i);
-_3a[_39+obj.idx]=_38+i;
+s.newItem(_46);
+_3a.push(_37+i);
+_39[_38+obj.idx]=_37+i;
 ++obj.idx;
 }
 catch(e){
@@ -322,56 +320,56 @@ catch(e){
 return;
 }
 }
-g.layer("rowmap").setMapping(_3a);
+g.layer("rowmap").setMapping(_39);
 s.save({onComplete:function(){
 g._refresh();
 setTimeout(function(){
-dojo.publish("dojox/grid/rearrange/insert/"+g.id,["row",_3b]);
+dojo.publish("dojox/grid/rearrange/insert/"+g.id,["row",_3a]);
 },0);
 }});
 }
 }
 catch(e){
 }
-},removeRows:function(_48){
+},removeRows:function(_47){
 var g=this.grid;
 var s=g.store;
 try{
-dojo.forEach(dojo.map(_48,function(_49){
-return g._by_idx[_49];
+dojo.forEach(dojo.map(_47,function(_48){
+return g._by_idx[_48];
 }),function(row){
 if(row){
 s.deleteItem(row.item);
 }
 });
 s.save({onComplete:function(){
-dojo.publish("dojox/grid/rearrange/remove/"+g.id,["row",_48]);
+dojo.publish("dojox/grid/rearrange/remove/"+g.id,["row",_47]);
 }});
 }
 catch(e){
 }
 },_getPageInfo:function(){
-var _4a=this.grid.scroller,_4b=_4a.page,_4c=_4a.page,_4d=_4a.firstVisibleRow,_4e=_4a.lastVisibleRow,_4f=_4a.rowsPerPage,_50=_4a.pageNodes[0],_51,_52,_53,_54=[];
-dojo.forEach(_50,function(_55,_56){
-if(!_55){
+var _49=this.grid.scroller,_4a=_49.page,_4b=_49.page,_4c=_49.firstVisibleRow,_4d=_49.lastVisibleRow,_4e=_49.rowsPerPage,_4f=_49.pageNodes[0],_50,_51,_52,_53=[];
+dojo.forEach(_4f,function(_54,_55){
+if(!_54){
 return;
 }
-_53=false;
-_51=_56*_4f;
-_52=(_56+1)*_4f-1;
-if(_4d>=_51&&_4d<=_52){
-_4b=_56;
-_53=true;
+_52=false;
+_50=_55*_4e;
+_51=(_55+1)*_4e-1;
+if(_4c>=_50&&_4c<=_51){
+_4a=_55;
+_52=true;
 }
-if(_4e>=_51&&_4e<=_52){
-_4c=_56;
-_53=true;
+if(_4d>=_50&&_4d<=_51){
+_4b=_55;
+_52=true;
 }
-if(!_53&&(_51>_4e||_52<_4d)){
-_54.push(_56);
+if(!_52&&(_50>_4d||_51<_4c)){
+_53.push(_55);
 }
 });
-return {topPage:_4b,bottomPage:_4c,invalidPages:_54};
+return {topPage:_4a,bottomPage:_4b,invalidPages:_53};
 }});
 dojox.grid.EnhancedGrid.registerPlugin(dojox.grid.enhanced.plugins.Rearrange);
 }

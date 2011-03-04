@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -17,8 +17,13 @@ this.endArrow=new dojox.drawing.annotations.Arrow({stencil:this,idx1:1,idx2:0});
 }
 if(this.points.length){
 this.render();
+_1.label&&this.setLabel(_1.label);
 }
-},{draws:true,type:"dojox.drawing.tools.Arrow",baseRender:false,arrowStart:false,arrowEnd:true,onUp:function(_2){
+},{draws:true,type:"dojox.drawing.tools.Arrow",baseRender:false,arrowStart:false,arrowEnd:true,labelPosition:function(){
+var d=this.data;
+var pt=dojox.drawing.util.positioning.label({x:d.x1,y:d.y1},{x:d.x2,y:d.y2});
+return {x:pt.x,y:pt.y};
+},onUp:function(_2){
 if(this.created||!this.shape){
 return;
 }

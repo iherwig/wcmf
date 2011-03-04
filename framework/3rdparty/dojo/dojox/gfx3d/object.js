@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -538,9 +538,11 @@ this.todos=this.objects;
 if(dim){
 var w=dojo.isString(dim.width)?parseInt(dim.width):dim.width;
 var h=dojo.isString(dim.height)?parseInt(dim.height):dim.height;
+if(this.rawNode){
 var trs=this.rawNode.style;
 trs.height=h;
 trs.width=w;
+}
 this.dimension={width:w,height:h};
 }else{
 this.dimension=null;

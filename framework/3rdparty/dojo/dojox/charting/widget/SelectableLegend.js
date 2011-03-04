@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -18,8 +18,10 @@ this.legends=[];
 this.legendAnim={};
 this.inherited(arguments);
 },refresh:function(){
+this.legends=[];
 this.inherited(arguments);
 this._applyEvents();
+new dojox.charting.widget._FocusManager(this);
 },_addLabel:function(_1,_2){
 this.inherited(arguments);
 var _3=dojo.query("td",this.legendBody);
@@ -27,6 +29,8 @@ var _4=_3[_3.length-1];
 this.legends.push(_4);
 var _5=new dijit.form.CheckBox({checked:true});
 dojo.place(_5.domNode,_4,"first");
+var _2=dojo.query("label",_4)[0];
+dojo.attr(_2,"for",_5.id);
 },_applyEvents:function(){
 dojo.forEach(this.legends,function(_6,i){
 var _7,_8=[],_9,_a;
@@ -43,9 +47,10 @@ _a=_7.name;
 }
 var _b={fills:df.map(_8,"x.getFill()"),strokes:df.map(_8,"x.getStroke()")};
 var _c=dojo.query(".dijitCheckBox",_6)[0];
-dojo.connect(_c,"onclick",this,function(){
+dojo.connect(_c,"onclick",this,function(e){
 this._toggle(_8,i,_6.vanished,_b,_a,_9);
 _6.vanished=!_6.vanished;
+e.stopPropagation();
 });
 var _d=dojo.query(".dojoxLegendIcon",_6)[0],_e=this._getFilledShape(this._surfaces[i].children);
 dojo.forEach(["onmouseenter","onmouseleave"],function(_f){
@@ -76,6 +81,7 @@ _20.process(_24);
 dojo.forEach(_1b,function(_25,i){
 _25.setFill(dyn.fills[i]);
 var o={shape:_25,index:_21?_1c:i,run:{name:_1e},type:_22};
+_20.duration=100;
 _20.process(o);
 });
 }
@@ -109,5 +115,70 @@ return "onmouseout";
 }
 return "on"+_29;
 };
+dojo.declare("dojox.charting.widget._FocusManager",null,{constructor:function(_2a){
+this.legend=_2a;
+this.index=0;
+this.horizontalLength=this._getHrizontalLength();
+dojo.forEach(_2a.legends,function(_2b,i){
+if(i>0){
+dojo.query("input",_2b).attr("tabindex",-1);
+}
+});
+this.firstLabel=dojo.query("input",_2a.legends[0])[0];
+dojo.connect(this.firstLabel,"focus",this,function(){
+this.legend.active=true;
+});
+dojo.connect(this.legend.legendNode,"keydown",this,"_onKeyEvent");
+},_getHrizontalLength:function(){
+var _2c=this.legend.horizontal;
+if(typeof _2c=="number"){
+return Math.min(_2c,this.legend.legends.length);
+}else{
+if(!_2c){
+return 1;
+}else{
+return this.legend.legends.length;
+}
+}
+},_onKeyEvent:function(e){
+if(!this.legend.active){
+return;
+}
+if(e.keyCode==dojo.keys.TAB){
+this.legend.active=false;
+return;
+}
+var max=this.legend.legends.length;
+switch(e.keyCode){
+case dojo.keys.LEFT_ARROW:
+this.index--;
+if(this.index<0){
+this.index+=max;
+}
+break;
+case dojo.keys.RIGHT_ARROW:
+this.index++;
+if(this.index>=max){
+this.index-=max;
+}
+break;
+case dojo.keys.UP_ARROW:
+if(this.index-this.horizontalLength>=0){
+this.index-=this.horizontalLength;
+}
+break;
+case dojo.keys.DOWN_ARROW:
+if(this.index+this.horizontalLength<max){
+this.index+=this.horizontalLength;
+}
+break;
+default:
+return;
+}
+this._moveToFocus();
+dojo.stopEvent(e);
+},_moveToFocus:function(){
+dojo.query("input",this.legend.legends[this.index])[0].focus();
+}});
 })();
 }

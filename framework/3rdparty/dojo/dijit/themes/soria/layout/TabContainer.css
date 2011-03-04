@@ -105,16 +105,6 @@
 .dj_ie6 .soria .dijitTabCloseButtonHover {
 	background: url("../images/spriteRoundedIconsSmall.gif") no-repeat -60px -15px;
 }
-.soria .dijitTab .tabLabel {
-	
-	min-height: 15px;
-	display: inline-block;
-}
-.dj_ie6 .soria .dijitTabButtonIcon {
-	
-	height: 18px;
-	width: 1px;
-}
 .soria .dijitTabContainerTop-tabs {
 	border-color: #B1BADF;
 	padding-left: 3px;

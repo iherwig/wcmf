@@ -73,7 +73,7 @@ class ActionMapper
     $context = $request->getContext();
     $action = $request->getAction();
     $response = new Response($referrer, $context, $action);
-    
+
     // this array stores all controllers executed since the last view displayed (the last call of main.php)
 
     // store last controller
@@ -168,6 +168,7 @@ class ActionMapper
     {
       // proceed based on the result
       $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction());
+      $nextRequest->setFormat($response->getFormat());
       $nextRequest->setValues($response->getValues());
       $nextRequest->setErrors($request->getErrors());
       $nextRequest->setResponseFormat($request->getResponseFormat());

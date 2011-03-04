@@ -629,10 +629,12 @@
 }
 .dojoxGridFBarStatus {
 	margin-left: 9px;
+	float: left;
 }
 .dojoxGridFBarClearFilterBtn {
 	margin: 0 0 0 10px;
 	vertical-align: top;
+	float: left;
 }
 .dojoxGridFBarInfoTD .dojoxGridFBarClearFilterBtn .dijitButtonNode,
 .dojoxGridFBarInfoTD .dojoxGridFBarCloseBtn .dijitButtonNode,
@@ -889,14 +891,11 @@
 }
 .dojoxGridDescriptionTd {
 	text-align: left;
-	width: 30%;
+	width: 35%;
 }
 .dojoxGridDescription {
 	text-align: left;
 	margin-left: 9px;
-	overflow: hidden;
-}
-.dojoxGridPaginatorSwitch {
 	overflow: hidden;
 }
 .dojoxGridPaginatorFastStep {
@@ -989,6 +988,7 @@
 .dojoxGridInactiveSwitch {
 	font-weight: normal;
 	color: #5D88AF;
+	float: left;
 	cursor: pointer;
 	margin: 1px 7px 0 7px;
 	zoom: 1; 
@@ -996,6 +996,7 @@
 .dojoxGridActivedSwitch {
 	font-weight: bold;
 	color: black;
+	float: left;
 	margin: 1px 7px 0 7px;
 	text-decoration: none!important; 
 	zoom: 1; 
@@ -1006,6 +1007,9 @@
 .dojoxGridDialogMargin {
 	width: 220px!important;
 	margin-bottom: 10px;
+}
+.dj_ie6 .dojoxGridDialogMargin {
+	position: relative;
 }
 .dojoxGridDialogButton {
 	width: 220px!important;
@@ -1089,100 +1093,138 @@
 .dojoDndCopy .dojoDndAvatarCanDrop .dojoxGridDnDIcon {
 	background: url(../../../../../dojo/resources/images/dndCopy.png) no-repeat center center;
 }
-.dojoxGrid .dojoxGridSortNode{
+.dojoxGrid .dojoxGridSortNode {
 	position: relative;
 	white-space:nowrap;
+	border: 1px solid transparent;
 }
 .dojoxGridSortBtn {
 	width: 10px;
-	height:15px;
+	height:100%;
 	visibility: hidden;
-	right:0;
-	top: 0px;
-	height: 100%;
+	top: 0;
 	display:block;
 	position: absolute;
 	color: #000;
 	background: transparent url(../images/sprite_icons.png) no-repeat 100px 0;
 	text-decoration: none;
 	outline: none;
+	right: 0;
+	border: 1px solid transparent;
+	box-sizing: border-box; 
+	-moz-box-sizing: border-box; 
+	-ms-box-sizing: border-box; 
+	-webkit-box-sizing: border-box; 
+	-khtml-box-sizing: border-box; 
 }
 .dojoxGridSortBtnNested {
-	right: 13px;
+	right: 10px;
+}
+.dojoxGridCellOver  .dojoxGridSortBtn,
+.dojoxGridCellSortFocus  .dojoxGridSortBtn {
+	border-left: 1px solid #999999;
+	background-color: #9dcfff;
+}
+.dojoxGridCellSortFocus  .dojoxGridSortBtn {
+	background-color: transparent;
 }
 .dojoxGridSortNode {
 	outline: none;
 }
+.dj_ie6 .dojoxGridSortBtn,
+.dj_ie6 .dojoxGrid .dojoxGridSortNode {
+	border: none;
+}
 .dojoxGridCellOver .dojoxGridSortNode,
-.dojoxGridSingleSorted .dojoxGridHeader .dojoxGridCellOver .dojoxGridSortNodeMain {
+.dojoxGridCellSortFocus .dojoxGridSortNode,
+.dojoxGridSingleSorted .dojoxGridHeader .dojoxGridCellOver .dojoxGridSortNodeMain,
+.dojoxGridSingleSorted .dojoxGridHeader .dojoxGridCellSortFocus .dojoxGridSortNodeMain {
 	margin-right: 5px;
 }
-.dojoxGridSorted .dojoxGridCellOver .dojoxGridSortNode {
-	margin-right: 23px;
+.dojoxGridSorted .dojoxGridCellOver .dojoxGridSortNode,
+.dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortNode {
+	margin-right: 24px;
 }
-.dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnSingle,
-.dojoxGridSorted .dojoxGridCellOver .dojoxGridSortNodeMain .dojoxGridSortBtnSingle  {
+html > body .dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnSingle,
+html > body .dojoxGridCellSortFocus .dojoxGridSortNode .dojoxGridSortBtnSingle,
+html > body .dojoxGridSorted .dojoxGridCellOver .dojoxGridSortNodeMain .dojoxGridSortBtnSingle,
+html > body .dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortNodeMain .dojoxGridSortBtnSingle {
 	right: -10px;
 }
-.dojoxGridSorted .dojoxGridCellOver .dojoxGridSortBtnSingle,
-.dojoxGridNestSorted .dojoxGridCellOver .dojoxGridSortNodeMain .dojoxGridSortBtnSingle {
+html > body .dojoxGridSorted .dojoxGridCellOver .dojoxGridSortBtnSingle,
+html > body .dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortBtnSingle,
+html > body .dojoxGridNestSorted .dojoxGridCellOver .dojoxGridSortNodeMain .dojoxGridSortBtnSingle,
+html > body .dojoxGridNestSorted .dojoxGridCellSortFocus .dojoxGridSortNodeMain .dojoxGridSortBtnSingle {
 	right: -28px;
 }
-.dojoxGridSorted .dojoxGridCellOver .dojoxGridSortBtnNested {
-	right: -18px;
+html > body .dojoxGridSorted .dojoxGridCellOver .dojoxGridSortBtnNested,
+html > body .dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortBtnNested {
+	right: -17px;
+}
+.dojoxGrid .dojoxGridHeader .dojoxGridRowTable .dojoxGridNoSort .dojoxGridSortNode {
+	margin:0!important;
 }
 .dojoxGrid .dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnSingle,					
+.dojoxGrid .dojoxGridCellSortFocus .dojoxGridSortNode .dojoxGridSortBtnSingle,
 .dojoxGridSorted .dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnNested,				
-.dojoxGrid .dojoxGridHeaderNodeShowIndex .dojoxGridSortNode .dojoxGridSortBtnNested,		
+.dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortNode .dojoxGridSortBtnNested,
+.dojoxGrid .dojoxGridCellShowIndex .dojoxGridSortNode .dojoxGridSortBtnNested,		
 .dojoxGrid .dojoxGridSortNodeSorted .dojoxGridSortBtn {										
 	visibility: visible;
 }
 .dojoxGridSingleSorted .dojoxGridCellOver .dojoxGridSortNodeMain .dojoxGridSortBtnNested,	
+.dojoxGridSingleSorted .dojoxGridCellSortFocus .dojoxGridSortNodeMain .dojoxGridSortBtnNested,
 .dojoxGridSingleSorted .dojoxGridSortNode .dojoxGridSortBtnNested {							
 	visibility: hidden;
 }
 .dojoxGridSortNodeAsc .dojoxGridSortBtnSingle {
-	background-position: -120px 5px;
+	background-position: -119px 5px;
 	visibility: visible;
 }
 .dojoxGridSortNodeDesc .dojoxGridSortBtnSingle {
-	background-position: -100px  5px;
+	background-position: -99px  5px;
 	visibility: visible;
 }
 .dojoxGridCellOver .dojoxGridSortBtnSingle,
 .dojoxGridCellSortFocus .dojoxGridSortBtnSingle {
-	background-position: -160px 5px;
-	border-left: 1px solid #999999;
+	background-position: -159px 5px;
 }
 .dojoxGridCellOver .dojoxGridSortNodeAsc .dojoxGridSortBtnSingle,
-.dojoxGridCellSortFocus .dojoxGridSortNodeAsc .dojoxGridSortBtnSingle {
-	background-position: -140px 5px;
+.dojoxGridCellSortFocus .dojoxGridSortNodeAsc .dojoxGridSortBtnSingle,
+.dojoxGrid .dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnAsc,
+.dojoxGrid .dojoxGridCellSortFocus .dojoxGridSortNode .dojoxGridSortBtnAsc {
+	background-position: -139px 5px;
 }
 .dojoxGridCellOver .dojoxGridSortNodeDesc .dojoxGridSortBtnSingle, 
-.dojoxGridCellSortFocus .dojoxGridSortNodeDesc .dojoxGridSortBtnSingle {
-	background-position: -180px 5px;
+.dojoxGridCellSortFocus .dojoxGridSortNodeDesc .dojoxGridSortBtnSingle, 
+.dojoxGrid .dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnDesc, 
+.dojoxGrid .dojoxGridCellSortFocus .dojoxGridSortNode .dojoxGridSortBtnDesc {
+	background-position: -179px 5px;
 }
 .dojoxGridCellOver .dojoxGridSortBtnNested,
 .dojoxGridCellSortFocus .dojoxGridSortBtnNested {
-	background-position: -150px 5px;
-	padding-right:8px;
-	border-left: 1px solid #999999;
+	background-position: -149px 5px;
+	width: 19px;
 }
 .dojoxGridCellOver .dojoxGridSortNodeAsc .dojoxGridSortBtnNested,
 .dojoxGridCellSortFocus .dojoxGridSortNodeAsc .dojoxGridSortBtnNested {
-	background-position: -130px 5px;
+	background-position: -129px 5px;
 }
 .dojoxGridCellOver .dojoxGridSortNodeDesc .dojoxGridSortBtnNested,
 .dojoxGridCellSortFocus .dojoxGridSortNodeDesc .dojoxGridSortBtnNested {
-	background-position: -170px 5px;
+	background-position: -169px 5px;
 }
 .dojoxGridNestSorted .dojoxGridCellOver .dojoxGridSortBtnSingle,
 .dojoxGridNestSorted .dojoxGridCellSortFocus .dojoxGridSortBtnSingle {
-	background-position: -160px 5px;
+	background-position: -159px 5px;
 }
-.dojoxGridCellOver .dojoxGridSortBtnSingle:hover,
-.dojoxGridCellOver .dojoxGridSortBtnNested:hover {
+.dojoxGridCellOver .dojoxGridSortBtn:hover {
 	background-color:#B7EAFF;
+}
+.dojoxGrid .dojoxGridSortNodeFocus,
+.dojoxGridCellSortFocus .dojoxGridRowSelector,
+.dojoxGridCellSortFocus .dojoxGridSortBtnFocus {
+	border: 1px dashed #666;
 }
 .dijitToasterContent {
 	padding:1em;
@@ -1277,7 +1319,8 @@
 .tundra .dojoxGridRowbarInner {
 	width:20px;
 }
-.tundra .dojoxGridCellOver .dojoxGridSortNode{
+.tundra .dojoxGridCellOver .dojoxGridSortNode,
+.tundra .dojoxGridCellSortFocus .dojoxGridSortNode {
 	cursor:pointer;
 	background: #f8fafd url(../../../../../dijit/themes/tundra/images/accordionItemHover.gif) bottom repeat-x;
 }
@@ -1326,4 +1369,77 @@
 .tundra .dojoxGridFStatusTipOddRow {
 	background-color: #f2f5f9;
 }
-@import url("Pagination.css");
+.tundra .dojoxGridSortBtn {
+	padding-top: 3px;
+}
+.tundra .dojoxGridSortBtnNested {
+	right: 11px;
+}
+.tundra .dojoxGridCellOver  .dojoxGridSortBtn,
+.tundra .dojoxGridCellSortFocus  .dojoxGridSortBtn {
+	background-color: #ccc;
+}
+.tundra .dojoxGridCellOver .dojoxGridSortNode,
+.tundra .dojoxGridCellSortFocus .dojoxGridSortNode,
+.tundra .dojoxGridSingleSorted .dojoxGridHeader .dojoxGridCellOver .dojoxGridSortNodeMain,
+.tundra .dojoxGridSingleSorted .dojoxGridHeader .dojoxGridCellSortFocus .dojoxGridSortNodeMain {
+	margin-right: 12px;
+}
+.tundra .dojoxGridSorted .dojoxGridCellOver .dojoxGridSortNode,
+.tundra .dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortNode {
+	margin-right: 31px;
+}
+.tundra .dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnSingle,
+.tundra .dojoxGridCellSortFocus .dojoxGridSortNode .dojoxGridSortBtnSingle,
+.tundra .dojoxGridSorted .dojoxGridCellOver .dojoxGridSortNodeMain .dojoxGridSortBtnSingle,
+.tundra .dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortNodeMain .dojoxGridSortBtnSingle  {
+	right: -12px;
+}
+.tundra .dojoxGridSorted .dojoxGridCellOver .dojoxGridSortBtnSingle,
+.tundra .dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortBtnSingle,
+.tundra .dojoxGridNestSorted .dojoxGridCellOver .dojoxGridSortNodeMain .dojoxGridSortBtnSingle,
+.tundra .dojoxGridNestSorted .dojoxGridCellSortFocus .dojoxGridSortNodeMain .dojoxGridSortBtnSingle {
+	right: -31px;
+}
+.tundra .dojoxGridSorted .dojoxGridCellOver .dojoxGridSortBtnNested,
+.tundra .dojoxGridSorted .dojoxGridCellSortFocus .dojoxGridSortBtnNested {
+	right: -20px;
+}
+.tundra .dojoxGridSortNodeAsc .dojoxGridSortBtnSingle {
+	background-position: -119px 8px;
+}
+.tundra .dojoxGridSortNodeDesc .dojoxGridSortBtnSingle {
+	background-position: -99px  8px;
+}
+.tundra .dojoxGridCellOver .dojoxGridSortBtnSingle,
+.tundra .dojoxGridCellSortFocus .dojoxGridSortBtnSingle {
+	background-position: -159px 8px;
+}
+.tundra .dojoxGridCellOver .dojoxGridSortNodeAsc .dojoxGridSortBtnSingle,
+.tundra .dojoxGridCellSortFocus .dojoxGridSortNodeAsc .dojoxGridSortBtnSingle,
+.tundra .dojoxGrid .dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnAsc,
+.tundra .dojoxGrid .dojoxGridCellSortFocus .dojoxGridSortNode .dojoxGridSortBtnAsc {
+	background-position: -139px 8px;
+}
+.tundra .dojoxGridCellOver .dojoxGridSortNodeDesc .dojoxGridSortBtnSingle, 
+.tundra .dojoxGridCellSortFocus .dojoxGridSortNodeDesc .dojoxGridSortBtnSingle, 
+.tundra .dojoxGrid .dojoxGridCellOver .dojoxGridSortNode .dojoxGridSortBtnDesc,
+.tundra .dojoxGrid .dojoxGridCellSortFocus .dojoxGridSortNode .dojoxGridSortBtnDesc {
+	background-position: -179px 8px;
+}
+.tundra .dojoxGridCellOver .dojoxGridSortBtnNested,
+.tundra .dojoxGridCellSortFocus .dojoxGridSortBtnNested {
+	background-position: -150px 8px;
+}
+.tundra .dojoxGridCellOver .dojoxGridSortNodeAsc .dojoxGridSortBtnNested,
+.tundra .dojoxGridCellSortFocus .dojoxGridSortNodeAsc .dojoxGridSortBtnNested {
+	background-position: -130px 8px;
+}
+.tundra .dojoxGridCellOver .dojoxGridSortNodeDesc .dojoxGridSortBtnNested,
+.tundra .dojoxGridCellSortFocus .dojoxGridSortNodeDesc .dojoxGridSortBtnNested {
+	background-position: -170px 8px;
+}
+.tundra .dojoxGridNestSorted .dojoxGridCellOver .dojoxGridSortBtnSingle,
+.tundra .dojoxGridNestSorted .dojoxGridCellSortFocus .dojoxGridSortBtnSingle {
+	background-position: -159px 8px;
+}

@@ -120,14 +120,12 @@
 	
 	overflow: hidden;	
 }
-.dijit_a11y * {
-	background-image:none !important;
-}
 .dijit_a11y .dijitIcon,
 .dijit_a11y DIV.dijitArrowButtonInner, 
 .dijit_a11y SPAN.dijitArrowButtonInner,
 .dijit_a11y IMG.dijitArrowButtonInner,
-.dijit_a11y .dijitCalendarIncrementControl {
+.dijit_a11y .dijitCalendarIncrementControl,
+.dijit_a11y .dijitTreeExpando {
 	
 	display: none;
 }
@@ -148,10 +146,6 @@
 }
 .dijit_a11y .dijitCalendarDateTemplate {
 	padding-bottom: 0.1em !important;	
-}
-.dijit_a11y .dijit * {
-	background:white !important;
-	color:black !important;
 }
 .dijit_a11y .dijitButtonNode {
 	border: black outset medium !important;
@@ -1145,6 +1139,21 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 .dijitTabCloseText {
 	display:none;
 }
+.dijitTab .tabLabel {
+	
+	min-height: 15px;
+	display: inline-block;
+}
+.dijitNoIcon {
+	
+	display: none;
+}
+.dj_ie6 .dijitTab .dijitNoIcon {
+	
+	display: inline;
+	height: 15px;
+	width: 1px;
+}
 .dijit_a11y .dijitTabCloseButton {
 	background-image: none !important;
 	width: auto !important;
@@ -1924,16 +1933,6 @@ DIV.dijitTabDisabled, .dj_ie DIV.dijitTabDisabled {
 }
 .dj_ie6 .soria .dijitTabCloseButtonHover {
 	background: url(images/spriteRoundedIconsSmall.gif) no-repeat -60px -15px;
-}
-.soria .dijitTab .tabLabel {
-	
-	min-height: 15px;
-	display: inline-block;
-}
-.dj_ie6 .soria .dijitTabButtonIcon {
-	
-	height: 18px;
-	width: 1px;
 }
 .soria .dijitTabContainerTop-tabs {
 	border-color: #B1BADF;

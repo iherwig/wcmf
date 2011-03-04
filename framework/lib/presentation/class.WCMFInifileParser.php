@@ -153,7 +153,7 @@ class WCMFInifileParser
    */
   function getErrorMsg()
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     return $parser->getErrorMsg();
   }
   /**
@@ -161,7 +161,7 @@ class WCMFInifileParser
    */
   function parseIniFile($filename, $processValues=true)
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     return $parser->parseIniFile($filename, $processValues);
   }
   /**
@@ -169,7 +169,7 @@ class WCMFInifileParser
    */
   function getData()
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     return $parser->getData();
   }
   /**
@@ -177,7 +177,7 @@ class WCMFInifileParser
    */
   function getSections()
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     return $parser->getSections();
   }
   /**
@@ -185,7 +185,7 @@ class WCMFInifileParser
    */
   function getSection($section, $caseSensitive=true)
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     return $parser->getSection($section, $caseSensitive);
   }
   /**
@@ -193,7 +193,7 @@ class WCMFInifileParser
    */
   function getValue($key, $section, $caseSensitive=true)
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     return $parser->getValue($key, $section, $caseSensitive);
   }
 }

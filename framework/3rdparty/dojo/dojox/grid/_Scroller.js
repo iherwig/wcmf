@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -206,7 +206,7 @@ dojox.grid.util.setStyleHeightPx(this.contentNodes[i],Math.max(1,this.height));
 }
 var _2e=(!this._invalidating);
 if(!_2e){
-var ah=this.grid.attr("autoHeight");
+var ah=this.grid.get("autoHeight");
 if(typeof ah=="number"&&ah<=Math.min(this.rowsPerPage,this.rowCount)){
 _2e=true;
 }
@@ -238,7 +238,7 @@ h=oh;
 this.pageHeights[_34]=h;
 if(oh!=h){
 this.updateContentHeight(h-oh);
-var ah=this.grid.attr("autoHeight");
+var ah=this.grid.get("autoHeight");
 if((typeof ah=="number"&&ah>this.rowCount)||(ah===true&&!_35)){
 if(!_36){
 this.grid.sizeChange();

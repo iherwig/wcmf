@@ -44,18 +44,18 @@ class SessionData
 
   /**
    * Created a SessionData instance with given session id.
-   * @param sessionID The session id to use (maybe null).
+   * @param sessionId The session id to use (maybe null).
    * @note If session id is null an automatically generated session id will be used.
    */
-  public function init($sessionID)
+  public static function init($sessionId)
   {
     // Set custom session id
-    if ($sessionID !== null) {
-      session_id($sessionID);
+    if (strlen($sessionId) > 0) {
+      session_id($sessionId);
     }
 
     // Restore class definitions before session start
-    $filename = SessionData::getClassDefinitionFile();
+    $filename = self::getClassDefinitionFile();
     if (file_exists($filename) && strpos($filename, WCMF_BASE) === 0)
     {
       $fp = fopen($filename, "r");

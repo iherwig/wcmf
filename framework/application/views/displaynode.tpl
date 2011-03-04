@@ -9,13 +9,13 @@ dojo.addOnLoad(function() {
   if (detailPane.oid) {
     detailPane.set("title", "{$object->getDisplayValue()}");
   }
-  
+
   /**
    * Create a grid for each related type
    */
 {foreach item=relation from=$mapper->getRelations()}
-{$type=$relation->otherType}
-{$role=$relation->otherRole}
+{$type=$relation->getOtherType()}
+{$role=$relation->getOtherRole()}
   var {$role}Grid = new wcmf.ui.Grid({
     modelClass: wcmf.model.{$type},
     autoHeight: 10,
@@ -36,9 +36,10 @@ dojo.addOnLoad(function() {
         <legend>{$object->getDisplayValue()}</legend>
         <ol>
       {foreach item=attribute from=$mapper->getAttributes(array('DATATYPE_IGNORE'), 'none')}
+      {$attributeName=$attribute->getName()}
           <li>
-	        <label for="{$attribute->name}" title="{$typeTemplate->getValueDescription($attribute->name)}">{$typeTemplate->getValueDisplayName($attribute->name)}</label>
-    	    {input object=$object name=$attribute->name}
+            <label for="{$attributeName}" title="{$typeTemplate->getValueDescription($attributeName)}">{$typeTemplate->getValueDisplayName($attributeName)}</label>
+            {input object=$object name=$attributeName}
           </li>
       {/foreach}
        </ol>
@@ -46,8 +47,8 @@ dojo.addOnLoad(function() {
   </div>
   <div class="rightcol">
     {foreach item=relation from=$mapper->getRelations()}
-    <h2>{$relation->otherRole}</h2>
-    <div id="grid{$object->getOID()}{$relation->otherRole}Div" style="width:445px; height:200px;"></div>
+    <h2>{$relation->getOtherRole()}</h2>
+    <div id="grid{$object->getOID()}{$relation->getOtherRole()}Div" style="width:445px; height:200px;"></div>
     {/foreach}
   </div>
 </div>

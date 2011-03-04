@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -368,7 +368,7 @@ if(_37){
 this.lineDiv=document.createElement("div");
 var vw=(dojo.position||dojo._abs)(e.sourceView.headerNode,true);
 var _39=dojo.contentBox(e.sourceView.domNode);
-var l=e.clientX;
+var l=e.pageX;
 if(!dojo._isBodyLtr()&&dojo.isIE<8){
 l-=dojox.html.metrics.getScrollbar().w;
 }

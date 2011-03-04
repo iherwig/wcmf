@@ -85,7 +85,7 @@ class HTMLFormat extends AbstractFormat
     {
       // check if a view template is defined
       $request = $controller->getRequest();
-      $viewTpl = self::getViewTemplate($response->getSender(), 
+      $viewTpl = self::getViewTemplate($response->getSender(),
                     $request->getContext(), $request->getAction());
       if (!$viewTpl) {
         throw new ConfigurationException("View definition missing for ".
@@ -94,7 +94,7 @@ class HTMLFormat extends AbstractFormat
       // create the view
       $view = ObjectFactory::createInstanceFromConfig('implementation', 'View');
       $view->setup();
-      
+
       // assign the response data to the view
       $data = $response->getValues();
       foreach (array_keys($data) as $variable)
@@ -107,14 +107,13 @@ class HTMLFormat extends AbstractFormat
         }
       }
       // assign additional values
-      $parser = InifileParser::getInstance();
       $rightsManager = RightsManager::getInstance();
       $authUser = $rightsManager->getAuthUser();
       $view->assignByRef('obfuscator', Obfuscator::getInstance());
       if ($authUser != null) {
         $view->assignByRef('authUser', $authUser);
       }
-      
+
       // display the view
       if ($view->caching && ($cacheId = $controller->getCacheId()) !== null) {
         $view->display(WCMF_BASE.$viewTpl, $cacheId);

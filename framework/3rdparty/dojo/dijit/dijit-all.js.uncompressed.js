@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -255,7 +255,8 @@ dojo.i18n = {
 };
 =====*/
 
-dojo.i18n.getLocalization = function(/*String*/packageName, /*String*/bundleName, /*String?*/locale){
+// when using a real AMD loader, dojo.i18n.getLocalization is already defined by dojo/lib/backCompat
+dojo.i18n.getLocalization = dojo.i18n.getLocalization || function(/*String*/packageName, /*String*/bundleName, /*String?*/locale){
 	//	summary:
 	//		Returns an Object containing the localization for a given resource
 	//		bundle in a package, matching the specified locale.
@@ -2926,6 +2927,7 @@ dojo._hasResource["dijit.layout._ContentPaneResizeMixin"] = true;
 dojo.provide("dijit.layout._ContentPaneResizeMixin");
 
 
+
 dojo.declare("dijit.layout._ContentPaneResizeMixin", null, {
 	// summary:
 	//		Resize() functionality of ContentPane.   If there's a single layout widget
@@ -2942,6 +2944,28 @@ dojo.declare("dijit.layout._ContentPaneResizeMixin", null, {
 	//		Indicates that this widget will call resize() on it's child widgets
 	//		when they become visible.
 	isLayoutContainer: true,
+
+	startup: function(){
+		// summary:
+		//		See `dijit.layout._LayoutWidget.startup` for description.
+		//		Although ContentPane doesn't extend _LayoutWidget, it does implement
+		//		the same API.
+
+		if(this._started){ return; }
+
+		var parent = dijit._Contained.prototype.getParent.call(this);
+		this._childOfLayoutWidget = parent && parent.isLayoutContainer;
+
+		// I need to call resize() on my child/children (when I become visible), unless
+		// I'm the child of a layout widget in which case my parent will call resize() on me and I'll do it then.
+		this._needLayout = !this._childOfLayoutWidget;
+
+		dojo.forEach(this.getChildren(), function(child){
+			child.startup();
+		});
+
+		this.inherited(arguments);
+	},
 
 	_checkIfSingleChild: function(){
 		// summary:
@@ -3017,7 +3041,7 @@ dojo.declare("dijit.layout._ContentPaneResizeMixin", null, {
 
 		this._layoutChildren();
 
-		delete this._needLayout;	// set and used by ContentPane
+		delete this._needLayout;
 	},
 	
 	_layoutChildren: function(){
@@ -3399,7 +3423,6 @@ dojo.provide("dijit.layout.ContentPane");
 
 
 
-
 dojo.declare(
 	"dijit.layout.ContentPane", [dijit._Widget, dijit.layout._ContentPaneResizeMixin], 
 {
@@ -3574,26 +3597,14 @@ dojo.declare(
 		//		See `dijit.layout._LayoutWidget.startup` for description.
 		//		Although ContentPane doesn't extend _LayoutWidget, it does implement
 		//		the same API.
+
 		if(this._started){ return; }
 
-		var parent = dijit._Contained.prototype.getParent.call(this);
-		this._childOfLayoutWidget = parent && parent.isLayoutContainer;
-
-		// I need to call resize() on my child/children (when I become visible), unless
-		// I'm the child of a layout widget in which case my parent will call resize() on me and I'll do it then.
-		this._needLayout = !this._childOfLayoutWidget;
-
-		if(this.isLoaded){
-			dojo.forEach(this.getChildren(), function(child){
-				child.startup();
-			});
-		}
+		this.inherited(arguments);
 
 		if(this._isShown() || this.preload){
 			this._onShow();
 		}
-
-		this.inherited(arguments);
 	},
 
 	setHref: function(/*String|Uri*/ href){
@@ -4518,7 +4529,12 @@ dojo.declare(
 			//		Display the dialog
 			// returns: dojo.Deferred
 			//		Deferred object that resolves when the display animation is complete
+
 			if(this.open){ return; }
+
+			if(!this._started){
+				this.startup();
+			}
 
 			// first time we show the dialog, there's some initialization stuff to do
 			if(!this._alreadyInitialized){
@@ -8300,7 +8316,6 @@ dojo.provide("dijit._HasDropDown");
 
 
 
-
 dojo.declare("dijit._HasDropDown",
 	null,
 	{
@@ -8760,10 +8775,8 @@ dojo.declare("dijit.form.Button",
 	templateString: dojo.cache("dijit.form", "templates/Button.html", "<span class=\"dijit dijitReset dijitInline\"\n\t><span class=\"dijitReset dijitInline dijitButtonNode\"\n\t\tdojoAttachEvent=\"ondijitclick:_onButtonClick\"\n\t\t><span class=\"dijitReset dijitStretch dijitButtonContents\"\n\t\t\tdojoAttachPoint=\"titleNode,focusNode\"\n\t\t\trole=\"button\" aria-labelledby=\"${id}_label\"\n\t\t\t><span class=\"dijitReset dijitInline dijitIcon\" dojoAttachPoint=\"iconNode\"></span\n\t\t\t><span class=\"dijitReset dijitToggleButtonIconChar\">&#x25CF;</span\n\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"\n\t\t\t\tid=\"${id}_label\"\n\t\t\t\tdojoAttachPoint=\"containerNode\"\n\t\t\t></span\n\t\t></span\n\t></span\n\t><input ${!nameAttrSetting} type=\"${type}\" value=\"${value}\" class=\"dijitOffScreen\"\n\t\tdojoAttachPoint=\"valueNode\"\n/></span>\n"),
 
 	attributeMap: dojo.delegate(dijit.form._FormWidget.prototype.attributeMap, {
-		value: "valueNode",
-		iconClass: { node: "iconNode", type: "class" }
+		value: "valueNode"
 	}),
-
 
 	_onClick: function(/*Event*/ e){
 		// summary:
@@ -8847,6 +8860,16 @@ dojo.declare("dijit.form.Button",
 		if(this.showLabel == false && !this.params.title){
 			this.titleNode.title = dojo.trim(this.containerNode.innerText || this.containerNode.textContent || '');
 		}
+	},
+
+	_setIconClassAttr: function(/*String*/ val){
+		// Custom method so that icon node is hidden when not in use, to avoid excess padding/margin
+		// appearing around it (even if it's a 0x0 sized <img> node)
+
+		var oldVal = this.iconClass || "dijitNoIcon",
+			newVal = val || "dijitNoIcon";
+		dojo.replaceClass(this.iconNode, newVal, oldVal);
+		this._set("iconClass", val);
 	}
 });
 
@@ -9103,7 +9126,7 @@ dojo.declare("dijit._editor._Plugin", null, {
 
 	// disabled: Boolean
 	//		Flag to indicate if this plugin has been disabled and should do nothing
-	//		helps control button state, amoung other things.  Set via the setter api.
+	//		helps control button state, among other things.  Set via the setter api.
 	disabled: false,
 
 	getLabel: function(/*String*/key){
@@ -11656,7 +11679,7 @@ dojo.declare(
 		// connectId: String|String[]
 		//		Id of domNode(s) to attach the tooltip to.
 		//		When user hovers over specified dom node, the tooltip will appear.
-		connectId: "",
+		connectId: [],
 
 		// position: String[]
 		//		See description of `dijit.Tooltip.defaultPosition` for details on position parameter.
@@ -11675,12 +11698,12 @@ dojo.declare(
 			var ary = dojo.isArrayLike(newId) ? newId : (newId ? [newId] : []);
 			this._connections = dojo.map(ary, function(id){
 				var node = dojo.byId(id);
-				return [
+				return node ? [
 					this.connect(node, "onmouseenter", "_onTargetMouseEnter"),
 					this.connect(node, "onmouseleave", "_onTargetMouseLeave"),
 					this.connect(node, "onfocus", "_onTargetFocus"),
 					this.connect(node, "onblur", "_onTargetBlur")
-				];
+				] : [];
 			}, this);
 	
 			this._set("connectId", newId);
@@ -11912,6 +11935,7 @@ dojo.declare(
 
 		// promptMessage: String
 		//		If defined, display this hint string immediately on focus to the textbox, if empty.
+		//		Also displays if the textbox value is Incomplete (not yet valid but will be with additional input).
 		//		Think of this like a tooltip that tells the user what to do, not an error message
 		//		that tells the user what they've done wrong.
 		//
@@ -12035,12 +12059,12 @@ dojo.declare(
 
 			if(this.state == "Error"){
 				this._maskValidSubsetError = isFocused && isValidSubset; // we want the error to show up after a blur and refocus
-				message = this.getErrorMessage(true);
+				message = this.getErrorMessage(isFocused);
 			}else if(this.state == "Incomplete"){
-				message = this.getPromptMessage(true); // show the prompt whenever there's no error
+				message = this.getPromptMessage(isFocused); // show the prompt whenever the value is not yet complete 
 				this._maskValidSubsetError = !this._hasBeenBlurred || isFocused; // no Incomplete warnings while focused
-			}else{
-				message = this.getPromptMessage(true); // show the prompt whenever there's no error
+			}else if(isEmpty){
+				message = this.getPromptMessage(isFocused); // show the prompt whenever there's no error and no text
 			}
 			this.set("message", message);
 
@@ -28293,7 +28317,8 @@ dojo.declare(
 			changedChildId, changedChildSize);
 	},
 
-	destroy: function(){
+	destroyRecursive: function(){
+		// Destroy splitters first, while getChildren() still works
 		dojo.forEach(this.getChildren(), function(child){
 			var splitter = child._splitterWidget;
 			if(splitter){
@@ -28301,6 +28326,8 @@ dojo.declare(
 			}
 			delete child._splitterWidget;
 		});
+
+		// Then destroy the real children, and myself
 		this.inherited(arguments);
 	}
 });
@@ -29471,31 +29498,14 @@ dojo.declare("dijit.layout._TabButton",
 		closeNode: "dijitTabCloseButton"
 	},
 
-	templateString: dojo.cache("dijit.layout", "templates/_TabButton.html", "<div role=\"presentation\" dojoAttachPoint=\"titleNode\" dojoAttachEvent='onclick:onClick'>\n    <div role=\"presentation\" class='dijitTabInnerDiv' dojoAttachPoint='innerDiv'>\n        <div role=\"presentation\" class='dijitTabContent' dojoAttachPoint='tabContent'>\n        \t<div role=\"presentation\" dojoAttachPoint='focusNode'>\n\t\t        <img src=\"${_blankGif}\" alt=\"\" class=\"dijitIcon\" dojoAttachPoint='iconNode' />\n\t\t        <span dojoAttachPoint='containerNode' class='tabLabel'></span>\n\t\t        <span class=\"dijitInline dijitTabCloseButton dijitTabCloseIcon\" dojoAttachPoint='closeNode'\n\t\t        \t\tdojoAttachEvent='onclick: onClickCloseButton' role=\"presentation\">\n\t\t            <span dojoAttachPoint='closeText' class='dijitTabCloseText'>x</span\n\t\t        ></span>\n\t\t\t</div>\n        </div>\n    </div>\n</div>\n"),
+	templateString: dojo.cache("dijit.layout", "templates/_TabButton.html", "<div role=\"presentation\" dojoAttachPoint=\"titleNode\" dojoAttachEvent='onclick:onClick'>\n    <div role=\"presentation\" class='dijitTabInnerDiv' dojoAttachPoint='innerDiv'>\n        <div role=\"presentation\" class='dijitTabContent' dojoAttachPoint='tabContent'>\n        \t<div role=\"presentation\" dojoAttachPoint='focusNode'>\n\t\t        <img src=\"${_blankGif}\" alt=\"\" class=\"dijitIcon dijitTabButtonIcon\" dojoAttachPoint='iconNode' />\n\t\t        <span dojoAttachPoint='containerNode' class='tabLabel'></span>\n\t\t        <span class=\"dijitInline dijitTabCloseButton dijitTabCloseIcon\" dojoAttachPoint='closeNode'\n\t\t        \t\tdojoAttachEvent='onclick: onClickCloseButton' role=\"presentation\">\n\t\t            <span dojoAttachPoint='closeText' class='dijitTabCloseText'>x</span\n\t\t        ></span>\n\t\t\t</div>\n        </div>\n    </div>\n</div>\n"),
 
 	// Override _FormWidget.scrollOnFocus.
 	// Don't scroll the whole tab container into view when the button is focused.
 	scrollOnFocus: false,
 
-	postMixInProperties: function(){
-		// Override blank iconClass from Button to do tab height adjustment on IE6,
-		// to make sure that tabs with and w/out close icons are same height
-		if(!this.iconClass){
-			this.iconClass = "dijitTabButtonIcon";
-		}
-	},
-
 	buildRendering: function(){
 		this.inherited(arguments);
-
-		// If a custom icon class has not been set for the
-		// tab icon, set its width to one pixel. This ensures
-		// that the height styling of the tab is maintained,
-		// as it is based on the height of the icon.
-		// TODO: I still think we can just set dijitTabButtonIcon to 1px in CSS <Bill>
-		if(this.iconNode.className == "dijitTabButtonIcon"){
-			dojo.style(this.iconNode, "width", "1px");
-		}
 
 		dojo.setSelectable(this.containerNode, false);
 	},

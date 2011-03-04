@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -557,7 +557,13 @@ dojo.declare("dijit.WidgetSet", null, {
 		//		  positive tabIndex value
 		//		* the last element in document order with the highest
 		//		  positive tabIndex value
-		var first, last, lowest, lowestTabindex, highest, highestTabindex;
+		var first, last, lowest, lowestTabindex, highest, highestTabindex, radioSelected = {};
+		function radioName(node) {
+			// If this element is part of a radio button group, return the name for that group.
+			return node && node.tagName.toLowerCase() == "input" &&
+				node.type && node.type.toLowerCase() == "radio" &&
+				node.name && node.name.toLowerCase();
+		}
 		var walkTree = function(/*DOMNode*/parent){
 			dojo.query("> *", parent).forEach(function(child){
 				// Skip hidden elements, and also non-HTML elements (those in custom namespaces) in IE,
@@ -581,6 +587,10 @@ dojo.declare("dijit.WidgetSet", null, {
 							highest = child;
 						}
 					}
+					var rn = radioName(child);
+					if(dojo.attr(child, "checked") && rn) {
+						radioSelected[rn] = child;
+					}
 				}
 				if(child.nodeName.toUpperCase() != 'SELECT'){
 					walkTree(child);
@@ -588,7 +598,11 @@ dojo.declare("dijit.WidgetSet", null, {
 			});
 		};
 		if(shown(root)){ walkTree(root) }
-		return { first: first, last: last, lowest: lowest, highest: highest };
+		function rs(node) {
+			// substitute checked radio button for unchecked one, if there is a checked one with the same name.
+			return radioSelected[radioName(node)] || node;
+		}
+		return { first: rs(first), last: rs(last), lowest: rs(lowest), highest: rs(highest) };
 	}
 	dijit.getFirstInTabbingOrder = function(/*String|DOMNode*/ root){
 		// summary:
@@ -3277,11 +3291,14 @@ dojo.declare("dojo.Stateful", null, {
 			var self = this;
 			callbacks = this._watchCallbacks = function(name, oldValue, value, ignoreCatchall){
 				var notify = function(propertyCallbacks){
-					for(var i = 0, l = propertyCallbacks && propertyCallbacks.length; i < l; i++){
-						try{
-							propertyCallbacks[i].call(self, name, oldValue, value);
-						}catch(e){
-							console.error(e);
+					if(propertyCallbacks){
+                        propertyCallbacks = propertyCallbacks.slice();
+						for(var i = 0, l = propertyCallbacks.length; i < l; i++){
+							try{
+								propertyCallbacks[i].call(self, name, oldValue, value);
+							}catch(e){
+								console.error(e);
+							}
 						}
 					}
 				};
@@ -8145,7 +8162,7 @@ dojo.provide("dojox.grid._Scroller");
 			// Calculate the average row height and update the defaults (row and page).
 			var needPage = (!this._invalidating);
 			if(!needPage){
-				var ah = this.grid.attr("autoHeight");
+				var ah = this.grid.get("autoHeight");
 				if(typeof ah == "number" && ah <= Math.min(this.rowsPerPage, this.rowCount)){
 					needPage = true;
 				}
@@ -8180,7 +8197,7 @@ dojo.provide("dojox.grid._Scroller");
 				this.pageHeights[inPageIndex] = h;
 				if(oh != h){
 					this.updateContentHeight(h - oh);
-					var ah = this.grid.attr("autoHeight");
+					var ah = this.grid.get("autoHeight");
 					if((typeof ah == "number" && ah > this.rowCount)||(ah === true && !fromBuild)){
 						if(!fromAsynRendering){
 							this.grid.sizeChange();
@@ -9794,7 +9811,7 @@ dojo.provide("dojox.grid._Builder");
 				var vw = (dojo.position||dojo._abs)(e.sourceView.headerNode, true);
 				var bodyContentBox = dojo.contentBox(e.sourceView.domNode);
 				//fix #11340
-				var l = e.clientX;
+				var l = e.pageX;
 				if(!dojo._isBodyLtr() && dojo.isIE < 8){
 					l -= dojox.html.metrics.getScrollbar().w;
 				}				
@@ -12691,7 +12708,7 @@ dojo.declare("dojox.grid._Layout", null, {
 			return new_cell;
 		}
 
-		var cell_type = inDef.type || this._defaultCellProps.type || dojox.grid.cells.Cell;
+		var cell_type = inDef.type || inDef.cellType || this._defaultCellProps.type || this._defaultCellProps.cellType || dojox.grid.cells.Cell;
 
 		props.unitWidth = getCellWidth(inDef);
 		return new cell_type(dojo.mixin({}, this._defaultCellProps, inDef, props));	
@@ -13240,7 +13257,7 @@ dojo.declare("dojox.grid._FocusManager", null, {
 	focusClass: "dojoxGridCellFocus",
 	focusView: null,
 	initFocusView: function(){
-		this.focusView = this.grid.views.getFirstScrollingView() || this.focusView;
+		this.focusView = this.grid.views.getFirstScrollingView() || this.focusView || this.grid.views.views[0];
 		this._initColumnHeaders();
 	},
 	isFocusCell: function(inCell, inRowIndex){
@@ -13530,7 +13547,8 @@ dojo.declare("dojox.grid._FocusManager", null, {
 			}
 			if(this.grid.edit.isEditing()){ //when editing, only navigate to editable cells
 				var nextCell = this.grid.getCell(col);
-				if (!this.isLastFocusCell() && !nextCell.editable){
+				if (!this.isLastFocusCell() && (!nextCell.editable ||
+					this.grid.canEdit && !this.grid.canEdit(nextCell, row))){
 					this.cell=nextCell;
 					this.rowIndex=row;
 					this.next();
@@ -13819,7 +13837,7 @@ dojo.declare("dojox.grid._EditManager", null, {
 		// inGrid: dojox.Grid
 		//		The dojox.Grid this editor should be attached to
 		this.grid = inGrid;
-		this.connections = [];
+		this.connections = [dojo.connect(this.grid, 'onBlur', this, 'apply')];
 		if(dojo.isIE){
 			this.connections.push(dojo.connect(document.body, "onfocus", dojo.hitch(this, "_boomerangFocus")));
 		}
@@ -14823,7 +14841,8 @@ dojo.i18n = {
 };
 =====*/
 
-dojo.i18n.getLocalization = function(/*String*/packageName, /*String*/bundleName, /*String?*/locale){
+// when using a real AMD loader, dojo.i18n.getLocalization is already defined by dojo/lib/backCompat
+dojo.i18n.getLocalization = dojo.i18n.getLocalization || function(/*String*/packageName, /*String*/bundleName, /*String?*/locale){
 	//	summary:
 	//		Returns an Object containing the localization for a given resource
 	//		bundle in a package, matching the specified locale.
@@ -15597,7 +15616,7 @@ dojo.provide("dojox.grid._Grid");
 		_setStructureAttr: function(structure){
 			var s = structure;
 			if(s && dojo.isString(s)){
-				dojo.deprecated("dojox.grid._Grid.attr('structure', 'objVar')", "use dojox.grid._Grid.attr('structure', objVar) instead", "2.0");
+				dojo.deprecated("dojox.grid._Grid.set('structure', 'objVar')", "use dojox.grid._Grid.set('structure', objVar) instead", "2.0");
 				s=dojo.getObject(s);
 			}
 			this.structure = s;
@@ -15618,7 +15637,7 @@ dojo.provide("dojox.grid._Grid");
 		setStructure: function(/* dojox.grid.__ViewDef|dojox.grid.__ViewDef[]|dojox.grid.__CellDef[]|Array[dojox.grid.__CellDef[]] */ inStructure){
 			// summary:
 			//		Install a new structure and rebuild the grid.
-			dojo.deprecated("dojox.grid._Grid.setStructure(obj)", "use dojox.grid._Grid.attr('structure', obj) instead.", "2.0");
+			dojo.deprecated("dojox.grid._Grid.setStructure(obj)", "use dojox.grid._Grid.set('structure', obj) instead.", "2.0");
 			this._setStructureAttr(inStructure);
 		},
 		
@@ -15645,14 +15664,14 @@ dojo.provide("dojox.grid._Grid");
 							}
 							checked = dojo.filter(self.layout.cells, function(c){
 								if(c.menuItems.length > 1){
-									dojo.forEach(c.menuItems, "item.attr('disabled', false);");
+									dojo.forEach(c.menuItems, "item.set('disabled', false);");
 								}else{
-									c.menuItems[0].attr('disabled', false);
+									c.menuItems[0].set('disabled', false);
 								}
 								return !c.hidden;
 							});
 							if(checked.length == 1){
-								dojo.forEach(checked[0].menuItems, "item.attr('disabled', true);");
+								dojo.forEach(checked[0].menuItems, "item.set('disabled', true);");
 							}
 						}
 					},
@@ -15688,7 +15707,7 @@ dojo.provide("dojox.grid._Grid");
 		},
 
 		setHeaderMenu: function(/* dijit.Menu */ menu){
-			dojo.deprecated("dojox.grid._Grid.setHeaderMenu(obj)", "use dojox.grid._Grid.attr('headerMenu', obj) instead.", "2.0");
+			dojo.deprecated("dojox.grid._Grid.setHeaderMenu(obj)", "use dojox.grid._Grid.set('headerMenu', obj) instead.", "2.0");
 			this._setHeaderMenuAttr(menu);
 		},
 		
@@ -16415,7 +16434,7 @@ dojo.provide("dojox.grid._Grid");
 						cell.relWidth = window.parseInt(dojo.attr(th, "relWidth"), 10);
 					}
 					if(d.hasAttr(th, "hidden")){
-						cell.hidden = d.attr(th, "hidden") == "true";
+						cell.hidden = (d.attr(th, "hidden") == "true" || d.attr(th, "hidden") === true/*always boolean true in Chrome*/);
 					}
 
 					if(cellFunc){
@@ -16992,6 +17011,7 @@ dojo.declare("dojox.grid.DataGrid", dojox.grid._Grid, {
 	},
 
 	sort: function(){
+		this.edit.apply();
 		this._lastScrollTop = this.scrollTop;
 		this._refresh();
 	},

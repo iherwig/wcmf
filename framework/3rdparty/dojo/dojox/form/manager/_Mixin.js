@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -73,7 +73,7 @@ if(dojo.isArray(w)){
 dojo.forEach(w,function(w){
 dojo.forEach(_17,function(o){
 c.push(dojo.connect(w,"onChange",this,function(evt){
-if(this.watch&&dojo.attr(w.focusNode,"checked")){
+if(this.watching&&dojo.attr(w.focusNode,"checked")){
 this[o](w.get("value"),_16,w,evt);
 }
 }));
@@ -83,14 +83,14 @@ this[o](w.get("value"),_16,w,evt);
 var _18=w.declaredClass=="dijit.form.Button"?"onClick":"onChange";
 dojo.forEach(_17,function(o){
 c.push(dojo.connect(w,_18,this,function(evt){
-if(this.watch){
+if(this.watching){
 this[o](w.get("value"),_16,w,evt);
 }
 }));
 },this);
 }
 };
-dojo.declare("dojox.form.manager._Mixin",null,{watch:true,startup:function(){
+dojo.declare("dojox.form.manager._Mixin",null,{watching:true,startup:function(){
 if(this._started){
 return;
 }
@@ -168,10 +168,10 @@ return null;
 if(dojo.isArray(_22)){
 if(_24){
 dojo.forEach(_22,function(_26){
-_26.set("checked",false,!this.watch);
+_26.set("checked",false,!this.watching);
 });
 dojo.forEach(_22,function(_27){
-_27.set("checked",_27.value===_23,!this.watch);
+_27.set("checked",_27.value===_23,!this.watching);
 });
 return this;
 }
@@ -186,13 +186,13 @@ return _25?_25.get("value"):"";
 }
 if(_22.declaredClass=="dijit.form.CheckBox"){
 if(_24){
-_22.set("value",Boolean(_23),!this.watch);
+_22.set("value",Boolean(_23),!this.watching);
 return this;
 }
 return Boolean(_22.get("value"));
 }
 if(_24){
-_22.set("value",_23,!this.watch);
+_22.set("value",_23,!this.watching);
 return this;
 }
 return _22.get("value");

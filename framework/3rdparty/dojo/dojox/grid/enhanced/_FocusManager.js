@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -397,8 +397,26 @@ this.move(_3e,_3f,evt);
 if(evt){
 dojo.stopEvent(evt);
 }
-},_onContentKeyDown:function(e,_40){
-if(_40){
+},move:function(_40,_41){
+this.inherited(arguments);
+var _42=this.cell,row=this.rowIndex;
+if(!this.isNavHeader()&&_42){
+if(_40!==0){
+var _43=_42.view.getRowNode(row);
+if(_43&&dojo.style(_43,"display")==="none"){
+this.move(_40>0?1:-1,_41);
+}
+}else{
+if(_41!==0){
+var _43=_42.getNode(row);
+if(_43&&dojo.style(_43,"display")==="none"){
+this.move(_40,_41>0?1:-1);
+}
+}
+}
+}
+},_onContentKeyDown:function(e,_44){
+if(_44){
 var dk=dojo.keys,s=this.grid.scroller;
 switch(e.keyCode){
 case dk.ENTER:
@@ -437,20 +455,20 @@ break;
 }
 }
 return true;
-},_blurFromEditableCell:false,_isNavigating:false,_navElems:null,_focusEditableCell:function(evt,_41){
-var _42=false;
+},_blurFromEditableCell:false,_isNavigating:false,_navElems:null,_focusEditableCell:function(evt,_45){
+var _46=false;
 if(this._isNavigating){
-_42=true;
+_46=true;
 }else{
 if(this.grid.edit.isEditing()&&this.cell){
-if(this._blurFromEditableCell||!this._blurEditableCell(evt,_41)){
+if(this._blurFromEditableCell||!this._blurEditableCell(evt,_45)){
 this.setFocusIndex(this.rowIndex,this.cell.index);
-_42=true;
+_46=true;
 }
 this._stopEvent(evt);
 }
 }
-return _42;
+return _46;
 },_applyEditableCell:function(){
 try{
 this.grid.edit.apply();
@@ -458,30 +476,33 @@ this.grid.edit.apply();
 catch(e){
 console.error("_applyEditableCell:",e);
 }
-},_blurEditableCell:function(evt,_43){
+},_blurEditableCell:function(evt,_47){
 this._blurFromEditableCell=false;
 if(this._isNavigating){
-var _44=true;
+var _48=true;
 if(evt){
-var _45=this._navElems;
-var _46=_45.lowest||_45.first;
-var _47=_45.last||_45.highest||_46;
-var _48=dojo.isIE?evt.srcElement:evt.target;
-_44=_48==(_43>0?_47:_46);
+var _49=this._navElems;
+var _4a=_49.lowest||_49.first;
+var _4b=_49.last||_49.highest||_4a;
+var _4c=dojo.isIE?evt.srcElement:evt.target;
+_48=_4c==(_47>0?_4b:_4a);
 }
-if(_44){
+if(_48){
 this._isNavigating=false;
 return "content";
 }
 return false;
 }else{
 if(this.grid.edit.isEditing()&&this.cell){
-var dir=_43>0?1:-1;
+if(!_47||typeof _47!="number"){
+return false;
+}
+var dir=_47>0?1:-1;
 var cc=this.grid.layout.cellCount;
-for(var _49,col=this.cell.index+dir;col>=0&&col<cc;col+=dir){
-_49=this.grid.getCell(col);
-if(_49.editable){
-this.cell=_49;
+for(var _4d,col=this.cell.index+dir;col>=0&&col<cc;col+=dir){
+_4d=this.grid.getCell(col);
+if(_4d.editable){
+this.cell=_4d;
 this._blurFromEditableCell=true;
 return false;
 }
@@ -489,9 +510,9 @@ return false;
 if((this.rowIndex>0||dir==1)&&(this.rowIndex<this.grid.rowCount||dir==-1)){
 this.rowIndex+=dir;
 for(col=dir>0?0:cc-1;col>=0&&col<cc;col+=dir){
-_49=this.grid.getCell(col);
-if(_49.editable){
-this.cell=_49;
+_4d=this.grid.getCell(col);
+if(_4d.editable){
+this.cell=_4d;
 break;
 }
 }
@@ -503,35 +524,35 @@ return "content";
 return true;
 },_initNavigatableElems:function(){
 this._navElems=dijit._getTabNavigable(this.cell.getNode(this.rowIndex));
-},_onEditableCellKeyDown:function(e,_4a){
-var dk=dojo.keys,g=this.grid,_4b=g.edit,_4c=false,_4d=true;
+},_onEditableCellKeyDown:function(e,_4e){
+var dk=dojo.keys,g=this.grid,_4f=g.edit,_50=false,_51=true;
 switch(e.keyCode){
 case dk.ENTER:
-if(_4a&&_4b.isEditing()){
+if(_4e&&_4f.isEditing()){
 this._applyEditableCell();
-_4c=true;
+_50=true;
 }
 case dk.SPACE:
-if(!_4a&&this._isNavigating){
-_4d=false;
+if(!_4e&&this._isNavigating){
+_51=false;
 break;
 }
-if(_4a){
+if(_4e){
 if(!this.cell.editable&&this.cell.navigatable){
 this._initNavigatableElems();
-var _4e=this._navElems.lowest||this._navElems.first;
-if(_4e){
+var _52=this._navElems.lowest||this._navElems.first;
+if(_52){
 this._isNavigating=true;
-dijit.focus(_4e);
+dijit.focus(_52);
 dojo.stopEvent(e);
 this.currentArea("editableCell",true);
 break;
 }
 }
-if(!_4c&&!_4b.isEditing()&&!g.pluginMgr.isFixedCell(this.cell)){
-_4b.setEditCell(this.cell,this.rowIndex);
+if(!_50&&!_4f.isEditing()&&!g.pluginMgr.isFixedCell(this.cell)){
+_4f.setEditCell(this.cell,this.rowIndex);
 }
-if(_4c){
+if(_50){
 this.currentArea("content",true);
 }else{
 if(this.cell.editable&&g.canEdit()){
@@ -542,28 +563,28 @@ this.currentArea("editableCell",true);
 break;
 case dk.PAGE_UP:
 case dk.PAGE_DOWN:
-if(!_4a&&_4b.isEditing()){
-_4d=false;
+if(!_4e&&_4f.isEditing()){
+_51=false;
 }
 break;
 case dk.ESCAPE:
-if(!_4a){
-_4b.cancel();
+if(!_4e){
+_4f.cancel();
 this.currentArea("content",true);
 }
 }
-return _4d;
+return _51;
 },_onEditableCellMouseEvent:function(evt){
 if(evt.type=="click"){
-var _4f=this.cell||evt.cell;
-if(_4f&&!_4f.editable&&_4f.navigatable){
+var _53=this.cell||evt.cell;
+if(_53&&!_53.editable&&_53.navigatable){
 this._initNavigatableElems();
 if(this._navElems.lowest||this._navElems.first){
-var _50=dojo.isIE?evt.srcElement:evt.target;
-if(_50!=_4f.getNode(evt.rowIndex)){
+var _54=dojo.isIE?evt.srcElement:evt.target;
+if(_54!=_53.getNode(evt.rowIndex)){
 this._isNavigating=true;
 this.focusArea("editableCell",evt);
-dijit.focus(_50);
+dijit.focus(_54);
 return false;
 }
 }

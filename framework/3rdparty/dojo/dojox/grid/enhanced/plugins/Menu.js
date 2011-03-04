@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -47,13 +47,13 @@ g[_a].unBindDomNode(n);
 g[_a]=_9;
 g[_a].bindDomNode(n);
 },showMenu:function(e){
-var _b=(e.cellNode&&dojo.hasClass(e.cellNode,"dojoxGridRowSelected")||e.rowNode&&dojo.hasClass(e.rowNode,"dojoxGridRowSelected"));
+var _b=(e.cellNode&&dojo.hasClass(e.cellNode,"dojoxGridRowSelected")||e.rowNode&&(dojo.hasClass(e.rowNode,"dojoxGridRowSelected")||dojo.hasClass(e.rowNode,"dojoxGridRowbarSelected")));
 if(_b&&this.selectedRegionMenu){
 this.onSelectedRegionContextMenu(e);
 return;
 }
 var _c={target:e.target,coords:"pageX" in e?{x:e.pageX,y:e.pageY}:null};
-if(this.rowMenu&&this.selection.isSelected(e.rowIndex)){
+if(this.rowMenu&&(this.selection.isSelected(e.rowIndex)||e.rowNode&&dojo.hasClass(e.rowNode,"dojoxGridRowbar"))){
 this.rowMenu._openMyself(_c);
 dojo.stopEvent(e);
 return;

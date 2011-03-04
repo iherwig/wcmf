@@ -37,9 +37,9 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
  * <b>Output actions:</b>
  * - @em ok In any case
  *
- * @param[in] An array of PersistentObject instances to save. Each object may have a
- *             property named 'uploadDir' specifying the directory where attached files should be stored
- *            on the server (see SaveController::getUploadDir())
+ * @param[in] Key/value pairs of serialized object ids and PersistentObject instances to save.
+ * @param[in] uploadDir The directory where attached files should be stored on the server,
+ *                      optional (see SaveController::getUploadDir())
  *
  * Errors concerning single input fields are added to the session (the keys are the input field names)
  *
@@ -83,17 +83,13 @@ class SaveController extends Controller
     $invalidOids = array();
     $invalidAttributeValues = array();
 
-    // make request data an array if it's not
+    // iterate over request values and check for oid/object pairs
     $saveData = $request->getValues();
-    Log::error($saveData, __CLASS__);
-
-    foreach ($saveData as $curRequestObject)
+    foreach ($saveData as $curOidStr => $curRequestObject)
     {
-      if ($curRequestObject instanceof PersistentObject)
+      if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
+              && $curRequestObject->getOID() == $curOid)
       {
-        $curOid = $curRequestObject->getOID();
-        $curOidStr = $curOid->__toString();
-
         // if the current user has a lock on the object, release it
         $lockManager->releaseLock($curOid);
 
@@ -240,8 +236,9 @@ class SaveController extends Controller
       }
     }
     // return the saved nodes
-    $response->setValues(array_values($nodeArray));
-    Log::error("size: ".sizeof($nodeArray), __CLASS__);
+    foreach ($nodeArray as $oidStr => $node) {
+      $response->setValue($oidStr, $node);
+    }
 
     // end the persistence transaction
     $persistenceFacade->commitTransaction();

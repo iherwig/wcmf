@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -100,14 +100,14 @@ dijit._masterTT=new dijit._MasterTooltip();
 }
 return dijit._masterTT.hide(_16);
 };
-dojo.declare("dijit.Tooltip",dijit._Widget,{label:"",showDelay:400,connectId:"",position:[],_setConnectIdAttr:function(_17){
+dojo.declare("dijit.Tooltip",dijit._Widget,{label:"",showDelay:400,connectId:[],position:[],_setConnectIdAttr:function(_17){
 dojo.forEach(this._connections||[],function(_18){
 dojo.forEach(_18,dojo.hitch(this,"disconnect"));
 },this);
 var ary=dojo.isArrayLike(_17)?_17:(_17?[_17]:[]);
 this._connections=dojo.map(ary,function(id){
 var _19=dojo.byId(id);
-return [this.connect(_19,"onmouseenter","_onTargetMouseEnter"),this.connect(_19,"onmouseleave","_onTargetMouseLeave"),this.connect(_19,"onfocus","_onTargetFocus"),this.connect(_19,"onblur","_onTargetBlur")];
+return _19?[this.connect(_19,"onmouseenter","_onTargetMouseEnter"),this.connect(_19,"onmouseleave","_onTargetMouseLeave"),this.connect(_19,"onfocus","_onTargetFocus"),this.connect(_19,"onblur","_onTargetBlur")]:[];
 },this);
 this._set("connectId",_17);
 this._connectIds=ary;

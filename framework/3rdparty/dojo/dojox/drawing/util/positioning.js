@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -16,15 +16,13 @@ var x=0.5*(_3.x+_4.x);
 var y=0.5*(_3.y+_4.y);
 var _5=dojox.drawing.util.common.slope(_3,_4);
 var _6=_1/Math.sqrt(1+_5*_5);
-if(_4.y>_3.y){
+if(_4.y>_3.y&&_4.x>_3.x||_4.y<_3.y&&_4.x<_3.x){
 _6=-_6;
+y-=_2;
 }
 x+=-_6*_5;
 y+=_6;
 var _7=_4.x<_3.x?"end":"start";
-if(_4.y>_3.y){
-y-=_2;
-}
 return {x:x,y:y,foo:"bar",align:_7};
 };
 dojox.drawing.util.positioning.angle=function(_8,_9){

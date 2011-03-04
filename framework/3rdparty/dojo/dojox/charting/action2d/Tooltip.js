@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -33,6 +33,9 @@ this.connect();
 if(o.type==="onplotreset"||o.type==="onmouseout"){
 dijit.hideTooltip(this.aroundRect);
 this.aroundRect=null;
+if(o.type==="onplotreset"){
+delete this.angles;
+}
 return;
 }
 if(!o.shape||o.type!=="onmouseover"){

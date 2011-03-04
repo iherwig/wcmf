@@ -22,6 +22,7 @@
   <!-- link rel="stylesheet" type="text/css" href="style/style.css" /-->
   <link rel="stylesheet" type="text/css" href="style/wcmf.css" />
   <link rel="stylesheet" type="text/css" href="style/dojo_theme/wcmf.css" />
+  <link rel="stylesheet" type="text/css" href="style/dojo_theme/EnhancedGrid.css" />
 
   <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
 

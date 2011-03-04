@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -37,7 +37,6 @@ this.reset();
 },onCancel:function(){
 },onAbort:function(){
 },onError:function(_8){
-console.error("error:",_8);
 },upload:function(_9){
 },submit:function(_a){
 },reset:function(){
@@ -46,21 +45,22 @@ dojo.forEach(this._inputs,dojo.destroy,dojo);
 this._inputs=[];
 this._nameIndex=0;
 this._createInput();
-},getFileList:function(_b){
-var _c=[];
-if(!_b){
-return _c;
-}
+},getFileList:function(){
+var _b=[];
 if(this.supports("multiple")){
-dojo.forEach(_b.target.files,function(f,i){
-_c.push({index:i,name:f.name,size:f.size,type:f.type});
+dojo.forEach(this.inputNode.files,function(f,i){
+_b.push({index:i,name:f.name,size:f.size,type:f.type});
 },this);
 }else{
 dojo.forEach(this._inputs,function(n,i){
-_c.push({index:i,name:n.value.substring(n.value.lastIndexOf("\\")+1),size:0,type:n.value.substring(n.value.lastIndexOf(".")+1)});
+_b.push({index:i,name:n.value.substring(n.value.lastIndexOf("\\")+1),size:0,type:n.value.substring(n.value.lastIndexOf(".")+1)});
 },this);
 }
-return _c;
+return _b;
+},_getValueAttr:function(){
+return this.getFileList();
+},_setValueAttr:function(_c){
+console.error("Uploader value is read only");
 },_getDisabledAttr:function(){
 return this._disabled;
 },_setDisabledAttr:function(_d){
