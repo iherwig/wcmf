@@ -56,10 +56,44 @@ class StringQueryTest extends WCMFTestCase
     $query = new StringQuery('Page');
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, `Page`.`creator`, ".
-      "`Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` ".
-      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `ChildPage` ON `ChildPage`.`fk_page_id` = `Page`.`id` ".
-      "WHERE (`Page`.`creator` LIKE '%ingo%' AND `ChildPage`.`name` LIKE 'Page 1%') ORDER BY `Page`.`sortkey` ASC";
+    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` ".
+      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `ChildPage` ON ".
+      "`ChildPage`.`fk_page_id` = `Page`.`id` WHERE (`Page`.`creator` LIKE '%ingo%' AND `ChildPage`.`name` ".
+      "LIKE 'Page 1%') ORDER BY `Page`.`sortkey` ASC";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    $this->runAnonymous(false);
+  }
+
+  public function testChildParent()
+  {
+    $this->runAnonymous(true);
+
+    $queryStr = "`NormalPage`.`id` = 10";
+    $query = new StringQuery('Image');
+    $query->setConditionString($queryStr);
+    $sql = $query->getQueryString();
+    $expected = "SELECT `Image`.`id`, `Image`.`fk_page_id`, `Image`.`fk_titlepage_id`, `Image`.`file`, `Image`.`created`, ".
+      "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor` FROM `Image` INNER JOIN `Page` AS `NormalPage` ON ".
+      "`Image`.`fk_page_id` = `NormalPage`.`id` WHERE (`NormalPage`.`id` = 10)";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    $this->runAnonymous(false);
+  }
+
+  public function testChildParentSameType()
+  {
+    $this->runAnonymous(true);
+
+    $queryStr = "`ParentPage`.`id` = 10";
+    $query = new StringQuery('Page');
+    $query->setConditionString($queryStr);
+    $sql = $query->getQueryString();
+    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` ".
+      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `ParentPage` ON ".
+      "`Page`.`fk_page_id` = `ParentPage`.`id` WHERE (`ParentPage`.`id` = 10) ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     $this->runAnonymous(false);
@@ -109,9 +143,8 @@ class StringQueryTest extends WCMFTestCase
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
       "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` INNER JOIN `Page` ON `Page`.`fk_author_id` = `Author`.`id` ".
-      "INNER JOIN `NormalImage` ON `NormalImage`.`fk_page_id` = `Page`.`id` ".
-      "INNER JOIN `TitleImage` ON `TitleImage`.`fk_titlepage_id` = `Page`.`id` ".
-      "WHERE (`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
+      "INNER JOIN `Image` AS `NormalImage` ON `NormalImage`.`fk_page_id` = `Page`.`id` INNER JOIN `Image` AS `TitleImage` ON ".
+      "`TitleImage`.`fk_titlepage_id` = `Page`.`id` WHERE (`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
       "AND `TitleImage`.`file` = 'title_image.jpg') ORDER BY `Author`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 

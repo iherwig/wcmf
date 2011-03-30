@@ -16,6 +16,9 @@ class ObjectQueryTest extends WCMFTestCase
       "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` ORDER BY `Author`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
+    $cond = $query->getQueryCondition();
+    $this->assertTrue($cond === '');
+
     $this->runAnonymous(false);
   }
 
@@ -32,6 +35,9 @@ class ObjectQueryTest extends WCMFTestCase
       "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
       "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+
+    $cond = $query->getQueryCondition();
+    $this->assertTrue($cond === "(`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%')");
 
     $this->runAnonymous(false);
   }
@@ -120,10 +126,11 @@ class ObjectQueryTest extends WCMFTestCase
     $page2Tpl->setValue("name", Criteria::asValue("LIKE", "Page 1%")); // explicit LIKE
     $page1Tpl->addNode($page2Tpl, 'ChildPage');
     $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, `Page`.`creator`, ".
-      "`Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` ".
-      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page_1` ON `Page_1`.`fk_page_id` = `Page`.`id` ".
-      "WHERE (`Page`.`creator` LIKE '%ingo%') AND (`Page_1`.`name` LIKE 'Page 1%') ORDER BY `Page`.`sortkey` ASC";
+    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM ".
+      "`Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `Page_1` ON ".
+      "`Page_1`.`fk_page_id` = `Page`.`id` WHERE (`Page`.`creator` LIKE '%ingo%') AND (`Page_1`.`name` LIKE 'Page 1%') ".
+      "ORDER BY `Page`.`sortkey` ASC";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     $this->runAnonymous(false);
@@ -185,7 +192,7 @@ class ObjectQueryTest extends WCMFTestCase
     $authorTpl1->setValue("creator", "admin"); // implicit LIKE
 
     // OR (Author.name LIKE '%herwig%')
-    $authorTpl2 = $query->getObjectTemplate('Author', Criteria::OPERATOR_OR);
+    $authorTpl2 = $query->getObjectTemplate('Author', null, Criteria::OPERATOR_OR);
     $authorTpl2->setValue("name", "herwig");
 
     // (Page.created >= '2004-01-01') AND (Page.created < '2005-01-01')
@@ -199,7 +206,7 @@ class ObjectQueryTest extends WCMFTestCase
     // of the ObjectQuery::makeGroup() method
     $pageTpl3 = $query->getObjectTemplate('Page');
     $pageTpl3->setValue("name", Criteria::asValue("LIKE", "Page 1%"));
-    $pageTpl4 = $query->getObjectTemplate('Page', Criteria::OPERATOR_OR);
+    $pageTpl4 = $query->getObjectTemplate('Page', null, Criteria::OPERATOR_OR);
     $pageTpl4->setValue("creator", Criteria::asValue("=", "admin"));
     $query->makeGroup(array(&$pageTpl3, &$pageTpl4), Criteria::OPERATOR_AND);
 

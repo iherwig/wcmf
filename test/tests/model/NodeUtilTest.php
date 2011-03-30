@@ -2,6 +2,7 @@
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.StringQuery.php");
 require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
 class NodeUtilTest extends WCMFTestCase
@@ -60,6 +61,26 @@ class NodeUtilTest extends WCMFTestCase
     $paths = NodeUtil::getConnections('Page', null, 'Document', 'child');
     $this->assertTrue(sizeof($paths) == 1);
     $this->assertTrue($paths[0]->getEndRole() == 'Document');
+
+    $this->runAnonymous(false);
+  }
+
+  public function testGetQueryCondition()
+  {
+    $this->runAnonymous(true);
+
+    $node = PersistenceFacade::getInstance()->create('Page');
+    $node->setOID(new ObjectId('Page', 10));
+    $condition = NodeUtil::getRelationQueryCondition($node, 'NormalImage');
+    $this->assertTrue($condition === '(`NormalPage`.`id` = 10)');
+
+    $query = new StringQuery('Image');
+    $query->setConditionString($condition);
+    $sql = $query->getQueryString();
+    $expected = "SELECT `Image`.`id`, `Image`.`fk_page_id`, `Image`.`fk_titlepage_id`, `Image`.`file`, `Image`.`created`, ".
+      "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor` FROM `Image` INNER JOIN `Page` AS `NormalPage` ON ".
+      "`Image`.`fk_page_id` = `NormalPage`.`id` WHERE ((`NormalPage`.`id` = 10))";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
     $this->runAnonymous(false);
   }
