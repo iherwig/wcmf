@@ -32,9 +32,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
  * <b>Output actions:</b>
  * - @em ok In any case
  *
- * @param[in] deleteoids A comma-separated string of the oids of the Nodes to delete.
- * @param[out] oids A comma-separated string of the oids of the deleted Nodes.
- * @param[out] poid The last parent oid of the last deleted Node.
+ * @param[in] oid The oid of the object to delete.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -43,90 +41,70 @@ class DeleteController extends Controller
   /**
    * @see Controller::hasView()
    */
-  function hasView()
+  public function hasView()
   {
     return false;
   }
   /**
    * Delete given Nodes.
-   * @return Array of given context and action 'ok' in every case.
-   * @attention This controller always does a recursive delete
    * @see Controller::executeKernel()
    */
-  function executeKernel()
+  public function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $lockManager = &LockManager::getInstance();
-
-    // for deleting nodes we need not know the correct relations between the nodes
-    // so we store the nodes to delete in an array and iterate over it when deleting
-    $deleteArray = array();
-    $removedOIDs = array();
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $lockManager = LockManager::getInstance();
+    $request = $this->getRequest();
+    $response = $this->getResponse();
 
     // start the persistence transaction
     $persistenceFacade->startTransaction();
 
-    // load doomed children
-    foreach(preg_split('/,/', $this->_request->getValue('deleteoids')) as $doid)
+    // load the doomed node
+    // if the current user has a lock on the object, release it
+    $oid = ObjectId::parse($request->getValue('oid'));
+    if ($oid)
     {
-      // if the current user has a lock on the object, release it
-      $lockManager->releaseLock($doid);
+      $lockManager->releaseLock($oid);
 
-      // check if the object belonging to doid is locked and continue with next if so
-      $lock = $lockManager->getLock($doid);
+      // check if the object belonging to oid is locked and continue with next if so
+      $lock = $lockManager->getLock($oid);
       if ($lock != null)
       {
-        $this->appendErrorMsg($lockManager->getLockMessage($lock, $doid));
+        $this->appendErrorMsg($lockManager->getLockMessage($lock, $oid));
         continue;
       }
 
-      $doomedChild = &$persistenceFacade->load($doid, BUILDDEPTH_SINGLE);
-      if ($doomedChild != null)
+      $doomedNode = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+      if ($doomedNode == null) {
+        Log::warn(Message::get("An object with oid %1% is does not exist.", array($oid)), __CLASS__);
+      }
+      else
       {
-        if($this->confirmDelete($doomedChild))
+        if($this->confirmDelete($doomedNode))
         {
-          $poids = $doomedChild->getParentOIDs();
-          $removedOIDs[$doid] = $poids;
-          $doomedChild->setState(PersistentObject::STATE_DELETED);
-          $deleteArray[sizeof($deleteArray)] = &$doomedChild;
+          // commit changes
+          $localization = Localization::getInstance();
+          if ($this->isLocalizedRequest())
+          {
+            // delete the translations for the requested language
+            $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));
+          }
+          else
+          {
+            // delete the real object data and all translations
+            $localization->deleteTranslation($doomedNode->getOID());
+            $doomedNode->delete();
+          }
+          // after delete
+          $this->afterDelete($oid);
         }
       }
-      else
-        Log::warn(Message::get("An object with oid %1% is does not exist.", array($doid)), __CLASS__);
     }
-
-    // commit changes
-    $localization = Localization::getInstance();
-    for($i=0; $i<sizeof($deleteArray); $i++)
-    {
-      $curObj = &$deleteArray[$i];
-      if ($this->isLocalizedRequest())
-      {
-        // delete the translations for the requested language
-        $localization->deleteTranslation($curObj->getOID(), $this->_request->getValue('language'));
-      }
-      else
-      {
-        // delete the real object data and all translations
-        $localization->deleteTranslation($curObj->getOID());
-        $curObj->delete();
-      }
-    }
-
-    // after delete
-    $lastPOID = null;
-    foreach($removedOIDs as $oid => $poids)
-    {
-      $this->afterDelete($oid, $poids);
-      $lastPOID = $poids[sizeof($poids)-1];
-    }
-
     // end the persistence transaction
     $persistenceFacade->commitTransaction();
 
-    $this->_response->setValue('poid', $lastPOID);
-    $this->_response->setValue('oids', array_keys($removedOIDs));
-    $this->_response->setAction('ok');
+    $response->setValue('oid', $oid);
+    $response->setAction('ok');
     return true;
   }
   /**
@@ -135,7 +113,7 @@ class DeleteController extends Controller
    * @param node A reference to the Node to confirm.
    * @return True/False whether the Node should be deleted [default: true].
    */
-  function confirmDelete(&$node)
+  protected function confirmDelete($node)
   {
     return true;
   }
@@ -143,9 +121,7 @@ class DeleteController extends Controller
    * Called after delete.
    * @note subclasses will override this to implement special application requirements.
    * @param oid The oid of the Node deleted.
-   * @param poids An array of oids of the Nodes from that the Node was deleted.
-   * @note The method is called for all delete candidates even if they are not deleted.
    */
-  function afterDelete($oid, $poids) {}
+  protected function afterDelete($oid) {}
 }
 ?>

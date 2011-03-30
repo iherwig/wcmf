@@ -129,7 +129,7 @@ class DefaultControlRenderer
   function configure_select(&$view)
   {
     // see if we have an async select box
-    $inputType = $view->get_template_vars('inputType');
+    $inputType = $view->getTemplateVars('inputType');
     if (preg_match("/^select.*?#async\:(.+)$/", $inputType, $matches))
     {
       $list = $matches[1];
@@ -142,8 +142,8 @@ class DefaultControlRenderer
       $view->assign('obfuscator', Obfuscator::getInstance());
 
       // get the translated value
-      $listMap = $view->get_template_vars('listMap');
-      $value = $view->get_template_vars('value');
+      $listMap = $view->getTemplateVars('listMap');
+      $value = $view->getTemplateVars('value');
       $view->assign('translatedValue', $listMap[$value]);
 
       $view->assign('isAsync', true);
@@ -177,7 +177,7 @@ class DefaultControlRenderer
   function configure_filebrowser(&$view)
   {
     $view->assign('resourceBrowserCodeAdded', $this->resourceBrowserCodeAdded);
-    $view->assign('directory', dirname($view->get_template_vars('value')));
+    $view->assign('directory', dirname($view->getTemplateVars('value')));
     $this->resourceBrowserCodeAdded = 1;
   }
   /**
@@ -186,7 +186,7 @@ class DefaultControlRenderer
    */
   function configure_linkbrowser(&$view)
   {
-    $value = $view->get_template_vars('value');
+    $value = $view->getTemplateVars('value');
     if (InternalLink::isLink($value))
       $view->assign('isExternal', false);
     else
@@ -212,7 +212,7 @@ class DefaultControlRenderer
     // unescape html special chars
     $trans = get_html_translation_table(HTML_ENTITIES);
     $trans = array_flip($trans);
-    $value = strtr($view->get_template_vars('value'), $trans);
+    $value = strtr($view->getTemplateVars('value'), $trans);
     $view->assign('value', preg_replace("/[\n\r]/", "", $value));
     $this->FCKeditorCodeAdded = 1;
   }

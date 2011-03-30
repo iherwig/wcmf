@@ -4,77 +4,115 @@ html, body, #mainDiv {
   padding: 0; 
   margin: 0; 
   border: 0;
+  font: normal 11px/12px Verdana, Arial, Helvetica, sans-serif;
 }
 
-form.wcmf_form {
+.wcmf_form {
   width: 370px;
 }
-form.wcmf_form fieldset {
+.wcmf_form fieldset {
   margin-bottom: 10px;
   border: 0;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
 }
-form.wcmf_form legend {
+.wcmf_form legend {
   padding: 0 2px;
   font-weight: bold;
 }
-form.wcmf_form label {
+.wcmf_form label {
   display: inline-block;
   line-height: 1.8;
   vertical-align: top;
 }
-form.wcmf_form fieldset ol {
+.wcmf_form fieldset ol {
   margin: 0;
   padding: 0;
 }
-form.wcmf_form fieldset li {
+.wcmf_form fieldset li {
   list-style: none;
   padding: 5px;
   margin: 0;
 }
-form.wcmf_form fieldset fieldset {
+.wcmf_form fieldset fieldset {
   border: none;
   margin: 3px 0 0;
 }
-form.wcmf_form fieldset fieldset legend {
+.wcmf_form fieldset fieldset legend {
   padding: 0 0 5px;
   font-weight: normal;
 }
-form.wcmf_form fieldset fieldset label {
+.wcmf_form fieldset fieldset label {
   display: block;
   width: auto;
 }
-form.wcmf_form em {
+.wcmf_form em {
   font-weight: bold;
   font-style: normal;
   color: #f00;
 }
-form.wcmf_form label {
+.wcmf_form label {
   width: 120px; /* Width of labels */
 }
-form.wcmf_form fieldset fieldset label {
+.wcmf_form fieldset fieldset label {
   margin-left: 123px; /* Width plus 3 (html space) */
+}
+
+#head {
+  height: 40px;
+}
+
+#logo {
+  position: relative;
+  top: -30px;
+}
+
+#title {
+  position: relative;
+  padding-left: 11px;
+  top: -50px;
+}
+
+#logininfo {
+  position: relative;
+  color: #D4D4D4;
+  float: right;
+  top: -5px;
 }
 
 #error {
   background: #CE4F4F; 
   color: #FFF; 
-  padding: 5px; 
-  margin:5px; 
+  padding: 5px 10px 5px;
+  margin: 0;
+  border: 1px dotted #B5BCC7;
+  position: absolute;
+  top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
 }
 
-div.leftcol { 
-  clear: both;
-  width: 450px;
-  float: left; 
-  height: auto; 
+.wcmfToolbarIcon {
+  width: 18px;
+  height: 18px;
+  text-align: center;
 }
-
-div.rightcol {
-  margin-left: 20px;
-  width: 500px;
-  float: left;
-  height: auto;
+.wcmfToolbarIconCreate {
+  background-image: url('../images/open-source-icons/blue/add-item.png');
+  background-repeat: no-repeat;
 }
-
+.wcmfToolbarIconEdit {
+  background-image: url('../images/open-source-icons/blue/edit.png');
+  background-repeat: no-repeat;
+}
+.wcmfToolbarIconSave {
+  background-image: url('../images/open-source-icons/blue/save.png');
+  background-repeat: no-repeat;
+}
+.wcmfToolbarIconDelete {
+  background-image: url('../images/open-source-icons/blue/delete-item.png');
+  background-repeat: no-repeat;
+}

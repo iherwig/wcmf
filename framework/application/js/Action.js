@@ -12,7 +12,7 @@ wcmf.Action.login = function() {
   new wcmf.persistence.Request().sendAjax({
     action:'dologin',
     responseFormat:'json'
-  }, 'mainForm').addCallback(function(data) {
+  }, 'loginForm').addCallback(function(data) {
     // redirect on success
     top.location.href = wcmf.appURL+'?action=ok';
   });
@@ -28,47 +28,53 @@ wcmf.Action.logout = function() {
 /**
  * The save action
  */
-wcmf.Action.save = function() {
-  var tabContainer = dijit.byId("modeTabContainer");
-  if (tabContainer) {
-	// save the current DetailPane
-	var pane = tabContainer.selectedChildWidget;
-	if (pane instanceof wcmf.ui.DetailPane) {
-	  pane.save();
-	}
+wcmf.Action.save = function(oid) {
+  var typeTabContainer = dijit.byId("nodeTabContainer");
+  if (typeTabContainer) {
+    // save the DetailPane with the given oid
+    var nodeTabContainer = typeTabContainer.selectedChildWidget;
+    var pane = nodeTabContainer.getDetailPane(oid);
+    if (pane != null) {
+      pane.save();
+    }
   }
 };
 
 /**
  * The create action
  */
-wcmf.Action.create = function(type) {
-  var tabContainer = dijit.byId("modeTabContainer");
-  if (tabContainer) {
-	var pane = new wcmf.ui.DetailPane({
-      title: wcmf.Message.get("New %1%", [type]),
-      oid: null,
-      modelClass: wcmf.model[type],
-      href: '?action=detail&type='+type
-    });
-	tabContainer.addChild(pane);
-	tabContainer.selectChild(pane);
+wcmf.Action.create = function(modelClass) {
+  var typeTabContainer = dijit.byId("nodeTabContainer");
+  if (typeTabContainer) {
+    var nodeTabContainer = typeTabContainer.getNodeTabContainer(modelClass);
+    typeTabContainer.selectChild(nodeTabContainer);
+    nodeTabContainer.addNode(wcmf.model.meta.Node.createRandomOid(modelClass.type), true);
   }
 };
 
 /**
  * The edit action
  */
-wcmf.Action.edit = function(type, oid) {
-  var tabContainer = dijit.byId("modeTabContainer");
-  if (tabContainer) {
-	var pane = new wcmf.ui.DetailPane({
-      title: oid,
-      oid: oid,
-      modelClass: wcmf.model[type],
-      href: '?action=detail&oid='+oid
-	});
-	tabContainer.addChild(pane);
-	tabContainer.selectChild(pane);
+wcmf.Action.edit = function(oid) {
+  var modelClass = wcmf.model.meta.Model.getType(wcmf.model.meta.Node.getTypeFromOid(oid));
+  var typeTabContainer = dijit.byId("nodeTabContainer");
+  if (typeTabContainer) {
+    var nodeTabContainer = typeTabContainer.getNodeTabContainer(modelClass);
+    typeTabContainer.selectChild(nodeTabContainer);
+    nodeTabContainer.addNode(oid, false);
+  }
+};
+
+/**
+ * The delete action
+ */
+wcmf.Action.remove = function(oid) {
+  if (confirm(wcmf.Message.get('Are you sure?'))) {
+    var modelClass = wcmf.model.meta.Model.getType(wcmf.model.meta.Node.getTypeFromOid(oid));
+    var typeTabContainer = dijit.byId("nodeTabContainer");
+    if (typeTabContainer) {
+      var nodeTabContainer = typeTabContainer.getNodeTabContainer(modelClass);
+      nodeTabContainer.deleteNode(oid);
+    }
   }
 };

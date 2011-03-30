@@ -31,9 +31,9 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  * subdirectory of the template directory named 'smarty'.
  *
  * Error Handling:
- * - throw an Exception or use action='failure' to signal fatal errors 
+ * - throw an Exception or use action='failure' to signal fatal errors
  *    (displays FailureController)
- * - add an ApplicationError to the response to signal non fatal errors 
+ * - add an ApplicationError to the response to signal non fatal errors
  *    (the message will be displayed in the next view)
  *
  * @param[in/out] action The action to be executed
@@ -53,7 +53,7 @@ abstract class Controller
   private $_request = null;
   private $_response = null;
   private $_executionResult = false;
-  
+
   private $_delegate = null;
 
   /**
@@ -83,7 +83,7 @@ abstract class Controller
   public function initialize(Request $request, Response $response)
   {
     $response->setController($this);
-    
+
     $this->_request = $request;
     $this->_response = $response;
 
@@ -113,7 +113,7 @@ abstract class Controller
    */
   public function hasView()
   {
-    $hasView = $this->_executionResult === false && 
+    $hasView = $this->_executionResult === false &&
       $this->_response->getFormat() == MSG_FORMAT_HTML;
     return $hasView;
   }
@@ -155,7 +155,7 @@ abstract class Controller
       // don't process further if validation failed
       $this->_executionResult = false;
     }
-    
+
     // prepare the response
     $this->assignResponseDefaults();
     if (Log::isDebugEnabled(__CLASS__)) {
@@ -169,6 +169,31 @@ abstract class Controller
    * @return True/False wether ActionMapper should proceed with the next controller or not.
    */
   protected abstract function executeKernel();
+  /**
+   * Delegate the current request to another action. The context is the same as
+   * the current context and the source controller will be set to TerminateController,
+   * which means that the application flow will return after the action (and possible
+   * sub actions) are executed. The request and response format will MSG_FORMAT_NULL
+   * which means that all request values should be passed in the application internal
+   * format and all response values will have that format.
+   * @param action The name of the action to execute
+   * @param requestValues An associative array of key value pairs overwriting,
+   *        the current request values, optional [default: empty array]
+   * @return Response instance
+   */
+  protected function executeSubAction($action, array $requestValues=array())
+  {
+    $curRequest = $this->getRequest();
+    $subRequest = new Request('TerminateController', $curRequest->getContext(), $action);
+    $subRequest->setValues($curRequest->getValues());
+    foreach ($requestValues as $key => $value) {
+      $subRequest->setValue($key, $value);
+    }
+    $subRequest->setFormat(MSG_FORMAT_NULL);
+    $subRequest->setResponseFormat(MSG_FORMAT_NULL);
+    $response = ActionMapper::getInstance()->processAction($subRequest);
+    return $response;
+  }
   /**
    * Get the Request object.
    * @return A reference to the Request object
@@ -230,7 +255,7 @@ abstract class Controller
     else {
       $this->_response->setValue('success', true);
     }
-    
+
     // set wCMF specific values
     $this->_response->setValue('controller', get_class($this));
     $this->_response->setValue('context', $this->_response->getContext());

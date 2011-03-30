@@ -855,6 +855,23 @@ class PersistentObject
     return Message::get($this->getType());
   }
   /**
+   * Get the display value names of the object.
+   * (defined by the property 'is_searchable')
+   * @return An array of value names
+   */
+  public function getDisplayValueNames()
+  {
+    $displayValues = array();
+    $displayValueStr = $this->getProperty('display_value');
+    if (!strPos($displayValueStr, '|')) {
+      $displayValues = array($displayValueStr);
+    }
+    else {
+      $displayValues = preg_split('/\|/', $displayValueStr);
+    }
+    return $displayValues;
+  }
+  /**
    * Get the value of the object used for display.
    * @return The value.
    * @note Sublasses will override this for special application requirements
@@ -896,6 +913,7 @@ class PersistentObject
 
   /**
    * Check if the instance object is contained in the search index
+   * (defined by the property 'is_searchable')
    * @return True/False wether the object is contained or not
    */
   protected function isIndexInSearch()

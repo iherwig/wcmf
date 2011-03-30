@@ -23,8 +23,12 @@
   <link rel="stylesheet" type="text/css" href="style/wcmf.css" />
   <link rel="stylesheet" type="text/css" href="style/dojo_theme/wcmf.css" />
   <link rel="stylesheet" type="text/css" href="style/dojo_theme/EnhancedGrid.css" />
+  <!--
+  <link rel="stylesheet" type="text/css" href="{$libDir}3rdparty/dojo/dijit/themes/claro/claro.css" />
+  <link rel="stylesheet" type="text/css" href="{$libDir}3rdparty/dojo/dojox/grid/enhanced/resources/claro/EnhancedGrid.css" />
+  -->
 
-  <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
+  <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" data-dojo-config="parseOnLoad:true, isDebug:true"></script>
 
   <script type="text/javascript">
     dojo.require("dijit.form.Form");
@@ -39,8 +43,11 @@
     dojo.require("dijit.Menu");
     dojo.require("dijit.MenuItem");
     dojo.require("dijit.PopupMenuItem");
+    dojo.require("dijit.Toolbar");
 
     dojo.require("dojo.fx");
+
+    dojo.require('dojox.uuid.generateRandomUuid');
 
     /**
      * Some global variables in the wcmf namespace
@@ -56,45 +63,44 @@
   <script type="text/javascript" src="js.php?file={$libDir}application/js/message.js.php"></script>
   <script type="text/javascript" src="{$libDir}application/js/Action.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/Error.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/model/meta/Model.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/model/meta/Node.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/EasyRestService.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/Request.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/DionysosService.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/Store.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/ui/TypeTabContainer.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/ui/NodeTabContainer.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/Grid.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/DetailPane.js"></script>
 {/block}
 </head>
 <body class="wcmf">
 <div id="mainDiv">
-<div dojoType="dijit.layout.BorderContainer" style="width:100%; height:100%" gutters="false">
-  <!-- TOP Pane -->
-  <div dojoType="dijit.layout.ContentPane" region="top">
-{block name=title}
-    <div id="head">
-      <span><a href="http://wcmf.sourceforge.net" target="_blank"><img src="images/wcmf_logo.gif" width="180" height="54" alt="wcmf logo" border="0" /></a></span>
-      <!--
-      <span id="title">{configvalue key="applicationTitle" section="cms"}</span>
-      <span id="logininfo">{if $authUser != null}{translate text="Logged in as %1% since %2%" r0=$authUser->getLogin() r1=$authUser->getLoginTime()}{/if}</span>
-      -->
-    </div>
-{/block}
-    <div id="error">
-      <span id="errorMessage">{$errorMessage}</span>
-    </div>
-{block name=navigation}{/block}
+  <div id="error">
+    <span id="errorMessage">{$errorMessage}</span>
   </div>
-  <!-- CENTER Pane -->
-  <div dojoType="dijit.layout.ContentPane" region="center">
-    <div dojoType="dijit.form.Form" id="mainForm" jsId="mainForm" encType="multipart/form-data"
-      action="{$smarty.server.PHP_SELF}" method="post" class="wcmf_form" style="width:100%; height:100%;">
+  <div data-dojo-type="dijit.layout.BorderContainer" id="borderContainer" style="width:100%; height:100%" data-dojo-props="gutters:false">
+    <!-- TOP Pane -->
+    <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'" style="padding-bottom:0;">
+{block name=title}
+      <div id="head">
+        <span id="logo"><a href="http://wcmf.sourceforge.net" target="_blank"><img src="images/wcmf_logo_new.png" height="71" alt="wcmf logo" border="0" /></a></span>
+        <span id="title">{configvalue key="applicationTitle" section="cms"}</span>
+        <span id="logininfo">{if $authUser != null}{translate text="Logged in as %1% since %2%" r0=$authUser->getLogin() r1=$authUser->getLoginTime()}{/if}</span>
+      </div>
+{/block}
+{block name=navigation}{/block}
+    </div>
+    <!-- CENTER Pane -->
+    <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
 {block name=parameters}{/block}
 {block name=content}{/block}
     </div>
+    <!-- BOTTOM Pane -->
+    <!--div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'">
+    </div-->
   </div>
-  <!-- BOTTOM Pane -->
-  <!--div dojoType="dijit.layout.ContentPane" region="bottom">
-  </div-->
-</div>
 </div>
 </body>
 </html>

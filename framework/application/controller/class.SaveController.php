@@ -37,7 +37,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
  * <b>Output actions:</b>
  * - @em ok In any case
  *
- * @param[in] Key/value pairs of serialized object ids and PersistentObject instances to save.
+ * @param[in,out] Key/value pairs of serialized object ids and PersistentObject instances to save.
  * @param[in] uploadDir The directory where attached files should be stored on the server,
  *                      optional (see SaveController::getUploadDir())
  *
@@ -81,7 +81,9 @@ class SaveController extends Controller
     // store all invalid parameters for later reference
     $lockedOids = array();
     $invalidOids = array();
+    $invalidAttributeNames = array();
     $invalidAttributeValues = array();
+    $curNode = null;
 
     // iterate over request values and check for oid/object pairs
     $saveData = $request->getValues();
@@ -102,8 +104,13 @@ class SaveController extends Controller
         }
 
         // iterate over all values given in the node
+        $mapper = $curRequestObject->getMapper();
         foreach ($curRequestObject->getValueNames() as $curValueName)
         {
+          // check if the attribute exists
+          if ($mapper && !$mapper->hasAttribute($curValueName) && !$mapper->hasRelation($curValueName)) {
+            $invalidAttributeNames[] = $curValueName;
+          }
           $curRequestValue = $curRequestObject->getValue($curValueName);
 
           // save uploaded file/ process array values
@@ -148,6 +155,7 @@ class SaveController extends Controller
               // load the existing object, if this is a save request in order to merge
               // the new with the existing values
               $curNode = $persistenceFacade->load($curOid, BUILDDEPTH_SINGLE);
+              $nodeArray[$curOidStr] = &$curNode;
             }
             if ($curNode == null) {
               $invalidOids[] = $curOidStr;
@@ -189,10 +197,7 @@ class SaveController extends Controller
             }
           }
 
-          // add node to node array
-          if (!isset($nodeArray[$curOidStr])) {
-            $nodeArray[$curOidStr] = &$curNode;
-          }
+          // add node to save array
           if ($curNode->getState() == PersistentObject::STATE_DIRTY) {
             // associative array to asure uniqueness
             $saveOids[$curOidStr] = $curOidStr;
@@ -209,6 +214,10 @@ class SaveController extends Controller
     if (sizeof($invalidOids) > 0) {
       $response->addError(ApplicationError::get('OID_INVALID',
         array('invalidOids' => $invalidOids)));
+    }
+    if (sizeof($invalidAttributeNames) > 0) {
+      $response->addError(ApplicationError::get('ATTRIBUTE_NAME_INVALID',
+        array('invalidAttributeNames' => $invalidAttributeNames)));
     }
     if (sizeof($invalidAttributeValues) > 0) {
       $response->addError(ApplicationError::get('ATTRIBUTE_VALUE_INVALID',
@@ -235,13 +244,13 @@ class SaveController extends Controller
         }
       }
     }
+    // end the persistence transaction
+    $persistenceFacade->commitTransaction();
+
     // return the saved nodes
     foreach ($nodeArray as $oidStr => $node) {
       $response->setValue($oidStr, $node);
     }
-
-    // end the persistence transaction
-    $persistenceFacade->commitTransaction();
 
     $response->setAction('ok');
     return true;

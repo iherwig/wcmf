@@ -32,7 +32,7 @@ class FileBrowserControl extends Control
    */
   protected function assignViewValues(IView $view)
   {
-    $view->assign('directory', dirname($view->get_template_vars('value')));
+    $view->assign('directory', dirname($view->getTemplateVars('value')));
   }
 }
 ?>

@@ -45,9 +45,9 @@ require_once(WCMF_BASE."wcmf/lib/model/class.StringQuery.php");
  *              for descending. If omitted, "asc" is assumed [optional]
  * @param[in] attributes The list of attributes of the entity type to return. If omitted,
  *              all attributes will be returned [optional]
+ * @param[in] query A query condition executed with StringQuery
  *
  * @param[in] poid The parent object id of the entities if any (this is used to set relation information on the result)
- * @param[in] filter A query condition executed with StringQuery
  * @param[in] renderValues True/False wether to render the values using NodeUtil::renderValues or not
  *              (optional, default: false)
  * @param[in] completeObjects True/False wether to return all object attributes objects or only the display values
@@ -100,16 +100,16 @@ class ListController extends Controller
     $request = $this->getRequest();
     $rightsManager = RightsManager::getInstance();
 
-    // unveil the filter value if it is ofuscated
-    $filter = null;
-    if ($request->hasValue('filter'))
+    // unveil the query value if it is ofuscated
+    $query = null;
+    if ($request->hasValue('query'))
     {
-      $filter = $request->getValue('filter');
-      if (strlen($filter) > 0)
+      $query = $request->getValue('query');
+      if (strlen($query) > 0)
       {
-        $unveiled = Obfuscator::unveil($filter);
+        $unveiled = Obfuscator::unveil($query);
         if (strlen($unveiled) > 0) {
-          $filter = stripslashes($unveiled);
+          $query = stripslashes($unveiled);
         }
       }
     }
@@ -128,7 +128,7 @@ class ListController extends Controller
       $sortArray = array($orderBy." ".$request->getValue('sortDirection'));
     }
     // get the object ids
-    $objects = $this->getObjects($request->getValue('className'), $filter, $sortArray, $pagingInfo);
+    $objects = $this->getObjects($request->getValue('className'), $query, $sortArray, $pagingInfo);
 
     // collect the nodes
     $nodes = array();
@@ -169,12 +169,12 @@ class ListController extends Controller
    * object retrieval. Subclasses may override this. If filter is an empty string, all nodes of the given
    * type will be selected.
    * @param type The object type
-   * @param filter The query condition passed from the view (to be used with StringQuery).
+   * @param queryCondition The query condition passed from the view (to be used with StringQuery).
    * @param sortArray An array of attributes to order by (with an optional ASC|DESC appended)
    * @param pagingInfo A reference to the current paging information (PagingInfo instance)
    * @return An array of object instances
    */
-  function getObjects($type, $filter, $sortArray, $pagingInfo)
+  function getObjects($type, $queryCondition, $sortArray, $pagingInfo)
   {
     if(!PersistenceFacade::getInstance()->isKnownType($type)) {
       return array();
@@ -185,7 +185,7 @@ class ListController extends Controller
       $filter = NodeUtil::getNodeQuery($type);
     }*/
     $query = new StringQuery($type);
-    $query->setConditionString($filter);
+    $query->setConditionString($queryCondition);
     $objects = $query->execute(BUILDDEPTH_SINGLE, $sortArray, $pagingInfo);
     return $objects;
   }

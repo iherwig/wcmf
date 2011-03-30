@@ -65,7 +65,7 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.ChangeListener.php");
  * $authorTpl1->setValue("email", "LIKE '%wemove%'");
  *
  * // OR Author.name LIKE '%herwig%'
- * $authorTpl2 = &$query->getObjectTemplate('Author', Criteria::OPERATOR_OR);
+ * $authorTpl2 = &$query->getObjectTemplate('Author', null, Criteria::OPERATOR_OR);
  * $authorTpl2->setValue("name", "herwig");
  *
  * // Recipe.created >= '2004-01-01' AND Recipe.created < '2005-01-01'
@@ -79,7 +79,7 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.ChangeListener.php");
  * // of the ObjectQuery::makeGroup() method
  * $recipeTpl3 = &$query->getObjectTemplate('Recipe');
  * $recipeTpl3->setValue("name", "Salat");
- * $recipeTpl4 = &$query->getObjectTemplate('Recipe', Criteria::OPERATOR_OR);
+ * $recipeTpl4 = &$query->getObjectTemplate('Recipe', null, Criteria::OPERATOR_OR);
  * $recipeTpl4->setValue("portions", "= 4");
  * $query->makeGroup(array(&$recipeTpl3, &$recipeTpl4), Criteria::OPERATOR_AND);
  *
@@ -128,12 +128,13 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
   /**
    * Get an object template for a given type.
    * @param type The type to query for
+   * @param alias An alias name to be used in the query. if null, use the default name [default: null]
    * @param combineOperator One of the Criteria::OPERATOR constants that precedes
    *    the conditions described in the template [default: Criteria::OPERATOR_AND]
    * @return A newly created instance of a Node subclass, that defines
    *         the requested type.
    */
-  public function getObjectTemplate($type, $combineOperator=Criteria::OPERATOR_AND)
+  public function getObjectTemplate($type, $alias=null, $combineOperator=Criteria::OPERATOR_AND)
   {
     $template = null;
 
@@ -149,16 +150,20 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
       $this->_rootNodes[] = $template;
     }
     $template->setProperty(self::PROPERTY_COMBINE_OPERATOR, $combineOperator);
+    if ($alias != null) {
+      $template->setProperty(self::PROPERTY_TABLE_NAME, $alias);
+    }
     $template->addChangeListener($this);
     return $template;
   }
   /**
    * Register an object template at the query.
    * @param template A reference to the template to register (must be an instance of PersistentObject)
+   * @param alias An alias name to be used in the query. if null, use the default name [default: null]
    * @param combineOperator One of the Criteria::OPERATOR constants that precedes
    *    the conditions described in the template [default: Criteria::OPERATOR_AND]
    */
-  public function registerObjectTemplate(Node $template, $combineOperator=Criteria::OPERATOR_AND)
+  public function registerObjectTemplate(Node $template, $alias=null, $combineOperator=Criteria::OPERATOR_AND)
   {
     if ($template != null)
     {
@@ -168,6 +173,9 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
       $template->copyValues($template);
 
       $template->setProperty(self::PROPERTY_COMBINE_OPERATOR, $combineOperator);
+      if ($alias != null) {
+        $template->setProperty(self::PROPERTY_TABLE_NAME, $alias);
+      }
 
       // replace the typeNode, the first time a node template of the query type is registered
       if ($template->getType() == $this->_typeNode->getType() && !$this->_isTypeNodeInQuery)
@@ -207,6 +215,21 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
     }
   }
   /**
+   * Get the condition part of the query. This is especially useful to
+   * build a StringQuery from the query objects.
+   * @return String
+   */
+  public function getQueryCondition()
+  {
+    $query = $this->getQueryString();
+    $tmp = preg_split("/ WHERE /i", $query);
+    if (sizeof($tmp) > 1) {
+      $tmp = preg_split("/ ORDER /i", $tmp[1]);
+      return $tmp[0];
+    }
+    return '';
+  }
+  /**
    * @see AbstractQuery::getQueryType()
    */
   protected function getQueryType()
@@ -228,7 +251,7 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
     // process all root nodes except for grouped nodes
     foreach ($this->_rootNodes as $curNode)
     {
-      if ($curNode->getNumParents() == 0 && !in_array($curNode->getOID(), $this->_groupedOIDs)) {
+      if (!in_array($curNode->getOID(), $this->_groupedOIDs)) {
         $this->processObjectTemplate($curNode, $selectStmt);
       }
     }
@@ -327,65 +350,81 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
 
     // add relations to children (this includes also many to many relations)
     // and process children
-    foreach ($mapper->getRelations('child') as $relationDescription)
+    foreach ($mapper->getRelations() as $relationDescription)
     {
-      $children = $tpl->getChildrenEx(null, $relationDescription->getOtherRole());
+      $children = $tpl->getValue($relationDescription->getOtherRole());
+      if ($children != null && !is_array($children)) {
+        $children = array($children);
+      }
       for($i=0, $count=sizeof($children); $i<$count; $i++)
       {
         $curChild = $children[$i];
-
-        // process relations
-
-        // don't process the relation twice (e.g. in a many to many relation, both
-        // ends are child ends)
-        if (!isset($this->_processedNodes[$curChild->getOID()->__toString()]))
+        if ($curChild instanceof Node)
         {
-          // don't join the tables twice
-          $childTableName = self::getTableName($curChild);
-          $fromPart = $selectStmt->getPart(Zend_Db_Select::FROM);
-          if (!isset($fromPart[$childTableName['alias']]))
+          // process relations
+
+          // don't process the relation twice (e.g. in a many to many relation, both
+          // ends are child ends)
+          if (!isset($this->_processedNodes[$curChild->getOID()->__toString()]))
           {
-            $childMapper = self::getMapper($curChild->getType());
-            if ($relationDescription instanceof RDBOneToManyRelationDescription)
+            // don't join the tables twice
+            $childTableName = self::getTableName($curChild);
+            $fromPart = $selectStmt->getPart(Zend_Db_Select::FROM);
+            if (!isset($fromPart[$childTableName['alias']]))
             {
-              $idAttr = $mapper->getAttribute($relationDescription->getIdName());
-              $fkAttr = $childMapper->getAttribute($relationDescription->getFkName());
-              $joinCondition = $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).".".
-                      $childMapper->quoteIdentifier($fkAttr->getColumn())." = ".
-                      $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).".".
-                      $mapper->quoteIdentifier($idAttr->getColumn());
+              $childMapper = self::getMapper($curChild->getType());
+              if ($relationDescription instanceof RDBManyToOneRelationDescription)
+              {
+                $idAttr = $childMapper->getAttribute($relationDescription->getIdName());
+                $fkAttr = $mapper->getAttribute($relationDescription->getFkName());
+                $joinCondition = $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).".".
+                        $mapper->quoteIdentifier($fkAttr->getColumn())." = ".
+                        $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).".".
+                        $childMapper->quoteIdentifier($idAttr->getColumn());
 
-              $selectStmt->join(array($childTableName['alias'], $childTableName['name']), $joinCondition, '');
-            }
-            elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
-            {
-              $thisRelationDescription = $relationDescription->getThisEndRelation();
-              $otherRelationDescription = $relationDescription->getOtherEndRelation();
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, '');
+              }
+              elseif ($relationDescription instanceof RDBOneToManyRelationDescription)
+              {
+                $idAttr = $mapper->getAttribute($relationDescription->getIdName());
+                $fkAttr = $childMapper->getAttribute($relationDescription->getFkName());
+                $joinCondition = $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).".".
+                        $childMapper->quoteIdentifier($fkAttr->getColumn())." = ".
+                        $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).".".
+                        $mapper->quoteIdentifier($idAttr->getColumn());
 
-              $nmMapper = self::getMapper($thisRelationDescription->getOtherType());
-              $otherFkAttr = $nmMapper->getAttribute($otherRelationDescription->getFkName());
-              $otherIdAttr = $childMapper->getAttribute($otherRelationDescription->getIdName());
-              $thisFkAttr = $nmMapper->getAttribute($thisRelationDescription->getFkName());
-              $thisIdAttr = $mapper->getAttribute($thisRelationDescription->getIdName());
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, '');
+              }
+              elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
+              {
+                $thisRelationDescription = $relationDescription->getThisEndRelation();
+                $otherRelationDescription = $relationDescription->getOtherEndRelation();
 
-              $joinCondition1 = $nmMapper->quoteIdentifier($nmMapper->getRealTableName()).".".
-                      $nmMapper->quoteIdentifier($thisFkAttr->getColumn())." = ".
-                      $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).".".
-                      $mapper->quoteIdentifier($thisIdAttr->getColumn());
-              $joinCondition2 = $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).".".
-                      $childMapper->quoteIdentifier($otherIdAttr->getColumn())." = ".
-                      $nmMapper->quoteIdentifier($nmMapper->getRealTableName()).".".
-                      $nmMapper->quoteIdentifier($otherFkAttr->getColumn());
+                $nmMapper = self::getMapper($thisRelationDescription->getOtherType());
+                $otherFkAttr = $nmMapper->getAttribute($otherRelationDescription->getFkName());
+                $otherIdAttr = $childMapper->getAttribute($otherRelationDescription->getIdName());
+                $thisFkAttr = $nmMapper->getAttribute($thisRelationDescription->getFkName());
+                $thisIdAttr = $mapper->getAttribute($thisRelationDescription->getIdName());
 
-              $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, '');
-              $selectStmt->join(array($childTableName['alias'], $childTableName['name']), $joinCondition2, '');
+                $joinCondition1 = $nmMapper->quoteIdentifier($nmMapper->getRealTableName()).".".
+                        $nmMapper->quoteIdentifier($thisFkAttr->getColumn())." = ".
+                        $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).".".
+                        $mapper->quoteIdentifier($thisIdAttr->getColumn());
+                $joinCondition2 = $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).".".
+                        $childMapper->quoteIdentifier($otherIdAttr->getColumn())." = ".
+                        $nmMapper->quoteIdentifier($nmMapper->getRealTableName()).".".
+                        $nmMapper->quoteIdentifier($otherFkAttr->getColumn());
+
+                $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, '');
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, '');
+              }
             }
           }
-        }
 
-        // process child
-        if (!in_array($curChild->getOID(), $this->_groupedOIDs)) {
-          $this->processObjectTemplate($curChild, $selectStmt);
+          // process child
+          if (!in_array($curChild->getOID(), $this->_groupedOIDs)) {
+            $this->processObjectTemplate($curChild, $selectStmt);
+          }
         }
       }
     }
@@ -407,8 +446,12 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
 
       // if the template is the child of another node of the same type,
       // we must use a table alias
-      if (sizeof($tpl->getParentsEx(null, null, $tpl->getType())) > 0) {
-        $tableName .= '_'.($this->_aliasCounter++);
+      $parents = $tpl->getParentsEx(null, null, $tpl->getType());
+      foreach ($parents as $curParent) {
+        $curParentTableName = $curParent->getProperty(self::PROPERTY_TABLE_NAME);
+        if ($curParentTableName == $tableName) {
+          $tableName .= '_'.($this->_aliasCounter++);
+        }
       }
       // set the table name for later reference
       $tpl->setProperty(self::PROPERTY_TABLE_NAME, $tableName);

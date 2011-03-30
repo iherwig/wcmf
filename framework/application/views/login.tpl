@@ -15,7 +15,7 @@
 {/block}
 
 {block name=content}
-<div class="contentblock">
+<div id="loginForm" class="wcmf_form" style="width:100%; height:100%;">
   <fieldset>
     <legend>{translate text="Login"}</legend>
     <ol>
@@ -33,7 +33,7 @@
       </li>
     </ol>
   </fieldset>
-  <p>  
+  <p>
     <button dojoType="dijit.form.Button" type="button">{translate text="Log in"}
       <script type="dojo/method" event="onClick" args="evt">wcmf.Action.login();</script>
     </button>

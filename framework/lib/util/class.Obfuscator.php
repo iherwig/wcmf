@@ -83,8 +83,12 @@ class Obfuscator
     $obfuscator->ensureStorage();
 
     $values = $session->get(self::$VALUES_VARNAME);
-    $unveiled = $values[$str];
-    return $unveiled;
+    if (isset($values[$str])) {
+      return $values[$str];
+    }
+    else {
+      return $str;
+    }
   }
   /**
    * Ensure that the session storage for the values is initialized

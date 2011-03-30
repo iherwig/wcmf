@@ -34,24 +34,45 @@ require_once(WCMF_BASE."wcmf/lib/visitor/class.CommitVisitor.php");
  * <b>Output actions:</b>
  * - @em ok In any case
  *
- * @param[in] poid The oid of the Node to add the new type to (if needed)
- * @param[in] newtype The type of Node to create
- * @param[in] newrole The role of the created node in relation to the parent node (only used if poid is set)
- * @param[in] <type:...> A Node instance that defines the values of the new node (optional)
- * @param[out] oid The object id of the last created Node
+ * @param[in] className The name of the class of the object to create or
+ * @param[in,out] Key/value pair of a dummy object id and a PersistentObject instance
+ *   holding the initial attribute values
+ * @param[out] oid The serialized object id of the newly created object
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class InsertController extends Controller
 {
   /**
+   * @see Controller::initialize()
+   */
+  public function initialize(Request $request, Response $response)
+  {
+    if (!$request->hasValue('className'))
+    {
+      // determine the className parameter from the given object if possible
+      $saveData = $request->getValues();
+      foreach($saveData as $curOidStr => $curRequestObject)
+      {
+        if ($curRequestObject instanceof PersistentObject) {
+          $request->setValue('className', $curRequestObject->getType());
+          break;
+        }
+      }
+    }
+    parent::initialize($request, $response);
+  }
+  /**
    * @see Controller::validate()
    */
-  function validate()
+  protected function validate()
   {
-    if(!$this->_request->hasValue('newtype'))
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    if(!$request->hasValue('className'))
     {
-      $this->appendErrorMsg("No 'newtype' given in data.");
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => array('className'))));
       return false;
     }
     return true;
@@ -59,115 +80,80 @@ class InsertController extends Controller
   /**
    * @see Controller::hasView()
    */
-  function hasView()
+  public function hasView()
   {
     return false;
   }
   /**
-   * Add new Nodes to parent Node.
-   * @return Array of given context and action 'ok' in every case.
+   * Create a new Node.
    * @see Controller::executeKernel()
    */
-  function executeKernel()
+  public function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $nodeUtil = new NodeUtil();
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $request = $this->getRequest();
+    $response = $this->getResponse();
 
     // start the persistence transaction
     $persistenceFacade->startTransaction();
 
-    // load parent node if a valid poid is given, add to root else
-    $parentNode = null;
-    $possibleChildren = null;
-    $poid = $this->_request->getValue('poid');
-    if (PersistenceFacade::isValidOID($poid))
-    {
-      $parentNode = &$persistenceFacade->load($poid, BUILDDEPTH_SINGLE);
-      $poidParts = PersistenceFacade::decomposeOID($poid);
-      $parentTemplate = &$persistenceFacade->create($poidParts['type'], 1);
-      $possibleChildren = $nodeUtil->getPossibleChildren($parentNode, $parentTemplate);
-    }
-
-    // construct child to insert
-    $newType = $this->_request->getValue('newtype');
-    $newRole = $this->_request->getValue('newrole');
-    if ($parentNode != null)
-    {
-      // check insertion as child of another object
-      if (!in_array($newRole, array_keys($possibleChildren)))
-      {
-        $this->appendErrorMsg(Message::get("%1% does not accept children with role %2%. The parent type is not compatible.", array($poid, $newRole)));
-        return true;
-      }
-      else
-      {
-        $template = &$possibleChildren[$newRole];
-        if (!$template->getProperty('canCreate'))
-        {
-          $this->appendErrorMsg(Message::get("%1% does not accept children with role %2%. The maximum number of children of that type is reached.", array($poid, $newRole)));
-          return true;
-        }
-      }
-    }
-    $newNode = &$persistenceFacade->create($newType, BUILDDEPTH_REQUIRED);
+    // construct the Node to insert
+    $newType = $request->getValue('className');
+    $newNode = $persistenceFacade->create($newType, BUILDDEPTH_REQUIRED);
 
     // look for a node template in the request parameters
     $localizationTpl = null;
-    foreach($this->_request->getValues() as $key => $value)
+    $saveData = $request->getValues();
+    foreach($saveData as $curOidStr => $curRequestObject)
     {
-      if (PersistenceFacade::isValidOID($key) && PersistenceFacade::getOIDParameter($key, 'type') == $newType)
+      if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
+              && $curOid->getType() == $newType)
       {
-        $tpl = &$value;
-
         if ($this->isLocalizedRequest())
         {
           // copy values from the node template to the localization template for later use
-          $localizationTpl = &$persistenceFacade->create($newType, BUIDLDEPTH_SINGLE);
-          $tpl->copyValues($localizationTpl, false);
+          $localizationTpl = $persistenceFacade->create($newType, BUIDLDEPTH_SINGLE);
+          $curRequestObject->copyValues($localizationTpl, false);
         }
         else
         {
           // copy values from the node template to the new node
-          $tpl->copyValues($newNode, false);
+          $curRequestObject->copyValues($newNode, false);
         }
         break;
       }
     }
 
-    if ($this->confirmInsert($newNode) && $parentNode != null) {
-      $parentNode->addNode($newNode, $newRole);
-    }
-    $this->modify($newNode);
-    $needCommit = true;
-
-    // commit changes
-    if ($needCommit)
+    if ($this->confirmInsert($newNode))
     {
+      $this->modify($newNode);
+
       // commit the new node and its descendants
       // we need to use the CommitVisitor because many to many objects maybe included
       $nIter = new NodeIterator($newNode);
       $cv = new CommitVisitor();
       $cv->startIterator($nIter);
+
+      // if the request is localized, use the localization template as translation
+      if ($this->isLocalizedRequest() && $localizationTpl != null)
+      {
+        $localizationTpl->setOID($newNode->getOID());
+        $localization = Localization::getInstance();
+        $localization->saveTranslation($localizationTpl, $request->getValue('language'));
+      }
+
+      // after insert
+      $this->afterInsert($newNode);
     }
-
-    // if the request is localized, use the localization template as translation
-    if ($this->isLocalizedRequest() && $localizationTpl != null)
-    {
-      $localizationTpl->setOID($newNode->getOID());
-      $localization = Localization::getInstance();
-      $localization->saveTranslation($localizationTpl, $this->_request->getValue('language'));
-    }
-
-    // after insert
-    $this->afterInsert($newNode);
-
     // end the persistence transaction
     $persistenceFacade->commitTransaction();
 
     // return the oid of the inserted node
-    $this->_response->setValue('oid', $newNode->getOID());
+    $oidStr = $newNode->getOID()->__toString();
+    $response->setValue('oid', $oidStr);
+    $response->setValue($oidStr, $newNode);
 
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return true;
   }
   /**
@@ -176,7 +162,7 @@ class InsertController extends Controller
    * @param node A reference to the Node to confirm.
    * @return True/False whether the Node should be inserted [default: true].
    */
-  function confirmInsert(&$node)
+  protected function confirmInsert($node)
   {
     return true;
   }
@@ -186,7 +172,7 @@ class InsertController extends Controller
    * @param node A reference to the Node to modify.
    * @return True/False whether the Node was modified [default: false].
    */
-  function modify(&$node)
+  protected function modify($node)
   {
     return false;
   }
@@ -196,7 +182,7 @@ class InsertController extends Controller
    * @param node A reference to the Node inserted.
    * @note The method is called for all insert candidates even if they are not inserted (use PersistentObject::getState() to confirm).
    */
-  function afterInsert(&$node) {}
+  protected function afterInsert($node) {}
 }
 ?>
 

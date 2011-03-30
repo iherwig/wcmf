@@ -109,6 +109,7 @@ class HTMLFormat extends AbstractFormat
       // assign additional values
       $rightsManager = RightsManager::getInstance();
       $authUser = $rightsManager->getAuthUser();
+      $view->assignByRef('nodeUtil', new NodeUtil());
       $view->assignByRef('obfuscator', Obfuscator::getInstance());
       if ($authUser != null) {
         $view->assignByRef('authUser', $authUser);

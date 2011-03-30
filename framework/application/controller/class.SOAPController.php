@@ -87,7 +87,7 @@ class SOAPController extends Controller
     foreach ($types as $type)
     {
       $query = new ObjectQuery($type);
-      $tpl = &$query->getObjectTemplate($type, ObjectQuery::QUERYOP_OR, ObjectQuery::QUERYOP_OR);
+      $tpl = &$query->getObjectTemplate($type, null,  ObjectQuery::QUERYOP_OR, ObjectQuery::QUERYOP_OR);
 
       // only search types with attributes and which are searchable
       if ($tpl->getProperty('is_searchable') == true)

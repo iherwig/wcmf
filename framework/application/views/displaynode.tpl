@@ -6,9 +6,14 @@ dojo.addOnLoad(function() {
 
   var detailNode = dojo.byId("detail{$object->getOID()}");
   var detailPane = dijit.getEnclosingWidget(detailNode.parentNode);
-  if (detailPane.oid) {
+  if (!detailPane.getIsNewNode()) {
     detailPane.set("title", "{$object->getDisplayValue()}");
   }
+
+  var relationTabContainer = new dijit.layout.TabContainer({
+    useMenu: true,
+    tabPosition: "bottom"
+  }, dojo.byId("relationTabContainer{$object->getOID()}Div"));
 
   /**
    * Create a grid for each related type
@@ -16,24 +21,31 @@ dojo.addOnLoad(function() {
 {foreach item=relation from=$mapper->getRelations()}
 {$type=$relation->getOtherType()}
 {$role=$relation->getOtherRole()}
+  var {$role}Pane = new dijit.layout.ContentPane({
+    title: '{$role}'
+  });
   var {$role}Grid = new wcmf.ui.Grid({
     modelClass: wcmf.model.{$type},
-    autoHeight: 10,
-    rowsPerPage: 10,
-    rowCount: 10
-  }, dojo.byId("grid{$object->getOID()}{$role}Div"));
-  {$role}Grid.startup();
+    query: {
+      query: "{$obfuscator->obfuscate($nodeUtil->getRelationQueryCondition($object, $role))}"
+    }
+  });
+  {$role}Pane.set('content', {$role}Grid);
   {$role}Grid.initEvents();
+  relationTabContainer.addChild({$role}Pane);
 
 {/foreach}
+
+  relationTabContainer.startup();
 });
 </script>
 
-<div id="detail{$object->getOID()}">
-  <div class="leftcol">
-    <div class="contentblock">
+<div data-dojo-type="dijit.layout.BorderContainer" id="detail{$object->getOID()}" style="padding:0; width:100%; height:100%" data-dojo-props="gutters:false">
+  <!-- CENTER Pane -->
+  <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'leading'" style="padding:0; width:370px;">
+    <div class="wcmf_form">
       <fieldset>
-        <legend>{$object->getDisplayValue()}</legend>
+        <!--legend>{$object->getDisplayValue()}</legend-->
         <ol>
       {foreach item=attribute from=$mapper->getAttributes(array('DATATYPE_IGNORE'), 'none')}
       {$attributeName=$attribute->getName()}
@@ -42,13 +54,12 @@ dojo.addOnLoad(function() {
             {input object=$object name=$attributeName}
           </li>
       {/foreach}
-       </ol>
-     </div>
+        </ol>
+      </fieldset>
+    </div>
   </div>
-  <div class="rightcol">
-    {foreach item=relation from=$mapper->getRelations()}
-    <h2>{$relation->getOtherRole()}</h2>
-    <div id="grid{$object->getOID()}{$relation->getOtherRole()}Div" style="width:445px; height:200px;"></div>
-    {/foreach}
+  <!-- RIGHT Pane -->
+  <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'" style="padding:0;">
+    <div id="relationTabContainer{$object->getOID()}Div"></div>
   </div>
 </div>

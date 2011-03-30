@@ -59,13 +59,10 @@ abstract class AbstractQuery
    */
   public function getQueryString()
   {
-    if ($this->_selectStmt != null) {
-      return $this->_selectStmt->__toString();
+    if ($this->_selectStmt == null) {
+      $this->_selectStmt = $this->buildQuery();
     }
-    else {
-      $selectStmt = $this->buildQuery();
-      return $selectStmt->__toString();
-    }
+    return $this->_selectStmt->__toString();
   }
   /**
    * Build the query

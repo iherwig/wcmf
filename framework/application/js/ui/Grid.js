@@ -7,6 +7,7 @@ dojo.require("dojox.grid.EnhancedGrid");
 dojo.require("dojox.grid.enhanced.plugins.DnD");
 dojo.require("dojox.grid.enhanced.plugins.NestedSorting");
 dojo.require("dojox.grid.enhanced.plugins.IndirectSelection");
+dojo.require("dojox.grid.enhanced.plugins.Filter");
 
 dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
@@ -14,12 +15,13 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
   plugins: {
       nestedSorting: true,
       //indirectSelection: true,
-      dnd: true
+      dnd: true,
+      filter: true
   },
   delayScroll: true,
   //elasticView: "2",
   rowSelector: "0px",
-  autoWidth: true,
+  autoWidth: false,
   autoHeight: false,
   rowsPerPage: 25,
   rowCount: 25,
@@ -50,13 +52,11 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
       // edit action
       if (event.cell.field == '_edit') {
-        wcmf.Action.edit(this.modelClass.type, item.oid);
+        wcmf.Action.edit(item.oid);
       }
       // delete action
       if (event.cell.field == '_delete') {
-    	if (confirm(wcmf.Message.get('Are you sure?'))) {
-          this.store.deleteItem(this.store.fetchItemByIdentity({identity:item}));
-    	}
+        wcmf.Action.remove(item.oid);
       }
     });
     dojo.connect(this, "onApplyCellEdit", this, function(value, rowIndex, fieldIndex) {
@@ -66,7 +66,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     dojo.connect(this, "onSelected", this, function(item, attribute, oldValue, newValue) {
       this.store.save();
     });
-	dojo.connect(this, "onShow", this, this.resizeGrid);
+    dojo.connect(this, "onShow", this, this.resizeGrid);
   },
 
   resizeGrid: function() {
@@ -77,7 +77,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
   getDefaultLayout: function() {
     var layout = {};
-    layout.defaultCell = { width: "100px" };
+    layout.defaultCell = { width: "auto" };
     layout.cells = [];
     dojo.forEach(this.modelClass.attributes, function(item) {
     if (dojo.some(item.tags, "return item == 'DATATYPE_ATTRIBUTE';")) {
@@ -110,13 +110,13 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
    * Formatter for the edit column
    */
   formatEdit: function(item) {
-    return '<img src="images/edit.png" />';
+    return '<div class="wcmfToolbarIcon wcmfToolbarIconEdit"></div>'
   },
 
   /**
    * Formatter for the delete column
    */
   formatDelete: function(item) {
-    return '<img src="images/delete.png" />';
+    return '<div class="wcmfToolbarIcon wcmfToolbarIconDelete"></div>'
   }
 });

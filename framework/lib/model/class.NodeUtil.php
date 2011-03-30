@@ -21,6 +21,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.ObjectQuery.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PathDescription.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/control/class.Control.php");
@@ -119,22 +120,22 @@ class NodeUtil
     }
   }
   /**
-   * Get the query used to select all Nodes of a type.
+   * Get the query condition used to select all Nodes of a type.
    * @param nodeType The Node type
-   * @return The serialized query string to be used with ObjectQuery::executeString.
+   * @return The condition string to be used with StringQuery.
    */
-  public static function getNodeQuery($nodeType)
+  public static function getNodeQueryCondition($nodeType)
   {
     $query = new ObjectQuery($nodeType);
-    return $query->getQueryString();
+    return $query->getQueryCondition();
   }
   /**
-   * Get the query used to select a special Node.
+   * Get the query condition used to select a special Node.
    * @param nodeType The Node type
    * @param oid The object id of the node
-   * @return The serialized query string to be used with ObjectQuery::executeString.
+   * @return The condition string to be used with StringQuery.
    */
-  public static function getSelfQuery($nodeType, ObjectId $oid)
+  public static function getSelfQueryCondition($nodeType, ObjectId $oid)
   {
     $query = new ObjectQuery($nodeType);
     $tpl = $query->getObjectTemplate($nodeType);
@@ -147,64 +148,29 @@ class NodeUtil
     return $query->getQueryString();
   }
   /**
-   * Get the query used to select all parent Nodes of a given role.
-   * @param parentRole The parent role
-   * @param childNode The Node to select the parents for
-   * @return The serialized query string to be used with ObjectQuery::executeString.
+   * Get the query condition used to select all related Nodes of a given role.
+   * @param node The Node to select the relatives for
+   * @param otherRole The role of the other nodes
+   * @return The condition string to be used with StringQuery.
    */
-  public static function getParentQuery($parentRole, Node $childNode)
+  public static function getRelationQueryCondition($node, $otherRole)
   {
-    $parentType = $childNode->getTypeForRole($parentRole);
-  //Log::error($parentRole." ".$parentType." ".$childNode->toString(), __CLASS__);
-    $query = new ObjectQuery($parentType);
-    $tpl = $query->getObjectTemplate($parentType);
-    // prepare the child: use a new one and set the primary key values
-    $cTpl = $query->getObjectTemplate($childNode->getType());
-    $mapper = $childNode->getMapper();
-    foreach ($mapper->getPkNames() as $pkName) {
-      $cTpl->setValue($pkName, '= '.$childNode->getValue($pkName));
+    $mapper = $node->getMapper();
+    $relationDescription = $mapper->getRelation($otherRole);
+    $otherType = $relationDescription->getOtherType();
+
+    $query = new ObjectQuery($otherType);
+    // register the node using the role name as alias (avoids ambiguous paths)
+    $query->registerObjectTemplate($node, $relationDescription->getThisRole());
+    $tpl = $query->getObjectTemplate($otherType);
+    $node->addNode($tpl, $otherRole);
+    $condition = $query->getQueryCondition();
+    $node->deleteNode($tpl, $otherRole);
+    // prevent selecting all objects, if the condition is empty
+    if (strlen($condition) == 0) {
+      $condition = 0;
     }
-    $tpl->addNode($cTpl, $childNode->getOppositeRole($parentRole));
-  //Log::error($query->getQueryString(), __CLASS__);
-    return $query->getQueryString();
-  }
-  /**
-   * Get the query used to select all child Nodes of a given role.
-   * @param parentNode The Node to select the children for
-   * @param childRole The child role
-   * @return The serialized query string to be used with ObjectQuery::executeString.
-   */
-  public static function getChildQuery(Node $parentNode, $childRole)
-  {
-    $childType = $parentNode->getTypeForRole($childRole);
-  //Log::error($childRole." ".$childType." ".$parentNode->toString(), __CLASS__);
-    $query = new ObjectQuery($childType);
-    $tpl = $query->getObjectTemplate($childType);
-    // prepare the parent: use a new one and set the primary key values
-    $pTpl = $query->getObjectTemplate($parentNode->getType());
-    $mapper = $parentNode->getMapper();
-    foreach ($mapper->getPkNames() as $pkName) {
-      $pTpl->setValue($pkName, '= '.$parentNode->getValue($pkName));
-    }
-    $pTpl->addNode($tpl);
-  //Log::error($query->getQueryString(), __CLASS__);
-    return $query->getQueryString();
-  }
-  /**
-   * Get the display value names of a Node.
-   * @param node The Node instance
-   * @return An array of value names
-   */
-  public static function getDisplayValueNames(Node $node)
-  {
-    $displayValueStr = $node->getProperty('display_value');
-    if (!strPos($displayValueStr, '|')) {
-      $displayValues = array($displayValueStr);
-    }
-    else {
-      $displayValues = preg_split('/\|/', $displayValueStr);
-    }
-    return $displayValues;
+    return $condition;
   }
   /**
    * Get the display value for a Node defined by the 'display_value' property that may reference values of subnodes.
@@ -538,7 +504,7 @@ class NodeUtil
    */
   public static function removeNonDisplayValues(Node $node)
   {
-    $displayValues = self::getDisplayValueNames($node);
+    $displayValues = $node->getDisplayValueNames($node);
     $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $displayValues)) {

@@ -31,8 +31,8 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
  *
  * The array representation is an associative array where the keys are:
  *
- * - className: The type of the Node (optional, since it may be deduced from the object id)
- * - oid: The object id of the Node
+ * - className: The type of the Node (optional, if oid is given)
+ * - oid: The object id of the Node (optional, if className is given)
  * - isReference: True/False wether this Node is a reference or complete
  * - lastChange: A timestamp defining the point in time of the last change of the Node
  * - attributes: An assiciative array with the value names as keys and the appropriate values
@@ -61,9 +61,11 @@ class NodeSerializer
     if (is_object($data)) {
       $data = (array)$data;
     }
-    $syntaxOk = (is_array($data) && isset($data['oid']) && isset($data['attributes']));
+    $syntaxOk = (is_array($data) &&
+            (isset($data['oid']) || isset($data['className'])) &&
+            isset($data['attributes']));
     // check for oid variables
-    if ($syntaxOk && preg_match('/^\{.+\}$/', $data['oid'])) {
+    if ($syntaxOk && isset($data['oid']) && preg_match('/^\{.+\}$/', $data['oid'])) {
       $syntaxOk = false;
     }
     return $syntaxOk;
@@ -79,42 +81,47 @@ class NodeSerializer
    */
   public static function deserializeNode($data, Node $parent=null, $role=null)
   {
+    if (!isset($data['className']) && !isset($data['oid'])) {
+      throw new IllegalArgumentException("Serialized Node data must contain an 'className' or 'oid' parameter");
+    }
+    // create a dummy oid, if not given
+    $oid = null;
     if (!isset($data['oid'])) {
-      throw new IllegalArgumentException("Serialized Node data must contain an 'oid' parameter");
+      $oid = new ObjectId($data['className']);
     }
-    $oid = ObjectId::parse($data['oid']);
-    if ($oid == null) {
-      throw new IllegalArgumentException("The object id '".$oid."' is invalid");
+    else {
+      $oid = ObjectId::parse($data['oid']);
+      if ($oid == null) {
+        throw new IllegalArgumentException("The object id '".$oid."' is invalid");
+      }
     }
-    else
-    {
-      // don't create all values by default (-> don't use PersistenceFacade::create() directly,
-      // just for determining the class)
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $class = get_class($persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE));
-      $node = new $class;
-      $node->setOID($oid);
 
-      if (isset($data['attributes'])) {
-        foreach($data['attributes'] as $key => $value) {
-          self::deserializeValue($node, $key, $value);
-        }
-      }
-      if ($parent != null) {
-        $parent->addNode($node, $role);
-      }
+    // don't create all values by default (-> don't use PersistenceFacade::create() directly,
+    // just for determining the class)
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $class = get_class($persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE));
+    $node = new $class;
+    $node->setOID($oid);
 
-      // get remaining part of data
-      foreach ($data as $key => $value) {
-        if (in_array($key, self::$NODE_KEYS)) {
-          unset($data[$key]);
-        }
+    if (isset($data['attributes'])) {
+      foreach($data['attributes'] as $key => $value) {
+        self::deserializeValue($node, $key, $value);
       }
-      return array('node' => $node, 'data' => $data);
     }
+    if ($parent != null) {
+      $parent->addNode($node, $role);
+    }
+
+    // get remaining part of data
+    foreach ($data as $key => $value) {
+      if (in_array($key, self::$NODE_KEYS)) {
+        unset($data[$key]);
+      }
+    }
+    return array('node' => $node, 'data' => $data);
   }
   /**
-   * Deserialize an node value
+   * Deserialize a node value
    * @param node A reference to the node
    * @param key The value name or type if value is an array
    * @param value The value or child data, if value is an array

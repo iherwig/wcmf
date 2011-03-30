@@ -3,6 +3,10 @@ RewriteEngine On
 RewriteBase /ingo/wCMF/framework/new_roles/cms/application
 
 # rest
+# we expect urls like:
+#    rest/Document
+#    rest/Document/12
+#    rest/Document/Document:12
 RewriteRule ^.*rest\/([^\/]+)\/?$ main.php?action=restAction&className=$1 [QSA,L]
 RewriteRule ^.*rest\/([^\/]+)\/([0-9]+)$ main.php?action=restAction&className=$1&id=$2 [QSA,L]
 RewriteRule ^.*rest\/([^\/]+)\/([A-Za-z0-9\:]+)$ main.php?action=restAction&className=$1&oid=$2 [QSA,L]

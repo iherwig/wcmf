@@ -3,7 +3,7 @@
  *        server
  */
 dojo.declare("wcmf.persistence.Request", null, {
-       
+
   serverUrl: wcmf.appURL,
   defaultParameters: {
     sid: wcmf.sid,
@@ -16,7 +16,7 @@ dojo.declare("wcmf.persistence.Request", null, {
 
   /**
    * Sends the request using Ajax.
-   * 
+   *
    * @param parameters
    *            An object defining the parameters to be send to the
    *            server. May be used to overwrite the default request
@@ -32,7 +32,7 @@ dojo.declare("wcmf.persistence.Request", null, {
 
   /**
    * Sends the request using an IFrame.
-   * 
+   *
    * @param parameters
    *            An object defining the parameters to be send to the
    *            server. May be used to overwrite the default request
@@ -43,16 +43,16 @@ dojo.declare("wcmf.persistence.Request", null, {
    * @return dojo.Deferred
    */
   sendIFrame: function(parameters, elementId) {
-	return this.sendInternal(dojo.io.iframe.send, parameters, elementId);
+    return this.sendInternal(dojo.io.iframe.send, parameters, elementId);
   },
-  
+
   /**
    * Internal send function
    */
   sendInternal: function(serverCallFunction, parameters, elementId) {
-    
+
     parameters = parameters || {};
-    
+
     // copy all form fields to the parameters
     if (elementId) {
       var widgets = dijit.findWidgets(dojo.byId(elementId));
@@ -63,7 +63,7 @@ dojo.declare("wcmf.persistence.Request", null, {
       });
     }
     var mergedParameters = dojo.mixin(this.defaultParameters, parameters);
-    
+
     // set the expected response format
     var handleAs = mergedParameters.responseFormat;
     if (handleAs.toLowerCase() == 'soap') {
@@ -81,7 +81,7 @@ dojo.declare("wcmf.persistence.Request", null, {
       content: mergedParameters,
       handleAs: handleAs
     });
-    
+
     // set callbacks
     if (deferred) {
       deferred.addCallback(function(response) {

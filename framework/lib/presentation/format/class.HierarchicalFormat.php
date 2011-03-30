@@ -57,7 +57,7 @@ abstract class HierarchicalFormat extends AbstractFormat
    * @param values The array/object of values
    *
    */
-  protected function deserializeValues(array $values)
+  protected function deserializeValues($values)
   {
     if ($this->isSerializedNode($values)) {
       // the values represent a node

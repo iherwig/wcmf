@@ -12,9 +12,22 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
     constructor: "manual"
   },
 
+  /**
+   * The wcmf.mode.meta.Node instance that describes objects
+   * of this store
+   */
   modelClass: null,
+
+  /**
+   * The identifier attribute of the contained objects
+   */
   idAttribute: "oid",
-  
+
+  /**
+   * The Service implementation
+   */
+  serviceImpl: null,
+
   /**
    * Constructor
    * @param options Parameter object:
@@ -23,30 +36,48 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
    */
   constructor: function(options) {
     this.modelClass = options.modelClass;
-    
+    this.serviceImpl = new wcmf.persistence.DionysosService(this.modelClass);
+
     dojo.mixin(this, {
-      target: "rest/"+this.modelClass.type+"/",
-      service: new wcmf.persistence.DionysosService(this.modelClass),
+      target: this.serviceImpl.getServiceUrl(),
+      service: this.serviceImpl.getServiceFunction(),
       cacheByDefault: true
     }, options);
-    
+
     this.inherited(arguments);
 
     // autosave
     dojo.connect(this, "onSet", this, function(item, attribute) {
       this.save();
     });
+  },
+
+  getLabel: function(item) {
+    var label = '';
+    var displayValues = this.getLabelAttributes(item);
+    for (var i=0, count=displayValues.length; i<count; i++) {
+      label += item[displayValues[i]] + " ";
+    }
+    label = dojo.trim(label);
+    if (label.length == 0) {
+      label = item.oid;
+    }
+    return label;
+  },
+
+  getLabelAttributes: function(item) {
+    return this.modelClass.displayValues;
   }
 });
 
 /**
  * Get the store for a given model class. If the store is
  * not created already, it will be created.
- * @param modelClass The model class to get the store for (subclass of wcmf.model.base.Class)
+ * @param modelClass The model class to get the store for (subclass of wcmf.model.meta.Node)
  * @return An instance of wcmf.Store
- */ 
+ */
 wcmf.persistence.Store.getStore = function(modelClass ) {
-  if (modelClass instanceof wcmf.model.base.Class) {
+  if (modelClass instanceof wcmf.model.meta.Node) {
     var store = wcmf.persistence.Store.stores[modelClass.type];
     if (store == undefined) {
       // create stores only for known model classes
@@ -64,5 +95,5 @@ wcmf.persistence.Store.getStore = function(modelClass ) {
 
 /**
  * Store registry.
- */ 
+ */
 wcmf.persistence.Store.stores = {};

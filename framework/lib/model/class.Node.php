@@ -386,7 +386,7 @@ class Node extends PersistentObject
     for($i=0, $count=sizeof($nodeList); $i<$count; $i++)
     {
       $curNode = $nodeList[$i];
-      if ($curNode instanceof PersistentObject)
+      if ($curNode instanceof PersistentObject || $curNode instanceof PersistentObjectProxy)
       {
         $match = true;
         // check oid

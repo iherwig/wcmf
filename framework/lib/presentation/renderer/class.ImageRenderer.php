@@ -30,9 +30,9 @@ class ImageRenderer extends ValueRenderer
   /**
    * @see ValueRenderer::assignViewValues
    */
-  protected function assignViewValues(IView $view) 
+  protected function assignViewValues(IView $view)
   {
-    $value = $view->get_template_vars('value');
+    $value = $view->getTemplateVars('value');
     if (file_exists($value))
     {
       $properties = getimagesize($value);

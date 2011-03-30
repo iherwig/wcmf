@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -41,20 +41,20 @@ require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
 
       // initialize view
       $outputView = &$this->initializeView($filename);
-  
+
       // load and assign model
       ...
       $outputView->assign('message', 'Hello world');
       ...
-      
+
       // output page
       $this->writeOutput($outputView, 'index');
     }
  * @endcode
- * 
+ *
  * The corresponding configuration would look like this:
  * @code
- 
+
     [actionmapping]
     ...
     ??preview = PageExportController
@@ -62,16 +62,16 @@ require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
     PageExportController??continue = PageExportController
     PageExportController??done = ViewController
     ...
-    
+
     [views]
     ...
     PageExportController?? = progressbar.tpl
     PageExportController?index? = ../../templates/index_html.tpl
     PageExportController?index?preview = ../../templates/index_html.tpl
     ...
-    
+
  * @endcode
- * 
+ *
  * <b>Input actions:</b>
  * - @em preview Show a preview of the given object
  * - more actions see BatchController
@@ -120,7 +120,7 @@ class PageExportController extends BatchController
     }
   }
   /**
-   * If the given action is 'preview', this method calls - depending on the context - the 
+   * If the given action is 'preview', this method calls - depending on the context - the
    * preview callback method defined by the subclass (@see getPreviewCallback()).
    * For any other action it delegates to the parent class processPart() method
    * @see LongTaskController::processPart()
@@ -157,24 +157,24 @@ class PageExportController extends BatchController
    */
 
   /**
-   * Create and initialize the view. This is the main entrance to view generation. 
+   * Create and initialize the view. This is the main entrance to view generation.
    * After creation this method calls the PageExportController::assignCommonValues()
    * method, that subclasses may implement to assign common vallues to their views (such as page title).
-   * @param filename The filename of the exported page (relative to exportDir as provided by by getExportDir()), 
+   * @param filename The filename of the exported page (relative to exportDir as provided by by getExportDir()),
    *          this value is even required for a preview to set the baseHref properly
    * @return A reference to the created and initialized view
    */
   function &initializeView($filename)
   {
     $isPreview = ($this->_request->getAction() == 'preview');
-    
+
     // create view
     $outputView = &$this->createOutputView();
 
     // assign common values to view
     if ($outputView != null)
     {
-      // get export directory    
+      // get export directory
       $exportDir = $this->getExportDir();
       if (!is_dir($exportDir))
         mkdir($exportDir);
@@ -185,7 +185,7 @@ class PageExportController extends BatchController
         $refURL = UriUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
         $baseHref = URIUtil::makeAbsolute($exportDir, $refURL).$filename;
         $outputView->assign('baseHref', $baseHref);
-      }      
+      }
       // application specific values
       $this->assignCommonValues($outputView);
     }
@@ -199,7 +199,7 @@ class PageExportController extends BatchController
   function &createOutputView()
   {
     $isPreview = ($this->_request->getAction() == 'preview');
-    
+
     if (!$isPreview)
     {
       // for export we need to do view handling manually
@@ -274,7 +274,7 @@ class PageExportController extends BatchController
     $view->assign('dateStamp', date("Y")."/".date("m"));
 
     // capture output into file
-    $filename = $view->get_template_vars($this->FILENAME_VARNAME);
+    $filename = $view->getTemplateVars($this->FILENAME_VARNAME);
     $path = dirname($filename);
     if (!file_exists($path))
       mkdir($path);

@@ -88,10 +88,36 @@ class WCMFFrontendController extends Controller
       // get all known types
       $knownTypes = $persistenceFacade->getKnownTypes();
 
+      // get root types from ini file
+      $parser = InifileParser::getInstance();
+      $rootTypes = $parser->getValue('rootTypes', 'cms');
+      if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '')
+      {
+        $this->setErrorMsg(Message::get("No root types defined."));
+        $response->setAction('failure');
+        return true;
+      }
+
       // create type templates
       $typeTemplates = array();
-      foreach ($knownTypes as $type) {
-        $typeTemplates[] = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+      foreach ($knownTypes as $type)
+      {
+        if ($rightsManager->authorize($type, '', ACTION_READ))
+        {
+          // create the template
+          $tpl = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+
+          // set properties used in views
+          if (in_array($type, $rootTypes)) {
+            $tpl->setProperty('isRootType', true);
+          }
+          else {
+            $tpl->setProperty('isRootType', false);
+          }
+
+          // add the template
+          $typeTemplates[] = $tpl;
+        }
       }
       // set response values
       $response->setValue('typeTemplates', $typeTemplates);
@@ -111,43 +137,15 @@ class WCMFFrontendController extends Controller
 
         // call DisplayController to read the requested node
         // and merge the responses
-        $readRequest = new Request('TerminateController', $request->getContext(), 'read');
-        $readRequest->setValues(array(
+        $readResponse = $this->executeSubAction('read', array(
             'oid' => $oid->__toString(),
-            'depth' => 0,
-            'sid' => SessionData::getInstance()->getID()
+            'depth' => 0
         ));
-        $readRequest->setFormat(MSG_FORMAT_NULL);
-        $readRequest->setResponseFormat(MSG_FORMAT_NULL);
-        $readResponse = ActionMapper::getInstance()->processAction($readRequest);
         $response->setValue('object', $readResponse->getValue('object'));
 
         $typeTemplate = $persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE);
         $response->setValue('typeTemplate', $typeTemplate);
       }
-    }
-    else
-    {
-      // get root types from ini file
-      $parser = InifileParser::getInstance();
-      $rootTypes = $parser->getValue('rootTypes', 'cms');
-      if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '')
-      {
-        $this->setErrorMsg(Message::get("No root types defined."));
-        $response->setAction('failure');
-        return true;
-      }
-
-      // create root type templates
-      $rootTypeTemplates = array();
-      foreach ($rootTypes as $rootType)
-      {
-        if ($rightsManager->authorize($rootType, '', ACTION_READ)) {
-          $rootTypeTemplates[] = $persistenceFacade->create($rootType, BUILDDEPTH_SINGLE);
-        }
-      }
-      // set response values
-      $response->setValue('rootTypeTemplates', $rootTypeTemplates);
     }
     // success
     $response->setAction('ok');
