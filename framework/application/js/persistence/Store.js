@@ -78,13 +78,13 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
  */
 wcmf.persistence.Store.getStore = function(modelClass ) {
   if (modelClass instanceof wcmf.model.meta.Node) {
-    var store = wcmf.persistence.Store.stores[modelClass.type];
+    var store = wcmf.persistence.Store.stores[modelClass.name];
     if (store == undefined) {
       // create stores only for known model classes
       store = new wcmf.persistence.Store({
         modelClass: modelClass
       });
-      wcmf.persistence.Store.stores[modelClass.type] = store;
+      wcmf.persistence.Store.stores[modelClass.name] = store;
     }
     return store;
   }

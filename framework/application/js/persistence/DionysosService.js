@@ -30,7 +30,7 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
     var self = this;
     var transformers = {
       transformGetArguments: function(args) {
-        args.url = args.url.replace("/"+self.modelClass.type+":/", "");
+        args.url = args.url.replace("/"+self.modelClass.name+":/", "");
         if (args.content) {
           if (args.content.count) {
             args.content.limit = args.content.count;
@@ -47,7 +47,7 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
         return args;
       },
       transformPutArguments: function(args) {
-        args.url = args.url.replace("/"+self.modelClass.type+":/", "");
+        args.url = args.url.replace("/"+self.modelClass.name+":/", "");
         if (args.putData) {
           var putData = {};
           var putDataTmp = dojo.fromJson(args.putData);
@@ -62,7 +62,7 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
         return args;
       },
       transformPostArguments: function(args) {
-        args.url = args.url.replace("/"+self.modelClass.type+":/", "");
+        args.url = args.url.replace("/"+self.modelClass.name+":/", "");
         if (args.postData) {
           var postData = {};
           var postDataTmp = dojo.fromJson(args.postData);
@@ -73,7 +73,7 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
         return args;
       },
       transformDeleteArguments: function(args) {
-        args.url = args.url.replace("/"+self.modelClass.type+":/", "");
+        args.url = args.url.replace("/"+self.modelClass.name+":/", "");
         return args;
       },
       transformGetResults: function(deferred, results) {
@@ -150,7 +150,7 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
    * @return String
    */
   getServiceUrl: function() {
-    return 'rest/'+this.modelClass.type+'/';
+    return 'rest/'+this.modelClass.name+'/';
   },
 
   /**

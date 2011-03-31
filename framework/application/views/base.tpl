@@ -73,6 +73,7 @@
   <script type="text/javascript" src="{$libDir}application/js/ui/NodeTabContainer.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/Grid.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/DetailPane.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/ui/RelationPane.js"></script>
 {/block}
 </head>
 <body class="wcmf">

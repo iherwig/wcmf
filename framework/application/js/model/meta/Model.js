@@ -11,7 +11,7 @@ dojo.declare("wcmf.model.meta.Model", null, {
  * @param typeInstance An instance of a wcmf.model.meta.Node subclass
  */
 wcmf.model.meta.Model.registerType = function(typeInstance) {
-  wcmf.model.meta.Model.types[typeInstance.type] = typeInstance;
+  wcmf.model.meta.Model.types[typeInstance.name] = typeInstance;
 };
 
 /**

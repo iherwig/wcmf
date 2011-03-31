@@ -48,7 +48,7 @@ wcmf.Action.create = function(modelClass) {
   if (typeTabContainer) {
     var nodeTabContainer = typeTabContainer.getNodeTabContainer(modelClass);
     typeTabContainer.selectChild(nodeTabContainer);
-    nodeTabContainer.addNode(wcmf.model.meta.Node.createRandomOid(modelClass.type), true);
+    nodeTabContainer.addNode(wcmf.model.meta.Node.createRandomOid(modelClass.name), true);
   }
 };
 

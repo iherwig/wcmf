@@ -1,5 +1,6 @@
 /**
  * @class DetailPane This class displays the detail view of an object.
+ * It loads the content from a backend template.
  */
 dojo.provide("wcmf.ui");
 
@@ -8,7 +9,7 @@ dojo.require("dojox.layout.ContentPane");
 dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   /**
-   * The type of object that is edited
+   * The model class of the object displayed object
    */
   modelClass: null,
   /**
@@ -24,16 +25,16 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    */
   isDirty: false,
   /**
-   * A list of connect handles for widget change events
+   * A list of connect handles for field change events
    */
-  onChangeHandles: [],
+  fieldChangeHandles: [],
 
   /**
    * Constructor
    * @param options Parameter object:
-   *    - modelClass The model class whose instances this pane contains
-   *    - oid The object id of the displayed object
-   *    - isNewNode True if the node does not exist yet, false else
+   *    - modelClass The model class of the object displayed object
+   *    - oid The object id of the object that is edited
+   *    - isNewNode True if the displayed object does not exist yet, false else
    *    + All other options defined for dijit.layout.ContentPane
    */
   constructor: function(options) {
@@ -41,8 +42,8 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     this.oid = options.oid;
     this.isNewNode = options.isNewNode;
 
-    this.title = this.isNewNode ? wcmf.Message.get("New %1%", [this.modelClass.type]) : this.oid;
-    this.href = this.isNewNode ? '?action=detail&type='+this.modelClass.type : '?action=detail&oid='+this.oid;
+    this.title = this.isNewNode ? wcmf.Message.get("New %1%", [this.modelClass.name]) : this.oid;
+    this.href = this.isNewNode ? '?action=detail&type='+this.modelClass.name : '?action=detail&oid='+this.oid;
 
     dojo.mixin(this, {
       // default options
@@ -50,8 +51,11 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
       closable: true
     }, options);
 
-    dojo.connect(this, 'onLoad', this, this.initControls);
+    dojo.connect(this, 'onLoad', this, this.connectFieldChangeEvents);
     dojo.connect(this, 'onClose', this, this.handleCloseEvent);
+
+    var store = this.getStore(this.modelClass);
+    dojo.connect(store, 'onSet', this, this.handleItemChangeEvent);
 
     // mark dirty if the oid is null
     if (this.isNewNode) {
@@ -90,7 +94,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     wcmf.Error.hide();
     if (this.isDirty) {
       // get the store
-      var store = wcmf.persistence.Store.getStore(this.modelClass);
+      var store = this.getStore(this.modelClass);
       var self = this;
 
       if (!this.isNewNode) {
@@ -100,10 +104,9 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
           identity: this.oid,
           onItem: function(item) {
             if (item) {
-              store.changing(item);
               var values = this.getFieldValues();
               for (var attribute in values) {
-                item[attribute] = values[attribute];
+                store.setValue(item, attribute, values[attribute]);
               }
               store.save({
                 scope: item,
@@ -159,16 +162,24 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     // only defined for other widgets to connect to
   },
 
-  initControls: function() {
-    this.connectWidgetChangeEvents();
+  /**
+   * Get the store that handles item persistence
+   * @return wcmf.persistence.Store
+   */
+  getStore: function() {
+    return wcmf.persistence.Store.getStore(this.modelClass);
   },
 
+  /**
+   * Update the DetailPane after the contained item was saved
+   * @param item The contained persistent item
+   */
   afterSave: function(item) {
     var oldOid = this.oid;
     // load the item from the store to get the current content
-    var store = wcmf.persistence.Store.getStore(this.modelClass);
+    var store = this.getStore(this.modelClass);
     // set the oid
-    this.oid = item.oid;
+    this.oid = store.getValue(item, "oid");
     // update title and fields
     this.set("title", store.getLabel(item));
     this.setFieldValues(item);
@@ -192,11 +203,15 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     }
   },
 
+  /**
+   * Get all input field values
+   * @return Name/Value pairs
+   */
   getFieldValues: function() {
     var values = {};
     dojo.forEach(this.getDescendants(), function(widget) {
       if (widget.name) {
-        var attribute = this.getAttributeNameFromControlName(widget.name);
+        var attribute = this.getAttributeNameFromFieldName(widget.name);
         if (attribute) {
           values[attribute] = widget.get('value');
         }
@@ -205,41 +220,51 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     return values;
   },
 
+  /**
+   * Set the input field values according to the given item
+   * @param item The contained persistent item
+   */
   setFieldValues: function(item) {
     // disable handleValueChangeEvent temporarily
-    this.disconnectWidgetChangeEvents();
+    this.disconnectFieldChangeEvents();
+    var store = this.getStore(this.modelClass);
     dojo.forEach(this.getDescendants(), function(widget) {
       if (widget.name) {
-        var attribute = this.getAttributeNameFromControlName(widget.name);
+        var attribute = this.getAttributeNameFromFieldName(widget.name);
         if (attribute) {
-          widget.set('value', item[attribute]);
+          widget.set('value', store.getValue(item, attribute));
         }
       }
     }, this);
     // enable handleValueChangeEvent again
-    this.connectWidgetChangeEvents();
+    this.connectFieldChangeEvents();
   },
 
-  getAttributeNameFromControlName: function(controlName) {
-    var matches = controlName.match(/^value-(.+)-[^-]*$/);
+  /**
+   * Determine the item attribute name from the given field name
+   * @param fieldName The name of the field
+   * @return The attribute name
+   */
+  getAttributeNameFromFieldName: function(fieldName) {
+    var matches = fieldName.match(/^value-(.+)-[^-]*$/);
     if (matches && matches.length > 0) {
       return matches[1];
     }
     return '';
   },
 
-  connectWidgetChangeEvents: function() {
+  connectFieldChangeEvents: function() {
     dojo.forEach(this.getDescendants(), function(widget) {
-      this.onChangeHandles.push(widget.watch(dojo.hitch(this, 'handleValueChangeEvent')));
+      this.fieldChangeHandles.push(widget.watch(dojo.hitch(this, 'handleValueChangeEvent')));
     }, this);
 
   },
 
-  disconnectWidgetChangeEvents: function() {
-    dojo.forEach(this.onChangeHandles, function(handler) {
+  disconnectFieldChangeEvents: function() {
+    dojo.forEach(this.fieldChangeHandles, function(handler) {
       handler.unwatch();
     });
-    this.onChangeHandles = [];
+    this.fieldChangeHandles = [];
   },
 
   handleValueChangeEvent: function(propertyName, oldValue, newValue) {
@@ -247,6 +272,15 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
       this.setDirty();
       // notify listeners
       this.onChange(this, propertyName, oldValue, newValue);
+    }
+  },
+
+  handleItemChangeEvent: function(item, attribute, oldValue, newValue) {
+    var store = this.getStore();
+    if (store.getValues(item, "oid") == this.oid) {
+      // update title and fields
+      this.set("title", store.getLabel(item));
+      this.setFieldValues(item);
     }
   },
 

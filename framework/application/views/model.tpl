@@ -9,7 +9,7 @@
  * Definition of model class {$type}
  */
 dojo.declare("wcmf.model.{$type}Class", wcmf.model.meta.Node, {
-  type: '{$type}',
+  name: '{$type}',
   isRootType: {if $tpl->getProperty('isRootType') == true}true{else}false{/if},
   attributes: [
 {foreach $mapper->getAttributes() as $attribute}

@@ -19,19 +19,13 @@ dojo.addOnLoad(function() {
    * Create a grid for each related type
    */
 {foreach item=relation from=$mapper->getRelations()}
-{$type=$relation->getOtherType()}
 {$role=$relation->getOtherRole()}
-  var {$role}Pane = new dijit.layout.ContentPane({
-    title: '{$role}'
+  var {$role}Pane = new wcmf.ui.RelationPane({
+    modelClass: wcmf.model.meta.Model.getType("{$object->getType()}"),
+    oid: "{$object->getOid()}",
+    otherRole: "{$role}",
+    relationQuery: "{$obfuscator->obfuscate($nodeUtil->getRelationQueryCondition($object, $role))}"
   });
-  var {$role}Grid = new wcmf.ui.Grid({
-    modelClass: wcmf.model.{$type},
-    query: {
-      query: "{$obfuscator->obfuscate($nodeUtil->getRelationQueryCondition($object, $role))}"
-    }
-  });
-  {$role}Pane.set('content', {$role}Grid);
-  {$role}Grid.initEvents();
   relationTabContainer.addChild({$role}Pane);
 
 {/foreach}

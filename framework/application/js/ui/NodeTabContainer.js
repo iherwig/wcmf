@@ -23,6 +23,14 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
   nodeTabs: null,
 
   /**
+   * Ui elements
+   */
+  createBtn: null,
+  saveBtn: null,
+  deleteBtn: null,
+  tabContainer: null,
+
+  /**
    * Constructor
    * @param options Parameter object
    *    - modelClass An instance of wcmf.model.meta.Node which defines the type of this tab
@@ -34,7 +42,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
 
     dojo.mixin(this, {
       // default options
-      title: this.modelClass.type,
+      title: this.modelClass.name,
       useMenu: true
     }, options);
   },
@@ -46,15 +54,14 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
    * @param isNewNode True if the node does not exist yet, false else
    */
   addNode: function(oid, isNewNode) {
-    var type = this.modelClass.type;
+    var type = this.modelClass.name;
 
     // check if the oid type fits to this container
     type = wcmf.model.meta.Node.getTypeFromOid(oid);
-    if (type != this.modelClass.type) {
+    if (type != this.modelClass.name) {
       return;
     }
 
-    var self = this;
     // check if there is already a DetailPane for the given oid
     var pane = this.nodeTabs[oid];
     if (pane == undefined) {
@@ -181,7 +188,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     });
 
     // create the toolbar
-    this.toolbar = new dijit.Toolbar({
+    var toolbar = new dijit.Toolbar({
       region: "top"
     });
     this.createBtn = new dijit.form.Button({
@@ -213,10 +220,10 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
         }
       }
     });
-    this.toolbar.addChild(this.createBtn);
-    this.toolbar.addChild(this.saveBtn);
-    this.toolbar.addChild(this.deleteBtn);
-    this.toolbar.startup();
+    toolbar.addChild(this.createBtn);
+    toolbar.addChild(this.saveBtn);
+    toolbar.addChild(this.deleteBtn);
+    toolbar.startup();
 
     // create the tab container
     this.tabContainer = new dijit.layout.TabContainer({
@@ -227,18 +234,17 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     dojo.connect(this.tabContainer, "selectChild", this, this.handleSelectEvent);
 
     // create the all objects tab
-    this.mainPane = new dijit.layout.ContentPane({
+    var mainPane = new dijit.layout.ContentPane({
       title: wcmf.Message.get("All")
     });
-    this.mainGrid = new wcmf.ui.Grid({
+    var mainGrid = new wcmf.ui.Grid({
       modelClass: this.modelClass
     });
-    this.mainPane.set('content', this.mainGrid);
-    this.mainGrid.startup();
-    this.mainGrid.initEvents();
-    this.tabContainer.addChild(this.mainPane);
+    mainPane.set('content', mainGrid);
+    mainGrid.initEvents();
+    this.tabContainer.addChild(mainPane);
 
-    layoutContainer.addChild(this.toolbar);
+    layoutContainer.addChild(toolbar);
     layoutContainer.addChild(this.tabContainer);
     layoutContainer.startup();
     this.set('content', layoutContainer);

@@ -38,7 +38,7 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
    */
   getNodeTabContainer: function(modelClass) {
     var self = this;
-    var tabContainer = this.nodeTabContainer[modelClass.type];
+    var tabContainer = this.nodeTabContainer[modelClass.name];
     if (tabContainer == undefined) {
       tabContainer = new wcmf.ui.NodeTabContainer({
         modelClass: modelClass,
@@ -46,10 +46,10 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
         closable: modelClass.isRootType ? false : true
       });
       dojo.connect(tabContainer, "onClose", this, function() {
-        delete self.nodeTabContainer[modelClass.type];
+        delete self.nodeTabContainer[modelClass.name];
         return true;
       });
-      this.nodeTabContainer[modelClass.type] = tabContainer;
+      this.nodeTabContainer[modelClass.name] = tabContainer;
       this.addChild(tabContainer);
       tabContainer.startup();
     }
