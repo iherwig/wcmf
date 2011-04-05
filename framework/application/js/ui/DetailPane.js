@@ -1,6 +1,9 @@
 /**
- * @class DetailPane This class displays the detail view of an object.
- * It loads the content from a backend template.
+ * @class DetailPane
+ *
+ * DetailPane displays the detail view of an object.
+ * The concrete representation is defined in a backend template, which
+ * is loaded on creation.
  */
 dojo.provide("wcmf.ui");
 
@@ -51,16 +54,19 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
       closable: true
     }, options);
 
-    dojo.connect(this, 'onLoad', this, this.connectFieldChangeEvents);
-    dojo.connect(this, 'onClose', this, this.handleCloseEvent);
-
-    var store = this.getStore(this.modelClass);
-    dojo.connect(store, 'onSet', this, this.handleItemChangeEvent);
-
     // mark dirty if the oid is null
     if (this.isNewNode) {
       this.setDirty();
     }
+  },
+
+  postCreate: function() {
+    this.inherited(arguments);
+    this.connect(this, 'onLoad', this.connectFieldChangeEvents);
+    this.connect(this, 'onClose', this.handleCloseEvent);
+
+    var store = this.getStore(this.modelClass);
+    this.connect(store, 'onSet', this.handleItemChangeEvent);
   },
 
   /**
@@ -89,9 +95,10 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   /**
    * Save the contained object data
+ * @return dojo.Deferred promise (The only parameter is the saved item)
    */
   save: function() {
-    wcmf.Error.hide();
+    var deferred = new dojo.Deferred();
     if (this.isDirty) {
       // get the store
       var store = this.getStore(this.modelClass);
@@ -104,18 +111,22 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
           identity: this.oid,
           onItem: function(item) {
             if (item) {
+              // use changing to issue one server request only
+              store.changing(item);
               var values = this.getFieldValues();
               for (var attribute in values) {
-                store.setValue(item, attribute, values[attribute]);
+                item[attribute] = values[attribute];
               }
               store.save({
                 scope: item,
                 onComplete: function() {
                   // 'this' is the saved object
                   self.afterSave(this);
+                  deferred.callback(this);
                 },
                 onError: function(errorData) {
-                  wcmf.Error.show(wcmf.Message.get("The object could not be saved. " + errorData));
+                  var msg = wcmf.Message.get("The object could not be saved: %1%", [errorData]);
+                  deferred.errback(msg);
                 }
               });
             }
@@ -128,16 +139,20 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
         var item = store.newItem(values);
         store.save({
           scope: item,
+          alwaysPostNewItems: true,
           onComplete: function() {
             // 'this' is the saved object
             self.afterSave(this);
+            deferred.callback(this);
           },
           onError: function(errorData) {
-            wcmf.Error.show(wcmf.Message.get("The object could not be created. " + errorData));
+            var msg = wcmf.Message.get("The object could not be created: %1%", [errorData]);
+            deferred.errback(msg);
           }
         });
       }
     }
+    return deferred;
   },
 
   /**
@@ -155,10 +170,11 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    * Called, after the pane content was saved. The two oid parameters may
    * differ, if the contained object was not contained in the store before.
    * @param pane The wcmf.ui.DetailPane that containes the saved object
+   * @param item The saved item
    * @param oldOid The object id of the contained object before saving
    * @param newOid The object id of the contained object after saving
    */
-  onSaved: function(pane, oldOid, newOid) {
+  onSaved: function(pane, item, oldOid, newOid) {
     // only defined for other widgets to connect to
   },
 
@@ -172,6 +188,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   /**
    * Update the DetailPane after the contained item was saved
+   * and notify onSaved listeners
    * @param item The contained persistent item
    */
   afterSave: function(item) {
@@ -186,7 +203,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     this.unsetDirty();
     this.isNewNode = false;
     // notify listeners
-    this.onSaved(this, oldOid, this.oid);
+    this.onSaved(this, item, oldOid, this.oid);
   },
 
   setDirty: function() {
@@ -289,5 +306,10 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
       return confirm(wcmf.Message.get("Do you really want to close this panel and lose all changes?"))
     }
     return true;
+  },
+
+  destroy: function() {
+    this.destroyRecursive();
+    this.inherited(arguments);
   }
 });

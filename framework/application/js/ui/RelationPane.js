@@ -33,6 +33,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
    * UI elements
    */
   createBtn: null,
+  relationsGrid: null,
 
   /**
    * Constructor
@@ -71,28 +72,38 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       region: "top"
     });
     this.createBtn = new dijit.form.Button({
-      label: wcmf.Message.get("New"),
+      label: wcmf.Message.get("New "+this.otherRole+" for this "+this.modelClass.name),
       iconClass: "wcmfToolbarIcon wcmfToolbarIconCreate",
       onClick: function() {
-        wcmf.Action.create(self.otherClass);
+        var pane = wcmf.Action.create(self.otherClass);
+        self.connect(pane, "onSaved", function(pane, item, oldOid, newOid) {
+          // TODO associate (only on first time)
+          // show the original node to which the new one is connected
+          wcmf.ui.TypeTabContainer.getInstance().displayNode(self.oid, false);
+          this.relationsGrid.update();
+        });
       }
     });
     toolbar.addChild(this.createBtn);
     toolbar.startup();
 
     // create relations grid
-    var relationsGrid = new wcmf.ui.Grid({
+    this.relationsGrid = new wcmf.ui.Grid({
       modelClass: this.otherClass,
       query: {
         query: this.relationQuery
       },
       region: "center"
     });
-    relationsGrid.initEvents();
 
     layoutContainer.addChild(toolbar);
-    layoutContainer.addChild(relationsGrid);
+    layoutContainer.addChild(this.relationsGrid);
     layoutContainer.startup();
     this.set('content', layoutContainer);
+  },
+
+  destroy: function() {
+    this.destroyRecursive();
+    this.inherited(arguments);
   }
 });

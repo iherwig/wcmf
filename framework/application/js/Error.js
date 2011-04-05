@@ -13,29 +13,29 @@ dojo.declare("wcmf.Error", null, {
 wcmf.Error.show = function(text) {
   dojo.style("error", "visibility", "visible");
   dojo.byId('errorMessage').innerHTML = text;
-  wcmf.Error.toggler.show();
+  dojo.fadeIn({
+    node: "error",
+    duration: 300,
+    end: 0.75
+  }).play();
 };
 
 /**
  * Hide the error message.
  */
 wcmf.Error.hide = function() {
-  wcmf.Error.toggler.hide();
+  dojo.fadeOut({
+    node: "error",
+    duration: 1
+  }).play();
 };
 
 
 dojo.addOnLoad(function() {
-  wcmf.Error.toggler = new dojo.fx.Toggler({
-    node: "error",
-    showDuration: 300,
-    hideDuration: 1/*,
-    showFunc: dojo.fx.wipeIn,
-    hideFunc: dojo.fx.wipeOut*/
-  });
   if (dojo.byId('errorMessage').innerHTML.length == 0) {
     dojo.style("error", "visibility", "hidden");
   }
-  dojo.query('#errorMessage').onclick(function(e) {
+  dojo.query('#error').onclick(function(e) {
     wcmf.Error.hide();
   });
 });

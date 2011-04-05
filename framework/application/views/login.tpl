@@ -15,7 +15,7 @@
 {/block}
 
 {block name=content}
-<div id="loginForm" class="wcmf_form" style="width:100%; height:100%;">
+<div id="loginForm" class="wcmf_form">
   <fieldset>
     <legend>{translate text="Login"}</legend>
     <ol>

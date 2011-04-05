@@ -5,5 +5,5 @@
 {/block}
 
 {block name=content}
-<div data-dojo-type="wcmf.ui.TypeTabContainer" id="nodeTabContainer" style="width:100%; height:100%"></div>
+<div data-dojo-type="wcmf.ui.TypeTabContainer" id="typeTabContainer" style="width:100%; height:100%"></div>
 {/block}

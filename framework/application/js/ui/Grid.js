@@ -12,6 +12,8 @@ dojo.require("dojox.grid.enhanced.plugins.Filter");
 dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
   modelClass: null,
+  actions: [],
+
   plugins: {
       nestedSorting: true,
       //indirectSelection: true,
@@ -20,7 +22,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
   },
   delayScroll: true,
   //elasticView: "2",
-  rowSelector: "0px",
+  rowSelector: "5px",
   autoWidth: false,
   autoHeight: false,
   rowsPerPage: 25,
@@ -31,10 +33,12 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
    * Constructor
    * @param options Parameter object:
    *    - modelClass The model class whose instances this grid contains
+   *    - actions Array of wcmf.ui.GridActionCell instances
    *    + All other options defined for dojox.grid.EnhancedGrid
    */
   constructor: function(options) {
     this.modelClass = options.modelClass;
+    this.actions = options.actions || [];
 
     dojo.mixin(this, {
       // default options
@@ -42,81 +46,67 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       structure: this.getDefaultLayout(),
       formatterScope: this
     }, options);
-
-    dojo.connect(this, 'onShow', this, this.initListeners);
   },
 
-  initEvents: function() {
-    dojo.connect(this, "onCellClick", this, function(event) {
-      var item = this.getItem(event.rowIndex);
+  /**
+   * Reload the grid content
+   */
+  reload: function() {
+    var store = wcmf.persistence.Store.getStore(this.modelClass);
+    this.setStore(store);
+  },
 
-      // edit action
-      if (event.cell.field == '_edit') {
-        wcmf.Action.edit(item.oid);
-      }
-      // delete action
-      if (event.cell.field == '_delete') {
-        wcmf.Action.remove(item.oid);
+  postCreate: function() {
+    this.inherited(arguments);
+    this.connect(this, "onCellClick", function(event) {
+      var item = this.getItem(event.rowIndex);
+      if (event.cell.action instanceof Function) {
+        event.cell.action.call(this, item);
       }
     });
-    dojo.connect(this, "onApplyCellEdit", this, function(value, rowIndex, fieldIndex) {
+    this.connect(this, "onApplyCellEdit", function(value, rowIndex, fieldIndex) {
       var item = this.getItem(rowIndex);
       this.store.setValue(item, fieldIndex, value);
-    });
-    dojo.connect(this, "onSelected", this, function(item, attribute, oldValue, newValue) {
       this.store.save();
     });
-    dojo.connect(this, "onShow", this, this.resizeGrid);
+    this.connect(this, "onShow", this.resizeGrid);
   },
 
   resizeGrid: function() {
-    // do whatever you need here, e.g.:
     this.resize();
     this.update();
   },
 
   getDefaultLayout: function() {
+    var self = this;
     var layout = {};
-    layout.defaultCell = { width: "auto" };
+    layout.defaultCell = {};
     layout.cells = [];
     dojo.forEach(this.modelClass.attributes, function(item) {
     if (dojo.some(item.tags, "return item == 'DATATYPE_ATTRIBUTE';")) {
         layout.cells.push({
           field: item.name,
           name: item.name,
-          //width: "10%",
-          editable: item.isEditable
+          width: "auto",
+          editable: item.isEditable,
+          hidden: false // TODO: hide non-display values
         });
       }
     });
-    layout.cells.push({
-      field: "_edit",
-      name: " ",
-      width: "26px",
-      formatter: this.formatEdit,
-      styles: "text-align:center;vertical-align:middle;"
-    });
-    layout.cells.push({
-      field: "_delete",
-      name: " ",
-      width: "26px",
-      formatter: this.formatDelete,
-      styles: "text-align:center;vertical-align:middle;"
-    });
+    // add cells for actions
+    var numDataColumns = layout.cells.length;
+    for(var i=0, count=this.actions.length; i<count; i++) {
+      var curAction = this.actions[i];
+      layout.cells.push({
+        formatter: function(inDatum, inRowIndex, inItem) {
+          var curAction = self.actions[inItem.index-numDataColumns];
+          return '<div class="wcmfToolbarIcon '+curAction.iconClass+'"></div>';
+        },
+        width: "26px",
+        styles: "text-align:center;vertical-align:middle;",
+        action: curAction.action
+      });
+    }
     return layout;
-  },
-
-  /**
-   * Formatter for the edit column
-   */
-  formatEdit: function(item) {
-    return '<div class="wcmfToolbarIcon wcmfToolbarIconEdit"></div>'
-  },
-
-  /**
-   * Formatter for the delete column
-   */
-  formatDelete: function(item) {
-    return '<div class="wcmfToolbarIcon wcmfToolbarIconDelete"></div>'
   }
 });

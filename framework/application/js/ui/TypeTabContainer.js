@@ -1,5 +1,8 @@
 /**
- * @class DetailPane This class displays the detail view of an object.
+ * @class TypeTabContainer
+ *
+ * TypeTabContainer contains one instance of NodeTabContainer per
+ * domain object type.
  */
 dojo.provide("wcmf.ui");
 
@@ -32,6 +35,21 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
   },
 
   /**
+   * Create a new wcmf.ui.DetailPane for the node with the given oid and show it.
+   * If there is already a DetailPane for the node no new will be created.
+   * @param oid The object id
+   * @param isNewNode True if the node does not exist yet, false else
+   * @return wcmf.ui.DetailPane
+   */
+  displayNode: function(oid, isNewNode) {
+    var className = wcmf.model.meta.Node.getTypeFromOid(oid);
+    var modelClass = wcmf.model.meta.Model.getType(className);
+    var nodeTabContainer = this.getNodeTabContainer(modelClass);
+    this.selectChild(nodeTabContainer);
+    return nodeTabContainer.displayNode(oid, isNewNode);
+  },
+
+  /**
    * Get the NodeTabContainer for a given type
    * @param modelClass A wcmf.model.meta.Node instance
    * @return wcmf.ui.NodeTabContainer instance
@@ -45,7 +63,7 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
         nested: true,
         closable: modelClass.isRootType ? false : true
       });
-      dojo.connect(tabContainer, "onClose", this, function() {
+      this.connect(tabContainer, "onClose", function() {
         delete self.nodeTabContainer[modelClass.name];
         return true;
       });
@@ -66,5 +84,23 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
         this.getNodeTabContainer(curType);
       }
     }
+  },
+
+  destroy: function() {
+    this.destroyRecursive();
+    this.inherited(arguments);
   }
 });
+
+/**
+ * Get the only instance of TypeTabContainer
+ * @return wcmf.ui.TypeTabContainer
+ */
+wcmf.ui.TypeTabContainer.getInstance = function() {
+  var typeTabContainer = dijit.byId("typeTabContainer");
+  if (typeTabContainer instanceof wcmf.ui.TypeTabContainer) {
+    return typeTabContainer;
+  }
+  throw "The application expects a wcmf.ui.TypeTabContainer attached to "+
+    "a div with id 'typeTabContainer'";
+}

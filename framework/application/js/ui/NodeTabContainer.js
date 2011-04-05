@@ -52,14 +52,15 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
    * If there is already a DetailPane for the node no new will be created.
    * @param oid The object id
    * @param isNewNode True if the node does not exist yet, false else
+   * @return wcmf.ui.DetailPane
    */
-  addNode: function(oid, isNewNode) {
+  displayNode: function(oid, isNewNode) {
     var type = this.modelClass.name;
 
     // check if the oid type fits to this container
     type = wcmf.model.meta.Node.getTypeFromOid(oid);
     if (type != this.modelClass.name) {
-      return;
+      return null;
     }
 
     // check if there is already a DetailPane for the given oid
@@ -71,14 +72,14 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
         modelClass: this.modelClass,
         isNewNode: isNewNode
       });
-      dojo.connect(pane, "onClose", this, function() {
+      this.connect(pane, "onClose", function() {
         delete this.nodeTabs[oid];
         return true;
       });
-      dojo.connect(pane, "onChange", this, function() {
+      this.connect(pane, "onChange", function() {
         this.saveBtn.set('disabled', false);
       });
-      dojo.connect(pane, "onSaved", this, function(pane, oldOid, newOid) {
+      this.connect(pane, "onSaved", function(pane, item, oldOid, newOid) {
         // update the tab registry if the oid changed
         if (oldOid != newOid) {
           this.nodeTabs[newOid] = pane;
@@ -91,6 +92,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
       this.nodeTabs[oid] = pane;
     }
     this.tabContainer.selectChild(pane);
+    return pane;
   },
 
   /**
@@ -115,7 +117,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
               }
             },
             onError: function(errorData) {
-              wcmf.Error.show(wcmf.Message.get("The object could not be deleted. " + errorData));
+              wcmf.Error.show(wcmf.Message.get("The object could not be deleted: %1%", [errorData]));
             }
           });
         }
@@ -223,7 +225,6 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     toolbar.addChild(this.createBtn);
     toolbar.addChild(this.saveBtn);
     toolbar.addChild(this.deleteBtn);
-    toolbar.startup();
 
     // create the tab container
     this.tabContainer = new dijit.layout.TabContainer({
@@ -231,22 +232,30 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
       useMenu: true,
       region: "center"
     });
-    dojo.connect(this.tabContainer, "selectChild", this, this.handleSelectEvent);
+    this.connect(this.tabContainer, "selectChild", this.handleSelectEvent);
 
     // create the all objects tab
     var mainPane = new dijit.layout.ContentPane({
       title: wcmf.Message.get("All")
     });
     var mainGrid = new wcmf.ui.Grid({
-      modelClass: this.modelClass
+      modelClass: this.modelClass,
+      actions: [
+        new wcmf.ui.GridActionEdit(),
+        new wcmf.ui.GridActionDelete()
+      ],
+      region: "center"
     });
-    mainPane.set('content', mainGrid);
-    mainGrid.initEvents();
-    this.tabContainer.addChild(mainPane);
 
+    mainPane.set('content', mainGrid);
+    this.tabContainer.addChild(mainPane);
     layoutContainer.addChild(toolbar);
     layoutContainer.addChild(this.tabContainer);
-    layoutContainer.startup();
     this.set('content', layoutContainer);
+  },
+
+  destroy: function() {
+    this.destroyRecursive();
+    this.inherited(arguments);
   }
 });

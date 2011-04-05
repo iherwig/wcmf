@@ -5,6 +5,7 @@
  */
 dojo.provide("wcmf.persistence");
 dojo.require("dojox.data.JsonRestStore");
+dojo.require("dojo.DeferredList");
 
 dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
   // we call the base class constructor manually
@@ -46,10 +47,12 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
 
     this.inherited(arguments);
 
+/*
     // autosave
     dojo.connect(this, "onSet", this, function(item, attribute) {
       this.save();
     });
+*/
   },
 
   getLabel: function(item) {
@@ -67,6 +70,50 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
 
   getLabelAttributes: function(item) {
     return this.modelClass.displayValues;
+  },
+
+  /**
+   * Overriden in order to set the item's oid after it has been committed.
+   */
+  save: function(kwArgs) {
+    // remove the callbacks and re-add them later in order
+    // to make sure that our callbacks are called first
+    var onComplete = null;
+    var onError = null;
+    if (kwArgs) {
+      onComplete = kwArgs.onComplete;
+      onError = kwArgs.onError;
+      delete kwArgs.onComplete;
+      delete kwArgs.onError;
+    }
+    var defs = [];
+    var actions = this.inherited(arguments);
+    for(var i=0; i<actions.length; i++) {
+      // need to update the item's oid after it has been committed
+      (function(item, dfd) {
+        dfd.then(function(result) {
+          if(result) {
+            item.oid = result.oid;
+          }
+          return result;
+        }, function(error) {
+          return error;
+        });
+      })(actions[i].content, actions[i].deferred);
+      defs.push(actions[i].deferred);
+    }
+    // add the given callbacks to the callback of a deferred list
+    var dl = new dojo.DeferredList(defs, false, true/* reject on first error */);
+    dl.promise.then(function(result) {
+        if (onComplete instanceof Function) {
+          onComplete.call(kwArgs.scope, result[1]);
+        }
+      }, function(error) {
+        if (onError instanceof Function) {
+          onError.call(kwArgs.scope, error);
+        }
+      }
+    );
   }
 });
 

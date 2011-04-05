@@ -38,6 +38,20 @@ dojo.declare("wcmf.model.meta.Node", null, {
       }
     }
     return null;
+  },
+
+  /**
+   * Check if the given attribute is a display value
+   * @param attribute The attribute's name
+   * @return Boolean
+   */
+  isDisplayValue: function(attribute) {
+    for (var i=0; i<this.displayValues.length; i++) {
+      if (this.displayValues[i] == attribute) {
+        return true;
+      }
+    }
+    return false;
   }
 });
 

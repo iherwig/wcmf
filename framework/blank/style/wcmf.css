@@ -73,6 +73,10 @@ html, body, #mainDiv {
   top: -50px;
 }
 
+#loginForm {
+  padding-top:100px; margin-left:auto; margin-right:auto; width:500px;
+}
+
 #logininfo {
   position: relative;
   color: #D4D4D4;
@@ -93,26 +97,28 @@ html, body, #mainDiv {
   left: 0;
   right: 0;
   text-align: center;
+  height: 35px;
+  z-index: 999;
 }
 
 .wcmfToolbarIcon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   text-align: center;
 }
 .wcmfToolbarIconCreate {
-  background-image: url('../images/open-source-icons/blue/add-item.png');
+  background-image: url('../images/icons/icons/page_add.png');
   background-repeat: no-repeat;
 }
 .wcmfToolbarIconEdit {
-  background-image: url('../images/open-source-icons/blue/edit.png');
+  background-image: url('../images/icons/icons/page_edit.png');
   background-repeat: no-repeat;
 }
 .wcmfToolbarIconSave {
-  background-image: url('../images/open-source-icons/blue/save.png');
+  background-image: url('../images/icons/icons/page_save.png');
   background-repeat: no-repeat;
 }
 .wcmfToolbarIconDelete {
-  background-image: url('../images/open-source-icons/blue/delete-item.png');
+  background-image: url('../images/icons/icons/page_delete.png');
   background-repeat: no-repeat;
 }

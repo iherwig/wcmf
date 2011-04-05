@@ -72,6 +72,7 @@
   <script type="text/javascript" src="{$libDir}application/js/ui/TypeTabContainer.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/NodeTabContainer.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/Grid.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/ui/GridActionCell.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/DetailPane.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/RelationPane.js"></script>
 {/block}
@@ -98,9 +99,6 @@
 {block name=parameters}{/block}
 {block name=content}{/block}
     </div>
-    <!-- BOTTOM Pane -->
-    <!--div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'">
-    </div-->
   </div>
 </div>
 </body>
