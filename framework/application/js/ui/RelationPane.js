@@ -33,6 +33,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
    * UI elements
    */
   createBtn: null,
+  associateBtn: null,
   relationsGrid: null,
 
   /**
@@ -72,7 +73,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       region: "top"
     });
     this.createBtn = new dijit.form.Button({
-      label: wcmf.Message.get("New "+this.otherRole+" for this "+this.modelClass.name),
+      label: wcmf.Message.get("New %1%", [this.otherRole]),
       iconClass: "wcmfToolbarIcon wcmfToolbarIconCreate",
       onClick: function() {
         var pane = wcmf.Action.create(self.otherClass);
@@ -84,8 +85,18 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
         });
       }
     });
+    this.associateBtn = new dijit.form.Button({
+      label: wcmf.Message.get("Associate %1%", [this.otherRole]),
+      iconClass: "wcmfToolbarIcon wcmfToolbarIconAssociate",
+      onClick: function() {
+        var dialog = new wcmf.ui.RelationDialog({
+          modelClass: self.otherClass
+        });
+        dialog.show();
+      }
+    });
     toolbar.addChild(this.createBtn);
-    toolbar.startup();
+    toolbar.addChild(this.associateBtn);
 
     // create relations grid
     this.relationsGrid = new wcmf.ui.Grid({
@@ -93,6 +104,12 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       query: {
         query: this.relationQuery
       },
+      actions: [
+        new wcmf.ui.GridActionDisassociate({
+          oid: this.oid
+        }),
+        new wcmf.ui.GridActionDelete()
+      ],
       region: "center"
     });
 

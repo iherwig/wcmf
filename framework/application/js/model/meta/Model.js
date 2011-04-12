@@ -15,10 +15,21 @@ wcmf.model.meta.Model.registerType = function(typeInstance) {
 };
 
 /**
- * Get a type
+ * Get a type from it's name
  * @param name The name of the type
+ * @return wcmf.model.meta.Node instance
  */
 wcmf.model.meta.Model.getType = function(typeName) {
+  return wcmf.model.meta.Model.types[typeName];
+};
+
+/**
+ * Get a type from an object id
+ * @param name The name of the type
+ * @return wcmf.model.meta.Node instance
+ */
+wcmf.model.meta.Model.getTypeFromOid = function(oid) {
+  var typeName = wcmf.model.meta.Node.getTypeFromOid(oid);
   return wcmf.model.meta.Model.types[typeName];
 };
 

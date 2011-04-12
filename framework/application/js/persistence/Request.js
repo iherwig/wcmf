@@ -24,7 +24,7 @@ dojo.declare("wcmf.persistence.Request", null, {
    * @param elementId
    *            The id of the DOM element that contains input fields
    *            whose values should be send to the server [maybe null]
-   * @return dojo.Deferred
+   * @return dojo.Deferred promise
    */
   sendAjax: function(parameters, elementId) {
     return this.sendInternal(dojo.xhrPost, parameters, elementId);
@@ -40,7 +40,7 @@ dojo.declare("wcmf.persistence.Request", null, {
    * @param elementId
    *            The id of the DOM element that contains input fields
    *            whose values should be send to the server [maybe null]
-   * @return dojo.Deferred
+   * @return dojo.Deferred promise
    */
   sendIFrame: function(parameters, elementId) {
     return this.sendInternal(dojo.io.iframe.send, parameters, elementId);

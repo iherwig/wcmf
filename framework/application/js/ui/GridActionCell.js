@@ -52,3 +52,13 @@ dojo.declare("wcmf.ui.GridActionDelete", wcmf.ui.GridActionCell, {
     wcmf.Action.remove(item.oid);
   }
 });
+
+/**
+ * This class calls the wcmf.Action.disassociate method on the current item
+ */
+dojo.declare("wcmf.ui.GridActionDisassociate", wcmf.ui.GridActionCell, {
+  iconClass: "wcmfToolbarIconDisassociate",
+  action: function(item) {
+    wcmf.Action.disassociate(item.oid, this.oid);
+  }
+});

@@ -75,6 +75,7 @@
   <script type="text/javascript" src="{$libDir}application/js/ui/GridActionCell.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/DetailPane.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/RelationPane.js"></script>
+  <script type="text/javascript" src="{$libDir}application/js/ui/RelationDialog.js"></script>
 {/block}
 </head>
 <body class="wcmf">

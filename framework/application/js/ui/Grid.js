@@ -60,8 +60,8 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     this.inherited(arguments);
     this.connect(this, "onCellClick", function(event) {
       var item = this.getItem(event.rowIndex);
-      if (event.cell.action instanceof Function) {
-        event.cell.action.call(this, item);
+      if (event.cell.instance instanceof wcmf.ui.GridActionCell) {
+        event.cell.instance.action.call(event.cell.instance, item);
       }
     });
     this.connect(this, "onApplyCellEdit", function(value, rowIndex, fieldIndex) {
@@ -104,7 +104,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
         },
         width: "26px",
         styles: "text-align:center;vertical-align:middle;",
-        action: curAction.action
+        instance: curAction
       });
     }
     return layout;

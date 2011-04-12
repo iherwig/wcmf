@@ -13,14 +13,24 @@ dojo.declare("wcmf.model.{$type}Class", wcmf.model.meta.Node, {
   isRootType: {if $tpl->getProperty('isRootType') == true}true{else}false{/if},
   attributes: [
 {foreach $mapper->getAttributes() as $attribute}
-    { name: "{$attribute->getName()}", isEditable: {if $attribute->getIsEditable()}true{else}false{/if}, tags: [{if sizeof($attribute->getTags()) > 0}"{join('","',$attribute->getTags())}"{/if}] }{if !$attribute@last},
+    {
+      name: "{$attribute->getName()}",
+      isEditable: {if $attribute->getIsEditable()}true{else}false{/if},
+      tags: [{if sizeof($attribute->getTags()) > 0}"{join('","',$attribute->getTags())}"{/if}]
+    }{if !$attribute@last},
 {/if}
 {/foreach}
 
   ],
   relations: [
 {foreach $mapper->getRelations() as $relation}
-    { name: "{$relation->getOtherRole()}", type: "{$relation->getOtherType()}" }{if !$relation@last},
+    {
+      name: "{$relation->getOtherRole()}",
+      type: "{$relation->getOtherType()}",
+      maxMultiplicity: "{$relation->getOtherMaxMultiplicity()}",
+      aggregrationKind: "{$relation->getOtherAggregationKind()}",
+      navigability: "{$relation->getOtherNavigability()}",
+    }{if !$relation@last},
 {/if}
 {/foreach}
 

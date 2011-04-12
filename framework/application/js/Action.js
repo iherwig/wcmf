@@ -66,6 +66,7 @@ wcmf.Action.save = function(oid) {
  * @return wcmf.ui.DetailPane
  */
 wcmf.Action.create = function(modelClass) {
+  wcmf.Error.hide();
   var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
   var detailPane = typeTabContainer.displayNode(
     wcmf.model.meta.Node.createRandomOid(modelClass.name), true);
@@ -79,6 +80,7 @@ wcmf.Action.create = function(modelClass) {
  * @return wcmf.ui.DetailPane
  */
 wcmf.Action.edit = function(oid) {
+  wcmf.Error.hide();
   var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
   var detailPane = typeTabContainer.displayNode(oid, false);
   return detailPane;
@@ -89,10 +91,37 @@ wcmf.Action.edit = function(oid) {
  * @param oid The object id
  */
 wcmf.Action.remove = function(oid) {
+  wcmf.Error.hide();
   if (confirm(wcmf.Message.get('Are you sure?'))) {
-    var modelClass = wcmf.model.meta.Model.getType(wcmf.model.meta.Node.getTypeFromOid(oid));
+    var modelClass = wcmf.model.meta.Model.getTypeFromOid(oid);
     var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
     var nodeTabContainer = typeTabContainer.getNodeTabContainer(modelClass);
     nodeTabContainer.deleteNode(oid);
   }
+};
+
+/**
+ * Associate two objects and notifies the appropriate DetailPanes to
+ * update the RelationPanes.
+ * @param sourceOid The object id of the source object
+ * @param targetOid The object id of the target object
+ * @param role The role of the target object in relation to the source object
+ */
+wcmf.Action.associate = function(sourceOid, targetOid, role) {
+  wcmf.Error.hide();
+  new wcmf.persistence.Request().sendAjax({
+    action:'associate',
+    sourceOid:sourceOid,
+    targetOid:targetOid,
+    role:role,
+    responseFormat:'json'
+  }, null).then(function(data) {
+    // update ui
+    var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
+    var sourceModelClass = wcmf.model.meta.Model.getTypeFromOid(sourceOid);
+    var targetModelClass = wcmf.model.meta.Model.getTypeFromOid(targetOid);
+    var sourceNodeTabContainer = typeTabContainer.getNodeTabContainer(sourceModelClass);
+    var targetNodeTabContainer = typeTabContainer.getNodeTabContainer(targetModelClass);
+    // TODO: update grid if showing
+  });
 };

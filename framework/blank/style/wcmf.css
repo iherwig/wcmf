@@ -114,11 +114,23 @@ html, body, #mainDiv {
   background-image: url('../images/icons/icons/page_edit.png');
   background-repeat: no-repeat;
 }
+.wcmfToolbarIconCopy {
+  background-image: url('../images/icons/icons/page_copy.png');
+  background-repeat: no-repeat;
+}
 .wcmfToolbarIconSave {
   background-image: url('../images/icons/icons/page_save.png');
   background-repeat: no-repeat;
 }
 .wcmfToolbarIconDelete {
   background-image: url('../images/icons/icons/page_delete.png');
+  background-repeat: no-repeat;
+}
+.wcmfToolbarIconAssociate {
+  background-image: url('../images/icons/icons/link_add.png');
+  background-repeat: no-repeat;
+}
+.wcmfToolbarIconDisassociate {
+  background-image: url('../images/icons/icons/link_delete.png');
   background-repeat: no-repeat;
 }
