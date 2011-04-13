@@ -16,17 +16,17 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
   plugins: {
       nestedSorting: true,
-      //indirectSelection: true,
+      indirectSelection: {headerSelector: true},
       dnd: true,
       filter: true
   },
   delayScroll: true,
   //elasticView: "2",
-  rowSelector: "5px",
   autoWidth: false,
   autoHeight: false,
   rowsPerPage: 25,
   rowCount: 25,
+  selectionMode: "multiple",
   //singleClickEdit: true,
 
   /**
@@ -43,8 +43,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     dojo.mixin(this, {
       // default options
       store: wcmf.persistence.Store.getStore(this.modelClass),
-      structure: this.getDefaultLayout(),
-      formatterScope: this
+      structure: this.getDefaultLayout()
     }, options);
   },
 
@@ -60,8 +59,9 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     this.inherited(arguments);
     this.connect(this, "onCellClick", function(event) {
       var item = this.getItem(event.rowIndex);
-      if (event.cell.instance instanceof wcmf.ui.GridActionCell) {
-        event.cell.instance.action.call(event.cell.instance, item);
+      var actionCell = event.cell.actionCell;
+      if (actionCell instanceof wcmf.ui.GridActionCell) {
+        actionCell.action.call(actionCell, item);
       }
     });
     this.connect(this, "onApplyCellEdit", function(value, rowIndex, fieldIndex) {
@@ -94,17 +94,15 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       }
     });
     // add cells for actions
-    var numDataColumns = layout.cells.length;
     for(var i=0, count=this.actions.length; i<count; i++) {
-      var curAction = this.actions[i];
+      var curActionCell = this.actions[i];
       layout.cells.push({
         formatter: function(inDatum, inRowIndex, inItem) {
-          var curAction = self.actions[inItem.index-numDataColumns];
-          return '<div class="wcmfToolbarIcon '+curAction.iconClass+'"></div>';
+          return '<div class="wcmfToolbarIcon '+inItem.actionCell.iconClass+'"></div>';
         },
         width: "26px",
         styles: "text-align:center;vertical-align:middle;",
-        instance: curAction
+        actionCell: curActionCell
       });
     }
     return layout;

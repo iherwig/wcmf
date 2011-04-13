@@ -87,9 +87,10 @@ dojo.declare("wcmf.persistence.Request", null, {
       deferred.addCallback(function(response) {
         // check for errors in json response
         if (handleAs == 'json' && !response.success) {
-          wcmf.Error.show(response.errorMessage);
-          promise.errback(response.errorMessage);
-     }
+          var errorMessage = response.errorMessage || wcmf.Message.get('Server error.');
+          wcmf.Error.show(errorMessage);
+          promise.errback(errorMessage);
+        }
         else {
           // call other callbacks
           if (promise.fired !== 1) {

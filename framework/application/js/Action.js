@@ -14,8 +14,8 @@ dojo.declare("wcmf.Action", null, {
 wcmf.Action.login = function() {
   wcmf.Error.hide();
   new wcmf.persistence.Request().sendAjax({
-    action:'dologin',
-    responseFormat:'json'
+    action: 'dologin',
+    responseFormat: 'json'
   }, 'loginForm').then(function(data) {
     // redirect on success
     top.location.href = wcmf.appURL+'?action=ok';
@@ -110,11 +110,12 @@ wcmf.Action.remove = function(oid) {
 wcmf.Action.associate = function(sourceOid, targetOid, role) {
   wcmf.Error.hide();
   new wcmf.persistence.Request().sendAjax({
-    action:'associate',
-    sourceOid:sourceOid,
-    targetOid:targetOid,
-    role:role,
-    responseFormat:'json'
+    action: 'associate',
+    sourceOid: sourceOid,
+    targetOid: targetOid,
+    role: role,
+    responseFormat: 'json',
+    controller: 'TerminateController'
   }, null).then(function(data) {
     // update ui
     var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();

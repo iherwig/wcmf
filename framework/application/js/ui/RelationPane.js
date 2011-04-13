@@ -79,6 +79,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
         var pane = wcmf.Action.create(self.otherClass);
         self.connect(pane, "onSaved", function(pane, item, oldOid, newOid) {
           // TODO associate (only on first time)
+          wcmf.Action.associate(self.oid, newOid, self.otherRole);
           // show the original node to which the new one is connected
           wcmf.ui.TypeTabContainer.getInstance().displayNode(self.oid, false);
           this.relationsGrid.update();
@@ -89,10 +90,15 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       label: wcmf.Message.get("Associate %1%", [this.otherRole]),
       iconClass: "wcmfToolbarIcon wcmfToolbarIconAssociate",
       onClick: function() {
-        var dialog = new wcmf.ui.RelationDialog({
+        var dialog = new wcmf.ui.ObjectSelectDialog({
           modelClass: self.otherClass
         });
-        dialog.show();
+        dialog.show().then(function(selectedObjects) {
+          // associate the selected objects
+          for (var i=0, count=selectedObjects.length; i<count; i++) {
+            wcmf.Action.associate(self.oid, selectedObjects[i].oid, self.otherRole);
+          }
+        });
       }
     });
     toolbar.addChild(this.createBtn);

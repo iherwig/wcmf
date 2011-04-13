@@ -1,5 +1,6 @@
 /**
  * @class RelationDialog This class displays a list of objects of the given type.
+ * 
  */
 dojo.provide("wcmf.ui");
 
@@ -7,12 +8,17 @@ dojo.require("dijit.Dialog");
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit.layout.BorderContainer");
 
-dojo.declare("wcmf.ui.RelationDialog", dijit.Dialog, {
+dojo.declare("wcmf.ui.ObjectSelectDialog", dijit.Dialog, {
 
   /**
    * The type of objects to show
    */
   modelClass: null,
+  
+  /**
+   * The dojo.Deferred, that is resolved, when the ok button is clicked
+   */
+  selectDeferred: null,
 
   /**
    * UI elements
@@ -28,12 +34,24 @@ dojo.declare("wcmf.ui.RelationDialog", dijit.Dialog, {
    */
   constructor: function(options) {
     this.modelClass = options.modelClass;
+    
+    this.selectDeferred = new dojo.Deferred();
 
     dojo.mixin(this, {
       // default options
       title: wcmf.Message.get("Associate %1%", [this.modelClass.name]),
       style: "width:500px; height:400px; overflow: auto;"
     }, options);
+  },
+  
+  /**
+   * Display the dialog. Returns a promise with the selected objects.
+   * @return dojo.Deferred promise
+   */
+  show: function() {
+    this.inherited(arguments);
+
+    return this.selectDeferred.promise;
   },
 
   buildRendering: function() {
@@ -65,21 +83,30 @@ dojo.declare("wcmf.ui.RelationDialog", dijit.Dialog, {
 
   postCreate: function() {
     this.inherited(arguments);
-
+    var self = this;
+    
     var okBtn = new dijit.form.Button({
       label: wcmf.Message.get("OK"),
       onClick: dojo.hitch(this, function() {
-        this.hide();
+        var selectedObjects = self.grid.selection.getSelected();
+        self.selectDeferred.callback(selectedObjects);
+        self.hide();
       })
     }, dojo.create('div'));
     var cancelBtn = new dijit.form.Button({
       label: wcmf.Message.get("Cancel"),
       onClick: dojo.hitch(this, function() {
-        this.hide();
+        self.selectDeferred.cancel();
+        self.hide();
       })
     }, dojo.create('div'));
     this.buttonbar.domNode.appendChild(okBtn.domNode);
     this.buttonbar.domNode.appendChild(cancelBtn.domNode);
+
+    // destroy the dialog content on hide
+    this.connect(this, 'onHide', function() {
+      setTimeout(function() { self.destroy(); }, 0);
+    });
   },
 
   destroy: function() {

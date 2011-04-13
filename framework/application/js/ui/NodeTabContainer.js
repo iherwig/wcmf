@@ -126,17 +126,6 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
   },
 
   /**
-   * Show the DetailPane containing the node with the given object id
-   * @param oid The object id
-   */
-  showNode: function(oid) {
-    var pane = this.nodeTabs[oid];
-    if (pane != undefined) {
-      this.tabContainer.selectChild(pane);
-    }
-  },
-
-  /**
    * Get the selected DetailPane instance
    * @return wcmf.ui.DetailPane
    */

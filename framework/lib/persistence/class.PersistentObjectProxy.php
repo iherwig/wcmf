@@ -44,14 +44,23 @@ class PersistentObjectProxy
   /**
    * Create a PersistenceProxy instance from a PersistentObject. This is useful
    * if you want to prevent automatic loading of the subject if it is already loaded.
-   * @param object The PersistentObject
+   * Returns the argument, if already an PersistentObjectProxy instance.
+   * @param object The PersistentObject or PersistentObjectProxy
    * @return PersistentObjectProxy
    */
-  public static function fromObject(PersistentObject $object)
+  public static function fromObject($object)
   {
-    $proxy = new PersistentObjectProxy($object->getOID());
-    $proxy->_realSubject = $object;
-    return $proxy;
+    if ($object instanceof PersistentObjectProxy) {
+      return $object;
+    }
+    else if ($object instanceof PersistentObject) {
+      $proxy = new PersistentObjectProxy($object->getOID());
+      $proxy->_realSubject = $object;
+      return $proxy;
+    }
+    else {
+      throw new IllegalArgumentException("Cannot create proxy from unknown object");
+    }
   }
   /**
    * Get the object id of the PersistentObject.
