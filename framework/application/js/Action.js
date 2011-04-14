@@ -38,11 +38,11 @@ wcmf.Action.logout = function() {
  * @return dojo.Deferred promise (The only parameter is the saved item)
  */
 wcmf.Action.save = function(oid) {
+  wcmf.Error.hide();
   var deferred = new dojo.Deferred();
-  var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
 
   // save the DetailPane with the given oid
-  wcmf.Error.hide();
+  var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
   var nodeTabContainer = typeTabContainer.selectedChildWidget;
   var pane = nodeTabContainer.getDetailPane(oid);
   if (pane != null) {
@@ -67,6 +67,8 @@ wcmf.Action.save = function(oid) {
  */
 wcmf.Action.create = function(modelClass) {
   wcmf.Error.hide();
+  
+  // create a DetailPane for a new instance
   var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
   var detailPane = typeTabContainer.displayNode(
     wcmf.model.meta.Node.createRandomOid(modelClass.name), true);
@@ -81,6 +83,8 @@ wcmf.Action.create = function(modelClass) {
  */
 wcmf.Action.edit = function(oid) {
   wcmf.Error.hide();
+
+  // show the DetailPane for the instance
   var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
   var detailPane = typeTabContainer.displayNode(oid, false);
   return detailPane;
@@ -89,15 +93,29 @@ wcmf.Action.edit = function(oid) {
 /**
  * Asks for confirmation and deletes the object with the given object id if yes.
  * @param oid The object id
+ * @return dojo.Deferred promise
  */
 wcmf.Action.remove = function(oid) {
   wcmf.Error.hide();
+  var deferred = new dojo.Deferred();
+
+  // ask for confirmation and delete
   if (confirm(wcmf.Message.get('Are you sure?'))) {
     var modelClass = wcmf.model.meta.Model.getTypeFromOid(oid);
     var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
     var nodeTabContainer = typeTabContainer.getNodeTabContainer(modelClass);
-    nodeTabContainer.deleteNode(oid);
+    nodeTabContainer.deleteNode(oid).then(function(item) {
+      // do nothing on success
+      deferred.callback();
+    }, function(errorMsg) {
+      wcmf.Error.show(errorMsg);
+      deferred.errback(errorMsg);
+    });
   }
+  else {
+    deferred.cancel();
+  }
+  return deferred.promise;
 };
 
 /**
@@ -106,9 +124,12 @@ wcmf.Action.remove = function(oid) {
  * @param sourceOid The object id of the source object
  * @param targetOid The object id of the target object
  * @param role The role of the target object in relation to the source object
+ * @return dojo.Deferred promise
  */
 wcmf.Action.associate = function(sourceOid, targetOid, role) {
   wcmf.Error.hide();
+  var deferred = new dojo.Deferred();
+  
   new wcmf.persistence.Request().sendAjax({
     action: 'associate',
     sourceOid: sourceOid,
@@ -123,6 +144,19 @@ wcmf.Action.associate = function(sourceOid, targetOid, role) {
     var targetModelClass = wcmf.model.meta.Model.getTypeFromOid(targetOid);
     var sourceNodeTabContainer = typeTabContainer.getNodeTabContainer(sourceModelClass);
     var targetNodeTabContainer = typeTabContainer.getNodeTabContainer(targetModelClass);
-    // TODO: update grid if showing
+    var sourceDetailPane = sourceNodeTabContainer.getDetailPane(sourceOid);
+    if (sourceDetailPane != null) {
+      sourceDetailPane.reloadRelation(role);
+    }
+    var targetDetailPane = targetNodeTabContainer.getDetailPane(targetOid);
+    if (targetDetailPane != null) {
+      // TODO find opposite role
+      targetDetailPane.reloadRelation(role);
+    }
+    deferred.callback();
+  }, function(errorMsg) {
+      wcmf.Error.show(errorMsg);
+      deferred.errback(errorMsg);
   });
+  return deferred.promise;
 };

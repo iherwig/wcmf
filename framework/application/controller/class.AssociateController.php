@@ -76,7 +76,7 @@ class AssociateController extends Controller
    * @return Array of given context and action 'ok' in every case.
    * @see Controller::executeKernel()
    */
-  function executeKernel()
+  protected function executeKernel()
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $lockManager = LockManager::getInstance();

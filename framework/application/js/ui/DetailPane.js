@@ -95,7 +95,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   /**
    * Save the contained object data
- * @return dojo.Deferred promise (The only parameter is the saved item)
+   * @return dojo.Deferred promise (The only parameter is the saved item)
    */
   save: function() {
     var deferred = new dojo.Deferred();
@@ -184,6 +184,18 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    */
   getStore: function() {
     return wcmf.persistence.Store.getStore(this.modelClass);
+  },
+
+  /**
+   * Update the list of objects in the given relation
+   * @param name The relation name
+   */
+  reloadRelation: function(name) {
+    dojo.forEach(this.getDescendants(), function(widget) {
+      if (widget instanceof wcmf.ui.RelationTabContainer) {
+        widget.reloadRelation(name);
+      }
+    }, this);
   },
 
   /**

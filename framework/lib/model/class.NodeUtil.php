@@ -75,7 +75,8 @@ class NodeUtil
    * @param result Array of PathDescriptions after execution
    * @param currentPath Internal use only
    */
-  protected static function getConnectionsImpl($type, $otherRole, $otherType, $hierarchyType, array &$result=array(), array $currentPath=array())
+  protected static function getConnectionsImpl($type, $otherRole, $otherType, 
+          $hierarchyType, array &$result=array(), array $currentPath=array())
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $mapper = $persistenceFacade->getMapper($type);
@@ -143,7 +144,7 @@ class NodeUtil
     $ids = $oid->getId();
     $i = 0;
     foreach ($mapper->getPkNames() as $pkName) {
-      $tpl->setValue($pkName, '= '.$ids[$i++]);
+      $tpl->setValue($pkName, Criteria::asValue("=", $ids[$i++]));
     }
     return $query->getQueryString();
   }
@@ -158,14 +159,21 @@ class NodeUtil
     $mapper = $node->getMapper();
     $relationDescription = $mapper->getRelation($otherRole);
     $otherType = $relationDescription->getOtherType();
-
+    
     $query = new ObjectQuery($otherType);
-    // register the node using the role name as alias (avoids ambiguous paths)
-    $query->registerObjectTemplate($node, $relationDescription->getThisRole());
-    $tpl = $query->getObjectTemplate($otherType);
-    $node->addNode($tpl, $otherRole);
+    // add the primary keys of the node 
+    // using the role name as alias (avoids ambiguous paths)
+    $nodeTpl = $query->getObjectTemplate($node->getType(), $relationDescription->getThisRole());
+    $oid = $node->getOID();
+    $ids = $oid->getId();
+    $i = 0;
+    foreach ($mapper->getPkNames() as $pkName) {
+      $nodeTpl->setValue($pkName, Criteria::asValue("=", $ids[$i++]));
+    }
+    // add the other type in the given relation
+    $otherTpl = $query->getObjectTemplate($otherType);
+    $nodeTpl->addNode($otherTpl, $otherRole);
     $condition = $query->getQueryCondition();
-    $node->deleteNode($tpl, $otherRole);
     // prevent selecting all objects, if the condition is empty
     if (strlen($condition) == 0) {
       $condition = 0;
@@ -508,6 +516,21 @@ class NodeUtil
     $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $displayValues)) {
+        $node->removeValue($name);
+      }
+    }
+  }
+  /**
+   * Remove all values from a Node that are not a primary key value.
+   * @param node The Node instance
+   */
+  public static function removeNonPkValues(Node $node)
+  {
+    $mapper = $persistenceFacade->getMapper($type);
+    $pkValues = $mapper->getPkNames();
+    $valueNames = $node->getValueNames();
+    foreach($valueNames as $name) {
+      if (!in_array($name, $pkValues)) {
         $node->removeValue($name);
       }
     }

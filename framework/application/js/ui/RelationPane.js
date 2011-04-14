@@ -39,18 +39,17 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
   /**
    * Constructor
    * @param options Parameter object:
-   *    - modelClass The type of object on this side of the relation
    *    - oid The object id of the object on this side of the relation
    *    - otherRole The role of the objects on the other side of the relation
    *    - relationQuery The query to find objects on the other side of the relation
    *    + All other options defined for dijit.layout.ContentPane
    */
   constructor: function(options) {
-    this.modelClass = options.modelClass;
     this.oid = options.oid;
     this.otherRole = options.otherRole;
     this.relationQuery = options.relationQuery;
 
+    this.modelClass = wcmf.model.meta.Model.getTypeFromOid(this.oid);
     this.otherClass = this.modelClass.getTypeForRole(this.otherRole);
     this.title = this.otherRole;
 
@@ -58,6 +57,15 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       // default options
       closable: false
     }, options);
+  },
+  
+  /**
+   * Reload the content
+   */
+  reload: function() {
+    this.relationsGrid.setQuery({
+      query: this.relationQuery
+    });
   },
 
   buildRendering: function() {
@@ -77,12 +85,14 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       iconClass: "wcmfToolbarIcon wcmfToolbarIconCreate",
       onClick: function() {
         var pane = wcmf.Action.create(self.otherClass);
-        self.connect(pane, "onSaved", function(pane, item, oldOid, newOid) {
-          // TODO associate (only on first time)
-          wcmf.Action.associate(self.oid, newOid, self.otherRole);
-          // show the original node to which the new one is connected
-          wcmf.ui.TypeTabContainer.getInstance().displayNode(self.oid, false);
-          this.relationsGrid.update();
+        var eventHandle = self.connect(pane, "onSaved", function(pane, item, oldOid, newOid) {
+          // associate (only on first time)
+          wcmf.Action.associate(self.oid, newOid, self.otherRole).then(function() {
+            // show the original node to which the new one is connected
+            wcmf.ui.TypeTabContainer.getInstance().displayNode(self.oid, false);
+            // disconnect the save event handler
+            self.disconnect(eventHandle);
+          });
         });
       }
     });
@@ -111,6 +121,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
         query: this.relationQuery
       },
       actions: [
+        new wcmf.ui.GridActionEdit(),
         new wcmf.ui.GridActionDisassociate({
           oid: this.oid
         }),

@@ -98,8 +98,10 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
   /**
    * Delete the node with the given oid and close the related panel.
    * @param oid The object id
+   * @return dojo.Deferred promise
    */
   deleteNode: function(oid) {
+    var deferred = new dojo.Deferred();
     var store = wcmf.persistence.Store.getStore(this.modelClass);
     store.fetchItemByIdentity({
       scope: this,
@@ -115,9 +117,11 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
                 this.tabContainer.removeChild(pane);
                 delete this.nodeTabs[oid];
               }
+              deferred.callback();
             },
             onError: function(errorData) {
-              wcmf.Error.show(wcmf.Message.get("The object could not be deleted: %1%", [errorData]));
+              var msg = wcmf.Message.get("The object could not be deleted: %1%", [errorData]);
+              deferred.errback(msg);
             }
           });
         }
