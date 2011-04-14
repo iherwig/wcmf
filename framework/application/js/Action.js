@@ -42,9 +42,7 @@ wcmf.Action.save = function(oid) {
   var deferred = new dojo.Deferred();
 
   // save the DetailPane with the given oid
-  var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
-  var nodeTabContainer = typeTabContainer.selectedChildWidget;
-  var pane = nodeTabContainer.getDetailPane(oid);
+  var pane = wcmf.ui.DetailPane.get(oid);
   if (pane != null) {
     pane.save().then(function(item) {
       // do nothing on success
@@ -101,9 +99,7 @@ wcmf.Action.remove = function(oid) {
 
   // ask for confirmation and delete
   if (confirm(wcmf.Message.get('Are you sure?'))) {
-    var modelClass = wcmf.model.meta.Model.getTypeFromOid(oid);
-    var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
-    var nodeTabContainer = typeTabContainer.getNodeTabContainer(modelClass);
+    var nodeTabContainer = wcmf.ui.NodeTabContainer.get(oid);
     nodeTabContainer.deleteNode(oid).then(function(item) {
       // do nothing on success
       deferred.callback();
@@ -139,16 +135,49 @@ wcmf.Action.associate = function(sourceOid, targetOid, role) {
     controller: 'TerminateController'
   }, null).then(function(data) {
     // update ui
-    var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
-    var sourceModelClass = wcmf.model.meta.Model.getTypeFromOid(sourceOid);
-    var targetModelClass = wcmf.model.meta.Model.getTypeFromOid(targetOid);
-    var sourceNodeTabContainer = typeTabContainer.getNodeTabContainer(sourceModelClass);
-    var targetNodeTabContainer = typeTabContainer.getNodeTabContainer(targetModelClass);
-    var sourceDetailPane = sourceNodeTabContainer.getDetailPane(sourceOid);
+    var sourceDetailPane = wcmf.ui.DetailPane.get(sourceOid);
     if (sourceDetailPane != null) {
       sourceDetailPane.reloadRelation(role);
     }
-    var targetDetailPane = targetNodeTabContainer.getDetailPane(targetOid);
+    var targetDetailPane = wcmf.ui.DetailPane.get(targetOid);
+    if (targetDetailPane != null) {
+      // TODO find opposite role
+      targetDetailPane.reloadRelation(role);
+    }
+    deferred.callback();
+  }, function(errorMsg) {
+      wcmf.Error.show(errorMsg);
+      deferred.errback(errorMsg);
+  });
+  return deferred.promise;
+};
+
+/**
+ * Disassociate two objects and notifies the appropriate DetailPanes to
+ * update the RelationPanes.
+ * @param sourceOid The object id of the source object
+ * @param targetOid The object id of the target object
+ * @param role The role of the target object in relation to the source object
+ * @return dojo.Deferred promise
+ */
+wcmf.Action.disassociate = function(sourceOid, targetOid, role) {
+  wcmf.Error.hide();
+  var deferred = new dojo.Deferred();
+  
+  new wcmf.persistence.Request().sendAjax({
+    action: 'disassociate',
+    sourceOid: sourceOid,
+    targetOid: targetOid,
+    role: role,
+    responseFormat: 'json',
+    controller: 'TerminateController'
+  }, null).then(function(data) {
+    // update ui
+    var sourceDetailPane = wcmf.ui.DetailPane.get(sourceOid);
+    if (sourceDetailPane != null) {
+      sourceDetailPane.reloadRelation(role);
+    }
+    var targetDetailPane = wcmf.ui.DetailPane.get(targetOid);
     if (targetDetailPane != null) {
       // TODO find opposite role
       targetDetailPane.reloadRelation(role);

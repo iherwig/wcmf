@@ -127,6 +127,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
         }
       }
     });
+    return deferred.promise;
   },
 
   /**
@@ -252,3 +253,14 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     this.inherited(arguments);
   }
 });
+
+/**
+ * Get the NodeTabContainer instance for a given object id
+ * @param oid The object id
+ * @return wcmf.ui.NodeTabContainer
+ */
+wcmf.ui.NodeTabContainer.get = function(oid) {
+  var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
+  var modelClass = wcmf.model.meta.Model.getTypeFromOid(oid);
+  return typeTabContainer.getNodeTabContainer(modelClass);
+}

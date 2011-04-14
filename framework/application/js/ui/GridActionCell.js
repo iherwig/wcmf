@@ -57,8 +57,32 @@ dojo.declare("wcmf.ui.GridActionDelete", wcmf.ui.GridActionCell, {
  * This class calls the wcmf.Action.disassociate method on the current item
  */
 dojo.declare("wcmf.ui.GridActionDisassociate", wcmf.ui.GridActionCell, {
+  
+  /**
+   * The object id of the source object (not given as item action parameter)
+   */
+  sourceOid: null,
+
+  /**
+   * The role of the item action parameter in relation to the source object
+   */
+  role: null,
+
+/**
+   * Constructor
+   * @param options Parameter object:
+   *    - sourceOid The object id of the source object (not given as item action parameter)
+   *    - role The role of the item action parameter in relation to the source object
+   *    + All other options defined for dojox.grid.cells.Cell
+   */
+  constructor: function(options) {
+    dojo.mixin(this, {
+      // no defaults
+    }, options);
+  },
+  
   iconClass: "wcmfToolbarIconDisassociate",
   action: function(item) {
-    wcmf.Action.disassociate(item.oid, this.oid);
+    wcmf.Action.disassociate(this.sourceOid, item.oid, this.role);
   }
 });

@@ -152,7 +152,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
         });
       }
     }
-    return deferred;
+    return deferred.promise;
   },
 
   /**
@@ -325,3 +325,13 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     this.inherited(arguments);
   }
 });
+
+/**
+ * Get the DetailPane instance for a given object id
+ * @param oid The object id
+ * @return wcmf.ui.DetailPane or null, if not opened
+ */
+wcmf.ui.DetailPane.get = function(oid) {
+  var nodeTabContainer = wcmf.ui.NodeTabContainer.get(oid);
+  return nodeTabContainer.getDetailPane(oid);
+}

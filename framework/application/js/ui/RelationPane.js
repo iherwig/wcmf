@@ -123,7 +123,8 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       actions: [
         new wcmf.ui.GridActionEdit(),
         new wcmf.ui.GridActionDisassociate({
-          oid: this.oid
+          sourceOid: this.oid,
+          role: this.otherRole
         }),
         new wcmf.ui.GridActionDelete()
       ],
