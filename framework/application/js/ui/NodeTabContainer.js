@@ -73,7 +73,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
         isNewNode: isNewNode
       });
       this.connect(pane, "onClose", function() {
-        delete this.nodeTabs[oid];
+        delete this.nodeTabs[pane.getOid()];
         return true;
       });
       this.connect(pane, "onChange", function() {
@@ -249,7 +249,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
   },
 
   destroy: function() {
-    this.destroyRecursive();
+    this.destroyDescendants();
     this.inherited(arguments);
   }
 });

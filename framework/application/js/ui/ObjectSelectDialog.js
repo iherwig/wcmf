@@ -110,7 +110,7 @@ dojo.declare("wcmf.ui.ObjectSelectDialog", dijit.Dialog, {
   },
 
   destroy: function() {
-    this.destroyRecursive();
+    this.destroyDescendants();
     this.inherited(arguments);
   }
 });

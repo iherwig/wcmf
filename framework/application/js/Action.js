@@ -141,8 +141,9 @@ wcmf.Action.associate = function(sourceOid, targetOid, role) {
     }
     var targetDetailPane = wcmf.ui.DetailPane.get(targetOid);
     if (targetDetailPane != null) {
-      // TODO find opposite role
-      targetDetailPane.reloadRelation(role);
+      var sourceType = wcmf.model.meta.Model.getTypeFromOid(sourceOid);
+      var sourceRole = sourceType.getRelation(role).thisEndName;
+      targetDetailPane.reloadRelation(sourceRole);
     }
     deferred.callback();
   }, function(errorMsg) {
@@ -179,8 +180,9 @@ wcmf.Action.disassociate = function(sourceOid, targetOid, role) {
     }
     var targetDetailPane = wcmf.ui.DetailPane.get(targetOid);
     if (targetDetailPane != null) {
-      // TODO find opposite role
-      targetDetailPane.reloadRelation(role);
+      var sourceType = wcmf.model.meta.Model.getTypeFromOid(sourceOid);
+      var sourceRole = sourceType.getRelation(role).thisEndName;
+      targetDetailPane.reloadRelation(sourceRole);
     }
     deferred.callback();
   }, function(errorMsg) {

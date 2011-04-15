@@ -46,11 +46,12 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     this.isNewNode = options.isNewNode;
 
     this.title = this.isNewNode ? wcmf.Message.get("New %1%", [this.modelClass.name]) : this.oid;
-    this.href = this.isNewNode ? '?action=detail&type='+this.modelClass.name : '?action=detail&oid='+this.oid;
+    this.href = this.getHref();
 
     dojo.mixin(this, {
       // default options
       parseOnLoad: true,
+      preload: true,
       closable: true
     }, options);
 
@@ -205,6 +206,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    */
   afterSave: function(item) {
     var oldOid = this.oid;
+    var wasNewNode = this.isNewNode;
     // load the item from the store to get the current content
     var store = this.getStore(this.modelClass);
     // set the oid
@@ -214,8 +216,21 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     this.setFieldValues(item);
     this.unsetDirty();
     this.isNewNode = false;
-    // notify listeners
-    this.onSaved(this, item, oldOid, this.oid);
+
+    // reload the content if the node was new
+    if (wasNewNode) {
+      var self = this;
+      // don't use set() to avoid automatic loading
+      this.href = this.getHref();
+      this.refresh().then(function() {
+        // notify listeners
+        self.onSaved(self, item, oldOid, self.oid);      
+      });
+    }
+    else {
+      // notify listeners
+      this.onSaved(this, item, oldOid, this.oid);      
+    }
   },
 
   setDirty: function() {
@@ -282,6 +297,19 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     return '';
   },
 
+  /**
+   * Get the url for loading the content
+   * @return String
+   */
+  getHref: function() {
+    if (this.isNewNode) {
+      return '?action=detail&type='+this.modelClass.name;
+    }
+    else {
+      return '?action=detail&oid='+this.oid;
+    }
+  },
+
   connectFieldChangeEvents: function() {
     dojo.forEach(this.getDescendants(), function(widget) {
       this.fieldChangeHandles.push(widget.watch(dojo.hitch(this, 'handleValueChangeEvent')));
@@ -319,9 +347,9 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     }
     return true;
   },
-
+        
   destroy: function() {
-    this.destroyRecursive();
+    this.destroyDescendants();
     this.inherited(arguments);
   }
 });

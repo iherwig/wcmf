@@ -54,13 +54,14 @@ dojo.declare("wcmf.ui.RelationTabContainer", dijit.layout.TabContainer, {
 
   /**
    * Reload the content of the RelationPane instance that
-   * belongs to the given relation
+   * belongs to the given relation and display it
    * @param name The relation name
    */
   reloadRelation: function(name) {
     var pane = this.relationPanes[name];
     if (pane != undefined) {
       pane.reload();
+      this.selectChild(pane);
     }
   },
 
@@ -80,7 +81,7 @@ dojo.declare("wcmf.ui.RelationTabContainer", dijit.layout.TabContainer, {
   },
 
   destroy: function() {
-    this.destroyRecursive();
+    this.destroyDescendants();
     this.inherited(arguments);
   }
 });

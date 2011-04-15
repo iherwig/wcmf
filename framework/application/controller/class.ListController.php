@@ -187,6 +187,7 @@ class ListController extends Controller
     $query = new StringQuery($type);
     $query->setConditionString($queryCondition);
     $objects = $query->execute(BUILDDEPTH_SINGLE, $sortArray, $pagingInfo);
+    Log::debug("Load objects with query: ".$query->getQueryString(), __CLASS__);
     return $objects;
   }
   /**

@@ -170,7 +170,7 @@ class ActionMapper
       $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction());
       $nextRequest->setFormat($response->getFormat());
       $nextRequest->setValues($response->getValues());
-      $nextRequest->setErrors($request->getErrors());
+      $nextRequest->setErrors($response->getErrors());
       $nextRequest->setResponseFormat($request->getResponseFormat());
       $response = ActionMapper::processAction($nextRequest);
     }

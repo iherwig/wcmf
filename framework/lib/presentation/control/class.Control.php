@@ -179,6 +179,67 @@ abstract class Control
    */
   public function render($name, $inputType, $value, $editable=true, $language=null, $parentView=null)
   {
+    // create the view
+    $view = $this->createView($name, $inputType, $value, $editable, $language, $parentView);
+
+    // add subclass parameters
+    $this->assignViewValues($view);
+
+    // render the view
+    return $view->fetch(WCMF_BASE.$this->_viewTpl);
+  }
+  /**
+   * Get a HTML input control for a given object value. The control is defined by the
+   * 'input_type' property of the value. The property 'is_editable' is used to determine
+   * wether the control should be enabled or not.
+   * @param obj A reference to the PersistentObject which contains the value
+   * @param name The name of the value to construct the control for
+   * @param language The lanugage if the Control should be localization aware. Optional,
+   *                 default null (= Localization::getDefaultLanguage())
+   * @param parentView The IView instance, in which the control should be embedded. Optional,
+   *                 default null
+   * @return The HTML control string
+   */
+  public function renderFromProperty(PersistentObject $obj, $name, $language=null, $parentView=null)
+  {
+    $controlName = self::getControlName($obj, $name);
+    $value = $obj->getValue($name);
+    $inputType = "";
+    $editable = false;
+
+    $mapper = $obj->getMapper();
+    if ($mapper) {
+      $attribute = $mapper->getAttribute($name);
+      $inputType = $attribute->getInputType();
+      $editable = $attribute->getIsEditable();
+    }
+
+    // create the view
+    $view = $this->createView($controlName, $inputType, $value, $editable, $language, $parentView);
+    
+    // assign attribute description
+    if ($attribute) {
+      $view->assign("attributeDescription", $attribute);
+    }
+    
+    // add subclass parameters
+    $this->assignViewValues($view);
+
+    // render the view
+    return $view->fetch(WCMF_BASE.$this->_viewTpl);
+  }
+  /**
+   * Create the control view.
+   * @param name @see Control::render
+   * @param inputType @see Control::render
+   * @param value @see Control::render
+   * @param editable @see Control::render
+   * @param language @see Control::render
+   * @param parentView @see Control::render
+   * @return IView instance
+   */
+  protected function createView($name, $inputType, $value, $editable=true, $language=null, $parentView=null)
+  {
     $value = strval($value);
 
     // get definition and list from description
@@ -252,38 +313,13 @@ abstract class Control
     $view->assign('controlIndex', $this->getControlIndex($parentView));
     $view->assign('attributes', $attributes);
     $view->assign('attributeList', $attributeList);
-
-    // add subclass parameters
-    $this->assignViewValues($view);
-
-    // render the view
-    $htmlString = $view->fetch(WCMF_BASE.$this->_viewTpl);
     $this->registerWithView($parentView);
-    return $htmlString;
-  }
-  /**
-   * Get a HTML input control for a given object value. The control is defined by the
-   * 'input_type' property of the value. The property 'is_editable' is used to determine
-   * wether the control should be enabled or not.
-   * @param obj A reference to the PersistentObject which contains the value
-   * @param name The name of the value to construct the control for
-   * @param language The lanugage if the Control should be localization aware. Optional,
-   *                 default null (= Localization::getDefaultLanguage())
-   * @param parentView The IView instance, in which the control should be embedded. Optional,
-   *                 default null
-   * @return The HTML control string
-   */
-  public function renderFromProperty(PersistentObject $obj, $name, $language=null, $parentView=null)
-  {
-    $controlName = self::getControlName($obj, $name);
-    $value = $obj->getValue($name);
-    return $this->render($controlName, $obj->getValueProperty($name, 'input_type'),
-      $value, $obj->getValueProperty($name, 'is_editable'),
-      $language, $parentView);
+
+    return $view;
   }
   /**
    * Assign the control specific values to the view. Parameters assigned by default
-   * may be retrieved by $view->getTemplateVars($paramName)
+   * may be retrieved by $view->getTemplateVars([$paramName])
    * @param view The view instance
    */
   protected abstract function assignViewValues(IView $view);

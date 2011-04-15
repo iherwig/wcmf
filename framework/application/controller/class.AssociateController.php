@@ -102,11 +102,23 @@ class AssociateController extends Controller
     if ($sourceNode != null && $targetNode != null)
     {
       // process actions
-      if ($request->getAction() == 'associate') {
-        $sourceNode->addNode($targetNode, $role);
+      if ($request->getAction() == 'associate')
+      {
+        try {
+          $sourceNode->addNode($targetNode, $role);
+        }
+        catch (Exception $ex) {
+          $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
+        }
       }
-      elseif ($request->getAction() == 'disassociate') {
-        $sourceNode->deleteNode($targetNode, $role);
+      elseif ($request->getAction() == 'disassociate')
+      {
+        try {
+          $sourceNode->deleteNode($targetNode, $role);
+        }
+        catch (Exception $ex) {
+          $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
+        }
       }
       $sourceNode->save();
       $targetNode->save();
@@ -114,12 +126,12 @@ class AssociateController extends Controller
     else
     {
       if ($sourceNode == null) {
-        $this->appendErrorMsg(Message::get("Cannot %1% %2% and %3%. Source node does not exist.", 
-                array($request->getAction(), $sourceOID, $targetOID)));
+        $this->addError(ApplicationError::get('PARAMETER_INVALID',
+          array('invalidParameters' => array('sourceOid'))));
       }
       if ($targetNode == null) {
-        $this->appendErrorMsg(Message::get("Cannot %1% %2% and %3%. Target node does not exist.", 
-                array($request->getAction(), $sourceOID, $targetOID)));
+        $this->addError(ApplicationError::get('PARAMETER_INVALID',
+          array('invalidParameters' => array('targetOid'))));
       }
     }
     $response->setAction('ok');

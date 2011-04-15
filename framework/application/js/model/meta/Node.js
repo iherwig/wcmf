@@ -27,15 +27,28 @@ dojo.declare("wcmf.model.meta.Node", null, {
   displayValues: [],
 
   /**
+   * Get a relation definition for a given role name
+   * @param roleName The name of the role
+   * @return Object
+   */
+  getRelation: function(roleName) {
+    for (var i=0, count=this.relations.length; i<count; i++) {
+      if (this.relations[i].name == roleName) {
+        return this.relations[i];
+      }
+    }
+    return null;
+  },
+
+  /**
    * Get the wcmf.model.meta.Node for a given role name
    * @param roleName The name of the role
    * @return wcmf.model.meta.Node
    */
   getTypeForRole: function(roleName) {
-    for (var i=0, count=this.relations.length; i<count; i++) {
-      if (this.relations[i].name == roleName) {
-        return wcmf.model.meta.Model.getType(this.relations[i].type);
-      }
+    var relation = this.getRelation(roleName);
+    if (relation != null) {
+      return wcmf.model.meta.Model.getType(relation.type);
     }
     return null;
   },

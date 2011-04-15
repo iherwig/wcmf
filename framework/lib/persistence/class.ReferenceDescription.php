@@ -27,8 +27,6 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.AttributeDescription.php");
  */
 class ReferenceDescription extends AttributeDescription
 {
-  protected $_isInitialized = false;
-
   protected $otherType = '';
   protected $otherName = '';
 
@@ -43,32 +41,6 @@ class ReferenceDescription extends AttributeDescription
     $this->name = $name;
     $this->otherType = $otherType;
     $this->otherName = $otherName;
-  }
-
-  /**
-   * Delegate property access to the base class.
-   */
-  public function __get($propName)
-  {
-    if (!$this->_isInitialized)
-    {
-      // get the AttributeDescription of the referenced attribute and fill in the missing attributes
-      $mapper = PersistenceFacade::getInstance()->getMapper($this->otherType);
-      $attributeDescription = $mapper->getAttribute($this->otherName);
-
-      $this->type = $attributeDescription->getType();
-      $this->tags = $attributeDescription->getTags();
-      $this->defaultValue = $attributeDescription->getDefaultValue();
-      $this->restrictionsMatch = $attributeDescription->getRestrictionsMatch();
-      $this->restrictionsNotMatch = $attributeDescription->getRestrictionsNotMatch();
-      $this->restrictionsDescription = $attributeDescription->getRestrictionsDescription();
-      $this->isEditable = $attributeDescription->getIsEditable();
-      $this->inputType = $attributeDescription->getInputType();
-      $this->displayType = $attributeDescription->getDisplayType();
-
-      $this->_isInitialized = true;
-    }
-    return parent::__get($propName);
   }
 
   /**
@@ -87,6 +59,114 @@ class ReferenceDescription extends AttributeDescription
   public function getOtherName()
   {
     return $this->otherName;
+  }
+  
+  /**
+   * Get the attribute name
+   * @return String
+   */
+  public function getName()
+  {
+    return $this->name;
+  }
+
+  /**
+   * Get the attribute type
+   * @return String
+   */
+  public function getType()
+  {
+    $attribute = $this->getReferencedAttribute();
+    return $attribute->getType();
+  }
+
+  /**
+   * Get the application specific tags that this attribute is tagged with
+   * @return Array of String
+   */
+  public function getTags()
+  {
+    $attribute = $this->getReferencedAttribute();
+    return $attribute->getTags();
+  }
+
+  /**
+   * Get the default value
+   * @return Mixed
+   */
+  public function getDefaultValue()
+  {
+    $attribute = $this->getReferencedAttribute();
+    return $attribute->getDefaultValue();
+  }
+
+  /**
+   * Get the regular expression that the value must match
+   * @return String
+   */
+  public function getRestrictionsMatch()
+  {
+    $attribute = $this->getReferencedAttribute();
+    return $attribute->getRestrictionsMatch();
+  }
+
+  /**
+   * Get the regular expression that the value must NOT match
+   * @return String
+   */
+  public function getRestrictionsNotMatch()
+  {
+    $attribute = $this->getReferencedAttribute();
+    return $attribute->getRestrictionsNotMatch();
+  }
+
+  /**
+   * Get the description of the resticitions
+   * @return String
+   */
+  public function getRestrictionsDescription()
+  {
+    $attribute = $this->getReferencedAttribute();
+    return $attribute->getRestrictionsDescription();
+  }
+
+  /**
+   * Check whether the attribute should be editable
+   * @return Boolean
+   */
+  public function getIsEditable()
+  {
+    return false;
+  }
+
+  /**
+   * Get the input type for the value
+   * @return String
+   */
+  public function getInputType()
+  {
+    $attribute = $this->getReferencedAttribute();
+    return $attribute->getInputType();
+  }
+
+  /**
+   * Get the display type for the value
+   * @return String
+   */
+  public function getDisplayType()
+  {
+    $attribute = $this->getReferencedAttribute();
+    return $attribute->getDisplayType();
+  }
+  
+  /**
+   * Get the referenced attribute
+   * @return AttributeDescription instance
+   */
+  private function getReferencedAttribute()
+  {
+    $mapper = PersistenceFacade::getInstance()->getMapper($this->otherType);
+    return $mapper->getAttribute($this->otherName);
   }
 }
 ?>

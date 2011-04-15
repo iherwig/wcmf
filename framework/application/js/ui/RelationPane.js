@@ -89,7 +89,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
           // associate (only on first time)
           wcmf.Action.associate(self.oid, newOid, self.otherRole).then(function() {
             // show the original node to which the new one is connected
-            wcmf.ui.TypeTabContainer.getInstance().displayNode(self.oid, false);
+            //wcmf.ui.TypeTabContainer.getInstance().displayNode(self.oid, false);
             // disconnect the save event handler
             self.disconnect(eventHandle);
           });
@@ -138,7 +138,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
   },
 
   destroy: function() {
-    this.destroyRecursive();
+    this.destroyDescendants();
     this.inherited(arguments);
   }
 });

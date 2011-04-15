@@ -87,7 +87,7 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
   },
 
   destroy: function() {
-    this.destroyRecursive();
+    this.destroyDescendants();
     this.inherited(arguments);
   }
 });
