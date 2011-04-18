@@ -28,26 +28,18 @@
   <link rel="stylesheet" type="text/css" href="{$libDir}3rdparty/dojo/dojox/grid/enhanced/resources/claro/EnhancedGrid.css" />
   -->
 
-  <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" data-dojo-config="parseOnLoad:true, isDebug:true"></script>
+  <script>
+  var _dbpDev = true;
+  dojoConfig = _dbpDev ? {
+    modulePaths : {
+      wcmf: "../../../application/js"
+    }
+  } : {};
+  </script>
+  <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" data-dojo-config="parseOnLoad:false, isDebug:true"></script>
+  <script>dojo.require("wcmf.base");</script>
 
   <script type="text/javascript">
-    dojo.require("dijit.form.Form");
-    dojo.require("dijit.form.Button");
-    dojo.require("dijit.form.ValidationTextBox");
-    dojo.require("dijit.form.CheckBox");
-    dojo.require("dijit.layout.BorderContainer");
-    dojo.require("dijit.layout.ContentPane");
-    dojo.require("dijit.layout.TabContainer");
-    dojo.require("dijit.MenuBar");
-    dojo.require("dijit.PopupMenuBarItem");
-    dojo.require("dijit.Menu");
-    dojo.require("dijit.MenuItem");
-    dojo.require("dijit.PopupMenuItem");
-    dojo.require("dijit.Toolbar");
-
-    dojo.require("dojo.fx");
-
-    dojo.require('dojox.uuid.generateRandomUuid');
 
     /**
      * Some global variables in the wcmf namespace
@@ -61,12 +53,10 @@
     wcmf.responseFormat = '{$responseFormat}';
   </script>
   <script type="text/javascript" src="js.php?file={$libDir}application/js/message.js.php"></script>
-  <script type="text/javascript" src="{$libDir}application/js/Action.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/Error.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/model/meta/Model.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/model/meta/Node.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/EasyRestService.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/persistence/Request.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/DionysosService.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/persistence/Store.js"></script>
   <script type="text/javascript" src="{$libDir}application/js/ui/TypeTabContainer.js"></script>

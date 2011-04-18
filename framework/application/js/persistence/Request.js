@@ -1,3 +1,5 @@
+dojo.provide("wcmf.persistence.Request");
+
 /**
  * @class Request This class encapsulates functionality for sending data to the
  *        server

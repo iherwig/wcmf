@@ -1,3 +1,7 @@
+dojo.provide("wcmf.Action");
+
+dojo.require("wcmf.persistence.Request");
+
 /**
  * @class Action
  *
