@@ -1,12 +1,13 @@
+dojo.provide("wcmf.persistence.Store");
+
+dojo.require("dojox.data.JsonRestStore");
+dojo.require("dojo.DeferredList");
+
 /**
  * @class Store This class represents the client side object repository.
  * There is one store for each type. Store uses wcmf.DionysosService to exchange
  * objects and their modifications with the server.
  */
-dojo.provide("wcmf.persistence");
-dojo.require("dojox.data.JsonRestStore");
-dojo.require("dojo.DeferredList");
-
 dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
   // we call the base class constructor manually
   "-chains-": {

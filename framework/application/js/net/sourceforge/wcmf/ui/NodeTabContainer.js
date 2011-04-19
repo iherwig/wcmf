@@ -1,7 +1,4 @@
-/**
- * @class DetailPane This class displays the detail view of an object.
- */
-dojo.provide("wcmf.ui");
+dojo.provide("wcmf.ui.NodeTabContainer");
 
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit.layout.TabContainer");

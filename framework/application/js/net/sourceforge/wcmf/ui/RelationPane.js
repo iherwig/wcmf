@@ -1,11 +1,14 @@
+dojo.provide("wcmf.ui.RelationPane");
+
+dojo.require("dojox.layout.ContentPane");
+dojo.require("dijit.layout.BorderContainer");
+
+dojo.require("wcmf.ui.Grid");
+
 /**
  * @class RelationPane This class displays the objects that are in a
  * specific relation to another object.
  */
-dojo.provide("wcmf.ui");
-
-dojo.require("dojox.layout.ContentPane");
-
 dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
 
   /**

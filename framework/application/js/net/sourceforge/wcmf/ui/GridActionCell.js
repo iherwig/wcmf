@@ -1,3 +1,7 @@
+dojo.provide("wcmf.ui.GridActionCell");
+
+dojo.require("dojox.grid.cells._base");
+
 /**
  * @class ActionCell
  *
@@ -5,8 +9,6 @@
  * perform actions on a row item. Each cell renders as an image
  * and performs the given action on the item represented by the row.
  */
-dojo.require("dojox.grid.cells._base");
-
 dojo.declare("wcmf.ui.GridActionCell", null, {
 
   /**

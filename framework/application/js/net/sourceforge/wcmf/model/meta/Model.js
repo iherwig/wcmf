@@ -1,4 +1,4 @@
-dojo.provide("wcmf.model.meta");
+dojo.provide("wcmf.model.meta.Model");
 
 /**
  * The meta model is a description the domain model

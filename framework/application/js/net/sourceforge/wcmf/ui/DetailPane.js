@@ -1,3 +1,7 @@
+dojo.provide("wcmf.ui.DetailPane");
+
+dojo.require("dojox.layout.ContentPane");
+
 /**
  * @class DetailPane
  *
@@ -5,10 +9,6 @@
  * The concrete representation is defined in a backend template, which
  * is loaded on creation.
  */
-dojo.provide("wcmf.ui");
-
-dojo.require("dojox.layout.ContentPane");
-
 dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   /**

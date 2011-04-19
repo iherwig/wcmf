@@ -1,3 +1,9 @@
+dojo.provide("wcmf.ui.RelationTabContainer");
+
+dojo.require("dijit.layout.TabContainer");
+
+dojo.require("wcmf.ui.RelationPane");
+
 /**
  * @class RelationTabContainer
  *
@@ -6,10 +12,6 @@
  * the objects at the target end of the relations of the given source object and 
  * are selected using the provided queries.
  */
-dojo.provide("wcmf.ui");
-
-dojo.require("dijit.layout.TabContainer");
-
 /**
  * TypeTabContainer is a TabContainer that consists of one NodeTabContainer per
  * model type.

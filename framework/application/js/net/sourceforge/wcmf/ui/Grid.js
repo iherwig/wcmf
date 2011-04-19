@@ -1,7 +1,4 @@
-/**
- * @class Grid This class displays a list of objects in a table.
- */
-dojo.provide("wcmf.ui");
+dojo.provide("wcmf.ui.Grid");
 
 dojo.require("dojox.grid.EnhancedGrid");
 dojo.require("dojox.grid.enhanced.plugins.DnD");
@@ -9,6 +6,9 @@ dojo.require("dojox.grid.enhanced.plugins.NestedSorting");
 dojo.require("dojox.grid.enhanced.plugins.IndirectSelection");
 dojo.require("dojox.grid.enhanced.plugins.Filter");
 
+/**
+ * @class Grid This class displays a list of objects in a table.
+ */
 dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
   modelClass: null,

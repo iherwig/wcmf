@@ -1,4 +1,4 @@
-dojo.provide("wcmf.model.meta");
+dojo.provide("wcmf.model.meta.Node");
 
 /**
  * Base class for all model classes

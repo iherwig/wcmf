@@ -1,11 +1,11 @@
+dojo.provide("wcmf.persistence.DionysosService");
+
 /**
  * @class DionysosService This class is used to exchange objects and
  * their modifications with the server. There is one service for each type.
  * DionysosService implements the Dionysos protocol. See:
  * http://olympos.svn.sourceforge.net/viewvc/olympos/trunk/olympos/dionysos/docs/Dionysos%20Specification%20JSON.odt
  */
-dojo.provide("wcmf.persistence.Service");
-
 dojo.declare("wcmf.persistence.DionysosService", null, {
 
   /**

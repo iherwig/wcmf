@@ -1,3 +1,5 @@
+dojo.provide("wcmf.Error");
+
 /**
  * @class Error This class encapsulates functionality for error handling
  */

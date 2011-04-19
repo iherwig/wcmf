@@ -1,13 +1,13 @@
+dojo.provide("wcmf.ui.TypeTabContainer");
+
+dojo.require("dijit.layout.TabContainer");
+
 /**
  * @class TypeTabContainer
  *
  * TypeTabContainer contains one instance of NodeTabContainer per
  * domain object type.
  */
-dojo.provide("wcmf.ui");
-
-dojo.require("dijit.layout.TabContainer");
-
 /**
  * TypeTabContainer is a TabContainer that consists of one NodeTabContainer per
  * model type.

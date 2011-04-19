@@ -14,7 +14,7 @@
  * See the license.txt file distributed with this work for 
  * additional information.
  *
- * $Id$
+ * $Id: Message.js.php 1259 2011-01-09 23:11:23Z iherwig $
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
@@ -27,6 +27,8 @@ $application->setupGlobals();
 $lang = $_GET['lang'];
 $messages = Message::getAll($lang);
 ?>
+dojo.provide("wcmf.Message");
+
 /**
  * @class Request The Message class is used to translate texts
  */

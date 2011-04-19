@@ -1,13 +1,15 @@
-/**
- * @class RelationDialog This class displays a list of objects of the given type.
- * 
- */
-dojo.provide("wcmf.ui");
+dojo.provide("wcmf.ui.ObjectSelectDialog");
 
 dojo.require("dijit.Dialog");
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit.layout.BorderContainer");
 
+dojo.require("wcmf.ui.Grid");
+
+/**
+ * @class RelationDialog This class displays a list of objects of the given type.
+ * 
+ */
 dojo.declare("wcmf.ui.ObjectSelectDialog", dijit.Dialog, {
 
   /**
