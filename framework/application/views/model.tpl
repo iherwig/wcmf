@@ -1,3 +1,11 @@
+{foreach $typeTemplates as $tpl}
+{$type=$tpl->getType()}
+dojo.provide("wcmf.model.{$type}Class");
+{/foreach}
+
+dojo.require("wcmf.model.meta.Node");
+dojo.require("wcmf.model.meta.Model");
+
 /**
  * This file contains definitions of all known model entities
  */

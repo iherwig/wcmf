@@ -29,17 +29,25 @@
   -->
 
   <script>
-  var _dbpDev = true;
-  dojoConfig = _dbpDev ? {
-    modulePaths : {
-      wcmf: "../../../application/js"
-    }
-  } : {};
+    /**
+     * Setup dojo
+     */
+    var _dbpDev = true;
+    dojoConfig = _dbpDev ? {
+      modulePaths : {
+        "app": "../../../application/js",
+        "wcmf": "../../../application/js/net/sourceforge/wcmf",
+        "com.ibm.developerworks": "../../../application/js/com/ibm/developerworks"
+      }
+    } : {};
   </script>
   <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" data-dojo-config="parseOnLoad:false, isDebug:true"></script>
-  <script>dojo.require("wcmf.base");</script>
-
+  <script type="text/javascript" src="js.php?file={$libDir}application/js/net/sourceforge/wcmf/Message.js.php"></script>
   <script type="text/javascript">
+    /**
+     * Include application classes
+     */
+    dojo.require("app.base");
 
     /**
      * Some global variables in the wcmf namespace
@@ -52,21 +60,6 @@
     wcmf.action = '{$action}';
     wcmf.responseFormat = '{$responseFormat}';
   </script>
-  <script type="text/javascript" src="js.php?file={$libDir}application/js/message.js.php"></script>
-  <script type="text/javascript" src="{$libDir}application/js/Error.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/model/meta/Model.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/model/meta/Node.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/persistence/EasyRestService.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/persistence/DionysosService.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/persistence/Store.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/ui/TypeTabContainer.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/ui/NodeTabContainer.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/ui/Grid.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/ui/GridActionCell.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/ui/DetailPane.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/ui/RelationTabContainer.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/ui/RelationPane.js"></script>
-  <script type="text/javascript" src="{$libDir}application/js/ui/ObjectSelectDialog.js"></script>
 {/block}
 </head>
 <body class="wcmf">
