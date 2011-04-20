@@ -69,11 +69,12 @@ class NodeUtilTest extends WCMFTestCase
   {
     $this->runAnonymous(true);
 
+    // Page -> NormalImage
     $node = PersistenceFacade::getInstance()->create('Page');
     $node->setOID(new ObjectId('Page', 10));
     $condition = NodeUtil::getRelationQueryCondition($node, 'NormalImage');
     $this->assertTrue($condition === '(`NormalPage`.`id` = 10)');
-
+    // test with query
     $query = new StringQuery('Image');
     $query->setConditionString($condition);
     $sql = $query->getQueryString();
@@ -82,6 +83,36 @@ class NodeUtilTest extends WCMFTestCase
       "`Image`.`fk_page_id` = `NormalPage`.`id` WHERE ((`NormalPage`.`id` = 10))";
     $this->assertTrue(str_replace("\n", "", $sql) === $expected);
 
+    // Page -> ParentPage
+    $node = PersistenceFacade::getInstance()->create('Page');
+    $node->setOID(new ObjectId('Page', 10));
+    $condition = NodeUtil::getRelationQueryCondition($node, 'ParentPage');
+    $this->assertTrue($condition === '(`ChildPage`.`id` = 10)');
+    // test with query
+    $query = new StringQuery('Page');
+    $query->setConditionString($condition);
+    $sql = $query->getQueryString();
+    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` ".
+      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `ChildPage` ON `ChildPage`.`fk_page_id` = `Page`.`id` ".
+      "WHERE ((`ChildPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+    
+    // Page -> ChildPage
+    $node = PersistenceFacade::getInstance()->create('Page');
+    $node->setOID(new ObjectId('Page', 10));
+    $condition = NodeUtil::getRelationQueryCondition($node, 'ChildPage');
+    $this->assertTrue($condition === '(`ParentPage`.`id` = 10)');
+    // test with query
+    $query = new StringQuery('Page');
+    $query->setConditionString($condition);
+    $sql = $query->getQueryString();
+    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` ".
+      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `ParentPage` ON `Page`.`fk_page_id` = `ParentPage`.`id` ".
+      "WHERE ((`ParentPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
+    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+    
     $this->runAnonymous(false);
   }
 }
