@@ -14,6 +14,10 @@ dojo.declare("wcmf.model.meta.Node", null, {
    */
   isRootType: false,
   /**
+   * Indicates wether this class is explicitly sortable
+   */
+  isSortable: false,
+  /**
    * An array of attribute definitions
    */
   attributes: [],

@@ -19,6 +19,7 @@ dojo.require("wcmf.model.meta.Model");
 dojo.declare("wcmf.model.{$type}Class", wcmf.model.meta.Node, {
   name: '{$type}',
   isRootType: {if $tpl->getProperty('isRootType') == true}true{else}false{/if},
+  isSortable: {if $tpl->hasValue('sortkey') == true}true{else}false{/if},
   attributes: [
 {foreach $mapper->getAttributes() as $attribute}
     {

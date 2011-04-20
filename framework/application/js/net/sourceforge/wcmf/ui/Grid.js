@@ -70,7 +70,11 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     this.connect(this, "onShow", this.resizeGrid);
     
     // dnd
-    dojo.subscribe("dojox/grid/rearrange/move/"+this.id, null, this.updateSeq); 
+    dojo.subscribe("dojox/grid/rearrange/move/"+this.id, null, this.updateSeq);
+    var dndPlugin = this.plugin('dnd');
+    if (dndPlugin) {
+      dndPlugin.setupConfig(this.getDnDConfig(this.modelClass.isSortable));
+    }
   },
 
   resizeGrid: function() {
@@ -111,5 +115,18 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
   updateSeq: function(moveType, map) {
     // TODO 
     var map = map;
-  }   
+  },
+  
+  getDnDConfig: function(isSortable) {
+    var dndConfig = {
+          within: {
+            row: isSortable,
+            col: false,
+            cell: false
+          },
+          "in": false,
+          out: false
+        };
+     return dndConfig;
+  }
 });
