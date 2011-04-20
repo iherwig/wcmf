@@ -21,15 +21,15 @@
     <ol>
       <li>
         <label for="user">{translate text="Login"}</label>
-        <input type="text" id="user" name="user" required="true" dojoType="dijit.form.ValidationTextBox"/>
+        <input id="user" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='required:true, name:"user"'/>
       </li>
       <li>
         <label for="password">{translate text="Password"}</label>
-        <input type="text" id="password" name="password" required="true" dojoType="dijit.form.ValidationTextBox"/>
+        <input id="password" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='required:true, name:"password"'/>
       </li>
       <li>
         <label for="remember_me">{translate text="Remember me"}</label>
-        <input id="remember_me" name="remember_me" dojoType="dijit.form.CheckBox" value="1" checked="false">
+        <input id="remember_me" data-dojo-type="dijit.form.CheckBox" data-dojo-props='name:"remember_me", value:"true", checked:false'/>
       </li>
     </ol>
   </fieldset>

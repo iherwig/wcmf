@@ -2,7 +2,6 @@ dojo.provide("wcmf.ui.Grid");
 
 dojo.require("dojox.grid.EnhancedGrid");
 dojo.require("dojox.grid.enhanced.plugins.DnD");
-dojo.require("dojox.grid.enhanced.plugins.NestedSorting");
 dojo.require("dojox.grid.enhanced.plugins.IndirectSelection");
 dojo.require("dojox.grid.enhanced.plugins.Filter");
 
@@ -15,7 +14,6 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
   actions: [],
 
   plugins: {
-      nestedSorting: true,
       indirectSelection: {headerSelector: true},
       dnd: true,
       filter: true
@@ -70,6 +68,9 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       this.store.save();
     });
     this.connect(this, "onShow", this.resizeGrid);
+    
+    // dnd
+    dojo.subscribe("dojox/grid/rearrange/move/"+this.id, null, this.updateSeq); 
   },
 
   resizeGrid: function() {
@@ -78,7 +79,6 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
   },
 
   getDefaultLayout: function() {
-    var self = this;
     var layout = {};
     layout.defaultCell = {};
     layout.cells = [];
@@ -106,5 +106,10 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       });
     }
     return layout;
-  }
+  },
+  
+  updateSeq: function(moveType, map) {
+    // TODO 
+    var map = map;
+  }   
 });

@@ -26,7 +26,7 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
     this.modelClass = modelClass;
 
     // define the transformers
-    // TODO: this can be done in a several class like the baseclass does it
+    // TODO: this can be done in an extra class like the base class does it
     var self = this;
     var transformers = {
       transformGetArguments: function(args) {
@@ -37,6 +37,11 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
           }
           if (args.content.start) {
             args.content.offset = args.content.start;
+          }
+          if (args.content.sort) {
+            var sortDef = args.content.sort[0];
+            args.content.sortFieldName = sortDef.attribute;
+            args.content.sortDirection = sortDef.descending ? "desc" : "asc";
           }
           // remove the query object. the content will be serialized
           // by dojo as key/value pairs automatically

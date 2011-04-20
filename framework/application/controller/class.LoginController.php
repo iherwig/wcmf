@@ -40,7 +40,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SessionData.php");
  * @param[in] user The name of the user to log in
  * @param[in] password The password the user is authenticated with
  *
- * @param[in] remember_me If given with any value a login cookie will be created in the browser [optional]
+ * @param[in] remember_me If given with a value of 'true' or true, a login cookie will be created in the browser [optional]
  * @param[in] password_is_encrypted True/False wether the given password is encrypted on not [optional, default: false]
  * @param[out] sid The newly established session id
  * @param[out] roles All roles assigned to the logged in user
@@ -149,14 +149,15 @@ class LoginController extends Controller
         $session->set(RightsManager::getAuthUserVarname(), $authUser);
 
         // did this user check the 'remember me' checkbox?
-        if($request->getValue('remember_me'))
+        $rememberMe = $request->getValue('remember_me');
+        if($rememberMe === 'true' || $rememberMe === true)
         {
           // if yes store the password login combination in a cookie
           $expire = time() + 1728000; // expire in 20 days
           $cookiePassword = UserManager::encryptPassword($request->getValue('password'));
 
-          setcookie('user', $request->getValue('user'), $expire);
-          setcookie('password', $cookiePassword, $expire);
+          setcookie($this->getCookieName('user'), $request->getValue('user'), $expire);
+          setcookie($this->getCookieName('password'), $cookiePassword, $expire);
         }
 
         // return role names of the user
@@ -185,12 +186,12 @@ class LoginController extends Controller
       $lockManager->releaseAllLocks();
 
       // delete cookies (also clientside)
-      setcookie('user', '', time()-3600, '/');
-      setcookie('password', '', time()-3600, '/');
+      setcookie($this->getCookieName('user'), '', time()-3600, '/');
+      setcookie($this->getCookieName('password'), '', time()-3600, '/');
       setcookie(session_name(), '', time()-3600, '/');
       print '<script type="text/javascript">
-      document.cookie = "user=; expires=Wed, 1 Mar 2006 00:00:00";
-      document.cookie = "password=; expires=Wed, 1 Mar 2006 00:00:00";
+      document.cookie = "'.$this->getCookieName('user').'=; expires=Wed, 1 Mar 2006 00:00:00";
+      document.cookie = "'.$this->getCookieName('password').'=; expires=Wed, 1 Mar 2006 00:00:00";
       </script>';
 
       // clear all session data
@@ -206,8 +207,8 @@ class LoginController extends Controller
       if ($this->isCookieLogin())
       {
         // if yes redirect to login process
-        $response->setValue('user', $_COOKIE['user']);
-        $response->setValue('password', $_COOKIE['password']);
+        $response->setValue('user', $_COOKIE[$this->getCookieName('user')]);
+        $response->setValue('password', $_COOKIE[$this->getCookieName('password')]);
         $response->setValue('password_is_encrypted', true);
 
         $response->setAction('dologin');
@@ -227,7 +228,19 @@ class LoginController extends Controller
   protected function isCookieLogin()
   {
     $request = $this->getRequest();
-    return ($request->getAction() == 'login' && isset($_COOKIE['user'], $_COOKIE['password']));
+    $isCookieLogin = ($request->getAction() == 'login' && 
+            isset($_COOKIE[$this->getCookieName('user')], $_COOKIE[$this->getCookieName('password')]));
+    return $isCookieLogin;
+  }
+  
+  /**
+   * Get a unique cookie name for the given variable name
+   * @param name The name of the variable
+   * @return String
+   */
+  protected function getCookieName($name)
+  {
+    return Application::getId()."_".$name;
   }
 }
 ?>

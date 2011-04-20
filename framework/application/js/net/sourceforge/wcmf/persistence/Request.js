@@ -60,7 +60,7 @@ dojo.declare("wcmf.persistence.Request", null, {
       var widgets = dijit.findWidgets(dojo.byId(elementId));
       dojo.forEach(widgets, function(input) {
         if (parameters[input.name] == undefined) {
-          parameters[input.name] = input.getValue();
+          parameters[input.name] = input.get('value');
         }
       });
     }

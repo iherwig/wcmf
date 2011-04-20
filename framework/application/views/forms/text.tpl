@@ -3,7 +3,7 @@
   {$regExp=$attributeDescription->getRestrictionsMatch()}
   {if $regExp}
     {$invalidMessage=$attributeDescription->getRestrictionsDescription()}
-    {$validationString="regExp='$regExp' invalidMessage='$invalidMessage'"}
+    {$validationString=", regExp:\"$regExp\", invalidMessage:\"$invalidMessage\""}
   {/if}
 {/if}
-<input type="text" id="{$name}" name="{$name}" value="{$value}" {if !$enabled}disabled="true"{/if} {$attributes} {$validationString} dojoType="dijit.form.ValidationTextBox"/>
+<input id="{$name}" {$attributes} data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='name:"{$name}", value:"{$value}"{if !$enabled}, disabled:true{/if}{$validationString}'/>
