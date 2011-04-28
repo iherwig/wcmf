@@ -32,7 +32,7 @@ Log::info("updating wCMF database tables...", "dbupdate");
 $CONFIG_PATH = WCMF_BASE.'application/include/';
 $configFile = $CONFIG_PATH.'config.ini';
 Log::info("configuration file: ".$configFile, "dbupdate");
-$parser = &InifileParser::getInstance();
+$parser = InifileParser::getInstance();
 if (!$parser->parseIniFile($configFile, true))
 {
   Log::error($parser->getErrorMsg(), "dbupdate");
@@ -350,6 +350,7 @@ function updateColumns(&$connection, $tableDef, $oldColumnDefs)
 {
   foreach ($tableDef['columns'] as $columnDef)
   {
+    Log::debug("> process column '".$columnDef['name'], "dbupdate");
     $oldValue = getOldValue($connection, $tableDef['id'], $columnDef['id'], 'column');
     if ($oldValue) {
       $oldColumnDef = $oldColumnDefs[$oldValue['column']];
@@ -430,6 +431,8 @@ function processTableDef($tableDef, &$tables)
   }
   $tables[$tableName]['pks'] = $pks;
   $tables[$tableName]['columns'] = $columns;
+  Log::debug("processed table: '".$tableName."'", "dbupdate");
+  Log::debug($tables[$tableName]['columns'], "dbupdate");
 }
 
 /**

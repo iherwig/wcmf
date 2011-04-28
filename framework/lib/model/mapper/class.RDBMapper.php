@@ -110,7 +110,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
           );
           if ($this->_connParams['dbType'] == 'mysql') {
             $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
-
           }
           $params = array(
             'host' => $this->_connParams['dbHostName'],

@@ -108,10 +108,10 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
   private $_typeNode = null;
   private $_isTypeNodeInQuery = false;
   private $_rootNodes = array();
-  private $_processedNodes = array();
   private $_conditions = array();
   private $_groups = array();
   private $_groupedOIDs = array();
+  private $_processedNodes = array();
   private $_aliasCounter = 1;
 
   /**
@@ -284,6 +284,10 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
         }
       }
     }
+    
+    // reset internal variables
+    $this->_processedNodes = array();
+    $this->_aliasCounter = 1;
 
     return $selectStmt;
   }

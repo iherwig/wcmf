@@ -63,14 +63,14 @@ interface PersistenceMapper
   /**
    * Check if a named relation is defined.
    * @param rolename The role name of the relation
-   * @return True/False
+   * @return Boolean
    */
   public function hasRelation($roleName);
 
   /**
    * Get the definition for a relation
    * @param rolename The role name of the relation
-   * @return A RelationDescription instance or null if the relation does not exist
+   * @return RelationDescription instance or null if the relation does not exist
    */
   public function getRelation($roleName);
 
@@ -86,14 +86,14 @@ interface PersistenceMapper
   /**
    * Check if a named attribute is defined.
    * @param name The attribute name
-   * @return True/False
+   * @return Boolean
    */
   public function hasAttribute($name);
 
   /**
    * Get the definition for an attribute.
    * @param name The attribute name
-   * @return An AttributeDescription instance or null if the attribute does not exist
+   * @return AttributeDescription instance or null if the attribute does not exist
    */
   public function getAttribute($name);
 
@@ -104,10 +104,19 @@ interface PersistenceMapper
   public function getProperties();
 
   /**
-   * Get the names of the attributes to order by default.
+   * Check if this type may be explicitly sorted by the user
+   * using a persistent attribute which stores the order.
+   * @return Boolean
+   */
+  public function isSortable();
+
+  /**
+   * Get the names of the attributes to order by default. The roleName parameter
+   * allows to ask for the order with respect to a specific role.
+   * @param rolename The role name of the relation, maybe null [default: null]
    * @return An array of attribute names (maybe appended with ASC or DESC, seperated by space)
    */
-  public function getDefaultOrder();
+  public function getDefaultOrder($roleName=null);
 
   /**
    * Set the DataConverter that should be used on load() and save().
@@ -134,7 +143,7 @@ interface PersistenceMapper
 
   /**
    * Check if the PersistenceMapper is logging.
-   * @return True/False whether the PersistenceMapper is logging.
+   * @return Boolean whether the PersistenceMapper is logging.
    */
   public function isLogging();
 
@@ -166,7 +175,7 @@ interface PersistenceMapper
   /**
    * Save an Object to the persistent storage.
    * @param object A reference to the object to safe
-   * @return True/False depending on success of operation
+   * @return Boolean depending on success of operation
    */
   public function save(PersistentObject $object);
 
@@ -174,7 +183,7 @@ interface PersistenceMapper
    * Delete an Object from the persistent storage.
    * @param oid The object id of the Object to delete
    * @param recursive True/False whether to physically delete it's children too [default: true]
-   * @return True/False depending on success of operation
+   * @return Boolean depending on success of operation
    */
   public function delete(ObjectId $oid, $recursive=true);
 

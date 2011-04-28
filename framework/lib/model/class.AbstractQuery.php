@@ -53,16 +53,26 @@ abstract class AbstractQuery
     return $this->executeInternal($this->_selectStmt, $buildDepth, $pagingInfo, $attribs);
   }
   /**
-   * Get the query serialized to a string. This will either be the last executed
-   * query or - if no query was executed yet - a query with all attributes selected.
+   * Get the query serialized to a string.
+   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param attribs An array of attributes to load (null to load all). [default: null]
    * @return String
    */
-  public function getQueryString()
+  public function getQueryString($orderby=null, $attribs=null)
   {
-    if ($this->_selectStmt == null) {
-      $this->_selectStmt = $this->buildQuery();
+    $selectStmt = $this->buildQuery($orderby, $attribs);
+    return $selectStmt->__toString();
+  }
+  /**
+   * Get the query last executed serialized to a string.
+   * @return String
+   */
+  public function getLastQueryString()
+  {
+    if ($this->_selectStmt != null) {
+      return $this->_selectStmt->__toString();
     }
-    return $this->_selectStmt->__toString();
+    return "";
   }
   /**
    * Build the query

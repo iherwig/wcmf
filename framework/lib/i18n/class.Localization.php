@@ -41,7 +41,7 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
  *
  * All languages available for translation are either defined in the configuration
  * section 'languages', where each language has it's own entry: e.g. en = English
- * or in an entity tyoe that is defined in the key 'languageType' in the
+ * or in an entity type that is defined in the key 'languageType' in the
  * configuration section 'i18n' (e.g. Language).  The entity type must have the
  * attributes 'code' and 'name' with the appropriate getter and setter methods.
  * If entity type and configuration section are defined, the configuration section is preferred.

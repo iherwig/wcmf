@@ -44,7 +44,7 @@ class LocktableRDBMapper extends NodeUnifiedRDBMapper
   /**
    * @see PersistenceMapper::getDefaultOrder()
    */
-  public function getDefaultOrder()
+  public function getDefaultOrder($roleName=null)
   {
     return array();
   }

@@ -142,7 +142,7 @@ class PersistentObject
   }
   /**
    * Get the PersistenceMapper of the object.
-   * @return A reference to a PersistenceMapper class
+   * @return PersistenceMapper
    */
   public function getMapper()
   {

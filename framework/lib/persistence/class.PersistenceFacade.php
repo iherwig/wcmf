@@ -48,7 +48,7 @@ abstract class PersistenceFacade
 
   /**
    * Returns an instance of the PersistenceFacade implementation.
-   * @return A reference to the only instance of the Singleton object
+   * @return PersistenceFacade
    */
   public static function getInstance()
   {
