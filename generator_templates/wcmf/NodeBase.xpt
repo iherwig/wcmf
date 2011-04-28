@@ -92,14 +92,24 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
      * Getter/Setter for properties
      */
   «EXPAND values FOR this-»
-  «IF getOrderByName() == "sortkey"-»
-    function getSortkey()
+  «IF this.getOrderByName() == defaultOrderByName()-»
+    «FOREACH this.getParentNodesRecursive() AS curParent-»
+    function «this.getOrderByNameForParent(curParent).asGetter()»()
     {
-      return $this->getValue('sortkey');
+      return $this->getValue('«this.getOrderByNameForParent(curParent)»');
     }
-    function setSortkey($sortkey)
+    function «this.getOrderByNameForParent(curParent).asSetter()»($sortkey)
     {
-      return $this->setValue('sortkey', $sortkey);
+      return $this->setValue('«this.getOrderByNameForParent(curParent)»', $sortkey);
+    }
+    «ENDFOREACH-»
+    function «this.getOrderByName().asGetter()»()
+    {
+      return $this->getValue('«this.getOrderByName()»');
+    }
+    function «this.getOrderByName().asSetter()»($sortkey)
+    {
+      return $this->setValue('«this.getOrderByName()»', $sortkey);
     }
   «ENDIF-»
   «EXPAND references FOR this-»

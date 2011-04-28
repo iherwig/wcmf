@@ -43,10 +43,13 @@ CREATE TABLE `«this.getTableName()»` # entityType=«name» tableId=«this.getId()»
 (
 		«FOREACH this.getWCMFValuesRecursive() AS curValue-»
   `«curValue.getColumnName()»` «curValue.db_data_type», # columnId=«curValue.getId()» «IF curValue.isFKValue()»referencedTable=«curValue.getFKClass().name»«ENDIF»
-  		«ENDFOREACH-»
-  	«IF this.getOrderByName() == "sortkey"-»
-  `sortkey` INT(11),
-  	«ENDIF-»
+		«ENDFOREACH-»
+		«IF this.getOrderByName() == defaultOrderByName()-»
+			«FOREACH this.getParentNodesRecursive() AS curParent-»
+  `«this.getOrderByNameForParent(curParent)»` INT(11), # columnId=«this.getOrderByNameForParent(curParent)»
+			«ENDFOREACH-»
+  `«this.getOrderByName()»` INT(11), # columnId=«this.getOrderByName()»
+		«ENDIF-»
   PRIMARY KEY («EXPAND columnName FOREACH this.getPKValues() SEPARATOR ','-»)
 	«FOREACH this.getWCMFValuesRecursive() AS curValue-»
 		«IF curValue.isFKValue() && !curValue.isPKValue()-»

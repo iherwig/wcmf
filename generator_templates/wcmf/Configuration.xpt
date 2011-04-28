@@ -66,12 +66,10 @@
 «ENDDEFINE»
 «DEFINE classMapping(String curConfig) FOR WCMFNode-»
 	«IF !this.isLibraryClass()-»
-		«FOREACH this.getRoleNames() AS curRoleName-»
-«curRoleName» = «this.getFullPackageName().asPath()»/«curRoleName.asClassFile()»
-			«IF !this.isAbstract-»
-«curRoleName.asMapper()» = «this.getFullPackageName().asPath()»/«curRoleName.asMapper().asClassFile()»
-			«ENDIF-»
-		«ENDFOREACH-»
+«this.name» = «this.getFullPackageName().asPath()»/«this.name.asClassFile()»
+		«IF !this.isAbstract-»
+«this.name.asMapper()» = «this.getFullPackageName().asPath()»/«this.name.asMapper().asClassFile()»
+		«ENDIF-»
 	«ENDIF-»
 «ENDDEFINE»
 
@@ -79,9 +77,7 @@
 «DEFINE typeMapping(String curConfig) FOR uml::Class»«ENDDEFINE»
 «DEFINE typeMapping(String curConfig) FOR WCMFNode-»
 	«IF !this.isLibraryClass() && !this.isAbstract-»
-		«FOREACH this.getRoleNames() AS curRoleName-»
-«curRoleName» = «curRoleName.asMapper()»
-		«ENDFOREACH-»
+«this.name» = «this.name.asMapper()»
 	«ENDIF-»
 «ENDDEFINE»
 
@@ -89,9 +85,7 @@
 «DEFINE initParams(String curConfig) FOR uml::Class»«ENDDEFINE»
 «DEFINE initParams(String curConfig) FOR WCMFNode-»
 	«IF !this.isLibraryClass() && !this.isAbstract-»
-		«FOREACH this.getRoleNames() AS curRoleName-»
-«curRoleName.asMapper()» = «this.getInitparams()»
-		«ENDFOREACH-»
+«this.name.asMapper()» = «this.getInitparams()»
 	«ENDIF-»
 «ENDDEFINE»
 

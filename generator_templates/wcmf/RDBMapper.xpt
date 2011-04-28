@@ -48,7 +48,7 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
    */
   public function getProperties()
   {
-  	return array(
+    return array(
 «IF this.metaType.toString().contains("WCMFManyToMany")-»
       'manyToMany' => array(«FOREACH this.getParentNodes() AS curParent SEPARATOR ', '»'«curParent.getRoleName()»'«ENDFOREACH»),
 «ENDIF-»
@@ -64,14 +64,34 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
 «ENDIF-»
 «PROTECT CSTART "// " CEND "" ID this.getFullPackageName().asPath()+"/"+this.name.asMapper().asClassFile()+"/Properties"»
 «ENDPROTECT»
-	);
+    );
+  }
+  /**
+   * @see PersistenceMapper::isSortable()
+   */
+  public function isSortable()
+  {
+«IF getOrderByName() == defaultOrderByName()-»
+    return true;
+«ELSE-»
+    return false;
+«ENDIF-»
   }
   /**
    * @see PersistenceMapper::getDefaultOrder()
    */
-  public function getDefaultOrder()
+  public function getDefaultOrder($roleName=null)
   {
+«IF getOrderByName() == defaultOrderByName()-»
+  «FOREACH this.getParentNodesRecursive() AS curParent-»
+    if ($roleName == '«curParent.getRoleName()»') {
+      return array('«this.getOrderByNameForParent(curParent)»');
+    }
+  «ENDFOREACH-»
+    return array('«this.getOrderByName()»');
+«ELSE-»
     return array(«IF this.getOrderByName() != ""»'«this.getOrderByName()»'«ENDIF»);
+«ENDIF-»
   }
   /**
    * @see RDBMapper::getRelationDescriptions()
@@ -89,12 +109,19 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
   {
     return array(
 «EXPAND attributes-»
-  «IF this.getOrderByName() == "sortkey"-»
+  «IF getOrderByName() == defaultOrderByName()-»
+    «FOREACH this.getParentNodesRecursive() AS curParent-»
+      /**
+       * Value description: Sort key for ordering in relation to «curParent.getRoleName()»
+       */
+      '«this.getOrderByNameForParent(curParent)»' => new RDBAttributeDescription('«this.getOrderByNameForParent(curParent)»', 'integer', array('DATATYPE_IGNORE'), null, «REM»NOBR«ENDREM-»
+'[0-9]*', '', '', true, 'text[class="tiny"]', 'text', '«getTableName()»', '«this.getOrderByNameForParent(curParent)»'),
+    «ENDFOREACH-»
       /**
        * Value description: Sort key for ordering
        */
-      'sortkey' => new RDBAttributeDescription('sortkey', 'integer', array('DATATYPE_IGNORE'), null, «REM»NOBR«ENDREM-»
-'[0-9]*', '', '', true, 'text[class="tiny"]', 'text', '«getTableName()»', 'sortkey'),
+      '«this.getOrderByName()»' => new RDBAttributeDescription('«this.getOrderByName()»', 'integer', array('DATATYPE_IGNORE'), null, «REM»NOBR«ENDREM-»
+'[0-9]*', '', '', true, 'text[class="tiny"]', 'text', '«getTableName()»', '«this.getOrderByName()»'),
   «ENDIF-»
 «EXPAND references-»
     );
