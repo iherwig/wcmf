@@ -13,11 +13,11 @@ class PersistentObjectProxyTest extends WCMFTestCase
     $this->createTestObject($oid, array("name" => "admin"));
 
     $proxy = new PersistentObjectProxy($oid);
-    $this->assertTrue($proxy->getName() == "admin", "The user's name is admin");
+    $this->assertEquals("admin", $proxy->getName(), "The user's name is admin");
     $this->assertTrue($proxy->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
 
     $proxy = PersistentObjectProxy::fromObject($proxy->getRealSubject());
-    $this->assertTrue($proxy->getName() == "admin", "The user's name is admin");
+    $this->assertEquals("admin", $proxy->getName(), "The user's name is admin");
     $this->assertTrue($proxy->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
 
     $this->deleteTestObject($oid);

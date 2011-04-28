@@ -38,7 +38,7 @@ class LocalizationTest extends WCMFTestCase
   {
     $defaultLanguage = Localization::getDefaultLanguage();
 
-    $this->assertTrue($defaultLanguage == LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE,
+    $this->assertEquals(LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE, $defaultLanguage,
       "The default language is '".LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE."'");
   }
 
@@ -51,8 +51,8 @@ class LocalizationTest extends WCMFTestCase
     $this->assertTrue(array_key_exists(LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE,
       $languages), "The language '".LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE."' is supported");
 
-    $this->assertTrue($languages[LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE] ==
-      LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_NAME,
+    $this->assertEquals(LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_NAME, 
+        $languages[LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE],
         "The name of '".LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE."' is '".
         LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_NAME."'");
   }
@@ -60,7 +60,7 @@ class LocalizationTest extends WCMFTestCase
   public function testCreateTranslationInstance()
   {
     $instance = &Localization::createTranslationInstance();
-    $this->assertTrue($instance->getType() == LocalizationTest::TRANSLATION_TYPE,
+    $this->assertEquals(LocalizationTest::TRANSLATION_TYPE, $instance->getType(),
       "The translation type is '".LocalizationTest::TRANSLATION_TYPE."'");
   }
 
@@ -76,7 +76,7 @@ class LocalizationTest extends WCMFTestCase
     // there must be no translation for the object in the translation table
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(),
       "objectid = '".$oid."'");
-    $this->assertTrue(sizeof($oids) == 0,
+    $this->assertEquals(0, sizeof($oids),
       "There must be no translation for the object in the translation table");
 
     // store a translation
@@ -90,7 +90,7 @@ class LocalizationTest extends WCMFTestCase
     Localization::loadTranslation($testObjUntranslated, Localization::getDefaultLanguage());
     $this->assertTrue($testObjUntranslated != null,
       "The untranslated object could be retrieved by Localization class");
-    $this->assertTrue($testObjUntranslated->getValue('name') == 'Herwig',
+    $this->assertEquals('Herwig', $testObjUntranslated->getValue('name'),
       "The untranslated name is 'Herwig'");
 
     // get a value in the translation language
@@ -98,7 +98,7 @@ class LocalizationTest extends WCMFTestCase
     Localization::loadTranslation($testObjTranslated, 'de');
     $this->assertTrue($testObjTranslated != null,
       "The translated object could be retrieved by Localization class");
-    $this->assertTrue($testObjTranslated->getValue('name') == 'Herwig [de]',
+    $this->assertEquals('Herwig [de]', $testObjTranslated->getValue('name'),
       "The translated name is 'Herwig [de]'");
 
     // cleanup
@@ -128,7 +128,7 @@ class LocalizationTest extends WCMFTestCase
     // there must be no translation for the untranslatable value in the translation table
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "objectid = '".
       $oid."' AND attribute = 'name'");
-    $this->assertTrue(sizeof($oids) == 0,
+    $this->assertEquals(0, sizeof($oids),
       "There must be no translation for the untranslatable value in the translation table");
 
     // cleanup
@@ -151,7 +151,7 @@ class LocalizationTest extends WCMFTestCase
 
     // there must be no translation for the default language in the translation table
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "objectid = '".$oid."'");
-    $this->assertTrue(sizeof($oids) == 0,
+    $this->assertEquals(0, sizeof($oids),
       "There must be no translation for the default language in the translation table");
 
     // cleanup
@@ -175,7 +175,7 @@ class LocalizationTest extends WCMFTestCase
 
     // there must be no translation for the untranslated values in the translation table
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "objectid = '".$oid."'");
-    $this->assertTrue(sizeof($oids) == 0,
+    $this->assertEquals(0, sizeof($oids),
       "There must be no translation for the untranslated values in the translation table");
 
     // store a translation all values empty and saveEmptyValues = true
@@ -210,7 +210,7 @@ class LocalizationTest extends WCMFTestCase
 
     // there must be only one entry in the translation table
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "objectid = '".$oid."' AND attribute = 'name'");
-    $this->assertTrue(sizeof($oids) == 1,
+    $this->assertEquals(1, sizeof($oids),
       "There must be only one entry in the translation table");
 
     // cleanup
@@ -237,13 +237,13 @@ class LocalizationTest extends WCMFTestCase
     // get the value in the translation language with loading defaults
     $testObjTranslated = $testObj->duplicate();
     Localization::loadTranslation($testObjTranslated, 'de', true);
-    $this->assertTrue($testObjTranslated->getValue('name') == $originalValue,
+    $this->assertEquals($originalValue, $testObjTranslated->getValue('name'),
       "The translated value is the default value");
 
     // get the value in the translation language without loading defaults
     $testObjTranslated = $testObj->duplicate();
     Localization::loadTranslation($testObjTranslated, 'de', false);
-    $this->assertTrue(strlen($testObjTranslated->getValue('name')) == 0,
+    $this->assertEquals(0, strlen($testObjTranslated->getValue('name')),
       "The translated value is empty");
 
     // cleanup
@@ -272,7 +272,7 @@ class LocalizationTest extends WCMFTestCase
     Localization::deleteTranslation($oid, 'de');
     // there must be no entry in the translation table for the deleted language
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "objectid = '".$oid."' AND language = 'de'");
-    $this->assertTrue(sizeof($oids) == 0,
+    $this->assertEquals(0, sizeof($oids),
       "There must be no entry in the translation table for the deleted language");
     // there must be entries in the translation table for the not deleted language
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "objectid = '".$oid."' AND language = 'it'");
@@ -290,7 +290,7 @@ class LocalizationTest extends WCMFTestCase
     Localization::deleteTranslation($oid);
     // there must be no entry in the translation table for the object
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "objectid = '".$oid."'");
-    $this->assertTrue(sizeof($oids) == 0,
+    $this->assertEquals(0, sizeof($oids),
       "There must be no entry in the translation table for the object");
 
     // cleanup
@@ -331,7 +331,7 @@ class LocalizationTest extends WCMFTestCase
     Localization::deleteLanguage('de');
     // there must be no entries in the translation table for the deleted language
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "language = 'de'");
-    $this->assertTrue(sizeof($oids) == 0,
+    $this->assertEquals(0, sizeof($oids),
       "There must be no entries in the translation table for the deleted language");
     // there must be entries in the translation table for the not deleted language
     $oids = $persistenceFacade->getOIDs(Localization::getTranslationType(), "language = 'it'");

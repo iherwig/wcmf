@@ -63,34 +63,34 @@ class NodeRelationTest extends WCMFTestCase
     $page = $persistenceFacade->load($this->oids['page'], 1);
 
     $curRelatives = $page->getChildrenEx(null, 'Document', null);
-    $this->assertTrue(sizeof($curRelatives) == 1);
-    $this->assertTrue($curRelatives[0]->getOID() == $this->oids['document']);
+    $this->assertEquals(1, sizeof($curRelatives));
+    $this->assertEquals($this->oids['document'], $curRelatives[0]->getOID());
 
     $curRelatives = $page->getChildrenEx(null, null, 'Document');
-    $this->assertTrue(sizeof($curRelatives) == 1);
+    $this->assertEquals(1, sizeof($curRelatives));
 
     $curRelatives = $page->getChildrenEx(null, 'ChildPage', null);
-    $this->assertTrue(sizeof($curRelatives) == 1);
-    $this->assertTrue($curRelatives[0]->getOID() == $this->oids['childPage']);
+    $this->assertEquals(1, sizeof($curRelatives));
+    $this->assertEquals($this->oids['childPage'], $curRelatives[0]->getOID());
 
     $curRelatives = $page->getParentsEx(null, 'ParentPage', null);
-    $this->assertTrue(sizeof($curRelatives) == 1);
-    $this->assertTrue($curRelatives[0]->getOID() == $this->oids['parentPage']);
+    $this->assertEquals(1, sizeof($curRelatives));
+    $this->assertEquals($this->oids['parentPage'], $curRelatives[0]->getOID());
 
     $curRelatives = $page->getParentsEx(null, 'Author', null);
-    $this->assertTrue(sizeof($curRelatives) == 1);
-    $this->assertTrue($curRelatives[0]->getOID() == $this->oids['author']);
+    $this->assertEquals(1, sizeof($curRelatives));
+    $this->assertEquals($this->oids['author'], $curRelatives[0]->getOID());
 
     $curRelatives = $page->getChildrenEx(null, 'TitleImage', null);
-    $this->assertTrue(sizeof($curRelatives) == 1);
-    $this->assertTrue($curRelatives[0]->getOID() == $this->oids['titleImage']);
+    $this->assertEquals(1, sizeof($curRelatives));
+    $this->assertEquals($this->oids['titleImage'], $curRelatives[0]->getOID());
 
     $curRelatives = $page->getChildrenEx(null, 'NormalImage', null);
-    $this->assertTrue(sizeof($curRelatives) == 1);
-    $this->assertTrue($curRelatives[0]->getOID() == $this->oids['normalImage']);
+    $this->assertEquals(1, sizeof($curRelatives));
+    $this->assertEquals($this->oids['normalImage'], $curRelatives[0]->getOID());
 
     $curRelatives = $page->getChildrenEx(null, null, 'Image');
-    $this->assertTrue(sizeof($curRelatives) == 2);
+    $this->assertEquals(2, sizeof($curRelatives));
 
     //$this->printProfile('Page');
     $this->runAnonymous(false);
@@ -116,30 +116,30 @@ class NodeRelationTest extends WCMFTestCase
     // test
     $persistenceFacade = PersistenceFacade::getInstance();
     $page = $persistenceFacade->load($this->oids['page'], 1);
-    $this->assertTrue(sizeof($page->getChildrenEx(null, 'Document', null)) == 0);
-    $this->assertTrue(sizeof($page->getChildrenEx(null, 'ChildPage', null)) == 0);
-    $this->assertTrue(sizeof($page->getParentEx(null, 'ParentPage', null)) == 0);
-    $this->assertTrue(sizeof($page->getParentEx(null, 'Author', null)) == 0);
-    $this->assertTrue(sizeof($page->getChildrenEx(null, 'TitleImage', null)) == 0);
-    $this->assertTrue(sizeof($page->getChildrenEx(null, 'NormalImage', null)) == 0);
+    $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'Document', null)));
+    $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'ChildPage', null)));
+    $this->assertEquals(0, sizeof($page->getParentEx(null, 'ParentPage', null)));
+    $this->assertEquals(0, sizeof($page->getParentEx(null, 'Author', null)));
+    $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'TitleImage', null)));
+    $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'NormalImage', null)));
 
     $document = $persistenceFacade->load($this->oids['document'], 1);
-    $this->assertTrue(sizeof($document->getChildrenEx(null, 'Page', null)) == 0);
+    $this->assertEquals(0, sizeof($document->getChildrenEx(null, 'Page', null)));
 
     $childPage = $persistenceFacade->load($this->oids['childPage'], 1);
-    $this->assertTrue(sizeof($childPage->getParentEx(null, 'ParentPage', null)) == 0);
+    $this->assertEquals(0, sizeof($childPage->getParentEx(null, 'ParentPage', null)));
 
     $parentPage = $persistenceFacade->load($this->oids['parentPage'], 1);
-    $this->assertTrue(sizeof($parentPage->getChildrenEx(null, 'ChildPage', null)) == 0);
+    $this->assertEquals(0, sizeof($parentPage->getChildrenEx(null, 'ChildPage', null)));
 
     $author = $persistenceFacade->load($this->oids['author'], 1);
-    $this->assertTrue(sizeof($author->getChildrenEx(null, 'Page', null)) == 0);
+    $this->assertEquals(0, sizeof($author->getChildrenEx(null, 'Page', null)));
 
     $titleImage = $persistenceFacade->load($this->oids['titleImage'], 1);
-    $this->assertTrue(sizeof($titleImage->getParentEx(null, 'TitlePage', null)) == 0);
+    $this->assertEquals(0, sizeof($titleImage->getParentEx(null, 'TitlePage', null)));
 
     $normalImage = $persistenceFacade->load($this->oids['normalImage'], 1);
-    $this->assertTrue(sizeof($normalImage->getParentEx(null, 'NormalPage', null)) == 0);
+    $this->assertEquals(0, sizeof($normalImage->getParentEx(null, 'NormalPage', null)));
 
     //$this->printProfile('Page');
     $this->runAnonymous(false);
@@ -172,13 +172,13 @@ class NodeRelationTest extends WCMFTestCase
 
     // test
     $persistenceFacade = PersistenceFacade::getInstance();
-    $this->assertTrue($persistenceFacade->load($this->oids['page']) == null);
-    $this->assertTrue($persistenceFacade->load($this->oids['document']) != null);
-    $this->assertTrue($persistenceFacade->load($this->oids['childPage']) == null);
-    $this->assertTrue($persistenceFacade->load($this->oids['parentPage']) != null);
-    $this->assertTrue($persistenceFacade->load($this->oids['author']) != null);
-    $this->assertTrue($persistenceFacade->load($this->oids['titleImage']) == null);
-    $this->assertTrue($persistenceFacade->load($this->oids['normalImage']) != null);
+    $this->assertEquals(null, $persistenceFacade->load($this->oids['page']));
+    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['document']));
+    $this->assertEquals(null, $persistenceFacade->load($this->oids['childPage']));
+    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['parentPage']));
+    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['author']));
+    $this->assertEquals(null, $persistenceFacade->load($this->oids['titleImage']));
+    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['normalImage']));
 
     $this->runAnonymous(false);
   }

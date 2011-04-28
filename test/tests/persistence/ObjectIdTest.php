@@ -8,11 +8,11 @@ class ObjectIdTest extends WCMFTestCase
   {
     // simple
     $oid = new ObjectId('UserRDB', 10);
-    $this->assertTrue($oid->__toString() === 'UserRDB:10', "The oid is 'UserRDB:10'");
+    $this->assertEquals('UserRDB:10', $oid->__toString(), "The oid is 'UserRDB:10'");
     
     // multiple primary keys
     $oid = new ObjectId('NMUserRole', array(10, 11));
-    $this->assertTrue($oid->__toString() === 'NMUserRole:10:11', "The oid is 'NMUserRole:10:11'");
+    $this->assertEquals('NMUserRole:10:11', $oid->__toString(), "The oid is 'NMUserRole:10:11'");
   }
 
   public function testValidate()

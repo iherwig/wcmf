@@ -12,55 +12,55 @@ class NodeUtilTest extends WCMFTestCase
     $this->runAnonymous(true);
 
     $paths = NodeUtil::getConnections('Author', null, 'Image', 'child');
-    $this->assertTrue(sizeof($paths) == 2);
+    $this->assertEquals(2, sizeof($paths));
     $endRoles = array($paths[0]->getEndRole(), $paths[1]->getEndRole());
-    $this->assertTrue(in_array('TitleImage', $endRoles));
-    $this->assertTrue(in_array('NormalImage', $endRoles));
+    $this->assertContains('TitleImage', $endRoles);
+    $this->assertContains('NormalImage', $endRoles);
 
     $paths = NodeUtil::getConnections('Author', null, 'Image', 'all');
-    $this->assertTrue(sizeof($paths) == 2);
+    $this->assertEquals(2, sizeof($paths));
     $endRoles = array($paths[0]->getEndRole(), $paths[1]->getEndRole());
-    $this->assertTrue(in_array('TitleImage', $endRoles));
-    $this->assertTrue(in_array('NormalImage', $endRoles));
+    $this->assertContains('TitleImage', $endRoles);
+    $this->assertContains('NormalImage', $endRoles);
 
     $paths = NodeUtil::getConnections('Image', 'Author', null, 'parent');
-    $this->assertTrue(sizeof($paths) == 2);
+    $this->assertEquals(2, sizeof($paths));
     $startRoles = array($paths[0]->getStartRole(), $paths[1]->getStartRole());
-    $this->assertTrue(in_array('TitleImage', $startRoles));
-    $this->assertTrue(in_array('NormalImage', $startRoles));
+    $this->assertContains('TitleImage', $startRoles);
+    $this->assertContains('NormalImage', $startRoles);
 
     $paths = NodeUtil::getConnections('Page', null, 'Page', 'all');
-    $this->assertTrue(sizeof($paths) == 2);
+    $this->assertEquals(2, sizeof($paths));
     $endRoles = array($paths[0]->getEndRole(), $paths[1]->getEndRole());
-    $this->assertTrue(in_array('ChildPage', $endRoles));
-    $this->assertTrue(in_array('ParentPage', $endRoles));
+    $this->assertContains('ChildPage', $endRoles);
+    $this->assertContains('ParentPage', $endRoles);
 
     $paths = NodeUtil::getConnections('Page', null, 'Page', 'parent');
-    $this->assertTrue(sizeof($paths) == 1);
-    $this->assertTrue($paths[0]->getEndRole() == 'ParentPage');
+    $this->assertEquals(1, sizeof($paths));
+    $this->assertEquals('ParentPage', $paths[0]->getEndRole());
 
     $paths = NodeUtil::getConnections('Page', 'ParentPage', null, 'parent');
-    $this->assertTrue(sizeof($paths) == 1);
-    $this->assertTrue($paths[0]->getEndRole() == 'ParentPage');
+    $this->assertEquals(1, sizeof($paths));
+    $this->assertEquals('ParentPage', $paths[0]->getEndRole());
 
     $paths = NodeUtil::getConnections('Page', 'ChildPage', null, 'child');
-    $this->assertTrue(sizeof($paths) == 1);
-    $this->assertTrue($paths[0]->getEndRole() == 'ChildPage');
+    $this->assertEquals(1, sizeof($paths));
+    $this->assertEquals('ChildPage', $paths[0]->getEndRole());
 
     $paths = NodeUtil::getConnections('Page', 'ChildPage', null, 'parent');
-    $this->assertTrue(sizeof($paths) == 0);
+    $this->assertEquals(0, sizeof($paths));
 
     $paths = NodeUtil::getConnections('Page', 'Author', null, 'parent');
-    $this->assertTrue(sizeof($paths) == 1);
-    $this->assertTrue($paths[0]->getEndRole() == 'Author');
+    $this->assertEquals(1, sizeof($paths));
+    $this->assertEquals('Author', $paths[0]->getEndRole());
 
     $paths = NodeUtil::getConnections('Document', null, 'Page', 'child');
-    $this->assertTrue(sizeof($paths) == 1);
-    $this->assertTrue($paths[0]->getEndRole() == 'Page');
+    $this->assertEquals(1, sizeof($paths));
+    $this->assertEquals('Page', $paths[0]->getEndRole());
 
     $paths = NodeUtil::getConnections('Page', null, 'Document', 'child');
-    $this->assertTrue(sizeof($paths) == 1);
-    $this->assertTrue($paths[0]->getEndRole() == 'Document');
+    $this->assertEquals(1, sizeof($paths));
+    $this->assertEquals('Document', $paths[0]->getEndRole());
 
     $this->runAnonymous(false);
   }
@@ -73,45 +73,47 @@ class NodeUtilTest extends WCMFTestCase
     $node = PersistenceFacade::getInstance()->create('Page');
     $node->setOID(new ObjectId('Page', 10));
     $condition = NodeUtil::getRelationQueryCondition($node, 'NormalImage');
-    $this->assertTrue($condition === '(`NormalPage`.`id` = 10)');
+    $this->assertEquals('(`NormalPage`.`id` = 10)', $condition);
     // test with query
     $query = new StringQuery('Image');
     $query->setConditionString($condition);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Image`.`id`, `Image`.`fk_page_id`, `Image`.`fk_titlepage_id`, `Image`.`file`, `Image`.`created`, ".
+    $expected = "SELECT `Image`.`id`, `Image`.`fk_titlepage_id`, `Image`.`fk_page_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
       "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor` FROM `Image` INNER JOIN `Page` AS `NormalPage` ON ".
       "`Image`.`fk_page_id` = `NormalPage`.`id` WHERE ((`NormalPage`.`id` = 10))";
-    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+    $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     // Page -> ParentPage
     $node = PersistenceFacade::getInstance()->create('Page');
     $node->setOID(new ObjectId('Page', 10));
     $condition = NodeUtil::getRelationQueryCondition($node, 'ParentPage');
-    $this->assertTrue($condition === '(`ChildPage`.`id` = 10)');
+    $this->assertEquals('(`ChildPage`.`id` = 10)', $condition);
     // test with query
     $query = new StringQuery('Page');
     $query->setConditionString($condition);
     $sql = $query->getQueryString();
     $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
-      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` ".
-      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `ChildPage` ON `ChildPage`.`fk_page_id` = `Page`.`id` ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
+      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
+      "INNER JOIN `Page` AS `ChildPage` ON `ChildPage`.`fk_page_id` = `Page`.`id` ".
       "WHERE ((`ChildPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
-    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+    $this->assertEquals($expected, str_replace("\n", "", $sql));
     
     // Page -> ChildPage
     $node = PersistenceFacade::getInstance()->create('Page');
     $node->setOID(new ObjectId('Page', 10));
     $condition = NodeUtil::getRelationQueryCondition($node, 'ChildPage');
-    $this->assertTrue($condition === '(`ParentPage`.`id` = 10)');
+    $this->assertEquals('(`ParentPage`.`id` = 10)', $condition);
     // test with query
     $query = new StringQuery('Page');
     $query->setConditionString($condition);
     $sql = $query->getQueryString();
     $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
-      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey`, `Author`.`name` AS `author_name` FROM `Page` ".
-      "LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `ParentPage` ON `Page`.`fk_page_id` = `ParentPage`.`id` ".
+      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
+      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
+      "INNER JOIN `Page` AS `ParentPage` ON `Page`.`fk_page_id` = `ParentPage`.`id` ".
       "WHERE ((`ParentPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
-    $this->assertTrue(str_replace("\n", "", $sql) === $expected);
+    $this->assertEquals($expected, str_replace("\n", "", $sql));
     
     $this->runAnonymous(false);
   }

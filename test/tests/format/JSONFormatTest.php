@@ -32,20 +32,20 @@ class JSONFormatTest extends WCMFTestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
 
-    $this->assertTrue($data['string'] === 'abc');
-    $this->assertTrue($data['integer'] === 123);
-    $this->assertTrue($data['boolean'] === true);
+    $this->assertEquals('abc', $data['string']);
+    $this->assertEquals(123, $data['integer']);
+    $this->assertEquals(true, $data['boolean']);
     $this->assertTrue(is_array($data['array']));
 
     $array1 = $data['array'];
-    $this->assertTrue($array1['string'] === 'def');
-    $this->assertTrue($array1['integer'] === 456);
-    $this->assertTrue($array1['boolean'] === false);
+    $this->assertEquals('def', $array1['string']);
+    $this->assertEquals(456, $array1['integer']);
+    $this->assertEquals(false, $array1['boolean']);
     $this->assertTrue(is_array($array1['array']));
 
     $array2 = $array1['array'];
-    $this->assertTrue($array2['string'] === 'ghi');
-    $this->assertTrue($array2['integer'] === 789);
+    $this->assertEquals('ghi', $array2['string']);
+    $this->assertEquals(789, $array2['integer']);
     $this->runAnonymous(false);
   }
 
@@ -70,10 +70,10 @@ class JSONFormatTest extends WCMFTestCase {
 
     $document = $data['Document:123'];
     $this->assertTrue($document instanceof Document);
-    $this->assertTrue($document->getOID()->__toString() === 'Document:123');
-    $this->assertTrue($document->getValue('title') === 'Matrix - The Original');
+    $this->assertEquals('Document:123', $document->getOID()->__toString());
+    $this->assertEquals('Matrix - The Original', $document->getValue('title'));
 
-    $this->assertTrue($data['sid'] === 'cd65fec9bce4d7ec74e341a9031f8966');
+    $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
     $this->assertFalse(isset($data['attributes']));
     $this->assertFalse(isset($data['oid']));
     $this->assertFalse(isset($data['lastChange']));
@@ -137,23 +137,23 @@ class JSONFormatTest extends WCMFTestCase {
 
     $document = $data['Document:123'];
     $this->assertTrue($document instanceof Document);
-    $this->assertTrue($document->getOID()->__toString() === 'Document:123');
+    $this->assertEquals('Document:123', $document->getOID()->__toString());
 
     $pages = $document->getValue('Page');
-    $this->assertTrue(sizeof($pages) == 2);
+    $this->assertEquals(2, sizeof($pages));
 
     $page1 = $pages[0];
-    $this->assertTrue($page1->getOID()->__toString() === 'Page:1');
+    $this->assertEquals('Page:1', $page1->getOID()->__toString());
 
     $childPages = $page1->getValue('ChildPage');
-    $this->assertTrue(sizeof($childPages) == 1);
-    $this->assertTrue($childPages[0]->getOID()->__toString() === 'Page:3');
+    $this->assertEquals(1, sizeof($childPages));
+    $this->assertEquals('Page:3', $childPages[0]->getOID()->__toString());
 
     $page2 = $pages[1];
-    $this->assertTrue($page2->getOID()->__toString() === 'Page:2');
+    $this->assertEquals('Page:2', $page2->getOID()->__toString());
 
     $author = $page2->getValue('Author');
-    $this->assertTrue($author->getOID()->__toString() === 'Author:1');
+    $this->assertEquals('Author:1', $author->getOID()->__toString());
     $this->runAnonymous(false);
   }
 
@@ -196,14 +196,14 @@ class JSONFormatTest extends WCMFTestCase {
 
     $list = $data['list'];
     $this->assertTrue(is_array($list));
-    $this->assertTrue(sizeof(array_keys($list)) == 2);
+    $this->assertEquals(2, sizeof(array_keys($list)));
 
     $pages = $list['content'];
-    $this->assertTrue(sizeof($pages) == 4);
-    $this->assertTrue($pages['contentType'] === 'Page');
-    $this->assertTrue($pages['Page:1']->getOID()->__toString() === 'Page:1');
-    $this->assertTrue($pages['Page:2']->getOID()->__toString() === 'Page:2');
-    $this->assertTrue($pages['Page:3']->getOID()->__toString() === 'Page:3');
+    $this->assertEquals(4, sizeof($pages));
+    $this->assertEquals('Page', $pages['contentType']);
+    $this->assertEquals('Page:1', $pages['Page:1']->getOID()->__toString());
+    $this->assertEquals('Page:2', $pages['Page:2']->getOID()->__toString());
+    $this->assertEquals('Page:3', $pages['Page:3']->getOID()->__toString());
     $this->runAnonymous(false);
   }
 
@@ -232,20 +232,20 @@ class JSONFormatTest extends WCMFTestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
 
-    $this->assertTrue($data['string'] === 'abc');
-    $this->assertTrue($data['integer'] === 123);
-    $this->assertTrue($data['boolean'] === true);
+    $this->assertEquals('abc', $data['string']);
+    $this->assertEquals(123, $data['integer']);
+    $this->assertEquals(true, $data['boolean']);
     $this->assertTrue(is_array($data['array']));
 
     $array1 = $data['array'];
-    $this->assertTrue($array1['string'] === 'def');
-    $this->assertTrue($array1['integer'] === 456);
-    $this->assertTrue($array1['boolean'] === false);
+    $this->assertEquals('def', $array1['string']);
+    $this->assertEquals(456, $array1['integer']);
+    $this->assertEquals(false, $array1['boolean'] );
     $this->assertTrue(is_array($array1['array']));
 
     $array2 = $array1['array'];
-    $this->assertTrue($array2['string'] === 'ghi');
-    $this->assertTrue($array2['integer'] === 789);
+    $this->assertEquals('ghi', $array2['string']);
+    $this->assertEquals(789, $array2['integer']);
     $this->runAnonymous(false);
   }
 
@@ -268,15 +268,15 @@ class JSONFormatTest extends WCMFTestCase {
     // test
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
-    $this->assertTrue($data['sid'] === 'cd65fec9bce4d7ec74e341a9031f8966');
-    $this->assertTrue($data['oid'] === 'Document:123');
-    $this->assertTrue($data['className'] === 'Document');
-    $this->assertTrue($data['isReference'] === false);
-    $this->assertTrue($data['lastChange'] === 1317420061);
+    $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
+    $this->assertEquals('Document:123', $data['oid']);
+    $this->assertEquals('Document', $data['className']);
+    $this->assertEquals(false, $data['isReference']);
+    $this->assertEquals(1317420061, $data['lastChange']);
 
     $attributes = $data['attributes'];
     $this->assertTrue(is_array($attributes));
-    $this->assertTrue($attributes['title'] === 'Matrix - The Original');
+    $this->assertEquals('Matrix - The Original', $attributes['title']);
   }
 
   public function testSerializeNodeHierarchy() {
@@ -318,40 +318,40 @@ class JSONFormatTest extends WCMFTestCase {
     // test
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
-    $this->assertTrue($data['sid'] === 'cd65fec9bce4d7ec74e341a9031f8966');
-    $this->assertTrue($data['oid'] === 'Document:123');
-    $this->assertTrue($data['className'] === 'Document');
-    $this->assertTrue($data['isReference'] === false);
+    $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
+    $this->assertEquals('Document:123', $data['oid']);
+    $this->assertEquals('Document', $data['className']);
+    $this->assertEquals(false, $data['isReference']);
 
     $documentAttributes = $data['attributes'];
     $this->assertTrue(is_array($documentAttributes));
-    $this->assertTrue($documentAttributes['title'] === 'Matrix - The Original');
+    $this->assertEquals('Matrix - The Original', $documentAttributes['title']);
 
     $pages = $documentAttributes['Page'];
     $this->assertTrue(is_array($pages));
-    $this->assertTrue(sizeof($pages) == 2);
+    $this->assertEquals(2, sizeof($pages));
 
     $page1 = $pages[0];
-    $this->assertTrue($page1['oid'] === 'Page:1');
+    $this->assertEquals('Page:1', $page1['oid']);
     $page1Attributes = $page1['attributes'];
-    $this->assertTrue($page1Attributes['name'] === 'Page 1');
+    $this->assertEquals('Page 1', $page1Attributes['name']);
 
     $childPages = $page1Attributes['ChildPage'];
-    $this->assertTrue(sizeof($childPages) == 1);
+    $this->assertEquals(1, sizeof($childPages));
     $childPage = $childPages[0];
-    $this->assertTrue($childPage['oid'] === 'Page:3');
+    $this->assertEquals('Page:3', $childPage['oid']);
     $childPageAttributes = $childPage['attributes'];
-    $this->assertTrue($childPageAttributes['name'] === 'Page 3');
+    $this->assertEquals('Page 3', $childPageAttributes['name']);
 
     $page2 = $pages[1];
-    $this->assertTrue($page2['oid'] === 'Page:2');
+    $this->assertEquals('Page:2', $page2['oid']);
     $page2Attributes = $page2['attributes'];
-    $this->assertTrue($page2Attributes['name'] === 'Page 2');
+    $this->assertEquals('Page 2', $page2Attributes['name']);
 
     $author = $page2Attributes['Author'];
-    $this->assertTrue($author['oid'] === 'Author:1');
+    $this->assertEquals('Author:1', $author['oid']);
     $authorAttributes = $author['attributes'];
-    $this->assertTrue($authorAttributes['name'] === 'Unknown');
+    $this->assertEquals('Unknown', $authorAttributes['name']);
   }
 
   public function testSerializeNodeList() {
@@ -381,18 +381,18 @@ class JSONFormatTest extends WCMFTestCase {
 
     $list = $data['list'];
     $this->assertTrue(is_array($list));
-    $this->assertTrue(sizeof(array_keys($list)) == 2);
+    $this->assertEquals(2, sizeof(array_keys($list)));
 
     $pages = $list['content'];
-    $this->assertTrue(sizeof($pages) == 4);
-    $this->assertTrue($pages['contentType'] === 'Page');
+    $this->assertEquals(4, sizeof($pages));
+    $this->assertEquals('Page', $pages['contentType']);
 
-    $this->assertTrue($pages[0]['className'] === 'Page');
-    $this->assertTrue($pages[0]['oid'] === 'Page:1');
-    $this->assertTrue($pages[1]['className'] === 'Page');
-    $this->assertTrue($pages[1]['oid'] === 'Page:2');
-    $this->assertTrue($pages[2]['className'] === 'Page');
-    $this->assertTrue($pages[2]['oid'] === 'Page:3');
+    $this->assertEquals('Page', $pages[0]['className']);
+    $this->assertEquals('Page:1', $pages[0]['oid']);
+    $this->assertEquals('Page', $pages[1]['className']);
+    $this->assertEquals('Page:2', $pages[1]['oid']);
+    $this->assertEquals('Page', $pages[2]['className']);
+    $this->assertEquals('Page:3', $pages[2]['oid']);
     $this->runAnonymous(false);
   }
 }

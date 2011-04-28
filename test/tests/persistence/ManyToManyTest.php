@@ -13,10 +13,10 @@ class ManyToManyTest extends WCMFTestCase
 
     $userMapper = $persistenceFacade->getMapper('UserRDB');
     $relationDescription = $userMapper->getRelation('RoleRDB');
-    $this->assertTrue($relationDescription->getOtherType() == 'RoleRDB', "The type is RoleRDB");
-    $this->assertTrue($relationDescription->getOtherRole() == 'RoleRDB', "The role is RoleRDB");
-    $this->assertTrue($relationDescription->getOtherMinMultiplicity() == '0', "The minimum multiplicity is 0");
-    $this->assertTrue($relationDescription->getOtherAggregationKind() == 'none', "The aggregation kind is none");
+    $this->assertEquals('RoleRDB', $relationDescription->getOtherType(), "The type is RoleRDB");
+    $this->assertEquals('RoleRDB', $relationDescription->getOtherRole(), "The role is RoleRDB");
+    $this->assertEquals('0', $relationDescription->getOtherMinMultiplicity(), "The minimum multiplicity is 0");
+    $this->assertEquals('none', $relationDescription->getOtherAggregationKind(), "The aggregation kind is none");
 
     $this->runAnonymous(false);
   }
@@ -45,7 +45,7 @@ class ManyToManyTest extends WCMFTestCase
 
     $newUser = $persistenceFacade->create('UserRDB', BUILDDEPTH_SINGLE);
     $children = $newUser->getPossibleChildren();
-    $this->assertTrue(in_array('RoleRDB', array_keys($children)), "RoleRDB is a possible child of UserRDB");
+    $this->assertContains('RoleRDB', array_keys($children), "RoleRDB is a possible child of UserRDB");
 
     $newUser = $persistenceFacade->create('UserRDB', 1);
     $role = $newUser->getFirstChild('RoleRDB');
@@ -66,28 +66,28 @@ class ManyToManyTest extends WCMFTestCase
 
     $user = $persistenceFacade->load($userOid, 1);
     $role = $persistenceFacade->load($roleOid, 1);
-    $this->assertTrue(sizeof($user->getFirstChild('RoleRDB', null, null)) == 0, "No connection yet");
-    $this->assertTrue(sizeof($role->getFirstChild('UserRDB', null, null)) == 0, "No connection yet");
+    $this->assertEquals(0, sizeof($user->getFirstChild('RoleRDB', null, null)), "No connection yet");
+    $this->assertEquals(0, sizeof($role->getFirstChild('UserRDB', null, null)), "No connection yet");
 
     $user->addNode($role);
     $user->save();
 
     $oids = $persistenceFacade->getOids('NMUserRole',
       array('fk_user_id' => $user->getOID()->getFirstId(), 'fk_role_id' => $role->getOID()->getFirstId()));
-    $this->assertTrue(sizeof($oids) == 1, "A connection was created");
+    $this->assertEquals(1, sizeof($oids), "A connection was created");
 
     $user->setName('new user');
     $user->save();
 
     $oids = $persistenceFacade->getOids('NMUserRole',
       array('fk_user_id' => $user->getOID()->getFirstId(), 'fk_role_id' => $role->getOID()->getFirstId()));
-        $this->assertTrue(sizeof($oids) == 1, "The connection is only created if not existing already");
+        $this->assertEquals(1, sizeof($oids), "The connection is only created if not existing already");
 
     // cleanup
     $this->deleteTestObject($userOid);
     $oids = $persistenceFacade->getOids('NMUserRole',
       array('fk_user_id' => $user->getOID()->getFirstId(), 'fk_role_id' => $role->getOID()->getFirstId()));
-        $this->assertTrue(sizeof($oids) == 0, "The connection was deleted");
+        $this->assertEquals(0, sizeof($oids), "The connection was deleted");
 
     $this->deleteTestObject($roleOid);
 

@@ -50,7 +50,7 @@ class IteratorTest extends WCMFTestCase
       $valueIter->proceed();
     }
 
-    $this->assertTrue($count == 10, "The node has 10 attributes");
+    $this->assertEquals(12, $count, "The node has 12 attributes");
 
     $this->runAnonymous(false);
   }

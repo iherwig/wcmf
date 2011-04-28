@@ -15,7 +15,7 @@ class NodeTest extends WCMFTestCase
     $page1->setName('testing'.$time);
 
     $page2 = $persistenceFacade->load($this->oids['page'], BUILDDEPTH_SINGLE);
-    $this->assertTrue($page2->getName() == 'testing'.$time);
+    $this->assertEquals('testing'.$time, $page2->getName());
 
     $this->runAnonymous(false);
   }
@@ -46,7 +46,7 @@ class NodeTest extends WCMFTestCase
 
     $pagingInfo = new PagingInfo(10);
     $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
-    $this->assertTrue(sizeof($documents) == 10);
+    $this->assertEquals(10, sizeof($documents));
 
     $this->runAnonymous(false);
   }
