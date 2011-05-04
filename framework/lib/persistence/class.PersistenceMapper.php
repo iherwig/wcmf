@@ -111,10 +111,11 @@ interface PersistenceMapper
   public function isSortable();
 
   /**
-   * Get the names of the attributes to order by default. The roleName parameter
-   * allows to ask for the order with respect to a specific role.
+   * Get the name of the attribute to order by default and the sort direction
+   * (ASC or DESC). The roleName parameter allows to ask for the order with respect to a specific role.
+   * In a many to many relation the attribute may not be contained in the mapped type.
    * @param rolename The role name of the relation, maybe null [default: null]
-   * @return An array of attribute names (maybe appended with ASC or DESC, seperated by space)
+   * @return An assciative array with the keys type, sortFieldName and sortDirection (ASC or DESC)
    */
   public function getDefaultOrder($roleName=null);
 

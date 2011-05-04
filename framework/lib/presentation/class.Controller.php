@@ -161,6 +161,12 @@ abstract class Controller
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug('Response: '.$this->_response, __CLASS__);
     }
+
+    // log errors
+    $errors = $this->_response->getErrors();
+    for ($i=0,$count=sizeof($errors); $i<$count; $i++) {
+      Log::error($errors[$i]->__toString(), __CLASS__);
+    }
     return $this->_executionResult;
   }
   /**
@@ -196,7 +202,7 @@ abstract class Controller
   }
   /**
    * Get the Request object.
-   * @return A reference to the Request object
+   * @return Request object
    */
   public function getRequest()
   {
@@ -204,7 +210,7 @@ abstract class Controller
   }
   /**
    * Get the Response object.
-   * @return A reference to the Response object
+   * @return Response object
    */
   public function getResponse()
   {
@@ -212,7 +218,7 @@ abstract class Controller
   }
   /**
    * Get the controller delegate.
-   * @return A reference to the ControllerDelegate / or null if none is existing
+   * @return ControllerDelegate / or null if none is existing
    */
   protected function getDelegate()
   {

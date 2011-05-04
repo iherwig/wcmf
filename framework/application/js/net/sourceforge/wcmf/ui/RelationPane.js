@@ -31,6 +31,12 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
    * The query to find objects on the other side of the relation
    */
   relationQuery: null,
+  /**
+   * An object with the following properties:
+   * - attribute: the name of the attribute to sort by
+   * - descending: boolean
+   */
+  sortInfo: null,
 
   /**
    * UI elements
@@ -45,12 +51,16 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
    *    - oid The object id of the object on this side of the relation
    *    - otherRole The role of the objects on the other side of the relation
    *    - relationQuery The query to find objects on the other side of the relation
+   *    - sortInfo An object with the following properties:
+   *      - attribute: the name of the attribute to sort by
+   *      - descending: boolean
    *    + All other options defined for dijit.layout.ContentPane
    */
   constructor: function(options) {
     this.oid = options.oid;
     this.otherRole = options.otherRole;
     this.relationQuery = options.relationQuery;
+    this.sortInfo = options.sortInfo;
 
     this.modelClass = wcmf.model.meta.Model.getTypeFromOid(this.oid);
     this.otherClass = this.modelClass.getTypeForRole(this.otherRole);
@@ -61,7 +71,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       closable: false
     }, options);
   },
-  
+
   /**
    * Reload the content
    */
@@ -118,11 +128,12 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
     toolbar.addChild(this.associateBtn);
 
     // create relations grid
-    this.relationsGrid = new wcmf.ui.Grid({
+    var gridOptions = {
       modelClass: this.otherClass,
       query: {
         query: this.relationQuery
       },
+      queryOptions: {},
       actions: [
         new wcmf.ui.GridActionEdit(),
         new wcmf.ui.GridActionDisassociate({
@@ -132,7 +143,13 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
         new wcmf.ui.GridActionDelete()
       ],
       region: "center"
-    });
+    };
+    if (this.sortInfo) {
+      // don't use sortFields option, because this would throw an exception,
+      // if the sortfield is unknown in the class
+      gridOptions["queryOptions"]["sort"] = [this.sortInfo];
+    }
+    this.relationsGrid = new wcmf.ui.Grid(gridOptions);
 
     layoutContainer.addChild(toolbar);
     layoutContainer.addChild(this.relationsGrid);

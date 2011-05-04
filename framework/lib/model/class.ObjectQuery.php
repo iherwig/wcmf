@@ -112,6 +112,7 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
   private $_groups = array();
   private $_groupedOIDs = array();
   private $_processedNodes = array();
+  private $_involvedTypes = array();
   private $_aliasCounter = 1;
 
   /**
@@ -242,11 +243,12 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
   protected function buildQuery($orderby=null, $attribs=null)
   {
     $mapper = self::getMapper($this->_typeNode->getType());
+    $this->_involvedTypes[$this->_typeNode->getType()] = true;
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
     $tableName = self::getTableName($this->_typeNode);
-    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], $orderby, $attribs);
+    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), $attribs);
 
     // process all root nodes except for grouped nodes
     foreach ($this->_rootNodes as $curNode)
@@ -284,10 +286,13 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
         }
       }
     }
-    
+
+    // set orderby after all involved tables are known in order to
+    // prefix the correct table name
+    $this->processOrderBy($orderby, $selectStmt);
+
     // reset internal variables
-    $this->_processedNodes = array();
-    $this->_aliasCounter = 1;
+    $this->resetInternals();
 
     return $selectStmt;
   }
@@ -306,6 +311,7 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
 
     $mapper = self::getMapper($tpl->getType());
     $tableName = self::getTableName($tpl);
+    $this->_involvedTypes[$tpl->getType()] = true;
 
     // add condition
     $condition = '';
@@ -350,7 +356,7 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
     }
 
     // register the node as processed
-    $this->_processedNodes[$oidStr] = true;
+    $this->_processedNodes[$oidStr] = $tpl;
 
     // add relations to children (this includes also many to many relations)
     // and process children
@@ -421,6 +427,9 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
 
                 $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, '');
                 $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, '');
+
+                // register the nm type
+                $this->_involvedTypes[$nmMapper->getType()] = true;
               }
             }
           }
@@ -432,6 +441,47 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
         }
       }
     }
+  }
+  /**
+   * Process an object template
+   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
+   * @param selectStmt A Zend_Db_Select instance
+   */
+  protected function processOrderBy($orderby, Zend_Db_Select $selectStmt)
+  {
+    if ($orderby)
+    {
+      // reset current order by
+      $selectStmt->reset(Zend_Db_Select::ORDER);
+
+      $persistenceFacade = PersistenceFacade::getInstance();
+      foreach ($orderby as $curOrderBy)
+      {
+        $orderByParts = preg_split('/ /', $curOrderBy);
+        $orderAttribute = $orderByParts[0];
+        $orderDirection = sizeof($orderByParts) > 1 ? $orderByParts[1] : 'ASC';
+
+        // check all involved types
+        foreach (array_keys($this->_involvedTypes) as $curType) {
+          $mapper = $persistenceFacade->getMapper($curType);
+          if ($mapper->hasAttribute($orderAttribute)) {
+            $orderTableName = $mapper->getRealTableName();
+            break;
+          }
+        }
+        $orderAttributeFinal = $orderTableName.".".$orderAttribute;
+        $selectStmt->order(array($orderAttributeFinal." ".$orderDirection));
+      }
+    }
+  }
+  /**
+   * Reset internal variables. Must be called after buildQuery
+   */
+  protected function resetInternals()
+  {
+    $this->_processedNodes = array();
+    $this->_involvedTypes = array();
+    $this->_aliasCounter = 1;
   }
   /**
    * Get the table name for the template.

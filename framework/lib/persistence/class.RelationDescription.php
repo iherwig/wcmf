@@ -90,7 +90,7 @@ class RelationDescription
    */
   public function isMultiValued()
   {
-    $maxMultiplicity = $this->otherMaxMultiplicity;
+    $maxMultiplicity = $this->getOtherMaxMultiplicity();
     if ($maxMultiplicity > 1 || $maxMultiplicity == 'unbounded') {
       return true;
     }
@@ -109,6 +109,15 @@ class RelationDescription
   }
 
   /**
+   * Get the PersistentMapper at this end
+   * @return PersistentMapper
+   */
+  public function getThisMapper()
+  {
+    return PersistenceFacade::getInstance()->getMapper($this->getThisType());
+  }
+
+  /**
    * Get the role name at this end
    * @return String
    */
@@ -124,6 +133,15 @@ class RelationDescription
   public function getOtherType()
   {
     return $this->otherType;
+  }
+
+  /**
+   * Get the PersistentMapper at the other end
+   * @return PersistentMapper
+   */
+  public function getOtherMapper()
+  {
+    return PersistenceFacade::getInstance()->getMapper($this->getOtherType());
   }
 
   /**
@@ -225,10 +243,10 @@ class RelationDescription
    */
   public function isSameRelation(RelationDescription $other)
   {
-    if (($this->thisType == $other->thisType && $this->otherType == $other->otherType
-            && $this->thisRole == $other->thisRole && $this->otherRole == $other->otherRole) ||
-        ($this->thisType == $other->otherType && $this->otherType == $other->thisType
-            && $this->thisRole == $other->otherRole && $this->otherRole == $other->thisRole)
+    if (($this->getThisType() == $other->getThisType() && $this->getOtherType() == $other->getOtherType()
+            && $this->getThisRole() == $other->getThisRole() && $this->getOtherRole() == $other->getOtherRole()) ||
+        ($this->getThisType() == $other->getOtherType() && $this->getOtherType() == $other->getThisType()
+            && $this->getThisRole() == $other->getOtherRole() && $this->getOtherRole() == $other->getThisRole())
        ) {
       return true;
     }

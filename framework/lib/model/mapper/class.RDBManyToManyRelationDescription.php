@@ -75,8 +75,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the PersistentObject type at this end
-   * @return String
+   * @see RelationDescription::getThisType
    */
   public function getThisType()
   {
@@ -84,8 +83,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the role name at this end
-   * @return String
+   * @see RelationDescription::getThisRole
    */
   public function getThisRole()
   {
@@ -93,8 +91,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the PersistentObject type at the other end
-   * @return String
+   * @see RelationDescription::getOtherType
    */
   public function getOtherType()
   {
@@ -102,8 +99,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the role name at the other end
-   * @return String
+   * @see RelationDescription::getOtherRole
    */
   public function getOtherRole()
   {
@@ -111,8 +107,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the minimum number of instances at this end
-   * @return Number or 'unbound'
+   * @see RelationDescription::getThisMinMultiplicity
    */
   public function getThisMinMultiplicity()
   {
@@ -120,8 +115,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the maximum number of instances at this end
-   * @return Number or 'unbound'
+   * @see RelationDescription::getThisMaxMultiplicity
    */
   public function getThisMaxMultiplicity()
   {
@@ -129,8 +123,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the minimum number of instances at the other end
-   * @return Number or 'unbound'
+   * @see RelationDescription::getOtherMinMultiplicity
    */
   public function getOtherMinMultiplicity()
   {
@@ -138,8 +131,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the maximum number of instances at the other end
-   * @return Number or 'unbound'
+   * @see RelationDescription::getOtherMaxMultiplicity
    */
   public function getOtherMaxMultiplicity()
   {
@@ -147,8 +139,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the aggregation kind at this end
-   * @return String 'none', 'shared' or 'composite'
+   * @see RelationDescription::getThisAggregationKind
    */
   public function getThisAggregationKind()
   {
@@ -156,8 +147,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the aggregation kind at the other end
-   * @return String 'none', 'shared' or 'composite'
+   * @see RelationDescription::getOtherAggregationKind
    */
   public function getOtherAggregationKind()
   {
@@ -165,8 +155,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Check wether this end is navigable from the other end or not
-   * @return Boolean
+   * @see RelationDescription::getThisNavigability
    */
   public function getThisNavigability()
   {
@@ -174,8 +163,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Check wether the other end is navigable from this end or not
-   * @return Boolean
+   * @see RelationDescription::getOtherNavigability
    */
   public function getOtherNavigability()
   {
@@ -183,8 +171,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
   }
 
   /**
-   * Get the hierarchy type that the other end has in relation to this end
-   * @return String 'parent', 'child', 'undefined'
+   * @see RelationDescription::getHierarchyType
    */
   public function getHierarchyType()
   {

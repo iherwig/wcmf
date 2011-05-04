@@ -63,7 +63,7 @@ class StringQuery extends ObjectQuery
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $selectStmt = $mapper->getSelectSQL(null, null, $orderby, $attribs);
+    $selectStmt = $mapper->getSelectSQL(null, null, null, $attribs);
 
     // get all referenced types/roles from the condition and translate
     // attributes to column names
@@ -155,6 +155,13 @@ class StringQuery extends ObjectQuery
       $node->setProperty(self::PROPERTY_TABLE_NAME, $typeOrRole);
     }
     $this->processObjectTemplate($rootNode, $selectStmt);
+
+    // set orderby after all involved tables are known in order to
+    // prefix the correct table name
+    $this->processOrderBy($orderby, $selectStmt);
+
+    // reset internal variables
+    $this->resetInternals();
 
     return $selectStmt;
   }

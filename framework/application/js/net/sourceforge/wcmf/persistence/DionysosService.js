@@ -32,20 +32,29 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
       transformGetArguments: function(args) {
         args.url = args.url.replace("/"+self.modelClass.name+":/", "");
         if (args.content) {
-          if (args.content.count) {
-            args.content.limit = args.content.count;
+          var content = args.content;
+          if (content.count) {
+            content.limit = content.count;
           }
-          if (args.content.start) {
-            args.content.offset = args.content.start;
+          if (content.start) {
+            content.offset = content.start;
           }
-          if (args.content.sort) {
-            var sortDef = args.content.sort[0];
-            args.content.sortFieldName = sortDef.attribute;
-            args.content.sortDirection = sortDef.descending ? "desc" : "asc";
+          var sortDef = null;
+          // check default sort from grid
+          if (content.sort) {
+            sortDef = content.sort[0];
+          }
+          // check custom sort from grid
+          else if (content.queryOptions && content.queryOptions.sort) {
+            sortDef = content.queryOptions.sort[0];
+          }
+          if (sortDef != null) {
+            content.sortFieldName = sortDef.attribute;
+            content.sortDirection = sortDef.descending ? "desc" : "asc";
           }
           // remove the query object. the content will be serialized
           // by dojo as key/value pairs automatically
-          if (args.content.query) {
+          if (content.query) {
             delete args.content.query;
           }
         }

@@ -17,8 +17,19 @@ dojo.addOnLoad(function() {
   // create a RelationTabContainer with one RelationPane instance for each related type
   var relations = [];
 {foreach item=relation from=$mapper->getRelations()}
-  {$role=$relation->getOtherRole()}
-  relations["{$role}"] = "{$obfuscator->obfuscate($nodeUtil->getRelationQueryCondition($object, $role))}";
+  {$otherRole=$relation->getOtherRole()}
+  {$otherMapper=$relation->getOtherMapper()}
+  {$orderBy=$otherMapper->getDefaultOrder($relation->getThisRole())}
+
+  relations.push({
+    role: "{$otherRole}",
+    query: "{$obfuscator->obfuscate($nodeUtil->getRelationQueryCondition($object, $otherRole))}"{if $orderBy},
+    sortInfo: {
+      attribute: "{$orderBy.sortFieldName}",
+      descending: {if $orderBy.sortDirection == "DESC"}true{else}false{/if}
+    }
+{/if}
+  });
 {/foreach}
 
   var relationTabContainer = new wcmf.ui.RelationTabContainer({

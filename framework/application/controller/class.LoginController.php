@@ -142,7 +142,17 @@ class LoginController extends Controller
       if ($request->hasValue('password_is_encrypted')) {
         $isPasswordEncrypted = $request->getValue('password_is_encrypted');
       }
-      if ($authUser->login($request->getValue('user'), $request->getValue('password'), $isPasswordEncrypted))
+
+      // try to login
+      $success = false;
+      try {
+        $success = $authUser->login($request->getValue('user'), $request->getValue('password'), $isPasswordEncrypted);
+      }
+      catch (Exception $ex) {
+        Log::error("Could not log in: ".$ex, __CLASS__);
+      }
+
+      if ($success)
       {
         // login succeeded
         $session->clear();
@@ -228,11 +238,11 @@ class LoginController extends Controller
   protected function isCookieLogin()
   {
     $request = $this->getRequest();
-    $isCookieLogin = ($request->getAction() == 'login' && 
+    $isCookieLogin = ($request->getAction() == 'login' &&
             isset($_COOKIE[$this->getCookieName('user')], $_COOKIE[$this->getCookieName('password')]));
     return $isCookieLogin;
   }
-  
+
   /**
    * Get a unique cookie name for the given variable name
    * @param name The name of the variable

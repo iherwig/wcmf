@@ -135,7 +135,7 @@ abstract class AbstractQuery
   /**
    * Get the mapper for a Node and check if it is a supported one.
    * @param type The type of Node to get the mapper for
-   * @return The mapper
+   * @return RDBMapper instance
    */
   protected static function getMapper($type)
   {

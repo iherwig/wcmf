@@ -475,11 +475,28 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
   }
   /**
+   * @see PersistenceMapper::getDefaultOrder()
+   */
+  public function getDefaultOrder($roleName=null)
+  {
+    if ($roleName != null)
+    {
+      $relationDesc = $this->getRelation($roleName);
+      if ($relationDesc instanceof RDBManyToManyRelationDescription)
+      {
+        $thisRelationDesc = $relationDesc->getThisEndRelation();
+        $nmMapper = $thisRelationDesc->getOtherMapper($thisRelationDesc->getOtherType());
+        return $nmMapper->getOwnDefaultOrder($roleName);
+      }
+    }
+    return $this->getOwnDefaultOrder($roleName);
+  }
+  /**
    * Check if a value is a primary key value
    * @param name The name of the value
    * @return True/False
    */
-  public function isPkValue($name)
+  protected function isPkValue($name)
   {
     $pkNames = $this->getPKNames();
     return in_array($name, $pkNames);
@@ -1133,6 +1150,13 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
    * Subclasses must implement this method to define their object type.
    */
 
+  /**
+   * Get the name of the attribute in the mapped class to order by default and the sort direction
+   * (ASC or DESC). The roleName parameter allows to ask for the order with respect to a specific role.
+   * @param rolename The role name of the relation, maybe null [default: null]
+   * @return An assciative array with the keys sortFieldName and sortDirection (ASC or DESC)
+   */
+  abstract protected function getOwnDefaultOrder($roleName=null);
   /**
    * Get a list of all RelationDescriptions.
    * @return An associative array with the relation names as keys and the RelationDescription instances as values.

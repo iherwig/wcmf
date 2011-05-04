@@ -8,8 +8,8 @@ dojo.require("wcmf.ui.RelationPane");
  * @class RelationTabContainer
  *
  * RelationTabContainer contains one instance of RelationPane for each relation
- * of a source type to a target type. The instances in each RelationPane are 
- * the objects at the target end of the relations of the given source object and 
+ * of a source type to a target type. The instances in each RelationPane are
+ * the objects at the target end of the relations of the given source object and
  * are selected using the provided queries.
  */
 /**
@@ -17,17 +17,21 @@ dojo.require("wcmf.ui.RelationPane");
  * model type.
  */
 dojo.declare("wcmf.ui.RelationTabContainer", dijit.layout.TabContainer, {
-  
+
   /**
    * The object id of the source object
    */
   oid: null,
 
   /**
-   * An object with role names as property names and the obfuscated relation 
-   * query condition as property values
+   * An array of objects describing the relations. Each object has the following properties:
+   * - role: the role name
+   * - query: the obfuscated relation query condition
+   * - sortInfo: An object with the following properties:
+   *   - attribute: the name of the attribute to sort by
+   *   - descending: boolean
    */
-  relations: null,
+  relations: [],
 
   /**
    * The RelationPane instances, key is the role name
@@ -38,13 +42,18 @@ dojo.declare("wcmf.ui.RelationTabContainer", dijit.layout.TabContainer, {
    * Constructor
    * @param options Parameter object
    *    - oid The object id of the source object
-   *    - relations An object with role names as property names and the 
-   *        obfuscated relation query condition as property values
+   *    - relations An array of objects describing the relations. Each object has
+   *      the following properties:
+   *      - role: the role name
+   *      - query: the obfuscated relation query condition
+   *      - sortInfo: An object with the following properties:
+   *        - attribute: the name of the attribute to sort by
+   *        - descending: boolean
    *    + All options defined for dijit.layout.TabContainer
    */
   constructor: function(options) {
     this.oid = options.oid;
-    this.relations = options.oid || [];
+    this.relations = options.relations || [];
     this.relationPanes = {};
 
     dojo.mixin(this, {
@@ -71,14 +80,16 @@ dojo.declare("wcmf.ui.RelationTabContainer", dijit.layout.TabContainer, {
     this.inherited(arguments);
 
     // create the RelationPane instances
-    for(var role in this.relations) {
+    for(var i=0, count=this.relations.length; i<count; i++) {
+      var curRelation = this.relations[i];
       var pane = new wcmf.ui.RelationPane({
         oid: this.oid,
-        otherRole: role,
-        relationQuery: this.relations[role]
+        otherRole: curRelation.role,
+        relationQuery: curRelation.query,
+        sortInfo: curRelation.sortInfo
       });
       this.addChild(pane);
-      this.relationPanes[role] = pane;
+      this.relationPanes[curRelation.role] = pane;
     }
   },
 

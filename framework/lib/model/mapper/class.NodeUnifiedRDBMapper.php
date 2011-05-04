@@ -203,15 +203,16 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     if ($orderby == null)
     {
       // use default ordering
-      $orderby = $this->getDefaultOrder();
-    }
-    foreach($orderby as $orderExpression)
-    {
-      // add the table name if missing
-      if (strpos($orderExpression, '.') === false) {
-        $orderExpression = $tableName.".".$orderExpression;
+      $defaultOrder = $this->getDefaultOrder();
+      if ($defaultOrder) {
+        $orderby = array($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection']);
       }
-      $orderbyFinal[] = $orderExpression;
+      else {
+        $orderby = array();
+      }
+    }
+    foreach($orderby as $orderExpression) {
+      $orderbyFinal[] = $this->ensureTablePrefix($orderExpression, $tableName);
     }
     if (sizeof($orderby) > 0) {
       $selectStmt->order($orderbyFinal);
@@ -246,6 +247,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
         $this->addColumns($selectStmt, $attribs, $tableName);
         $selectStmt->where($this->quoteIdentifier($tableName).".".
                 $this->quoteIdentifier($thisAttr->getName())."= ?", $dbid);
+        $defaultOrder = $this->getDefaultOrder($otherRole);
+        if ($defaultOrder) {
+          $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
+                  $tableName));
+        }
       }
       elseif ($relationDescription instanceof RDBOneToManyRelationDescription)
       {
@@ -255,10 +261,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
           $fkValue = new Zend_Db_Expr('NULL');
         }
 
-        $selectStmt->from($this->getRealTableName(), '');
+        $selectStmt->from($tableName, '');
         $this->addColumns($selectStmt, $attribs, $tableName);
         $selectStmt->where($this->quoteIdentifier($tableName).".".
                 $this->quoteIdentifier($thisAttr->getName())."= ?", $fkValue);
+        $defaultOrder = $this->getDefaultOrder($otherRole);
+        if ($defaultOrder) {
+          $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
+                  $tableName));
+        }
       }
       elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
       {
@@ -273,15 +284,21 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
         $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
         $thisFkAttr = $nmMapper->getAttribute($thisRelationDesc->getFkName());
         $thisIdAttr = $this->getAttribute($thisRelationDesc->getIdName());
+        $nmTablename = $nmMapper->getRealTableName();
 
-        $selectStmt->from($this->getRealTableName(), '');
+        $selectStmt->from($tableName, '');
         $this->addColumns($selectStmt, $attribs, $tableName);
 
-        $joinCond = $this->quoteIdentifier($nmMapper->getRealTableName()).".".$this->quoteIdentifier($thisFkAttr->getName())."=".
+        $joinCond = $this->quoteIdentifier($nmTablename).".".$this->quoteIdentifier($thisFkAttr->getName())."=".
                 $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($thisIdAttr->getName());
-        $selectStmt->join($nmMapper->getRealTableName(), $joinCond, array());
-        $selectStmt->where($this->quoteIdentifier($nmMapper->getRealTableName()).".".
+        $selectStmt->join($nmTablename, $joinCond, array());
+        $selectStmt->where($this->quoteIdentifier($nmTablename).".".
                 $this->quoteIdentifier($otherFkAttr->getName())."= ?", $dbid);
+        $defaultOrder = $nmMapper->getDefaultOrder($otherRole);
+        if ($defaultOrder) {
+          $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
+                  $nmTablename));
+        }
       }
     }
     return $selectStmt;
@@ -551,6 +568,20 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       $conn = $this->getConnection();
       return $conn->quote($value);
     }
+  }
+  /**
+   * Make sure that the given table name is prefixed before the given expression
+   * and return the modified expression.
+   * @param expression The expression
+   * @param tableName The table name
+   * @return String
+   */
+  protected function ensureTablePrefix($expression, $tableName)
+  {
+    if (strpos($expression, '.') === false) {
+      $expression = $tableName.".".$expression;
+    }
+    return $expression;
   }
 }
 ?>

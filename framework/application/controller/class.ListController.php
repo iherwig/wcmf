@@ -184,6 +184,7 @@ class ListController extends Controller
     if (strlen($filter) == 0) {
       $filter = NodeUtil::getNodeQuery($type);
     }*/
+    // TODO: check if orderby attribute is illegal
     $query = new StringQuery($type);
     $query->setConditionString($queryCondition);
     $objects = $query->execute(BUILDDEPTH_SINGLE, $sortArray, $pagingInfo);
