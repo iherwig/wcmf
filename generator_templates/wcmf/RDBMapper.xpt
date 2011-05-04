@@ -78,19 +78,21 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
 «ENDIF-»
   }
   /**
-   * @see PersistenceMapper::getDefaultOrder()
+   * @see RDBMapper::getOwnDefaultOrder()
    */
-  public function getDefaultOrder($roleName=null)
+  public function getOwnDefaultOrder($roleName=null)
   {
 «IF getOrderByName() == defaultOrderByName()-»
   «FOREACH this.getParentNodesRecursive() AS curParent-»
     if ($roleName == '«curParent.getRoleName()»') {
-      return array('«this.getOrderByNameForParent(curParent)»');
+      return array('sortFieldName' => '«this.getOrderByNameForParent(curParent)»', 'sortDirection' => '«this.getOrderByDirection()»');
     }
   «ENDFOREACH-»
-    return array('«this.getOrderByName()»');
+«ENDIF-»
+«IF getOrderByName() != null-»
+    return array('sortFieldName' => '«this.getOrderByName()»', 'sortDirection' => '«this.getOrderByDirection()»');
 «ELSE-»
-    return array(«IF this.getOrderByName() != ""»'«this.getOrderByName()»'«ENDIF»);
+    return null;
 «ENDIF-»
   }
   /**

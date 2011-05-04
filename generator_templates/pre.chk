@@ -1,0 +1,50 @@
+import uml;
+import wcmf;
+
+extension org::openarchitectureware::uml2::profile::profiling;
+extension templates::extensions::naming;
+extension templates::extensions::globals;
+extension templates::extensions::util;
+extension templates::extensions::umlutils;
+extension templates::extensions::wcmf;
+
+/**
+ * Model checks
+ */
+
+/**
+ * Check if required Node base class exists
+ */
+context Model ERROR
+	"Required Node superclass '"+RequiredNodeSuperClass()+"' does not exist in the model" :
+	let requiredSuperClass = this.allOwnedElements().typeSelect(WCMFNode).select(e|e.qualifiedName == RequiredNodeSuperClass()) :
+ 		requiredSuperClass.size != 0
+;
+/**
+ * Check if required Controller base class exists
+ */
+context Model ERROR
+	"Required Controller superclass '"+RequiredControllerSuperClass()+"' does not exist in the model" :
+	let requiredSuperClass = this.allOwnedElements().typeSelect(WCMFController).select(e|e.qualifiedName == RequiredControllerSuperClass()) :
+ 		requiredSuperClass.size != 0
+;
+
+/**
+ * Node checks
+ */
+      
+/**
+ * Value checks
+ */
+
+/**
+ * ValueRef checks
+ */
+      
+/**
+ * Controller checks
+ */
+
+/**
+ * ActionKey checks
+ */

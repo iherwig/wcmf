@@ -1,0 +1,104 @@
+import uml;
+
+/**
+ * Database related
+ */
+ 
+/**
+ * Convert a string sql friendly
+ */
+String asSql(String str) : str.toLowerCase();
+
+/**
+ * Convert a multiline string to a sql multiline comment
+ */
+String asSqlMultilineComment(String str) : str.replaceAll("(\\n)", "$1# ");
+
+/**
+ * The default foreign key column name
+ */
+String defaultFKName(uml::Type parent) : "fk_"+parent.name.asSql()+"_id";
+
+/**
+ * The default primary key column name
+ */
+String defaultPKName(uml::Type type) : "id";
+
+/**
+ * The default order by column name
+ */
+String defaultOrderByName() : "sortkey";
+
+/**
+ * PHP related
+ */
+ 
+/**
+ * Convert a package name into a path
+ */
+String asPath(String package) : package.replaceAll("\\.", "/");
+
+/**
+ * Get the php class file name for a class
+ */
+String asType(String string) :
+	JAVA com.wemove.wcmf.generator.Util.toCamelCase(java.lang.String)
+;
+
+/**
+ * Get the php class file name for a class
+ */
+String asClassFile(String name): "class."+name+".php";
+
+/**
+ * Get the php base class file name for a class
+ */
+String asBaseClassFile(String name): "class."+name+"Base.php";
+
+/**
+ * Get the php mapper class name for a class
+ */
+String asMapper(String name): name+"RDBMapper";
+
+/**
+ * Get the smarty file name for a class
+ */
+String asTemplateFile(String name): name+".tpl";
+
+/**
+ * Get the getter method name for a property
+ */
+String asGetter(String name) : "get"+name.asType();
+
+/**
+ * Get the setter method name for a property
+ */
+String asSetter(String name) : "set"+name.asType();
+
+/**
+ * JS related
+ */
+ 
+/**
+ * Get the JS  base class file name for a class
+ */
+String asBaseJSClassFile(String name): name+".class.js";
+
+/**
+ * Get the JS class file name for a class
+ */
+String asJSClassFile(String name): name+"Class.class.js";
+
+String getExtJsInputType(String str):
+	switch (str) {
+		case 'checkbox' : 'ComboBox'
+		case 'fckeditor' : 'HtmlEditor'
+		case 'text' : 'TextField'
+		case 'date' : 'DateField'
+		case 'radio' : 'Radio'
+		case 'checkbox' : 'Checkbox'
+		case 'select' : 'ComboBox'
+		case 'password' : 'Password'
+		default : 'TextField'
+	}
+;

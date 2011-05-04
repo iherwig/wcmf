@@ -1,0 +1,31 @@
+import uml;
+import wcmf;
+
+extension templates::extensions::globals;
+extension templates::extensions::wcmf;
+extension templates::extensions::util;
+extension org::openarchitectureware::uml2::profile::profiling;
+
+/**
+ * Add inherited values and associations to all nodes
+ */
+Void addDefaults(uml::Model this) :
+	info("--------------------------") ->
+	info("M2M Start") ->
+	info("--------------------------") ->
+	info("Apply wCMF profile") ->
+	this.applyProfile(ProfileFile()) ->
+	this.allOwnedElements().typeSelect(WCMFNode).select(e|e.qualifiedName == RequiredNodeSuperClass()).first().
+		postProcessNodes("Model::"+RootPackage()+"::"+ApplicationPackage()) ->
+	info("--------------------------") ->
+	info("M2M End") ->
+	info("--------------------------") ->
+	this
+;
+
+/**
+ * PostProcessor delegates
+ */
+WCMFNode postProcessNodes(WCMFNode root, String package) :
+	JAVA com.wemove.wcmf.generator.PostProcessor.postProcessNodes(org.eclipse.uml2.uml.Class, java.lang.String)
+;

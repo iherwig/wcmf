@@ -1,0 +1,51 @@
+import uml;
+
+/**
+ * Logging
+ */
+Void debug(Object o) : 
+	JAVA com.wemove.wcmf.generator.Logger.debug(java.lang.Object)
+;	
+Void info(Object o) : 
+	JAVA com.wemove.wcmf.generator.Logger.info(java.lang.Object)
+;	
+Void warn(Object o) : 
+	JAVA com.wemove.wcmf.generator.Logger.warn(java.lang.Object)
+;	
+Void error(Object o) : 
+	JAVA com.wemove.wcmf.generator.Logger.error(java.lang.Object)
+;
+   
+/**
+ * Join a list of strings
+ */
+String join(List list, String separator) : 
+	JAVA com.wemove.wcmf.generator.Util.join(java.util.AbstractCollection, java.lang.String)
+;
+
+/**
+ * Check if a string is empty
+ */
+Boolean isNullOrEmpty(String s) :
+	s == null || s.trim().length == 0
+;
+
+/**
+ * Check if a boolean is false
+ */
+Boolean isNullOrFalse(Boolean b) :
+	b == null || !b
+;
+Boolean isNullOrFalse(uml::EnumerationLiteral b) :
+	b == null || b.name.toString().matches("false")
+;
+
+/**
+ * Get the string representation of a boolean
+ */ 
+String boolString(Boolean b) :
+	b == null || !b ? "false" : "true"
+;
+String boolString(uml::EnumerationLiteral b) :
+	b == null || b.name.toString().matches("false") ? "false" : "true"
+;

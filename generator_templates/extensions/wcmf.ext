@@ -1,0 +1,467 @@
+import uml;
+import wcmf;
+import emf;
+
+extension templates::extensions::globals;
+extension templates::extensions::naming;
+extension templates::extensions::util;
+extension templates::extensions::umlutils;
+extension org::openarchitectureware::uml2::profile::profiling;
+extension org::openarchitectureware::util::stdlib::io;
+
+/**
+ * wCMF Stereotypes
+ */
+String STEREOTYPE_WCMF_NODE() : "wcmf::WCMFNode";
+String STEREOTYPE_WCMF_VALUE() : "wcmf::WCMFValue";
+String STEREOTYPE_WCMF_MANY_TO_MANY() : "wcmf::WCMFManyToMany";
+String STEREOTYPE_WCMF_ASSOCIATION() : "wcmf::WCMFAssociation";
+
+/**
+ * Check if a given class belongs to the wcmf library
+ */
+boolean isLibraryClass(uml::NamedElement this) : 
+	this.getQualifiedName().startsWith("Model::"+RootPackage()+"::"+LibraryPackage())
+;
+
+/**
+ * Check if a given class belongs to the application
+ */
+boolean isApplicationClass(uml::NamedElement this) : 
+	this.getQualifiedName().startsWith("Model::"+RootPackage()+"::"+ApplicationPackage()) && this.metaType == uml::Class
+;
+
+/**
+ * Check if an element is added by the generator
+ */
+boolean isGeneratorAdded(uml::Element this) : 
+	JAVA com.wemove.wcmf.generator.Generator.isGeneratorAdded(org.eclipse.uml2.uml.Element)
+;
+
+/**
+ * Check if an element is inherited by the generator
+ */
+boolean isGeneratorInherited(uml::Element this) : 
+	JAVA com.wemove.wcmf.generator.Generator.isGeneratorInherited(org.eclipse.uml2.uml.Element)
+;
+
+/**
+ * Check if an element is added by the generator
+ */
+boolean isNode(uml::Element this) : 
+	this.getAppliedStereotype("wcmf::WCMFNode") != null || this.getAppliedStereotype("wcmf::WCMFManyToMany") != null
+;
+
+/**
+ * WCMFNode extensions
+ */
+
+/**
+ * Methods for retrieving parent nodes. Parents are at the composite or shared end (uml::Property) or the one 
+ * that is navigable in an association with the node.
+ */
+ 
+/**
+ * Check if a node has parent nodes (including associations added by the generator)
+ */
+Boolean hasParentNodesRecursive(WCMFNode this):
+	this.getParentNodesRecursive().size > 0 ? true : false 
+;
+/**
+ * Get all parent nodes (including associations added by the generator)
+ */
+cached List[uml::Property] getParentNodesRecursive(WCMFNode this) : 
+	this.getParentNodes(true).select(e|e.type.isNode())
+;
+/**
+ * Check if a node has parent nodes
+ */
+Boolean hasParentNodes(WCMFNode this):
+	this.getParentNodes().size > 0 ? true : false 
+;
+/**
+ * Get all parent nodes
+ */
+cached List[uml::Property] getParentNodes(WCMFNode this) : 
+	this.getParentNodes(false).select(e|e.type.isNode())
+;
+/**
+ * Check if a node is a parent node
+ */
+Boolean isParentNode(WCMFNode this, WCMFNode other) : 
+	this.isParentNode(other, false)
+;
+/**
+ * Private calls to JAVA extensions
+ */
+private List[uml::Property] getParentNodes(WCMFNode this, boolean recursive) : 
+	JAVA com.wemove.wcmf.generator.NodeHelper.getParents(org.eclipse.uml2.uml.Class, java.lang.Boolean)
+;
+private Boolean isParentNode(WCMFNode this, WCMFNode other, Boolean recursive) : 
+	JAVA com.wemove.wcmf.generator.NodeHelper.isParent(org.eclipse.uml2.uml.Class, org.eclipse.uml2.uml.Class, java.lang.Boolean)
+;
+
+/**
+ * Methods for retrieving child nodes. Children are at otherEnd (uml::Property) of parent ends.
+ */
+ 
+/**
+ * Check if a node has child nodes (including associations added by the generator)
+ */
+Boolean hasChildNodesRecursive(WCMFNode this):
+	this.getChildNodesRecursive().size > 0 ? true : false
+;
+/**
+ * Get all child nodes (including associations added by the generator)
+ */
+cached List[uml::Property] getChildNodesRecursive(WCMFNode this) : 
+	this.getChildNodes(true).select(e|e.type.isNode())
+;
+/**
+ * Check if a node has child nodes (including associations added by the generator)
+ */
+Boolean hasChildNodes(WCMFNode this):
+	this.getChildNodes().size > 0 ? true : false
+;
+/**
+ * Get all child nodes
+ */
+cached List[uml::Property] getChildNodes(WCMFNode this) : 
+	this.getChildNodes(false).select(e|e.type.isNode())
+;
+/**
+ * Check if a node is a child node
+ */
+Boolean isChildNode(WCMFNode this, WCMFNode other) : 
+	this.isChildNode(other, false)
+;
+/**
+ * Private calls to JAVA extensions
+ */
+private List[Property] getChildNodes(WCMFNode this, boolean recursive) : 
+	JAVA com.wemove.wcmf.generator.NodeHelper.getChildren(org.eclipse.uml2.uml.Class, java.lang.Boolean)
+;
+private Boolean isChildNode(WCMFNode this, WCMFNode other, Boolean recursive) : 
+	JAVA com.wemove.wcmf.generator.NodeHelper.isChild(org.eclipse.uml2.uml.Class, org.eclipse.uml2.uml.Class, java.lang.Boolean)
+;
+
+/**
+ *Get the node at the other end of an N:M relation.
+ */
+cached List[uml::Property] getOtherEnd(WCMFManyToMany this, WCMFNode sourceNode, boolean includeAbstract):
+	let result = this.getParentNodes().select(e|(!((WCMFNode)e.type).isAbstract || includeAbstract) && 
+		sourceNode.isAtOtherNmEnd((WCMFNode) e.type, this) && e.type != sourceNode):
+	/*result.setUpper(-1) ->*/
+	result
+;
+
+/**
+ * Checks whether a WCMFNode is at the other end of an N:M relation.
+ */
+cached Boolean isAtOtherNmEnd(WCMFNode this, WCMFNode otherNode, WCMFManyToMany nm) :
+/*
+Algorithm remarks:
+1) This Node may not be other Node
+2) The common superclasses of this Node and the other Node (if any) may not
+   have a relation to NM
+
+Test Scenario:
+
+Class hierarchy:
+ChiBase
+	ChiBusinessUseCase
+		ChiBusinessUseCaseCore
+	Actor
+		ChiWorker
+			ChiWorkerInternal
+			ChiWorkerExternal
+		ChiBusinessPartner
+			ChiBusinessPartnerActive
+			
+Relations:
+ChiBusinessUseCase ---NMUCActor--- Actor
+
+Test Case:
+this = ChiWorkerInternal
+nm = NMUCActor
+
+TRUE for otherNode = ChiBusinessUseCase, ChiBusinessUseCaseCore
+FALSE for all other
+*/
+ 	otherNode.name != this.name
+	&& this.getSuperClassesRecursive().add(this).select(
+		e|otherNode.getSuperClassesRecursive().add(otherNode).contains(e)
+	).select(
+		e|e.getChildNodes().select(
+			f|f.type == nm
+		).size > 0
+	).size == 0
+ ;
+ 
+ /*
+ curChildParent.type.name != name
+			&& this.getSuperClassesRecursive().select(
+				e|curChildParent.type.getSuperClassesRecursive().add(curChildParent.type).contains(e)
+			).select(
+				e|e.getChildNodes().select(
+					f|f.type == curChild.type
+				).size > 0
+			).size == 0
+*/
+
+/**
+ * Methods for retrieving attributes
+ */
+
+/**
+ * Get all attributes (including attributes added by the generator)
+ */
+cached List[WCMFValue] getWCMFValuesRecursive(WCMFNode this): 
+	this.attribute.typeSelect(WCMFValue)
+;
+/**
+ * Get all attributes
+ */
+cached List[WCMFValue] getWCMFValues(WCMFNode this): 
+	this.attribute.typeSelect(WCMFValue).select(v|!v.isGeneratorInherited())
+;
+/**
+ * Get all references
+ */
+cached List[WCMFValueRef] getWCMFValueRefs(WCMFNode this): 
+	this.attribute.typeSelect(WCMFValueRef)
+;
+/**
+ * Get the referenced parent/child for a reference (or null if it is not connected to the values class')
+ */
+cached uml::Property getReferencedProperty(WCMFValueRef this): 
+	let referencedNode = this.getModel().allOwnedElements().typeSelect(WCMFNode).select(e|e.name == this.reference_type).first() :
+		let node = this.getModel().allOwnedElements().typeSelect(WCMFNode).select(e|e == this.class).first() :
+			let parent = node.getParentNodesRecursive().select(e|e.type == referencedNode).first() :
+				parent != null ? parent : node.getChildNodesRecursive().select(e|e.type == referencedNode).first()
+;
+/**
+ * Get the referenced value for a reference (or null if it is not connected to the values class')
+ */
+cached WCMFNode getReferencedNode(WCMFValueRef this): 
+	let referencedProperty = this.getReferencedProperty() :
+		referencedProperty != null ? referencedProperty.type : null
+;
+/**
+ * Get the referenced value for a reference (or null if it is not connected to the values class')
+ */
+cached WCMFValue getReferencedValue(WCMFValueRef this): 
+	let referencedNode = this.getReferencedNode() :
+		referencedNode != null ? referencedNode.getWCMFValuesRecursive().select(e|e.name == this.reference_value).first() :
+			null
+;
+
+/**
+ * Get the init params
+ */
+String getInitparams(WCMFNode this) :
+	// use the next line, if initparams tagged value is of type WCMFSystem
+	//this.initparams != null ? this.initparams.name : "database"
+	// use the next line, if initparams tagged value is of type String
+	!this.initparams.isNullOrEmpty() ? this.initparams : "database"
+;
+
+/**
+ * Get the table name
+ */
+String getTableName(WCMFNode this) : 
+	this.table_name.length > 0 ? this.table_name : this.name
+;
+
+/**
+ * Get the column name
+ */
+String getColumnName(WCMFValue this) : 
+	this.column_name.length > 0 ? this.column_name : this.name.asSql()
+;
+
+/**
+ * Get the order column from the orderby tagged value
+ */
+String getOrderByName(WCMFNode this) : 
+	let name = this.orderby.split(" ").first().trim() : 
+		let orderVal = this.getWCMFValuesRecursive().select(v|v.name == name).first() :
+			orderVal != null ? orderVal.name : (name == defaultOrderByName() ? name : null)
+;
+
+/**
+ * Get the order direction from the orderby tagged value (ASC or DESC, defaults to ASC)
+ */
+String getOrderByDirection(WCMFNode this) : 
+	let dir = this.orderby.split(" ").last().trim() : 
+		dir.toUpperCase() == "ASC" || dir.toUpperCase() == "DESC" ? dir.toUpperCase() : "ASC"
+;
+
+/**
+ * Get the order column that should be used in relation to a given parent.
+ * It will only contain a value, if getOrderByName returns the defaultOrderByName
+ */
+String getOrderByNameForParent(WCMFNode this, Property parent) : 
+  let orderByName = this.getOrderByName() :
+    orderByName == defaultOrderByName() ? orderByName+"_"+parent.type.name.toLowerCase() : null
+;
+
+/**
+ * Get the primary key tagged value or default pk name if not set
+ */
+String getPKName(WCMFNode this) : 
+	this.pk_name == null || this.pk_name.length == 0 ? defaultPKName(this) : this.pk_name
+;
+String getPKName(WCMFManyToMany this) : 
+	this.pk_name == null || this.pk_name.length == 0 ? defaultPKName(this) : this.pk_name
+;
+
+/**
+ * Set the primary key tagged value
+ */
+Void setPKName(WCMFNode this, String name) :
+	this.setTaggedValue(STEREOTYPE_WCMF_NODE(), "pk_name", name)
+;
+Void setPKName(WCMFManyToMany this, String name) :
+	this.setTaggedValue(STEREOTYPE_WCMF_MANY_TO_MANY(), "pk_name", name)
+;
+
+/**
+ * Get the primary keys (from the tagged value)
+ */
+List[WCMFValue] getPKValues(WCMFNode this) : 
+	let pkNameStr = this.pk_name.split("\\|") : 
+		this.getWCMFValuesRecursive().select(v|pkNameStr.contains(v.name))
+;
+
+/**
+ * Check if an attribute is a pk value
+ */
+boolean isPKValue(WCMFValue this) : 
+	JAVA com.wemove.wcmf.generator.Generator.isPKValue(org.eclipse.uml2.uml.Property)
+;
+
+/**
+ * Get the foreign key
+ */
+String getFKName(Property parent) :
+	let association = parent.association :
+	association != null ? 
+		(let fk_name = association.getTaggedValue(STEREOTYPE_WCMF_ASSOCIATION(), "fk_name") :
+			fk_name == null || fk_name.toString().length == 0 ? defaultFKName(parent.type) : fk_name) : 
+		defaultFKName(parent.type) 
+;
+
+/**
+ * Check if an attribute is a fk value
+ * (this is delegated to the generator, because the result was calcualted during post processing)
+ */
+boolean isFKValue(WCMFValue this) : 
+	JAVA com.wemove.wcmf.generator.Generator.isFKValue(org.eclipse.uml2.uml.Property)
+;
+
+/**
+ * Get the class that is referenced by a fk value 
+ * (this is delegated to the generator, because the result was calcualted during post processing)
+ */ 
+Class getFKClass(WCMFValue this) : 
+	JAVA com.wemove.wcmf.generator.Generator.getFKClass(org.eclipse.uml2.uml.Property)
+;
+
+/**
+ * Action key related methods
+ */
+ 
+/**
+ * Check if an action key has a source controller
+ */
+boolean hasSourceController(WCMFActionKey this) :
+	this.getSourceController() != null
+;
+/**
+ * Get the source controller of an action key 
+ */
+cached WCMFController getSourceController(WCMFActionKey this) :
+	this.memberEnd.select(e|e.isNavigable()).class.typeSelect(WCMFController).first()
+;
+
+/**
+ * Check if an action key has a target controller
+ */
+boolean hasTargetController(WCMFActionKey this) :
+	this.getTargetController() != null
+;
+
+/**
+ * Get the target controller of an action key 
+ * (if getEndTypes().size == 1, source and target are the same)
+ */
+cached WCMFController getTargetController(WCMFActionKey this) :
+	this.getEndTypes().size == 1 ? this.getEndTypes().first() :
+		this.getEndTypes().reject(e|e == this.getSourceController()).typeSelect(WCMFController).first()
+;
+
+/**
+ * Check if an action key has a target view
+ */
+boolean hasTargetView(WCMFActionKey this) :
+	this.getTargetView() != null
+;
+
+/**
+ * Get the target view of an action key 
+ */
+cached WCMFView getTargetView(WCMFActionKey this) :
+	this.getEndTypes().reject(e|e == this.getSourceController()).typeSelect(WCMFView).first()
+;
+
+/**
+ * Controller related methods
+ */
+ 
+/**
+ * Get the views that are attached to a controller
+ */
+cached List[WCMFView] getViews(WCMFController this) :
+	this.getAssociations().typeSelect(WCMFActionKey).memberEnd.class.typeSelect(WCMFView)
+;
+/**
+ * Get all action keys that are attached to a controller
+ */
+cached List[WCMFActionKey] getWCMFActionKeys(WCMFController this) :
+	this.getAssociations().typeSelect(WCMFActionKey)
+;
+
+/**
+ * View related methods
+ */
+ 
+/**
+ * Get all nodes that are connected to the view
+ */
+cached List[WCMFNode] getWCMFNodes(WCMFView this) :
+	this.getAssociations().memberEnd.type.typeSelect(WCMFNode)
+;
+
+/**
+ * Configuration related methods
+ */
+ 
+/**
+ * Check if a model contains a application configuration
+ */
+boolean hasSystemConfig(uml::Model this) :
+	this.allOwnedElements().typeSelect(WCMFSystem).size > 0
+;
+/**
+ * Get all configuration file names that are referenced in the model
+ */
+Set[String] getConfigurationFiles(uml::Model this) :
+	let fromKeys = this.allOwnedElements().typeSelect(WCMFActionKey).config :
+		let fromSystem = this.allOwnedElements().typeSelect(WCMFSystem).config :
+			fromKeys.addAll(fromSystem).toSet()
+;
+/**
+ * Check if a configuation file is the default one
+ */
+boolean isDefaultConfig(String config) : config == DefaultConfigFile();
