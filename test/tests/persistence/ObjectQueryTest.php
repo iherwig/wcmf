@@ -175,6 +175,27 @@ class ObjectQueryTest extends WCMFTestCase
     $this->runAnonymous(false);
   }
 
+  public function testSortManyToManyRelation()
+  {
+    $this->runAnonymous(true);
+
+    $query = new ObjectQuery('Page');
+    $pageTpl = $query->getObjectTemplate('Page');
+    $pageTpl->setValue("name", Criteria::asValue("LIKE", "%Page 1%")); // explicit LIKE
+    $documentTpl = $query->getObjectTemplate('Document');
+    $documentTpl->setValue("title", Criteria::asValue("=", "Document")); // explicit LIKE
+    $pageTpl->addNode($documentTpl);
+    $sql = $query->getQueryString(array('sortkey_document DESC'));
+    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, ".
+      "`Page`.`created`, `Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
+      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
+      "INNER JOIN `NMPageDocument` ON `NMPageDocument`.`fk_page_id` = `Page`.`id` INNER JOIN `Document` ON `Document`.`id` = `NMPageDocument`.`fk_document_id` ".
+      "WHERE (`Page`.`name` LIKE '%Page 1%') AND (`Document`.`title` = 'Document') ORDER BY `NMPageDocument`.`sortkey_document` DESC";
+    $this->assertEquals($expected, str_replace("\n", "", $sql));
+
+    $this->runAnonymous(false);
+  }
+
   public function testComplex()
   {
     $this->runAnonymous(true);

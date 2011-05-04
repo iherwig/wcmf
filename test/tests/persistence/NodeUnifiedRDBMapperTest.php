@@ -109,14 +109,14 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
     $otherMapper = new AuthorRDBMapper($this->dbParams);
     $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), array()))->__toString();
-    $expected = "SELECT `Author`.`id` FROM `Author` WHERE (`Author`.`id`= 12)";
+    $expected = "SELECT `Author`.`id` FROM `Author` WHERE (`Author`.`id`= 12) ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    // parent (complets)
+    // parent (complete)
     $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole()))->__toString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
-      "`Author`.`modified`, `Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`id`= 12)";
+      "`Author`.`modified`, `Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`id`= 12) ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     // child (pk only)
@@ -141,16 +141,16 @@ class NodeUnifiedRDBMapperTest extends WCMFTestCase {
     $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), array()))->__toString();
     $expected = "SELECT `Document`.`id` FROM `Document` INNER JOIN `NMPageDocument` ON ".
-      "`NMPageDocument`.`fk_document_id`=`Document`.`id` WHERE (`NMPageDocument`.`fk_page_id`= 1)";
+      "`NMPageDocument`.`fk_document_id`=`Document`.`id` WHERE (`NMPageDocument`.`fk_page_id`= 1) ORDER BY `NMPageDocument`.`sortkey_page` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     // many to many (complete)
     $sql = $this->callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole()))->__toString();
     $expected = "SELECT `Document`.`id`, `Document`.`title`, `Document`.`created`, `Document`.`creator`, ".
-      "`Document`.`modified`, `Document`.`last_editor`, `Document`.`sortkey` FROM `Document` ".
+      "`Document`.`modified`, `Document`.`last_editor` FROM `Document` ".
       "INNER JOIN `NMPageDocument` ON `NMPageDocument`.`fk_document_id`=`Document`.`id` ".
-      "WHERE (`NMPageDocument`.`fk_page_id`= 1)";
+      "WHERE (`NMPageDocument`.`fk_page_id`= 1) ORDER BY `NMPageDocument`.`sortkey_page` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
   }
 

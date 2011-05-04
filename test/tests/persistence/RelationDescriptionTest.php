@@ -7,6 +7,13 @@ require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
 class RelationDescriptionTest extends WCMFTestCase
 {
+  public function testMapper()
+  {
+    $rel1 = new RDBOneToManyRelationDescription('Page', 'ParentPage', 'Page', 'ChildPage',
+            '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_page_id');
+    $this->assertEquals(PersistenceFacade::getInstance()->getMapper('Page'), $rel1->getThisMapper());
+    $this->assertEquals(PersistenceFacade::getInstance()->getMapper('Page'), $rel1->getOtherMapper());
+  }
   public function testCompare()
   {
     // to same type

@@ -98,7 +98,7 @@ class NodeUtilTest extends WCMFTestCase
       "INNER JOIN `Page` AS `ChildPage` ON `ChildPage`.`fk_page_id` = `Page`.`id` ".
       "WHERE ((`ChildPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
-    
+
     // Page -> ChildPage
     $node = PersistenceFacade::getInstance()->create('Page');
     $node->setOID(new ObjectId('Page', 10));
@@ -114,7 +114,7 @@ class NodeUtilTest extends WCMFTestCase
       "INNER JOIN `Page` AS `ParentPage` ON `Page`.`fk_page_id` = `ParentPage`.`id` ".
       "WHERE ((`ParentPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
-    
+
     $this->runAnonymous(false);
   }
 }
