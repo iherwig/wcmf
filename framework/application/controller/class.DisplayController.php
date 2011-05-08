@@ -38,9 +38,9 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  * - @em ok In any other case
  *
  * @param[in] oid The oid of the requested object
- * @param[in] depth The number of levels referenced objects must be returned 
+ * @param[in] depth The number of levels referenced objects must be returned
  *                    as complete objects. Below this level, objects are returned as references.
- *                    If omitted, 1 is assumed. The value -1 has the special meaning of unlimited depth. 
+ *                    If omitted, 1 is assumed. The value -1 has the special meaning of unlimited depth.
  *
  * @param[in] translateValues True/False. If true, list values will be translated using Control::translateValue. If not given,
  *                        all values will be returned as is.
@@ -60,7 +60,8 @@ class DisplayController extends Controller
     $response = $this->getResponse();
     $oid = ObjectId::parse($request->getValue('oid'));
     if(!$oid) {
-      $response->addError(ApplicationError::get('OID_INVALID'));
+      $response->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => array($request->getValue('oid')))));
       return false;
     }
     if($request->hasValue('depth')) {

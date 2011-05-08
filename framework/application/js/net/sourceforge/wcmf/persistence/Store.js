@@ -43,7 +43,8 @@ dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
     dojo.mixin(this, {
       target: this.serviceImpl.getServiceUrl(),
       service: this.serviceImpl.getServiceFunction(),
-      cacheByDefault: true
+      cacheByDefault: true,
+      clearOnClose: true
     }, options);
 
     this.inherited(arguments);

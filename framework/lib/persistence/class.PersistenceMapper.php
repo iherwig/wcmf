@@ -34,21 +34,21 @@ interface PersistenceMapper
 
   /**
    * Get the names of the primary key values.
-   * @return An array with the value names.
+   * @return Array with the value names.
    */
   public function getPkNames();
 
   /**
    * Add quotation to a given identifier (like column name).
    * @param identifier The identifier string
-   * @return The quoted string
+   * @return String
    */
   public function quoteIdentifier($identifier);
 
   /**
    * Add quotation to a given value.
    * @param value The value
-   * @return The quoted string
+   * @return String
    */
   public function quoteValue($value);
 
@@ -56,7 +56,7 @@ interface PersistenceMapper
    * Get the relations for this type
    * @param hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
-   * @return An array of RelationDescription instances
+   * @return Array of RelationDescription instances
    */
   public function getRelations($hierarchyType='all');
 
@@ -70,7 +70,7 @@ interface PersistenceMapper
   /**
    * Get the definition for a relation
    * @param rolename The role name of the relation
-   * @return RelationDescription instance or null if the relation does not exist
+   * @return RelationDescription or null if the relation does not exist
    */
   public function getRelation($roleName);
 
@@ -79,7 +79,7 @@ interface PersistenceMapper
    * This method gets the attributes belonging to the given tags.
    * @param tags An array of tags that the attribute should match. Empty array means all attributes independent of the given matchMode [default: empty array]
    * @param matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags [default: 'all']
-   * @return An array of AttributeDescription instances
+   * @return Array of AttributeDescription instances
    */
   public function getAttributes(array $tags=array(), $matchMode='all');
 
@@ -93,13 +93,13 @@ interface PersistenceMapper
   /**
    * Get the definition for an attribute.
    * @param name The attribute name
-   * @return AttributeDescription instance or null if the attribute does not exist
+   * @return AttributeDescription or null if the attribute does not exist
    */
   public function getAttribute($name);
 
   /**
    * Get meta information on the mapped class.
-   * @return An associative array of key value pairs
+   * @return Associative array of key value pairs
    */
   public function getProperties();
 
@@ -115,7 +115,7 @@ interface PersistenceMapper
    * (ASC or DESC). The roleName parameter allows to ask for the order with respect to a specific role.
    * In a many to many relation the attribute may not be contained in the mapped type.
    * @param rolename The role name of the relation, maybe null [default: null]
-   * @return An assciative array with the keys type, sortFieldName and sortDirection (ASC or DESC)
+   * @return Assciative array with the keys type, sortFieldName and sortDirection (ASC or DESC)
    */
   public function getDefaultOrder($roleName=null);
 
@@ -127,7 +127,7 @@ interface PersistenceMapper
 
   /**
    * Get the DataConverter that is used on load() and save().
-   * @return The DataConverter object.
+   * @return DataConverter
    */
   public function getDataConverter();
 
@@ -157,7 +157,7 @@ interface PersistenceMapper
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include (default: null, includes all types)
-   * @return A reference to the object, null if oid does not exist or a given condition prevents loading.
+   * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
    */
   public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
 
@@ -169,7 +169,7 @@ interface PersistenceMapper
    * @param buildAttribs An assoziative array listing the attributes to create (default: null, creates all attributes)
    *        (keys: the types, values: an array of attributes of the type to create)
    *        Use this to create only a subset of attributes
-   * @return A reference to the object.
+   * @return PersistentObject
    */
   public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
 
@@ -209,7 +209,7 @@ interface PersistenceMapper
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
-   * @return An array of PersistentObject instances
+   * @return Array of PersistentObject instances
    */
   public function loadRelation(PersistentObject $object, $role, $buildDepth=BUILDDEPTH_SINGLE,
     $buildAttribs=null, $buildTypes=null);
@@ -224,7 +224,7 @@ interface PersistenceMapper
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
-   * @return An array of PersistentObject instances
+   * @return Array of PersistentObject instances
    */
   public function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BUILDDEPTH_SINGLE,
     $buildAttribs=null, $buildTypes=null);

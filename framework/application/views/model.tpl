@@ -11,15 +11,19 @@ dojo.require("wcmf.model.meta.Model");
  */
 
 {foreach $typeTemplates as $tpl}
-{$type=$tpl->getType()}
-{$mapper=$tpl->getMapper()}
+  {$type=$tpl->getType()}
+  {$mapper=$tpl->getMapper()}
+  {$orderBy=$mapper->getDefaultOrder()}
 /**
  * Definition of model class {$type}
  */
 dojo.declare("wcmf.model.{$type}Class", wcmf.model.meta.Node, {
   name: '{$type}',
   isRootType: {if $tpl->getProperty('isRootType') == true}true{else}false{/if},
-  isSortable: {if $tpl->hasValue('sortkey') == true}true{else}false{/if},
+  isSortable: {if $mapper->isSortable()}true{else}false{/if},
+{if $orderBy}
+  sortInfo: { attribute: "{$orderBy.sortFieldName}", descending: {if $orderBy.sortDirection == "DESC"}true{else}false{/if} },
+{/if}
   attributes: [
 {foreach $mapper->getAttributes() as $attribute}
     {

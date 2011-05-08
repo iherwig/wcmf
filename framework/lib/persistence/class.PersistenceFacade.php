@@ -77,7 +77,7 @@ abstract class PersistenceFacade
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include (default: null, includes all types)
-   * @return A reference to the object, null if oid does not exist or a given condition prevents loading.
+   * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
    */
   abstract function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
   /**
@@ -88,25 +88,25 @@ abstract class PersistenceFacade
    * @param buildAttribs An assoziative array listing the attributes to create (default: null, creates all attributes)
    *        (keys: the types, values: an array of attributes of the type to create)
    *        Use this to create only a subset of attributes
-   * @return A reference to the object.
+   * @return PersistentObject
    */
   abstract function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
   /**
    * Save an object to the database (inserted if it is new).
    * @param object A reference to the object to save
-   * @return True/False depending on success of operation
+   * @return Boolean depending on success of operation
    */
   abstract function save(PersistentObject $object);
   /**
    * Delete an object from the database (together with all of its children).
    * @param oid The object id of the object to delete
-   * @return True/False depending on success of operation
+   * @return Boolean depending on success of operation
    */
   abstract function delete(ObjectId $oid);
   /**
    * Get the object id of the last created object of a given type.
    * @param type The type of the object
-   * @return The object id or null
+   * @return ObjectId or null
    */
   abstract function getLastCreatedOID($type);
   /**
@@ -115,7 +115,7 @@ abstract class PersistenceFacade
    * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance. [default: null]
-   * @return An array containing the objects ids
+   * @return Array containing the ObjectId instances
    */
   abstract function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
   /**
@@ -124,7 +124,7 @@ abstract class PersistenceFacade
    * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance. [default: null]
-   * @return An object id or null
+   * @return ObjectId or null
    */
   abstract function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
   /**
@@ -139,7 +139,7 @@ abstract class PersistenceFacade
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
-   * @return An array containing the objects
+   * @return Array containing the PersistentObject instances
    */
   abstract function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
       $buildAttribs=null, $buildTypes=null);
@@ -155,7 +155,7 @@ abstract class PersistenceFacade
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
-   * @return A reference to the object or null
+   * @return PersistentObject or null
    */
   abstract function loadFirstObject($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null);
@@ -184,7 +184,7 @@ abstract class PersistenceFacade
   /**
    * Get the PersistenceMapper for a given type. If no mapper for this type is defined the mapper for type '*' will be returned
    * @param type The type of the object to get the PersistenceMapper for
-   * @return A reference to the PersistenceMapper, null on error
+   * @return PersistenceMapper or null on error
    */
   abstract function getMapper($type);
   /**
@@ -210,7 +210,7 @@ abstract class PersistenceFacade
   abstract function disableLogging();
   /**
    * Check if the PersistenceMapper is logging.
-   * @return True/False whether the PersistenceMapper is logging.
+   * @return Boolean whether the PersistenceMapper is logging.
    */
   abstract function isLogging();
   /**

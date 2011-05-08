@@ -37,7 +37,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NullNode.php");
  *
  * @param[in] sourceOid The object id of the object to originate the association from
  * @param[in] targetOid The object id of the destination object
- * @param[in] roleobject The role the target object should have in the source object
+ * @param[in] role The role the target object should have in the source object
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -50,17 +50,38 @@ class AssociateController extends Controller
   {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if(!$request->hasValue('sourceOid') || (ObjectId::parse($request->getValue('sourceOid')) == null))
-    {
-      $response->addError(ApplicationError::get('PARAMETER_INVALID',
-        array('invalidParameters' => array('sourceOid'))));
+
+    // check object id validity
+    $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
+    if(!$sourceOid) {
+      $response->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => array($request->getValue('sourceOid')))));
       return false;
     }
-    if(!$request->hasValue('targetOid') || (ObjectId::parse($request->getValue('targetOid')) == null))
-    {
-      $response->addError(ApplicationError::get('PARAMETER_INVALID',
-        array('invalidParameters' => array('targetOid'))));
+    $targetOid = ObjectId::parse($request->getValue('targetOid'));
+    if(!$targetOid) {
+      $response->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => array($request->getValue('targetOid')))));
       return false;
+    }
+
+    // check association
+    $mapper = PersistenceFacade::getInstance()->getMapper($sourceOid->getType());
+    // try role
+    if ($request->hasValue('role')) {
+      $relationDesc = $mapper->getRelation($request->getValue('role'));
+      if ($relationDesc == null) {
+        $response->addError(ApplicationError::get('ROLE_INVALID'));
+        return false;
+      }
+    }
+    // try type
+    else {
+      $relationDesc = $mapper->getRelation($targetOid->getType());
+      if ($relationDesc == null) {
+        $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
+        return false;
+      }
     }
     return true;
   }
@@ -73,7 +94,7 @@ class AssociateController extends Controller
   }
   /**
    * (Dis-)Associate the Nodes.
-   * @return Array of given context and action 'ok' in every case.
+   * @return True in every case.
    * @see Controller::executeKernel()
    */
   protected function executeKernel()
@@ -98,7 +119,7 @@ class AssociateController extends Controller
     if ($request->hasValue('role')) {
       $role = $request->getValue('role');
     }
-    
+
     if ($sourceNode != null && $targetNode != null)
     {
       // process actions
@@ -126,12 +147,12 @@ class AssociateController extends Controller
     else
     {
       if ($sourceNode == null) {
-        $this->addError(ApplicationError::get('PARAMETER_INVALID',
-          array('invalidParameters' => array('sourceOid'))));
+        $this->addError(ApplicationError::get('OID_INVALID',
+          array('invalidOids' => array('sourceOid'))));
       }
       if ($targetNode == null) {
-        $this->addError(ApplicationError::get('PARAMETER_INVALID',
-          array('invalidParameters' => array('targetOid'))));
+        $this->addError(ApplicationError::get('OID_INVALID',
+          array('invalidOids' => array('targetOid'))));
       }
     }
     $response->setAction('ok');

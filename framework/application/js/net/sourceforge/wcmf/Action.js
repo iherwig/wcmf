@@ -193,3 +193,54 @@ wcmf.Action.disassociate = function(sourceOid, targetOid, role) {
   });
   return deferred.promise;
 };
+
+/**
+ * Move an object to another position. The object is either moved to another
+ * position in the list of objects of the same type or moved to a list of objects
+ * contained in another object.
+ * @param oid The object id of the object to move
+ * @param referenceOid The object id of the object to insert the moved object before
+ * (if the object should be the last position, this value is null)
+ * @param containerOid The object id of the containing object (optional)
+ * @param role The role of the moved object in relation to the containing object (optional)
+ * @return dojo.Deferred promise
+ */
+wcmf.Action.move = function(oid, referenceOid, containerOid, role) {
+  wcmf.Error.hide();
+  var deferred = new dojo.Deferred();
+
+  // special value for the last position
+  if (referenceOid == null) {
+    referencedOid = "ORDER_BOTTOM";
+  }
+
+  var promise = null;
+  if (containerOid != undefined) {
+    promise = new wcmf.persistence.Request().sendAjax({
+      action: 'insertBefore',
+      containerOid: containerOid,
+      insertOid: oid,
+      referenceOid: referenceOid,
+      role: role,
+      responseFormat: 'json',
+      controller: 'TerminateController'
+    }, null);
+  }
+  else {
+    promise = new wcmf.persistence.Request().sendAjax({
+      action: 'moveBefore',
+      insertOid: oid,
+      referenceOid: referenceOid,
+      responseFormat: 'json',
+      controller: 'TerminateController'
+    }, null);
+  }
+
+  promise.then(function(data) {
+    deferred.callback();
+  }, function(errorMsg) {
+      wcmf.Error.show(errorMsg);
+      deferred.errback(errorMsg);
+  });
+  return deferred.promise;
+};

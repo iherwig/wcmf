@@ -73,14 +73,6 @@ class ListController extends Controller
     if($request->hasValue('limit') && intval($request->getValue('limit')) < 0) {
       Log::warn(ApplicationError::get('LIMIT_NEGATIVE'), __CLASS__);
     }
-    if($request->hasValue('sortFieldName')) {
-      $sortFieldName = $request->getValue('sortFieldName');
-      $mapper = PersistenceFacade::getInstance()->getMapper($request->getValue('className'));
-      if (!$mapper->hasAttribute($sortFieldName)) {
-        $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));
-        return false;
-      }
-    }
     if($request->hasValue('sortDirection')) {
       $sortDirection = $request->getValue('sortDirection');
       if (strtolower($sortDirection) != 'asc' && strtolower($sortDirection) != 'desc') {
@@ -174,20 +166,30 @@ class ListController extends Controller
    * @param pagingInfo A reference to the current paging information (PagingInfo instance)
    * @return An array of object instances
    */
-  function getObjects($type, $queryCondition, $sortArray, $pagingInfo)
+  protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo)
   {
     if(!PersistenceFacade::getInstance()->isKnownType($type)) {
       return array();
     }
-    // if no filter is given, we select all nodes of the given type
-    /*
-    if (strlen($filter) == 0) {
-      $filter = NodeUtil::getNodeQuery($type);
-    }*/
-    // TODO: check if orderby attribute is illegal
+    $objects = array();
     $query = new StringQuery($type);
     $query->setConditionString($queryCondition);
-    $objects = $query->execute(BUILDDEPTH_SINGLE, $sortArray, $pagingInfo);
+    try {
+      $objects = $query->execute(BUILDDEPTH_SINGLE, $sortArray, $pagingInfo);
+    }
+    catch (UnknownFieldException $ex)
+    {
+      // check if the sort field is illegal
+      $response = $this->getResponse();
+      $request = $this->getRequest();
+      if($request->hasValue('sortFieldName'))
+      {
+        $sortFieldName = $request->getValue('sortFieldName');
+        if ($sortFieldName == $ex->getField()) {
+          $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));
+        }
+      }
+    }
     Log::debug("Load objects with query: ".$query->getLastQueryString(), __CLASS__);
     return $objects;
   }
@@ -196,10 +198,10 @@ class ListController extends Controller
    * @note subclasses will override this to implement special application requirements.
    * @param nodes A reference to the array of node references passed to the view
    */
-  function modifyModel($nodes)
+  protected function modifyModel($nodes)
   {
     $request = $this->getRequest();
-    // @todo put this into subclass ListController
+    // TODO: put this into subclass ListController
 
     // remove all attributes except for display_values
     if ($request->getBooleanValue('completeObjects', false) == false)
@@ -211,10 +213,6 @@ class ListController extends Controller
     // render values
     if ($request->getBooleanValue('renderValues', false) == true) {
       NodeUtil::renderValues($nodes);
-    }
-    // set sort properties
-    if (strlen($request->getValue('sortFieldName')) == 0) {
-      NodeUtil::setSortProperties($nodes);
     }
   }
 }

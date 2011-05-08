@@ -18,6 +18,11 @@ dojo.declare("wcmf.model.meta.Node", null, {
    */
   isSortable: false,
   /**
+   * An object with attributes 'attribute', 'descending' (boolean) defining
+   * the default sort order, null if undefined
+   */
+  sortInfo: null,
+  /**
    * An array of attribute definitions
    */
   attributes: [],
@@ -80,6 +85,25 @@ dojo.declare("wcmf.model.meta.Node", null, {
 wcmf.model.meta.Node.getTypeFromOid = function(oid) {
   var parts = oid.split(":", 1);
   return parts[0];
+};
+
+/**
+ * Get the display value of an object id.
+ * @return String
+ */
+wcmf.model.meta.Node.getDisplayValue = function(object) {
+  var result = '';
+  var type = wcmf.model.meta.Model.getTypeFromOid(object.oid);
+  if (type) {
+    for (var i=0; i<type.displayValues.length; i++) {
+      result += object[type.displayValues[i]]+" | ";
+    }
+    result = result.substring(0, result.length-3);
+  }
+  else {
+    result = object.oid || "unknown";
+  }
+  return result;
 };
 
 /**

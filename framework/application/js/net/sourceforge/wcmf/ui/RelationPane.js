@@ -133,7 +133,6 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       query: {
         query: this.relationQuery
       },
-      queryOptions: {},
       actions: [
         new wcmf.ui.GridActionEdit(),
         new wcmf.ui.GridActionDisassociate({
@@ -145,9 +144,7 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       region: "center"
     };
     if (this.sortInfo) {
-      // don't use sortFields option, because this would throw an exception,
-      // if the sortfield is unknown in the class
-      gridOptions["queryOptions"]["sort"] = [this.sortInfo];
+      gridOptions["sortFields"] = [this.sortInfo];
     }
     this.relationsGrid = new wcmf.ui.Grid(gridOptions);
 

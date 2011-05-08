@@ -115,7 +115,7 @@ class PersistentObject
   }
   /**
    * Get the object id of the PersistentObject.
-   * @return The PersistentObject's ObjectId.
+   * @return ObjectId
    */
   public function getOID()
   {
@@ -157,7 +157,7 @@ class PersistentObject
   }
   /**
    * Get the DataConverter used when loading/saving values.
-   * @return A reference to the dataConverter instance
+   * @return DataConverter
    */
   public function getDataConverter()
   {
@@ -283,7 +283,7 @@ class PersistentObject
   }
   /**
    * Get the lock on the object.
-   * @return lock The lock as provided by LockManager::getLock() or null if not locked
+   * @return Lock instance as provided by LockManager::getLock() or null if not locked
    * @note If the object is locked it's set immutable. This is not reversible
    * (reload the object to get a mutable one)
    */
@@ -298,7 +298,7 @@ class PersistentObject
   }
   /**
    * Get a copy of the object (ChangeListeners and Lock are not copied)
-   * @return A reference to copy.
+   * @return PersistentObject
    */
   public function duplicate()
   {

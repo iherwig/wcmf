@@ -6,42 +6,71 @@ dojo.require("dojox.grid.enhanced.plugins.IndirectSelection");
 dojo.require("dojox.grid.enhanced.plugins.Filter");
 
 /**
- * @class Grid This class displays a list of objects in a table.
+ * @class Grid This class displays a list of objects of the given type in a table.
+ * The grid is configured with a number of GridActionCell instances that
+ * define actions that may be executed on the contained objects.
+ * If the grid is used in a master-detail scenario, the masterOid parameter
+ * defines the object to which the contained objects are related.
  */
 dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
+  /**
+   * The wcmf.model.meta.Node instance which defines the type of objects in this grid
+   */
   modelClass: null,
+
+  /**
+   * Array of wcmf.ui.GridActionCell instances to be executed on the contained objects
+   */
   actions: [],
 
-  plugins: {
-      indirectSelection: {headerSelector: true},
-      dnd: true,
-      filter: true
-  },
-  delayScroll: true,
-  //elasticView: "2",
-  autoWidth: false,
-  autoHeight: false,
-  rowsPerPage: 25,
-  rowCount: 25,
-  selectionMode: "multiple",
-  //singleClickEdit: true,
+  /**
+   * Array of wcmf.ui.GridActionCell instances to be executed on the contained objects
+   */
+  masterOid: null,
+
+  /**
+   * The role of the cntained instances in relation to the master object
+   */
+  role: null,
 
   /**
    * Constructor
    * @param options Parameter object:
-   *    - modelClass The model class whose instances this grid contains
-   *    - actions Array of wcmf.ui.GridActionCell instances
+   *    - modelClass  The wcmf.model.meta.Node instance which defines the type of objects in this grid
+   *    - actions Array of wcmf.ui.GridActionCell instances to be executed on the contained objects
+   *    - masterOid The object id of the master object in a master-detail scenario (optional)
+   *    - role The role of the cntained instances in relation to the master object (optional)
    *    + All other options defined for dojox.grid.EnhancedGrid
    */
   constructor: function(options) {
     this.modelClass = options.modelClass;
     this.actions = options.actions || [];
 
+    // add default sort order, if not given
+    if (!options.sortFields && this.modelClass.sortInfo != null) {
+      options.sortFields = [this.modelClass.sortInfo];
+    }
+
     dojo.mixin(this, {
       // default options
       store: wcmf.persistence.Store.getStore(this.modelClass),
-      structure: this.getDefaultLayout()
+      structure: this.getDefaultLayout(),
+      plugins: {
+          indirectSelection: {headerSelector: true},
+          dnd: true,
+          filter: true
+      },
+      delayScroll: true,
+      //elasticView: "2",
+      autoWidth: false,
+      autoHeight: false,
+      rowsPerPage: 25,
+      rowCount: 25,
+      selectionMode: "multiple",
+      clientSort: false,
+      // TODO: configure this
+      sortFields: [{ attribute: "sortkey", descending: false }]
     }, options);
   },
 
@@ -68,9 +97,12 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       this.store.save();
     });
     this.connect(this, "onShow", this.resizeGrid);
-    
+
     // dnd
-    dojo.subscribe("dojox/grid/rearrange/move/"+this.id, null, this.updateSeq);
+    this.connect(this.pluginMgr.getPlugin("dnd"), "_startDnd", this.onRowMoveStart);
+    this.connect(this.pluginMgr.getPlugin("rearrange"), "moveRows", this.onRowMoved);
+    dojo.subscribe("dojox/grid/rearrange/move/" + this.id, this, this.onRowMovedEnd);
+
     var dndPlugin = this.plugin('dnd');
     if (dndPlugin) {
       dndPlugin.setupConfig(this.getDnDConfig(this.modelClass.isSortable));
@@ -111,12 +143,41 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     }
     return layout;
   },
-  
-  updateSeq: function(moveType, map) {
-    // TODO 
-    var map = map;
+
+  onRowMoveStart: function() {
+    // make a snapshot of the index array, because the
+    // rearrange plugin will clear it
+    this.tmpIdx = this._by_idx;
   },
-  
+
+  onRowMoved: function(indexesOfRowsToMove, targetIndex) {
+    // determine the object ids of the involved objects
+    // from the snapshot made before dnd
+    this.dndTargetOid = this.tmpIdx[targetIndex].idty;
+    this.dndMovedOids = [];
+    for (var i=0, count=indexesOfRowsToMove.length; i<count; i++) {
+      this.dndMovedOids.push(this.tmpIdx[indexesOfRowsToMove[i]].idty);
+    }
+    this.tmpIdx = [];
+  },
+
+  onRowMovedEnd: function(map) {
+    // perform the move action with the information collected before
+    var self = this;
+    if (this.masterOid != null) {
+      wcmf.Action.move(this.dndMovedOids[0], this.dndTargetOid, this.masterOid, this.role).then(function() {
+        self.sort();
+      });
+    }
+    else {
+      wcmf.Action.move(this.dndMovedOids[0], this.dndTargetOid).then(function() {
+        self.sort();
+      });
+    }
+    // clear the selection to prevent users moving rows from an old selection
+    this.selection.clear();
+  },
+
   getDnDConfig: function(isSortable) {
     var dndConfig = {
           within: {

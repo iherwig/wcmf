@@ -111,9 +111,7 @@ class LoginController extends Controller
    * If called with any action except 'dologin' this Controller presents the login dialog else
    * if action is 'dologin' it checks the login data ('user' & 'password') and creates AuthUser object in the Session on
    * success.
-   * @return Array of given context and action 'ok' on success, action 'failure' on failure.
-   *         False if the login dialog is presented (Stop action processing chain).
-   *         In case of 'failure' a detailed description is provided by getErrorMsg().
+   * @return Boolean
    * @see Controller::executeKernel()
    */
   protected function executeKernel()

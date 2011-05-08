@@ -40,20 +40,22 @@ class LoggingController extends Controller
   /**
    * @see Controller::hasView()
    */
-  function hasView()
+  public function hasView()
   {
     return false;
   }
   /**
    * Log the message.
-   * @return Array of given context and action 'ok' in every case.
+   * @return True in any case
    * @see Controller::executeKernel()
    */
-  function executeKernel()
+  protected function executeKernel()
   {
-    $logType = $this->_request->getValue('type');
-    $message = $this->_request->getValue('message');
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     
+    $logType = $request->getValue('type');
+    $message = $request->getValue('message');
     switch($logType)
     {
       case 'DEBUG':
@@ -80,7 +82,7 @@ class LoggingController extends Controller
         Log::error("Unknown log message type: ".$logType, __CLASS__);
     }
 
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return true;
   }
 }

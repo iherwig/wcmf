@@ -23,6 +23,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.AbstractQuery.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ChangeListener.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.UnknownFieldException.php");
 
 /**
  * @class ObjectQuery
@@ -119,7 +120,7 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
    * Constructor.
    * @param type The type to search for.
    */
-  public function ObjectQuery($type)
+  public function __construct($type)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $this->_typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
@@ -132,8 +133,7 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
    * @param alias An alias name to be used in the query. if null, use the default name [default: null]
    * @param combineOperator One of the Criteria::OPERATOR constants that precedes
    *    the conditions described in the template [default: Criteria::OPERATOR_AND]
-   * @return A newly created instance of a Node subclass, that defines
-   *         the requested type.
+   * @return Node
    */
   public function getObjectTemplate($type, $alias=null, $combineOperator=Criteria::OPERATOR_AND)
   {
@@ -460,6 +460,7 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
         $orderByParts = preg_split('/ /', $curOrderBy);
         $orderAttribute = $orderByParts[0];
         $orderDirection = sizeof($orderByParts) > 1 ? $orderByParts[1] : 'ASC';
+        $orderTableName = null;
 
         // check all involved types
         foreach (array_keys($this->_involvedTypes) as $curType) {
@@ -469,8 +470,13 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
             break;
           }
         }
-        $orderAttributeFinal = $orderTableName.".".$orderAttribute;
-        $selectStmt->order(array($orderAttributeFinal." ".$orderDirection));
+        if ($orderTableName) {
+          $orderAttributeFinal = $orderTableName.".".$orderAttribute;
+          $selectStmt->order(array($orderAttributeFinal." ".$orderDirection));
+        }
+        else {
+          throw new UnknownFieldException($orderAttribute, "The sort field name '"+$orderAttribute+"' is unknown");
+        }
       }
     }
   }

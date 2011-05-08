@@ -349,41 +349,6 @@ class NodeUtil
     return $typeNode->getObjectDisplayName();
   }
   /**
-   * Sort a list of Nodes and set the sort properties on Nodes of a given list. The two attributes (DATATPE_IGNORE)
-   * 'hasSortUp', 'hasSortDown' (values (false,true)) will be added to each Node depending on
-   * its list position. If applicable the attributes (DATATPE_IGNORE) 'prevoid'
-   * and 'nextoid' resp. will be added to denote the neighboured Nodes.
-   * The attributes will only be added if a Node has a sortkey value (DATATPE_IGNORE).
-   * @param nodeList A reference to the list of Nodes
-   */
-  public static function setSortProperties(&$nodeList)
-  {
-    if(sizeof($nodeList) > 0 && $nodeList[0]->hasValue('sortkey')) {
-      $nodeList = Node::sort($nodeList, 'sortkey');
-    }
-    for ($i=0; $i<sizeof($nodeList); $i++)
-    {
-      if ($nodeList[$i]->hasValue('sortkey'))
-      {
-        $nodeList[$i]->setValue('hasSortUp', true);
-        $nodeList[$i]->setValue('hasSortDown', true);
-
-        if ($i == 0) {
-          $nodeList[$i]->setValue('hasSortUp', false);
-        }
-        else {
-          $nodeList[$i]->setValue('prevoid', $nodeList[$i-1]->getOID());
-        }
-        if ($i == sizeof($nodeList)-1) {
-          $nodeList[$i]->setValue('hasSortDown', false);
-        }
-        else {
-          $nodeList[$i]->setValue('nextoid', $nodeList[$i+1]->getOID());
-        }
-      }
-    }
-  }
-  /**
    * Make all urls matching a given base url in a Node relative.
    * @param node A reference to the Node the holds the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
@@ -406,7 +371,7 @@ class NodeUtil
    * @param valueName The name of the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
    */
-  private static function makeValueUrlsRelative(Node $node, $valueName, $baseUrl)
+  private static function makeValueUrlsRelative(PersistentObject $object, $valueName, $baseUrl)
   {
     $value = $object->getValue($valueName);
 
@@ -466,7 +431,7 @@ class NodeUtil
     if (strlen($displayType) == 0) {
       $displayType = 'text';
     }
-    $value = ValueRenderer::render($displayType, $value, $renderAttribs);
+    $value = ValueRenderer::render($displayType, $value, "");
     // force set (the rendered value may not be satisfy validation rules)
     $object->setValue($valueName, $value, true);
   }
@@ -526,7 +491,7 @@ class NodeUtil
    */
   public static function removeNonPkValues(Node $node)
   {
-    $mapper = $persistenceFacade->getMapper($type);
+    $mapper = $node->getMapper();
     $pkValues = $mapper->getPkNames();
     $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {

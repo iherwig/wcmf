@@ -19,259 +19,246 @@
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.ObjectQuery.php");
 require_once(WCMF_BASE."wcmf/lib/visitor/class.CommitVisitor.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.Obfuscator.php");
 
 /**
  * @class SortController
  * @ingroup Controller
- * @brief SortController is a controller that sorts Nodes of same type.
+ * @brief SortController is a controller that changes the order of nodes.
  *
- * This Controller sorts the Nodes by responding to the 'sortup', 'sortdown'
- * action names. It requires a parameter 'sortoid' which tells to which Node
- * the action should be applied. According to the given action the Nodes sortkey
- * attribute will be changed the way that it either swaps with its predecessor
- * ('prevoid') or with its successor ('nextoid') or move a given distance ('dist')
- * in a list of nodes that is either defined by the 'filter' or the 'poid' parameter.
- * If none of the both parameters is given, the list contains all entities that
- * have the same type as the type defined by 'sortoid'.
- *
- * After using the NodeUtil::setSortProperties method on a list of Nodes
- * you could write the following Smarty template code to support sorting:
- *
- * @code
- * {foreach from=$nodeList item=curNode}
- *   {if $curNode->getValue('hasSortUp')}
- *     <a href="javascript:setVariable('sortoid', '{$curNode->getOID()}'); setVariable('prevoid', '{$curNode->getValue('prevoid')}'); submitAction('sortup');">{translate text="up"}</a>
- *   {else}
- *     <span>{translate text="up"}</span>
- *   {/if}
- *   {if $curNode->getValue('hasSortDown')}
- *     <a href="javascript:setVariable('sortoid', '{$curNode->getOID()}'); setVariable('nextoid', '{$curNode->getValue('nextoid')}'); submitAction('sortdown');">{translate text="down"}</a>
- *   {else}
- *     <span>{translate text="down"}</span>
- *   {/if}
- * {/foreach}
- * @endcode
+ * Nodes can either be sorted in a list of nodes of the same type (moveBefore
+ * action) or in a list of child nodes of a container node (insertBefore action).
  *
  * <b>Input actions:</b>
- * - @em sortup Move the given Node up in the list
- * - @em sortdown Move the given Node down in the list
+ * - @em moveBefore Insert an object before a reference object in the list of
+ * all objects of the same type
+ * - @em insertBefore Insert an object before a reference object in the
+ * order of a container object
  *
  * <b>Output actions:</b>
  * - @em ok In any case
  *
- * @param[in] sortoid The oid of the Node to change its sortkey. The Controller assumes
- *            that the given Node has a sortkey attribute.
- * @param[in] prevoid The oid of the Node to swap with on sortup action.
- *            If not given, the Node with previous sortkey is taken.
- * @param[in] nextoid The oid of the Node to swap with on sortdown action.
- *            If not given, the Node with next sortkey is taken.
- * @param[in] dist The distance to move the Node up or down. 'prevoid', 'nextoid' will
- *            be ignored.
- * @param[in] filter A filter string to be used to filter the entities in the list,
- *            when moving by dist (see StringQuery), if no filter is defined, all
- *            entities of the type defined in sortoid are contained in the list to sort.
- * @param[in] poid As alternative to the filter parameter the entity list maybe defined
- *            by a parent oid, which means that all child nodes of that parent are
- *            contained in the list to sort.
- * @param[in] sortcol The name of the column to use for sorting.
- *            If not given it defaults to 'sortkey'.
- * @param[out] oid The oid of the Node that changed its sortkey (= sortoid).
+ * @param[in] containerOid The oid of the container object (insertBefore action only).
+ * @param[in] insertOid The oid of the object to insert/move.
+ * @param[in] referenceOid The oid of the object to insert the inserted object before.
+ *            If the inserted object should be the last in the container order,
+ *            the referenceOid contains the special value ORDER_BOTTOM
+ * @param[in] role The role, that the inserted object should have in the container object.
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
 class SortController extends Controller
 {
+  private static $ORDER_BOTTOM = 'ORDER_BOTTOM';
+
   /**
    * @see Controller::hasView()
    */
-  function hasView()
+  public function hasView()
   {
     return false;
   }
   /**
    * @see Controller::validate()
    */
-  function validate()
+  protected function validate()
   {
-    if(!$this->_request->hasValue('sortoid'))
-    {
-      $this->setErrorMsg("No 'sortoid' given in data.");
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+
+    $isOrderBottom = ($request->getValue('referenceOid') == self::$ORDER_BOTTOM);
+
+    // check object id validity
+    $insertOid = ObjectId::parse($request->getValue('insertOid'));
+    if(!$insertOid) {
+      $response->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => array($request->getValue('insertOid')))));
       return false;
+    }
+    $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
+    if(!$referenceOid && !$isOrderBottom) {
+      $response->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => array($request->getValue('referenceOid')))));
+      return false;
+    }
+
+    if ($request->getAction() == 'insertBefore') {
+      $containerOid = ObjectId::parse($request->getValue('containerOid'));
+      if(!$containerOid) {
+        $response->addError(ApplicationError::get('OID_INVALID',
+          array('invalidOids' => array($request->getValue('containerOid')))));
+        return false;
+      }
+    }
+
+    // check if object supports order
+    $mapper = PersistenceFacade::getInstance()->getMapper($insertOid->getType());
+    if (!$mapper->isSortable()) {
+      $response->addError(ApplicationError::get('ORDER_NOT_SUPPORTED'));
+      return false;
+    }
+
+    // check matching classes for move operation
+    if ($request->getAction() == 'moveBefore') {
+      if ($insertOid->getType() != $referenceOid->getType()) {
+        $response->addError(ApplicationError::get('CLASSES_DO_NOT_MATCH'));
+        return false;
+      }
+    }
+
+    // check association for insert operation
+    if ($request->getAction() == 'insertBefore')
+    {
+      $mapper = PersistenceFacade::getInstance()->getMapper($containerOid->getType());
+      // try role
+      if ($request->hasValue('role')) {
+        $relationDesc = $mapper->getRelation($request->getValue('role'));
+        if ($relationDesc == null) {
+          $response->addError(ApplicationError::get('ROLE_INVALID'));
+          return false;
+        }
+      }
+      // try type
+      else {
+        $relationDesc = $mapper->getRelation($insertOid->getType());
+        if ($relationDesc == null) {
+          $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
+          return false;
+        }
+      }
     }
     return true;
   }
   /**
    * Sort Nodes.
-   * @return Array of given context and action 'ok' in every case.
+   * @return True in every case.
    * @see Controller::executeKernel()
    */
-  function executeKernel()
+  protected function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $request = $this->getRequest();
+    $response = $this->getResponse();
 
     // do actions
-    if ($this->_request->getAction() == 'sortdown' && PersistenceFacade::isValidOID($this->_request->getValue('nextoid')))
-    {
-      // if action is sortdown and nextoid is given, we have to swap the Nodes oids
-      $node1 = &$persistenceFacade->load($this->_request->getValue('sortoid'), BUILDDEPTH_SINGLE);
-      $node2 = &$persistenceFacade->load($this->_request->getValue('nextoid'), BUILDDEPTH_SINGLE);
-      $this->swapNodes($node1, $node2, true);
+    if ($request->getAction() == 'moveBefore') {
+      $this->doMoveBefore();
     }
-    else if ($this->_request->getAction() == 'sortup' && PersistenceFacade::isValidOID($this->_request->getValue('prevoid')))
-    {
-      // if action is sortup and prevoid is given, we have to swap the Nodes oids
-      $node1 = &$persistenceFacade->load($this->_request->getValue('sortoid'), BUILDDEPTH_SINGLE);
-      $node2 = &$persistenceFacade->load($this->_request->getValue('prevoid'), BUILDDEPTH_SINGLE);
-      $this->swapNodes($node1, $node2, true);
-    }
-    else
-    {
-      // if prevoid/nextoid are not given, we have to load all Nodes and sort...
-      $this->sortAll();
+    else if ($request->getAction() == 'insertBefore') {
+      $this->doInsertBefore();
     }
 
-    $this->_response->setValue('oid', $this->_request->getValue('sortoid'));
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return true;
   }
+
   /**
-   * Get the name of the column to use for sorting.
-   * @return The name.
+   * Execute the moveBefore action
    */
-  function getSortColumn()
+  protected function doMoveBefore()
   {
-    // determine the sort column
-    $sortCol = 'sortkey';
-    if (strlen($this->_request->getValue('sortcol')) > 0) {
-      $sortCol = $this->_request->getValue('sortcol');
-    }
-    return $sortCol;
-  }
-  /**
-   * Swap sortkey of two given Nodes.
-   * @param node1 first Node
-   * @param node2 second Node
-   * @param doSave True/False wether to save the Nodes or not
-   */
-  function swapNodes($node1, $node2, $doSave)
-  {
-    $sortCol = $this->getSortColumn();
+    $request = $this->getRequest();
+    $persistenceFacade = PersistenceFacade::getInstance();
 
-    $sortkey1 = $node2->getValue($sortCol);
-    $sortkey2 = $node1->getValue($sortCol);
+    // load the moved object and the reference object
+    $insertOid = ObjectId::parse($request->getValue('insertOid'));
+    $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
+    $insertObject = $persistenceFacade->load($insertOid);
+    $referenceObject = $persistenceFacade->load($referenceOid);
+    if ($insertObject != null && $referenceObject != null) {
+      // determine the sort key
+      $mapper = $insertObject->getMapper();
+      $sortDef = $mapper->getDefaultOrder();
+      $sortKey = $sortDef['sortFieldName'];
 
-    // fallback sortkeys have never been set
-    if (!$sortkey1 || !$sortkey2)
-    {
-      $this->sortAll();
-      return;
-    }
+      // determine boundaries and sort direction
+      $referenceValue = $referenceObject->getValue($sortKey);
+      $insertValue = $insertObject->getValue($sortKey);
+      $isSortUp = false;
+      if ($referenceValue > $insertValue) {
+        $isSortUp = true;
+      }
 
-    // fallback if sortkeys are identical
-    if ($sortkey1 == $sortkey2) {
-      $sortkey1++;
-    }
-    // actually swap sortkeys
-    $node1->setValue($sortCol, $sortkey1);
-    $node2->setValue($sortCol, $sortkey2);
+      // get all objects between the boundaries
+      $objects = array();
+      $type = $mapper->getType();
+      if ($isSortUp) {
+        $objects = $this->loadObjectsInSortRange($type, $sortKey,
+                $insertValue, $referenceValue);
+      }
+      else {
+        $objects = $this->loadObjectsInSortRange($type, $sortKey,
+                $referenceValue, $insertValue);
+      }
 
-    if ($doSave)
-    {
-      $node1->save();
-      $node2->save();
-    }
-  }
-  /**
-   * Sort all Nodes.
-   */
-  function sortAll()
-  {
-    $sortCol = $this->getSortColumn();
-    $type = PersistenceFacade::getOIDParameter($this->_request->getValue('sortoid'), 'type');
-    $nodes = array();
-
-    // load all children of poid if the poid parameter is given
-    if ($this->_request->hasValue('poid'))
-    {
-      $poid = $this->_request->getValue('poid');
-      if (PersistenceFacade::isValidOID($poid))
-      {
-        $persistenceFacade = &PersistenceFacade::getInstance();
-        $parent = &$persistenceFacade->load($poid, 1);
-        if ($parent) {
-          $nodes = Node::sort($parent->getChildren(), 'sortkey');
+      // add insert (and reference) object at the correct
+      // end of the list
+      if ($isSortUp) {
+        array_push($objects, $insertObject);
+        // sortkey of reference object does not change
+        // update sort keys
+        $count=sizeof($objects);
+        $lastValue = $objects[$count-1]->getValue($sortKey);
+        for ($i=$count-1; $i>0; $i--) {
+          $objects[$i]->setValue($sortKey, $objects[$i-1]->getValue($sortKey));
         }
+        $objects[0]->setValue($sortKey, $lastValue);
       }
       else {
-        $this->setErrorMsg("The 'poid' parameter is invalid.");
+        array_unshift($objects, $referenceObject);
+        array_unshift($objects, $insertObject);
+        // update sort keys
+        $count=sizeof($objects);
+        $firstValue = $objects[0]->getValue($sortKey);
+        for ($i=0; $i<$count-1; $i++) {
+          $objects[$i]->setValue($sortKey, $objects[$i+1]->getValue($sortKey));
+        }
+        $objects[$count-1]->setValue($sortKey, $firstValue);
+      }
+
+      // commit changes
+      for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
+        $objects[$i]->save();
       }
     }
-    // load all nodes defined by filter if the filter parameter is given
-    else if ($this->_request->hasValue('filter'))
-    {
-      // unveil the filter value if it is obfuscated
-      $filter = $this->_request->getValue('filter');
-      $unveiled = Obfuscator::unveil($filter);
-      if (strlen($filter) > 0 && strlen($unveiled) > 0) {
-        $filter = $unveiled;
-        $nodes = ObjectQuery::executeString($type, $filter, BUILDDEPTH_SINGLE, array($type.'.'.$sortCol));
-      }
-      else {
-        $this->setErrorMsg("The 'poid' parameter is invalid.");
-      }
-    }
-    // load all nodes defined by 'sortoid' type in any other case
     else
     {
-      $filter = NodeUtil::getNodeQuery($type);
-      $nodes = ObjectQuery::executeString($type, $filter, BUILDDEPTH_SINGLE, array($type.'.'.$sortCol));
-    }
-
-    // load all nodes and set their sortkeys ascending
-    $rootNode = new Node('');
-    $sortkey = 1;
-    for ($i=0; $i<sizeof($nodes); $i++)
-    {
-      $nodes[$i]->setValue($sortCol, $sortkey);
-      $rootNode->addNode($nodes[$i]);
-      $sortkey++;
-    }
-
-    $dist = 1;
-    if (strlen($this->_request->getValue('dist')) > 0) {
-      $dist = $this->_request->getValue('dist');
-    }
-    // swap nodes
-    $nodes = $rootNode->getChildren();
-    $numNodes = sizeof($nodes);
-    for ($j=0; $j<$dist; $j++)
-    {
-      for ($i=0; $i<$numNodes; $i++)
-      {
-        if ($nodes[$i]->getOID() == $this->_request->getValue('sortoid'))
-        {
-          if ($this->_request->getAction() == 'sortdown' && $i<$numNodes-1) {
-            $this->swapNodes($nodes[$i], $nodes[$i+1], false);
-          }
-          elseif ($this->_request->getAction() == 'sortup' && $i>0) {
-            $this->swapNodes($nodes[$i], $nodes[$i-1], false);
-          }
-        }
+      // at least one of the objects does not exist
+      if ($insertObject == null) {
+        $this->addError(ApplicationError::get('OID_INVALID',
+          array('invalidOids' => array('insertOid'))));
       }
-      $nodes = Node::sort($nodes, $sortCol);
+      if ($referenceObject == null) {
+        $this->addError(ApplicationError::get('OID_INVALID',
+          array('invalidOids' => array('referenceOid'))));
+      }
     }
+  }
 
-    // don't save the root node
-    $rootNode->setState(PersistentObject::STATE_CLEAN, false);
+  /**
+   * Execute the moveBefore action
+   */
+  protected function doInsertBefore()
+  {
+  }
 
-    // commit changes
-    $nIter = new NodeIterator($rootNode);
-    $cv = new CommitVisitor();
-    $cv->startIterator($nIter);
+  /**
+   * Load all objects between two sortkey values
+   * @param type The type of objects
+   * @param sortKeyName The name of the sortkey attribute
+   * @param lowerValue The lower value of the sortkey
+   * @param upperValue The upper value of the sortkey
+   */
+  protected function loadObjectsInSortRange($type, $sortKeyName, $lowerValue, $upperValue)
+  {
+    $query = new ObjectQuery($type);
+    $tpl1 = $query->getObjectTemplate($type);
+    $tpl2 = $query->getObjectTemplate($type);
+    $tpl1->setValue($sortKeyName, Criteria::asValue('>', $lowerValue));
+    $tpl2->setValue($sortKeyName, Criteria::asValue('<', $upperValue));
+    $objects = $query->execute(BUILDDEPTH_SINGLE);
+    return $objects;
   }
 }
 ?>
