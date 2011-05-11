@@ -20,16 +20,16 @@ require_once(WCMF_BASE."wcmf/lib/presentation/control/class.Control.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/control/class.IListStrategy.php");
 
 /**
- * @interface FunctionListStrategy
+ * @class FunctionListStrategy
  * @ingroup Presentation
  * @brief FunctionListStrategy implements list of key value pairs that is retrieved
  * by a global function.
  * The following list definition(s) must be used in the input_type configuraton:
- * @code 
+ * @code
  * fkt:name|param1,param2,... // where name is the name of a global function and
  *                               param1, param2, ... are used as parameters in the call
  *                               to that function
- * @endcode 
+ * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */

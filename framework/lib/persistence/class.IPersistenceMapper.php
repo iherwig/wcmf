@@ -18,13 +18,13 @@
  */
 
  /**
- * @class PersistenceMapper
+ * @interface IPersistenceMapper
  * @ingroup Persistence
- * @brief PersistenceMapper defines the interface for all mapper classes.
+ * @brief IPersistenceMapper defines the interface for all mapper classes.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface PersistenceMapper
+interface IPersistenceMapper
 {
   /**
    * Get the mapper type.
@@ -149,52 +149,32 @@ interface PersistenceMapper
   public function isLogging();
 
   /**
-   * Load an object from the database.
-   * @param oid The object id of the object to construct
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
-   * @param buildAttribs An assoziative array listing the attributes to load (default: null, loads all attributes)
-   *        (keys: the types, values: an array of attributes of the type to load)
-   *        Use this to load only a subset of attributes
-   * @param buildTypes An array listing the (sub-)types to include (default: null, includes all types)
-   * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
+   * @see IPersistenceFacade::load()
    */
   public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
 
   /**
-   * Construct the template of an Object of a given type.
-   * @param type The type of object to build
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
-   * @param buildAttribs An assoziative array listing the attributes to create (default: null, creates all attributes)
-   *        (keys: the types, values: an array of attributes of the type to create)
-   *        Use this to create only a subset of attributes
-   * @return PersistentObject
+   * @see IPersistenceFacade::create()
    */
   public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
 
   /**
-   * Save an Object to the persistent storage.
-   * @param object A reference to the object to safe
-   * @return Boolean depending on success of operation
+   * @see IPersistenceFacade::save()
    */
   public function save(PersistentObject $object);
 
   /**
-   * Delete an Object from the persistent storage.
-   * @param oid The object id of the Object to delete
-   * @param recursive True/False whether to physically delete it's children too [default: true]
-   * @return Boolean depending on success of operation
+   * @see IPersistenceFacade::delete()
    */
-  public function delete(ObjectId $oid, $recursive=true);
+  public function delete(ObjectId $oid);
 
   /**
-   * @see PersistenceFacade::getOIDs()
+   * @see IPersistenceFacade::getOIDs()
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
-   * @see PersistenceFacade::loadObjects()
+   * @see IPersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
@@ -238,17 +218,23 @@ interface PersistenceMapper
   public function executeOperation(PersistenceOperation $operation);
 
   /**
-   * @see PersistenceFacade::startTransaction()
+   * Start a transaction on the transactional resource (e.g. database) of
+   * this mapper. Nested transactions are not supported, so the implementation should
+   * ignore consecutive calls, if a transaction is already started.
    */
   public function startTransaction();
 
   /**
-   * @see PersistenceFacade::commitTransaction()
+   * Commit the transaction on the transactional resource (e.g. database) of
+   * this mapper. The implementation should ignore calls, if no transaction
+   * is started yet.
    */
   public function commitTransaction();
 
   /**
-   * @see PersistenceFacade::rollbackTransaction()
+   * Rollback the transaction on the transactional resource (e.g. database) of
+   * this mapper. The implementation should ignore calls, if no transaction
+   * is started yet.
    */
   public function rollbackTransaction();
 }

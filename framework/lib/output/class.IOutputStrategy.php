@@ -18,17 +18,15 @@
  */
 
 /**
- * @interface OutputStrategy
+ * @interface IOutputStrategy
  * @ingroup Output
- * @brief OutputStrategy is used to write an object's content
- * to a destination (called 'document') using a special format.
+ * @brief IOutputStrategy defines the interface for classes that write an
+ * object's content to a destination (called 'document') using a special format.
  * OutputStrategy implements the 'Strategy Pattern'.
- * The abstract base class OutputStrategy defines the interface for all
- * specialized OutputStrategy classes.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface OutputStrategy
+interface IOutputStrategy
 {
   /**
    * Write the document header.

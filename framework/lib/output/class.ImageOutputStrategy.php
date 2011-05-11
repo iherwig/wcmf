@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.IOutputStrategy.php");
 /**
  * Some constants describing the line type
  */
@@ -30,7 +30,7 @@ define("LINETYPE_ROUTED", 1);
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ImageOutputStrategy implements OutputStrategy
+class ImageOutputStrategy implements IOutputStrategy
 {
   protected $_format = null;
   protected $_file = '';

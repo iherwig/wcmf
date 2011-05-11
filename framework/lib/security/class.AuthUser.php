@@ -21,6 +21,7 @@ require_once(WCMF_BASE."wcmf/lib/security/class.UserManager.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.IStorable.php");
 
 /**
  * @class AuthUser
@@ -30,7 +31,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AuthUser extends User implements Storable
+class AuthUser extends User implements IStorable
 {
   private $_login_time = "";
   private $_policies = array();

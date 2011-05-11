@@ -20,15 +20,15 @@ require_once(WCMF_BASE."wcmf/lib/presentation/control/class.Control.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/control/class.IListStrategy.php");
 
 /**
- * @interface FixedListStrategy
+ * @class FixedListStrategy
  * @ingroup Presentation
  * @brief FixedListStrategy implements a constant list of key value pairs.
  * The following list definition(s) must be used in the input_type configuraton:
- * @code 
- * fix:key1[val1]|key2[val2]|... // list with explicit key value pairs 
- * 
+ * @code
+ * fix:key1[val1]|key2[val2]|... // list with explicit key value pairs
+ *
  * fix:$global_array_variable // list with key value pairs defined in a global variable
- * @endcode 
+ * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */

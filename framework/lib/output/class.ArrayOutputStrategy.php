@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.IOutputStrategy.php");
 /**
  * @class ArrayOutputStrategy
  * @ingroup Output
@@ -24,7 +24,7 @@ require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ArrayOutputStrategy implements OutputStrategy
+class ArrayOutputStrategy implements IOutputStrategy
 {
   var $_writeValueProperties = false;
 

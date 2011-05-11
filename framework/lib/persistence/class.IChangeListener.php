@@ -18,14 +18,14 @@
  */
 
 /**
- * @class ChangeListener
+ * @interface IChangeListener
  * @ingroup Persistence
- * @brief ChangeListener defines an interface for classes that want to
+ * @brief IChangeListener defines an interface for classes that want to
  * be notified when a value of an persistent object changes.
 
  * @author ingo herwig <ingo@wemove.com>
  */
-interface ChangeListener
+interface IChangeListener
 {
   /**
    * Get a unique id for the listener.

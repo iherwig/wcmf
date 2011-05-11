@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.IOutputStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 
@@ -29,7 +29,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class XMLOutputStrategy implements OutputStrategy
+class XMLOutputStrategy implements IOutputStrategy
 {
   protected  $_id = 0;
   protected  $_file = '';

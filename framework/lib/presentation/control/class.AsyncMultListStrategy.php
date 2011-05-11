@@ -21,15 +21,15 @@ require_once(WCMF_BASE."wcmf/lib/presentation/control/class.IListStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
 
 /**
- * @interface AsyncMultListStrategy
+ * @class AsyncMultListStrategy
  * @ingroup Presentation
  * @brief AsyncMultListStrategy implements a list of entities that is retrieved
- * asynchronously from the server, where the keys are the object ids and the 
+ * asynchronously from the server, where the keys are the object ids and the
  * values are the display values.
  * The following list definition(s) must be used in the input_type configuraton:
- * @code 
+ * @code
  * async:type1|type2|... // list with all entities of the given types
- * @endcode 
+ * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */

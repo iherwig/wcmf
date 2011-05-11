@@ -18,13 +18,13 @@
  */
 
 /**
- * @class Storable
+ * @class IStorable
  * @ingroup Util
- * @brief This class defines the interface for classes that can be stored in the session.
+ * @brief IStorable defines the interface for classes that can be stored in the session.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface Storable
+interface IStorable
 {
   /**
    * Get the class definition files.

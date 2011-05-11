@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.IOutputStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 
 /**
@@ -27,7 +27,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DotOutputStrategy implements OutputStrategy
+class DotOutputStrategy implements IOutputStrategy
 {
   private $DEFAULT_NODE_STYLE = 'height=0.1,width=1,shape=box,style=filled,color="#49B4CF",fillcolor="#49B4CF",fontcolor=white,fontsize=14,fontname="Helvetica-Bold"';
   private $DEFAULT_EDGE_STYLE = 'arrowhead=none,arrowtail=none,color="#49B4CF"';

@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,13 +11,13 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.IDataConverter.php");
 
 /**
  * @class MySQLDateConverter
@@ -27,7 +27,7 @@ require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php")
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class MySQLDateConverter extends DataConverter
+class MySQLDateConverter implements IDataConverter
 {
   /**
    * @see DataConverter::convertStorageToApplication()
@@ -39,11 +39,11 @@ class MySQLDateConverter extends DataConverter
     {
       global $MESSAGE_LANGUAGE;
       $locale = strtolower($MESSAGE_LANGUAGE);
-      
+
       // handle empty dates
       if (strpos($data, "0000-00-00") === 0)
         return "";
-      
+
         // convert localized date/time to language format
         // we don't rely on setLocale, strftime and strtotime
         $convertFunction = "storageTo_".$locale;
@@ -68,7 +68,7 @@ class MySQLDateConverter extends DataConverter
       $locale = strtolower($MESSAGE_LANGUAGE);
       $type = strtolower($type);
 
-      if ($type == 'datetime' || $type == 'date') 
+      if ($type == 'datetime' || $type == 'date')
       {
         // convert localized date/time to english format
         $convertFunction = $locale."ToEnglish";
@@ -76,12 +76,12 @@ class MySQLDateConverter extends DataConverter
         if (in_array($convertFunction, $methods))
           $date = $this->$convertFunction($data, $type);
 
-        // convert date/time to mysql      
+        // convert date/time to mysql
         if ($type == 'datetime')
           $data = strftime("%Y-%m-%d %H:%M:%S", strtotime($date));
         if ($type == 'date')
           $data = strftime("%Y-%m-%d", strtotime($date));
-      }    
+      }
     }
     return $data;
   }
@@ -92,7 +92,7 @@ class MySQLDateConverter extends DataConverter
    */
   function de_deToEnglish($date, $type)
   {
-    // test german date format, return original if not matching 
+    // test german date format, return original if not matching
     $testFormat = preg_split("/[\.: ]/", $date);
     if (sizeof($testFormat) != 6 && sizeof($testFormat) != 5 && sizeof($testFormat) != 3)
       return $date;

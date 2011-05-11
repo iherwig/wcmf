@@ -17,7 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.IPersistenceMapper.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceException.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ValidationException.php");
@@ -142,7 +142,7 @@ class PersistentObject
   }
   /**
    * Get the PersistenceMapper of the object.
-   * @return PersistenceMapper
+   * @return IPersistenceMapper
    */
   public function getMapper()
   {
@@ -771,18 +771,18 @@ class PersistentObject
    */
 
   /**
-   * Add a change listener (Must be of type ChangeListener).
-   * @param listener The ChangeListener.
+   * Add a change listener.
+   * @param listener The ChangeListener instance.
    */
-  public function addChangeListener(ChangeListener $listener)
+  public function addChangeListener(IChangeListener $listener)
   {
     $this->_changeListeners[sizeof($this->_changeListeners)] = &$listener;
   }
   /**
-   * Remove a change listener (Must be of type ChangeListener).
-   * @param listener The ChangeListener.
+   * Remove a change listener.
+   * @param listener The ChangeListener instance.
    */
-  public function removeChangeListener(ChangeListener $listener)
+  public function removeChangeListener(IChangeListener $listener)
   {
     for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
       if ($this->_changeListeners[$i]->getId() == $listener->getId()) {

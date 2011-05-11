@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,13 +11,13 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/core/class.WCMFException.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.IDataConverter.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
@@ -36,7 +36,7 @@ $gLinkConverterBaseUrl = null;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LinkConverter extends DataConverter
+class LinkConverter implements IDataConverter
 {
   /**
    * @see DataConverter::convertStorageToApplication()
@@ -50,12 +50,12 @@ class LinkConverter extends DataConverter
         {
           // convert relative url
           $urlConv = LinkConverter::makeUrlAbsolute($url);
-  
+
           // replace url
           $data = str_replace('"'.$url.'"', '"'.$urlConv.'"', $data);
         }
     }
-    
+
     return $data;
   }
   /**
@@ -70,16 +70,16 @@ class LinkConverter extends DataConverter
         {
           // convert absolute url
           $urlConv = LinkConverter::makeUrlRelative($url);
-  
+
           // replace url
           $data = str_replace('"'.$url.'"', '"'.$urlConv.'"', $data);
         }
     }
-    
+
     // convert if whole data is an url
     if ($url != '#' && !LinkConverter::isExternalUrl($data))
       $data = LinkConverter::makeUrlRelative($data);
-    
+
     return $data;
   }
   /**
@@ -95,7 +95,7 @@ class LinkConverter extends DataConverter
 
     // get base url
     $baseUrl = LinkConverter::getBaseUrl();
-    
+
     // strip base url
     if (strpos($url, $baseUrl) === 0)
       $urlConv = str_replace($baseUrl, '', $url);
@@ -120,8 +120,8 @@ class LinkConverter extends DataConverter
     return $urlConv;
   }
   /**
-   * Get the absolute http url of the base directory. The relative path to 
-   * that directory as seen from the script is configured in the config key 
+   * Get the absolute http url of the base directory. The relative path to
+   * that directory as seen from the script is configured in the config key
    * 'htmlBaseDir' section 'cms'.
    * @return The base url.
    */
@@ -132,17 +132,17 @@ class LinkConverter extends DataConverter
       $parser = InifileParser::getInstance();
       if (($resourceBaseDir = $parser->getValue('htmlBaseDir', 'cms')) === false)
         WCMFException::throwEx($parser->getErrorMsg(), __FILE__, __LINE__);
-        
+
       $refURL = UriUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
       $gLinkConverterBaseUrl = URIUtil::makeAbsolute($resourceBaseDir, $refURL);
-    }    
+    }
     return $gLinkConverterBaseUrl;
   }
   /**
    * Check if an url is absolute
    * @param url The url to check
    * @return True/False wether the url is absolute
-   */  
+   */
   function isAbsoluteUrl($url)
   {
     return strpos($url, 'http://') === 0 || strpos($url, 'https://');
@@ -151,10 +151,10 @@ class LinkConverter extends DataConverter
    * Check if an url is external
    * @param url The url to check
    * @return True/False wether the url is external
-   */  
+   */
   function isExternalUrl($url)
   {
-    return !(strpos($url, UriUtil::getProtocolStr().$_SERVER['HTTP_HOST']) === 0 || 
+    return !(strpos($url, UriUtil::getProtocolStr().$_SERVER['HTTP_HOST']) === 0 ||
       strpos($url, 'http://') === false || strpos($url, 'https://') === false);
   }
 }

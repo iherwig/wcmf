@@ -21,14 +21,14 @@ require_once(WCMF_BASE."wcmf/lib/presentation/control/class.IListStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 /**
- * @interface ConfigListStrategy
+ * @class ConfigListStrategy
  * @ingroup Presentation
  * @brief ConfigListStrategy implements list of key value pairs that is retrieved
  * from an configuration section.
  * The following list definition(s) must be used in the input_type configuraton:
- * @code 
+ * @code
  * config:section // where section is the name of a configuration section
- * @endcode 
+ * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */

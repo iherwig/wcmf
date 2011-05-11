@@ -86,7 +86,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     return $this->_isTranslatingValues;
   }
   /**
-   * @see PersistenceFacade::load()
+   * @see IPersistenceFacade::load()
    */
   public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
   {
@@ -108,7 +108,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     return $obj;
   }
   /**
-   * @see PersistenceFacade::create()
+   * @see IPersistenceFacade::create()
    */
   public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
   {
@@ -116,7 +116,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     return $obj;
   }
   /**
-   * @see PersistenceFacade::save()
+   * @see IPersistenceFacade::save()
    */
   public function save(PersistentObject $object)
   {
@@ -128,7 +128,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     return $result;
   }
   /**
-   * @see PersistenceFacade::delete()
+   * @see IPersistenceFacade::delete()
    */
   public function delete(ObjectId $oid)
   {
@@ -139,7 +139,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     return $result;
   }
   /**
-   * @see PersistenceFacade::getOIDs()
+   * @see IPersistenceFacade::getOIDs()
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
   {
@@ -147,7 +147,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     return $result;
   }
   /**
-   * @see PersistenceFacade::loadObjects()
+   * @see IPersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null)

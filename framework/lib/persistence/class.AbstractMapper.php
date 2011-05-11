@@ -179,7 +179,7 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::delete()
    */
-  public function delete(ObjectId $oid, $recursive=true)
+  public function delete(ObjectId $oid)
   {
     if (!$this->checkAuthorization($oid, ACTION_DELETE))
     {

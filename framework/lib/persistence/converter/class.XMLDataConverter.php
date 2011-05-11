@@ -17,7 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.IDataConverter.php");
 
 /**
  * @class XMLDataConverter
@@ -26,7 +26,7 @@ require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php")
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class XMLDataConverter extends DataConverter
+class XMLDataConverter implements IDataConverter
 {
   /**
    * @see DataConverter::convertStorageToApplication()

@@ -166,7 +166,10 @@ class SortController extends Controller
     $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
     $insertObject = $persistenceFacade->load($insertOid);
     $referenceObject = $persistenceFacade->load($referenceOid);
-    if ($insertObject != null && $referenceObject != null) {
+    // check object existence
+    $objectMap = array('insertOid' => $insertObject,
+        'referenceOid' => $referenceObject);
+    if ($this->checkObjects($objectMap)) {
       // determine the sort key
       $mapper = $insertObject->getMapper();
       $sortDef = $mapper->getDefaultOrder();
@@ -222,18 +225,6 @@ class SortController extends Controller
         $objects[$i]->save();
       }
     }
-    else
-    {
-      // at least one of the objects does not exist
-      if ($insertObject == null) {
-        $this->addError(ApplicationError::get('OID_INVALID',
-          array('invalidOids' => array('insertOid'))));
-      }
-      if ($referenceObject == null) {
-        $this->addError(ApplicationError::get('OID_INVALID',
-          array('invalidOids' => array('referenceOid'))));
-      }
-    }
   }
 
   /**
@@ -241,6 +232,81 @@ class SortController extends Controller
    */
   protected function doInsertBefore()
   {
+    $request = $this->getRequest();
+    $persistenceFacade = PersistenceFacade::getInstance();
+
+    // load the moved object and the reference object
+    $insertOid = ObjectId::parse($request->getValue('insertOid'));
+    $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
+    $containerOid = ObjectId::parse($request->getValue('containerOid'));
+    $insertObject = $persistenceFacade->load($insertOid);
+    $referenceObject = $persistenceFacade->load($referenceOid);
+    $containerObject = $persistenceFacade->load($containerOid);
+    // check object existence
+    $objectMap = array('insertOid' => $insertObject,
+        'referenceOid' => $referenceObject,
+        'containerOid' => $containerObject);
+    if ($this->checkObjects($objectMap)) {
+      // determine the sort key
+      $role = $request->getValue('role');
+      $containerObjectMapper = $containerObject->getMapper();
+      $relationDesc = $containerObjectMapper->getRelation($role);
+      $otherMapper = $relationDesc->getOtherMapper();
+      $sortDef = $otherMapper->getDefaultOrder($relationDesc->getThisRole());
+      $sortKey = $sortDef['sortFieldName'];
+
+      // determine boundaries and sort direction
+      /*
+      $referenceValue = $referenceObject->getValue($sortKey);
+      $insertValue = $insertObject->getValue($sortKey);
+      $isSortUp = false;
+      if ($referenceValue > $insertValue) {
+        $isSortUp = true;
+      }
+
+      // get all objects between the boundaries
+      $objects = array();
+      $type = $mapper->getType();
+      if ($isSortUp) {
+        $objects = $this->loadObjectsInSortRange($type, $sortKey,
+                $insertValue, $referenceValue);
+      }
+      else {
+        $objects = $this->loadObjectsInSortRange($type, $sortKey,
+                $referenceValue, $insertValue);
+      }
+
+      // add insert (and reference) object at the correct
+      // end of the list
+      if ($isSortUp) {
+        array_push($objects, $insertObject);
+        // sortkey of reference object does not change
+        // update sort keys
+        $count=sizeof($objects);
+        $lastValue = $objects[$count-1]->getValue($sortKey);
+        for ($i=$count-1; $i>0; $i--) {
+          $objects[$i]->setValue($sortKey, $objects[$i-1]->getValue($sortKey));
+        }
+        $objects[0]->setValue($sortKey, $lastValue);
+      }
+      else {
+        array_unshift($objects, $referenceObject);
+        array_unshift($objects, $insertObject);
+        // update sort keys
+        $count=sizeof($objects);
+        $firstValue = $objects[0]->getValue($sortKey);
+        for ($i=0; $i<$count-1; $i++) {
+          $objects[$i]->setValue($sortKey, $objects[$i+1]->getValue($sortKey));
+        }
+        $objects[$count-1]->setValue($sortKey, $firstValue);
+      }
+
+      // commit changes
+      for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
+        $objects[$i]->save();
+      }
+      */
+    }
   }
 
   /**
@@ -260,5 +326,29 @@ class SortController extends Controller
     $objects = $query->execute(BUILDDEPTH_SINGLE);
     return $objects;
   }
+
+  /**
+   * Check if all objects in the given array are not null and add
+   * an OID_INVALID error to the response, if at least one is
+   * @param objectMap An associative array with the controller parameter names
+   *        as keys and the objects to check as values
+   * @return Boolean
+   */
+  protected function checkObjects($objectMap)
+  {
+    $invalidOids = array();
+    foreach ($objectMap as $parameterName => $object) {
+      if ($object == null) {
+        $invalidOids[] = $parameterName;
+      }
+    }
+    if (sizeof($invalidOids) > 0) {
+      $this->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => $invalidOids)));
+      return false;
+    }
+    return true;
+  }
+
 }
 ?>

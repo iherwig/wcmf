@@ -17,14 +17,14 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.IPersistenceMapper.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.AbstractMapper.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistentObjectProxy.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.InsertOperation.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.UpdateOperation.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.DeleteOperation.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.DataConverter.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/converter/class.IDataConverter.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 
 
@@ -43,7 +43,7 @@ require_once('Zend/Db.php');
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
+abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
 {
   private static $SEQUENCE_CLASS = 'Adodbseq';
   private static $connections = array();   // registry for connections, key: connId
@@ -85,7 +85,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     return array('_connParams', '_dbPrefix');
   }
   /**
-   * Actually connect to the database using the parameters given to the constructor.
+   * Actually connect to the database using the configuration parameters given
+   * to the constructor. The implementation ensures that only one connection is
+   * used for all RDBMappers with the same configuration parameters.
    */
   private function connect()
   {
@@ -1087,6 +1089,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   }
   /**
    * @see PersistenceMapper::startTransaction()
+   * Since all RDBMapper instances with the same connection parameters share
+   * one connection, the call will be ignored, if the method was already called
+   * for another instance.
    */
   public function startTransaction()
   {
@@ -1101,6 +1106,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   }
   /**
    * @see PersistenceMapper::commitTransaction()
+   * Since all RDBMapper instances with the same connection parameters share
+   * one connection, the call will be ignored, if the method was already called
+   * for another instance.
    */
   public function commitTransaction()
   {
@@ -1116,6 +1124,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
   /**
    * @see PersistenceMapper::rollbackTransaction()
    * @note Rollbacks have to be supported by the database.
+   * Since all RDBMapper instances with the same connection parameters share
+   * one connection, the call will be ignored, if the method was already called
+   * for another instance.
    */
   public function rollbackTransaction()
   {
@@ -1129,15 +1140,15 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper
     }
   }
   /**
-   * Check if a connection is currently in a transaction
-   * @param isInTransaction True/False wether the mapper is in a transaction or not
+   * Set the transaction state for the connection
+   * @param isInTransaction Boolean wether the connection is in a transaction or not
    */
   protected function setIsInTransaction($isInTransaction)
   {
     self::$inTransaction[$this->_connId] = $isInTransaction;
   }
   /**
-   * Check if a connection is currently in a transaction
+   * Check if the connection is currently in a transaction
    * @return Boolean
    */
   protected function isInTransaction()

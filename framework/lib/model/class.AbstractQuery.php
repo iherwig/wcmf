@@ -146,10 +146,10 @@ abstract class AbstractQuery
   }
   /**
    * Check if a mapper is a supported one.
-   * @param mapper A reference to the PersistenceMapper
+   * @param mapper IPersistenceMapper instance
    * Throws an Exception
    */
-  protected static function checkMapper(PersistenceMapper $mapper)
+  protected static function checkMapper(IPersistenceMapper $mapper)
   {
     if (!($mapper instanceof RDBMapper)) {
       throw new PersistenceException(Message::get('Only PersistenceMappers of type RDBMapper are supported.'));

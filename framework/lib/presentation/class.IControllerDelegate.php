@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,27 +11,27 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
 
 /**
- * @class ControllerDelegate
+ * @interface IControllerDelegate
  * @ingroup Presentation
- * @brief ControllerDelegate is used to define an interface to vary the behaviour of the 
- * Controller base class. The methods are called by the Controller base class on defined variation 
+ * @brief IControllerDelegate is used to define an interface to vary the behaviour of the
+ * Controller base class. The methods are called by the Controller base class on defined variation
  * points and get the currently executed controller as parameter.
- * 
- * @note: There is only one instance used for all controllers, which is passed to the controller 
+ *
+ * @note: There is only one instance used for all controllers, which is passed to the controller
  * instances on construction.
  *
- * Users may implement special application requirements by subclassing ControllerDelegate and
+ * Users may implement special application requirements by implementing IControllerDelegate and
  * configuring its usage in the configuration section 'implementation', key 'ControllerDelegate'.
  * If no ControllerDelegate is configured, none is used.
  * e.g.
- * 
+ *
  * @code
  * [implementation]
  * ...
@@ -41,14 +41,14 @@
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface ControllerDelegate
+interface IControllerDelegate
 {
   /**
    * This method is called after the base class initialize method.
    * @see Controller::initialize()
    * @param controller The currently executed controller
    */
-  function postInitialize(Controller $controller); 
+  function postInitialize(Controller $controller);
   /**
    * This method is called before the base class validate method.
    * @see Controller::validate()
@@ -69,12 +69,12 @@ interface ControllerDelegate
    * @param result The result of Controller::executeKernel
    * @return The execution result.
    */
-  function postExecute(Controller $controller, $result); 
+  function postExecute(Controller $controller, $result);
   /**
    * Assign additional variables to the response.
    * This method is called after the base class assignResponseDefaults method.
    * @param controller The currently executed controller
-   */  
-  function assignAdditionalResponseValues(Controller $controller); 
+   */
+  function assignAdditionalResponseValues(Controller $controller);
 }
 ?>

@@ -27,11 +27,8 @@ require_once(WCMF_BASE."wcmf/lib/util/class.ArrayUtil.php");
  * @class Node
  * @ingroup Model
  * @brief Node adds the concept of relations to PersistentObject. It is the basic component for
- * building object trees (although a Node can have one than more parents).
- * The Node class implements the 'Composite Pattern', so no special tree class is required, all interaction
- * is performed using the Node interface.
- * Subclasses for specialized Nodes must implement this interface so that clients don't have to know
- * about special Node classes.
+ * building object trees (although a Node can have more than one parents).
+ * The Node class implements the 'Composite Pattern'.
  * Use the methods addNode(), deleteNode() to build/modify trees.
  *
  * @author   ingo herwig <ingo@wemove.com>

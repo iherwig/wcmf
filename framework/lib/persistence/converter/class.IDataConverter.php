@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -19,14 +19,14 @@
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
 
 /**
- * @class DataConverter
+ * @interface IDataConverter
  * @ingroup Converter
- * @brief DataConverter is the base class for all converter classes.
- * It defines the interface for converting data between storage and application.
+ * @brief IDataConverter defines the interface for converting data between
+ * storage and application.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DataConverter
+interface IDataConverter
 {
   /**
    * Convert data after reading from storage.
@@ -36,10 +36,7 @@ class DataConverter
    * @param name The name of the data item.
    * @return The converted data.
    */
-  function convertStorageToApplication($data, $type, $name)
-  {
-    return $data;
-  }
+  function convertStorageToApplication($data, $type, $name);
   /**
    * Convert data before writing to storage.
    * This method is called by PersistenceMapper classes before storing the data to the storage.
@@ -48,9 +45,6 @@ class DataConverter
    * @param name The name of the data item.
    * @return The converted data.
    */
-  function convertApplicationToStorage($data, $type, $name)
-  {
-    return $data;
-  }
+  function convertApplicationToStorage($data, $type, $name);
 }
 ?>

@@ -22,7 +22,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.AbstractQuery.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ChangeListener.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.IChangeListener.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.UnknownFieldException.php");
 
 /**
@@ -100,7 +100,7 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.UnknownFieldException.php");
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
-class ObjectQuery extends AbstractQuery implements ChangeListener
+class ObjectQuery extends AbstractQuery implements IChangeListener
 {
   const PROPERTY_COMBINE_OPERATOR = "object_query_combine_operator";
   const PROPERTY_TABLE_NAME = "object_query_table_name";
@@ -525,14 +525,14 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
    */
 
   /**
-   * @see ChangeListener::getId()
+   * @see IChangeListener::getId()
    */
   public function getId()
   {
     return $this->_id;
   }
   /**
-   * @see ChangeListener::valueChanged()
+   * @see IChangeListener::valueChanged()
    */
   public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue)
   {
@@ -565,11 +565,11 @@ class ObjectQuery extends AbstractQuery implements ChangeListener
     $this->_conditions[$oid][$name] = $newValue;
   }
   /**
-   * @see ChangeListener::propertyChanged()
+   * @see IChangeListener::propertyChanged()
    */
   public function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
   /**
-   * @see ChangeListener::stateChanged()
+   * @see IChangeListener::stateChanged()
    */
   public function stateChanged(PersistentObject $object, $oldValue, $newValue) {}
 }

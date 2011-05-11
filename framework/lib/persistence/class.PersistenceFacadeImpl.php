@@ -18,21 +18,30 @@
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.IOutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.IPersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.IPersistenceMapper.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/class.IChangeListener.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceMapper.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PagingInfo.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ChangeListener.php");
 require_once(WCMF_BASE."wcmf/lib/core/class.ConfigurationException.php");
 
 /**
  * @class PersistenceFacadeImpl
  * @ingroup Persistence
  * @brief Default PersistenceFacade implementation.
+ * TODO implement Unit of Work pattern. PersistentObjects register their changes
+ * here, remove save method (use commitTransaction instead), delete will not delete immediatly
+ * - registerNew
+ * - registerClean
+ * - registerDirty
+ * - registerDeleted
+ * - detachObject?
+ * implicitly start transaction on first load/create, remove caching functions
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
+class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
 {
   private $_knownTypes = null;
   private $_mapperObjects = array();
@@ -47,12 +56,10 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
   /**
    * Constructor
    */
-  public function __construct()
-  {
-  }
+  public function __construct() {}
 
   /**
-   * @see PersistenceFacade::getKnownTypes()
+   * @see IPersistenceFacade::getKnownTypes()
    */
   public function getKnownTypes()
   {
@@ -64,7 +71,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return array_keys($this->_knownTypes);
   }
   /**
-   * @see PersistenceFacade::isKnownType()
+   * @see IPersistenceFacade::isKnownType()
    */
   public function isKnownType($type)
   {
@@ -74,7 +81,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return (isset($this->_knownTypes[$type]) || isset($this->_knownTypes['*']));
   }
   /**
-   * @see PersistenceFacade::load()
+   * @see IPersistenceFacade::load()
    */
   public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
   {
@@ -116,7 +123,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return $obj;
   }
   /**
-   * @see PersistenceFacade::create()
+   * @see IPersistenceFacade::create()
    */
   public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
   {
@@ -136,7 +143,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return $obj;
   }
   /**
-   * @see PersistenceFacade::save()
+   * @see IPersistenceFacade::save()
    */
   public function save(PersistentObject $object)
   {
@@ -151,7 +158,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return $result;
   }
   /**
-   * @see PersistenceFacade::delete()
+   * @see IPersistenceFacade::delete()
    */
   public function delete(ObjectId $oid)
   {
@@ -163,10 +170,13 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     if ($mapper != null) {
       $result = $mapper->delete($oid);
     }
+    if ($result == true && $this->_isCaching) {
+      // TODO remove objects from cache
+    }
     return $result;
   }
   /**
-   * @see PersistenceFacade::getLastCreatedOID()
+   * @see IPersistenceFacade::getLastCreatedOID()
    */
   public function getLastCreatedOID($type)
   {
@@ -176,7 +186,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return null;
   }
   /**
-   * @see PersistenceFacade::getOIDs()
+   * @see IPersistenceFacade::getOIDs()
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
   {
@@ -188,7 +198,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return $result;
   }
   /**
-   * @see PersistenceFacade::getFirstOID()
+   * @see IPersistenceFacade::getFirstOID()
    */
   public function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
   {
@@ -202,7 +212,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     }
   }
   /**
-   * @see PersistenceFacade::loadObjects()
+   * @see IPersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null)
@@ -215,7 +225,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return $result;
   }
   /**
-   * @see PersistenceFacade::loadFirstObject()
+   * @see IPersistenceFacade::loadFirstObject()
    */
   public function loadFirstObject($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null)
@@ -230,7 +240,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     }
   }
   /**
-   * @see PersistenceFacade::startTransaction()
+   * @see IPersistenceFacade::startTransaction()
    */
   public function startTransaction()
   {
@@ -240,16 +250,12 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
       if ($this->isLogging()) {
         Log::debug("Start Transaction", __CLASS__);
       }
-      // end transaction for every mapper
-      foreach ($this->getKnownTypes() as $type) {
-        $mapper = $this->getMapper($type);
-        $mapper->startTransaction();
-      }
+      // TODO initialize Unit of Work here
       $this->_inTransaction = true;
     }
   }
   /**
-   * @see PersistenceFacade::commitTransaction()
+   * @see IPersistenceFacade::commitTransaction()
    */
   public function commitTransaction()
   {
@@ -259,16 +265,34 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
       if ($this->isLogging()) {
         Log::debug("Commit Transaction", __CLASS__);
       }
-      // commit transaction for every mapper
-      foreach ($this->getKnownTypes() as $type) {
-        $mapper = $this->getMapper($type);
-        $mapper->commitTransaction();
+      try {
+        // start transaction for each mapper
+        foreach ($this->getKnownTypes() as $type) {
+          $mapper = $this->getMapper($type);
+          $mapper->startTransaction();
+        }
+        // TODO implement persistence
+        // 1. insert new objects
+        // 2. update dirty objects
+        // 3. delete removed objects
+        // 4. finish Unit of Work
+        // commit transaction for each mapper
+        foreach ($this->getKnownTypes() as $type) {
+          $mapper = $this->getMapper($type);
+          $mapper->commitTransaction();
+        }
+      } catch (Exception $ex) {
+        // rollback transaction for each mapper
+        foreach ($this->getKnownTypes() as $type) {
+          $mapper = $this->getMapper($type);
+          $mapper->rollbackTransaction();
+        }
       }
       $this->_inTransaction = false;
     }
   }
   /**
-   * @see PersistenceFacade::rollbackTransaction()
+   * @see IPersistenceFacade::rollbackTransaction()
    */
   public function rollbackTransaction()
   {
@@ -277,16 +301,12 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
       if ($this->isLogging()) {
         Log::debug("Rollback Transaction", __CLASS__);
       }
-      // rollback transaction for every mapper
-      foreach ($this->getKnownTypes() as $type) {
-        $mapper = $this->getMapper($type);
-        $mapper->rollbackTransaction();
-      }
+      // TODO what to do here?
       $this->_inTransaction = false;
     }
   }
   /**
-   * @see PersistenceFacade::getMapper()
+   * @see IPersistenceFacade::getMapper()
    */
   public function getMapper($type)
   {
@@ -346,14 +366,14 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return $mapper;
   }
   /**
-   * @see PersistenceFacade::setMapper()
+   * @see IPersistenceFacade::setMapper()
    */
-  public function setMapper($type, PersistenceMapper $mapper)
+  public function setMapper($type, IPersistenceMapper $mapper)
   {
     $this->_mapperObjects[$type] = $mapper;
   }
   /**
-   * @see PersistenceFacade::getMapperForConfigSection()
+   * @see IPersistenceFacade::getMapperForConfigSection()
    */
   public function getMapperForConfigSection($configSection)
   {
@@ -374,7 +394,7 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     return $mapper;
   }
   /**
-   * @see PersistenceFacade::setMapper()
+   * @see IPersistenceFacade::setMapper()
    */
   public function enableLogging($logStrategy)
   {
@@ -382,35 +402,35 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
     $this->_logging = true;
   }
   /**
-   * @see PersistenceFacade::disableLogging()
+   * @see IPersistenceFacade::disableLogging()
    */
   public function disableLogging()
   {
     $this->_logging = false;
   }
   /**
-   * @see PersistenceFacade::isLogging()
+   * @see IPersistenceFacade::isLogging()
    */
   public function isLogging()
   {
     return $this->_logging;
   }
   /**
-   * @see PersistenceFacade::setReadOnly()
+   * @see IPersistenceFacade::setReadOnly()
    */
   public function setReadOnly($isReadOnly)
   {
     $this->_isReadOnly = $isReadOnly;
   }
   /**
-   * @see PersistenceFacade::setCaching()
+   * @see IPersistenceFacade::setCaching()
    */
   public function setCaching($isCaching)
   {
     $this->_isCaching = $isCaching;
   }
   /**
-   * @see PersistenceFacade::clearCache()
+   * @see IPersistenceFacade::clearCache()
    */
   public function clearCache()
   {
@@ -420,11 +440,11 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
    * Get cache key from the given parameters
    * @param oid The object id of the object
    * @param buildDepth One of the BUILDDEPTH constants
-   * @param buildAttribs An assoziative array (@see PersistenceFacade::load)
-   * @param buildTypes An array (@see PersistenceFacade::load)
+   * @param buildAttribs An assoziative array (@see IPersistenceFacade::load)
+   * @param buildTypes An array (@see IPersistenceFacade::load)
    * @return The cache key string
    */
-  protected function getCacheKey(ObjectId $oid, $buildDepth, array $buildAttribs, array $buildTypes)
+  protected function getCacheKey(ObjectId $oid, $buildDepth, $buildAttribs=null, $buildTypes=null)
   {
     $key = $oid->__toString().':'.$buildDepth.':';
     foreach($buildAttribs as $type => $attribs) {
@@ -439,22 +459,22 @@ class PersistenceFacadeImpl extends PersistenceFacade implements ChangeListener
    */
 
   /**
-   * @see ChangeListener::getId()
+   * @see IChangeListener::getId()
    */
   public function getId()
   {
     return __CLASS__;
   }
   /**
-   * @see ChangeListener::valueChanged()
+   * @see IChangeListener::valueChanged()
    */
   public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
   /**
-   * @see ChangeListener::propertyChanged()
+   * @see IChangeListener::propertyChanged()
    */
   public function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
   /**
-   * @see ChangeListener::stateChanged()
+   * @see IChangeListener::stateChanged()
    */
   public function stateChanged(PersistentObject $object, $oldValue, $newValue)
   {

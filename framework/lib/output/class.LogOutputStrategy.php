@@ -17,7 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
-require_once(WCMF_BASE."wcmf/lib/output/class.OutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/output/class.IOutputStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
 /**
@@ -29,7 +29,7 @@ require_once(WCMF_BASE."wcmf/lib/security/class.RightsManager.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LogOutputStrategy implements OutputStrategy
+class LogOutputStrategy implements IOutputStrategy
 {
   /**
    * @see OutputStrategy::writeHeader

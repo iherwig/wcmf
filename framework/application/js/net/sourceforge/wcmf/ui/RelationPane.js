@@ -141,6 +141,8 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
         }),
         new wcmf.ui.GridActionDelete()
       ],
+      masterOid: this.oid,
+      role: this.otherRole,
       region: "center"
     };
     if (this.sortInfo) {
