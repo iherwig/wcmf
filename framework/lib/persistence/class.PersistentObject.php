@@ -21,7 +21,6 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.IPersistenceMapper.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceException.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ValidationException.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
 /**
  * @class PersistentObject
@@ -75,13 +74,13 @@ class PersistentObject
     if (!(isset($oid)) || !ObjectId::isValid($oid))
     {
       // no oid is given -> new node
-      $this->setOID(new ObjectId($type));
+      $this->setOIDInternal(new ObjectId($type), false);
       $this->setState(self::STATE_NEW, false);
     }
     else
     {
       // old node
-      $this->setOID($oid);
+      $this->setOIDInternal($oid, false);
       $this->setState(self::STATE_CLEAN, false);
     }
   }
@@ -127,18 +126,32 @@ class PersistentObject
    */
   public function setOID(ObjectId $oid)
   {
+    $this->setOIDInternal($oid, true);
+  }
+  /**
+   * Set the object id of the PersistentObject.
+   * @param oid The PersistentObject's oid.
+   * @param triggerListeners Boolean, wether value CahngeListeners should be
+   * notified or not
+   */
+  protected function setOIDInternal(ObjectId $oid, $triggerListeners)
+  {
+    $this->_oid = $oid;
     $mapper = $this->getMapper();
     if ($mapper != null)
     {
-      // update the primary key columns
+      // update the primary key attributes
       $ids = $oid->getId();
       $pkNames = $mapper->getPkNames();
       for ($i=0, $count=sizeof($pkNames); $i<$count; $i++) {
-        $this->setValue($pkNames[$i], $ids[$i], true);
+        if ($triggerListeners) {
+          $this->setValue($pkNames[$i], $ids[$i], true);
+        }
+        else {
+          $this->setValueInternal($pkNames[$i], $ids[$i]);
+        }
       }
     }
-    // set this afterwards, because setValue may have triggered updateOID
-    $this->_oid = $oid;
   }
   /**
    * Get the PersistenceMapper of the object.
@@ -168,58 +181,14 @@ class PersistentObject
     return null;
   }
   /**
-   * Save data. This call will be delegated to the PersistenceFacade class.
-   */
-  public function save()
-  {
-    if (!$this->_isImmutable)
-    {
-      $oldState = $this->getState();
-      // call before hook method
-      if ($oldState == self::STATE_NEW) {
-        $this->beforeInsert();
-      }
-      elseif ($oldState == self::STATE_DIRTY) {
-        $this->beforeUpdate();
-      }
-      // save the object
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $persistenceFacade->save($this);
-
-      // update search index
-      SearchUtil::indexInSearch($this);
-
-      // call after hook method
-      if ($oldState == self::STATE_NEW) {
-        $this->afterInsert();
-      }
-      elseif ($oldState == self::STATE_DIRTY) {
-        $this->afterUpdate();
-      }
-    }
-    else {
-      throw new PersistenceException(Message::get("Cannot save immutable object '%1%'.", array($this->getOID())));
-    }
-  }
-  /**
-   * Delete data. This call will be delegated to the PersistenceFacade class.
+   * Delete the object
    */
   public function delete()
   {
     if (!$this->_isImmutable)
     {
-      // call before hook method
-      $this->beforeDelete();
-
       // delete the object
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $persistenceFacade->delete($this->getOID());
-
-      // remove from index
-      SearchUtil::deleteFromSearch($this);
-
-      // call after hook method
-      $this->afterDelete();
+      $this->setState(self::STATE_DELETED, false);
     }
     else {
       throw new PersistenceException(Message::get("Cannot delete immutable object '%1%'.", array($this->getOID())));
@@ -315,7 +284,7 @@ class PersistentObject
   }
   /**
    * Copy all non-empty values to a given instance (ChangeListeners are triggered)
-   * @param object A reference to the PersistentObject to copy the values to.
+   * @param object PersistentObject instance to copy the values to.
    * @param copyPkValues True/False wether primary key values should be copied
    */
   public function copyValues(PersistentObject $object, $copyPkValues=true)
@@ -328,18 +297,26 @@ class PersistentObject
       }
     }
     $iter = new NodeValueIterator($this, false);
-    while(!$iter->isEnd())
-    {
-      $curNode = $iter->getCurrentNode();
-      $valueName = $iter->getCurrentAttribute();
-      if (!isset($valuesToIgnore[$valueName]))
-      {
-        $value = $curNode->getValue($valueName);
+    foreach($iter as $valueName => $value) {
+      if (!isset($valuesToIgnore[$valueName])) {
         if (strlen($value) > 0) {
           $object->setValue($valueName, $value, true);
         }
       }
-      $iter->proceed();
+    }
+  }
+  /**
+   * Copy all values, that don't exist yet from a given instance
+   * (ChangeListeners are not triggered)
+   * @param object PersistentObject instance to copy the values from.
+   */
+  public function mergeValues(PersistentObject $object)
+  {
+    $iter = new NodeValueIterator($object, false);
+    foreach($iter as $valueName => $value) {
+      if (!$this->hasValue($valueName) && strlen($value) > 0) {
+        $this->setValueInternal($valueName, $value);
+      }
     }
   }
   /**
@@ -348,11 +325,9 @@ class PersistentObject
   public function clearValues()
   {
     $iter = new NodeValueIterator($this, false);
-    while(!$iter->isEnd())
-    {
-      $curNode = $iter->getCurrentNode();
-      $curNode->setValue($iter->getCurrentAttribute(), null);
-      $iter->proceed();
+    for($iter->rewind(); $iter->valid(); $iter->next()) {
+      $curNode = $iter->currentNode();
+      $curNode->setValue($iter->key(), null);
     }
   }
   /**
@@ -367,7 +342,7 @@ class PersistentObject
       // collect the values of the primary keys and compose the oid from them
       $pkNames = $mapper->getPkNames();
       foreach ($pkNames as $pkName) {
-        array_push($pkValues, $this->getValue($pkName));
+        $pkValues[] = $this->getValue($pkName);
       }
       $this->_oid = new ObjectId($this->getType(), $pkValues);
     }
@@ -557,30 +532,36 @@ class PersistentObject
    */
   public function setValue($name, $value, $forceSet=false)
   {
-    if (!isset($this->_data[$name])) {
-      $this->_data[$name] = array('value' => null);
-    }
-    if (!$forceSet)
+    if (!$this->_isImmutable)
     {
-      try {
-        $this->validateValue($name, $value);
+      if (!isset($this->_data[$name])) {
+        $this->_data[$name] = array('value' => null);
       }
-      catch(ValidationException $ex) {
-        $msg = "Invalid value (".$value.") for ".$this->getOID().".".$name.": ".$ex->getMessage();
-        throw new ValidationException($msg);
+      if (!$forceSet)
+      {
+        try {
+          $this->validateValue($name, $value);
+        }
+        catch(ValidationException $ex) {
+          $msg = "Invalid value (".$value.") for ".$this->getOID().".".$name.": ".$ex->getMessage();
+          throw new ValidationException($msg);
+        }
+      }
+      $oldValue = $this->getValue($name);
+      if ($oldValue !== $value || $forceSet)
+      {
+        $this->setValueInternal($name, $value);
+        $mapper = $this->getMapper();
+        if ($mapper != null && in_array($name, $mapper->getPKNames())) {
+          $this->updateOID();
+        }
+        self::setState(self::STATE_DIRTY);
+        $this->propagateValueChange($name, $oldValue, $value);
+        return true;
       }
     }
-    $oldValue = $this->getValue($name);
-    if ($oldValue !== $value || $forceSet)
-    {
-      $this->setValueInternal($name, $value);
-      self::setState(self::STATE_DIRTY);
-      $mapper = $this->getMapper();
-      if ($mapper != null && in_array($name, $mapper->getPKNames())) {
-        $this->updateOID();
-      }
-      $this->propagateValueChange($name, $oldValue, $value);
-      return true;
+    else {
+      throw new PersistenceException(Message::get("Cannot modify immutable object '%1%'.", array($this->getOID())));
     }
     return false;
   }
@@ -776,7 +757,7 @@ class PersistentObject
    */
   public function addChangeListener(IChangeListener $listener)
   {
-    $this->_changeListeners[sizeof($this->_changeListeners)] = &$listener;
+    $this->_changeListeners[$listener->getId()] = $listener;
   }
   /**
    * Remove a change listener.
@@ -784,11 +765,7 @@ class PersistentObject
    */
   public function removeChangeListener(IChangeListener $listener)
   {
-    for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
-      if ($this->_changeListeners[$i]->getId() == $listener->getId()) {
-        unset($this->_changeListeners[$i]);
-      }
-    }
+    unset($this->_changeListeners[$listener->getId()]);
   }
   /**
    * Notify ChangeListeners of value changes.
@@ -798,10 +775,8 @@ class PersistentObject
    */
   private function propagateValueChange($name, $oldValue, $newValue)
   {
-    for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
-      if(method_exists($this->_changeListeners[$i], 'valueChanged')) {
-        $this->_changeListeners[$i]->valueChanged($this, $name, $oldValue, $newValue);
-      }
+    foreach ($this->_changeListeners as $id => $listener) {
+      $listener->valueChanged($this, $name, $oldValue, $newValue);
     }
   }
   /**
@@ -812,10 +787,8 @@ class PersistentObject
    */
   private function propagatePropertyChange($name, $oldValue, $newValue)
   {
-    for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
-      if(method_exists($this->_changeListeners[$i], 'propertyChanged')) {
-        $this->_changeListeners[$i]->propertyChanged($this, $name, $oldValue, $newValue);
-      }
+    foreach ($this->_changeListeners as $id => $listener) {
+      $listener->propertyChanged($this, $name, $oldValue, $newValue);
     }
   }
   /**
@@ -825,10 +798,8 @@ class PersistentObject
    */
   private function propagateStateChange($oldValue, $newValue)
   {
-    for ($i=0, $count=sizeof($this->_changeListeners); $i<$count; $i++) {
-      if(method_exists($this->_changeListeners[$i], 'stateChanged')) {
-        $this->_changeListeners[$i]->stateChanged($this, $oldValue, $newValue);
-      }
+    foreach ($this->_changeListeners as $id => $listener) {
+      $listener->stateChanged($this, $oldValue, $newValue);
     }
   }
 
@@ -878,7 +849,7 @@ class PersistentObject
    */
   public function getDisplayValue()
   {
-    return $this->__toString();
+    return $this->getOID()->__toString();
   }
   /**
    * Get the name of a value used for display.
@@ -903,12 +874,11 @@ class PersistentObject
   }
   /**
    * Get a string representation of the PersistentObject.
-   * @param verbose True to get a verbose output [default: false]
    * @return The string representation of the PersistentObject.
    */
   public function __toString()
   {
-    return $this->getOID()->__toString();
+    return self::getDisplayValue();
   }
 
   /**

@@ -849,7 +849,7 @@ class Node extends PersistentObject
    */
   public function __toString()
   {
-    return NodeUtil::getDisplayValue($this).' ['.parent::__toString().']';
+    return $this->getDisplayValue().' ['.parent::__toString().']';
   }
 }
 ?>

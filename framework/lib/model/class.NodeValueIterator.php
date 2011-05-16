@@ -22,9 +22,30 @@
  * @ingroup Model
  * @brief NodeValueIterator is used to iterate over all persistent values of a Node.
  *
+ * The following example shows the usage:
+ *
+ * @code
+ * // load the node with depth 10
+ * $node = PersistentFacade::getInstance()->load(new ObjectId('Page', 300), 10);
+ *
+ * // iterate over all values
+ * $it = new NodeValueIterator($node);
+ * foreach($it as $name => $value) {
+ *   echo("current attribute name: ".$name);
+ *   echo("current attribute value: ".$value);
+ * }
+ *
+ * // iterate over all values with access to the current object
+ * for($it->rewind(); $it->valid(); $it->next()) {
+ *   echo("current object: ".$it->currentNode());
+ *   echo("current attribute name: ".$it->key());
+ *   echo("current attribute value: ".$it->current());
+ * }
+ * @endcode
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeValueIterator
+class NodeValueIterator implements Iterator
 {
   protected $_end;               // indicates if the iteration is ended
   protected $_recursive;         // indicates if the iterator should also process child nodes
@@ -45,11 +66,26 @@ class NodeValueIterator
     $this->_end = sizeof($this->_currentAttributes) == 0;
   }
   /**
-   * Proceed to next attribute.
-   * Subclasses may override this method to implement spezial traversion algorithms.
-   * @return A reference to the NodeValueIterator.
+   * Return the current element
+   * @return Value of the current attribute
    */
-  public function proceed()
+  public function current()
+  {
+    $node = $this->_nodeIterator->current();
+    return $node->getValue($this->_currentAttribute);
+  }
+  /**
+   * Return the key of the current element
+   * @return String, the name of the current attribute
+   */
+  public function key()
+  {
+    return $this->_currentAttribute;
+  }
+  /**
+   * Move forward to next element
+   */
+  public function next()
   {
     $next = next($this->_currentAttributes);
     if ($next !== false) {
@@ -59,12 +95,12 @@ class NodeValueIterator
     {
       if ($this->_recursive)
       {
-        $this->_nodeIterator->proceed();
-        if ($this->_nodeIterator->isEnd()) {
+        $this->_nodeIterator->next();
+        if (!$this->_nodeIterator->valid()) {
           $this->_end = true;
         }
         else {
-          $nextNode = $this->_nodeIterator->getCurrentNode();
+          $nextNode = $this->_nodeIterator->current();
           $this->_currentAttributes = $nextNode->getPersistentValueNames();
           $this->_currentAttribute = current($this->_currentAttributes);
         }
@@ -76,43 +112,29 @@ class NodeValueIterator
     return $this;
   }
   /**
-   * Get the current node.
-   * Subclasses may override this method to return only special attributes.
-   * @return The current node.
+   * Rewind the Iterator to the first element
    */
-  public function getCurrentNode()
+  public function rewind()
   {
-    return $this->_nodeIterator->getCurrentNode();
-  }
-  /**
-   * Get the current attribute name.
-   * Subclasses may override this method to return only special attributes.
-   * @return The current attribute name.
-   */
-  public function getCurrentAttribute()
-  {
-    return $this->_currentAttribute;
-  }
-  /**
-   * Find out whether iteration is finished.
-   * @return 'True' if iteration is finished, 'False' alternatively.
-   */
-  public function isEnd()
-  {
-    return $this->_end;
-  }
-  /**
-   * Reset the iterator to given node.
-   * @param node The node to start from.
-   * @param recursive True/False wether the iterator should also process child nodes
-   */
-  public function reset($node, $recursive)
-  {
-    $this->_recursive = $recursive;
-    $this->_nodeIterator = new NodeIterator($node);
-    $this->_currentAttributes = $node->getPersistentValueNames();
+    $this->_nodeIterator->rewind();
+    $this->_currentAttributes = $this->_nodeIterator->current()->getPersistentValueNames();
     $this->_currentAttribute = current($this->_currentAttributes);
-    $this->_end = sizeof($this->_currentAttributes) == 0;
+    $this->_end = (sizeof($this->_currentAttributes) == 0);
+  }
+  /**
+   * Checks if current position is valid
+   */
+  public function valid()
+  {
+    return !$this->_end;
+  }
+  /**
+   * Get the current node
+   * @return Node instance
+   */
+  public function currentNode()
+  {
+    return $this->_nodeIterator->current();
   }
 }
 ?>

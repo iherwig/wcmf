@@ -56,52 +56,57 @@ class DeleteController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    // start the persistence transaction
-    $persistenceFacade->startTransaction();
-
-    // load the doomed node
-    // if the current user has a lock on the object, release it
     $oid = ObjectId::parse($request->getValue('oid'));
-    if ($oid)
-    {
-      $lockManager->releaseLock($oid);
 
-      // check if the object belonging to oid is locked and continue with next if so
-      $lock = $lockManager->getLock($oid);
-      if ($lock != null)
+    // start the transaction
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    try {
+      // load the doomed node
+      // if the current user has a lock on the object, release it
+      if ($oid)
       {
-        $this->appendErrorMsg($lockManager->getLockMessage($lock, $oid));
-        continue;
-      }
+        $lockManager->releaseLock($oid);
 
-      $doomedNode = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
-      if ($doomedNode == null) {
-        Log::warn(Message::get("An object with oid %1% is does not exist.", array($oid)), __CLASS__);
-      }
-      else
-      {
-        if($this->confirmDelete($doomedNode))
+        // check if the object belonging to oid is locked and continue with next if so
+        $lock = $lockManager->getLock($oid);
+        if ($lock != null)
         {
-          // commit changes
-          $localization = Localization::getInstance();
-          if ($this->isLocalizedRequest())
+          $this->appendErrorMsg($lockManager->getLockMessage($lock, $oid));
+          continue;
+        }
+
+        $doomedNode = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+        if ($doomedNode == null) {
+          Log::warn(Message::get("An object with oid %1% is does not exist.", array($oid)), __CLASS__);
+        }
+        else
+        {
+          if($this->confirmDelete($doomedNode))
           {
-            // delete the translations for the requested language
-            $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));
+            // commit changes
+            $localization = Localization::getInstance();
+            if ($this->isLocalizedRequest())
+            {
+              // delete the translations for the requested language
+              $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));
+            }
+            else
+            {
+              // delete the real object data and all translations
+              $localization->deleteTranslation($doomedNode->getOID());
+              $doomedNode->delete();
+            }
+            // after delete
+            $this->afterDelete($oid);
           }
-          else
-          {
-            // delete the real object data and all translations
-            $localization->deleteTranslation($doomedNode->getOID());
-            $doomedNode->delete();
-          }
-          // after delete
-          $this->afterDelete($oid);
         }
       }
+      $transaction->commit();
     }
-    // end the persistence transaction
-    $persistenceFacade->commitTransaction();
+    catch (Exception $ex) {
+      $transaction->rollback();
+    }
 
     $response->setValue('oid', $oid);
     $response->setAction('ok');

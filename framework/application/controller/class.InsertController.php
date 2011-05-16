@@ -94,65 +94,72 @@ class InsertController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
 
+    $newNode = null;
+
     // start the persistence transaction
-    $persistenceFacade->startTransaction();
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    try {
+      // construct the Node to insert
+      $newType = $request->getValue('className');
+      $newNode = $persistenceFacade->create($newType, BUILDDEPTH_REQUIRED);
 
-    // construct the Node to insert
-    $newType = $request->getValue('className');
-    $newNode = $persistenceFacade->create($newType, BUILDDEPTH_REQUIRED);
-
-    // look for a node template in the request parameters
-    $localizationTpl = null;
-    $saveData = $request->getValues();
-    foreach($saveData as $curOidStr => $curRequestObject)
-    {
-      if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
-              && $curOid->getType() == $newType)
+      // look for a node template in the request parameters
+      $localizationTpl = null;
+      $saveData = $request->getValues();
+      foreach($saveData as $curOidStr => $curRequestObject)
       {
-        if ($this->isLocalizedRequest())
+        if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
+                && $curOid->getType() == $newType)
         {
-          // copy values from the node template to the localization template for later use
-          $localizationTpl = $persistenceFacade->create($newType, BUIDLDEPTH_SINGLE);
-          $curRequestObject->copyValues($localizationTpl, false);
+          if ($this->isLocalizedRequest())
+          {
+            // copy values from the node template to the localization template for later use
+            $localizationTpl = $persistenceFacade->create($newType, BUIDLDEPTH_SINGLE);
+            $curRequestObject->copyValues($localizationTpl, false);
+          }
+          else
+          {
+            // copy values from the node template to the new node
+            $curRequestObject->copyValues($newNode, false);
+          }
+          break;
         }
-        else
-        {
-          // copy values from the node template to the new node
-          $curRequestObject->copyValues($newNode, false);
-        }
-        break;
-      }
-    }
-
-    if ($this->confirmInsert($newNode))
-    {
-      $this->modify($newNode);
-
-      // commit the new node and its descendants
-      // we need to use the CommitVisitor because many to many objects maybe included
-      $nIter = new NodeIterator($newNode);
-      $cv = new CommitVisitor();
-      $cv->startIterator($nIter);
-
-      // if the request is localized, use the localization template as translation
-      if ($this->isLocalizedRequest() && $localizationTpl != null)
-      {
-        $localizationTpl->setOID($newNode->getOID());
-        $localization = Localization::getInstance();
-        $localization->saveTranslation($localizationTpl, $request->getValue('language'));
       }
 
-      // after insert
-      $this->afterInsert($newNode);
+      if ($this->confirmInsert($newNode))
+      {
+        $this->modify($newNode);
+
+        // commit the new node and its descendants
+        // we need to use the CommitVisitor because many to many objects maybe included
+        $nIter = new NodeIterator($newNode);
+        $cv = new CommitVisitor();
+        $cv->startIterator($nIter);
+
+        // if the request is localized, use the localization template as translation
+        if ($this->isLocalizedRequest() && $localizationTpl != null)
+        {
+          $localizationTpl->setOID($newNode->getOID());
+          $localization = Localization::getInstance();
+          $localization->saveTranslation($localizationTpl, $request->getValue('language'));
+        }
+
+        // after insert
+        $this->afterInsert($newNode);
+      }
+      $transaction->commit();
     }
-    // end the persistence transaction
-    $persistenceFacade->commitTransaction();
+    catch (Exception $ex) {
+      $transaction->rollback();
+    }
 
     // return the oid of the inserted node
-    $oidStr = $newNode->getOID()->__toString();
-    $response->setValue('oid', $oidStr);
-    $response->setValue($oidStr, $newNode);
-
+    if ($newNode != null) {
+      $oidStr = $newNode->getOID()->__toString();
+      $response->setValue('oid', $oidStr);
+      $response->setValue($oidStr, $newNode);
+    }
     $response->setAction('ok');
     return true;
   }

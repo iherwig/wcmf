@@ -63,7 +63,7 @@ if(sizeof($persistenceFacade->getOIDs("Adodbseq")) == 0)
   $seq->save();
 }
 $userManager = ObjectFactory::createInstanceFromConfig('implementation', 'UserManager');
-$userManager->startTransaction();
+$userManager->beginTransaction();
 if (!$userManager->getRole("administrators"))
 {
   Log::info("creating role with name 'administrators'...", "install");

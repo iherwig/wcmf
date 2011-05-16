@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -42,7 +42,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
 class AdminController extends Controller
 {
   var $_userManager = null;
-  
+
   /**
    * @see Controller::initialize()
    */
@@ -81,7 +81,7 @@ class AdminController extends Controller
   function executeKernel()
   {
     $persistenceFacade = &PersistenceFacade::getInstance();
-    $this->_userManager->startTransaction();
+    $this->_userManager->beginTransaction();
 
     // assign model to view
     $userType = $this->_userManager->getUserClassName();

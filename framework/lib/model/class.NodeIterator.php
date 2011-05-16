@@ -23,16 +23,30 @@
  * @brief NodeIterator is used to iterate over a tree/list build of Nodes
  * using a Depth-First-Algorithm. Classes used with the NodeIterator must
  * implement the getChildren() and getOID() methods.
- * NodeIterator implements the 'Iterator Pattern'.
+ *
+ * The following example shows the usage:
+ *
+ * @code
+ * // load the node with depth 10
+ * $node = PersistentFacade::getInstance()->load(new ObjectId('Page', 300), 10);
+ *
+ * // iterate over all children
+ * $it = new NodeIterator($node);
+ * foreach($it as $oid => $obj) {
+ *   echo("current object id: ".$oid);
+ *   echo("current object: ".$obj);
+ * }
+ * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeIterator
+class NodeIterator implements Iterator
 {
   protected $_end;          // indicates if the iteration is ended
   protected $_nodeList;     // the list of seen nodes
   protected $_nodeIdList;   // the list of seen object ids
   protected $_currentNode;  // the node the iterator points to
+  protected $_startNode;    // the start node
   /**
    * Constructor.
    * @param node The node to start from.
@@ -42,14 +56,29 @@ class NodeIterator
     $this->_end = false;
     $this->_nodeList = array();
     $this->_nodeIdList = array();
-    $this->_currentNode = &$node;
+    $this->_currentNode = $node;
+    $this->_startNode = $node;
   }
   /**
-   * Proceed to next node.
-   * Subclasses may override this method to implement spezial traversion algorithms.
-   * @return A reference to the NodeIterator.
+   * Return the current element
+   * @return Node instance
    */
-  public function proceed()
+  public function current()
+  {
+    return $this->_currentNode;
+  }
+  /**
+   * Return the key of the current element
+   * @return String, the serialized object id
+   */
+  public function key()
+  {
+    return $this->_currentNode->getOID()->__toString();
+  }
+  /**
+   * Move forward to next element
+   */
+  public function next()
   {
     $childrenArray = $this->_currentNode->getChildren();
     $this->addToSeenList($childrenArray);
@@ -66,46 +95,34 @@ class NodeIterator
     return $this;
   }
   /**
-   * Get the current node.
-   * Subclasses may override this method to return only special nodes.
-   * @return A reference to the current node.
+   * Rewind the Iterator to the first element
    */
-  public function getCurrentNode()
-  {
-    return $this->_currentNode;
-  }
-  /**
-   * Find out whether iteration is finished.
-   * @return 'True' if iteration is finished, 'False' alternatively.
-   */
-  public function isEnd()
-  {
-    return $this->_end;
-  }
-  /**
-   * Reset the iterator to given node.
-   * @param node The node to start from.
-   */
-  public function reset($node)
+  public function rewind()
   {
     $this->_end = false;
     $this->_nodeList = array();
     $this->_nodeIdList = array();
-    $this->_currentNode = &$node;
+    $this->_currentNode = $this->_startNode;
+  }
+  /**
+   * Checks if current position is valid
+   */
+  public function valid()
+  {
+    return !$this->_end;
   }
   /**
    * Add nodes, only if they are not already in the internal processed node list.
    * @param nodeList An array of nodes.
    */
-  //
   protected function addToSeenList($nodeList)
   {
     for ($i=sizeOf($nodeList)-1;$i>=0;$i--) {
       if ($nodeList[$i] instanceof Node) {
-        if (!in_array($nodeList[$i]->getOID(), $this->_nodeIdList))
+        if (!in_array($nodeList[$i]->getOID()->__toString(), $this->_nodeIdList))
         {
-          $this->_nodeList[sizeOf($this->_nodeList)] = &$nodeList[$i];
-          array_push($this->_nodeIdList, $nodeList[$i]->getOID());
+          $this->_nodeList[] = $nodeList[$i];
+          $this->_nodeIdList[] = $nodeList[$i]->getOID()->__toString();
         }
       }
     }

@@ -160,16 +160,17 @@ abstract class AbstractMapper
    */
   public function save(PersistentObject $object)
   {
+    $oid = $object->getOID();
     if ( ($object->getState() == PersistentObject::STATE_DIRTY) &&
-            !$this->checkAuthorization($object->getOID(), ACTION_MODIFY) )
+            !$this->checkAuthorization($oid, ACTION_MODIFY) )
     {
-      $this->authorizationFailedError($object->getOID(), ACTION_MODIFY);
+      $this->authorizationFailedError($oid, ACTION_MODIFY);
       return;
     }
     else if ( ($object->getState() == PersistentObject::STATE_NEW) &&
-            !$this->checkAuthorization($object->getOID(), ACTION_CREATE) )
+            !$this->checkAuthorization($oid, ACTION_CREATE) )
     {
-      $this->authorizationFailedError($object->getOID(), ACTION_CREATE);
+      $this->authorizationFailedError($oid, ACTION_CREATE);
       return;
     }
 
@@ -179,8 +180,9 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::delete()
    */
-  public function delete(ObjectId $oid)
+  public function delete(PersistentObject $object)
   {
+    $oid = $object->getOID();
     if (!$this->checkAuthorization($oid, ACTION_DELETE))
     {
       $this->authorizationFailedError($oid, ACTION_DELETE);
@@ -191,7 +193,7 @@ abstract class AbstractMapper
       return false;
     }
     // delete oid
-    $result = $this->deleteImpl($oid);
+    $result = $this->deleteImpl($object);
     if ($result === true)
     {
       // release any locks on the object
@@ -236,41 +238,25 @@ abstract class AbstractMapper
   protected function initialize(PersistentObject $object) {}
 
   /**
-   * @see PersistenceFacade::load()
+   * @see IPersistenceFacade::load()
    * @note Precondition: Object rights have been checked already
    *
    */
   abstract protected function loadImpl(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
   /**
-   * @see PersistenceFacade::create()
+   * @see IPersistenceFacade::create()
    * @note Precondition: Object rights have been checked already
    */
   abstract protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
   /**
-   * @see PersistenceFacade::save()
+   * @see IPersistenceMapper::save()
    * @note Precondition: Object rights have been checked already
    */
   abstract protected function saveImpl(PersistentObject $object);
   /**
-   * @see PersistenceFacade::delete()
+   * @see IPersistenceMapper::delete()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function deleteImpl(ObjectId $oid);
-
-  /**
-   * @see PersistenceFacade::startTransaction()
-   * @note The default implementation does nothing. Subclasses may override this method if required
-   */
-  public function startTransaction() {}
-  /**
-   * @see PersistenceFacade::commitTransaction()
-   * @note The default implementation does nothing. Subclasses may override this method if required
-   */
-  public function commitTransaction() {}
-  /**
-   * @see PersistenceFacade::rollbackTransaction()
-   * @note The default implementation does nothing. Subclasses may override this method if required
-   */
-  public function rollbackTransaction() {}
+  abstract protected function deleteImpl(PersistentObject $object);
 }
 ?>

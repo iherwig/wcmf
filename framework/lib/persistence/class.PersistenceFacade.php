@@ -43,7 +43,7 @@ class PersistenceFacade
 
   /**
    * Returns an instance of the PersistenceFacade implementation.
-   * @return PersistenceFacade
+   * @return IPersistenceFacade
    */
   public static function getInstance()
   {

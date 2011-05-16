@@ -45,7 +45,12 @@ interface IPersistenceFacade
    */
   function isKnownType($type);
   /**
-   * Load an object from the database.
+   * Load an object from the storage. The object will be attached to the transaction,
+   * if the transaction is active.
+   * @note The parameters buildDepth, buildAttribs and buildTypes are used to improve fetching
+   * from the storage, but objects returned by this method are not guaranteed to conform to
+   * the parameter values. This is especially true, if the same object was loaded before with
+   * a wider fetch definition (e.g. greater buildDeph value)
    * @param oid The object id of the object to construct
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
@@ -57,7 +62,10 @@ interface IPersistenceFacade
    */
   function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
   /**
-   * Construct the template of an Object of a given type.
+   * Construct the template of an object of a given type. The object will be
+   * attached to the transaction, if the transaction is active.
+   * @note If an object required to be transient, the IPersistentMapper::create() method or the class
+   * constructor must be used.
    * @param type The type of object to build
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
@@ -67,18 +75,6 @@ interface IPersistenceFacade
    * @return PersistentObject
    */
   function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
-  /**
-   * Save an object to the database (inserted if it is new).
-   * @param object A reference to the object to save
-   * @return Boolean depending on success of operation
-   */
-  function save(PersistentObject $object);
-  /**
-   * Delete an object from the database (together with all of its children).
-   * @param oid The object id of the object to delete
-   * @return Boolean depending on success of operation
-   */
-  function delete(ObjectId $oid);
   /**
    * Get the object id of the last created object of a given type.
    * @param type The type of the object
@@ -136,23 +132,11 @@ interface IPersistenceFacade
   function loadFirstObject($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null);
   /**
-   * Start a business transaction.
-   * @note There is only ONE transaction active at a time. Repeated calls of this method will leave the initial
-   * transaction active until commitTransaction() ore rollbackTransaction() is called.
+   * Get the current business transaction.
+   * @note There is only one transaction instance at the same time.
+   * @return ITransaction
    */
-  function startTransaction();
-  /**
-   * Start the business transaction.
-   * @note There is only ONE transaction active at a time. Repeated calls of this method will do nothing until
-   * a new transaction was started by calling startTransaction().
-   */
-  function commitTransaction();
-  /**
-   * Commit the business transaction.
-   * @note There is only ONE transaction active at a time. Repeated calls of this method will do nothing until
-   * a new transaction was started by calling startTransaction(). Rollbacks have to be supported by the data storage.
-   */
-  function rollbackTransaction();
+  function getTransaction();
   /**
    * Get the PersistenceMapper for a given type. If no mapper for this type is defined the mapper for type '*' will be returned
    * @param type The type of the object to get the PersistenceMapper for
@@ -191,15 +175,5 @@ interface IPersistenceFacade
    * @param isReadOnly True/False whether objects should be readonly or not
    */
   function setReadOnly($isReadOnly);
-  /**
-   * Set state to caching. If set to true, PersistenceFacade will cache all loaded objects
-   * and returns cached instances when calling the PersistenceFacade::load method.
-   * @param isCaching True/False whether objects should be chached or not
-   */
-  function setCaching($isCaching);
-  /**
-   * Clear the object cache
-   */
-  function clearCache();
 }
 ?>

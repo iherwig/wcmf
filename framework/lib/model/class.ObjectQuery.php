@@ -122,10 +122,11 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
    */
   public function __construct($type)
   {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $this->_typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+    // don't use IPersistenceFacade::create, because template instances must be transient
+    $mapper = $this->getMapper($type);
+    $this->_typeNode = $mapper->create($type, BUILDDEPTH_SINGLE);
     $this->_rootNodes[] = $this->_typeNode;
-    $this->_id = ObjectId::getDummyId();
+    $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
   }
   /**
    * Get an object template for a given type.
@@ -146,8 +147,9 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
       // the typeNode is contained already in the rootNodes array
     }
     else {
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $template = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+      // don't use IPersistenceFacade::create, because template instances must be transient
+      $mapper = $this->getMapper($type);
+      $template = $mapper->create($type, BUILDDEPTH_SINGLE);
       $this->_rootNodes[] = $template;
     }
     $template->setProperty(self::PROPERTY_COMBINE_OPERATOR, $combineOperator);
@@ -316,20 +318,19 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
     // add condition
     $condition = '';
     $iter = new NodeValueIterator($tpl, false);
-    while(!$iter->isEnd())
+    foreach($iter as $valueName => $value)
     {
-      $curValueName = $iter->getCurrentAttribute();
       // check if the value was set when building the query
-      if (isset($this->_conditions[$oidStr][$curValueName]))
+      if (isset($this->_conditions[$oidStr][$valueName]))
       {
-        $curCriteria = $this->_conditions[$oidStr][$curValueName];
+        $curCriteria = $this->_conditions[$oidStr][$valueName];
         if ($curCriteria instanceof Criteria)
         {
-          $attributeDesc = $mapper->getAttribute($curValueName);
+          $attributeDesc = $mapper->getAttribute($valueName);
           if ($attributeDesc)
           {
             // ignore foreign keys
-            if (!$mapper->isForeignKey($curValueName))
+            if (!$mapper->isForeignKey($valueName))
             {
               // add the combine operator, if there are already other conditions
               if (strlen($condition) > 0) {
@@ -342,7 +343,6 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
           }
         }
       }
-      $iter->proceed();
     }
     if (strlen($condition) > 0)
     {

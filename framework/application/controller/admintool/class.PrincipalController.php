@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -50,7 +50,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
  * @param[in] principals The list of all users that should belong to the displayed role or
  *              the list of all roles that the displayed user should have
  * @param[out] principal The principal to display
- * @param[out] principalBaseList The list of all users, if a role is displayed or 
+ * @param[out] principalBaseList The list of all users, if a role is displayed or
  *              the list of all roles if a user is displayed
  * @param[out] principalList The list of all users that belong to the displayed role or
  *              the list of all roles that the displayed user has
@@ -60,7 +60,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
 class PrincipalController extends Controller
 {
   var $_userManager = null;
-  
+
   /**
    * @see Controller::initialize()
    */
@@ -71,7 +71,7 @@ class PrincipalController extends Controller
       $request->setContext('user');
       $response->setContext('user');
     }
-    
+
     parent::initialize($request, $response);
 
     // create UserManager instance
@@ -128,8 +128,8 @@ class PrincipalController extends Controller
   function executeKernel()
   {
     $persistenceFacade = &PersistenceFacade::getInstance();
-    $this->_userManager->startTransaction();
-    
+    $this->_userManager->beginTransaction();
+
     // process actions
 
     // DELETE
@@ -177,14 +177,14 @@ class PrincipalController extends Controller
     {
       // load model
       $principal = &$this->_userManager->getPrincipal($this->_request->getValue('oid'));
-      
+
       // save changes
       if ($this->_request->getAction() == 'save')
       {
         $saveNode = &$this->_request->getValue($this->_request->getValue('oid'));
 
         if (strtolower(get_class($principal)) == strtolower(UserManager::getUserClassName()))
-        {          
+        {
           // properties
           foreach(array(USER_PROPERTY_LOGIN, USER_PROPERTY_NAME, USER_PROPERTY_FIRSTNAME, USER_PROPERTY_CONFIG) as $property)
           {
@@ -198,7 +198,7 @@ class PrincipalController extends Controller
           // password
           if ($this->_request->hasValue('changepassword'))
           {
-            $this->_userManager->resetPassword($principal->getLogin(), $this->_request->getValue('newpassword1'), 
+            $this->_userManager->resetPassword($principal->getLogin(), $this->_request->getValue('newpassword1'),
                                                  $this->_request->getValue('newpassword2'));
           }
           // roles

@@ -25,7 +25,7 @@
       </li>
       <li>
         <label for="password">{translate text="Password"}</label>
-        <input id="password" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='required:true, name:"password"'/>
+        <input id="password" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='required:true, name:"password", type:"password"'/>
       </li>
       <li>
         <label for="remember_me">{translate text="Remember me"}</label>

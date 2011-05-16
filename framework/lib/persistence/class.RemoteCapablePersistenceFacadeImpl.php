@@ -116,29 +116,6 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     return $obj;
   }
   /**
-   * @see IPersistenceFacade::save()
-   */
-  public function save(PersistentObject $object)
-  {
-    $oid = $object->getOID();
-    if (strlen($oid->getPrefix()) > 0) {
-      throw new PersistenceException("The remote object '".$object->getOID()."' is immutable.");
-    }
-    $result = parent::save($object);
-    return $result;
-  }
-  /**
-   * @see IPersistenceFacade::delete()
-   */
-  public function delete(ObjectId $oid)
-  {
-    if (strlen($oid->getPrefix()) > 0) {
-      throw new PersistenceException("The remote object '".$oid."' is immutable.");
-    }
-    $result = parent::delete($oid);
-    return $result;
-  }
-  /**
    * @see IPersistenceFacade::getOIDs()
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)

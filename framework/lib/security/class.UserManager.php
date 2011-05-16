@@ -68,7 +68,7 @@ abstract class UserManager
     if (!isset($this->_userRepository['roles'])) {
       $this->_userRepository['roles'] = array();
     }
-    
+
     // load role config if existing
     $parser = InifileParser::getInstance();
     if (($roleConfig = $parser->getSection('roleconfig')) !== false) {
@@ -91,18 +91,18 @@ abstract class UserManager
    * and execute them on commitTransaction().
    * If not implemented the UserManager will execute these actions on every call of the appropriate function.
    */
-  public function startTransaction() {}
+  public function beginTransaction() {}
 
   /**
    * Commit a transaction. If implemented, the UserManager will execute a number of actions
-   * that it collected since the call to startTransaction().
+   * that it collected since the call to beginTransaction().
    * If not implemented the UserManager will execute these actions on every call of the appropriate function.
    */
   public function commitTransaction() {}
 
   /**
    * Rollback a transaction. If implemented, the UserManager will rollback a number of actions
-   * that it collected since the call to startTransaction().
+   * that it collected since the call to beginTransaction().
    * If not implemented the UserManager will execute these actions on every call of the appropriate function.
    */
   public function rollbackTransaction() {}

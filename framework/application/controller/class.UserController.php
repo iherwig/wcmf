@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -44,7 +44,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.ObjectFactory.php");
 class UserController extends Controller
 {
   var $_userManager = null;
-  
+
   /**
    * @see Controller::initialize()
    */
@@ -74,7 +74,7 @@ class UserController extends Controller
   {
     $persistenceFacade = &PersistenceFacade::getInstance();
     $rightsManager = &RightsManager::getInstance();
-    
+
     // process actions
     $result = '';
 
@@ -87,17 +87,17 @@ class UserController extends Controller
       $principal = $this->_userManager->getPrincipal($oid);
 
       // password
-      $this->_userManager->startTransaction();
+      $this->_userManager->beginTransaction();
       if ($this->_request->getValue('changepassword') == 'yes')
       {
-        $this->_userManager->changePassword($principal->getLogin(), $this->_request->getValue('oldpassword'), 
+        $this->_userManager->changePassword($principal->getLogin(), $this->_request->getValue('oldpassword'),
           $this->_request->getValue('newpassword1'), $this->_request->getValue('newpassword2'));
         $message .= Message::get("The password was successfully changed.");
       }
       $this->_userManager->commitTransaction();
     }
     $this->_response->setValue("message", $message);
-    
+
     // success
     $this->_response->setAction('edituser');
     return false;

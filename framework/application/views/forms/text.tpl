@@ -6,4 +6,16 @@
     {$validationString=", regExp:\"$regExp\", invalidMessage:\"$invalidMessage\""}
   {/if}
 {/if}
-<input id="{$name}" {$attributes} data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='name:"{$name}", value:"{$value}"{if !$enabled}, disabled:true{/if}{$validationString}'/>
+<input
+  id="{$name}"
+  {$attributes}
+  data-dojo-type="dijit.form.ValidationTextBox"
+  data-dojo-props='
+    name:"{$name}",
+    value:"{$value}"
+    {if !$enabled}
+      , disabled:true
+    {/if}
+    {$validationString}
+  '
+/>

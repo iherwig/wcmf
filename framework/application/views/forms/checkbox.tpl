@@ -1,12 +1,22 @@
-{assign var="attributes" value=$attributes|default:'class="check"'}
-{if $enabled}
+<div class="controlContainer">
 {foreach key=listkey item=listvalue from=$listMap}
-{if ((!is_array($value) && $listkey == $value) || (is_array($value) && in_array($listkey, $value)))}
-  <input type="checkbox" name="{$name}[]" value="{$listkey}" checked {$attributes} onchange="setDirty(this.name);" /> <label>{$listvalue}</label>
-{else}
-  <input type="checkbox" name="{$name}[]" value="{$listkey}" {$attributes} onchange="setDirty(this.name);" /> <label>{$listvalue}</label>
-{/if}
+  <input
+    id="{$name}_{$listkey}"
+    {$attributes}
+    data-dojo-type="dijit.form.CheckBox"
+    data-dojo-props='
+      type:"checkBox",
+      name:"{$name}[]",
+      value:"{$listkey}"
+      {if ((!is_array($value) && $listkey == $value) || (is_array($value) && in_array($listkey, $value)))}
+        , checked:"checked"
+      {/if}
+      {if !$enabled}
+        , disabled:true
+      {/if}
+      {* TODO: onChange: function(){ldelim}console.log("changed"){rdelim} *}
+    '
+  />
+  <label for="{$name}_{$listkey}">{$listvalue}</label><br />
 {/foreach}
-{else}
-<span class="disabled" {$attributes}>{$value}</span>
-{/if}
+</div>

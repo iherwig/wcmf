@@ -189,12 +189,8 @@ class NodeSerializer
       // use NodeValueIterator to iterate over all Node values
       $values = array();
       $valueIter = new NodeValueIterator($node, false);
-      while (!$valueIter->isEnd())
-      {
-        $curIterNode = $valueIter->getCurrentNode();
-        $valueName = $valueIter->getCurrentAttribute();
-        $values[$valueName] = $curIterNode->getValue($valueName);
-        $valueIter->proceed();
+      foreach($valueIter as $valueName => $value) {
+        $values[$valueName] = $value;
       }
       $curResult['attributes'] = $values;
 

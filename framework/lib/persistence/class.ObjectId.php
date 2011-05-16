@@ -36,6 +36,7 @@ class ObjectId
   private $_prefix;
   private $_type;
   private $_id;
+  private $_strVal = null;
 
   private static $_dummyIdPattern = 'wcmf[A-Za-z0-9]{32}';
   private static $_idPattern = null;
@@ -76,6 +77,10 @@ class ObjectId
     while (sizeof($this->_id) < $numPKs) {
       array_push($this->_id, self::getDummyId());
     }
+
+    // set strVal immediatly otherwise object comparison will fail in
+    // cases where __toString was only called on one instance
+    $this->_strVal = $this->__toString();
   }
 
   /**
@@ -187,12 +192,16 @@ class ObjectId
    * Get a string representation of the object id.
    * @return String
    */
-  public function __toString() {
-    $oidStr = $this->_type.':'.join(':', $this->_id);
-    if (strlen(trim($this->_prefix)) > 0) {
-      $oidStr = $this->_prefix.':'.$oidStr;
+  public function __toString()
+  {
+    if ($this->_strVal == null) {
+      $oidStr = $this->_type.':'.join(':', $this->_id);
+      if (strlen(trim($this->_prefix)) > 0) {
+        $oidStr = $this->_prefix.':'.$oidStr;
+      }
+      $this->_strVal = $oidStr;
     }
-    return $oidStr;
+    return $this->_strVal;
   }
 
   /**

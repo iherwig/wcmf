@@ -561,7 +561,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     return $result;
   }
   /**
-   * @see PersistenceMapper::loadImpl()
+   * @see AbstractMapper::loadImpl()
    */
   protected function loadImpl(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
   {
@@ -577,7 +577,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     }
   }
   /**
-   * @see PersistenceMapper::createImpl()
+   * @see AbstractMapper::createImpl()
    * @note The type parameter is not used here because this class only constructs one type
    */
   protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
@@ -630,7 +630,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     return $object;
   }
   /**
-   * @see PersistenceMapper::saveImpl()
+   * @see AbstractMapper::saveImpl()
    */
   protected function saveImpl(PersistentObject $object)
   {
@@ -704,9 +704,9 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     return true;
   }
   /**
-   * @see PersistenceMapper::deleteImpl()
+   * @see AbstractMapper::deleteImpl()
    */
-  protected function deleteImpl(ObjectId $oid)
+  protected function deleteImpl(PersistentObject $object)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     if ($this->_conn == null) {
@@ -714,15 +714,12 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     }
 
     // log action
-    if ($this->isLogging())
-    {
-      $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
-      if ($obj) {
-        $this->logAction($obj);
-      }
+    if ($this->isLogging()) {
+      $this->logAction($object);
     }
 
     // delete object
+    $oid = $object->getOID();
     $affectedRows = 0;
     $operations = $this->getDeleteSQL($oid);
     foreach($operations as $operation) {
@@ -752,15 +749,17 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
                 BUILDDEPTH_SINGLE);
         foreach($objects as $object)
         {
-          if ($isComposite) {
+          if ($isManyToMany) {
+            // delete the many to many object immediatly
+            $otherMapper->delete($object);
+          }
+          elseif ($isComposite) {
             // delete composite and relation object children
             $object->delete();
           }
-          else
-          {
+          else {
             // unlink shared children
             $object->setValue($relationDesc->getThisRole(), null);
-            $object->save();
           }
         }
       }
@@ -780,7 +779,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     return $this->_conn;
   }
   /**
-   * @see PersistenceMapper::getOIDs()
+   * @see IPersistenceMapper::getOIDs()
    * @note The type parameter is not used here because this class only constructs one type
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
@@ -799,7 +798,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     return $oids;
   }
   /**
-   * @see PersistenceFacade::loadObjects()
+   * @see IPersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null)
@@ -809,7 +808,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     return $objects;
   }
   /**
-   * @see PersistenceMapper::loadRelatedObjects()
+   * @see IPersistenceMapper::loadRelatedObjects()
    */
   public function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BUILDDEPTH_SINGLE,
     $buildAttribs=null, $buildTypes=null)
@@ -917,6 +916,8 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       // initialized
       $object->setState(PersistentObject::STATE_CLEAN, false);
       $objects[] = $object;
+      // register the object with the transaction
+      PersistenceFacade::getInstance()->getTransaction()->registerLoaded($object);
     }
     return $objects;
   }
@@ -1088,12 +1089,12 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     return $relatives;
   }
   /**
-   * @see PersistenceMapper::startTransaction()
+   * @see PersistenceMapper::beginTransaction()
    * Since all RDBMapper instances with the same connection parameters share
    * one connection, the call will be ignored, if the method was already called
    * for another instance.
    */
-  public function startTransaction()
+  public function beginTransaction()
   {
     if ($this->_conn == null) {
       $this->connect();

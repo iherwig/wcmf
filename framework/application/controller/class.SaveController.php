@@ -76,176 +76,180 @@ class SaveController extends Controller
     $needCommit = false;
 
     // start the persistence transaction
-    $persistenceFacade->startTransaction();
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    try {
+      // store all invalid parameters for later reference
+      $lockedOids = array();
+      $invalidOids = array();
+      $invalidAttributeNames = array();
+      $invalidAttributeValues = array();
+      $curNode = null;
 
-    // store all invalid parameters for later reference
-    $lockedOids = array();
-    $invalidOids = array();
-    $invalidAttributeNames = array();
-    $invalidAttributeValues = array();
-    $curNode = null;
-
-    // iterate over request values and check for oid/object pairs
-    $saveData = $request->getValues();
-    foreach ($saveData as $curOidStr => $curRequestObject)
-    {
-      if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
-              && $curRequestObject->getOID() == $curOid)
+      // iterate over request values and check for oid/object pairs
+      $saveData = $request->getValues();
+      foreach ($saveData as $curOidStr => $curRequestObject)
       {
-        // if the current user has a lock on the object, release it
-        $lockManager->releaseLock($curOid);
-
-        // check if the object is locked and continue with next if so
-        $lock = $lockManager->getLock($curOid);
-        if ($lock != null)
+        if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
+                && $curRequestObject->getOID() == $curOid)
         {
-          $lockedOids[] = $curOidStr;
-          continue;
-        }
+          // if the current user has a lock on the object, release it
+          $lockManager->releaseLock($curOid);
 
-        // iterate over all values given in the node
-        $mapper = $curRequestObject->getMapper();
-        foreach ($curRequestObject->getValueNames() as $curValueName)
-        {
-          // check if the attribute exists
-          if ($mapper && !$mapper->hasAttribute($curValueName) && !$mapper->hasRelation($curValueName)) {
-            $invalidAttributeNames[] = $curValueName;
-          }
-          $curRequestValue = $curRequestObject->getValue($curValueName);
-
-          // save uploaded file/ process array values
-          $isFile = false;
-          if (is_array($curRequestValue))
+          // check if the object is locked and continue with next if so
+          $lock = $lockManager->getLock($curOid);
+          if ($lock != null)
           {
-            // save file
-            $result = $this->saveUploadFile($curOid, $curValueName, $curRequestValue);
-            // upload failed (present an error message and save the rest)
-            if ($result === false) {
-              ; // $response->setAction('ok'); return true;
+            $lockedOids[] = $curOidStr;
+            continue;
+          }
+
+          // iterate over all values given in the node
+          $mapper = $curRequestObject->getMapper();
+          foreach ($curRequestObject->getValueNames() as $curValueName)
+          {
+            // check if the attribute exists
+            if ($mapper && !$mapper->hasAttribute($curValueName) && !$mapper->hasRelation($curValueName)) {
+              $invalidAttributeNames[] = $curValueName;
             }
-            if ($result === true)
+            $curRequestValue = $curRequestObject->getValue($curValueName);
+
+            // save uploaded file/ process array values
+            $isFile = false;
+            if (is_array($curRequestValue))
             {
-              // no upload
-              // connect array values to a comma separated string
-              if (sizeof($curRequestValue) > 0) {
-                $curRequestValue = join($curRequestValue, ",");
+              // save file
+              $result = $this->saveUploadFile($curOid, $curValueName, $curRequestValue);
+              // upload failed (present an error message and save the rest)
+              if ($result === false) {
+                ; // $response->setAction('ok'); return true;
               }
-            }
-            else
-            {
-              // success with probably altered filename
-              $curRequestValue = $result;
-              $isFile = true;
-            }
-          }
-
-          // get the requested node
-          // see if we have modified the node before or if we have to initially load it
-          if (!isset($nodeArray[$curOidStr]))
-          {
-            // load the node initially
-            if ($this->isLocalizedRequest())
-            {
-              // create an empty object, if this is a localization request in order to
-              // make sure that only translated values are stored
-              $curNode = $persistenceFacade->create($curOid->getType(), BUILDDEPTH_SINGLE);
-              $curNode->setOID($curOidStr);
-            }
-            else {
-              // load the existing object, if this is a save request in order to merge
-              // the new with the existing values
-              $curNode = $persistenceFacade->load($curOid, BUILDDEPTH_SINGLE);
-              $nodeArray[$curOidStr] = &$curNode;
-            }
-            if ($curNode == null) {
-              $invalidOids[] = $curOidStr;
-              continue;
-            }
-          }
-          else {
-            // take the existing node
-            $curNode = &$nodeArray[$curOidStr];
-          }
-
-          // continue only if the new value differs from the old value
-          $curRequestValue = stripslashes($curRequestValue);
-          $oldValue = $curNode->getValue($curValueName);
-          if ($oldValue != $curRequestValue)
-          {
-            // set data in node (prevent overwriting old image values, if no image is uploaded)
-            if (!$isFile || ($isFile && sizeof($curRequestValue) > 0))
-            {
-              // validate the new value
-              $validationMsg = $curNode->validateValue($curValueName, $curRequestValue);
-              $validationFailed = strlen($validationMsg) > 0 ? true : false;
-              if (!$validationFailed)
+              if ($result === true)
               {
-                if ($this->confirmSave($curNode, $curValueName, $curRequestValue))
-                {
-                  // set the new value
-                  $curNode->setValue($curValueName, $curRequestValue);
-                  $needCommit = true;
+                // no upload
+                // connect array values to a comma separated string
+                if (sizeof($curRequestValue) > 0) {
+                  $curRequestValue = join($curRequestValue, ",");
                 }
               }
               else
               {
-                $invalidAttributeValues[] = array('oid' => $curOidStr,
-                  'parameter' => $curValueName, 'message' => $validationMsg);
-                // add error to session
-                $session->addError($curOidStr, $validationMsg);
+                // success with probably altered filename
+                $curRequestValue = $result;
+                $isFile = true;
               }
             }
-          }
 
-          // add node to save array
-          if ($curNode->getState() == PersistentObject::STATE_DIRTY) {
-            // associative array to asure uniqueness
-            $saveOids[$curOidStr] = $curOidStr;
+            // get the requested node
+            // see if we have modified the node before or if we have to initially load it
+            if (!isset($nodeArray[$curOidStr]))
+            {
+              // load the node initially
+              if ($this->isLocalizedRequest())
+              {
+                // create an empty object, if this is a localization request in order to
+                // make sure that only translated values are stored
+                $curNode = $persistenceFacade->create($curOid->getType(), BUILDDEPTH_SINGLE);
+                $curNode->setOID($curOidStr);
+              }
+              else {
+                // load the existing object, if this is a save request in order to merge
+                // the new with the existing values
+                $curNode = $persistenceFacade->load($curOid, BUILDDEPTH_SINGLE);
+                $nodeArray[$curOidStr] = &$curNode;
+              }
+              if ($curNode == null) {
+                $invalidOids[] = $curOidStr;
+                continue;
+              }
+            }
+            else {
+              // take the existing node
+              $curNode = &$nodeArray[$curOidStr];
+            }
+
+            // continue only if the new value differs from the old value
+            $curRequestValue = stripslashes($curRequestValue);
+            $oldValue = $curNode->getValue($curValueName);
+            if ($oldValue != $curRequestValue)
+            {
+              // set data in node (prevent overwriting old image values, if no image is uploaded)
+              if (!$isFile || ($isFile && sizeof($curRequestValue) > 0))
+              {
+                // validate the new value
+                $validationMsg = $curNode->validateValue($curValueName, $curRequestValue);
+                $validationFailed = strlen($validationMsg) > 0 ? true : false;
+                if (!$validationFailed)
+                {
+                  if ($this->confirmSave($curNode, $curValueName, $curRequestValue))
+                  {
+                    // set the new value
+                    $curNode->setValue($curValueName, $curRequestValue);
+                    $needCommit = true;
+                  }
+                }
+                else
+                {
+                  $invalidAttributeValues[] = array('oid' => $curOidStr,
+                    'parameter' => $curValueName, 'message' => $validationMsg);
+                  // add error to session
+                  $session->addError($curOidStr, $validationMsg);
+                }
+              }
+            }
+
+            // add node to save array
+            if ($curNode->getState() == PersistentObject::STATE_DIRTY) {
+              // associative array to asure uniqueness
+              $saveOids[$curOidStr] = $curOidStr;
+            }
           }
         }
       }
-    }
 
-    // add errors to the response
-    if (sizeof($lockedOids) > 0) {
-      $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
-        array('lockedOids' => $lockedOids)));
-    }
-    if (sizeof($invalidOids) > 0) {
-      $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => $invalidOids)));
-    }
-    if (sizeof($invalidAttributeNames) > 0) {
-      $response->addError(ApplicationError::get('ATTRIBUTE_NAME_INVALID',
-        array('invalidAttributeNames' => $invalidAttributeNames)));
-    }
-    if (sizeof($invalidAttributeValues) > 0) {
-      $response->addError(ApplicationError::get('ATTRIBUTE_VALUE_INVALID',
-        array('invalidAttributeValues' => $invalidAttributeValues)));
-    }
+      // add errors to the response
+      if (sizeof($lockedOids) > 0) {
+        $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
+          array('lockedOids' => $lockedOids)));
+      }
+      if (sizeof($invalidOids) > 0) {
+        $response->addError(ApplicationError::get('OID_INVALID',
+          array('invalidOids' => $invalidOids)));
+      }
+      if (sizeof($invalidAttributeNames) > 0) {
+        $response->addError(ApplicationError::get('ATTRIBUTE_NAME_INVALID',
+          array('invalidAttributeNames' => $invalidAttributeNames)));
+      }
+      if (sizeof($invalidAttributeValues) > 0) {
+        $response->addError(ApplicationError::get('ATTRIBUTE_VALUE_INVALID',
+          array('invalidAttributeValues' => $invalidAttributeValues)));
+      }
 
-    // commit changes
-    if ($needCommit)
-    {
-      $localization = Localization::getInstance();
-      $saveOids = array_keys($saveOids);
-      for ($i=0, $count=sizeof($saveOids); $i<$count; $i++)
+      // commit changes
+      if ($needCommit)
       {
-        $curObject = &$nodeArray[$saveOids[$i]];
-        if ($this->isLocalizedRequest())
+        $localization = Localization::getInstance();
+        $saveOids = array_keys($saveOids);
+        for ($i=0, $count=sizeof($saveOids); $i<$count; $i++)
         {
-          // store a translation for localized data
-          $localization->saveTranslation($curObject, $request->getValue('language'));
-        }
-        else
-        {
-          // store the real object data
-          $curObject->save();
+          $curObject = &$nodeArray[$saveOids[$i]];
+          if ($this->isLocalizedRequest())
+          {
+            // store a translation for localized data
+            $localization->saveTranslation($curObject, $request->getValue('language'));
+          }
+          else
+          {
+            // store the real object data
+            $curObject->save();
+          }
         }
       }
+      $transaction->commit();
     }
-    // end the persistence transaction
-    $persistenceFacade->commitTransaction();
+    catch (Exception $ex) {
+      $transaction->rollback();
+    }
 
     // return the saved nodes
     foreach ($nodeArray as $oidStr => $node) {

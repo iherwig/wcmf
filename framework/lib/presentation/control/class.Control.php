@@ -216,12 +216,12 @@ abstract class Control
 
     // create the view
     $view = $this->createView($controlName, $inputType, $value, $editable, $language, $parentView);
-    
+
     // assign attribute description
     if ($attribute) {
       $view->assign("attributeDescription", $attribute);
     }
-    
+
     // add subclass parameters
     $this->assignViewValues($view);
 
@@ -292,10 +292,10 @@ abstract class Control
     {
       if (strlen($attribute) > 0)
       {
-        list($key, $value) = preg_split("/[=:]+/", $attribute);
+        list($key, $val) = preg_split("/[=:]+/", $attribute);
         $key = trim(stripslashes($key));
-        $value = trim(stripslashes($value));
-        $attributeList[$key] = $value;
+        $val = trim(stripslashes($val));
+        $attributeList[$key] = $val;
       }
     }
 
@@ -384,8 +384,9 @@ abstract class Control
     $translated = '';
     if (strPos($inputType, '#') && $value != '')
     {
+      $control = self::getControl($inputType);
       list(,$list) = preg_split('/#/', $inputType, 2);
-      $map = $this->getListMap($list, $value, $nodeOid, $language);
+      $map = $control->getListMap($list, $value, $nodeOid, $language);
       if ($list != '' && strPos($value, ',')) {
         $value = preg_split('/,/', $value);
       }

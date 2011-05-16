@@ -40,7 +40,7 @@ class PagingInfo
    * @param ignoreTotalCount True/False wether this instance ignores the
    *    total count or not, optional [default: false]
    */
-  public function PagingInfo($pageSize, $ignoreTotalCount=false)
+  public function __construct($pageSize, $ignoreTotalCount=false)
   {
     $this->_pageSize = intval($pageSize);
     $this->_ignoreTotalCount = $ignoreTotalCount;

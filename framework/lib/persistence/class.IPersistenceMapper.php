@@ -149,24 +149,43 @@ interface IPersistenceMapper
   public function isLogging();
 
   /**
-   * @see IPersistenceFacade::load()
+   * Load an object from the storage.
+   * @note PersistentMapper implementations must register each loaded object
+   * at the PersistenceFacade using the ITransaction::registerLoaded() method-
+   * @param oid The object id of the object to construct
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   * @param buildAttribs An assoziative array listing the attributes to load (default: null, loads all attributes)
+   *        (keys: the types, values: an array of attributes of the type to load)
+   *        Use this to load only a subset of attributes
+   * @param buildTypes An array listing the (sub-)types to include (default: null, includes all types)
+   * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
    */
   public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
 
   /**
-   * @see IPersistenceFacade::create()
+   * Construct the template of an object of a given type.
+   * @param type The type of object to build
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   * @param buildAttribs An assoziative array listing the attributes to create (default: null, creates all attributes)
+   *        (keys: the types, values: an array of attributes of the type to create)
+   *        Use this to create only a subset of attributes
+   * @return PersistentObject
    */
   public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
 
   /**
-   * @see IPersistenceFacade::save()
+   * Save a PersistentObject
+   * @param object PersistentObject
    */
   public function save(PersistentObject $object);
 
   /**
-   * @see IPersistenceFacade::delete()
+   * Delete a PersistentObject
+   * @param object PersistentObject
    */
-  public function delete(ObjectId $oid);
+  public function delete(PersistentObject $object);
 
   /**
    * @see IPersistenceFacade::getOIDs()
@@ -222,7 +241,7 @@ interface IPersistenceMapper
    * this mapper. Nested transactions are not supported, so the implementation should
    * ignore consecutive calls, if a transaction is already started.
    */
-  public function startTransaction();
+  public function beginTransaction();
 
   /**
    * Commit the transaction on the transactional resource (e.g. database) of
