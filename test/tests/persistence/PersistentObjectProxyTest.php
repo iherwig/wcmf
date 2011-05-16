@@ -10,7 +10,10 @@ class PersistentObjectProxyTest extends WCMFTestCase
     $this->runAnonymous(true);
 
     $oid = new ObjectId('UserRDB', 300);
+    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction->begin();
     $this->createTestObject($oid, array("name" => "admin"));
+    $transaction->commit();
 
     $proxy = new PersistentObjectProxy($oid);
     $this->assertEquals("admin", $proxy->getName(), "The user's name is admin");
@@ -20,7 +23,9 @@ class PersistentObjectProxyTest extends WCMFTestCase
     $this->assertEquals("admin", $proxy->getName(), "The user's name is admin");
     $this->assertTrue($proxy->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
 
+    $transaction->begin();
     $this->deleteTestObject($oid);
+    $transaction->commit();
     $this->runAnonymous(false);
   }
 }

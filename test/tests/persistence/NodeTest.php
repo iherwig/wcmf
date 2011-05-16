@@ -4,22 +4,6 @@ require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
 class NodeTest extends WCMFTestCase
 {
-  public function _testCaching()
-  {
-    $this->runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $persistenceFacade->setCaching(true);
-    $time = time();
-
-    $page1 = $persistenceFacade->load($this->oids['page'], BUILDDEPTH_SINGLE);
-    $page1->setName('testing'.$time);
-
-    $page2 = $persistenceFacade->load($this->oids['page'], BUILDDEPTH_SINGLE);
-    $this->assertEquals('testing'.$time, $page2->getName());
-
-    $this->runAnonymous(false);
-  }
-
   function testCreateRandom()
   {
     $this->runAnonymous(true);
@@ -34,7 +18,6 @@ class NodeTest extends WCMFTestCase
       }
       $title = substr(str_shuffle($alphanum), 0, 15);
       $doc->setName(ucfirst($title));
-      $doc->save();
     }
     $this->runAnonymous(false);
   }
@@ -51,23 +34,26 @@ class NodeTest extends WCMFTestCase
     $this->runAnonymous(false);
   }
 
-  public function _testLoadMany()
+  public function testLoadManyWithAllAttributes()
   {
     $this->runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
     $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE);
-    echo sizeof($documents)."\n";
-    /*
-    foreach($documents as $document) {
-      if($document->getId() == 3) {
-        foreach($document->getValueNames() as $name) {
-          $value = $document->getValue($name);
-          echo $name.": ".$value."(".sizeof($value).")\n";
-        }
-      }
-    }
-    //*/
+    echo "loaded: ".sizeof($documents).", first: ".$documents[0]->__toString()."\n";
+    echo StringUtil::getDump($documents[0]->getValueNames());
+    $this->runAnonymous(false);
+  }
+
+  public function testLoadManyWithOneAttribute()
+  {
+    $this->runAnonymous(true);
+    $persistenceFacade = PersistenceFacade::getInstance();
+
+    $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE,
+            null, null, null, array('Document' => array('id')));
+    echo "loaded: ".sizeof($documents).", first: ".$documents[0]->__toString()."\n";
+    echo StringUtil::getDump($documents[0]->getValueNames());
     $this->runAnonymous(false);
   }
 }

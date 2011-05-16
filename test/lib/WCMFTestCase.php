@@ -100,8 +100,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
   }
 
   /**
-   * Create a test object with the given oid and attributes. A test object
-   * with the same object id will be deleted first.
+   * Create a test object with the given oid and attributes.
    * @param oid The object id
    * @param attribute An associative array with the value names as keys
    *    and the values as values
@@ -109,20 +108,21 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    */
   protected function createTestObject(ObjectId $oid, array $attributes)
   {
-    $this->deleteTestObject($oid);
-
+    // check if the object already exists and delete it if necessary
     $persistenceFacade = PersistenceFacade::getInstance();
-    $testObj = $persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE);
-    $mapper = $testObj->getMapper();
-    $i = 0;
-    $ids = $oid->getId();
-    foreach ($mapper->getPkNames() as $pkName) {
-      $testObj->setValue($pkName, $ids[$i++]);
+    $testObj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+    if ($testObj) {
+      // direct delete without transaction
+      $testObj->getMapper()->delete($testObj);
     }
+
+    $type = $oid->getType();
+    $testObj = new $type($oid);
     foreach ($attributes as $name => $value) {
       $testObj->setValue($name, $value);
     }
-    $testObj->save();
+    $testObj->setState(PersistentObject::STATE_NEW);
+    PersistenceFacade::getInstance()->getTransaction()->registerNew($testObj);
     return $testObj;
   }
 
@@ -145,7 +145,10 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
   protected function deleteTestObject(ObjectId $oid)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
-    $persistenceFacade->delete($oid);
+    $object = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+    if ($object) {
+      $object->delete();
+    }
   }
 
   /**
