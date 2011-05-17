@@ -122,8 +122,8 @@ class NodeRelationTest extends WCMFTestCase
     $page = $persistenceFacade->load($this->oids['page'], 1);
     $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'Document', null)));
     $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'ChildPage', null)));
-    $this->assertEquals(0, sizeof($page->getParentEx(null, 'ParentPage', null)));
-    $this->assertEquals(0, sizeof($page->getParentEx(null, 'Author', null)));
+    $this->assertEquals(0, sizeof($page->getParentsEx(null, 'ParentPage', null)));
+    $this->assertEquals(0, sizeof($page->getParentsEx(null, 'Author', null)));
     $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'TitleImage', null)));
     $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'NormalImage', null)));
 
@@ -131,7 +131,7 @@ class NodeRelationTest extends WCMFTestCase
     $this->assertEquals(0, sizeof($document->getChildrenEx(null, 'Page', null)));
 
     $childPage = $persistenceFacade->load($this->oids['childPage'], 1);
-    $this->assertEquals(0, sizeof($childPage->getParentEx(null, 'ParentPage', null)));
+    $this->assertEquals(0, sizeof($childPage->getParentsEx(null, 'ParentPage', null)));
 
     $parentPage = $persistenceFacade->load($this->oids['parentPage'], 1);
     $this->assertEquals(0, sizeof($parentPage->getChildrenEx(null, 'ChildPage', null)));
@@ -140,10 +140,10 @@ class NodeRelationTest extends WCMFTestCase
     $this->assertEquals(0, sizeof($author->getChildrenEx(null, 'Page', null)));
 
     $titleImage = $persistenceFacade->load($this->oids['titleImage'], 1);
-    $this->assertEquals(0, sizeof($titleImage->getParentEx(null, 'TitlePage', null)));
+    $this->assertEquals(0, sizeof($titleImage->getParentsEx(null, 'TitlePage', null)));
 
     $normalImage = $persistenceFacade->load($this->oids['normalImage'], 1);
-    $this->assertEquals(0, sizeof($normalImage->getParentEx(null, 'NormalPage', null)));
+    $this->assertEquals(0, sizeof($normalImage->getParentsEx(null, 'NormalPage', null)));
     $transaction->rollback();
 
     //$this->printProfile('Page');

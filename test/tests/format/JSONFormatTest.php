@@ -1,9 +1,9 @@
 <?php
-require_once(WCMF_BASE . "wcmf/lib/presentation/class.Request.php");
-require_once(WCMF_BASE . "wcmf/lib/presentation/class.Response.php");
-require_once(WCMF_BASE . "wcmf/lib/presentation/format/class.JSONFormat.php");
-require_once(WCMF_BASE . "test/lib/WCMFTestCase.php");
-require_once(WCMF_BASE . "application/include/model/class.Document.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/class.JSONFormat.php");
+require_once(WCMF_BASE."application/include/model/class.Document.php");
+require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
 class JSONFormatTest extends WCMFTestCase {
 

@@ -58,38 +58,53 @@ class ManyToManyTest extends WCMFTestCase
   {
     $this->runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
+    $transaction = $persistenceFacade->getTransaction();
 
+    $transaction->begin();
     $userOid = new ObjectId('UserRDB', array(999999));
     $this->createTestObject($userOid, array());
     $roleOid = new ObjectId('RoleRDB', array(999990));
     $this->createTestObject($roleOid, array('name' => 'new role'));
+    $transaction->commit();
 
+    $transaction->begin();
     $user = $persistenceFacade->load($userOid, 1);
     $role = $persistenceFacade->load($roleOid, 1);
     $this->assertEquals(0, sizeof($user->getFirstChild('RoleRDB', null, null)), "No connection yet");
     $this->assertEquals(0, sizeof($role->getFirstChild('UserRDB', null, null)), "No connection yet");
 
     $user->addNode($role);
-    $user->save();
+    $transaction->commit();
 
+    $transaction->begin();
     $oids = $persistenceFacade->getOids('NMUserRole',
-      array('fk_user_id' => $user->getOID()->getFirstId(), 'fk_role_id' => $role->getOID()->getFirstId()));
+      array(new Criteria('NMUserRole', 'fk_user_id', '=', $user->getOID()->getFirstId()),
+          new Criteria('NMUserRole', 'fk_role_id', '=', $role->getOID()->getFirstId()))
+    );
     $this->assertEquals(1, sizeof($oids), "A connection was created");
 
     $user->setName('new user');
-    $user->save();
+    $transaction->commit();
 
+    $transaction->begin();
     $oids = $persistenceFacade->getOids('NMUserRole',
-      array('fk_user_id' => $user->getOID()->getFirstId(), 'fk_role_id' => $role->getOID()->getFirstId()));
-        $this->assertEquals(1, sizeof($oids), "The connection is only created if not existing already");
+      array(new Criteria('NMUserRole', 'fk_user_id', '=', $user->getOID()->getFirstId()),
+          new Criteria('NMUserRole', 'fk_role_id', '=', $role->getOID()->getFirstId()))
+    );
+    $this->assertEquals(1, sizeof($oids), "The connection is only created if not existing already");
 
-    // cleanup
     $this->deleteTestObject($userOid);
+    $transaction->commit();
+
+    $transaction->begin();
     $oids = $persistenceFacade->getOids('NMUserRole',
-      array('fk_user_id' => $user->getOID()->getFirstId(), 'fk_role_id' => $role->getOID()->getFirstId()));
-        $this->assertEquals(0, sizeof($oids), "The connection was deleted");
+      array(new Criteria('NMUserRole', 'fk_user_id', '=', $user->getOID()->getFirstId()),
+          new Criteria('NMUserRole', 'fk_role_id', '=', $role->getOID()->getFirstId()))
+    );
+    $this->assertEquals(0, sizeof($oids), "The connection was deleted");
 
     $this->deleteTestObject($roleOid);
+    $transaction->commit();
 
     $this->runAnonymous(false);
   }
