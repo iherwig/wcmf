@@ -160,9 +160,9 @@ class PrincipalController extends Controller
 
       // set the login/name to the oid
       if($newType == 'user')
-        $this->_userManager->setUserProperty($newNode->getOID(), USER_PROPERTY_LOGIN, 'user'.$newPrincipal->getDBID());
+        $this->_userManager->setUserProperty($newNode->getOID(), USER_PROPERTY_LOGIN, $newPrincipal->getOID()->__toString());
       else
-        $this->_userManager->setRoleProperty($newNode->getOID(), ROLE_PROPERTY_NAME, 'role'.$newPrincipal->getDBID());
+        $this->_userManager->setRoleProperty($newNode->getOID(), ROLE_PROPERTY_NAME, $newPrincipal->getOID()->__toString());
       $newPrincipal->save();
 
       $this->afterInsert($newPrincipal);

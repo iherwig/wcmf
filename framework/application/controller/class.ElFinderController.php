@@ -24,17 +24,13 @@ require_once(WCMF_BASE."wcmf/3rdparty/elfinder/connectors/php/elFinder.class.php
  * @ingroup Controller
  * @brief ElFinderController integrates elFinder (http://elrte.org/elfinder)
  * into wCMF.
+ * @note elFinder defines action names in the 'cmd' parameter.
  *
  * <b>Input actions:</b>
- * - @em associate Associate one Node to another
- * - @em disassociate Disassociate one Node from another
+ * @see elFinder documentation
  *
  * <b>Output actions:</b>
  * - @em ok In any case
- *
- * @param[in] sourceOid The object id of the object to originate the association from
- * @param[in] targetOid The object id of the destination object
- * @param[in] role The role the target object should have in the source object
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -65,9 +61,9 @@ class ElFinderController extends Controller
 
     if ($request->getAction() != "browseResources")
     {
-      if (function_exists('date_default_timezone_set')) {
-        date_default_timezone_set('Europe/Berlin');
-      }
+      //if (function_exists('date_default_timezone_set')) {
+      //  date_default_timezone_set('Europe/Berlin');
+      //}
 
       $opts = array(
         'root'            => '../media',                       // path to root directory
@@ -132,6 +128,12 @@ class ElFinderController extends Controller
       return true;
     }
     else {
+      // handle special actions (given in the cmd parameter from elfinder)
+      $action = $request->getValue('cmd');
+      if ($action == 'rename') {
+        
+      }
+
       $response->setAction('ok');
       return false;
     }

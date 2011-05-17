@@ -4,24 +4,24 @@
  * Manual modifications should be placed inside the protected regions.
  */
 require_once(WCMF_BASE."wcmf/lib/model/mapper/class.NodeUnifiedRDBMapper.php");
-require_once(WCMF_BASE."application/include/model/wcmf/class.RoleRDB.php");
+require_once(WCMF_BASE."application/include/model/wcmf/class.UserConfig.php");
 
 /**
- * @class RoleRDBRDBMapper
- * RoleRDBRDBMapper maps RoleRDB Nodes to the database.
- * RoleRDB description: 
+ * @class UserConfigRDBMapper
+ * UserConfigRDBMapper maps UserConfig Nodes to the database.
+ * UserConfig description: 
  *
  * @author 
  * @version 1.0
  */
-class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
+class UserConfigRDBMapper extends NodeUnifiedRDBMapper
 {
   /**
    * @see RDBMapper::getType()
    */
   public function getType()
   {
-    return 'RoleRDB';
+    return 'UserConfig';
   }
   /**
    * @see PersistenceMapper::getPkNames()
@@ -36,9 +36,8 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
   public function getProperties()
   {
     return array(
-      'is_searchable' => true,
-      'display_value' => 'name',
-// PROTECTED REGION ID(application/include/model/wcmf/class.RoleRDBRDBMapper.php/Properties) ENABLED START
+      'is_searchable' => false,
+// PROTECTED REGION ID(application/include/model/wcmf/class.UserConfigRDBMapper.php/Properties) ENABLED START
 // PROTECTED REGION END
     );
   }
@@ -54,7 +53,7 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
    */
   public function getOwnDefaultOrder($roleName=null)
   {
-    return array('sortFieldName' => 'name', 'sortDirection' => 'ASC');
+    return array('sortFieldName' => 'key', 'sortDirection' => 'ASC');
   }
   /**
    * @see RDBMapper::getRelationDescriptions()
@@ -62,10 +61,8 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
   protected function getRelationDescriptions()
   {
     return array(
-      'UserRDB' => new RDBManyToManyRelationDescription(
-        /* this -> nm  */ new RDBOneToManyRelationDescription('RoleRDB', 'RoleRDB', 'NMUserRole', 'NMUserRole', '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_role_id'),
-        /* nm -> other */ new RDBManyToOneRelationDescription('NMUserRole', 'NMUserRole', 'UserRDB', 'UserRDB', '0', 'unbounded', '1', '1', 'none', 'composite', 'true', 'true', 'parent', 'id', 'fk_user_id')
-      ),
+      'UserRDB' => new RDBManyToOneRelationDescription('UserConfig', 'UserConfig', 'UserRDB', 'UserRDB', '0', 'unbounded', '1', '1', 'none', 'composite', 'true', 'true', 'parent', 'id', 'fk_user_id'),
+    
     );
   }
   /**
@@ -77,11 +74,19 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'role', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'user_config', 'id'),
      /**
       * Value description: 
       */
-      'name' => new RDBAttributeDescription('name', 'string', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'role', 'name'),
+      'fk_user_id' => new RDBAttributeDescription('fk_user_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'user_config', 'fk_user_id'),
+     /**
+      * Value description: 
+      */
+      'key' => new RDBAttributeDescription('key', 'string', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'user_config', 'key'),
+     /**
+      * Value description: 
+      */
+      'val' => new RDBAttributeDescription('val', 'string', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'user_config', 'val'),
     );
   }
   /**
@@ -89,14 +94,14 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper
    */
   protected function createObject(ObjectId $oid=null)
   {
-    return new RoleRDB($oid);
+    return new UserConfig($oid);
   }
   /**
    * @see NodeUnifiedRDBMapper::getTableName()
    */
   protected function getTableName()
   {
-    return 'role';
+    return 'user_config';
   }
 }
 ?>

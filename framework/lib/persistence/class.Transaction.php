@@ -207,6 +207,26 @@ class Transaction implements ITransaction
     return null;
   }
   /**
+   * @see ITransaction::detach()
+   */
+  public function detach(PersistentObject $object)
+  {
+    $key = $object->getOID()->__toString();
+    if (isset($this->_newObjects[$key])) {
+      unset($this->_newObjects[$key]);
+    }
+    if (isset($this->_dirtyObjects[$key])) {
+      unset($this->_dirtyObjects[$key]);
+    }
+    if (isset($this->_deletedObjects[$key])) {
+      unset($this->_deletedObjects[$key]);
+    }
+    if (isset($this->_loadedObjects[$key])) {
+      unset($this->_loadedObjects[$key]);
+    }
+    $object->removeChangeListener($this);
+  }
+  /**
    * Clear all internal
    */
   protected function clear()

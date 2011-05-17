@@ -237,11 +237,8 @@ class SaveController extends Controller
           {
             // store a translation for localized data
             $localization->saveTranslation($curObject, $request->getValue('language'));
-          }
-          else
-          {
-            // store the real object data
-            $curObject->save();
+            // don't store changes on the original object
+            $transaction->detach($curObject);
           }
         }
       }

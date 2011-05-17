@@ -14,7 +14,7 @@
  * See the license.txt file distributed with this work for 
  * additional information.
  *
- * $Id$
+ * $Id: Message.js.php 1334 2011-05-17 00:15:05Z iherwig $
  */
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");

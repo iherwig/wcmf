@@ -64,8 +64,8 @@ class Localization
   private function __construct() {}
 
   /**
-   * Returns an instance of the class.
-   * @return A reference to the only instance of the Singleton object
+   * Returns the only instance of the class.
+   * @return Localization instance
    */
   public static function getInstance()
   {
@@ -131,7 +131,7 @@ class Localization
    * Get the type name of the translation instances.
    * @return The type name.
    */
-  public function getTranslationType()
+  public static function getTranslationType()
   {
     $parser = InifileParser::getInstance();
     if (($type = $parser->getValue('translationType', 'i18n')) === false) {
@@ -143,7 +143,7 @@ class Localization
    * Get the input types that are translatable.
    * @return The input type names.
    */
-  protected function getIncludedInputTypes()
+  protected static function getIncludedInputTypes()
   {
     $parser = InifileParser::getInstance();
     if (($inputTypes = $parser->getValue('inputTypes', 'i18n')) === false) {
@@ -156,10 +156,9 @@ class Localization
    * the key 'type' in the configuration section 'i18n'.
    * @return An instance.
    */
-  public function createTranslationInstance()
+  public static function createTranslationInstance()
   {
-    $objectFactory = &ObjectFactory::getInstance();
-    $obj = $objectFactory->createInstanceFromConfig('i18n', 'translationType');
+    $obj = ObjectFactory::createInstanceFromConfig('i18n', 'translationType');
     return $obj;
   }
   /**
@@ -180,6 +179,8 @@ class Localization
   }
   /**
    * Load a translation of an entity for a specific language.
+   * @note The object state will be changed to dirty by this operation, so make
+   * sure that the object is not attached to the transaction.
    * @param object A reference to the object to load the translation into. The object
    *    is supposed to have it's values in the default language.
    * @param lang The language of the translation to load.
@@ -200,20 +201,18 @@ class Localization
     // load the translations and translate the object for any other language
     else
     {
-      $type = $this->getTranslationType();
+      $type = self::getTranslationType();
       $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
-      $tpl->setObjectid("= '".$object->getOID()."'");
-      $tpl->setLanguage("= '".$lang."'");
+      $tpl->setObjectid(Criteria::asValue("=", $object->getOID()->__toString()));
+      $tpl->setLanguage(Criteria::asValue("=", $lang));
       $translations = $query->execute(BUILDDEPTH_SINGLE);
 
       // set the translated values in the object
       $iter = new NodeValueIterator($object, false);
-      while(!$iter->isEnd())
-      {
-        $this->setTranslatedValue($iter->getCurrentNode(), $iter->getCurrentAttribute(),
-          $translations, $useDefaults);
-        $iter->proceed();
+      for($iter->rewind(); $iter->valid(); $iter->next()) {
+        $curIterNode = $iter->currentNode();
+        $this->setTranslatedValue($curIterNode, $iter->key(), $translations, $useDefaults);
       }
     }
 
@@ -249,20 +248,18 @@ class Localization
     else
     {
       // get the existing translations for the requested language
-      $type = $this->getTranslationType();
+      $type = self::getTranslationType();
       $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
-      $tpl->setObjectid("= '".$object->getOID()."'");
-      $tpl->setLanguage("= '".$lang."'");
+      $tpl->setObjectid(Criteria::asValue("=", $object->getOID()->__toString()));
+      $tpl->setLanguage(Criteria::asValue("=", $lang));
       $translations = $query->execute(BUILDDEPTH_SINGLE);
 
       // save the translations
       $iter = new NodeValueIterator($object, false);
-      while(!$iter->isEnd())
-      {
-        $this->saveTranslatedValue($iter->getCurrentNode(), $iter->getCurrentAttribute(),
-          $translations, $lang, $saveEmptyValues);
-        $iter->proceed();
+      for($iter->rewind(); $iter->valid(); $iter->next()) {
+        $curIterNode = $iter->currentNode();
+        $this->saveTranslatedValue($curIterNode, $iter->key(), $translations, $lang, $saveEmptyValues);
       }
     }
 
@@ -292,19 +289,18 @@ class Localization
     else
     {
       // get the existing translations for the requested language or all languages
-      $type = $this->getTranslationType();
+      $type = self::getTranslationType();
       $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
-      $tpl->setObjectid("= '".$oid."'");
+      $tpl->setObjectid(Criteria::asValue("=", $oid));
       if ($lang != null) {
-        $tpl->setLanguage("= '".$lang."'");
+        $tpl->setLanguage(Criteria::asValue("=", $lang));
       }
-      $translationOIDs = $query->execute(false);
+      $translations = $query->execute(BUILDDEPTH_SINGLE);
 
       // delete the found tranlations
-      $persistenceFacade = PersistenceFacade::getInstance();
-      foreach ($translationOIDs as $curTranslationOID) {
-        $persistenceFacade->delete($curTranslationOID);
+      foreach ($translations as $curTranslation) {
+        $curTranslation->delete();
       }
     }
   }
@@ -322,16 +318,15 @@ class Localization
     else
     {
       // get the existing translations for the requested language
-      $type = $this->getTranslationType();
+      $type = self::getTranslationType();
       $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
-      $tpl->setLanguage("= '".$lang."'");
-      $translationOIDs = $query->execute(false);
+      $tpl->setLanguage(Criteria::asValue("=", $lang));
+      $translations = $query->execute(BUILDDEPTH_SINGLE);
 
       // delete the found tranlations
-      $persistenceFacade = PersistenceFacade::getInstance();
-      foreach ($translationOIDs as $curTranslationOID) {
-        $persistenceFacade->delete($curTranslationOID);
+      foreach ($translations as $curTranslation) {
+        $curTranslation->delete();
       }
     }
   }
@@ -347,7 +342,7 @@ class Localization
   private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults)
   {
     $inputType = $object->getValueProperty($valueName, 'input_type');
-    $inputTypes = $this->getIncludedInputTypes();
+    $inputTypes = self::getIncludedInputTypes();
     if (in_array($inputType, $inputTypes))
     {
       // empty the value, if the default language values should not be used
@@ -380,7 +375,7 @@ class Localization
   private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang, $saveEmptyValues)
   {
     $inputType = $object->getValueProperty($valueName, 'input_type');
-    $inputTypes = $this->getIncludedInputTypes();
+    $inputTypes = self::getIncludedInputTypes();
     if (in_array($inputType, $inputTypes))
     {
       $value = $object->getValue($valueName);
@@ -403,15 +398,14 @@ class Localization
         if ($translation == null)
         {
           $persistenceFacade = PersistenceFacade::getInstance();
-          $translation = $persistenceFacade->create($this->getTranslationType());
+          $translation = $persistenceFacade->create(self::getTranslationType());
         }
 
-        // set all required properties and save
+        // set all required properties
         $translation->setObjectid($object->getOID());
         $translation->setAttribute($valueName);
         $translation->setTranslation($object->getValue($valueName));
         $translation->setLanguage($lang);
-        $translation->save();
       }
     }
   }

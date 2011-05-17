@@ -275,7 +275,7 @@ class PersistentObject
     $copy = new $class;
     $copy->_oid = $this->_oid;
     $copy->_type = $this->_type;
-    $copy->_requestData = $this->_data;
+    $copy->_data = $this->_data;
     $copy->_properties = $this->_properties;
     $copy->_state = $this->_state;
     $copy->_isImmutable = $this->_isImmutable;
@@ -361,11 +361,11 @@ class PersistentObject
   /**
    * This method is called once before inserting the newly created object into the store.
    */
-  protected function beforeInsert() {}
+  public function beforeInsert() {}
   /**
    * This method is called once after inserting the newly created object into the store.
    */
-  protected function afterInsert() {}
+  public function afterInsert() {}
   /**
    * This method is called always after loading the object from the store.
    */
@@ -373,19 +373,19 @@ class PersistentObject
   /**
    * This method is called always before updating the modified object in the store.
    */
-  protected function beforeUpdate() {}
+  public function beforeUpdate() {}
   /**
    * This method is called always after updating the modified object in the store.
    */
-  protected function afterUpdate() {}
+  public function afterUpdate() {}
   /**
    * This method is called once before deleting the object from the store.
    */
-  protected function beforeDelete() {}
+  public function beforeDelete() {}
   /**
    * This method is called once after deleting the object from the store.
    */
-  protected function afterDelete() {}
+  public function afterDelete() {}
 
   /**
    * Values and Properties
@@ -827,7 +827,7 @@ class PersistentObject
   }
   /**
    * Get the display value names of the object.
-   * (defined by the property 'is_searchable')
+   * (defined by the property 'display_value')
    * @return An array of value names
    */
   public function getDisplayValueNames()
@@ -879,16 +879,6 @@ class PersistentObject
   public function __toString()
   {
     return self::getDisplayValue();
-  }
-
-  /**
-   * Check if the instance object is contained in the search index
-   * (defined by the property 'is_searchable')
-   * @return True/False wether the object is contained or not
-   */
-  protected function isIndexInSearch()
-  {
-    return (boolean) $this->getProperty('is_searchable');
   }
 }
 ?>

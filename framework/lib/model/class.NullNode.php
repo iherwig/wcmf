@@ -39,13 +39,5 @@ class NullNode extends Node
   {
     return new ObjectId($this->_type, NULL);
   }
-
-  /**
-   * @see PersistentObject::getDBID()
-   */
-  function getDBID()
-  {
-    return NULL;
-  }
 }
 ?>

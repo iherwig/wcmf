@@ -80,6 +80,9 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
     }
+    $this->checkArrayParameter($buildAttribs, 'buildAttribs');
+    $this->checkArrayParameter($buildTypes, 'buildTypes');
+
     $obj = null;
 
     // check if the object is already part of the transaction
@@ -111,6 +114,8 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE, BUILDDEPTH_REQUIRED))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
+    $this->checkArrayParameter($buildAttribs, 'buildAttribs');
+
     $obj = null;
     $mapper = $this->getMapper($type);
     if ($mapper != null)
@@ -145,6 +150,9 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
   {
+    $this->checkArrayParameter($criteria, 'criteria');
+    $this->checkArrayParameter($orderby, 'orderby');
+
     $result = array();
     $mapper = $this->getMapper($type);
     if ($mapper != null) {
@@ -174,6 +182,9 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
   public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null)
   {
+    $this->checkArrayParameter($criteria, 'criteria');
+    $this->checkArrayParameter($orderby, 'orderby');
+
     $result = array();
     $mapper = $this->getMapper($type);
     if ($mapper != null)
@@ -336,6 +347,19 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
   public function setReadOnly($isReadOnly)
   {
     $this->_isReadOnly = $isReadOnly;
+  }
+  /**
+   * Check if the given value is either null or an array and
+   * throw an exception if not
+   * @param param The parameter
+   * @param name The name of the parameter (used in the exception text)
+   */
+  private function checkArrayParameter($param, $paramName)
+  {
+    if ($param != null && !is_array($param)) {
+      throw new IllegalArgumentException("The parameter '".$paramName.
+              "' is expected to be null or an array");
+    }
   }
 
   /**

@@ -75,7 +75,7 @@ class NodeUtil
    * @param result Array of PathDescriptions after execution
    * @param currentPath Internal use only
    */
-  protected static function getConnectionsImpl($type, $otherRole, $otherType, 
+  protected static function getConnectionsImpl($type, $otherRole, $otherType,
           $hierarchyType, array &$result=array(), array $currentPath=array())
   {
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -159,9 +159,9 @@ class NodeUtil
     $mapper = $node->getMapper();
     $relationDescription = $mapper->getRelation($otherRole);
     $otherType = $relationDescription->getOtherType();
-    
+
     $query = new ObjectQuery($otherType);
-    // add the primary keys of the node 
+    // add the primary keys of the node
     // using the role name as alias (avoids ambiguous paths)
     $nodeTpl = $query->getObjectTemplate($node->getType(), $relationDescription->getThisRole());
     $oid = $node->getOID();
@@ -241,9 +241,8 @@ class NodeUtil
           {
             // we found a matching attribute/element
             $tmpDisplay = $curNode->getValue($curPiece);
-            $properties = $curNode->getValueProperties($curPiece);
-            $inputType = $properties['input_type'];
-            $displayType = $properties['display_type'];
+            $inputType = $curNode->getProperty('input_type');
+            $displayType = $curNode->getProperty('display_type');
             break;
           }
           else

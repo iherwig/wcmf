@@ -37,7 +37,7 @@ try {
 
   // store the last successful request
   SessionData::getInstance()->set('lastRequest', $request);
-  
+
   register_shutdown_function('shutdown');
   exit;
 }
@@ -64,7 +64,7 @@ function handleException(Exception $exception)
       ActionMapper::processAction($request);
     }
   }
-  
+
   Log::error( $exception->getMessage()."\n".Application::getStackTrace(), 'main');
 
   // rollback current transaction
@@ -75,7 +75,7 @@ function handleException(Exception $exception)
   $numCalled++;
   if ($numCalled == 2) {
     $request->setAction('fatal');
-    $request->addError(ApplicationError::get('GENERAL_FATAL', 
+    $request->addError(ApplicationError::get('GENERAL_FATAL',
           array('exception' => $exception)));
     ActionMapper::processAction($request);
   }

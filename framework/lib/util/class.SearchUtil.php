@@ -56,7 +56,7 @@ class SearchUtil
       $indexPath = self::getIndexPath();
 
       Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
-      if (defined(Zend_Search_Lucene_Search_Query_Wildcard)) {
+      if (defined('Zend_Search_Lucene_Search_Query_Wildcard')) {
         Zend_Search_Lucene_Search_Query_Wildcard::setMinPrefixLength(0);
       }
       Zend_Search_Lucene_Search_QueryParser::setDefaultOperator(Zend_Search_Lucene_Search_QueryParser::B_AND);
@@ -86,9 +86,9 @@ class SearchUtil
    * index. For that reason SearchUtil::commitIndex() should be called afterwards.
    * @param obj The PersistentObject instance.
    */
-  public static function indexInSearch(&$obj)
+  public static function indexInSearch(PersistentObject $obj)
   {
-    if ($obj->isIndexInSearch())
+    if (self::isIndexInSearch($obj))
     {
       $index = self::getIndex();
       $encoding = new EncodingUtil();
@@ -97,18 +97,16 @@ class SearchUtil
 
       $valueNames = $obj->getValueNames();
 
-      $doc->addField(Zend_Search_Lucene_Field::unIndexed('oid', $obj->getOID(), 'utf-8'));
+      $doc->addField(Zend_Search_Lucene_Field::unIndexed('oid', $obj->getOID()->__toString(), 'utf-8'));
       $typeField = Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'utf-8');
       $typeField->isStored = false;
       $doc->addField($typeField);
 
       foreach ($valueNames as $currValueName)
       {
-        $properties = $obj->getValueProperties($currValueName);
-
+        $inputType = $obj->getProperty('input_type');
         $value = $obj->getValue($currValueName);
-
-        switch($properties['input_type'])
+        switch($inputType)
         {
           case 'text':
             $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName, $encoding->convertIsoToCp1252Utf8($value), 'utf-8'));
@@ -120,13 +118,15 @@ class SearchUtil
             break;
 
           default:
-            $field = Zend_Search_Lucene_Field::keyword($currValueName, $value, 'utf-8');
-            $field->isStored = false;
-            $doc->addField($field);
+            if (is_scalar($value)) {
+              $field = Zend_Search_Lucene_Field::keyword($currValueName, $value, 'utf-8');
+              $field->isStored = false;
+              $doc->addField($field);
+            }
         }
       }
 
-      $term = new Zend_Search_Lucene_Index_Term($obj->getOID(), 'oid');
+      $term = new Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
       $docIds  = $index->termDocs($term);
       foreach ($docIds as $id)
       {
@@ -142,13 +142,13 @@ class SearchUtil
    * Delete a PersistentObject instance from the search index.
    * @param obj The PersistentObject instance.
    */
-  public static function deleteFromSearch(&$obj)
+  public static function deleteFromSearch(PersistentObject $obj)
   {
-    if ($obj->isIndexInSearch())
+    if (self::isIndexInSearch($obj))
     {
       $index = self::getIndex();
 
-      $term = new Zend_Search_Lucene_Index_Term($obj->getOID(), 'oid');
+      $term = new Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
       $docIds  = $index->termDocs($term);
       foreach ($docIds as $id)
       {
@@ -206,4 +206,16 @@ class SearchUtil
     }
     return self::$indexPath;
   }
+
+  /**
+   * Check if the instance object is contained in the search index
+   * (defined by the property 'is_searchable')
+   * @param obj PersistentObject instance
+   * @return True/False wether the object is contained or not
+   */
+  private static function isIndexInSearch(PersistentObject $obj)
+  {
+    return (boolean) $obj->getProperty('is_searchable');
+  }
+
 }

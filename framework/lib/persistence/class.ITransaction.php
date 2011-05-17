@@ -76,5 +76,11 @@ interface ITransaction extends IChangeListener
    * @return PersistentObject instance or null if not loaded yet
    */
   function getLoaded(ObjectId $oid);
+  /**
+   * Detach an object from the transaction. All local changes will not
+   * be stored. Afterwards the object is unknown to the transaction.
+   * @param object PersistentObject instance
+   */
+  function detach(PersistentObject $object);
 }
 ?>

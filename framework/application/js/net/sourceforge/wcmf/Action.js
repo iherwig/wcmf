@@ -32,6 +32,13 @@ wcmf.Action.logout = function() {
 };
 
 /**
+ * Opens the media pool window
+ */
+wcmf.Action.browseResources = function() {
+    window.open(wcmf.appURL+'?action=browseResources', 'mediaPool', "height=500, width=820");
+};
+
+/**
  * Saves the content of the DetailPane that shows the object with
  * the given object id. If no DetailPane is opened or no modifications
  * are done in the opened DetailPane, nothing happens. If DetailPane
@@ -67,7 +74,7 @@ wcmf.Action.save = function(oid) {
  */
 wcmf.Action.create = function(modelClass) {
   wcmf.Error.hide();
-  
+
   // create a DetailPane for a new instance
   var typeTabContainer = wcmf.ui.TypeTabContainer.getInstance();
   var detailPane = typeTabContainer.displayNode(
@@ -127,7 +134,7 @@ wcmf.Action.remove = function(oid) {
 wcmf.Action.associate = function(sourceOid, targetOid, role) {
   wcmf.Error.hide();
   var deferred = new dojo.Deferred();
-  
+
   new wcmf.persistence.Request().sendAjax({
     action: 'associate',
     sourceOid: sourceOid,
@@ -166,7 +173,7 @@ wcmf.Action.associate = function(sourceOid, targetOid, role) {
 wcmf.Action.disassociate = function(sourceOid, targetOid, role) {
   wcmf.Error.hide();
   var deferred = new dojo.Deferred();
-  
+
   new wcmf.persistence.Request().sendAjax({
     action: 'disassociate',
     sourceOid: sourceOid,

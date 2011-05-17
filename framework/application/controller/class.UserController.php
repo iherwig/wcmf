@@ -72,8 +72,8 @@ class UserController extends Controller
    */
   function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $rightsManager = &RightsManager::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $rightsManager = RightsManager::getInstance();
 
     // process actions
     $result = '';
@@ -82,8 +82,8 @@ class UserController extends Controller
     if ($this->_request->getAction() == 'save')
     {
       // load model
-      $user = &$rightsManager->getAuthUser();
-      $oid = PersistenceFacade::composeOID(array('type' => UserManager::getUserClassName(), 'id' => $user->getDBID()));
+      $user = $rightsManager->getAuthUser();
+      $oid = new ObjectId(UserManager::getUserClassName(), $user->getUserId());
       $principal = $this->_userManager->getPrincipal($oid);
 
       // password

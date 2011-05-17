@@ -238,6 +238,6 @@ html, body, #mainDiv {
 	background-image: url('../../wcmf/3rdparty/dojo/dojo/resources/images/dndCopy.png') !important;
 }
 
-
+.wcmfFinder .el-finder-dialog { height:300px !important}
 
 

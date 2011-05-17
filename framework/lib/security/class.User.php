@@ -72,7 +72,7 @@ abstract class User extends Node
    */
   public function getUserId()
   {
-    return $this->getDBID();
+    return $this->getOID()->getFirstId();
   }
 
   /**
