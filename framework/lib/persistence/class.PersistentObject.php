@@ -169,6 +169,19 @@ class PersistentObject
     return $mapper;
   }
   /**
+   * Get the primary key values
+   * @return Array of value names
+   */
+  public function getPkNames()
+  {
+    $pkNames = array();
+    $mapper = $this->getMapper();
+    if ($mapper != null) {
+      $pkNames = $mapper->getPkNames();
+    }
+    return $pkNames;
+  }
+  /**
    * Get the DataConverter used when loading/saving values.
    * @return DataConverter
    */
@@ -289,16 +302,10 @@ class PersistentObject
    */
   public function copyValues(PersistentObject $object, $copyPkValues=true)
   {
-    $valuesToIgnore = array();
-    $mapper = $this->getMapper();
-    if ($mapper) {
-      if (!$copyPkValues) {
-        $valuesToIgnore = $mapper->getPkNames();
-      }
-    }
+    $pkNames = $this->getPkNames();
     $iter = new NodeValueIterator($this, false);
     foreach($iter as $valueName => $value) {
-      if (!isset($valuesToIgnore[$valueName])) {
+      if ($copyPkValues || in_array($valueName, $pkNames)) {
         if (strlen($value) > 0) {
           $object->setValue($valueName, $value, true);
         }
@@ -320,14 +327,19 @@ class PersistentObject
     }
   }
   /**
-   * Clear all values. Set each value to null.
+   * Clear all values. Set each value to null except
+   * for the primary key values
    */
   public function clearValues()
   {
+    $pkNames = $this->getPkNames();
     $iter = new NodeValueIterator($this, false);
     for($iter->rewind(); $iter->valid(); $iter->next()) {
-      $curNode = $iter->currentNode();
-      $curNode->setValue($iter->key(), null);
+      $valueName = $iter->key();
+      if (!in_array($valueName, $pkNames)) {
+        $curNode = $iter->currentNode();
+        $curNode->setValue($valueName, null);
+      }
     }
   }
   /**

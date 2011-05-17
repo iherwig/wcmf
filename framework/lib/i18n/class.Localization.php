@@ -255,11 +255,15 @@ class Localization
       $tpl->setLanguage(Criteria::asValue("=", $lang));
       $translations = $query->execute(BUILDDEPTH_SINGLE);
 
-      // save the translations
+      // save the translations, ignore pk values
+      $pkNames = $object->getPkNames();
       $iter = new NodeValueIterator($object, false);
       for($iter->rewind(); $iter->valid(); $iter->next()) {
-        $curIterNode = $iter->currentNode();
-        $this->saveTranslatedValue($curIterNode, $iter->key(), $translations, $lang, $saveEmptyValues);
+        $valueName = $iter->key();
+        if (!in_array($valueName, $pkNames)) {
+          $curIterNode = $iter->currentNode();
+          $this->saveTranslatedValue($curIterNode, $valueName, $translations, $lang, $saveEmptyValues);
+        }
       }
     }
 
@@ -292,7 +296,7 @@ class Localization
       $type = self::getTranslationType();
       $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
-      $tpl->setObjectid(Criteria::asValue("=", $oid));
+      $tpl->setObjectid(Criteria::asValue("=", $oid->__toString()));
       if ($lang != null) {
         $tpl->setLanguage(Criteria::asValue("=", $lang));
       }
@@ -402,7 +406,7 @@ class Localization
         }
 
         // set all required properties
-        $translation->setObjectid($object->getOID());
+        $translation->setObjectid($object->getOID()->__toString());
         $translation->setAttribute($valueName);
         $translation->setTranslation($object->getValue($valueName));
         $translation->setLanguage($lang);
