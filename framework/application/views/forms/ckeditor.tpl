@@ -10,30 +10,26 @@
   {/if}
 
   <script type="text/javascript">
-    function ckCheck()
-    {
-      if (this.checkDirty())
-      {
+    function ckCheck() {
+      if (this.checkDirty()) {
         console.log("dirty");
       }
     }
-    
+
     // delete any old instance of same id and create new
-    if (CKEDITOR.instances["{$name}"])
-    {
+    if (CKEDITOR.instances["{$name}"]) {
       delete CKEDITOR.instances["{$name}"];
     }
-    var ckeditorInstance = CKEDITOR.replace("{$name}",
-    {
+    var ckeditorInstance = CKEDITOR.replace("{$name}", {
       {foreach key=listkey item=listvalue from=$attributeList}
-        {$listkey} : {$listvalue},
+        {$listkey}: {$listvalue},
       {/foreach}
-      customConfig : '../../../application/script/ckconfig.js'
+      filebrowserBrowseUrl: 'main.php?action=browseResources&sid={sessionid}',
+      customConfig: '../../../application/script/ckconfig.js'
     });
 
     // assign handlers to check for changes of editor's content
-    ckeditorInstance.on('instanceReady', function(e)
-    {
+    ckeditorInstance.on('instanceReady', function(e) {
       var self = this;
       this.document.on("keyup", function() { ckCheck.call(self) });
       this.document.on("paste", function() { ckCheck.call(self) });

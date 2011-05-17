@@ -67,7 +67,6 @@ class EntityBase extends EntityBaseBase
     if (in_array('sortkey', $this->getValueNames()))
     {
       $this->setSortkey($this->getDBID());
-      $this->save();
     }
   }
 // PROTECTED REGION END

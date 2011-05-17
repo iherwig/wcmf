@@ -69,7 +69,7 @@ function handleException(Exception $exception)
 
   // rollback current transaction
   $persistenceFacade = PersistenceFacade::getInstance();
-  $persistenceFacade->rollbackTransaction();
+  $persistenceFacade->getTransaction()->rollback();
 
   // prevent recursive calls
   $numCalled++;
