@@ -27,23 +27,26 @@ require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
+register_shutdown_function('shutdown');
+
 try {
   // initialize the application
   $application = Application::getInstance();
   $request = $application->initialize();
 
   // process the requested action
-  $result = ActionMapper::processAction($request);
+  ActionMapper::processAction($request);
 
   // store the last successful request
   SessionData::getInstance()->set('lastRequest', $request);
 
-  register_shutdown_function('shutdown');
-  exit;
 }
 catch (Exception $ex) {
   handleException($ex);
 }
+Log::debug(number_format(memory_get_peak_usage()/(1024*1024), 2)." MB used [".
+        $callParams['controller']."?".$callParams['context']."?".$callParams['action']."]", 'Resources');
+exit;
 
 /**
  * Global exception handling function.
@@ -99,7 +102,6 @@ function handleException(Exception $exception)
       print $exception;
     }
   }
-  exit;
 }
 
 function shutdown()
