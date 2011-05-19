@@ -61,7 +61,7 @@ class InifileParser
    * Returns the errorMsg.
    * @return The error message.
    */
-  function getErrorMsg()
+  public function getErrorMsg()
   {
     return $this->_errorMsg;
   }

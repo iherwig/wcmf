@@ -24,6 +24,12 @@ if (strpos($includePath, 'Zend') === false) {
 }
 require_once('Zend/Search/Lucene.php');
 
+function gShutdownSearchUtil()
+{
+  SearchUtil::commitIndex();
+}
+register_shutdown_function('gShutdownSearchUtil');
+
 /**
  * @class SearchUtil
  * @ingroup Util
@@ -90,6 +96,7 @@ class SearchUtil
   {
     if (self::isIndexInSearch($obj))
     {
+      Log::debug("Add/Update index for: ".$obj->getOID(), __CLASS__);
       $index = self::getIndex();
       $encoding = new EncodingUtil();
 
@@ -146,6 +153,7 @@ class SearchUtil
   {
     if (self::isIndexInSearch($obj))
     {
+      Log::debug("Delete from index: ".$obj->getOID(), __CLASS__);
       $index = self::getIndex();
 
       $term = new Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
@@ -167,6 +175,7 @@ class SearchUtil
    */
   public static function commitIndex($forceCommit = false)
   {
+    Log::debug("Commit index", __CLASS__);
     if (self::$indexIsDirty || $forceCommit)
     {
       $index = self::getIndex(false);

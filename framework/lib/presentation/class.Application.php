@@ -42,12 +42,48 @@ class Application
   private $_requestValues = array();
   private $_rawPostBody = null;
   private $_rawPostBodyIsJson = false;
-  private $_errorHandler = null;
+
+  private $_startTime = null;
+  private $_initialRequest = null;
 
   /**
    * Constructor
    */
   private function __construct()
+  {
+    $this->_startTime = microtime(true);
+    register_shutdown_function(array($this, "shutdown"));
+  }
+  /**
+   * Returns an instance of the class.
+   * @return A reference to the only instance of the Singleton object
+   */
+  public static function getInstance()
+  {
+    if (!isset(self::$_instance)) {
+      self::$_instance = new Application();
+    }
+    return self::$_instance;
+  }
+  /**
+   * Initialize the application.
+   * - Parses and processes the configuration
+   * - Sets global variables
+   * - Initialize the session and other main application classes
+   * - Extracts the application parameters
+   * @param configPath The path where config files reside (as seen from main.php), optional [default: 'include/']
+   * @param mainConfigFile The main configuration file to use, optional [default: 'config.ini']
+   * @param defaultController The controller to call if none is given in request parameters, optional [default: 'LoginController']
+   * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
+   * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
+   * @param defaultResponseFormat The response format if none is given in request parameters, optional [default: HTML]
+   * @return Request instance representing the current HTTP request
+   * TODO: return request instance, maybe use default parameters from a config section?
+   * TODO: allow configPath array to search from different locations, simplifies inclusion
+   */
+  public function initialize($configPath='include/', $mainConfigFile='config.ini',
+    $defaultController='LoginController', $defaultContext='', $defaultAction='login',
+    $defaultResponseFormat='HTML')
   {
     // collect all request data
     $this->_requestValues = array_merge($_GET, $_POST, $_FILES);
@@ -61,40 +97,7 @@ class Application
         $this->_requestValues[$key] = $value;
       }
     }
-  }
 
-  /**
-   * Returns an instance of the class.
-   * @return A reference to the only instance of the Singleton object
-   */
-  public static function getInstance()
-  {
-    if (!isset(self::$_instance)) {
-      self::$_instance = new Application();
-    }
-    return self::$_instance;
-  }
-
-  /**
-   * Initialize the application.
-   * - Parses and processes the configuration
-   * - Sets global variables
-   * - Initialize the session and other main application classes
-   * - Extracts the application parameters
-   * @param configPath The path where config files reside (as seen from main.php), optional [default: 'include/']
-   * @param mainConfigFile The main configuration file to use, optional [default: 'config.ini']
-   * @param defaultController The controller to call if none is given in request parameters, optional [default: 'LoginController']
-   * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
-   * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
-   * @param defaultResponseFormat The response format if none is given in request parameters, optional [default: HTML]
-   * @return The Request instance representing the current HTTP request
-   * TODO: return request instance, maybe use default parameters from a config section?
-   * TODO: allow configPath array to search from different locations, simplifies inclusion
-   */
-  public function initialize($configPath='include/', $mainConfigFile='config.ini',
-    $defaultController='LoginController', $defaultContext='', $defaultAction='login',
-    $defaultResponseFormat='HTML')
-  {
     self::setupGlobals($configPath, $mainConfigFile);
     $parser = WCMFInifileParser::getInstance();
 
@@ -139,10 +142,10 @@ class Application
     }
 
     // create the Request instance
-    $request = new Request($controller, $context, $action);
-    $request->setFormat($requestFormat);
-    $request->setResponseFormat($responseFormat);
-    $request->setValues($this->_requestValues);
+    $this->_initialRequest = new Request($controller, $context, $action);
+    $this->_initialRequest->setFormat($requestFormat);
+    $this->_initialRequest->setResponseFormat($responseFormat);
+    $this->_initialRequest->setValues($this->_requestValues);
 
   // TODO:
   // - request headers should be added to the Request class
@@ -151,7 +154,7 @@ class Application
   //   }
 
     // initialize session with session id if given
-    $sessionId = $request->getValue('sid', null);
+    $sessionId = $this->_initialRequest->getValue('sid', null);
     SessionData::init($sessionId);
 
     // clear errors
@@ -175,7 +178,65 @@ class Application
     }
 
     // return the request
-    return $request;
+    return $this->_initialRequest;
+  }
+  /**
+   * This method is automatically called after script execution
+   */
+  public function shutdown()
+  {
+    // log resource usage
+    if (Log::isDebugEnabled(__CLASS__)) {
+      $timeDiff = microtime(true)-$this->_startTime;
+      $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
+      $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
+      if ($this->_initialRequest != null) {
+        $msg .= " Request[".$this->_initialRequest->getSender()."?".
+                $this->_initialRequest->getContext()."?".$this->_initialRequest->getAction()."]";
+      }
+      Log::debug($msg, __CLASS__);
+    }
+
+    // log last error
+    $error = error_get_last();
+    if ($error !== NULL) {
+      $info = "Error: ".$error['message']." in ".$error['file']." on line ".$error['line'];
+      Log::error($info, __CLASS__);
+    }
+  }
+  /**
+   * Default exception handling method. Rolls back the transaction and
+   * re-executes the last request (expected in the session variable 'lastRequest').
+   * @param exception The exception instance
+   */
+  public function handleException(Exception $exception)
+  {
+    if ($exception instanceof ApplicationException)
+    {
+      $error = $exception->getError();
+      if ($error->getCode() == 'SESSION_INVALID') {
+        $request = $exception->getRequest();
+        $request->setAction('logout');
+        $request->addError($error);
+        ActionMapper::processAction($request);
+        return;
+      }
+    }
+
+    Log::error($exception->getMessage()."\n".$exception->getTraceAsString(), 'main');
+
+    // rollback current transaction
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade->getTransaction()->rollback();
+
+    // process last successful request
+    $lastRequest = SessionData::getInstance()->get('lastRequest');
+    if ($lastRequest) {
+      ActionMapper::processAction($lastRequest);
+    }
+    else {
+      print $exception;
+    }
   }
   /**
    * Get a value from the request parameters (GET, POST variables)
@@ -217,17 +278,6 @@ class Application
       setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
     }
   }
-
-  /**
-   * Set a custom error handler to be used instead of the default implementation
-   * Application::onError.
-   * @param errorHandler A callback to be used, when
-   */
-  public function setErrorHandler($errorHandler)
-  {
-    $this->_errorHandler = $errorHandler;
-  }
-
   /**
    * Get the stack trace
    * @return The stack trace as string

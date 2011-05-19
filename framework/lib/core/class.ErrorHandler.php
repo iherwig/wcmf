@@ -42,5 +42,5 @@ class ErrorHandler
   }
 }
 
-set_error_handler(array(new ErrorHandler(),'handleError'));
+set_error_handler(array(new ErrorHandler(), 'handleError'));
 ?>

@@ -63,7 +63,7 @@ class WCMFInifileParser
    * - CONFIG_PATH: the path of the configuration files
    * - CONFIG_EXTENSION: the extension of configuration files (e.g. 'ini')
    */
-  function getIniFiles()
+  public function getIniFiles()
   {
     global $CONFIG_PATH, $CONFIG_EXTENSION;
     $fileUtil = new FileUtil();
@@ -77,70 +77,70 @@ class WCMFInifileParser
    * @param action The given action.
    * @return The best matching key or an empty string if nothing matches.
    */
-  function getBestActionKey($section, $resource, $context, $action)
+  public function getBestActionKey($section, $resource, $context, $action)
   {
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     // check resource?context?action
-    if (strlen($resource) > 0 && strlen($context) > 0 && strlen($action) > 0)
-    {
-    	$key = $resource.$this->_actionDelimiter.$context.$this->_actionDelimiter.$action;
-      if ($parser->getValue($key, $section, false) !== false)
+    if (strlen($resource) > 0 && strlen($context) > 0 && strlen($action) > 0) {
+      $key = $resource.$this->_actionDelimiter.$context.$this->_actionDelimiter.$action;
+      if ($parser->getValue($key, $section, false) !== false) {
         return $key;
+      }
     }
 
     // check resource??action
-    if (strlen($resource) > 0 && strlen($action) > 0)
-    {
-    	$key = $resource.$this->_actionDelimiter.$this->_actionDelimiter.$action;
-      if ($parser->getValue($key, $section, false) !== false)
+    if (strlen($resource) > 0 && strlen($action) > 0) {
+      $key = $resource.$this->_actionDelimiter.$this->_actionDelimiter.$action;
+      if ($parser->getValue($key, $section, false) !== false) {
         return $key;
+      }
     }
 
     // check resource?context?
-    if (strlen($resource) > 0 && strlen($context) > 0)
-    {
-    	$key = $resource.$this->_actionDelimiter.$context.$this->_actionDelimiter;
-      if ($parser->getValue($key, $section, false) !== false)
+    if (strlen($resource) > 0 && strlen($context) > 0) {
+      $key = $resource.$this->_actionDelimiter.$context.$this->_actionDelimiter;
+      if ($parser->getValue($key, $section, false) !== false) {
         return $key;
+      }
     }
 
     // check ?context?action
-    if (strlen($context) > 0 && strlen($action) > 0)
-    {
-    	$key = $this->_actionDelimiter.$context.$this->_actionDelimiter.$action;
-      if ($parser->getValue($key, $section, false) !== false)
+    if (strlen($context) > 0 && strlen($action) > 0) {
+      $key = $this->_actionDelimiter.$context.$this->_actionDelimiter.$action;
+      if ($parser->getValue($key, $section, false) !== false) {
         return $key;
+      }
     }
 
     // check ??action
-    if (strlen($action) > 0)
-    {
-    	$key = $this->_actionDelimiter.$this->_actionDelimiter.$action;
-      if ($parser->getValue($key, $section, false) !== false)
+    if (strlen($action) > 0) {
+      $key = $this->_actionDelimiter.$this->_actionDelimiter.$action;
+      if ($parser->getValue($key, $section, false) !== false) {
         return $key;
-     }
+      }
+    }
 
     // check resource??
-    if (strlen($resource) > 0)
-    {
-    	$key = $resource.$this->_actionDelimiter.$this->_actionDelimiter;
-      if ($parser->getValue($key, $section, false) !== false)
+    if (strlen($resource) > 0) {
+      $key = $resource.$this->_actionDelimiter.$this->_actionDelimiter;
+      if ($parser->getValue($key, $section, false) !== false) {
         return $key;
+      }
     }
 
     // check ?context?
-    if (strlen($context) > 0)
-    {
-    	$key = $this->_actionDelimiter.$context.$this->_actionDelimiter;
-      if ($parser->getValue($key, $section, false) !== false)
+    if (strlen($context) > 0) {
+      $key = $this->_actionDelimiter.$context.$this->_actionDelimiter;
+      if ($parser->getValue($key, $section, false) !== false) {
         return $key;
+      }
     }
 
     // check ??
     $key = $this->_actionDelimiter.$this->_actionDelimiter;
-    if ($parser->getValue($key, $section, false) !== false)
+    if ($parser->getValue($key, $section, false) !== false) {
       return $key;
-
+    }
     return '';
   }
 
@@ -151,7 +151,7 @@ class WCMFInifileParser
   /**
    * @see InifileParser::getErrorMsg()
    */
-  function getErrorMsg()
+  public function getErrorMsg()
   {
     $parser = InifileParser::getInstance();
     return $parser->getErrorMsg();
@@ -159,7 +159,7 @@ class WCMFInifileParser
   /**
    * @see InifileParser::parseIniFile()
    */
-  function parseIniFile($filename, $processValues=true)
+  public function parseIniFile($filename, $processValues=true)
   {
     $parser = InifileParser::getInstance();
     return $parser->parseIniFile($filename, $processValues);
@@ -167,7 +167,7 @@ class WCMFInifileParser
   /**
    * @see InifileParser::getData()
    */
-  function getData()
+  public function getData()
   {
     $parser = InifileParser::getInstance();
     return $parser->getData();
@@ -175,7 +175,7 @@ class WCMFInifileParser
   /**
    * @see InifileParser::getSections()
    */
-  function getSections()
+  public function getSections()
   {
     $parser = InifileParser::getInstance();
     return $parser->getSections();
@@ -183,7 +183,7 @@ class WCMFInifileParser
   /**
    * @see InifileParser::getSection()
    */
-  function getSection($section, $caseSensitive=true)
+  public function getSection($section, $caseSensitive=true)
   {
     $parser = InifileParser::getInstance();
     return $parser->getSection($section, $caseSensitive);
@@ -191,7 +191,7 @@ class WCMFInifileParser
   /**
    * @see InifileParser::getValue()
    */
-  function getValue($key, $section, $caseSensitive=true)
+  public function getValue($key, $section, $caseSensitive=true)
   {
     $parser = InifileParser::getInstance();
     return $parser->getValue($key, $section, $caseSensitive);

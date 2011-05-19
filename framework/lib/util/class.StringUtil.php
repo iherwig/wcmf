@@ -182,7 +182,7 @@ class StringUtil
    * @param string The string
    * @return The escaped string
    */
-  function escapeForRegex($string)
+  public static function escapeForRegex($string)
   {
     $patterns = array('/\//', '/\^/', '/\./', '/\$/', '/\|/', '/\(/', '/\)/', '/\[/', '/\]/', '/\*/', '/\+/', '/\?/', '/\{/', '/\}/');
     $replace = array('\/', '\^', '\.', '\$', '\|', '\(', '\)', '\[', '\]', '\*', '\+', '\?', '\{', '\}');
