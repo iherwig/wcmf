@@ -8,7 +8,7 @@ and open the template in the editor.
 <phpunit backupGlobals="true"
          backupStaticAttributes="false"
          bootstrap="bootstrap.php"
-         colors="false"
+         colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
@@ -21,7 +21,7 @@ and open the template in the editor.
          stopOnSkipped="false"
          syntaxCheck="false"
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
-         strict="false"
+         strict="true"
          verbose="true">
   <testsuites>
     <testsuite name="Format">
