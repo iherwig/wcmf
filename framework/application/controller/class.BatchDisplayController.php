@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -26,7 +26,7 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
  * @class BatchDisplayController
  * @ingroup Controller
  * @brief BatchDisplayController is a controller that loads a tree of Nodes recursivly and
- * returns the Nodes in lists of a given size. The reconstruction of the tree must 
+ * returns the Nodes in lists of a given size. The reconstruction of the tree must
  * be handled by the client.
  *
  * <b>Input actions:</b>
@@ -34,9 +34,9 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
  *
  * <b>Output actions:</b>
  * - see BatchController
- * 
+ *
  * @param[in,out] oid The oid of the Node to start loading from
- * @param[in] translateValues True/False. If true, list values will be translated using Control::translateValue. If not given, 
+ * @param[in] translateValues True/False. If true, list values will be translated using Control::translateValue. If not given,
  *                        all values will be returned as is, default: true
  * @param[in] nodes_per_call The number of nodes to process in one call, default: 50
  * @param[out] objects An array of Nodes
@@ -49,21 +49,21 @@ class BatchDisplayController extends BatchController
   var $REQUEST = 'BatchDisplayController.request';
   var $REGISTRY = 'BatchDisplayController.registry';
   var $ITERATOR_ID = 'BatchDisplayController.iteratorid';
-  
+
   // default values, maybe overriden by corresponding request values (see above)
   var $_NODES_PER_CALL = 50;
-  
+
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
+  function initialize($request, $response)
   {
     parent::initialize($request, $response);
 
     // initialize controller
     if ($request->getAction() != 'continue')
     {
-      $session = &SessionData::getInstance();
+      $session = SessionData::getInstance();
 
       // set defaults
       if (!$request->hasValue('nodes_per_call')) {
@@ -72,7 +72,7 @@ class BatchDisplayController extends BatchController
       if (!$request->hasValue('translateValues')) {
         $request->setValue('translateValues', true);
       }
-      
+
       // store request in session
       $session->set($this->REQUEST, $request, array(WCMF_BASE."wcmf/lib/presentation/class.ControllerMessage.php"));
       $reg = array();
@@ -82,7 +82,7 @@ class BatchDisplayController extends BatchController
   /**
    * @see Controller::validate()
    */
-  function validate()
+  protected function validate()
   {
     if ($this->_request->getAction() != 'continue')
     {
@@ -122,28 +122,28 @@ class BatchDisplayController extends BatchController
   function startProcess($oids)
   {
     $session = &SessionData::getInstance();
-    
+
     // restore the request from session
     $request = $session->get($this->REQUEST);
     $nodeOID = $request->getValue('oid');
-    
+
     // do the action
     $iterator = new PersistentIterator($nodeOID);
     $iteratorID = $iterator->save();
     $session->set($this->ITERATOR_ID, $iteratorID);
-    
+
     // display the first node in order to reduce the number of calls
-    $this->loadNode($iterator->getCurrentOID());
-    
-    $iterator->proceed();
+    $this->loadNode($iterator->current());
+
+    $iterator->next();
 
     // proceed if nodes are left
-    if (!$iterator->isEnd())
+    if ($iterator->valid())
     {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
-      
-      $name = Message::get('Loading tree: continue with %1%', array($iterator->getCurrentOID()));
+
+      $name = Message::get('Loading tree: continue with %1%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'loadNodes');
     }
     else
@@ -158,8 +158,8 @@ class BatchDisplayController extends BatchController
    */
   function loadNodes($oids)
   {
-    $session = &SessionData::getInstance();
-    
+    $session = SessionData::getInstance();
+
     // restore the request from session
     $request = $session->get($this->REQUEST);
 
@@ -167,10 +167,10 @@ class BatchDisplayController extends BatchController
     $iterator = null;
     $iteratorID = $session->get($this->ITERATOR_ID);
     if ($iteratorID != null) {
-      $iterator = &PersistentIterator::load($iteratorID);
+      $iterator = PersistentIterator::load($iteratorID);
     }
 
-    // no iterator, finish  
+    // no iterator, finish
     if ($iterator == null)
     {
       // set the result and finish
@@ -179,23 +179,23 @@ class BatchDisplayController extends BatchController
 
     // process _NODES_PER_CALL nodes
     $counter = 0;
-    while (!$iterator->isEnd() && $counter < $request->getValue('nodes_per_call'))
+    while ($iterator->valid() && $counter < $request->getValue('nodes_per_call'))
     {
-      $currentOID = $iterator->getCurrentOID();
+      $currentOID = $iterator->current();
       $this->loadNode($currentOID);
 
-      $iterator->proceed();
+      $iterator->next();
       $counter++;
     }
-    
+
     // decide what to do next
-    if (!$iterator->isEnd())
+    if ($iterator->valid())
     {
       // proceed with current iterator
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Loading tree: continue with %1%', array($iterator->getCurrentOID()));
+      $name = Message::get('Loading tree: continue with %1%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'loadNodes');
     }
     else
@@ -207,9 +207,9 @@ class BatchDisplayController extends BatchController
   /**
    * Finish the process and set the result
    */
-  function endProcess() 
+  function endProcess()
   {
-    $session = &SessionData::getInstance();
+    $session = SessionData::getInstance();
 
     // clear session variables
     $tmp = null;
@@ -226,9 +226,9 @@ class BatchDisplayController extends BatchController
     // check if we already loaded the node
     if ($this->isRegistered($oid))
       return;
-      
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $session = &SessionData::getInstance();
+
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $session = SessionData::getInstance();
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -238,7 +238,7 @@ class BatchDisplayController extends BatchController
     if ($node == null) {
       WCMFException::throwEx("Can't load node '".$oid."'", __FILE__, __LINE__);
     }
-    
+
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest())
     {
@@ -268,7 +268,7 @@ class BatchDisplayController extends BatchController
     }
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug($node->toString(), __CLASS__);
-    }    
+    }
   }
   /**
    * Register an object id in the registry
@@ -288,9 +288,9 @@ class BatchDisplayController extends BatchController
    */
   function isRegistered($oid)
   {
-    $session = &SessionData::getInstance();
+    $session = SessionData::getInstance();
     $registry = $session->get($this->REGISTRY);
-    
+
     return in_array($oid, $registry);
   }
   /**
@@ -303,7 +303,7 @@ class BatchDisplayController extends BatchController
       $objects = array();
       $this->_response->setValue('objects', $objects);
     }
-    
+
     $objects = &$this->_response->getValue('objects');
     $objects[sizeof($objects)] = &$node;
     $this->_response->setValue('objects', $objects);

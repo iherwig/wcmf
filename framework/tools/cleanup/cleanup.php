@@ -62,9 +62,8 @@ if (is_array($rootTypes))
     foreach($rootOIDs as $rootOID)
     {
       $iter = new PersistentIterator($rootOID);
-      while (!$iter->isEnd())
+      foreach($iter as $depth => $oid)
       {
-        $oid = $iter->getCurrentOID();
         $node = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
 
         $valueNames = $node->getValueNames();
@@ -103,7 +102,6 @@ if (is_array($rootTypes))
             }
           }
         }
-        $iter->proceed();
       }
     }
   }

@@ -152,15 +152,13 @@ class SearchController extends AsyncPagingController
           $tpl = &$value;
           // modify values to be searchable with LIKE
           $iter = new NodeValueIterator($tpl, false);
-          while (!$iter->isEnd())
-          {
-            $curNode = $iter->getCurrentNode();
-            $valueName = $iter->getCurrentAttribute();
+          for($iter->rewind(); $iter->valid(); $iter->next()) {
+            $curNode = $iter->currentNode();
+            $valueName = $iter->key();
             $value = $curNode->getValue($valueName);
             if (strlen($value) > 0) {
               $curNode->setValue($valueName, "LIKE '%".$value."%'");
             }
-            $iter->proceed();
           }
           break;
         }

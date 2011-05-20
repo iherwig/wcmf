@@ -358,10 +358,8 @@ class NodeUtil
     // use NodeValueIterator to iterate over all Node values
     // and call the global convert function on each
     $iter = new NodeValueIterator($node, $recursive);
-    while (!$iter->isEnd())
-    {
-      self::makeValueUrlsRelative($iter->getCurrentNode(), $iter->getCurrentAttribute(), $baseUrl);
-      $iter->proceed();
+    for($iter->rewind(); $iter->valid(); $iter->next()) {
+      self::makeValueUrlsRelative($iter->currentNode(), $iter->key(), $baseUrl);
     }
   }
   /**
@@ -406,10 +404,8 @@ class NodeUtil
     for($i=0, $count=sizeof($nodes); $i<$count; $i++)
     {
       $iter = new NodeValueIterator($nodes[$i], false);
-      while (!$iter->isEnd())
-      {
-        self::renderValue($iter->getCurrentNode(), $iter->getCurrentAttribute(), $language);
-        $iter->proceed();
+      for($iter->rewind(); $iter->valid(); $iter->next()) {
+        self::renderValue($iter->currentNode(), $iter->key(), $baseUrl);
       }
     }
   }
@@ -449,10 +445,8 @@ class NodeUtil
     for($i=0; $i<sizeof($nodes); $i++)
     {
       $iter = new NodeValueIterator($nodes[$i], false);
-      while (!$iter->isEnd())
-      {
-        self::translateValue($iter->getCurrentNode(), $iter->getCurrentAttribute(), $language);
-        $iter->proceed();
+      for($iter->rewind(); $iter->valid(); $iter->next()) {
+        self::translateValue($iter->currentNode(), $iter->key(), $baseUrl);
       }
     }
   }

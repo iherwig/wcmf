@@ -36,16 +36,13 @@ abstract class Visitor
    * Start the visiting process by iterating over all objects using
    * the given NodeIterator. The visit() method is called by every
    * visited object.
-   * @param iterator A reference to the NodeIterator to use (configured with the start object).
+   * @param iterator NodeIterator to use (configured with the start object).
    */
-  public function startIterator($iterator)
+  public function startIterator(NodeIterator $iterator)
   {
     $this->doPreVisit();
-    while(!($iterator->isEnd()))
-    {
-      $currentObject = & $iterator->getCurrentNode();
+    foreach($iterator as $oid => $currentObject) {
       $currentObject->acceptVisitor($this);
-      $iterator->proceed();
     }
     $this->doPostVisit();
   }

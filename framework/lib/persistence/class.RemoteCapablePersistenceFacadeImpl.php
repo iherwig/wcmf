@@ -236,9 +236,8 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
         // set umis instead of oids
         $umiPrefix = $umi->getPrefix();
         $iter = new NodeIterator($obj);
-        while (!$iter->isEnd())
+        foreach($iter as $oid => $curNode)
         {
-          $curNode = $iter->getCurrentNode();
           $oids = $this->makeUmis(array($curNode->getOID()), $umiPrefix);
           $curNode->setOID($oids[0]);
           // TODO implement this for new Node class
@@ -248,7 +247,6 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
           $childOIDs = $this->makeUmis($curNode->getProperty('childoids'), $umiPrefix);
           $curNode->setProperty('childoids', $childOIDs);
           */
-          $iter->proceed();
         }
         // set the proxy oid as attribute
         $proxy = $this->getProxyObject($umi, $buildDepth);

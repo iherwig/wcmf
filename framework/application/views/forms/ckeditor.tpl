@@ -1,40 +1,42 @@
 {if $enabled}
-  <textarea class="ckeditor" cols="50" id="{$name}" name="{$name}" rows="10">{$value|escape:"quotes"}</textarea>
-
   {if $controlIndex == 0}
     {configvalue section="cms" key="libDir" varname="libDir"}
   <script type="text/javascript">
+
     var CKEDITOR_BASEPATH = '{$libDir}3rdparty/ckeditor/';
   </script>
   <script type="text/javascript" src="{$libDir}3rdparty/ckeditor/ckeditor.js"></script>
   {/if}
 
-  <script type="text/javascript">
-    function ckCheck() {
-      if (this.checkDirty()) {
-        console.log("dirty");
-      }
-    }
+  {$validationString=''}
+  {if $attributeDescription}
+    {$regExp=$attributeDescription->getRestrictionsMatch()}
+    {if $regExp}
+      {$invalidMessage=$attributeDescription->getRestrictionsDescription()}
+      {$validationString=", regExp:\"$regExp\", invalidMessage:\"$invalidMessage\""}
+    {/if}
+  {/if}
 
-    // delete any old instance of same id and create new
-    if (CKEDITOR.instances["{$name}"]) {
-      delete CKEDITOR.instances["{$name}"];
-    }
-    var ckeditorInstance = CKEDITOR.replace("{$name}", {
+  <textarea
+    id="{$name}"
+    {$attributes}
+    data-dojo-type="wcmf.ui.CkEditorWidget"
+    data-dojo-props='
+      name:"{$name}"
+      {if !$enabled}
+        , disabled:true
+      {/if}
       {foreach key=listkey item=listvalue from=$attributeList}
-        {$listkey}: {$listvalue},
+        , {$listkey}:"{$listvalue}"
       {/foreach}
-      filebrowserBrowseUrl: 'main.php?action=browseResources&sid={sessionid}',
-      customConfig: '../../../application/script/ckconfig.js'
-    });
-
-    // assign handlers to check for changes of editor's content
-    ckeditorInstance.on('instanceReady', function(e) {
-      var self = this;
-      this.document.on("keyup", function() { ckCheck.call(self) });
-      this.document.on("paste", function() { ckCheck.call(self) });
-    });
-  </script>
+      , filebrowserBrowseUrl: "main.php?action=browseResources&sid={sessionid}"
+      , customConfig: "../../../application/script/ckconfig.js"
+      , stylesSet: "wcmf:../../../application/script/ckstyles.js"
+      {$validationString}
+    '
+  >
+  {$value}
+  </textarea>
 {else}
   <span class="disabled">{$value|strip_tags}</span>
 {/if}

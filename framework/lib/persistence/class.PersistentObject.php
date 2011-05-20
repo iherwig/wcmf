@@ -474,15 +474,12 @@ class PersistentObject
   {
     $errorMsg = '';
     $iter = new NodeValueIterator($this, false);
-    while(!$iter->isEnd())
-    {
-      $curNode = $iter->getCurrentNode();
-      $valueName = $iter->getCurrentAttribute();
-      $error = $curNode->validateValue($valueName, $value);
+    for($iter->rewind(); $iter->valid(); $iter->next()) {
+      $curNode = $iter->currentNode();
+      $error = $curNode->validateValue($iter->key(), $iter->current());
       if (strlen($error) > 0) {
         $errorMsg .= $error."\n";
       }
-      $iter->proceed();
     }
     return $errorMsg;
   }

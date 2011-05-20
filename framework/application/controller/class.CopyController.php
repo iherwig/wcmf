@@ -221,7 +221,7 @@ class CopyController extends BatchController
       $session->set($this->ITERATOR_ID, $iteratorID);
 
       // copy the first node in order to reduce the number of calls for a single copy
-      $nodeCopy = &$this->copyNode($iterator->getCurrentOID());
+      $nodeCopy = &$this->copyNode($iterator->current());
       if ($nodeCopy)
       {
         // attach the copy to the target node
@@ -232,15 +232,15 @@ class CopyController extends BatchController
         $this->modify($nodeCopy);
         $this->saveToTarget($nodeCopy);
 
-        $iterator->proceed();
+        $iterator->next();
 
         // proceed if nodes are left
-        if ($request->getBooleanValue('recursive') && !$iterator->isEnd())
+        if ($request->getBooleanValue('recursive') && $iterator->valid())
         {
           $iteratorID = $iterator->save();
           $session->set($this->ITERATOR_ID, $iteratorID);
 
-          $name = Message::get('Copying tree: continue with %1%', array($iterator->getCurrentOID()));
+          $name = Message::get('Copying tree: continue with %1%', array($iterator->current()));
           $this->addWorkPackage($name, 1, array(null), 'copyNodes');
         }
         else
@@ -281,23 +281,23 @@ class CopyController extends BatchController
 
     // process _NODES_PER_CALL nodes
     $counter = 0;
-    while (!$iterator->isEnd() && $counter < $request->getValue('nodes_per_call'))
+    while ($iterator->valid() && $counter < $request->getValue('nodes_per_call'))
     {
-      $currentOID = $iterator->getCurrentOID();
+      $currentOID = $iterator->current();
       $this->copyNode($currentOID);
 
-      $iterator->proceed();
+      $iterator->next();
       $counter++;
     }
 
     // decide what to do next
-    if (!$iterator->isEnd())
+    if ($iterator->valid())
     {
       // proceed with current iterator
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Copying tree: continue with %1%', array($iterator->getCurrentOID()));
+      $name = Message::get('Copying tree: continue with %1%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'copyNodes');
     }
     else

@@ -93,26 +93,23 @@ class SOAPController extends Controller
       if ($tpl->getProperty('is_searchable') == true)
       {
         $iter = new NodeValueIterator($tpl, false);
-        while (!$iter->isEnd())
-        {
-          $curNode = $iter->getCurrentNode();
-          $valueName = $iter->getCurrentAttribute();
+        for($iter->rewind(); $iter->valid(); $iter->next()) {
+          $curNode = $iter->currentNode();
+          $valueName = $iter->key();
           $value = $curNode->getValue($valueName);
           if (strlen($value) > 0) {
             $curNode->setValue($valueName, "LIKE '%".$value."%'");
           }
-          $iter->proceed();
         }
 
         $nodes = $query->execute(BUILDDEPTH_SINGLE);
-        foreach ($nodes as $node)
-        {
-    			$object = array();
-    			$object['type'] = $node->getType();
-    			$object['oid'] = $node->getOID();
+        foreach ($nodes as $node) {
+          $object = array();
+          $object['type'] = $node->getType();
+          $object['oid'] = $node->getOID();
           $object['displayName'] = strip_tags(preg_replace("/[\r\n']/", " ", NodeUtil::getDisplayValue($node)));
-    			array_push($objectList, $object);
-    	  }
+          array_push($objectList, $object);
+        }
       }
     }
     $this->_response->setValue('soapResult', $objectList);
@@ -128,15 +125,15 @@ class SOAPController extends Controller
     $query = new StringQuery($type);
     $query->setConditionString($queryStr);
     $nodes = $query->execute(BUILDDEPTH_SINGLE);
-		$objectList = array();
+    $objectList = array();
     foreach ($nodes as $node)
     {
-			$object = array();
-			$object['type'] = $node->getType();
-			$object['oid'] = $node->getOID();
+      $object = array();
+      $object['type'] = $node->getType();
+      $object['oid'] = $node->getOID();
       $object['displayName'] = strip_tags(preg_replace("/[\r\n']/", " ", NodeUtil::getDisplayValue($node)));
-			array_push($objectList, $object);
-	  }
+      array_push($objectList, $object);
+    }
     $this->_response->setValue('soapResult', $objectList);
   }
 }

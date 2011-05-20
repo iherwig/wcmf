@@ -117,7 +117,7 @@ class NodeIterator implements Iterator
    */
   protected function addToSeenList($nodeList)
   {
-    for ($i=sizeOf($nodeList)-1;$i>=0;$i--) {
+    for ($i=sizeOf($nodeList)-1; $i>=0; $i--) {
       if ($nodeList[$i] instanceof Node) {
         if (!in_array($nodeList[$i]->getOID()->__toString(), $this->_nodeIdList))
         {

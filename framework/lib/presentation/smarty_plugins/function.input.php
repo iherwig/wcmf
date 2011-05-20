@@ -14,7 +14,7 @@
  * See the license.txt file distributed with this work for 
  * additional information.
  *
- * $Id: function.image.php 1250 2010-12-05 23:02:43Z iherwig $
+ * $Id: function.input.php 1250 2010-12-05 23:02:43Z iherwig $
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/control/class.Control.php");
 

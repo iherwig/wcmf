@@ -1,7 +1,7 @@
 dojo.provide("app.base");
 
 dojo.ready(function() {
-  
+
   // dojo
   dojo.require('dojo.parser');
   dojo.require("dojo.fx");
@@ -45,7 +45,8 @@ dojo.ready(function() {
   dojo.require("wcmf.ui.RelationTabContainer");
   dojo.require("wcmf.ui.RelationPane");
   dojo.require("wcmf.ui.ObjectSelectDialog");
-  
+  dojo.require("wcmf.ui.CkEditorWidget");
+
   // create declarative widgets after code is loaded
   dojo.parser.parse();
 });

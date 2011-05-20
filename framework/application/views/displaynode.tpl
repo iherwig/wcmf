@@ -6,8 +6,7 @@
 dojo.addOnLoad(function() {
 
   // get the DetailPane instance
-  var detailNode = dojo.byId("detail{$uid}Div");
-  var detailPane = dijit.getEnclosingWidget(detailNode.parentNode);
+  var detailPane = wcmf.ui.DetailPane.getFromContainedDiv("detail{$uid}Div");
 
   // update the title of the pane, if it is an existing object
   if (!detailPane.getIsNewNode()) {

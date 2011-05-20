@@ -159,11 +159,8 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
   /**
    * Called, after a property of the contained object changed
    * @param pane The wcmf.ui.DetailPane which containes the changed object
-   * @param propertyName The name of the property that changed
-   * @param oldValue The old value of the property
-   * @param newValue The new value of the property
    */
-  onChange: function(pane, propertyName, oldValue, newValue) {
+  onChange: function(pane) {
     // only defined for other widgets to connect to
   },
 
@@ -224,12 +221,12 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
       this.href = this.getHref();
       this.refresh().then(function() {
         // notify listeners
-        self.onSaved(self, item, oldOid, self.oid);      
+        self.onSaved(self, item, oldOid, self.oid);
       });
     }
     else {
       // notify listeners
-      this.onSaved(this, item, oldOid, this.oid);      
+      this.onSaved(this, item, oldOid, this.oid);
     }
   },
 
@@ -237,6 +234,8 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     if (!this.isDirty) {
       this.set("title", "*"+this.get("title"));
       this.isDirty = true;
+      // notify listeners
+      this.onChange(this);
     }
   },
 
@@ -325,10 +324,8 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
   },
 
   handleValueChangeEvent: function(propertyName, oldValue, newValue) {
-    if (propertyName == 'value' || propertyName == 'displayedValue') {
+    if (propertyName == 'value' || propertyName == 'displayedValue' || propertyName == 'checked') {
       this.setDirty();
-      // notify listeners
-      this.onChange(this, propertyName, oldValue, newValue);
     }
   },
 
@@ -347,7 +344,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     }
     return true;
   },
-        
+
   destroy: function() {
     this.destroyDescendants();
     this.inherited(arguments);
@@ -362,4 +359,20 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 wcmf.ui.DetailPane.get = function(oid) {
   var nodeTabContainer = wcmf.ui.NodeTabContainer.get(oid);
   return nodeTabContainer.getDetailPane(oid);
+}
+
+/**
+ * Get the enclosing DetailPane instance for a given div id. This method is
+ * especially useful for controls that are embedded in a DetailPane instance.
+ * @param detailDivId The detail div id
+ * @return wcmf.ui.DetailPane or null
+ */
+wcmf.ui.DetailPane.getFromContainedDiv = function(divId) {
+  var maxDepth = 20;
+  var widget = dijit.getEnclosingWidget(dojo.byId(divId));
+  while (maxDepth > 0 && !(widget instanceof wcmf.ui.DetailPane)) {
+    widget = dijit.getEnclosingWidget(widget.domNode.parentNode);
+    maxDepth--;
+  }
+  return widget;
 }

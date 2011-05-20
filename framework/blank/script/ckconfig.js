@@ -55,7 +55,7 @@ CKEDITOR.editorConfig = function( config )
   // config.entities_greek
   // config.entities_latin
   // config.entities_processNumerical
-  // config.extraPlugins
+  config.extraPlugins = 'onchange';
   // config.filebrowserBrowseUrl - defined in wcmf/application/views/forms/ckeditor.tpl
   // config.filebrowserFlashBrowseUrl
   // config.filebrowserFlashUploadUrl
@@ -65,7 +65,7 @@ CKEDITOR.editorConfig = function( config )
   // config.filebrowserUploadUrl
   // config.filebrowserWindowFeatures
   config.filebrowserWindowHeight = 550;
-  config.filebrowserWindowWidth = 830
+  config.filebrowserWindowWidth = 830;
   // config.fillEmptyBlocks
   // config.find_highlight
   // config.font_defaultLabel
@@ -145,7 +145,7 @@ CKEDITOR.editorConfig = function( config )
   // config.startupShowBorders
   // config.stylesheetParser_skipSelectors
   // config.stylesheetParser_validSelectors
-  config.stylesSet = 'mystyles:/ckstyles.js';
+  // config.stylesSet - defined in wcmf/application/views/forms/ckeditor.tpl
   // config.tabIndex
   // config.tabSpaces
   // config.templates_files

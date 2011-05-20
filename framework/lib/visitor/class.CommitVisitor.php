@@ -41,7 +41,6 @@ class CommitVisitor extends Visitor
       case PersistentObject::STATE_DIRTY:
       case PersistentObject::STATE_NEW:
         // save changes / insert
-        $obj->save();
         break;
 
       case PersistentObject::STATE_DELETED:

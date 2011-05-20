@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -26,7 +26,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
  * @class XMLExportController
  * @ingroup Controller
  * @brief XMLExportController exports the content tree into an XML file.
- * 
+ *
  * <b>Input actions:</b>
  * - @em continue Continue export
  * - unspecified: Initiate the export
@@ -51,9 +51,9 @@ class XMLExportController extends BatchController
   private $ITERATOR_ID = 'XMLExportController.iteratorid';
 
   // documentInfo passes the current document info/status from one call to the next:
-  // An assoziative array with keys 'docFile', 'doctype', 'dtd', 'docLinebreak', 'docIndent', 'nodesPerCall', 
-  // 'lastIndent' and 'tagsToClose' where the latter is an array of assoziative arrays with keys 'indent', 'name'  
-  private $DOCUMENT_INFO = 'XMLExportController.documentinfo';  
+  // An assoziative array with keys 'docFile', 'doctype', 'dtd', 'docLinebreak', 'docIndent', 'nodesPerCall',
+  // 'lastIndent' and 'tagsToClose' where the latter is an array of assoziative arrays with keys 'indent', 'name'
+  private $DOCUMENT_INFO = 'XMLExportController.documentinfo';
 
   // default values, maybe overriden by corresponding request values (see above)
   private $_DOCFILE = "export.xml";
@@ -83,11 +83,11 @@ class XMLExportController extends BatchController
       $docLinebreak = $this->_request->hasValue('doclinebreak') ? $this->_request->getValue('doclinebreak') : $this->_DOCLINEBREAK;
       $docIndent = $this->_request->hasValue('docindent') ? $this->_request->getValue('docindent') : $this->_DOCINDENT;
       $nodesPerCall = $this->_request->hasValue('nodes_per_call') ? $this->_request->getValue('nodes_per_call') : $this->_NODES_PER_CALL;
-      
-      $documentInfo = array('docFile' => $docFile, 'docType' => $docType, 'dtd' => $dtd, 'docRootElement' => $docRootElement, 
-        'docLinebreak' => $docLinebreak, 'docIndent' => $docIndent, 'nodesPerCall' => $nodesPerCall, 
+
+      $documentInfo = array('docFile' => $docFile, 'docType' => $docType, 'dtd' => $dtd, 'docRootElement' => $docRootElement,
+        'docLinebreak' => $docLinebreak, 'docIndent' => $docIndent, 'nodesPerCall' => $nodesPerCall,
         'lastIndent' => 0, 'tagsToClose' => array());
-  
+
       // store document info in session
       $session->set($this->DOCUMENT_INFO, $documentInfo);
     }
@@ -122,9 +122,9 @@ class XMLExportController extends BatchController
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
-    // delete export file    
+    // delete export file
     unlink($documentInfo['docFile']);
-    
+
     // start document
     $fileHandle = fopen($documentInfo['docFile'], "a");
     FileUtil::fputsUnicode($fileHandle, '<?xml version="1.0" encoding="UTF-8"?>'.$documentInfo['docLinebreak']);
@@ -150,7 +150,7 @@ class XMLExportController extends BatchController
     // store root object ids in session
     $nextOID = array_shift($rootOIDs);
     $session->set($this->ROOT_OIDS, $rootOIDs);
-    
+
     // create work package for first root node
     $this->addWorkPackage(Message::get('Exporting tree: start with %1%', array($nextOID)), 1, array($nextOID), 'exportNodes');
   }
@@ -163,11 +163,11 @@ class XMLExportController extends BatchController
   {
     // Export starts from root oids and iterates over all children.
     // On every call we have to decide what to do:
-    // - If there is an iterator stored in the session we are inside a tree and continue iterating (_NODES_PER_CALL nodes) 
+    // - If there is an iterator stored in the session we are inside a tree and continue iterating (_NODES_PER_CALL nodes)
     //   until the iterator finishes
     // - If the oids array holds one value!=null this is assumed to be an root oid and a new iterator is constructed
     // - If there is no iterator and no oid given, we return
-    
+
    	$session = SessionData::getInstance();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
@@ -182,32 +182,32 @@ class XMLExportController extends BatchController
     if ($iterator == null && $oids[0] != null) {
       $iterator = new PersistentIterator($oids[0]);
     }
-    // no iterator, no oid, finish  
+    // no iterator, no oid, finish
     if ($iterator == null)
     {
       $this->addWorkPackage(Message::get('Finish'), 1, array(null), 'finishExport');
       return;
     }
-      
+
     // process _NODES_PER_CALL nodes
     $fileHandle = fopen($documentInfo['docFile'], "a");
     $counter = 0;
     $documentInfo['endTag'] = false;
-    while (!$iterator->isEnd() && $counter < $documentInfo['nodesPerCall'])
+    while ($iterator->valid() && $counter < $documentInfo['nodesPerCall'])
     {
       // write node
-      $documentInfo = $this->writeNode($fileHandle, $iterator->getCurrentOID(), $iterator->getCurrentDepth()+1, $documentInfo);
-      $iterator->proceed();
+      $documentInfo = $this->writeNode($fileHandle, $iterator->current(), $iterator->key()+1, $documentInfo);
+      $iterator->next();
       $counter++;
     }
     fclose($fileHandle);
 
     // save document state to session
     $session->set($this->DOCUMENT_INFO, $documentInfo);
-    
+
     // decide what to do next
     $rootOIDs = $session->get($this->ROOT_OIDS);
-    if ($iterator->isEnd() && sizeof($rootOIDs) > 0)
+    if (!$iterator->valid() && sizeof($rootOIDs) > 0)
     {
       // if the current iterator is finished, set iterator null and proceed with the next root oid
       $nextOID = array_shift($rootOIDs);
@@ -217,17 +217,17 @@ class XMLExportController extends BatchController
       // unset iterator id to start with new root oid
       $tmp = null;
       $session->set($this->ITERATOR_ID, $tmp);
-      
+
       $name = Message::get('Exporting tree: start with %1%', array($nextOID));
       $this->addWorkPackage($name, 1, array($nextOID), 'exportNodes');
     }
-    elseif (!$iterator->isEnd())
+    elseif ($iterator->valid())
     {
       // proceed with current iterator
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Exporting tree: continue with %1%', array($iterator->getCurrentOID()));
+      $name = Message::get('Exporting tree: continue with %1%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'exportNodes');
     }
     else
@@ -268,7 +268,7 @@ class XMLExportController extends BatchController
    protected function endTags($fileHandle, $curIndent, $documentInfo)
    {
      $lastIndent = $documentInfo['lastIndent'];
-	   
+
 	   // write last opened and not closed tags
      if ($curIndent < $lastIndent)
      {
@@ -296,7 +296,7 @@ class XMLExportController extends BatchController
     $lastIndent = $documentInfo['lastIndent'];
     $curIndent = $depth;
     $this->endTags($fileHandle, $curIndent, $documentInfo);
-	  
+
     if (!$documentInfo['endTag'])
     {
       if ($numChildren > 0)

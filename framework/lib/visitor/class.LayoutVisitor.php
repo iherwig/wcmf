@@ -84,54 +84,52 @@ class LayoutVisitor extends Visitor
    */
   private function calculatePosition($obj)
   {
-	  $parent = & $obj->getParent();
-	  if (!$parent)
-	  {
-  		// start here
-  		$position = new Position(0,0,0);
-	  }
-	  else
-	  {
-	    $position = new Position(0,0,0);
-  		$parentPos = $this->_map[$parent->getOID()];
-  		$position->y = $parentPos->y + 1;
-  		$position->z = $parentPos->z + 1;
+    $parent = & $obj->getParent();
+    if (!$parent)
+    {
+      // start here
+      $position = new Position(0,0,0);
+    }
+    else
+    {
+      $position = new Position(0,0,0);
+      $parentPos = $this->_map[$parent->getOID()];
+      $position->y = $parentPos->y + 1;
+      $position->z = $parentPos->z + 1;
 
-  		$siblings = $parent->getChildren();
-  		if ($siblings[0]->getOID() == $obj->getOID()) {
-    		$position->x = $parentPos->x;
-    	}
-  		else
-  		{
-        	// find leftmost sibling of object
-        	for ($i=0;$i<sizeOf($siblings);$i++)
-            {
-              if ($siblings[$i]->getOID() == $obj->getOID()) {
-                $leftSibling = & $siblings[$i-1];
-              }
-            }
-  			// find x-coordinate of rightmost descendant of leftmost sibling
-  			$maxX = 0;
-  			$nIter = new NodeIterator($leftSibling);
-            while(!($nIter->isEnd()))
-  			{
-  			  $curObject = $nIter->getCurrentNode();
-  			  $curPosition = $this->_map[$curObject->getOID()];
-  			  if ($curPosition->x >= $maxX) {
-  			    $maxX = $curPosition->x;
-  			  }
-              $nIter->proceed();
-   			}
-    		$position->x = $maxX+2;
-  			// reposition parents
-  			while ($parent != null)
-  			{
-  				$this->_map[$parent->getOID()]->x += 1;
-  				$parent = $parent->getParent();
-  			}
-  		}
-  	}
-  	return $position;
+      $siblings = $parent->getChildren();
+      if ($siblings[0]->getOID() == $obj->getOID()) {
+        $position->x = $parentPos->x;
+      }
+      else
+      {
+        // find leftmost sibling of object
+        for ($i=0;$i<sizeOf($siblings);$i++)
+        {
+          if ($siblings[$i]->getOID() == $obj->getOID()) {
+            $leftSibling = & $siblings[$i-1];
+          }
+        }
+        // find x-coordinate of rightmost descendant of leftmost sibling
+        $maxX = 0;
+        $nIter = new NodeIterator($leftSibling);
+        foreach($nIter as $oid => $curObject)
+        {
+          $curPosition = $this->_map[$curObject->getOID()];
+          if ($curPosition->x >= $maxX) {
+            $maxX = $curPosition->x;
+          }
+         }
+        $position->x = $maxX+2;
+        // reposition parents
+        while ($parent != null)
+        {
+          $this->_map[$parent->getOID()]->x += 1;
+          $parent = $parent->getParent();
+        }
+      }
+    }
+    return $position;
   }
 }
 ?>
