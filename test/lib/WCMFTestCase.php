@@ -204,6 +204,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
     $mapper = PersistenceFacade::getInstance()->getMapper($type);
     $profiler = $mapper->getProfiler();
 
+    echo "\n";
     foreach ($profiler->getQueryProfiles() as $query) {
       echo $query->getElapsedSecs()."s: ".$query->getQuery()."\n";
     }

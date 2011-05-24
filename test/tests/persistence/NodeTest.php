@@ -38,10 +38,8 @@ class NodeTest extends WCMFTestCase
   {
     $this->runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
-
     $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE);
-    echo "loaded: ".sizeof($documents).", first: ".$documents[0]->__toString()."\n";
-    echo StringUtil::getDump($documents[0]->getValueNames());
+    echo "Loaded documents: ".sizeof($documents);
     $this->runAnonymous(false);
   }
 
@@ -49,11 +47,9 @@ class NodeTest extends WCMFTestCase
   {
     $this->runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
-
     $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE,
             null, null, null, array('Document' => array('id')));
-    echo "loaded: ".sizeof($documents).", first: ".$documents[0]->__toString()."\n";
-    echo StringUtil::getDump($documents[0]->getValueNames());
+    echo "Loaded documents: ".sizeof($documents);
     $this->runAnonymous(false);
   }
 }

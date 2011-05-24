@@ -1,8 +1,7 @@
 <?php
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeSerializer.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
 class IteratorTest extends WCMFTestCase

@@ -1,5 +1,6 @@
 <?php
 require_once("tests/model/IteratorTest.php");
+require_once("tests/model/NodeBuildTest.php");
 require_once("tests/model/NodeUtilTest.php");
 
 class AllModelTests
@@ -8,6 +9,7 @@ class AllModelTests
   {
     $suite = new PHPUnit_Framework_TestSuite('Model');
     $suite->addTestSuite('IteratorTest');
+    $suite->addTestSuite('NodeBuildTest');
     $suite->addTestSuite('NodeUtilTest');
     return $suite;
   }
