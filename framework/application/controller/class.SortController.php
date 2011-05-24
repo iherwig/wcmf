@@ -140,14 +140,17 @@ class SortController extends Controller
   {
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $transaction = PersistenceFacade::getInstance()->getTransaction();
 
     // do actions
+    $transaction->begin();
     if ($request->getAction() == 'moveBefore') {
       $this->doMoveBefore();
     }
     else if ($request->getAction() == 'insertBefore') {
       $this->doInsertBefore();
     }
+    $transaction->commit();
 
     $response->setAction('ok');
     return true;
@@ -218,11 +221,6 @@ class SortController extends Controller
           $objects[$i]->setValue($sortKey, $objects[$i+1]->getValue($sortKey));
         }
         $objects[$count-1]->setValue($sortKey, $firstValue);
-      }
-
-      // commit changes
-      for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
-        $objects[$i]->save();
       }
     }
   }

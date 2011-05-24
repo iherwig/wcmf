@@ -20,7 +20,8 @@
 /**
  * @class NodeValueIterator
  * @ingroup Model
- * @brief NodeValueIterator is used to iterate over all persistent values of a Node.
+ * @brief NodeValueIterator is used to iterate over all persistent values of a Node
+ * (not including relations).
  *
  * The following example shows the usage:
  *

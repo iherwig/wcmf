@@ -85,15 +85,15 @@ class PersistentObject
     }
   }
   /**
-   * Initialize the object with a set of data. This method does not change the
-   * object's state and does not call any listeners. Any existing data will
+   * Initialize the object with a set of data. This method does not validate, does not
+   * change the object's state and does not call any listeners. Any existing data will
    * be overwritten.
    * @param data An associative array with the data to set.
    */
   public function initialize(array $data)
   {
     foreach ($data as $name => $value) {
-      $this->_data[$name] = array('value' => $value);
+      $this->setValueInternal($name, $value);
     }
   }
   /**
@@ -410,7 +410,7 @@ class PersistentObject
    */
   public function hasValue($name)
   {
-    return in_array($name, $this->getValueNames());
+    return isset($this->_data[$name]);
   }
   /**
    * Get the value of a named item.
@@ -535,17 +535,15 @@ class PersistentObject
    * Set the value of a named item if it exists.
    * @param name The name of the item to set.
    * @param value The value of the item.
-   * @param forceSet True/False wether to set the value even if it is already set
-   *   and validation would fail (used to notify listeners) [default: false]
-   * @return true if operation succeeds / false else
+   * @param forceSet Boolean wether to set the value even if it is already set
+   *   and to bypass validation (used to notify listeners) [default: false]
+   * @param keepState Boolean wether to keep the object state or not [default: false]
+   * @return Boolean wether the operation succeeds or not
    */
-  public function setValue($name, $value, $forceSet=false)
+  public function setValue($name, $value, $forceSet=false, $keepState=false)
   {
     if (!$this->_isImmutable)
     {
-      if (!isset($this->_data[$name])) {
-        $this->_data[$name] = array('value' => null);
-      }
       if (!$forceSet)
       {
         try {
@@ -557,14 +555,16 @@ class PersistentObject
         }
       }
       $oldValue = $this->getValue($name);
-      if ($oldValue !== $value || $forceSet)
+      if ($forceSet || $oldValue !== $value)
       {
         $this->setValueInternal($name, $value);
         $mapper = $this->getMapper();
         if ($mapper != null && in_array($name, $mapper->getPKNames())) {
           $this->updateOID();
         }
-        self::setState(self::STATE_DIRTY);
+        if (!$keepState) {
+          self::setState(self::STATE_DIRTY);
+        }
         $this->propagateValueChange($name, $oldValue, $value);
         return true;
       }
@@ -582,35 +582,12 @@ class PersistentObject
    */
   protected function setValueInternal($name, $value)
   {
-    $this->_data[$name]['value'] = $value;
-  }
-  /**
-   * Add a value to an array value. If the value is not set yet, an array will
-   * be created. If the value is set already and it is no array a warning will be
-   * logged without setting the value.
-   * @param name The name of the item to add the value to.
-   * @param value The value to add.
-   * @param forceSet Add the value even if it is already set and validation would fail (used to notify listeners) [default: false]
-   * @return true if operation succeeds / false else
-   */
-  public function addValue($name, $value, $forceSet=false)
-  {
-    $existingValue = $this->getValue($name);
-    $isEmpty = empty($existingValue);
-    if (!$isEmpty && !is_array($existingValue)) {
-      Log::warn("Can't add to the non-array value '".$name."'", __CLASS__);
+    if (!isset($this->_data[$name])) {
+      $this->_data[$name] = array('value' => $value);
     }
     else {
-      if ($isEmpty) {
-        $newValue = array($value);
-      }
-      else {
-        $existingValue[] = $value;
-        $newValue = $existingValue;
-      }
-      return $this->setValue($name, $newValue, $forceSet);
+      $this->_data[$name]['value'] = $value;
     }
-    return false;
   }
   /**
    * Get the value of one property of a named item.
@@ -882,8 +859,52 @@ class PersistentObject
     return Message::get($name);
   }
   /**
+   * Get a string representation of the values of the PersistentObject.
+   * @return String
+   */
+  public function dump()
+  {
+    $str = $this->getOID()->__toString()."\n";
+    foreach ($this->getValueNames() as $valueName) {
+      $value = self::getValue($valueName);
+      $valueStr = null;
+      if (is_array($value)) {
+        $valueStr = self::dumpArray($value)."\n";
+      }
+      else {
+        if ($value instanceof PersistentObject || $value instanceof PersistentObjectProxy) {
+          $valueStr = $value->__toString()."\n";
+        }
+        else {
+          $valueStr = StringUtil::getDump($value);
+        }
+      }
+      $str .= "  ".$valueName.": ".$valueStr;
+    }
+    return $str;
+  }
+  /**
+   * Get a string representation of an array of values.
+   * @param array The array to dump
+   * @return String
+   */
+  private static function dumpArray(array $array)
+  {
+    $str = "[";
+    foreach ($array as $value) {
+      if ($value instanceof PersistentObject || $value instanceof PersistentObjectProxy) {
+        $str .= $value->__toString().", ";
+      }
+      else {
+        $str .= $value.", ";
+      }
+    }
+    $str = preg_replace("/, $/", "", $str)."]";
+    return $str;
+  }
+  /**
    * Get a string representation of the PersistentObject.
-   * @return The string representation of the PersistentObject.
+   * @return String
    */
   public function __toString()
   {

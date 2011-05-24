@@ -68,9 +68,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
       rowsPerPage: 25,
       rowCount: 25,
       selectionMode: "multiple",
-      clientSort: false,
-      // TODO: configure this
-      sortFields: [{ attribute: "sortkey", descending: false }]
+      clientSort: false
     }, options);
   },
 
@@ -119,7 +117,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     layout.defaultCell = {};
     layout.cells = [];
     dojo.forEach(this.modelClass.attributes, function(item) {
-    if (dojo.some(item.tags, "return item == 'DATATYPE_ATTRIBUTE';")) {
+      if (dojo.some(item.tags, "return item == 'DATATYPE_ATTRIBUTE';")) {
         layout.cells.push({
           field: item.name,
           name: item.name,

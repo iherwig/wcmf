@@ -58,7 +58,7 @@ class Transaction implements ITransaction
     }
     $key = $object->getOID()->__toString();
     Log::debug("Register new object: ".$key, __CLASS__);
-    $this->_newObjects[$key] = &$object;
+    $this->_newObjects[$key] = $object;
   }
   /**
    * @see ITransaction::registerDirty()
@@ -74,7 +74,7 @@ class Transaction implements ITransaction
       return;
     }
     Log::debug("Register dirty object: ".$key, __CLASS__);
-    $this->_dirtyObjects[$key] = &$object;
+    $this->_dirtyObjects[$key] = $object;
   }
   /**
    * @see ITransaction::registerDeleted()
@@ -96,13 +96,14 @@ class Transaction implements ITransaction
       unset($this->_dirtyObjects[$key]);
     }
     Log::debug("Register deleted object: ".$key, __CLASS__);
-    $this->_deletedObjects[$key] = &$object;
+    $this->_deletedObjects[$key] = $object;
   }
   /**
    * @see ITransaction::begin()
    */
   public function begin()
   {
+    Log::debug("Starting transaction", __CLASS__);
     $this->_isActive = true;
   }
   /**
@@ -135,7 +136,7 @@ class Transaction implements ITransaction
                           sizeof($this->_deletedObjects) == 0);
         }
         // commit transaction for each mapper
-        Log::info("Committing transaction", __CLASS__);
+        Log::debug("Committing transaction", __CLASS__);
         foreach ($knowTypes as $type) {
           $mapper = $persistenceFacade->getMapper($type);
           $mapper->commitTransaction();
@@ -177,23 +178,44 @@ class Transaction implements ITransaction
   {
     $oid = $object->getOID();
     $key = $oid->__toString();
-
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Register loaded object: ".$key, __CLASS__);
+      Log::debug("New Data:\n".$object->dump(), __CLASS__);
+      Log::debug("Registry before:\n".$this->dump(), __CLASS__);
+    }
     // register the object if it is newly loaded or
     // merge the attributes, if it is already loaded
     $registeredObject = $this->getLoaded($oid);
     if ($registeredObject != null) {
       // merge existing attributes with new attributes
+      Log::debug("Merging data of ".$key, __CLASS__);
       $registeredObject->mergeValues($object);
     }
     else {
-      $this->_loadedObjects[$key] = &$object;
+      $this->_loadedObjects[$key] = $object;
+      // start to listen to changes if the transaction is active
+      if ($this->_isActive) {
+        Log::debug("Start listening to: ".$key, __CLASS__);
+        $object->addChangeListener($this);
+      }
+      $registeredObject = $object;
     }
-
-    // start to listen to changes if the transaction is active
-    if ($this->_isActive) {
-      Log::debug("Register loaded object: ".$key, __CLASS__);
-      $object->addChangeListener($this);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Registry after:\n".$this->dump(), __CLASS__);
     }
+    return $registeredObject;
+  }
+  /**
+   * Dump the registry content into a string
+   * @return String
+   */
+  protected function dump()
+  {
+    $str = '';
+    foreach (array_values($this->_loadedObjects) as $curObject) {
+      $str .= $curObject->dump();
+    }
+    return $str;
   }
   /**
    * @see ITransaction::getLoaded()
@@ -345,6 +367,7 @@ class Transaction implements ITransaction
    */
   public function stateChanged(PersistentObject $object, $oldValue, $newValue)
   {
+    Log::debug("State changed: ".$object->getOID()." old:".$oldValue." new:".$newValue, __CLASS__);
     switch ($newValue)
     {
       case PersistentObject::STATE_NEW:

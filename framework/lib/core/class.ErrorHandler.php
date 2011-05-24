@@ -25,12 +25,14 @@
  */
 class ErrorHandler
 {
+  private static $FATAL_ERRORS = array(E_USER_ERROR => '', E_RECOVERABLE_ERROR => '');
+
   public static function handleError($errno, $errstr, $errfile, $errline)
   {
     $errorIsEnabled = (bool)($errno & ini_get('error_reporting'));
 
     // -- FATAL ERROR
-    if(in_array($errno, array(E_USER_ERROR, E_RECOVERABLE_ERROR)) && $errorIsEnabled ) {
+    if(isset(self::$FATAL_ERRORS[$errno]) && $errorIsEnabled ) {
         throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 

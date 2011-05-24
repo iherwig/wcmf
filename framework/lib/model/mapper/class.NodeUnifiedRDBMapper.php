@@ -116,8 +116,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
               // add the parent nodes to the many to many object, don't
               // update the other side of the relation, because there may be no
               // relation defined to the many to many object
-              $nmObj->addNode($object, $thisEndRelation->getThisRole(), true, false);
-              $nmObj->addNode($relative, $otherEndRelation->getOtherRole(), true, false);
+              $nmObj->addNode($object, $thisEndRelation->getThisRole(), true, true, false);
+              $nmObj->addNode($relative, $otherEndRelation->getOtherRole(), true, true, false);
               // this relation must be saved immediatly, in order to be
               // available when the other side of the relation is processed
               // (otherwise two objects would be inserted)

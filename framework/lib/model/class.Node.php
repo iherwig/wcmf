@@ -67,7 +67,7 @@ class Node extends PersistentObject
    */
   public function getValue($name)
   {
-    // initialize a relation value if not done before
+    // initialize a relation value, if not done before
     $value = parent::getValue($name);
     if (isset($this->_relationStates[$name]) &&
             $this->_relationStates[$name] == Node::RELATION_STATE_UNINITIALIZED)
@@ -84,6 +84,97 @@ class Node extends PersistentObject
     return $value;
   }
   /**
+   * @see PersistentObject::setValue
+   */
+  public function setValue($name, $value, $forceSet=false, $keepState=false)
+  {
+    // if the attribute is a relation, a special handling is required
+    $mapper = $this->getMapper();
+    if ($mapper && $mapper->hasRelation($name))
+    {
+      if (!is_array($value)) {
+        $value = array($value);
+      }
+      // delegate to addNode
+      $result = true;
+      for($i=0, $count=sizeof($value); $i<$count; $i++) {
+        $curValue = $value[$i];
+        if ($curValue != null) {
+          $result &= $this->addNode($curValue, $name, $forceSet, $keepState);
+        }
+      }
+      return $result;
+    }
+    else {
+      // default behaviour
+      return parent::setValue($name, $value, $forceSet, $keepState);
+    }
+    return true;
+  }
+  /**
+   * @see PersistentObject::mergeValues
+   */
+  public function mergeValues(PersistentObject $object)
+  {
+    parent::mergeValues($object);
+    // implement special handling for relation values
+    $mapper = $this->getMapper();
+    if ($mapper)
+    {
+      foreach ($mapper->getRelations() as $curRelationDesc) {
+        $valueName = $curRelationDesc->getOtherRole();
+        // use parent getters to avoid loading relations
+        $existingValue = parent::getValue($valueName);
+        $newValue = parent::getValue($valueName);
+        if ($curRelationDesc->isMultiValued()) {
+          $newValue = self::mergeObjectLists($existingValue, $newValue);
+          $this->setValueInternal($valueName, $newValue);
+        }
+        elseif ($existingValue instanceof PersistentObjectProxy &&
+                  $newValue instanceof PersistentObject) {
+            $this->setValueInternal($valueName, $newValue);
+        }
+      }
+    }
+  }
+  /**
+   * Merge two object lists using the following rules:
+   * - proxies in list1 are replaced by the appropriate objects from list2
+   * - proxies/objects from list2 that don't exist in list1 are added to list1
+   * @param list1 Array of PersistentObject(Proxy) instances
+   * @param list2 Array of PersistentObject(Proxy) instances
+   * @return Array of merged values
+   */
+  protected static function mergeObjectLists($list1, $list2)
+  {
+    // ensure arrays
+    if (!is_array($list1)) {
+      $list1 = array();
+    }
+    if (!is_array($list2)) {
+      $list2 = array();
+    }
+    // create hashtables for better search performance
+    $list1Map = array();
+    foreach ($list1 as $curObject) {
+      $list1Map[$curObject->getOID()->__toString()] = $curObject;
+    }
+    // merge
+    foreach ($list2 as $curObject) {
+      $curOidStr = $curObject->getOID()->__toString();
+      if (!isset($list1Map[$curOidStr])) {
+        // add the object, if it doesn't exist yet
+        $list1Map[$curOidStr] = $curObject;
+      }
+      elseif ($list1Map[$curOidStr] instanceof PersistentObjectProxy &&
+              $curObject instanceof PersistentObject) {
+        // overwrite a proxy by a real subject
+        $list1Map[$curOidStr] = $curObject;
+      }
+    }
+    return array_values($list1Map);
+  }
+  /**
    * Get the number of children of the Node.
    * @param memOnly True/False wether to only get the number of loaded children or all children [default: true].
    * @return The number of children.
@@ -93,16 +184,16 @@ class Node extends PersistentObject
     return $this->getNumRelatives('child', $memOnly);
   }
   /**
-   * Add a Node to the given relation.
+   * Add a Node to the given relation. Delegates to setValue internally.
    * @param other The Node to add.
    * @param role The role of the Node in the created relation. If null, the role will be
    *        the Node's type. [default: null]
-   * @param strict True/False wether to add the Node according to an existing RelationDescription or not.
-   *        If true, the value for the relation will be an array, if the multiplicity is > 1 and
-   *        a single value otherwise. If false, the value will always be an array [default: true]
+   * @param forceSet @see PersistentObject::setValue()
+   * @param keepState @see PersistentObject::setValue()
    * @param updateOtherSide True/False wether to update also the other side of the relation [default: true]
+   * @return Boolean wether the operation succeeds or not
    */
-  public function addNode(PersistentObject $other, $role=null, $strict=true, $updateOtherSide=true)
+  public function addNode(PersistentObject $other, $role=null, $forceSet=false, $keepState=false, $updateOtherSide=true)
   {
     if ($role == null) {
       $role = $other->getType();
@@ -115,31 +206,30 @@ class Node extends PersistentObject
       $relDesc = $mapper->getRelation($role);
     }
 
-    if ($strict && $relDesc && !$relDesc->isMultiValued()) {
-      // just set the value if strict and not multivalued
-      $this->setValue($role, $other);
+    $value = $other;
+    if (!$relDesc || $relDesc->isMultiValued()) {
+      // make sure that the value is an array if multivalued
+      $value = self::mergeObjectLists(parent::getValue($role), array($value));
     }
-    else {
-      // make sure that the value is an array if multivalued or not strict
-      $this->addValue($role, $other);
-    }
+    $result1 = parent::setValue($role, $value, $forceSet, $keepState);
 
     // remember the addition
     if (!isset($this->_addedNodes[$role])) {
       $this->_addedNodes[$role] = array();
     }
     $this->_addedNodes[$role][] = $other->getOID();
-    $this->setState(PersistentOBject::STATE_DIRTY, false);
 
     // propagate add action to the other object
+    $result2 = true;
     if ($updateOtherSide)
     {
       $thisRole = $this->getType();
       if ($relDesc) {
         $thisRole = $relDesc->getThisRole();
       }
-      $other->addNode($this, $thisRole, $strict, false);
+      $result2 = $other->addNode($this, $thisRole, $forceSet, $keepState, false);
     }
+    return ($result1 & $result2);
   }
   /**
    * Get the object ids of the nodes that were added since the node was loaded.
@@ -198,7 +288,7 @@ class Node extends PersistentObject
         $nodes = null;
       }
     }
-    $this->setValue($role, $nodes);
+    parent::setValue($role, $nodes);
 
     // remember the deletion
     if (!isset($this->_deletedNodes[$role])) {
@@ -285,11 +375,24 @@ class Node extends PersistentObject
     if ($role != null)
     {
       // nodes of a given role are requested
-      $nodes = $this->getValue($role);
+      // make sure it is a child role
+      $childRoles = $this->getPossibleChildren();
+      if (!isset($childRoles[$role])) {
+        throw new IllegalArgumentException("No child role defined with name: ".$role);
+      }
+      // we are only looking for nodes that are in memory already
+      $nodes = parent::getValue($role);
       if (!is_array($nodes)) {
         $nodes = array($nodes);
       }
-      return self::filter($nodes, $oid, $type, $values, $properties, $useRegExp);
+      // sort out proxies
+      $children = array();
+      foreach($nodes as $curNode) {
+        if ($curNode instanceof PersistentObject) {
+          $children[] = $curNode;
+        }
+      }
+      return self::filter($children, $oid, $type, $values, $properties, $useRegExp);
     }
     else {
       return self::filter($this->getChildren(), $oid, $type, $values, $properties, $useRegExp);
@@ -564,11 +667,24 @@ class Node extends PersistentObject
     if ($role != null)
     {
       // nodes of a given role are requested
-      $nodes = $this->getValue($role);
+      // make sure it is a parent role
+      $parentRoles = $this->getPossibleParents();
+      if (!isset($parentRoles[$role])) {
+        throw new IllegalArgumentException("No parent role defined with name: ".$role);
+      }
+      // we are only looking for nodes that are in memory already
+      $nodes = parent::getValue($role);
       if (!is_array($nodes)) {
         $nodes = array($nodes);
       }
-      return self::filter($nodes, $oid, $type, $values, $properties, $useRegExp);
+      // sort out proxies
+      $parents = array();
+      foreach($nodes as $curNode) {
+        if ($curNode instanceof PersistentObject) {
+          $parents[] = $curNode;
+        }
+      }
+      return self::filter($parents, $oid, $type, $values, $properties, $useRegExp);
     }
     else {
       return self::filter($this->getParents(), $oid, $type, $values, $properties, $useRegExp);
@@ -819,8 +935,10 @@ class Node extends PersistentObject
    */
   public function addRelation($name)
   {
-    $this->_relationStates[$name] = Node::RELATION_STATE_UNINITIALIZED;
-    $this->setValueInternal($name, null);
+    if (!$this->hasValue($name)) {
+      $this->_relationStates[$name] = Node::RELATION_STATE_UNINITIALIZED;
+      $this->setValueInternal($name, null);
+    }
   }
 
   /**
@@ -849,7 +967,12 @@ class Node extends PersistentObject
    */
   public function __toString()
   {
-    return $this->getDisplayValue().' ['.parent::__toString().']';
+    $pStr = parent::__toString();
+    $str = $this->getDisplayValue();
+    if ($pStr != $str) {
+      return $this->getDisplayValue().' ['.parent::__toString().']';
+    }
+    return $str;
   }
 }
 ?>

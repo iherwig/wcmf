@@ -197,8 +197,6 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
           if ($this->_isReadOnly) {
             $obj->setImmutable();
           }
-          // register the object with the transaction
-          $transaction->registerLoaded($obj);
         }
       }
     }

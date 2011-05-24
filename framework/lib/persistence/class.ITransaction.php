@@ -67,8 +67,9 @@ interface ITransaction extends IChangeListener
   function isActive();
   /**
    * Register a loaded object. Mappers must call this method on each
-   * loaded object
+   * loaded object. The returned object is the registered instance.
    * @param object PersistentObject instance
+   * @return PersistentObject instance
    */
   function registerLoaded(PersistentObject $object);
   /**

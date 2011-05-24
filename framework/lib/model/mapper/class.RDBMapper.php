@@ -582,7 +582,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
    */
   protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
   {
-    if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE, BUILDDEPTH_REQUIRED))) {
+    if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_SINGLE, BUILDDEPTH_REQUIRED))) {
       throw new InvalidArgumentException("Build depth not supported: $buildDepth");
     }
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -598,7 +598,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
 
     // recalculate build depth for the next generation
     $newBuildDepth = $buildDepth;
-    if ($buildDepth != BUILDDEPTH_REQUIRED && $buildDepth != BUILDDEPTH_SINGLE && $buildDepth != BUILDDEPTH_INFINITE && $buildDepth > 0) {
+    if ($buildDepth != BUILDDEPTH_REQUIRED && $buildDepth != BUILDDEPTH_SINGLE && $buildDepth > 0) {
       $newBuildDepth = $buildDepth-1;
     }
 
@@ -610,10 +610,10 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       // set dependend objects of this object
       foreach ($relationDescs as $curRelationDesc)
       {
-        if ( ($buildDepth != BUILDDEPTH_SINGLE) && (($buildDepth > 0) || ($buildDepth == BUILDDEPTH_INFINITE) ||
+        if ( ($curRelationDesc->getHierarchyType() == 'child' && ($buildDepth > 0 ||
           // if BUILDDEPTH_REQUIRED only construct shared/composite children with min multiplicity > 0
-          (($buildDepth == BUILDDEPTH_REQUIRED) && $curRelationDesc->getOtherMinMultiplicity() > 0 && $curRelationDesc->getOtherAggregationKind() != 'none'
-                && !($curRelationDesc->getOtherType() == $object->getType() && $curRelationDesc->getHierarchyType() == 'parent'))) )
+          ($buildDepth == BUILDDEPTH_REQUIRED && $curRelationDesc->getOtherMinMultiplicity() > 0 && $curRelationDesc->getThisAggregationKind() != 'none')
+        )) )
         {
           $childObject = null;
           if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
@@ -622,7 +622,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
           else {
             $childObject = $persistenceFacade->create($curRelationDesc->getOtherType(), $newBuildDepth, $buildAttribs);
           }
-          $object->setValue($curRelationDesc->getOtherRole(), array($childObject));
+          $object->setValue($curRelationDesc->getOtherRole(), array($childObject), true, true);
         }
       }
     }
@@ -651,7 +651,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
           $value = $object->getValue($valueName);
           $appValues[$valueName] = $value;
           $convertedValue = $this->_dataConverter->convertApplicationToStorage($value, $object->getValueProperty($valueName, 'type'), $valueName);
-          $object->setValue($valueName, $convertedValue);
+          $object->setValue($valueName, $convertedValue, true, true);
         }
       }
     }
@@ -692,7 +692,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       foreach ($object->getValueNames() as $valueName)
       {
         if (!$this->isPkValue($valueName)) {
-          $object->setValue($valueName, $appValues[$valueName], true);
+          $object->setValue($valueName, $appValues[$valueName], true, true);
         }
       }
     }
@@ -759,7 +759,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
           }
           else {
             // unlink shared children
-            $object->setValue($relationDesc->getThisRole(), null);
+            $object->setValue($relationDesc->getThisRole(), null, true, true);
           }
         }
       }
@@ -909,15 +909,20 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       // (since we only loaded the requested attributes, we can set the attribs parameter null safely)
       $object = $this->createObjectFromData($data[$i], null);
 
-      // add related objects
-      $this->addRelatedObjects($object, $buildDepth, $buildAttribs, $buildTypes);
-
       // don't set the state recursive, because otherwise relations would be
       // initialized
       $object->setState(PersistentObject::STATE_CLEAN, false);
-      $objects[] = $object;
+
       // register the object with the transaction
-      PersistenceFacade::getInstance()->getTransaction()->registerLoaded($object);
+      $object = PersistenceFacade::getInstance()->getTransaction()->registerLoaded($object);
+
+      // add related objects
+      $this->addRelatedObjects($object, $buildDepth, $buildAttribs, $buildTypes);
+
+      // register the object with the transaction
+      $object = PersistenceFacade::getInstance()->getTransaction()->registerLoaded($object);
+
+      $objects[] = $object;
     }
     return $objects;
   }
@@ -925,7 +930,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
    * Create an object of the mapper's type with the given attributes from the given data
    * @param data An associative array with the attribute names as keys and the attribute values as values
    * @param attribs An array of attributes to add (default: null add all attributes)
-   * @return A reference to the object
+   * @return PersistentObject
    */
   protected function createObjectFromData(array $data, $attribs=null)
   {
@@ -1013,7 +1018,6 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     // recalculate build depth for the next generation
     $newBuildDepth = $buildDepth;
     if ($buildDepth != BUILDDEPTH_SINGLE && $buildDepth != BUILDDEPTH_INFINITE && $buildDepth > 0) {
-      Log::error($buildDepth, __CLASS__);
       $newBuildDepth = $buildDepth-1;
     }
     $loadNextGeneration = (($buildDepth != BUILDDEPTH_SINGLE) && ($buildDepth > 0 || $buildDepth == BUILDDEPTH_INFINITE));
@@ -1027,10 +1031,9 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       // if the build depth is not satisfied already we load the complete objects and add them
       if ($loadNextGeneration)
       {
-        $relatives = array();
         $relatives = $this->loadRelation($object, $role, $newBuildDepth, $buildAttribs, $buildTypes);
         // set the value
-        $object->setValue($role, $relatives);
+        $object->setValue($role, $relatives, true, true);
       }
       // otherwise set the value to not initialized.
       // the Node will initialize it with the proxies for the relation objects

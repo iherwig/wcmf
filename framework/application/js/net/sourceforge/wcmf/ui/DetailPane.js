@@ -7,7 +7,10 @@ dojo.require("dojox.layout.ContentPane");
  *
  * DetailPane displays the detail view of an object.
  * The concrete representation is defined in a backend template, which
- * is loaded on creation.
+ * is loaded on creation. Each sub-widget with a name starting with 'value-'
+ * is supposed to display an object value. DetailPane listens to changes in
+ * those widgets and applies them to the displayed object when pressing the
+ * save buttton.
  */
 dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
@@ -31,6 +34,10 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    * A list of connect handles for field change events
    */
   fieldChangeHandles: [],
+  /**
+   * A list of sub-widgets for editing the values of the displayed object
+   */
+  objectValueWidgets: null,
 
   /**
    * Constructor
@@ -252,7 +259,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    */
   getFieldValues: function() {
     var values = {};
-    dojo.forEach(this.getDescendants(), function(widget) {
+    dojo.forEach(this.getObjectValueWidgets(), function(widget) {
       if (widget.name) {
         var attribute = this.getAttributeNameFromFieldName(widget.name);
         if (attribute) {
@@ -271,7 +278,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     // disable handleValueChangeEvent temporarily
     this.disconnectFieldChangeEvents();
     var store = this.getStore(this.modelClass);
-    dojo.forEach(this.getDescendants(), function(widget) {
+    dojo.forEach(this.getObjectValueWidgets(), function(widget) {
       if (widget.name) {
         var attribute = this.getAttributeNameFromFieldName(widget.name);
         if (attribute) {
@@ -309,9 +316,21 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     }
   },
 
+  getObjectValueWidgets: function() {
+    if (this.objectValueWidgets == null) {
+      this.objectValueWidgets = [];
+      dojo.forEach(this.getDescendants(), function(widget) {
+        if (widget.name && widget.name.indexOf("value-") == 0) {
+          this.objectValueWidgets.push(widget);
+        }
+      }, this);
+    }
+    return this.objectValueWidgets;
+  },
+
   connectFieldChangeEvents: function() {
-    dojo.forEach(this.getDescendants(), function(widget) {
-      this.fieldChangeHandles.push(widget.watch(dojo.hitch(this, 'handleValueChangeEvent')));
+    dojo.forEach(this.getObjectValueWidgets(), function(widget) {
+      this.fieldChangeHandles.push(widget.watch(dojo.hitch(this, 'handleValueChangeEvent', widget)));
     }, this);
 
   },
@@ -323,7 +342,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     this.fieldChangeHandles = [];
   },
 
-  handleValueChangeEvent: function(propertyName, oldValue, newValue) {
+  handleValueChangeEvent: function(widget, propertyName, oldValue, newValue) {
     if (propertyName == 'value' || propertyName == 'displayedValue' || propertyName == 'checked') {
       this.setDirty();
     }

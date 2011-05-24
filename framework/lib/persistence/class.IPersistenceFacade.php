@@ -68,7 +68,7 @@ interface IPersistenceFacade
    * constructor must be used.
    * @param type The type of object to build
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   *        (except BUILDDEPTH_INFINITE, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
    * @param buildAttribs An assoziative array listing the attributes to create (default: null, creates all attributes)
    *        (keys: the types, values: an array of attributes of the type to create)
    *        Use this to create only a subset of attributes
