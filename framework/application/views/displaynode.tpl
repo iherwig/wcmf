@@ -41,7 +41,7 @@ dojo.addOnLoad(function() {
 
 <div data-dojo-type="dijit.layout.BorderContainer" id="detail{$uid}Div" style="padding:0; width:100%; height:100%" data-dojo-props="gutters:false">
   <!-- CENTER Pane -->
-  <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'leading'" style="padding:0; width:450px;">
+  <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'leading'" style="padding:0; width:450px; overflow:auto">
     <div class="wcmf_form">
       <fieldset>
         <!--legend>{$object->getDisplayValue()}</legend-->
