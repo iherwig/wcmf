@@ -286,11 +286,9 @@ class Transaction implements ITransaction
       $object = $this->_newObjects[$key];
       $mapper = $object->getMapper();
       if ($mapper) {
-        $object->beforeInsert();
         $mapper->save($object);
         // update search index
         SearchUtil::indexInSearch($object);
-        $object->afterInsert();
       }
       unset($this->_newObjects[$key]);
       $insertOids = array_keys($this->_newObjects);
@@ -309,11 +307,9 @@ class Transaction implements ITransaction
       $object = $this->_dirtyObjects[$key];
       $mapper = $object->getMapper();
       if ($mapper) {
-        $object->beforeUpdate();
         $mapper->save($object);
         // update search index
         SearchUtil::indexInSearch($object);
-        $object->afterUpdate();
       }
       unset($this->_dirtyObjects[$key]);
       $updateOids = array_keys($this->_dirtyObjects);
@@ -333,10 +329,8 @@ class Transaction implements ITransaction
       $mapper = $object->getMapper();
       if ($mapper) {
         $object->beforeDelete();
-        $mapper->delete($object);
         // remove from search index
         SearchUtil::deleteFromSearch($object);
-        $object->afterDelete();
       }
       unset($this->_deletedObjects[$key]);
       $deleteOids = array_keys($this->_deletedObjects);

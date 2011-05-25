@@ -149,9 +149,10 @@ interface IPersistenceMapper
   public function isLogging();
 
   /**
-   * Load an object from the storage.
-   * @note PersistentMapper implementations must register each loaded object
-   * at the PersistenceFacade using the ITransaction::registerLoaded() method-
+   * Load a PersistentObject instance from the storage.
+   * @note PersistentMapper implementations must call the PersistentObject::afterLoad()
+   * lifecycle callcack on each loaded object and register it at the PersistenceFacade using
+   * the ITransaction::registerLoaded() method.
    * @param oid The object id of the object to construct
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
@@ -164,7 +165,9 @@ interface IPersistenceMapper
   public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
 
   /**
-   * Construct the template of an object of a given type.
+   * Construct a PersistentObject instance of a given type.
+   * @note PersistentMapper implementations must call the PersistentObject::afterCreate()
+   * lifecycle callcack on each created object.
    * @param type The type of object to build
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BUILDDEPTH_INFINITE, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
@@ -176,13 +179,19 @@ interface IPersistenceMapper
   public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
 
   /**
-   * Save a PersistentObject
+   * Save a PersistentObject instance.
+   * @note PersistentMapper implementations must call the PersistentObject::beforeUpdate()/
+   * PersistentObject::afterUpdate() or PersistentObject::beforeInsert()/
+   * PersistentObject::afterInsert() lifecycle callcacks on each object depending
+   * on it's state.
    * @param object PersistentObject
    */
   public function save(PersistentObject $object);
 
   /**
-   * Delete a PersistentObject
+   * Delete a PersistentObject instance.
+   * @note PersistentMapper implementations must call the PersistentObject::beforeDelete()/
+   * PersistentObject::afterDelete() lifecycle callcacks on each object.
    * @param object PersistentObject
    */
   public function delete(PersistentObject $object);

@@ -27,6 +27,8 @@ require_once(WCMF_BASE."wcmf/lib/security/class.AuthorizationException.php");
  * @class AbstractMapper
  * @ingroup Persistence
  * @brief AbstractMapper provides a basic implementation for other mapper classes.
+ * It handles authorization and calls the lifecycle callcacks of PersistentObject
+ * instances.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -133,7 +135,7 @@ abstract class AbstractMapper
       }
       $this->initialize($object);
 
-      // call custom initialization
+      // call lifecycle callback
       $object->afterLoad();
     }
     return $object;
@@ -150,7 +152,7 @@ abstract class AbstractMapper
 
     $this->initialize($object);
 
-    // call custom initialization
+    // call lifecycle callback
     $object->afterCreate();
 
     return $object;
@@ -160,22 +162,37 @@ abstract class AbstractMapper
    */
   public function save(PersistentObject $object)
   {
+    $isDirty = ($object->getState() == PersistentObject::STATE_DIRTY);
+    $isNew = ($object->getState() == PersistentObject::STATE_NEW);
+
     $oid = $object->getOID();
-    if ( ($object->getState() == PersistentObject::STATE_DIRTY) &&
-            !$this->checkAuthorization($oid, ACTION_MODIFY) )
-    {
+    if ($isDirty && !$this->checkAuthorization($oid, ACTION_MODIFY)) {
       $this->authorizationFailedError($oid, ACTION_MODIFY);
       return;
     }
-    else if ( ($object->getState() == PersistentObject::STATE_NEW) &&
-            !$this->checkAuthorization($oid, ACTION_CREATE) )
-    {
+    elseif ($isNew && !$this->checkAuthorization($oid, ACTION_CREATE)) {
       $this->authorizationFailedError($oid, ACTION_CREATE);
       return;
     }
 
+    // call lifecycle callback
+    if ($isDirty) {
+      $object->beforeUpdate();
+    }
+    elseif ($isNew) {
+      $object->beforeInsert();
+    }
+
     // modify object
     return $this->saveImpl($object);
+
+    // call lifecycle callback
+    if ($isDirty) {
+      $object->afterUpdate();
+    }
+    elseif ($isNew) {
+      $object->afterInsert();
+    }
   }
   /**
    * @see PersistenceMapper::delete()
@@ -192,10 +209,16 @@ abstract class AbstractMapper
     if (!ObjectId::isValid($oid)) {
       return false;
     }
-    // delete oid
+    // call lifecycle callback
+    $object->beforeDelete();
+
+    // delete object
     $result = $this->deleteImpl($object);
     if ($result === true)
     {
+      // call lifecycle callback
+      $object->afterDelete();
+
       // release any locks on the object
       $lockManager = LockManager::getInstance();
       $lockManager->releaseLocks($oid);

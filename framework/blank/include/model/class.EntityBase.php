@@ -36,6 +36,7 @@ class EntityBase extends EntityBaseBase
       $this->setValue('creator', $authUser->getLogin());
     }
     $this->beforeUpdate();
+    $this->initializeSortkeys();
   }
   /**
    * Set last_editor and modified attribute on the node.
@@ -59,19 +60,17 @@ class EntityBase extends EntityBaseBase
   /**
    * Set the sortkey initially if existing.
    */
-  public function afterInsert()
+  protected function initializeSortkeys()
   {
-    parent::afterInsert();
-
     // set the sortkeys to the id value
     $mapper = $this->getMapper();
     if ($mapper)
     {
-      $id = $this->getOID()->getFirstId();
+      $value = time();
       foreach ($mapper->getRelations() as $relationDesc) {
         $sortkey = $mapper->getDefaultOrder($relationDesc->getOtherRole());
         if (isset($sortkey['sortFieldName'])) {
-          $this->setValue($sortkey['sortFieldName'], $id);
+          $this->setValue($sortkey['sortFieldName'], $value);
         }
       }
     }
