@@ -28,21 +28,17 @@ require_once(WCMF_BASE."«getSuperClass().getFullPackageName().asPath()»/«getSupe
  */
 class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().name»«ENDIF»
 {
-    function __construct($oid=null, $type=null)
+    /**
+     * Constructor
+     * @param oid ObjectId instance (optional)
+     */
+    function __construct($oid=null)
     {
 «IF this.hasSuperClass()-»
-      if ($type == null)
-  «IF this.getSuperClass().name == "Node"-»
-        parent::__construct('«this.name»', $oid);
-  «ELSE-»
-        parent::__construct($oid, '«this.name»');
-  «ENDIF-»
-      else
-  «IF this.getSuperClass().name == "Node"-»
-        parent::__construct($type, $oid);
-  «ELSE-»
-        parent::__construct($oid, $type);
-  «ENDIF-»
+      if ($oid == null) {
+        $oid = new ObjectId('«this.name»');
+      }
+      parent::__construct($oid);
 «ENDIF-»
     }
     /**
@@ -77,40 +73,47 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
   «EXPAND valueDescription FOR this-»
       return Message::get($description);
     }
-    /**
-     * Getter/Setter for properties
-     */
   «EXPAND values FOR this-»
   «IF this.getOrderByName() == defaultOrderByName()-»
     «FOREACH this.getParentNodesRecursive() AS curParent-»
+    /**
+     * Get the sortkey for the «curParent.getRoleName()» relation
+     * @return Number
+     */
     function «this.getOrderByNameForParent(curParent).asGetter()»()
     {
       return $this->getValue('«this.getOrderByNameForParent(curParent)»');
     }
+    /**
+     * Set the sortkey for the «curParent.getRoleName()» relation
+     * @param sortkey The sortkey value
+     */
     function «this.getOrderByNameForParent(curParent).asSetter()»($sortkey)
     {
       return $this->setValue('«this.getOrderByNameForParent(curParent)»', $sortkey);
     }
     «ENDFOREACH-»
+    /**
+     * Get the default sortkey
+     * @return Number
+     */
     function «this.getOrderByName().asGetter()»()
     {
       return $this->getValue('«this.getOrderByName()»');
     }
+    /**
+     * Set the default sortkey
+     * @param sortkey The sortkey value
+     */
     function «this.getOrderByName().asSetter()»($sortkey)
     {
       return $this->setValue('«this.getOrderByName()»', $sortkey);
     }
   «ENDIF-»
   «IF this.getWCMFValueRefs().size > 0-»
-    /**
-     * Referenced properties
-     */
     «EXPAND references FOR this-»
   «ENDIF-»
   «IF this.getParentNodesRecursive().size > 0 || this.getChildNodesRecursive().size > 0 -»
-    /**
-     * Related node lists
-     */
     «EXPAND parents FOR this-»
     «EXPAND children FOR this-»
   «ENDIF-»
@@ -122,15 +125,22 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
 «REM» values -----------------------------------------------------«ENDREM»
 «DEFINE values FOR WCMFNode-»
   «FOREACH this.getWCMFValues() AS curValue-»
+    /**
+     * Get the value of the «curValue.name» attribute
+     * @param unconverted Boolean wether to get the converted or stored value (default: false)
+     * @return Mixed
+     */
     function «curValue.name.asGetter()»($unconverted=false)
     {
-      if ($unconverted) {
-        return $this->getUnconvertedValue('«curValue.name»');
-      }
-      else {
-        return $this->getValue('«curValue.name»');
-      }
+      $value = null;
+      if ($unconverted) { $value = $this->getUnconvertedValue('«curValue.name»'); }
+      else { $value = $this->getValue('«curValue.name»'); }
+      return $value;
     }
+    /**
+     * Set the value of the «curValue.name» attribute
+     * @param «curValue.name» The value to set
+     */
     function «curValue.name.asSetter()»($«curValue.name»)
     {
       return $this->setValue('«curValue.name»', $«curValue.name»);
@@ -141,20 +151,24 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
 «REM» valueDisplayNames ------------------------------------------«ENDREM»
 «DEFINE valueDisplayNames FOR WCMFNode-»
   «FOREACH this.getWCMFValuesRecursive() AS curValue-»
-      if ($name == '«curValue.name»') $displayName = Message::get("«curValue.name»");
+      if ($name == '«curValue.name»') { $displayName = Message::get("«curValue.name»"); }
   «ENDFOREACH-»
 «ENDDEFINE»
 
 «REM» valueDescription -------------------------------------------«ENDREM»
 «DEFINE valueDescription FOR WCMFNode-»
   «FOREACH this.getWCMFValuesRecursive() AS curValue-»
-      if ($name == '«curValue.name»') $description = Message::get("«curValue.getComment(" ")»");
+      if ($name == '«curValue.name»') { $description = Message::get("«curValue.getComment(" ")»"); }
   «ENDFOREACH-»
 «ENDDEFINE»
 
 «REM» references -------------------------------------------------«ENDREM»
 «DEFINE references FOR WCMFNode-»
   «FOREACH this.getWCMFValueRefs() AS curReference-»
+    /**
+     * Get the value of the «curReference.name» reference attribute
+     * @return Mixed
+     */
     function «curReference.name.asGetter()»()
     {
       return $this->getValue('«curReference.name»');
@@ -165,10 +179,18 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
 «REM» parents ----------------------------------------------------«ENDREM»
 «DEFINE parents FOR WCMFNode-»
   «FOREACH this.getParentNodesRecursive() AS curParent-»
+    /**
+     * Get the «curParent.type.name» instances in the «curParent.getRoleName()» relation
+     * @return Array of «curParent.type.name» instances
+     */
     function «curParent.getRoleName().asGetter()»List()
     {
       return $this->getParentsEx(null, '«curParent.getRoleName()»');
     }
+    /**
+     * Set the «curParent.type.name» instances in the «curParent.getRoleName()» relation
+     * @param nodeList Array of «curParent.type.name» instances
+     */
     function «curParent.getRoleName().asSetter()»List(array $nodeList)
     {
       $this->setValue('«curParent.getRoleName()»', null);
@@ -185,10 +207,18 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
     «IF curChild.type.metaType.toString().contains("WCMFManyToMany")-»
       «FOREACH ((WCMFNode)curChild.type).getParentNodes() AS curChildParent-»
         «IF isAtOtherNmEnd(this, curChildParent.type, curChild.type)-»
+    /**
+     * Get the «curChildParent.type.name» instances in the «curChildParent.type.name» relation
+     * @return Array of «curChildParent.type.name» instances
+     */
     function «curChildParent.type.name.asGetter()»List()
     {
       return $this->getChildrenEx(null, '«curChildParent.type.name»', null, null, null, false);
     }
+    /**
+     * Set the «curChildParent.type.name» instances in the «curChildParent.type.name» relation
+     * @param nodeList Array of «curChildParent.type.name» instances
+     */
     function «curChildParent.type.name.asSetter()»List(array $nodeList)
     {
       $this->setValue('«curChildParent.type.name»', null);
@@ -199,10 +229,18 @@ class «this.name»Base«IF this.hasSuperClass()» extends «this.getSuperClass().nam
         «ENDIF-»
       «ENDFOREACH-»
     «ELSE-»
+    /**
+     * Get the «curChild.type.name» instances in the «curChild.getRoleName()» relation
+     * @return Array of «curChild.type.name» instances
+     */
     function «curChild.getRoleName().asGetter()»List()
     {
       return $this->getChildrenEx(null, '«curChild.getRoleName()»', null, null, null, false);
     }
+    /**
+     * Set the «curChild.type.name» instances in the «curChild.getRoleName()» relation
+     * @param nodeList Array of «curChild.type.name» instances
+     */
     function «curChild.getRoleName().asSetter()»List(array $nodeList)
     {
       $this->setValue('«curChild.getRoleName()»', null);
