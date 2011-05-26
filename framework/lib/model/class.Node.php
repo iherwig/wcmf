@@ -54,15 +54,6 @@ class Node extends PersistentObject
   private $_deletedNodes = array();
 
   /**
-   * Constructor.
-   * @param type The Nodes type.
-   * @param oid The Node's oid (, optional will be calculated if not given or not valid).
-   */
-  public function __construct($type, ObjectId $oid=null)
-  {
-    parent::__construct($type, $oid);
-  }
-  /**
    * @see PersistentObject::getValue
    */
   public function getValue($name)

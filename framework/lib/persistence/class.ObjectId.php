@@ -47,11 +47,12 @@ class ObjectId
    * Constructor.
    * @param type The type of the object
    * @param id Either a single value or an array of values (for compound primary keys) identifying
-   * @param prefix Either a single value or an array of values (for compound primary keys) identifying
-   * the object between others of the same type. [optional, default: null]
-   * If id is an array, the order of the values must match the order of the primary key names given
+   * the object between others of the same type. If not given, a dummy id will be
+   * assigned. [optional, default: null]
+   * @param prefix A prefix for identifying a set of objects belonging to one storage in a
+   * distributed enviroment.
+   * @note If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
-   * If only type is given, the id will be set with initial values.
    */
   public function __construct($type, $id=null, $prefix=null)
   {

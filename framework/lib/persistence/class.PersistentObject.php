@@ -61,27 +61,26 @@ class PersistentObject
   private $_changeListeners = array(); // the change listeners
 
   /**
-   * Constructor. The object will be bound to the appripriate PersistenceMapper automatically, if the
-   * the PersistenceFacade knows the type.
-   * @param type The object type.
-   * @param oid The object id (, optional will be calculated if not given or not valid).
+   * Constructor.
+   * The object will be bound to the appropriate PersistenceMapper automatically,
+   * if the PersistenceFacade knows the type. The object id is needed to extract
+   * the type. If the id parameter of the object id is a dummy id, the object
+   * is supposed to be a newly created object (@see ObjectId::containsDummyIds()).
+   * @param oid ObjectId instance
    */
-  public function __construct($type, ObjectId $oid=null)
+  public function __construct(ObjectId $oid)
   {
-    $this->_type = $type;
-
     // set oid and state
-    if (!(isset($oid)) || !ObjectId::isValid($oid))
+    if (ObjectId::isValid($oid))
     {
-      // no oid is given -> new node
-      $this->setOIDInternal(new ObjectId($type), false);
-      $this->setState(self::STATE_NEW, false);
-    }
-    else
-    {
-      // old node
+      $this->_type = $oid->getType();
+      if ($oid->containsDummyIds()) {
+        $this->setState(self::STATE_NEW, false);
+      }
+      else {
+        $this->setState(self::STATE_CLEAN, false);
+      }
       $this->setOIDInternal($oid, false);
-      $this->setState(self::STATE_CLEAN, false);
     }
   }
   /**
@@ -305,10 +304,8 @@ class PersistentObject
     $pkNames = $this->getPkNames();
     $iter = new NodeValueIterator($this, false);
     foreach($iter as $valueName => $value) {
-      if ($copyPkValues || in_array($valueName, $pkNames)) {
-        if (strlen($value) > 0) {
-          $object->setValue($valueName, $value, true);
-        }
+      if (strlen($value) > 0 && ($copyPkValues || !in_array($valueName, $pkNames))) {
+        $object->setValue($valueName, $value, true);
       }
     }
   }

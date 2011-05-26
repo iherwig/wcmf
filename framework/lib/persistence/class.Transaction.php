@@ -57,7 +57,7 @@ class Transaction implements ITransaction
       return;
     }
     $key = $object->getOID()->__toString();
-    Log::debug("Register new object: ".$key, __CLASS__);
+    Log::info("Register new object: ".$key, __CLASS__);
     $this->_newObjects[$key] = $object;
   }
   /**
@@ -73,7 +73,7 @@ class Transaction implements ITransaction
     if (isset($this->_newObjects[$key]) || isset($this->_deletedObjects[$key])) {
       return;
     }
-    Log::debug("Register dirty object: ".$key, __CLASS__);
+    Log::info("Register dirty object: ".$key, __CLASS__);
     $this->_dirtyObjects[$key] = $object;
   }
   /**
@@ -95,7 +95,7 @@ class Transaction implements ITransaction
     if (isset($this->_dirtyObjects[$key])) {
       unset($this->_dirtyObjects[$key]);
     }
-    Log::debug("Register deleted object: ".$key, __CLASS__);
+    Log::info("Register deleted object: ".$key, __CLASS__);
     $this->_deletedObjects[$key] = $object;
   }
   /**
@@ -103,7 +103,7 @@ class Transaction implements ITransaction
    */
   public function begin()
   {
-    Log::debug("Starting transaction", __CLASS__);
+    Log::info("Starting transaction", __CLASS__);
     $this->_isActive = true;
   }
   /**
@@ -136,7 +136,7 @@ class Transaction implements ITransaction
                           sizeof($this->_deletedObjects) == 0);
         }
         // commit transaction for each mapper
-        Log::debug("Committing transaction", __CLASS__);
+        Log::info("Committing transaction", __CLASS__);
         foreach ($knowTypes as $type) {
           $mapper = $persistenceFacade->getMapper($type);
           $mapper->commitTransaction();
@@ -179,7 +179,6 @@ class Transaction implements ITransaction
     $oid = $object->getOID();
     $key = $oid->__toString();
     if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Register loaded object: ".$key, __CLASS__);
       Log::debug("New Data:\n".$object->dump(), __CLASS__);
       Log::debug("Registry before:\n".$this->dump(), __CLASS__);
     }
@@ -192,6 +191,7 @@ class Transaction implements ITransaction
       $registeredObject->mergeValues($object);
     }
     else {
+      Log::info("Register loaded object: ".$key, __CLASS__);
       $this->_loadedObjects[$key] = $object;
       // start to listen to changes if the transaction is active
       if ($this->_isActive) {
@@ -282,7 +282,7 @@ class Transaction implements ITransaction
     while (sizeof($insertOids) > 0)
     {
       $key = array_shift($insertOids);
-      Log::debug("Process insert on object: ".$key, __CLASS__);
+      Log::info("Process insert on object: ".$key, __CLASS__);
       $object = $this->_newObjects[$key];
       $mapper = $object->getMapper();
       if ($mapper) {
@@ -303,7 +303,7 @@ class Transaction implements ITransaction
     while (sizeof($updateOids) > 0)
     {
       $key = array_shift($updateOids);
-      Log::debug("Process update on object: ".$key, __CLASS__);
+      Log::info("Process update on object: ".$key, __CLASS__);
       $object = $this->_dirtyObjects[$key];
       $mapper = $object->getMapper();
       if ($mapper) {
@@ -324,11 +324,11 @@ class Transaction implements ITransaction
     while (sizeof($deleteOids) > 0)
     {
       $key = array_shift($deleteOids);
-      Log::debug("Process delete on object: ".$key, __CLASS__);
+      Log::info("Process delete on object: ".$key, __CLASS__);
       $object = $this->_deletedObjects[$key];
       $mapper = $object->getMapper();
       if ($mapper) {
-        $object->beforeDelete();
+        $mapper->delete($object);
         // remove from search index
         SearchUtil::deleteFromSearch($object);
       }
