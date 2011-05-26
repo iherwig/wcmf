@@ -95,6 +95,8 @@ this._config[_17]=_1;
 }else{
 if(_15[_17]=="single"){
 this._config[_17]=_2;
+}else{
+this._config[_17]=_3;
 }
 }
 }
@@ -104,7 +106,7 @@ this.grid.selection.setMode(_18);
 },isSelected:function(_19,_1a,_1b){
 return this._isSelected(_19,_f(_19,_1a,_1b));
 },toggleSelect:function(_1c,_1d,_1e){
-this._startSelect(_1c,_f(_1c,_1d,_1e),this._config[_1c]===_3,false);
+this._startSelect(_1c,_f(_1c,_1d,_1e),this._config[_1c]===_3,false,false,!this.isSelected(_1c,_1d,_1e));
 this._endSelect(_1c);
 },select:function(_1f,_20,_21){
 if(!this.isSelected(_1f,_20,_21)){
@@ -266,11 +268,14 @@ this.connect(g,"onHeaderCellMouseUp",dp(_47,"col"));
 this.connect(g,"onRowSelectorMouseDown",dp(_44,"row"));
 this.connect(g,"onRowSelectorMouseUp",dp(_47,"row"));
 this.connect(g,"onCellMouseDown",function(e){
+if(e.cell&&e.cell.isRowSelector){
+return;
+}
 if(g.singleClickEdit){
 _43._singleClickEdit=true;
 g.singleClickEdit=false;
 }
-_44("cell",e);
+_44(_43._config["cell"]==_1?"row":"cell",e);
 });
 this.connect(g,"onCellMouseUp",function(e){
 if(_43._singleClickEdit){
@@ -459,6 +464,7 @@ this._refreshSelected(true);
 this._focusPoint(_58,this._lastEndPoint);
 }
 catch(e){
+console.warn("Selector._onInternalRearrange() error",e);
 }
 },_onExternalChange:function(_66,_67){
 var _68=_66=="cell"?_67.min:_67[0],end=_66=="cell"?_67.max:_67[_67.length-1];
@@ -548,7 +554,9 @@ return false;
 var _81=g.views.views[0];
 if(_81 instanceof dojox.grid._RowSelector){
 var _82=_81.getCellNode(_6c._lastFocusedRowBarIdx,0);
+if(_82){
 dojo.toggleClass(_82,f.focusClass,false);
+}
 _d(evt);
 }
 return true;

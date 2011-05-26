@@ -8,110 +8,115 @@
 if(!dojo._hasResource["dojo.store.Observable"]){
 dojo._hasResource["dojo.store.Observable"]=true;
 dojo.provide("dojo.store.Observable");
+dojo.getObject("store",true,dojo);
 dojo.store.Observable=function(_1){
 var _2=[],_3=0;
-var _4=_1.notify=function(_5,_6){
+_1.notify=function(_4,_5){
 _3++;
-var _7=_2.slice();
-for(var i=0,l=_7.length;i<l;i++){
-_7[i](_5,_6);
+var _6=_2.slice();
+for(var i=0,l=_6.length;i<l;i++){
+_6[i](_4,_5);
 }
 };
-var _8=_1.query;
-_1.query=function(_9,_a){
-_a=_a||{};
-var _b=_8.apply(this,arguments);
-if(_b&&_b.forEach){
-var _c=dojo.mixin({},_a);
-delete _c.start;
-delete _c.count;
-var _d=_1.queryEngine&&_1.queryEngine(_9,_c);
-var _e=_3;
-var _f=[],_10;
-_b.observe=function(_11,_12){
-if(_f.push(_11)==1){
-_2.push(_10=function(_13,_14){
-dojo.when(_b,function(_15){
-var _16=_15.length!=_a.count;
+var _7=_1.query;
+_1.query=function(_8,_9){
+_9=_9||{};
+var _a=_7.apply(this,arguments);
+if(_a&&_a.forEach){
+var _b=dojo.mixin({},_9);
+delete _b.start;
+delete _b.count;
+var _c=_1.queryEngine&&_1.queryEngine(_8,_b);
+var _d=_3;
+var _e=[],_f;
+_a.observe=function(_10,_11){
+if(_e.push(_10)==1){
+_2.push(_f=function(_12,_13){
+dojo.when(_a,function(_14){
+var _15=_14.length!=_9.count;
 var i;
-if(++_e!=_3){
+if(++_d!=_3){
 throw new Error("Query is out of date, you must observe() the query prior to any data modifications");
 }
-var _17,_18,_19;
-if(_14){
-for(i=0,l=_15.length;i<l;i++){
-var _1a=_15[i];
-if(_1.getIdentity(_1a)==_14){
-_17=_1a;
-_18=i;
-_15.splice(i,1);
+var _16,_17=-1,_18=-1;
+if(_13){
+for(i=0,l=_14.length;i<l;i++){
+var _19=_14[i];
+if(_1.getIdentity(_19)==_13){
+_16=_19;
+_17=i;
+if(_c||!_12){
+_14.splice(i,1);
+}
 break;
 }
 }
 }
-if(_d){
-if(_13&&(_d.matches?_d.matches(_13):_d([_13]).length)){
-if(_18>-1){
-_15.splice(_18,0,_13);
+if(_c){
+if(_12&&(_c.matches?_c.matches(_12):_c([_12]).length)){
+if(_17>-1){
+_14.splice(_17,0,_12);
 }else{
-_15.push(_13);
+_14.push(_12);
 }
-_19=_d(_15).indexOf(_13);
-if((_a.start&&_19==0)||(!_16&&_19==_15.length-1)){
-_19=-1;
+_18=dojo.indexOf(_c(_14),_12);
+if((_9.start&&_18==0)||(!_15&&_18==_14.length-1)){
+_18=-1;
 }
 }
 }else{
-if(_13){
-_19=_18>=0?_18:-1;
+if(_12){
+_18=_17>=0?_17:(_1.defaultIndex||0);
 }
 }
-if((_18>-1||_19>-2)&&(_12||!_d||(_18!=_19))){
-var _1b=_f.slice();
-for(i=0;_11=_1b[i];i++){
-_11(_13||_17,_18,_19);
+if((_17>-1||_18>-1)&&(_11||!_c||(_17!=_18))){
+var _1a=_e.slice();
+for(i=0;_10=_1a[i];i++){
+_10(_12||_16,_17,_18);
 }
 }
 });
 });
 }
 return {cancel:function(){
-_f.splice(dojo.indexOf(_f,_11),1);
-if(!_f.length){
-_2.splice(dojo.indexOf(_2,_10),1);
+_e.splice(dojo.indexOf(_e,_10),1);
+if(!_e.length){
+_2.splice(dojo.indexOf(_2,_f),1);
 }
 }};
 };
 }
-return _b;
+return _a;
 };
-var _1c;
-function _1d(_1e,_1f){
-var _20=_1[_1e];
-if(_20){
-_1[_1e]=function(_21){
-if(_1c){
-return _20.apply(this,arguments);
+var _1b;
+function _1c(_1d,_1e){
+var _1f=_1[_1d];
+if(_1f){
+_1[_1d]=function(_20){
+if(_1b){
+return _1f.apply(this,arguments);
 }
-_1c=true;
+_1b=true;
 try{
-return dojo.when(_20.apply(this,arguments),function(_22){
-_1f((typeof _22=="object"&&_22)||_21);
-return _22;
+return dojo.when(_1f.apply(this,arguments),function(_21){
+_1e((typeof _21=="object"&&_21)||_20);
+return _21;
 });
 }
 finally{
-_1c=false;
+_1b=false;
 }
 };
 }
 };
-_1d("put",function(_23){
-_4(_23,_1.getIdentity(_23));
+_1c("put",function(_22){
+_1.notify(_22,_1.getIdentity(_22));
 });
-_1d("add",_4);
-_1d("remove",function(id){
-_4(undefined,id);
+_1c("add",function(_23){
+_1.notify(_23);
+});
+_1c("remove",function(id){
+_1.notify(undefined,id);
 });
 return _1;
 };

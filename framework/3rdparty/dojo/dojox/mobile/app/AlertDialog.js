@@ -9,8 +9,8 @@ if(!dojo._hasResource["dojox.mobile.app.AlertDialog"]){
 dojo._hasResource["dojox.mobile.app.AlertDialog"]=true;
 dojo.provide("dojox.mobile.app.AlertDialog");
 dojo.experimental("dojox.mobile.app.AlertDialog");
-dojo.require("dijit._Widget");
-dojo.declare("dojox.mobile.app.AlertDialog",dijit._Widget,{title:"",text:"",controller:null,buttons:null,defaultButtonLabel:"OK",onChoose:null,constructor:function(){
+dojo.require("dijit._WidgetBase");
+dojo.declare("dojox.mobile.app.AlertDialog",dijit._WidgetBase,{title:"",text:"",controller:null,buttons:null,defaultButtonLabel:"OK",onChoose:null,constructor:function(){
 this.onClick=dojo.hitch(this,this.onClick);
 this._handleSelect=dojo.hitch(this,this._handleSelect);
 },buildRendering:function(){

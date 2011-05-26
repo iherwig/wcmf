@@ -6,33 +6,39 @@
 
 
 define(["dojo","dojo/cache"],function(_1){
-var _2={},_3=function(_4,_5){
-define("text!"+_4,0,_5);
-_2[_4]=_5;
+var _2={},_3=function(_4,_5,_6){
+_2[_4]=_6;
 _1.cache({toString:function(){
-return _4;
-}},_5);
-},_6=function(_7){
-if(_7){
-_7=_7.replace(/^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im,"");
-var _8=_7.match(/<body[^>]*>\s*([\s\S]+)\s*<\/body>/im);
+return _5;
+}},_6);
+},_7=function(_8){
 if(_8){
-_7=_8[1];
+_8=_8.replace(/^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im,"");
+var _9=_8.match(/<body[^>]*>\s*([\s\S]+)\s*<\/body>/im);
+if(_9){
+_8=_9[1];
 }
 }else{
-_7="";
+_8="";
 }
-return _7;
+return _8;
 };
-return {load:function(_9,id,_a){
-var _b=id.split("!"),_c=_9.nameToUrl(_b[0]),_d="text!"+_c;
-if(_c in _2){
-_a(_b[1]&&_b[1]=="strip"?_6(_2[_c]):_2[_c]);
-}else{
-_1.xhrGet({url:_c,load:function(_e){
-_3(_c,_e);
-_a(_b[1]&&_b[1]=="strip"?_6(_e):_e);
-}});
+return {load:function(id,_a,_b){
+var _c,_d,_e,_f=id.split("!");
+if(_a.toAbsMid){
+_c=_f[0].match(/(.+)(\.[^\/]*)$/);
+_d=_c?_a.toAbsMid(_c[1])+_c[2]:_a.toAbsMid(_f[0]);
+if(_d in _2){
+_b(_f[1]=="strip"?_7(_2[_d]):_2[_d]);
+return;
 }
-},cache:_3};
+}
+_e=_a.toUrl(_f[0]);
+_1.xhrGet({url:_e,load:function(_10){
+_d&&_3(_d,_e,_10);
+_b(_f[1]=="strip"?_7(_10):_10);
+}});
+},cache:function(_11,mid,_12,_13){
+_3(_11,require.nameToUrl(mid)+_12,_13);
+}};
 });

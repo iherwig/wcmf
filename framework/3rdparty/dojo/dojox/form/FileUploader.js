@@ -424,7 +424,7 @@ this._setHtmlPostData();
 if(this.showProgress){
 this._animateProgress();
 }
-var dfd=dojo.io.iframe.send({url:this.uploadUrl,form:this._formNode,handleAs:"json",error:dojo.hitch(this,function(err){
+var dfd=dojo.io.iframe.send({url:this.uploadUrl.toString(),form:this._formNode,handleAs:"json",error:dojo.hitch(this,function(err){
 this._error("HTML Upload Error:"+err.message);
 }),load:dojo.hitch(this,function(_23,_24,_25){
 this._complete(_23);
@@ -444,10 +444,12 @@ dojo.addClass(this.domNode,this.hoverClass);
 this.onMouseOver(evt);
 }));
 this._cons.push(dojo.connect(this._fileInput,"mouseout",this,function(evt){
+setTimeout(dojo.hitch(this,function(){
 dojo.removeClass(this.domNode,this.activeClass);
 dojo.removeClass(this.domNode,this.hoverClass);
 this.onMouseOut(evt);
 this._checkHtmlCancel("off");
+}),0);
 }));
 this._cons.push(dojo.connect(this._fileInput,"mousedown",this,function(evt){
 dojo.addClass(this.domNode,this.activeClass);
@@ -502,15 +504,14 @@ this._connectInput();
 if(this._formNode){
 return;
 }
-if(dojo.isIE){
+if(dojo.isIE<9||(dojo.isIE&&dojo.isQuirks)){
 this._formNode=document.createElement("<form enctype=\"multipart/form-data\" method=\"post\">");
 this._formNode.encoding="multipart/form-data";
-}else{
-this._formNode=document.createElement("form");
-this._formNode.setAttribute("enctype","multipart/form-data");
-}
 this._formNode.id=dijit.getUniqueId("FileUploaderForm");
 this.domNode.appendChild(this._formNode);
+}else{
+this._formNode=dojo.create("form",{enctype:"multipart/form-data",method:"post",id:dijit.getUniqueId("FileUploaderForm")},this.domNode);
+}
 },_buildFileInput:function(){
 if(this._fileInput){
 this._disconnect();
@@ -528,7 +529,6 @@ this.fileCount++;
 }
 dojo.attr(this._fileInput,{id:this.id,name:nm,type:"file"});
 dojo.addClass(this._fileInput,"dijitFileInputReal");
-console.warn("BUILD FI");
 this._formNode.appendChild(this._fileInput);
 var _28=dojo.marginBox(this._fileInput);
 dojo.style(this._fileInput,{position:"relative",left:(this.fhtml.nr.w-_28.w)+"px",opacity:0});
@@ -567,7 +567,6 @@ var o={};
 for(var nm in this.postData){
 o[nm]=this.postData[nm];
 }
-console.warn("this.postData:",o);
 this.flashMovie.doUpload(o);
 }
 catch(err){

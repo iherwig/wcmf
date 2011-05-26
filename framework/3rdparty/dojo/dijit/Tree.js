@@ -617,12 +617,13 @@ _93.setChildItems(_8f);
 var _95=this.model,_96=_95.getIdentity(_94),_97=this._itemNodesMap[_96];
 if(_97){
 dojo.forEach(_97,function(_98){
+this.dndController.removeTreeNode(_98);
 var _99=_98.getParent();
 if(_99){
 _99.removeChild(_98);
 }
 _98.destroyRecursive();
-});
+},this);
 delete this._itemNodesMap[_96];
 }
 },_initState:function(){
@@ -675,7 +676,6 @@ this.destroy();
 },resize:function(_9e){
 if(_9e){
 dojo.marginBox(this.domNode,_9e);
-dojo.style(this.domNode,"overflow","auto");
 }
 this._nodePixelIndent=dojo._getMarginSize(this.tree.indentDetector).w;
 if(this.tree.rootNode){

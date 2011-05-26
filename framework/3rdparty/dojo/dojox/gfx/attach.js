@@ -5,8 +5,13 @@
 */
 
 
+if(!dojo._hasResource["dojox.gfx.attach"]){
+dojo._hasResource["dojox.gfx.attach"]=true;
+dojo.provide("dojox.gfx.attach");
 dojo.require("dojox.gfx");
-dojo.requireIf(dojox.gfx.renderer=="svg","dojox.gfx.svg_attach");
-dojo.requireIf(dojox.gfx.renderer=="vml","dojox.gfx.vml_attach");
-dojo.requireIf(dojox.gfx.renderer=="silverlight","dojox.gfx.silverlight_attach");
-dojo.requireIf(dojox.gfx.renderer=="canvas","dojox.gfx.canvas_attach");
+(function(){
+var r=dojox.gfx.svg.attach[dojox.gfx.renderer];
+dojo.gfx.attachSurface=r.attachSurface;
+dojo.gfx.attachNode=r.attachNode;
+})();
+}

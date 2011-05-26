@@ -1,1 +1,1 @@
-({"redLabel":"v","hueLabel":"m","greenLabel":"e","saturationPickerTitle":"Saturation Selector","valueLabel":"v","blueLabel":"b","saturationLabel":"s","hexLabel":"hex","huePickerTitle":"Hue Selector","degLabel":"°"})
+({"redLabel":"v","hueLabel":"m","saturationPickerTitle":"Selector de saturació","huePickerTitle":"Selector de matís","greenLabel":"e","valueLabel":"v","blueLabel":"b","saturationLabel":"s","hexLabel":"hex","degLabel":"°"})

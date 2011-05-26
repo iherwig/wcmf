@@ -27,7 +27,7 @@ if(this._started&&!_1._started){
 _1.startup();
 }
 },removeChild:function(_5){
-if(typeof _5=="number"&&_5>0){
+if(typeof _5=="number"){
 _5=this.getChildren()[_5];
 }
 if(_5){

@@ -1,1 +1,1 @@
-({"redLabel":"k","valueLabel":"d","hexLabel":"onaltılı","hueLabel":"t","saturationLabel":"d","greenLabel":"y","blueLabel":"m","saturationPickerTitle":"Saturation Selector","huePickerTitle":"Hue Selector","degLabel":"°"})
+({"saturationPickerTitle":"Doygunluk Seçici","valueLabel":"d","blueLabel":"m","saturationLabel":"d","greenLabel":"y","redLabel":"k","hueLabel":"t","hexLabel":"onaltılı","huePickerTitle":"Ton Seçici","degLabel":"°"})

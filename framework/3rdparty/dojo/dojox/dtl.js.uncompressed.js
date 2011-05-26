@@ -27,10 +27,10 @@ dojox.string.Builder = function(/*String?*/str){
 	var b = "";
 	this.length = 0;
 	
-	this.append = function(/* String... */s){ 
-		// summary: Append all arguments to the end of the buffer 
+	this.append = function(/* String... */s){
+		// summary: Append all arguments to the end of the buffer
 		if(arguments.length>1){
-			/*  
+			/*
 				This is a loop unroll was designed specifically for Firefox;
 				it would seem that static index access on an Arguments
 				object is a LOT faster than doing dynamic index access.
@@ -45,10 +45,10 @@ dojox.string.Builder = function(/*String?*/str){
 				Safari or Opera, so we just use it for all.
 
 				It turns out also that this loop unroll can increase performance
-				significantly with Internet Explorer, particularly when 
+				significantly with Internet Explorer, particularly when
 				as many arguments are provided as possible.
 
-				Loop unroll per suggestion from Kris Zyp, implemented by 
+				Loop unroll per suggestion from Kris Zyp, implemented by
 				Tom Trenka.
 
 				Note: added empty string to force a string cast if needed.
@@ -96,7 +96,7 @@ dojox.string.Builder = function(/*String?*/str){
 	};
 	
 	this.clear = function(){
-		//	summary: 
+		//	summary:
 		//		Remove all characters from the buffer.
 		b = "";
 		this.length = 0;
@@ -104,7 +104,7 @@ dojox.string.Builder = function(/*String?*/str){
 	};
 	
 	this.replace = function(/* String */oldStr, /* String */ newStr){
-		// 	summary: 
+		// 	summary:
 		//		Replace instances of one string with another in the buffer.
 		b = b.replace(oldStr,newStr);
 		this.length = b.length;
@@ -123,7 +123,7 @@ dojox.string.Builder = function(/*String?*/str){
 	};
 	
 	this.insert = function(/* Number */index, /* String */str){
-		//	summary: 
+		//	summary:
 		//		Insert string str starting at index.
 		if(index == 0){
 			b = str + b;
@@ -265,7 +265,7 @@ dojo.experimental("dojox.dtl");
 		}
 	});
 
-	var smart_split_re = /("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s]+)/g;           
+	var smart_split_re = /("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s]+)/g;
 	var split_re = /\s+/g;
 	var split = function(/*String|RegExp?*/ splitter, /*Integer?*/ limit){
 		splitter = splitter || split_re;
@@ -1523,7 +1523,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 	}else{
 		// If at first you don't succeed ...
 		// If IE knows about the TZ, it appears before the year
-		// Capital letters or slash before a 4-digit year 
+		// Capital letters or slash before a 4-digit year
 		// at the end of string
 		var pat = /([A-Z\/]+) \d{4}$/;
 		if((match = str.match(pat))){
@@ -1532,7 +1532,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 		// Some browsers (e.g. Safari) glue the TZ on the end
 		// of toLocaleString instead of putting it in toString
 			str = dateObject.toLocaleString();
-			// Capital letters or slash -- end of string, 
+			// Capital letters or slash -- end of string,
 			// after space
 			pat = / ([A-Z\/]+)$/;
 			if((match = str.match(pat))){
@@ -1819,7 +1819,7 @@ dojo.provide("dojox.date.php");
 dojox.date.php.format = function(/*Date*/ date, /*String*/ format){
 	// summary: Get a formatted string for a given date object
 	var df = new dojox.date.php.DateFormat(format);
-	return df.format(date);	
+	return df.format(date);
 }
 
 dojox.date.php.DateFormat = function(/*String*/ format){
@@ -2136,7 +2136,7 @@ dojo.extend(dojox.dtl.utils.date.DateFormat, dojox.date.php.DateFormat.prototype
 	f: function(){
 		// summary:
 		//		Time, in 12-hour hours and minutes, with minutes left off if they're zero.
-		// description: 
+		// description:
 		//		Examples: '1', '1:30', '2:05', '2'
 		//		Proprietary extension.
 		return (!this.date.getMinutes()) ? this.g() : this.g() + ":" + this.i();

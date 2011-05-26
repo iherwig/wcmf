@@ -2,8 +2,8 @@
 .tundra .dijitDialog {
 	background: #fff;
 	border: 1px solid #7eabcd;
-	padding: 0px;
-	-webkit-box-shadow: 0px 5px 10px #adadad;
+	padding: 0;
+	-webkit-box-shadow: 0 5px 10px #adadad;
 }
 .tundra .dijitDialogPaneContent {
 	background: #fff;
@@ -19,7 +19,7 @@
 .tundra .dijitDialogTitle {
 	
 	font-weight: bold;
-	padding: 0px 4px;
+	padding: 0 4px;
 }
 .tundra .dijitDialogCloseIcon {
 	
@@ -64,7 +64,7 @@
 }
 .tundra .dijitTooltipConnector {
 	
-	border:0px;
+	border:0;
 	z-index: 2;
 }
 .tundra .dijitTooltipABRight .dijitTooltipConnector {
@@ -74,7 +74,7 @@
 }
 .tundra .dijitTooltipBelow .dijitTooltipConnector {
 	
-	top: 0px;
+	top: 0;
 	left: 3px;
 	background:url("images/tooltipConnectorUp.png") no-repeat top left;
 	width:16px;
@@ -86,7 +86,7 @@
 }
 .tundra .dijitTooltipAbove .dijitTooltipConnector {
 	
-	bottom: 0px;
+	bottom: 0;
 	left: 3px;
 	background:url("images/tooltipConnectorDown.png") no-repeat top left;
 	width:16px;
@@ -103,7 +103,7 @@
 }
 .tundra .dijitTooltipLeft .dijitTooltipConnector {
 	
-	right: 0px;
+	right: 0;
 	background:url("images/tooltipConnectorRight.png") no-repeat top left;
 	width:16px;
 	height:14px;
@@ -116,7 +116,7 @@
 }
 .tundra .dijitTooltipRight .dijitTooltipConnector {
 	
-	left: 0px;
+	left: 0;
 	background:url("images/tooltipConnectorLeft.png") no-repeat top left;
 	width:16px;
 	height:14px;
@@ -125,5 +125,5 @@
 	background-image: url("images/tooltipConnectorLeft.gif");
 }
 .dj_webkit .tundra .dijitTooltipContainer {
-	-webkit-box-shadow: 0px 5px 10px #adadad;
+	-webkit-box-shadow: 0 5px 10px #adadad;
 }

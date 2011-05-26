@@ -49,6 +49,9 @@ this.flashMedia.doPlay(this._normalizeUrl(_5));
 },pause:function(){
 this.isPlaying=false;
 this.isStopped=false;
+if(this.onPaused){
+this.onPaused();
+}
 this.flashMedia.pause();
 },seek:function(_6){
 this.flashMedia.seek(_6);

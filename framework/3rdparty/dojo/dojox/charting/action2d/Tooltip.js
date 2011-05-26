@@ -100,7 +100,10 @@ _7.y=Math.round(_7.y);
 _7.width=Math.ceil(_7.width);
 _7.height=Math.ceil(_7.height);
 this.aroundRect=_7;
-dijit.showTooltip(this.text(o),this.aroundRect,_8);
+var _b=this.text(o);
+if(_b){
+dijit.showTooltip(_b,this.aroundRect,_8);
+}
 }});
 })();
 }

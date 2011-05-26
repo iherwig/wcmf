@@ -68,10 +68,7 @@ c.render();
 this.chart.destroy();
 this.inherited(arguments);
 },resize:function(box){
-if(box.w>0&&box.h>0){
-dojo.marginBox(this.domNode,box);
-this.chart.resize();
-}
+this.chart.resize(box);
 }});
 _1=function(_13,_14,kw){
 var dp=eval("("+_14+".prototype.defaultParams)");

@@ -9,7 +9,7 @@ if(!dojo._hasResource["dojox.mobile.TabBar"]){
 dojo._hasResource["dojox.mobile.TabBar"]=true;
 dojo.provide("dojox.mobile.TabBar");
 dojo.require("dojox.mobile");
-dojo.declare("dojox.mobile.TabBar",dijit._Widget,{iconBase:"",iconPos:"",barType:"tabBar",inHeading:false,_fixedButtonWidth:76,_fixedButtonMargin:17,_largeScreenWidth:500,buildRendering:function(){
+dojo.declare("dojox.mobile.TabBar",dijit._WidgetBase,{iconBase:"",iconPos:"",barType:"tabBar",inHeading:false,_fixedButtonWidth:76,_fixedButtonMargin:17,_largeScreenWidth:500,buildRendering:function(){
 this._clsName=this.barType=="segmentedControl"?"mblTabButton":"mblTabBarButton";
 this.domNode=this.containerNode=this.srcNodeRef||dojo.doc.createElement("H1");
 this.domNode.className=this.barType=="segmentedControl"?"mblTabPanelHeader":"mblTabBar";

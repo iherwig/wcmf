@@ -11,7 +11,7 @@ dojo.provide("dojox.form.Uploader");
 dojo.experimental("dojox.form.Uploader");
 dojo.require("dojox.form.uploader.Base");
 dojo.require("dijit.form.Button");
-dojo.declare("dojox.form.Uploader",[dojox.form.uploader.Base],{uploadOnSelect:false,tabIndex:0,multiple:false,label:"Upload...",url:"",name:"uploadedfile",flashFieldName:"",_nameIndex:0,widgetsInTemplate:true,templateString:"<div class=\"dojoxFileInput\"><div dojoType=\"dijit.form.Button\" dojoAttachPoint=\"button\">${label}</div></div>",postMixInProperties:function(){
+dojo.declare("dojox.form.Uploader",[dojox.form.uploader.Base],{uploadOnSelect:false,tabIndex:0,multiple:false,label:"Upload...",url:"",name:"uploadedfile",flashFieldName:"",uploadType:"form",_nameIndex:0,widgetsInTemplate:true,templateString:"<div class=\"dojoxFileInput\"><div dojoType=\"dijit.form.Button\" dojoAttachPoint=\"button\">${label}</div></div>",postMixInProperties:function(){
 this._inputs=[];
 this._getButtonStyle(this.srcNodeRef);
 this.inherited(arguments);

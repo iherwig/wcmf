@@ -24,7 +24,7 @@
 }
 .claro .dijitCheckBoxChecked, .claro .dijitToggleButtonChecked .dijitCheckBoxIcon {
   
-  background-position: 0px;
+  background-position: 0;
 }
 .claro .dijitCheckBoxDisabled {
   

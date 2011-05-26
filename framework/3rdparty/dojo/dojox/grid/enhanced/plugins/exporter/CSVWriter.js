@@ -18,7 +18,7 @@ this._newline=_1.newline?_1.newline:this._newline;
 this._headers=[];
 this._dataRows=[];
 },_formatCSVCell:function(_2){
-if(!_2){
+if(_2===null||_2===undefined){
 return "";
 }
 var _3=String(_2).replace(/"/g,"\"\"");

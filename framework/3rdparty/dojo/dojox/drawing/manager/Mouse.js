@@ -14,7 +14,7 @@ this.keys=_1.keys;
 this.id=_1.id||this.util.uid("mouse");
 this.currentNodeId="";
 this.registered={};
-},{doublClickSpeed:400,_lastx:0,_lasty:0,__reg:0,_downOnCanvas:false,init:function(_2){
+},{doublClickSpeed:400,rightClickMenu:false,_lastx:0,_lasty:0,__reg:0,_downOnCanvas:false,init:function(_2){
 this.container=_2;
 this.setCanvas();
 var c;
@@ -26,12 +26,16 @@ dojo.connect(document.body,"mousedown",this,function(_5){
 });
 dojo.connect(this.container,"mousedown",this,function(_6){
 this.down(_6);
+if(_6.button!=dojo.mouseButtons.RIGHT){
 _3=true;
 c=dojo.connect(document,"mousemove",this,"drag");
+}
 });
 dojo.connect(document,"mouseup",this,function(_7){
+if(_7.button!=dojo.mouseButtons.RIGHT){
 dojo.disconnect(c);
 _3=false;
+}
 this.up(_7);
 });
 dojo.connect(document,"mousemove",this,function(_8){
@@ -139,8 +143,6 @@ return "on"+t+_13;
 },up:function(evt){
 this.onUp(this.create(evt));
 },down:function(evt){
-evt.preventDefault();
-dojo.stopEvent(evt);
 this._downOnCanvas=true;
 var sc=this.scrollOffset();
 var dim=this._getXY(evt);
@@ -158,6 +160,11 @@ this._lastx=x;
 this._lasty=y;
 this.drawingType=this.util.attr(evt,"drawingType")||"";
 var id=this._getId(evt);
+if(this.rightClickMenu&&(evt.button==dojo.mouseButtons.RIGHT)&&this.id=="mse"){
+}else{
+evt.preventDefault();
+dojo.stopEvent(evt);
+}
 this.onDown({mid:this.id,x:x,y:y,pageX:dim.x,pageY:dim.y,withinCanvas:_14,id:id});
 },over:function(obj){
 this.onOver(obj);

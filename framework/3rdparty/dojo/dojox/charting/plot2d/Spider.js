@@ -9,20 +9,17 @@ if(!dojo._hasResource["dojox.charting.plot2d.Spider"]){
 dojo._hasResource["dojox.charting.plot2d.Spider"]=true;
 dojo.provide("dojox.charting.plot2d.Spider");
 dojo.experimental("dojox.charting.plot2d.Spider");
-dojo.require("dijit.Tooltip");
 dojo.require("dojox.charting.Element");
 dojo.require("dojox.charting.plot2d._PlotEvents");
 dojo.require("dojox.charting.axis2d.common");
 dojo.require("dojox.charting.plot2d.common");
 dojo.require("dojox.charting.scaler.primitive");
-dojo.require("dojox.charting.widget.Legend");
 dojo.require("dojox.lang.functional");
 dojo.require("dojox.lang.utils");
 dojo.require("dojox.gfx");
 dojo.require("dojo.fx");
 dojo.require("dojo.fx.easing");
 dojo.require("dojox.gfx.fx");
-dojo.require("dojo.number");
 (function(){
 var df=dojox.lang.functional,du=dojox.lang.utils,dc=dojox.charting.plot2d.common,da=dojox.charting.axis2d.common,g=dojox.gfx,m=g.matrix,_1=0.2;
 dojo.declare("dojox.charting.plot2d.Spider",[dojox.charting.Element,dojox.charting.plot2d._PlotEvents],{defaultParams:{labels:true,ticks:false,fixed:true,precision:1,labelOffset:-10,labelStyle:"default",htmlLabels:true,startAngle:-90,divisions:3,axisColor:"",axisWidth:0,spiderColor:"",spiderWidth:0,seriesWidth:0,seriesFillAlpha:0.2,spiderOrigin:0.16,markerSize:3,spiderType:"polygon",animationType:dojo.fx.easing.backOut,axisTickFont:"",axisTickFontColor:"",axisFont:"",axisFontColor:""},optionalParams:{radius:0,font:"",fontColor:""},constructor:function(_2,_3){
@@ -302,11 +299,15 @@ _56.width=Math.ceil(_56.width);
 _56.height=Math.ceil(_56.height);
 this.aroundRect=_56;
 var _57=["after","before"];
+if(dijit&&dijit.Tooltip){
 dijit.showTooltip(o.tdata.sname+"<br/>"+o.tdata.key+"<br/>"+o.tdata.data,this.aroundRect,_57);
+}
 }else{
 _53=dojox.gfx.matrix.scaleAt(_55,o.cx,o.cy);
 _54=1/_55;
+if(dijit&&dijit.Tooltip){
 this.aroundRect&&dijit.hideTooltip(this.aroundRect);
+}
 }
 var cs=o.shape.getShape(),_53=m.scaleAt(_55,cs.cx,cs.cy),_58={shape:o.shape,duration:200,easing:dojo.fx.easing.backOut,transform:[{name:"scaleAt",start:[1,cs.cx,cs.cy],end:[_54,cs.cx,cs.cy]},_53]};
 a.anim=dojox.gfx.fx.animateTransform(_58);
@@ -351,7 +352,7 @@ _6c++;
 }
 return _6c;
 },_getLabel:function(_6d){
-return this.opt.fixed?dojo.number.format(_6d,{places:this.opt.precision}):_6d.toString();
+return dc.getLabel(_6d,this.opt.fixed,this.opt.precision);
 }});
 function _51(_6e){
 var a=new dojox.color.Color(_6e),x=a.toHsl();

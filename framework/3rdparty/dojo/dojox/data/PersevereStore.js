@@ -46,7 +46,7 @@ var _11=_f[j];
 if(_11.runAt!="client"&&!_10[j]){
 _10[j]=(function(_12){
 return function(){
-var _13=dojo.rawXhrPost({url:this.__id,postData:dojo.toJson({method:_12,id:_a++,params:dojo._toArray(arguments)}),handleAs:"json"});
+var _13=dojo.rawXhrPost({url:this.__id,postData:dojox.json.ref.toJson({method:_12,id:_a++,params:dojo._toArray(arguments)}),handleAs:"json"});
 _13.addCallback(function(_14){
 return _14.error?new Error(_14.error):_14.result;
 });

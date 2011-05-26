@@ -13,9 +13,12 @@ dojo.require("dojox.embed.flashVars");
 dojo.require("dojox.embed.Flash");
 dojo.declare("dojox.form.uploader.plugins.Flash",[],{swfPath:dojo.config.uploaderPath||dojo.moduleUrl("dojox.form","resources/uploader.swf"),skipServerCheck:true,serverTimeout:2000,isDebug:false,devMode:false,deferredUploading:0,force:"",postMixInProperties:function(){
 if(!this.supports("multiple")){
+this.uploadType="flash";
 this._files=[];
 this._fileMap={};
 this._createInput=this._createFlashUploader;
+this.getFileList=this.getFlashFileList;
+this.reset=this.flashReset;
 this.upload=this.uploadFlash;
 this.submit=this.submitFlash;
 this.fieldname="flashUploadFiles";
@@ -25,9 +28,9 @@ this.inherited(arguments);
 },onLoad:function(_2){
 },onFileChange:function(_3){
 },onFileProgress:function(_4){
-},getFileList:function(){
+},getFlashFileList:function(){
 return this._files;
-},reset:function(){
+},flashReset:function(){
 this.flashMovie.reset();
 this._files=[];
 },uploadFlash:function(){
@@ -95,13 +98,13 @@ if(this.tabIndex>=0){
 dojo.attr(this.domNode,"tabIndex",this.tabIndex);
 }
 },_createFlashUploader:function(){
-url=this.getUrl();
-if(url){
-if(url.toLowerCase().indexOf("http")<0&&url.indexOf("/")!=0){
-var _d=window.location.href.split("/");
-_d.pop();
-_d=_d.join("/")+"/";
-url=_d+url;
+var _d=this.getUrl();
+if(_d){
+if(_d.toLowerCase().indexOf("http")<0&&_d.indexOf("/")!=0){
+var _e=window.location.href.split("/");
+_e.pop();
+_e=_e.join("/")+"/";
+_d=_e+_d;
 }
 }else{
 console.warn("Warning: no uploadUrl provided.");
@@ -110,10 +113,10 @@ this.inputNode=dojo.create("div",{className:"dojoxFlashNode"},this.domNode,"firs
 dojo.style(this.inputNode,{position:"absolute",top:"-2px",width:this.btnSize.w+"px",height:this.btnSize.h+"px",opacity:0});
 var w=this.btnSize.w;
 var h=this.btnSize.h;
-var _e={expressInstall:true,path:this.swfPath.uri||this.swfPath,width:w,height:h,allowScriptAccess:"always",allowNetworking:"all",vars:{uploadDataFieldName:this.flashFieldName||this.name+"Flash",uploadUrl:url,uploadOnSelect:this.uploadOnSelect,deferredUploading:this.deferredUploading||0,selectMultipleFiles:this.multiple,id:this.id,isDebug:this.isDebug,noReturnCheck:this.skipServerCheck,serverTimeout:this.serverTimeout},params:{scale:"noscale",wmode:"transparent",wmode:"opaque",allowScriptAccess:"always",allowNetworking:"all"}};
-this.flashObject=new dojox.embed.Flash(_e,this.inputNode);
-this.flashObject.onError=dojo.hitch(function(_f){
-console.error("Flash Error: "+_f);
+var _f={expressInstall:true,path:(this.swfPath.uri||this.swfPath)+"?cb_"+(new Date().getTime()),width:w,height:h,allowScriptAccess:"always",allowNetworking:"all",vars:{uploadDataFieldName:this.flashFieldName||this.name+"Flash",uploadUrl:_d,uploadOnSelect:this.uploadOnSelect,deferredUploading:this.deferredUploading||0,selectMultipleFiles:this.multiple,id:this.id,isDebug:this.isDebug,noReturnCheck:this.skipServerCheck,serverTimeout:this.serverTimeout},params:{scale:"noscale",wmode:"transparent",wmode:"opaque",allowScriptAccess:"always",allowNetworking:"all"}};
+this.flashObject=new dojox.embed.Flash(_f,this.inputNode);
+this.flashObject.onError=dojo.hitch(function(msg){
+console.error("Flash Error: "+msg);
 });
 this.flashObject.onReady=dojo.hitch(this,function(){
 this.onReady(this);

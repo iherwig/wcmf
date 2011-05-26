@@ -19,8 +19,7 @@ dojo.forEach(this.events,this.shape.disconnect,this.shape);
 this.events=this.shape=null;
 },onMouseDown:function(e){
 if(this.delay){
-this.events.push(this.shape.connect("onmousemove",this,"onMouseMove"));
-this.events.push(this.shape.connect("onmouseup",this,"onMouseUp"));
+this.events.push(this.shape.connect("onmousemove",this,"onMouseMove"),this.shape.connect("onmouseup",this,"onMouseUp"));
 this._lastX=e.clientX;
 this._lastY=e.clientY;
 }else{

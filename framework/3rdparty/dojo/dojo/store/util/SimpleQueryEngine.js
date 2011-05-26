@@ -18,8 +18,15 @@ case "undefined":
 var _3=_1;
 _1=function(_4){
 for(var _5 in _3){
-if(_3[_5]!=_4[_5]){
+var _6=_3[_5];
+if(_6&&_6.test){
+if(!_6.test(_4[_5])){
 return false;
+}
+}else{
+if(_6!=_4[_5]){
+return false;
+}
 }
 }
 return true;
@@ -32,28 +39,28 @@ throw new Error("No filter function "+_1+" was found in store");
 _1=this[_1];
 case "function":
 }
-function _6(_7){
-var _8=dojo.filter(_7,_1);
+function _7(_8){
+var _9=dojo.filter(_8,_1);
 if(_2&&_2.sort){
-_8.sort(function(a,b){
-for(var _9,i=0;_9=_2.sort[i];i++){
-var _a=a[_9.attribute];
-var _b=b[_9.attribute];
-if(_a!=_b){
-return !!_9.descending==_a>_b?-1:1;
+_9.sort(function(a,b){
+for(var _a,i=0;_a=_2.sort[i];i++){
+var _b=a[_a.attribute];
+var _c=b[_a.attribute];
+if(_b!=_c){
+return !!_a.descending==_b>_c?-1:1;
 }
 }
 return 0;
 });
 }
 if(_2&&(_2.start||_2.count)){
-var _c=_8.length;
-_8=_8.slice(_2.start||0,(_2.start||0)+(_2.count||Infinity));
-_8.total=_c;
+var _d=_9.length;
+_9=_9.slice(_2.start||0,(_2.start||0)+(_2.count||Infinity));
+_9.total=_d;
 }
-return _8;
+return _9;
 };
-_6.matches=_1;
-return _6;
+_7.matches=_1;
+return _7;
 };
 }

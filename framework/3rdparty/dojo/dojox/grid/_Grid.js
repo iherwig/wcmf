@@ -163,6 +163,7 @@ var _6=new c({grid:this,index:_5});
 this.viewsNode.appendChild(_6.domNode);
 this.viewsHeaderNode.appendChild(_6.headerNode);
 this.views.addView(_6);
+dojo.attr(this.domNode,"align",dojo._isBodyLtr()?"left":"right");
 return _6;
 },buildViews:function(){
 for(var i=0,vs;(vs=this.layout.structure[i]);i++){
@@ -184,6 +185,7 @@ return;
 }
 }
 this.views.destroyViews();
+this.focus.focusView=null;
 if(s!==this.layout.structure){
 this.layout.setStructure(s);
 }
@@ -306,7 +308,6 @@ var hh=undefined;
 var h;
 if(this._autoHeight){
 this.domNode.style.height="auto";
-this.viewsNode.style.height="";
 }else{
 if(typeof this.autoHeight=="number"){
 h=hh=this._getHeaderHeight();

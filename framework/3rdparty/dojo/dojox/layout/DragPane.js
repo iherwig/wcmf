@@ -15,6 +15,7 @@ this.connect(this.domNode,"onmouseleave","_up");
 this.connect(this.domNode,"onmouseup","_up");
 },_down:function(e){
 var t=this.domNode;
+e.preventDefault();
 dojo.style(t,"cursor","move");
 this._x=e.pageX;
 this._y=e.pageY;

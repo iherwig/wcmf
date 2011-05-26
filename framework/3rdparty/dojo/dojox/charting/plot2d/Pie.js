@@ -15,7 +15,6 @@ dojo.require("dojox.charting.plot2d._PlotEvents");
 dojo.require("dojox.lang.functional");
 dojo.require("dojox.lang.utils");
 dojo.require("dojox.gfx");
-dojo.require("dojo.number");
 (function(){
 var df=dojox.lang.functional,du=dojox.lang.utils,dc=dojox.charting.plot2d.common,da=dojox.charting.axis2d.common,g=dojox.gfx,m=g.matrix,_1=0.2;
 dojo.declare("dojox.charting.plot2d.Pie",[dojox.charting.Element,dojox.charting.plot2d._PlotEvents],{defaultParams:{labels:true,ticks:false,fixed:true,precision:1,labelOffset:20,labelStyle:"default",htmlLabels:true,radGrad:"native",fanSize:5,startAngle:0},optionalParams:{radius:0,stroke:{},outline:{},shadow:{},fill:{},font:"",fontColor:"",labelWiring:{}},constructor:function(_2,_3){
@@ -270,7 +269,7 @@ i=(i<0)?i+_3f.length:i;
 j=(j<0)?j+_3f.length:j;
 }
 },_getLabel:function(_44){
-return this.opt.fixed?dojo.number.format(_44,{places:this.opt.precision}):_44.toString();
+return dc.getLabel(_44,this.opt.fixed,this.opt.precision);
 }});
 })();
 }

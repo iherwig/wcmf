@@ -1,1 +1,1 @@
-({"redLabel":"č","valueLabel":"j","hexLabel":"hex","hueLabel":"o","saturationLabel":"n","greenLabel":"z","blueLabel":"m","saturationPickerTitle":"Saturation Selector","huePickerTitle":"Hue Selector","degLabel":"°"})
+({"redLabel":"č","valueLabel":"j","hueLabel":"o","saturationLabel":"n","saturationPickerTitle":"Selektor sytosti","huePickerTitle":"Selektor odstínu","greenLabel":"z","blueLabel":"m","hexLabel":"hex","degLabel":"°"})

@@ -2,8 +2,8 @@
 .nihilo .dijitMenu,
 .nihilo .dijitMenuBar {
 	border: 1px solid #d3d3d3;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	background-color: #fff;
 }
 .nihilo .dijitBorderContainer .dijitMenuBar {
@@ -11,7 +11,7 @@
 }
 .nihilo .dijitMenuItem {
 	font-family: sans-serif;
-	margin: 0px;
+	margin: 0;
 	color: #243C5F;
 }
 .nihilo .dijitMenuBar .dijitMenuItem {

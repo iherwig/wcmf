@@ -22,6 +22,7 @@ this.scrollDir="v";
 this.weight=0.6;
 this.fadeScrollBar=true;
 this.disableFlashScrollBar=false;
+this.threshold=0;
 this.init=function(_1){
 if(_1){
 for(var p in _1){
@@ -33,14 +34,12 @@ this[p]=((p=="domNode"||p=="containerNode")&&typeof _1[p]=="string")?dojo.doc.ge
 this._v=(this.scrollDir.indexOf("v")!=-1);
 this._h=(this.scrollDir.indexOf("h")!=-1);
 this._f=(this.scrollDir=="f");
-this._appFooterHeight=(this.fixedFooterHeight&&!this.isLocalFooter)?this.fixedFooterHeight:0;
 this._ch=[];
 this._ch.push(dojo.connect(this.containerNode,dojox.mobile.hasTouch?"touchstart":"onmousedown",this,"onTouchStart"));
 if(dojo.isWebKit){
-this._ch.push(dojo.connect(this.containerNode,"webkitAnimationEnd",this,"onFlickAnimationEnd"));
-this._ch.push(dojo.connect(this.containerNode,"webkitAnimationStart",this,"onFlickAnimationStart"));
+this._ch.push(dojo.connect(this.domNode,"webkitAnimationEnd",this,"onFlickAnimationEnd"));
+this._ch.push(dojo.connect(this.domNode,"webkitAnimationStart",this,"onFlickAnimationStart"));
 }
-this.containerNode.style.paddingTop=this.fixedHeaderHeight+"px";
 if(dojo.global.onorientationchange!==undefined){
 this._ch.push(dojo.connect(dojo.global,"onorientationchange",this,"resizeView"));
 }else{
@@ -59,6 +58,8 @@ dojo.disconnect(this._ch[i]);
 this._ch=null;
 };
 this.resizeView=function(e){
+this._appFooterHeight=(this.fixedFooterHeight&&!this.isLocalFooter)?this.fixedFooterHeight:0;
+this.containerNode.style.paddingTop=this.fixedHeaderHeight+"px";
 var c=0;
 var _3=this;
 var id=setInterval(function(){
@@ -110,7 +111,7 @@ this._dim=this.getDim();
 this._time=[0];
 this._posX=[this.touchStartX];
 this._posY=[this.touchStartY];
-if(e.target.nodeType!=1||(e.target.tagName!="SELECT"&&e.target.tagName!="INPUT")){
+if(e.target.nodeType!=1||(e.target.tagName!="SELECT"&&e.target.tagName!="INPUT"&&e.target.tagName!="TEXTAREA")){
 dojo.stopEvent(e);
 }
 };
@@ -122,6 +123,9 @@ var dy=y-this.touchStartY;
 var to={x:this.startPos.x+dx,y:this.startPos.y+dy};
 var _6=this._dim;
 if(this._time.length==1){
+if(dx<this.threshold&&dy<this.threshold){
+return;
+}
 this.addCover();
 this.showScrollBar();
 }

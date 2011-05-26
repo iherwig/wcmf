@@ -29,7 +29,7 @@ this.markerThemes=null;
 if(_1.markerThemes&&_1.markerThemes.length){
 this.markerThemes=_1.markerThemes.slice(0);
 }
-this.markers=dojo.delegate(dojox.charting.Theme.defaultMarkers,_1.markers);
+this.markers=_1.markers?dojo.clone(_1.markers):dojo.delegate(dojox.charting.Theme.defaultMarkers);
 this.noGradConv=_1.noGradConv;
 this.noRadialConv=_1.noRadialConv;
 if(_1.reverseFills){

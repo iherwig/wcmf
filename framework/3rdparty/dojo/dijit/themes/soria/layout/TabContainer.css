@@ -16,10 +16,10 @@
 	background:#fff;
 	border:1px solid #B1BADF;
 	margin: 0;
-	padding-left: 0px;
+	padding-left: 0;
 }
 .soria .dijitTabInnerDiv {
-	padding:0px 3px 0px 0px;
+	padding:0 3px 0 0;
 	margin: 0 0 0 4px;
 	background: url("../images/tabContainerSprite.gif") no-repeat;
 	background-position: right -400px;
@@ -27,7 +27,7 @@
 .soria .dijitTab {
 	line-height:normal;
 	margin:0 2px 0 0;	
-	padding:0px;
+	padding:0;
 	background: url("../images/tabContainerSprite.gif") no-repeat 0 -300px;
 	color: #243C5F;
 	border-bottom: 1px #B1BADF solid;
@@ -42,7 +42,7 @@
 }
 .soria .dijitTabHover {
 	color: #243C5F;
-	background: url("../images/tabContainerSprite.gif") no-repeat 0px -150px;
+	background: url("../images/tabContainerSprite.gif") no-repeat 0 -150px;
 }
 .soria .dijitTabHover .dijitTabInnerDiv {
 	background: url("../images/tabContainerSprite.gif") no-repeat right -250px;
@@ -53,7 +53,7 @@
 .soria .dijitTabChecked
 {
 	
-	background: url("../images/tabContainerSprite.gif") no-repeat 0px -0px;
+	background: url("../images/tabContainerSprite.gif") no-repeat 0 -0;
 }
 .soria .dijitTabChecked .dijitTabInnerDiv {
 	background: url("../images/tabContainerSprite.gif") no-repeat right -100px;
@@ -70,7 +70,7 @@
 .soria .dijitTabContainerTabListNested .dijitTab {
 	background: none;
 	border: none;
-	top: 0px;	
+	top: 0;	
 }
 .soria .dijitTabContainerTabListNested .dijitTab .dijitTabInnerDiv,
 .soria .dijitTabContainerTabListNested .dijitTab .dijitTabContent {
@@ -85,7 +85,7 @@
 }
 .soria .dijitTabContainerSpacerNested .dijitTabSpacer {
 	
-	height: 0px;
+	height: 0;
 }
 .soria .dijitTabPaneWrapperNested {
 	border: none;	
@@ -309,11 +309,11 @@
 	border-right: none;
 }
 .soria .dijitTabContainerTop-dijitContentPane .dijitTabContainerTop-tabs {
-	border-left: 0px solid #ccc;
-	border-top: 0px solid #ccc;
-	border-right: 0px solid #ccc;
-	padding-top: 0px;
-	padding-left: 0px;
+	border-left: 0 solid #ccc;
+	border-top: 0 solid #ccc;
+	border-right: 0 solid #ccc;
+	padding-top: 0;
+	padding-left: 0;
 }
 .soria .dijitTabContainer .tabStripButton {
 	margin-right: 0;

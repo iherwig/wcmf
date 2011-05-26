@@ -14,7 +14,7 @@
   width: auto;
   background-color: #efefef;
   background-image: url("images/formHighlight.png");
-  background-position: 0px 0px;
+  background-position: 0 0;
   background-repeat: repeat-x;
   overflow: hidden;
 }
@@ -39,7 +39,7 @@
   background-position: -139px center;
   
   display: block;
-  margin: -1px 0px -1px 0px;
+  margin: -1px 0 -1px 0;
   
 }
 .dj_ie6 .claro .dijitSpinner .dijitArrowButtonInner, .dj_ie7 .claro .dijitSpinner .dijitArrowButtonInner {
@@ -73,11 +73,11 @@
 }
 .claro .dijitSpinner .dijitDownArrowButtonActive, .claro .dijitSpinner .dijitUpArrowButtonActive {
   background-color: #7dbefa;
-  background-position: 0px -177px;
+  background-position: 0 -177px;
 }
 .claro .dijitSpinner .dijitUpArrowButtonActive .dijitArrowButtonInner, .claro .dijitSpinner .dijitDownArrowButtonActive .dijitArrowButtonInner {
   
-  border: 0px;
+  border: 0;
   padding: 1px;
   margin-right: 2px;
   margin-bottom: 1px;

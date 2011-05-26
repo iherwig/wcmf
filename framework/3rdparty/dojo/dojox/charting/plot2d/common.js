@@ -213,6 +213,11 @@ _1a=p2.y-_1f*(p3.y-p1.y)/_1d;
 return "C"+(_17+","+_18+" "+_19+","+_1a+" "+p2.x+","+p2.y);
 });
 return p.join(" ");
+},getLabel:function(_20,_21,_22){
+if(dojo.number){
+return (_21?dojo.number.format(_20,{places:_22}):dojo.number.format(_20))||"";
+}
+return _21?_20.toFixed(_22):_20.toString();
 }});
 })();
 }

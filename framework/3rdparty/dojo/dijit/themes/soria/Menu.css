@@ -2,8 +2,8 @@
 .soria .dijitMenu,
 .soria .dijitMenuBar {
 	border: 1px solid #cbcbcb;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	background-color: #fff;
 }
 .soria .dijitBorderContainer .dijitMenuBar {
@@ -11,7 +11,7 @@
 }
 .soria .dijitMenuItem {
 	font-family: sans-serif;
-	margin: 0px;
+	margin: 0;
 	color: #243C5F;
 }
 .soria .dijitMenuBar .dijitMenuItem {

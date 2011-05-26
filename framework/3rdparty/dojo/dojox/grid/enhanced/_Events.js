@@ -43,6 +43,11 @@ _3*=-1;
 }
 _2.currentArea().move(0,_3,e);
 break;
+case dk.F10:
+if(this.menus&&e.shiftKey){
+this.onRowContextMenu(e);
+}
+break;
 default:
 _2.currentArea().keydown(e);
 break;
@@ -76,10 +81,9 @@ if(this._click.length>1&&(!this._click[0]||!this._click[1])){
 this._click[0]=this._click[1]=e;
 }
 this._events.onCellDblClick.call(this,e);
-this.focus.setFocusCell(e.cell,e.rowIndex);
 },onRowClick:function(e){
 this.edit.rowClick(e);
-if(!this.indirectSelection){
+if(!e.cell||(!e.cell.isRowSelector&&(!this.rowSelectCell||!this.rowSelectCell.disabled(e.rowIndex)))){
 this.selection.clickSelectEvent(e);
 }
 },onRowContextMenu:function(e){
@@ -88,7 +92,7 @@ this.showMenu(e);
 }
 },onSelectedRegionContextMenu:function(e){
 if(this.selectedRegionMenu){
-this.selectedRegionMenu._openMyself({target:e.target,coords:"pageX" in e?{x:e.pageX,y:e.pageY}:null});
+this.selectedRegionMenu._openMyself({target:e.target,coords:e.keyCode!==dojo.keys.F10&&"pageX" in e?{x:e.pageX,y:e.pageY}:null});
 dojo.stopEvent(e);
 }
 },onHeaderCellMouseOut:function(e){

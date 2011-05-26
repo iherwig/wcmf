@@ -57,27 +57,25 @@ return !_10;
 if(_c.overflow&&_9){
 _9(_7,_c.aroundCorner,_c.corner,_c.spaceAvailable,_a);
 }
-_7.style.left=_c.x+"px";
-_7.style.top=_c.y+"px";
+var l=dojo._isBodyLtr(),s=_7.style;
+s.top=_c.y+"px";
+s[l?"left":"right"]=(l?_c.x:_b.w-_c.x-_c.w)+"px";
 return _c;
 };
 dijit.placeOnScreenAroundNode=function(_1b,_1c,_1d,_1e){
 _1c=dojo.byId(_1c);
-var _1f=_1c.style.display;
-_1c.style.display="";
-var _20=dojo.position(_1c,true);
-_1c.style.display=_1f;
-return dijit._placeOnScreenAroundRect(_1b,_20.x,_20.y,_20.w,_20.h,_1d,_1e);
+var _1f=dojo.position(_1c,true);
+return dijit._placeOnScreenAroundRect(_1b,_1f.x,_1f.y,_1f.w,_1f.h,_1d,_1e);
 };
-dijit.placeOnScreenAroundRectangle=function(_21,_22,_23,_24){
-return dijit._placeOnScreenAroundRect(_21,_22.x,_22.y,_22.width,_22.height,_23,_24);
+dijit.placeOnScreenAroundRectangle=function(_20,_21,_22,_23){
+return dijit._placeOnScreenAroundRect(_20,_21.x,_21.y,_21.width,_21.height,_22,_23);
 };
-dijit._placeOnScreenAroundRect=function(_25,x,y,_26,_27,_28,_29){
-var _2a=[];
-for(var _2b in _28){
-_2a.push({aroundCorner:_2b,corner:_28[_2b],pos:{x:x+(_2b.charAt(1)=="L"?0:_26),y:y+(_2b.charAt(0)=="T"?0:_27)}});
+dijit._placeOnScreenAroundRect=function(_24,x,y,_25,_26,_27,_28){
+var _29=[];
+for(var _2a in _27){
+_29.push({aroundCorner:_2a,corner:_27[_2a],pos:{x:x+(_2a.charAt(1)=="L"?0:_25),y:y+(_2a.charAt(0)=="T"?0:_26)}});
 }
-return dijit._place(_25,_2a,_29,{w:_26,h:_27});
+return dijit._place(_24,_29,_28,{w:_25,h:_26});
 };
 dijit.placementRegistry=new dojo.AdapterRegistry();
 dijit.placementRegistry.register("node",function(n,x){
@@ -86,34 +84,34 @@ return typeof x=="object"&&typeof x.offsetWidth!="undefined"&&typeof x.offsetHei
 dijit.placementRegistry.register("rect",function(n,x){
 return typeof x=="object"&&"x" in x&&"y" in x&&"width" in x&&"height" in x;
 },dijit.placeOnScreenAroundRectangle);
-dijit.placeOnScreenAroundElement=function(_2c,_2d,_2e,_2f){
+dijit.placeOnScreenAroundElement=function(_2b,_2c,_2d,_2e){
 return dijit.placementRegistry.match.apply(dijit.placementRegistry,arguments);
 };
-dijit.getPopupAroundAlignment=function(_30,_31){
-var _32={};
-dojo.forEach(_30,function(pos){
+dijit.getPopupAroundAlignment=function(_2f,_30){
+var _31={};
+dojo.forEach(_2f,function(pos){
 switch(pos){
 case "after":
-_32[_31?"BR":"BL"]=_31?"BL":"BR";
+_31[_30?"BR":"BL"]=_30?"BL":"BR";
 break;
 case "before":
-_32[_31?"BL":"BR"]=_31?"BR":"BL";
+_31[_30?"BL":"BR"]=_30?"BR":"BL";
 break;
 case "below-alt":
-_31=!_31;
+_30=!_30;
 case "below":
-_32[_31?"BL":"BR"]=_31?"TL":"TR";
-_32[_31?"BR":"BL"]=_31?"TR":"TL";
+_31[_30?"BL":"BR"]=_30?"TL":"TR";
+_31[_30?"BR":"BL"]=_30?"TR":"TL";
 break;
 case "above-alt":
-_31=!_31;
+_30=!_30;
 case "above":
 default:
-_32[_31?"TL":"TR"]=_31?"BL":"BR";
-_32[_31?"TR":"TL"]=_31?"BR":"BL";
+_31[_30?"TL":"TR"]=_30?"BL":"BR";
+_31[_30?"TR":"TL"]=_30?"BR":"BL";
 break;
 }
 });
-return _32;
+return _31;
 };
 }

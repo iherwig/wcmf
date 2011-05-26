@@ -11,145 +11,6 @@
 		http://dojotoolkit.org
 */
 
-if(!dojo._hasResource["dojo.window"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojo.window"] = true;
-dojo.provide("dojo.window");
-
-dojo.getObject("window", true, dojo);
-
-dojo.window.getBox = function(){
-	// summary:
-	//		Returns the dimensions and scroll position of the viewable area of a browser window
-
-	var scrollRoot = (dojo.doc.compatMode == 'BackCompat') ? dojo.body() : dojo.doc.documentElement;
-
-	// get scroll position
-	var scroll = dojo._docScroll(); // scrollRoot.scrollTop/Left should work
-	return { w: scrollRoot.clientWidth, h: scrollRoot.clientHeight, l: scroll.x, t: scroll.y };
-};
-
-dojo.window.get = function(doc){
-	// summary:
-	// 		Get window object associated with document doc
-
-	// In some IE versions (at least 6.0), document.parentWindow does not return a
-	// reference to the real window object (maybe a copy), so we must fix it as well
-	// We use IE specific execScript to attach the real window reference to
-	// document._parentWindow for later use
-	if(dojo.isIE && window !== document.parentWindow){
-		/*
-		In IE 6, only the variable "window" can be used to connect events (others
-		may be only copies).
-		*/
-		doc.parentWindow.execScript("document._parentWindow = window;", "Javascript");
-		//to prevent memory leak, unset it after use
-		//another possibility is to add an onUnload handler which seems overkill to me (liucougar)
-		var win = doc._parentWindow;
-		doc._parentWindow = null;
-		return win;	//	Window
-	}
-
-	return doc.parentWindow || doc.defaultView;	//	Window
-};
-
-dojo.window.scrollIntoView = function(/*DomNode*/ node, /*Object?*/ pos){
-	// summary:
-	//		Scroll the passed node into view, if it is not already.
-	
-	// don't rely on node.scrollIntoView working just because the function is there
-
-	try{ // catch unexpected/unrecreatable errors (#7808) since we can recover using a semi-acceptable native method
-		node = dojo.byId(node);
-		var doc = node.ownerDocument || dojo.doc,
-			body = doc.body || dojo.body(),
-			html = doc.documentElement || body.parentNode,
-			isIE = dojo.isIE, isWK = dojo.isWebKit;
-		// if an untested browser, then use the native method
-		if((!(dojo.isMoz || isIE || isWK || dojo.isOpera) || node == body || node == html) && (typeof node.scrollIntoView != "undefined")){
-			node.scrollIntoView(false); // short-circuit to native if possible
-			return;
-		}
-		var backCompat = doc.compatMode == 'BackCompat',
-			clientAreaRoot = backCompat? body : html,
-			scrollRoot = isWK ? body : clientAreaRoot,
-			rootWidth = clientAreaRoot.clientWidth,
-			rootHeight = clientAreaRoot.clientHeight,
-			rtl = !dojo._isBodyLtr(),
-			nodePos = pos || dojo.position(node),
-			el = node.parentNode,
-			isFixed = function(el){
-				return ((isIE <= 6 || (isIE && backCompat))? false : (dojo.style(el, 'position').toLowerCase() == "fixed"));
-			};
-		if(isFixed(node)){ return; } // nothing to do
-
-		while(el){
-			if(el == body){ el = scrollRoot; }
-			var elPos = dojo.position(el),
-				fixedPos = isFixed(el);
-	
-			if(el == scrollRoot){
-				elPos.w = rootWidth; elPos.h = rootHeight;
-				if(scrollRoot == html && isIE && rtl){ elPos.x += scrollRoot.offsetWidth-elPos.w; } // IE workaround where scrollbar causes negative x
-				if(elPos.x < 0 || !isIE){ elPos.x = 0; } // IE can have values > 0
-				if(elPos.y < 0 || !isIE){ elPos.y = 0; }
-			}else{
-				var pb = dojo._getPadBorderExtents(el);
-				elPos.w -= pb.w; elPos.h -= pb.h; elPos.x += pb.l; elPos.y += pb.t;
-			}
-	
-			if(el != scrollRoot){ // body, html sizes already have the scrollbar removed
-				var clientSize = el.clientWidth,
-					scrollBarSize = elPos.w - clientSize;
-				if(clientSize > 0 && scrollBarSize > 0){
-					elPos.w = clientSize;
-					if(isIE && rtl){ elPos.x += scrollBarSize; }
-				}
-				clientSize = el.clientHeight;
-				scrollBarSize = elPos.h - clientSize;
-				if(clientSize > 0 && scrollBarSize > 0){
-					elPos.h = clientSize;
-				}
-			}
-			if(fixedPos){ // bounded by viewport, not parents
-				if(elPos.y < 0){
-					elPos.h += elPos.y; elPos.y = 0;
-				}
-				if(elPos.x < 0){
-					elPos.w += elPos.x; elPos.x = 0;
-				}
-				if(elPos.y + elPos.h > rootHeight){
-					elPos.h = rootHeight - elPos.y;
-				}
-				if(elPos.x + elPos.w > rootWidth){
-					elPos.w = rootWidth - elPos.x;
-				}
-			}
-			// calculate overflow in all 4 directions
-			var l = nodePos.x - elPos.x, // beyond left: < 0
-				t = nodePos.y - Math.max(elPos.y, 0), // beyond top: < 0
-				r = l + nodePos.w - elPos.w, // beyond right: > 0
-				bot = t + nodePos.h - elPos.h; // beyond bottom: > 0
-			if(r * l > 0){
-				var s = Math[l < 0? "max" : "min"](l, r);
-				nodePos.x += el.scrollLeft;
-				el.scrollLeft += (isIE >= 8 && !backCompat && rtl)? -s : s;
-				nodePos.x -= el.scrollLeft;
-			}
-			if(bot * t > 0){
-				nodePos.y += el.scrollTop;
-				el.scrollTop += Math[t < 0? "max" : "min"](t, bot);
-				nodePos.y -= el.scrollTop;
-			}
-			el = (el != scrollRoot) && !fixedPos && el.parentNode;
-		}	
-	}catch(error){
-		console.error('scrollIntoView: ' + error);
-		node.scrollIntoView(false);
-	}
-};
-
-}
-
 if(!dojo._hasResource["dijit._base.manager"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dijit._base.manager"] = true;
 dojo.provide("dijit._base.manager");
@@ -637,6 +498,1100 @@ dojo.declare("dijit.WidgetSet", null, {
 
 }
 
+if(!dojo._hasResource["dojo.Stateful"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojo.Stateful"] = true;
+dojo.provide("dojo.Stateful");
+
+
+dojo.declare("dojo.Stateful", null, {
+	// summary:
+	//		Base class for objects that provide named properties with optional getter/setter
+	//		control and the ability to watch for property changes
+	// example:
+	//	|	var obj = new dojo.Stateful();
+	//	|	obj.watch("foo", function(){
+	//	|		console.log("foo changed to " + this.get("foo"));
+	//	|	});
+	//	|	obj.set("foo","bar");
+	postscript: function(mixin){
+		if(mixin){
+			dojo.mixin(this, mixin);
+		}
+	},
+	
+	get: function(/*String*/name){
+		// summary:
+		//		Get a property on a Stateful instance.
+		//	name:
+		//		The property to get.
+		// description:
+		//		Get a named property on a Stateful object. The property may
+		//		potentially be retrieved via a getter method in subclasses. In the base class
+		// 		this just retrieves the object's property.
+		// 		For example:
+		//	|	stateful = new dojo.Stateful({foo: 3});
+		//	|	stateful.get("foo") // returns 3
+		//	|	stateful.foo // returns 3
+		
+		return this[name];
+	},
+	set: function(/*String*/name, /*Object*/value){
+		// summary:
+		//		Set a property on a Stateful instance
+		//	name:
+		//		The property to set.
+		//	value:
+		//		The value to set in the property.
+		// description:
+		//		Sets named properties on a stateful object and notifies any watchers of
+		// 		the property. A programmatic setter may be defined in subclasses.
+		// 		For example:
+		//	|	stateful = new dojo.Stateful();
+		//	|	stateful.watch(function(name, oldValue, value){
+		//	|		// this will be called on the set below
+		//	|	}
+		//	|	stateful.set(foo, 5);
+		//
+		//	set() may also be called with a hash of name/value pairs, ex:
+		//	|	myObj.set({
+		//	|		foo: "Howdy",
+		//	|		bar: 3
+		//	|	})
+		//	This is equivalent to calling set(foo, "Howdy") and set(bar, 3)
+		if(typeof name === "object"){
+			for(var x in name){
+				this.set(x, name[x]);
+			}
+			return this;
+		}
+		var oldValue = this[name];
+		this[name] = value;
+		if(this._watchCallbacks){
+			this._watchCallbacks(name, oldValue, value);
+		}
+		return this;
+	},
+	watch: function(/*String?*/name, /*Function*/callback){
+		// summary:
+		//		Watches a property for changes
+		//	name:
+		//		Indicates the property to watch. This is optional (the callback may be the
+		// 		only parameter), and if omitted, all the properties will be watched
+		// returns:
+		//		An object handle for the watch. The unwatch method of this object
+		// 		can be used to discontinue watching this property:
+		//		|	var watchHandle = obj.watch("foo", callback);
+		//		|	watchHandle.unwatch(); // callback won't be called now
+		//	callback:
+		//		The function to execute when the property changes. This will be called after
+		//		the property has been changed. The callback will be called with the |this|
+		//		set to the instance, the first argument as the name of the property, the
+		// 		second argument as the old value and the third argument as the new value.
+		
+		var callbacks = this._watchCallbacks;
+		if(!callbacks){
+			var self = this;
+			callbacks = this._watchCallbacks = function(name, oldValue, value, ignoreCatchall){
+				var notify = function(propertyCallbacks){
+					if(propertyCallbacks){
+                        propertyCallbacks = propertyCallbacks.slice();
+						for(var i = 0, l = propertyCallbacks.length; i < l; i++){
+							try{
+								propertyCallbacks[i].call(self, name, oldValue, value);
+							}catch(e){
+								console.error(e);
+							}
+						}
+					}
+				};
+				notify(callbacks['_' + name]);
+				if(!ignoreCatchall){
+					notify(callbacks["*"]); // the catch-all
+				}
+			}; // we use a function instead of an object so it will be ignored by JSON conversion
+		}
+		if(!callback && typeof name === "function"){
+			callback = name;
+			name = "*";
+		}else{
+			// prepend with dash to prevent name conflicts with function (like "name" property)
+			name = '_' + name;
+		}
+		var propertyCallbacks = callbacks[name];
+		if(typeof propertyCallbacks !== "object"){
+			propertyCallbacks = callbacks[name] = [];
+		}
+		propertyCallbacks.push(callback);
+		return {
+			unwatch: function(){
+				propertyCallbacks.splice(dojo.indexOf(propertyCallbacks, callback), 1);
+			}
+		};
+	}
+	
+});
+
+}
+
+if(!dojo._hasResource["dijit._WidgetBase"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dijit._WidgetBase"] = true;
+dojo.provide("dijit._WidgetBase");
+
+
+
+
+(function(){
+
+dojo.declare("dijit._WidgetBase", dojo.Stateful, {
+	// summary:
+	//		Future base class for all Dijit widgets.
+	//		_Widget extends this class adding support for various features needed by desktop.
+
+	// id: [const] String
+	//		A unique, opaque ID string that can be assigned by users or by the
+	//		system. If the developer passes an ID which is known not to be
+	//		unique, the specified ID is ignored and the system-generated ID is
+	//		used instead.
+	id: "",
+
+	// lang: [const] String
+	//		Rarely used.  Overrides the default Dojo locale used to render this widget,
+	//		as defined by the [HTML LANG](http://www.w3.org/TR/html401/struct/dirlang.html#adef-lang) attribute.
+	//		Value must be among the list of locales specified during by the Dojo bootstrap,
+	//		formatted according to [RFC 3066](http://www.ietf.org/rfc/rfc3066.txt) (like en-us).
+	lang: "",
+
+	// dir: [const] String
+	//		Bi-directional support, as defined by the [HTML DIR](http://www.w3.org/TR/html401/struct/dirlang.html#adef-dir)
+	//		attribute. Either left-to-right "ltr" or right-to-left "rtl".  If undefined, widgets renders in page's
+	//		default direction.
+	dir: "",
+
+	// class: String
+	//		HTML class attribute
+	"class": "",
+
+	// style: String||Object
+	//		HTML style attributes as cssText string or name/value hash
+	style: "",
+
+	// title: String
+	//		HTML title attribute.
+	//
+	//		For form widgets this specifies a tooltip to display when hovering over
+	//		the widget (just like the native HTML title attribute).
+	//
+	//		For TitlePane or for when this widget is a child of a TabContainer, AccordionContainer,
+	//		etc., it's used to specify the tab label, accordion pane title, etc.
+	title: "",
+
+	// tooltip: String
+	//		When this widget's title attribute is used to for a tab label, accordion pane title, etc.,
+	//		this specifies the tooltip to appear when the mouse is hovered over that text.
+	tooltip: "",
+
+	// baseClass: [protected] String
+	//		Root CSS class of the widget (ex: dijitTextBox), used to construct CSS classes to indicate
+	//		widget state.
+	baseClass: "",
+
+	// srcNodeRef: [readonly] DomNode
+	//		pointer to original DOM node
+	srcNodeRef: null,
+
+	// domNode: [readonly] DomNode
+	//		This is our visible representation of the widget! Other DOM
+	//		Nodes may by assigned to other properties, usually through the
+	//		template system's dojoAttachPoint syntax, but the domNode
+	//		property is the canonical "top level" node in widget UI.
+	domNode: null,
+
+	// containerNode: [readonly] DomNode
+	//		Designates where children of the source DOM node will be placed.
+	//		"Children" in this case refers to both DOM nodes and widgets.
+	//		For example, for myWidget:
+	//
+	//		|	<div dojoType=myWidget>
+	//		|		<b> here's a plain DOM node
+	//		|		<span dojoType=subWidget>and a widget</span>
+	//		|		<i> and another plain DOM node </i>
+	//		|	</div>
+	//
+	//		containerNode would point to:
+	//
+	//		|		<b> here's a plain DOM node
+	//		|		<span dojoType=subWidget>and a widget</span>
+	//		|		<i> and another plain DOM node </i>
+	//
+	//		In templated widgets, "containerNode" is set via a
+	//		dojoAttachPoint assignment.
+	//
+	//		containerNode must be defined for any widget that accepts innerHTML
+	//		(like ContentPane or BorderContainer or even Button), and conversely
+	//		is null for widgets that don't, like TextBox.
+	containerNode: null,
+
+/*=====
+	// _started: Boolean
+	//		startup() has completed.
+	_started: false,
+=====*/
+
+	// attributeMap: [protected] Object
+	//		attributeMap sets up a "binding" between attributes (aka properties)
+	//		of the widget and the widget's DOM.
+	//		Changes to widget attributes listed in attributeMap will be
+	//		reflected into the DOM.
+	//
+	//		For example, calling set('title', 'hello')
+	//		on a TitlePane will automatically cause the TitlePane's DOM to update
+	//		with the new title.
+	//
+	//		attributeMap is a hash where the key is an attribute of the widget,
+	//		and the value reflects a binding to a:
+	//
+	//		- DOM node attribute
+	// |		focus: {node: "focusNode", type: "attribute"}
+	// 		Maps this.focus to this.focusNode.focus
+	//
+	//		- DOM node innerHTML
+	//	|		title: { node: "titleNode", type: "innerHTML" }
+	//		Maps this.title to this.titleNode.innerHTML
+	//
+	//		- DOM node innerText
+	//	|		title: { node: "titleNode", type: "innerText" }
+	//		Maps this.title to this.titleNode.innerText
+	//
+	//		- DOM node CSS class
+	// |		myClass: { node: "domNode", type: "class" }
+	//		Maps this.myClass to this.domNode.className
+	//
+	//		If the value is an array, then each element in the array matches one of the
+	//		formats of the above list.
+	//
+	//		There are also some shorthands for backwards compatibility:
+	//		- string --> { node: string, type: "attribute" }, for example:
+	//	|	"focusNode" ---> { node: "focusNode", type: "attribute" }
+	//		- "" --> { node: "domNode", type: "attribute" }
+	attributeMap: {id:"", dir:"", lang:"", "class":"", style:"", title:""},
+
+	// _blankGif: [protected] String
+	//		Path to a blank 1x1 image.
+	//		Used by <img> nodes in templates that really get their image via CSS background-image.
+	_blankGif: (dojo.config.blankGif || dojo.moduleUrl("dojo", "resources/blank.gif")).toString(),
+
+	//////////// INITIALIZATION METHODS ///////////////////////////////////////
+
+	postscript: function(/*Object?*/params, /*DomNode|String*/srcNodeRef){
+		// summary:
+		//		Kicks off widget instantiation.  See create() for details.
+		// tags:
+		//		private
+		this.create(params, srcNodeRef);
+	},
+
+	create: function(/*Object?*/params, /*DomNode|String?*/srcNodeRef){
+		// summary:
+		//		Kick off the life-cycle of a widget
+		// params:
+		//		Hash of initialization parameters for widget, including
+		//		scalar values (like title, duration etc.) and functions,
+		//		typically callbacks like onClick.
+		// srcNodeRef:
+		//		If a srcNodeRef (DOM node) is specified:
+		//			- use srcNodeRef.innerHTML as my contents
+		//			- if this is a behavioral widget then apply behavior
+		//			  to that srcNodeRef
+		//			- otherwise, replace srcNodeRef with my generated DOM
+		//			  tree
+		// description:
+		//		Create calls a number of widget methods (postMixInProperties, buildRendering, postCreate,
+		//		etc.), some of which of you'll want to override. See http://docs.dojocampus.org/dijit/_Widget
+		//		for a discussion of the widget creation lifecycle.
+		//
+		//		Of course, adventurous developers could override create entirely, but this should
+		//		only be done as a last resort.
+		// tags:
+		//		private
+
+		// store pointer to original DOM tree
+		this.srcNodeRef = dojo.byId(srcNodeRef);
+
+		// For garbage collection.  An array of handles returned by Widget.connect()
+		// Each handle returned from Widget.connect() is an array of handles from dojo.connect()
+		this._connects = [];
+
+		// For garbage collection.  An array of handles returned by Widget.subscribe()
+		// The handle returned from Widget.subscribe() is the handle returned from dojo.subscribe()
+		this._subscribes = [];
+
+		// mix in our passed parameters
+		if(this.srcNodeRef && (typeof this.srcNodeRef.id == "string")){ this.id = this.srcNodeRef.id; }
+		if(params){
+			this.params = params;
+			dojo._mixin(this, params);
+		}
+		this.postMixInProperties();
+
+		// generate an id for the widget if one wasn't specified
+		// (be sure to do this before buildRendering() because that function might
+		// expect the id to be there.)
+		if(!this.id){
+			this.id = dijit.getUniqueId(this.declaredClass.replace(/\./g,"_"));
+		}
+		dijit.registry.add(this);
+
+		this.buildRendering();
+
+		if(this.domNode){
+			// Copy attributes listed in attributeMap into the [newly created] DOM for the widget.
+			// Also calls custom setters for all attributes with custom setters.
+			this._applyAttributes();
+
+			// If srcNodeRef was specified, then swap out original srcNode for this widget's DOM tree.
+			// For 2.0, move this after postCreate().  postCreate() shouldn't depend on the
+			// widget being attached to the DOM since it isn't when a widget is created programmatically like
+			// new MyWidget({}).   See #11635.
+			var source = this.srcNodeRef;
+			if(source && source.parentNode && this.domNode !== source){
+				source.parentNode.replaceChild(this.domNode, source);
+			}
+		}
+
+		if(this.domNode){
+			// Note: for 2.0 may want to rename widgetId to dojo._scopeName + "_widgetId",
+			// assuming that dojo._scopeName even exists in 2.0
+			this.domNode.setAttribute("widgetId", this.id);
+		}
+		this.postCreate();
+
+		// If srcNodeRef has been processed and removed from the DOM (e.g. TemplatedWidget) then delete it to allow GC.
+		if(this.srcNodeRef && !this.srcNodeRef.parentNode){
+			delete this.srcNodeRef;
+		}
+
+		this._created = true;
+	},
+
+	_applyAttributes: function(){
+		// summary:
+		//		Step during widget creation to copy all widget attributes to the
+		//		DOM as per attributeMap and _setXXXAttr functions.
+		// description:
+		//		Skips over blank/false attribute values, unless they were explicitly specified
+		//		as parameters to the widget, since those are the default anyway,
+		//		and setting tabIndex="" is different than not setting tabIndex at all.
+		//
+		//		It processes the attributes in the attribute map first, and then
+		//		it goes through and processes the attributes for the _setXXXAttr
+		//		functions that have been specified
+		// tags:
+		//		private
+		var condAttrApply = function(attr, scope){
+			if((scope.params && attr in scope.params) || scope[attr]){
+				scope.set(attr, scope[attr]);
+			}
+		};
+
+		// Do the attributes in attributeMap
+		for(var attr in this.attributeMap){
+			condAttrApply(attr, this);
+		}
+
+		// And also any attributes with custom setters
+		dojo.forEach(this._getSetterAttributes(), function(a){
+			if(!(a in this.attributeMap)){
+				condAttrApply(a, this);
+			}
+		}, this);
+	},
+
+	_getSetterAttributes: function(){
+		// summary:
+		//		Returns list of attributes with custom setters for this widget
+		var ctor = this.constructor;
+		if(!ctor._setterAttrs){
+			var r = (ctor._setterAttrs = []),
+				attrs,
+				proto = ctor.prototype;
+			for(var fxName in proto){
+				if(dojo.isFunction(proto[fxName]) && (attrs = fxName.match(/^_set([a-zA-Z]*)Attr$/)) && attrs[1]){
+					r.push(attrs[1].charAt(0).toLowerCase() + attrs[1].substr(1));
+				}
+			}
+		}
+		return ctor._setterAttrs;	// String[]
+	},
+
+	postMixInProperties: function(){
+		// summary:
+		//		Called after the parameters to the widget have been read-in,
+		//		but before the widget template is instantiated. Especially
+		//		useful to set properties that are referenced in the widget
+		//		template.
+		// tags:
+		//		protected
+	},
+
+	buildRendering: function(){
+		// summary:
+		//		Construct the UI for this widget, setting this.domNode
+		// description:
+		//		Most widgets will mixin `dijit._Templated`, which implements this
+		//		method.
+		// tags:
+		//		protected
+
+		if(!this.domNode){
+			// Create root node if it wasn't created by _Templated
+			this.domNode = this.srcNodeRef || dojo.create('div');
+		}
+
+		// baseClass is a single class name or occasionally a space-separated list of names.
+		// Add those classes to the DOMNode.  If RTL mode then also add with Rtl suffix.
+		// TODO: make baseClass custom setter
+		if(this.baseClass){
+			var classes = this.baseClass.split(" ");
+			if(!this.isLeftToRight()){
+				classes = classes.concat( dojo.map(classes, function(name){ return name+"Rtl"; }));
+			}
+			dojo.addClass(this.domNode, classes);
+		}
+	},
+
+	postCreate: function(){
+		// summary:
+		//		Processing after the DOM fragment is created
+		// description:
+		//		Called after the DOM fragment has been created, but not necessarily
+		//		added to the document.  Do not include any operations which rely on
+		//		node dimensions or placement.
+		// tags:
+		//		protected
+	},
+
+	startup: function(){
+		// summary:
+		//		Processing after the DOM fragment is added to the document
+		// description:
+		//		Called after a widget and its children have been created and added to the page,
+		//		and all related widgets have finished their create() cycle, up through postCreate().
+		//		This is useful for composite widgets that need to control or layout sub-widgets.
+		//		Many layout widgets can use this as a wiring phase.
+		this._started = true;
+	},
+
+	//////////// DESTROY FUNCTIONS ////////////////////////////////
+
+	destroyRecursive: function(/*Boolean?*/ preserveDom){
+		// summary:
+		// 		Destroy this widget and its descendants
+		// description:
+		//		This is the generic "destructor" function that all widget users
+		// 		should call to cleanly discard with a widget. Once a widget is
+		// 		destroyed, it is removed from the manager object.
+		// preserveDom:
+		//		If true, this method will leave the original DOM structure
+		//		alone of descendant Widgets. Note: This will NOT work with
+		//		dijit._Templated widgets.
+
+		this._beingDestroyed = true;
+		this.destroyDescendants(preserveDom);
+		this.destroy(preserveDom);
+	},
+
+	destroy: function(/*Boolean*/ preserveDom){
+		// summary:
+		// 		Destroy this widget, but not its descendants.
+		//		This method will, however, destroy internal widgets such as those used within a template.
+		// preserveDom: Boolean
+		//		If true, this method will leave the original DOM structure alone.
+		//		Note: This will not yet work with _Templated widgets
+
+		this._beingDestroyed = true;
+		this.uninitialize();
+		var d = dojo,
+			dfe = d.forEach,
+			dun = d.unsubscribe;
+		dfe(this._connects, function(array){
+			dfe(array, d.disconnect);
+		});
+		dfe(this._subscribes, function(handle){
+			dun(handle);
+		});
+
+		// destroy widgets created as part of template, etc.
+		dfe(this._supportingWidgets || [], function(w){
+			if(w.destroyRecursive){
+				w.destroyRecursive();
+			}else if(w.destroy){
+				w.destroy();
+			}
+		});
+
+		this.destroyRendering(preserveDom);
+		dijit.registry.remove(this.id);
+		this._destroyed = true;
+	},
+
+	destroyRendering: function(/*Boolean?*/ preserveDom){
+		// summary:
+		//		Destroys the DOM nodes associated with this widget
+		// preserveDom:
+		//		If true, this method will leave the original DOM structure alone
+		//		during tear-down. Note: this will not work with _Templated
+		//		widgets yet.
+		// tags:
+		//		protected
+
+		if(this.bgIframe){
+			this.bgIframe.destroy(preserveDom);
+			delete this.bgIframe;
+		}
+
+		if(this.domNode){
+			if(preserveDom){
+				dojo.removeAttr(this.domNode, "widgetId");
+			}else{
+				dojo.destroy(this.domNode);
+			}
+			delete this.domNode;
+		}
+
+		if(this.srcNodeRef){
+			if(!preserveDom){
+				dojo.destroy(this.srcNodeRef);
+			}
+			delete this.srcNodeRef;
+		}
+	},
+
+	destroyDescendants: function(/*Boolean?*/ preserveDom){
+		// summary:
+		//		Recursively destroy the children of this widget and their
+		//		descendants.
+		// preserveDom:
+		//		If true, the preserveDom attribute is passed to all descendant
+		//		widget's .destroy() method. Not for use with _Templated
+		//		widgets.
+
+		// get all direct descendants and destroy them recursively
+		dojo.forEach(this.getChildren(), function(widget){
+			if(widget.destroyRecursive){
+				widget.destroyRecursive(preserveDom);
+			}
+		});
+	},
+
+	uninitialize: function(){
+		// summary:
+		//		Stub function. Override to implement custom widget tear-down
+		//		behavior.
+		// tags:
+		//		protected
+		return false;
+	},
+
+	////////////////// GET/SET, CUSTOM SETTERS, ETC. ///////////////////
+
+	_setClassAttr: function(/*String*/ value){
+		// summary:
+		//		Custom setter for the CSS "class" attribute
+		// tags:
+		//		protected
+		var mapNode = this[this.attributeMap["class"] || 'domNode'];
+		dojo.replaceClass(mapNode, value, this["class"]);
+		this._set("class", value);
+	},
+
+	_setStyleAttr: function(/*String||Object*/ value){
+		// summary:
+		//		Sets the style attribute of the widget according to value,
+		//		which is either a hash like {height: "5px", width: "3px"}
+		//		or a plain string
+		// description:
+		//		Determines which node to set the style on based on style setting
+		//		in attributeMap.
+		// tags:
+		//		protected
+
+		var mapNode = this[this.attributeMap.style || 'domNode'];
+
+		// Note: technically we should revert any style setting made in a previous call
+		// to his method, but that's difficult to keep track of.
+
+		if(dojo.isObject(value)){
+			dojo.style(mapNode, value);
+		}else{
+			if(mapNode.style.cssText){
+				mapNode.style.cssText += "; " + value;
+			}else{
+				mapNode.style.cssText = value;
+			}
+		}
+
+		this._set("style", value);
+	},
+
+	_attrToDom: function(/*String*/ attr, /*String*/ value){
+		// summary:
+		//		Reflect a widget attribute (title, tabIndex, duration etc.) to
+		//		the widget DOM, as specified in attributeMap.
+		//		Note some attributes like "type"
+		//		cannot be processed this way as they are not mutable.
+		//
+		// tags:
+		//		private
+
+		var commands = this.attributeMap[attr];
+		dojo.forEach(dojo.isArray(commands) ? commands : [commands], function(command){
+
+			// Get target node and what we are doing to that node
+			var mapNode = this[command.node || command || "domNode"];	// DOM node
+			var type = command.type || "attribute";	// class, innerHTML, innerText, or attribute
+
+			switch(type){
+				case "attribute":
+					if(dojo.isFunction(value)){ // functions execute in the context of the widget
+						value = dojo.hitch(this, value);
+					}
+
+					// Get the name of the DOM node attribute; usually it's the same
+					// as the name of the attribute in the widget (attr), but can be overridden.
+					// Also maps handler names to lowercase, like onSubmit --> onsubmit
+					var attrName = command.attribute ? command.attribute :
+						(/^on[A-Z][a-zA-Z]*$/.test(attr) ? attr.toLowerCase() : attr);
+
+					dojo.attr(mapNode, attrName, value);
+					break;
+				case "innerText":
+					mapNode.innerHTML = "";
+					mapNode.appendChild(dojo.doc.createTextNode(value));
+					break;
+				case "innerHTML":
+					mapNode.innerHTML = value;
+					break;
+				case "class":
+					dojo.replaceClass(mapNode, value, this[attr]);
+					break;
+			}
+		}, this);
+	},
+
+	get: function(name){
+		// summary:
+		//		Get a property from a widget.
+		//	name:
+		//		The property to get.
+		// description:
+		//		Get a named property from a widget. The property may
+		//		potentially be retrieved via a getter method. If no getter is defined, this
+		// 		just retrieves the object's property.
+		// 		For example, if the widget has a properties "foo"
+		//		and "bar" and a method named "_getFooAttr", calling:
+		//	|	myWidget.get("foo");
+		//		would be equivalent to writing:
+		//	|	widget._getFooAttr();
+		//		and:
+		//	|	myWidget.get("bar");
+		//		would be equivalent to writing:
+		//	|	widget.bar;
+		var names = this._getAttrNames(name);
+		return this[names.g] ? this[names.g]() : this[name];
+	},
+	
+	set: function(name, value){
+		// summary:
+		//		Set a property on a widget
+		//	name:
+		//		The property to set.
+		//	value:
+		//		The value to set in the property.
+		// description:
+		//		Sets named properties on a widget which may potentially be handled by a
+		// 		setter in the widget.
+		// 		For example, if the widget has a properties "foo"
+		//		and "bar" and a method named "_setFooAttr", calling:
+		//	|	myWidget.set("foo", "Howdy!");
+		//		would be equivalent to writing:
+		//	|	widget._setFooAttr("Howdy!");
+		//		and:
+		//	|	myWidget.set("bar", 3);
+		//		would be equivalent to writing:
+		//	|	widget.bar = 3;
+		//
+		//	set() may also be called with a hash of name/value pairs, ex:
+		//	|	myWidget.set({
+		//	|		foo: "Howdy",
+		//	|		bar: 3
+		//	|	})
+		//	This is equivalent to calling set(foo, "Howdy") and set(bar, 3)
+
+		if(typeof name === "object"){
+			for(var x in name){
+				this.set(x, name[x]);
+			}
+			return this;
+		}
+		var names = this._getAttrNames(name);
+		if(this[names.s]){
+			// use the explicit setter
+			var result = this[names.s].apply(this, Array.prototype.slice.call(arguments, 1));
+		}else{
+			// if param is specified as DOM node attribute, copy it
+			if(name in this.attributeMap){
+				this._attrToDom(name, value);
+			}
+			this._set(name, value);
+		}
+		return result || this;
+	},
+	
+	_attrPairNames: {},		// shared between all widgets
+	_getAttrNames: function(name){
+		// summary:
+		//		Helper function for get() and set().
+		//		Caches attribute name values so we don't do the string ops every time.
+		// tags:
+		//		private
+
+		var apn = this._attrPairNames;
+		if(apn[name]){ return apn[name]; }
+		var uc = name.charAt(0).toUpperCase() + name.substr(1);
+		return (apn[name] = {
+			n: name+"Node",
+			s: "_set"+uc+"Attr",
+			g: "_get"+uc+"Attr"
+		});
+	},
+
+	_set: function(/*String*/ name, /*anything*/ value){
+		// summary:
+		//		Helper function to set new value for specified attribute, and call handlers
+		//		registered with watch() if the value has changed.
+		var oldValue = this[name];
+		this[name] = value;
+		if(this._watchCallbacks && this._created && value !== oldValue){
+			this._watchCallbacks(name, oldValue, value);
+		}
+	},
+
+	toString: function(){
+		// summary:
+		//		Returns a string that represents the widget
+		// description:
+		//		When a widget is cast to a string, this method will be used to generate the
+		//		output. Currently, it does not implement any sort of reversible
+		//		serialization.
+		return '[Widget ' + this.declaredClass + ', ' + (this.id || 'NO ID') + ']'; // String
+	},
+
+	getDescendants: function(){
+		// summary:
+		//		Returns all the widgets contained by this, i.e., all widgets underneath this.containerNode.
+		//		This method should generally be avoided as it returns widgets declared in templates, which are
+		//		supposed to be internal/hidden, but it's left here for back-compat reasons.
+
+		return this.containerNode ? dojo.query('[widgetId]', this.containerNode).map(dijit.byNode) : []; // dijit._Widget[]
+	},
+
+	getChildren: function(){
+		// summary:
+		//		Returns all the widgets contained by this, i.e., all widgets underneath this.containerNode.
+		//		Does not return nested widgets, nor widgets that are part of this widget's template.
+		return this.containerNode ? dijit.findWidgets(this.containerNode) : []; // dijit._Widget[]
+	},
+
+	connect: function(
+			/*Object|null*/ obj,
+			/*String|Function*/ event,
+			/*String|Function*/ method){
+		// summary:
+		//		Connects specified obj/event to specified method of this object
+		//		and registers for disconnect() on widget destroy.
+		// description:
+		//		Provide widget-specific analog to dojo.connect, except with the
+		//		implicit use of this widget as the target object.
+		//		Events connected with `this.connect` are disconnected upon
+		//		destruction.
+		// returns:
+		//		A handle that can be passed to `disconnect` in order to disconnect before
+		//		the widget is destroyed.
+		// example:
+		//	|	var btn = new dijit.form.Button();
+		//	|	// when foo.bar() is called, call the listener we're going to
+		//	|	// provide in the scope of btn
+		//	|	btn.connect(foo, "bar", function(){
+		//	|		console.debug(this.toString());
+		//	|	});
+		// tags:
+		//		protected
+
+		var handles = [dojo._connect(obj, event, this, method)];
+		this._connects.push(handles);
+		return handles;		// _Widget.Handle
+	},
+
+	disconnect: function(/* _Widget.Handle */ handles){
+		// summary:
+		//		Disconnects handle created by `connect`.
+		//		Also removes handle from this widget's list of connects.
+		// tags:
+		//		protected
+		for(var i=0; i<this._connects.length; i++){
+			if(this._connects[i] == handles){
+				dojo.forEach(handles, dojo.disconnect);
+				this._connects.splice(i, 1);
+				return;
+			}
+		}
+	},
+
+	subscribe: function(
+			/*String*/ topic,
+			/*String|Function*/ method){
+		// summary:
+		//		Subscribes to the specified topic and calls the specified method
+		//		of this object and registers for unsubscribe() on widget destroy.
+		// description:
+		//		Provide widget-specific analog to dojo.subscribe, except with the
+		//		implicit use of this widget as the target object.
+		// example:
+		//	|	var btn = new dijit.form.Button();
+		//	|	// when /my/topic is published, this button changes its label to
+		//	|   // be the parameter of the topic.
+		//	|	btn.subscribe("/my/topic", function(v){
+		//	|		this.set("label", v);
+		//	|	});
+		var handle = dojo.subscribe(topic, this, method);
+
+		// return handles for Any widget that may need them
+		this._subscribes.push(handle);
+		return handle;
+	},
+
+	unsubscribe: function(/*Object*/ handle){
+		// summary:
+		//		Unsubscribes handle created by this.subscribe.
+		//		Also removes handle from this widget's list of subscriptions
+		for(var i=0; i<this._subscribes.length; i++){
+			if(this._subscribes[i] == handle){
+				dojo.unsubscribe(handle);
+				this._subscribes.splice(i, 1);
+				return;
+			}
+		}
+	},
+
+	isLeftToRight: function(){
+		// summary:
+		//		Return this widget's explicit or implicit orientation (true for LTR, false for RTL)
+		// tags:
+		//		protected
+		return this.dir ? (this.dir == "ltr") : dojo._isBodyLtr(); //Boolean
+	},
+
+	placeAt: function(/* String|DomNode|_Widget */reference, /* String?|Int? */position){
+		// summary:
+		//		Place this widget's domNode reference somewhere in the DOM based
+		//		on standard dojo.place conventions, or passing a Widget reference that
+		//		contains and addChild member.
+		//
+		// description:
+		//		A convenience function provided in all _Widgets, providing a simple
+		//		shorthand mechanism to put an existing (or newly created) Widget
+		//		somewhere in the dom, and allow chaining.
+		//
+		// reference:
+		//		The String id of a domNode, a domNode reference, or a reference to a Widget posessing
+		//		an addChild method.
+		//
+		// position:
+		//		If passed a string or domNode reference, the position argument
+		//		accepts a string just as dojo.place does, one of: "first", "last",
+		//		"before", or "after".
+		//
+		//		If passed a _Widget reference, and that widget reference has an ".addChild" method,
+		//		it will be called passing this widget instance into that method, supplying the optional
+		//		position index passed.
+		//
+		// returns:
+		//		dijit._Widget
+		//		Provides a useful return of the newly created dijit._Widget instance so you
+		//		can "chain" this function by instantiating, placing, then saving the return value
+		//		to a variable.
+		//
+		// example:
+		// | 	// create a Button with no srcNodeRef, and place it in the body:
+		// | 	var button = new dijit.form.Button({ label:"click" }).placeAt(dojo.body());
+		// | 	// now, 'button' is still the widget reference to the newly created button
+		// | 	dojo.connect(button, "onClick", function(e){ console.log('click'); });
+		//
+		// example:
+		// |	// create a button out of a node with id="src" and append it to id="wrapper":
+		// | 	var button = new dijit.form.Button({},"src").placeAt("wrapper");
+		//
+		// example:
+		// |	// place a new button as the first element of some div
+		// |	var button = new dijit.form.Button({ label:"click" }).placeAt("wrapper","first");
+		//
+		// example:
+		// |	// create a contentpane and add it to a TabContainer
+		// |	var tc = dijit.byId("myTabs");
+		// |	new dijit.layout.ContentPane({ href:"foo.html", title:"Wow!" }).placeAt(tc)
+
+		if(reference.declaredClass && reference.addChild){
+			reference.addChild(this, position);
+		}else{
+			dojo.place(this.domNode, reference, position);
+		}
+		return this;
+	}
+});
+
+})();
+
+}
+
+if(!dojo._hasResource["dojo.window"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojo.window"] = true;
+dojo.provide("dojo.window");
+
+dojo.getObject("window", true, dojo);
+
+dojo.window.getBox = function(){
+	// summary:
+	//		Returns the dimensions and scroll position of the viewable area of a browser window
+
+	var scrollRoot = (dojo.doc.compatMode == 'BackCompat') ? dojo.body() : dojo.doc.documentElement;
+
+	// get scroll position
+	var scroll = dojo._docScroll(); // scrollRoot.scrollTop/Left should work
+	return { w: scrollRoot.clientWidth, h: scrollRoot.clientHeight, l: scroll.x, t: scroll.y };
+};
+
+dojo.window.get = function(doc){
+	// summary:
+	// 		Get window object associated with document doc
+
+	// In some IE versions (at least 6.0), document.parentWindow does not return a
+	// reference to the real window object (maybe a copy), so we must fix it as well
+	// We use IE specific execScript to attach the real window reference to
+	// document._parentWindow for later use
+	if(dojo.isIE && window !== document.parentWindow){
+		/*
+		In IE 6, only the variable "window" can be used to connect events (others
+		may be only copies).
+		*/
+		doc.parentWindow.execScript("document._parentWindow = window;", "Javascript");
+		//to prevent memory leak, unset it after use
+		//another possibility is to add an onUnload handler which seems overkill to me (liucougar)
+		var win = doc._parentWindow;
+		doc._parentWindow = null;
+		return win;	//	Window
+	}
+
+	return doc.parentWindow || doc.defaultView;	//	Window
+};
+
+dojo.window.scrollIntoView = function(/*DomNode*/ node, /*Object?*/ pos){
+	// summary:
+	//		Scroll the passed node into view, if it is not already.
+	
+	// don't rely on node.scrollIntoView working just because the function is there
+
+	try{ // catch unexpected/unrecreatable errors (#7808) since we can recover using a semi-acceptable native method
+		node = dojo.byId(node);
+		var doc = node.ownerDocument || dojo.doc,
+			body = doc.body || dojo.body(),
+			html = doc.documentElement || body.parentNode,
+			isIE = dojo.isIE, isWK = dojo.isWebKit;
+		// if an untested browser, then use the native method
+		if((!(dojo.isMoz || isIE || isWK || dojo.isOpera) || node == body || node == html) && (typeof node.scrollIntoView != "undefined")){
+			node.scrollIntoView(false); // short-circuit to native if possible
+			return;
+		}
+		var backCompat = doc.compatMode == 'BackCompat',
+			clientAreaRoot = (isIE >= 9 && node.ownerDocument.parentWindow.frameElement)
+				? ((html.clientHeight > 0 && html.clientWidth > 0 && (body.clientHeight == 0 || body.clientWidth == 0 || body.clientHeight > html.clientHeight || body.clientWidth > html.clientWidth)) ? html : body)
+				: (backCompat ? body : html),
+			scrollRoot = isWK ? body : clientAreaRoot,
+			rootWidth = clientAreaRoot.clientWidth,
+			rootHeight = clientAreaRoot.clientHeight,
+			rtl = !dojo._isBodyLtr(),
+			nodePos = pos || dojo.position(node),
+			el = node.parentNode,
+			isFixed = function(el){
+				return ((isIE <= 6 || (isIE && backCompat))? false : (dojo.style(el, 'position').toLowerCase() == "fixed"));
+			};
+		if(isFixed(node)){ return; } // nothing to do
+
+		while(el){
+			if(el == body){ el = scrollRoot; }
+			var elPos = dojo.position(el),
+				fixedPos = isFixed(el);
+	
+			if(el == scrollRoot){
+				elPos.w = rootWidth; elPos.h = rootHeight;
+				if(scrollRoot == html && isIE && rtl){ elPos.x += scrollRoot.offsetWidth-elPos.w; } // IE workaround where scrollbar causes negative x
+				if(elPos.x < 0 || !isIE){ elPos.x = 0; } // IE can have values > 0
+				if(elPos.y < 0 || !isIE){ elPos.y = 0; }
+			}else{
+				var pb = dojo._getPadBorderExtents(el);
+				elPos.w -= pb.w; elPos.h -= pb.h; elPos.x += pb.l; elPos.y += pb.t;
+				var clientSize = el.clientWidth,
+					scrollBarSize = elPos.w - clientSize;
+				if(clientSize > 0 && scrollBarSize > 0){
+					elPos.w = clientSize;
+					elPos.x += (rtl && (isIE || el.clientLeft > pb.l/*Chrome*/)) ? scrollBarSize : 0;
+				}
+				clientSize = el.clientHeight;
+				scrollBarSize = elPos.h - clientSize;
+				if(clientSize > 0 && scrollBarSize > 0){
+					elPos.h = clientSize;
+				}
+			}
+			if(fixedPos){ // bounded by viewport, not parents
+				if(elPos.y < 0){
+					elPos.h += elPos.y; elPos.y = 0;
+				}
+				if(elPos.x < 0){
+					elPos.w += elPos.x; elPos.x = 0;
+				}
+				if(elPos.y + elPos.h > rootHeight){
+					elPos.h = rootHeight - elPos.y;
+				}
+				if(elPos.x + elPos.w > rootWidth){
+					elPos.w = rootWidth - elPos.x;
+				}
+			}
+			// calculate overflow in all 4 directions
+			var l = nodePos.x - elPos.x, // beyond left: < 0
+				t = nodePos.y - Math.max(elPos.y, 0), // beyond top: < 0
+				r = l + nodePos.w - elPos.w, // beyond right: > 0
+				bot = t + nodePos.h - elPos.h; // beyond bottom: > 0
+			if(r * l > 0){
+				var s = Math[l < 0? "max" : "min"](l, r);
+				if(rtl && ((isIE == 8 && !backCompat) || isIE >= 9)){ s = -s; }
+				nodePos.x += el.scrollLeft;
+				el.scrollLeft += s;
+				nodePos.x -= el.scrollLeft;
+			}
+			if(bot * t > 0){
+				nodePos.y += el.scrollTop;
+				el.scrollTop += Math[t < 0? "max" : "min"](t, bot);
+				nodePos.y -= el.scrollTop;
+			}
+			el = (el != scrollRoot) && !fixedPos && el.parentNode;
+		}
+	}catch(error){
+		console.error('scrollIntoView: ' + error);
+		node.scrollIntoView(false);
+	}
+};
+
+}
+
 if(!dojo._hasResource["dijit._base.focus"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dijit._base.focus"] = true;
 dojo.provide("dijit._base.focus");
@@ -698,6 +1653,9 @@ dojo.mixin(dijit, {
 						}
 					}
 					bm = {isCollapsed:true};
+					if(sel.rangeCount){
+						bm.mark = sel.getRangeAt(0).cloneRange();
+					}
 				}else{
 					rg = sel.getRangeAt(0);
 					bm = {isCollapsed: false, mark: rg.cloneRange()};
@@ -945,7 +1903,7 @@ dojo.mixin(dijit, {
 		var doc = dojo.isIE ? targetWindow.document.documentElement : targetWindow.document;
 		if(doc){
 			if(dojo.isIE){
-				doc.attachEvent('onmousedown', mousedownListener);
+				targetWindow.document.body.attachEvent('onmousedown', mousedownListener);
 				var activateListener = function(evt){
 					// IE reports that nodes like <body> have gotten focus, even though they have tabIndex=-1,
 					// Should consider those more like a mouse-click than a focus....
@@ -963,13 +1921,13 @@ dojo.mixin(dijit, {
 				doc.attachEvent('ondeactivate', deactivateListener);
 
 				return function(){
-					doc.detachEvent('onmousedown', mousedownListener);
+					targetWindow.document.detachEvent('onmousedown', mousedownListener);
 					doc.detachEvent('onactivate', activateListener);
 					doc.detachEvent('ondeactivate', deactivateListener);
 					doc = null;	// prevent memory leak (apparent circular reference via closure)
 				};
 			}else{
-				doc.addEventListener('mousedown', mousedownListener, true);
+				doc.body.addEventListener('mousedown', mousedownListener, true);
 				var focusListener = function(evt){
 					dijit._onFocusNode(effectiveNode || evt.target);
 				};
@@ -980,7 +1938,7 @@ dojo.mixin(dijit, {
 				doc.addEventListener('blur', blurListener, true);
 
 				return function(){
-					doc.removeEventListener('mousedown', mousedownListener, true);
+					doc.body.removeEventListener('mousedown', mousedownListener, true);
 					doc.removeEventListener('focus', focusListener, true);
 					doc.removeEventListener('blur', blurListener, true);
 					doc = null;	// prevent memory leak (apparent circular reference via closure)
@@ -1198,7 +2156,7 @@ dojo.AdapterRegistry = function(/*Boolean?*/ returnWrappers){
 
 dojo.extend(dojo.AdapterRegistry, {
 	register: function(/*String*/ name, /*Function*/ check, /*Function*/ wrap, /*Boolean?*/ directReturn, /*Boolean?*/ override){
-		//	summary: 
+		//	summary:
 		//		register a check function to determine if the wrap function or
 		//		object gets selected
 		//	name:
@@ -1419,9 +2377,14 @@ dijit._place = function(/*DomNode*/ node, choices, layoutNode, /*Object*/ around
 	// And then position the node.   Do this last, after the layoutNode() above
 	// has sized the node, due to browser quirks when the viewport is scrolled
 	// (specifically that a Tooltip will shrink to fit as though the window was
-	// scrolled to the left)
-	node.style.left = best.x + "px";
-	node.style.top = best.y + "px";
+	// scrolled to the left).
+	//
+	// In RTL mode, set style.right rather than style.left so in the common case,
+	// window resizes move the popup along with the aroundNode.
+	var l = dojo._isBodyLtr(),
+		s = node.style;
+	s.top = best.y + "px";
+	s[l ? "left" : "right"] = (l ? best.x : view.w - best.x - best.w) + "px";
 	
 	return best;
 }
@@ -1469,11 +2432,7 @@ dijit.placeOnScreenAroundNode = function(
 
 	// get coordinates of aroundNode
 	aroundNode = dojo.byId(aroundNode);
-	var oldDisplay = aroundNode.style.display;
-	aroundNode.style.display="";
-	// #3172: use the slightly tighter border box instead of marginBox
 	var aroundNodePos = dojo.position(aroundNode, true);
-	aroundNode.style.display=oldDisplay;
 
 	// place the node around the calculated rectangle
 	return dijit._placeOnScreenAroundRect(node,
@@ -1725,7 +2684,7 @@ dijit.popup = {
 		//		Puts widget inside a wrapper DIV (if not already in one),
 		//		and returns pointer to that wrapper DIV.
 
-		var wrapper = widget.declaredClass ? widget._popupWrapper : (dojo.hasClass(widget.parentNode, "dijitPopup") && widget.parentNode),
+		var wrapper = widget.declaredClass ? widget._popupWrapper : (widget.parentNode && dojo.hasClass(widget.parentNode, "dijitPopup")),
 			node = widget.domNode || widget;
 
 		if(!wrapper){
@@ -1826,7 +2785,7 @@ dijit.popup = {
 			around = args.around,
 			id = (args.around && args.around.id) ? (args.around.id+"_dropdown") : ("popup_"+this._idGen++);
 
-		// If we are opening a new popup that isn't a child of a currently opened popup, then 
+		// If we are opening a new popup that isn't a child of a currently opened popup, then
 		// close currently opened popup(s).   This should happen automatically when the old popups
 		// gets the _onBlur() event, except that the _onBlur() event isn't reliable on IE, see [22198].
 		while(stack.length && (!args.parent || !dojo.isDescendant(args.parent.domNode, stack[stack.length-1].widget.domNode))){
@@ -1959,7 +2918,7 @@ dijit._frames = new function(){
 			iframe = queue.pop();
 			iframe.style.display="";
 		}else{
-			if(dojo.isIE){
+			if(dojo.isIE < 9){
 				var burl = dojo.config["dojoBlankHtmlUrl"] || (dojo.moduleUrl("dojo", "resources/blank.html")+"") || "javascript:\"\"";
 				var html="<iframe src='" + burl + "'"
 					+ " style='position: absolute; left: 0px; top: 0px;"
@@ -2037,30 +2996,6 @@ dojo.extend(dijit.BackgroundIframe, {
 	}
 });
 
-
-// Resizing browser window displaces the popup from the around node, and perhaps
-// even moves the around node off the screen.  Can either close the drop down, or reposition it.
-// Unclear which action is better -- repositioning seems better except for the problem
-// when the around node is moved off the screen -- but for now I just close the
-// drop down.   Repositioning would be difficult to implement because widgets like
-// ComboBox have special code for sizing the drop down depending on available real estate.
-(function(){
-	var oldSize = {};
-	dojo.addOnLoad(function(){
-		oldSize = dojo.window.getBox();
-});
-	dojo.connect(window, "onresize", function(){
-		var newSize = dojo.window.getBox();
-		// if() guards against spurious IE resize events
-		if(newSize.h != oldSize.h || newSize.w != oldSize.w){
-			oldSize = newSize;
-			dijit.popup.close();
-		}
-	});
-})();
-
-dojo.connect(document, dojo.isMozilla ? "DOMMouseScroll" : "onmousewheel", dojo.hitch(dijit.popup, "close", null));
-
 }
 
 if(!dojo._hasResource["dijit._base.scroll"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
@@ -2108,6 +3043,7 @@ dojo.provide("dojo.uacss");
 			dj_ie6: maj(ie) == 6,
 			dj_ie7: maj(ie) == 7,
 			dj_ie8: maj(ie) == 8,
+			dj_ie9: maj(ie) == 9,
 			dj_quirks: d.isQuirks,
 			dj_iequirks: ie && d.isQuirks,
 
@@ -2504,138 +3440,6 @@ dojo.provide("dijit._base");
 
 }
 
-if(!dojo._hasResource["dojo.Stateful"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojo.Stateful"] = true;
-dojo.provide("dojo.Stateful");
-
-
-dojo.declare("dojo.Stateful", null, {
-	// summary:
-	//		Base class for objects that provide named properties with optional getter/setter
-	//		control and the ability to watch for property changes
-	// example:
-	//	|	var obj = new dojo.Stateful();
-	//	|	obj.watch("foo", function(){
-	//	|		console.log("foo changed to " + this.get("foo"));
-	//	|	});
-	//	|	obj.set("foo","bar");
-	postscript: function(mixin){
-		if(mixin){
-			dojo.mixin(this, mixin);
-		}
-	},
-	
-	get: function(/*String*/name){
-		// summary:
-		//		Get a property on a Stateful instance.
-		//	name:
-		//		The property to get.
-		// description:
-		//		Get a named property on a Stateful object. The property may
-		//		potentially be retrieved via a getter method in subclasses. In the base class
-		// 		this just retrieves the object's property. 
-		// 		For example:
-		//	|	stateful = new dojo.Stateful({foo: 3});
-		//	|	stateful.get("foo") // returns 3
-		//	|	stateful.foo // returns 3
-		
-		return this[name];
-	},
-	set: function(/*String*/name, /*Object*/value){
-		// summary:
-		//		Set a property on a Stateful instance
-		//	name:
-		//		The property to set. 
-		//	value:
-		//		The value to set in the property.
-		// description:
-		//		Sets named properties on a stateful object and notifies any watchers of 
-		// 		the property. A programmatic setter may be defined in subclasses.
-		// 		For example:
-		//	|	stateful = new dojo.Stateful();
-		//	|	stateful.watch(function(name, oldValue, value){
-		//	|		// this will be called on the set below
-		//	|	}
-		//	|	stateful.set(foo, 5);
-		//
-		//	set() may also be called with a hash of name/value pairs, ex:
-		//	|	myObj.set({
-		//	|		foo: "Howdy",
-		//	|		bar: 3
-		//	|	})
-		//	This is equivalent to calling set(foo, "Howdy") and set(bar, 3)
-		if(typeof name === "object"){
-			for(var x in name){
-				this.set(x, name[x]); 
-			}
-			return this;
-		}
-		var oldValue = this[name];
-		this[name] = value;
-		if(this._watchCallbacks){
-			this._watchCallbacks(name, oldValue, value);
-		}
-		return this;
-	},
-	watch: function(/*String?*/name, /*Function*/callback){
-		// summary:
-		//		Watches a property for changes
-		//	name:
-		//		Indicates the property to watch. This is optional (the callback may be the 
-		// 		only parameter), and if omitted, all the properties will be watched
-		// returns:
-		//		An object handle for the watch. The unwatch method of this object 
-		// 		can be used to discontinue watching this property:
-		//		|	var watchHandle = obj.watch("foo", callback);
-		//		|	watchHandle.unwatch(); // callback won't be called now
-		//	callback:
-		//		The function to execute when the property changes. This will be called after
-		//		the property has been changed. The callback will be called with the |this|
-		//		set to the instance, the first argument as the name of the property, the 
-		// 		second argument as the old value and the third argument as the new value.
-		
-		var callbacks = this._watchCallbacks;
-		if(!callbacks){
-			var self = this;
-			callbacks = this._watchCallbacks = function(name, oldValue, value, ignoreCatchall){
-				var notify = function(propertyCallbacks){
-					if(propertyCallbacks){
-                        propertyCallbacks = propertyCallbacks.slice();
-						for(var i = 0, l = propertyCallbacks.length; i < l; i++){
-							try{
-								propertyCallbacks[i].call(self, name, oldValue, value);
-							}catch(e){
-								console.error(e);
-							}
-						}
-					}
-				};
-				notify(callbacks[name]);
-				if(!ignoreCatchall){
-					notify(callbacks["*"]); // the catch-all
-				}
-			}; // we use a function instead of an object so it will be ignored by JSON conversion
-		}
-		if(!callback && typeof name === "function"){
-			callback = name;
-			name = "*";
-		}
-		var propertyCallbacks = callbacks[name];
-		if(typeof propertyCallbacks !== "object"){
-			propertyCallbacks = callbacks[name] = [];
-		}
-		propertyCallbacks.push(callback);
-		return {
-			unwatch: function(){
-				propertyCallbacks.splice(dojo.indexOf(propertyCallbacks, callback), 1);
-			}
-		};
-	}
-	
-});
-
-}
-
 if(!dojo._hasResource["dijit._Widget"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dijit._Widget"] = true;
 dojo.provide("dijit._Widget");
@@ -2643,8 +3447,8 @@ dojo.provide("dijit._Widget");
 
 
 
-dojo.require( "dijit._base" );
 
+////////////////// DEFERRED CONNECTS ///////////////////
 
 // This code is to assist deferring dojo.connect() calls in widgets (connecting to events on the widgets'
 // DOM nodes) until someone actually needs to monitor that event.
@@ -2656,6 +3460,8 @@ dojo.connect(dojo, "_connect",
 	});
 
 dijit._connectOnUseEventHandler = function(/*Event*/ event){};
+
+////////////////// ONDIJITCLICK SUPPORT ///////////////////
 
 // Keep track of where the last keydown event was, to help avoid generating
 // spurious ondijitclick events when:
@@ -2682,142 +3488,28 @@ if(dojo.isIE){
 
 (function(){
 
-dojo.declare("dijit._Widget", dojo.Stateful, {
+dojo.declare("dijit._Widget", dijit._WidgetBase, {
 	// summary:
 	//		Base class for all Dijit widgets.
+	//
+	//		Extends _WidgetBase, adding support for:
+	//			- deferred connections
+	//				A call like dojo.connect(myWidget, "onMouseMove", func)
+	//				will essentially do a dojo.connect(myWidget.domNode, "onMouseMove", func)
+	//			- ondijitclick
+	//				Support new dojoAttachEvent="ondijitclick: ..." that is triggered by a mouse click or a SPACE/ENTER keypress
+	//			- focus related functions
+	//				In particular, the onFocus()/onBlur() callbacks.   Driven internally by
+	//				dijit/_base/focus.js.
+	//			- deprecated methods
+	//			- onShow(), onHide(), onClose()
+	//
+	//		Also, by loading code in dijit/_base, turns on:
+	//			- browser sniffing (putting browser id like .dj_ie on <html> node)
+	//			- high contrast mode sniffing (add .dijit_a11y class to <body> if machine is in high contrast mode)
+	
 
-	// id: [const] String
-	//		A unique, opaque ID string that can be assigned by users or by the
-	//		system. If the developer passes an ID which is known not to be
-	//		unique, the specified ID is ignored and the system-generated ID is
-	//		used instead.
-	id: "",
-
-	// lang: [const] String
-	//		Rarely used.  Overrides the default Dojo locale used to render this widget,
-	//		as defined by the [HTML LANG](http://www.w3.org/TR/html401/struct/dirlang.html#adef-lang) attribute.
-	//		Value must be among the list of locales specified during by the Dojo bootstrap,
-	//		formatted according to [RFC 3066](http://www.ietf.org/rfc/rfc3066.txt) (like en-us).
-	lang: "",
-
-	// dir: [const] String
-	//		Bi-directional support, as defined by the [HTML DIR](http://www.w3.org/TR/html401/struct/dirlang.html#adef-dir)
-	//		attribute. Either left-to-right "ltr" or right-to-left "rtl".  If undefined, widgets renders in page's
-	//		default direction.
-	dir: "",
-
-	// class: String
-	//		HTML class attribute
-	"class": "",
-
-	// style: String||Object
-	//		HTML style attributes as cssText string or name/value hash
-	style: "",
-
-	// title: String
-	//		HTML title attribute.
-	//
-	//		For form widgets this specifies a tooltip to display when hovering over
-	//		the widget (just like the native HTML title attribute).
-	//
-	//		For TitlePane or for when this widget is a child of a TabContainer, AccordionContainer,
-	//		etc., it's used to specify the tab label, accordion pane title, etc.
-	title: "",
-
-	// tooltip: String
-	//		When this widget's title attribute is used to for a tab label, accordion pane title, etc.,
-	//		this specifies the tooltip to appear when the mouse is hovered over that text.
-	tooltip: "",
-
-	// baseClass: [protected] String
-	//		Root CSS class of the widget (ex: dijitTextBox), used to construct CSS classes to indicate
-	//		widget state.
-	baseClass: "",
-
-	// srcNodeRef: [readonly] DomNode
-	//		pointer to original DOM node
-	srcNodeRef: null,
-
-	// domNode: [readonly] DomNode
-	//		This is our visible representation of the widget! Other DOM
-	//		Nodes may by assigned to other properties, usually through the
-	//		template system's dojoAttachPoint syntax, but the domNode
-	//		property is the canonical "top level" node in widget UI.
-	domNode: null,
-
-	// containerNode: [readonly] DomNode
-	//		Designates where children of the source DOM node will be placed.
-	//		"Children" in this case refers to both DOM nodes and widgets.
-	//		For example, for myWidget:
-	//
-	//		|	<div dojoType=myWidget>
-	//		|		<b> here's a plain DOM node
-	//		|		<span dojoType=subWidget>and a widget</span>
-	//		|		<i> and another plain DOM node </i>
-	//		|	</div>
-	//
-	//		containerNode would point to:
-	//
-	//		|		<b> here's a plain DOM node
-	//		|		<span dojoType=subWidget>and a widget</span>
-	//		|		<i> and another plain DOM node </i>
-	//
-	//		In templated widgets, "containerNode" is set via a
-	//		dojoAttachPoint assignment.
-	//
-	//		containerNode must be defined for any widget that accepts innerHTML
-	//		(like ContentPane or BorderContainer or even Button), and conversely
-	//		is null for widgets that don't, like TextBox.
-	containerNode: null,
-
-/*=====
-	// _started: Boolean
-	//		startup() has completed.
-	_started: false,
-=====*/
-
-	// focused: [readonly] Boolean
-	//		This widget or a widget it contains has focus, or is "active" because
-	//		it was recently clicked.
-	focused: false,
-
-	// attributeMap: [protected] Object
-	//		attributeMap sets up a "binding" between attributes (aka properties)
-	//		of the widget and the widget's DOM.
-	//		Changes to widget attributes listed in attributeMap will be
-	//		reflected into the DOM.
-	//
-	//		For example, calling set('title', 'hello')
-	//		on a TitlePane will automatically cause the TitlePane's DOM to update
-	//		with the new title.
-	//
-	//		attributeMap is a hash where the key is an attribute of the widget,
-	//		and the value reflects a binding to a:
-	//
-	//		- DOM node attribute
-	// |		focus: {node: "focusNode", type: "attribute"}
-	// 		Maps this.focus to this.focusNode.focus
-	//
-	//		- DOM node innerHTML
-	//	|		title: { node: "titleNode", type: "innerHTML" }
-	//		Maps this.title to this.titleNode.innerHTML
-	//
-	//		- DOM node innerText
-	//	|		title: { node: "titleNode", type: "innerText" }
-	//		Maps this.title to this.titleNode.innerText
-	//
-	//		- DOM node CSS class
-	// |		myClass: { node: "domNode", type: "class" }
-	//		Maps this.myClass to this.domNode.className
-	//
-	//		If the value is an array, then each element in the array matches one of the
-	//		formats of the above list.
-	//
-	//		There are also some shorthands for backwards compatibility:
-	//		- string --> { node: string, type: "attribute" }, for example:
-	//	|	"focusNode" ---> { node: "focusNode", type: "attribute" }
-	//		- "" --> { node: "domNode", type: "attribute" }
-	attributeMap: {id:"", dir:"", lang:"", "class":"", style:"", title:""},
+	////////////////// DEFERRED CONNECTS ///////////////////
 
 	// _deferredConnects: [protected] Object
 	//		attributeMap addendum for event handlers that should be connected only on first use
@@ -2969,58 +3661,7 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 	},
 	=====*/
 
-	// Constants used in templates
-
-	// _blankGif: [protected] String
-	//		Path to a blank 1x1 image.
-	//		Used by <img> nodes in templates that really get their image via CSS background-image.
-	_blankGif: (dojo.config.blankGif || dojo.moduleUrl("dojo", "resources/blank.gif")).toString(),
-
-	//////////// INITIALIZATION METHODS ///////////////////////////////////////
-
-	postscript: function(/*Object?*/params, /*DomNode|String*/srcNodeRef){
-		// summary:
-		//		Kicks off widget instantiation.  See create() for details.
-		// tags:
-		//		private
-		this.create(params, srcNodeRef);
-	},
-
 	create: function(/*Object?*/params, /*DomNode|String?*/srcNodeRef){
-		// summary:
-		//		Kick off the life-cycle of a widget
-		// params:
-		//		Hash of initialization parameters for widget, including
-		//		scalar values (like title, duration etc.) and functions,
-		//		typically callbacks like onClick.
-		// srcNodeRef:
-		//		If a srcNodeRef (DOM node) is specified:
-		//			- use srcNodeRef.innerHTML as my contents
-		//			- if this is a behavioral widget then apply behavior
-		//			  to that srcNodeRef
-		//			- otherwise, replace srcNodeRef with my generated DOM
-		//			  tree
-		// description:
-		//		Create calls a number of widget methods (postMixInProperties, buildRendering, postCreate,
-		//		etc.), some of which of you'll want to override. See http://docs.dojocampus.org/dijit/_Widget
-		//		for a discussion of the widget creation lifecycle.
-		//
-		//		Of course, adventurous developers could override create entirely, but this should
-		//		only be done as a last resort.
-		// tags:
-		//		private
-
-		// store pointer to original DOM tree
-		this.srcNodeRef = dojo.byId(srcNodeRef);
-
-		// For garbage collection.  An array of handles returned by Widget.connect()
-		// Each handle returned from Widget.connect() is an array of handles from dojo.connect()
-		this._connects = [];
-
-		// For garbage collection.  An array of handles returned by Widget.subscribe()
-		// The handle returned from Widget.subscribe() is the handle returned from dojo.subscribe()
-		this._subscribes = [];
-
 		// To avoid double-connects, remove entries from _deferredConnects
 		// that have been setup manually by a subclass (ex, by dojoAttachEvent).
 		// If a subclass has redefined a callback (ex: onClick) then assume it's being
@@ -3035,37 +3676,9 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 			}
 		}
 
-		//mixin our passed parameters
-		if(this.srcNodeRef && (typeof this.srcNodeRef.id == "string")){ this.id = this.srcNodeRef.id; }
-		if(params){
-			this.params = params;
-			dojo._mixin(this, params);
-		}
-		this.postMixInProperties();
-
-		// generate an id for the widget if one wasn't specified
-		// (be sure to do this before buildRendering() because that function might
-		// expect the id to be there.)
-		if(!this.id){
-			this.id = dijit.getUniqueId(this.declaredClass.replace(/\./g,"_"));
-		}
-		dijit.registry.add(this);
-
-		this.buildRendering();
+		this.inherited(arguments);
 
 		if(this.domNode){
-			// Copy attributes listed in attributeMap into the [newly created] DOM for the widget.
-			this._applyAttributes();
-
-			// If srcNodeRef was specified, then swap out original srcNode for this widget's DOM tree.
-			// For 2.0, move this after postCreate().  postCreate() shouldn't depend on the
-			// widget being attached to the DOM since it isn't when a widget is created programatically like
-			// new MyWidget({}).   See #11635.
-			var source = this.srcNodeRef;
-			if(source && source.parentNode && this.domNode !== source){
-				source.parentNode.replaceChild(this.domNode, source);
-			}
-
 			// If the developer has specified a handler as a widget parameter
 			// (ex: new Button({onClick: ...})
 			// then naturally need to connect from DOM node to that handler immediately,
@@ -3073,243 +3686,38 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 				this._onConnect(attr);
 			}
 		}
-
-		if(this.domNode){
-			// Note: for 2.0 may want to rename widgetId to dojo._scopeName + "_widgetId",
-			// assuming that dojo._scopeName even exists in 2.0
-			this.domNode.setAttribute("widgetId", this.id);
-		}
-		this.postCreate();
-
-		// If srcNodeRef has been processed and removed from the DOM (e.g. TemplatedWidget) then delete it to allow GC.
-		if(this.srcNodeRef && !this.srcNodeRef.parentNode){
-			delete this.srcNodeRef;
-		}
-
-		this._created = true;
 	},
 
-	_applyAttributes: function(){
+	_onConnect: function(/*String*/ event){
 		// summary:
-		//		Step during widget creation to copy all widget attributes to the
-		//		DOM as per attributeMap and _setXXXAttr functions.
-		// description:
-		//		Skips over blank/false attribute values, unless they were explicitly specified
-		//		as parameters to the widget, since those are the default anyway,
-		//		and setting tabIndex="" is different than not setting tabIndex at all.
+		//		Called when someone connects to one of my handlers.
+		//		"Turn on" that handler if it isn't active yet.
 		//
-		//		It processes the attributes in the attribute map first, and then
-		//		it goes through and processes the attributes for the _setXXXAttr
-		//		functions that have been specified
+		//		This is also called for every single initialization parameter
+		//		so need to do nothing for parameters like "id".
 		// tags:
 		//		private
-		var condAttrApply = function(attr, scope){
-			if((scope.params && attr in scope.params) || scope[attr]){
-				scope.set(attr, scope[attr]);
-			}
-		};
-
-		// Do the attributes in attributeMap
-		for(var attr in this.attributeMap){
-			condAttrApply(attr, this);
-		}
-
-		// And also any attributes with custom setters
-		dojo.forEach(this._getSetterAttributes(), function(a){
-			if(!(a in this.attributeMap)){
-				condAttrApply(a, this);
-			}
-		}, this);
-	},
-
-	_getSetterAttributes: function(){
-		// summary:
-		//		Returns list of attributes with custom setters for this widget
-		var ctor = this.constructor;
-		if(!ctor._setterAttrs){
-			var r = (ctor._setterAttrs = []),
-				attrs,
-				proto = ctor.prototype;
-			for(var fxName in proto){
-				if(dojo.isFunction(proto[fxName]) && (attrs = fxName.match(/^_set([a-zA-Z]*)Attr$/)) && attrs[1]){
-					r.push(attrs[1].charAt(0).toLowerCase() + attrs[1].substr(1));
-				}
-			}
-		}
-		return ctor._setterAttrs;	// String[]
-	},
-
-	postMixInProperties: function(){
-		// summary:
-		//		Called after the parameters to the widget have been read-in,
-		//		but before the widget template is instantiated. Especially
-		//		useful to set properties that are referenced in the widget
-		//		template.
-		// tags:
-		//		protected
-	},
-
-	buildRendering: function(){
-		// summary:
-		//		Construct the UI for this widget, setting this.domNode
-		// description:
-		//		Most widgets will mixin `dijit._Templated`, which implements this
-		//		method.
-		// tags:
-		//		protected
-
-		if(!this.domNode){
-			// Create root node if it wasn't created by _Templated
-		this.domNode = this.srcNodeRef || dojo.create('div');
-		}
-
-		// baseClass is a single class name or occasionally a space-separated list of names.
-		// Add those classes to the DOMNode.  If RTL mode then also add with Rtl suffix.		
-		// TODO: do this in attributeMap (need to enhance attributeMap)
-		if(this.baseClass){
-			var classes = this.baseClass.split(" ");
-			if(!this.isLeftToRight()){
-				classes = classes.concat( dojo.map(classes, function(name){ return name+"Rtl"; }));
-			}
-			dojo.addClass(this.domNode, classes);
+		if(event in this._deferredConnects){
+			var mapNode = this[this._deferredConnects[event] || 'domNode'];
+			this.connect(mapNode, event.toLowerCase(), event);
+			delete this._deferredConnects[event];
 		}
 	},
 
-	postCreate: function(){
+	////////////////// FOCUS RELATED ///////////////////
+	// _onFocus() and _onBlur() are called by the focus manager
+
+	// focused: [readonly] Boolean
+	//		This widget or a widget it contains has focus, or is "active" because
+	//		it was recently clicked.
+	focused: false,
+
+	isFocusable: function(){
 		// summary:
-		//		Processing after the DOM fragment is created
-		// description:
-		//		Called after the DOM fragment has been created, but not necessarily
-		//		added to the document.  Do not include any operations which rely on
-		//		node dimensions or placement.
-		// tags:
-		//		protected
+		//		Return true if this widget can currently be focused
+		//		and false if not
+		return this.focus && (dojo.style(this.domNode, "display") != "none");
 	},
-
-	startup: function(){
-		// summary:
-		//		Processing after the DOM fragment is added to the document
-		// description:
-		//		Called after a widget and its children have been created and added to the page,
-		//		and all related widgets have finished their create() cycle, up through postCreate().
-		//		This is useful for composite widgets that need to control or layout sub-widgets.
-		//		Many layout widgets can use this as a wiring phase.
-		this._started = true;
-	},
-
-	//////////// DESTROY FUNCTIONS ////////////////////////////////
-
-	destroyRecursive: function(/*Boolean?*/ preserveDom){
-		// summary:
-		// 		Destroy this widget and its descendants
-		// description:
-		//		This is the generic "destructor" function that all widget users
-		// 		should call to cleanly discard with a widget. Once a widget is
-		// 		destroyed, it is removed from the manager object.
-		// preserveDom:
-		//		If true, this method will leave the original DOM structure
-		//		alone of descendant Widgets. Note: This will NOT work with
-		//		dijit._Templated widgets.
-
-		this._beingDestroyed = true;
-		this.destroyDescendants(preserveDom);
-		this.destroy(preserveDom);
-	},
-
-	destroy: function(/*Boolean*/ preserveDom){
-		// summary:
-		// 		Destroy this widget, but not its descendants.
-		//		This method will, however, destroy internal widgets such as those used within a template.
-		// preserveDom: Boolean
-		//		If true, this method will leave the original DOM structure alone.
-		//		Note: This will not yet work with _Templated widgets
-
-		this._beingDestroyed = true;
-		this.uninitialize();
-		var d = dojo,
-			dfe = d.forEach,
-			dun = d.unsubscribe;
-		dfe(this._connects, function(array){
-			dfe(array, d.disconnect);
-		});
-		dfe(this._subscribes, function(handle){
-			dun(handle);
-		});
-
-		// destroy widgets created as part of template, etc.
-		dfe(this._supportingWidgets || [], function(w){
-			if(w.destroyRecursive){
-				w.destroyRecursive();
-			}else if(w.destroy){
-				w.destroy();
-			}
-		});
-
-		this.destroyRendering(preserveDom);
-		dijit.registry.remove(this.id);
-		this._destroyed = true;
-	},
-
-	destroyRendering: function(/*Boolean?*/ preserveDom){
-		// summary:
-		//		Destroys the DOM nodes associated with this widget
-		// preserveDom:
-		//		If true, this method will leave the original DOM structure alone
-		//		during tear-down. Note: this will not work with _Templated
-		//		widgets yet.
-		// tags:
-		//		protected
-
-		if(this.bgIframe){
-			this.bgIframe.destroy(preserveDom);
-			delete this.bgIframe;
-		}
-
-		if(this.domNode){
-			if(preserveDom){
-				dojo.removeAttr(this.domNode, "widgetId");
-			}else{
-				dojo.destroy(this.domNode);
-			}
-			delete this.domNode;
-		}
-
-		if(this.srcNodeRef){
-			if(!preserveDom){
-				dojo.destroy(this.srcNodeRef);
-			}
-			delete this.srcNodeRef;
-		}
-	},
-
-	destroyDescendants: function(/*Boolean?*/ preserveDom){
-		// summary:
-		//		Recursively destroy the children of this widget and their
-		//		descendants.
-		// preserveDom:
-		//		If true, the preserveDom attribute is passed to all descendant
-		//		widget's .destroy() method. Not for use with _Templated
-		//		widgets.
-
-		// get all direct descendants and destroy them recursively
-		dojo.forEach(this.getChildren(), function(widget){
-			if(widget.destroyRecursive){
-				widget.destroyRecursive(preserveDom);
-			}
-		});
-	},
-
-
-	uninitialize: function(){
-		// summary:
-		//		Stub function. Override to implement custom widget tear-down
-		//		behavior.
-		// tags:
-		//		protected
-		return false;
-	},
-
-	////////////////// MISCELLANEOUS METHODS ///////////////////
 
 	onFocus: function(){
 		// summary:
@@ -3348,60 +3756,7 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 		this.onBlur();
 	},
 
-	_onConnect: function(/*String*/ event){
-		// summary:
-		//		Called when someone connects to one of my handlers.
-		//		"Turn on" that handler if it isn't active yet.
-		//
-		//		This is also called for every single initialization parameter
-		//		so need to do nothing for parameters like "id".
-		// tags:
-		//		private
-		if(event in this._deferredConnects){
-			var mapNode = this[this._deferredConnects[event] || 'domNode'];
-			this.connect(mapNode, event.toLowerCase(), event);
-			delete this._deferredConnects[event];
-		}
-	},
-
-	_setClassAttr: function(/*String*/ value){
-		// summary:
-		//		Custom setter for the CSS "class" attribute
-		// tags:
-		//		protected
-		var mapNode = this[this.attributeMap["class"] || 'domNode'];
-		dojo.replaceClass(mapNode, value, this["class"]);
-		this._set("class", value);
-	},
-
-	_setStyleAttr: function(/*String||Object*/ value){
-		// summary:
-		//		Sets the style attribute of the widget according to value,
-		//		which is either a hash like {height: "5px", width: "3px"}
-		//		or a plain string
-		// description:
-		//		Determines which node to set the style on based on style setting
-		//		in attributeMap.
-		// tags:
-		//		protected
-
-		var mapNode = this[this.attributeMap.style || 'domNode'];
-
-		// Note: technically we should revert any style setting made in a previous call
-		// to his method, but that's difficult to keep track of.
-
-		if(dojo.isObject(value)){
-			dojo.style(mapNode, value);
-		}else{
-			if(mapNode.style.cssText){
-				mapNode.style.cssText += "; " + value;
-			}else{
-				mapNode.style.cssText = value;
-			}
-		}
-
-		this._set("style", value);
-	},
+	////////////////// DEPRECATED METHODS ///////////////////
 
 	setAttribute: function(/*String*/ attr, /*anything*/ value){
 		// summary:
@@ -3410,51 +3765,6 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 		//		deprecated
 		dojo.deprecated(this.declaredClass+"::setAttribute(attr, value) is deprecated. Use set() instead.", "", "2.0");
 		this.set(attr, value);
-	},
-
-	_attrToDom: function(/*String*/ attr, /*String*/ value){
-		// summary:
-		//		Reflect a widget attribute (title, tabIndex, duration etc.) to
-		//		the widget DOM, as specified in attributeMap.
-		//		Note some attributes like "type"
-		//		cannot be processed this way as they are not mutable.
-		//
-		// tags:
-		//		private
-
-		var commands = this.attributeMap[attr];
-		dojo.forEach(dojo.isArray(commands) ? commands : [commands], function(command){
-
-			// Get target node and what we are doing to that node
-			var mapNode = this[command.node || command || "domNode"];	// DOM node
-			var type = command.type || "attribute";	// class, innerHTML, innerText, or attribute
-
-			switch(type){
-				case "attribute":
-					if(dojo.isFunction(value)){ // functions execute in the context of the widget
-						value = dojo.hitch(this, value);
-					}
-
-					// Get the name of the DOM node attribute; usually it's the same
-					// as the name of the attribute in the widget (attr), but can be overridden.
-					// Also maps handler names to lowercase, like onSubmit --> onsubmit
-					var attrName = command.attribute ? command.attribute :
-						(/^on[A-Z][a-zA-Z]*$/.test(attr) ? attr.toLowerCase() : attr);
-
-					dojo.attr(mapNode, attrName, value);
-					break;
-				case "innerText":
-					mapNode.innerHTML = "";
-					mapNode.appendChild(dojo.doc.createTextNode(value));
-					break;
-				case "innerHTML":
-					mapNode.innerHTML = value;
-					break;
-				case "class":
-					dojo.replaceClass(mapNode, value, this[attr]);
-					break;
-			}
-		}, this);
 	},
 
 	attr: function(/*String|Object*/name, /*Object?*/value){
@@ -3489,129 +3799,7 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 		}
 	},
 	
-	get: function(name){
-		// summary:
-		//		Get a property from a widget.
-		//	name:
-		//		The property to get.
-		// description:
-		//		Get a named property from a widget. The property may
-		//		potentially be retrieved via a getter method. If no getter is defined, this
-		// 		just retrieves the object's property.  
-		// 		For example, if the widget has a properties "foo"
-		//		and "bar" and a method named "_getFooAttr", calling:
-		//	|	myWidget.get("foo");
-		//		would be equivalent to writing:
-		//	|	widget._getFooAttr();
-		//		and:
-		//	|	myWidget.get("bar");
-		//		would be equivalent to writing:
-		//	|	widget.bar;
-		var names = this._getAttrNames(name);
-		return this[names.g] ? this[names.g]() : this[name];
-	},
-	
-	set: function(name, value){
-		// summary:
-		//		Set a property on a widget
-		//	name:
-		//		The property to set. 
-		//	value:
-		//		The value to set in the property.
-		// description:
-		//		Sets named properties on a widget which may potentially be handled by a 
-		// 		setter in the widget.
-		// 		For example, if the widget has a properties "foo"
-		//		and "bar" and a method named "_setFooAttr", calling:
-		//	|	myWidget.set("foo", "Howdy!");
-		//		would be equivalent to writing:
-		//	|	widget._setFooAttr("Howdy!");
-		//		and:
-		//	|	myWidget.set("bar", 3);
-		//		would be equivalent to writing:
-		//	|	widget.bar = 3;
-		//
-		//	set() may also be called with a hash of name/value pairs, ex:
-		//	|	myWidget.set({
-		//	|		foo: "Howdy",
-		//	|		bar: 3
-		//	|	})
-		//	This is equivalent to calling set(foo, "Howdy") and set(bar, 3)
-
-		if(typeof name === "object"){
-			for(var x in name){
-				this.set(x, name[x]); 
-			}
-			return this;
-		}
-		var names = this._getAttrNames(name);
-		if(this[names.s]){
-			// use the explicit setter
-			var result = this[names.s].apply(this, Array.prototype.slice.call(arguments, 1));
-		}else{
-			// if param is specified as DOM node attribute, copy it
-			if(name in this.attributeMap){
-				this._attrToDom(name, value);
-			}
-			this._set(name, value);
-		}
-		return result || this;
-	},
-	
-	_attrPairNames: {},		// shared between all widgets
-	_getAttrNames: function(name){
-		// summary:
-		//		Helper function for get() and set().
-		//		Caches attribute name values so we don't do the string ops every time.
-		// tags:
-		//		private
-
-		var apn = this._attrPairNames;
-		if(apn[name]){ return apn[name]; }
-		var uc = name.charAt(0).toUpperCase() + name.substr(1);
-		return (apn[name] = {
-			n: name+"Node",
-			s: "_set"+uc+"Attr",
-			g: "_get"+uc+"Attr"
-		});
-	},
-
-	_set: function(/*String*/ name, /*anything*/ value){
-		// summary:
-		//		Helper function to set new value for specified attribute, and call handlers
-		//		registered with watch() if the value has changed.
-		var oldValue = this[name];
-		this[name] = value;
-		if(this._watchCallbacks && this._created && value !== oldValue){
-			this._watchCallbacks(name, oldValue, value);
-		}
-	},
-
-	toString: function(){
-		// summary:
-		//		Returns a string that represents the widget
-		// description:
-		//		When a widget is cast to a string, this method will be used to generate the
-		//		output. Currently, it does not implement any sort of reversible
-		//		serialization.
-		return '[Widget ' + this.declaredClass + ', ' + (this.id || 'NO ID') + ']'; // String
-	},
-
-	getDescendants: function(){
-		// summary:
-		//		Returns all the widgets contained by this, i.e., all widgets underneath this.containerNode.
-		//		This method should generally be avoided as it returns widgets declared in templates, which are
-		//		supposed to be internal/hidden, but it's left here for back-compat reasons.
-
-		return this.containerNode ? dojo.query('[widgetId]', this.containerNode).map(dijit.byNode) : []; // dijit._Widget[]
-	},
-
-	getChildren: function(){
-		// summary:
-		//		Returns all the widgets contained by this, i.e., all widgets underneath this.containerNode.
-		//		Does not return nested widgets, nor widgets that are part of this widget's template.
-		return this.containerNode ? dijit.findWidgets(this.containerNode) : []; // dijit._Widget[]
-	},
+	////////////////// ONDIJITCLICK SUPPORT ///////////////////
 
 	// nodesWithKeyClick: [private] String[]
 	//		List of nodes that correctly handle click events via native browser support,
@@ -3631,7 +3819,7 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 		//		This version of connect also provides a special "ondijitclick"
 		//		event which triggers on a click or space or enter keyup.
 		//		Events connected with `this.connect` are disconnected upon
-		//		destruction. 
+		//		destruction.
 		// returns:
 		//		A handle that can be passed to `disconnect` in order to disconnect before
 		//		the widget is destroyed.
@@ -3647,7 +3835,8 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 
 		var d = dojo,
 			dc = d._connect,
-			handles = [];
+			handles = this.inherited(arguments, [obj, event == "ondijitclick" ? "onclick" : event, method]);
+
 		if(event == "ondijitclick"){
 			// add key based click activation for unsupported nodes.
 			// do all processing onkey up to prevent spurious clicks
@@ -3682,136 +3871,12 @@ dojo.declare("dijit._Widget", dojo.Stateful, {
 					})
 				);
 			}
-			event = "onclick";
 		}
-		handles.push(dc(obj, event, this, method));
 
-		this._connects.push(handles);
 		return handles;		// _Widget.Handle
 	},
 
-	disconnect: function(/* _Widget.Handle */ handles){
-		// summary:
-		//		Disconnects handle created by `connect`.
-		//		Also removes handle from this widget's list of connects.
-		// tags:
-		//		protected
-		for(var i=0; i<this._connects.length; i++){
-			if(this._connects[i] == handles){
-				dojo.forEach(handles, dojo.disconnect);
-				this._connects.splice(i, 1);
-				return;
-			}
-		}
-	},
-
-	subscribe: function(
-			/*String*/ topic,
-			/*String|Function*/ method){
-		// summary:
-		//		Subscribes to the specified topic and calls the specified method
-		//		of this object and registers for unsubscribe() on widget destroy.
-		// description:
-		//		Provide widget-specific analog to dojo.subscribe, except with the
-		//		implicit use of this widget as the target object.
-		// example:
-		//	|	var btn = new dijit.form.Button();
-		//	|	// when /my/topic is published, this button changes its label to
-		//	|   // be the parameter of the topic.
-		//	|	btn.subscribe("/my/topic", function(v){
-		//	|		this.set("label", v);
-		//	|	});
-		var handle = dojo.subscribe(topic, this, method);
-
-		// return handles for Any widget that may need them
-		this._subscribes.push(handle);
-		return handle;
-	},
-
-	unsubscribe: function(/*Object*/ handle){
-		// summary:
-		//		Unsubscribes handle created by this.subscribe.
-		//		Also removes handle from this widget's list of subscriptions
-		for(var i=0; i<this._subscribes.length; i++){
-			if(this._subscribes[i] == handle){
-				dojo.unsubscribe(handle);
-				this._subscribes.splice(i, 1);
-				return;
-			}
-		}
-	},
-
-	isLeftToRight: function(){
-		// summary:
-		//		Return this widget's explicit or implicit orientation (true for LTR, false for RTL)
-		// tags:
-		//		protected
-		return this.dir ? (this.dir == "ltr") : dojo._isBodyLtr(); //Boolean
-	},
-
-	isFocusable: function(){
-		// summary:
-		//		Return true if this widget can currently be focused
-		//		and false if not
-		return this.focus && (dojo.style(this.domNode, "display") != "none");
-	},
-
-	placeAt: function(/* String|DomNode|_Widget */reference, /* String?|Int? */position){
-		// summary:
-		//		Place this widget's domNode reference somewhere in the DOM based
-		//		on standard dojo.place conventions, or passing a Widget reference that
-		//		contains and addChild member.
-		//
-		// description:
-		//		A convenience function provided in all _Widgets, providing a simple
-		//		shorthand mechanism to put an existing (or newly created) Widget
-		//		somewhere in the dom, and allow chaining.
-		//
-		// reference:
-		//		The String id of a domNode, a domNode reference, or a reference to a Widget posessing
-		//		an addChild method.
-		//
-		// position:
-		//		If passed a string or domNode reference, the position argument
-		//		accepts a string just as dojo.place does, one of: "first", "last",
-		//		"before", or "after".
-		//
-		//		If passed a _Widget reference, and that widget reference has an ".addChild" method,
-		//		it will be called passing this widget instance into that method, supplying the optional
-		//		position index passed.
-		//
-		// returns:
-		//		dijit._Widget
-		//		Provides a useful return of the newly created dijit._Widget instance so you
-		//		can "chain" this function by instantiating, placing, then saving the return value
-		//		to a variable.
-		//
-		// example:
-		// | 	// create a Button with no srcNodeRef, and place it in the body:
-		// | 	var button = new dijit.form.Button({ label:"click" }).placeAt(dojo.body());
-		// | 	// now, 'button' is still the widget reference to the newly created button
-		// | 	dojo.connect(button, "onClick", function(e){ console.log('click'); });
-		//
-		// example:
-		// |	// create a button out of a node with id="src" and append it to id="wrapper":
-		// | 	var button = new dijit.form.Button({},"src").placeAt("wrapper");
-		//
-		// example:
-		// |	// place a new button as the first element of some div
-		// |	var button = new dijit.form.Button({ label:"click" }).placeAt("wrapper","first");
-		//
-		// example:
-		// |	// create a contentpane and add it to a TabContainer
-		// |	var tc = dijit.byId("myTabs");
-		// |	new dijit.layout.ContentPane({ href:"foo.html", title:"Wow!" }).placeAt(tc)
-
-		if(reference.declaredClass && reference.addChild){
-			reference.addChild(this, position);
-		}else{
-			dojo.place(this.domNode, reference, position);
-		}
-		return this;
-	},
+	////////////////// MISCELLANEOUS METHODS ///////////////////
 
 	_onShow: function(){
 		// summary:
@@ -4324,7 +4389,7 @@ dojo.provide("dojox.gfx._base");
 		// return (new RegExp('(^|\\s+)'+classStr+'(\\s+|$)')).test(node.className)	// Boolean
 		var cls = node.getAttribute("className");
 		return cls && (" " + cls + " ").indexOf(" " + classStr + " ") >= 0;  // Boolean
-	}
+	};
 	g._addClass = function(/*DomNode*/node, /*String*/classStr){
 		//	summary:
 		//		Adds the specified classes to the end of the class list on the
@@ -4333,17 +4398,17 @@ dojo.provide("dojox.gfx._base");
 		if(!cls || (" " + cls + " ").indexOf(" " + classStr + " ") < 0){
 			node.setAttribute("className", cls + (cls ? " " : "") + classStr);
 		}
-	}
+	};
 	g._removeClass = function(/*DomNode*/node, /*String*/classStr){
 		//	summary: Removes classes from node.
 		var cls = node.getAttribute("className");
 		if(cls){
 			node.setAttribute(
-				"className", 
+				"className",
 				cls.replace(new RegExp('(^|\\s+)' + classStr + '(\\s+|$)'), "$1$2")
 			);
 		}
-	}
+	};
 
 	// candidate for dojox.html.metrics (dynamic font resize handler is not implemented here)
 
@@ -4492,7 +4557,7 @@ dojo.mixin(dojox.gfx, {
 
 	// default geometric attributes
 	defaultStroke: {
-		type: "stroke", color: "black", style: "solid", width: 1, 
+		type: "stroke", color: "black", style: "solid", width: 1,
 		cap: "butt", join: 4
 	},
 	defaultLinearGradient: {
@@ -4511,7 +4576,7 @@ dojo.mixin(dojox.gfx, {
 		type: "pattern", x: 0, y: 0, width: 0, height: 0, src: ""
 	},
 	defaultFont: {
-		type: "font", style: "normal", variant: "normal", 
+		type: "font", style: "normal", variant: "normal",
 		weight: "normal", size: "10pt", family: "serif"
 	},
 
@@ -4675,6 +4740,17 @@ dojo.mixin(dojox.gfx, {
 	equalSources: function(a, b){
 		// summary: compares event sources, returns true if they are equal
 		return a && b && a == b;
+	},
+	
+	switchTo: function(renderer){
+		var ns = dojox.gfx[renderer];
+		if(ns){
+			dojo.forEach(["Group", "Rect", "Ellipse", "Circle", "Line",
+					"Polyline", "Image", "Text", "Path", "TextPath",
+					"Surface", "createSurface"], function(name){
+				dojox.gfx[name] = ns[name];
+			});
+		}
 	}
 });
 
@@ -4688,55 +4764,24 @@ dojo.provide("dojox.gfx");
 
 
 dojo.loadInit(function(){
-	//Since loaderInit can be fired before any dojo.provide/require calls,
-	//make sure the dojox.gfx object exists and only run this logic if dojox.gfx.renderer
-	//has not been defined yet.
+	// Since loaderInit can be fired before any dojo.provide/require calls,
+	// make sure the dojox.gfx object exists and only run this logic if dojox.gfx.renderer
+	// has not been defined yet.
 	var gfx = dojo.getObject("dojox.gfx", true), sl, flag, match;
-	if(!gfx.renderer){
-		//Have a way to force a GFX renderer, if so desired.
-		//Useful for being able to serialize GFX data in a particular format.
+	while(!gfx.renderer){
+		// Have a way to force a GFX renderer, if so desired.
+		// Useful for being able to serialize GFX data in a particular format.
 		if(dojo.config.forceGfxRenderer){
 			dojox.gfx.renderer = dojo.config.forceGfxRenderer;
-			return;
+			break;
 		}
 		var renderers = (typeof dojo.config.gfxRenderer == "string" ?
-			dojo.config.gfxRenderer : "svg,vml,silverlight,canvas").split(",");
-
-		// mobile platform detection
-		// TODO: move to the base?
-
-		var ua = navigator.userAgent, iPhoneOsBuild = 0, androidVersion = 0;
-		if(dojo.isSafari >= 3){
-			// detect mobile version of WebKit starting with "version 3"
-
-			//	comprehensive iPhone test.  Have to figure out whether it's SVG or Canvas based on the build.
-			//	iPhone OS build numbers from en.wikipedia.org.
-			if(ua.indexOf("iPhone") >= 0 || ua.indexOf("iPod") >= 0){
-				//	grab the build out of this.  Expression is a little nasty because we want
-				//		to be sure we have the whole version string.
-				match = ua.match(/Version\/(\d(\.\d)?(\.\d)?)\sMobile\/([^\s]*)\s?/);
-				if(match){
-					//	grab the build out of the match.  Only use the first three because of specific builds.
-					iPhoneOsBuild = parseInt(match[4].substr(0,3), 16);
-				}
-			}
-		}
-		if(dojo.isWebKit){
-			// Android detection
-			if(!iPhoneOsBuild){
-				match = ua.match(/Android\s+(\d+\.\d+)/);
-				if(match){
-					androidVersion = parseFloat(match[1]);
-					// Android 1.0-1.1 doesn't support SVG but supports Canvas
-				}
-			}
-		}
-
+			dojo.config.gfxRenderer : "svg,vml,canvas,silverlight").split(",");
 		for(var i = 0; i < renderers.length; ++i){
 			switch(renderers[i]){
 				case "svg":
-					//	iPhone OS builds greater than 5F1 should have SVG.
-					if(!dojo.isIE && (!iPhoneOsBuild || iPhoneOsBuild >= 0x5f1) && !androidVersion && !dojo.isAIR){
+					// the next test is from https://github.com/phiggins42/has.js
+					if("SVGAngle" in dojo.global){
 						dojox.gfx.renderer = "svg";
 					}
 					break;
@@ -4762,28 +4807,37 @@ dojo.loadInit(function(){
 					}finally{
 						sl = null;
 					}
-					if(flag){ dojox.gfx.renderer = "silverlight"; }
+					if(flag){
+						dojox.gfx.renderer = "silverlight";
+					}
 					break;
 				case "canvas":
-					//TODO: need more comprehensive test for Canvas
-					if(!dojo.isIE){
+					if(dojo.global.CanvasRenderingContext2D){
 						dojox.gfx.renderer = "canvas";
 					}
 					break;
 			}
-			if(dojox.gfx.renderer){ break; }
+			if(gfx.renderer){
+				break;
+			}
 		}
-		if(dojo.config.isDebug){
-			console.log("gfx renderer = " + dojox.gfx.renderer);
-		}
+		break;
+	}
+	
+	if(dojo.config.isDebug){
+		console.log("gfx renderer = " + gfx.renderer);
+	}
+
+	// load & initialize renderer
+	if(gfx[gfx.renderer]){
+		// already loaded
+		gfx.switchTo(gfx.renderer);
+	}else{
+		// load
+		gfx.loadAndSwitch = gfx.renderer;
+		dojo["require"]("dojox.gfx." + gfx.renderer);
 	}
 });
-
-// include a renderer conditionally
-dojo.requireIf(dojox.gfx.renderer == "svg", "dojox.gfx.svg");
-dojo.requireIf(dojox.gfx.renderer == "vml", "dojox.gfx.vml");
-dojo.requireIf(dojox.gfx.renderer == "silverlight", "dojox.gfx.silverlight");
-dojo.requireIf(dojox.gfx.renderer == "canvas", "dojox.gfx.canvas");
 
 }
 
@@ -4795,12 +4849,12 @@ dojo.provide("dojox.lang.functional.lambda");
 //	- anonymous functions built from the string
 
 // Acknoledgements:
-//	- lambda() is based on work by Oliver Steele 
+//	- lambda() is based on work by Oliver Steele
 //		(http://osteele.com/sources/javascript/functional/functional.js)
 //		which was published under MIT License
 
 // Notes:
-//	- lambda() produces functions, which after the compilation step are 
+//	- lambda() produces functions, which after the compilation step are
 //		as fast as regular JS functions (at least theoretically).
 
 // Lambda input values:
@@ -4843,7 +4897,7 @@ dojo.provide("dojox.lang.functional.lambda");
 					s = s + "$2";
 				}
 			}else{
-				// the point of the long regex below is to exclude all well-known 
+				// the point of the long regex below is to exclude all well-known
 				// lower-case words from the list of potential arguments
 				var vars = s.
 					replace(/(?:\b[A-Z]|\.[a-zA-Z_$])[a-zA-Z_$\d]*|[a-zA-Z_$][a-zA-Z_$\d]*:|this|true|false|null|undefined|typeof|instanceof|in|delete|new|void|arguments|decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|escape|eval|isFinite|isNaN|parseFloat|parseInt|unescape|dojo|dijit|dojox|window|document|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"/g, "").
@@ -4860,13 +4914,13 @@ dojo.provide("dojox.lang.functional.lambda");
 	};
 
 	var compose = function(/*Array*/ a){
-		return a.length ? 
+		return a.length ?
 					function(){
 						var i = a.length - 1, x = df.lambda(a[i]).apply(this, arguments);
 						for(--i; i >= 0; --i){ x = df.lambda(a[i]).call(this, x); }
 						return x;
 					}
-				: 
+				:
 					// identity
 					function(x){ return x; };
 	};
@@ -4932,7 +4986,7 @@ dojo.provide("dojox.lang.functional.array");
 //	- array-processing functions similar to standard JS functions
 
 // Notes:
-//	- this module provides JS standard methods similar to high-level functions in dojo/_base/array.js: 
+//	- this module provides JS standard methods similar to high-level functions in dojo/_base/array.js:
 //		forEach, map, filter, every, some
 
 // Defined methods:
@@ -4948,7 +5002,7 @@ dojo.provide("dojox.lang.functional.array");
 		// JS 1.6 standard array functions, which can take a lambda as a parameter.
 		// Consider using dojo._base.array functions, if you don't need the lambda support.
 		filter: function(/*Array|String|Object*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: creates a new array with all elements that pass the test 
+			// summary: creates a new array with all elements that pass the test
 			//	implemented by the provided function.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -4998,7 +5052,7 @@ dojo.provide("dojox.lang.functional.array");
 			return o;	// Object
 		},
 		map: function(/*Array|String|Object*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: creates a new array with the results of calling 
+			// summary: creates a new array with the results of calling
 			//	a provided function on every element in this array.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -5023,7 +5077,7 @@ dojo.provide("dojox.lang.functional.array");
 			return t;	// Array
 		},
 		every: function(/*Array|String|Object*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: tests whether all elements in the array pass the test 
+			// summary: tests whether all elements in the array pass the test
 			//	implemented by the provided function.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -5055,7 +5109,7 @@ dojo.provide("dojox.lang.functional.array");
 			return true;	// Boolean
 		},
 		some: function(/*Array|String|Object*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: tests whether some element in the array passes the test 
+			// summary: tests whether some element in the array passes the test
 			//	implemented by the provided function.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -5102,7 +5156,7 @@ dojo.provide("dojox.lang.functional.object");
 
 // Defined methods:
 //	- take any valid lambda argument as the functional argument
-//	- skip all attributes that are present in the empty object 
+//	- skip all attributes that are present in the empty object
 //		(IE and/or 3rd-party libraries).
 
 (function(){
@@ -5131,7 +5185,7 @@ dojo.provide("dojox.lang.functional.object");
 			return	t; // Array
 		},
 		filterIn: function(/*Object*/ obj, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: creates new object with all attributes that pass the test 
+			// summary: creates new object with all attributes that pass the test
 			//	implemented by the provided function.
 			o = o || d.global; f = df.lambda(f);
 			var t = {}, v, i;
@@ -5154,7 +5208,7 @@ dojo.provide("dojox.lang.functional.object");
 			return o;	// Object
 		},
 		mapIn: function(/*Object*/ obj, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: creates new object with the results of calling 
+			// summary: creates new object with the results of calling
 			//	a provided function on every attribute in this object.
 			o = o || d.global; f = df.lambda(f);
 			var t = {}, i;
@@ -5190,9 +5244,9 @@ dojo.provide("dojox.lang.functional.fold");
 //	- "fold" family of functions
 
 // Notes:
-//	- missing high-level functions are provided with the compatible API: 
+//	- missing high-level functions are provided with the compatible API:
 //		foldl, foldl1, foldr, foldr1
-//	- missing JS standard functions are provided with the compatible API: 
+//	- missing JS standard functions are provided with the compatible API:
 //		reduce, reduceRight
 //	- the fold's counterpart: unfold
 
@@ -5264,7 +5318,7 @@ dojo.provide("dojox.lang.functional.fold");
 		},
 		foldr: function(/*Array|String*/ a, /*Function|String|Array*/ f, /*Object*/ z, /*Object?*/ o){
 			// summary: repeatedly applies a binary function to an array from right
-			//	to left using a seed value as a starting point; returns the final 
+			//	to left using a seed value as a starting point; returns the final
 			//	value.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -5315,7 +5369,7 @@ dojo.provide("dojox.lang.functional.reversed");
 //	- reversed versions of array-processing functions similar to standard JS functions
 
 // Notes:
-//	- this module provides reversed versions of standard array-processing functions: 
+//	- this module provides reversed versions of standard array-processing functions:
 //		forEachRev, mapRev, filterRev
 
 // Defined methods:
@@ -5330,7 +5384,7 @@ dojo.provide("dojox.lang.functional.reversed");
 		// JS 1.6 standard array functions, which can take a lambda as a parameter.
 		// Consider using dojo._base.array functions, if you don't need the lambda support.
 		filterRev: function(/*Array|String*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: creates a new array with all elements that pass the test 
+			// summary: creates a new array with all elements that pass the test
 			//	implemented by the provided function.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -5348,7 +5402,7 @@ dojo.provide("dojox.lang.functional.reversed");
 			for(var i = a.length - 1; i >= 0; f.call(o, a[i], i, a), --i);
 		},
 		mapRev: function(/*Array|String*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: creates a new array with the results of calling 
+			// summary: creates a new array with the results of calling
 			//	a provided function on every element in this array.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -5357,7 +5411,7 @@ dojo.provide("dojox.lang.functional.reversed");
 			return t;	// Array
 		},
 		everyRev: function(/*Array|String*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: tests whether all elements in the array pass the test 
+			// summary: tests whether all elements in the array pass the test
 			//	implemented by the provided function.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -5369,7 +5423,7 @@ dojo.provide("dojox.lang.functional.reversed");
 			return true;	// Boolean
 		},
 		someRev: function(/*Array|String*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: tests whether some element in the array passes the test 
+			// summary: tests whether some element in the array passes the test
 			//	implemented by the provided function.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -5382,6 +5436,371 @@ dojo.provide("dojox.lang.functional.reversed");
 		}
 	});
 })();
+
+}
+
+if(!dojo._hasResource["dojox.charting.Element"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.Element"] = true;
+dojo.provide("dojox.charting.Element");
+
+
+
+dojo.declare("dojox.charting.Element", null, {
+	//	summary:
+	//		A base class that is used to build other elements of a chart, such as
+	//		a series.
+	//	chart: dojox.charting.Chart2D
+	//		The parent chart for this element.
+	//	group: dojox.gfx.Group
+	//		The visual GFX group representing this element.
+	//	htmlElement: Array
+	//		Any DOMNodes used as a part of this element (such as HTML-based labels).
+	//	dirty: Boolean
+	//		A flag indicating whether or not this element needs to be rendered.
+
+	chart: null,
+	group: null,
+	htmlElements: null,
+	dirty: true,
+
+	constructor: function(chart){
+		//	summary:
+		//		Creates a new charting element.
+		//	chart: dojox.charting.Chart2D
+		//		The chart that this element belongs to.
+		this.chart = chart;
+		this.group = null;
+		this.htmlElements = [];
+		this.dirty = true;
+		this.trailingSymbol = "...";
+		this._events = [];
+	},
+	createGroup: function(creator){
+		//	summary:
+		//		Convenience function to create a new dojox.gfx.Group.
+		//	creator: dojox.gfx.Surface?
+		//		An optional surface in which to create this group.
+		//	returns: dojox.charting.Element
+		//		A reference to this object for functional chaining.
+		if(!creator){ creator = this.chart.surface; }
+		if(!this.group){
+			this.group = creator.createGroup();
+		}
+		return this;	//	dojox.charting.Element
+	},
+	purgeGroup: function(){
+		//	summary:
+		//		Clear any elements out of our group, and destroy the group.
+		//	returns: dojox.charting.Element
+		//		A reference to this object for functional chaining.
+		this.destroyHtmlElements();
+		if(this.group){
+			this.group.clear();
+			this.group.removeShape();
+			this.group = null;
+		}
+		this.dirty = true;
+		if(this._events.length){
+			dojo.forEach(this._events, function(item){
+				item.shape.disconnect(item.handle);
+			});
+			this._events = [];
+		}
+		return this;	//	dojox.charting.Element
+	},
+	cleanGroup: function(creator){
+		//	summary:
+		//		Clean any elements (HTML or GFX-based) out of our group, and create a new one.
+		//	creator: dojox.gfx.Surface?
+		//		An optional surface to work with.
+		//	returns: dojox.charting.Element
+		//		A reference to this object for functional chaining.
+		this.destroyHtmlElements();
+		if(!creator){ creator = this.chart.surface; }
+		if(this.group){
+			this.group.clear();
+		}else{
+			this.group = creator.createGroup();
+		}
+		this.dirty = true;
+		return this;	//	dojox.charting.Element
+	},
+	destroyHtmlElements: function(){
+		//	summary:
+		//		Destroy any DOMNodes that may have been created as a part of this element.
+		if(this.htmlElements.length){
+			dojo.forEach(this.htmlElements, dojo.destroy);
+			this.htmlElements = [];
+		}
+	},
+	destroy: function(){
+		//	summary:
+		//		API addition to conform to the rest of the Dojo Toolkit's standard.
+		this.purgeGroup();
+	},
+	//text utilities
+	getTextWidth: function(s, font){
+		return dojox.gfx._base._getTextBox(s, {font: font}).w || 0;
+	},
+	getTextWithLimitLength: function(s, font, limitWidth, truncated){
+		//	summary:
+		//		Get the truncated string based on the limited width in px(dichotomy algorithm)
+		//	s: String?
+		//		candidate text.
+		//	font: String?
+		//		text's font style.
+		//	limitWidth: Number?
+		//		text limited width in px.
+		//	truncated: Boolean?
+		//		whether the input text(s) has already been truncated.
+		//	returns: Object
+		//		{
+		//			text: processed text, maybe truncated or not
+		//			truncated: whether text has been truncated
+		//		}
+		if (!s || s.length <= 0) {
+			return {
+				text: "",
+				truncated: truncated || false
+			};
+		}
+		if(!limitWidth || limitWidth <= 0){
+			return {
+				text: s,
+				truncated: truncated || false
+			};
+		}
+		var delta = 2,
+			//golden section for dichotomy algorithm
+			trucPercentage = 0.618,
+			minStr = s.substring(0,1) + this.trailingSymbol,
+			minWidth = this.getTextWidth(minStr, font);
+		if (limitWidth <= minWidth) {
+			return {
+				text: minStr,
+				truncated: true
+			};
+		}
+		var width = this.getTextWidth(s, font);
+		if(width <= limitWidth){
+			return {
+				text: s,
+				truncated: truncated || false
+			};
+		}else{
+			var begin = 0,
+				end = s.length;
+			while(begin < end){
+				if(end - begin <= delta ){
+					while (this.getTextWidth(s.substring(0, begin) + this.trailingSymbol, font) > limitWidth) {
+						begin -= 1;
+					}
+					return {
+						text: (s.substring(0,begin) + this.trailingSymbol),
+						truncated: true
+					};
+				}
+				var index = begin + Math.round((end - begin) * trucPercentage),
+					widthIntercepted = this.getTextWidth(s.substring(0, index), font);
+				if(widthIntercepted < limitWidth){
+					begin = index;
+					end = end;
+				}else{
+					begin = begin;
+					end = index;
+				}
+			}
+		}
+	},
+	getTextWithLimitCharCount: function(s, font, wcLimit, truncated){
+		//	summary:
+		//		Get the truncated string based on the limited character count(dichotomy algorithm)
+		//	s: String?
+		//		candidate text.
+		//	font: String?
+		//		text's font style.
+		//	wcLimit: Number?
+		//		text limited character count.
+		//	truncated: Boolean?
+		//		whether the input text(s) has already been truncated.
+		//	returns: Object
+		//		{
+		//			text: processed text, maybe truncated or not
+		//			truncated: whether text has been truncated
+		//		}
+		if (!s || s.length <= 0) {
+			return {
+				text: "",
+				truncated: truncated || false
+			};
+		}
+		if(!wcLimit || wcLimit <= 0 || s.length <= wcLimit){
+			return {
+				text: s,
+				truncated: truncated || false
+			};
+		}
+		return {
+			text: s.substring(0, wcLimit) + this.trailingSymbol,
+			truncated: true
+		};
+	},
+	// fill utilities
+	_plotFill: function(fill, dim, offsets){
+		// process a plot-wide fill
+		if(!fill || !fill.type || !fill.space){
+			return fill;
+		}
+		var space = fill.space;
+		switch(fill.type){
+			case "linear":
+				if(space === "plot" || space === "shapeX" || space === "shapeY"){
+					// clone a fill so we can modify properly directly
+					fill = dojox.gfx.makeParameters(dojox.gfx.defaultLinearGradient, fill);
+					fill.space = space;
+					// process dimensions
+					if(space === "plot" || space === "shapeX"){
+						// process Y
+						var span = dim.height - offsets.t - offsets.b;
+						fill.y1 = offsets.t + span * fill.y1 / 100;
+						fill.y2 = offsets.t + span * fill.y2 / 100;
+					}
+					if(space === "plot" || space === "shapeY"){
+						// process X
+						var span = dim.width - offsets.l - offsets.r;
+						fill.x1 = offsets.l + span * fill.x1 / 100;
+						fill.x2 = offsets.l + span * fill.x2 / 100;
+					}
+				}
+				break;
+			case "radial":
+				if(space === "plot"){
+					// this one is used exclusively for scatter charts
+					// clone a fill so we can modify properly directly
+					fill = dojox.gfx.makeParameters(dojox.gfx.defaultRadialGradient, fill);
+					fill.space = space;
+					// process both dimensions
+					var spanX = dim.width  - offsets.l - offsets.r,
+						spanY = dim.height - offsets.t - offsets.b;
+					fill.cx = offsets.l + spanX * fill.cx / 100;
+					fill.cy = offsets.t + spanY * fill.cy / 100;
+					fill.r  = fill.r * Math.sqrt(spanX * spanX + spanY * spanY) / 200;
+				}
+				break;
+			case "pattern":
+				if(space === "plot" || space === "shapeX" || space === "shapeY"){
+					// clone a fill so we can modify properly directly
+					fill = dojox.gfx.makeParameters(dojox.gfx.defaultPattern, fill);
+					fill.space = space;
+					// process dimensions
+					if(space === "plot" || space === "shapeX"){
+						// process Y
+						var span = dim.height - offsets.t - offsets.b;
+						fill.y = offsets.t + span * fill.y / 100;
+						fill.height = span * fill.height / 100;
+					}
+					if(space === "plot" || space === "shapeY"){
+						// process X
+						var span = dim.width - offsets.l - offsets.r;
+						fill.x = offsets.l + span * fill.x / 100;
+						fill.width = span * fill.width / 100;
+					}
+				}
+				break;
+		}
+		return fill;
+	},
+	_shapeFill: function(fill, bbox){
+		// process shape-specific fill
+		if(!fill || !fill.space){
+			return fill;
+		}
+		var space = fill.space;
+		switch(fill.type){
+			case "linear":
+				if(space === "shape" || space === "shapeX" || space === "shapeY"){
+					// clone a fill so we can modify properly directly
+					fill = dojox.gfx.makeParameters(dojox.gfx.defaultLinearGradient, fill);
+					fill.space = space;
+					// process dimensions
+					if(space === "shape" || space === "shapeX"){
+						// process X
+						var span = bbox.width;
+						fill.x1 = bbox.x + span * fill.x1 / 100;
+						fill.x2 = bbox.x + span * fill.x2 / 100;
+					}
+					if(space === "shape" || space === "shapeY"){
+						// process Y
+						var span = bbox.height;
+						fill.y1 = bbox.y + span * fill.y1 / 100;
+						fill.y2 = bbox.y + span * fill.y2 / 100;
+					}
+				}
+				break;
+			case "radial":
+				if(space === "shape"){
+					// this one is used exclusively for bubble charts and pie charts
+					// clone a fill so we can modify properly directly
+					fill = dojox.gfx.makeParameters(dojox.gfx.defaultRadialGradient, fill);
+					fill.space = space;
+					// process both dimensions
+					fill.cx = bbox.x + bbox.width  / 2;
+					fill.cy = bbox.y + bbox.height / 2;
+					fill.r  = fill.r * bbox.width  / 200;
+				}
+				break;
+			case "pattern":
+				if(space === "shape" || space === "shapeX" || space === "shapeY"){
+					// clone a fill so we can modify properly directly
+					fill = dojox.gfx.makeParameters(dojox.gfx.defaultPattern, fill);
+					fill.space = space;
+					// process dimensions
+					if(space === "shape" || space === "shapeX"){
+						// process X
+						var span = bbox.width;
+						fill.x = bbox.x + span * fill.x / 100;
+						fill.width = span * fill.width / 100;
+					}
+					if(space === "shape" || space === "shapeY"){
+						// process Y
+						var span = bbox.height;
+						fill.y = bbox.y + span * fill.y / 100;
+						fill.height = span * fill.height / 100;
+					}
+				}
+				break;
+		}
+		return fill;
+	},
+	_pseudoRadialFill: function(fill, center, radius, start, end){
+		// process pseudo-radial fills
+		if(!fill || fill.type !== "radial" || fill.space !== "shape"){
+			return fill;
+		}
+		// clone and normalize fill
+		var space = fill.space;
+		fill = dojox.gfx.makeParameters(dojox.gfx.defaultRadialGradient, fill);
+		fill.space = space;
+		if(arguments.length < 4){
+			// process both dimensions
+			fill.cx = center.x;
+			fill.cy = center.y;
+			fill.r  = fill.r * radius / 100;
+			return fill;
+		}
+		// convert to a linear gradient
+		var angle = arguments.length < 5 ? start : (end + start) / 2;
+		return {
+			type: "linear",
+			x1: center.x,
+			y1: center.y,
+			x2: center.x + fill.r * radius * Math.cos(angle) / 100,
+			y2: center.y + fill.r * radius * Math.sin(angle) / 100,
+			colors: fill.colors
+		};
+		return fill;
+	}
+});
 
 }
 
@@ -5437,9 +5856,9 @@ dojo.colors = {
 				var H = ((parseFloat(c[0]) % 360) + 360) % 360 / 360,
 					S = parseFloat(c[1]) / 100,
 					L = parseFloat(c[2]) / 100,
-					// calculate rgb according to the algorithm 
-					// recommended by the CSS3 Color Module 
-					m2 = L <= 0.5 ? L * (S + 1) : L + S - L * S, 
+					// calculate rgb according to the algorithm
+					// recommended by the CSS3 Color Module
+					m2 = L <= 0.5 ? L * (S + 1) : L + S - L * S,
 					m1 = 2 * L - m2;
 				a = [
 					hue2rgb(m1, m2, H + 1 / 3) * 256,
@@ -5906,7 +6325,7 @@ dojo.provide("dojox.color.Palette");
 		var ret = new dojox.color.Palette();
 		ret.colors = [];
 		dojo.forEach(p.colors, function(item){
-			var o=item.toCmy(), 
+			var o=item.toCmy(),
 				c=(param=="dc")?o.c+val:o.c,
 				m=(param=="dm")?o.m+val:o.m,
 				y=(param=="dy")?o.y+val:o.y;
@@ -5923,7 +6342,7 @@ dojo.provide("dojox.color.Palette");
 		var ret = new dojox.color.Palette();
 		ret.colors = [];
 		dojo.forEach(p.colors, function(item){
-			var o=item.toCmyk(), 
+			var o=item.toCmyk(),
 				c=(param=="dc")?o.c+val:o.c,
 				m=(param=="dm")?o.m+val:o.m,
 				y=(param=="dy")?o.y+val:o.y,
@@ -5942,7 +6361,7 @@ dojo.provide("dojox.color.Palette");
 		var ret = new dojox.color.Palette();
 		ret.colors = [];
 		dojo.forEach(p.colors, function(item){
-			var o=item.toHsl(), 
+			var o=item.toHsl(),
 				h=(param=="dh")?o.h+val:o.h,
 				s=(param=="ds")?o.s+val:o.s,
 				l=(param=="dl")?o.l+val:o.l;
@@ -5955,7 +6374,7 @@ dojo.provide("dojox.color.Palette");
 		var ret = new dojox.color.Palette();
 		ret.colors = [];
 		dojo.forEach(p.colors, function(item){
-			var o=item.toHsv(), 
+			var o=item.toHsv(),
 				h=(param=="dh")?o.h+val:o.h,
 				s=(param=="ds")?o.s+val:o.s,
 				v=(param=="dv")?o.v+val:o.v;
@@ -6083,7 +6502,7 @@ dojox.color.Palette.__generatorArgs = function(base){
 	//	base: dojo.Color
 	//		The base color to be used to generate the palette.
 	this.base = base;
-} 
+}
 dojox.color.Palette.__analogousArgs = function(base, high, low){
 	//	summary:
 	//		The keyword arguments object that is used to create a 5 color palette based on the
@@ -6098,7 +6517,7 @@ dojox.color.Palette.__analogousArgs = function(base, high, low){
 	this.base = base;
 	this.high = high;
 	this.low = low;
-} 
+}
 dojox.color.Palette.__splitComplementaryArgs = function(base, da){
 	//	summary:
 	//		The keyword arguments object used to create a palette based on the split complementary rules
@@ -6111,7 +6530,7 @@ dojox.color.Palette.__splitComplementaryArgs = function(base, da){
 	//		In degrees, the default is 30.
 	this.base = base;
 	this.da = da;
-} 
+}
 =====*/
 	dojo.mixin(dxc.Palette, {
 		generators: {
@@ -6652,7 +7071,7 @@ dojo.declare("dojox.charting.Theme", null, {
 		if(kwArgs.markerThemes && kwArgs.markerThemes.length){
 			this.markerThemes = kwArgs.markerThemes.slice(0);
 		}
-		this.markers = dojo.delegate(dojox.charting.Theme.defaultMarkers, kwArgs.markers);
+		this.markers = kwArgs.markers ? dojo.clone(kwArgs.markers) : dojo.delegate(dojox.charting.Theme.defaultMarkers);
 
 		// set flags
 		this.noGradConv = kwArgs.noGradConv;
@@ -7003,7 +7422,7 @@ dojo.mixin(dojox.charting.Theme, {
 			titleGap:		20,
 			titlePos:		"top",
 			titleFont:      "normal normal bold 14pt Tahoma",	// labels on axis
-			titleFontColor: "#333"	
+			titleFontColor: "#333"
 		},
 		plotarea:{
 			stroke: null,
@@ -7140,371 +7559,6 @@ dojo.mixin(dojox.charting.Theme, {
 
 }
 
-if(!dojo._hasResource["dojox.charting.Element"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.Element"] = true;
-dojo.provide("dojox.charting.Element");
-
-
-
-dojo.declare("dojox.charting.Element", null, {
-	//	summary:
-	//		A base class that is used to build other elements of a chart, such as
-	//		a series.
-	//	chart: dojox.charting.Chart2D
-	//		The parent chart for this element.
-	//	group: dojox.gfx.Group
-	//		The visual GFX group representing this element.
-	//	htmlElement: Array
-	//		Any DOMNodes used as a part of this element (such as HTML-based labels).
-	//	dirty: Boolean
-	//		A flag indicating whether or not this element needs to be rendered.
-
-	chart: null,
-	group: null,
-	htmlElements: null,
-	dirty: true,
-
-	constructor: function(chart){
-		//	summary:
-		//		Creates a new charting element.
-		//	chart: dojox.charting.Chart2D
-		//		The chart that this element belongs to.
-		this.chart = chart;
-		this.group = null;
-		this.htmlElements = [];
-		this.dirty = true;
-		this.trailingSymbol = "...";
-		this._events = [];
-	},
-	createGroup: function(creator){
-		//	summary:
-		//		Convenience function to create a new dojox.gfx.Group.
-		//	creator: dojox.gfx.Surface?
-		//		An optional surface in which to create this group.
-		//	returns: dojox.charting.Element
-		//		A reference to this object for functional chaining.
-		if(!creator){ creator = this.chart.surface; }
-		if(!this.group){
-			this.group = creator.createGroup();
-		}
-		return this;	//	dojox.charting.Element
-	},
-	purgeGroup: function(){
-		//	summary:
-		//		Clear any elements out of our group, and destroy the group.
-		//	returns: dojox.charting.Element
-		//		A reference to this object for functional chaining.
-		this.destroyHtmlElements();
-		if(this.group){
-			this.group.clear();
-			this.group.removeShape();
-			this.group = null;
-		}
-		this.dirty = true;
-		if(this._events.length){
-			dojo.forEach(this._events, function(item){
-				item.shape.disconnect(item.handle);
-			});
-			this._events = [];
-		}
-		return this;	//	dojox.charting.Element
-	},
-	cleanGroup: function(creator){
-		//	summary:
-		//		Clean any elements (HTML or GFX-based) out of our group, and create a new one.
-		//	creator: dojox.gfx.Surface?
-		//		An optional surface to work with.
-		//	returns: dojox.charting.Element
-		//		A reference to this object for functional chaining.
-		this.destroyHtmlElements();
-		if(!creator){ creator = this.chart.surface; }
-		if(this.group){
-			this.group.clear();
-		}else{
-			this.group = creator.createGroup();
-		}
-		this.dirty = true;
-		return this;	//	dojox.charting.Element
-	},
-	destroyHtmlElements: function(){
-		//	summary:
-		//		Destroy any DOMNodes that may have been created as a part of this element.
-		if(this.htmlElements.length){
-			dojo.forEach(this.htmlElements, dojo.destroy);
-			this.htmlElements = [];
-		}
-	},
-	destroy: function(){
-		//	summary:
-		//		API addition to conform to the rest of the Dojo Toolkit's standard.
-		this.purgeGroup();
-	},
-	//text utilities
-	getTextWidth: function(s, font){
-		return dojox.gfx._base._getTextBox(s, {font: font}).w || 0;
-	},
-	getTextWithLimitLength: function(s, font, limitWidth, truncated){
-		//	summary:
-		//		Get the truncated string based on the limited width in px(dichotomy algorithm)
-		//	s: String?
-		//		candidate text.
-		//	font: String?
-		//		text's font style.
-		//	limitWidth: Number?
-		//		text limited width in px.
-		//	truncated: Boolean?
-		//		whether the input text(s) has already been truncated.
-		//	returns: Object
-		//		{
-		//			text: processed text, maybe truncated or not
-		//			truncated: whether text has been truncated
-		//		}
-		if (!s || s.length <= 0) {
-			return {
-				text: "",
-				truncated: truncated || false
-			};
-		}
-		if(!limitWidth || limitWidth <= 0){
-			return {
-				text: s,
-				truncated: truncated || false
-			};
-		}
-		var delta = 2,
-			//golden section for dichotomy algorithm
-			trucPercentage = 0.618,
-			minStr = s.substring(0,1) + this.trailingSymbol,
-			minWidth = this.getTextWidth(minStr, font);
-		if (limitWidth <= minWidth) {
-			return {
-				text: minStr,
-				truncated: true
-			};
-		}
-		var width = this.getTextWidth(s, font);
-		if(width <= limitWidth){
-			return {
-				text: s,
-				truncated: truncated || false
-			};
-		}else{
-			var begin = 0,
-				end = s.length;
-			while(begin < end){
-				if(end - begin <= delta ){
-					while (this.getTextWidth(s.substring(0, begin) + this.trailingSymbol, font) > limitWidth) {
-						begin -= 1;
-					}
-					return {
-						text: (s.substring(0,begin) + this.trailingSymbol),
-						truncated: true
-					};
-				}
-				var index = begin + Math.round((end - begin) * trucPercentage),
-					widthIntercepted = this.getTextWidth(s.substring(0, index), font);
-				if(widthIntercepted < limitWidth){
-					begin = index;
-					end = end;
-				}else{
-					begin = begin;
-					end = index;
-				}
-			}
-		}
-	},
-	getTextWithLimitCharCount: function(s, font, wcLimit, truncated){
-		//	summary:
-		//		Get the truncated string based on the limited character count(dichotomy algorithm)
-		//	s: String?
-		//		candidate text.
-		//	font: String?
-		//		text's font style.
-		//	wcLimit: Number?
-		//		text limited character count.
-		//	truncated: Boolean?
-		//		whether the input text(s) has already been truncated.
-		//	returns: Object
-		//		{
-		//			text: processed text, maybe truncated or not
-		//			truncated: whether text has been truncated
-		//		}
-		if (!s || s.length <= 0) {
-			return {
-				text: "",
-				truncated: truncated || false
-			};
-		}
-		if(!wcLimit || wcLimit <= 0 || s.length <= wcLimit){
-			return {
-				text: s,
-				truncated: truncated || false
-			};
-		}
-		return {
-			text: s.substring(0, wcLimit) + this.trailingSymbol,
-			truncated: true
-		};
-	},
-	// fill utilities
-	_plotFill: function(fill, dim, offsets){
-		// process a plot-wide fill
-		if(!fill || !fill.type || !fill.space){
-			return fill;
-		}
-		var space = fill.space;
-		switch(fill.type){
-			case "linear":
-				if(space === "plot" || space === "shapeX" || space === "shapeY"){
-					// clone a fill so we can modify properly directly
-					fill = dojox.gfx.makeParameters(dojox.gfx.defaultLinearGradient, fill);
-					fill.space = space;
-					// process dimensions
-					if(space === "plot" || space === "shapeX"){
-						// process Y
-						var span = dim.height - offsets.t - offsets.b;
-						fill.y1 = offsets.t + span * fill.y1 / 100;
-						fill.y2 = offsets.t + span * fill.y2 / 100;
-					}
-					if(space === "plot" || space === "shapeY"){
-						// process X
-						var span = dim.width - offsets.l - offsets.r;
-						fill.x1 = offsets.l + span * fill.x1 / 100;
-						fill.x2 = offsets.l + span * fill.x2 / 100;
-					}
-				}
-				break;
-			case "radial":
-				if(space === "plot"){
-					// this one is used exclusively for scatter charts
-					// clone a fill so we can modify properly directly
-					fill = dojox.gfx.makeParameters(dojox.gfx.defaultRadialGradient, fill);
-					fill.space = space;
-					// process both dimensions
-					var spanX = dim.width  - offsets.l - offsets.r,
-						spanY = dim.height - offsets.t - offsets.b;
-					fill.cx = offsets.l + spanX * fill.cx / 100;
-					fill.cy = offsets.t + spanY * fill.cy / 100;
-					fill.r  = fill.r * Math.sqrt(spanX * spanX + spanY * spanY) / 200;
-				}
-				break;
-			case "pattern":
-				if(space === "plot" || space === "shapeX" || space === "shapeY"){
-					// clone a fill so we can modify properly directly
-					fill = dojox.gfx.makeParameters(dojox.gfx.defaultPattern, fill);
-					fill.space = space;
-					// process dimensions
-					if(space === "plot" || space === "shapeX"){
-						// process Y
-						var span = dim.height - offsets.t - offsets.b;
-						fill.y = offsets.t + span * fill.y / 100;
-						fill.height = span * fill.height / 100;
-					}
-					if(space === "plot" || space === "shapeY"){
-						// process X
-						var span = dim.width - offsets.l - offsets.r;
-						fill.x = offsets.l + span * fill.x / 100;
-						fill.width = span * fill.width / 100;
-					}
-				}
-				break;
-		}
-		return fill;
-	},
-	_shapeFill: function(fill, bbox){
-		// process shape-specific fill
-		if(!fill || !fill.space){
-			return fill;
-		}
-		var space = fill.space;
-		switch(fill.type){
-			case "linear":
-				if(space === "shape" || space === "shapeX" || space === "shapeY"){
-					// clone a fill so we can modify properly directly
-					fill = dojox.gfx.makeParameters(dojox.gfx.defaultLinearGradient, fill);
-					fill.space = space;
-					// process dimensions
-					if(space === "shape" || space === "shapeX"){
-						// process X
-						var span = bbox.width;
-						fill.x1 = bbox.x + span * fill.x1 / 100;
-						fill.x2 = bbox.x + span * fill.x2 / 100;
-					}
-					if(space === "shape" || space === "shapeY"){
-						// process Y
-						var span = bbox.height;
-						fill.y1 = bbox.y + span * fill.y1 / 100;
-						fill.y2 = bbox.y + span * fill.y2 / 100;
-					}
-				}
-				break;
-			case "radial":
-				if(space === "shape"){
-					// this one is used exclusively for bubble charts and pie charts
-					// clone a fill so we can modify properly directly
-					fill = dojox.gfx.makeParameters(dojox.gfx.defaultRadialGradient, fill);
-					fill.space = space;
-					// process both dimensions
-					fill.cx = bbox.x + bbox.width  / 2;
-					fill.cy = bbox.y + bbox.height / 2;
-					fill.r  = fill.r * bbox.width  / 200;
-				}
-				break;
-			case "pattern":
-				if(space === "shape" || space === "shapeX" || space === "shapeY"){
-					// clone a fill so we can modify properly directly
-					fill = dojox.gfx.makeParameters(dojox.gfx.defaultPattern, fill);
-					fill.space = space;
-					// process dimensions
-					if(space === "shape" || space === "shapeX"){
-						// process X
-						var span = bbox.width;
-						fill.x = bbox.x + span * fill.x / 100;
-						fill.width = span * fill.width / 100;
-					}
-					if(space === "shape" || space === "shapeY"){
-						// process Y
-						var span = bbox.height;
-						fill.y = bbox.y + span * fill.y / 100;
-						fill.height = span * fill.height / 100;
-					}
-				}
-				break;
-		}
-		return fill;
-	},
-	_pseudoRadialFill: function(fill, center, radius, start, end){
-		// process pseudo-radial fills
-		if(!fill || fill.type !== "radial" || fill.space !== "shape"){
-			return fill;
-		}
-		// clone and normalize fill
-		var space = fill.space;
-		fill = dojox.gfx.makeParameters(dojox.gfx.defaultRadialGradient, fill);
-		fill.space = space;
-		if(arguments.length < 4){
-			// process both dimensions
-			fill.cx = center.x;
-			fill.cy = center.y;
-			fill.r  = fill.r * radius / 100;
-			return fill;
-		}
-		// convert to a linear gradient
-		var angle = arguments.length < 5 ? start : (end + start) / 2;
-		return {
-			type: "linear",
-			x1: center.x,
-			y1: center.y,
-			x2: center.x + fill.r * radius * Math.cos(angle) / 100,
-			y2: center.y + fill.r * radius * Math.sin(angle) / 100,
-			colors: fill.colors
-		};
-		return fill;
-	}
-});
-
-}
-
 if(!dojo._hasResource["dojox.charting.Series"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.charting.Series"] = true;
 dojo.provide("dojox.charting.Series");
@@ -7517,7 +7571,7 @@ dojox.charting.__SeriesCtorArgs = function(plot){
 	//	plot: String?
 	//		The plot (by name) that this series belongs to.
 	this.plot = plot;
-} 
+}
 =====*/
 dojo.declare("dojox.charting.Series", dojox.charting.Element, {
 	//	summary:
@@ -7741,10 +7795,11 @@ dojo.provide("dojox.charting.Chart");
 
 
 
+
 /*=====
-dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
+dojox.charting.__ChartCtorArgs = function(margins, stroke, fill, delayInMs){
 	//	summary:
-	//		The keyword arguments that can be passed in a Chart2D constructor.
+	//		The keyword arguments that can be passed in a Chart constructor.
 	//
 	//	margins: Object?
 	//		Optional margins for the chart, in the form of { l, t, r, b}.
@@ -7775,17 +7830,17 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 		//		chart based on dojox.gfx.
 		//
 		//	description:
-		//		dojox.charting.Chart2D is the primary object used for any kind of charts.  It
+		//		dojox.charting.Chart is the primary object used for any kind of charts.  It
 		//		is simple to create--just pass it a node reference, which is used as the
 		//		container for the chart--and a set of optional keyword arguments and go.
 		//
-		//		Note that like most of dojox.gfx, most of dojox.charting.Chart2D's methods are
+		//		Note that like most of dojox.gfx, most of dojox.charting.Chart's methods are
 		//		designed to return a reference to the chart itself, to allow for functional
 		//		chaining.  This makes defining everything on a Chart very easy to do.
 		//
 		//	example:
 		//		Create an area chart, with smoothing.
-		//	|	new dojox.charting.Chart2D(node))
+		//	|	new dojox.charting.Chart(node))
 		//	|		.addPlot("default", { type: "Areas", tension: "X" })
 		//	|		.setTheme(dojox.charting.themes.Shrooms)
 		//	|		.addSeries("Series A", [1, 2, 0.5, 1.5, 1, 2.8, 0.4])
@@ -7798,7 +7853,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 		//		an array of objects {x,y}, or something custom (as determined by the plot).
 		//		Here's an example of a Candlestick chart, which expects an object of
 		//		{ open, high, low, close }.
-		//	|	new dojox.charting.Chart2D(node))
+		//	|	new dojox.charting.Chart(node))
 		//	|		.addPlot("default", {type: "Candlesticks", gap: 1})
 		//	|		.addAxis("x", {fixLower: "major", fixUpper: "major", includeZero: true})
 		//	|		.addAxis("y", {vertical: true, fixLower: "major", fixUpper: "major", natural: true})
@@ -7863,10 +7918,10 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 		//	coords: Object
 		//		The coordinates on a page of the containing node, as returned from dojo.coords.
 
-		constructor: function(/* DOMNode */node, /* dojox.charting.__Chart2DCtorArgs? */kwArgs){
+		constructor: function(/* DOMNode */node, /* dojox.charting.__ChartCtorArgs? */kwArgs){
 			//	summary:
-			//		The constructor for a new Chart2D.  Initializes all parameters used for a chart.
-			//	returns: dojox.charting.Chart2D
+			//		The constructor for a new Chart.  Initializes all parameters used for a chart.
+			//	returns: dojox.charting.Chart
 			//		The newly created chart.
 
 			// initialize parameters
@@ -7926,11 +7981,11 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//		Set a theme of the chart.
 			//	theme: dojox.charting.Theme
 			//		The theme to be used for visual rendering.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			this.theme = theme.clone();
 			this.dirty = true;
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		addAxis: function(name, kwArgs){
 			//	summary:
@@ -7939,7 +7994,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//		The name of the axis.
 			//	kwArgs: dojox.charting.axis2d.__AxisCtorArgs?
 			//		An optional keyword arguments object for use in defining details of an axis.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
             var axis, axisType = kwArgs && kwArgs.type || "Default";
             if(typeof axisType == "string"){
@@ -7957,7 +8012,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			}
 			this.axes[name] = axis;
 			this.dirty = true;
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		getAxis: function(name){
 			//	summary:
@@ -7973,7 +8028,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//		Remove the axis that was defined using name.
 			//	name: String
 			//		The axis name, as defined in addAxis.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(name in this.axes){
 				// destroy the axis
@@ -7982,7 +8037,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				// mark the chart as dirty
 				this.dirty = true;
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		addPlot: function(name, kwArgs){
 			//	summary:
@@ -7994,7 +8049,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//		The name of the plot to be added to the chart.  If you only plan on using one plot, call it "default".
 			//	kwArgs: dojox.charting.plot2d.__PlotCtorArgs
 			//		An object with optional parameters for the plot in question.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			var plot, plotType = kwArgs && kwArgs.type || "Default";
             if(typeof plotType == "string"){
@@ -8015,14 +8070,14 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				this.stack.push(plot);
 			}
 			this.dirty = true;
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		removePlot: function(name){
 			//	summary:
 			//		Remove the plot defined using name from the chart's plot stack.
 			//	name: String
 			//		The name of the plot as defined using addPlot.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(name in this.plots){
 				// get the index and remove the name
@@ -8057,7 +8112,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				// mark the chart as dirty
 				this.dirty = true;
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		getPlotOrder: function(){
 			//	summary:
@@ -8072,7 +8127,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//		plots. Wrong names, or dups are ignored.
 			//	newOrder: Array:
 			//		Array of plot names compatible with getPlotOrder().
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			var names = {},
 				order = df.filter(newOrder, function(name){
@@ -8098,14 +8153,14 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			}, this);
 			this.stack = newStack;
 			this.dirty = true;
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		movePlotToFront: function(name){
 			//	summary:
 			//		Moves a given plot to front.
 			//	name: String:
 			//		Plot's name to move.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(name in this.plots){
 				var index = this.plots[name];
@@ -8113,17 +8168,17 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 					var newOrder = this.getPlotOrder();
 					newOrder.splice(index, 1);
 					newOrder.unshift(name);
-					return this.setPlotOrder(newOrder);	//	dojox.charting.Chart2D
+					return this.setPlotOrder(newOrder);	//	dojox.charting.Chart
 				}
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		movePlotToBack: function(name){
 			//	summary:
 			//		Moves a given plot to back.
 			//	name: String:
 			//		Plot's name to move.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(name in this.plots){
 				var index = this.plots[name];
@@ -8131,10 +8186,10 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 					var newOrder = this.getPlotOrder();
 					newOrder.splice(index, 1);
 					newOrder.push(name);
-					return this.setPlotOrder(newOrder);	//	dojox.charting.Chart2D
+					return this.setPlotOrder(newOrder);	//	dojox.charting.Chart
 				}
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		addSeries: function(name, data, kwArgs){
 			//	summary:
@@ -8149,7 +8204,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//	kwArgs: dojox.charting.__SeriesCtorArgs?:
 			//		An optional keyword arguments object that will be mixed into
 			//		the resultant series object.
-			//	returns: dojox.charting.Chart2D:
+			//	returns: dojox.charting.Chart:
 			//		A reference to the current chart for functional chaining.
 			var run = new dc.Series(this, data, kwArgs);
 			run.name = name;
@@ -8164,14 +8219,14 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			// fix min/max
 			if(!("ymin" in run) && "min" in run){ run.ymin = run.min; }
 			if(!("ymax" in run) && "max" in run){ run.ymax = run.max; }
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		removeSeries: function(name){
 			//	summary:
 			//		Remove the series defined by name from the chart.
 			//	name: String
 			//		The name of the series as defined by addSeries.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(name in this.runs){
 				// get the index and remove the name
@@ -8189,7 +8244,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				});
 				this.dirty = true;
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		updateSeries: function(name, data){
 			//	summary:
@@ -8201,7 +8256,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//		represents the data to be drawn. Or it can be an object. In
 			//		the latter case, it should have a property "data" (an array),
 			//		destroy(), and setSeriesObject().
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(name in this.runs){
 				var run = this.series[this.runs[name]];
@@ -8209,7 +8264,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				this._invalidateDependentPlots(run.plot, false);
 				this._invalidateDependentPlots(run.plot, true);
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		getSeriesOrder: function(plotName){
 			//	summary:
@@ -8229,7 +8284,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//	newOrder: Array:
 			//		Array of series names compatible with getPlotOrder(). All
 			//		series should belong to the same plot.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			var plotName, names = {},
 				order = df.filter(newOrder, function(name){
@@ -8263,14 +8318,14 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				this.runs[run.name] = i;
 			}, this);
 			this.dirty = true;
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		moveSeriesToFront: function(name){
 			//	summary:
 			//		Moves a given series to front of a plot.
 			//	name: String:
 			//		Series' name to move.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(name in this.runs){
 				var index = this.runs[name],
@@ -8278,17 +8333,17 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				if(name != newOrder[0]){
 					newOrder.splice(index, 1);
 					newOrder.unshift(name);
-					return this.setSeriesOrder(newOrder);	//	dojox.charting.Chart2D
+					return this.setSeriesOrder(newOrder);	//	dojox.charting.Chart
 				}
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		moveSeriesToBack: function(name){
 			//	summary:
 			//		Moves a given series to back of a plot.
 			//	name: String:
 			//		Series' name to move.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(name in this.runs){
 				var index = this.runs[name],
@@ -8296,37 +8351,44 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				if(name != newOrder[newOrder.length - 1]){
 					newOrder.splice(index, 1);
 					newOrder.push(name);
-					return this.setSeriesOrder(newOrder);	//	dojox.charting.Chart2D
+					return this.setSeriesOrder(newOrder);	//	dojox.charting.Chart
 				}
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		resize: function(width, height){
 			//	summary:
 			//		Resize the chart to the dimensions of width and height.
+			//	description:
+			//		Resize the chart and its surface to the width and height dimensions.
+			//		If no width/height or box is provided, resize the surface to the marginBox of the chart.
 			//	width: Number
 			//		The new width of the chart.
 			//	height: Number
 			//		The new height of the chart.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			var box;
 			switch(arguments.length){
-				case 0:
-					box = dojo.marginBox(this.node);
-					break;
+				// case 0, do not resize the div, just the surface
 				case 1:
-					box = width;
+					// argument, override node box
+					box = dojo.mixin({}, width);
+					dojo.marginBox(this.node, box);
 					break;
-				default:
-					box = { w: width, h: height };
+				case 2:
+					box = {w: width, h: height};
+					// argument, override node box
+					dojo.marginBox(this.node, box);
 					break;
 			}
-			dojo.marginBox(this.node, box);
+			// in all cases take back the computed box
+			box = dojo.marginBox(this.node);
+			// and set it on the surface
 			this.surface.setDimensions(box.w, box.h);
 			this.dirty = true;
 			this.coords = null;
-			return this.render();	//	dojox.charting.Chart2D
+			return this.render();	//	dojox.charting.Chart
 		},
 		getGeometry: function(){
 			//	summary:
@@ -8359,7 +8421,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//	zoom: Boolean|Object?
 			//		The chart zooming animation trigger.  This is null by default,
 			//		e.g. {duration: 1200}, or just set true.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			var axis = this.axes[name];
 			if(axis){
@@ -8370,7 +8432,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 					}
 				})
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		setWindow: function(sx, sy, dx, dy, zoom){
 			//	summary:
@@ -8386,7 +8448,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//	zoom: Boolean|Object?
 			//		The chart zooming animation trigger.  This is null by default,
 			//		e.g. {duration: 1200}, or just set true.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(!("plotArea" in this)){
 				this.calculateGeometry();
@@ -8404,7 +8466,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				axis.setWindow(scale, offset);
 			});
 			dojo.forEach(this.stack, function(plot){ plot.zoom = zoom; });
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		zoomIn:	function(name, range){
 			//	summary:
@@ -8431,7 +8493,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//	summary:
 			//		Calculate the geometry of the chart based on the defined axes of
 			//		a chart.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(this.dirty){
 				return this.fullGeometry();
@@ -8445,14 +8507,14 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				}, this);
 			calculateAxes(dirty, this.plotArea);
 
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		fullGeometry: function(){
 			//	summary:
 			//		Calculate the full geometry of the chart.  This includes passing
 			//		over all major elements of a chart (plots, axes, series, container)
 			//		in order to ensure proper rendering.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			this._makeDirty();
 
@@ -8523,14 +8585,14 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			df.forIn(this.axes, clear);
 			calculateAxes(this.stack, this.plotArea);
 
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		render: function(){
 			//	summary:
 			//		Render the chart according to the current information defined.  This should
 			//		be the last call made when defining/creating a chart, or if data within the
 			//		chart has been changed.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(this.theme){
 				this.theme.clear();
@@ -8554,18 +8616,18 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			if(this.surface.render){ this.surface.render(); };
 			// END FOR HTML CANVAS
 
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		fullRender: function(){
 			//	summary:
 			//		Force a full rendering of the chart, including full resets on the chart itself.
 			//		You should not call this method directly unless absolutely necessary.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 
 			// calculate geometry
 			this.fullGeometry();
-			var offsets = this.offsets, dim = this.dim;
+			var offsets = this.offsets, dim = this.dim, rect;
 
 			// get required colors
 			//var requiredColors = df.foldl(this.stack, "z + plot.getRequiredColors()", 0);
@@ -8587,13 +8649,15 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			// draw a plot background
 			var t = this.theme,
 				fill   = t.plotarea && t.plotarea.fill,
-				stroke = t.plotarea && t.plotarea.stroke;
-			if(fill){
-				this.surface.createRect({
+				stroke = t.plotarea && t.plotarea.stroke,
+				rect = {
 					x: offsets.l - 1, y: offsets.t - 1,
 					width:  dim.width  - offsets.l - offsets.r + 2,
 					height: dim.height - offsets.t - offsets.b + 2
-				}).setFill(fill);
+				};
+			if(fill){
+				fill = dc.Element.prototype._shapeFill(dc.Element.prototype._plotFill(fill, dim, offsets), rect);
+				this.surface.createRect(rect).setFill(fill);
 			}
 			if(stroke){
 				this.surface.createRect({
@@ -8621,33 +8685,45 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			}
 
 			if(fill){
+				fill = dc.Element.prototype._plotFill(fill, dim, offsets);
 				if(offsets.l){	// left
-					this.surface.createRect({
+					rect = {
 						width:  offsets.l,
 						height: dim.height + 1
-					}).setFill(fill);
+					};
+					this.surface.createRect(rect).setFill(dc.Element.prototype._shapeFill(fill, rect));
 				}
 				if(offsets.r){	// right
-					this.surface.createRect({
+					rect = {
 						x: dim.width - offsets.r,
 						width:  offsets.r + 1,
 						height: dim.height + 2
-					}).setFill(fill);
+					};
+					this.surface.createRect(rect).setFill(dc.Element.prototype._shapeFill(fill, rect));
 				}
 				if(offsets.t){	// top
-					this.surface.createRect({
+					rect = {
 						width:  dim.width + 1,
 						height: offsets.t
-					}).setFill(fill);
+					};
+					this.surface.createRect(rect).setFill(dc.Element.prototype._shapeFill(fill, rect));
 				}
 				if(offsets.b){	// bottom
-					this.surface.createRect({
+					rect = {
 						y: dim.height - offsets.b,
 						width:  dim.width + 1,
 						height: offsets.b + 2
-					}).setFill(fill);
+					};
+					this.surface.createRect(rect).setFill(dc.Element.prototype._shapeFill(fill, rect));
 				}
 			}
+			if(stroke){
+				this.surface.createRect({
+					width:  dim.width - 1,
+					height: dim.height - 1
+				}).setStroke(stroke);
+			}
+
 			//create title: Whether to make chart title as a widget which extends dojox.charting.Element?
 			if(this.title){
 				var forceHtmlLabels = (g.renderer == "canvas"),
@@ -8664,12 +8740,6 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 					this.titleFontColor
 				);
 			}
-			if(stroke){
-				this.surface.createRect({
-					width:  dim.width - 1,
-					height: dim.height - 1
-				}).setStroke(stroke);
-			}
 
 			// go over axes
 			df.forIn(this.axes, function(axis){ axis.render(dim, offsets); });
@@ -8680,13 +8750,13 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			if(this.surface.render){ this.surface.render(); };
 			// END FOR HTML CANVAS
 
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		delayedRender: function(){
 			//	summary:
 			//		Delayed render, which is used to collect multiple updates
 			//		within a delayInMs time window.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 
 			if(!this._delayedRenderHandle){
@@ -8700,7 +8770,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 				);
 			}
 
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		connectToPlot: function(name, object, method){
 			//	summary:
@@ -8724,7 +8794,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 			//		Event name to simulate: onmouseover, onmouseout, onclick.
 			//	index: Number:
 			//		Valid data value index for the event.
-			//	returns: dojox.charting.Chart2D
+			//	returns: dojox.charting.Chart
 			//		A reference to the current chart for functional chaining.
 			if(seriesName in this.runs){
 				var plotName = this.series[this.runs[seriesName]].plot;
@@ -8735,7 +8805,7 @@ dojox.charting.__Chart2DCtorArgs = function(margins, stroke, fill, delayInMs){
 					}
 				}
 			}
-			return this;	//	dojox.charting.Chart2D
+			return this;	//	dojox.charting.Chart
 		},
 		_makeClean: function(){
 			// reset dirty flags
@@ -8869,7 +8939,7 @@ dojo.provide("dojox.charting.widget.Chart");
 			// build the chart
 			n.innerHTML = "";
 			var c = this.chart = new dc.Chart(n, {
-				margins: this.margins, 
+				margins: this.margins,
 				stroke:  this.stroke,
 				fill:    this.fill
 			});
@@ -8897,15 +8967,15 @@ dojo.provide("dojox.charting.widget.Chart");
 					c.addSeries(series.name, [0], series.kwArgs);
 					var kw = {};
 					du.updateWithPattern(
-						kw, 
-						series.kwArgs, 
+						kw,
+						series.kwArgs,
 						{
-							"query": "", 
-							"queryOptions": null, 
-							"start": 0, 
-							"count": 1 //, 
+							"query": "",
+							"queryOptions": null,
+							"start": 0,
+							"count": 1 //,
 							// "sort": []
-						}, 
+						},
 						true
 					);
 					if(series.kwArgs.sort){
@@ -8940,11 +9010,15 @@ dojo.provide("dojox.charting.widget.Chart");
 			this.inherited(arguments);
 		},
 		resize: function(box){
-			// summary: resize the widget
-			if(box.w > 0 && box.h > 0){
-				dojo.marginBox(this.domNode, box);
-				this.chart.resize();
-			}
+			//	summary:
+			//		Resize the widget.
+			//	description:
+			//		Resize the domNode and the widget surface to the dimensions of a box of the following form:
+			//			`{ l: 50, t: 200, w: 300: h: 150 }`
+			//		If no box is provided, resize the surface to the marginBox of the domNode.
+			//	box:
+			//		If passed, denotes the new size of the widget.
+			this.chart.resize(box);
 		}
 	});
 	
@@ -8975,7 +9049,7 @@ dojo.provide("dojox.charting.widget.Chart");
 				type = dojox._scopeName + ".charting.axis2d." + type;
 			}
 			var axis = eval("(" + type + ")");
-			if(axis){ kw.type = axis; } 
+			if(axis){ kw.type = axis; }
 		}else{
 			type = dojox._scopeName + ".charting.axis2d.Default";
 		}
@@ -9005,7 +9079,7 @@ dojo.provide("dojox.charting.widget.Chart");
 				type = dojox._scopeName + ".charting.plot2d." + type;
 			}
 			var plot = eval("(" + type + ")");
-			if(plot){ kw.type = plot; } 
+			if(plot){ kw.type = plot; }
 		}else{
 			type = dojox._scopeName + ".charting.plot2d.Default";
 		}
@@ -9100,10 +9174,10 @@ dojo.provide("dojo.fx.easing");
 dojo.getObject("fx.easing", true, dojo);
 
 dojo.fx.easing = {
-	// summary: 
-	//		Collection of easing functions to use beyond the default 
+	// summary:
+	//		Collection of easing functions to use beyond the default
 	//		`dojo._defaultEasing` function.
-	// 
+	//
 	// description:
 	//
 	//		Easing functions are used to manipulate the iteration through
@@ -9111,22 +9185,22 @@ dojo.fx.easing = {
 	//		and the easing function progresses through that Line determing
 	//		how quickly (or slowly) it should go. Or more accurately: modify
 	//		the value of the _Line based on the percentage of animation completed.
-	//	
+	//
 	//		All functions follow a simple naming convention of "ease type" + "when".
 	//		If the name of the function ends in Out, the easing described appears
 	//		towards the end of the animation. "In" means during the beginning,
 	//		and InOut means both ranges of the Animation will applied, both
-	//		beginning and end. 
+	//		beginning and end.
 	//
-	//		One does not call the easing function directly, it must be passed to 
+	//		One does not call the easing function directly, it must be passed to
 	//		the `easing` property of an animation.
 	//
 	//	example:
 	//	|	
 	//	|	var anim = dojo.fadeOut({
-	//	|		node: 'node',	
+	//	|		node: 'node',
 	//	|		duration: 2000,
-	//	|		//	note there is no () 
+	//	|		//	note there is no ()
 	//	|		easing: dojo.fx.easing.quadIn
 	//	|	}).play();
 	//
@@ -9241,24 +9315,24 @@ dojo.fx.easing = {
 	},
 
 	backIn: function(/* Decimal? */n){
-		// summary: 
-		//		An easing function that starts away from the target, 
+		// summary:
+		//		An easing function that starts away from the target,
 		//		and quickly accelerates towards the end value.
-		// 
-		//		Use caution when the easing will cause values to become 
+		//
+		//		Use caution when the easing will cause values to become
 		//		negative as some properties cannot be set to negative values.
 		var s = 1.70158;
 		return Math.pow(n, 2) * ((s + 1) * n - s);
 	},
 
 	backOut: function(/* Decimal? */n){
-		// summary: 
-		//		An easing function that pops past the range briefly, and slowly comes back. 
+		// summary:
+		//		An easing function that pops past the range briefly, and slowly comes back.
 		//
 		// description:
-		//		An easing function that pops past the range briefly, and slowly comes back. 
+		//		An easing function that pops past the range briefly, and slowly comes back.
 		//
-		//		Use caution when the easing will cause values to become negative as some 
+		//		Use caution when the easing will cause values to become negative as some
 		//		properties cannot be set to negative values.
 		
 		n = n - 1;
@@ -9267,12 +9341,12 @@ dojo.fx.easing = {
 	},
 
 	backInOut: function(/* Decimal? */n){
-		// summary: 
+		// summary:
 		//		An easing function combining the effects of `backIn` and `backOut`
 		//
 		// description:
 		//		An easing function combining the effects of `backIn` and `backOut`.
-		//		Use caution when the easing will cause values to become negative 
+		//		Use caution when the easing will cause values to become negative
 		//		as some properties cannot be set to negative values.
 		var s = 1.70158 * 1.525;
 		n = n * 2;
@@ -9282,13 +9356,13 @@ dojo.fx.easing = {
 	},
 
 	elasticIn: function(/* Decimal? */n){
-		// summary: 
+		// summary:
 		//		An easing function the elastically snaps from the start value
 		//
 		// description:
 		//		An easing function the elastically snaps from the start value
-		//	
-		//		Use caution when the elasticity will cause values to become negative 
+		//
+		//		Use caution when the elasticity will cause values to become negative
 		//		as some properties cannot be set to negative values.
 		if(n == 0 || n == 1){ return n; }
 		var p = .3;
@@ -9298,7 +9372,7 @@ dojo.fx.easing = {
 	},
 
 	elasticOut: function(/* Decimal? */n){
-		// summary: 
+		// summary:
 		//		An easing function that elasticly snaps around the target value,
 		//		near the end of the Animation
 		//
@@ -9306,7 +9380,7 @@ dojo.fx.easing = {
 		//		An easing function that elasticly snaps around the target value,
 		//		near the end of the Animation
 		//
-		//		Use caution when the elasticity will cause values to become 
+		//		Use caution when the elasticity will cause values to become
 		//		negative as some properties cannot be set to negative values.
 		if(n==0 || n == 1){ return n; }
 		var p = .3;
@@ -9315,7 +9389,7 @@ dojo.fx.easing = {
 	},
 
 	elasticInOut: function(/* Decimal? */n){
-		// summary: 
+		// summary:
 		//		An easing function that elasticly snaps around the value, near
 		//		the beginning and end of the Animation.
 		//
@@ -9323,7 +9397,7 @@ dojo.fx.easing = {
 		//		An easing function that elasticly snaps around the value, near
 		//		the beginning and end of the Animation.
 		//
-		//		Use caution when the elasticity will cause values to become 
+		//		Use caution when the elasticity will cause values to become
 		//		negative as some properties cannot be set to negative values.
 		if(n == 0) return 0;
 		n = n * 2;
@@ -9339,7 +9413,7 @@ dojo.fx.easing = {
 	},
 
 	bounceIn: function(/* Decimal? */n){
-		// summary: 
+		// summary:
 		//		An easing function that 'bounces' near the beginning of an Animation
 		return (1 - dojo.fx.easing.bounceOut(1 - n)); // Decimal
 	},
@@ -9349,7 +9423,7 @@ dojo.fx.easing = {
 		//		An easing function that 'bounces' near the end of an Animation
 		var s = 7.5625;
 		var p = 2.75;
-		var l; 
+		var l;
 		if(n < (1 / p)){
 			l = s * Math.pow(n, 2);
 		}else if(n < (2 / p)){
@@ -9366,7 +9440,7 @@ dojo.fx.easing = {
 	},
 
 	bounceInOut: function(/* Decimal? */n){
-		// summary: 
+		// summary:
 		//		An easing function that 'bounces' at the beginning and end of the Animation
 		if(n < 0.5){ return dojo.fx.easing.bounceIn(n * 2) / 2; }
 		return (dojo.fx.easing.bounceOut(n * 2 - 1) / 2) + 0.5; // Decimal
@@ -9386,97 +9460,85 @@ dojo.provide("dojox.gfx.fx");
 
 	// Generic interpolators. Should they be moved to dojox.fx?
 
-	var InterpolNumber = function(start, end){
+	function InterpolNumber(start, end){
 		this.start = start, this.end = end;
+	}
+	InterpolNumber.prototype.getValue = function(r){
+		return (this.end - this.start) * r + this.start;
 	};
-	d.extend(InterpolNumber, {
-		getValue: function(r){
-			return (this.end - this.start) * r + this.start;
-		}
-	});
 
-	var InterpolUnit = function(start, end, units){
+	function InterpolUnit(start, end, units){
 		this.start = start, this.end = end;
 		this.units = units;
+	}
+	InterpolUnit.prototype.getValue = function(r){
+		return (this.end - this.start) * r + this.start + this.units;
 	};
-	d.extend(InterpolUnit, {
-		getValue: function(r){
-			return (this.end - this.start) * r + this.start + this.units;
-		}
-	});
 
-	var InterpolColor = function(start, end){
+	function InterpolColor(start, end){
 		this.start = start, this.end = end;
 		this.temp = new dojo.Color();
+	}
+	InterpolColor.prototype.getValue = function(r){
+		return d.blendColors(this.start, this.end, r, this.temp);
 	};
-	d.extend(InterpolColor, {
-		getValue: function(r){
-			return d.blendColors(this.start, this.end, r, this.temp);
-		}
-	});
 
-	var InterpolValues = function(values){
+	function InterpolValues(values){
 		this.values = values;
 		this.length = values.length;
+	}
+	InterpolValues.prototype.getValue = function(r){
+		return this.values[Math.min(Math.floor(r * this.length), this.length - 1)];
 	};
-	d.extend(InterpolValues, {
-		getValue: function(r){
-			return this.values[Math.min(Math.floor(r * this.length), this.length - 1)];
-		}
-	});
 
-	var InterpolObject = function(values, def){
+	function InterpolObject(values, def){
 		this.values = values;
 		this.def = def ? def : {};
-	};
-	d.extend(InterpolObject, {
-		getValue: function(r){
-			var ret = dojo.clone(this.def);
-			for(var i in this.values){
-				ret[i] = this.values[i].getValue(r);
-			}
-			return ret;
+	}
+	InterpolObject.prototype.getValue = function(r){
+		var ret = dojo.clone(this.def);
+		for(var i in this.values){
+			ret[i] = this.values[i].getValue(r);
 		}
-	});
+		return ret;
+	};
 
-	var InterpolTransform = function(stack, original){
+	function InterpolTransform(stack, original){
 		this.stack = stack;
 		this.original = original;
+	}
+	InterpolTransform.prototype.getValue = function(r){
+		var ret = [];
+		dojo.forEach(this.stack, function(t){
+			if(t instanceof m.Matrix2D){
+				ret.push(t);
+				return;
+			}
+			if(t.name == "original" && this.original){
+				ret.push(this.original);
+				return;
+			}
+			if(!(t.name in m)){ return; }
+			var f = m[t.name];
+			if(typeof f != "function"){
+				// constant
+				ret.push(f);
+				return;
+			}
+			var val = dojo.map(t.start, function(v, i){
+							return (t.end[i] - v) * r + v;
+						}),
+				matrix = f.apply(m, val);
+			if(matrix instanceof m.Matrix2D){
+				ret.push(matrix);
+			}
+		}, this);
+		return ret;
 	};
-	d.extend(InterpolTransform, {
-		getValue: function(r){
-			var ret = [];
-			dojo.forEach(this.stack, function(t){
-				if(t instanceof m.Matrix2D){
-					ret.push(t);
-					return;
-				}
-				if(t.name == "original" && this.original){
-					ret.push(this.original);
-					return;
-				}
-				if(!(t.name in m)){ return; }
-				var f = m[t.name];
-				if(typeof f != "function"){
-					// constant
-					ret.push(f);
-					return;
-				}
-				var val = dojo.map(t.start, function(v, i){
-								return (t.end[i] - v) * r + v;
-							}),
-					matrix = f.apply(m, val);
-				if(matrix instanceof m.Matrix2D){
-					ret.push(matrix);
-				}
-			}, this);
-			return ret;
-		}
-	});
 
 	var transparent = new d.Color(0, 0, 0, 0);
 
-	var getColorInterpol = function(prop, obj, name, def){
+	function getColorInterpol(prop, obj, name, def){
 		if(prop.values){
 			return new InterpolValues(prop.values);
 		}
@@ -9495,9 +9557,9 @@ dojo.provide("dojox.gfx.fx");
 			end = value;
 		}
 		return new InterpolColor(start, end);
-	};
+	}
 
-	var getNumberInterpol = function(prop, obj, name, def){
+	function getNumberInterpol(prop, obj, name, def){
 		if(prop.values){
 			return new InterpolValues(prop.values);
 		}
@@ -9516,7 +9578,7 @@ dojo.provide("dojox.gfx.fx");
 			end = value;
 		}
 		return new InterpolNumber(start, end);
-	};
+	}
 
 	g.fx.animateStroke = function(/*Object*/ args){
 		// summary:
@@ -9887,16 +9949,16 @@ dojo.declare("dojo.fx.Toggler", null, {
 	// description:
 	//		class constructor for an animation toggler. It accepts a packed
 	//		set of arguments about what type of animation to use in each
-	//		direction, duration, etc. All available members are mixed into 
-	//		these animations from the constructor (for example, `node`, 
-	//		`showDuration`, `hideDuration`). 
+	//		direction, duration, etc. All available members are mixed into
+	//		these animations from the constructor (for example, `node`,
+	//		`showDuration`, `hideDuration`).
 	//
 	// example:
 	//	|	var t = new dojo.fx.Toggler({
 	//	|		node: "nodeId",
 	//	|		showDuration: 500,
 	//	|		// hideDuration will default to "200"
-	//	|		showFunc: dojo.fx.wipeIn, 
+	//	|		showFunc: dojo.fx.wipeIn,
 	//	|		// hideFunc will default to "fadeOut"
 	//	|	});
 	//	|	t.show(100); // delay showing for 100ms
@@ -9911,7 +9973,7 @@ dojo.declare("dojo.fx.Toggler", null, {
 	//		The function that returns the `dojo.Animation` to show the node
 	showFunc: dojo.fadeIn,
 
-	// hideFunc: Function	
+	// hideFunc: Function
 	//		The function that returns the `dojo.Animation` to hide the node
 	hideFunc: dojo.fadeOut,
 
@@ -9927,7 +9989,7 @@ dojo.declare("dojo.fx.Toggler", null, {
 	// time show/hide are called if we're stopped somewhere in the
 	// middle.
 	// FIXME: also would be nice to specify individual showArgs/hideArgs mixed into
-	// each animation individually. 
+	// each animation individually.
 	// FIXME: also would be nice to have events from the animations exposed/bridged
 
 	/*=====
@@ -9990,7 +10052,7 @@ dojo.fx = {
 =====*/
 (function(){
 	
-	var d = dojo, 
+	var d = dojo,
 		_baseObj = {
 			_fire: function(evt, args){
 				if(this[evt]){
@@ -10109,14 +10171,14 @@ dojo.fx = {
 	d.extend(_chain, _baseObj);
 
 	dojo.fx.chain = function(/*dojo.Animation[]*/ animations){
-		// summary: 
+		// summary:
 		//		Chain a list of `dojo.Animation`s to run in sequence
 		//
 		// description:
 		//		Return a `dojo.Animation` which will play all passed
 		//		`dojo.Animation` instances in sequence, firing its own
 		//		synthesized events simulating a single animation. (eg:
-		//		onEnd of this animation means the end of the chain, 
+		//		onEnd of this animation means the end of the chain,
 		//		not the individual animations within)
 		//
 		// example:
@@ -10144,7 +10206,7 @@ dojo.fx = {
 		
 		this._pseudoAnimation = new d.Animation({curve: [0, 1], duration: this.duration});
 		var self = this;
-		d.forEach(["beforeBegin", "onBegin", "onPlay", "onAnimate", "onPause", "onStop", "onEnd"], 
+		d.forEach(["beforeBegin", "onBegin", "onPlay", "onAnimate", "onPause", "onStop", "onEnd"],
 			function(evt){
 				self._connects.push(d.connect(self._pseudoAnimation, evt,
 					function(){ self._fire(evt, arguments); }
@@ -10202,11 +10264,11 @@ dojo.fx = {
 	d.extend(_combine, _baseObj);
 
 	dojo.fx.combine = function(/*dojo.Animation[]*/ animations){
-		// summary: 
+		// summary:
 		//		Combine a list of `dojo.Animation`s to run in parallel
 		//
 		// description:
-		//		Combine an array of `dojo.Animation`s to run in parallel, 
+		//		Combine an array of `dojo.Animation`s to run in parallel,
 		//		providing a new `dojo.Animation` instance encompasing each
 		//		animation, firing standard animation events.
 		//
@@ -10277,7 +10339,7 @@ dojo.fx = {
 			}
 		}, args));
 
-		d.connect(anim, "onEnd", function(){ 
+		d.connect(anim, "onEnd", function(){
 			s.height = "auto";
 			s.overflow = o;
 		});
@@ -10287,7 +10349,7 @@ dojo.fx = {
 
 	dojo.fx.wipeOut = function(/*Object*/ args){
 		// summary:
-		//		Shrink a node to nothing and hide it. 
+		//		Shrink a node to nothing and hide it.
 		//
 		// description:
 		//		Returns an animation that will shrink node defined in "args"
@@ -10296,7 +10358,7 @@ dojo.fx = {
 		// args: Object
 		//		A hash-map of standard `dojo.Animation` constructor properties
 		//		(such as easing: node: duration: and so on)
-		// 
+		//
 		// example:
 		//	|	dojo.fx.wipeOut({ node:"someId" }).play()
 		
@@ -10329,7 +10391,7 @@ dojo.fx = {
 		//		Slide a node to a new top/left position
 		//
 		// description:
-		//		Returns an animation that will slide "node" 
+		//		Returns an animation that will slide "node"
 		//		defined in args Object from its current position to
 		//		the position defined by (args.left, args.top).
 		//
@@ -10341,7 +10403,7 @@ dojo.fx = {
 		// example:
 		//	|	dojo.fx.slideTo({ node: node, left:"40", top:"50", units:"px" }).play()
 
-		var node = args.node = d.byId(args.node), 
+		var node = args.node = d.byId(args.node),
 			top = null, left = null;
 
 		var init = (function(n){
@@ -10509,7 +10571,7 @@ dojo.provide("dojox.lang.functional.scan");
 //	- "scan" family of functions
 
 // Notes:
-//	- missing high-level functions are provided with the compatible API: 
+//	- missing high-level functions are provided with the compatible API:
 //		scanl, scanl1, scanr, scanr1
 
 // Defined methods:
@@ -10524,7 +10586,7 @@ dojo.provide("dojox.lang.functional.scan");
 	d.mixin(df, {
 		// classic reduce-class functions
 		scanl: function(/*Array|String|Object*/ a, /*Function|String|Array*/ f, /*Object*/ z, /*Object?*/ o){
-			// summary: repeatedly applies a binary function to an array from left 
+			// summary: repeatedly applies a binary function to an array from left
 			//	to right using a seed value as a starting point; returns an array
 			//	of values produced by foldl() at that point.
 			if(typeof a == "string"){ a = a.split(""); }
@@ -10551,8 +10613,8 @@ dojo.provide("dojox.lang.functional.scan");
 			return t;	// Array
 		},
 		scanl1: function(/*Array|String|Object*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
-			// summary: repeatedly applies a binary function to an array from left 
-			//	to right; returns an array of values produced by foldl1() at that 
+			// summary: repeatedly applies a binary function to an array from left
+			//	to right; returns an array of values produced by foldl1() at that
 			//	point.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -10596,7 +10658,7 @@ dojo.provide("dojox.lang.functional.scan");
 		},
 		scanr1: function(/*Array|String*/ a, /*Function|String|Array*/ f, /*Object?*/ o){
 			// summary: repeatedly applies a binary function to an array from right
-			//	to left; returns an array of values produced by foldr1() at that 
+			//	to left; returns an array of values produced by foldr1() at that
 			//	point.
 			if(typeof a == "string"){ a = a.split(""); }
 			o = o || d.global; f = df.lambda(f);
@@ -10866,7 +10928,7 @@ dojo.provide("dojo.string");
 dojo.getObject("string", true, dojo);
 
 /*=====
-dojo.string = { 
+dojo.string = {
 	// summary: String utilities for Dojo
 };
 =====*/
@@ -10917,22 +10979,22 @@ dojo.string.pad = function(/*String*/text, /*Integer*/size, /*String?*/ch, /*Boo
 	return end ? out + pad : pad + out;	// String
 };
 
-dojo.string.substitute = function(	/*String*/		template, 
-									/*Object|Array*/map, 
-									/*Function?*/	transform, 
+dojo.string.substitute = function(	/*String*/		template,
+									/*Object|Array*/map,
+									/*Function?*/	transform,
 									/*Object?*/		thisObject){
 	//	summary:
 	//		Performs parameterized substitutions on a string. Throws an
 	//		exception if any parameter is unmatched.
-	//	template: 
+	//	template:
 	//		a string with expressions in the form `${key}` to be replaced or
-	//		`${key:format}` which specifies a format function. keys are case-sensitive. 
+	//		`${key:format}` which specifies a format function. keys are case-sensitive.
 	//	map:
 	//		hash to search for substitutions
-	//	transform: 
+	//	transform:
 	//		a function to process all parameters before substitution takes
 	//		place, e.g. mylib.encodeXML
-	//	thisObject: 
+	//	thisObject:
 	//		where to look for optional format function; default to the global
 	//		namespace
 	//	example:
@@ -10975,7 +11037,7 @@ dojo.string.substitute = function(	/*String*/		template,
 	//	|	);
 
 	thisObject = thisObject || dojo.global;
-	transform = transform ? 
+	transform = transform ?
 		dojo.hitch(thisObject, transform) : function(v){ return v; };
 
 	return template.replace(/\$\{([^\s\:\}]+)(?:\:([^\s\:\}]+))?\}/g,
@@ -11153,7 +11215,7 @@ dojo.date.stamp.toISOString = function(/*Date*/dateObject, /*dojo.date.stamp.__O
 		}else if(options.selector != "time"){
 			var timezoneOffset = dateObject.getTimezoneOffset();
 			var absOffset = Math.abs(timezoneOffset);
-			time += (timezoneOffset > 0 ? "-" : "+") + 
+			time += (timezoneOffset > 0 ? "-" : "+") +
 				_(Math.floor(absOffset/60)) + ":" + _(absOffset%60);
 		}
 		formattedDate.push(time);
@@ -11205,7 +11267,7 @@ dojo.parser = new function(){
 			case "function":
 				if(d.isFunction(value)){
 					// IE gives us a function, even when we say something like onClick="foo"
-					// (in which case it gives us an invalid function "function(){ foo }"). 
+					// (in which case it gives us an invalid function "function(){ foo }").
 					//	Therefore, convert to string
 					value=value.toString();
 					value=d.trim(value.substring(value.indexOf('{')+1, value.length-1));
@@ -11269,8 +11331,8 @@ dojo.parser = new function(){
 		//		fully qualified name (like "dijit.form.Button")
 		// returns:
 		//		structure like
-		//			{ 
-		//				cls: dijit.Button, 
+		//			{
+		//				cls: dijit.Button,
 		//				params: { label: "string", disabled: "boolean"}
 		//			}
 
@@ -11286,9 +11348,9 @@ dojo.parser = new function(){
 			
 		}else if(!skipParamsLookup && !c.params){
 			// if we're calling getClassInfo and have a cls proto, but no params info, scan that cls for params now
-			// and update the pointer in instanceClasses[className]. This happens when a widget appears in another 
+			// and update the pointer in instanceClasses[className]. This happens when a widget appears in another
 			// widget's template which still uses dojoType, but an instance of the widget appears prior with a data-dojo-type,
-			// skipping this lookup the first time. 
+			// skipping this lookup the first time.
 			c.params = getProtoInfo(c.cls.prototype, {});
 		}
 		
@@ -11370,7 +11432,7 @@ dojo.parser = new function(){
 				type = attrName in mixin ? mixin[attrName] : node.getAttribute(attrName);
 				clsInfo = type && getClassInfo(type);
 				clazz = clsInfo && clsInfo.cls;
-				scripts = (clazz && (clazz._noScript || clazz.prototype._noScript) ? [] : 
+				scripts = (clazz && (clazz._noScript || clazz.prototype._noScript) ? [] :
 							d.query("> script[type^='dojo/']", node));
 			}
 			if(!clsInfo){
@@ -11397,7 +11459,7 @@ dojo.parser = new function(){
 				if(extra && extra.length){
 					try{
 						extra = d.fromJson.call(args.propsThis, "{" + extra + "}");
-						d._mixin(params, extra);					
+						d._mixin(params, extra);
 					}catch(e){
 						// give the user a pointer to their invalid parameters. FIXME: can we kill this in production?
 						throw new Error(e.toString() + " in data-dojo-props='" + extra + "'");
@@ -11416,7 +11478,7 @@ dojo.parser = new function(){
 				}
 				dojo.mixin(params, mixin);
 			}else{
-				// FIXME: we need something like "deprecateOnce()" to throw dojo.deprecation for something. 
+				// FIXME: we need something like "deprecateOnce()" to throw dojo.deprecation for something.
 				// remove this logic in 2.0
 				// read parameters (ie, attributes) specified on DOMNode
 
@@ -11501,9 +11563,9 @@ dojo.parser = new function(){
 			// ContentPane is the parent widget (so that the parse doesn't call startup() on the
 			// ContentPane's children)
 			d.forEach(thelist, function(instance){
-				if( !args.noStart && instance  && 
+				if( !args.noStart && instance  &&
 					dojo.isFunction(instance.startup) &&
-					!instance._started && 
+					!instance._started &&
 					(!instance.getParent || !instance.getParent())
 				){
 					instance.startup();
@@ -11533,19 +11595,19 @@ dojo.parser = new function(){
 		//		types by looking up the Class prototype values. This is the default behavior
 		//		from Dojo 1.0 to Dojo 1.5. `dojoType` support is deprecated, and will
 		//		go away in Dojo 2.0.
-		//      
+		//
 		// rootNode: DomNode?
 		//		A default starting root node from which to start the parsing. Can be
 		//		omitted, defaulting to the entire document. If omitted, the `args`
-		//		object can be passed in this place. If the `args` object has a 
+		//		object can be passed in this place. If the `args` object has a
 		//		`rootNode` member, that is used.
 		//
 		// args: Object
 		//		a kwArgs object passed along to instantiate()
-		//		
+		//
 		//			* noStart: Boolean?
 		//				when set will prevent the parser from calling .startup()
-		//				when locating the nodes. 
+		//				when locating the nodes.
 		//			* rootNode: DomNode?
 		//				identical to the function's `rootNode` argument, though
 		//				allowed to be passed in via this `args object.
@@ -11574,7 +11636,7 @@ dojo.parser = new function(){
 		//	|		dojo.parser.parse(dojo.byId('foo'));
 		//
 		// example:
-		//		Parse all classes in a page, but do not call .startup() on any 
+		//		Parse all classes in a page, but do not call .startup() on any
 		//		child
 		//	|		dojo.parser.parse({ noStart: true })
 		//
@@ -11592,6 +11654,7 @@ dojo.parser = new function(){
 		}else{
 			root = rootNode;
 		}
+		root = root ? dojo.byId(root) : dojo.body();
 		args = args || {};
 
 		var attrName = (args.scope || d._scopeName) + "Type",		// typically "dojoType"
@@ -11618,6 +11681,7 @@ dojo.parser = new function(){
 			// Effective dir and lang settings on parent node, either set directly or inherited from grandparent
 			var inherited = dojo.clone(parent.inherited);
 			dojo.forEach(["dir", "lang"], function(name){
+				// TODO: what if this is a widget and dir/lang are declared in data-dojo-props?
 				var val = parent.node.getAttribute(name);
 				if(val){
 					inherited[name] = val;
@@ -11635,11 +11699,11 @@ dojo.parser = new function(){
 				if(child.nodeType == 1){
 					// FIXME: desupport dojoType in 2.0. use data-dojo-type instead
 					var type, html5 = recurse && child.getAttribute(attrData + "type");
-					if(html5){ 
-						type = html5; 
+					if(html5){
+						type = html5;
 					}else{
 						// fallback to backward compatible mode, using dojoType. remove in 2.0
-						type = recurse && child.getAttribute(attrName); 
+						type = recurse && child.getAttribute(attrName);
 					}
 					
 					var fastpath = html5 == type;
@@ -11676,13 +11740,19 @@ dojo.parser = new function(){
 			}
 		}
 
+		// Ignore bogus entries in inherited hash like {dir: ""}
+		var inherited = {};
+		if(args && args.inherited){
+			for(var key in args.inherited){
+				if(args.inherited[key]){ inherited[key] = args.inherited[key]; }
+			}
+		}
+
 		// Make list of all nodes on page w/dojoType specified
 		var list = [];
 		scan({
-			node: root ? dojo.byId(root) : dojo.body(),
-			inherited: (args && args.inherited) || {
-				dir: dojo._isBodyLtr() ? "ltr" : "rtl"
-			}
+			node: root,
+			inherited: inherited
 		}, list);
 
 		// go build the object instances
@@ -11695,9 +11765,9 @@ dojo.parser = new function(){
 //after the a11y test.
 
 (function(){
-	var parseRunner = function(){ 
+	var parseRunner = function(){
 		if(dojo.config.parseOnLoad){
-			dojo.parser.parse(); 
+			dojo.parser.parse();
 		}
 	};
 
@@ -11717,7 +11787,7 @@ dojo.provide("dojo.cache");
 
 
 /*=====
-dojo.cache = { 
+dojo.cache = {
 	// summary:
 	// 		A way to cache string content that is fetchable via `dojo.moduleUrl`.
 };
@@ -11761,7 +11831,7 @@ dojo.cache = {
 		//		|	var text = dojo["cache"]("my.module", "template.html");
 		//	example:
 		//		To ask dojo.cache to fetch content and store it in the cache, and sanitize the input
-		// 		 (the dojo["cache"] style of call is used to avoid an issue with the build system 
+		// 		 (the dojo["cache"] style of call is used to avoid an issue with the build system
 		// 		erroneously trying to intern this example. To get the build system to intern your
 		// 		dojo.cache calls, use the "dojo.cache" style of call):
 		// 		|	//If template.html contains "<html><body><h1>Hello</h1></body></html>", the
@@ -11811,7 +11881,7 @@ dojo.cache = {
 	};
 
 	dojo.cache._sanitize = function(/*String*/val){
-		// summary: 
+		// summary:
 		//		Strips <?xml ...?> declarations so that external SVG and XML
 		// 		documents can be added to a document without worry. Also, if the string
 		//		is an HTML document, only the part inside the body tag is returned.
@@ -12239,7 +12309,7 @@ dojo.declare(
 			this.aroundNode = aroundNode;
 		},
 
-		orient: function(/*DomNode*/ node, /*String*/ aroundCorner, /*String*/ tooltipCorner, /*Object*/ spaceAvailable, /*Object*/ aroundNodeCoords){			
+		orient: function(/*DomNode*/ node, /*String*/ aroundCorner, /*String*/ tooltipCorner, /*Object*/ spaceAvailable, /*Object*/ aroundNodeCoords){
 			// summary:
 			//		Private function to set CSS for tooltip node based on which position it's in.
 			//		This is called by the dijit popup code.   It will also reduce the tooltip's
@@ -12281,7 +12351,7 @@ dojo.declare(
 				}
 			}
 			
-			// Reposition the tooltip connector.  
+			// Reposition the tooltip connector.
 			if(tooltipCorner.charAt(0) == 'B' && aroundCorner.charAt(0) == 'B'){
 				var mb = dojo.marginBox(node);
 				var tooltipConnectorHeight = this.connectorNode.offsetHeight;
@@ -12430,7 +12500,7 @@ dojo.declare(
 
 			// TODO: remove in 2.0 and just use set("connectId", ...) interface
 
-			var id = node.id || node;		
+			var id = node.id || node;
 			if(dojo.indexOf(this._connectIds, id) == -1){
 				this.set("connectId", this._connectIds.concat(id));
 			}
@@ -12629,7 +12699,7 @@ dojo.declare("dojox.charting.action2d.__TooltipCtorArgs", dojox.charting.action2
 	//		Additional arguments for tooltip actions.
 
 	//	text: Function?
-	//		The function that produces the text to be shown within a tooltip.  By default this will be 
+	//		The function that produces the text to be shown within a tooltip.  By default this will be
 	//		set by the plot in question, by returning the value of the element.
 	text: null
 });
@@ -12691,7 +12761,6 @@ dojo.declare("dojox.charting.action2d.__TooltipCtorArgs", dojox.charting.action2
 				}
 				return;
 			}
-			
 			
 			if(!o.shape || o.type !== "onmouseover"){ return; }
 			
@@ -12764,8 +12833,11 @@ dojo.declare("dojox.charting.action2d.__TooltipCtorArgs", dojox.charting.action2
 			aroundRect.width = Math.ceil(aroundRect.width);
 			aroundRect.height = Math.ceil(aroundRect.height);
 			this.aroundRect = aroundRect;
-			
-            dijit.showTooltip(this.text(o), this.aroundRect, position);
+
+			var tooltip = this.text(o);
+			if(tooltip){
+                dijit.showTooltip(tooltip, this.aroundRect, position);
+			}
 		}
 	});
 })();
@@ -12791,9 +12863,13 @@ dojo.provide("dojox.charting.scaler.common");
 			return false;
 		},
 		getNumericLabel: function(/*Number*/ number, /*Number*/ precision, /*Object*/ kwArgs){
-			var def = kwArgs.fixed ? 
-						number.toFixed(precision < 0 ? -precision : 0) : 
-						number.toString();
+			var def = "";
+			if(dojo.number){
+				def = (kwArgs.fixed ? dojo.number.format(number, {places : precision < 0 ? -precision : 0}) :
+					dojo.number.format(number)) || "";
+			}else{
+				def = kwArgs.fixed ? number.toFixed(precision < 0 ? -precision : 0) : number.toString();
+			}
 			if(kwArgs.labelFunc){
 				var r = kwArgs.labelFunc(def, number, precision);
 				if(r){ return r; }
@@ -12891,7 +12967,7 @@ dojo.provide("dojox.charting.scaler.linear");
 			microPerMinor  = microTick ? Math.round(minorTick / microTick) : 0,
 			majorPrecision = majorTick ? Math.floor(Math.log(majorTick) / Math.LN10) : 0,
 			minorPrecision = minorTick ? Math.floor(Math.log(minorTick) / Math.LN10) : 0,
-			scale = span / (max - min);	
+			scale = span / (max - min);
 		if(!isFinite(scale)){ scale = 1; }
 		
 		return {
@@ -12963,7 +13039,7 @@ dojo.provide("dojox.charting.scaler.linear");
 			}
 			
 			var mag = Math.floor(Math.log(max - min) / Math.LN10),
-				major = kwArgs && ("majorTickStep" in kwArgs) ? kwArgs.majorTickStep : Math.pow(10, mag), 
+				major = kwArgs && ("majorTickStep" in kwArgs) ? kwArgs.majorTickStep : Math.pow(10, mag),
 				minor = 0, micro = 0, ticks;
 				
 			// calculate minor ticks
@@ -13019,8 +13095,8 @@ dojo.provide("dojox.charting.scaler.linear");
 		},
 		buildTicks: function(/*Object*/ scaler, /*Object*/ kwArgs){
 			var step, next, tick,
-				nextMajor = scaler.major.start, 
-				nextMinor = scaler.minor.start, 
+				nextMajor = scaler.major.start,
+				nextMinor = scaler.minor.start,
 				nextMicro = scaler.micro.start;
 			if(kwArgs.microTicks && scaler.micro.tick){
 				step = scaler.micro.tick, next = nextMicro;
@@ -13663,7 +13739,7 @@ dojo.provide("dojox.charting.axis2d.Default");
 			tick:           {},	// stroke + length for a tick
 			font:			"",	// font for labels
 			fontColor:		"",	// color for labels as a string
-			title:		 		null,	// axis title
+			title:		 		"",	// axis title
 			titleGap:	 		0,		// gap between axis title and axis label
 			titleFont:	 		"",		// axis title font
 			titleFontColor:	 	"",		// axis title font color
@@ -14386,6 +14462,14 @@ dojo.provide("dojox.charting.plot2d.common");
 				return "C"+(bz1x+","+bz1y+" "+bz2x+","+bz2y+" "+p2.x+","+p2.y);
 			});
 			return p.join(" ");
+		},
+		
+		getLabel: function(/*Number*/number, /*Boolean*/fixed, /*Number*/precision){
+			if(dojo.number){
+				return (fixed ? dojo.number.format(number, {places : precision}) :
+					dojo.number.format(number)) || "";
+			}
+			return fixed ? number.toFixed(precision) : number.toString();
 		}
 	});
 })();
@@ -15062,6 +15146,8 @@ dojo.declare("dojox.charting.plot2d.__DefaultCtorArgs", dojox.charting.plot2d.__
 							}
 							frontMarkers[i] = s.createPath(path).setStroke(theme.marker.stroke).setFill(theme.marker.fill);
 						}, this);
+						run.dyn.markerFill = theme.marker.fill;
+						run.dyn.markerStroke = theme.marker.stroke;
 						if(events){
 							dojo.forEach(frontMarkers, function(s, i){
 								var o = {
@@ -16810,916 +16896,9 @@ dojo.declare("dojox.charting.plot2d.__GridCtorArgs", dojox.charting.plot2d.__Def
 
 }
 
-if(!dojo._hasResource["dojo.i18n"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojo.i18n"] = true;
-dojo.provide("dojo.i18n");
-
-dojo.getObject("i18n", true, dojo);
-
-/*=====
-dojo.i18n = {
-	// summary: Utility classes to enable loading of resources for internationalization (i18n)
-};
-=====*/
-
-// when using a real AMD loader, dojo.i18n.getLocalization is already defined by dojo/lib/backCompat
-dojo.i18n.getLocalization = dojo.i18n.getLocalization || function(/*String*/packageName, /*String*/bundleName, /*String?*/locale){
-	//	summary:
-	//		Returns an Object containing the localization for a given resource
-	//		bundle in a package, matching the specified locale.
-	//	description:
-	//		Returns a hash containing name/value pairs in its prototypesuch
-	//		that values can be easily overridden.  Throws an exception if the
-	//		bundle is not found.  Bundle must have already been loaded by
-	//		`dojo.requireLocalization()` or by a build optimization step.  NOTE:
-	//		try not to call this method as part of an object property
-	//		definition (`var foo = { bar: dojo.i18n.getLocalization() }`).  In
-	//		some loading situations, the bundle may not be available in time
-	//		for the object definition.  Instead, call this method inside a
-	//		function that is run after all modules load or the page loads (like
-	//		in `dojo.addOnLoad()`), or in a widget lifecycle method.
-	//	packageName:
-	//		package which is associated with this resource
-	//	bundleName:
-	//		the base filename of the resource bundle (without the ".js" suffix)
-	//	locale:
-	//		the variant to load (optional).  By default, the locale defined by
-	//		the host environment: dojo.locale
-
-	locale = dojo.i18n.normalizeLocale(locale);
-
-	// look for nearest locale match
-	var elements = locale.split('-');
-	var module = [packageName,"nls",bundleName].join('.');
-		var bundle = dojo._loadedModules[module];
-	if(bundle){
-		var localization;
-		for(var i = elements.length; i > 0; i--){
-			var loc = elements.slice(0, i).join('_');
-			if(bundle[loc]){
-				localization = bundle[loc];
-				break;
-			}
-		}
-		if(!localization){
-			localization = bundle.ROOT;
-		}
-
-		// make a singleton prototype so that the caller won't accidentally change the values globally
-		if(localization){
-			var clazz = function(){};
-			clazz.prototype = localization;
-			return new clazz(); // Object
-		}
-	}
-
-	throw new Error("Bundle not found: " + bundleName + " in " + packageName+" , locale=" + locale);
-};
-
-dojo.i18n.normalizeLocale = function(/*String?*/locale){
-	//	summary:
-	//		Returns canonical form of locale, as used by Dojo.
-	//
-	//  description:
-	//		All variants are case-insensitive and are separated by '-' as specified in [RFC 3066](http://www.ietf.org/rfc/rfc3066.txt).
-	//		If no locale is specified, the dojo.locale is returned.  dojo.locale is defined by
-	//		the user agent's locale unless overridden by djConfig.
-
-	var result = locale ? locale.toLowerCase() : dojo.locale;
-	if(result == "root"){
-		result = "ROOT";
-	}
-	return result; // String
-};
-
-dojo.i18n._requireLocalization = function(/*String*/moduleName, /*String*/bundleName, /*String?*/locale, /*String?*/availableFlatLocales){
-	//	summary:
-	//		See dojo.requireLocalization()
-	//	description:
-	// 		Called by the bootstrap, but factored out so that it is only
-	// 		included in the build when needed.
-
-	var targetLocale = dojo.i18n.normalizeLocale(locale);
- 	var bundlePackage = [moduleName, "nls", bundleName].join(".");
-	// NOTE:
-	//		When loading these resources, the packaging does not match what is
-	//		on disk.  This is an implementation detail, as this is just a
-	//		private data structure to hold the loaded resources.  e.g.
-	//		`tests/hello/nls/en-us/salutations.js` is loaded as the object
-	//		`tests.hello.nls.salutations.en_us={...}` The structure on disk is
-	//		intended to be most convenient for developers and translators, but
-	//		in memory it is more logical and efficient to store in a different
-	//		order.  Locales cannot use dashes, since the resulting path will
-	//		not evaluate as valid JS, so we translate them to underscores.
-
-	//Find the best-match locale to load if we have available flat locales.
-	var bestLocale = "";
-	if(availableFlatLocales){
-		var flatLocales = availableFlatLocales.split(",");
-		for(var i = 0; i < flatLocales.length; i++){
-			//Locale must match from start of string.
-			//Using ["indexOf"] so customBase builds do not see
-			//this as a dojo._base.array dependency.
-			if(targetLocale["indexOf"](flatLocales[i]) == 0){
-				if(flatLocales[i].length > bestLocale.length){
-					bestLocale = flatLocales[i];
-				}
-			}
-		}
-		if(!bestLocale){
-			bestLocale = "ROOT";
-		}
-	}
-
-	//See if the desired locale is already loaded.
-	var tempLocale = availableFlatLocales ? bestLocale : targetLocale;
-	var bundle = dojo._loadedModules[bundlePackage];
-	var localizedBundle = null;
-	if(bundle){
-		if(dojo.config.localizationComplete && bundle._built){return;}
-		var jsLoc = tempLocale.replace(/-/g, '_');
-		var translationPackage = bundlePackage+"."+jsLoc;
-		localizedBundle = dojo._loadedModules[translationPackage];
-	}
-
-	if(!localizedBundle){
-		bundle = dojo["provide"](bundlePackage);
-		var syms = dojo._getModuleSymbols(moduleName);
-		var modpath = syms.concat("nls").join("/");
-		var parent;
-
-		dojo.i18n._searchLocalePath(tempLocale, availableFlatLocales, function(loc){
-			var jsLoc = loc.replace(/-/g, '_');
-			var translationPackage = bundlePackage + "." + jsLoc;
-			var loaded = false;
-			if(!dojo._loadedModules[translationPackage]){
-				// Mark loaded whether it's found or not, so that further load attempts will not be made
-				dojo["provide"](translationPackage);
-				var module = [modpath];
-				if(loc != "ROOT"){module.push(loc);}
-				module.push(bundleName);
-				var filespec = module.join("/") + '.js';
-				loaded = dojo._loadPath(filespec, null, function(hash){
-					hash = hash.root || hash;
-					// Use singleton with prototype to point to parent bundle, then mix-in result from loadPath
-					var clazz = function(){};
-					clazz.prototype = parent;
-					bundle[jsLoc] = new clazz();
-					for(var j in hash){ bundle[jsLoc][j] = hash[j]; }
-				});
-			}else{
-				loaded = true;
-			}
-			if(loaded && bundle[jsLoc]){
-				parent = bundle[jsLoc];
-			}else{
-				bundle[jsLoc] = parent;
-			}
-
-			if(availableFlatLocales){
-				//Stop the locale path searching if we know the availableFlatLocales, since
-				//the first call to this function will load the only bundle that is needed.
-				return true;
-			}
-		});
-	}
-
-	//Save the best locale bundle as the target locale bundle when we know the
-	//the available bundles.
-	if(availableFlatLocales && targetLocale != bestLocale){
-		bundle[targetLocale.replace(/-/g, '_')] = bundle[bestLocale.replace(/-/g, '_')];
-	}
-};
-
-(function(){
-	// If other locales are used, dojo.requireLocalization should load them as
-	// well, by default.
-	//
-	// Override dojo.requireLocalization to do load the default bundle, then
-	// iterate through the extraLocale list and load those translations as
-	// well, unless a particular locale was requested.
-
-	var extra = dojo.config.extraLocale;
-	if(extra){
-		if(!extra instanceof Array){
-			extra = [extra];
-		}
-
-		var req = dojo.i18n._requireLocalization;
-		dojo.i18n._requireLocalization = function(m, b, locale, availableFlatLocales){
-			req(m,b,locale, availableFlatLocales);
-			if(locale){return;}
-			for(var i=0; i<extra.length; i++){
-				req(m,b,extra[i], availableFlatLocales);
-			}
-		};
-	}
-})();
-
-dojo.i18n._searchLocalePath = function(/*String*/locale, /*Boolean*/down, /*Function*/searchFunc){
-	//	summary:
-	//		A helper method to assist in searching for locale-based resources.
-	//		Will iterate through the variants of a particular locale, either up
-	//		or down, executing a callback function.  For example, "en-us" and
-	//		true will try "en-us" followed by "en" and finally "ROOT".
-
-	locale = dojo.i18n.normalizeLocale(locale);
-
-	var elements = locale.split('-');
-	var searchlist = [];
-	for(var i = elements.length; i > 0; i--){
-		searchlist.push(elements.slice(0, i).join('-'));
-	}
-	searchlist.push(false);
-	if(down){searchlist.reverse();}
-
-	for(var j = searchlist.length - 1; j >= 0; j--){
-		var loc = searchlist[j] || "ROOT";
-		var stop = searchFunc(loc);
-		if(stop){ break; }
-	}
-};
-
-dojo.i18n._preloadLocalizations = function(/*String*/bundlePrefix, /*Array*/localesGenerated){
-	//	summary:
-	//		Load built, flattened resource bundles, if available for all
-	//		locales used in the page. Only called by built layer files.
-
-	function preload(locale){
-		locale = dojo.i18n.normalizeLocale(locale);
-		dojo.i18n._searchLocalePath(locale, true, function(loc){
-			for(var i=0; i<localesGenerated.length;i++){
-				if(localesGenerated[i] == loc){
-					dojo["require"](bundlePrefix+"_"+loc);
-					return true; // Boolean
-				}
-			}
-			return false; // Boolean
-		});
-	}
-	preload();
-	var extra = dojo.config.extraLocale||[];
-	for(var i=0; i<extra.length; i++){
-		preload(extra[i]);
-	}
-};
-
-}
-
-if(!dojo._hasResource["dojo.regexp"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojo.regexp"] = true;
-dojo.provide("dojo.regexp");
-
-dojo.getObject("regexp", true, dojo);
-
-/*=====
-dojo.regexp = {
-	// summary: Regular expressions and Builder resources
-};
-=====*/
-
-dojo.regexp.escapeString = function(/*String*/str, /*String?*/except){
-	//	summary:
-	//		Adds escape sequences for special characters in regular expressions
-	// except:
-	//		a String with special characters to be left unescaped
-
-	return str.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, function(ch){
-		if(except && except.indexOf(ch) != -1){
-			return ch;
-		}
-		return "\\" + ch;
-	}); // String
-};
-
-dojo.regexp.buildGroupRE = function(/*Object|Array*/arr, /*Function*/re, /*Boolean?*/nonCapture){
-	//	summary:
-	//		Builds a regular expression that groups subexpressions
-	//	description:
-	//		A utility function used by some of the RE generators. The
-	//		subexpressions are constructed by the function, re, in the second
-	//		parameter.  re builds one subexpression for each elem in the array
-	//		a, in the first parameter. Returns a string for a regular
-	//		expression that groups all the subexpressions.
-	// arr:
-	//		A single value or an array of values.
-	// re:
-	//		A function. Takes one parameter and converts it to a regular
-	//		expression. 
-	// nonCapture:
-	//		If true, uses non-capturing match, otherwise matches are retained
-	//		by regular expression. Defaults to false
-
-	// case 1: a is a single value.
-	if(!(arr instanceof Array)){
-		return re(arr); // String
-	}
-
-	// case 2: a is an array
-	var b = [];
-	for(var i = 0; i < arr.length; i++){
-		// convert each elem to a RE
-		b.push(re(arr[i]));
-	}
-
-	 // join the REs as alternatives in a RE group.
-	return dojo.regexp.group(b.join("|"), nonCapture); // String
-};
-
-dojo.regexp.group = function(/*String*/expression, /*Boolean?*/nonCapture){
-	// summary:
-	//		adds group match to expression
-	// nonCapture:
-	//		If true, uses non-capturing match, otherwise matches are retained
-	//		by regular expression. 
-	return "(" + (nonCapture ? "?:":"") + expression + ")"; // String
-};
-
-}
-
-if(!dojo._hasResource["dojo.number"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojo.number"] = true;
-dojo.provide("dojo.number");
-
-
-
-
-
-dojo.getObject("number", true, dojo);
-
-/*=====
-dojo.number = {
-	// summary: localized formatting and parsing routines for Number
-}
-
-dojo.number.__FormatOptions = function(){
-	//	pattern: String?
-	//		override [formatting pattern](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
-	//		with this string.  Default value is based on locale.  Overriding this property will defeat
-	//		localization.  Literal characters in patterns are not supported.
-	//	type: String?
-	//		choose a format type based on the locale from the following:
-	//		decimal, scientific (not yet supported), percent, currency. decimal by default.
-	//	places: Number?
-	//		fixed number of decimal places to show.  This overrides any
-	//		information in the provided pattern.
-	//	round: Number?
-	//		5 rounds to nearest .5; 0 rounds to nearest whole (default). -1
-	//		means do not round.
-	//	locale: String?
-	//		override the locale used to determine formatting rules
-	//	fractional: Boolean?
-	//		If false, show no decimal places, overriding places and pattern settings.
-	this.pattern = pattern;
-	this.type = type;
-	this.places = places;
-	this.round = round;
-	this.locale = locale;
-	this.fractional = fractional;
-}
-=====*/
-
-dojo.number.format = function(/*Number*/value, /*dojo.number.__FormatOptions?*/options){
-	// summary:
-	//		Format a Number as a String, using locale-specific settings
-	// description:
-	//		Create a string from a Number using a known localized pattern.
-	//		Formatting patterns appropriate to the locale are chosen from the
-	//		[Common Locale Data Repository](http://unicode.org/cldr) as well as the appropriate symbols and
-	//		delimiters.
-	//		If value is Infinity, -Infinity, or is not a valid JavaScript number, return null.
-	// value:
-	//		the number to be formatted
-
-	options = dojo.mixin({}, options || {});
-	var locale = dojo.i18n.normalizeLocale(options.locale),
-		bundle = dojo.i18n.getLocalization("dojo.cldr", "number", locale);
-	options.customs = bundle;
-	var pattern = options.pattern || bundle[(options.type || "decimal") + "Format"];
-	if(isNaN(value) || Math.abs(value) == Infinity){ return null; } // null
-	return dojo.number._applyPattern(value, pattern, options); // String
-};
-
-//dojo.number._numberPatternRE = /(?:[#0]*,?)*[#0](?:\.0*#*)?/; // not precise, but good enough
-dojo.number._numberPatternRE = /[#0,]*[#0](?:\.0*#*)?/; // not precise, but good enough
-
-dojo.number._applyPattern = function(/*Number*/value, /*String*/pattern, /*dojo.number.__FormatOptions?*/options){
-	// summary:
-	//		Apply pattern to format value as a string using options. Gives no
-	//		consideration to local customs.
-	// value:
-	//		the number to be formatted.
-	// pattern:
-	//		a pattern string as described by
-	//		[unicode.org TR35](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
-	// options: dojo.number.__FormatOptions?
-	//		_applyPattern is usually called via `dojo.number.format()` which
-	//		populates an extra property in the options parameter, "customs".
-	//		The customs object specifies group and decimal parameters if set.
-
-	//TODO: support escapes
-	options = options || {};
-	var group = options.customs.group,
-		decimal = options.customs.decimal,
-		patternList = pattern.split(';'),
-		positivePattern = patternList[0];
-	pattern = patternList[(value < 0) ? 1 : 0] || ("-" + positivePattern);
-
-	//TODO: only test against unescaped
-	if(pattern.indexOf('%') != -1){
-		value *= 100;
-	}else if(pattern.indexOf('\u2030') != -1){
-		value *= 1000; // per mille
-	}else if(pattern.indexOf('\u00a4') != -1){
-		group = options.customs.currencyGroup || group;//mixins instead?
-		decimal = options.customs.currencyDecimal || decimal;// Should these be mixins instead?
-		pattern = pattern.replace(/\u00a4{1,3}/, function(match){
-			var prop = ["symbol", "currency", "displayName"][match.length-1];
-			return options[prop] || options.currency || "";
-		});
-	}else if(pattern.indexOf('E') != -1){
-		throw new Error("exponential notation not supported");
-	}
-	
-	//TODO: support @ sig figs?
-	var numberPatternRE = dojo.number._numberPatternRE;
-	var numberPattern = positivePattern.match(numberPatternRE);
-	if(!numberPattern){
-		throw new Error("unable to find a number expression in pattern: "+pattern);
-	}
-	if(options.fractional === false){ options.places = 0; }
-	return pattern.replace(numberPatternRE,
-		dojo.number._formatAbsolute(value, numberPattern[0], {decimal: decimal, group: group, places: options.places, round: options.round}));
-};
-
-dojo.number.round = function(/*Number*/value, /*Number?*/places, /*Number?*/increment){
-	//	summary:
-	//		Rounds to the nearest value with the given number of decimal places, away from zero
-	//	description:
-	//		Rounds to the nearest value with the given number of decimal places, away from zero if equal.
-	//		Similar to Number.toFixed(), but compensates for browser quirks. Rounding can be done by
-	//		fractional increments also, such as the nearest quarter.
-	//		NOTE: Subject to floating point errors.  See dojox.math.round for experimental workaround.
-	//	value:
-	//		The number to round
-	//	places:
-	//		The number of decimal places where rounding takes place.  Defaults to 0 for whole rounding.
-	//		Must be non-negative.
-	//	increment:
-	//		Rounds next place to nearest value of increment/10.  10 by default.
-	//	example:
-	//		>>> dojo.number.round(-0.5)
-	//		-1
-	//		>>> dojo.number.round(162.295, 2)
-	//		162.29  // note floating point error.  Should be 162.3
-	//		>>> dojo.number.round(10.71, 0, 2.5)
-	//		10.75
-	var factor = 10 / (increment || 10);
-	return (factor * +value).toFixed(places) / factor; // Number
-};
-
-if((0.9).toFixed() == 0){
-	// (isIE) toFixed() bug workaround: Rounding fails on IE when most significant digit
-	// is just after the rounding place and is >=5
-	(function(){
-		var round = dojo.number.round;
-		dojo.number.round = function(v, p, m){
-			var d = Math.pow(10, -p || 0), a = Math.abs(v);
-			if(!v || a >= d || a * Math.pow(10, p + 1) < 5){
-				d = 0;
-			}
-			return round(v, p, m) + (v > 0 ? d : -d);
-		};
-	})();
-}
-
-/*=====
-dojo.number.__FormatAbsoluteOptions = function(){
-	//	decimal: String?
-	//		the decimal separator
-	//	group: String?
-	//		the group separator
-	//	places: Number?|String?
-	//		number of decimal places.  the range "n,m" will format to m places.
-	//	round: Number?
-	//		5 rounds to nearest .5; 0 rounds to nearest whole (default). -1
-	//		means don't round.
-	this.decimal = decimal;
-	this.group = group;
-	this.places = places;
-	this.round = round;
-}
-=====*/
-
-dojo.number._formatAbsolute = function(/*Number*/value, /*String*/pattern, /*dojo.number.__FormatAbsoluteOptions?*/options){
-	// summary: 
-	//		Apply numeric pattern to absolute value using options. Gives no
-	//		consideration to local customs.
-	// value:
-	//		the number to be formatted, ignores sign
-	// pattern:
-	//		the number portion of a pattern (e.g. `#,##0.00`)
-	options = options || {};
-	if(options.places === true){options.places=0;}
-	if(options.places === Infinity){options.places=6;} // avoid a loop; pick a limit
-
-	var patternParts = pattern.split("."),
-		comma = typeof options.places == "string" && options.places.indexOf(","),
-		maxPlaces = options.places;
-	if(comma){
-		maxPlaces = options.places.substring(comma + 1);
-	}else if(!(maxPlaces >= 0)){
-		maxPlaces = (patternParts[1] || []).length;
-	}
-	if(!(options.round < 0)){
-		value = dojo.number.round(value, maxPlaces, options.round);
-	}
-
-	var valueParts = String(Math.abs(value)).split("."),
-		fractional = valueParts[1] || "";
-	if(patternParts[1] || options.places){
-		if(comma){
-			options.places = options.places.substring(0, comma);
-		}
-		// Pad fractional with trailing zeros
-		var pad = options.places !== undefined ? options.places : (patternParts[1] && patternParts[1].lastIndexOf("0") + 1);
-		if(pad > fractional.length){
-			valueParts[1] = dojo.string.pad(fractional, pad, '0', true);
-		}
-
-		// Truncate fractional
-		if(maxPlaces < fractional.length){
-			valueParts[1] = fractional.substr(0, maxPlaces);
-		}
-	}else{
-		if(valueParts[1]){ valueParts.pop(); }
-	}
-
-	// Pad whole with leading zeros
-	var patternDigits = patternParts[0].replace(',', '');
-	pad = patternDigits.indexOf("0");
-	if(pad != -1){
-		pad = patternDigits.length - pad;
-		if(pad > valueParts[0].length){
-			valueParts[0] = dojo.string.pad(valueParts[0], pad);
-		}
-
-		// Truncate whole
-		if(patternDigits.indexOf("#") == -1){
-			valueParts[0] = valueParts[0].substr(valueParts[0].length - pad);
-		}
-	}
-
-	// Add group separators
-	var index = patternParts[0].lastIndexOf(','),
-		groupSize, groupSize2;
-	if(index != -1){
-		groupSize = patternParts[0].length - index - 1;
-		var remainder = patternParts[0].substr(0, index);
-		index = remainder.lastIndexOf(',');
-		if(index != -1){
-			groupSize2 = remainder.length - index - 1;
-		}
-	}
-	var pieces = [];
-	for(var whole = valueParts[0]; whole;){
-		var off = whole.length - groupSize;
-		pieces.push((off > 0) ? whole.substr(off) : whole);
-		whole = (off > 0) ? whole.slice(0, off) : "";
-		if(groupSize2){
-			groupSize = groupSize2;
-			delete groupSize2;
-		}
-	}
-	valueParts[0] = pieces.reverse().join(options.group || ",");
-
-	return valueParts.join(options.decimal || ".");
-};
-
-/*=====
-dojo.number.__RegexpOptions = function(){
-	//	pattern: String?
-	//		override [formatting pattern](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
-	//		with this string.  Default value is based on locale.  Overriding this property will defeat
-	//		localization.
-	//	type: String?
-	//		choose a format type based on the locale from the following:
-	//		decimal, scientific (not yet supported), percent, currency. decimal by default.
-	//	locale: String?
-	//		override the locale used to determine formatting rules
-	//	strict: Boolean?
-	//		strict parsing, false by default.  Strict parsing requires input as produced by the format() method.
-	//		Non-strict is more permissive, e.g. flexible on white space, omitting thousands separators
-	//	places: Number|String?
-	//		number of decimal places to accept: Infinity, a positive number, or
-	//		a range "n,m".  Defined by pattern or Infinity if pattern not provided.
-	this.pattern = pattern;
-	this.type = type;
-	this.locale = locale;
-	this.strict = strict;
-	this.places = places;
-}
-=====*/
-dojo.number.regexp = function(/*dojo.number.__RegexpOptions?*/options){
-	//	summary:
-	//		Builds the regular needed to parse a number
-	//	description:
-	//		Returns regular expression with positive and negative match, group
-	//		and decimal separators
-	return dojo.number._parseInfo(options).regexp; // String
-};
-
-dojo.number._parseInfo = function(/*Object?*/options){
-	options = options || {};
-	var locale = dojo.i18n.normalizeLocale(options.locale),
-		bundle = dojo.i18n.getLocalization("dojo.cldr", "number", locale),
-		pattern = options.pattern || bundle[(options.type || "decimal") + "Format"],
-//TODO: memoize?
-		group = bundle.group,
-		decimal = bundle.decimal,
-		factor = 1;
-
-	if(pattern.indexOf('%') != -1){
-		factor /= 100;
-	}else if(pattern.indexOf('\u2030') != -1){
-		factor /= 1000; // per mille
-	}else{
-		var isCurrency = pattern.indexOf('\u00a4') != -1;
-		if(isCurrency){
-			group = bundle.currencyGroup || group;
-			decimal = bundle.currencyDecimal || decimal;
-		}
-	}
-
-	//TODO: handle quoted escapes
-	var patternList = pattern.split(';');
-	if(patternList.length == 1){
-		patternList.push("-" + patternList[0]);
-	}
-
-	var re = dojo.regexp.buildGroupRE(patternList, function(pattern){
-		pattern = "(?:"+dojo.regexp.escapeString(pattern, '.')+")";
-		return pattern.replace(dojo.number._numberPatternRE, function(format){
-			var flags = {
-				signed: false,
-				separator: options.strict ? group : [group,""],
-				fractional: options.fractional,
-				decimal: decimal,
-				exponent: false
-				},
-
-				parts = format.split('.'),
-				places = options.places;
-
-			// special condition for percent (factor != 1)
-			// allow decimal places even if not specified in pattern
-			if(parts.length == 1 && factor != 1){
-			    parts[1] = "###";
-			}
-			if(parts.length == 1 || places === 0){
-				flags.fractional = false;
-			}else{
-				if(places === undefined){ places = options.pattern ? parts[1].lastIndexOf('0') + 1 : Infinity; }
-				if(places && options.fractional == undefined){flags.fractional = true;} // required fractional, unless otherwise specified
-				if(!options.places && (places < parts[1].length)){ places += "," + parts[1].length; }
-				flags.places = places;
-			}
-			var groups = parts[0].split(',');
-			if(groups.length > 1){
-				flags.groupSize = groups.pop().length;
-				if(groups.length > 1){
-					flags.groupSize2 = groups.pop().length;
-				}
-			}
-			return "("+dojo.number._realNumberRegexp(flags)+")";
-		});
-	}, true);
-
-	if(isCurrency){
-		// substitute the currency symbol for the placeholder in the pattern
-		re = re.replace(/([\s\xa0]*)(\u00a4{1,3})([\s\xa0]*)/g, function(match, before, target, after){
-			var prop = ["symbol", "currency", "displayName"][target.length-1],
-				symbol = dojo.regexp.escapeString(options[prop] || options.currency || "");
-			before = before ? "[\\s\\xa0]" : "";
-			after = after ? "[\\s\\xa0]" : "";
-			if(!options.strict){
-				if(before){before += "*";}
-				if(after){after += "*";}
-				return "(?:"+before+symbol+after+")?";
-			}
-			return before+symbol+after;
-		});
-	}
-
-//TODO: substitute localized sign/percent/permille/etc.?
-
-	// normalize whitespace and return
-	return {regexp: re.replace(/[\xa0 ]/g, "[\\s\\xa0]"), group: group, decimal: decimal, factor: factor}; // Object
-};
-
-/*=====
-dojo.number.__ParseOptions = function(){
-	//	pattern: String?
-	//		override [formatting pattern](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
-	//		with this string.  Default value is based on locale.  Overriding this property will defeat
-	//		localization.  Literal characters in patterns are not supported.
-	//	type: String?
-	//		choose a format type based on the locale from the following:
-	//		decimal, scientific (not yet supported), percent, currency. decimal by default.
-	//	locale: String?
-	//		override the locale used to determine formatting rules
-	//	strict: Boolean?
-	//		strict parsing, false by default.  Strict parsing requires input as produced by the format() method.
-	//		Non-strict is more permissive, e.g. flexible on white space, omitting thousands separators
-	//	fractional: Boolean?|Array?
-	//		Whether to include the fractional portion, where the number of decimal places are implied by pattern
-	//		or explicit 'places' parameter.  The value [true,false] makes the fractional portion optional.
-	this.pattern = pattern;
-	this.type = type;
-	this.locale = locale;
-	this.strict = strict;
-	this.fractional = fractional;
-}
-=====*/
-dojo.number.parse = function(/*String*/expression, /*dojo.number.__ParseOptions?*/options){
-	// summary:
-	//		Convert a properly formatted string to a primitive Number, using
-	//		locale-specific settings.
-	// description:
-	//		Create a Number from a string using a known localized pattern.
-	//		Formatting patterns are chosen appropriate to the locale
-	//		and follow the syntax described by
-	//		[unicode.org TR35](http://www.unicode.org/reports/tr35/#Number_Format_Patterns)
-    	//		Note that literal characters in patterns are not supported.
-	// expression:
-	//		A string representation of a Number
-	var info = dojo.number._parseInfo(options),
-		results = (new RegExp("^"+info.regexp+"$")).exec(expression);
-	if(!results){
-		return NaN; //NaN
-	}
-	var absoluteMatch = results[1]; // match for the positive expression
-	if(!results[1]){
-		if(!results[2]){
-			return NaN; //NaN
-		}
-		// matched the negative pattern
-		absoluteMatch =results[2];
-		info.factor *= -1;
-	}
-
-	// Transform it to something Javascript can parse as a number.  Normalize
-	// decimal point and strip out group separators or alternate forms of whitespace
-	absoluteMatch = absoluteMatch.
-		replace(new RegExp("["+info.group + "\\s\\xa0"+"]", "g"), "").
-		replace(info.decimal, ".");
-	// Adjust for negative sign, percent, etc. as necessary
-	return absoluteMatch * info.factor; //Number
-};
-
-/*=====
-dojo.number.__RealNumberRegexpFlags = function(){
-	//	places: Number?
-	//		The integer number of decimal places or a range given as "n,m".  If
-	//		not given, the decimal part is optional and the number of places is
-	//		unlimited.
-	//	decimal: String?
-	//		A string for the character used as the decimal point.  Default
-	//		is ".".
-	//	fractional: Boolean?|Array?
-	//		Whether decimal places are used.  Can be true, false, or [true,
-	//		false].  Default is [true, false] which means optional.
-	//	exponent: Boolean?|Array?
-	//		Express in exponential notation.  Can be true, false, or [true,
-	//		false]. Default is [true, false], (i.e. will match if the
-	//		exponential part is present are not).
-	//	eSigned: Boolean?|Array?
-	//		The leading plus-or-minus sign on the exponent.  Can be true,
-	//		false, or [true, false].  Default is [true, false], (i.e. will
-	//		match if it is signed or unsigned).  flags in regexp.integer can be
-	//		applied.
-	this.places = places;
-	this.decimal = decimal;
-	this.fractional = fractional;
-	this.exponent = exponent;
-	this.eSigned = eSigned;
-}
-=====*/
-
-dojo.number._realNumberRegexp = function(/*dojo.number.__RealNumberRegexpFlags?*/flags){
-	// summary:
-	//		Builds a regular expression to match a real number in exponential
-	//		notation
-
-	// assign default values to missing parameters
-	flags = flags || {};
-	//TODO: use mixin instead?
-	if(!("places" in flags)){ flags.places = Infinity; }
-	if(typeof flags.decimal != "string"){ flags.decimal = "."; }
-	if(!("fractional" in flags) || /^0/.test(flags.places)){ flags.fractional = [true, false]; }
-	if(!("exponent" in flags)){ flags.exponent = [true, false]; }
-	if(!("eSigned" in flags)){ flags.eSigned = [true, false]; }
-
-	var integerRE = dojo.number._integerRegexp(flags),
-		decimalRE = dojo.regexp.buildGroupRE(flags.fractional,
-		function(q){
-			var re = "";
-			if(q && (flags.places!==0)){
-				re = "\\" + flags.decimal;
-				if(flags.places == Infinity){ 
-					re = "(?:" + re + "\\d+)?"; 
-				}else{
-					re += "\\d{" + flags.places + "}"; 
-				}
-			}
-			return re;
-		},
-		true
-	);
-
-	var exponentRE = dojo.regexp.buildGroupRE(flags.exponent,
-		function(q){ 
-			if(q){ return "([eE]" + dojo.number._integerRegexp({ signed: flags.eSigned}) + ")"; }
-			return ""; 
-		}
-	);
-
-	var realRE = integerRE + decimalRE;
-	// allow for decimals without integers, e.g. .25
-	if(decimalRE){realRE = "(?:(?:"+ realRE + ")|(?:" + decimalRE + "))";}
-	return realRE + exponentRE; // String
-};
-
-/*=====
-dojo.number.__IntegerRegexpFlags = function(){
-	//	signed: Boolean?
-	//		The leading plus-or-minus sign. Can be true, false, or `[true,false]`.
-	//		Default is `[true, false]`, (i.e. will match if it is signed
-	//		or unsigned).
-	//	separator: String?
-	//		The character used as the thousands separator. Default is no
-	//		separator. For more than one symbol use an array, e.g. `[",", ""]`,
-	//		makes ',' optional.
-	//	groupSize: Number?
-	//		group size between separators
-	//	groupSize2: Number?
-	//		second grouping, where separators 2..n have a different interval than the first separator (for India)
-	this.signed = signed;
-	this.separator = separator;
-	this.groupSize = groupSize;
-	this.groupSize2 = groupSize2;
-}
-=====*/
-
-dojo.number._integerRegexp = function(/*dojo.number.__IntegerRegexpFlags?*/flags){
-	// summary: 
-	//		Builds a regular expression that matches an integer
-
-	// assign default values to missing parameters
-	flags = flags || {};
-	if(!("signed" in flags)){ flags.signed = [true, false]; }
-	if(!("separator" in flags)){
-		flags.separator = "";
-	}else if(!("groupSize" in flags)){
-		flags.groupSize = 3;
-	}
-
-	var signRE = dojo.regexp.buildGroupRE(flags.signed,
-		function(q){ return q ? "[-+]" : ""; },
-		true
-	);
-
-	var numberRE = dojo.regexp.buildGroupRE(flags.separator,
-		function(sep){
-			if(!sep){
-				return "(?:\\d+)";
-			}
-
-			sep = dojo.regexp.escapeString(sep);
-			if(sep == " "){ sep = "\\s"; }
-			else if(sep == "\xa0"){ sep = "\\s\\xa0"; }
-
-			var grp = flags.groupSize, grp2 = flags.groupSize2;
-			//TODO: should we continue to enforce that numbers with separators begin with 1-9?  See #6933
-			if(grp2){
-				var grp2RE = "(?:0|[1-9]\\d{0," + (grp2-1) + "}(?:[" + sep + "]\\d{" + grp2 + "})*[" + sep + "]\\d{" + grp + "})";
-				return ((grp-grp2) > 0) ? "(?:" + grp2RE + "|(?:0|[1-9]\\d{0," + (grp-1) + "}))" : grp2RE;
-			}
-			return "(?:0|[1-9]\\d{0," + (grp-1) + "}(?:[" + sep + "]\\d{" + grp + "})*)";
-		},
-		true
-	);
-
-	return signRE + numberRE; // String
-};
-
-}
-
 if(!dojo._hasResource["dojox.charting.plot2d.Pie"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.charting.plot2d.Pie"] = true;
 dojo.provide("dojox.charting.plot2d.Pie");
-
-
 
 
 
@@ -18128,12 +17307,12 @@ dojo.declare("dojox.charting.plot2d.__PieCtorArgs", dojox.charting.plot2d.__Defa
 					//draw label and wiring
 					dojo.forEach(labeledSlices, function(slice, i){
 						if (!slice.omit) {
-							var leftColumn = circle.cx - circle.r * 2, 
-								rightColumn = circle.cx + circle.r * 2, 
-								labelWidth = dojox.gfx._base._getTextBox(labels[i], {font: taFont}).w, 
-								x = circle.cx + slice.labelR * Math.cos(slice.angle), 
+							var leftColumn = circle.cx - circle.r * 2,
+								rightColumn = circle.cx + circle.r * 2,
+								labelWidth = dojox.gfx._base._getTextBox(labels[i], {font: taFont}).w,
+								x = circle.cx + slice.labelR * Math.cos(slice.angle),
 								y = circle.cy + slice.labelR * Math.sin(slice.angle),
-								jointX = (slice.left) ? (leftColumn + labelWidth) : (rightColumn - labelWidth), 
+								jointX = (slice.left) ? (leftColumn + labelWidth) : (rightColumn - labelWidth),
 								labelX = (slice.left) ? leftColumn : jointX;
 							var wiring = s.createPath().moveTo(circle.cx + circle.r * Math.cos(slice.angle), circle.cy + circle.r * Math.sin(slice.angle))
 							if (Math.abs(slice.labelR * Math.cos(slice.angle)) < circle.r * 2 - labelWidth) {
@@ -18193,7 +17372,7 @@ dojo.declare("dojox.charting.plot2d.__PieCtorArgs", dojox.charting.plot2d.__Defa
 				}
 				i++;
 			}
-			i = firstSlice.index,j = (i == 0)?length-1 : i - 1; 
+			i = firstSlice.index,j = (i == 0)?length-1 : i - 1;
 			while(!(slices[i].left ^ slices[j].left)){
 				if (!slices[j].omit) {
 					var nextLabelR = (Math.sin(slices[i].angle) * currentLabelR + ((slices[i].left) ? labelHeight : (-labelHeight))) /
@@ -18208,7 +17387,7 @@ dojo.declare("dojox.charting.plot2d.__PieCtorArgs", dojox.charting.plot2d.__Defa
 		},
 		// utilities
 		_getLabel: function(number){
-			return this.opt.fixed ? dojo.number.format(number, {places: this.opt.precision}) : number.toString();
+			return dc.getLabel(number, this.opt.fixed, this.opt.precision);
 		}
 	});
 })();
@@ -18899,6 +18078,795 @@ dojo.provide("dojox.charting.plot2d.OHLC");
 
 }
 
+if(!dojo._hasResource["dojox.charting.plot2d.Spider"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.plot2d.Spider"] = true;
+dojo.provide("dojox.charting.plot2d.Spider");
+
+dojo.experimental("dojox.charting.plot2d.Spider");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(function(){
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		da = dojox.charting.axis2d.common,
+		g = dojox.gfx, m = g.matrix,
+		FUDGE_FACTOR = 0.2; // use to overlap fans
+
+	dojo.declare("dojox.charting.plot2d.Spider", [dojox.charting.Element, dojox.charting.plot2d._PlotEvents], {
+		//	summary:
+		//		The plot that represents a typical Spider chart.
+		defaultParams: {
+			labels:			true,
+			ticks:			false,
+			fixed:			true,
+			precision:		1,
+			labelOffset:	-10,
+			labelStyle:		"default",	// default/rows/auto
+			htmlLabels:		true,		// use HTML to draw labels
+			startAngle:		-90,		// start angle for slices in degrees
+			divisions:		 3,			// radius tick count
+			axisColor:		 "",		// spider axis color
+			axisWidth:		 0,			// spider axis stroke width
+			spiderColor:	 "",		// spider web color
+			spiderWidth:	 0,			// spider web stroke width
+			seriesWidth:	 0,			// plot border with
+			seriesFillAlpha: 0.2,		// plot fill alpha
+			spiderOrigin:	 0.16,
+			markerSize:		 3,			// radius of plot vertex (px)
+			spiderType:		 "polygon", //"circle"
+			animationType:	 dojo.fx.easing.backOut,
+			axisTickFont:		"",
+			axisTickFontColor:	"",
+			axisFont:			"",
+			axisFontColor:		""
+		},
+		optionalParams: {
+			radius:		0,
+			font:		"",
+			fontColor:	""
+		},
+
+		constructor: function(chart, kwArgs){
+			//	summary:
+			//		Create a Spider plot.
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
+			this.series = [];
+			this.dyn = [];
+			this.datas = {};
+			this.labelKey = [];
+			this.oldSeriePoints = {};
+			this.animations = {};
+		},
+		clear: function(){
+			//	summary:
+			//		Clear out all of the information tied to this plot.
+			//	returns: dojox.charting.plot2d.Spider
+			//		A reference to this plot for functional chaining.
+			this.dirty = true;
+			this.dyn = [];
+			this.series = [];
+			this.datas = {};
+			this.labelKey = [];
+			this.oldSeriePoints = {};
+			this.animations = {};
+			return this;	//	dojox.charting.plot2d.Spider
+		},
+		setAxis: function(axis){
+			//	summary:
+			//		Dummy method, since axes are irrelevant with a Spider chart.
+			//	returns: dojox.charting.plot2d.Spider
+			//		The reference to this plot for functional chaining.
+			return this;	//	dojox.charting.plot2d.Spider
+		},
+		addSeries: function(run){
+			//	summary:
+			//		Add a data series to this plot.
+			//	run: dojox.charting.Series
+			//		The series to be added.
+			//	returns: dojox.charting.plot2d.Base
+			//		A reference to this plot for functional chaining.
+			var matched = false;
+			this.series.push(run);
+			for(var key in run.data){
+				var val = run.data[key],
+					data = this.datas[key];
+				if(data){
+					data.vlist.push(val);
+					data.min = Math.min(data.min, val);
+					data.max = Math.max(data.max, val);
+				}else{
+					this.datas[key] = {min: val, max: val, vlist: [val]};
+				}
+			}
+			if (this.labelKey.length <= 0) {
+				for (var key in run.data) {
+					this.labelKey.push(key);
+				}
+			}
+			return this;	//	dojox.charting.plot2d.Base
+		},
+		getSeriesStats: function(){
+			//	summary:
+			//		Calculate the min/max on all attached series in both directions.
+			//	returns: Object
+			//		{hmin, hmax, vmin, vmax} min/max in both directions.
+			return dojox.charting.plot2d.common.collectSimpleStats(this.series);
+		},
+		calculateAxes: function(dim){
+			//	summary:
+			//		Stub function for running the axis calculations (depricated).
+			//	dim: Object
+			//		An object of the form { width, height }
+			//	returns: dojox.charting.plot2d.Base
+			//		A reference to this plot for functional chaining.
+			this.initializeScalers(dim, this.getSeriesStats());
+			return this;	//	dojox.charting.plot2d.Base
+		},
+		getRequiredColors: function(){
+			//	summary:
+			//		Get how many data series we have, so we know how many colors to use.
+			//	returns: Number
+			//		The number of colors needed.
+			return this.series.length;	//	Number
+		},
+		initializeScalers: function(dim, stats){
+			//	summary:
+			//		Initializes scalers using attached axes.
+			//	dim: Object:
+			//		Size of a plot area in pixels as {width, height}.
+			//	stats: Object:
+			//		Min/max of data in both directions as {hmin, hmax, vmin, vmax}.
+			//	returns: dojox.charting.plot2d.Base
+			//		A reference to this plot for functional chaining.
+			if(this._hAxis){
+				if(!this._hAxis.initialized()){
+					this._hAxis.calculate(stats.hmin, stats.hmax, dim.width);
+				}
+				this._hScaler = this._hAxis.getScaler();
+			}else{
+				this._hScaler = dojox.charting.scaler.primitive.buildScaler(stats.hmin, stats.hmax, dim.width);
+			}
+			if(this._vAxis){
+				if(!this._vAxis.initialized()){
+					this._vAxis.calculate(stats.vmin, stats.vmax, dim.height);
+				}
+				this._vScaler = this._vAxis.getScaler();
+			}else{
+				this._vScaler = dojox.charting.scaler.primitive.buildScaler(stats.vmin, stats.vmax, dim.height);
+			}
+			return this;	//	dojox.charting.plot2d.Base
+		},
+		render: function(dim, offsets){
+			//	summary:
+			//		Render the plot on the chart.
+			//	dim: Object
+			//		An object of the form { width, height }.
+			//	offsets: Object
+			//		An object of the form { l, r, t, b }.
+			//	returns: dojox.charting.plot2d.Spider
+			//		A reference to this plot for functional chaining.
+			if(!this.dirty){ return this; }
+			this.dirty = false;
+			this.cleanGroup();
+			var s = this.group, t = this.chart.theme;
+			this.resetEvents();
+
+			if(!this.series || !this.series.length){
+				return this;
+			}
+
+			// calculate the geometry
+			var o = this.opt, ta = t.axis,
+				rx = (dim.width	 - offsets.l - offsets.r) / 2,
+				ry = (dim.height - offsets.t - offsets.b) / 2,
+				r  = Math.min(rx, ry),
+				axisTickFont = o.font || (ta.majorTick && ta.majorTick.font) || (ta.tick && ta.tick.font) || "normal normal normal 7pt Tahoma",
+				axisFont = o.axisFont || (ta.tick && ta.tick.titleFont) || "normal normal normal 11pt Tahoma",
+				axisTickFontColor = o.axisTickFontColor || (ta.majorTick && ta.majorTick.fontColor) || (ta.tick && ta.tick.fontColor) || "silver",
+				axisFontColor = o.axisFontColor || (ta.tick && ta.tick.titleFontColor) || "black",
+				axisColor = o.axisColor || (ta.tick && ta.tick.axisColor) || "silver",
+				spiderColor = o.spiderColor || (ta.tick && ta.tick.spiderColor) || "silver",
+				axisWidth = o.axisWidth || (ta.stroke && ta.stroke.width) || 2,
+				spiderWidth = o.spiderWidth || (ta.stroke && ta.stroke.width) || 2,
+				seriesWidth = o.seriesWidth || (ta.stroke && ta.stroke.width) || 2,
+				asize = g.normalizedLength(g.splitFontString(axisFont).size),
+				startAngle = m._degToRad(o.startAngle),
+				start = startAngle, step, filteredRun, slices, labels, shift, labelR,
+				outerPoints, innerPoints, divisionPoints, divisionRadius, labelPoints,
+				ro = o.spiderOrigin, dv = o.divisions >= 3 ? o.divisions : 3, ms = o.markerSize,
+				spt = o.spiderType, at = o.animationType, lboffset = o.labelOffset < -10 ? o.labelOffset : -10,
+				axisExtra = 0.2;
+			
+			if(o.labels){
+				labels = dojo.map(this.series, function(s){
+					return s.name;
+				}, this);
+				shift = df.foldl1(df.map(labels, function(label, i){
+					var font = t.series.font;
+					return dojox.gfx._base._getTextBox(label, {
+						font: font
+					}).w;
+				}, this), "Math.max(a, b)") / 2;
+				r = Math.min(rx - 2 * shift, ry - asize) + lboffset;
+				labelR = r - lboffset;
+			}
+			if ("radius" in o) {
+				r = o.radius;
+				labelR = r - lboffset;
+			}
+			r /= (1+axisExtra);
+			var circle = {
+				cx: offsets.l + rx,
+				cy: offsets.t + ry,
+				r: r
+			};
+			
+			for (var i = this.series.length - 1; i >= 0; i--) {
+				var serieEntry = this.series[i];
+				if (!this.dirty && !serieEntry.dirty) {
+					t.skip();
+					continue;
+				}
+				serieEntry.cleanGroup();
+				var run = serieEntry.data;
+				if (run !== null) {
+					var len = this._getObjectLength(run);
+					//construct connect points
+					if (!outerPoints || outerPoints.length <= 0) {
+						outerPoints = [], innerPoints = [], labelPoints = [];
+						this._buildPoints(outerPoints, len, circle, r, start, true);
+						this._buildPoints(innerPoints, len, circle, r*ro, start, true);
+						this._buildPoints(labelPoints, len, circle, labelR, start);
+						if(dv > 2){
+							divisionPoints = [], divisionRadius = [];
+							for (var j = 0; j < dv - 2; j++) {
+								divisionPoints[j] = [];
+								this._buildPoints(divisionPoints[j], len, circle, r*(ro + (1-ro)*(j+1)/(dv-1)), start, true);
+								divisionRadius[j] = r*(ro + (1-ro)*(j+1)/(dv-1));
+							}
+						}
+					}
+				}
+			}
+			
+			//draw Spider
+			//axis
+			var axisGroup = s.createGroup(), axisStroke = {color: axisColor, width: axisWidth},
+				spiderStroke = {color: spiderColor, width: spiderWidth};
+			for (var j = outerPoints.length - 1; j >= 0; --j) {
+				var point = outerPoints[j],
+					st = {
+						x: point.x + (point.x - circle.cx) * axisExtra,
+						y: point.y + (point.y - circle.cy) * axisExtra
+					},
+					nd = {
+						x: point.x + (point.x - circle.cx) * axisExtra / 2,
+						y: point.y + (point.y - circle.cy) * axisExtra / 2
+					};
+				axisGroup.createLine({
+					x1: circle.cx,
+					y1: circle.cy,
+					x2: st.x,
+					y2: st.y
+				}).setStroke(axisStroke);
+				//arrow
+				this._drawArrow(axisGroup, st, nd, axisStroke);
+			}
+			
+			// draw the label
+			var labelGroup = s.createGroup();
+			for (var j = labelPoints.length - 1; j >= 0; --j) {
+				var point = labelPoints[j],
+					fontWidth = dojox.gfx._base._getTextBox(this.labelKey[j], {font: axisFont}).w || 0,
+					render = this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx";
+					elem = da.createText[render](this.chart, labelGroup, (!dojo._isBodyLtr() && render == "html") ? (point.x + fontWidth - dim.width) : point.x, point.y,
+							"middle", this.labelKey[j], axisFont, axisFontColor);
+				if (this.opt.htmlLabels) {
+					this.htmlElements.push(elem);
+				}
+			}
+			
+			//spider web: polygon or circle
+			var spiderGroup = s.createGroup();
+			if(spt == "polygon"){
+				spiderGroup.createPolyline(outerPoints).setStroke(spiderStroke);
+				spiderGroup.createPolyline(innerPoints).setStroke(spiderStroke);
+				if (divisionPoints.length > 0) {
+					for (var j = divisionPoints.length - 1; j >= 0; --j) {
+						spiderGroup.createPolyline(divisionPoints[j]).setStroke(spiderStroke);
+					}
+				}
+			}else{//circle
+				var ccount = this._getObjectLength(this.datas);
+				spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: r}).setStroke(spiderStroke);
+				spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: r*ro}).setStroke(spiderStroke);
+				if (divisionRadius.length > 0) {
+					for (var j = divisionRadius.length - 1; j >= 0; --j) {
+						spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: divisionRadius[j]}).setStroke(spiderStroke);
+					}
+				}
+			}
+			//text
+			var textGroup = s.createGroup(), len = this._getObjectLength(this.datas), k = 0;
+			for(var key in this.datas){
+				var data = this.datas[key], min = data.min, max = data.max, distance = max - min,
+					end = start + 2 * Math.PI * k / len;
+				for (var i = 0; i < dv; i++) {
+					var text = min + distance*i/(dv-1), point = this._getCoordinate(circle, r*(ro + (1-ro)*i/(dv-1)), end);
+					text = this._getLabel(text);
+					var fontWidth = dojox.gfx._base._getTextBox(text, {font: axisTickFont}).w || 0,
+						render = this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx";
+					if (this.opt.htmlLabels) {
+						this.htmlElements.push(da.createText[render]
+							(this.chart, textGroup, (!dojo._isBodyLtr() && render == "html") ? (point.x + fontWidth - dim.width) : point.x, point.y,
+								"start", text, axisTickFont, axisTickFontColor));
+					}
+				}
+				k++;
+			}
+			
+			//draw series (animation)
+			this.chart.seriesShapes = {};
+			var animationConnections = [];
+			for (var i = this.series.length - 1; i >= 0; i--) {
+				var serieEntry = this.series[i], run = serieEntry.data;
+				if (run !== null) {
+					//series polygon
+					var seriePoints = [], k = 0, tipData = [];
+					for(var key in run){
+						var data = this.datas[key], min = data.min, max = data.max, distance = max - min,
+							entry = run[key], end = start + 2 * Math.PI * k / len,
+							point = this._getCoordinate(circle, r*(ro + (1-ro)*(entry-min)/distance), end);
+						seriePoints.push(point);
+						tipData.push({sname: serieEntry.name, key: key, data: entry});
+						k++;
+					}
+					seriePoints[seriePoints.length] = seriePoints[0];
+					tipData[tipData.length] = tipData[0];
+					var polygonBoundRect = this._getBoundary(seriePoints),
+						theme = t.next("spider", [o, serieEntry]), ts = serieEntry.group,
+						f = g.normalizeColor(theme.series.fill), sk = {color: theme.series.fill, width: seriesWidth};
+					f.a = o.seriesFillAlpha;
+					serieEntry.dyn = {fill: f, stroke: sk};
+					
+					var osps = this.oldSeriePoints[serieEntry.name];
+					var cs = this._createSeriesEntry(ts, (osps || innerPoints), seriePoints, f, sk, r, ro, ms, at);
+					this.chart.seriesShapes[serieEntry.name] = cs;
+					this.oldSeriePoints[serieEntry.name] = seriePoints;
+					
+					var po = {
+						element: "spider_poly",
+						index:	 i,
+						id:		 "spider_poly_"+serieEntry.name,
+						run:	 serieEntry,
+						plot:	 this,
+						shape:	 cs.poly,
+						parent:	 ts,
+						brect:	 polygonBoundRect,
+						cx:		 circle.cx,
+						cy:		 circle.cy,
+						cr:		 r,
+						f:		 f,
+						s:		 s
+					};
+					this._connectEvents(po);
+					
+					var so = {
+						element: "spider_plot",
+						index:	 i,
+						id:		 "spider_plot_"+serieEntry.name,
+						run:	 serieEntry,
+						plot:	 this,
+						shape:	 serieEntry.group
+					};
+					this._connectEvents(so);
+					
+					dojo.forEach(cs.circles, function(c, i){
+						var shape = c.getShape(),
+							co = {
+								element: "spider_circle",
+								index:	 i,
+								id:		 "spider_circle_"+serieEntry.name+i,
+								run:	 serieEntry,
+								plot:	 this,
+								shape:	 c,
+								parent:	 ts,
+								tdata:	 tipData[i],
+								cx:		 seriePoints[i].x,
+								cy:		 seriePoints[i].y,
+								f:		 f,
+								s:		 s
+							};
+						this._connectEvents(co);
+					}, this);
+				}
+			}
+			return this;	//	dojox.charting.plot2d.Spider
+		},
+		_createSeriesEntry: function(ts, osps, sps, f, sk, r, ro, ms, at){
+			//polygon
+			var spoly = ts.createPolyline(osps).setFill(f).setStroke(sk), scircle = [];
+			for (var j = 0; j < osps.length; j++) {
+				var point = osps[j], cr = ms;
+				var circle = ts.createCircle({cx: point.x, cy: point.y, r: cr}).setFill(f).setStroke(sk);
+				scircle.push(circle);
+			}
+			
+			var anims = dojo.map(sps, function(np, j){
+				// create animation
+				var sp = osps[j],
+					anim = new dojo._Animation({
+					duration: 1000,
+					easing:	  at,
+					curve:	  [sp.y, np.y]
+				});
+				var spl = spoly, sc = scircle[j];
+				dojo.connect(anim, "onAnimate", function(y){
+					//apply poly
+					var pshape = spl.getShape();
+					pshape.points[j].y = y;
+					spl.setShape(pshape);
+					//apply circle
+					var cshape = sc.getShape();
+					cshape.cy = y;
+					sc.setShape(cshape);
+				});
+				return anim;
+			});
+			
+			var anims1 = dojo.map(sps, function(np, j){
+				// create animation
+				var sp = osps[j],
+					anim = new dojo._Animation({
+					duration: 1000,
+					easing:	  at,
+					curve:	  [sp.x, np.x]
+				});
+				var spl = spoly, sc = scircle[j];
+				dojo.connect(anim, "onAnimate", function(x){
+					//apply poly
+					var pshape = spl.getShape();
+					pshape.points[j].x = x;
+					spl.setShape(pshape);
+					//apply circle
+					var cshape = sc.getShape();
+					cshape.cx = x;
+					sc.setShape(cshape);
+				});
+				return anim;
+			});
+			var masterAnimation = dojo.fx.combine(anims.concat(anims1)); //dojo.fx.chain(anims);
+			masterAnimation.play();
+			return {group :ts, poly: spoly, circles: scircle};
+		},
+		plotEvent: function(o){
+			//	summary:
+			//		Stub function for use by specific plots.
+			//	o: Object
+			//		An object intended to represent event parameters.
+			var runName = o.id ? o.id : "default", a;
+			if (runName in this.animations) {
+				a = this.animations[runName];
+				a.anim && a.anim.stop(true);
+			} else {
+				a = this.animations[runName] = {};
+			}
+			if(o.element == "spider_poly"){
+				if(!a.color){
+					var color = o.shape.getFill();
+					if(!color || !(color instanceof dojo.Color)){
+						return;
+					}
+					a.color = {
+						start: color,
+						end:   transColor(color)
+					};
+				}
+				var start = a.color.start, end = a.color.end;
+				if(o.type == "onmouseout"){
+					// swap colors
+					var t = start; start = end; end = t;
+				}
+				a.anim = dojox.gfx.fx.animateFill({
+					shape:	  o.shape,
+					duration: 800,
+					easing:	  dojo.fx.easing.backOut,
+					color:	  {start: start, end: end}
+				});
+				a.anim.play();
+			}else if(o.element == "spider_circle"){
+				var init, scale, defaultScale = 1.5;
+				if(o.type == "onmouseover"){
+					init  = dojox.gfx.matrix.identity;
+					scale = defaultScale;
+					//show tooltip
+					var aroundRect = {type: "rect"};
+					aroundRect.x = o.cx;
+					aroundRect.y = o.cy;
+					aroundRect.width = aroundRect.height = 1;
+					var lt = dojo.coords(this.chart.node, true);
+					aroundRect.x += lt.x;
+					aroundRect.y += lt.y;
+					aroundRect.x = Math.round(aroundRect.x);
+					aroundRect.y = Math.round(aroundRect.y);
+					aroundRect.width = Math.ceil(aroundRect.width);
+					aroundRect.height = Math.ceil(aroundRect.height);
+					this.aroundRect = aroundRect;
+					var position = ["after", "before"];
+					if(dijit && dijit.Tooltip){
+						dijit.showTooltip(o.tdata.sname + "<br/>" + o.tdata.key + "<br/>" + o.tdata.data, this.aroundRect, position);
+					}
+				}else{
+					init  = dojox.gfx.matrix.scaleAt(defaultScale, o.cx, o.cy);
+					scale = 1/defaultScale;
+					if(dijit && dijit.Tooltip){
+						this.aroundRect && dijit.hideTooltip(this.aroundRect);
+					}
+				}
+				var cs = o.shape.getShape(),
+					init = m.scaleAt(defaultScale, cs.cx, cs.cy),
+					kwArgs = {
+						shape: o.shape,
+						duration: 200,
+						easing:	  dojo.fx.easing.backOut,
+						transform: [
+							{name: "scaleAt", start: [1, cs.cx, cs.cy], end: [scale, cs.cx, cs.cy]},
+							init
+						]
+					};
+				a.anim = dojox.gfx.fx.animateTransform(kwArgs);
+				a.anim.play();
+			}else if(o.element == "spider_plot"){
+				//dojo gfx function "moveToFront" not work in IE
+				if (o.type == "onmouseover" && !dojo.isIE) {
+					o.shape.moveToFront();
+				}
+			}
+		},
+		_getBoundary: function(points){
+			var xmax = points[0].x,
+				xmin = points[0].x,
+				ymax = points[0].y,
+				ymin = points[0].y;
+			for(var i = 0; i < points.length; i++){
+				var point = points[i];
+				xmax = Math.max(point.x, xmax);
+				ymax = Math.max(point.y, ymax);
+				xmin = Math.min(point.x, xmin);
+				ymin = Math.min(point.y, ymin);
+			}
+			return {
+				x: xmin,
+				y: ymin,
+				width: xmax - xmin,
+				height: ymax - ymin
+			};
+		},
+		
+		_drawArrow: function(s, start, end, stroke){
+			var len = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)),
+				sin = (end.y - start.y)/len, cos = (end.x - start.x)/len,
+				point2 = {x: end.x + (len/3)*(-sin), y: end.y + (len/3)*cos},
+				point3 = {x: end.x + (len/3)*sin, y: end.y + (len/3)*(-cos)};
+			s.createPolyline([start, point2, point3]).setFill(stroke.color).setStroke(stroke);
+		},
+		
+		_buildPoints: function(points, count, circle, radius, angle, recursive){
+			for (var i = 0; i < count; i++) {
+				var end = angle + 2 * Math.PI * i / count;
+				points.push(this._getCoordinate(circle, radius, end));
+			}
+			if(recursive){
+				points.push(this._getCoordinate(circle, radius, angle + 2 * Math.PI));
+			}
+		},
+		
+		_getCoordinate: function(circle, radius, angle){
+			return {
+				x: circle.cx + radius * Math.cos(angle),
+				y: circle.cy + radius * Math.sin(angle)
+			}
+		},
+		
+		_getObjectLength: function(obj){
+			var count = 0;
+			if(dojo.isObject(obj)){
+				for(var key in obj){
+					count++;
+				}
+			}
+			return count;
+		},
+
+		// utilities
+		_getLabel: function(number){
+			return dc.getLabel(number, this.opt.fixed, this.opt.precision);
+		}
+	});
+	
+	function transColor(color){
+		var a = new dojox.color.Color(color),
+			x = a.toHsl();
+		if(x.s == 0){
+			x.l = x.l < 50 ? 100 : 0;
+		}else{
+			x.s = 100;
+			if(x.l < 50){
+				x.l = 75;
+			}else if(x.l > 75){
+				x.l = 50;
+			}else{
+				x.l = x.l - 50 > 75 - x.l ?
+					50 : 75;
+			}
+		}
+		var color = dojox.color.fromHsl(x);
+		color.a = 0.7;
+		return color;
+	}
+	
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.Chart2D"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.Chart2D"] = true;
+dojo.provide("dojox.charting.Chart2D");
+
+dojo.deprecated("dojox.charting.Chart2D", "Use dojo.charting.Chart instead and require all other components explicitly", "2.0");
+
+// require all axes to support references by name
+
+
+
+// require all plots to support references by name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// require the main file
+
+
+dojox.charting.Chart2D = dojox.charting.Chart;
+
+}
+
+if(!dojo._hasResource["dojox.charting.widget.Chart2D"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.widget.Chart2D"] = true;
+dojo.provide("dojox.charting.widget.Chart2D");
+
+dojo.deprecated("dojox.charting.widget.Chart2D", "Use dojo.charting.widget.Chart instead and require all other components explicitly", "2.0");
+
+
+
+// require all actions to support references by name
+
+
+
+
+
+
+// require Chart2D to get compatibility on chart type reference by name
+
+
+dojox.charting.widget.Chart2D =  dojox.charting.widget.Chart;
+
+}
+
+if(!dojo._hasResource["dojox.charting.themes.GreySkies"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.themes.GreySkies"] = true;
+dojo.provide("dojox.charting.themes.GreySkies");
+
+
+(function(){
+	var dxc=dojox.charting;
+	dxc.themes.GreySkies=new dxc.Theme(dxc.Theme._def);
+})();
+
+}
+
+if(!dojo._hasResource["dojox.charting.widget.Sparkline"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
+dojo._hasResource["dojox.charting.widget.Sparkline"] = true;
+dojo.provide("dojox.charting.widget.Sparkline");
+
+
+
+
+
+
+(function(){
+
+	var d = dojo;
+
+	dojo.declare("dojox.charting.widget.Sparkline",
+		dojox.charting.widget.Chart2D,
+		{
+			theme: dojox.charting.themes.GreySkies,
+			margins: { l: 0, r: 0, t: 0, b: 0 },
+			type: "Lines",
+			valueFn: "Number(x)",
+			store: "",
+			field: "",
+			query: "",
+			queryOptions: "",
+			start: "0",
+			count: "Infinity",
+			sort: "",
+			data: "",
+			name: "default",
+			buildRendering: function(){
+				var n = this.srcNodeRef;
+				if(	!n.childNodes.length || // shortcut the query
+					!d.query("> .axis, > .plot, > .action, > .series", n).length){
+					var plot = document.createElement("div");
+					d.attr(plot, {
+						"class": "plot",
+						"name": "default",
+						"type": this.type
+					});
+					n.appendChild(plot);
+
+					var series = document.createElement("div");
+					d.attr(series, {
+						"class": "series",
+						plot: "default",
+						name: this.name,
+						start: this.start,
+						count: this.count,
+						valueFn: this.valueFn
+					});
+					d.forEach(
+						["store", "field", "query", "queryOptions", "sort", "data"],
+						function(i){
+							if(this[i].length){
+								d.attr(series, i, this[i]);
+							}
+						},
+						this
+					);
+					n.appendChild(series);
+				}
+				this.inherited(arguments);
+			}
+		}
+	);
+
+})();
+
+}
+
 if(!dojo._hasResource["dojox.charting.widget.Legend"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.charting.widget.Legend"] = true;
 dojo.provide("dojox.charting.widget.Legend");
@@ -18910,7 +18878,7 @@ dojo.provide("dojox.charting.widget.Legend");
 
 
 dojo.declare("dojox.charting.widget.Legend", [dijit._Widget, dijit._Templated], {
-	// summary: A legend for a chart. A legend contains summary labels for 
+	// summary: A legend for a chart. A legend contains summary labels for
 	// each series of data contained in the chart.
 	//
 	// Set the horizontal attribute to boolean false to layout legend labels vertically.
@@ -19071,794 +19039,3 @@ dojo.declare("dojox.charting.widget.Legend", [dijit._Widget, dijit._Templated], 
 
 }
 
-if(!dojo._hasResource["dojox.charting.plot2d.Spider"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.plot2d.Spider"] = true;
-dojo.provide("dojox.charting.plot2d.Spider");
-
-dojo.experimental("dojox.charting.plot2d.Spider");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(function(){
-	var df = dojox.lang.functional, du = dojox.lang.utils,
-		dc = dojox.charting.plot2d.common,
-		da = dojox.charting.axis2d.common,
-		g = dojox.gfx, m = g.matrix,
-		FUDGE_FACTOR = 0.2; // use to overlap fans
-
-	dojo.declare("dojox.charting.plot2d.Spider", [dojox.charting.Element, dojox.charting.plot2d._PlotEvents], {
-		//	summary:
-		//		The plot that represents a typical Spider chart.
-		defaultParams: {
-			labels:			true,
-			ticks:			false,
-			fixed:			true,
-			precision:		1,
-			labelOffset:	-10,
-			labelStyle:		"default",	// default/rows/auto
-			htmlLabels:		true,		// use HTML to draw labels
-			startAngle:     -90,		// start angle for slices in degrees
-            divisions:       3,			// radius tick count
-            axisColor:       "",		// spider axis color
-            axisWidth:       0,			// spider axis stroke width
-            spiderColor:     "",		// spider web color
-            spiderWidth:     0,			// spider web stroke width
-            seriesWidth:     0,			// plot border with
-            seriesFillAlpha: 0.2,		// plot fill alpha
-			spiderOrigin:	 0.16,		
-			markerSize:  	 3,			// radius of plot vertex (px)
-			spiderType:		 "polygon", //"circle"
-			animationType:	 dojo.fx.easing.backOut,
-			axisTickFont:	 	"",
-			axisTickFontColor:	"",
-			axisFont:		 	"",
-			axisFontColor:	 	""
-		},
-		optionalParams: {
-			radius:		0,
-			font:		"",
-			fontColor:	""
-		},
-
-		constructor: function(chart, kwArgs){
-			//	summary:
-			//		Create a Spider plot.
-			this.opt = dojo.clone(this.defaultParams);
-			du.updateWithObject(this.opt, kwArgs);
-			du.updateWithPattern(this.opt, kwArgs, this.optionalParams);
-			this.series = [];
-			this.dyn = [];
-			this.datas = {};
-			this.labelKey = [];
-			this.oldSeriePoints = {};
-			this.animations = {};
-		},
-		clear: function(){
-			//	summary:
-			//		Clear out all of the information tied to this plot.
-			//	returns: dojox.charting.plot2d.Spider
-			//		A reference to this plot for functional chaining.
-			this.dirty = true;
-			this.dyn = [];
-			this.series = [];
-			this.datas = {};
-			this.labelKey = [];
-			this.oldSeriePoints = {};
-			this.animations = {};
-			return this;	//	dojox.charting.plot2d.Spider
-		},
-		setAxis: function(axis){
-			//	summary:
-			//		Dummy method, since axes are irrelevant with a Spider chart.
-			//	returns: dojox.charting.plot2d.Spider
-			//		The reference to this plot for functional chaining.
-			return this;	//	dojox.charting.plot2d.Spider
-		},
-		addSeries: function(run){
-			//	summary:
-			//		Add a data series to this plot.
-			//	run: dojox.charting.Series
-			//		The series to be added.
-			//	returns: dojox.charting.plot2d.Base
-			//		A reference to this plot for functional chaining.
-			var matched = false;
-			this.series.push(run);
-			for(var key in run.data){
-				var val = run.data[key],
-					data = this.datas[key];
-				if(data){
-					data.vlist.push(val);
-					data.min = Math.min(data.min, val);
-					data.max = Math.max(data.max, val);
-				}else{
-					this.datas[key] = {min: val, max: val, vlist: [val]};
-				}
-			}
-			if (this.labelKey.length <= 0) {
-				for (var key in run.data) {
-					this.labelKey.push(key);
-				}
-			}
-			return this;	//	dojox.charting.plot2d.Base
-		},
-		getSeriesStats: function(){
-			//	summary:
-			//		Calculate the min/max on all attached series in both directions.
-			//	returns: Object
-			//		{hmin, hmax, vmin, vmax} min/max in both directions.
-			return dojox.charting.plot2d.common.collectSimpleStats(this.series);
-		},
-		calculateAxes: function(dim){
-			//	summary:
-			//		Stub function for running the axis calculations (depricated).
-			//	dim: Object
-			//		An object of the form { width, height }
-			//	returns: dojox.charting.plot2d.Base
-			//		A reference to this plot for functional chaining.
-			this.initializeScalers(dim, this.getSeriesStats());
-			return this;	//	dojox.charting.plot2d.Base
-		},
-		getRequiredColors: function(){
-			//	summary:
-			//		Get how many data series we have, so we know how many colors to use.
-			//	returns: Number
-			//		The number of colors needed.
-			return this.series.length;	//	Number
-		},
-		initializeScalers: function(dim, stats){
-			//	summary:
-			//		Initializes scalers using attached axes.
-			//	dim: Object:
-			//		Size of a plot area in pixels as {width, height}.
-			//	stats: Object:
-			//		Min/max of data in both directions as {hmin, hmax, vmin, vmax}.
-			//	returns: dojox.charting.plot2d.Base
-			//		A reference to this plot for functional chaining.
-			if(this._hAxis){
-				if(!this._hAxis.initialized()){
-					this._hAxis.calculate(stats.hmin, stats.hmax, dim.width);
-				}
-				this._hScaler = this._hAxis.getScaler();
-			}else{
-				this._hScaler = dojox.charting.scaler.primitive.buildScaler(stats.hmin, stats.hmax, dim.width);
-			}
-			if(this._vAxis){
-				if(!this._vAxis.initialized()){
-					this._vAxis.calculate(stats.vmin, stats.vmax, dim.height);
-				}
-				this._vScaler = this._vAxis.getScaler();
-			}else{
-				this._vScaler = dojox.charting.scaler.primitive.buildScaler(stats.vmin, stats.vmax, dim.height);
-			}
-			return this;	//	dojox.charting.plot2d.Base
-		},
-		render: function(dim, offsets){
-			//	summary:
-			//		Render the plot on the chart.
-			//	dim: Object
-			//		An object of the form { width, height }.
-			//	offsets: Object
-			//		An object of the form { l, r, t, b }.
-			//	returns: dojox.charting.plot2d.Spider
-			//		A reference to this plot for functional chaining.
-			if(!this.dirty){ return this; }
-			this.dirty = false;
-			this.cleanGroup();
-			var s = this.group, t = this.chart.theme;
-			this.resetEvents();
-
-			if(!this.series || !this.series.length){
-				return this;
-			}
-
-			// calculate the geometry
-			var o = this.opt, ta = t.axis,
-				rx = (dim.width  - offsets.l - offsets.r) / 2,
-				ry = (dim.height - offsets.t - offsets.b) / 2,
-				r  = Math.min(rx, ry),
-				axisTickFont = o.font || (ta.majorTick && ta.majorTick.font) || (ta.tick && ta.tick.font) || "normal normal normal 7pt Tahoma",
-				axisFont = o.axisFont || (ta.tick && ta.tick.titleFont) || "normal normal normal 11pt Tahoma",
-				axisTickFontColor = o.axisTickFontColor || (ta.majorTick && ta.majorTick.fontColor) || (ta.tick && ta.tick.fontColor) || "silver",
-				axisFontColor = o.axisFontColor || (ta.tick && ta.tick.titleFontColor) || "black",
-				axisColor = o.axisColor || (ta.tick && ta.tick.axisColor) || "silver",
-				spiderColor = o.spiderColor || (ta.tick && ta.tick.spiderColor) || "silver",
-				axisWidth = o.axisWidth || (ta.stroke && ta.stroke.width) || 2,
-				spiderWidth = o.spiderWidth || (ta.stroke && ta.stroke.width) || 2,
-				seriesWidth = o.seriesWidth || (ta.stroke && ta.stroke.width) || 2,
-				asize = g.normalizedLength(g.splitFontString(axisFont).size),
-				startAngle = m._degToRad(o.startAngle),
-				start = startAngle, step, filteredRun, slices, labels, shift, labelR, 
-				outerPoints, innerPoints, divisionPoints, divisionRadius, labelPoints,
-				ro = o.spiderOrigin, dv = o.divisions >= 3 ? o.divisions : 3, ms = o.markerSize,
-				spt = o.spiderType, at = o.animationType, lboffset = o.labelOffset < -10 ? o.labelOffset : -10,
-				axisExtra = 0.2;
-			
-			if(o.labels){
-				labels = dojo.map(this.series, function(s){
-					return s.name;
-				}, this);
-				shift = df.foldl1(df.map(labels, function(label, i){
-					var font = t.series.font;
-					return dojox.gfx._base._getTextBox(label, {
-						font: font
-					}).w;
-				}, this), "Math.max(a, b)") / 2;
-				r = Math.min(rx - 2 * shift, ry - asize) + lboffset;
-				labelR = r - lboffset;
-			}
-			if ("radius" in o) {
-				r = o.radius;
-				labelR = r - lboffset;
-			}
-			r /= (1+axisExtra);
-			var circle = {
-				cx: offsets.l + rx,
-				cy: offsets.t + ry,
-				r: r
-			};
-			
-			for (var i = this.series.length - 1; i >= 0; i--) {
-				var serieEntry = this.series[i];
-				if (!this.dirty && !serieEntry.dirty) {
-					t.skip();
-					continue;
-				}
-				serieEntry.cleanGroup();
-				var run = serieEntry.data;
-				if (run !== null) {
-					var len = this._getObjectLength(run);
-					//construct connect points
-					if (!outerPoints || outerPoints.length <= 0) {
-						outerPoints = [], innerPoints = [], labelPoints = [];
-						this._buildPoints(outerPoints, len, circle, r, start, true);
-						this._buildPoints(innerPoints, len, circle, r*ro, start, true);
-						this._buildPoints(labelPoints, len, circle, labelR, start);
-						if(dv > 2){
-							divisionPoints = [], divisionRadius = [];
-							for (var j = 0; j < dv - 2; j++) {
-								divisionPoints[j] = [];
-								this._buildPoints(divisionPoints[j], len, circle, r*(ro + (1-ro)*(j+1)/(dv-1)), start, true);
-								divisionRadius[j] = r*(ro + (1-ro)*(j+1)/(dv-1));
-							}
-						}
-					}
-				}
-			}
-			
-			//draw Spider
-			//axis
-			var axisGroup = s.createGroup(), axisStroke = {color: axisColor, width: axisWidth},
-				spiderStroke = {color: spiderColor, width: spiderWidth};
-			for (var j = outerPoints.length - 1; j >= 0; --j) {
-				var point = outerPoints[j],
-					st = {
-						x: point.x + (point.x - circle.cx) * axisExtra,
-						y: point.y + (point.y - circle.cy) * axisExtra
-					},
-					nd = {
-						x: point.x + (point.x - circle.cx) * axisExtra / 2,
-						y: point.y + (point.y - circle.cy) * axisExtra / 2
-					};
-				axisGroup.createLine({
-					x1: circle.cx,
-					y1: circle.cy,
-					x2: st.x,
-					y2: st.y
-				}).setStroke(axisStroke);
-				//arrow
-				this._drawArrow(axisGroup, st, nd, axisStroke);
-			}
-			
-			// draw the label
-			var labelGroup = s.createGroup();
-			for (var j = labelPoints.length - 1; j >= 0; --j) {
-				var point = labelPoints[j],
-					fontWidth = dojox.gfx._base._getTextBox(this.labelKey[j], {font: axisFont}).w || 0,
-					render = this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx";
-					elem = da.createText[render](this.chart, labelGroup, (!dojo._isBodyLtr() && render == "html") ? (point.x + fontWidth - dim.width) : point.x, point.y, 
-							"middle", this.labelKey[j], axisFont, axisFontColor);
-				if (this.opt.htmlLabels) {
-					this.htmlElements.push(elem);
-				}
-			}
-			
-			//spider web: polygon or circle
-			var spiderGroup = s.createGroup();
-			if(spt == "polygon"){
-				spiderGroup.createPolyline(outerPoints).setStroke(spiderStroke);
-				spiderGroup.createPolyline(innerPoints).setStroke(spiderStroke);
-				if (divisionPoints.length > 0) {
-					for (var j = divisionPoints.length - 1; j >= 0; --j) {
-						spiderGroup.createPolyline(divisionPoints[j]).setStroke(spiderStroke);
-					}
-				}
-			}else{//circle
-				var ccount = this._getObjectLength(this.datas);
-				spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: r}).setStroke(spiderStroke);
-				spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: r*ro}).setStroke(spiderStroke);
-				if (divisionRadius.length > 0) {
-					for (var j = divisionRadius.length - 1; j >= 0; --j) {
-						spiderGroup.createCircle({cx: circle.cx, cy: circle.cy, r: divisionRadius[j]}).setStroke(spiderStroke);
-					}
-				}
-			}
-			//text
-			var textGroup = s.createGroup(), len = this._getObjectLength(this.datas), k = 0;
-			for(var key in this.datas){
-				var data = this.datas[key], min = data.min, max = data.max, distance = max - min, 
-					end = start + 2 * Math.PI * k / len;
-				for (var i = 0; i < dv; i++) {
-					var text = min + distance*i/(dv-1), point = this._getCoordinate(circle, r*(ro + (1-ro)*i/(dv-1)), end);
-					text = this._getLabel(text);
-					var fontWidth = dojox.gfx._base._getTextBox(text, {font: axisTickFont}).w || 0,
-						render = this.opt.htmlLabels && dojox.gfx.renderer != "vml" ? "html" : "gfx";
-					if (this.opt.htmlLabels) {
-						this.htmlElements.push(da.createText[render]
-							(this.chart, textGroup, (!dojo._isBodyLtr() && render == "html") ? (point.x + fontWidth - dim.width) : point.x, point.y, 
-								"start", text, axisTickFont, axisTickFontColor));
-					}
-				}
-				k++;
-			}
-			
-			//draw series (animation)
-			this.chart.seriesShapes = {};
-			var animationConnections = [];
-			for (var i = this.series.length - 1; i >= 0; i--) {
-				var serieEntry = this.series[i], run = serieEntry.data;
-				if (run !== null) {
-					//series polygon
-					var seriePoints = [], k = 0, tipData = [];
-					for(var key in run){
-						var data = this.datas[key], min = data.min, max = data.max, distance = max - min,
-							entry = run[key], end = start + 2 * Math.PI * k / len,
-							point = this._getCoordinate(circle, r*(ro + (1-ro)*(entry-min)/distance), end);
-						seriePoints.push(point);
-						tipData.push({sname: serieEntry.name, key: key, data: entry});
-						k++;
-					}
-					seriePoints[seriePoints.length] = seriePoints[0];
-					tipData[tipData.length] = tipData[0];
-					var polygonBoundRect = this._getBoundary(seriePoints),
-						theme = t.next("spider", [o, serieEntry]), ts = serieEntry.group,
-						f = g.normalizeColor(theme.series.fill), sk = {color: theme.series.fill, width: seriesWidth};
-					f.a = o.seriesFillAlpha;
-					serieEntry.dyn = {fill: f, stroke: sk};
-					
-					var osps = this.oldSeriePoints[serieEntry.name];
-					var cs = this._createSeriesEntry(ts, (osps || innerPoints), seriePoints, f, sk, r, ro, ms, at);
-					this.chart.seriesShapes[serieEntry.name] = cs;
-					this.oldSeriePoints[serieEntry.name] = seriePoints;
-					
-					var po = {
-						element: "spider_poly",
-						index:   i,
-						id:	 	 "spider_poly_"+serieEntry.name,
-						run:     serieEntry,
-						plot:    this,
-						shape:   cs.poly,
-						parent:	 ts,
-						brect:	 polygonBoundRect,
-						cx:      circle.cx,
-						cy:      circle.cy,
-						cr:      r,
-						f:		 f,
-						s: 		 s
-					};
-					this._connectEvents(po);
-					
-					var so = {
-						element: "spider_plot",
-						index:   i,
-						id:	 	 "spider_plot_"+serieEntry.name,
-						run:     serieEntry,
-						plot:    this,
-						shape:   serieEntry.group
-					};
-					this._connectEvents(so);
-					
-					dojo.forEach(cs.circles, function(c, i){
-						var shape = c.getShape(),
-							co = {
-								element: "spider_circle",
-								index:   i,
-								id:	 	 "spider_circle_"+serieEntry.name+i,
-								run:     serieEntry,
-								plot:    this,
-								shape:   c,
-								parent:	 ts,
-								tdata:	 tipData[i],
-								cx:      seriePoints[i].x,
-								cy:      seriePoints[i].y,
-								f:		 f,
-								s:		 s
-							};
-						this._connectEvents(co);
-					}, this);
-				}
-			}
-			return this;	//	dojox.charting.plot2d.Spider
-		},
-		_createSeriesEntry: function(ts, osps, sps, f, sk, r, ro, ms, at){
-			//polygon
-			var spoly = ts.createPolyline(osps).setFill(f).setStroke(sk), scircle = [];
-			for (var j = 0; j < osps.length; j++) {
-				var point = osps[j], cr = ms;
-				var circle = ts.createCircle({cx: point.x, cy: point.y, r: cr}).setFill(f).setStroke(sk);
-				scircle.push(circle);
-			}
-			
-			var anims = dojo.map(sps, function(np, j){
-                // create animation
-				var sp = osps[j],
-                	anim = new dojo._Animation({
-                    duration: 1000,
-                    easing:   at,
-                    curve:    [sp.y, np.y]
-                });
-				var spl = spoly, sc = scircle[j];
-                dojo.connect(anim, "onAnimate", function(y){
-                    //apply poly
-					var pshape = spl.getShape();
-					pshape.points[j].y = y;
-                    spl.setShape(pshape);
-					//apply circle
-					var cshape = sc.getShape();
-					cshape.cy = y;
-					sc.setShape(cshape);
-                });
-				return anim;
-            });
-			
-			var anims1 = dojo.map(sps, function(np, j){
-                // create animation
-				var sp = osps[j],
-                	anim = new dojo._Animation({
-                    duration: 1000,
-                    easing:   at,
-                    curve:    [sp.x, np.x]
-                });
-				var spl = spoly, sc = scircle[j];
-                dojo.connect(anim, "onAnimate", function(x){
-                    //apply poly
-					var pshape = spl.getShape();
-					pshape.points[j].x = x;
-                    spl.setShape(pshape);
-					//apply circle
-					var cshape = sc.getShape();
-					cshape.cx = x;
-					sc.setShape(cshape);
-                });
-				return anim;
-            });
-            var masterAnimation = dojo.fx.combine(anims.concat(anims1)); //dojo.fx.chain(anims);
-			masterAnimation.play();
-			return {group :ts, poly: spoly, circles: scircle};
-		},
-		plotEvent: function(o){
-			//	summary:
-			//		Stub function for use by specific plots.
-			//	o: Object
-			//		An object intended to represent event parameters.
-			var runName = o.id ? o.id : "default", a;
-			if (runName in this.animations) {
-				a = this.animations[runName];
-				a.anim && a.anim.stop(true);
-			} else {
-				a = this.animations[runName] = {};
-			}
-			if(o.element == "spider_poly"){
-				if(!a.color){
-					var color = o.shape.getFill();
-					if(!color || !(color instanceof dojo.Color)){
-						return;
-					}
-					a.color = {
-						start: color,
-						end:   transColor(color)
-					};
-				}
-				var start = a.color.start, end = a.color.end; 
-				if(o.type == "onmouseout"){
-					// swap colors
-					var t = start; start = end; end = t;
-				}
-				a.anim = dojox.gfx.fx.animateFill({
-					shape:    o.shape,
-					duration: 800,
-					easing:   dojo.fx.easing.backOut,
-					color:    {start: start, end: end}
-				});
-				a.anim.play();
-			}else if(o.element == "spider_circle"){
-				var init, scale, defaultScale = 1.5;
-				if(o.type == "onmouseover"){
-					init  = dojox.gfx.matrix.identity;
-					scale = defaultScale;
-					//show tooltip
-					var aroundRect = {type: "rect"};
-					aroundRect.x = o.cx;
-					aroundRect.y = o.cy;
-					aroundRect.width = aroundRect.height = 1;
-					var lt = dojo.coords(this.chart.node, true);
-					aroundRect.x += lt.x;
-					aroundRect.y += lt.y;
-					aroundRect.x = Math.round(aroundRect.x);
-					aroundRect.y = Math.round(aroundRect.y);
-					aroundRect.width = Math.ceil(aroundRect.width);
-					aroundRect.height = Math.ceil(aroundRect.height);
-					this.aroundRect = aroundRect;
-					var position = ["after", "before"];
-					dijit.showTooltip(o.tdata.sname + "<br/>" + o.tdata.key + "<br/>" + o.tdata.data, this.aroundRect, position);
-				}else{
-					init  = dojox.gfx.matrix.scaleAt(defaultScale, o.cx, o.cy);
-					scale = 1/defaultScale;
-					//hide tooltip
-					this.aroundRect && dijit.hideTooltip(this.aroundRect);
-				}
-				var cs = o.shape.getShape(),
-					init = m.scaleAt(defaultScale, cs.cx, cs.cy),
-					kwArgs = {
-						shape: o.shape,
-						duration: 200,
-						easing:   dojo.fx.easing.backOut,
-						transform: [
-							{name: "scaleAt", start: [1, cs.cx, cs.cy], end: [scale, cs.cx, cs.cy]},
-							init
-						]
-					};
-				a.anim = dojox.gfx.fx.animateTransform(kwArgs);
-				a.anim.play();
-			}else if(o.element == "spider_plot"){
-				//dojo gfx function "moveToFront" not work in IE 
-				if (o.type == "onmouseover" && !dojo.isIE) {
-					o.shape.moveToFront();
-				}
-			}
-		},
-		_getBoundary: function(points){
-			var xmax = points[0].x,
-				xmin = points[0].x,
-				ymax = points[0].y,
-				ymin = points[0].y;
-			for(var i = 0; i < points.length; i++){
-				var point = points[i];
-				xmax = Math.max(point.x, xmax);
-				ymax = Math.max(point.y, ymax);
-				xmin = Math.min(point.x, xmin);
-				ymin = Math.min(point.y, ymin);
-			}
-			return {
-				x: xmin,
-				y: ymin,
-				width: xmax - xmin,
-				height: ymax - ymin
-			};
-		},
-		
-		_drawArrow: function(s, start, end, stroke){
-			var len = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)),
-				sin = (end.y - start.y)/len, cos = (end.x - start.x)/len,
-				point2 = {x: end.x + (len/3)*(-sin), y: end.y + (len/3)*cos},
-				point3 = {x: end.x + (len/3)*sin, y: end.y + (len/3)*(-cos)};
-			s.createPolyline([start, point2, point3]).setFill(stroke.color).setStroke(stroke);
-		},
-		
-		_buildPoints: function(points, count, circle, radius, angle, recursive){
-			for (var i = 0; i < count; i++) {
-				var end = angle + 2 * Math.PI * i / count;
-				points.push(this._getCoordinate(circle, radius, end));
-			}
-			if(recursive){
-				points.push(this._getCoordinate(circle, radius, angle + 2 * Math.PI));
-			}
-		},
-		
-		_getCoordinate: function(circle, radius, angle){
-			return {
-				x: circle.cx + radius * Math.cos(angle),
-				y: circle.cy + radius * Math.sin(angle)
-			}
-		},
-		
-		_getObjectLength: function(obj){
-			var count = 0;
-			if(dojo.isObject(obj)){
-				for(var key in obj){
-					count++;
-				}
-			}
-			return count;
-		},
-
-		// utilities
-		_getLabel: function(number){
-			return this.opt.fixed ? dojo.number.format(number, {places: this.opt.precision}) : number.toString();
-		}
-	});
-	
-	function transColor(color){
-		var a = new dojox.color.Color(color),
-			x = a.toHsl();
-		if(x.s == 0){
-			x.l = x.l < 50 ? 100 : 0;
-		}else{
-			x.s = 100;
-			if(x.l < 50){
-				x.l = 75;
-			}else if(x.l > 75){
-				x.l = 50;
-			}else{
-				x.l = x.l - 50 > 75 - x.l ?
-					50 : 75;
-			}
-		}
-		var color = dojox.color.fromHsl(x);
-		color.a = 0.7;
-		return color;
-	};
-})();
-
-}
-
-if(!dojo._hasResource["dojox.charting.Chart2D"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.Chart2D"] = true;
-dojo.provide("dojox.charting.Chart2D");
-
-dojo.deprecated("dojox.charting.Chart2D", "Use dojo.charting.Chart instead and require all other components explicitly", "2.0");
-
-// require all axes to support references by name
-
-
-
-// require all plots to support references by name
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// require the main file
-
-
-dojox.charting.Chart2D = dojox.charting.Chart;
-
-}
-
-if(!dojo._hasResource["dojox.charting.widget.Chart2D"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.widget.Chart2D"] = true;
-dojo.provide("dojox.charting.widget.Chart2D");
-
-dojo.deprecated("dojox.charting.widget.Chart2D", "Use dojo.charting.widget.Chart instead and require all other components explicitly", "2.0");
-
-
-
-// require all actions to support references by name
-
-
-
-
-
-
-// require Chart2D to get compatibility on chart type reference by name
-
-
-dojox.charting.widget.Chart2D =  dojox.charting.widget.Chart;
-
-}
-
-if(!dojo._hasResource["dojox.charting.themes.GreySkies"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.themes.GreySkies"] = true;
-dojo.provide("dojox.charting.themes.GreySkies");
-
-
-(function(){
-	var dxc=dojox.charting;
-	dxc.themes.GreySkies=new dxc.Theme(dxc.Theme._def);
-})();
-
-}
-
-if(!dojo._hasResource["dojox.charting.widget.Sparkline"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.charting.widget.Sparkline"] = true;
-dojo.provide("dojox.charting.widget.Sparkline");
-
-
-
-
-
-
-(function(){
-
-	var d = dojo;
-
-	dojo.declare("dojox.charting.widget.Sparkline",
-		dojox.charting.widget.Chart2D,
-		{
-			theme: dojox.charting.themes.GreySkies,
-			margins: { l: 0, r: 0, t: 0, b: 0 },
-			type: "Lines",
-			valueFn: "Number(x)",
-			store: "",
-			field: "",
-			query: "",
-			queryOptions: "",
-			start: "0",
-			count: "Infinity",
-			sort: "",
-			data: "",
-			name: "default",
-			buildRendering: function(){
-				var n = this.srcNodeRef;
-				if(	!n.childNodes.length || // shortcut the query
-					!d.query("> .axis, > .plot, > .action, > .series", n).length){
-					var plot = document.createElement("div");
-					d.attr(plot, {
-						"class": "plot",
-						"name": "default",
-						"type": this.type
-					});
-					n.appendChild(plot);
-
-					var series = document.createElement("div");
-					d.attr(series, {
-						"class": "series",
-						plot: "default",
-						name: this.name,
-						start: this.start,
-						count: this.count,
-						valueFn: this.valueFn
-					});
-					d.forEach(
-						["store", "field", "query", "queryOptions", "sort", "data"],
-						function(i){
-							if(this[i].length){
-								d.attr(series, i, this[i]);
-							}
-						},
-						this
-					);
-					n.appendChild(series);
-				}
-				this.inherited(arguments);
-			}
-		}
-	);
-
-})();
-
-}
-
-
-dojo.i18n._preloadLocalizations("dojox.charting.widget.nls.Chart2D", ["ROOT","ar","ca","cs","da","de","de-de","el","en","en-gb","en-us","es","es-es","fi","fi-fi","fr","fr-fr","he","he-il","hu","it","it-it","ja","ja-jp","ko","ko-kr","nb","nl","nl-nl","pl","pt","pt-br","pt-pt","ru","sk","sl","sv","th","tr","xx","zh","zh-cn","zh-tw"]);

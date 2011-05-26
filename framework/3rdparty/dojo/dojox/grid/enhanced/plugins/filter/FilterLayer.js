@@ -180,6 +180,7 @@ return g(_2a,arg,_29,s);
 }).getValue());
 }
 catch(e){
+console.warn("FilterLayer._applyFilter() error: ",e);
 return false;
 }
 },_doFilter:function(_2b,_2c,_2d){

@@ -9,8 +9,8 @@
 .soria .dijitToolbar .dijitComboButton .dijitButtonContents,
 .soria .dijitToolbar .dijitComboButton .dijitDownArrowButton {
 	background: none;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	border: none;
 	font-size: 12px;
 }
@@ -26,14 +26,14 @@
 .soria .dijitToolbar .dijitToggleButtonChecked {
 	background-color:#d8e5f8;
 	border:1px solid #316ac5;
-	padding: 0px;
+	padding: 0;
 }
 .soria .dijitToolbar .dijitButtonCheckedHover,
 .soria .dijitToolbar .dijitToggleButtonCheckedHover
  {
 	background-color:#9abbea;
 	border:1px solid #316ac5;
-	padding: 0px;
+	padding: 0;
 }
 .soria .dijitToolbar .dijitButtonHover,
 .soria .dijitToolbar .dijitToggleButtonHover,
@@ -42,7 +42,7 @@
 .soria .dijitToolbar .dijitComboButton .dijitDownArrowButtonHover {
 	
 	border: 1px solid #316ac5;
-	padding: 0px;
+	padding: 0;
 	background-color:#9abbea;
 }
 .soria .dijitToolbar label {
@@ -52,5 +52,5 @@
 .dj_ie .soria .dijitToolbar .dijitComboButton .dijitDownArrowButtonFocused {
 	
 	border: 1px #777 dotted !important;
-	padding: 0px;
+	padding: 0;
 }

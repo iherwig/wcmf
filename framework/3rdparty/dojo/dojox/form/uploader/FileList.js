@@ -33,7 +33,6 @@ return;
 if(this.uploader){
 this.connect(this.uploader,"onChange","_onUploaderChange");
 this.connect(this.uploader,"reset","reset");
-if(this.supports("multiple")){
 this.connect(this.uploader,"onBegin",function(){
 this.showProgress(true);
 });
@@ -43,7 +42,6 @@ setTimeout(dojo.hitch(this,function(){
 this.hideProgress(true);
 }),1250);
 });
-}
 }else{
 this._upCheckCnt++;
 setTimeout(dojo.hitch(this,"setUploader"),250);

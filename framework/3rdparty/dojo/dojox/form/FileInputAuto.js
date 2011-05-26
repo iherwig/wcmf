@@ -40,7 +40,7 @@ dojo.style(this.overlay,{opacity:0,display:"block"});
 this.setMessage(this.uploadMessage);
 dojo.fadeIn({node:this.overlay,duration:this.duration}).play();
 var _2;
-if(dojo.isIE){
+if(dojo.isIE<9||(dojo.isIE&&dojo.isQuirks)){
 _2=document.createElement("<form enctype=\"multipart/form-data\" method=\"post\">");
 _2.encoding="multipart/form-data";
 }else{

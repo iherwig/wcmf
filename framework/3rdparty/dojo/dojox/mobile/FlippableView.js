@@ -8,7 +8,7 @@
 if(!dojo._hasResource["dojox.mobile.FlippableView"]){
 dojo._hasResource["dojox.mobile.FlippableView"]=true;
 dojo.provide("dojox.mobile.FlippableView");
-dojo.require("dijit._Widget");
+dojo.require("dijit._WidgetBase");
 dojo.require("dojox.mobile");
 dojo.require("dojox.mobile._ScrollableMixin");
 dojo.declare("dojox.mobile.FlippableView",[dojox.mobile.View,dojox.mobile._ScrollableMixin],{scrollDir:"f",weight:1.2,buildRendering:function(){

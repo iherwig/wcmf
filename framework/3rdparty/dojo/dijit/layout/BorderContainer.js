@@ -34,7 +34,7 @@ _2=_3?"left":"right";
 if(_2=="trailing"){
 _2=_3?"right":"left";
 }
-if((_1.splitter||this.gutters)&&!_1._splitterWidget){
+if(_2!="center"&&(_1.splitter||this.gutters)&&!_1._splitterWidget){
 var _4=dojo.getObject(_1.splitter?this._splitterClass:"dijit.layout._Gutter");
 var _5=new _4({id:_1.id+"_splitter",container:this,child:_1,region:_2,live:this.liveSplitters});
 _5.isSplitter=true;

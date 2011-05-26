@@ -1,1 +1,1 @@
-({"redLabel":"R","valueLabel":"V","hexLabel":"HEX","hueLabel":"H","saturationLabel":"S","greenLabel":"G","blueLabel":"B","saturationPickerTitle":"Saturation Selector","huePickerTitle":"Hue Selector","degLabel":"°"})
+({"saturationPickerTitle":"채도 선택자","valueLabel":"V","blueLabel":"B","saturationLabel":"S","greenLabel":"G","redLabel":"R","hueLabel":"H","hexLabel":"16진","huePickerTitle":"색상 선택자","degLabel":"°"})

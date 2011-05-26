@@ -91,7 +91,7 @@ if(_a<=_d){
 }
 }
 delete g._notRefreshSelection;
-dojo.publish("dojox/grid/rearrange/move/"+g.id,["col",_10]);
+dojo.publish("dojox/grid/rearrange/move/"+g.id,["col",_10,_9]);
 },moveRows:function(_14,_15){
 var g=this.grid,_16={},_17=[],_18=[],len=_14.length,i,r,k,arr,_19,_1a;
 for(i=0;i<len;++i){
@@ -151,9 +151,9 @@ return false;
 g.selection.selected=[];
 g._noInternalMapping=true;
 g._refresh();
-g._noInternalMapping=false;
 setTimeout(function(){
-dojo.publish("dojox/grid/rearrange/move/"+g.id,["row",_1b]);
+dojo.publish("dojox/grid/rearrange/move/"+g.id,["row",_1b,_14]);
+g._noInternalMapping=false;
 },0);
 },moveCells:function(_1d,_1e){
 var g=this.grid,s=g.store;

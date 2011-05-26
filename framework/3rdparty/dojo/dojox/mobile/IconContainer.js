@@ -9,7 +9,7 @@ if(!dojo._hasResource["dojox.mobile.IconContainer"]){
 dojo._hasResource["dojox.mobile.IconContainer"]=true;
 dojo.provide("dojox.mobile.IconContainer");
 dojo.require("dojox.mobile");
-dojo.declare("dojox.mobile.IconContainer",dijit._Widget,{defaultIcon:"",transition:"below",pressedIconOpacity:0.4,iconBase:"",iconPos:"",back:"Home",label:"My Application",single:false,buildRendering:function(){
+dojo.declare("dojox.mobile.IconContainer",dijit._WidgetBase,{defaultIcon:"",transition:"below",pressedIconOpacity:0.4,iconBase:"",iconPos:"",back:"Home",label:"My Application",single:false,buildRendering:function(){
 this.domNode=this.containerNode=this.srcNodeRef||dojo.doc.createElement("UL");
 this.domNode.className="mblIconContainer";
 var t=this._terminator=dojo.create("LI");

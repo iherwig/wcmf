@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.mobile.FixedSplitter"]){
 dojo._hasResource["dojox.mobile.FixedSplitter"]=true;
 dojo.provide("dojox.mobile.FixedSplitter");
-dojo.require("dijit._Widget");
-dojo.declare("dojox.mobile.FixedSplitter",dijit._Widget,{orientation:"H",isContainer:true,buildRendering:function(){
+dojo.require("dijit._WidgetBase");
+dojo.declare("dojox.mobile.FixedSplitter",dijit._WidgetBase,{orientation:"H",isContainer:true,buildRendering:function(){
 this.domNode=this.containerNode=this.srcNodeRef?this.srcNodeRef:dojo.doc.createElement("DIV");
 dojo.addClass(this.domNode,"mblFixedSpliter");
 },startup:function(){
@@ -61,7 +61,7 @@ _d.resize();
 }
 });
 }});
-dojo.declare("dojox.mobile.FixedSplitterPane",dijit._Widget,{buildRendering:function(){
+dojo.declare("dojox.mobile.FixedSplitterPane",dijit._WidgetBase,{buildRendering:function(){
 this.inherited(arguments);
 dojo.addClass(this.domNode,"mblFixedSplitterPane");
 }});

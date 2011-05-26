@@ -286,6 +286,7 @@ this._oldCursor=dojo.style(dojo.body(),"cursor");
 dojo.style(dojo.body(),"cursor","default");
 }
 catch(e){
+console.warn("DnD._createDnDUI() error:",e);
 }
 },_destroyDnDUI:function(_2c,_2d){
 try{
@@ -299,6 +300,7 @@ this._destroyMoveable();
 dojo.style(dojo.body(),"cursor",this._oldCursor);
 }
 catch(e){
+console.warn("DnD._destroyDnDUI() error:",this.grid.id,e);
 }
 },_createSource:function(evt){
 this._elem.createDnDNodes(this._dndRegion);
@@ -488,6 +490,7 @@ this._target=null;
 }
 }
 catch(e){
+console.warn("DnD._markTargetAnchor() error:",e);
 }
 },_unmarkTargetAnchor:function(){
 if(this._dndRegion){

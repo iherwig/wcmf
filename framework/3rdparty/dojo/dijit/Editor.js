@@ -17,7 +17,6 @@ dojo.require("dijit._editor.range");
 dojo.require("dijit._Container");
 dojo.require("dojo.i18n");
 dojo.require("dijit.layout._LayoutWidget");
-dojo.require("dijit._editor.range");
 dojo.requireLocalization("dijit._editor","commands",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.declare("dijit.Editor",dijit._editor.RichText,{plugins:null,extraPlugins:null,constructor:function(){
 if(!dojo.isArray(this.plugins)){
@@ -194,7 +193,7 @@ var _12=b.mark;
 var col=b.isCollapsed;
 var r,_13,_14,sel;
 if(_12){
-if(dojo.isIE){
+if(dojo.isIE<9){
 if(dojo.isArray(_12)){
 _11=[];
 dojo.forEach(_12,function(n){
@@ -285,7 +284,7 @@ var b=dojo.withGlobal(this.window,dijit.getBookmark);
 var tmp=[];
 if(b&&b.mark){
 var _17=b.mark;
-if(dojo.isIE){
+if(dojo.isIE<9){
 var sel=dijit.range.getSelection(this.window);
 if(!dojo.isArray(_17)){
 if(sel){

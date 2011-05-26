@@ -1,1 +1,1 @@
-({"saturationPickerTitle":"Saturation Selector","valueLabel":"v","blueLabel":"b","saturationLabel":"s","greenLabel":"g","redLabel":"r","hueLabel":"h","hexLabel":"hex","huePickerTitle":"Hue Selector","degLabel":"°"})
+({"saturationPickerTitle":"Sättigungsauswahl","huePickerTitle":"Farbtonauswahl","valueLabel":"v","blueLabel":"b","saturationLabel":"s","greenLabel":"g","redLabel":"r","hueLabel":"h","hexLabel":"hex","degLabel":"°"})

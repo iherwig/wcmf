@@ -1,1 +1,1 @@
-({"valueLabel":"l","hueLabel":"n","saturationLabel":"m","saturationPickerTitle":"Saturation Selector","blueLabel":"b","greenLabel":"g","redLabel":"r","hexLabel":"hex","huePickerTitle":"Hue Selector","degLabel":"°"})
+({"valueLabel":"l","hueLabel":"n","saturationLabel":"m","saturationPickerTitle":"Välj mättnad","huePickerTitle":"Välj färgton","blueLabel":"b","greenLabel":"g","redLabel":"r","hexLabel":"hex","degLabel":"°"})

@@ -9,7 +9,7 @@ if(!dojo._hasResource["dojox.mobile.TabContainer"]){
 dojo._hasResource["dojox.mobile.TabContainer"]=true;
 dojo.provide("dojox.mobile.TabContainer");
 dojo.require("dojox.mobile");
-dojo.declare("dojox.mobile.TabContainer",dijit._Widget,{iconBase:"",iconPos:"",fixedHeader:false,constructor:function(){
+dojo.declare("dojox.mobile.TabContainer",dijit._WidgetBase,{iconBase:"",iconPos:"",fixedHeader:false,constructor:function(){
 dojo.deprecated("dojox.mobile.TabContainer is deprecated","use dojox.mobile.TabBar instead",2);
 },buildRendering:function(){
 var _1=this.domNode=this.srcNodeRef;
@@ -95,7 +95,7 @@ dojo.removeClass(tab,"mblTabButtonHighlighted");
 },200);
 this.selectTab(tab);
 }});
-dojo.declare("dojox.mobile.TabPane",dijit._Widget,{label:"",icon:"",iconPos:"",selected:false,inheritParams:function(){
+dojo.declare("dojox.mobile.TabPane",dijit._WidgetBase,{label:"",icon:"",iconPos:"",selected:false,inheritParams:function(){
 var _11=this.getParentWidget();
 if(_11){
 if(!this.icon){

@@ -24,72 +24,55 @@ console.warn("dojo.io.iframe.create: When using cross-domain Dojo builds,"+" ple
 }
 _5=(dojo.config["dojoBlankHtmlUrl"]||dojo.moduleUrl("dojo","resources/blank.html"));
 }
-var _6=dojo.isIE?"<iframe name=\""+_1+"\" src=\""+_5+"\" onload=\""+_2+"\">":"iframe";
-_4=dojo.doc.createElement(_6);
-with(_4){
-name=_1;
-setAttribute("name",_1);
-id=_1;
-}
-dojo.body().appendChild(_4);
+var _4=dojo.place("<iframe id=\""+_1+"\" name=\""+_1+"\" src=\""+_5+"\" onload=\""+_2+"\" style=\"position: absolute; left: 1px; top: 1px; height: 1px; width: 1px; visibility: hidden\">",dojo.body());
 window[_1]=_4;
-with(_4.style){
-position="absolute";
-left=top="1px";
-height=width="1px";
-visibility="hidden";
-}
-if(!dojo.isIE){
-this.setSrc(_4,_5,true);
-_4.onload=new Function(_2);
-}
 return _4;
-},setSrc:function(_7,_8,_9){
+},setSrc:function(_6,_7,_8){
 try{
-if(!_9){
+if(!_8){
 if(dojo.isWebKit){
-_7.location=_8;
+_6.location=_7;
 }else{
-frames[_7.name].location=_8;
+frames[_6.name].location=_7;
 }
 }else{
-var _a;
+var _9;
 if(dojo.isIE||dojo.isWebKit){
-_a=_7.contentWindow.document;
+_9=_6.contentWindow.document;
 }else{
-_a=_7.contentWindow;
+_9=_6.contentWindow;
 }
-if(!_a){
-_7.location=_8;
+if(!_9){
+_6.location=_7;
 return;
 }else{
-_a.location.replace(_8);
+_9.location.replace(_7);
 }
 }
 }
 catch(e){
 }
-},doc:function(_b){
-var _c=_b.contentDocument||(((_b.name)&&(_b.document)&&(dojo.doc.getElementsByTagName("iframe")[_b.name].contentWindow)&&(dojo.doc.getElementsByTagName("iframe")[_b.name].contentWindow.document)))||((_b.name)&&(dojo.doc.frames[_b.name])&&(dojo.doc.frames[_b.name].document))||null;
-return _c;
-},send:function(_d){
+},doc:function(_a){
+var _b=_a.contentDocument||(((_a.name)&&(_a.document)&&(dojo.doc.getElementsByTagName("iframe")[_a.name].contentWindow)&&(dojo.doc.getElementsByTagName("iframe")[_a.name].contentWindow.document)))||((_a.name)&&(dojo.doc.frames[_a.name])&&(dojo.doc.frames[_a.name].document))||null;
+return _b;
+},send:function(_c){
 if(!this["_frame"]){
 this._frame=this.create(this._iframeName,dojo._scopeName+".io.iframe._iframeOnload();");
 }
-var _e=dojo._ioSetArgs(_d,function(_f){
-_f.canceled=true;
-_f.ioArgs._callNext();
-},function(dfd){
+var _d=dojo._ioSetArgs(_c,function(_e){
+_e.canceled=true;
+_e.ioArgs._callNext();
+},function(_f){
 var _10=null;
 try{
-var _11=dfd.ioArgs;
+var _11=_f.ioArgs;
 var dii=dojo.io.iframe;
 var ifd=dii.doc(dii._frame);
 var _12=_11.handleAs;
 _10=ifd;
 if(_12!="html"){
 if(_12=="xml"){
-if(dojo.isIE){
+if(dojo.isIE<9||(dojo.isIE&&dojo.isQuirks)){
 dojo.query("a",dii._frame.contentWindow.document.documentElement).orphan();
 var _13=(dii._frame.contentWindow.document).documentElement.innerText;
 _13=_13.replace(/>\s+</g,"><");
@@ -121,16 +104,16 @@ dfd.ioArgs._hasError=true;
 dfd.ioArgs._callNext();
 return _15;
 });
-_e.ioArgs._callNext=function(){
+_d.ioArgs._callNext=function(){
 if(!this["_calledNext"]){
 this._calledNext=true;
 dojo.io.iframe._currentDfd=null;
 dojo.io.iframe._fireNextRequest();
 }
 };
-this._dfdQueue.push(_e);
+this._dfdQueue.push(_d);
 this._fireNextRequest();
-dojo._ioWatch(_e,function(dfd){
+dojo._ioWatch(_d,function(dfd){
 return !dfd.ioArgs["_hasError"];
 },function(dfd){
 return (!!dfd.ioArgs["_finished"]);
@@ -141,7 +124,7 @@ dfd.callback(dfd);
 dfd.errback(new Error("Invalid dojo.io.iframe request state"));
 }
 });
-return _e;
+return _d;
 },_currentDfd:null,_dfdQueue:[],_iframeName:dojo._scopeName+"IoIframe",_fireNextRequest:function(){
 try{
 if((this._currentDfd)||(this._dfdQueue.length==0)){
@@ -162,16 +145,7 @@ var _18=_17["content"]||{};
 if(fn){
 if(_18){
 var _19=function(_1a,_1b){
-var tn;
-if(dojo.isIE){
-tn=dojo.doc.createElement("<input type='hidden' name='"+_1a+"'>");
-}else{
-tn=dojo.doc.createElement("input");
-tn.type="hidden";
-tn.name=_1a;
-}
-tn.value=_1b;
-fn.appendChild(tn);
+dojo.create("input",{type:"hidden",name:_1a,value:_1b},fn);
 _16._contentToClean.push(_1a);
 };
 for(var x in _18){

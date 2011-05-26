@@ -8,7 +8,7 @@
 .tundra .dijitTab {
 	line-height:normal;
 	margin-right:4px;	
-	padding:0px;
+	padding:0;
 	border:1px solid #ccc;
 	background:#e2e2e2 url("../images/tabEnabled.png") repeat-x;
 }
@@ -28,7 +28,7 @@
 	top: 2px;
 }
 .tundra .dijitTabContainerBottom .nowrapTabStrip .dijitTab {
-	top: 0px;
+	top: 0;
 	bottom: 2px;
 }
 .tundra .dijitTabChecked {
@@ -76,7 +76,7 @@
 .tundra .dijitTabContainerTabListNested .dijitTab {
 	background: none;
 	border: none;
-	top: 0px;		
+	top: 0;		
 }
 .tundra .dijitTabContainerTabListNested .dijitTab .dijitTabContent {
 }
@@ -106,13 +106,13 @@
 	background-image : url("../images/tabCloseHover.gif");
 }
 .tundra .dijitTabContainerTop-tabs {
-	margin-bottom: 0px;
+	margin-bottom: 0;
 	border-color: #cccccc;
 	padding-left: 3px;
 	background-position: bottom;
 }
 .tundra .dijitTabContainerTop-tabs .dijitTab {
-	top: 0px;
+	top: 0;
 	margin-bottom: -1px;
 }
 .tundra .dijitTabContainerTop-container {
@@ -134,16 +134,16 @@
 	background: #f2f2f2;
 }
 .tundra .dijitTabContainerTopNone {
-	padding-top: 0px;
+	padding-top: 0;
 }
 .tundra .dijitTabContainerBottom-tabs {
-	margin-top: 0px;
+	margin-top: 0;
 	border-color: #cccccc;
 	background-position: top;
 	padding-left: 3px;
 }
 .tundra .dijitTabContainerBottom-tabs .dijitTab {
-	bottom: 0px;
+	bottom: 0;
 	margin-top: -1px;
 }
 .tundra .dijitTabContainerBottom-container {
@@ -198,15 +198,15 @@
 }
 .tundra .dijitTabContainerLeft-tabs .dijitTab,
 .tundra .dijitTabContainerRight-tabs .dijitTab {
-	margin-right:0px;
+	margin-right:0;
 	margin-bottom:4px;	
 }
 .tundra .dijitTabContainerTop-dijitContentPane .dijitTabContainerTop-tabs {
-	border-left: 0px solid #ccc;
-	border-top: 0px solid #ccc;
-	border-right: 0px solid #ccc;
-	padding-top: 0px;
-	padding-left: 0px;
+	border-left: 0 solid #ccc;
+	border-top: 0 solid #ccc;
+	border-right: 0 solid #ccc;
+	padding-top: 0;
+	padding-left: 0;
 }
 .tundra .dijitTabContainer .tabStripButton {
 	margin-right: 0;

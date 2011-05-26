@@ -25,7 +25,16 @@ this._initMenu(_1,_2[_1]);
 },_initMenu:function(_3,_4){
 var g=this.grid;
 if(!g[_3]){
-g.set(_3,this._getMenuWidget(_4));
+var m=this._getMenuWidget(_4);
+if(!m){
+return;
+}
+g.set(_3,m);
+if(_3!="headerMenu"){
+m._scheduleOpen=function(){
+return;
+};
+}
 }
 },_getMenuWidget:function(_5){
 return (_5 instanceof dijit.Menu)?_5:dijit.byId(_5);
@@ -52,8 +61,8 @@ if(_b&&this.selectedRegionMenu){
 this.onSelectedRegionContextMenu(e);
 return;
 }
-var _c={target:e.target,coords:"pageX" in e?{x:e.pageX,y:e.pageY}:null};
-if(this.rowMenu&&(this.selection.isSelected(e.rowIndex)||e.rowNode&&dojo.hasClass(e.rowNode,"dojoxGridRowbar"))){
+var _c={target:e.target,coords:e.keyCode!==dojo.keys.F10&&"pageX" in e?{x:e.pageX,y:e.pageY}:null};
+if(this.rowMenu&&(!this.cellMenu||this.selection.isSelected(e.rowIndex)||e.rowNode&&dojo.hasClass(e.rowNode,"dojoxGridRowbar"))){
 this.rowMenu._openMyself(_c);
 dojo.stopEvent(e);
 return;
@@ -64,6 +73,9 @@ this.cellMenu._openMyself(_c);
 dojo.stopEvent(e);
 },destroy:function(){
 var g=this.grid;
+if(g.headerMenu){
+g.headerMenu.unBindDomNode(g.viewsHeaderNode);
+}
 if(g.rowMenu){
 g.rowMenu.unBindDomNode(g.domNode);
 }

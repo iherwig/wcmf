@@ -158,17 +158,21 @@ this.isShowingNow=false;
 this.parentMenu=null;
 },_closeChild:function(){
 this._stopPopupTimer();
+var _12=this.focusedChild&&this.focusedChild.from_item;
+if(this.currentPopup){
+if(dijit._curFocus&&dojo.isDescendant(dijit._curFocus,this.currentPopup.domNode)){
+this.focusedChild.focusNode.focus();
+}
+dijit.popup.close(this.currentPopup);
+this.currentPopup=null;
+}
 if(this.focusedChild){
 this.focusedChild._setSelected(false);
 this.focusedChild._onUnhover();
 this.focusedChild=null;
 }
-if(this.currentPopup){
-dijit.popup.close(this.currentPopup);
-this.currentPopup=null;
-}
-},_onItemFocus:function(_12){
-if(this._hoveredChild&&this._hoveredChild!=_12){
+},_onItemFocus:function(_13){
+if(this._hoveredChild&&this._hoveredChild!=_13){
 this._hoveredChild._onUnhover();
 }
 },_onBlur:function(){
@@ -213,100 +217,100 @@ dojo.stopEvent(evt);
 }
 break;
 }
-},_iframeContentWindow:function(_13){
-var win=dojo.window.get(this._iframeContentDocument(_13))||this._iframeContentDocument(_13)["__parent__"]||(_13.name&&dojo.doc.frames[_13.name])||null;
+},_iframeContentWindow:function(_14){
+var win=dojo.window.get(this._iframeContentDocument(_14))||this._iframeContentDocument(_14)["__parent__"]||(_14.name&&dojo.doc.frames[_14.name])||null;
 return win;
-},_iframeContentDocument:function(_14){
-var doc=_14.contentDocument||(_14.contentWindow&&_14.contentWindow.document)||(_14.name&&dojo.doc.frames[_14.name]&&dojo.doc.frames[_14.name].document)||null;
+},_iframeContentDocument:function(_15){
+var doc=_15.contentDocument||(_15.contentWindow&&_15.contentWindow.document)||(_15.name&&dojo.doc.frames[_15.name]&&dojo.doc.frames[_15.name].document)||null;
 return doc;
-},bindDomNode:function(_15){
-_15=dojo.byId(_15);
+},bindDomNode:function(_16){
+_16=dojo.byId(_16);
 var cn;
-if(_15.tagName.toLowerCase()=="iframe"){
-var _16=_15,win=this._iframeContentWindow(_16);
+if(_16.tagName.toLowerCase()=="iframe"){
+var _17=_16,win=this._iframeContentWindow(_17);
 cn=dojo.withGlobal(win,dojo.body);
 }else{
-cn=(_15==dojo.body()?dojo.doc.documentElement:_15);
+cn=(_16==dojo.body()?dojo.doc.documentElement:_16);
 }
-var _17={node:_15,iframe:_16};
-dojo.attr(_15,"_dijitMenu"+this.id,this._bindings.push(_17));
-var _18=dojo.hitch(this,function(cn){
+var _18={node:_16,iframe:_17};
+dojo.attr(_16,"_dijitMenu"+this.id,this._bindings.push(_18));
+var _19=dojo.hitch(this,function(cn){
 return [dojo.connect(cn,this.leftClickToOpen?"onclick":"oncontextmenu",this,function(evt){
 dojo.stopEvent(evt);
-this._scheduleOpen(evt.target,_16,{x:evt.pageX,y:evt.pageY});
+this._scheduleOpen(evt.target,_17,{x:evt.pageX,y:evt.pageY});
 }),dojo.connect(cn,"onkeydown",this,function(evt){
 if(evt.shiftKey&&evt.keyCode==dojo.keys.F10){
 dojo.stopEvent(evt);
-this._scheduleOpen(evt.target,_16);
+this._scheduleOpen(evt.target,_17);
 }
 })];
 });
-_17.connects=cn?_18(cn):[];
-if(_16){
-_17.onloadHandler=dojo.hitch(this,function(){
-var win=this._iframeContentWindow(_16);
+_18.connects=cn?_19(cn):[];
+if(_17){
+_18.onloadHandler=dojo.hitch(this,function(){
+var win=this._iframeContentWindow(_17);
 cn=dojo.withGlobal(win,dojo.body);
-_17.connects=_18(cn);
+_18.connects=_19(cn);
 });
-if(_16.addEventListener){
-_16.addEventListener("load",_17.onloadHandler,false);
+if(_17.addEventListener){
+_17.addEventListener("load",_18.onloadHandler,false);
 }else{
-_16.attachEvent("onload",_17.onloadHandler);
+_17.attachEvent("onload",_18.onloadHandler);
 }
 }
-},unBindDomNode:function(_19){
-var _1a;
+},unBindDomNode:function(_1a){
+var _1b;
 try{
-_1a=dojo.byId(_19);
+_1b=dojo.byId(_1a);
 }
 catch(e){
 return;
 }
-var _1b="_dijitMenu"+this.id;
-if(_1a&&dojo.hasAttr(_1a,_1b)){
-var bid=dojo.attr(_1a,_1b)-1,b=this._bindings[bid];
+var _1c="_dijitMenu"+this.id;
+if(_1b&&dojo.hasAttr(_1b,_1c)){
+var bid=dojo.attr(_1b,_1c)-1,b=this._bindings[bid];
 dojo.forEach(b.connects,dojo.disconnect);
-var _1c=b.iframe;
-if(_1c){
-if(_1c.removeEventListener){
-_1c.removeEventListener("load",b.onloadHandler,false);
+var _1d=b.iframe;
+if(_1d){
+if(_1d.removeEventListener){
+_1d.removeEventListener("load",b.onloadHandler,false);
 }else{
-_1c.detachEvent("onload",b.onloadHandler);
+_1d.detachEvent("onload",b.onloadHandler);
 }
 }
-dojo.removeAttr(_1a,_1b);
+dojo.removeAttr(_1b,_1c);
 delete this._bindings[bid];
 }
-},_scheduleOpen:function(_1d,_1e,_1f){
+},_scheduleOpen:function(_1e,_1f,_20){
 if(!this._openTimer){
 this._openTimer=setTimeout(dojo.hitch(this,function(){
 delete this._openTimer;
-this._openMyself({target:_1d,iframe:_1e,coords:_1f});
+this._openMyself({target:_1e,iframe:_1f,coords:_20});
 }),1);
 }
-},_openMyself:function(_20){
-var _21=_20.target,_22=_20.iframe,_23=_20.coords;
+},_openMyself:function(_21){
+var _22=_21.target,_23=_21.iframe,_24=_21.coords;
+if(_24){
 if(_23){
-if(_22){
-var od=_21.ownerDocument,ifc=dojo.position(_22,true),win=this._iframeContentWindow(_22),_24=dojo.withGlobal(win,"_docScroll",dojo);
-var cs=dojo.getComputedStyle(_22),tp=dojo._toPixelValue,_25=(dojo.isIE&&dojo.isQuirks?0:tp(_22,cs.paddingLeft))+(dojo.isIE&&dojo.isQuirks?tp(_22,cs.borderLeftWidth):0),top=(dojo.isIE&&dojo.isQuirks?0:tp(_22,cs.paddingTop))+(dojo.isIE&&dojo.isQuirks?tp(_22,cs.borderTopWidth):0);
-_23.x+=ifc.x+_25-_24.x;
-_23.y+=ifc.y+top-_24.y;
+var od=_22.ownerDocument,ifc=dojo.position(_23,true),win=this._iframeContentWindow(_23),_25=dojo.withGlobal(win,"_docScroll",dojo);
+var cs=dojo.getComputedStyle(_23),tp=dojo._toPixelValue,_26=(dojo.isIE&&dojo.isQuirks?0:tp(_23,cs.paddingLeft))+(dojo.isIE&&dojo.isQuirks?tp(_23,cs.borderLeftWidth):0),top=(dojo.isIE&&dojo.isQuirks?0:tp(_23,cs.paddingTop))+(dojo.isIE&&dojo.isQuirks?tp(_23,cs.borderTopWidth):0);
+_24.x+=ifc.x+_26-_25.x;
+_24.y+=ifc.y+top-_25.y;
 }
 }else{
-_23=dojo.position(_21,true);
-_23.x+=10;
-_23.y+=10;
+_24=dojo.position(_22,true);
+_24.x+=10;
+_24.y+=10;
 }
-var _26=this;
-var _27=dijit.getFocus(this);
-function _28(){
-if(_26.refocus){
-dijit.focus(_27);
+var _27=this;
+var _28=dijit.getFocus(this);
+function _29(){
+if(_27.refocus){
+dijit.focus(_28);
 }
-dijit.popup.close(_26);
+dijit.popup.close(_27);
 };
-dijit.popup.open({popup:this,x:_23.x,y:_23.y,onExecute:_28,onCancel:_28,orient:this.isLeftToRight()?"L":"R"});
+dijit.popup.open({popup:this,x:_24.x,y:_24.y,onExecute:_29,onCancel:_29,orient:this.isLeftToRight()?"L":"R"});
 this.focus();
 this._onBlur=function(){
 this.inherited("_onBlur",arguments);

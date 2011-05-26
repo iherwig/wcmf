@@ -33,9 +33,9 @@ this._init(true);
 this.forEach("onPreInit");
 },postInit:function(){
 this._init(false);
-if(this._plugins.length>0){
 dojo.forEach(this.grid.views.views,this._initView,this);
 this._connects.push(dojo.connect(this.grid.views,"addView",dojo.hitch(this,this._initView)));
+if(this._plugins.length>0){
 var _3=this.grid.edit;
 if(_3){
 _3.styleRow=function(_4){

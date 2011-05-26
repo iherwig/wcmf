@@ -10,10 +10,10 @@ dojo._hasResource["dojox.mobile.app.List"]=true;
 dojo.provide("dojox.mobile.app.List");
 dojo.experimental("dojox.mobile.app.List");
 dojo.require("dojo.string");
-dojo.require("dijit._Widget");
+dojo.require("dijit._WidgetBase");
 (function(){
 var _1={};
-dojo.declare("dojox.mobile.app.List",dijit._Widget,{items:null,itemTemplate:"",emptyTemplate:"",dividerTemplate:"",dividerFunction:null,labelDelete:"Delete",labelCancel:"Cancel",controller:null,autoDelete:true,enableDelete:true,enableHold:true,formatters:null,_templateLoadCount:0,_mouseDownPos:null,baseClass:"list",constructor:function(){
+dojo.declare("dojox.mobile.app.List",dijit._WidgetBase,{items:null,itemTemplate:"",emptyTemplate:"",dividerTemplate:"",dividerFunction:null,labelDelete:"Delete",labelCancel:"Cancel",controller:null,autoDelete:true,enableDelete:true,enableHold:true,formatters:null,_templateLoadCount:0,_mouseDownPos:null,baseClass:"list",constructor:function(){
 this._checkLoadComplete=dojo.hitch(this,this._checkLoadComplete);
 this._replaceToken=dojo.hitch(this,this._replaceToken);
 this._postDeleteAnim=dojo.hitch(this,this._postDeleteAnim);

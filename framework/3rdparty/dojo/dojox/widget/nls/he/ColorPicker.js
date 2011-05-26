@@ -1,1 +1,1 @@
-({"redLabel":"א","valueLabel":"ע","hexLabel":"הקס","hueLabel":"ג","saturationLabel":"ר","greenLabel":"י","blueLabel":"כ","saturationPickerTitle":"Saturation Selector","huePickerTitle":"Hue Selector","degLabel":"°"})
+({"saturationPickerTitle":"בורר רוויה","valueLabel":"ע","blueLabel":"כ","saturationLabel":"ר","greenLabel":"י","redLabel":"א","hueLabel":"ג","hexLabel":"הקס","huePickerTitle":"בורר גוון","degLabel":"°"})

@@ -29,7 +29,13 @@ if(_1.dataId){
 this.dataId=_1.dataId;
 }
 }
-},url:"",dataId:"",trimWhitespace:false,urlPreventCache:false,_indexItems:function(){
+if(_1&&"fetchOnCreate" in _1){
+this.fetchOnCreate=_1.fetchOnCreate?true:false;
+}
+if(this.fetchOnCreate&&this.dataId){
+this.fetch();
+}
+},url:"",dataId:"",trimWhitespace:false,urlPreventCache:false,fetchOnCreate:false,_indexItems:function(){
 this._getHeadings();
 if(this._rootNode.rows){
 if(this._rootNode.tBodies&&this._rootNode.tBodies.length>0){

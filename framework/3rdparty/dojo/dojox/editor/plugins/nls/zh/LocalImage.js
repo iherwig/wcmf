@@ -1,1 +1,1 @@
-({"set":"插入","text":"描述","insertImageTitle":"插入图片","invalidMessage":"非法图片格式","prePopuTextBrowse":"或者单击浏览插入本地图像","browse":"浏览...","prePopuTextUrl":"输入图片URL","url":"图片"})
+({"set":"插入","text":"描述","insertImageTitle":"插入图像","invalidMessage":"无效的图像文件类型","prePopuTextBrowse":"或浏览本地文件。","browse":"浏览...","prePopuTextUrl":"输入图像 URL","url":"图像"})

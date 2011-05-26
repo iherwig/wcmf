@@ -30,8 +30,12 @@ c.b-=mb.h;
 }
 },onMove:function(_6,_7){
 var c=this.constraintBox,s=_6.node.style;
-s.left=(_7.l<c.l?c.l:c.r<_7.l?c.r:_7.l)+"px";
-s.top=(_7.t<c.t?c.t:c.b<_7.t?c.b:_7.t)+"px";
+this.onMoving(_6,_7);
+_7.l=_7.l<c.l?c.l:c.r<_7.l?c.r:_7.l;
+_7.t=_7.t<c.t?c.t:c.b<_7.t?c.b:_7.t;
+s.left=_7.l+"px";
+s.top=_7.t+"px";
+this.onMoved(_6,_7);
 }});
 dojo.declare("dojo.dnd.move.boxConstrainedMoveable",dojo.dnd.move.constrainedMoveable,{box:{},markupFactory:function(_8,_9){
 return new dojo.dnd.move.boxConstrainedMoveable(_9,_8);
@@ -65,60 +69,6 @@ mb.l+=t.l,mb.t+=t.t,mb.w-=t.w,mb.h-=t.h;
 return mb;
 };
 }});
-dojo.dnd.move.constrainedMover=function(fun,_12){
-dojo.deprecated("dojo.dnd.move.constrainedMover, use dojo.dnd.move.constrainedMoveable instead");
-var _13=function(_14,e,_15){
-dojo.dnd.Mover.call(this,_14,e,_15);
-};
-dojo.extend(_13,dojo.dnd.Mover.prototype);
-dojo.extend(_13,{onMouseMove:function(e){
-dojo.dnd.autoScroll(e);
-var m=this.marginBox,c=this.constraintBox,l=m.l+e.pageX,t=m.t+e.pageY;
-l=l<c.l?c.l:c.r<l?c.r:l;
-t=t<c.t?c.t:c.b<t?c.b:t;
-this.host.onMove(this,{l:l,t:t});
-},onFirstMove:function(){
-dojo.dnd.Mover.prototype.onFirstMove.call(this);
-var c=this.constraintBox=fun.call(this);
-c.r=c.l+c.w;
-c.b=c.t+c.h;
-if(_12){
-var mb=dojo._getMarginSize(this.node);
-c.r-=mb.w;
-c.b-=mb.h;
-}
-}});
-return _13;
-};
-dojo.dnd.move.boxConstrainedMover=function(box,_16){
-dojo.deprecated("dojo.dnd.move.boxConstrainedMover, use dojo.dnd.move.boxConstrainedMoveable instead");
-return dojo.dnd.move.constrainedMover(function(){
-return box;
-},_16);
-};
-dojo.dnd.move.parentConstrainedMover=function(_17,_18){
-dojo.deprecated("dojo.dnd.move.parentConstrainedMover, use dojo.dnd.move.parentConstrainedMoveable instead");
-var fun=function(){
-var n=this.node.parentNode,s=dojo.getComputedStyle(n),mb=dojo._getMarginBox(n,s);
-if(_17=="margin"){
-return mb;
-}
-var t=dojo._getMarginExtents(n,s);
-mb.l+=t.l,mb.t+=t.t,mb.w-=t.w,mb.h-=t.h;
-if(_17=="border"){
-return mb;
-}
-t=dojo._getBorderExtents(n,s);
-mb.l+=t.l,mb.t+=t.t,mb.w-=t.w,mb.h-=t.h;
-if(_17=="padding"){
-return mb;
-}
-t=dojo._getPadExtents(n,s);
-mb.l+=t.l,mb.t+=t.t,mb.w-=t.w,mb.h-=t.h;
-return mb;
-};
-return dojo.dnd.move.constrainedMover(fun,_18);
-};
 dojo.dnd.constrainedMover=dojo.dnd.move.constrainedMover;
 dojo.dnd.boxConstrainedMover=dojo.dnd.move.boxConstrainedMover;
 dojo.dnd.parentConstrainedMover=dojo.dnd.move.parentConstrainedMover;

@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.store.Cache"]){
 dojo._hasResource["dojo.store.Cache"]=true;
 dojo.provide("dojo.store.Cache");
+dojo.getObject("store",true,dojo);
 dojo.store.Cache=function(_1,_2,_3){
 _3=_3||{};
 return dojo.delegate(_1,{query:function(_4,_5){
@@ -18,7 +19,7 @@ _2.put(_7);
 }
 });
 return _6;
-},get:function(id,_8){
+},queryEngine:_1.queryEngine||_2.queryEngine,get:function(id,_8){
 return dojo.when(_2.get(id),function(_9){
 return _9||dojo.when(_1.get(id,_8),function(_a){
 if(_a){

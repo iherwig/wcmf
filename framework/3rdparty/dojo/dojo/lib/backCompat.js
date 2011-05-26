@@ -80,6 +80,9 @@ _16="i18n!"+_14(_16);
 return (/root/i.test(_18))?(_16+"/nls/"+_17):(_16+"/nls/"+_18+"/"+_17);
 };
 _2.requireLocalization=function(_19,_1a,_1b){
+if(_1.vendor!="altoviso.com"){
+_1b=!_1b||_1b.toLowerCase()===_2.locale?"root":_1b;
+}
 return _1(_2.getL10nName(_19,_1a,_1b));
 };
 _2.i18n={getLocalization:_2.requireLocalization,normalizeLocale:function(_1c){

@@ -12,6 +12,7 @@ dojo.require("dojox.gfx");
 dojo.require("dojox.lang.functional");
 dojo.require("dojox.lang.functional.fold");
 dojo.require("dojox.lang.functional.reversed");
+dojo.require("dojox.charting.Element");
 dojo.require("dojox.charting.Theme");
 dojo.require("dojox.charting.Series");
 dojo.require("dojox.charting.axis2d.common");
@@ -285,17 +286,16 @@ return this;
 },resize:function(_41,_42){
 var box;
 switch(arguments.length){
-case 0:
-box=dojo.marginBox(this.node);
-break;
 case 1:
-box=_41;
+box=dojo.mixin({},_41);
+dojo.marginBox(this.node,box);
 break;
-default:
+case 2:
 box={w:_41,h:_42};
+dojo.marginBox(this.node,box);
 break;
 }
-dojo.marginBox(this.node,box);
+box=dojo.marginBox(this.node);
 this.surface.setDimensions(box.w,box.h);
 this.dirty=true;
 this.coords=null;
@@ -433,7 +433,7 @@ this.surface.render();
 return this;
 },fullRender:function(){
 this.fullGeometry();
-var _62=this.offsets,dim=this.dim;
+var _62=this.offsets,dim=this.dim,_63;
 dojo.forEach(this.series,_2);
 df.forIn(this.axes,_2);
 dojo.forEach(this.stack,_2);
@@ -442,48 +442,54 @@ dojo.destroy(this.chartTitle);
 }
 this.surface.clear();
 this.chartTitle=null;
-var t=this.theme,_63=t.plotarea&&t.plotarea.fill,_64=t.plotarea&&t.plotarea.stroke;
-if(_63){
-this.surface.createRect({x:_62.l-1,y:_62.t-1,width:dim.width-_62.l-_62.r+2,height:dim.height-_62.t-_62.b+2}).setFill(_63);
+var t=this.theme,_64=t.plotarea&&t.plotarea.fill,_65=t.plotarea&&t.plotarea.stroke,_63={x:_62.l-1,y:_62.t-1,width:dim.width-_62.l-_62.r+2,height:dim.height-_62.t-_62.b+2};
+if(_64){
+_64=dc.Element.prototype._shapeFill(dc.Element.prototype._plotFill(_64,dim,_62),_63);
+this.surface.createRect(_63).setFill(_64);
+}
+if(_65){
+this.surface.createRect({x:_62.l,y:_62.t,width:dim.width-_62.l-_62.r+1,height:dim.height-_62.t-_62.b+1}).setStroke(_65);
+}
+df.foldr(this.stack,function(z,_66){
+return _66.render(dim,_62),0;
+},0);
+_64=this.fill!==undefined?this.fill:(t.chart&&t.chart.fill);
+_65=this.stroke!==undefined?this.stroke:(t.chart&&t.chart.stroke);
+if(_64=="inherit"){
+var _67=this.node,_64=new dojo.Color(dojo.style(_67,"backgroundColor"));
+while(_64.a==0&&_67!=document.documentElement){
+_64=new dojo.Color(dojo.style(_67,"backgroundColor"));
+_67=_67.parentNode;
+}
 }
 if(_64){
-this.surface.createRect({x:_62.l,y:_62.t,width:dim.width-_62.l-_62.r+1,height:dim.height-_62.t-_62.b+1}).setStroke(_64);
-}
-df.foldr(this.stack,function(z,_65){
-return _65.render(dim,_62),0;
-},0);
-_63=this.fill!==undefined?this.fill:(t.chart&&t.chart.fill);
-_64=this.stroke!==undefined?this.stroke:(t.chart&&t.chart.stroke);
-if(_63=="inherit"){
-var _66=this.node,_63=new dojo.Color(dojo.style(_66,"backgroundColor"));
-while(_63.a==0&&_66!=document.documentElement){
-_63=new dojo.Color(dojo.style(_66,"backgroundColor"));
-_66=_66.parentNode;
-}
-}
-if(_63){
+_64=dc.Element.prototype._plotFill(_64,dim,_62);
 if(_62.l){
-this.surface.createRect({width:_62.l,height:dim.height+1}).setFill(_63);
+_63={width:_62.l,height:dim.height+1};
+this.surface.createRect(_63).setFill(dc.Element.prototype._shapeFill(_64,_63));
 }
 if(_62.r){
-this.surface.createRect({x:dim.width-_62.r,width:_62.r+1,height:dim.height+2}).setFill(_63);
+_63={x:dim.width-_62.r,width:_62.r+1,height:dim.height+2};
+this.surface.createRect(_63).setFill(dc.Element.prototype._shapeFill(_64,_63));
 }
 if(_62.t){
-this.surface.createRect({width:dim.width+1,height:_62.t}).setFill(_63);
+_63={width:dim.width+1,height:_62.t};
+this.surface.createRect(_63).setFill(dc.Element.prototype._shapeFill(_64,_63));
 }
 if(_62.b){
-this.surface.createRect({y:dim.height-_62.b,width:dim.width+1,height:_62.b+2}).setFill(_63);
+_63={y:dim.height-_62.b,width:dim.width+1,height:_62.b+2};
+this.surface.createRect(_63).setFill(dc.Element.prototype._shapeFill(_64,_63));
 }
+}
+if(_65){
+this.surface.createRect({width:dim.width-1,height:dim.height-1}).setStroke(_65);
 }
 if(this.title){
-var _67=(g.renderer=="canvas"),_68=_67||!dojo.isIE&&!dojo.isOpera?"html":"gfx",_69=g.normalizedLength(g.splitFontString(this.titleFont).size);
-this.chartTitle=dc.axis2d.common.createText[_68](this,this.surface,dim.width/2,this.titlePos=="top"?_69+this.margins.t:dim.height-this.margins.b,"middle",this.title,this.titleFont,this.titleFontColor);
+var _68=(g.renderer=="canvas"),_69=_68||!dojo.isIE&&!dojo.isOpera?"html":"gfx",_6a=g.normalizedLength(g.splitFontString(this.titleFont).size);
+this.chartTitle=dc.axis2d.common.createText[_69](this,this.surface,dim.width/2,this.titlePos=="top"?_6a+this.margins.t:dim.height-this.margins.b,"middle",this.title,this.titleFont,this.titleFontColor);
 }
-if(_64){
-this.surface.createRect({width:dim.width-1,height:dim.height-1}).setStroke(_64);
-}
-df.forIn(this.axes,function(_6a){
-_6a.render(dim,_62);
+df.forIn(this.axes,function(_6b){
+_6b.render(dim,_62);
 });
 this._makeClean();
 if(this.surface.render){
@@ -499,15 +505,15 @@ this.render();
 }),this.delayInMs);
 }
 return this;
-},connectToPlot:function(_6b,_6c,_6d){
-return _6b in this.plots?this.stack[this.plots[_6b]].connect(_6c,_6d):null;
-},fireEvent:function(_6e,_6f,_70){
-if(_6e in this.runs){
-var _71=this.series[this.runs[_6e]].plot;
-if(_71 in this.plots){
-var _72=this.stack[this.plots[_71]];
-if(_72){
-_72.fireEvent(_6e,_6f,_70);
+},connectToPlot:function(_6c,_6d,_6e){
+return _6c in this.plots?this.stack[this.plots[_6c]].connect(_6d,_6e):null;
+},fireEvent:function(_6f,_70,_71){
+if(_6f in this.runs){
+var _72=this.series[this.runs[_6f]].plot;
+if(_72 in this.plots){
+var _73=this.stack[this.plots[_72]];
+if(_73){
+_73.fireEvent(_6f,_70,_71);
 }
 }
 }
@@ -522,65 +528,65 @@ dojo.forEach(this.axes,_5);
 dojo.forEach(this.stack,_5);
 dojo.forEach(this.series,_5);
 this.dirty=true;
-},_invalidateDependentPlots:function(_73,_74){
-if(_73 in this.plots){
-var _75=this.stack[this.plots[_73]],_76,_77=_74?"vAxis":"hAxis";
-if(_75[_77]){
-_76=this.axes[_75[_77]];
-if(_76&&_76.dependOnData()){
-_76.dirty=true;
+},_invalidateDependentPlots:function(_74,_75){
+if(_74 in this.plots){
+var _76=this.stack[this.plots[_74]],_77,_78=_75?"vAxis":"hAxis";
+if(_76[_78]){
+_77=this.axes[_76[_78]];
+if(_77&&_77.dependOnData()){
+_77.dirty=true;
 dojo.forEach(this.stack,function(p){
-if(p[_77]&&p[_77]==_75[_77]){
+if(p[_78]&&p[_78]==_76[_78]){
 p.dirty=true;
 }
 });
 }
 }else{
-_75.dirty=true;
+_76.dirty=true;
 }
 }
 }});
-function _78(_79){
-return {min:_79.hmin,max:_79.hmax};
+function _79(_7a){
+return {min:_7a.hmin,max:_7a.hmax};
 };
-function _7a(_7b){
-return {min:_7b.vmin,max:_7b.vmax};
+function _7b(_7c){
+return {min:_7c.vmin,max:_7c.vmax};
 };
-function _7c(_7d,h){
-_7d.hmin=h.min;
-_7d.hmax=h.max;
+function _7d(_7e,h){
+_7e.hmin=h.min;
+_7e.hmax=h.max;
 };
-function _7e(_7f,v){
-_7f.vmin=v.min;
-_7f.vmax=v.max;
+function _7f(_80,v){
+_80.vmin=v.min;
+_80.vmax=v.max;
 };
-function _80(_81,_82){
-if(_81&&_82){
-_81.min=Math.min(_81.min,_82.min);
-_81.max=Math.max(_81.max,_82.max);
+function _81(_82,_83){
+if(_82&&_83){
+_82.min=Math.min(_82.min,_83.min);
+_82.max=Math.max(_82.max,_83.max);
 }
-return _81||_82;
+return _82||_83;
 };
-function _5a(_83,_84){
-var _85={},_86={};
-dojo.forEach(_83,function(_87){
-var _88=_85[_87.name]=_87.getSeriesStats();
-if(_87.hAxis){
-_86[_87.hAxis]=_80(_86[_87.hAxis],_78(_88));
+function _5a(_84,_85){
+var _86={},_87={};
+dojo.forEach(_84,function(_88){
+var _89=_86[_88.name]=_88.getSeriesStats();
+if(_88.hAxis){
+_87[_88.hAxis]=_81(_87[_88.hAxis],_79(_89));
 }
-if(_87.vAxis){
-_86[_87.vAxis]=_80(_86[_87.vAxis],_7a(_88));
+if(_88.vAxis){
+_87[_88.vAxis]=_81(_87[_88.vAxis],_7b(_89));
 }
 });
-dojo.forEach(_83,function(_89){
-var _8a=_85[_89.name];
-if(_89.hAxis){
-_7c(_8a,_86[_89.hAxis]);
+dojo.forEach(_84,function(_8a){
+var _8b=_86[_8a.name];
+if(_8a.hAxis){
+_7d(_8b,_87[_8a.hAxis]);
 }
-if(_89.vAxis){
-_7e(_8a,_86[_89.vAxis]);
+if(_8a.vAxis){
+_7f(_8b,_87[_8a.vAxis]);
 }
-_89.initializeScalers(_84,_8a);
+_8a.initializeScalers(_85,_8b);
 });
 };
 })();

@@ -8,7 +8,7 @@
 if(!dojo._hasResource["dojox.grid.enhanced.plugins.Filter"]){
 dojo._hasResource["dojox.grid.enhanced.plugins.Filter"]=true;
 dojo.provide("dojox.grid.enhanced.plugins.Filter");
-dojo.requireLocalization("dojox.grid.enhanced","Filter",null,"ROOT,kk");
+dojo.requireLocalization("dojox.grid.enhanced","Filter",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hr,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.require("dojox.grid.enhanced._Plugin");
 dojo.require("dojox.grid.enhanced.plugins.Dialog");
 dojo.require("dojox.grid.enhanced.plugins.filter.FilterLayer");
@@ -53,6 +53,7 @@ this.nls=null;
 this.args=null;
 }
 catch(e){
+console.warn("Filter.destroy() error:",e);
 }
 },_wrapStore:function(){
 var g=this.grid;

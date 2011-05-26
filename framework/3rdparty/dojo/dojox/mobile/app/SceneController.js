@@ -67,7 +67,7 @@ return dojo.query(_e,_f||this.domNode);
 },parse:function(_10){
 var _11=this._widgets=dojox.mobile.parser.parse(_10||this.domNode,{controller:this});
 for(var i=0;i<_11.length;i++){
-_11[i].attr("controller",this);
+_11[i].set("controller",this);
 }
 },getWindowSize:function(){
 return {w:dojo.global.innerWidth,h:dojo.global.innerHeight};

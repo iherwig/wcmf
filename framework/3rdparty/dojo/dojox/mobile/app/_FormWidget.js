@@ -10,8 +10,8 @@ dojo._hasResource["dojox.mobile.app._FormWidget"]=true;
 dojo.provide("dojox.mobile.app._FormWidget");
 dojo.experimental("dojox.mobile.app._FormWidget");
 dojo.require("dojo.window");
-dojo.require("dijit._Widget");
-dojo.declare("dojox.mobile.app._FormWidget",dijit._Widget,{name:"",alt:"",value:"",type:"text",disabled:false,intermediateChanges:false,scrollOnFocus:false,attributeMap:dojo.delegate(dijit._Widget.prototype.attributeMap,{value:"focusNode",id:"focusNode",alt:"focusNode",title:"focusNode"}),postMixInProperties:function(){
+dojo.require("dijit._WidgetBase");
+dojo.declare("dojox.mobile.app._FormWidget",dijit._WidgetBase,{name:"",alt:"",value:"",type:"text",disabled:false,intermediateChanges:false,scrollOnFocus:false,attributeMap:dojo.delegate(dijit._WidgetBase.prototype.attributeMap,{value:"focusNode",id:"focusNode",alt:"focusNode",title:"focusNode"}),postMixInProperties:function(){
 this.nameAttrSetting=this.name?("name=\""+this.name.replace(/'/g,"&quot;")+"\""):"";
 this.inherited(arguments);
 },postCreate:function(){

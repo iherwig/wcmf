@@ -1,8 +1,8 @@
 .tundra .dijitSelect .dijitButtonNode {
-	padding: 0px;
+	padding: 0;
 }
 .tundra .dijitSelect .dijitButtonNode .dijitArrowButtonInner {
-	margin: 0px 4px 0px 5px;
+	margin: 0 4px 0 5px;
 }
 .tundra .dijitSelect .dijitButtonContents {
 	padding-top: 1px;
@@ -17,7 +17,7 @@
 	background: transparent none;
 }
 .dj_ie .tundra .dijitSelect .dijitButtonContents {
-	padding-top: 0px;
+	padding-top: 0;
 }
 .tundra .dijitSelectDisabled .dijitButtonNode {
 	border-color: #d5d5d5 #bdbdbd #bdbdbd #d5d5d5;
@@ -39,7 +39,7 @@
 	background: #ededed url("../images/buttonActive.png") bottom repeat-x;
 }
 .tundra .dijitSelectMenu td {
-	padding: 0em;
+	padding: 0;
 }
 .tundra .dijitSelectMenu .dijitMenuItemLabel,
 .tundra .dijitSelectMenu .dijitMenuArrowCell {

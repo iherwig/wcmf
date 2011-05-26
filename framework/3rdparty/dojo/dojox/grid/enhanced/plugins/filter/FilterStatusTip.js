@@ -8,7 +8,7 @@
 if(!dojo._hasResource["dojox.grid.enhanced.plugins.filter.FilterStatusTip"]){
 dojo._hasResource["dojox.grid.enhanced.plugins.filter.FilterStatusTip"]=true;
 dojo.provide("dojox.grid.enhanced.plugins.filter.FilterStatusTip");
-dojo.requireLocalization("dojox.grid.enhanced","Filter",null,"ROOT,kk");
+dojo.requireLocalization("dojox.grid.enhanced","Filter",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hr,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.require("dijit.TooltipDialog");
 dojo.require("dijit._base.popup");
 dojo.require("dijit.form.Button");
@@ -21,10 +21,10 @@ var _b=this.plugin=_a.plugin;
 this._statusHeader=["<table border='0' cellspacing='0' class='",_1,"'><thead><tr class='",_2,"'><th class='",_3,"'><div>",_b.nls["statusTipHeaderColumn"],"</div></th><th class='",_3," lastColumn'><div>",_b.nls["statusTipHeaderCondition"],"</div></th></tr></thead><tbody>"].join("");
 this._removedCriterias=[];
 this._rules=[];
-(this.statusPane=new dojox.grid.enhanced.plugins.filter.FilterStatusPane()).startup();
-(this._dlg=new dijit.TooltipDialog({"class":"dojoxGridFStatusTipDialog",content:this.statusPane.domNode,autofocus:false,onMouseLeave:dojo.hitch(this,function(){
+this.statusPane=new dojox.grid.enhanced.plugins.filter.FilterStatusPane();
+this._dlg=new dijit.TooltipDialog({"class":"dojoxGridFStatusTipDialog",content:this.statusPane,autofocus:false,onMouseLeave:dojo.hitch(this,function(){
 this.closeDialog();
-})})).startup();
+})});
 this._dlg.connect(this._dlg.domNode,"click",dojo.hitch(this,this._modifyFilter));
 },destroy:function(){
 this._dlg.destroyRecursive();

@@ -105,6 +105,9 @@ return o.cloneNode(true);
 if(o instanceof Date){
 return new Date(o.getTime());
 }
+if(o instanceof RegExp){
+return new RegExp(o);
+}
 var r,i,l,s,_19;
 if(d.isArray(o)){
 r=[];

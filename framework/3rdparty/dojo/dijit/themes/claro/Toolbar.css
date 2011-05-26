@@ -3,25 +3,29 @@
   border-bottom: 1px solid #b5bcc7;
   background-color: #efefef;
   background-image: url("images/commonHighlight.png");
-  background-position: 0px 0px;
+  background-position: 0 0;
   background-repeat: repeat-x;
-  padding: 2px 0px 2px 4px;
+  padding: 2px 0 2px 4px;
   zoom: 1;
 }
 .claro .dijitToolbar label {
-  padding: 0px 3px 0 6px;
+  padding: 0 3px 0 6px;
 }
 .claro .dijitToolbar .dijitButtonNode {
-  border-width: 0px;
+  border-width: 0;
   
   padding: 2px;
-  border-radius: 2px;
   -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-box-shadow: none;
+  border-radius: 2px;
   -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
   -webkit-transition-property: background-color;
-  -webkit-transition-duration: .3s, .35s;
+  -moz-transition-property: background-color;
+  transition-property: background-color;
+  -webkit-transition-duration: 0.3s, 0.35s;
+  -moz-transition-duration: 0.3s, 0.35s;
+  transition-duration: 0.3s, 0.35s;
   background-image: url("images/commonHighlight.png");
   background-position: 0 -30px;
   background-repeat: repeat-x;
@@ -37,22 +41,16 @@
 }
 .claro .dijitToolbar .dijitComboButton .dijitStretch {
   
-  -moz-border-radius: 2px 0px 0px 2px;
-  -webkit-border-top-left-radius: 2px;
-  -webkit-border-top-right-radius: 0px;
-  -webkit-border-bottom-right-radius: 0px;
-  -webkit-border-bottom-left-radius: 2px;
+  -moz-border-radius: 2px 0 0 2px;
+  border-radius: 2px 0 0 2px;
 }
 .claro .dijitToolbar .dijitComboButton .dijitArrowButton {
   
-  -moz-border-radius: 0px 2px 2px 0px;
-  -webkit-border-top-left-radius: 0px;
-  -webkit-border-top-right-radius: 2px;
-  -webkit-border-bottom-right-radius: 2px;
-  -webkit-border-bottom-left-radius: 0px;
+  -moz-border-radius: 0 2px 2px 0;
+  border-radius: 0 2px 2px 0;
 }
 .claro .dijitToolbar .dijitComboBox .dijitButtonNode {
-  padding: 0px;
+  padding: 0;
 }
 .claro .dijitToolbar .dijitButtonHover .dijitButtonNode,
 .claro .dijitToolbar .dijitDropDownButtonHover .dijitButtonNode,
@@ -73,17 +71,19 @@
 .claro .dijitToolbar .dijitButtonActive .dijitButtonNode, .claro .dijitToolbar .dijitDropDownButtonActive .dijitButtonNode, .claro .dijitToolbar .dijitToggleButtonActive .dijitButtonNode {
   border-width: 1px;
   background-color: #7dbefa;
-  background-position: 0px -177px;
+  background-position: 0 -177px;
   padding: 1px;
 }
 .claro .dijitToolbar .dijitComboButtonActive {
-  -webkit-transition-duration: .2s;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  transition-duration: 0.2s;
   border-width: 1px;
-  padding: 0px;
+  padding: 0;
 }
 .claro .dijitToolbar .dijitComboButtonActive .dijitButtonNode, .claro .dijitToolbar .dijitComboButtonActive .dijitDownArrowButton {
   background-color: #f4ffff;
-  background-position: 0px -177px;
+  background-position: 0 -177px;
   padding: 2px;
 }
 .claro .dijitToolbar .dijitComboButtonActive .dijitButtonNodeActive {
@@ -93,7 +93,7 @@
   background-color: #7dbefa;
 }
 .claro .dijitToolbar .dijitComboButtonHover .dijitDownArrowButton, .claro .dijitToolbar .dijitComboButtonActive .dijitDownArrowButton {
-  border-left-width: 0px;
+  border-left-width: 0;
 }
 .claro .dijitToolbar .dijitComboButtonHover .dijitDownArrowButton {
   padding-left: 2px;

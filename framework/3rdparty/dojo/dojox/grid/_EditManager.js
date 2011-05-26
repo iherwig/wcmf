@@ -11,9 +11,10 @@ dojo.provide("dojox.grid._EditManager");
 dojo.require("dojox.grid.util");
 dojo.declare("dojox.grid._EditManager",null,{constructor:function(_1){
 this.grid=_1;
-this.connections=[dojo.connect(this.grid,"onBlur",this,"apply")];
 if(dojo.isIE){
-this.connections.push(dojo.connect(document.body,"onfocus",dojo.hitch(this,"_boomerangFocus")));
+this.connections=[dojo.connect(document.body,"onfocus",dojo.hitch(this,"_boomerangFocus"))];
+}else{
+this.connections=[dojo.connect(this.grid,"onBlur",this,"apply")];
 }
 },info:{},destroy:function(){
 dojo.forEach(this.connections,dojo.disconnect);

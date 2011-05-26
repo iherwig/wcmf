@@ -118,6 +118,9 @@
 	text-decoration: none!important; 
 	zoom: 1; 
 }
+.dojoxGridSeparator {
+	float: left;
+}
 .dojoxGridPageTextHover {
 	text-decoration: underline;
 }

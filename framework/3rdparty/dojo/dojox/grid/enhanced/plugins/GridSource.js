@@ -51,17 +51,17 @@ var _10;
 try{
 switch(_f){
 case "grid/cells":
-_9[0].innerHTML=this.getNodeDataForGridCells(_e,_b[0].min,_b[0].max)||"";
+_9[0].innerHTML=this.getCellContent(_e,_b[0].min,_b[0].max)||"";
 this.onDropGridCells(_e,_b[0].min,_b[0].max);
 break;
 case "grid/rows":
 _10=_1(_b);
-_9[0].innerHTML=this.getNodeDataForGridRows(_e,_10)||"";
+_9[0].innerHTML=this.getRowContent(_e,_10)||"";
 this.onDropGridRows(_e,_10);
 break;
 case "grid/cols":
 _10=_1(_b);
-_9[0].innerHTML=this.getNodeDataForGridColumns(_e,_10)||"";
+_9[0].innerHTML=this.getColumnContent(_e,_10)||"";
 this.onDropGridColumns(_e,_10);
 break;
 }
@@ -72,13 +72,14 @@ this.insertNodes(true,[_9[0]],this.before,this.current);
 _d.dndPlugin.onDragOut(!_a);
 }
 catch(e){
+console.warn("GridSource.onDropExternal() error:",e);
 }
 }else{
 this.inherited(arguments);
 }
-},getNodeDataForGridCells:function(_11,_12,_13){
-},getNodeDataForGridRows:function(_14,_15){
-},getNodeDataForGridColumns:function(_16,_17){
+},getCellContent:function(_11,_12,_13){
+},getRowContent:function(_14,_15){
+},getColumnContent:function(_16,_17){
 },onDropGridCells:function(_18,_19,_1a){
 },onDropGridRows:function(_1b,_1c){
 },onDropGridColumns:function(_1d,_1e){

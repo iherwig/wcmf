@@ -90,7 +90,9 @@ _f="default";
 if(!_1[_f]){
 if(dojo.doc.createStyleSheet){
 _1[_f]=dojo.doc.createStyleSheet();
+if(dojo.isIE<9){
 _1[_f].title=_f;
+}
 }else{
 _1[_f]=dojo.doc.createElement("style");
 _1[_f].setAttribute("type","text/css");

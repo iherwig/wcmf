@@ -195,5 +195,12 @@ return val*dojox.gfx.cm_in_pt*_21;
 return parseFloat(len);
 },pathVmlRegExp:/([A-Za-z]+)|(\d+(\.\d+)?)|(\.\d+)|(-\d+(\.\d+)?)|(-\.\d+)/g,pathSvgRegExp:/([A-Za-z])|(\d+(\.\d+)?)|(\.\d+)|(-\d+(\.\d+)?)|(-\.\d+)/g,equalSources:function(a,b){
 return a&&b&&a==b;
+},switchTo:function(_22){
+var ns=dojox.gfx[_22];
+if(ns){
+dojo.forEach(["Group","Rect","Ellipse","Circle","Line","Polyline","Image","Text","Path","TextPath","Surface","createSurface"],function(_23){
+dojox.gfx[_23]=ns[_23];
+});
+}
 }});
 }

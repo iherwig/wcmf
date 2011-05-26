@@ -15,64 +15,64 @@ dojo.require("dojox.gfx.arc");
 dojo.require("dojox.gfx.decompose");
 dojo.experimental("dojox.gfx.canvas");
 (function(){
-var d=dojo,g=dojox.gfx,gs=g.shape,ga=g.arc,m=g.matrix,mp=m.multiplyPoint,pi=Math.PI,_1=2*pi,_2=pi/2,_3=null;
-d.extend(g.Shape,{_render:function(_4){
-_4.save();
-this._renderTransform(_4);
-this._renderShape(_4);
-this._renderFill(_4,true);
-this._renderStroke(_4,true);
-_4.restore();
-},_renderTransform:function(_5){
+var d=dojo,g=dojox.gfx,gs=g.shape,ga=g.arc,_1=g.canvas,m=g.matrix,mp=m.multiplyPoint,pi=Math.PI,_2=2*pi,_3=pi/2,_4=null;
+d.declare("dojox.gfx.canvas.Shape",gs.Shape,{_render:function(_5){
+_5.save();
+this._renderTransform(_5);
+this._renderShape(_5);
+this._renderFill(_5,true);
+this._renderStroke(_5,true);
+_5.restore();
+},_renderTransform:function(_6){
 if("canvasTransform" in this){
 var t=this.canvasTransform;
-_5.translate(t.dx,t.dy);
-_5.rotate(t.angle2);
-_5.scale(t.sx,t.sy);
-_5.rotate(t.angle1);
+_6.translate(t.dx,t.dy);
+_6.rotate(t.angle2);
+_6.scale(t.sx,t.sy);
+_6.rotate(t.angle1);
 }
-},_renderShape:function(_6){
-},_renderFill:function(_7,_8){
+},_renderShape:function(_7){
+},_renderFill:function(_8,_9){
 if("canvasFill" in this){
 var fs=this.fillStyle;
 if("canvasFillImage" in this){
 var w=fs.width,h=fs.height,iw=this.canvasFillImage.width,ih=this.canvasFillImage.height,sx=w==iw?1:w/iw,sy=h==ih?1:h/ih,s=Math.min(sx,sy),dx=(w-s*iw)/2,dy=(h-s*ih)/2;
-_3.width=w;
-_3.height=h;
-var _9=_3.getContext("2d");
-_9.clearRect(0,0,w,h);
-_9.drawImage(this.canvasFillImage,0,0,iw,ih,dx,dy,s*iw,s*ih);
-this.canvasFill=_7.createPattern(_3,"repeat");
+_4.width=w;
+_4.height=h;
+var _a=_4.getContext("2d");
+_a.clearRect(0,0,w,h);
+_a.drawImage(this.canvasFillImage,0,0,iw,ih,dx,dy,s*iw,s*ih);
+this.canvasFill=_8.createPattern(_4,"repeat");
 delete this.canvasFillImage;
 }
-_7.fillStyle=this.canvasFill;
-if(_8){
+_8.fillStyle=this.canvasFill;
+if(_9){
 if(fs.type==="pattern"&&(fs.x!==0||fs.y!==0)){
-_7.translate(fs.x,fs.y);
+_8.translate(fs.x,fs.y);
 }
-_7.fill();
+_8.fill();
 }
 }else{
-_7.fillStyle="rgba(0,0,0,0.0)";
+_8.fillStyle="rgba(0,0,0,0.0)";
 }
-},_renderStroke:function(_a,_b){
+},_renderStroke:function(_b,_c){
 var s=this.strokeStyle;
 if(s){
-_a.strokeStyle=s.color.toString();
-_a.lineWidth=s.width;
-_a.lineCap=s.cap;
+_b.strokeStyle=s.color.toString();
+_b.lineWidth=s.width;
+_b.lineCap=s.cap;
 if(typeof s.join=="number"){
-_a.lineJoin="miter";
-_a.miterLimit=s.join;
+_b.lineJoin="miter";
+_b.miterLimit=s.join;
 }else{
-_a.lineJoin=s.join;
+_b.lineJoin=s.join;
 }
-if(_b){
-_a.stroke();
+if(_c){
+_b.stroke();
 }
 }else{
-if(!_b){
-_a.strokeStyle="rgba(0,0,0,0.0)";
+if(!_c){
+_b.strokeStyle="rgba(0,0,0,0.0)";
 }
 }
 },getEventSource:function(){
@@ -80,26 +80,26 @@ return null;
 },connect:function(){
 },disconnect:function(){
 }});
-var _c=function(_d,_e,_f){
-var old=_d.prototype[_e];
-_d.prototype[_e]=_f?function(){
+var _d=function(_e,_f,_10){
+var old=_e.prototype[_f];
+_e.prototype[_f]=_10?function(){
 this.surface.makeDirty();
 old.apply(this,arguments);
-_f.call(this);
+_10.call(this);
 return this;
 }:function(){
 this.surface.makeDirty();
 return old.apply(this,arguments);
 };
 };
-_c(g.Shape,"setTransform",function(){
+_d(_1.Shape,"setTransform",function(){
 if(this.matrix){
 this.canvasTransform=g.decompose(this.matrix);
 }else{
 delete this.canvasTransform;
 }
 });
-_c(g.Shape,"setFill",function(){
+_d(_1.Shape,"setFill",function(){
 var fs=this.fillStyle,f;
 if(fs){
 if(typeof (fs)=="object"&&"type" in fs){
@@ -108,13 +108,13 @@ switch(fs.type){
 case "linear":
 case "radial":
 f=fs.type=="linear"?ctx.createLinearGradient(fs.x1,fs.y1,fs.x2,fs.y2):ctx.createRadialGradient(fs.cx,fs.cy,0,fs.cx,fs.cy,fs.r);
-d.forEach(fs.colors,function(_10){
-f.addColorStop(_10.offset,g.normalizeColor(_10.color).toString());
+d.forEach(fs.colors,function(_11){
+f.addColorStop(_11.offset,g.normalizeColor(_11.color).toString());
 });
 break;
 case "pattern":
-if(!_3){
-_3=document.createElement("canvas");
+if(!_4){
+_4=document.createElement("canvas");
 }
 var img=new Image();
 this.surface.downloadImage(img,fs.src);
@@ -128,9 +128,9 @@ this.canvasFill=f;
 delete this.canvasFill;
 }
 });
-_c(g.Shape,"setStroke");
-_c(g.Shape,"setShape");
-dojo.declare("dojox.gfx.Group",g.Shape,{constructor:function(){
+_d(_1.Shape,"setStroke");
+_d(_1.Shape,"setShape");
+dojo.declare("dojox.gfx.canvas.Group",_1.Shape,{constructor:function(){
 gs.Container._init.call(this);
 },_render:function(ctx){
 ctx.save();
@@ -140,15 +140,15 @@ this.children[i]._render(ctx);
 }
 ctx.restore();
 }});
-dojo.declare("dojox.gfx.Rect",gs.Rect,{_renderShape:function(ctx){
+dojo.declare("dojox.gfx.canvas.Rect",[_1.Shape,gs.Rect],{_renderShape:function(ctx){
 var s=this.shape,r=Math.min(s.r,s.height/2,s.width/2),xl=s.x,xr=xl+s.width,yt=s.y,yb=yt+s.height,xl2=xl+r,xr2=xr-r,yt2=yt+r,yb2=yb-r;
 ctx.beginPath();
 ctx.moveTo(xl2,yt);
 if(r){
-ctx.arc(xr2,yt2,r,-_2,0,false);
-ctx.arc(xr2,yb2,r,0,_2,false);
-ctx.arc(xl2,yb2,r,_2,pi,false);
-ctx.arc(xl2,yt2,r,pi,pi+_2,false);
+ctx.arc(xr2,yt2,r,-_3,0,false);
+ctx.arc(xr2,yb2,r,0,_3,false);
+ctx.arc(xl2,yb2,r,_3,pi,false);
+ctx.arc(xl2,yt2,r,pi,pi+_3,false);
 }else{
 ctx.lineTo(xr2,yt);
 ctx.lineTo(xr,yb2);
@@ -157,24 +157,24 @@ ctx.lineTo(xl,yt2);
 }
 ctx.closePath();
 }});
-var _11=[];
+var _12=[];
 (function(){
 var u=ga.curvePI4;
-_11.push(u.s,u.c1,u.c2,u.e);
+_12.push(u.s,u.c1,u.c2,u.e);
 for(var a=45;a<360;a+=45){
 var r=m.rotateg(a);
-_11.push(mp(r,u.c1),mp(r,u.c2),mp(r,u.e));
+_12.push(mp(r,u.c1),mp(r,u.c2),mp(r,u.e));
 }
 })();
-dojo.declare("dojox.gfx.Ellipse",gs.Ellipse,{setShape:function(){
-g.Ellipse.superclass.setShape.apply(this,arguments);
+dojo.declare("dojox.gfx.canvas.Ellipse",[_1.Shape,gs.Ellipse],{setShape:function(){
+this.inherited(arguments);
 var s=this.shape,t,c1,c2,r=[],M=m.normalize([m.translate(s.cx,s.cy),m.scale(s.rx,s.ry)]);
-t=mp(M,_11[0]);
+t=mp(M,_12[0]);
 r.push([t.x,t.y]);
-for(var i=1;i<_11.length;i+=3){
-c1=mp(M,_11[i]);
-c2=mp(M,_11[i+1]);
-t=mp(M,_11[i+2]);
+for(var i=1;i<_12.length;i+=3){
+c1=mp(M,_12[i]);
+c2=mp(M,_12[i+1]);
+t=mp(M,_12[i+2]);
 r.push([c1.x,c1.y,c2.x,c2.y,t.x,t.y]);
 }
 this.canvasEllipse=r;
@@ -188,19 +188,19 @@ ctx.bezierCurveTo.apply(ctx,r[i]);
 }
 ctx.closePath();
 }});
-dojo.declare("dojox.gfx.Circle",gs.Circle,{_renderShape:function(ctx){
+dojo.declare("dojox.gfx.canvas.Circle",[_1.Shape,gs.Circle],{_renderShape:function(ctx){
 var s=this.shape;
 ctx.beginPath();
-ctx.arc(s.cx,s.cy,s.r,0,_1,1);
+ctx.arc(s.cx,s.cy,s.r,0,_2,1);
 }});
-dojo.declare("dojox.gfx.Line",gs.Line,{_renderShape:function(ctx){
+dojo.declare("dojox.gfx.canvas.Line",[_1.Shape,gs.Line],{_renderShape:function(ctx){
 var s=this.shape;
 ctx.beginPath();
 ctx.moveTo(s.x1,s.y1);
 ctx.lineTo(s.x2,s.y2);
 }});
-dojo.declare("dojox.gfx.Polyline",gs.Polyline,{setShape:function(){
-g.Polyline.superclass.setShape.apply(this,arguments);
+dojo.declare("dojox.gfx.canvas.Polyline",[_1.Shape,gs.Polyline],{setShape:function(){
+this.inherited(arguments);
 var p=this.shape.points,f=p[0],r=[],c,i;
 if(p.length){
 if(typeof f=="number"){
@@ -231,8 +231,8 @@ ctx.lineTo(p[i],p[i+1]);
 }
 }
 }});
-dojo.declare("dojox.gfx.Image",gs.Image,{setShape:function(){
-g.Image.superclass.setShape.apply(this,arguments);
+dojo.declare("dojox.gfx.canvas.Image",[_1.Shape,gs.Image],{setShape:function(){
+this.inherited(arguments);
 var img=new Image();
 this.surface.downloadImage(img,this.shape.src);
 this.canvasImage=img;
@@ -241,17 +241,13 @@ return this;
 var s=this.shape;
 ctx.drawImage(this.canvasImage,s.x,s.y,s.width,s.height);
 }});
-var _12=typeof (document.createElement("canvas").getContext("2d").fillText)=="function";
-dojo.declare("dojox.gfx.Text",gs.Text,{_setFont:function(){
+dojo.declare("dojox.gfx.canvas.Text",[_1.Shape,gs.Text],{_setFont:function(){
 if(this.fontStyle){
-this.canvasFont=dojox.gfx.makeFontString(this.fontStyle);
+this.canvasFont=g.makeFontString(this.fontStyle);
 }else{
 delete this.canvasFont;
 }
 },getTextWidth:function(){
-if(!_12){
-return 0;
-}
 var s=this.shape,w=0,ctx;
 if(s.text&&s.text.length>0){
 ctx=this.surface.rawNode.getContext("2d");
@@ -274,9 +270,6 @@ this._renderStroke(ctx,false);
 this._renderShape(ctx);
 ctx.restore();
 },_renderShape:function(ctx){
-if(!_12){
-return;
-}
 var ta,s=this.shape;
 if(!s.text||s.text.length==0){
 return;
@@ -295,18 +288,24 @@ ctx.strokeText(s.text,s.x,s.y);
 ctx.closePath();
 }
 }});
-_c(g.Text,"setFont");
+_d(_1.Text,"setFont");
+if(typeof dojo.doc.createElement("canvas").getContext("2d").fillText!="function"){
+_1.Text.extend({getTextWidth:function(){
+return 0;
+},_renderShape:function(){
+}});
+}
 var _13={M:"_moveToA",m:"_moveToR",L:"_lineToA",l:"_lineToR",H:"_hLineToA",h:"_hLineToR",V:"_vLineToA",v:"_vLineToR",C:"_curveToA",c:"_curveToR",S:"_smoothCurveToA",s:"_smoothCurveToR",Q:"_qCurveToA",q:"_qCurveToR",T:"_qSmoothCurveToA",t:"_qSmoothCurveToR",A:"_arcTo",a:"_arcTo",Z:"_closePath",z:"_closePath"};
-dojo.declare("dojox.gfx.Path",g.path.Path,{constructor:function(){
+dojo.declare("dojox.gfx.canvas.Path",[_1.Shape,g.path.Path],{constructor:function(){
 this.lastControl={};
 },setShape:function(){
 this.canvasPath=[];
-return g.Path.superclass.setShape.apply(this,arguments);
+return this.inherited(arguments);
 },_updateWithSegment:function(_14){
 var _15=d.clone(this.last);
 this[_13[_14.action]](this.canvasPath,_14.action,_14.args);
 this.last=_15;
-g.Path.superclass._updateWithSegment.apply(this,arguments);
+this.inherited(arguments);
 },_renderShape:function(ctx){
 var r=this.canvasPath;
 ctx.beginPath();
@@ -454,12 +453,14 @@ _4f.push("closePath",[]);
 this.lastControl={};
 }});
 d.forEach(["moveTo","lineTo","hLineTo","vLineTo","curveTo","smoothCurveTo","qCurveTo","qSmoothCurveTo","arcTo","closePath"],function(_52){
-_c(g.Path,_52);
+_d(_1.Path,_52);
 });
-dojo.declare("dojox.gfx.TextPath",g.path.TextPath,{_renderShape:function(ctx){
+dojo.declare("dojox.gfx.canvas.TextPath",[_1.Shape,g.path.TextPath],{_renderShape:function(ctx){
 var s=this.shape;
+},_setText:function(){
+},_setFont:function(){
 }});
-dojo.declare("dojox.gfx.Surface",gs.Surface,{constructor:function(){
+dojo.declare("dojox.gfx.canvas.Surface",gs.Surface,{constructor:function(){
 gs.Container._init.call(this);
 this.pendingImageCount=0;
 this.makeDirty();
@@ -513,7 +514,7 @@ return null;
 },connect:function(){
 },disconnect:function(){
 }});
-g.createSurface=function(_56,_57,_58){
+_1.createSurface=function(_56,_57,_58){
 if(!_57&&!_58){
 var pos=d.position(_56);
 _57=_57||pos.w;
@@ -525,9 +526,9 @@ _57=_57+"px";
 if(typeof _58=="number"){
 _58=_58+"px";
 }
-var s=new g.Surface(),p=d.byId(_56),c=p.ownerDocument.createElement("canvas");
-c.width=dojox.gfx.normalizedLength(_57);
-c.height=dojox.gfx.normalizedLength(_58);
+var s=new _1.Surface(),p=d.byId(_56),c=p.ownerDocument.createElement("canvas");
+c.width=g.normalizedLength(_57);
+c.height=g.normalizedLength(_58);
 p.appendChild(c);
 s.rawNode=c;
 s._parent=p;
@@ -550,16 +551,22 @@ return C._moveChildToFront.apply(this,arguments);
 this.surface.makeDirty();
 return C._moveChildToBack.apply(this,arguments);
 }};
-d.mixin(gs.Creator,{createObject:function(_5f,_60){
-var _61=new _5f();
-_61.surface=this.surface;
-_61.setShape(_60);
-this.add(_61);
-return _61;
-}});
-d.extend(g.Group,_59);
-d.extend(g.Group,gs.Creator);
-d.extend(g.Surface,_59);
-d.extend(g.Surface,gs.Creator);
+var _5f={createObject:function(_60,_61){
+var _62=new _60();
+_62.surface=this.surface;
+_62.setShape(_61);
+this.add(_62);
+return _62;
+}};
+d.extend(_1.Group,_59);
+d.extend(_1.Group,gs.Creator);
+d.extend(_1.Group,_5f);
+d.extend(_1.Surface,_59);
+d.extend(_1.Surface,gs.Creator);
+d.extend(_1.Surface,_5f);
+if(g.loadAndSwitch==="canvas"){
+g.switchTo("canvas");
+delete g.loadAndSwitch;
+}
 })();
 }

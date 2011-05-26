@@ -10,27 +10,12 @@
 	
 	float:left;
 }
-.dijit_a11y .dijitTextBoxRtl .dijitValidationContainer,
+.dijitTextBoxRtl .dijitValidationContainer,
 .dijitTextBoxRtl .dijitSpinnerButtonContainer,
 .dijitComboBoxRtl .dijitArrowButtonContainer {
 	
 	border-right-width: 1px !important;
-	border-right-style: solid !important;
-	border-left-width: 0px !important;
-	border-left-style: none !important;
-}
-.dijit_a11y .dijitToolbar .dijitTextBoxRtl .dijitValidationContainer,
-.dijitTextBoxRtl .dijitSpinnerButtonContainer,
-.dijitComboBoxRtl .dijitArrowButtonContainer  {
-	border-right-width: 0px !important;
-	border-right-style: none !important;
-}
-	
-.dijit_a11y .dijitTextBoxRtl .dijitValidationContainer,
-.dijit_a11y .dijitTextBoxRtl .dijitSpinnerButtonContainer,
-.dijit_a11y .dijitComboBoxRtl .dijitArrowButtonContainer {
-	border-right: 1px solid black !important;
-	border-left: 0px none black !important;
+	border-left-width: 0 !important;
 }
 .dijitSpinnerRtl .dijitSpinnerButtonContainer .dijitArrowButton {
 	right: 0;
@@ -80,7 +65,7 @@
 	padding-right:25px;
 }
 .dijitTabRtl .dijitTabCloseButton {
-	margin-left: 0px;
+	margin-left: 0;
 	margin-right: 1em;
 }
 .dj_ie .dijitTimePickerRtl .dijitTimePickerItem {
@@ -95,25 +80,19 @@
 	text-align: right;
 }
 .claro .dijitTextBoxRtlError .dijitValidationContainer {
-  border-left-width: 0px;
+  border-left-width: 0;
   border-right-width: 1px;
 }
 .claro .dijitComboButtonRtl .dijitStretch {
-  -moz-border-radius: 0px 4px 4px 0px;
-  -webkit-border-top-left-radius: 0px;
-  -webkit-border-top-right-radius: 4px;
-  -webkit-border-bottom-right-radius: 4px;
-  -webkit-border-bottom-left-radius: 0px;
+  -moz-border-radius: 0 4px 4px 0;
+  border-radius: 0 4px 4px 0;
 }
 .claro .dijitComboButtonRtl .dijitArrowButton {
-  -moz-border-radius: 4px 0px 0px 4px;
-  -webkit-border-top-left-radius: 4px;
-  -webkit-border-top-right-radius: 0px;
-  -webkit-border-bottom-right-radius: 0px;
-  -webkit-border-bottom-left-radius: 4px;
-  padding: 3px 0px 4px;
+  -moz-border-radius: 4px 0 0 4px;
+  border-radius: 4px 0 0 4px;
+  padding: 3px 0 4px;
   border-left-width: 1px;
-  border-right-width: 0px;
+  border-right-width: 0;
 }
 .claro .dijitTabContainerTop-tabs .dijitTabRtl, .claro .dijitTabContainerBottom-tabs .dijitTabRtl {
   margin-right: 0;
@@ -186,12 +165,12 @@
   background-position: bottom right;
 }
 .claro .dijitSliderRtl .dijitSliderLeftBumper {
-  border-left-width: 0px;
+  border-left-width: 0;
   border-right-width: 1px;
 }
 .claro .dijitSliderRtl .dijitSliderRightBumper {
   border-left-width: 1px;
-  border-right-width: 0px;
+  border-right-width: 0;
 }
 .claro .dijitSliderRtl .dijitSliderIncrementIconH {
   background-position: -357px 50%;
@@ -200,7 +179,7 @@
   background-position: -251px 50%;
 }
 .claro .dijitSelectRtl .dijitButtonContents {
-  border-right-width: 0px;
+  border-right-width: 0;
   border-left-width: 1px;
 }
 .claro .dijitDialogRtl .dijitDialogCloseIcon {
@@ -340,33 +319,33 @@
 	background:url(../../icons/images/loadingAnimation_rtl.gif) no-repeat;
 }
 .claro .dijitTitlePaneRtl .dijitClosed .dijitArrowNode {
-  background-position: -7px 0px;
+  background-position: -7px 0;
 }
 .claro .dijitMenuItemRtl .dijitMenuExpand {
-  background-position: -7px 0px;
-  margin-right: 0px;
+  background-position: -7px 0;
+  margin-right: 0;
   margin-left: 3px;
 }
 .claro .dijitMenuItemRtl .dijitMenuItemIcon {
-  margin: 0px 4px 0px 0px;
+  margin: 0 4px 0 0;
 }
 .claro .dijitCalendarRtl .dijitCalendarIncrease {
-  background-position: 0px 0px;
+  background-position: 0 0;
 }
 .claro .dijitCalendarRtl .dijitCalendarDecrease {
-  background-position: -18px 0px;
+  background-position: -18px 0;
 }
 .claro .dijitCalendarRtl .dijitCalendarArrowHover .dijitCalendarIncrease {
-  background-position: -36px 0px;
+  background-position: -36px 0;
 }
 .claro .dijitCalendarRtl .dijitCalendarArrowHover .dijitCalendarDecrease {
-  background-position: -55px 0px;
+  background-position: -55px 0;
 }
 .claro .dijitCalendarRtl .dijitCalendarArrowActive .dijitCalendarIncrease {
-  background-position: -72px 0px;
+  background-position: -72px 0;
 }
 .claro .dijitCalendarRtl .dijitCalendarArrowActive .dijitCalendarDecrease {
-  background-position: -91px 0px;
+  background-position: -91px 0;
 }
 .dj_ie .claro .dijitTimePickerRtl .dijitTimePickerTickHover,
 .dj_ie .claro .dijitTimePickerRtl .dijitTimePickerMarkerHover,
@@ -377,7 +356,7 @@
   width: 114%;
 }
 .claro .dijitToolbar .dijitComboButtonRtl .dijitButtonNode {
-  border-width: 0px;
+  border-width: 0;
   padding: 2px;
 }
 .claro .dijitToolbar .dijitComboButtonRtlHover .dijitButtonNode, .claro .dijitToolbar .dijitComboButtonRtlActive .dijitButtonNode {
@@ -386,24 +365,18 @@
 }
 .claro .dijitToolbar .dijitComboButtonRtl .dijitStretch {
   
-  -moz-border-radius: 0px 2px 2px 0px;
-  -webkit-border-top-left-radius: 0px;
-  -webkit-border-top-right-radius: 2px;
-  -webkit-border-bottom-right-radius: 2px;
-  -webkit-border-bottom-left-radius: 0px;
+  -moz-border-radius: 0 2px 2px 0;
+  border-radius: 0 2px 2px 0;
 }
 .claro .dijitToolbar .dijitComboButtonRtl .dijitArrowButton {
   
-  -moz-border-radius: 2px 0px 0px  2px;
-  -webkit-border-top-left-radius: 2px;
-  -webkit-border-top-right-radius: 0px;
-  -webkit-border-bottom-right-radius: 0px;
-  -webkit-border-bottom-left-radius: 2px;
+  -moz-border-radius: 2px 0 0 2px;
+  border-radius: 2px 0 0 2px;
 }
 .claro .dijitToolbar .dijitComboButtonRtlHover .dijitArrowButton, .claro .dijitToolbar .dijitComboButtonRtlActive .dijitArrowButton {
   
   border-left-width: 1px;
-  border-right-width: 0px;
+  border-right-width: 0;
   padding-left: 1px;
   padding-right: 2px;
 }

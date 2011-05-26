@@ -150,6 +150,8 @@ _18[i]=s.createPath(_1c).setStroke(_9);
 }
 _17[i]=s.createPath(_1c).setStroke(_d.marker.stroke).setFill(_d.marker.fill);
 },this);
+_c.dyn.markerFill=_d.marker.fill;
+_c.dyn.markerStroke=_d.marker.stroke;
 if(_b){
 dojo.forEach(_17,function(s,i){
 var o={element:"marker",index:i+_f[seg],run:_c,shape:s,outline:_18[i]||null,shadow:_19&&_19[i]||null,cx:_11[i].x,cy:_11[i].y};

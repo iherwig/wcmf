@@ -10,7 +10,7 @@ dojo._hasResource["dojox.mobile.app._base"]=true;
 dojo.provide("dojox.mobile.app._base");
 dojo.experimental("dojox.mobile.app._base");
 dojo.require("dijit._base");
-dojo.require("dijit._Widget");
+dojo.require("dijit._WidgetBase");
 dojo.require("dojox.mobile");
 dojo.require("dojox.mobile.parser");
 dojo.require("dojox.mobile.app._event");

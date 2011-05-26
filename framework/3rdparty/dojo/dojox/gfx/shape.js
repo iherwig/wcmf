@@ -9,7 +9,7 @@ if(!dojo._hasResource["dojox.gfx.shape"]){
 dojo._hasResource["dojox.gfx.shape"]=true;
 dojo.provide("dojox.gfx.shape");
 dojo.require("dojox.gfx._base");
-dojo.declare("dojox.gfx.Shape",null,{constructor:function(){
+dojo.declare("dojox.gfx.shape.Shape",null,{constructor:function(){
 this.rawNode=null;
 this.shape=null;
 this.matrix=null;
@@ -134,7 +134,7 @@ return arguments.length>2?dojo.connect(this.getEventSource(),_c,_d,_e):dojo.conn
 },disconnect:function(_f){
 dojo.disconnect(_f);
 }};
-dojo.extend(dojox.gfx.Shape,dojox.gfx.shape._eventsProcessing);
+dojo.extend(dojox.gfx.shape.Shape,dojox.gfx.shape._eventsProcessing);
 dojox.gfx.shape.Container={_init:function(){
 this.children=[];
 },openBatch:function(){
@@ -219,13 +219,13 @@ f(_19);
 dojo.extend(dojox.gfx.shape.Surface,dojox.gfx.shape._eventsProcessing);
 dojo.declare("dojox.gfx.Point",null,{});
 dojo.declare("dojox.gfx.Rectangle",null,{});
-dojo.declare("dojox.gfx.shape.Rect",dojox.gfx.Shape,{constructor:function(_1a){
+dojo.declare("dojox.gfx.shape.Rect",dojox.gfx.shape.Shape,{constructor:function(_1a){
 this.shape=dojox.gfx.getDefault("Rect");
 this.rawNode=_1a;
 },getBoundingBox:function(){
 return this.shape;
 }});
-dojo.declare("dojox.gfx.shape.Ellipse",dojox.gfx.Shape,{constructor:function(_1b){
+dojo.declare("dojox.gfx.shape.Ellipse",dojox.gfx.shape.Shape,{constructor:function(_1b){
 this.shape=dojox.gfx.getDefault("Ellipse");
 this.rawNode=_1b;
 },getBoundingBox:function(){
@@ -235,7 +235,7 @@ this.bbox={x:_1c.cx-_1c.rx,y:_1c.cy-_1c.ry,width:2*_1c.rx,height:2*_1c.ry};
 }
 return this.bbox;
 }});
-dojo.declare("dojox.gfx.shape.Circle",dojox.gfx.Shape,{constructor:function(_1d){
+dojo.declare("dojox.gfx.shape.Circle",dojox.gfx.shape.Shape,{constructor:function(_1d){
 this.shape=dojox.gfx.getDefault("Circle");
 this.rawNode=_1d;
 },getBoundingBox:function(){
@@ -245,7 +245,7 @@ this.bbox={x:_1e.cx-_1e.r,y:_1e.cy-_1e.r,width:2*_1e.r,height:2*_1e.r};
 }
 return this.bbox;
 }});
-dojo.declare("dojox.gfx.shape.Line",dojox.gfx.Shape,{constructor:function(_1f){
+dojo.declare("dojox.gfx.shape.Line",dojox.gfx.shape.Shape,{constructor:function(_1f){
 this.shape=dojox.gfx.getDefault("Line");
 this.rawNode=_1f;
 },getBoundingBox:function(){
@@ -255,17 +255,17 @@ this.bbox={x:Math.min(_20.x1,_20.x2),y:Math.min(_20.y1,_20.y2),width:Math.abs(_2
 }
 return this.bbox;
 }});
-dojo.declare("dojox.gfx.shape.Polyline",dojox.gfx.Shape,{constructor:function(_21){
+dojo.declare("dojox.gfx.shape.Polyline",dojox.gfx.shape.Shape,{constructor:function(_21){
 this.shape=dojox.gfx.getDefault("Polyline");
 this.rawNode=_21;
 },setShape:function(_22,_23){
 if(_22&&_22 instanceof Array){
-dojox.gfx.Shape.prototype.setShape.call(this,{points:_22});
+this.inherited(arguments,[{points:_22}]);
 if(_23&&this.shape.points.length){
 this.shape.points.push(this.shape.points[0]);
 }
 }else{
-dojox.gfx.Shape.prototype.setShape.call(this,_22);
+this.inherited(arguments,[_22]);
 }
 return this;
 },_normalizePoints:function(){
@@ -302,7 +302,7 @@ this.bbox={x:_25.l,y:_25.t,width:_25.r-_25.l,height:_25.b-_25.t};
 }
 return this.bbox;
 }});
-dojo.declare("dojox.gfx.shape.Image",dojox.gfx.Shape,{constructor:function(_26){
+dojo.declare("dojox.gfx.shape.Image",dojox.gfx.shape.Shape,{constructor:function(_26){
 this.shape=dojox.gfx.getDefault("Image");
 this.rawNode=_26;
 },getBoundingBox:function(){
@@ -312,7 +312,7 @@ return this;
 },setFill:function(){
 return this;
 }});
-dojo.declare("dojox.gfx.shape.Text",dojox.gfx.Shape,{constructor:function(_27){
+dojo.declare("dojox.gfx.shape.Text",dojox.gfx.shape.Shape,{constructor:function(_27){
 this.fontStyle=null;
 this.shape=dojox.gfx.getDefault("Text");
 this.rawNode=_27;

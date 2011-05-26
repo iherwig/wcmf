@@ -1,8 +1,8 @@
 .tundra .dijitMenu,
 .tundra .dijitMenuBar {
 	border: 1px solid #7eabcd;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	background-color: #f7f7f7;
 }
 .tundra .dijitBorderContainer .dijitMenuBar {
@@ -35,7 +35,7 @@
 	width: 7px;
 	height: 7px;
 	background-image: url('images/spriteArrows.png');
-	background-position: -14px 0px;
+	background-position: -14px 0;
 }
 .dj_ie6 .tundra .dijitMenuExpand {
 	background-image: url('images/spriteArrows.gif');

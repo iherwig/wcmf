@@ -11,10 +11,10 @@ dojo.provide("dojox.gfx.decompose");
 dojo.require("dojox.gfx.matrix");
 (function(){
 var m=dojox.gfx.matrix;
-var eq=function(a,b){
+function eq(a,b){
 return Math.abs(a-b)<=0.000001*(Math.abs(a)+Math.abs(b));
 };
-var _1=function(r1,m1,r2,m2){
+function _1(r1,m1,r2,m2){
 if(!isFinite(r1)){
 return r2;
 }else{
@@ -25,14 +25,14 @@ return r1;
 m1=Math.abs(m1),m2=Math.abs(m2);
 return (m1*r1+m2*r2)/(m1+m2);
 };
-var _2=function(_3){
+function _2(_3){
 var M=new m.Matrix2D(_3);
 return dojo.mixin(M,{dx:0,dy:0,xy:M.yx,yx:M.xy});
 };
-var _4=function(_5){
+function _4(_5){
 return (_5.xx*_5.yy<0||_5.xy*_5.yx>0)?-1:1;
 };
-var _6=function(_7){
+function _6(_7){
 var M=m.normalize(_7),b=-M.xx-M.yy,c=M.xx*M.yy-M.xy*M.yx,d=Math.sqrt(b*b-4*c),l1=-(b+(b<0?-d:d))/2,l2=c/l1,_8=M.xy/(l1-M.xx),_9=1,_a=M.xy/(l2-M.xx),_b=1;
 if(eq(l1,l2)){
 _8=1,_9=0,_a=0,_b=1;
@@ -70,13 +70,13 @@ _b=0;
 }
 return {value1:l1,value2:l2,vector1:{x:_8,y:_9},vector2:{x:_a,y:_b}};
 };
-var _c=function(M,_d){
+function _c(M,_d){
 var _e=_4(M),a=_d.angle1=(Math.atan2(M.yx,M.yy)+Math.atan2(-_e*M.xy,_e*M.xx))/2,_f=Math.cos(a),sin=Math.sin(a);
 _d.sx=_1(M.xx/_f,_f,-M.xy/sin,sin);
 _d.sy=_1(M.yy/_f,_f,M.yx/sin,sin);
 return _d;
 };
-var _10=function(M,_11){
+function _10(M,_11){
 var _12=_4(M),a=_11.angle2=(Math.atan2(_12*M.yx,_12*M.xx)+Math.atan2(-M.xy,M.yy))/2,cos=Math.cos(a),sin=Math.sin(a);
 _11.sx=_1(M.xx/cos,cos,M.yx/sin,sin);
 _11.sy=_1(M.yy/cos,cos,-M.xy/sin,sin);

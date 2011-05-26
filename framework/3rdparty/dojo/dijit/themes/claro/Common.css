@@ -1,14 +1,14 @@
 
 .claro .dijitPopup {
-  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-  -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
 }
 .claro .dijitTooltipDialogPopup {
   
-  box-shadow: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
+  box-shadow: none;
 }
 .claro .dijitComboBoxHighlightMatch {
   background-color: #abd6ff;
@@ -36,7 +36,9 @@
   border: 1px solid #b5bcc7;
   border-collapse: collapse;
   background-color: #ffffff;
-  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 .claro .dojoDndAvatarHeader td {
   height: 20px;

@@ -15,7 +15,7 @@
 	padding: 0 0.3em;
 }
 .nihilo .dijitComboBox .dijitButtonNode {
-	border-width: 0px 0px 0px 1px;
+	border-width: 0 0 0 1px;
 }
 .nihilo .dijitArrowButton {
 	color: #111;
@@ -71,7 +71,7 @@
 .nihilo .dijitArrowButtonInner {
 	background-image: url("../images/spriteArrows.png");
 	background-repeat: no-repeat;
-	background-position: 0px center;
+	background-position: 0 center;
 	width: 11px;
 	height: 11px;
 }

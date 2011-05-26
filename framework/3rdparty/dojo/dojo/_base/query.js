@@ -372,7 +372,7 @@ return function(_65){
 return (_45(_65)==_64);
 };
 }};
-var _66=(d.isIE)?function(_67){
+var _66=(d.isIE<9||(dojo.isIE&&dojo.isQuirks))?function(_67){
 var clc=_67.toLowerCase();
 if(clc=="class"){
 _67="className";

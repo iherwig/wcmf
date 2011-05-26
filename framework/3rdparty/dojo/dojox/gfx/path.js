@@ -10,7 +10,7 @@ dojo._hasResource["dojox.gfx.path"]=true;
 dojo.provide("dojox.gfx.path");
 dojo.require("dojox.gfx.matrix");
 dojo.require("dojox.gfx.shape");
-dojo.declare("dojox.gfx.path.Path",dojox.gfx.Shape,{constructor:function(_1){
+dojo.declare("dojox.gfx.path.Path",dojox.gfx.shape.Shape,{constructor:function(_1){
 this.shape=dojo.clone(dojox.gfx.defaultPath);
 this.segments=[];
 this.tbbox=null;
@@ -47,7 +47,7 @@ this._confirmSegmented();
 return "x" in this.last?this.last:null;
 },_applyTransform:function(){
 this.tbbox=null;
-return dojox.gfx.Shape.prototype._applyTransform.call(this);
+return this.inherited(arguments);
 },_updateBBox:function(x,y,_6){
 if(_6){
 var t=dojox.gfx.matrix.multiplyPoint(_6,x,y);
@@ -295,7 +295,7 @@ _1d.push(x);
 }
 this._pushSegment(_1c,_1d);
 },setShape:function(_1e){
-dojox.gfx.Shape.prototype.setShape.call(this,typeof _1e=="string"?{path:_1e}:_1e);
+this.inherited(arguments,[typeof _1e=="string"?{path:_1e}:_1e]);
 this.segmented=false;
 this.segments=[];
 if(!dojox.gfx.lazyPathSegmentation){

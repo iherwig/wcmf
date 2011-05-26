@@ -10,12 +10,10 @@ dojo._hasResource["dojox.grid.EnhancedGrid"]=true;
 dojo.provide("dojox.grid.EnhancedGrid");
 dojo.require("dojox.grid.DataGrid");
 dojo.require("dojox.grid.enhanced._PluginManager");
-dojo.requireLocalization("dojox.grid.enhanced","EnhancedGrid",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dojox.grid.enhanced","EnhancedGrid",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hr,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 dojo.experimental("dojox.grid.EnhancedGrid");
-dojo.declare("dojox.grid.EnhancedGrid",dojox.grid.DataGrid,{plugins:null,pluginMgr:null,minRowHeight:10,keepSelection:false,_pluginMgrClass:dojox.grid.enhanced._PluginManager,rowMovedTopic:"",colMovedTopic:"",postMixInProperties:function(){
+dojo.declare("dojox.grid.EnhancedGrid",dojox.grid.DataGrid,{plugins:null,pluginMgr:null,keepSelection:false,_pluginMgrClass:dojox.grid.enhanced._PluginManager,postMixInProperties:function(){
 this._nls=dojo.i18n.getLocalization("dojox.grid.enhanced","EnhancedGrid",this.lang);
-this.rowMovedTopic="ROW_MOVED_"+this.id;
-this.colMovedTopic="COLUMN_MOVED_"+this.id;
 this.inherited(arguments);
 },postCreate:function(){
 this.pluginMgr=new this._pluginMgrClass(this);
@@ -32,10 +30,14 @@ this.selection=new dojox.grid.enhanced.DataSelection(this);
 },canSort:function(_2,_3){
 return true;
 },doKeyEvent:function(e){
+try{
 var _4=this.focus.focusView;
 _4.content.decorateEvent(e);
 if(!e.cell){
 _4.header.decorateEvent(e);
+}
+}
+catch(e){
 }
 this.inherited(arguments);
 },doApplyCellEdit:function(_5,_6,_7){
@@ -87,6 +89,7 @@ this.store.fetch(req);
 return dojo.filter(this.layout.cells,function(_11){
 return _11.field==_10;
 })[0];
+},onMouseUp:function(e){
 },createView:function(){
 var _12=this.inherited(arguments);
 if(dojo.isMoz){
@@ -105,7 +108,7 @@ var _1a=_12.header.getCellX;
 _12.header.getCellX=function(e){
 var x=_1a.call(_12.header,e);
 var n=_13(e.target,_16("th"));
-if(n&&e.target==n.firstChild){
+if(n&&n!==e.target&&dojo.isDescendant(e.target,n)){
 x+=n.firstChild.offsetLeft;
 }
 return x;

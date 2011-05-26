@@ -8,7 +8,7 @@
 if(!dojo._hasResource["dojox.mobile._ScrollableMixin"]){
 dojo._hasResource["dojox.mobile._ScrollableMixin"]=true;
 dojo.provide("dojox.mobile._ScrollableMixin");
-dojo.require("dijit._Widget");
+dojo.require("dijit._WidgetBase");
 dojo.require("dojox.mobile.scrollable");
 dojo.declare("dojox.mobile._ScrollableMixin",null,{fixedHeader:"",fixedFooter:"",destroy:function(){
 this.cleanup();

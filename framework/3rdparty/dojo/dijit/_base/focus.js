@@ -27,6 +27,9 @@ return {isCollapsed:(_1.end<=_1.start),mark:_1};
 }
 }
 bm={isCollapsed:true};
+if(_1.rangeCount){
+bm.mark=_1.getRangeAt(0).cloneRange();
+}
 }else{
 rg=_1.getRangeAt(0);
 bm={isCollapsed:false,mark:rg.cloneRange()};
@@ -157,7 +160,7 @@ dijit._onTouchNode(_13||evt.target||evt.srcElement,"mouse");
 var doc=dojo.isIE?_12.document.documentElement:_12.document;
 if(doc){
 if(dojo.isIE){
-doc.attachEvent("onmousedown",_14);
+_12.document.body.attachEvent("onmousedown",_14);
 var _15=function(evt){
 if(evt.srcElement.tagName.toLowerCase()!="#document"&&dijit.isTabNavigable(evt.srcElement)){
 dijit._onFocusNode(_13||evt.srcElement);
@@ -171,13 +174,13 @@ dijit._onBlurNode(_13||evt.srcElement);
 };
 doc.attachEvent("ondeactivate",_16);
 return function(){
-doc.detachEvent("onmousedown",_14);
+_12.document.detachEvent("onmousedown",_14);
 doc.detachEvent("onactivate",_15);
 doc.detachEvent("ondeactivate",_16);
 doc=null;
 };
 }else{
-doc.addEventListener("mousedown",_14,true);
+doc.body.addEventListener("mousedown",_14,true);
 var _17=function(evt){
 dijit._onFocusNode(_13||evt.target);
 };
@@ -187,7 +190,7 @@ dijit._onBlurNode(_13||evt.target);
 };
 doc.addEventListener("blur",_18,true);
 return function(){
-doc.removeEventListener("mousedown",_14,true);
+doc.body.removeEventListener("mousedown",_14,true);
 doc.removeEventListener("focus",_17,true);
 doc.removeEventListener("blur",_18,true);
 doc=null;

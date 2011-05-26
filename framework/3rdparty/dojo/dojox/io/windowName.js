@@ -72,7 +72,15 @@ doc.write("<html><body margin='0px'></body></html>");
 doc.close();
 _11=doc.body;
 }
-var _17=_d.frame=_17=doc.createElement(dojo.isIE?"<iframe name=\""+_10+"\" onload=\"dojox.io.windowName["+_e+"]()\">":"iframe");
+var _17;
+if(dojo.isIE){
+var div=doc.createElement("div");
+div.innerHTML="<iframe name=\""+_10+"\" onload=\"dojox.io.windowName["+_e+"]()\">";
+_17=div.firstChild;
+}else{
+_17=doc.createElement("iframe");
+}
+_d.frame=_17;
 _12(_17);
 _d.outerFrame=_14=_14||_17;
 if(!_b){

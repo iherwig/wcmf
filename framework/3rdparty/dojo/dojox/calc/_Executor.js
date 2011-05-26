@@ -5,39 +5,43 @@
 */
 
 
-define(["dojo","dijit/_Templated","dojox/math/_base"],function(_1){
-_1.experimental("dojox.calc._Executor");
+if(!dojo._hasResource["dojox.calc._Executor"]){
+dojo._hasResource["dojox.calc._Executor"]=true;
+dojo.provide("dojox.calc._Executor");
+dojo.require("dijit._Templated");
+dojo.require("dojox.math._base");
+dojo.experimental("dojox.calc._Executor");
 (function(){
-var _2;
+var _1;
 if(!("pow" in dojox.calc)){
-dojox.calc.pow=function(_3,_4){
-function _5(n){
+dojox.calc.pow=function(_2,_3){
+function _4(n){
 return Math.floor(n)==n;
 };
-if(_3>=0||_5(_4)){
-return Math.pow(_3,_4);
+if(_2>=0||_4(_3)){
+return Math.pow(_2,_3);
 }else{
-var _6=1/_4;
-return (_5(_6)&&(_6&1))?-Math.pow(-_3,_4):NaN;
+var _5=1/_3;
+return (_4(_5)&&(_5&1))?-Math.pow(-_2,_3):NaN;
 }
 };
 }
-_1.declare("dojox.calc._Executor",[dijit._Widget,dijit._Templated],{templateString:"<iframe src=\""+_1.moduleUrl("dojox.calc","_ExecutorIframe.html")+"\" style=\"display:none;\" onload=\"if(arguments[0] && arguments[0].Function)"+dijit._scopeName+".byNode(this)._onLoad(arguments[0])\"></iframe>",_onLoad:function(_7){
-_2=_7;
-_7.outerPrompt=window.prompt;
-_7.dojox={math:{}};
+dojo.declare("dojox.calc._Executor",[dijit._Widget,dijit._Templated],{templateString:"<iframe src=\""+dojo.moduleUrl("dojox.calc","_ExecutorIframe.html")+"\" style=\"display:none;\" onload=\"if(arguments[0] && arguments[0].Function)"+dijit._scopeName+".byNode(this)._onLoad(arguments[0])\"></iframe>",_onLoad:function(_6){
+_1=_6;
+_6.outerPrompt=window.prompt;
+_6.dojox={math:{}};
 for(var f in dojox.math){
-_7.dojox.math[f]=_1.hitch(dojox.math,f);
+_6.dojox.math[f]=dojo.hitch(dojox.math,f);
 }
 if("toFrac" in dojox.calc){
-_7.toFracCall=_1.hitch(dojox.calc,"toFrac");
+_6.toFracCall=dojo.hitch(dojox.calc,"toFrac");
 this.Function("toFrac","x","return toFracCall(x)");
 }
-_7.isJavaScriptLanguage=_1.number.format(1.5,{pattern:"#.#"})=="1.5";
-_7.Ans=0;
-_7.pi=Math.PI;
-_7.eps=Math.E;
-_7.powCall=_1.hitch(dojox.calc,"pow");
+_6.isJavaScriptLanguage=dojo.number.format(1.5,{pattern:"#.#"})=="1.5";
+_6.Ans=0;
+_6.pi=Math.PI;
+_6.eps=Math.E;
+_6.powCall=dojo.hitch(dojox.calc,"pow");
 this.normalizedFunction("sqrt","x","return Math.sqrt(x)");
 this.normalizedFunction("sin","x","return Math.sin(x)");
 this.normalizedFunction("cos","x","return Math.cos(x)");
@@ -62,28 +66,27 @@ this.normalizedFunction("toOct","number","return toRadix(number, 8)");
 this.normalizedFunction("toHex","number","return toRadix(number, 16)");
 this.onLoad();
 },onLoad:function(){
-},Function:function(_8,_9,_a){
-return _1.hitch(_2,_2.Function.apply(_2,arguments));
-},normalizedFunction:function(_b,_c,_d){
-return _1.hitch(_2,_2.normalizedFunction.apply(_2,arguments));
-},deleteFunction:function(_e){
-_2[_e]=undefined;
-delete _2[_e];
-},eval:function(_f){
-return _2.eval.apply(_2,arguments);
+},Function:function(_7,_8,_9){
+return dojo.hitch(_1,_1.Function.apply(_1,arguments));
+},normalizedFunction:function(_a,_b,_c){
+return dojo.hitch(_1,_1.normalizedFunction.apply(_1,arguments));
+},deleteFunction:function(_d){
+_1[_d]=undefined;
+delete _1[_d];
+},eval:function(_e){
+return _1.eval.apply(_1,arguments);
 },destroy:function(){
 this.inherited(arguments);
-_2=null;
+_1=null;
 }});
 })();
 (function(){
-var _10=(1<<30)-35;
-_1.mixin(dojox.calc,{approx:function(r){
+var _f=(1<<30)-35;
+dojo.mixin(dojox.calc,{approx:function(r){
 if(typeof r=="number"){
-return Math.round(r*_10)/_10;
+return Math.round(r*_f)/_f;
 }
 return r;
 }});
 })();
-return dojox.calc._Executor;
-});
+}

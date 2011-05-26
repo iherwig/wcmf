@@ -1,9 +1,9 @@
 
 .claro .dijitDialog {
   border: 1px solid #769dc0;
-  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-  -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
 }
 .claro .dijitDialogPaneContent {
   background: #ffffff repeat-x top left;
@@ -38,7 +38,7 @@
 }
 .claro .dijitDialogTitle {
   
-  padding: 0px 1px;
+  padding: 0 1px;
   font-size: 1.091em;
 }
 .claro .dijitDialogCloseIcon {
@@ -84,12 +84,11 @@
   background-position: bottom;
   border: 1px solid #769dc0;
   padding: 6px 8px;
-  border-radius: 4px;
-  -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   font-size: 1em;
 }
 .dj_ie6 .claro .dijitTooltipContainer {
@@ -97,7 +96,7 @@
 }
 .claro .dijitTooltipConnector {
   
-  border: 0px;
+  border: 0;
   z-index: 2;
   background-image: url("images/tooltip.png");
   background-repeat: no-repeat;
@@ -114,17 +113,17 @@
 }
 .claro .dijitTooltipBelow .dijitTooltipConnector {
   
-  top: 0px;
+  top: 0;
   left: 3px;
-  background-position: -31px 0%;
+  background-position: -31px 0;
   width: 16px;
   height: 14px;
 }
 .claro .dijitTooltipAbove .dijitTooltipConnector {
   
-  bottom: 0px;
+  bottom: 0;
   left: 3px;
-  background-position: -15px 0%;
+  background-position: -15px 0;
   width: 16px;
   height: 14px;
 }
@@ -136,8 +135,8 @@
 }
 .claro .dijitTooltipLeft .dijitTooltipConnector {
   
-  right: 0px;
-  background-position: 0px 0%;
+  right: 0;
+  background-position: 0 0;
   width: 16px;
   height: 14px;
 }
@@ -146,8 +145,8 @@
 }
 .claro .dijitTooltipRight .dijitTooltipConnector {
   
-  left: 0px;
-  background-position: -48px 0%;
+  left: 0;
+  background-position: -48px 0;
   width: 16px;
   height: 14px;
 }

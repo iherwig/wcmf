@@ -30,8 +30,8 @@
 
 .claro .dijitButtonNode {
 	/* rules for dijit.form.*Button widgets and arrow nodes on ComboBox, Spinner etc. */
-	-webkit-transition-property:background-color;
- 	-webkit-transition-duration:.3s;
+	.transition-property(background-color);
+ 	.transition-duration(.3s);
 }
 
 .claro .dijitButton .dijitButtonNode,
@@ -45,16 +45,12 @@
 	background-position: center top;
 	background-repeat: repeat-x;
 	background-color: @button-background-color;
-	border-radius: @button-border-radius;
-	-moz-border-radius: @button-border-radius;
-	-webkit-border-radius: @button-border-radius;
-	box-shadow:0px 1px 1px rgba(0,0,0,0.15);
-	-webkit-box-shadow:0px 1px 1px rgba(0,0,0,0.15);
-	-moz-box-shadow: 0px 1px 1px rgba(0,0,0,0.15);	
+	.border-radius(@button-border-radius);
+	.box-shadow(0 1px 1px rgba(0,0,0,0.15));
 }
 
 .claro .dijitComboButton .dijitArrowButton {
-	border-left-width: 0px;
+	border-left-width: 0;
 	padding: 4px 2px 4px 2px;	/* TODO: still needed? */
 }
 
@@ -74,7 +70,7 @@
 	background-position: -26px 53%;
 }
 .claro .dijitUpArrowButton .dijitArrowButtonInner {
-	background-position: 0px 53%;
+	background-position: 0 53%;
 }
 .claro .dijitDisabled .dijitArrowButtonInner {
 	background-position: -151px 53%;
@@ -106,7 +102,7 @@
 .claro .dijitToggleButtonHover .dijitButtonNode {
 	background-color: @button-hovered-background-color;
 	color:@text-color;
- 	-webkit-transition-duration:.2s;
+ 	.transition-duration(.2s);
 }
 
 /* checked status */
@@ -115,10 +111,8 @@
 .claro .dijitComboButtonActive .dijitButtonNode,
 .claro .dijitToggleButtonActive .dijitButtonNode {
 	background-color: @button-pressed-background-color;
-	box-shadow:0px 0px 0px rgba(0,0,0,0);
-	-webkit-box-shadow:0px 0px 0px rgba(0,0,0,0);
-	-moz-box-shadow: 0px 0px 0px rgba(0,0,0,0);
- 	-webkit-transition-duration:.1s;
+	.box-shadow(0 0 0 rgba(0,0,0,0));
+ 	.transition-duration(.1s);
 }
 
 /* disabled status */
@@ -134,16 +128,14 @@
 .claro .dijitDropDownButtonDisabled .dijitButtonNode,
 .claro .dijitComboButtonDisabled .dijitButtonNode,
 .claro .dijitToggleButtonDisabled .dijitButtonNode { 
-	background-position:0px -149px;
+	background-position:0 -149px;
 	background-color: @disabled-background-color;
 	border: solid 1px @disabled-border-color;
 	color: @disabled-text-color;
-	box-shadow:0px 0px 0px rgba(0,0,0,0);
-	-webkit-box-shadow:0px 0px 0px rgba(0,0,0,0);
-	-moz-box-shadow: 0px 0px 0px rgba(0,0,0,0);
+	.box-shadow(0 0 0 rgba(0,0,0,0));
 }
 .claro .dijitComboButtonDisabled .dijitArrowButton{ 
-	border-left-width: 0px;
+	border-left-width: 0;
 }
 /* for ComboButton */
 .claro table.dijitComboButton {
@@ -155,16 +147,8 @@
 }
 
 .claro .dijitComboButton .dijitStretch {
-	-moz-border-radius: @button-border-radius 0px 0px @button-border-radius;
-	-webkit-border-top-left-radius: @button-border-radius;
-	-webkit-border-top-right-radius: 0px;
-	-webkit-border-bottom-right-radius: 0px;
-	-webkit-border-bottom-left-radius: @button-border-radius;
+	.border-radius(@button-border-radius 0 0 @button-border-radius);
 }
 .claro .dijitComboButton .dijitArrowButton {
-	-moz-border-radius: 0px @button-border-radius @button-border-radius 0px;
-	-webkit-border-top-left-radius: 0px;
-	-webkit-border-top-right-radius: @button-border-radius;
-	-webkit-border-bottom-right-radius: @button-border-radius;
-	-webkit-border-bottom-left-radius: 0px;
+	.border-radius(0 @button-border-radius @button-border-radius 0);
 }
