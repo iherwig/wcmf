@@ -17,6 +17,8 @@
  * $Id: class.ElFinderController.php 1332 2011-05-16 15:46:44Z iherwig $
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Controller.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(WCMF_BASE."wcmf/3rdparty/elfinder/connectors/php/elFinder.class.php");
 
 /**
@@ -31,6 +33,10 @@ require_once(WCMF_BASE."wcmf/3rdparty/elfinder/connectors/php/elFinder.class.php
  *
  * <b>Output actions:</b>
  * - @em ok In any case
+ *
+ * @param[in] fieldName The name of the input field that should receive the
+ *                      url of the selected file. if not given, elFinder will
+ *                      search for a CkEditor instance and set the url on that.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -59,16 +65,24 @@ class ElFinderController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
 
+    // get root path and root url for the browser
+    $rootPath = InifileParser::getInstance()->getValue('uploadDir', 'media').'/';
+    $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+    $rootUrl = URIUtil::makeAbsolute($rootPath, $refURL);
+
+    // set common response values
+    if ($request->hasValue('fieldName')) {
+      $response->setValue('fieldName', $request->getValue('fieldName'));
+    }
+    $response->setValue('rootUrl', $rootUrl);
+    $response->setValue('rootPath', $rootPath);
+
     if ($request->getAction() != "browseResources")
     {
-      //if (function_exists('date_default_timezone_set')) {
-      //  date_default_timezone_set('Europe/Berlin');
-      //}
-
       $opts = array(
-        'root'            => '../media',                       // path to root directory
-        'URL'             => 'http://'.$_SERVER['SERVER_NAME'].'/ingo/wCMF/framework/new_roles/cms/media/', // root directory URL
-        'rootAlias'       => 'Home',       // display this instead of root directory name
+        'root'            => $rootPath,    // path to root directory
+        'URL'             => $rootUrl,     // root directory URL
+        'rootAlias'       => 'Media',       // display this instead of root directory name
         //'uploadAllow'   => array('images/*'),
         //'uploadDeny'    => array('all'),
         //'uploadOrder'   => 'deny,allow'
@@ -131,7 +145,7 @@ class ElFinderController extends Controller
       // handle special actions (given in the cmd parameter from elfinder)
       $action = $request->getValue('cmd');
       if ($action == 'rename') {
-        
+
       }
 
       $response->setAction('ok');

@@ -27,9 +27,6 @@ dojo.declare("wcmf.ui.RelationTabContainer", dijit.layout.TabContainer, {
    * An array of objects describing the relations. Each object has the following properties:
    * - role: the role name
    * - query: the obfuscated relation query condition
-   * - sortInfo: An object with the following properties:
-   *   - attribute: the name of the attribute to sort by
-   *   - descending: boolean
    */
   relations: [],
 
@@ -46,9 +43,6 @@ dojo.declare("wcmf.ui.RelationTabContainer", dijit.layout.TabContainer, {
    *      the following properties:
    *      - role: the role name
    *      - query: the obfuscated relation query condition
-   *      - sortInfo: An object with the following properties:
-   *        - attribute: the name of the attribute to sort by
-   *        - descending: boolean
    *    + All options defined for dijit.layout.TabContainer
    */
   constructor: function(options) {
@@ -85,8 +79,7 @@ dojo.declare("wcmf.ui.RelationTabContainer", dijit.layout.TabContainer, {
       var pane = new wcmf.ui.RelationPane({
         oid: this.oid,
         otherRole: curRelation.role,
-        relationQuery: curRelation.query,
-        sortInfo: curRelation.sortInfo
+        relationQuery: curRelation.query
       });
       this.addChild(pane);
       this.relationPanes[curRelation.role] = pane;

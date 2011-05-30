@@ -39,6 +39,7 @@ dojo.ready(function() {
 
   dojo.require("wcmf.ui.TypeTabContainer");
   dojo.require("wcmf.ui.NodeTabContainer");
+  dojo.require("wcmf.ui.Form");
   dojo.require("wcmf.ui.Grid");
   dojo.require("wcmf.ui.GridActionCell");
   dojo.require("wcmf.ui.DetailPane");

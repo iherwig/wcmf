@@ -28,11 +28,15 @@ require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
 abstract class Role extends Node
 {
   /**
-   * Default constructor.
+   * Constructor
+   * @param oid ObjectId instance (optional)
    */
-  public function __construct(ObjectId $oid=null, $type='Role')
+  function __construct($oid=null)
   {
-    parent::__construct($type, $oid);
+    if ($oid == null) {
+      $oid = new ObjectId('Role');
+    }
+    parent::__construct($oid);
   }
 
   /**

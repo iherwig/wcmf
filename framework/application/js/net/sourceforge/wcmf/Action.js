@@ -28,14 +28,20 @@ wcmf.Action.login = function() {
  * Sends the logout action and shows the login screen
  */
 wcmf.Action.logout = function() {
-    top.location.href = wcmf.appURL+'?action=logout';
+  top.location.href = wcmf.appURL+'?action=logout';
 };
 
 /**
  * Opens the media pool window
+ * @param fieldName The name of the input field that should receive the
+ * url of the selected file (optional).
  */
-wcmf.Action.browseResources = function() {
-    window.open(wcmf.appURL+'?action=browseResources', 'mediaPool', "height=500, width=820");
+wcmf.Action.browseResources = function(fieldName) {
+  var url = wcmf.appURL+'?action=browseResources';
+  if (fieldName) {
+    url += '&fieldName='+fieldName;
+  }
+  window.open(url, 'mediaPool', "height=500, width=820");
 };
 
 /**

@@ -1,4 +1,5 @@
 {configvalue key="libDir" section="cms" varname="libDir"}
+{configvalue key="language" section="cms" varname="lang"}
 {$elFinderBaseDir=$libDir|cat:"3rdparty/elfinder/"}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -14,21 +15,31 @@
   <script src="{$elFinderBaseDir}js/jquery-ui-1.7.2.custom.min.js" type="text/javascript" charset="utf-8"></script>
 
   <script src="{$elFinderBaseDir}js/elfinder.min.js" type="text/javascript" charset="utf-8"></script>
-  <!--
-  <script src="{$elFinderBaseDir}js/i18n/elfinder.ru.js" type="text/javascript" charset="utf-8"></script>
-  -->
+  <script src="{$elFinderBaseDir}js/i18n/elfinder.{$lang}.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
     $().ready(function() {
       var f = $('#finder').elfinder({
         url: 'main.php?controller=ElFinderController&sid={sessionid}',
-        lang: '{configvalue key="language" section="cms"}',
+        lang: '{$lang}',
+        cutURL: '{$rootUrl}',
 
         editorCallback: function(url) {
+          // prepend media path
+          url = '{$rootPath}'+url;
           if (window.console && window.console.log) {
             window.console.log(url);
           }
-          var funcNum = window.location.search.replace(/^.*CKEditorFuncNum=(\d+).*$/, "$1");
+          var fieldName = '{$fieldName}';
+          // check for a widget with the id given in fieldName
+          if (fieldName.length > 0 && window.opener) {
+            var widget = window.opener.dijit.byId(fieldName);
+            if (widget) {
+              widget.set('value', url);
+            }
+          }
+          // check for ckeditor
           if (window.opener.CKEDITOR) {
+            var funcNum = window.location.search.replace(/^.*CKEditorFuncNum=(\d+).*$/, "$1");
             window.opener.CKEDITOR.tools.callFunction(funcNum, url);
           }
           window.close();

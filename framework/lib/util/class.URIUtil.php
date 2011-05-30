@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
@@ -39,7 +39,7 @@ class URIUtil
 
     $abs_array = explode('/', $abs_uri);
     $base_array = explode('/', $base);
-    
+
     // remove trailing file names
     $fileName = '';
     if (strrpos($abs_uri, '/') !== strlen($abs_uri)) {
@@ -48,13 +48,13 @@ class URIUtil
     if (strrpos($base, '/') !== strlen($base)) {
       array_pop($base_array);
     }
-    // ignore common path    
+    // ignore common path
     while ($abs_array[0] == $base_array[0] && sizeof($abs_array) > 0)
     {
       array_shift($abs_array);
       array_shift($base_array);
     }
-    
+
     // construct connecting path
     $rel_uri = str_repeat('../', sizeof($base_array)).join('/', $abs_array).'/'.$fileName;
     return $rel_uri;
@@ -67,7 +67,7 @@ class URIUtil
    * @param REMOVE_LEADING_DOTS True/False wether to remove leading dots or not [default: true]
    */
   public static function makeAbsolute($rel_uri, $base, $REMOVE_LEADING_DOTS = true)
-  {  
+  {
     preg_match("'^([^:]+://[^/]+)/'", $base, $m);
     $base_start = $m[1];
     if (preg_match("'^/'", $rel_uri)) {
@@ -77,7 +77,7 @@ class URIUtil
     $base .= $rel_uri;
     $base = preg_replace("{^[^:]+://[^/]+}", '', $base);
     $base_array = explode('/', $base);
-    if (count($base_array) and !strlen($base_array[0])) {
+    if (count($base_array) && !strlen($base_array[0])) {
       array_shift($base_array);
     }
     $i = 1;
@@ -87,8 +87,8 @@ class URIUtil
       {
         array_splice($base_array, $i - 1, 1);
         if ($i > 1) $i--;
-      } 
-      elseif ($base_array[$i] == ".." and $base_array[$i - 1]!= "..")
+      }
+      elseif ($base_array[$i] == ".." && $base_array[$i - 1]!= "..")
       {
         array_splice($base_array, $i - 1, 2);
         if ($i > 1)
@@ -103,13 +103,13 @@ class URIUtil
         $i++;
       }
     }
-    
-    if (count($base_array) and $base_array[-1] == ".") {
+
+    if (count($base_array) && isset($base_array[-1]) && $base_array[-1] == ".") {
       $base_array[-1] = "";
     }
     /* How do we treat the case where there are still some leading ../
        segments left? According to RFC2396 we are free to handle that
-       any way we want. The default is to remove them. 
+       any way we want. The default is to remove them.
      #
        "If the resulting buffer string still begins with one or more
        complete path segments of "..", then the reference is considered
@@ -121,18 +121,18 @@ class URIUtil
      #
        http://www.faqs.org/rfcs/rfc2396.html  5.2.6.g
     */
-    
+
     if ($REMOVE_LEADING_DOTS)
     {
-      while (count($base_array) and preg_match("/^\.\.?$/", $base_array[0]))
+      while (count($base_array) && preg_match("/^\.\.?$/", $base_array[0]))
         array_shift($base_array);
     }
-    return($base_start . '/' . implode("/", $base_array)); 
+    return($base_start . '/' . implode("/", $base_array));
   }
   /**
    * Translate a relative URI from one location to the script location.
    * For example if a file path is stored relative to location A and should be
-   * translated to the script URI (location B), use 
+   * translated to the script URI (location B), use
    * URIUtil::translate($filepathAsSeenFromA, $pathFromBtoA)
    * @param rel_uri Relative URI to translate as seen from base
    * @param base Base URI
@@ -145,7 +145,7 @@ class URIUtil
     $path = dirname($self).'/';
     $absUrl = URIUtil::makeAbsolute($rel_uri, $path.$base);
     $relUrl = URIUtil::makeRelative($absUrl, $self);
-    
+
     return array('absolute' => $absUrl, 'relative' => $relUrl);
   }
   /**
@@ -156,9 +156,9 @@ class URIUtil
    * @return True/False wether the url is available
    */
   public static function validateUrl($url, $timeout=10)
-  {        
+  {
     $url_parts = @parse_url($url);
-    if (empty($url_parts["host"])) 
+    if (empty($url_parts["host"]))
     {
       // check local relative url
       $fh = @fopen($url, "r");
@@ -169,7 +169,7 @@ class URIUtil
         return(true);
       }
     }
-       
+
     if (!empty($url_parts["path"])) {
       $documentpath = $url_parts["path"];
     }
@@ -199,7 +199,7 @@ class URIUtil
       {
         fclose($socket);
         return(true);
-      } 
+      }
       else
       {
         if (Log::isDebugEnabled(__CLASS__)) {
@@ -208,14 +208,14 @@ class URIUtil
         return(false);
       }
     }
-  }  
+  }
   /*
    * Get the protocol string (http:// or https://)
    * @return The protocol string
    */
   public static function getProtocolStr()
   {
-    if (strlen($_SERVER['HTTPS']) > 0 && $_SERVER['HTTPS'] != 'off') {
+    if (isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) > 0 && $_SERVER['HTTPS'] != 'off') {
       return 'https://';
     }
     else {
@@ -231,7 +231,7 @@ class URIUtil
     $pageURL = URIUtil::getProtocolStr();
     if ($_SERVER["SERVER_PORT"] != "80") {
       $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-    } 
+    }
     else {
       $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
    }

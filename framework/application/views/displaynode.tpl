@@ -8,25 +8,14 @@ dojo.addOnLoad(function() {
   // get the DetailPane instance
   var detailPane = wcmf.ui.DetailPane.getFromContainedDiv("detail{$uid}Div");
 
-  // update the title of the pane, if it is an existing object
-  if (!detailPane.getIsNewNode()) {
-    detailPane.set("title", "{$object->getDisplayValue()}");
-  }
-
   // create a RelationTabContainer with one RelationPane instance for each related type
   var relations = [];
-{foreach item=relation from=$mapper->getRelations()}
+{foreach $mapper->getRelations() as $relation}
   {$otherRole=$relation->getOtherRole()}
-  {$otherMapper=$relation->getOtherMapper()}
-  {$orderBy=$otherMapper->getDefaultOrder($relation->getThisRole())}
 
   relations.push({
     role: "{$otherRole}",
-    query: "{$obfuscator->obfuscate($nodeUtil->getRelationQueryCondition($object, $otherRole))}"{if $orderBy},
-    sortInfo: {
-      attribute: "{$orderBy.sortFieldName}",
-      descending: {if $orderBy.sortDirection == "DESC"}true{else}false{/if}
-    }
+    query: "{$obfuscator->obfuscate($nodeUtil->getRelationQueryCondition($object, $otherRole))}"{if $orderBy}
 {/if}
   });
 {/foreach}

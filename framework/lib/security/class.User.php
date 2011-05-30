@@ -34,6 +34,17 @@ abstract class User extends Node
   private $_hasOwnRolesLoaded = false;
 
   /**
+   * Constructor
+   * @param oid ObjectId instance (optional)
+   */
+  function __construct($oid=null)
+  {
+    if ($oid == null) {
+      $oid = new ObjectId('User');
+    }
+    parent::__construct($oid);
+  }
+  /**
    * Get the user instance by login and password.
    * The default implementation searches the user using the PersistenceFacade.
    * This method may be called in a static way.

@@ -70,7 +70,7 @@ class AuthUser extends User implements IStorable
     if ($user != null)
     {
       // login succeeded, store the user instance
-      $this->_user = &$user->duplicate();
+      $this->_user = clone $user;
       $this->setOID($user->getOID());
 
       // load user config initially

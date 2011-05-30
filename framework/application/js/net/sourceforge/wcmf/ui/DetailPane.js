@@ -70,11 +70,20 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   postCreate: function() {
     this.inherited(arguments);
-    this.connect(this, 'onLoad', this.connectFieldChangeEvents);
+    this.connect(this, 'onLoad', this.handleLoadEvent);
     this.connect(this, 'onClose', this.handleCloseEvent);
 
     var store = this.getStore(this.modelClass);
     this.connect(store, 'onSet', this.handleItemChangeEvent);
+  },
+
+  /**
+   * Set the title of the pane
+   * @param title The title
+   */
+  setTitle: function(title) {
+    var re = /<[^>]*?>/gi;
+    this.set("title", dojo.trim(title.replace(re, "")));
   },
 
   /**
@@ -216,7 +225,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     // set the oid
     this.oid = store.getValue(item, "oid");
     // update title and fields
-    this.set("title", store.getLabel(item));
+    this.setTitle(store.getLabel(item));
     this.setFieldValues(item);
     this.unsetDirty();
     this.isNewNode = false;
@@ -239,7 +248,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   setDirty: function() {
     if (!this.isDirty) {
-      this.set("title", "*"+this.get("title"));
+      this.setTitle("*"+this.get("title"));
       this.isDirty = true;
       // notify listeners
       this.onChange(this);
@@ -248,7 +257,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   unsetDirty: function() {
     if (this.isDirty) {
-      this.set("title", this.get("title").replace(/^\*/, ''));
+      this.setTitle(this.get("title").replace(/^\*/, ''));
       this.isDirty = false;
     }
   },
@@ -261,7 +270,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     var values = {};
     dojo.forEach(this.getObjectValueWidgets(), function(widget) {
       if (widget.name) {
-        var attribute = this.getAttributeNameFromFieldName(widget.name);
+        var attribute = wcmf.ui.Form.getAttributeNameFromFieldName(widget.name);
         if (attribute) {
           values[attribute] = widget.get('value');
         }
@@ -280,7 +289,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     var store = this.getStore(this.modelClass);
     dojo.forEach(this.getObjectValueWidgets(), function(widget) {
       if (widget.name) {
-        var attribute = this.getAttributeNameFromFieldName(widget.name);
+        var attribute = wcmf.ui.Form.getAttributeNameFromFieldName(widget.name);
         if (attribute) {
           widget.set('value', store.getValue(item, attribute));
         }
@@ -288,19 +297,6 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     }, this);
     // enable handleValueChangeEvent again
     this.connectFieldChangeEvents();
-  },
-
-  /**
-   * Determine the item attribute name from the given field name
-   * @param fieldName The name of the field
-   * @return The attribute name
-   */
-  getAttributeNameFromFieldName: function(fieldName) {
-    var matches = fieldName.match(/^value-(.+)-[^-]*$/);
-    if (matches && matches.length > 0) {
-      return matches[1];
-    }
-    return '';
   },
 
   /**
@@ -352,7 +348,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     var store = this.getStore();
     if (store.getValues(item, "oid") == this.oid) {
       // update title and fields
-      this.set("title", store.getLabel(item));
+      this.setTitle(store.getLabel(item));
       this.setFieldValues(item);
     }
   },
@@ -362,6 +358,20 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
       return confirm(wcmf.Message.get("Do you really want to close this panel and lose all changes?"))
     }
     return true;
+  },
+
+  handleLoadEvent: function(e) {
+    this.connectFieldChangeEvents();
+    if (!this.isNewNode) {
+      var store = this.getStore();
+      store.fetchItemByIdentity({
+        scope: this,
+        identity: this.oid,
+        onItem: function(item) {
+          this.setTitle(store.getLabel(item));
+        }
+      });
+    }
   },
 
   destroy: function() {

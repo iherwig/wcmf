@@ -133,7 +133,7 @@ class LinkConverter implements IDataConverter
       if (($resourceBaseDir = $parser->getValue('htmlBaseDir', 'cms')) === false)
         WCMFException::throwEx($parser->getErrorMsg(), __FILE__, __LINE__);
 
-      $refURL = UriUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+      $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
       $gLinkConverterBaseUrl = URIUtil::makeAbsolute($resourceBaseDir, $refURL);
     }
     return $gLinkConverterBaseUrl;
@@ -154,7 +154,7 @@ class LinkConverter implements IDataConverter
    */
   function isExternalUrl($url)
   {
-    return !(strpos($url, UriUtil::getProtocolStr().$_SERVER['HTTP_HOST']) === 0 ||
+    return !(strpos($url, URIUtil::getProtocolStr().$_SERVER['HTTP_HOST']) === 0 ||
       strpos($url, 'http://') === false || strpos($url, 'https://') === false);
   }
 }

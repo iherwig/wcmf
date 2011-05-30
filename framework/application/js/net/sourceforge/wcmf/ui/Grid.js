@@ -35,21 +35,32 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
   role: null,
 
   /**
+   * Object with attributes 'attribute', 'descending' (Boolean) and 'isSortkey' (Boolean)
+   * defining the attribute and direction to order the objects by. If isSortkey is true,
+   * drag and drop sorting will be enabled
+   */
+  sortField: null,
+
+  /**
    * Constructor
    * @param options Parameter object:
    *    - modelClass  The wcmf.model.meta.Node instance which defines the type of objects in this grid
    *    - actions Array of wcmf.ui.GridActionCell instances to be executed on the contained objects
    *    - masterOid The object id of the master object in a master-detail scenario (optional)
    *    - role The role of the cntained instances in relation to the master object (optional)
+   *    - sortFields Array of objects with attributes 'attribute', 'descending' (Boolean) and 'isSortkey' (Boolean)
+   *      defining the attribute and direction to order the objects by. If isSortkey is true,
+   *      drag and drop sorting will be enabled (optional)
    *    + All other options defined for dojox.grid.EnhancedGrid
    */
   constructor: function(options) {
     this.modelClass = options.modelClass;
     this.actions = options.actions || [];
-
-    // add default sort order, if not given
-    if (!options.sortFields && this.modelClass.sortInfo != null) {
-      options.sortFields = [this.modelClass.sortInfo];
+    this.masterOid = options.masterOid;
+    this.role = options.role;
+    if (options.sortFields) {
+      // explicit sorting is only possible for one attribute
+      this.sortField = options.sortFields[0];
     }
 
     dojo.mixin(this, {
@@ -103,7 +114,8 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
     var dndPlugin = this.plugin('dnd');
     if (dndPlugin) {
-      dndPlugin.setupConfig(this.getDnDConfig(this.modelClass.isSortable));
+      var isSortable = this.sortField && this.sortField.isSortkey;
+      dndPlugin.setupConfig(this.getDnDConfig(isSortable));
     }
   },
 

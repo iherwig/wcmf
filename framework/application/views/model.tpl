@@ -13,7 +13,6 @@ dojo.require("wcmf.model.meta.Model");
 {foreach $typeTemplates as $tpl}
   {$type=$tpl->getType()}
   {$mapper=$tpl->getMapper()}
-  {$orderBy=$mapper->getDefaultOrder()}
 /**
  * Definition of model class {$type}
  */
@@ -21,9 +20,28 @@ dojo.declare("wcmf.model.{$type}Class", wcmf.model.meta.Node, {
   name: '{$type}',
   isRootType: {if $tpl->getProperty('isRootType') == true}true{else}false{/if},
   isSortable: {if $mapper->isSortable()}true{else}false{/if},
-{if $orderBy}
-  sortInfo: { attribute: "{$orderBy.sortFieldName}", descending: {if $orderBy.sortDirection == "DESC"}true{else}false{/if} },
-{/if}
+{$orderBy=$mapper->getDefaultOrder()}
+  sortInfo: {
+    attribute: "{$orderBy.sortFieldName}",
+    descending: {if $orderBy.sortDirection == "DESC"}true{else}false{/if},
+    isSortkey: {if $orderBy.isSortkey}true{else}false{/if}
+
+  },
+  relationSortInfo: {
+{foreach $mapper->getRelations() as $relation}
+  {$orderBy=$mapper->getDefaultOrder($relation->getOtherRole())}
+  {if $orderBy}
+    {$relation->getOtherRole()}: {
+      attribute: "{$orderBy.sortFieldName}",
+      descending: {if $orderBy.sortDirection == "DESC"}true{else}false{/if},
+      isSortkey: {if $orderBy.isSortkey}true{else}false{/if}
+
+    }{if !$relation@last},
+    {/if}
+  {/if}
+{/foreach}
+
+  },
   attributes: [
 {foreach $mapper->getAttributes() as $attribute}
     {

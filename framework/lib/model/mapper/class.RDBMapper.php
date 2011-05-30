@@ -486,9 +486,13 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       $relationDesc = $this->getRelation($roleName);
       if ($relationDesc instanceof RDBManyToManyRelationDescription)
       {
+        // the order may be overriden by the many to many relation class
         $thisRelationDesc = $relationDesc->getThisEndRelation();
         $nmMapper = $thisRelationDesc->getOtherMapper($thisRelationDesc->getOtherType());
-        return $nmMapper->getOwnDefaultOrder($roleName);
+        $order = $nmMapper->getOwnDefaultOrder($roleName);
+        if ($order != null) {
+          return $order;
+        }
       }
     }
     return $this->getOwnDefaultOrder($roleName);

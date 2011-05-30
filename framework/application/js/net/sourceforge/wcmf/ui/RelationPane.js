@@ -31,12 +31,6 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
    * The query to find objects on the other side of the relation
    */
   relationQuery: null,
-  /**
-   * An object with the following properties:
-   * - attribute: the name of the attribute to sort by
-   * - descending: boolean
-   */
-  sortInfo: null,
 
   /**
    * UI elements
@@ -51,16 +45,12 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
    *    - oid The object id of the object on this side of the relation
    *    - otherRole The role of the objects on the other side of the relation
    *    - relationQuery The query to find objects on the other side of the relation
-   *    - sortInfo An object with the following properties:
-   *      - attribute: the name of the attribute to sort by
-   *      - descending: boolean
    *    + All other options defined for dijit.layout.ContentPane
    */
   constructor: function(options) {
     this.oid = options.oid;
     this.otherRole = options.otherRole;
     this.relationQuery = options.relationQuery;
-    this.sortInfo = options.sortInfo;
 
     this.modelClass = wcmf.model.meta.Model.getTypeFromOid(this.oid);
     this.otherClass = this.modelClass.getTypeForRole(this.otherRole);
@@ -145,8 +135,12 @@ dojo.declare("wcmf.ui.RelationPane", dojox.layout.ContentPane, {
       role: this.otherRole,
       region: "center"
     };
-    if (this.sortInfo) {
-      gridOptions["sortFields"] = [this.sortInfo];
+    // set the sort info for the objects of otherClass
+    // in relation to modelClass
+    var relation = this.modelClass.getRelation(this.otherRole);
+    var sortInfo = this.otherClass.relationSortInfo[relation.thisEndName];
+    if (sortInfo) {
+      gridOptions["sortFields"] = [sortInfo];
     }
     this.relationsGrid = new wcmf.ui.Grid(gridOptions);
 

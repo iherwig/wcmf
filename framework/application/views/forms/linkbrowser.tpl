@@ -1,18 +1,23 @@
-{assign var="attributes" value=$attributes|default:'class="default"'}
-{if !$resourceBrowserCodeAdded}
-<script type="text/javascript">
-{literal}
-function SetUrl(value, fieldName)
-{
-  setVariable(fieldName, value);
-}
-{/literal}
-</script>
+{$validationString=''}
+{if $attributeDescription}
+  {$regExp=$attributeDescription->getRestrictionsMatch()}
+  {if $regExp}
+    {$invalidMessage=$attributeDescription->getRestrictionsDescription()}
+    {$validationString=", regExp:\"$regExp\", invalidMessage:\"$invalidMessage\""}
+  {/if}
 {/if}
-{if $enabled}
-<input type="text" name="{$name}" value="{$value}" {$attributes} onchange="setDirty(this.name);" /><br />
+<input
+  id="{$name}"
+  {$attributes}
+  data-dojo-type="dijit.form.ValidationTextBox"
+  data-dojo-props='
+    name:"{$name}",
+    value:"{$value}"
+    {if !$enabled}
+      , disabled:true
+    {/if}
+    {$validationString}
+  '
+/>
 <a href="javascript:newWindowEx('', '', 'browseresources', 'browseWindow', 'width=800,height=700,resizable=yes,scrollbars=yes,status=yes,locationbar=no', '&type=link&subtype=content&fieldName={$name}')">{translate text="Internal Link"}</a>
-{else}
-<span class="disabled" {$attributes}>{$value}</span>
-{/if}
 {if $value}| <a href="{$value}"{if $isExternal} target="_blank"{/if}>{translate text="Test"}</a>{/if}

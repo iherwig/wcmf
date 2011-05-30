@@ -112,10 +112,13 @@ interface IPersistenceMapper
 
   /**
    * Get the name of the attribute to order by default and the sort direction
-   * (ASC or DESC). The roleName parameter allows to ask for the order with respect to a specific role.
+   * (ASC or DESC). If the order may be established explicitly by the user, the
+   * isSortkey return parameter is true. The roleName parameter allows to ask
+   * for the order with respect to a specific role.
    * In a many to many relation the attribute may not be contained in the mapped type.
    * @param rolename The role name of the relation, maybe null [default: null]
-   * @return Assciative array with the keys type, sortFieldName and sortDirection (ASC or DESC)
+   * @return Assciative array with the keys sortFieldName, sortDirection (ASC or DESC) and isSortkey (Boolean)
+   * or null, if no order is defined
    */
   public function getDefaultOrder($roleName=null);
 

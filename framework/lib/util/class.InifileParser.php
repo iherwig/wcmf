@@ -47,7 +47,7 @@ class InifileParser
 
   /**
    * Returns an instance of the class.
-   * @return A reference to the only instance of the Singleton object
+   * @return InifileParser instance
    */
   public static function getInstance()
   {

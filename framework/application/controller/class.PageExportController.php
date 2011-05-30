@@ -182,7 +182,7 @@ class PageExportController extends BatchController
 
       if ($this->useBaseHref())
       {
-        $refURL = UriUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+        $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
         $baseHref = URIUtil::makeAbsolute($exportDir, $refURL).$filename;
         $outputView->assign('baseHref', $baseHref);
       }

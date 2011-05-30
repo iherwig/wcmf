@@ -289,7 +289,7 @@ class ResourceListController extends Controller
   function getResourceList($imagesOnly)
   {
     $resourceList = array();
-    $refURL = UriUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+    $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 
     if (($uploadDir = $this->_directory) !== false)
     {

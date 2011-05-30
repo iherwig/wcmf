@@ -281,7 +281,7 @@ class PersistentObject
    * Get a copy of the object (ChangeListeners and Lock are not copied)
    * @return PersistentObject
    */
-  public function duplicate()
+  public function __clone()
   {
     $class = get_class($this);
     $copy = new $class;
