@@ -34,10 +34,15 @@ class SaveControllerTest extends ControllerTestCase
     return 'SaveController';
   }
 
+  /**
+   * @group controller
+   */
   public function testSave()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(SaveControllerTest::TEST_OID1);
-    $this->createTestObject($oid);
+    TestUtil::createTestObject($oid);
 
     // simulate a simple save call
     $type = $oid->getType();
@@ -53,13 +58,18 @@ class SaveControllerTest extends ControllerTestCase
     $this->assertTrue($obj->getValue('name') == 'Administrator', "The name is 'Administrator'");
 
     // cleanup
-    $this->deleteTestObject($oid);
+    TestUtil::deleteTestObject($oid);
   }
 
+  /**
+   * @group controller
+   */
   public function testSaveTranslation()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(SaveControllerTest::TEST_OID1);
-    $this->createTestObject($oid);
+    TestUtil::createTestObject($oid);
 
     // simulate a translate call
     $type = $oid->getType();
@@ -77,7 +87,7 @@ class SaveControllerTest extends ControllerTestCase
       "The translated name is 'Administrator [it]'");
 
     // cleanup
-    $this->deleteTestObject($oid);
+    TestUtil::deleteTestObject($oid);
     Localization::deleteTranslation($oid);
   }
 }

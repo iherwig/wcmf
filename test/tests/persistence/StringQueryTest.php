@@ -1,12 +1,12 @@
 <?php
 require_once(WCMF_BASE."wcmf/lib/model/class.StringQuery.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
-class StringQueryTest extends WCMFTestCase
+class StringQueryTest extends PHPUnit_Framework_TestCase
 {
   public function testSimple()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%'";
     $query = new StringQuery('Author');
@@ -16,12 +16,12 @@ class StringQueryTest extends WCMFTestCase
       "`Author`.`sortkey` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testNoCondition()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new StringQuery('Author');
     $sql = $query->getQueryString();
@@ -29,12 +29,12 @@ class StringQueryTest extends WCMFTestCase
       "`Author`.`sortkey` FROM `Author` ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testParentChild()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Page`.`name` LIKE 'Page 1%'";
     $query = new StringQuery('Author');
@@ -45,12 +45,12 @@ class StringQueryTest extends WCMFTestCase
       "WHERE (`Author`.`name` LIKE '%ingo%' AND `Page`.`name` LIKE 'Page 1%') ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testParentChildSameType()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $queryStr = "`Page`.`creator` LIKE '%ingo%' AND `ChildPage`.`name` LIKE 'Page 1%'";
     $query = new StringQuery('Page');
@@ -63,28 +63,28 @@ class StringQueryTest extends WCMFTestCase
       "LIKE 'Page 1%') ORDER BY `Page`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testChildParent()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $queryStr = "`NormalPage`.`id` = 10";
     $query = new StringQuery('Image');
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Image`.`id`, `Image`.`fk_titlepage_id`, `Image`.`fk_page_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
+    $expected = "SELECT `Image`.`id`, `Image`.`fk_page_id`, `Image`.`fk_titlepage_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
       "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor` FROM `Image` INNER JOIN `Page` AS `NormalPage` ON ".
       "`Image`.`fk_page_id` = `NormalPage`.`id` WHERE (`NormalPage`.`id` = 10)";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testChildParentSameType()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $queryStr = "`ParentPage`.`id` = 10";
     $query = new StringQuery('Page');
@@ -96,12 +96,12 @@ class StringQueryTest extends WCMFTestCase
       "`Page`.`fk_page_id` = `ParentPage`.`id` WHERE (`ParentPage`.`id` = 10) ORDER BY `Page`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testManyToMany()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $queryStr = "`Page`.`name` LIKE '%Page 1%' AND `Document`.`title` = 'Document'";
     $query = new StringQuery('Page');
@@ -114,7 +114,7 @@ class StringQueryTest extends WCMFTestCase
       "WHERE (`Page`.`name` LIKE '%Page 1%' AND `Document`.`title` = 'Document') ORDER BY `Page`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   /**
@@ -122,7 +122,7 @@ class StringQueryTest extends WCMFTestCase
    */
   public function testAmbiguousRelation()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Image`.`file` = 'image.jpg'";
     $query = new StringQuery('Author');
@@ -135,12 +135,12 @@ class StringQueryTest extends WCMFTestCase
       "AND `TitleImage`.`file` = 'title_image.jpg') ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testDifferentRoles()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`filename` = 'image.jpg' ".
       "AND `TitleImage`.`filename` = 'title_image.jpg'";
@@ -154,7 +154,7 @@ class StringQueryTest extends WCMFTestCase
       "AND `TitleImage`.`file` = 'title_image.jpg') ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 }
 ?>

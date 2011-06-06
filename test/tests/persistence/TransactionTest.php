@@ -1,39 +1,39 @@
 <?php
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
-class TransactionTest extends WCMFTestCase
+class TransactionTest extends PHPUnit_Framework_TestCase
 {
   private $_pageOidStr = 'Page:12345';
   private $_documentOidStr = 'Document:12345';
 
   protected function setUp()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $page = $this->createTestObject(ObjectId::parse($this->_pageOidStr), array());
-    $document = $this->createTestObject(ObjectId::parse($this->_documentOidStr), array());
+    $page = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
+    $document = TestUtil::createTestObject(ObjectId::parse($this->_documentOidStr), array());
     $page->addNode($document);
     $transaction->commit();
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   protected function tearDown()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
-    $this->deleteTestObject(ObjectId::parse($this->_pageOidStr));
-    $this->deleteTestObject(ObjectId::parse($this->_documentOidStr));
+    TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStr));
+    TestUtil::deleteTestObject(ObjectId::parse($this->_documentOidStr));
     $transaction->commit();
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testSimple()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
 
@@ -66,12 +66,12 @@ class TransactionTest extends WCMFTestCase
     $document2 = $persistenceFacade->load($document->getOID());
     $this->assertNull($document2);
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testChangesOutOfTxBoundaries()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
 
@@ -92,12 +92,12 @@ class TransactionTest extends WCMFTestCase
     $page2 = $persistenceFacade->load($page->getOID());
     $this->assertEquals($oldName, $page2->getName());
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testRollback()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
 
@@ -117,12 +117,12 @@ class TransactionTest extends WCMFTestCase
     $document2 = $persistenceFacade->load($document->getOID());
     $this->assertNotNull($document2);
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testSingleInstancePerEntity()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
 
@@ -147,7 +147,7 @@ class TransactionTest extends WCMFTestCase
     $this->assertEquals($modifiedName, $page3->getName());
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 }
 ?>

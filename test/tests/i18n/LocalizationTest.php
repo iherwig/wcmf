@@ -19,7 +19,7 @@
 require_once(WCMF_BASE."wcmf/lib/i18n/class.Localization.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.Criteria.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 /**
  * @class LocalizationTest
@@ -28,7 +28,7 @@ require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LocalizationTest extends WCMFTestCase
+class LocalizationTest extends PHPUnit_Framework_TestCase
 {
   const EXPECTED_DEFAULT_LANGUAGE_CODE = 'en';
   const EXPECTED_DEFAULT_LANGUAGE_NAME = 'English';
@@ -38,32 +38,32 @@ class LocalizationTest extends WCMFTestCase
 
   protected function setUp()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $user1 = $this->createTestObject(ObjectId::parse(LocalizationTest::TEST_OID1), array());
+    $user1 = TestUtil::createTestObject(ObjectId::parse(LocalizationTest::TEST_OID1), array());
     $user1->setValue('name', 'Herwig');
     $user1->setValue('firstname', 'Ingo');
-    $this->createTestObject(ObjectId::parse(LocalizationTest::TEST_OID2), array());
+    TestUtil::createTestObject(ObjectId::parse(LocalizationTest::TEST_OID2), array());
     $transaction->commit();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   protected function tearDown()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
-    $this->deleteTestObject(ObjectId::parse(LocalizationTest::TEST_OID1), array());
-    $this->deleteTestObject(ObjectId::parse(LocalizationTest::TEST_OID2), array());
+    TestUtil::deleteTestObject(ObjectId::parse(LocalizationTest::TEST_OID1), array());
+    TestUtil::deleteTestObject(ObjectId::parse(LocalizationTest::TEST_OID2), array());
     $localization = Localization::getInstance();
     $localization->deleteTranslation(ObjectId::parse(LocalizationTest::TEST_OID1));
     $localization->deleteTranslation(ObjectId::parse(LocalizationTest::TEST_OID2));
     $transaction->commit();
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testGetDefaultLanguage()
@@ -98,7 +98,7 @@ class LocalizationTest extends WCMFTestCase
 
   public function testTranslation()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
@@ -115,7 +115,7 @@ class LocalizationTest extends WCMFTestCase
       "There must be no translation for the object in the translation table");
 
     // store a translation
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [de]');
     $tmp->setValue('firstname', 'Ingo [de]');
     $localization->saveTranslation($tmp, 'de');
@@ -123,7 +123,7 @@ class LocalizationTest extends WCMFTestCase
 
     // get a value in the default language
     $transaction->begin();
-    $testObjUntranslated = $testObj->duplicate();
+    $testObjUntranslated = clone $testObj;
     $localization->loadTranslation($testObjUntranslated, $localization->getDefaultLanguage());
     $this->assertTrue($testObjUntranslated != null,
       "The untranslated object could be retrieved by Localization class");
@@ -131,7 +131,7 @@ class LocalizationTest extends WCMFTestCase
       "The untranslated name is 'Herwig'");
 
     // get a value in the translation language
-    $testObjTranslated = $testObj->duplicate();
+    $testObjTranslated = clone $testObj;
     $localization->loadTranslation($testObjTranslated, 'de');
     $this->assertTrue($testObjTranslated != null,
       "The translated object could be retrieved by Localization class");
@@ -139,12 +139,12 @@ class LocalizationTest extends WCMFTestCase
       "The translated name is 'Herwig [de]'");
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testTranslationForNonTranslatableValues()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
@@ -160,7 +160,7 @@ class LocalizationTest extends WCMFTestCase
     $testObj->setValueProperty('name', 'input_type', 'notTranslatable');
 
     // store a translation for an untranslatable value
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', "Herwig [de]");
     $tmp->setValue('firstname', "Ingo [de]");
     $localization->saveTranslation($tmp, 'de');
@@ -174,12 +174,12 @@ class LocalizationTest extends WCMFTestCase
       "There must be no translation for the untranslatable value in the translation table");
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testDontCreateEntriesForDefaultLanguage()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
@@ -191,7 +191,7 @@ class LocalizationTest extends WCMFTestCase
     $testObj = $persistenceFacade->load($oid);
 
     // store a translation in the default language with saveEmptyValues = true
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $localization->saveTranslation($tmp, $localization->getDefaultLanguage(), true);
     $transaction->commit();
 
@@ -202,12 +202,12 @@ class LocalizationTest extends WCMFTestCase
       "There must be no translation for the default language in the translation table");
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testDontSaveUntranslatedValues()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
@@ -219,7 +219,7 @@ class LocalizationTest extends WCMFTestCase
     $testObj = $persistenceFacade->load($oid);
 
     // store a translation all values empty and saveEmptyValues = false
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->clearValues();
     $localization->saveTranslation($tmp, 'de', false);
     $transaction->commit();
@@ -241,12 +241,12 @@ class LocalizationTest extends WCMFTestCase
       "There must be translations for the untranslated values in the translation table");
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testDontCreateDuplicateEntries()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
@@ -258,13 +258,13 @@ class LocalizationTest extends WCMFTestCase
     $testObj = $persistenceFacade->load($oid);
 
     // store a translation
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $localization->saveTranslation($tmp, 'de');
     $transaction->commit();
 
     // store a translation a second time
     $transaction->begin();
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $localization->saveTranslation($tmp, 'de');
     $transaction->commit();
 
@@ -276,12 +276,12 @@ class LocalizationTest extends WCMFTestCase
       "There must be only one entry in the translation table");
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testTranslationWithDefaults()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $localization = Localization::getInstance();
@@ -293,7 +293,7 @@ class LocalizationTest extends WCMFTestCase
     $originalValue = $testObj->getValue('name');
 
     // store a translation for only one value
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->clearValues();
     $tmp->setValue('firstname', "Ingo [de]");
     $localization->saveTranslation($tmp, 'de');
@@ -301,24 +301,24 @@ class LocalizationTest extends WCMFTestCase
 
     // get the value in the translation language with loading defaults
     $transaction->begin();
-    $testObjTranslated = $testObj->duplicate();
+    $testObjTranslated = clone $testObj;
     $localization->loadTranslation($testObjTranslated, 'de', true);
     $this->assertEquals($originalValue, $testObjTranslated->getValue('name'),
       "The translated value is the default value");
 
     // get the value in the translation language without loading defaults
-    $testObjTranslated = $testObj->duplicate();
+    $testObjTranslated = clone $testObj;
     $localization->loadTranslation($testObjTranslated, 'de', false);
     $this->assertEquals(0, strlen($testObjTranslated->getValue('name')),
       "The translated value is empty");
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testDeleteTranslation()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
@@ -330,10 +330,10 @@ class LocalizationTest extends WCMFTestCase
     $testObj = $persistenceFacade->load($oid);
 
     // store a translation in two languages
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [de]');
     $localization->saveTranslation($tmp, 'de', true);
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [it]');
     $localization->saveTranslation($tmp, 'it', true);
     $transaction->commit();
@@ -356,10 +356,10 @@ class LocalizationTest extends WCMFTestCase
       "There must be entries in the translation table for the not deleted language");
 
     // store a translation in two languages
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [de]');
     $localization->saveTranslation($tmp, 'de', true);
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [it]');
     $localization->saveTranslation($tmp, 'it', true);
     $transaction->commit();
@@ -376,12 +376,12 @@ class LocalizationTest extends WCMFTestCase
       "There must be no entry in the translation table for the object");
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testDeleteLanguage()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
@@ -393,10 +393,10 @@ class LocalizationTest extends WCMFTestCase
     $testObj = $persistenceFacade->load($oid1);
 
     // store a translation in two languages
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [de]');
     $localization->saveTranslation($tmp, 'de', true);
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [it]');
     $localization->saveTranslation($tmp, 'it', true);
     $transaction->commit();
@@ -407,10 +407,10 @@ class LocalizationTest extends WCMFTestCase
     $testObj = $persistenceFacade->load($oid2);
 
     // store a translation in two languages
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [de]');
     $localization->saveTranslation($tmp, 'de', true);
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [it]');
     $localization->saveTranslation($tmp, 'it', true);
     $transaction->commit();
@@ -431,7 +431,7 @@ class LocalizationTest extends WCMFTestCase
       "There must be entries in the translation table for the not deleted language");
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 }
 ?>

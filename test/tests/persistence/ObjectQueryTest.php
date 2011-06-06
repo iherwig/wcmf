@@ -2,13 +2,13 @@
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.Criteria.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.ObjectQuery.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
-class ObjectQueryTest extends WCMFTestCase
+class ObjectQueryTest extends PHPUnit_Framework_TestCase
 {
   public function testSimple()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
     $sql = $query->getQueryString();
@@ -19,12 +19,12 @@ class ObjectQueryTest extends WCMFTestCase
     $cond = $query->getQueryCondition();
     $this->assertEquals('', $cond);
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testOneNode()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
     $authorTpl = $query->getObjectTemplate('Author');
@@ -39,12 +39,12 @@ class ObjectQueryTest extends WCMFTestCase
     $cond = $query->getQueryCondition();
     $this->assertEquals("(`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%')", $cond);
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testAttribs()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
     $authorTpl = $query->getObjectTemplate('Author');
@@ -58,12 +58,12 @@ class ObjectQueryTest extends WCMFTestCase
       "`Author`.`creator` IN ('admin', 'ingo')) ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testOrderby()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
     //
@@ -73,12 +73,12 @@ class ObjectQueryTest extends WCMFTestCase
     $expected = "SELECT `Author`.`id` FROM `Author` ORDER BY `Author`.`name` ASC, `Author`.`created` DESC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testOneNodeRegistered()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();
     $authorTpl = $persistenceFacade->create('Author', BUILDDEPTH_SINGLE);
@@ -93,12 +93,12 @@ class ObjectQueryTest extends WCMFTestCase
       "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testParentChild()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
     $authorTpl = $query->getObjectTemplate('Author');
@@ -112,12 +112,12 @@ class ObjectQueryTest extends WCMFTestCase
       "WHERE (`Author`.`name` LIKE '%ingo%') AND (`Page`.`name` LIKE 'Page 1%') ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testParentChildSameType()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Page');
     $page1Tpl = $query->getObjectTemplate('Page');
@@ -133,12 +133,12 @@ class ObjectQueryTest extends WCMFTestCase
       "ORDER BY `Page`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testManyToMany()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Page');
     $pageTpl = $query->getObjectTemplate('Page');
@@ -154,12 +154,12 @@ class ObjectQueryTest extends WCMFTestCase
       "WHERE (`Page`.`name` LIKE '%Page 1%') AND (`Document`.`title` = 'Document') ORDER BY `Page`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testColumnNotEqualsAttribute()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $oid = new ObjectId('UserRDB', array(2));
     $query = new ObjectQuery('Locktable');
@@ -172,12 +172,12 @@ class ObjectQueryTest extends WCMFTestCase
       "`locktable`.`sessionid` = '7pkt0i3ojm67s9qb66dih5nd60')";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testSortManyToManyRelation()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Page');
     $pageTpl = $query->getObjectTemplate('Page');
@@ -193,12 +193,12 @@ class ObjectQueryTest extends WCMFTestCase
       "WHERE (`Page`.`name` LIKE '%Page 1%') AND (`Document`.`title` = 'Document') ORDER BY `NMPageDocument`.`sortkey_document` DESC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testComplex()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     /*
     WHERE (Author.name LIKE '%ingo%' AND Author.creator LIKE '%admin%') OR (Author.name LIKE '%herwig%') AND
@@ -243,7 +243,7 @@ class ObjectQueryTest extends WCMFTestCase
       "((`Page`.`name` LIKE 'Page 1%') OR (`Page`.`creator` = 'admin')) ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 }
 ?>

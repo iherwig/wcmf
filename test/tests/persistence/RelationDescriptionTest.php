@@ -3,9 +3,9 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.RelationDescription.php");
 require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBOneToManyRelationDescription.php");
 require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBManyToOneRelationDescription.php");
 require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBManyToManyRelationDescription.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
-class RelationDescriptionTest extends WCMFTestCase
+class RelationDescriptionTest extends PHPUnit_Framework_TestCase
 {
   public function testMapper()
   {

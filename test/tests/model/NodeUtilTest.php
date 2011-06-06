@@ -3,13 +3,13 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.StringQuery.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
-class NodeUtilTest extends WCMFTestCase
+class NodeUtilTest extends PHPUnit_Framework_TestCase
 {
   public function testGetConnection()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $paths = NodeUtil::getConnections('Author', null, 'Image', 'child');
     $this->assertEquals(2, sizeof($paths));
@@ -62,12 +62,12 @@ class NodeUtilTest extends WCMFTestCase
     $this->assertEquals(1, sizeof($paths));
     $this->assertEquals('Document', $paths[0]->getEndRole());
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testGetQueryCondition()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     // Page -> NormalImage
     $node = PersistenceFacade::getInstance()->create('Page');
@@ -78,7 +78,7 @@ class NodeUtilTest extends WCMFTestCase
     $query = new StringQuery('Image');
     $query->setConditionString($condition);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Image`.`id`, `Image`.`fk_titlepage_id`, `Image`.`fk_page_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
+    $expected = "SELECT `Image`.`id`, `Image`.`fk_page_id`, `Image`.`fk_titlepage_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
       "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor` FROM `Image` INNER JOIN `Page` AS `NormalPage` ON ".
       "`Image`.`fk_page_id` = `NormalPage`.`id` WHERE ((`NormalPage`.`id` = 10))";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
@@ -115,7 +115,7 @@ class NodeUtilTest extends WCMFTestCase
       "WHERE ((`ParentPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 }
 ?>

@@ -35,10 +35,15 @@ class DisplayControllerTest extends ControllerTestCase
     return 'DisplayController';
   }
 
+  /**
+   * @group controller
+   */
   public function testSimpleDisplay()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(DisplayControllerTest::TEST_OID1);
-    $this->createTestObject($oid, array('name' => 'Administrator'));
+    TestUtil::createTestObject($oid, array('name' => 'Administrator'));
 
     // simulate a simple display call
     $type = $oid->getType();
@@ -52,16 +57,21 @@ class DisplayControllerTest extends ControllerTestCase
     $this->assertTrue($obj->getValue('name') == 'Administrator', "The name is 'Administrator'");
 
     // cleanup
-    $this->deleteTestObject($oid);
+    TestUtil::deleteTestObject($oid);
   }
 
+  /**
+   * @group controller
+   */
   public function testDisplayTranslation()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(DisplayControllerTest::TEST_OID1);
-    $testObj = $this->createTestObject($oid, array('name' => 'Administrator'));
+    $testObj = TestUtil::createTestObject($oid, array('name' => 'Administrator'));
 
     // store a translation
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Administrator [de]');
     Localization::saveTranslation($tmp, 'de');
 
@@ -78,24 +88,29 @@ class DisplayControllerTest extends ControllerTestCase
       "The translated name is 'Administrator [de]'");
 
     // cleanup
-    $this->deleteTestObject($oid);
+    TestUtil::deleteTestObject($oid);
     Localization::deleteTranslation($oid);
   }
 
+  /**
+   * @group controller
+   */
   public function testDisplayTranslationOfReferencedObjects()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid1 = ObjectId::parse(DisplayControllerTest::TEST_OID1);
     $oid2 = ObjectId::parse(DisplayControllerTest::TEST_OID2);
-    $testObj1 = &$this->createTestObject($oid1, array('name' => 'Administrator'));
-    $testObj2 = &$this->createTestObject($oid2, array('sessionid' => 'Session Id'));
+    $testObj1 = &TestUtil::createTestObject($oid1, array('name' => 'Administrator'));
+    $testObj2 = &TestUtil::createTestObject($oid2, array('sessionid' => 'Session Id'));
     $testObj1->addNode($testObj2);
     $testObj2->save();
 
     // store a translations
-    $tmp = $testObj1->duplicate();
+    $tmp = clone $testObj1;
     $tmp->setValue('name', 'Administrator [de]');
     Localization::saveTranslation($tmp, 'de');
-    $tmp = $testObj2->duplicate();
+    $tmp = clone $testObj2;
     $tmp->setValue('sessionid', 'Session Id [de]');
     Localization::saveTranslation($tmp, 'de');
 
@@ -114,14 +129,19 @@ class DisplayControllerTest extends ControllerTestCase
       "The translated value is 'Session Id [de]'");
 
     // cleanup
-    $this->deleteTestObject($oid1);
+    TestUtil::deleteTestObject($oid1);
     Localization::deleteTranslation($oid1);
-    $this->deleteTestObject($oid2);
+    TestUtil::deleteTestObject($oid2);
     Localization::deleteTranslation($oid2);
   }
 
+  /**
+   * @group controller
+   */
   public function testDisplayTranslationOfReferencedValues()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     // TODO: implement for input_type = select#async:ReferencedType, select#fkt:g_getOIDs|ReferencedType
   }
 }

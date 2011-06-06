@@ -700,7 +700,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
         }
       }
     }
-    $object->setState(PersistentObject::STATE_CLEAN, false);
+    $object->setState(PersistentObject::STATE_CLEAN);
 
     // postcondition: the object is saved to the db
     //                the object state is STATE_CLEAN
@@ -915,7 +915,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
 
       // don't set the state recursive, because otherwise relations would be
       // initialized
-      $object->setState(PersistentObject::STATE_CLEAN, false);
+      $object->setState(PersistentObject::STATE_CLEAN);
 
       // register the object with the transaction
       $object = PersistenceFacade::getInstance()->getTransaction()->registerLoaded($object);

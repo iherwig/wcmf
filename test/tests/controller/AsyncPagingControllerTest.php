@@ -34,10 +34,15 @@ class AsyncPagingControllerTest extends ControllerTestCase
     return 'AsyncPagingController';
   }
 
+  /**
+   * @group controller
+   */
   public function testSimpleList()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(AsyncPagingControllerTest::TEST_OID);
-    $this->createTestObject($oid, array('login' => 'test'));
+    TestUtil::createTestObject($oid, array('login' => 'test'));
 
     // simulate a simple list call
     $type = $oid->getType();
@@ -53,16 +58,21 @@ class AsyncPagingControllerTest extends ControllerTestCase
     $this->assertTrue($filteredObjects[0]->getValue('login') == 'test', "The login is 'test'");
 
     // cleanup
-    $this->deleteTestObject($oid);
+    TestUtil::deleteTestObject($oid);
   }
 
+  /**
+   * @group controller
+   */
   public function _testDisplayTranslation()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(AsyncPagingControllerTest::TEST_OID);
-    $testObj = $this->createTestObject($oid, array('login' => 'test'));
+    $testObj = TestUtil::createTestObject($oid, array('login' => 'test'));
 
     // store a translation
-    $tmp = &$testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('login', 'test [de]');
     Localization::saveTranslation($tmp, 'de');
 
@@ -82,7 +92,7 @@ class AsyncPagingControllerTest extends ControllerTestCase
       "The translated login is 'test [de]'");
 
     // cleanup
-    $this->deleteTestObject($oid);
+    TestUtil::deleteTestObject($oid);
     Localization::deleteTranslation($oid);
   }
 }

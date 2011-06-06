@@ -235,6 +235,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
         new wcmf.ui.GridActionEdit(),
         new wcmf.ui.GridActionDelete()
       ],
+      sortFields: [this.modelClass.sortInfo],
       region: "center"
     });
 

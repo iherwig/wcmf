@@ -2,13 +2,13 @@
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
-class ManyToManyTest extends WCMFTestCase
+class ManyToManyTest extends PHPUnit_Framework_TestCase
 {
   public function testRelation()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
     $userMapper = $persistenceFacade->getMapper('UserRDB');
@@ -18,12 +18,12 @@ class ManyToManyTest extends WCMFTestCase
     $this->assertEquals('0', $relationDescription->getOtherMinMultiplicity(), "The minimum multiplicity is 0");
     $this->assertEquals('none', $relationDescription->getOtherAggregationKind(), "The aggregation kind is none");
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testLoad()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
     $user = $persistenceFacade->load(new ObjectId('UserRDB', 2), 1);
@@ -35,12 +35,12 @@ class ManyToManyTest extends WCMFTestCase
     $role = $user->getFirstChild('RoleRDB', null, null);
     $this->assertTrue($role instanceof RoleRDB, "The role is loaded as direct child");
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testCreate()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
     $newUser = $persistenceFacade->create('UserRDB', BUILDDEPTH_SINGLE);
@@ -51,20 +51,20 @@ class ManyToManyTest extends WCMFTestCase
     $role = $newUser->getFirstChild('RoleRDB');
     $this->assertTrue($role instanceof RoleRDB, "RoleRDB is a possible child of UserRDB");
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testSave()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
 
     $transaction->begin();
     $userOid = new ObjectId('UserRDB', array(999999));
-    $this->createTestObject($userOid, array());
+    TestUtil::createTestObject($userOid, array());
     $roleOid = new ObjectId('RoleRDB', array(999990));
-    $this->createTestObject($roleOid, array('name' => 'new role'));
+    TestUtil::createTestObject($roleOid, array('name' => 'new role'));
     $transaction->commit();
 
     $transaction->begin();
@@ -93,7 +93,7 @@ class ManyToManyTest extends WCMFTestCase
     );
     $this->assertEquals(1, sizeof($oids), "The connection is only created if not existing already");
 
-    $this->deleteTestObject($userOid);
+    TestUtil::deleteTestObject($userOid);
     $transaction->commit();
 
     $transaction->begin();
@@ -103,10 +103,10 @@ class ManyToManyTest extends WCMFTestCase
     );
     $this->assertEquals(0, sizeof($oids), "The connection was deleted");
 
-    $this->deleteTestObject($roleOid);
+    TestUtil::deleteTestObject($roleOid);
     $transaction->commit();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 }
 ?>

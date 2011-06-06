@@ -165,7 +165,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
         }
       }
     }
-    $object->setState($oldState, false);
+    $object->setState($oldState);
   }
   /**
    * @see RDBMapper::getSelectSQL()

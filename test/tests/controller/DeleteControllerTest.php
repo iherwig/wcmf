@@ -35,10 +35,15 @@ class DeleteControllerTest extends ControllerTestCase
     return 'DeleteController';
   }
 
+  /**
+   * @group controller
+   */
   public function testDelete()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID1);
-    $this->createTestObject($oid);
+    TestUtil::createTestObject($oid);
 
     // simulate a delete call
     $data = array(
@@ -53,19 +58,24 @@ class DeleteControllerTest extends ControllerTestCase
     $this->assertTrue(!in_array($oid, $oids), $oid." is does not exist after deleting");
   }
 
+  /**
+   * @group controller
+   */
   public function testDeleteTranslation()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID1);
-    $testObj = $this->createTestObject($oid);
+    $testObj = TestUtil::createTestObject($oid);
 
     // store a 1st translation
-    $tmpDe = $testObj->duplicate();
+    $tmpDe = clone $testObj;
     $tmpDe->setValue('name', 'Herwig [de]');
     $tmpDe->setValue('firstname', 'Ingo [de]');
     Localization::saveTranslation($tmpDe, 'de');
 
     // store a 2nd translation
-    $tmpIt = $testObj->duplicate();
+    $tmpIt = clone $testObj;
     $tmpIt->setValue('name', 'Herwig [it]');
     $tmpIt->setValue('firstname', 'Ingo [it]');
     Localization::saveTranslation($tmpIt, 'it');
@@ -92,17 +102,22 @@ class DeleteControllerTest extends ControllerTestCase
     $this->assertTrue(sizeof($translationsDe) == 0, "All translations 'de' are deleted");
 
     // cleanup
-    $this->deleteTestObject($oid);
+    TestUtil::deleteTestObject($oid);
     Localization::deleteTranslation($oid);
   }
 
+  /**
+   * @group controller
+   */
   public function testDeleteComplete()
   {
+    $this->markTestIncomplete('This test is not ready to run yet.');
+
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID1);
-    $testObj = $this->createTestObject($oid);
+    $testObj = TestUtil::createTestObject($oid);
 
     // store a translation
-    $tmp = $testObj->duplicate();
+    $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [de]');
     $tmp->setValue('firstname', 'Ingo [de]');
     Localization::saveTranslation($tmp, 'de');

@@ -22,20 +22,19 @@ require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
 
 /**
- * @class WCMFTestCase
+ * @class TestUtil
  * @ingroup test
- * @brief WCMFTestCase is a PHPUnit test case, that
- * serves as base class for wCMF test cases.
+ * @brief TestUtil provides helper methods for testing wCMF functionality.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class WCMFTestCase extends PHPUnit_Framework_TestCase
+class TestUtil
 {
   /**
    * Turn authorization validation on/off.
    * @param True/False wether to turn it off or on
    */
-  protected function runAnonymous($isAnonymous)
+  public static function runAnonymous($isAnonymous)
   {
     $parser = InifileParser::getInstance();
     $parser->setValue('anonymous', $isAnonymous, 'cms');
@@ -46,7 +45,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * @param request The Request instance
    * @return The Response instance (result of the last ActionMapper::processAction call)
    */
-  protected function simulateRequest($request)
+  public static function simulateRequest($request)
   {
     // set formatter
     $request->setFormat('Null');
@@ -54,7 +53,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
 
     // initialize the application
     $application = Application::getInstance();
-    $callParams = $application->initialize('../application/include/');
+    $application->initialize('../application/include/');
 
     // reset the action mapper, because otherwise all requests would be cumulated
     ActionMapper::reset();
@@ -69,7 +68,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * @return The session id. Use this as data['sid'] parameter for
    *    subsequent simulateRequest calls
    */
-  protected function startSession($login, $password)
+  public static function startSession($login, $password)
   {
     $request = new Request('LoginController',
       '',
@@ -79,7 +78,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
         'password' => 'admin'
       )
     );
-    $response = $this->simulateRequest($request);
+    $response = self::simulateRequest($request);
     return $response->getValue('sid');
   }
 
@@ -87,7 +86,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * End a session.
    * @param sid The session id
    */
-  protected function endSession($sid)
+  public static function endSession($sid)
   {
     $request = new Request('',
       '',
@@ -96,7 +95,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
         'sid' => $sid
       )
     );
-    $response = $this->simulateRequest($request);
+    self::simulateRequest($request);
   }
 
   /**
@@ -106,7 +105,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    *    and the values as values
    * @return The object
    */
-  protected function createTestObject(ObjectId $oid, array $attributes)
+  public static function createTestObject(ObjectId $oid, array $attributes)
   {
     // check if the object already exists and delete it if necessary
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -131,7 +130,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * @param oid The object id
    * @return The object
    */
-  protected function loadTestObject(ObjectId $oid)
+  public static function loadTestObject(ObjectId $oid)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $object = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
@@ -142,7 +141,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * Delete a test object
    * @param oid The object id
    */
-  protected function deleteTestObject(ObjectId $oid)
+  public static function deleteTestObject(ObjectId $oid)
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $object = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
@@ -155,7 +154,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * Set a configuration value
    * @see InifileParser::setValue()
    */
-  protected function setConfigValue($key, $value, $section)
+  public static function setConfigValue($key, $value, $section)
   {
     $parser = InifileParser::getInstance();
     $parser->setValue($key, $value, $section);
@@ -167,7 +166,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * @param methodName The method name
    * @param args An array of method arguments
    */
-  protected function callProtectedMethod($instance, $methodName, $args=null)
+  public static function callProtectedMethod($instance, $methodName, $args=null)
   {
     $className = get_class($instance);
     $class = new ReflectionClass($className);
@@ -186,7 +185,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * Enable the Zend_Db_Profiler for a given entity type.
    * @param type The entity type
    */
-  protected function enableProfiler($type)
+  public static function enableProfiler($type)
   {
     $mapper = PersistenceFacade::getInstance()->getMapper($type);
     if ($mapper instanceof RDBMapper) {
@@ -199,7 +198,7 @@ class WCMFTestCase extends PHPUnit_Framework_TestCase
    * The profiler must have been enabled first
    * @param type The entity type
    */
-  protected function printProfile($type)
+  public static function printProfile($type)
   {
     $mapper = PersistenceFacade::getInstance()->getMapper($type);
     $profiler = $mapper->getProfiler();

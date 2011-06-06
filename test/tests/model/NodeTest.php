@@ -1,12 +1,12 @@
 <?php
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
-class NodeBuildTest extends WCMFTestCase
+class NodeTest extends PHPUnit_Framework_TestCase
 {
   public function testBuildDepth()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
@@ -67,7 +67,7 @@ class NodeBuildTest extends WCMFTestCase
     catch(Exception $ex) {}
 
     $transaction->rollback();
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 }
 ?>

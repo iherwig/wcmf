@@ -1,15 +1,15 @@
 <?php
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
+require_once(WCMF_BASE."test/lib/TestUtil.php");
 
-class NodeRelationTest extends WCMFTestCase
+class NodeRelationTest extends PHPUnit_Framework_TestCase
 {
   private $oids = array();
   private $objects = array();
 
   protected function setUp()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -27,7 +27,7 @@ class NodeRelationTest extends WCMFTestCase
     );
     $this->objects = array();
     foreach ($this->oids as $name => $oid) {
-      $this->objects[$name] = $this->createTestObject($oid, array());
+      $this->objects[$name] = TestUtil::createTestObject($oid, array());
     }
     $page = $this->objects['page'];
     $page->addNode($this->objects['document']);
@@ -39,24 +39,24 @@ class NodeRelationTest extends WCMFTestCase
     // commit changes
     $transaction->commit();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   protected function tearDown()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
     foreach ($this->oids as $name => $oid) {
-      $this->deleteTestObject($oid);
+      TestUtil::deleteTestObject($oid);
     }
     $transaction->commit();
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testAddNode()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     //$this->enableProfiler('Page');
 
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -96,12 +96,12 @@ class NodeRelationTest extends WCMFTestCase
     $transaction->rollback();
 
     //$this->printProfile('Page');
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testDeleteNode()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     //$this->enableProfiler('Page');
 
     // delete all relations
@@ -147,12 +147,12 @@ class NodeRelationTest extends WCMFTestCase
     $transaction->rollback();
 
     //$this->printProfile('Page');
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function _testLoadSingle()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
     $page = $persistenceFacade->load($this->oids['page'], BUILDDEPTH_SINGLE);
@@ -165,12 +165,12 @@ class NodeRelationTest extends WCMFTestCase
       echo $name.": ".$value."(".sizeof($value).")\n";
     }
     //*/
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 
   public function testDelete()
   {
-    $this->runAnonymous(true);
+    TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -190,7 +190,7 @@ class NodeRelationTest extends WCMFTestCase
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['normalImage']));
     $transaction->rollback();
 
-    $this->runAnonymous(false);
+    TestUtil::runAnonymous(false);
   }
 }
 ?>

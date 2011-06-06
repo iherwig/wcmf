@@ -286,7 +286,7 @@ class Node extends PersistentObject
       $this->_deletedNodes[$role] = array();
     }
     $this->_deletedNodes[$role][] = $other->getOID();
-    $this->setState(PersistentOBject::STATE_DIRTY, false);
+    $this->setState(PersistentOBject::STATE_DIRTY);
 
     // propagate add action to the other object
     if ($updateOtherSide)
@@ -901,22 +901,6 @@ class Node extends PersistentObject
   public function acceptVisitor($visitor)
   {
     $visitor->visit($this);
-  }
-  /**
-   * Set the state of the node.
-   * @param state The state to set.
-   * @param recursive True/False [Default: True]
-   */
-  public function setState($state, $recursive=true)
-  {
-    parent::setState($state);
-    if ($recursive)
-    {
-      $children = $this->getChildren();
-      for($i=0, $count=sizeOf($children); $i<$count; $i++) {
-        $children[$i]->setState($state, $recursive);
-      }
-    }
   }
   /**
    * Add an uninitialized relation. The relation will be

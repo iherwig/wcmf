@@ -171,7 +171,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
     this.tmpIdx = [];
   },
 
-  onRowMovedEnd: function(map) {
+  onRowMovedEnd: function(map, colsToMove) {
     // perform the move action with the information collected before
     var self = this;
     if (this.masterOid != null) {

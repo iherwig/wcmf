@@ -27,5 +27,32 @@ and open the template in the editor.
     <testsuite name="Format">
       <file>tests/format/JSONFormatTest.php</file>
     </testsuite>
+    <testsuite name="I18N">
+      <file>tests/i18n/LocalizationTest.php</file>
+    </testsuite>
+    <testsuite name="Model">
+      <file>tests/format/IteratorTest.php</file>
+      <file>tests/format/NodeTest.php</file>
+      <file>tests/format/NodeUtilTest.php</file>
+    </testsuite>
+    <testsuite name="Persistence">
+      <file>tests/format/ManyToManyTest.php</file>
+      <file>tests/format/NodeRelationTest.php</file>
+      <file>tests/format/NodeUnifiedRDBMapperTest.php</file>
+      <file>tests/format/ObjectIdTest.php</file>
+      <file>tests/format/ObjectQueryTest.php</file>
+      <file>tests/format/PersistentObjectProxyTest.php</file>
+      <file>tests/format/PersistentObjectTest.php</file>
+      <file>tests/format/RelationDescriptionTest.php</file>
+      <file>tests/format/SortTest.php</file>
+      <file>tests/format/StringQueryTest.php</file>
+      <file>tests/format/TransactionTest.php</file>
+    </testsuite>
   </testsuites>
+  <groups>
+    <exclude>
+      <group>controller</group>
+      <group>performance</group>
+    </exclude>
+  </groups>
 </phpunit>

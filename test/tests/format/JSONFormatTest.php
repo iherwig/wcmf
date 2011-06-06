@@ -3,12 +3,10 @@ require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/class.JSONFormat.php");
 require_once(WCMF_BASE."application/include/model/class.Document.php");
-require_once(WCMF_BASE."test/lib/WCMFTestCase.php");
 
-class JSONFormatTest extends WCMFTestCase {
+class JSONFormatTest extends PHPUnit_Framework_TestCase {
 
   public function testDeserializeSimple() {
-    $this->runAnonymous(true);
     $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'string' => 'abc',
@@ -46,11 +44,9 @@ class JSONFormatTest extends WCMFTestCase {
     $array2 = $array1['array'];
     $this->assertEquals('ghi', $array2['string']);
     $this->assertEquals(789, $array2['integer']);
-    $this->runAnonymous(false);
   }
 
   public function testDeserializeNodeSimple() {
-    $this->runAnonymous(true);
     $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
@@ -77,11 +73,9 @@ class JSONFormatTest extends WCMFTestCase {
     $this->assertFalse(isset($data['attributes']));
     $this->assertFalse(isset($data['oid']));
     $this->assertFalse(isset($data['lastChange']));
-    $this->runAnonymous(false);
   }
 
   public function testDeserializeNodeHierarchy() {
-    $this->runAnonymous(true);
     $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
@@ -154,11 +148,9 @@ class JSONFormatTest extends WCMFTestCase {
 
     $author = $page2->getValue('Author');
     $this->assertEquals('Author:1', $author->getOID()->__toString());
-    $this->runAnonymous(false);
   }
 
   public function testDeserializeNodeList() {
-    $this->runAnonymous(true);
     $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
@@ -204,11 +196,9 @@ class JSONFormatTest extends WCMFTestCase {
     $this->assertEquals('Page:1', $pages['Page:1']->getOID()->__toString());
     $this->assertEquals('Page:2', $pages['Page:2']->getOID()->__toString());
     $this->assertEquals('Page:3', $pages['Page:3']->getOID()->__toString());
-    $this->runAnonymous(false);
   }
 
   public function testSerializeSimple() {
-    $this->runAnonymous(true);
     $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
                 'string' => 'abc',
@@ -246,12 +236,9 @@ class JSONFormatTest extends WCMFTestCase {
     $array2 = $array1['array'];
     $this->assertEquals('ghi', $array2['string']);
     $this->assertEquals(789, $array2['integer']);
-    $this->runAnonymous(false);
   }
 
   public function testSerializeNodeSimple() {
-    $this->runAnonymous(true);
-
     $document = new Document(new ObjectId('Document', array(123)));
     $document->setValue('title', 'Matrix - The Original');
     $document->setValue('modified', '2011-10-01 00:01:01');
@@ -280,8 +267,6 @@ class JSONFormatTest extends WCMFTestCase {
   }
 
   public function testSerializeNodeHierarchy() {
-    $this->runAnonymous(true);
-
     $document = new Document(new ObjectId('Document', array(123)));
     $document->setValue('title', 'Matrix - The Original');
     $document->setValue('modified', 1234567890);
@@ -355,8 +340,6 @@ class JSONFormatTest extends WCMFTestCase {
   }
 
   public function testSerializeNodeList() {
-    $this->runAnonymous(true);
-
     $page1 = new Page(new ObjectId('Page', array(1)));
     $page1->setValue('name', 'Page 1');
     $page2 = new Page(new ObjectId('Page', array(2)));
@@ -393,7 +376,6 @@ class JSONFormatTest extends WCMFTestCase {
     $this->assertEquals('Page:2', $pages[1]['oid']);
     $this->assertEquals('Page', $pages[2]['className']);
     $this->assertEquals('Page:3', $pages[2]['oid']);
-    $this->runAnonymous(false);
   }
 }
 

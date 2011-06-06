@@ -75,10 +75,10 @@ class PersistentObject
     {
       $this->_type = $oid->getType();
       if ($oid->containsDummyIds()) {
-        $this->setState(self::STATE_NEW, false);
+        $this->setState(self::STATE_NEW);
       }
       else {
-        $this->setState(self::STATE_CLEAN, false);
+        $this->setState(self::STATE_CLEAN);
       }
       $this->setOIDInternal($oid, false);
     }
@@ -200,7 +200,7 @@ class PersistentObject
     if (!$this->_isImmutable)
     {
       // delete the object
-      $this->setState(self::STATE_DELETED, false);
+      $this->setState(self::STATE_DELETED);
     }
     else {
       throw new PersistenceException(Message::get("Cannot delete immutable object '%1%'.", array($this->getOID())));
@@ -216,10 +216,8 @@ class PersistentObject
   }
   /**
    * Set the state of the object to one of the STATE constants.
-   * @param recursive True/False [Default: True]
-   * @note PersistentObject ignores the recursive parameter, but subclasses may use it
    */
-  public function setState($state, $recursive=true)
+  public function setState($state)
   {
     $oldState = $this->_state;
     switch ($this->_state)
