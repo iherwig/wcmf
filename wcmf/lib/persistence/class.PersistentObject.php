@@ -59,6 +59,7 @@ class PersistentObject
   private $_state = self::STATE_CLEAN;       // the state of the PersistentObject
   private $_isImmutable = false;       // immutable state
   private $_changeListeners = array(); // the change listeners
+  private $_changedAttributes = array(); // used to track changes, see setValue method
 
   /**
    * Constructor.
@@ -349,7 +350,7 @@ class PersistentObject
       // collect the values of the primary keys and compose the oid from them
       $pkNames = $mapper->getPkNames();
       foreach ($pkNames as $pkName) {
-        $pkValues[] = $this->getValue($pkName);
+        $pkValues[] = self::getValue($pkName);
       }
       $this->_oid = new ObjectId($this->getType(), $pkValues);
     }
@@ -532,10 +533,11 @@ class PersistentObject
    * @param value The value of the item.
    * @param forceSet Boolean wether to set the value even if it is already set
    *   and to bypass validation (used to notify listeners) [default: false]
-   * @param keepState Boolean wether to keep the object state or not [default: false]
+   * @param trackChange Boolean wether to track the change (change state, notify listeners) or not [default: true]
+   *      Only set this false, if you know, what you are doing
    * @return Boolean wether the operation succeeds or not
    */
-  public function setValue($name, $value, $forceSet=false, $keepState=false)
+  public function setValue($name, $value, $forceSet=false, $trackChange=true)
   {
     if (!$this->_isImmutable)
     {
@@ -549,7 +551,7 @@ class PersistentObject
           throw new ValidationException($msg);
         }
       }
-      $oldValue = $this->getValue($name);
+      $oldValue = self::getValue($name);
       if ($forceSet || $oldValue !== $value)
       {
         $this->setValueInternal($name, $value);
@@ -557,10 +559,11 @@ class PersistentObject
         if ($mapper != null && in_array($name, $mapper->getPKNames())) {
           $this->updateOID();
         }
-        if (!$keepState) {
+        if ($trackChange) {
           self::setState(self::STATE_DIRTY);
+          $this->_changedAttributes[$name] = true;
+          $this->propagateValueChange($name, $oldValue, $value);
         }
-        $this->propagateValueChange($name, $oldValue, $value);
         return true;
       }
     }
@@ -583,6 +586,14 @@ class PersistentObject
     else {
       $this->_data[$name]['value'] = $value;
     }
+  }
+  /**
+   * Get the list of changed attributes since creation, loading.
+   * @return Array of value names
+   */
+  public function getChangedValues()
+  {
+    return array_keys($this->_changedAttributes);
   }
   /**
    * Get the value of one property of a named item.

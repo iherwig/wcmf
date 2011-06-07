@@ -481,7 +481,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
    */
   public function getDefaultOrder($roleName=null)
   {
-    if ($roleName != null)
+    if ($roleName != null && $this->hasRelation($roleName))
     {
       $relationDesc = $this->getRelation($roleName);
       if ($relationDesc instanceof RDBManyToManyRelationDescription)
@@ -626,7 +626,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
           else {
             $childObject = $persistenceFacade->create($curRelationDesc->getOtherType(), $newBuildDepth, $buildAttribs);
           }
-          $object->setValue($curRelationDesc->getOtherRole(), array($childObject), true, true);
+          $object->setValue($curRelationDesc->getOtherRole(), array($childObject), true, false);
         }
       }
     }
@@ -655,7 +655,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
           $value = $object->getValue($valueName);
           $appValues[$valueName] = $value;
           $convertedValue = $this->_dataConverter->convertApplicationToStorage($value, $object->getValueProperty($valueName, 'type'), $valueName);
-          $object->setValue($valueName, $convertedValue, true, true);
+          $object->setValue($valueName, $convertedValue, true, false);
         }
       }
     }
@@ -696,7 +696,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       foreach ($object->getValueNames() as $valueName)
       {
         if (!$this->isPkValue($valueName)) {
-          $object->setValue($valueName, $appValues[$valueName], true, true);
+          $object->setValue($valueName, $appValues[$valueName], true, false);
         }
       }
     }
@@ -763,7 +763,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
           }
           else {
             // unlink shared children
-            $object->setValue($relationDesc->getThisRole(), null, true, true);
+            $object->setValue($relationDesc->getThisRole(), null, true, false);
           }
         }
       }
@@ -1037,7 +1037,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       {
         $relatives = $this->loadRelation($object, $role, $newBuildDepth, $buildAttribs, $buildTypes);
         // set the value
-        $object->setValue($role, $relatives, true, true);
+        $object->setValue($role, $relatives, true, false);
       }
       // otherwise set the value to not initialized.
       // the Node will initialize it with the proxies for the relation objects

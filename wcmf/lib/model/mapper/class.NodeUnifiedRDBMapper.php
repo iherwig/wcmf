@@ -69,6 +69,25 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       }
     }
 
+    if ($oldState == PersistentObject::STATE_NEW)
+    {
+      // set the sortkeys to the id value
+      if ($this->isSortable())
+      {
+        $value = join('', $object->getOID()->getId());
+        foreach ($this->getRelations() as $curRelationDesc) {
+          $sortkey = $this->getDefaultOrder($curRelationDesc->getOtherRole());
+          if (isset($sortkey['sortFieldName'])) {
+            $object->setValue($sortkey['sortFieldName'], $value);
+          }
+        }
+        $sortkey = $this->getDefaultOrder();
+        if (isset($sortkey['sortFieldName'])) {
+          $object->setValue($sortkey['sortFieldName'], $value);
+        }
+      }
+    }
+
     // handle relations
     if ($object instanceof Node)
     {
@@ -116,8 +135,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
               // add the parent nodes to the many to many object, don't
               // update the other side of the relation, because there may be no
               // relation defined to the many to many object
-              $nmObj->addNode($object, $thisEndRelation->getThisRole(), true, true, false);
-              $nmObj->addNode($relative, $otherEndRelation->getOtherRole(), true, true, false);
+              $nmObj->addNode($object, $thisEndRelation->getThisRole(), true, false, false);
+              $nmObj->addNode($relative, $otherEndRelation->getOtherRole(), true, false, false);
               // this relation must be saved immediatly, in order to be
               // available when the other side of the relation is processed
               // (otherwise two objects would be inserted)
@@ -160,6 +179,47 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
               // already deleted when the other side of the relation is processed
               // (otherwise we would try to delete it twice)
               $nmObj->getMapper()->delete($nmObj);
+            }
+          }
+        }
+      }
+
+      // changed order
+      foreach ($this->getRelations() as $curRelationDesc)
+      {
+        $otherMapper = $curRelationDesc->getOtherMapper();
+        $otherRole = $curRelationDesc->getOtherRole();
+        $defaultOrder = $otherMapper->getDefaultOrder($curRelationDesc->getThisRole());
+        if ($defaultOrder != null && $defaultOrder['isSortkey'] == true) {
+          // check for order changes only if the relation attribute was changed
+          if (in_array($otherRole, $object->getChangedValues())) {
+            $sortkeyName = $defaultOrder['sortFieldName'];
+            $relatives = $object->getValue($otherRole);
+            // order changes only make sense for arrays with more than one element
+            if (is_array($relatives) && sizeof($relatives) > 0)
+            {
+              // in a many to many relation, we have to modify the order of the relation objects
+              if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
+                $nmRelatives = array();
+                for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
+                  $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
+                        PersistentObjectProxy::fromObject($relatives[$i]), $curRelationDesc);
+                  $nmRelatives[] = $nmObjects[0];
+                }
+                $relatives = $nmRelatives;
+              }
+
+              // collect all sortkey values
+              $sortkeyValues = array();
+              for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
+                $sortkeyValues[] = $relatives[$i]->getValue($sortkeyName);
+              }
+              // sort the values
+              sort($sortkeyValues);
+              // set the values on the objects
+              for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
+                $relatives[$i]->setValue($sortkeyName, $sortkeyValues[$i]);
+              }
             }
           }
         }

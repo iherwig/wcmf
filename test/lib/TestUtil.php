@@ -103,7 +103,7 @@ class TestUtil
    * @param oid The object id
    * @param attribute An associative array with the value names as keys
    *    and the values as values
-   * @return The object
+   * @return Node
    */
   public static function createTestObject(ObjectId $oid, array $attributes)
   {
@@ -128,7 +128,7 @@ class TestUtil
   /**
    * Load a test object
    * @param oid The object id
-   * @return The object
+   * @return Node
    */
   public static function loadTestObject(ObjectId $oid)
   {
@@ -139,7 +139,7 @@ class TestUtil
 
   /**
    * Delete a test object
-   * @param oid The object id
+   * @param oid ObjectId
    */
   public static function deleteTestObject(ObjectId $oid)
   {

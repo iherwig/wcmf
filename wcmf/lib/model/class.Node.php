@@ -77,7 +77,7 @@ class Node extends PersistentObject
   /**
    * @see PersistentObject::setValue
    */
-  public function setValue($name, $value, $forceSet=false, $keepState=false)
+  public function setValue($name, $value, $forceSet=false, $trackChange=true)
   {
     // if the attribute is a relation, a special handling is required
     $mapper = $this->getMapper();
@@ -86,19 +86,21 @@ class Node extends PersistentObject
       if (!is_array($value)) {
         $value = array($value);
       }
+      // clean the value
+      parent::setValue($name, null, true, false);
       // delegate to addNode
       $result = true;
       for($i=0, $count=sizeof($value); $i<$count; $i++) {
         $curValue = $value[$i];
         if ($curValue != null) {
-          $result &= $this->addNode($curValue, $name, $forceSet, $keepState);
+          $result &= $this->addNode($curValue, $name, $forceSet, $trackChange);
         }
       }
       return $result;
     }
     else {
       // default behaviour
-      return parent::setValue($name, $value, $forceSet, $keepState);
+      return parent::setValue($name, $value, $forceSet, $trackChange);
     }
     return true;
   }
@@ -176,16 +178,20 @@ class Node extends PersistentObject
   }
   /**
    * Add a Node to the given relation. Delegates to setValue internally.
-   * @param other The Node to add.
+   * @param other PersistentObject or PersistentObjectProxy
    * @param role The role of the Node in the created relation. If null, the role will be
    *        the Node's type. [default: null]
    * @param forceSet @see PersistentObject::setValue()
-   * @param keepState @see PersistentObject::setValue()
+   * @param trackChange @see PersistentObject::setValue()
    * @param updateOtherSide True/False wether to update also the other side of the relation [default: true]
    * @return Boolean wether the operation succeeds or not
    */
-  public function addNode(PersistentObject $other, $role=null, $forceSet=false, $keepState=false, $updateOtherSide=true)
+  public function addNode($other, $role=null, $forceSet=false, $trackChange=true, $updateOtherSide=true)
   {
+    if (!($other instanceof PersistentObject) && !($other instanceof PersistentObjectProxy)) {
+      throw new IllegalArgumentException("Node::addNode expects a PersistentObject or ".
+        "PersistentObjectProxy as first argument.", __CLASS__);
+    }
     if ($role == null) {
       $role = $other->getType();
     }
@@ -202,7 +208,7 @@ class Node extends PersistentObject
       // make sure that the value is an array if multivalued
       $value = self::mergeObjectLists(parent::getValue($role), array($value));
     }
-    $result1 = parent::setValue($role, $value, $forceSet, $keepState);
+    $result1 = parent::setValue($role, $value, $forceSet, $trackChange);
 
     // remember the addition
     if (!isset($this->_addedNodes[$role])) {
@@ -218,7 +224,7 @@ class Node extends PersistentObject
       if ($relDesc) {
         $thisRole = $relDesc->getThisRole();
       }
-      $result2 = $other->addNode($this, $thisRole, $forceSet, $keepState, false);
+      $result2 = $other->addNode($this, $thisRole, $forceSet, $trackChange, false);
     }
     return ($result1 & $result2);
   }
@@ -330,7 +336,7 @@ class Node extends PersistentObject
    * @param values An assoziative array holding key value pairs that the child values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the child properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
-   * @return An reference to the first child that matched or null.
+   * @return Node instance or null.
    */
   public function getFirstChild($role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
@@ -353,13 +359,16 @@ class Node extends PersistentObject
   }
   /**
    * Get the children that match given conditions.
+   * @note This method will only return objects that are already loaded, to get all objects in
+   * the given relation (including proxies), use the Node::getValue() method and filter the returned
+   * list afterwards.
    * @param oid The object id that the children should match [maybe null, default: null].
    * @param role The role that the children should match [maybe null, default: null].
    * @param type The type that the children should match [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the children values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the children properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
-   * @return An Array holding references to the children that matched.
+   * @return Array containing children Nodes that matched (proxies not included).
    */
   public function getChildrenEx(ObjectId $oid=null, $role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
@@ -622,7 +631,7 @@ class Node extends PersistentObject
    * @param values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
-   * @return An reference to the first parent that matched or null.
+   * @return Node instance or null.
    */
   public function getFirstParent($role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
@@ -645,13 +654,16 @@ class Node extends PersistentObject
   }
   /**
    * Get the parents that match given conditions.
+   * @note This method will only return objects that are already loaded, to get all objects in
+   * the given relation (including proxies), use the Node::getValue() method and filter the returned
+   * list afterwards.
    * @param oid The object id that the parent should match [maybe null, default: null].
    * @param role The role that the parents should match [maybe null, default: null].
    * @param type The type that the parents should match [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
-   * @return An Array holding references to the parents that matched.
+   * @return Array containing parent Nodes that matched (proxies not included).
    */
   public function getParentsEx(ObjectId $oid=null, $role=null, $type=null, $values=null, $properties=null, $useRegExp=true)
   {
@@ -758,7 +770,7 @@ class Node extends PersistentObject
   /**
    * Get the relatives of a given hierarchyType.
    * @param hierarchyType @see PersistenceMapper::getRelations
-   * @param memOnly True/False wether to only get the relatives in memory or all relatives [default: true].
+   * @param memOnly Boolean wether to only get the relatives in memory or all relatives (including proxies) [default: true].
    * @return An array containing the relatives.
    */
   protected function getRelatives($hierarchyType, $memOnly=true)
@@ -767,7 +779,13 @@ class Node extends PersistentObject
     $relations = $this->getRelations($hierarchyType);
     foreach ($relations as $curRelation)
     {
-      $curRelatives = $this->getValue($curRelation->getOtherRole());
+      $curRelatives = null;
+      if ($memOnly) {
+        $curRelatives = parent::getValue($curRelation->getOtherRole());
+      }
+      else {
+        $curRelatives = $this->getValue($curRelation->getOtherRole());
+      }
       if (!$curRelatives) {
         continue;
       }
