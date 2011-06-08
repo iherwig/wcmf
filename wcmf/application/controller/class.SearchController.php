@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/application/controller/class.AsyncPagingController.php");
+require_once(WCMF_BASE."wcmf/application/controller/class.ListController.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.ObjectQuery.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
@@ -51,7 +51,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SearchController extends AsyncPagingController
+class SearchController extends ListController
 {
   // session name constants
   var $OIDS_VARNAME = 'SearchController.oids';
