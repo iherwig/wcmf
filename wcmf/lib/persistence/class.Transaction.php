@@ -184,8 +184,9 @@ class Transaction implements ITransaction
     }
     // register the object if it is newly loaded or
     // merge the attributes, if it is already loaded
-    $registeredObject = $this->getLoaded($oid);
-    if ($registeredObject != null) {
+    $registeredObject = null;
+    if (isset($this->_loadedObjects[$key])) {
+      $registeredObject = $this->_loadedObjects[$key];
       // merge existing attributes with new attributes
       Log::debug("Merging data of ".$key, __CLASS__);
       $registeredObject->mergeValues($object);
@@ -220,13 +221,32 @@ class Transaction implements ITransaction
   /**
    * @see ITransaction::getLoaded()
    */
-  public function getLoaded(ObjectId $oid)
+  public function getLoaded(ObjectId $oid, $buildAttribs=null)
   {
+    $registeredObject = null;
     $key = $oid->__toString();
     if (isset($this->_loadedObjects[$key])) {
-      return $this->_loadedObjects[$key];
+      $registeredObject = $this->_loadedObjects[$key];
+      // check requested attributes
+      if (!$registeredObject->isComplete())
+      {
+        if ($buildAttribs == null) {
+          // all attributes are expected, but the object is not complete
+          return null;
+        }
+        else {
+          // compare existing attributes with requested ones
+          foreach ($buildAttribs as $attributeName) {
+            if (!$registeredObject->hasValue($attributeName)) {
+              // immediatly return, if buildAttrib does not exist
+              Log::debug("Build attribte constraint not fullfilled for: ".$key.".".$attributeName, __CLASS__);
+              return null;
+            }
+          }
+        }
+      }
     }
-    return null;
+    return $registeredObject;
   }
   /**
    * @see ITransaction::detach()

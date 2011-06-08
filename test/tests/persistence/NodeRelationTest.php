@@ -192,5 +192,31 @@ class NodeRelationTest extends PHPUnit_Framework_TestCase
 
     TestUtil::runAnonymous(false);
   }
+
+  public function testNavigabilityManyToMany()
+  {
+    TestUtil::runAnonymous(true);
+
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    $nmPageDocument = $persistenceFacade->loadFirstObject("NMPageDocument");
+    // the Document is navigable from the NMPageDocument instance
+    $document = $nmPageDocument->getValue("Document");
+    $this->assertNotNull($document);
+    $transaction->rollback();
+
+    $transaction->begin();
+    $document = $persistenceFacade->load($document->getOID());
+    // the NMPageDocument is not navigable from the Document instance
+    $nmPageDocuments = $document->getValue("NMPageDocument");
+    $this->assertNull($nmPageDocuments);
+    // but the Page is
+    $pages = $document->getValue("Page");
+    $this->assertNotNull($pages);
+    $transaction->rollback();
+
+    TestUtil::runAnonymous(false);
+  }
 }
 ?>

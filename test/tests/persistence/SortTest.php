@@ -9,18 +9,27 @@ class SortTest extends PHPUnit_Framework_TestCase
   private $_documentOid2Str = 'Document:123452';
   private $_documentOid3Str = 'Document:123453';
   private $_documentOidStrs = array();
+  private $_pageOid1Str = 'Page:123451';
+  private $_pageOid2Str = 'Page:123452';
+  private $_pageOid3Str = 'Page:123453';
+  private $_pageOidStrs = array();
 
   protected function setUp()
   {
     $this->_documentOidStrs = array($this->_documentOid1Str, $this->_documentOid2Str, $this->_documentOid3Str);
+    $this->_pageOidStrs = array($this->_pageOid1Str, $this->_pageOid2Str, $this->_pageOid3Str);
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $page = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
+    $mainPage = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
     for ($i=0, $count=sizeof($this->_documentOidStrs); $i<$count; $i++) {
       $document = TestUtil::createTestObject(ObjectId::parse($this->_documentOidStrs[$i]), array());
-      $page->addNode($document);
+      $mainPage->addNode($document);
+    }
+    for ($i=0, $count=sizeof($this->_pageOidStrs); $i<$count; $i++) {
+      $page = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStrs[$i]), array());
+      $mainPage->addNode($page, "ChildPage");
     }
     $transaction->commit();
     TestUtil::runAnonymous(false);
@@ -34,6 +43,9 @@ class SortTest extends PHPUnit_Framework_TestCase
     TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStr));
     for ($i=0, $count=sizeof($this->_documentOidStrs); $i<$count; $i++) {
       TestUtil::deleteTestObject(ObjectId::parse($this->_documentOidStrs[$i]));
+    }
+    for ($i=0, $count=sizeof($this->_pageOidStrs); $i<$count; $i++) {
+      TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStrs[$i]));
     }
     $transaction->commit();
     TestUtil::runAnonymous(false);
@@ -51,7 +63,39 @@ class SortTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testImplicitOrderUpdate()
+  public function testImplicitOrderUpdateSimple()
+  {
+    TestUtil::runAnonymous(true);
+    $persistenceFacade = PersistenceFacade::getInstance();
+
+    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction->begin();
+    // get the existing order
+    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr));
+    $pages = $page->getValue("ChildPage");
+    $pageOids = array();
+    for ($i=0, $count=sizeof($pages); $i<$count; $i++) {
+      $pageOids[] = $pages[$i]->getOID()->__toString();
+    }
+    // put last into first place
+    $lastPage = array_pop($pages);
+    array_unshift($pages, $lastPage);
+    $page->setValue("ChildPage", $pages);
+    $transaction->commit();
+
+    // reload
+    $transaction->begin();
+    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
+    $pages = $page->getChildrenEx(null, "ChildPage");
+    $this->assertEquals($pageOids[0], $pages[1]->getOID()->__toString());
+    $this->assertEquals($pageOids[1], $pages[2]->getOID()->__toString());
+    $this->assertEquals($pageOids[2], $pages[0]->getOID()->__toString());
+    $transaction->rollback();
+
+    TestUtil::runAnonymous(false);
+  }
+
+  public function testImplicitOrderUpdateManyToMany()
   {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();

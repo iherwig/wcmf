@@ -73,10 +73,12 @@ interface ITransaction extends IChangeListener
    */
   function registerLoaded(PersistentObject $object);
   /**
-   * Register a loaded object.
+   * Get a loaded object.
+   * @param oid ObjectId of the object
+   * @param buildAttribs An array listing the attributes to load (default: null, loads all attributes)
    * @return PersistentObject instance or null if not loaded yet
    */
-  function getLoaded(ObjectId $oid);
+  function getLoaded(ObjectId $oid, $buildAttribs=null);
   /**
    * Detach an object from the transaction. All local changes will not
    * be stored. Afterwards the object is unknown to the transaction.

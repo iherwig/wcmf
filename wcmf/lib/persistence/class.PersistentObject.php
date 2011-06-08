@@ -685,6 +685,24 @@ class PersistentObject
     return $names;
   }
   /**
+   * Check if the object contains all attributes described in it's mapper.
+   * @return Boolean
+   */
+  public function isComplete()
+  {
+    $mapper = $this->getMapper();
+    if ($mapper)
+    {
+      $attributes = $mapper->getAttributes();
+      foreach ($attributes as $attribute) {
+        if (!$this->hasValue($attribute->getName())) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  /**
    * Get the value of a named property in the object.
    * @param name The name of the property to query.
    * @return The value of the property / null if it doesn't exits.

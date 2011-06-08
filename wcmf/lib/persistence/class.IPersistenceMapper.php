@@ -62,14 +62,14 @@ interface IPersistenceMapper
 
   /**
    * Check if a named relation is defined.
-   * @param rolename The role name of the relation
+   * @param roleName The role name of the relation
    * @return Boolean
    */
   public function hasRelation($roleName);
 
   /**
    * Get the definition for a relation
-   * @param rolename The role name of the relation
+   * @param roleName The role name of the relation
    * @return RelationDescription or null if the relation does not exist
    */
   public function getRelation($roleName);
@@ -211,7 +211,8 @@ interface IPersistenceMapper
     PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
 
   /**
-   * Load the objects of the specified role.
+   * Load the objects of the specified role.The implementation must check the navigability of
+   * the relation and return null, if the requested direction is not navigable.
    * @param object The object for which the objects are loaded
    * @param role The role of the objects in relation to the given object
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
@@ -220,13 +221,14 @@ interface IPersistenceMapper
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
-   * @return Array of PersistentObject instances
+   * @return Array of PersistentObject instances or null, if not navigable
    */
   public function loadRelation(PersistentObject $object, $role, $buildDepth=BUILDDEPTH_SINGLE,
     $buildAttribs=null, $buildTypes=null);
 
   /**
-   * Load the objects of the own type that are related to a given object.
+   * Load the objects of the own type that are related to a given object. The implementation must
+   * check the navigability of the relation and return null, if the requested direction is not navigable.
    * @param otherObjectProxy A PersistentObjectProxy for the object that the objects to load are related to
    * @param otherRole The role of the other object in relation to the objects to load
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
@@ -235,7 +237,7 @@ interface IPersistenceMapper
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
-   * @return Array of PersistentObject instances
+   * @return Array of PersistentObject instances or null, if not navigable
    */
   public function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BUILDDEPTH_SINGLE,
     $buildAttribs=null, $buildTypes=null);

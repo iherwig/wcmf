@@ -87,10 +87,14 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
 
     // check if the object is already part of the transaction
     $transaction = $this->getTransaction();
-    $obj = $transaction->getLoaded($oid);
+    // extract type specific build attribs
+    $attribs = null;
+    if ($buildAttribs !== null && isset($buildAttribs[$oid->getType()])) {
+      $attribs = $buildAttribs[$oid->getType()];
+    }
+    $obj = $transaction->getLoaded($oid, $attribs);
 
     // if not cached, load
-    // TODO also check build parameters
     if ($obj == null)
     {
       $mapper = $this->getMapper($oid->getType());
@@ -190,7 +194,6 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
     if ($mapper != null)
     {
       $result = $mapper->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
-      $transaction = $this->getTransaction();
       foreach($result as $obj) {
         if ($obj != null) {
           // prepare the object (readonly/locked)

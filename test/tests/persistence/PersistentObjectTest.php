@@ -4,25 +4,45 @@ require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class PersistentObjectTest extends PHPUnit_Framework_TestCase
 {
-  function testCreateRandom()
+  protected function setUp()
   {
     TestUtil::runAnonymous(true);
-    $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
-    $pf = PersistenceFacade::getInstance();
-    for ($i=0; $i<100; $i++) {
-      $doc = $pf->create('Page', BUILDDEPTH_SINGLE);
-      $inc = 1;
-      while ($inc < 15){
-        $alphanum = $alphanum.'abcdefghijkmnpqrstuvwxyz23456789';
-        $inc++;
-      }
-      $title = substr(str_shuffle($alphanum), 0, 15);
-      $doc->setName(ucfirst($title));
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    for ($i=100000; $i<100000+11; $i++) {
+      TestUtil::createTestObject(ObjectId::parse('Page:'.$i), array());
     }
+    $transaction->commit();
     TestUtil::runAnonymous(false);
   }
 
-  function testCopyValues()
+  protected function tearDown()
+  {
+    TestUtil::runAnonymous(true);
+    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction->begin();
+    for ($i=100000; $i<100000+11; $i++) {
+      TestUtil::deleteTestObject(ObjectId::parse('Page:'.$i));
+    }
+    $transaction->commit();
+    TestUtil::runAnonymous(false);
+  }
+
+  public function testInitializeSortkeys()
+  {
+    TestUtil::runAnonymous(true);
+    $persistenceFacade = PersistenceFacade::getInstance();
+
+    $page = $persistenceFacade->load(ObjectId::parse('Page:100000'));
+    $this->assertEquals(100000, $page->getSortkey());
+    $this->assertEquals(100000, $page->getSortkeyPage());
+    $this->assertEquals(100000, $page->getSortkeyAuthor());
+
+    TestUtil::runAnonymous(false);
+  }
+
+  public function testCopyValues()
   {
     TestUtil::runAnonymous(true);
     $page1 = new Page(new ObjectId('Page', 123));
@@ -50,7 +70,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  function testMergeValues()
+  public function testMergeValues()
   {
     TestUtil::runAnonymous(true);
     $page1 = new Page(new ObjectId('Page', 123));
@@ -70,7 +90,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  function testClearValues()
+  public function testClearValues()
   {
     TestUtil::runAnonymous(true);
     $page1 = new Page(new ObjectId('Page', 123));
@@ -85,15 +105,73 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
+  public function testLoadPartially()
+  {
+    TestUtil::runAnonymous(true);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $pagePartially = $persistenceFacade->load(ObjectId::parse('Page:100000'), BUILDDEPTH_SINGLE, array('Page' => array()));
+    $this->assertFalse($pagePartially->hasValue('sortkey_page'));
+    $this->assertEquals(null, $pagePartially->getSortkeyPage());
+
+    $pageComplete = $persistenceFacade->load(ObjectId::parse('Page:100000'), BUILDDEPTH_SINGLE);
+    $this->assertTrue($pagePartially->hasValue('sortkey_page'));
+    $this->assertEquals(100000, $pageComplete->getSortkeyPage());
+
+    TestUtil::runAnonymous(false);
+  }
+
   public function testLoadPaging()
   {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
-    $pagingInfo = new PagingInfo(10);
-    $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
-    $this->assertEquals(10, sizeof($documents));
+    // lower bound 1
+    $pagingInfo = new PagingInfo(0);
+    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $this->assertEquals(0, sizeof($pages));
 
+    // lower bound 2
+    $pagingInfo = new PagingInfo(1);
+    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $this->assertEquals(1, sizeof($pages));
+
+    // simple
+    $pagingInfo = new PagingInfo(10);
+    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $this->assertEquals(10, sizeof($pages));
+
+    // out of bounds 1
+    $pagingInfo = new PagingInfo(-1);
+    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $this->assertEquals(0, sizeof($pages));
+
+    // out of bounds 2
+    $pagingInfo = new PagingInfo(100000000);
+    $numPages = sizeof($persistenceFacade->getOIDs('Page'));
+    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $this->assertEquals($numPages, sizeof($pages));
+
+    TestUtil::runAnonymous(false);
+  }
+
+  /**
+   * @group performance
+   */
+  public function testCreateRandom()
+  {
+    TestUtil::runAnonymous(true);
+    $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
+    $pf = PersistenceFacade::getInstance();
+    for ($i=0; $i<100; $i++) {
+      $doc = $pf->create('Page', BUILDDEPTH_SINGLE);
+      $inc = 1;
+      while ($inc < 15){
+        $alphanum = $alphanum.'abcdefghijkmnpqrstuvwxyz23456789';
+        $inc++;
+      }
+      $title = substr(str_shuffle($alphanum), 0, 15);
+      $doc->setName(ucfirst($title));
+    }
     TestUtil::runAnonymous(false);
   }
 

@@ -299,77 +299,74 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     $connection = $this->getConnection();
     $selectStmt = $connection->select();
 
-    $relationDescription = $this->getRelation($otherRole);
-    if ($relationDescription->getOtherNavigability())
+    $relationDescription = $this->getRelationImpl($otherRole, true);
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $oid = $otherObjectProxy->getOID();
+    $tableName = $this->getRealTableName();
+
+    if ($relationDescription instanceof RDBManyToOneRelationDescription)
     {
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $oid = $otherObjectProxy->getOID();
-      $tableName = $this->getRealTableName();
-
-      if ($relationDescription instanceof RDBManyToOneRelationDescription)
-      {
-        $thisAttr = $this->getAttribute($relationDescription->getFkName());
-        $dbid = $oid->getFirstId();
-        if ($dbid === null) {
-          $dbid = new Zend_Db_Expr('NULL');
-        }
-
-        $selectStmt->from($tableName, '');
-        $this->addColumns($selectStmt, $attribs, $tableName);
-        $selectStmt->where($this->quoteIdentifier($tableName).".".
-                $this->quoteIdentifier($thisAttr->getName())."= ?", $dbid);
-        $defaultOrder = $this->getDefaultOrder($otherRole);
-        if ($defaultOrder) {
-          $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
-                  $tableName));
-        }
+      $thisAttr = $this->getAttribute($relationDescription->getFkName());
+      $dbid = $oid->getFirstId();
+      if ($dbid === null) {
+        $dbid = new Zend_Db_Expr('NULL');
       }
-      elseif ($relationDescription instanceof RDBOneToManyRelationDescription)
-      {
-        $thisAttr = $this->getAttribute($relationDescription->getIdName());
-        $fkValue = $otherObjectProxy->getValue($relationDescription->getFkName());
-        if ($fkValue === null) {
-          $fkValue = new Zend_Db_Expr('NULL');
-        }
 
-        $selectStmt->from($tableName, '');
-        $this->addColumns($selectStmt, $attribs, $tableName);
-        $selectStmt->where($this->quoteIdentifier($tableName).".".
-                $this->quoteIdentifier($thisAttr->getName())."= ?", $fkValue);
-        $defaultOrder = $this->getDefaultOrder($otherRole);
-        if ($defaultOrder) {
-          $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
-                  $tableName));
-        }
+      $selectStmt->from($tableName, '');
+      $this->addColumns($selectStmt, $attribs, $tableName);
+      $selectStmt->where($this->quoteIdentifier($tableName).".".
+              $this->quoteIdentifier($thisAttr->getName())."= ?", $dbid);
+      $defaultOrder = $this->getDefaultOrder($otherRole);
+      if ($defaultOrder) {
+        $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
+                $tableName));
       }
-      elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
-      {
-        $thisRelationDesc = $relationDescription->getThisEndRelation();
-        $otherRelationDesc = $relationDescription->getOtherEndRelation();
+    }
+    elseif ($relationDescription instanceof RDBOneToManyRelationDescription)
+    {
+      $thisAttr = $this->getAttribute($relationDescription->getIdName());
+      $fkValue = $otherObjectProxy->getValue($relationDescription->getFkName());
+      if ($fkValue === null) {
+        $fkValue = new Zend_Db_Expr('NULL');
+      }
 
-        $dbid = $oid->getFirstId();
-        if ($dbid === null) {
-          $dbid = new Zend_Db_Expr('NULL');
-        }
-        $nmMapper = $persistenceFacade->getMapper($thisRelationDesc->getOtherType());
-        $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
-        $thisFkAttr = $nmMapper->getAttribute($thisRelationDesc->getFkName());
-        $thisIdAttr = $this->getAttribute($thisRelationDesc->getIdName());
-        $nmTablename = $nmMapper->getRealTableName();
+      $selectStmt->from($tableName, '');
+      $this->addColumns($selectStmt, $attribs, $tableName);
+      $selectStmt->where($this->quoteIdentifier($tableName).".".
+              $this->quoteIdentifier($thisAttr->getName())."= ?", $fkValue);
+      $defaultOrder = $this->getDefaultOrder($otherRole);
+      if ($defaultOrder) {
+        $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
+                $tableName));
+      }
+    }
+    elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
+    {
+      $thisRelationDesc = $relationDescription->getThisEndRelation();
+      $otherRelationDesc = $relationDescription->getOtherEndRelation();
 
-        $selectStmt->from($tableName, '');
-        $this->addColumns($selectStmt, $attribs, $tableName);
+      $dbid = $oid->getFirstId();
+      if ($dbid === null) {
+        $dbid = new Zend_Db_Expr('NULL');
+      }
+      $nmMapper = $persistenceFacade->getMapper($thisRelationDesc->getOtherType());
+      $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
+      $thisFkAttr = $nmMapper->getAttribute($thisRelationDesc->getFkName());
+      $thisIdAttr = $this->getAttribute($thisRelationDesc->getIdName());
+      $nmTablename = $nmMapper->getRealTableName();
 
-        $joinCond = $this->quoteIdentifier($nmTablename).".".$this->quoteIdentifier($thisFkAttr->getName())."=".
-                $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($thisIdAttr->getName());
-        $selectStmt->join($nmTablename, $joinCond, array());
-        $selectStmt->where($this->quoteIdentifier($nmTablename).".".
-                $this->quoteIdentifier($otherFkAttr->getName())."= ?", $dbid);
-        $defaultOrder = $nmMapper->getDefaultOrder($otherRole);
-        if ($defaultOrder) {
-          $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
-                  $nmTablename));
-        }
+      $selectStmt->from($tableName, '');
+      $this->addColumns($selectStmt, $attribs, $tableName);
+
+      $joinCond = $this->quoteIdentifier($nmTablename).".".$this->quoteIdentifier($thisFkAttr->getName())."=".
+              $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($thisIdAttr->getName());
+      $selectStmt->join($nmTablename, $joinCond, array());
+      $selectStmt->where($this->quoteIdentifier($nmTablename).".".
+              $this->quoteIdentifier($otherFkAttr->getName())."= ?", $dbid);
+      $defaultOrder = $nmMapper->getDefaultOrder($otherRole);
+      if ($defaultOrder) {
+        $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
+                $nmTablename));
       }
     }
     return $selectStmt;
