@@ -84,34 +84,34 @@ class SortController extends Controller
       return false;
     }
 
+    // action specific
+
+    if ($request->getAction() == 'moveBefore') {
+      // check matching classes for move operation
+      if ($insertOid->getType() != $referenceOid->getType()) {
+        $response->addError(ApplicationError::get('CLASSES_DO_NOT_MATCH'));
+        return false;
+      }
+      // check if the class supports order
+      $mapper = PersistenceFacade::getInstance()->getMapper($insertOid->getType());
+      if (!$mapper->isSortable()) {
+        $response->addError(ApplicationError::get('ORDER_UNDEFINED'));
+        return false;
+      }
+    }
+
     if ($request->getAction() == 'insertBefore') {
+      // check object id validity
       $containerOid = ObjectId::parse($request->getValue('containerOid'));
       if(!$containerOid) {
         $response->addError(ApplicationError::get('OID_INVALID',
           array('invalidOids' => array($request->getValue('containerOid')))));
         return false;
       }
-    }
 
-    // check if object supports order
-    $mapper = PersistenceFacade::getInstance()->getMapper($insertOid->getType());
-    if (!$mapper->isSortable()) {
-      $response->addError(ApplicationError::get('ORDER_NOT_SUPPORTED'));
-      return false;
-    }
-
-    // check matching classes for move operation
-    if ($request->getAction() == 'moveBefore') {
-      if ($insertOid->getType() != $referenceOid->getType()) {
-        $response->addError(ApplicationError::get('CLASSES_DO_NOT_MATCH'));
-        return false;
-      }
-    }
-
-    // check association for insert operation
-    if ($request->getAction() == 'insertBefore')
-    {
+      // check association for insert operation
       $mapper = PersistenceFacade::getInstance()->getMapper($containerOid->getType());
+      $relationDesc = null;
       // try role
       if ($request->hasValue('role')) {
         $relationDesc = $mapper->getRelation($request->getValue('role'));
@@ -125,6 +125,14 @@ class SortController extends Controller
         $relationDesc = $mapper->getRelation($insertOid->getType());
         if ($relationDesc == null) {
           $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
+          return false;
+        }
+      }
+      // check if object supports order
+      if ($relationDesc) {
+        $otherMapper = $relationDesc->getOtherMapper();
+        if (!$otherMapper->isSortable($relationDesc->getThisRole())) {
+          $response->addError(ApplicationError::get('ORDER_NOT_SUPPORTED'));
           return false;
         }
       }
@@ -176,51 +184,50 @@ class SortController extends Controller
       // determine the sort key
       $mapper = $insertObject->getMapper();
       $sortDef = $mapper->getDefaultOrder();
-      $sortKey = $sortDef['sortFieldName'];
+      $sortkey = $sortDef['sortFieldName'];
 
-      // determine boundaries and sort direction
-      $referenceValue = $referenceObject->getValue($sortKey);
-      $insertValue = $insertObject->getValue($sortKey);
-      $isSortUp = false;
+      // determine the sort boundaries
+      $referenceValue = $referenceObject->getValue($sortkey);
+      $insertValue = $insertObject->getValue($sortkey);
+
+      // determine the sort direction
+      $isSortup = false;
       if ($referenceValue > $insertValue) {
-        $isSortUp = true;
+        $isSortup = true;
       }
 
-      // get all objects between the boundaries
+      // load the objects in the sortkey range
       $objects = array();
-      $type = $mapper->getType();
-      if ($isSortUp) {
-        $objects = $this->loadObjectsInSortRange($type, $sortKey,
-                $insertValue, $referenceValue);
+      $type = $insertObject->getType();
+      if ($isSortup) {
+        $objects = $this->loadObjectsInSortkeyRange($type, $sortkey, $insertValue, $referenceValue);
       }
       else {
-        $objects = $this->loadObjectsInSortRange($type, $sortKey,
-                $referenceValue, $insertValue);
+        $objects = $this->loadObjectsInSortkeyRange($type, $sortkey, $referenceValue, $insertValue);
       }
 
-      // add insert (and reference) object at the correct
-      // end of the list
-      if ($isSortUp) {
+      // add insert (and reference) object at the correct end of the list
+      if ($isSortup) {
         array_push($objects, $insertObject);
         // sortkey of reference object does not change
         // update sort keys
         $count=sizeof($objects);
-        $lastValue = $objects[$count-1]->getValue($sortKey);
+        $lastValue = $objects[$count-1]->getValue($sortkey);
         for ($i=$count-1; $i>0; $i--) {
-          $objects[$i]->setValue($sortKey, $objects[$i-1]->getValue($sortKey));
+          $objects[$i]->setValue($sortkey, $objects[$i-1]->getValue($sortkey));
         }
-        $objects[0]->setValue($sortKey, $lastValue);
+        $objects[0]->setValue($sortkey, $lastValue);
       }
       else {
         array_unshift($objects, $referenceObject);
         array_unshift($objects, $insertObject);
         // update sort keys
         $count=sizeof($objects);
-        $firstValue = $objects[0]->getValue($sortKey);
+        $firstValue = $objects[0]->getValue($sortkey);
         for ($i=0; $i<$count-1; $i++) {
-          $objects[$i]->setValue($sortKey, $objects[$i+1]->getValue($sortKey));
+          $objects[$i]->setValue($sortkey, $objects[$i+1]->getValue($sortkey));
         }
-        $objects[$count-1]->setValue($sortKey, $firstValue);
+        $objects[$count-1]->setValue($sortkey, $firstValue);
       }
     }
   }
@@ -233,94 +240,54 @@ class SortController extends Controller
     $request = $this->getRequest();
     $persistenceFacade = PersistenceFacade::getInstance();
 
-    // load the moved object and the reference object
+    // load the moved object, the reference object and the conainer object
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
     $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
     $containerOid = ObjectId::parse($request->getValue('containerOid'));
     $insertObject = $persistenceFacade->load($insertOid);
-    $referenceObject = $persistenceFacade->load($referenceOid);
-    $containerObject = $persistenceFacade->load($containerOid);
+    $containerObject = $persistenceFacade->load($containerOid, 1);
+    $referenceObjects = $containerObject->getChildrenEx($referenceOid);
+    $referenceObject = null;
+    if (sizeof($referenceObjects) == 1) {
+      $referenceObject = $referenceObjects[0];
+    }
     // check object existence
     $objectMap = array('insertOid' => $insertObject,
         'referenceOid' => $referenceObject,
         'containerOid' => $containerObject);
     if ($this->checkObjects($objectMap)) {
-      // determine the sort key
-      $role = $request->getValue('role');
-      $containerObjectMapper = $containerObject->getMapper();
-      $relationDesc = $containerObjectMapper->getRelation($role);
-      $otherMapper = $relationDesc->getOtherMapper();
-      $sortDef = $otherMapper->getDefaultOrder($relationDesc->getThisRole());
-      $sortKey = $sortDef['sortFieldName'];
-
-      // determine boundaries and sort direction
-      /*
-      $referenceValue = $referenceObject->getValue($sortKey);
-      $insertValue = $insertObject->getValue($sortKey);
-      $isSortUp = false;
-      if ($referenceValue > $insertValue) {
-        $isSortUp = true;
+      // add the new node to the container, if it is not yet
+      $nodeExists = sizeof($containerObject->getChildrenEx($insertOid)) == 1;
+      if (!$nodeExists) {
+        $containerObject->addNode($insertObject, $request->getValue('role'));
       }
-
-      // get all objects between the boundaries
-      $objects = array();
-      $type = $mapper->getType();
-      if ($isSortUp) {
-        $objects = $this->loadObjectsInSortRange($type, $sortKey,
-                $insertValue, $referenceValue);
-      }
-      else {
-        $objects = $this->loadObjectsInSortRange($type, $sortKey,
-                $referenceValue, $insertValue);
-      }
-
-      // add insert (and reference) object at the correct
-      // end of the list
-      if ($isSortUp) {
-        array_push($objects, $insertObject);
-        // sortkey of reference object does not change
-        // update sort keys
-        $count=sizeof($objects);
-        $lastValue = $objects[$count-1]->getValue($sortKey);
-        for ($i=$count-1; $i>0; $i--) {
-          $objects[$i]->setValue($sortKey, $objects[$i-1]->getValue($sortKey));
+      // reorder the children list
+      $children = $containerObject->getChildren();
+      $newChildren = array();
+      foreach ($children as $curChild) {
+        if ($curChild->getOID() == $referenceOid) {
+          $newChildren[] = $insertObject;
         }
-        $objects[0]->setValue($sortKey, $lastValue);
+        $newChildren[] = $curChild;
       }
-      else {
-        array_unshift($objects, $referenceObject);
-        array_unshift($objects, $insertObject);
-        // update sort keys
-        $count=sizeof($objects);
-        $firstValue = $objects[0]->getValue($sortKey);
-        for ($i=0; $i<$count-1; $i++) {
-          $objects[$i]->setValue($sortKey, $objects[$i+1]->getValue($sortKey));
-        }
-        $objects[$count-1]->setValue($sortKey, $firstValue);
-      }
-
-      // commit changes
-      for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
-        $objects[$i]->save();
-      }
-      */
+      $containerObject->setNodeOrder($newChildren);
     }
   }
 
   /**
    * Load all objects between two sortkey values
    * @param type The type of objects
-   * @param sortKeyName The name of the sortkey attribute
+   * @param sortkeyName The name of the sortkey attribute
    * @param lowerValue The lower value of the sortkey
    * @param upperValue The upper value of the sortkey
    */
-  protected function loadObjectsInSortRange($type, $sortKeyName, $lowerValue, $upperValue)
+  protected function loadObjectsInSortkeyRange($type, $sortkeyName, $lowerValue, $upperValue)
   {
     $query = new ObjectQuery($type);
     $tpl1 = $query->getObjectTemplate($type);
     $tpl2 = $query->getObjectTemplate($type);
-    $tpl1->setValue($sortKeyName, Criteria::asValue('>', $lowerValue));
-    $tpl2->setValue($sortKeyName, Criteria::asValue('<', $upperValue));
+    $tpl1->setValue($sortkeyName, Criteria::asValue('>', $lowerValue));
+    $tpl2->setValue($sortkeyName, Criteria::asValue('<', $upperValue));
     $objects = $query->execute(BUILDDEPTH_SINGLE);
     return $objects;
   }

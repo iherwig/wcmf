@@ -1,5 +1,6 @@
 <?php
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeSortkeyComparator.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class SortTest extends PHPUnit_Framework_TestCase
@@ -9,9 +10,9 @@ class SortTest extends PHPUnit_Framework_TestCase
   private $_documentOid2Str = 'Document:123452';
   private $_documentOid3Str = 'Document:123453';
   private $_documentOidStrs = array();
-  private $_pageOid1Str = 'Page:123451';
-  private $_pageOid2Str = 'Page:123452';
-  private $_pageOid3Str = 'Page:123453';
+  private $_pageOid1Str = 'Page:123454';
+  private $_pageOid2Str = 'Page:123455';
+  private $_pageOid3Str = 'Page:123456';
   private $_pageOidStrs = array();
 
   protected function setUp()
@@ -80,7 +81,7 @@ class SortTest extends PHPUnit_Framework_TestCase
     // put last into first place
     $lastPage = array_pop($pages);
     array_unshift($pages, $lastPage);
-    $page->setValue("ChildPage", $pages);
+    $page->setNodeOrder($pages);
     $transaction->commit();
 
     // reload
@@ -112,7 +113,7 @@ class SortTest extends PHPUnit_Framework_TestCase
     // put last into first place
     $lastDocument = array_pop($documents);
     array_unshift($documents, $lastDocument);
-    $page->setValue("Document", $documents);
+    $page->setNodeOrder($documents);
     $transaction->commit();
 
     // reload
@@ -122,6 +123,40 @@ class SortTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($documentOids[0], $documents[1]->getOID()->__toString());
     $this->assertEquals($documentOids[1], $documents[2]->getOID()->__toString());
     $this->assertEquals($documentOids[2], $documents[0]->getOID()->__toString());
+    $transaction->rollback();
+
+    TestUtil::runAnonymous(false);
+  }
+
+  public function testImplicitOrderUpdateMixedType()
+  {
+    TestUtil::runAnonymous(true);
+    $persistenceFacade = PersistenceFacade::getInstance();
+
+    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction->begin();
+
+    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
+    $children = $page->getChildren();
+    // get the existing order
+    $childOids = array();
+    for ($i=0, $count=sizeof($children); $i<$count; $i++) {
+      $childOids[] = $children[$i]->getOID()->__toString();
+    }
+    // put last into first place
+    $lastChild = array_pop($children);
+    array_unshift($children, $lastChild);
+    $page->setNodeOrder($children);
+    $transaction->commit();
+
+    // reload
+    $transaction->begin();
+    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
+    $children = $page->getChildren();
+    $comparator = new NodeSortkeyComparator($page, $children);
+    usort($children, array($comparator, 'compare'));
+    $this->assertEquals($childOids[sizeof($childOids)-1], $children[0]->getOID()->__toString());
+    $this->assertEquals($childOids[0], $children[1]->getOID()->__toString());
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);

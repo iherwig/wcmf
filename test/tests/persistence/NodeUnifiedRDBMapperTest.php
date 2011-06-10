@@ -111,7 +111,7 @@ class NodeUnifiedRDBMapperTest extends PHPUnit_Framework_TestCase {
     $relationDescription = $mapper->getRelation('Author');
     $otherMapper = new AuthorRDBMapper($this->dbParams);
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
-            array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), array()))->__toString();
+            array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), null, null, array()))->__toString();
     $expected = "SELECT `Author`.`id` FROM `Author` WHERE (`Author`.`id`= 12) ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
@@ -122,11 +122,31 @@ class NodeUnifiedRDBMapperTest extends PHPUnit_Framework_TestCase {
       "`Author`.`modified`, `Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`id`= 12) ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
+    // parent (order)
+    $relationDescription = $mapper->getRelation('Author');
+    $otherMapper = new AuthorRDBMapper($this->dbParams);
+    $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
+            array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), null, array('name')))->__toString();
+    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
+      "`Author`.`modified`, `Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`id`= 12) ORDER BY `Author`.`name` ASC";
+    $this->assertEquals($expected, str_replace("\n", "", $sql));
+
+    // parent (criteria)
+    $criteria = new Criteria('Author', 'name', '=', 'Unknown');
+    $relationDescription = $mapper->getRelation('Author');
+    $otherMapper = new AuthorRDBMapper($this->dbParams);
+    $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
+            array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), array($criteria)))->__toString();
+    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
+      "`Author`.`modified`, `Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`id`= 12) AND (`Author`.`name` = 'Unknown') ".
+      "ORDER BY `Author`.`sortkey` ASC";
+    $this->assertEquals($expected, str_replace("\n", "", $sql));
+
     // child (pk only)
     $relationDescription = $mapper->getRelation('NormalImage');
     $otherMapper = new ImageRDBMapper($this->dbParams);
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
-            array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), array()))->__toString();
+            array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), null, null, array()))->__toString();
     $expected = "SELECT `Image`.`id` FROM `Image` WHERE (`Image`.`fk_page_id`= 1)";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
@@ -142,8 +162,8 @@ class NodeUnifiedRDBMapperTest extends PHPUnit_Framework_TestCase {
     $relationDescription = $mapper->getRelation('Document');
     $otherMapper = new DocumentRDBMapper($this->dbParams);
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
-            array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), array()))->__toString();
-    $expected = "SELECT `Document`.`id` FROM `Document` INNER JOIN `NMPageDocument` ON ".
+            array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), null, null, array()))->__toString();
+    $expected = "SELECT `Document`.`id`, `NMPageDocument`.`sortkey_page` FROM `Document` INNER JOIN `NMPageDocument` ON ".
       "`NMPageDocument`.`fk_document_id`=`Document`.`id` WHERE (`NMPageDocument`.`fk_page_id`= 1) ORDER BY `NMPageDocument`.`sortkey_page` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
@@ -151,7 +171,7 @@ class NodeUnifiedRDBMapperTest extends PHPUnit_Framework_TestCase {
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole()))->__toString();
     $expected = "SELECT `Document`.`id`, `Document`.`title`, `Document`.`created`, `Document`.`creator`, ".
-      "`Document`.`modified`, `Document`.`last_editor` FROM `Document` ".
+      "`Document`.`modified`, `Document`.`last_editor`, `NMPageDocument`.`sortkey_page` FROM `Document` ".
       "INNER JOIN `NMPageDocument` ON `NMPageDocument`.`fk_document_id`=`Document`.`id` ".
       "WHERE (`NMPageDocument`.`fk_page_id`= 1) ORDER BY `NMPageDocument`.`sortkey_page` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));

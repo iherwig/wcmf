@@ -502,25 +502,39 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     }
   }
   /**
+   * @see IPersistenceMapper::isSortable()
+   */
+  public function isSortable($roleName=null)
+  {
+    $sortDef = $this->getDefaultOrder($roleName);
+    return ($sortDef['isSortkey'] == true);
+  }
+  /**
    * @see IPersistenceMapper::getDefaultOrder()
    */
   public function getDefaultOrder($roleName=null)
   {
-    if ($roleName != null && $this->hasRelation($roleName))
+    $sortDef = null;
+    $sortType = null;
+    if ($roleName != null && $this->hasRelation($roleName) &&
+            ($relationDesc = $this->getRelation($roleName)) instanceof RDBManyToManyRelationDescription)
     {
-      $relationDesc = $this->getRelation($roleName);
-      if ($relationDesc instanceof RDBManyToManyRelationDescription)
-      {
-        // the order may be overriden by the many to many relation class
-        $thisRelationDesc = $relationDesc->getThisEndRelation();
-        $nmMapper = $thisRelationDesc->getOtherMapper($thisRelationDesc->getOtherType());
-        $order = $nmMapper->getOwnDefaultOrder($roleName);
-        if ($order != null) {
-          return $order;
-        }
-      }
+      // the order may be overriden by the many to many relation class
+      $thisRelationDesc = $relationDesc->getThisEndRelation();
+      $nmMapper = $thisRelationDesc->getOtherMapper($thisRelationDesc->getOtherType());
+      $sortDef = $nmMapper->getOwnDefaultOrder($roleName);
+      $sortType = $nmMapper->getType();
     }
-    return $this->getOwnDefaultOrder($roleName);
+    else {
+      // default: the order is defined in this mapper
+      $sortDef = $this->getOwnDefaultOrder($roleName);
+      $sortType = $this->getType();
+    }
+    // add the sortType parameter to the result
+    if ($sortDef != null) {
+      $sortDef['sortType'] = $sortType;
+    }
+    return $sortDef;
   }
   /**
    * Check if a value is a primary key value
@@ -840,7 +854,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
    * @see IPersistenceMapper::loadRelatedObjects()
    */
   public function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BUILDDEPTH_SINGLE,
-    $buildAttribs=null, $buildTypes=null)
+    $criteria=null, $orderby=null, PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null)
   {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
@@ -862,9 +876,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       }
 
       // create query
-      $selectStmt = $this->getRelationSelectSQL($otherObjectProxy, $otherRole, $attribs);
-
-      $pagingInfo = null;
+      $selectStmt = $this->getRelationSelectSQL($otherObjectProxy, $otherRole, $criteria, $orderby, $attribs);
       $objects = $this->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo, $buildAttribs, $buildTypes);
     }
     return $objects;
@@ -1001,9 +1013,12 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
     {
       if ($attribs == null || in_array($name, $attribs))
       {
-        $curAttributeDesc = $this->getAttribute($name);
-        if ($this->_dataConverter && !is_null($value)) {
-          $value = $this->_dataConverter->convertStorageToApplication($value, $curAttributeDesc->getType(), $name);
+        // convert the value, if the attribute is known
+        if ($this->hasAttribute($name)) {
+          $curAttributeDesc = $this->getAttribute($name);
+          if ($this->_dataConverter && !is_null($value)) {
+            $value = $this->_dataConverter->convertStorageToApplication($value, $curAttributeDesc->getType(), $name);
+          }
         }
         $values[$name] = $value;
       }
@@ -1080,7 +1095,7 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
    * @see IPersistenceMapper::loadRelation()
    */
   public function loadRelation(PersistentObject $object, $role, $buildDepth=BUILDDEPTH_SINGLE,
-    $buildAttribs=null, $buildTypes=null)
+    $criteria=null, $orderby=null, PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null)
   {
     $relatives = array();
 
@@ -1095,7 +1110,8 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       if ($buildDepth == BUILDDEPTH_PROXIES_ONLY)
       {
         $relatedObjects = $otherMapper->loadRelatedObjects(PersistentObjectProxy::fromObject($object),
-                $relationDescription->getThisRole(), BUILDDEPTH_SINGLE, array($otherType => array()));
+                $relationDescription->getThisRole(), BUILDDEPTH_SINGLE, $criteria, $orderby, $pagingInfo,
+                array($otherType => array()));
         if ($relationDescription->isMultiValued())
         {
           foreach ($relatedObjects as $relatedObject) {
@@ -1116,7 +1132,8 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
       else
       {
         $relatives = $otherMapper->loadRelatedObjects(PersistentObjectProxy::fromObject($object),
-                $relationDescription->getThisRole(), $buildDepth, $buildAttribs, $buildTypes);
+                $relationDescription->getThisRole(), $buildDepth, $criteria, $orderby, $pagingInfo,
+                $buildAttribs, $buildTypes);
         if (!$relationDescription->isMultiValued() && sizeof($relatives) > 0) {
           $relatives = $relatives[0];
         }
@@ -1242,12 +1259,16 @@ abstract class RDBMapper extends AbstractMapper implements IPersistenceMapper
   /**
    * Get the SQL command to select those objects from the database that are related to the given object.
    * @note Navigability may not be checked in this method
+   * @note In case of a aortable many to many relation, the sortkey value must also be selected
    * @param otherObjectProxy A PersistentObjectProxy for the object to load the relatives for.
    * @param otherRole The role of the other object in relation to the objects to load.
+   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
+   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param attribs An array listing the attributes to load [default: null loads all attributes].
    * @return Zend_Db_Select instance
    */
-  abstract protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole, $attribs=null);
+  abstract protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
+          $criteria=null, $orderby=null, $attribs=null);
   /**
    * Get the SQL command to insert a object into the database.
    * @param object A reference to the object to insert.

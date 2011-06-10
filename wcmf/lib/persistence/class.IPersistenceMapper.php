@@ -104,20 +104,23 @@ interface IPersistenceMapper
   public function getProperties();
 
   /**
-   * Check if this type may be explicitly sorted by the user
-   * using a persistent attribute which stores the order.
+   * Check if this type may be explicitly sorted by the user using a persistent
+   * attribute which stores the order. The roleName parameter allows to ask
+   * for the order with respect to a specific role.
+   * @param rolename The role name of the relation, maybe null [default: null]
    * @return Boolean
    */
-  public function isSortable();
+  public function isSortable($roleName=null);
 
   /**
-   * Get the name of the attribute to order by default and the sort direction
+   * Get the name of the type and attribute to order by default and the sort direction
    * (ASC or DESC). If the order may be established explicitly by the user, the
    * isSortkey return parameter is true. The roleName parameter allows to ask
    * for the order with respect to a specific role.
-   * In a many to many relation the attribute may not be contained in the mapped type.
+   * In a many to many relation the attribute may not be contained in the mapped type,
+   * so sortType may be different from the mapper type.
    * @param rolename The role name of the relation, maybe null [default: null]
-   * @return Assciative array with the keys sortFieldName, sortDirection (ASC or DESC) and isSortkey (Boolean)
+   * @return Assciative array with the keys sortType, sortFieldName, sortDirection (ASC or DESC) and isSortkey (Boolean)
    * or null, if no order is defined
    */
   public function getDefaultOrder($roleName=null);
@@ -211,20 +214,23 @@ interface IPersistenceMapper
     PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
 
   /**
-   * Load the objects of the specified role.The implementation must check the navigability of
+   * Load the objects of the specified role. The implementation must check the navigability of
    * the relation and return null, if the requested direction is not navigable.
    * @param object The object for which the objects are loaded
    * @param role The role of the objects in relation to the given object
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null). [default: null]
+   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @param buildAttribs An assoziative array listing the attributes to load [default: null, loads all attributes]
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
    * @return Array of PersistentObject instances or null, if not navigable
    */
-  public function loadRelation(PersistentObject $object, $role, $buildDepth=BUILDDEPTH_SINGLE,
-    $buildAttribs=null, $buildTypes=null);
+  public function loadRelation(PersistentObject $object, $role, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null,
+    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
 
   /**
    * Load the objects of the own type that are related to a given object. The implementation must
@@ -233,6 +239,9 @@ interface IPersistenceMapper
    * @param otherRole The role of the other object in relation to the objects to load
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
+   * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null). [default: null]
+   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @param buildAttribs An assoziative array listing the attributes to load [default: null, loads all attributes]
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
@@ -240,7 +249,7 @@ interface IPersistenceMapper
    * @return Array of PersistentObject instances or null, if not navigable
    */
   public function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BUILDDEPTH_SINGLE,
-    $buildAttribs=null, $buildTypes=null);
+    $criteria=null, $orderby=null, PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
 
   /**
    * Execute a PersistenceOperation. PersistenceOperation.type must be the type that

@@ -110,7 +110,7 @@ class RelationDescription
 
   /**
    * Get the PersistentMapper at this end
-   * @return PersistentMapper
+   * @return IPersistenceMapper
    */
   public function getThisMapper()
   {
@@ -137,7 +137,7 @@ class RelationDescription
 
   /**
    * Get the PersistentMapper at the other end
-   * @return PersistentMapper
+   * @return IPersistenceMapper
    */
   public function getOtherMapper()
   {

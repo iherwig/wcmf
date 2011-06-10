@@ -76,14 +76,14 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       {
         $value = join('', $object->getOID()->getId());
         foreach ($this->getRelations() as $curRelationDesc) {
-          $sortkey = $this->getDefaultOrder($curRelationDesc->getOtherRole());
-          if (isset($sortkey['sortFieldName'])) {
-            $object->setValue($sortkey['sortFieldName'], $value);
+          $sortDef = $this->getDefaultOrder($curRelationDesc->getOtherRole());
+          if ($sortDef && isset($sortDef['sortFieldName'])) {
+            $object->setValue($sortDef['sortFieldName'], $value);
           }
         }
-        $sortkey = $this->getDefaultOrder();
-        if (isset($sortkey['sortFieldName'])) {
-          $object->setValue($sortkey['sortFieldName'], $value);
+        $sortDef = $this->getDefaultOrder();
+        if ($sortDef && isset($sortDef['sortFieldName'])) {
+          $object->setValue($sortDef['sortFieldName'], $value);
         }
       }
     }
@@ -185,43 +185,40 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       }
 
       // changed order
-      foreach ($this->getRelations() as $curRelationDesc)
+      $orderedNodes = $object->getNodeOrder();
+      // order changes only make sense for arrays with more than one element
+      if (sizeof($orderedNodes) > 1)
       {
-        $otherMapper = $curRelationDesc->getOtherMapper();
-        $otherRole = $curRelationDesc->getOtherRole();
-        $defaultOrder = $otherMapper->getDefaultOrder($curRelationDesc->getThisRole());
-        if ($defaultOrder != null && $defaultOrder['isSortkey'] == true) {
-          // check for order changes only if the relation attribute was changed
-          if (in_array($otherRole, $object->getChangedValues())) {
-            $sortkeyName = $defaultOrder['sortFieldName'];
-            $relatives = $object->getValue($otherRole);
-            // order changes only make sense for arrays with more than one element
-            if (is_array($relatives) && sizeof($relatives) > 0)
-            {
+        $relatives = array();
+        $sortkeyValues = array();
+        foreach ($orderedNodes as $curNode) {
+          // find the role of the node
+          $curRelationDesc = $object->getNodeRelation($curNode);
+          if ($curRelationDesc != null) {
+            // find the sortkey
+            $otherMapper = $curRelationDesc->getOtherMapper();
+            $defaultOrder = $otherMapper->getDefaultOrder($curRelationDesc->getThisRole());
+            if ($defaultOrder != null && $defaultOrder['isSortkey'] == true) {
+              $sortkeyName = $defaultOrder['sortFieldName'];
               // in a many to many relation, we have to modify the order of the relation objects
               if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
-                $nmRelatives = array();
-                for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
                   $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
-                        PersistentObjectProxy::fromObject($relatives[$i]), $curRelationDesc);
-                  $nmRelatives[] = $nmObjects[0];
-                }
-                $relatives = $nmRelatives;
+                        PersistentObjectProxy::fromObject($curNode), $curRelationDesc);
+                  $curNode = $nmObjects[0];
               }
-
-              // collect all sortkey values
-              $sortkeyValues = array();
-              for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
-                $sortkeyValues[] = $relatives[$i]->getValue($sortkeyName);
-              }
-              // sort the values
-              sort($sortkeyValues);
-              // set the values on the objects
-              for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
-                $relatives[$i]->setValue($sortkeyName, $sortkeyValues[$i]);
-              }
+              // collect the objects and sortkey definitions
+              $relatives[] = array('object' => $curNode, 'sortFieldName' => $sortkeyName);
+              // collect the sortkey values
+              $sortkeyValues[] = $curNode->getValue($sortkeyName);
             }
           }
+        }
+        // sort the values
+        sort($sortkeyValues);
+        // set the values on the objects
+        for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
+          $curRelative = $relatives[$i];
+          $curRelative['object']->setValue($curRelative['sortFieldName'], $sortkeyValues[$i]);
         }
       }
     }
@@ -249,52 +246,18 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
     $this->addColumns($selectStmt, $attribs, $tableName);
 
     // condition
-    if ($criteria != null)
-    {
-      foreach ($criteria as $curCriteria)
-      {
-        if ($curCriteria instanceof Criteria)
-        {
-          $condition = $this->renderCriteria($curCriteria, true, $tableName);
-          if ($curCriteria->getCombineOperator() == Criteria::OPERATOR_AND) {
-            $selectStmt->where($condition, $curCriteria->getValue());
-          }
-          else {
-            $selectStmt->orWhere($condition, $curCriteria->getValue());
-          }
-        }
-        else {
-          throw new IllegalArgumentException("The select condition must be an instance of Criteria");
-        }
-      }
-    }
+    $this->addCriteria($selectStmt, $criteria, $tableName);
 
-    // order by
-    $orderbyFinal = array();
-    if ($orderby == null)
-    {
-      // use default ordering
-      $defaultOrder = $this->getDefaultOrder();
-      if ($defaultOrder) {
-        $orderby = array($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection']);
-      }
-      else {
-        $orderby = array();
-      }
-    }
-    foreach($orderby as $orderExpression) {
-      $orderbyFinal[] = $this->ensureTablePrefix($orderExpression, $tableName);
-    }
-    if (sizeof($orderby) > 0) {
-      $selectStmt->order($orderbyFinal);
-    }
+    // order
+    $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder());
 
     return $selectStmt;
   }
   /**
    * @see RDBMapper::getRelationSelectSQL()
    */
-  protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole, $attribs=null)
+  protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
+          $criteria=null, $orderby=null, $attribs=null)
   {
     $connection = $this->getConnection();
     $selectStmt = $connection->select();
@@ -316,11 +279,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       $this->addColumns($selectStmt, $attribs, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).".".
               $this->quoteIdentifier($thisAttr->getName())."= ?", $dbid);
-      $defaultOrder = $this->getDefaultOrder($otherRole);
-      if ($defaultOrder) {
-        $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
-                $tableName));
-      }
+      // order
+      $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
+      // additional conditions
+      $this->addCriteria($selectStmt, $criteria, $tableName);
     }
     elseif ($relationDescription instanceof RDBOneToManyRelationDescription)
     {
@@ -334,11 +296,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       $this->addColumns($selectStmt, $attribs, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).".".
               $this->quoteIdentifier($thisAttr->getName())."= ?", $fkValue);
-      $defaultOrder = $this->getDefaultOrder($otherRole);
-      if ($defaultOrder) {
-        $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
-                $tableName));
-      }
+      // order
+      $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
+      // additional conditions
+      $this->addCriteria($selectStmt, $criteria, $tableName);
     }
     elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
     {
@@ -363,12 +324,18 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       $selectStmt->join($nmTablename, $joinCond, array());
       $selectStmt->where($this->quoteIdentifier($nmTablename).".".
               $this->quoteIdentifier($otherFkAttr->getName())."= ?", $dbid);
-      $defaultOrder = $nmMapper->getDefaultOrder($otherRole);
-      if ($defaultOrder) {
-        $selectStmt->order($this->ensureTablePrefix($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection'],
-                $nmTablename));
+      // order (in this case we use the order of the many to many objects)
+      $nmSortDef = $nmMapper->getDefaultOrder($otherRole);
+      $this->addOrderBy($selectStmt, $orderby, $nmTablename, $nmSortDef);
+      if ($nmSortDef) {
+        // add the sort attribute from the many to many object
+        $nmSortAttributeDesc = $nmMapper->getAttribute($nmSortDef['sortFieldName']);
+        $selectStmt->columns(array($nmSortAttributeDesc->getName() => $nmSortAttributeDesc->getColumn()), $nmTablename);
       }
+      // additional conditions
+      $this->addCriteria($selectStmt, $criteria, $nmTablename);
     }
+
     return $selectStmt;
   }
   /**
@@ -517,6 +484,61 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
       $selectStmt->joinLeft($otherTable, $curReference['joinCond'], $curReference['attributes']);
     }
     return $selectStmt;
+  }
+  /**
+   * Add the given criteria to the select statement
+   * @param selectStmt The select statement (instance of Zend_Db_Select)
+   * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null)
+   * @param tableName The table name
+   */
+  protected function addCriteria(Zend_Db_Select $selectStmt, $criteria, $tableName)
+  {
+    if ($criteria != null)
+    {
+      foreach ($criteria as $curCriteria)
+      {
+        if ($curCriteria instanceof Criteria)
+        {
+          $condition = $this->renderCriteria($curCriteria, true, $tableName);
+          if ($curCriteria->getCombineOperator() == Criteria::OPERATOR_AND) {
+            $selectStmt->where($condition, $curCriteria->getValue());
+          }
+          else {
+            $selectStmt->orWhere($condition, $curCriteria->getValue());
+          }
+        }
+        else {
+          throw new IllegalArgumentException("The select condition must be an instance of Criteria");
+        }
+      }
+    }
+  }
+  /**
+   * Add the given order to the select statement
+   * @param selectStmt The select statement (instance of Zend_Db_Select)
+   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
+   * @param tableName The table name
+   * @param defaultOrder The default order definition to use, if orderby is null (@see IPersistenceMapper::getDefaultOrder())
+   */
+  protected function addOrderBy(Zend_Db_Select $selectStmt, $orderby, $tableName, $defaultOrder)
+  {
+    $orderbyFinal = array();
+    if ($orderby == null)
+    {
+      // use default ordering
+      if ($defaultOrder) {
+        $orderby = array($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection']);
+      }
+      else {
+        $orderby = array();
+      }
+    }
+    foreach($orderby as $orderExpression) {
+      $orderbyFinal[] = $this->ensureTablePrefix($orderExpression, $tableName);
+    }
+    if (sizeof($orderby) > 0) {
+      $selectStmt->order($orderbyFinal);
+    }
   }
   /**
    * Get an associative array of attribute name-value pairs to be stored for a

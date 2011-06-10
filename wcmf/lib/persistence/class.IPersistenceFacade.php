@@ -48,7 +48,7 @@ interface IPersistenceFacade
    * Load an object from the storage. The object will be attached to the transaction,
    * if the transaction is active.
    * @note The parameters buildDepth, buildAttribs and buildTypes are used to improve fetching
-   * from the storage, but objects returned by this method are not guaranteed to conform to
+   * from the storage, but objects returned by this method are not guaranteed to only contain
    * the parameter values. This is especially true, if the same object was loaded before with
    * a wider fetch definition (e.g. greater buildDeph value)
    * @param oid The object id of the object to construct
@@ -104,7 +104,7 @@ interface IPersistenceFacade
    * @param type The type of the object
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BUILDDEPTH_REQUIRED, BUILDDEPTH_PROXIES_ONLY) [default: BUILDDEPTH_SINGLE]
-   * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
+   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @param buildAttribs An assoziative array listing the attributes to load [default: null, loads all attributes]

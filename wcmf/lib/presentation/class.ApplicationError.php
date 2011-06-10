@@ -196,7 +196,7 @@ define('ORDER_UNDEFINED', serialize(array('ORDER_UNDEFINED',
 define('REFERENCE_INVALID', serialize(array('REFERENCE_INVALID',
   Message::get('There reference object cannot be found in the container object.'), ERROR_LEVEL_ERROR)));
 define('ORDER_NOT_SUPPORTED', serialize(array('ORDER_NOT_SUPPORTED',
-  Message::get('There container class does not support ordered references.'), ERROR_LEVEL_ERROR)));
+  Message::get('The container class does not support ordered references.'), ERROR_LEVEL_ERROR)));
 
 define('CLASSES_DO_NOT_MATCH', serialize(array('CLASSES_DO_NOT_MATCH',
   Message::get('The classes of insertOid and referenceOid do not match.'), ERROR_LEVEL_ERROR)));

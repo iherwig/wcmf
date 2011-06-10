@@ -21,6 +21,7 @@ require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistentObject.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/model/class.NodeComparator.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.ArrayUtil.php");
 
 /**
@@ -31,27 +32,22 @@ require_once(WCMF_BASE."wcmf/lib/util/class.ArrayUtil.php");
  * The Node class implements the 'Composite Pattern'.
  * Use the methods addNode(), deleteNode() to build/modify trees.
  *
- * @author   ingo herwig <ingo@wemove.com>
+ * @author ingo herwig <ingo@wemove.com>
  */
 class Node extends PersistentObject
 {
-  const SORTTYPE_ASC = -1;  // sort children ascending
-  const SORTTYPE_DESC = -2; // sort children descending
-  const SORTBY_OID = -3;  // sort by oid
-  const SORTBY_TYPE = -4; // sort by type
-
   const RELATION_STATE_UNINITIALIZED = -1;
   const RELATION_STATE_INITIALIZING = -2;
   const RELATION_STATE_INITIALIZED = -3;
   const RELATION_STATE_LOADED = -4;
 
-  private static $_sortCriteria;
   private $_depth = -1;
   private $_path = '';
   private $_relationStates = array();
 
   private $_addedNodes = array();
   private $_deletedNodes = array();
+  private $_orderedNodes = array();
 
   /**
    * @see PersistentObject::getValue
@@ -105,6 +101,72 @@ class Node extends PersistentObject
     return true;
   }
   /**
+   * Get Nodes that match given conditions from a list.
+   * @param nodeList An array of nodes to filter or a single Node.
+   * @param oid The object id that the Nodes should match [maybe null, default: null].
+   * @param type The type that the Nodes should match [maybe null, default: null].
+   * @param values An assoziative array holding key value pairs that the Node values should match
+   *        [values are interpreted as regular expression, parameter maybe null, default: null].
+   * @param properties An assoziative array holding key value pairs that the Node properties should match
+   *        [values are interpreted as regular expression, parameter maybe null, default: null].
+   * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
+   * @return An Array holding references to the Nodes that matched.
+   */
+  public static function filter(array $nodeList, ObjectId $oid=null, $type=null, $values=null, $properties=null, $useRegExp=true)
+  {
+    $returnArray = array();
+    for($i=0, $count=sizeof($nodeList); $i<$count; $i++)
+    {
+      $curNode = $nodeList[$i];
+      if ($curNode instanceof PersistentObject || $curNode instanceof PersistentObjectProxy)
+      {
+        $match = true;
+        // check oid
+        if ($oid != null && $curNode->getOID() != $oid) {
+          $match = false;
+        }
+        // check type
+        if ($type != null && $curNode->getType() != $type) {
+          $match = false;
+        }
+        // check values
+        if ($values != null && is_array($values))
+        {
+          foreach($values as $key => $value)
+          {
+            $nodeValue = $curNode->getValue($key);
+            if ($useRegExp && !preg_match("/".$value."/m", $nodeValue) || !$useRegExp && $value != $nodeValue)
+            {
+              $match = false;
+              break;
+            }
+          }
+        }
+        // check properties
+        if ($properties != null && is_array($properties))
+        {
+          foreach($properties as $key => $value)
+          {
+            $nodeProperty = $curNode->getProperty($key);
+            if ($useRegExp && !preg_match("/".$value."/m", $nodeProperty) || !$useRegExp && $value != $nodeProperty)
+            {
+              $match = false;
+              break;
+            }
+          }
+        }
+        if ($match) {
+          $returnArray[] = $curNode;
+        }
+      }
+      else {
+        Log::warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".Application::getStackTrace(),
+          __CLASS__);
+      }
+    }
+    return $returnArray;
+  }
+  /**
    * @see PersistentObject::mergeValues
    */
   public function mergeValues(PersistentObject $object)
@@ -120,7 +182,8 @@ class Node extends PersistentObject
         $existingValue = parent::getValue($valueName);
         $newValue = parent::getValue($valueName);
         if ($curRelationDesc->isMultiValued()) {
-          $newValue = self::mergeObjectLists($existingValue, $newValue);
+          $mergeResult = self::mergeObjectLists($existingValue, $newValue);
+          $newValue = $mergeResult['result'];
           $this->setValueInternal($valueName, $newValue);
         }
         elseif ($existingValue instanceof PersistentObjectProxy &&
@@ -136,7 +199,8 @@ class Node extends PersistentObject
    * - proxies/objects from list2 that don't exist in list1 are added to list1
    * @param list1 Array of PersistentObject(Proxy) instances
    * @param list2 Array of PersistentObject(Proxy) instances
-   * @return Array of merged values
+   * @return Associative array with keys 'result' and 'added' and arrays of
+   *   all and only added objects respectively.
    */
   protected static function mergeObjectLists($list1, $list2)
   {
@@ -149,6 +213,7 @@ class Node extends PersistentObject
     }
     // create hashtables for better search performance
     $list1Map = array();
+    $added = array();
     foreach ($list1 as $curObject) {
       $list1Map[$curObject->getOID()->__toString()] = $curObject;
     }
@@ -158,6 +223,7 @@ class Node extends PersistentObject
       if (!isset($list1Map[$curOidStr])) {
         // add the object, if it doesn't exist yet
         $list1Map[$curOidStr] = $curObject;
+        $added[] = $curObject;
       }
       elseif ($list1Map[$curOidStr] instanceof PersistentObjectProxy &&
               $curObject instanceof PersistentObject) {
@@ -165,7 +231,7 @@ class Node extends PersistentObject
         $list1Map[$curOidStr] = $curObject;
       }
     }
-    return array_values($list1Map);
+    return array('result' => array_values($list1Map), 'added' => $added);
   }
   /**
    * Get the number of children of the Node.
@@ -204,17 +270,27 @@ class Node extends PersistentObject
     }
 
     $value = $other;
+    $oldValue = parent::getValue($role);
+    $addedNodes = array(); // this array contains the other node or nothing
     if (!$relDesc || $relDesc->isMultiValued()) {
       // make sure that the value is an array if multivalued
-      $value = self::mergeObjectLists(parent::getValue($role), array($value));
+      $mergeResult = self::mergeObjectLists($oldValue, array($value));
+      $value = $mergeResult['result'];
+      $addedNodes = $mergeResult['added'];
+    }
+    elseif ($oldValue != $value) {
+      $addedNodes[] = $value;
     }
     $result1 = parent::setValue($role, $value, $forceSet, $trackChange);
 
     // remember the addition
-    if (!isset($this->_addedNodes[$role])) {
-      $this->_addedNodes[$role] = array();
+    if (sizeof($addedNodes) > 0)
+    {
+      if (!isset($this->_addedNodes[$role])) {
+        $this->_addedNodes[$role] = array();
+      }
+      $this->_addedNodes[$role][] = $other->getOID();
     }
-    $this->_addedNodes[$role][] = $other->getOID();
 
     // propagate add action to the other object
     $result2 = true;
@@ -230,6 +306,7 @@ class Node extends PersistentObject
   }
   /**
    * Get the object ids of the nodes that were added since the node was loaded.
+   * Persistence mappers use this method when persisting the node relations.
    * @return Associative array with the roles as keys and an array of ObjectId instances
    *  as values
    */
@@ -306,12 +383,36 @@ class Node extends PersistentObject
   }
   /**
    * Get the object ids of the nodes that were deleted since the node was loaded.
+   * Persistence mappers use this method when persisting the node relations.
    * @return Associative array with the roles as keys and an array of ObjectId instances
    *  as values
    */
   public function getDeletedNodes()
   {
     return $this->_deletedNodes;
+  }
+  /**
+   * Define the order of related Node instances. The mapper is responsible for
+   * persisting the order of the given Node instances in relation to this Node.
+   * @note Note instances, that are not explicitly sortable by a sortkey
+   * (@see IPersistenceMapper::getDefaultOrder()) will be ignored. If a given
+   * Node instance is not related to this Node yet, an exception will be thrown.
+   * Any not persisted definition of a previous call will be overwritten
+   * @param nodeList Array of sorted Node instances
+   */
+  public function setNodeOrder(array $nodeList)
+  {
+    $this->_orderedNodes = $nodeList;
+    $this->setState(PersistentOBject::STATE_DIRTY);
+  }
+  /**
+   * Get the order of related Node instances, if it was defined using
+   * the Node::setNodeOrder() method.
+   * @return Array of sorted Node instances
+   */
+  public function getNodeOrder()
+  {
+    return $this->_orderedNodes;
   }
   /**
    * Load the children of a given role and add them. If all children should be
@@ -410,179 +511,6 @@ class Node extends PersistentObject
       $result[$curRelation->getOtherRole()] = $curRelation;
     }
     return $result;
-  }
-  /**
-   * Sort children by a given criteria.
-   * @param criteria An assoziative array of criteria - SORTTYPE constant pairs OR a single criteria string.
-   *        possible criteria: Node::OID, Node::TYPE or any value/property name
-   *        (e.g. array(Node::OID => Node::SORTTYPE_ASC, 'sortkey' => Node::SORTTYPE_DESC) OR 'sortkey')
-   *        @note If criteria is only a string we will sort by this criteria with Node::SORTTYPE_ASC
-   * @param recursive True/False whether the descendants of the children schould be sorted too (default: false)
-   * @param changeSortkey True/False whether the sortkey should be changed according to the new order (default: false)
-   * @param sortFunction The name of a global compare function to use. If given criteria will be ignored (default: "")
-   * @deprecated
-   */
-  public function sortChildren($criteria, $recursive=false, $changeSortkey=false, $sortFunction='')
-  {
-    Log::warn("use of deprecated method Node::sortChildren. ".
-    	"use Node::getChildren() and afterwards Node::sort() instead.\n".
-        Application::getStackTrace(), __CLASS__);
-  }
-  /**
-   * Sort Node list by a given criteria.
-   * @note static method
-   * @param nodeList A reference to an array of Nodes
-   * @param criteria An assoziative array of criteria - SORTTYPE constant pairs OR a single criteria string.
-   *        possible criteria: Node::OID, Node::TYPE or any value/property name
-   *        (e.g. array(Node::OID => Node::SORTTYPE_ASC, 'sortkey' => Node::SORTTYPE_DESC) OR 'sortkey')
-   *        @note If criteria is only a string we will sort by this criteria with Node::SORTTYPE_ASC
-   * @param changeSortkey True/False whether the sortkey should be changed according to the new order (default: false)
-   * @param sortFunction The name of a global compare function to use. If given criteria will be ignored (default: "")
-   * @return The sorted array of Nodes
-   */
-  public static function sort(array $nodeList, $criteria, $changeSortkey=false, $sortFunction='')
-  {
-    if (strlen($sortFunction) == 0)
-    {
-      // sort with internal sort function
-      if (!is_array($criteria)) {
-        self::$_sortCriteria = array($criteria => Node::SORTTYPE_ASC);
-      }
-      else {
-        self::$_sortCriteria = $criteria;
-      }
-      usort($nodeList, array('Node', 'nodeCmpFunction'));
-    }
-    else {
-      usort($nodeList, $sortFunction);
-    }
-    // change sortkey
-    if ($changeSortkey)
-    {
-      $sortkey = 0;
-      for($i=0, $count=sizeof($nodeList); $i<$count; $i++)
-      {
-        $nodeList[$i]->setValue('sortkey', $sortkey);
-        $sortkey++;
-      }
-    }
-    return $nodeList;
-  }
-  /**
-   * Get Nodes that match given conditions from a list.
-   * @param nodeList An array of nodes to filter or a single Node.
-   * @param oid The object id that the Nodes should match [maybe null, default: null].
-   * @param type The type that the Nodes should match [maybe null, default: null].
-   * @param values An assoziative array holding key value pairs that the Node values should match
-   *        [values are interpreted as regular expression, parameter maybe null, default: null].
-   * @param properties An assoziative array holding key value pairs that the Node properties should match
-   *        [values are interpreted as regular expression, parameter maybe null, default: null].
-   * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
-   * @return An Array holding references to the Nodes that matched.
-   */
-  public static function filter(array $nodeList, ObjectId $oid=null, $type=null, $values=null, $properties=null, $useRegExp=true)
-  {
-    $returnArray = array();
-    for($i=0, $count=sizeof($nodeList); $i<$count; $i++)
-    {
-      $curNode = $nodeList[$i];
-      if ($curNode instanceof PersistentObject || $curNode instanceof PersistentObjectProxy)
-      {
-        $match = true;
-        // check oid
-        if ($oid != null && $curNode->getOID() != $oid) {
-          $match = false;
-        }
-        // check type
-        if ($type != null && $curNode->getType() != $type) {
-          $match = false;
-        }
-        // check values
-        if ($values != null && is_array($values))
-        {
-          foreach($values as $key => $value)
-          {
-            $nodeValue = $curNode->getValue($key);
-            if ($useRegExp && !preg_match("/".$value."/m", $nodeValue) || !$useRegExp && $value != $nodeValue)
-            {
-              $match = false;
-              break;
-            }
-          }
-        }
-        // check properties
-        if ($properties != null && is_array($properties))
-        {
-          foreach($properties as $key => $value)
-          {
-            $nodeProperty = $curNode->getProperty($key);
-            if ($useRegExp && !preg_match("/".$value."/m", $nodeProperty) || !$useRegExp && $value != $nodeProperty)
-            {
-              $match = false;
-              break;
-            }
-          }
-        }
-        if ($match) {
-          $returnArray[] = $curNode;
-        }
-      }
-      else {
-        Log::warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".Application::getStackTrace(),
-          __CLASS__);
-      }
-    }
-    return $returnArray;
-  }
-  /**
-   * Get the next sibling of the Node.
-   * @return The next sibling of the node or NULL if it does not exists.
-   */
-  public function getNextSibling()
-  {
-    $parent = $this->getParent();
-    if ($parent != null)
-    {
-      $pChildren = $parent->getChildren();
-      $nextSibling = null;
-      for ($i=0, $count=sizeOf($pChildren); $i<$count; $i++)
-      {
-        if ($pChildren[$i]->getOID() == $this->_oid && $i<($count-1))
-        {
-          $nextSibling = $pChildren[++$i];
-          break;
-        }
-      }
-      if ($nextSibling != null) {
-        return $nextSibling;
-      }
-    }
-    return null;
-  }
-  /**
-   * Get the previous sibling of the Node.
-   * @return The previous sibling of the node or NULL if it does not exists.
-   */
-  public function getPreviousSibling()
-  {
-    $parent = $this->getParent();
-    if ($parent != null)
-    {
-      $pChildren = $parent->getChildren();
-      $prevSibling = null;
-      for ($i=0, $count=sizeOf($pChildren); $i<$count; $i++)
-      {
-        if ($pChildren[$i]->getOID() == $this->_oid && $i>0)
-        {
-          $prevSibling = $pChildren[--$i];
-          break;
-        }
-      }
-      if ($prevSibling != null) {
-        return $prevSibling;
-      }
-    }
-    return null;
   }
   /**
    * Load the parents of a given role and add them. If all parents should be
@@ -707,6 +635,30 @@ class Node extends PersistentObject
     return $result;
   }
   /**
+   * Get the relation description for a given node.
+   * @param node The Node/PersistentObjectProxy instance to look for
+   * @return RelationDescription instance or null, if the Node is not related
+   */
+  public function getNodeRelation($node)
+  {
+    $relations = $this->getRelations();
+    foreach ($relations as $curRelation)
+    {
+      $curRelatives = parent::getValue($curRelation->getOtherRole());
+      if ($curRelatives instanceof Node && $curRelatives->getOID() == $node->getOID()) {
+        return $curRelation;
+      }
+      elseif (is_array($curRelatives)) {
+        foreach ($curRelatives as $curRelative) {
+          if ($curRelative->getOID() == $node->getOID()) {
+            return $curRelation;
+          }
+        }
+      }
+    }
+    return null;
+  }
+  /**
    * Load all objects in the given set of relations
    * @param roles An array of relation (=role) names
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
@@ -813,74 +765,6 @@ class Node extends PersistentObject
   protected function getNumRelatives($hierarchyType, $memOnly=true)
   {
     return sizeof($this->getRelatives($hierarchyType, $memOnly));
-  }
-  /**
-   * Compare function for sorting Nodes by a given criteria.
-   * @param a, b The Nodes to compare.
-   * @return -1, 0 or 1 whether a is less, equal or greater than b in respect of the criteria
-   */
-  protected static function nodeCmpFunction($a, $b)
-  {
-    // we compare for each criteria and sum the results for $a, $b
-    // afterwards we compare the sums and return -1,0,1 appropriate
-    $sumA = 0;
-    $sumB = 0;
-    $maxWeight = sizeOf(self::$_sortCriteria);
-    $i = 0;
-    foreach (self::$_sortCriteria as $criteria => $sortType)
-    {
-      $weightedValue = ($maxWeight-$i)*($maxWeight-$i);
-      $AGreaterB = 0;
-      // sort by id
-      if ($criteria == Node::SORTBY_OID)
-      {
-        if ($a->getOID() != $b->getOID()) {
-          ($a->getOID() > $b->getOID()) ? $AGreaterB = 1 : $AGreaterB = -1;
-        }
-      }
-      // sort by type
-      else if ($criteria == Node::SORTBY_TYPE)
-      {
-        if ($a->getType() != $b->getType()) {
-          ($a->getType() > $b->getType()) ? $AGreaterB = 1 : $AGreaterB = -1;
-        }
-      }
-      // sort by value
-      else if($a->getValue($criteria) != null || $b->getValue($criteria) != null)
-      {
-        $aValue = strToLower($a->getValue($criteria));
-        $bValue = strToLower($b->getValue($criteria));
-        if ($aValue != $bValue) {
-          ($aValue > $bValue) ? $AGreaterB = 1 : $AGreaterB = -1;
-        }
-      }
-      // sort by property
-      else if($a->getProperty($criteria) != null || $b->getProperty($criteria) != null)
-      {
-        $aProperty = strToLower($a->getProperty($criteria));
-        $bProperty = strToLower($b->getProperty($criteria));
-        if ($aProperty != $bProperty) {
-          ($aProperty > $bProperty) ? $AGreaterB = 1 : $AGreaterB = -1;
-        }
-      }
-      // calculate result of current criteria depending on current sorttype
-      if ($sortType == Node::SORTTYPE_ASC)
-      {
-        if ($AGreaterB == 1) { $sumA += $weightedValue; }
-        else if ($AGreaterB == -1) { $sumB += $weightedValue; }
-      }
-      else if ($sortType == Node::SORTTYPE_DESC)
-      {
-        if ($AGreaterB == 1) { $sumB += $weightedValue; }
-        else if ($AGreaterB == -1) { $sumA += $weightedValue; }
-      }
-      else {
-        throw new IllegalArgumentException("Unknown SORTTYPE.");
-      }
-      $i++;
-    }
-    if ($sumA == $sumB) { return 0; }
-    return ($sumA > $sumB) ? 1 : -1;
   }
   /**
    * Get the Nodes depth.

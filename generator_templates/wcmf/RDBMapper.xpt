@@ -67,17 +67,6 @@ class «this.name.asMapper()» extends NodeUnifiedRDBMapper
     );
   }
   /**
-   * @see IPersistenceMapper::isSortable()
-   */
-  public function isSortable()
-  {
-«IF getOrderByName() == defaultOrderByName()-»
-    return true;
-«ELSE-»
-    return false;
-«ENDIF-»
-  }
-  /**
    * @see RDBMapper::getOwnDefaultOrder()
    */
   public function getOwnDefaultOrder($roleName=null)
