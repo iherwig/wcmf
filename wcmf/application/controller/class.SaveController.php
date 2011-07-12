@@ -150,7 +150,10 @@ class SaveController extends Controller
                 // create an empty object, if this is a localization request in order to
                 // make sure that only translated values are stored
                 $curNode = $persistenceFacade->create($curOid->getType(), BUILDDEPTH_SINGLE);
-                $curNode->setOID($curOidStr);
+                // don't store changes on the original object
+                $transaction->detach($curNode);
+                $curNode->setOID($curOid);
+                $nodeArray[$curOidStr] = &$curNode;
               }
               else {
                 // load the existing object, if this is a save request in order to merge
@@ -199,7 +202,7 @@ class SaveController extends Controller
             }
 
             // add node to save array
-            if ($curNode->getState() == PersistentObject::STATE_DIRTY) {
+            if ($curNode->getState() != PersistentObject::STATE_CLEAN) {
               // associative array to asure uniqueness
               $saveOids[$curOidStr] = $curOidStr;
             }
@@ -237,8 +240,6 @@ class SaveController extends Controller
           {
             // store a translation for localized data
             $localization->saveTranslation($curObject, $request->getValue('language'));
-            // don't store changes on the original object
-            $transaction->detach($curObject);
           }
         }
       }

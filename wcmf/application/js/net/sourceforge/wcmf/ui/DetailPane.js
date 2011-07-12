@@ -5,17 +5,18 @@ dojo.require("dojox.layout.ContentPane");
 /**
  * @class DetailPane
  *
- * DetailPane displays the detail view of an object.
+ * DetailPane displays the detail view of an object. Widgets for displaying/
+ * editing the object's attributes are supposed to be contained in
+ * wcmf.ui.AttibutePane instances and the object's relations are supposed
+ * to be displayed in wcmf.ui.RelationPane instances.
  * The concrete representation is defined in a backend template, which
- * is loaded on creation. Each sub-widget with a name starting with 'value-'
- * is supposed to display an object value. DetailPane listens to changes in
- * those widgets and applies them to the displayed object when pressing the
- * save buttton.
+ * is loaded on creation. This allows developers to defined the concrete
+ * set of attributes/relations to be displayed.
  */
 dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   /**
-   * The model class of the object displayed object
+   * The model class of the object displayed object (wcmf.mode.meta.Node instance)
    */
   modelClass: null,
   /**
@@ -31,18 +32,14 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    */
   isDirty: false,
   /**
-   * A list of connect handles for field change events
+   * The list of wcmf.ui.AttributePane instances to listen to
    */
-  fieldChangeHandles: [],
-  /**
-   * A list of sub-widgets for editing the values of the displayed object
-   */
-  objectValueWidgets: null,
+  attributePaneInstances: null,
 
   /**
    * Constructor
    * @param options Parameter object:
-   *    - modelClass The model class of the object displayed object
+   *    - modelClass The model class of the object displayed object (wcmf.mode.meta.Node instance)
    *    - oid The object id of the object that is edited
    *    - isNewNode True if the displayed object does not exist yet, false else
    *    + All other options defined for dijit.layout.ContentPane
@@ -73,7 +70,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     this.connect(this, 'onLoad', this.handleLoadEvent);
     this.connect(this, 'onClose', this.handleCloseEvent);
 
-    var store = this.getStore(this.modelClass);
+    var store = this.getStore();
     this.connect(store, 'onSet', this.handleItemChangeEvent);
   },
 
@@ -116,59 +113,26 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    */
   save: function() {
     var deferred = new dojo.Deferred();
-    if (this.isDirty) {
-      // get the store
-      var store = this.getStore(this.modelClass);
-      var self = this;
+    var self = this;
 
-      if (!this.isNewNode) {
-        // update the existing object in the store
-        store.fetchItemByIdentity({
-          scope: this,
-          identity: this.oid,
-          onItem: function(item) {
-            if (item) {
-              // use changing to issue one server request only
-              store.changing(item);
-              var values = this.getFieldValues();
-              for (var attribute in values) {
-                item[attribute] = values[attribute];
-              }
-              store.save({
-                scope: item,
-                onComplete: function() {
-                  // 'this' is the saved object
-                  self.afterSave(this);
-                  deferred.callback(this);
-                },
-                onError: function(errorData) {
-                  var msg = wcmf.Message.get("The object could not be saved: %1%", [errorData]);
-                  deferred.errback(msg);
-                }
-              });
-            }
-          }
-        });
-      }
-      else {
-        // create a new object in the store
-        var values = this.getFieldValues();
-        var item = store.newItem(values);
-        store.save({
-          scope: item,
-          alwaysPostNewItems: true,
-          onComplete: function() {
-            // 'this' is the saved object
-            self.afterSave(this);
-            deferred.callback(this);
-          },
-          onError: function(errorData) {
-            var msg = wcmf.Message.get("The object could not be created: %1%", [errorData]);
-            deferred.errback(msg);
-          }
-        });
-      }
-    }
+    // call save on each attribute panel
+    var deferredArray = [];
+    dojo.forEach(this.getAttributePaneInstances(), function(widget) {
+      deferredArray.push(widget.save());
+    }, this);
+
+    // create a deferred list to wait for all panels to save
+    var deferredList = new dojo.DeferredList(deferredArray);
+    deferredList.addCallback(function() {
+      wcmf.persistence.Store.fetch(self.oid, wcmf.defaultLanguage).then(function(item) {
+        self.afterSave(item);
+        deferred.callback(item);
+      });
+    });
+    deferredList.addErrback(function(errorData) {
+      deferred.errback(errorData);
+    });
+
     return deferred.promise;
   },
 
@@ -184,7 +148,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    * Called, after the pane content was saved. The two oid parameters may
    * differ, if the contained object was not contained in the store before.
    * @param pane The wcmf.ui.DetailPane that containes the saved object
-   * @param item The saved item
+   * @param item The saved item (in the default language)
    * @param oldOid The object id of the contained object before saving
    * @param newOid The object id of the contained object after saving
    */
@@ -197,7 +161,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
    * @return wcmf.persistence.Store
    */
   getStore: function() {
-    return wcmf.persistence.Store.getStore(this.modelClass);
+    return wcmf.persistence.Store.getStore(this.modelClass, wcmf.defaultLanguage);
   },
 
   /**
@@ -215,18 +179,14 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
   /**
    * Update the DetailPane after the contained item was saved
    * and notify onSaved listeners
-   * @param item The contained persistent item
+   * @param item The contained persistent item (in the default language)
    */
   afterSave: function(item) {
     var oldOid = this.oid;
     var wasNewNode = this.isNewNode;
-    // load the item from the store to get the current content
-    var store = this.getStore(this.modelClass);
     // set the oid
+    var store = this.getStore();
     this.oid = store.getValue(item, "oid");
-    // update title and fields
-    this.setTitle(store.getLabel(item));
-    this.setFieldValues(item);
     this.unsetDirty();
     this.isNewNode = false;
 
@@ -262,41 +222,16 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     }
   },
 
-  /**
-   * Get all input field values
-   * @return Name/Value pairs
-   */
-  getFieldValues: function() {
-    var values = {};
-    dojo.forEach(this.getObjectValueWidgets(), function(widget) {
-      if (widget.name) {
-        var attribute = wcmf.ui.Form.getAttributeNameFromFieldName(widget.name);
-        if (attribute) {
-          values[attribute] = widget.get('value');
+  getAttributePaneInstances: function() {
+    if (this.attributePaneInstances == null) {
+      this.attributePaneInstances = [];
+      dojo.forEach(this.getDescendants(), function(widget) {
+        if (widget instanceof wcmf.ui.AttributePane) {
+          this.attributePaneInstances.push(widget);
         }
-      }
-    }, this);
-    return values;
-  },
-
-  /**
-   * Set the input field values according to the given item
-   * @param item The contained persistent item
-   */
-  setFieldValues: function(item) {
-    // disable handleValueChangeEvent temporarily
-    this.disconnectFieldChangeEvents();
-    var store = this.getStore(this.modelClass);
-    dojo.forEach(this.getObjectValueWidgets(), function(widget) {
-      if (widget.name) {
-        var attribute = wcmf.ui.Form.getAttributeNameFromFieldName(widget.name);
-        if (attribute) {
-          widget.set('value', store.getValue(item, attribute));
-        }
-      }
-    }, this);
-    // enable handleValueChangeEvent again
-    this.connectFieldChangeEvents();
+      }, this);
+    }
+    return this.attributePaneInstances;
   },
 
   /**
@@ -312,44 +247,11 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     }
   },
 
-  getObjectValueWidgets: function() {
-    if (this.objectValueWidgets == null) {
-      this.objectValueWidgets = [];
-      dojo.forEach(this.getDescendants(), function(widget) {
-        if (widget.name && widget.name.indexOf("value-") == 0) {
-          this.objectValueWidgets.push(widget);
-        }
-      }, this);
-    }
-    return this.objectValueWidgets;
-  },
-
-  connectFieldChangeEvents: function() {
-    dojo.forEach(this.getObjectValueWidgets(), function(widget) {
-      this.fieldChangeHandles.push(widget.watch(dojo.hitch(this, 'handleValueChangeEvent', widget)));
-    }, this);
-
-  },
-
-  disconnectFieldChangeEvents: function() {
-    dojo.forEach(this.fieldChangeHandles, function(handler) {
-      handler.unwatch();
-    });
-    this.fieldChangeHandles = [];
-  },
-
-  handleValueChangeEvent: function(widget, propertyName, oldValue, newValue) {
-    if (propertyName == 'value' || propertyName == 'displayedValue' || propertyName == 'checked') {
-      this.setDirty();
-    }
-  },
-
   handleItemChangeEvent: function(item, attribute, oldValue, newValue) {
     var store = this.getStore();
-    if (store.getValues(item, "oid") == this.oid) {
-      // update title and fields
+    if (store.getValue(item, "oid") == this.oid) {
+      // update title
       this.setTitle(store.getLabel(item));
-      this.setFieldValues(item);
     }
   },
 
@@ -361,15 +263,17 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
   },
 
   handleLoadEvent: function(e) {
-    this.connectFieldChangeEvents();
+    // listen to changes in attribute panel instances
+    dojo.forEach(this.getAttributePaneInstances(), function(widget) {
+      this.connect(widget, "onChange", this.setDirty);
+    }, this);
+
+    // set the title, if the object existed already
+    var self = this;
     if (!this.isNewNode) {
-      var store = this.getStore();
-      store.fetchItemByIdentity({
-        scope: this,
-        identity: this.oid,
-        onItem: function(item) {
-          this.setTitle(store.getLabel(item));
-        }
+      wcmf.persistence.Store.fetch(self.oid, wcmf.defaultLanguage).then(function(item) {
+        var store = self.getStore();
+        self.setTitle(store.getLabel(item));
       });
     }
   },
@@ -393,7 +297,7 @@ wcmf.ui.DetailPane.get = function(oid) {
 /**
  * Get the enclosing DetailPane instance for a given div id. This method is
  * especially useful for controls that are embedded in a DetailPane instance.
- * @param detailDivId The detail div id
+ * @param divId The detail div id
  * @return wcmf.ui.DetailPane or null
  */
 wcmf.ui.DetailPane.getFromContainedDiv = function(divId) {

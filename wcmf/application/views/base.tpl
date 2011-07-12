@@ -20,7 +20,7 @@
   <meta name="robots" content="INDEX,FOLLOW" />
 
   <link rel="shortcut icon" href="images/favicon.ico" />
-  
+
   <!-- link rel="stylesheet" type="text/css" href="style/style.css" /-->
   <link rel="stylesheet" type="text/css" href="style/wcmf.css" />
   <link rel="stylesheet" type="text/css" href="style/dojo_theme/wcmf.css" />
@@ -61,6 +61,7 @@
     wcmf.context = '{$context}';
     wcmf.action = '{$action}';
     wcmf.responseFormat = '{$responseFormat}';
+    wcmf.defaultLanguage = '{configvalue key="defaultLanguage" section="i18n"}';
   </script>
 {/block}
 </head>
@@ -81,11 +82,10 @@
 {/block}
 {block name=navigation}{/block}
     </div>
+    <!-- LEFT Pane -->
+{block name=left}{/block}
     <!-- CENTER Pane -->
-    <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
-{block name=parameters}{/block}
-{block name=content}{/block}
-    </div>
+{block name=center}{/block}
   </div>
 </div>
 </body>

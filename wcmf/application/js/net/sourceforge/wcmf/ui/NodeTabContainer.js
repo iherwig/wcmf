@@ -5,7 +5,9 @@ dojo.require("dijit.layout.TabContainer");
 
 /**
  * NodeTabContainer is a TabContainer that contains tab panels for objects
- * of it's type.
+ * of it's type. The first tab panel contains a grid with all objects of the
+ * type. For each object a DetailPane instance is added as tab panel if
+ * requested.
  */
 dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
 
@@ -140,7 +142,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
   },
 
   /**
-   * Get the selected DetailPane instance
+   * Get the DetailPane instance for a given object id
    * @return wcmf.ui.DetailPane
    */
   getDetailPane: function(oid) {

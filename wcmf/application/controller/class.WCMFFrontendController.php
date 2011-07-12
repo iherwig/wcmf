@@ -39,8 +39,9 @@ require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
  * @param[in] type The type to display get the instance for (action: detail)
  * @param[in] oid The object id of the node to read (action: detail)
  * @param[out] typeTemplate An instance of the requested type (action: detail)
- * @param[out] object The requested object loaded with BUILDDEPTH_SINGLE, if an oid is given (action: detail)
+ * @param[out] object The requested object loaded with BUILDDEPTH_SINGLE, if an oid is given, same as typeTemplate else (action: detail)
  * @param[out] typeTemplates A list of instances of all known types (action: model)
+ * @param[out] isNew Boolean indicating if the object exists or not (action: model)
  * @param[out] rootTypeTemplates A list of instances of all root types
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -80,6 +81,7 @@ class WCMFFrontendController extends Controller
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $rightsManager = RightsManager::getInstance();
+    $parser = InifileParser::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -89,7 +91,6 @@ class WCMFFrontendController extends Controller
       $knownTypes = $persistenceFacade->getKnownTypes();
 
       // get root types from ini file
-      $parser = InifileParser::getInstance();
       $rootTypes = $parser->getValue('rootTypes', 'cms');
       if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '')
       {
@@ -129,11 +130,13 @@ class WCMFFrontendController extends Controller
         $typeTemplate = $persistenceFacade->create($request->getValue('type'), BUILDDEPTH_SINGLE);
         $response->setValue('object', $typeTemplate);
         $response->setValue('typeTemplate', $typeTemplate);
+        $response->setValue('isNew', true);
       }
       // called with oid parameter
       if ($request->hasValue('oid'))
       {
         $oid = ObjectId::parse($request->getValue('oid'));
+        $typeTemplate = $persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE);
 
         // call DisplayController to read the requested node
         // and merge the responses
@@ -142,10 +145,10 @@ class WCMFFrontendController extends Controller
             'depth' => 0
         ));
         $response->setValue('object', $readResponse->getValue('object'));
-
-        $typeTemplate = $persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE);
         $response->setValue('typeTemplate', $typeTemplate);
+        $response->setValue('isNew', false);
       }
+      $response->setValue('languages', $parser->getSection('languages'));
     }
     // success
     $response->setAction('ok');

@@ -45,6 +45,35 @@ wcmf.Action.browseResources = function(fieldName) {
 };
 
 /**
+ * Read an object or it's translation to a given language.
+ * @param oid The object id
+ * @param language The translation language (optional)
+ * @return dojo.Deferred promise (The only parameter is the loaded item)
+ */
+wcmf.Action.read = function(oid, language) {
+  wcmf.Error.hide();
+  var deferred = new dojo.Deferred();
+
+  if (language == undefined) {
+    language = wcmf.defaultLanguage;
+  }
+  // load the object
+  new wcmf.persistence.Request().sendAjax({
+    action: 'read',
+    oid: oid,
+    language: language,
+    responseFormat: 'json'
+  }).then(function(item) {
+    // do nothing on success
+    deferred.callback(item);
+  }, function(errorMsg) {
+      wcmf.Error.show(errorMsg);
+      deferred.errback(errorMsg);
+  });
+  return deferred.promise;
+};
+
+/**
  * Saves the content of the DetailPane that shows the object with
  * the given object id. If no DetailPane is opened or no modifications
  * are done in the opened DetailPane, nothing happens. If DetailPane

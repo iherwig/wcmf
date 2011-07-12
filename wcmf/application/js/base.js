@@ -21,8 +21,11 @@ dojo.ready(function() {
   dojo.require("dijit.MenuBar");
   dojo.require("dijit.MenuBarItem");
   dojo.require("dijit.MenuItem");
+  dojo.require("dijit.Tree");
+  dojo.require("dijit.tree.ForestStoreModel");
 
   dojo.require("dojox.uuid.generateRandomUuid");
+  dojo.require("dojox.layout.ToggleSplitter");
 
   // ibm
   dojo.require("com.ibm.developerworks.EasyRestService");
@@ -42,11 +45,14 @@ dojo.ready(function() {
   dojo.require("wcmf.ui.Form");
   dojo.require("wcmf.ui.Grid");
   dojo.require("wcmf.ui.GridActionCell");
+  dojo.require("wcmf.ui.Format");
   dojo.require("wcmf.ui.DetailPane");
+  dojo.require("wcmf.ui.AttributePane");
   dojo.require("wcmf.ui.RelationTabContainer");
   dojo.require("wcmf.ui.RelationPane");
   dojo.require("wcmf.ui.ObjectSelectDialog");
   dojo.require("wcmf.ui.CkEditorWidget");
+  dojo.require("wcmf.ui.ObjectTree");
 
   // create declarative widgets after code is loaded
   dojo.parser.parse();

@@ -65,7 +65,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
 
     dojo.mixin(this, {
       // default options
-      store: wcmf.persistence.Store.getStore(this.modelClass),
+      store: wcmf.persistence.Store.getStore(this.modelClass, wcmf.defaultLanguage),
       structure: this.getDefaultLayout(),
       plugins: {
           indirectSelection: {headerSelector: true},
@@ -87,7 +87,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
    * Reload the grid content
    */
   reload: function() {
-    var store = wcmf.persistence.Store.getStore(this.modelClass);
+    var store = wcmf.persistence.Store.getStore(this.modelClass, wcmf.defaultLanguage);
     this.setStore(store);
   },
 
@@ -135,6 +135,7 @@ dojo.declare("wcmf.ui.Grid", dojox.grid.EnhancedGrid, {
           name: item.name,
           width: "auto",
           editable: item.isEditable,
+          formatter: wcmf.ui.Format.text,
           hidden: false // TODO: hide non-display values
         });
       }

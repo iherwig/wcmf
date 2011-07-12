@@ -9,10 +9,13 @@ dojo.provide("wcmf.persistence.DionysosService");
 dojo.declare("wcmf.persistence.DionysosService", null, {
 
   /**
-   * The type of object that is handled
+   * The type of object that is handled (wcmf.mode.meta.Node instance)
    */
   modelClass: null,
-
+  /**
+   * The langauge of the handled objects
+   */
+  language: null,
   /**
    * The service function used as service paramter for dojox.data.ServiceStore
    */
@@ -21,9 +24,11 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
   /**
    * Constructor
    * @param modelClass The model class whose instances this service handles
+   * @param language The langauge of the handled objects
    */
-  constructor: function(modelClass) {
+  constructor: function(modelClass, language) {
     this.modelClass = modelClass;
+    this.language = language;
 
     // define the transformers
     // TODO: this can be done in an extra class like the base class does it
@@ -92,15 +97,28 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
       },
       transformGetResults: function(deferred, results) {
         if (!self.handleError(deferred, results)) {
+          var result = null;
           var objList = results.list;
-          var result = [];
-          for (var i=0, count=objList.length; i<count; i++) {
-            var obj = objList[i].attributes;
-            // add the oid field
-            obj['oid'] = objList[i].oid;
-            result.push(obj);
+          if (objList) {
+            // object list
+            result = [];
+            for (var i=0, count=objList.length; i<count; i++) {
+              var obj = objList[i].attributes;
+              // add the oid field
+              obj['oid'] = objList[i].oid;
+              result.push(obj);
+            }
+            deferred.fullLength = results.totalCount;
           }
-          deferred.fullLength = results.totalCount;
+          else {
+            // single object
+            if (results.object) {
+              var obj = results.object.attributes;
+              // add the oid field
+              obj['oid'] = results.object.oid;
+              result = obj;
+            }
+          }
           return result;
         }
       },
@@ -164,7 +182,7 @@ dojo.declare("wcmf.persistence.DionysosService", null, {
    * @return String
    */
   getServiceUrl: function() {
-    return 'rest/'+this.modelClass.name+'/';
+    return 'rest/'+this.language+"/"+this.modelClass.name+'/';
   },
 
   /**

@@ -88,17 +88,22 @@ abstract class Control
    * Get a HTML input control name for a given object value.
    * @param obj A reference to the PersistentObject which contains the value
    * @param name The name of the value to construct the control for
+   * @param language The lanugage if the Control should be localization aware. Optional,
+   *                 default null (= Localization::getDefaultLanguage())
    * @return The HTML control name string in the form value-<name>-<oid>
    */
-  public static function getControlName(PersistentObject $obj, $name)
+  public static function getControlName(PersistentObject $obj, $name, $language=null)
   {
+    if ($language == null) {
+      $language = Localization::getInstance()->getDefaultLanguage();
+    }
     $fieldDelimiter = self::getInputFieldDelimiter();
-    return 'value'.$fieldDelimiter.$name.$fieldDelimiter.$obj->getOID();
+    return 'value'.$fieldDelimiter.$language.$fieldDelimiter.$name.$fieldDelimiter.$obj->getOID();
   }
   /**
    * Get the object value definition from a HTML input control name.
    * @param name The name of input control in the format defined by Control::getControlName
-   * @return An associative array with keys 'oid', 'name' or null if the name is not valid
+   * @return An associative array with keys 'oid', 'language', 'name' or null if the name is not valid
    */
   public static function getValueDefFromInputControlName($name)
   {
@@ -112,6 +117,7 @@ abstract class Control
       return null;
     }
     $forget = array_shift($pieces);
+    $def['language'] = array_shift($pieces);
     $def['name'] = array_shift($pieces);
     $def['oid'] = array_shift($pieces);
 
@@ -202,10 +208,11 @@ abstract class Control
    */
   public function renderFromProperty(PersistentObject $obj, $name, $language=null, $parentView=null)
   {
-    $controlName = self::getControlName($obj, $name);
+    $controlName = self::getControlName($obj, $name, $language);
     $value = $obj->getValue($name);
     $inputType = "";
     $editable = false;
+    $attribute = null;
 
     $mapper = $obj->getMapper();
     if ($mapper) {

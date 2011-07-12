@@ -12,7 +12,7 @@ dojo.declare("wcmf.ui.Form", null, {
  * @return The attribute name
  */
 wcmf.ui.Form.getAttributeNameFromFieldName = function(fieldName) {
-  var matches = fieldName.match(/^value-(.+)-[^-]*$/);
+  var matches = fieldName.match(/^value-[^-]+?-(.+)-[^-]*$/);
   if (matches && matches.length > 0) {
     return matches[1];
   }

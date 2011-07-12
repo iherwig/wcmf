@@ -247,6 +247,8 @@ class Localization
     // save the translations for any other language
     else
     {
+      $object->beforeUpdate();
+      
       // get the existing translations for the requested language
       $type = self::getTranslationType();
       $query = new ObjectQuery($type);
