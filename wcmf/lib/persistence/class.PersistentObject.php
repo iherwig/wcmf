@@ -16,11 +16,15 @@
  *
  * $Id$
  */
+require_once(WCMF_BASE."wcmf/lib/core/EventManager.php");
 require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.IPersistenceMapper.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/locking/class.LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceException.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ValidationException.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/StateChangeEvent.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/ValueChangeEvent.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/PropertyChangeEvent.php");
 
 /**
  * @class PersistentObject
@@ -58,7 +62,6 @@ class PersistentObject
   private $_properties = array();      // associative array holding the properties
   private $_state = self::STATE_CLEAN;       // the state of the PersistentObject
   private $_isImmutable = false;       // immutable state
-  private $_changeListeners = array(); // the change listeners
   private $_changedAttributes = array(); // used to track changes, see setValue method
 
   /**
@@ -75,12 +78,14 @@ class PersistentObject
     if (ObjectId::isValid($oid))
     {
       $this->_type = $oid->getType();
+      $this->_oid = $oid;
       if ($oid->containsDummyIds()) {
         $this->setState(self::STATE_NEW);
       }
       else {
         $this->setState(self::STATE_CLEAN);
       }
+      // set primary keys
       $this->setOIDInternal($oid, false);
     }
   }
@@ -245,7 +250,8 @@ class PersistentObject
         $this->_state = $state;
     }
     if ($oldState != $this->_state) {
-      $this->propagateStateChange($oldState, $this->_state);
+      EventManager::getInstance()->dispatch(StateChangeEvent::NAME,
+              new StateChangeEvent($this, $oldState, $this->_state));
     }
   }
   /**
@@ -562,7 +568,8 @@ class PersistentObject
         if ($trackChange) {
           self::setState(self::STATE_DIRTY);
           $this->_changedAttributes[$name] = true;
-          $this->propagateValueChange($name, $oldValue, $value);
+          EventManager::getInstance()->dispatch(ValueChangeEvent::NAME,
+              new ValueChangeEvent($this, $name, $oldValue, $value));
         }
         return true;
       }
@@ -734,7 +741,8 @@ class PersistentObject
   {
     $oldValue = $this->getProperty($name);
     $this->_properties[$name] = $value;
-    $this->propagatePropertyChange($name, $oldValue, $value);
+    EventManager::getInstance()->dispatch(PropertyChangeEvent::NAME,
+        new PropertyChangeEvent($this, $name, $oldValue, $value));
   }
   /**
    * Get the names of all properties in the object. Properties are
@@ -755,62 +763,6 @@ class PersistentObject
       }
     }
     return array_merge($result, array_keys($this->_properties));
-  }
-
-  /**
-   * ChangeListener Support
-   */
-
-  /**
-   * Add a change listener.
-   * @param listener The ChangeListener instance.
-   */
-  public function addChangeListener(IChangeListener $listener)
-  {
-    $this->_changeListeners[$listener->getId()] = $listener;
-  }
-  /**
-   * Remove a change listener.
-   * @param listener The ChangeListener instance.
-   */
-  public function removeChangeListener(IChangeListener $listener)
-  {
-    unset($this->_changeListeners[$listener->getId()]);
-  }
-  /**
-   * Notify ChangeListeners of value changes.
-   * @param name The name of the item that has changed.
-   * @param oldValue The old value of the item that has changed
-   * @param newValue The new value of the item that has changed
-   */
-  private function propagateValueChange($name, $oldValue, $newValue)
-  {
-    foreach ($this->_changeListeners as $id => $listener) {
-      $listener->valueChanged($this, $name, $oldValue, $newValue);
-    }
-  }
-  /**
-   * Notify ChangeListeners of property changes.
-   * @param name The name of the item that has changed.
-   * @param oldValue The old value of the item that has changed
-   * @param newValue The new value of the item that has changed
-   */
-  private function propagatePropertyChange($name, $oldValue, $newValue)
-  {
-    foreach ($this->_changeListeners as $id => $listener) {
-      $listener->propertyChanged($this, $name, $oldValue, $newValue);
-    }
-  }
-  /**
-   * Notify ChangeListeners of state changes.
-   * @param oldValue The old value of the item that has changed
-   * @param newValue The new value of the item that has changed
-   */
-  private function propagateStateChange($oldValue, $newValue)
-  {
-    foreach ($this->_changeListeners as $id => $listener) {
-      $listener->stateChanged($this, $oldValue, $newValue);
-    }
   }
 
   /**

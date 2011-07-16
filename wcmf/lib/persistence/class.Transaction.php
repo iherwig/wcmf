@@ -17,8 +17,6 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ITransaction.php");
-// TODO make SearchUtil a ChangeListener at PersistenceFacade
-require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
 /**
  * @class Transaction
@@ -31,6 +29,7 @@ class Transaction implements ITransaction
 {
   private $_id = '';
   private $_isActive = false;
+  private $_observedObjects = array();
 
   protected $_newObjects = array();
   protected $_dirtyObjects = array();
@@ -47,6 +46,8 @@ class Transaction implements ITransaction
   public function __construct()
   {
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
+    EventManager::getInstance()->addListener(StateChangeEvent::NAME,
+      array($this, 'stateChanged'));
   }
   /**
    * @see ITransaction::registerNew()
@@ -59,6 +60,7 @@ class Transaction implements ITransaction
     $key = $object->getOID()->__toString();
     Log::info("Register new object: ".$key, __CLASS__);
     $this->_newObjects[$key] = $object;
+    $this->_observedObjects[$key] = $object;
   }
   /**
    * @see ITransaction::registerDirty()
@@ -197,7 +199,7 @@ class Transaction implements ITransaction
       // start to listen to changes if the transaction is active
       if ($this->_isActive) {
         Log::debug("Start listening to: ".$key, __CLASS__);
-        $object->addChangeListener($this);
+        $this->_observedObjects[$key] = $object;
       }
       $registeredObject = $object;
     }
@@ -266,7 +268,7 @@ class Transaction implements ITransaction
     if (isset($this->_loadedObjects[$key])) {
       unset($this->_loadedObjects[$key]);
     }
-    $object->removeChangeListener($this);
+    unset($this->_observedObjects[$key]);
   }
   /**
    * Clear all internal
@@ -274,22 +276,22 @@ class Transaction implements ITransaction
   protected function clear()
   {
     foreach ($this->_newObjects as $object) {
-      $object->removeChangeListener($this);
+      unset($this->_observedObjects[$object->getOID()->__toString()]);
     }
     $this->_newObjects = array();
 
     foreach ($this->_dirtyObjects as $object) {
-      $object->removeChangeListener($this);
+      unset($this->_observedObjects[$object->getOID()->__toString()]);
     }
     $this->_dirtyObjects = array();
 
     foreach ($this->_deletedObjects as $object) {
-      $object->removeChangeListener($this);
+      unset($this->_observedObjects[$object->getOID()->__toString()]);
     }
     $this->_deletedObjects = array();
 
     foreach ($this->_loadedObjects as $object) {
-      $object->removeChangeListener($this);
+      unset($this->_observedObjects[$object->getOID()->__toString()]);
     }
     $this->_loadedObjects = array();
   }
@@ -307,8 +309,6 @@ class Transaction implements ITransaction
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->save($object);
-        // update search index
-        SearchUtil::indexInSearch($object);
       }
       unset($this->_newObjects[$key]);
       $insertOids = array_keys($this->_newObjects);
@@ -328,8 +328,6 @@ class Transaction implements ITransaction
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->save($object);
-        // update search index
-        SearchUtil::indexInSearch($object);
       }
       unset($this->_dirtyObjects[$key]);
       $updateOids = array_keys($this->_dirtyObjects);
@@ -349,8 +347,6 @@ class Transaction implements ITransaction
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->delete($object);
-        // remove from search index
-        SearchUtil::deleteFromSearch($object);
       }
       unset($this->_deletedObjects[$key]);
       $deleteOids = array_keys($this->_deletedObjects);
@@ -358,43 +354,31 @@ class Transaction implements ITransaction
   }
 
   /**
-   * ChangeListener interface implementation
+   * Listen to StateChangeEvents
+   * @param event StateChangeEvent instance
    */
-
-  /**
-   * @see IChangeListener::getId()
-   */
-  public function getId()
+  public function stateChanged(StateChangeEvent $event)
   {
-    return $this->_id;
-  }
-  /**
-   * @see IChangeListener::valueChanged()
-   */
-  public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
-  /**
-   * @see IChangeListener::propertyChanged()
-   */
-  public function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
-  /**
-   * @see IChangeListener::stateChanged()
-   */
-  public function stateChanged(PersistentObject $object, $oldValue, $newValue)
-  {
-    Log::debug("State changed: ".$object->getOID()." old:".$oldValue." new:".$newValue, __CLASS__);
-    switch ($newValue)
+    $object = $event->getObject();
+    if (isset($this->_observedObjects[$object->getOID()->__toString()]))
     {
-      case PersistentObject::STATE_NEW:
-        $this->registerNew($object);
-        break;
+      $oldState = $event->getOldValue();
+      $newState = $event->getNewValue();
+      Log::debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState, __CLASS__);
+      switch ($newState)
+      {
+        case PersistentObject::STATE_NEW:
+          $this->registerNew($object);
+          break;
 
-      case PersistentObject::STATE_DIRTY:
-        $this->registerDirty($object);
-        break;
+        case PersistentObject::STATE_DIRTY:
+          $this->registerDirty($object);
+          break;
 
-      case PersistentObject::STATE_DELETED:
-        $this->registerDeleted($object);
-        break;
+        case PersistentObject::STATE_DELETED:
+          $this->registerDeleted($object);
+          break;
+      }
     }
   }
 }

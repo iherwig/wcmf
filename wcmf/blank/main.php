@@ -22,7 +22,6 @@ require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/AutoLoader.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
 
 $application = Application::getInstance();
 try {

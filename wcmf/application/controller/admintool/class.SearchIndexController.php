@@ -18,7 +18,7 @@
  */
 require_once(WCMF_BASE."wcmf/application/controller/class.BatchController.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.SearchUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/LuceneSearch.php");
 
 /**
  * @class SearchIndexController
@@ -53,8 +53,8 @@ class SearchIndexController extends BatchController
           array_push($types, $type);
         }
       }
-      
-      SearchUtil::resetIndex();
+
+      LuceneSearch::resetIndex();
 
       return array('name' => Message::get('Collect objects'), 'size' => 1, 'oids' => $types, 'callback' => 'collect');
     }
@@ -96,9 +96,9 @@ class SearchIndexController extends BatchController
       }
     }
 
-    $index = SearchUtil::getIndex();
+    $index = LuceneSearch::getIndex();
     $index->commit();
-    
+
     if ($this->getStepNumber() == $this->getNumberOfSteps() - 1) {
       $this->addWorkPackage(Message::get('Optimizing index'), 1, array(0), 'optimize');
     }
@@ -106,7 +106,7 @@ class SearchIndexController extends BatchController
 
   function optimize($oids)
   {
-    $index = SearchUtil::getIndex();
+    $index = LuceneSearch::getIndex();
     $index->optimize();
   }
   // PROTECTED REGION END

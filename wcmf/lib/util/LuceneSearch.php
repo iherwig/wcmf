@@ -17,6 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE.'wcmf/lib/util/class.InifileParser.php');
+require_once(WCMF_BASE.'wcmf/lib/persistence/StateChangeEvent.php');
 
 $includePath = get_include_path();
 if (strpos($includePath, 'Zend') === false) {
@@ -24,24 +25,28 @@ if (strpos($includePath, 'Zend') === false) {
 }
 require_once('Zend/Search/Lucene.php');
 
-function gShutdownSearchUtil()
+function gShutdownSearch()
 {
-  SearchUtil::commitIndex();
+  LuceneSearch::commitIndex();
 }
-register_shutdown_function('gShutdownSearchUtil');
+register_shutdown_function('gShutdownSearch');
+
+// listen to object change events
+EventManager::getInstance()->addListener(StateChangeEvent::NAME,
+  array('LuceneSearch', 'stateChanged'));
 
 /**
- * @class SearchUtil
+ * @class LuceneSearch
  * @ingroup Util
  * @brief This class provides access to the search based on Zend_Search_Lucene.
  * The search index stored in the location that is defined by the configuration key 'indexPath'
  * in the configuration section 'search'. To manage PersistentObjects in the index use the
- * methods SearchUtil::indexInSearch() and SearchIndex::deleteFromSearch() and SearchUtil::commitIndex().
- * The method SearchUtil::getIndex() offers direct access to the search index for advanced operations.
+ * methods LuceneSearch::indexInSearch() and LuceneSearch::deleteFromSearch() and LuceneSearch::commitIndex().
+ * The method LuceneSearch::getIndex() offers direct access to the search index for advanced operations.
  *
  * @author Niko <enikao@users.sourceforge.net>
  */
-class SearchUtil
+class LuceneSearch
 {
   const INI_SECTION = 'search';
   const INI_INDEX_PATH = 'indexPath';
@@ -89,7 +94,7 @@ class SearchUtil
 
   /**
    * Add a PersistentObject instance to the search index. This method modifies the
-   * index. For that reason SearchUtil::commitIndex() should be called afterwards.
+   * index. For that reason LuceneSearch::commitIndex() should be called afterwards.
    * @param obj The PersistentObject instance.
    */
   public static function indexInSearch(PersistentObject $obj)
@@ -167,7 +172,7 @@ class SearchUtil
   }
 
   /**
-   * Commit any changes made by using SearchUtil::indexInSearch() and SearchIndex::deleteFromSearch().
+   * Commit any changes made by using LuceneSearch::indexInSearch() and SearchIndex::deleteFromSearch().
    * @note By default this method only commits the index if changes were made using the methods mentioned above.
    * If you want to make sure that the index is committed in any case, set forceCommit to true.
    * @param forceCommit True/False wether the index should be committed even if no changes were made
@@ -227,4 +232,27 @@ class SearchUtil
     return (boolean) $obj->getProperty('is_searchable');
   }
 
+  /**
+   * Listen to StateChangeEvents
+   * @param event StateChangeEvent instance
+   */
+  public static function stateChanged(StateChangeEvent $event)
+  {
+    $object = $event->getObject();
+    $newState = $event->getNewValue();
+    switch ($newState)
+    {
+      case PersistentObject::STATE_NEW:
+        self::indexInSearch($object);
+        break;
+
+      case PersistentObject::STATE_DIRTY:
+        self::indexInSearch($object);
+        break;
+
+      case PersistentObject::STATE_DELETED:
+        self::deleteFromSearch($object);
+        break;
+    }
+  }
 }

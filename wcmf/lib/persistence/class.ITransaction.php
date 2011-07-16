@@ -16,20 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/class.IChangeListener.php");
 
 /**
  * @interface ITransaction
  * @ingroup Persistence
  * @brief ITransaction implements the Unit of Work pattern as it defines
  * the interface for maintaining a list of PersistentObject changes inside
- * a business transaction and commit/rollback them. PersistentObjects
- * register the current transaction as ChangeListener.
+ * a business transaction and commit/rollback them.
  * ITransaction also serves as an Identity Map for loaded objects.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface ITransaction extends IChangeListener
+interface ITransaction
 {
   /**
    * Register a newly created object

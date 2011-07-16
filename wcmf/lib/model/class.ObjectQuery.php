@@ -22,7 +22,6 @@ require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.NodeValueIterator.php");
 require_once(WCMF_BASE."wcmf/lib/model/class.AbstractQuery.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.IChangeListener.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.UnknownFieldException.php");
 
 /**
@@ -100,10 +99,11 @@ require_once(WCMF_BASE."wcmf/lib/persistence/class.UnknownFieldException.php");
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
-class ObjectQuery extends AbstractQuery implements IChangeListener
+class ObjectQuery extends AbstractQuery
 {
   const PROPERTY_COMBINE_OPERATOR = "object_query_combine_operator";
   const PROPERTY_TABLE_NAME = "object_query_table_name";
+  const PROPERTY_INITIAL_OID = "object_query_initial_oid";
 
   private $_id = '';
   private $_typeNode = null;
@@ -115,6 +115,7 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
   private $_processedNodes = array();
   private $_involvedTypes = array();
   private $_aliasCounter = 1;
+  private $_observedObjects = array();
 
   /**
    * Constructor.
@@ -127,6 +128,8 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
     $this->_typeNode = $mapper->create($type, BUILDDEPTH_SINGLE);
     $this->_rootNodes[] = $this->_typeNode;
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
+    EventManager::getInstance()->addListener(ValueChangeEvent::NAME,
+      array($this, 'valueChanged'));
   }
   /**
    * Get an object template for a given type.
@@ -156,7 +159,9 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
     if ($alias != null) {
       $template->setProperty(self::PROPERTY_TABLE_NAME, $alias);
     }
-    $template->addChangeListener($this);
+    $initialOid = $template->getOID()->__toString();
+    $template->setProperty(self::PROPERTY_INITIAL_OID, $initialOid);
+    $this->_observedObjects[$initialOid] = $template;
     return $template;
   }
   /**
@@ -170,7 +175,9 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
   {
     if ($template != null)
     {
-      $template->addChangeListener($this);
+      $initialOid = $template->getOID()->__toString();
+      $template->setProperty(self::PROPERTY_INITIAL_OID, $initialOid);
+      $this->_observedObjects[$initialOid] = $template;
 
       // call the setters for all attributes in order to register them in the query
       $template->copyValues($template);
@@ -521,56 +528,45 @@ class ObjectQuery extends AbstractQuery implements IChangeListener
   }
 
   /**
-   * ChangeListener interface implementation
+   * Listen to ValueChangeEvents
+   * @param event ValueChangeEvent instance
    */
-
-  /**
-   * @see IChangeListener::getId()
-   */
-  public function getId()
+  public function valueChanged(ValueChangeEvent $event)
   {
-    return $this->_id;
-  }
-  /**
-   * @see IChangeListener::valueChanged()
-   */
-  public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue)
-  {
-    // make a criteria from newValue and make sure that all properties are set
-    if (!($newValue instanceof Criteria))
+    $object = $event->getObject();
+    $name = $event->getValueName();
+    $initialOid = $object->getProperty(self::PROPERTY_INITIAL_OID);
+    if (isset($this->_observedObjects[$initialOid]))
     {
-      $mapper = self::getMapper($object->getType());
-      $pkNames = $mapper->getPkNames();
-      if (!in_array($name, $pkNames)) {
-        // use like condition on any attribute
-        $newValue = new Criteria($object->getType(), $name, "LIKE", "%".$newValue."%");
+      $newValue = $event->getNewValue();
+      // make a criteria from newValue and make sure that all properties are set
+      if (!($newValue instanceof Criteria))
+      {
+        $mapper = self::getMapper($object->getType());
+        $pkNames = $mapper->getPkNames();
+        if (!in_array($name, $pkNames)) {
+          // use like condition on any attribute
+          $newValue = new Criteria($object->getType(), $name, "LIKE", "%".$newValue."%");
+        }
+        else {
+          // don't search for pk names with LIKE
+          $newValue = new Criteria($object->getType(), $name, "=", $newValue);
+        }
       }
       else {
-        // don't search for pk names with LIKE
-        $newValue = new Criteria($object->getType(), $name, "=", $newValue);
+        // make sure that type and name are set even if the Criteria is constructed
+        // via Criteria::forValue()
+        $newValue->setType($object->getType());
+        $newValue->setAttribute($name);
       }
-    }
-    else {
-      // make sure that type and name are set even if the Criteria is constructed
-      // via Criteria::forValue()
-      $newValue->setType($object->getType());
-      $newValue->setAttribute($name);
-    }
 
-    $oid = $object->getOID()->__toString();
-    // store change in internal array to have it when constructing the query
-    if (!isset($this->_conditions[$oid])) {
-      $this->_conditions[$oid] = array();
+      $oid = $object->getOID()->__toString();
+      // store change in internal array to have it when constructing the query
+      if (!isset($this->_conditions[$oid])) {
+        $this->_conditions[$oid] = array();
+      }
+      $this->_conditions[$oid][$name] = $newValue;
     }
-    $this->_conditions[$oid][$name] = $newValue;
   }
-  /**
-   * @see IChangeListener::propertyChanged()
-   */
-  public function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
-  /**
-   * @see IChangeListener::stateChanged()
-   */
-  public function stateChanged(PersistentObject $object, $oldValue, $newValue) {}
 }
 ?>

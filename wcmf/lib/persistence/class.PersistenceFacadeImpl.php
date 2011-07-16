@@ -21,7 +21,6 @@ require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/output/class.IOutputStrategy.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.IPersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.IPersistenceMapper.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.IChangeListener.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ITransaction.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.Transaction.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
@@ -35,7 +34,7 @@ require_once(WCMF_BASE."wcmf/lib/core/class.ConfigurationException.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
+class PersistenceFacadeImpl implements IPersistenceFacade
 {
   private $_knownTypes = null;
   private $_mapperObjects = array();
@@ -130,11 +129,11 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
       $transaction = $this->getTransaction();
       if ($transaction->isActive()) {
         $transaction->registerNew($obj);
-        $obj->addChangeListener($transaction);
       }
 
       // register as change listener to track the created oid, after save
-      $obj->addChangeListener($this);
+      EventManager::getInstance()->addListener(StateChangeEvent::NAME,
+              array($this, 'stateChanged'));
     }
 
     return $obj;
@@ -364,32 +363,17 @@ class PersistenceFacadeImpl implements IPersistenceFacade, IChangeListener
   }
 
   /**
-   * ChangeListener interface implementation
+   * Listen to StateChangeEvents
+   * @param event StateChangeEvent instance
    */
-
-  /**
-   * @see IChangeListener::getId()
-   */
-  public function getId()
+  public function stateChanged(StateChangeEvent $event)
   {
-    return __CLASS__;
-  }
-  /**
-   * @see IChangeListener::valueChanged()
-   */
-  public function valueChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
-  /**
-   * @see IChangeListener::propertyChanged()
-   */
-  public function propertyChanged(PersistentObject $object, $name, $oldValue, $newValue) {}
-  /**
-   * @see IChangeListener::stateChanged()
-   */
-  public function stateChanged(PersistentObject $object, $oldValue, $newValue)
-  {
+    $oldState = $event->getOldValue();
+    $newState = $event->getNewValue();
     // store the object id in the internal registry if the object was saved after creation
-    if ($oldValue == PersistentObject::STATE_NEW && $newValue == PersistentObject::STATE_CLEAN)
+    if ($oldState == PersistentObject::STATE_NEW && $newState == PersistentObject::STATE_CLEAN)
     {
+      $object = $event->getObject();
       $type = $object->getType();
       if (!array_key_exists($type, $this->_createdOIDs)) {
         $this->_createdOIDs[$type] = array();
