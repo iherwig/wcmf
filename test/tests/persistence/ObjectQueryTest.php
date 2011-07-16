@@ -1,7 +1,7 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.Criteria.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.ObjectQuery.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/Criteria.php");
+require_once(WCMF_BASE."wcmf/lib/model/ObjectQuery.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class ObjectQueryTest extends PHPUnit_Framework_TestCase

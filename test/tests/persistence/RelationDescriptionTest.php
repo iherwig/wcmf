@@ -1,8 +1,8 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/class.RelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBOneToManyRelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBManyToOneRelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/class.RDBManyToManyRelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/RelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBOneToManyRelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBManyToOneRelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBManyToManyRelationDescription.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class RelationDescriptionTest extends PHPUnit_Framework_TestCase

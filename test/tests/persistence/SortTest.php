@@ -1,6 +1,6 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeSortkeyComparator.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/model/NodeSortkeyComparator.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class SortTest extends PHPUnit_Framework_TestCase

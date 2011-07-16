@@ -1,7 +1,7 @@
 <?php
 require_once("base_dir.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
 
 Log::configure('log4php.properties');
 

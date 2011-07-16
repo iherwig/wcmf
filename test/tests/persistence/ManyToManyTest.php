@@ -1,7 +1,7 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeUtil.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
+require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class ManyToManyTest extends PHPUnit_Framework_TestCase

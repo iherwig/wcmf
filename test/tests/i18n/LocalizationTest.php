@@ -16,9 +16,9 @@
  *
  * $Id: LocalizationTest.php 998 2009-05-29 01:29:20Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/i18n/class.Localization.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.Criteria.php");
+require_once(WCMF_BASE."wcmf/lib/i18n/Localization.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/Criteria.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 /**

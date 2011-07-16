@@ -25,14 +25,14 @@ error_reporting(E_ERROR | E_PARSE);
 define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
-require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.FileUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.PersistentIterator.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
+require_once(WCMF_BASE."wcmf/lib/model/Node.php");
+require_once(WCMF_BASE."wcmf/lib/model/PersistentIterator.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
 
 $action = $HTTP_POST_VARS["action"];
 $filesToRemove = $HTTP_POST_VARS["removeFiles"];

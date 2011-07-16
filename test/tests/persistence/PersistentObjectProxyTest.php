@@ -1,6 +1,6 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistentObjectProxy.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/PersistentObjectProxy.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class PersistentObjectProxyTest extends PHPUnit_Framework_TestCase

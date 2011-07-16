@@ -24,7 +24,7 @@ An example test may look like this (PersistenceTest.php)
 
 <?php
 
-require_once(BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
+require_once(BASE."wcmf/lib/persistence/PersistenceFacade.php");
 
 class PersistenceTest extends WCMFTestCase
 {

@@ -8,8 +8,8 @@ define("ID", 3);
 define("STR", 4);
 define("APPEND", 5);
 
-require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
 
 // read config file
 $parser = &InifileParser::getInstance();

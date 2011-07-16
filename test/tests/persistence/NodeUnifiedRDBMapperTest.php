@@ -1,12 +1,12 @@
 <?php
 
-require_once(WCMF_BASE."application/include/model/class.PageRDBMapper.php");
-require_once(WCMF_BASE."application/include/model/class.AuthorRDBMapper.php");
-require_once(WCMF_BASE."application/include/model/class.ImageRDBMapper.php");
-require_once(WCMF_BASE."application/include/model/class.DocumentRDBMapper.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.Criteria.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.RelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ReferenceDescription.php");
+require_once(WCMF_BASE."application/include/model/PageRDBMapper.php");
+require_once(WCMF_BASE."application/include/model/AuthorRDBMapper.php");
+require_once(WCMF_BASE."application/include/model/ImageRDBMapper.php");
+require_once(WCMF_BASE."application/include/model/DocumentRDBMapper.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/Criteria.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/RelationDescription.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/ReferenceDescription.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class NodeUnifiedRDBMapperTest extends PHPUnit_Framework_TestCase {

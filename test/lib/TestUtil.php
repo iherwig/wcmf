@@ -16,10 +16,10 @@
  *
  * $Id: WCMFTestCase.php 998 2009-05-29 01:29:20Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/class.ActionMapper.php");
+require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/Application.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/ActionMapper.php");
 
 /**
  * @class TestUtil

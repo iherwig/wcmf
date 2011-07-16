@@ -16,7 +16,7 @@
  *
  * $Id: function.input.php 1250 2010-12-05 23:02:43Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/class.Control.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
 
 /*
 * Smarty plugin

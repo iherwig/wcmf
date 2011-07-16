@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/class.InternalLink.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/InternalLink.php");
 
 /*
 * Smarty plugin

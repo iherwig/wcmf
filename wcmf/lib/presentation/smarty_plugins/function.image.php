@@ -16,8 +16,8 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/class.GraphicsUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.URIUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/GraphicsUtil.php");
+require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
 
 /*
 * Smarty plugin

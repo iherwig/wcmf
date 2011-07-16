@@ -1,8 +1,8 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/presentation/class.Request.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/class.Response.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/class.JSONFormat.php");
-require_once(WCMF_BASE."application/include/model/class.Document.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/Request.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/Response.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/format/JSONFormat.php");
+require_once(WCMF_BASE."application/include/model/Document.php");
 
 class JSONFormatTest extends PHPUnit_Framework_TestCase {
 

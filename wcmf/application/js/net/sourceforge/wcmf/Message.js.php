@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,13 +11,13 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id: Message.js.php 1334 2011-05-17 00:15:05Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/util/class.Message.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/class.Application.php");
+require_once(WCMF_BASE."wcmf/lib/util/Message.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/Application.php");
 
 // initialize global variables
 $application = Application::getInstance();
@@ -45,10 +45,10 @@ wcmf.Message.messages = {
   echo '  "-": "-"'."\n";
 ?>
 };
-  
+
 /**
  * Get a localized string.
- * 
+ *
  * @param message
  *            The string to localize
  * @param parameter

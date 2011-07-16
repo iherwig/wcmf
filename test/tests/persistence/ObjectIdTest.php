@@ -1,5 +1,5 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/class.ObjectId.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class ObjectIdTest extends PHPUnit_Framework_TestCase

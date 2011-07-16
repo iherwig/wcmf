@@ -6,14 +6,14 @@ error_reporting(E_ERROR | E_PARSE);
 define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
-require_once(WCMF_BASE."wcmf/lib/util/class.Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/class.InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/class.NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/class.PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/visitor/class.OutputVisitor.php");
-require_once(WCMF_BASE."wcmf/lib/output/class.DotOutputStrategy.php");
-require_once(WCMF_BASE."wcmf/lib/output/class.XMLOutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+require_once(WCMF_BASE."wcmf/lib/model/Node.php");
+require_once(WCMF_BASE."wcmf/lib/model/NodeIterator.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/visitor/OutputVisitor.php");
+require_once(WCMF_BASE."wcmf/lib/output/DotOutputStrategy.php");
+require_once(WCMF_BASE."wcmf/lib/output/XMLOutputStrategy.php");
 
 $parser = &InifileParser::getInstance();
 $parser->parseIniFile('config.ini', true);

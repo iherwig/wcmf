@@ -1,5 +1,5 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/model/class.StringQuery.php");
+require_once(WCMF_BASE."wcmf/lib/model/StringQuery.php");
 require_once(WCMF_BASE."test/lib/TestUtil.php");
 
 class StringQueryTest extends PHPUnit_Framework_TestCase

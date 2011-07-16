@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE.'wcmf/lib/util/class.InifileParser.php');
+require_once(WCMF_BASE.'wcmf/lib/util/InifileParser.php');
 require_once(WCMF_BASE.'wcmf/lib/persistence/StateChangeEvent.php');
 
 $includePath = get_include_path();
