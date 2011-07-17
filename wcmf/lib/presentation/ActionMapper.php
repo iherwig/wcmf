@@ -17,6 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/core/ConfigurationException.php");
+require_once(WCMF_BASE."wcmf/lib/core/EventManager.php");
 require_once(WCMF_BASE."wcmf/lib/util/Log.php");
 require_once(WCMF_BASE."wcmf/lib/util/Message.php");
 require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
@@ -26,6 +27,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/Response.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/ApplicationException.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/ApplicationError.php");
+require_once(WCMF_BASE."wcmf/lib/presentation/ApplicationEvent.php");
 require_once(WCMF_BASE."wcmf/lib/presentation/format/Formatter.php");
 require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
 
@@ -40,7 +42,6 @@ require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
 class ActionMapper
 {
   private static $_instance = null;
-  private $_controllerDelegate = null;
   private $_lastControllers = array();
 
   private function __construct() {}
@@ -69,6 +70,9 @@ class ActionMapper
     // allow static call
     $actionMapper = ActionMapper::getInstance();
 
+    EventManager::getInstance()->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
+            ApplicationEvent::BEFORE_ROUTE_ACTION, $request));
+
     $referrer = $request->getSender();
     $context = $request->getContext();
     $action = $request->getAction();
@@ -81,6 +85,7 @@ class ActionMapper
 
     $parser = WCMFInifileParser::getInstance();
     $rightsManager = RightsManager::getInstance();
+    $actionKey = null;
 
     // check authorization for controller/context/action triple
     if (!$rightsManager->authorize($referrer, $context, $action))
@@ -106,6 +111,7 @@ class ActionMapper
       Log::debug($referrer."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
     }
 
+    $controllerClass = null;
     if (strlen($actionKey) == 0)
     {
       // re-execute the initial referrer
@@ -123,24 +129,15 @@ class ActionMapper
       throw new ApplicationException($request, $response, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
     }
 
-    // create controller delegate instance if configured
-    if ($actionMapper->_controllerDelegate == null)
-    {
-      if ($parser->getValue('ControllerDelegate', 'implementation') !== false)
-      {
-        $objectFactory = ObjectFactory::getInstance();
-        $actionMapper->_controllerDelegate = $objectFactory->createInstanceFromConfig('implementation', 'ControllerDelegate');
-      }
-    }
-
     // instantiate controller
+    $controllerObj = null;
     if (($classFile = $parser->getValue($controllerClass, 'classmapping')) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
     }
     if (file_exists(WCMF_BASE.$classFile))
     {
       require_once(WCMF_BASE.$classFile);
-      $controllerObj = new $controllerClass($actionMapper->_controllerDelegate);
+      $controllerObj = new $controllerClass();
     }
     else {
       throw new ConfigurationException("Definition of Controller ".$controllerClass." in '".$classFile."' not found.");
@@ -154,10 +151,17 @@ class ActionMapper
     $response->setFormat($request->getResponseFormat());
 
     // initialize controller
+    EventManager::getInstance()->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
+            ApplicationEvent::BEFORE_INITIALIZE_CONTROLLER, $request, $response, $controllerObj));
     $controllerObj->initialize($request, $response);
 
     // execute controller
+    EventManager::getInstance()->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
+            ApplicationEvent::BEFORE_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
     $result = $controllerObj->execute();
+    EventManager::getInstance()->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
+            ApplicationEvent::AFTER_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
+
     Formatter::serialize($response);
     if ($result === false)
     {

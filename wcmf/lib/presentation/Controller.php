@@ -54,17 +54,13 @@ abstract class Controller
   private $_response = null;
   private $_executionResult = false;
 
-  private $_delegate = null;
-
   /**
    * Constructor.
-   * @param delegate A ControllerDelegate instance, if one is defined in the configuration (optional, default null does not work in PHP4).
    */
-  public function __construct($delegate)
+  public function __construct()
   {
     $this->_request = new Request(null, null, null);
     $this->_response = new Response(null, null, null);
-    $this->_delegate = $delegate;
   }
   /**
    * Initialize the Controller with request/response data. Which data is required is defined by the Controller.
@@ -92,9 +88,6 @@ abstract class Controller
       foreach ($request->getErrors() as $error) {
         $response->addError($error);
       }
-    }
-    if ($this->_delegate !== null) {
-      $this->_delegate->postInitialize($this);
     }
   }
   /**
@@ -131,25 +124,13 @@ abstract class Controller
 
     // validate controller data
     $validationFailed = false;
-    if ($this->_delegate !== null) {
-      if (!$this->_delegate->preValidate($this)) {
-        $validationFailed = true;
-      }
-    }
-    if (!$validationFailed && !$this->validate()) {
+    if (!$this->validate()) {
       $validationFailed = true;
     }
 
     // execute controller logic
-    if (!$validationFailed)
-    {
-      if ($this->_delegate !== null) {
-        $this->_delegate->preExecute($this);
-      }
+    if (!$validationFailed) {
       $this->_executionResult = $this->executeKernel();
-      if ($this->_delegate !== null) {
-        $this->_executionResult = $this->_delegate->postExecute($this, $this->_executionResult);
-      }
     }
     else {
       // don't process further if validation failed
@@ -217,14 +198,6 @@ abstract class Controller
     return $this->_response;
   }
   /**
-   * Get the controller delegate.
-   * @return ControllerDelegate / or null if none is existing
-   */
-  protected function getDelegate()
-  {
-    return $this->_delegate;
-  }
-  /**
    * Get a string value that uniquely identifies the current request data. This value
    * maybe used to compare two requests and return cached responses based on the result.
    * The default implementation returns null. Subclasses should override this to
@@ -267,10 +240,6 @@ abstract class Controller
     $this->_response->setValue('context', $this->_response->getContext());
     $this->_response->setValue('action', $this->_response->getAction());
     $this->_response->setValue('responseFormat', $this->_response->getFormat());
-
-    if ($this->_delegate !== null) {
-      $this->_delegate->assignAdditionalResponseValues($this);
-    }
   }
   /**
    * Check if the current request is localized. This is true,
