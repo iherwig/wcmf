@@ -123,11 +123,13 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
     // create a deferred list to wait for all panels to save
     var deferredList = new dojo.DeferredList(deferredArray);
-    deferredList.addCallback(function() {
-      wcmf.persistence.Store.fetch(self.oid, wcmf.defaultLanguage).then(function(item) {
-        self.afterSave(item);
-        deferred.callback(item);
-      });
+    deferredList.addCallback(function(result) {
+      // NOTE: the callback parameter is an array of results which contains
+      // localized items, but since we are only interested in the oid,
+      // this doesn't matter
+      var item = result[0][1];
+      self.afterSave(item);
+      deferred.callback(item);
     });
     deferredList.addErrback(function(errorData) {
       deferred.errback(errorData);
@@ -264,6 +266,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
   handleLoadEvent: function(e) {
     // listen to changes in attribute panel instances
+    this.attributePaneInstances = null;
     dojo.forEach(this.getAttributePaneInstances(), function(widget) {
       this.connect(widget, "onChange", this.setDirty);
     }, this);

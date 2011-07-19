@@ -160,7 +160,7 @@ abstract class Controller
    * Delegate the current request to another action. The context is the same as
    * the current context and the source controller will be set to TerminateController,
    * which means that the application flow will return after the action (and possible
-   * sub actions) are executed. The request and response format will MSG_FORMAT_NULL
+   * sub actions) are executed. The request and response format will be MSG_FORMAT_NULL
    * which means that all request values should be passed in the application internal
    * format and all response values will have that format.
    * @param action The name of the action to execute

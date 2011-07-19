@@ -34,6 +34,7 @@ dojo.addOnLoad(function() {
     <div data-dojo-type="dijit.layout.TabContainer" data-dojo-props="tabPosition:'bottom'">
 {configvalue key="defaultLanguage" section="i18n" varname="defaultLanguage"}
 {foreach $languages as $languageKey => $languageName}
+  {if !$isNew || $isNew && $languageKey == $defaultLanguage}
       <div data-dojo-type="wcmf.ui.AttributePane" data-dojo-props="title:'{$languageName}', language:'{$languageKey}', oid:'{$object->getOID()}', isNewNode:{if $isNew}true{else}false{/if}, {if $languageKey == $defaultLanguage}selected:true{/if}">
         <div class="wcmf_form">
           <fieldset>
@@ -50,6 +51,7 @@ dojo.addOnLoad(function() {
           </fieldset>
         </div>
       </div>
+  {/if}
 {/foreach}
     </div>
   </div>

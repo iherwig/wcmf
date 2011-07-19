@@ -93,7 +93,7 @@ dojo.declare("wcmf.ui.AttributePane", dojox.layout.ContentPane, {
    */
   save: function() {
     var deferred = new dojo.Deferred();
-    if (!this.isDirty) {
+    if (!this.isDirty && !this.isNewNode) {
       // immediatly return, if we don't need to save
       wcmf.persistence.Store.fetch(this.oid, this.language).then(function(item) {
         deferred.callback(item);
@@ -117,7 +117,7 @@ dojo.declare("wcmf.ui.AttributePane", dojox.layout.ContentPane, {
             scope: item,
             onComplete: function() {
               // 'this' is the saved object
-              self.setFieldValues(this);
+              self.afterSave(this);
               deferred.callback(this);
             },
             onError: function(errorData) {
@@ -136,7 +136,7 @@ dojo.declare("wcmf.ui.AttributePane", dojox.layout.ContentPane, {
           alwaysPostNewItems: true,
           onComplete: function() {
             // 'this' is the saved object
-            self.setFieldValues(this);
+            self.afterSave(this);
             deferred.callback(this);
           },
           onError: function(errorData) {
@@ -149,15 +149,28 @@ dojo.declare("wcmf.ui.AttributePane", dojox.layout.ContentPane, {
     return deferred.promise;
   },
 
+  /**
+   * Update the AttributePane after the contained item was saved
+   * @param item The contained persistent item
+   */
+  afterSave: function(item) {
+    this.setFieldValues(item);
+    // set the oid
+    var store = this.getStore();
+    this.oid = store.getValue(item, "oid");
+    this.isDirty = false;
+    this.isNewNode = false;
+  },
+
   handleShowEvent: function() {
-    if (!this.attributesLoaded) {
+    if (!this.attributesLoaded && !this.isNewNode) {
       var self = this;
       wcmf.persistence.Store.fetch(this.oid, this.language).then(function(item) {
         self.setFieldValues(item);
         self.connectFieldChangeEvents();
       });
-      this.attributesLoaded = true;
     }
+    this.attributesLoaded = true;
   },
 
   /**
