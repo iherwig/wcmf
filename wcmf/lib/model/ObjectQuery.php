@@ -132,6 +132,14 @@ class ObjectQuery extends AbstractQuery
       array($this, 'valueChanged'));
   }
   /**
+   * Desctructor.
+   */
+  public function __destruct()
+  {
+    EventManager::getInstance()->removeListener(ValueChangeEvent::NAME,
+      array($this, 'valueChanged'));
+  }
+  /**
    * Get an object template for a given type.
    * @param type The type to query for
    * @param alias An alias name to be used in the query. if null, use the default name [default: null]

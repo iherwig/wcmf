@@ -63,7 +63,15 @@ class Node extends PersistentObject
       $mapper = $this->getMapper();
       if ($mapper)
       {
-        $value = $mapper->loadRelation($this, $name, BUILDDEPTH_PROXIES_ONLY);
+        $relatives = $mapper->loadRelation($this, $name, BUILDDEPTH_PROXIES_ONLY);
+        $relDesc = $mapper->getRelation($name);
+        if ($relDesc->isMultiValued()) {
+          $mergeResult = self::mergeObjectLists($value, $relatives);
+          $value = $mergeResult['result'];
+        }
+        else {
+          $value = $relatives;
+        }
         $this->setValueInternal($name, $value);
         $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZED;
       }

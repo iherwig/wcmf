@@ -74,16 +74,16 @@ class PersistentObject
    */
   public function __construct(ObjectId $oid)
   {
-    // set oid and state
+    // set oid and state (avoid calling listeners)
     if (ObjectId::isValid($oid))
     {
       $this->_type = $oid->getType();
       $this->_oid = $oid;
       if ($oid->containsDummyIds()) {
-        $this->setState(self::STATE_NEW);
+        $this->_state = self::STATE_NEW;
       }
       else {
-        $this->setState(self::STATE_CLEAN);
+        $this->_state = self::STATE_CLEAN;
       }
       // set primary keys
       $this->setOIDInternal($oid, false);
@@ -205,7 +205,7 @@ class PersistentObject
   {
     if (!$this->_isImmutable)
     {
-      // delete the object
+      // delete the object (will be done in the transaction)
       $this->setState(self::STATE_DELETED);
     }
     else {

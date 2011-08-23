@@ -67,7 +67,7 @@ class EventManager
     if (isset($this->_listeners[$eventName])) {
       $listeners = array();
       for ($i=0, $count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
-        $curCallback = $this->_listeners[$eventName];
+        $curCallback = $this->_listeners[$eventName][$i];
         if ($curCallback != $callback) {
           $listeners[] = $curCallback;
         }
@@ -84,7 +84,7 @@ class EventManager
   {
     if (isset($this->_listeners[$eventName]))
     {
-      for ($i=0, $count=$count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
+      for ($i=0, $count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
         $curCallback = $this->_listeners[$eventName][$i];
         call_user_func($curCallback, $event);
         if ($event->isStopped()) {

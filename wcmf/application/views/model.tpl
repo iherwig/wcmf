@@ -45,6 +45,7 @@ dojo.declare("wcmf.model.{$type}Class", wcmf.model.meta.Node, {
 {foreach $mapper->getAttributes() as $attribute}
     {
       name: "{$attribute->getName()}",
+      type: "{$attribute->getType()}",
       isEditable: {if $attribute->getIsEditable()}true{else}false{/if},
       tags: [{if sizeof($attribute->getTags()) > 0}"{join('","',$attribute->getTags())}"{/if}]
     }{if !$attribute@last},

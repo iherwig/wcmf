@@ -28,6 +28,8 @@ require_once('Zend/Search/Lucene.php');
 function gShutdownSearch()
 {
   LuceneSearch::commitIndex();
+  EventManager::getInstance()->removeListener(StateChangeEvent::NAME,
+    array('LuceneSearch', 'stateChanged'));
 }
 register_shutdown_function('gShutdownSearch');
 
@@ -239,20 +241,14 @@ class LuceneSearch
   public static function stateChanged(StateChangeEvent $event)
   {
     $object = $event->getObject();
+    $oldState = $event->getOldValue();
     $newState = $event->getNewValue();
-    switch ($newState)
-    {
-      case PersistentObject::STATE_NEW:
+    if (($oldState == PersistentObject::STATE_NEW || $oldState == PersistentObject::STATE_DIRTY)
+            && $newState == PersistentObject::STATE_CLEAN) {
         self::indexInSearch($object);
-        break;
-
-      case PersistentObject::STATE_DIRTY:
-        self::indexInSearch($object);
-        break;
-
-      case PersistentObject::STATE_DELETED:
+    }
+    elseif ($newState == PersistentObject::STATE_DELETED) {
         self::deleteFromSearch($object);
-        break;
     }
   }
 }

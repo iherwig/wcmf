@@ -50,6 +50,14 @@ class Transaction implements ITransaction
       array($this, 'stateChanged'));
   }
   /**
+   * Destructor.
+   */
+  public function __destruct()
+  {
+    EventManager::getInstance()->removeListener(StateChangeEvent::NAME,
+      array($this, 'stateChanged'));
+  }
+  /**
    * @see ITransaction::registerNew()
    */
   public function registerNew(PersistentObject $object)
@@ -241,7 +249,7 @@ class Transaction implements ITransaction
           foreach ($buildAttribs as $attributeName) {
             if (!$registeredObject->hasValue($attributeName)) {
               // immediatly return, if buildAttrib does not exist
-              Log::debug("Build attribte constraint not fullfilled for: ".$key.".".$attributeName, __CLASS__);
+              Log::debug("Build attribute constraint not fullfilled for: ".$key.".".$attributeName, __CLASS__);
               return null;
             }
           }

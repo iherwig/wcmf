@@ -175,10 +175,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper
             $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
                     new PersistentObjectProxy($relativeOid), $relationDesc);
             foreach ($nmObjects as $nmObj) {
-              // this relation can be deleted immediatly, in order to be
-              // already deleted when the other side of the relation is processed
-              // (otherwise we would try to delete it twice)
-              $nmObj->getMapper()->delete($nmObj);
+              // delete the relation
+              $nmObj->delete();
             }
           }
         }

@@ -47,8 +47,20 @@ class PersistenceFacadeImpl implements IPersistenceFacade
   /**
    * Constructor
    */
-  public function __construct() {}
-
+  public function __construct()
+  {
+    // register as change listener to track the created oids, after save
+    EventManager::getInstance()->addListener(StateChangeEvent::NAME,
+            array($this, 'stateChanged'));
+  }
+  /**
+   * Destructor
+   */
+  public function __destruct()
+  {
+    EventManager::getInstance()->removeListener(StateChangeEvent::NAME,
+            array($this, 'stateChanged'));
+  }
   /**
    * @see IPersistenceFacade::getKnownTypes()
    */
@@ -130,10 +142,6 @@ class PersistenceFacadeImpl implements IPersistenceFacade
       if ($transaction->isActive()) {
         $transaction->registerNew($obj);
       }
-
-      // register as change listener to track the created oid, after save
-      EventManager::getInstance()->addListener(StateChangeEvent::NAME,
-              array($this, 'stateChanged'));
     }
 
     return $obj;
