@@ -3,58 +3,68 @@
 {$elFinderBaseDir=$libDir|cat:"3rdparty/elfinder/"}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
+  "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>{translate text="Media Pool"}</title>
-  <link rel="stylesheet" href="{$elFinderBaseDir}js/ui-themes/base/ui.all.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="{$elFinderBaseDir}css/elfinder.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{translate text="Media Pool"}</title>
 
-  <script src="{$elFinderBaseDir}js/jquery-1.4.1.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="{$elFinderBaseDir}js/jquery-ui-1.7.2.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <!-- jQuery and jQuery UI (REQUIRED) -->
+    <link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/smoothness/jquery-ui.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
 
-  <script src="{$elFinderBaseDir}js/elfinder.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="{$elFinderBaseDir}js/i18n/elfinder.{$lang}.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
-    $().ready(function() {
-      var f = $('#finder').elfinder({
-        url: 'main.php?controller=ElFinderController&sid={sessionid}',
-        lang: '{$lang}',
-        cutURL: '{$rootUrl}',
+    <!-- elFinder CSS (REQUIRED) -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{$elFinderBaseDir}css/elfinder.min.css">
 
-        editorCallback: function(url) {
-          // prepend media path
-          url = '{$rootPath}'+url;
-          if (window.console && window.console.log) {
-            window.console.log(url);
-          }
-          var fieldName = '{$fieldName}';
-          // check for a widget with the id given in fieldName
-          if (fieldName.length > 0 && window.opener) {
-            var widget = window.opener.dijit.byId(fieldName);
-            if (widget) {
-              widget.set('value', url);
+    <!-- Mac OS X Finder style for jQuery UI smoothness theme (OPTIONAL) -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{$elFinderBaseDir}css/theme.css">
+
+    <!-- elFinder JS (REQUIRED) -->
+    <script type="text/javascript" src="{$elFinderBaseDir}js/elfinder.min.js"></script>
+
+    <!-- elFinder translation (OPTIONAL) -->
+    <script type="text/javascript" src="{$elFinderBaseDir}js/i18n/elfinder.{$lang}.js"></script>
+
+    <!-- elFinder initialization (REQUIRED) -->
+    <script type="text/javascript" charset="utf-8">
+      $().ready(function() {
+        var elf = $('#elfinder').elfinder({
+          lang: '{$lang}',
+          url: 'main.php?controller=ElFinderController&sid={sessionid}',
+          cutURL: '{$rootUrl}',
+          getFileCallback: function(url) {
+            // prepend media path
+            url = '{$rootPath}'+url;
+            if (window.console && window.console.log) {
+              window.console.log(url);
             }
-          }
-          // check for ckeditor
-          if (window.opener.CKEDITOR) {
-            var funcNum = window.location.search.replace(/^.*CKEditorFuncNum=(\d+).*$/, "$1");
-            window.opener.CKEDITOR.tools.callFunction(funcNum, url);
-          }
-          window.close();
-        },
-        closeOnEditorCallback: true,
-        places: '',
-        width: 800,
-        height: 400,
-        cssClass: 'wcmfFinder',
-        rememberLastDir: true
-      })
-    })
-  </script>
-</head>
-<body>
-  <div id="finder">finder</div>
-</body>
+            var fieldName = '{$fieldName}';
+            // check for a widget with the id given in fieldName
+            if (fieldName.length > 0 && window.opener) {
+              var widget = window.opener.dijit.byId(fieldName);
+              if (widget) {
+                widget.set('value', url);
+              }
+            }
+            // check for ckeditor
+            if (window.opener.CKEDITOR) {
+              var funcNum = window.location.search.replace(/^.*CKEditorFuncNum=(\d+).*$/, "$1");
+              window.opener.CKEDITOR.tools.callFunction(funcNum, url);
+            }
+            window.close();
+          },
+          //closeOnEditorCallback: true,
+          ui : ['toolbar'/*, 'places'*/, 'tree', 'path', 'stat'],
+          width: 800,
+          height: 400,
+          cssClass: 'wcmfFinder',
+          rememberLastDir: true
+        }).elfinder('instance');
+      });
+    </script>
+  </head>
+  <body>
+    <div id="elfinder">finder</div>
+  </body>
 </html>
