@@ -333,6 +333,7 @@ class Transaction implements ITransaction
       $key = array_shift($updateOids);
       Log::info("Process update on object: ".$key, __CLASS__);
       $object = $this->_dirtyObjects[$key];
+      ConcurrencyManager::getInstance()->checkPersist($object);
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->save($object);
@@ -352,6 +353,7 @@ class Transaction implements ITransaction
       $key = array_shift($deleteOids);
       Log::info("Process delete on object: ".$key, __CLASS__);
       $object = $this->_deletedObjects[$key];
+      ConcurrencyManager::getInstance()->checkPersist($object);
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->delete($object);

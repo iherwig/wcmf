@@ -17,7 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/locking/LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
 require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
 
 /**
@@ -65,24 +65,16 @@ class ConcurrencyController extends Controller
    */
   function executeKernel()
   {
-    $lockManager = &LockManager::getInstance();
-    $rightsManager = &RightsManager::getInstance();
-    $session = &SessionData::getInstance();
+    // TODO aquire lock depending on configured locking strategy
+    $concurrencyManager = ConcurrencyManager::getInstance();
     $oid = $this->_request->getValue('oid');
 
     // process actions
-    if ($this->_request->getAction() == 'lock')
-    {
-      $lock = $lockManager->aquireLock($oid);
-      $authUser = $rightsManager->getAuthUser();
-      if ($lock && $authUser && ($lock->getLogin() != $authUser->getLogin() || $lock->getSessionID() != $session->getID()))
-      {
-        $this->appendErrorMsg($lockManager->getLockMessage($lock));
-      }
+    if ($this->_request->getAction() == 'lock') {
+      $concurrencyManager->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     }
-    elseif ($this->_request->getAction() == 'unlock')
-    {
-      $lockManager->releaseLock($oid);
+    elseif ($this->_request->getAction() == 'unlock') {
+      $concurrencyManager->releaseLock($oid);
     }
 
     $this->_response->setValue('oid', $oid);

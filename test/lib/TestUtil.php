@@ -63,21 +63,21 @@ class TestUtil
 
   /**
    * Start a session. This is usefull for simulateRequest calls
-   * @param login The login of the user
+   * @param user The name of the user
    * @param password The password of the user
    * @return The session id. Use this as data['sid'] parameter for
    *    subsequent simulateRequest calls
    */
-  public static function startSession($login, $password)
+  public static function startSession($user, $password)
   {
     $request = new Request('LoginController',
       '',
-      'dologin',
-      array(
-        'login' => 'admin',
-        'password' => 'admin'
-      )
+      'dologin'
     );
+    $request->setValues(array(
+        'user' => $user,
+        'password' => $password
+    ));
     $response = self::simulateRequest($request);
     return $response->getValue('sid');
   }
@@ -90,11 +90,11 @@ class TestUtil
   {
     $request = new Request('',
       '',
-      'logout',
-      array(
-        'sid' => $sid
-      )
+      'logout'
     );
+    $request->setValues(array(
+        'sid' => $sid
+    ));
     self::simulateRequest($request);
   }
 

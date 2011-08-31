@@ -53,7 +53,7 @@ class SmartyView extends Smarty implements IView
     $this->caching = $caching;
     $this->cache_lifetime = $cacheLifetime;
     $this->plugins_dir = array(
-      WCMF_BASE.'wcmf/3rdparty/smarty/libs/plugins/', 
+      WCMF_BASE.'wcmf/3rdparty/smarty/libs/plugins/',
       WCMF_BASE.'wcmf/lib/presentation/smarty_plugins/'
     );
     if ($debugView) {
@@ -62,7 +62,7 @@ class SmartyView extends Smarty implements IView
     else {
       $this->error_reporting = E_ALL & ~E_NOTICE;
     }
-    
+
     // load filter
     $this->loadFilter('pre','removeprids');
     $this->loadFilter('output','trimwhitespace');
@@ -95,26 +95,26 @@ class SmartyView extends Smarty implements IView
    * Clear the complete cache
    * @see Smarty::clearAllCache()
    */
-  public function clearAllCache()
+  public function clearAllCache($expTime=null, $type=null)
   {
-    return $this->clearAllCache();
+    return $this->clearAllCache($expTime, $type);
   }
   /**
    * Clear parts of cache
    * @see Smarty::clearCache()
    */
-  public function clearCache($tplFile=null, $cacheId=null)
+  public function clearCache($tplFile=null, $cacheId=null, $compileId=null, $expTime=null, $type=null)
   {
-    return $this->clearCache($tplFile, $cacheId);
+    return $this->clearCache($tplFile, $cacheId, $compileId, $expTime, $type);
   }
   /**
    * Check if a view is cached. Returns also false, if caching is disabled
    * to make sure that views get regenerated every time when expected.
    * @see Smarty::isCached()
    */
-  public function isCached($tplFile, $cacheId=null)
+  public function isCached($tplFile, $cacheId=null, $compileId=null, $parent=null)
   {
-    return ($this->caching && $this->isCached($tplFile, $cacheId));
+    return ($this->caching && $this->isCached($tplFile, $cacheId, $compileId, $parent));
   }
 }
 ?>

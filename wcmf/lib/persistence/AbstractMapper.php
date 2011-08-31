@@ -19,7 +19,7 @@
 require_once(WCMF_BASE."wcmf/lib/util/Log.php");
 require_once(WCMF_BASE."wcmf/lib/util/Message.php");
 require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/locking/LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/security/AuthorizationException.php");
 
@@ -220,8 +220,7 @@ abstract class AbstractMapper
       $object->afterDelete();
 
       // release any locks on the object
-      $lockManager = LockManager::getInstance();
-      $lockManager->releaseLocks($oid);
+      ConcurrencyManager::getInstance()->releaseLocks($oid);
     }
     return $result;
   }

@@ -20,7 +20,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
 require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/security/AuthUser.php");
 require_once(WCMF_BASE."wcmf/lib/security/UserManager.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/locking/LockManager.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
 require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
 
 /**
@@ -190,8 +190,7 @@ class LoginController extends Controller
     elseif ($request->getAction() == 'logout')
     {
       // release all locks
-      $lockManager = LockManager::getInstance();
-      $lockManager->releaseAllLocks();
+      ConcurrencyManager::getInstance()->releaseAllLocks();
 
       // delete cookies (also clientside)
       setcookie($this->getCookieName('user'), '', time()-3600, '/');

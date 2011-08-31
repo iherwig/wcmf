@@ -86,7 +86,7 @@ class AuthUser extends User implements IStorable
       else {
   	    $this->addPolicies($policies);
       }
-      $this->_login_time = strftime("%c", mktime());
+      $this->_login_time = strftime("%c", time());
   	  $loginOk = true;
 	}
 

@@ -18,7 +18,6 @@
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/locking/LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/model/Node.php");
 require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
 require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
@@ -64,7 +63,6 @@ class SaveController extends Controller
   public function executeKernel()
   {
     $persistenceFacade = PersistenceFacade::getInstance();
-    $lockManager = LockManager::getInstance();
     $session = SessionData::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -80,7 +78,6 @@ class SaveController extends Controller
     $transaction->begin();
     try {
       // store all invalid parameters for later reference
-      $lockedOids = array();
       $invalidOids = array();
       $invalidAttributeNames = array();
       $invalidAttributeValues = array();
@@ -93,17 +90,6 @@ class SaveController extends Controller
         if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
                 && $curRequestObject->getOID() == $curOid)
         {
-          // if the current user has a lock on the object, release it
-          $lockManager->releaseLock($curOid);
-
-          // check if the object is locked and continue with next if so
-          $lock = $lockManager->getLock($curOid);
-          if ($lock != null)
-          {
-            $lockedOids[] = $curOidStr;
-            continue;
-          }
-
           // iterate over all values given in the node
           $mapper = $curRequestObject->getMapper();
           foreach ($curRequestObject->getValueNames() as $curValueName)
@@ -211,10 +197,6 @@ class SaveController extends Controller
       }
 
       // add errors to the response
-      if (sizeof($lockedOids) > 0) {
-        $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
-          array('lockedOids' => $lockedOids)));
-      }
       if (sizeof($invalidOids) > 0) {
         $response->addError(ApplicationError::get('OID_INVALID',
           array('invalidOids' => $invalidOids)));
@@ -245,7 +227,20 @@ class SaveController extends Controller
       }
       $transaction->commit();
     }
+    catch (PessimisticLockException $ex) {
+      $lock = $ex->getLock();
+      $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
+        array('lockedOids' => array($lock->getOID()->__toString()))));
+      $transaction->rollback();
+    }
+    catch (OptimisticLockException $ex) {
+      $currentState = $ex->getCurrentState();
+      $response->addError(ApplicationError::get('CONCURRENT_UPDATE',
+        array('currentState' => $currentState)));
+      $transaction->rollback();
+    }
     catch (Exception $ex) {
+      $response->addError(ApplicationError::get('GENERAL_ERROR'));
       $transaction->rollback();
     }
 

@@ -84,11 +84,6 @@ class DisplayController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    // release all locks before edit
-    $lockManager = LockManager::getInstance();
-    $lockManager->releaseAllLocks();
-    $lockMsg = '';
-
     // load model
     $oid = ObjectId::parse($request->getValue('oid'));
     if ($oid && $rightsManager->authorize($oid, '', ACTION_READ))

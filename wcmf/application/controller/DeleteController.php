@@ -18,7 +18,6 @@
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/locking/LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/model/Node.php");
 
 /**
@@ -52,7 +51,6 @@ class DeleteController extends Controller
   public function executeKernel()
   {
     $persistenceFacade = PersistenceFacade::getInstance();
-    $lockManager = LockManager::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -63,19 +61,8 @@ class DeleteController extends Controller
     $transaction->begin();
     try {
       // load the doomed node
-      // if the current user has a lock on the object, release it
       if ($oid)
       {
-        $lockManager->releaseLock($oid);
-
-        // check if the object belonging to oid is locked and continue with next if so
-        $lock = $lockManager->getLock($oid);
-        if ($lock != null)
-        {
-          $this->appendErrorMsg($lockManager->getLockMessage($lock, $oid));
-          continue;
-        }
-
         $doomedNode = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
         if ($doomedNode == null) {
           Log::warn(Message::get("An object with oid %1% is does not exist.", array($oid)), __CLASS__);
@@ -104,7 +91,14 @@ class DeleteController extends Controller
       }
       $transaction->commit();
     }
+    catch (PessimisticLockException $ex) {
+      $lock = $ex->getLock();
+      $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
+        array('lockedOids' => array($oid->__toString()))));
+      $transaction->rollback();
+    }
     catch (Exception $ex) {
+      $response->addError(ApplicationError::get('GENERAL_ERROR'));
       $transaction->rollback();
     }
 

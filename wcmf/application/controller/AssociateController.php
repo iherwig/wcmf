@@ -100,7 +100,6 @@ class AssociateController extends Controller
   protected function executeKernel()
   {
     $persistenceFacade = PersistenceFacade::getInstance();
-    $lockManager = LockManager::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -109,12 +108,10 @@ class AssociateController extends Controller
     try {
       // get the source node
       $sourceOID = ObjectId::parse($request->getValue('sourceOid'));
-      $lockManager->releaseLock($sourceOID);
       $sourceNode = $persistenceFacade->load($sourceOID, BUILDDEPTH_SINGLE);
 
       // get the target node
       $targetOID = ObjectId::parse($request->getValue('targetOid'));
-      $lockManager->releaseLock($targetOID);
       $targetNode = $persistenceFacade->load($targetOID, BUILDDEPTH_SINGLE);
 
       // get the role

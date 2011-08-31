@@ -19,7 +19,6 @@
 require_once(WCMF_BASE."wcmf/lib/core/EventManager.php");
 require_once(WCMF_BASE."wcmf/lib/util/Message.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/IPersistenceMapper.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/locking/LockManager.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceException.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/ValidationException.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/StateChangeEvent.php");
@@ -266,21 +265,6 @@ class PersistentObject
       $this->setValueProperty($name, 'is_editable', false);
     }
     $this->_isImmutable = true;
-  }
-  /**
-   * Get the lock on the object.
-   * @return Lock instance as provided by LockManager::getLock() or null if not locked
-   * @note If the object is locked it's set immutable. This is not reversible
-   * (reload the object to get a mutable one)
-   */
-  public function getLock()
-  {
-    $lockManager = LockManager::getInstance();
-    $lock = $lockManager->getLock($this->getOID());
-    if ($lock != null) {
-      $this->setImmutable();
-    }
-    return $lock;
   }
   /**
    * Get a copy of the object (ChangeListeners and Lock are not copied)
