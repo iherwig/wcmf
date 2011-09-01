@@ -120,7 +120,7 @@ class Lock
    * @return PersistentObject instance
    */
   public function setCurrentState($_currentState) {
-    $this->_currentState = $_currentState;
+    $this->_currentState = serialize($_currentState);
   }
 
   /**
@@ -129,7 +129,7 @@ class Lock
    * @return PersistentObject instance
    */
   public function getCurrentState() {
-    return $this->_currentState;
+    return unserialize($this->_currentState);
   }
 }
 ?>

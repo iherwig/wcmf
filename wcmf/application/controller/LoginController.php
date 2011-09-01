@@ -189,9 +189,6 @@ class LoginController extends Controller
     }
     elseif ($request->getAction() == 'logout')
     {
-      // release all locks
-      ConcurrencyManager::getInstance()->releaseAllLocks();
-
       // delete cookies (also clientside)
       setcookie($this->getCookieName('user'), '', time()-3600, '/');
       setcookie($this->getCookieName('password'), '', time()-3600, '/');

@@ -17,6 +17,7 @@
  * $Id$
  */
 require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ILockHandler.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/PessimisticLockException.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/model/ObjectQuery.php");
 require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
@@ -55,7 +56,7 @@ class DefaultLockHandler implements ILockHandler
         if ($lock->getUserOID() != $currentUser->getOID()) {
           throw new PessimisticLockException($lock);
         }
-        // if the existing lock is a pessimistic lock and owned by the user
+        // if the existing lock is a pessimistic lock and is owned by the user
         // there is no need to aquire a optimistic lock
         if ($type == Lock::TYPE_OPTIMISTIC) {
           return;
@@ -85,13 +86,11 @@ class DefaultLockHandler implements ILockHandler
     if (!$currentUser) {
       return;
     }
-    $session = SessionData::getInstance();
 
-    // delete locks for the given oid, current user and session
+    // delete locks for the given oid and current user
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
-    $tpl->setValue('sessionid', Criteria::asValue("=", $session->getID()));
-    $tpl->setValue('objectid', Criteria::asValue("=", $oid->__toString()));
+    $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $userTpl = $query->getObjectTemplate(UserManager::getUserClassName());
     $userTpl->setOID($currentUser->getOID());
     $userTpl->addNode($tpl);
@@ -110,7 +109,7 @@ class DefaultLockHandler implements ILockHandler
     // delete locks for the given oid
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
-    $tpl->setValue('objectid', Criteria::asValue("=", $oid->__toString()));
+    $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $locks = $query->execute(BUILDDEPTH_SINGLE);
     foreach($locks as $lock) {
       // delete lock immediatly
@@ -129,10 +128,9 @@ class DefaultLockHandler implements ILockHandler
     }
     $session = SessionData::getInstance();
 
-    // delete locks for the current user and session
+    // delete locks for the current user
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
-    $tpl->setValue('sessionid', Criteria::asValue("=", $session->getID()));
     $userTpl = $query->getObjectTemplate(UserManager::getUserClassName());
     $userTpl->setOID($currentUser->getOID());
     $userTpl->addNode($tpl);
@@ -161,11 +159,11 @@ class DefaultLockHandler implements ILockHandler
     // check if a lock is stored in the database (only pessimistic)
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
-    $tpl->setValue('objectid', "= '".$oid."'");
+    $tpl->setValue('objectid', Criteria::asValue('=', $oid));
     $locks = $query->execute(BUILDDEPTH_SINGLE);
     if (sizeof($locks) > 0) {
       $lockObj = $locks[0];
-      $user = $lockObj->getFirstParent(UserManager::getUserClassName());
+      $user = $lockObj->getValue(UserManager::getUserClassName());
       $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $user->getOID(), $user->getLogin(),
               $lockObj->getValue('sessionid'), $lockObj->getValue('since'));
 

@@ -18,7 +18,6 @@
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
 require_once(WCMF_BASE."wcmf/lib/model/Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
 
@@ -63,9 +62,6 @@ class SOAPController extends Controller
 
     else if ($action == 'soapAdvancedSearch')
       $this->soapAdvancedSearch($this->_request->getValue('type'), $this->_request->getValue('query'));
-
-    // release all locks
-    ConcurrencyManager::getInstance()->releaseAllLocks();
 
     $this->_response->setAction('ok');
     return false;

@@ -159,11 +159,12 @@ class Transaction implements ITransaction
           $mapper = $persistenceFacade->getMapper($type);
           $mapper->rollbackTransaction();
         }
+        $this->rollback();
+        throw $ex;
       }
     }
     // forget changes
-    $this->clear();
-    $this->_isActive = false;
+    $this->rollback();
   }
   /**
    * @see ITransaction::rollback()

@@ -29,12 +29,20 @@ class OptimisticLockException extends Exception
   /**
    * Constructor
    * @param currentState PersistentObject instance representing the current object state
+   *    or null, if the object is deleted
    */
-  public function __construct(PersistentObject $currentState)
+  public function __construct($currentState)
   {
     $this->_currentState = $currentState;
 
-    parent::__construct("The object was modified by another user.");
+    $msg = '';
+    if ($currentState == null) {
+      $msg = 'The object was deleted by another user.';
+    }
+    else {
+      $msg = 'The object was modified by another user.';
+    }
+    parent::__construct($msg);
   }
 
   /**

@@ -153,7 +153,6 @@ function doSoapCall()
       ApplicationError::get('AUTHENTICATION_FAILED'));
   }
   // cleanup
-  ConcurrencyManager::getInstance()->releaseAllLocks();
   $session->destroy();
       
   return $response;

@@ -22,6 +22,8 @@ require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ILockHandler.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/Lock.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/PessimisticLockException.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/OptimisticLockException.php");
 require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
 require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
 
@@ -128,30 +130,47 @@ class ConcurrencyManager
   {
     $oid = $object->getOID();
     $lock = $this->_lockHandlerImpl->getLock($oid);
-    $type = $lock->getType();
+    if ($lock != null) {
+      $type = $lock->getType();
 
-    // if there is a pessimistic lock on the object and it's not
-    // owned by the current user, throw a PessimisticLockException
-    if ($type == Lock::TYPE_OPTIMISTIC) {
-      $rightsManager = RightsManaer::getInstance();
-      $currentUser = $rightsManager->getAuthUser();
-      if ($lock->getUserOID() != $currentUser->getOID()) {
-          throw new PesismisticLockException($lock);
+      // if there is a pessimistic lock on the object and it's not
+      // owned by the current user, throw a PessimisticLockException
+      if ($type == Lock::TYPE_PESSIMISTIC) {
+        $rightsManager = RightsManager::getInstance();
+        $currentUser = $rightsManager->getAuthUser();
+        if ($lock->getUserOID() != $currentUser->getOID()) {
+            throw new PessimisticLockException($lock);
+        }
       }
-    }
 
-    // if there is an optimistic lock on the object and the object was updated
-    // in the meantime, throw a OptimisticLockException
-    if ($type == Lock::TYPE_OPTIMISTIC) {
-      $originalState = $lock->getCurrentState();
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $currentState = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
-
-      $it = new NodeValueIterator($originalState);
-      foreach($it as $valueName => $originalValue) {
-        $currentValue = $currentState->getValue($valueName);
-        if ($currentValue != $originalValue) {
-          throw new OptimisticLockException($currentState);
+      // if there is an optimistic lock on the object and the object was updated
+      // in the meantime, throw a OptimisticLockException
+      if ($type == Lock::TYPE_OPTIMISTIC) {
+        $originalState = $lock->getCurrentState();
+        // temporarily detach the object from the transaction in order to get
+        // the latest version from the store
+        $persistenceFacade = PersistenceFacade::getInstance();
+        $transaction = $persistenceFacade->getTransaction();
+        $transaction->detach($object);
+        $currentState = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+        // check for deletion
+        if ($currentState == null) {
+          throw new OptimisticLockException(null);
+        }
+        // check for modifications
+        $it = new NodeValueIterator($originalState, false);
+        foreach($it as $valueName => $originalValue) {
+          $currentValue = $currentState->getValue($valueName);
+          if ($currentValue != $originalValue) {
+            throw new OptimisticLockException($currentState);
+          }
+        }
+        // if there was no concurrent update, attach the object again
+        if ($object->getState() == PersistentObject::STATE_DIRTY) {
+          $transaction->registerDirty($object);
+        }
+        elseif ($object->getState() == PersistentObject::STATE_DELETED) {
+          $transaction->registerDeleted($object);
         }
       }
     }
