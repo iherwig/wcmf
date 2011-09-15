@@ -31,22 +31,22 @@ and open the template in the editor.
       <file>tests/i18n/LocalizationTest.php</file>
     </testsuite>
     <testsuite name="Model">
-      <file>tests/format/IteratorTest.php</file>
-      <file>tests/format/NodeTest.php</file>
-      <file>tests/format/NodeUtilTest.php</file>
+      <file>tests/model/IteratorTest.php</file>
+      <file>tests/model/NodeTest.php</file>
+      <file>tests/model/NodeUtilTest.php</file>
     </testsuite>
     <testsuite name="Persistence">
-      <file>tests/format/ManyToManyTest.php</file>
-      <file>tests/format/NodeRelationTest.php</file>
-      <file>tests/format/NodeUnifiedRDBMapperTest.php</file>
-      <file>tests/format/ObjectIdTest.php</file>
-      <file>tests/format/ObjectQueryTest.php</file>
-      <file>tests/format/PersistentObjectProxyTest.php</file>
-      <file>tests/format/PersistentObjectTest.php</file>
-      <file>tests/format/RelationDescriptionTest.php</file>
-      <file>tests/format/SortTest.php</file>
-      <file>tests/format/StringQueryTest.php</file>
-      <file>tests/format/TransactionTest.php</file>
+      <file>tests/persistence/ManyToManyTest.php</file>
+      <file>tests/persistence/NodeRelationTest.php</file>
+      <file>tests/persistence/NodeUnifiedRDBMapperTest.php</file>
+      <file>tests/persistence/ObjectIdTest.php</file>
+      <file>tests/persistence/ObjectQueryTest.php</file>
+      <file>tests/persistence/PersistentObjectProxyTest.php</file>
+      <file>tests/persistence/PersistentObjectTest.php</file>
+      <file>tests/persistence/RelationDescriptionTest.php</file>
+      <file>tests/persistence/SortTest.php</file>
+      <file>tests/persistence/StringQueryTest.php</file>
+      <file>tests/persistence/TransactionTest.php</file>
     </testsuite>
   </testsuites>
   <groups>
