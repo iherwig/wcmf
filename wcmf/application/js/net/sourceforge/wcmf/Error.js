@@ -1,9 +1,10 @@
-dojo.provide("wcmf.Error");
+define(["dojo/_base/declare", "dojo/fx"
+], function(declare, fx) {
 
 /**
  * @class Error This class encapsulates functionality for error handling
  */
-dojo.declare("wcmf.Error", null, {
+var Error = declare("wcmf.Error", null, {
 });
 
 /**
@@ -12,26 +13,31 @@ dojo.declare("wcmf.Error", null, {
  * @param text
  *            The error message
  */
-wcmf.Error.show = function(text) {
+Error.show = function(text) {
   dojo.style("error", "visibility", "visible");
   dojo.byId('errorMessage').innerHTML = text;
-  dojo.fadeIn({
+  fx.wipeIn({
     node: "error",
-    duration: 300,
-    end: 0.75
+    duration: 0
   }).play();
+  Error.visible = true;
 };
 
 /**
  * Hide the error message.
  */
-wcmf.Error.hide = function() {
-  dojo.fadeOut({
-    node: "error",
-    duration: 1
-  }).play();
+Error.hide = function() {
+  if (Error.visible) {
+    fx.wipeOut({
+        node: "error",
+        duration: 0
+    }).play();
+    Error.visible = false;
+  }
 };
 
+return Error;
+});
 
 dojo.addOnLoad(function() {
   if (dojo.byId('errorMessage').innerHTML.length == 0) {

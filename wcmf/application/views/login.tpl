@@ -1,6 +1,6 @@
 {extends file="lib:application/views/base.tpl"}
 
-{block name=head append}
+{block name=script append}
 <script type="text/javascript">
 {literal}
   dojo.addOnLoad(function() {
@@ -15,30 +15,35 @@
 {/block}
 
 {block name=center}
-<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
-  <div id="loginForm" class="wcmf_form">
+<form class="well form-horizontal" id="loginForm">
     <fieldset>
-      <legend>{translate text="Login"}</legend>
-      <ol>
-        <li>
-          <label for="user">{translate text="Login"}</label>
-          <input id="user" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='required:true, name:"user"'/>
-        </li>
-        <li>
-          <label for="password">{translate text="Password"}</label>
-          <input id="password" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='required:true, name:"password", type:"password"'/>
-        </li>
-        <li>
-          <label for="remember_me">{translate text="Remember me"}</label>
-          <input id="remember_me" data-dojo-type="dijit.form.CheckBox" data-dojo-props='name:"remember_me", value:"true", checked:false'/>
-        </li>
-      </ol>
+        <div class="control-group">
+            <label class="control-label" for="login">{translate text="Login name"}</label>
+            <div class="controls">
+                <input id="login" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='required:true, name:"user"' placeholder="{translate text="Login name"}">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="login">{translate text="Password"}</label>
+            <div class="controls">
+                <input id="password" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props='required:true, name:"password", type:"password"' placeholder="{translate text="Password"}">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="remember_me"></label>
+            <div class="controls">
+                <label class="checkbox">
+                    <input id="remember_me" type="checkbox" value="true"> {translate text="Remember me"}
+                </label>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="wcmf.Action.login(); return false;">{translate text="Log in"}</button>
+        </div>
     </fieldset>
-    <p>
-      <button dojoType="dijit.form.Button" type="button">{translate text="Log in"}
-        <script type="dojo/method" event="onClick" args="evt">wcmf.Action.login();</script>
-      </button>
-    </p>
-  </div>
-</div>
+
+</form>
 {/block}

@@ -1,3 +1,5 @@
+{header value="Content-Type: text/javascript"}
+
 {foreach $typeTemplates as $tpl}
 {$type=$tpl->getType()}
 dojo.provide("wcmf.model.{$type}Class");

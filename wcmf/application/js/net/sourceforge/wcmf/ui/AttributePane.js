@@ -95,7 +95,7 @@ dojo.declare("wcmf.ui.AttributePane", dojox.layout.ContentPane, {
     var deferred = new dojo.Deferred();
     if (!this.isDirty && !this.isNewNode) {
       // immediatly return, if we don't need to save
-      wcmf.persistence.Store.fetch(this.oid, this.language).then(function(item) {
+      wcmf.Action.read(this.oid, this.language).then(function(item) {
         deferred.callback(item);
       });
     }
@@ -106,7 +106,7 @@ dojo.declare("wcmf.ui.AttributePane", dojox.layout.ContentPane, {
 
       if (!this.isNewNode) {
         // update the existing object in the store
-        wcmf.persistence.Store.fetch(this.oid, this.language).then(function(item) {
+        wcmf.Action.read(this.oid, this.language).then(function(item) {
           // use changing to issue one server request only
           store.changing(item);
           var values = self.getFieldValues();
@@ -165,7 +165,7 @@ dojo.declare("wcmf.ui.AttributePane", dojox.layout.ContentPane, {
   handleShowEvent: function() {
     if (!this.attributesLoaded && !this.isNewNode) {
       var self = this;
-      wcmf.persistence.Store.fetch(this.oid, this.language).then(function(item) {
+      wcmf.Action.read(this.oid, this.language).then(function(item) {
         self.setFieldValues(item);
         self.connectFieldChangeEvents();
       });

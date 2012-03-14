@@ -91,7 +91,6 @@ dojo.declare("wcmf.persistence.Request", null, {
         if (handleAs == 'json' && !response.success) {
           var errorMessage = response.errorMessage || wcmf.Message.get('Server error.');
           wcmf.Error.show(errorMessage);
-          promise.errback(errorMessage);
         }
         else {
           // call other callbacks

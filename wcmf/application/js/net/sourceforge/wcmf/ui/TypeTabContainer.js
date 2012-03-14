@@ -1,6 +1,7 @@
 dojo.provide("wcmf.ui.TypeTabContainer");
 
 dojo.require("dijit.layout.TabContainer");
+dojo.require("dijit.Toolbar");
 
 /**
  * @class TypeTabContainer
@@ -20,8 +21,14 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
   nodeTabContainer: null,
 
   /**
+   * Array of root type names
+   */
+  rootTypes: null,
+
+  /**
    * Constructor
    * @param options Parameter object
+   *    - rootTypes: Array of root type names
    *    + All options defined for dijit.layout.TabContainer
    */
   constructor: function(options) {
@@ -77,12 +84,9 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
   buildRendering: function() {
     this.inherited(arguments);
     // create NodeTabContainer instances for all root types
-    var allTypes = wcmf.model.meta.Model.getAllTypes();
-    for (var i=0, count=allTypes.length; i<count; i++) {
-      var curType = allTypes[i];
-      if (curType.isRootType) {
-        this.getNodeTabContainer(curType);
-      }
+    for (var i=0, count=this.rootTypes.length; i<count; i++) {
+      var curType = wcmf.model.meta.Model.getType(this.rootTypes[i]);
+      this.getNodeTabContainer(curType);
     }
   },
 
@@ -97,10 +101,10 @@ dojo.declare("wcmf.ui.TypeTabContainer", dijit.layout.TabContainer, {
  * @return wcmf.ui.TypeTabContainer
  */
 wcmf.ui.TypeTabContainer.getInstance = function() {
-  var typeTabContainer = dijit.byId("typeTabContainer");
+  var typeTabContainer = dijit.byId("typeTabContainerDiv");
   if (typeTabContainer instanceof wcmf.ui.TypeTabContainer) {
     return typeTabContainer;
   }
   throw "The application expects a wcmf.ui.TypeTabContainer attached to "+
-    "a div with id 'typeTabContainer'";
+    "a div with id 'typeTabContainerDiv'";
 }

@@ -18,6 +18,7 @@
  */
 require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
 require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
 require_once(WCMF_BASE."wcmf/lib/model/Node.php");
 require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
 require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
@@ -81,6 +82,7 @@ class DisplayController extends Controller
   {
     $persistenceFacade = PersistenceFacade::getInstance();
     $rightsManager = RightsManager::getInstance();
+    $concurrencyManager = ConcurrencyManager::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -94,6 +96,7 @@ class DisplayController extends Controller
         $buildDepth = $request->getValue('depth');
       }
       $node = $persistenceFacade->load($oid, $buildDepth);
+      $concurrencyManager->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $node);
 
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest())

@@ -1,19 +1,28 @@
 {extends file="lib:application/views/main.tpl"}
 
-{block name=head append}
-<script type="text/javascript" src="main.php?action=model"></script>
-{/block}
+{block name=script append}
+  <script type="text/javascript" src="main.php?action=model"></script>
+  <script type="text/javascript">
+  dojo.addOnLoad(function() {
 
-{block name=left}
-{*
-<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'leading', splitter:true, _splitterClass:dojox.layout.ToggleSplitter">
-  <!--div data-dojo-type="wcmf.ui.ObjectTree" id="objectTree" minSize="20" style="width:300px;"></div-->
-</div>
-*}
+    var rootTypes = [];
+  {configvalue key="rootTypes" section="cms" varname="rootTypes"}
+  {foreach $rootTypes as $rootType}
+    rootTypes.push("{$rootType}");
+  {/foreach}
+
+    // create TypeTabContainer instance
+    var typeTabContainer = new wcmf.ui.TypeTabContainer({
+      rootTypes: rootTypes,
+      style: "height: 530px; width: 100%;"
+    }, dojo.byId("typeTabContainerDiv"));
+    typeTabContainer.startup();
+  });
+  </script>
 {/block}
 
 {block name=center}
-<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
-  <div data-dojo-type="wcmf.ui.TypeTabContainer" id="typeTabContainer" style="width:50%; height:100%"></div>
-</div>
+  <div class="container">
+    <div id="typeTabContainerDiv"></div>
+  </div>
 {/block}

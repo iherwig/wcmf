@@ -1,7 +1,5 @@
-dojo.provide("wcmf.ui.NodeTabContainer");
-
-dojo.require("dijit.layout.ContentPane");
-dojo.require("dijit.layout.TabContainer");
+define(["dojo/_base/declare", "dijit/layout/ContentPane", "dijit/layout/TabContainer", "../ui/Grid"
+], function(declare, ContentPane, TabContainer, Grid) {
 
 /**
  * NodeTabContainer is a TabContainer that contains tab panels for objects
@@ -9,7 +7,7 @@ dojo.require("dijit.layout.TabContainer");
  * type. For each object a DetailPane instance is added as tab panel if
  * requested.
  */
-dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
+dojo.declare("wcmf.ui.NodeTabContainer", ContentPane, {
 
   /**
    * The wcmf.model.meta.Node instance which defines the type of this tab
@@ -188,14 +186,14 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     });
     this.createBtn = new dijit.form.Button({
       label: wcmf.Message.get("New"),
-      iconClass: "wcmfToolbarIcon wcmfToolbarIconCreate",
+      iconClass: "icon-plus-sign",
       onClick: function() {
         wcmf.Action.create(self.modelClass);
       }
     });
     this.saveBtn = new dijit.form.Button({
       label: wcmf.Message.get("Save"),
-      iconClass: "wcmfToolbarIcon wcmfToolbarIconSave",
+      iconClass: "icon-ok-sign",
       disabled: true,
       onClick: function() {
         var pane = self.getSelectedDetailPane();
@@ -206,7 +204,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     });
     this.deleteBtn = new dijit.form.Button({
       label: wcmf.Message.get("Delete"),
-      iconClass: "wcmfToolbarIcon wcmfToolbarIconDelete",
+      iconClass: "icon-remove-sign",
       disabled: true,
       onClick: function() {
         var pane = self.getSelectedDetailPane();
@@ -220,9 +218,11 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     toolbar.addChild(this.deleteBtn);
 
     // create the tab container
-    this.tabContainer = new dijit.layout.TabContainer({
+    this.tabContainer = new TabContainer({
       tabStrips: true,
       useMenu: true,
+      nested: true,
+      border: false,
       region: "center"
     });
     this.connect(this.tabContainer, "selectChild", this.handleSelectEvent);
@@ -231,7 +231,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     var mainPane = new dijit.layout.ContentPane({
       title: wcmf.Message.get("All")
     });
-    var mainGrid = new wcmf.ui.Grid({
+    var mainGrid = new Grid({
       modelClass: this.modelClass,
       actions: [
         new wcmf.ui.GridActionEdit(),
@@ -246,6 +246,7 @@ dojo.declare("wcmf.ui.NodeTabContainer", dijit.layout.ContentPane, {
     layoutContainer.addChild(toolbar);
     layoutContainer.addChild(this.tabContainer);
     this.set('content', layoutContainer);
+    mainGrid.startup();
   },
 
   destroy: function() {
@@ -264,3 +265,6 @@ wcmf.ui.NodeTabContainer.get = function(oid) {
   var modelClass = wcmf.model.meta.Model.getTypeFromOid(oid);
   return typeTabContainer.getNodeTabContainer(modelClass);
 }
+
+return wcmf.ui.NodeTabContainer;
+});

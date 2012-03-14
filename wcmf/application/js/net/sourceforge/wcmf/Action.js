@@ -4,7 +4,7 @@ dojo.provide("wcmf.Action");
  * @class Action
  *
  * Action methods are to be used on buttons to change the application
- * state. Persistent operations do not directly interact with the
+ * state. Except for read persistent operations do not directly interact with the
  * persistent store, but with the appropriate ui elements.
  */
 dojo.declare("wcmf.Action", null, {
@@ -58,12 +58,7 @@ wcmf.Action.read = function(oid, language) {
     language = wcmf.defaultLanguage;
   }
   // load the object
-  new wcmf.persistence.Request().sendAjax({
-    action: 'read',
-    oid: oid,
-    language: language,
-    responseFormat: 'json'
-  }).then(function(item) {
+  wcmf.persistence.Store.fetch(oid, language).then(function(item) {
     // do nothing on success
     deferred.callback(item);
   }, function(errorMsg) {

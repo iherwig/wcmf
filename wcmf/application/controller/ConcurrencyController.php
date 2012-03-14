@@ -65,7 +65,6 @@ class ConcurrencyController extends Controller
    */
   function executeKernel()
   {
-    // TODO aquire lock depending on configured locking strategy
     $concurrencyManager = ConcurrencyManager::getInstance();
     $oid = $this->_request->getValue('oid');
 

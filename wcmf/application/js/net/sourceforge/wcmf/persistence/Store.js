@@ -1,125 +1,92 @@
-dojo.provide("wcmf.persistence.Store");
-
-dojo.require("dojox.data.JsonRestStore");
-dojo.require("dojo.DeferredList");
+define(["dojo/_base/declare", "dojo/store/Observable", "./DionysosServiceAdapter"
+], function(declare, Observable, ServiceAdapter) {
 
 /**
- * @class Store This class represents the client side object repository.
- * There is one store for each type. Store uses wcmf.DionysosService to exchange
- * objects and their modifications with the server.
+ * @class Store This class represents the client side object repository,
+ * that uses a wcmf.persistence.ServiceAdapter instance to communicate with a server.
+ * There is one store for each type.
  */
-dojo.declare("wcmf.persistence.Store", dojox.data.JsonRestStore, {
-  // we call the base class constructor manually
-  "-chains-": {
-    constructor: "manual"
-  },
+declare("wcmf.persistence.Store", null, {
 
   /**
    * The wcmf.mode.meta.Node instance that describes objects of this store
    */
   modelClass: null,
+
   /**
    * The language of the objects of this store
    */
   language: null,
-  /**
-   * The identifier attribute of the contained objects
-   */
-  idAttribute: "oid",
+
   /**
    * The Service implementation
    */
-  serviceImpl: null,
+  serviceAdapter: null,
+
+  /**
+   * @see dojo.store.api.Store.idProperty
+   */
+  idProperty: "oid",
 
   /**
    * Constructor
    * @param options Parameter object:
-   *    - modelClass The class definition of the entities this store contains
-   *    - language The language of the objects of this store
-   *    + All other options defined for dojox.data.JsonRestStore
+   *  - modelClass The class definition of the entities this store contains
+   *  - language The language of the objects of this store
    */
   constructor: function(options) {
     this.modelClass = options.modelClass;
     this.language = options.language;
-    this.serviceImpl = new wcmf.persistence.DionysosService(this.modelClass,
-      this.language);
-
-    dojo.mixin(this, {
-      target: this.serviceImpl.getServiceUrl(),
-      service: this.serviceImpl.getServiceFunction(),
-      cacheByDefault: true,
-      clearOnClose: true
-    }, options);
-
-    this.inherited(arguments);
-
-/*
-    // autosave
-    dojo.connect(this, "onSet", this, function(item, attribute) {
-      this.save();
-    });
-*/
-  },
-
-  getLabel: function(item) {
-    var label = '';
-    var displayValues = this.getLabelAttributes(item);
-    for (var i=0, count=displayValues.length; i<count; i++) {
-      label += item[displayValues[i]] + " ";
-    }
-    label = dojo.trim(label);
-    if (label.length == 0) {
-      label = item.oid;
-    }
-    return label;
-  },
-
-  getLabelAttributes: function(item) {
-    return this.modelClass.displayValues;
+    this.serviceAdapter = new ServiceAdapter(
+      this.modelClass,
+      this.language
+    );
   },
 
   /**
-   * Overriden in order to set the item's oid after it has been committed.
+   * @see dojo.store.api.Store.get
    */
-  save: function(kwArgs) {
-    // remove the callbacks and re-add them later in order
-    // to make sure that our callbacks are called first
-    var onComplete = null;
-    var onError = null;
-    if (kwArgs) {
-      onComplete = kwArgs.onComplete;
-      onError = kwArgs.onError;
-      delete kwArgs.onComplete;
-      delete kwArgs.onError;
-    }
-    var defs = [];
-    var actions = this.inherited(arguments);
-    for(var i=0; i<actions.length; i++) {
-      // need to update the item's oid after it has been committed
-      (function(item, dfd) {
-        dfd.then(function(result) {
-          if(result) {
-            item.oid = result.oid;
-          }
-          return result;
-        }, function(error) {
-          return error;
-        });
-      })(actions[i].content, actions[i].deferred);
-      defs.push(actions[i].deferred);
-    }
-    // add the given callbacks to the callback of a deferred list
-    var dl = new dojo.DeferredList(defs, false, true/* reject on first error */);
-    dl.promise.then(function(result) {
-        if (onComplete instanceof Function) {
-          onComplete.call(kwArgs.scope, result[1]);
-        }
-      }, function(error) {
-        if (onError instanceof Function) {
-          onError.call(kwArgs.scope, error);
-        }
-      }
-    );
+  get: function(id) {
+    return this.serviceAdapter.get(id);
+  },
+
+  /**
+   * @see dojo.store.api.Store.getIdentity
+   */
+  getIdentity: function(object) {
+    return object[this.idProperty];
+  },
+
+  /**
+   * @see dojo.store.api.Store.put
+   */
+  put: function(object, directives){
+    directives = directives || {};
+    directives.id = ("id" in directives) ? directives.id : this.getIdentity(object);
+    return this.serviceAdapter.addOrUpdate(object, directives);
+  },
+
+  /**
+   * @see dojo.store.api.Store.add
+   */
+  add: function(object, directives){
+    directives = directives || {};
+    directives.overwrite = false;
+    return this.put(object, directives);
+  },
+
+  /**
+   * @see dojo.store.api.Store.remove
+   */
+  remove: function(id){
+    return this.serviceAdapter.remove(id);
+  },
+
+  /**
+   * @see dojo.store.api.Store.query
+   */
+  query: function(query, options){
+    return this.serviceAdapter.query(query, options);
   }
 });
 
@@ -139,10 +106,15 @@ wcmf.persistence.Store.getStore = function(modelClass, language) {
       }
       if (store == undefined) {
         // create stores only for known model classes
+        // our store is a dojo.data.store
         store = new wcmf.persistence.Store({
           modelClass: modelClass,
           language: language
         });
+        // wrap dojo.data.store for usage with object store consumers
+        //store = new dojo.store.DataStore({store: store});
+        // add observable interface
+        store = Observable(store);
         if (wcmf.persistence.Store.stores[modelClass.name] == undefined) {
           wcmf.persistence.Store.stores[modelClass.name] = {};
         }
@@ -186,3 +158,6 @@ wcmf.persistence.Store.fetch = function(oid, language) {
  * Store registry.
  */
 wcmf.persistence.Store.stores = {};
+
+return wcmf.persistence.Store;
+});

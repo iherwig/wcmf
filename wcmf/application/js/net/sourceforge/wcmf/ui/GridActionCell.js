@@ -39,7 +39,7 @@ dojo.declare("wcmf.ui.GridActionCell", null, {
  * This class calls the wcmf.Action.edit method on the current item
  */
 dojo.declare("wcmf.ui.GridActionEdit", wcmf.ui.GridActionCell, {
-  iconClass: "wcmfToolbarIconEdit",
+  iconClass: "icon-pencil",
   action: function(item) {
     wcmf.Action.edit(item.oid);
   }
@@ -49,7 +49,7 @@ dojo.declare("wcmf.ui.GridActionEdit", wcmf.ui.GridActionCell, {
  * This class calls the wcmf.Action.remove method on the current item
  */
 dojo.declare("wcmf.ui.GridActionDelete", wcmf.ui.GridActionCell, {
-  iconClass: "wcmfToolbarIconDelete",
+  iconClass: "icon-remove-sign",
   action: function(item) {
     wcmf.Action.remove(item.oid);
   }
@@ -59,7 +59,7 @@ dojo.declare("wcmf.ui.GridActionDelete", wcmf.ui.GridActionCell, {
  * This class calls the wcmf.Action.disassociate method on the current item
  */
 dojo.declare("wcmf.ui.GridActionDisassociate", wcmf.ui.GridActionCell, {
-  
+
   /**
    * The object id of the source object (not given as item action parameter)
    */
@@ -82,7 +82,7 @@ dojo.declare("wcmf.ui.GridActionDisassociate", wcmf.ui.GridActionCell, {
       // no defaults
     }, options);
   },
-  
+
   iconClass: "wcmfToolbarIconDisassociate",
   action: function(item) {
     wcmf.Action.disassociate(this.sourceOid, item.oid, this.role);

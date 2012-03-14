@@ -178,7 +178,7 @@ define('ATTRIBUTE_NAME_INVALID', serialize(array('ATTRIBUTE_NAME_INVALID',
 define('ATTRIBUTE_VALUE_INVALID', serialize(array('ATTRIBUTE_VALUE_INVALID',
   Message::get('The attribute value passed is invalid for the attribute.'), ERROR_LEVEL_ERROR)));
 define('CONCURRENT_UPDATE', serialize(array('CONCURRENT_UPDATE',
-  Message::get('The server detected an concurrent update.'), ERROR_LEVEL_ERROR)));
+  Message::get('The server detected a concurrent update.'), ERROR_LEVEL_ERROR)));
 
 define('ROLE_INVALID', serialize(array('ROLE_INVALID',
   Message::get('The role passed cannot be found in the selected source class.'), ERROR_LEVEL_ERROR)));

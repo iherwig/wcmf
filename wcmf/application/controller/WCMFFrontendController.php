@@ -42,7 +42,6 @@ require_once(WCMF_BASE."wcmf/lib/util/Log.php");
  * @param[out] object The requested object loaded with BUILDDEPTH_SINGLE, if an oid is given, same as typeTemplate else (action: detail)
  * @param[out] typeTemplates A list of instances of all known types (action: model)
  * @param[out] isNew Boolean indicating if the object exists or not (action: model)
- * @param[out] rootTypeTemplates A list of instances of all root types
  *
  * @author ingo herwig <ingo@wemove.com>
  */

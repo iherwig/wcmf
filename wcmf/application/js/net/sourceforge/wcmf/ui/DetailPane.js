@@ -123,16 +123,28 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
 
     // create a deferred list to wait for all panels to save
     var deferredList = new dojo.DeferredList(deferredArray);
-    deferredList.addCallback(function(result) {
-      // NOTE: the callback parameter is an array of results which contains
-      // localized items, but since we are only interested in the oid,
-      // this doesn't matter
-      var item = result[0][1];
-      self.afterSave(item);
-      deferred.callback(item);
-    });
-    deferredList.addErrback(function(errorData) {
-      deferred.errback(errorData);
+    deferredList.promise.then(function(results) {
+      // check if an error occured
+      var validItem = null;
+      for (var i=0, count=results.length; i<count; i++) {
+        var curResult = results[i];
+        if (curResult[0] == false) {
+          deferred.errback(curResult[1]);
+          return;
+        }
+        else {
+          validItem = curResult[1];
+        }
+      }
+      if (validItem) {
+        // NOTE: the callback parameter is an array of results which contains
+        // localized items, but since we are only interested in the oid,
+        // this doesn't matter
+        self.afterSave(validItem);
+        deferred.callback(validItem);
+      }
+    }, function(error) {
+      deferred.errback(error);
     });
 
     return deferred.promise;
@@ -274,7 +286,7 @@ dojo.declare("wcmf.ui.DetailPane", dojox.layout.ContentPane, {
     // set the title, if the object existed already
     var self = this;
     if (!this.isNewNode) {
-      wcmf.persistence.Store.fetch(self.oid, wcmf.defaultLanguage).then(function(item) {
+      wcmf.Action.read(self.oid, wcmf.defaultLanguage).then(function(item) {
         var store = self.getStore();
         self.setTitle(store.getLabel(item));
       });
