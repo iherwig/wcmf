@@ -1,19 +1,24 @@
 {extends file="lib:application/views/base.tpl"}
 
 {block name=navigation}
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">{translate text="CMS"}</a></li>
-              <li><a href="#administration">{translate text="Administration"}</a></li>
-              <li class="divider-vertical"></li>
-              <li><a href="#" onclick="wcmf.Action.logout();">{translate text="Logout"}</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="active"><a href="#">{translate text="Home"}</a></li>
+          <li><a href="#" onclick="wcmf.Action.browseResources();">{translate text="Media Pool"}</a></li>
+          <form class="navbar-search pull-left">
+            <input type="text" class="search-query" placeholder="Search">
+          </form>
+        </ul>
+        <ul class="nav pull-right">
+          <li><a href="#">{translate text="Administration"}</a></li>
+          <li><a href="#" onclick="wcmf.Action.logout();">{translate text="Logout"}</a></li>
+        </ul>
+     </div>
 {/block}
 
 {*block name=navigation}

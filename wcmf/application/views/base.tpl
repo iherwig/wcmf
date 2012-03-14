@@ -43,7 +43,7 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">wCMF</a>
+          <a class="brand" href="#">{configvalue key="applicationTitle" section="cms"}</a>
 {block name=navigation}{/block}
         </div>
       </div>
@@ -55,12 +55,18 @@
         <p id="errorMessage"></p>
       </div>
 {block name=center}{/block}
+      <hr>
+      <footer>
+        <p>
+          {if $authUser != null}{translate text="Logged in as %1% since %2%" r0=$authUser->getLogin() r1=$authUser->getLoginTime()}{/if}
+          <span class="wcmfLink">Powered by <a href="http://wcmf.sourceforge.net" target="_blank">wCMF</a></span>
+        </p>
+      </footer>
     </div> <!-- /container -->
 
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <!--script src="bootstrap/js/bootstrap.js"></script-->
 {block name=script}
     <script>
       /**
@@ -76,6 +82,8 @@
       } : {};
     </script>
     <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" data-dojo-config="parseOnLoad:false, isDebug:true"></script>
+    <script src="{$libDir}3rdparty/jquery/jquery.js"></script>
+    <script src="{$libDir}3rdparty/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="js.php?file={$libDir}application/js/net/sourceforge/wcmf/Message.js.php"></script>
     <script type="text/javascript">
       /**
