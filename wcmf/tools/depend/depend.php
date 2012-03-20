@@ -1,87 +1,78 @@
 <?php
 /**
- * This script extracts application messages from calls to Message::get
+ * This script extracts class dependencies by searching for
+ * - new Constructor()
+ * - Static::method()
+ * - extends Superclass {
+ * - (Typehint1 param1, Typehint2 param2
  */
 error_reporting(E_ERROR | E_PARSE);
 define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/I18nUtil.php");
+require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
-// read config file
-$parser = &InifileParser::getInstance();
-$parser->parseIniFile('config.ini', true);
+use wcmf\lib\io\FileUtil;
 
-// get config values
-$searchDir = getConfigValue("searchDir", "i18n", true);
-$localeDir = getConfigValue("localeDir", "cms", true);
-$languages = getConfigValue("languages", "i18n");
+getDependencies();
 
-$i18nUtil = new I18nUtil();
-
-// get messages from search directory
-$allMessages = $i18nUtil->getMessages($searchDir."/", "/\.php$|\.tpl$/");
-
-foreach ($languages as $language)
-{
-  // get translations from old array file (created with po2array.php), if existing
-  $messageFile = $localeDir.$language."/LC_MESSAGES/messages_".$language.".php";
-  if (file_exists($messageFile))
-    require($messageFile); // require_once does not work here !!!
-
-  // prepare message array
-  $messages = array();
-  foreach ($allMessages as $file => $fileMessages)
-    foreach ($fileMessages as $message)
-    {
-      if (!isset($messages[$message]))
-      {
-        $messages[$message] = array();
-        $messages[$message]['translation'] = ${"messages_$language"}[$message];
-        $messages[$message]['files'] = $file;
+function getDependencies() {
+  $exclude = '/\/3rdparty\/|\/templates_c\//';
+  $fileUtil = new FileUtil();
+  $files = $fileUtil->getFiles(WCMF_BASE, '/\.php$/', true, true);
+  foreach ($files as $file) {
+    if (!preg_match($exclude, $file)) {
+      $dependencies = getDependenciesFromFile($file);
+      echo "<br>\n".$file."<br>\n";
+      foreach ($dependencies as $dependency) {
+        $namespaces = searchClass($dependency);
+        $prefix = sizeof($namespaces) > 1 ? '? ' : '';
+        foreach ($namespaces as $ns) {
+          echo $prefix."use ".$ns."<br>\n";
+        }
       }
-      else
-        $messages[$message]['files'] .= ', '.$file;
     }
-  $messages = natcaseksort($messages);
-  Log::info($messages, "locale");
-
-  $languageParts = preg_split('/_/', $language);
-  $i18nUtil->createPOFile(getConfigValue("applicationTitle", "cms"),
-    getConfigValue("editor", "i18n"),
-    getConfigValue("email", "i18n"),
-    $languageParts[0],
-    $languageParts[1],
-    getConfigValue("charset", "i18n"),
-    "main", $messages);
-}
-exit;
-
-function natcaseksort($array)
-{
-  // Like ksort but uses natural sort instead
-  $keys = array_keys($array);
-  natcasesort($keys);
-
-  foreach ($keys as $k)
-   $new_array[$k] = $array[$k];
-
-  return $new_array;
+  }
 }
 
-function getConfigValue($key, $section, $isDirectory=false)
-{
-  $value = '';
-  $parser = &InifileParser::getInstance();
-  if (($value = $parser->getValue($key, $section)) === false)
-    Log::error($parser->getErrorMsg(), "locale");
+function getDependenciesFromFile($file) {
+  $result = array();
+  if (file_exists($file)) {
+    $fh = fopen($file, "r");
+    $content = fread($fh, filesize ($file));
+    fclose($fh);
 
-  // add slash
-  if ($isDirectory && substr($value, -1) != '/')
-    $value .= '/';
+    preg_match_all('/\s+new\s+(\w+?)\(\)|\s+(\w+?)::.*?\(|extends\s+(\w+?)\s*\{|[\(,]\s*(\w+)\s+/i', $content, $matchesTmp);
+    $matches = array();
+    $excludes = array('', 'parent', 'self');
+    foreach(array_merge($matchesTmp[1], $matchesTmp[2], $matchesTmp[3], $matchesTmp[4]) as $match) {
+      if (!in_array($match, $excludes) && !in_array($match, $matches)) {
+        $matches[] = $match;
+      }
+    }
+    if (sizeof($matches) > 0) {
+      $result = $matches;
+    }
+  }
+  return $result;
+}
 
-  return $value;
+function searchClass($name) {
+  static $foundNamespaces = array();
+  if (!isset($foundNamespaces[$name])) {
+    $namespaces = array();
+    $fileUtil = new FileUtil();
+    $files = $fileUtil->getFiles(WCMF_BASE, '/\.php$/', true, true);
+    foreach ($files as $file) {
+      if (preg_match('/\/'.$name.'\.php$/', $file)) {
+        $usage = str_replace(WCMF_BASE, '', $file);
+        $usage = str_replace('.php', '', $usage);
+        $usage = str_replace('/', '\\', $usage);
+        $namespaces[] = $usage;
+      }
+    }
+    $foundNamespaces[$name] = $namespaces;
+  }
+  return $foundNamespaces[$name];
 }
 ?>
