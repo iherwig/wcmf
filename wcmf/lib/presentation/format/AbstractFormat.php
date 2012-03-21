@@ -27,8 +27,8 @@ use wcmf\lib\persistence\PersistenceFacade;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class AbstractFormat implements IFormat
-{
+abstract class AbstractFormat implements IFormat {
+
   private $_deserializedNodes = array();
 
   /**
@@ -37,14 +37,11 @@ abstract class AbstractFormat implements IFormat
    * @param oid The oid
    * @return A reference to the Node instance
    */
-  protected function getNode(ObjectId $oid)
-  {
-    if (!isset($this->_deserializedNodes[$oid]))
-    {
+  protected function getNode(ObjectId $oid) {
+    if (!isset($this->_deserializedNodes[$oid])) {
       $persistenceFacade = PersistenceFacade::getInstance();
       $type = $oid->getType();
-      if ($persistenceFacade->isKnownType($type))
-      {
+      if ($persistenceFacade->isKnownType($type)) {
         // don't create all values by default (-> don't use PersistenceFacade::create() directly, just for determining the class)
         $class = get_class($persistenceFacade->create($type, BUILDDEPTH_SINGLE));
         $node = new $class;
@@ -62,8 +59,7 @@ abstract class AbstractFormat implements IFormat
    * Get all serialized nodes
    * @return An array of Node references
    */
-  protected function getNodes()
-  {
+  protected function getNodes() {
     return $this->_deserializedNodes;
   }
 }

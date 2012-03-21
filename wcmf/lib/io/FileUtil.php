@@ -18,8 +18,6 @@
  */
 namespace wcmf\lib\io;
 
-use wcmf\lib\i18n\Message;
-
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\i18n\Message;

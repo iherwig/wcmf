@@ -1,0 +1,55 @@
+<?php
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace wcmf\lib\persistence\output;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\persistence\IOutputStrategy;
+use wcmf\lib\persistence\PersistentObject;
+
+
+/**
+ * DefaultOutputStrategy outputs an object's content to the Log category DefaultOutputStrategy.
+ * Classes used must implement the toString() method.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class DefaultOutputStrategy implements IOutputStrategy {
+
+  /**
+   * @see IOutputStrategy::writeHeader
+   */
+  public function writeHeader() {
+    Log::info("DOCUMENT START.", __CLASS__);
+  }
+
+  /**
+   * @see IOutputStrategy::writeFooter
+   */
+  public function writeFooter() {
+    Log::info("DOCUMENT END.", __CLASS__);
+  }
+
+  /**
+   * @see IOutputStrategy::writeObject
+   */
+  public function writeObject(PersistentObject $obj) {
+    Log::info($obj->toString(), __CLASS__);
+  }
+}
+?>

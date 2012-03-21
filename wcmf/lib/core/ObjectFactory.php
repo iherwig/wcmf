@@ -112,7 +112,7 @@ class ObjectFactory {
       $obj = new $className;
     }
     else {
-      throw new ConfigurationException("Class ".$className." is not found defined.");
+      throw new ConfigurationException("Class ".$className." is not found.");
     }
     return $obj;
   }

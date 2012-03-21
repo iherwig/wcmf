@@ -19,7 +19,7 @@
 namespace wcmf\lib\model\output;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\model\output\IOutputStrategy;
+use wcmf\lib\model\persistence\IOutputStrategy;
 
 /**
  * DotOutputStrategy outputs an object's content in a dot file.
@@ -65,7 +65,7 @@ class DotOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeHeader
+   * @see IOutputStrategy::writeHeader
    */
   public function writeHeader() {
     // check if file exists and is locked
@@ -93,7 +93,7 @@ class DotOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeFooter
+   * @see IOutputStrategy::writeFooter
    */
   public function writeFooter() {
     if ($this->_fileOk) {
@@ -104,9 +104,9 @@ class DotOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeObject
+   * @see IOutputStrategy::writeObject
    */
-  public function writeObject($obj) {
+  public function writeObject(PersistentObject $obj) {
     if (!$obj->getProperty('nodeIndex')) {
       $obj->setProperty('nodeIndex', $this->getNextIndex());
     }

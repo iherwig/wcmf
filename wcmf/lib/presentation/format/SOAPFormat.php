@@ -36,29 +36,27 @@ define("MSG_FORMAT_SOAP", "SOAP");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SOAPFormat extends HierarchicalFormat
-{
+class SOAPFormat extends HierarchicalFormat {
+
   /**
    * @see HierarchicalFormat::isSerializedNode()
    */
-  protected function isSerializedNode($value)
-  {
+  protected function isSerializedNode($value) {
     return ObjectID::isValid($value);
   }
 
   /**
    * @see HierarchicalFormat::serializeNode()
    */
-  protected function serializeNode($value)
-  {
+  protected function serializeNode($value) {
     // use NodeSerializer to serialize
     return NodeSerializer::serializeNode($value);
   }
+
   /**
    * @see HierarchicalFormat::deserializeNode()
    */
-  protected function deserializeNode($value)
-  {
+  protected function deserializeNode($value) {
     $oidStr = $key;
     $oid = ObjectId::parse($oidStr);
     if ($oid == null) {
@@ -76,5 +74,5 @@ class SOAPFormat extends HierarchicalFormat
 }
 
 // register this format
-Formatter::registerFormat(MSG_FORMAT_SOAP, "SOAPFormat");
+Formatter::registerFormat(MSG_FORMAT_SOAP, __NAMESPACE__.SOAPFormat);
 ?>

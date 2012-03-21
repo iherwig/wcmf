@@ -46,22 +46,19 @@ define("MSG_FORMAT_HTML", "HTML");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class HTMLFormat extends AbstractFormat
-{
+class HTMLFormat extends AbstractFormat {
+
   /**
    * @see IFormat::deserialize()
    */
-  public function deserialize(Request $request)
-  {
+  public function deserialize(Request $request) {
     // construct nodes from values serialized as form fields
     // nodes are encoded in separated fields with names value-<name>-<oid>
     $data = $request->getValues();
     $nodeValues = array();
-    foreach ($data as $key => $value)
-    {
+    foreach ($data as $key => $value) {
       $valueDef = Control::getValueDefFromInputControlName($key);
-      if ($valueDef != null && strlen($valueDef['oid']) > 0)
-      {
+      if ($valueDef != null && strlen($valueDef['oid']) > 0) {
         $node = &$this->getNode($valueDef['oid']);
         $node->setValue($valueDef['name'], $value);
         array_push($nodeValues, $key);
@@ -77,15 +74,14 @@ class HTMLFormat extends AbstractFormat
       $request->setValue($oid, $deserializedNodes[$oid]);
     }
   }
+
   /**
    * @see IFormat::serialize()
    */
-  public function serialize(Response $response)
-  {
+  public function serialize(Response $response) {
     // assign the data to the view if one exists
     $controller = $response->getController();
-    if ($controller->hasView())
-    {
+    if ($controller->hasView()) {
       // check if a view template is defined
       $request = $controller->getRequest();
       $viewTpl = self::getViewTemplate($response->getSender(),
@@ -100,8 +96,7 @@ class HTMLFormat extends AbstractFormat
 
       // assign the response data to the view
       $data = $response->getValues();
-      foreach (array_keys($data) as $variable)
-      {
+      foreach (array_keys($data) as $variable) {
         if (is_scalar($data[$variable])) {
           $view->assign($variable, $data[$variable]);
         }
@@ -127,6 +122,7 @@ class HTMLFormat extends AbstractFormat
       }
     }
   }
+
   /**
    * Get the template filename for the view from the configfile.
    * @param controller The name of the controller
@@ -134,8 +130,7 @@ class HTMLFormat extends AbstractFormat
    * @param action The name of the action
    * @return The filename of the template or false, if no view is defined
    */
-  protected static function getViewTemplate($controller, $context, $action)
-  {
+  protected static function getViewTemplate($controller, $context, $action) {
     $view = '';
     $parser = WCMFInifileParser::getInstance();
     $actionKey = $parser->getBestActionKey('views', $controller, $context, $action);
@@ -149,5 +144,5 @@ class HTMLFormat extends AbstractFormat
 }
 
 // register this format
-Formatter::registerFormat(MSG_FORMAT_HTML, "HTMLFormat");
+Formatter::registerFormat(MSG_FORMAT_HTML, __NAMESPACE__.HTMLFormat);
 ?>

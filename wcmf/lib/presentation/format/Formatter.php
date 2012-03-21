@@ -30,8 +30,8 @@ use wcmf\lib\presentation\Response;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Formatter
-{
+class Formatter {
+
   private static $_formats = array();
 
   /**
@@ -41,25 +41,23 @@ class Formatter
    * @param formatName The name of the format as used in requests/responses (case insensitive)
    * @param className The name of the implementation class
    */
-  public static function registerFormat($formatName, $className)
-  {
+  public static function registerFormat($formatName, $className) {
     $impl = new $className;
     if (!($impl instanceof IFormat)) {
       throw new ConfigurationException($className." must implement IFormat.");
     }
     self::$_formats[strtolower($formatName)] = $className;
   }
+
   /**
    * Deserialize Request data into objects.
    * @note UTF-8 encoded request data is decoded automatically
    * @param request A reference to the Request instance
    */
-  public static function deserialize(Request $request)
-  {
+  public static function deserialize(Request $request) {
     // get the formatter that should be used for this request format
     $format = $request->getFormat();
-    if ($format == null || strlen($format) == 0)
-    {
+    if ($format == null || strlen($format) == 0) {
       // default to html (POST/GET variables) format
       $format = MSG_FORMAT_HTML;
     }
@@ -71,8 +69,7 @@ class Formatter
 
     // decode UTF-8
     $data = $request->getValues();
-    foreach ($data as $key => $value)
-    {
+    foreach ($data as $key => $value) {
       if (is_string($value) && EncodingUtil::isUtf8($value)) {
         $data[$key] = EncodingUtil::convertCp1252Utf8ToIso($value);
       }
@@ -81,16 +78,15 @@ class Formatter
 
     $formatter->deserialize($request);
   }
+
   /**
    * Serialize Response according to the output format.
    * @param response A reference to the Response instance
    */
-  public static function serialize(Response $response)
-  {
+  public static function serialize(Response $response) {
     // get the formatter that should be used for this response format
     $format = $response->getFormat();
-    if ($format == null)
-    {
+    if ($format == null) {
       // the response format must be given!
       throw new ConfigurationException("No response format defined for ".$response->__toString());
     }
@@ -101,13 +97,13 @@ class Formatter
     }
     $formatter->serialize($response);
   }
+
   /**
    * Get the format implementation
    * @param formatName The name of the format
    * @return An instance of an IFormat implementation
    */
-  private static function getFormatImplementation($formatName)
-  {
+  private static function getFormatImplementation($formatName) {
     $formatName = strtolower($formatName);
     if (isset(self::$_formats[$formatName])) {
       return new self::$_formats[$formatName];

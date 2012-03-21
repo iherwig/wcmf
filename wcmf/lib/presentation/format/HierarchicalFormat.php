@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation\format;
 
 use wcmf\lib\io\EncodingUtil;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\AbstractFormat;
@@ -32,37 +33,36 @@ use wcmf\lib\presentation\format\IFormat;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class HierarchicalFormat extends AbstractFormat
-{
+abstract class HierarchicalFormat extends AbstractFormat {
+
   /**
    * @see IFormat::deserialize()
    */
-  public function deserialize(Request $request)
-  {
+  public function deserialize(Request $request) {
     $values = $request->getValues();
     $values = $this->beforeDeserialize($values);
     $values = $this->deserializeValues($values);
     $values = $this->afterDeserialize($values);
     $request->setValues($values);
   }
+
   /**
    * @see IFormat::serialize()
    */
-  public function serialize(Response $response)
-  {
+  public function serialize(Response $response) {
     $values = $response->getValues();
     $values = $this->beforeSerialize($values);
     $values = $this->serializeValues($values);
     $values = $this->afterSerialize($values);
     $response->setValues($values);
   }
+
   /**
    * Deserialize an array of values.
    * @param values The array/object of values
    *
    */
-  protected function deserializeValues($values)
-  {
+  protected function deserializeValues($values) {
     if ($this->isSerializedNode($values)) {
       // the values represent a node
       $result = $this->deserializeNode($values);
@@ -95,12 +95,12 @@ abstract class HierarchicalFormat extends AbstractFormat
     }
     return $values;
   }
+
   /**
    * Serialize an array of values.
    * @param values The array/object of values
    */
-  protected function serializeValues($values)
-  {
+  protected function serializeValues($values) {
     if ($this->isDeserializedNode($values)) {
       // the values represent a node
       $values = $this->serializeNode($values);
@@ -126,7 +126,7 @@ abstract class HierarchicalFormat extends AbstractFormat
       }
     }
     return $values;
-}
+  }
 
   /**
    * Template methods
@@ -138,38 +138,37 @@ abstract class HierarchicalFormat extends AbstractFormat
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function beforeDeserialize(array $values)
-  {
+  protected function beforeDeserialize(array $values) {
     return $values;
   }
+
   /**
    * Modify data after deserialization. The default implementation does nothing.
    * @param values The request values
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function afterDeserialize(array $values)
-  {
+  protected function afterDeserialize(array $values) {
     return $values;
   }
+
   /**
    * Modify data before serialization. The default implementation does nothing.
    * @param values The response values
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function beforeSerialize(array $values)
-  {
+  protected function beforeSerialize(array $values) {
     return $values;
   }
+
   /**
    * Modify data after serialization. The default implementation does nothing.
    * @param values The response values
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
-  protected function afterSerialize(array $values)
-  {
+  protected function afterSerialize(array $values) {
     return $values;
   }
 
@@ -180,10 +179,10 @@ abstract class HierarchicalFormat extends AbstractFormat
    * @return True/False
    * @note Subclasses override this if necessary
    */
-  protected function isSerializedNode($value)
-  {
+  protected function isSerializedNode($value) {
     return false;
   }
+
   /**
    * Determine if the value is a deserialized Node. The default
    * implementation checks if the value is an object of type Node.
@@ -191,8 +190,7 @@ abstract class HierarchicalFormat extends AbstractFormat
    * @return True/False
    * @note Subclasses override this if necessary
    */
-  protected function isDeserializedNode($value)
-  {
+  protected function isDeserializedNode($value) {
     return ($value instanceof Node);
   }
 

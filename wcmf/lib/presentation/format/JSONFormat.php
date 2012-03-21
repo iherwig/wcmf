@@ -36,25 +36,6 @@ define("MSG_FORMAT_JSON", "JSON");
  */
 $GLOBALS['gJSONData'] = array();
 $GLOBALS['gJSONUsed'] = false;
-function gPrintJSONResult()
-{
-  if ($GLOBALS['gJSONUsed'])
-  {
-    $data = $GLOBALS['gJSONData'];
-    if ($data != null)
-    {
-      $encoded = json_encode($data);
-      if (Log::isDebugEnabled('JSONFormat'))
-      {
-        Log::debug($data, 'JSONFormat');
-        Log::debug($encoded, 'JSONFormat');
-      }
-      header("Content-Type: application/json");
-      print($encoded);
-    }
-  }
-}
-register_shutdown_function('gPrintJSONResult');
 
 /**
  * JSONFormat realizes the JSON request/response format. All data will
@@ -65,13 +46,27 @@ register_shutdown_function('gPrintJSONResult');
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class JSONFormat extends HierarchicalFormat
-{
+class JSONFormat extends HierarchicalFormat {
+
+  protected static function printJSONResult() {
+    if ($GLOBALS['gJSONUsed']) {
+      $data = $GLOBALS['gJSONData'];
+      if ($data != null) {
+        $encoded = json_encode($data);
+        if (Log::isDebugEnabled('JSONFormat')) {
+          Log::debug($data, 'JSONFormat');
+          Log::debug($encoded, 'JSONFormat');
+        }
+        header("Content-Type: application/json");
+        print($encoded);
+      }
+    }
+  }
+
   /**
    * @see HierarchicalFormat::afterSerialize()
    */
-  protected function afterSerialize(array $values)
-  {
+  protected function afterSerialize(array $values) {
     // TODO: check if merging is required for multiple actions
     /*
     // merge data into global data array
@@ -86,8 +81,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::isSerializedNode()
    */
-  protected function isSerializedNode($value)
-  {
+  protected function isSerializedNode($value) {
     // use NodeSerializer to test
     return NodeSerializer::isSerializedNode($value);
   }
@@ -95,8 +89,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::serializeNode()
    */
-  protected function serializeNode($value)
-  {
+  protected function serializeNode($value) {
     // use NodeSerializer to serialize
     $node = NodeSerializer::serializeNode($value);
     return $node;
@@ -105,8 +98,7 @@ class JSONFormat extends HierarchicalFormat
   /**
    * @see HierarchicalFormat::deserializeNode()
    */
-  protected function deserializeNode($value)
-  {
+  protected function deserializeNode($value) {
     // use NodeSerializer to deserialize
     $result = NodeSerializer::deserializeNode($value);
     return $result;
@@ -114,5 +106,8 @@ class JSONFormat extends HierarchicalFormat
 }
 
 // register this format
-Formatter::registerFormat(MSG_FORMAT_JSON, "JSONFormat");
+Formatter::registerFormat(MSG_FORMAT_JSON, __NAMESPACE__.JSONFormat);
+
+// register the output method
+register_shutdown_function(array(__NAMESPACE__.JSONFormat, 'printJSONResult'));
 ?>

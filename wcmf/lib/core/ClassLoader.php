@@ -31,16 +31,15 @@ class ClassLoader {
    * Constructor.
    */
   public function __construct() {
-    spl_autoload_register(array($this, 'load'));
+    spl_autoload_register(array($this, 'load'), true, true);
   }
 
   private function load($className) {
-    // check if the class is contained in the wcmf namespace
-    if (strpos($className, 'wcmf') === 0) {
-      $filename = WCMF_BASE.str_replace("\\", "/", $className).'.php';
-      if (file_exists($filename)) {
-        include($filename);
-      }
+    // search under WCMF_BASE assuming that namespaces
+    // match directories
+    $filename = WCMF_BASE.str_replace("\\", "/", $className).'.php';
+    if (file_exists($filename)) {
+      include($filename);
     }
   }
 

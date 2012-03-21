@@ -71,7 +71,7 @@ class Application {
    * - Sets global variables
    * - Initialize the session and other main application classes
    * - Extracts the application parameters
-   * @param configPath The path where config files reside (as seen from main.php), optional [default: 'include/']
+   * @param configPath The path where config files reside (as seen from main.php), optional [default: 'config/']
    * @param mainConfigFile The main configuration file to use, optional [default: 'config.ini']
    * @param defaultController The controller to call if none is given in request parameters, optional [default: 'LoginController']
    * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
@@ -81,7 +81,7 @@ class Application {
    * TODO: return request instance, maybe use default parameters from a config section?
    * TODO: allow configPath array to search from different locations, simplifies inclusion
    */
-  public function initialize($configPath='include/', $mainConfigFile='config.ini',
+  public function initialize($configPath='config/', $mainConfigFile='config.ini',
     $defaultController='LoginController', $defaultContext='', $defaultAction='login',
     $defaultResponseFormat='HTML') {
 

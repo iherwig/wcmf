@@ -19,7 +19,7 @@
 namespace wcmf\lib\model\output;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\model\output\IOutputStrategy;
+use wcmf\lib\model\persistence\IOutputStrategy;
 
 /**
  * XMLOutputStrategy outputs an object's content in a xml file
@@ -63,7 +63,7 @@ class XMLOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeHeader
+   * @see IOutputStrategy::writeHeader
    */
   public function writeHeader() {
     // check if file exists and is locked
@@ -90,7 +90,7 @@ class XMLOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeFooter
+   * @see IOutputStrategy::writeFooter
    */
   public function writeFooter() {
     if ($this->_fileOk) {
@@ -105,9 +105,9 @@ class XMLOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeObject
+   * @see IOutputStrategy::writeObject
    */
-  public function writeObject($obj) {
+  public function writeObject(PersistentObject $obj) {
     if ($this->_fileOk) {
       $curIndent = $obj->getDepth();
       if ($curIndent < $this->_lastIndent) {
@@ -149,7 +149,7 @@ class XMLOutputStrategy implements IOutputStrategy {
    * @param curIndent The current indent.
    * @return The name of the opening tag
    */
-  protected function writeObjectContent($obj, $curIndent) {
+  protected function writeObjectContent(PersistentObject $obj, $curIndent) {
     // write object's content
     $elementName = $this->getElementName($obj);
 
@@ -188,7 +188,7 @@ class XMLOutputStrategy implements IOutputStrategy {
    * @param obj The object to write
    * @return The xml name of the element
    */
-  protected function getElementName($obj) {
+  protected function getElementName(PersistentObject $obj) {
     return $obj->getType();
   }
 
@@ -201,7 +201,7 @@ class XMLOutputStrategy implements IOutputStrategy {
    * @param value The value to write
    * @return The xml value
    */
-  protected function getElementValue($obj, $name, $value) {
+  protected function getElementValue(PersistentObject $obj, $name, $value) {
     return htmlspecialchars(preg_replace("/\r\n|\n\r|\n|\r/", "<br />", $value));
   }
 
@@ -211,7 +211,7 @@ class XMLOutputStrategy implements IOutputStrategy {
    * @param obj The object to write
    * @param name The name of the value
    */
-  protected function writeAttribute($obj, $name) {
+  protected function writeAttribute(PersistentObject $obj, $name) {
     $value = $obj->getValue($name);
     if ($value != '') {
       $value = $this->getAttributeValue($obj, $name, $value);
@@ -226,7 +226,7 @@ class XMLOutputStrategy implements IOutputStrategy {
    * @param name The name of the attribute
    * @return The xml name of the attribute
    */
-  protected function getAttributeName($obj, $name) {
+  protected function getAttributeName(PersistentObject $obj, $name) {
     return $name;
   }
 
@@ -239,7 +239,7 @@ class XMLOutputStrategy implements IOutputStrategy {
    * @param value The value to write
    * @return The xml value
    */
-  protected function getAttributeValue($obj, $name, $value) {
+  protected function getAttributeValue(PersistentObject $obj, $name, $value) {
     return htmlspecialchars(preg_replace("/\r\n|\n\r|\n|\r/", "<br />", $value));
   }
 }

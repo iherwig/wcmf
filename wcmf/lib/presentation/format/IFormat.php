@@ -29,8 +29,8 @@ use wcmf\lib\presentation\Response;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface IFormat
-{
+interface IFormat {
+
   /**
    * Deserialize Request data from the external representation into Nodes and scalars/arrays.
    * @param request A reference to the Request instance

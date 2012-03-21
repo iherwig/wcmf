@@ -18,7 +18,7 @@
  */
 namespace wcmf\lib\model\output;
 
-use wcmf\lib\model\output\IOutputStrategy;
+use wcmf\lib\model\persistence\IOutputStrategy;
 
 /**
  * ImageOutputStrategy outputs a tree of objects into an image file. It must be configured
@@ -86,7 +86,7 @@ class ImageOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeHeader
+   * @see IOutputStrategy::writeHeader
    */
   public function writeHeader() {
     // calculate bounding box
@@ -112,7 +112,7 @@ class ImageOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeFooter
+   * @see IOutputStrategy::writeFooter
    */
   public function writeFooter() {
     ImageString($this->_img,1,$this->_width-350,$this->_height-10,'wemove digital solutions. '.date ("l dS of F Y h:i:s A"),$this->_txtColor);
@@ -134,9 +134,9 @@ class ImageOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see OutputStrategy::writeObject
+   * @see IOutputStrategy::writeObject
    */
-  public function writeObject($obj) {
+  public function writeObject(PersistentObject $obj) {
     $oid = $obj->getOID();
     $x = $this->_map[$oid]->x * $this->_xscale - $this->_labelDim['left'] +  $this->_border;
     $y = $this->_map[$oid]->y * $this->_yscale - $this->_labelDim['top'] +  $this->_border;

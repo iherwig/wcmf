@@ -34,8 +34,8 @@ define("MSG_FORMAT_NULL", "NULL");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullFormat implements IFormat
-{
+class NullFormat implements IFormat {
+
   /**
    * @see IFormat::deserialize()
    */
@@ -48,5 +48,5 @@ class NullFormat implements IFormat
 }
 
 // register this format
-Formatter::registerFormat(MSG_FORMAT_NULL, "NullFormat");
+Formatter::registerFormat(MSG_FORMAT_NULL, __NAMESPACE__.NullFormat);
 ?>

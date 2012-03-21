@@ -19,6 +19,9 @@
 namespace wcmf\lib\model\mapper;
 
 use \Exception;
+use \PDO;
+use \Zend_Db;
+
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\model\mapper\RDBMapper;
