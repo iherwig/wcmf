@@ -1,11 +1,33 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class ObjectIdTest extends PHPUnit_Framework_TestCase
-{
-  public function testSerialize()
-  {
+use wcmf\lib\persistence\ObjectId;
+
+/**
+ * NodeUnifiedRDBMapperTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class ObjectIdTest extends \PHPUnit_Framework_TestCase {
+
+  public function testSerialize() {
     // simple
     $oid = new ObjectId('UserRDB', 10);
     $this->assertEquals('UserRDB:10', $oid->__toString(), "The oid is 'UserRDB:10'");
@@ -15,8 +37,7 @@ class ObjectIdTest extends PHPUnit_Framework_TestCase
     $this->assertEquals('NMUserRole:10:11', $oid->__toString(), "The oid is 'NMUserRole:10:11'");
   }
 
-  public function testValidate()
-  {
+  public function testValidate() {
     // ok
     $oidStr = 'UserRDB:1';
     $this->assertTrue(ObjectId::isValid($oidStr), "'UserRDB:1' is valid");
@@ -30,8 +51,7 @@ class ObjectIdTest extends PHPUnit_Framework_TestCase
     $this->assertFalse(ObjectId::isValid($oidStr), "'UserRDB:1:2' is not valid");
   }
 
-  public function testParse()
-  {
+  public function testParse() {
     // simple
     $oid = ObjectId::parse('UserRDB:10');
     $id = $oid->getId();
@@ -43,8 +63,7 @@ class ObjectIdTest extends PHPUnit_Framework_TestCase
     $this->assertTrue($oid->getType() === 'NMUserRole' && is_array($id) && sizeof($id) === 2 && $id[0] === 10 && $id[1] === 11, "The oid is valid");
   }
 
-  public function testDummy()
-  {
+  public function testDummy() {
     // simple
     $oid = new ObjectId('UserRDB');
     $id = $oid->getId();

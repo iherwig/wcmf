@@ -14,34 +14,34 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: InsertControllerTest.php 998 2009-05-29 01:29:20Z iherwig $
+ * $Id$
  */
-require_once("lib/ControllerTestCase.php");
+namespace test\tests\controller;
+
+use test\lib\ControllerTestCase;
+use test\lib\TestUtil;
+use wcmf\lib\i18n\Localization;
 
 /**
- * @class InsertControllerTest
- * @ingroup test
- * @brief InsertControllerTest tests the InsertController.
+ * InsertControllerTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class InsertControllerTest extends ControllerTestCase
-{
+class InsertControllerTest extends ControllerTestCase {
+
   const TEST_TYPE = 'UserRDB';
   const TEST_CHILD_TYPE = 'Locktable';
   const TEST_NM_CHILD_TYPE = 'RoleRDB';
   const TEST_OID1 = 'UserRDB:0';
 
-  protected function getControllerName()
-  {
+  protected function getControllerName() {
     return 'InsertController';
   }
 
   /**
    * @group controller
    */
-  public function testInsert()
-  {
+  public function testInsert() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     // simulate a simple insert call with initial data
@@ -66,8 +66,7 @@ class InsertControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testInsertWithChild()
-  {
+  public function testInsertWithChild() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     TestUtil::createTestObject(InsertControllerTest::TEST_OID1);
@@ -95,8 +94,7 @@ class InsertControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testInsertWithManyToManyChild()
-  {
+  public function testInsertWithManyToManyChild() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     TestUtil::createTestObject(InsertControllerTest::TEST_OID1);
@@ -124,8 +122,7 @@ class InsertControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testInsertTranslation()
-  {
+  public function testInsertTranslation() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     // simulate a translate call

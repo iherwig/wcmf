@@ -1,11 +1,34 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/model/StringQuery.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class StringQueryTest extends PHPUnit_Framework_TestCase
-{
-  public function testSimple()
-  {
+use test\lib\TestUtil;
+use wcmf\lib\model\StringQuery;
+
+/**
+ * StringQueryTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class StringQueryTest extends \PHPUnit_Framework_TestCase {
+
+  public function testSimple() {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%'";
@@ -19,8 +42,7 @@ class StringQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testNoCondition()
-  {
+  public function testNoCondition() {
     TestUtil::runAnonymous(true);
 
     $query = new StringQuery('Author');
@@ -32,8 +54,7 @@ class StringQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testParentChild()
-  {
+  public function testParentChild() {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Page`.`name` LIKE 'Page 1%'";
@@ -48,8 +69,7 @@ class StringQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testParentChildSameType()
-  {
+  public function testParentChildSameType() {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Page`.`creator` LIKE '%ingo%' AND `ChildPage`.`name` LIKE 'Page 1%'";
@@ -66,8 +86,7 @@ class StringQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testChildParent()
-  {
+  public function testChildParent() {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`NormalPage`.`id` = 10";
@@ -82,8 +101,7 @@ class StringQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testChildParentSameType()
-  {
+  public function testChildParentSameType() {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`ParentPage`.`id` = 10";
@@ -99,8 +117,7 @@ class StringQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testManyToMany()
-  {
+  public function testManyToMany() {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Page`.`name` LIKE '%Page 1%' AND `Document`.`title` = 'Document'";
@@ -120,8 +137,7 @@ class StringQueryTest extends PHPUnit_Framework_TestCase
   /**
    * @expectedException IllegalArgumentException
    */
-  public function testAmbiguousRelation()
-  {
+  public function testAmbiguousRelation() {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Image`.`file` = 'image.jpg'";
@@ -138,8 +154,7 @@ class StringQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDifferentRoles()
-  {
+  public function testDifferentRoles() {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`filename` = 'image.jpg' ".

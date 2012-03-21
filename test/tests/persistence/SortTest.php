@@ -1,10 +1,34 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeSortkeyComparator.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class SortTest extends PHPUnit_Framework_TestCase
-{
+use test\lib\TestUtil;
+use wcmf\lib\model\NodeSortkeyComparator;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * SortTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class SortTest extends \PHPUnit_Framework_TestCase {
+
   private $_pageOidStr = 'Page:12345';
   private $_documentOid1Str = 'Document:123451';
   private $_documentOid2Str = 'Document:123452';
@@ -15,8 +39,7 @@ class SortTest extends PHPUnit_Framework_TestCase
   private $_pageOid3Str = 'Page:123456';
   private $_pageOidStrs = array();
 
-  protected function setUp()
-  {
+  protected function setUp() {
     $this->_documentOidStrs = array($this->_documentOid1Str, $this->_documentOid2Str, $this->_documentOid3Str);
     $this->_pageOidStrs = array($this->_pageOid1Str, $this->_pageOid2Str, $this->_pageOid3Str);
     TestUtil::runAnonymous(true);
@@ -36,8 +59,7 @@ class SortTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  protected function tearDown()
-  {
+  protected function tearDown() {
     TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
@@ -52,8 +74,7 @@ class SortTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDefaultOrder()
-  {
+  public function testDefaultOrder() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -64,8 +85,7 @@ class SortTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testImplicitOrderUpdateSimple()
-  {
+  public function testImplicitOrderUpdateSimple() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -96,8 +116,7 @@ class SortTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testImplicitOrderUpdateManyToMany()
-  {
+  public function testImplicitOrderUpdateManyToMany() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -128,8 +147,7 @@ class SortTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testImplicitOrderUpdateMixedType()
-  {
+  public function testImplicitOrderUpdateMixedType() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 

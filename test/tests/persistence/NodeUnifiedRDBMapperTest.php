@@ -1,20 +1,44 @@
 <?php
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-require_once(WCMF_BASE."application/include/model/PageRDBMapper.php");
-require_once(WCMF_BASE."application/include/model/AuthorRDBMapper.php");
-require_once(WCMF_BASE."application/include/model/ImageRDBMapper.php");
-require_once(WCMF_BASE."application/include/model/DocumentRDBMapper.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/Criteria.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/RelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/ReferenceDescription.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+use new_roles\app\model\Author;
+use new_roles\app\model\AuthorRDBMapper;
+use new_roles\app\model\DocumentRDBMapper;
+use new_roles\app\model\ImageRDBMapper;
+use new_roles\app\model\Page;
+use new_roles\app\model\PageRDBMapper;
 
-class NodeUnifiedRDBMapperTest extends PHPUnit_Framework_TestCase {
+use test\lib\TestUtil;
+use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
+
+/**
+ * NodeUnifiedRDBMapperTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
 
   protected $dbParams;
 
-  protected function setUp()
-  {
+  protected function setUp() {
     $this->dbParams = array('dbType' => 'mysql', 'dbHostName' => 'localhost',
         'dbUserName' => 'root', 'dbPassword' => '', 'dbName' => 'wcmf_newroles', 'dbPrefix' => '');
   }
@@ -232,5 +256,4 @@ class NodeUnifiedRDBMapperTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('DeleteOperation:type=Page,values=(),criteria=([AND] Page.id = 1)', $str);
   }
 }
-
 ?>

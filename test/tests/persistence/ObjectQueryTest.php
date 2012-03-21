@@ -1,13 +1,37 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/Criteria.php");
-require_once(WCMF_BASE."wcmf/lib/model/ObjectQuery.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class ObjectQueryTest extends PHPUnit_Framework_TestCase
-{
-  public function testSimple()
-  {
+use test\lib\TestUtil;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * ObjectQueryTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
+
+  public function testSimple() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
@@ -22,8 +46,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testOneNode()
-  {
+  public function testOneNode() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
@@ -42,8 +65,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testAttribs()
-  {
+  public function testAttribs() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
@@ -61,8 +83,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testOrderby()
-  {
+  public function testOrderby() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
@@ -76,8 +97,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testOneNodeRegistered()
-  {
+  public function testOneNodeRegistered() {
     TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -96,8 +116,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testParentChild()
-  {
+  public function testParentChild() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
@@ -115,8 +134,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testParentChildSameType()
-  {
+  public function testParentChildSameType() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Page');
@@ -136,8 +154,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testManyToMany()
-  {
+  public function testManyToMany() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Page');
@@ -157,8 +174,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testColumnNotEqualsAttribute()
-  {
+  public function testColumnNotEqualsAttribute() {
     TestUtil::runAnonymous(true);
 
     $oid = new ObjectId('UserRDB', array(2));
@@ -175,8 +191,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testSortManyToManyRelation()
-  {
+  public function testSortManyToManyRelation() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Page');
@@ -196,8 +211,7 @@ class ObjectQueryTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testComplex()
-  {
+  public function testComplex() {
     TestUtil::runAnonymous(true);
 
     /*

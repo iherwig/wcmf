@@ -14,33 +14,33 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: WCMFTestCase.php 998 2009-05-29 01:29:20Z iherwig $
+ * $Id$
  */
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+namespace test\lib;
+
+use test\lib\TestUtil;
+use wcmf\lib\presentation\Request;
+
 
 /**
- * @class ControllerTestCase
- * @ingroup test
- * @brief ControllerTestCase is a PHPUnit test case, that
+ * ControllerTestCase is a PHPUnit test case, that
  * serves as base class for test cases used for Controllers.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
-{
+abstract class ControllerTestCase extends \PHPUnit_Framework_TestCase {
+
   private $_sid = null;
 
   /**
    * Get the action name for this test.
    * @return The action name
    */
-  private function getAction()
-  {
+  private function getAction() {
     return 'test'.$this->getControllerName();
   }
 
-  protected function setUp()
-  {
+  protected function setUp() {
     // log into the application
     $this->_sid = TestUtil::startSession('admin', 'admin');
 
@@ -48,8 +48,7 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
     TestUtil::setConfigValue('??'.$this->getAction(), $this->getControllerName(), 'actionmapping');
   }
 
-  protected function tearDown()
-  {
+  protected function tearDown() {
     // log out
     TestUtil::endSession($this->_sid);
   }
@@ -59,8 +58,7 @@ abstract class ControllerTestCase extends PHPUnit_Framework_TestCase
    * @param data An associative array with additional key/value pairs for the Request instance
    * @return Response instance
    */
-  protected function runRequest($data)
-  {
+  protected function runRequest($data) {
     $request = new Request('TerminateController', '', $this->getAction(),
       array(
         'sid' => $this->_sid

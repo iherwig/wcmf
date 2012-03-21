@@ -14,32 +14,33 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: DisplayControllerTest.php 998 2009-05-29 01:29:20Z iherwig $
+ * $Id$
  */
-require_once("lib/ControllerTestCase.php");
+namespace test\tests\controller;
+
+use test\lib\ControllerTestCase;
+use test\lib\TestUtil;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\persistence\ObjectId;
 
 /**
- * @class DisplayControllerTest
- * @ingroup test
- * @brief DisplayControllerTest tests the DisplayController.
+ * DisplayControllerTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DisplayControllerTest extends ControllerTestCase
-{
+class DisplayControllerTest extends ControllerTestCase {
+
   const TEST_OID1 = 'UserRDB:0';
   const TEST_OID2 = 'Locktable:0';
 
-  protected function getControllerName()
-  {
+  protected function getControllerName() {
     return 'DisplayController';
   }
 
   /**
    * @group controller
    */
-  public function testSimpleDisplay()
-  {
+  public function testSimpleDisplay() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(DisplayControllerTest::TEST_OID1);
@@ -63,8 +64,7 @@ class DisplayControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testDisplayTranslation()
-  {
+  public function testDisplayTranslation() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(DisplayControllerTest::TEST_OID1);
@@ -95,8 +95,7 @@ class DisplayControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testDisplayTranslationOfReferencedObjects()
-  {
+  public function testDisplayTranslationOfReferencedObjects() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid1 = ObjectId::parse(DisplayControllerTest::TEST_OID1);
@@ -138,8 +137,7 @@ class DisplayControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testDisplayTranslationOfReferencedValues()
-  {
+  public function testDisplayTranslationOfReferencedValues() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     // TODO: implement for input_type = select#async:ReferencedType, select#fkt:g_getOIDs|ReferencedType

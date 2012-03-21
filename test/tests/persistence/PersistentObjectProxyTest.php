@@ -1,15 +1,38 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistentObjectProxy.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class PersistentObjectProxyTest extends PHPUnit_Framework_TestCase
-{
+use test\lib\TestUtil;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObjectProxy;
+
+/**
+ * PersistentObjectProxyTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class PersistentObjectProxyTest extends \PHPUnit_Framework_TestCase {
+
   private $_page1OidStr = 'Page:123451';
   private $_page2OidStr = 'Page:123452';
 
-  protected function setUp()
-  {
+  protected function setUp() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -21,8 +44,7 @@ class PersistentObjectProxyTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  protected function tearDown()
-  {
+  protected function tearDown() {
     TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
@@ -32,8 +54,7 @@ class PersistentObjectProxyTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testLoadSimple()
-  {
+  public function testLoadSimple() {
     TestUtil::runAnonymous(true);
     $proxy = new PersistentObjectProxy(ObjectId::parse($this->_page1OidStr));
     $this->assertEquals("Page1", $proxy->getName());
@@ -47,8 +68,7 @@ class PersistentObjectProxyTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testLoadRelation()
-  {
+  public function testLoadRelation() {
     TestUtil::runAnonymous(true);
     $proxy = new PersistentObjectProxy(ObjectId::parse($this->_page1OidStr));
     $page1 = $proxy->getRealSubject();
@@ -62,6 +82,5 @@ class PersistentObjectProxyTest extends PHPUnit_Framework_TestCase
     $this->assertEquals("Page2", $page2->getName());
     $this->assertEquals(123452, $page2->getSortkeyPage());
   }
-
 }
 ?>

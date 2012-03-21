@@ -1,14 +1,38 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class NodeRelationTest extends PHPUnit_Framework_TestCase
-{
+use test\lib\TestUtil;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * NodeRelationTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class NodeRelationTest extends \PHPUnit_Framework_TestCase {
+
   private $oids = array();
   private $objects = array();
 
-  protected function setUp()
-  {
+  protected function setUp() {
     TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -42,8 +66,7 @@ class NodeRelationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  protected function tearDown()
-  {
+  protected function tearDown() {
     TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
@@ -54,8 +77,7 @@ class NodeRelationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testAddNode()
-  {
+  public function testAddNode() {
     TestUtil::runAnonymous(true);
     //$this->enableProfiler('Page');
 
@@ -99,8 +121,7 @@ class NodeRelationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDeleteNode()
-  {
+  public function testDeleteNode() {
     TestUtil::runAnonymous(true);
     //$this->enableProfiler('Page');
 
@@ -150,8 +171,7 @@ class NodeRelationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function _testLoadSingle()
-  {
+  public function _testLoadSingle() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -168,8 +188,7 @@ class NodeRelationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDelete()
-  {
+  public function testDelete() {
     TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -193,8 +212,7 @@ class NodeRelationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testNavigabilityManyToMany()
-  {
+  public function testNavigabilityManyToMany() {
     TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();

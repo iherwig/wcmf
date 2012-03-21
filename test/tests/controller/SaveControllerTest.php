@@ -14,31 +14,32 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: SaveControllerTest.php 998 2009-05-29 01:29:20Z iherwig $
+ * $Id$
  */
-require_once("lib/ControllerTestCase.php");
+namespace test\tests\controller;
+
+use test\lib\ControllerTestCase;
+use test\lib\TestUtil;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\persistence\ObjectId;
 
 /**
- * @class SaveControllerTest
- * @ingroup test
- * @brief SaveControllerTest tests the SaveController.
+ * SaveControllerTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SaveControllerTest extends ControllerTestCase
-{
+class SaveControllerTest extends ControllerTestCase {
+
   const TEST_OID1 = 'UserRDB:0';
 
-  protected function getControllerName()
-  {
+  protected function getControllerName() {
     return 'SaveController';
   }
 
   /**
    * @group controller
    */
-  public function testSave()
-  {
+  public function testSave() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(SaveControllerTest::TEST_OID1);
@@ -64,8 +65,7 @@ class SaveControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testSaveTranslation()
-  {
+  public function testSaveTranslation() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(SaveControllerTest::TEST_OID1);

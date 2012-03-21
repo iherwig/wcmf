@@ -1,11 +1,38 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class PersistentObjectTest extends PHPUnit_Framework_TestCase
-{
-  protected function setUp()
-  {
+use new_roles\app\model\Page;
+
+use test\lib\TestUtil;
+use wcmf\lib\core\Log;
+use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * PersistentObjectTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
+
+  protected function setUp() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -17,8 +44,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  protected function tearDown()
-  {
+  protected function tearDown() {
     TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
@@ -29,8 +55,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testInitializeSortkeys()
-  {
+  public function testInitializeSortkeys() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -42,8 +67,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testCopyValues()
-  {
+  public function testCopyValues() {
     TestUtil::runAnonymous(true);
     $page1 = new Page(new ObjectId('Page', 123));
     $page1->setName('Page 1');
@@ -70,8 +94,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testMergeValues()
-  {
+  public function testMergeValues() {
     TestUtil::runAnonymous(true);
     $page1 = new Page(new ObjectId('Page', 123));
     $page1->setName('Page 1');
@@ -90,8 +113,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testClearValues()
-  {
+  public function testClearValues() {
     TestUtil::runAnonymous(true);
     $page1 = new Page(new ObjectId('Page', 123));
     $page1->setName('Page 1');
@@ -105,8 +127,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testLoadPartially()
-  {
+  public function testLoadPartially() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $pagePartially = $persistenceFacade->load(ObjectId::parse('Page:100000'), BUILDDEPTH_SINGLE, array('Page' => array()));
@@ -120,8 +141,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testLoadPaging()
-  {
+  public function testLoadPaging() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -157,8 +177,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
   /**
    * @group performance
    */
-  public function testCreateRandom()
-  {
+  public function testCreateRandom() {
     TestUtil::runAnonymous(true);
     $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
     $pf = PersistenceFacade::getInstance();
@@ -178,8 +197,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
   /**
    * @group performance
    */
-  public function testLoadManyWithAllAttributes()
-  {
+  public function testLoadManyWithAllAttributes() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $start = time();
@@ -191,8 +209,7 @@ class PersistentObjectTest extends PHPUnit_Framework_TestCase
   /**
    * @group performance
    */
-  public function testLoadManyWithOneAttribute()
-  {
+  public function testLoadManyWithOneAttribute() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $start = time();

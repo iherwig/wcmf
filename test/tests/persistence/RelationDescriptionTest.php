@@ -1,21 +1,43 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/RelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBOneToManyRelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBManyToOneRelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBManyToManyRelationDescription.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class RelationDescriptionTest extends PHPUnit_Framework_TestCase
-{
-  public function testMapper()
-  {
+use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
+use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
+use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * RelationDescriptionTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class RelationDescriptionTest extends \PHPUnit_Framework_TestCase {
+
+  public function testMapper() {
     $rel1 = new RDBOneToManyRelationDescription('Page', 'ParentPage', 'Page', 'ChildPage',
             '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_page_id');
     $this->assertEquals(PersistenceFacade::getInstance()->getMapper('Page'), $rel1->getThisMapper());
     $this->assertEquals(PersistenceFacade::getInstance()->getMapper('Page'), $rel1->getOtherMapper());
   }
-  public function testCompare()
-  {
+
+  public function testCompare() {
     // to same type
     $rel1 = new RDBOneToManyRelationDescription('Page', 'ParentPage', 'Page', 'ChildPage',
             '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_page_id');

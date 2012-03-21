@@ -1,14 +1,36 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/StringQuery.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\model;
 
-class NodeUtilTest extends PHPUnit_Framework_TestCase
-{
-  public function testGetConnection()
-  {
+use test\lib\TestUtil;
+use wcmf\lib\model\NodeUtil;
+use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * NodeUtilTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class NodeUtilTest extends \PHPUnit_Framework_TestCase {
+
+  public function testGetConnection() {
     TestUtil::runAnonymous(true);
 
     $paths = NodeUtil::getConnections('Author', null, 'Image', 'child');
@@ -65,8 +87,7 @@ class NodeUtilTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testGetQueryCondition()
-  {
+  public function testGetQueryCondition() {
     TestUtil::runAnonymous(true);
 
     // Page -> NormalImage

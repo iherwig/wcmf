@@ -1,13 +1,35 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class ManyToManyTest extends PHPUnit_Framework_TestCase
-{
-  public function testRelation()
-  {
+use test\lib\TestUtil;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * ManyToManyTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class ManyToManyTest extends \PHPUnit_Framework_TestCase {
+
+  public function testRelation() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -21,8 +43,7 @@ class ManyToManyTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testLoad()
-  {
+  public function testLoad() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -38,8 +59,7 @@ class ManyToManyTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testCreate()
-  {
+  public function testCreate() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -54,8 +74,7 @@ class ManyToManyTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testSave()
-  {
+  public function testSave() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();

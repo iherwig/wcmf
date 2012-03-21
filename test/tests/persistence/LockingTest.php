@@ -1,16 +1,42 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class LockingTest extends PHPUnit_Framework_TestCase
-{
+use test\lib\TestUtil;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\concurrency\ConcurrencyManager;
+
+/**
+ * LockingTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class LockingTest extends \PHPUnit_Framework_TestCase {
+
   private $_user1OidStr = 'UserRDB:555';
   private $_user2OidStr = 'UserRDB:666';
   private $_user3OidStr = 'UserRDB:777';
 
-  protected function setUp()
-  {
+  protected function setUp() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -25,8 +51,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  protected function tearDown()
-  {
+  protected function tearDown() {
     TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
@@ -38,8 +63,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testPessimisticLock()
-  {
+  public function testPessimisticLock() {
     $oid = ObjectId::parse($this->_user3OidStr);
     $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
 
@@ -65,8 +89,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
   }
 
-  public function testPessimisticConcurrentLock()
-  {
+  public function testPessimisticConcurrentLock() {
     $oid = ObjectId::parse($this->_user3OidStr);
     $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
     $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
@@ -92,8 +115,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     $this->fail('Expected PessimisticLockException has not been raised.');
   }
 
-  public function testPessimisticConcurrentUpdate()
-  {
+  public function testPessimisticConcurrentUpdate() {
     $oid = ObjectId::parse($this->_user3OidStr);
     $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
     $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
@@ -126,8 +148,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     $this->fail('Expected PessimisticLockException has not been raised.');
   }
 
-  public function testPessimisticConcurrentDelete()
-  {
+  public function testPessimisticConcurrentDelete() {
     $oid = ObjectId::parse($this->_user3OidStr);
     $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
     $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
@@ -158,8 +179,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     $this->fail('Expected PessimisticLockException has not been raised.');
   }
 
-  public function testOptimisticLock()
-  {
+  public function testOptimisticLock() {
     $oid = ObjectId::parse($this->_user3OidStr);
 
     // user 1 locks the object and modifies it
@@ -181,8 +201,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     TestUtil::endSession($sid1);
   }
 
-  public function testOptimisticConcurrentUpdate()
-  {
+  public function testOptimisticConcurrentUpdate() {
     $oid = ObjectId::parse($this->_user3OidStr);
 
     // user 1 locks the object
@@ -213,8 +232,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     $this->fail('Expected OptimisticLockException has not been raised.');
   }
 
-  public function testOptimisticConcurrentDelete()
-  {
+  public function testOptimisticConcurrentDelete() {
     $oid = ObjectId::parse($this->_user3OidStr);
 
     // user 1 locks the object
@@ -244,8 +262,7 @@ class LockingTest extends PHPUnit_Framework_TestCase
     $this->fail('Expected OptimisticLockException has not been raised.');
   }
 
-  protected function getNumPessimisticLocks($oid, $userId)
-  {
+  protected function getNumPessimisticLocks($oid, $userId) {
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));

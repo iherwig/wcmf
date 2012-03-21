@@ -1,14 +1,37 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\persistence;
 
-class TransactionTest extends PHPUnit_Framework_TestCase
-{
+use test\lib\TestUtil;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * TransactionTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class TransactionTest extends \PHPUnit_Framework_TestCase {
+
   private $_pageOidStr = 'Page:12345';
   private $_documentOidStr = 'Document:12345';
 
-  protected function setUp()
-  {
+  protected function setUp() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -20,8 +43,7 @@ class TransactionTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  protected function tearDown()
-  {
+  protected function tearDown() {
     TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
@@ -31,8 +53,7 @@ class TransactionTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testSimple()
-  {
+  public function testSimple() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -69,8 +90,7 @@ class TransactionTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testChangesOutOfTxBoundaries()
-  {
+  public function testChangesOutOfTxBoundaries() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -95,8 +115,7 @@ class TransactionTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testRollback()
-  {
+  public function testRollback() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -120,8 +139,7 @@ class TransactionTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testSingleInstancePerEntity()
-  {
+  public function testSingleInstancePerEntity() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();

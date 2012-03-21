@@ -14,32 +14,36 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: DeleteControllerTest.php 998 2009-05-29 01:29:20Z iherwig $
+ * $Id$
  */
-require_once("lib/ControllerTestCase.php");
+namespace test\tests\controller;
+
+use test\lib\ControllerTestCase;
+use test\lib\TestUtil;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\Node;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @class DeleteControllerTest
- * @ingroup test
- * @brief DeleteControllerTest tests the DeleteController.
+ * DeleteControllerTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DeleteControllerTest extends ControllerTestCase
-{
+class DeleteControllerTest extends ControllerTestCase {
+
   const TEST_TYPE = 'UserRDB';
   const TEST_OID1 = 'UserRDB:0';
 
-  protected function getControllerName()
-  {
+  protected function getControllerName() {
     return 'DeleteController';
   }
 
   /**
    * @group controller
    */
-  public function testDelete()
-  {
+  public function testDelete() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID1);
@@ -61,8 +65,7 @@ class DeleteControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testDeleteTranslation()
-  {
+  public function testDeleteTranslation() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID1);
@@ -109,8 +112,7 @@ class DeleteControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function testDeleteComplete()
-  {
+  public function testDeleteComplete() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID1);

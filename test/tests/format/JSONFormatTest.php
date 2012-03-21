@@ -1,10 +1,39 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/presentation/Request.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Response.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/JSONFormat.php");
-require_once(WCMF_BASE."application/include/model/Document.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\format;
 
-class JSONFormatTest extends PHPUnit_Framework_TestCase {
+use new_roles\app\model\Author;
+use new_roles\app\model\Document;
+use new_roles\app\model\Image;
+use new_roles\app\model\Page;
+
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\format\JSONFormat;
+
+/**
+ * JSONFormatTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class JSONFormatTest extends \PHPUnit_Framework_TestCase {
 
   public function testDeserializeSimple() {
     $message = new Request('controller', 'context', 'action');
@@ -378,5 +407,4 @@ class JSONFormatTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('Page:3', $pages[2]['oid']);
   }
 }
-
 ?>

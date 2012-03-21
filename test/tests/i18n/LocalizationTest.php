@@ -14,30 +14,29 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: LocalizationTest.php 998 2009-05-29 01:29:20Z iherwig $
+ * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/i18n/Localization.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/Criteria.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+namespace test\tests\i18n;
+
+use test\lib\TestUtil;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @class LocalizationTest
- * @ingroup test
- * @brief LocalizationTest tests the localization.
+ * LocalizationTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LocalizationTest extends PHPUnit_Framework_TestCase
-{
+class LocalizationTest extends \PHPUnit_Framework_TestCase {
+
   const EXPECTED_DEFAULT_LANGUAGE_CODE = 'en';
   const EXPECTED_DEFAULT_LANGUAGE_NAME = 'English';
   const TEST_OID1 = 'UserRDB:301';
   const TEST_OID2 = 'UserRDB:302';
   const TRANSLATION_TYPE = 'Translation';
 
-  protected function setUp()
-  {
+  protected function setUp() {
     TestUtil::runAnonymous(true);
 
     $persistenceFacade = PersistenceFacade::getInstance();
@@ -52,8 +51,7 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  protected function tearDown()
-  {
+  protected function tearDown() {
     TestUtil::runAnonymous(true);
     $transaction = PersistenceFacade::getInstance()->getTransaction();
     $transaction->begin();
@@ -66,16 +64,14 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testGetDefaultLanguage()
-  {
+  public function testGetDefaultLanguage() {
     $defaultLanguage = Localization::getInstance()->getDefaultLanguage();
 
     $this->assertEquals(LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE, $defaultLanguage,
       "The default language is '".LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE."'");
   }
 
-  public function testGetSupportedLanguages()
-  {
+  public function testGetSupportedLanguages() {
     $languages = Localization::getInstance()->getSupportedLanguages();
 
     $this->assertTrue(is_array($languages), "Languages is an array");
@@ -89,15 +85,13 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
         LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_NAME."'");
   }
 
-  public function testCreateTranslationInstance()
-  {
+  public function testCreateTranslationInstance() {
     $instance = Localization::createTranslationInstance();
     $this->assertEquals(LocalizationTest::TRANSLATION_TYPE, $instance->getType(),
       "The translation type is '".LocalizationTest::TRANSLATION_TYPE."'");
   }
 
-  public function testTranslation()
-  {
+  public function testTranslation() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -142,8 +136,7 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testTranslationForNonTranslatableValues()
-  {
+  public function testTranslationForNonTranslatableValues() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -177,8 +170,7 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDontCreateEntriesForDefaultLanguage()
-  {
+  public function testDontCreateEntriesForDefaultLanguage() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -205,8 +197,7 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDontSaveUntranslatedValues()
-  {
+  public function testDontSaveUntranslatedValues() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -244,8 +235,7 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDontCreateDuplicateEntries()
-  {
+  public function testDontCreateDuplicateEntries() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -279,8 +269,7 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testTranslationWithDefaults()
-  {
+  public function testTranslationWithDefaults() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -316,8 +305,7 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDeleteTranslation()
-  {
+  public function testDeleteTranslation() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();
@@ -379,8 +367,7 @@ class LocalizationTest extends PHPUnit_Framework_TestCase
     TestUtil::runAnonymous(false);
   }
 
-  public function testDeleteLanguage()
-  {
+  public function testDeleteLanguage() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();

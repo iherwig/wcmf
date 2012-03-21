@@ -1,11 +1,34 @@
 <?php
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."test/lib/TestUtil.php");
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace test\tests\model;
 
-class NodeTest extends PHPUnit_Framework_TestCase
-{
-  public function testBuildDepth()
-  {
+use test\lib\TestUtil;
+use wcmf\lib\persistence\PersistenceFacade;
+
+/**
+ * NodeTest.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class NodeTest extends \PHPUnit_Framework_TestCase {
+
+  public function testBuildDepth() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = PersistenceFacade::getInstance();
     $transaction = $persistenceFacade->getTransaction();

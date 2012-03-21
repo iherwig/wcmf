@@ -14,28 +14,28 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: WCMFTestCase.php 998 2009-05-29 01:29:20Z iherwig $
+ * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Request.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Application.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ActionMapper.php");
+namespace test\lib;
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\Application;
+use wcmf\lib\presentation\Request;
 
 /**
- * @class TestUtil
- * @ingroup test
- * @brief TestUtil provides helper methods for testing wCMF functionality.
+ * TestUtil provides helper methods for testing wCMF functionality.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class TestUtil
-{
+class TestUtil {
+
   /**
    * Turn authorization validation on/off.
    * @param True/False wether to turn it off or on
    */
-  public static function runAnonymous($isAnonymous)
-  {
+  public static function runAnonymous($isAnonymous) {
     $parser = InifileParser::getInstance();
     $parser->setValue('anonymous', $isAnonymous, 'cms');
   }
@@ -45,8 +45,7 @@ class TestUtil
    * @param request The Request instance
    * @return The Response instance (result of the last ActionMapper::processAction call)
    */
-  public static function simulateRequest($request)
-  {
+  public static function simulateRequest($request) {
     // set formatter
     $request->setFormat('Null');
     $request->setResponseFormat('Null');
@@ -68,8 +67,7 @@ class TestUtil
    * @return The session id. Use this as data['sid'] parameter for
    *    subsequent simulateRequest calls
    */
-  public static function startSession($user, $password)
-  {
+  public static function startSession($user, $password) {
     $request = new Request('LoginController',
       '',
       'dologin'
@@ -86,8 +84,7 @@ class TestUtil
    * End a session.
    * @param sid The session id
    */
-  public static function endSession($sid)
-  {
+  public static function endSession($sid) {
     $request = new Request('',
       '',
       'logout'
@@ -105,8 +102,7 @@ class TestUtil
    *    and the values as values
    * @return Node
    */
-  public static function createTestObject(ObjectId $oid, array $attributes)
-  {
+  public static function createTestObject(ObjectId $oid, array $attributes) {
     // check if the object already exists and delete it if necessary
     $persistenceFacade = PersistenceFacade::getInstance();
     $testObj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
@@ -130,8 +126,7 @@ class TestUtil
    * @param oid The object id
    * @return Node
    */
-  public static function loadTestObject(ObjectId $oid)
-  {
+  public static function loadTestObject(ObjectId $oid) {
     $persistenceFacade = PersistenceFacade::getInstance();
     $object = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
     return $object;
@@ -141,8 +136,7 @@ class TestUtil
    * Delete a test object
    * @param oid ObjectId
    */
-  public static function deleteTestObject(ObjectId $oid)
-  {
+  public static function deleteTestObject(ObjectId $oid) {
     $persistenceFacade = PersistenceFacade::getInstance();
     $object = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
     if ($object) {
@@ -154,8 +148,7 @@ class TestUtil
    * Set a configuration value
    * @see InifileParser::setValue()
    */
-  public static function setConfigValue($key, $value, $section)
-  {
+  public static function setConfigValue($key, $value, $section) {
     $parser = InifileParser::getInstance();
     $parser->setValue($key, $value, $section);
   }
@@ -166,10 +159,9 @@ class TestUtil
    * @param methodName The method name
    * @param args An array of method arguments
    */
-  public static function callProtectedMethod($instance, $methodName, $args=null)
-  {
+  public static function callProtectedMethod($instance, $methodName, $args=null) {
     $className = get_class($instance);
-    $class = new ReflectionClass($className);
+    $class = new \ReflectionClass($className);
     $method = $class->getMethod($methodName);
     $method->setAccessible(true);
 
@@ -185,8 +177,7 @@ class TestUtil
    * Enable the Zend_Db_Profiler for a given entity type.
    * @param type The entity type
    */
-  public static function enableProfiler($type)
-  {
+  public static function enableProfiler($type) {
     $mapper = PersistenceFacade::getInstance()->getMapper($type);
     if ($mapper instanceof RDBMapper) {
       $mapper->enableProfiler();
@@ -198,8 +189,7 @@ class TestUtil
    * The profiler must have been enabled first
    * @param type The entity type
    */
-  public static function printProfile($type)
-  {
+  public static function printProfile($type) {
     $mapper = PersistenceFacade::getInstance()->getMapper($type);
     $profiler = $mapper->getProfiler();
 

@@ -14,31 +14,33 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: AsyncPagingControllerTest.php 998 2009-05-29 01:29:20Z iherwig $
+ * $Id$
  */
-require_once("lib/ControllerTestCase.php");
+namespace test\tests\controller;
+
+use test\lib\ControllerTestCase;
+use test\lib\TestUtil;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\Node;
+use wcmf\lib\persistence\ObjectId;
 
 /**
- * @class AsyncPagingControllerTest
- * @ingroup test
- * @brief AsyncPagingControllerTest tests the DisplayController.
+ * AsyncPagingControllerTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AsyncPagingControllerTest extends ControllerTestCase
-{
+class AsyncPagingControllerTest extends ControllerTestCase {
+
   const TEST_OID = 'UserRDB:0';
 
-  protected function getControllerName()
-  {
+  protected function getControllerName() {
     return 'AsyncPagingController';
   }
 
   /**
    * @group controller
    */
-  public function testSimpleList()
-  {
+  public function testSimpleList() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(AsyncPagingControllerTest::TEST_OID);
@@ -64,8 +66,7 @@ class AsyncPagingControllerTest extends ControllerTestCase
   /**
    * @group controller
    */
-  public function _testDisplayTranslation()
-  {
+  public function _testDisplayTranslation() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
     $oid = ObjectId::parse(AsyncPagingControllerTest::TEST_OID);
