@@ -16,8 +16,10 @@
  *
  * $Id: Message.js.php 1334 2011-05-17 00:15:05Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Application.php");
+require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+
+use wcmf\lib\i18n\Message;
+use wcmf\lib\presentation\Application;
 
 // initialize global variables
 $application = Application::getInstance();
