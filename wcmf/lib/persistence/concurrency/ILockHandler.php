@@ -16,16 +16,17 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence\concurrency;
+
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
- * @class ILockHandler
- * @ingroup Persistence
- * @brief Interface for LockHandler implementations.
+ * ILockHandler defines the interface for LockHandler implementations.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface ILockHandler
-{
+interface ILockHandler {
   /**
    * Aquire a lock on an object id for the current user and throw
    * an exception, if another user already owns a pessimistic lock on
@@ -35,26 +36,30 @@ interface ILockHandler
    * @param currentState PersistentObject instance defining the current state
    *    for an optimistic lock (optional, only given if type is Lock::TYPE_OPTIMISTIC)
    */
-  function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null);
+  public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null);
+
   /**
    * Release the lock the current user owns on an object id.
    * @param oid ObjectId of the object to release.
    */
-  function releaseLock(ObjectId $oid);
+  public function releaseLock(ObjectId $oid);
+
   /**
    * Release all locks on an object id regardless of the user.
    * @param oid ObjectId of the object to release.
    */
-  function releaseLocks(ObjectId $oid);
+  public function releaseLocks(ObjectId $oid);
+
   /**
    * Release all locks owned by the current user.
    */
-  function releaseAllLocks();
+  public function releaseAllLocks();
+
   /**
    * Get the lock for an object id.
    * @param oid object id of the object to get the lock data for.
    * @return Lock instance or null
    */
-  function getLock(ObjectId $oid);
+  public function getLock(ObjectId $oid);
 }
 ?>

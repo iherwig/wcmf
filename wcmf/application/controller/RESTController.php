@@ -16,12 +16,13 @@
  *
  * $Id: class.RESTController.php 1250 2010-12-05 23:02:43Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class RESTController
- * @ingroup Controller
- * @brief RESTController is a controller that handles REST requests.
+ * RESTController is a controller that handles REST requests.
  *
  * <b>Input actions:</b>
  * - unspecified: Handle action according to HTTP method and parameters

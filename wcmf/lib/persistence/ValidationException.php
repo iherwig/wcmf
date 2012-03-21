@@ -16,13 +16,13 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
 
 /**
  * @class ValidationException
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ValidationException extends Exception
-{
+class ValidationException extends \Exception {
 }
 ?>

@@ -16,14 +16,14 @@
  *
  * $Id: class.View.php 1250 2010-12-05 23:02:43Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/IView.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+namespace wcmf\lib\presentation;
+
+use wcmf\lib\presentation\IView;
+
 require_once(WCMF_BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
 
 /**
- * @class View
- * @ingroup Presentation
- * @brief View is used by Controller to handle the view presentation in MVC pattern.
+ * View is used by Controller to handle the view presentation in MVC pattern.
  * View is a subclass of Smarty that is customized for use with the wCMF.
  *
  * @author ingo herwig <ingo@wemove.com>

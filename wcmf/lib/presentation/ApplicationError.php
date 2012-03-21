@@ -16,6 +16,11 @@
  *
  * $Id: class.ApplicationError.php 1221 2010-07-13 22:24:13Z iherwig $
  */
+namespace wcmf\lib\presentation;
+
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\presentation\ApplicationError;
 
 /**
  * Predefined error levels
@@ -45,8 +50,8 @@ define('ERROR_LEVEL_FATAL',   'fatal');
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ApplicationError
-{
+class ApplicationError {
+
   private $_code = null;
   private $_message = null;
   private $_level = null;
@@ -60,8 +65,7 @@ class ApplicationError
    * @param data Some error codes required to transmit further information
    *             to the client, optional [default: null]
    */
-  private function __construct($code, $message, $level, $data=null)
-  {
+  private function __construct($code, $message, $level, $data=null) {
     $this->_code = $code;
     $this->_message = $message;
     $this->_level = $level;
@@ -72,8 +76,7 @@ class ApplicationError
    * Get the error code
    * @return The code
    */
-  public function getCode()
-  {
+  public function getCode() {
     return $this->_code;
   }
 
@@ -81,9 +84,8 @@ class ApplicationError
    * Get the error message
    * @return The message
    */
-  public function getMessage()
-  {
-    return $this->_message;
+  public function getMessage() {
+    return Message::get($this->_message);
   }
 
   /**
@@ -91,8 +93,7 @@ class ApplicationError
    * @param data Some error codes require to transmit
    *   further information to the client
    */
-  public function setData($data)
-  {
+  public function setData($data) {
     $this->_data = $data;
   }
 
@@ -100,8 +101,7 @@ class ApplicationError
    * Get the error data
    * @return The data
    */
-  public function getData()
-  {
+  public function getData() {
     return $this->_data;
   }
 
@@ -109,8 +109,7 @@ class ApplicationError
    * Get a string representation of the error
    * @return String
    */
-  public function __toString()
-  {
+  public function __toString() {
     $str = strtoupper($this->_level).": ".$this->_code.": ".$this->_message;
     if ($this->_data) {
       $str .= " Data: ".StringUtil::getDump($this->_data);
@@ -124,10 +123,8 @@ class ApplicationError
    * @param data Some error codes required to transmit further information
    *             to the client, optional [default: null]
    */
-  public static function get($code, $data=null)
-  {
-    if (defined($code))
-    {
+  public static function get($code, $data=null) {
+    if (defined($code)) {
       $def = unserialize(constant($code));
       return new ApplicationError($def[0], $def[1], $def[2], $data);
     }

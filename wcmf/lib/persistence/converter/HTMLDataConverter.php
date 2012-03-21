@@ -16,13 +16,10 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/IDataConverter.php");
+namespace wcmf\lib\persistence\converter;
 
 /**
- * @class HTMLDataConverter
- * @ingroup Converter
- * @brief HTMLDataConverter converts data between storage and HTML files.
+ * HTMLDataConverter converts data between storage and HTML files.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

@@ -16,15 +16,16 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeValueIterator.php");
+namespace wcmf\lib\model;
+
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\model\Node;
+use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @class NodeSerializer
- * @ingroup Model
- * @brief NodeSerializer is used to serialize Nodes into an array representation
+ * NodeSerializer is used to serialize Nodes into an array representation
  * or deserialize an array representation into Nodes.
  * The format of serialized Nodes is defined in the Dionysos specification (See:
  * http://olympos.svn.sourceforge.net/viewvc/olympos/trunk/olympos/dionysos/docs/Dionysos%20Specification%20JSON.odt)

@@ -16,13 +16,13 @@
  *
  * $Id$
  */
+namespace wcmf\lib\security;
 
 /**
  * @class AuthorizationException
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AuthorizationException extends Exception
-{
+class AuthorizationException extends \Exception{
 }
 ?>

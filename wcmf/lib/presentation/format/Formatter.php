@@ -16,13 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
-require_once(WCMF_BASE."wcmf/lib/util/EncodingUtil.php");
+namespace wcmf\lib\presentation\format;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\io\EncodingUtil;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
- * @class Formatter
- * @ingroup Format
- * @brief Formatter is is the single entry point for request/response formatting.
+ * Formatter is is the single entry point for request/response formatting.
  * It chooses the configured formatter based on the format property of the message
  * by getting the value XXXFormat from the configuration section 'implementation'.
  *
@@ -31,7 +33,7 @@ require_once(WCMF_BASE."wcmf/lib/util/EncodingUtil.php");
 class Formatter
 {
   private static $_formats = array();
-  
+
   /**
    * Register a IFormat implementation for formatting messages.
    * This method must be called for all IFormat implementations in order

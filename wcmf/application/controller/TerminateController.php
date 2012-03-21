@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class TerminateController
- * @ingroup Controller
- * @brief TerminateController stops the action processing by returning
+ * TerminateController stops the action processing by returning
  * false in executeKernel.
  *
  * The controller passes all input parameters to the output.

@@ -1,30 +1,29 @@
 <?php
-/**
- * Smarty plugin
- * @package Smarty
- * @subpackage plugins
- */
-
-/**
- * Smarty trimwhitespace outputfilter plugin
+ /**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * File:     outputfilter.trimwhitespace.php<br>
- * Type:     outputfilter<br>
- * Name:     trimwhitespace<br>
- * Date:     Jan 25, 2003<br>
- * Purpose:  trim leading white space and blank lines from
- *           template source after it gets interpreted, cleaning
- *           up code and saving bandwidth. Does not affect
- *           <<PRE>></PRE> and <SCRIPT></SCRIPT> blocks.<br>
- * Install:  Drop into the plugin directory, call
- *           <code>$smarty->load_filter('output','trimwhitespace');</code>
- *           from application.
- * @author   Monte Ohrt <monte at ohrt dot com>
- * @author Contributions from Lars Noschinski <lars@usenet.noschinski.de>
- * @version  1.3
- * @param string
- * @param Smarty
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
  */
+namespace wcmf\lib\presentation\smarty_plugins;
+
+/*
+* Smarty plugin
+* -------------------------------------------------------------
+* File:     smarty_outputfilter_trimwhitespace
+* -------------------------------------------------------------
+*/
 function smarty_outputfilter_trimwhitespace($source, &$smarty)
 {
     // Pull out the script blocks
@@ -38,7 +37,7 @@ function smarty_outputfilter_trimwhitespace($source, &$smarty)
     $_pre_blocks = $match[0];
     $source = preg_replace("!<pre[^>]*?>.*?</pre>!is",
                            '@@@SMARTY:TRIM:PRE@@@', $source);
-    
+
     // Pull out the textarea blocks
     preg_match_all("!<textarea[^>]*?>.*?</textarea>!is", $source, $match);
     $_textarea_blocks = $match[0];

@@ -16,33 +16,41 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacadeImpl.php");
-require_once(WCMF_BASE."wcmf/lib/remoting/RemotingFacade.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\core\Session;
+use wcmf\lib\model\NodeIterator;
+use wcmf\lib\persistence\IPersistenceFacade;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistenceFacadeImpl;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\remoting\RemotingFacade;
 
 /**
- * @class RemoteCapablePersistenceFacade
- * @ingroup Persistence
- * @brief RemoteCapablePersistenceFacade delegates local persistence operations to the
+ * RemoteCapablePersistenceFacade delegates local persistence operations to the
  * default PersistenceFacadeImpl and remote operations to a remote server.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
-{
+class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
+
   // constants
   const PROXY_OBJECTS_SESSION_VARNAME = 'RemoteCapablePersistenceFacadeImpl.proxyObjects';
   const REMOTE_OBJECTS_SESSION_VARNAME = 'RemoteCapablePersistenceFacadeImpl.remoteObjects';
 
-  var $_isResolvingProxies = true;
-  var $_isTranslatingValues = true;
+  private $_isResolvingProxies = true;
+  private $_isTranslatingValues = true;
 
   /**
    * Constructor
    */
-  public function __construct()
-  {
+  public function __construct() {
     // initialize session variables
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
     if (!$session->exist(self::PROXY_OBJECTS_SESSION_VARNAME)) {
       $proxies = array();
       $session->set(self::PROXY_OBJECTS_SESSION_VARNAME, $proxies);
@@ -53,50 +61,49 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     }
     parent::__construct();
   }
+
   /**
    * Tell the PersistenceFacade implementation to resolve proxies or not.
    * @param isResolvingProxies True/False whether proxies should be resolved or not
    */
-  public function setResolveProxies($isResolvingProxies)
-  {
+  public function setResolveProxies($isResolvingProxies) {
     $this->_isResolvingProxies = $isResolvingProxies;
   }
+
   /**
    * Check if the PersistenceFacade implementation is resolving proxies or not.
    * @return True/False whether proxies are resolved or not
    */
-  public function isResolvingProxies()
-  {
+  public function isResolvingProxies() {
     return $this->_isResolvingProxies;
   }
+
   /**
    * Tell the PersistenceFacade implementation to translate remote values or not.
    * @param isTranslatingValues True/False whether values should be translated or not
    */
-  public function setTranslatingValues($isTranslatingValues)
-  {
+  public function setTranslatingValues($isTranslatingValues) {
     $this->_isTranslatingValues = $isTranslatingValues;
   }
+
   /**
    * Check if the PersistenceFacade implementation is translating remote values or not.
    * @return True/False whether values are tanslated or not
    */
-  public function isTranslatingValues()
-  {
+  public function isTranslatingValues() {
     return $this->_isTranslatingValues;
   }
+
   /**
    * @see IPersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
-  {
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null) {
     $obj = null;
     if ($this->isResolvingProxies() && strlen($oid->getPrefix()) > 0) {
       // load real subject
       $obj = $this->loadRemoteObject($oid, $buildDepth);
     }
-    else
-    {
+    else {
       $obj = parent::load($oid, $buildDepth, $buildAttribs, $buildTypes);
       if ($obj && $this->isResolvingProxies() && strlen($umi = $obj->getValue('umi')) > 0) {
         // store proxy for later reference
@@ -107,32 +114,32 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     }
     return $obj;
   }
+
   /**
    * @see IPersistenceFacade::create()
    */
-  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
-  {
+  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null) {
     $obj = parent::create($type, $buildDepth, $buildAttribs);
     return $obj;
   }
+
   /**
    * @see IPersistenceFacade::getOIDs()
    */
-  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)
-  {
+  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $result = parent::getOIDs($type, $criteria, $orderby, $pagingInfo);
     return $result;
   }
+
   /**
    * @see IPersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    $buildAttribs=null, $buildTypes=null)
-  {
+    $buildAttribs=null, $buildTypes=null) {
+
     $tmpResult = parent::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
     $result = array();
-    foreach($tmpResult as $obj)
-    {
+    foreach($tmpResult as $obj) {
       if ($obj && $this->isResolvingProxies() && strlen($umi = $obj->getValue('umi')) > 0) {
         // store proxy for later reference
         $this->registerProxyObject($umi, $obj, $buildDepth);
@@ -153,8 +160,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param umi The universal model id (oid with server prefix)
    * @return The proxy object.
    */
-  protected function getProxyObject(ObjectId $umi, $buildDepth)
-  {
+  protected function getProxyObject(ObjectId $umi, $buildDepth) {
     Log::debug("Get proxy object for: ".$umi, __CLASS__);
 
     // local objects don't have a proxy
@@ -166,8 +172,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     $proxy = $this->getRegisteredProxyObject($umi, $buildDepth);
 
     // search the proxy object if requested for the first time
-    if (!$proxy)
-    {
+    if (!$proxy) {
       $persistenceFacade = PersistenceFacade::getInstance();
       $isRemoteCapableFacade = ($persistenceFacade instanceof RemoteCapablePersistenceFacadeImpl);
       $oldState = true;
@@ -197,16 +202,14 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param umi The universal model id (oid with server prefix)
    * @param buildDepth buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BUILDDEPTH_REQUIRED)
    */
-  protected function loadRemoteObject(ObjectId $umi, $buildDepth)
-  {
+  protected function loadRemoteObject(ObjectId $umi, $buildDepth) {
     Log::debug("Resolve proxy object for: ".$umi, __CLASS__);
 
     // check if the remote object was loaded already
     $obj = $this->getRegisteredRemoteObject($umi, $buildDepth);
 
     // resolve the object if requested for the first time
-    if (!$obj)
-    {
+    if (!$obj) {
       Log::debug("Retrieving...", __CLASS__);
 
       // determine remote oid
@@ -231,13 +234,11 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
       $facade = RemotingFacade::getInstance();
       $response = $facade->doCall($serverKey, $request);
       $obj = $response->getValue('node');
-      if ($obj)
-      {
+      if ($obj) {
         // set umis instead of oids
         $umiPrefix = $umi->getPrefix();
         $iter = new NodeIterator($obj);
-        foreach($iter as $oid => $curNode)
-        {
+        foreach($iter as $oid => $curNode) {
           $oids = $this->makeUmis(array($curNode->getOID()), $umiPrefix);
           $curNode->setOID($oids[0]);
           // TODO implement this for new Node class
@@ -288,8 +289,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param obj The proxy object.
    * @param buildDepth The depth the object was loaded.
    */
-  protected function registerProxyObject(ObjectID $umi, PersistentObject $obj, $buildDepth)
-  {
+  protected function registerProxyObject(ObjectID $umi, PersistentObject $obj, $buildDepth) {
     $oid = $obj->getOID();
     if (strlen($oid->getPrefix()) > 0) {
       Log::debug("NOT A PROXY", __CLASS__);
@@ -304,8 +304,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param obj The remote object.
    * @param buildDepth The depth the object was loaded.
    */
-  protected function registerRemoteObject(ObjectId $umi, PersistentObject $obj, $buildDepth)
-  {
+  protected function registerRemoteObject(ObjectId $umi, PersistentObject $obj, $buildDepth) {
     // TODO: fix caching remote objects (invalidate cache entry, if an association to the object changes)
     return;
 
@@ -319,13 +318,12 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param buildDepth The depth the object was loaded.
    * @param varName The session variable name.
    */
-  protected function registerObject(ObjectId $umi, PersistentObject $obj, $buildDepth, $varName)
-  {
+  protected function registerObject(ObjectId $umi, PersistentObject $obj, $buildDepth, $varName) {
     if ($buildDepth == 0) {
       $buildDepth=BUILDDEPTH_SINGLE;
     }
     // save the object in the session
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
     $umiStr = $umi->toString();
     $objects = $session->get($varName);
     if (!isset($objects[$umiStr])) {
@@ -346,8 +344,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param buildDepth The requested build depth.
    * @return The proxy object or null if not found.
    */
-  protected function getRegisteredProxyObject(ObjectId $umi, $buildDepth)
-  {
+  protected function getRegisteredProxyObject(ObjectId $umi, $buildDepth) {
     $proxy = $this->getRegisteredObject($umi, $buildDepth, self::PROXY_OBJECTS_SESSION_VARNAME);
     return $proxy;
   }
@@ -358,8 +355,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param buildDepth The requested build depth.
    * @return The remote object or null if not found.
    */
-  protected function getRegisteredRemoteObject(ObjectId $umi, $buildDepth)
-  {
+  protected function getRegisteredRemoteObject(ObjectId $umi, $buildDepth) {
     $object = $this->getRegisteredObject($umi, $buildDepth, self::REMOTE_OBJECTS_SESSION_VARNAME);;
     return $object;
   }
@@ -370,12 +366,11 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param buildDepth The requested build depth.
    * @return The object or null if not found.
    */
-  protected function getRegisteredObject(ObjectId $umi, $buildDepth, $varName)
-  {
+  protected function getRegisteredObject(ObjectId $umi, $buildDepth, $varName) {
     if ($buildDepth == 0) {
       $buildDepth=BUILDDEPTH_SINGLE;
     }
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
     $umiStr = $umi->toString();
     $objects = $session->get($varName);
     if (isset($objects[$umiStr]) && isset($objects[$umiStr][$buildDepth])) {
@@ -392,6 +387,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
     }
     return null;
   }
+
   /**
    * Replace all object ids in an array with the umis according to
    * the given umiPrefix.
@@ -399,13 +395,10 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl
    * @param umiPrefix The umi prefix
    * @return The array of umis
    */
-  protected function makeUmis($oids, $umiPrefix)
-  {
+  protected function makeUmis($oids, $umiPrefix) {
     $result = array();
-    foreach ($oids as $oid)
-    {
-      if (strlen($oid->getPrefix()) == 0)
-      {
+    foreach ($oids as $oid) {
+      if (strlen($oid->getPrefix()) == 0) {
         $umi = new ObjectId($oid->getType(), $oid->getId(), $umiPrefix);
         $result[] = $umi;
       }

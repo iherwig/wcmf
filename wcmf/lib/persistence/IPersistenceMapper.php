@@ -16,16 +16,23 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\IPersistenceFacade;
+use wcmf\lib\persistence\ITransaction;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceOperation;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\PersistentObjectProxy;
 
  /**
- * @interface IPersistenceMapper
- * @ingroup Persistence
- * @brief IPersistenceMapper defines the interface for all mapper classes.
+ * IPersistenceMapper defines the interface for all mapper classes.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface IPersistenceMapper
-{
+interface IPersistenceMapper {
+
   /**
    * Get the mapper type.
    * @return String

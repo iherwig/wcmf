@@ -16,8 +16,12 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/format/IFormat.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/Formatter.php");
+namespace wcmf\lib\presentation\format;
+
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response; // ambiguous
+use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\presentation\format\IFormat;
 
 /**
  * Define the message format
@@ -25,9 +29,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/format/Formatter.php");
 define("MSG_FORMAT_NULL", "NULL");
 
 /**
- * @class NullFormat
- * @ingroup Format
- * @brief NullFormat passes through the original request and response objects
+ * NullFormat passes through the original request and response objects
  * without modifying or transforming them.
  *
  * @author ingo herwig <ingo@wemove.com>

@@ -16,15 +16,17 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/ObjectQuery.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
+namespace wcmf\lib\model;
+
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\model\AbstractQuery;
+use wcmf\lib\model\NodeUtil;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @class StringQuery
- * @ingroup Persistence
- * @brief StringQuery executes queries from a string representation. Queries are
+ * StringQuery executes queries from a string representation. Queries are
  * constructed like WHERE clauses in sql, except that foreign key relations between the
  * different types are not necessary. Attributes have to be prepended with the
  * type name (or in case of ambiguity the role name), e.g. Author.name instead of name.

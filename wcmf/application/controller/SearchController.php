@@ -16,16 +16,20 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/application/controller/ListController.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/ObjectQuery.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
-require_once(WCMF_BASE."wcmf/lib/util/SearchUtil.php");
+namespace wcmf\application\controller;
+
+use wcmf\application\controller\ListController;
+use wcmf\lib\core\Session;
+use wcmf\lib\model\NodeUtil;
+use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\format\JSONFormat;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class SearchController
- * @ingroup Controller
- * @brief SearchController is a controller that exectutes a search for oids and
+ * SearchController is a controller that exectutes a search for oids and
  * displays them in a paged list. If a type is given in the parameters, it will search
  * for oids of that type where the attribute values match the given ones (advanced search).
  * Otherwise it searches for a given searchterm in all nodes and displays the result in a list (simple search).
@@ -65,7 +69,7 @@ class SearchController extends ListController
     // check if this is a new call and the stored oids should be deleted
     if ($request->getAction() != 'list')
     {
-      $session = &SessionData::getInstance();
+      $session = Session::getInstance();
       $session->remove($this->OIDS_VARNAME);
     }
 
@@ -94,7 +98,7 @@ class SearchController extends ListController
    */
   function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
 
     // show define search view if requested
     if ($this->_request->getAction() == 'definesearch')
@@ -106,7 +110,7 @@ class SearchController extends ListController
       {
         if (PersistenceFacade::isKnownType($type))
         {
-          $tpl = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+          $tpl = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
           if ($tpl->getProperty('is_searchable') == true)
           {
             array_push($types, $type);
@@ -124,7 +128,7 @@ class SearchController extends ListController
       // set type on request, for further use
       $this->_request->setValue('type', $type);
 
-      $node = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+      $node = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
       $this->_response->setValue('node', $node);
       $this->_response->setValue('type', $type);
       $this->_response->setValue('listBoxStr', $listBoxStr);
@@ -165,7 +169,7 @@ class SearchController extends ListController
       }
       // serialize the Node into json format
       $formatter = new JSONFormat();
-      $searchdef = JSONUtil::encode($formatter->serializeNode(null, $tpl));
+      $searchdef = json_encode($formatter->serializeNode(null, $tpl));
 
       $this->_response->setValue('type', $type);
       $this->_response->setValue('searchdef', $searchdef);
@@ -186,7 +190,7 @@ class SearchController extends ListController
   function getObjects($type, $filter, $sortArray, &$pagingInfo)
   {
     $rightsManager = RightsManager::getInstance();
-    $session = &SessionData::getInstance();
+    $session = Session::getInstance();
 
     if (!$session->exist($this->OIDS_VARNAME))
     {
@@ -199,7 +203,7 @@ class SearchController extends ListController
         // get search parameters from filter value
         // (json serialized node construced as searchdef parameter)
         $formatter = new JSONFormat();
-        $tpl = $formatter->deserializeNode(null, JSONUtil::decode($filter));
+        $tpl = $formatter->deserializeNode(null, json_decode($filter));
 
         $query = new ObjectQuery($type);
         $query->registerObjectTemplate($tpl);
@@ -234,13 +238,13 @@ class SearchController extends ListController
     $oids = array_slice($allOIDs, ($pagingInfo->getPage()-1)*$size, $size);
 
     // load the objects
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
     $objects = array();
     foreach($oids as $oid)
     {
       if ($rightsManager->authorize($oid, '', ACTION_READ))
       {
-        $obj = &$persistenceFacade->load($oid, BUILDEPTH_SINGLE);
+        $obj = $persistenceFacade->load($oid, BUILDEPTH_SINGLE);
         $objects[] = &$obj;
       }
     }
@@ -267,7 +271,7 @@ class SearchController extends ListController
       $curNode = &$nodes[$i];
 
       // create hightlighted summary
-      $session = SessionData::getInstance();
+      $session = Session::getInstance();
       $queryObj = Zend_Search_Lucene_Search_QueryParser::parse($session->get($this->FILTER_VARNAME));
       $summary = '';
       $valueNames = $curNode->getValueNames();

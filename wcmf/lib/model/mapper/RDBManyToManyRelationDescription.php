@@ -16,12 +16,14 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/RelationDescription.php");
+namespace wcmf\lib\model\mapper;
+
+use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
+use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
+use wcmf\lib\persistence\RelationDescription;
 
 /**
- * @class RDBManyToManyRelationDescription
- * @ingroup Persistence
- * @brief Instances of RDBManyToManyRelationDescription describe a many to many relation
+ * Instances of RDBManyToManyRelationDescription describe a many to many relation
  * from 'this' end to 'other' end  in a relational database.
  * This relation is always realized by a connecting database table and can be resolved
  * into a many-to-one relation from 'this' end to the relation type and a one-to-many relation
@@ -29,8 +31,8 @@ require_once(WCMF_BASE."wcmf/lib/persistence/RelationDescription.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RDBManyToManyRelationDescription extends RelationDescription
-{
+class RDBManyToManyRelationDescription extends RelationDescription {
+
   protected $thisEndRelation = '';
   protected $otherEndRelation = '';
 
@@ -40,8 +42,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
    * @param thisEndRelation The RDBOneToManyRelationDescription describing the relation between 'this' end and the connecting type
    * @param oneToManyRelationDescription The RDBManyToOneRelationDescription describing the relation between the connecting type and the 'other' end
    */
-  public function __construct(RDBOneToManyRelationDescription $thisEndRelation, RDBManyToOneRelationDescription $otherEndRelation)
-  {
+  public function __construct(RDBOneToManyRelationDescription $thisEndRelation, RDBManyToOneRelationDescription $otherEndRelation) {
     $this->thisEndRelation = $thisEndRelation;
     $this->otherEndRelation = $otherEndRelation;
   }
@@ -51,8 +52,7 @@ class RDBManyToManyRelationDescription extends RelationDescription
    * 'this' end and the connecting type
    * @return RelationDescription
    */
-  public function getThisEndRelation()
-  {
+  public function getThisEndRelation() {
     return $this->thisEndRelation;
   }
 
@@ -61,120 +61,105 @@ class RDBManyToManyRelationDescription extends RelationDescription
    * the connecting type and the 'other' end
    * @return RelationDescription
    */
-  public function getOtherEndRelation()
-  {
+  public function getOtherEndRelation() {
     return $this->otherEndRelation;
   }
 
   /**
    * @see RelationDescription::isMultiValued
    */
-  public function isMultiValued()
-  {
+  public function isMultiValued() {
     return true;
   }
 
   /**
    * @see RelationDescription::getThisType
    */
-  public function getThisType()
-  {
+  public function getThisType() {
     return $this->thisEndRelation->thisType;
   }
 
   /**
    * @see RelationDescription::getThisRole
    */
-  public function getThisRole()
-  {
+  public function getThisRole() {
     return $this->thisEndRelation->thisRole;
   }
 
   /**
    * @see RelationDescription::getOtherType
    */
-  public function getOtherType()
-  {
+  public function getOtherType() {
     return $this->otherEndRelation->otherType;
   }
 
   /**
    * @see RelationDescription::getOtherRole
    */
-  public function getOtherRole()
-  {
+  public function getOtherRole() {
     return $this->otherEndRelation->otherRole;
   }
 
   /**
    * @see RelationDescription::getThisMinMultiplicity
    */
-  public function getThisMinMultiplicity()
-  {
+  public function getThisMinMultiplicity() {
     return $this->thisEndRelation->thisMinMultiplicity;
   }
 
   /**
    * @see RelationDescription::getThisMaxMultiplicity
    */
-  public function getThisMaxMultiplicity()
-  {
+  public function getThisMaxMultiplicity() {
     return $this->thisEndRelation->thisMaxMultiplicity;
   }
 
   /**
    * @see RelationDescription::getOtherMinMultiplicity
    */
-  public function getOtherMinMultiplicity()
-  {
+  public function getOtherMinMultiplicity() {
     return $this->thisEndRelation->otherMinMultiplicity;
   }
 
   /**
    * @see RelationDescription::getOtherMaxMultiplicity
    */
-  public function getOtherMaxMultiplicity()
-  {
+  public function getOtherMaxMultiplicity() {
     return $this->thisEndRelation->otherMaxMultiplicity;
   }
 
   /**
    * @see RelationDescription::getThisAggregationKind
    */
-  public function getThisAggregationKind()
-  {
+  public function getThisAggregationKind() {
     return $this->thisEndRelation->thisAggregationKind;
   }
 
   /**
    * @see RelationDescription::getOtherAggregationKind
    */
-  public function getOtherAggregationKind()
-  {
+  public function getOtherAggregationKind() {
     return $this->thisEndRelation->otherAggregationKind;
   }
 
   /**
    * @see RelationDescription::getThisNavigability
    */
-  public function getThisNavigability()
-  {
+  public function getThisNavigability() {
     return $this->thisEndRelation->thisNavigability;
   }
 
   /**
    * @see RelationDescription::getOtherNavigability
    */
-  public function getOtherNavigability()
-  {
+  public function getOtherNavigability() {
     return $this->thisEndRelation->otherNavigability;
   }
 
   /**
    * @see RelationDescription::getHierarchyType
    */
-  public function getHierarchyType()
-  {
+  public function getHierarchyType() {
     return 'child';
   }
 }

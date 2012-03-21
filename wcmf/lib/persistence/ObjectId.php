@@ -16,11 +16,12 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @class ObjectId
- * @ingroup Persistence
- * @brief The unique identifier of an object.
+ * ObjectId is the unique identifier of an object.
  *
  * @note The ObjectId must provide enough information to select the appropriate mapper for the object.
  *       This may be achived by different strategies, e.g. coding the object type into the ObjectId or
@@ -31,8 +32,8 @@
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ObjectId
-{
+class ObjectId {
+
   private $_prefix;
   private $_type;
   private $_id;
@@ -41,7 +42,6 @@ class ObjectId
   private static $_dummyIdPattern = 'wcmf[A-Za-z0-9]{32}';
   private static $_idPattern = null;
   private static $_numPkKeys = array();
-
 
   /**
    * Constructor.
@@ -54,14 +54,12 @@ class ObjectId
    * @note If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
    */
-  public function __construct($type, $id=null, $prefix=null)
-  {
+  public function __construct($type, $id=null, $prefix=null) {
     $this->_prefix = $prefix;
     $this->_type = $type;
 
     // get given primary keys
-    if ($id != null)
-    {
+    if ($id != null) {
       if (!is_array($id)) {
         $this->_id = array($id);
       }
@@ -88,8 +86,7 @@ class ObjectId
    * Get the prefix
    * @return String
    */
-  public function getPrefix()
-  {
+  public function getPrefix() {
     return $this->_prefix;
   }
 
@@ -97,8 +94,7 @@ class ObjectId
    * Get the type
    * @return String
    */
-  public function getType()
-  {
+  public function getType() {
     return $this->_type;
   }
 
@@ -106,8 +102,7 @@ class ObjectId
    * Get the id
    * @return Array
    */
-  public function getId()
-  {
+  public function getId() {
     return $this->_id;
   }
 
@@ -115,8 +110,7 @@ class ObjectId
    * Get the first id. This is especially usefull, when you know that this id only consists of one id.
    * @return String
    */
-  public function getFirstId()
-  {
+  public function getFirstId() {
     return $this->_id[0];
   }
 
@@ -126,8 +120,7 @@ class ObjectId
    * @param oid The serialized ObjectId.
    * @return Boolean
    */
-  public static function isValid($oid)
-  {
+  public static function isValid($oid) {
     if (self::parse($oid) == null) {
       return false;
     }
@@ -139,8 +132,7 @@ class ObjectId
    * @param oid The string
    * @return ObjectId or null, if the id cannot be parsed
    */
-  public static function parse($oid)
-  {
+  public static function parse($oid) {
     // fast checks first
     if (strlen($oid) == 0) {
       return null;
@@ -158,8 +150,7 @@ class ObjectId
     // get the ids from the oid
     $ids = array();
     $nextPart = array_pop($oidParts);
-    while($nextPart !== null && preg_match(self::$_idPattern, $nextPart) == 1)
-    {
+    while($nextPart !== null && preg_match(self::$_idPattern, $nextPart) == 1) {
       $intNextPart = (int)$nextPart;
       if ($nextPart == $intNextPart) {
         $ids[] = $intNextPart;
@@ -193,8 +184,7 @@ class ObjectId
    * Get a string representation of the object id.
    * @return String
    */
-  public function __toString()
-  {
+  public function __toString() {
     if ($this->_strVal == null) {
       $oidStr = $this->_type.':'.join(':', $this->_id);
       if (strlen(trim($this->_prefix)) > 0) {
@@ -209,8 +199,7 @@ class ObjectId
    * Get a dummy id ("wcmf" + unique 32 character string).
    * @return String
    */
-  public static function getDummyId()
-  {
+  public static function getDummyId() {
     return 'wcmf'.md5(uniqid(ip2long(@$_SERVER['REMOTE_ADDR']) ^ (int)@$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space(sys_get_temp_dir()), 1));
   }
 
@@ -219,8 +208,7 @@ class ObjectId
    * @param id The id to check
    * @return Boolean
    */
-  public static function isDummyId($id)
-  {
+  public static function isDummyId($id) {
     return (strlen($id) == 36 && strpos($id, 'wcmf') === 0);
   }
 
@@ -228,8 +216,7 @@ class ObjectId
    * Check if a given object id contains a dummy id.
    * @return Boolean
    */
-  public function containsDummyIds()
-  {
+  public function containsDummyIds() {
     foreach ($this->getId() as $id) {
       if (self::isDummyId($id)) {
         return true;
@@ -243,10 +230,8 @@ class ObjectId
    * @param type The type
    * @return Integer (1 if the type is unknown)
    */
-  private static function getNumberOfPKs($type)
-  {
-    if (!isset(self::$_numPkKeys[$type]))
-    {
+  private static function getNumberOfPKs($type) {
+    if (!isset(self::$_numPkKeys[$type])) {
       $numPKs = 1;
       if (PersistenceFacade::getInstance()->isKnownType($type))
       {

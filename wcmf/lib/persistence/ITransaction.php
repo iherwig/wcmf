@@ -16,11 +16,10 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
 
 /**
- * @interface ITransaction
- * @ingroup Persistence
- * @brief ITransaction implements the Unit of Work pattern as it defines
+ * ITransaction implements the Unit of Work pattern as it defines
  * the interface for maintaining a list of PersistentObject changes inside
  * a business transaction and commit/rollback them.
  * ITransaction also serves as an Identity Map for loaded objects.

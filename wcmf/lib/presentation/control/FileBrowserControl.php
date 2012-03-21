@@ -16,12 +16,13 @@
  *
  * $Id: class.TextControl.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\control\Control;
 
 /**
- * @class FileBrowserControl
- * @ingroup Presentation
- * @brief FileBrowserControl allows to browse files on the server.
+ * FileBrowserControl allows to browse files on the server.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

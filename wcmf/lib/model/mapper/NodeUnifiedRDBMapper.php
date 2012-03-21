@@ -16,18 +16,23 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBMapper.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBAttributeDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBManyToManyRelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBManyToOneRelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBOneToManyRelationDescription.php");
+namespace wcmf\lib\model\mapper;
+
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
+use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\DeleteOperation;
+use wcmf\lib\persistence\IPersistenceMapper;
+use wcmf\lib\persistence\InsertOperation;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\PersistentObjectProxy;
+use wcmf\lib\persistence\UpdateOperation;
 
 /**
- * @class NodeUnifiedRDBMapper
- * @ingroup Mapper
- * @brief NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node
+ * NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node
  * type has its own table.
  * The wCMFGenerator uses this class as base class for all mappers.
  *

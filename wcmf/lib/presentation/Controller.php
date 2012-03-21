@@ -16,16 +16,17 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/Formatter.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ApplicationError.php");
-require_once(WCMF_BASE."wcmf/lib/i18n/Localization.php");
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+namespace wcmf\lib\presentation;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
- * @class Controller
- * @ingroup Presentation
- * @brief Controller is the base class of all controllers. If a Controller has a view
+ * Controller is the base class of all controllers. If a Controller has a view
  * it is expected to reside in the directory configured in section smarty.templateDir.
  * Additional smarty directories ('templates_c', 'configs', 'cache') are expected in a
  * subdirectory of the template directory named 'smarty'.
@@ -48,8 +49,8 @@ require_once(WCMF_BASE."wcmf/lib/util/Log.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class Controller
-{
+abstract class Controller {
+
   private $_request = null;
   private $_response = null;
   private $_executionResult = false;
@@ -57,11 +58,11 @@ abstract class Controller
   /**
    * Constructor.
    */
-  public function __construct()
-  {
+  public function __construct() {
     $this->_request = new Request(null, null, null);
     $this->_response = new Response(null, null, null);
   }
+
   /**
    * Initialize the Controller with request/response data. Which data is required is defined by the Controller.
    * The base class method just stores the parameters in a member variable. Specialized Controllers may overide
@@ -76,8 +77,7 @@ abstract class Controller
    * performed action. The sender attribute of the response is set to the current controller. Initially there
    * are no data stored in the response.
    */
-  public function initialize(Request $request, Response $response)
-  {
+  public function initialize(Request $request, Response $response) {
     $response->setController($this);
 
     $this->_request = $request;
@@ -90,34 +90,33 @@ abstract class Controller
       }
     }
   }
+
   /**
    * Check if the data given by initialize() meet the requirements of the Controller.
    * Subclasses will override this method to validate against their special requirements.
    * @return True/False whether the data are ok or not.
    */
-  protected function validate()
-  {
+  protected function validate() {
     return true;
   }
+
   /**
    * Check if the Controller has a view. The default implementation
    * returns true, if the execution result is false and the response format is MSG_FORMAT_HTML.
    * @return True/False whether the Controller has a view or not.
    */
-  public function hasView()
-  {
+  public function hasView() {
     $hasView = $this->_executionResult === false &&
       $this->_response->getFormat() == MSG_FORMAT_HTML;
     return $hasView;
   }
+
   /**
    * Execute the Controller resulting in its Action processed and/or its View beeing displayed.
    * @return True/False wether following Controllers should be executed or not.
    */
-  public function execute()
-  {
-    if (Log::isDebugEnabled(__CLASS__))
-    {
+  public function execute() {
+    if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug('Executing: '.get_class($this), __CLASS__);
       Log::debug('Request: '.$this->_request, __CLASS__);
     }
@@ -150,12 +149,14 @@ abstract class Controller
     }
     return $this->_executionResult;
   }
+
   /**
    * Do the work in execute(): Load and process model and maybe assign data to response.
    * Subclasses process their Action and assign the Model to the response.
-   * @return True/False wether ActionMapper should proceed with the next controller or not.
+   * @return Boolean whether ActionMapper should proceed with the next controller or not.
    */
   protected abstract function executeKernel();
+
   /**
    * Delegate the current request to another action. The context is the same as
    * the current context and the source controller will be set to TerminateController,
@@ -168,8 +169,7 @@ abstract class Controller
    *        the current request values, optional [default: empty array]
    * @return Response instance
    */
-  protected function executeSubAction($action, array $requestValues=array())
-  {
+  protected function executeSubAction($action, array $requestValues=array()) {
     $curRequest = $this->getRequest();
     $subRequest = new Request('TerminateController', $curRequest->getContext(), $action);
     $subRequest->setValues($curRequest->getValues());
@@ -181,22 +181,23 @@ abstract class Controller
     $response = ActionMapper::getInstance()->processAction($subRequest);
     return $response;
   }
+
   /**
    * Get the Request object.
    * @return Request object
    */
-  public function getRequest()
-  {
+  public function getRequest() {
     return $this->_request;
   }
+
   /**
    * Get the Response object.
    * @return Response object
    */
-  public function getResponse()
-  {
+  public function getResponse() {
     return $this->_response;
   }
+
   /**
    * Get a string value that uniquely identifies the current request data. This value
    * maybe used to compare two requests and return cached responses based on the result.
@@ -204,19 +205,18 @@ abstract class Controller
    * return reasonable values based on the expected requests.
    * @return The id or null, if no cache id should be used.
    */
-  public function getCacheId()
-  {
+  public function getCacheId() {
     return null;
   }
+
   /**
    * Assign default variables to the response. This method is called after Controller execution.
    * This method may be used by derived controller classes for convenient response setup.
    * @attention Internal use only.
    */
-  protected function assignResponseDefaults()
-  {
+  protected function assignResponseDefaults() {
     // set default values on the response
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
     $this->_response->setValue('sid', $session->getID());
 
     // return the first error
@@ -241,13 +241,13 @@ abstract class Controller
     $this->_response->setValue('action', $this->_response->getAction());
     $this->_response->setValue('responseFormat', $this->_response->getFormat());
   }
+
   /**
    * Check if the current request is localized. This is true,
    * if it has a language parameter that is not equal to Localization::getDefaultLanguage().
    * @return True/False wether the request is localized or not
    */
-  protected function isLocalizedRequest()
-  {
+  protected function isLocalizedRequest() {
     $localization = Localization::getInstance();
     if ($this->_request->hasValue('language') &&
       $this->_request->getValue('language') != $localization->getDefaultLanguage()) {

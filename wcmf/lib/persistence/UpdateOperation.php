@@ -16,17 +16,16 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceOperation.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\PersistenceOperation;
 
 /**
- * @class UpdateOperation
- * @ingroup Persistence
- * @brief A PersistenceOperation instance holds data necessary to accomplish
+ * UpdateOperation instances hold data necessary to accomplish
  * an upate operation on the persistent store.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class UpdateOperation extends PersistenceOperation
-{
+class UpdateOperation extends PersistenceOperation {
 }
 ?>

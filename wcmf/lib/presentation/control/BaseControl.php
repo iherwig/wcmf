@@ -16,12 +16,13 @@
  *
  * $Id: class.Control.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\control\Control;
 
 /**
- * @class BaseControl
- * @ingroup Presentation
- * @brief BaseControl is the default control implementation
+ * BaseControl is the default control implementation
  *
  * @author ingo herwig <ingo@wemove.com>
  */

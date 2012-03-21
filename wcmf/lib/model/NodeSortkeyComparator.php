@@ -16,11 +16,12 @@
  *
  * $Id$
  */
+namespace wcmf\lib\model;
+
+use wcmf\lib\model\Node;
 
 /**
- * @class NodeRelationComparator
- * @ingroup Model
- * @brief NodeRelationComparator is used to compare nodes by their sortkey
+ * NodeRelationComparator is used to compare nodes by their sortkey
  * in relation to a given node.
  *
  * The following example shows the usage:
@@ -36,8 +37,8 @@
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeSortkeyComparator
-{
+class NodeSortkeyComparator {
+
   private $_referenceNode;
   private $_oidRoleMap = array();
 
@@ -49,8 +50,7 @@ class NodeSortkeyComparator
    * @note If the role of a node to sort is not be defined, the comparator
    * uses the first relation that has the type of the given node
    */
-  public function __construct(Node $referenceNode, array $nodeList)
-  {
+  public function __construct(Node $referenceNode, array $nodeList) {
     $this->_referenceNode = $referenceNode;
     // map oids to roles for faster access
     foreach ($nodeList as $curNode) {
@@ -68,8 +68,7 @@ class NodeSortkeyComparator
    * @return -1, 0 or 1 whether a is less, equal or greater than b
    *   in respect of the criteria
    */
-  public function compare(Node $a, Node $b)
-  {
+  public function compare(Node $a, Node $b) {
     $valA = $this->getSortkeyValue($a);
     $valB = $this->getSortkeyValue($b);
     if ($valA == $valB) { return 0; }
@@ -81,8 +80,7 @@ class NodeSortkeyComparator
    * @param node Node
    * @return Number
    */
-  protected function getSortkeyValue(Node $node)
-  {
+  protected function getSortkeyValue(Node $node) {
     // if no role is defined for a or b, the sortkey is
     // determined from the type of the reference node
     $defaultRole = $this->_referenceNode->getType();

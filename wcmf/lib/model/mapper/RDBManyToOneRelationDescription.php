@@ -16,18 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/RelationDescription.php");
+namespace wcmf\lib\model\mapper;
+
+use wcmf\lib\persistence\RelationDescription;
 
 /**
- * @class RDBManyToOneRelationDescription
- * @ingroup Persistence
- * @brief Instances of RDBManyToOneRelationDescription describe a many to one relation
+ * Instances of RDBManyToOneRelationDescription describe a many to one relation
  * from 'this' end (many) to 'other' end (one) in a relational database.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RDBManyToOneRelationDescription extends RelationDescription
-{
+class RDBManyToOneRelationDescription extends RelationDescription {
+
   protected $idName = '';
   protected $fkName = '';
 
@@ -39,8 +39,8 @@ class RDBManyToOneRelationDescription extends RelationDescription
    */
   public function __construct($thisType, $thisRole, $otherType, $otherRole, $thisMinMultiplicity, $thisMaxMultiplicity,
     $otherMinMultiplicity, $otherMaxMultiplicity, $thisAggregationKind, $otherAggregationKind, $thisNavigability, $otherNavigability,
-    $hierarchyType, $idName, $fkName)
-  {
+    $hierarchyType, $idName, $fkName) {
+
     parent::__construct($thisType, $thisRole, $otherType, $otherRole, $thisMinMultiplicity, $thisMaxMultiplicity,
     $otherMinMultiplicity, $otherMaxMultiplicity, $thisAggregationKind, $otherAggregationKind, $thisNavigability, $otherNavigability,
     $hierarchyType);
@@ -54,8 +54,7 @@ class RDBManyToOneRelationDescription extends RelationDescription
    * by the foreign key attribute in 'this' end's type
    * @return String
    */
-  public function getIdName()
-  {
+  public function getIdName() {
     return $this->idName;
   }
 
@@ -63,8 +62,7 @@ class RDBManyToOneRelationDescription extends RelationDescription
    * Get the name of the foreign key attribute in 'this' end's type
    * @return String
    */
-  public function getFkName()
-  {
+  public function getFkName() {
     return $this->fkName;
   }
 }

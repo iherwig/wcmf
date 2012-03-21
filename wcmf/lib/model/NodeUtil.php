@@ -16,26 +16,28 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeValueIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/ObjectQuery.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PathDescription.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/renderer/ValueRenderer.php");
+namespace wcmf\lib\model;
+
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\Node;
+use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PathDescription;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\renderer\ValueRenderer;
+use wcmf\lib\util\StringUtil;
 
 /**
- * @class NodeUtil
- * @ingroup Model
- * @brief NodeUtil provides services for the Node class. All methods are static.
+ * NodeUtil provides services for the Node class. All methods are static.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeUtil
-{
+class NodeUtil {
+
   /**
    * Get the shortest paths that connect a type to another type.
    * @param type The type to start from
@@ -45,14 +47,12 @@ class NodeUtil
    *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
    * @return An array of PathDescription instances
    */
-  public static function getConnections($type, $otherRole, $otherType, $hierarchyType='all')
-  {
+  public static function getConnections($type, $otherRole, $otherType, $hierarchyType='all') {
     $paths = array();
     self::getConnectionsImpl($type, $otherRole, $otherType, $hierarchyType, $paths);
     $minLength = -1;
     $shortestPaths = array();
-    foreach ($paths as $curPath)
-    {
+    foreach ($paths as $curPath) {
       $curLength = $curPath->getPathLength();
       if ($minLength == -1 || $minLength > $curLength) {
         $minLength = $curLength;
@@ -76,19 +76,16 @@ class NodeUtil
    * @param currentPath Internal use only
    */
   protected static function getConnectionsImpl($type, $otherRole, $otherType,
-          $hierarchyType, array &$result=array(), array $currentPath=array())
-  {
+          $hierarchyType, array &$result=array(), array $currentPath=array()) {
     $persistenceFacade = PersistenceFacade::getInstance();
     $mapper = $persistenceFacade->getMapper($type);
 
     // check relations
     $relationDescs = $mapper->getRelations($hierarchyType);
-    foreach ($relationDescs as $relationDesc)
-    {
+    foreach ($relationDescs as $relationDesc) {
       // loop detection
       $loopDetected = false;
-      foreach ($currentPath as $pathPart)
-      {
+      foreach ($currentPath as $pathPart) {
         if ($relationDesc->isSameRelation($pathPart)) {
           $loopDetected = true;
           break;
@@ -120,24 +117,24 @@ class NodeUtil
       }
     }
   }
+
   /**
    * Get the query condition used to select all Nodes of a type.
    * @param nodeType The Node type
    * @return The condition string to be used with StringQuery.
    */
-  public static function getNodeQueryCondition($nodeType)
-  {
+  public static function getNodeQueryCondition($nodeType) {
     $query = new ObjectQuery($nodeType);
     return $query->getQueryCondition();
   }
+
   /**
    * Get the query condition used to select a special Node.
    * @param nodeType The Node type
    * @param oid The object id of the node
    * @return The condition string to be used with StringQuery.
    */
-  public static function getSelfQueryCondition($nodeType, ObjectId $oid)
-  {
+  public static function getSelfQueryCondition($nodeType, ObjectId $oid) {
     $query = new ObjectQuery($nodeType);
     $tpl = $query->getObjectTemplate($nodeType);
     $mapper = $tpl->getMapper();
@@ -148,14 +145,14 @@ class NodeUtil
     }
     return $query->getQueryString();
   }
+
   /**
    * Get the query condition used to select all related Nodes of a given role.
    * @param node The Node to select the relatives for
    * @param otherRole The role of the other nodes
    * @return The condition string to be used with StringQuery.
    */
-  public static function getRelationQueryCondition($node, $otherRole)
-  {
+  public static function getRelationQueryCondition($node, $otherRole) {
     $mapper = $node->getMapper();
     $relationDescription = $mapper->getRelation($otherRole);
     $otherType = $relationDescription->getOtherType();
@@ -180,6 +177,7 @@ class NodeUtil
     }
     return $condition;
   }
+
   /**
    * Get the display value for a Node defined by the 'display_value' property that may reference values of subnodes.
    * If the 'display_value' is an array ('|' separated strings) the pieces will be put together with ' - '.
@@ -198,10 +196,10 @@ class NodeUtil
    * @return The display string
    * @see ValueRenderer::render
    */
-  public static function getDisplayValue(Node $node, $useDisplayType=false, $language=null, $values=null)
-  {
+  public static function getDisplayValue(Node $node, $useDisplayType=false, $language=null, $values=null) {
     return join(' - ', array_values(self::getDisplayValues($node, $useDisplayType, $language, $values)));
   }
+
   /**
    * Does the same as NodeUtil::getDisplayValue but returns the display value as associative array
    * @param node A reference to the Node to display
@@ -210,8 +208,7 @@ class NodeUtil
    * @param values An assoziative array holding key value pairs that the display node's values should match [maybe null].
    * @return The display array
    */
-  public static function getDisplayValues(Node $node, $useDisplayType=false, $language=null, $values=null)
-  {
+  public static function getDisplayValues(Node $node, $useDisplayType=false, $language=null, $values=null) {
     // localize node if requested
     $localization = Localization::getInstance();
     if ($language != null) {
@@ -219,7 +216,6 @@ class NodeUtil
     }
 
     $displayArray = array();
-    $persistenceFacade = PersistenceFacade::getInstance();
     $pathToShow = $node->getProperty('display_value');
     if (!strPos($pathToShow, '|')) {
       $pathToShowPieces = array($pathToShow);
@@ -227,18 +223,15 @@ class NodeUtil
     else {
       $pathToShowPieces = preg_split('/\|/', $pathToShow);
     }
-    foreach($pathToShowPieces as $pathToShowPiece)
-    {
+
+    foreach($pathToShowPieces as $pathToShowPiece) {
       $tmpDisplay = '';
       $inputType = ''; // needed for the translation of a list value
-      if ($pathToShowPiece != '')
-      {
+      if ($pathToShowPiece != '') {
         $curNode = $node;
         $pieces = preg_split('/\//', $pathToShowPiece);
-        foreach ($pieces as $curPiece)
-        {
-          if (in_array($curPiece, $curNode->getValueNames()))
-          {
+        foreach ($pieces as $curPiece) {
+          if (in_array($curPiece, $curNode->getValueNames())) {
             // we found a matching attribute/element
             $tmpDisplay = $curNode->getValue($curPiece);
             $inputType = $curNode->getProperty('input_type');
@@ -251,8 +244,8 @@ class NodeUtil
       if (strlen($tmpDisplay) == 0) {
         $tmpDisplay = $node->getOID();
       }
-      if ($useDisplayType)
-      {
+
+      if ($useDisplayType) {
         // get type and attributes from definition
         preg_match_all("/[\w][^\[\]]+/", $displayType, $matches);
         if (sizeOf($matches[0]) > 0) {
@@ -263,30 +256,29 @@ class NodeUtil
         }
         $tmpDisplay = ValueRenderer::render($displayType, $tmpDisplay, $attributes);
       }
-
       $displayArray[$pathToShowPiece] = $tmpDisplay;
     }
     return $displayArray;
   }
+
   /**
    * Get the display name for a Node type defined by the mappers 'alt' property.
    * @param type The name of the type
    * @return The display string
    */
-  public static function getDisplayNameFromType($type)
-  {
+  public static function getDisplayNameFromType($type) {
     $persistenceFacade = PersistenceFacade::getInstance();
     $typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
     return $typeNode->getObjectDisplayName();
   }
+
   /**
    * Make all urls matching a given base url in a Node relative.
    * @param node A reference to the Node the holds the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
    * @param recursive True/False wether to recurse into child Nodes or not (default: true)
    */
-  public static function makeNodeUrlsRelative(Node $node, $baseUrl, $recursive=true)
-  {
+  public static function makeNodeUrlsRelative(Node $node, $baseUrl, $recursive=true) {
     // use NodeValueIterator to iterate over all Node values
     // and call the global convert function on each
     $iter = new NodeValueIterator($node, $recursive);
@@ -294,14 +286,14 @@ class NodeUtil
       self::makeValueUrlsRelative($iter->currentNode(), $iter->key(), $baseUrl);
     }
   }
+
   /**
    * Make the urls matching a given base url in a PersistentObject value relative.
    * @param node A reference to the Node the holds the value
    * @param valueName The name of the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
    */
-  private static function makeValueUrlsRelative(PersistentObject $object, $valueName, $baseUrl)
-  {
+  private static function makeValueUrlsRelative(PersistentObject $object, $valueName, $baseUrl) {
     $value = $object->getValue($valueName);
 
     // find urls in texts
@@ -311,8 +303,7 @@ class NodeUtil
       array_push($urls, $value);
     }
     // process urls
-    foreach ($urls as $url)
-    {
+    foreach ($urls as $url) {
       // convert absolute urls matching baseUrl
       $urlConv = $url;
       if (strpos($url, $baseUrl) === 0) {
@@ -323,6 +314,7 @@ class NodeUtil
     }
     $object->setValue($valueName, $value);
   }
+
   /**
    * Render all values in a list of Nodes using the appropriate ValueRenderer.
    * @note Values will be translated before rendering using Control::translateValue
@@ -330,25 +322,23 @@ class NodeUtil
    * @param language The language code, if the translated values should be localized.
    *                 Optional, default is Localization::getDefaultLanguage()
    */
-  public static function renderValues(&$nodes, $language=null)
-  {
+  public static function renderValues(&$nodes, $language=null) {
     // render the node values
-    for($i=0, $count=sizeof($nodes); $i<$count; $i++)
-    {
+    for($i=0, $count=sizeof($nodes); $i<$count; $i++) {
       $iter = new NodeValueIterator($nodes[$i], false);
       for($iter->rewind(); $iter->valid(); $iter->next()) {
         self::renderValue($iter->currentNode(), $iter->key(), $baseUrl);
       }
     }
   }
+
   /**
    * Render a PersistentObject value
    * @param object The object whose value to render
    * @param valueName The name of the value to render
    * @param language The language to use
    */
-  private static function renderValue(PersistentObject $object, $valueName, $language)
-  {
+  private static function renderValue(PersistentObject $object, $valueName, $language) {
     $value = $object->getValue($valueName);
     // translate list values
     $value = Control::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
@@ -362,6 +352,7 @@ class NodeUtil
     // force set (the rendered value may not be satisfy validation rules)
     $object->setValue($valueName, $value, true);
   }
+
   /**
    * Translate all list values in a list of Nodes.
    * @note Translation in this case refers to mapping list values from the key to the value
@@ -371,8 +362,7 @@ class NodeUtil
    * @param language The language code, if the translated values should be localized.
    *                 Optional, default is Localizat$objectgetDefaultLanguage()
    */
-  public static function translateValues(&$nodes, $language=null)
-  {
+  public static function translateValues(&$nodes, $language=null) {
     // translate the node values
     for($i=0; $i<sizeof($nodes); $i++)
     {
@@ -382,26 +372,26 @@ class NodeUtil
       }
     }
   }
+
   /**
    * Translate a PersistentObject list value.
    * @param object The object whose value to translate
    * @param valueName The name of the value to translate
    * @param language The language to use
    */
-  private static function translateValue(PersistentObject $object, $valueName, $language)
-  {
+  private static function translateValue(PersistentObject $object, $valueName, $language) {
     $value = $object->getValue($valueName);
     // translate list values
     $value = Control::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
     // force set (the rendered value may not be satisfy validation rules)
     $object->setValue($valueName, $value, true);
   }
+
   /**
    * Remove all values from a Node that are not a display value.
    * @param node The Node instance
    */
-  public static function removeNonDisplayValues(Node $node)
-  {
+  public static function removeNonDisplayValues(Node $node) {
     $displayValues = $node->getDisplayValueNames($node);
     $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {
@@ -410,12 +400,12 @@ class NodeUtil
       }
     }
   }
+
   /**
    * Remove all values from a Node that are not a primary key value.
    * @param node The Node instance
    */
-  public static function removeNonPkValues(Node $node)
-  {
+  public static function removeNonPkValues(Node $node) {
     $mapper = $node->getMapper();
     $pkValues = $mapper->getPkNames();
     $valueNames = $node->getValueNames();

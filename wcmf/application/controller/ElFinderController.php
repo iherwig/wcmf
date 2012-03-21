@@ -16,9 +16,11 @@
  *
  * $Id: class.ElFinderController.php 1332 2011-05-16 15:46:44Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\util\URIUtil;
 
 include_once(WCMF_BASE."wcmf/3rdparty/elfinder/php/elFinderConnector.class.php");
 include_once(WCMF_BASE."wcmf/3rdparty/elfinder/php/elFinder.class.php");
@@ -26,9 +28,7 @@ include_once(WCMF_BASE."wcmf/3rdparty/elfinder/php/elFinderVolumeDriver.class.ph
 include_once(WCMF_BASE."wcmf/3rdparty/elfinder/php/elFinderVolumeLocalFileSystem.class.php");
 
 /**
- * @class ElFinderController
- * @ingroup Controller
- * @brief ElFinderController integrates elFinder (http://elrte.org/elfinder)
+ * ElFinderController integrates elFinder (http://elrte.org/elfinder)
  * into wCMF.
  * @note elFinder defines action names in the 'cmd' parameter.
  *

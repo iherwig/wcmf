@@ -16,24 +16,42 @@
  *
  * $Id$
  */
+namespace wcmf\lib\core;
+
+use wcmf\lib\core\Log;
 
 /**
- * @class ErrorHandler catches all php errors and transforms fatal
+ * ErrorHandler catches all php errors and transforms fatal
  * errors into ErrorExceptions and non-fatal into log messages
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ErrorHandler
-{
+class ErrorHandler {
+
   private static $FATAL_ERRORS = array(E_USER_ERROR => '', E_RECOVERABLE_ERROR => '');
 
-  public static function handleError($errno, $errstr, $errfile, $errline)
-  {
-    $errorIsEnabled = (bool)($errno & ini_get('error_reporting'));
+  /**
+   * Constructor.
+   */
+  public function __construct() {
+    set_error_handler(array($this, 'handleError'));
+  }
 
+  /**
+   * Actual error handling method
+   * @param type errno
+   * @param type errstr
+   * @param type errfile
+   * @param type errline
+   * @return boolean
+   * @throws ErrorException
+   */
+  private function handleError($errno, $errstr, $errfile, $errline) {
+    $errorIsEnabled = (bool)($errno & ini_get('error_reporting'));
+echo $errstr." ".$errfile." ".$errline;
     // -- FATAL ERROR
     if(isset(self::$FATAL_ERRORS[$errno]) && $errorIsEnabled ) {
-        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 
     // -- NON-FATAL ERROR/WARNING/NOTICE
@@ -44,5 +62,5 @@ class ErrorHandler
   }
 }
 
-set_error_handler(array(new ErrorHandler(), 'handleError'));
+new ErrorHandler();
 ?>

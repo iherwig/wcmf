@@ -16,14 +16,15 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence\concurrency;
 
 /**
  * @class OptimisticLockException
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class OptimisticLockException extends Exception
-{
+class OptimisticLockException extends \Exception {
+
   private $_currentState = null;
 
   /**
@@ -31,8 +32,7 @@ class OptimisticLockException extends Exception
    * @param currentState PersistentObject instance representing the current object state
    *    or null, if the object is deleted
    */
-  public function __construct($currentState)
-  {
+  public function __construct($currentState) {
     $this->_currentState = $currentState;
 
     $msg = '';
@@ -49,8 +49,7 @@ class OptimisticLockException extends Exception
    * Get the current object
    * @return PersistentObject instance
    */
-  public function getCurrentState()
-  {
+  public function getCurrentState() {
     return $this->_currentState;
   }
 }

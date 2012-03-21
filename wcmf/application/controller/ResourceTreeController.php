@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,29 +11,30 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/application/controller/TreeViewController.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/InternalLink.php");
+namespace wcmf\application\controller;
+
+use wcmf\application\controller\TreeViewController;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\InternalLink;
 
 /**
- * @class ResourceTreeController
- * @ingroup Controller
- * @brief ResourceTreeController allows to browse cms content in a tree view
- *        and set links when selecting a resource. It works together with
- *        resourcetree.tpl.
+ * ResourceTreeController allows to browse cms content in a tree view
+ * and set links when selecting a resource. It works together with
+ * resourcetree.tpl.
  *
  * <b>Input actions:</b>
  * - see TreeViewController
  *
  * <b>Output actions:</b>
  * - see TreeViewController
- * 
+ *
  * @param[in,out] fieldName The name of the input field, to which the selected value should be assigned
- * 
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
 class ResourceTreeController extends TreeViewController

@@ -16,15 +16,17 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class UserController
- * @ingroup Controller
- * @brief UserController is used to edit data of the current users.
+ * UserController is used to edit data of the current users.
  *
  * <b>Input actions:</b>
  * - @em save Save the new password
@@ -41,46 +43,43 @@ require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class UserController extends Controller
-{
-  var $_userManager = null;
+class UserController extends Controller {
+
+  private $_userManager = null;
 
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
-  {
+  protected function initialize(&$request, &$response) {
     parent::initialize($request, $response);
 
     // create UserManager instance
-    $objectFactory = &ObjectFactory::getInstance();
-    $this->_userManager = &$objectFactory->createInstanceFromConfig('implementation', 'UserManager');
-    if ($this->_userManager == null)
-      WCMFException::throwEx($objectFactory->getErrorMsg(), __FILE__, __LINE__);
+    $objectFactory = ObjectFactory::getInstance();
+    $this->_userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+    if ($this->_userManager == null) {
+      throw new ConfigurationException($objectFactory->getErrorMsg());
+    }
   }
+
   /**
    * @see Controller::hasView()
    */
-  function hasView()
-  {
+  protected function hasView() {
     return true;
   }
+
   /**
    * Process action and assign data to View.
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
+  protected function executeKernel() {
     $rightsManager = RightsManager::getInstance();
 
     // process actions
-    $result = '';
 
     // save changes
-    if ($this->_request->getAction() == 'save')
-    {
+    if ($this->_request->getAction() == 'save') {
       // load model
       $user = $rightsManager->getAuthUser();
       $oid = new ObjectId(UserManager::getUserClassName(), $user->getUserId());
@@ -88,10 +87,9 @@ class UserController extends Controller
 
       // password
       $this->_userManager->beginTransaction();
-      if ($this->_request->getValue('changepassword') == 'yes')
-      {
+      if ($this->_request->getValue('changepassword') == 'yes') {
         $this->_userManager->changePassword($principal->getLogin(), $this->_request->getValue('oldpassword'),
-          $this->_request->getValue('newpassword1'), $this->_request->getValue('newpassword2'));
+        $this->_request->getValue('newpassword1'), $this->_request->getValue('newpassword2'));
         $message .= Message::get("The password was successfully changed.");
       }
       $this->_userManager->commitTransaction();

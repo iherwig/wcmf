@@ -16,25 +16,24 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceOperation.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\PersistenceOperation;
 
 /**
- * @class InsertOperation
- * @ingroup Persistence
- * @brief A InsertOperation instance holds data necessary to accomplish
+ * InsertOperation holds data necessary to accomplish
  * an insert operation on the persistent store.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class InsertOperation extends PersistenceOperation
-{
+class InsertOperation extends PersistenceOperation {
+
   /**
    * Constructor.
    * @param entityType The type of PersistentObject to insert
    * @param values An array of attribute/value pairs to apply
    */
-  public function __construct($entityType, array $values)
-  {
+  public function __construct($entityType, array $values) {
     parent::__construct($entityType, $values, array());
   }
 }

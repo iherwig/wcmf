@@ -16,15 +16,20 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/format/Formatter.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/AbstractFormat.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/IView.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/Obfuscator.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
+namespace wcmf\lib\presentation\format;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\WCMFInifileParser;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\format\AbstractFormat;
+use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\presentation\format\IFormat;
+use wcmf\lib\security\RightsManager;
+use wcmf\lib\util\Obfuscator;
 
 /**
  * Define the message format
@@ -32,9 +37,7 @@ require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
 define("MSG_FORMAT_HTML", "HTML");
 
 /**
- * @class HTMLFormat
- * @ingroup Format
- * @brief HTMLFormat realizes the HTML request/response format. Since all data
+ * HTMLFormat realizes the HTML request/response format. Since all data
  * from the external representation arrives in form fields, grouping of values
  * has to be done via the field names. So Nodes are represented by their values
  * whose field names are of the form value-<name>-<oid>. All of these

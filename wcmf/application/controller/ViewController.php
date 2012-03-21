@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,19 +11,19 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class ViewController
- * @ingroup Controller
- * @brief ViewController is a controller that has no logic.
+ * ViewController is a controller that has no logic.
  * It is used to display a static view only.
- * 
+ *
  * <b>Input actions:</b>
  * - unspecified: Present the view
  *

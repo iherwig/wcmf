@@ -16,17 +16,16 @@
  *
  * $Id$
  */
+namespace wcmf\lib\io;
 
 /**
- * @class EncodingUtil
- * @ingroup Util
- * @brief EncodingUtil provides helper functions for working with different encodings
+ * EncodingUtil provides helper functions for working with different encodings
  * mainly UTF-8.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class EncodingUtil
-{
+class EncodingUtil {
+
   /**
    * This structure encodes the difference between ISO-8859-1 and Windows-1252,
    * as a map from the UTF-8 encoding of some ISO-8859-1 control characters to
@@ -70,31 +69,33 @@ class EncodingUtil
    * @param string The string to be tested
    * code from: http://us2.php.net/mb_detect_encoding
    */
-  public static function isUtf8($string)
-  {
-    if ($string === mb_convert_encoding(mb_convert_encoding($string, "UTF-32", "UTF-8"), "UTF-8", "UTF-32"))
+  public static function isUtf8($string) {
+    if ($string === mb_convert_encoding(mb_convert_encoding($string, "UTF-32", "UTF-8"), "UTF-8", "UTF-32")) {
       return true;
-    else
+    }
+    else {
       return false;
+    }
   }
+
   /**
    * Decodes mixed CP1252 UTF-8 strings to ISO.
    * @param string The string to be decode
    * code from: http://www.php.net/manual/en/function.utf8-decode.php#47146
    */
-  public static function convertCp1252Utf8ToIso($str)
-	{
+  public static function convertCp1252Utf8ToIso($str) {
     return utf8_decode(strtr($str, array_flip(self::$CP1252Map)));
   }
+
   /**
    * Encodes ISO strings to mixed CP1252 UTF-8.
    * @param string The string to be encode
    * code from: http://www.php.net/manual/en/function.utf8-decode.php#47146
    */
-  public static function convertIsoToCp1252Utf8($str)
-	{
+  public static function convertIsoToCp1252Utf8($str) {
     return strtr(utf8_encode($str), self::$CP1252Map);
   }
+
   /**
    * Encodes an ISO-8859-1 mixed variable to UTF-8 (PHP 4, PHP 5 compat)
    * @param input An array, associative or simple
@@ -102,19 +103,15 @@ class EncodingUtil
    * @return utf-8 encoded input
    * code from: http://de3.php.net/utf8_encode
    */
-  public static function utf8EncodeMix($input, $encodeKeys=false)
-  {
-    if(is_array($input))
-    {
+  public static function utf8EncodeMix($input, $encodeKeys=false) {
+    if(is_array($input)) {
       $result = array();
-      foreach($input as $k => $v)
-      {
+      foreach($input as $k => $v) {
         $key = ($encodeKeys) ? self::convertIsoToCp1252Utf8($k) : $k;
         $result[$key] = self::utf8EncodeMix($v, $encodeKeys);
       }
     }
-    else
-    {
+    else {
       if (!is_int($input) && !is_float($input) && !is_bool($input)) {
         $result = self::convertIsoToCp1252Utf8($input);
       } else {

@@ -16,40 +16,44 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ILockHandler.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/PessimisticLockException.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/ObjectQuery.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+namespace wcmf\lib\persistence\concurrency;
+
+use wcmf\lib\core\Session;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\concurrency\ILockHandler;
+use wcmf\lib\persistence\concurrency\Lock;
+use wcmf\lib\persistence\concurrency\PessimisticLockException;
+use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\UserManager;
 
 /**
- * @class DefaultLockHandler
- * @ingroup Persistence
- * @brief DefaultLockHandler implements the ILockHandler interface for relational databases.
+ * DefaultLockHandler implements the ILockHandler interface for relational databases.
  * Locks are represented by the entity type 'Locktable' with attributes
  * 'sessionid', 'objectid', 'since'. Locktable instances are children of the user entity.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DefaultLockHandler implements ILockHandler
-{
+class DefaultLockHandler implements ILockHandler {
+
   const SESSION_VARNAME = 'DefaultLockHandler.locks';
 
   /**
    * @see ILockHandler::aquireLock()
    */
-  public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null)
-  {
+  public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null) {
     $currentUser = $this->getCurrentUser();
     if (!$currentUser) {
       return;
     }
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
 
     // check for existing locks
     $lock = $this->getLock($oid);
-    if ($lock != null)
-    {
+    if ($lock != null) {
       if ($lock->getType() == Lock::TYPE_PESSIMISTIC) {
         // if the existing lock is a pessimistic lock and it is owned by another
         // user, we throw an exception
@@ -80,8 +84,7 @@ class DefaultLockHandler implements ILockHandler
   /**
    * @see ILockHandler::releaseLock()
    */
-  public function releaseLock(ObjectId $oid)
-  {
+  public function releaseLock(ObjectId $oid) {
     $currentUser = $this->getCurrentUser();
     if (!$currentUser) {
       return;
@@ -104,8 +107,7 @@ class DefaultLockHandler implements ILockHandler
   /**
    * @see ILockHandler::releaseLocks()
    */
-  public function releaseLocks(ObjectId $oid)
-  {
+  public function releaseLocks(ObjectId $oid) {
     // delete locks for the given oid
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
@@ -120,13 +122,11 @@ class DefaultLockHandler implements ILockHandler
   /**
    * @see ILockHandler::releaseAllLocks()
    */
-  public function releaseAllLocks()
-  {
+  public function releaseAllLocks() {
     $currentUser = $this->getCurrentUser();
     if (!$currentUser) {
       return;
     }
-    $session = SessionData::getInstance();
 
     // delete locks for the current user
     $query = new ObjectQuery('Locktable');
@@ -146,8 +146,7 @@ class DefaultLockHandler implements ILockHandler
    * @param oid ObjectId of the locked object
    * @return Lock instance or null
    */
-  public function getLock(ObjectId $oid)
-  {
+  public function getLock(ObjectId $oid) {
     // check if a lock is stored in the session (maybe optimistic
     // or pessimistic)
     $locks = $this->getSessionLocks();
@@ -175,7 +174,6 @@ class DefaultLockHandler implements ILockHandler
       }
       return $lock;
     }
-
     return null;
   }
 
@@ -183,8 +181,7 @@ class DefaultLockHandler implements ILockHandler
    * Store the given Lock instance for later retrieval
    * @param lock Lock instance
    */
-  protected function storeLock(Lock $lock)
-  {
+  protected function storeLock(Lock $lock) {
     if ($lock->getType() == Lock::TYPE_PESSIMISTIC) {
       // pessimistic locks must be stored in the database in order
       // to be seen by other users
@@ -207,8 +204,7 @@ class DefaultLockHandler implements ILockHandler
    * Get the current user
    * @return User instance
    */
-  protected function getCurrentUser()
-  {
+  protected function getCurrentUser() {
     $rightsManager = RightsManager::getInstance();
     return $rightsManager->getAuthUser();
   }
@@ -218,9 +214,8 @@ class DefaultLockHandler implements ILockHandler
    * @return Associative array with the serialized ObjectId instances
    * as keys and the Lock instances as values
    */
-  protected function getSessionLocks()
-  {
-    $session = SessionData::getInstance();
+  protected function getSessionLocks() {
+    $session = Session::getInstance();
     if ($session->exist(self::SESSION_VARNAME)) {
       return $session->get(self::SESSION_VARNAME);
     }
@@ -231,9 +226,8 @@ class DefaultLockHandler implements ILockHandler
    * Add a given Lock instance to the session
    * @param lock Lock instance
    */
-  protected function addSessionLock(Lock $lock)
-  {
-    $session = SessionData::getInstance();
+  protected function addSessionLock(Lock $lock) {
+    $session = Session::getInstance();
     $locks = $this->getSessionLocks();
     $locks[$lock->getOID()->__toString()] = $lock;
     $session->set(self::SESSION_VARNAME, $locks);
@@ -243,9 +237,8 @@ class DefaultLockHandler implements ILockHandler
    * Remove a given Lock instance from the session
    * @param lock Lock instance
    */
-  protected function removeSessionLock(Lock $lock)
-  {
-    $session = SessionData::getInstance();
+  protected function removeSessionLock(Lock $lock) {
+    $session = Session::getInstance();
     $locks = $this->getSessionLocks();
     unset($locks[$lock->getOID->__toString()]);
     $session->set(self::SESSION_VARNAME, $locks);

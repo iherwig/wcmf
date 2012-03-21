@@ -16,12 +16,19 @@
  *
  * $Id$
  */
-require_once("base_dir.php");
+namespace wcmf\lib\presentation\control;
 
-require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/i18n/Localization.php");
+use wcmf\application\controller\DisplayController;
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\io\FileUtil;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\WCMFInifileParser;
+use wcmf\lib\presentation\control\Control;
 
 /**
  * Global function for id (oid) retrieval. For parameters see PersistenceFacade::getOIDs().

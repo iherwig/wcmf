@@ -16,14 +16,17 @@
  *
  * $Id: class.Control.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/control/IListStrategy.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
+namespace wcmf\lib\presentation\control;
+
+use \Exception;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\control\IListStrategy;
 
 /**
- * @class AsyncListStrategy
- * @ingroup Presentation
- * @brief AsyncListStrategy implements a list of entities that is retrieved
+ * AsyncListStrategy implements a list of entities that is retrieved
  * asynchronously from the server, where the keys are the object ids and the
  * values are the display values.
  * The following list definition(s) must be used in the input_type configuraton:

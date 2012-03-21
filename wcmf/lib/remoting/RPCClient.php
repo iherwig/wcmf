@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,92 +11,92 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Request.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Response.php");
+namespace wcmf\lib\remoting;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\Log;
+use wcmf\lib\core\Session;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\format\Formatter;
 
 /**
- * @class RPCClient
- * @ingroup Remoting
- * @brief RPCClient is used to do calls to other wCMF instances on
+ * RPCClient is used to do calls to other wCMF instances on
  * the same maschine.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RPCClient
-{
+class RPCClient {
+
   // constants
   const SIDS_SESSION_VARNAME = 'RPCClient.sids';
-  
+
   private $_serverCli = null;
   private $_php = null;
   private $_user = null;
-  
+
   /**
    * Constructor
    * @param serverCli The command line interface of the other server instance.
    * @param user The remote user instance.
    */
-  function __construct($serverCli, $user)
-  {
+  public function __construct($serverCli, $user) {
+
     $this->_serverCli = realpath($serverCli);
-    if (!file_exists($this->_serverCli))
-    {
-      WCMFException::throwEx("Could not setup RPCClient: ".$this->_serverCli." not found.",
-        __FILE__, __LINE__);
+    if (!file_exists($this->_serverCli)) {
+      throw new RuntimeException("Could not setup RPCClient: ".$this->_serverCli." not found.");
     }
-    
+
     // locate the php executable
     $parser = InifileParser::getInstance();
-    if (($this->_php = $parser->getValue('php', 'system')) === false)
-    {
-      WCMFException::throwEx("Could not setup RPCClient:\n".
-        $parser->getErrorMsg(), __FILE__, __LINE__);
+    if (($this->_php = $parser->getValue('php', 'system')) === false) {
+      throw new ConfigurationException("Could not setup RPCClient:\n".$parser->getErrorMsg());
     }
-    
+
     // initialize the session variable for storing session
-    $session = &SessionData::getInstance();
+    $session = &Session::getInstance();
     if (!$session->exist(self::SIDS_SESSION_VARNAME)) {
       $var = array();
       $session->set(self::SIDS_SESSION_VARNAME, $var);
     }
     $this->_user = $user;
   }
+
   /**
    * Do a call to the remote server.
    * @param request A Request instance
    * @return A Response instance
    */
-  function call($request)
-  {
+  public function call($request) {
     $response = $this->doRemoteCall($request, false);
     return $response;
   }
+
   /**
    * Do a remote call.
    * @param request The Request instance
    * @param isLogin True/False wether this request is a login request or not
    * @return The Response instance
    */
-  protected function doRemoteCall($request, $isLogin)
-  {
-  	// initially login, if no sessionId is set
-  	$sessionId = $this->getSessionId();
+  protected function doRemoteCall($request, $isLogin) {
+    // initially login, if no sessionId is set
+    $sessionId = $this->getSessionId();
     if (!$isLogin && $sessionId == null) {
       $response = $this->doLogin();
       if ($response) {
   	    $sessionId = $this->getSessionId();
       }
     }
-    
+
     $jsonResponse = null;
     $returnValue = -1;
-    
+
     $request->setResponseFormat(MSG_FORMAT_JSON);
     $serializedRequest = base64_encode(serialize($request));
 
@@ -118,15 +118,15 @@ class RPCClient
       Log::debug("Response [JSON]:\n".$jsonResponse[0], __CLASS__);
     }
     chdir($currentDir);
-    
-    $responseData = JSONUtil::decode($jsonResponse[0], true);
+
+    $responseData = json_decode($jsonResponse[0], true);
     $response = new Response('', '', '', $responseData);
     $response->setFormat(MSG_FORMAT_JSON);
     Formatter::deserialize($response);
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Response:\n".$response->toString(), __CLASS__);
     }
-    
+
     if (!$response->getValue('success')) {
       // if the session expired, try to relogin
       if (strpos('Authorization failed', $response->getValue('errorMsg')) === 0 && !$isLogin) {
@@ -138,71 +138,69 @@ class RPCClient
     }
     return $response;
   }
+
   /**
    * Do the login request. If the request is successful,
    * the session id will be set.
    * @return True on success
    */
-  protected function doLogin()
-  {
-    if ($this->_user)
-  	{
+  protected function doLogin() {
+    if ($this->_user) {
       $request = new Request(
-        'LoginController', 
-        '', 
-        'dologin', 
+        'LoginController',
+        '',
+        'dologin',
         array(
-          'login' => $this->_user->getLogin(), 
-          'password' => $this->_user->getPassword(), 
+          'login' => $this->_user->getLogin(),
+          'password' => $this->_user->getPassword(),
           'password_is_encrypted' => true
         )
-      );    
+      );
       $response = $this->doRemoteCall($request, true);
-      if ($response->getValue('success'))
-      {
+      if ($response->getValue('success')) {
         // store the session id in the session
       	$this->setSessionId($response->getValue('sid'));
         return true;
       }
     }
     else {
-      WCMFException::throwEx("Remote user required for remote call.", __FILE__, __LINE__);
+      throw new RuntimeException("Remote user required for remote call.");
     }
   }
+
   /**
    * Store the session id for our server in the local session
    * @return The session id or null
    */
-  protected function setSessionId($sessionId)
-  {
-    $session = SessionData::getInstance();
+  protected function setSessionId($sessionId) {
+    $session = Session::getInstance();
     $sids = $session->get(self::SIDS_SESSION_VARNAME);
     $sids[$this->_serverCli] = $sessionId;
     $session->set(self::SIDS_SESSION_VARNAME, $sids);
   }
+
   /**
    * Get the session id for our server from the local session
    * @return The session id or null
    */
-  protected function getSessionId()
-  {
+  protected function getSessionId() {
     // check if we already have a session with the server
-    $session = &SessionData::getInstance();
-  	$sids = $session->get(self::SIDS_SESSION_VARNAME);
+    $session = &Session::getInstance();
+    $sids = $session->get(self::SIDS_SESSION_VARNAME);
     if (isset($sids[$this->_serverCli])) {
       return $sids[$this->_serverCli];
     }
     return null;
   }
+
   /**
    * Error handling method
    * @param response The Response instance
    */
-  protected function handleError($response)
-  {
+  protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');
-    Log::error("Error in remote call to ".$this->_serverCli.": ".$errorMsg."\n".$response->toString(), __FILE__, __LINE__);
-    WCMFException::throwEx("Error in remote call to ".$this->_serverCli.": ".$errorMsg, __FILE__, __LINE__);
+    Log::error("Error in remote call to ".$this->_serverCli.": ".$errorMsg."\n".$response->toString(), __CLASS__);
+    throw new RuntimeException("Error in remote call to ".$this->_serverCli.": ".$errorMsg);
   }
 }
 ?>

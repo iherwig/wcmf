@@ -16,13 +16,13 @@
  *
  * $Id$
  */
+namespace wcmf\lib\config;
 
 /**
  * @class ConfigurationException
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ConfigurationException extends Exception
-{
+class ConfigurationException extends \Exception {
 }
 ?>

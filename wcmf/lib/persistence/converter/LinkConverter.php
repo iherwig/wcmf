@@ -16,18 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/core/WCMFException.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/IDataConverter.php");
-require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+namespace wcmf\lib\persistence\converter;
 
-// this is stored in a global variable to allow static method calls
-$gLinkConverterBaseUrl = null;
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\util\StringUtil;
+use wcmf\lib\util\URIUtil;
 
 /**
- * @class LinkConverter
- * @ingroup Converter
- * @brief LinkConverter converts internal absolute urls to relative ones when saving
+ * LinkConverter converts internal absolute urls to relative ones when saving
  * to the database and vice versa. Since StringUtil::getUrls() is used to
  * detect urls, only urls in hmtl elements are detected when converting from
  * storage to application (relative to absolute). If the url is not in an
@@ -36,52 +33,49 @@ $gLinkConverterBaseUrl = null;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LinkConverter implements IDataConverter
-{
+class LinkConverter implements IDataConverter {
+
+  private static $_linkConverterBaseUrl = null;
+
   /**
    * @see DataConverter::convertStorageToApplication()
    */
-  function convertStorageToApplication($data, $type, $name)
-  {
+  public function convertStorageToApplication($data, $type, $name) {
     $urls = StringUtil::getUrls($data);
-    foreach ($urls as $url)
-    {
-        if ($url != '#' && !LinkConverter::isExternalUrl($url))
-        {
-          // convert relative url
-          $urlConv = LinkConverter::makeUrlAbsolute($url);
+    foreach ($urls as $url) {
+      if ($url != '#' && !self::isExternalUrl($url)) {
+        // convert relative url
+        $urlConv = self::makeUrlAbsolute($url);
 
-          // replace url
-          $data = str_replace('"'.$url.'"', '"'.$urlConv.'"', $data);
-        }
+        // replace url
+        $data = str_replace('"'.$url.'"', '"'.$urlConv.'"', $data);
+      }
     }
-
     return $data;
   }
+
   /**
    * @see DataConverter::convertApplicationToStorage()
    */
-  function convertApplicationToStorage($data, $type, $name)
-  {
+  public function convertApplicationToStorage($data, $type, $name) {
     $urls = StringUtil::getUrls($data);
-    foreach ($urls as $url)
-    {
-        if ($url != '#' && !LinkConverter::isExternalUrl($url))
-        {
-          // convert absolute url
-          $urlConv = LinkConverter::makeUrlRelative($url);
+    foreach ($urls as $url) {
+      if ($url != '#' && !self::isExternalUrl($url)) {
+        // convert absolute url
+        $urlConv = self::makeUrlRelative($url);
 
-          // replace url
-          $data = str_replace('"'.$url.'"', '"'.$urlConv.'"', $data);
-        }
+        // replace url
+        $data = str_replace('"'.$url.'"', '"'.$urlConv.'"', $data);
+      }
     }
 
     // convert if whole data is an url
-    if ($url != '#' && !LinkConverter::isExternalUrl($data))
-      $data = LinkConverter::makeUrlRelative($data);
-
+    if ($url != '#' && !self::isExternalUrl($data)) {
+      $data = self::makeUrlRelative($data);
+    }
     return $data;
   }
+
   /**
    * Convert an absolute resource url on the server where the script runs to a relative one.
    * The converted url is relative to the directory configured in the config key
@@ -89,71 +83,69 @@ class LinkConverter implements IDataConverter
    * @param url The url to convert
    * @return The converted url
    */
-  function makeUrlRelative($url)
-  {
+  private static function makeUrlRelative($url) {
     $urlConv = $url;
 
     // get base url
-    $baseUrl = LinkConverter::getBaseUrl();
+    $baseUrl = self::getBaseUrl();
 
     // strip base url
-    if (strpos($url, $baseUrl) === 0)
+    if (strpos($url, $baseUrl) === 0) {
       $urlConv = str_replace($baseUrl, '', $url);
-
+    }
     return $urlConv;
   }
+
   /**
    * Convert an relative url to a absolute one.
    * @param url The url to convert
    * @return The converted url
    */
-  function makeUrlAbsolute($url)
-  {
+  private static function makeUrlAbsolute($url) {
     $urlConv = $url;
 
     // get base url
-    $baseUrl = LinkConverter::getBaseUrl();
+    $baseUrl = self::getBaseUrl();
 
-    if (strpos($url, $baseUrl) !== 0 && strpos($url, 'javascript') !== 0)
+    if (strpos($url, $baseUrl) !== 0 && strpos($url, 'javascript') !== 0) {
       $urlConv = $baseUrl.$url;
-
+    }
     return $urlConv;
   }
+
   /**
    * Get the absolute http url of the base directory. The relative path to
    * that directory as seen from the script is configured in the config key
    * 'htmlBaseDir' section 'cms'.
    * @return The base url.
    */
-  function getBaseUrl()
-  {
-    if ($gLinkConverterBaseUrl == null)
-    {
+  private static function getBaseUrl() {
+    if (self::$_linkConverterBaseUrl == null) {
       $parser = InifileParser::getInstance();
       if (($resourceBaseDir = $parser->getValue('htmlBaseDir', 'cms')) === false)
-        WCMFException::throwEx($parser->getErrorMsg(), __FILE__, __LINE__);
+        throw new ConfigurationException($parser->getErrorMsg());
 
       $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-      $gLinkConverterBaseUrl = URIUtil::makeAbsolute($resourceBaseDir, $refURL);
+      self::$_linkConverterBaseUrl = URIUtil::makeAbsolute($resourceBaseDir, $refURL);
     }
-    return $gLinkConverterBaseUrl;
+    return self::$_linkConverterBaseUrl;
   }
+
   /**
    * Check if an url is absolute
    * @param url The url to check
    * @return True/False wether the url is absolute
    */
-  function isAbsoluteUrl($url)
-  {
+  private static function isAbsoluteUrl($url) {
     return strpos($url, 'http://') === 0 || strpos($url, 'https://');
   }
+
   /**
    * Check if an url is external
    * @param url The url to check
    * @return True/False wether the url is external
    */
-  function isExternalUrl($url)
-  {
+  private function isExternalUrl($url) {
     return !(strpos($url, URIUtil::getProtocolStr().$_SERVER['HTTP_HOST']) === 0 ||
       strpos($url, 'http://') === false || strpos($url, 'https://') === false);
   }

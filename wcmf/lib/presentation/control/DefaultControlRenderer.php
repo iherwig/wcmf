@@ -16,16 +16,16 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/View.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/InternalLink.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\control\DefaultControlRenderer;
+use wcmf\lib\util\Obfuscator;
 
 /**
- * @class DefaultControlRenderer
- * @ingroup Presentation
- * @brief DefaultControlRenderer is responsible for rendering html input controls.
+ * DefaultControlRenderer is responsible for rendering html input controls.
  * Each control is defined in a smarty template, which is configured by the appropriate entry
  * in the configuration section 'htmlform' (e.g. the text input control has the entry 'text').
  * The templates get a default set of variables assigned. Additional variables, needed only for

@@ -16,17 +16,20 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/output/ArrayOutputStrategy.php");
-require_once(WCMF_BASE."wcmf/lib/visitor/OutputVisitor.php");
-require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
-require_once(WCMF_BASE."wcmf/lib/util/Obfuscator.php");
-require_once(WCMF_BASE."wcmf/lib/model/StringQuery.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\NodeUtil;
+use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\UnknownFieldException;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\RightsManager;
+use wcmf\lib\util\Obfuscator;
 
 /**
- * @class ListController
- * @ingroup Controller
- * @brief ListController is a controller that allows to navigate lists.
+ * ListController is a controller that allows to navigate lists.
  *
  * <b>Input actions:</b>
  * - unspecified: List nodes
@@ -61,13 +64,12 @@ require_once(WCMF_BASE."wcmf/lib/model/StringQuery.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ListController extends Controller
-{
+class ListController extends Controller {
+
   /**
    * @see Controller::validate()
    */
-  protected function validate()
-  {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     if($request->hasValue('limit') && intval($request->getValue('limit')) < 0) {
@@ -82,23 +84,21 @@ class ListController extends Controller
     // we can't check for offset out of bounds here
     return true;
   }
+
   /**
    * Do processing and assign Node data to View.
    * @return False in every case.
    * @see Controller::executeKernel()
    */
-  protected function executeKernel()
-  {
+  protected function executeKernel() {
     $request = $this->getRequest();
     $rightsManager = RightsManager::getInstance();
 
     // unveil the query value if it is ofuscated
     $query = null;
-    if ($request->hasValue('query'))
-    {
+    if ($request->hasValue('query')) {
       $query = $request->getValue('query');
-      if (strlen($query) > 0)
-      {
+      if (strlen($query) > 0) {
         $unveiled = Obfuscator::unveil($query);
         if (strlen($unveiled) > 0) {
           $query = stripslashes($unveiled);
@@ -124,8 +124,7 @@ class ListController extends Controller
 
     // collect the nodes
     $nodes = array();
-    for($i=0,$count=sizeof($objects); $i<$count; $i++)
-    {
+    for($i=0,$count=sizeof($objects); $i<$count; $i++) {
       $curObject = &$objects[$i];
 
       // check if we can read the object
@@ -136,8 +135,7 @@ class ListController extends Controller
     $totalCount = $pagingInfo != null ? $pagingInfo->getTotalCount() : sizeof($nodes);
 
     // translate all nodes to the requested language if requested
-    if ($this->isLocalizedRequest())
-    {
+    if ($this->isLocalizedRequest()) {
       $localization = Localization::getInstance();
       for ($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         $localization->loadTranslation($nodes[$i], $this->_request->getValue('language'), true, true);
@@ -156,6 +154,7 @@ class ListController extends Controller
     $response->setAction('ok');
     return false;
   }
+
   /**
    * Get the object to display. The default implementation uses a StringQuery instance for the
    * object retrieval. Subclasses may override this. If filter is an empty string, all nodes of the given
@@ -166,8 +165,7 @@ class ListController extends Controller
    * @param pagingInfo A reference to the current paging information (PagingInfo instance)
    * @return An array of object instances
    */
-  protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo)
-  {
+  protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
     if(!PersistenceFacade::getInstance()->isKnownType($type)) {
       return array();
     }
@@ -177,8 +175,7 @@ class ListController extends Controller
     try {
       $objects = $query->execute(BUILDDEPTH_SINGLE, $sortArray, $pagingInfo);
     }
-    catch (UnknownFieldException $ex)
-    {
+    catch (UnknownFieldException $ex) {
       // check if the sort field is illegal
       $response = $this->getResponse();
       $request = $this->getRequest();
@@ -193,19 +190,18 @@ class ListController extends Controller
     Log::debug("Load objects with query: ".$query->getLastQueryString(), __CLASS__);
     return $objects;
   }
+
   /**
    * Modify the model passed to the view.
    * @note subclasses will override this to implement special application requirements.
    * @param nodes A reference to the array of node references passed to the view
    */
-  protected function modifyModel($nodes)
-  {
+  protected function modifyModel($nodes) {
     $request = $this->getRequest();
     // TODO: put this into subclass ListController
 
     // remove all attributes except for display_values
-    if ($request->getBooleanValue('completeObjects', false) == false)
-    {
+    if ($request->getBooleanValue('completeObjects', false) == false) {
       for($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         NodeUtil::removeNonDisplayValues($nodes[$i]);
       }

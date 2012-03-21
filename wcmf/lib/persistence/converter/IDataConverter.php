@@ -16,18 +16,16 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
+namespace wcmf\lib\persistence\converter;
 
 /**
- * @interface IDataConverter
- * @ingroup Converter
- * @brief IDataConverter defines the interface for converting data between
+ * IDataConverter defines the interface for converting data between
  * storage and application.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface IDataConverter
-{
+interface IDataConverter {
+
   /**
    * Convert data after reading from storage.
    * This method is called by PersistenceMapper classes after reading the data from the storage.
@@ -36,7 +34,8 @@ interface IDataConverter
    * @param name The name of the data item.
    * @return The converted data.
    */
-  function convertStorageToApplication($data, $type, $name);
+  public function convertStorageToApplication($data, $type, $name);
+
   /**
    * Convert data before writing to storage.
    * This method is called by PersistenceMapper classes before storing the data to the storage.
@@ -45,6 +44,6 @@ interface IDataConverter
    * @param name The name of the data item.
    * @return The converted data.
    */
-  function convertApplicationToStorage($data, $type, $name);
+  public function convertApplicationToStorage($data, $type, $name);
 }
 ?>

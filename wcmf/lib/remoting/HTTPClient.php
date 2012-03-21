@@ -16,9 +16,13 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Request.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Response.php");
+namespace wcmf\lib\remoting;
+
+use \Exception;
+use wcmf\lib\core\Log;
+use wcmf\lib\presentation\ControllerMessage;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\format\Formatter;
 
 $includePath = get_include_path();
 if (strpos($includePath, 'Zend') === false) {
@@ -27,14 +31,12 @@ if (strpos($includePath, 'Zend') === false) {
 require_once('Zend/Http/Client.php');
 
 /**
- * @class HTTPClient
- * @ingroup Remoting
- * @brief HTTPClient is used to do calls to other wCMF instances over HTTP.
+ * HTTPClient is used to do calls to other wCMF instances over HTTP.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class HTTPClient
-{
+class HTTPClient {
+
   private $_client = null;
   private $_user = null;
 
@@ -43,8 +45,7 @@ class HTTPClient
    * @param serverUrl The url of the other server instance.
    * @param user The remote user instance.
    */
-  function __construct($serverUrl, $user)
-  {
+  public function __construct($serverUrl, $user) {
     $this->_client = new Zend_Http_Client($serverUrl, array(
         'keepalive' => true,
         'timeout' => 3600
@@ -54,24 +55,24 @@ class HTTPClient
     $this->_client->setCookieJar();
     $this->_user = $user;
   }
+
   /**
    * Do a call to the remote server.
    * @param request A Request instance
    * @return A Response instance
    */
-  function call($request)
-  {
+  public function call($request) {
     $response = $this->doRemoteCall($request, false);
     return $response;
   }
+
   /**
    * Do a remote call.
    * @param request The Request instance
    * @param isLogin True/False wether this request is a login request or not
    * @return The Response instance
    */
-  protected function doRemoteCall($request, $isLogin)
-  {
+  protected function doRemoteCall($request, $isLogin) {
     // initially login, if no cookie is set
     $cookyJar = $this->_client->getCookieJar();
     if (!$isLogin && sizeof($cookyJar->getAllCookies()) == 0) {
@@ -92,11 +93,11 @@ class HTTPClient
     }
     catch (Exception $ex) {
       Log::error("Error in remote call to ".$url.":\n".$ex, __FILE__, __LINE__);
-      throw new Exception("Error in remote call to ".$url.": ".$ex->getMessage());
+      throw new RuntimeException("Error in remote call to ".$url.": ".$ex->getMessage());
     }
 
     // deserialize the response
-    $responseData = JSONUtil::decode($httpResponse->getBody(), true);
+    $responseData = json_decode($httpResponse->getBody(), true);
     $response = new ControllerMessage('', '', '', $responseData);
     $response->setFormat(MSG_FORMAT_JSON);
     Formatter::deserialize($response);
@@ -111,19 +112,18 @@ class HTTPClient
       }
       $url = $this->_client->getUri();
       Log::error("Error in remote call to ".$url.": ".$errorMsg."\n".$response->toString(), __FILE__, __LINE__);
-      throw new Exception("Error in remote call: $errorMsg");
+      throw new RuntimeException("Error in remote call: $errorMsg");
     }
     return $response;
   }
+
   /**
    * Do the login request. If the request is successful,
    * the session id will be set.
    * @return True on success
    */
-  protected function doLogin()
-  {
-    if ($this->_user)
-    {
+  protected function doLogin() {
+    if ($this->_user) {
       $request = new Request(
         'LoginController',
         '',
@@ -141,18 +141,18 @@ class HTTPClient
       }
     }
     else {
-      throw new Exception("Remote user required for remote call.");
+      throw new RuntimeException("Remote user required for remote call.");
     }
   }
+
   /**
    * Error handling method
    * @param response The Response instance
    */
-  protected function handleError($response)
-  {
+  protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');
     Log::error("Error in remote call to ".$this->_serverBase.": ".$errorMsg."\n".$response->toString(), __FILE__, __LINE__);
-    throw new Exception("Error in remote call to ".$this->_serverBase.": ".$errorMsg);
+    throw new RuntimeException("Error in remote call to ".$this->_serverBase.": ".$errorMsg);
   }
 }
 ?>

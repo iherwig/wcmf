@@ -16,18 +16,19 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/core/Event.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\core\Event;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
- * @class StateChangeEvent
- * @ingroup Event
- * @brief StateChangeEvent signals a change of the state of
+ * StateChangeEvent signals a change of the state of
  * a PersistentObject instance.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class StateChangeEvent extends Event
-{
+class StateChangeEvent extends Event {
+
   const NAME = __CLASS__;
 
   private $_object = null;
@@ -40,12 +41,12 @@ class StateChangeEvent extends Event
    * @param oldValue The old value of the state.
    * @param newValue The new value of the state.
    */
-  public function __construct(PersistentObject $object, $oldValue, $newValue)
-  {
+  public function __construct(PersistentObject $object, $oldValue, $newValue) {
     $this->_object = $object;
     $this->_oldValue = $oldValue;
     $this->_newValue = $newValue;
   }
+
   /**
    * Get the object whose state has changed.
    * @return PersistentObject instance
@@ -53,6 +54,7 @@ class StateChangeEvent extends Event
   public function getObject() {
     return $this->_object;
   }
+
   /**
    * Get the old value.
    * @return Mixed
@@ -60,6 +62,7 @@ class StateChangeEvent extends Event
   public function getOldValue() {
     return $this->_oldValue;
   }
+
   /**
    * Get the new value.
    * @return Mixed

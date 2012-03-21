@@ -16,23 +16,23 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
+namespace wcmf\lib\security;
+
+use wcmf\lib\model\Node;
+use wcmf\lib\persistence\ObjectId;
 
 /**
- * @class Role
- * @ingroup Security
- * @brief Abstract base class for role classes that represent a user role.
+ * Role is the abstract base class for role classes that represent a user role.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class Role extends Node
-{
+abstract class Role extends Node {
+
   /**
    * Constructor
    * @param oid ObjectId instance (optional)
    */
-  function __construct($oid=null)
-  {
+  function __construct($oid=null) {
     if ($oid == null) {
       $oid = new ObjectId('Role');
     }

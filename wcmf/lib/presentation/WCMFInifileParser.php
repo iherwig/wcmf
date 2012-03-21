@@ -16,25 +16,25 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
+namespace wcmf\lib\presentation;
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\io\FileUtil;
 
 /**
- * @class WCMFInifileParser
- * @ingroup Presentation
- * @brief WCMFInifileParser adds methods for wcmf specific inifiles.
- *        This class is a decorator to the InifileParser class, showing only the
- *        readonly methods of InifileParser in it's interface.
- *        The advantage in using the InifileParser singleton inside
- *        this class is that its instance will hold the same configuration
- *        data as the WCMFInifileParser instance does.@n
- *        For this reason other classes may use the InifileParser instance
- *        not knowing about the WCMFInifileParser class at all.
+ * WCMFInifileParser adds methods for wcmf specific inifiles.
+ * This class is a decorator to the InifileParser class, showing only the
+ * readonly methods of InifileParser in it's interface.
+ * The advantage in using the InifileParser singleton inside
+ * this class is that its instance will hold the same configuration
+ * data as the WCMFInifileParser instance does.@n
+ * For this reason other classes may use the InifileParser instance
+ * not knowing about the WCMFInifileParser class at all.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class WCMFInifileParser
-{
+class WCMFInifileParser {
+
   private static $_instance = null;
   private $_actionDelimiter = '?';
 
@@ -44,10 +44,8 @@ class WCMFInifileParser
    * Returns an instance of the class.
    * @return A reference to the only instance of the Singleton object
    */
-  public static function getInstance()
-  {
-    if (!isset(self::$_instance))
-    {
+  public static function getInstance() {
+    if (!isset(self::$_instance)) {
       self::$_instance = new WCMFInifileParser();
       // assign instance to InifileParser instance
       $baseInstance = InifileParser::getInstance();
@@ -55,6 +53,7 @@ class WCMFInifileParser
     }
     return self::$_instance;
   }
+
   /**
    * Get a list of available configuration files.
    * @return Array of configuration file names.
@@ -63,12 +62,12 @@ class WCMFInifileParser
    * - CONFIG_PATH: the path of the configuration files
    * - CONFIG_EXTENSION: the extension of configuration files (e.g. 'ini')
    */
-  public function getIniFiles()
-  {
+  public function getIniFiles() {
     global $CONFIG_PATH, $CONFIG_EXTENSION;
     $fileUtil = new FileUtil();
     return $fileUtil->getFiles($CONFIG_PATH, "/\.".$CONFIG_EXTENSION."$/", true);
   }
+
   /**
    * Get an ini file key that matches a given combination of resource, context, action best.
    * @param section The section to search in.
@@ -77,8 +76,7 @@ class WCMFInifileParser
    * @param action The given action.
    * @return The best matching key or an empty string if nothing matches.
    */
-  public function getBestActionKey($section, $resource, $context, $action)
-  {
+  public function getBestActionKey($section, $resource, $context, $action) {
     $parser = InifileParser::getInstance();
     // check resource?context?action
     if (strlen($resource) > 0 && strlen($context) > 0 && strlen($action) > 0) {
@@ -151,48 +149,47 @@ class WCMFInifileParser
   /**
    * @see InifileParser::getErrorMsg()
    */
-  public function getErrorMsg()
-  {
+  public function getErrorMsg() {
     $parser = InifileParser::getInstance();
     return $parser->getErrorMsg();
   }
+
   /**
    * @see InifileParser::parseIniFile()
    */
-  public function parseIniFile($filename, $processValues=true)
-  {
+  public function parseIniFile($filename, $processValues=true) {
     $parser = InifileParser::getInstance();
     return $parser->parseIniFile($filename, $processValues);
   }
+
   /**
    * @see InifileParser::getData()
    */
-  public function getData()
-  {
+  public function getData() {
     $parser = InifileParser::getInstance();
     return $parser->getData();
   }
+
   /**
    * @see InifileParser::getSections()
    */
-  public function getSections()
-  {
+  public function getSections() {
     $parser = InifileParser::getInstance();
     return $parser->getSections();
   }
+
   /**
    * @see InifileParser::getSection()
    */
-  public function getSection($section, $caseSensitive=true)
-  {
+  public function getSection($section, $caseSensitive=true) {
     $parser = InifileParser::getInstance();
     return $parser->getSection($section, $caseSensitive);
   }
+
   /**
    * @see InifileParser::getValue()
    */
-  public function getValue($key, $section, $caseSensitive=true)
-  {
+  public function getValue($key, $section, $caseSensitive=true) {
     $parser = InifileParser::getInstance();
     return $parser->getValue($key, $section, $caseSensitive);
   }

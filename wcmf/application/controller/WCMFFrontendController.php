@@ -16,16 +16,16 @@
  *
  * $Id: class.WCMFFrontendController.php 1250 2010-12-05 23:02:43Z iherwig $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class WCMFFrontendController
- * @ingroup Controller
- * @brief WCMFFrontendController is used to display the wCMF frontend.
+ * WCMFFrontendController is used to display the wCMF frontend.
  *
  * <b>Input actions:</b>
  * - model: Get a list of template instances of all known model entities

@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,21 +11,21 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/ArrayUtil.php");
+namespace wcmf\application\controller\admintool;
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\model\Node;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\util\ArrayUtil;
 
 /**
- * @class ConfigController
- * @ingroup Controller
- * @brief ConfigController is used to edit configuration files. The controller
+ * ConfigController is used to edit configuration files. The controller
  * uses the global variable CONFIG_PATH to locate the configuration files.
  * The global variables CONFIG_EXTENSION and MAIN_CONFIG_FILE are used to
  * determine which files are configuration files and which one is the default
@@ -58,7 +58,7 @@ require_once(WCMF_BASE."wcmf/lib/util/ArrayUtil.php");
  * @author ingo herwig <ingo@wemove.com>
  */
 class ConfigController extends Controller
-{  
+{
   /**
    * @see Controller::initialize()
    */
@@ -69,7 +69,7 @@ class ConfigController extends Controller
       $request->setContext('config');
       $response->setContext('config');
     }
-    
+
     parent::initialize($request, $response);
   }
   /**
@@ -114,12 +114,12 @@ class ConfigController extends Controller
   function executeKernel()
   {
     global $CONFIG_PATH, $CONFIG_EXTENSION, $MAIN_CONFIG_FILE;
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
     $configFilename = $this->_request->getValue('oid');
     // strip path
     $configFilename = str_replace($CONFIG_PATH, '', $configFilename);
     $configFilenameNoExtension = str_replace('.'.$CONFIG_EXTENSION, '', $configFilename);
-    
+
     // process actions
 
     // DELETE CONFIG
@@ -147,7 +147,7 @@ class ConfigController extends Controller
       // redirect directly to edit view
       $this->_request->setAction('editconfig');
     }
-    
+
     // EDIT, SAVE
     $internalLink = '';
     if (in_array($this->_request->getAction(), array('editconfig', 'save')) || in_array($this->_request->getContext(), array('config')))
@@ -155,7 +155,7 @@ class ConfigController extends Controller
       // load model
       $configFile = new InifileParser();
       $configFile->parseIniFile($CONFIG_PATH.$configFilename, false);
-      
+
       // save changes
       if ($this->_request->getAction() == 'save')
       {
@@ -276,7 +276,7 @@ class ConfigController extends Controller
   /**
    * Extract the parameters for locating a value in a configuration file (type, section, key).
    * @param controlname A string of the from 'type_typeName_section_sectionName_option_optionName'
-   * @return An assoziative array with the keys 'type', 'section', 'option', 
+   * @return An assoziative array with the keys 'type', 'section', 'option',
    *         where type typically has one of the values 'section', 'option', 'value'
    */
   function getKeyFromControlName($controlname)

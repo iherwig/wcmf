@@ -16,16 +16,19 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/application/controller/BatchController.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/PersistentIterator.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
+namespace wcmf\application\controller;
+
+use wcmf\application\controller\BatchController;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\io\FileUtil;
+use wcmf\lib\model\PersistentIterator;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class XMLExportController
- * @ingroup Controller
- * @brief XMLExportController exports the content tree into an XML file.
+ * XMLExportController exports the content tree into an XML file.
  *
  * <b>Input actions:</b>
  * - @em continue Continue export
@@ -74,7 +77,7 @@ class XMLExportController extends BatchController
     // construct initial document info
     if ($request->getAction() != 'continue')
     {
-     	$session = SessionData::getInstance();
+     	$session = Session::getInstance();
 
       $docFile = $this->_request->hasValue('docfile') ? $this->_request->getValue('docfile') : $this->_DOCFILE;
       $docType = $this->_request->hasValue('doctype') ? $this->_request->getValue('doctype') : $this->_DOCTYPE;
@@ -118,7 +121,7 @@ class XMLExportController extends BatchController
    */
   public function initExport($oids)
   {
-   	$session = SessionData::getInstance();
+   	$session = Session::getInstance();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -141,7 +144,7 @@ class XMLExportController extends BatchController
 
     if (is_array($rootTypes))
     {
-      $persistenceFacade = &PersistenceFacade::getInstance();
+      $persistenceFacade = PersistenceFacade::getInstance();
       foreach($rootTypes as $rootType) {
         $rootOIDs = array_merge($rootOIDs, $persistenceFacade->getOIDs($rootType));
       }
@@ -168,7 +171,7 @@ class XMLExportController extends BatchController
     // - If the oids array holds one value!=null this is assumed to be an root oid and a new iterator is constructed
     // - If there is no iterator and no oid given, we return
 
-   	$session = SessionData::getInstance();
+   	$session = Session::getInstance();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -243,7 +246,7 @@ class XMLExportController extends BatchController
    */
   protected function finishExport($oids)
   {
-   	$session = SessionData::getInstance();
+   	$session = Session::getInstance();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 

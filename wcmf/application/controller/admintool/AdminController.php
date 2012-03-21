@@ -16,15 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
+namespace wcmf\application\controller\admintool;
+
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\WCMFInifileParser;
 
 /**
- * @class AdminController
- * @ingroup Controller
- * @brief AdminController is used as an entry point to the admintool.
+ * AdminController is used as an entry point to the admintool.
  *
  * <b>Input actions:</b>
  * - unspecified: Display the admintool start screen
@@ -51,8 +51,8 @@ class AdminController extends Controller
     parent::initialize($request, $response);
 
     // create UserManager instance
-    $objectFactory = &ObjectFactory::getInstance();
-    $this->_userManager = &$objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+    $objectFactory = ObjectFactory::getInstance();
+    $this->_userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
   }
   /**
    * @see Controller::validate()
@@ -80,7 +80,7 @@ class AdminController extends Controller
    */
   function executeKernel()
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
     $this->_userManager->beginTransaction();
 
     // assign model to view

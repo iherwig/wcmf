@@ -16,13 +16,10 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/IDataConverter.php");
+namespace wcmf\lib\persistence\converter;
 
 /**
- * @class XMLDataConverter
- * @ingroup Converter
- * @brief XMLDataConverter converts data between storage and XML files.
+ * XMLDataConverter converts data between storage and XML files.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

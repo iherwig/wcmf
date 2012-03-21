@@ -19,9 +19,12 @@
 error_reporting(E_ALL | E_PARSE);
 
 require_once("base_dir.php");
-require_once(WCMF_BASE."wcmf/lib/core/AutoLoader.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Application.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ActionMapper.php");
+require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+
+use \Exception;
+use wcmf\lib\core\Session;
+use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\Application;
 
 $application = Application::getInstance();
 try {
@@ -32,7 +35,7 @@ try {
   ActionMapper::processAction($request);
 
   // store the last successful request
-  SessionData::getInstance()->set('lastRequest', $request);
+  Session::getInstance()->set('lastRequest', $request);
 }
 catch (Exception $ex) {
   $application->handleException($ex);

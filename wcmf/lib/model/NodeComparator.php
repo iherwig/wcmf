@@ -16,11 +16,13 @@
  *
  * $Id$
  */
+namespace wcmf\lib\model;
+
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\model\Node;
 
 /**
- * @class NodeComparator
- * @ingroup Model
- * @brief NodeComparator is used to compare nodes by given criterias.
+ * NodeComparator is used to compare nodes by given criterias.
  *
  * The following example shows the usage:
  *
@@ -42,8 +44,8 @@
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeComparator
-{
+class NodeComparator {
+
   const SORTTYPE_ASC = -1;  // sort children ascending
   const SORTTYPE_DESC = -2; // sort children descending
   const ATTRIB_OID = -3;  // sort by oid
@@ -58,8 +60,7 @@ class NodeComparator
    *        (e.g. array(NodeComparator::OID => NodeComparator::SORTTYPE_ASC, 'name' => NodeComparator::SORTTYPE_DESC) OR 'name')
    *        @note If criteria is only a string we will sort by this criteria with NodeComparator::SORTTYPE_ASC
    */
-  public function __construct(array $sortCriteria)
-  {
+  public function __construct(array $sortCriteria) {
     $this->_sortCriteria = $sortCriteria;
   }
 
@@ -70,35 +71,30 @@ class NodeComparator
    * @return -1, 0 or 1 whether a is less, equal or greater than b
    *   in respect of the criteria
    */
-  public function compare(Node $a, Node $b)
-  {
+  public function compare(Node $a, Node $b) {
     // we compare for each criteria and sum the results for $a, $b
     // afterwards we compare the sums and return -1,0,1 appropriate
     $sumA = 0;
     $sumB = 0;
     $maxWeight = sizeOf($this->_sortCriteria);
     $i = 0;
-    foreach ($this->_sortCriteria as $criteria => $sortType)
-    {
+    foreach ($this->_sortCriteria as $criteria => $sortType) {
       $weightedValue = ($maxWeight-$i)*($maxWeight-$i);
       $AGreaterB = 0;
       // sort by id
-      if ($criteria == self::SORTBY_OID)
-      {
+      if ($criteria == self::SORTBY_OID) {
         if ($a->getOID() != $b->getOID()) {
           ($a->getOID() > $b->getOID()) ? $AGreaterB = 1 : $AGreaterB = -1;
         }
       }
       // sort by type
-      else if ($criteria == self::SORTBY_TYPE)
-      {
+      else if ($criteria == self::SORTBY_TYPE) {
         if ($a->getType() != $b->getType()) {
           ($a->getType() > $b->getType()) ? $AGreaterB = 1 : $AGreaterB = -1;
         }
       }
       // sort by value
-      else if($a->getValue($criteria) != null || $b->getValue($criteria) != null)
-      {
+      else if($a->getValue($criteria) != null || $b->getValue($criteria) != null) {
         $aValue = strToLower($a->getValue($criteria));
         $bValue = strToLower($b->getValue($criteria));
         if ($aValue != $bValue) {
@@ -106,8 +102,7 @@ class NodeComparator
         }
       }
       // sort by property
-      else if($a->getProperty($criteria) != null || $b->getProperty($criteria) != null)
-      {
+      else if($a->getProperty($criteria) != null || $b->getProperty($criteria) != null) {
         $aProperty = strToLower($a->getProperty($criteria));
         $bProperty = strToLower($b->getProperty($criteria));
         if ($aProperty != $bProperty) {
@@ -115,13 +110,11 @@ class NodeComparator
         }
       }
       // calculate result of current criteria depending on current sorttype
-      if ($sortType == self::SORTTYPE_ASC)
-      {
+      if ($sortType == self::SORTTYPE_ASC) {
         if ($AGreaterB == 1) { $sumA += $weightedValue; }
         else if ($AGreaterB == -1) { $sumB += $weightedValue; }
       }
-      else if ($sortType == self::SORTTYPE_DESC)
-      {
+      else if ($sortType == self::SORTTYPE_DESC) {
         if ($AGreaterB == 1) { $sumB += $weightedValue; }
         else if ($AGreaterB == -1) { $sumA += $weightedValue; }
       }

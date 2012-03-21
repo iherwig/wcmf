@@ -16,19 +16,19 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/IOutputStrategy.php");
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+namespace wcmf\lib\model\output;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\model\output\IOutputStrategy;
 
 /**
- * @class DotOutputStrategy
- * @ingroup Output
- * @brief This OutputStrategy outputs an object's content in a dot file.
+ * DotOutputStrategy outputs an object's content in a dot file.
  * @note file locking works not on NFS!
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DotOutputStrategy implements IOutputStrategy
-{
+class DotOutputStrategy implements IOutputStrategy {
+
   private $DEFAULT_NODE_STYLE = 'height=0.1,width=1,shape=box,style=filled,color="#49B4CF",fillcolor="#49B4CF",fontcolor=white,fontsize=14,fontname="Helvetica-Bold"';
   private $DEFAULT_EDGE_STYLE = 'arrowhead=none,arrowtail=none,color="#49B4CF"';
 
@@ -46,8 +46,7 @@ class DotOutputStrategy implements IOutputStrategy
    * @param nodeStyle Style definition to use for nodes (see dot documentation).
    * @param edgeStyle Style definition to use for edges (see dot documentation).
    */
-  public function DotOutputStrategy($file, $nodeStyle='', $edgeStyle='')
-  {
+  public function __construct($file, $nodeStyle='', $edgeStyle='') {
     $this->_file = $file;
     $this->_fileOk = false;
 
@@ -64,17 +63,15 @@ class DotOutputStrategy implements IOutputStrategy
       $this->_edgeStyle = $this->DEFAULT_EDGE_STYLE;
     }
   }
+
   /**
    * @see OutputStrategy::writeHeader
    */
-  public function writeHeader()
-  {
+  public function writeHeader() {
     // check if file exists and is locked
-    if (file_exists($this->_file))
-    {
+    if (file_exists($this->_file)) {
       $this->_fp = fopen($this->_file, "r");
-      if (!$this->_fp)
-      {
+      if (!$this->_fp) {
         Log::warn("Can't write to file ".$this->_file.". Another user holds the lock. Try again later.", __CLASS__);
         return;
       }
@@ -84,10 +81,8 @@ class DotOutputStrategy implements IOutputStrategy
     }
     // check if file exists and is locked
     $this->_fp = fopen($this->_file, "w");
-    if ($this->_fp)
-    {
-      if (flock ($this->_fp, LOCK_EX))
-      {
+    if ($this->_fp) {
+      if (flock ($this->_fp, LOCK_EX)) {
         $this->_fileOk = true;
         fputs($this->_fp, "digraph G {\n\n");
         fputs($this->_fp, "  node [".$this->_nodeStyle."]\n");
@@ -96,32 +91,29 @@ class DotOutputStrategy implements IOutputStrategy
       }
     }
   }
+
   /**
    * @see OutputStrategy::writeFooter
    */
-  public function writeFooter()
-  {
-    if ($this->_fileOk)
-    {
+  public function writeFooter() {
+    if ($this->_fileOk) {
       fputs($this->_fp, "\n}\n");
       flock ($this->_fp, LOCK_UN);
       fclose($this->_fp);
     }
   }
+
   /**
    * @see OutputStrategy::writeObject
    */
-  public function writeObject($obj)
-  {
+  public function writeObject($obj) {
     if (!$obj->getProperty('nodeIndex')) {
       $obj->setProperty('nodeIndex', $this->getNextIndex());
     }
-    if ($this->_fileOk)
-    {
+    if ($this->_fileOk) {
       fputs($this->_fp, '  n'.$obj->getProperty('nodeIndex').' [label="'.$obj->getOID().'"]'."\n");
       $children = $obj->getChildren();
-      for($i=0; $i<sizeOf($children); $i++)
-      {
+      for($i=0; $i<sizeOf($children); $i++) {
         if (!$children[$i]->getProperty('nodeIndex')) {
           $children[$i]->setProperty('nodeIndex', $this->getNextIndex());
         }
@@ -130,12 +122,12 @@ class DotOutputStrategy implements IOutputStrategy
       fputs($this->_fp, "\n");
     }
   }
+
   /**
    * Get the next Node index.
    * @return The next Node index.
    */
-  private function getNextIndex()
-  {
+  private function getNextIndex() {
     return $this->_nodeIndex++;
   }
 }

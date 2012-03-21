@@ -16,14 +16,15 @@
  *
  * $Id: class.Control.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/control/IListStrategy.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\control\IListStrategy;
 
 /**
- * @class ConfigListStrategy
- * @ingroup Presentation
- * @brief ConfigListStrategy implements list of key value pairs that is retrieved
+ * ConfigListStrategy implements list of key value pairs that is retrieved
  * from an configuration section.
  * The following list definition(s) must be used in the input_type configuraton:
  * @code

@@ -16,24 +16,25 @@
  *
  * $Id$
  */
+namespace wcmf\lib\util;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\util\URIUtil;
 
 /**
- * @class URIUtil
- * @ingroup Util
- * @brief URIUtil provides support for uri manipulation.
+ * URIUtil provides support for uri manipulation.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class URIUtil
-{
+class URIUtil {
+
   /**
    * Convert an absolute URI to a relative
    * code from http://www.webmasterworld.com/forum88/334.htm
    * @param abs_uri Absolute URI to convert
    * @param base Base URI
    */
-  public static function makeRelative($abs_uri, $base)
-  {
+  public static function makeRelative($abs_uri, $base) {
     $abs_uri = preg_replace("{^[^:]+://[^/]+}", '', $abs_uri);
     $base = preg_replace("{^[^:]+://[^/]+}", '', $base);
 
@@ -49,8 +50,7 @@ class URIUtil
       array_pop($base_array);
     }
     // ignore common path
-    while ($abs_array[0] == $base_array[0] && sizeof($abs_array) > 0)
-    {
+    while ($abs_array[0] == $base_array[0] && sizeof($abs_array) > 0) {
       array_shift($abs_array);
       array_shift($base_array);
     }
@@ -59,6 +59,7 @@ class URIUtil
     $rel_uri = str_repeat('../', sizeof($base_array)).join('/', $abs_array).'/'.$fileName;
     return $rel_uri;
   }
+
   /**
    * Convert a relative URI to an absolute
    * code from http://www.webmasterworld.com/forum88/334.htm
@@ -66,8 +67,7 @@ class URIUtil
    * @param base Base URI
    * @param REMOVE_LEADING_DOTS True/False wether to remove leading dots or not [default: true]
    */
-  public static function makeAbsolute($rel_uri, $base, $REMOVE_LEADING_DOTS = true)
-  {
+  public static function makeAbsolute($rel_uri, $base, $REMOVE_LEADING_DOTS = true) {
     preg_match("'^([^:]+://[^/]+)/'", $base, $m);
     $base_start = $m[1];
     if (preg_match("'^/'", $rel_uri)) {
@@ -81,18 +81,14 @@ class URIUtil
       array_shift($base_array);
     }
     $i = 1;
-    while ($i < count($base_array))
-    {
-      if ($base_array[$i - 1] == ".")
-      {
+    while ($i < count($base_array)) {
+      if ($base_array[$i - 1] == ".") {
         array_splice($base_array, $i - 1, 1);
         if ($i > 1) $i--;
       }
-      elseif ($base_array[$i] == ".." && $base_array[$i - 1]!= "..")
-      {
+      elseif ($base_array[$i] == ".." && $base_array[$i - 1]!= "..") {
         array_splice($base_array, $i - 1, 2);
-        if ($i > 1)
-        {
+        if ($i > 1) {
           $i--;
           if ($i == count($base_array)) {
             array_push($base_array, "");
@@ -122,13 +118,13 @@ class URIUtil
        http://www.faqs.org/rfcs/rfc2396.html  5.2.6.g
     */
 
-    if ($REMOVE_LEADING_DOTS)
-    {
+    if ($REMOVE_LEADING_DOTS) {
       while (count($base_array) && preg_match("/^\.\.?$/", $base_array[0]))
         array_shift($base_array);
     }
     return($base_start . '/' . implode("/", $base_array));
   }
+
   /**
    * Translate a relative URI from one location to the script location.
    * For example if a file path is stored relative to location A and should be
@@ -139,8 +135,7 @@ class URIUtil
    * @return An associtative array with keys 'absolute' and 'relative'
    * and the absolute and relative URI (as seen from the executed script) as values
    */
-  public static function translate($rel_uri, $base)
-  {
+  public static function translate($rel_uri, $base) {
     $self = UriUtil::getProtocolStr().$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
     $path = dirname($self).'/';
     $absUrl = URIUtil::makeAbsolute($rel_uri, $path.$base);
@@ -148,6 +143,7 @@ class URIUtil
 
     return array('absolute' => $absUrl, 'relative' => $relUrl);
   }
+
   /**
    * Check if an url is available (HTTP-Code: 200)
    * code from http://de.php.net/fsockopen
@@ -155,11 +151,9 @@ class URIUtil
    * @param timeout The timeout in seconds (default: 10)
    * @return True/False wether the url is available
    */
-  public static function validateUrl($url, $timeout=10)
-  {
+  public static function validateUrl($url, $timeout=10) {
     $url_parts = @parse_url($url);
-    if (empty($url_parts["host"]))
-    {
+    if (empty($url_parts["host"])) {
       // check local relative url
       $fh = @fopen($url, "r");
       if ($fh === false) {
@@ -190,18 +184,15 @@ class URIUtil
     if (!$socket) {
       return(false);
     }
-    else
-    {
+    else {
       fwrite ($socket, "HEAD ".$documentpath." HTTP/1.0\r\nHost: $host\r\n\r\n");
       $http_response = fgets($socket, 22);
       preg_match('/.+ ([0-9]{3}) .+/', $http_response, $matches);
-      if (intval($matches[1]) < 400)
-      {
+      if (intval($matches[1]) < 400) {
         fclose($socket);
         return(true);
       }
-      else
-      {
+      else {
         if (Log::isDebugEnabled(__CLASS__)) {
           Log::debug("$url: HTTP-Response: $http_response", __CLASS__);
         }
@@ -209,12 +200,12 @@ class URIUtil
       }
     }
   }
+
   /*
    * Get the protocol string (http:// or https://)
    * @return The protocol string
    */
-  public static function getProtocolStr()
-  {
+  public static function getProtocolStr() {
     if (isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) > 0 && $_SERVER['HTTPS'] != 'off') {
       return 'https://';
     }
@@ -222,12 +213,12 @@ class URIUtil
       return 'http://';
     }
   }
+
   /**
    * Get the current page url
    * @return The url of the page
    */
-  public static function getPageURL()
-  {
+  public static function getPageURL() {
     $pageURL = URIUtil::getProtocolStr();
     if ($_SERVER["SERVER_PORT"] != "80") {
       $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];

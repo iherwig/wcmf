@@ -16,13 +16,13 @@
  *
  * $Id$
  */
+namespace wcmf\lib\io;
 
 /**
  * @class IOException
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class IOException extends Exception
-{
+class IOException extends \Exception {
 }
 ?>

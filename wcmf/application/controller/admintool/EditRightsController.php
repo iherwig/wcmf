@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,21 +11,20 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
+namespace wcmf\application\controller\admintool;
+
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\WCMFInifileParser;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class EditRightsController
- * @ingroup Controller
- * @brief EditRightsController is used to edit rights on a resource.
+ * EditRightsController is used to edit rights on a resource.
  *
  * <b>Input actions:</b>
  * - @em save Save changes right to the current resource
@@ -69,9 +68,9 @@ class EditRightsController extends Controller
    */
   function executeKernel()
   {
-    $objectFactory = &ObjectFactory::getInstance();
-    $userManager = &$objectFactory->createInstanceFromConfig('implementation', 'UserManager');
-    $rightsManager = &RightsManager::getInstance();
+    $objectFactory = ObjectFactory::getInstance();
+    $userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+    $rightsManager = RightsManager::getInstance();
 
     $configFiles = WCMFInifileParser::getIniFiles();
     $rightNames = array(ACTION_READ, ACTION_MODIFY, ACTION_DELETE, ACTION_CREATE);
@@ -89,7 +88,7 @@ class EditRightsController extends Controller
         foreach ($rightNames as $action)
         {
           $existingRight = $rightsManager->getRight($configFile, $resource, $context, $action);
-          
+
           // allow
           $controlName = $action."_allow_".str_replace(".", "", $configFile);
           $newAllowedRoles = $this->_request->getValue($controlName);

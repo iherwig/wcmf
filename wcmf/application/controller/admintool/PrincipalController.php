@@ -16,17 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
+namespace wcmf\application\controller\admintool;
+
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\Node;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\WCMFInifileParser;
 
 /**
- * @class PrincipalController
- * @ingroup Controller
- * @brief PrincipalController is used to edit users and roles.
+ * PrincipalController is used to edit users and roles.
  *
  * <b>Input actions:</b>
  * - @em newprincipal Create a new principal of the given type
@@ -57,17 +58,15 @@ require_once(WCMF_BASE."wcmf/lib/presentation/ListboxFunctions.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PrincipalController extends Controller
-{
+class PrincipalController extends Controller {
+
   var $_userManager = null;
 
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
-  {
-    if (strlen($request->getContext()) == 0)
-    {
+  protected function initialize(Request $request, Response $response) {
+    if (strlen($request->getContext()) == 0) {
       $request->setContext('user');
       $response->setContext('user');
     }
@@ -75,69 +74,63 @@ class PrincipalController extends Controller
     parent::initialize($request, $response);
 
     // create UserManager instance
-    $objectFactory = &ObjectFactory::getInstance();
-    $this->_userManager = &$objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+    $objectFactory = ObjectFactory::getInstance();
+    $this->_userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
   }
+
   /**
    * @see Controller::validate()
    */
-  function validate()
-  {
-    if($this->_request->getAction() == 'newprincipal')
-    {
-      if(strlen($this->_request->getValue('newtype')) == 0)
-      {
+  protected function validate() {
+    if($this->_request->getAction() == 'newprincipal') {
+      if(strlen($this->_request->getValue('newtype')) == 0) {
         $this->setErrorMsg("No 'newtype' given in data.");
         return false;
       }
     }
-    if(in_array($this->_request->getAction(), array('editprincipal', 'save')))
-    {
-      if(strlen($this->_request->getValue('oid')) == 0)
-      {
+    if(in_array($this->_request->getAction(), array('editprincipal', 'save'))) {
+      if(strlen($this->_request->getValue('oid')) == 0) {
         $this->setErrorMsg("No 'oid' given in data.");
         return false;
       }
     }
-    if($this->_request->getAction() == 'delprincipal')
-    {
-      if(strlen($this->_request->getValue('deleteoids')) == 0)
-      {
+    if($this->_request->getAction() == 'delprincipal') {
+      if(strlen($this->_request->getValue('deleteoids')) == 0) {
         $this->setErrorMsg("No 'deleteoids' given in data.");
         return false;
       }
     }
     return true;
   }
+
   /**
    * @see Controller::hasView()
    */
-  function hasView()
-  {
-    if ($this->_request->getAction() == 'delprincipal')
+  protected function hasView() {
+    if ($this->_request->getAction() == 'delprincipal') {
       return false;
-    else
+    }
+    else {
       return true;
+    }
   }
+
   /**
    * Process action and assign data to View.
    * @return Array of given context and action 'overview' on delete.
    *         False else (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
-    $persistenceFacade = &PersistenceFacade::getInstance();
+  protected function executeKernel() {
+    $persistenceFacade = PersistenceFacade::getInstance();
     $this->_userManager->beginTransaction();
 
     // process actions
 
     // DELETE
-    if($this->_request->getAction() == 'delprincipal')
-    {
+    if($this->_request->getAction() == 'delprincipal') {
       $deleteOIDs = split(',', $this->_request->getValue('deleteoids'));
-      foreach($deleteOIDs as $oid)
-      {
+      foreach($deleteOIDs as $oid) {
         $this->beforeDelete($this->_userManager->getPrincipal($oid));
         $this->_userManager->removePrincipal($oid);
       }
@@ -148,15 +141,14 @@ class PrincipalController extends Controller
     }
 
     // NEW
-    if($this->_request->getAction() == 'newprincipal')
-    {
+    if($this->_request->getAction() == 'newprincipal') {
       $newType = $this->_request->getValue('newtype');
       $newNode = new Node($newType);
 
       if($newType == 'user')
-        $newPrincipal = &$this->_userManager->createUser('', '', $newNode->getOID(), '', '');
+        $newPrincipal = $this->_userManager->createUser('', '', $newNode->getOID(), '', '');
       else
-        $newPrincipal = &$this->_userManager->createRole($newNode->getOID());
+        $newPrincipal = $this->_userManager->createRole($newNode->getOID());
 
       // set the login/name to the oid
       if($newType == 'user')
@@ -173,31 +165,26 @@ class PrincipalController extends Controller
     }
 
     // EDIT, SAVE
-    if (in_array($this->_request->getAction(), array('editprincipal', 'save')) || in_array($this->_request->getContext(), array('user', 'role')))
-    {
+    if (in_array($this->_request->getAction(), array('editprincipal', 'save')) || in_array($this->_request->getContext(), array('user', 'role'))) {
       // load model
-      $principal = &$this->_userManager->getPrincipal($this->_request->getValue('oid'));
+      $principal = $this->_userManager->getPrincipal($this->_request->getValue('oid'));
 
       // save changes
-      if ($this->_request->getAction() == 'save')
-      {
-        $saveNode = &$this->_request->getValue($this->_request->getValue('oid'));
+      if ($this->_request->getAction() == 'save') {
+        $saveNode = $this->_request->getValue($this->_request->getValue('oid'));
 
-        if (strtolower(get_class($principal)) == strtolower(UserManager::getUserClassName()))
-        {
+        if (strtolower(get_class($principal)) == strtolower(UserManager::getUserClassName())) {
           // properties
-          foreach(array(USER_PROPERTY_LOGIN, USER_PROPERTY_NAME, USER_PROPERTY_FIRSTNAME, USER_PROPERTY_CONFIG) as $property)
-          {
+          foreach(array(USER_PROPERTY_LOGIN, USER_PROPERTY_NAME, USER_PROPERTY_FIRSTNAME, USER_PROPERTY_CONFIG) as $property) {
             $value = $saveNode->getValue($property);
-              if ($value != $principal->getValue($property))
-              {
-                $this->_userManager->setUserProperty($principal->getLogin(), $property, $value);
-                $principal->setValue($property, $value);
-              }
+            if ($value != $principal->getValue($property))
+            {
+              $this->_userManager->setUserProperty($principal->getLogin(), $property, $value);
+              $principal->setValue($property, $value);
             }
+          }
           // password
-          if ($this->_request->hasValue('changepassword'))
-          {
+          if ($this->_request->hasValue('changepassword')) {
             $this->_userManager->resetPassword($principal->getLogin(), $this->_request->getValue('newpassword1'),
                                                  $this->_request->getValue('newpassword2'));
           }
@@ -205,22 +192,18 @@ class PrincipalController extends Controller
           $roles = $this->_userManager->listRoles();
           $userRoles = $this->_userManager->listUserRoles($principal->getLogin());
           $principals = $this->_request->getValue('principals');
-          foreach($roles as $curRole)
-          {
+          foreach($roles as $curRole) {
             if ((is_array($principals) && in_array($curRole, $principals)) && (!is_array($userRoles) || !in_array($curRole, $userRoles)))
               $this->_userManager->addUserToRole($curRole, $principal->getLogin());
             if ((!is_array($principals) || !in_array($curRole, $principals)) && (is_array($userRoles) && in_array($curRole, $userRoles)))
               $this->_userManager->removeUserFromRole($curRole, $principal->getLogin());
           }
         }
-        if (strtolower(get_class($principal)) == strtolower(UserManager::getRoleClassName()))
-        {
+        if (strtolower(get_class($principal)) == strtolower(UserManager::getRoleClassName())) {
           // properties
-          foreach(array(ROLE_PROPERTY_NAME) as $property)
-          {
+          foreach(array(ROLE_PROPERTY_NAME) as $property) {
             $value = $saveNode->getValue($property);
-              if ($value != $principal->getValue($property))
-              {
+              if ($value != $principal->getValue($property)) {
                 $this->_userManager->setRoleProperty($principal->getName(), $property, $value);
                 $principal->setValue($property, $value);
             }
@@ -229,26 +212,25 @@ class PrincipalController extends Controller
           $users = $this->_userManager->listUsers();
           $roleMembers = $this->_userManager->listRoleMembers($principal->getName());
           $principals = $this->_request->getValue('principals');
-          foreach($users as $curUser)
-          {
-            if (in_array($curUser, $principals) && !in_array($curUser, $roleMembers))
+          foreach($users as $curUser) {
+            if (in_array($curUser, $principals) && !in_array($curUser, $roleMembers)) {
               $this->_userManager->addUserToRole($principal->getName(), $curUser);
-            if (!in_array($curUser, $principals) && in_array($curUser, $roleMembers))
+            }
+            if (!in_array($curUser, $principals) && in_array($curUser, $roleMembers)) {
               $this->_userManager->removeUserFromRole($principal->getName(), $curUser);
+            }
           }
         }
         $this->afterUpdate($this->_userManager->getPrincipal($this->_request->getValue('oid')));
       }
 
       // reload model
-      $principal = &$this->_userManager->getPrincipal($this->_request->getValue('oid'));
-      if (strtolower(get_class($principal)) == strtolower(UserManager::getUserClassName()))
-      {
+      $principal = $this->_userManager->getPrincipal($this->_request->getValue('oid'));
+      if (strtolower(get_class($principal)) == strtolower(UserManager::getUserClassName())) {
         $principalBaseList = $this->_userManager->listRoles();
         $principalList = $this->_userManager->listUserRoles($principal->getLogin());
       }
-      elseif (strtolower(get_class($principal)) == strtolower(UserManager::getRoleClassName()))
-      {
+      elseif (strtolower(get_class($principal)) == strtolower(UserManager::getRoleClassName())) {
         $principalBaseList = $this->_userManager->listUsers();
         $principalList = $this->_userManager->listRoleMembers($principal->getName());
       }
@@ -271,23 +253,26 @@ class PrincipalController extends Controller
     $this->_response->setAction('ok');
     return false;
   }
+
   /**
    * Called before deleting an exisiting principal.
    * @note subclasses will override this to implement special application requirements.
    * @param principal A reference to the principal to delete (@see UserManager::getPrincipal).
    */
-  function beforeDelete(&$principal) {}
+  function beforeDelete($principal) {}
+
   /**
    * Called after inserting a new principal.
    * @note subclasses will override this to implement special application requirements.
    * @param principal A reference to the principal inserted (@see UserManager::getPrincipal).
    */
-  function afterInsert(&$principal) {}
+  function afterInsert($principal) {}
+
   /**
    * Called after updating an existing principal.
    * @note subclasses will override this to implement special application requirements.
    * @param principal A reference to the principal updated (@see UserManager::getPrincipal).
    */
-  function afterUpdate(&$principal) {}
+  function afterUpdate($principal) {}
 }
 ?>

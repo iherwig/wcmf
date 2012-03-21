@@ -16,13 +16,10 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/IDataConverter.php");
+namespace wcmf\lib\persistence\converter;
 
 /**
- * @class DefaultDataConverter
- * @ingroup Converter
- * @brief The default dataconverter.
+ * The default dataconverter.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

@@ -16,20 +16,19 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/control/ListboxFunctions.php");
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\NodeUtil;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\concurrency\ConcurrencyManager;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class DisplayController
- * @ingroup Controller
- * @brief DisplayController is used to read a node.
+ * DisplayController is used to read a node.
  *
  * <b>Input actions:</b>
  * - unspecified: Display given Node if an oid is given
@@ -50,13 +49,12 @@ require_once(WCMF_BASE."wcmf/lib/util/Log.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DisplayController extends Controller
-{
+class DisplayController extends Controller {
+
   /**
    * @see Controller::validate()
    */
-  protected function validate()
-  {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $oid = ObjectId::parse($request->getValue('oid'));
@@ -73,13 +71,13 @@ class DisplayController extends Controller
     }
     return true;
   }
+
   /**
    * Assign Node data to View.
    * @return False in every case.
    * @see Controller::executeKernel()
    */
-  protected function executeKernel()
-  {
+  protected function executeKernel() {
     $persistenceFacade = PersistenceFacade::getInstance();
     $rightsManager = RightsManager::getInstance();
     $concurrencyManager = ConcurrencyManager::getInstance();
@@ -88,8 +86,7 @@ class DisplayController extends Controller
 
     // load model
     $oid = ObjectId::parse($request->getValue('oid'));
-    if ($oid && $rightsManager->authorize($oid, '', ACTION_READ))
-    {
+    if ($oid && $rightsManager->authorize($oid, '', ACTION_READ)) {
       // determine the builddepth
       $buildDepth = BUILDDEPTH_SINGLE;
       if ($request->hasValue('depth')) {
@@ -99,8 +96,7 @@ class DisplayController extends Controller
       $concurrencyManager->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $node);
 
       // translate all nodes to the requested language if requested
-      if ($this->isLocalizedRequest())
-      {
+      if ($this->isLocalizedRequest()) {
         $localization = Localization::getInstance();
         $localization->loadTranslation($node, $request->getValue('language'), true, true);
       }
@@ -110,8 +106,7 @@ class DisplayController extends Controller
       }
 
       // translate values if requested
-      if ($request->getBooleanValue('translateValues'))
-      {
+      if ($request->getBooleanValue('translateValues')) {
         $nodes = array($node);
         if ($this->isLocalizedRequest()) {
           NodeUtil::translateValues($nodes, $request->getValue('language'));

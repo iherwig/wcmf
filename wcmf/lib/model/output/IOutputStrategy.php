@@ -16,32 +16,30 @@
  *
  * $Id$
  */
+namespace wcmf\lib\output;
 
 /**
- * @interface IOutputStrategy
- * @ingroup Output
- * @brief IOutputStrategy defines the interface for classes that write an
+ * IOutputStrategy defines the interface for classes that write an
  * object's content to a destination (called 'document') using a special format.
  * OutputStrategy implements the 'Strategy Pattern'.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface IOutputStrategy
-{
+interface IOutputStrategy {
   /**
    * Write the document header.
    */
-  function writeHeader();
+  public function writeHeader();
 
   /**
    * Write the document footer.
    */
-  function writeFooter();
+  public function writeFooter();
 
   /**
    * Write the object's content.
    * @param obj The object to write.
    */
-  function writeObject($obj);
+  public function writeObject($obj);
 }
 ?>

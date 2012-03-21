@@ -16,12 +16,13 @@
  *
  * $Id: class.Control.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\control\Control;
 
 /**
- * @class ListControl
- * @ingroup Presentation
- * @brief ListControl handles static lists
+ * ListControl handles static lists
  *
  * @author ingo herwig <ingo@wemove.com>
  */

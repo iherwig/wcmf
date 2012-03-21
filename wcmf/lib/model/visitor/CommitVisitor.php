@@ -16,28 +16,27 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/visitor/Visitor.php");
+namespace wcmf\lib\model\visitor;
+
+use wcmf\lib\model\visitor\Visitor;
+
 /**
- * @class CommitVisitor
- * @ingroup Visitor
- * @brief The CommitVisitor is used to commit the object's changes to the object storage.
+ * CommitVisitor is used to commit the object's changes to the object storage.
  * The objects must implement the PersistentObject interface.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class CommitVisitor extends Visitor
-{
+class CommitVisitor extends Visitor {
+
   private $_result = array();
 
   /**
    * Visit the current object in iteration and commit changes.
    * @param obj A reference to the current object.
    */
-  public function visit($obj)
-  {
+  public function visit($obj) {
     $oldState = $obj->getState();
-    switch($oldState)
-    {
+    switch($oldState) {
       case PersistentObject::STATE_DIRTY:
       case PersistentObject::STATE_NEW:
         // save changes / insert
@@ -61,16 +60,14 @@ class CommitVisitor extends Visitor
    * @return An associative array with the persistent states as keys and
    *         arrays of oids (after commit) as values
    */
-  public function getResult()
-  {
+  public function getResult() {
     return $this->_result;
   }
 
   /**
    * Clear the commit result.
    */
-  public function clearResult()
-  {
+  public function clearResult() {
     $this->_result = array();
   }
 }

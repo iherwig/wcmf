@@ -1,21 +1,33 @@
 <?php
 /**
- * Smarty plugin
- * @package Smarty
- * @subpackage plugins
- */
- 
-/**
- * Smarty money_format modifier plugin
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Type:     modifier<br>
- * Name:     money_format<br>
- * Purpose:  Formats a number as a html-encoded currency string
- * @link http://www.php.net/money_format
- * @param float
- * @param integer (default 0)
- * @return string (html-encoded)
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
  */
+ namespace wcmf\lib\presentation\smarty_plugins;
+
+/*
+* Smarty plugin
+* -------------------------------------------------------------
+* File:     modifier.modifier_money_format.php
+* Type:     function
+* Name:     modifier_money_format
+* Purpose:  pass a value to the PHP function money_format
+* Usage:    e.g. {$number|money_format:2:,:.}
+* -------------------------------------------------------------
+*/
 function smarty_modifier_money_format($number, $leftFill='0')
 {
   if (function_exists('money_format'))

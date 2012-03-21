@@ -16,49 +16,68 @@
  *
  * $Id$
  */
+namespace wcmf\lib\i18n;
+
+use wcmf\lib\config\InifileParser;
 
 /**
- * @class Message
- * @ingroup Util
- * @brief Use the Message class to output messages.
- * You need not instantiate a Message object
- * because the methods may be called like static
- * class methods e.g.
- * $translated = Message::get('text to translate')
+ * Message is used to get localized messages.
+ * The localization directory must be given in the configuration value 'localeDir' in section 'cms'.
+ * Inside this directory there must be a messages_$lang.php files for each language
+ * defining the translation for each message.
+ * For example the messages_de_DE file could have the following content:
+ * @code
+ * $messages_de_DE = array(
+ *   'up' => 'hoch',
+ *   'down' => 'runter',
+ *   ...
+ * );
+ * @endcode
+ * @note The language is determined in one of 3 ways (in this order):
+ * -# use the value of the configuration value 'language' in section 'cms'
+ * -# use the value of the global variable $_SERVER['HTTP_ACCEPT_LANGUAGE']
+ * -# use the value of the lang parameter passed to Message::get()
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Message
-{
+class Message {
+
+  private static $localeDir;
+  private static $language;
+  private static $initialized = false;
+
   /**
-   * The get() method is used to get a localized string.
-   * The localization directory must be given in the global variable $MESSAGE_LOCALE_DIR
-   * (configuration value 'localeDir' in section 'cms').
-   * Inside this directory there must be a messages_$lang.php files for each language
-   * defining the translation for each message.
-   * For example the messages_de_DE file could have the following content:
-   * @code
-   * $messages_de_DE = array(
-   *   'up' => 'hoch',
-   *   'down' => 'runter',
-   *   ...
-   * );
-   * @endcode
-   * @note The language is determined in one of 3 ways (in this order):
-   * -# use the value of the global variable $MESSAGE_LANGUAGE (configuration value 'language' in section 'cms')
-   * -# use the value of the global variable $_SERVER['HTTP_ACCEPT_LANGUAGE']
-   * -# use the value of the given lang parameter
-   * @param message The message to translate (\%0%, \%1%, ... will be replaced by given parameters).
-   * @param parameters An array of values for parameter substitution in the message.
-   * @param lang The language, optional, default: ''.
-   * @return The localized string
+   * Cache for loaded translations
+   */
+  private static $translations = array();
+
+  /**
+   * Initialize static members
+   */
+  private static function initialize() {
+    $parser = InifileParser::getInstance();
+    self::$localeDir = $parser->getValue('localeDir', 'cms');
+    self::$language = $parser->getValue('language', 'cms');
+    setlocale(LC_ALL, self::$language);
+    self::$initialized = true;
+  }
+
+  /**
+   * Get a localized string.
    * @note It is not recommended to use this method with concatenated strings because this
    * restricts the positions of words in translations. E.g. 'She was born in %1% on %2%'
    * translates to the german sentance 'Sie wurde am \%2% in \%1% geboren' with the variables
    * flipped.
+   * @param message The message to translate (\%0%, \%1%, ... will be replaced by given parameters).
+   * @param parameters An array of values for parameter substitution in the message.
+   * @param lang The language, optional, default: ''.
+   * @return The localized string
    */
-  public static function get($message, $parameters=null, $lang='')
-  {
+  public static function get($message, $parameters=null, $lang='') {
+    if (!self::$initialized) {
+      self::initialize();
+    }
+
     // get the translations
     $translations = self::getTranslations($lang);
     if (isset($translations[$message])) {
@@ -71,7 +90,7 @@ class Message
     // replace parameters
     preg_match_all("/%([0-9]+)%/", $localizedMessage, $matches);
     $matches = $matches[1];
-    for ($i=0; $i<sizeof($matches);$i++) {
+    for ($i=0; $i<sizeof($matches); $i++) {
       $matches[$i] = '/\%'.$matches[$i].'\%/';
     }
     sort($matches);
@@ -86,8 +105,10 @@ class Message
    * @param lang The language, optional, default: ''.
    * @return An array of localized string
    */
-  public static function getAll($lang='')
-  {
+  public static function getAll($lang='') {
+    if (!self::$initialized) {
+      self::initialize();
+    }
     // get the translations
     $translations = self::getTranslations($lang);
     return $translations;
@@ -98,15 +119,11 @@ class Message
    * @param lang The language, optional, default: ''.
    * @return The language code
    */
-  private static function getLanguage($lang)
-  {
-    global $MESSAGE_LANGUAGE;
-
+  private static function getQualifiedLanguage($lang) {
     // select language
-    if ($lang == '')
-    {
-      if ($MESSAGE_LANGUAGE != '') {
-        $lang = $MESSAGE_LANGUAGE;
+    if ($lang == '') {
+      if (strlen(self::$language) > 0) {
+        $lang = self::$language;
       }
       else if ($lang == '' && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
         $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -120,7 +137,6 @@ class Message
     if (strpos($lang, '_') === false) {
       $lang = $lang.'_'.strtoupper($lang);
     }
-
     return $lang;
   }
 
@@ -129,20 +145,19 @@ class Message
    * @param lang The language, optional, default: ''.
    * @return The translations as associative array
    */
-  private static function getTranslations($lang)
-  {
-    $lang = self::getLanguage($lang);
+  private static function getTranslations($lang) {
+    if (!isset(self::$translations[$lang])) {
+      $qualifiedLang = self::getQualifiedLanguage($lang);
 
-    global $MESSAGE_LOCALE_DIR;
-    global ${"messages_$lang"};
-
-    $messageFile = $MESSAGE_LOCALE_DIR."/messages_".$lang.".php";
-    if (file_exists($messageFile))
-    {
-      require_once($messageFile);
-      return ${"messages_$lang"};
+      $messageFile = self::$localeDir."/messages_".$qualifiedLang.".php";
+      if (file_exists($messageFile)) {
+        require_once($messageFile);
+        // store as requested and qualified language for later reference
+        self::$translations[$lang] = ${"messages_$lang"};
+        self::$translations[$qualifiedLang] = ${"messages_$lang"};
+      }
     }
-    return array();
+    return self::$translations[$lang];
   }
 }
 ?>

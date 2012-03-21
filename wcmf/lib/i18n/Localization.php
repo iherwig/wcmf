@@ -16,15 +16,20 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+namespace wcmf\lib\i18n;
 
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
- * @class Localization
- * @ingroup i18n
- * @brief Localization is used to store localized entity instances
+ * Localization is used to store localized entity instances
  * and retrieve them back. Entity instances are localized value by value,
  * where a translation of a value of one instance into a specific language
  * is represented by one instance of the entity type that is defined
@@ -248,7 +253,7 @@ class Localization
     else
     {
       $object->beforeUpdate();
-      
+
       // get the existing translations for the requested language
       $type = self::getTranslationType();
       $query = new ObjectQuery($type);

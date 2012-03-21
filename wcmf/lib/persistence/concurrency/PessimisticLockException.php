@@ -16,22 +16,24 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence\concurrency;
+
+use wcmf\lib\persistence\concurrency\Lock;
 
 /**
  * @class PessimisticLockException
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PessimisticLockException extends Exception
-{
+class PessimisticLockException extends \Exception {
+
   private $_lock = null;
 
   /**
    * Constructor
    * @param lock Lock instance that cause the exception
    */
-  public function __construct(Lock $lock)
-  {
+  public function __construct(Lock $lock) {
     $this->_lock = $lock;
 
     parent::__construct("The object is currently locked by another user.");
@@ -41,8 +43,7 @@ class PessimisticLockException extends Exception
    * Get the lock
    * @return Lock instance
    */
-  public function getLock()
-  {
+  public function getLock() {
     return $this->_lock;
   }
 }

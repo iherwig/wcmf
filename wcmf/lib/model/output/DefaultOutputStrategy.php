@@ -16,38 +16,37 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/IOutputStrategy.php");
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+namespace wcmf\lib\model\output;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\model\output\IOutputStrategy;
 
 /**
- * @class DefaultOutputStrategy
- * @ingroup Output
- * @brief This OutputStrategy outputs an object's content to the Log category DefaultOutputStrategy.
+ * DefaultOutputStrategy outputs an object's content to the Log category DefaultOutputStrategy.
  * Classes used must implement the toString() method.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DefaultOutputStrategy implements IOutputStrategy
-{
+class DefaultOutputStrategy implements IOutputStrategy {
+
   /**
    * @see OutputStrategy::writeHeader
    */
-  public function writeHeader()
-  {
+  public function writeHeader() {
     Log::info("DOCUMENT START.", __CLASS__);
   }
+
   /**
    * @see OutputStrategy::writeFooter
    */
-  public function writeFooter()
-  {
+  public function writeFooter() {
     Log::info("DOCUMENT END.", __CLASS__);
   }
+
   /**
    * @see OutputStrategy::writeObject
    */
-  public function writeObject($obj)
-  {
+  public function writeObject($obj) {
     Log::info($obj->toString(), __CLASS__);
   }
 }

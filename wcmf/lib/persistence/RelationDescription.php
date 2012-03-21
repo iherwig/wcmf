@@ -16,17 +16,19 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\RelationDescription;
 
 /**
- * @class RelationDescription
- * @ingroup Persistence
- * @brief Instances of RelationDescription describe relations between different types
+ * Instances of RelationDescription describe relations between different types
  * of PersistentObjects. A relation always has two ends: 'this' end and 'other' end.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RelationDescription
-{
+class RelationDescription {
+
   protected $thisType = '';
   protected $thisRole = '';
   protected $otherType = '';
@@ -63,8 +65,8 @@ class RelationDescription
    */
   public function __construct($thisType, $thisRole, $otherType, $otherRole, $thisMinMultiplicity, $thisMaxMultiplicity,
     $otherMinMultiplicity, $otherMaxMultiplicity, $thisAggregationKind, $otherAggregationKind, $thisNavigability, $otherNavigability,
-    $hierarchyType)
-  {
+    $hierarchyType) {
+
     $this->thisType = $thisType;
     $this->thisRole = $thisRole;
     $this->otherType = $otherType;
@@ -88,8 +90,7 @@ class RelationDescription
    * Determine if there may more than one objects at the other side of the relation
    * @return Boolean
    */
-  public function isMultiValued()
-  {
+  public function isMultiValued() {
     $maxMultiplicity = $this->getOtherMaxMultiplicity();
     if ($maxMultiplicity > 1 || $maxMultiplicity == 'unbounded') {
       return true;
@@ -103,8 +104,7 @@ class RelationDescription
    * Get the PersistentObject type at this end
    * @return String
    */
-  public function getThisType()
-  {
+  public function getThisType() {
     return $this->thisType;
   }
 
@@ -112,8 +112,7 @@ class RelationDescription
    * Get the PersistentMapper at this end
    * @return IPersistenceMapper
    */
-  public function getThisMapper()
-  {
+  public function getThisMapper() {
     return PersistenceFacade::getInstance()->getMapper($this->getThisType());
   }
 
@@ -121,8 +120,7 @@ class RelationDescription
    * Get the role name at this end
    * @return String
    */
-  public function getThisRole()
-  {
+  public function getThisRole() {
     return $this->thisRole;
   }
 
@@ -130,8 +128,7 @@ class RelationDescription
    * Get the PersistentObject type at the other end
    * @return String
    */
-  public function getOtherType()
-  {
+  public function getOtherType() {
     return $this->otherType;
   }
 
@@ -139,8 +136,7 @@ class RelationDescription
    * Get the PersistentMapper at the other end
    * @return IPersistenceMapper
    */
-  public function getOtherMapper()
-  {
+  public function getOtherMapper() {
     return PersistenceFacade::getInstance()->getMapper($this->getOtherType());
   }
 
@@ -148,8 +144,7 @@ class RelationDescription
    * Get the role name at the other end
    * @return String
    */
-  public function getOtherRole()
-  {
+  public function getOtherRole() {
     return $this->otherRole;
   }
 
@@ -157,8 +152,7 @@ class RelationDescription
    * Get the minimum number of instances at this end
    * @return Number or 'unbound'
    */
-  public function getThisMinMultiplicity()
-  {
+  public function getThisMinMultiplicity() {
     return $this->thisMinMultiplicity;
   }
 
@@ -166,8 +160,7 @@ class RelationDescription
    * Get the maximum number of instances at this end
    * @return Number or 'unbound'
    */
-  public function getThisMaxMultiplicity()
-  {
+  public function getThisMaxMultiplicity() {
     return $this->thisMaxMultiplicity;
   }
 
@@ -175,8 +168,7 @@ class RelationDescription
    * Get the minimum number of instances at the other end
    * @return Number or 'unbound'
    */
-  public function getOtherMinMultiplicity()
-  {
+  public function getOtherMinMultiplicity() {
     return $this->otherMinMultiplicity;
   }
 
@@ -184,8 +176,7 @@ class RelationDescription
    * Get the maximum number of instances at the other end
    * @return Number or 'unbound'
    */
-  public function getOtherMaxMultiplicity()
-  {
+  public function getOtherMaxMultiplicity() {
     return $this->otherMaxMultiplicity;
   }
 
@@ -193,8 +184,7 @@ class RelationDescription
    * Get the aggregation kind at this end
    * @return String 'none', 'shared' or 'composite'
    */
-  public function getThisAggregationKind()
-  {
+  public function getThisAggregationKind() {
     return $this->thisAggregationKind;
   }
 
@@ -202,8 +192,7 @@ class RelationDescription
    * Get the aggregation kind at the other end
    * @return String 'none', 'shared' or 'composite'
    */
-  public function getOtherAggregationKind()
-  {
+  public function getOtherAggregationKind() {
     return $this->otherAggregationKind;
   }
 
@@ -211,8 +200,7 @@ class RelationDescription
    * Check wether this end is navigable from the other end or not
    * @return Boolean
    */
-  public function getThisNavigability()
-  {
+  public function getThisNavigability() {
     return $this->thisNavigability;
   }
 
@@ -220,8 +208,7 @@ class RelationDescription
    * Check wether the other end is navigable from this end or not
    * @return Boolean
    */
-  public function getOtherNavigability()
-  {
+  public function getOtherNavigability() {
     return $this->otherNavigability;
   }
 
@@ -229,8 +216,7 @@ class RelationDescription
    * Get the hierarchy type that the other end has in relation to this end
    * @return String 'parent', 'child', 'undefined'
    */
-  public function getHierarchyType()
-  {
+  public function getHierarchyType() {
     return $this->hierarchyType;
   }
 
@@ -241,8 +227,7 @@ class RelationDescription
    * @param other The other RelationDescription
    * @return Boolean
    */
-  public function isSameRelation(RelationDescription $other)
-  {
+  public function isSameRelation(RelationDescription $other) {
     if (($this->getThisType() == $other->getThisType() && $this->getOtherType() == $other->getOtherType()
             && $this->getThisRole() == $other->getThisRole() && $this->getOtherRole() == $other->getOtherRole()) ||
         ($this->getThisType() == $other->getOtherType() && $this->getOtherType() == $other->getThisType()

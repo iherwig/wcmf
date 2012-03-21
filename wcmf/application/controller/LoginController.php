@@ -16,17 +16,21 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/security/AuthUser.php");
-require_once(WCMF_BASE."wcmf/lib/security/UserManager.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
+namespace wcmf\application\controller;
+
+use \Exception;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\Log;
+use wcmf\lib\core\Session;
+use wcmf\lib\presentation\Application;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
+use wcmf\lib\security\AuthUser;
+use wcmf\lib\security\UserManager;
 
 /**
- * @class LoginController
- * @ingroup Controller
- * @brief LoginController is a controller that handles the login process.
+ * LoginController is a controller that handles the login process.
  *
  * <b>Input actions:</b>
  * - @em login Present the login dialog
@@ -116,7 +120,7 @@ class LoginController extends Controller
    */
   protected function executeKernel()
   {
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 

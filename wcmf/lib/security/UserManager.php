@@ -16,9 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+namespace wcmf\lib\security;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\security\Role;
+use wcmf\lib\security\User;
+use wcmf\lib\security\UserManager;
 
 /**
  * Some constants describing user properties
@@ -30,14 +36,12 @@ define("USER_PROPERTY_CONFIG", "config");
 define("ROLE_PROPERTY_NAME", "name");
 
 /**
- * @class UserManager
- * @ingroup Security
- * @brief UserManager is used to edit users and roles.
- *        UserManager supports the following operations:
- *        - create/remove a user
- *        - create/remove a role
- *        - add/remove a user to/from a role
- *        - change a users password
+ * UserManager is used to edit users and roles.
+ * UserManager supports the following operations:
+ * - create/remove a user
+ * - create/remove a role
+ * - add/remove a user to/from a role
+ * - change a users password
  *
  * This class defines abstract methods that subclasses must implement to support
  * different user repositories. The UserManager implementation class is defined by

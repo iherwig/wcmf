@@ -16,45 +16,45 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/IOutputStrategy.php");
+namespace wcmf\lib\model\output;
+
+use wcmf\lib\model\output\IOutputStrategy;
+
 /**
- * @class ArrayOutputStrategy
- * @ingroup Output
- * @brief This OutputStrategy outputs an object's content into an array.
+ * ArrayOutputStrategy outputs an object's content into an array.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ArrayOutputStrategy implements IOutputStrategy
-{
+class ArrayOutputStrategy implements IOutputStrategy {
+
   var $_writeValueProperties = false;
 
   /**
    * Constructor
    * @param writeValueProperties True/False wether to write value properties or not [default: false]
    */
-  public function ArrayOutputStrategy($writeValueProperties=false)
-  {
+  public function __construct($writeValueProperties=false) {
     $this->_writeValueProperties = $writeValueProperties;
   }
+
   /**
    * @see OutputStrategy::writeHeader
    */
-  public function writeHeader()
-  {
+  public function writeHeader() {
     // do nothing
   }
+
   /**
    * @see OutputStrategy::writeFooter
    */
-  public function writeFooter()
-  {
+  public function writeFooter() {
     // do nothing
   }
+
   /**
    * @see OutputStrategy::writeObject
    */
-  public function writeObject($obj)
-  {
+  public function writeObject($obj) {
     $content = array();
     $content['oid'] = $obj->getOID();
     $content['type'] = $obj->getType();
@@ -63,16 +63,13 @@ class ArrayOutputStrategy implements IOutputStrategy
       $content['properties'][$name] = $this->writeValue($obj->getProperty($name));
     }
     $content['values'] = array();
-    foreach($obj->getValueNames() as $name)
-    {
+    foreach($obj->getValueNames() as $name) {
       $content['values'][$name] = array();
       $value = $this->writeValue($obj->getValue($name));
       $content['values'][$name]['value'] = $value;
-      if ($this->_writeValueProperties)
-      {
+      if ($this->_writeValueProperties) {
         $mapper = $obj->getMapper();
-        if ($mapper)
-        {
+        if ($mapper) {
           $content['values'][$name]['properties'] = array();
           foreach($obj->getValuePropertyNames($name) as $propertyName) {
             $content['values'][$name]['properties'][$propertyName] = $this->writeValue($obj->getValueProperty($name, $propertyname));
@@ -82,15 +79,14 @@ class ArrayOutputStrategy implements IOutputStrategy
     }
     return $content;
   }
+
   /**
    * Write the objects content.
    * @param value The value to write.
    */
-  private function writeValue($value)
-  {
+  private function writeValue($value) {
     $content = '';
-    if (is_array($value))
-    {
+    if (is_array($value)) {
       $content = array();
       for ($i=0; $i<sizeof($value); $i++) {
         array_push($content, utf8_encode($value[$i]));

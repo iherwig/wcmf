@@ -16,6 +16,7 @@
  *
  * $Id$
  */
+namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin

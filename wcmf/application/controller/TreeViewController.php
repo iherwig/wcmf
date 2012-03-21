@@ -16,17 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\Node;
+use wcmf\lib\model\NodeUtil;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class TreeViewController
- * @ingroup Controller
- * @brief TreeViewController is used to visualize cms data in a tree view.
+ * TreeViewController is used to visualize cms data in a tree view.
  *
  * <b>Input actions:</b>
  * - @em loadChilren Load the children of the given parent Node
@@ -112,14 +113,14 @@ class TreeViewController extends Controller
     $oids = array();
 
     // get root types from ini file
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     $rootTypes = $parser->getValue('rootTypes', 'cms');
     if ($rootTypes === false || !is_array($rootTypes) ||  $rootTypes[0] == '') {
       $this->setErrorMsg("No root types defined.");
     }
     else
     {
-      $persistenceFacade = &PersistenceFacade::getInstance();
+      $persistenceFacade = PersistenceFacade::getInstance();
       foreach($rootTypes as $rootType) {
         $oids = array_merge($oids, $persistenceFacade->getOIDs($rootType));
       }
@@ -133,8 +134,8 @@ class TreeViewController extends Controller
    */
   function getChildren($oid)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $rightsManager = &RightsManager::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
+    $rightsManager = RightsManager::getInstance();
 
     $nodes = array();
     if ($oid != 'root' && PersistenceFacade::isValidOID($oid))
@@ -142,7 +143,7 @@ class TreeViewController extends Controller
       // load children
       if ($rightsManager->authorize($oid, '', ACTION_READ))
       {
-        $parentNode = &$persistenceFacade->load($oid, 1);
+        $parentNode = $persistenceFacade->load($oid, 1);
         $nodes = $parentNode->getChildren();
       }
     }
@@ -154,7 +155,7 @@ class TreeViewController extends Controller
       {
         if ($rightsManager->authorize($rootOID, '', ACTION_READ))
         {
-          $node = &$persistenceFacade->load($rootOID, BUILDDEPTH_SINGLE);
+          $node = $persistenceFacade->load($rootOID, BUILDDEPTH_SINGLE);
           $nodes[sizeof($nodes)] = &$node;
         }
       }

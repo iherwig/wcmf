@@ -16,18 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceOperation.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\PersistenceOperation;
 
 /**
- * @class DeleteOperation
- * @ingroup Persistence
- * @brief A PersistenceOperation instance holds data necessary to accomplish
+ * DeleteOperation holds data necessary to accomplish
  * an delete operation on the persistent store.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DeleteOperation extends PersistenceOperation
-{
+class DeleteOperation extends PersistenceOperation {
+
   protected $operationType = null;
   protected $entityType = null;
   protected $criteria = null;
@@ -38,8 +38,7 @@ class DeleteOperation extends PersistenceOperation
    * @param criteria An array of criteria instances to select the objects on
    *          which the operation will be executed
    */
-  public function __construct($entityType, array $criteria)
-  {
+  public function __construct($entityType, array $criteria) {
     parent::__construct($entityType, array(), $criteria);
   }
 }

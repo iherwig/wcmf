@@ -16,13 +16,14 @@
  *
  * $Id: class.Control.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/control/IListStrategy.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\control\IListStrategy;
 
 /**
- * @class FunctionListStrategy
- * @ingroup Presentation
- * @brief FunctionListStrategy implements list of key value pairs that is retrieved
+ * FunctionListStrategy implements list of key value pairs that is retrieved
  * by a global function.
  * The following list definition(s) must be used in the input_type configuraton:
  * @code

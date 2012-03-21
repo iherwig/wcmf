@@ -19,12 +19,14 @@
 define("WCMF_BASE", realpath ("../../")."/");
 error_reporting(E_ERROR | E_PARSE);
 
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/DBUtil.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
+require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+
+use \Exception;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\Log;
+use wcmf\lib\io\FileUtil;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\util\DBUtil;
 
 Log::info("updating wCMF database tables...", "dbupdate");
 

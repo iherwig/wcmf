@@ -16,13 +16,10 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/converter/IDataConverter.php");
+namespace wcmf\lib\persistence\converter;
 
 /**
- * @class MySQLDateConverter
- * @ingroup Converter
- * @brief MySQLDateConverter converts MySQL dates to a date localized to the users or
+ * MySQLDateConverter converts MySQL dates to a date localized to the users or
  * application settings.
  *
  * @author ingo herwig <ingo@wemove.com>

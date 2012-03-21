@@ -16,15 +16,17 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\model\NodeUtil;
+use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\model\StringQuery;
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class SOAPController
- * @ingroup Controller
- * @brief SOAPController is a controller that handles SOAP requests.
+ * SOAPController is a controller that handles SOAP requests.
  *
  * <b>Input actions:</b>
  * - @em soapSearch Search for objects that match a searchterm in any attribute
@@ -74,7 +76,7 @@ class SOAPController extends Controller
   function soapSearch($searchTerm)
   {
     // get all known types from configuration file
-    $parser = &InifileParser::getInstance();
+    $parser = InifileParser::getInstance();
     $types = array_keys($parser->getSection('typemapping'));
 
     // query for each type
@@ -82,7 +84,7 @@ class SOAPController extends Controller
     foreach ($types as $type)
     {
       $query = new ObjectQuery($type);
-      $tpl = &$query->getObjectTemplate($type, null,  ObjectQuery::QUERYOP_OR, ObjectQuery::QUERYOP_OR);
+      $tpl = $query->getObjectTemplate($type, null,  ObjectQuery::QUERYOP_OR, ObjectQuery::QUERYOP_OR);
 
       // only search types with attributes and which are searchable
       if ($tpl->getProperty('is_searchable') == true)

@@ -16,34 +16,40 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ILockHandler.php");
+namespace wcmf\lib\persistence\concurrency;
+
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\concurrency\ILockHandler;
 
 /**
- * @class NullLockHandler
- * @ingroup Persistence
- * @brief NullLockHandler acts as if no LockHandler was installed.
+ * NullLockHandler acts as if no LockHandler was installed.
  * Use this to disable locking.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullLockHandler implements ILockHandler
-{
+class NullLockHandler implements ILockHandler {
+
   /**
    * @see ILockHandler::aquireLock()
    */
   public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null) {}
+
   /**
    * @see ILockHandler::releaseLock()
    */
   public function releaseLock(ObjectId $oid) {}
+
   /**
    * @see ILockHandler::releaseLocks()
    */
   public function releaseLocks(ObjectId $oid) {}
+
   /**
    * @see ILockHandler::releaseAllLocks()
    */
   public function releaseAllLocks() {}
+
   /**
    * @see ILockHandler::getLocks()
    */

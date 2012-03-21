@@ -16,19 +16,20 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/ArrayUtil.php");
+namespace wcmf\lib\config;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\util\ArrayUtil;
+use wcmf\lib\util\StringUtil;
 
 /**
- * @class InifileParser
- * @ingroup Util
- * @brief InifileParser provides basic services for parsing a ini file from the file system.
+ * InifileParser provides basic services for parsing a ini file from the file system.
  * @note This class only supports ini files with sections.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class InifileParser
-{
+class InifileParser {
+
   private static $_instance = null;
   private $_errorMsg = '';
   private $_filename = null;
@@ -49,8 +50,7 @@ class InifileParser
    * Returns an instance of the class.
    * @return InifileParser instance
    */
-  public static function getInstance()
-  {
+  public static function getInstance() {
     if (!isset(self::$_instance)) {
       self::$_instance = new InifileParser();
     }
@@ -61,8 +61,7 @@ class InifileParser
    * Returns the errorMsg.
    * @return The error message.
    */
-  public function getErrorMsg()
-  {
+  public function getErrorMsg() {
     return $this->_errorMsg;
   }
 
@@ -70,8 +69,7 @@ class InifileParser
    * Check if file is modified.
    * @return True/False whether modified.
    */
-  public function isModified()
-  {
+  public function isModified() {
     return $this->_isModified;
   }
 
@@ -82,8 +80,7 @@ class InifileParser
    * @note ini files referenced in section 'config' key 'include' are parsed afterwards
    * @return True/False whether method succeeded.
    */
-  public function parseIniFile($filename, $processValues=true)
-  {
+  public function parseIniFile($filename, $processValues=true) {
     // do nothing, if the requested file was the last parsed file
     $numParsedFiles = sizeof($this->_parsedFiles);
     if ($numParsedFiles > 0 && $this->_parsedFiles[sizeof($this->_parsedFiles)-1] == $filename) {
@@ -91,21 +88,18 @@ class InifileParser
     }
 
     global $CONFIG_PATH;
-    if (file_exists($filename))
-    {
+    if (file_exists($filename)) {
       $this->_filename = $filename;
 
       // try to unserialize an already parsed ini file sequence
       $tmpSequence = $this->_parsedFiles;
       $tmpSequence[] = $filename;
-      if (!$this->unserialize($tmpSequence))
-      {
+      if (!$this->unserialize($tmpSequence)) {
         // merge new with old values, overwrite redefined values
         $this->_iniArray = $this->configMerge($this->_iniArray, $this->_parse_ini_file($filename, true), true);
 
         // merge referenced ini files, don't override values
-        if (($includes = $this->getValue('include', 'config')) !== false)
-        {
+        if (($includes = $this->getValue('include', 'config')) !== false) {
           $this->processValue($includes);
           foreach($includes as $include) {
             $this->_iniArray = $this->configMerge($this->_iniArray, $this->_parse_ini_file($CONFIG_PATH.$include, true), false);
@@ -122,8 +116,7 @@ class InifileParser
       }
       return true;
     }
-    else
-    {
+    else {
       $this->_errorMsg = "Configuration file ".$filename." not found!";
       return false;
     }
@@ -133,8 +126,7 @@ class InifileParser
    * Returns the data of the formerly parsed ini file.
    * @return The data of the parsed ini file.
    */
-  public function getData()
-  {
+  public function getData() {
     return $this->_iniArray;
   }
 
@@ -142,8 +134,7 @@ class InifileParser
    * Get all section names.
    * @return An array of section names.
    */
-  public function getSections()
-  {
+  public function getSections() {
     return array_keys($this->_iniArray);
   }
 
@@ -154,18 +145,15 @@ class InifileParser
    * @return An assoziative array holding the key/value pairs belonging to the section or
    *         False if the section does not exist (use getErrorMsg() for detailed information).
    */
-  public function getSection($section, $caseSensitive=true)
-  {
-    if (!$caseSensitive)
-    {
+  public function getSection($section, $caseSensitive=true) {
+    if (!$caseSensitive) {
       $matchingKeys = ArrayUtil::get_matching_values_i($section, array_keys($this->_iniArray));
       if (sizeof($matchingKeys) > 0) {
         $section = array_pop($matchingKeys);
       }
     }
 
-    if (!isset($this->_iniArray[$section]))
-    {
+    if (!isset($this->_iniArray[$section])) {
       $this->_errorMsg = "Section '".$section."' not found!";
       return false;
     }
@@ -182,21 +170,18 @@ class InifileParser
    * @return The results of the parsed ini file or
    *         False in the case of wrong parameters (use getErrorMsg() for detailed information).
    */
-  public function getValue($key, $section, $caseSensitive=true)
-  {
+  public function getValue($key, $section, $caseSensitive=true) {
     $sectionArray = $this->getSection($section, $caseSensitive);
     if ($sectionArray === false) {
       return false;
     }
-    if (!$caseSensitive)
-    {
+    if (!$caseSensitive) {
       $matchingKeys = ArrayUtil::get_matching_values_i($key, array_keys($sectionArray));
       if (sizeof($matchingKeys) > 0) {
         $key = array_pop($matchingKeys);
       }
     }
-    if (!array_key_exists($key, $sectionArray))
-    {
+    if (!isset($sectionArray[$key])) {
       $this->_errorMsg = "Key '".$key."' not found in section '".$section."'!";
       return false;
     }
@@ -213,8 +198,7 @@ class InifileParser
    * Set ini file data.
    * @param data The ini file data.
    */
-  public function setData($data)
-  {
+  public function setData($data) {
     $this->_iniArray = $data;
     $this->_isModified = true;
   }
@@ -224,10 +208,8 @@ class InifileParser
    * @param section The name of the section.
    * @note hidden sections are defined as an array in section 'config' key 'hiddenSections'
    */
-  public function isHidden($section)
-  {
-    if (($hiddenSections = $this->getValue('hiddenSections', 'config')) !== false)
-    {
+  public function isHidden($section) {
+    if (($hiddenSections = $this->getValue('hiddenSections', 'config')) !== false) {
       $this->processValue($hiddenSections);
       if (is_array($hiddenSections) && in_array($section, $hiddenSections)) {
         return true;
@@ -241,10 +223,8 @@ class InifileParser
    * @param section The name of the section.
    * @note readyonly sections are defined as an array in section 'config' key 'readonlySections'
    */
-  public function isEditable($section)
-  {
-    if (($readonlySections = $this->getValue('readonlySections', 'config')) !== false)
-    {
+  public function isEditable($section) {
+    if (($readonlySections = $this->getValue('readonlySections', 'config')) !== false) {
       $this->processValue($readonlySections);
       if (is_array($readonlySections) && in_array($section, $readonlySections)) {
         return true;
@@ -261,16 +241,13 @@ class InifileParser
    * @param section The name of the section (will be trimmed).
    * @return True/false whether successful.
    */
-  public function createSection($section)
-  {
+  public function createSection($section) {
     $section = trim($section);
-    if ($this->getSection($section) !== false)
-    {
+    if ($this->getSection($section) !== false) {
       $this->_errorMsg = "Section '".$section."' already exists!";
       return false;
     }
-    if ($section == '')
-    {
+    if ($section == '') {
       $this->_errorMsg = "Empty section names are not allowed!";
       return false;
     }
@@ -284,10 +261,8 @@ class InifileParser
    * @param section The name of the section.
    * @return True/false whether successful.
    */
-  public function removeSection($section)
-  {
-    if (!$this->isEditable($section))
-    {
+  public function removeSection($section) {
+    if (!$this->isEditable($section)) {
       $this->_errorMsg = "Section ".$section." is not editable!";
       return false;
     }
@@ -305,10 +280,8 @@ class InifileParser
    * @param newname The new name of the section (will be trimmed).
    * @return True/false whether successful.
    */
-  public function renameSection($oldname, $newname)
-  {
-    if (!$this->isEditable($oldname))
-    {
+  public function renameSection($oldname, $newname) {
+    if (!$this->isEditable($oldname)) {
       $this->_errorMsg = "Section ".$oldname." is not editable!";
       return false;
     }
@@ -316,13 +289,11 @@ class InifileParser
     if ($this->getSection($oldname) === false) {
       return false;
     }
-    if ($this->getSection($newname) !== false)
-    {
+    if ($this->getSection($newname) !== false) {
       $this->_errorMsg = "Section '".$newname."' already exists!";
       return false;
     }
-    if ($newname == '')
-    {
+    if ($newname == '') {
       $this->_errorMsg = "Empty section names are not allowed!";
       return false;
     }
@@ -339,10 +310,8 @@ class InifileParser
    * @param createSection The name of the section.
    * @return True/False whether successful.
    */
-  public function setValue($key, $value, $section, $createSection=true)
-  {
-    if (!$this->isEditable($section))
-    {
+  public function setValue($key, $value, $section, $createSection=true) {
+    if (!$this->isEditable($section)) {
       $this->_errorMsg = "Section ".$section." is not editable!";
       return false;
     }
@@ -350,8 +319,7 @@ class InifileParser
     if (!$createSection && ($this->getSection($section) === false)) {
       return false;
     }
-    if ($key == '')
-    {
+    if ($key == '') {
       $this->_errorMsg = "Empty key names are not allowed!";
       return false;
     }
@@ -366,10 +334,8 @@ class InifileParser
    * @param section The name of the section.
    * @return True/False whether successful.
    */
-  public function removeKey($key, $section)
-  {
-    if (!$this->isEditable($section))
-    {
+  public function removeKey($key, $section) {
+    if (!$this->isEditable($section)) {
       $this->_errorMsg = "Section ".$section." is not editable!";
       return false;
     }
@@ -388,10 +354,8 @@ class InifileParser
    * @param section The name of the section.
    * @return True/false whether successful.
    */
-  public function renameKey($oldname, $newname, $section)
-  {
-    if (!$this->isEditable($section))
-    {
+  public function renameKey($oldname, $newname, $section) {
+    if (!$this->isEditable($section)) {
       $this->_errorMsg = "Section ".$section." is not editable!";
       return false;
     }
@@ -399,13 +363,11 @@ class InifileParser
     if ($this->getValue($oldname, $section) === false) {
       return false;
     }
-    if ($this->getValue($newname, $section) !== false)
-    {
+    if ($this->getValue($newname, $section) !== false) {
       $this->_errorMsg = "Key '".$newname."' already exists in section '".$section."'!";
       return false;
     }
-    if ($newname == '')
-    {
+    if ($newname == '') {
       $this->_errorMsg = "Empty key names are not allowed!";
       return false;
     }
@@ -419,21 +381,17 @@ class InifileParser
    * @param filename The filename to write to, if null the original file will be used [default: null].
    * @return True/False whether successful
    */
-  public function writeIniFile($filename=null)
-  {
+  public function writeIniFile($filename=null) {
     if ($filename == null) {
       $filename = $this->_filename;
     }
     $content = "";
-    foreach($this->_iniArray as $section => $values)
-    {
+    foreach($this->_iniArray as $section => $values) {
       $sectionString = "[".$section."]";
       $content .= $this->_comments[$sectionString];
       $content .= $sectionString."\n";
-      if (is_array($values))
-      {
-        foreach($values as $key => $value)
-        {
+      if (is_array($values)) {
+        foreach($values as $key => $value) {
           if (is_array($value)) {
             $value = "{".join(", ", $value)."}";
           }
@@ -446,14 +404,12 @@ class InifileParser
     }
     $content .= $this->_comments[';'];
 
-    if (!$fh = fopen($filename, 'w'))
-    {
+    if (!$fh = fopen($filename, 'w')) {
       $this->_errorMsg = "Can't open ini file '".$filename."'!";
       return false;
     }
 
-    if (!fwrite($fh, $content))
-    {
+    if (!fwrite($fh, $content)) {
       $this->_errorMsg = "Can't write ini file '".$filename."'!";
       return false;
     }
@@ -477,8 +433,7 @@ class InifileParser
    *          Original Code base: <info@megaman.nl>
    *          Added comment handling/Removed process sections flag: Ingo Herwig
    */
-  protected function _parse_ini_file($filename)
-  {
+  protected function _parse_ini_file($filename) {
     if (!file_exists($filename)) {
       throw new ConfigurationException("The config file ".$filename." does not exist.");
     }
@@ -486,18 +441,15 @@ class InifileParser
     $sec_name = "";
     $lines = file($filename);
     $commentsPending = "";
-    foreach($lines as $line)
-    {
+    foreach($lines as $line) {
       $line = trim($line);
       // comments/blank lines
-      if($line == "" || $line[0] == ";")
-      {
+      if($line == "" || $line[0] == ";") {
         $commentsPending .= $line."\n";
         continue;
       }
 
-      if($line[0] == "[" && $line[strlen($line)-1] == "]")
-      {
+      if($line[0] == "[" && $line[strlen($line)-1] == "]") {
         $sec_name = substr($line, 1, strlen($line)-2);
         $ini_array[$sec_name] = array();
 
@@ -505,8 +457,7 @@ class InifileParser
         $this->_comments[$line] = $commentsPending;
         $commentsPending = "";
       }
-      else
-      {
+      else {
         $parts = explode("=", $line, 2);
         $property = trim($parts[0]);
         $value = trim($parts[1]);
@@ -529,8 +480,7 @@ class InifileParser
    * (comma separated values enclosed by curly brackets) into array values.
    * @attention Internal use only.
    */
-  protected function processValues()
-  {
+  protected function processValues() {
     array_walk_recursive($this->_iniArray, array($this, 'processValue'));
   }
 
@@ -541,17 +491,14 @@ class InifileParser
    * @param value A reference to the value
    * @attention Internal use only.
    */
-  protected function processValue(&$value)
-  {
-    if (!is_array($value))
-    {
+  protected function processValue(&$value) {
+    if (!is_array($value)) {
       // decode encoded (%##) values
       if (preg_match ("/%/", $value)) {
         $value = urldecode($value);
       }
       // make arrays
-      if(preg_match("/^{.*}$/", $value))
-      {
+      if(preg_match("/^{.*}$/", $value)) {
         $arrayValues = StringUtil::quotesplit(substr($value, 1, -1));
         $value = array();
         foreach ($arrayValues as $arrayValue) {
@@ -569,18 +516,14 @@ class InifileParser
    * @param override True/False whether values defined in array1 should be overriden by values defined in array2.
    * @return The merged array.
    */
-  protected function configMerge($array1, $array2, $override)
-  {
+  protected function configMerge($array1, $array2, $override) {
     $result = $array1;
-    foreach(array_keys($array2) as $key)
-    {
+    foreach(array_keys($array2) as $key) {
       if (!array_key_exists($key, $result)) {
         $result[$key] = $array2[$key];
       }
-      else
-      {
-        foreach(array_keys($array2[$key]) as $subkey)
-        {
+      else {
+        foreach(array_keys($array2[$key]) as $subkey) {
           if ((array_key_exists($subkey, $result[$key]) && $override) || !isset($result[$key][$subkey]))
             $result[$key][$subkey] = $array2[$key][$subkey];
         }
@@ -592,13 +535,10 @@ class InifileParser
   /**
    * Store the instance in the filesystem. If the instance is modified, this call is ignored.
    */
-  protected function serialize()
-  {
-    if ($this->_useCache && !$this->isModified())
-    {
+  protected function serialize() {
+    if ($this->_useCache && !$this->isModified()) {
       $cacheFile = $this->getSerializeFilename($this->_parsedFiles);
-      if($fh = @fopen($cacheFile, "w"))
-      {
+      if($fh = @fopen($cacheFile, "w")) {
         if(@fwrite($fh, serialize(get_object_vars($this)))) {
           @fclose($f);
         }
@@ -613,24 +553,18 @@ class InifileParser
    * @param parsedFiles An array of ini filenames that must be contained in the data.
    * @param True/False wether the data could be retrieved or not
    */
-  protected function unserialize($parsedFiles)
-  {
-    if ($this->_useCache && !$this->isModified())
-    {
+  protected function unserialize($parsedFiles) {
+    if ($this->_useCache && !$this->isModified()) {
       $cacheFile = $this->getSerializeFilename($parsedFiles);
-      if (file_exists($cacheFile))
-      {
-        if (!$this->checkFileDate($parsedFiles, $cacheFile))
-        {
+      if (file_exists($cacheFile)) {
+        if (!$this->checkFileDate($parsedFiles, $cacheFile)) {
           $vars = unserialize(file_get_contents($cacheFile));
 
           // check if included ini files were updated since last cache time
-          if (isset($vars['_iniArray']['config']))
-          {
+          if (isset($vars['_iniArray']['config'])) {
             global $CONFIG_PATH;
             $includes = $vars['_iniArray']['config']['include'];
-            if (is_array($includes))
-            {
+            if (is_array($includes)) {
               $includedFiles = array();
               foreach($includes as $include) {
                 $includedFiles[] = $CONFIG_PATH.$include;
@@ -656,8 +590,7 @@ class InifileParser
    * Get the filename for the serialized data that correspond to the the given ini file sequence.
    * @param parsedFiles An array of parsed filenames
    */
-  protected function getSerializeFilename($parsedFiles)
-  {
+  protected function getSerializeFilename($parsedFiles) {
     global $CONFIG_PATH;
     $path = session_save_path();
     $filename = $path.'/'.urlencode(realpath($CONFIG_PATH)."/".join('_', $parsedFiles));
@@ -670,8 +603,7 @@ class InifileParser
    * @param referenceFile The file to check against
    * @return True, if one of the files is newer, false else
    */
-  protected function checkFileDate($fileList, $referenceFile)
-  {
+  protected function checkFileDate($fileList, $referenceFile) {
     foreach ($fileList as $file) {
       if (filemtime($file) > filemtime($referenceFile)) {
         return true;

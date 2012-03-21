@@ -16,11 +16,10 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
 
 /**
- * @class PagingInfo
- * @ingroup Persistence
- * @brief PagingInfo contains information about a paged list.
+ * PagingInfo contains information about a paged list.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

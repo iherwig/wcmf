@@ -16,13 +16,14 @@
  *
  * $Id: class.TextControl.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
-require_once(WCMF_BASE."wcmf/lib/util/Obfuscator.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\util\Obfuscator;
 
 /**
- * @class AsyncListControl
- * @ingroup Presentation
- * @brief AsyncListControl handles lists that are retrieved from the server
+ * AsyncListControl handles lists that are retrieved from the server
  * asynchronously.
  *
  * @author ingo herwig <ingo@wemove.com>

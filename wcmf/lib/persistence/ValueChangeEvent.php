@@ -16,18 +16,19 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/core/Event.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\core\Event;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
- * @class ValueChangeEvent
- * @ingroup Event
- * @brief ValueChangeEvent signals a change of a value of
+ * ValueChangeEvent signals a change of a value of
  * a PersistentObject instance.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ValueChangeEvent extends Event
-{
+class ValueChangeEvent extends Event {
+
   const NAME = __CLASS__;
 
   private $_object = null;
@@ -42,13 +43,13 @@ class ValueChangeEvent extends Event
    * @param oldValue The old value of the item that has changed.
    * @param newValue The new value of the item that has changed.
    */
-  public function __construct(PersistentObject $object, $name, $oldValue, $newValue)
-  {
+  public function __construct(PersistentObject $object, $name, $oldValue, $newValue) {
     $this->_object = $object;
     $this->_name = $name;
     $this->_oldValue = $oldValue;
     $this->_newValue = $newValue;
   }
+
   /**
    * Get the object whose value has changed.
    * @return PersistentObject instance
@@ -56,6 +57,7 @@ class ValueChangeEvent extends Event
   public function getObject() {
     return $this->_object;
   }
+
   /**
    * Get the name of the value that has changed.
    * @return String
@@ -63,6 +65,7 @@ class ValueChangeEvent extends Event
   public function getValueName() {
     return $this->_name;
   }
+
   /**
    * Get the old value.
    * @return Mixed
@@ -70,6 +73,7 @@ class ValueChangeEvent extends Event
   public function getOldValue() {
     return $this->_oldValue;
   }
+
   /**
    * Get the new value.
    * @return Mixed

@@ -16,65 +16,65 @@
  *
  * $Id$
  */
+namespace wcmf\lib\util;
 
 /**
- * @class ArrayUtil
- * @ingroup Util
- * @brief ArrayUtil provides support for array manipulation.
+ * ArrayUtil provides support for array manipulation.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ArrayUtil
-{
+class ArrayUtil {
+
   /*
    * Implementation of in_array case insensitive search (see PHP documentation for parameters)
    */
-  public static function in_array_i($str, $array)
-  {
+  public static function in_array_i($str, $array) {
     return (sizeof(ArrayUtil::get_matching_values_i($str, $array)) > 0);
   }
+
   /*
    * Get array values that match a string case insensitive.
    * @param str String to match
    * @param array Array to search in
    * @return Array of matched values
    */
-  public static function get_matching_values_i($str, $array)
-  {
+  public static function get_matching_values_i($str, $array) {
     return preg_grep('/^' . preg_quote($str, '/') . '$/i', $array);
   }
+
   /*
    * Implementation of array_slice for assoziative arrays (see PHP documentation for parameters)
    */
-  public static function key_array_splice(&$input, $key_ofs, $length=null, $replacement=null)
-  {
+  public static function key_array_splice(&$input, $key_ofs, $length=null, $replacement=null) {
     // Adjust the length if it was negative or not passed
     if ($length === null || $length < 0)
       $count = $length + count($input);
 
     // Cycle through the array
-    foreach ($input as $key => $value)
-    {
-      if (!$key_found)
-      {
-        if ($key === $key_ofs)
-        {
+    foreach ($input as $key => $value) {
+      if (!$key_found) {
+        if ($key === $key_ofs) {
           $key_found = true;
-          if ($length !== null && $length >= 0)
+          if ($length !== null && $length >= 0) {
             $count = $length;
-          if (is_array($replacement))
-            foreach($replacement as $r_key => $r_value)
+          }
+          if (is_array($replacement)) {
+            foreach($replacement as $r_key => $r_value) {
               $new_array[$r_key] = $r_value;
+            }
+          }
         }
-        else
+        else {
           $new_array[$key] = $value;
+        }
       }
-      if ($key_found)
-      {
-        if ($count > 0)
+      if ($key_found) {
+        if ($count > 0) {
           $ret_array[$key] = $value;
-        else
+        }
+        else {
           $new_array[$key] = $value;
+        }
       }
       $count--;
     }
@@ -90,8 +90,7 @@ class ArrayUtil
    * @param oldname The old name of the key
    * @param newname The new name of the key
    */
-  public static function key_array_rename(&$input, $oldname, $newname)
-  {
+  public static function key_array_rename(&$input, $oldname, $newname) {
     ArrayUtil::key_array_splice($input, $oldname, 1,
       array($newname => $input[$oldname]));
     unset($input[$oldname]);
@@ -106,12 +105,13 @@ class ArrayUtil
    * already exists or not.
    * @return True/False indicating wether the value was inserted or not
    */
-  public static function array_insert(&$input, $pos, &$val, $unique=true)
-  {
-    if (!is_array($input))
-  	  $input = array();
-    if ($unique && in_array($val, $input, true))
+  public static function array_insert(&$input, $pos, &$val, $unique=true) {
+    if (!is_array($input)) {
+      $input = array();
+    }
+    if ($unique && in_array($val, $input, true)) {
       return false;
+    }
     array_splice($input, $pos, 0, array(&$val));
     return true;
   }
@@ -121,9 +121,8 @@ class ArrayUtil
    * @param input A reference to the array to remove from
    * @param val A reference to the value to remove
    */
-  public static function array_remove(&$input, &$val)
-  {
-  	$input = array_diff($input, array($val));
+  public static function array_remove(&$input, &$val) {
+    $input = array_diff($input, array($val));
   }
 
   /**
@@ -135,8 +134,7 @@ class ArrayUtil
    * @param objArray The array of objects
    * @return An array of objects made unique by oid
    */
-  public static function array_unique_by_oid($objArray)
-  {
+  public static function array_unique_by_oid($objArray) {
     $out = array();
     $oidList = array();
     for($i=0; $i<sizeof($objArray); $i++)
@@ -162,36 +160,34 @@ class ArrayUtil
    * @param wrap True/False wether to wrap the list or not
    * @return An Array with two the previous and the next oid
    */
-  public static function getPrevNextOIDs($oid, &$objList, $wrap)
-  {
+  public static function getPrevNextOIDs($oid, &$objList, $wrap) {
     $prevOID = null;
     $nextOID = null;
     $listSize = sizeof($objList);
 
-    if ($listSize > 0)
-    {
-      for ($i=0; $i<$listSize; $i++)
-      {
-        if ($objList[$i]->getOID() == $oid)
-        {
+    if ($listSize > 0) {
+      for ($i=0; $i<$listSize; $i++) {
+        if ($objList[$i]->getOID() == $oid) {
           // determine previous
-          if ($i == 0)
-          {
-            if ($wrap)
+          if ($i == 0) {
+            if ($wrap) {
               $prevOID = $objList[$listSize-1]->getOID();
-            else
+            }
+            else {
               $prevOID = null;
+            }
           }
-          else
+          else {
             $prevOID = $objList[$i-1]->getOID();
-
+          }
           // determine next
-          if ($i == $listSize-1)
-          {
-            if ($wrap)
+          if ($i == $listSize-1) {
+            if ($wrap) {
               $nextOID = $objList[0]->getOID();
-            else
+            }
+            else {
               $nextOID = null;
+            }
           }
           else
             $nextOID = $objList[$i+1]->getOID();

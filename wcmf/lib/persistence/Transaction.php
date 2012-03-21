@@ -16,17 +16,25 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/ITransaction.php");
+namespace wcmf\lib\persistence;
+
+use \Exception;
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\Log;
+use wcmf\lib\persistence\ITransaction;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\StateChangeEvent;
+use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 
 /**
- * @class Transaction
- * @ingroup Persistence
- * @brief Default implementation of ITransaction.
+ * Default implementation of ITransaction.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Transaction implements ITransaction
-{
+class Transaction implements ITransaction {
+
   private $_id = '';
   private $_isActive = false;
   private $_observedObjects = array();
@@ -43,25 +51,24 @@ class Transaction implements ITransaction
   /**
    * Constructor.
    */
-  public function __construct()
-  {
+  public function __construct() {
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
     EventManager::getInstance()->addListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
   }
+
   /**
    * Destructor.
    */
-  public function __destruct()
-  {
+  public function __destruct() {
     EventManager::getInstance()->removeListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
   }
+
   /**
    * @see ITransaction::registerNew()
    */
-  public function registerNew(PersistentObject $object)
-  {
+  public function registerNew(PersistentObject $object) {
     if (!$this->_isActive) {
       return;
     }
@@ -70,11 +77,11 @@ class Transaction implements ITransaction
     $this->_newObjects[$key] = $object;
     $this->_observedObjects[$key] = $object;
   }
+
   /**
    * @see ITransaction::registerDirty()
    */
-  public function registerDirty(PersistentObject $object)
-  {
+  public function registerDirty(PersistentObject $object) {
     if (!$this->_isActive) {
       return;
     }
@@ -86,11 +93,11 @@ class Transaction implements ITransaction
     Log::info("Register dirty object: ".$key, __CLASS__);
     $this->_dirtyObjects[$key] = $object;
   }
+
   /**
    * @see ITransaction::registerDeleted()
    */
-  public function registerDeleted(PersistentObject $object)
-  {
+  public function registerDeleted(PersistentObject $object) {
     if (!$this->_isActive) {
       return;
     }
@@ -108,21 +115,20 @@ class Transaction implements ITransaction
     Log::info("Register deleted object: ".$key, __CLASS__);
     $this->_deletedObjects[$key] = $object;
   }
+
   /**
    * @see ITransaction::begin()
    */
-  public function begin()
-  {
+  public function begin() {
     Log::info("Starting transaction", __CLASS__);
     $this->_isActive = true;
   }
+
   /**
    * @see ITransaction::commit()
    */
-  public function commit()
-  {
-    if ($this->_isActive)
-    {
+  public function commit() {
+    if ($this->_isActive) {
       $persistenceFacade = PersistenceFacade::getInstance();
       $knowTypes = $persistenceFacade->getKnownTypes();
       try {
@@ -135,8 +141,7 @@ class Transaction implements ITransaction
         // object changes may occure during the commit, we
         // loop until all queues are empty
         $commitDone = false;
-        while (!$commitDone)
-        {
+        while (!$commitDone) {
           $this->processInserts();
           $this->processUpdates();
           $this->processDeletes();
@@ -166,27 +171,27 @@ class Transaction implements ITransaction
     // forget changes
     $this->rollback();
   }
+
   /**
    * @see ITransaction::rollback()
    */
-  public function rollback()
-  {
+  public function rollback() {
     // forget changes
     $this->clear();
     $this->_isActive = false;
   }
+
   /**
    * @see ITransaction::isActive()
    */
-  public function isActive()
-  {
+  public function isActive() {
     return $this->_isActive;
   }
+
   /**
    * @see ITransaction::registerLoaded()
    */
-  public function registerLoaded(PersistentObject $object)
-  {
+  public function registerLoaded(PersistentObject $object) {
     $oid = $object->getOID();
     $key = $oid->__toString();
     if (Log::isDebugEnabled(__CLASS__)) {
@@ -217,30 +222,29 @@ class Transaction implements ITransaction
     }
     return $registeredObject;
   }
+
   /**
    * Dump the registry content into a string
    * @return String
    */
-  protected function dump()
-  {
+  protected function dump() {
     $str = '';
     foreach (array_values($this->_loadedObjects) as $curObject) {
       $str .= $curObject->dump();
     }
     return $str;
   }
+
   /**
    * @see ITransaction::getLoaded()
    */
-  public function getLoaded(ObjectId $oid, $buildAttribs=null)
-  {
+  public function getLoaded(ObjectId $oid, $buildAttribs=null) {
     $registeredObject = null;
     $key = $oid->__toString();
     if (isset($this->_loadedObjects[$key])) {
       $registeredObject = $this->_loadedObjects[$key];
       // check requested attributes
-      if (!$registeredObject->isComplete())
-      {
+      if (!$registeredObject->isComplete()) {
         if ($buildAttribs == null) {
           // all attributes are expected, but the object is not complete
           return null;
@@ -259,11 +263,11 @@ class Transaction implements ITransaction
     }
     return $registeredObject;
   }
+
   /**
    * @see ITransaction::detach()
    */
-  public function detach(PersistentObject $object)
-  {
+  public function detach(PersistentObject $object) {
     $key = $object->getOID()->__toString();
     if (isset($this->_newObjects[$key])) {
       unset($this->_newObjects[$key]);
@@ -279,11 +283,11 @@ class Transaction implements ITransaction
     }
     unset($this->_observedObjects[$key]);
   }
+
   /**
    * Clear all internal
    */
-  protected function clear()
-  {
+  protected function clear() {
     foreach ($this->_newObjects as $object) {
       unset($this->_observedObjects[$object->getOID()->__toString()]);
     }
@@ -304,14 +308,13 @@ class Transaction implements ITransaction
     }
     $this->_loadedObjects = array();
   }
+
   /**
    * Process the new objects queue
    */
-  protected function processInserts()
-  {
+  protected function processInserts() {
     $insertOids = array_keys($this->_newObjects);
-    while (sizeof($insertOids) > 0)
-    {
+    while (sizeof($insertOids) > 0) {
       $key = array_shift($insertOids);
       Log::info("Process insert on object: ".$key, __CLASS__);
       $object = $this->_newObjects[$key];
@@ -323,14 +326,13 @@ class Transaction implements ITransaction
       $insertOids = array_keys($this->_newObjects);
     }
   }
+
   /**
    * Process the dirty objects queue
    */
-  protected function processUpdates()
-  {
+  protected function processUpdates() {
     $updateOids = array_keys($this->_dirtyObjects);
-    while (sizeof($updateOids) > 0)
-    {
+    while (sizeof($updateOids) > 0) {
       $key = array_shift($updateOids);
       Log::info("Process update on object: ".$key, __CLASS__);
       $object = $this->_dirtyObjects[$key];
@@ -343,14 +345,13 @@ class Transaction implements ITransaction
       $updateOids = array_keys($this->_dirtyObjects);
     }
   }
+
   /**
    * Process the deleted objects queue
    */
-  protected function processDeletes()
-  {
+  protected function processDeletes() {
     $deleteOids = array_keys($this->_deletedObjects);
-    while (sizeof($deleteOids) > 0)
-    {
+    while (sizeof($deleteOids) > 0) {
       $key = array_shift($deleteOids);
       Log::info("Process delete on object: ".$key, __CLASS__);
       $object = $this->_deletedObjects[$key];
@@ -368,16 +369,13 @@ class Transaction implements ITransaction
    * Listen to StateChangeEvents
    * @param event StateChangeEvent instance
    */
-  public function stateChanged(StateChangeEvent $event)
-  {
+  public function stateChanged(StateChangeEvent $event) {
     $object = $event->getObject();
-    if (isset($this->_observedObjects[$object->getOID()->__toString()]))
-    {
+    if (isset($this->_observedObjects[$object->getOID()->__toString()])) {
       $oldState = $event->getOldValue();
       $newState = $event->getNewValue();
       Log::debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState, __CLASS__);
-      switch ($newState)
-      {
+      switch ($newState) {
         case PersistentObject::STATE_NEW:
           $this->registerNew($object);
           break;

@@ -16,20 +16,23 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/core/ConfigurationException.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+namespace wcmf\lib\presentation\renderer;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\renderer\ValueRenderer;
 
 /**
- * @class ValueRenderer
- * @ingroup Presentation
- * @brief ValueRenderer is the base class for html renderers. Each ValueRenderer
+ * ValueRenderer is the base class for html renderers. Each ValueRenderer
  * instance has a view template assigned, which defines the actual
  * representation of the value (display type) in html. A ValueRenderer class may use
- * several view templates to render different display types in html. The main 
- * purpose of ValueRenderer classes is the assignment of display type specific 
- * values to the associated view before it will be rendered 
+ * several view templates to render different display types in html. The main
+ * purpose of ValueRenderer classes is the assignment of display type specific
+ * values to the associated view before it will be rendered
  * (@see ValueRenderer::assignViewValues()).
- * 
+ *
  * ValueRenderer are be bound to value types in the configuration section
  * named 'htmldisplay' in the following way:
  * @code
@@ -43,12 +46,12 @@ require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
 abstract class ValueRenderer
 {
   const RENDERER_SECTION_NAME = 'htmldisplay';
-  
+
   private $_viewTpl = null;
 
   /**
    * Get an instance of the renderer class that matches the given displayType.
-   * The implementation searches in the configuration section 'htmldisplay' for the 
+   * The implementation searches in the configuration section 'htmldisplay' for the
    * most specific key that matches the displayType.
    * @param displayType The value type to get the renderer for
    * @return A ValueRenderer instance
@@ -79,18 +82,18 @@ abstract class ValueRenderer
       $viewTpl = $rendererDef[1];
       $renderer = ObjectFactory::createInstance($rendererClass);
       if (!$renderer instanceof ValueRenderer) {
-        throw new ConfigurationException($rendererClass." does not inherit from ValueRenderer");        
+        throw new ConfigurationException($rendererClass." does not inherit from ValueRenderer");
       }
       $renderer->_viewTpl = $viewTpl;
       return $renderer;
-    }    
+    }
     // no match found
     throw new ConfigurationException("No renderer found for value type '".
       $displayType."' in section '".self::RENDERER_SECTION_NAME."'");
   }
   /**
    * Render a value of given display type using the appropriate smarty template (defined in the
-   * config section 'htmldisplay'). The given parameters will be passed to the view. 
+   * config section 'htmldisplay'). The given parameters will be passed to the view.
    * @param displayType The display type of the value
    * @param value The value to display
    * @param attributes An attribute string to be placed in the html tag (defining its appearance)
@@ -113,11 +116,11 @@ abstract class ValueRenderer
         $attributeList[$key] = $value;
       }
     }
-    
+
     // build renderer view
     $view = ObjectFactory::createInstanceFromConfig('implementation', 'View');
     $view->setup();
-    
+
     // assign view values
     $view->assign('value', $value);
     $view->assign('attributes', $attributes);
@@ -125,14 +128,14 @@ abstract class ValueRenderer
 
     // add subclass parameters
     $renderer->assignViewValues($view);
-    
+
     // render the view
     $htmlString = $view->fetch(WCMF_BASE.$renderer->_viewTpl);
     return $htmlString;
   }
   /**
    * Assign the display type specific values to the view. Parameters assigned by default
-   * may be retrieved by $view->getTemplateVars($paramName) 
+   * may be retrieved by $view->getTemplateVars($paramName)
    * The default implementation does nothing, subclasses may overwrite this method
    * to meet special requirements.
    * @param view The view instance

@@ -16,7 +16,9 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\core\ObjectFactory;
 
 /**
  * Some constants describing the build process
@@ -29,14 +31,12 @@ define("BUILDDEPTH_PROXIES_ONLY", -8); // build only proxies
 define("BUILDDEPTH_MAX", 10);          // maximum possible creation depth in one call
 
 /**
- * @class PersistenceFacade
- * @ingroup Persistence
- * @brief PersistenceFacade instantiates the PersistenceFacade implementation.
+ * PersistenceFacade instantiates the PersistenceFacade implementation.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistenceFacade
-{
+class PersistenceFacade {
+
   private static $_instance = null;
 
   private function __construct() {}
@@ -45,8 +45,7 @@ class PersistenceFacade
    * Returns an instance of the PersistenceFacade implementation.
    * @return IPersistenceFacade
    */
-  public static function getInstance()
-  {
+  public static function getInstance() {
     if (!isset(self::$_instance)) {
       self::$_instance = ObjectFactory::createInstanceFromConfig('implementation', 'PersistenceFacade');
     }

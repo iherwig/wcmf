@@ -16,13 +16,14 @@
  *
  * $Id: class.Control.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/control/Control.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/control/IListStrategy.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\control\IListStrategy;
 
 /**
- * @class FixedListStrategy
- * @ingroup Presentation
- * @brief FixedListStrategy implements a constant list of key value pairs.
+ * FixedListStrategy implements a constant list of key value pairs.
  * The following list definition(s) must be used in the input_type configuraton:
  * @code
  * fix:key1[val1]|key2[val2]|... // list with explicit key value pairs

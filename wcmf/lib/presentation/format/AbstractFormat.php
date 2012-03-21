@@ -16,12 +16,14 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/format/IFormat.php");
+namespace wcmf\lib\presentation\format;
+
+use wcmf\lib\model\Node;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @class AbstractFormat
- * @ingroup Format
- * @brief AbstractFormat maybe used as base class for specialized formats.
+ * AbstractFormat maybe used as base class for specialized formats.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

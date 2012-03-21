@@ -16,17 +16,19 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/ImageOutputStrategy.php");
+namespace wcmf\lib\model\output;
+
+use wcmf\lib\model\output\ImageOutputStrategy;
+use wcmf\lib\model\output\IOutputStrategy;
+
 /**
- * @class ElementImageOutputStrategy
- * @ingroup Output
- * @brief This OutputStrategy outputs a tree of objects into an image file. It must be configured
- * with a map that was calculated by a LayoutVisitor.
+ * ElementImageOutputStrategy outputs a tree of objects into an image file.
+ * It must be configured with a map that was calculated by a LayoutVisitor.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ElementImageOutputStrategy extends ImageOutputStrategy
-{
+class ElementImageOutputStrategy extends ImageOutputStrategy {
+
   /**
    * Constructor.
    * @param format Image format name [IMG_GIF | IMG_JPG | IMG_PNG | IMG_WBMP].
@@ -38,9 +40,10 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
    * @param border The image border [px] DEFAULT 50.
    * @param usemap Name of the HTML ImageMap to write to stdout ['' means no map] DEFAULT ''.
    */
-  public function ElementImageOutputStrategy($format, $file, $map, $lineType=LINETYPE_DIRECT, $scale=100, $aspect=0.5, $border=50, $usemap='')
-  {
-    ImageOutputStrategy::ImageOutputStrategy($format, $file, $map, $lineType, $scale, $aspect, $border, $usemap);
+  public function __construct($format, $file, $map, $lineType=self::LINETYPE_DIRECT, $scale=100,
+          $aspect=0.5, $border=50, $usemap='') {
+
+    parent::__construct($format, $file, $map, $lineType, $scale, $aspect, $border, $usemap);
     // define label dimensions relative to node connector position
     $this->_labelDim['left']   = -10;
     $this->_labelDim['top']    = -10;
@@ -50,11 +53,11 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
     $this->_textPos['left']   = -5;
     $this->_textPos['top']    = -8;
   }
+
   /**
    * @see OutputStrategy::writeHeader
    */
-  public function writeHeader()
-  {
+  public function writeHeader() {
     parent::writeHeader();
     // print legend
     $color = ImageColorAllocate($this->_img,0,150,0);
@@ -72,20 +75,18 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
     }
     ImageString($this->_img,1, $this->_border+20, $this->_border+42, "repetitive", $color);
   }
+
   /**
    * @see OutputStrategy::writeObject
    */
-  public function writeObject($obj)
-  {
+  public function writeObject($obj) {
     $properties = $obj->getValueProperties($obj->getType());
-    if (!strstr($obj->getType(), '->'))
-    {
+    if (!strstr($obj->getType(), '->')) {
       $smallText = $obj->getType();
       $bigText = $properties['oid'];
       $color = $this->_txtColor;
     }
-    else
-    {
+    else {
       $smallText = substr ($obj->getType(), 0, strrpos ($obj->getType(), ":"));
       $bigText = substr (strrchr ($obj->getType(), ":"), 1);
       $color = ImageColorAllocate($this->_img,150,150,150);
@@ -100,8 +101,7 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
     }
 
     // print box
-    if ($obj->getProperty('maxOccurs') == 'unbounded' || $obj->getProperty('maxOccurs') > 1) // repetitive
-    {
+    if ($obj->getProperty('maxOccurs') == 'unbounded' || $obj->getProperty('maxOccurs') > 1) {
       for($i=3;$i>=1;$i--) {
         $this->writeFilledBorderedRect(new Position($x + $this->_labelDim['left']+5*$i, $y + $this->_labelDim['top']+5*$i, 0),
                                 new Position($x + $this->_labelDim['right']+5*$i, $y + $this->_labelDim['bottom']+5*$i, 0),
@@ -126,10 +126,8 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
     // write attribs
     $attribs = $obj->getValueNames();
     $i = 0;
-    if (is_array($attribs))
-    {
-      foreach ($attribs as $attrib)
-      {
+    if (is_array($attribs)) {
+      foreach ($attribs as $attrib) {
         ImageString($this->_img,1,
               $x + $this->_textPos['left'],
               $y + $this->_textPos['top']+25+10*$i,
@@ -150,8 +148,7 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
       $this->drawConnectionLine($parent->getOID(), $oid);
     }
     // print map
-    if ($this->_usemap != '')
-    {
+    if ($this->_usemap != '') {
       echo '<area shape="rect" coords="'.
         ($x + $this->_labelDim['left']).','.
         ($y + $this->_labelDim['top']).','.
@@ -160,8 +157,8 @@ class ElementImageOutputStrategy extends ImageOutputStrategy
         '" onclick="javascript:alert(\'Node OID: '.$obj->getOID().'\')" alt="'.$obj->getOID().'">'."\n";
     }
   }
-  private function writeFilledBorderedRect($topleft, $bottomright, $bgcolor, $bordercolor)
-  {
+
+  private function writeFilledBorderedRect($topleft, $bottomright, $bgcolor, $bordercolor) {
     ImageFilledRectangle($this->_img, $topleft->x, $topleft->y, $bottomright->x, $bottomright->y, $bgcolor);
     ImageRectangle($this->_img, $topleft->x, $topleft->y, $bottomright->x, $bottomright->y, $bordercolor);
   }

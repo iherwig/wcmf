@@ -16,19 +16,23 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/GraphicsUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
+namespace wcmf\application\controller;
+
+use \Exception;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\io\FileUtil;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\concurrency\OptimisticLockException;
+use wcmf\lib\persistence\concurrency\PessimisticLockException;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\util\GraphicsUtil;
 
 /**
- * @class SaveController
- * @ingroup Controller
- * @brief SaveController is a controller that saves Node data.
+ * SaveController is a controller that saves Node data.
  *
  * <b>Input actions:</b>
  * - unspecified: Save the given Node values
@@ -63,7 +67,7 @@ class SaveController extends Controller
   public function executeKernel()
   {
     $persistenceFacade = PersistenceFacade::getInstance();
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 

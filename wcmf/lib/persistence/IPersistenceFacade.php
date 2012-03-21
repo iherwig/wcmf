@@ -16,17 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/ObjectId.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/Criteria.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/RelationDescription.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/AttributeDescription.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/ReferenceDescription.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\IPersistenceMapper;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @interface IPersistenceFacade
- * @ingroup Persistence
- * @brief IPersistenceFacade defines the interface for PersistenceFacade
+ * IPersistenceFacade defines the interface for PersistenceFacade
  * implementations.
  *
  * @author ingo herwig <ingo@wemove.com>

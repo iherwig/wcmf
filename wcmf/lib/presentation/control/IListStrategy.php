@@ -16,11 +16,10 @@
  *
  * $Id: class.Control.php -1   $
  */
+namespace wcmf\lib\presentation\control;
 
 /**
- * @interface IListStrategy
- * @ingroup Presentation
- * @brief IListStrategy defines the interface for classes that
+ * IListStrategy defines the interface for classes that
  * retrieve value lists.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -29,7 +28,7 @@ interface IListStrategy
 {
   /**
    * Get a list of key/value pairs defined by the given description.
-   * @param configuration The list type specific configuration of the list as 
+   * @param configuration The list type specific configuration of the list as
    *                 used in the input_type definition
    * @param value The selected value (maybe null, default: null)
    * @param nodeOid Serialized oid of the node containing this value (for determining remote oids) [default: null]

@@ -16,17 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
+namespace wcmf\lib\persistence;
 
 /**
- * @class AttributeDescription
- * @ingroup Persistence
- * @brief Instances of AttributeDescription describe attributes of PersistentObjects
+ * Instances of AttributeDescription describe attributes of PersistentObjects
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AttributeDescription
-{
+class AttributeDescription {
+
   protected $name = '';
   protected $type = 'string';
   protected $tags = array();
@@ -52,8 +50,8 @@ class AttributeDescription
    * @param displayType The display type for the value, see NodeUtil::getDisplayValue()
    */
   public function __construct($name, $type, array $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
-    $restrictionsDescription, $isEditable, $inputType, $displayType)
-  {
+    $restrictionsDescription, $isEditable, $inputType, $displayType) {
+
     $this->name = $name;
     $this->type = $type;
     $this->tags = $tags;
@@ -72,16 +70,14 @@ class AttributeDescription
    * @param matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags [default: 'all']
    * @return True if the attribute has all data types, false else
    */
-  public function matchTags(array $tags=array(), $matchMode='all')
-  {
+  public function matchTags(array $tags=array(), $matchMode='all') {
     $numGivenTags = sizeof($tags);
     if (sizeof($numGivenTags) == 0) {
       return true;
     }
     $result = true;
     $diff = sizeof(array_diff($tags, $this->tags));
-    switch ($matchMode)
-    {
+    switch ($matchMode) {
       case 'all':
         $result = ($diff == 0);
         break;
@@ -99,8 +95,7 @@ class AttributeDescription
    * Return an array of property names defined in this attribute description
    * @return An array of names
    */
-  public function getPropertyNames()
-  {
+  public function getPropertyNames() {
     return array('name', 'type', 'tags', 'defaultValue', 'restrictionsMatch', 'restrictionsNotMatch',
       'restrictionsDescription', 'isEditable', 'inputType', 'displayType');
   }
@@ -109,8 +104,7 @@ class AttributeDescription
    * Get the attribute name
    * @return String
    */
-  public function getName()
-  {
+  public function getName() {
     return $this->name;
   }
 
@@ -118,8 +112,7 @@ class AttributeDescription
    * Get the attribute type
    * @return String
    */
-  public function getType()
-  {
+  public function getType() {
     return $this->type;
   }
 
@@ -127,8 +120,7 @@ class AttributeDescription
    * Get the application specific tags that this attribute is tagged with
    * @return Array of String
    */
-  public function getTags()
-  {
+  public function getTags() {
     return $this->tags;
   }
 
@@ -136,8 +128,7 @@ class AttributeDescription
    * Get the default value
    * @return Mixed
    */
-  public function getDefaultValue()
-  {
+  public function getDefaultValue() {
     return $this->defaultValue;
   }
 
@@ -145,8 +136,7 @@ class AttributeDescription
    * Get the regular expression that the value must match
    * @return String
    */
-  public function getRestrictionsMatch()
-  {
+  public function getRestrictionsMatch() {
     return $this->restrictionsMatch;
   }
 
@@ -154,8 +144,7 @@ class AttributeDescription
    * Get the regular expression that the value must NOT match
    * @return String
    */
-  public function getRestrictionsNotMatch()
-  {
+  public function getRestrictionsNotMatch() {
     return $this->restrictionsNotMatch;
   }
 
@@ -163,8 +152,7 @@ class AttributeDescription
    * Get the description of the resticitions
    * @return String
    */
-  public function getRestrictionsDescription()
-  {
+  public function getRestrictionsDescription() {
     return $this->restrictionsDescription;
   }
 
@@ -172,8 +160,7 @@ class AttributeDescription
    * Check whether the attribute should be editable
    * @return Boolean
    */
-  public function getIsEditable()
-  {
+  public function getIsEditable() {
     return $this->isEditable;
   }
 
@@ -181,8 +168,7 @@ class AttributeDescription
    * Get the input type for the value
    * @return String
    */
-  public function getInputType()
-  {
+  public function getInputType() {
     return $this->inputType;
   }
 
@@ -190,8 +176,7 @@ class AttributeDescription
    * Get the display type for the value
    * @return String
    */
-  public function getDisplayType()
-  {
+  public function getDisplayType() {
     return $this->displayType;
   }
 }

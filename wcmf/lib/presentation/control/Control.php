@@ -16,17 +16,21 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
-require_once(WCMF_BASE."wcmf/lib/i18n/Localization.php");
+namespace wcmf\lib\presentation\control;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\control\Control;
+use wcmf\lib\util\StringUtil;
 
 /**
- * @class Control
- * @ingroup Presentation
- * @brief Control is the base class for html controls. Each Control
+ * Control is the base class for html controls. Each Control
  * instance has a view template assigned, which defines the actual
  * representation of the control in html. A Control class may use
  * several view templates to render different html controls. The main
@@ -289,7 +293,7 @@ abstract class Control
     }
 
     // get error from session
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
     $error = $session->getError($name);
 
     // split attributes into an array

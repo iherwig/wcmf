@@ -16,18 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/core/Event.php");
+namespace wcmf\lib\core;
+
+use wcmf\lib\core\Event;
 
 /**
- * @class EventManager
- * @ingroup Event
- * @brief EventManager is responsible for dispatching events
+ * EventManager is responsible for dispatching events
  * to registered listeners.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class EventManager
-{
+class EventManager {
+
   private static $_instance = null;
   private $_listeners = array();
 
@@ -37,8 +37,7 @@ class EventManager
    * Returns the only instance of the class.
    * @return EventManager instance
    */
-  public static function getInstance()
-  {
+  public static function getInstance() {
     if (!isset(self::$_instance)) {
       self::$_instance = new EventManager();
     }
@@ -50,20 +49,19 @@ class EventManager
    * @param eventName The event name
    * @param callback A php callback
    */
-  public function addListener($eventName, $callback)
-  {
+  public function addListener($eventName, $callback) {
     if (!isset($this->_listeners[$eventName])) {
       $this->_listeners[$eventName] = array();
     }
     $this->_listeners[$eventName][] = $callback;
   }
+
   /**
    * Remove a listener for a given event
    * @param eventName The event name
    * @param callback A php callback
    */
-  public function removeListener($eventName, $callback)
-  {
+  public function removeListener($eventName, $callback) {
     if (isset($this->_listeners[$eventName])) {
       $listeners = array();
       for ($i=0, $count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
@@ -75,15 +73,14 @@ class EventManager
       $this->_listeners[$eventName] = $listeners;
     }
   }
+
   /**
    * Notify listeners about the given event.
    * @param eventName The event name
    * @param event An Event instance
    */
-  public function dispatch($eventName, Event $event)
-  {
-    if (isset($this->_listeners[$eventName]))
-    {
+  public function dispatch($eventName, Event $event) {
+    if (isset($this->_listeners[$eventName])) {
       for ($i=0, $count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
         $curCallback = $this->_listeners[$eventName][$i];
         call_user_func($curCallback, $event);

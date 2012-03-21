@@ -16,12 +16,16 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/format/AbstractFormat.php");
+namespace wcmf\lib\presentation\format;
+
+use wcmf\lib\io\EncodingUtil;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\format\AbstractFormat;
+use wcmf\lib\presentation\format\IFormat;
 
 /**
- * @class HierarchicalFormat
- * @ingroup Format
- * @brief HierarchicalFormat maybe used as base class for formats that
+ * HierarchicalFormat maybe used as base class for formats that
  * are able to represent hierarchical data like JSON or XML. This format
  * automatically iterates over data when de-/serializing and uses template
  * methods to implement the specific format.

@@ -16,17 +16,18 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\Criteria;
 
 /**
- * @class Criteria
- * @ingroup Persistence
- * @brief A Criteria defines a condition on a PersistentObject's attribute
+ * Criteria defines a condition on a PersistentObject's attribute
  * used to select specific instances.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Criteria
-{
+class Criteria {
+
   const OPERATOR_AND = 'AND'; // the and operator
   const OPERATOR_OR = 'OR'; // the or operator
 
@@ -46,8 +47,7 @@ class Criteria
    * @param combineOperator The Criteria::OPERATOR to use, when this criteria is
    *   combined with other criteria, optional [default: Criteria::OPERATOR_AND]
    */
-  public function __construct($type, $attribute, $operator, $value, $combineOperator=Criteria::OPERATOR_AND)
-  {
+  public function __construct($type, $attribute, $operator, $value, $combineOperator=Criteria::OPERATOR_AND) {
     $this->type = $type;
     $this->attribute = $attribute;
     $this->operator = $operator;
@@ -63,8 +63,7 @@ class Criteria
    * @param value The value to compare the object with
    * @return Criteria
    */
-  public static function asValue($operator, $value)
-  {
+  public static function asValue($operator, $value) {
     return new Criteria(null, null, $operator, $value);
   }
 
@@ -72,8 +71,7 @@ class Criteria
    * Set the PersistentObject type that has the attribute
    * @param type The type name
    */
-  public function setType($type)
-  {
+  public function setType($type) {
     $this->type = $type;
   }
 
@@ -81,8 +79,7 @@ class Criteria
    * Get the PersistentObject type that has the attribute
    * @return String
    */
-  public function getType()
-  {
+  public function getType() {
     return $this->type;
   }
 
@@ -90,8 +87,7 @@ class Criteria
    * Set the name of the attribute
    * @param attribute The attribute name
    */
-  public function setAttribute($attribute)
-  {
+  public function setAttribute($attribute) {
     $this->attribute = $attribute;
   }
 
@@ -99,8 +95,7 @@ class Criteria
    * Get the name of the attribute
    * @return String
    */
-  public function getAttribute()
-  {
+  public function getAttribute() {
     return $this->attribute;
   }
 
@@ -109,8 +104,7 @@ class Criteria
    * the attribute's value
    * @param operator The operator
    */
-  public function setOperator($operator)
-  {
+  public function setOperator($operator) {
     $this->operator = $operator;
   }
 
@@ -119,8 +113,7 @@ class Criteria
    * the attribute's value
    * @return String
    */
-  public function getOperator()
-  {
+  public function getOperator() {
     return $this->operator;
   }
 
@@ -128,8 +121,7 @@ class Criteria
    * Set the value to compare the object with
    * @param value The value
    */
-  public function setValue($value)
-  {
+  public function setValue($value) {
     $this->value = $value;
   }
 
@@ -137,8 +129,7 @@ class Criteria
    * Get the value to compare the object with
    * @return Mixed
    */
-  public function getValue()
-  {
+  public function getValue() {
     return $this->value;
   }
 
@@ -146,8 +137,7 @@ class Criteria
    * Set the Criteria::OPERATOR to use, when this criteria is combined with other criteria
    * @param combineOperator One of the Criteria::OPERATOR constants
    */
-  public function setCombineOperator($combineOperator)
-  {
+  public function setCombineOperator($combineOperator) {
     $this->combineOperator = $combineOperator;
   }
 
@@ -155,8 +145,7 @@ class Criteria
    * Get the Criteria::OPERATOR to use, when this criteria is combined with other criteria
    * @return One of the Criteria::OPERATOR constants
    */
-  public function getCombineOperator()
-  {
+  public function getCombineOperator() {
     return $this->combineOperator;
   }
 
@@ -164,8 +153,7 @@ class Criteria
    * Get a string representation of the operation
    * @return String
    */
-  public function __toString()
-  {
+  public function __toString() {
     $str = "[".$this->combineOperator."] ".$this->type.".".$this->attribute.
             " ".$this->operator." ".$this->value;
     return $str;

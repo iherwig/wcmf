@@ -16,17 +16,17 @@
  *
  * $Id$
  */
-require_once("base_dir.php");
+namespace wcmf\lib\presentation;
 
-require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
-require_once(WCMF_BASE."wcmf/lib/output/LogOutputStrategy.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Request.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/security/AuthUser.php");
-require_once(WCMF_BASE."wcmf/lib/util/JSONUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/core/ErrorHandler.php");
+use \Exception;
+use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\WCMFInifileParser;
+use wcmf\lib\security\RightsManager;
 
 /**
  * @class Application
@@ -35,8 +35,8 @@ require_once(WCMF_BASE."wcmf/lib/core/ErrorHandler.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Application
-{
+class Application {
+
   private static $_instance = null;
 
   private $_requestValues = array();
@@ -49,22 +49,22 @@ class Application
   /**
    * Constructor
    */
-  private function __construct()
-  {
+  private function __construct() {
     $this->_startTime = microtime(true);
     register_shutdown_function(array($this, "shutdown"));
   }
+
   /**
    * Returns an instance of the class.
    * @return A reference to the only instance of the Singleton object
    */
-  public static function getInstance()
-  {
+  public static function getInstance() {
     if (!isset(self::$_instance)) {
       self::$_instance = new Application();
     }
     return self::$_instance;
   }
+
   /**
    * Initialize the application.
    * - Parses and processes the configuration
@@ -83,15 +83,14 @@ class Application
    */
   public function initialize($configPath='include/', $mainConfigFile='config.ini',
     $defaultController='LoginController', $defaultContext='', $defaultAction='login',
-    $defaultResponseFormat='HTML')
-  {
+    $defaultResponseFormat='HTML') {
+
     // collect all request data
     $this->_requestValues = array_merge($_GET, $_POST, $_FILES);
     $this->_rawPostBody = file_get_contents('php://input');
     // add the raw post data if they are json encoded
-    $json = JSONUtil::decode($this->_rawPostBody, true);
-    if (is_array($json))
-    {
+    $json = json_decode($this->_rawPostBody, true);
+    if (is_array($json)) {
       $this->_rawPostBodyIsJson = true;
       foreach ($json as $key => $value) {
         $this->_requestValues[$key] = $value;
@@ -104,8 +103,7 @@ class Application
     // include files from implementation section
     // NOTE: this must be done before the session is started to avoid incomplete object definitions
     $values = array_values($parser->getSection("implementation"));
-    foreach($values as $class)
-    {
+    foreach($values as $class) {
       if (is_array($class)) {
         foreach ($class as $c) {
           ObjectFactory::loadClassDefinition($c);
@@ -155,10 +153,10 @@ class Application
 
     // initialize session with session id if given
     $sessionId = $this->_initialRequest->getValue('sid', null);
-    SessionData::init($sessionId);
+    Session::init($sessionId);
 
     // clear errors
-    $session = SessionData::getInstance();
+    $session = Session::getInstance();
     $session->clearErrors();
 
     // load user configuration
@@ -180,11 +178,11 @@ class Application
     // return the request
     return $this->_initialRequest;
   }
+
   /**
    * This method is automatically called after script execution
    */
-  public function shutdown()
-  {
+  public function shutdown() {
     // log resource usage
     if (Log::isDebugEnabled(__CLASS__)) {
       $timeDiff = microtime(true)-$this->_startTime;
@@ -204,15 +202,14 @@ class Application
       Log::error($info, __CLASS__);
     }
   }
+
   /**
    * Default exception handling method. Rolls back the transaction and
    * re-executes the last request (expected in the session variable 'lastRequest').
    * @param exception The exception instance
    */
-  public function handleException(Exception $exception)
-  {
-    if ($exception instanceof ApplicationException)
-    {
+  public function handleException(Exception $exception) {
+    if ($exception instanceof ApplicationException) {
       $error = $exception->getError();
       if ($error->getCode() == 'SESSION_INVALID') {
         $request = $exception->getRequest();
@@ -230,7 +227,7 @@ class Application
     $persistenceFacade->getTransaction()->rollback();
 
     // process last successful request
-    $lastRequest = SessionData::getInstance()->get('lastRequest');
+    $lastRequest = Session::getInstance()->get('lastRequest');
     if ($lastRequest) {
       ActionMapper::processAction($lastRequest);
     }
@@ -238,28 +235,28 @@ class Application
       print $exception;
     }
   }
+
   /**
    * Get a value from the request parameters (GET, POST variables)
    * @param name The name of the parameter
    * @param default The value to return, if no value is given
    * @return The value
    */
-  protected function getRequestValue($name, $default)
-  {
+  protected function getRequestValue($name, $default) {
     $value = $default;
     if (array_key_exists($name, $this->_requestValues)) {
       $value = $this->_requestValues[$name];
     }
     return $value;
   }
+
   /**
    * Setup global variables. Does nothing related to session, users and persistence.
    * Use this method if you just want to have all global variables initialized and need access to config values.
    * @param configPath The path where config files reside (as seen from main.php), maybe null [default: include/]
    * @param mainConfigFile The main configuration file to use, maybe null [default: config.ini]
    */
-  public function setupGlobals($configPath='include/', $mainConfigFile='config.ini')
-  {
+  public function setupGlobals($configPath='include/', $mainConfigFile='config.ini') {
     // globals
     $GLOBALS['CONFIG_PATH'] = $configPath;
     $GLOBALS['CONFIG_EXTENSION'] = "ini";
@@ -268,22 +265,13 @@ class Application
     // get configuration from file
     $parser = WCMFInifileParser::getInstance();
     $parser->parseIniFile($GLOBALS['CONFIG_PATH'].$GLOBALS['MAIN_CONFIG_FILE'], true);
-
-    // message globals
-    $GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'cms');
-    $GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'cms');
-
-    // set locale
-    if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {
-      setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
-    }
   }
+
   /**
    * Get the stack trace
    * @return The stack trace as string
    */
-  public static function getStackTrace()
-  {
+  public static function getStackTrace() {
     ob_start();
     debug_print_backtrace();
     $trace = ob_get_contents();
@@ -297,22 +285,22 @@ class Application
 
     return $trace;
   }
+
   /**
    * Get an unique id for the application based on the installation location.
    * @return The id
    */
-  public static function getId()
-  {
+  public static function getId() {
     return md5(__FILE__);
   }
+
   /**
    * Determine the message format from a HTTP header value
    * @param header The header value
    * @param defaultFormat The default format to be used if no other can be determined
    * @return One of the message formats (JSON, SOAP, ...)
    */
-  protected static function getMessageFormatFromHeader($header, $defaultFormat)
-  {
+  protected static function getMessageFormatFromHeader($header, $defaultFormat) {
     $format = $defaultFormat;
     if (strpos($header, 'application/json') !== false) {
       $format = 'JSON';

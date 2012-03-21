@@ -16,18 +16,19 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistentObject.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+namespace wcmf\lib\persistence;
 
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceException;
+use wcmf\lib\persistence\PersistenceFacade;
 /**
- * @class PersistentObjectProxy
- * @ingroup Persistence
- * @brief PersistentObjectProxy is proxy for an PersistentObject instance.
+ * PersistentObjectProxy is proxy for an PersistentObject instance.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistentObjectProxy
-{
+class PersistentObjectProxy {
+
   protected $_oid = null;                // object identifier
   protected $_realSubject = null;        // the PersistentObject instance
 
@@ -37,10 +38,10 @@ class PersistentObjectProxy
    * @param object The PersistentObject instance [optional]. This parameter is useful
    * if you want to prevent automatic loading of the subject if it is already loaded.
    */
-  public function __construct(ObjectId $oid)
-  {
+  public function __construct(ObjectId $oid) {
     $this->_oid = $oid;
   }
+
   /**
    * Create a PersistenceProxy instance from a PersistentObject. This is useful
    * if you want to prevent automatic loading of the subject if it is already loaded.
@@ -48,8 +49,7 @@ class PersistentObjectProxy
    * @param object The PersistentObject or PersistentObjectProxy
    * @return PersistentObjectProxy
    */
-  public static function fromObject($object)
-  {
+  public static function fromObject($object) {
     if ($object instanceof PersistentObjectProxy) {
       return $object;
     }
@@ -62,62 +62,62 @@ class PersistentObjectProxy
       throw new IllegalArgumentException("Cannot create proxy from unknown object");
     }
   }
+
   /**
    * Get the object id of the PersistentObject.
    * @return ObjectId
    */
-  public function getOID()
-  {
+  public function getOID() {
     return $this->_oid;
   }
+
   /**
    * Get the type of the PersistentObject.
    * @return String
    */
-  public function getType()
-  {
+  public function getType() {
     return $this->_oid->getType();
   }
+
   /**
    * Get the PersistentObject instance.
    * @return PersistentObject
    */
-  public function getRealSubject()
-  {
+  public function getRealSubject() {
     if ($this->_realSubject == null) {
       $this->resolve();
     }
     return $this->_realSubject;
   }
+
   /**
    * Delegate method call to the instance.
    */
-  public function __call($name, array $arguments)
-  {
+  public function __call($name, array $arguments) {
     if ($this->_realSubject == null) {
       $this->resolve();
     }
     return call_user_func_array(array($this->_realSubject, $name), $arguments);
   }
+
   /**
    * Load the PersistentObject instance. Use this method if the subject should be loaded
    * with a depth greater than BUILDDEPTH_SINGLE
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        [default: BUILDDEPTH_SINGLE)]
    */
-  public function resolve($buildDepth=BUILDDEPTH_SINGLE)
-  {
+  public function resolve($buildDepth=BUILDDEPTH_SINGLE) {
     $this->_realSubject = PersistenceFacade::getInstance()->load($this->_oid, $buildDepth);
     if ($this->_realSubject == null) {
       throw new PersistenceException("Could not resolve oid: ".$this->_oid);
     }
   }
+
   /**
    * Get a string representation of the instance.
    * @return String
    */
-  function __toString()
-  {
+  function __toString() {
     return 'Proxy_'.$this->_oid->__toString();
   }
 }

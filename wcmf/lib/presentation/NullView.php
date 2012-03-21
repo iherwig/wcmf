@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,17 +11,17 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/IView.php");
+namespace wcmf\lib\presentation;
+
+use wcmf\lib\presentation\IView;
 
 /**
- * @class NullView
- * @ingroup Presentation
- * @brief NullView is a stub class that implements all view methods.
+ * NullView is a stub class that implements all view methods.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -29,7 +29,7 @@ class NullView implements IView
 {
   public function setup() {}
 
-  public function clearAllCache() 
+  public function clearAllCache()
   {
     return true;
   }
@@ -41,7 +41,7 @@ class NullView implements IView
   {
     return false;
   }
-  
+
   public function assign($tpl_var, $value=null) {}
   public function assignByRef($tpl_var, &$value) {}
   public function display($resource_name, $cache_id=null, $compile_id=null) {}

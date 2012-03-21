@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,24 +11,24 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class FailureController
- * @ingroup Controller
- * @brief FailureController is a controller that shows an error page to the user.
- * 
+ * FailureController is a controller that shows an error page to the user.
+ *
  * <b>Input actions:</b>
  * - unspecified: Display the error message
  *
  * <b>Output actions:</b>
  * - @em ok In any case
- * 
+ *
  * @param[in,out] errorMsg The message to display
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -51,7 +51,7 @@ class FailureController extends Controller
   {
     // assign model to view
     $this->_response->setValue('errorMsg', $this->_request->getValue('errorMsg'));
-    
+
     $this->_response->setAction('ok');
     return false;
   }

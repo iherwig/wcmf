@@ -16,15 +16,16 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/security/UserManager.php");
-require_once(WCMF_BASE."wcmf/lib/security/User.php");
-require_once(WCMF_BASE."wcmf/lib/security/Role.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+namespace wcmf\lib\security;
+
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\security\Role;
+use wcmf\lib\security\User;
+use wcmf\lib\security\UserManager;
 
 /**
- * @class UserManagerRDB
- * @ingroup Security
- * @brief UserManagerRDB is a UserManager that stores user and role information in a database
+ * UserManagerRDB is a UserManager that stores user and role information in a database
  * using RDBMappers. The User and Role implementation classes are defined by the configuration
  * keys 'User' and 'Role' in the [implementation] section.
  *

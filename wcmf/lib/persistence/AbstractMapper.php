@@ -16,24 +16,27 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/security/AuthorizationException.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\IPersistenceFacade;
+use wcmf\lib\persistence\IPersistenceMapper;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\concurrency\ConcurrencyManager;
+use wcmf\lib\security\AuthorizationException;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class AbstractMapper
- * @ingroup Persistence
- * @brief AbstractMapper provides a basic implementation for other mapper classes.
+ * AbstractMapper provides a basic implementation for other mapper classes.
  * It handles authorization and calls the lifecycle callcacks of PersistentObject
  * instances.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class AbstractMapper
-{
+abstract class AbstractMapper {
+
   private $_dataConverter = null; // a DataConverter object that converts data before writing and after reading from storage
   private $_logging = false;
   private $_logStrategy = null;
@@ -41,8 +44,7 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::hasRelation()
    */
-  public function hasRelation($roleName)
-  {
+  public function hasRelation($roleName) {
     $relations = $this->getRelations();
     foreach ($relations as $relation) {
       if ($relation->getOtherRole() == $roleName) {
@@ -55,8 +57,7 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::hasAttribute()
    */
-  public function hasAttribute($name)
-  {
+  public function hasAttribute($name) {
     $attributes = $this->getAttributes();
     foreach ($attributes as $attribute) {
       if ($attribute->getName() == $name) {
@@ -69,55 +70,53 @@ abstract class AbstractMapper
   /**
    * @see PersistenceMapper::setDataConverter()
    */
-  public function setDataConverter(DataConverter $dataConverter)
-  {
+  public function setDataConverter(DataConverter $dataConverter) {
     $this->_dataConverter = $dataConverter;
   }
+
   /**
    * @see PersistenceMapper::getDataConverter()
    */
-  public function getDataConverter()
-  {
+  public function getDataConverter() {
     return $this->_dataConverter;
   }
+
   /**
    * @see PersistenceMapper::enableLogging()
    */
-  public function enableLogging(OutputStrategy $logStrategy)
-  {
+  public function enableLogging(OutputStrategy $logStrategy) {
     $this->_logStrategy = $logStrategy;
     $this->_logging = true;
   }
+
   /**
    * @see PersistenceMapper::disableLogging()
    */
-  public function disableLogging()
-  {
+  public function disableLogging() {
     $this->_logging = false;
   }
+
   /**
    * @see PersistenceMapper::isLogging()
    */
-  public function isLogging()
-  {
+  public function isLogging() {
     return $this->_logging;
   }
+
   /**
    * @see PersistenceMapper::logAction()
    */
-  public function logAction(PersistentObject $obj)
-  {
+  public function logAction(PersistentObject $obj) {
     if ($this->isLogging()) {
       $this->_logStrategy->writeObject($obj);
     }
   }
+
   /**
    * @see PersistenceMapper::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null)
-  {
-    if (!$this->checkAuthorization($oid, ACTION_READ))
-    {
+  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null) {
+    if (!$this->checkAuthorization($oid, ACTION_READ)) {
       $this->authorizationFailedError($oid, ACTION_READ);
       return;
     }
@@ -127,8 +126,7 @@ abstract class AbstractMapper
     }
     // load object
     $object = $this->loadImpl($oid, $buildDepth, $buildAttribs, $buildTypes);
-    if ($object != null)
-    {
+    if ($object != null) {
       // set immutable if not authorized for modification
       if (!$this->checkAuthorization($oid, ACTION_MODIFY)) {
         $object->setImmutable();
@@ -140,11 +138,11 @@ abstract class AbstractMapper
     }
     return $object;
   }
+
   /**
    * @see PersistenceMapper::create()
    */
-  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null)
-  {
+  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null) {
     // Don't check rights here, because object creation may be needed
     // for internal purposes. That newly created objects may not be saved
     // to the storage is asured by the save method.
@@ -157,11 +155,11 @@ abstract class AbstractMapper
 
     return $object;
   }
+
   /**
    * @see PersistenceMapper::save()
    */
-  public function save(PersistentObject $object)
-  {
+  public function save(PersistentObject $object) {
     $isDirty = ($object->getState() == PersistentObject::STATE_DIRTY);
     $isNew = ($object->getState() == PersistentObject::STATE_NEW);
 
@@ -194,14 +192,13 @@ abstract class AbstractMapper
       $object->afterInsert();
     }
   }
+
   /**
    * @see PersistenceMapper::delete()
    */
-  public function delete(PersistentObject $object)
-  {
+  public function delete(PersistentObject $object) {
     $oid = $object->getOID();
-    if (!$this->checkAuthorization($oid, ACTION_DELETE))
-    {
+    if (!$this->checkAuthorization($oid, ACTION_DELETE)) {
       $this->authorizationFailedError($oid, ACTION_DELETE);
       return;
     }
@@ -214,8 +211,7 @@ abstract class AbstractMapper
 
     // delete object
     $result = $this->deleteImpl($object);
-    if ($result === true)
-    {
+    if ($result === true) {
       // call lifecycle callback
       $object->afterDelete();
 
@@ -224,14 +220,14 @@ abstract class AbstractMapper
     }
     return $result;
   }
+
   /**
    * Check authorization on an type/OID and a given action.
    * @param oid The object id of the Object to authorize (its type will be checked too)
    * @param action Action to authorize
    * @return True/False depending on success of authorization
    */
-  protected function checkAuthorization(ObjectId $oid, $action)
-  {
+  protected function checkAuthorization(ObjectId $oid, $action) {
     $rightsManager = RightsManager::getInstance();
     if (!$rightsManager->authorize($oid, '', $action)) {
       return false;
@@ -240,8 +236,14 @@ abstract class AbstractMapper
       return true;
     }
   }
-  protected function authorizationFailedError(ObjectId $oid, $action)
-  {
+
+  /**
+   * Handle an authorization error.
+   * @param ObjectId oid
+   * @param type action
+   * @throws AuthorizationException
+   */
+  protected function authorizationFailedError(ObjectId $oid, $action) {
     // when reading only log the error to avoid errors on the display
     $msg = Message::get("Authorization failed for action '%1%' on '%2%'.", array($action, $oid));
     if ($action == ACTION_READ) {
@@ -251,6 +253,7 @@ abstract class AbstractMapper
       throw new AuthorizationException($msg);
     }
   }
+
   /**
    * Initialize the object after creation/loading and before handing it over to the application.
    * @note Subclasses may override this to implement special requirements (e.g. install listeners).
@@ -265,16 +268,19 @@ abstract class AbstractMapper
    *
    */
   abstract protected function loadImpl(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
+
   /**
    * @see IPersistenceFacade::create()
    * @note Precondition: Object rights have been checked already
    */
   abstract protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
+
   /**
    * @see IPersistenceMapper::save()
    * @note Precondition: Object rights have been checked already
    */
   abstract protected function saveImpl(PersistentObject $object);
+
   /**
    * @see IPersistenceMapper::delete()
    * @note Precondition: Object rights have been checked already

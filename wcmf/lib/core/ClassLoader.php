@@ -16,84 +16,62 @@
  *
  * $Id$
  */
-$classMapping = array();
+namespace wcmf\lib\core;
 
-function __autoload($className)
-{
-  global $classMapping;
+/**
+ * ClassLoader tries to load missing class definitions.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+class ClassLoader {
 
-  // don't search if there was a call to class_exists
-  $stack = debug_backtrace();
-  if ($stack[1]['function'] == 'class_exists') {
-    return;
+  private static $classMapping = array();
+
+  /**
+   * Constructor.
+   */
+  public function __construct() {
+    spl_autoload_register(array($this, 'load'));
   }
 
-  Log::error($className." searched from ".$stack[1]['file'], "__autoload");
-
-  // search the class definition and register it, if found
-  if (!array_key_exists($className, $classMapping))
-  {
-    // ask ObjectFactory first
-    $objectFactory = &ObjectFactory::getInstance();
-    $classFile = $objectFactory->getClassfile($className);
-    if ($classFile !== false) {
-      $classMapping[$className] = WCMF_BASE.$classFile;
-    }
-    else
-    {
-      // search directories
-      $dir = searchClass($className);
-      if ($dir === false) {
-        return;
-        //throw new Exception("Unable to load definition of class: $className.");
+  private function load($className) {
+    // check if the class is contained in the wcmf namespace
+    if (strpos($className, 'wcmf') === 0) {
+      $filename = WCMF_BASE.str_replace("\\", "/", $className).'.php';
+      if (file_exists($filename)) {
+        include($filename);
       }
-      $classMapping[$className] = $dir.getFileName($className);
     }
   }
-  require_once $classMapping[$className];
-}
 
-/**
- * Get the file name of a class definition.
- *
- * @param className The name of the class
- * @return The file name
- */
-function getFileName($className)
-{
-  return 'class.'.$className.'.php';
-}
+  /**
+  * Search a class definition in any subfolder of WCMF_BASE
+  * Code from: http://php.net/manual/en/language.oop5.autoload.php
+  *
+  * @param className The name of the class
+  * @param sub The start directory [optional]
+  * @return The directory name
+  */
+  function searchClass($className, $sub="/") {
+    if(file_exists(WCMF_BASE.$sub.getFileName($className))) {
+      return WCMF_BASE.$sub;
+    }
 
-/**
- * Search a class definition in any subfolder of WCMF_BASE
- * Code from: http://php.net/manual/en/language.oop5.autoload.php
- *
- * @param className The name of the class
- * @param sub The start directory [optional]
- * @return The directory name
- */
-function searchClass($className, $sub="/")
-{
-  if(file_exists(WCMF_BASE.$sub.getFileName($className))) {
-    return WCMF_BASE.$sub;
-  }
-
-  $dir = dir(WCMF_BASE.$sub);
-  while(false !== ($folder = $dir->read()))
-  {
-    if($folder != "." && $folder != "..")
-    {
-      if(is_dir(WCMF_BASE.$sub.$folder))
-      {
-        $subFolder = searchClass($className, $sub.$folder."/");
-
-        if($subFolder) {
-          return $subFolder;
+    $dir = dir(WCMF_BASE.$sub);
+    while(false !== ($folder = $dir->read())) {
+      if($folder != "." && $folder != "..") {
+        if(is_dir(WCMF_BASE.$sub.$folder)) {
+          $subFolder = searchClass($className, $sub.$folder."/");
+          if($subFolder) {
+            return $subFolder;
+          }
         }
       }
     }
+    $dir->close();
+    return false;
   }
-  $dir->close();
-  return false;
 }
+
+new ClassLoader();
 ?>

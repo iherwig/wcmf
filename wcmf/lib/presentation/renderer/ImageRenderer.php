@@ -16,12 +16,13 @@
  *
  * $Id: class.ValueRenderer.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/renderer/ValueRenderer.php");
+namespace wcmf\lib\presentation\renderer;
+
+use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\renderer\ValueRenderer;
 
 /**
- * @class ImageRenderer
- * @ingroup Presentation
- * @brief ImageRenderer is used to render values with display type 'image'.
+ * ImageRenderer is used to render values with display type 'image'.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

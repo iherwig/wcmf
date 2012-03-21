@@ -25,19 +25,19 @@ error_reporting(E_ERROR | E_PARSE);
 define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/StringUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
-require_once(WCMF_BASE."wcmf/lib/util/FileUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/PersistentIterator.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
+require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\Log;
+use wcmf\lib\io\FileUtil;
+use wcmf\lib\model\PersistentIterator;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\util\StringUtil;
 
 $action = $HTTP_POST_VARS["action"];
 $filesToRemove = $HTTP_POST_VARS["removeFiles"];
 
-$parser = &InifileParser::getInstance();
+$parser = InifileParser::getInstance();
 $parser->parseIniFile('config.ini', true);
 
 // media directory
@@ -64,7 +64,7 @@ if (is_array($rootTypes))
       $iter = new PersistentIterator($rootOID);
       foreach($iter as $depth => $oid)
       {
-        $node = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+        $node = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
 
         $valueNames = $node->getValueNames();
         foreach($valueNames as $valueName)

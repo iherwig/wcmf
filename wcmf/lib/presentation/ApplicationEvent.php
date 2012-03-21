@@ -16,12 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/core/Event.php");
+namespace wcmf\lib\presentation;
+
+use wcmf\lib\core\Event;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
- * @class ApplicationEvent
- * @ingroup Event
- * @brief ApplicationEvent instances are fired at different stages
+ * ApplicationEvent instances are fired at different stages
  * of the program flow. Note that depending on the stage, some of
  * the properties may be null, because they are not initialized yet
  * (e.g. controller).
@@ -31,8 +34,8 @@ require_once(WCMF_BASE."wcmf/lib/core/Event.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ApplicationEvent extends Event
-{
+class ApplicationEvent extends Event {
+
   const NAME = __CLASS__;
 
   /**
@@ -41,16 +44,19 @@ class ApplicationEvent extends Event
    * this stage.
    */
   const BEFORE_ROUTE_ACTION = 'BEFORE_ROUTE_ACTION';
+
   /**
    * A BEFORE_INITIALIZE_CONTROLLER event occurs before the current
    * controller is initialized.
    */
   const BEFORE_INITIALIZE_CONTROLLER = 'BEFORE_INITIALIZE_CONTROLLER';
+
   /**
    * A BEFORE_EXECUTE_CONTROLLER event occurs after the current
    * controller is initialized and before it is executed.
    */
   const BEFORE_EXECUTE_CONTROLLER = 'BEFORE_EXECUTE_CONTROLLER';
+
   /**
    * A AFTER_EXECUTE_CONTROLLER event occurs after the current
    * controller is executed.
@@ -69,13 +75,13 @@ class ApplicationEvent extends Event
    * @param response The response instance (optional).
    * @param controller The controller instance (optional).
    */
-  public function __construct($stage, Request $request, Response $response=null, Controller $controller=null)
-  {
+  public function __construct($stage, Request $request, Response $response=null, Controller $controller=null) {
     $this->_stage = $stage;
     $this->_request = $request;
     $this->_response = $response;
     $this->_controller = $controller;
   }
+
   /**
    * Get the stage at which the event occured.
    * @return String
@@ -90,6 +96,7 @@ class ApplicationEvent extends Event
   public function getRequest() {
     return $this->_request;
   }
+
   /**
    * Get the response.
    * @return Response instance
@@ -97,6 +104,7 @@ class ApplicationEvent extends Event
   public function getResponse() {
     return $this->_response;
   }
+
   /**
    * Get the controller.
    * @return Controller instance

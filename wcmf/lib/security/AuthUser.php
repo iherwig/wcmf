@@ -16,23 +16,24 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/security/User.php");
-require_once(WCMF_BASE."wcmf/lib/security/UserManager.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/IStorable.php");
+namespace wcmf\lib\security;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\User;
+use wcmf\lib\security\UserManager;
 
 /**
- * @class AuthUser
- * @ingroup Security
- * @brief AuthUser provides a storage and methods for user data used for
- * authentication/authorization purposes. This class requires php >= 4.1.0
+ * AuthUser provides a storage and methods for user data used for
+ * authentication/authorization purposes.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AuthUser extends User implements IStorable
-{
+class AuthUser extends User {
+
   private $_login_time = "";
   private $_policies = array();
   private $_defaulPolicy = true;
@@ -45,8 +46,7 @@ class AuthUser extends User implements IStorable
    * @param isPasswordEncrypted True/False wether the password is encrypted or not [default: false]
    * @return True/False whether login succeeded.
    */
-  public function login($login, $password, $isPasswordEncrypted=false)
-  {
+  public function login($login, $password, $isPasswordEncrypted=false) {
     $parser = InifileParser::getInstance();
 
     // encrypt password if not done already
@@ -67,8 +67,7 @@ class AuthUser extends User implements IStorable
 
     // check if user exists
     $loginOk = false;
-    if ($user != null)
-    {
+    if ($user != null) {
       // login succeeded, store the user instance
       $this->_user = clone $user;
       $this->setOID($user->getOID());
@@ -81,14 +80,14 @@ class AuthUser extends User implements IStorable
 
       // add policies
       if (($policies = $parser->getSection('authorization')) === false) {
-        WCMFException::throwEx($parser->getErrorMsg(), __FILE__, __LINE__);
+        throw new ConfigurationException($parser->getErrorMsg());
       }
       else {
-  	    $this->addPolicies($policies);
+        $this->addPolicies($policies);
       }
       $this->_login_time = strftime("%c", time());
-  	  $loginOk = true;
-	}
+      $loginOk = true;
+    }
 
     // reactivate the RightsManager if necessary
     if (!$isAnonymous) {
@@ -102,16 +101,13 @@ class AuthUser extends User implements IStorable
    * @param policies An associative array with the policy information (key=action, value=policy string).
    * @note A policy string looks like this "+*, -guest, +admin"
    */
-  protected function addPolicies(array $policies)
-  {
-  	foreach ($policies AS $key => $value)
-  	{
-  	  if (!isset($this->_policies[$key]))
-  	  {
+  protected function addPolicies(array $policies) {
+    foreach ($policies AS $key => $value) {
+      if (!isset($this->_policies[$key])) {
         $parsedPolicies = $this->parsePolicy($value);
         $this->_policies[$key] = $parsedPolicies;
-  	  }
-  	}
+      }
+    }
   }
 
   /**
@@ -120,15 +116,14 @@ class AuthUser extends User implements IStorable
    * @param actionKey An action key string
    * @return True/False whether authorization succeeded
    */
-  public function authorize($actionKey)
-  {
-  	if ($actionKey == '') {
-  	  return $this->_defaulPolicy;
-  	}
-	if (isset($this->_policies[$actionKey])) {
-	  return $this->matchRoles($this->_policies[$actionKey]);
-  	}
-  	return $this->_defaulPolicy;
+  public function authorize($actionKey) {
+    if ($actionKey == '') {
+      return $this->_defaulPolicy;
+    }
+    if (isset($this->_policies[$actionKey])) {
+      return $this->matchRoles($this->_policies[$actionKey]);
+    }
+    return $this->_defaulPolicy;
   }
 
   /**
@@ -137,27 +132,22 @@ class AuthUser extends User implements IStorable
    * 	      'allow', 'deny' are arrays itselves holding roles. 'allow' overwrites 'deny' overwrites 'default'
    * @return True/False whether the user has access right according to this policy.
    */
-  protected function matchRoles($val)
-  {
-  	if (isset($val['allow']))
-  	{
-      foreach ($val['allow'] as $value)
-      {
+  protected function matchRoles($val) {
+    if (isset($val['allow'])) {
+      foreach ($val['allow'] as $value) {
         if ($this->hasRole($value)) {
           return true;
         }
       }
-  	}
-  	if (isset($val['deny']))
-  	{
-      foreach ($val['deny'] as $value)
-      {
+    }
+    if (isset($val['deny'])) {
+      foreach ($val['deny'] as $value) {
         if ($this->hasRole($value)) {
           return false;
         }
       }
-  	}
-  	return $val['default'];
+    }
+    return $val['default'];
   }
 
   /**
@@ -166,47 +156,41 @@ class AuthUser extends User implements IStorable
    * @param val An role string (+*, +admin, -guest, entries without '+' or '-' prefix default to allow rules).
    * @return An array containing the policy data as an associative array with the keys 'default', 'allow', 'deny'.
    */
-  protected function parsePolicy($val)
-  {
-  	$rtn = array();
+  protected function parsePolicy($val) {
+    $rtn = array();
 
-  	$roles = explode(" ", $val);
-  	foreach ($roles as $value)
-  	{
-  	  $value=trim($value);
-  	  if (strlen($value)==2 && substr($value,1,1) == "*")
-  	  {
+    $roles = explode(" ", $val);
+    foreach ($roles as $value) {
+      $value=trim($value);
+      if (strlen($value)==2 && substr($value,1,1) == "*") {
         if (substr($value,0,1)=="+") {
           $rtn['default'] = true;
         }
         else if (substr($value,0,1)=="-") {
           $rtn['default'] = false;
         }
-  	  }
-  	  else
-  	  {
+      }
+      else {
         if (substr($value,0,1)=="+") {
           $rtn['allow'][] = substr($value,1);
         }
         else if (substr($value,0,1)=="-") {
           $rtn['deny'][] = substr($value,1);
         }
-        else
-        {
+        else {
           // entries without '+' or '-' prefix default to allow rules
           $rtn['allow'][] = $value;
         }
-  	  }
-  	}
-  	return $rtn;
+      }
+    }
+    return $rtn;
   }
 
   /**
    * Assign the default policy.
    * @param val A boolean value.
    */
-  public function setDefaultPolicy($val)
-  {
+  public function setDefaultPolicy($val) {
     $this->_defaulPolicy = $val;
   }
 
@@ -214,8 +198,7 @@ class AuthUser extends User implements IStorable
    * Get login time of the user.
    * @return A formatted time string.
    */
-  public function getLoginTime()
-  {
+  public function getLoginTime() {
     return $this->_login_time;
   }
 
@@ -223,8 +206,7 @@ class AuthUser extends User implements IStorable
    * Get a string representation of the user.
    * @return The string
    */
-  public function __toString()
-  {
+  public function __toString() {
     if ($this->_user != null) {
       return $this->_user->__toString();
     }
@@ -237,18 +219,16 @@ class AuthUser extends User implements IStorable
    */
 
   /**
-   * Get the type
+   * @see PersistentObject::getType()
    */
-  function getType()
-  {
+  function getType() {
     return UserManager::getUserClassName();
   }
 
   /**
    * @see User::setLogin()
    */
-  public function setLogin($login)
-  {
+  public function setLogin($login) {
     if ($this->_user != null) {
       $this->_user->setLogin($login);
     }
@@ -257,8 +237,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::getLogin()
    */
-  public function getLogin()
-  {
+  public function getLogin() {
     if ($this->_user != null) {
       return $this->_user->getLogin();
     }
@@ -268,8 +247,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::setPassword()
    */
-  public function setPassword($password)
-  {
+  public function setPassword($password) {
     if ($this->_user != null) {
       $this->_user->setPassword($password);
     }
@@ -278,8 +256,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::getPassword()
    */
-  public function getPassword()
-  {
+  public function getPassword() {
     if ($this->_user != null) {
       return $this->_user->getPassword();
     }
@@ -289,8 +266,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::setName()
    */
-  public function setName($name)
-  {
+  public function setName($name) {
     if ($this->_user != null) {
       $this->_user->setName($name);
     }
@@ -299,8 +275,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::getName()
    */
-  public function getName()
-  {
+  public function getName() {
     if ($this->_user != null) {
       return $this->_user->getName();
     }
@@ -310,8 +285,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::setFirstname()
    */
-  public function setFirstname($firstname)
-  {
+  public function setFirstname($firstname) {
     if ($this->_user != null) {
       $this->_user->setFirstname($firstname);
     }
@@ -320,8 +294,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::getFirstname()
    */
-  public function getFirstname()
-  {
+  public function getFirstname() {
     if ($this->_user != null) {
       return $this->_user->getFirstname();
     }
@@ -331,8 +304,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::setConfig()
    */
-  public function setConfig($config)
-  {
+  public function setConfig($config) {
     if ($this->_user != null) {
       $this->_user->setConfig($config);
     }
@@ -341,8 +313,7 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::getConfig()
    */
-  public function getConfig()
-  {
+  public function getConfig() {
     // strip path from config name for compatibility with old versions,
     // where the path was stored
     if ($this->_user != null) {
@@ -354,24 +325,21 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::addRole()
    */
-  public function addRole($rolename)
-  {
+  public function addRole($rolename) {
     // not supported by AuthUser
   }
 
   /**
    * @see User::removeRole()
    */
-  public function removeRole($rolename)
-  {
+  public function removeRole($rolename) {
     // not supported by AuthUser
   }
 
   /**
    * @see User::hasRole()
    */
-  public function hasRole($rolename)
-  {
+  public function hasRole($rolename) {
     if ($this->_user != null) {
       return $this->_user->hasRole($rolename);
     }
@@ -381,39 +349,11 @@ class AuthUser extends User implements IStorable
   /**
    * @see User::getRoles()
    */
-  public function getRoles()
-  {
+  public function getRoles() {
     if ($this->_user != null) {
       return $this->_user->getRoles();
     }
     return array();
   }
-
-  /**
-   * Implementation of the storable interface.
-   */
-
-  /**
-   * @see Storable::getClassDefinitionFiles()
-   */
-  public function getClassDefinitionFiles()
-  {
-    $parser = InifileParser::getInstance();
-
-    $userClassFile = ObjectFactory::getClassfile(UserManager::getUserClassName());
-    $roleClassFile = ObjectFactory::getClassfile(UserManager::getRoleClassName());
-
-    return array(__FILE__, WCMF_BASE.$userClassFile, WCMF_BASE.$roleClassFile);
-  }
-
-  /**
-   * @see Storable::loadFromSession()
-   */
-  public function loadFromSession() {}
-
-  /**
-   * @see Storable::saveToSession()
-   */
-  public function saveToSession() {}
 }
 ?>

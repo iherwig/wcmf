@@ -16,14 +16,15 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
 
 /**
  * @class UnknownFieldException
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class UnknownFieldException extends Exception
-{
+class UnknownFieldException extends \Exception {
+
   private $_field = '';
 
   /**
@@ -33,8 +34,7 @@ class UnknownFieldException extends Exception
    * @param code The error code
    * @param previous The previous Exception
    */
-  public function __construct($field, $message="", $code=0, Exception $previous=null)
-  {
+  public function __construct($field, $message="", $code=0, \Exception $previous=null) {
     parent::__construct($message, $code, $previous);
     $this->_field = $field;
   }
@@ -43,8 +43,7 @@ class UnknownFieldException extends Exception
    * Get the name of the field
    * @return String
    */
-  public function getField()
-  {
+  public function getField() {
     return $this->_field;
   }
 }

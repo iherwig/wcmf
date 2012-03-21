@@ -16,17 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/AttributeDescription.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\persistence\AttributeDescription;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @class ReferenceDescription
- * @ingroup Persistence
- * @brief Instances of ReferenceDescription describe reference attributes of PersistentObjects
+ * Instances of ReferenceDescription describe reference attributes of PersistentObjects
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ReferenceDescription extends AttributeDescription
-{
+class ReferenceDescription extends AttributeDescription {
+
   protected $otherType = '';
   protected $otherName = '';
 
@@ -36,8 +37,7 @@ class ReferenceDescription extends AttributeDescription
    * @param otherType The name of the referenced type (must be the role name, @see RelationDescription)
    * @param otherName The name of the referenced attribute in the referenced type
    */
-  public function __construct($name, $otherType, $otherName)
-  {
+  public function __construct($name, $otherType, $otherName) {
     $this->name = $name;
     $this->otherType = $otherType;
     $this->otherName = $otherName;
@@ -47,8 +47,7 @@ class ReferenceDescription extends AttributeDescription
    * Get the name of the referenced type
    * @return String
    */
-  public function getOtherType()
-  {
+  public function getOtherType() {
     return $this->otherType;
   }
 
@@ -56,17 +55,15 @@ class ReferenceDescription extends AttributeDescription
    * Get the name of the referenced attribute in the referenced type
    * @return String
    */
-  public function getOtherName()
-  {
+  public function getOtherName() {
     return $this->otherName;
   }
-  
+
   /**
    * Get the attribute name
    * @return String
    */
-  public function getName()
-  {
+  public function getName() {
     return $this->name;
   }
 
@@ -74,8 +71,7 @@ class ReferenceDescription extends AttributeDescription
    * Get the attribute type
    * @return String
    */
-  public function getType()
-  {
+  public function getType() {
     $attribute = $this->getReferencedAttribute();
     return $attribute->getType();
   }
@@ -84,8 +80,7 @@ class ReferenceDescription extends AttributeDescription
    * Get the application specific tags that this attribute is tagged with
    * @return Array of String
    */
-  public function getTags()
-  {
+  public function getTags() {
     $attribute = $this->getReferencedAttribute();
     return $attribute->getTags();
   }
@@ -94,8 +89,7 @@ class ReferenceDescription extends AttributeDescription
    * Get the default value
    * @return Mixed
    */
-  public function getDefaultValue()
-  {
+  public function getDefaultValue() {
     $attribute = $this->getReferencedAttribute();
     return $attribute->getDefaultValue();
   }
@@ -104,8 +98,7 @@ class ReferenceDescription extends AttributeDescription
    * Get the regular expression that the value must match
    * @return String
    */
-  public function getRestrictionsMatch()
-  {
+  public function getRestrictionsMatch() {
     $attribute = $this->getReferencedAttribute();
     return $attribute->getRestrictionsMatch();
   }
@@ -114,8 +107,7 @@ class ReferenceDescription extends AttributeDescription
    * Get the regular expression that the value must NOT match
    * @return String
    */
-  public function getRestrictionsNotMatch()
-  {
+  public function getRestrictionsNotMatch() {
     $attribute = $this->getReferencedAttribute();
     return $attribute->getRestrictionsNotMatch();
   }
@@ -124,8 +116,7 @@ class ReferenceDescription extends AttributeDescription
    * Get the description of the resticitions
    * @return String
    */
-  public function getRestrictionsDescription()
-  {
+  public function getRestrictionsDescription() {
     $attribute = $this->getReferencedAttribute();
     return $attribute->getRestrictionsDescription();
   }
@@ -134,8 +125,7 @@ class ReferenceDescription extends AttributeDescription
    * Check whether the attribute should be editable
    * @return Boolean
    */
-  public function getIsEditable()
-  {
+  public function getIsEditable() {
     return false;
   }
 
@@ -143,8 +133,7 @@ class ReferenceDescription extends AttributeDescription
    * Get the input type for the value
    * @return String
    */
-  public function getInputType()
-  {
+  public function getInputType() {
     $attribute = $this->getReferencedAttribute();
     return $attribute->getInputType();
   }
@@ -153,18 +142,16 @@ class ReferenceDescription extends AttributeDescription
    * Get the display type for the value
    * @return String
    */
-  public function getDisplayType()
-  {
+  public function getDisplayType() {
     $attribute = $this->getReferencedAttribute();
     return $attribute->getDisplayType();
   }
-  
+
   /**
    * Get the referenced attribute
    * @return AttributeDescription instance
    */
-  private function getReferencedAttribute()
-  {
+  private function getReferencedAttribute() {
     $mapper = PersistenceFacade::getInstance()->getMapper($this->otherType);
     return $mapper->getAttribute($this->otherName);
   }

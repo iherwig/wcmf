@@ -16,8 +16,16 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE.'wcmf/lib/util/InifileParser.php');
-require_once(WCMF_BASE.'wcmf/lib/persistence/StateChangeEvent.php');
+namespace wcmf\lib\util;
+
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\Log;
+use wcmf\lib\io\EncodingUtil;
+use wcmf\lib\io\FileUtil;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\StateChangeEvent;
+use wcmf\lib\util\LuceneSearch;
 
 $includePath = get_include_path();
 if (strpos($includePath, 'Zend') === false) {
@@ -25,8 +33,7 @@ if (strpos($includePath, 'Zend') === false) {
 }
 require_once('Zend/Search/Lucene.php');
 
-function gShutdownSearch()
-{
+function gShutdownSearch() {
   LuceneSearch::commitIndex();
   EventManager::getInstance()->removeListener(StateChangeEvent::NAME,
     array('LuceneSearch', 'stateChanged'));
@@ -38,9 +45,7 @@ EventManager::getInstance()->addListener(StateChangeEvent::NAME,
   array('LuceneSearch', 'stateChanged'));
 
 /**
- * @class LuceneSearch
- * @ingroup Util
- * @brief This class provides access to the search based on Zend_Search_Lucene.
+ * LuceneSearch provides access to the search based on Zend_Search_Lucene.
  * The search index stored in the location that is defined by the configuration key 'indexPath'
  * in the configuration section 'search'. To manage PersistentObjects in the index use the
  * methods LuceneSearch::indexInSearch() and LuceneSearch::deleteFromSearch() and LuceneSearch::commitIndex().
@@ -48,8 +53,8 @@ EventManager::getInstance()->addListener(StateChangeEvent::NAME,
  *
  * @author Niko <enikao@users.sourceforge.net>
  */
-class LuceneSearch
-{
+class LuceneSearch {
+
   const INI_SECTION = 'search';
   const INI_INDEX_PATH = 'indexPath';
 
@@ -62,10 +67,8 @@ class LuceneSearch
    * @param create True/False wether to create the index, if it does not exist [default: true]
    * @return An instance of Zend_Search_Lucene_Interface
    */
-  public static function getIndex($create = true)
-  {
-    if (!self::$index && $create)
-    {
+  public static function getIndex($create = true) {
+    if (!self::$index && $create) {
       $indexPath = self::getIndexPath();
 
       Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
@@ -87,8 +90,7 @@ class LuceneSearch
   /**
    * Reset the search index.
    */
-  public static function resetIndex()
-  {
+  public static function resetIndex() {
     $indexPath = self::getIndexPath();
 
     return Zend_Search_Lucene::create($indexPath);
@@ -99,10 +101,8 @@ class LuceneSearch
    * index. For that reason LuceneSearch::commitIndex() should be called afterwards.
    * @param obj The PersistentObject instance.
    */
-  public static function indexInSearch(PersistentObject $obj)
-  {
-    if (self::isIndexInSearch($obj))
-    {
+  public static function indexInSearch(PersistentObject $obj) {
+    if (self::isIndexInSearch($obj)) {
       Log::debug("Add/Update index for: ".$obj->getOID(), __CLASS__);
       $index = self::getIndex();
       $encoding = new EncodingUtil();
@@ -116,12 +116,10 @@ class LuceneSearch
       $typeField->isStored = false;
       $doc->addField($typeField);
 
-      foreach ($valueNames as $currValueName)
-      {
+      foreach ($valueNames as $currValueName) {
         $inputType = $obj->getProperty('input_type');
         $value = $obj->getValue($currValueName);
-        switch($inputType)
-        {
+        switch($inputType) {
           case 'text':
             $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName, $encoding->convertIsoToCp1252Utf8($value), 'utf-8'));
             break;
@@ -142,8 +140,7 @@ class LuceneSearch
 
       $term = new Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
       $docIds  = $index->termDocs($term);
-      foreach ($docIds as $id)
-      {
+      foreach ($docIds as $id) {
         $index->delete($id);
       }
 
@@ -156,17 +153,14 @@ class LuceneSearch
    * Delete a PersistentObject instance from the search index.
    * @param obj The PersistentObject instance.
    */
-  public static function deleteFromSearch(PersistentObject $obj)
-  {
-    if (self::isIndexInSearch($obj))
-    {
+  public static function deleteFromSearch(PersistentObject $obj) {
+    if (self::isIndexInSearch($obj)) {
       Log::debug("Delete from index: ".$obj->getOID(), __CLASS__);
       $index = self::getIndex();
 
       $term = new Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
       $docIds  = $index->termDocs($term);
-      foreach ($docIds as $id)
-      {
+      foreach ($docIds as $id) {
         $index->delete($id);
       }
       self::$indexIsDirty = true;
@@ -180,11 +174,9 @@ class LuceneSearch
    * @param forceCommit True/False wether the index should be committed even if no changes were made
    *   using the methods mentioned above [default: false].
    */
-  public static function commitIndex($forceCommit = false)
-  {
+  public static function commitIndex($forceCommit = false) {
     Log::debug("Commit index", __CLASS__);
-    if (self::$indexIsDirty || $forceCommit)
-    {
+    if (self::$indexIsDirty || $forceCommit) {
       $index = self::getIndex(false);
       if ($index) {
         $index->commit();
@@ -196,13 +188,10 @@ class LuceneSearch
    * Get the path to the index.
    * @return The path.
    */
-  private static function getIndexPath()
-  {
-    if (!self::$indexPath)
-    {
+  private static function getIndexPath() {
+    if (!self::$indexPath) {
       $parser = InifileParser::getInstance();
-      if (($path = $parser->getValue(self::INI_INDEX_PATH, self::INI_SECTION)) !== false)
-      {
+      if (($path = $parser->getValue(self::INI_INDEX_PATH, self::INI_SECTION)) !== false) {
         self::$indexPath = WCMF_BASE . 'application/' . $path;
 
         if (!file_exists(self::$indexPath)) {
@@ -215,8 +204,7 @@ class LuceneSearch
 
         Log::debug("Lucene index location: ".self::$indexPath, __CLASS__);
       }
-      else
-      {
+      else {
         Log::error($parser->getErrorMsg(), __CLASS__);
       }
     }
@@ -229,8 +217,7 @@ class LuceneSearch
    * @param obj PersistentObject instance
    * @return True/False wether the object is contained or not
    */
-  private static function isIndexInSearch(PersistentObject $obj)
-  {
+  private static function isIndexInSearch(PersistentObject $obj) {
     return (boolean) $obj->getProperty('is_searchable');
   }
 
@@ -238,17 +225,16 @@ class LuceneSearch
    * Listen to StateChangeEvents
    * @param event StateChangeEvent instance
    */
-  public static function stateChanged(StateChangeEvent $event)
-  {
+  public static function stateChanged(StateChangeEvent $event) {
     $object = $event->getObject();
     $oldState = $event->getOldValue();
     $newState = $event->getNewValue();
     if (($oldState == PersistentObject::STATE_NEW || $oldState == PersistentObject::STATE_DIRTY)
             && $newState == PersistentObject::STATE_CLEAN) {
-        self::indexInSearch($object);
+      self::indexInSearch($object);
     }
     elseif ($newState == PersistentObject::STATE_DELETED) {
-        self::deleteFromSearch($object);
+      self::deleteFromSearch($object);
     }
   }
 }

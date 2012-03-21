@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005 wemove digital solutions GmbH
  *
@@ -7,33 +7,37 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ActionMapper.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\core\Session;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
 
 /**
- * @class MultipleActionController
- * @ingroup Controller
- * @brief MultipleActionController is a controller that executes multiple actions by
+ * MultipleActionController is a controller that executes multiple actions by
  * passing them do the appropriate controllers and returning all results as once.
- * 
+ *
  * <b>Input actions:</b>
  * - unspecified: Execute the given actions
  *
  * <b>Output actions:</b>
  * - @em ok In any case
- * 
+ *
  * @param[in] data An associative array with unique/sortable keys and values that describe an action to perform
  * @param[out] data An associative array with the same keys and values that describe the resonse of each action
  *
@@ -54,7 +58,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/ActionMapper.php");
       }
     }
  * @endcode
- * 
+ *
  * The output data for the preceding request could look like
  * @code
    data: {
@@ -114,7 +118,7 @@ class MultipleActionController extends Controller
   {
     // create and execute requests for the actions given in data
     $results = array();
-    $session = &SessionData::getInstance();
+    $session = Session::getInstance();
     $data = &$this->_request->getValue('data');
     $actions = array_keys($data);
     $numActions = sizeof($actions);
@@ -122,40 +126,40 @@ class MultipleActionController extends Controller
     {
       $action = $actions[$i];
       $GLOBALS['gJSONData'] = array();
-      
+
       if (Log::isDebugEnabled(__CLASS__))
         Log::debug("processing action: ".$action.":\n".StringUtil::getDump($data[$action]), __CLASS__);
-      
+
       // replace special variables
       $this->replaceVariables($data[$action]);
 
-      // for all requests we choose TerminateController as source controller 
+      // for all requests we choose TerminateController as source controller
       // to make sure that we process the action and return to here
-      
+
       // create the request
       $request = new Request(
         'TerminateController',
-        $data[$action]['context'], 
-        $data[$action]['action'], 
+        $data[$action]['context'],
+        $data[$action]['action'],
         $data[$action]
       );
       $request->setFormat($this->_request->getFormat());
       $request->setResponseFormat($this->_request->getResponseFormat());
 
       // execute the request
-      $response = &ActionMapper::processAction($request);
-      
+      $response = ActionMapper::processAction($request);
+
       // collect the result
       $results[$action] = &$response->getValues();
     }
     if (Log::isDebugEnabled(__CLASS__))
       Log::debug($results, __CLASS__);
-    
+
     $this->_response->setValue('data', $results);
     $this->_response->setAction('ok');
     return true;
   }
-  
+
   /**
    * Check the given data array for special variables to replace
    * Variables have either the form 'variable_name' or 'variable_name:column_separated_parameters'
@@ -168,7 +172,7 @@ class MultipleActionController extends Controller
     {
       $key = $keys[$i];
       $value = $data[$key];
-      
+
       // replace variables
       $newKey = $this->replaceVariablesString($key);
       $newValue = $this->replaceVariablesString($value);
@@ -213,7 +217,7 @@ class MultipleActionController extends Controller
           $type = $parameters;
           if (PersistenceFacade::isKnownType($type))
           {
-            $persistenceFacade = &PersistenceFacade::getInstance();
+            $persistenceFacade = PersistenceFacade::getInstance();
             $oid = $persistenceFacade->getLastCreatedOID($type);
             $value = preg_replace("/{".$variable."}/", $oid, $value);
           }
@@ -223,7 +227,7 @@ class MultipleActionController extends Controller
         if (PersistenceFacade::isKnownType($variableName))
         {
           $type = $variableName;
-          $persistenceFacade = &PersistenceFacade::getInstance();
+          $persistenceFacade = PersistenceFacade::getInstance();
           $oid = $persistenceFacade->getLastCreatedOID($type);
           $value = $oid;
         }

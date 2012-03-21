@@ -16,17 +16,16 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/ObjectQuery.php");
-require_once(WCMF_BASE."wcmf/lib/visitor/CommitVisitor.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class SortController
- * @ingroup Controller
- * @brief SortController is a controller that changes the order of nodes.
+ * SortController is a controller that changes the order of nodes.
  *
  * Nodes can either be sorted in a list of nodes of the same type (moveBefore
  * action) or in a list of child nodes of a container node (insertBefore action).
@@ -49,26 +48,26 @@ require_once(WCMF_BASE."wcmf/lib/visitor/CommitVisitor.php");
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
-class SortController extends Controller
-{
-  private static $ORDER_BOTTOM = 'ORDER_BOTTOM';
+class SortController extends Controller {
+
+  const ORDER_BOTTOM = 'ORDER_BOTTOM';
 
   /**
    * @see Controller::hasView()
    */
-  public function hasView()
-  {
+  public function hasView() {
     return false;
   }
+
   /**
    * @see Controller::validate()
    */
-  protected function validate()
-  {
+  protected function validate() {
+
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    $isOrderBottom = ($request->getValue('referenceOid') == self::$ORDER_BOTTOM);
+    $isOrderBottom = ($request->getValue('referenceOid') == self::ORDER_BOTTOM);
 
     // check object id validity
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
@@ -139,13 +138,13 @@ class SortController extends Controller
     }
     return true;
   }
+
   /**
    * Sort Nodes.
    * @return True in every case.
    * @see Controller::executeKernel()
    */
-  protected function executeKernel()
-  {
+  protected function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $transaction = PersistenceFacade::getInstance()->getTransaction();
@@ -167,8 +166,7 @@ class SortController extends Controller
   /**
    * Execute the moveBefore action
    */
-  protected function doMoveBefore()
-  {
+  protected function doMoveBefore() {
     $request = $this->getRequest();
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -235,8 +233,7 @@ class SortController extends Controller
   /**
    * Execute the moveBefore action
    */
-  protected function doInsertBefore()
-  {
+  protected function doInsertBefore() {
     $request = $this->getRequest();
     $persistenceFacade = PersistenceFacade::getInstance();
 
@@ -281,8 +278,7 @@ class SortController extends Controller
    * @param lowerValue The lower value of the sortkey
    * @param upperValue The upper value of the sortkey
    */
-  protected function loadObjectsInSortkeyRange($type, $sortkeyName, $lowerValue, $upperValue)
-  {
+  protected function loadObjectsInSortkeyRange($type, $sortkeyName, $lowerValue, $upperValue) {
     $query = new ObjectQuery($type);
     $tpl1 = $query->getObjectTemplate($type);
     $tpl2 = $query->getObjectTemplate($type);
@@ -299,8 +295,7 @@ class SortController extends Controller
    *        as keys and the objects to check as values
    * @return Boolean
    */
-  protected function checkObjects($objectMap)
-  {
+  protected function checkObjects($objectMap) {
     $invalidOids = array();
     foreach ($objectMap as $parameterName => $object) {
       if ($object == null) {
@@ -314,6 +309,5 @@ class SortController extends Controller
     }
     return true;
   }
-
 }
 ?>

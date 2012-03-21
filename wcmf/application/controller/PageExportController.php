@@ -16,15 +16,17 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/application/controller/BatchController.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
+namespace wcmf\application\controller;
+
+use wcmf\application\controller\BatchController;
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\WCMFInifileParser;
+use wcmf\lib\util\URIUtil;
 
 /**
- * @class PageExportController
- * @ingroup Controller
- * @brief PageExportController is an abstract controller that is used as base class
+ * PageExportController is an abstract controller that is used as base class
  * for Controller classes that export content to pages defined by templates.
  * Export is triggered by any action except 'preview' and 'continue'.
  * On 'preview' action PageExportController creates a preview corresponding to a given
@@ -40,7 +42,7 @@ require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
       $filename = 'index.html';
 
       // initialize view
-      $outputView = &$this->initializeView($filename);
+      $outputView = $this->initializeView($filename);
 
       // load and assign model
       ...
@@ -83,74 +85,68 @@ require_once(WCMF_BASE."wcmf/lib/util/URIUtil.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PageExportController extends BatchController
-{
+abstract class PageExportController extends BatchController {
+
   // constants
-  var $FILENAME_VARNAME = 'PageExportController.filename';
+  private $FILENAME_VARNAME = 'PageExportController.filename';
 
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
-  {
-    Controller::initialize($request, $response);
-
-    if ($request->getAction() != 'preview')
-    {
+  protected function initialize($request, $response) {
+    parent::initialize($request, $response);
+    if ($request->getAction() != 'preview') {
       // do export batch
       parent::initialize($request, $response);
     }
   }
+
   /**
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
-    if ($this->_request->getAction() != 'preview')
-    {
+  protected function executeKernel() {
+    if ($this->_request->getAction() != 'preview') {
       // do export batch
       return parent::executeKernel();
     }
-    else
-    {
+    else {
       // do preview
       $this->processPart();
       // stop processing
       return false;
     }
   }
+
   /**
    * If the given action is 'preview', this method calls - depending on the context - the
    * preview callback method defined by the subclass (@see getPreviewCallback()).
    * For any other action it delegates to the parent class processPart() method
    * @see LongTaskController::processPart()
    */
-  function processPart()
-  {
+  protected function processPart() {
     // do preview
-    if ($this->_request->getAction() == 'preview')
-    {
+    if ($this->_request->getAction() == 'preview') {
       $previewItem = $this->_request->getValue('oid');
 
       $callback = $this->getPreviewCallback($this->_request->getContext());
-      if (!method_exists($this, $callback))
-        WCMFException::throwEx("Method ".$callback." must be implemented by ".get_class($this), __FILE__, __LINE__);
-      else
+      if (!method_exists($this, $callback)) {
+        throw new RuntimeException("Method ".$callback." must be implemented by ".get_class($this));
+      }
+      else {
         call_user_method($callback, &$this, array($previewItem));
+      }
     }
-    else
+    else {
       parent::processPart();
+    }
   }
+
   /**
    * Get the preview callback method for a given context.
    * This method must have the same signature as one of the callbacks passed to BatchController::addWorkPackage().
    * The oid array passed as argument to that method will only hold the oid passed as 'oid' parameter to the view.
-   * @note subclasses must implement this method.
    */
-  function getPreviewCallback($context)
-  {
-    WCMFException::throwEx("getPreviewCallback() must be implemented by derived class: ".get_class($this), __FILE__, __LINE__);
-  }
+  protected abstract function getPreviewCallback($context);
 
   /**
    * HELPER FUNCTIONS
@@ -164,24 +160,22 @@ class PageExportController extends BatchController
    *          this value is even required for a preview to set the baseHref properly
    * @return A reference to the created and initialized view
    */
-  function &initializeView($filename)
-  {
+  protected function initializeView($filename) {
     $isPreview = ($this->_request->getAction() == 'preview');
 
     // create view
-    $outputView = &$this->createOutputView();
+    $outputView = $this->createOutputView();
 
     // assign common values to view
-    if ($outputView != null)
-    {
+    if ($outputView != null) {
       // get export directory
       $exportDir = $this->getExportDir();
-      if (!is_dir($exportDir))
+      if (!is_dir($exportDir)) {
         mkdir($exportDir);
+      }
       $outputView->assign($this->FILENAME_VARNAME, realpath($exportDir).'/'.$filename);
 
-      if ($this->useBaseHref())
-      {
+      if ($this->useBaseHref()) {
         $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
         $baseHref = URIUtil::makeAbsolute($exportDir, $refURL).$filename;
         $outputView->assign('baseHref', $baseHref);
@@ -192,48 +186,49 @@ class PageExportController extends BatchController
 
     return $outputView;
   }
+
   /**
    * Actually create the view for output.
    * @return A reference to the created view
    */
-  function &createOutputView()
-  {
+  protected function createOutputView() {
     $isPreview = ($this->_request->getAction() == 'preview');
 
-    if (!$isPreview)
-    {
+    if (!$isPreview) {
       // for export we need to do view handling manually
       // because we want to write the result to a file, not the browser window
       $outputView = new View();
       $outputView->setup();
       $this->assignViewDefaults($outputView);
     }
-    else
-    {
+    else {
       // for preview use regular view
-      $outputView = &$this->getView();
+      $outputView = $this->getView();
     }
     return $outputView;
   }
+
   /**
    * Assign common values to the export view.
    * This method is called when the view is initialized.
    * @param view A reference to the view to assign the values to
    */
-  function assignCommonValues(&$view) {}
+  protected function assignCommonValues($view) {}
+
   /**
    * Get the directory where the exported files should be placed.
    * The default implementation gets the directory from the key 'exportDir' in the config section 'cms'
    * @note subclasses override this method to implement special application requirements.
    * @return The export directory name
    */
-  function getExportDir()
-  {
-    $parser = &InifileParser::getInstance();
-    if (($exportDir = $parser->getValue('exportDir', 'cms')) === false)
-      WCMFException::throwEx($parser->getErrorMsg(), __FILE__, __LINE__);
+  protected function getExportDir() {
+    $parser = InifileParser::getInstance();
+    if (($exportDir = $parser->getValue('exportDir', 'cms')) === false) {
+      throw new ConfigurationException($parser->getErrorMsg());
+    }
     return $exportDir;
   }
+
   /**
    * Determine if a baseHref should be used in the html output. The baseHref metatag allows to interpret all
    * resource paths used in the html code to be relative to the baseHref value. If you want to prevent this
@@ -242,33 +237,35 @@ class PageExportController extends BatchController
    * @note subclasses override this method to implement special application requirements.
    * @return True/False
    */
-  function useBaseHref()
-  {
+  protected function useBaseHref() {
     // we only need a base href for the preview pages because
     // they don't exist in the filesystem
-    if ($this->_request->getAction() == 'preview')
+    if ($this->_request->getAction() == 'preview') {
       return true;
-    else
+    }
+    else {
       return false;
+    }
   }
+
   /**
    * Write the view content to a file.
    * @param view A reference to the view to write
    * @param context The context of the view template definition in the configuration file
    */
-  function writeOutput(&$view, $context)
-  {
+  protected function writeOutput($view, $context) {
     $isPreview = ($this->_request->getAction() == 'preview');
-    if ($isPreview)
+    if ($isPreview) {
       return;
-
+    }
     $viewTemplate = '';
-    $parser = &WCMFInifileParser::getInstance();
+    $parser = WCMFInifileParser::getInstance();
 
     // get corresponding view
     $actionKey = $parser->getBestActionKey('views', $this->_response->getSender(), $context, '');
-    if (($viewTemplate = WCMF_BASE.$parser->getValue($actionKey, 'views')) === false)
-      WCMFException::throwEx("View definition missing for ".$this->_response->getSender()."?".$context.".", __FILE__, __LINE__);
+    if (($viewTemplate = WCMF_BASE.$parser->getValue($actionKey, 'views')) === false) {
+      throw new Configuration("View definition missing for ".$this->_response->getSender()."?".$context.".");
+    }
 
     // assign datestamp to view
     $view->assign('dateStamp', date("Y")."/".date("m"));
@@ -276,8 +273,9 @@ class PageExportController extends BatchController
     // capture output into file
     $filename = $view->getTemplateVars($this->FILENAME_VARNAME);
     $path = dirname($filename);
-    if (!file_exists($path))
+    if (!file_exists($path)) {
       mkdir($path);
+    }
     $fp = fopen($filename, "w");
     fputs($fp, $view->fetch($viewTemplate));
     fclose($fp);

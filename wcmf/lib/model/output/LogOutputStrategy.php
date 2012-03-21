@@ -16,45 +16,44 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/output/IOutputStrategy.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
+namespace wcmf\lib\model\output;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\security\RightsManager;
+use wcmf\lib\model\output\IOutputStrategy;
 /**
- * @class LogOutputStrategy
- * @ingroup Output
- * @brief This OutputStrategy outputs an object's content to the logger category
+ * LogOutputStrategy outputs an object's content to the logger category
  * LogOutputStrategy, loglevel info
  * Used classes must implement the toString() method.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LogOutputStrategy implements IOutputStrategy
-{
+class LogOutputStrategy implements IOutputStrategy {
+
   /**
    * @see OutputStrategy::writeHeader
    */
-  public function writeHeader()
-  {
+  public function writeHeader() {
     // do nothing
   }
+
   /**
    * @see OutputStrategy::writeFooter
    */
-  public function writeFooter()
-  {
+  public function writeFooter() {
     // do nothing
   }
+
   /**
    * @see OutputStrategy::writeObject
    */
-  public function writeObject($obj)
-  {
+  public function writeObject($obj) {
     $persistenceFacade = PersistenceFacade::getInstance();
     $rightsManager = RightsManager::getInstance();
     $user = $rightsManager->getAuthUser();
-    switch ($state = $obj->getState())
-    {
+
+    switch ($state = $obj->getState()) {
       // log insert action
       case PersistentObject::STATE_NEW:
         Log::info('INSERT '.$obj->getOID().': '.str_replace("\n", " ", $obj->toString()).' USER: '.$user->getLogin(), __CLASS__);
@@ -66,16 +65,14 @@ class LogOutputStrategy implements IOutputStrategy
         // collect differences
         $values = array();
         $valueNames = $obj->getValueNames();
-        foreach($valueNames as $name)
-        {
+        foreach($valueNames as $name) {
           $values[$name]['name'] = $name;
           $values[$name]['new'] = $obj->getValue($name);
           $values[$name]['old'] = $oldObj->getValue($name);
         }
         // make diff string
         $diff = '';
-        foreach ($values as $value)
-        {
+        foreach ($values as $value) {
           if ($value['old'] != $value['new']) {
             $diff .= $value['name'].':'.$value['old'].'->'.$value['new'].' ';
           }

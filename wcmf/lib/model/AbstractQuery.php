@@ -16,19 +16,20 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/mapper/RDBMapper.php");
+namespace wcmf\lib\model;
+
+use wcmf\lib\persistence\IPersistenceMapper;
+use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceException;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * @class AbstractQuery
- * @ingroup Persistence
- * @brief AbstractQuery is the base class for all query classes.
+ * AbstractQuery is the base class for all query classes.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class AbstractQuery
-{
+abstract class AbstractQuery {
+
   private $_selectStmt = null;
 
   /**
@@ -36,6 +37,7 @@ abstract class AbstractQuery
    * @return String
    */
   protected abstract function getQueryType();
+
   /**
    * Execute the query
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BUILDDEPTH_REQUIRED)
@@ -45,35 +47,35 @@ abstract class AbstractQuery
    * @param attribs An array of attributes to load (null to load all). [default: null]
    * @return A list of objects that match the given conditions or a list of object ids
    */
-  public function execute($buildDepth, $orderby=null, $pagingInfo=null, $attribs=null)
-  {
+  public function execute($buildDepth, $orderby=null, $pagingInfo=null, $attribs=null) {
     // build the query
     $this->_selectStmt = $this->buildQuery($orderby, $attribs);
 
     return $this->executeInternal($this->_selectStmt, $buildDepth, $pagingInfo, $attribs);
   }
+
   /**
    * Get the query serialized to a string.
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param attribs An array of attributes to load (null to load all). [default: null]
    * @return String
    */
-  public function getQueryString($orderby=null, $attribs=null)
-  {
+  public function getQueryString($orderby=null, $attribs=null) {
     $selectStmt = $this->buildQuery($orderby, $attribs);
     return $selectStmt->__toString();
   }
+
   /**
    * Get the query last executed serialized to a string.
    * @return String
    */
-  public function getLastQueryString()
-  {
+  public function getLastQueryString() {
     if ($this->_selectStmt != null) {
       return $this->_selectStmt->__toString();
     }
     return "";
   }
+
   /**
    * Build the query
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
@@ -81,6 +83,7 @@ abstract class AbstractQuery
    * @return Zend_Db_Select instance
    */
   protected abstract function buildQuery($orderby=null, $attribs=null);
+
   /**
    * Execute the query and return the results.
    * @param selectStmt A Zend_Db_Select instance
@@ -90,14 +93,13 @@ abstract class AbstractQuery
    * @param attribs An array of attributes to load (null to load all). [default: null]
    * @return A list of objects that match the given conditions or a list of object ids
    */
-  protected function executeInternal(Zend_Db_Select $selectStmt, $buildDepth, PagingInfo $pagingInfo=null, $attribs=null)
-  {
+  protected function executeInternal(Zend_Db_Select $selectStmt, $buildDepth, PagingInfo
+          $pagingInfo=null, $attribs=null) {
     $type = $this->getQueryType();
     $loadOidsOnly = ($buildDepth === false);
 
     // load only the necessary attributes if only object ids are requested
-    if ($loadOidsOnly)
-    {
+    if ($loadOidsOnly) {
       $attribs = array();
       $buildDepth = BUILDDEPTH_SINGLE;
     }
@@ -110,8 +112,7 @@ abstract class AbstractQuery
     $result = $mapper->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo, $buildAttribs);
 
     // transform the result
-    if ($loadOidsOnly)
-    {
+    if ($loadOidsOnly) {
       // collect oids
       $oids = array();
       foreach ($result as $object) {
@@ -121,36 +122,36 @@ abstract class AbstractQuery
     }
     return $result;
   }
+
   /**
    * Get the database connection of the given node type.
    * @param type The node type to get the connection from connection
    * @return The connection
    */
-  protected static function getConnection($type)
-  {
+  protected static function getConnection($type) {
     $mapper = self::getMapper($type);
     $conn = $mapper->getConnection();
     return $conn;
   }
+
   /**
    * Get the mapper for a Node and check if it is a supported one.
    * @param type The type of Node to get the mapper for
    * @return RDBMapper instance
    */
-  protected static function getMapper($type)
-  {
+  protected static function getMapper($type) {
     $persistenceFacade = PersistenceFacade::getInstance();
     $mapper = $persistenceFacade->getMapper($type);
     self::checkMapper($mapper);
     return $mapper;
   }
+
   /**
    * Check if a mapper is a supported one.
    * @param mapper IPersistenceMapper instance
    * Throws an Exception
    */
-  protected static function checkMapper(IPersistenceMapper $mapper)
-  {
+  protected static function checkMapper(IPersistenceMapper $mapper) {
     if (!($mapper instanceof RDBMapper)) {
       throw new PersistenceException(Message::get('Only PersistenceMappers of type RDBMapper are supported.'));
     }

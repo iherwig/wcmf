@@ -16,6 +16,9 @@
  *
  * $Id$
  */
+namespace wcmf\lib\presentation\smarty_plugins;
+
+use wcmf\lib\security\RightsManager;
 
 /*
 * Smarty plugin

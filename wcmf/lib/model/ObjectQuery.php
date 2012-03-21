@@ -16,18 +16,21 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeValueIterator.php");
-require_once(WCMF_BASE."wcmf/lib/model/AbstractQuery.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/UnknownFieldException.php");
+namespace wcmf\lib\model;
+
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\model\AbstractQuery;
+use wcmf\lib\model\Node;
+use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\UnknownFieldException;
+use wcmf\lib\persistence\ValueChangeEvent;
 
 /**
- * @class ObjectQuery
- * @ingroup Persistence
- * @brief ObjectQuery implements a template based object query. This class provides the
+ * ObjectQuery implements a template based object query. This class provides the
  * user with object templates on which query conditions may be set. Object templates
  * are Node instances whose attribute values are used as conditions on the
  * appropriate attributes. A value maybe a scalar or a Criteria instance. For
@@ -99,8 +102,8 @@ require_once(WCMF_BASE."wcmf/lib/persistence/UnknownFieldException.php");
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
-class ObjectQuery extends AbstractQuery
-{
+class ObjectQuery extends AbstractQuery {
+
   const PROPERTY_COMBINE_OPERATOR = "object_query_combine_operator";
   const PROPERTY_TABLE_NAME = "object_query_table_name";
   const PROPERTY_INITIAL_OID = "object_query_initial_oid";
@@ -121,8 +124,7 @@ class ObjectQuery extends AbstractQuery
    * Constructor.
    * @param type The type to search for.
    */
-  public function __construct($type)
-  {
+  public function __construct($type) {
     // don't use IPersistenceFacade::create, because template instances must be transient
     $mapper = $this->getMapper($type);
     $this->_typeNode = $mapper->create($type, BUILDDEPTH_SINGLE);
@@ -131,14 +133,15 @@ class ObjectQuery extends AbstractQuery
     EventManager::getInstance()->addListener(ValueChangeEvent::NAME,
       array($this, 'valueChanged'));
   }
+
   /**
    * Desctructor.
    */
-  public function __destruct()
-  {
+  public function __destruct() {
     EventManager::getInstance()->removeListener(ValueChangeEvent::NAME,
       array($this, 'valueChanged'));
   }
+
   /**
    * Get an object template for a given type.
    * @param type The type to query for
@@ -147,8 +150,7 @@ class ObjectQuery extends AbstractQuery
    *    the conditions described in the template [default: Criteria::OPERATOR_AND]
    * @return Node
    */
-  public function getObjectTemplate($type, $alias=null, $combineOperator=Criteria::OPERATOR_AND)
-  {
+  public function getObjectTemplate($type, $alias=null, $combineOperator=Criteria::OPERATOR_AND) {
     $template = null;
 
     // use the typeNode, the first time a node template of the query type is requested
@@ -172,6 +174,7 @@ class ObjectQuery extends AbstractQuery
     $this->_observedObjects[$initialOid] = $template;
     return $template;
   }
+
   /**
    * Register an object template at the query.
    * @param template A reference to the template to register (must be an instance of PersistentObject)
@@ -179,10 +182,8 @@ class ObjectQuery extends AbstractQuery
    * @param combineOperator One of the Criteria::OPERATOR constants that precedes
    *    the conditions described in the template [default: Criteria::OPERATOR_AND]
    */
-  public function registerObjectTemplate(Node $template, $alias=null, $combineOperator=Criteria::OPERATOR_AND)
-  {
-    if ($template != null)
-    {
+  public function registerObjectTemplate(Node $template, $alias=null, $combineOperator=Criteria::OPERATOR_AND) {
+    if ($template != null) {
       $initialOid = $template->getOID()->__toString();
       $template->setProperty(self::PROPERTY_INITIAL_OID, $initialOid);
       $this->_observedObjects[$initialOid] = $template;
@@ -196,8 +197,7 @@ class ObjectQuery extends AbstractQuery
       }
 
       // replace the typeNode, the first time a node template of the query type is registered
-      if ($template->getType() == $this->_typeNode->getType() && !$this->_isTypeNodeInQuery)
-      {
+      if ($template->getType() == $this->_typeNode->getType() && !$this->_isTypeNodeInQuery) {
         $newRootNodes = array($template);
         foreach($this->_rootNodes as $node) {
           if ($node != $this->_typeNode) {
@@ -212,18 +212,17 @@ class ObjectQuery extends AbstractQuery
       }
     }
   }
+
   /**
    * Group different templates together to realize brackets in the query.
    * @note Grouped templates will be ignored, when iterating over the object tree and appended at the end.
    * @param templates An array of references to the templates contained in the group
    * @param combineOperator One of the Criteria::OPERATOR constants that precedes the group [default: Criteria::OPERATOR_AND]
    */
-  public function makeGroup($templates, $combineOperator=Criteria::OPERATOR_AND)
-  {
+  public function makeGroup($templates, $combineOperator=Criteria::OPERATOR_AND) {
     $this->_groups[] = array('tpls' => $templates, self::PROPERTY_COMBINE_OPERATOR => $combineOperator);
     // store grouped nodes in an extra array to separate them from the others
-    for ($i=0; $i<sizeof($templates); $i++)
-    {
+    for ($i=0; $i<sizeof($templates); $i++) {
       if ($templates[$i] != null) {
         $this->_groupedOIDs[] = $templates[$i]->getOID();
       }
@@ -232,13 +231,13 @@ class ObjectQuery extends AbstractQuery
       }
     }
   }
+
   /**
    * Get the condition part of the query. This is especially useful to
    * build a StringQuery from the query objects.
    * @return String
    */
-  public function getQueryCondition()
-  {
+  public function getQueryCondition() {
     $query = $this->getQueryString();
     $tmp = preg_split("/ WHERE /i", $query);
     if (sizeof($tmp) > 1) {
@@ -247,18 +246,18 @@ class ObjectQuery extends AbstractQuery
     }
     return '';
   }
+
   /**
    * @see AbstractQuery::getQueryType()
    */
-  protected function getQueryType()
-  {
+  protected function getQueryType() {
     return $this->_typeNode->getType();
   }
+
   /**
    * @see AbstractQuery::buildQuery()
    */
-  protected function buildQuery($orderby=null, $attribs=null)
-  {
+  protected function buildQuery($orderby=null, $attribs=null) {
     $mapper = self::getMapper($this->_typeNode->getType());
     $this->_involvedTypes[$this->_typeNode->getType()] = true;
 
@@ -268,21 +267,18 @@ class ObjectQuery extends AbstractQuery
     $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), $attribs);
 
     // process all root nodes except for grouped nodes
-    foreach ($this->_rootNodes as $curNode)
-    {
+    foreach ($this->_rootNodes as $curNode) {
       if (!in_array($curNode->getOID(), $this->_groupedOIDs)) {
         $this->processObjectTemplate($curNode, $selectStmt);
       }
     }
 
     // process groups
-    for ($i=0, $countI=sizeof($this->_groups); $i<$countI; $i++)
-    {
+    for ($i=0, $countI=sizeof($this->_groups); $i<$countI; $i++) {
       $group = $this->_groups[$i];
       $tmpSelectStmt = $this->getConnection($this->_typeNode->getType())->select();
       $tmpSelectStmt->from($this->_typeNode->getProperty(self::PROPERTY_TABLE_NAME));
-      for ($j=0, $countJ=sizeof($group['tpls']); $j<$countJ; $j++)
-      {
+      for ($j=0, $countJ=sizeof($group['tpls']); $j<$countJ; $j++) {
         $tpl = $group['tpls'][$j];
         $this->processObjectTemplate($tpl, $tmpSelectStmt);
       }
@@ -292,8 +288,7 @@ class ObjectQuery extends AbstractQuery
         $condition .= " ".$where;
       }
       $condition = trim($condition);
-      if (strlen($condition) > 0)
-      {
+      if (strlen($condition) > 0) {
         $combineOperator = $group[self::PROPERTY_COMBINE_OPERATOR];
         if ($combineOperator == Criteria::OPERATOR_OR) {
           $selectStmt->orWhere($condition);
@@ -313,13 +308,13 @@ class ObjectQuery extends AbstractQuery
 
     return $selectStmt;
   }
+
   /**
    * Process an object template
    * @param tpl The object template
    * @param selectStmt A Zend_Db_Select instance
    */
-  protected function processObjectTemplate(PersistentObject $tpl, Zend_Db_Select $selectStmt)
-  {
+  protected function processObjectTemplate(PersistentObject $tpl, Zend_Db_Select $selectStmt) {
     // avoid infinite recursion
     $oidStr = $tpl->getOID()->__toString();
     if (isset($this->_processedNodes[$oidStr])) {
@@ -333,20 +328,15 @@ class ObjectQuery extends AbstractQuery
     // add condition
     $condition = '';
     $iter = new NodeValueIterator($tpl, false);
-    foreach($iter as $valueName => $value)
-    {
+    foreach($iter as $valueName => $value) {
       // check if the value was set when building the query
-      if (isset($this->_conditions[$oidStr][$valueName]))
-      {
+      if (isset($this->_conditions[$oidStr][$valueName])) {
         $curCriteria = $this->_conditions[$oidStr][$valueName];
-        if ($curCriteria instanceof Criteria)
-        {
+        if ($curCriteria instanceof Criteria) {
           $attributeDesc = $mapper->getAttribute($valueName);
-          if ($attributeDesc)
-          {
+          if ($attributeDesc) {
             // ignore foreign keys
-            if (!$mapper->isForeignKey($valueName))
-            {
+            if (!$mapper->isForeignKey($valueName)) {
               // add the combine operator, if there are already other conditions
               if (strlen($condition) > 0) {
                 $condition .= " ".$curCriteria->getCombineOperator()." ";
@@ -359,8 +349,7 @@ class ObjectQuery extends AbstractQuery
         }
       }
     }
-    if (strlen($condition) > 0)
-    {
+    if (strlen($condition) > 0) {
       $combineOperator = $tpl->getProperty(self::PROPERTY_COMBINE_OPERATOR);
       if ($combineOperator == Criteria::OPERATOR_OR) {
         $selectStmt->orWhere($condition);
@@ -375,31 +364,25 @@ class ObjectQuery extends AbstractQuery
 
     // add relations to children (this includes also many to many relations)
     // and process children
-    foreach ($mapper->getRelations() as $relationDescription)
-    {
+    foreach ($mapper->getRelations() as $relationDescription) {
       $children = $tpl->getValue($relationDescription->getOtherRole());
       if ($children != null && !is_array($children)) {
         $children = array($children);
       }
-      for($i=0, $count=sizeof($children); $i<$count; $i++)
-      {
+      for($i=0, $count=sizeof($children); $i<$count; $i++) {
         $curChild = $children[$i];
-        if ($curChild instanceof Node)
-        {
+        if ($curChild instanceof Node) {
           // process relations
 
           // don't process the relation twice (e.g. in a many to many relation, both
           // ends are child ends)
-          if (!isset($this->_processedNodes[$curChild->getOID()->__toString()]))
-          {
+          if (!isset($this->_processedNodes[$curChild->getOID()->__toString()])) {
             // don't join the tables twice
             $childTableName = self::getTableName($curChild);
             $fromPart = $selectStmt->getPart(Zend_Db_Select::FROM);
-            if (!isset($fromPart[$childTableName['alias']]))
-            {
+            if (!isset($fromPart[$childTableName['alias']])) {
               $childMapper = self::getMapper($curChild->getType());
-              if ($relationDescription instanceof RDBManyToOneRelationDescription)
-              {
+              if ($relationDescription instanceof RDBManyToOneRelationDescription) {
                 $idAttr = $childMapper->getAttribute($relationDescription->getIdName());
                 $fkAttr = $mapper->getAttribute($relationDescription->getFkName());
                 $joinCondition = $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).".".
@@ -409,8 +392,7 @@ class ObjectQuery extends AbstractQuery
 
                 $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, '');
               }
-              elseif ($relationDescription instanceof RDBOneToManyRelationDescription)
-              {
+              elseif ($relationDescription instanceof RDBOneToManyRelationDescription) {
                 $idAttr = $mapper->getAttribute($relationDescription->getIdName());
                 $fkAttr = $childMapper->getAttribute($relationDescription->getFkName());
                 $joinCondition = $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).".".
@@ -420,8 +402,7 @@ class ObjectQuery extends AbstractQuery
 
                 $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, '');
               }
-              elseif ($relationDescription instanceof RDBManyToManyRelationDescription)
-              {
+              elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
                 $thisRelationDescription = $relationDescription->getThisEndRelation();
                 $otherRelationDescription = $relationDescription->getOtherEndRelation();
 
@@ -457,21 +438,19 @@ class ObjectQuery extends AbstractQuery
       }
     }
   }
+
   /**
    * Process an object template
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
    * @param selectStmt A Zend_Db_Select instance
    */
-  protected function processOrderBy($orderby, Zend_Db_Select $selectStmt)
-  {
-    if ($orderby)
-    {
+  protected function processOrderBy($orderby, Zend_Db_Select $selectStmt) {
+    if ($orderby) {
       // reset current order by
       $selectStmt->reset(Zend_Db_Select::ORDER);
 
       $persistenceFacade = PersistenceFacade::getInstance();
-      foreach ($orderby as $curOrderBy)
-      {
+      foreach ($orderby as $curOrderBy) {
         $orderByParts = preg_split('/ /', $curOrderBy);
         $orderAttribute = $orderByParts[0];
         $orderDirection = sizeof($orderByParts) > 1 ? $orderByParts[1] : 'ASC';
@@ -495,28 +474,27 @@ class ObjectQuery extends AbstractQuery
       }
     }
   }
+
   /**
    * Reset internal variables. Must be called after buildQuery
    */
-  protected function resetInternals()
-  {
+  protected function resetInternals() {
     $this->_processedNodes = array();
     $this->_involvedTypes = array();
     $this->_aliasCounter = 1;
   }
+
   /**
    * Get the table name for the template.
    * @param tpl The object template
    * @return Associative array with keys 'name', 'alias'
    */
-  protected function getTableName(Node $tpl)
-  {
+  protected function getTableName(Node $tpl) {
     $mapper = self::getMapper($tpl->getType());
     $mapperTableName = $mapper->getRealTableName();
 
     $tableName = $tpl->getProperty(self::PROPERTY_TABLE_NAME);
-    if ($tableName == null)
-    {
+    if ($tableName == null) {
       $tableName = $mapperTableName;
 
       // if the template is the child of another node of the same type,
@@ -539,17 +517,14 @@ class ObjectQuery extends AbstractQuery
    * Listen to ValueChangeEvents
    * @param event ValueChangeEvent instance
    */
-  public function valueChanged(ValueChangeEvent $event)
-  {
+  public function valueChanged(ValueChangeEvent $event) {
     $object = $event->getObject();
     $name = $event->getValueName();
     $initialOid = $object->getProperty(self::PROPERTY_INITIAL_OID);
-    if (isset($this->_observedObjects[$initialOid]))
-    {
+    if (isset($this->_observedObjects[$initialOid])) {
       $newValue = $event->getNewValue();
       // make a criteria from newValue and make sure that all properties are set
-      if (!($newValue instanceof Criteria))
-      {
+      if (!($newValue instanceof Criteria)) {
         $mapper = self::getMapper($object->getType());
         $pkNames = $mapper->getPkNames();
         if (!in_array($name, $pkNames)) {

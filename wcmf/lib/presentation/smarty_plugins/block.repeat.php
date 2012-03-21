@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,11 +11,12 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
+namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -24,7 +25,7 @@
 * Type:     block
 * Name:     repeat
 * Purpose:  repeat a template block a given number of times and replace
-*           {literal}{$index}{/literal} by the current index 
+*           {literal}{$index}{/literal} by the current index
 *           (NOTE: $index has to be enclosed by literal)
 * Parameters: count [required]  - number of times to repeat
 *             assign [optional] - variable to collect output
@@ -49,7 +50,7 @@ function smarty_block_repeat($params, $content, &$smarty)
             $smarty->trigger_error("block: negative 'count' parameter");
             return;
         }
-        
+
         $strRepeat = '';
         for ($i=0; $i<$intCount; $i++)
         {
@@ -58,9 +59,9 @@ function smarty_block_repeat($params, $content, &$smarty)
             $indexStr = sprintf($params['strformat'], $index);
           else
             $indexStr = $index;
-          
+
           $strRepeat .= str_replace('{$index}', $indexStr, $content);
-          
+
           if (isset($params['separator']) && $i<$intCount-1)
             $strRepeat .= $params['separator'];
         }

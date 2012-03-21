@@ -16,14 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
+namespace wcmf\application\controller;
+
+use \Exception;
+use wcmf\lib\core\Log;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\concurrency\PessimisticLockException;
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class DeleteController
- * @ingroup Controller
- * @brief DeleteController is a controller that delete Nodes.
+ * DeleteController is a controller that delete Nodes.
  *
  * <b>Input actions:</b>
  * - unspecified: Delete given Nodes

@@ -16,12 +16,12 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/security/AuthUser.php");
+namespace wcmf\lib\security;
+
+use wcmf\lib\security\AuthUser;
 
 /**
- * @class AnonymousUser
- * @ingroup Security
- * @brief Anonymous User
+ * Anonymous User
  *
  * @author ingo herwig <ingo@wemove.com>
  */

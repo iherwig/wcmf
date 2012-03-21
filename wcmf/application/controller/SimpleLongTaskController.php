@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,22 +11,22 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/application/controller/LongTaskController.php");
+namespace wcmf\application\controller;
+
+use wcmf\application\controller\LongTaskController;
 
 /**
- * @class SimpleLongTaskController
- * @ingroup Controller
- * @brief SimpleLongTaskController is a controller demonstrating the use
+ * SimpleLongTaskController is a controller demonstrating the use
  * of LongTaskController for cutting a long task into a fixed number
  * of smaller tasks.
- * 
+ *
  * @note This is an example implementation that creates 10 files
- * 
+ *
  * <b>Input actions:</b>
  * - see LongTaskController
  *

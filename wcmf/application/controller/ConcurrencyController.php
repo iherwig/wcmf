@@ -16,14 +16,13 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ConcurrencyManager.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
+namespace wcmf\application\controller;
+
+use wcmf\lib\persistence\concurrency\ConcurrencyManager;
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class ConcurrencyController
- * @ingroup Controller
- * @brief ConcurrencyController is a controller that allows to lock/unlock objects.
+ * ConcurrencyController is a controller that allows to lock/unlock objects.
  *
  * <b>Input actions:</b>
  * - @em lock Lock an entity

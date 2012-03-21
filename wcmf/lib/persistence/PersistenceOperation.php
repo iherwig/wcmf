@@ -16,17 +16,18 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\util\StringUtil;
 
 /**
- * @class PersistenceOperation
- * @ingroup Persistence
- * @brief A PersistenceOperation instance holds data necessary to accomplish
+ * A PersistenceOperation instance holds data necessary to accomplish
  * an operation on the persistent store.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class PersistenceOperation
-{
+abstract class PersistenceOperation {
+
   protected $type = null;
   protected $values = null;
   protected $criteria = null;
@@ -39,8 +40,7 @@ abstract class PersistenceOperation
    * @param criteria An array of criteria instances to select the objects on
    *          which the operation will be executed
    */
-  public function __construct($type, array $values, array $criteria)
-  {
+  public function __construct($type, array $values, array $criteria) {
     $this->type = $type;
     $this->values = $values;
     $this->criteria = $criteria;
@@ -50,8 +50,7 @@ abstract class PersistenceOperation
    * Get the type of PersistentObject on which the operation should be executed
    * @return String
    */
-  public function getType()
-  {
+  public function getType() {
     return $this->type;
   }
 
@@ -59,8 +58,7 @@ abstract class PersistenceOperation
    * Get the type of PersistentObject on which the operation should be executed
    * @return Array of attribute/value pairs
    */
-  public function getValues()
-  {
+  public function getValues() {
     return $this->values;
   }
 
@@ -68,8 +66,7 @@ abstract class PersistenceOperation
    * Get the type of PersistentObject on which the operation should be executed
    * @return Array of Criteria instances
    */
-  public function getCriteria()
-  {
+  public function getCriteria() {
     return $this->criteria;
   }
 
@@ -77,8 +74,7 @@ abstract class PersistenceOperation
    * Get a string representation of the operation
    * @return String
    */
-  public function __toString()
-  {
+  public function __toString() {
     $str = get_class($this).":type=".$this->type.",values=(";
     foreach($this->values as $key => $val) {
       $str .= $key."=".$val.",";

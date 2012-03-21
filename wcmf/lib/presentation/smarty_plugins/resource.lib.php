@@ -16,6 +16,10 @@
  *
  * $Id$
  */
+namespace wcmf\lib\presentation\smarty_plugins;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
 
 /*
  * Smarty plugin

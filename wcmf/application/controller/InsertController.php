@@ -16,17 +16,20 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeIterator.php");
-require_once(WCMF_BASE."wcmf/lib/visitor/CommitVisitor.php");
+namespace wcmf\application\controller;
+
+use \Exception;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\NodeIterator;
+use wcmf\lib\model\visitor\CommitVisitor;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
- * @class InsertController
- * @ingroup Controller
- * @brief InsertController is a controller that inserts Nodes.
+ * InsertController is a controller that inserts Nodes.
  *
  * <b>Input actions:</b>
  * - unspecified: Create Nodes of given type
@@ -41,15 +44,13 @@ require_once(WCMF_BASE."wcmf/lib/visitor/CommitVisitor.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class InsertController extends Controller
-{
+class InsertController extends Controller {
+
   /**
    * @see Controller::initialize()
    */
-  public function initialize(Request $request, Response $response)
-  {
-    if (!$request->hasValue('className'))
-    {
+  protected function initialize(Request $request, Response $response) {
+    if (!$request->hasValue('className')) {
       // determine the className parameter from the given object if possible
       $saveData = $request->getValues();
       foreach($saveData as $curOidStr => $curRequestObject)
@@ -62,34 +63,33 @@ class InsertController extends Controller
     }
     parent::initialize($request, $response);
   }
+
   /**
    * @see Controller::validate()
    */
-  protected function validate()
-  {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if(!$request->hasValue('className'))
-    {
+    if(!$request->hasValue('className')) {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
         array('invalidParameters' => array('className'))));
       return false;
     }
     return true;
   }
+
   /**
    * @see Controller::hasView()
    */
-  public function hasView()
-  {
+  protected function hasView() {
     return false;
   }
+
   /**
    * Create a new Node.
    * @see Controller::executeKernel()
    */
-  public function executeKernel()
-  {
+  protected function executeKernel() {
     $persistenceFacade = PersistenceFacade::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -107,19 +107,15 @@ class InsertController extends Controller
       // look for a node template in the request parameters
       $localizationTpl = null;
       $saveData = $request->getValues();
-      foreach($saveData as $curOidStr => $curRequestObject)
-      {
+      foreach($saveData as $curOidStr => $curRequestObject) {
         if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
-                && $curOid->getType() == $newType)
-        {
-          if ($this->isLocalizedRequest())
-          {
+                && $curOid->getType() == $newType) {
+          if ($this->isLocalizedRequest()) {
             // copy values from the node template to the localization template for later use
             $localizationTpl = $persistenceFacade->create($newType, BUIDLDEPTH_SINGLE);
             $curRequestObject->copyValues($localizationTpl, false);
           }
-          else
-          {
+          else {
             // copy values from the node template to the new node
             $curRequestObject->copyValues($newNode, false);
           }
@@ -127,8 +123,7 @@ class InsertController extends Controller
         }
       }
 
-      if ($this->confirmInsert($newNode))
-      {
+      if ($this->confirmInsert($newNode)) {
         $this->modify($newNode);
 
         // commit the new node and its descendants
@@ -138,8 +133,7 @@ class InsertController extends Controller
         $cv->startIterator($nIter);
 
         // if the request is localized, use the localization template as translation
-        if ($this->isLocalizedRequest() && $localizationTpl != null)
-        {
+        if ($this->isLocalizedRequest() && $localizationTpl != null) {
           $localizationTpl->setOID($newNode->getOID());
           $localization = Localization::getInstance();
           $localization->saveTranslation($localizationTpl, $request->getValue('language'));
@@ -164,26 +158,27 @@ class InsertController extends Controller
     $response->setAction('ok');
     return true;
   }
+
   /**
    * Confirm insert action on given Node. This method is called before modify()
    * @note subclasses will override this to implement special application requirements.
    * @param node A reference to the Node to confirm.
    * @return True/False whether the Node should be inserted [default: true].
    */
-  protected function confirmInsert($node)
-  {
+  protected function confirmInsert($node) {
     return true;
   }
+
   /**
    * Modify a given Node before insert action.
    * @note subclasses will override this to implement special application requirements.
    * @param node A reference to the Node to modify.
    * @return True/False whether the Node was modified [default: false].
    */
-  protected function modify($node)
-  {
+  protected function modify($node) {
     return false;
   }
+
   /**
    * Called after insert.
    * @note subclasses will override this to implement special application requirements.

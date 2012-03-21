@@ -16,17 +16,14 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/visitor/Visitor.php");
-require_once(WCMF_BASE."wcmf/lib/util/Position.php");
+namespace wcmf\lib\model\visitor;
+
+use wcmf\lib\model\NodeIterator;
+use wcmf\lib\model\output\Position;
+use wcmf\lib\model\visitor\Visitor;
+
 /**
- * Some constants describing the map type
- */
-define("MAPTYPE_HORIZONTAL", 0);
-define("MAPTYPE_VERTICAL",   1);
-/**
- * @class LayoutVisitor
- * @ingroup Visitor
- * @brief The LayoutVisitor is used to position a tree of objects on a plane (the objects must implement the getParent()).
+ * LayoutVisitor is used to position a tree of objects on a plane (the objects must implement the getParent()).
  * It uses a simple algorithm that positions the objects on a discrete array with distance 1 so
  * that all leaves are equal distant from their neighbours.
  * The positions are stored in a map that is provided by the getMap() method.
@@ -35,40 +32,41 @@ define("MAPTYPE_VERTICAL",   1);
  */
 class LayoutVisitor extends Visitor
 {
+  const MAPTYPE_HORIZONTAL = 0;
+  const MAPTYPE_VERTICAL = 1;
+
   private $_map = array();
 
   /**
    * Constructor.
    */
-  public function __construct()
-  {
+  public function __construct() {
     // set default maptype
-    $this->_map["type"] = MAPTYPE_HORIZONTAL;
+    $this->_map["type"] = self::MAPTYPE_HORIZONTAL;
   }
+
   /**
    * Visit the current object in iteration and position it on the map.
    * @param obj A reference to the current object.
    */
-  public function visit($obj)
-  {
+  public function visit($obj) {
     $this->_map[$obj->getOID()] = $this->calculatePosition($obj);
   }
+
   /**
    * Visit the current object in iteration and position it on the map.
    * @return The object map as assioziative array (key: object Id, value: Position).
    * map["type"] = MAPTYPE_HORIZONTAL | MAPTYPE_VERTICAL
    */
-  public function getMap()
-  {
+  public function getMap() {
     return $this->_map;
   }
+
   /**
    * Flip layout (x <-> y).
    */
-  public function flip()
-  {
-    foreach($this->_map as $key => $position)
-    {
+  public function flip() {
+    foreach($this->_map as $key => $position) {
       $temp = $position->x;
       $position->x = $position->y;
       $position->y = $temp;
@@ -77,21 +75,19 @@ class LayoutVisitor extends Visitor
     // switch map type
     $this->_map["type"] = 1-$this->_map["type"];
   }
+
   /**
    * Calculate the object's position using the described algorithm.
    * @attention Internal use only.
    * @param obj A reference to the current object.
    */
-  private function calculatePosition($obj)
-  {
+  private function calculatePosition($obj) {
     $parent = & $obj->getParent();
-    if (!$parent)
-    {
+    if (!$parent) {
       // start here
       $position = new Position(0,0,0);
     }
-    else
-    {
+    else {
       $position = new Position(0,0,0);
       $parentPos = $this->_map[$parent->getOID()];
       $position->y = $parentPos->y + 1;
@@ -101,11 +97,9 @@ class LayoutVisitor extends Visitor
       if ($siblings[0]->getOID() == $obj->getOID()) {
         $position->x = $parentPos->x;
       }
-      else
-      {
+      else {
         // find leftmost sibling of object
-        for ($i=0;$i<sizeOf($siblings);$i++)
-        {
+        for ($i=0;$i<sizeOf($siblings);$i++) {
           if ($siblings[$i]->getOID() == $obj->getOID()) {
             $leftSibling = & $siblings[$i-1];
           }
@@ -113,8 +107,7 @@ class LayoutVisitor extends Visitor
         // find x-coordinate of rightmost descendant of leftmost sibling
         $maxX = 0;
         $nIter = new NodeIterator($leftSibling);
-        foreach($nIter as $oid => $curObject)
-        {
+        foreach($nIter as $oid => $curObject) {
           $curPosition = $this->_map[$curObject->getOID()];
           if ($curPosition->x >= $maxX) {
             $maxX = $curPosition->x;
@@ -122,8 +115,7 @@ class LayoutVisitor extends Visitor
          }
         $position->x = $maxX+2;
         // reposition parents
-        while ($parent != null)
-        {
+        while ($parent != null) {
           $this->_map[$parent->getOID()]->x += 1;
           $parent = $parent->getParent();
         }

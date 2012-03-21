@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,26 +11,30 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/application/controller/BatchController.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
+namespace wcmf\application\controller\admintool;
+
+use wcmf\application\controller\BatchController;
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\Session;
+use wcmf\lib\io\FileUtil;
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class BackupController
- * @ingroup Controller
- * @brief This Controller creates a backup (action 'makebackup') from a directory 
- * and restores (action 'restorebackup') a created one to that directory respectively. 
- * It creates a directory named after the 'backupName' parameter in the backup directory 
+ * BackupController creates a backup (action 'makebackup') from a directory
+ * and restores (action 'restorebackup') a created one to that directory respectively.
+ * It creates a directory named after the 'backupName' parameter in the backup directory
  * whose name is determined by the configuration key 'backupDir' (section 'cms'). Then
- * it copies all files found in the directory given in the 'sourceDir' parameter to that 
+ * it copies all files found in the directory given in the 'sourceDir' parameter to that
  * directory.
- * Subclasses may add additional work packages by overriding the 
+ * Subclasses may add additional work packages by overriding the
  * BackupController::getAdditionalWorkPackage method.
- * 
+ *
  * <b>Input actions:</b>
  * - @em makebackup Create a backup
  * - @em restorebackup Restore a backup
@@ -42,7 +46,7 @@ require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
  * @param[in] backupName The name of the backup to create/restore.
  * @param[in] sourceDir The name of the directory to backup.
  * @param[out] @see BatchController
- * 
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
 class BackupController extends BatchController
@@ -56,7 +60,7 @@ class BackupController extends BatchController
    */
   function validate()
   {
-    $session = &SessionData::getInstance();
+    $session = Session::getInstance();
 
     if(strlen($this->_request->getValue('backupName')) == 0 && !$session->exist($this->BACKUP_NAME_VARNAME))
     {
@@ -76,15 +80,15 @@ class BackupController extends BatchController
   function initialize(&$request, &$response)
   {
     parent::initialize($request, $response);
-    
+
     // store parameters in session
     if ($request->getAction() != 'continue')
     {
-      $session = &SessionData::getInstance();
-      
+      $session = Session::getInstance();
+
       // replace illegal characters in backupname
       $this->_request->setValue('backupName', preg_replace("/[^a-zA-Z0-9\-_\.]+/", "_", $this->_request->getValue('backupName')));
-      
+
       $session->set($this->BACKUP_NAME_VARNAME, $this->_request->getValue('backupName'));
       $session->set($this->SOURCE_DIR_VARNAME, $this->_request->getValue('sourceDir'));
     }
@@ -116,15 +120,15 @@ class BackupController extends BatchController
   {
     return null;
   }
-  
+
   /**
    * Copy all files from sourceDir to the backup location defined by backupDir and backupName.
    */
   function backupFiles()
   {
-    $session = &SessionData::getInstance();
+    $session = Session::getInstance();
     $sourceDir = $session->get($this->SOURCE_DIR_VARNAME);
-      
+
     FileUtil::copyRecDir($sourceDir, $this->getBackupDir().$sourceDir);
   }
   /**
@@ -133,10 +137,10 @@ class BackupController extends BatchController
    */
   function restoreFiles()
   {
-    $session = &SessionData::getInstance();
+    $session = Session::getInstance();
     $sourceDir = $session->get($this->SOURCE_DIR_VARNAME);
 
-    // return on error    
+    // return on error
     if (!file_exists($this->getBackupDir().$sourceDir))
     {
       $this->setErrorMsg(Message::get("Can't restore backup from %1%. The directory does not exists.", array($this->getBackupDir().$sourceDir)));
@@ -148,22 +152,23 @@ class BackupController extends BatchController
     // copy files
     FileUtil::copyRecDir($this->getBackupDir().$sourceDir, $sourceDir);
   }
-  
+
   /**
-   * Get the actual backup directory defined by the key 'backupDir' in configuration 
+   * Get the actual backup directory defined by the key 'backupDir' in configuration
    * section 'cms' and the backup name.
    * @return The name of the actual backup directory
    */
-  function getBackupDir()
-  {
-    $session = &SessionData::getInstance();
+  protected function getBackupDir() {
+    $session = Session::getInstance();
     $backupName = $session->get($this->BACKUP_NAME_VARNAME);
 
-    $parser = &InifileParser::getInstance();
-    if (($backupDir = $parser->getValue('backupDir', 'cms')) === false)
-      WCMFException::throwEx($parser->getErrorMsg(), __FILE__, __LINE__);
-    if (strrpos($backupDir, '/') != strlen($backupDir)-1)
+    $parser = InifileParser::getInstance();
+    if (($backupDir = $parser->getValue('backupDir', 'cms')) === false) {
+      throw new ConfigurationException($parser->getErrorMsg());
+    }
+    if (strrpos($backupDir, '/') != strlen($backupDir)-1) {
       $backupDir .= '/';
+    }
     return $backupDir.$backupName.'/';
   }
 }

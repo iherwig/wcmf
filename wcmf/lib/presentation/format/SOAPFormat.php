@@ -16,9 +16,14 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/model/NodeSerializer.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/Formatter.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/HierarchicalFormat.php");
+namespace wcmf\lib\presentation\format;
+
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\Log;
+use wcmf\lib\model\NodeSerializer;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\presentation\format\HierarchicalFormat;
 
 /**
  * Define the message format
@@ -26,9 +31,7 @@ require_once(WCMF_BASE."wcmf/lib/presentation/format/HierarchicalFormat.php");
 define("MSG_FORMAT_SOAP", "SOAP");
 
 /**
- * @class SOAPFormat
- * @ingroup Format
- * @brief SOAPFormat realizes the SOAP request/response format. Nodes are serialized
+ * SOAPFormat realizes the SOAP request/response format. Nodes are serialized
  * into an array (the nusoap library creates the XML)
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -67,7 +70,7 @@ class SOAPFormat extends HierarchicalFormat
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug($node->toString(), __CLASS__);
     }
-    
+
     return $node;
   }
 }

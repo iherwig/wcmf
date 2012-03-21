@@ -16,18 +16,19 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/core/Event.php");
+namespace wcmf\lib\persistence;
+
+use wcmf\lib\core\Event;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
- * @class PropertyChangeEvent
- * @ingroup Event
- * @brief PropertyChangeEvent signals a change of a property of
+ * PropertyChangeEvent signals a change of a property of
  * a PersistentObject instance.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PropertyChangeEvent extends Event
-{
+class PropertyChangeEvent extends Event {
+
   const NAME = __CLASS__;
 
   private $_object = null;
@@ -42,13 +43,13 @@ class PropertyChangeEvent extends Event
    * @param oldValue The old value of the property that has changed.
    * @param newValue The new value of the property that has changed.
    */
-  public function __construct(PersistentObject $object, $name, $oldValue, $newValue)
-  {
+  public function __construct(PersistentObject $object, $name, $oldValue, $newValue) {
     $this->_object = $object;
     $this->_name = $name;
     $this->_oldValue = $oldValue;
     $this->_newValue = $newValue;
   }
+
   /**
    * Get the object whose property has changed.
    * @return PersistentObject instance
@@ -56,6 +57,7 @@ class PropertyChangeEvent extends Event
   public function getObject() {
     return $this->_object;
   }
+
   /**
    * Get the name of the property that has changed.
    * @return String
@@ -63,6 +65,7 @@ class PropertyChangeEvent extends Event
   public function getPropertyName() {
     return $this->_name;
   }
+
   /**
    * Get the old value.
    * @return Mixed
@@ -70,6 +73,7 @@ class PropertyChangeEvent extends Event
   public function getOldValue() {
     return $this->_oldValue;
   }
+
   /**
    * Get the new value.
    * @return Mixed

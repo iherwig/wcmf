@@ -16,16 +16,15 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence;
 
 /**
- * @class PathDescription
- * @ingroup Persistence
- * @brief Instances of PathDescription describe a path between two types.
+ * PathDescription describes a path between two types.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PathDescription
-{
+class PathDescription {
+
   protected $startType = '';
   protected $startRole = '';
   protected $endType = '';
@@ -37,13 +36,11 @@ class PathDescription
    * Constructor.
    * @param path Array of RelationDescription instances
    */
-  public function __construct(array $path)
-  {
+  public function __construct(array $path) {
     $this->path = $path;
 
     $pathSize = sizeof($path);
-    if ($pathSize > 0)
-    {
+    if ($pathSize > 0) {
       $firstPathPart = $path[0];
       $lastPathPart = $path[$pathSize-1];
       $this->startType = $firstPathPart->getThisType();
@@ -57,8 +54,7 @@ class PathDescription
    * Get the PersistentObject type at the start point
    * @return String
    */
-  public function getStartType()
-  {
+  public function getStartType() {
     return $this->startType;
   }
 
@@ -66,8 +62,7 @@ class PathDescription
    * Get the role name at the start point
    * @return String
    */
-  public function getStartRole()
-  {
+  public function getStartRole() {
     return $this->startRole;
   }
 
@@ -75,8 +70,7 @@ class PathDescription
    * Get the PersistentObject type at the end point
    * @return String
    */
-  public function getEndType()
-  {
+  public function getEndType() {
     return $this->endType;
   }
 
@@ -84,8 +78,7 @@ class PathDescription
    * Get the role name at the end point
    * @return String
    */
-  public function getEndRole()
-  {
+  public function getEndRole() {
     return $this->endRole;
   }
 
@@ -93,8 +86,7 @@ class PathDescription
    * Get the path
    * @return Array of RelationDesctription instances
    */
-  public function getPath()
-  {
+  public function getPath() {
     return $this->path;
   }
 
@@ -102,8 +94,7 @@ class PathDescription
    * Get the length of the path
    * @return int
    */
-  public function getPathLength()
-  {
+  public function getPathLength() {
     return sizeof($this->path);
   }
 }

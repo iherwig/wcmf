@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,12 +11,12 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/InternalLink.php");
+namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -39,9 +39,9 @@ function smarty_function_linktext($params, &$smarty)
     $node = $persistenceFacade->load(InternalLink::getReferencedOID($url), BUILDDEPTH_SINGLE);
     $value = $node->getDisplayValue();
   }
-  else 
+  else
     $value = preg_replace('/^http:\/\//', '', $url);
-  
+
   echo $value;
 }
 ?>

@@ -16,21 +16,21 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/util/InifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/ILockHandler.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/Lock.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/PessimisticLockException.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/concurrency/OptimisticLockException.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
+namespace wcmf\lib\persistence\concurrency;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\concurrency\OptimisticLockException;
+use wcmf\lib\persistence\concurrency\PessimisticLockException;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class ConcurrencyManager
- * @ingroup Persistence
- * @brief ConcurrencyManager is used to handle concurrency for objects.
+ * ConcurrencyManager is used to handle concurrency for objects.
  * Depending on the lock type, locking has different semantics:
  * - Optimistic locks can be aquired on the same object by different users.
  *   This lock quarantees that an exception is thrown, if the user tries
@@ -45,8 +45,8 @@ require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ConcurrencyManager
-{
+class ConcurrencyManager {
+
   private static $_instance = null;
   private function __construct() {}
 
@@ -56,10 +56,8 @@ class ConcurrencyManager
    * Returns an instance of the class.
    * @return A reference to the only instance of the Singleton object
    */
-  public static function getInstance()
-  {
-    if (!isset(self::$_instance) )
-    {
+  public static function getInstance() {
+    if (!isset(self::$_instance) ) {
       self::$_instance = new ConcurrencyManager();
 
       $impl = ObjectFactory::createInstanceFromConfig('implementation', 'LockHandler');
@@ -70,6 +68,7 @@ class ConcurrencyManager
     }
     return self::$_instance;
   }
+
   /**
    * Aquire a lock on an ObjectId for the current user. Throws an exception if
    * locking fails.
@@ -79,8 +78,7 @@ class ConcurrencyManager
    *    for an optimistic lock (optional, if not given, the current state will
    *    be loaded from the store)
    */
-  public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null)
-  {
+  public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null) {
     if (!ObjectId::isValid($oid) || ($type != Lock::TYPE_OPTIMISTIC &&
             $type != Lock::TYPE_PESSIMISTIC)) {
       throw new IllegalArgumentException("Invalid object id or locktype given");
@@ -94,40 +92,40 @@ class ConcurrencyManager
 
     $this->_lockHandlerImpl->aquireLock($oid, $type, $currentState);
   }
+
   /**
    * Release a lock on an ObjectId for the current user.
    * @param oid object id of the object to release.
    */
-  public function releaseLock(ObjectId $oid)
-  {
+  public function releaseLock(ObjectId $oid) {
     if (!ObjectId::isValid($oid)) {
       throw new IllegalArgumentException("Invalid object id given");
     }
     $this->_lockHandlerImpl->releaseLock($oid);
   }
+
   /**
    * Release all locks on an ObjectId regardless of the user.
    * @param oid object id of the object to release.
    */
-  public function releaseLocks(ObjectId $oid)
-  {
+  public function releaseLocks(ObjectId $oid) {
     if (!ObjectId::isValid($oid)) {
       throw new IllegalArgumentException("Invalid object id given");
     }
     $this->_lockHandlerImpl->releaseLocks($oid);
   }
+
   /**
    * Release all locks for the current user.
    */
-  public function releaseAllLocks()
-  {
+  public function releaseAllLocks() {
     $this->_lockHandlerImpl->releaseAllLocks();
   }
+
   /**
    * Check if the given object can be persisted. Throws an exception if not.
    */
-  public function checkPersist(PersistentObject $object)
-  {
+  public function checkPersist(PersistentObject $object) {
     $oid = $object->getOID();
     $lock = $this->_lockHandlerImpl->getLock($oid);
     if ($lock != null) {
@@ -174,7 +172,6 @@ class ConcurrencyManager
         }
       }
     }
-
     // everything is ok
   }
 }

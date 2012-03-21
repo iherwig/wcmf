@@ -16,16 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/Controller.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/NullNode.php");
+namespace wcmf\application\controller;
+
+use \Exception;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\Controller;
 
 /**
- * @class AssociateController
- * @ingroup Controller
- * @brief AssociateController is a controller that (dis-)associates Nodes
+ * AssociateController is a controller that (dis-)associates Nodes
  * (by setting the parent/child relations).
  *
  * <b>Input actions:</b>

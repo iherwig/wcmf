@@ -16,22 +16,21 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/IOutputStrategy.php");
+namespace wcmf\lib\model\output;
+
+use wcmf\lib\model\output\IOutputStrategy;
+
 /**
- * Some constants describing the line type
- */
-define("LINETYPE_DIRECT", 0);
-define("LINETYPE_ROUTED", 1);
-/**
- * @class ImageOutputStrategy
- * @ingroup Output
- * @brief This OutputStrategy outputs a tree of objects into an image file. It must be configured
+ * ImageOutputStrategy outputs a tree of objects into an image file. It must be configured
  * with a map that was calculated by a LayoutVisitor.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ImageOutputStrategy implements IOutputStrategy
-{
+class ImageOutputStrategy implements IOutputStrategy {
+
+  const LINETYPE_DIRECT = 0;
+  const LINETYPE_ROUTED = 0;
+
   protected $_format = null;
   protected $_file = '';
   protected $_map = null;
@@ -47,6 +46,7 @@ class ImageOutputStrategy implements IOutputStrategy
   protected $_labelDim = null;
   protected $_textPos = null;
   protected $_usemap = '';
+
   /**
    * Constructor.
    * @param format Image format name [IMG_GIF | IMG_JPG | IMG_PNG | IMG_WBMP].
@@ -58,8 +58,9 @@ class ImageOutputStrategy implements IOutputStrategy
    * @param border The image border [px] DEFAULT 50.
    * @param usemap Name of the HTML ImageMap to write to stdout ['' means no map] DEFAULT ''.
    */
-  public function ImageOutputStrategy($format, $file, $map, $lineType=LINETYPE_DIRECT, $scale=100, $aspect=0.5, $border=50, $usemap='')
-  {
+  public function __construct($format, $file, $map, $lineType=self::LINETYPE_DIRECT,
+          $scale=100, $aspect=0.5, $border=50, $usemap='') {
+
     if (!(ImageTypes() & $format)) {
       IllegalArgumentException($format." image support is disabled.");
     }
@@ -83,14 +84,13 @@ class ImageOutputStrategy implements IOutputStrategy
     $this->_textPos['left']   = -5;
     $this->_textPos['top']    = -8;
   }
+
   /**
    * @see OutputStrategy::writeHeader
    */
-  public function writeHeader()
-  {
+  public function writeHeader() {
     // calculate bounding box
-    while (list ($key, $val) = each ($this->_map))
-    {
+    while (list ($key, $val) = each ($this->_map)) {
       if($val->x >= $this->_width) {
         $this->_width = $val->x;
       }
@@ -110,11 +110,11 @@ class ImageOutputStrategy implements IOutputStrategy
       echo "\n".'<map name="'.$this->_usemap.'">'."\n";
     }
   }
+
   /**
    * @see OutputStrategy::writeFooter
    */
-  function writeFooter()
-  {
+  public function writeFooter() {
     ImageString($this->_img,1,$this->_width-350,$this->_height-10,'wemove digital solutions. '.date ("l dS of F Y h:i:s A"),$this->_txtColor);
     if ($this->_format & IMG_GIF) {
       ImageGIF($this->_img, $this->_file);
@@ -132,11 +132,11 @@ class ImageOutputStrategy implements IOutputStrategy
       echo "\n".'</map>'."\n";
     }
   }
+
   /**
    * @see OutputStrategy::writeObject
    */
-  function writeObject($obj)
-  {
+  public function writeObject($obj) {
     $oid = $obj->getOID();
     $x = $this->_map[$oid]->x * $this->_xscale - $this->_labelDim['left'] +  $this->_border;
     $y = $this->_map[$oid]->y * $this->_yscale - $this->_labelDim['top'] +  $this->_border;
@@ -193,30 +193,30 @@ class ImageOutputStrategy implements IOutputStrategy
         '" onclick="javascript:if (nodeClicked) nodeClicked(\''.$obj->getOID().'\')" alt="'.$obj->getOID().'">'."\n";
     }
   }
+
   /**
    * Draw connection line.
    * @attention Internal use only.
    * @param poid The parent object's object id.
    * @param oid The object's object id.
    */
-  protected function drawConnectionLine($poid, $oid)
-  {
+  protected function drawConnectionLine($poid, $oid) {
     list($start, $end) = $this->calculateEndPoints($poid, $oid);
-    if($this->_lineType == LINETYPE_DIRECT) {
+    if($this->_lineType == self::LINETYPE_DIRECT) {
       $this->drawDirectLine($start, $end);
     }
-    else if($this->_lineType == LINETYPE_ROUTED) {
+    else if($this->_lineType == self::LINETYPE_ROUTED) {
       $this->drawRoutedLine($start, $end);
     }
   }
+
   /**
    * Draw direct line.
    * @attention Internal use only.
    * @param start The start point (Position).
    * @param end The end point (Position).
    */
-  protected function drawDirectLine($start, $end)
-  {
+  protected function drawDirectLine($start, $end) {
     ImageLine($this->_img,
       $start->x,
       $start->y,
@@ -224,16 +224,15 @@ class ImageOutputStrategy implements IOutputStrategy
       $end->y,
       $this->_lineColor);
   }
+
   /**
    * Draw routed line.
    * @attention Internal use only.
    * @param start The start point (Position).
    * @param end The end point (Position).
    */
-  protected function drawRoutedLine($start, $end)
-  {
-    if ($this->_map["type"] == MAPTYPE_HORIZONTAL)
-    {
+  protected function drawRoutedLine($start, $end) {
+    if ($this->_map["type"] == MAPTYPE_HORIZONTAL) {
       ImageLine($this->_img,
         $start->x,
         $start->y,
@@ -253,8 +252,7 @@ class ImageOutputStrategy implements IOutputStrategy
         $end->y,
         $this->_lineColor);
     }
-    else
-    {
+    else {
       ImageLine($this->_img,
         $start->x,
         $start->y,
@@ -275,6 +273,7 @@ class ImageOutputStrategy implements IOutputStrategy
         $this->_lineColor);
     }
   }
+
   /**
    * Calculate line end points.
    * @attention Internal use only.
@@ -282,30 +281,25 @@ class ImageOutputStrategy implements IOutputStrategy
    * @param oid The object's object id.
    * @return Array containing start and end position
    */
-  private function calculateEndPoints($poid, $oid)
-  {
-      // from child...
-    if ($this->_map["type"] == MAPTYPE_HORIZONTAL)
-    {
+  private function calculateEndPoints($poid, $oid) {
+    // from child...
+    if ($this->_map["type"] == MAPTYPE_HORIZONTAL) {
       // connect from mid top...
       $x1 = $this->_map[$oid]->x * $this->_xscale + ($this->_labelDim['right'] - $this->_labelDim['left'])/2 + $this->_border;
       $y1 = $this->_map[$oid]->y * $this->_yscale + $this->_border - 1;
     }
-    else
-    {
+    else {
       // connect from mid left...
       $x1 = $this->_map[$oid]->x * $this->_xscale + $this->_border - 1;
       $y1 = $this->_map[$oid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top'])/2 + $this->_border;
     }
     // ...to parent
-    if ($this->_map["type"] == MAPTYPE_HORIZONTAL)
-    {
+    if ($this->_map["type"] == MAPTYPE_HORIZONTAL) {
       // ...to mid bottom
       $x2 = $this->_map[$poid]->x * $this->_xscale + ($this->_labelDim['right'] - $this->_labelDim['left'])/2 +  $this->_border;
       $y2 = $this->_map[$poid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top']) +  $this->_border + 1;
     }
-    else
-    {
+    else {
       // ...to mid right
       $x2 = $this->_map[$poid]->x * $this->_xscale + $this->_labelDim['right'] - $this->_labelDim['left'] +  $this->_border + 1;
       $y2 = $this->_map[$poid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top'])/2 +  $this->_border;
@@ -314,4 +308,3 @@ class ImageOutputStrategy implements IOutputStrategy
   }
 }
 ?>
-

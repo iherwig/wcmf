@@ -16,13 +16,13 @@
  *
  * $Id$
  */
+namespace wcmf\lib\core;
 
 /**
  * @class IllegalArgumentException
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class IllegalArgumentException extends Exception
-{
+class IllegalArgumentException extends \Exception {
 }
 ?>

@@ -16,10 +16,12 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/util/JSONUtil.php");
-require_once(WCMF_BASE."wcmf/lib/model/NodeSerializer.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/Formatter.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/HierarchicalFormat.php");
+namespace wcmf\lib\presentation\format;
+
+use wcmf\lib\core\Log;
+use wcmf\lib\model\NodeSerializer;
+use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\presentation\format\HierarchicalFormat;
 
 /**
  * Define the message format
@@ -41,7 +43,7 @@ function gPrintJSONResult()
     $data = $GLOBALS['gJSONData'];
     if ($data != null)
     {
-      $encoded = JSONUtil::encode($data);
+      $encoded = json_encode($data);
       if (Log::isDebugEnabled('JSONFormat'))
       {
         Log::debug($data, 'JSONFormat');
@@ -55,9 +57,7 @@ function gPrintJSONResult()
 register_shutdown_function('gPrintJSONResult');
 
 /**
- * @class JSONFormat
- * @ingroup Format
- * @brief JSONFormat realizes the JSON request/response format. All data will
+ * JSONFormat realizes the JSON request/response format. All data will
  * be serialized using the json_encode method except for Nodes.
  * Nodes are serialized into an array before encoding (see JSONFormat::serializeValue)
  * using the NodeSerializer class.

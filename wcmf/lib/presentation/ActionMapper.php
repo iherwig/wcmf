@@ -16,25 +16,22 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/core/ConfigurationException.php");
-require_once(WCMF_BASE."wcmf/lib/core/EventManager.php");
-require_once(WCMF_BASE."wcmf/lib/util/Log.php");
-require_once(WCMF_BASE."wcmf/lib/util/Message.php");
-require_once(WCMF_BASE."wcmf/lib/util/SessionData.php");
-require_once(WCMF_BASE."wcmf/lib/util/ObjectFactory.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Request.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/Response.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/WCMFInifileParser.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ApplicationException.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ApplicationError.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/ApplicationEvent.php");
-require_once(WCMF_BASE."wcmf/lib/presentation/format/Formatter.php");
-require_once(WCMF_BASE."wcmf/lib/security/RightsManager.php");
+namespace wcmf\lib\presentation;
+
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\Log;
+use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\WCMFInifileParser;
+use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\security\RightsManager;
 
 /**
- * @class ActionMapper
- * @ingroup Presentation
- * @brief ActionMapper is the central class in our implementation of the mvc pattern.
+ * ActionMapper is the central class in our implementation of the mvc pattern.
  * It calls the different Controllers based on the referring Controller and the given action.
  *
  * @author   ingo herwig <ingo@wemove.com>

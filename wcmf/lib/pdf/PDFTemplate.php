@@ -16,13 +16,13 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/output/pdf/PDF.php");
-require_once(WCMF_BASE."wcmf/lib/core/WCMFException.php");
+namespace wcmf\lib\pdf;
+
+use wcmf\lib\pdf\PDF;
+use wcmf\lib\pdf\PDFTemplate;
 
 /**
- * @class PDFTemplate
- * @ingroup Output
- * @brief PDFTemplate is used to output pdf files based on a given pdf template.
+ * PDFTemplate is used to output pdf files based on a given pdf template.
  * PDFTemplate uses FPDI/FPDF. PDFPage instances are used to render data onto
  * the template pages.
  *
@@ -52,8 +52,8 @@ require_once(WCMF_BASE."wcmf/lib/core/WCMFException.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PDFTemplate
-{
+class PDFTemplate {
+
   var $_pdf = null;
   var $_tpl = null;
   var $_pages = array();
@@ -64,20 +64,20 @@ class PDFTemplate
    * Constructor
    * @param pdf The PDF instance to render onto, defaults to PDF created with default constructor
    */
-  function PDFTemplate(&$pdf)
-  {
-    if (!isset($pdf) || (!($pdf instanceof PDF)))
+  public function __construct($pdf) {
+    if (!isset($pdf) || (!($pdf instanceof PDF))) {
       $this->_pdf = new PDF();
-    else
-      $this->_pdf = &$pdf;
+    }
+    else {
+      $this->_pdf = $pdf;
+    }
   }
 
   /**
    * Set the template filename
    * @param filename The name of the file
    */
-  function setTemplate($filename)
-  {
+  public function setTemplate($filename) {
     $this->_tpl = $filename;
   }
 
@@ -91,8 +91,7 @@ class PDFTemplate
    * @param cycle True/False wether to cycle the PDFPage instances or not [default: false]
    * @param data An optional data object, that will passed to the PDFPage::render method [default: null]
    */
-  function setPages($pages, $cycle=false, $data=null)
-  {
+  public function setPages($pages, $cycle=false, $data=null) {
     $this->_pages = $pages;
     $this->_cycle = $cycle;
     $this->_data = &$data;
@@ -105,29 +104,24 @@ class PDFTemplate
    * @param dest The pdf destination ('I': browser inline, 'D': browser download, 'F': filesystem, 'S': string)
    * @return The document string in case of dest = 'S', nothing else
    */
-  function output($name='', $dest='')
-  {
-    if ($this->_tpl == null)
-    {
-      WCMFException::throwEx("No PDF template provided. Use PDFTemplate::setTemplate.", __FILE__, __LINE__);
-      return;
+  public function output($name='', $dest='') {
+
+    if ($this->_tpl == null) {
+      throw new RuntimeException("No PDF template provided. Use PDFTemplate::setTemplate.");
     }
 
     $pageIndex = 0;
     $numPages = $this->_pdf->setSourceFile($this->_tpl);
-    for ($i=1; $i<=$numPages; $i++)
-    {
+    for ($i=1; $i<=$numPages; $i++) {
       // add each page
       $tplIndex = $this->_pdf->ImportPage($i);
       $size = $this->_pdf->getTemplatesize($tplIndex);
       $this->_pdf->AddPage($size['h'] > $size['w'] ? 'P' : 'L');
 
       // render the PDFPage onto the template page
-      if ($pageIndex < sizeof($this->_pages))
-      {
+      if ($pageIndex < sizeof($this->_pages)) {
         $curPage = &$this->_pages[$pageIndex];
-        if ($curPage instanceof PDFPage)
-        {
+        if ($curPage instanceof PDFPage) {
           $this->_pdf->startPage();
           $curPage->render($this->_pdf, $i, $this->_data);
           $this->_pdf->endPage();
@@ -136,8 +130,9 @@ class PDFTemplate
       $pageIndex++;
 
       // cycle pages if required
-      if ($this->_cycle && $pageIndex == sizeof($this->_pages))
+      if ($this->_cycle && $pageIndex == sizeof($this->_pages)) {
         $pageIndex = 0;
+      }
     }
 
     // output the pdf

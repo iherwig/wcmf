@@ -16,12 +16,13 @@
  *
  * $Id: class.ValueRenderer.php -1   $
  */
-require_once(WCMF_BASE."wcmf/lib/presentation/renderer/ValueRenderer.php");
+namespace wcmf\lib\presentation\renderer;
+
+use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\renderer\ValueRenderer;
 
 /**
- * @class BaseRenderer
- * @ingroup Presentation
- * @brief BaseRenderer is the default ValueRenderer implementation.
+ * BaseRenderer is the default ValueRenderer implementation.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

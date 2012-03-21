@@ -4,6 +4,7 @@
  * - new Constructor()
  * - Static::method()
  * - extends Superclass {
+ * - implements Superclass {
  * - (Typehint1 param1, Typehint2 param2
  */
 error_reporting(E_ERROR | E_PARSE);
@@ -24,12 +25,18 @@ function getDependencies() {
     if (!preg_match($exclude, $file)) {
       $dependencies = getDependenciesFromFile($file);
       echo "<br>\n".$file."<br>\n";
+      // collect references first for later sorting
+      $usages = array();
       foreach ($dependencies as $dependency) {
         $namespaces = searchClass($dependency);
-        $prefix = sizeof($namespaces) > 1 ? '? ' : '';
+        $postfix = sizeof($namespaces) > 1 ? ' // ambiguous' : '';
         foreach ($namespaces as $ns) {
-          echo $prefix."use ".$ns."<br>\n";
+          $usages[] = $ns.";".$postfix;
         }
+      }
+      sort($usages);
+      foreach ($usages as $usage) {
+        echo "use ".$usage."<br>\n";
       }
     }
   }
@@ -42,7 +49,13 @@ function getDependenciesFromFile($file) {
     $content = fread($fh, filesize ($file));
     fclose($fh);
 
-    preg_match_all('/\s+new\s+(\w+?)\(\)|\s+(\w+?)::.*?\(|extends\s+(\w+?)\s*\{|[\(,]\s*(\w+)\s+/i', $content, $matchesTmp);
+    preg_match_all(
+            '/\s+new\s+(\w+?)\s*\(|'.    // new Constructor()
+            '\s+(\w+?)::.*?\s*\(|'.      // Static::method()
+            'extends\s+(\w+?)\s*\{|'.    // extends Superclass {
+            'implements\s+(\w+?)\s*\{|'. // implements Superclass {
+            '[\(,]\s*(\w+)\s+/i'         // (Typehint1 param1, Typehint2 param2
+            , $content, $matchesTmp);
     $matches = array();
     $excludes = array('', 'parent', 'self');
     foreach(array_merge($matchesTmp[1], $matchesTmp[2], $matchesTmp[3], $matchesTmp[4]) as $match) {
@@ -61,14 +74,21 @@ function searchClass($name) {
   static $foundNamespaces = array();
   if (!isset($foundNamespaces[$name])) {
     $namespaces = array();
-    $fileUtil = new FileUtil();
-    $files = $fileUtil->getFiles(WCMF_BASE, '/\.php$/', true, true);
-    foreach ($files as $file) {
-      if (preg_match('/\/'.$name.'\.php$/', $file)) {
-        $usage = str_replace(WCMF_BASE, '', $file);
-        $usage = str_replace('.php', '', $usage);
-        $usage = str_replace('/', '\\', $usage);
-        $namespaces[] = $usage;
+    // php base classes in the global namespace
+    if (in_array($name, array('Exception'))) {
+      $namespaces = array('\\'.$name);
+    }
+    else {
+      // search in directories
+      $fileUtil = new FileUtil();
+      $files = $fileUtil->getFiles(WCMF_BASE, '/\.php$/', true, true);
+      foreach ($files as $file) {
+        if (preg_match('/\/'.$name.'\.php$/', $file)) {
+          $usage = str_replace(WCMF_BASE, '', $file);
+          $usage = str_replace('.php', '', $usage);
+          $usage = str_replace('/', '\\', $usage);
+          $namespaces[] = $usage;
+        }
       }
     }
     $foundNamespaces[$name] = $namespaces;

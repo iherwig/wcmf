@@ -16,18 +16,18 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/persistence/AttributeDescription.php");
+namespace wcmf\lib\model\mapper;
+
+use wcmf\lib\persistence\AttributeDescription;
 
 /**
- * @class RDBAttributeDescription
- * @ingroup Persistence
- * @brief Instances of RDBAttributeDescription describe attributes of PersistentObjects
+ * Instances of RDBAttributeDescription describe attributes of PersistentObjects
  * in a relational database.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RDBAttributeDescription extends AttributeDescription
-{
+class RDBAttributeDescription extends AttributeDescription {
+
   protected $table = '';
   protected $column = '';
 
@@ -38,8 +38,8 @@ class RDBAttributeDescription extends AttributeDescription
    * @param column The column name
    */
   public function __construct($name, $type, array $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
-    $restrictionsDescription, $isEditable, $inputType, $displayType, $table, $column)
-  {
+    $restrictionsDescription, $isEditable, $inputType, $displayType, $table, $column) {
+
     parent::__construct($name, $type, $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
       $restrictionsDescription, $isEditable, $inputType, $displayType);
 
@@ -51,8 +51,7 @@ class RDBAttributeDescription extends AttributeDescription
    * Get the table name
    * @return String
    */
-  public function getTable()
-  {
+  public function getTable() {
     return $this->table;
   }
 
@@ -60,8 +59,7 @@ class RDBAttributeDescription extends AttributeDescription
    * Get the column name
    * @return String
    */
-  public function getColumn()
-  {
+  public function getColumn() {
     return $this->column;
   }
 }

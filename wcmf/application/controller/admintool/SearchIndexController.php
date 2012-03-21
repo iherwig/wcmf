@@ -16,14 +16,15 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/application/controller/BatchController.php");
-require_once(WCMF_BASE."wcmf/lib/persistence/PersistenceFacade.php");
-require_once(WCMF_BASE."wcmf/lib/util/LuceneSearch.php");
+namespace wcmf\application\controller\admintool;
+
+use wcmf\application\controller\BatchController;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\util\LuceneSearch;
 
 /**
- * @class SearchIndexController
- * @ingroup Controller
- * @brief SearchIndexController creates a Lucene index from the complete datastore.
+ * SearchIndexController creates a Lucene index from the complete datastore.
  *
  * <b>Input actions:</b>
  * - unspecified: Create the index
@@ -45,10 +46,10 @@ class SearchIndexController extends BatchController
     {
       // get all types to index
       $types = array();
-      $persistenceFacade = &PersistenceFacade::getInstance();
+      $persistenceFacade = PersistenceFacade::getInstance();
       foreach (PersistenceFacade::getKnownTypes() as $type)
       {
-        $tpl = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+        $tpl = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
         if ($tpl->isIndexInSearch()) {
           array_push($types, $type);
         }
@@ -69,7 +70,7 @@ class SearchIndexController extends BatchController
    */
   function collect($types)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
     foreach ($types as $type)
     {
       $oids = $persistenceFacade->getOIDs($type);
@@ -86,12 +87,12 @@ class SearchIndexController extends BatchController
    */
   function index($oids)
   {
-    $persistenceFacade = &PersistenceFacade::getInstance();
+    $persistenceFacade = PersistenceFacade::getInstance();
     foreach($oids as $oid)
     {
       if (PersistenceFacade::isValidOID($oid))
       {
-        $obj = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+        $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
         $obj->indexInSearch();
       }
     }

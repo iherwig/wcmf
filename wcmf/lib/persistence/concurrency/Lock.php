@@ -16,16 +16,15 @@
  *
  * $Id$
  */
+namespace wcmf\lib\persistence\concurrency;
 
 /**
- * @class Lock
- * @ingroup Persistence
- * @brief Lock represents a lock on an object.
+ * Lock represents a lock on an object.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Lock
-{
+class Lock {
+
   const TYPE_OPTIMISTIC = 0;
   const TYPE_PESSIMISTIC = 1; // pessimistic write lock
 
@@ -45,8 +44,7 @@ class Lock
    * @param sessid Id of the session of the user
    * @param created Creation date of the lock. If omitted the current date will be taken.
    */
-  public function Lock($type, $oid, $useroid, $login, $sessid, $created='')
-  {
+  public function __construct($type, $oid, $useroid, $login, $sessid, $created='') {
     $this->_type = $type;
     $this->_oid = $oid;
     $this->_useroid = $useroid;
@@ -64,8 +62,7 @@ class Lock
    * Get the type of the lock.
    * @return One of the Lock::Type constants.
    */
-  public function getType()
-  {
+  public function getType() {
     return $this->_type;
   }
 
@@ -73,8 +70,7 @@ class Lock
    * Get the oid of the locked object.
    * @return ObjectId of the locked object.
    */
-  public function getOID()
-  {
+  public function getOID() {
     return $this->_oid;
   }
 

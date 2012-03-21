@@ -16,12 +16,14 @@
  *
  * $Id$
  */
-require_once(WCMF_BASE."wcmf/lib/model/Node.php");
+namespace wcmf\lib\model;
+
+use wcmf\lib\model\Node;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
- * @class NullNode
- * @ingroup Model
- * @brief NullNode is an implementation of the NullObject pattern,
+ * NullNode is an implementation of the NullObject pattern,
  * It inherits all functionality from Node (acts like a Node)
  * and is only distinguishable from a Node instance by it's class or oid.
  * If a Node's parent is a NullNode instance, than they should be separated

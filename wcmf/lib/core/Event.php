@@ -16,31 +16,29 @@
  *
  * $Id$
  */
+namespace wcmf\lib\core;
 
 /**
- * @class Event
- * @ingroup Event
- * @brief Event is the base class for all events.
+ * Event is the base class for all events.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class Event
-{
+abstract class Event {
+
   private $_isStopped = false;
 
   /**
    * Stop further processing of the event
    */
-  public function stopPropagation()
-  {
+  public function stopPropagation() {
     $this->_isStopped = true;
   }
+
   /**
    * Check if the event is stopped
    * @return Boolean
    */
-  public function isStopped()
-  {
+  public function isStopped() {
     return $this->_isStopped;
   }
 }
