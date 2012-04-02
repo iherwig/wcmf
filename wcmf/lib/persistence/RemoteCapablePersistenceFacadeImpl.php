@@ -333,8 +333,8 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
     $session->set($varName, $objects);
 
     // register class definitions in session
-    $classFile = WCMF_BASE.ObjectFactory::getClassfile(get_class($obj));
-    $mapperClassFile = WCMF_BASE.ObjectFactory::getClassfile(get_class($obj->getMapper()));
+    $classFile = ObjectFactory::getClassfile(get_class($obj));
+    $mapperClassFile = ObjectFactory::getClassfile(get_class($obj->getMapper()));
     $session->addClassDefinitions(array($classFile, $mapperClassFile));
   }
 

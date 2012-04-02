@@ -29,47 +29,42 @@ use wcmf\lib\config\InifileParser;
 class ObjectFactory {
 
   /**
-   * Get the class filename for a given class name.
-   * This method looks up the class definition from 'classmapping' section.
-   * @param className The name of the class.
-   * @return The class filename
+   * Get the filename for a given class name. The method assumes that
+   * namespaces are equivalent to directories.
+   * @param className The fully qualified name of the class.
+   * @return String
    */
   public static function getClassfile($className) {
-    // find class file
-    $parser = InifileParser::getInstance();
-    if (($classFile = $parser->getValue($className, 'classmapping', false)) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
-    }
+    $classFile = WCMF_BASE.str_replace("\\", "/", $className).'.php';
     return $classFile;
   }
 
   /**
-   * Load a class definition from the 'classmapping' section.
-   * This method looks up the class name as key in the 'classmapping' section of the main
-   * configuration file and includes the desired class definition.
-   * @param className The name of the key in the 'classmapping' section.
+   * Load a class definition.
+   * This method uses ObjectFactory::getClassfile for finding the class definition.
+   * @param className The fully qualified name of the class.
    */
   public static function loadClassDefinition($className) {
     // find class file
     $classFile = self::getClassfile($className);
 
     // include class definition
-    if (file_exists(WCMF_BASE.$classFile)) {
-      require_once(WCMF_BASE.$classFile);
+    if (file_exists($classFile)) {
+      require_once($classFile);
     }
     else {
-      throw new ConfigurationException("Classfile ".$classFile." not found.");
+      throw new ConfigurationException("Classfile ".$classFile." not found for classname: ".$className);
     }
   }
 
   /**
-   * Load a class definition from a configuration entry.
-   * This method looks up the class name as value of $classEntry in $section of the main
-   * configuration file and takes class definition from 'classmapping' section.
-   * With this information it includes the desired class definition.
+   * Load a class definition from a configuration entry and return the class name.
+   * The class name is looked up as value of $classEntry in $section of the main
+   * configuration file. With this information it includes the desired class definition.
+   * This method uses ObjectFactory::getClassfile for finding the class definition.
    * @param section The name of the section, where the class is defined.
    * @param classEntry The name of the key in the section, where the class is defined.
-   * @return The classname
+   * @return String
    */
   public static function loadClassDefinitionFromConfig($section, $classEntry) {
     // find class name
@@ -83,12 +78,12 @@ class ObjectFactory {
   }
 
   /**
-   * Create an object from a classmapping entry.
-   * This method looks up the class name as key in the 'classmapping' section of the main
-   * configuration file and takes - if given - constructor parameters from the 'initparams'
+   * Create an instance of a class.
+   * This method uses ObjectFactory::getClassfile for finding the class definition
+   * and takes - if given - constructor parameters from the 'initparams'
    * section. With this information it constructs the desired object.
-   * @param className The name of the key in the 'classmapping' section.
-   * @return A reference to an instance of the class.
+   * @param className The fully qualified name of the class.
+   * @return Instance of the class.
    */
   public static function createInstance($className) {
     $obj = null;
@@ -99,8 +94,7 @@ class ObjectFactory {
     // find init parameters
     $initParams = null;
     $parser = InifileParser::getInstance();
-    if (($initSection = $parser->getValue($className, 'initparams')) !== false)
-    {
+    if (($initSection = $parser->getValue($className, 'initparams')) !== false) {
       if (($initParams = $parser->getSection($initSection)) === false) {
         $initParams = null;
       }
@@ -121,11 +115,11 @@ class ObjectFactory {
    * Create an object from a configuration entry.
    * This method looks up the class name as value of $classEntry in $section of the main
    * configuration file and takes - if given - constructor parameters from the 'initparams'
-   * section and class definition from 'classmapping' section. With this information it
+   * section and class definition found by ObjectFactory::getClassfile. With this information it
    * constructs the desired object.
    * @param section The name of the section, where the class is defined.
    * @param classEntry The name of the key in the section, where the class is defined.
-   * @return A reference to an instance of the class.
+   * @return Instance of the class.
    */
   public static function createInstanceFromConfig($section, $classEntry) {
     // load class definition
