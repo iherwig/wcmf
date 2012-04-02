@@ -18,10 +18,11 @@
  */
 namespace test\tests\persistence;
 
-use new_roles\app\model\Page;
+use new_roles\application\model\Page;
 
 use test\lib\TestUtil;
 use wcmf\lib\core\Log;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;
 

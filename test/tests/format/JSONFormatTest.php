@@ -18,10 +18,10 @@
  */
 namespace test\tests\format;
 
-use new_roles\app\model\Author;
-use new_roles\app\model\Document;
-use new_roles\app\model\Image;
-use new_roles\app\model\Page;
+use new_roles\application\model\Author;
+use new_roles\application\model\Document;
+use new_roles\application\model\Image;
+use new_roles\application\model\Page;
 
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;

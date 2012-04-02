@@ -20,6 +20,7 @@ namespace test\tests\persistence;
 
 use test\lib\TestUtil;
 use wcmf\lib\model\NodeSortkeyComparator;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 
 /**
