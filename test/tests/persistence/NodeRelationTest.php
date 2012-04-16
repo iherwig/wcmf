@@ -19,6 +19,7 @@
 namespace test\tests\persistence;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 
@@ -35,7 +36,7 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
   protected function setUp() {
     TestUtil::runAnonymous(true);
 
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
 
@@ -68,7 +69,7 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
 
   protected function tearDown() {
     TestUtil::runAnonymous(true);
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     foreach ($this->oids as $name => $oid) {
       TestUtil::deleteTestObject($oid);
@@ -81,7 +82,7 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
     TestUtil::runAnonymous(true);
     //$this->enableProfiler('Page');
 
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     $page = $persistenceFacade->load($this->oids['page'], 1);
@@ -126,7 +127,7 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
     //$this->enableProfiler('Page');
 
     // delete all relations
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     $page = $persistenceFacade->load($this->oids['page'], 1);
@@ -173,9 +174,9 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
 
   public function _testLoadSingle() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $page = $persistenceFacade->load($this->oids['page'], BUILDDEPTH_SINGLE);
+    $page = $persistenceFacade->load($this->oids['page'], BuildDepth::SINGLE);
     $page->loadChildren('Document', 1);
     $document = $page->getFirstChild('Document');
     echo "title: ".$document->getTitle()."\n";
@@ -191,7 +192,7 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
   public function testDelete() {
     TestUtil::runAnonymous(true);
 
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     $page = $persistenceFacade->load($this->oids['page'], 1);
@@ -215,7 +216,7 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
   public function testNavigabilityManyToMany() {
     TestUtil::runAnonymous(true);
 
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     $nmPageDocument = $persistenceFacade->loadFirstObject("NMPageDocument");

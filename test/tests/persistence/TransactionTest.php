@@ -19,6 +19,7 @@
 namespace test\tests\persistence;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 
@@ -34,7 +35,7 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     $page = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
@@ -46,7 +47,7 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
   protected function tearDown() {
     TestUtil::runAnonymous(true);
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStr));
     TestUtil::deleteTestObject(ObjectId::parse($this->_documentOidStr));
@@ -56,7 +57,7 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
   public function testSimple() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
     $transaction->begin();
@@ -93,7 +94,7 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
   public function testChangesOutOfTxBoundaries() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
     // load the object inside the transaction
@@ -118,7 +119,7 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
   public function testRollback() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
     $transaction->begin();
@@ -142,7 +143,7 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
   public function testSingleInstancePerEntity() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
     $transaction->begin();

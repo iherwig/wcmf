@@ -19,6 +19,7 @@
 namespace test\tests\model;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
@@ -35,7 +36,7 @@ class IteratorTest extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
@@ -45,7 +46,7 @@ class IteratorTest extends \PHPUnit_Framework_TestCase {
 
   protected function tearDown() {
     TestUtil::runAnonymous(true);
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStr));
     $transaction->commit();
@@ -54,9 +55,9 @@ class IteratorTest extends \PHPUnit_Framework_TestCase {
 
   public function testNodeIterater() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $node = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), BUILDDEPTH_SINGLE);
+    $node = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), BuildDepth::SINGLE);
     $node->setName('original name');
     $nodeIter = new NodeIterator($node);
     $count = 0;
@@ -73,9 +74,9 @@ class IteratorTest extends \PHPUnit_Framework_TestCase {
 
   public function _testValueIterater() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $node = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), BUILDDEPTH_SINGLE);
+    $node = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), BuildDepth::SINGLE);
     $valueIter = new NodeValueIterator($node, true);
     $count = 0;
     for($valueIter->rewind(); $valueIter->valid(); $valueIter->next()) {

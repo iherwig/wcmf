@@ -19,6 +19,8 @@
 namespace test\tests\model;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceFacade;
 
 /**
@@ -30,11 +32,11 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 
   public function testBuildDepth() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
 
-    $page1 = $persistenceFacade->create('Page', BUILDDEPTH_SINGLE);
+    $page1 = $persistenceFacade->create('Page', BuildDepth::SINGLE);
     $this->assertEquals(0, sizeof($page1->getValue('ChildPage')));
     $this->assertEquals(0, sizeof($page1->getValue('ParentPage')));
     $this->assertEquals(0, sizeof($page1->getValue('Author')));
@@ -42,7 +44,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(0, sizeof($page1->getValue('TitleImage')));
     $this->assertEquals(0, sizeof($page1->getValue('Document')));
 
-    $page2 = $persistenceFacade->create('Page', BUILDDEPTH_REQUIRED);
+    $page2 = $persistenceFacade->create('Page', BuildDepth::REQUIRED);
     $this->assertEquals(0, sizeof($page2->getValue('ChildPage')));
     $this->assertEquals(0, sizeof($page2->getValue('ParentPage')));
     $this->assertEquals(0, sizeof($page2->getValue('Author')));
@@ -76,15 +78,15 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
     $documentPage = $document->getFirstChild('Page');
     $this->assertEquals($documentPage, $page3);
 
-    $author1 = $persistenceFacade->create('Author', BUILDDEPTH_SINGLE);
+    $author1 = $persistenceFacade->create('Author', BuildDepth::SINGLE);
     $this->assertEquals(0, sizeof($author1->getValue('Page')));
 
-    $author2 = $persistenceFacade->create('Author', BUILDDEPTH_REQUIRED);
+    $author2 = $persistenceFacade->create('Author', BuildDepth::REQUIRED);
     $this->assertNotEquals(0, sizeof($author2->getValue('Page')));
 
     // BUILDDEPTH_INFINTE is not allowed for create
     try {
-      $persistenceFacade->create('Page', BUILDDEPTH_INFINITE);
+      $persistenceFacade->create('Page', BuildDepth::INFINITE);
       $this->fail('An expected exception has not been raised.');
     }
     catch(Exception $ex) {}

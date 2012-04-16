@@ -28,6 +28,7 @@ use new_roles\application\model\PageRDBMapper;
 use test\lib\TestUtil;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistentObjectProxy;
 
 /**
  * NodeUnifiedRDBMapperTest.

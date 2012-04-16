@@ -19,8 +19,10 @@
 namespace test\tests\model;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 
 /**
@@ -91,7 +93,7 @@ class NodeUtilTest extends \PHPUnit_Framework_TestCase {
     TestUtil::runAnonymous(true);
 
     // Page -> NormalImage
-    $node = PersistenceFacade::getInstance()->create('Page');
+    $node = ObjectFactory::getInstance('persistenceFacade')->create('Page');
     $node->setOID(new ObjectId('Page', 10));
     $condition = NodeUtil::getRelationQueryCondition($node, 'NormalImage');
     $this->assertEquals('(`NormalPage`.`id` = 10)', $condition);
@@ -105,7 +107,7 @@ class NodeUtilTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     // Page -> ParentPage
-    $node = PersistenceFacade::getInstance()->create('Page');
+    $node = ObjectFactory::getInstance('persistenceFacade')->create('Page');
     $node->setOID(new ObjectId('Page', 10));
     $condition = NodeUtil::getRelationQueryCondition($node, 'ParentPage');
     $this->assertEquals('(`ChildPage`.`id` = 10)', $condition);
@@ -121,7 +123,7 @@ class NodeUtilTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     // Page -> ChildPage
-    $node = PersistenceFacade::getInstance()->create('Page');
+    $node = ObjectFactory::getInstance('persistenceFacade')->create('Page');
     $node->setOID(new ObjectId('Page', 10));
     $condition = NodeUtil::getRelationQueryCondition($node, 'ChildPage');
     $this->assertEquals('(`ParentPage`.`id` = 10)', $condition);

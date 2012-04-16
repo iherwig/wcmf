@@ -20,6 +20,7 @@ namespace test\tests\controller;
 
 use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\ObjectQuery;
@@ -56,7 +57,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $response = $this->runRequest($data);
 
     // test
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE);
 
     $this->assertTrue(!in_array($oid, $oids), $oid." is does not exist after deleting");
@@ -91,7 +92,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $response = $this->runRequest($data);
 
     // tests
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $oids = &$persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE);
     $this->assertTrue(in_array($oid, $oids), $oid." still exists after deleting the translation");
 

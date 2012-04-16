@@ -19,7 +19,9 @@
 namespace test\tests\persistence;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -74,7 +76,7 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
     $authorTpl->setValue("creator", Criteria::asValue("IN", array("admin", "ingo"))); // explicit set
     //
     // we need to execute the query first in order to define the attributes
-    $query->execute(BUILDDEPTH_SINGLE, null, null, array('name'));
+    $query->execute(BuildDepth::SINGLE, null, null, array('name'));
     $sql = $query->getLastQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' AND ".
       "`Author`.`creator` IN ('admin', 'ingo')) ORDER BY `Author`.`sortkey` ASC";
@@ -89,7 +91,7 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
     $query = new ObjectQuery('Author');
     //
     // we need to execute the query first in order to define the attributes
-    $query->execute(BUILDDEPTH_SINGLE, array('name ASC', 'created DESC'), null, array());
+    $query->execute(BuildDepth::SINGLE, array('name ASC', 'created DESC'), null, array());
     $sql = $query->getLastQueryString();
     $expected = "SELECT `Author`.`id` FROM `Author` ORDER BY `Author`.`name` ASC, `Author`.`created` DESC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
@@ -100,8 +102,8 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
   public function testOneNodeRegistered() {
     TestUtil::runAnonymous(true);
 
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $authorTpl = $persistenceFacade->create('Author', BUILDDEPTH_SINGLE);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $authorTpl = $persistenceFacade->create('Author', BuildDepth::SINGLE);
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
     $authorTpl->setValue("creator", "admin"); // implicit LIKE
 

@@ -19,6 +19,9 @@
 namespace test\tests\persistence;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 
@@ -31,7 +34,7 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase {
 
   public function testRelation() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $userMapper = $persistenceFacade->getMapper('UserRDB');
     $relationDescription = $userMapper->getRelation('RoleRDB');
@@ -45,13 +48,13 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase {
 
   public function testLoad() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $user = $persistenceFacade->load(new ObjectId('UserRDB', 2), 1);
     $role = $user->getFirstChild('RoleRDB', null, null);
     $this->assertTrue($role instanceof RoleRDB, "The role is loaded as direct child");
 
-    $user = $persistenceFacade->load(new ObjectId('UserRDB', 2), BUILDDEPTH_SINGLE);
+    $user = $persistenceFacade->load(new ObjectId('UserRDB', 2), BuildDepth::SINGLE);
     $user->loadChildren('RoleRDB');
     $role = $user->getFirstChild('RoleRDB', null, null);
     $this->assertTrue($role instanceof RoleRDB, "The role is loaded as direct child");
@@ -61,9 +64,9 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase {
 
   public function testCreate() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $newUser = $persistenceFacade->create('UserRDB', BUILDDEPTH_SINGLE);
+    $newUser = $persistenceFacade->create('UserRDB', BuildDepth::SINGLE);
     $children = $newUser->getPossibleChildren();
     $this->assertContains('RoleRDB', array_keys($children), "RoleRDB is a possible child of UserRDB");
 
@@ -76,7 +79,7 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase {
 
   public function testSave() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
     $transaction->begin();

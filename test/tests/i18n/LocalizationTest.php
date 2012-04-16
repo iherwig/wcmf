@@ -19,6 +19,7 @@
 namespace test\tests\i18n;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -39,13 +40,13 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
   protected function setUp() {
     TestUtil::runAnonymous(true);
 
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $user1 = TestUtil::createTestObject(ObjectId::parse(LocalizationTest::TEST_OID1), array());
+    $user1 = TestUtil::createTestObject(ObjectId::parse(self::TEST_OID1), array());
     $user1->setValue('name', 'Herwig');
     $user1->setValue('firstname', 'Ingo');
-    TestUtil::createTestObject(ObjectId::parse(LocalizationTest::TEST_OID2), array());
+    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID2), array());
     $transaction->commit();
 
     TestUtil::runAnonymous(false);
@@ -53,13 +54,13 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
   protected function tearDown() {
     TestUtil::runAnonymous(true);
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse(LocalizationTest::TEST_OID1), array());
-    TestUtil::deleteTestObject(ObjectId::parse(LocalizationTest::TEST_OID2), array());
+    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID1), array());
+    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID2), array());
     $localization = Localization::getInstance();
-    $localization->deleteTranslation(ObjectId::parse(LocalizationTest::TEST_OID1));
-    $localization->deleteTranslation(ObjectId::parse(LocalizationTest::TEST_OID2));
+    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID1));
+    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID2));
     $transaction->commit();
     TestUtil::runAnonymous(false);
   }
@@ -67,8 +68,8 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
   public function testGetDefaultLanguage() {
     $defaultLanguage = Localization::getInstance()->getDefaultLanguage();
 
-    $this->assertEquals(LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE, $defaultLanguage,
-      "The default language is '".LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE."'");
+    $this->assertEquals(self::EXPECTED_DEFAULT_LANGUAGE_CODE, $defaultLanguage,
+      "The default language is '".self::EXPECTED_DEFAULT_LANGUAGE_CODE."'");
   }
 
   public function testGetSupportedLanguages() {
@@ -76,31 +77,31 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertTrue(is_array($languages), "Languages is an array");
 
-    $this->assertTrue(array_key_exists(LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE,
-      $languages), "The language '".LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE."' is supported");
+    $this->assertTrue(array_key_exists(self::EXPECTED_DEFAULT_LANGUAGE_CODE,
+      $languages), "The language '".self::EXPECTED_DEFAULT_LANGUAGE_CODE."' is supported");
 
-    $this->assertEquals(LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_NAME,
-        $languages[LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE],
-        "The name of '".LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_CODE."' is '".
-        LocalizationTest::EXPECTED_DEFAULT_LANGUAGE_NAME."'");
+    $this->assertEquals(self::EXPECTED_DEFAULT_LANGUAGE_NAME,
+        $languages[self::EXPECTED_DEFAULT_LANGUAGE_CODE],
+        "The name of '".self::EXPECTED_DEFAULT_LANGUAGE_CODE."' is '".
+        self::EXPECTED_DEFAULT_LANGUAGE_NAME."'");
   }
 
   public function testCreateTranslationInstance() {
     $instance = Localization::createTranslationInstance();
-    $this->assertEquals(LocalizationTest::TRANSLATION_TYPE, $instance->getType(),
-      "The translation type is '".LocalizationTest::TRANSLATION_TYPE."'");
+    $this->assertEquals(self::TRANSLATION_TYPE, $instance->getType(),
+      "The translation type is '".self::TRANSLATION_TYPE."'");
   }
 
   public function testTranslation() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
     $localization = Localization::getInstance();
 
     // create a new object
     $transaction->begin();
-    $oid = ObjectId::parse(LocalizationTest::TEST_OID1);
+    $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
 
     // there must be no translation for the object in the translation table
@@ -138,14 +139,14 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
   public function testTranslationForNonTranslatableValues() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
     $localization = Localization::getInstance();
 
     // create a new object
     $transaction->begin();
-    $oid = ObjectId::parse(LocalizationTest::TEST_OID1);
+    $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
     $originalValue = $testObj->getValue('name');
 
@@ -172,14 +173,14 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
   public function testDontCreateEntriesForDefaultLanguage() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
     $localization = Localization::getInstance();
 
     // create a new object
     $transaction->begin();
-    $oid = ObjectId::parse(LocalizationTest::TEST_OID1);
+    $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
 
     // store a translation in the default language with saveEmptyValues = true
@@ -199,14 +200,14 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
   public function testDontSaveUntranslatedValues() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
     $localization = Localization::getInstance();
 
     // create a new object
     $transaction->begin();
-    $oid = ObjectId::parse(LocalizationTest::TEST_OID1);
+    $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
 
     // store a translation all values empty and saveEmptyValues = false
@@ -237,14 +238,14 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
   public function testDontCreateDuplicateEntries() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
     $localization = Localization::getInstance();
 
     // create a new object
     $transaction->begin();
-    $oid = ObjectId::parse(LocalizationTest::TEST_OID1);
+    $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
 
     // store a translation
@@ -271,13 +272,13 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
   public function testTranslationWithDefaults() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = Localization::getInstance();
 
     // create a new object
     $transaction->begin();
-    $oid = ObjectId::parse(LocalizationTest::TEST_OID1);
+    $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
     $originalValue = $testObj->getValue('name');
 
@@ -307,14 +308,14 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
   public function testDeleteTranslation() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
     $localization = Localization::getInstance();
 
     // create a new object
     $transaction->begin();
-    $oid = ObjectId::parse(LocalizationTest::TEST_OID1);
+    $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
 
     // store a translation in two languages
@@ -369,14 +370,14 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
   public function testDeleteLanguage() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
     $localization = Localization::getInstance();
 
     // create a new object
     $transaction->begin();
-    $oid1 = ObjectId::parse(LocalizationTest::TEST_OID1);
+    $oid1 = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid1);
 
     // store a translation in two languages
@@ -390,7 +391,7 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
 
     // create a new object
     $transaction->begin();
-    $oid2 = ObjectId::parse(LocalizationTest::TEST_OID2);
+    $oid2 = ObjectId::parse(self::TEST_OID2);
     $testObj = $persistenceFacade->load($oid2);
 
     // store a translation in two languages

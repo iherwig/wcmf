@@ -19,6 +19,7 @@
 namespace test\tests\persistence;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObjectProxy;
@@ -35,7 +36,7 @@ class PersistentObjectProxyTest extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     $page1 = TestUtil::createTestObject(ObjectId::parse($this->_page1OidStr), array('name' => 'Page1'));
@@ -47,7 +48,7 @@ class PersistentObjectProxyTest extends \PHPUnit_Framework_TestCase {
 
   protected function tearDown() {
     TestUtil::runAnonymous(true);
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     TestUtil::deleteTestObject(ObjectId::parse($this->_page1OidStr));
     TestUtil::deleteTestObject(ObjectId::parse($this->_page2OidStr));

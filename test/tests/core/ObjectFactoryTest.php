@@ -19,6 +19,7 @@
 namespace test\tests\core;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\output\LogOutputStrategy;
 
 /**
  * JSONFormatTest.
@@ -27,16 +28,46 @@ use wcmf\lib\core\ObjectFactory;
  */
 class ObjectFactoryTest extends \PHPUnit_Framework_TestCase {
 
-  public function testGetClassFile() {
-    $expectedFilename = WCMF_BASE.'wcmf/lib/core/ObjectFactory.php';
+  public function testDIShared() {
+    $obj = ObjectFactory::getInstance('persistenceFacade');
+    $this->assertEquals('wcmf\lib\persistence\PersistenceFacadeImpl', get_class($obj));
+    $this->assertFalse($obj->isLogging());
 
-    // given a class name with namespace
-    $this->assertEquals($expectedFilename,
-            ObjectFactory::getClassfile('wcmf\lib\core\ObjectFactory'));
+    // modify instance
+    $obj->enableLogging(new LogOutputStrategy());
+    $this->assertTrue($obj->isLogging());
 
-    // given an object
-    $this->assertEquals($expectedFilename,
-            ObjectFactory::getClassfile(get_class(new ObjectFactory())));
+    // get second time (same instance)
+    $obj2 = ObjectFactory::getInstance('persistenceFacade');
+    $this->assertEquals('wcmf\lib\persistence\PersistenceFacadeImpl', get_class($obj2));
+    $this->assertTrue($obj2->isLogging());
+  }
+
+  public function testDINonShared() {
+    $obj = ObjectFactory::getInstance('view');
+    $this->assertEquals('wcmf\lib\presentation\SmartyView', get_class($obj));
+
+    // modify instance
+    $obj->assign('test', 'value1');
+    $this->assertEquals('value1', $obj->getTemplateVars('test'));
+
+    // get second time (same instance)
+    $obj2 = ObjectFactory::getInstance('view');
+    $this->assertEquals('wcmf\lib\presentation\SmartyView', get_class($obj2));
+
+    // modify instance
+    $obj2->assign('test', 'value2');
+    $this->assertEquals('value2', $obj2->getTemplateVars('test'));
+
+    // check first instance
+    $this->assertEquals('value1', $obj->getTemplateVars('test'));
+  }
+
+  public function test() {
+    $obj = ObjectFactory::getInstance('controlRenderer');
+    $this->assertEquals('wcmf\lib\presentation\control\ControlRenderer', get_class($obj));
+    $ctrl = $obj->getControl('text');
+    $this->assertEquals('wcmf\lib\presentation\control\BaseControl', get_class($ctrl));
   }
 }
 ?>

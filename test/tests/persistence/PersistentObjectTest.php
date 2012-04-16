@@ -22,6 +22,8 @@ use new_roles\application\model\Page;
 
 use test\lib\TestUtil;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -35,7 +37,7 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     for ($i=100000; $i<100000+11; $i++) {
@@ -47,7 +49,7 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
 
   protected function tearDown() {
     TestUtil::runAnonymous(true);
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     for ($i=100000; $i<100000+11; $i++) {
       TestUtil::deleteTestObject(ObjectId::parse('Page:'.$i));
@@ -58,7 +60,7 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
 
   public function testInitializeSortkeys() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $page = $persistenceFacade->load(ObjectId::parse('Page:100000'));
     $this->assertEquals(100000, $page->getSortkey());
@@ -130,12 +132,12 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
 
   public function testLoadPartially() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $pagePartially = $persistenceFacade->load(ObjectId::parse('Page:100000'), BUILDDEPTH_SINGLE, array('Page' => array()));
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $pagePartially = $persistenceFacade->load(ObjectId::parse('Page:100000'), BuildDepth::SINGLE, array('Page' => array()));
     $this->assertFalse($pagePartially->hasValue('sortkey_page'));
     $this->assertEquals(null, $pagePartially->getSortkeyPage());
 
-    $pageComplete = $persistenceFacade->load(ObjectId::parse('Page:100000'), BUILDDEPTH_SINGLE);
+    $pageComplete = $persistenceFacade->load(ObjectId::parse('Page:100000'), BuildDepth::SINGLE);
     $this->assertTrue($pagePartially->hasValue('sortkey_page'));
     $this->assertEquals(100000, $pageComplete->getSortkeyPage());
 
@@ -144,32 +146,32 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
 
   public function testLoadPaging() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // lower bound 1
     $pagingInfo = new PagingInfo(0);
-    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
     $this->assertEquals(0, sizeof($pages));
 
     // lower bound 2
     $pagingInfo = new PagingInfo(1);
-    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
     $this->assertEquals(1, sizeof($pages));
 
     // simple
     $pagingInfo = new PagingInfo(10);
-    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
     $this->assertEquals(10, sizeof($pages));
 
     // out of bounds 1
     $pagingInfo = new PagingInfo(-1);
-    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
     $this->assertEquals(0, sizeof($pages));
 
     // out of bounds 2
     $pagingInfo = new PagingInfo(100000000);
     $numPages = sizeof($persistenceFacade->getOIDs('Page'));
-    $pages = $persistenceFacade->loadObjects('Page', BUILDDEPTH_SINGLE, null, null, $pagingInfo);
+    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
     $this->assertEquals($numPages, sizeof($pages));
 
     TestUtil::runAnonymous(false);
@@ -181,9 +183,9 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
   public function testCreateRandom() {
     TestUtil::runAnonymous(true);
     $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
-    $pf = PersistenceFacade::getInstance();
+    $pf = ObjectFactory::getInstance('persistenceFacade');
     for ($i=0; $i<100; $i++) {
-      $doc = $pf->create('Page', BUILDDEPTH_SINGLE);
+      $doc = $pf->create('Page', BuildDepth::SINGLE);
       $inc = 1;
       while ($inc < 15){
         $alphanum = $alphanum.'abcdefghijkmnpqrstuvwxyz23456789';
@@ -200,9 +202,9 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
    */
   public function testLoadManyWithAllAttributes() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $start = time();
-    $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE);
+    $documents = $persistenceFacade->loadObjects('Document', BuildDepth::SINGLE);
     Log::info("Loaded ".sizeof($documents)." documents with all attributes in ".(time()-$start)." seconds", __CLASS__);
     TestUtil::runAnonymous(false);
   }
@@ -212,9 +214,9 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
    */
   public function testLoadManyWithOneAttribute() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $start = time();
-    $documents = $persistenceFacade->loadObjects('Document', BUILDDEPTH_SINGLE,
+    $documents = $persistenceFacade->loadObjects('Document', BuildDepth::SINGLE,
             null, null, null, array('Document' => array('id')));
     Log::info("Loaded ".sizeof($documents)." documents with one attribute in ".(time()-$start)." seconds", __CLASS__);
     TestUtil::runAnonymous(false);

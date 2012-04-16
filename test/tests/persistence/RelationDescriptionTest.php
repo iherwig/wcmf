@@ -18,6 +18,7 @@
  */
 namespace test\tests\persistence;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
@@ -33,8 +34,8 @@ class RelationDescriptionTest extends \PHPUnit_Framework_TestCase {
   public function testMapper() {
     $rel1 = new RDBOneToManyRelationDescription('Page', 'ParentPage', 'Page', 'ChildPage',
             '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_page_id');
-    $this->assertEquals(PersistenceFacade::getInstance()->getMapper('Page'), $rel1->getThisMapper());
-    $this->assertEquals(PersistenceFacade::getInstance()->getMapper('Page'), $rel1->getOtherMapper());
+    $this->assertEquals(ObjectFactory::getInstance('persistenceFacade')->getMapper('Page'), $rel1->getThisMapper());
+    $this->assertEquals(ObjectFactory::getInstance('persistenceFacade')->getMapper('Page'), $rel1->getOtherMapper());
   }
 
   public function testCompare() {

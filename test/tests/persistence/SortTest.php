@@ -19,6 +19,7 @@
 namespace test\tests\persistence;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeSortkeyComparator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -44,7 +45,7 @@ class SortTest extends \PHPUnit_Framework_TestCase {
     $this->_documentOidStrs = array($this->_documentOid1Str, $this->_documentOid2Str, $this->_documentOid3Str);
     $this->_pageOidStrs = array($this->_pageOid1Str, $this->_pageOid2Str, $this->_pageOid3Str);
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     $mainPage = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
@@ -62,7 +63,7 @@ class SortTest extends \PHPUnit_Framework_TestCase {
 
   protected function tearDown() {
     TestUtil::runAnonymous(true);
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStr));
     for ($i=0, $count=sizeof($this->_documentOidStrs); $i<$count; $i++) {
@@ -77,7 +78,7 @@ class SortTest extends \PHPUnit_Framework_TestCase {
 
   public function testDefaultOrder() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $documentMapper = $persistenceFacade->getMapper('Document');
     $defaultPageOrder = $documentMapper->getDefaultOrder('Page');
@@ -88,9 +89,9 @@ class SortTest extends \PHPUnit_Framework_TestCase {
 
   public function testImplicitOrderUpdateSimple() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     // get the existing order
     $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr));
@@ -119,9 +120,9 @@ class SortTest extends \PHPUnit_Framework_TestCase {
 
   public function testImplicitOrderUpdateManyToMany() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     // get the existing order
     $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr));
@@ -150,9 +151,9 @@ class SortTest extends \PHPUnit_Framework_TestCase {
 
   public function testImplicitOrderUpdateMixedType() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
 
     $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);

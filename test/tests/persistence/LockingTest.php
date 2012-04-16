@@ -19,6 +19,7 @@
 namespace test\tests\persistence;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
@@ -38,7 +39,7 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
     TestUtil::runAnonymous(true);
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     TestUtil::createTestObject(ObjectId::parse($this->_user1OidStr), array(
@@ -53,7 +54,7 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
 
   protected function tearDown() {
     TestUtil::runAnonymous(true);
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     ConcurrencyManager::getInstance()->releaseLocks(ObjectId::parse($this->_user3OidStr));
     TestUtil::deleteTestObject(ObjectId::parse($this->_user1OidStr));
@@ -131,16 +132,16 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
     $sid2 = TestUtil::startSession('user2', 'user2');
     $objectName = '';
     try {
-      $transaction = PersistenceFacade::getInstance()->getTransaction();
+      $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
-      $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+      $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $objectName = $object->getName();
       $object->setValue('name', $objectName.'modified');
       $transaction->commit();
     }
     catch (PessimisticLockException $ex) {
       // check if the object is not modified
-      $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+      $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $this->assertEquals($objectName, $object->getName());
       TestUtil::endSession($sid2);
       return;
@@ -163,15 +164,15 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
     // user 2 tries to delete the object
     $sid2 = TestUtil::startSession('user2', 'user2');
     try {
-      $transaction = PersistenceFacade::getInstance()->getTransaction();
+      $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
-      $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+      $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $object->delete();
       $transaction->commit();
     }
     catch (PessimisticLockException $ex) {
       // check if the object is not deleted
-      $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+      $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $this->assertNotEquals(null, $object);
       TestUtil::endSession($sid2);
       return;
@@ -184,18 +185,18 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
 
     // user 1 locks the object and modifies it
     $sid1 = TestUtil::startSession('user1', 'user1');
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
-    $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+    $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ConcurrencyManager::getInstance()->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
     $newFirstname = time();
     $object->setFirstname($newFirstname);
     $transaction->commit();
 
     // check if the object was updated
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
-    $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+    $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     $this->assertEquals($newFirstname, $object->getFirstname());
     $transaction->rollback();
     TestUtil::endSession($sid1);
@@ -206,9 +207,9 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
 
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
-    $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+    $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ConcurrencyManager::getInstance()->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
     $originalFirstname = $object->getFirstname();
     $object->setFirstname($originalFirstname.'modified');
@@ -224,7 +225,7 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
     }
     catch (OptimisticLockException $ex) {
       // check if the object still has the value set by user 2
-      $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+      $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $this->assertEquals($newFirstname, $object->getFirstname());
       TestUtil::endSession($sid1);
       return;
@@ -237,9 +238,9 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
 
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
-    $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+    $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ConcurrencyManager::getInstance()->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
     $originalFirstname = $object->getFirstname();
     $object->setFirstname($originalFirstname.'modified');
@@ -254,7 +255,7 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
     }
     catch (OptimisticLockException $ex) {
       // check if the object is still deleted
-      $object = PersistenceFacade::getInstance()->load($oid, BUILDDEPTH_SINGLE);
+      $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $this->assertNull($object);
       TestUtil::endSession($sid1);
       return;

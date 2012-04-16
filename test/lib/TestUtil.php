@@ -19,7 +19,11 @@
 namespace test\lib;
 
 use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\presentation\Request;
@@ -104,20 +108,20 @@ class TestUtil {
    */
   public static function createTestObject(ObjectId $oid, array $attributes) {
     // check if the object already exists and delete it if necessary
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $testObj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     if ($testObj) {
       // direct delete without transaction
       $testObj->getMapper()->delete($testObj);
     }
 
-    $type = $oid->getType();
+    $type = get_class($persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $testObj = new $type($oid);
     foreach ($attributes as $name => $value) {
       $testObj->setValue($name, $value);
     }
     $testObj->setState(PersistentObject::STATE_NEW);
-    PersistenceFacade::getInstance()->getTransaction()->registerNew($testObj);
+    $persistenceFacade->getTransaction()->registerNew($testObj);
     return $testObj;
   }
 
@@ -127,8 +131,8 @@ class TestUtil {
    * @return Node
    */
   public static function loadTestObject(ObjectId $oid) {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $object = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     return $object;
   }
 
@@ -137,8 +141,8 @@ class TestUtil {
    * @param oid ObjectId
    */
   public static function deleteTestObject(ObjectId $oid) {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $object = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     if ($object) {
       $object->delete();
     }
@@ -178,7 +182,7 @@ class TestUtil {
    * @param type The entity type
    */
   public static function enableProfiler($type) {
-    $mapper = PersistenceFacade::getInstance()->getMapper($type);
+    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($type);
     if ($mapper instanceof RDBMapper) {
       $mapper->enableProfiler();
     }
@@ -190,7 +194,7 @@ class TestUtil {
    * @param type The entity type
    */
   public static function printProfile($type) {
-    $mapper = PersistenceFacade::getInstance()->getMapper($type);
+    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($type);
     $profiler = $mapper->getProfiler();
 
     echo "\n";
