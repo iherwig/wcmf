@@ -55,7 +55,7 @@ $mediaFilesDB = array();
 $rootTypes = $parser->getValue('rootTypes', 'cms');
 if (is_array($rootTypes))
 {
-  $persistenceFacade = PersistenceFacade::getInstance();
+  $persistenceFacade = ObjectFactory::getInstance('persistenceFacade')
   foreach($rootTypes as $rootType)
   {
     $rootOIDs = array_merge($oids, $persistenceFacade->getOIDs($rootType));
@@ -64,7 +64,7 @@ if (is_array($rootTypes))
       $iter = new PersistentIterator($rootOID);
       foreach($iter as $depth => $oid)
       {
-        $node = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+        $node = $persistenceFacade->load($oid, BuildDepth::SINGLE);
 
         $valueNames = $node->getValueNames();
         foreach($valueNames as $valueName)

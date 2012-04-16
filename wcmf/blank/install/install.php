@@ -54,15 +54,15 @@ $rightsManager = RightsManager::getInstance();
 $rightsManager->deactivate();
 
 // initialize database sequence, create default user/role
-$persistenceFacade = PersistenceFacade::getInstance();
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 if(sizeof($persistenceFacade->getOIDs("Adodbseq")) == 0)
 {
   Log::info("initializing database sequence...", "install");
-  $seq = $persistenceFacade->create("Adodbseq", BUILDDEPTH_SINGLE);
+  $seq = $persistenceFacade->create("Adodbseq", BuildDepth::SINGLE);
   $seq->setValue("id", 1);
   $seq->save();
 }
-$userManager = ObjectFactory::createInstanceFromConfig('implementation', 'UserManager');
+$userManager = ObjectFactory::getInsance('userManager');
 $userManager->beginTransaction();
 if (!$userManager->getRole("administrators"))
 {

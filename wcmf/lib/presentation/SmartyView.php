@@ -18,7 +18,7 @@
  */
 namespace wcmf\lib\presentation;
 
-use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\View;
 
 require_once(WCMF_BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
 
@@ -28,7 +28,7 @@ require_once(WCMF_BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SmartyView extends Smarty implements IView
+class SmartyView extends \Smarty implements View
 {
   /**
    * Setup the View for display (set directories, attributes, ...).

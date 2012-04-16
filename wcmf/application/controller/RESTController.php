@@ -53,7 +53,7 @@ class RESTController extends Controller
     $request = $this->getRequest();
     $response = $this->getResponse();
     if ($request->hasValue('className') &&
-      !PersistenceFacade::getInstance()->isKnownType($request->getValue('className')))
+      !ObjectFactory::getInstance('persistenceFacade')->isKnownType($request->getValue('className')))
     {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
         array('invalidParameters' => array('className'))));

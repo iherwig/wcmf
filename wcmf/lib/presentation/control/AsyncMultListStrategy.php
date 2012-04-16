@@ -14,15 +14,16 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: class.Control.php -1   $
+ * $Id$
  */
 namespace wcmf\lib\presentation\control;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\control\Control;
-use wcmf\lib\presentation\control\IListStrategy;
+use wcmf\lib\presentation\control\ListStrategy;
 
 /**
  * AsyncMultListStrategy implements a list of entities that is retrieved
@@ -35,27 +36,23 @@ use wcmf\lib\presentation\control\IListStrategy;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AsyncMultListStrategy implements IListStrategy
-{
+class AsyncMultListStrategy implements ListStrategy {
+
   /**
-   * @see IListStrategy::getListMap
+   * @see ListStrategy::getListMap
    */
-  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null)
-  {
+  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null) {
     // load the translated value only
     $parts = preg_split('/\|/', $configuration);
-    $persistenceFacade = PersistenceFacade::getInstance();
-    foreach($parts as $key=>$entityType)
-    {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    foreach($parts as $key=>$entityType) {
       // since this may be a multivalue field, the ids may be separated by commas
       $ids = preg_split('/,/', $value);
-      foreach ($ids as $id)
-      {
+      foreach ($ids as $id) {
         $oid = new ObjectId($entityType, $id);
-        if (ObjectId::isValidOID($oid->__toString()))
-        {
+        if (ObjectId::isValidOID($oid->__toString())) {
           $localization = Localization::getInstance();
-          $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+          $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
           if ($obj != null) {
             // localize object if requested
             if ($language != null) {
@@ -73,7 +70,4 @@ class AsyncMultListStrategy implements IListStrategy
     return $map;
   }
 }
-
-// register this list strategy
-Control::registerListStrategy('asyncmult', 'AsyncMultListStrategy');
 ?>

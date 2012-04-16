@@ -46,16 +46,25 @@ function smarty_function_input($params, $smarty)
     $language = $params['language'];
   }
 
-  if (isset($params['object']))
-  {
+  if (isset($params['object'])) {
     $object = $params['object'];
-    $name = $params['name'];
-    $inputType = $object->getValueProperty($name, 'input_type');
-    $control = Control::getControl($inputType);
-    $html = $control->renderFromProperty($object, $name, $language, $smarty);
+    $attrName = $params['name'];
+    $value = $object->getValue($attrName);
+
+    $inputType = "text";
+    $editable = false;
+    $attribute = null;
+    $mapper = $object->getMapper();
+    if ($mapper) {
+      $attribute = $mapper->getAttribute($name);
+      $inputType = $attribute->getInputType();
+      $editable = $attribute->getIsEditable();
+    }
+    $name = ControlRenderer::getControlName($object, $attrName, $language);
+    $control = ControlRenderer::getControl($inputType);
+    $html = $control->render($name, $inputType, $value, $editable, $language, $smarty);
   }
-  else
-  {
+  else {
     $name = $params['name'];
     $inputType = $params['type'];
     $value = $params['value'];

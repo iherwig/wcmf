@@ -71,7 +71,7 @@ class InternalLink
     if (sizeof($matches) > 0)
     {
       $oid = $matches[1][0];
-      if (PersistenceFacade::isValidOID($oid))
+      if (ObjectId::isValidOID($oid))
         return $oid;
     }
     return null;
@@ -87,7 +87,7 @@ class InternalLink
     if (sizeof($matches) > 0 && sizeof($matches[1]) > 0)
     {
       $oid = $matches[1][1];
-      if (PersistenceFacade::isValidOID($oid))
+      if (ObjectId::isValidOID($oid))
         return $oid;
     }
     return null;

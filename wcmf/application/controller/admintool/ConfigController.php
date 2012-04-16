@@ -19,6 +19,7 @@
 namespace wcmf\application\controller\admintool;
 
 use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Controller;
@@ -114,7 +115,7 @@ class ConfigController extends Controller
   function executeKernel()
   {
     global $CONFIG_PATH, $CONFIG_EXTENSION, $MAIN_CONFIG_FILE;
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $configFilename = $this->_request->getValue('oid');
     // strip path
     $configFilename = str_replace($CONFIG_PATH, '', $configFilename);

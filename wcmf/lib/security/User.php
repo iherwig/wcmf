@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\security;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -53,9 +54,9 @@ abstract class User extends Node {
    * @return A reference to the instance or null if not found.
    */
   public function getUser($login, $password) {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $userType = UserManager::getUserClassName();
-    $user = $persistenceFacade->loadFirstObject($userType, BUILDDEPTH_SINGLE,
+    $user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE,
                   array(
                       new Criteria($userType, 'login', '=', $login),
                       new Criteria($userType, 'password', '=', $password)
@@ -218,8 +219,8 @@ abstract class User extends Node {
   protected function getRoleByName($rolename) {
     if (!isset($this->_cachedRoles[$rolename])) {
       // load the role
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $role = $persistenceFacade->loadFirstObject(UserManager::getRoleClassName(), BUILDDEPTH_SINGLE, array('name' => $rolename));
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $role = $persistenceFacade->loadFirstObject(UserManager::getRoleClassName(), BuildDepth::SINGLE, array('name' => $rolename));
       if ($role != null) {
         $this->_cachedRoles[$rolename] = $role;
       }

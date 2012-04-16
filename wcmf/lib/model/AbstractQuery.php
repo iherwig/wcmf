@@ -18,7 +18,12 @@
  */
 namespace wcmf\lib\model;
 
-use wcmf\lib\persistence\IPersistenceMapper;
+use \Zend_Db_Select;
+
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -40,7 +45,7 @@ abstract class AbstractQuery {
 
   /**
    * Execute the query
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BUILDDEPTH_REQUIRED)
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
    * or false if only object ids should be returned
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference paging info instance, optional [default null].
@@ -87,7 +92,7 @@ abstract class AbstractQuery {
   /**
    * Execute the query and return the results.
    * @param selectStmt A Zend_Db_Select instance
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BUILDDEPTH_REQUIRED)
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
    *        or false if only object ids should be returned
    * @param pagingInfo A reference paging info instance. [default: null]
    * @param attribs An array of attributes to load (null to load all). [default: null]
@@ -101,7 +106,7 @@ abstract class AbstractQuery {
     // load only the necessary attributes if only object ids are requested
     if ($loadOidsOnly) {
       $attribs = array();
-      $buildDepth = BUILDDEPTH_SINGLE;
+      $buildDepth = BuildDepth::SINGLE;
     }
 
     // convert attribs to buildAttribs format used by the mapper
@@ -140,7 +145,7 @@ abstract class AbstractQuery {
    * @return RDBMapper instance
    */
   protected static function getMapper($type) {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = $persistenceFacade->getMapper($type);
     self::checkMapper($mapper);
     return $mapper;
@@ -148,10 +153,10 @@ abstract class AbstractQuery {
 
   /**
    * Check if a mapper is a supported one.
-   * @param mapper IPersistenceMapper instance
+   * @param mapper PersistenceMapper instance
    * Throws an Exception
    */
-  protected static function checkMapper(IPersistenceMapper $mapper) {
+  protected static function checkMapper(PersistenceMapper $mapper) {
     if (!($mapper instanceof RDBMapper)) {
       throw new PersistenceException(Message::get('Only PersistenceMappers of type RDBMapper are supported.'));
     }

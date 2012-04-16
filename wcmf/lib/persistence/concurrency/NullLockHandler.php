@@ -28,7 +28,7 @@ use wcmf\lib\persistence\concurrency\ILockHandler;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullLockHandler implements ILockHandler {
+class NullLockHandler implements LockHandler {
 
   /**
    * @see ILockHandler::aquireLock()

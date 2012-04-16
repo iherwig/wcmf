@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\presentation\format;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -27,7 +28,7 @@ use wcmf\lib\persistence\PersistenceFacade;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class AbstractFormat implements IFormat {
+abstract class AbstractFormat implements Format {
 
   private $_deserializedNodes = array();
 
@@ -39,11 +40,11 @@ abstract class AbstractFormat implements IFormat {
    */
   protected function getNode(ObjectId $oid) {
     if (!isset($this->_deserializedNodes[$oid])) {
-      $persistenceFacade = PersistenceFacade::getInstance();
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $type = $oid->getType();
       if ($persistenceFacade->isKnownType($type)) {
         // don't create all values by default (-> don't use PersistenceFacade::create() directly, just for determining the class)
-        $class = get_class($persistenceFacade->create($type, BUILDDEPTH_SINGLE));
+        $class = get_class($persistenceFacade->create($type, BuildDepth::SINGLE));
         $node = new $class;
       }
       else {

@@ -14,12 +14,12 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: class.TextControl.php -1   $
+ * $Id$
  */
 namespace wcmf\lib\presentation\control;
 
-use wcmf\lib\presentation\IView;
-use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\View;
+use wcmf\lib\presentation\control\BaseControl;
 use wcmf\lib\util\Obfuscator;
 
 /**
@@ -28,16 +28,14 @@ use wcmf\lib\util\Obfuscator;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AsyncListControl extends Control
-{
+class AsyncListControl extends ListControl {
+
   /**
    * @see Control::assignViewValues()
    */
-  protected function assignViewValues(IView $view)
-  {
+  protected function assignViewValues(View $view) {
     $inputType = $view->getTemplateVars('inputType');
-    if (preg_match("/^select.*?#async\:(.+)$/", $inputType, $matches))
-    {
+    if (preg_match("/^select.*?#async\:(.+)$/", $inputType, $matches)) {
       $list = $matches[1];
       // get the entity type to list and an optional filter
       $parts = preg_split('/\|/', $list);

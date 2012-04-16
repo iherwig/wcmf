@@ -23,23 +23,22 @@ use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\output\IOutputStrategy;
-use wcmf\lib\persistence\IPersistenceFacade;
-use wcmf\lib\persistence\IPersistenceMapper;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\Transaction;
+use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
  * Default PersistenceFacade implementation.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistenceFacadeImpl implements IPersistenceFacade {
+class PersistenceFacadeImpl implements PersistenceFacade {
 
-  private $_knownTypes = null;
-  private $_mapperObjects = array();
+  private $_mappers = array();
   private $_createdOIDs = array();
   private $_logging = false;
   private $_logStrategy = null;
@@ -64,31 +63,33 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::getKnownTypes()
+   * Set the PersistentMapper instances.
+   * @param mappers Associative array with the
+   *   mapped class names as keys and the mapper instances as values
+   */
+  public function setMappers($mappers) {
+    $this->_mappers = $mappers;
+  }
+
+  /**
+   * @see PersistenceFacade::getKnownTypes()
    */
   public function getKnownTypes() {
-    if ($this->_knownTypes == null) {
-      $parser = InifileParser::getInstance();
-      $this->_knownTypes = $parser->getSection('typemapping');
-    }
-    return array_keys($this->_knownTypes);
+    return array_keys($this->_mappers);
   }
 
   /**
-   * @see IPersistenceFacade::isKnownType()
+   * @see PersistenceFacade::isKnownType()
    */
   public function isKnownType($type) {
-    if ($this->_knownTypes == null) {
-      self::getKnownTypes();
-    }
-    return (isset($this->_knownTypes[$type]) || isset($this->_knownTypes['*']));
+    return (isset($this->_mappers[$type]));
   }
 
   /**
-   * @see IPersistenceFacade::load()
+   * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null) {
-    if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE))) {
+  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null) {
+    if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
     }
     $this->checkArrayParameter($buildAttribs, 'buildAttribs');
@@ -122,10 +123,10 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::create()
+   * @see PersistenceFacade::create()
    */
-  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null) {
-    if ($buildDepth < 0 && !in_array($buildDepth, array(BUILDDEPTH_INFINITE, BUILDDEPTH_SINGLE, BUILDDEPTH_REQUIRED))) {
+  public function create($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null) {
+    if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE, BuildDepth::REQUIRED))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
     $this->checkArrayParameter($buildAttribs, 'buildAttribs');
@@ -146,7 +147,7 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::getLastCreatedOID()
+   * @see PersistenceFacade::getLastCreatedOID()
    */
   public function getLastCreatedOID($type) {
     if (isset($this->_createdOIDs[$type]) && sizeof($this->_createdOIDs[$type]) > 0) {
@@ -156,7 +157,7 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::getOIDs()
+   * @see PersistenceFacade::getOIDs()
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $this->checkArrayParameter($criteria, 'criteria');
@@ -171,7 +172,7 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::getFirstOID()
+   * @see PersistenceFacade::getFirstOID()
    */
   public function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     if ($pagingInfo == null) {
@@ -187,9 +188,9 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::loadObjects()
+   * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null) {
     $this->checkArrayParameter($criteria, 'criteria');
     $this->checkArrayParameter($orderby, 'orderby');
@@ -211,9 +212,9 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::loadFirstObject()
+   * @see PersistenceFacade::loadFirstObject()
    */
-  public function loadFirstObject($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  public function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null) {
     if ($pagingInfo == null) {
       $pagingInfo = new PagingInfo(1);
@@ -228,78 +229,41 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::getTransaction()
+   * @see PersistenceFacade::getTransaction()
    */
   public function getTransaction() {
     if ($this->_currentTransaction == null) {
-      $this->_currentTransaction = new Transaction();
+      $this->_currentTransaction = ObjectFactory::getInstance('transaction');
     }
     return $this->_currentTransaction;
   }
 
   /**
-   * @see IPersistenceFacade::getMapper()
+   * @see PersistenceFacade::getMapper()
    */
   public function getMapper($type) {
-    $mapper = null;
-    // find type-specific mapper
-    if (!array_key_exists($type, $this->_mapperObjects)) {
-      // first use
-      // find mapper in configfile
-      $parser = InifileParser::getInstance();
-      if (($mapperClass = $parser->getValue($type, 'typemapping')) === false) {
-        if (($mapperClass = $parser->getValue('*', 'typemapping')) === false) {
-          throw new ConfigurationException("No PersistenceMapper found in configfile for type '".$type."' in section 'typemapping'");
-        }
+    if ($this->isKnownType($type)) {
+      $mapper = $this->_mappers[$type];
+      // enable logging if desired
+      if ($this->isLogging() && !$mapper->isLogging()) {
+        $mapper->enableLogging($this->_logStrategy);
       }
-
-      // see if class is already instantiated and reuse it if possible
-      $isAlreadyInUse = false;
-      $mapperObjects = array_values($this->_mapperObjects);
-      for ($i=0; $i<sizeof($mapperObjects); $i++) {
-        if (strtolower(get_class($mapperObjects[$i])) == strtolower($mapperClass)) {
-          $this->_mapperObjects[$type] = &$mapperObjects[$i];
-          $isAlreadyInUse = true;
-          break;
-        }
-      }
-
-      // instantiate class if needed
-      if (!$isAlreadyInUse) {
-        $mapperObj = ObjectFactory::createInstance($mapperClass);
-        $this->_mapperObjects[$type] = $mapperObj;
-
-        // lookup converter (optional)
-        if (($converterClass = $parser->getValue($type, 'converter')) !== false ||
-            ($converterClass = $parser->getValue('*', 'converter')) !== false) {
-          $converterObj = ObjectFactory::createInstance($converterClass);
-          $mapperObj->setDataConverter($converterObj);
-        }
-      }
-    }
-
-    if (array_key_exists($type, $this->_mapperObjects)) {
-      $mapper = $this->_mapperObjects[$type];
+      return $mapper;
     }
     else {
-      $mapper = $this->_mapperObjects['*'];
+      throw new ConfigurationException("No PersistenceMapper found in configfile for type '".$type."'");
     }
-    // enable logging if desired
-    if ($this->isLogging() && !$mapper->isLogging()) {
-      $mapper->enableLogging($this->_logStrategy);
-    }
-    return $mapper;
   }
 
   /**
-   * @see IPersistenceFacade::setMapper()
+   * @see PersistenceFacade::setMapper()
    */
-  public function setMapper($type, IPersistenceMapper $mapper) {
-    $this->_mapperObjects[$type] = $mapper;
+  public function setMapper($type, PersistenceMapper $mapper) {
+    $this->_mappers[$type] = $mapper;
   }
 
   /**
-   * @see IPersistenceFacade::getMapperForConfigSection()
+   * @see PersistenceFacade::getMapperForConfigSection()
    */
   public function getMapperForConfigSection($configSection) {
     $mapper = null;
@@ -319,29 +283,29 @@ class PersistenceFacadeImpl implements IPersistenceFacade {
   }
 
   /**
-   * @see IPersistenceFacade::setMapper()
+   * @see PersistenceFacade::setMapper()
    */
-  public function enableLogging(IOutputStrategy $logStrategy) {
+  public function enableLogging(OutputStrategy $logStrategy) {
     $this->_logStrategy = $logStrategy;
     $this->_logging = true;
   }
 
   /**
-   * @see IPersistenceFacade::disableLogging()
+   * @see PersistenceFacade::disableLogging()
    */
   public function disableLogging() {
     $this->_logging = false;
   }
 
   /**
-   * @see IPersistenceFacade::isLogging()
+   * @see PersistenceFacade::isLogging()
    */
   public function isLogging() {
     return $this->_logging;
   }
 
   /**
-   * @see IPersistenceFacade::setReadOnly()
+   * @see PersistenceFacade::setReadOnly()
    */
   public function setReadOnly($isReadOnly) {
     $this->_isReadOnly = $isReadOnly;

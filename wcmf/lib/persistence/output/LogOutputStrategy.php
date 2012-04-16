@@ -19,9 +19,10 @@
 namespace wcmf\lib\persistence\output;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\persistence\IOutputStrategy;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\security\RightsManager;
 /**
  * LogOutputStrategy outputs an object's content to the logger category
@@ -30,27 +31,27 @@ use wcmf\lib\security\RightsManager;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LogOutputStrategy implements IOutputStrategy {
+class LogOutputStrategy implements OutputStrategy {
 
   /**
-   * @see IOutputStrategy::writeHeader
+   * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
     // do nothing
   }
 
   /**
-   * @see IOutputStrategy::writeFooter
+   * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
     // do nothing
   }
 
   /**
-   * @see IOutputStrategy::writeObject
+   * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rightsManager = RightsManager::getInstance();
     $user = $rightsManager->getAuthUser();
 
@@ -62,7 +63,7 @@ class LogOutputStrategy implements IOutputStrategy {
       // log update action
       case PersistentObject::STATE_DIRTY:
         // get old object from storage
-        $oldObj = $persistenceFacade->load($obj->getOID(), BUILDDEPTH_SINGLE);
+        $oldObj = $persistenceFacade->load($obj->getOID(), BuildDepth::SINGLE);
         // collect differences
         $values = array();
         $valueNames = $obj->getValueNames();

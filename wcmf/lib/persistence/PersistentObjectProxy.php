@@ -19,6 +19,7 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -102,12 +103,12 @@ class PersistentObjectProxy {
 
   /**
    * Load the PersistentObject instance. Use this method if the subject should be loaded
-   * with a depth greater than BUILDDEPTH_SINGLE
+   * with a depth greater than BuildDepth::SINGLE
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        [default: BUILDDEPTH_SINGLE)]
+   *        [default: BuildDepth::SINGLE)]
    */
-  public function resolve($buildDepth=BUILDDEPTH_SINGLE) {
-    $this->_realSubject = PersistenceFacade::getInstance()->load($this->_oid, $buildDepth);
+  public function resolve($buildDepth=BuildDepth::SINGLE) {
+    $this->_realSubject = ObjectFactory::getInstance('persistenceFacade')->load($this->_oid, $buildDepth);
     if ($this->_realSubject == null) {
       throw new PersistenceException("Could not resolve oid: ".$this->_oid);
     }

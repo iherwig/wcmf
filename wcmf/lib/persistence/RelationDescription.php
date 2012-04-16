@@ -18,8 +18,8 @@
  */
 namespace wcmf\lib\persistence;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\persistence\RelationDescription;
 
 /**
  * Instances of RelationDescription describe relations between different types
@@ -110,10 +110,10 @@ class RelationDescription {
 
   /**
    * Get the PersistentMapper at this end
-   * @return IPersistenceMapper
+   * @return PersistenceMapper
    */
   public function getThisMapper() {
-    return PersistenceFacade::getInstance()->getMapper($this->getThisType());
+    return ObjectFactory::getInstance('persistenceFacade')->getMapper($this->getThisType());
   }
 
   /**
@@ -134,10 +134,10 @@ class RelationDescription {
 
   /**
    * Get the PersistentMapper at the other end
-   * @return IPersistenceMapper
+   * @return PersistenceMapper
    */
   public function getOtherMapper() {
-    return PersistenceFacade::getInstance()->getMapper($this->getOtherType());
+    return ObjectFactory::getInstance('persistenceFacade')->getMapper($this->getOtherType());
   }
 
   /**

@@ -19,6 +19,7 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\ObjectQuery;
@@ -41,23 +42,22 @@ use wcmf\lib\persistence\PersistenceFacade;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class StringQuery extends ObjectQuery
-{
+class StringQuery extends ObjectQuery {
+
   private $_condition = '';
 
   /**
    * Set the query condition string
    * @param condition The query definition string
    */
-  public function setConditionString($condition)
-  {
+  public function setConditionString($condition) {
     $this->_condition = $condition;
   }
+
   /**
    * @see AbstractQuery::buildQuery()
    */
-  protected function buildQuery($orderby=null, $attribs=null)
-  {
+  protected function buildQuery($orderby=null, $attribs=null) {
     $queryType = $this->getQueryType();
     $mapper = self::getMapper($queryType);
 
@@ -73,29 +73,22 @@ class StringQuery extends ObjectQuery
     $otherRoles = array();
     $tokens = preg_split("/[\s=<>()!]+/", $conditionString);
     $operators = array('and', 'or', 'not', 'like', 'is', 'null');
-    foreach ($tokens as $token)
-    {
-      if (strlen($token) > 0)
-      {
-        if (!in_array(strtolower($token), $operators))
-        {
+    foreach ($tokens as $token) {
+      if (strlen($token) > 0) {
+        if (!in_array(strtolower($token), $operators)) {
           // three possibilities left: token is
           // 1. type or attribute (not allowed)
           // 2. type.attribute
           // 3. searchterm
-          if (!preg_match('/^\'|^"|^[0-9]/', $token))
-          {
+          if (!preg_match('/^\'|^"|^[0-9]/', $token)) {
             // token is no searchterm (does not start with a quote or a number)
             $token = str_replace($quoteIdentifierSymbol, '', $token);
             $pos = strpos($token, '.');
-            if ($pos > 0)
-            {
+            if ($pos > 0) {
               // token is type/role.attribute
               list($typeOrRole, $attribute) = explode('.', $token, 2);
-              if ($typeOrRole != $queryType)
-              {
-                if (!isset($otherRoles[$typeOrRole]))
-                {
+              if ($typeOrRole != $queryType) {
+                if (!isset($otherRoles[$typeOrRole])) {
                   // find the path from the queryType to the other type/role
                   // (role is preferred)
                   $paths = NodeUtil::getConnections($queryType, $typeOrRole, null);
@@ -140,14 +133,12 @@ class StringQuery extends ObjectQuery
     }
 
     // get relation conditions
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rootNode = $persistenceFacade->create($queryType);
-    foreach ($otherRoles as $typeOrRole => $pathDescription)
-    {
+    foreach ($otherRoles as $typeOrRole => $pathDescription) {
       $relationDescriptions = $pathDescription->getPath();
       $parent = $rootNode;
-      foreach ($relationDescriptions as $relationDescription)
-      {
+      foreach ($relationDescriptions as $relationDescription) {
         $node = $persistenceFacade->create($relationDescription->getOtherType());
         $parent->addNode($node, $relationDescription->getOtherRole());
         $parent = $node;
@@ -167,14 +158,14 @@ class StringQuery extends ObjectQuery
 
     return $selectStmt;
   }
+
   /**
    * Map a application type and value name to the appropriate database names
    * @param type The type to map
    * @param valueName The name of the value to map
    * @return An array with the table and column name or null if no mapper is found
    */
-  protected static function mapToDatabase($type, $valueName)
-  {
+  protected static function mapToDatabase($type, $valueName) {
     $mapper = self::getMapper($type);
     $attributeDescription = $mapper->getAttribute($valueName);
 

@@ -25,6 +25,7 @@ use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\concurrency\LockHandler;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\security\RightsManager;
@@ -60,9 +61,9 @@ class ConcurrencyManager {
     if (!isset(self::$_instance) ) {
       self::$_instance = new ConcurrencyManager();
 
-      $impl = ObjectFactory::createInstanceFromConfig('implementation', 'LockHandler');
-      if (!($impl instanceof ILockHandler)) {
-        throw new ConfigurationException("The configured LockHandler does not implement ILockHandler.");
+      $impl = ObjectFactory::getInstance('lockHandler');
+      if (!($impl instanceof LockHandler)) {
+        throw new ConfigurationException("The configured LockHandler does not implement LockHandler.");
       }
       self::$_instance->_lockHandlerImpl = $impl;
     }
@@ -86,8 +87,8 @@ class ConcurrencyManager {
 
     // load the current state if not provided
     if ($type == Lock::TYPE_OPTIMISTIC && $currentState == null) {
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $currentState = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $currentState = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     }
 
     $this->_lockHandlerImpl->aquireLock($oid, $type, $currentState);
@@ -147,10 +148,10 @@ class ConcurrencyManager {
         $originalState = $lock->getCurrentState();
         // temporarily detach the object from the transaction in order to get
         // the latest version from the store
-        $persistenceFacade = PersistenceFacade::getInstance();
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
         $transaction = $persistenceFacade->getTransaction();
         $transaction->detach($object);
-        $currentState = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+        $currentState = $persistenceFacade->load($oid, BuildDepth::SINGLE);
         // check for deletion
         if ($currentState == null) {
           throw new OptimisticLockException(null);

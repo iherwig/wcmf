@@ -52,27 +52,23 @@ define("ROLE_PROPERTY_NAME", "name");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class UserManager
-{
-  var $_initParams = null;
-  var $_userRepository = null;
-  var $_roleConfig = null;
+abstract class UserManager {
+
+  /**
+   * Associative array mapping configuration files to role names
+   */
+  private $_roleConfig = null;
+
+  /**
+   * Associative array with keys 'users' and 'roles' and
+   * array values containing the user and role instances.
+   */
+  private $_userRepository = null;
 
   /**
    * Creates a UserManager Object.
-   * @param params Initialization data given in an associative array as needed to load the user repository
    */
-  public function __construct($params)
-  {
-    $this->_initParams = $params;
-    $this->_userRepository = $this->initialize($this->_initParams);
-    if (!isset($this->_userRepository['users'])) {
-      $this->_userRepository['users'] = array();
-    }
-    if (!isset($this->_userRepository['roles'])) {
-      $this->_userRepository['roles'] = array();
-    }
-
+  public function __construct() {
     // load role config if existing
     $parser = InifileParser::getInstance();
     if (($roleConfig = $parser->getSection('roleconfig')) !== false) {
@@ -85,8 +81,7 @@ abstract class UserManager
    * @param password The password to encrypt
    * @return The encrypted password.
    */
-  public static function encryptPassword($password)
-  {
+  public static function encryptPassword($password) {
     return md5($password);
   }
 
@@ -120,8 +115,11 @@ abstract class UserManager
    * @param passwordRepeated The password of the user again
    * @return A reference to the created user.
    */
-  public function createUser($name, $firstname, $login, $password, $passwordRepeated)
-  {
+  public function createUser($name, $firstname, $login, $password, $passwordRepeated) {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
     if ($password != $passwordRepeated) {
       throw new IllegalArgumentException(Message::get("The given passwords don't match"));
     }
@@ -147,16 +145,18 @@ abstract class UserManager
    * Remove a user login.
    * @param login The login of the user
    */
-  public function removeUser($login)
-  {
+  public function removeUser($login) {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
     if (($user = $this->getUser($login)) == null) {
       throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
     }
     $this->removeUserImpl($user);
 
     // update user repository
-    for($i=0, $count=sizeof($this->_userRepository['users']); $i<$count; $i++)
-    {
+    for($i=0, $count=sizeof($this->_userRepository['users']); $i<$count; $i++) {
       if ($this->_userRepository['users'][$i]->getLogin() == $login) {
         array_splice($this->_userRepository['users'][$i], $i, 1);
       }
@@ -169,8 +169,7 @@ abstract class UserManager
    * @param property One of the USER_PROPERTY constants
    * @param value The value to set this property to
    */
-  public function setUserProperty($login, $property, $value)
-  {
+  public function setUserProperty($login, $property, $value) {
     if (!in_array($property, array(USER_PROPERTY_LOGIN, USER_PROPERTY_NAME, USER_PROPERTY_FIRSTNAME, USER_PROPERTY_CONFIG))) {
       throw new IllegalArgumentException("Unknown user property: '%1%'", array($property));
     }
@@ -205,8 +204,7 @@ abstract class UserManager
    * @param newPassword The new password for the user
    * @param newPasswordRepeated The new password of the user again
    */
-  public function resetPassword($login, $newPassword, $newPasswordRepeated)
-  {
+  public function resetPassword($login, $newPassword, $newPasswordRepeated) {
     if (($user = $this->getUser($login)) == null) {
       throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
     }
@@ -231,8 +229,7 @@ abstract class UserManager
    * @param newPassword The new password for the user
    * @param newPasswordRepeated The new password of the user again
    */
-  public function changePassword($login, $oldPassword, $newPassword, $newPasswordRepeated)
-  {
+  public function changePassword($login, $oldPassword, $newPassword, $newPasswordRepeated) {
     if (($user = $this->getUser($login)) == null) {
       throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
     }
@@ -260,8 +257,11 @@ abstract class UserManager
    * @param name The name of the role
    * @return A reference to the created role.
    */
-  public function createRole($name)
-  {
+  public function createRole($name) {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
     if ($name == '') {
       throw new IllegalArgumentException(Message::get("The role requires a name"));
     }
@@ -280,16 +280,18 @@ abstract class UserManager
    * Remove a role.
    * @param name The name of the role
    */
-  public function removeRole($name)
-  {
+  public function removeRole($name) {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
     if (($role = $this->getRole($name)) == null) {
       throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($name)));
     }
     $this->removeRoleImpl($role);
 
     // update user repository
-    for($i=0; $i<sizeof($this->_userRepository['roles']); $i++)
-    {
+    for($i=0; $i<sizeof($this->_userRepository['roles']); $i++) {
       if ($this->_userRepository['roles'][$i]->getName() == $name) {
         array_splice($this->_userRepository['roles'][$i], $i, 1);
       }
@@ -302,8 +304,7 @@ abstract class UserManager
    * @param property One of the ROLE_PROPERTY constants
    * @param value The value to set this property to
    */
-  public function setRoleProperty($name, $property, $value)
-  {
+  public function setRoleProperty($name, $property, $value) {
     if (!in_array($property, array(ROLE_PROPERTY_NAME))) {
       throw new IllegalArgumentException(Message::get("Unknown role property: '%1%'", array($property)));
     }
@@ -337,8 +338,7 @@ abstract class UserManager
    * @param rolename The name of the role
    * @param login The login of the user
    */
-  public function addUserToRole($rolename, $login)
-  {
+  public function addUserToRole($rolename, $login) {
     if (($role = $this->getRole($rolename)) == null) {
       throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($rolename)));
     }
@@ -361,8 +361,7 @@ abstract class UserManager
    * @param rolename The name of the role
    * @param login The login of the user
    */
-  public function removeUserFromRole($rolename, $login)
-  {
+  public function removeUserFromRole($rolename, $login) {
     if (($role = $this->getRole($rolename)) == null) {
       throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($rolename)));
     }
@@ -384,8 +383,11 @@ abstract class UserManager
    * Get list of all users.
    * @return An array containing all login names
    */
-  public function listUsers()
-  {
+  public function listUsers() {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
     $result = array();
     for($i=0, $count=sizeof($this->_userRepository['users']); $i<$count; $i++) {
       array_push($result, $this->_userRepository['users'][$i]->getLogin());
@@ -397,8 +399,11 @@ abstract class UserManager
    * Get list of all roles.
    * @return An array containing all role names
    */
-  public function listRoles()
-  {
+  public function listRoles() {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
     $result = array();
     for($i=0, $count=sizeof($this->_userRepository['roles']); $i<$count; $i++) {
       array_push($result, $this->_userRepository['roles'][$i]->getName());
@@ -410,8 +415,7 @@ abstract class UserManager
    * Get list of all roles a user has.
    * @return An array containing all role names of the user
    */
-  public function listUserRoles($login)
-  {
+  public function listUserRoles($login) {
     if (($user = $this->getUser($login)) == null) {
       throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
     }
@@ -427,14 +431,16 @@ abstract class UserManager
    * Get list of all users that have a role.
    * @return An array containing all login names of the role members
    */
-  public function listRoleMembers($rolename)
-  {
+  public function listRoleMembers($rolename) {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
     if (($role = &$this->getRole($rolename)) == null) {
       throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($rolename)));
     }
     $result = array();
-    for($i=0, $count=sizeof($this->_userRepository['users']); $i<$count; $i++)
-    {
+    for($i=0, $count=sizeof($this->_userRepository['users']); $i<$count; $i++) {
       $curUser = $this->_userRepository['users'][$i];
       $roles = $this->listUserRoles($curUser->getLogin());
       if (in_array($rolename, $roles)) {
@@ -449,10 +455,12 @@ abstract class UserManager
    * @param login The login of the user
    * @return A reference to the matching User object or null if the user does not exist
    */
-  public function getUser($login)
-  {
-    for($i=0, $count=sizeof($this->_userRepository['users']); $i<$count; $i++)
-    {
+  public function getUser($login) {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
+    for($i=0, $count=sizeof($this->_userRepository['users']); $i<$count; $i++) {
       $curUser = $this->_userRepository['users'][$i];
       if ($curUser->getLogin() == $login) {
         return $curUser;
@@ -466,10 +474,12 @@ abstract class UserManager
    * @param name The name of the role
    * @return A reference to the matching Role object or null if the role does not exist
    */
-  public function getRole($name)
-  {
-    for($i=0, $count=sizeof($this->_userRepository['roles']); $i<$count; $i++)
-    {
+  public function getRole($name) {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
+    for($i=0, $count=sizeof($this->_userRepository['roles']); $i<$count; $i++) {
       $curRole = $this->_userRepository['roles'][$i];
       if ($curRole->getName() == $name) {
         return $curRole;
@@ -483,21 +493,19 @@ abstract class UserManager
    * @param oid The oid of the principal
    * @return A reference to the matching User/Role object or null if the principal does not exist
    */
-  public function getPrincipal(ObjectId $oid)
-  {
+  public function getPrincipal(ObjectId $oid) {
     $principal = null;
     $type = $oid->getType();
-    if ($type == UserManager::getUserClassName()) {
+    if ($type == self::getUserClassName()) {
       $principalArray = $this->_userRepository['users'];
     }
-    elseif ($type == UserManager::getRoleClassName()) {
+    elseif ($type == self::getRoleClassName()) {
       $principalArray = $this->_userRepository['roles'];
     }
     else {
       throw new IllegalArgumentException(Message::get("Unknown object type: '%1%'", array($type)));
     }
-    for($i=0, $count=sizeof($principalArray); $i<$count; $i++)
-    {
+    for($i=0, $count=sizeof($principalArray); $i<$count; $i++) {
       $curPrincipal = $principalArray[$i];
       if ($curPrincipal->getOID() == $oid) {
         $principal = $curPrincipal;
@@ -511,16 +519,14 @@ abstract class UserManager
    * Remove a principal (type: user/role) from the repository.
    * @param oid The oid of the principal
    */
-  public function removePrincipal(ObjectId $oid)
-  {
+  public function removePrincipal(ObjectId $oid) {
     $type = $oid->getType();
     $principal = $this->getPrincipal($oid);
-    if ($principal != null)
-    {
-      if ($type == UserManager::getUserClassName()) {
+    if ($principal != null) {
+      if ($type == self::getUserClassName()) {
         $this->removeUser($principal->getLogin());
       }
-      elseif ($type == UserManager::getRoleClassName()) {
+      elseif ($type == self::getRoleClassName()) {
         $this->removeRole($principal->getName());
       }
       else {
@@ -537,8 +543,7 @@ abstract class UserManager
    * 'implementation' key 'User'.
    * @return The class name
    */
-  public static function getUserClassName()
-  {
+  public static function getUserClassName() {
     $parser = InifileParser::getInstance();
     if (($className = $parser->getValue('User', 'implementation')) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
@@ -551,8 +556,7 @@ abstract class UserManager
    * 'implementation' key 'Role'.
    * @return The class name
    */
-  public static function getRoleClassName()
-  {
+  public static function getRoleClassName() {
     $parser = InifileParser::getInstance();
     if (($className = $parser->getValue('Role', 'implementation')) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
@@ -565,12 +569,11 @@ abstract class UserManager
    */
 
   /**
-   * Get the user and roles. This method is called before any operation on the repository.
-   * Subclasses will override this method to get the data from the application repository.
-   * @param params Initialization data given in an associative array as needed to load the user repository
-   * @return An assoziative array with the keys 'users' and 'roles' holding user and role objects respectively
+   * Get the user and role instances from the store.
+   * @return Associative array with keys 'users' and 'roles' and
+   * array values containing the instances.
    */
-  protected abstract function initialize($params);
+  protected abstract function getUsersAndRoles();
 
   /**
    * Create a user login with a given password.

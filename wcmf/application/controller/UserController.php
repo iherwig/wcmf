@@ -55,7 +55,7 @@ class UserController extends Controller {
 
     // create UserManager instance
     $objectFactory = ObjectFactory::getInstance();
-    $this->_userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+    $this->_userManager = $objectFactory->getInstance('userManager');
     if ($this->_userManager == null) {
       throw new ConfigurationException($objectFactory->getErrorMsg());
     }

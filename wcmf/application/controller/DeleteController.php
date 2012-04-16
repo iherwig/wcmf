@@ -20,6 +20,7 @@ namespace wcmf\application\controller;
 
 use \Exception;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -39,22 +40,21 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DeleteController extends Controller
-{
+class DeleteController extends Controller {
+
   /**
    * @see Controller::hasView()
    */
-  public function hasView()
-  {
+  public function hasView() {
     return false;
   }
+
   /**
    * Delete given Nodes.
    * @see Controller::executeKernel()
    */
-  public function executeKernel()
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
+  public function executeKernel() {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -65,25 +65,20 @@ class DeleteController extends Controller
     $transaction->begin();
     try {
       // load the doomed node
-      if ($oid)
-      {
-        $doomedNode = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+      if ($oid) {
+        $doomedNode = $persistenceFacade->load($oid, BuildDepth::SINGLE);
         if ($doomedNode == null) {
           Log::warn(Message::get("An object with oid %1% is does not exist.", array($oid)), __CLASS__);
         }
-        else
-        {
-          if($this->confirmDelete($doomedNode))
-          {
+        else {
+          if($this->confirmDelete($doomedNode)) {
             // commit changes
             $localization = Localization::getInstance();
-            if ($this->isLocalizedRequest())
-            {
+            if ($this->isLocalizedRequest()) {
               // delete the translations for the requested language
               $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));
             }
-            else
-            {
+            else {
               // delete the real object data and all translations
               $localization->deleteTranslation($doomedNode->getOID());
               $doomedNode->delete();
@@ -110,16 +105,17 @@ class DeleteController extends Controller
     $response->setAction('ok');
     return true;
   }
+
   /**
    * Confirm delete action on given Node.
    * @note subclasses will override this to implement special application requirements.
    * @param node A reference to the Node to confirm.
    * @return True/False whether the Node should be deleted [default: true].
    */
-  protected function confirmDelete($node)
-  {
+  protected function confirmDelete($node) {
     return true;
   }
+  
   /**
    * Called after delete.
    * @note subclasses will override this to implement special application requirements.

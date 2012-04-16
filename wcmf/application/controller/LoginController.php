@@ -51,8 +51,8 @@ use wcmf\lib\security\UserManager;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LoginController extends Controller
-{
+class LoginController extends Controller {
+
   private $_anonymous = 0; // in anonymous mode all authorization requests answered positive
                        // and AuthUser is an instance of AnonymousUser
                        // The mode is set in configuration section 'cms' key 'anonymous'
@@ -60,8 +60,7 @@ class LoginController extends Controller
   /**
    * @see Controller::initialize()
    */
-  public function initialize(Request $request, Response $response)
-  {
+  public function initialize(Request $request, Response $response) {
     // delete all data, if not in login process
     if ($request->getAction() != 'dologin') {
       $request->clearValues();
@@ -71,15 +70,14 @@ class LoginController extends Controller
 
     parent::initialize($request, $response);
   }
+
   /**
    * @see Controller::validate()
    */
-  protected function validate()
-  {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if ($request->getAction() == 'dologin' && !$this->_anonymous)
-    {
+    if ($request->getAction() == 'dologin' && !$this->_anonymous) {
       $invalidParameters = array();
       if(!$request->hasValue('user')) {
         $invalidParameters[] = 'user';
@@ -97,11 +95,11 @@ class LoginController extends Controller
     }
     return true;
   }
+
   /**
    * @see Controller::hasView()
    */
-  public function hasView()
-  {
+  public function hasView() {
     $request = $this->getRequest();
     if (!$request->hasErrors() &&
       ($request->getAction() == 'dologin' || $this->_anonymous || $this->isCookieLogin())) {
@@ -111,6 +109,7 @@ class LoginController extends Controller
       return true;
     }
   }
+
   /**
    * If called with any action except 'dologin' this Controller presents the login dialog else
    * if action is 'dologin' it checks the login data ('user' & 'password') and creates AuthUser object in the Session on
@@ -118,15 +117,13 @@ class LoginController extends Controller
    * @return Boolean
    * @see Controller::executeKernel()
    */
-  protected function executeKernel()
-  {
+  protected function executeKernel() {
     $session = Session::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
     // return immediately if anonymous
-    if ($this->_anonymous)
-    {
+    if ($this->_anonymous) {
       $request->setAction('ok');
       return true;
     }
@@ -135,8 +132,7 @@ class LoginController extends Controller
       $session->clear();
     }
 
-    if ($request->getAction() == 'dologin')
-    {
+    if ($request->getAction() == 'dologin') {
       // create AuthUser instance
       $authUser = new AuthUser();
 
@@ -154,16 +150,14 @@ class LoginController extends Controller
         Log::error("Could not log in: ".$ex, __CLASS__);
       }
 
-      if ($success)
-      {
+      if ($success) {
         // login succeeded
         $session->clear();
         $session->set(RightsManager::getAuthUserVarname(), $authUser);
 
         // did this user check the 'remember me' checkbox?
         $rememberMe = $request->getValue('remember_me');
-        if($rememberMe === 'true' || $rememberMe === true)
-        {
+        if($rememberMe === 'true' || $rememberMe === true) {
           // if yes store the password login combination in a cookie
           $expire = time() + 1728000; // expire in 20 days
           $cookiePassword = UserManager::encryptPassword($request->getValue('password'));
@@ -184,15 +178,13 @@ class LoginController extends Controller
         $response->setAction('ok');
         return true;
       }
-      else
-      {
+      else {
         // login failed
         $response->addError(ApplicationError::get('AUTHENTICATION_FAILED'));
         return false;
       }
     }
-    elseif ($request->getAction() == 'logout')
-    {
+    elseif ($request->getAction() == 'logout') {
       // delete cookies (also clientside)
       setcookie($this->getCookieName('user'), '', time()-3600, '/');
       setcookie($this->getCookieName('password'), '', time()-3600, '/');
@@ -209,11 +201,9 @@ class LoginController extends Controller
       $response->clearValues();
       return false;
     }
-    else
-    {
+    else {
       // check if the user and password is stored in a cookie
-      if ($this->isCookieLogin())
-      {
+      if ($this->isCookieLogin()) {
         // if yes redirect to login process
         $response->setValue('user', $_COOKIE[$this->getCookieName('user')]);
         $response->setValue('password', $_COOKIE[$this->getCookieName('password')]);
@@ -233,8 +223,7 @@ class LoginController extends Controller
    * Check if the user logs in via cookies
    * @return True/False
    */
-  protected function isCookieLogin()
-  {
+  protected function isCookieLogin() {
     $request = $this->getRequest();
     $isCookieLogin = ($request->getAction() == 'login' &&
             isset($_COOKIE[$this->getCookieName('user')], $_COOKIE[$this->getCookieName('password')]));
@@ -246,8 +235,7 @@ class LoginController extends Controller
    * @param name The name of the variable
    * @return String
    */
-  protected function getCookieName($name)
-  {
+  protected function getCookieName($name) {
     return Application::getId()."_".$name;
   }
 }

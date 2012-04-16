@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\persistence;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\AttributeDescription;
 use wcmf\lib\persistence\PersistenceFacade;
 
@@ -152,7 +153,7 @@ class ReferenceDescription extends AttributeDescription {
    * @return AttributeDescription instance
    */
   private function getReferencedAttribute() {
-    $mapper = PersistenceFacade::getInstance()->getMapper($this->otherType);
+    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($this->otherType);
     return $mapper->getAttribute($this->otherName);
   }
 }

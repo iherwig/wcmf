@@ -27,7 +27,7 @@ use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\presentation\control\Control;
 use wcmf\lib\presentation\format\AbstractFormat;
 use wcmf\lib\presentation\format\Formatter;
-use wcmf\lib\presentation\format\IFormat;
+use wcmf\lib\presentation\format\Format;
 use wcmf\lib\security\RightsManager;
 use wcmf\lib\util\Obfuscator;
 
@@ -49,7 +49,7 @@ define("MSG_FORMAT_HTML", "HTML");
 class HTMLFormat extends AbstractFormat {
 
   /**
-   * @see IFormat::deserialize()
+   * @see Format::deserialize()
    */
   public function deserialize(Request $request) {
     // construct nodes from values serialized as form fields
@@ -76,7 +76,7 @@ class HTMLFormat extends AbstractFormat {
   }
 
   /**
-   * @see IFormat::serialize()
+   * @see Format::serialize()
    */
   public function serialize(Response $response) {
     // assign the data to the view if one exists
@@ -91,7 +91,7 @@ class HTMLFormat extends AbstractFormat {
                     "request: ".$request->__toString());
       }
       // create the view
-      $view = ObjectFactory::createInstanceFromConfig('implementation', 'View');
+      $view = ObjectFactory::getInstnace('view');
       $view->setup();
 
       // assign the response data to the view

@@ -19,6 +19,7 @@
 namespace wcmf\application\controller;
 
 use \Exception;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\visitor\CommitVisitor;
@@ -90,7 +91,7 @@ class InsertController extends Controller {
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -102,7 +103,7 @@ class InsertController extends Controller {
     try {
       // construct the Node to insert
       $newType = $request->getValue('className');
-      $newNode = $persistenceFacade->create($newType, BUILDDEPTH_REQUIRED);
+      $newNode = $persistenceFacade->create($newType, BuildDepth::REQUIRED);
 
       // look for a node template in the request parameters
       $localizationTpl = null;

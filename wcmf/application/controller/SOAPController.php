@@ -99,7 +99,7 @@ class SOAPController extends Controller
           }
         }
 
-        $nodes = $query->execute(BUILDDEPTH_SINGLE);
+        $nodes = $query->execute(BuildDepth::SINGLE);
         foreach ($nodes as $node) {
           $object = array();
           $object['type'] = $node->getType();
@@ -121,7 +121,7 @@ class SOAPController extends Controller
   {
     $query = new StringQuery($type);
     $query->setConditionString($queryStr);
-    $nodes = $query->execute(BUILDDEPTH_SINGLE);
+    $nodes = $query->execute(BuildDepth::SINGLE);
     $objectList = array();
     foreach ($nodes as $node)
     {

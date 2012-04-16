@@ -100,20 +100,6 @@ class Application {
     self::setupGlobals($configPath, $mainConfigFile);
     $parser = WCMFInifileParser::getInstance();
 
-    // include files from implementation section
-    // NOTE: this must be done before the session is started to avoid incomplete object definitions
-    $values = array_values($parser->getSection("implementation"));
-    foreach($values as $class) {
-      if (is_array($class)) {
-        foreach ($class as $c) {
-          ObjectFactory::loadClassDefinition($c);
-        }
-      }
-      else {
-        ObjectFactory::loadClassDefinition($class);
-      }
-    }
-
     // get controller/context/action triple
     // (defaults to /LoginController//login in this application)
     $controller = $this->getRequestValue('controller', $defaultController);
@@ -167,7 +153,7 @@ class Application {
     }
 
     // prepare PersistenceFacade
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if ($parser->getValue('logDBActions', 'cms') == 1) {
       $persistenceFacade->enableLogging(new LogOutputStrategy());
     }
@@ -223,7 +209,7 @@ class Application {
     Log::error($exception->getMessage()."\n".$exception->getTraceAsString(), 'main');
 
     // rollback current transaction
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $persistenceFacade->getTransaction()->rollback();
 
     // process last successful request

@@ -84,7 +84,7 @@ foreach($lines as $line)
 }
 
 // process table definitions
-$persistenceFacade = PersistenceFacade::getInstance();
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 foreach ($tables as $tableDef)
 {
   Log::info(("processing table ".$tableDef['name']."..."), "dbupdate");

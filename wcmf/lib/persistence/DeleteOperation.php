@@ -28,10 +28,6 @@ use wcmf\lib\persistence\PersistenceOperation;
  */
 class DeleteOperation extends PersistenceOperation {
 
-  protected $operationType = null;
-  protected $entityType = null;
-  protected $criteria = null;
-
   /**
    * Constructor.
    * @param entityType The type of PersistentObject to delete

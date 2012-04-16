@@ -35,8 +35,8 @@ function smarty_function_linktext($params, &$smarty)
   if (InternalLink::isLink($url))
   {
     // get the display value
-    $persistenceFacade = &PersistenceFacade::getInstance();
-    $node = $persistenceFacade->load(InternalLink::getReferencedOID($url), BUILDDEPTH_SINGLE);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $node = $persistenceFacade->load(InternalLink::getReferencedOID($url), BuildDepth::SINGLE);
     $value = $node->getDisplayValue();
   }
   else

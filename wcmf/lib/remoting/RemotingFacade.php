@@ -103,7 +103,7 @@ class RemotingFacade {
       $parser = InifileParser::getInstance();
       if (($remoteLogin = $parser->getValue($serverKey, 'remoteuser')) !== false) {
         $objectFactory = ObjectFactory::getInstance();
-        $userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+        $userManager = $objectFactory->getInstance('userManager');
         $user = $userManager->getUser($remoteLogin);
         if ($user != null) {
           $this->_users[$serverKey] = $user;

@@ -21,7 +21,7 @@ namespace wcmf\lib\model;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\model\NodeUtil;
-use wcmf\lib\persistence\IPersistenceMapper;
+use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 
@@ -60,7 +60,7 @@ class Node extends PersistentObject {
       $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZING;
       $mapper = $this->getMapper();
       if ($mapper) {
-        $relatives = $mapper->loadRelation($this, $name, BUILDDEPTH_PROXIES_ONLY);
+        $relatives = $mapper->loadRelation($this, $name, BuildDepth::PROXIES_ONLY);
         $relDesc = $mapper->getRelation($name);
         if ($relDesc->isMultiValued()) {
           $mergeResult = self::mergeObjectLists($value, $relatives);
@@ -388,7 +388,7 @@ class Node extends PersistentObject {
    * Define the order of related Node instances. The mapper is responsible for
    * persisting the order of the given Node instances in relation to this Node.
    * @note Note instances, that are not explicitly sortable by a sortkey
-   * (@see IPersistenceMapper::getDefaultOrder()) will be ignored. If a given
+   * (@see PersistenceMapper::getDefaultOrder()) will be ignored. If a given
    * Node instance is not related to this Node yet, an exception will be thrown.
    * Any not persisted definition of a previous call will be overwritten
    * @param nodeList Array of sorted Node instances
@@ -412,9 +412,9 @@ class Node extends PersistentObject {
    * loaded, set the role parameter to null.
    * @param role The role of children to load (maybe null, to load all children) [default: null]
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        [default: BUILDDEPTH_SINGLE)]
+   *        [default: BuildDepth::SINGLE)]
    */
-  public function loadChildren($role=null, $buildDepth=BUILDDEPTH_SINGLE) {
+  public function loadChildren($role=null, $buildDepth=BuildDepth::SINGLE) {
     if ($role != null) {
       $this->loadRelations(array($role), $buildDepth);
     }
@@ -510,9 +510,9 @@ class Node extends PersistentObject {
    * loaded, set the role parameter to null.
    * @param role The role of parents to load (maybe null, to load all parents) [default: null]
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        [default: BUILDDEPTH_SINGLE)]
+   *        [default: BuildDepth::SINGLE)]
    */
-  public function loadParents($role=null, $buildDepth=BUILDDEPTH_SINGLE) {
+  public function loadParents($role=null, $buildDepth=BuildDepth::SINGLE) {
     if ($role != null) {
       $this->loadRelations(array($role), $buildDepth);
     }
@@ -655,9 +655,9 @@ class Node extends PersistentObject {
    * Load all objects in the given set of relations
    * @param roles An array of relation (=role) names
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        [default: BUILDDEPTH_SINGLE)]
+   *        [default: BuildDepth::SINGLE)]
    */
-  protected function loadRelations(array $roles, $buildDepth=BUILDDEPTH_SINGLE) {
+  protected function loadRelations(array $roles, $buildDepth=BuildDepth::SINGLE) {
     $oldState = $this->getState();
     foreach ($roles as $curRole) {
       if (isset($this->_relationStates[$curRole]) &&

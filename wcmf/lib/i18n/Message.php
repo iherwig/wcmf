@@ -156,6 +156,10 @@ class Message {
         self::$translations[$lang] = ${"messages_$lang"};
         self::$translations[$qualifiedLang] = ${"messages_$lang"};
       }
+      else {
+        self::$translations[$lang] = array();
+        self::$translations[$qualifiedLang] = array();
+      }
     }
     return self::$translations[$lang];
   }

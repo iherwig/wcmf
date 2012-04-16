@@ -19,6 +19,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\ObjectId;
@@ -78,7 +79,7 @@ class DisplayController extends Controller {
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rightsManager = RightsManager::getInstance();
     $concurrencyManager = ConcurrencyManager::getInstance();
     $request = $this->getRequest();
@@ -86,9 +87,9 @@ class DisplayController extends Controller {
 
     // load model
     $oid = ObjectId::parse($request->getValue('oid'));
-    if ($oid && $rightsManager->authorize($oid, '', ACTION_READ)) {
+    if ($oid && $rightsManager->authorize($oid, '', PersistenceAction::READ)) {
       // determine the builddepth
-      $buildDepth = BUILDDEPTH_SINGLE;
+      $buildDepth = BuildDepth::SINGLE;
       if ($request->hasValue('depth')) {
         $buildDepth = $request->getValue('depth');
       }

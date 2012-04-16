@@ -14,13 +14,13 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: class.Control.php -1   $
+ * $Id$
  */
 namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\presentation\control\Control;
-use wcmf\lib\presentation\control\IListStrategy;
+use wcmf\lib\presentation\control\ListStrategy;
 
 /**
  * FixedListStrategy implements a constant list of key value pairs.
@@ -33,13 +33,12 @@ use wcmf\lib\presentation\control\IListStrategy;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class FixedListStrategy implements IListStrategy
-{
+class FixedListStrategy implements ListStrategy {
+
   /**
-   * @see IListStrategy::getListMap
+   * @see ListStrategy::getListMap
    */
-  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null)
-  {
+  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null) {
     // see if we have an array variable or a list definition
     if (strPos($configuration, '$') === 0) {
       $entries = $GLOBALS[subStr($configuration, 1)];
@@ -51,18 +50,14 @@ class FixedListStrategy implements IListStrategy
       throw new ConfigurationException($configuration." is no array.");
     }
     // process list
-    foreach($entries as $curEntry)
-    {
+    foreach($entries as $curEntry) {
       preg_match_all("/([^\[]*)\[*([^\]]*)\]*/", $curEntry, $matches);
-      if (sizeOf($matches) > 0)
-      {
-        if ($val2 != '')
-        {
+      if (sizeOf($matches) > 0) {
+        if ($val2 != '') {
           // value given
           $map[$val1] = $val2;
         }
-        else
-        {
+        else {
           // only key given
           $map[$val1] = $val1;
         }
@@ -71,7 +66,4 @@ class FixedListStrategy implements IListStrategy
     return $map;
   }
 }
-
-// register this list strategy
-Control::registerListStrategy('fix', 'FixedListStrategy');
 ?>

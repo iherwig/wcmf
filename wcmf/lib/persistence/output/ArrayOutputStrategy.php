@@ -18,15 +18,15 @@
  */
 namespace wcmf\lib\persistence\output;
 
-use wcmf\lib\persistence\IOutputStrategy;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
  * ArrayOutputStrategy outputs an object's content into an array.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ArrayOutputStrategy implements IOutputStrategy {
+class ArrayOutputStrategy implements OutputStrategy {
 
   var $_writeValueProperties = false;
 
@@ -39,21 +39,21 @@ class ArrayOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see IOutputStrategy::writeHeader
+   * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
     // do nothing
   }
 
   /**
-   * @see IOutputStrategy::writeFooter
+   * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
     // do nothing
   }
 
   /**
-   * @see IOutputStrategy::writeObject
+   * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
     $content = array();

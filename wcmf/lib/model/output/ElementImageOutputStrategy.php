@@ -19,7 +19,7 @@
 namespace wcmf\lib\model\output;
 
 use wcmf\lib\model\output\ImageOutputStrategy;
-use wcmf\lib\model\persistence\IOutputStrategy;
+use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
  * ElementImageOutputStrategy outputs a tree of objects into an image file.
@@ -55,7 +55,7 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
   }
 
   /**
-   * @see IOutputStrategy::writeHeader
+   * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
     parent::writeHeader();
@@ -77,7 +77,7 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
   }
 
   /**
-   * @see IOutputStrategy::writeObject
+   * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
     $properties = $obj->getValueProperties($obj->getType());

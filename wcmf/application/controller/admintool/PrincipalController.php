@@ -74,8 +74,7 @@ class PrincipalController extends Controller {
     parent::initialize($request, $response);
 
     // create UserManager instance
-    $objectFactory = ObjectFactory::getInstance();
-    $this->_userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+    $this->_userManager = ObjectFactory::getInstance('userManager');
   }
 
   /**
@@ -122,7 +121,6 @@ class PrincipalController extends Controller {
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
-    $persistenceFacade = PersistenceFacade::getInstance();
     $this->_userManager->beginTransaction();
 
     // process actions

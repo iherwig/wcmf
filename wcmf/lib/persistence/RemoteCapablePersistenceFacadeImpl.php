@@ -20,8 +20,9 @@ namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\Session;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeIterator;
-use wcmf\lib\persistence\IPersistenceFacade;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -95,9 +96,9 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
   }
 
   /**
-   * @see IPersistenceFacade::load()
+   * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null) {
+  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null) {
     $obj = null;
     if ($this->isResolvingProxies() && strlen($oid->getPrefix()) > 0) {
       // load real subject
@@ -116,15 +117,15 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
   }
 
   /**
-   * @see IPersistenceFacade::create()
+   * @see PersistenceFacade::create()
    */
-  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null) {
+  public function create($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null) {
     $obj = parent::create($type, $buildDepth, $buildAttribs);
     return $obj;
   }
 
   /**
-   * @see IPersistenceFacade::getOIDs()
+   * @see PersistenceFacade::getOIDs()
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $result = parent::getOIDs($type, $criteria, $orderby, $pagingInfo);
@@ -132,9 +133,9 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
   }
 
   /**
-   * @see IPersistenceFacade::loadObjects()
+   * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($type, $buildDepth=BUILDDEPTH_SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null) {
 
     $tmpResult = parent::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
@@ -173,7 +174,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
 
     // search the proxy object if requested for the first time
     if (!$proxy) {
-      $persistenceFacade = PersistenceFacade::getInstance();
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $isRemoteCapableFacade = ($persistenceFacade instanceof RemoteCapablePersistenceFacadeImpl);
       $oldState = true;
       if ($isRemoteCapableFacade) {
@@ -187,7 +188,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
       if (!$proxy) {
         // the proxy has to be created
         Log::debug("Creating...", __CLASS__);
-        $proxy = $persistenceFacade->create($umi->getType(), BUILDDEPTH_SINGLE);
+        $proxy = $persistenceFacade->create($umi->getType(), BuildDepth::SINGLE);
         $proxy->setValue('umi', $umi);
         $proxy->save();
       }
@@ -200,7 +201,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
   /**
    * Load the real subject of a proxy from the remote instance.
    * @param umi The universal model id (oid with server prefix)
-   * @param buildDepth buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BUILDDEPTH_REQUIRED)
+   * @param buildDepth buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BuildDepth::REQUIRED)
    */
   protected function loadRemoteObject(ObjectId $umi, $buildDepth) {
     Log::debug("Resolve proxy object for: ".$umi, __CLASS__);
@@ -320,7 +321,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
    */
   protected function registerObject(ObjectId $umi, PersistentObject $obj, $buildDepth, $varName) {
     if ($buildDepth == 0) {
-      $buildDepth=BUILDDEPTH_SINGLE;
+      $buildDepth=BuildDepth::SINGLE;
     }
     // save the object in the session
     $session = Session::getInstance();
@@ -331,11 +332,6 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
     }
     $objects[$umiStr][$buildDepth] = $obj;
     $session->set($varName, $objects);
-
-    // register class definitions in session
-    $classFile = ObjectFactory::getClassfile(get_class($obj));
-    $mapperClassFile = ObjectFactory::getClassfile(get_class($obj->getMapper()));
-    $session->addClassDefinitions(array($classFile, $mapperClassFile));
   }
 
   /**
@@ -368,7 +364,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
    */
   protected function getRegisteredObject(ObjectId $umi, $buildDepth, $varName) {
     if ($buildDepth == 0) {
-      $buildDepth=BUILDDEPTH_SINGLE;
+      $buildDepth=BuildDepth::SINGLE;
     }
     $session = Session::getInstance();
     $umiStr = $umi->toString();
@@ -377,10 +373,10 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
       return $objects[$umiStr][$buildDepth];
     }
     // check if an object with larger build depth was stored already
-    if ($buildDepth == BUILDDEPTH_SINGLE) {
+    if ($buildDepth == BuildDepth::SINGLE) {
       $existingDepths = array_keys($objects[$umiStr]);
       foreach($existingDepths as $depth) {
-        if ($depth > 0 || $depth == BUILDDEPTH_INFINITE) {
+        if ($depth > 0 || $depth == BuildDepth::INFINITE) {
           return $objects[$umiStr][$depth];
         }
       }

@@ -39,20 +39,19 @@ use wcmf\lib\presentation\WCMFInifileParser;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AdminController extends Controller
-{
-  var $_userManager = null;
+class AdminController extends Controller {
+
+  private $_userManager = null;
 
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
+  public function initialize(&$request, &$response)
   {
     parent::initialize($request, $response);
 
     // create UserManager instance
-    $objectFactory = ObjectFactory::getInstance();
-    $this->_userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+    $this->_userManager = ObjectFactory::getInstance('userManager');
   }
   /**
    * @see Controller::validate()
@@ -80,16 +79,16 @@ class AdminController extends Controller
    */
   function executeKernel()
   {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $this->_userManager->beginTransaction();
 
     // assign model to view
     $userType = $this->_userManager->getUserClassName();
     $this->_response->setValue('userType', $userType);
-    $this->_response->setValue('userTemplateNode', $persistenceFacade->create($userType, BUILDDEPTH_REQUIRED));
+    $this->_response->setValue('userTemplateNode', $persistenceFacade->create($userType, BuildDepth::REQUIRED));
     $roleType = $this->_userManager->getRoleClassName();
     $this->_response->setValue('roleType', $roleType);
-    $this->_response->setValue('roleTemplateNode', $persistenceFacade->create($roleType, BUILDDEPTH_REQUIRED));
+    $this->_response->setValue('roleTemplateNode', $persistenceFacade->create($roleType, BuildDepth::REQUIRED));
 
     $this->_response->setValue('configfiles', WCMFInifileParser::getIniFiles());
     $this->_response->setValue('mainconfigfile', $GLOBALS['CONFIG_PATH'].$GLOBALS['MAIN_CONFIG_FILE']);

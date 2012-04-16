@@ -43,7 +43,7 @@ class ConcurrencyController extends Controller
    */
   function validate()
   {
-    if(!PersistenceFacade::isValidOID($this->_request->getValue('oid')))
+    if(!ObjectId::isValidOID($this->_request->getValue('oid')))
     {
       $this->setErrorMsg("No valid 'oid' given in data.");
       return false;

@@ -14,25 +14,24 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: class.TextControl.php -1   $
+ * $Id$
  */
 namespace wcmf\lib\presentation\control;
 
-use wcmf\lib\presentation\IView;
-use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\View;
+use wcmf\lib\presentation\control\BaseControl;
 
 /**
  * FileBrowserControl allows to browse files on the server.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class FileBrowserControl extends Control
-{
+class FileBrowserControl extends BaseControl {
+
   /**
    * @see Control::assignViewValues()
    */
-  protected function assignViewValues(IView $view)
-  {
+  protected function assignViewValues(View $view) {
     $view->assign('directory', dirname($view->getTemplateVars('value')));
   }
 }

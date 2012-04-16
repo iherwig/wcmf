@@ -20,6 +20,7 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
@@ -222,7 +223,7 @@ class BatchDisplayController extends BatchController {
     if ($this->isRegistered($oid)) {
       return;
     }
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $session = Session::getInstance();
 
     // restore the request from session

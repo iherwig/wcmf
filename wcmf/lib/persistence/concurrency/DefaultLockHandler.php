@@ -19,7 +19,9 @@
 namespace wcmf\lib\persistence\concurrency;
 
 use wcmf\lib\core\Session;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -37,7 +39,7 @@ use wcmf\lib\security\UserManager;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DefaultLockHandler implements ILockHandler {
+class DefaultLockHandler implements LockHandler {
 
   const SESSION_VARNAME = 'DefaultLockHandler.locks';
 
@@ -97,7 +99,7 @@ class DefaultLockHandler implements ILockHandler {
     $userTpl = $query->getObjectTemplate(UserManager::getUserClassName());
     $userTpl->setOID($currentUser->getOID());
     $userTpl->addNode($tpl);
-    $locks = $query->execute(BUILDDEPTH_SINGLE);
+    $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
       // delete lock immediatly
       $lock->getMapper()->delete($lock);
@@ -112,7 +114,7 @@ class DefaultLockHandler implements ILockHandler {
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
-    $locks = $query->execute(BUILDDEPTH_SINGLE);
+    $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
       // delete lock immediatly
       $lock->getMapper()->delete($lock);
@@ -134,7 +136,7 @@ class DefaultLockHandler implements ILockHandler {
     $userTpl = $query->getObjectTemplate(UserManager::getUserClassName());
     $userTpl->setOID($currentUser->getOID());
     $userTpl->addNode($tpl);
-    $locks = $query->execute(BUILDDEPTH_SINGLE);
+    $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
       // delete lock immediatly
       $lock->getMapper()->delete($lock);
@@ -159,7 +161,7 @@ class DefaultLockHandler implements ILockHandler {
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     $tpl->setValue('objectid', Criteria::asValue('=', $oid));
-    $locks = $query->execute(BUILDDEPTH_SINGLE);
+    $locks = $query->execute(BuildDepth::SINGLE);
     if (sizeof($locks) > 0) {
       $lockObj = $locks[0];
       $user = $lockObj->getValue(UserManager::getUserClassName());
@@ -185,8 +187,8 @@ class DefaultLockHandler implements ILockHandler {
     if ($lock->getType() == Lock::TYPE_PESSIMISTIC) {
       // pessimistic locks must be stored in the database in order
       // to be seen by other users
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $lockObj = $persistenceFacade->create('Locktable', BUILDDEPTH_REQUIRED);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $lockObj = $persistenceFacade->create('Locktable', BuildDepth::REQUIRED);
       $lockObj->setValue('sessionid', $lock->getSessionID());
       $lockObj->setValue('objectid', $lock->getOID());
       $lockObj->setValue('since', $lock->getCreated());

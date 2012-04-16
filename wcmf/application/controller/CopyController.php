@@ -22,6 +22,7 @@ use wcmf\application\controller\BatchController;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
@@ -101,7 +102,7 @@ class CopyController extends BatchController {
         return false;
       }
       if($this->_request->hasValue('targetoid') &&
-        !PersistenceFacade::isValidOID($this->_request->getValue('targetoid')))
+        !ObjectId::isValidOID($this->_request->getValue('targetoid')))
       {
         $this->appendErrorMsg("Invalid 'targetoid' parameter given in data.");
         return false;
@@ -110,7 +111,7 @@ class CopyController extends BatchController {
       // check if the parent accepts this node type (only when not adding to root)
       $addOk = true;
       if ($this->_request->hasValue('targetoid')) {
-        $persistenceFacade = PersistenceFacade::getInstance();
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
         $targetOID = $this->_request->getValue('targetoid');
         $nodeOID = $this->_request->getValue('oid');
 
@@ -191,7 +192,7 @@ class CopyController extends BatchController {
 
       // with move action, we only need to attach the Node to the new target
       // the children will not be loaded, they will be moved automatically
-      $nodeCopy = $persistenceFacade->load($nodeOID, BUILDDEPTH_SINGLE);
+      $nodeCopy = $persistenceFacade->load($nodeOID, BuildDepth::SINGLE);
       if ($nodeCopy) {
         // attach the node to the target node
         $parentNode = $this->getTargetNode($targetOID);
@@ -322,7 +323,7 @@ class CopyController extends BatchController {
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Copying node ".$oid, __CLASS__);
     }
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // load the original node
     $node = $persistenceFacade->load($oid, BUIDLDEPTH_SINGLE);
@@ -334,7 +335,7 @@ class CopyController extends BatchController {
     $nodeCopy = $this->getCopy($node->getOID());
     if ($nodeCopy == null) {
       // if not, create a copy
-      $nodeCopy = $persistenceFacade->create($node->getType(), BUILDDEPTH_SINGLE);
+      $nodeCopy = $persistenceFacade->create($node->getType(), BuildDepth::SINGLE);
       $node->copyValues($nodeCopy, false);
     }
 
@@ -395,7 +396,7 @@ class CopyController extends BatchController {
         $targetNode = new Node('');
       }
       else {
-        $targetNode = $this->loadFromTarget($targetOID, BUILDDEPTH_SINGLE);
+        $targetNode = $this->loadFromTarget($targetOID, BuildDepth::SINGLE);
       }
       $this->_targetNode = &$targetNode;
     }
@@ -432,8 +433,8 @@ class CopyController extends BatchController {
     // check if the oid exists in the registry
     if (!isset($registry[$origOID])) {
       // check if the corresponding base oid exists in the registry
-      $persistenceFacade = PersistenceFacade::getInstance();
-      $origNodeType = $persistenceFacade->create($requestedType, BUILDDEPTH_SINGLE);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $origNodeType = $persistenceFacade->create($requestedType, BuildDepth::SINGLE);
       $baseOID = PersistenceFacade::composeOID(array('type' => $origNodeType->getBaseType(), 'id' => $origOIDParts['id']));
       if (!isset($registry[$baseOID])) {
         if (Log::isDebugEnabled(__CLASS__)) {
@@ -477,7 +478,7 @@ class CopyController extends BatchController {
    * @param node A reference to the node
    */
   protected function saveToTarget($node) {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $originalMapper = $persistenceFacade->getMapper($node->getType());
 
     $targetMapper = $this->getTargetMapper($originalMapper);
@@ -493,13 +494,13 @@ class CopyController extends BatchController {
    * @return A reference to the node
    */
   protected function loadFromTarget($oid) {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $type = PersistenceFacade::getOIDParameter($oid, 'type');
     $originalMapper = $persistenceFacade->getMapper($type);
 
     $targetMapper = $this->getTargetMapper($originalMapper);
     $persistenceFacade->setMapper($type, $targetMapper);
-    $node = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+    $node = $persistenceFacade->load($oid, BuildDepth::SINGLE);
 
     $persistenceFacade->setMapper($node->getType(), $originalMapper);
 

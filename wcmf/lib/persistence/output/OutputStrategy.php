@@ -16,18 +16,18 @@
  *
  * $Id$
  */
-namespace wcmf\lib\persistence;
+namespace wcmf\lib\persistence\output;
 
 use wcmf\lib\persistence\PersistentObject;
 
 /**
- * IOutputStrategy defines the interface for classes that write an
+ * OutputStrategy defines the interface for classes that write an
  * object's content to a destination (called 'document') using a special format.
  * OutputStrategy implements the 'Strategy Pattern'.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface IOutputStrategy {
+interface OutputStrategy {
 
   /**
    * Write the document header.

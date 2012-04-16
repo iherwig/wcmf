@@ -35,16 +35,16 @@ class Formatter {
   private static $_formats = array();
 
   /**
-   * Register a IFormat implementation for formatting messages.
-   * This method must be called for all IFormat implementations in order
+   * Register a Format implementation for formatting messages.
+   * This method must be called for all Format implementations in order
    * to be usable.
    * @param formatName The name of the format as used in requests/responses (case insensitive)
    * @param className The name of the implementation class
    */
   public static function registerFormat($formatName, $className) {
     $impl = new $className;
-    if (!($impl instanceof IFormat)) {
-      throw new ConfigurationException($className." must implement IFormat.");
+    if (!($impl instanceof Format)) {
+      throw new ConfigurationException($className." must implement Format.");
     }
     self::$_formats[strtolower($formatName)] = $className;
   }
@@ -63,7 +63,7 @@ class Formatter {
     }
     $formatter = self::getFormatImplementation($format);
     if ($formatter === null) {
-      throw new ConfigurationException("No IFormat implementation registered for ".$format.
+      throw new ConfigurationException("No Format implementation registered for ".$format.
       	".\nRequest: ".$request->__toString());
     }
 
@@ -92,7 +92,7 @@ class Formatter {
     }
     $formatter = self::getFormatImplementation($format);
     if ($formatter === null) {
-      throw new ConfigurationException("No IFormat implementation registered for ".$format.
+      throw new ConfigurationException("No Format implementation registered for ".$format.
       	".\nResponse: ".$response->__toString());
     }
     $formatter->serialize($response);
@@ -101,7 +101,7 @@ class Formatter {
   /**
    * Get the format implementation
    * @param formatName The name of the format
-   * @return An instance of an IFormat implementation
+   * @return An instance of an Format implementation
    */
   private static function getFormatImplementation($formatName) {
     $formatName = strtolower($formatName);

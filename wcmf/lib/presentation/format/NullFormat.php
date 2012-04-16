@@ -21,7 +21,7 @@ namespace wcmf\lib\presentation\format;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response; // ambiguous
 use wcmf\lib\presentation\format\Formatter;
-use wcmf\lib\presentation\format\IFormat;
+use wcmf\lib\presentation\format\Format;
 
 /**
  * Define the message format
@@ -34,15 +34,15 @@ define("MSG_FORMAT_NULL", "NULL");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullFormat implements IFormat {
+class NullFormat implements Format {
 
   /**
-   * @see IFormat::deserialize()
+   * @see Format::deserialize()
    */
   public function deserialize(Request $request) {}
 
   /**
-   * @see IFormat::serialize()
+   * @see Format::serialize()
    */
   public function serialize(Response $response) {}
 }

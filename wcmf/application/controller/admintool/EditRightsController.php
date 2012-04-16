@@ -68,12 +68,11 @@ class EditRightsController extends Controller
    */
   function executeKernel()
   {
-    $objectFactory = ObjectFactory::getInstance();
-    $userManager = $objectFactory->createInstanceFromConfig('implementation', 'UserManager');
+    $userManager = ObjectFactory::getInstance('userManager');
     $rightsManager = RightsManager::getInstance();
 
     $configFiles = WCMFInifileParser::getIniFiles();
-    $rightNames = array(ACTION_READ, ACTION_MODIFY, ACTION_DELETE, ACTION_CREATE);
+    $rightNames = array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE);
 
     // process actions
     if ($this->_request->getAction() == 'save')
@@ -123,7 +122,7 @@ class EditRightsController extends Controller
     // load model
     $rights = array();
     foreach($configFiles as $configFile)
-      foreach (array(ACTION_READ, ACTION_MODIFY, ACTION_DELETE, ACTION_CREATE) as $action)
+      foreach (array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE) as $action)
       {
         $right = $rightsManager->getRight($configFile, $this->_request->getValue('oid'), '', $action);
         // flatten role array for input control

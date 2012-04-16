@@ -18,6 +18,7 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -39,26 +40,24 @@ use wcmf\lib\security\RightsManager;
  * @param[in] type The type to display get the instance for (action: detail)
  * @param[in] oid The object id of the node to read (action: detail)
  * @param[out] typeTemplate An instance of the requested type (action: detail)
- * @param[out] object The requested object loaded with BUILDDEPTH_SINGLE, if an oid is given, same as typeTemplate else (action: detail)
+ * @param[out] object The requested object loaded with BuildDepth::SINGLE, if an oid is given, same as typeTemplate else (action: detail)
  * @param[out] typeTemplates A list of instances of all known types (action: model)
  * @param[out] isNew Boolean indicating if the object exists or not (action: model)
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class WCMFFrontendController extends Controller
-{
+class WCMFFrontendController extends Controller {
+
   /**
    * @see Controller::validate()
    */
-  protected function validate()
-  {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if($request->getAction() == 'detail')
-    {
+    if($request->getAction() == 'detail') {
       if ($request->hasValue('type')) {
         $type = $request->getValue('type');
-        if (!PersistenceFacade::getInstance()->isKnownType($type)) {
+        if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
           $response->addError(ApplicationError::get('CLASS_NAME_INVALID'));
           return false;
         }
@@ -73,26 +72,24 @@ class WCMFFrontendController extends Controller
     }
     return true;
   }
+
   /**
    * @see Controller::executeKernel()
    */
-  protected function executeKernel()
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
+  protected function executeKernel() {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rightsManager = RightsManager::getInstance();
     $parser = InifileParser::getInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    if ($request->getAction() == 'model')
-    {
+    if ($request->getAction() == 'model') {
       // get all known types
       $knownTypes = $persistenceFacade->getKnownTypes();
 
       // get root types from ini file
       $rootTypes = $parser->getValue('rootTypes', 'cms');
-      if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '')
-      {
+      if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '') {
         $this->setErrorMsg(Message::get("No root types defined."));
         $response->setAction('failure');
         return true;
@@ -100,12 +97,10 @@ class WCMFFrontendController extends Controller
 
       // create type templates
       $typeTemplates = array();
-      foreach ($knownTypes as $type)
-      {
-        if ($rightsManager->authorize($type, '', ACTION_READ))
-        {
+      foreach ($knownTypes as $type) {
+        if ($rightsManager->authorize($type, '', PersistenceAction::READ)) {
           // create the template
-          $tpl = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+          $tpl = $persistenceFacade->create($type, BuildDepth::SINGLE);
 
           // set properties used in views
           if (in_array($type, $rootTypes)) {
@@ -122,20 +117,18 @@ class WCMFFrontendController extends Controller
       // set response values
       $response->setValue('typeTemplates', $typeTemplates);
     }
-    else if ($request->getAction() == 'detail')
-    {
+    else if ($request->getAction() == 'detail') {
       // called with type parameter
       if ($request->hasValue('type')) {
-        $typeTemplate = $persistenceFacade->create($request->getValue('type'), BUILDDEPTH_SINGLE);
+        $typeTemplate = $persistenceFacade->create($request->getValue('type'), BuildDepth::SINGLE);
         $response->setValue('object', $typeTemplate);
         $response->setValue('typeTemplate', $typeTemplate);
         $response->setValue('isNew', true);
       }
       // called with oid parameter
-      if ($request->hasValue('oid'))
-      {
+      if ($request->hasValue('oid')) {
         $oid = ObjectId::parse($request->getValue('oid'));
-        $typeTemplate = $persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE);
+        $typeTemplate = $persistenceFacade->create($oid->getType(), BuildDepth::SINGLE);
 
         // call DisplayController to read the requested node
         // and merge the responses

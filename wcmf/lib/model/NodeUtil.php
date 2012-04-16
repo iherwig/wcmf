@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\model;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
@@ -27,7 +28,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PathDescription;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\control\ControlRenderer;
 use wcmf\lib\presentation\renderer\ValueRenderer;
 use wcmf\lib\util\StringUtil;
 
@@ -77,7 +78,7 @@ class NodeUtil {
    */
   protected static function getConnectionsImpl($type, $otherRole, $otherType,
           $hierarchyType, array &$result=array(), array $currentPath=array()) {
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = $persistenceFacade->getMapper($type);
 
     // check relations
@@ -240,7 +241,7 @@ class NodeUtil {
           }
         }
       }
-      $tmpDisplay = Control::translateValue($tmpDisplay, $inputType, false, null, $language);
+      $tmpDisplay = ControlRenderer::getControl($inputType)->translateValue($tmpDisplay, $inputType, false, null, $language);
       if (strlen($tmpDisplay) == 0) {
         $tmpDisplay = $node->getOID();
       }
@@ -267,8 +268,8 @@ class NodeUtil {
    * @return The display string
    */
   public static function getDisplayNameFromType($type) {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $typeNode = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $typeNode = $persistenceFacade->create($type, BuildDepth::SINGLE);
     return $typeNode->getObjectDisplayName();
   }
 

@@ -20,8 +20,8 @@ namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\persistence\IPersistenceFacade;
-use wcmf\lib\persistence\IPersistenceMapper;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
@@ -115,9 +115,9 @@ abstract class AbstractMapper {
   /**
    * @see PersistenceMapper::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null) {
-    if (!$this->checkAuthorization($oid, ACTION_READ)) {
-      $this->authorizationFailedError($oid, ACTION_READ);
+  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null) {
+    if (!$this->checkAuthorization($oid, PersistenceAction::READ)) {
+      $this->authorizationFailedError($oid, PersistenceAction::READ);
       return;
     }
 
@@ -128,7 +128,7 @@ abstract class AbstractMapper {
     $object = $this->loadImpl($oid, $buildDepth, $buildAttribs, $buildTypes);
     if ($object != null) {
       // set immutable if not authorized for modification
-      if (!$this->checkAuthorization($oid, ACTION_MODIFY)) {
+      if (!$this->checkAuthorization($oid, PersistenceAction::MODIFY)) {
         $object->setImmutable();
       }
       $this->initialize($object);
@@ -142,7 +142,7 @@ abstract class AbstractMapper {
   /**
    * @see PersistenceMapper::create()
    */
-  public function create($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null) {
+  public function create($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null) {
     // Don't check rights here, because object creation may be needed
     // for internal purposes. That newly created objects may not be saved
     // to the storage is asured by the save method.
@@ -164,12 +164,12 @@ abstract class AbstractMapper {
     $isNew = ($object->getState() == PersistentObject::STATE_NEW);
 
     $oid = $object->getOID();
-    if ($isDirty && !$this->checkAuthorization($oid, ACTION_MODIFY)) {
-      $this->authorizationFailedError($oid, ACTION_MODIFY);
+    if ($isDirty && !$this->checkAuthorization($oid, PersistenceAction::MODIFY)) {
+      $this->authorizationFailedError($oid, PersistenceAction::MODIFY);
       return;
     }
-    elseif ($isNew && !$this->checkAuthorization($oid, ACTION_CREATE)) {
-      $this->authorizationFailedError($oid, ACTION_CREATE);
+    elseif ($isNew && !$this->checkAuthorization($oid, PersistenceAction::CREATE)) {
+      $this->authorizationFailedError($oid, PersistenceAction::CREATE);
       return;
     }
 
@@ -198,8 +198,8 @@ abstract class AbstractMapper {
    */
   public function delete(PersistentObject $object) {
     $oid = $object->getOID();
-    if (!$this->checkAuthorization($oid, ACTION_DELETE)) {
-      $this->authorizationFailedError($oid, ACTION_DELETE);
+    if (!$this->checkAuthorization($oid, PersistenceAction::DELETE)) {
+      $this->authorizationFailedError($oid, PersistenceAction::DELETE);
       return;
     }
 
@@ -246,7 +246,7 @@ abstract class AbstractMapper {
   protected function authorizationFailedError(ObjectId $oid, $action) {
     // when reading only log the error to avoid errors on the display
     $msg = Message::get("Authorization failed for action '%1%' on '%2%'.", array($action, $oid));
-    if ($action == ACTION_READ) {
+    if ($action == PersistenceAction::READ) {
       Log::error($msg."\n".Application::getStackTrace(), __CLASS__);
     }
     else {
@@ -263,26 +263,26 @@ abstract class AbstractMapper {
   protected function initialize(PersistentObject $object) {}
 
   /**
-   * @see IPersistenceFacade::load()
+   * @see PersistenceFacade::load()
    * @note Precondition: Object rights have been checked already
    *
    */
-  abstract protected function loadImpl(ObjectId $oid, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null, $buildTypes=null);
+  abstract protected function loadImpl(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null);
 
   /**
-   * @see IPersistenceFacade::create()
+   * @see PersistenceFacade::create()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function createImpl($type, $buildDepth=BUILDDEPTH_SINGLE, $buildAttribs=null);
+  abstract protected function createImpl($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null);
 
   /**
-   * @see IPersistenceMapper::save()
+   * @see PersistenceMapper::save()
    * @note Precondition: Object rights have been checked already
    */
   abstract protected function saveImpl(PersistentObject $object);
 
   /**
-   * @see IPersistenceMapper::delete()
+   * @see PersistenceMapper::delete()
    * @note Precondition: Object rights have been checked already
    */
   abstract protected function deleteImpl(PersistentObject $object);

@@ -19,6 +19,7 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\Session;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceFacade;
 
 /**
@@ -106,8 +107,8 @@ class PersistentIterator implements Iterator {
    * Move forward to next element
    */
   public function next() {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $node = $persistenceFacade->load($this->_currentOID, BUILDDEPTH_SINGLE);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $node = $persistenceFacade->load($this->_currentOID, BuildDepth::SINGLE);
 
     $childOIDs = $node->getProperty('childoids');
     $this->addToSeenList($childOIDs, ++$this->_currentDepth);

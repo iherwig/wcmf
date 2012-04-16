@@ -23,7 +23,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\AbstractFormat;
-use wcmf\lib\presentation\format\IFormat;
+use wcmf\lib\presentation\format\Format;
 
 /**
  * HierarchicalFormat maybe used as base class for formats that
@@ -36,7 +36,7 @@ use wcmf\lib\presentation\format\IFormat;
 abstract class HierarchicalFormat extends AbstractFormat {
 
   /**
-   * @see IFormat::deserialize()
+   * @see Format::deserialize()
    */
   public function deserialize(Request $request) {
     $values = $request->getValues();
@@ -47,7 +47,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
   }
 
   /**
-   * @see IFormat::serialize()
+   * @see Format::serialize()
    */
   public function serialize(Response $response) {
     $values = $response->getValues();

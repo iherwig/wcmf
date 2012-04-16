@@ -21,17 +21,10 @@ namespace wcmf\lib\security;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Session;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\Application;
 use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\security\AnonymousUser;
 use wcmf\lib\security\AuthUser;
-
-/**
- * Some constants describing actions on PersistentObjects
- */
-define("ACTION_READ",   "read");
-define("ACTION_MODIFY", "modify");
-define("ACTION_DELETE", "delete");
-define("ACTION_CREATE", "create");
 
 define("RIGHT_MODIFIER_ALLOW", "+");
 define("RIGHT_MODIFIER_DENY",  "-");
@@ -39,16 +32,17 @@ define("RIGHT_MODIFIER_DENY",  "-");
 define("AUTHORIZATION_SECTION", "authorization");
 
 /**
- * Actions that do not require authorization
- */
-$PUBLIC_ACTIONS = array('fatal', 'login', 'dologin', 'logout');
-
-/**
  * RightsManager is used to handle all authorization requests.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class RightsManager {
+
+  /**
+   * Actions that do not require authorization
+   * TODO: make this configurable
+   */
+  private static $_PUBLIC_ACTIONS = array('fatal', 'login', 'dologin', 'logout');
 
   private static $_instance = null;
   private $_anonymousUser = null;
@@ -135,11 +129,10 @@ class RightsManager {
    * @return True/False whether authorization succeded/failed.
    */
   public function authorize($resource, $context, $action) {
-    global $PUBLIC_ACTIONS;
     if ($this->isAnonymous()) {
       return true;
     }
-    if (!in_array($action, $PUBLIC_ACTIONS)) {
+    if (!in_array($action, self::$_PUBLIC_ACTIONS)) {
       // if authorization is requested for an oid, we check the type first
       if (ObjectId::isValid($resource)) {
         $oid = ObjectId::parse($resource);

@@ -14,16 +14,17 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: class.Control.php -1   $
+ * $Id$
  */
 namespace wcmf\lib\presentation\control;
 
 use \Exception;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\control\Control;
-use wcmf\lib\presentation\control\IListStrategy;
+use wcmf\lib\presentation\control\ListStrategy;
 
 /**
  * AsyncListStrategy implements a list of entities that is retrieved
@@ -39,19 +40,17 @@ use wcmf\lib\presentation\control\IListStrategy;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AsyncListStrategy implements IListStrategy
-{
+class AsyncListStrategy implements ListStrategy {
+
   /**
-   * @see IListStrategy::getListMap
+   * @see ListStrategy::getListMap
    */
-  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null)
-  {
+  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null) {
     // load the translated value only
     $parts = preg_split('/\|/', $configuration);
     $entityType = array_shift($parts);
     // check for (remote) oid
-    if (ObjectId::isValid($nodeOid))
-    {
+    if (ObjectId::isValid($nodeOid)) {
       $oid = ObjectId::parse($nodeOid);
       $typeOid = new ObjectId($entityType, $value, $oid->getPrefix());
 
@@ -59,12 +58,10 @@ class AsyncListStrategy implements IListStrategy
         $map[$value] = self::resolveByOid($typeOid, $language);
       }
     }
-    else
-    {
+    else {
       // since this may be a multivalue field, the ids may be separated by commas
       $ids = split(',', $value);
-      foreach ($ids as $id)
-      {
+      foreach ($ids as $id) {
         // oid may be pre-set
         $oid = new ObjectId($entityType, $id);
         $resolvedValue = self::resolveByOid($oid, $language);
@@ -79,6 +76,7 @@ class AsyncListStrategy implements IListStrategy
     }
     return $map;
   }
+
   /**
    * Resolves the display value of the given oid.
    * @param oid The oid of the requested object.
@@ -86,17 +84,14 @@ class AsyncListStrategy implements IListStrategy
    *                 default is Localization::getDefaultLanguage()
    * @return String The display value of oid, or null if oid is invalid.
    */
-  private static function resolveByOid(ObjectId $oid, $language=null)
-  {
+  private static function resolveByOid(ObjectId $oid, $language=null) {
     $result = null;
-    if (ObjectId::isValid($oid))
-    {
-      $persistenceFacade = PersistenceFacade::getInstance();
+    if (ObjectId::isValid($oid)) {
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $localization = Localization::getInstance();
       try {
-        $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
-        if ($obj != null)
-        {
+        $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
+        if ($obj != null) {
           // localize object if requested
           if ($language != null) {
             $localization->loadTranslation($obj, $language);
@@ -110,7 +105,4 @@ class AsyncListStrategy implements IListStrategy
     return $result;
   }
 }
-
-// register this list strategy
-Control::registerListStrategy('async', 'AsyncListStrategy');
 ?>

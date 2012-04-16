@@ -19,11 +19,11 @@
 namespace wcmf\lib\presentation;
 
 /**
- * IView defines the interface for all view implementations.
+ * View defines the interface for all view implementations.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface IView
+interface View
 {
   function setup();
 

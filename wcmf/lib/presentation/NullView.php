@@ -18,14 +18,14 @@
  */
 namespace wcmf\lib\presentation;
 
-use wcmf\lib\presentation\IView;
+use wcmf\lib\presentation\View;
 
 /**
  * NullView is a stub class that implements all view methods.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullView implements IView
+class NullView implements View
 {
   public function setup() {}
 

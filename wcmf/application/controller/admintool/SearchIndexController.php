@@ -19,6 +19,8 @@
 namespace wcmf\application\controller\admintool;
 
 use wcmf\application\controller\BatchController;
+
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\util\LuceneSearch;
@@ -34,27 +36,22 @@ use wcmf\lib\util\LuceneSearch;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SearchIndexController extends BatchController
-{
+class SearchIndexController extends BatchController {
 
   /**
    * @see BatchController::getWorkPackage()
    */
-  function getWorkPackage($number)
-  {
-    if ($number == 0)
-    {
+  protected function getWorkPackage($number) {
+    if ($number == 0) {
       // get all types to index
       $types = array();
-      $persistenceFacade = PersistenceFacade::getInstance();
-      foreach (PersistenceFacade::getKnownTypes() as $type)
-      {
-        $tpl = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      foreach ($persistenceFacade->getKnownTypes() as $type) {
+        $tpl = $persistenceFacade->create($type, BuildDepth::SINGLE);
         if ($tpl->isIndexInSearch()) {
           array_push($types, $type);
         }
       }
-
       LuceneSearch::resetIndex();
 
       return array('name' => Message::get('Collect objects'), 'size' => 1, 'oids' => $types, 'callback' => 'collect');
@@ -63,16 +60,15 @@ class SearchIndexController extends BatchController
       return null;
     }
   }
+
   /**
    * Collect all oids of the given types
    * @param types The types to process
    * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
    */
-  function collect($types)
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    foreach ($types as $type)
-    {
+  protected function collect($types) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    foreach ($types as $type) {
       $oids = $persistenceFacade->getOIDs($type);
       if (sizeof($oids) == 0) {
         $oids = array(1);
@@ -80,19 +76,17 @@ class SearchIndexController extends BatchController
       $this->addWorkPackage(Message::get('Indexing %1%', array($type)), 10, $oids, 'index');
     }
   }
+
   /**
    * Create the lucene index from the given objects
    * @param oids The oids to process
    * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
    */
-  function index($oids)
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    foreach($oids as $oid)
-    {
-      if (PersistenceFacade::isValidOID($oid))
-      {
-        $obj = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+  protected function index($oids) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    foreach($oids as $oid) {
+      if (ObjectId::isValidOID($oid)) {
+        $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
         $obj->indexInSearch();
       }
     }
@@ -105,8 +99,7 @@ class SearchIndexController extends BatchController
     }
   }
 
-  function optimize($oids)
-  {
+  function optimize($oids) {
     $index = LuceneSearch::getIndex();
     $index->optimize();
   }

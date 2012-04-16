@@ -61,8 +61,8 @@ use wcmf\lib\persistence\PersistentObject;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Localization
-{
+class Localization {
+
   private static $_instance = null;
   private $_supportedLanguages = null;
 
@@ -72,8 +72,7 @@ class Localization
    * Returns the only instance of the class.
    * @return Localization instance
    */
-  public static function getInstance()
-  {
+  public static function getInstance() {
     if (!isset(self::$_instance)) {
       self::$_instance = new Localization();
     }
@@ -85,8 +84,7 @@ class Localization
    * Reads the key 'defaultLanguage' in the configuation section 'i18n'.
    * @return The default language value (e.g. en)
    */
-  public function getDefaultLanguage()
-  {
+  public function getDefaultLanguage() {
     $parser = InifileParser::getInstance();
 
     if (($defaultLanguage = $parser->getValue('defaultLanguage', 'i18n')) === false) {
@@ -98,32 +96,28 @@ class Localization
     }
     return $defaultLanguage;
   }
+
   /**
    * Get all supported languages.
    * @return An associative array with the language codes as keys and the names as values.
    */
-  public function getSupportedLanguages()
-  {
-    if ($this->_supportedLanguages == null)
-    {
+  public function getSupportedLanguages() {
+    if ($this->_supportedLanguages == null) {
       // check if the configuration section exists
       $parser = InifileParser::getInstance();
       if (($languages = $parser->getSection('languages')) !== false) {
         $this->_supportedLanguages = $languages;
       }
       // if not, use the languageType
-      else
-      {
+      else {
         $languageType = $parser->getValue('languageType', 'i18n');
         if ($languageType === false) {
           throw new ConfigurationException("No 'languageType' defined in configfile. ".$parser->getErrorMsg());
         }
-        else
-        {
-          $persistenceFacade = PersistenceFacade::getInstance();
+        else {
+          $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
           $languages = $persistenceFacade->loadObjects($languageType, BUILDEPTH_SINGLE);
-          for($i=0; $i<sizeof($languages); $i++)
-          {
+          for($i=0; $i<sizeof($languages); $i++) {
             $curLanguage = $languages[$i];
             $this->_supportedLanguages[$curLanguage->getCode()] = $curLanguage->getName();
           }
@@ -132,56 +126,57 @@ class Localization
     }
     return $this->_supportedLanguages;
   }
+
   /**
    * Get the type name of the translation instances.
    * @return The type name.
    */
-  public static function getTranslationType()
-  {
+  public static function getTranslationType() {
     $parser = InifileParser::getInstance();
     if (($type = $parser->getValue('translationType', 'i18n')) === false) {
       throw new ConfigurationException("No translation type defined in configfile. ".$parser->getErrorMsg());
     }
     return $type;
   }
+
   /**
    * Get the input types that are translatable.
    * @return The input type names.
    */
-  protected static function getIncludedInputTypes()
-  {
+  protected static function getIncludedInputTypes() {
     $parser = InifileParser::getInstance();
     if (($inputTypes = $parser->getValue('inputTypes', 'i18n')) === false) {
       throw new ConfigurationException("No input types defined in configfile. ".$parser->getErrorMsg());
     }
     return $inputTypes;
   }
+
   /**
    * Get a newly created instance of the type defined in
    * the key 'type' in the configuration section 'i18n'.
    * @return An instance.
    */
-  public static function createTranslationInstance()
-  {
-    $obj = ObjectFactory::createInstanceFromConfig('i18n', 'translationType');
+  public static function createTranslationInstance() {
+    $obj = ObjectFactory::getInstance('translationType');
     return $obj;
   }
+
   /**
-   * Load a single translated object. The object is always loaded with BUILDDEPTH_SINGLE.
+   * Load a single translated object. The object is always loaded with BuildDepth::SINGLE.
    * @param oid The object id of the object to load the translation for.
    * @param lang The language of the translation to load.
    * @param useDefaults True/False wether to use the default language values
    *    for untranslated/empty values or not. Optional, default is true
    * @return A reference to the translated object.
    */
-  public function loadTranslatedObject(ObjectId $oid, $lang, $useDefaults=true)
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $object = $persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+  public function loadTranslatedObject(ObjectId $oid, $lang, $useDefaults=true) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
 
     $this->loadTranslation($object, $lang, $useDefaults, false);
     return $object;
   }
+
   /**
    * Load a translation of an entity for a specific language.
    * @note The object state will be changed to dirty by this operation, so make
@@ -194,8 +189,7 @@ class Localization
    * @param recursive True/False wether to load translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    */
-  public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true)
-  {
+  public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true) {
     if ($object == null) {
       throw new IllegalArgumentException("Cannot load translation for null");
     }
@@ -204,14 +198,13 @@ class Localization
       // nothing to do
     }
     // load the translations and translate the object for any other language
-    else
-    {
+    else {
       $type = self::getTranslationType();
       $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
       $tpl->setObjectid(Criteria::asValue("=", $object->getOID()->__toString()));
       $tpl->setLanguage(Criteria::asValue("=", $lang));
-      $translations = $query->execute(BUILDDEPTH_SINGLE);
+      $translations = $query->execute(BuildDepth::SINGLE);
 
       // set the translated values in the object
       $iter = new NodeValueIterator($object, false);
@@ -231,6 +224,7 @@ class Localization
       }
     }
   }
+
   /**
    * Save a translation of an entity for a specific language. Only the
    * values that have a non-empty value are considered as translations and stored.
@@ -243,15 +237,13 @@ class Localization
    * @param recursive True/False wether to save translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    */
-  public function saveTranslation(PersistentObject $object, $lang, $saveEmptyValues=false, $recursive=true)
-  {
+  public function saveTranslation(PersistentObject $object, $lang, $saveEmptyValues=false, $recursive=true) {
     // if the requested language is the default language, do nothing
     if ($lang == $this->getDefaultLanguage()) {
       // nothing to do
     }
     // save the translations for any other language
-    else
-    {
+    else {
       $object->beforeUpdate();
 
       // get the existing translations for the requested language
@@ -260,7 +252,7 @@ class Localization
       $tpl = $query->getObjectTemplate($type);
       $tpl->setObjectid(Criteria::asValue("=", $object->getOID()->__toString()));
       $tpl->setLanguage(Criteria::asValue("=", $lang));
-      $translations = $query->execute(BUILDDEPTH_SINGLE);
+      $translations = $query->execute(BuildDepth::SINGLE);
 
       // save the translations, ignore pk values
       $pkNames = $object->getPkNames();
@@ -284,21 +276,20 @@ class Localization
       }
     }
   }
+
   /**
    * Remove translations for a given entity.
    * @param oid The id of the object
    * @param lang The language of the translation to remove. If null, all translations
    *    will be deleted [default: null]
    */
-  public function deleteTranslation(ObjectId $oid, $lang=null)
-  {
+  public function deleteTranslation(ObjectId $oid, $lang=null) {
     // if the requested language is the default language, do nothing
     if ($lang == $this->getDefaultLanguage()) {
       // nothing to do
     }
     // delete the translations for any other language
-    else
-    {
+    else {
       // get the existing translations for the requested language or all languages
       $type = self::getTranslationType();
       $query = new ObjectQuery($type);
@@ -307,7 +298,7 @@ class Localization
       if ($lang != null) {
         $tpl->setLanguage(Criteria::asValue("=", $lang));
       }
-      $translations = $query->execute(BUILDDEPTH_SINGLE);
+      $translations = $query->execute(BuildDepth::SINGLE);
 
       // delete the found tranlations
       foreach ($translations as $curTranslation) {
@@ -315,25 +306,24 @@ class Localization
       }
     }
   }
+
   /**
    * Delete all translations for a given language.
    * @param lang The language of the translations to remove
    */
-  public function deleteLanguage($lang)
-  {
+  public function deleteLanguage($lang) {
     // if the requested language is the default language, do nothing
     if ($lang == $this->getDefaultLanguage()) {
       // nothing to do
     }
     // delete the translations for any other language
-    else
-    {
+    else {
       // get the existing translations for the requested language
       $type = self::getTranslationType();
       $query = new ObjectQuery($type);
       $tpl = $query->getObjectTemplate($type);
       $tpl->setLanguage(Criteria::asValue("=", $lang));
-      $translations = $query->execute(BUILDDEPTH_SINGLE);
+      $translations = $query->execute(BuildDepth::SINGLE);
 
       // delete the found tranlations
       foreach ($translations as $curTranslation) {
@@ -341,6 +331,7 @@ class Localization
       }
     }
   }
+
   /**
    * Set a translated value in the given PersistentObject instance.
    * @param object The object to set the value on. The object
@@ -350,22 +341,18 @@ class Localization
    * @param useDefaults True/False wether to use the default language if no translation is
    *    found or not.
    */
-  private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults)
-  {
+  private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults) {
     $inputType = $object->getValueProperty($valueName, 'input_type');
     $inputTypes = self::getIncludedInputTypes();
-    if (in_array($inputType, $inputTypes))
-    {
+    if (in_array($inputType, $inputTypes)) {
       // empty the value, if the default language values should not be used
       if (!$useDefaults) {
         $object->setValue($valueName, null);
       }
       // translate the value
-      for ($i=0, $count=sizeof($translations); $i<$count; $i++)
-      {
+      for ($i=0, $count=sizeof($translations); $i<$count; $i++) {
         $curValueName = $translations[$i]->getAttribute();
-        if ($curValueName == $valueName)
-        {
+        if ($curValueName == $valueName) {
           $translation = $translations[$i]->getTranslation();
           if (!($useDefaults && strlen($translation) == 0)) {
             $object->setValue($valueName, $translation);
@@ -375,6 +362,7 @@ class Localization
       }
     }
   }
+
   /**
    * Save translated values for the given object
    * @param object The object to save the translations on
@@ -383,32 +371,26 @@ class Localization
    * @param lang The language of the translations.
    * @param saveEmptyValues True/False wether to also save empty translations or not.
    */
-  private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang, $saveEmptyValues)
-  {
+  private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang, $saveEmptyValues) {
     $inputType = $object->getValueProperty($valueName, 'input_type');
     $inputTypes = self::getIncludedInputTypes();
-    if (in_array($inputType, $inputTypes))
-    {
+    if (in_array($inputType, $inputTypes)) {
       $value = $object->getValue($valueName);
-      if ($saveEmptyValues || strlen($value) > 0)
-      {
+      if ($saveEmptyValues || strlen($value) > 0) {
         $translation = null;
 
         // check if a translation already exists
-        for ($i=0, $count=sizeof($existingTranslations); $i<$count; $i++)
-        {
+        for ($i=0, $count=sizeof($existingTranslations); $i<$count; $i++) {
           $curValueName = $existingTranslations[$i]->getAttribute();
-          if ($curValueName == $valueName)
-          {
+          if ($curValueName == $valueName) {
             $translation = &$existingTranslations[$i];
             break;
           }
         }
 
         // if not, create a new translation
-        if ($translation == null)
-        {
-          $persistenceFacade = PersistenceFacade::getInstance();
+        if ($translation == null) {
+          $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
           $translation = $persistenceFacade->create(self::getTranslationType());
         }
 

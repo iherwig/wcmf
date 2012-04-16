@@ -14,13 +14,13 @@
  * See the license.txt file distributed with this work for
  * additional information.
  *
- * $Id: class.Control.php -1   $
+ * $Id$
  */
 namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\presentation\control\Control;
-use wcmf\lib\presentation\control\IListStrategy;
+use wcmf\lib\presentation\control\ListStrategy;
 
 /**
  * FunctionListStrategy implements list of key value pairs that is retrieved
@@ -34,13 +34,12 @@ use wcmf\lib\presentation\control\IListStrategy;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class FunctionListStrategy implements IListStrategy
-{
+class FunctionListStrategy implements ListStrategy {
+
   /**
-   * @see IListStrategy::getListMap
+   * @see ListStrategy::getListMap
    */
-  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null)
-  {
+  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null) {
     // maybe there are '|' chars in parameters
     $parts = preg_split('/\|/', $configuration);
     $name = array_shift($parts);
@@ -54,7 +53,4 @@ class FunctionListStrategy implements IListStrategy
     return $map;
   }
 }
-
-// register this list strategy
-Control::registerListStrategy('fkt', 'FunctionListStrategy');
 ?>

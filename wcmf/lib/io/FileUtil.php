@@ -35,36 +35,28 @@ class FileUtil {
    * @param mediaFile An assoziative array with the following keys: 'name', 'type', 'size', 'tmp_name' (typically a $HTTP_POST_FILES entry)
    * @param destName The destination file name
    * @param mimeType An array holding the allowed mimetypes, null if arbitrary [default: null]
-   * @param maxSize The maximum size of the file (if -1 it's not limited) [default: -1]
    * @param override True/False whether an existing file should be overridden, if false an unque id will be placed in the filename to prevent overriding [default: true]
    * @return The filename of the uploaded file
    */
-  public static function uploadFile($mediaFile, $destName, $mimeTypes=null, $maxSize=-1, $override=true) {
+  public static function uploadFile($mediaFile, $destName, $mimeTypes=null, $override=true) {
     $filename = null;
     // check if the file was uploaded
     if (is_uploaded_file($mediaFile['tmp_name'])) {
       // check mime type
       if ($mimeTypes == null || in_array($mediaFile['type'], $mimeTypes)) {
-        // check size
-        if ($mediaFile['size'] <= $maxSize || $maxSize == -1) {
-          // check if we need a new name
-          if ($override == false && file_exists($destName)) {
-            $pieces = preg_split('/\./', basename($destName));
-            $extension = array_pop($pieces);
-            $name = join('.', $pieces);
-            $destName = dirname($destName)."/".$name.uniqid(rand()).".".$extension;
-          }
-          $result = move_uploaded_file($mediaFile['tmp_name'], $destName);
-          if ($result === false) {
-            throw new IOException("Failed to move %1% to %2%.", array($mediaFile['tmp_name'], $destName));
-          }
-          chmod($destName, 0644);
-          $filename = basename($destName);
+        // check if we need a new name
+        if ($override == false && file_exists($destName)) {
+          $pieces = preg_split('/\./', basename($destName));
+          $extension = array_pop($pieces);
+          $name = join('.', $pieces);
+          $destName = dirname($destName)."/".$name.uniqid(rand()).".".$extension;
         }
-        else {
-          throw new IOException(Message::get("File too big: %1%. Allowed size: %2% bytes.",
-            array($mediaFile['name'], $maxSize)));
+        $result = move_uploaded_file($mediaFile['tmp_name'], $destName);
+        if ($result === false) {
+          throw new IOException("Failed to move %1% to %2%.", array($mediaFile['tmp_name'], $destName));
         }
+        chmod($destName, 0644);
+        $filename = basename($destName);
       }
       else {
         throw new IOException(Message::get("File '%1%' has wrong mime type: %2%. Allowed types: %3%.",
@@ -73,11 +65,6 @@ class FileUtil {
     }
     else {
       $msg = Message::get("Possible file upload attack: filename %1%.", array($mediaFile['name']));
-      $parser = InifileParser::getInstance();
-      if(($maxFileSize = $parser->getValue('maxFileSize', 'htmlform')) !== false) {
-        $msg += Message::get("A possible reason is that the file size is too big (maximum allowed: %1%  bytes).",
-          array($maxFileSize));
-      }
       throw new IOException($msg);
     }
     return $filename;

@@ -19,8 +19,10 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 
@@ -41,8 +43,8 @@ use wcmf\lib\persistence\PersistenceFacade;
  *               name is the array key
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeSerializer
-{
+class NodeSerializer {
+
   private static $NODE_KEYS = array(
       'className',
       'oid',
@@ -57,8 +59,7 @@ class NodeSerializer
    * @param data A variable of any type
    * @return boolean
    */
-  public static function isSerializedNode($data)
-  {
+  public static function isSerializedNode($data) {
     if (is_object($data)) {
       $data = (array)$data;
     }
@@ -71,6 +72,7 @@ class NodeSerializer
     }
     return $syntaxOk;
   }
+
   /**
    * Deserialize a Node from serialized data. Only values given in data are be set.
    * @param data An array containing the serialized Node data
@@ -80,8 +82,7 @@ class NodeSerializer
    * value is the Node instance and the data value is the
    * remaining part of data, that is not used for deserializing the Node
    */
-  public static function deserializeNode($data, Node $parent=null, $role=null)
-  {
+  public static function deserializeNode($data, Node $parent=null, $role=null) {
     if (!isset($data['className']) && !isset($data['oid'])) {
       throw new IllegalArgumentException("Serialized Node data must contain an 'className' or 'oid' parameter");
     }
@@ -99,8 +100,8 @@ class NodeSerializer
 
     // don't create all values by default (-> don't use PersistenceFacade::create() directly,
     // just for determining the class)
-    $persistenceFacade = PersistenceFacade::getInstance();
-    $class = get_class($persistenceFacade->create($oid->getType(), BUILDDEPTH_SINGLE));
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $class = get_class($persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
     $node->setOID($oid);
 
@@ -121,19 +122,18 @@ class NodeSerializer
     }
     return array('node' => $node, 'data' => $data);
   }
+
   /**
    * Deserialize a node value
    * @param node A reference to the node
    * @param key The value name or type if value is an array
    * @param value The value or child data, if value is an array
    */
-  protected static function deserializeValue(Node $node, $key, $value)
-  {
+  protected static function deserializeValue(Node $node, $key, $value) {
     if (!is_array($value)) {
       $node->setValue($key, $value);
     }
-    else
-    {
+    else {
       $role = $key;
       if (self::isMultiValued($node, $role)) {
         // deserialize children
@@ -146,13 +146,13 @@ class NodeSerializer
       }
     }
   }
+
   /**
    * Serialize a Node into an array
    * @param node A reference to the node to serialize
    * @return The node serialized into an associated array
    */
-  public static function serializeNode(Node $node)
-  {
+  public static function serializeNode(Node $node) {
     self::$_serializedOIDs = array();
     $serializedNode = self::serializeNodeImpl($node);
     return $serializedNode;
@@ -164,8 +164,7 @@ class NodeSerializer
    * @return The node serialized into an associated array or null, if
    *  the node parameter is not a Node instance (e.g. PersistentObjectProxy)
    */
-  protected static function serializeNodeImpl($node)
-  {
+  protected static function serializeNodeImpl($node) {
     if (!($node instanceof Node)) {
       return null;
     }
@@ -175,13 +174,11 @@ class NodeSerializer
     $curResult['lastChange'] = strtotime($node->getValue('modified'));
 
     $oidStr = $node->getOID()->__toString();
-    if (in_array($oidStr, self::$_serializedOIDs))
-    {
+    if (in_array($oidStr, self::$_serializedOIDs)) {
       // the node is serialized already
       $curResult['isReference'] = true;
     }
-    else
-    {
+    else {
       // the node is not serialized yet
       $curResult['isReference'] = false;
       self::$_serializedOIDs[] = $oidStr;
@@ -198,19 +195,15 @@ class NodeSerializer
       // add related objects by creating an attribute that is named as the role of the object
       // multivalued relations will be serialized into an array
       $mapper = $node->getMapper();
-      foreach ($mapper->getRelations() as $relation)
-      {
+      foreach ($mapper->getRelations() as $relation) {
         $role = $relation->getOtherRole();
         $relatedNodes = $node->getValue($role);
-        if ($relatedNodes)
-        {
+        if ($relatedNodes) {
           // serialize the nodes
           $isMultiValued = $relation->isMultiValued();
-          if ($isMultiValued)
-          {
+          if ($isMultiValued) {
             $curResult['attributes'][$role] = array();
-            foreach ($relatedNodes as $relatedNode)
-            {
+            foreach ($relatedNodes as $relatedNode) {
               $data = self::serializeNodeImpl($relatedNode);
               if ($data != null) {
                 // add the data to the relation attribute
@@ -236,8 +229,7 @@ class NodeSerializer
    * @param node The Node that has the relation
    * @param role The role of the relation
    */
-  protected static function isMultiValued(Node $node, $role)
-  {
+  protected static function isMultiValued(Node $node, $role) {
     $isMultiValued = false;
     $mapper = $node->getMapper();
     if ($mapper->hasRelation($role)) {

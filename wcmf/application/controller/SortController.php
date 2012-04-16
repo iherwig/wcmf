@@ -18,6 +18,7 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
@@ -92,7 +93,7 @@ class SortController extends Controller {
         return false;
       }
       // check if the class supports order
-      $mapper = PersistenceFacade::getInstance()->getMapper($insertOid->getType());
+      $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($insertOid->getType());
       if (!$mapper->isSortable()) {
         $response->addError(ApplicationError::get('ORDER_UNDEFINED'));
         return false;
@@ -109,7 +110,7 @@ class SortController extends Controller {
       }
 
       // check association for insert operation
-      $mapper = PersistenceFacade::getInstance()->getMapper($containerOid->getType());
+      $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($containerOid->getType());
       $relationDesc = null;
       // try role
       if ($request->hasValue('role')) {
@@ -147,7 +148,7 @@ class SortController extends Controller {
   protected function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $transaction = PersistenceFacade::getInstance()->getTransaction();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
     // do actions
     $transaction->begin();
@@ -168,7 +169,7 @@ class SortController extends Controller {
    */
   protected function doMoveBefore() {
     $request = $this->getRequest();
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // load the moved object and the reference object
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
@@ -235,7 +236,7 @@ class SortController extends Controller {
    */
   protected function doInsertBefore() {
     $request = $this->getRequest();
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // load the moved object, the reference object and the conainer object
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
@@ -284,7 +285,7 @@ class SortController extends Controller {
     $tpl2 = $query->getObjectTemplate($type);
     $tpl1->setValue($sortkeyName, Criteria::asValue('>', $lowerValue));
     $tpl2->setValue($sortkeyName, Criteria::asValue('<', $upperValue));
-    $objects = $query->execute(BUILDDEPTH_SINGLE);
+    $objects = $query->execute(BuildDepth::SINGLE);
     return $objects;
   }
 

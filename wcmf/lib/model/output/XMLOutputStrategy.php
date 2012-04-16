@@ -19,7 +19,7 @@
 namespace wcmf\lib\model\output;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\model\persistence\IOutputStrategy;
+use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
  * XMLOutputStrategy outputs an object's content in a xml file
@@ -28,7 +28,7 @@ use wcmf\lib\model\persistence\IOutputStrategy;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class XMLOutputStrategy implements IOutputStrategy {
+class XMLOutputStrategy implements OutputStrategy {
 
   protected  $_id = 0;
   protected  $_file = '';
@@ -63,7 +63,7 @@ class XMLOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see IOutputStrategy::writeHeader
+   * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
     // check if file exists and is locked
@@ -90,7 +90,7 @@ class XMLOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see IOutputStrategy::writeFooter
+   * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
     if ($this->_fileOk) {
@@ -105,7 +105,7 @@ class XMLOutputStrategy implements IOutputStrategy {
   }
 
   /**
-   * @see IOutputStrategy::writeObject
+   * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
     if ($this->_fileOk) {

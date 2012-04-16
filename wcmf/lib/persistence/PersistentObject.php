@@ -19,6 +19,7 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\EventManager;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
@@ -157,13 +158,13 @@ class PersistentObject {
 
   /**
    * Get the PersistenceMapper of the object.
-   * @return IPersistenceMapper
+   * @return PersistenceMapper
    */
   public function getMapper() {
     $mapper = null;
 
     // set the mapper, if defined in PersistenceFacade
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if ($persistenceFacade->isKnownType($this->_type)) {
       $mapper = $persistenceFacade->getMapper($this->_type);
     }
@@ -596,7 +597,7 @@ class PersistentObject {
         if ($mapper->hasAttribute($name)) {
           $attr = $mapper->getAttribute($name);
           if ($attr) {
-            $getter = "get".ucfirst(StringUtil::underScoreToCamelCase($property, true));
+            $getter = 'get'.ucfirst(StringUtil::underScoreToCamelCase($property, true));
             return $attr->$getter();
           }
         }

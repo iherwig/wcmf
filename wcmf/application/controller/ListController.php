@@ -128,7 +128,7 @@ class ListController extends Controller {
       $curObject = &$objects[$i];
 
       // check if we can read the object
-      if ($rightsManager->authorize($curObject->getOID(), '', ACTION_READ)) {
+      if ($rightsManager->authorize($curObject->getOID(), '', PersistenceAction::READ)) {
         $nodes[] = &$curObject;
       }
     }
@@ -166,14 +166,14 @@ class ListController extends Controller {
    * @return An array of object instances
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
-    if(!PersistenceFacade::getInstance()->isKnownType($type)) {
+    if(!ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
       return array();
     }
     $objects = array();
     $query = new StringQuery($type);
     $query->setConditionString($queryCondition);
     try {
-      $objects = $query->execute(BUILDDEPTH_SINGLE, $sortArray, $pagingInfo);
+      $objects = $query->execute(BuildDepth::SINGLE, $sortArray, $pagingInfo);
     }
     catch (UnknownFieldException $ex) {
       // check if the sort field is illegal

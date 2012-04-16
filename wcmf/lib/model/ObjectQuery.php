@@ -18,12 +18,17 @@
  */
 namespace wcmf\lib\model;
 
+use \Zend_Db_Select;
+
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\UnknownFieldException;
@@ -90,7 +95,7 @@ use wcmf\lib\persistence\ValueChangeEvent;
  * $authorTpl1->addNode($recipeTpl2, 'Recipe');
  * $authorTpl1->addNode($recipeTpl3, 'Recipe');
  * $authorTpl1->addNode($recipeTpl4, 'Recipe');
- * $authorList = $query->execute(BUILDDEPTH_SINGLE);
+ * $authorList = $query->execute(BuildDepth::SINGLE);
  * @endcode
  *
  * @note There are some limitations when using this class:
@@ -125,9 +130,9 @@ class ObjectQuery extends AbstractQuery {
    * @param type The type to search for.
    */
   public function __construct($type) {
-    // don't use IPersistenceFacade::create, because template instances must be transient
+    // don't use PersistenceFacade::create, because template instances must be transient
     $mapper = $this->getMapper($type);
-    $this->_typeNode = $mapper->create($type, BUILDDEPTH_SINGLE);
+    $this->_typeNode = $mapper->create($type, BuildDepth::SINGLE);
     $this->_rootNodes[] = $this->_typeNode;
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
     EventManager::getInstance()->addListener(ValueChangeEvent::NAME,
@@ -160,9 +165,9 @@ class ObjectQuery extends AbstractQuery {
       // the typeNode is contained already in the rootNodes array
     }
     else {
-      // don't use IPersistenceFacade::create, because template instances must be transient
+      // don't use PersistenceFacade::create, because template instances must be transient
       $mapper = $this->getMapper($type);
-      $template = $mapper->create($type, BUILDDEPTH_SINGLE);
+      $template = $mapper->create($type, BuildDepth::SINGLE);
       $this->_rootNodes[] = $template;
     }
     $template->setProperty(self::PROPERTY_COMBINE_OPERATOR, $combineOperator);
@@ -449,7 +454,7 @@ class ObjectQuery extends AbstractQuery {
       // reset current order by
       $selectStmt->reset(Zend_Db_Select::ORDER);
 
-      $persistenceFacade = PersistenceFacade::getInstance();
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       foreach ($orderby as $curOrderBy) {
         $orderByParts = preg_split('/ /', $curOrderBy);
         $orderAttribute = $orderByParts[0];

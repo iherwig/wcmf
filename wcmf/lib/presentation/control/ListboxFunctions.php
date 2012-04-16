@@ -21,6 +21,7 @@ namespace wcmf\lib\presentation\control;
 use wcmf\application\controller\DisplayController;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\ObjectQuery;
@@ -42,17 +43,16 @@ use wcmf\lib\presentation\control\Control;
  * @return An assoziative array with the database ids (or object ids depending on the last parameter) as keys and the display values as values
  * @note This function is especially useful as fkt parameter for list input type see Control::render()
  */
-function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $language=null)
-{
-  if (!PersistenceFacade::isKnownType($type)) {
+function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $language=null) {
+  $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+  if (!$persistenceFacade->isKnownType($type)) {
     throw new IllegalArgumentException("Illegal type given: ".$type);
   }
-  $persistenceFacade = PersistenceFacade::getInstance();
   $localization = Localization::getInstance();
 
   // see if the type has a display value defined (via the 'display_value' property)
   $hasDisplayValue = false;
-  $template = &$persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+  $template = $persistenceFacade->create($type, BuildDepth::SINGLE);
   if ($template instanceof Node && $template->getProperty('display_value') != '') {
     $hasDisplayValue = true;
   }
@@ -74,9 +74,8 @@ function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $la
   $query = new StringQuery($type);
   $query->setConditionString($queryStr);
   $pagingInfo = new PagingInfo();
-  $nodes = $query->execute(BUILDDEPTH_SINGLE, $orderby, $pagingInfo);
-  for($i=0; $i<sizeof($nodes); $i++)
-  {
+  $nodes = $query->execute(BuildDepth::SINGLE, $orderby, $pagingInfo);
+  for($i=0; $i<sizeof($nodes); $i++) {
     $oid = $nodes[$i]->getOID();
     if ($realOIDs) {
       $key = $oid;
@@ -105,14 +104,13 @@ function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $la
  * This method is used to fill listboxes in the assoziated view.
  * @return An associative array of object ids (key: oid, value: display value)
  */
-function g_getObjects($type, $parentOID)
-{
-  $persistenceFacade = &PersistenceFacade::getInstance();
+function g_getObjects($type, $parentOID) {
+  $persistenceFacade = &ObjectFactory::getInstance('persistenceFacade');
   $result = array();
-  if (!PersistenceFacade::isValidOID($parentOID)) {
+  if (!ObjectId::isValidOID($parentOID)) {
     throw new IllegalArgumentException("Illegal parent oid given: ".$parentOID);
   }
-  if (!PersistenceFacade::isKnownType($type)) {
+  if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
     throw new IllegalArgumentException("Illegal type given: ".$type, __FILE__, __LINE__);
   }
   // collect children from parent
@@ -124,10 +122,9 @@ function g_getObjects($type, $parentOID)
   }
   // collect all possible objects
   $query = new ObjectQuery($type);
-  $nodes = $query->execute(BUILDDEPTH_SINGLE);
+  $nodes = $query->execute(BuildDepth::SINGLE);
   $oids = $persistenceFacade->getOIDs($type);
-  for($i=0; $i<sizeof($nodes); $i++)
-  {
+  for($i=0, $count=sizeof($nodes); $i<$count; $i++) {
     $node = &$nodes[$i];
     $oid = $node->getOID();
     if (!in_array($oid, $childOIDs)) {
@@ -142,13 +139,11 @@ function g_getObjects($type, $parentOID)
  * This method is used to fill listboxes in the assoziated view.
  * @return An associative array of type names (key: type, value: dispaly name)
  */
-function g_getTypes()
-{
-  $persistenceFacade = PersistenceFacade::getInstance();
-  $types = PersistenceFacade::getKnownTypes();
-  foreach($types as $type)
-  {
-    $node = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+function g_getTypes() {
+  $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+  $types = $persistenceFacade->getKnownTypes();
+  foreach($types as $type) {
+    $node = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $result[$type] = $node->getObjectDisplayName();
   }
   asort($result);
@@ -161,12 +156,10 @@ function g_getTypes()
  * @return An associative array of object ids (key: oid, value: display value)
  */
 $g_oidArray = array();
-function g_getOIDArray($oidStringList)
-{
+function g_getOIDArray($oidStringList) {
   global $g_oidArray;
-  if (!isset($g_oidArray[$oidStringList]))
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
+  if (!isset($g_oidArray[$oidStringList])) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $result = array();
     if (strpos($oidStringList, '|') === false) {
       $oids = array($oidStringList);
@@ -174,11 +167,9 @@ function g_getOIDArray($oidStringList)
     else {
       $oids = preg_split('/\|/', $oidStringList);
     }
-    foreach($oids as $oid)
-    {
-      if (PersistenceFacade::isValidOID($oid))
-      {
-        $node = &$persistenceFacade->load($oid, BUILDDEPTH_SINGLE);
+    foreach($oids as $oid) {
+      if (ObjectId::isValidOID($oid)) {
+        $node = &$persistenceFacade->load($oid, BuildDepth::SINGLE);
         $result[$node->getOID()] = DisplayController::getDisplayText($node);
       }
       else {
@@ -195,12 +186,10 @@ function g_getOIDArray($oidStringList)
  * This method is used to fill listboxes in the assoziated view.
  * @return An associative array of config file names (key: filename, value: filename)
  */
-function g_getConfigFiles()
-{
+function g_getConfigFiles() {
   $result = array();
   $configFiles = WCMFInifileParser::getIniFiles();
-  foreach ($configFiles as $file)
-  {
+  foreach ($configFiles as $file) {
     $file = basename($file);
     $result[$file] = $file;
   }
@@ -212,8 +201,7 @@ function g_getConfigFiles()
  * Global function for backup name retrieval.
  * @return An array of backup names
  */
-function g_getBackupNames()
-{
+function g_getBackupNames() {
   $result = array();
 
   $parser = &InifileParser::getInstance();

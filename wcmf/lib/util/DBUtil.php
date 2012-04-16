@@ -49,7 +49,7 @@ class DBUtil {
         throw new ConfigurationException("No '".$initSection."' section given in configfile.");
       }
       // connect to the database using a RDBMapper instance
-      $mapper = PersistenceFacade::getInstance()->getMapperForConfigSection($initSection);
+      $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapperForConfigSection($initSection);
       $connection = $mapper->getConnection();
 
       Log::debug('Starting transaction ...', __CLASS__);

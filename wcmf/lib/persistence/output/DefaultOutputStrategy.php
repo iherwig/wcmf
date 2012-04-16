@@ -19,9 +19,8 @@
 namespace wcmf\lib\persistence\output;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\persistence\IOutputStrategy;
 use wcmf\lib\persistence\PersistentObject;
-
+use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
  * DefaultOutputStrategy outputs an object's content to the Log category DefaultOutputStrategy.
@@ -29,24 +28,24 @@ use wcmf\lib\persistence\PersistentObject;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DefaultOutputStrategy implements IOutputStrategy {
+class DefaultOutputStrategy implements OutputStrategy {
 
   /**
-   * @see IOutputStrategy::writeHeader
+   * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
     Log::info("DOCUMENT START.", __CLASS__);
   }
 
   /**
-   * @see IOutputStrategy::writeFooter
+   * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
     Log::info("DOCUMENT END.", __CLASS__);
   }
 
   /**
-   * @see IOutputStrategy::writeObject
+   * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
     Log::info($obj->toString(), __CLASS__);

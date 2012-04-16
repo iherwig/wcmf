@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\persistence;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceFacade;
 
 /**
@@ -45,7 +46,7 @@ class ObjectId {
 
   /**
    * Constructor.
-   * @param type The type of the object
+   * @param type The type of the object (string)
    * @param id Either a single value or an array of values (for compound primary keys) identifying
    * the object between others of the same type. If not given, a dummy id will be
    * assigned. [optional, default: null]
@@ -164,7 +165,7 @@ class ObjectId {
 
     // get the type
     $type = $nextPart;
-    if (!PersistenceFacade::getInstance()->isKnownType($type)) {
+    if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
       return null;
     }
 
@@ -233,9 +234,9 @@ class ObjectId {
   private static function getNumberOfPKs($type) {
     if (!isset(self::$_numPkKeys[$type])) {
       $numPKs = 1;
-      if (PersistenceFacade::getInstance()->isKnownType($type))
-      {
-        $mapper = PersistenceFacade::getInstance()->getMapper($type);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      if ($persistenceFacade->isKnownType($type)) {
+        $mapper = $persistenceFacade->getMapper($type);
         $numPKs = sizeof($mapper->getPKNames());
       }
       self::$_numPkKeys[$type] = $numPKs;

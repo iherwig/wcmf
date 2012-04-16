@@ -19,6 +19,8 @@
 namespace wcmf\application\controller;
 
 use \Exception;
+
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Controller;
@@ -40,13 +42,12 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AssociateController extends Controller
-{
+class AssociateController extends Controller {
+
   /**
    * @see Controller::validate()
    */
-  protected function validate()
-  {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -65,7 +66,7 @@ class AssociateController extends Controller
     }
 
     // check association
-    $mapper = PersistenceFacade::getInstance()->getMapper($sourceOid->getType());
+    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($sourceOid->getType());
     // try role
     if ($request->hasValue('role')) {
       $relationDesc = $mapper->getRelation($request->getValue('role'));
@@ -84,21 +85,21 @@ class AssociateController extends Controller
     }
     return true;
   }
+
   /**
    * @see Controller::hasView()
    */
-  public function hasView()
-  {
+  public function hasView() {
     return false;
   }
+
   /**
    * (Dis-)Associate the Nodes.
    * @return True in every case.
    * @see Controller::executeKernel()
    */
-  protected function executeKernel()
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
+  protected function executeKernel() {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -107,11 +108,11 @@ class AssociateController extends Controller
     try {
       // get the source node
       $sourceOID = ObjectId::parse($request->getValue('sourceOid'));
-      $sourceNode = $persistenceFacade->load($sourceOID, BUILDDEPTH_SINGLE);
+      $sourceNode = $persistenceFacade->load($sourceOID, BuildDepth::SINGLE);
 
       // get the target node
       $targetOID = ObjectId::parse($request->getValue('targetOid'));
-      $targetNode = $persistenceFacade->load($targetOID, BUILDDEPTH_SINGLE);
+      $targetNode = $persistenceFacade->load($targetOID, BuildDepth::SINGLE);
 
       // get the role
       $role = null;
@@ -119,11 +120,9 @@ class AssociateController extends Controller
         $role = $request->getValue('role');
       }
 
-      if ($sourceNode != null && $targetNode != null)
-      {
+      if ($sourceNode != null && $targetNode != null) {
         // process actions
-        if ($request->getAction() == 'associate')
-        {
+        if ($request->getAction() == 'associate') {
           try {
             $sourceNode->addNode($targetNode, $role);
           }
@@ -132,8 +131,7 @@ class AssociateController extends Controller
             throw $ex;
           }
         }
-        elseif ($request->getAction() == 'disassociate')
-        {
+        elseif ($request->getAction() == 'disassociate') {
           try {
             $sourceNode->deleteNode($targetNode, $role);
           }
@@ -143,8 +141,7 @@ class AssociateController extends Controller
           }
         }
       }
-      else
-      {
+      else {
         if ($sourceNode == null) {
           $this->addError(ApplicationError::get('OID_INVALID',
             array('invalidOids' => array('sourceOid'))));

@@ -19,6 +19,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\ListController;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\NodeValueIterator;
@@ -55,8 +56,8 @@ use wcmf\lib\security\RightsManager;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SearchController extends ListController
-{
+class SearchController extends ListController {
+
   // session name constants
   var $OIDS_VARNAME = 'SearchController.oids';
   var $FILTER_VARNAME = 'SearchController.filter';
@@ -64,11 +65,9 @@ class SearchController extends ListController
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
-  {
+  public function initialize(Request $request, Response $response) {
     // check if this is a new call and the stored oids should be deleted
-    if ($request->getAction() != 'list')
-    {
+    if ($request->getAction() != 'list') {
       $session = Session::getInstance();
       $session->remove($this->OIDS_VARNAME);
     }
@@ -81,11 +80,11 @@ class SearchController extends ListController
       parent::initialize($request, $response);
     }
   }
+
   /**
    * @see Controller::hasView()
    */
-  function hasView()
-  {
+  public function hasView() {
     if ($this->_request->getAction() == 'list') {
       return false;
     }
@@ -93,26 +92,22 @@ class SearchController extends ListController
       return true;
     }
   }
+
   /**
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
-    $persistenceFacade = PersistenceFacade::getInstance();
+  protected function executeKernel() {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // show define search view if requested
-    if ($this->_request->getAction() == 'definesearch')
-    {
+    if ($this->_request->getAction() == 'definesearch') {
       // get searchable types
       $types = array();
       $listBoxStr = '';
-      foreach (array_keys(g_getTypes()) as $type)
-      {
-        if (PersistenceFacade::isKnownType($type))
-        {
-          $tpl = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
-          if ($tpl->getProperty('is_searchable') == true)
-          {
+      foreach (array_keys(g_getTypes()) as $type) {
+        if (ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
+          $tpl = $persistenceFacade->create($type, BuildDepth::SINGLE);
+          if ($tpl->getProperty('is_searchable') == true) {
             array_push($types, $type);
             $listBoxStr .= $type.'['.$tpl->getObjectDisplayName().']|';
           }
@@ -122,13 +117,13 @@ class SearchController extends ListController
 
       // default selection if unknown type is given
       $type = $this->_request->getValue('type');
-      if (!PersistenceFacade::isKnownType($type)) {
+      if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
         $type = $types[0];
       }
       // set type on request, for further use
       $this->_request->setValue('type', $type);
 
-      $node = $persistenceFacade->create($type, BUILDDEPTH_SINGLE);
+      $node = $persistenceFacade->create($type, BuildDepth::SINGLE);
       $this->_response->setValue('node', $node);
       $this->_response->setValue('type', $type);
       $this->_response->setValue('listBoxStr', $listBoxStr);
@@ -137,22 +132,18 @@ class SearchController extends ListController
       return false;
     }
     // execute the search if requested
-    elseif ($this->_request->getAction() == 'list')
-    {
+    elseif ($this->_request->getAction() == 'list') {
       return parent::executeKernel();
     }
 
     // if a type is given, we have to perform an advanced search
     // encode search parameters from advanced search into filter value (as json serialized node)
     $type = $this->_request->getValue('type');
-    if (strlen($type) > 0)
-    {
+    if (strlen($type) > 0) {
       $tpl = null;
       // look for the object template in the request parameters
-      foreach($this->_request->getValues() as $key => $value)
-      {
-        if (PersistenceFacade::isValidOID($key) && PersistenceFacade::getOIDParameter($key, 'type') == $type)
-        {
+      foreach($this->_request->getValues() as $key => $value) {
+        if (ObjectId::isValidOID($key) && PersistenceFacade::getOIDParameter($key, 'type') == $type) {
           $tpl = &$value;
           // modify values to be searchable with LIKE
           $iter = new NodeValueIterator($tpl, false);
@@ -174,8 +165,7 @@ class SearchController extends ListController
       $this->_response->setValue('type', $type);
       $this->_response->setValue('searchdef', $searchdef);
     }
-    else
-    {
+    else {
       // for simple search we just pass the searchterm as searchdef
       $this->_response->setValue('searchdef', $this->_request->getValue('searchterm'));
     }
@@ -184,22 +174,20 @@ class SearchController extends ListController
     $this->_response->setAction('ok');
     return false;
   }
+
   /**
    * @see AsyncPagingController::getObjects()
    */
-  function getObjects($type, $filter, $sortArray, &$pagingInfo)
-  {
+  protected function getObjects($type, $filter, $sortArray, PagingInfo $pagingInfo) {
     $rightsManager = RightsManager::getInstance();
     $session = Session::getInstance();
 
-    if (!$session->exist($this->OIDS_VARNAME))
-    {
+    if (!$session->exist($this->OIDS_VARNAME)) {
       $allOIDs = array();
 
       // if a type is give, we have to perform an advanced search
       $type = $this->_request->getValue('type');
-      if (strlen($type) > 0)
-      {
+      if (strlen($type) > 0) {
         // get search parameters from filter value
         // (json serialized node construced as searchdef parameter)
         $formatter = new JSONFormat();
@@ -210,8 +198,7 @@ class SearchController extends ListController
         $allOIDs = $query->execute(false);
       }
       // search with searchterm (even if empty) if no query is given
-      else
-      {
+      else {
         $index = SearchUtil::getIndex();
         $results = $index->find($filter);
         foreach($results as $result) {
@@ -238,24 +225,22 @@ class SearchController extends ListController
     $oids = array_slice($allOIDs, ($pagingInfo->getPage()-1)*$size, $size);
 
     // load the objects
-    $persistenceFacade = PersistenceFacade::getInstance();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $objects = array();
-    foreach($oids as $oid)
-    {
-      if ($rightsManager->authorize($oid, '', ACTION_READ))
-      {
+    foreach($oids as $oid) {
+      if ($rightsManager->authorize($oid, '', PersistenceAction::READ)) {
         $obj = $persistenceFacade->load($oid, BUILDEPTH_SINGLE);
         $objects[] = &$obj;
       }
     }
     return $objects;
   }
+
   /**
    * Modify the model passed to the view.
    * @param nodes A reference to the array of node references passed to the view
    */
-  function modifyModel(&$nodes)
-  {
+  protected function modifyModel(&$nodes) {
     // remove all attributes except for display_values
     if ($this->_request->getBooleanValue('completeObjects', false) == false) {
       for($i=0; $i<sizeof($nodes); $i++) {
@@ -266,8 +251,7 @@ class SearchController extends ListController
     if ($this->_request->getBooleanValue('renderValues', false) == true) {
       NodeUtil::renderValues($nodes);
     }
-    for ($i=0; $i<sizeof($nodes); $i++)
-    {
+    for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
       $curNode = &$nodes[$i];
 
       // create hightlighted summary
