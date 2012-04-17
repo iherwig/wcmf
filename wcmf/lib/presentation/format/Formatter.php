@@ -19,35 +19,22 @@
 namespace wcmf\lib\presentation\format;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\EncodingUtil;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\format\Format;
 
 /**
  * Formatter is is the single entry point for request/response formatting.
  * It chooses the configured formatter based on the format property of the message
- * by getting the value XXXFormat from the configuration section 'implementation'.
+ * by getting the value XXXFormat from the configuration section 'formats'.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class Formatter {
 
   private static $_formats = array();
-
-  /**
-   * Register a Format implementation for formatting messages.
-   * This method must be called for all Format implementations in order
-   * to be usable.
-   * @param formatName The name of the format as used in requests/responses (case insensitive)
-   * @param className The name of the implementation class
-   */
-  public static function registerFormat($formatName, $className) {
-    $impl = new $className;
-    if (!($impl instanceof Format)) {
-      throw new ConfigurationException($className." must implement Format.");
-    }
-    self::$_formats[strtolower($formatName)] = $className;
-  }
 
   /**
    * Deserialize Request data into objects.
@@ -101,10 +88,20 @@ class Formatter {
   /**
    * Get the format implementation
    * @param formatName The name of the format
-   * @return An instance of an Format implementation
+   * @return Format implementation
    */
   private static function getFormatImplementation($formatName) {
     $formatName = strtolower($formatName);
+    if (self::$_formats == null) {
+      // initially get formats from configuration
+      $formats = ObjectFactory::getInstance('formats');
+      foreach ($formats as $name => $instance) {
+        if (!($instance instanceof Format)) {
+          throw new ConfigurationException(get_class($instance)." must implement Format.");
+        }
+        self::$_formats[strtolower($formatName)] = $instance;
+      }
+    }
     if (isset(self::$_formats[$formatName])) {
       return new self::$_formats[$formatName];
     }

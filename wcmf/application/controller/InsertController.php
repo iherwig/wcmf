@@ -25,6 +25,7 @@ use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\visitor\CommitVisitor;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistenceObject;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;

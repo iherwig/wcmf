@@ -23,6 +23,7 @@ use \Zend_Db_Select;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceException;

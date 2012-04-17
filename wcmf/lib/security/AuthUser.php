@@ -21,6 +21,7 @@ namespace wcmf\lib\security;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\security\RightsManager;
@@ -63,7 +64,8 @@ class AuthUser extends User {
     }
     // try to receive the user with given credentials
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $userInstance = $persistenceFacade->create(UserManager::getUserClassName(), BuildDepth::SINGLE);
+    $userType = ObjectFactory::getInstance('userManager')->getUserType();
+    $userInstance = $persistenceFacade->create($userType, BuildDepth::SINGLE);
     $user = $userInstance->getUser($login, $password);
 
     // check if user exists
@@ -223,7 +225,7 @@ class AuthUser extends User {
    * @see PersistentObject::getType()
    */
   function getType() {
-    return UserManager::getUserClassName();
+    return ObjectFactory::getInstance('userManager')->getUserType();
   }
 
   /**

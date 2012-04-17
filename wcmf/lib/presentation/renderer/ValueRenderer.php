@@ -20,6 +20,7 @@ namespace wcmf\lib\presentation\renderer;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\renderer\DisplayType;
 
 /**
  * ValueRenderer is used to render values in html. It uses DisplayType

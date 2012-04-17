@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation\format;
 
 use wcmf\lib\io\EncodingUtil;
+use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;

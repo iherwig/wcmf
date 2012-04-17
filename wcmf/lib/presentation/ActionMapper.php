@@ -127,18 +127,7 @@ class ActionMapper
     }
 
     // instantiate controller
-    $controllerObj = null;
-    if (($classFile = $parser->getValue($controllerClass, 'classmapping')) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
-    }
-    if (file_exists(WCMF_BASE.$classFile))
-    {
-      require_once(WCMF_BASE.$classFile);
-      $controllerObj = new $controllerClass();
-    }
-    else {
-      throw new ConfigurationException("Definition of Controller ".$controllerClass." in '".$classFile."' not found.");
-    }
+    $controllerObj = new $controllerClass();
 
     // everything is right in place, start processing
     Formatter::deserialize($request);

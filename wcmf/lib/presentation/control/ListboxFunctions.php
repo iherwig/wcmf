@@ -24,6 +24,7 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\model\Node;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\PagingInfo;

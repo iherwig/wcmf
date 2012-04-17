@@ -25,6 +25,8 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\WCMFInifileParser;
+use wcmf\lib\security\User;
+use wcmf\lib\security\Role;
 
 /**
  * PrincipalController is used to edit users and roles.
@@ -171,7 +173,7 @@ class PrincipalController extends Controller {
       if ($this->_request->getAction() == 'save') {
         $saveNode = $this->_request->getValue($this->_request->getValue('oid'));
 
-        if (strtolower(get_class($principal)) == strtolower(UserManager::getUserClassName())) {
+        if ($principal instanceof User) {
           // properties
           foreach(array(USER_PROPERTY_LOGIN, USER_PROPERTY_NAME, USER_PROPERTY_FIRSTNAME, USER_PROPERTY_CONFIG) as $property) {
             $value = $saveNode->getValue($property);
@@ -197,7 +199,7 @@ class PrincipalController extends Controller {
               $this->_userManager->removeUserFromRole($curRole, $principal->getLogin());
           }
         }
-        if (strtolower(get_class($principal)) == strtolower(UserManager::getRoleClassName())) {
+        if ($principal instanceof Role) {
           // properties
           foreach(array(ROLE_PROPERTY_NAME) as $property) {
             $value = $saveNode->getValue($property);
@@ -224,11 +226,11 @@ class PrincipalController extends Controller {
 
       // reload model
       $principal = $this->_userManager->getPrincipal($this->_request->getValue('oid'));
-      if (strtolower(get_class($principal)) == strtolower(UserManager::getUserClassName())) {
+      if ($principal instanceof User) {
         $principalBaseList = $this->_userManager->listRoles();
         $principalList = $this->_userManager->listUserRoles($principal->getLogin());
       }
-      elseif (strtolower(get_class($principal)) == strtolower(UserManager::getRoleClassName())) {
+      elseif ($principal instanceof Role) {
         $principalBaseList = $this->_userManager->listUsers();
         $principalList = $this->_userManager->listRoleMembers($principal->getName());
       }

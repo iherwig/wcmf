@@ -19,7 +19,7 @@
 namespace wcmf\lib\pdf;
 
 use wcmf\lib\pdf\PDF;
-use wcmf\lib\pdf\PDFTemplate;
+use wcmf\lib\pdf\PDFPage;
 
 /**
  * PDFTemplate is used to output pdf files based on a given pdf template.

@@ -23,10 +23,12 @@ use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\Session;
 use wcmf\lib\presentation\Application;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\security\AuthUser;
+use wcmf\lib\security\RightsManager;
 use wcmf\lib\security\UserManager;
 
 /**

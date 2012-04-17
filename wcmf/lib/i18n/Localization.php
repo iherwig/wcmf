@@ -24,6 +24,8 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
@@ -157,7 +159,8 @@ class Localization {
    * @return An instance.
    */
   public static function createTranslationInstance() {
-    $obj = ObjectFactory::getInstance('translationType');
+    $obj = ObjectFactory::getInstance('persistenceFacade')->create(
+            self::getTranslationType(), BuildDepth::SINGLE);
     return $obj;
   }
 

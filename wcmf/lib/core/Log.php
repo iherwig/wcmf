@@ -21,7 +21,6 @@ namespace wcmf\lib\core;
 use \Logger;
 
 require_once(WCMF_BASE."wcmf/3rdparty/log4php/Logger.php");
-Logger::configure(dirname($_SERVER['SCRIPT_FILENAME']).'/log4php.properties');
 
 /**
  * Log is used to log application events. The implementation

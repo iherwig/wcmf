@@ -40,7 +40,7 @@ class Session {
     if (strlen($sessionId) > 0) {
       session_id($sessionId);
     }
-    session_start();
+    @session_start();
   }
 
   /**

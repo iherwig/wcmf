@@ -66,6 +66,16 @@ abstract class UserManager {
   private $_userRepository = null;
 
   /**
+   * The type used as User class.
+   */
+  private $_userType = null;
+
+  /**
+   * The type used as Role class.
+   */
+  private $_roleType = null;
+
+  /**
    * Creates a UserManager Object.
    */
   public function __construct() {
@@ -74,6 +84,22 @@ abstract class UserManager {
     if (($roleConfig = $parser->getSection('roleconfig')) !== false) {
       $this->_roleConfig = $roleConfig;
     }
+  }
+
+  /**
+   * Set the user type.
+   * @param userType
+   */
+  public function setUserType($userType) {
+    $this->_userType = $userType;
+  }
+
+  /**
+   * Set the role type.
+   * @param roleType
+   */
+  public function setRoleType($roleType) {
+    $this->_roleType = $roleType;
   }
 
   /**
@@ -496,10 +522,10 @@ abstract class UserManager {
   public function getPrincipal(ObjectId $oid) {
     $principal = null;
     $type = $oid->getType();
-    if ($type == self::getUserClassName()) {
+    if ($type == self::getUserType()) {
       $principalArray = $this->_userRepository['users'];
     }
-    elseif ($type == self::getRoleClassName()) {
+    elseif ($type == self::getRoleType()) {
       $principalArray = $this->_userRepository['roles'];
     }
     else {
@@ -523,10 +549,10 @@ abstract class UserManager {
     $type = $oid->getType();
     $principal = $this->getPrincipal($oid);
     if ($principal != null) {
-      if ($type == self::getUserClassName()) {
+      if ($type == self::getUserType()) {
         $this->removeUser($principal->getLogin());
       }
-      elseif ($type == self::getRoleClassName()) {
+      elseif ($type == self::getRoleType()) {
         $this->removeRole($principal->getName());
       }
       else {
@@ -539,29 +565,25 @@ abstract class UserManager {
   }
 
   /**
-   * Get the user implemenataion class name as configured in config section
-   * 'implementation' key 'User'.
-   * @return The class name
+   * Get the user type.
+   * @return String
    */
-  public static function getUserClassName() {
-    $parser = InifileParser::getInstance();
-    if (($className = $parser->getValue('User', 'implementation')) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
+  public function getUserType() {
+    if ($this->_userType == null) {
+      throw new ConfigurationException("The userType is not set.");
     }
-    return $className;
+    return $this->_userType;
   }
 
   /**
-   * Get the role implemenataion class name as configured in config section
-   * 'implementation' key 'Role'.
-   * @return The class name
+   * Get the role type.
+   * @return String
    */
-  public static function getRoleClassName() {
-    $parser = InifileParser::getInstance();
-    if (($className = $parser->getValue('Role', 'implementation')) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
+  public function getRoleType() {
+    if ($this->_roleType == null) {
+      throw new ConfigurationException("The roleType is not set.");
     }
-    return $className;
+    return $this->_roleType;
   }
 
   /**

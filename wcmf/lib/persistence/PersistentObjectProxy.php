@@ -23,6 +23,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistenceObject;
 /**
  * PersistentObjectProxy is proxy for an PersistentObject instance.
  *

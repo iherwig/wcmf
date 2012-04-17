@@ -23,8 +23,12 @@ use \Zend_Db_Select;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\Node;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
+use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
+use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
 use wcmf\lib\persistence\PersistenceMapper;

@@ -82,7 +82,7 @@ class UserController extends Controller {
     if ($this->_request->getAction() == 'save') {
       // load model
       $user = $rightsManager->getAuthUser();
-      $oid = new ObjectId(UserManager::getUserClassName(), $user->getUserId());
+      $oid = new ObjectId(ObjectFactory::getInstance('userManager')->getUserType(), $user->getUserId());
       $principal = $this->_userManager->getPrincipal($oid);
 
       // password

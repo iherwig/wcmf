@@ -21,9 +21,11 @@ namespace wcmf\lib\model;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\model\NodeUtil;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\PersistentObjectProxy;
 
 /**
  * Node adds the concept of relations to PersistentObject. It is the basic component for
@@ -822,14 +824,13 @@ class Node extends PersistentObject {
 
   /**
    * Get a string representation of the Node.
-   * @param verbose True to get a verbose output [default: false]
    * @return The string representation of the Node.
    */
   public function __toString() {
     $pStr = parent::__toString();
     $str = $this->getDisplayValue();
     if ($pStr != $str) {
-      return $this->getDisplayValue().' ['.parent::__toString().']';
+      return $this->getDisplayValue().' ['.$pStr.']';
     }
     return $str;
   }

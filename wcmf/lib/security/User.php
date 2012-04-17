@@ -20,6 +20,8 @@ namespace wcmf\lib\security;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\RightsManager;
@@ -55,7 +57,7 @@ abstract class User extends Node {
    */
   public function getUser($login, $password) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $userType = UserManager::getUserClassName();
+    $userType = ObjectFactory::getInstance('userManager')->getUserType();
     $user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE,
                   array(
                       new Criteria($userType, 'login', '=', $login),
@@ -191,6 +193,7 @@ abstract class User extends Node {
    * @return An array holding the role names
    */
   public function getRoles() {
+    $roleType = ObjectFactory::getInstance('userManager')->getRoleType();
     if (!$this->_hasOwnRolesLoaded) {
       // make sure that the roles are loaded
 
@@ -200,7 +203,7 @@ abstract class User extends Node {
       if (!$isAnonymous) {
         $rightsManager->deactivate();
       }
-      $this->loadChildren(UserManager::getRoleClassName());
+      $this->loadChildren($roleType);
 
       // reactivate the RightsManager if necessary
       if (!$isAnonymous) {
@@ -208,7 +211,7 @@ abstract class User extends Node {
       }
       $this->_hasOwnRolesLoaded = true;
     }
-    return $this->getChildrenEx(null, UserManager::getRoleClassName(), null, null);
+    return $this->getChildrenEx(null, $roleType, null, null);
   }
 
   /**
@@ -219,8 +222,9 @@ abstract class User extends Node {
   protected function getRoleByName($rolename) {
     if (!isset($this->_cachedRoles[$rolename])) {
       // load the role
+      $roleType = ObjectFactory::getInstance('userManager')->getRoleType();
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $role = $persistenceFacade->loadFirstObject(UserManager::getRoleClassName(), BuildDepth::SINGLE, array('name' => $rolename));
+      $role = $persistenceFacade->loadFirstObject($roleType, BuildDepth::SINGLE, array('name' => $rolename));
       if ($role != null) {
         $this->_cachedRoles[$rolename] = $role;
       }

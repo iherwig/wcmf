@@ -23,13 +23,13 @@ namespace wcmf\lib\persistence;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PagingInfo
-{
-  var $_pageSize = 10;
-  var $_page = 0;
-  var $_offset = 0;
-  var $_totalCount = 0;
-  var $_ignoreTotalCount = false;
+class PagingInfo {
+
+  private $_pageSize = 10;
+  private $_page = 0;
+  private $_offset = 0;
+  private $_totalCount = 0;
+  private $_ignoreTotalCount = false;
 
   /**
    * Creates a PagingInfo object. The ignoreTotalCount parameter may be
@@ -39,8 +39,7 @@ class PagingInfo
    * @param ignoreTotalCount True/False wether this instance ignores the
    *    total count or not, optional [default: false]
    */
-  public function __construct($pageSize, $ignoreTotalCount=false)
-  {
+  public function __construct($pageSize, $ignoreTotalCount=false) {
     $this->_pageSize = intval($pageSize);
     $this->_ignoreTotalCount = $ignoreTotalCount;
   }
@@ -49,8 +48,7 @@ class PagingInfo
    * Set the number of list items.
    * @param totalCount The number of list items.
    */
-  public function setTotalCount($totalCount)
-  {
+  public function setTotalCount($totalCount) {
     $this->_totalCount = intval($totalCount);
   }
 
@@ -58,8 +56,7 @@ class PagingInfo
    * Get the number of list items.
    * @return Number
    */
-  public function getTotalCount()
-  {
+  public function getTotalCount() {
     return $this->_totalCount;
   }
 
@@ -67,8 +64,7 @@ class PagingInfo
    * Set the current page (1-based) (also sets the offset).
    * @param page The current page.
    */
-  public function setPage($page)
-  {
+  public function setPage($page) {
     $this->_page = intval($page);
     $this->_offset = ($page - 1) * $this->_pageSize;
   }
@@ -77,8 +73,7 @@ class PagingInfo
    * Get the current page (1-based).
    * @return Number
    */
-  public function getPage()
-  {
+  public function getPage() {
     return $this->_page;
   }
 
@@ -86,8 +81,7 @@ class PagingInfo
    * Get the size of a pages.
    * @return Number
    */
-  public function getPageSize()
-  {
+  public function getPageSize() {
     return $this->_pageSize;
   }
 
@@ -95,8 +89,7 @@ class PagingInfo
    * Get the number of pages.
    * @return Number
    */
-  public function getPageCount()
-  {
+  public function getPageCount() {
     return ceil($this->_totalCount / $this->_pageSize);
   }
 
@@ -104,8 +97,7 @@ class PagingInfo
    * Set the current offset (also selects the page).
    * @param offset The current list offset.
    */
-  public function setOffset($offset)
-  {
+  public function setOffset($offset) {
     $this->_offset = $offset;
     $this->_page = ceil(intval($offset) / $this->_pageSize) + 1;
   }
@@ -114,8 +106,7 @@ class PagingInfo
    * Get the current offset.
    * @return Number
    */
-  public function getOffset()
-  {
+  public function getOffset() {
     return $this->_offset;
   }
 
@@ -123,8 +114,7 @@ class PagingInfo
    * Determine if we are on the first page.
    * @return Boolean
    */
-  public function isOnFirstPage()
-  {
+  public function isOnFirstPage() {
     return $this->_page == 1;
   }
 
@@ -132,8 +122,7 @@ class PagingInfo
    * Determine if we are on the first page.
    * @return Boolean
    */
-  public function isOnLastPage()
-  {
+  public function isOnLastPage() {
     return $this->_page == $this->getPageCount;
   }
 
@@ -141,8 +130,7 @@ class PagingInfo
    * Check if this instance iignores the total count.
    * @return Boolean
    */
-  public function isIgnoringTotalCount()
-  {
+  public function isIgnoringTotalCount() {
     return $this->_ignoreTotalCount;
   }
 }

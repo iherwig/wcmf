@@ -20,6 +20,7 @@ namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\util\StringUtil;
 
 /**
  * ControllerMessages are sent between Controllers and are used to transfer data

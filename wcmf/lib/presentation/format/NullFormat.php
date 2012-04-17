@@ -26,7 +26,7 @@ use wcmf\lib\presentation\format\Format;
 /**
  * Define the message format
  */
-define("MSG_FORMAT_NULL", "NULL");
+define("MSG_FORMAT_NULL", "null");
 
 /**
  * NullFormat passes through the original request and response objects
@@ -46,7 +46,4 @@ class NullFormat implements Format {
    */
   public function serialize(Response $response) {}
 }
-
-// register this format
-Formatter::registerFormat(MSG_FORMAT_NULL, __NAMESPACE__.NullFormat);
 ?>

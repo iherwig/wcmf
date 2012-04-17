@@ -24,6 +24,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\security\RightsManager;
@@ -73,17 +74,17 @@ class Application {
    * - Extracts the application parameters
    * @param configPath The path where config files reside (as seen from main.php), optional [default: 'config/']
    * @param mainConfigFile The main configuration file to use, optional [default: 'config.ini']
-   * @param defaultController The controller to call if none is given in request parameters, optional [default: 'LoginController']
+   * @param defaultController The controller to call if none is given in request parameters, optional [default: 'wcmf\application\controller\LoginController']
    * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
    * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
-   * @param defaultResponseFormat The response format if none is given in request parameters, optional [default: HTML]
+   * @param defaultResponseFormat The response format if none is given in request parameters, optional [default: html]
    * @return Request instance representing the current HTTP request
    * TODO: return request instance, maybe use default parameters from a config section?
    * TODO: allow configPath array to search from different locations, simplifies inclusion
    */
   public function initialize($configPath='config/', $mainConfigFile='config.ini',
-    $defaultController='LoginController', $defaultContext='', $defaultAction='login',
-    $defaultResponseFormat='HTML') {
+    $defaultController='wcmf\application\controller\LoginController', $defaultContext='', $defaultAction='login',
+    $defaultResponseFormat='html') {
 
     // collect all request data
     $this->_requestValues = array_merge($_GET, $_POST, $_FILES);
@@ -101,7 +102,6 @@ class Application {
     $parser = WCMFInifileParser::getInstance();
 
     // get controller/context/action triple
-    // (defaults to /LoginController//login in this application)
     $controller = $this->getRequestValue('controller', $defaultController);
     $context = $this->getRequestValue('context', $defaultContext);
     $action = $this->getRequestValue('action', $defaultAction);

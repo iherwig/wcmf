@@ -40,9 +40,9 @@ class DefaultUserManager extends UserManager {
    */
   protected function getUsersAndRoles() {
     // load the user/role instances
-    $query = new ObjectQuery(self::getUserClassName());
+    $query = new ObjectQuery(self::getUserType());
     $users = $query->execute(1);
-    $query = new ObjectQuery(self::getRoleClassName());
+    $query = new ObjectQuery(self::getRoleType());
     $roles = $query->execute(1);
     return array('users' => $users, 'roles' => $roles);
   }
@@ -52,7 +52,7 @@ class DefaultUserManager extends UserManager {
    */
   protected function createUserImpl($name, $firstname, $login, $password) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $user = $persistenceFacade->create(self::getUserClassName(), BuildDepth::REQUIRED);
+    $user = $persistenceFacade->create(self::getUserType(), BuildDepth::REQUIRED);
     $user->setName($name);
     $user->setFirstname($firstname);
     $user->setLogin($login);

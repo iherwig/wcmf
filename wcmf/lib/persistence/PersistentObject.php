@@ -25,6 +25,8 @@ use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistenceObjectProxy;
+use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\util\StringUtil;
 
@@ -695,8 +697,7 @@ class PersistentObject {
     else {
       // get the default property value from the mapper
       $mapper = $this->getMapper();
-      if ($mapper)
-      {
+      if ($mapper) {
         $properties = $mapper->getProperties();
         if (isset($properties[$name])) {
           return $properties[$name];

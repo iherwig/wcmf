@@ -125,7 +125,7 @@ class HTTPClient {
   protected function doLogin() {
     if ($this->_user) {
       $request = new Request(
-        'LoginController',
+        'wcmf\application\controller\LoginController',
         '',
         'dologin',
         array(

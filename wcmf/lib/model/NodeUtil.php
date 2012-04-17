@@ -230,18 +230,25 @@ class NodeUtil {
       $inputType = ''; // needed for the translation of a list value
       if ($pathToShowPiece != '') {
         $curNode = $node;
+        $mapper = $curNode->getMapper();
         $pieces = preg_split('/\//', $pathToShowPiece);
         foreach ($pieces as $curPiece) {
           if (in_array($curPiece, $curNode->getValueNames())) {
             // we found a matching attribute/element
+            $attribute = $mapper->getAttribute($curPiece);
+            $inputType = $attribute->getInputType();
+            $displayType = $attribute->getDisplayType();
             $tmpDisplay = $curNode->getValue($curPiece);
-            $inputType = $curNode->getProperty('input_type');
-            $displayType = $curNode->getProperty('display_type');
             break;
           }
         }
       }
-      $tmpDisplay = ControlRenderer::getControl($inputType)->translateValue($tmpDisplay, $inputType, false, null, $language);
+
+      $controlRenderer = ObjectFactory::getInstance('controlRenderer');
+      $control = $controlRenderer->getControl($inputType);
+      if ($control != null) {
+        $tmpDisplay = $control->translateValue($tmpDisplay, $inputType, false, null, $language);
+      }
       if (strlen($tmpDisplay) == 0) {
         $tmpDisplay = $node->getOID();
       }
@@ -255,7 +262,11 @@ class NodeUtil {
         if (!$displayType || $displayType == '') {
           $displayType = 'text';
         }
-        $tmpDisplay = ValueRenderer::render($displayType, $tmpDisplay, $attributes);
+        $valueRenderer = ObjectFactory::getInstance('valueRenderer');
+        $renderer = $valueRenderer->getControl($displayType);
+        if ($renderer != null) {
+          $tmpDisplay = $renderer->render($tmpDisplay, $attributes);
+        }
       }
       $displayArray[$pathToShowPiece] = $tmpDisplay;
     }

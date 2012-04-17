@@ -43,6 +43,8 @@ class DefaultLockHandler implements LockHandler {
 
   const SESSION_VARNAME = 'DefaultLockHandler.locks';
 
+  private $_userType = null;
+
   /**
    * @see ILockHandler::aquireLock()
    */
@@ -96,7 +98,7 @@ class DefaultLockHandler implements LockHandler {
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
-    $userTpl = $query->getObjectTemplate(UserManager::getUserClassName());
+    $userTpl = $query->getObjectTemplate($this->getUserType());
     $userTpl->setOID($currentUser->getOID());
     $userTpl->addNode($tpl);
     $locks = $query->execute(BuildDepth::SINGLE);
@@ -133,7 +135,7 @@ class DefaultLockHandler implements LockHandler {
     // delete locks for the current user
     $query = new ObjectQuery('Locktable');
     $tpl = $query->getObjectTemplate('Locktable');
-    $userTpl = $query->getObjectTemplate(UserManager::getUserClassName());
+    $userTpl = $query->getObjectTemplate($this->getUserType());
     $userTpl->setOID($currentUser->getOID());
     $userTpl->addNode($tpl);
     $locks = $query->execute(BuildDepth::SINGLE);
@@ -164,7 +166,7 @@ class DefaultLockHandler implements LockHandler {
     $locks = $query->execute(BuildDepth::SINGLE);
     if (sizeof($locks) > 0) {
       $lockObj = $locks[0];
-      $user = $lockObj->getValue(UserManager::getUserClassName());
+      $user = $lockObj->getValue($this->getUserType());
       $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $user->getOID(), $user->getLogin(),
               $lockObj->getValue('sessionid'), $lockObj->getValue('since'));
 
@@ -192,7 +194,7 @@ class DefaultLockHandler implements LockHandler {
       $lockObj->setValue('sessionid', $lock->getSessionID());
       $lockObj->setValue('objectid', $lock->getOID());
       $lockObj->setValue('since', $lock->getCreated());
-      $userClass = UserManager::getUserClassName();
+      $userClass = get_class($persistenceFacade->create($this->getUserType(), BuildDepth::REQUIRED));
       $user = new $userClass($lock->getUserOID());
       $user->addNode($lockObj);
       // save lock immediatly
@@ -244,6 +246,17 @@ class DefaultLockHandler implements LockHandler {
     $locks = $this->getSessionLocks();
     unset($locks[$lock->getOID->__toString()]);
     $session->set(self::SESSION_VARNAME, $locks);
+  }
+
+  /**
+   * Get the user type.
+   * @return String
+   */
+  protected function getUserType() {
+    if ($this->_userType == null) {
+      $this->_userType = ObjectFactory::getInstance('userManager')->getUserType();
+    }
+    return $this->_userType;
   }
 }
 ?>

@@ -25,6 +25,7 @@ use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\LockHandler;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;

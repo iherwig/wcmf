@@ -27,6 +27,8 @@ use \Zend_Db_Select;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\Node;
+use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\persistence\AbstractMapper;
 use wcmf\lib\persistence\BuildDepth;
