@@ -47,7 +47,7 @@
  *      Tue Sep  8 21:51:04 2009,120 [5485] FATAL root - Some critical message!
  * </pre>
  *
- * @version $Revision$
+ * @version $Revision: 1237433 $
  * @package log4php
  * @subpackage appenders
  */
@@ -56,91 +56,70 @@ class LoggerAppenderMailEvent extends LoggerAppender {
 	/**  'from' field (defaults to 'sendmail_from' from php.ini on win32).
 	 * @var string
 	 */
-	private $from = null;
+	protected $from;
 
 	/** Mailserver port (win32 only).
 	 * @var integer 
 	 */
-	private $port = 25;
+	protected $port = 25;
 
 	/** Mailserver hostname (win32 only).
 	 * @var string   
 	 */
-	private $smtpHost = null;
+	protected $smtpHost = null;
 
 	/**
 	 * @var string 'subject' field
 	 */
-	private $subject = '';
+	protected $subject = '';
 
 	/**
 	 * @var string 'to' field
 	 */
-	private $to = null;
+	protected $to = null;
 	
-	/**
-	 * @access private
-	 */
-	protected $requiresLayout = true;
-
 	/** @var indiciates if this appender should run in dry mode */
-	private $dry = false;
+	protected $dry = false;
 	
-	/**
-	 * Constructor.
-	 *
-	 * @param string $name appender name
-	 */
-	public function __construct($name = '') {
-		parent::__construct($name);
-	}
-
-	public function __destruct() {
-       $this->close();
-   	}
-   	
 	public function activateOptions() {
-	    if (empty($this->layout)) {
-	        throw new LoggerException("LoggerAppenderMailEvent requires layout!");
-	    }
-	    if (empty($this->to)) {
-            throw new LoggerException("LoggerAppenderMailEvent was initialized with empty 'from' ($this->from) or 'to' ($this->to) Adress!");
-        }
-        
-        $sendmail_from = ini_get('sendmail_from');
-        if (empty($this->from) and empty($sendmail_from)) {
-            throw new LoggerException("LoggerAppenderMailEvent requires 'from' or on win32 at least the ini variable sendmail_from!");
-        }
-        
-        $this->closed = false;
+		if (empty($this->to)) {
+			$this->warn("Required parameter 'to' not set. Closing appender.");
+			$this->close = true;
+			return;
+		}
+		
+		$sendmail_from = ini_get('sendmail_from');
+		if (empty($this->from) and empty($sendmail_from)) {
+			$this->warn("Required parameter 'from' not set. Closing appender.");
+			$this->close = true;
+			return;
+		}
+		
+		$this->closed = false;
 	}
 	
-	public function close() {
-		$this->closed = true;
-	}
-
 	public function setFrom($from) {
-		$this->from = $from;
+		$this->setString('from', $from);
 	}
 	
 	public function setPort($port) {
-		$this->port = (int)$port;
+		$this->setPositiveInteger('port', $port);
 	}
 	
 	public function setSmtpHost($smtpHost) {
-		$this->smtpHost = $smtpHost;
+		$this->setString('smtpHost', $smtpHost);
 	}
 	
 	public function setSubject($subject) {
-		$this->subject = $subject;
+		$this->setString('subject',  $subject);
 	}
 	
 	public function setTo($to) {
-		$this->to = $to;
+		$this->setString('to',  $to);
 	}
 
 	public function setDry($dry) {
-		$this->dry = $dry;
+		$this->setBoolean('dry', $dry);
 	}
 	
 	public function append(LoggerLoggingEvent $event) {
@@ -161,19 +140,12 @@ class LoggerAppenderMailEvent extends LoggerAppender {
 		$addHeader = empty($this->from) ? '' : "From: {$this->from}\r\n";
 		
 		if(!$this->dry) {
-			$result = mail($this->to, $this->subject, 
-				$this->layout->getHeader() . $this->layout->format($event) . $this->layout->getFooter($event), 
-				$addHeader);			
-		    if ($result === false) {
-		        // The error message is only printed to stderr as warning. Any idea how to get it?
-		        throw new LoggerException("Error sending mail to '".$this->to."'!");
-		    }
+			$result = mail($this->to, $this->subject, $this->layout->getHeader() . $this->layout->format($event) . $this->layout->getFooter($event), $addHeader);			
 		} else {
-		    echo "DRY MODE OF MAIL APP.: Send mail to: ".$this->to." with additional headers '".trim($addHeader)."' and content: ".$this->layout->format($event);
+			echo "DRY MODE OF MAIL APP.: Send mail to: ".$this->to." with additional headers '".trim($addHeader)."' and content: ".$this->layout->format($event);
 		}
 			
 		ini_set('SMTP', $prevSmtpHost);
 		ini_set('smtp_port', $prevSmtpPort);
 	}
 }
-

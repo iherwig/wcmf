@@ -25,7 +25,7 @@
  * <p>It is this class that parses conversion patterns and creates
  * a chained list of {@link LoggerPatternConverter} converters.</p>
  * 
- * @version $Revision$ 
+ * @version $Revision: 1163520 $ 
  * @package log4php
  * @subpackage helpers
  *
@@ -245,7 +245,7 @@ class LoggerPatternParser {
 				$this->currentLiteral = '';
 				break;
 			case 'C':
-				$pc = new LoggerClassNamePatternConverter($this->formattingInfo, $this->extractPrecisionOption());
+				$pc = new LoggerClassNamePatternConverter($this->formattingInfo, self::CLASS_LOCATION_CONVERTER);
 				$this->currentLiteral = '';
 				break;
 			case 'd':
@@ -301,16 +301,6 @@ class LoggerPatternParser {
 			case 't':
 				$pc = new LoggerBasicPatternConverter($this->formattingInfo, self::THREAD_CONVERTER);
 				$this->currentLiteral = '';
-				break;
-			case 'u':
-				if($this->i < $this->patternLength) {
-					$cNext = $this->pattern{$this->i};
-					if(ord($cNext) >= ord('0') and ord($cNext) <= ord('9')) {
-						$pc = new LoggerUserFieldPatternConverter($this->formattingInfo, (string)(ord($cNext) - ord('0')));
-						$this->currentLiteral = '';
-						$this->i++;
-					}
-				}
 				break;
 			case 'x':
 				$pc = new LoggerBasicPatternConverter($this->formattingInfo, self::NDC_CONVERTER);

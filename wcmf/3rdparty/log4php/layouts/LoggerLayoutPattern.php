@@ -130,7 +130,7 @@
  *                                                                then truncate from the beginning.  
  * </pre>
  * 
- * @version $Revision$
+ * @version $Revision: 1213283 $
  * @package log4php
  * @subpackage layouts
  * @since 0.3 
@@ -140,30 +140,16 @@ class LoggerLayoutPattern extends LoggerLayout {
 	const DEFAULT_CONVERSION_PATTERN = '%m%n';
 
 	/** Default conversion TTCC Pattern */
-	const TTCC_CONVERSION_PATTERN = '%r [%t] %p %c %x - %m%n';
+	const TTCC_CONVERSION_PATTERN = '%d [%t] %p %c %x - %m%n';
 
-	/** The pattern. 
-	 * @var string */
-	private $pattern;
+	/** The conversion pattern. */ 
+	protected $pattern = self::DEFAULT_CONVERSION_PATTERN;
 
-	/** Head of a chain of Converters.
-	 * @var LoggerPatternConverter */
-	private $head;
-
-	private $timezone;
-
-	/**
-	 * Constructs a PatternLayout using the 
-	 * {@link DEFAULT_LAYOUT_PATTERN}.
-	 * The default pattern just produces the application supplied message.
+	/** 
+	 * Head of a chain of Converters.
+	 * @var LoggerPatternConverter 
 	 */
-	public function __construct($pattern = null) {
-		if ($pattern === null) {
-			$this->pattern = self :: DEFAULT_CONVERSION_PATTERN;
-		} else {
-			$this->pattern = $pattern;
-		}
-	}
+	private $head;
 
 	/**
 	 * Set the <b>ConversionPattern</b> option. This is the string which
@@ -192,28 +178,28 @@ class LoggerLayoutPattern extends LoggerLayout {
 		return $sbuf;
 	}
 	
-    /**
-     * Returns an array with the formatted elements.
-     * 
-     * This method is mainly used for the prepared statements of {@see LoggerAppenderPDO}.
-     * 
-     * It requires {@link $this->pattern} to be a comma separated string of patterns like
-     * e.g. <code>%d,%c,%p,%m,%t,%F,%L</code>.
-     * 
-     * @return array(string)   An array of the converted elements i.e. timestamp, message, filename etc.
-     */
-    public function formatToArray(LoggerLoggingEvent $event) {
-        $results = array();
-        $c = $this->head;
-        while ($c !== null) {
-            if ( ! $c instanceOf LoggerLiteralPatternConverter) {
-                $sbuf = null;
-                $c->format($sbuf, $event);
-                $results[] = $sbuf;
-            }
-            $c = $c->next;
-        }
-        return $results;
-    }      
+	/**
+	 * Returns an array with the formatted elements.
+	 * 
+	 * This method is mainly used for the prepared statements of {@see LoggerAppenderPDO}.
+	 * 
+	 * It requires {@link $this->pattern} to be a comma separated string of patterns like
+	 * e.g. <code>%d,%c,%p,%m,%t,%F,%L</code>.
+	 * 
+	 * @return array(string)   An array of the converted elements i.e. timestamp, message, filename etc.
+	 */
+	public function formatToArray(LoggerLoggingEvent $event) {
+		$results = array();
+		$c = $this->head;
+		while ($c !== null) {
+			if ( ! $c instanceOf LoggerLiteralPatternConverter) {
+				$sbuf = null;
+				$c->format($sbuf, $event);
+				$results[] = $sbuf;
+			}
+			$c = $c->next;
+		}
+		return $results;
+	}
 	
 }

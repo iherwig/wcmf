@@ -24,11 +24,17 @@
  * The file is rolled over once a day. That means, for each day a new file 
  * is created. A formatted version of the date pattern is used as to create 
  * the file name using the {@link PHP_MANUAL#sprintf} function.
+ *
+ * This appender uses a layout.
  * 
- * - layout             - Sets the layout class for this appender
- * - datePattern        - Sets date format for the file name. Should be set before $file!
- * - file               - The target file name. Should contain a '%s' which gets substituted by the date.
- * - append             - Sets if the appender should append to the end of the file or overwrite content ("true" or "false")
+ * Configurable parameters for this appender are:
+ * - datePattern - The date format for the file name. Should be set before 
+ *                 $file. Default value: "Ymd".
+ * - file        - The path to the target log file. The filename should 
+ *                 contain a '%s' which will be substituted by the date.
+ * - append      - Sets if the appender should append to the end of the
+ *                 file or overwrite content ("true" or "false"). Default 
+ *                 value: true.
  * 
  * An example php file:
  * 
@@ -40,7 +46,7 @@
  *
  * The above will create a file like: daily_20090908.log
  *
- * @version $Revision$
+ * @version $Revision: 1213283 $
  * @package log4php
  * @subpackage appenders
  */
@@ -51,42 +57,54 @@ class LoggerAppenderDailyFile extends LoggerAppenderFile {
 	 * It follows the {@link PHP_MANUAL#date()} formatting rules and <b>should always be set before {@link $file} param</b>.
 	 * @var string
 	 */
-	public $datePattern = "Ymd";
+	protected $datePattern = "Ymd";
 	
-	public function __destruct() {
-       parent::__destruct();
-   	}
-   	
 	/**
-	* Sets date format for the file name.
-	* @param string $format a regular date() string format
-	*/
-	public function setDatePattern($format) {
-		$this->datePattern = $format;
+	 * Sets date format for the file name.
+	 * @param string $datePattern a regular date() string format
+	 */
+	public function setDatePattern($datePattern) {
+		$this->setString('datePattern', $datePattern);
 	}
 	
 	/**
-	* @return string returns date format for the filename
-	*/
+	 * @return string returns date format for the filename
+	 */
 	public function getDatePattern() {
 		return $this->datePattern;
 	}
 	
-	/**
-	* The File property takes a string value which should be the name of the file to append to.
-	* Sets and opens the file where the log output will go.
-	*
-	* @see LoggerAppenderFile::setFile()
-	*/
-	public function setFile() {
-		$numargs = func_num_args();
-		$args = func_get_args();
+	/** 
+	 * Similar to parent method, but but replaces "%s" in the file name with 
+	 * the current date in format specified by the 'datePattern' parameter.
+	 */ 
+	public function activateOptions() {
+		$fileName = $this->getFile();
+		$date = date($this->getDatePattern());
+		$fileName = sprintf($fileName, $date);
 		
-		if($numargs == 1 and is_string($args[0])) {
-			parent::setFile( sprintf((string)$args[0], date($this->getDatePattern())) );
-		} else if ($numargs == 2 and is_string($args[0]) and is_bool($args[1])) {
-			parent::setFile( sprintf((string)$args[0], date($this->getDatePattern())), $args[1] );
+		if(!is_file($fileName)) {
+			$dir = dirname($fileName);
+			if(!is_dir($dir)) {
+				mkdir($dir, 0777, true);
+			}
 		}
-	} 
-
+	
+		$this->fp = fopen($fileName, ($this->getAppend()? 'a':'w'));
+		if($this->fp) {
+			if(flock($this->fp, LOCK_EX)) {
+				if($this->getAppend()) {
+					fseek($this->fp, 0, SEEK_END);
+				}
+				fwrite($this->fp, $this->layout->getHeader());
+				flock($this->fp, LOCK_UN);
+				$this->closed = false;
+			} else {
+				// TODO: should we take some action in this case?
+				$this->closed = true;
+			}
+		} else {
+			$this->closed = true;
+		}
+	}
 }

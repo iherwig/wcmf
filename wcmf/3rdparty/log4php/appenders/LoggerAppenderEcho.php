@@ -36,27 +36,19 @@
  *    Tue Sep  8 22:44:55 2009,812 [6783] DEBUG appender_echo - Hello World!
  * </pre>
  *
- * @version $Revision$
+ * @version $Revision: 1213283 $
  * @package log4php
  * @subpackage appenders
  */
 class LoggerAppenderEcho extends LoggerAppender {
 	/** boolean used internally to mark first append */
-	private $firstAppend = true;
+	protected $firstAppend = true;
 	
-	public function __construct($name = '') {
-	    parent::__construct($name);
-	    $this->requiresLayout = true;
-	    $this->firstAppend = true;
-	}
-	
-	public function __destruct() {
-       $this->close();
-   	}
-   	
-	public function activateOptions() {
-		$this->closed = false;
-	}
+	/** 
+	 * If set to true, a <br /> element will be inserted before each line
+	 * break in the logged message. Default value is false. @var boolean 
+	 */
+	protected $htmlLineBreaks = false;
 	
 	public function close() {
 		if($this->closed != true) {
@@ -64,7 +56,7 @@ class LoggerAppenderEcho extends LoggerAppender {
 				echo $this->layout->getFooter();
 			}
 		}
-		$this->closed = true;	 
+		$this->closed = true;
 	}
 
 	public function append(LoggerLoggingEvent $event) {
@@ -73,8 +65,21 @@ class LoggerAppenderEcho extends LoggerAppender {
 				echo $this->layout->getHeader();
 				$this->firstAppend = false;
 			}
-			echo $this->layout->format($event);
+			$text = $this->layout->format($event);
+			
+			if ($this->htmlLineBreaks) {
+				$text = nl2br($text);
+			}
+			echo $text;
 		} 
+	}
+	
+	public function setHtmlLineBreaks($value) {
+		$this->setBoolean('htmlLineBreaks', $value);
+	}
+
+	public function getHtmlLineBreaks() {
+		return $this->htmlLineBreaks;
 	}
 }
 

@@ -36,8 +36,8 @@ class LoggerLocationPatternConverter extends LoggerPatternConverter {
 	 * @param integer $type
 	 */
 	public function __construct($formattingInfo, $type) {
-	  parent::__construct($formattingInfo);
-	  $this->type = $type;
+		parent::__construct($formattingInfo);
+		$this->type = $type;
 	}
 
 	/**
@@ -55,6 +55,8 @@ class LoggerLocationPatternConverter extends LoggerPatternConverter {
 				return $locationInfo->getLineNumber();
 			case LoggerPatternParser::FILE_LOCATION_CONVERTER:
 				return $locationInfo->getFileName();
+			case LoggerPatternParser::CLASS_LOCATION_CONVERTER:
+				return $locationInfo->getFullQualifiedClassname();
 			default: 
 				return '';
 		}

@@ -36,7 +36,7 @@
  * 
  * {@example ../../examples/resources/filter_denyall.xml 18}
  *
- * @version $Revision$
+ * @version $Revision: 883108 $
  * @package log4php
  * @subpackage filters
  * @since 0.3

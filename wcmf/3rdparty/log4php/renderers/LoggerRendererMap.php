@@ -29,7 +29,7 @@
  * DEBUG - Doe, John
  * </pre>
  * 
- * @version $Revision$
+ * @version $Revision: 1166187 $
  * @package log4php
  * @subpackage renderers
  * @since 0.3
@@ -61,7 +61,6 @@ class LoggerRendererMap {
 	 * @param LoggerHierarchy $repository a logger repository.
 	 * @param string $renderedClassName
 	 * @param string $renderingClassName
-	 * @static
 	 */
 	public function addRenderer($renderedClassName, $renderingClassName) {
 		$renderer = LoggerReflectionUtils::createObject($renderingClassName);
@@ -126,7 +125,8 @@ class LoggerRendererMap {
 	 */
 	public function getByClassName($class) {
 		$r = null;
-		for($c = strtolower($class); !empty($c); $c = get_parent_class($c)) {
+		for($c = $class; !empty($c); $c = get_parent_class($c)) {
+			$c = strtolower($c);
 			if(isset($this->map[$c])) {
 				return $this->map[$c];
 			}

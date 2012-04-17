@@ -21,7 +21,7 @@
 /**
  * The root logger.
  *
- * @version $Revision$
+ * @version $Revision: 822448 $
  * @package log4php
  * @see Logger
  */

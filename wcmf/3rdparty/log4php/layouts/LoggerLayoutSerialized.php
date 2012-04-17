@@ -19,38 +19,37 @@
  */
 
 /**
- * A simple layout.
- *
- * Returns the log statement in a format consisting of the
- * <b>level</b>, followed by " - " and then the <b>message</b>. 
- *
- * For example the following php and properties files
+ * Layout which formats the events using PHP's serialize() function.
  * 
- * {@example ../../examples/php/layout_simple.php 19}<br>
+ * Available options:
+ * - locationInfo - If set to true, the event's location information will also
+ *                  be serialized (slow, defaults to false).
  * 
- * {@example ../../examples/resources/layout_simple.properties 18}<br>
- *
- * would result in:
- * 
- * <samp>INFO - Hello World!</samp>
- *
- * @version $Revision: 1213283 $
+ * @version $Revision: 1059292 $
  * @package log4php
  * @subpackage layouts
+ * @since 2.2
  */  
-class LoggerLayoutSimple extends LoggerLayout {
-	/**
-	 * Returns the log statement in a format consisting of the
-	 * <b>level</b>, followed by " - " and then the
-	 * <b>message</b>. For example, 
-	 * <samp> INFO - "A message" </samp>
-	 *
-	 * @param LoggerLoggingEvent $event
-	 * @return string
-	 */
+class LoggerLayoutSerialized extends LoggerLayout {
+	
+	/** Whether to include the event's location information (slow). */
+	protected $locationInfo = false;
+	
+	/** Sets the location information flag. */
+	public function setLocationInfo($value) {
+		$this->setBoolean('locationInfo', $value);
+	}
+	
+	/** Returns the location information flag. */
+	public function getLocationInfo() {
+		return $this->locationInfo;
+	}
+	
 	public function format(LoggerLoggingEvent $event) {
-		$level = $event->getLevel();
-		$message = $event->getRenderedMessage();
-		return "$level - $message" . PHP_EOL;
+		// If required, initialize the location data
+		if($this->locationInfo) {
+			$event->getLocationInformation();
+		}
+		return serialize($event) . PHP_EOL;
 	}
 }

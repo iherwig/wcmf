@@ -18,21 +18,6 @@
  * @package log4php
  */
 
-/**
- * Array for fast space padding
- * Used by {@link LoggerPatternConverter::spacePad()}.	
- * 
- * @package log4php
- * @subpackage helpers
- */
-$GLOBALS['log4php.LoggerPatternConverter.spaces'] = array(
-	" ", // 1 space
-	"  ", // 2 spaces
-	"    ", // 4 spaces
-	"        ", // 8 spaces
-	"                ", // 16 spaces
-	"                                " ); // 32 spaces
-
 
 /**
  * LoggerPatternConverter is an abstract class that provides the formatting 
@@ -42,14 +27,25 @@ $GLOBALS['log4php.LoggerPatternConverter.spaces'] = array(
  * individual PatternConverters. Each of which is responsible for
  * converting a logging event in a converter specific manner.</p>
  * 
- * @version $Revision$
+ * @version $Revision: 1166187 $
  * @package log4php
  * @subpackage helpers
- * @abstract
  * @since 0.3
  */
 class LoggerPatternConverter {
-
+	
+	/**
+	 * Array for fast space padding
+	 * Used by {@link LoggerPatternConverter::spacePad()}.	
+	 */
+	private $spaces = array(
+		" ", // 1 space
+		"  ", // 2 spaces
+		"    ", // 4 spaces
+		"        ", // 8 spaces
+		"                ", // 16 spaces
+		"                                "); // 32 spaces 
+	 
 	/**
 	 * @var LoggerPatternConverter next converter in converter chain
 	 */
@@ -116,20 +112,20 @@ class LoggerPatternConverter {
 	/**
 	 * Fast space padding method.
 	 *
-	 * @param string	$sbuf	   string buffer
+	 * @param string	&$sbuf	   string buffer
 	 * @param integer	$length	   pad length
 	 *
 	 * @todo reimplement using PHP string functions
 	 */
-	public function spacePad($sbuf, $length) {
+	public function spacePad(&$sbuf, $length) {
 		while($length >= 32) {
-		  $sbuf .= $GLOBALS['log4php.LoggerPatternConverter.spaces'][5];
+		  $sbuf .= $this->spaces[5];
 		  $length -= 32;
 		}
 		
 		for($i = 4; $i >= 0; $i--) {	
 			if(($length & (1<<$i)) != 0) {
-				$sbuf .= $GLOBALS['log4php.LoggerPatternConverter.spaces'][$i];
+				$sbuf .= $this->spaces[$i];
 			}
 		}
 

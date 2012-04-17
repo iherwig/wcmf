@@ -21,7 +21,7 @@
 /**
  * The internal representation of caller location information.
  *
- * @version $Revision$
+ * @version $Revision: 822448 $
  * @package log4php
  * @since 0.3
  */
