@@ -25,6 +25,7 @@ use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
+use wcmf\lib\persistence\concurrency\Lock;
 
 /**
  * LockingTest.

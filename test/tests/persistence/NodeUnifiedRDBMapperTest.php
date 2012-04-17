@@ -45,7 +45,8 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testSelectSQL() {
-    $mapper = new PageRDBMapper($this->dbParams);
+    $mapper = new PageRDBMapper();
+    $mapper->setConnectionParams($this->dbParams);
     $criteria = new Criteria('Page', 'name', '=', 'Page 1');
 
     // condition 1
@@ -115,7 +116,8 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
 
     // dbprefix
     $this->dbParams['dbPrefix'] = 'WCMF_';
-    $mapper = new PageRDBMapper($this->dbParams);
+    $mapper = new PageRDBMapper();
+    $mapper->setConnectionParams($this->dbParams);
 
     // condition
     $sql = TestUtil::callProtectedMethod($mapper, 'getSelectSQL', array(array($criteria)))->__toString();
@@ -127,14 +129,16 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testRelationSQL() {
-    $mapper = new PageRDBMapper($this->dbParams);
+    $mapper = new PageRDBMapper();
+    $mapper->setConnectionParams($this->dbParams);
 
     $page = new Page(new ObjectId('Page', array(1)));
     $page->setFkAuthorId(12);
 
     // parent (pk only)
     $relationDescription = $mapper->getRelation('Author');
-    $otherMapper = new AuthorRDBMapper($this->dbParams);
+    $otherMapper = new AuthorRDBMapper();
+    $otherMapper->setConnectionParams($this->dbParams);
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), null, null, array()))->__toString();
     $expected = "SELECT `Author`.`id` FROM `Author` WHERE (`Author`.`id`= 12) ORDER BY `Author`.`sortkey` ASC";
@@ -149,7 +153,8 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
 
     // parent (order)
     $relationDescription = $mapper->getRelation('Author');
-    $otherMapper = new AuthorRDBMapper($this->dbParams);
+    $otherMapper = new AuthorRDBMapper();
+    $otherMapper->setConnectionParams($this->dbParams);
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), null, array('name')))->__toString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
@@ -159,7 +164,8 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
     // parent (criteria)
     $criteria = new Criteria('Author', 'name', '=', 'Unknown');
     $relationDescription = $mapper->getRelation('Author');
-    $otherMapper = new AuthorRDBMapper($this->dbParams);
+    $otherMapper = new AuthorRDBMapper();
+    $otherMapper->setConnectionParams($this->dbParams);
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), array($criteria)))->__toString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
@@ -169,7 +175,8 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
 
     // child (pk only)
     $relationDescription = $mapper->getRelation('NormalImage');
-    $otherMapper = new ImageRDBMapper($this->dbParams);
+    $otherMapper = new ImageRDBMapper();
+    $otherMapper->setConnectionParams($this->dbParams);
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), null, null, array()))->__toString();
     $expected = "SELECT `Image`.`id` FROM `Image` WHERE (`Image`.`fk_page_id`= 1)";
@@ -185,7 +192,8 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
 
     // many to many (pk only)
     $relationDescription = $mapper->getRelation('Document');
-    $otherMapper = new DocumentRDBMapper($this->dbParams);
+    $otherMapper = new DocumentRDBMapper();
+    $otherMapper->setConnectionParams($this->dbParams);
     $sql = TestUtil::callProtectedMethod($otherMapper, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($page), $relationDescription->getThisRole(), null, null, array()))->__toString();
     $expected = "SELECT `Document`.`id`, `NMPageDocument`.`sortkey_page` FROM `Document` INNER JOIN `NMPageDocument` ON ".
@@ -203,7 +211,8 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testInsertSQL() {
-    $mapper = new PageRDBMapper($this->dbParams);
+    $mapper = new PageRDBMapper();
+    $mapper->setConnectionParams($this->dbParams);
 
     $page = new Page(new ObjectId('Page', 1));
     $page->setValue('name', 'Page 1');
@@ -221,11 +230,12 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertEquals('InsertOperation:type=Page,values=(id=1,fk_page_id=3,fk_author_id=2,name=Page 1,created=2010-02-21,creator=admin),criteria=()', $str);
+    $this->assertEquals('wcmf\lib\persistence\InsertOperation:type=Page,values=(id=1,fk_page_id=3,fk_author_id=2,name=Page 1,created=2010-02-21,creator=admin),criteria=()', $str);
   }
 
   public function testUpdateSQL() {
-    $mapper = new PageRDBMapper($this->dbParams);
+    $mapper = new PageRDBMapper();
+    $mapper->setConnectionParams($this->dbParams);
 
     $page = new Page(new ObjectId('Page', 1));
     $page->setValue('name', 'Page 1');
@@ -243,18 +253,19 @@ class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertEquals('UpdateOperation:type=Page,values=(id=1,fk_page_id=3,fk_author_id=2,name=Page 1,created=2010-02-21,creator=admin),criteria=([AND] Page.id = 1)', $str);
+    $this->assertEquals('wcmf\lib\persistence\UpdateOperation:type=Page,values=(id=1,fk_page_id=3,fk_author_id=2,name=Page 1,created=2010-02-21,creator=admin),criteria=([AND] Page.id = 1)', $str);
   }
 
   public function testDeleteSQL() {
-    $mapper = new PageRDBMapper($this->dbParams);
+    $mapper = new PageRDBMapper();
+    $mapper->setConnectionParams($this->dbParams);
 
     $operations = TestUtil::callProtectedMethod($mapper, 'getDeleteSQL', array(new ObjectId('Page', 1)));
     $this->assertEquals(1, sizeof($operations));
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertEquals('DeleteOperation:type=Page,values=(),criteria=([AND] Page.id = 1)', $str);
+    $this->assertEquals('wcmf\lib\persistence\DeleteOperation:type=Page,values=(),criteria=([AND] Page.id = 1)', $str);
   }
 }
 ?>

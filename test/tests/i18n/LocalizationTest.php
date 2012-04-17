@@ -21,6 +21,7 @@ namespace test\tests\i18n;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 

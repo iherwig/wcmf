@@ -135,7 +135,7 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @expectedException IllegalArgumentException
+   * @expectedException wcmf\lib\core\IllegalArgumentException
    */
   public function testAmbiguousRelation() {
     TestUtil::runAnonymous(true);

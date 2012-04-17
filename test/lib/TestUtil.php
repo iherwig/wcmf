@@ -20,6 +20,7 @@ namespace test\lib;
 
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -51,12 +52,12 @@ class TestUtil {
    */
   public static function simulateRequest($request) {
     // set formatter
-    $request->setFormat('Null');
-    $request->setResponseFormat('Null');
+    $request->setFormat('null');
+    $request->setResponseFormat('null');
 
     // initialize the application
     $application = Application::getInstance();
-    $application->initialize('../application/include/');
+    $application->initialize('config/');
 
     // reset the action mapper, because otherwise all requests would be cumulated
     ActionMapper::reset();
@@ -72,7 +73,7 @@ class TestUtil {
    *    subsequent simulateRequest calls
    */
   public static function startSession($user, $password) {
-    $request = new Request('LoginController',
+    $request = new Request('wcmf\application\controller\LoginController',
       '',
       'dologin'
     );

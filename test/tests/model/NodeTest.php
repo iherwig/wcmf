@@ -19,6 +19,7 @@
 namespace test\tests\model;
 
 use test\lib\TestUtil;
+use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -84,12 +85,13 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
     $author2 = $persistenceFacade->create('Author', BuildDepth::REQUIRED);
     $this->assertNotEquals(0, sizeof($author2->getValue('Page')));
 
-    // BUILDDEPTH_INFINTE is not allowed for create
+    // BuildDepth::INFINTE is not allowed for create
     try {
       $persistenceFacade->create('Page', BuildDepth::INFINITE);
       $this->fail('An expected exception has not been raised.');
     }
-    catch(Exception $ex) {}
+    catch(IllegalArgumentException $ex) {
+    }
 
     $transaction->rollback();
     TestUtil::runAnonymous(false);
