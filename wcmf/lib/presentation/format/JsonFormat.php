@@ -26,36 +26,35 @@ use wcmf\lib\presentation\format\HierarchicalFormat;
 /**
  * Define the message format
  */
-define("MSG_FORMAT_JSON", "JSON");
+define("MSG_FORMAT_JSON", "json");
 
 /**
- * JSONFormat collects the response data from all executed controllers
- * into one response array and returns it all at once at the end of
- * script execution. This prevents from having multiple junks of json
- * from each controller response that can't be decoded by clients.
- */
-$GLOBALS['gJSONData'] = array();
-$GLOBALS['gJSONUsed'] = false;
-
-/**
- * JSONFormat realizes the JSON request/response format. All data will
+ * JsonFormat realizes the JSON request/response format. All data will
  * be serialized using the json_encode method except for Nodes.
- * Nodes are serialized into an array before encoding (see JSONFormat::serializeValue)
+ * Nodes are serialized into an array before encoding (see JsonFormat::serializeValue)
  * using the NodeSerializer class.
  * On serialization the data will be outputted directly using the print command.
  *
+ * JsonFormat collects the response data from all executed controllers
+ * into one response array and returns it all at once at the end of
+ * script execution. This prevents from having multiple junks of json
+ * from each controller response that can't be decoded by clients.
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
-class JSONFormat extends HierarchicalFormat {
+class JsonFormat extends HierarchicalFormat {
 
-  protected static function printJSONResult() {
-    if ($GLOBALS['gJSONUsed']) {
-      $data = $GLOBALS['gJSONData'];
+  private static $_jsonData = array();
+  private static $_jsonUsed = false;
+
+  public static function printJSONResult() {
+    if (self::$_jsonUsed) {
+      $data = self::$_jsonData;
       if ($data != null) {
         $encoded = json_encode($data);
-        if (Log::isDebugEnabled('JSONFormat')) {
-          Log::debug($data, 'JSONFormat');
-          Log::debug($encoded, 'JSONFormat');
+        if (Log::isDebugEnabled('JsonFormat')) {
+          Log::debug($data, 'JsonFormat');
+          Log::debug($encoded, 'JsonFormat');
         }
         header("Content-Type: application/json");
         print($encoded);
@@ -71,10 +70,10 @@ class JSONFormat extends HierarchicalFormat {
     /*
     // merge data into global data array
     // new values override old
-    $GLOBALS['gJSONData'] = array_merge($GLOBALS['gJSONData'], $data);
+    self::$_jsonData = array_merge(self::$_jsonData, $data);
      */
-    $GLOBALS['gJSONData'] = $values;
-    $GLOBALS['gJSONUsed'] = true;
+    self::$_jsonData = $values;
+    self::$_jsonUsed = true;
     return $values;
   }
 
@@ -105,9 +104,6 @@ class JSONFormat extends HierarchicalFormat {
   }
 }
 
-// register this format
-Formatter::registerFormat(MSG_FORMAT_JSON, __NAMESPACE__.JSONFormat);
-
 // register the output method
-register_shutdown_function(array(__NAMESPACE__.JSONFormat, 'printJSONResult'));
+register_shutdown_function(array(__NAMESPACE__.'\JsonFormat', 'printJSONResult'));
 ?>

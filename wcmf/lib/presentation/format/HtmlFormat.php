@@ -34,10 +34,10 @@ use wcmf\lib\util\Obfuscator;
 /**
  * Define the message format
  */
-define("MSG_FORMAT_HTML", "HTML");
+define("MSG_FORMAT_HTML", "html");
 
 /**
- * HTMLFormat realizes the HTML request/response format. Since all data
+ * HtmlFormat realizes the HTML request/response format. Since all data
  * from the external representation arrives in form fields, grouping of values
  * has to be done via the field names. So Nodes are represented by their values
  * whose field names are of the form value-<name>-<oid>. All of these
@@ -46,7 +46,7 @@ define("MSG_FORMAT_HTML", "HTML");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class HTMLFormat extends AbstractFormat {
+class HtmlFormat extends AbstractFormat {
 
   /**
    * @see Format::deserialize()
@@ -135,14 +135,11 @@ class HTMLFormat extends AbstractFormat {
     $parser = WCMFInifileParser::getInstance();
     $actionKey = $parser->getBestActionKey('views', $controller, $context, $action);
     if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug('HTMLFormat::getViewTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
+      Log::debug('HtmlFormat::getViewTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
     }
     // get corresponding view
     $view = $parser->getValue($actionKey, 'views', false);
     return $view;
   }
 }
-
-// register this format
-Formatter::registerFormat(MSG_FORMAT_HTML, __NAMESPACE__.HTMLFormat);
 ?>

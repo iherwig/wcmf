@@ -28,15 +28,15 @@ use wcmf\lib\presentation\format\HierarchicalFormat;
 /**
  * Define the message format
  */
-define("MSG_FORMAT_SOAP", "SOAP");
+define("MSG_FORMAT_SOAP", "soap");
 
 /**
- * SOAPFormat realizes the SOAP request/response format. Nodes are serialized
+ * SoapFormat realizes the SOAP request/response format. Nodes are serialized
  * into an array (the nusoap library creates the XML)
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SOAPFormat extends HierarchicalFormat {
+class SoapFormat extends HierarchicalFormat {
 
   /**
    * @see HierarchicalFormat::isSerializedNode()
@@ -72,7 +72,4 @@ class SOAPFormat extends HierarchicalFormat {
     return $node;
   }
 }
-
-// register this format
-Formatter::registerFormat(MSG_FORMAT_SOAP, __NAMESPACE__.SOAPFormat);
 ?>
