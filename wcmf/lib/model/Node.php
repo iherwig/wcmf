@@ -18,12 +18,13 @@
  */
 namespace wcmf\lib\model;
 
+use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 
@@ -162,7 +163,7 @@ class Node extends PersistentObject {
         }
       }
       else {
-        Log::warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".Application::getStackTrace(),
+        Log::warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".ErrorHandler::getStackTrace(),
           __CLASS__);
       }
     }

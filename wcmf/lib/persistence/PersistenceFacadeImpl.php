@@ -23,6 +23,7 @@ use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ObjectId;

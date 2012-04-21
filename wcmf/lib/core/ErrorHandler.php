@@ -38,6 +38,25 @@ class ErrorHandler {
   }
 
   /**
+   * Get the stack trace
+   * @return The stack trace as string
+   */
+  public static function getStackTrace() {
+    ob_start();
+    debug_print_backtrace();
+    $trace = ob_get_contents();
+    ob_end_clean();
+
+    // remove first item from backtrace as it's this function which is redundant.
+    $trace = preg_replace ('/^#0\s+' . __FUNCTION__ . "[^\n]*\n/", '', $trace, 1);
+
+    // renumber backtrace items.
+    $trace = preg_replace ('/^#(\d+)/me', '\'#\' . ($1 - 1)', $trace);
+
+    return $trace;
+  }
+
+  /**
    * Actual error handling method
    * @param type errno
    * @param type errstr
@@ -46,9 +65,9 @@ class ErrorHandler {
    * @return boolean
    * @throws ErrorException
    */
-  private function handleError($errno, $errstr, $errfile, $errline) {
+  public function handleError($errno, $errstr, $errfile, $errline) {
     $errorIsEnabled = (bool)($errno & ini_get('error_reporting'));
-echo $errstr." ".$errfile." ".$errline;
+
     // -- FATAL ERROR
     if(isset(self::$FATAL_ERRORS[$errno]) && $errorIsEnabled ) {
         throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
@@ -61,6 +80,4 @@ echo $errstr." ".$errfile." ".$errline;
     }
   }
 }
-
-new ErrorHandler();
 ?>

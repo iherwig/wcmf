@@ -23,9 +23,11 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\visitor\CommitVisitor;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\persistence\PersistenceObject;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -42,7 +44,7 @@ use wcmf\lib\presentation\Response;
  * @param[in] className The name of the class of the object to create or
  * @param[in,out] Key/value pair of a dummy object id and a PersistentObject instance
  *   holding the initial attribute values
- * @param[out] oid The serialized object id of the newly created object
+ * @param[out] oid The object id of the newly created object
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -51,7 +53,7 @@ class InsertController extends Controller {
   /**
    * @see Controller::initialize()
    */
-  protected function initialize(Request $request, Response $response) {
+  public function initialize(Request $request, Response $response) {
     if (!$request->hasValue('className')) {
       // determine the className parameter from the given object if possible
       $saveData = $request->getValues();
@@ -83,7 +85,7 @@ class InsertController extends Controller {
   /**
    * @see Controller::hasView()
    */
-  protected function hasView() {
+  public function hasView() {
     return false;
   }
 
@@ -114,7 +116,7 @@ class InsertController extends Controller {
                 && $curOid->getType() == $newType) {
           if ($this->isLocalizedRequest()) {
             // copy values from the node template to the localization template for later use
-            $localizationTpl = $persistenceFacade->create($newType, BUIDLDEPTH_SINGLE);
+            $localizationTpl = $persistenceFacade->create($newType, BuildDepth::SINGLE);
             $curRequestObject->copyValues($localizationTpl, false);
           }
           else {
@@ -134,15 +136,19 @@ class InsertController extends Controller {
         $cv = new CommitVisitor();
         $cv->startIterator($nIter);
 
-        // if the request is localized, use the localization template as translation
-        if ($this->isLocalizedRequest() && $localizationTpl != null) {
-          $localizationTpl->setOID($newNode->getOID());
-          $localization = Localization::getInstance();
-          $localization->saveTranslation($localizationTpl, $request->getValue('language'));
-        }
-
         // after insert
         $this->afterInsert($newNode);
+      }
+      $transaction->commit();
+
+      // if the request is localized, use the localization template as translation
+      // NOTE: this has to be done after the new node got it's oid by committing the
+      // transaction
+      $transaction->begin();
+      if ($this->isLocalizedRequest() && $localizationTpl != null) {
+        $localizationTpl->setOID($newNode->getOID());
+        $localization = Localization::getInstance();
+        $localization->saveTranslation($localizationTpl, $request->getValue('language'));
       }
       $transaction->commit();
     }
@@ -153,9 +159,9 @@ class InsertController extends Controller {
 
     // return the oid of the inserted node
     if ($newNode != null) {
-      $oidStr = $newNode->getOID()->__toString();
-      $response->setValue('oid', $oidStr);
-      $response->setValue($oidStr, $newNode);
+      $oid = $newNode->getOID();
+      $response->setValue('oid', $oid);
+      $response->setValue($oid->__toString(), $newNode);
     }
     $response->setAction('ok');
     return true;

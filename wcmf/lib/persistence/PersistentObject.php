@@ -25,7 +25,7 @@ use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\persistence\PersistenceObjectProxy;
+use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\util\StringUtil;

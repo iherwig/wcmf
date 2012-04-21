@@ -41,7 +41,7 @@ abstract class User extends Node {
    * Constructor
    * @param oid ObjectId instance (optional)
    */
-  function __construct($oid=null) {
+  public function __construct($oid=null) {
     if ($oid == null) {
       $oid = new ObjectId('User');
     }

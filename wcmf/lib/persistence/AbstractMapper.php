@@ -18,10 +18,13 @@
  */
 namespace wcmf\lib\persistence;
 
+use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
@@ -247,7 +250,7 @@ abstract class AbstractMapper {
     // when reading only log the error to avoid errors on the display
     $msg = Message::get("Authorization failed for action '%1%' on '%2%'.", array($action, $oid));
     if ($action == PersistenceAction::READ) {
-      Log::error($msg."\n".Application::getStackTrace(), __CLASS__);
+      Log::error($msg."\n".ErrorHandler::getStackTrace(), __CLASS__);
     }
     else {
       throw new AuthorizationException($msg);

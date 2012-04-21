@@ -32,7 +32,7 @@ abstract class Role extends Node {
    * Constructor
    * @param oid ObjectId instance (optional)
    */
-  function __construct($oid=null) {
+  public function __construct($oid=null) {
     if ($oid == null) {
       $oid = new ObjectId('Role');
     }
@@ -43,12 +43,12 @@ abstract class Role extends Node {
    * Set the name of the role.
    * @param name The name of the role.
    */
-  abstract function setName($name);
+  public abstract function setName($name);
 
   /**
    * Get name of the role.
    * @return The name of the role.
    */
-  abstract function getName();
+  public abstract function getName();
 }
 ?>

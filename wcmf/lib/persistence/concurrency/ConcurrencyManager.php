@@ -22,6 +22,7 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;

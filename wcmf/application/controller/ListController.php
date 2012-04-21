@@ -19,10 +19,13 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\UnknownFieldException;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\RightsManager;
@@ -125,11 +128,11 @@ class ListController extends Controller {
     // collect the nodes
     $nodes = array();
     for($i=0,$count=sizeof($objects); $i<$count; $i++) {
-      $curObject = &$objects[$i];
+      $curObject = $objects[$i];
 
       // check if we can read the object
       if ($rightsManager->authorize($curObject->getOID(), '', PersistenceAction::READ)) {
-        $nodes[] = &$curObject;
+        $nodes[] = $curObject;
       }
     }
     $totalCount = $pagingInfo != null ? $pagingInfo->getTotalCount() : sizeof($nodes);

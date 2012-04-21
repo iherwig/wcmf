@@ -36,8 +36,8 @@ use wcmf\lib\security\RightsManager;
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
-class ActionMapper
-{
+class ActionMapper {
+
   private static $_instance = null;
   private $_lastControllers = array();
 
@@ -47,13 +47,13 @@ class ActionMapper
    * Returns an instance of the class.
    * @return A reference to the only instance of the Singleton object
    */
-  public static function getInstance()
-  {
+  public static function getInstance() {
     if (!isset(self::$_instance)) {
       self::$_instance = new ActionMapper();
     }
     return self::$_instance;
   }
+
   /**
    * Process an action depending on a given referrer. The ActionMapper will instantiate the required Controller class
    * as configured in the iniFile and delegates the request to it.
@@ -62,8 +62,7 @@ class ActionMapper
    * @param request A reference to a Request instance
    * @return A reference to an Response instance or null on error.
    */
-  public static function processAction($request)
-  {
+  public static function processAction($request) {
     // allow static call
     $actionMapper = ActionMapper::getInstance();
 
@@ -78,23 +77,20 @@ class ActionMapper
     // this array stores all controllers executed since the last view displayed (the last call of main.php)
 
     // store last controller
-    array_push($actionMapper->_lastControllers, $referrer);
+    $actionMapper->_lastControllers[] = $referrer;
 
     $parser = WCMFInifileParser::getInstance();
     $rightsManager = RightsManager::getInstance();
     $actionKey = null;
 
     // check authorization for controller/context/action triple
-    if (!$rightsManager->authorize($referrer, $context, $action))
-    {
+    if (!$rightsManager->authorize($referrer, $context, $action)) {
       $authUser = $rightsManager->getAuthUser();
-      if (!$authUser)
-      {
+      if (!$authUser) {
         Log::error("Session invalid. The request was: ".$request->__toString(), __CLASS__);
         throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
       }
-      else
-      {
+      else {
         $login = $authUser->getName();
         Log::error("Authorization failed for '".$actionKey."' user '".$login."'", __CLASS__);
         throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
@@ -109,14 +105,12 @@ class ActionMapper
     }
 
     $controllerClass = null;
-    if (strlen($actionKey) == 0)
-    {
+    if (strlen($actionKey) == 0) {
       // re-execute the initial referrer
       $controllerClass = $actionMapper->_lastControllers[0];
       Log::warn("No actionkey found for ".$referrer."?".$context."?".$action.". Executing ".$controllerClass." ...", __CLASS__);
     }
-    else
-    {
+    else {
       // get next controller
       if (($controllerClass = $parser->getValue($actionKey, 'actionmapping')) === false) {
         throw new ConfigurationException($parser->getErrorMsg());
@@ -149,13 +143,11 @@ class ActionMapper
             ApplicationEvent::AFTER_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
 
     Formatter::serialize($response);
-    if ($result === false)
-    {
+    if ($result === false) {
       // stop processing
       return $response;
     }
-    else if ($result === true)
-    {
+    else if ($result === true) {
       // proceed based on the result
       $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction());
       $nextRequest->setFormat($response->getFormat());
@@ -169,11 +161,11 @@ class ActionMapper
     }
     return $response;
   }
+
   /**
    * Reset the state of ActionMapper to initial. Especially clears the processed controller queue.
    */
-  public static function reset()
-  {
+  public static function reset() {
     // allow static call
     $actionMapper = ActionMapper::getInstance();
     $actionMapper->_lastControllers = array();

@@ -19,6 +19,7 @@
 namespace wcmf\lib\model\visitor;
 
 use wcmf\lib\model\visitor\Visitor;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
  * CommitVisitor is used to commit the object's changes to the object storage.

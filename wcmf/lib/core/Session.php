@@ -82,9 +82,11 @@ class Session {
    * @param value The value of the session variable.
    */
   public function set($key, $value) {
-    // try to store class definition
     if (isset($_SESSION)) {
       $_SESSION[$key] = $value;
+    }
+    else {
+      throw new Exception("Cannot set session variable. A session is not started.");
     }
   }
 

@@ -20,7 +20,7 @@ namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\util\StringUtil;
 
 /**
  * Predefined error levels

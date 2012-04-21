@@ -79,6 +79,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   private $_dataConverter = null;
 
+  // keeps track of currently loading relations to avoid circular loading
+  private $_loadingRelations = array();
+
   /**
    * Select data to be stored in the session.
    * PDO throws an excetption if tried to be (un-)serialized.
@@ -1065,11 +1068,15 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     foreach($relationDescs as $relationDesc) {
       $role = $relationDesc->getOtherRole();
 
-      // if the build depth is not satisfied already we load the complete objects and add them
-      if ($loadNextGeneration) {
+      $relationId = $object->getOID()->__toString().$role;
+      // if the build depth is not satisfied already and the relation is not
+      // currently loading, we load the complete objects and add them
+      if ($loadNextGeneration && !isset($this->_loadingRelations[$relationId])) {
+        $this->_loadingRelations[$relationId] = true;
         $relatives = $this->loadRelation($object, $role, $newBuildDepth, $buildAttribs, $buildTypes);
         // set the value
         $object->setValue($role, $relatives, true, false);
+        unset($this->_loadingRelations[$relationId]);
       }
       // otherwise set the value to not initialized.
       // the Node will initialize it with the proxies for the relation objects

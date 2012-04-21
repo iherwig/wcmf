@@ -28,8 +28,11 @@ use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistenceMapper;
+use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -301,7 +304,7 @@ class CopyController extends BatchController {
    * Finish the process and set the result
    * @param oid The object id of the newly created Node
    */
-  protected function endProcess($oid) {
+  protected function endProcess(ObjectId $oid) {
     $this->_response->setValue('oid', $oid);
 
     $session = Session::getInstance();
@@ -319,7 +322,7 @@ class CopyController extends BatchController {
    * @param oid The oid of the node to copy
    * @return A reference to the copied node or null
    */
-  protected function copyNode($oid) {
+  protected function copyNode(ObjectId $oid) {
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Copying node ".$oid, __CLASS__);
     }
@@ -389,7 +392,7 @@ class CopyController extends BatchController {
    * @param targetOID The oid of the target node or null
    * @return A reference to the node, an empty node, if targetoid is null
    */
-  protected function getTargetNode($targetOID) {
+  protected function getTargetNode(ObjectId $targetOID) {
     if ($this->_targetNode == null) {
       // load parent node or create an empty node if adding to root
       if ($targetOID == null) {
@@ -408,7 +411,7 @@ class CopyController extends BatchController {
    * @param origNode A reference to the original node
    * @param copyNode A reference to the copied node
    */
-  protected function registerCopy(&$origNode, &$copyNode) {
+  protected function registerCopy(PersistentObject $origNode, PersistentObject $copyNode) {
     $session = Session::getInstance();
     $registry = $session->get($this->OBJECT_MAP);
     // store oid and corresponding base oid in the registry
@@ -422,7 +425,7 @@ class CopyController extends BatchController {
    * @param oid The object id of the original node
    * @return The object id or null, if it does not exist already
    */
-  protected function getCopyOID($origOID) {
+  protected function getCopyOID(ObjectId $origOID) {
     $session = Session::getInstance();
     $registry = $session->get($this->OBJECT_MAP);
 
@@ -462,7 +465,7 @@ class CopyController extends BatchController {
    * @param oid The object id of the original node
    * @return A reference to the copied node or null, if it does not exist already
    */
-  protected function getCopy($origOID) {
+  protected function getCopy(ObjectId $origOID) {
     $copyOID = $this->getCopyOID($origOID);
     if ($copyOID != null) {
       $nodeCopy = $this->loadFromTarget($copyOID);
@@ -477,7 +480,7 @@ class CopyController extends BatchController {
    * Save a node to the target store
    * @param node A reference to the node
    */
-  protected function saveToTarget($node) {
+  protected function saveToTarget(PersistentObject $node) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $originalMapper = $persistenceFacade->getMapper($node->getType());
 
@@ -493,7 +496,7 @@ class CopyController extends BatchController {
    * @param oid The object id of the node
    * @return A reference to the node
    */
-  protected function loadFromTarget($oid) {
+  protected function loadFromTarget(ObjectId $oid) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $type = PersistenceFacade::getOIDParameter($oid, 'type');
     $originalMapper = $persistenceFacade->getMapper($type);
@@ -512,7 +515,7 @@ class CopyController extends BatchController {
    * @param sourceMapper A reference to the source mapper
    * @param targetMapper A reference to the target mapper
    */
-  protected function getTargetMapper(&$sourceMapper) {
+  protected function getTargetMapper(PersistenceMapper $sourceMapper) {
     // restore the request from session
     $session = Session::getInstance();
     $request = $session->get($this->REQUEST);
@@ -541,7 +544,7 @@ class CopyController extends BatchController {
    * @param node A reference to the Node to modify.
    * @return True/False whether the Node was modified [default: false].
    */
-  protected function modify($node) {
+  protected function modify(PersistentObject $node) {
     return false;
   }
 }

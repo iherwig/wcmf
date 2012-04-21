@@ -218,11 +218,10 @@ class Localization {
     }
 
     // recurse if requested
-    if ($recursive)
-    {
+    if ($recursive) {
       // translate children
       $children = $object->getChildren();
-      for($i=0; $i<sizeOf($children); $i++) {
+      for($i=0, $count=sizeOf($children); $i<$count; $i++) {
         $this->loadTranslation($children[$i], $lang, $useDefaults, $recursive);
       }
     }

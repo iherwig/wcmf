@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation;
 
 use \Exception;
+use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
@@ -51,6 +52,7 @@ class Application {
    * Constructor
    */
   private function __construct() {
+    new ErrorHandler();
     $this->_startTime = microtime(true);
     register_shutdown_function(array($this, "shutdown"));
   }
@@ -251,25 +253,6 @@ class Application {
     // get configuration from file
     $parser = WCMFInifileParser::getInstance();
     $parser->parseIniFile($GLOBALS['CONFIG_PATH'].$GLOBALS['MAIN_CONFIG_FILE'], true);
-  }
-
-  /**
-   * Get the stack trace
-   * @return The stack trace as string
-   */
-  public static function getStackTrace() {
-    ob_start();
-    debug_print_backtrace();
-    $trace = ob_get_contents();
-    ob_end_clean();
-
-    // remove first item from backtrace as it's this function which is redundant.
-    $trace = preg_replace ('/^#0\s+' . __FUNCTION__ . "[^\n]*\n/", '', $trace, 1);
-
-    // renumber backtrace items.
-    $trace = preg_replace ('/^#(\d+)/me', '\'#\' . ($1 - 1)', $trace);
-
-    return $trace;
   }
 
   /**

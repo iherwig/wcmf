@@ -24,7 +24,7 @@ $oids = array();
 $rootTypes = $parser->getValue('rootTypes', 'cms');
 if (is_array($rootTypes))
 {
-  $persistenceFacade = ObjectFactory::getInstance('persistenceFacade')
+  $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
   foreach($rootTypes as $rootType)
   {
     Log::debug("getting oids for: ".$rootType, "graph");
@@ -34,7 +34,7 @@ if (is_array($rootTypes))
 }
 
 // construct tree from root oids
-$persistenceFacade = ObjectFactory::getInstance('persistenceFacade')
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 $rootNode = new Node("root");
 foreach($oids as $oid)
 {

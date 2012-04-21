@@ -82,7 +82,6 @@ class RightsManager {
     }
     else {
       // include this later to avoid circular includes
-      require_once(WCMF_BASE."wcmf/lib/security/AuthUser.php");
       $session = Session::getInstance();
       $user = null;
       $userVarname = self::getAuthUserVarname();
@@ -123,7 +122,7 @@ class RightsManager {
 
   /**
    * Authorize for given resource, context, action triple.
-   * @param resource The resource to authorize (e.g. class name of the Controller or OID).
+   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId).
    * @param context The context in which the action takes place.
    * @param action The action to process.
    * @return True/False whether authorization succeded/failed.
@@ -134,11 +133,15 @@ class RightsManager {
     }
     if (!in_array($action, self::$_PUBLIC_ACTIONS)) {
       // if authorization is requested for an oid, we check the type first
-      if (ObjectId::isValid($resource)) {
+      $oid = null;
+      if ($resource instanceof ObjectId) {
+        $oid = $resource;
+      }
+      else if (ObjectId::isValid($resource)) {
         $oid = ObjectId::parse($resource);
-        if (!$this->authorize($oid->getType(), $context, $action)) {
-          return false;
-        }
+      }
+      if ($oid && !$this->authorize($oid->getType(), $context, $action)) {
+        return false;
       }
 
       $parser = WCMFInifileParser::getInstance();
