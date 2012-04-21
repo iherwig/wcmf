@@ -24,6 +24,16 @@ and open the template in the editor.
          strict="false"
          verbose="true">
   <testsuites>
+    <testsuite name="Controller">
+      <file>tests/controller/ListControllerTest.php</file>
+      <file>tests/controller/DeleteControllerTest.php</file>
+      <file>tests/controller/DisplayControllerTest.php</file>
+      <file>tests/controller/InsertControllerControllerTest.php</file>
+      <file>tests/controller/SaveControllerTest.php</file>
+    </testsuite>
+    <testsuite name="Core">
+      <file>tests/core/ObjectFactoryTest.php</file>
+    </testsuite>
     <testsuite name="Format">
       <file>tests/format/JSONFormatTest.php</file>
     </testsuite>
@@ -51,7 +61,7 @@ and open the template in the editor.
   </testsuites>
   <groups>
     <exclude>
-      <group>controller</group>
+      <!--group>controller</group-->
       <!--group>performance</group-->
     </exclude>
   </groups>

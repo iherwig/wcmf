@@ -20,7 +20,10 @@ namespace test\tests\controller;
 
 use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
+
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
+use \wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
 /**
@@ -30,65 +33,74 @@ use wcmf\lib\persistence\ObjectId;
  */
 class SaveControllerTest extends ControllerTestCase {
 
-  const TEST_OID1 = 'UserRDB:0';
+  const TEST_OID = 'UserRDB:0';
 
   protected function getControllerName() {
-    return 'SaveController';
+    return 'wcmf\application\controller\SaveController';
+  }
+
+  protected function setUp() {
+    parent::setUp();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID), array());
+    $transaction->commit();
+  }
+
+  protected function tearDown() {
+    $localization = Localization::getInstance();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID));
+    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID));
+    $transaction->commit();
+    parent::tearDown();
   }
 
   /**
    * @group controller
    */
   public function testSave() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
-    $oid = ObjectId::parse(SaveControllerTest::TEST_OID1);
-    TestUtil::createTestObject($oid);
+    $oid = ObjectId::parse(self::TEST_OID);
 
     // simulate a simple save call
     $type = $oid->getType();
-    $testObj = new $type();
+    $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
+    $testObj->setOID($oid);
     $testObj->setValue('name', 'Administrator');
     $data = array(
-      $oid->__toString() => &$testObj
+      $oid->__toString() => $testObj
     );
-    $this->runRequest($data);
+    $response = $this->runRequest($data);
 
     // test
-    $obj = $this->loadTestObject($oid);
-    $this->assertTrue($obj->getValue('name') == 'Administrator', "The name is 'Administrator'");
-
-    // cleanup
-    TestUtil::deleteTestObject($oid);
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $obj = TestUtil::loadTestObject($oid);
+    $this->assertEquals('Administrator', $obj->getValue('name'));
   }
 
   /**
    * @group controller
    */
   public function testSaveTranslation() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
-    $oid = ObjectId::parse(SaveControllerTest::TEST_OID1);
-    TestUtil::createTestObject($oid);
+    $oid = ObjectId::parse(self::TEST_OID);
 
     // simulate a translate call
     $type = $oid->getType();
-    $testObj = new $type();
+    $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
+    $testObj->setOID($oid);
     $testObj->setValue('name', 'Administrator [it]');
     $data = array(
-      $oid->__toString() => &$testObj,
+      $oid->__toString() => $testObj,
       'language' => 'it'
     );
-    $this->runRequest($data);
+    $response = $this->runRequest($data);
 
     // test
-    $translatedObj = Localization::loadTranslatedObject($oid, 'it');
-    $this->assertTrue($translatedObj->getValue('name') == 'Administrator [it]',
-      "The translated name is 'Administrator [it]'");
-
-    // cleanup
-    TestUtil::deleteTestObject($oid);
-    Localization::deleteTranslation($oid);
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $translatedObj = Localization::getInstance()->loadTranslatedObject($oid, 'it');
+    $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
   }
 }
 ?>

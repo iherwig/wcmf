@@ -21,11 +21,14 @@ namespace test\tests\persistence;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\concurrency\Lock;
+use wcmf\lib\persistence\concurrency\OptimisticLockException;
+use wcmf\lib\persistence\concurrency\PessimisticLockException;
 
 /**
  * LockingTest.

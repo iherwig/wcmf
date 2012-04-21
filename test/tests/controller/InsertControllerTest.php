@@ -19,8 +19,12 @@
 namespace test\tests\controller;
 
 use test\lib\ControllerTestCase;
+
+use wcmf\lib\core\ObjectFactory;
 use test\lib\TestUtil;
 use wcmf\lib\i18n\Localization;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\ObjectId;
 
 /**
  * InsertControllerTest.
@@ -32,119 +36,79 @@ class InsertControllerTest extends ControllerTestCase {
   const TEST_TYPE = 'UserRDB';
   const TEST_CHILD_TYPE = 'Locktable';
   const TEST_NM_CHILD_TYPE = 'RoleRDB';
-  const TEST_OID1 = 'UserRDB:0';
+  const TEST_OID = 'UserRDB:0';
+
+  private $_insertOID = null;
 
   protected function getControllerName() {
-    return 'InsertController';
+    return 'wcmf\application\controller\InsertController';
+  }
+
+  protected function setUp() {
+    parent::setUp();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID), array());
+    $transaction->commit();
+    $this->_insertOID = null;
+  }
+
+  protected function tearDown() {
+    $localization = Localization::getInstance();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID));
+    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID));
+    if ($this->_insertOID != null) {
+      TestUtil::deleteTestObject($this->_insertOID);
+      $localization->deleteTranslation($this->_insertOID);
+    }
+    $transaction->commit();
+    parent::tearDown();
   }
 
   /**
    * @group controller
    */
   public function testInsert() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
     // simulate a simple insert call with initial data
-    $type = InsertControllerTest::TEST_TYPE;
-    $testObj = new $type();
+    $type = self::TEST_TYPE;
+    $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
     $testObj->setValue('name', 'Administrator');
     $data = array(
-      'newtype' => InsertControllerTest::TEST_TYPE,
-      InsertControllerTest::TEST_TYPE.':' => &$testObj
+      'className' => self::TEST_TYPE,
+      self::TEST_TYPE.':' => $testObj
     );
     $response = $this->runRequest($data);
 
     // test
-    $insertOID = $response->getValue('oid');
-    $obj = &$this->loadTestObject($insertOID);
-    $this->assertTrue($obj->getValue('name') == 'Administrator', "The name is 'Administrator'");
-
-    // cleanup
-    TestUtil::deleteTestObject($insertOID);
-  }
-
-  /**
-   * @group controller
-   */
-  public function testInsertWithChild() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
-    TestUtil::createTestObject(InsertControllerTest::TEST_OID1);
-
-    // simulate an insert call with parent
-    $data = array(
-      'newtype' => InsertControllerTest::TEST_CHILD_TYPE,
-      'poid' => InsertControllerTest::TEST_OID1
-    );
-    $response = $this->runRequest($data);
-
-    // test
-    $insertOID = $response->getValue('oid');
-    $obj = &$this->loadTestObject($insertOID);
-    $obj->loadParents(InsertControllerTest::TEST_TYPE);
-
-    $this->assertTrue(sizeof($obj->getParentsEx(InsertControllerTest::TEST_OID1, null, null, null)) == 1,
-      InsertControllerTest::TEST_OID1." is a parent of the created child");
-
-    // cleanup
-    TestUtil::deleteTestObject(InsertControllerTest::TEST_OID1);
-    TestUtil::deleteTestObject($insertOID);
-  }
-
-  /**
-   * @group controller
-   */
-  public function testInsertWithManyToManyChild() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
-    TestUtil::createTestObject(InsertControllerTest::TEST_OID1);
-
-    // simulate an insert call with parent
-    $data = array(
-      'newtype' => InsertControllerTest::TEST_NM_CHILD_TYPE,
-      'poid' => InsertControllerTest::TEST_OID1
-    );
-    $response = $this->runRequest($data);
-
-    // test
-    $insertOID = $response->getValue('oid');
-    $obj = &$this->loadTestObject($insertOID);
-    $obj->loadChildren(InsertControllerTest::TEST_TYPE);
-
-    $this->assertTrue(sizeof($obj->getChildrenEx(InsertControllerTest::TEST_OID1, null, null, null)) == 1,
-      InsertControllerTest::TEST_OID1." is a child of the created child");
-
-    // cleanup
-    TestUtil::deleteTestObject(InsertControllerTest::TEST_OID1);
-    TestUtil::deleteTestObject($insertOID);
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $this->_insertOID = $response->getValue('oid');
+    $obj = TestUtil::loadTestObject($this->_insertOID);
+    $this->assertEquals('Administrator', $obj->getValue('name'));
   }
 
   /**
    * @group controller
    */
   public function testInsertTranslation() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
     // simulate a translate call
-    $type = InsertControllerTest::TEST_TYPE;
-    $testObj = new $type();
+    $type = self::TEST_TYPE;
+    $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
     $testObj->setValue('name', 'Administrator [it]');
     $data = array(
-      'newtype' => InsertControllerTest::TEST_TYPE,
-      InsertControllerTest::TEST_TYPE.':' => &$testObj,
+      'className' => self::TEST_TYPE,
+      self::TEST_TYPE.':' => $testObj,
       'language' => 'it'
     );
     $response = $this->runRequest($data);
 
     // test
-    $insertOID = $response->getValue('oid');
-    $translatedObj = &Localization::loadTranslatedObject($insertOID, 'it');
-    $this->assertTrue($translatedObj->getValue('name') == 'Administrator [it]',
-      "The translated name is 'Administrator [it]'");
-
-    // cleanup
-    TestUtil::deleteTestObject($insertOID);
-    Localization::deleteTranslation($insertOID);
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $this->_insertOID = $response->getValue('oid');
+    $translatedObj = Localization::getInstance()->loadTranslatedObject($this->_insertOID, 'it');
+    $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
   }
 }
 ?>

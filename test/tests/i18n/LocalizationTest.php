@@ -57,8 +57,8 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
     TestUtil::runAnonymous(true);
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID1), array());
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID2), array());
+    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID1));
+    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID2));
     $localization = Localization::getInstance();
     $localization->deleteTranslation(ObjectId::parse(self::TEST_OID1));
     $localization->deleteTranslation(ObjectId::parse(self::TEST_OID2));

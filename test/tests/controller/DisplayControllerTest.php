@@ -20,6 +20,8 @@ namespace test\tests\controller;
 
 use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
+
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\ObjectId;
 
@@ -34,46 +36,63 @@ class DisplayControllerTest extends ControllerTestCase {
   const TEST_OID2 = 'Locktable:0';
 
   protected function getControllerName() {
-    return 'DisplayController';
+    return 'wcmf\application\controller\DisplayController';
+  }
+
+  protected function setUp() {
+    parent::setUp();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID1), array('name' => 'Administrator'));
+    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID2), array('sessionid' => 'Session Id'));
+    $transaction->commit();
+  }
+
+  protected function tearDown() {
+    $localization = Localization::getInstance();
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID1));
+    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID2));
+    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID1));
+    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID2));
+    $transaction->commit();
+    parent::tearDown();
   }
 
   /**
    * @group controller
    */
   public function testSimpleDisplay() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
-    $oid = ObjectId::parse(DisplayControllerTest::TEST_OID1);
-    TestUtil::createTestObject($oid, array('name' => 'Administrator'));
+    $oid = ObjectId::parse(self::TEST_OID1);
 
     // simulate a simple display call
-    $type = $oid->getType();
     $data = array(
       'oid' => $oid->__toString()
     );
     $response = $this->runRequest($data);
 
     // test
-    $obj = &$response->getValue('node');
-    $this->assertTrue($obj->getValue('name') == 'Administrator', "The name is 'Administrator'");
-
-    // cleanup
-    TestUtil::deleteTestObject($oid);
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $obj = $response->getValue('object');
+    $this->assertEquals('Administrator', $obj->getValue('name'));
   }
 
   /**
    * @group controller
    */
   public function testDisplayTranslation() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
-    $oid = ObjectId::parse(DisplayControllerTest::TEST_OID1);
-    $testObj = TestUtil::createTestObject($oid, array('name' => 'Administrator'));
+    $oid = ObjectId::parse(self::TEST_OID1);
 
     // store a translation
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    $testObj = TestUtil::loadTestObject($oid);
     $tmp = clone $testObj;
     $tmp->setValue('name', 'Administrator [de]');
-    Localization::saveTranslation($tmp, 'de');
+    Localization::getInstance()->saveTranslation($tmp, 'de');
+    $transaction->commit();
 
     // simulate a localized display call
     $data = array(
@@ -83,35 +102,34 @@ class DisplayControllerTest extends ControllerTestCase {
     $response = $this->runRequest($data);
 
     // test
-    $translatedObj = $response->getValue('node');
-    $this->assertTrue($translatedObj->getValue('name') == 'Administrator [de]',
-      "The translated name is 'Administrator [de]'");
-
-    // cleanup
-    TestUtil::deleteTestObject($oid);
-    Localization::deleteTranslation($oid);
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $translatedObj = $response->getValue('object');
+    $this->assertEquals('Administrator [de]', $translatedObj->getValue('name'));
   }
 
   /**
    * @group controller
    */
   public function testDisplayTranslationOfReferencedObjects() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
+    $oid1 = ObjectId::parse(self::TEST_OID1);
+    $oid2 = ObjectId::parse(self::TEST_OID2);
 
-    $oid1 = ObjectId::parse(DisplayControllerTest::TEST_OID1);
-    $oid2 = ObjectId::parse(DisplayControllerTest::TEST_OID2);
-    $testObj1 = &TestUtil::createTestObject($oid1, array('name' => 'Administrator'));
-    $testObj2 = &TestUtil::createTestObject($oid2, array('sessionid' => 'Session Id'));
+    // associate objects
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    $testObj1 = TestUtil::loadTestObject($oid1);
+    $testObj2 = TestUtil::loadTestObject($oid2);
     $testObj1->addNode($testObj2);
-    $testObj2->save();
 
     // store a translations
-    $tmp = clone $testObj1;
-    $tmp->setValue('name', 'Administrator [de]');
-    Localization::saveTranslation($tmp, 'de');
-    $tmp = clone $testObj2;
-    $tmp->setValue('sessionid', 'Session Id [de]');
-    Localization::saveTranslation($tmp, 'de');
+    $localization = Localization::getInstance();
+    $tmp1 = clone $testObj1;
+    $tmp1->setValue('name', 'Administrator [de]');
+    $localization->saveTranslation($tmp1, 'de');
+    $tmp2 = clone $testObj2;
+    $tmp2->setValue('sessionid', 'Session Id [de]');
+    $localization->saveTranslation($tmp2, 'de');
+    $transaction->commit();
 
     // simulate a localized display call
     $data = array(
@@ -122,16 +140,10 @@ class DisplayControllerTest extends ControllerTestCase {
     $response = $this->runRequest($data);
 
     // test
-    $translatedObj = $response->getValue('node');
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $translatedObj = $response->getValue('object');
     $translatedChild = $translatedObj->getFirstChild();
-    $this->assertTrue($translatedChild->getValue('sessionid') == 'Session Id [de]',
-      "The translated value is 'Session Id [de]'");
-
-    // cleanup
-    TestUtil::deleteTestObject($oid1);
-    Localization::deleteTranslation($oid1);
-    TestUtil::deleteTestObject($oid2);
-    Localization::deleteTranslation($oid2);
+    $this->assertEquals('Session Id [de]', $translatedChild->getValue('sessionid'));
   }
 
   /**

@@ -59,11 +59,8 @@ abstract class ControllerTestCase extends \PHPUnit_Framework_TestCase {
    * @return Response instance
    */
   protected function runRequest($data) {
-    $request = new Request('TerminateController', '', $this->getAction(),
-      array(
-        'sid' => $this->_sid
-      )
-    );
+    $request = new Request('\wcmf\application\controller\TerminateController', '', $this->getAction());
+    $request->setValue('sid', $this->_sid);
     foreach ($data as $key => $value) {
       $request->setValue($key, $value);
     }
@@ -71,7 +68,7 @@ abstract class ControllerTestCase extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Get the name of the controller to test
+   * Get the fully qualified name of the controller to test
    * @return The name of the controller
    */
   abstract protected function getControllerName();
