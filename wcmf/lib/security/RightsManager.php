@@ -96,12 +96,12 @@ class RightsManager {
   /**
    * See if the RightsManager is working in anonymous mode. In anonymous mode all
    * authorization requests answered positive and AuthUser is an instance of AnonymousUser
-   * The mode is set in configuration section 'cms' key 'anonymous'
+   * The mode is set in configuration section 'application' key 'anonymous'
    * @return True/False wether in anonymous mode
    */
   public function isAnonymous() {
     $parser = InifileParser::getInstance();
-    return $parser->getValue('anonymous', 'cms');
+    return $parser->getValue('anonymous', 'application');
   }
 
   /**
@@ -109,7 +109,7 @@ class RightsManager {
    */
   public function deactivate() {
     $parser = InifileParser::getInstance();
-    $parser->setValue('anonymous', 1, 'cms');
+    $parser->setValue('anonymous', 1, 'application');
   }
 
   /**
@@ -117,7 +117,7 @@ class RightsManager {
    */
   public function activate() {
     $parser = InifileParser::getInstance();
-    $parser->setValue('anonymous', 0, 'cms');
+    $parser->setValue('anonymous', 0, 'application');
   }
 
   /**

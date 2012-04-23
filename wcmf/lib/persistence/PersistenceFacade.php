@@ -168,15 +168,10 @@ interface PersistenceFacade {
   function getMapperForConfigSection($configSection);
 
   /**
-   * Enable logging using a given OutputStrategy to log insert/update/delete actions to a file.
-   * @param logStrategy The OutputStrategy to use.
+   * Set logging state for insert/update/delete actions.
+   * @param isLogging Boolean whether logging should be enabled or not
    */
-  function enableLogging(OutputStrategy $logStrategy);
-
-  /**
-   * Disable logging.
-   */
-  function disableLogging();
+  function setLogging($isLogging);
 
   /**
    * Check if the PersistenceMapper is logging.
@@ -187,7 +182,7 @@ interface PersistenceFacade {
   /**
    * Set state to readonly. If set to true, PersistenceFacade will return only immutable
    * objects and save/delete methods are disabled.
-   * @param isReadOnly True/False whether objects should be readonly or not
+   * @param isReadOnly Boolean whether objects should be readonly or not
    */
   function setReadOnly($isReadOnly);
 }

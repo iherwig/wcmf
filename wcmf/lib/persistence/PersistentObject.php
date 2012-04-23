@@ -65,6 +65,7 @@ class PersistentObject {
   private $_state = self::STATE_CLEAN;       // the state of the PersistentObject
   private $_isImmutable = false;       // immutable state
   private $_changedAttributes = array(); // used to track changes, see setValue method
+  private $_originalData = array();    // data provided to the initialize method
 
   /**
    * Constructor.
@@ -93,13 +94,14 @@ class PersistentObject {
   /**
    * Initialize the object with a set of data. This method does not validate, does not
    * change the object's state and does not call any listeners. Any existing data will
-   * be overwritten.
+   * be overwritten. The data will also be used as base line for tracking changes.
    * @param data An associative array with the data to set.
    */
   public function initialize(array $data) {
     foreach ($data as $name => $value) {
       $this->setValueInternal($name, $value);
     }
+    $this->_originalData = $data;
   }
 
   /**
@@ -583,6 +585,14 @@ class PersistentObject {
    */
   public function getChangedValues() {
     return array_keys($this->_changedAttributes);
+  }
+
+  /**
+   * Get the original data provided to the initialize method.
+   * @return Associative array with value names as keys and values as values
+   */
+  public function getOriginalValues() {
+    return $this->_originalData;
   }
 
   /**

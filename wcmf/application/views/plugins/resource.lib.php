@@ -71,8 +71,8 @@ function get_path($path)
     return $userTpl;
   }
   // use templates from libDir
-  if (($libDir = $parser->getValue('libDir', 'cms')) === false) {
-    throw new ConfigurationException("No library path 'libDir' defined in ini section 'cms'.", __FILE__, __LINE__);
+  if (($libDir = $parser->getValue('libDir', 'application')) === false) {
+    throw new ConfigurationException("No library path 'libDir' defined in ini section 'application'.", __FILE__, __LINE__);
   }
   return realpath($libDir."/".$path);
 }

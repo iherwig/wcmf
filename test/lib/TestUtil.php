@@ -42,7 +42,7 @@ class TestUtil {
    */
   public static function runAnonymous($isAnonymous) {
     $parser = InifileParser::getInstance();
-    $parser->setValue('anonymous', $isAnonymous, 'cms');
+    $parser->setValue('anonymous', $isAnonymous, 'application');
   }
 
   /**

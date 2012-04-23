@@ -22,7 +22,7 @@ use wcmf\lib\config\InifileParser;
 
 /**
  * Message is used to get localized messages.
- * The localization directory must be given in the configuration value 'localeDir' in section 'cms'.
+ * The localization directory must be given in the configuration value 'localeDir' in section 'i18n'.
  * Inside this directory there must be a messages_$lang.php files for each language
  * defining the translation for each message.
  * For example the messages_de_DE file could have the following content:
@@ -34,7 +34,7 @@ use wcmf\lib\config\InifileParser;
  * );
  * @endcode
  * @note The language is determined in one of 3 ways (in this order):
- * -# use the value of the configuration value 'language' in section 'cms'
+ * -# use the value of the configuration value 'language' in section 'i18n'
  * -# use the value of the global variable $_SERVER['HTTP_ACCEPT_LANGUAGE']
  * -# use the value of the lang parameter passed to Message::get()
  *
@@ -56,8 +56,8 @@ class Message {
    */
   private static function initialize() {
     $parser = InifileParser::getInstance();
-    self::$localeDir = $parser->getValue('localeDir', 'cms');
-    self::$language = $parser->getValue('language', 'cms');
+    self::$localeDir = $parser->getValue('localeDir', 'i18n');
+    self::$language = $parser->getValue('language', 'i18n');
     setlocale(LC_ALL, self::$language);
     self::$initialized = true;
   }

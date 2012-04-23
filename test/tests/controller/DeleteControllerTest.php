@@ -151,11 +151,11 @@ class DeleteControllerTest extends ControllerTestCase {
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $query = new ObjectQuery(Localization::getTranslationType());
-    $tpl = $query->getObjectTemplate(Localization::getTranslationType());
-    $tpl->setObjectid($oid);
-    $oids = $query->execute(false);
-    $this->assertEquals(0, sizeof($oids), "All translations are deleted");
+    $object = ObjectFactory::getInstance('persistenceFacade')->create(self::TEST_TYPE);
+    $object->setOID($oid);
+    Localization::getInstance()->loadTranslation($object, 'de');
+    $this->assertEquals(null, $object->getValue('name'));
+    $this->assertEquals(null, $object->getValue('firstname'));
   }
 }
 ?>

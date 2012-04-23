@@ -52,10 +52,10 @@ $relMediaDir = $parser->getValue('relMediaDir', 'cleanupdir');
 // get all media files defined in the database
 $mediaFilesDB = array();
 // iterate over rootTypes
-$rootTypes = $parser->getValue('rootTypes', 'cms');
+$rootTypes = $parser->getValue('rootTypes', 'application');
 if (is_array($rootTypes))
 {
-  $persistenceFacade = ObjectFactory::getInstance('persistenceFacade')
+  $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
   foreach($rootTypes as $rootType)
   {
     $rootOIDs = array_merge($oids, $persistenceFacade->getOIDs($rootType));

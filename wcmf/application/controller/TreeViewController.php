@@ -111,7 +111,7 @@ class TreeViewController extends Controller {
 
     // get root types from ini file
     $parser = InifileParser::getInstance();
-    $rootTypes = $parser->getValue('rootTypes', 'cms');
+    $rootTypes = $parser->getValue('rootTypes', 'application');
     if ($rootTypes === false || !is_array($rootTypes) ||  $rootTypes[0] == '') {
       $this->setErrorMsg("No root types defined.");
     }

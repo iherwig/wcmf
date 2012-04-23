@@ -19,19 +19,17 @@
 namespace wcmf\lib\persistence\output;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\security\RightsManager;
 /**
- * LogOutputStrategy outputs an object's content to the logger category
+ * LogOutputStrategy outputs object changes to the logger category
  * LogOutputStrategy, loglevel info
  * Used classes must implement the toString() method.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LogOutputStrategy implements OutputStrategy {
+class AuditingOutputStrategy implements OutputStrategy {
 
   /**
    * @see OutputStrategy::writeHeader
@@ -51,7 +49,6 @@ class LogOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rightsManager = RightsManager::getInstance();
     $user = $rightsManager->getAuthUser();
 
@@ -62,15 +59,15 @@ class LogOutputStrategy implements OutputStrategy {
         break;
       // log update action
       case PersistentObject::STATE_DIRTY:
-        // get old object from storage
-        $oldObj = $persistenceFacade->load($obj->getOID(), BuildDepth::SINGLE);
+        // get original values
+        $orignialValues = $obj->getOriginalValues();
         // collect differences
         $values = array();
         $valueNames = $obj->getValueNames();
         foreach($valueNames as $name) {
           $values[$name]['name'] = $name;
           $values[$name]['new'] = $obj->getValue($name);
-          $values[$name]['old'] = $oldObj->getValue($name);
+          $values[$name]['old'] = $orignialValues[$name];
         }
         // make diff string
         $diff = '';

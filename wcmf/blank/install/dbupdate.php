@@ -46,8 +46,8 @@ if (!ensureDatabases($parser)) {
 }
 
 // message globals
-$GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'cms');
-$GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'cms');
+$GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'i18n');
+$GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'i18n');
 
 // set locale
 if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {

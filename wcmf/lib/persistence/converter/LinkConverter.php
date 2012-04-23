@@ -79,7 +79,7 @@ class LinkConverter implements IDataConverter {
   /**
    * Convert an absolute resource url on the server where the script runs to a relative one.
    * The converted url is relative to the directory configured in the config key
-   * 'htmlBaseDir' section 'cms'
+   * 'htmlBaseDir' section 'application'
    * @param url The url to convert
    * @return The converted url
    */
@@ -116,15 +116,15 @@ class LinkConverter implements IDataConverter {
   /**
    * Get the absolute http url of the base directory. The relative path to
    * that directory as seen from the script is configured in the config key
-   * 'htmlBaseDir' section 'cms'.
+   * 'htmlBaseDir' section 'application'.
    * @return The base url.
    */
   private static function getBaseUrl() {
     if (self::$_linkConverterBaseUrl == null) {
       $parser = InifileParser::getInstance();
-      if (($resourceBaseDir = $parser->getValue('htmlBaseDir', 'cms')) === false)
+      if (($resourceBaseDir = $parser->getValue('htmlBaseDir', 'application')) === false) {
         throw new ConfigurationException($parser->getErrorMsg());
-
+      }
       $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
       self::$_linkConverterBaseUrl = URIUtil::makeAbsolute($resourceBaseDir, $refURL);
     }

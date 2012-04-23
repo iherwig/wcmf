@@ -65,40 +65,6 @@ class ObjectFactory {
   }
 
   /**
-   * Create an instance of a class.
-   * This method uses ObjectFactory::getClassfile for finding the class definition
-   * and takes - if given - constructor parameters from the 'initparams'
-   * section. With this information it constructs the desired object.
-   * @param className The fully qualified name of the class.
-   * @return Instance of the class.
-   */
-  public static function createInstance($className) {
-    $obj = null;
-
-    // load class definition
-    self::loadClassDefinition($className);
-
-    // find init parameters
-    $initParams = null;
-    $parser = InifileParser::getInstance();
-    if (($initSection = $parser->getValue($className, 'initparams')) !== false) {
-      if (($initParams = $parser->getSection($initSection)) === false) {
-        $initParams = null;
-      }
-    }
-    if ($initParams != null) {
-      $obj = new $className($initParams);
-    }
-    else if (class_exists($className)) {
-      $obj = new $className;
-    }
-    else {
-      throw new ConfigurationException("Class ".$className." is not found.");
-    }
-    return $obj;
-  }
-
-  /**
    * Get an instance from the configuration.
    * @param name The name of the section, where the instance is defined.
    * @return Object.
@@ -110,7 +76,7 @@ class ObjectFactory {
     if (!isset(self::$_instances[$name])) {
       // load class definition
       $parser = InifileParser::getInstance();
-      if (($configSection = $parser->getSection($name)) !== false) {
+      if (($configSection = $parser->getSection($name, false)) !== false) {
         if (isset($configSection['__class'])) {
           // the instance belongs to the given class
           $className = $configSection['__class'];

@@ -21,7 +21,7 @@ $parser->parseIniFile('config.ini', true);
 
 // get root oids
 $oids = array();
-$rootTypes = $parser->getValue('rootTypes', 'cms');
+$rootTypes = $parser->getValue('rootTypes', 'application');
 if (is_array($rootTypes))
 {
   $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

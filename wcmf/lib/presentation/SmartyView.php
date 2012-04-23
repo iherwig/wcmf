@@ -36,7 +36,7 @@ class SmartyView extends \Smarty implements View
   public function setup()
   {
     $parser = InifileParser::getInstance();
-    if (($debugView = $parser->getValue('debugView', 'cms')) === false) {
+    if (($debugView = $parser->getValue('debugView', 'smarty')) === false) {
       $debugView = 0;
     }
     if (($compileCheck = $parser->getValue('compileCheck', 'smarty')) === false) {

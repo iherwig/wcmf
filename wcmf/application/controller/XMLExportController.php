@@ -139,7 +139,7 @@ class XMLExportController extends BatchController {
     // get root types from ini file
     $rootOIDs = array();
     $parser = InifileParser::getInstance();
-    $rootTypes = $parser->getValue('rootTypes', 'cms');
+    $rootTypes = $parser->getValue('rootTypes', 'application');
 
     if (is_array($rootTypes)) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

@@ -88,7 +88,7 @@ class WCMFFrontendController extends Controller {
       $knownTypes = $persistenceFacade->getKnownTypes();
 
       // get root types from ini file
-      $rootTypes = $parser->getValue('rootTypes', 'cms');
+      $rootTypes = $parser->getValue('rootTypes', 'application');
       if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '') {
         $this->setErrorMsg(Message::get("No root types defined."));
         $response->setAction('failure');

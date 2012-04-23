@@ -206,7 +206,7 @@ function g_getBackupNames() {
   $result = array();
 
   $parser = &InifileParser::getInstance();
-  if (($backupDir = $parser->getValue('backupDir', 'cms')) === false) {
+  if (($backupDir = $parser->getValue('backupDir', 'application')) === false) {
     throw new ConfigurationException($parser->getErrorMsg());
   }
   $fileUtil = new FileUtil();

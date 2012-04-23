@@ -57,7 +57,7 @@ class LoginController extends Controller {
 
   private $_anonymous = 0; // in anonymous mode all authorization requests answered positive
                        // and AuthUser is an instance of AnonymousUser
-                       // The mode is set in configuration section 'cms' key 'anonymous'
+                       // The mode is set in configuration section 'application' key 'anonymous'
 
   /**
    * @see Controller::initialize()
@@ -68,7 +68,7 @@ class LoginController extends Controller {
       $request->clearValues();
     }
     $parser = InifileParser::getInstance();
-    $this->_anonymous = $parser->getValue('anonymous', 'cms');
+    $this->_anonymous = $parser->getValue('anonymous', 'application');
 
     parent::initialize($request, $response);
   }

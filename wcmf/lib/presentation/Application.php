@@ -156,9 +156,6 @@ class Application {
 
     // prepare PersistenceFacade
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    if ($parser->getValue('logDBActions', 'cms') == 1) {
-      $persistenceFacade->enableLogging(new LogOutputStrategy());
-    }
     if ($readonly) {
       $persistenceFacade->setReadOnly(true);
     }

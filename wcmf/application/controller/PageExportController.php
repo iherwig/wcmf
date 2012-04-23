@@ -217,13 +217,13 @@ abstract class PageExportController extends BatchController {
 
   /**
    * Get the directory where the exported files should be placed.
-   * The default implementation gets the directory from the key 'exportDir' in the config section 'cms'
+   * The default implementation gets the directory from the key 'exportDir' in the config section 'application'
    * @note subclasses override this method to implement special application requirements.
    * @return The export directory name
    */
   protected function getExportDir() {
     $parser = InifileParser::getInstance();
-    if (($exportDir = $parser->getValue('exportDir', 'cms')) === false) {
+    if (($exportDir = $parser->getValue('exportDir', 'application')) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
     }
     return $exportDir;

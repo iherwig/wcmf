@@ -29,7 +29,7 @@ use wcmf\lib\presentation\Controller;
  * BackupController creates a backup (action 'makebackup') from a directory
  * and restores (action 'restorebackup') a created one to that directory respectively.
  * It creates a directory named after the 'backupName' parameter in the backup directory
- * whose name is determined by the configuration key 'backupDir' (section 'cms'). Then
+ * whose name is determined by the configuration key 'backupDir' (section 'application'). Then
  * it copies all files found in the directory given in the 'sourceDir' parameter to that
  * directory.
  * Subclasses may add additional work packages by overriding the
@@ -155,7 +155,7 @@ class BackupController extends BatchController
 
   /**
    * Get the actual backup directory defined by the key 'backupDir' in configuration
-   * section 'cms' and the backup name.
+   * section 'application' and the backup name.
    * @return The name of the actual backup directory
    */
   protected function getBackupDir() {
@@ -163,7 +163,7 @@ class BackupController extends BatchController
     $backupName = $session->get($this->BACKUP_NAME_VARNAME);
 
     $parser = InifileParser::getInstance();
-    if (($backupDir = $parser->getValue('backupDir', 'cms')) === false) {
+    if (($backupDir = $parser->getValue('backupDir', 'application')) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
     }
     if (strrpos($backupDir, '/') != strlen($backupDir)-1) {

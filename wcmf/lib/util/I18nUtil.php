@@ -106,7 +106,7 @@ class I18nUtil {
   /**
    * Create a message catalog (*.PO file) for use with 'gettext'. The file will be created in
    * the directory 'localeDir/language/LC_MESSAGES/' where 'localeDir' must be given in the configuration
-   * file section 'cms'.
+   * file section 'i18n'.
    * @param projectID The name of the project
    * @param teamName The name of the translation team
    * @param teamEmail The email of the translation team
@@ -121,7 +121,7 @@ class I18nUtil {
   public static function createPOFile($projectID, $teamName, $teamEmail, $language, $country, $charset, $filename, $messages) {
     // get locale directory
     $parser = &InifileParser::getInstance();
-    if (($localDir = $parser->getValue('localeDir', 'cms')) === false) {
+    if (($localDir = $parser->getValue('localeDir', 'i18n')) === false) {
       $this->_errorMsg = $parser->getErrorMsg();
       return false;
     }
