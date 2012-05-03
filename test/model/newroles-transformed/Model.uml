@@ -1739,12 +1739,24 @@
             <packagedElement xmi:type="uml:Package" xmi:id="{AB07DCED-E48E-402d-864C-1146B0C69675}" name="wcmf">
               <packagedElement xmi:type="uml:Class" xmi:id="{AA8C9439-6A21-4ba4-8FA8-C1CB6BD9473D}" name="Adodbseq">
                 <generalization xmi:id="_k5DCIpSzEeGTrNXfXXuzKg" general="{CEF40E2B-9607-48cc-AE96-FA4C63501EAE}"/>
+                <ownedAttribute xmi:id="_nbxdkJSzEeGTrNXfXXuzKg" name="id">
+                  <eAnnotations xmi:id="_nbxdkpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nbxdk5SzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_nbxdlJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="{FEAA2CF5-AB25-4867-807C-9E738E694405}" name="Language">
                 <ownedComment xmi:id="_kDtVkZSzEeGTrNXfXXuzKg" annotatedElement="{FEAA2CF5-AB25-4867-807C-9E738E694405}">
                   <body>A llanguage for which a translation of the model can be created. The code is arbitrary but it is recommended to use the ISO language codes (en, de, it, ...).</body>
                 </ownedComment>
                 <generalization xmi:id="_k5DCI5SzEeGTrNXfXXuzKg" general="{CEF40E2B-9607-48cc-AE96-FA4C63501EAE}"/>
+                <ownedAttribute xmi:id="_nbnskJSzEeGTrNXfXXuzKg" name="id">
+                  <eAnnotations xmi:id="_nbnskpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nbnsk5SzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_nbnslJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
                 <ownedAttribute xmi:id="{81B86546-18D9-4544-8091-9C7AE8C90140}" name="name" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k5DCJ5SzEeGTrNXfXXuzKg" value="1"/>
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k5DCJpSzEeGTrNXfXXuzKg" value="1"/>
@@ -1756,6 +1768,18 @@
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="{7A97D295-9913-4935-AB5A-D0617E1CDFFD}" name="Locktable">
                 <generalization xmi:id="_k5MzI5SzEeGTrNXfXXuzKg" general="{CEF40E2B-9607-48cc-AE96-FA4C63501EAE}"/>
+                <ownedAttribute xmi:id="_nbUxpZSzEeGTrNXfXXuzKg" name="id">
+                  <eAnnotations xmi:id="_nbUxp5SzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nbUxqJSzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_nbUxqZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nbUxoJSzEeGTrNXfXXuzKg" name="fk_userrdb_id">
+                  <eAnnotations xmi:id="_nbUxopSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nbUxo5SzEeGTrNXfXXuzKg" key="FK"/>
+                    <details xmi:id="_nbUxpJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
                 <ownedAttribute xmi:id="{26AC8337-D8B0-4234-9975-916C5185D3E8}" name="objectid" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k5WkIZSzEeGTrNXfXXuzKg" value="1"/>
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k5WkIJSzEeGTrNXfXXuzKg" value="1"/>
@@ -1775,6 +1799,30 @@
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="{CF08DBFE-D012-4601-80FD-CD8896D5605B}" name="NMUserRole">
                 <generalization xmi:id="_k5fuEJSzEeGTrNXfXXuzKg" general="{CEF40E2B-9607-48cc-AE96-FA4C63501EAE}"/>
+                <ownedAttribute xmi:id="_nau7z5SzEeGTrNXfXXuzKg" name="fk_role_id">
+                  <eAnnotations xmi:id="_nau70ZSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nau70pSzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_nau705SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nau7ypSzEeGTrNXfXXuzKg" name="fk_user_id">
+                  <eAnnotations xmi:id="_nau7zJSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nau7zZSzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_nau7zpSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nau7xZSzEeGTrNXfXXuzKg" name="fk_userrdb_id">
+                  <eAnnotations xmi:id="_nau7x5SzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nau7yJSzEeGTrNXfXXuzKg" key="FK"/>
+                    <details xmi:id="_nau7yZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nau7wJSzEeGTrNXfXXuzKg" name="fk_rolerdb_id">
+                  <eAnnotations xmi:id="_nau7wpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nau7w5SzEeGTrNXfXXuzKg" key="FK"/>
+                    <details xmi:id="_nau7xJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
                 <ownedAttribute xmi:id="0a2605b3-dd04-465c-8701-e09b031be653" name="" visibility="public" type="{393420E4-BBE6-4eca-BFF5-7ACF71CD2BB9}" association="{4420DEDE-3D9C-41b6-A4C0-C1DAA328F153}">
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k6sA45SzEeGTrNXfXXuzKg" value="1"/>
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k6sA4pSzEeGTrNXfXXuzKg" value="1"/>
@@ -1786,6 +1834,12 @@
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="{A0812238-2543-40bc-8A6D-405693576DFA}" name="RoleRDB">
                 <generalization xmi:id="_k5fuEZSzEeGTrNXfXXuzKg" general="{03A935F5-7495-47be-8369-ADCE4576AE5F}"/>
+                <ownedAttribute xmi:id="_ncXTcJSzEeGTrNXfXXuzKg" name="id">
+                  <eAnnotations xmi:id="_nchEcZSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nchEcpSzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_nchEc5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
                 <ownedAttribute xmi:id="{8036A26B-E985-4a5d-8176-89EB57CAC625}" name="name" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k5fuFJSzEeGTrNXfXXuzKg" value="1"/>
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k5fuE5SzEeGTrNXfXXuzKg" value="1"/>
@@ -1800,6 +1854,12 @@
                   <body>Instances of this class are used to localize entity attributes. Each instance defines a translation of one attribute of one entity into one language.</body>
                 </ownedComment>
                 <generalization xmi:id="_k5pfEJSzEeGTrNXfXXuzKg" general="{CEF40E2B-9607-48cc-AE96-FA4C63501EAE}"/>
+                <ownedAttribute xmi:id="_naIe0JSzEeGTrNXfXXuzKg" name="id">
+                  <eAnnotations xmi:id="_naIe0pSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_naIe05SzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_naIe1JSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
                 <ownedAttribute xmi:id="{0DD329F4-E904-47bc-9864-E801334017E4}" name="objectid" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                   <ownedComment xmi:id="_k5pfFJSzEeGTrNXfXXuzKg" annotatedElement="{0DD329F4-E904-47bc-9864-E801334017E4}">
                     <body>The object id of the object to which the translation belongs</body>
@@ -1831,6 +1891,18 @@
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="{09A7F948-A25F-470d-A827-ED1457918C4F}" name="UserConfig">
                 <generalization xmi:id="_k58aBZSzEeGTrNXfXXuzKg" general="{CEF40E2B-9607-48cc-AE96-FA4C63501EAE}"/>
+                <ownedAttribute xmi:id="_nZ1j5ZSzEeGTrNXfXXuzKg" name="id">
+                  <eAnnotations xmi:id="_nZ1j55SzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nZ1j6JSzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_nZ1j6ZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nZ1j4JSzEeGTrNXfXXuzKg" name="fk_userrdb_id">
+                  <eAnnotations xmi:id="_nZ1j4pSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nZ1j45SzEeGTrNXfXXuzKg" key="FK"/>
+                    <details xmi:id="_nZ1j5JSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
                 <ownedAttribute xmi:id="{08D79929-3415-4f5f-8665-4C55CFFBCC52}" name="key" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k58aCJSzEeGTrNXfXXuzKg" value="1"/>
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k58aB5SzEeGTrNXfXXuzKg" value="1"/>
@@ -1846,6 +1918,12 @@
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="{393420E4-BBE6-4eca-BFF5-7ACF71CD2BB9}" name="UserRDB">
                 <generalization xmi:id="_k6GLA5SzEeGTrNXfXXuzKg" general="{CB34826D-7220-4564-8CB3-85ECE5525761}"/>
+                <ownedAttribute xmi:id="_ncEYgJSzEeGTrNXfXXuzKg" name="id">
+                  <eAnnotations xmi:id="_ncEYgpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_ncEYg5SzEeGTrNXfXXuzKg" key="PK"/>
+                    <details xmi:id="_ncEYhJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  </eAnnotations>
+                </ownedAttribute>
                 <ownedAttribute xmi:id="{B62E46B8-CFA0-4187-92E0-F63E15300DA8}" name="login" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k6PU8pSzEeGTrNXfXXuzKg" value="1"/>
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k6PU8ZSzEeGTrNXfXXuzKg" value="1"/>
@@ -1886,6 +1964,12 @@
             </packagedElement>
             <packagedElement xmi:type="uml:Class" xmi:id="{F1425666-6D70-41f8-A11B-1657C0D88B64}" name="Author">
               <generalization xmi:id="_k6_i55SzEeGTrNXfXXuzKg" general="{753B1B92-0485-4584-BC3F-A921B3182FC5}"/>
+              <ownedAttribute xmi:id="_nZY38JSzEeGTrNXfXXuzKg" name="id">
+                <eAnnotations xmi:id="_nZY38pSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nZY385SzEeGTrNXfXXuzKg" key="PK"/>
+                  <details xmi:id="_nZY39JSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
               <ownedAttribute xmi:id="{B56B58B9-6C4A-4288-84A7-BF95814CFFA1}" name="name" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k6_i6pSzEeGTrNXfXXuzKg" value="1"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k6_i6ZSzEeGTrNXfXXuzKg" value="1"/>
@@ -1894,9 +1978,51 @@
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k8U_rZSzEeGTrNXfXXuzKg" value="*"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k8U_rJSzEeGTrNXfXXuzKg" value="1"/>
               </ownedAttribute>
+              <ownedAttribute xmi:id="_nY8MAJSzEeGTrNXfXXuzKg" name="created" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nZF9ApSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nZF9A5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nZF9BJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nZF9AZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nZF9BZSzEeGTrNXfXXuzKg" name="creator" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nZF9CJSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nZF9CZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nZF9CpSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nZF9B5SzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nZF9C5SzEeGTrNXfXXuzKg" name="modified" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nZF9DpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nZF9D5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nZF9EJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nZF9DZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nZF9EZSzEeGTrNXfXXuzKg" name="last_editor" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nZPG8pSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nZPG85SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nZPG9JSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nZPG8ZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
             </packagedElement>
             <packagedElement xmi:type="uml:Class" xmi:id="{E5E702C2-E97D-45cd-B390-6DD93B1115EA}" name="Document">
               <generalization xmi:id="_k7Is0JSzEeGTrNXfXXuzKg" general="{753B1B92-0485-4584-BC3F-A921B3182FC5}"/>
+              <ownedAttribute xmi:id="_nYybAJSzEeGTrNXfXXuzKg" name="id">
+                <eAnnotations xmi:id="_nYybApSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYybA5SzEeGTrNXfXXuzKg" key="PK"/>
+                  <details xmi:id="_nYybBJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
               <ownedAttribute xmi:id="{B904647E-2EA1-4fe5-AEF1-557775AF35ED}" name="title" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k7Is05SzEeGTrNXfXXuzKg" value="1"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k7Is0pSzEeGTrNXfXXuzKg" value="1"/>
@@ -1905,9 +2031,51 @@
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k74TuZSzEeGTrNXfXXuzKg" value="*"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k74TuJSzEeGTrNXfXXuzKg"/>
               </ownedAttribute>
+              <ownedAttribute xmi:id="_nYWWJZSzEeGTrNXfXXuzKg" name="created" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nYfgEpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYfgE5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nYfgFJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYfgEZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nYfgFZSzEeGTrNXfXXuzKg" name="creator" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nYpREpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYpRE5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nYpRFJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYpREZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nYpRFZSzEeGTrNXfXXuzKg" name="modified" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nYpRGJSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYpRGZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nYpRGpSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYpRF5SzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nYpRG5SzEeGTrNXfXXuzKg" name="last_editor" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nYpRHpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYpRH5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nYpRIJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYpRHZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
             </packagedElement>
             <packagedElement xmi:type="uml:Class" xmi:id="{753B1B92-0485-4584-BC3F-A921B3182FC5}" name="EntityBase" isAbstract="true">
               <generalization xmi:id="_k7Sd0JSzEeGTrNXfXXuzKg" general="{CEF40E2B-9607-48cc-AE96-FA4C63501EAE}"/>
+              <ownedAttribute xmi:id="_nVqOgJSzEeGTrNXfXXuzKg" name="id">
+                <eAnnotations xmi:id="_nVqOgpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nVqOg5SzEeGTrNXfXXuzKg" key="PK"/>
+                  <details xmi:id="_nVqOhJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
               <ownedAttribute xmi:id="{65FD4931-71DB-4044-8C1D-2354DE6D6CF0}" name="created" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k7Sd05SzEeGTrNXfXXuzKg" value="1"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k7Sd0pSzEeGTrNXfXXuzKg" value="1"/>
@@ -1927,6 +2095,18 @@
             </packagedElement>
             <packagedElement xmi:type="uml:Class" xmi:id="{FE0A7FD5-797B-413c-A003-B06C712AEB19}" name="Image">
               <generalization xmi:id="_k7lYw5SzEeGTrNXfXXuzKg" general="{753B1B92-0485-4584-BC3F-A921B3182FC5}"/>
+              <ownedAttribute xmi:id="_nYWWIJSzEeGTrNXfXXuzKg" name="id">
+                <eAnnotations xmi:id="_nYWWIpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYWWI5SzEeGTrNXfXXuzKg" key="PK"/>
+                  <details xmi:id="_nYWWJJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nYMlIJSzEeGTrNXfXXuzKg" name="fk_page_id">
+                <eAnnotations xmi:id="_nYMlIpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYMlI5SzEeGTrNXfXXuzKg" key="FK"/>
+                  <details xmi:id="_nYMlJJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
               <ownedAttribute xmi:id="{D488779B-64B4-4caa-B995-9408B9D8179B}" name="filename" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k7vJwZSzEeGTrNXfXXuzKg" value="1"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k7vJwJSzEeGTrNXfXXuzKg" value="1"/>
@@ -1939,9 +2119,63 @@
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k8ewo5SzEeGTrNXfXXuzKg" value="1"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k8ewopSzEeGTrNXfXXuzKg" value="1"/>
               </ownedAttribute>
+              <ownedAttribute xmi:id="_nXmINJSzEeGTrNXfXXuzKg" name="created" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nXv5MpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXv5M5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nXv5NJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nXv5MZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nXv5NZSzEeGTrNXfXXuzKg" name="creator" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nXv5OJSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXv5OZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nXv5OpSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nXv5N5SzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nXv5O5SzEeGTrNXfXXuzKg" name="modified" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nXv5PpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXv5P5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nXv5QJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nXv5PZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nXv5QZSzEeGTrNXfXXuzKg" name="last_editor" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nX5qMpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nX5qM5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nX5qNJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nX5qMZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
             </packagedElement>
             <packagedElement xmi:type="uml:Class" xmi:id="{EB63781B-5C98-4c4d-9D7D-82CF9E1E5070}" name="NMPageDocument">
               <generalization xmi:id="_k7vJwpSzEeGTrNXfXXuzKg" general="{753B1B92-0485-4584-BC3F-A921B3182FC5}"/>
+              <ownedAttribute xmi:id="_nXc-SpSzEeGTrNXfXXuzKg" name="id">
+                <eAnnotations xmi:id="_nXmIMZSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXmIMpSzEeGTrNXfXXuzKg" key="PK"/>
+                  <details xmi:id="_nXmIM5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nXc-RZSzEeGTrNXfXXuzKg" name="fk_page_id">
+                <eAnnotations xmi:id="_nXc-R5SzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXc-SJSzEeGTrNXfXXuzKg" key="FK"/>
+                  <details xmi:id="_nXc-SZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nXc-QJSzEeGTrNXfXXuzKg" name="fk_document_id">
+                <eAnnotations xmi:id="_nXc-QpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXc-Q5SzEeGTrNXfXXuzKg" key="FK"/>
+                  <details xmi:id="_nXc-RJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
               <ownedAttribute xmi:id="78653f6b-4310-4537-aa2e-49436ce857cd" name="" visibility="public" type="{E5E702C2-E97D-45cd-B390-6DD93B1115EA}" association="{35E17EE5-01E5-4332-8BEE-2D71A6F5A44D}">
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k74TtpSzEeGTrNXfXXuzKg" value="1"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k74TtZSzEeGTrNXfXXuzKg" value="1"/>
@@ -1950,9 +2184,63 @@
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k8U_o5SzEeGTrNXfXXuzKg" value="1"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k8U_opSzEeGTrNXfXXuzKg" value="1"/>
               </ownedAttribute>
+              <ownedAttribute xmi:id="_nW2hUJSzEeGTrNXfXXuzKg" name="created" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nW2hU5SzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nW2hVJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nW2hVZSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nW2hUpSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nW2hVpSzEeGTrNXfXXuzKg" name="creator" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nXASUpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXASU5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nXASVJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nXASUZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nXASVZSzEeGTrNXfXXuzKg" name="modified" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nXASWJSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXASWZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nXASWpSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nXASV5SzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nXASW5SzEeGTrNXfXXuzKg" name="last_editor" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nXASXpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nXASX5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nXASYJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nXASXZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
             </packagedElement>
             <packagedElement xmi:type="uml:Class" xmi:id="{7E8C2CB1-F88F-483c-9C0C-711AA45A2D2B}" name="Page">
               <generalization xmi:id="_k7vJw5SzEeGTrNXfXXuzKg" general="{753B1B92-0485-4584-BC3F-A921B3182FC5}"/>
+              <ownedAttribute xmi:id="_nWtXapSzEeGTrNXfXXuzKg" name="id">
+                <eAnnotations xmi:id="_nWtXbJSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nWtXbZSzEeGTrNXfXXuzKg" key="PK"/>
+                  <details xmi:id="_nWtXbpSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nWtXZZSzEeGTrNXfXXuzKg" name="fk_page_id">
+                <eAnnotations xmi:id="_nWtXZ5SzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nWtXaJSzEeGTrNXfXXuzKg" key="FK"/>
+                  <details xmi:id="_nWtXaZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nWtXYJSzEeGTrNXfXXuzKg" name="fk_author_id">
+                <eAnnotations xmi:id="_nWtXYpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nWtXY5SzEeGTrNXfXXuzKg" key="FK"/>
+                  <details xmi:id="_nWtXZJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                </eAnnotations>
+              </ownedAttribute>
               <ownedAttribute xmi:id="{00B2BEEE-7755-485f-9696-E8F50C3D889F}" name="author_name" visibility="public" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0" isUnique="false">
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k7vJxpSzEeGTrNXfXXuzKg" value="1"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k7vJxZSzEeGTrNXfXXuzKg" value="1"/>
@@ -1985,6 +2273,42 @@
                 <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_k8ewppSzEeGTrNXfXXuzKg" value="*"/>
                 <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_k8ewpZSzEeGTrNXfXXuzKg"/>
               </ownedAttribute>
+              <ownedAttribute xmi:id="_nV9wgJSzEeGTrNXfXXuzKg" name="created" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nV9wg5SzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nV9whJSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nV9whZSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nV9wgpSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nV9whpSzEeGTrNXfXXuzKg" name="creator" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nV9wiZSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nV9wipSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nV9wi5SzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nV9wiJSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nV9wjJSzEeGTrNXfXXuzKg" name="modified" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nWG6cpSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nWG6c5SzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nWG6dJSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nWG6cZSzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="_nWG6dZSzEeGTrNXfXXuzKg" name="last_editor" type="8b8ec136-7e9f-45cf-8273-4d87f9b801e0">
+                <eAnnotations xmi:id="_nWG6eJSzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nWG6eZSzEeGTrNXfXXuzKg" key="generatorAdded"/>
+                  <details xmi:id="_nWG6epSzEeGTrNXfXXuzKg" key="generatorInherited"/>
+                </eAnnotations>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="_nWG6d5SzEeGTrNXfXXuzKg">
+                  <value xsi:nil="true"/>
+                </defaultValue>
+              </ownedAttribute>
             </packagedElement>
             <packagedElement xmi:type="uml:Association" xmi:id="{35E17EE5-01E5-4332-8BEE-2D71A6F5A44D}" name="" memberEnd="78653f6b-4310-4537-aa2e-49436ce857cd 1893cdf6-4cfd-4108-82e3-13bd1e083d35"/>
             <packagedElement xmi:type="uml:Association" xmi:id="{ECF3F7DF-D6F3-4e78-A601-D20BD26AC436}" name="" memberEnd="3637cb36-4cfc-4d6b-a32c-bbcde42fa3dd b197e7c5-b7ca-4597-9810-175246243e4b"/>
@@ -2002,6 +2326,12 @@
         <appliedProfile href="file:/F:/wCMF/framework/new_roles/cms/test/model/../../../generator/metamodel/chronos.profile.uml#873fb1a3-cfa7-11de-9e87-d74203c08737"/>
       </profileApplication>
     </packagedElement>
+    <profileApplication xmi:id="_nMH4JpSzEeGTrNXfXXuzKg">
+      <eAnnotations xmi:id="_nMH4J5SzEeGTrNXfXXuzKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="file:/F:/wCMF/framework/new_roles/cms/test/model/../../../generator/metamodel/chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw"/>
+      </eAnnotations>
+      <appliedProfile href="file:/F:/wCMF/framework/new_roles/cms/test/model/../../../generator/metamodel/chronos.profile.uml#873fb1a3-cfa7-11de-9e87-d74203c08737"/>
+    </profileApplication>
   </uml:Model>
   <Chronos:ChiSystem xmi:id="_k8n6kJSzEeGTrNXfXXuzKg" plattform="wcmf" base_Class="{D9F80247-4083-4c44-AA42-D47C0A2E86C7}"/>
   <Chronos:ChiSystem xmi:id="_k8n6kZSzEeGTrNXfXXuzKg" plattform="wcmf" base_Class="{B5DCFDBA-2B76-460b-ABFD-B1477BFD91AF}"/>
@@ -2197,25 +2527,38 @@
   <Chronos:ChiNode xmi:id="_k-Q5VJSzEeGTrNXfXXuzKg" base_Class="{CEF40E2B-9607-48cc-AE96-FA4C63501EAE}" child_order="" display_value="" is_searchable="true" is_soap="true" parent_order="" table_name=""/>
   <Chronos:ChiController xmi:id="_k-Q5VZSzEeGTrNXfXXuzKg" base_Class="{770A47D3-6CB6-4fe2-9051-24E5675F5B00}"/>
   <Chronos:ChiNode xmi:id="_k-Q5VpSzEeGTrNXfXXuzKg" base_Class="{AA8C9439-6A21-4ba4-8FA8-C1CB6BD9473D}" child_order="" display_value="" parent_order="" table_name="adodbseq"/>
+  <Chronos:ChiValue xmi:id="_nbxdkZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nbxdkJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiNode xmi:id="_k-Q5V5SzEeGTrNXfXXuzKg" base_Class="{FEAA2CF5-AB25-4867-807C-9E738E694405}" child_order="" display_value="name" is_searchable="true" is_soap="true" orderby="name" parent_order="" table_name="language"/>
+  <Chronos:ChiValue xmi:id="_nbnskZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nbnskJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_dMKpSzEeGTrNXfXXuzKg" is_editable="true" restrictions_match="" restrictions_not_match="" restrictions_description="" column_name="" base_Property="{81B86546-18D9-4544-8091-9C7AE8C90140}"/>
   <Chronos:ChiValue xmi:id="_k_dMK5SzEeGTrNXfXXuzKg" is_editable="true" restrictions_match="" restrictions_not_match="" restrictions_description="" column_name="" base_Property="{AFFBCF51-0E57-4e3c-B459-70F9B1E98B36}"/>
   <Chronos:ChiNode xmi:id="_k-Q5WJSzEeGTrNXfXXuzKg" base_Class="{7A97D295-9913-4935-AB5A-D0617E1CDFFD}" child_order="" display_value="" parent_order="" table_name="locktable"/>
+  <Chronos:ChiValue xmi:id="_nbUxppSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nbUxpZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nbUxoZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_userrdb_id" base_Property="_nbUxoJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_m9IJSzEeGTrNXfXXuzKg" is_editable="true" restrictions_match="" restrictions_not_match="" restrictions_description="" column_name="" base_Property="{26AC8337-D8B0-4234-9975-916C5185D3E8}"/>
   <Chronos:ChiValue xmi:id="_k_m9IZSzEeGTrNXfXXuzKg" base_Property="{70E24D16-E799-48d5-A8D8-0AA961840E67}"/>
   <Chronos:ChiValue xmi:id="_k_m9IpSzEeGTrNXfXXuzKg" base_Property="{8CB5996B-049B-4102-A834-758B86A3226A}"/>
   <Chronos:ChiManyToMany xmi:id="_k-Q5WZSzEeGTrNXfXXuzKg" base_Class="{CF08DBFE-D012-4601-80FD-CD8896D5605B}" child_order="" display_value="" parent_order="" pk_name="fk_user_id|fk_role_id" table_name="nm_user_role"/>
+  <Chronos:ChiValue xmi:id="_nau70JSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="fk_role_id" base_Property="_nau7z5SzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nau7y5SzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="fk_user_id" base_Property="_nau7ypSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nau7xpSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_userrdb_id" base_Property="_nau7xZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nau7wZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_rolerdb_id" base_Property="_nau7wJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiNode xmi:id="_k-Q5WpSzEeGTrNXfXXuzKg" base_Class="{A0812238-2543-40bc-8A6D-405693576DFA}" child_order="" display_value="name" is_searchable="true" is_soap="true" orderby="name" parent_order="" table_name="role"/>
+  <Chronos:ChiValue xmi:id="_nchEcJSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_ncXTcJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_m9I5SzEeGTrNXfXXuzKg" base_Property="{8036A26B-E985-4a5d-8176-89EB57CAC625}"/>
   <Chronos:ChiNode xmi:id="_k-aqUJSzEeGTrNXfXXuzKg" base_Class="{362DA03E-7E9D-42c9-81E2-FC1B90425243}" child_order="" display_value="objectid|attribute|language" is_searchable="true" is_soap="true" parent_order="" table_name="translation"/>
+  <Chronos:ChiValue xmi:id="_naIe0ZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_naIe0JSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_m9JJSzEeGTrNXfXXuzKg" base_Property="{0DD329F4-E904-47bc-9864-E801334017E4}"/>
   <Chronos:ChiValue xmi:id="_k_m9JZSzEeGTrNXfXXuzKg" base_Property="{DEF01315-86CE-430a-B478-780704EDD13B}"/>
   <Chronos:ChiValue xmi:id="_k_m9JpSzEeGTrNXfXXuzKg" base_Property="{B1C1D4D9-0B0D-4791-AD06-AD0BB019B9E7}"/>
   <Chronos:ChiValue xmi:id="_k_m9J5SzEeGTrNXfXXuzKg" base_Property="{80C618C0-C693-410d-9FD3-D68EB7C349FF}"/>
   <Chronos:ChiNode xmi:id="_k-aqUZSzEeGTrNXfXXuzKg" base_Class="{09A7F948-A25F-470d-A827-ED1457918C4F}" child_order="" display_value="" parent_order="" table_name="user_config"/>
+  <Chronos:ChiValue xmi:id="_nZ1j5pSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nZ1j5ZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nZ1j4ZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_userrdb_id" base_Property="_nZ1j4JSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_m9KJSzEeGTrNXfXXuzKg" base_Property="{08D79929-3415-4f5f-8665-4C55CFFBCC52}"/>
   <Chronos:ChiValue xmi:id="_k_m9KZSzEeGTrNXfXXuzKg" base_Property="{E2951C26-DF8A-431e-A43A-FFB70869DB17}"/>
   <Chronos:ChiNode xmi:id="_k-aqUpSzEeGTrNXfXXuzKg" base_Class="{393420E4-BBE6-4eca-BFF5-7ACF71CD2BB9}" child_order="" display_value="login" is_searchable="true" is_soap="true" orderby="name" parent_order="" table_name="user"/>
+  <Chronos:ChiValue xmi:id="_ncEYgZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_ncEYgJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_m9KpSzEeGTrNXfXXuzKg" base_Property="{B62E46B8-CFA0-4187-92E0-F63E15300DA8}"/>
   <Chronos:ChiValue xmi:id="_k_wuIJSzEeGTrNXfXXuzKg" base_Property="{BAA2656D-5FC5-4c2a-885F-C2708A46F0CA}"/>
   <Chronos:ChiValue xmi:id="_k_wuIZSzEeGTrNXfXXuzKg" base_Property="{906F26BF-DA7E-43ec-9BD8-99068146D4F5}"/>
@@ -2226,20 +2569,52 @@
   <Chronos:ChiAssociation xmi:id="_k_wuJpSzEeGTrNXfXXuzKg" base_Association="{39D62224-C226-42dc-A02D-6633F5C79FE8}"/>
   <Chronos:ChiAssociation xmi:id="_k_wuJ5SzEeGTrNXfXXuzKg" base_Association="{4519059C-9310-4e16-8C7F-A1CDFB63517E}"/>
   <Chronos:ChiNode xmi:id="_k-aqU5SzEeGTrNXfXXuzKg" base_Class="{F1425666-6D70-41f8-A11B-1657C0D88B64}" child_order="" display_value="name" is_searchable="true" is_soap="true" orderby="sortkey" parent_order="" table_name=""/>
+  <Chronos:ChiValue xmi:id="_nZY38ZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nZY38JSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_wuKJSzEeGTrNXfXXuzKg" base_Property="{B56B58B9-6C4A-4288-84A7-BF95814CFFA1}"/>
+  <Chronos:ChiValue xmi:id="_nZF9AJSzEeGTrNXfXXuzKg" base_Property="_nY8MAJSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nZF9BpSzEeGTrNXfXXuzKg" base_Property="_nZF9BZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nZF9DJSzEeGTrNXfXXuzKg" base_Property="_nZF9C5SzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nZPG8JSzEeGTrNXfXXuzKg" base_Property="_nZF9EZSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiNode xmi:id="_k-aqVJSzEeGTrNXfXXuzKg" base_Class="{E5E702C2-E97D-45cd-B390-6DD93B1115EA}" child_order="" display_value="" is_searchable="true" is_soap="true" orderby="title DESC" parent_order="" table_name=""/>
+  <Chronos:ChiValue xmi:id="_nYybAZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nYybAJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_54EJSzEeGTrNXfXXuzKg" base_Property="{B904647E-2EA1-4fe5-AEF1-557775AF35ED}"/>
+  <Chronos:ChiValue xmi:id="_nYfgEJSzEeGTrNXfXXuzKg" base_Property="_nYWWJZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nYpREJSzEeGTrNXfXXuzKg" base_Property="_nYfgFZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nYpRFpSzEeGTrNXfXXuzKg" base_Property="_nYpRFZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nYpRHJSzEeGTrNXfXXuzKg" base_Property="_nYpRG5SzEeGTrNXfXXuzKg"/>
   <Chronos:ChiNode xmi:id="_k-aqVZSzEeGTrNXfXXuzKg" base_Class="{753B1B92-0485-4584-BC3F-A921B3182FC5}" child_order="" display_value="" is_searchable="true" is_soap="true" parent_order="" table_name=""/>
+  <Chronos:ChiValue xmi:id="_nVqOgZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nVqOgJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_54EZSzEeGTrNXfXXuzKg" base_Property="{65FD4931-71DB-4044-8C1D-2354DE6D6CF0}"/>
   <Chronos:ChiValue xmi:id="_k_54EpSzEeGTrNXfXXuzKg" base_Property="{942A1BF6-F5EA-4d5c-8AAD-6A92F410D49D}"/>
   <Chronos:ChiValue xmi:id="_k_54E5SzEeGTrNXfXXuzKg" base_Property="{37A7CAEC-A282-4796-968F-D7A53B27C830}"/>
   <Chronos:ChiValue xmi:id="_k_54FJSzEeGTrNXfXXuzKg" base_Property="{7FC1B925-80DF-4fac-93BD-C49F6B6D86F8}"/>
   <Chronos:ChiNode xmi:id="_k-aqVpSzEeGTrNXfXXuzKg" base_Class="{FE0A7FD5-797B-413c-A003-B06C712AEB19}" child_order="" display_value="file" is_searchable="true" is_soap="true" parent_order="" table_name=""/>
+  <Chronos:ChiValue xmi:id="_nYWWIZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nYWWIJSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nYMlIZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_page_id" base_Property="_nYMlIJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValue xmi:id="_k_54FZSzEeGTrNXfXXuzKg" base_Property="{D488779B-64B4-4caa-B995-9408B9D8179B}"/>
+  <Chronos:ChiValue xmi:id="_nXv5MJSzEeGTrNXfXXuzKg" base_Property="_nXmINJSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nXv5NpSzEeGTrNXfXXuzKg" base_Property="_nXv5NZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nXv5PJSzEeGTrNXfXXuzKg" base_Property="_nXv5O5SzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nX5qMJSzEeGTrNXfXXuzKg" base_Property="_nXv5QZSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiManyToMany xmi:id="_k-aqV5SzEeGTrNXfXXuzKg" base_Class="{EB63781B-5C98-4c4d-9D7D-82CF9E1E5070}" child_order="" display_value="" is_searchable="true" is_soap="true" orderby="sortkey" parent_order="" table_name=""/>
+  <Chronos:ChiValue xmi:id="_nXmIMJSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nXc-SpSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nXc-RpSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_page_id" base_Property="_nXc-RZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nXc-QZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_document_id" base_Property="_nXc-QJSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nW2hUZSzEeGTrNXfXXuzKg" base_Property="_nW2hUJSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nXASUJSzEeGTrNXfXXuzKg" base_Property="_nW2hVpSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nXASVpSzEeGTrNXfXXuzKg" base_Property="_nXASVZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nXASXJSzEeGTrNXfXXuzKg" base_Property="_nXASW5SzEeGTrNXfXXuzKg"/>
   <Chronos:ChiNode xmi:id="_k-aqWJSzEeGTrNXfXXuzKg" base_Class="{7E8C2CB1-F88F-483c-9C0C-711AA45A2D2B}" child_order="" display_value="name" is_searchable="true" is_soap="true" orderby="sortkey" parent_order="" table_name=""/>
+  <Chronos:ChiValue xmi:id="_nWtXa5SzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11) NOT NULL" column_name="id" base_Property="_nWtXapSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nWtXZpSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_page_id" base_Property="_nWtXZZSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nWtXYZSzEeGTrNXfXXuzKg" app_data_type="DATATYPE_IGNORE" db_data_type="INT(11)" column_name="fk_author_id" base_Property="_nWtXYJSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiValueRef xmi:id="_k_54FpSzEeGTrNXfXXuzKg" base_Property="{00B2BEEE-7755-485f-9696-E8F50C3D889F}"/>
+  <Chronos:ChiValue xmi:id="_nUxdsJSzEeGTrNXfXXuzKg" base_Property="{00B2BEEE-7755-485f-9696-E8F50C3D889F}"/>
   <Chronos:ChiValue xmi:id="_k_54F5SzEeGTrNXfXXuzKg" base_Property="{0106D140-8F27-40c1-8AC9-716C7470E399}"/>
+  <Chronos:ChiValue xmi:id="_nV9wgZSzEeGTrNXfXXuzKg" base_Property="_nV9wgJSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nV9wh5SzEeGTrNXfXXuzKg" base_Property="_nV9whpSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nWG6cJSzEeGTrNXfXXuzKg" base_Property="_nV9wjJSzEeGTrNXfXXuzKg"/>
+  <Chronos:ChiValue xmi:id="_nWG6dpSzEeGTrNXfXXuzKg" base_Property="_nWG6dZSzEeGTrNXfXXuzKg"/>
   <Chronos:ChiAssociation xmi:id="_k_54GJSzEeGTrNXfXXuzKg" base_Association="{116645B7-45FE-47b5-AB42-61C6A33260F9}"/>
   <Chronos:ChiAssociation xmi:id="_k_54GZSzEeGTrNXfXXuzKg" base_Association="{D34D5812-814B-4f57-8C3C-1D170709380A}"/>
 </xmi:XMI>
