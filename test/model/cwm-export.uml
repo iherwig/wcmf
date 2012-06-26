@@ -1,0 +1,1893 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+  <uml:Model xmi:id="__LATEL_hEeGCLfRJsWE2ew" name="uml-generated">
+    <packagedElement xmi:type="uml:Package" xmi:id="__LATEb_hEeGCLfRJsWE2ew" name="newroles">
+      <ownedComment xmi:id="__LATEr_hEeGCLfRJsWE2ew" annotatedElement="__LATEb_hEeGCLfRJsWE2ew">
+        <body>?</body>
+      </ownedComment>
+      <packagedElement xmi:type="uml:Package" xmi:id="__LATE7_hEeGCLfRJsWE2ew" name="configuration">
+        <packagedElement xmi:type="uml:Package" xmi:id="__LATFL_hEeGCLfRJsWE2ew" name="default">
+          <packagedElement xmi:type="uml:Package" xmi:id="__LATFb_hEeGCLfRJsWE2ew" name="config.ini">
+            <packagedElement xmi:type="uml:Class" xmi:id="__LATFr_hEeGCLfRJsWE2ew" name="Config">
+              <ownedComment xmi:id="__LATF7_hEeGCLfRJsWE2ew" annotatedElement="__LATFr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LATGL_hEeGCLfRJsWE2ew" name="include" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LATGb_hEeGCLfRJsWE2ew" annotatedElement="__LATGL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LATGr_hEeGCLfRJsWE2ew" value="{server.ini, persistence.ini, presentation.ini}"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LATG7_hEeGCLfRJsWE2ew" name="ActionMapping">
+              <ownedComment xmi:id="__LATHL_hEeGCLfRJsWE2ew" annotatedElement="__LATG7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LATHb_hEeGCLfRJsWE2ew" name="??fatal" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LATHr_hEeGCLfRJsWE2ew" annotatedElement="__LATHb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LATH7_hEeGCLfRJsWE2ew" value="wcmf\application\controller\FailureController"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LATIL_hEeGCLfRJsWE2ew" name="Views">
+              <ownedComment xmi:id="__LA6IL_hEeGCLfRJsWE2ew" annotatedElement="__LATIL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6Ib_hEeGCLfRJsWE2ew" name="TypeMapping">
+              <ownedComment xmi:id="__LA6Ir_hEeGCLfRJsWE2ew" annotatedElement="__LA6Ib_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6I7_hEeGCLfRJsWE2ew" name="Application">
+              <ownedComment xmi:id="__LA6JL_hEeGCLfRJsWE2ew" annotatedElement="__LA6I7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LA6Jb_hEeGCLfRJsWE2ew" name="applicationTitle" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6Jr_hEeGCLfRJsWE2ew" annotatedElement="__LA6Jb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6J7_hEeGCLfRJsWE2ew" value="WCMF TEST MODEL"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6KL_hEeGCLfRJsWE2ew" name="libDir" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6Kb_hEeGCLfRJsWE2ew" annotatedElement="__LA6KL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6Kr_hEeGCLfRJsWE2ew" value="../wcmf/"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6K7_hEeGCLfRJsWE2ew" name="exportDir" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6LL_hEeGCLfRJsWE2ew" annotatedElement="__LA6K7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6Lb_hEeGCLfRJsWE2ew" value="../../html/"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6Lr_hEeGCLfRJsWE2ew" name="backupDir" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6L7_hEeGCLfRJsWE2ew" annotatedElement="__LA6Lr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6ML_hEeGCLfRJsWE2ew" value="backup/"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6Mb_hEeGCLfRJsWE2ew" name="anonymous" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6Mr_hEeGCLfRJsWE2ew" annotatedElement="__LA6Mb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6M7_hEeGCLfRJsWE2ew" value="false"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6NL_hEeGCLfRJsWE2ew" name="rootTypes" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6Nb_hEeGCLfRJsWE2ew" annotatedElement="__LA6NL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6Nr_hEeGCLfRJsWE2ew" value="{Page, Document}"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6N7_hEeGCLfRJsWE2ew" name="Media">
+              <ownedComment xmi:id="__LA6OL_hEeGCLfRJsWE2ew" annotatedElement="__LA6N7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LA6Ob_hEeGCLfRJsWE2ew" name="uploadDir" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6Or_hEeGCLfRJsWE2ew" annotatedElement="__LA6Ob_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6O7_hEeGCLfRJsWE2ew" value="../../media/"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6PL_hEeGCLfRJsWE2ew" name="RoleConfig">
+              <ownedComment xmi:id="__LA6Pb_hEeGCLfRJsWE2ew" annotatedElement="__LA6PL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LA6Pr_hEeGCLfRJsWE2ew" name="administrators" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6P7_hEeGCLfRJsWE2ew" annotatedElement="__LA6Pr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6QL_hEeGCLfRJsWE2ew" value="admin.ini"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6Qb_hEeGCLfRJsWE2ew" name="Authorization">
+              <ownedComment xmi:id="__LA6Qr_hEeGCLfRJsWE2ew" annotatedElement="__LA6Qb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6Q7_hEeGCLfRJsWE2ew" name="I18N">
+              <ownedComment xmi:id="__LA6RL_hEeGCLfRJsWE2ew" annotatedElement="__LA6Q7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LA6Rb_hEeGCLfRJsWE2ew" name="localeDir" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6Rr_hEeGCLfRJsWE2ew" annotatedElement="__LA6Rb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6R7_hEeGCLfRJsWE2ew" value="locale/"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6SL_hEeGCLfRJsWE2ew" name="language" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6Sb_hEeGCLfRJsWE2ew" annotatedElement="__LA6SL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6Sr_hEeGCLfRJsWE2ew" value="en_EN"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6S7_hEeGCLfRJsWE2ew" name="inputTypes" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6TL_hEeGCLfRJsWE2ew" annotatedElement="__LA6S7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6Tb_hEeGCLfRJsWE2ew" value="{text, textarea, filebrowser, linkbrowser, ckeditor}"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6Tr_hEeGCLfRJsWE2ew" name="languageType" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6T7_hEeGCLfRJsWE2ew" annotatedElement="__LA6Tr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6UL_hEeGCLfRJsWE2ew" value="Language"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6Ub_hEeGCLfRJsWE2ew" name="translationType" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6Ur_hEeGCLfRJsWE2ew" annotatedElement="__LA6Ub_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6U7_hEeGCLfRJsWE2ew" value="Translation"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6VL_hEeGCLfRJsWE2ew" name="Search">
+              <ownedComment xmi:id="__LA6Vb_hEeGCLfRJsWE2ew" annotatedElement="__LA6VL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LA6Vr_hEeGCLfRJsWE2ew" name="indexPath" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6V7_hEeGCLfRJsWE2ew" annotatedElement="__LA6Vr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6WL_hEeGCLfRJsWE2ew" value="searchIndex/"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6Wb_hEeGCLfRJsWE2ew" name="Boolean">
+              <ownedComment xmi:id="__LA6Wr_hEeGCLfRJsWE2ew" annotatedElement="__LA6Wb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LA6W7_hEeGCLfRJsWE2ew" name="0" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6XL_hEeGCLfRJsWE2ew" annotatedElement="__LA6W7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6Xb_hEeGCLfRJsWE2ew" value="no"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LA6Xr_hEeGCLfRJsWE2ew" name="1" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6X7_hEeGCLfRJsWE2ew" annotatedElement="__LA6Xr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6YL_hEeGCLfRJsWE2ew" value="yes"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LA6Yb_hEeGCLfRJsWE2ew" name="config.ini">
+              <ownedComment xmi:id="__LA6Yr_hEeGCLfRJsWE2ew" annotatedElement="__LA6Yb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LA6Y7_hEeGCLfRJsWE2ew" name="admin.ini">
+            <ownedComment xmi:id="__LA6ZL_hEeGCLfRJsWE2ew" annotatedElement="__LA6Y7_hEeGCLfRJsWE2ew">
+              <body>?</body>
+            </ownedComment>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LA6Zb_hEeGCLfRJsWE2ew" name="Application">
+              <ownedComment xmi:id="__LA6Zr_hEeGCLfRJsWE2ew" annotatedElement="__LA6Zb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LA6Z7_hEeGCLfRJsWE2ew" name="rootTypes" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LA6aL_hEeGCLfRJsWE2ew" annotatedElement="__LA6Z7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LA6ab_hEeGCLfRJsWE2ew" value="{Page, Document, UserRDB, RoleRDB, Locktable}"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LA6ar_hEeGCLfRJsWE2ew" name="admin.ini">
+              <ownedComment xmi:id="__LA6a7_hEeGCLfRJsWE2ew" annotatedElement="__LA6ar_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LA6bL_hEeGCLfRJsWE2ew" name="server.ini">
+            <ownedComment xmi:id="__LBhML_hEeGCLfRJsWE2ew" annotatedElement="__LA6bL_hEeGCLfRJsWE2ew">
+              <body>?</body>
+            </ownedComment>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhMb_hEeGCLfRJsWE2ew" name="Database">
+              <ownedComment xmi:id="__LBhMr_hEeGCLfRJsWE2ew" annotatedElement="__LBhMb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhM7_hEeGCLfRJsWE2ew" name="dbType" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhNL_hEeGCLfRJsWE2ew" annotatedElement="__LBhM7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhNb_hEeGCLfRJsWE2ew" value="mysql"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhNr_hEeGCLfRJsWE2ew" name="dbHostName" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhN7_hEeGCLfRJsWE2ew" annotatedElement="__LBhNr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhOL_hEeGCLfRJsWE2ew" value="localhost"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhOb_hEeGCLfRJsWE2ew" name="dbName" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhOr_hEeGCLfRJsWE2ew" annotatedElement="__LBhOb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhO7_hEeGCLfRJsWE2ew" value="wcmf_newroles"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhPL_hEeGCLfRJsWE2ew" name="dbUserName" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhPb_hEeGCLfRJsWE2ew" annotatedElement="__LBhPL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhPr_hEeGCLfRJsWE2ew" value="wcmf"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhP7_hEeGCLfRJsWE2ew" name="dbPassword" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhQL_hEeGCLfRJsWE2ew" annotatedElement="__LBhP7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhQb_hEeGCLfRJsWE2ew" value="geheim"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhQr_hEeGCLfRJsWE2ew" name="dbCharSet" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhQ7_hEeGCLfRJsWE2ew" annotatedElement="__LBhQr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhRL_hEeGCLfRJsWE2ew" value="utf8"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhRb_hEeGCLfRJsWE2ew" name="I18N">
+              <ownedComment xmi:id="__LBhRr_hEeGCLfRJsWE2ew" annotatedElement="__LBhRb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhR7_hEeGCLfRJsWE2ew" name="defaultLanguage" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhSL_hEeGCLfRJsWE2ew" annotatedElement="__LBhR7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhSb_hEeGCLfRJsWE2ew" value="en"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhSr_hEeGCLfRJsWE2ew" name="Languages">
+              <ownedComment xmi:id="__LBhS7_hEeGCLfRJsWE2ew" annotatedElement="__LBhSr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhTL_hEeGCLfRJsWE2ew" name="de" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhTb_hEeGCLfRJsWE2ew" annotatedElement="__LBhTL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhTr_hEeGCLfRJsWE2ew" value="Deutsch"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhT7_hEeGCLfRJsWE2ew" name="en" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhUL_hEeGCLfRJsWE2ew" annotatedElement="__LBhT7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhUb_hEeGCLfRJsWE2ew" value="English"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhUr_hEeGCLfRJsWE2ew" name="NewInstance">
+              <ownedComment xmi:id="__LBhU7_hEeGCLfRJsWE2ew" annotatedElement="__LBhUr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhVL_hEeGCLfRJsWE2ew" name="dbPrefix" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhVb_hEeGCLfRJsWE2ew" annotatedElement="__LBhVL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhVr_hEeGCLfRJsWE2ew" value="wcmf_"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhV7_hEeGCLfRJsWE2ew" name="targetDir" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhWL_hEeGCLfRJsWE2ew" annotatedElement="__LBhV7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhWb_hEeGCLfRJsWE2ew" value="../../"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhWr_hEeGCLfRJsWE2ew" name="RemoteServer">
+              <ownedComment xmi:id="__LBhW7_hEeGCLfRJsWE2ew" annotatedElement="__LBhWr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhXL_hEeGCLfRJsWE2ew" name="RemoteUser">
+              <ownedComment xmi:id="__LBhXb_hEeGCLfRJsWE2ew" annotatedElement="__LBhXL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LBhXr_hEeGCLfRJsWE2ew" name="server.ini">
+              <ownedComment xmi:id="__LBhX7_hEeGCLfRJsWE2ew" annotatedElement="__LBhXr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LBhYL_hEeGCLfRJsWE2ew" name="persistence.ini">
+            <ownedComment xmi:id="__LBhYb_hEeGCLfRJsWE2ew" annotatedElement="__LBhYL_hEeGCLfRJsWE2ew">
+              <body>?</body>
+            </ownedComment>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhYr_hEeGCLfRJsWE2ew" name="PersistenceFacade">
+              <ownedComment xmi:id="__LBhY7_hEeGCLfRJsWE2ew" annotatedElement="__LBhYr_hEeGCLfRJsWE2ew">
+                <body>PersistenceFacade implementation</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhZL_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhZb_hEeGCLfRJsWE2ew" annotatedElement="__LBhZL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhZr_hEeGCLfRJsWE2ew" value="wcmf\lib\persistence\DefaultPersistenceFacade"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhZ7_hEeGCLfRJsWE2ew" name="mappers" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhaL_hEeGCLfRJsWE2ew" annotatedElement="__LBhZ7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhab_hEeGCLfRJsWE2ew" value="$typeMapping"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhar_hEeGCLfRJsWE2ew" name="logging" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBha7_hEeGCLfRJsWE2ew" annotatedElement="__LBhar_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhbL_hEeGCLfRJsWE2ew" value="false"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LBhbb_hEeGCLfRJsWE2ew" name="logStrategy" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhbr_hEeGCLfRJsWE2ew" annotatedElement="__LBhbb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhb7_hEeGCLfRJsWE2ew" value="$auditingLogStragegy"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhcL_hEeGCLfRJsWE2ew" name="AuditingLogStragegy">
+              <ownedComment xmi:id="__LBhcb_hEeGCLfRJsWE2ew" annotatedElement="__LBhcL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhcr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhc7_hEeGCLfRJsWE2ew" annotatedElement="__LBhcr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhdL_hEeGCLfRJsWE2ew" value="wcmf\lib\persistence\output\AuditingOutputStrategy"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhdb_hEeGCLfRJsWE2ew" name="Transaction">
+              <ownedComment xmi:id="__LBhdr_hEeGCLfRJsWE2ew" annotatedElement="__LBhdb_hEeGCLfRJsWE2ew">
+                <body>Transaction implementation</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhd7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBheL_hEeGCLfRJsWE2ew" annotatedElement="__LBhd7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBheb_hEeGCLfRJsWE2ew" value="wcmf\lib\persistence\DefaultTransaction"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBher_hEeGCLfRJsWE2ew" name="Converter">
+              <ownedComment xmi:id="__LBhe7_hEeGCLfRJsWE2ew" annotatedElement="__LBher_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhfL_hEeGCLfRJsWE2ew" name="LockHandler">
+              <ownedComment xmi:id="__LBhfb_hEeGCLfRJsWE2ew" annotatedElement="__LBhfL_hEeGCLfRJsWE2ew">
+                <body>LockHandler implementation</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhfr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhf7_hEeGCLfRJsWE2ew" annotatedElement="__LBhfr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhgL_hEeGCLfRJsWE2ew" value="wcmf\lib\persistence\concurrency\DefaultLockHandler"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LBhgb_hEeGCLfRJsWE2ew" name="UserManager">
+              <ownedComment xmi:id="__LBhgr_hEeGCLfRJsWE2ew" annotatedElement="__LBhgb_hEeGCLfRJsWE2ew">
+                <body>UserManager implementation</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LBhg7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LBhhL_hEeGCLfRJsWE2ew" annotatedElement="__LBhg7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LBhhb_hEeGCLfRJsWE2ew" value="wcmf\lib\security\DefaultUserManager"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIQL_hEeGCLfRJsWE2ew" name="userType" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIQb_hEeGCLfRJsWE2ew" annotatedElement="__LCIQL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIQr_hEeGCLfRJsWE2ew" value="UserRDB"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIQ7_hEeGCLfRJsWE2ew" name="roleType" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIRL_hEeGCLfRJsWE2ew" annotatedElement="__LCIQ7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIRb_hEeGCLfRJsWE2ew" value="RoleRDB"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LCIRr_hEeGCLfRJsWE2ew" name="persistence.ini">
+              <ownedComment xmi:id="__LCIR7_hEeGCLfRJsWE2ew" annotatedElement="__LCIRr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LCISL_hEeGCLfRJsWE2ew" name="presentation.ini">
+            <ownedComment xmi:id="__LCISb_hEeGCLfRJsWE2ew" annotatedElement="__LCISL_hEeGCLfRJsWE2ew">
+              <body>?</body>
+            </ownedComment>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCISr_hEeGCLfRJsWE2ew" name="View">
+              <ownedComment xmi:id="__LCIS7_hEeGCLfRJsWE2ew" annotatedElement="__LCISr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCITL_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCITb_hEeGCLfRJsWE2ew" annotatedElement="__LCITL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCITr_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\SmartyView"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIT7_hEeGCLfRJsWE2ew" name="__shared" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIUL_hEeGCLfRJsWE2ew" annotatedElement="__LCIT7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIUb_hEeGCLfRJsWE2ew" value="false"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIUr_hEeGCLfRJsWE2ew" name="templateDir" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIU7_hEeGCLfRJsWE2ew" annotatedElement="__LCIUr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIVL_hEeGCLfRJsWE2ew" value="include/views/"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIVb_hEeGCLfRJsWE2ew" name="compileCheck" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIVr_hEeGCLfRJsWE2ew" annotatedElement="__LCIVb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIV7_hEeGCLfRJsWE2ew" value="true"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIWL_hEeGCLfRJsWE2ew" name="debugView" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIWb_hEeGCLfRJsWE2ew" annotatedElement="__LCIWL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIWr_hEeGCLfRJsWE2ew" value="false"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIW7_hEeGCLfRJsWE2ew" name="caching" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIXL_hEeGCLfRJsWE2ew" annotatedElement="__LCIW7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIXb_hEeGCLfRJsWE2ew" value="false"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIXr_hEeGCLfRJsWE2ew" name="cacheLifetime" type="__LL5Q7_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIX7_hEeGCLfRJsWE2ew" annotatedElement="__LCIXr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIYL_hEeGCLfRJsWE2ew" value="3600"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCIYb_hEeGCLfRJsWE2ew" name="Formats">
+              <ownedComment xmi:id="__LCIYr_hEeGCLfRJsWE2ew" annotatedElement="__LCIYb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCIY7_hEeGCLfRJsWE2ew" name="html" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIZL_hEeGCLfRJsWE2ew" annotatedElement="__LCIY7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIZb_hEeGCLfRJsWE2ew" value="$htmlFormat"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIZr_hEeGCLfRJsWE2ew" name="json" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIZ7_hEeGCLfRJsWE2ew" annotatedElement="__LCIZr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIaL_hEeGCLfRJsWE2ew" value="$jsonFormat"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIab_hEeGCLfRJsWE2ew" name="soap" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIar_hEeGCLfRJsWE2ew" annotatedElement="__LCIab_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIa7_hEeGCLfRJsWE2ew" value="$soapFormat"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIbL_hEeGCLfRJsWE2ew" name="null" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIbb_hEeGCLfRJsWE2ew" annotatedElement="__LCIbL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIbr_hEeGCLfRJsWE2ew" value="$nullFormat"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCIb7_hEeGCLfRJsWE2ew" name="HtmlFormat">
+              <ownedComment xmi:id="__LCIcL_hEeGCLfRJsWE2ew" annotatedElement="__LCIb7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCIcb_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIcr_hEeGCLfRJsWE2ew" annotatedElement="__LCIcb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIc7_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\format\HtmlFormat"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCIdL_hEeGCLfRJsWE2ew" name="JsonFormat">
+              <ownedComment xmi:id="__LCIdb_hEeGCLfRJsWE2ew" annotatedElement="__LCIdL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCIdr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCId7_hEeGCLfRJsWE2ew" annotatedElement="__LCIdr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIeL_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\format\JsonFormat"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCIeb_hEeGCLfRJsWE2ew" name="SoapFormat">
+              <ownedComment xmi:id="__LCIer_hEeGCLfRJsWE2ew" annotatedElement="__LCIeb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCIe7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIfL_hEeGCLfRJsWE2ew" annotatedElement="__LCIe7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIfb_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\format\SoapFormat"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCIfr_hEeGCLfRJsWE2ew" name="NullFormat">
+              <ownedComment xmi:id="__LCIf7_hEeGCLfRJsWE2ew" annotatedElement="__LCIfr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCIgL_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIgb_hEeGCLfRJsWE2ew" annotatedElement="__LCIgL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIgr_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\format\NullFormat"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCIg7_hEeGCLfRJsWE2ew" name="ListStrategies">
+              <ownedComment xmi:id="__LCIhL_hEeGCLfRJsWE2ew" annotatedElement="__LCIg7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCIhb_hEeGCLfRJsWE2ew" name="fix" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIhr_hEeGCLfRJsWE2ew" annotatedElement="__LCIhb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIh7_hEeGCLfRJsWE2ew" value="$fixedListStrategy"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIiL_hEeGCLfRJsWE2ew" name="function" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIib_hEeGCLfRJsWE2ew" annotatedElement="__LCIiL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIir_hEeGCLfRJsWE2ew" value="$functionListStrategy"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIi7_hEeGCLfRJsWE2ew" name="config" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIjL_hEeGCLfRJsWE2ew" annotatedElement="__LCIi7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIjb_hEeGCLfRJsWE2ew" value="$configListStrategy"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIjr_hEeGCLfRJsWE2ew" name="async" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIj7_hEeGCLfRJsWE2ew" annotatedElement="__LCIjr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIkL_hEeGCLfRJsWE2ew" value="$asyncListStrategy"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCIkb_hEeGCLfRJsWE2ew" name="asyncmult" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCIkr_hEeGCLfRJsWE2ew" annotatedElement="__LCIkb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCIk7_hEeGCLfRJsWE2ew" value="$asyncMultListStrategy"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvUL_hEeGCLfRJsWE2ew" name="FixedListStrategy">
+              <ownedComment xmi:id="__LCvUb_hEeGCLfRJsWE2ew" annotatedElement="__LCvUL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvUr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvU7_hEeGCLfRJsWE2ew" annotatedElement="__LCvUr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvVL_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\FixedListStrategy"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvVb_hEeGCLfRJsWE2ew" name="FunctionListStrategy">
+              <ownedComment xmi:id="__LCvVr_hEeGCLfRJsWE2ew" annotatedElement="__LCvVb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvV7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvWL_hEeGCLfRJsWE2ew" annotatedElement="__LCvV7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvWb_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\FunctionListStrategy"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvWr_hEeGCLfRJsWE2ew" name="ConfigListStrategy">
+              <ownedComment xmi:id="__LCvW7_hEeGCLfRJsWE2ew" annotatedElement="__LCvWr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvXL_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvXb_hEeGCLfRJsWE2ew" annotatedElement="__LCvXL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvXr_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\ConfigListStrategy"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvX7_hEeGCLfRJsWE2ew" name="AsyncListStrategy">
+              <ownedComment xmi:id="__LCvYL_hEeGCLfRJsWE2ew" annotatedElement="__LCvX7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvYb_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvYr_hEeGCLfRJsWE2ew" annotatedElement="__LCvYb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvY7_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\AsyncListStrategy"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvZL_hEeGCLfRJsWE2ew" name="AsyncMultListStrategy">
+              <ownedComment xmi:id="__LCvZb_hEeGCLfRJsWE2ew" annotatedElement="__LCvZL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvZr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvZ7_hEeGCLfRJsWE2ew" annotatedElement="__LCvZr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvaL_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\AsyncMultListStrategy"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvab_hEeGCLfRJsWE2ew" name="ValueRenderer">
+              <ownedComment xmi:id="__LCvar_hEeGCLfRJsWE2ew" annotatedElement="__LCvab_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCva7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvbL_hEeGCLfRJsWE2ew" annotatedElement="__LCva7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvbb_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\renderer\ValueRenderer"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvbr_hEeGCLfRJsWE2ew" name="displayTypes" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvb7_hEeGCLfRJsWE2ew" annotatedElement="__LCvbr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvcL_hEeGCLfRJsWE2ew" value="$displayTypes"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvcb_hEeGCLfRJsWE2ew" name="DisplayTypes">
+              <ownedComment xmi:id="__LCvcr_hEeGCLfRJsWE2ew" annotatedElement="__LCvcb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvc7_hEeGCLfRJsWE2ew" name="text" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvdL_hEeGCLfRJsWE2ew" annotatedElement="__LCvc7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvdb_hEeGCLfRJsWE2ew" value="$textDisplayType"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvdr_hEeGCLfRJsWE2ew" name="image" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvd7_hEeGCLfRJsWE2ew" annotatedElement="__LCvdr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCveL_hEeGCLfRJsWE2ew" value="$imageDisplayType"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCveb_hEeGCLfRJsWE2ew" name="link" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCver_hEeGCLfRJsWE2ew" annotatedElement="__LCveb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCve7_hEeGCLfRJsWE2ew" value="$linkDisplayType"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvfL_hEeGCLfRJsWE2ew" name="TextDisplayType">
+              <ownedComment xmi:id="__LCvfb_hEeGCLfRJsWE2ew" annotatedElement="__LCvfL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvfr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvf7_hEeGCLfRJsWE2ew" annotatedElement="__LCvfr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvgL_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\renderer\BaseDisplayType"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvgb_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvgr_hEeGCLfRJsWE2ew" annotatedElement="__LCvgb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvg7_hEeGCLfRJsWE2ew" value="wcmf/application/views/display/text.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvhL_hEeGCLfRJsWE2ew" name="ImageDisplayType">
+              <ownedComment xmi:id="__LCvhb_hEeGCLfRJsWE2ew" annotatedElement="__LCvhL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvhr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvh7_hEeGCLfRJsWE2ew" annotatedElement="__LCvhr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCviL_hEeGCLfRJsWE2ew" value="wcmfl\ib\presentation\renderer\ImageDisplayType"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvib_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvir_hEeGCLfRJsWE2ew" annotatedElement="__LCvib_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvi7_hEeGCLfRJsWE2ew" value="wcmf/application/views/display/image.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvjL_hEeGCLfRJsWE2ew" name="LinkDisplayType">
+              <ownedComment xmi:id="__LCvjb_hEeGCLfRJsWE2ew" annotatedElement="__LCvjL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvjr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvj7_hEeGCLfRJsWE2ew" annotatedElement="__LCvjr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvkL_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\renderer\BaseDisplayType"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvkb_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvkr_hEeGCLfRJsWE2ew" annotatedElement="__LCvkb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvk7_hEeGCLfRJsWE2ew" value="wcmf/application/views/display/link.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvlL_hEeGCLfRJsWE2ew" name="ControlRenderer">
+              <ownedComment xmi:id="__LCvlb_hEeGCLfRJsWE2ew" annotatedElement="__LCvlL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvlr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvl7_hEeGCLfRJsWE2ew" annotatedElement="__LCvlr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvmL_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\ControlRenderer"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvmb_hEeGCLfRJsWE2ew" name="controls" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvmr_hEeGCLfRJsWE2ew" annotatedElement="__LCvmb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvm7_hEeGCLfRJsWE2ew" value="$controls"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvnL_hEeGCLfRJsWE2ew" name="inputFieldDelimiter" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvnb_hEeGCLfRJsWE2ew" annotatedElement="__LCvnL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvnr_hEeGCLfRJsWE2ew" value="-"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LCvn7_hEeGCLfRJsWE2ew" name="Controls">
+              <ownedComment xmi:id="__LCvoL_hEeGCLfRJsWE2ew" annotatedElement="__LCvn7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LCvob_hEeGCLfRJsWE2ew" name="checkbox" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvor_hEeGCLfRJsWE2ew" annotatedElement="__LCvob_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvo7_hEeGCLfRJsWE2ew" value="$checkboxControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvpL_hEeGCLfRJsWE2ew" name="ckeditor" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvpb_hEeGCLfRJsWE2ew" annotatedElement="__LCvpL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvpr_hEeGCLfRJsWE2ew" value="$ckeditorControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvp7_hEeGCLfRJsWE2ew" name="date" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LCvqL_hEeGCLfRJsWE2ew" annotatedElement="__LCvp7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LCvqb_hEeGCLfRJsWE2ew" value="$dateControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LCvqr_hEeGCLfRJsWE2ew" name="filebrowser" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWYL_hEeGCLfRJsWE2ew" annotatedElement="__LCvqr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWYb_hEeGCLfRJsWE2ew" value="$filebrowserControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWYr_hEeGCLfRJsWE2ew" name="linkbrowser" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWY7_hEeGCLfRJsWE2ew" annotatedElement="__LDWYr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWZL_hEeGCLfRJsWE2ew" value="$linkbrowserControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWZb_hEeGCLfRJsWE2ew" name="password" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWZr_hEeGCLfRJsWE2ew" annotatedElement="__LDWZb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWZ7_hEeGCLfRJsWE2ew" value="$passwordControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWaL_hEeGCLfRJsWE2ew" name="radio" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWab_hEeGCLfRJsWE2ew" annotatedElement="__LDWaL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWar_hEeGCLfRJsWE2ew" value="$radioControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWa7_hEeGCLfRJsWE2ew" name="select" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWbL_hEeGCLfRJsWE2ew" annotatedElement="__LDWa7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWbb_hEeGCLfRJsWE2ew" value="$selectControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWbr_hEeGCLfRJsWE2ew" name="select#async" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWb7_hEeGCLfRJsWE2ew" annotatedElement="__LDWbr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWcL_hEeGCLfRJsWE2ew" value="$selectAsyncControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWcb_hEeGCLfRJsWE2ew" name="text" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWcr_hEeGCLfRJsWE2ew" annotatedElement="__LDWcb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWc7_hEeGCLfRJsWE2ew" value="$textControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWdL_hEeGCLfRJsWE2ew" name="textarea" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWdb_hEeGCLfRJsWE2ew" annotatedElement="__LDWdL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWdr_hEeGCLfRJsWE2ew" value="$textareaControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWd7_hEeGCLfRJsWE2ew" name="textile" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWeL_hEeGCLfRJsWE2ew" annotatedElement="__LDWd7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWeb_hEeGCLfRJsWE2ew" value="$textileControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWer_hEeGCLfRJsWE2ew" name="binarycheckbox" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWe7_hEeGCLfRJsWE2ew" annotatedElement="__LDWer_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWfL_hEeGCLfRJsWE2ew" value="$binarycheckboxControl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LDWfb_hEeGCLfRJsWE2ew" name="CheckboxControl">
+              <ownedComment xmi:id="__LDWfr_hEeGCLfRJsWE2ew" annotatedElement="__LDWfb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LDWf7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWgL_hEeGCLfRJsWE2ew" annotatedElement="__LDWf7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWgb_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\BaseControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWgr_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWg7_hEeGCLfRJsWE2ew" annotatedElement="__LDWgr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWhL_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/checkbox.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LDWhb_hEeGCLfRJsWE2ew" name="CkeditorControl">
+              <ownedComment xmi:id="__LDWhr_hEeGCLfRJsWE2ew" annotatedElement="__LDWhb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LDWh7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWiL_hEeGCLfRJsWE2ew" annotatedElement="__LDWh7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWib_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\BaseControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWir_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWi7_hEeGCLfRJsWE2ew" annotatedElement="__LDWir_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWjL_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/ckeditor.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LDWjb_hEeGCLfRJsWE2ew" name="DateControl">
+              <ownedComment xmi:id="__LDWjr_hEeGCLfRJsWE2ew" annotatedElement="__LDWjb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LDWj7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWkL_hEeGCLfRJsWE2ew" annotatedElement="__LDWj7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWkb_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\BaseControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWkr_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWk7_hEeGCLfRJsWE2ew" annotatedElement="__LDWkr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWlL_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/date.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LDWlb_hEeGCLfRJsWE2ew" name="FilebrowserControl">
+              <ownedComment xmi:id="__LDWlr_hEeGCLfRJsWE2ew" annotatedElement="__LDWlb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LDWl7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWmL_hEeGCLfRJsWE2ew" annotatedElement="__LDWl7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWmb_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\FileBrowserControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWmr_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWm7_hEeGCLfRJsWE2ew" annotatedElement="__LDWmr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWnL_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/filebrowser.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LDWnb_hEeGCLfRJsWE2ew" name="LinkbrowserControl">
+              <ownedComment xmi:id="__LDWnr_hEeGCLfRJsWE2ew" annotatedElement="__LDWnb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LDWn7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWoL_hEeGCLfRJsWE2ew" annotatedElement="__LDWn7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWob_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\LinkBrowserControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWor_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWo7_hEeGCLfRJsWE2ew" annotatedElement="__LDWor_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWpL_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/linkbrowser.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LDWpb_hEeGCLfRJsWE2ew" name="PasswordControl">
+              <ownedComment xmi:id="__LDWpr_hEeGCLfRJsWE2ew" annotatedElement="__LDWpb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LDWp7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWqL_hEeGCLfRJsWE2ew" annotatedElement="__LDWp7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWqb_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\BaseControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LDWqr_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LDWq7_hEeGCLfRJsWE2ew" annotatedElement="__LDWqr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LDWrL_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/password.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LDWrb_hEeGCLfRJsWE2ew" name="RadioControl">
+              <ownedComment xmi:id="__LDWrr_hEeGCLfRJsWE2ew" annotatedElement="__LDWrb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LD9cL_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9cb_hEeGCLfRJsWE2ew" annotatedElement="__LD9cL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9cr_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\ListControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9c7_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9dL_hEeGCLfRJsWE2ew" annotatedElement="__LD9c7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9db_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/radio.tpl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9dr_hEeGCLfRJsWE2ew" name="listStrategies" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9d7_hEeGCLfRJsWE2ew" annotatedElement="__LD9dr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9eL_hEeGCLfRJsWE2ew" value="$listStrategies"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9eb_hEeGCLfRJsWE2ew" name="SelectControl">
+              <ownedComment xmi:id="__LD9er_hEeGCLfRJsWE2ew" annotatedElement="__LD9eb_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LD9e7_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9fL_hEeGCLfRJsWE2ew" annotatedElement="__LD9e7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9fb_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\ListControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9fr_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9f7_hEeGCLfRJsWE2ew" annotatedElement="__LD9fr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9gL_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/select.tpl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9gb_hEeGCLfRJsWE2ew" name="listStrategies" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9gr_hEeGCLfRJsWE2ew" annotatedElement="__LD9gb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9g7_hEeGCLfRJsWE2ew" value="$listStrategies"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9hL_hEeGCLfRJsWE2ew" name="SelectAsyncControl">
+              <ownedComment xmi:id="__LD9hb_hEeGCLfRJsWE2ew" annotatedElement="__LD9hL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LD9hr_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9h7_hEeGCLfRJsWE2ew" annotatedElement="__LD9hr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9iL_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\AsyncListControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9ib_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9ir_hEeGCLfRJsWE2ew" annotatedElement="__LD9ib_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9i7_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/selectasync.tpl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9jL_hEeGCLfRJsWE2ew" name="listStrategies" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9jb_hEeGCLfRJsWE2ew" annotatedElement="__LD9jL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9jr_hEeGCLfRJsWE2ew" value="$listStrategies"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9j7_hEeGCLfRJsWE2ew" name="TextControl">
+              <ownedComment xmi:id="__LD9kL_hEeGCLfRJsWE2ew" annotatedElement="__LD9j7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LD9kb_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9kr_hEeGCLfRJsWE2ew" annotatedElement="__LD9kb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9k7_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\BaseControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9lL_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9lb_hEeGCLfRJsWE2ew" annotatedElement="__LD9lL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9lr_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/text.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9l7_hEeGCLfRJsWE2ew" name="TextareaControl">
+              <ownedComment xmi:id="__LD9mL_hEeGCLfRJsWE2ew" annotatedElement="__LD9l7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LD9mb_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9mr_hEeGCLfRJsWE2ew" annotatedElement="__LD9mb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9m7_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\BaseControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9nL_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9nb_hEeGCLfRJsWE2ew" annotatedElement="__LD9nL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9nr_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/textarea.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9n7_hEeGCLfRJsWE2ew" name="TextileControl">
+              <ownedComment xmi:id="__LD9oL_hEeGCLfRJsWE2ew" annotatedElement="__LD9n7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LD9ob_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9or_hEeGCLfRJsWE2ew" annotatedElement="__LD9ob_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9o7_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\BaseControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9pL_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9pb_hEeGCLfRJsWE2ew" annotatedElement="__LD9pL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9pr_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/textile.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9p7_hEeGCLfRJsWE2ew" name="BinaryCheckboxControl">
+              <ownedComment xmi:id="__LD9qL_hEeGCLfRJsWE2ew" annotatedElement="__LD9p7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LD9qb_hEeGCLfRJsWE2ew" name="__class" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9qr_hEeGCLfRJsWE2ew" annotatedElement="__LD9qb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9q7_hEeGCLfRJsWE2ew" value="wcmf\lib\presentation\control\BaseControl"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LD9rL_hEeGCLfRJsWE2ew" name="viewTpl" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LD9rb_hEeGCLfRJsWE2ew" annotatedElement="__LD9rL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <defaultValue xmi:type="uml:LiteralString" xmi:id="__LD9rr_hEeGCLfRJsWE2ew" value="wcmf/application/views/forms/binarycheckbox.tpl"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LD9r7_hEeGCLfRJsWE2ew" name="presentation.ini">
+              <ownedComment xmi:id="__LD9sL_hEeGCLfRJsWE2ew" annotatedElement="__LD9r7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+          </packagedElement>
+        </packagedElement>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="__LD9sb_hEeGCLfRJsWE2ew" name="wcmf">
+        <packagedElement xmi:type="uml:Package" xmi:id="__LD9sr_hEeGCLfRJsWE2ew" name="application">
+          <packagedElement xmi:type="uml:Package" xmi:id="__LD9s7_hEeGCLfRJsWE2ew" name="controller">
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9tL_hEeGCLfRJsWE2ew" name="ActionSetController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9tb_hEeGCLfRJsWE2ew" name="AssociateController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9tr_hEeGCLfRJsWE2ew" name="BatchController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9t7_hEeGCLfRJsWE2ew" name="BatchDisplayController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9uL_hEeGCLfRJsWE2ew" name="ConcurrencyController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9ub_hEeGCLfRJsWE2ew" name="CopyController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9ur_hEeGCLfRJsWE2ew" name="DeleteController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9u7_hEeGCLfRJsWE2ew" name="DisplayController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9vL_hEeGCLfRJsWE2ew" name="ElFinderController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9vb_hEeGCLfRJsWE2ew" name="ExitController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9vr_hEeGCLfRJsWE2ew" name="FailureController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9v7_hEeGCLfRJsWE2ew" name="InsertController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9wL_hEeGCLfRJsWE2ew" name="ListboxController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9wb_hEeGCLfRJsWE2ew" name="ListController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9wr_hEeGCLfRJsWE2ew" name="LoggingController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9w7_hEeGCLfRJsWE2ew" name="LoginController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9xL_hEeGCLfRJsWE2ew" name="LongTaskController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9xb_hEeGCLfRJsWE2ew" name="PageExportController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9xr_hEeGCLfRJsWE2ew" name="ResourceTreeController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9x7_hEeGCLfRJsWE2ew" name="RESTController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LD9yL_hEeGCLfRJsWE2ew" name="SaveController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkgL_hEeGCLfRJsWE2ew" name="SearchController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkgb_hEeGCLfRJsWE2ew" name="SimpleBatchController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkgr_hEeGCLfRJsWE2ew" name="SimpleLongTaskController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkg7_hEeGCLfRJsWE2ew" name="SOAPController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkhL_hEeGCLfRJsWE2ew" name="SortController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkhb_hEeGCLfRJsWE2ew" name="TerminateController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkhr_hEeGCLfRJsWE2ew" name="TextilePreviewController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkh7_hEeGCLfRJsWE2ew" name="TreeViewController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkiL_hEeGCLfRJsWE2ew" name="UserController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkib_hEeGCLfRJsWE2ew" name="ViewController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkir_hEeGCLfRJsWE2ew" name="WCMFFrontendController"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEki7_hEeGCLfRJsWE2ew" name="XMLExportController"/>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LEkjL_hEeGCLfRJsWE2ew" name="admintool">
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkjb_hEeGCLfRJsWE2ew" name="AdminController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkjr_hEeGCLfRJsWE2ew" name="BackupController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkj7_hEeGCLfRJsWE2ew" name="ConfigController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkkL_hEeGCLfRJsWE2ew" name="CreateInstanceController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkkb_hEeGCLfRJsWE2ew" name="EditRightsController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkkr_hEeGCLfRJsWE2ew" name="MySQLBackupController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkk7_hEeGCLfRJsWE2ew" name="PrincipalController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEklL_hEeGCLfRJsWE2ew" name="SearchIndexController"/>
+            </packagedElement>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LEklb_hEeGCLfRJsWE2ew" name="views">
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEklr_hEeGCLfRJsWE2ew" name="displayfailure">
+              <ownedComment xmi:id="__LEkl7_hEeGCLfRJsWE2ew" annotatedElement="__LEklr_hEeGCLfRJsWE2ew">
+                <body>Displays a failure. Attached to FailureController.</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkmL_hEeGCLfRJsWE2ew" name="displaynode">
+              <ownedComment xmi:id="__LEkmb_hEeGCLfRJsWE2ew" annotatedElement="__LEkmL_hEeGCLfRJsWE2ew">
+                <body>Displays the content of a Node. Attached to DisplayController.</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkmr_hEeGCLfRJsWE2ew" name="elfinder"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkm7_hEeGCLfRJsWE2ew" name="frontend">
+              <ownedComment xmi:id="__LEknL_hEeGCLfRJsWE2ew" annotatedElement="__LEkm7_hEeGCLfRJsWE2ew">
+                <body>Displays the content tree. Attached to TreeViewController.</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEknb_hEeGCLfRJsWE2ew" name="login">
+              <ownedComment xmi:id="__LEknr_hEeGCLfRJsWE2ew" annotatedElement="__LEknb_hEeGCLfRJsWE2ew">
+                <body>Displays the login dialog. Attached to LoginController.</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkn7_hEeGCLfRJsWE2ew" name="model">
+              <ownedComment xmi:id="__LEkoL_hEeGCLfRJsWE2ew" annotatedElement="__LEkn7_hEeGCLfRJsWE2ew">
+                <body>Displays the content tree. Attached to TreeViewController.</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkob_hEeGCLfRJsWE2ew" name="nodelist"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkor_hEeGCLfRJsWE2ew" name="progressbar">
+              <ownedComment xmi:id="__LEko7_hEeGCLfRJsWE2ew" annotatedElement="__LEkor_hEeGCLfRJsWE2ew">
+                <body>Displays a progress bar. Attached to LongTaskController.</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkpL_hEeGCLfRJsWE2ew" name="resourcetree"/>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkpb_hEeGCLfRJsWE2ew" name="treeview">
+              <ownedComment xmi:id="__LEkpr_hEeGCLfRJsWE2ew" annotatedElement="__LEkpb_hEeGCLfRJsWE2ew">
+                <body>Displays the content tree. Attached to TreeViewController.</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LEkp7_hEeGCLfRJsWE2ew" name="user"/>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LEkqL_hEeGCLfRJsWE2ew" name="admintool">
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkqb_hEeGCLfRJsWE2ew" name="config"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkqr_hEeGCLfRJsWE2ew" name="overview"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkq7_hEeGCLfRJsWE2ew" name="rights"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkrL_hEeGCLfRJsWE2ew" name="role"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkrb_hEeGCLfRJsWE2ew" name="user"/>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LEkrr_hEeGCLfRJsWE2ew" name="forms">
+              <packagedElement xmi:type="uml:Class" xmi:id="__LEkr7_hEeGCLfRJsWE2ew" name="textilepreview">
+                <ownedComment xmi:id="__LEksL_hEeGCLfRJsWE2ew" annotatedElement="__LEkr7_hEeGCLfRJsWE2ew">
+                  <body>Displays a failure. Attached to FailureController.</body>
+                </ownedComment>
+              </packagedElement>
+            </packagedElement>
+          </packagedElement>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="__LEksb_hEeGCLfRJsWE2ew" name="lib">
+          <packagedElement xmi:type="uml:Package" xmi:id="__LEksr_hEeGCLfRJsWE2ew" name="model">
+            <packagedElement xmi:type="uml:Class" xmi:id="__LFLkL_hEeGCLfRJsWE2ew" name="Node" isAbstract="true">
+              <eAnnotations xmi:id="__LFyoL_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="__LFyob_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:255"/>
+              </eAnnotations>
+              <ownedComment xmi:id="__LFyor_hEeGCLfRJsWE2ew" annotatedElement="__LFLkL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LFyo7_hEeGCLfRJsWE2ew" name="presentation">
+            <packagedElement xmi:type="uml:Class" xmi:id="__LFypL_hEeGCLfRJsWE2ew" name="Controller">
+              <ownedComment xmi:id="__LFypb_hEeGCLfRJsWE2ew" annotatedElement="__LFypL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LFypr_hEeGCLfRJsWE2ew" name="security">
+            <ownedComment xmi:id="__LFyp7_hEeGCLfRJsWE2ew" annotatedElement="__LFypr_hEeGCLfRJsWE2ew">
+              <body>?</body>
+            </ownedComment>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LFyqL_hEeGCLfRJsWE2ew" name="User">
+              <eAnnotations xmi:id="__LFyqb_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="__LGZsL_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:4384"/>
+              </eAnnotations>
+              <ownedComment xmi:id="__LGZsb_hEeGCLfRJsWE2ew" annotatedElement="__LFyqL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LHAwL_hEeGCLfRJsWE2ew" name="Role">
+              <eAnnotations xmi:id="__LHAwb_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="__LHAwr_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:4398"/>
+              </eAnnotations>
+              <ownedComment xmi:id="__LHAw7_hEeGCLfRJsWE2ew" annotatedElement="__LHAwL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+          </packagedElement>
+        </packagedElement>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="__LHAxL_hEeGCLfRJsWE2ew" name="new_roles">
+        <packagedElement xmi:type="uml:Package" xmi:id="__LHAxb_hEeGCLfRJsWE2ew" name="application">
+          <packagedElement xmi:type="uml:Package" xmi:id="__LHAxr_hEeGCLfRJsWE2ew" name="controller"/>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LHAx7_hEeGCLfRJsWE2ew" name="views"/>
+          <packagedElement xmi:type="uml:Package" xmi:id="__LHAyL_hEeGCLfRJsWE2ew" name="model">
+            <ownedComment xmi:id="__LHAyb_hEeGCLfRJsWE2ew" annotatedElement="__LHAyL_hEeGCLfRJsWE2ew">
+              <body>?</body>
+            </ownedComment>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LHAyr_hEeGCLfRJsWE2ew" name="Author">
+              <eAnnotations xmi:id="__LHAy7_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="__LHAzL_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:264"/>
+              </eAnnotations>
+              <ownedComment xmi:id="__LHAzb_hEeGCLfRJsWE2ew" annotatedElement="__LHAyr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <generalization xmi:id="__LI18L_hEeGCLfRJsWE2ew" general="__LI2AL_hEeGCLfRJsWE2ew"/>
+              <ownedAttribute xmi:id="__LI18b_hEeGCLfRJsWE2ew" name="name" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LI18r_hEeGCLfRJsWE2ew" annotatedElement="__LI18b_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LI187_hEeGCLfRJsWE2ew" name="" type="__LJdCr_hEeGCLfRJsWE2ew" aggregation="shared" association="__LLSVr_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LI19L_hEeGCLfRJsWE2ew" value="*"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LI19b_hEeGCLfRJsWE2ew"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LI19r_hEeGCLfRJsWE2ew" name="Document">
+              <eAnnotations xmi:id="__LI197_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="__LI1-L_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:271"/>
+              </eAnnotations>
+              <ownedComment xmi:id="__LI1-b_hEeGCLfRJsWE2ew" annotatedElement="__LI19r_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <generalization xmi:id="__LI1-r_hEeGCLfRJsWE2ew" general="__LI2AL_hEeGCLfRJsWE2ew"/>
+              <ownedAttribute xmi:id="__LI1-7_hEeGCLfRJsWE2ew" name="title" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LI1_L_hEeGCLfRJsWE2ew" annotatedElement="__LI1-7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LI1_b_hEeGCLfRJsWE2ew" name="" type="__LJdI7_hEeGCLfRJsWE2ew" aggregation="composite" association="__LLSV7_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LI1_r_hEeGCLfRJsWE2ew" value="*"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LI1_7_hEeGCLfRJsWE2ew"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LI2AL_hEeGCLfRJsWE2ew" name="EntityBase" isAbstract="true">
+              <eAnnotations xmi:id="__LI2Ab_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="__LI2Ar_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:278"/>
+              </eAnnotations>
+              <ownedComment xmi:id="__LI2A7_hEeGCLfRJsWE2ew" annotatedElement="__LI2AL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <generalization xmi:id="__LI2BL_hEeGCLfRJsWE2ew" general="__LFLkL_hEeGCLfRJsWE2ew"/>
+              <ownedAttribute xmi:id="__LI2Bb_hEeGCLfRJsWE2ew" name="created" type="__LL5RL_hEeGCLfRJsWE2ew"/>
+              <ownedAttribute xmi:id="__LI2Br_hEeGCLfRJsWE2ew" name="creator" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LI2B7_hEeGCLfRJsWE2ew" annotatedElement="__LI2Br_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LI2CL_hEeGCLfRJsWE2ew" name="modified" type="__LL5RL_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LI2Cb_hEeGCLfRJsWE2ew" annotatedElement="__LI2CL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LI2Cr_hEeGCLfRJsWE2ew" name="last_editor" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LI2C7_hEeGCLfRJsWE2ew" annotatedElement="__LI2Cr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LI2DL_hEeGCLfRJsWE2ew" name="Image">
+              <eAnnotations xmi:id="__LI2Db_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="__LI2Dr_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:284"/>
+              </eAnnotations>
+              <ownedComment xmi:id="__LJdAL_hEeGCLfRJsWE2ew" annotatedElement="__LI2DL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <generalization xmi:id="__LJdAb_hEeGCLfRJsWE2ew" general="__LI2AL_hEeGCLfRJsWE2ew"/>
+              <ownedAttribute xmi:id="__LJdAr_hEeGCLfRJsWE2ew" name="filename" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LJdA7_hEeGCLfRJsWE2ew" annotatedElement="__LJdAr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdBL_hEeGCLfRJsWE2ew" name="TitlePage" type="__LJdCr_hEeGCLfRJsWE2ew" association="__LLSWL_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdBb_hEeGCLfRJsWE2ew" value="1"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdBr_hEeGCLfRJsWE2ew" value="1"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdB7_hEeGCLfRJsWE2ew" name="NormalPage" type="__LJdCr_hEeGCLfRJsWE2ew" association="__LLSWb_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdCL_hEeGCLfRJsWE2ew" value="1"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdCb_hEeGCLfRJsWE2ew" value="1"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LJdCr_hEeGCLfRJsWE2ew" name="Page">
+              <eAnnotations xmi:id="__LJdC7_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                <details xmi:id="__LJdDL_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:292"/>
+              </eAnnotations>
+              <ownedComment xmi:id="__LJdDb_hEeGCLfRJsWE2ew" annotatedElement="__LJdCr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <generalization xmi:id="__LJdDr_hEeGCLfRJsWE2ew" general="__LI2AL_hEeGCLfRJsWE2ew"/>
+              <ownedAttribute xmi:id="__LJdD7_hEeGCLfRJsWE2ew" name="name" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                <ownedComment xmi:id="__LJdEL_hEeGCLfRJsWE2ew" annotatedElement="__LJdD7_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdEb_hEeGCLfRJsWE2ew" name="" type="__LHAyr_hEeGCLfRJsWE2ew" association="__LLSVr_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdEr_hEeGCLfRJsWE2ew" value="1"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdE7_hEeGCLfRJsWE2ew" value="1"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdFL_hEeGCLfRJsWE2ew" name="TitleImage" type="__LI2DL_hEeGCLfRJsWE2ew" aggregation="shared" association="__LLSWL_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdFb_hEeGCLfRJsWE2ew" value="1"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdFr_hEeGCLfRJsWE2ew"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdF7_hEeGCLfRJsWE2ew" name="NormalImage" type="__LI2DL_hEeGCLfRJsWE2ew" aggregation="shared" association="__LLSWb_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdGL_hEeGCLfRJsWE2ew" value="*"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdGb_hEeGCLfRJsWE2ew"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdGr_hEeGCLfRJsWE2ew" name="" type="__LJdI7_hEeGCLfRJsWE2ew" aggregation="composite" association="__LLSWr_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdG7_hEeGCLfRJsWE2ew" value="*"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdHL_hEeGCLfRJsWE2ew"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdHb_hEeGCLfRJsWE2ew" name="ParentPage" type="__LJdCr_hEeGCLfRJsWE2ew" aggregation="composite" association="__LLSW7_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdHr_hEeGCLfRJsWE2ew" value="1"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdH7_hEeGCLfRJsWE2ew" value="1"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdIL_hEeGCLfRJsWE2ew" name="ChildPage" type="__LJdCr_hEeGCLfRJsWE2ew" association="__LLSW7_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdIb_hEeGCLfRJsWE2ew" value="*"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdIr_hEeGCLfRJsWE2ew"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Class" xmi:id="__LJdI7_hEeGCLfRJsWE2ew" name="NMPageDocument">
+              <ownedComment xmi:id="__LJdJL_hEeGCLfRJsWE2ew" annotatedElement="__LJdI7_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <ownedAttribute xmi:id="__LJdJb_hEeGCLfRJsWE2ew" name="" type="__LI19r_hEeGCLfRJsWE2ew" association="__LLSV7_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdJr_hEeGCLfRJsWE2ew" value="1"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdJ7_hEeGCLfRJsWE2ew" value="1"/>
+              </ownedAttribute>
+              <ownedAttribute xmi:id="__LJdKL_hEeGCLfRJsWE2ew" name="" type="__LJdCr_hEeGCLfRJsWE2ew" association="__LLSWr_hEeGCLfRJsWE2ew">
+                <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LJdKb_hEeGCLfRJsWE2ew" value="1"/>
+                <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LJdKr_hEeGCLfRJsWE2ew" value="1"/>
+              </ownedAttribute>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LKEEL_hEeGCLfRJsWE2ew" name="model">
+              <ownedComment xmi:id="__LKEEb_hEeGCLfRJsWE2ew" annotatedElement="__LKEEL_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="__LKEEr_hEeGCLfRJsWE2ew" name="wcmf">
+              <ownedComment xmi:id="__LKEE7_hEeGCLfRJsWE2ew" annotatedElement="__LKEEr_hEeGCLfRJsWE2ew">
+                <body>?</body>
+              </ownedComment>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LKEFL_hEeGCLfRJsWE2ew" name="Adodbseq">
+                <eAnnotations xmi:id="__LKEFb_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="__LKEFr_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:311"/>
+                </eAnnotations>
+                <ownedComment xmi:id="__LKEF7_hEeGCLfRJsWE2ew" annotatedElement="__LKEFL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <generalization xmi:id="__LKEGL_hEeGCLfRJsWE2ew" general="__LFLkL_hEeGCLfRJsWE2ew"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LKEGb_hEeGCLfRJsWE2ew" name="Language">
+                <eAnnotations xmi:id="__LKEGr_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="__LKEG7_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:313"/>
+                </eAnnotations>
+                <ownedComment xmi:id="__LKEHL_hEeGCLfRJsWE2ew" annotatedElement="__LKEGb_hEeGCLfRJsWE2ew">
+                  <body>A llanguage for which a translation of the model can be created. The code is arbitrary but it is recommended to use the ISO language codes (en, de, it, ...).</body>
+                </ownedComment>
+                <generalization xmi:id="__LKEHb_hEeGCLfRJsWE2ew" general="__LFLkL_hEeGCLfRJsWE2ew"/>
+                <ownedAttribute xmi:id="__LKEHr_hEeGCLfRJsWE2ew" name="name" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKEH7_hEeGCLfRJsWE2ew" annotatedElement="__LKEHr_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKEIL_hEeGCLfRJsWE2ew" name="code" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKEIb_hEeGCLfRJsWE2ew" annotatedElement="__LKEIL_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LKEIr_hEeGCLfRJsWE2ew" name="Locktable">
+                <eAnnotations xmi:id="__LKEI7_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="__LKEJL_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:317"/>
+                </eAnnotations>
+                <ownedComment xmi:id="__LKEJb_hEeGCLfRJsWE2ew" annotatedElement="__LKEIr_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <generalization xmi:id="__LKEJr_hEeGCLfRJsWE2ew" general="__LFLkL_hEeGCLfRJsWE2ew"/>
+                <ownedAttribute xmi:id="__LKEJ7_hEeGCLfRJsWE2ew" name="objectid" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKEKL_hEeGCLfRJsWE2ew" annotatedElement="__LKEJ7_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKEKb_hEeGCLfRJsWE2ew" name="sessionid" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKEKr_hEeGCLfRJsWE2ew" annotatedElement="__LKEKb_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKEK7_hEeGCLfRJsWE2ew" name="since" type="__LL5RL_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKELL_hEeGCLfRJsWE2ew" annotatedElement="__LKEK7_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKELb_hEeGCLfRJsWE2ew" name="" type="__LKrQb_hEeGCLfRJsWE2ew" association="__LLSVL_hEeGCLfRJsWE2ew">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LKELr_hEeGCLfRJsWE2ew" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LKEL7_hEeGCLfRJsWE2ew" value="1"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LKEML_hEeGCLfRJsWE2ew" name="RoleRDB">
+                <eAnnotations xmi:id="__LKEMb_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="__LKEMr_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:323"/>
+                </eAnnotations>
+                <ownedComment xmi:id="__LKrIL_hEeGCLfRJsWE2ew" annotatedElement="__LKEML_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <generalization xmi:id="__LKrIb_hEeGCLfRJsWE2ew" general="__LHAwL_hEeGCLfRJsWE2ew"/>
+                <generalization xmi:id="__LKrIr_hEeGCLfRJsWE2ew" general="__LFLkL_hEeGCLfRJsWE2ew"/>
+                <ownedAttribute xmi:id="__LKrI7_hEeGCLfRJsWE2ew" name="name" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKrJL_hEeGCLfRJsWE2ew" annotatedElement="__LKrI7_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKrJb_hEeGCLfRJsWE2ew" name="" type="__LLSSL_hEeGCLfRJsWE2ew" aggregation="composite" association="__LLSUr_hEeGCLfRJsWE2ew">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LKrJr_hEeGCLfRJsWE2ew" value="*"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LKrJ7_hEeGCLfRJsWE2ew"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LKrKL_hEeGCLfRJsWE2ew" name="Translation">
+                <eAnnotations xmi:id="__LKrKb_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="__LKrKr_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:326"/>
+                </eAnnotations>
+                <ownedComment xmi:id="__LKrK7_hEeGCLfRJsWE2ew" annotatedElement="__LKrKL_hEeGCLfRJsWE2ew">
+                  <body>Instances of this class are used to localize entity attributes. Each instance defines a translation of one attribute of one entity into one language.</body>
+                </ownedComment>
+                <generalization xmi:id="__LKrLL_hEeGCLfRJsWE2ew" general="__LFLkL_hEeGCLfRJsWE2ew"/>
+                <ownedAttribute xmi:id="__LKrLb_hEeGCLfRJsWE2ew" name="objectid" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKrLr_hEeGCLfRJsWE2ew" annotatedElement="__LKrLb_hEeGCLfRJsWE2ew">
+                    <body>The object id of the object to which the translation belongs</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKrL7_hEeGCLfRJsWE2ew" name="attribute" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKrML_hEeGCLfRJsWE2ew" annotatedElement="__LKrL7_hEeGCLfRJsWE2ew">
+                    <body>The attribute of the object that is translated</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKrMb_hEeGCLfRJsWE2ew" name="translation" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKrMr_hEeGCLfRJsWE2ew" annotatedElement="__LKrMb_hEeGCLfRJsWE2ew">
+                    <body>The translation</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKrM7_hEeGCLfRJsWE2ew" name="language" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKrNL_hEeGCLfRJsWE2ew" annotatedElement="__LKrM7_hEeGCLfRJsWE2ew">
+                    <body>The language of the translation</body>
+                  </ownedComment>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LKrNb_hEeGCLfRJsWE2ew" name="UserConfig">
+                <eAnnotations xmi:id="__LKrNr_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="__LKrN7_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:332"/>
+                </eAnnotations>
+                <ownedComment xmi:id="__LKrOL_hEeGCLfRJsWE2ew" annotatedElement="__LKrNb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <generalization xmi:id="__LKrOb_hEeGCLfRJsWE2ew" general="__LFLkL_hEeGCLfRJsWE2ew"/>
+                <ownedAttribute xmi:id="__LKrOr_hEeGCLfRJsWE2ew" name="key" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKrO7_hEeGCLfRJsWE2ew" annotatedElement="__LKrOr_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKrPL_hEeGCLfRJsWE2ew" name="val" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LKrPb_hEeGCLfRJsWE2ew" annotatedElement="__LKrPL_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LKrPr_hEeGCLfRJsWE2ew" name="" type="__LKrQb_hEeGCLfRJsWE2ew" association="__LLSVb_hEeGCLfRJsWE2ew">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LKrP7_hEeGCLfRJsWE2ew" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LKrQL_hEeGCLfRJsWE2ew" value="1"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LKrQb_hEeGCLfRJsWE2ew" name="UserRDB">
+                <eAnnotations xmi:id="__LLSML_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="__LLSMb_hEeGCLfRJsWE2ew" key="CHRONOS_ID_KEYWORD_ChiNode:337"/>
+                </eAnnotations>
+                <ownedComment xmi:id="__LLSMr_hEeGCLfRJsWE2ew" annotatedElement="__LKrQb_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <generalization xmi:id="__LLSM7_hEeGCLfRJsWE2ew" general="__LFyqL_hEeGCLfRJsWE2ew"/>
+                <generalization xmi:id="__LLSNL_hEeGCLfRJsWE2ew" general="__LFLkL_hEeGCLfRJsWE2ew"/>
+                <ownedAttribute xmi:id="__LLSNb_hEeGCLfRJsWE2ew" name="login" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LLSNr_hEeGCLfRJsWE2ew" annotatedElement="__LLSNb_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LLSN7_hEeGCLfRJsWE2ew" name="password" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LLSOL_hEeGCLfRJsWE2ew" annotatedElement="__LLSN7_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LLSOb_hEeGCLfRJsWE2ew" name="name" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LLSOr_hEeGCLfRJsWE2ew" annotatedElement="__LLSOb_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LLSO7_hEeGCLfRJsWE2ew" name="firstname" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LLSPL_hEeGCLfRJsWE2ew" annotatedElement="__LLSO7_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LLSPb_hEeGCLfRJsWE2ew" name="config" type="__LL5Qr_hEeGCLfRJsWE2ew">
+                  <ownedComment xmi:id="__LLSPr_hEeGCLfRJsWE2ew" annotatedElement="__LLSPb_hEeGCLfRJsWE2ew">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LLSP7_hEeGCLfRJsWE2ew" name="" type="__LLSSL_hEeGCLfRJsWE2ew" aggregation="composite" association="__LLSU7_hEeGCLfRJsWE2ew">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LLSQL_hEeGCLfRJsWE2ew" value="*"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LLSQb_hEeGCLfRJsWE2ew"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LLSQr_hEeGCLfRJsWE2ew" name="" type="__LKEIr_hEeGCLfRJsWE2ew" aggregation="composite" association="__LLSVL_hEeGCLfRJsWE2ew">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LLSQ7_hEeGCLfRJsWE2ew" value="*"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LLSRL_hEeGCLfRJsWE2ew"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LLSRb_hEeGCLfRJsWE2ew" name="" type="__LKrNb_hEeGCLfRJsWE2ew" aggregation="composite" association="__LLSVb_hEeGCLfRJsWE2ew">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LLSRr_hEeGCLfRJsWE2ew" value="*"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LLSR7_hEeGCLfRJsWE2ew"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="__LLSSL_hEeGCLfRJsWE2ew" name="NMUserRole">
+                <ownedComment xmi:id="__LLSSb_hEeGCLfRJsWE2ew" annotatedElement="__LLSSL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="__LLSSr_hEeGCLfRJsWE2ew" name="" type="__LKEML_hEeGCLfRJsWE2ew" association="__LLSUr_hEeGCLfRJsWE2ew">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LLSS7_hEeGCLfRJsWE2ew" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LLSTL_hEeGCLfRJsWE2ew" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="__LLSTb_hEeGCLfRJsWE2ew" name="" type="__LKrQb_hEeGCLfRJsWE2ew" association="__LLSU7_hEeGCLfRJsWE2ew">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__LLSTr_hEeGCLfRJsWE2ew" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__LLST7_hEeGCLfRJsWE2ew" value="1"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Package" xmi:id="__LLSUL_hEeGCLfRJsWE2ew" name="wcmf">
+                <ownedComment xmi:id="__LLSUb_hEeGCLfRJsWE2ew" annotatedElement="__LLSUL_hEeGCLfRJsWE2ew">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="__LLSUr_hEeGCLfRJsWE2ew" name="Composition" memberEnd="__LKrJb_hEeGCLfRJsWE2ew __LLSSr_hEeGCLfRJsWE2ew"/>
+              <packagedElement xmi:type="uml:Association" xmi:id="__LLSU7_hEeGCLfRJsWE2ew" name="Composition" memberEnd="__LLSP7_hEeGCLfRJsWE2ew __LLSTb_hEeGCLfRJsWE2ew"/>
+              <packagedElement xmi:type="uml:Association" xmi:id="__LLSVL_hEeGCLfRJsWE2ew" memberEnd="__LLSQr_hEeGCLfRJsWE2ew __LKELb_hEeGCLfRJsWE2ew">
+                <name xsi:nil="true"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="__LLSVb_hEeGCLfRJsWE2ew" memberEnd="__LLSRb_hEeGCLfRJsWE2ew __LKrPr_hEeGCLfRJsWE2ew">
+                <name xsi:nil="true"/>
+              </packagedElement>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Association" xmi:id="__LLSVr_hEeGCLfRJsWE2ew" memberEnd="__LI187_hEeGCLfRJsWE2ew __LJdEb_hEeGCLfRJsWE2ew">
+              <name xsi:nil="true"/>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Association" xmi:id="__LLSV7_hEeGCLfRJsWE2ew" name="Composition" memberEnd="__LI1_b_hEeGCLfRJsWE2ew __LJdJb_hEeGCLfRJsWE2ew"/>
+            <packagedElement xmi:type="uml:Association" xmi:id="__LLSWL_hEeGCLfRJsWE2ew" memberEnd="__LJdFL_hEeGCLfRJsWE2ew __LJdBL_hEeGCLfRJsWE2ew">
+              <name xsi:nil="true"/>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Association" xmi:id="__LLSWb_hEeGCLfRJsWE2ew" memberEnd="__LJdF7_hEeGCLfRJsWE2ew __LJdB7_hEeGCLfRJsWE2ew">
+              <name xsi:nil="true"/>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Association" xmi:id="__LLSWr_hEeGCLfRJsWE2ew" name="Composition" memberEnd="__LJdGr_hEeGCLfRJsWE2ew __LJdKL_hEeGCLfRJsWE2ew"/>
+            <packagedElement xmi:type="uml:Association" xmi:id="__LLSW7_hEeGCLfRJsWE2ew" memberEnd="__LJdHb_hEeGCLfRJsWE2ew __LJdIL_hEeGCLfRJsWE2ew">
+              <name xsi:nil="true"/>
+            </packagedElement>
+          </packagedElement>
+        </packagedElement>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="__LL5QL_hEeGCLfRJsWE2ew" name="Referenced Nodes"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="__LL5Qb_hEeGCLfRJsWE2ew" name="PrimitiveTypes">
+      <packagedElement xmi:type="uml:PrimitiveType" xmi:id="__LL5Qr_hEeGCLfRJsWE2ew" name="ChiNode:531"/>
+      <packagedElement xmi:type="uml:PrimitiveType" xmi:id="__LL5Q7_hEeGCLfRJsWE2ew" name="ChiNode:3463"/>
+      <packagedElement xmi:type="uml:PrimitiveType" xmi:id="__LL5RL_hEeGCLfRJsWE2ew" name="ChiNode:530"/>
+    </packagedElement>
+    <profileApplication xmi:id="__LL5Rb_hEeGCLfRJsWE2ew">
+      <eAnnotations xmi:id="__LL5Rr_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw"/>
+      </eAnnotations>
+      <appliedProfile href="chronos.profile.uml#873fb1a3-cfa7-11de-9e87-d74203c08737"/>
+    </profileApplication>
+    <profileApplication xmi:id="__LL5R7_hEeGCLfRJsWE2ew">
+      <eAnnotations xmi:id="__LL5SL_hEeGCLfRJsWE2ew" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="ouranos.profile.uml#_fmnPK1vpEd6-GfKcCJahig"/>
+      </eAnnotations>
+      <appliedProfile href="ouranos.profile.uml#_fmnPKVvpEd6-GfKcCJahig"/>
+    </profileApplication>
+  </uml:Model>
+  <Chronos:ChiSystem xmi:id="__LNucL_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LATFr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LNucb_hEeGCLfRJsWE2ew" base_Property="__LATGL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LNucr_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LATG7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LOVgL_hEeGCLfRJsWE2ew" base_Property="__LATHb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LOVgb_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LATIL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LO8kL_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LA6Ib_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LO8kb_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LA6I7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LO8kr_hEeGCLfRJsWE2ew" base_Property="__LA6Jb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LPjoL_hEeGCLfRJsWE2ew" base_Property="__LA6KL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LPjob_hEeGCLfRJsWE2ew" base_Property="__LA6K7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LQKsL_hEeGCLfRJsWE2ew" base_Property="__LA6Lr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LQKsb_hEeGCLfRJsWE2ew" base_Property="__LA6Mb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LQxwL_hEeGCLfRJsWE2ew" base_Property="__LA6NL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LQxwb_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LA6N7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LQxwr_hEeGCLfRJsWE2ew" base_Property="__LA6Ob_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LRY0L_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LA6PL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LRY0b_hEeGCLfRJsWE2ew" base_Property="__LA6Pr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LR_4L_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LA6Qb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LR_4b_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LA6Q7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LR_4r_hEeGCLfRJsWE2ew" base_Property="__LA6Rb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LSm8L_hEeGCLfRJsWE2ew" base_Property="__LA6SL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LSm8b_hEeGCLfRJsWE2ew" base_Property="__LA6S7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LTOAL_hEeGCLfRJsWE2ew" base_Property="__LA6Tr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LTOAb_hEeGCLfRJsWE2ew" base_Property="__LA6Ub_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LTOAr_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LA6VL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LT1EL_hEeGCLfRJsWE2ew" base_Property="__LA6Vr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LT1Eb_hEeGCLfRJsWE2ew" plattform="wcmf" base_Class="__LA6Wb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LT1Er_hEeGCLfRJsWE2ew" base_Property="__LA6W7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LUcIL_hEeGCLfRJsWE2ew" base_Property="__LA6Xr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiDiagram xmi:id="__LUcIb_hEeGCLfRJsWE2ew" Alias="Chi002Dia" base_Package="__LA6Yb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LVDML_hEeGCLfRJsWE2ew" plattform="wcmf" config="admin.ini" base_Class="__LA6Zb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LVDMb_hEeGCLfRJsWE2ew" base_Property="__LA6Z7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiDiagram xmi:id="__LVDMr_hEeGCLfRJsWE2ew" Alias="Chi005Dia" base_Package="__LA6ar_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LVqQL_hEeGCLfRJsWE2ew" plattform="wcmf" config="server.ini" base_Class="__LBhMb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LVqQb_hEeGCLfRJsWE2ew" base_Property="__LBhM7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LWRUL_hEeGCLfRJsWE2ew" base_Property="__LBhNr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LWRUb_hEeGCLfRJsWE2ew" base_Property="__LBhOb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LWRUr_hEeGCLfRJsWE2ew" base_Property="__LBhPL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LW4YL_hEeGCLfRJsWE2ew" base_Property="__LBhP7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LW4Yb_hEeGCLfRJsWE2ew" base_Property="__LBhQr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LXfcL_hEeGCLfRJsWE2ew" plattform="wcmf" config="server.ini" base_Class="__LBhRb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LXfcb_hEeGCLfRJsWE2ew" base_Property="__LBhR7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LYGgL_hEeGCLfRJsWE2ew" plattform="wcmf" config="server.ini" base_Class="__LBhSr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LYGgb_hEeGCLfRJsWE2ew" base_Property="__LBhTL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LYtkL_hEeGCLfRJsWE2ew" base_Property="__LBhT7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LYtkb_hEeGCLfRJsWE2ew" plattform="wcmf" config="server.ini" base_Class="__LBhUr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LZUoL_hEeGCLfRJsWE2ew" base_Property="__LBhVL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LZUob_hEeGCLfRJsWE2ew" base_Property="__LBhV7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LZUor_hEeGCLfRJsWE2ew" plattform="wcmf" config="server.ini" base_Class="__LBhWr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LZ7sL_hEeGCLfRJsWE2ew" plattform="wcmf" config="server.ini" base_Class="__LBhXL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiDiagram xmi:id="__LZ7sb_hEeGCLfRJsWE2ew" Alias="Chi006Dia" base_Package="__LBhXr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LZ7sr_hEeGCLfRJsWE2ew" plattform="wcmf" config="persistence.ini" base_Class="__LBhYr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LZ7s7_hEeGCLfRJsWE2ew" base_Property="__LBhZL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LaiwL_hEeGCLfRJsWE2ew" base_Property="__LBhZ7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Laiwb_hEeGCLfRJsWE2ew" base_Property="__LBhar_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Laiwr_hEeGCLfRJsWE2ew" base_Property="__LBhbb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Laiw7_hEeGCLfRJsWE2ew" plattform="wcmf" config="persistence.ini" base_Class="__LBhcL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LbJ0L_hEeGCLfRJsWE2ew" base_Property="__LBhcr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LbJ0b_hEeGCLfRJsWE2ew" plattform="wcmf" config="persistence.ini" base_Class="__LBhdb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LbJ0r_hEeGCLfRJsWE2ew" base_Property="__LBhd7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Lbw4L_hEeGCLfRJsWE2ew" plattform="wcmf" config="persistence.ini" base_Class="__LBher_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Lbw4b_hEeGCLfRJsWE2ew" plattform="wcmf" config="persistence.ini" base_Class="__LBhfL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lbw4r_hEeGCLfRJsWE2ew" base_Property="__LBhfr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LcX8L_hEeGCLfRJsWE2ew" plattform="wcmf" config="persistence.ini" base_Class="__LBhgb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LcX8b_hEeGCLfRJsWE2ew" base_Property="__LBhg7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LcX8r_hEeGCLfRJsWE2ew" base_Property="__LCIQL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lc_AL_hEeGCLfRJsWE2ew" base_Property="__LCIQ7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiDiagram xmi:id="__Lc_Ab_hEeGCLfRJsWE2ew" Alias="Chi007Dia" base_Package="__LCIRr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Lc_Ar_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCISr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lc_A7_hEeGCLfRJsWE2ew" base_Property="__LCITL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LdmEL_hEeGCLfRJsWE2ew" base_Property="__LCIT7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LdmEb_hEeGCLfRJsWE2ew" base_Property="__LCIUr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LdmEr_hEeGCLfRJsWE2ew" base_Property="__LCIVb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LdmE7_hEeGCLfRJsWE2ew" base_Property="__LCIWL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LeNIL_hEeGCLfRJsWE2ew" base_Property="__LCIW7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LeNIb_hEeGCLfRJsWE2ew" base_Property="__LCIXr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LeNIr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCIYb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Le0ML_hEeGCLfRJsWE2ew" base_Property="__LCIY7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Le0Mb_hEeGCLfRJsWE2ew" base_Property="__LCIZr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Le0Mr_hEeGCLfRJsWE2ew" base_Property="__LCIab_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LfbQL_hEeGCLfRJsWE2ew" base_Property="__LCIbL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LfbQb_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCIb7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LfbQr_hEeGCLfRJsWE2ew" base_Property="__LCIcb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LgCUL_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCIdL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LgCUb_hEeGCLfRJsWE2ew" base_Property="__LCIdr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LgCUr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCIeb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LgpYL_hEeGCLfRJsWE2ew" base_Property="__LCIe7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LgpYb_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCIfr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LhQcL_hEeGCLfRJsWE2ew" base_Property="__LCIgL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LhQcb_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCIg7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LhQcr_hEeGCLfRJsWE2ew" base_Property="__LCIhb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lh3gL_hEeGCLfRJsWE2ew" base_Property="__LCIiL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lh3gb_hEeGCLfRJsWE2ew" base_Property="__LCIi7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LiekL_hEeGCLfRJsWE2ew" base_Property="__LCIjr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Liekb_hEeGCLfRJsWE2ew" base_Property="__LCIkb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Liekr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvUL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LjFoL_hEeGCLfRJsWE2ew" base_Property="__LCvUr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LjFob_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvVb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LjFor_hEeGCLfRJsWE2ew" base_Property="__LCvV7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LjssL_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvWr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Ljssb_hEeGCLfRJsWE2ew" base_Property="__LCvXL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Ljssr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvX7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LkTwL_hEeGCLfRJsWE2ew" base_Property="__LCvYb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LkTwb_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvZL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LkTwr_hEeGCLfRJsWE2ew" base_Property="__LCvZr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Lk60L_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvab_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lk60b_hEeGCLfRJsWE2ew" base_Property="__LCva7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lk60r_hEeGCLfRJsWE2ew" base_Property="__LCvbr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Llh4L_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvcb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Llh4b_hEeGCLfRJsWE2ew" base_Property="__LCvc7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LmI8L_hEeGCLfRJsWE2ew" base_Property="__LCvdr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LmI8b_hEeGCLfRJsWE2ew" base_Property="__LCveb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LmI8r_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvfL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LmwAL_hEeGCLfRJsWE2ew" base_Property="__LCvfr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LmwAb_hEeGCLfRJsWE2ew" base_Property="__LCvgb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LmwAr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvhL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LnXEL_hEeGCLfRJsWE2ew" base_Property="__LCvhr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LnXEb_hEeGCLfRJsWE2ew" base_Property="__LCvib_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LnXEr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvjL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Ln-IL_hEeGCLfRJsWE2ew" base_Property="__LCvjr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Ln-Ib_hEeGCLfRJsWE2ew" base_Property="__LCvkb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Ln-Ir_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvlL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LolML_hEeGCLfRJsWE2ew" base_Property="__LCvlr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LolMb_hEeGCLfRJsWE2ew" base_Property="__LCvmb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LolMr_hEeGCLfRJsWE2ew" base_Property="__LCvnL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LpMQL_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LCvn7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LpMQb_hEeGCLfRJsWE2ew" base_Property="__LCvob_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LpzUL_hEeGCLfRJsWE2ew" base_Property="__LCvpL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LpzUb_hEeGCLfRJsWE2ew" base_Property="__LCvp7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LpzUr_hEeGCLfRJsWE2ew" base_Property="__LCvqr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LqaYL_hEeGCLfRJsWE2ew" base_Property="__LDWYr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LqaYb_hEeGCLfRJsWE2ew" base_Property="__LDWZb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LqaYr_hEeGCLfRJsWE2ew" base_Property="__LDWaL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LrBcL_hEeGCLfRJsWE2ew" base_Property="__LDWa7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LrBcb_hEeGCLfRJsWE2ew" base_Property="__LDWbr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LrogL_hEeGCLfRJsWE2ew" base_Property="__LDWcb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lrogb_hEeGCLfRJsWE2ew" base_Property="__LDWdL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LsPkL_hEeGCLfRJsWE2ew" base_Property="__LDWd7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LsPkb_hEeGCLfRJsWE2ew" base_Property="__LDWer_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LsPkr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LDWfb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Ls2oL_hEeGCLfRJsWE2ew" base_Property="__LDWf7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Ls2ob_hEeGCLfRJsWE2ew" base_Property="__LDWgr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Ls2or_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LDWhb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LtdsL_hEeGCLfRJsWE2ew" base_Property="__LDWh7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Ltdsb_hEeGCLfRJsWE2ew" base_Property="__LDWir_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LuEwL_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LDWjb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LuEwb_hEeGCLfRJsWE2ew" base_Property="__LDWj7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LuEwr_hEeGCLfRJsWE2ew" base_Property="__LDWkr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Lur0L_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LDWlb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lur0b_hEeGCLfRJsWE2ew" base_Property="__LDWl7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lur0r_hEeGCLfRJsWE2ew" base_Property="__LDWmr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LvS4L_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LDWnb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LvS4b_hEeGCLfRJsWE2ew" base_Property="__LDWn7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LvS4r_hEeGCLfRJsWE2ew" base_Property="__LDWor_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Lv58L_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LDWpb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lv58b_hEeGCLfRJsWE2ew" base_Property="__LDWp7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Lv58r_hEeGCLfRJsWE2ew" base_Property="__LDWqr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LwhAL_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LDWrb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LwhAb_hEeGCLfRJsWE2ew" base_Property="__LD9cL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LxIEL_hEeGCLfRJsWE2ew" base_Property="__LD9c7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LxIEb_hEeGCLfRJsWE2ew" base_Property="__LD9dr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LxIEr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LD9eb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LxvIL_hEeGCLfRJsWE2ew" base_Property="__LD9e7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LxvIb_hEeGCLfRJsWE2ew" base_Property="__LD9fr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LxvIr_hEeGCLfRJsWE2ew" base_Property="__LD9gb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__LyWML_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LD9hL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LyWMb_hEeGCLfRJsWE2ew" base_Property="__LD9hr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Ly9QL_hEeGCLfRJsWE2ew" base_Property="__LD9ib_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__Ly9Qb_hEeGCLfRJsWE2ew" base_Property="__LD9jL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__Ly9Qr_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LD9j7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LzkUL_hEeGCLfRJsWE2ew" base_Property="__LD9kb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__LzkUb_hEeGCLfRJsWE2ew" base_Property="__LD9lL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__L0LYL_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LD9l7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__L0LYb_hEeGCLfRJsWE2ew" base_Property="__LD9mb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__L0LYr_hEeGCLfRJsWE2ew" base_Property="__LD9nL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__L0ycL_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LD9n7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__L0ycb_hEeGCLfRJsWE2ew" base_Property="__LD9ob_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__L0ycr_hEeGCLfRJsWE2ew" base_Property="__LD9pL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiSystem xmi:id="__L1ZgL_hEeGCLfRJsWE2ew" plattform="wcmf" config="presentation.ini" base_Class="__LD9p7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__L1Zgb_hEeGCLfRJsWE2ew" base_Property="__LD9qb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__L1Zgr_hEeGCLfRJsWE2ew" base_Property="__LD9rL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiDiagram xmi:id="__L2AkL_hEeGCLfRJsWE2ew" Alias="Chi008Dia" base_Package="__LD9r7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L2Akb_hEeGCLfRJsWE2ew" base_Class="__LD9tL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L2noL_hEeGCLfRJsWE2ew" base_Class="__LD9tb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L2nob_hEeGCLfRJsWE2ew" base_Class="__LD9tr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L2nor_hEeGCLfRJsWE2ew" base_Class="__LD9t7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L2no7_hEeGCLfRJsWE2ew" base_Class="__LD9uL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L31wL_hEeGCLfRJsWE2ew" base_Class="__LD9ub_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L31wb_hEeGCLfRJsWE2ew" base_Class="__LD9ur_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L31wr_hEeGCLfRJsWE2ew" base_Class="__LD9u7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L31w7_hEeGCLfRJsWE2ew" base_Class="__LD9vL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L4c0L_hEeGCLfRJsWE2ew" base_Class="__LD9vb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L4c0b_hEeGCLfRJsWE2ew" base_Class="__LD9vr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L4c0r_hEeGCLfRJsWE2ew" base_Class="__LD9v7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L4c07_hEeGCLfRJsWE2ew" base_Class="__LD9wL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L4c1L_hEeGCLfRJsWE2ew" base_Class="__LD9wb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5D4L_hEeGCLfRJsWE2ew" base_Class="__LD9wr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5D4b_hEeGCLfRJsWE2ew" base_Class="__LD9w7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5D4r_hEeGCLfRJsWE2ew" base_Class="__LD9xL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5D47_hEeGCLfRJsWE2ew" base_Class="__LD9xb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5D5L_hEeGCLfRJsWE2ew" base_Class="__LD9xr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5q8L_hEeGCLfRJsWE2ew" base_Class="__LD9x7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5q8b_hEeGCLfRJsWE2ew" base_Class="__LD9yL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5q8r_hEeGCLfRJsWE2ew" base_Class="__LEkgL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5q87_hEeGCLfRJsWE2ew" base_Class="__LEkgb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L5q9L_hEeGCLfRJsWE2ew" base_Class="__LEkgr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L6SAL_hEeGCLfRJsWE2ew" base_Class="__LEkg7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L6SAb_hEeGCLfRJsWE2ew" base_Class="__LEkhL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L6SAr_hEeGCLfRJsWE2ew" base_Class="__LEkhb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L6SA7_hEeGCLfRJsWE2ew" base_Class="__LEkhr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L6SBL_hEeGCLfRJsWE2ew" base_Class="__LEkh7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L65EL_hEeGCLfRJsWE2ew" base_Class="__LEkiL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L65Eb_hEeGCLfRJsWE2ew" base_Class="__LEkib_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L65Er_hEeGCLfRJsWE2ew" base_Class="__LEkir_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L65E7_hEeGCLfRJsWE2ew" base_Class="__LEki7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L65FL_hEeGCLfRJsWE2ew" base_Class="__LEkjb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L7gIL_hEeGCLfRJsWE2ew" base_Class="__LEkjr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L7gIb_hEeGCLfRJsWE2ew" base_Class="__LEkj7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L7gIr_hEeGCLfRJsWE2ew" base_Class="__LEkkL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L7gI7_hEeGCLfRJsWE2ew" base_Class="__LEkkb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L7gJL_hEeGCLfRJsWE2ew" base_Class="__LEkkr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L8HML_hEeGCLfRJsWE2ew" base_Class="__LEkk7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiController xmi:id="__L8HMb_hEeGCLfRJsWE2ew" base_Class="__LEklL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L8HMr_hEeGCLfRJsWE2ew" base_Class="__LEklr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L8HM7_hEeGCLfRJsWE2ew" base_Class="__LEkmL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L8uQL_hEeGCLfRJsWE2ew" base_Class="__LEkmr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L8uQb_hEeGCLfRJsWE2ew" base_Class="__LEkm7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L8uQr_hEeGCLfRJsWE2ew" base_Class="__LEknb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L8uQ7_hEeGCLfRJsWE2ew" base_Class="__LEkn7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L9VUL_hEeGCLfRJsWE2ew" base_Class="__LEkob_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L9VUb_hEeGCLfRJsWE2ew" base_Class="__LEkor_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L9VUr_hEeGCLfRJsWE2ew" base_Class="__LEkpL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L9VU7_hEeGCLfRJsWE2ew" base_Class="__LEkpb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L98YL_hEeGCLfRJsWE2ew" base_Class="__LEkp7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L98Yb_hEeGCLfRJsWE2ew" base_Class="__LEkqb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L98Yr_hEeGCLfRJsWE2ew" base_Class="__LEkqr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L_xkL_hEeGCLfRJsWE2ew" base_Class="__LEkq7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L_xkb_hEeGCLfRJsWE2ew" base_Class="__LEkrL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L_xkr_hEeGCLfRJsWE2ew" base_Class="__LEkrb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiView xmi:id="__L_xk7_hEeGCLfRJsWE2ew" base_Class="__LEkr7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MAYoL_hEeGCLfRJsWE2ew" Alias="Chi040Nod" created="2012-05-11 08:49:22" creator="admin" last_editor="admin" modified="2012-06-23 23:49:00" base_Class="__LFLkL_hEeGCLfRJsWE2ew" display_value="name"/>
+  <Chronos:ChiController xmi:id="__MAYob_hEeGCLfRJsWE2ew" base_Class="__LFypL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MA_sL_hEeGCLfRJsWE2ew" Alias="Chi220Nod" created="2012-06-26 23:51:50" creator="admin" last_editor="admin" modified="2012-06-26 23:52:28" base_Class="__LFyqL_hEeGCLfRJsWE2ew" display_value="name"/>
+  <Chronos:ChiNode xmi:id="__MA_sb_hEeGCLfRJsWE2ew" Alias="Chi221Nod" created="2012-06-26 23:52:41" creator="admin" last_editor="admin" modified="2012-06-26 23:53:03" base_Class="__LHAwL_hEeGCLfRJsWE2ew" display_value="name"/>
+  <Chronos:ChiNode xmi:id="__MBmwL_hEeGCLfRJsWE2ew" Alias="Chi041Nod" created="2012-05-11 08:49:23" creator="admin" last_editor="admin" modified="2012-06-22 23:57:55" base_Class="__LHAyr_hEeGCLfRJsWE2ew" display_value="name" is_searchable="true" is_soap="true" orderby="name"/>
+  <Chronos:ChiValue xmi:id="__MBmwb_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LI18b_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MBmwr_hEeGCLfRJsWE2ew" Alias="Chi042Nod" created="2012-05-11 08:49:24" creator="admin" last_editor="admin" modified="2012-06-23 00:22:15" base_Class="__LI19r_hEeGCLfRJsWE2ew" display_value="title" is_searchable="true" is_soap="true" orderby="title DESC"/>
+  <Chronos:ChiValue xmi:id="__MC04L_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LI1-7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MC04b_hEeGCLfRJsWE2ew" Alias="Chi043Nod" created="2012-05-11 08:49:25" creator="admin" last_editor="admin" modified="2012-06-22 23:56:50" base_Class="__LI2AL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MC04r_hEeGCLfRJsWE2ew" db_data_type="DATETIME" base_Property="__LI2Bb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MC047_hEeGCLfRJsWE2ew" base_Property="__LI2Br_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MC05L_hEeGCLfRJsWE2ew" db_data_type="DATETIME" base_Property="__LI2CL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MDb8L_hEeGCLfRJsWE2ew" base_Property="__LI2Cr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MDb8b_hEeGCLfRJsWE2ew" Alias="Chi044Nod" created="2012-05-11 08:49:26" creator="admin" last_editor="admin" modified="2012-06-23 00:24:26" base_Class="__LI2DL_hEeGCLfRJsWE2ew" display_value="filename" is_searchable="true" is_soap="true" orderby="sortkey"/>
+  <Chronos:ChiValue xmi:id="__MDb8r_hEeGCLfRJsWE2ew" is_editable="true" input_type="filebrowser" display_type="image" column_name="file" base_Property="__LJdAr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MDb87_hEeGCLfRJsWE2ew" Alias="Chi045Nod" created="2012-05-11 08:49:27" creator="admin" last_editor="admin" modified="2012-06-23 00:20:59" base_Class="__LJdCr_hEeGCLfRJsWE2ew" display_value="name" is_searchable="true" is_soap="true" orderby="sortkey"/>
+  <Chronos:ChiValue xmi:id="__MEDAL_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LJdD7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiManyToMany xmi:id="__MEqEL_hEeGCLfRJsWE2ew" Alias="Chi001" created="2012-06-27 00:01:50" creator="admin" last_editor="admin" modified="2012-06-27 00:02:28" base_Class="__LJdI7_hEeGCLfRJsWE2ew" display_value="name"/>
+  <Chronos:ChiDiagram xmi:id="__MEqEb_hEeGCLfRJsWE2ew" Alias="Chi003Dia" base_Package="__LKEEL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MEqEr_hEeGCLfRJsWE2ew" Alias="Chi046Nod" created="2012-05-11 08:49:30" creator="admin" last_editor="admin" modified="2012-06-23 00:42:10" base_Class="__LKEFL_hEeGCLfRJsWE2ew" table_name="adodbseq"/>
+  <Chronos:ChiNode xmi:id="__MFRIL_hEeGCLfRJsWE2ew" Alias="Chi047Nod" created="2012-05-11 08:49:30" creator="admin" last_editor="admin" modified="2012-05-11 08:51:09" base_Class="__LKEGb_hEeGCLfRJsWE2ew" display_value="name" orderby="name" table_name="language"/>
+  <Chronos:ChiValue xmi:id="__MFRIb_hEeGCLfRJsWE2ew" base_Property="__LKEHr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MFRIr_hEeGCLfRJsWE2ew" base_Property="__LKEIL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MFRI7_hEeGCLfRJsWE2ew" Alias="Chi048Nod" created="2012-05-11 08:49:30" creator="admin" last_editor="admin" modified="2012-06-23 00:37:59" base_Class="__LKEIr_hEeGCLfRJsWE2ew" table_name="locktable"/>
+  <Chronos:ChiValue xmi:id="__MF4ML_hEeGCLfRJsWE2ew" base_Property="__LKEJ7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MF4Mb_hEeGCLfRJsWE2ew" base_Property="__LKEKb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MF4Mr_hEeGCLfRJsWE2ew" db_data_type="DATETIME" base_Property="__LKEK7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MF4M7_hEeGCLfRJsWE2ew" Alias="Chi049Nod" created="2012-05-11 08:49:31" creator="admin" last_editor="admin" modified="2012-06-23 00:26:03" base_Class="__LKEML_hEeGCLfRJsWE2ew" display_value="name" orderby="name" table_name="role"/>
+  <Chronos:ChiValue xmi:id="__MF4NL_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LKrI7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MGfQL_hEeGCLfRJsWE2ew" Alias="Chi050Nod" created="2012-05-11 08:49:32" creator="admin" last_editor="admin" modified="2012-05-11 08:51:13" base_Class="__LKrKL_hEeGCLfRJsWE2ew" display_value="objectid|attribute|language" table_name="translation"/>
+  <Chronos:ChiValue xmi:id="__MGfQb_hEeGCLfRJsWE2ew" base_Property="__LKrLb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MGfQr_hEeGCLfRJsWE2ew" base_Property="__LKrL7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MGfQ7_hEeGCLfRJsWE2ew" db_data_type="TEXT" input_type="textarea" base_Property="__LKrMb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MGfRL_hEeGCLfRJsWE2ew" base_Property="__LKrM7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MHGUL_hEeGCLfRJsWE2ew" Alias="Chi051Nod" created="2012-05-11 08:49:33" creator="admin" last_editor="admin" modified="2012-06-23 00:40:08" base_Class="__LKrNb_hEeGCLfRJsWE2ew" display_value="key" table_name="user_config"/>
+  <Chronos:ChiValue xmi:id="__MHGUb_hEeGCLfRJsWE2ew" base_Property="__LKrOr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MHGUr_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LKrPL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiNode xmi:id="__MHGU7_hEeGCLfRJsWE2ew" Alias="Chi052Nod" created="2012-05-11 08:49:33" creator="admin" last_editor="admin" modified="2012-06-23 00:34:01" base_Class="__LKrQb_hEeGCLfRJsWE2ew" display_value="login" orderby="name" table_name="user"/>
+  <Chronos:ChiValue xmi:id="__MHtYL_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LLSNb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MHtYb_hEeGCLfRJsWE2ew" is_editable="true" input_type="password" base_Property="__LLSN7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MHtYr_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LLSOb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MHtY7_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LLSO7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiValue xmi:id="__MIUcL_hEeGCLfRJsWE2ew" is_editable="true" base_Property="__LLSPb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiManyToMany xmi:id="__MI7gL_hEeGCLfRJsWE2ew" Alias="Chi001" created="2012-06-26 23:29:14" creator="admin" last_editor="admin" modified="2012-06-26 23:30:11" base_Class="__LLSSL_hEeGCLfRJsWE2ew" pk_name="fk_user_id|fk_role_id" table_name="nm_user_role"/>
+  <Chronos:ChiDiagram xmi:id="__MI7gb_hEeGCLfRJsWE2ew" Alias="Chi004Dia" base_Package="__LLSUL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MI7gr_hEeGCLfRJsWE2ew" fk_name="fk_role_id" base_Association="__LLSUr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MJikL_hEeGCLfRJsWE2ew" fk_name="fk_user_id" base_Association="__LLSU7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MJikb_hEeGCLfRJsWE2ew" fk_name="fk_user_id" base_Association="__LLSVL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MJikr_hEeGCLfRJsWE2ew" fk_name="fk_user_id" base_Association="__LLSVb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MJik7_hEeGCLfRJsWE2ew" base_Association="__LLSVr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MJilL_hEeGCLfRJsWE2ew" base_Association="__LLSV7_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MJilb_hEeGCLfRJsWE2ew" fk_name="fk_titlepage_id" base_Association="__LLSWL_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MKJoL_hEeGCLfRJsWE2ew" fk_name="fk_page_id" base_Association="__LLSWb_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MKJob_hEeGCLfRJsWE2ew" base_Association="__LLSWr_hEeGCLfRJsWE2ew"/>
+  <Chronos:ChiAssociation xmi:id="__MKJor_hEeGCLfRJsWE2ew" base_Association="__LLSW7_hEeGCLfRJsWE2ew"/>
+</xmi:XMI>
