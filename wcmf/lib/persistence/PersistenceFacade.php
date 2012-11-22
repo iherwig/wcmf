@@ -21,8 +21,6 @@ namespace wcmf\lib\persistence;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
-use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
  * PersistenceFacade defines the interface for PersistenceFacade
@@ -159,13 +157,6 @@ interface PersistenceFacade {
    * @param mapper PersistenceMapper instance
    */
   function setMapper($type, PersistenceMapper $mapper);
-
-  /**
-   * Get a mapper for a given configuration section
-   * @param configSection The name of the configuration section (e.g. database)
-   * return PersistenceMapper or null on error
-   */
-  function getMapperForConfigSection($configSection);
 
   /**
    * Set logging state for insert/update/delete actions.

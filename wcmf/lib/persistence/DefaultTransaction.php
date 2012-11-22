@@ -24,7 +24,6 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\Transaction;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;

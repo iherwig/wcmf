@@ -24,13 +24,11 @@ use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\concurrency\ILockHandler;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\security\RightsManager;
-use wcmf\lib\security\UserManager;
 
 /**
  * DefaultLockHandler implements the ILockHandler interface for relational databases.

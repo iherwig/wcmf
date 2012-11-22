@@ -31,6 +31,7 @@ require_once(WCMF_BASE."wcmf/3rdparty/log4php/Logger.php");
  * @author ingo herwig <ingo@wemove.com>
  */
 class Log {
+  private static $_initialized = false;
 
   /**
    * Print a debug message for a category
@@ -139,6 +140,10 @@ class Log {
    */
   public static function getLogger($category) {
     $logger = Logger::getLogger($category);
+    if (!self::$_initialized) {
+      $logger->configure('log4php.properties');
+      self::$_initialized = true;
+    }
     return $logger;
   }
 

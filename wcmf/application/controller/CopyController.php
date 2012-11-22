@@ -30,7 +30,6 @@ use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\Controller;
@@ -119,8 +118,8 @@ class CopyController extends BatchController {
         $nodeOID = $this->_request->getValue('oid');
 
         $targetNode = $this->getTargetNode($targetOID);
-        $nodeType = PersistenceFacade::getOIDParameter($nodeOID, 'type');
-        $targetType = PersistenceFacade::getOIDParameter($targetOID, 'type');
+        $nodeType = $nodeOID->getType();
+        $targetType = $targetOID->getType();
 
         $tplNode = $persistenceFacade->create($targetType, 1);
         $possibleChildren = NodeUtil::getPossibleChildren($targetNode, $tplNode);
@@ -430,15 +429,14 @@ class CopyController extends BatchController {
     $registry = $session->get($this->OBJECT_MAP);
 
     $oid = $origOID;
-    $origOIDParts = PersistenceFacade::decomposeOID($oid);
-    $requestedType = $origOIDParts['type'];
+    $requestedType = $oid->getType();
 
     // check if the oid exists in the registry
     if (!isset($registry[$origOID])) {
       // check if the corresponding base oid exists in the registry
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $origNodeType = $persistenceFacade->create($requestedType, BuildDepth::SINGLE);
-      $baseOID = PersistenceFacade::composeOID(array('type' => $origNodeType->getBaseType(), 'id' => $origOIDParts['id']));
+      $baseOID = new ObjectId($origNodeType->getBaseType(), $oid->getId());
       if (!isset($registry[$baseOID])) {
         if (Log::isDebugEnabled(__CLASS__)) {
           Log::debug("Copy of ".$oid." not found.", __CLASS__);
@@ -453,9 +451,8 @@ class CopyController extends BatchController {
     $copyOID = $registry[$oid];
 
     // make sure to return the oid in the requested role
-    $copyOIDParts = PersistenceFacade::decomposeOID($copyOID);
-    if ($copyOIDParts['type'] != $requestedType) {
-      $copyOID = PersistenceFacade::composeOID(array('type' => $requestedType, 'id' => $copyOIDParts['id']));
+    if ($copyOID->getType() != $requestedType) {
+      $copyOID = new ObjectId($requestedType, $copyOID->getId());
     }
     return $copyOID;
   }
@@ -498,7 +495,7 @@ class CopyController extends BatchController {
    */
   protected function loadFromTarget(ObjectId $oid) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $type = PersistenceFacade::getOIDParameter($oid, 'type');
+    $type = $oid->getType();
     $originalMapper = $persistenceFacade->getMapper($type);
 
     $targetMapper = $this->getTargetMapper($originalMapper);

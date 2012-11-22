@@ -24,7 +24,6 @@ use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\ValidationException;

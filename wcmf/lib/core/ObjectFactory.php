@@ -67,7 +67,7 @@ class ObjectFactory {
   /**
    * Get an instance from the configuration.
    * @param name The name of the section, where the instance is defined.
-   * @return Object.
+   * @return Object
    */
   public static function getInstance($name) {
     $instance = null;
@@ -76,56 +76,8 @@ class ObjectFactory {
     if (!isset(self::$_instances[$name])) {
       // load class definition
       $parser = InifileParser::getInstance();
-      if (($configSection = $parser->getSection($name, false)) !== false) {
-        if (isset($configSection['__class'])) {
-          // the instance belongs to the given class
-          $className = $configSection['__class'];
-
-          // load the class definition
-          self::loadClassDefinition($className);
-          if (class_exists($className)) {
-            // create the instance
-            $obj = new $className;
-            // set the instance properties
-            foreach ($configSection as $key => $value) {
-              // exclude properties starting with __
-              if (strpos($value, '__') !== 0) {
-                // replace variables denoted by a leading $
-                if (strpos($value, '$') === 0) {
-                  $value = self::getInstance(preg_replace('/^\$/', '', $value));
-                }
-                // set the property
-                $setterName = self::getSetterName($key);
-                if (method_exists($obj, $setterName)) {
-                  $obj->$setterName($value);
-                }
-                else {
-                  $obj->$key = $value;
-                }
-              }
-            }
-            // register the instance if it is shared
-            if (!isset($configSection['__shared']) || $configSection['__shared'] == 'true') {
-              self::$_instances[$name] = $obj;
-            }
-            $instance = $obj;
-          }
-          else {
-            throw new ConfigurationException("Class ".$className." is not found.");
-          }
-        }
-        else {
-          // the instance is a map
-          foreach ($configSection as $key => $value) {
-            // replace variables denoted by a leading $
-            if (strpos($value, '$') === 0) {
-              $configSection[$key] = self::getInstance(preg_replace('/^\$/', '', $value));
-            }
-          }
-          // always register maps
-          self::$_instances[$name] = $configSection;
-          $instance = $configSection;
-        }
+      if (($configuration = $parser->getSection($name, false)) !== false) {
+        $instance = self::createInstance($name, $configuration);
       }
       else {
         throw new ConfigurationException($parser->getErrorMsg());
@@ -152,6 +104,70 @@ class ObjectFactory {
    */
   private static function getSetterName($property) {
     return 'set'.ucfirst(StringUtil::underScoreToCamelCase($property, true));
+  }
+
+  /**
+   * Create an instance from the given configuration array.
+   * @param name The name by which the instance may be retrieved later
+   * using ObjectFactory::getInstance()
+   * @param configuration Associative array with key value pairs for instance properties
+   * and the special keys '__class' (optional, denotes the instance class name),
+   * '__shared' (optional, if true, the instance may be reused using ObjectFactory::getInstance())
+   * @return Object
+   */
+  public static function createInstance($name, $configuration) {
+    $instance = null;
+
+    if (isset($configuration['__class'])) {
+      // the instance belongs to the given class
+      $className = $configuration['__class'];
+
+      // load the class definition
+      self::loadClassDefinition($className);
+      if (class_exists($className)) {
+        // create the instance
+        $obj = new $className;
+        // set the instance properties
+        foreach ($configuration as $key => $value) {
+          // exclude properties starting with __
+          if (strpos($value, '__') !== 0) {
+            // replace variables denoted by a leading $
+            if (strpos($value, '$') === 0) {
+              $value = self::getInstance(preg_replace('/^\$/', '', $value));
+            }
+            // set the property
+            $setterName = self::getSetterName($key);
+            if (method_exists($obj, $setterName)) {
+              $obj->$setterName($value);
+            }
+            else {
+              $obj->$key = $value;
+            }
+          }
+        }
+        // register the instance if it is shared
+        if (!isset($configuration['__shared']) || $configuration['__shared'] == 'true') {
+          self::$_instances[$name] = $obj;
+        }
+        $instance = $obj;
+      }
+      else {
+        throw new ConfigurationException("Class ".$className." is not found.");
+      }
+    }
+    else {
+      // the instance is a map
+      foreach ($configuration as $key => $value) {
+        // replace variables denoted by a leading $
+        if (strpos($value, '$') === 0) {
+          $configuration[$key] = self::getInstance(preg_replace('/^\$/', '', $value));
+        }
+      }
+      // always register maps
+      self::$_instances[$name] = $configuration;
+      $instance = $configuration;
+    }
+    return $instance;
   }
 }
 ?>

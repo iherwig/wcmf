@@ -20,7 +20,7 @@ namespace wcmf\lib\security;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
-use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\security\Role;
 use wcmf\lib\security\User;
 use wcmf\lib\security\UserManager;
@@ -40,10 +40,10 @@ class DefaultUserManager extends UserManager {
    */
   protected function getUsersAndRoles() {
     // load the user/role instances
-    $query = new ObjectQuery(self::getUserType());
-    $users = $query->execute(1);
-    $query = new ObjectQuery(self::getRoleType());
-    $roles = $query->execute(1);
+    $userQuery = new ObjectQuery(self::getUserType());
+    $users = $userQuery->execute(1);
+    $roleQuery = new ObjectQuery(self::getRoleType());
+    $roles = $roleQuery->execute(1);
     return array('users' => $users, 'roles' => $roles);
   }
 
@@ -57,7 +57,6 @@ class DefaultUserManager extends UserManager {
     $user->setFirstname($firstname);
     $user->setLogin($login);
     $user->setPassword($password);
-    $user->save();
 
     return $user;
   }
@@ -74,7 +73,6 @@ class DefaultUserManager extends UserManager {
    */
   protected function setUserPropertyImpl(User $user, $property, $value) {
     $user->setValue($property, $value);
-    $user->save();
   }
 
   /**
@@ -82,9 +80,8 @@ class DefaultUserManager extends UserManager {
    */
   protected function createRoleImpl($name) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $role = $persistenceFacade->create($this->getRoleClassName(), BuildDepth::REQUIRED);
+    $role = $persistenceFacade->create(self::getRoleType(), BuildDepth::REQUIRED);
     $role->setName($name);
-    $role->save();
 
     return $role;
   }
@@ -101,7 +98,6 @@ class DefaultUserManager extends UserManager {
    */
   protected function setRolePropertyImpl(Role $role, $property, $value) {
     $role->setValue($property, $value);
-    $role->save();
   }
 
   /**

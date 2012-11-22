@@ -24,7 +24,7 @@
  * @package log4php
  * @subpackage configurators
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
- * @version $Revision$
+ * @version $Revision: 1394956 $
  * @since 2.2
  */
 class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
@@ -38,8 +38,7 @@ class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
 		'renderers' => array(),
 	);
 	
-	public function convert($url)
-	{
+	public function convert($url) {
 		$xml = $this->loadXML($url);
 		
 		$this->parseConfiguration($xml);
@@ -63,6 +62,12 @@ class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
 		foreach($xml->renderer as $rendererNode) {
 			$this->parseRenderer($rendererNode);
 		}
+
+		// Process <defaultRenderer> node
+		foreach($xml->defaultRenderer as $rendererNode) {
+			$this->parseDefaultRenderer($rendererNode);
+		}
+
 		return $this->config;
 	}
 	
@@ -174,10 +179,7 @@ class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
 			$logger['level'] = $this->getAttributeValue($node->level, 'value');
 		}
 		
-		$logger['appenders'] = array();
-		foreach($node->appender_ref as $appender) {
-			$logger['appenders'][] = $this->getAttributeValue($appender, 'ref');
-		}
+		$logger['appenders'] = $this->parseAppenderReferences($node);
 		
 		$this->config['rootLogger'] = $logger;
 	}
@@ -200,7 +202,7 @@ class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
 			$logger['additivity'] = $this->getAttributeValue($node, 'additivity');
 		}
 		
-		$logger['appenders'] = $this->parseAppenderReferences($node, $name);
+		$logger['appenders'] = $this->parseAppenderReferences($node);
 
 		// Check for duplicate loggers
 		if (isset($this->config['loggers'][$name])) {
@@ -212,13 +214,20 @@ class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
 	
 	/** 
 	 * Parses a <logger> node for appender references and returns them in an array.
+	 * 
+	 * Previous versions supported appender-ref, as well as appender_ref so both
+	 * are parsed for backward compatibility.
 	 */
-	private function parseAppenderReferences(SimpleXMLElement $node, $name) {
+	private function parseAppenderReferences(SimpleXMLElement $node) {
 		$refs = array();
 		foreach($node->appender_ref as $ref) {
 			$refs[] = $this->getAttributeValue($ref, 'ref');
 		}
 		
+		foreach($node->{'appender-ref'} as $ref) {
+			$refs[] = $this->getAttributeValue($ref, 'ref');
+		}
+
 		return $refs;
 	}
 	
@@ -242,6 +251,18 @@ class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
 		$this->config['renderers'][] = compact('renderedClass', 'renderingClass');
 	}
 	
+	/** Parses a <defaultRenderer> node. */
+	private function parseDefaultRenderer(SimpleXMLElement $node) {
+		$renderingClass = $this->getAttributeValue($node, 'renderingClass');
+		
+		// Warn on duplicates
+		if(isset($this->config['defaultRenderer'])) {
+			$this->warn("Duplicate <defaultRenderer> node. Overwriting.");
+		}
+		
+		$this->config['defaultRenderer'] = $renderingClass; 
+	}
+	
 	// ******************************************
 	// ** Helper methods                       **
 	// ******************************************
@@ -255,4 +276,3 @@ class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
 	}
 }
 
-?>

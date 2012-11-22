@@ -19,7 +19,6 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
@@ -29,7 +28,6 @@ use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\StateChangeEvent;
-use wcmf\lib\persistence\Transaction;
 use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
@@ -269,26 +267,6 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function setMapper($type, PersistenceMapper $mapper) {
     $this->_mappers[$type] = $mapper;
-  }
-
-  /**
-   * @see PersistenceFacade::getMapperForConfigSection()
-   */
-  public function getMapperForConfigSection($configSection) {
-    $mapper = null;
-    $parser = InifileParser::getInstance();
-    $initParamSection = $parser->getSection('initparams');
-    $typeMappingSection = array_flip($parser->getSection('typemapping'));
-    foreach ($initParamSection as $mapperClass => $curConfigSection) {
-      if ($curConfigSection == $configSection) {
-        $mapper = $this->getMapper($typeMappingSection[$mapperClass]);
-        break;
-      }
-    }
-    if ($mapper == null) {
-      throw new ConfigurationException("No PersistenceMapper found in configfile for config section '".$configSection."'");
-    }
-    return $mapper;
   }
 
   /**

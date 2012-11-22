@@ -22,7 +22,6 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\Session;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeIterator;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;

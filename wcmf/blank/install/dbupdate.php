@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-define("WCMF_BASE", realpath ("../../")."/");
+define('WCMF_BASE', realpath( dirname(__FILE__).'/../..').'/');
 error_reporting(E_ERROR | E_PARSE);
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
@@ -24,14 +24,14 @@ require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 use \Exception;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\util\DBUtil;
 
 Log::info("updating wCMF database tables...", "dbupdate");
 
 // get configuration from file
-$CONFIG_PATH = WCMF_BASE.'application/include/';
+$CONFIG_PATH = realpath('../config/').'/';
 $configFile = $CONFIG_PATH.'config.ini';
 Log::info("configuration file: ".$configFile, "dbupdate");
 $parser = InifileParser::getInstance();

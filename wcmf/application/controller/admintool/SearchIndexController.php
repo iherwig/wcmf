@@ -22,7 +22,6 @@ use wcmf\application\controller\BatchController;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\util\LuceneSearch;
 
 /**

@@ -32,7 +32,6 @@ use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\UnknownFieldException;
 use wcmf\lib\persistence\ValueChangeEvent;

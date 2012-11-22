@@ -35,7 +35,6 @@ use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\InsertOperation;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\UpdateOperation;

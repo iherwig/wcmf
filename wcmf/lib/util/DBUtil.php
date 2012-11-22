@@ -18,11 +18,13 @@
  */
 namespace wcmf\lib\util;
 
+use \PDO;
+use \Zend_Db;
+
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
 use wcmf\lib\persistence\PersistenceException;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\util\DBUtil;
 
 /**
@@ -31,6 +33,45 @@ use wcmf\lib\util\DBUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DBUtil {
+
+  private static function createConnection($connectionParams) {
+    // connect
+    if (isset($connectionParams['dbType']) && isset($connectionParams['dbHostName']) &&
+      isset($connectionParams['dbUserName']) && isset($connectionParams['dbPassword']) &&
+      isset($connectionParams['dbName'])) {
+
+      try {
+        // create new connection
+        $pdoParams = array(
+          PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        );
+        if ($connectionParams['dbType'] == 'mysql') {
+          $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+        }
+        $params = array(
+          'host' => $connectionParams['dbHostName'],
+          'username' => $connectionParams['dbUserName'],
+          'password' => $connectionParams['dbPassword'],
+          'dbname' => $connectionParams['dbName'],
+          'driver_options' => $pdoParams,
+          'profiler' => false
+        );
+        if (!empty($connectionParams['dbPort'])) {
+          $params['port'] = $connectionParams['dbPort'];
+        }
+        $conn = Zend_Db::factory('Pdo_'.ucfirst($connectionParams['dbType']), $params);
+        $conn->setFetchMode(Zend_Db::FETCH_ASSOC);
+        return $conn;
+      }
+      catch(Exception $ex) {
+        throw new PersistenceException("Connection to ".$connectionParams['dbHostName'].".".
+          $connectionParams['dbName']." failed: ".$ex->getMessage());
+      }
+    }
+    else {
+      throw new IllegalArgumentException("Wrong parameters for creating connection.");
+    }
+  }
 
   /**
    * Execute a sql script. Execution is done inside a transaction, which is rolled back in case of failure.
@@ -44,13 +85,11 @@ class DBUtil {
 
       // find init params
       $parser = InifileParser::getInstance();
-      $initParams = null;
-      if (($initParams = $parser->getSection($initSection)) === false) {
+      if (($connectionParams = $parser->getSection($initSection)) === false) {
         throw new ConfigurationException("No '".$initSection."' section given in configfile.");
       }
-      // connect to the database using a RDBMapper instance
-      $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapperForConfigSection($initSection);
-      $connection = $mapper->getConnection();
+      // connect to the database
+      $connection = self::createConnection($connectionParams);
 
       Log::debug('Starting transaction ...', __CLASS__);
       $connection->beginTransaction();
@@ -83,6 +122,7 @@ class DBUtil {
         $connection->rollBack();
       }
       Log::debug('Finished SQL script '.$file.'.', __CLASS__);
+      $connection->closeConnection();
     }
     else {
       Log::error('SQL script '.$file.' not found.', __CLASS__);

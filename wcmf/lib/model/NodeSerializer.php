@@ -24,7 +24,6 @@ use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * NodeSerializer is used to serialize Nodes into an array representation

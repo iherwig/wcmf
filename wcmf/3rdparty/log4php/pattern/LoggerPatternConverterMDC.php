@@ -19,35 +19,37 @@
  */
 
 /**
+ * Returns the Mapped Diagnostic Context value corresponding to the given key.
+ * 
+ * Options:
+ *  [0] the MDC key
+ * 
  * @package log4php
- * @subpackage helpers
+ * @subpackage pattern
+ * @version $Revision: 1326626 $
+ * @since 2.3
  */
-class LoggerDatePatternConverter extends LoggerPatternConverter {
+class LoggerPatternConverterMDC extends LoggerPatternConverter {
 
-	/**
-	 * @var string
-	 */
-	private $df;
-	
-	/**
-	 * Constructor
-	 *
-	 * @param string $formattingInfo
-	 * @param string $df
-	 */
-	public function __construct($formattingInfo, $df) {
-		parent::__construct($formattingInfo);
-		$this->df = $df;
+	private $key;
+
+	public function activateOptions() {
+		if (isset($this->option) && $this->option !== '') {
+			$this->key = $this->option;
+		}
 	}
-
-	/**
-	 * @param LoggerLoggingEvent $event
-	 * @return string
-	 */
-	public function convert($event) {
-		$timeStamp = $event->getTimeStamp();
-		$usecs = round(($timeStamp - (int)$timeStamp) * 1000);
-		$df = preg_replace('/((?<!\\\\)(?:\\\\{2})*)u/', '${1}' . sprintf('%03d', $usecs), $this->df);
-		return date($df, $timeStamp);
+	
+	public function convert(LoggerLoggingEvent $event) {
+		if (isset($this->key)) {
+			return $event->getMDC($this->key);
+		} else {
+			$buff = array();
+			$map = $event->getMDCMap();
+			foreach($map as $key => $value) {
+				$buff []= "$key=$value";
+			}
+			return implode(', ', $buff);
+		}
 	}
 }
+ 

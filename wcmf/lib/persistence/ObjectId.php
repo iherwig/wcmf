@@ -19,7 +19,6 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * ObjectId is the unique identifier of an object.

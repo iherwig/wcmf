@@ -20,7 +20,6 @@ namespace wcmf\lib\model;
 
 use wcmf\lib\core\Session;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * PersistentIterator is used to iterate over a tree/list build of oids

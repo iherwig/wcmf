@@ -26,7 +26,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * PersistentObjectTest.

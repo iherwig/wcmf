@@ -27,7 +27,7 @@
  * @package log4php
  * @subpackage configurators
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
- * @version $Revision$
+ * @version $Revision: 1343601 $
  * @since 2.2
  */
 class LoggerConfigurationAdapterINI implements LoggerConfigurationAdapter {
@@ -58,12 +58,6 @@ class LoggerConfigurationAdapterINI implements LoggerConfigurationAdapter {
 	
 	/**
 	 * Loads and parses the INI configuration file.
-	 * 
-	 * INI_SCANNER_RAW is used here because otherwise parse_ini_file() will 
-	 * try to parse all values, with some strange results. For example, "true"
-	 * will become "1", while "false" and "null" will become "" (empty string). 
-	 * 
-	 * @see http://php.net/manual/en/function.parse-ini-file.php
 	 * 
 	 * @param string $url Path to the config file.
 	 * @throws LoggerException
@@ -303,4 +297,3 @@ class LoggerConfigurationAdapterINI implements LoggerConfigurationAdapter {
 	
 }
 
-?>

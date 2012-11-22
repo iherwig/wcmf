@@ -25,7 +25,6 @@ use wcmf\lib\security\RightsManager;
 /**
  * LogOutputStrategy outputs object changes to the logger category
  * LogOutputStrategy, loglevel info
- * Used classes must implement the toString() method.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -55,7 +54,7 @@ class AuditingOutputStrategy implements OutputStrategy {
     switch ($state = $obj->getState()) {
       // log insert action
       case PersistentObject::STATE_NEW:
-        Log::info('INSERT '.$obj->getOID().': '.str_replace("\n", " ", $obj->toString()).' USER: '.$user->getLogin(), __CLASS__);
+        Log::info('INSERT '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$user->getLogin(), __CLASS__);
         break;
       // log update action
       case PersistentObject::STATE_DIRTY:
@@ -81,7 +80,7 @@ class AuditingOutputStrategy implements OutputStrategy {
       // log delete action
       case PersistentObject::STATE_DELETED:
         // get old object from storage
-        Log::info('DELETE '.$obj->getOID().': '.str_replace("\n", " ", $obj->toString()).' USER: '.$user->getLogin(), __CLASS__);
+        Log::info('DELETE '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$user->getLogin(), __CLASS__);
         break;
     }
   }

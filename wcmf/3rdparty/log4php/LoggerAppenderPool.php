@@ -26,7 +26,7 @@
  * appender can be linked to multiple loggers. This makes sure duplicate 
  * appenders are not created.
  *
- * @version $Revision: 795727 $
+ * @version $Revision: 1350602 $
  * @package log4php
  */
 class LoggerAppenderPool {
@@ -39,8 +39,7 @@ class LoggerAppenderPool {
 	 * The appender must be named for this operation. 
 	 * @param LoggerAppender $appender
 	 */
-	public static function add(LoggerAppender $appender)
-	{
+	public static function add(LoggerAppender $appender) {
 		$name = $appender->getName();
 		
 		if(empty($name)) {

@@ -27,7 +27,6 @@ use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceException;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * AbstractQuery is the base class for all query classes.

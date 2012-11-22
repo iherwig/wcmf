@@ -19,32 +19,21 @@
  */
 
 /**
+ * Returns the line number within the file from which the logging request was 
+ * issued. 
+ * 
  * @package log4php
- * @subpackage helpers
+ * @subpackage pattern
+ * @version $Revision: 1326626 $
+ * @since 2.3
  */
-class LoggerMDCPatternConverter extends LoggerPatternConverter {
+class LoggerPatternConverterLocation extends LoggerPatternConverter {
 
-	/**
-	 * @var string
-	 */
-	private $key;
-
-	/**
-	 * Constructor
-	 *
-	 * @param string $formattingInfo
-	 * @param string $key
-	 */
-	public function __construct($formattingInfo, $key) {
-		parent::__construct($formattingInfo);
-		$this->key = $key;
-	}
-
-	/**
-	 * @param LoggerLoggingEvent $event
-	 * @return string
-	 */
-	public function convert($event) {
-		return $event->getMDC($this->key);
+	public function convert(LoggerLoggingEvent $event) {
+		return 
+			$event->getLocationInformation()->getClassName() . '.' .
+			$event->getLocationInformation()->getMethodName() . '(' .
+			$event->getLocationInformation()->getFileName() . ':' .
+			$event->getLocationInformation()->getLineNumber() . ')';
 	}
 }

@@ -19,39 +19,16 @@
  */
 
 /**
+ * Returns the logged message.
+ * 
  * @package log4php
- * @subpackage helpers
+ * @subpackage pattern
+ * @version $Revision: 1326626 $
+ * @since 2.3
  */
-class LoggerLiteralPatternConverter extends LoggerPatternConverter {
-	
-	/**
-	 * @var string
-	 */
-	private $literal;
+class LoggerPatternConverterMessage extends LoggerPatternConverter {
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $value
-	 */
-	public function __construct($value) {
-		$this->literal = $value;
-	}
-
-	/**
-	 * @param string &$sbuf
-	 * @param LoggerLoggingEvent $event
-	 */
-	public function format(&$sbuf, $event) {
-		$sbuf .= $this->literal;
-	}
-
-	/**
-	 * @param LoggerLoggingEvent $event
-	 * @return string
-	 */
-	public function convert($event) {
-		return $this->literal;
+	public function convert(LoggerLoggingEvent $event) {
+		return $event->getRenderedMessage();
 	}
 }
-

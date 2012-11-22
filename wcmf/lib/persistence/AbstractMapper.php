@@ -28,6 +28,7 @@ use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
+use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\security\RightsManager;
 

@@ -25,7 +25,7 @@
  * 
  * @package log4php
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
- * @version $Revision: 1212319 $
+ * @version $Revision: 1394956 $
  * @since 2.2
  */
 class LoggerConfiguratorDefault implements LoggerConfigurator
@@ -55,10 +55,7 @@ class LoggerConfiguratorDefault implements LoggerConfigurator
         ),
         'appenders' => array(
             'default' => array(
-                'class' => 'LoggerAppenderEcho',
-                'layout' => array(
-                    'class' => 'LoggerLayoutTTCC',
-                ),
+                'class' => 'LoggerAppenderEcho'
             ),
         ),
 	);
@@ -100,8 +97,7 @@ class LoggerConfiguratorDefault implements LoggerConfigurator
 	 * 		will be used.
 	 * @return array The parsed configuration.
 	 */
-	public function parse($input)
-	{
+	public function parse($input) {
 		// No input - use default configuration
 		if (!isset($input)) {
 			$config = self::$defaultConfiguration;
@@ -224,38 +220,35 @@ class LoggerConfiguratorDefault implements LoggerConfigurator
 				$this->configureRenderer($hierarchy, $rendererConfig);
 			}
 		}
+		
+		if (isset($config['defaultRenderer'])) {
+			$this->configureDefaultRenderer($hierarchy, $config['defaultRenderer']);
+		}
 	}
 	
 	private function configureRenderer(LoggerHierarchy $hierarchy, $config) {
-		if (!isset($config['renderingClass'])) {
-			$this->warn("Rendering class not specified. Skipping renderers definition.");
-			return;			
-		}
-		
-		$renderingClass = $config['renderingClass'];
-		if (!class_exists($renderingClass)) {
-			$this->warn("Nonexistant rendering class [$renderingClass] specified. Skipping renderers definition.");
+		if (empty($config['renderingClass'])) {
+			$this->warn("Rendering class not specified. Skipping renderer definition.");
 			return;
 		}
 		
-		$renderingClassInstance = new $renderingClass();
-		if (!$renderingClassInstance instanceof LoggerRendererObject) {
-			$this->warn("Invalid class [$renderingClass] given. Not a valid LoggerRenderer class. Skipping renderers definition.");
-			return;			
+		if (empty($config['renderedClass'])) {
+			$this->warn("Rendered class not specified. Skipping renderer definition.");
+			return;
 		}
+		
+		// Error handling performed by RendererMap
+		$hierarchy->getRendererMap()->addRenderer($config['renderedClass'], $config['renderingClass']);
+	}
 	
-		if (!isset($config['renderedClass'])) {
-			$this->warn("Rendered class not specified for rendering Class [$renderingClass]. Skipping renderers definition.");
-			return;			
+	private function configureDefaultRenderer(LoggerHierarchy $hierarchy, $class) {
+		if (empty($class)) {
+			$this->warn("Rendering class not specified. Skipping default renderer definition.");
+			return;
 		}
 		
-		$renderedClass = $config['renderedClass'];
-		if (!class_exists($renderedClass)) {
-			$this->warn("Nonexistant rendered class [$renderedClass] specified for renderer [$renderingClass]. Skipping renderers definition.");
-			return;
-		}		
-
-		$hierarchy->getRendererMap()->addRenderer($renderedClass, $renderingClassInstance);
+		// Error handling performed by RendererMap
+		$hierarchy->getRendererMap()->setDefaultRenderer($class);
 	}
 	
 	/** 
@@ -416,7 +409,6 @@ class LoggerConfiguratorDefault implements LoggerConfigurator
 			if (isset($level)) {
 				$logger->setLevel($level);
 			} else {
-				$default = $logger->getLevel();
 				$this->warn("Invalid level value [{$config['level']}] specified for logger [$loggerName]. Ignoring level definition.");
 			}
 		}
@@ -434,10 +426,10 @@ class LoggerConfiguratorDefault implements LoggerConfigurator
 		
 		// Set logger additivity
 		if (isset($config['additivity'])) {
-			$additivity = LoggerOptionConverter::toBoolean($config['additivity'], null);
-			if (is_bool($additivity)) {
+			try {
+				$additivity = LoggerOptionConverter::toBooleanEx($config['additivity'], null);
 				$logger->setAdditivity($additivity);
-			} else {
+			} catch (Exception $ex) {
 				$this->warn("Invalid additivity value [{$config['additivity']}] specified for logger [$loggerName]. Ignoring additivity setting.");
 			}
 		}

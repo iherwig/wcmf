@@ -25,7 +25,6 @@ use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\presentation\Controller;

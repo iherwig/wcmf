@@ -26,9 +26,7 @@ use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PathDescription;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\presentation\control\ControlRenderer;
 use wcmf\lib\presentation\renderer\ValueRenderer;
 use wcmf\lib\util\StringUtil;
 

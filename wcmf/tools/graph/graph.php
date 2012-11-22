@@ -14,7 +14,6 @@ use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\output\DotOutputStrategy;
 use wcmf\lib\model\visitor\OutputVisitor;
-use wcmf\lib\persistence\PersistenceFacade;
 
 $parser = InifileParser::getInstance();
 $parser->parseIniFile('config.ini', true);

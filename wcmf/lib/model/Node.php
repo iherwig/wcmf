@@ -24,7 +24,6 @@ use wcmf\lib\core\Log;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 
@@ -829,9 +828,9 @@ class Node extends PersistentObject {
    */
   public function __toString() {
     $pStr = parent::__toString();
-    $str = $this->getDisplayValue();
+    $str = $this->getDisplayValue(false);
     if ($pStr != $str) {
-      return $this->getDisplayValue().' ['.$pStr.']';
+      return $this->getDisplayValue(false).' ['.$pStr.']';
     }
     return $str;
   }

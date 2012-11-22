@@ -27,7 +27,7 @@
  * @package log4php
  * @subpackage configurators
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
- * @version $Revision$
+ * @version $Revision: 1343601 $
  * @since 2.2
  */
 interface LoggerConfigurationAdapter
@@ -37,4 +37,3 @@ interface LoggerConfigurationAdapter
 
 }
 
-?>

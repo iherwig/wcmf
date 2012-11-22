@@ -23,9 +23,7 @@ use wcmf\lib\model\Node;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\RightsManager;
-use wcmf\lib\security\UserManager;
 
 /**
  * User is the abstract base class for user classes that represent a system user.
@@ -151,8 +149,6 @@ abstract class User extends Node {
     $role = $this->getRoleByName($rolename);
     if ($role != null) {
       $this->addNode($role);
-      // commit the changes
-      $this->save();
     }
   }
 
@@ -168,8 +164,6 @@ abstract class User extends Node {
     $role = $this->getRoleByName($rolename);
     if ($role != null) {
       $this->deleteNode($role);
-      // commit the changes
-      $this->save();
     }
   }
 
@@ -224,7 +218,10 @@ abstract class User extends Node {
       // load the role
       $roleType = ObjectFactory::getInstance('userManager')->getRoleType();
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $role = $persistenceFacade->loadFirstObject($roleType, BuildDepth::SINGLE, array('name' => $rolename));
+      $role = $persistenceFacade->loadFirstObject($roleType, BuildDepth::SINGLE,
+                  array(
+                      new Criteria($roleType, 'name', '=', $rolename)
+                  ), null);
       if ($role != null) {
         $this->_cachedRoles[$rolename] = $role;
       }

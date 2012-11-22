@@ -25,7 +25,6 @@ use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\PersistentIterator;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Controller;
 
 /**

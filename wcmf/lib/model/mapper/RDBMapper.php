@@ -1073,7 +1073,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       // currently loading, we load the complete objects and add them
       if ($loadNextGeneration && !isset($this->_loadingRelations[$relationId])) {
         $this->_loadingRelations[$relationId] = true;
-        $relatives = $this->loadRelation($object, $role, $newBuildDepth, $buildAttribs, $buildTypes);
+        $relatives = $this->loadRelation($object, $role, $newBuildDepth, null, null, null, $buildAttribs, $buildTypes);
         // set the value
         $object->setValue($role, $relatives, true, false);
         unset($this->_loadingRelations[$relationId]);

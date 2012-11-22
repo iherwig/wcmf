@@ -22,8 +22,6 @@ use \Exception;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\presentation\control\Control;
 use wcmf\lib\presentation\control\ListStrategy;
 
 /**

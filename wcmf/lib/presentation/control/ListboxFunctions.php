@@ -30,7 +30,6 @@ use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\WCMFInifileParser;
-use wcmf\lib\presentation\control\Control;
 
 /**
  * Global function for id (oid) retrieval. For parameters see PersistenceFacade::getOIDs().
@@ -62,7 +61,8 @@ function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $la
 
   // create the null entry
   if ($realOIDs) {
-    $result[PersistenceFacade::composeOID(array('type' => $type, 'id' => array('')))] = "";
+    $oid = new ObjectId($type, array(''));
+    $result[$oid->__toString()] = "";
   }
   else {
     $result[""] = "";

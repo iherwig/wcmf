@@ -22,7 +22,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * RelationDescriptionTest.

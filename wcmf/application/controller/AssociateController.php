@@ -22,7 +22,6 @@ use \Exception;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Controller;
 
 /**

@@ -44,9 +44,12 @@
  * The above would print:<br>
  * <samp>02:28 [13714] INFO root - Hello World!</samp>
  *
- * @version $Revision: 1213283 $
+ * @version $Revision: 1302503 $
  * @package log4php
  * @subpackage layouts
+ * 
+ * @deprecated LoggerLayout TTCC is deprecated and will be removed in a future release. Please use 
+ *   LoggerLayoutPattern instead. 
  */
 class LoggerLayoutTTCC extends LoggerLayout {
 
@@ -68,6 +71,7 @@ class LoggerLayoutTTCC extends LoggerLayout {
 	 * @see dateFormat
 	 */
 	public function __construct($dateFormat = '') {
+		$this->warn("LoggerLayout TTCC is deprecated and will be removed in a future release. Please use LoggerLayoutPattern instead.");
 		if (!empty($dateFormat)) {
 			$this->dateFormat = $dateFormat;
 		}

@@ -23,8 +23,6 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;

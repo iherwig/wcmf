@@ -21,7 +21,7 @@
 /**
  * The internal representation of logging event.
  *
- * @version $Revision: 1222216 $
+ * @version $Revision: 1382273 $
  * @package log4php
  */
 class LoggerLoggingEvent {
@@ -36,7 +36,7 @@ class LoggerLoggingEvent {
 	/**
 	* @var Logger reference
 	*/
-	private $logger = null;
+	private $logger;
 	
 	/** 
 	 * The category (logger) name.
@@ -69,14 +69,6 @@ class LoggerLoggingEvent {
 	private $ndcLookupRequired = true;
 	
 	/** 
-	 * Have we tried to do an MDC lookup? If we did, there is no need
-	 * to do it again.	Note that its value is always false when
-	 * serialized. See also the getMDC and getMDCCopy methods.
-	 * @var boolean	 
-	 */
-	private $mdcCopyLookupRequired = true;
-	
-	/** 
 	 * @var mixed The application supplied message of logging event. 
 	 */
 	private $message;
@@ -86,14 +78,14 @@ class LoggerLoggingEvent {
 	 * objet rendering mechanism. At present renderedMessage == message.
 	 * @var string
 	 */
-	private $renderedMessage = null;
+	private $renderedMessage;
 	
 	/** 
 	 * The name of thread in which this logging event was generated.
 	 * log4php saves here the process id via {@link PHP_MANUAL#getmypid getmypid()} 
 	 * @var mixed
 	 */
-	private $threadName = null;
+	private $threadName;
 	
 	/** 
 	* The number of seconds elapsed from 1/1/1970 until logging event
@@ -105,12 +97,12 @@ class LoggerLoggingEvent {
 	/** 
 	* @var LoggerLocationInfo Location information for the caller. 
 	*/
-	private $locationInfo = null;
+	private $locationInfo;
 	
 	/**
 	 * @var LoggerThrowableInformation log4php internal representation of throwable
 	 */
-	private $throwableInfo = null;
+	private $throwableInfo;
 	
 	/**
 	* Instantiate a LoggingEvent from the supplied parameters.
@@ -120,12 +112,12 @@ class LoggerLoggingEvent {
 	*
 	* @param string $fqcn name of the caller class.
 	* @param mixed $logger The {@link Logger} category of this event or the logger name.
-	* @param LoggerLevel $priority The level of this event.
+	* @param LoggerLevel $level The level of this event.
 	* @param mixed $message The message of this event.
 	* @param integer $timeStamp the timestamp of this logging event.
 	* @param Exception $throwable The throwable associated with logging event
 	*/
-	public function __construct($fqcn, $logger, $priority, $message, $timeStamp = null, Exception $throwable = null) {
+	public function __construct($fqcn, $logger, LoggerLevel $level, $message, $timeStamp = null, $throwable = null) {
 		$this->fqcn = $fqcn;
 		if($logger instanceof Logger) {
 			$this->logger = $logger;
@@ -133,9 +125,9 @@ class LoggerLoggingEvent {
 		} else {
 			$this->categoryName = strval($logger);
 		}
-		$this->level = $priority;
+		$this->level = $level;
 		$this->message = $message;
-		if($timeStamp !== null && is_float($timeStamp)) {
+		if($timeStamp !== null && is_numeric($timeStamp)) {
 			$this->timeStamp = $timeStamp;
 		} else {
 			$this->timeStamp = microtime(true);
@@ -212,6 +204,14 @@ class LoggerLoggingEvent {
 	}
 
 	/**
+	 * Returns the logger which created the event.
+	 * @return Logger
+	 */
+	public function getLogger() {
+		return $this->logger;
+	}
+	
+	/**
 	 * Return the name of the logger. Use this form instead of directly
 	 * accessing the {@link $categoryName} field.
 	 * @return string  
@@ -222,19 +222,10 @@ class LoggerLoggingEvent {
 
 	/**
 	 * Return the message for this logging event.
-	 *
-	 * <p>Before serialization, the returned object is the message
-	 * passed by the user to generate the logging event. After
-	 * serialization, the returned value equals the String form of the
-	 * message possibly after object rendering.
 	 * @return mixed
 	 */
 	public function getMessage() {
-		if($this->message !== null) {
-			return $this->message;
-		} else {
-			return $this->getRenderedMessage();
-		}
+		return $this->message;
 	}
 
 	/**
@@ -305,8 +296,23 @@ class LoggerLoggingEvent {
 	}
 	
 	/**
-	 * Calculates the time of this event.
-	 * @return the time after event starttime when this event has occured
+	 * Returns the time in seconds passed from the beginning of execution to 
+	 * the time the event was constructed.
+	 * 
+	 * @return float Seconds with microseconds in decimals.
+	 */
+	public function getRelativeTime() {
+		return $this->timeStamp - self::$startTime;
+	}
+	
+	/**
+	 * Returns the time in milliseconds passed from the beginning of execution
+	 * to the time the event was constructed.
+	 * 
+	 * @deprecated This method has been replaced by getRelativeTime which 
+	 * 		does not perform unneccesary multiplication and formatting.
+	 * 
+	 * @return integer 
 	 */
 	public function getTime() {
 		$eventTime = $this->getTimeStamp();

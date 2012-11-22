@@ -21,7 +21,7 @@
 /**
  * Abstract class that defines output logs strategies.
  *
- * @version $Revision: 1240469 $
+ * @version $Revision: 1374777 $
  * @package log4php
  */
 abstract class LoggerAppender extends LoggerConfigurable {
@@ -75,14 +75,14 @@ abstract class LoggerAppender extends LoggerConfigurable {
 	 */
 	public function __construct($name = '') {
 		$this->name = $name;
-		
-		// Closes the appender on shutdown. Better than a destructor because
-		// it will be called even if a fatal error occurs (destructor won't).
-		register_shutdown_function(array($this, 'close'));
-		
+
 		if ($this->requiresLayout) {
 			$this->layout = $this->getDefaultLayout();
 		}
+	}
+	
+	public function __destruct() {
+		$this->close();
 	}
 	
 	/**
@@ -91,8 +91,7 @@ abstract class LoggerAppender extends LoggerConfigurable {
 	 * 
 	 * @return LoggerLayout
 	 */
-	public function getDefaultLayout()
-	{
+	public function getDefaultLayout() {
 		return new LoggerLayoutSimple();
 	}
 	
@@ -148,12 +147,12 @@ abstract class LoggerAppender extends LoggerConfigurable {
 			return;
 		}
 
-		$f = $this->getFirstFilter();
-		while($f !== null) {
-			switch ($f->decide($event)) {
+		$filter = $this->getFirstFilter();
+		while($filter !== null) {
+			switch ($filter->decide($event)) {
 				case LoggerFilter::DENY: return;
 				case LoggerFilter::ACCEPT: return $this->append($event);
-				case LoggerFilter::NEUTRAL: $f = $f->getNext();
+				case LoggerFilter::NEUTRAL: $filter = $filter->getNext();
 			}
 		}
 		$this->append($event);

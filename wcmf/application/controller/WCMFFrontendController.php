@@ -21,7 +21,6 @@ namespace wcmf\application\controller;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\RightsManager;
 

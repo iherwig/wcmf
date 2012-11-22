@@ -27,7 +27,7 @@
  * <p>The <i>LoggerLevel</i> class may be subclassed to define a larger
  * level set.</p>
  *
- * @version $Revision: 1230524 $
+ * @version $Revision: 1379729 $
  * @package log4php
  * @since 0.5
  */
@@ -175,7 +175,7 @@ class LoggerLevel {
 	}
 	
 	/**
-	 * Return the syslog equivalent of this priority as an integer.
+	 * Return the syslog equivalent of this level as an integer.
 	 * @return integer
 	 */
 	public function getSyslogEquivalent() {

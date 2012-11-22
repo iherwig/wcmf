@@ -24,7 +24,6 @@ use wcmf\lib\core\Session;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\format\JSONFormat;
 use wcmf\lib\security\RightsManager;
@@ -143,7 +142,7 @@ class SearchController extends ListController {
       $tpl = null;
       // look for the object template in the request parameters
       foreach($this->_request->getValues() as $key => $value) {
-        if (ObjectId::isValidOID($key) && PersistenceFacade::getOIDParameter($key, 'type') == $type) {
+        if (ObjectId::isValidOID($key) && ObjectId::parse($key)->getType() == $type) {
           $tpl = &$value;
           // modify values to be searchable with LIKE
           $iter = new NodeValueIterator($tpl, false);

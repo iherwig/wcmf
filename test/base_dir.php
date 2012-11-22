@@ -1,3 +1,3 @@
 <?php
-  define("WCMF_BASE", realpath("../") . "/");
+  define('WCMF_BASE', realpath( dirname(__FILE__).'/..').'/');
 ?>

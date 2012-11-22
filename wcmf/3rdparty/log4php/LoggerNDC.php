@@ -89,7 +89,7 @@
  * 2009-09-13 19:04:27 DEBUG root : back and waiting for new connections in src/examples/php/ndc.php at 29
  * </pre>
  *	
- * @version $Revision: 1166187 $
+ * @version $Revision: 1350602 $
  * @package log4php 
  * @since 0.3
  */
@@ -153,14 +153,14 @@ class LoggerNDC {
 	 * context is available, then the empty string "" is returned.</p>
 	 * @return string The innermost diagnostic context.
 	 */
-	public static function peek(){
+	public static function peek() {
 		if(count(self::$stack) > 0) {
 			return end(self::$stack);
 		} else {
 			return '';
 		}
 	}
-  
+	
 	/**
 	 * Push new diagnostic context information for the current thread.
 	 *

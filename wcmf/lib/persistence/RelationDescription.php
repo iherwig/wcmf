@@ -19,7 +19,6 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * Instances of RelationDescription describe relations between different types

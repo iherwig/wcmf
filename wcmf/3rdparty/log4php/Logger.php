@@ -36,7 +36,7 @@ require dirname(__FILE__) . '/LoggerAutoloader.php';
  * 
  * @package    log4php
  * @license	   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
- * @version	   SVN: $Id: Logger.php 1241439 2012-02-07 12:17:21Z ihabunek $
+ * @version	   SVN: $Id: Logger.php 1395241 2012-10-07 08:28:53Z ihabunek $
  * @link	   http://logging.apache.org/log4php
  */
 class Logger {
@@ -170,7 +170,34 @@ class Logger {
 	 */
 	public function log(LoggerLevel $level, $message, $throwable = null) {
 		if($this->isEnabledFor($level)) {
-			$this->forcedLog($this->fqcn, $throwable, $level, $message);
+			$event = new LoggerLoggingEvent($this->fqcn, $this, $level, $message, null, $throwable);
+			$this->callAppenders($event);
+		}
+		
+		// Forward the event upstream if additivity is turned on
+		if(isset($this->parent) && $this->getAdditivity()) {
+			
+			// Use the event if already created
+			if (isset($event)) {
+				$this->parent->logEvent($event);
+			} else {
+				$this->parent->log($level, $message, $throwable);
+			}
+		}
+	}
+	
+	/**
+	 * Logs an already prepared logging event object. 
+	 * @param LoggerLoggingEvent $event
+	 */
+	public function logEvent(LoggerLoggingEvent $event) {
+		if($this->isEnabledFor($event->getLevel())) {
+			$this->callAppenders($event);
+		}
+		
+		// Forward the event upstream if additivity is turned on
+		if(isset($this->parent) && $this->getAdditivity()) {
+			$this->parent->logEvent($event);
 		}
 	}
 	
@@ -202,11 +229,24 @@ class Logger {
 	 * @param mixed $message message to log
 	 */
 	public function forcedLog($fqcn, $throwable, LoggerLevel $level, $message) {
-		if (!($throwable instanceof Exception)) {
-			$throwable = null;
+		$event = new LoggerLoggingEvent($fqcn, $this, $level, $message, null, $throwable);
+		$this->callAppenders($event);
+		
+		// Forward the event upstream if additivity is turned on
+		if(isset($this->parent) && $this->getAdditivity()) {
+			$this->parent->logEvent($event);
 		}
-		$this->callAppenders(new LoggerLoggingEvent($fqcn, $this, $level, $message, null, $throwable));
-	} 
+	}
+
+	/**
+	 * Forwards the given logging event to all linked appenders.
+	 * @param LoggerLoggingEvent $event
+	 */
+	public function callAppenders($event) {
+		foreach($this->appenders as $appender) {
+			$appender->doAppend($event);
+		}
+	}
 	
 	// ******************************************
 	// *** Checker methods                    ***
@@ -305,22 +345,6 @@ class Logger {
 	}
 	
 	/**
-	 * Forwards the given logging event to all linked appenders.
-	 * @param LoggerLoggingEvent $event 
-	 */
-	public function callAppenders($event) {
-		// Forward the event to each linked appender
-		foreach($this->appenders as $appender) {
-			$appender->doAppend($event);
-		}
-		
-		// Forward the event upstream if additivity is turned on
-		if(isset($this->parent) && $this->getAdditivity()) {
-			$this->parent->callAppenders($event);
-		}
-	}
-	
-	/**
 	 * Returns the appenders linked to this logger as an array.
 	 * @return array collection of appender names
 	 */
@@ -376,9 +400,12 @@ class Logger {
 	/**
 	 * Set the Logger level.
 	 *
-	 * @param LoggerLevel $level the level to set
+	 * Use LoggerLevel::getLevelXXX() methods to get a LoggerLevel object, e.g.
+	 * <code>$logger->setLevel(LoggerLevel::getLevelInfo());</code>
+	 *
+	 * @param LoggerLevel $level The level to set, or NULL to clear the logger level.
 	 */
-	public function setLevel($level) {
+	public function setLevel(LoggerLevel $level = null) {
 		$this->level = $level;
 	}
 	
@@ -390,9 +417,8 @@ class Logger {
 	 */
 	public function isAttached(LoggerAppender $appender) {
 		return isset($this->appenders[$appender->getName()]);
-	} 
-		   
-
+	}
+	
 	/**
 	 * Sets the parent logger.
 	 * @param Logger $logger
@@ -567,5 +593,4 @@ class Logger {
 	private static function isInitialized() {
 		return self::$initialized;
 	}
-	
 }

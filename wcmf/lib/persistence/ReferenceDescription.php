@@ -20,7 +20,6 @@ namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\AttributeDescription;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * Instances of ReferenceDescription describe reference attributes of PersistentObjects

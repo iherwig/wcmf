@@ -27,7 +27,6 @@ use wcmf\lib\model\Node;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * DeleteControllerTest.

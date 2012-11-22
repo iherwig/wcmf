@@ -22,7 +22,6 @@ use test\lib\TestUtil;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * NodeTest.

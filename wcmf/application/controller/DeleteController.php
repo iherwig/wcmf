@@ -24,7 +24,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;

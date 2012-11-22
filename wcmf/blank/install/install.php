@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-define("WCMF_BASE", realpath ("../../")."/");
+define('WCMF_BASE', realpath( dirname(__FILE__).'/../..').'/');
 error_reporting(E_ERROR | E_PARSE);
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
@@ -25,19 +25,18 @@ use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
-use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\security\RightsManager;
 use wcmf\lib\util\DBUtil;
 
 Log::info("initializing wCMF database tables...", "install");
 
 // get configuration from file
-$CONFIG_PATH = WCMF_BASE.'application/include/';
+$CONFIG_PATH = realpath('../config/').'/';
 $configFile = $CONFIG_PATH.'config.ini';
 Log::info("configuration file: ".$configFile, "install");
 $parser = InifileParser::getInstance();
-if (!$parser->parseIniFile($configFile, true))
-{
+if (!$parser->parseIniFile($configFile, true)) {
   Log::error($parser->getErrorMsg(), "install");
   exit();
 }
@@ -53,47 +52,47 @@ if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {
 $rightsManager = RightsManager::getInstance();
 $rightsManager->deactivate();
 
-// initialize database sequence, create default user/role
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-if(sizeof($persistenceFacade->getOIDs("Adodbseq")) == 0)
-{
-  Log::info("initializing database sequence...", "install");
-  $seq = $persistenceFacade->create("Adodbseq", BuildDepth::SINGLE);
-  $seq->setValue("id", 1);
-  $seq->save();
-}
-$userManager = ObjectFactory::getInsance('userManager');
-$userManager->beginTransaction();
-if (!$userManager->getRole("administrators"))
-{
-  Log::info("creating role with name 'administrators'...", "install");
-  $userManager->createRole("administrators");
-}
-if (!$userManager->getUser("admin"))
-{
-  Log::info("creating user with login 'admin' password 'admin'...", "install");
-  $userManager->createUser("Administrator", "", "admin", "admin", "admin");
-  $userManager->setUserProperty("admin", USER_PROPERTY_CONFIG, "admin.ini");
-}
-$admin = $userManager->getUser("admin");
-if ($admin && !$admin->hasRole('administrators'))
-{
-  Log::info("adding user 'admin' to role 'administrators'...", "install");
-  $userManager->addUserToRole("administrators", "admin");
-}
-$userManager->commitTransaction();
-
-// execute custom scripts from the directory 'custom-install'
-if (is_dir('custom-install'))
-{
-  $sqlScripts = FileUtil::getFiles('custom-install', '/[^_]+_.*\.sql$/', true);
-  sort($sqlScripts);
-  foreach ($sqlScripts as $script)
-  {
-    // extract the initSection from the filename
-    $initSection = array_shift(preg_split('/_/', basename($script)));
-    DBUtil::executeScript($script, $initSection);
+$userManager = ObjectFactory::getInstance('userManager');
+$transaction = $persistenceFacade->getTransaction();
+$transaction->begin();
+try {
+  // initialize database sequence, create default user/role
+  if(sizeof($persistenceFacade->getOIDs("Adodbseq")) == 0) {
+    Log::info("initializing database sequence...", "install");
+    $seq = $persistenceFacade->create("Adodbseq", BuildDepth::SINGLE);
+    $seq->setValue("id", 1);
   }
-}
 
-Log::info("done.", "install");
+  if (!$userManager->getRole("administrators")) {
+    Log::info("creating role with name 'administrators'...", "install");
+    $userManager->createRole("administrators");
+  }
+  if (!$userManager->getUser("admin")) {
+    Log::info("creating user with login 'admin' password 'admin'...", "install");
+    $userManager->createUser("Administrator", "", "admin", "admin", "admin");
+    $userManager->setUserProperty("admin", USER_PROPERTY_CONFIG, "admin.ini");
+  }
+  $admin = $userManager->getUser("admin");
+  if ($admin && !$admin->hasRole('administrators')) {
+    Log::info("adding user 'admin' to role 'administrators'...", "install");
+    $userManager->addUserToRole("administrators", "admin");
+  }
+
+  // execute custom scripts from the directory 'custom-install'
+  if (is_dir('custom-install')) {
+    $sqlScripts = FileUtil::getFiles('custom-install', '/[^_]+_.*\.sql$/', true);
+    sort($sqlScripts);
+    foreach ($sqlScripts as $script) {
+      // extract the initSection from the filename
+      $initSection = array_shift(preg_split('/_/', basename($script)));
+      DBUtil::executeScript($script, $initSection);
+    }
+  }
+  $transaction->commit();
+  Log::info("done.", "install");
+}
+catch (Exception $ex) {
+  Log::error($ex, "install");
+  $transaction->rollback();
+}

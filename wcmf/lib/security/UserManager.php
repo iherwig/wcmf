@@ -24,7 +24,6 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\security\Role;
 use wcmf\lib\security\User;
-use wcmf\lib\security\UserManager;
 
 /**
  * Some constants describing user properties
@@ -110,27 +109,6 @@ abstract class UserManager {
   public static function encryptPassword($password) {
     return md5($password);
   }
-
-  /**
-   * Start a transaction. If implemented, the UserManager will collect a number of actions
-   * and execute them on commitTransaction().
-   * If not implemented the UserManager will execute these actions on every call of the appropriate function.
-   */
-  public function beginTransaction() {}
-
-  /**
-   * Commit a transaction. If implemented, the UserManager will execute a number of actions
-   * that it collected since the call to beginTransaction().
-   * If not implemented the UserManager will execute these actions on every call of the appropriate function.
-   */
-  public function commitTransaction() {}
-
-  /**
-   * Rollback a transaction. If implemented, the UserManager will rollback a number of actions
-   * that it collected since the call to beginTransaction().
-   * If not implemented the UserManager will execute these actions on every call of the appropriate function.
-   */
-  public function rollbackTransaction() {}
 
   /**
    * Create a user login with a given password.

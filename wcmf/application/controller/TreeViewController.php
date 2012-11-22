@@ -23,7 +23,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\RightsManager;
 

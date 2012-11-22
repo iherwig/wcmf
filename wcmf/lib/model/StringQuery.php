@@ -23,8 +23,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\ObjectQuery;
-use wcmf\lib\model\StringQuery;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * StringQuery executes queries from a string representation. Queries are

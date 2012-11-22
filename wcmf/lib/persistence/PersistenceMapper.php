@@ -19,12 +19,12 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\persistence\Transaction;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
+use wcmf\lib\persistence\output\OutputStrategy;
 
  /**
  * PersistenceMapper defines the interface for all mapper classes.

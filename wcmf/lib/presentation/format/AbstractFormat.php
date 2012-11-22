@@ -21,7 +21,6 @@ namespace wcmf\lib\presentation\format;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * AbstractFormat maybe used as base class for specialized formats.
