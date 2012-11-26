@@ -18,7 +18,7 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\persistence\concurrency\ConcurrencyManager;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -64,7 +64,7 @@ class ConcurrencyController extends Controller
    */
   function executeKernel()
   {
-    $concurrencyManager = ConcurrencyManager::getInstance();
+    $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
     $oid = $this->_request->getValue('oid');
 
     // process actions

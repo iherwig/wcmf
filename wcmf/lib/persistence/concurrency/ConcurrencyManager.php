@@ -18,7 +18,6 @@
  */
 namespace wcmf\lib\persistence\concurrency;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
@@ -49,26 +48,14 @@ use wcmf\lib\security\RightsManager;
  */
 class ConcurrencyManager {
 
-  private static $_instance = null;
-  private function __construct() {}
-
-  private $_lockHandlerImpl = null;
+  private $_lockHandler = null;
 
   /**
-   * Returns an instance of the class.
-   * @return A reference to the only instance of the Singleton object
+   * Set the LockHandler used for locking.
+   * @param lockHandler
    */
-  public static function getInstance() {
-    if (!isset(self::$_instance) ) {
-      self::$_instance = new ConcurrencyManager();
-
-      $impl = ObjectFactory::getInstance('lockHandler');
-      if (!($impl instanceof LockHandler)) {
-        throw new ConfigurationException("The configured LockHandler does not implement LockHandler.");
-      }
-      self::$_instance->_lockHandlerImpl = $impl;
-    }
-    return self::$_instance;
+  public function setLockHandler(LockHandler $lockHandler) {
+    $this->_lockHandler = $lockHandler;
   }
 
   /**
@@ -92,7 +79,7 @@ class ConcurrencyManager {
       $currentState = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     }
 
-    $this->_lockHandlerImpl->aquireLock($oid, $type, $currentState);
+    $this->_lockHandler->aquireLock($oid, $type, $currentState);
   }
 
   /**
@@ -103,7 +90,7 @@ class ConcurrencyManager {
     if (!ObjectId::isValid($oid)) {
       throw new IllegalArgumentException("Invalid object id given");
     }
-    $this->_lockHandlerImpl->releaseLock($oid);
+    $this->_lockHandler->releaseLock($oid);
   }
 
   /**
@@ -114,14 +101,14 @@ class ConcurrencyManager {
     if (!ObjectId::isValid($oid)) {
       throw new IllegalArgumentException("Invalid object id given");
     }
-    $this->_lockHandlerImpl->releaseLocks($oid);
+    $this->_lockHandler->releaseLocks($oid);
   }
 
   /**
    * Release all locks for the current user.
    */
   public function releaseAllLocks() {
-    $this->_lockHandlerImpl->releaseAllLocks();
+    $this->_lockHandler->releaseAllLocks();
   }
 
   /**
@@ -129,7 +116,7 @@ class ConcurrencyManager {
    */
   public function checkPersist(PersistentObject $object) {
     $oid = $object->getOID();
-    $lock = $this->_lockHandlerImpl->getLock($oid);
+    $lock = $this->_lockHandler->getLock($oid);
     if ($lock != null) {
       $type = $lock->getType();
 

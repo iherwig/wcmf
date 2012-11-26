@@ -130,7 +130,7 @@ class ObjectFactory {
         // set the instance properties
         foreach ($configuration as $key => $value) {
           // exclude properties starting with __
-          if (strpos($value, '__') !== 0) {
+          if (strpos($key, '__') !== 0) {
             // replace variables denoted by a leading $
             if (strpos($value, '$') === 0) {
               $value = self::getInstance(preg_replace('/^\$/', '', $value));

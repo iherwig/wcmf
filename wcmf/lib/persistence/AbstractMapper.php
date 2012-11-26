@@ -20,6 +20,7 @@ namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -27,7 +28,6 @@ use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\security\RightsManager;
@@ -220,7 +220,8 @@ abstract class AbstractMapper {
       $object->afterDelete();
 
       // release any locks on the object
-      ConcurrencyManager::getInstance()->releaseLocks($oid);
+      $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
+      $concurrencyManager->releaseLocks($oid);
     }
     return $result;
   }

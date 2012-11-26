@@ -26,7 +26,6 @@ use wcmf\lib\persistence\Transaction;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
-use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 
 /**
  * Default implementation of Transaction.
@@ -332,11 +331,12 @@ class DefaultTransaction implements Transaction {
    */
   protected function processUpdates() {
     $updateOids = array_keys($this->_dirtyObjects);
+    $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
     while (sizeof($updateOids) > 0) {
       $key = array_shift($updateOids);
       Log::info("Process update on object: ".$key, __CLASS__);
       $object = $this->_dirtyObjects[$key];
-      ConcurrencyManager::getInstance()->checkPersist($object);
+      $concurrencyManager->checkPersist($object);
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->save($object);
@@ -351,11 +351,12 @@ class DefaultTransaction implements Transaction {
    */
   protected function processDeletes() {
     $deleteOids = array_keys($this->_deletedObjects);
+    $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
     while (sizeof($deleteOids) > 0) {
       $key = array_shift($deleteOids);
       Log::info("Process delete on object: ".$key, __CLASS__);
       $object = $this->_deletedObjects[$key];
-      ConcurrencyManager::getInstance()->checkPersist($object);
+      $concurrencyManager->checkPersist($object);
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->delete($object);

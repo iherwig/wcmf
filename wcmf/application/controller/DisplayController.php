@@ -83,7 +83,7 @@ class DisplayController extends Controller {
   protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rightsManager = RightsManager::getInstance();
-    $concurrencyManager = ConcurrencyManager::getInstance();
+    $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
