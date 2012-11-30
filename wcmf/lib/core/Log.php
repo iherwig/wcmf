@@ -141,8 +141,7 @@ class Log {
   public static function getLogger($category) {
     $logger = Logger::getLogger($category);
     if (!self::$_initialized) {
-      $logger->configure('log4php.properties');
-      self::$_initialized = true;
+      throw new ConfigurationException("Logging is not configured. Please call Log::configure().");
     }
     return $logger;
   }
@@ -153,6 +152,7 @@ class Log {
    */
   public static function configure($file) {
     Logger::configure($file);
+    self::$_initialized = true;
   }
 }
 ?>

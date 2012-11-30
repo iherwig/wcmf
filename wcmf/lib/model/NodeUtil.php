@@ -178,16 +178,13 @@ class NodeUtil {
   }
 
   /**
-   * Get the display value for a Node defined by the 'display_value' property that may reference values of subnodes.
+   * Get the display value for a Node defined by the 'display_value' property.
    * If the 'display_value' is an array ('|' separated strings) the pieces will be put together with ' - '.
    * If search for 'display_value' gives no result the function returns an empty string.
-   * Example: 'name|Comment/text' shows the name of the Node together with the text of the first Comment child
-   * @note If display_value is ambiguous because a parent has more than one children of a given type than the first child of
-   *       that type will be chosen for display.
+   * Example: 'name|text' shows the name of the Node together with the content of the text attribute
    * @param node A reference to the Node to display
    * @param useDisplayType True/False wether to use the display types that are associated with the values which the display value contains [default: false]
    * @param language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
-   * @param values An assoziative array holding key value pairs that the display node's values should match [maybe null].
    * @note The display type is configured via the display_type property of a value. It describes how the value should be displayed.
    *       The description is of the form @code type @endcode or @code type[attributes] @endcode
    *       - type: text|image|link
@@ -195,8 +192,8 @@ class NodeUtil {
    * @return The display string
    * @see ValueRenderer::render
    */
-  public static function getDisplayValue(Node $node, $useDisplayType=false, $language=null, $values=null) {
-    return join(' - ', array_values(self::getDisplayValues($node, $useDisplayType, $language, $values)));
+  public static function getDisplayValue(Node $node, $useDisplayType=false, $language=null) {
+    return join(' - ', array_values(self::getDisplayValues($node, $useDisplayType, $language)));
   }
 
   /**
@@ -204,10 +201,9 @@ class NodeUtil {
    * @param node A reference to the Node to display
    * @param useDisplayType True/False wether to use the display types that are associated with the values which the display value contains [default: false]
    * @param language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
-   * @param values An assoziative array holding key value pairs that the display node's values should match [maybe null].
    * @return The display array
    */
-  public static function getDisplayValues(Node $node, $useDisplayType=false, $language=null, $values=null) {
+  public static function getDisplayValues(Node $node, $useDisplayType=false, $language=null) {
     // localize node if requested
     $localization = Localization::getInstance();
     if ($language != null) {
@@ -215,58 +211,49 @@ class NodeUtil {
     }
 
     $displayArray = array();
-    $pathToShow = $node->getProperty('display_value');
-    if (!strPos($pathToShow, '|')) {
-      $pathToShowPieces = array($pathToShow);
-    }
-    else {
-      $pathToShowPieces = preg_split('/\|/', $pathToShow);
-    }
-
-    foreach($pathToShowPieces as $pathToShowPiece) {
-      $tmpDisplay = '';
-      $inputType = ''; // needed for the translation of a list value
-      if ($pathToShowPiece != '') {
-        $curNode = $node;
-        $mapper = $curNode->getMapper();
-        $pieces = preg_split('/\//', $pathToShowPiece);
-        foreach ($pieces as $curPiece) {
-          if (in_array($curPiece, $curNode->getValueNames())) {
-            // we found a matching attribute/element
-            $attribute = $mapper->getAttribute($curPiece);
+    $displayValueDef = $node->getProperty('display_value');
+    if (strlen($displayValueDef) > 0) {
+      $displayValuesNames = preg_split('/\|/', $displayValueDef);
+      foreach($displayValuesNames as $displayValueName) {
+        $tmpDisplay = '';
+        $inputType = ''; // needed for the translation of a list value
+        if ($displayValueName != '') {
+          $curNode = $node;
+          $mapper = $curNode->getMapper();
+          if (in_array($displayValueName, $curNode->getPersistentValueNames())) {
+            $attribute = $mapper->getAttribute($displayValueName);
             $inputType = $attribute->getInputType();
             $displayType = $attribute->getDisplayType();
-            $tmpDisplay = $curNode->getValue($curPiece);
-            break;
+            $tmpDisplay = $curNode->getValue($displayValueName);
           }
         }
-      }
 
-      $controlRenderer = ObjectFactory::getInstance('controlRenderer');
-      $control = $controlRenderer->getControl($inputType);
-      if ($control != null) {
-        $tmpDisplay = $control->translateValue($tmpDisplay, $inputType, false, null, $language);
-      }
-      if (strlen($tmpDisplay) == 0) {
-        $tmpDisplay = $node->getOID();
-      }
+        $controlRenderer = ObjectFactory::getInstance('controlRenderer');
+        $control = $controlRenderer->getControl($inputType);
+        if ($control != null) {
+          $tmpDisplay = $control->translateValue($tmpDisplay, $inputType, false, null, $language);
+        }
+        if (strlen($tmpDisplay) == 0) {
+          $tmpDisplay = $node->getOID();
+        }
 
-      if ($useDisplayType) {
-        // get type and attributes from definition
-        preg_match_all("/[\w][^\[\]]+/", $displayType, $matches);
-        if (sizeOf($matches[0]) > 0) {
-          list($displayType, $attributes) = $matches[0];
+        if ($useDisplayType) {
+          // get type and attributes from definition
+          preg_match_all("/[\w][^\[\]]+/", $displayType, $matches);
+          if (sizeOf($matches[0]) > 0) {
+            list($displayType, $attributes) = $matches[0];
+          }
+          if (!$displayType || $displayType == '') {
+            $displayType = 'text';
+          }
+          $valueRenderer = ObjectFactory::getInstance('valueRenderer');
+          $renderer = $valueRenderer->getControl($displayType);
+          if ($renderer != null) {
+            $tmpDisplay = $renderer->render($tmpDisplay, $attributes);
+          }
         }
-        if (!$displayType || $displayType == '') {
-          $displayType = 'text';
-        }
-        $valueRenderer = ObjectFactory::getInstance('valueRenderer');
-        $renderer = $valueRenderer->getControl($displayType);
-        if ($renderer != null) {
-          $tmpDisplay = $renderer->render($tmpDisplay, $attributes);
-        }
+        $displayArray[$displayValueName] = $tmpDisplay;
       }
-      $displayArray[$pathToShowPiece] = $tmpDisplay;
     }
     return $displayArray;
   }
@@ -403,7 +390,7 @@ class NodeUtil {
    */
   public static function removeNonDisplayValues(Node $node) {
     $displayValues = $node->getDisplayValueNames($node);
-    $valueNames = $node->getValueNames();
+    $valueNames = $node->getPersistentValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $displayValues)) {
         $node->removeValue($name);
@@ -418,7 +405,7 @@ class NodeUtil {
   public static function removeNonPkValues(Node $node) {
     $mapper = $node->getMapper();
     $pkValues = $mapper->getPkNames();
-    $valueNames = $node->getValueNames();
+    $valueNames = $node->getPersistentValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $pkValues)) {
         $node->removeValue($name);

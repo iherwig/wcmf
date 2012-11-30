@@ -30,16 +30,16 @@ class ObjectFactoryTest extends \PHPUnit_Framework_TestCase {
 
   public function testDIShared() {
     $obj = ObjectFactory::getInstance('persistenceFacade');
-    $this->assertEquals('wcmf\lib\persistence\PersistenceFacadeImpl', get_class($obj));
+    $this->assertEquals('wcmf\lib\persistence\DefaultPersistenceFacade', get_class($obj));
     $this->assertFalse($obj->isLogging());
 
     // modify instance
-    $obj->enableLogging(new LogOutputStrategy());
+    $obj->setLogging(true);
     $this->assertTrue($obj->isLogging());
 
     // get second time (same instance)
     $obj2 = ObjectFactory::getInstance('persistenceFacade');
-    $this->assertEquals('wcmf\lib\persistence\PersistenceFacadeImpl', get_class($obj2));
+    $this->assertEquals('wcmf\lib\persistence\DefaultPersistenceFacade', get_class($obj2));
     $this->assertTrue($obj2->isLogging());
   }
 

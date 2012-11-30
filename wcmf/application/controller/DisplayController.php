@@ -25,7 +25,6 @@ use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
-use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\RightsManager;
@@ -105,7 +104,7 @@ class DisplayController extends Controller {
       }
 
       if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug(nl2br($node->toString()), __CLASS__);
+        Log::debug(nl2br($node->__toString()), __CLASS__);
       }
 
       // translate values if requested

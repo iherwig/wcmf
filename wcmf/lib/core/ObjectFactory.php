@@ -135,6 +135,14 @@ class ObjectFactory {
             if (strpos($value, '$') === 0) {
               $value = self::getInstance(preg_replace('/^\$/', '', $value));
             }
+            // convert booleans
+            $lower = strtolower($value);
+            if ($lower === 'true') {
+              $value = true;
+            }
+            if ($lower === 'false') {
+              $value = false;
+            }
             // set the property
             $setterName = self::getSetterName($key);
             if (method_exists($obj, $setterName)) {
