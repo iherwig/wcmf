@@ -136,12 +136,14 @@ class ObjectFactory {
               $value = self::getInstance(preg_replace('/^\$/', '', $value));
             }
             // convert booleans
-            $lower = strtolower($value);
-            if ($lower === 'true') {
-              $value = true;
-            }
-            if ($lower === 'false') {
-              $value = false;
+            if (is_string($value)) {
+              $lower = strtolower($value);
+              if ($lower === 'true') {
+                $value = true;
+              }
+              if ($lower === 'false') {
+                $value = false;
+              }
             }
             // set the property
             $setterName = self::getSetterName($key);

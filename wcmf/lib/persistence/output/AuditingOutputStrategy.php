@@ -66,7 +66,7 @@ class AuditingOutputStrategy implements OutputStrategy {
         foreach($valueNames as $name) {
           $values[$name]['name'] = $name;
           $values[$name]['new'] = $obj->getValue($name);
-          $values[$name]['old'] = $orignialValues[$name];
+          $values[$name]['old'] = isset($orignialValues[$name]) ? $orignialValues[$name] : null;
         }
         // make diff string
         $diff = '';

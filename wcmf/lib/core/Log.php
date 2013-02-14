@@ -18,6 +18,8 @@
  */
 namespace wcmf\lib\core;
 
+use wcmf\lib\config\ConfigurationException;
+
 use \Logger;
 
 require_once(WCMF_BASE."wcmf/3rdparty/log4php/Logger.php");

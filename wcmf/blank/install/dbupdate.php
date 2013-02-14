@@ -28,6 +28,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\util\DBUtil;
 
+Log::configure('log4php.properties');
 Log::info("updating wCMF database tables...", "dbupdate");
 
 // get configuration from file

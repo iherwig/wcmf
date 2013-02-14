@@ -187,14 +187,16 @@ class LoginController extends Controller {
       }
     }
     elseif ($request->getAction() == 'logout') {
-      // delete cookies (also clientside)
-      setcookie($this->getCookieName('user'), '', time()-3600, '/');
-      setcookie($this->getCookieName('password'), '', time()-3600, '/');
-      setcookie(session_name(), '', time()-3600, '/');
-      print '<script type="text/javascript">
-      document.cookie = "'.$this->getCookieName('user').'=; expires=Wed, 1 Mar 2006 00:00:00";
-      document.cookie = "'.$this->getCookieName('password').'=; expires=Wed, 1 Mar 2006 00:00:00";
-      </script>';
+      // delete cookies (also clientside) / avoid header warning
+      if (!headers_sent()) {
+        setcookie($this->getCookieName('user'), '', time()-3600, '/');
+        setcookie($this->getCookieName('password'), '', time()-3600, '/');
+        setcookie(session_name(), '', time()-3600, '/');
+        print '<script type="text/javascript">
+        document.cookie = "'.$this->getCookieName('user').'=; expires=Wed, 1 Mar 2006 00:00:00";
+        document.cookie = "'.$this->getCookieName('password').'=; expires=Wed, 1 Mar 2006 00:00:00";
+        </script>';
+      }
 
       // clear all session data
       $session->destroy();

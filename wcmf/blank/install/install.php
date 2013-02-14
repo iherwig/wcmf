@@ -29,6 +29,7 @@ use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\security\RightsManager;
 use wcmf\lib\util\DBUtil;
 
+Log::configure('log4php.properties');
 Log::info("initializing wCMF database tables...", "install");
 
 // get configuration from file
