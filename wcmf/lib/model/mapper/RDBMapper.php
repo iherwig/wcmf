@@ -664,7 +664,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       foreach ($relationDescs as $curRelationDesc) {
         if ( ($curRelationDesc->getHierarchyType() == 'child' && ($buildDepth > 0 ||
           // if BuildDepth::REQUIRED only construct shared/composite children with min multiplicity > 0
-          ($buildDepth == BuildDepth::REQUIRED && $curRelationDesc->getOtherMinMultiplicity() > 0 && $curRelationDesc->getThisAggregationKind() != 'none')
+          ($buildDepth == BuildDepth::REQUIRED && $curRelationDesc->getOtherMinMultiplicity() > 0 && $curRelationDesc->getOtherAggregationKind() != 'none')
         )) ) {
           $childObject = null;
           if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
