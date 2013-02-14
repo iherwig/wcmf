@@ -1,1 +1,1 @@
-java -Djava.library.path=../../../generator/lib/ -jar ../../../generator/ChronosGenerator.jar ../../../generator/cartridge/Wcmf/workflow/wcmf.oaw -basePath=../../../generator/ -propertyFile=workflow.properties
+java -Djava.library.path=C:/Users/ingo/Daten/web/olympos/generator/dist/lib -jar C:/Users/ingo/Daten/web/olympos/generator/dist/ChronosGenerator.jar ../../../generator/cartridge/Wcmf/workflow/wcmf.oaw -basePath=C:/Users/ingo/Daten/web/olympos/generator/dist/ -propertyFile=workflow.properties
