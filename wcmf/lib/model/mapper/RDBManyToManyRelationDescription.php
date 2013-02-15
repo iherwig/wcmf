@@ -139,7 +139,7 @@ class RDBManyToManyRelationDescription extends RelationDescription {
    * @see RelationDescription::getOtherAggregationKind
    */
   public function getOtherAggregationKind() {
-    return $this->thisEndRelation->otherAggregationKind;
+    return $this->otherEndRelation->otherAggregationKind;
   }
 
   /**
@@ -153,7 +153,7 @@ class RDBManyToManyRelationDescription extends RelationDescription {
    * @see RelationDescription::getOtherNavigability
    */
   public function getOtherNavigability() {
-    return $this->thisEndRelation->otherNavigability;
+    return $this->otherEndRelation->otherNavigability;
   }
 
   /**

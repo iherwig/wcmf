@@ -63,7 +63,7 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
 
     $page = $persistenceFacade->load(ObjectId::parse('Page:100000'));
     $this->assertEquals(100000, $page->getSortkey());
-    $this->assertEquals(100000, $page->getSortkeyPage());
+    $this->assertEquals(100000, $page->getSortkeyParentPage());
     $this->assertEquals(100000, $page->getSortkeyAuthor());
 
     TestUtil::runAnonymous(false);
@@ -133,12 +133,12 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $pagePartially = $persistenceFacade->load(ObjectId::parse('Page:100000'), BuildDepth::SINGLE, array('Page' => array()));
-    $this->assertFalse($pagePartially->hasValue('sortkey_page'));
-    $this->assertEquals(null, $pagePartially->getSortkeyPage());
+    $this->assertFalse($pagePartially->hasValue('sortkey_parentpage'));
+    $this->assertEquals(null, $pagePartially->getSortkeyParentPage());
 
     $pageComplete = $persistenceFacade->load(ObjectId::parse('Page:100000'), BuildDepth::SINGLE);
-    $this->assertTrue($pagePartially->hasValue('sortkey_page'));
-    $this->assertEquals(100000, $pageComplete->getSortkeyPage());
+    $this->assertTrue($pagePartially->hasValue('sortkey_parentpage'));
+    $this->assertEquals(100000, $pageComplete->getSortkeyParentPage());
 
     TestUtil::runAnonymous(false);
   }
