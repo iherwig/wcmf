@@ -18,6 +18,8 @@
  */
 namespace test\tests\model;
 
+use test\lib\ArrayDataSet;
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeIterator;
@@ -30,27 +32,16 @@ use wcmf\lib\persistence\ObjectId;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class IteratorTest extends \PHPUnit_Framework_TestCase {
+class IteratorTest extends DatabaseTestCase {
 
   private $_pageOidStr = 'Page:12345';
 
-  protected function setUp() {
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
-  }
-
-  protected function tearDown() {
-    TestUtil::runAnonymous(true);
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStr));
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'Page' => array(
+        array('id' => 12345),
+      ),
+    ));
   }
 
   public function testNodeIterater() {

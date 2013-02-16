@@ -18,6 +18,8 @@
  */
 namespace test\tests\i18n;
 
+use test\lib\ArrayDataSet;
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
@@ -29,7 +31,7 @@ use wcmf\lib\persistence\ObjectId;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LocalizationTest extends \PHPUnit_Framework_TestCase {
+class LocalizationTest extends DatabaseTestCase {
 
   const EXPECTED_DEFAULT_LANGUAGE_CODE = 'en';
   const EXPECTED_DEFAULT_LANGUAGE_NAME = 'English';
@@ -37,32 +39,15 @@ class LocalizationTest extends \PHPUnit_Framework_TestCase {
   const TEST_OID2 = 'UserRDB:302';
   const TRANSLATION_TYPE = 'Translation';
 
-  protected function setUp() {
-    TestUtil::runAnonymous(true);
-
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    $user1 = TestUtil::createTestObject(ObjectId::parse(self::TEST_OID1), array());
-    $user1->setValue('name', 'Herwig');
-    $user1->setValue('firstname', 'Ingo');
-    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID2), array());
-    $transaction->commit();
-
-    TestUtil::runAnonymous(false);
-  }
-
-  protected function tearDown() {
-    TestUtil::runAnonymous(true);
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID1));
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID2));
-    $localization = Localization::getInstance();
-    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID1));
-    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID2));
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'User' => array(
+        array('id' => 301, 'name' => 'Herwig', 'firstname' => 'Ingo'),
+        array('id' => 302),
+      ),
+      'Translation' => array(
+      ),
+    ));
   }
 
   public function testGetDefaultLanguage() {
