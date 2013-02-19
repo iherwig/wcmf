@@ -1,6 +1,6 @@
 Options +FollowSymlinks
 RewriteEngine On
-RewriteBase /ingo/wCMF/framework/new_roles/cms/application
+RewriteBase /ingo/wCMF/framework/testapp/cms/application
 
 # rest
 # we expect urls like:

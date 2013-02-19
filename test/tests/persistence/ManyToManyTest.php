@@ -18,7 +18,7 @@
  */
 namespace test\tests\persistence;
 
-use new_roles\application\model\wcmf\RoleRDB;
+use testapp\application\model\wcmf\RoleRDB;
 
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;

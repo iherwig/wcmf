@@ -18,12 +18,12 @@
  */
 namespace test\tests\persistence;
 
-use new_roles\application\model\Author;
-use new_roles\application\model\AuthorRDBMapper;
-use new_roles\application\model\DocumentRDBMapper;
-use new_roles\application\model\ImageRDBMapper;
-use new_roles\application\model\Page;
-use new_roles\application\model\PageRDBMapper;
+use testapp\application\model\Author;
+use testapp\application\model\AuthorRDBMapper;
+use testapp\application\model\DocumentRDBMapper;
+use testapp\application\model\ImageRDBMapper;
+use testapp\application\model\Page;
+use testapp\application\model\PageRDBMapper;
 
 use test\lib\TestUtil;
 use wcmf\lib\persistence\Criteria;

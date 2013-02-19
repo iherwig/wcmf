@@ -6,7 +6,7 @@ use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
 use wcmf\lib\presentation\Application;
 
-$GLOBALS['CONFIG_PATH'] = WCMF_BASE.'test/config/';
+$GLOBALS['CONFIG_PATH'] = WCMF_BASE.'testapp/config/';
 Log::configure($GLOBALS['CONFIG_PATH'].'log4php.properties');
 
 $configFile = $GLOBALS['CONFIG_PATH'].'config.ini';

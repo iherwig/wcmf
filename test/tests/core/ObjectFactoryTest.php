@@ -19,7 +19,6 @@
 namespace test\tests\core;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\output\LogOutputStrategy;
 
 /**
  * JSONFormatTest.

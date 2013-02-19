@@ -18,7 +18,7 @@
  */
 namespace test\tests\persistence;
 
-use new_roles\application\model\Page;
+use testapp\application\model\Page;
 
 use test\lib\TestUtil;
 use wcmf\lib\core\Log;

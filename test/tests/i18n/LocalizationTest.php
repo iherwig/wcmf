@@ -41,11 +41,11 @@ class LocalizationTest extends DatabaseTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'User' => array(
+      'user' => array(
         array('id' => 301, 'name' => 'Herwig', 'firstname' => 'Ingo'),
         array('id' => 302),
       ),
-      'Translation' => array(
+      'translation' => array(
       ),
     ));
   }
