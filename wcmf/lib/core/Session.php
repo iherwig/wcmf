@@ -171,4 +171,12 @@ class Session {
       session_destroy();
     }
   }
+
+  /**
+   * Get session variable name for the authenticated user.
+   * @return The variable name.
+   */
+  private static function getAuthUserVarname() {
+    return 'auth_user_'.Application::getId();
+  }
 }

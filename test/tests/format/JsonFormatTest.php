@@ -19,9 +19,9 @@
 namespace test\tests\format;
 
 use testapp\application\model\Author;
-use testapp\application\model\Document;
+use testapp\application\model\Book;
+use testapp\application\model\Chapter;
 use testapp\application\model\Image;
-use testapp\application\model\Page;
 
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;
@@ -79,7 +79,7 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
-                'oid' => 'Document:123',
+                'oid' => 'Book:123',
                 'lastChange' => 1234567890,
                 'attributes' => array(
                     'title' => 'Matrix - The Original'
@@ -93,10 +93,10 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
 
-    $document = $data['Document:123'];
-    $this->assertTrue($document instanceof Document);
-    $this->assertEquals('Document:123', $document->getOID()->__toString());
-    $this->assertEquals('Matrix - The Original', $document->getValue('title'));
+    $book = $data['Book:123'];
+    $this->assertTrue($book instanceof Book);
+    $this->assertEquals('Book:123', $book->getOID()->__toString());
+    $this->assertEquals('Matrix - The Original', $book->getValue('title'));
 
     $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
     $this->assertFalse(isset($data['attributes']));
@@ -108,29 +108,29 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
-                'oid' => 'Document:123',
+                'oid' => 'Book:123',
                 'lastChange' => 1234567890,
                 'attributes' => array(
                     'title' => 'Matrix - The Original',
-                    'Page' => array(
+                    'Chapter' => array(
                         array(
-                            'oid' => 'Page:1',
+                            'oid' => 'Chapter:1',
                             'attributes' => array(
-                                'name' => 'Page 1',
-                                'ChildPage' => array(
+                                'name' => 'Chapter 1',
+                                'SubChapter' => array(
                                     array(
-                                        'oid' => 'Page:3',
+                                        'oid' => 'Chapter:3',
                                         'attributes' => array(
-                                            'name' => 'Page 3'
+                                            'name' => 'Chapter 3'
                                         )
                                     )
                                 )
                             )
                         ),
                         array(
-                            'oid' => 'Page:2',
+                            'oid' => 'Chapter:2',
                             'attributes' => array(
-                                'name' => 'Page 2',
+                                'name' => 'Chapter 2',
                                 'NormalImage' => array(
                                     array(
                                         'oid' => 'Image:12',
@@ -158,24 +158,24 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
 
-    $document = $data['Document:123'];
-    $this->assertTrue($document instanceof Document);
-    $this->assertEquals('Document:123', $document->getOID()->__toString());
+    $book = $data['Book:123'];
+    $this->assertTrue($book instanceof Book);
+    $this->assertEquals('Book:123', $book->getOID()->__toString());
 
-    $pages = $document->getValue('Page');
-    $this->assertEquals(2, sizeof($pages));
+    $chapters = $book->getValue('Chapter');
+    $this->assertEquals(2, sizeof($chapters));
 
-    $page1 = $pages[0];
-    $this->assertEquals('Page:1', $page1->getOID()->__toString());
+    $chapter1 = $chapters[0];
+    $this->assertEquals('Chapter:1', $chapter1->getOID()->__toString());
 
-    $childPages = $page1->getValue('ChildPage');
-    $this->assertEquals(1, sizeof($childPages));
-    $this->assertEquals('Page:3', $childPages[0]->getOID()->__toString());
+    $subChapters = $chapter1->getValue('SubChapter');
+    $this->assertEquals(1, sizeof($subChapters));
+    $this->assertEquals('Chapter:3', $subChapters[0]->getOID()->__toString());
 
-    $page2 = $pages[1];
-    $this->assertEquals('Page:2', $page2->getOID()->__toString());
+    $chapter2 = $chapters[1];
+    $this->assertEquals('Chapter:2', $chapter2->getOID()->__toString());
 
-    $author = $page2->getValue('Author');
+    $author = $chapter2->getValue('Author');
     $this->assertEquals('Author:1', $author->getOID()->__toString());
   }
 
@@ -184,25 +184,25 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'list' => array(
-                    'type' => 'Page',
+                    'type' => 'Chapter',
                     'content' => array(
-                        'contentType' => 'Page',
+                        'contentType' => 'Chapter',
                         array(
-                            'oid' => 'Page:1',
+                            'oid' => 'Chapter:1',
                             'attributes' => array(
-                                'name' => 'Page 1'
+                                'name' => 'Chapter 1'
                             )
                         ),
                         array(
-                            'oid' => 'Page:2',
+                            'oid' => 'Chapter:2',
                             'attributes' => array(
-                                'name' => 'Page 2'
+                                'name' => 'Chapter 2'
                             )
                         ),
                         array(
-                            'oid' => 'Page:3',
+                            'oid' => 'Chapter:3',
                             'attributes' => array(
-                                'name' => 'Page 3'
+                                'name' => 'Chapter 3'
                             )
                         )
                     )
@@ -219,12 +219,12 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue(is_array($list));
     $this->assertEquals(2, sizeof(array_keys($list)));
 
-    $pages = $list['content'];
-    $this->assertEquals(4, sizeof($pages));
-    $this->assertEquals('Page', $pages['contentType']);
-    $this->assertEquals('Page:1', $pages['Page:1']->getOID()->__toString());
-    $this->assertEquals('Page:2', $pages['Page:2']->getOID()->__toString());
-    $this->assertEquals('Page:3', $pages['Page:3']->getOID()->__toString());
+    $chapters = $list['content'];
+    $this->assertEquals(4, sizeof($chapters));
+    $this->assertEquals('Chapter', $chapters['contentType']);
+    $this->assertEquals('Chapter:1', $chapters['Chapter:1']->getOID()->__toString());
+    $this->assertEquals('Chapter:2', $chapters['Chapter:2']->getOID()->__toString());
+    $this->assertEquals('Chapter:3', $chapters['Chapter:3']->getOID()->__toString());
   }
 
   public function testSerializeSimple() {
@@ -268,13 +268,13 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testSerializeNodeSimple() {
-    $document = new Document(new ObjectId('Document', array(123)));
-    $document->setValue('title', 'Matrix - The Original');
-    $document->setValue('modified', '2011-10-01 00:01:01');
+    $book = new Book(new ObjectId('Book', array(123)));
+    $book->setValue('title', 'Matrix - The Original');
+    $book->setValue('modified', '2011-10-01 00:01:01');
 
     $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
-                'Document:123' => $document,
+                'Book:123' => $book,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
             ));
 
@@ -285,8 +285,8 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
     $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
-    $this->assertEquals('Document:123', $data['oid']);
-    $this->assertEquals('Document', $data['className']);
+    $this->assertEquals('Book:123', $data['oid']);
+    $this->assertEquals('Book', $data['className']);
     $this->assertEquals(false, $data['isReference']);
     $this->assertEquals(1317420061, $data['lastChange']);
 
@@ -296,16 +296,16 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testSerializeNodeHierarchy() {
-    $document = new Document(new ObjectId('Document', array(123)));
-    $document->setValue('title', 'Matrix - The Original');
-    $document->setValue('modified', 1234567890);
+    $book = new Book(new ObjectId('Book', array(123)));
+    $book->setValue('title', 'Matrix - The Original');
+    $book->setValue('modified', 1234567890);
 
-    $page1 = new Page(new ObjectId('Page', array(1)));
-    $page1->setValue('name', 'Page 1');
-    $page2 = new Page(new ObjectId('Page', array(2)));
-    $page2->setValue('name', 'Page 2');
-    $page3 = new Page(new ObjectId('Page', array(3)));
-    $page3->setValue('name', 'Page 3');
+    $chapter1 = new Chapter(new ObjectId('Chapter', array(1)));
+    $chapter1->setValue('name', 'Chapter 1');
+    $chapter2 = new Chapter(new ObjectId('Chapter', array(2)));
+    $chapter2->setValue('name', 'Chapter 2');
+    $chapter3 = new Chapter(new ObjectId('Chapter', array(3)));
+    $chapter3->setValue('name', 'Chapter 3');
 
     $image = new Image(new ObjectId('Image', array(12)));
     $image->setValue('file', 'image.png');
@@ -313,16 +313,16 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $author = new Author(new ObjectId('Author', array(1)));
     $author->setValue('name', 'Unknown');
 
-    $page1->addNode($page3, 'ChildPage');
-    $page2->addNode($image, 'NormalImage');
-    $page2->addNode($author, 'Author');
+    $chapter1->addNode($chapter3, 'SubChapter');
+    $chapter2->addNode($image, 'NormalImage');
+    $chapter2->addNode($author, 'Author');
 
-    $document->addNode($page1, 'Page');
-    $document->addNode($page2, 'Page');
+    $book->addNode($chapter1, 'Chapter');
+    $book->addNode($chapter2, 'Chapter');
 
     $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
-                'Document:123' => $document,
+                'Book:123' => $book,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
         ));
 
@@ -333,51 +333,51 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
     $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
-    $this->assertEquals('Document:123', $data['oid']);
-    $this->assertEquals('Document', $data['className']);
+    $this->assertEquals('Book:123', $data['oid']);
+    $this->assertEquals('Book', $data['className']);
     $this->assertEquals(false, $data['isReference']);
 
-    $documentAttributes = $data['attributes'];
-    $this->assertTrue(is_array($documentAttributes));
-    $this->assertEquals('Matrix - The Original', $documentAttributes['title']);
+    $bookAttributes = $data['attributes'];
+    $this->assertTrue(is_array($bookAttributes));
+    $this->assertEquals('Matrix - The Original', $bookAttributes['title']);
 
-    $pages = $documentAttributes['Page'];
-    $this->assertTrue(is_array($pages));
-    $this->assertEquals(2, sizeof($pages));
+    $chapters = $bookAttributes['Chapter'];
+    $this->assertTrue(is_array($chapters));
+    $this->assertEquals(2, sizeof($chapters));
 
-    $page1 = $pages[0];
-    $this->assertEquals('Page:1', $page1['oid']);
-    $page1Attributes = $page1['attributes'];
-    $this->assertEquals('Page 1', $page1Attributes['name']);
+    $chapter1 = $chapters[0];
+    $this->assertEquals('Chapter:1', $chapter1['oid']);
+    $chapter1Attributes = $chapter1['attributes'];
+    $this->assertEquals('Chapter 1', $chapter1Attributes['name']);
 
-    $childPages = $page1Attributes['ChildPage'];
-    $this->assertEquals(1, sizeof($childPages));
-    $childPage = $childPages[0];
-    $this->assertEquals('Page:3', $childPage['oid']);
-    $childPageAttributes = $childPage['attributes'];
-    $this->assertEquals('Page 3', $childPageAttributes['name']);
+    $subChapters = $chapter1Attributes['SubChapter'];
+    $this->assertEquals(1, sizeof($subChapters));
+    $subChapter = $subChapters[0];
+    $this->assertEquals('Chapter:3', $subChapter['oid']);
+    $subChapterAttributes = $subChapter['attributes'];
+    $this->assertEquals('Chapter 3', $subChapterAttributes['name']);
 
-    $page2 = $pages[1];
-    $this->assertEquals('Page:2', $page2['oid']);
-    $page2Attributes = $page2['attributes'];
-    $this->assertEquals('Page 2', $page2Attributes['name']);
+    $chapter2 = $chapters[1];
+    $this->assertEquals('Chapter:2', $chapter2['oid']);
+    $chapter2Attributes = $chapter2['attributes'];
+    $this->assertEquals('Chapter 2', $chapter2Attributes['name']);
 
-    $author = $page2Attributes['Author'];
+    $author = $chapter2Attributes['Author'];
     $this->assertEquals('Author:1', $author['oid']);
     $authorAttributes = $author['attributes'];
     $this->assertEquals('Unknown', $authorAttributes['name']);
   }
 
   public function testSerializeNodeList() {
-    $page1 = new Page(new ObjectId('Page', array(1)));
-    $page1->setValue('name', 'Page 1');
-    $page2 = new Page(new ObjectId('Page', array(2)));
-    $page2->setValue('name', 'Page 2');
-    $page3 = new Page(new ObjectId('Page', array(3)));
-    $page3->setValue('name', 'Page 3');
+    $chapter1 = new Chapter(new ObjectId('Chapter', array(1)));
+    $chapter1->setValue('name', 'Chapter 1');
+    $chapter2 = new Chapter(new ObjectId('Chapter', array(2)));
+    $chapter2->setValue('name', 'Chapter 2');
+    $chapter3 = new Chapter(new ObjectId('Chapter', array(3)));
+    $chapter3->setValue('name', 'Chapter 3');
 
-    $list = array('type' => 'Page',
-        'content' => array('contentType' => 'Page', $page1, $page2, $page3));
+    $list = array('type' => 'Chapter',
+        'content' => array('contentType' => 'Chapter', $chapter1, $chapter2, $chapter3));
 
     $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
@@ -395,16 +395,16 @@ class JsonFormatTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue(is_array($list));
     $this->assertEquals(2, sizeof(array_keys($list)));
 
-    $pages = $list['content'];
-    $this->assertEquals(4, sizeof($pages));
-    $this->assertEquals('Page', $pages['contentType']);
+    $chapters = $list['content'];
+    $this->assertEquals(4, sizeof($chapters));
+    $this->assertEquals('Chapter', $chapters['contentType']);
 
-    $this->assertEquals('Page', $pages[0]['className']);
-    $this->assertEquals('Page:1', $pages[0]['oid']);
-    $this->assertEquals('Page', $pages[1]['className']);
-    $this->assertEquals('Page:2', $pages[1]['oid']);
-    $this->assertEquals('Page', $pages[2]['className']);
-    $this->assertEquals('Page:3', $pages[2]['oid']);
+    $this->assertEquals('Chapter', $chapters[0]['className']);
+    $this->assertEquals('Chapter:1', $chapters[0]['oid']);
+    $this->assertEquals('Chapter', $chapters[1]['className']);
+    $this->assertEquals('Chapter:2', $chapters[1]['oid']);
+    $this->assertEquals('Chapter', $chapters[2]['className']);
+    $this->assertEquals('Chapter:3', $chapters[2]['oid']);
   }
 }
 ?>

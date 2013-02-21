@@ -36,57 +36,67 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
 
-    $page1 = $persistenceFacade->create('Page', BuildDepth::SINGLE);
-    $this->assertEquals(0, sizeof($page1->getValue('ChildPage')));
-    $this->assertEquals(0, sizeof($page1->getValue('ParentPage')));
-    $this->assertEquals(0, sizeof($page1->getValue('Author')));
-    $this->assertEquals(0, sizeof($page1->getValue('NormalImage')));
-    $this->assertEquals(0, sizeof($page1->getValue('TitleImage')));
-    $this->assertEquals(0, sizeof($page1->getValue('Document')));
+    $publisher1 = $persistenceFacade->create('Publisher', BuildDepth::SINGLE);
+    $this->assertEquals(0, sizeof($publisher1->getValue('Author')));
+    $this->assertEquals(0, sizeof($publisher1->getValue('Book')));
 
-    $page2 = $persistenceFacade->create('Page', BuildDepth::REQUIRED);
-    $this->assertEquals(0, sizeof($page2->getValue('ChildPage')));
-    $this->assertEquals(0, sizeof($page2->getValue('ParentPage')));
-    $this->assertEquals(0, sizeof($page2->getValue('Author')));
-    $this->assertEquals(0, sizeof($page2->getValue('NormalImage')));
-    $this->assertEquals(0, sizeof($page2->getValue('TitleImage')));
-    $this->assertEquals(0, sizeof($page2->getValue('Document')));
+    $publisher2 = $persistenceFacade->create('Publisher', BuildDepth::REQUIRED);
+    $this->assertEquals(0, sizeof($publisher2->getValue('Author')));
+    $this->assertEquals(1, sizeof($publisher2->getValue('Book')));
 
-    $page3 = $persistenceFacade->create('Page', 2);
-    $this->assertEquals(1, sizeof($page3->getValue('ChildPage')));
-    $this->assertEquals(0, sizeof($page3->getValue('ParentPage')));
-    $this->assertEquals(0, sizeof($page3->getValue('Author')));
-    $this->assertEquals(1, sizeof($page3->getValue('NormalImage')));
-    $this->assertEquals(1, sizeof($page3->getValue('TitleImage')));
-    $this->assertEquals(1, sizeof($page3->getValue('Document')));
+    $publisher3 = $persistenceFacade->create('Publisher', 1);
+    $this->assertEquals(1, sizeof($publisher3->getValue('Author')));
+    $this->assertEquals(1, sizeof($publisher3->getValue('Book')));
 
-    $childPage1 = $page3->getFirstChild('ChildPage');
-    $this->assertEquals(1, sizeof($childPage1->getValue('ChildPage')));
-    $this->assertEquals(1, sizeof($childPage1->getValue('ParentPage')));
-    $childPage2 = $childPage1->getFirstChild('ChildPage');
-    $this->assertEquals(0, sizeof($childPage2->getValue('ChildPage')));
-    $this->assertEquals(1, sizeof($childPage2->getValue('ParentPage')));
+    $book1 = $persistenceFacade->create('Book', BuildDepth::SINGLE);
+    $this->assertEquals(0, sizeof($book1->getValue('Chapter')));
 
-    $normalImage = $page3->getFirstChild('NormalImage');
-    $this->assertEquals(1, sizeof($normalImage->getValue('NormalPage')));
+    $book2 = $persistenceFacade->create('Book', 1);
+    $this->assertEquals(1, sizeof($book2->getValue('Chapter')));
+    $book2Chapters = $book2->getValue('Chapter');
+    $book2Chapter = $book2Chapters[0];
+    $this->assertEquals(0, sizeof($book2Chapter->getValue('SubChapter')));
+    $this->assertEquals(0, sizeof($book2Chapter->getValue('NormalImage')));
+    $this->assertEquals(0, sizeof($book2Chapter->getValue('TitleImage')));
+    $this->assertEquals(0, sizeof($book2Chapter->getValue('Author')));
 
-    $titleImage = $page3->getFirstChild('TitleImage');
-    $this->assertEquals(1, sizeof($titleImage->getValue('TitlePage')));
+    $book3 = $persistenceFacade->create('Book', 2);
+    $this->assertEquals(1, sizeof($book3->getValue('Chapter')));
+    $book3Chapters = $book3->getValue('Chapter');
+    $book3Chapter = $book3Chapters[0];
+    $this->assertEquals(1, sizeof($book3Chapter->getValue('SubChapter')));
+    $this->assertEquals(1, sizeof($book3Chapter->getValue('NormalImage')));
+    $this->assertEquals(1, sizeof($book3Chapter->getValue('TitleImage')));
+    $this->assertEquals(0, sizeof($book3Chapter->getValue('Author')));
 
-    $document = $page3->getFirstChild('Document');
-    $this->assertEquals(1, sizeof($document->getValue('Page')));
-    $documentPage = $document->getFirstChild('Page');
-    $this->assertEquals($documentPage, $page3);
+    $chapter1 = $persistenceFacade->create('Chapter', 2);
+    $subChapter1 = $chapter1->getFirstChild('SubChapter');
+    $this->assertEquals(1, sizeof($subChapter1->getValue('SubChapter')));
+    $this->assertEquals(1, sizeof($subChapter1->getValue('ParentChapter')));
+    $subChapter2 = $subChapter1->getFirstChild('SubChapter');
+    $this->assertEquals(0, sizeof($subChapter2->getValue('SubChapter')));
+    $this->assertEquals(1, sizeof($subChapter2->getValue('ParentChapter')));
+
+    $normalImage = $chapter1->getFirstChild('NormalImage');
+    $this->assertEquals(1, sizeof($normalImage->getValue('NormalChapter')));
+
+    $titleImage = $chapter1->getFirstChild('TitleImage');
+    $this->assertEquals(1, sizeof($titleImage->getValue('TitleChapter')));
+
+    $chapter2 = $book3->getFirstChild('Chapter');
+    $this->assertEquals(1, sizeof($chapter2->getValue('Book')));
+    $book4 = $chapter2->getValue('Book');
+    $this->assertEquals($book4, $book3);
 
     $author1 = $persistenceFacade->create('Author', BuildDepth::SINGLE);
-    $this->assertEquals(0, sizeof($author1->getValue('Page')));
+    $this->assertEquals(0, sizeof($author1->getValue('Chapter')));
 
-    $author2 = $persistenceFacade->create('Author', BuildDepth::REQUIRED);
-    $this->assertNotEquals(0, sizeof($author2->getValue('Page')));
+    $author2 = $persistenceFacade->create('Author', 1);
+    $this->assertEquals(1, sizeof($author2->getValue('Chapter')));
 
     // BuildDepth::INFINTE is not allowed for create
     try {
-      $persistenceFacade->create('Page', BuildDepth::INFINITE);
+      $persistenceFacade->create('Chapter', BuildDepth::INFINITE);
       $this->fail('An expected exception has not been raised.');
     }
     catch(IllegalArgumentException $ex) {

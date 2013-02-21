@@ -34,56 +34,56 @@ class NodeUtilTest extends \PHPUnit_Framework_TestCase {
   public function testGetConnection() {
     TestUtil::runAnonymous(true);
 
-    $paths = NodeUtil::getConnections('Author', null, 'Image', 'child');
-    $this->assertEquals(2, sizeof($paths));
-    $endRoles = array($paths[0]->getEndRole(), $paths[1]->getEndRole());
-    $this->assertContains('TitleImage', $endRoles);
-    $this->assertContains('NormalImage', $endRoles);
+    $paths1 = NodeUtil::getConnections('Author', null, 'Image', 'child');
+    $this->assertEquals(2, sizeof($paths1));
+    $endRoles1 = array($paths1[0]->getEndRole(), $paths1[1]->getEndRole());
+    $this->assertContains('TitleImage', $endRoles1);
+    $this->assertContains('NormalImage', $endRoles1);
 
-    $paths = NodeUtil::getConnections('Author', null, 'Image', 'all');
-    $this->assertEquals(2, sizeof($paths));
-    $endRoles = array($paths[0]->getEndRole(), $paths[1]->getEndRole());
-    $this->assertContains('TitleImage', $endRoles);
-    $this->assertContains('NormalImage', $endRoles);
+    $paths2 = NodeUtil::getConnections('Author', null, 'Image', 'all');
+    $this->assertEquals(2, sizeof($paths2));
+    $endRoles2 = array($paths2[0]->getEndRole(), $paths2[1]->getEndRole());
+    $this->assertContains('TitleImage', $endRoles2);
+    $this->assertContains('NormalImage', $endRoles2);
 
-    $paths = NodeUtil::getConnections('Image', 'Author', null, 'parent');
-    $this->assertEquals(2, sizeof($paths));
-    $startRoles = array($paths[0]->getStartRole(), $paths[1]->getStartRole());
-    $this->assertContains('TitleImage', $startRoles);
-    $this->assertContains('NormalImage', $startRoles);
+    $paths3 = NodeUtil::getConnections('Image', 'Author', null, 'parent');
+    $this->assertEquals(2, sizeof($paths3));
+    $startRoles3 = array($paths3[0]->getStartRole(), $paths3[1]->getStartRole());
+    $this->assertContains('TitleImage', $startRoles3);
+    $this->assertContains('NormalImage', $startRoles3);
 
-    $paths = NodeUtil::getConnections('Page', null, 'Page', 'all');
-    $this->assertEquals(2, sizeof($paths));
-    $endRoles = array($paths[0]->getEndRole(), $paths[1]->getEndRole());
-    $this->assertContains('ChildPage', $endRoles);
-    $this->assertContains('ParentPage', $endRoles);
+    $paths4 = NodeUtil::getConnections('Chapter', null, 'Chapter', 'all');
+    $this->assertEquals(2, sizeof($paths4));
+    $endRoles4 = array($paths4[0]->getEndRole(), $paths4[1]->getEndRole());
+    $this->assertContains('ParentChapter', $endRoles4);
+    $this->assertContains('SubChapter', $endRoles4);
 
-    $paths = NodeUtil::getConnections('Page', null, 'Page', 'parent');
-    $this->assertEquals(1, sizeof($paths));
-    $this->assertEquals('ParentPage', $paths[0]->getEndRole());
+    $paths5 = NodeUtil::getConnections('Chapter', null, 'Chapter', 'parent');
+    $this->assertEquals(1, sizeof($paths5));
+    $this->assertEquals('ParentChapter', $paths5[0]->getEndRole());
 
-    $paths = NodeUtil::getConnections('Page', 'ParentPage', null, 'parent');
-    $this->assertEquals(1, sizeof($paths));
-    $this->assertEquals('ParentPage', $paths[0]->getEndRole());
+    $paths6 = NodeUtil::getConnections('Chapter', 'ParentChapter', null, 'parent');
+    $this->assertEquals(1, sizeof($paths6));
+    $this->assertEquals('ParentChapter', $paths6[0]->getEndRole());
 
-    $paths = NodeUtil::getConnections('Page', 'ChildPage', null, 'child');
-    $this->assertEquals(1, sizeof($paths));
-    $this->assertEquals('ChildPage', $paths[0]->getEndRole());
+    $paths7 = NodeUtil::getConnections('Chapter', 'SubChapter', null, 'child');
+    $this->assertEquals(1, sizeof($paths7));
+    $this->assertEquals('SubChapter', $paths7[0]->getEndRole());
 
-    $paths = NodeUtil::getConnections('Page', 'ChildPage', null, 'parent');
-    $this->assertEquals(0, sizeof($paths));
+    $paths8 = NodeUtil::getConnections('Chapter', 'SubChapter', null, 'parent');
+    $this->assertEquals(0, sizeof($paths8));
 
-    $paths = NodeUtil::getConnections('Page', 'Author', null, 'parent');
-    $this->assertEquals(1, sizeof($paths));
-    $this->assertEquals('Author', $paths[0]->getEndRole());
+    $paths9 = NodeUtil::getConnections('Chapter', 'Author', null, 'parent');
+    $this->assertEquals(1, sizeof($paths9));
+    $this->assertEquals('Author', $paths9[0]->getEndRole());
 
-    $paths = NodeUtil::getConnections('Document', null, 'Page', 'child');
-    $this->assertEquals(1, sizeof($paths));
-    $this->assertEquals('Page', $paths[0]->getEndRole());
+    $paths10 = NodeUtil::getConnections('Publisher', null, 'Author', 'child');
+    $this->assertEquals(1, sizeof($paths10));
+    $this->assertEquals('Author', $paths10[0]->getEndRole());
 
-    $paths = NodeUtil::getConnections('Page', null, 'Document', 'child');
-    $this->assertEquals(1, sizeof($paths));
-    $this->assertEquals('Document', $paths[0]->getEndRole());
+    $paths11 = NodeUtil::getConnections('Author', null, 'Publisher', 'child');
+    $this->assertEquals(1, sizeof($paths11));
+    $this->assertEquals('Publisher', $paths11[0]->getEndRole());
 
     TestUtil::runAnonymous(false);
   }
@@ -91,52 +91,52 @@ class NodeUtilTest extends \PHPUnit_Framework_TestCase {
   public function testGetQueryCondition() {
     TestUtil::runAnonymous(true);
 
-    // Page -> NormalImage
-    $node = ObjectFactory::getInstance('persistenceFacade')->create('Page');
-    $node->setOID(new ObjectId('Page', 10));
-    $condition = NodeUtil::getRelationQueryCondition($node, 'NormalImage');
-    $this->assertEquals('(`NormalPage`.`id` = 10)', $condition);
+    // Chapter -> NormalImage
+    $node1 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
+    $node1->setOID(new ObjectId('Chapter', 10));
+    $condition1 = NodeUtil::getRelationQueryCondition($node1, 'NormalImage');
+    $this->assertEquals('(`NormalChapter`.`id` = 10)', $condition1);
     // test with query
-    $query = new StringQuery('Image');
-    $query->setConditionString($condition);
-    $sql = $query->getQueryString();
-    $expected = "SELECT `Image`.`id`, `Image`.`fk_page_id`, `Image`.`fk_titlepage_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
-      "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor`, `Image`.`sortkey_titlepage`, `Image`.`sortkey_normalpage`, `Image`.`sortkey` ".
-      "FROM `Image` INNER JOIN `Page` AS `NormalPage` ON ".
-      "`Image`.`fk_page_id` = `NormalPage`.`id` WHERE ((`NormalPage`.`id` = 10)) ORDER BY `Image`.`sortkey` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql));
+    $query1 = new StringQuery('Image');
+    $query1->setConditionString($condition1);
+    $sql1 = $query1->getQueryString();
+    $expected1 = "SELECT `Image`.`id`, `Image`.`fk_chapter_id`, `Image`.`fk_titlechapter_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
+      "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor`, `Image`.`sortkey_titlechapter`, `Image`.`sortkey_normalchapter`, `Image`.`sortkey` ".
+      "FROM `Image` INNER JOIN `Chapter` AS `NormalChapter` ON ".
+      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE ((`NormalChapter`.`id` = 10)) ORDER BY `Image`.`sortkey` ASC";
+    $this->assertEquals($expected1, str_replace("\n", "", $sql1));
 
-    // Page -> ParentPage
-    $node = ObjectFactory::getInstance('persistenceFacade')->create('Page');
-    $node->setOID(new ObjectId('Page', 10));
-    $condition = NodeUtil::getRelationQueryCondition($node, 'ParentPage');
-    $this->assertEquals('(`ChildPage`.`id` = 10)', $condition);
+    // Chapter -> ParentChapter
+    $node2 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
+    $node2->setOID(new ObjectId('Chapter', 10));
+    $condition2 = NodeUtil::getRelationQueryCondition($node2, 'ParentChapter');
+    $this->assertEquals('(`SubChapter`.`id` = 10)', $condition2);
     // test with query
-    $query = new StringQuery('Page');
-    $query->setConditionString($condition);
-    $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
-      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_parentpage`, `Page`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
-      "INNER JOIN `Page` AS `ChildPage` ON `ChildPage`.`fk_page_id` = `Page`.`id` ".
-      "WHERE ((`ChildPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql));
+    $query2 = new StringQuery('Chapter');
+    $query2->setConditionString($condition2);
+    $sql2 = $query2->getQueryString();
+    $expected2 = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
+      "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` ".
+      "INNER JOIN `Chapter` AS `SubChapter` ON `SubChapter`.`fk_chapter_id` = `Chapter`.`id` ".
+      "WHERE ((`SubChapter`.`id` = 10)) ORDER BY `Chapter`.`sortkey` ASC";
+    $this->assertEquals($expected2, str_replace("\n", "", $sql2));
 
-    // Page -> ChildPage
-    $node = ObjectFactory::getInstance('persistenceFacade')->create('Page');
-    $node->setOID(new ObjectId('Page', 10));
-    $condition = NodeUtil::getRelationQueryCondition($node, 'ChildPage');
-    $this->assertEquals('(`ParentPage`.`id` = 10)', $condition);
+    // Chapter -> SubChapter
+    $node3 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
+    $node3->setOID(new ObjectId('Chapter', 10));
+    $condition3 = NodeUtil::getRelationQueryCondition($node3, 'SubChapter');
+    $this->assertEquals('(`ParentChapter`.`id` = 10)', $condition3);
     // test with query
-    $query = new StringQuery('Page');
-    $query->setConditionString($condition);
-    $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
-      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_parentpage`, `Page`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
-      "INNER JOIN `Page` AS `ParentPage` ON `Page`.`fk_page_id` = `ParentPage`.`id` ".
-      "WHERE ((`ParentPage`.`id` = 10)) ORDER BY `Page`.`sortkey` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql));
+    $query3 = new StringQuery('Chapter');
+    $query3->setConditionString($condition3);
+    $sql3 = $query3->getQueryString();
+    $expected3 = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
+      "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` ".
+      "INNER JOIN `Chapter` AS `ParentChapter` ON `Chapter`.`fk_chapter_id` = `ParentChapter`.`id` ".
+      "WHERE ((`ParentChapter`.`id` = 10)) ORDER BY `Chapter`.`sortkey` ASC";
+    $this->assertEquals($expected3, str_replace("\n", "", $sql3));
 
     TestUtil::runAnonymous(false);
   }

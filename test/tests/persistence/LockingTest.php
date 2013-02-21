@@ -18,11 +18,11 @@
  */
 namespace test\tests\persistence;
 
+use test\lib\ArrayDataSet;
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
@@ -33,37 +33,25 @@ use wcmf\lib\persistence\concurrency\PessimisticLockException;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LockingTest extends \PHPUnit_Framework_TestCase {
+class LockingTest extends DatabaseTestCase {
 
   private $_user1OidStr = 'UserRDB:555';
   private $_user2OidStr = 'UserRDB:666';
   private $_user3OidStr = 'UserRDB:777';
 
-  protected function setUp() {
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    TestUtil::createTestObject(ObjectId::parse($this->_user1OidStr), array(
-        'login' => 'user1', 'password' => '24c9e15e52afc47c225b757e7bee1f9d'));
-    TestUtil::createTestObject(ObjectId::parse($this->_user2OidStr), array(
-        'login' => 'user2', 'password' => '7e58d63b60197ceb55a1c487989a3720'));
-    TestUtil::createTestObject(ObjectId::parse($this->_user3OidStr), array());
-    ObjectFactory::getInstance('concurrencymanager')->releaseLocks(ObjectId::parse($this->_user3OidStr));
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
-  }
-
-  protected function tearDown() {
-    TestUtil::runAnonymous(true);
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    ObjectFactory::getInstance('concurrencymanager')->releaseLocks(ObjectId::parse($this->_user3OidStr));
-    TestUtil::deleteTestObject(ObjectId::parse($this->_user1OidStr));
-    TestUtil::deleteTestObject(ObjectId::parse($this->_user2OidStr));
-    TestUtil::deleteTestObject(ObjectId::parse($this->_user3OidStr));
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array(id => 1),
+      ),
+      'user' => array(
+        array('id' => 555, 'login' => 'user1', 'password' => '24c9e15e52afc47c225b757e7bee1f9d'),
+        array('id' => 666, 'login' => 'user2', 'password' => '7e58d63b60197ceb55a1c487989a3720'),
+        array('id' => 777),
+      ),
+      'locktable' => array(
+      ),
+    ));
   }
 
   public function testPessimisticLock() {
@@ -266,13 +254,7 @@ class LockingTest extends \PHPUnit_Framework_TestCase {
   }
 
   protected function getNumPessimisticLocks($oid, $userId) {
-    $query = new ObjectQuery('Locktable');
-    $tpl = $query->getObjectTemplate('Locktable');
-    $tpl->setValue('objectid', Criteria::asValue("=", $oid));
-    $tpl2 = $query->getObjectTemplate('UserRDB');
-    $tpl2->setValue('id', Criteria::asValue("=", $userId));
-    $tpl2->addNode($tpl);
-    return sizeof($query->execute(false));
+    return $this->getConnection()->getRowCount('locktable', "objectid = '".$oid."' AND fk_user_id = ".$userId);
   }
 }
 ?>

@@ -34,11 +34,14 @@ use wcmf\lib\persistence\ObjectId;
  */
 class IteratorTest extends DatabaseTestCase {
 
-  private $_pageOidStr = 'Page:12345';
+  private $_chapterOid = 'Chapter:12345';
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'Page' => array(
+      'dbsequence' => array(
+        array(id => 1),
+      ),
+      'Chapter' => array(
         array('id' => 12345),
       ),
     ));
@@ -48,7 +51,7 @@ class IteratorTest extends DatabaseTestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $node = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), BuildDepth::SINGLE);
+    $node = $persistenceFacade->load(ObjectId::parse($this->_chapterOid), BuildDepth::SINGLE);
     $node->setName('original name');
     $nodeIter = new NodeIterator($node);
     $count = 0;
@@ -67,12 +70,12 @@ class IteratorTest extends DatabaseTestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $node = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), BuildDepth::SINGLE);
+    $node = $persistenceFacade->load(ObjectId::parse($this->_chapterOid), BuildDepth::SINGLE);
     $valueIter = new NodeValueIterator($node, true);
     $count = 0;
     for($valueIter->rewind(); $valueIter->valid(); $valueIter->next()) {
       $curIterNode = $valueIter->currentNode();
-      $this->assertEquals($this->_pageOidStr, $curIterNode->getOID()->__toString());
+      $this->assertEquals($this->_chapterOid, $curIterNode->getOID()->__toString());
       $this->assertEquals($curIterNode->getValue($valueIter->key()), $valueIter->current());
       $count++;
     }

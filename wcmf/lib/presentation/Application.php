@@ -252,11 +252,11 @@ class Application {
   }
 
   /**
-   * Get an unique id for the application based on the installation location.
+   * Get an unique id for the application based on configuration location.
    * @return The id
    */
   public static function getId() {
-    return md5(__FILE__);
+    return md5(realpath($GLOBALS['CONFIG_PATH']));
   }
 
   /**

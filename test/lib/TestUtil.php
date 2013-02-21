@@ -20,6 +20,7 @@ namespace test\lib;
 
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
@@ -27,6 +28,8 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\presentation\Request;
+use wcmf\lib\security\AuthUser;
+use wcmf\lib\security\RightsManager;
 
 /**
  * TestUtil provides helper methods for testing wCMF functionality.
@@ -72,16 +75,14 @@ class TestUtil {
    *    subsequent simulateRequest calls
    */
   public static function startSession($user, $password) {
-    $request = new Request('wcmf\application\controller\LoginController',
-      '',
-      'dologin'
-    );
-    $request->setValues(array(
-        'user' => $user,
-        'password' => $password
-    ));
-    $response = self::simulateRequest($request);
-    return $response->getValue('sid');
+    $session = Session::getInstance();
+    $authUser = new AuthUser();
+    $success = $authUser->login($user, $password, false);
+    if ($success) {
+      $session->clear();
+      $session->set(RightsManager::getAuthUserVarname(), $authUser);
+    }
+    return $session->getID();
   }
 
   /**
@@ -89,14 +90,8 @@ class TestUtil {
    * @param sid The session id
    */
   public static function endSession($sid) {
-    $request = new Request('',
-      '',
-      'logout'
-    );
-    $request->setValues(array(
-        'sid' => $sid
-    ));
-    self::simulateRequest($request);
+    $session = Session::getInstance();
+    $session->destroy();
   }
 
   /**
@@ -106,7 +101,7 @@ class TestUtil {
    *    and the values as values
    * @return Node
    */
-  public static function createTestObject(ObjectId $oid, array $attributes) {
+  public static function _createTestObject(ObjectId $oid, array $attributes) {
     // check if the object already exists and delete it if necessary
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
@@ -130,7 +125,7 @@ class TestUtil {
    * @param oid The object id
    * @return Node
    */
-  public static function loadTestObject(ObjectId $oid) {
+  public static function _loadTestObject(ObjectId $oid) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     return $object;
@@ -140,7 +135,7 @@ class TestUtil {
    * Delete a test object
    * @param oid ObjectId
    */
-  public static function deleteTestObject(ObjectId $oid) {
+  public static function _deleteTestObject(ObjectId $oid) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     if ($object) {

@@ -198,8 +198,7 @@ class ControllerMessage {
    */
   public function getBooleanValue($name, $default=false) {
     if ($this->hasValue($name)) {
-       return ($this->_values[$name] === true || strtolower($this->_values[$name]) === "true"
-        || intval($this->_values[$name]) === 1);
+      return StringUtil::getBoolean($this->_values[$name]);
     }
     else {
       return $default;

@@ -372,7 +372,7 @@ class DefaultTransaction implements Transaction {
    */
   public function stateChanged(StateChangeEvent $event) {
     $object = $event->getObject();
-    if (isset($this->_observedObjects[$object->getOID()->__toString()])) {
+    //if (isset($this->_observedObjects[$object->getOID()->__toString()])) {
       $oldState = $event->getOldValue();
       $newState = $event->getNewValue();
       Log::debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState, __CLASS__);
@@ -389,7 +389,7 @@ class DefaultTransaction implements Transaction {
           $this->registerDeleted($object);
           break;
       }
-    }
+    //}
   }
 }
 ?>

@@ -18,6 +18,8 @@
  */
 namespace test\tests\persistence;
 
+use test\lib\ArrayDataSet;
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
@@ -27,147 +29,138 @@ use wcmf\lib\persistence\ObjectId;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeRelationTest extends \PHPUnit_Framework_TestCase {
+class NodeRelationTest extends DatabaseTestCase {
 
   private $oids = array();
-  private $objects = array();
+
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array(id => 1),
+      ),
+      'Chapter' => array(
+        array('id' => 300, 'fk_chapter_id' => 303, 'fk_author_id' => 304),
+        array('id' => 302, 'fk_chapter_id' => 300, 'fk_author_id' => null),
+        array('id' => 303, 'fk_chapter_id' => null, 'fk_author_id' => null),
+      ),
+      'Book' => array(
+        array('id' => 301),
+      ),
+      'Author' => array(
+        array('id' => 304),
+      ),
+      'Image' => array(
+        array('id' => 305, 'fk_titlechapter_id' => 300, 'fk_chapter_id' => null),
+        array('id' => 306, 'fk_titlechapter_id' => null, 'fk_chapter_id' => 300),
+      ),
+    ));
+  }
 
   protected function setUp() {
-    TestUtil::runAnonymous(true);
-
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-
     // setup the object tree
     $this->oids = array(
-      'page' => new ObjectId('Page', 300),
-      'document' => new ObjectId('Document', 301),
-      'childPage' => new ObjectId('Page', 302),
-      'parentPage' => new ObjectId('Page', 303),
+      'chapter' => new ObjectId('Chapter', 300),
+      'book' => new ObjectId('Book', 301),
+      'subChapter' => new ObjectId('Chapter', 302),
+      'parentChapter' => new ObjectId('Chapter', 303),
       'author' => new ObjectId('Author', 304),
       'titleImage' => new ObjectId('Image', 305),
       'normalImage' => new ObjectId('Image', 306)
     );
-    $this->objects = array();
-    foreach ($this->oids as $name => $oid) {
-      $this->objects[$name] = TestUtil::createTestObject($oid, array());
-    }
-    $page = $this->objects['page'];
-    $page->addNode($this->objects['document']);
-    $page->addNode($this->objects['childPage'], 'ChildPage');
-    $page->addNode($this->objects['parentPage'], 'ParentPage');
-    $page->addNode($this->objects['author']);
-    $page->addNode($this->objects['titleImage'], 'TitleImage');
-    $page->addNode($this->objects['normalImage'], 'NormalImage');
-    // commit changes
-    $transaction->commit();
-
-    TestUtil::runAnonymous(false);
+    parent::setUp();
   }
 
-  protected function tearDown() {
+  public function testRelations() {
     TestUtil::runAnonymous(true);
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    foreach ($this->oids as $name => $oid) {
-      TestUtil::deleteTestObject($oid);
-    }
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
-  }
-
-  public function testAddNode() {
-    TestUtil::runAnonymous(true);
-    //$this->enableProfiler('Page');
+    //$this->enableProfiler('Chapter');
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $page = $persistenceFacade->load($this->oids['page'], 1);
+    $chapter = $persistenceFacade->load($this->oids['chapter'], 1);
 
-    $curRelatives = $page->getChildrenEx(null, 'Document', null);
-    $this->assertEquals(1, sizeof($curRelatives));
-    $this->assertEquals($this->oids['document'], $curRelatives[0]->getOID());
+    $curRelatives1 = $chapter->getChildrenEx(null, 'Book', null);
+    $this->assertEquals(1, sizeof($curRelatives1));
+    $this->assertEquals($this->oids['book'], $curRelatives1[0]->getOID());
 
-    $curRelatives = $page->getChildrenEx(null, null, 'Document');
-    $this->assertEquals(1, sizeof($curRelatives));
+    $curRelatives2 = $chapter->getChildrenEx(null, null, 'Book');
+    $this->assertEquals(1, sizeof($curRelatives2));
 
-    $curRelatives = $page->getChildrenEx(null, 'ChildPage', null);
-    $this->assertEquals(1, sizeof($curRelatives));
-    $this->assertEquals($this->oids['childPage'], $curRelatives[0]->getOID());
+    $curRelatives3 = $chapter->getChildrenEx(null, 'SubChapter', null);
+    $this->assertEquals(1, sizeof($curRelatives3));
+    $this->assertEquals($this->oids['subChapter'], $curRelatives3[0]->getOID());
 
-    $curRelatives = $page->getParentsEx(null, 'ParentPage', null);
-    $this->assertEquals(1, sizeof($curRelatives));
-    $this->assertEquals($this->oids['parentPage'], $curRelatives[0]->getOID());
+    $curRelatives4 = $chapter->getParentsEx(null, 'ParentChapter', null);
+    $this->assertEquals(1, sizeof($curRelatives4));
+    $this->assertEquals($this->oids['parentChapter'], $curRelatives4[0]->getOID());
 
-    $curRelatives = $page->getParentsEx(null, 'Author', null);
-    $this->assertEquals(1, sizeof($curRelatives));
-    $this->assertEquals($this->oids['author'], $curRelatives[0]->getOID());
+    $curRelatives5 = $chapter->getParentsEx(null, 'Author', null);
+    $this->assertEquals(1, sizeof($curRelatives5));
+    $this->assertEquals($this->oids['author'], $curRelatives5[0]->getOID());
 
-    $curRelatives = $page->getChildrenEx(null, 'TitleImage', null);
-    $this->assertEquals(1, sizeof($curRelatives));
-    $this->assertEquals($this->oids['titleImage'], $curRelatives[0]->getOID());
+    $curRelatives6 = $chapter->getChildrenEx(null, 'TitleImage', null);
+    $this->assertEquals(1, sizeof($curRelatives6));
+    $this->assertEquals($this->oids['titleImage'], $curRelatives6[0]->getOID());
 
-    $curRelatives = $page->getChildrenEx(null, 'NormalImage', null);
-    $this->assertEquals(1, sizeof($curRelatives));
-    $this->assertEquals($this->oids['normalImage'], $curRelatives[0]->getOID());
+    $curRelatives7 = $chapter->getChildrenEx(null, 'NormalImage', null);
+    $this->assertEquals(1, sizeof($curRelatives7));
+    $this->assertEquals($this->oids['normalImage'], $curRelatives7[0]->getOID());
 
-    $curRelatives = $page->getChildrenEx(null, null, 'Image');
-    $this->assertEquals(2, sizeof($curRelatives));
+    $curRelatives8 = $chapter->getChildrenEx(null, null, 'Image');
+    $this->assertEquals(2, sizeof($curRelatives8));
     $transaction->rollback();
 
-    //$this->printProfile('Page');
+    //$this->printProfile('Chapter');
     TestUtil::runAnonymous(false);
   }
 
   public function testDeleteNode() {
     TestUtil::runAnonymous(true);
-    //$this->enableProfiler('Page');
+    //$this->enableProfiler('Chapter');
 
     // delete all relations
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $page = $persistenceFacade->load($this->oids['page'], 1);
-    $page->deleteNode($persistenceFacade->load($this->oids['document']));
-    $page->deleteNode($persistenceFacade->load($this->oids['childPage']), 'ChildPage');
-    $page->deleteNode($persistenceFacade->load($this->oids['parentPage']), 'ParentPage');
-    $page->deleteNode($persistenceFacade->load($this->oids['author']));
-    $page->deleteNode($persistenceFacade->load($this->oids['titleImage']), 'TitleImage');
-    $page->deleteNode($persistenceFacade->load($this->oids['normalImage']), 'NormalImage');
+    $chapter1 = $persistenceFacade->load($this->oids['chapter'], 1);
+    $chapter1->deleteNode($persistenceFacade->load($this->oids['book']));
+    $chapter1->deleteNode($persistenceFacade->load($this->oids['subChapter']), 'SubChapter');
+    $chapter1->deleteNode($persistenceFacade->load($this->oids['parentChapter']), 'ParentChapter');
+    $chapter1->deleteNode($persistenceFacade->load($this->oids['author']));
+    $chapter1->deleteNode($persistenceFacade->load($this->oids['titleImage']), 'TitleImage');
+    $chapter1->deleteNode($persistenceFacade->load($this->oids['normalImage']), 'NormalImage');
     $transaction->commit();
 
     // test
     $transaction->begin();
-    $page = $persistenceFacade->load($this->oids['page'], 1);
-    $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'Document', null)));
-    $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'ChildPage', null)));
-    $this->assertEquals(0, sizeof($page->getParentsEx(null, 'ParentPage', null)));
-    $this->assertEquals(0, sizeof($page->getParentsEx(null, 'Author', null)));
-    $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'TitleImage', null)));
-    $this->assertEquals(0, sizeof($page->getChildrenEx(null, 'NormalImage', null)));
+    $chapter2 = $persistenceFacade->load($this->oids['chapter'], 1);
+    $this->assertEquals(0, sizeof($chapter2->getChildrenEx(null, 'Book', null)));
+    $this->assertEquals(0, sizeof($chapter2->getChildrenEx(null, 'SubChapter', null)));
+    $this->assertEquals(0, sizeof($chapter2->getParentsEx(null, 'ParentChapter', null)));
+    $this->assertEquals(0, sizeof($chapter2->getParentsEx(null, 'Author', null)));
+    $this->assertEquals(0, sizeof($chapter2->getChildrenEx(null, 'TitleImage', null)));
+    $this->assertEquals(0, sizeof($chapter2->getChildrenEx(null, 'NormalImage', null)));
 
-    $document = $persistenceFacade->load($this->oids['document'], 1);
-    $this->assertEquals(0, sizeof($document->getChildrenEx(null, 'Page', null)));
+    $book = $persistenceFacade->load($this->oids['book'], 1);
+    $this->assertEquals(0, sizeof($book->getChildrenEx(null, 'Chapter', null)));
 
-    $childPage = $persistenceFacade->load($this->oids['childPage'], 1);
-    $this->assertEquals(0, sizeof($childPage->getParentsEx(null, 'ParentPage', null)));
+    $subChapter = $persistenceFacade->load($this->oids['subChapter'], 1);
+    $this->assertEquals(0, sizeof($subChapter->getParentsEx(null, 'ParentChapter', null)));
 
-    $parentPage = $persistenceFacade->load($this->oids['parentPage'], 1);
-    $this->assertEquals(0, sizeof($parentPage->getChildrenEx(null, 'ChildPage', null)));
+    $parentChapter = $persistenceFacade->load($this->oids['parentChapter'], 1);
+    $this->assertEquals(0, sizeof($parentChapter->getChildrenEx(null, 'SubChapter', null)));
 
     $author = $persistenceFacade->load($this->oids['author'], 1);
-    $this->assertEquals(0, sizeof($author->getChildrenEx(null, 'Page', null)));
+    $this->assertEquals(0, sizeof($author->getChildrenEx(null, 'Chapter', null)));
 
     $titleImage = $persistenceFacade->load($this->oids['titleImage'], 1);
-    $this->assertEquals(0, sizeof($titleImage->getParentsEx(null, 'TitlePage', null)));
+    $this->assertEquals(0, sizeof($titleImage->getParentsEx(null, 'TitleChapter', null)));
 
     $normalImage = $persistenceFacade->load($this->oids['normalImage'], 1);
-    $this->assertEquals(0, sizeof($normalImage->getParentsEx(null, 'NormalPage', null)));
+    $this->assertEquals(0, sizeof($normalImage->getParentsEx(null, 'NormalChapter', null)));
     $transaction->rollback();
 
-    //$this->printProfile('Page');
+    //$this->printProfile('Chapter');
     TestUtil::runAnonymous(false);
   }
 
@@ -175,13 +168,13 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $page = $persistenceFacade->load($this->oids['page'], BuildDepth::SINGLE);
-    $page->loadChildren('Document', 1);
-    $document = $page->getFirstChild('Document');
-    echo "title: ".$document->getTitle()."\n";
+    $chapter = $persistenceFacade->load($this->oids['chapter'], BuildDepth::SINGLE);
+    $chapter->loadChildren('Book', 1);
+    $book = $chapter->getFirstChild('Book');
+    echo "title: ".$book->getTitle()."\n";
     //*
-    foreach($page->getValueNames() as $name) {
-      $value = $page->getValue($name);
+    foreach($chapter->getValueNames() as $name) {
+      $value = $chapter->getValue($name);
       echo $name.": ".$value."(".sizeof($value).")\n";
     }
     //*/
@@ -194,18 +187,18 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $page = $persistenceFacade->load($this->oids['page'], 1);
-    $page->delete();
+    $chapter = $persistenceFacade->load($this->oids['chapter'], 1);
+    $chapter->delete();
     $transaction->commit();
 
     // test
     $transaction->begin();
-    $this->assertEquals(null, $persistenceFacade->load($this->oids['page']));
-    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['document']));
-    $this->assertEquals(null, $persistenceFacade->load($this->oids['childPage']));
-    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['parentPage']));
+    $this->assertEquals(null, $persistenceFacade->load($this->oids['chapter']));
+    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['book']));
+    $this->assertEquals(null, $persistenceFacade->load($this->oids['subChapter']));
+    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['parentChapter']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['author']));
-    $this->assertEquals(null, $persistenceFacade->load($this->oids['titleImage']));
+    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['titleImage']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['normalImage']));
     $transaction->rollback();
 
@@ -218,20 +211,20 @@ class NodeRelationTest extends \PHPUnit_Framework_TestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $nmPageDocument = $persistenceFacade->loadFirstObject("NMPageDocument");
-    // the Document is navigable from the NMPageDocument instance
-    $document = $nmPageDocument->getValue("Document");
-    $this->assertNotNull($document);
+    $nmChapterBook = $persistenceFacade->loadFirstObject("NMChapterBook");
+    // the Book is navigable from the NMChapterBook instance
+    $book1 = $nmChapterBook->getValue("Book");
+    $this->assertNotNull($book1);
     $transaction->rollback();
 
     $transaction->begin();
-    $document = $persistenceFacade->load($document->getOID());
-    // the NMPageDocument is not navigable from the Document instance
-    $nmPageDocuments = $document->getValue("NMPageDocument");
-    $this->assertNull($nmPageDocuments);
-    // but the Page is
-    $pages = $document->getValue("Page");
-    $this->assertNotNull($pages);
+    $book2 = $persistenceFacade->load($book1->getOID());
+    // the NMChapterBook is not navigable from the Book instance
+    $nmChapterBooks = $book2->getValue("NMChapterBook");
+    $this->assertNull($nmChapterBooks);
+    // but the Chapter is
+    $chapters = $book2->getValue("Chapter");
+    $this->assertNotNull($chapters);
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);

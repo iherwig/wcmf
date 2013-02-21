@@ -179,5 +179,18 @@ class StringUtil {
 
     return preg_replace($patterns, $replace, $string);
   }
+
+  /**
+   * Get the boolean value of a string
+   * @param string
+   * @return Boolean or the string, if it does not represent a boolean.
+   */
+  public static function getBoolean($string) {
+    $val = filter_var($string, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    if ($val === null) {
+      return $string;
+    }
+    return $val;
+  }
 }
 ?>

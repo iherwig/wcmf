@@ -39,7 +39,6 @@ use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceException;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
@@ -60,7 +59,7 @@ require_once('Zend/Db.php');
  */
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
-  private static $SEQUENCE_CLASS = 'Adodbseq';
+  private static $SEQUENCE_CLASS = 'DBSequence';
   private static $connections = array();   // registry for connections, key: connId
   private static $inTransaction = array(); // registry for transaction status (boolean), key: connId
 
@@ -778,7 +777,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $relationDescs = $this->getRelations('child');
       foreach($relationDescs as $relationDesc) {
         $isManyToMany = ($relationDesc instanceof RDBManyToManyRelationDescription);
-        $isComposite = ($relationDesc->getThisAggregationKind() == 'composite' ||
+        $isComposite = ($relationDesc->getOtherAggregationKind() == 'composite' ||
                 $isManyToMany);
         if ($isManyToMany) {
           // in a many to many relation we only use the relation description

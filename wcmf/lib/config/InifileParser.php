@@ -191,6 +191,20 @@ class InifileParser {
   }
 
   /**
+   * Get a value from the formerly parsed ini file as boolean if it represents
+   * a boolean.
+   * @param key The name of the entry.
+   * @param section The section the key belongs to.
+   * @param caseSensitive True/False, whether to look up the key case sensitive or not [default: true]
+   * @return The results of the parsed ini file or
+   *         False in the case of wrong parameters (use getErrorMsg() for detailed information).
+   */
+  public function getBooleanValue($key, $section, $caseSensitive=true) {
+    $value = $this->getValue($key, $section, $caseSensitive);
+    return StringUtil::getBoolean($value);
+  }
+
+  /**
    * InifileParser public modification Interface
    */
 
