@@ -36,18 +36,24 @@ class NodeRelationTest extends DatabaseTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'dbsequence' => array(
-        array(id => 1),
+        array('id' => 1),
       ),
-      'Chapter' => array(
-        array('id' => 300, 'fk_chapter_id' => 303, 'fk_author_id' => 304),
-        array('id' => 302, 'fk_chapter_id' => 300, 'fk_author_id' => null),
-        array('id' => 303, 'fk_chapter_id' => null, 'fk_author_id' => null),
+      'Publisher' => array(
+        array('id' => 200),
       ),
-      'Book' => array(
-        array('id' => 301),
+      'NMPublisherAuthor' => array(
+        array('id' => 201, 'fk_publisher_id' => 200, 'fk_author_id' => 202),
       ),
       'Author' => array(
-        array('id' => 304),
+        array('id' => 202),
+      ),
+      'Book' => array(
+        array('id' => 203),
+      ),
+      'Chapter' => array(
+        array('id' => 300, 'fk_chapter_id' => 303, 'fk_author_id' => 202, 'fk_book_id' => 203),
+        array('id' => 302, 'fk_chapter_id' => 300, 'fk_author_id' => 202, 'fk_book_id' => null),
+        array('id' => 303, 'fk_chapter_id' => null, 'fk_author_id' => 202, 'fk_book_id' => null),
       ),
       'Image' => array(
         array('id' => 305, 'fk_titlechapter_id' => 300, 'fk_chapter_id' => null),
@@ -59,11 +65,12 @@ class NodeRelationTest extends DatabaseTestCase {
   protected function setUp() {
     // setup the object tree
     $this->oids = array(
+      'publisher' => new ObjectId('Publisher', 200),
+      'author' => new ObjectId('Author', 202),
+      'book' => new ObjectId('Book', 203),
       'chapter' => new ObjectId('Chapter', 300),
-      'book' => new ObjectId('Book', 301),
       'subChapter' => new ObjectId('Chapter', 302),
       'parentChapter' => new ObjectId('Chapter', 303),
-      'author' => new ObjectId('Author', 304),
       'titleImage' => new ObjectId('Image', 305),
       'normalImage' => new ObjectId('Image', 306)
     );
@@ -77,37 +84,39 @@ class NodeRelationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $chapter = $persistenceFacade->load($this->oids['chapter'], 1);
+    $publisher = $persistenceFacade->load($this->oids['publisher'], 3);
 
-    $curRelatives1 = $chapter->getChildrenEx(null, 'Book', null);
-    $this->assertEquals(1, sizeof($curRelatives1));
-    $this->assertEquals($this->oids['book'], $curRelatives1[0]->getOID());
+    $authors1 = $publisher->getChildrenEx(null, 'Author', null);
+    $this->assertEquals(1, sizeof($authors1));
+    $this->assertEquals($this->oids['author'], $authors1[0]->getOID());
 
-    $curRelatives2 = $chapter->getChildrenEx(null, null, 'Book');
-    $this->assertEquals(1, sizeof($curRelatives2));
+    $author = $publisher->getFirstChild(null, 'Author', null);
+    $chapters = $author->getChildrenEx(null, 'Chapter', null);
+    $this->assertEquals(3, sizeof($chapters));
 
-    $curRelatives3 = $chapter->getChildrenEx(null, 'SubChapter', null);
-    $this->assertEquals(1, sizeof($curRelatives3));
-    $this->assertEquals($this->oids['subChapter'], $curRelatives3[0]->getOID());
+    $chapter = $author->getFirstChild(null, 'Chapter', null);
+    $subChapters = $chapter->getChildrenEx(null, 'SubChapter', null);
+    $this->assertEquals(1, sizeof($subChapters));
+    $this->assertEquals($this->oids['subChapter'], $subChapters[0]->getOID());
 
-    $curRelatives4 = $chapter->getParentsEx(null, 'ParentChapter', null);
-    $this->assertEquals(1, sizeof($curRelatives4));
-    $this->assertEquals($this->oids['parentChapter'], $curRelatives4[0]->getOID());
+    $parentChapters = $chapter->getParentsEx(null, 'ParentChapter', null);
+    $this->assertEquals(1, sizeof($parentChapters));
+    $this->assertEquals($this->oids['parentChapter'], $parentChapters[0]->getOID());
 
-    $curRelatives5 = $chapter->getParentsEx(null, 'Author', null);
-    $this->assertEquals(1, sizeof($curRelatives5));
-    $this->assertEquals($this->oids['author'], $curRelatives5[0]->getOID());
+    $authors2 = $chapter->getParentsEx(null, 'Author', null);
+    $this->assertEquals(1, sizeof($authors2));
+    $this->assertEquals($this->oids['author'], $authors2[0]->getOID());
 
-    $curRelatives6 = $chapter->getChildrenEx(null, 'TitleImage', null);
-    $this->assertEquals(1, sizeof($curRelatives6));
-    $this->assertEquals($this->oids['titleImage'], $curRelatives6[0]->getOID());
+    $titleImages = $chapter->getChildrenEx(null, 'TitleImage', null);
+    $this->assertEquals(1, sizeof($titleImages));
+    $this->assertEquals($this->oids['titleImage'], $titleImages[0]->getOID());
 
-    $curRelatives7 = $chapter->getChildrenEx(null, 'NormalImage', null);
-    $this->assertEquals(1, sizeof($curRelatives7));
-    $this->assertEquals($this->oids['normalImage'], $curRelatives7[0]->getOID());
+    $normalImages = $chapter->getChildrenEx(null, 'NormalImage', null);
+    $this->assertEquals(1, sizeof($normalImages));
+    $this->assertEquals($this->oids['normalImage'], $normalImages[0]->getOID());
 
-    $curRelatives8 = $chapter->getChildrenEx(null, null, 'Image');
-    $this->assertEquals(2, sizeof($curRelatives8));
+    $images = $chapter->getChildrenEx(null, null, 'Image');
+    $this->assertEquals(2, sizeof($images));
     $transaction->rollback();
 
     //$this->printProfile('Chapter');
@@ -134,7 +143,7 @@ class NodeRelationTest extends DatabaseTestCase {
     // test
     $transaction->begin();
     $chapter2 = $persistenceFacade->load($this->oids['chapter'], 1);
-    $this->assertEquals(0, sizeof($chapter2->getChildrenEx(null, 'Book', null)));
+    $this->assertEquals(0, sizeof($chapter2->getParentsEx(null, 'Book', null)));
     $this->assertEquals(0, sizeof($chapter2->getChildrenEx(null, 'SubChapter', null)));
     $this->assertEquals(0, sizeof($chapter2->getParentsEx(null, 'ParentChapter', null)));
     $this->assertEquals(0, sizeof($chapter2->getParentsEx(null, 'Author', null)));
@@ -151,7 +160,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $this->assertEquals(0, sizeof($parentChapter->getChildrenEx(null, 'SubChapter', null)));
 
     $author = $persistenceFacade->load($this->oids['author'], 1);
-    $this->assertEquals(0, sizeof($author->getChildrenEx(null, 'Chapter', null)));
+    $this->assertEquals(2, sizeof($author->getChildrenEx(null, 'Chapter', null)));
 
     $titleImage = $persistenceFacade->load($this->oids['titleImage'], 1);
     $this->assertEquals(0, sizeof($titleImage->getParentsEx(null, 'TitleChapter', null)));
@@ -211,20 +220,20 @@ class NodeRelationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $nmChapterBook = $persistenceFacade->loadFirstObject("NMChapterBook");
-    // the Book is navigable from the NMChapterBook instance
-    $book1 = $nmChapterBook->getValue("Book");
-    $this->assertNotNull($book1);
+    $nmPublisherAuthor1 = $persistenceFacade->loadFirstObject("NMPublisherAuthor");
+    // the Publisher is navigable from the NMPublisherAuthor instance
+    $publisher1 = $nmPublisherAuthor1->getValue("Publisher");
+    $this->assertNotNull($publisher1);
     $transaction->rollback();
 
     $transaction->begin();
-    $book2 = $persistenceFacade->load($book1->getOID());
-    // the NMChapterBook is not navigable from the Book instance
-    $nmChapterBooks = $book2->getValue("NMChapterBook");
-    $this->assertNull($nmChapterBooks);
-    // but the Chapter is
-    $chapters = $book2->getValue("Chapter");
-    $this->assertNotNull($chapters);
+    $publisher2 = $persistenceFacade->load($publisher1->getOID());
+    // the NMPublisherAuthor is not navigable from the Publisher instance
+    $nmPublisherAuthor2 = $publisher2->getValue("NMPublisherAuthor");
+    $this->assertNull($nmPublisherAuthor2);
+    // but the Author is
+    $authors = $publisher2->getValue("Author");
+    $this->assertNotNull($authors);
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);

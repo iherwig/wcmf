@@ -38,7 +38,7 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
     $query = new ObjectQuery('Author');
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
-      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` ORDER BY `Author`.`sortkey` ASC";
+      "`Author`.`last_editor` FROM `Author` ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     $cond = $query->getQueryCondition();
@@ -56,8 +56,8 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
     $authorTpl->setValue("creator", "admin"); // implicit LIKE
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
-      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
-      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`sortkey` ASC";
+      "`Author`.`last_editor` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
+      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     $cond = $query->getQueryCondition();
@@ -78,7 +78,7 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
     $query->execute(BuildDepth::SINGLE, null, null, array('name'));
     $sql = $query->getLastQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' AND ".
-      "`Author`.`creator` IN ('admin', 'ingo')) ORDER BY `Author`.`sortkey` ASC";
+      "`Author`.`creator` IN ('admin', 'ingo')) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -110,8 +110,8 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
     $query->registerObjectTemplate($authorTpl);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
-      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
-      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`sortkey` ASC";
+      "`Author`.`last_editor` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
+      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -123,13 +123,13 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
     $query = new ObjectQuery('Author');
     $authorTpl = $query->getObjectTemplate('Author');
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
-    $pageTpl = $query->getObjectTemplate('Page');
-    $pageTpl->setValue("name", Criteria::asValue("LIKE", "Page 1%")); // explicit LIKE
-    $authorTpl->addNode($pageTpl);
+    $chapterTpl = $query->getObjectTemplate('Chapter');
+    $chapterTpl->setValue("name", Criteria::asValue("LIKE", "Chapter 1%")); // explicit LIKE
+    $authorTpl->addNode($chapterTpl);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
-      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` INNER JOIN `Page` ON `Page`.`fk_author_id` = `Author`.`id` ".
-      "WHERE (`Author`.`name` LIKE '%ingo%') AND (`Page`.`name` LIKE 'Page 1%') ORDER BY `Author`.`sortkey` ASC";
+      "`Author`.`last_editor` FROM `Author` INNER JOIN `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
+      "WHERE (`Author`.`name` LIKE '%ingo%') AND (`Chapter`.`name` LIKE 'Chapter 1%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -138,18 +138,19 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
   public function testParentChildSameType() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Page');
-    $page1Tpl = $query->getObjectTemplate('Page');
+    $query = new ObjectQuery('Chapter');
+    $page1Tpl = $query->getObjectTemplate('Chapter');
     $page1Tpl->setValue("creator", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
-    $page2Tpl = $query->getObjectTemplate('Page');
-    $page2Tpl->setValue("name", Criteria::asValue("LIKE", "Page 1%")); // explicit LIKE
-    $page1Tpl->addNode($page2Tpl, 'ChildPage');
+    $page2Tpl = $query->getObjectTemplate('Chapter');
+    $page2Tpl->setValue("name", Criteria::asValue("LIKE", "Chapter 1%")); // explicit LIKE
+    $page1Tpl->addNode($page2Tpl, 'SubChapter');
     $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
-      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `Page_1` ON ".
-      "`Page_1`.`fk_page_id` = `Page`.`id` WHERE (`Page`.`creator` LIKE '%ingo%') AND (`Page_1`.`name` LIKE 'Page 1%') ".
-      "ORDER BY `Page`.`sortkey` ASC";
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, ".
+      "`Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
+      "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` INNER JOIN `Chapter` AS `Chapter_1` ON ".
+      "`Chapter_1`.`fk_chapter_id` = `Chapter`.`id` WHERE (`Chapter`.`creator` LIKE '%ingo%') AND (`Chapter_1`.`name` LIKE 'Chapter 1%') ".
+      "ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -158,18 +159,16 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
   public function testManyToMany() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Page');
-    $pageTpl = $query->getObjectTemplate('Page');
-    $pageTpl->setValue("name", Criteria::asValue("LIKE", "%Page 1%")); // explicit LIKE
-    $documentTpl = $query->getObjectTemplate('Document');
-    $documentTpl->setValue("title", Criteria::asValue("=", "Document")); // explicit LIKE
-    $pageTpl->addNode($documentTpl);
+    $query = new ObjectQuery('Publisher');
+    $publisherTpl = $query->getObjectTemplate('Publisher');
+    $publisherTpl->setValue("name", Criteria::asValue("LIKE", "%Publisher 1%")); // explicit LIKE
+    $authorTpl = $query->getObjectTemplate('Author');
+    $authorTpl->setValue("name", Criteria::asValue("=", "Author")); // explicit LIKE
+    $publisherTpl->addNode($authorTpl);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, ".
-      "`Page`.`created`, `Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
-      "INNER JOIN `NMPageDocument` ON `NMPageDocument`.`fk_page_id` = `Page`.`id` INNER JOIN `Document` ON `Document`.`id` = `NMPageDocument`.`fk_document_id` ".
-      "WHERE (`Page`.`name` LIKE '%Page 1%') AND (`Document`.`title` = 'Document') ORDER BY `Page`.`sortkey` ASC";
+    $expected = "SELECT `Publisher`.`id`, `Publisher`.`name`, `Publisher`.`created`, `Publisher`.`creator`, `Publisher`.`modified`, `Publisher`.`last_editor` ".
+      "FROM `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
+      "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `Publisher`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -195,18 +194,16 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
   public function testSortManyToManyRelation() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Page');
-    $pageTpl = $query->getObjectTemplate('Page');
-    $pageTpl->setValue("name", Criteria::asValue("LIKE", "%Page 1%")); // explicit LIKE
-    $documentTpl = $query->getObjectTemplate('Document');
-    $documentTpl->setValue("title", Criteria::asValue("=", "Document")); // explicit LIKE
-    $pageTpl->addNode($documentTpl);
-    $sql = $query->getQueryString(array('sortkey_document DESC'));
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, ".
-      "`Page`.`created`, `Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
-      "INNER JOIN `NMPageDocument` ON `NMPageDocument`.`fk_page_id` = `Page`.`id` INNER JOIN `Document` ON `Document`.`id` = `NMPageDocument`.`fk_document_id` ".
-      "WHERE (`Page`.`name` LIKE '%Page 1%') AND (`Document`.`title` = 'Document') ORDER BY `NMPageDocument`.`sortkey_document` DESC";
+    $query = new ObjectQuery('Publisher');
+    $publisherTpl = $query->getObjectTemplate('Publisher');
+    $publisherTpl->setValue("name", Criteria::asValue("LIKE", "%Publisher 1%")); // explicit LIKE
+    $authorTpl = $query->getObjectTemplate('Author');
+    $authorTpl->setValue("name", Criteria::asValue("=", "Author")); // explicit LIKE
+    $publisherTpl->addNode($authorTpl);
+    $sql = $query->getQueryString(array('sortkey_publisher DESC'));
+    $expected = "SELECT `Publisher`.`id`, `Publisher`.`name`, `Publisher`.`created`, `Publisher`.`creator`, `Publisher`.`modified`, `Publisher`.`last_editor` ".
+      "FROM `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
+      "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `NMPublisherAuthor`.`sortkey_publisher` DESC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -217,7 +214,7 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
 
     /*
     WHERE (Author.name LIKE '%ingo%' AND Author.creator LIKE '%admin%') OR (Author.name LIKE '%herwig%') AND
-      (Page.created >= '2004-01-01') AND (Page.created < '2005-01-01') AND ((Page.name LIKE 'Page 1%') OR (Page.creator = 'admin'))
+      (Chapter.created >= '2004-01-01') AND (Chapter.created < '2005-01-01') AND ((Chapter.name LIKE 'Chapter 1%') OR (Chapter.creator = 'admin'))
      */
 
     $query = new ObjectQuery('Author');
@@ -231,31 +228,31 @@ class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
     $authorTpl2 = $query->getObjectTemplate('Author', null, Criteria::OPERATOR_OR);
     $authorTpl2->setValue("name", "herwig");
 
-    // (Page.created >= '2004-01-01') AND (Page.created < '2005-01-01')
-    $pageTpl1 = $query->getObjectTemplate('Page');
+    // (Chapter.created >= '2004-01-01') AND (Chapter.created < '2005-01-01')
+    $pageTpl1 = $query->getObjectTemplate('Chapter');
     $pageTpl1->setValue("created", Criteria::asValue(">=", "2004-01-01"));
-    $pageTpl2 = $query->getObjectTemplate('Page');
+    $pageTpl2 = $query->getObjectTemplate('Chapter');
     $pageTpl2->setValue("created", Criteria::asValue("<", "2005-01-01"));
 
-    // AND ((Page.name LIKE 'Page 1%') OR (Page.creator = 'admin'))
+    // AND ((Chapter.name LIKE 'Chapter 1%') OR (Chapter.creator = 'admin'))
     // could have be built using one template, but this demonstrates the usage
     // of the ObjectQuery::makeGroup() method
-    $pageTpl3 = $query->getObjectTemplate('Page');
-    $pageTpl3->setValue("name", Criteria::asValue("LIKE", "Page 1%"));
-    $pageTpl4 = $query->getObjectTemplate('Page', null, Criteria::OPERATOR_OR);
+    $pageTpl3 = $query->getObjectTemplate('Chapter');
+    $pageTpl3->setValue("name", Criteria::asValue("LIKE", "Chapter 1%"));
+    $pageTpl4 = $query->getObjectTemplate('Chapter', null, Criteria::OPERATOR_OR);
     $pageTpl4->setValue("creator", Criteria::asValue("=", "admin"));
     $query->makeGroup(array(&$pageTpl3, &$pageTpl4), Criteria::OPERATOR_AND);
 
-    $authorTpl1->addNode($pageTpl1, 'Page');
-    $authorTpl1->addNode($pageTpl2, 'Page');
-    $authorTpl1->addNode($pageTpl3, 'Page');
-    $authorTpl1->addNode($pageTpl4, 'Page');
+    $authorTpl1->addNode($pageTpl1, 'Chapter');
+    $authorTpl1->addNode($pageTpl2, 'Chapter');
+    $authorTpl1->addNode($pageTpl3, 'Chapter');
+    $authorTpl1->addNode($pageTpl4, 'Chapter');
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
-      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` INNER JOIN `Page` ON `Page`.`fk_author_id` = `Author`.`id` ".
-      "WHERE (`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%') AND (`Page`.`created` >= '2004-01-01') ".
-      "AND (`Page`.`created` < '2005-01-01') OR (`Author`.`name` LIKE '%herwig%') AND ".
-      "((`Page`.`name` LIKE 'Page 1%') OR (`Page`.`creator` = 'admin')) ORDER BY `Author`.`sortkey` ASC";
+      "`Author`.`last_editor` FROM `Author` INNER JOIN `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
+      "WHERE (`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%') AND (`Chapter`.`created` >= '2004-01-01') ".
+      "AND (`Chapter`.`created` < '2005-01-01') OR (`Author`.`name` LIKE '%herwig%') AND ".
+      "((`Chapter`.`name` LIKE 'Chapter 1%') OR (`Chapter`.`creator` = 'admin')) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);

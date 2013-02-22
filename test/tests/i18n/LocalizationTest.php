@@ -42,7 +42,7 @@ class LocalizationTest extends DatabaseTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'dbsequence' => array(
-        array(id => 1),
+        array('id' => 1),
       ),
       'user' => array(
         array('id' => 301, 'name' => 'Herwig', 'firstname' => 'Ingo'),

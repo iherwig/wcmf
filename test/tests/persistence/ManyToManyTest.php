@@ -37,7 +37,7 @@ class ManyToManyTest extends DatabaseTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'dbsequence' => array(
-        array(id => 1),
+        array('id' => 1),
       ),
       'user' => array(
         array('id' => 50, 'login' => 'user1'),

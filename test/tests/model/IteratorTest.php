@@ -39,7 +39,7 @@ class IteratorTest extends DatabaseTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'dbsequence' => array(
-        array(id => 1),
+        array('id' => 1),
       ),
       'Chapter' => array(
         array('id' => 12345),

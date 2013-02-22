@@ -18,8 +18,9 @@
  */
 namespace test\tests\persistence;
 
+use test\lib\ArrayDataSet;
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
@@ -29,60 +30,50 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistentObjectProxyTest extends \PHPUnit_Framework_TestCase {
+class PersistentObjectProxyTest extends DatabaseTestCase {
 
-  private $_page1OidStr = 'Page:123451';
-  private $_page2OidStr = 'Page:123452';
+  private $_chapter1OidStr = 'Chapter:123451';
+  private $_chapter2OidStr = 'Chapter:123452';
 
-  protected function setUp() {
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    $page1 = TestUtil::createTestObject(ObjectId::parse($this->_page1OidStr), array('name' => 'Page1'));
-    $page2 = TestUtil::createTestObject(ObjectId::parse($this->_page2OidStr), array('name' => 'Page2'));
-    $page1->addNode($page2, "ChildPage");
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
-  }
-
-  protected function tearDown() {
-    TestUtil::runAnonymous(true);
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse($this->_page1OidStr));
-    TestUtil::deleteTestObject(ObjectId::parse($this->_page2OidStr));
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'Chapter' => array(
+        array('id' => 123451, 'fk_chapter_id' => null, 'name' => 'Chapter1', 'sortkey' => 123451),
+        array('id' => 123452, 'fk_chapter_id' => 123451, 'name' => 'Chapter2', 'sortkey' => 123452),
+      ),
+    ));
   }
 
   public function testLoadSimple() {
     TestUtil::runAnonymous(true);
-    $proxy = new PersistentObjectProxy(ObjectId::parse($this->_page1OidStr));
-    $this->assertEquals("Page1", $proxy->getName());
-    $this->assertEquals(123451, $proxy->getSortkeyPage());
-    $this->assertTrue($proxy->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
+    $proxy1 = new PersistentObjectProxy(ObjectId::parse($this->_chapter1OidStr));
+    $this->assertEquals("Chapter1", $proxy1->getName());
+    $this->assertEquals(123451, $proxy1->getSortkey());
+    $this->assertTrue($proxy1->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
 
-    $proxy = PersistentObjectProxy::fromObject($proxy->getRealSubject());
-    $this->assertEquals("Page1", $proxy->getName());
-    $this->assertEquals(123451, $proxy->getSortkeyPage());
-    $this->assertTrue($proxy->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
+    $proxy2 = PersistentObjectProxy::fromObject($proxy1->getRealSubject());
+    $this->assertEquals("Chapter1", $proxy2->getName());
+    $this->assertEquals(123451, $proxy2->getSortkey());
+    $this->assertTrue($proxy2->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
     TestUtil::runAnonymous(false);
   }
 
   public function testLoadRelation() {
     TestUtil::runAnonymous(true);
-    $proxy = new PersistentObjectProxy(ObjectId::parse($this->_page1OidStr));
-    $page1 = $proxy->getRealSubject();
-    $this->assertEquals("Page1", $proxy->getName());
-    $this->assertEquals(123451, $proxy->getSortkeyPage());
-    $this->assertTrue($page1 instanceof PersistentObject, "Real subject is PersistentObject instance");
+    $proxy = new PersistentObjectProxy(ObjectId::parse($this->_chapter1OidStr));
+    $chapter1 = $proxy->getRealSubject();
+    $this->assertEquals("Chapter1", $proxy->getName());
+    $this->assertEquals(123451, $proxy->getSortkey());
+    $this->assertTrue($chapter1 instanceof PersistentObject, "Real subject is PersistentObject instance");
 
     // implicitly load relation
-    $childPages = $page1->getValue("ChildPage");
-    $page2 = $childPages[0];
-    $this->assertEquals("Page2", $page2->getName());
-    $this->assertEquals(123452, $page2->getSortkeyPage());
+    $subChapters = $chapter1->getValue("SubChapter");
+    $chapter2 = $subChapters[0];
+    $this->assertEquals("Chapter2", $chapter2->getName());
+    $this->assertEquals(123452, $chapter2->getSortkey());
   }
 }
 ?>

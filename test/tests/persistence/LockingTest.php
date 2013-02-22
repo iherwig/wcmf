@@ -42,7 +42,7 @@ class LockingTest extends DatabaseTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'dbsequence' => array(
-        array(id => 1),
+        array('id' => 1),
       ),
       'user' => array(
         array('id' => 555, 'login' => 'user1', 'password' => '24c9e15e52afc47c225b757e7bee1f9d'),
