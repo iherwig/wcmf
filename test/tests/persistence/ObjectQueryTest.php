@@ -18,6 +18,7 @@
  */
 namespace test\tests\persistence;
 
+use test\lib\BaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
@@ -30,7 +31,7 @@ use wcmf\lib\persistence\ObjectId;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ObjectQueryTest extends \PHPUnit_Framework_TestCase {
+class ObjectQueryTest extends BaseTestCase {
 
   public function testSimple() {
     TestUtil::runAnonymous(true);

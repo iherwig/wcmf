@@ -18,6 +18,7 @@
  */
 namespace test\tests\persistence;
 
+use test\lib\BaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\model\StringQuery;
 
@@ -26,7 +27,7 @@ use wcmf\lib\model\StringQuery;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class StringQueryTest extends \PHPUnit_Framework_TestCase {
+class StringQueryTest extends BaseTestCase {
 
   public function testSimple() {
     TestUtil::runAnonymous(true);
@@ -35,8 +36,8 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
     $query = new StringQuery('Author');
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor`, ".
-      "`Author`.`sortkey` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`sortkey` ASC";
+    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor` ".
+      "FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -47,8 +48,8 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
 
     $query = new StringQuery('Author');
     $sql = $query->getQueryString();
-    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor`, ".
-      "`Author`.`sortkey` FROM `Author` ORDER BY `Author`.`sortkey` ASC";
+    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor` ".
+      "FROM `Author` ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -57,13 +58,13 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
   public function testParentChild() {
     TestUtil::runAnonymous(true);
 
-    $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Page`.`name` LIKE 'Page 1%'";
+    $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Chapter`.`name` LIKE 'Chapter 1%'";
     $query = new StringQuery('Author');
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
-      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` INNER JOIN `Page` ON `Page`.`fk_author_id` = `Author`.`id` ".
-      "WHERE (`Author`.`name` LIKE '%ingo%' AND `Page`.`name` LIKE 'Page 1%') ORDER BY `Author`.`sortkey` ASC";
+      "`Author`.`last_editor` FROM `Author` INNER JOIN `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
+      "WHERE (`Author`.`name` LIKE '%ingo%' AND `Chapter`.`name` LIKE 'Chapter 1%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -72,15 +73,15 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
   public function testParentChildSameType() {
     TestUtil::runAnonymous(true);
 
-    $queryStr = "`Page`.`creator` LIKE '%ingo%' AND `ChildPage`.`name` LIKE 'Page 1%'";
-    $query = new StringQuery('Page');
+    $queryStr = "`Chapter`.`creator` LIKE '%ingo%' AND `SubChapter`.`name` LIKE 'Chapter 1%'";
+    $query = new StringQuery('Chapter');
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
-      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `ChildPage` ON ".
-      "`ChildPage`.`fk_page_id` = `Page`.`id` WHERE (`Page`.`creator` LIKE '%ingo%' AND `ChildPage`.`name` ".
-      "LIKE 'Page 1%') ORDER BY `Page`.`sortkey` ASC";
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
+      "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` INNER JOIN `Chapter` AS `SubChapter` ON ".
+      "`SubChapter`.`fk_chapter_id` = `Chapter`.`id` WHERE (`Chapter`.`creator` LIKE '%ingo%' AND `SubChapter`.`name` ".
+      "LIKE 'Chapter 1%') ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -89,13 +90,14 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
   public function testChildParent() {
     TestUtil::runAnonymous(true);
 
-    $queryStr = "`NormalPage`.`id` = 10";
+    $queryStr = "`NormalChapter`.`id` = 10";
     $query = new StringQuery('Image');
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Image`.`id`, `Image`.`fk_page_id`, `Image`.`fk_titlepage_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
-      "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor` FROM `Image` INNER JOIN `Page` AS `NormalPage` ON ".
-      "`Image`.`fk_page_id` = `NormalPage`.`id` WHERE (`NormalPage`.`id` = 10)";
+    $expected = "SELECT `Image`.`id`, `Image`.`fk_chapter_id`, `Image`.`fk_titlechapter_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
+      "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor`, `Image`.`sortkey_titlechapter`, `Image`.`sortkey_normalchapter`, `Image`.`sortkey` ".
+      "FROM `Image` INNER JOIN `Chapter` AS `NormalChapter` ON ".
+      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE (`NormalChapter`.`id` = 10) ORDER BY `Image`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -104,14 +106,15 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
   public function testChildParentSameType() {
     TestUtil::runAnonymous(true);
 
-    $queryStr = "`ParentPage`.`id` = 10";
-    $query = new StringQuery('Page');
+    $queryStr = "`ParentChapter`.`id` = 10";
+    $query = new StringQuery('Chapter');
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, `Page`.`created`, ".
-      "`Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` INNER JOIN `Page` AS `ParentPage` ON ".
-      "`Page`.`fk_page_id` = `ParentPage`.`id` WHERE (`ParentPage`.`id` = 10) ORDER BY `Page`.`sortkey` ASC";
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, ".
+      "`Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
+      "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` INNER JOIN `Chapter` AS `ParentChapter` ON ".
+      "`Chapter`.`fk_chapter_id` = `ParentChapter`.`id` WHERE (`ParentChapter`.`id` = 10) ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -120,15 +123,15 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
   public function testManyToMany() {
     TestUtil::runAnonymous(true);
 
-    $queryStr = "`Page`.`name` LIKE '%Page 1%' AND `Document`.`title` = 'Document'";
-    $query = new StringQuery('Page');
+    $queryStr = "`Publisher`.`name` LIKE '%Publisher 1%' AND `Author`.`name` = 'Author 2'";
+    $query = new StringQuery('Publisher');
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT `Page`.`id`, `Page`.`fk_page_id`, `Page`.`fk_author_id`, `Page`.`name`, ".
-      "`Page`.`created`, `Page`.`creator`, `Page`.`modified`, `Page`.`last_editor`, `Page`.`sortkey_author`, `Page`.`sortkey_page`, `Page`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Page` LEFT JOIN `Author` ON `Page`.`fk_author_id`=`Author`.`id` ".
-      "INNER JOIN `NMPageDocument` ON `NMPageDocument`.`fk_page_id` = `Page`.`id` INNER JOIN `Document` ON `Document`.`id` = `NMPageDocument`.`fk_document_id` ".
-      "WHERE (`Page`.`name` LIKE '%Page 1%' AND `Document`.`title` = 'Document') ORDER BY `Page`.`sortkey` ASC";
+    $expected = "SELECT `Publisher`.`id`, `Publisher`.`name`, ".
+      "`Publisher`.`created`, `Publisher`.`creator`, `Publisher`.`modified`, `Publisher`.`last_editor` ".
+      "FROM `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` ".
+      "INNER JOIN `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
+      "WHERE (`Publisher`.`name` LIKE '%Publisher 1%' AND `Author`.`name` = 'Author 2') ORDER BY `Publisher`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);
@@ -145,9 +148,9 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
-      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` INNER JOIN `Page` ON `Page`.`fk_author_id` = `Author`.`id` ".
-      "INNER JOIN `Image` AS `NormalImage` ON `NormalImage`.`fk_page_id` = `Page`.`id` INNER JOIN `Image` AS `TitleImage` ON ".
-      "`TitleImage`.`fk_titlepage_id` = `Page`.`id` WHERE (`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
+      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` INNER JOIN `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
+      "INNER JOIN `Image` AS `NormalImage` ON `NormalImage`.`fk_chapter_id` = `Chapter`.`id` INNER JOIN `Image` AS `TitleImage` ON ".
+      "`TitleImage`.`fk_titlechapter_id` = `Chapter`.`id` WHERE (`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
       "AND `TitleImage`.`file` = 'title_image.jpg') ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
@@ -163,10 +166,10 @@ class StringQueryTest extends \PHPUnit_Framework_TestCase {
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
-      "`Author`.`last_editor`, `Author`.`sortkey` FROM `Author` INNER JOIN `Page` ON `Page`.`fk_author_id` = `Author`.`id` ".
-      "INNER JOIN `Image` AS `NormalImage` ON `NormalImage`.`fk_page_id` = `Page`.`id` INNER JOIN `Image` AS `TitleImage` ON ".
-      "`TitleImage`.`fk_titlepage_id` = `Page`.`id` WHERE (`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
-      "AND `TitleImage`.`file` = 'title_image.jpg') ORDER BY `Author`.`sortkey` ASC";
+      "`Author`.`last_editor` FROM `Author` INNER JOIN `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
+      "INNER JOIN `Image` AS `NormalImage` ON `NormalImage`.`fk_chapter_id` = `Chapter`.`id` INNER JOIN `Image` AS `TitleImage` ON ".
+      "`TitleImage`.`fk_titlechapter_id` = `Chapter`.`id` WHERE (`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
+      "AND `TitleImage`.`file` = 'title_image.jpg') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);

@@ -18,8 +18,10 @@
  */
 namespace test\tests\persistence;
 
-use testapp\application\model\Page;
+use testapp\application\model\Chapter;
 
+use test\lib\ArrayDataSet;
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
@@ -32,99 +34,78 @@ use wcmf\lib\persistence\PagingInfo;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
+class PersistentObjectTest extends DatabaseTestCase {
 
-  protected function setUp() {
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    for ($i=100000; $i<100000+11; $i++) {
-      TestUtil::createTestObject(ObjectId::parse('Page:'.$i), array());
+  protected function getDataSet() {
+    $chapters = array();
+    for ($i=99000; $i<100000+11; $i++) {
+      $chapters[] = array('id' => $i, 'sortkey' => $i);
     }
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
-  }
 
-  protected function tearDown() {
-    TestUtil::runAnonymous(true);
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    for ($i=100000; $i<100000+11; $i++) {
-      TestUtil::deleteTestObject(ObjectId::parse('Page:'.$i));
-    }
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
-  }
-
-  public function testInitializeSortkeys() {
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-
-    $page = $persistenceFacade->load(ObjectId::parse('Page:100000'));
-    $this->assertEquals(100000, $page->getSortkey());
-    $this->assertEquals(100000, $page->getSortkeyParentPage());
-    $this->assertEquals(100000, $page->getSortkeyAuthor());
-
-    TestUtil::runAnonymous(false);
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'Chapter' => $chapters,
+    ));
   }
 
   public function testCopyValues() {
     TestUtil::runAnonymous(true);
-    $page1 = new Page(new ObjectId('Page', 123));
-    $page1->setName('Page 1');
-    $page1->setCreated(null);
+    $chapter1 = new Chapter(new ObjectId('Chapter', 123));
+    $chapter1->setName('Chapter 1');
+    $chapter1->setCreated(null);
 
     // copy values without pks
-    $page21 = new Page(new ObjectId('Page', 234));
-    $page21->setName('Page 2');
-    $page1->setCreated('2011-05-31');
-    $page1->copyValues($page21, false);
-    $this->assertEquals('Page:234', $page21->getOID()->__toString());
-    $this->assertEquals('Page 1', $page21->getName());
-    $this->assertEquals('2011-05-31', $page21->getCreated());
+    $chapter21 = new Chapter(new ObjectId('Chapter', 234));
+    $chapter21->setName('Chapter 2');
+    $chapter1->setCreated('2011-05-31');
+    $chapter1->copyValues($chapter21, false);
+    $this->assertEquals('Chapter:234', $chapter21->getOID()->__toString());
+    $this->assertEquals('Chapter 1', $chapter21->getName());
+    $this->assertEquals('2011-05-31', $chapter21->getCreated());
 
     // copy values without pks
-    $page22 = new Page(new ObjectId('Page', 234));
-    $page22->setName('Page 2');
-    $page1->setCreated('2011-05-31');
-    $page1->copyValues($page22, true);
-    $this->assertEquals('Page:123', $page22->getOID()->__toString());
-    $this->assertEquals('Page 1', $page22->getName());
-    $this->assertEquals('2011-05-31', $page22->getCreated());
+    $chapter22 = new Chapter(new ObjectId('Chapter', 234));
+    $chapter22->setName('Chapter 2');
+    $chapter1->setCreated('2011-05-31');
+    $chapter1->copyValues($chapter22, true);
+    $this->assertEquals('Chapter:123', $chapter22->getOID()->__toString());
+    $this->assertEquals('Chapter 1', $chapter22->getName());
+    $this->assertEquals('2011-05-31', $chapter22->getCreated());
 
     TestUtil::runAnonymous(false);
   }
 
   public function testMergeValues() {
     TestUtil::runAnonymous(true);
-    $page1 = new Page(new ObjectId('Page', 123));
-    $page1->setName('Page 1');
-    $page1->setCreated('2011-05-31');
-    $page1->setCreator('admin');
+    $chapter1 = new Chapter(new ObjectId('Chapter', 123));
+    $chapter1->setName('Chapter 1');
+    $chapter1->setCreated('2011-05-31');
+    $chapter1->setCreator('admin');
 
-    $page2 = new Page(new ObjectId('Page', 234));
-    $page2->setName('Page 2');
-    $page1->setCreated(null);
-    $page2->mergeValues($page1);
-    $this->assertEquals('Page:234', $page2->getOID()->__toString());
-    $this->assertEquals('Page 2', $page2->getName());
-    $this->assertEquals(null, $page2->getCreated());
-    $this->assertEquals('admin', $page2->getCreator());
+    $chapter2 = new Chapter(new ObjectId('Chapter', 234));
+    $chapter2->setName('Chapter 2');
+    $chapter1->setCreated(null);
+    $chapter2->mergeValues($chapter1);
+    $this->assertEquals('Chapter:234', $chapter2->getOID()->__toString());
+    $this->assertEquals('Chapter 2', $chapter2->getName());
+    $this->assertEquals(null, $chapter2->getCreated());
+    $this->assertEquals('admin', $chapter2->getCreator());
 
     TestUtil::runAnonymous(false);
   }
 
   public function testClearValues() {
     TestUtil::runAnonymous(true);
-    $page1 = new Page(new ObjectId('Page', 123));
-    $page1->setName('Page 1');
-    $page1->setCreated('2011-05-31');
+    $chapter1 = new Chapter(new ObjectId('Chapter', 123));
+    $chapter1->setName('Chapter 1');
+    $chapter1->setCreated('2011-05-31');
 
-    $page1->clearValues();
-    $this->assertEquals('Page:123', $page1->getOID()->__toString());
-    $this->assertEquals(null, $page1->getName());
-    $this->assertEquals(null, $page1->getCreated());
+    $chapter1->clearValues();
+    $this->assertEquals('Chapter:123', $chapter1->getOID()->__toString());
+    $this->assertEquals(null, $chapter1->getName());
+    $this->assertEquals(null, $chapter1->getCreated());
 
     TestUtil::runAnonymous(false);
   }
@@ -132,13 +113,13 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
   public function testLoadPartially() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $pagePartially = $persistenceFacade->load(ObjectId::parse('Page:100000'), BuildDepth::SINGLE, array('Page' => array()));
-    $this->assertFalse($pagePartially->hasValue('sortkey_parentpage'));
-    $this->assertEquals(null, $pagePartially->getSortkeyParentPage());
+    $chapterPartially = $persistenceFacade->load(ObjectId::parse('Chapter:100000'), BuildDepth::SINGLE, array('Chapter' => array()));
+    $this->assertFalse($chapterPartially->hasValue('sortkey'));
+    $this->assertEquals(null, $chapterPartially->getSortkey());
 
-    $pageComplete = $persistenceFacade->load(ObjectId::parse('Page:100000'), BuildDepth::SINGLE);
-    $this->assertTrue($pagePartially->hasValue('sortkey_parentpage'));
-    $this->assertEquals(100000, $pageComplete->getSortkeyParentPage());
+    $chapterComplete = $persistenceFacade->load(ObjectId::parse('Chapter:100000'), BuildDepth::SINGLE);
+    $this->assertTrue($chapterPartially->hasValue('sortkey'));
+    $this->assertEquals(100000, $chapterComplete->getSortkey());
 
     TestUtil::runAnonymous(false);
   }
@@ -148,30 +129,30 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // lower bound 1
-    $pagingInfo = new PagingInfo(0);
-    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
-    $this->assertEquals(0, sizeof($pages));
+    $pagingInfo1 = new PagingInfo(0);
+    $chapters1 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo1);
+    $this->assertEquals(0, sizeof($chapters1));
 
     // lower bound 2
-    $pagingInfo = new PagingInfo(1);
-    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
-    $this->assertEquals(1, sizeof($pages));
+    $pagingInfo2 = new PagingInfo(1);
+    $chapters2 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo2);
+    $this->assertEquals(1, sizeof($chapters2));
 
     // simple
-    $pagingInfo = new PagingInfo(10);
-    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
-    $this->assertEquals(10, sizeof($pages));
+    $pagingInfo3 = new PagingInfo(10);
+    $chapters3 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo3);
+    $this->assertEquals(10, sizeof($chapters3));
 
     // out of bounds 1
-    $pagingInfo = new PagingInfo(-1);
-    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
-    $this->assertEquals(0, sizeof($pages));
+    $pagingInfo4 = new PagingInfo(-1);
+    $chapters4 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo4);
+    $this->assertEquals(0, sizeof($chapters4));
 
     // out of bounds 2
-    $pagingInfo = new PagingInfo(100000000);
-    $numPages = sizeof($persistenceFacade->getOIDs('Page'));
-    $pages = $persistenceFacade->loadObjects('Page', BuildDepth::SINGLE, null, null, $pagingInfo);
-    $this->assertEquals($numPages, sizeof($pages));
+    $pagingInfo5 = new PagingInfo(100000000);
+    $numChapters = sizeof($persistenceFacade->getOIDs('Chapter'));
+    $chapters5 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo5);
+    $this->assertEquals($numChapters, sizeof($chapters5));
 
     TestUtil::runAnonymous(false);
   }
@@ -184,14 +165,14 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
     $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
     $pf = ObjectFactory::getInstance('persistenceFacade');
     for ($i=0; $i<100; $i++) {
-      $doc = $pf->create('Page', BuildDepth::SINGLE);
+      $chapter = $pf->create('Chapter', BuildDepth::SINGLE);
       $inc = 1;
       while ($inc < 15){
         $alphanum = $alphanum.'abcdefghijkmnpqrstuvwxyz23456789';
         $inc++;
       }
       $title = substr(str_shuffle($alphanum), 0, 15);
-      $doc->setName(ucfirst($title));
+      $chapter->setName(ucfirst($title));
     }
     TestUtil::runAnonymous(false);
   }
@@ -203,8 +184,8 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $start = time();
-    $documents = $persistenceFacade->loadObjects('Document', BuildDepth::SINGLE);
-    Log::info("Loaded ".sizeof($documents)." documents with all attributes in ".(time()-$start)." seconds", __CLASS__);
+    $chapters = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE);
+    Log::info("Loaded ".sizeof($chapters)." chapters with all attributes in ".(time()-$start)." seconds", __CLASS__);
     TestUtil::runAnonymous(false);
   }
 
@@ -215,9 +196,9 @@ class PersistentObjectTest extends \PHPUnit_Framework_TestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $start = time();
-    $documents = $persistenceFacade->loadObjects('Document', BuildDepth::SINGLE,
-            null, null, null, array('Document' => array('id')));
-    Log::info("Loaded ".sizeof($documents)." documents with one attribute in ".(time()-$start)." seconds", __CLASS__);
+    $chapters = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE,
+            null, null, null, array('Chapter' => array('id')));
+    Log::info("Loaded ".sizeof($chapters)." chapters with one attribute in ".(time()-$start)." seconds", __CLASS__);
     TestUtil::runAnonymous(false);
   }
 }

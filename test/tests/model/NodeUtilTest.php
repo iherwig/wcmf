@@ -18,6 +18,7 @@
  */
 namespace test\tests\model;
 
+use test\lib\BaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
@@ -29,7 +30,7 @@ use wcmf\lib\persistence\ObjectId;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeUtilTest extends \PHPUnit_Framework_TestCase {
+class NodeUtilTest extends BaseTestCase {
 
   public function testGetConnection() {
     TestUtil::runAnonymous(true);

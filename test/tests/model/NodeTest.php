@@ -18,6 +18,7 @@
  */
 namespace test\tests\model;
 
+use test\lib\BaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
@@ -28,7 +29,7 @@ use wcmf\lib\persistence\BuildDepth;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeTest extends \PHPUnit_Framework_TestCase {
+class NodeTest extends BaseTestCase {
 
   public function testBuildDepth() {
     TestUtil::runAnonymous(true);

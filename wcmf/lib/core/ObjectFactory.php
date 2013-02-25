@@ -98,6 +98,13 @@ class ObjectFactory {
   }
 
   /**
+   * Delete all created instances.
+   */
+  public static function clear() {
+    self::$_instances = array();
+  }
+
+  /**
    * Get the setter method name for a property.
    * @param property
    * @return String

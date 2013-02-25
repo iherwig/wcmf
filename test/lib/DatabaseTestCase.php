@@ -20,6 +20,7 @@ namespace test\lib;
 
 use \PDO;
 use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 
 /**
  * ControllerTestCase is a PHPUnit test case, that
@@ -45,6 +46,13 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
     }
 
     return $this->conn;
+  }
+
+  protected function setUp() {
+    // clear object factory instance
+    ObjectFactory::clear();
+
+    parent::setUp();
   }
 }
 ?>

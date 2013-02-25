@@ -18,6 +18,7 @@
  */
 namespace test\tests\persistence;
 
+use test\lib\BaseTestCase;
 use wcmf\lib\persistence\ObjectId;
 
 /**
@@ -25,7 +26,7 @@ use wcmf\lib\persistence\ObjectId;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ObjectIdTest extends \PHPUnit_Framework_TestCase {
+class ObjectIdTest extends BaseTestCase {
 
   public function testSerialize() {
     // simple

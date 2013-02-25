@@ -18,6 +18,7 @@
  */
 namespace test\lib;
 
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\presentation\Request;
 
@@ -28,7 +29,7 @@ use wcmf\lib\presentation\Request;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class ControllerTestCase extends \PHPUnit_Framework_TestCase {
+abstract class ControllerTestCase extends DatabaseTestCase {
 
   private $_sid = null;
 
@@ -41,6 +42,8 @@ abstract class ControllerTestCase extends \PHPUnit_Framework_TestCase {
   }
 
   protected function setUp() {
+    parent::setUp();
+
     // log into the application
     $this->_sid = TestUtil::startSession('admin', 'admin');
 
@@ -49,6 +52,8 @@ abstract class ControllerTestCase extends \PHPUnit_Framework_TestCase {
   }
 
   protected function tearDown() {
+    parent::tearDown();
+
     // log out
     TestUtil::endSession($this->_sid);
   }

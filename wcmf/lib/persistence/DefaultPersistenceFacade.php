@@ -102,8 +102,6 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $this->checkArrayParameter($buildAttribs, 'buildAttribs');
     $this->checkArrayParameter($buildTypes, 'buildTypes');
 
-    $obj = null;
-
     // check if the object is already part of the transaction
     $transaction = $this->getTransaction();
     // extract type specific build attribs

@@ -31,41 +31,41 @@ use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 class RelationDescriptionTest extends \PHPUnit_Framework_TestCase {
 
   public function testMapper() {
-    $rel1 = new RDBOneToManyRelationDescription('Page', 'ParentPage', 'Page', 'ChildPage',
-            '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_page_id');
-    $this->assertEquals(ObjectFactory::getInstance('persistenceFacade')->getMapper('Page'), $rel1->getThisMapper());
-    $this->assertEquals(ObjectFactory::getInstance('persistenceFacade')->getMapper('Page'), $rel1->getOtherMapper());
+    $rel1 = new RDBOneToManyRelationDescription('Chapter', 'ParentChapter', 'Chapter', 'SubChapter',
+            '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_chapter_id');
+    $this->assertEquals(ObjectFactory::getInstance('persistenceFacade')->getMapper('Chapter'), $rel1->getThisMapper());
+    $this->assertEquals(ObjectFactory::getInstance('persistenceFacade')->getMapper('Chapter'), $rel1->getOtherMapper());
   }
 
   public function testCompare() {
     // to same type
-    $rel1 = new RDBOneToManyRelationDescription('Page', 'ParentPage', 'Page', 'ChildPage',
-            '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_page_id');
-    $rel2 = new RDBManyToOneRelationDescription('Page', 'ChildPage', 'Page', 'ParentPage',
-            '0', 'unbounded', '1', '1', 'none', 'composite', 'true', 'true', 'parent', 'id', 'fk_page_id');
-    $this->assertTrue($rel1->isSameRelation($rel2));
+    $rel11 = new RDBOneToManyRelationDescription('Chapter', 'ParentChapter', 'Chapter', 'SubChapter',
+            '1', '1', '0', 'unbounded', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_chapter_id');
+    $rel12 = new RDBManyToOneRelationDescription('Chapter', 'SubChapter', 'Chapter', 'ParentChapter',
+            '0', 'unbounded', '1', '1', 'none', 'composite', 'true', 'true', 'parent', 'id', 'fk_chapter_id');
+    $this->assertTrue($rel11->isSameRelation($rel12));
 
     // to other type
-    $rel1 = new RDBOneToManyRelationDescription('Page', 'TitlePage', 'Image', 'TitleImage',
-            '1', '1', '0', '1', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_titlepage_id');
-    $rel2 = new RDBManyToOneRelationDescription('Image', 'TitleImage', 'Page', 'TitlePage',
-            '0', '1', '1', '1', 'none', 'composite', 'true', 'true', 'parent', 'id', 'fk_titlepage_id');
-    $this->assertTrue($rel1->isSameRelation($rel2));
+    $rel21 = new RDBOneToManyRelationDescription('Chapter', 'TitleChapter', 'Image', 'TitleImage',
+            '1', '1', '0', '1', 'composite', 'none', 'true', 'true', 'child', 'id', 'fk_titlechapter_id');
+    $rel22 = new RDBManyToOneRelationDescription('Image', 'TitleImage', 'Chapter', 'TitleChapter',
+            '0', '1', '1', '1', 'none', 'composite', 'true', 'true', 'parent', 'id', 'fk_titlechapter_id');
+    $this->assertTrue($rel21->isSameRelation($rel22));
 
-    // many to mayn
-    $rel1 = new RDBManyToManyRelationDescription(
-        /* this -> nm  */ new RDBOneToManyRelationDescription('Page', 'Page', 'NMPageDocument', 'NMPageDocument',
-                '1', '1', '0', 'unbounded', 'shared', 'none', 'true', 'true', 'child', 'id', 'fk_page_id'),
-        /* nm -> other */ new RDBManyToOneRelationDescription('NMPageDocument', 'NMPageDocument', 'Document', 'Document',
-                '0', 'unbounded', '1', '1', 'none', 'shared', 'true', 'true', 'parent', 'id', 'fk_document_id')
+    // many to many
+    $rel31 = new RDBManyToManyRelationDescription(
+        /* this -> nm  */ new RDBOneToManyRelationDescription('Publisher', 'Publisher', 'NMPublisherAuthor', 'NMPublisherAuthor',
+                '1', '1', '0', 'unbounded', 'shared', 'none', 'true', 'true', 'child', 'id', 'fk_publisher_id'),
+        /* nm -> other */ new RDBManyToOneRelationDescription('NMPublisherAuthor', 'NMPublisherAuthor', 'Author', 'Author',
+                '0', 'unbounded', '1', '1', 'none', 'shared', 'true', 'true', 'parent', 'id', 'fk_author_id')
         );
-    $rel2 = new RDBManyToManyRelationDescription(
-        /* this -> nm  */ new RDBOneToManyRelationDescription('Document', 'Document', 'NMPageDocument', 'NMPageDocument',
-                '1', '1', '0', 'unbounded', 'shared', 'none', 'true', 'true', 'child', 'id', 'fk_document_id'),
-        /* nm -> other */ new RDBManyToOneRelationDescription('NMPageDocument', 'NMPageDocument', 'Page', 'Page',
-                '0', 'unbounded', '1', '1', 'none', 'shared', 'true', 'true', 'parent', 'id', 'fk_page_id')
+    $rel32 = new RDBManyToManyRelationDescription(
+        /* this -> nm  */ new RDBOneToManyRelationDescription('Author', 'Author', 'NMPublisherAuthor', 'NMPublisherAuthor',
+                '1', '1', '0', 'unbounded', 'shared', 'none', 'true', 'true', 'child', 'id', 'fk_author_id'),
+        /* nm -> other */ new RDBManyToOneRelationDescription('NMPublisherAuthor', 'NMPublisherAuthor', 'Publisher', 'Publisher',
+                '0', 'unbounded', '1', '1', 'none', 'shared', 'true', 'true', 'parent', 'id', 'fk_publisher_id')
         );
-    $this->assertTrue($rel1->isSameRelation($rel2));
+    $this->assertTrue($rel31->isSameRelation($rel32));
   }
 }
 ?>

@@ -18,6 +18,8 @@
  */
 namespace test\tests\persistence;
 
+use test\lib\ArrayDataSet;
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeSortkeyComparator;
@@ -28,60 +30,48 @@ use wcmf\lib\persistence\ObjectId;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SortTest extends \PHPUnit_Framework_TestCase {
+class SortTest extends DatabaseTestCase {
 
-  private $_pageOidStr = 'Page:12345';
-  private $_documentOid1Str = 'Document:123451';
-  private $_documentOid2Str = 'Document:123452';
-  private $_documentOid3Str = 'Document:123453';
-  private $_documentOidStrs = array();
-  private $_pageOid1Str = 'Page:123454';
-  private $_pageOid2Str = 'Page:123455';
-  private $_pageOid3Str = 'Page:123456';
-  private $_pageOidStrs = array();
+  private $_chapterOidStr = 'Chapter:12345';
+  private $_publisherOidStr = 'Publisher:12345';
 
-  protected function setUp() {
-    $this->_documentOidStrs = array($this->_documentOid1Str, $this->_documentOid2Str, $this->_documentOid3Str);
-    $this->_pageOidStrs = array($this->_pageOid1Str, $this->_pageOid2Str, $this->_pageOid3Str);
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    $mainPage = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
-    for ($i=0, $count=sizeof($this->_documentOidStrs); $i<$count; $i++) {
-      $document = TestUtil::createTestObject(ObjectId::parse($this->_documentOidStrs[$i]), array());
-      $mainPage->addNode($document);
-    }
-    for ($i=0, $count=sizeof($this->_pageOidStrs); $i<$count; $i++) {
-      $page = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStrs[$i]), array());
-      $mainPage->addNode($page, "ChildPage");
-    }
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
-  }
-
-  protected function tearDown() {
-    TestUtil::runAnonymous(true);
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStr));
-    for ($i=0, $count=sizeof($this->_documentOidStrs); $i<$count; $i++) {
-      TestUtil::deleteTestObject(ObjectId::parse($this->_documentOidStrs[$i]));
-    }
-    for ($i=0, $count=sizeof($this->_pageOidStrs); $i<$count; $i++) {
-      TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStrs[$i]));
-    }
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'Publisher' => array(
+        array('id' => 12345),
+      ),
+      'NMPublisherAuthor' => array(
+        array('id' => 123451, 'fk_publisher_id' => 12345, 'fk_author_id' => 123454, 'sortkey_publisher' => 123454),
+        array('id' => 123452, 'fk_publisher_id' => 12345, 'fk_author_id' => 123455, 'sortkey_publisher' => 123455),
+        array('id' => 123453, 'fk_publisher_id' => 12345, 'fk_author_id' => 123456, 'sortkey_publisher' => 123456),
+      ),
+      'Author' => array(
+        array('id' => 123454),
+        array('id' => 123455),
+        array('id' => 123456),
+      ),
+      'Chapter' => array(
+        array('id' => 12345, 'fk_chapter_id' => null, 'sortkey_parentchapter' => null, 'sortkey' => null),
+        array('id' => 123454, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123454, 'sortkey' => 123454),
+        array('id' => 123455, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123455, 'sortkey' => 123455),
+        array('id' => 123456, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123456, 'sortkey' => 123456),
+      ),
+    ));
   }
 
   public function testDefaultOrder() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $documentMapper = $persistenceFacade->getMapper('Document');
-    $defaultPageOrder = $documentMapper->getDefaultOrder('Page');
-    $this->assertEquals('sortkey_page', $defaultPageOrder['sortFieldName']);
+    $publisherMapper = $persistenceFacade->getMapper('Publisher');
+    $defaultAuthorOrder = $publisherMapper->getDefaultOrder('Author');
+    $this->assertEquals('sortkey_author', $defaultAuthorOrder['sortFieldName']);
+    $this->assertEquals('NMPublisherAuthor', $defaultAuthorOrder['sortType']);
+    $this->assertEquals(true, $defaultAuthorOrder['isSortkey']);
+    $this->assertEquals('ASC', $defaultAuthorOrder['sortDirection']);
 
     TestUtil::runAnonymous(false);
   }
@@ -93,25 +83,25 @@ class SortTest extends \PHPUnit_Framework_TestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     // get the existing order
-    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr));
-    $pages = $page->getValue("ChildPage");
-    $pageOids = array();
-    for ($i=0, $count=sizeof($pages); $i<$count; $i++) {
-      $pageOids[] = $pages[$i]->getOID()->__toString();
+    $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_chapterOidStr));
+    $subChapters1 = $chapter1->getValue("SubChapter");
+    $chapterOids = array();
+    for ($i=0, $count=sizeof($subChapters1); $i<$count; $i++) {
+      $chapterOids[] = $subChapters1[$i]->getOID()->__toString();
     }
     // put last into first place
-    $lastPage = array_pop($pages);
-    array_unshift($pages, $lastPage);
-    $page->setNodeOrder($pages);
+    $lastChapter = array_pop($subChapters1);
+    array_unshift($subChapters1, $lastChapter);
+    $chapter1->setNodeOrder($subChapters1);
     $transaction->commit();
 
     // reload
     $transaction->begin();
-    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
-    $pages = $page->getChildrenEx(null, "ChildPage");
-    $this->assertEquals($pageOids[0], $pages[1]->getOID()->__toString());
-    $this->assertEquals($pageOids[1], $pages[2]->getOID()->__toString());
-    $this->assertEquals($pageOids[2], $pages[0]->getOID()->__toString());
+    $chapter2 = $persistenceFacade->load(ObjectId::parse($this->_chapterOidStr), 1);
+    $subChapters2 = $chapter2->getChildrenEx(null, "SubChapter");
+    $this->assertEquals($chapterOids[0], $subChapters2[1]->getOID()->__toString());
+    $this->assertEquals($chapterOids[1], $subChapters2[2]->getOID()->__toString());
+    $this->assertEquals($chapterOids[2], $subChapters2[0]->getOID()->__toString());
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);
@@ -124,25 +114,25 @@ class SortTest extends \PHPUnit_Framework_TestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     // get the existing order
-    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr));
-    $documents = $page->getValue("Document");
-    $documentOids = array();
-    for ($i=0, $count=sizeof($documents); $i<$count; $i++) {
-      $documentOids[] = $documents[$i]->getOID()->__toString();
+    $publisher1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
+    $authors1 = $publisher1->getValue("Author");
+    $authorOids = array();
+    for ($i=0, $count=sizeof($authors1); $i<$count; $i++) {
+      $authorOids[] = $authors1[$i]->getOID()->__toString();
     }
     // put last into first place
-    $lastDocument = array_pop($documents);
-    array_unshift($documents, $lastDocument);
-    $page->setNodeOrder($documents);
+    $lastAuthor = array_pop($authors1);
+    array_unshift($authors1, $lastAuthor);
+    $publisher1->setNodeOrder($authors1);
     $transaction->commit();
 
     // reload
     $transaction->begin();
-    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
-    $documents = $page->getChildrenEx(null, "Document");
-    $this->assertEquals($documentOids[0], $documents[1]->getOID()->__toString());
-    $this->assertEquals($documentOids[1], $documents[2]->getOID()->__toString());
-    $this->assertEquals($documentOids[2], $documents[0]->getOID()->__toString());
+    $publisher2 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr), 1);
+    $authors2 = $publisher2->getChildrenEx(null, "Author");
+    $this->assertEquals($authorOids[0], $authors2[1]->getOID()->__toString());
+    $this->assertEquals($authorOids[1], $authors2[2]->getOID()->__toString());
+    $this->assertEquals($authorOids[2], $authors2[0]->getOID()->__toString());
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);
@@ -155,27 +145,27 @@ class SortTest extends \PHPUnit_Framework_TestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
 
-    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
-    $children = $page->getChildren();
+    $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_chapterOidStr), 1);
+    $children1 = $chapter1->getChildren();
     // get the existing order
     $childOids = array();
-    for ($i=0, $count=sizeof($children); $i<$count; $i++) {
-      $childOids[] = $children[$i]->getOID()->__toString();
+    for ($i=0, $count=sizeof($children1); $i<$count; $i++) {
+      $childOids[] = $children1[$i]->getOID()->__toString();
     }
     // put last into first place
-    $lastChild = array_pop($children);
-    array_unshift($children, $lastChild);
-    $page->setNodeOrder($children);
+    $lastChild = array_pop($children1);
+    array_unshift($children1, $lastChild);
+    $chapter1->setNodeOrder($children1);
     $transaction->commit();
 
     // reload
     $transaction->begin();
-    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
-    $children = $page->getChildren();
-    $comparator = new NodeSortkeyComparator($page, $children);
-    usort($children, array($comparator, 'compare'));
-    $this->assertEquals($childOids[sizeof($childOids)-1], $children[0]->getOID()->__toString());
-    $this->assertEquals($childOids[0], $children[1]->getOID()->__toString());
+    $chapter2 = $persistenceFacade->load(ObjectId::parse($this->_chapterOidStr), 1);
+    $children2 = $chapter2->getChildren();
+    $comparator = new NodeSortkeyComparator($chapter2, $children2);
+    usort($children2, array($comparator, 'compare'));
+    $this->assertEquals($childOids[sizeof($childOids)-1], $children2[0]->getOID()->__toString());
+    $this->assertEquals($childOids[0], $children2[1]->getOID()->__toString());
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);

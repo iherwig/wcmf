@@ -18,6 +18,8 @@
  */
 namespace test\tests\format;
 
+use test\lib\BaseTestCase;
+
 use testapp\application\model\Author;
 use testapp\application\model\Book;
 use testapp\application\model\Chapter;
@@ -33,7 +35,7 @@ use wcmf\lib\presentation\format\JsonFormat;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class JsonFormatTest extends \PHPUnit_Framework_TestCase {
+class JsonFormatTest extends BaseTestCase {
 
   public function testDeserializeSimple() {
     $message = new Request('controller', 'context', 'action');

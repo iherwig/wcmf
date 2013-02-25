@@ -33,7 +33,6 @@ use wcmf\lib\persistence\PersistentObjectProxy;
 class PersistentObjectProxyTest extends DatabaseTestCase {
 
   private $_chapter1OidStr = 'Chapter:123451';
-  private $_chapter2OidStr = 'Chapter:123452';
 
   protected function getDataSet() {
     return new ArrayDataSet(array(

@@ -18,6 +18,8 @@
  */
 namespace test\tests\persistence;
 
+use test\lib\ArrayDataSet;
+use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
@@ -27,31 +29,26 @@ use wcmf\lib\persistence\ObjectId;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class TransactionTest extends \PHPUnit_Framework_TestCase {
+class TransactionTest extends DatabaseTestCase {
 
-  private $_pageOidStr = 'Page:12345';
-  private $_documentOidStr = 'Document:12345';
+  private $_publisherOidStr = 'Publisher:12345';
+  private $_authorOidStr = 'Author:12345';
 
-  protected function setUp() {
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    $page = TestUtil::createTestObject(ObjectId::parse($this->_pageOidStr), array());
-    $document = TestUtil::createTestObject(ObjectId::parse($this->_documentOidStr), array());
-    $page->addNode($document);
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
-  }
-
-  protected function tearDown() {
-    TestUtil::runAnonymous(true);
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse($this->_pageOidStr));
-    TestUtil::deleteTestObject(ObjectId::parse($this->_documentOidStr));
-    $transaction->commit();
-    TestUtil::runAnonymous(false);
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'Publisher' => array(
+        array('id' => 12345),
+      ),
+      'NMPublisherAuthor' => array(
+        array('id' => 123451, 'fk_publisher_id' => 12345, 'fk_author_id' => 12345),
+      ),
+      'Author' => array(
+        array('id' => 12345),
+      ),
+    ));
   }
 
   public function testSimple() {
@@ -61,32 +58,32 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
     $transaction->begin();
     // create a new object
-    $newPage = $persistenceFacade->create('Page');
+    $newPublisher1 = $persistenceFacade->create('Publisher');
     $newName = time();
-    $newPage->setName($newName);
-    $id = $newPage->getOID()->getFirstId();
-    $this->assertTrue(ObjectId::isDummyId($id));
-    // modfy an existing object
-    $existingPage = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr));
-    $modifiedName = $existingPage->getName()." modified";
-    $existingPage->setName($modifiedName);
-    $this->assertEquals($modifiedName, $existingPage->getName());
+    $newPublisher1->setName($newName);
+    $id1 = $newPublisher1->getOID()->getFirstId();
+    $this->assertTrue(ObjectId::isDummyId($id1));
+    // modify an existing object
+    $existingPublisher1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
+    $modifiedName = $existingPublisher1->getName()." modified";
+    $existingPublisher1->setName($modifiedName);
+    $this->assertEquals($modifiedName, $existingPublisher1->getName());
     // delete an existing object
-    $document = $persistenceFacade->load(ObjectId::parse($this->_documentOidStr));
-    $document->delete();
+    $author1 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
+    $author1->delete();
     $transaction->commit();
 
     // the new object has a valid oid assigned by the persistence layer
-    $id = $newPage->getOID()->getFirstId();
-    $this->assertFalse(ObjectId::isDummyId($id));
+    $id2 = $newPublisher1->getOID()->getFirstId();
+    $this->assertFalse(ObjectId::isDummyId($id2));
 
     // load the objects again
-    $newPage2 = $persistenceFacade->load($newPage->getOID());
-    $this->assertEquals($newName, $newPage2->getName());
-    $existingPage2 = $persistenceFacade->load($existingPage->getOID());
-    $this->assertEquals($modifiedName, $existingPage2->getName());
-    $document2 = $persistenceFacade->load($document->getOID());
-    $this->assertNull($document2);
+    $newPublisher2 = $persistenceFacade->load($newPublisher1->getOID());
+    $this->assertEquals($newName, $newPublisher2->getName());
+    $existingPublisher2 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
+    $this->assertEquals($modifiedName, $existingPublisher2->getName());
+    $author2 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
+    $this->assertNull($author2);
 
     TestUtil::runAnonymous(false);
   }
@@ -98,20 +95,21 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
     // load the object inside the transaction
     $transaction->begin();
-    $page = $persistenceFacade->loadFirstObject('Page');
-    $oldName = $page->getName();
+    $chapter1 = $persistenceFacade->loadFirstObject('Publisher');
+    $oldName = $chapter1->getName();
     $transaction->rollback();
 
-    // modify the object in another transaction (should not
-    // change the object, since it is not attached to that transaction)
+    // modify the object in another transaction (should also
+    // change the object)
     $transaction->begin();
-    $page->setName($oldName." modified");
-    $this->assertEquals($oldName." modified", $page->getName());
+    $modifiedName = $oldName." modified";
+    $chapter1->setName($modifiedName);
+    $this->assertEquals($modifiedName, $chapter1->getName());
     $transaction->commit();
 
     // load the object
-    $page2 = $persistenceFacade->load($page->getOID());
-    $this->assertEquals($oldName, $page2->getName());
+    $chapter2 = $persistenceFacade->load($chapter1->getOID());
+    $this->assertEquals($modifiedName, $chapter2->getName());
 
     TestUtil::runAnonymous(false);
   }
@@ -123,19 +121,19 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
     $transaction->begin();
     // modify an object
-    $page = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr));
-    $oldName = $page->getName();
-    $page->setName($oldName." modified");
+    $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
+    $oldName = $chapter1->getName();
+    $chapter1->setName($oldName." modified");
     // delete an object
-    $document = $persistenceFacade->load(ObjectId::parse($this->_documentOidStr));
-    $document->delete();
+    $author1 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
+    $author1->delete();
     $transaction->rollback();
 
     // load the objects again
-    $page2 = $persistenceFacade->load($page->getOID());
-    $this->assertEquals($oldName, $page2->getName());
-    $document2 = $persistenceFacade->load($document->getOID());
-    $this->assertNotNull($document2);
+    $chapter2 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
+    $this->assertEquals($oldName, $chapter2->getName());
+    $author2 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
+    $this->assertNotNull($author2);
 
     TestUtil::runAnonymous(false);
   }
@@ -147,23 +145,23 @@ class TransactionTest extends \PHPUnit_Framework_TestCase {
 
     $transaction->begin();
     // modify objects
-    $page1 = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
-    $modifiedName = $page1->getName()." modified";
-    $page1->setName($modifiedName);
-    $this->assertEquals($modifiedName, $page1->getName());
-    $document1 = $page1->getFirstChild('Document');
-    $modifiedTitle = $document1->getTitle()." modified";
-    $document1->setTitle($modifiedTitle);
-    $this->assertEquals($modifiedTitle, $document1->getTitle());
+    $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr), 1);
+    $modifiedName = $chapter1->getName()." modified";
+    $chapter1->setName($modifiedName);
+    $this->assertEquals($modifiedName, $chapter1->getName());
+    $author1 = $chapter1->getFirstChild('Author');
+    $modifiedName = $author1->getName()." modified";
+    $author1->setName($modifiedName);
+    $this->assertEquals($modifiedName, $author1->getName());
     // reload objects
-    $page2 = $persistenceFacade->load(ObjectId::parse($this->_pageOidStr), 1);
-    $this->assertEquals($modifiedName, $page2->getName());
-    $document2 = $page2->getFirstChild('Document');
-    $this->assertEquals($modifiedTitle, $document2->getTitle());
-    $document3 = $persistenceFacade->load(ObjectId::parse($this->_documentOidStr), 1);
-    $this->assertEquals($modifiedTitle, $document3->getTitle());
-    $page3 = $document3->getFirstChild('Page');
-    $this->assertEquals($modifiedName, $page3->getName());
+    $chapter2 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr), 1);
+    $this->assertEquals($modifiedName, $chapter2->getName());
+    $author2 = $chapter2->getFirstChild('Author');
+    $this->assertEquals($modifiedName, $author2->getName());
+    $author3 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr), 1);
+    $this->assertEquals($modifiedName, $author3->getName());
+    $publisher3 = $author3->getFirstChild('Publisher');
+    $this->assertEquals($modifiedName, $publisher3->getName());
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);

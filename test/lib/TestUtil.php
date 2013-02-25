@@ -27,7 +27,6 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Application;
-use wcmf\lib\presentation\Request;
 use wcmf\lib\security\AuthUser;
 use wcmf\lib\security\RightsManager;
 

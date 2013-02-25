@@ -25,6 +25,7 @@ use testapp\application\model\ImageRDBMapper;
 use testapp\application\model\Chapter;
 use testapp\application\model\ChapterRDBMapper;
 
+use test\lib\BaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
@@ -35,7 +36,7 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeUnifiedRDBMapperTest extends \PHPUnit_Framework_TestCase {
+class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
   protected $dbParams;
 

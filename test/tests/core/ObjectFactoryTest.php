@@ -18,6 +18,7 @@
  */
 namespace test\tests\core;
 
+use test\lib\BaseTestCase;
 use wcmf\lib\core\ObjectFactory;
 
 /**
@@ -25,7 +26,7 @@ use wcmf\lib\core\ObjectFactory;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ObjectFactoryTest extends \PHPUnit_Framework_TestCase {
+class ObjectFactoryTest extends BaseTestCase {
 
   public function testDIShared() {
     $obj = ObjectFactory::getInstance('persistenceFacade');
