@@ -270,7 +270,7 @@ class ObjectQuery extends AbstractQuery {
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $tableName = self::getTableName($this->_typeNode);
+    $tableName = self::processTableName($this->_typeNode);
     $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), $attribs);
 
     // process all root nodes except for grouped nodes
@@ -329,7 +329,7 @@ class ObjectQuery extends AbstractQuery {
     }
 
     $mapper = self::getMapper($tpl->getType());
-    $tableName = self::getTableName($tpl);
+    $tableName = self::processTableName($tpl);
     $this->_involvedTypes[$tpl->getType()] = true;
 
     // add condition
@@ -385,7 +385,7 @@ class ObjectQuery extends AbstractQuery {
           // ends are child ends)
           if (!isset($this->_processedNodes[$curChild->getOID()->__toString()])) {
             // don't join the tables twice
-            $childTableName = self::getTableName($curChild);
+            $childTableName = self::processTableName($curChild);
             $fromPart = $selectStmt->getPart(Zend_Db_Select::FROM);
             if (!isset($fromPart[$childTableName['alias']])) {
               $childMapper = self::getMapper($curChild->getType());
@@ -492,11 +492,12 @@ class ObjectQuery extends AbstractQuery {
   }
 
   /**
-   * Get the table name for the template.
+   * Get the table name for the template and calculate an alias if
+   * necessary.
    * @param tpl The object template
    * @return Associative array with keys 'name', 'alias'
    */
-  protected function getTableName(Node $tpl) {
+  protected function processTableName(Node $tpl) {
     $mapper = self::getMapper($tpl->getType());
     $mapperTableName = $mapper->getRealTableName();
 
@@ -532,11 +533,15 @@ class ObjectQuery extends AbstractQuery {
       $newValue = $event->getNewValue();
       // make a criteria from newValue and make sure that all properties are set
       if (!($newValue instanceof Criteria)) {
+        // LIKE fallback, if the value is not a Criteria instance
         $mapper = self::getMapper($object->getType());
         $pkNames = $mapper->getPkNames();
         if (!in_array($name, $pkNames)) {
-          // use like condition on any attribute
-          $newValue = new Criteria($object->getType(), $name, "LIKE", "%".$newValue."%");
+          // use like condition on any attribute, if it's a string
+          // other value changes will be ignored!
+          if (is_string($newValue)) {
+            $newValue = new Criteria($object->getType(), $name, "LIKE", "%".$newValue."%");
+          }
         }
         else {
           // don't search for pk names with LIKE

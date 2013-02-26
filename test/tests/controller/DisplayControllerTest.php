@@ -61,28 +61,28 @@ class DisplayControllerTest extends ControllerTestCase {
    * @group controller
    */
   public function testSimpleDisplay() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID1);
 
     // simulate a simple display call
     $data = array(
       'oid' => $oid->__toString()
     );
-    $response = $this->runRequest('display', $data, $sid);
+    $response = $this->runRequest('display', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $obj = $response->getValue('object');
     $this->assertEquals('Administrator', $obj->getValue('name'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 
   /**
    * @group controller
    */
   public function testDisplayTranslation() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID1);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
@@ -100,21 +100,21 @@ class DisplayControllerTest extends ControllerTestCase {
       'oid' => $oid->__toString(),
       'language' => 'de'
     );
-    $response = $this->runRequest('display', $data, $sid);
+    $response = $this->runRequest('display', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = $response->getValue('object');
     $this->assertEquals('Administrator [de]', $translatedObj->getValue('name'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 
   /**
    * @group controller
    */
   public function testDisplayTranslationOfReferencedObjects() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid1 = ObjectId::parse(self::TEST_OID1);
     $oid2 = ObjectId::parse(self::TEST_OID2);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -141,7 +141,7 @@ class DisplayControllerTest extends ControllerTestCase {
       'depth' => -1,
       'language' => 'de'
     );
-    $response = $this->runRequest('display', $data, $sid);
+    $response = $this->runRequest('display', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -149,7 +149,7 @@ class DisplayControllerTest extends ControllerTestCase {
     $translatedChild = $translatedObj->getFirstChild();
     $this->assertEquals('Session Id [de]', $translatedChild->getValue('sessionid'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 
   /**

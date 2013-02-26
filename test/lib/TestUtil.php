@@ -86,60 +86,10 @@ class TestUtil {
 
   /**
    * End a session.
-   * @param sid The session id
    */
-  public static function endSession($sid) {
+  public static function endSession() {
     $session = Session::getInstance();
     $session->destroy();
-  }
-
-  /**
-   * Create a test object with the given oid and attributes.
-   * @param oid The object id
-   * @param attribute An associative array with the value names as keys
-   *    and the values as values
-   * @return Node
-   */
-  public static function _createTestObject(ObjectId $oid, array $attributes) {
-    // check if the object already exists and delete it if necessary
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-    if ($testObj) {
-      // direct delete without transaction
-      $testObj->getMapper()->delete($testObj);
-    }
-
-    $type = get_class($persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
-    $testObj = new $type($oid);
-    foreach ($attributes as $name => $value) {
-      $testObj->setValue($name, $value);
-    }
-    $testObj->setState(PersistentObject::STATE_NEW);
-    $persistenceFacade->getTransaction()->registerNew($testObj);
-    return $testObj;
-  }
-
-  /**
-   * Load a test object
-   * @param oid The object id
-   * @return Node
-   */
-  public static function _loadTestObject(ObjectId $oid) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-    return $object;
-  }
-
-  /**
-   * Delete a test object
-   * @param oid ObjectId
-   */
-  public static function _deleteTestObject(ObjectId $oid) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-    if ($object) {
-      $object->delete();
-    }
   }
 
   /**

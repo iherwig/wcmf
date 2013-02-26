@@ -58,7 +58,7 @@ class ListControllerTest extends ControllerTestCase {
    * @group controller
    */
   public function testSimpleList() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
 
     // simulate a simple list call
@@ -66,7 +66,7 @@ class ListControllerTest extends ControllerTestCase {
     $data = array(
       'className' => $type
     );
-    $response = $this->runRequest('list', $data, $sid);
+    $response = $this->runRequest('list', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -76,14 +76,14 @@ class ListControllerTest extends ControllerTestCase {
     // can only ask for display values
     $this->assertEquals('admin', $filteredObjects[0]->getValue('login'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 
   /**
    * @group controller
    */
   public function _testDisplayTranslation() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
@@ -100,7 +100,7 @@ class ListControllerTest extends ControllerTestCase {
       'className' => $type,
       'language' => 'de'
     );
-    $response = $this->runRequest('list', $data, $sid);
+    $response = $this->runRequest('list', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -110,7 +110,7 @@ class ListControllerTest extends ControllerTestCase {
     // can only ask for display values
     $this->assertEquals('test [de]', $filteredObjects[0]->getValue('login'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 }
 ?>

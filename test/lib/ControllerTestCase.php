@@ -38,18 +38,14 @@ abstract class ControllerTestCase extends DatabaseTestCase {
    * The calling method has to make sure that a session is started, if necessary
    * (e.g. by calling TestUtil::startSession()).
    * @param data An associative array with additional key/value pairs for the Request instance
-   * @param sid Optional session id
    * @return Response instance
    */
-  protected function runRequest($action, $data, $sid=null) {
+  protected function runRequest($action, $data) {
     // add action key
     TestUtil::setConfigValue('??'.$action, $this->getControllerName(), 'actionmapping');
 
     // make request
     $request = new Request('\wcmf\application\controller\TerminateController', '', $action);
-    if ($sid !== null) {
-      $request->setValue('sid', $sid);
-    }
     foreach ($data as $key => $value) {
       $request->setValue($key, $value);
     }

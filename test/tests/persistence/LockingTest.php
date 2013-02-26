@@ -63,20 +63,18 @@ class LockingTest extends DatabaseTestCase {
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
     ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
-    TestUtil::endSession($sid1);
+    TestUtil::endSession();
 
     // expect lock not to be removed
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
 
     // release
     $sid2 = TestUtil::startSession('user1', 'user1');
-    echo "SID1: $sid1";
-    echo "SID2: $sid2";
     $this->assertNotEquals($sid1, $sid2);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
     ObjectFactory::getInstance('concurrencymanager')->releaseLock($oid);
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
-    TestUtil::endSession($sid2);
+    TestUtil::endSession();
 
     // expect lock not to be removed
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
@@ -92,7 +90,7 @@ class LockingTest extends DatabaseTestCase {
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
     ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
-    TestUtil::endSession($sid1);
+    TestUtil::endSession();
 
     // user 2 tries to lock the object
     $sid2 = TestUtil::startSession('user2', 'user2');
@@ -102,7 +100,7 @@ class LockingTest extends DatabaseTestCase {
     catch (PessimisticLockException $ex) {
       // check if no lock was aquired
       $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user2Id));
-      TestUtil::endSession($sid2);
+      TestUtil::endSession();
       return;
     }
     $this->fail('Expected PessimisticLockException has not been raised.');
@@ -118,7 +116,7 @@ class LockingTest extends DatabaseTestCase {
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
     ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
-    TestUtil::endSession($sid1);
+    TestUtil::endSession();
 
     // user 2 tries to update the object
     $sid2 = TestUtil::startSession('user2', 'user2');
@@ -135,7 +133,7 @@ class LockingTest extends DatabaseTestCase {
       // check if the object is not modified
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $this->assertEquals($objectName, $object->getName());
-      TestUtil::endSession($sid2);
+      TestUtil::endSession();
       return;
     }
     $this->fail('Expected PessimisticLockException has not been raised.');
@@ -151,7 +149,7 @@ class LockingTest extends DatabaseTestCase {
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
     ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
-    TestUtil::endSession($sid1);
+    TestUtil::endSession();
 
     // user 2 tries to delete the object
     $sid2 = TestUtil::startSession('user2', 'user2');
@@ -166,7 +164,7 @@ class LockingTest extends DatabaseTestCase {
       // check if the object is not deleted
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $this->assertNotEquals(null, $object);
-      TestUtil::endSession($sid2);
+      TestUtil::endSession();
       return;
     }
     $this->fail('Expected PessimisticLockException has not been raised.');
@@ -191,7 +189,7 @@ class LockingTest extends DatabaseTestCase {
     $object2 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     $this->assertEquals($newFirstname, $object2->getFirstname());
     $transaction2->rollback();
-    TestUtil::endSession($sid1);
+    TestUtil::endSession();
   }
 
   public function testOptimisticConcurrentUpdate() {
@@ -219,7 +217,7 @@ class LockingTest extends DatabaseTestCase {
       // check if the object still has the value set by user 2
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $this->assertEquals($newFirstname, $object->getFirstname());
-      TestUtil::endSession($sid1);
+      TestUtil::endSession();
       return;
     }
     $this->fail('Expected OptimisticLockException has not been raised.');
@@ -249,7 +247,7 @@ class LockingTest extends DatabaseTestCase {
       // check if the object is still deleted
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
       $this->assertNull($object);
-      TestUtil::endSession($sid1);
+      TestUtil::endSession();
       return;
     }
     $this->fail('Expected OptimisticLockException has not been raised.');

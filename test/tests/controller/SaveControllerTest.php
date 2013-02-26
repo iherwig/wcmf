@@ -57,7 +57,7 @@ class SaveControllerTest extends ControllerTestCase {
    * @group controller
    */
   public function testSave() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
@@ -69,21 +69,21 @@ class SaveControllerTest extends ControllerTestCase {
     $data = array(
       $oid->__toString() => $testObj
     );
-    $response = $this->runRequest('save', $data, $sid);
+    $response = $this->runRequest('save', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     $this->assertEquals('Administrator', $obj->getValue('name'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 
   /**
    * @group controller
    */
   public function testSaveTranslation() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
 
     // simulate a translate call
@@ -95,14 +95,14 @@ class SaveControllerTest extends ControllerTestCase {
       $oid->__toString() => $testObj,
       'language' => 'it'
     );
-    $response = $this->runRequest('save', $data, $sid);
+    $response = $this->runRequest('save', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = Localization::getInstance()->loadTranslatedObject($oid, 'it');
     $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 }
 ?>

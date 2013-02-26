@@ -138,10 +138,8 @@ class Application {
   //     Log::error("$name: $value", __CLASS__);
   //   }
 
-    // initialize session with session id if given
-    $sessionId = $this->_initialRequest->getValue('sid', null);
+    // initialize session
     $session = Session::getInstance();
-    $session->resume($sessionId);
 
     // clear errors
     $session->clearErrors();

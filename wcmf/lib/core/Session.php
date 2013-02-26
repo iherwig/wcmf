@@ -29,23 +29,7 @@ class Session {
   private static $ERROR_VARNAME = 'Session.errors';
 
   private function __construct() {
-    if (session_id() == '') {
-      session_start();
-    }
-  }
-
-  /**
-   * Make the Session instance resume a session with given session id.
-   * @param sessionId The session id to use (maybe null).
-   * @note If session id is null an automatically generated session id will be used.
-   */
-  public function resume($sessionId) {
-    // Set custom session id
-    if (strlen($sessionId) > 0) {
-      $this->destroy();
-      session_id($sessionId);
-      session_start();
-    }
+    @session_start();
   }
 
   /**
@@ -172,8 +156,7 @@ class Session {
    */
   public function destroy() {
     $_SESSION = array();
-    if (strlen(session_id()) > 0) {
-      session_destroy();
-    }
+    session_destroy();
+    self::$_instance = null;
   }
 }

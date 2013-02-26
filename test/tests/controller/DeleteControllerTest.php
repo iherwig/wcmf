@@ -61,7 +61,7 @@ class DeleteControllerTest extends ControllerTestCase {
    * @group controller
    */
   public function testDelete() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
@@ -69,21 +69,21 @@ class DeleteControllerTest extends ControllerTestCase {
     $data = array(
       'oid' => $oid
     );
-    $response = $this->runRequest('delete', $data, $sid);
+    $response = $this->runRequest('delete', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE);
     $this->assertTrue(!in_array($oid, $oids), $oid." is does not exist after deleting");
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 
   /**
    * @group controller
    */
   public function testDeleteTranslation() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
@@ -109,7 +109,7 @@ class DeleteControllerTest extends ControllerTestCase {
       'oid' => $oid->__toString(),
       'language' => 'de'
     );
-    $response = $this->runRequest('delete', $data, $sid);
+    $response = $this->runRequest('delete', $data);
 
     // tests
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -125,14 +125,14 @@ class DeleteControllerTest extends ControllerTestCase {
     $translationsDe = Node::filter($translations, null, null, array('language' => 'de'), null, false);
     $this->assertEquals(0, sizeof($translationsDe), "All translations 'de' are deleted");
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 
   /**
    * @group controller
    */
   public function testDeleteComplete() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
@@ -150,7 +150,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $data = array(
       'oid' => $oid->__toString()
     );
-    $response = $this->runRequest('delete', $data, $sid);
+    $response = $this->runRequest('delete', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -160,7 +160,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $this->assertEquals(null, $object->getValue('name'));
     $this->assertEquals(null, $object->getValue('firstname'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 }
 ?>

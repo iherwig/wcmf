@@ -63,7 +63,7 @@ class InsertControllerTest extends ControllerTestCase {
    * @group controller
    */
   public function testInsert() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a simple insert call with initial data
@@ -74,7 +74,7 @@ class InsertControllerTest extends ControllerTestCase {
       'className' => self::TEST_TYPE,
       self::TEST_TYPE.':' => $testObj
     );
-    $response = $this->runRequest('insert', $data, $sid);
+    $response = $this->runRequest('insert', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -82,14 +82,14 @@ class InsertControllerTest extends ControllerTestCase {
     $obj = $persistenceFacade->load($this->_insertOID, BuildDepth::SINGLE);
     $this->assertEquals('Administrator', $obj->getValue('name'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 
   /**
    * @group controller
    */
   public function testInsertTranslation() {
-    $sid = TestUtil::startSession('admin', 'admin');
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a translate call
@@ -101,7 +101,7 @@ class InsertControllerTest extends ControllerTestCase {
       self::TEST_TYPE.':' => $testObj,
       'language' => 'it'
     );
-    $response = $this->runRequest('insert', $data, $sid);
+    $response = $this->runRequest('insert', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -109,7 +109,7 @@ class InsertControllerTest extends ControllerTestCase {
     $translatedObj = Localization::getInstance()->loadTranslatedObject($this->_insertOID, 'it');
     $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
 
-    TestUtil::endSession($sid);
+    TestUtil::endSession();
   }
 }
 ?>
