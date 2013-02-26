@@ -18,7 +18,7 @@
  */
 namespace wcmf\lib\presentation;
 
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 
 /**
  * WCMFInifileParser adds methods for wcmf specific inifiles.
@@ -45,11 +45,11 @@ class Action {
    * @return The best matching key or an empty string if nothing matches.
    */
   public static function getBestMatch($section, $resource, $context, $action) {
-    $parser = InifileParser::getInstance();
+    $configuration = ObjectFactory::getInstance('configuration');
     // check resource?context?action
     if (strlen($resource) > 0 && strlen($context) > 0 && strlen($action) > 0) {
       $key = $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
-      if ($parser->getValue($key, $section, false) !== false) {
+      if ($configuration->getValue($key, $section, false) !== false) {
         return $key;
       }
     }
@@ -57,7 +57,7 @@ class Action {
     // check resource??action
     if (strlen($resource) > 0 && strlen($action) > 0) {
       $key = $resource.self::$_actionDelimiter.self::$_actionDelimiter.$action;
-      if ($parser->getValue($key, $section, false) !== false) {
+      if ($configuration->getValue($key, $section, false) !== false) {
         return $key;
       }
     }
@@ -65,7 +65,7 @@ class Action {
     // check resource?context?
     if (strlen($resource) > 0 && strlen($context) > 0) {
       $key = $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter;
-      if ($parser->getValue($key, $section, false) !== false) {
+      if ($configuration->getValue($key, $section, false) !== false) {
         return $key;
       }
     }
@@ -73,7 +73,7 @@ class Action {
     // check ?context?action
     if (strlen($context) > 0 && strlen($action) > 0) {
       $key = self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
-      if ($parser->getValue($key, $section, false) !== false) {
+      if ($configuration->getValue($key, $section, false) !== false) {
         return $key;
       }
     }
@@ -81,7 +81,7 @@ class Action {
     // check ??action
     if (strlen($action) > 0) {
       $key = self::$_actionDelimiter.self::$_actionDelimiter.$action;
-      if ($parser->getValue($key, $section, false) !== false) {
+      if ($configuration->getValue($key, $section, false) !== false) {
         return $key;
       }
     }
@@ -89,7 +89,7 @@ class Action {
     // check resource??
     if (strlen($resource) > 0) {
       $key = $resource.self::$_actionDelimiter.self::$_actionDelimiter;
-      if ($parser->getValue($key, $section, false) !== false) {
+      if ($configuration->getValue($key, $section, false) !== false) {
         return $key;
       }
     }
@@ -97,14 +97,14 @@ class Action {
     // check ?context?
     if (strlen($context) > 0) {
       $key = self::$_actionDelimiter.$context.self::$_actionDelimiter;
-      if ($parser->getValue($key, $section, false) !== false) {
+      if ($configuration->getValue($key, $section, false) !== false) {
         return $key;
       }
     }
 
     // check ??
     $key = self::$_actionDelimiter.self::$_actionDelimiter;
-    if ($parser->getValue($key, $section, false) !== false) {
+    if ($configuration->getValue($key, $section, false) !== false) {
       return $key;
     }
     return '';

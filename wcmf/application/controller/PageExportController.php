@@ -20,9 +20,8 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Action;
-use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\URIUtil;
 
 /**
@@ -222,8 +221,8 @@ abstract class PageExportController extends BatchController {
    * @return The export directory name
    */
   protected function getExportDir() {
-    $parser = InifileParser::getInstance();
-    if (($exportDir = $parser->getValue('exportDir', 'application')) === false) {
+    $configuration = ObjectFactory::getInstance('configuration');
+    if (($exportDir = $configuration->getValue('exportDir', 'application')) === false) {
       throw new ConfigurationException($parser->getErrorMsg());
     }
     return $exportDir;
@@ -259,11 +258,11 @@ abstract class PageExportController extends BatchController {
       return;
     }
     $viewTemplate = '';
-    $parser = InifileParser::getInstance();
+    $configuration = ObjectFactory::getInstance('configuration');
 
     // get corresponding view
     $actionKey = Action::getBestMatch('views', $this->_response->getSender(), $context, '');
-    if (($viewTemplate = WCMF_BASE.$parser->getValue($actionKey, 'views')) === false) {
+    if (($viewTemplate = WCMF_BASE.$configuration->getValue($actionKey, 'views')) === false) {
       throw new Configuration("View definition missing for ".$this->_response->getSender()."?".$context.".");
     }
 

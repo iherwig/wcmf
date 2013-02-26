@@ -19,12 +19,10 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\PersistentIterator;
-use wcmf\lib\presentation\Controller;
 
 /**
  * XMLExportController exports the content tree into an XML file.
@@ -136,8 +134,8 @@ class XMLExportController extends BatchController {
 
     // get root types from ini file
     $rootOIDs = array();
-    $parser = InifileParser::getInstance();
-    $rootTypes = $parser->getValue('rootTypes', 'application');
+    $configuration = ObjectFactory::getInstance('configuration');
+    $rootTypes = $configuration->getValue('rootTypes', 'application');
 
     if (is_array($rootTypes)) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

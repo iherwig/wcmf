@@ -73,6 +73,9 @@ class ObjectFactory {
 
     // check if the instance is registered already
     if (!isset(self::$_instances[$name])) {
+      if (!isset(self::$_instances['configuration'])) {
+        throw new ConfigurationException("No 'configuration' instance provided.");
+      }
       // load class definition
       $configuration = self::getInstance('configuration');
       if (($instanceConfig = $configuration->getSection($name, false)) !== false) {

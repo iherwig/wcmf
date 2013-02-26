@@ -21,6 +21,7 @@ namespace wcmf\lib\presentation;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
@@ -79,7 +80,7 @@ class ActionMapper {
     // store last controller
     $actionMapper->_lastControllers[] = $referrer;
 
-    $parser = WCMFInifileParser::getInstance();
+    $configuration = ObjectFactory::getInstance('configuration');
     $rightsManager = RightsManager::getInstance();
 
     // check authorization for controller/context/action triple
@@ -111,8 +112,8 @@ class ActionMapper {
     }
     else {
       // get next controller
-      if (($controllerClass = $parser->getValue($actionKey, 'actionmapping')) === false) {
-        throw new ConfigurationException($parser->getErrorMsg());
+      if (($controllerClass = $configuration->getValue($actionKey, 'actionmapping')) === false) {
+        throw new ConfigurationException($configuration->getErrorMsg());
       }
     }
     if (strlen($controllerClass) == 0) {

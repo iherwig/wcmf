@@ -19,7 +19,6 @@
 namespace wcmf\lib\i18n;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
@@ -86,10 +85,10 @@ class Localization {
    * @return The default language value (e.g. en)
    */
   public function getDefaultLanguage() {
-    $parser = InifileParser::getInstance();
+    $configuration = ObjectFactory::getInstance('configuration');
 
-    if (($defaultLanguage = $parser->getValue('defaultLanguage', 'i18n')) === false) {
-      throw new ConfigurationException("No default language defined in configfile. ".$parser->getErrorMsg());
+    if (($defaultLanguage = $configuration->getValue('defaultLanguage', 'i18n')) === false) {
+      throw new ConfigurationException("No default language defined in configfile. ".$configuration->getErrorMsg());
     }
     $supportedLanguages = $this->getSupportedLanguages();
     if (!isset($supportedLanguages[$defaultLanguage])) {
@@ -105,15 +104,15 @@ class Localization {
   public function getSupportedLanguages() {
     if ($this->_supportedLanguages == null) {
       // check if the configuration section exists
-      $parser = InifileParser::getInstance();
-      if (($languages = $parser->getSection('languages')) !== false) {
+      $configuration = ObjectFactory::getInstance('configuration');
+      if (($languages = $configuration->getSection('languages')) !== false) {
         $this->_supportedLanguages = $languages;
       }
       // if not, use the languageType
       else {
-        $languageType = $parser->getValue('languageType', 'i18n');
+        $languageType = $configuration->getValue('languageType', 'i18n');
         if ($languageType === false) {
-          throw new ConfigurationException("No 'languageType' defined in configfile. ".$parser->getErrorMsg());
+          throw new ConfigurationException("No 'languageType' defined in configfile. ".$configuration->getErrorMsg());
         }
         else {
           $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -133,9 +132,9 @@ class Localization {
    * @return The type name.
    */
   public static function getTranslationType() {
-    $parser = InifileParser::getInstance();
-    if (($type = $parser->getValue('translationType', 'i18n')) === false) {
-      throw new ConfigurationException("No translation type defined in configfile. ".$parser->getErrorMsg());
+    $configuration = ObjectFactory::getInstance('configuration');
+    if (($type = $configuration->getValue('translationType', 'i18n')) === false) {
+      throw new ConfigurationException("No translation type defined in configfile. ".$configuration->getErrorMsg());
     }
     return $type;
   }
@@ -145,9 +144,9 @@ class Localization {
    * @return The input type names.
    */
   protected static function getIncludedInputTypes() {
-    $parser = InifileParser::getInstance();
-    if (($inputTypes = $parser->getValue('inputTypes', 'i18n')) === false) {
-      throw new ConfigurationException("No input types defined in configfile. ".$parser->getErrorMsg());
+    $configuration = ObjectFactory::getInstance('configuration');
+    if (($inputTypes = $configuration->getValue('inputTypes', 'i18n')) === false) {
+      throw new ConfigurationException("No input types defined in configfile. ".$configuration->getErrorMsg());
     }
     return $inputTypes;
   }

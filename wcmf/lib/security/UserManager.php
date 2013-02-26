@@ -19,8 +19,8 @@
 namespace wcmf\lib\security;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\security\Role;
 use wcmf\lib\security\User;
@@ -79,8 +79,8 @@ abstract class UserManager {
    */
   public function __construct() {
     // load role config if existing
-    $parser = InifileParser::getInstance();
-    if (($roleConfig = $parser->getSection('roleconfig')) !== false) {
+    $configuration = ObjectFactory::getInstance('configuration');
+    if (($roleConfig = $configuration->getSection('roleconfig')) !== false) {
       $this->_roleConfig = $roleConfig;
     }
   }

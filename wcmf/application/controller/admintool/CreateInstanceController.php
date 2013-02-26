@@ -19,8 +19,9 @@
 namespace wcmf\application\controller\admintool;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\DBUtil;
@@ -87,8 +88,8 @@ class CreateInstanceController extends Controller {
 
     // copy database
     Log::debug("Create database: ".$newDatabase, __CLASS__);
-    $parser = InifileParser::getInstance();
-    $dbParams = $parser->getSection('database');
+    $configuration = ObjectFactory::getInstance('configuration');
+    $dbParams = $configuration->getSection('database');
     DBUtil::copyDatabase($dbParams['dbName'], $newDatabase, $dbParams['dbHostName'], $dbParams['dbUserName'], $dbParams['dbPassword']);
 
     // configure application (server.ini)
@@ -97,7 +98,7 @@ class CreateInstanceController extends Controller {
     $applicationDir = array_pop(split('/', dirname($_SERVER['PHP_SELF'])));
     $configFilename = $newLocation."/".$applicationDir."/".$originalParser->getConfigPath().'server.ini';
     Log::debug("Modify configuration: ".$configFilename, __CLASS__);
-    $configFile = new InifileParser();
+    $configFile = new InifileConfiguration();
     $configFile->parseIniFile($configFilename, false);
     if ($configFile->setValue('dbName', $newDatabase, 'database', false) === false) {
       $this->appendErrorMsg($configFile->getErrorMsg());
@@ -113,9 +114,9 @@ class CreateInstanceController extends Controller {
    * @return A relative path to this application
    */
   protected function getBaseLocation() {
-    $parser = InifileParser::getInstance();
-    if (($targetDir = $parser->getValue('targetDir', 'newinstance', false)) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
+    $configuration = ObjectFactory::getInstance('configuration');
+    if (($targetDir = $configuration->getValue('targetDir', 'newinstance', false)) === false) {
+      throw new ConfigurationException($configuration->getErrorMsg());
     }
     return $targetDir;
   }
@@ -135,9 +136,9 @@ class CreateInstanceController extends Controller {
    * @return The database name
    */
   protected function getNewInstanceDatabase($name) {
-    $parser = InifileParser::getInstance();
-    if (($dbPrefix = $parser->getValue('dbPrefix', 'newinstance', false)) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
+    $configuration = ObjectFactory::getInstance('configuration');
+    if (($dbPrefix = $configuration->getValue('dbPrefix', 'newinstance', false)) === false) {
+      throw new ConfigurationException($configuration->getErrorMsg());
     }
     return $dbPrefix.strtolower(FileUtil::sanitizeFilename($name));
   }

@@ -19,10 +19,9 @@
 namespace wcmf\application\controller\admintool;
 
 use wcmf\application\controller\BatchController;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\io\FileUtil;
-use wcmf\lib\presentation\Controller;
 
 /**
  * BackupController creates a backup (action 'makebackup') from a directory
@@ -161,9 +160,9 @@ class BackupController extends BatchController
     $session = ObjectFactory::getInstance('session');
     $backupName = $session->get($this->BACKUP_NAME_VARNAME);
 
-    $parser = InifileParser::getInstance();
-    if (($backupDir = $parser->getValue('backupDir', 'application')) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
+    $configuration = ObjectFactory::getInstance('configuration');
+    if (($backupDir = $configuration->getValue('backupDir', 'application')) === false) {
+      throw new ConfigurationException($configuration->getErrorMsg());
     }
     if (strrpos($backupDir, '/') != strlen($backupDir)-1) {
       $backupDir .= '/';

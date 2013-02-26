@@ -18,7 +18,7 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\URIUtil;
 
@@ -70,7 +70,8 @@ class ElFinderController extends Controller
     $response = $this->getResponse();
 
     // get root path and root url for the browser
-    $rootPath = InifileParser::getInstance()->getValue('uploadDir', 'media').'/';
+    $configuration = ObjectFactory::getInstance('configuration');
+    $rootPath = $configuration->getValue('uploadDir', 'media').'/';
     $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $rootUrl = URIUtil::makeAbsolute($rootPath, $refURL);
 

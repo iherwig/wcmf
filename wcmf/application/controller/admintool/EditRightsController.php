@@ -18,7 +18,6 @@
  */
 namespace wcmf\application\controller\admintool;
 
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\RightsManager;

@@ -18,7 +18,7 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
@@ -76,8 +76,8 @@ class SOAPController extends Controller
   function soapSearch($searchTerm)
   {
     // get all known types from configuration file
-    $parser = InifileParser::getInstance();
-    $types = array_keys($parser->getSection('typemapping'));
+    $configuration = ObjectFactory::getInstance('configuration');
+    $types = array_keys($configuration->getSection('typemapping'));
 
     // query for each type
     $objectList = array();

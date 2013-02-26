@@ -19,7 +19,6 @@
 namespace wcmf\application\controller;
 
 use \Exception;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
@@ -382,9 +381,9 @@ class SaveController extends Controller {
    */
   protected function getImageConstraints(ObjectId $oid, $valueName) {
     // get required image dimensions
-    $parser = InifileParser::getInstance();
-    $imgWidth = $parser->getValue('imgWidth', 'media');
-    $imgHeight = $parser->getValue('imgHeight', 'media');
+    $configuration = ObjectFactory::getInstance('configuration');
+    $imgWidth = $configuration->getValue('imgWidth', 'media');
+    $imgHeight = $configuration->getValue('imgHeight', 'media');
     return array('width' => $imgWidth, 'height' => $imgHeight);
   }
 
@@ -432,8 +431,8 @@ class SaveController extends Controller {
       $uploadDir = $request->getValue('uploadDir').'/';
     }
     else {
-      $parser = InifileParser::getInstance();
-      if(($dir = $parser->getValue('uploadDir', 'media')) !== false) {
+      $configuration = ObjectFactory::getInstance('configuration');
+      if(($dir = $configuration->getValue('uploadDir', 'media')) !== false) {
         $uploadDir = $dir;
       }
     }

@@ -25,7 +25,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\security\RightsManager;
 
 /**

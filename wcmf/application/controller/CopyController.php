@@ -20,7 +20,6 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
@@ -31,7 +30,6 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\presentation\Controller;
 
 /**
  * CopyController is a controller that copies Nodes.
@@ -178,6 +176,7 @@ class CopyController extends BatchController {
    */
   protected function startProcess($oids) {
     $session = ObjectFactory::getInstance('session');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -520,8 +519,8 @@ class CopyController extends BatchController {
       $mapperClass = get_class($sourceMapper);
       if (!isset($this->_targetMapper[$mapperClass])) {
         $initSection = $request->getValue('target_initparams');
-        $parser = InifileParser::getInstance();
-        if (($initParams = $parser->getSection($initSection)) === false) {
+        $configuration = ObjectFactory::getInstance('configuration');
+        if (($initParams = $configuration->getSection($initSection)) === false) {
           throw new ConfigurationException("No '".$initSection."' section given in configfile.");
         }
         $targetMapper = new $mapperClass($initParams);

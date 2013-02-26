@@ -19,7 +19,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\RightsManager;
@@ -78,7 +77,7 @@ class WCMFFrontendController extends Controller {
   protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rightsManager = RightsManager::getInstance();
-    $parser = InifileParser::getInstance();
+    $configuration = ObjectFactory::getInstance('configuration');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -87,7 +86,7 @@ class WCMFFrontendController extends Controller {
       $knownTypes = $persistenceFacade->getKnownTypes();
 
       // get root types from ini file
-      $rootTypes = $parser->getValue('rootTypes', 'application');
+      $rootTypes = $configuration->getValue('rootTypes', 'application');
       if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '') {
         $this->setErrorMsg(Message::get("No root types defined."));
         $response->setAction('failure');
@@ -139,7 +138,7 @@ class WCMFFrontendController extends Controller {
         $response->setValue('typeTemplate', $typeTemplate);
         $response->setValue('isNew', false);
       }
-      $response->setValue('languages', $parser->getSection('languages'));
+      $response->setValue('languages', $configuration->getSection('languages'));
     }
     // success
     $response->setAction('ok');

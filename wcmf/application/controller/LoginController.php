@@ -19,8 +19,8 @@
 namespace wcmf\application\controller;
 
 use \Exception;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -66,8 +66,8 @@ class LoginController extends Controller {
     if ($request->getAction() != 'dologin') {
       $request->clearValues();
     }
-    $parser = InifileParser::getInstance();
-    $this->_anonymous = $parser->getValue('anonymous', 'application');
+    $configuration = ObjectFactory::getInstance('configuration');
+    $this->_anonymous = $configuration->getValue('anonymous', 'application');
 
     parent::initialize($request, $response);
   }
