@@ -18,13 +18,13 @@
  */
 namespace test\tests\controller;
 
+use test\lib\ArrayDataSet;
 use test\lib\ControllerTestCase;
+use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
-use test\lib\TestUtil;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\ObjectId;
 
 /**
  * InsertControllerTest.
@@ -38,77 +38,78 @@ class InsertControllerTest extends ControllerTestCase {
   const TEST_NM_CHILD_TYPE = 'RoleRDB';
   const TEST_OID = 'UserRDB:0';
 
-  private $_insertOID = null;
-
   protected function getControllerName() {
     return 'wcmf\application\controller\InsertController';
   }
 
-  protected function setUp() {
-    parent::setUp();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID), array());
-    $transaction->commit();
-    $this->_insertOID = null;
-  }
-
-  protected function tearDown() {
-    $localization = Localization::getInstance();
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID));
-    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID));
-    if ($this->_insertOID != null) {
-      TestUtil::deleteTestObject($this->_insertOID);
-      $localization->deleteTranslation($this->_insertOID);
-    }
-    $transaction->commit();
-    parent::tearDown();
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'user' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '21232f297a57a5a743894a0e4a801fc3'),
+      ),
+      'locktable' => array(
+      ),
+      'role' => array(
+      ),
+      'translation' => array(
+      ),
+    ));
   }
 
   /**
    * @group controller
    */
   public function testInsert() {
+    $sid = TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
     // simulate a simple insert call with initial data
     $type = self::TEST_TYPE;
-    $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
+    $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $testObj->setValue('name', 'Administrator');
     $data = array(
       'className' => self::TEST_TYPE,
       self::TEST_TYPE.':' => $testObj
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('insert', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $this->_insertOID = $response->getValue('oid');
-    $obj = TestUtil::loadTestObject($this->_insertOID);
+    $obj = $persistenceFacade->load($this->_insertOID, BuildDepth::SINGLE);
     $this->assertEquals('Administrator', $obj->getValue('name'));
+
+    TestUtil::endSession($sid);
   }
 
   /**
    * @group controller
    */
   public function testInsertTranslation() {
+    $sid = TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
     // simulate a translate call
     $type = self::TEST_TYPE;
-    $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
+    $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $testObj->setValue('name', 'Administrator [it]');
     $data = array(
       'className' => self::TEST_TYPE,
       self::TEST_TYPE.':' => $testObj,
       'language' => 'it'
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('insert', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $this->_insertOID = $response->getValue('oid');
     $translatedObj = Localization::getInstance()->loadTranslatedObject($this->_insertOID, 'it');
     $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
+
+    TestUtil::endSession($sid);
   }
 }
 ?>

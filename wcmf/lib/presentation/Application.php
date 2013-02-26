@@ -140,10 +140,10 @@ class Application {
 
     // initialize session with session id if given
     $sessionId = $this->_initialRequest->getValue('sid', null);
-    Session::init($sessionId);
+    $session = Session::getInstance();
+    $session->resume($sessionId);
 
     // clear errors
-    $session = Session::getInstance();
     $session->clearErrors();
 
     // load user configuration

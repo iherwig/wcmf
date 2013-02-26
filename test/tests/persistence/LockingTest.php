@@ -70,6 +70,8 @@ class LockingTest extends DatabaseTestCase {
 
     // release
     $sid2 = TestUtil::startSession('user1', 'user1');
+    echo "SID1: $sid1";
+    echo "SID2: $sid2";
     $this->assertNotEquals($sid1, $sid2);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
     ObjectFactory::getInstance('concurrencymanager')->releaseLock($oid);
@@ -175,20 +177,20 @@ class LockingTest extends DatabaseTestCase {
 
     // user 1 locks the object and modifies it
     $sid1 = TestUtil::startSession('user1', 'user1');
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
+    $transaction1 = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction1->begin();
+    $object1 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
+    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object1);
     $newFirstname = time();
-    $object->setFirstname($newFirstname);
-    $transaction->commit();
+    $object1->setFirstname($newFirstname);
+    $transaction1->commit();
 
     // check if the object was updated
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-    $this->assertEquals($newFirstname, $object->getFirstname());
-    $transaction->rollback();
+    $transaction2 = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction2->begin();
+    $object2 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
+    $this->assertEquals($newFirstname, $object2->getFirstname());
+    $transaction2->rollback();
     TestUtil::endSession($sid1);
   }
 

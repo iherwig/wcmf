@@ -28,19 +28,24 @@ class Session {
   private static $_instance = null;
   private static $ERROR_VARNAME = 'Session.errors';
 
-  private function __construct() {}
+  private function __construct() {
+    if (session_id() == '') {
+      session_start();
+    }
+  }
 
   /**
-   * Created a Session instance with given session id.
+   * Make the Session instance resume a session with given session id.
    * @param sessionId The session id to use (maybe null).
    * @note If session id is null an automatically generated session id will be used.
    */
-  public static function init($sessionId) {
+  public function resume($sessionId) {
     // Set custom session id
     if (strlen($sessionId) > 0) {
+      $this->destroy();
       session_id($sessionId);
+      session_start();
     }
-    @session_start();
   }
 
   /**
@@ -113,7 +118,7 @@ class Session {
    * Clear the session data.
    */
   public function clear() {
-    session_unset();
+    $_SESSION = array();
   }
 
   /**
@@ -170,13 +175,5 @@ class Session {
     if (strlen(session_id()) > 0) {
       session_destroy();
     }
-  }
-
-  /**
-   * Get session variable name for the authenticated user.
-   * @return The variable name.
-   */
-  private static function getAuthUserVarname() {
-    return 'auth_user_'.Application::getId();
   }
 }

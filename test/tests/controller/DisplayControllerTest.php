@@ -18,11 +18,13 @@
  */
 namespace test\tests\controller;
 
+use test\lib\ArrayDataSet;
 use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
 /**
@@ -39,56 +41,55 @@ class DisplayControllerTest extends ControllerTestCase {
     return 'wcmf\application\controller\DisplayController';
   }
 
-  protected function setUp() {
-    parent::setUp();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID1), array('name' => 'Administrator'));
-    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID2), array('sessionid' => 'Session Id'));
-    $transaction->commit();
-  }
-
-  protected function tearDown() {
-    $localization = Localization::getInstance();
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID1));
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID2));
-    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID1));
-    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID2));
-    $transaction->commit();
-    parent::tearDown();
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'user' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '21232f297a57a5a743894a0e4a801fc3'),
+      ),
+      'locktable' => array(
+        array('id' => 0, 'sessionid' => 'Session Id', 'fk_user_id' => 0),
+      ),
+      'translation' => array(
+      ),
+    ));
   }
 
   /**
    * @group controller
    */
   public function testSimpleDisplay() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID1);
 
     // simulate a simple display call
     $data = array(
       'oid' => $oid->__toString()
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('display', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $obj = $response->getValue('object');
     $this->assertEquals('Administrator', $obj->getValue('name'));
+
+    TestUtil::endSession($sid);
   }
 
   /**
    * @group controller
    */
   public function testDisplayTranslation() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID1);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // store a translation
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
-    $testObj = TestUtil::loadTestObject($oid);
+    $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     $tmp = clone $testObj;
     $tmp->setValue('name', 'Administrator [de]');
     Localization::getInstance()->saveTranslation($tmp, 'de');
@@ -99,27 +100,30 @@ class DisplayControllerTest extends ControllerTestCase {
       'oid' => $oid->__toString(),
       'language' => 'de'
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('display', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = $response->getValue('object');
     $this->assertEquals('Administrator [de]', $translatedObj->getValue('name'));
+
+    TestUtil::endSession($sid);
   }
 
   /**
    * @group controller
    */
   public function testDisplayTranslationOfReferencedObjects() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid1 = ObjectId::parse(self::TEST_OID1);
     $oid2 = ObjectId::parse(self::TEST_OID2);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // associate objects
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
-    $testObj1 = TestUtil::loadTestObject($oid1);
-    $testObj2 = TestUtil::loadTestObject($oid2);
-    $testObj1->addNode($testObj2);
+    $testObj1 = $persistenceFacade->load($oid1, BuildDepth::SINGLE);
+    $testObj2 = $persistenceFacade->load($oid2, BuildDepth::SINGLE);
 
     // store a translations
     $localization = Localization::getInstance();
@@ -137,13 +141,15 @@ class DisplayControllerTest extends ControllerTestCase {
       'depth' => -1,
       'language' => 'de'
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('display', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = $response->getValue('object');
     $translatedChild = $translatedObj->getFirstChild();
     $this->assertEquals('Session Id [de]', $translatedChild->getValue('sessionid'));
+
+    TestUtil::endSession($sid);
   }
 
   /**

@@ -18,6 +18,7 @@
  */
 namespace test\tests\controller;
 
+use test\lib\ArrayDataSet;
 use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
@@ -36,61 +37,61 @@ use wcmf\lib\persistence\ObjectId;
 class DeleteControllerTest extends ControllerTestCase {
 
   const TEST_TYPE = 'UserRDB';
-  const TEST_OID = 'UserRDB:0';
+  const TEST_OID = 'UserRDB:1';
 
   protected function getControllerName() {
     return 'wcmf\application\controller\DeleteController';
   }
 
-  protected function setUp() {
-    parent::setUp();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID), array());
-    $transaction->commit();
-  }
-
-  protected function tearDown() {
-    $localization = Localization::getInstance();
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID));
-    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID));
-    $transaction->commit();
-    parent::tearDown();
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'user' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '21232f297a57a5a743894a0e4a801fc3'),
+        array('id' => 1, 'login' => 'user1', 'name' => 'User 1', 'password' => '24c9e15e52afc47c225b757e7bee1f9d'),
+      ),
+      'translation' => array(
+      ),
+    ));
   }
 
   /**
    * @group controller
    */
   public function testDelete() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a delete call
     $data = array(
       'oid' => $oid
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('delete', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE);
     $this->assertTrue(!in_array($oid, $oids), $oid." is does not exist after deleting");
+
+    TestUtil::endSession($sid);
   }
 
   /**
    * @group controller
    */
   public function testDeleteTranslation() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // store a 1st translation
     $localization = Localization::getInstance();
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $testObj = TestUtil::loadTestObject($oid);
+    $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     $tmpDe = clone $testObj;
     $tmpDe->setValue('name', 'Herwig [de]');
     $tmpDe->setValue('firstname', 'Ingo [de]');
@@ -108,11 +109,10 @@ class DeleteControllerTest extends ControllerTestCase {
       'oid' => $oid->__toString(),
       'language' => 'de'
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('delete', $data, $sid);
 
     // tests
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE);
     $this->assertTrue(in_array($oid, $oids), $oid." still exists after deleting the translation");
 
@@ -124,18 +124,22 @@ class DeleteControllerTest extends ControllerTestCase {
 
     $translationsDe = Node::filter($translations, null, null, array('language' => 'de'), null, false);
     $this->assertEquals(0, sizeof($translationsDe), "All translations 'de' are deleted");
+
+    TestUtil::endSession($sid);
   }
 
   /**
    * @group controller
    */
   public function testDeleteComplete() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // store a translation
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
-    $testObj = TestUtil::loadTestObject($oid);
+    $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [de]');
     $tmp->setValue('firstname', 'Ingo [de]');
@@ -146,15 +150,17 @@ class DeleteControllerTest extends ControllerTestCase {
     $data = array(
       'oid' => $oid->__toString()
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('delete', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $object = ObjectFactory::getInstance('persistenceFacade')->create(self::TEST_TYPE);
+    $object = $persistenceFacade->create(self::TEST_TYPE);
     $object->setOID($oid);
     Localization::getInstance()->loadTranslation($object, 'de');
     $this->assertEquals(null, $object->getValue('name'));
     $this->assertEquals(null, $object->getValue('firstname'));
+
+    TestUtil::endSession($sid);
   }
 }
 ?>

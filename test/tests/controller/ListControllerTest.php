@@ -18,12 +18,14 @@
  */
 namespace test\tests\controller;
 
+use test\lib\ArrayDataSet;
 use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\Node;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
 /**
@@ -39,29 +41,24 @@ class ListControllerTest extends ControllerTestCase {
     return 'wcmf\application\controller\ListController';
   }
 
-  protected function setUp() {
-    parent::setUp();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID), array('login' => 'test'));
-    $transaction->commit();
-  }
-
-  protected function tearDown() {
-    $localization = Localization::getInstance();
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID));
-    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID));
-    $transaction->commit();
-    parent::tearDown();
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'user' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '21232f297a57a5a743894a0e4a801fc3'),
+      ),
+      'translation' => array(
+      ),
+    ));
   }
 
   /**
    * @group controller
    */
   public function testSimpleList() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
 
     // simulate a simple list call
@@ -69,7 +66,7 @@ class ListControllerTest extends ControllerTestCase {
     $data = array(
       'className' => $type
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('list', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -77,21 +74,25 @@ class ListControllerTest extends ControllerTestCase {
     $filteredObjects = Node::filter($objects, $oid, null, null, null);
     $this->assertEquals(1, sizeof($filteredObjects));
     // can only ask for display values
-    $this->assertEquals('test', $filteredObjects[0]->getValue('login'));
+    $this->assertEquals('admin', $filteredObjects[0]->getValue('login'));
+
+    TestUtil::endSession($sid);
   }
 
   /**
    * @group controller
    */
   public function _testDisplayTranslation() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
-    $testObj = TestUtil::loadTestObject($oid);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
 
     // store a translation
     $tmp = clone $testObj;
     $tmp->setValue('login', 'test [de]');
-    Localization::saveTranslation($tmp, 'de');
-    ObjectFactory::getInstance('persistenceFacade')->getTransaction()->commit();
+    Localization::getInstance()->saveTranslation($tmp, 'de');
+    $persistenceFacade->getTransaction()->commit();
 
     // simulate a localized display call
     $type = $oid->getType();
@@ -99,7 +100,7 @@ class ListControllerTest extends ControllerTestCase {
       'className' => $type,
       'language' => 'de'
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('list', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -108,6 +109,8 @@ class ListControllerTest extends ControllerTestCase {
     $this->assertEquals(1, sizeof($filteredObjects));
     // can only ask for display values
     $this->assertEquals('test [de]', $filteredObjects[0]->getValue('login'));
+
+    TestUtil::endSession($sid);
   }
 }
 ?>

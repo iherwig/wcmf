@@ -18,6 +18,7 @@
  */
 namespace test\tests\controller;
 
+use test\lib\ArrayDataSet;
 use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
@@ -39,51 +40,50 @@ class SaveControllerTest extends ControllerTestCase {
     return 'wcmf\application\controller\SaveController';
   }
 
-  protected function setUp() {
-    parent::setUp();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    TestUtil::createTestObject(ObjectId::parse(self::TEST_OID), array());
-    $transaction->commit();
-  }
-
-  protected function tearDown() {
-    $localization = Localization::getInstance();
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
-    $transaction->begin();
-    TestUtil::deleteTestObject(ObjectId::parse(self::TEST_OID));
-    $localization->deleteTranslation(ObjectId::parse(self::TEST_OID));
-    $transaction->commit();
-    parent::tearDown();
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'dbsequence' => array(
+        array('id' => 1),
+      ),
+      'user' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '21232f297a57a5a743894a0e4a801fc3'),
+      ),
+      'translation' => array(
+      ),
+    ));
   }
 
   /**
    * @group controller
    */
   public function testSave() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a simple save call
     $type = $oid->getType();
-    $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
+    $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $testObj->setOID($oid);
     $testObj->setValue('name', 'Administrator');
     $data = array(
       $oid->__toString() => $testObj
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('save', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $obj = TestUtil::loadTestObject($oid);
+    $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     $this->assertEquals('Administrator', $obj->getValue('name'));
+
+    TestUtil::endSession($sid);
   }
 
   /**
    * @group controller
    */
   public function testSaveTranslation() {
+    $sid = TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
 
     // simulate a translate call
@@ -95,12 +95,14 @@ class SaveControllerTest extends ControllerTestCase {
       $oid->__toString() => $testObj,
       'language' => 'it'
     );
-    $response = $this->runRequest($data);
+    $response = $this->runRequest('save', $data, $sid);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = Localization::getInstance()->loadTranslatedObject($oid, 'it');
     $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
+
+    TestUtil::endSession($sid);
   }
 }
 ?>

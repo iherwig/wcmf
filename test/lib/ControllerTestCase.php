@@ -26,46 +26,30 @@ use wcmf\lib\presentation\Request;
 /**
  * ControllerTestCase is a PHPUnit test case, that
  * serves as base class for test cases used for Controllers.
+ * The application is configured to
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class ControllerTestCase extends DatabaseTestCase {
 
-  private $_sid = null;
-
   /**
-   * Get the action name for this test.
-   * @return The action name
-   */
-  private function getAction() {
-    return 'test'.$this->getControllerName();
-  }
-
-  protected function setUp() {
-    parent::setUp();
-
-    // log into the application
-    $this->_sid = TestUtil::startSession('admin', 'admin');
-
-    // setup the test action mapping
-    TestUtil::setConfigValue('??'.$this->getAction(), $this->getControllerName(), 'actionmapping');
-  }
-
-  protected function tearDown() {
-    parent::tearDown();
-
-    // log out
-    TestUtil::endSession($this->_sid);
-  }
-
-  /**
-   * Make a request to the controller.
+   * Make a request to the controller. This method makes sure that the
+   * requested action is routed to the controller to be tested.
+   * The calling method has to make sure that a session is started, if necessary
+   * (e.g. by calling TestUtil::startSession()).
    * @param data An associative array with additional key/value pairs for the Request instance
+   * @param sid Optional session id
    * @return Response instance
    */
-  protected function runRequest($data) {
-    $request = new Request('\wcmf\application\controller\TerminateController', '', $this->getAction());
-    $request->setValue('sid', $this->_sid);
+  protected function runRequest($action, $data, $sid=null) {
+    // add action key
+    TestUtil::setConfigValue('??'.$action, $this->getControllerName(), 'actionmapping');
+
+    // make request
+    $request = new Request('\wcmf\application\controller\TerminateController', '', $action);
+    if ($sid !== null) {
+      $request->setValue('sid', $sid);
+    }
     foreach ($data as $key => $value) {
       $request->setValue($key, $value);
     }
