@@ -21,7 +21,6 @@ namespace wcmf\application\controller;
 use \Exception;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
-use wcmf\lib\core\Session;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -120,7 +119,7 @@ class LoginController extends Controller {
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $request = $this->getRequest();
     $response = $this->getResponse();
 

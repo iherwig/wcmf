@@ -18,13 +18,8 @@
  */
 namespace test\lib;
 
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\model\mapper\RDBMapper;
-use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\security\AuthUser;
@@ -42,8 +37,8 @@ class TestUtil {
    * @param True/False wether to turn it off or on
    */
   public static function runAnonymous($isAnonymous) {
-    $parser = InifileParser::getInstance();
-    $parser->setValue('anonymous', $isAnonymous, 'application');
+    $configuration = ObjectFactory::getInstance('configuration');
+    $configuration->setValue('anonymous', $isAnonymous, 'application');
   }
 
   /**
@@ -74,7 +69,7 @@ class TestUtil {
    *    subsequent simulateRequest calls
    */
   public static function startSession($user, $password) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $authUser = new AuthUser();
     $success = $authUser->login($user, $password, false);
     if ($success) {
@@ -88,17 +83,17 @@ class TestUtil {
    * End a session.
    */
   public static function endSession() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $session->destroy();
   }
 
   /**
    * Set a configuration value
-   * @see InifileParser::setValue()
+   * @see Configuration::setValue()
    */
   public static function setConfigValue($key, $value, $section) {
-    $parser = InifileParser::getInstance();
-    $parser->setValue($key, $value, $section);
+    $configuration = ObjectFactory::getInstance('configuration');
+    $configuration->setValue($key, $value, $section);
   }
 
   /**

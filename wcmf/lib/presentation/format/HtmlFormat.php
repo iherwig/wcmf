@@ -19,14 +19,14 @@
 namespace wcmf\lib\presentation\format;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\presentation\control\Control;
 use wcmf\lib\presentation\format\AbstractFormat;
-use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\format\Format;
 use wcmf\lib\security\RightsManager;
 use wcmf\lib\util\Obfuscator;
@@ -131,13 +131,12 @@ class HtmlFormat extends AbstractFormat {
    * @return The filename of the template or false, if no view is defined
    */
   protected static function getViewTemplate($controller, $context, $action) {
-    $view = '';
-    $parser = WCMFInifileParser::getInstance();
-    $actionKey = $parser->getBestActionKey('views', $controller, $context, $action);
+    $actionKey = Action::getBestMatch('views', $controller, $context, $action);
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug('HtmlFormat::getViewTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
     }
     // get corresponding view
+    $parser = InifileParser::getInstance();
     $view = $parser->getValue($actionKey, 'views', false);
     return $view;
   }

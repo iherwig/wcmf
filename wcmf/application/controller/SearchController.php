@@ -20,7 +20,6 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\ListController;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
@@ -67,7 +66,7 @@ class SearchController extends ListController {
   public function initialize(Request $request, Response $response) {
     // check if this is a new call and the stored oids should be deleted
     if ($request->getAction() != 'list') {
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
       $session->remove($this->OIDS_VARNAME);
     }
 
@@ -179,7 +178,7 @@ class SearchController extends ListController {
    */
   protected function getObjects($type, $filter, $sortArray, PagingInfo $pagingInfo) {
     $rightsManager = RightsManager::getInstance();
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     if (!$session->exist($this->OIDS_VARNAME)) {
       $allOIDs = array();
@@ -254,7 +253,7 @@ class SearchController extends ListController {
       $curNode = &$nodes[$i];
 
       // create hightlighted summary
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
       $queryObj = Zend_Search_Lucene_Search_QueryParser::parse($session->get($this->FILTER_VARNAME));
       $summary = '';
       $valueNames = $curNode->getValueNames();

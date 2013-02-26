@@ -21,7 +21,6 @@ namespace wcmf\application\controller\admintool;
 use wcmf\application\controller\BatchController;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\InifileParser;
-use wcmf\lib\core\Session;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\Controller;
 
@@ -60,7 +59,7 @@ class BackupController extends BatchController
    */
   function validate()
   {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     if(strlen($this->_request->getValue('backupName')) == 0 && !$session->exist($this->BACKUP_NAME_VARNAME))
     {
@@ -84,7 +83,7 @@ class BackupController extends BatchController
     // store parameters in session
     if ($request->getAction() != 'continue')
     {
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
 
       // replace illegal characters in backupname
       $this->_request->setValue('backupName', preg_replace("/[^a-zA-Z0-9\-_\.]+/", "_", $this->_request->getValue('backupName')));
@@ -126,7 +125,7 @@ class BackupController extends BatchController
    */
   function backupFiles()
   {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $sourceDir = $session->get($this->SOURCE_DIR_VARNAME);
 
     FileUtil::copyRecDir($sourceDir, $this->getBackupDir().$sourceDir);
@@ -137,7 +136,7 @@ class BackupController extends BatchController
    */
   function restoreFiles()
   {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $sourceDir = $session->get($this->SOURCE_DIR_VARNAME);
 
     // return on error
@@ -159,7 +158,7 @@ class BackupController extends BatchController
    * @return The name of the actual backup directory
    */
   protected function getBackupDir() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $backupName = $session->get($this->BACKUP_NAME_VARNAME);
 
     $parser = InifileParser::getInstance();

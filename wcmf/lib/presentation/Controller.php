@@ -19,7 +19,7 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\core\Session;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Request;
@@ -216,7 +216,7 @@ abstract class Controller {
    */
   protected function assignResponseDefaults() {
     // set default values on the response
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $this->_response->setValue('sid', $session->getID());
 
     // return the first error

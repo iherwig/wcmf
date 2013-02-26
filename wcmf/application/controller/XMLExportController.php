@@ -21,7 +21,6 @@ namespace wcmf\application\controller;
 use wcmf\application\controller\BatchController;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\PersistentIterator;
@@ -75,7 +74,7 @@ class XMLExportController extends BatchController {
 
     // construct initial document info
     if ($request->getAction() != 'continue') {
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
 
       $docFile = $this->_request->hasValue('docfile') ? $this->_request->getValue('docfile') : $this->_DOCFILE;
       $docType = $this->_request->hasValue('doctype') ? $this->_request->getValue('doctype') : $this->_DOCTYPE;
@@ -119,7 +118,7 @@ class XMLExportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   public function initExport($oids) {
-       $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -168,7 +167,7 @@ class XMLExportController extends BatchController {
     // - If the oids array holds one value!=null this is assumed to be an root oid and a new iterator is constructed
     // - If there is no iterator and no oid given, we return
 
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -238,7 +237,7 @@ class XMLExportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function finishExport($oids) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 

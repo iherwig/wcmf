@@ -22,7 +22,6 @@ use wcmf\application\controller\admintool\BackupController;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
-use wcmf\lib\core\Session;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -51,7 +50,7 @@ class MySQLBackupController extends BackupController {
    * @see Controller::validate()
    */
   protected function validate() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     if(strlen($this->_request->getValue('paramsSection')) == 0 && !$session->exist($this->PARAMS_SECTION_VARNAME)) {
       $this->setErrorMsg("No 'paramsSection' given in data.");
@@ -68,7 +67,7 @@ class MySQLBackupController extends BackupController {
 
     // store parameters in session
     if ($request->getAction() != 'continue') {
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
       $session->set($this->PARAMS_SECTION_VARNAME, $this->_request->getValue('paramsSection'));
     }
   }
@@ -118,7 +117,7 @@ class MySQLBackupController extends BackupController {
     $params = array();
 
     // store parameters in session
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $paramSection = $session->get($this->PARAMS_SECTION_VARNAME);
 
     $parser = InifileParser::getInstance();

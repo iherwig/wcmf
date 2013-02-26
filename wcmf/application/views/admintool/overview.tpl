@@ -32,7 +32,7 @@
       performAction: function(actionName, record) {
         var _this = this;
         var _grid = this.grid;
-        Ext.MessageBox.confirm(Message.get("Delete %1%", [record['id']]), Message.get("Really delete node %1%?", [record['id']]), 
+        Ext.MessageBox.confirm(Message.get("Delete %1%", [record['id']]), Message.get("Really delete node %1%?", [record['id']]),
           function(btn) {
             if (btn == "yes") {
               Action.perform('delprincipal', {deleteoids:record['id']}, _grid.actionPerformed, _this);
@@ -77,7 +77,7 @@
     grid.init('{translate text="Roles"}', '{$roleType}', '{$obfuscator->obfuscate($nodeUtil->getNodeQuery($roleType))}', columDefs, {ldelim}paging:true, autoheight:true, singleSelect:true, ddRows:false{rdelim}, [new wcmf.grid.EditPrincipalAction({ldelim}type:'role'{rdelim}), new wcmf.grid.DeletePrincipalAction()], buttonDefs);
     grid.getGridImpl().applyToMarkup('roleGrid');
     grid.load();
-    
+
   {rdelim}
 </script>
 </head>
@@ -113,24 +113,7 @@
   <span class="left">{input name="makeBackupName" type='text[class="wide"]' value=$defaultBackupName editable=true}</span>
   <span class="left"><a href="javascript:newWindowEx('AdminController', '', 'makebackup', 'backupWindow', 'width=360,height=120,scrollbars=no,locationbar=no', '&backupName='+getVariable('makeBackupName')+'&paramsSection=database&sourceDir=include/');" class="cms">{translate text="Create Backup"}</a></span>
   <span class="left">{input name="restoreBackupName" type='select[class="wide"]#fkt:g_getBackupNames' value="" editable=true}</span>
-  <span class="left"><a href="javascript:newWindowEx('AdminController', '', 'restorebackup', 'backupWindow', 'width=360,height=120,scrollbars=no,locationbar=no', '&backupName='+getVariable('restoreBackupName')+'&paramsSection=database&sourceDir=include/');" class="cms">{translate text="Restore Backup"}</a></span>  
-</div>
-
-<div class="contentblock configurationpanel">
-	<span class="spacer"></span>
-	<h2>{translate text="Configuration Files"}</h2>
-{section name=configfiles_index loop=$configfiles}
-{assign var="file" value=$configfiles[configfiles_index]}
-{cycle name=configfiles_cycle values=light,dark assign=style}
-  <div class="row{$style}">
-  	<span class="left"><a href="javascript:setContext('config'); doDisplay('{$file}'); submitAction('editconfig');" class="{$style}" title="{$file}">{$file|truncate:18:"...":true}</a></span>
-  	<span class="right">
-  	  <a href="javascript:setContext('config'); doDisplay('{$file}'); submitAction('editconfig');" class="{$style}" title="{translate text="Edit %1%" r1=$file}"><img src="images/edit.png" alt="{translate text="Edit %1%" r1=$file}" title="{translate text="Edit %1%" r1=$file}" border="0"></a>
-  	  {if $file != $mainconfigfile}<a href="javascript:if(doDelete('{$file}', true, '{translate text="Really delete configuration %1%?" r1=$file}')) submitAction('delconfig');" class="{$style}"><img src="images/delete.png" alt="{translate text="Delete %1%" r1=$file}" title="{translate text="Delete %1%" r1=$file}" border="0"></a>{else}<a href="#">&nbsp;</a>{/if}</span>
-  </div>
-{/section}
-	<span class="spacer"></span>
-	<span class="left"><a href="javascript:setContext('config'); doNew('config'); submitAction('newconfig');"><img src="images/new.png" alt="{translate text="Create new Configuration File"}" title="{translate text="Create new Configuration File"}" border="0"></a></span>
+  <span class="left"><a href="javascript:newWindowEx('AdminController', '', 'restorebackup', 'backupWindow', 'width=360,height=120,scrollbars=no,locationbar=no', '&backupName='+getVariable('restoreBackupName')+'&paramsSection=database&sourceDir=include/');" class="cms">{translate text="Restore Backup"}</a></span>
 </div>
 
 {include file="lib:application/views/include/footer.tpl"}

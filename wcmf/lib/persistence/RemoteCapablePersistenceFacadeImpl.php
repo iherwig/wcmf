@@ -19,7 +19,6 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\core\Session;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\persistence\ObjectId;
@@ -50,7 +49,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
    */
   public function __construct() {
     // initialize session variables
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     if (!$session->exist(self::PROXY_OBJECTS_SESSION_VARNAME)) {
       $proxies = array();
       $session->set(self::PROXY_OBJECTS_SESSION_VARNAME, $proxies);
@@ -323,7 +322,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
       $buildDepth=BuildDepth::SINGLE;
     }
     // save the object in the session
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $umiStr = $umi->toString();
     $objects = $session->get($varName);
     if (!isset($objects[$umiStr])) {
@@ -365,7 +364,7 @@ class RemoteCapablePersistenceFacadeImpl extends PersistenceFacadeImpl {
     if ($buildDepth == 0) {
       $buildDepth=BuildDepth::SINGLE;
     }
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $umiStr = $umi->toString();
     $objects = $session->get($varName);
     if (isset($objects[$umiStr]) && isset($objects[$umiStr][$buildDepth])) {

@@ -20,7 +20,6 @@ namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\PersistentObject;
@@ -130,7 +129,7 @@ class BaseControl implements Control {
     }
 
     // get error from session
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $error = $session->getError($name);
 
     // split attributes into an array

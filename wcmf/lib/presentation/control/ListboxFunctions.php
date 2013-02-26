@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation\control;
 
 use wcmf\application\controller\DisplayController;
+use wcmf\lib\config\InifileParser;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
@@ -28,8 +29,6 @@ use wcmf\lib\model\Node;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\PagingInfo;
-use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\presentation\WCMFInifileParser;
 
 /**
  * Global function for id (oid) retrieval. For parameters see PersistenceFacade::getOIDs().
@@ -189,7 +188,7 @@ function g_getOIDArray($oidStringList) {
  */
 function g_getConfigFiles() {
   $result = array();
-  $configFiles = WCMFInifileParser::getIniFiles();
+  $configFiles = InifileParser::getIniFiles();
   foreach ($configFiles as $file) {
     $file = basename($file);
     $result[$file] = $file;

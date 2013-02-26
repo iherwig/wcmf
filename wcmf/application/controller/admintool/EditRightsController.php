@@ -18,9 +18,9 @@
  */
 namespace wcmf\application\controller\admintool;
 
+use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\security\RightsManager;
 
 /**
@@ -71,7 +71,7 @@ class EditRightsController extends Controller
     $userManager = ObjectFactory::getInstance('userManager');
     $rightsManager = RightsManager::getInstance();
 
-    $configFiles = WCMFInifileParser::getIniFiles();
+    $configFiles = InifileParser::getIniFiles();
     $rightNames = array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE);
 
     // process actions
@@ -136,7 +136,7 @@ class EditRightsController extends Controller
     $this->_response->setValue('allroles', join("|", $userManager->listRoles()));
     $this->_response->setValue('rights', $rights);
     $this->_response->setValue('rightnames', $rightNames);
-    $this->_response->setValue('configfiles', WCMFInifileParser::getIniFiles());
+    $this->_response->setValue('configfiles', InifileParser::getIniFiles());
 
     // success
     $this->_response->setAction('ok');

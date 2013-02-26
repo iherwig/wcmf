@@ -21,7 +21,6 @@ namespace wcmf\lib\remoting;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
-use wcmf\lib\core\Session;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\Formatter;
@@ -60,7 +59,7 @@ class RPCClient {
     }
 
     // initialize the session variable for storing session
-    $session = &Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     if (!$session->exist(self::SIDS_SESSION_VARNAME)) {
       $var = array();
       $session->set(self::SIDS_SESSION_VARNAME, $var);
@@ -173,7 +172,7 @@ class RPCClient {
    * @return The session id or null
    */
   protected function setSessionId($sessionId) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $sids = $session->get(self::SIDS_SESSION_VARNAME);
     $sids[$this->_serverCli] = $sessionId;
     $session->set(self::SIDS_SESSION_VARNAME, $sids);
@@ -185,7 +184,7 @@ class RPCClient {
    */
   protected function getSessionId() {
     // check if we already have a session with the server
-    $session = &Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $sids = $session->get(self::SIDS_SESSION_VARNAME);
     if (isset($sids[$this->_serverCli])) {
       return $sids[$this->_serverCli];

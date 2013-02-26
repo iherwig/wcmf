@@ -54,11 +54,7 @@ class UserController extends Controller {
     parent::initialize($request, $response);
 
     // create UserManager instance
-    $objectFactory = ObjectFactory::getInstance();
-    $this->_userManager = $objectFactory->getInstance('userManager');
-    if ($this->_userManager == null) {
-      throw new ConfigurationException($objectFactory->getErrorMsg());
-    }
+    $this->_userManager = ObjectFactory::getInstance('userManager');
   }
 
   /**

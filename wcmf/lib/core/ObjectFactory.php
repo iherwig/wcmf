@@ -19,7 +19,6 @@
 namespace wcmf\lib\core;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 
 use wcmf\lib\util\StringUtil;
 
@@ -66,7 +65,7 @@ class ObjectFactory {
 
   /**
    * Get an instance from the configuration.
-   * @param name The name of the section, where the instance is defined.
+   * @param name The name of the instance (section, where the instance is defined)
    * @return Object
    */
   public static function getInstance($name) {
@@ -75,12 +74,12 @@ class ObjectFactory {
     // check if the instance is registered already
     if (!isset(self::$_instances[$name])) {
       // load class definition
-      $parser = InifileParser::getInstance();
-      if (($configuration = $parser->getSection($name, false)) !== false) {
-        $instance = self::createInstance($name, $configuration);
+      $configuration = self::getInstance('configuration');
+      if (($instanceConfig = $configuration->getSection($name, false)) !== false) {
+        $instance = self::createInstance($name, $instanceConfig);
       }
       else {
-        throw new ConfigurationException($parser->getErrorMsg());
+        throw new ConfigurationException($configuration->getErrorMsg());
       }
     }
     else {
@@ -98,10 +97,26 @@ class ObjectFactory {
   }
 
   /**
-   * Delete all created instances.
+   * Register a shared instance with a given name.
+   * @param name The name of the instance.
+   * @param instance The instance
    */
-  public static function clear() {
+  public static function registerInstance($name, $instance) {
+    self::$_instances[$name] = $instance;
+  }
+
+  /**
+   * Delete all created instances.
+   * @param keepConfiguration Boolean wether to keep the configuration or not [default: true]
+   */
+  public static function clear($keepConfiguration=true) {
+    if ($keepConfiguration) {
+      $configuration = self::getInstance('configuration');
+    }
     self::$_instances = array();
+    if ($keepConfiguration) {
+      self::registerInstance('configuration', $configuration);
+    }
   }
 
   /**
@@ -162,9 +177,9 @@ class ObjectFactory {
             }
           }
         }
-        // register the instance if it is shared
+        // register the instance if it is shared (default)
         if (!isset($configuration['__shared']) || $configuration['__shared'] == 'true') {
-          self::$_instances[$name] = $obj;
+          self::registerInstance($name, $obj);
         }
         $instance = $obj;
       }
@@ -181,7 +196,7 @@ class ObjectFactory {
         }
       }
       // always register maps
-      self::$_instances[$name] = $configuration;
+      self::registerInstance($name, $configuration);
       $instance = $configuration;
     }
     return $instance;

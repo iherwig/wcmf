@@ -21,8 +21,8 @@ namespace wcmf\application\controller;
 use wcmf\application\controller\BatchController;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\InifileParser;
+use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\util\URIUtil;
 
 /**
@@ -259,10 +259,10 @@ abstract class PageExportController extends BatchController {
       return;
     }
     $viewTemplate = '';
-    $parser = WCMFInifileParser::getInstance();
+    $parser = InifileParser::getInstance();
 
     // get corresponding view
-    $actionKey = $parser->getBestActionKey('views', $this->_response->getSender(), $context, '');
+    $actionKey = Action::getBestMatch('views', $this->_response->getSender(), $context, '');
     if (($viewTemplate = WCMF_BASE.$parser->getValue($actionKey, 'views')) === false) {
       throw new Configuration("View definition missing for ".$this->_response->getSender()."?".$context.".");
     }

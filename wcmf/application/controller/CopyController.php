@@ -23,7 +23,6 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
@@ -76,7 +75,7 @@ class CopyController extends BatchController {
 
     // initialize controller
     if ($request->getAction() != 'continue') {
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
 
       // set defaults
       if (!$request->hasValue('nodes_per_call')) {
@@ -178,7 +177,7 @@ class CopyController extends BatchController {
    * @param oids The oids to process
    */
   protected function startProcess($oids) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -253,7 +252,7 @@ class CopyController extends BatchController {
    * @param oids The oids to process
    */
   protected function copyNodes($oids) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -306,7 +305,7 @@ class CopyController extends BatchController {
   protected function endProcess(ObjectId $oid) {
     $this->_response->setValue('oid', $oid);
 
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // clear session variables
     $tmp = null;
@@ -411,7 +410,7 @@ class CopyController extends BatchController {
    * @param copyNode A reference to the copied node
    */
   protected function registerCopy(PersistentObject $origNode, PersistentObject $copyNode) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->OBJECT_MAP);
     // store oid and corresponding base oid in the registry
     $registry[$origNode->getOID()] = $copyNode->getOID();
@@ -425,7 +424,7 @@ class CopyController extends BatchController {
    * @return The object id or null, if it does not exist already
    */
   protected function getCopyOID(ObjectId $origOID) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->OBJECT_MAP);
 
     $oid = $origOID;
@@ -514,7 +513,7 @@ class CopyController extends BatchController {
    */
   protected function getTargetMapper(PersistenceMapper $sourceMapper) {
     // restore the request from session
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $request = $session->get($this->REQUEST);
     if ($request->hasValue('target_initparams')) {
       // get a mapper wih the target initparams

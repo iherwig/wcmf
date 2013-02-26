@@ -22,7 +22,6 @@ use \Exception;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
@@ -99,8 +98,8 @@ class Application {
       }
     }
 
-    self::setupGlobals($configPath, $mainConfigFile);
-    $parser = WCMFInifileParser::getInstance();
+    $parser = ObjectFactory::getInstance('configuration');
+    $parser->parseIniFile($configPath.$mainConfigFile, true);
 
     // get controller/context/action triple
     $controller = $this->getRequestValue('controller', $defaultController);
@@ -110,17 +109,15 @@ class Application {
 
     // determine message formats based on request headers
     if (isset($_SERVER['CONTENT_TYPE'])) {
-      $requestFormat = self::getMessageFormatFromHeader(
-        strtolower($_SERVER['CONTENT_TYPE']), $defaultResponseFormat);
-      $requestFormat = $this->getRequestValue('requestFormat', $requestFormat);
+      $headerRequestFormat = self::getMessageFormatFromHeader(strtolower($_SERVER['CONTENT_TYPE']), $defaultResponseFormat);
+      $requestFormat = $this->getRequestValue('requestFormat', $headerRequestFormat);
     }
     else {
       $requestFormat = $this->getRequestValue('requestFormat', $defaultResponseFormat);
     }
     if (isset($_SERVER['HTTP_ACCEPT'])) {
-      $responseFormat = self::getMessageFormatFromHeader(
-        strtolower($_SERVER['HTTP_ACCEPT']), $defaultResponseFormat);
-      $responseFormat = $this->getRequestValue('responseFormat', $responseFormat);
+      $headerResponseFormat = self::getMessageFormatFromHeader(strtolower($_SERVER['HTTP_ACCEPT']), $defaultResponseFormat);
+      $responseFormat = $this->getRequestValue('responseFormat', $headerResponseFormat);
     }
     else {
       $responseFormat = $this->getRequestValue('responseFormat', $defaultResponseFormat);
@@ -139,7 +136,7 @@ class Application {
   //   }
 
     // initialize session
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // clear errors
     $session->clearErrors();
@@ -148,7 +145,7 @@ class Application {
     $rightsManager = RightsManager::getInstance();
     $authUser = $rightsManager->getAuthUser();
     if ($authUser && strlen($authUser->getConfig()) > 0) {
-      $parser->parseIniFile($GLOBALS['CONFIG_PATH'].$authUser->getConfig(), true);
+      $parser->parseIniFile($configPath.$authUser->getConfig(), true);
     }
 
     // prepare PersistenceFacade
@@ -209,7 +206,8 @@ class Application {
     $persistenceFacade->getTransaction()->rollback();
 
     // process last successful request
-    $lastRequest = Session::getInstance()->get('lastRequest');
+    $session = ObjectFactory::getInstance('session');
+    $lastRequest = $session->get('lastRequest');
     if ($lastRequest) {
       ActionMapper::processAction($lastRequest);
     }
@@ -233,28 +231,11 @@ class Application {
   }
 
   /**
-   * Setup global variables. Does nothing related to session, users and persistence.
-   * Use this method if you just want to have all global variables initialized and need access to config values.
-   * @param configPath The path where config files reside (as seen from main.php), maybe null [default: include/]
-   * @param mainConfigFile The main configuration file to use, maybe null [default: config.ini]
-   */
-  public function setupGlobals($configPath='include/', $mainConfigFile='config.ini') {
-    // globals
-    $GLOBALS['CONFIG_PATH'] = $configPath;
-    $GLOBALS['CONFIG_EXTENSION'] = "ini";
-    $GLOBALS['MAIN_CONFIG_FILE'] = $mainConfigFile;
-
-    // get configuration from file
-    $parser = WCMFInifileParser::getInstance();
-    $parser->parseIniFile($GLOBALS['CONFIG_PATH'].$GLOBALS['MAIN_CONFIG_FILE'], true);
-  }
-
-  /**
-   * Get an unique id for the application based on configuration location.
+   * Get an unique id for the application based on main script location.
    * @return The id
    */
   public static function getId() {
-    return md5(realpath($GLOBALS['CONFIG_PATH']));
+    return md5(realpath($_SERVER['PHP_SELF']));
   }
 
   /**

@@ -18,7 +18,6 @@
  */
 namespace wcmf\lib\persistence\concurrency;
 
-use wcmf\lib\core\Session;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -51,7 +50,7 @@ class DefaultLockHandler implements LockHandler {
     if (!$currentUser) {
       return;
     }
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // check for existing locks
     $lock = $this->getLock($oid);
@@ -217,7 +216,7 @@ class DefaultLockHandler implements LockHandler {
    * as keys and the Lock instances as values
    */
   protected function getSessionLocks() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     if ($session->exist(self::SESSION_VARNAME)) {
       return $session->get(self::SESSION_VARNAME);
     }
@@ -229,7 +228,7 @@ class DefaultLockHandler implements LockHandler {
    * @param lock Lock instance
    */
   protected function addSessionLock(Lock $lock) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $locks = $this->getSessionLocks();
     $locks[$lock->getOID()->__toString()] = $lock;
     $session->set(self::SESSION_VARNAME, $locks);
@@ -240,7 +239,7 @@ class DefaultLockHandler implements LockHandler {
    * @param lock Lock instance
    */
   protected function removeSessionLock(Lock $lock) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $locks = $this->getSessionLocks();
     unset($locks[$lock->getOID->__toString()]);
     $session->set(self::SESSION_VARNAME, $locks);

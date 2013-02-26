@@ -19,18 +19,20 @@
 namespace wcmf\lib\config;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\Configuration;
+use wcmf\lib\config\WritableConfiguration;
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\util\ArrayUtil;
 use wcmf\lib\util\StringUtil;
 
 /**
- * InifileParser provides basic services for parsing a ini file from the file system.
+ * InifileConfiguration reads the application configuraiton from ini files.
  * @note This class only supports ini files with sections.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class InifileParser {
+class InifileConfiguration implements Configuration, WritableConfiguration {
 
-  private static $_instance = null;
   private $_errorMsg = '';
   private $_filename = null;
   private $_iniArray = array(); // an assoziate array that holds sections with keys with values
@@ -40,21 +42,24 @@ class InifileParser {
   private $_isModified = false;
   private $_parsedFiles = array();
   private $_useCache = true;
-  private function __construct() {}
+
+  private $_configPath = null;
+  private $_configExtension = 'ini';
 
   /**
-   * InifileParser public readonly Interface
+   * Set the filesystem path to the configuration files.
+   * @param configPath The path, either absolute or relative to the executed script
    */
+  public function setConfigPath($configPath) {
+    $this->_configPath = $configPath;
+  }
 
   /**
-   * Returns an instance of the class.
-   * @return InifileParser instance
+   * Get the filesystem path to the configuration files.
+   * @return The path, either absolute or relative to the executed script
    */
-  public static function getInstance() {
-    if (!isset(self::$_instance)) {
-      self::$_instance = new InifileParser();
-    }
-    return self::$_instance;
+  public function getConfigPath() {
+    return $this->_configPath;
   }
 
   /**
@@ -66,16 +71,17 @@ class InifileParser {
   }
 
   /**
-   * Check if file is modified.
-   * @return True/False whether modified.
+   * Get a list of available configuration files.
+   * @return Array of configuration file names.
    */
-  public function isModified() {
-    return $this->_isModified;
+  public static function getIniFiles() {
+    $fileUtil = new FileUtil();
+    return $fileUtil->getFiles($this->_configPath, "/\.".$this->_configExtension."$/", true);
   }
 
   /**
    * Parses an ini file and puts an array with all the key-values pairs into the object.
-   * @param filename The filename of the ini file to parse
+   * @param filename The filename of the ini file to parse (relative to configPath)
    * @param processValues True/False whether values should be processed after parsing (e.g. make arrays) [default: true]
    * @note ini files referenced in section 'config' key 'include' are parsed afterwards
    * @return True/False whether method succeeded.
@@ -87,7 +93,7 @@ class InifileParser {
       return true;
     }
 
-    global $CONFIG_PATH;
+    $filename = $this->_configPath.$filename;
     if (file_exists($filename)) {
       $this->_filename = $filename;
 
@@ -102,7 +108,7 @@ class InifileParser {
         if (($includes = $this->getValue('include', 'config')) !== false) {
           $this->processValue($includes);
           foreach($includes as $include) {
-            $this->_iniArray = $this->configMerge($this->_iniArray, $this->_parse_ini_file($CONFIG_PATH.$include, true), false);
+            $this->_iniArray = $this->configMerge($this->_iniArray, $this->_parse_ini_file($this->_configPath.$include, true), false);
           }
         }
         if ($processValues) {
@@ -123,27 +129,18 @@ class InifileParser {
   }
 
   /**
-   * Returns the data of the formerly parsed ini file.
-   * @return The data of the parsed ini file.
+   * Configuration interface
    */
-  public function getData() {
-    return $this->_iniArray;
-  }
 
   /**
-   * Get all section names.
-   * @return An array of section names.
+   * @see Configuration::getSections()
    */
   public function getSections() {
     return array_keys($this->_iniArray);
   }
 
   /**
-   * Get a section.
-   * @param section The section to return.
-   * @param caseSensitive True/False, whether to look up the key case sensitive or not [default: true]
-   * @return An assoziative array holding the key/value pairs belonging to the section or
-   *         False if the section does not exist (use getErrorMsg() for detailed information).
+   * @see Configuration::getSection()
    */
   public function getSection($section, $caseSensitive=true) {
     if (!$caseSensitive) {
@@ -163,12 +160,7 @@ class InifileParser {
   }
 
   /**
-   * Get a value from the formerly parsed ini file.
-   * @param key The name of the entry.
-   * @param section The section the key belongs to.
-   * @param caseSensitive True/False, whether to look up the key case sensitive or not [default: true]
-   * @return The results of the parsed ini file or
-   *         False in the case of wrong parameters (use getErrorMsg() for detailed information).
+   * @see Configuration::getValue()
    */
   public function getValue($key, $section, $caseSensitive=true) {
     $sectionArray = $this->getSection($section, $caseSensitive);
@@ -191,13 +183,7 @@ class InifileParser {
   }
 
   /**
-   * Get a value from the formerly parsed ini file as boolean if it represents
-   * a boolean.
-   * @param key The name of the entry.
-   * @param section The section the key belongs to.
-   * @param caseSensitive True/False, whether to look up the key case sensitive or not [default: true]
-   * @return The results of the parsed ini file or
-   *         False in the case of wrong parameters (use getErrorMsg() for detailed information).
+   * @see Configuration::getBooleanValue()
    */
   public function getBooleanValue($key, $section, $caseSensitive=true) {
     $value = $this->getValue($key, $section, $caseSensitive);
@@ -205,37 +191,11 @@ class InifileParser {
   }
 
   /**
-   * InifileParser public modification Interface
+   * WritableConfiguration interface
    */
 
   /**
-   * Set ini file data.
-   * @param data The ini file data.
-   */
-  public function setData($data) {
-    $this->_iniArray = $data;
-    $this->_isModified = true;
-  }
-
-  /**
-   * Check if a section is hidden.
-   * @param section The name of the section.
-   * @note hidden sections are defined as an array in section 'config' key 'hiddenSections'
-   */
-  public function isHidden($section) {
-    if (($hiddenSections = $this->getValue('hiddenSections', 'config')) !== false) {
-      $this->processValue($hiddenSections);
-      if (is_array($hiddenSections) && in_array($section, $hiddenSections)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Check if a section is editable.
-   * @param section The name of the section.
-   * @note readyonly sections are defined as an array in section 'config' key 'readonlySections'
+   * @see WritableConfiguration::isEditable()
    */
   public function isEditable($section) {
     if (($readonlySections = $this->getValue('readonlySections', 'config')) !== false) {
@@ -251,9 +211,14 @@ class InifileParser {
   }
 
   /**
-   * Create a section.
-   * @param section The name of the section (will be trimmed).
-   * @return True/false whether successful.
+   * @see WritableConfiguration::isModified()
+   */
+  public function isModified() {
+    return $this->_isModified;
+  }
+
+  /**
+   * @see WritableConfiguration::createSection()
    */
   public function createSection($section) {
     $section = trim($section);
@@ -271,9 +236,7 @@ class InifileParser {
   }
 
   /**
-   * Remove a section.
-   * @param section The name of the section.
-   * @return True/false whether successful.
+   * @see WritableConfiguration::removeSection()
    */
   public function removeSection($section) {
     if (!$this->isEditable($section)) {
@@ -289,10 +252,7 @@ class InifileParser {
   }
 
   /**
-   * Rename a section.
-   * @param oldname The name of the section.
-   * @param newname The new name of the section (will be trimmed).
-   * @return True/false whether successful.
+   * @see WritableConfiguration::renameSection()
    */
   public function renameSection($oldname, $newname) {
     if (!$this->isEditable($oldname)) {
@@ -317,12 +277,7 @@ class InifileParser {
   }
 
   /**
-   * Create a key/value pair in a section.
-   * @param key The name of the key (will be trimmed).
-   * @param value The value of the key.
-   * @param section The name of the section.
-   * @param createSection The name of the section.
-   * @return True/False whether successful.
+   * @see WritableConfiguration::setValue()
    */
   public function setValue($key, $value, $section, $createSection=true) {
     if (!$this->isEditable($section)) {
@@ -343,10 +298,7 @@ class InifileParser {
   }
 
   /**
-   * Remove a key from a section.
-   * @param key The name of the key.
-   * @param section The name of the section.
-   * @return True/False whether successful.
+   * @see WritableConfiguration::removeKey()
    */
   public function removeKey($key, $section) {
     if (!$this->isEditable($section)) {
@@ -362,11 +314,7 @@ class InifileParser {
   }
 
   /**
-   * Rename a key in a section.
-   * @param oldname The name of the section.
-   * @param newname The new name of the section (will be trimmed).
-   * @param section The name of the section.
-   * @return True/false whether successful.
+   * @see WritableConfiguration::renameKey()
    */
   public function renameKey($oldname, $newname, $section) {
     if (!$this->isEditable($section)) {
@@ -391,14 +339,10 @@ class InifileParser {
   }
 
   /**
-   * Write the ini data to a file.
-   * @param filename The filename to write to, if null the original file will be used [default: null].
-   * @return True/False whether successful
+   * @see WritableConfiguration::writeConfiguration()
    */
-  public function writeIniFile($filename=null) {
-    if ($filename == null) {
-      $filename = $this->_filename;
-    }
+  public function writeConfiguration() {
+    $filename = $this->_filename;
     $content = "";
     foreach($this->_iniArray as $section => $values) {
       $sectionString = "[".$section."]";
@@ -433,7 +377,7 @@ class InifileParser {
   }
 
   /**
-   * InifileParser private Interface
+   * Private interface
    */
 
   /**
@@ -576,12 +520,11 @@ class InifileParser {
 
           // check if included ini files were updated since last cache time
           if (isset($vars['_iniArray']['config'])) {
-            global $CONFIG_PATH;
             $includes = $vars['_iniArray']['config']['include'];
             if (is_array($includes)) {
               $includedFiles = array();
               foreach($includes as $include) {
-                $includedFiles[] = $CONFIG_PATH.$include;
+                $includedFiles[] = $this->_configPath.$include;
               }
               if ($this->checkFileDate($includedFiles, $cacheFile)) {
                 return false;
@@ -605,9 +548,8 @@ class InifileParser {
    * @param parsedFiles An array of parsed filenames
    */
   protected function getSerializeFilename($parsedFiles) {
-    global $CONFIG_PATH;
     $path = session_save_path();
-    $filename = $path.'/'.urlencode(realpath($CONFIG_PATH)."/".join('_', $parsedFiles));
+    $filename = $path.'/'.urlencode(realpath($this->_configPath)."/".join('_', $parsedFiles));
     return $filename;
   }
 

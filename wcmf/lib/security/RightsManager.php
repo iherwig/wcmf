@@ -18,11 +18,10 @@
  */
 namespace wcmf\lib\security;
 
-use wcmf\lib\config\InifileParser;
-use wcmf\lib\core\Session;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\Application;
-use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\security\AnonymousUser;
 use wcmf\lib\security\AuthUser;
 
@@ -82,7 +81,7 @@ class RightsManager {
     }
     else {
       // include this later to avoid circular includes
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
       $user = null;
       $userVarname = self::getAuthUserVarname();
       if ($session->exist($userVarname)) {
@@ -100,24 +99,24 @@ class RightsManager {
    * @return True/False wether in anonymous mode
    */
   public function isAnonymous() {
-    $parser = InifileParser::getInstance();
-    return $parser->getBooleanValue('anonymous', 'application');
+    $configuration = ObjectFactory::getInstance('configuration');
+    return $configuration->getBooleanValue('anonymous', 'application');
   }
 
   /**
    * Deactivate rights checking by setting the anonymous confguration value.
    */
   public function deactivate() {
-    $parser = InifileParser::getInstance();
-    $parser->setValue('anonymous', true, 'application');
+    $configuration = ObjectFactory::getInstance('configuration');
+    $configuration->setValue('anonymous', true, 'application');
   }
 
   /**
    * (Re-)activate rights checking by unsetting the anonymous confguration value.
    */
   public function activate() {
-    $parser = InifileParser::getInstance();
-    $parser->setValue('anonymous', false, 'application');
+    $configuration = ObjectFactory::getInstance('configuration');
+    $configuration->setValue('anonymous', false, 'application');
   }
 
   /**
@@ -144,8 +143,7 @@ class RightsManager {
         return false;
       }
 
-      $parser = WCMFInifileParser::getInstance();
-      $actionKey = $parser->getBestActionKey(AUTHORIZATION_SECTION, $resource, $context, $action);
+      $actionKey = Action::getBestMatch(AUTHORIZATION_SECTION, $resource, $context, $action);
 
       $authUser = $this->getAuthUser();
       if (!($authUser && $authUser->authorize($actionKey))) {
@@ -172,12 +170,13 @@ class RightsManager {
    * @see AuthUser::parsePolicy
    */
   public function getRight($config, $resource, $context, $action) {
-    $iniFile = new IniFileParser();
-    $iniFile->parseIniFile($config);
+    $parser = new IniFileConfiguration();
+    $parser->setConfigPath(dirname($config));
+    $parser->parseIniFile(basename($config));
 
     $rightDef = $resource."?".$context."?".$action;
-    if ($iniFile->getValue($rightDef, AUTHORIZATION_SECTION) !== false) {
-      return AuthUser::parsePolicy($iniFile->getValue($rightDef, AUTHORIZATION_SECTION));
+    if ($parser->getValue($rightDef, AUTHORIZATION_SECTION) !== false) {
+      return AuthUser::parsePolicy($parser->getValue($rightDef, AUTHORIZATION_SECTION));
     }
     else {
       return array();
@@ -245,7 +244,7 @@ class RightsManager {
       }
     }
 
-    $iniFile->writeIniFile();
+    $iniFile->writeConfiguration();
     return true;
   }
 }

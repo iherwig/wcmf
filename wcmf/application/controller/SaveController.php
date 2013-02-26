@@ -21,7 +21,6 @@ namespace wcmf\application\controller;
 use \Exception;
 use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
@@ -68,7 +67,7 @@ class SaveController extends Controller {
    */
   protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $request = $this->getRequest();
     $response = $this->getResponse();
 

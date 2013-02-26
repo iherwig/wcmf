@@ -20,7 +20,6 @@ namespace wcmf\application\controller\admintool;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\presentation\WCMFInifileParser;
 
 /**
  * AdminController is used as an entry point to the admintool.
@@ -88,9 +87,6 @@ class AdminController extends Controller {
     $roleType = $this->_userManager->getRoleClassName();
     $this->_response->setValue('roleType', $roleType);
     $this->_response->setValue('roleTemplateNode', $persistenceFacade->create($roleType, BuildDepth::REQUIRED));
-
-    $this->_response->setValue('configfiles', WCMFInifileParser::getIniFiles());
-    $this->_response->setValue('mainconfigfile', $GLOBALS['CONFIG_PATH'].$GLOBALS['MAIN_CONFIG_FILE']);
 
     $this->_userManager->commitTransaction();
 

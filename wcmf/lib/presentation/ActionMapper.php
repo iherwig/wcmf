@@ -21,7 +21,7 @@ namespace wcmf\lib\presentation;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\Log;
-use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
@@ -81,7 +81,6 @@ class ActionMapper {
 
     $parser = WCMFInifileParser::getInstance();
     $rightsManager = RightsManager::getInstance();
-    $actionKey = null;
 
     // check authorization for controller/context/action triple
     if (!$rightsManager->authorize($referrer, $context, $action)) {
@@ -92,13 +91,13 @@ class ActionMapper {
       }
       else {
         $login = $authUser->getName();
-        Log::error("Authorization failed for '".$actionKey."' user '".$login."'", __CLASS__);
+        Log::error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$login."'", __CLASS__);
         throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
       }
     }
 
     // get best matching action key from inifile
-    $actionKey = $parser->getBestActionKey('actionmapping', $referrer, $context, $action);
+    $actionKey = Action::getBestMatch('actionmapping', $referrer, $context, $action);
 
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug($referrer."?".$context."?".$action.' -> '.$actionKey, __CLASS__);

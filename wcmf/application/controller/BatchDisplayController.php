@@ -21,7 +21,6 @@ namespace wcmf\application\controller;
 use wcmf\application\controller\BatchController;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeUtil;
@@ -66,7 +65,7 @@ class BatchDisplayController extends BatchController {
 
     // initialize controller
     if ($request->getAction() != 'continue') {
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
 
       // set defaults
       if (!$request->hasValue('nodes_per_call')) {
@@ -122,7 +121,7 @@ class BatchDisplayController extends BatchController {
    * @param oids The oids to process
    */
   protected function startProcess($oids) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -157,7 +156,7 @@ class BatchDisplayController extends BatchController {
    * @param oids The oids to process
    */
   protected function loadNodes($oids) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -204,7 +203,7 @@ class BatchDisplayController extends BatchController {
    * Finish the process and set the result
    */
   protected function endProcess() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // clear session variables
     $tmp = null;
@@ -223,7 +222,7 @@ class BatchDisplayController extends BatchController {
       return;
     }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -269,7 +268,7 @@ class BatchDisplayController extends BatchController {
    * @param oid The object id to register
    */
   protected function register($oid) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->REGISTRY);
     array_push($registry, $oid);
     $session->set($this->REGISTRY, $registry);
@@ -281,7 +280,7 @@ class BatchDisplayController extends BatchController {
    * @return True/False wether the oid is registered or not
    */
   protected function isRegistered($oid) {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->REGISTRY);
 
     return in_array($oid, $registry);

@@ -18,7 +18,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\Session;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -82,7 +81,7 @@ abstract class LongTaskController extends Controller {
   protected function initialize($request, $response) {
     parent::initialize($request, $response);
 
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     if ($request->getAction() == 'continue') {
       // get step for current call from session
       if ($session->exist(self::STEP_SESSION_VARNAME)) {
@@ -136,7 +135,7 @@ abstract class LongTaskController extends Controller {
       // add the summary message
       $this->_response->setValue('summaryText', $this->getSummaryText());
 
-      $session = Session::getInstance();
+      $session = ObjectFactory::getInstance('session');
       if ($session->get(self::ONE_CALL_SESSION_VARNAME) == false) {
         // show progress bar
         return false;

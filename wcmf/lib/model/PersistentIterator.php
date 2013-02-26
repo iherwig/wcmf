@@ -18,7 +18,6 @@
  */
 namespace wcmf\lib\model;
 
-use wcmf\lib\core\Session;
 use wcmf\lib\core\ObjectFactory;
 
 /**
@@ -56,7 +55,7 @@ class PersistentIterator implements Iterator {
    * @return A unique id to provide for load, see PersistentIterator::load()
    */
   public function save() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
 
     $uid = md5(uniqid(""));
     $state = array('end' => $this->_end, 'oidList' => $this->_oidList, 'allList' => $this->_allList, 'currentOID' => $this->_currentOID,
@@ -72,7 +71,7 @@ class PersistentIterator implements Iterator {
    */
   public static function load($uid) {
     // get state from session
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $state = $session->get('PersistentIterator.'.$uid);
     if ($state == null) {
       return null;

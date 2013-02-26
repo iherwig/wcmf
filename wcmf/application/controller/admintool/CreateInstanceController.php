@@ -92,17 +92,17 @@ class CreateInstanceController extends Controller {
     DBUtil::copyDatabase($dbParams['dbName'], $newDatabase, $dbParams['dbHostName'], $dbParams['dbUserName'], $dbParams['dbPassword']);
 
     // configure application (server.ini)
-    global $CONFIG_PATH;
+    $originalParser = ObjectFactory::getInstance('configuration');
 
     $applicationDir = array_pop(split('/', dirname($_SERVER['PHP_SELF'])));
-    $configFilename = $newLocation."/".$applicationDir."/".$CONFIG_PATH.'server.ini';
+    $configFilename = $newLocation."/".$applicationDir."/".$originalParser->getConfigPath().'server.ini';
     Log::debug("Modify configuration: ".$configFilename, __CLASS__);
     $configFile = new InifileParser();
     $configFile->parseIniFile($configFilename, false);
     if ($configFile->setValue('dbName', $newDatabase, 'database', false) === false) {
       $this->appendErrorMsg($configFile->getErrorMsg());
     }
-    $configFile->writeIniFile($configFilename);
+    $configFile->writeConfiguration();
 
     $this->_response->setAction('ok');
     return true;

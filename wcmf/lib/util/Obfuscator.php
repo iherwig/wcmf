@@ -18,9 +18,6 @@
  */
 namespace wcmf\lib\util;
 
-use wcmf\lib\core\Session;
-use wcmf\lib\util\Obfuscator;
-
 /**
  * Obfuscator allows to obfuscate strings. By passing an objuscated string
  * to the method Obfuscator::unveil() the orginal string is returned.
@@ -59,7 +56,7 @@ class Obfuscator {
       return '';
     }
     $obfuscator = self::getInstance();
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $obfuscator->ensureStorage();
 
     // create and store the value
@@ -78,7 +75,7 @@ class Obfuscator {
    */
   public static function unveil($str) {
     $obfuscator = self::getInstance();
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $obfuscator->ensureStorage();
 
     $values = $session->get(self::$VALUES_VARNAME);
@@ -94,7 +91,7 @@ class Obfuscator {
    * Ensure that the session storage for the values is initialized
    */
   private function ensureStorage() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     if (!$session->exist(self::$VALUES_VARNAME)) {
       $values = array();
       $session->set(self::$VALUES_VARNAME, $values);

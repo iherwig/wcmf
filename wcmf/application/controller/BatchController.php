@@ -19,7 +19,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\LongTaskController;
-use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\presentation\Controller;
 
@@ -53,7 +52,7 @@ abstract class BatchController extends LongTaskController {
     parent::initialize($request, $response);
 
     // define work packages
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     if ($request->getAction() == 'continue') {
       // get export definition for current call from session
       if ($session->exist($this->WORK_PACKAGES_VARNAME)) {
@@ -109,7 +108,7 @@ abstract class BatchController extends LongTaskController {
       throw new RuntimeException("Wrong work package description '".$name."': No callback given.");
     }
 
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     $workPackages = $session->get($this->WORK_PACKAGES_VARNAME);
 
     $counter = 1;
@@ -163,7 +162,7 @@ abstract class BatchController extends LongTaskController {
    * @see LongTaskController::getNumberOfSteps()
    */
   protected function getNumberOfSteps() {
-    $session = Session::getInstance();
+    $session = ObjectFactory::getInstance('session');
     return $session->get($this->NUM_STEPS_VARNAME);
   }
 

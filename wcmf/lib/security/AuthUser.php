@@ -19,7 +19,6 @@
 namespace wcmf\lib\security;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistentObject;
@@ -48,7 +47,7 @@ class AuthUser extends User {
    * @return True/False whether login succeeded.
    */
   public function login($login, $password, $isPasswordEncrypted=false) {
-    $parser = InifileParser::getInstance();
+    $configuration = ObjectFactory::getInstance('configuration');
 
     // encrypt password if not done already
     if (!$isPasswordEncrypted) {
@@ -77,12 +76,12 @@ class AuthUser extends User {
       // load user config initially
       $config = $this->getConfig();
       if (strlen($config) > 0) {
-        $parser->parseIniFile($GLOBALS['CONFIG_PATH'].$config, true);
+        $configuration->parseIniFile($config, true);
       }
 
       // add policies
-      if (($policies = $parser->getSection('authorization')) === false) {
-        throw new ConfigurationException($parser->getErrorMsg());
+      if (($policies = $configuration->getSection('authorization')) === false) {
+        throw new ConfigurationException($configuration->getErrorMsg());
       }
       else {
         $this->addPolicies($policies);

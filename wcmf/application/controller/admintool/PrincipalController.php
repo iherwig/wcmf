@@ -18,12 +18,12 @@
  */
 namespace wcmf\application\controller\admintool;
 
+use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\security\User;
 use wcmf\lib\security\Role;
 
@@ -241,7 +241,7 @@ class PrincipalController extends Controller {
       $this->_response->setValue('principalBaseList', join("|", $principalBaseList));
       $this->_response->setValue('principalList', join(",", $principalList));
 
-      $configFiles = WCMFInifileParser::getIniFiles();
+      $configFiles = InifileParser::getIniFiles();
       array_push($configFiles, '');
       $this->_response->setValue('configFiles', join("|", $configFiles));
     }

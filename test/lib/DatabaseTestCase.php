@@ -19,7 +19,6 @@
 namespace test\lib;
 
 use \PDO;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 
 /**
@@ -37,8 +36,8 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
 
   public final function getConnection() {
     if ($this->conn === null) {
-      $parser = InifileParser::getInstance();
-      $params = $parser->getSection('database');
+      $configuration = ObjectFactory::getInstance('configuration');
+      $params = $configuration->getSection('database');
       if (self::$pdo == null) {
         self::$pdo = new PDO($params['dbType'].':host='.$params['dbHostName'].';dbname='.$params['dbName'], $params['dbUserName'], $params['dbPassword']);
       }

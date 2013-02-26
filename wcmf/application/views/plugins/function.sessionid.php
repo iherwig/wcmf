@@ -30,7 +30,7 @@ namespace wcmf\lib\presentation\smarty_plugins;
 */
 function smarty_function_sessionid($params, &$smarty)
 {
-  $session = Session::getInstance();
+  $session = ObjectFactory::getInstance('session');
   echo $session->getID();
 }
 ?>

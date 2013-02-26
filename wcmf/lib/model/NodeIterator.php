@@ -29,7 +29,7 @@ use wcmf\lib\model\Node;
  *
  * @code
  * // load the node with depth 10
- * $node = PersistentFacade::getInstance()->load(new ObjectId('Page', 300), 10);
+ * $node = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Page', 300), 10);
  *
  * // iterate over all children
  * $it = new NodeIterator($node);
