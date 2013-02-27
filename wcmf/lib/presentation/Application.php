@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation;
 
 use \Exception;
+use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
@@ -48,21 +49,10 @@ class Application {
   /**
    * Constructor
    */
-  private function __construct() {
+  public function __construct() {
     new ErrorHandler();
     $this->_startTime = microtime(true);
     register_shutdown_function(array($this, "shutdown"));
-  }
-
-  /**
-   * Returns an instance of the class.
-   * @return A reference to the only instance of the Singleton object
-   */
-  public static function getInstance() {
-    if (!isset(self::$_instance)) {
-      self::$_instance = new Application();
-    }
-    return self::$_instance;
   }
 
   /**
@@ -97,8 +87,10 @@ class Application {
       }
     }
 
-    $parser = ObjectFactory::getInstance('configuration');
-    $parser->parseIniFile($configPath.$mainConfigFile, true);
+    Log::configure($configPath.'log4php.properties');
+    $config = new InifileConfiguration($configPath);
+    $config->addConfiguration($mainConfigFile);
+    ObjectFactory::configure($config);
 
     // get controller/context/action triple
     $controller = $this->getRequestValue('controller', $defaultController);
@@ -144,7 +136,7 @@ class Application {
     $rightsManager = RightsManager::getInstance();
     $authUser = $rightsManager->getAuthUser();
     if ($authUser && strlen($authUser->getConfig()) > 0) {
-      $parser->parseIniFile($configPath.$authUser->getConfig(), true);
+      $config->addConfiguration($authUser->getConfig(), true);
     }
 
     // prepare PersistenceFacade

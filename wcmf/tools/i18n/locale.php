@@ -8,13 +8,14 @@ define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\I18nUtil;
 
 // read config file
-$parser = InifileParser::getInstance();
-$parser->parseIniFile('config.ini', true);
+$config = new InifileConfiguration('./');
+$config->addConfiguration('config.ini');
 
 // get config values
 $searchDir = getConfigValue("searchDir", "i18n", true);
@@ -75,10 +76,8 @@ function natcaseksort($array)
 
 function getConfigValue($key, $section, $isDirectory=false)
 {
-  $value = '';
-  $parser = InifileParser::getInstance();
-  if (($value = $parser->getValue($key, $section)) === false)
-    Log::error($parser->getErrorMsg(), "locale");
+  $config = ObjectFactory::getConfigurationInstance();
+  $value = $config->getValue($key, $section);
 
   // add slash
   if ($isDirectory && substr($value, -1) != '/')

@@ -22,7 +22,7 @@ error_reporting(E_ERROR | E_PARSE);
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
 use \Exception;
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
@@ -32,23 +32,19 @@ Log::configure('log4php.properties');
 Log::info("updating wCMF database tables...", "dbupdate");
 
 // get configuration from file
-$CONFIG_PATH = realpath('../config/').'/';
-$configFile = $CONFIG_PATH.'config.ini';
+$configPath = realpath('../config/').'/';
+$configFile = $configPath.'config.ini';
 Log::info("configuration file: ".$configFile, "dbupdate");
-$parser = InifileParser::getInstance();
-if (!$parser->parseIniFile($configFile, true))
-{
-  Log::error($parser->getErrorMsg(), "dbupdate");
-  exit();
-}
+$config = new InifileConfiguration($configPath);
+$config->addConfiguration($configFile);
 
-if (!ensureDatabases($parser)) {
+if (!ensureDatabases($config)) {
   exit();
 }
 
 // message globals
-$GLOBALS['MESSAGE_LOCALE_DIR'] = $parser->getValue('localeDir', 'i18n');
-$GLOBALS['MESSAGE_LANGUAGE'] = $parser->getValue('language', 'i18n');
+$GLOBALS['MESSAGE_LOCALE_DIR'] = $config->getValue('localeDir', 'i18n');
+$GLOBALS['MESSAGE_LANGUAGE'] = $config->getValue('language', 'i18n');
 
 // set locale
 if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {

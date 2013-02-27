@@ -19,7 +19,7 @@
 namespace wcmf\lib\persistence\converter;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\StringUtil;
 use wcmf\lib\util\URIUtil;
 
@@ -121,10 +121,8 @@ class LinkConverter implements IDataConverter {
    */
   private static function getBaseUrl() {
     if (self::$_linkConverterBaseUrl == null) {
-      $parser = InifileParser::getInstance();
-      if (($resourceBaseDir = $parser->getValue('htmlBaseDir', 'application')) === false) {
-        throw new ConfigurationException($parser->getErrorMsg());
-      }
+      $config = ObjectFactory::getConfigurationInstance();
+      $resourceBaseDir = $config->getValue('htmlBaseDir', 'application');
       $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
       self::$_linkConverterBaseUrl = URIUtil::makeAbsolute($resourceBaseDir, $refURL);
     }

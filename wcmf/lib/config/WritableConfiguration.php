@@ -29,6 +29,7 @@ interface WritableConfiguration {
   /**
    * Check if a section is editable.
    * @param section The name of the section.
+   * @return Boolean
    */
   public function isEditable($section);
 
@@ -41,14 +42,14 @@ interface WritableConfiguration {
   /**
    * Create a section.
    * @param section The name of the section (will be trimmed).
-   * @return Boolean
+   * @throws IllegalArgumentException if section exists or the name is empty
    */
   public function createSection($section);
 
   /**
    * Remove a section.
    * @param section The name of the section.
-   * @return Boolean
+   * @throws IllegalArgumentException if section is not editable
    */
   public function removeSection($section);
 
@@ -56,7 +57,8 @@ interface WritableConfiguration {
    * Rename a section.
    * @param oldname The name of the section.
    * @param newname The new name of the section (will be trimmed).
-   * @return Boolean
+   * @throws IllegalArgumentException if old section does not exist or is not editable,
+   *   if new section already exists or name is empty
    */
   public function renameSection($oldname, $newname);
 
@@ -66,7 +68,8 @@ interface WritableConfiguration {
    * @param value The value of the key.
    * @param section The name of the section.
    * @param createSection The name of the section.
-   * @return Boolean
+   * @throws IllegalArgumentException if section does not exist and should not be created
+   *   or is not editable or key is empty
    */
   public function setValue($key, $value, $section, $createSection=true);
 
@@ -74,7 +77,7 @@ interface WritableConfiguration {
    * Remove a key from a section.
    * @param key The name of the key.
    * @param section The name of the section.
-   * @return Boolean
+   * @throws IllegalArgumentException if section is not editable
    */
   public function removeKey($key, $section);
 
@@ -83,14 +86,16 @@ interface WritableConfiguration {
    * @param oldname The name of the section.
    * @param newname The new name of the section (will be trimmed).
    * @param section The name of the section.
-   * @return Boolean
+   * @throws IllegalArgumentException if section is not editable or does not
+   *   exist or the old key does not exist or the new key already exists or is empty
    */
   public function renameKey($oldname, $newname, $section);
 
   /**
    * Persist the configuration changes.
-   * @return Boolean
+   * @param name The name of the configuration to write.
+   * @throws IOException
    */
-  public function writeConfiguration();
+  public function writeConfiguration($name);
 }
 ?>

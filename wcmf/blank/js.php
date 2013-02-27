@@ -16,13 +16,20 @@
  *
  * $Id$
  */
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(E_ALL | E_PARSE);
+
+require_once("base_dir.php");
+require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+
+use wcmf\lib\presentation\Application;
 
 /**
  * Script for inclusion of dynamic javascript files.
  * The following parameters are known:
  * file: The javascript file to include
  */
+$application = new Application();
+$application->initialize();
 
 // deliver the requested javascript file
 Header("content-type: application/x-javascript");

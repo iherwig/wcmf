@@ -221,10 +221,8 @@ abstract class PageExportController extends BatchController {
    * @return The export directory name
    */
   protected function getExportDir() {
-    $configuration = ObjectFactory::getInstance('configuration');
-    if (($exportDir = $configuration->getValue('exportDir', 'application')) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
-    }
+    $config = ObjectFactory::getConfigurationInstance();
+    $exportDir = $config->getValue('exportDir', 'application');
     return $exportDir;
   }
 
@@ -258,11 +256,11 @@ abstract class PageExportController extends BatchController {
       return;
     }
     $viewTemplate = '';
-    $configuration = ObjectFactory::getInstance('configuration');
+    $config = ObjectFactory::getConfigurationInstance();
 
     // get corresponding view
     $actionKey = Action::getBestMatch('views', $this->_response->getSender(), $context, '');
-    if (($viewTemplate = WCMF_BASE.$configuration->getValue($actionKey, 'views')) === false) {
+    if (($viewTemplate = WCMF_BASE.$config->getValue($actionKey, 'views')) === false) {
       throw new Configuration("View definition missing for ".$this->_response->getSender()."?".$context.".");
     }
 

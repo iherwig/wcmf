@@ -70,8 +70,8 @@ class ElFinderController extends Controller
     $response = $this->getResponse();
 
     // get root path and root url for the browser
-    $configuration = ObjectFactory::getInstance('configuration');
-    $rootPath = $configuration->getValue('uploadDir', 'media').'/';
+    $config = ObjectFactory::getConfigurationInstance();
+    $rootPath = $config->getValue('uploadDir', 'media').'/';
     $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $rootUrl = URIUtil::makeAbsolute($rootPath, $refURL);
 

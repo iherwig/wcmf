@@ -47,7 +47,7 @@ class AuthUser extends User {
    * @return True/False whether login succeeded.
    */
   public function login($login, $password, $isPasswordEncrypted=false) {
-    $configuration = ObjectFactory::getInstance('configuration');
+    $config = ObjectFactory::getConfigurationInstance();
 
     // encrypt password if not done already
     if (!$isPasswordEncrypted) {
@@ -74,18 +74,14 @@ class AuthUser extends User {
       $this->setOID($user->getOID());
 
       // load user config initially
-      $config = $this->getConfig();
-      if (strlen($config) > 0) {
-        $configuration->parseIniFile($config, true);
+      $userConfig = $this->getConfig();
+      if (strlen($userConfig) > 0) {
+        $config->addConfiguation($userConfig);
       }
 
       // add policies
-      if (($policies = $configuration->getSection('authorization')) === false) {
-        throw new ConfigurationException($configuration->getErrorMsg());
-      }
-      else {
-        $this->addPolicies($policies);
-      }
+      $policies = $config->getSection('authorization');
+      $this->addPolicies($policies);
       $this->_login_time = strftime("%c", time());
       $loginOk = true;
     }

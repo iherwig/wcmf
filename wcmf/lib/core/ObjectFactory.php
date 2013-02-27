@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\core;
 
+use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 
 use wcmf\lib\util\StringUtil;
@@ -33,6 +34,11 @@ class ObjectFactory {
    * The registry for already created instances
    */
   private static $_instances = array();
+
+  /**
+   * The Configuration instance that holds the instance definitions
+   */
+  private static $_configuration = null;
 
   /**
    * Get the filename for a given class name. The method assumes that
@@ -64,6 +70,22 @@ class ObjectFactory {
   }
 
   /**
+   * Set the Configuration instance.
+   * @param configuration Configuration instance used to construct instances.
+   */
+  public static function configure(Configuration $configuration) {
+    self::$_configuration = $configuration;
+  }
+
+  /**
+   * Get the Configuration instance.
+   * @return Configuration
+   */
+  public static function getConfigurationInstance() {
+    return self::$_configuration;
+  }
+
+  /**
    * Get an instance from the configuration.
    * @param name The name of the instance (section, where the instance is defined)
    * @return Object
@@ -73,17 +95,12 @@ class ObjectFactory {
 
     // check if the instance is registered already
     if (!isset(self::$_instances[$name])) {
-      if (!isset(self::$_instances['configuration'])) {
-        throw new ConfigurationException("No 'configuration' instance provided.");
+      if (self::$_configuration == null) {
+        throw new ConfigurationException("No Configuration instance provided. Do this by calling the configure() method.");
       }
       // load class definition
-      $configuration = self::getInstance('configuration');
-      if (($instanceConfig = $configuration->getSection($name, false)) !== false) {
-        $instance = self::createInstance($name, $instanceConfig);
-      }
-      else {
-        throw new ConfigurationException($configuration->getErrorMsg());
-      }
+      $instanceConfig = self::$_configuration->getSection($name);
+      $instance = self::createInstance($name, $instanceConfig);
     }
     else {
       $instance = self::$_instances[$name];
@@ -110,16 +127,9 @@ class ObjectFactory {
 
   /**
    * Delete all created instances.
-   * @param keepConfiguration Boolean wether to keep the configuration or not [default: true]
    */
-  public static function clear($keepConfiguration=true) {
-    if ($keepConfiguration) {
-      $configuration = self::getInstance('configuration');
-    }
+  public static function clear() {
     self::$_instances = array();
-    if ($keepConfiguration) {
-      self::registerInstance('configuration', $configuration);
-    }
   }
 
   /**

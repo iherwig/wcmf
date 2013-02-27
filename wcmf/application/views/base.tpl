@@ -84,7 +84,7 @@
     <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" data-dojo-config="parseOnLoad:false, isDebug:true"></script>
     <script src="{$libDir}3rdparty/jquery/jquery.js"></script>
     <script src="{$libDir}3rdparty/bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript" src="js.php?file={$libDir}application/js/net/sourceforge/wcmf/Message.js.php"></script>
+    <script type="text/javascript" src="js.php?file={$libDir}application/js/net/sourceforge/wcmf/Message.js.php&lang={$lang}"></script>
     <script type="text/javascript">
       /**
        * Include application classes

@@ -108,8 +108,8 @@ class TreeViewController extends Controller {
     $oids = array();
 
     // get root types from ini file
-    $configuration = ObjectFactory::getInstance('configuration');
-    $rootTypes = $configuration->getValue('rootTypes', 'application');
+    $config = ObjectFactory::getConfigurationInstance();
+    $rootTypes = $config->getValue('rootTypes', 'application');
     if ($rootTypes === false || !is_array($rootTypes) ||  $rootTypes[0] == '') {
       $this->setErrorMsg("No root types defined.");
     }

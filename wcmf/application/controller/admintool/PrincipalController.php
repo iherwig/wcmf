@@ -18,7 +18,6 @@
  */
 namespace wcmf\application\controller\admintool;
 
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\presentation\Controller;
@@ -241,9 +240,9 @@ class PrincipalController extends Controller {
       $this->_response->setValue('principalBaseList', join("|", $principalBaseList));
       $this->_response->setValue('principalList', join(",", $principalList));
 
-      $configFiles = InifileParser::getIniFiles();
-      array_push($configFiles, '');
-      $this->_response->setValue('configFiles', join("|", $configFiles));
+      $configurations = ObjectFactory::getConfigurationInstance()->getConfigurations();
+      array_push($configurations, '');
+      $this->_response->setValue('configFiles', join("|", $configurations));
     }
 
     $this->_userManager->commitTransaction();

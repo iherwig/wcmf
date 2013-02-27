@@ -19,7 +19,6 @@
 namespace wcmf\lib\remoting;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\remoting\HTTPClient;
@@ -71,24 +70,19 @@ class RemotingFacade {
    */
   private function getClient($serverKey) {
     if (!isset($this->_clients[$serverKey])) {
-      $parser = InifileParser::getInstance();
-      if (($serverDef = $parser->getValue($serverKey, 'remoteserver')) !== false) {
-      	// get remote the user
-        $user = $this->getRemoteUser($serverKey);
+      $config = ObjectFactory::getConfigurationInstance();
+      $serverDef = $config->getValue($serverKey, 'remoteserver');
+      // get remote the user
+      $user = $this->getRemoteUser($serverKey);
 
-        $client = null;
-        if (strpos($serverDef, 'http://') === 0 || strpos($serverDef, 'https://') === 0) {
-          $client = new HTTPClient($serverDef, $user);
-        }
-        else {
-          $client = new RPCClient($serverDef, $user);
-        }
-        $this->_clients[$serverKey] = $client;
+      $client = null;
+      if (strpos($serverDef, 'http://') === 0 || strpos($serverDef, 'https://') === 0) {
+        $client = new HTTPClient($serverDef, $user);
       }
       else {
-        throw new ConfigurationException("The remote server with key '".$serverKey."' is unknown.\n".
-          $parser->getErrorMsg());
+        $client = new RPCClient($serverDef, $user);
       }
+      $this->_clients[$serverKey] = $client;
     }
     return $this->_clients[$serverKey];
   }
@@ -100,21 +94,16 @@ class RemotingFacade {
    */
   private function getRemoteUser($serverKey) {
     if (!isset($this->_users[$serverKey])) {
-      $parser = InifileParser::getInstance();
-      if (($remoteLogin = $parser->getValue($serverKey, 'remoteuser')) !== false) {
-        $objectFactory = ObjectFactory::getInstance();
-        $userManager = $objectFactory->getInstance('userManager');
-        $user = $userManager->getUser($remoteLogin);
-        if ($user != null) {
-          $this->_users[$serverKey] = $user;
-        }
-        else {
-          throw new RuntimeException("The remote user with login '".$remoteLogin."' does not exist.\n");
-        }
+      $config = ObjectFactory::getConfigurationInstance();
+      $remoteLogin = $config->getValue($serverKey, 'remoteuser');
+      $objectFactory = ObjectFactory::getInstance();
+      $userManager = $objectFactory->getInstance('userManager');
+      $user = $userManager->getUser($remoteLogin);
+      if ($user != null) {
+        $this->_users[$serverKey] = $user;
       }
       else {
-        throw new ConfigurationException("The remote user with key '".$serverKey."' is unknown.\n".
-          $parser->getErrorMsg());
+        throw new RuntimeException("The remote user with login '".$remoteLogin."' does not exist.\n");
       }
     }
     return $this->_users[$serverKey];

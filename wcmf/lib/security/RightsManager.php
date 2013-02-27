@@ -99,24 +99,24 @@ class RightsManager {
    * @return True/False wether in anonymous mode
    */
   public function isAnonymous() {
-    $configuration = ObjectFactory::getInstance('configuration');
-    return $configuration->getBooleanValue('anonymous', 'application');
+    $config = ObjectFactory::getConfigurationInstance();
+    return $config->getBooleanValue('anonymous', 'application');
   }
 
   /**
    * Deactivate rights checking by setting the anonymous confguration value.
    */
   public function deactivate() {
-    $configuration = ObjectFactory::getInstance('configuration');
-    $configuration->setValue('anonymous', true, 'application');
+    $config = ObjectFactory::getConfigurationInstance();
+    $config->setValue('anonymous', true, 'application');
   }
 
   /**
    * (Re-)activate rights checking by unsetting the anonymous confguration value.
    */
   public function activate() {
-    $configuration = ObjectFactory::getInstance('configuration');
-    $configuration->setValue('anonymous', false, 'application');
+    $config = ObjectFactory::getConfigurationInstance();
+    $config->setValue('anonymous', false, 'application');
   }
 
   /**
@@ -161,22 +161,21 @@ class RightsManager {
   }
 
   /**
-   * Get the rights on a resource, context, action combination.
-   * @param config The configuration file to create the right in.
+   * Get the permission on a resource, context, action combination.
+   * @param config The configuration to get the permission from.
    * @param resource The resource (e.g. class name of the Controller or OID).
    * @param context The context in which the action takes place.
    * @param action The action to process.
    * @return An assoziative array with keys 'default', 'allow', 'deny' and the attached roles as values.
    * @see AuthUser::parsePolicy
    */
-  public function getRight($config, $resource, $context, $action) {
-    $parser = new IniFileConfiguration();
-    $parser->setConfigPath(dirname($config));
-    $parser->parseIniFile(basename($config));
+  public function getPermission($config, $resource, $context, $action) {
+    $configuration = new IniFileConfiguration(dirname($config));
+    $configuration->addConfiguration(basename($config));
 
     $rightDef = $resource."?".$context."?".$action;
-    if ($parser->getValue($rightDef, AUTHORIZATION_SECTION) !== false) {
-      return AuthUser::parsePolicy($parser->getValue($rightDef, AUTHORIZATION_SECTION));
+    if ($configuration->getValue($rightDef, AUTHORIZATION_SECTION) !== false) {
+      return AuthUser::parsePolicy($configuration->getValue($rightDef, AUTHORIZATION_SECTION));
     }
     else {
       return array();
@@ -185,7 +184,7 @@ class RightsManager {
 
   /**
    * Create/Change a permission for a role on a resource, context, action combination.
-   * @param config The configuration file to create the right in.
+   * @param config The configuration to create the permission in.
    * @param resource The resource (e.g. class name of the Controller or OID).
    * @param context The context in which the action takes place.
    * @param action The action to process.
@@ -194,12 +193,12 @@ class RightsManager {
    * @return True/False whether creation succeded/failed.
    */
   public function createPermission($config, $resource, $context, $action, $role, $modifier) {
-    return self::modifyRight($config, $resource, $context, $action, $role, $modifier);
+    return self::modifyPermission($config, $resource, $context, $action, $role, $modifier);
   }
 
   /**
-   * Remove a role from a right on a resource, context, action combination.
-   * @param config The configuration file to remove the right from.
+   * Remove a role from a permission on a resource, context, action combination.
+   * @param config The configuration to remove the right from.
    * @param resource The resource (e.g. class name of the Controller or OID).
    * @param context The context in which the action takes place.
    * @param action The action to process.
@@ -207,12 +206,12 @@ class RightsManager {
    * @return True/False whether removal succeded/failed.
    */
   public function removePermission($config, $resource, $context, $action, $role) {
-    return self::modifyRight($config, $resource, $context, $action, $role, null);
+    return self::modifyPermission($config, $resource, $context, $action, $role, null);
   }
 
   /**
-   * Modify a right of a role on a resource, context, action combination.
-   * @param config The configuration file to remove the right from.
+   * Modify a permission of a role on a resource, context, action combination.
+   * @param config The configuration to modify the permission in.
    * @param resource The resource (e.g. class name of the Controller or OID).
    * @param context The context in which the action takes place.
    * @param action The action to process.
@@ -220,31 +219,31 @@ class RightsManager {
    * @param modifier One of the RIGHT_MODIFIER_ constants or null (which means remove role).
    * @return True/False whether modification succeded/failed.
    */
-  public function modifyRight($config, $resource, $context, $action, $role, $modifier) {
-    $iniFile = new IniFileParser($config);
-    $iniFile->parseIniFile($config);
+  protected function modifyPermission($config, $resource, $context, $action, $role, $modifier) {
+    $configuration = new IniFileConfiguration(dirname($config));
+    $configuration->addConfiguration(basename($config));
 
     $rightDef = $resource."?".$context."?".$action;
     $rightVal = '';
     if ($modifier != null) {
       $rightVal = $modifier.$role;
     }
-    if ($iniFile->getValue($rightDef, AUTHORIZATION_SECTION) === false && $modifier != null) {
-      $iniFile->setValue($rightDef, $rightVal, AUTHORIZATION_SECTION, true);
+    if ($configuration->getValue($rightDef, AUTHORIZATION_SECTION) === false && $modifier != null) {
+      $configuration->setValue($rightDef, $rightVal, AUTHORIZATION_SECTION, true);
     }
     else {
-      $value = $iniFile->getValue($rightDef, AUTHORIZATION_SECTION);
+      $value = $configuration->getValue($rightDef, AUTHORIZATION_SECTION);
       // remove role from value
       $value = trim(preg_replace("/[+\-]*".$role."/", "", $value));
       if ($value != '') {
-        $iniFile->setValue($rightDef, $value." ".$rightVal, AUTHORIZATION_SECTION, false);
+        $configuration->setValue($rightDef, $value." ".$rightVal, AUTHORIZATION_SECTION, false);
       }
       else {
-        $iniFile->removeKey($rightDef, AUTHORIZATION_SECTION);
+        $configuration->removeKey($rightDef, AUTHORIZATION_SECTION);
       }
     }
 
-    $iniFile->writeConfiguration();
+    $configuration->writeConfiguration(basename($config));
     return true;
   }
 }

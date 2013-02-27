@@ -381,9 +381,9 @@ class SaveController extends Controller {
    */
   protected function getImageConstraints(ObjectId $oid, $valueName) {
     // get required image dimensions
-    $configuration = ObjectFactory::getInstance('configuration');
-    $imgWidth = $configuration->getValue('imgWidth', 'media');
-    $imgHeight = $configuration->getValue('imgHeight', 'media');
+    $config = ObjectFactory::getConfigurationInstance();
+    $imgWidth = $config->getValue('imgWidth', 'media');
+    $imgHeight = $config->getValue('imgHeight', 'media');
     return array('width' => $imgWidth, 'height' => $imgHeight);
   }
 
@@ -431,8 +431,8 @@ class SaveController extends Controller {
       $uploadDir = $request->getValue('uploadDir').'/';
     }
     else {
-      $configuration = ObjectFactory::getInstance('configuration');
-      if(($dir = $configuration->getValue('uploadDir', 'media')) !== false) {
+      $config = ObjectFactory::getConfigurationInstance();
+      if(($dir = $config->getValue('uploadDir', 'media')) !== false) {
         $uploadDir = $dir;
       }
     }

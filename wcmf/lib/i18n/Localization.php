@@ -85,11 +85,9 @@ class Localization {
    * @return The default language value (e.g. en)
    */
   public function getDefaultLanguage() {
-    $configuration = ObjectFactory::getInstance('configuration');
+    $config = ObjectFactory::getConfigurationInstance();
 
-    if (($defaultLanguage = $configuration->getValue('defaultLanguage', 'i18n')) === false) {
-      throw new ConfigurationException("No default language defined in configfile. ".$configuration->getErrorMsg());
-    }
+    $defaultLanguage = $config->getValue('defaultLanguage', 'i18n');
     $supportedLanguages = $this->getSupportedLanguages();
     if (!isset($supportedLanguages[$defaultLanguage])) {
       throw new ConfigurationException("No supported language equals the default language '".$defaultLanguage."'");
@@ -104,23 +102,18 @@ class Localization {
   public function getSupportedLanguages() {
     if ($this->_supportedLanguages == null) {
       // check if the configuration section exists
-      $configuration = ObjectFactory::getInstance('configuration');
-      if (($languages = $configuration->getSection('languages')) !== false) {
+      $config = ObjectFactory::getConfigurationInstance();
+      if (($languages = $config->getSection('languages')) !== false) {
         $this->_supportedLanguages = $languages;
       }
       // if not, use the languageType
       else {
-        $languageType = $configuration->getValue('languageType', 'i18n');
-        if ($languageType === false) {
-          throw new ConfigurationException("No 'languageType' defined in configfile. ".$configuration->getErrorMsg());
-        }
-        else {
-          $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-          $languages = $persistenceFacade->loadObjects($languageType, BUILDEPTH_SINGLE);
-          for($i=0; $i<sizeof($languages); $i++) {
-            $curLanguage = $languages[$i];
-            $this->_supportedLanguages[$curLanguage->getCode()] = $curLanguage->getName();
-          }
+        $languageType = $config->getValue('languageType', 'i18n');
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $languages = $persistenceFacade->loadObjects($languageType, BuildDepth::SINGLE);
+        for($i=0; $i<sizeof($languages); $i++) {
+          $curLanguage = $languages[$i];
+          $this->_supportedLanguages[$curLanguage->getCode()] = $curLanguage->getName();
         }
       }
     }
@@ -132,10 +125,8 @@ class Localization {
    * @return The type name.
    */
   public static function getTranslationType() {
-    $configuration = ObjectFactory::getInstance('configuration');
-    if (($type = $configuration->getValue('translationType', 'i18n')) === false) {
-      throw new ConfigurationException("No translation type defined in configfile. ".$configuration->getErrorMsg());
-    }
+    $config = ObjectFactory::getConfigurationInstance();
+    $type = $config->getValue('translationType', 'i18n');
     return $type;
   }
 
@@ -144,10 +135,8 @@ class Localization {
    * @return The input type names.
    */
   protected static function getIncludedInputTypes() {
-    $configuration = ObjectFactory::getInstance('configuration');
-    if (($inputTypes = $configuration->getValue('inputTypes', 'i18n')) === false) {
-      throw new ConfigurationException("No input types defined in configfile. ".$configuration->getErrorMsg());
-    }
+    $config = ObjectFactory::getConfigurationInstance();
+    $inputTypes = $config->getValue('inputTypes', 'i18n');
     return $inputTypes;
   }
 

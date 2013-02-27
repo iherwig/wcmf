@@ -79,8 +79,8 @@ abstract class UserManager {
    */
   public function __construct() {
     // load role config if existing
-    $configuration = ObjectFactory::getInstance('configuration');
-    if (($roleConfig = $configuration->getSection('roleconfig')) !== false) {
+    $config = ObjectFactory::getConfigurationInstance();
+    if (($roleConfig = $config->getSection('roleconfig')) !== false) {
       $this->_roleConfig = $roleConfig;
     }
   }

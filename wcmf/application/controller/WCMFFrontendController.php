@@ -77,7 +77,7 @@ class WCMFFrontendController extends Controller {
   protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rightsManager = RightsManager::getInstance();
-    $configuration = ObjectFactory::getInstance('configuration');
+    $config = ObjectFactory::getConfigurationInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -86,7 +86,7 @@ class WCMFFrontendController extends Controller {
       $knownTypes = $persistenceFacade->getKnownTypes();
 
       // get root types from ini file
-      $rootTypes = $configuration->getValue('rootTypes', 'application');
+      $rootTypes = $config->getValue('rootTypes', 'application');
       if ($rootTypes === false || !is_array($rootTypes) || $rootTypes[0] == '') {
         $this->setErrorMsg(Message::get("No root types defined."));
         $response->setAction('failure');
@@ -138,7 +138,7 @@ class WCMFFrontendController extends Controller {
         $response->setValue('typeTemplate', $typeTemplate);
         $response->setValue('isNew', false);
       }
-      $response->setValue('languages', $configuration->getSection('languages'));
+      $response->setValue('languages', $config->getSection('languages'));
     }
     // success
     $response->setAction('ok');

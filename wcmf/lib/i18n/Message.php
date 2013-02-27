@@ -18,7 +18,7 @@
  */
 namespace wcmf\lib\i18n;
 
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 
 /**
  * Message is used to get localized messages.
@@ -55,9 +55,9 @@ class Message {
    * Initialize static members
    */
   private static function initialize() {
-    $parser = InifileParser::getInstance();
-    self::$localeDir = $parser->getValue('localeDir', 'i18n');
-    self::$language = $parser->getValue('language', 'i18n');
+    $config = ObjectFactory::getConfigurationInstance();
+    self::$localeDir = $config->getValue('localeDir', 'i18n');
+    self::$language = $config->getValue('language', 'i18n');
     setlocale(LC_ALL, self::$language);
     self::$initialized = true;
   }

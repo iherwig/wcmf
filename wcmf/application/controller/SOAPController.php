@@ -76,8 +76,8 @@ class SOAPController extends Controller
   function soapSearch($searchTerm)
   {
     // get all known types from configuration file
-    $configuration = ObjectFactory::getInstance('configuration');
-    $types = array_keys($configuration->getSection('typemapping'));
+    $config = ObjectFactory::getConfigurationInstance();
+    $types = array_keys($config->getSection('typemapping'));
 
     // query for each type
     $objectList = array();
@@ -93,9 +93,8 @@ class SOAPController extends Controller
         for($iter->rewind(); $iter->valid(); $iter->next()) {
           $curNode = $iter->currentNode();
           $valueName = $iter->key();
-          $value = $curNode->getValue($valueName);
-          if (strlen($value) > 0) {
-            $curNode->setValue($valueName, "LIKE '%".$value."%'");
+          if (strlen($searchTerm) > 0) {
+            $curNode->setValue($valueName, "LIKE '%".$searchTerm."%'");
           }
         }
 

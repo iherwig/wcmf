@@ -27,7 +27,6 @@ use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\WCMFInifileParser;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\security\RightsManager;
 
@@ -80,7 +79,7 @@ class ActionMapper {
     // store last controller
     $actionMapper->_lastControllers[] = $referrer;
 
-    $configuration = ObjectFactory::getInstance('configuration');
+    $config = ObjectFactory::getConfigurationInstance();
     $rightsManager = RightsManager::getInstance();
 
     // check authorization for controller/context/action triple
@@ -112,9 +111,7 @@ class ActionMapper {
     }
     else {
       // get next controller
-      if (($controllerClass = $configuration->getValue($actionKey, 'actionmapping')) === false) {
-        throw new ConfigurationException($configuration->getErrorMsg());
-      }
+      $controllerClass = $config->getValue($actionKey, 'actionmapping');
     }
     if (strlen($controllerClass) == 0) {
       throw new ApplicationException($request, $response, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");

@@ -22,8 +22,8 @@ use \PDO;
 use \Zend_Db;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\util\DBUtil;
 
@@ -84,8 +84,8 @@ class DBUtil {
       Log::info('Executing SQL script '.$file.' ...', __CLASS__);
 
       // find init params
-      $parser = InifileParser::getInstance();
-      if (($connectionParams = $parser->getSection($initSection)) === false) {
+      $config = ObjectFactory::getConfigurationInstance();
+      if (($connectionParams = $config->getSection($initSection)) === false) {
         throw new ConfigurationException("No '".$initSection."' section given in configfile.");
       }
       // connect to the database

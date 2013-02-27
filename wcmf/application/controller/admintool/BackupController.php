@@ -160,10 +160,8 @@ class BackupController extends BatchController
     $session = ObjectFactory::getInstance('session');
     $backupName = $session->get($this->BACKUP_NAME_VARNAME);
 
-    $configuration = ObjectFactory::getInstance('configuration');
-    if (($backupDir = $configuration->getValue('backupDir', 'application')) === false) {
-      throw new ConfigurationException($configuration->getErrorMsg());
-    }
+    $config = ObjectFactory::getConfigurationInstance();
+    $backupDir = $config->getValue('backupDir', 'application');
     if (strrpos($backupDir, '/') != strlen($backupDir)-1) {
       $backupDir .= '/';
     }

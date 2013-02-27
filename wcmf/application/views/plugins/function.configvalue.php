@@ -18,7 +18,7 @@
  */
 namespace wcmf\lib\presentation\smarty_plugins;
 
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 
 /*
 * Smarty plugin
@@ -26,7 +26,7 @@ use wcmf\lib\config\InifileParser;
 * File:     function.configvalue.php
 * Type:     function
 * Name:     configvalue
-* Purpose:  output a configuration value (uses the getValue method of InifileParser)
+* Purpose:  output a configuration value
 *           or assign it to a smarty variable
 * Usage:    e.g. {configvalue key="exportDir" section="cms"} or
 *           {configvalue key="exportDir" section="cms" varname="exportDir"}
@@ -34,8 +34,8 @@ use wcmf\lib\config\InifileParser;
 */
 function smarty_function_configvalue($params, $smarty)
 {
-  $parser = InifileParser::getInstance();
-  $value = $parser->getValue($params['key'], $params['section'], false);
+  $config = ObjectFactory::getConfigurationInstance();
+  $value = $config->getValue($params['key'], $params['section'], false);
   if (isset($params['varname'])) {
     $smarty->assign($params['varname'], $value);
   }

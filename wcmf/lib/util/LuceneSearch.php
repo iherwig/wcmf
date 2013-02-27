@@ -18,9 +18,9 @@
  */
 namespace wcmf\lib\util;
 
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\EncodingUtil;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\PersistentObject;
@@ -190,23 +190,19 @@ class LuceneSearch {
    */
   private static function getIndexPath() {
     if (!self::$indexPath) {
-      $parser = InifileParser::getInstance();
-      if (($path = $parser->getValue(self::INI_INDEX_PATH, self::INI_SECTION)) !== false) {
-        self::$indexPath = WCMF_BASE . 'application/' . $path;
+      $config = ObjectFactory::getConfigurationInstance();
+      $path = $config->getValue(self::INI_INDEX_PATH, self::INI_SECTION);
+      self::$indexPath = realpath($path);
 
-        if (!file_exists(self::$indexPath)) {
-          FileUtil::mkdirRec(self::$indexPath);
-        }
-
-        if (!is_writeable(self::$indexPath)) {
-          Log::error("Index path '".self::$indexPath."' is not writeable.", __CLASS__);
-        }
-
-        Log::debug("Lucene index location: ".self::$indexPath, __CLASS__);
+      if (!file_exists(self::$indexPath)) {
+        FileUtil::mkdirRec(self::$indexPath);
       }
-      else {
-        Log::error($parser->getErrorMsg(), __CLASS__);
+
+      if (!is_writeable(self::$indexPath)) {
+        Log::error("Index path '".self::$indexPath."' is not writeable.", __CLASS__);
       }
+
+      Log::debug("Lucene index location: ".self::$indexPath, __CLASS__);
     }
     return self::$indexPath;
   }

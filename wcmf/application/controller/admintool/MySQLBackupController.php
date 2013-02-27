@@ -20,8 +20,8 @@ namespace wcmf\application\controller\admintool;
 
 use wcmf\application\controller\admintool\BackupController;
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -120,10 +120,8 @@ class MySQLBackupController extends BackupController {
     $session = ObjectFactory::getInstance('session');
     $paramSection = $session->get($this->PARAMS_SECTION_VARNAME);
 
-    $parser = InifileParser::getInstance();
-    if (($params = $parser->getSection($paramSection)) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
-    }
+    $config = ObjectFactory::getConfigurationInstance();
+    $params = $config->getSection($paramSection);
     return $params;
   }
 }

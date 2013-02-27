@@ -19,7 +19,7 @@
 namespace wcmf\lib\util;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\i18n\Message;
+use wcmf\lib\core\ObjectFactory;
 
 /**
  * I18nUtil provides support i18n functionality.
@@ -120,11 +120,8 @@ class I18nUtil {
    */
   public static function createPOFile($projectID, $teamName, $teamEmail, $language, $country, $charset, $filename, $messages) {
     // get locale directory
-    $parser = &InifileParser::getInstance();
-    if (($localDir = $parser->getValue('localeDir', 'i18n')) === false) {
-      $this->_errorMsg = $parser->getErrorMsg();
-      return false;
-    }
+    $config = ObjectFactory::getConfigurationInstance();
+    $localDir = $config->getValue('localeDir', 'i18n');
     if (substr($localDir, -1) != '/') {
       $localDir .= '/';
     }

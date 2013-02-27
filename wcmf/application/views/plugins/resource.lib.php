@@ -19,7 +19,7 @@
 namespace wcmf\lib\presentation\smarty_plugins;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\core\ObjectFactory;
 
 /*
  * Smarty plugin
@@ -62,16 +62,16 @@ function smarty_resource_lib_trusted($tpl_name, $smarty)
 
 function get_path($path)
 {
-  $parser = InifileParser::getInstance();
+  $config = ObjectFactory::getConfigurationInstance();
 
   // check for overrides in templateDir first
-  $templateDir = $parser->getValue('templateDir', 'smarty');
+  $templateDir = $config->getValue('templateDir', 'smarty');
   $userTpl = realpath($templateDir."/".$path);
   if (file_exists($userTpl)) {
     return $userTpl;
   }
   // use templates from libDir
-  if (($libDir = $parser->getValue('libDir', 'application')) === false) {
+  if (($libDir = $config->getValue('libDir', 'application')) === false) {
     throw new ConfigurationException("No library path 'libDir' defined in ini section 'application'.", __FILE__, __LINE__);
   }
   return realpath($libDir."/".$path);

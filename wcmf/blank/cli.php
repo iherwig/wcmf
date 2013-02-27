@@ -61,8 +61,8 @@ if ($numArguments == 2) {
 }
 
 // initialize the remote application
-$application = Application::getInstance();
-$application->initialize('include/', 'config.ini', 'wcmf\application\controller\LoginController', '', 'login', 'Null');
+$application = new Application();
+$application->initialize('config/', 'config.ini', 'wcmf\application\controller\LoginController', '', 'login', 'Null');
 
 // process the requested action
 $serializedRequest = base64_decode($arguments[0]);

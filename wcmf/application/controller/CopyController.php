@@ -519,8 +519,8 @@ class CopyController extends BatchController {
       $mapperClass = get_class($sourceMapper);
       if (!isset($this->_targetMapper[$mapperClass])) {
         $initSection = $request->getValue('target_initparams');
-        $configuration = ObjectFactory::getInstance('configuration');
-        if (($initParams = $configuration->getSection($initSection)) === false) {
+        $config = ObjectFactory::getConfigurationInstance();
+        if (($initParams = $config->getSection($initSection)) === false) {
           throw new ConfigurationException("No '".$initSection."' section given in configfile.");
         }
         $targetMapper = new $mapperClass($initParams);

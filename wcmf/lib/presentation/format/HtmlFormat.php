@@ -19,7 +19,6 @@
 namespace wcmf\lib\presentation\format;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Action;
@@ -136,8 +135,8 @@ class HtmlFormat extends AbstractFormat {
       Log::debug('HtmlFormat::getViewTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
     }
     // get corresponding view
-    $parser = InifileParser::getInstance();
-    $view = $parser->getValue($actionKey, 'views', false);
+    $config = ObjectFactory::getConfigurationInstance();
+    $view = $config->getValue($actionKey, 'views', false);
     return $view;
   }
 }

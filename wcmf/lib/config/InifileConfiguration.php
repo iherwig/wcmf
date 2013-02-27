@@ -21,7 +21,9 @@ namespace wcmf\lib\config;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\WritableConfiguration;
+use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\io\IOException;
 use wcmf\lib\util\ArrayUtil;
 use wcmf\lib\util\StringUtil;
 
@@ -33,24 +35,22 @@ use wcmf\lib\util\StringUtil;
  */
 class InifileConfiguration implements Configuration, WritableConfiguration {
 
-  private $_errorMsg = '';
-  private $_filename = null;
-  private $_iniArray = array(); // an assoziate array that holds sections with keys with values
+  private $_configArray = array(); // an assoziate array that holds sections with keys with values
   private $_comments = array(); // an assoziate array that holds the comments/blank lines in the file
-                            // (each comment is attached to the following section/key)
-                            // the key ';' holds the comments at the end of the file
+                                // (each comment is attached to the following section/key)
+                                // the key ';' holds the comments at the end of the file
   private $_isModified = false;
   private $_parsedFiles = array();
-  private $_useCache = true;
+  private $_useCache = false;
 
   private $_configPath = null;
   private $_configExtension = 'ini';
 
   /**
-   * Set the filesystem path to the configuration files.
+   * Constructor.
    * @param configPath The path, either absolute or relative to the executed script
    */
-  public function setConfigPath($configPath) {
+  public function __construct($configPath) {
     $this->_configPath = $configPath;
   }
 
@@ -63,52 +63,45 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   }
 
   /**
-   * Returns the errorMsg.
-   * @return The error message.
+   * Configuration interface
    */
-  public function getErrorMsg() {
-    return $this->_errorMsg;
-  }
 
   /**
-   * Get a list of available configuration files.
-   * @return Array of configuration file names.
+   * @see Configuration::getConfigurations()
    */
-  public static function getIniFiles() {
+  public static function getConfigurations() {
     $fileUtil = new FileUtil();
-    return $fileUtil->getFiles($this->_configPath, "/\.".$this->_configExtension."$/", true);
+    return $fileUtil->getFiles($this->_configPath, '/\.'.$this->_configExtension.'$/', true);
   }
 
   /**
-   * Parses an ini file and puts an array with all the key-values pairs into the object.
-   * @param filename The filename of the ini file to parse (relative to configPath)
-   * @param processValues True/False whether values should be processed after parsing (e.g. make arrays) [default: true]
+   * @see Configuration::addConfiguration()
+   * Name is the ini file to be parsed (relative to configPath)
    * @note ini files referenced in section 'config' key 'include' are parsed afterwards
-   * @return True/False whether method succeeded.
    */
-  public function parseIniFile($filename, $processValues=true) {
+  public function addConfiguration($name, $processValues=true) {
+    $filename = $name;
+
     // do nothing, if the requested file was the last parsed file
     $numParsedFiles = sizeof($this->_parsedFiles);
     if ($numParsedFiles > 0 && $this->_parsedFiles[sizeof($this->_parsedFiles)-1] == $filename) {
-      return true;
+      return;
     }
 
     $filename = $this->_configPath.$filename;
     if (file_exists($filename)) {
-      $this->_filename = $filename;
-
       // try to unserialize an already parsed ini file sequence
       $tmpSequence = $this->_parsedFiles;
       $tmpSequence[] = $filename;
       if (!$this->unserialize($tmpSequence)) {
         // merge new with old values, overwrite redefined values
-        $this->_iniArray = $this->configMerge($this->_iniArray, $this->_parse_ini_file($filename, true), true);
+        $this->_configArray = $this->configMerge($this->_configArray, $this->_parse_ini_file($filename, true), true);
 
         // merge referenced ini files, don't override values
         if (($includes = $this->getValue('include', 'config')) !== false) {
           $this->processValue($includes);
           foreach($includes as $include) {
-            $this->_iniArray = $this->configMerge($this->_iniArray, $this->_parse_ini_file($this->_configPath.$include, true), false);
+            $this->_configArray = $this->configMerge($this->_configArray, $this->_parse_ini_file($this->_configPath.$include, true), false);
           }
         }
         if ($processValues) {
@@ -120,73 +113,69 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
         // serialize the parsed ini file sequence
         $this->serialize();
       }
-      return true;
     }
     else {
-      $this->_errorMsg = "Configuration file ".$filename." not found!";
-      return false;
+      throw new ConfigurationException('Configuration file '.$filename.' not found!');
     }
   }
-
-  /**
-   * Configuration interface
-   */
 
   /**
    * @see Configuration::getSections()
    */
   public function getSections() {
-    return array_keys($this->_iniArray);
+    return array_keys($this->_configArray);
+  }
+
+  /**
+   * @see Configuration::hasSection()
+   */
+  public function hasSection($section) {
+    $sectionLower = strtolower($section);
+    return isset($this->_configArray[$sectionLower]);
   }
 
   /**
    * @see Configuration::getSection()
    */
-  public function getSection($section, $caseSensitive=true) {
-    if (!$caseSensitive) {
-      $matchingKeys = ArrayUtil::get_matching_values_i($section, array_keys($this->_iniArray));
-      if (sizeof($matchingKeys) > 0) {
-        $section = array_pop($matchingKeys);
-      }
-    }
-
-    if (!isset($this->_iniArray[$section])) {
-      $this->_errorMsg = "Section '".$section."' not found!";
-      return false;
+  public function getSection($section) {
+    $sectionLower = strtolower($section);
+    if (!isset($this->_configArray[$sectionLower])) {
+      throw new ConfigurationException('Section \''.$section.'\' not found!');
     }
     else {
-      return $this->_iniArray[$section];
+      return $this->_configArray[$sectionLower];
     }
+  }
+
+  /**
+   * @see Configuration::hasValue()
+   */
+  public function hasValue($key, $section) {
+    $keyLower = strtolower($key);
+    $sectionLower = strtolower($section);
+    return isset($this->_configArray[$sectionLower], $this->_configArray[$sectionLower][$keyLower]);
   }
 
   /**
    * @see Configuration::getValue()
    */
-  public function getValue($key, $section, $caseSensitive=true) {
-    $sectionArray = $this->getSection($section, $caseSensitive);
-    if ($sectionArray === false) {
-      return false;
-    }
-    if (!$caseSensitive) {
-      $matchingKeys = ArrayUtil::get_matching_values_i($key, array_keys($sectionArray));
-      if (sizeof($matchingKeys) > 0) {
-        $key = array_pop($matchingKeys);
-      }
-    }
-    if (!isset($sectionArray[$key])) {
-      $this->_errorMsg = "Key '".$key."' not found in section '".$section."'!";
-      return false;
+  public function getValue($key, $section) {
+    $keyLower = strtolower($key);
+
+    $sectionArray = $this->getSection($section);
+    if (!isset($sectionArray[$keyLower])) {
+      throw new ConfigurationException('Key \''.$key.'\' not found in section \''.$section.'\'!');
     }
     else {
-      return $sectionArray[$key];
+      return $sectionArray[$keyLower];
     }
   }
 
   /**
    * @see Configuration::getBooleanValue()
    */
-  public function getBooleanValue($key, $section, $caseSensitive=true) {
-    $value = $this->getValue($key, $section, $caseSensitive);
+  public function getBooleanValue($key, $section) {
+    $value = $this->getValue($key, $section);
     return StringUtil::getBoolean($value);
   }
 
@@ -198,9 +187,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @see WritableConfiguration::isEditable()
    */
   public function isEditable($section) {
-    if (($readonlySections = $this->getValue('readonlySections', 'config')) !== false) {
+    if ($this->hasValue('readonlySections', 'config')) {
+      $readonlySections = $this->getValue('readonlySections', 'config');
+      $sectionLower = strtolower($section);
       $this->processValue($readonlySections);
-      if (is_array($readonlySections) && in_array($section, $readonlySections)) {
+      if (is_array($readonlySections) && in_array($sectionLower, $readonlySections)) {
         return true;
       }
       else {
@@ -222,15 +213,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   public function createSection($section) {
     $section = trim($section);
-    if ($this->getSection($section) !== false) {
-      $this->_errorMsg = "Section '".$section."' already exists!";
-      return false;
+    if (strlen($section) == 0) {
+      throw new IllegalArgumentException('Empty section names are not allowed!');
     }
-    if ($section == '') {
-      $this->_errorMsg = "Empty section names are not allowed!";
-      return false;
+    if ($this->hasSection($section)) {
+      throw new IllegalArgumentException('Section \''.$section.'\' already exists!');
     }
-    $this->_iniArray[$section] = '';
+    $sectionLower = strtolower($section);
+    $this->_configArray[$sectionLower] = '';
     $this->_isModified = true;
     return true;
   }
@@ -240,61 +230,64 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   public function removeSection($section) {
     if (!$this->isEditable($section)) {
-      $this->_errorMsg = "Section ".$section." is not editable!";
-      return false;
+      throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
-    if ($this->getSection($section) === false) {
-      return false;
+    if ($this->hasSection($section)) {
+      $sectionLower = strtolower($section);
+      unset($this->_configArray[$sectionLower]);
+      $this->_isModified = true;
     }
-    unset($this->_iniArray[$section]);
-    $this->_isModified = true;
-    return true;
   }
 
   /**
    * @see WritableConfiguration::renameSection()
    */
   public function renameSection($oldname, $newname) {
-    if (!$this->isEditable($oldname)) {
-      $this->_errorMsg = "Section ".$oldname." is not editable!";
-      return false;
-    }
     $newname = trim($newname);
-    if ($this->getSection($oldname) === false) {
-      return false;
+    if (strlen($newname) == 0) {
+      throw new IllegalArgumentException('Empty section names are not allowed!');
     }
-    if ($this->getSection($newname) !== false) {
-      $this->_errorMsg = "Section '".$newname."' already exists!";
-      return false;
+    if (!$this->hasSection($oldname)) {
+      throw new IllegalArgumentException('Section \''.$oldname.'\' does not exist!');
     }
-    if ($newname == '') {
-      $this->_errorMsg = "Empty section names are not allowed!";
-      return false;
+    if (!$this->isEditable($oldname)) {
+      throw new IllegalArgumentException('Section \''.$oldname.'\' is not editable!');
     }
-    ArrayUtil::key_array_rename($this->_iniArray, $oldname, $newname);
+    if ($this->hasSection($newname)) {
+      throw new IllegalArgumentException('Section \''.$newname.'\' already exists!');
+    }
+    $oldnameLower = strtolower($oldname);
+    $newnameLower = strtolower($newname);
+    ArrayUtil::key_array_rename($this->_configArray, $oldnameLower, $newnameLower);
     $this->_isModified = true;
-    return true;
   }
 
   /**
    * @see WritableConfiguration::setValue()
    */
   public function setValue($key, $value, $section, $createSection=true) {
-    if (!$this->isEditable($section)) {
-      $this->_errorMsg = "Section ".$section." is not editable!";
-      return false;
-    }
     $key = trim($key);
-    if (!$createSection && ($this->getSection($section) === false)) {
-      return false;
+    if (strlen($key) == 0) {
+      throw new IllegalArgumentException('Empty key names are not allowed!');
     }
-    if ($key == '') {
-      $this->_errorMsg = "Empty key names are not allowed!";
-      return false;
+    $sectionExists = $this->hasSection($section);
+    if (!$sectionExists && !$createSection) {
+      throw new IllegalArgumentException('Section \''.$section.'\' does not exist!');
     }
-    $this->_iniArray[$section][$key] = $value;
+    if ($sectionExists && !$this->isEditable($section)) {
+      throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
+    }
+
+    $sectionLower = strtolower($section);
+    $keyLower = strtolower($key);
+
+    // create section if requested
+    if (!$sectionExists && $createSection) {
+      $sectionLower = trim($sectionLower);
+      $this->_configArray[$sectionLower] = array();
+    }
+    $this->_configArray[$sectionLower][$keyLower] = $value;
     $this->_isModified = true;
-    return true;
   }
 
   /**
@@ -302,49 +295,50 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   public function removeKey($key, $section) {
     if (!$this->isEditable($section)) {
-      $this->_errorMsg = "Section ".$section." is not editable!";
-      return false;
+      throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
-    if ($this->getValue($key, $section) === false) {
-      return false;
+    if ($this->hasSection($section)) {
+      $sectionLower = strtolower($section);
+      $keyLower = strtolower($key);
+      unset($this->_configArray[$sectionLower][$keyLower]);
+      $this->_isModified = true;
     }
-    unset($this->_iniArray[$section][$key]);
-    $this->_isModified = true;
-    return true;
   }
 
   /**
    * @see WritableConfiguration::renameKey()
    */
   public function renameKey($oldname, $newname, $section) {
-    if (!$this->isEditable($section)) {
-      $this->_errorMsg = "Section ".$section." is not editable!";
-      return false;
-    }
     $newname = trim($newname);
-    if ($this->getValue($oldname, $section) === false) {
-      return false;
+    if (strlen($newname) == 0) {
+      throw new IllegalArgumentException('Empty key names are not allowed!');
     }
-    if ($this->getValue($newname, $section) !== false) {
-      $this->_errorMsg = "Key '".$newname."' already exists in section '".$section."'!";
-      return false;
+    if (!$this->hasSection($section)) {
+      throw new IllegalArgumentException('Section \''.$section.'\' does not exist!');
     }
-    if ($newname == '') {
-      $this->_errorMsg = "Empty key names are not allowed!";
-      return false;
+    if (!$this->isEditable($section)) {
+      throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
-    ArrayUtil::key_array_rename($this->_iniArray[$section], $oldname, $newname);
+    if (!$this->hasValue($oldname, $section)) {
+      throw new IllegalArgumentException('Key \''.$oldname.'\' does not exist in section \''.$section.'\'!');
+    }
+    if ($this->hasValue($newname, $section)) {
+      throw new IllegalArgumentException('Key \''.$newname.'\' already exists in section \''.$section.'\'!');
+    }
+    $oldnameLower = strtolower($oldname);
+    $newnameLower = strtolower($newname);
+    $sectionLower = strtolower($section);
+    ArrayUtil::key_array_rename($this->_configArray[$sectionLower], $oldnameLower, $newnameLower);
     $this->_isModified = true;
-    return true;
   }
 
   /**
    * @see WritableConfiguration::writeConfiguration()
    */
-  public function writeConfiguration() {
-    $filename = $this->_filename;
+  public function writeConfiguration($name) {
+    $filename = $name;
     $content = "";
-    foreach($this->_iniArray as $section => $values) {
+    foreach($this->_configArray as $section => $values) {
       $sectionString = "[".$section."]";
       $content .= $this->_comments[$sectionString];
       $content .= $sectionString."\n";
@@ -363,17 +357,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $content .= $this->_comments[';'];
 
     if (!$fh = fopen($filename, 'w')) {
-      $this->_errorMsg = "Can't open ini file '".$filename."'!";
-      return false;
+      throw new IOException('Can\'t open ini file \''.$filename.'\'!');
     }
 
     if (!fwrite($fh, $content)) {
-      $this->_errorMsg = "Can't write ini file '".$filename."'!";
-      return false;
+      throw new IOException('Can\'t write ini file \''.$filename.'\'!');
     }
     fclose($fh);
     $this->_isModified = false;
-    return true;
   }
 
   /**
@@ -395,41 +386,41 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (!file_exists($filename)) {
       throw new ConfigurationException("The config file ".$filename." does not exist.");
     }
-    $ini_array = array();
-    $sec_name = "";
+    $configArray = array();
+    $sectionName = '';
     $lines = file($filename);
-    $commentsPending = "";
+    $commentsPending = '';
     foreach($lines as $line) {
       $line = trim($line);
       // comments/blank lines
-      if($line == "" || $line[0] == ";") {
+      if($line == '' || $line[0] == ';') {
         $commentsPending .= $line."\n";
         continue;
       }
 
-      if($line[0] == "[" && $line[strlen($line)-1] == "]") {
-        $sec_name = substr($line, 1, strlen($line)-2);
-        $ini_array[$sec_name] = array();
+      if($line[0] == '[' && $line[strlen($line)-1] == ']') {
+        $sectionName = strtolower(substr($line, 1, strlen($line)-2));
+        $configArray[$sectionName] = array();
 
         // store comments/blank lines for section
         $this->_comments[$line] = $commentsPending;
-        $commentsPending = "";
+        $commentsPending = '';
       }
       else {
-        $parts = explode("=", $line, 2);
-        $property = trim($parts[0]);
+        $parts = explode('=', $line, 2);
+        $key = strtolower(trim($parts[0]));
         $value = trim($parts[1]);
-        $ini_array[$sec_name][$property] = $value;
+        $configArray[$sectionName][$key] = $value;
 
         // store comments/blank lines for key
-        $this->_comments[$sec_name][$property] = $commentsPending;
+        $this->_comments[$sectionName][$key] = $commentsPending;
         $commentsPending = "";
       }
     }
     // store comments/blank lines from the end of the file
     $this->_comments[';'] = substr($commentsPending, 0, -1);
 
-    return $ini_array;
+    return $configArray;
   }
 
   /**
@@ -439,7 +430,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @attention Internal use only.
    */
   protected function processValues() {
-    array_walk_recursive($this->_iniArray, array($this, 'processValue'));
+    array_walk_recursive($this->_configArray, array($this, 'processValue'));
   }
 
   /**
@@ -519,8 +510,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
           $vars = unserialize(file_get_contents($cacheFile));
 
           // check if included ini files were updated since last cache time
-          if (isset($vars['_iniArray']['config'])) {
-            $includes = $vars['_iniArray']['config']['include'];
+          if (isset($vars['_configArray']['config'])) {
+            $includes = $vars['_configArray']['config']['include'];
             if (is_array($includes)) {
               $includedFiles = array();
               foreach($includes as $include) {

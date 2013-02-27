@@ -19,8 +19,8 @@
 namespace wcmf\lib\remoting;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\Formatter;
@@ -53,10 +53,8 @@ class RPCClient {
     }
 
     // locate the php executable
-    $parser = InifileParser::getInstance();
-    if (($this->_php = $parser->getValue('php', 'system')) === false) {
-      throw new ConfigurationException("Could not setup RPCClient:\n".$parser->getErrorMsg());
-    }
+    $config = ObjectFactory::getConfigurationInstance();
+    $this->_php = $config->getValue('php', 'system');
 
     // initialize the session variable for storing session
     $session = ObjectFactory::getInstance('session');

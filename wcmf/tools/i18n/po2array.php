@@ -10,16 +10,19 @@ define("APPEND", 5);
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
-use wcmf\lib\config\InifileParser;
+use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\core\Log;
 
 // read config file
-$parser = InifileParser::getInstance();
-$parser->parseIniFile('config.ini', true);
+$config = new InifileConfiguration('./');
+$config->addConfiguration('config.ini');
 
 // get config values
-$localeDir = getConfigValue("localeDir", "cms", true);
-$languages = getConfigValue("languages", "i18n");
+$localeDir = $config->getValue("localeDir", "cms");
+$languages = $config->getValue("languages", "i18n");
+if (substr($localeDir, -1) != '/') {
+  $localeDir .= '/';
+}
 
 // convert po files for each language
 foreach($languages as $language)
@@ -141,19 +144,5 @@ function writeMessageFile($directory, $language, $messages) {
   }
   fputs($fh, '?>'."\n");
   fclose ($fh);
-}
-//----------------------------------------------------------------------------------------------
-function getConfigValue($key, $section, $isDirectory=false)
-{
-  $value = '';
-  $parser = InifileParser::getInstance();
-  if (($value = $parser->getValue($key, $section)) === false)
-    Log::error($parser->getErrorMsg(), 'po2array');
-
-  // add slash
-  if ($isDirectory && substr($value, -1) != '/')
-    $value .= '/';
-
-  return $value;
 }
 ?>

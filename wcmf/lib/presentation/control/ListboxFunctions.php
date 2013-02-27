@@ -19,7 +19,6 @@
 namespace wcmf\lib\presentation\control;
 
 use wcmf\application\controller\DisplayController;
-use wcmf\lib\config\InifileParser;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
@@ -123,7 +122,6 @@ function g_getObjects($type, $parentOID) {
   // collect all possible objects
   $query = new ObjectQuery($type);
   $nodes = $query->execute(BuildDepth::SINGLE);
-  $oids = $persistenceFacade->getOIDs($type);
   for($i=0, $count=sizeof($nodes); $i<$count; $i++) {
     $node = &$nodes[$i];
     $oid = $node->getOID();
@@ -188,8 +186,8 @@ function g_getOIDArray($oidStringList) {
  */
 function g_getConfigFiles() {
   $result = array();
-  $configFiles = InifileParser::getIniFiles();
-  foreach ($configFiles as $file) {
+  $configurations = ObjectFactory::getConfigurationInstance()->getConfigurations();
+  foreach ($configurations as $file) {
     $file = basename($file);
     $result[$file] = $file;
   }
@@ -204,10 +202,8 @@ function g_getConfigFiles() {
 function g_getBackupNames() {
   $result = array();
 
-  $parser = &InifileParser::getInstance();
-  if (($backupDir = $parser->getValue('backupDir', 'application')) === false) {
-    throw new ConfigurationException($parser->getErrorMsg());
-  }
+  $config = ObjectFactory::getConfigurationInstance();
+  $backupDir = $config->getValue('backupDir', 'application');
   $fileUtil = new FileUtil();
   $folders = $fileUtil->getFiles($backupDir, '/./');
   foreach($folders as $folder) {

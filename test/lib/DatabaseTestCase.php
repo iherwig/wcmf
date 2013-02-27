@@ -36,8 +36,8 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
 
   public final function getConnection() {
     if ($this->conn === null) {
-      $configuration = ObjectFactory::getInstance('configuration');
-      $params = $configuration->getSection('database');
+      $config = ObjectFactory::getConfigurationInstance();
+      $params = $config->getSection('database');
       if (self::$pdo == null) {
         self::$pdo = new PDO($params['dbType'].':host='.$params['dbHostName'].';dbname='.$params['dbName'], $params['dbUserName'], $params['dbPassword']);
       }

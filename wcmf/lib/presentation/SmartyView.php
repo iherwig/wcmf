@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\presentation;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\View;
 
 require_once(WCMF_BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
@@ -35,17 +36,17 @@ class SmartyView extends \Smarty implements View
    */
   public function setup()
   {
-    $parser = InifileParser::getInstance();
-    if (($debugView = $parser->getValue('debugView', 'smarty')) === false) {
+    $config = ObjectFactory::getConfigurationInstance();
+    if (($debugView = $config->getValue('debugView', 'smarty')) === false) {
       $debugView = 0;
     }
-    if (($compileCheck = $parser->getValue('compileCheck', 'smarty')) === false) {
+    if (($compileCheck = $config->getValue('compileCheck', 'smarty')) === false) {
       $compileCheck = 0;
     }
-    if (($caching = $parser->getValue('caching', 'smarty')) === false) {
+    if (($caching = $config->getValue('caching', 'smarty')) === false) {
       $caching = 0;
     }
-    if (($cacheLifetime = $parser->getValue('cacheLifetime', 'smarty')) === false) {
+    if (($cacheLifetime = $config->getValue('cacheLifetime', 'smarty')) === false) {
       $cacheLifetime = 3600;
     }
     $this->debugging = $debugView;
@@ -68,7 +69,7 @@ class SmartyView extends \Smarty implements View
     $this->loadFilter('output','trimwhitespace');
 
     // get template path
-    if (($smartyPath = $parser->getValue('templateDir', 'smarty')) === false) {
+    if (($smartyPath = $config->getValue('templateDir', 'smarty')) === false) {
       throw new ConfigurationException("No 'smarty.templateDir' given in configfile.");
     }
     if (substr($smartyPath,-1) != '/') {

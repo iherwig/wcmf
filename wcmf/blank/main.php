@@ -25,7 +25,7 @@ use \Exception;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Application;
 
-$application = Application::getInstance();
+$application = new Application();
 try {
   // initialize the application
   $request = $application->initialize();

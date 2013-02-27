@@ -66,8 +66,8 @@ class LoginController extends Controller {
     if ($request->getAction() != 'dologin') {
       $request->clearValues();
     }
-    $configuration = ObjectFactory::getInstance('configuration');
-    $this->_anonymous = $configuration->getValue('anonymous', 'application');
+    $config = ObjectFactory::getConfigurationInstance();
+    $this->_anonymous = $config->getValue('anonymous', 'application');
 
     parent::initialize($request, $response);
   }

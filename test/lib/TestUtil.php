@@ -21,7 +21,6 @@ namespace test\lib;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\presentation\ActionMapper;
-use wcmf\lib\presentation\Application;
 use wcmf\lib\security\AuthUser;
 use wcmf\lib\security\RightsManager;
 
@@ -37,8 +36,8 @@ class TestUtil {
    * @param True/False wether to turn it off or on
    */
   public static function runAnonymous($isAnonymous) {
-    $configuration = ObjectFactory::getInstance('configuration');
-    $configuration->setValue('anonymous', $isAnonymous, 'application');
+    $config = ObjectFactory::getConfigurationInstance();
+    $config->setValue('anonymous', $isAnonymous, 'application');
   }
 
   /**
@@ -50,10 +49,6 @@ class TestUtil {
     // set formatter
     $request->setFormat('null');
     $request->setResponseFormat('null');
-
-    // initialize the application
-    $application = Application::getInstance();
-    $application->initialize('config/');
 
     // reset the action mapper, because otherwise all requests would be cumulated
     ActionMapper::reset();
@@ -92,8 +87,8 @@ class TestUtil {
    * @see Configuration::setValue()
    */
   public static function setConfigValue($key, $value, $section) {
-    $configuration = ObjectFactory::getInstance('configuration');
-    $configuration->setValue($key, $value, $section);
+    $config = ObjectFactory::getConfigurationInstance();
+    $config->setValue($key, $value, $section);
   }
 
   /**

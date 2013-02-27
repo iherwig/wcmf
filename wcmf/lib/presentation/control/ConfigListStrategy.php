@@ -19,8 +19,7 @@
 namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileParser;
-use wcmf\lib\presentation\control\Control;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\control\ListStrategy;
 
 /**
@@ -39,11 +38,8 @@ class ConfigListStrategy implements ListStrategy {
    * @see ListStrategy::getListMap
    */
   public function getListMap($configuration, $value=null, $nodeOid=null, $language=null) {
-    $parser = InifileParser::getInstance();
-    $map = $parser->getSection($list);
-    if (($map = $parser->getSection($configuration, false)) === false) {
-      throw new ConfigurationException($parser->getErrorMsg());
-    }
+    $config = ObjectFactory::getConfigurationInstance();
+    $map = $config->getSection($configuration);
     return $map;
   }
 }
