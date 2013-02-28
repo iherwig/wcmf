@@ -20,7 +20,6 @@ namespace wcmf\lib\presentation\control;
 
 use \Exception;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\control\ListStrategy;
 
@@ -86,7 +85,7 @@ class AsyncListStrategy implements ListStrategy {
     $result = null;
     if (ObjectId::isValid($oid)) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $localization = Localization::getInstance();
+      $localization = ObjectFactory::getInstance('localization');
       try {
         $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
         if ($obj != null) {

@@ -19,7 +19,6 @@
 namespace wcmf\lib\persistence;
 
 use \Exception;
-use wcmf\lib\core\EventManager;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\Transaction;
@@ -52,7 +51,7 @@ class DefaultTransaction implements Transaction {
    */
   public function __construct() {
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
-    EventManager::getInstance()->addListener(StateChangeEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
   }
 
@@ -60,7 +59,7 @@ class DefaultTransaction implements Transaction {
    * Destructor.
    */
   public function __destruct() {
-    EventManager::getInstance()->removeListener(StateChangeEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
   }
 

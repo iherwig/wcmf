@@ -20,7 +20,6 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -28,7 +27,7 @@ use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\UnknownFieldException;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\Obfuscator;
 
 /**
@@ -95,7 +94,7 @@ class ListController extends Controller {
    */
   protected function executeKernel() {
     $request = $this->getRequest();
-    $rightsManager = RightsManager::getInstance();
+    $permissionManager = PermissionManager::getInstance();
 
     // unveil the query value if it is ofuscated
     $query = null;
@@ -131,7 +130,7 @@ class ListController extends Controller {
       $curObject = $objects[$i];
 
       // check if we can read the object
-      if ($rightsManager->authorize($curObject->getOID(), '', PersistenceAction::READ)) {
+      if ($permissionManager->authorize($curObject->getOID(), '', PersistenceAction::READ)) {
         $nodes[] = $curObject;
       }
     }
@@ -139,7 +138,7 @@ class ListController extends Controller {
 
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
-      $localization = Localization::getInstance();
+      $localization = ObjectFactory::getInstance('localization');
       for ($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         $localization->loadTranslation($nodes[$i], $this->_request->getValue('language'), true, true);
       }

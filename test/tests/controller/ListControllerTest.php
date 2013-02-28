@@ -23,7 +23,6 @@ use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
@@ -91,7 +90,7 @@ class ListControllerTest extends ControllerTestCase {
     // store a translation
     $tmp = clone $testObj;
     $tmp->setValue('login', 'test [de]');
-    Localization::getInstance()->saveTranslation($tmp, 'de');
+    ObjectFactory::getInstance('localization')->saveTranslation($tmp, 'de');
     $persistenceFacade->getTransaction()->commit();
 
     // simulate a localized display call

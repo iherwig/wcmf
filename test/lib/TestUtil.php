@@ -20,9 +20,8 @@ namespace test\lib;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
-use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\security\AuthUser;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * TestUtil provides helper methods for testing wCMF functionality.
@@ -43,7 +42,7 @@ class TestUtil {
   /**
    * Process a request as if it was sent to main.php
    * @param request The Request instance
-   * @return The Response instance (result of the last ActionMapper::processAction call)
+   * @return The Response instance (result of the last ActionMapper::processAction() call)
    */
   public static function simulateRequest($request) {
     // set formatter
@@ -51,8 +50,9 @@ class TestUtil {
     $request->setResponseFormat('null');
 
     // reset the action mapper, because otherwise all requests would be cumulated
-    ActionMapper::reset();
-    $response = ActionMapper::processAction($request);
+    $actionMapper = ObjectFactory::getInstance('actionMapper');
+    $actionMapper->reset();
+    $response = $actionMapper->processAction($request);
     return $response;
   }
 
@@ -69,7 +69,7 @@ class TestUtil {
     $success = $authUser->login($user, $password, false);
     if ($success) {
       $session->clear();
-      $session->set(RightsManager::getAuthUserVarname(), $authUser);
+      $session->set(PermissionManager::getAuthUserVarname(), $authUser);
     }
     return $session->getID();
   }

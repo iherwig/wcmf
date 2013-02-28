@@ -141,7 +141,7 @@ function doSoapCall()
 
     $request->setFormat(MSG_FORMAT_SOAP);
     $request->setResponseFormat(MSG_FORMAT_SOAP);
-    $response = ActionMapper::processAction($request);
+    $response = ObjectFactory::getInstance('actionMapper')->processAction($request);
     $error = $response->getValue('errorMessage');
     if (strlen($error) > 0) {
       throw new ApplicationException($request, $response,

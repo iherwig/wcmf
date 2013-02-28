@@ -18,11 +18,10 @@
  */
 namespace wcmf\lib\security;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\User;
 use wcmf\lib\security\UserManager;
 
@@ -54,11 +53,11 @@ class AuthUser extends User {
       $password = UserManager::encryptPassword($password);
     }
     // because there is no authorized user already, we propably have to deactivate the
-    // RightsManager for this operation to allow user retrieval from the persistent storage
-    $rightsManager = RightsManager::getInstance();
-    $isAnonymous = $rightsManager->isAnonymous();
+    // PermissionManager for this operation to allow user retrieval from the persistent storage
+    $permissionManager = PermissionManager::getInstance();
+    $isAnonymous = $permissionManager->isAnonymous();
     if (!$isAnonymous) {
-      $rightsManager->deactivate();
+      $permissionManager->deactivate();
     }
     // try to receive the user with given credentials
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -86,9 +85,9 @@ class AuthUser extends User {
       $loginOk = true;
     }
 
-    // reactivate the RightsManager if necessary
+    // reactivate the PermissionManager if necessary
     if (!$isAnonymous) {
-      $rightsManager->activate();
+      $permissionManager->activate();
     }
     return $loginOk;
   }

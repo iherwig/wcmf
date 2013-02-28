@@ -20,7 +20,6 @@ namespace wcmf\application\controller;
 
 use \Exception;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\visitor\CommitVisitor;
 use wcmf\lib\persistence\BuildDepth;
@@ -146,7 +145,7 @@ class InsertController extends Controller {
       $transaction->begin();
       if ($this->isLocalizedRequest() && $localizationTpl != null) {
         $localizationTpl->setOID($newNode->getOID());
-        $localization = Localization::getInstance();
+        $localization = ObjectFactory::getInstance('localization');
         $localization->saveTranslation($localizationTpl, $request->getValue('language'));
       }
       $transaction->commit();

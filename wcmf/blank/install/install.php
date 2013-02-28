@@ -26,7 +26,7 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\DBUtil;
 
 Log::configure('log4php.properties');
@@ -47,8 +47,8 @@ $GLOBALS['MESSAGE_LANGUAGE'] = $config->getValue('language', 'i18n');
 if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {
   setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
 }
-$rightsManager = RightsManager::getInstance();
-$rightsManager->deactivate();
+$permissionManager = PermissionManager::getInstance();
+$permissionManager->deactivate();
 
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 $userManager = ObjectFactory::getInstance('userManager');

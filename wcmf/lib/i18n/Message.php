@@ -56,8 +56,8 @@ class Message {
    */
   private static function initialize() {
     $config = ObjectFactory::getConfigurationInstance();
-    self::$localeDir = $config->getValue('localeDir', 'i18n');
-    self::$language = $config->getValue('language', 'i18n');
+    self::$localeDir = $config->getValue('localeDir', 'localization');
+    self::$language = $config->getValue('language', 'localization');
     setlocale(LC_ALL, self::$language);
     self::$initialized = true;
   }

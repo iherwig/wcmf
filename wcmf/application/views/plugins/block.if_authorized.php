@@ -18,7 +18,7 @@
  */
 namespace wcmf\lib\presentation\smarty_plugins;
 
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 
 /*
 * Smarty plugin
@@ -43,8 +43,8 @@ function smarty_block_if_authorized($params, $content, &$smarty)
 {
   if(!$repeat)
   {
-    $rightsManager = RightsManager::getInstance();
-    if ($rightsManager->authorize($params['resource'], $params['context'], $params['action']))
+    $permissionManager = PermissionManager::getInstance();
+    if ($permissionManager->authorize($params['resource'], $params['context'], $params['action']))
     {
       return $content;
     }

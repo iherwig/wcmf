@@ -19,7 +19,6 @@
 namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\control\ListStrategy;
 
@@ -49,7 +48,7 @@ class AsyncMultListStrategy implements ListStrategy {
       foreach ($ids as $id) {
         $oid = new ObjectId($entityType, $id);
         if (ObjectId::isValidOID($oid->__toString())) {
-          $localization = Localization::getInstance();
+          $localization = ObjectFactory::getInstance('localization');
           $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
           if ($obj != null) {
             // localize object if requested

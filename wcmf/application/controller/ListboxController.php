@@ -18,7 +18,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\Obfuscator;
 
@@ -80,7 +79,7 @@ class ListboxController extends Controller
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest())
     {
-      $localization = Localization::getInstance();
+      $localization = ObjectFactory::getInstance('localization');
       for ($i=0; $i<sizeof($objects); $i++) {
         $localization->loadTranslation($objects[$i], $this->_request->getValue('language'), true, true);
       }

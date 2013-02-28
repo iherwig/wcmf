@@ -19,7 +19,6 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
@@ -49,7 +48,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function __construct() {
     // register as change listener to track the created oids, after save
-    EventManager::getInstance()->addListener(StateChangeEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
             array($this, 'stateChanged'));
   }
 
@@ -57,7 +56,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * Destructor
    */
   public function __destruct() {
-    EventManager::getInstance()->removeListener(StateChangeEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
             array($this, 'stateChanged'));
   }
 

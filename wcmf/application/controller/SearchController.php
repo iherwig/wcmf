@@ -25,7 +25,8 @@ use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\format\JSONFormat;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
+use wcmf\lib\util\LuceneSearch;
 
 /**
  * SearchController is a controller that exectutes a search for oids and
@@ -177,7 +178,7 @@ class SearchController extends ListController {
    * @see AsyncPagingController::getObjects()
    */
   protected function getObjects($type, $filter, $sortArray, PagingInfo $pagingInfo) {
-    $rightsManager = RightsManager::getInstance();
+    $permissionManager = PermissionManager::getInstance();
     $session = ObjectFactory::getInstance('session');
 
     if (!$session->exist($this->OIDS_VARNAME)) {
@@ -197,7 +198,7 @@ class SearchController extends ListController {
       }
       // search with searchterm (even if empty) if no query is given
       else {
-        $index = SearchUtil::getIndex();
+        $index = LuceneSearch::getIndex();
         $results = $index->find($filter);
         foreach($results as $result) {
           array_push($allOIDs, $result->oid);
@@ -226,7 +227,7 @@ class SearchController extends ListController {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $objects = array();
     foreach($oids as $oid) {
-      if ($rightsManager->authorize($oid, '', PersistenceAction::READ)) {
+      if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
         $obj = $persistenceFacade->load($oid, BUILDEPTH_SINGLE);
         $objects[] = &$obj;
       }

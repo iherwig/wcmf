@@ -46,7 +46,7 @@ define("ROLE_PROPERTY_NAME", "name");
  * different user repositories. The UserManager implementation class is defined by
  * the configuration key 'UserManager' in the [implementation] section.
  *
- * @todo - Use RightsManager to restrict access to methods (except changePassword)
+ * @todo - Use PermissionManager to restrict access to methods (except changePassword)
  *       - Transaction support
  *
  * @author ingo herwig <ingo@wemove.com>

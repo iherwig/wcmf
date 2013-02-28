@@ -22,7 +22,6 @@ use test\lib\ArrayDataSet;
 use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 
@@ -54,14 +53,14 @@ class LocalizationTest extends DatabaseTestCase {
   }
 
   public function testGetDefaultLanguage() {
-    $defaultLanguage = Localization::getInstance()->getDefaultLanguage();
+    $defaultLanguage = ObjectFactory::getInstance('localization')->getDefaultLanguage();
 
     $this->assertEquals(self::EXPECTED_DEFAULT_LANGUAGE_CODE, $defaultLanguage,
       "The default language is '".self::EXPECTED_DEFAULT_LANGUAGE_CODE."'");
   }
 
   public function testGetSupportedLanguages() {
-    $languages = Localization::getInstance()->getSupportedLanguages();
+    $languages = ObjectFactory::getInstance('localization')->getSupportedLanguages();
 
     $this->assertTrue(is_array($languages), "Languages is an array");
 
@@ -85,7 +84,7 @@ class LocalizationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
 
     // create a new object
     $transaction->begin();
@@ -130,7 +129,7 @@ class LocalizationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
 
     // create a new object
     $transaction->begin();
@@ -164,7 +163,7 @@ class LocalizationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
 
     // create a new object
     $transaction->begin();
@@ -191,7 +190,7 @@ class LocalizationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
 
     // create a new object
     $transaction->begin();
@@ -229,7 +228,7 @@ class LocalizationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
 
     // create a new object
     $transaction->begin();
@@ -262,7 +261,7 @@ class LocalizationTest extends DatabaseTestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
 
     // create a new object
     $transaction->begin();
@@ -299,7 +298,7 @@ class LocalizationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
 
     // create a new object
     $transaction->begin();
@@ -361,7 +360,7 @@ class LocalizationTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $translationType = Localization::getTranslationType();
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
 
     // create a new object
     $transaction->begin();

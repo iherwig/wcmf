@@ -23,10 +23,9 @@ use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * @class Application
@@ -133,8 +132,8 @@ class Application {
     $session->clearErrors();
 
     // load user configuration
-    $rightsManager = RightsManager::getInstance();
-    $authUser = $rightsManager->getAuthUser();
+    $permissionManager = PermissionManager::getInstance();
+    $authUser = $permissionManager->getAuthUser();
     if ($authUser && strlen($authUser->getConfig()) > 0) {
       $config->addConfiguration($authUser->getConfig(), true);
     }
@@ -185,7 +184,7 @@ class Application {
         $request = $exception->getRequest();
         $request->setAction('logout');
         $request->addError($error);
-        ActionMapper::processAction($request);
+        ObjectFactory::getInstance('actionMapper')->processAction($request);
         return;
       }
     }
@@ -200,7 +199,7 @@ class Application {
     $session = ObjectFactory::getInstance('session');
     $lastRequest = $session->get('lastRequest');
     if ($lastRequest) {
-      ActionMapper::processAction($lastRequest);
+      ObjectFactory::getInstance('actionMapper')->processAction($lastRequest);
     }
     else {
       print $exception;

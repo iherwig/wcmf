@@ -20,7 +20,6 @@ namespace wcmf\lib\model;
 
 use \Zend_Db_Select;
 
-use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
@@ -137,7 +136,7 @@ class ObjectQuery extends AbstractQuery {
     $this->_typeNode = $mapper->create($type, BuildDepth::SINGLE);
     $this->_rootNodes[] = $this->_typeNode;
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
-    EventManager::getInstance()->addListener(ValueChangeEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->addListener(ValueChangeEvent::NAME,
       array($this, 'valueChanged'));
   }
 
@@ -145,7 +144,7 @@ class ObjectQuery extends AbstractQuery {
    * Desctructor.
    */
   public function __destruct() {
-    EventManager::getInstance()->removeListener(ValueChangeEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->removeListener(ValueChangeEvent::NAME,
       array($this, 'valueChanged'));
   }
 

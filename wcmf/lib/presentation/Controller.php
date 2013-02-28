@@ -20,8 +20,6 @@ namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
-use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
@@ -178,7 +176,7 @@ abstract class Controller {
     }
     $subRequest->setFormat(MSG_FORMAT_NULL);
     $subRequest->setResponseFormat(MSG_FORMAT_NULL);
-    $response = ActionMapper::getInstance()->processAction($subRequest);
+    $response = ObjectFactory::getInstance('actionMapper')->processAction($subRequest);
     return $response;
   }
 
@@ -248,7 +246,7 @@ abstract class Controller {
    * @return True/False wether the request is localized or not
    */
   protected function isLocalizedRequest() {
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
     if ($this->_request->hasValue('language') &&
       $this->_request->getValue('language') != $localization->getDefaultLanguage()) {
       return true;

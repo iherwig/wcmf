@@ -23,7 +23,6 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 
@@ -117,6 +116,7 @@ class MultipleActionController extends Controller {
     $data = &$this->_request->getValue('data');
     $actions = array_keys($data);
     $numActions = sizeof($actions);
+    $actionMapper = ObjectFactory::getInstance('actionMapper');
     for($i=0; $i<$numActions; $i++)
     {
       $action = $actions[$i];
@@ -142,7 +142,7 @@ class MultipleActionController extends Controller {
       $request->setResponseFormat($this->_request->getResponseFormat());
 
       // execute the request
-      $response = ActionMapper::processAction($request);
+      $response = $actionMapper->processAction($request);
 
       // collect the result
       $results[$action] = &$response->getValues();

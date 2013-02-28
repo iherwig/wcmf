@@ -31,11 +31,11 @@ define("RIGHT_MODIFIER_DENY",  "-");
 define("AUTHORIZATION_SECTION", "authorization");
 
 /**
- * RightsManager is used to handle all authorization requests.
+ * PermissionManager is used to handle all authorization requests.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RightsManager {
+class PermissionManager {
 
   /**
    * Actions that do not require authorization
@@ -58,7 +58,7 @@ class RightsManager {
    */
   public static function getInstance() {
     if (!isset(self::$_instance)) {
-      self::$_instance = new RightsManager();
+      self::$_instance = new PermissionManager();
     }
     return self::$_instance;
   }
@@ -93,7 +93,7 @@ class RightsManager {
   }
 
   /**
-   * See if the RightsManager is working in anonymous mode. In anonymous mode all
+   * See if the PermissionManager is working in anonymous mode. In anonymous mode all
    * authorization requests answered positive and AuthUser is an instance of AnonymousUser
    * The mode is set in configuration section 'application' key 'anonymous'
    * @return True/False wether in anonymous mode

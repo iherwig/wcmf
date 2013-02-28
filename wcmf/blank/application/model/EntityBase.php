@@ -6,7 +6,7 @@
 namespace application\model;
 
 use application\model\EntityBaseBase;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 // PROTECTED REGION ID(application/include/model/EntityBase.php/Import) ENABLED START
 // PROTECTED REGION END
 
@@ -34,8 +34,8 @@ class EntityBase extends EntityBaseBase
     // set creator on nodes with appropriate attribute
     if ($this->hasValue('creator'))
     {
-      $rightsManager = RightsManager::getInstance();
-      $authUser = $rightsManager->getAuthUser();
+      $permissionManager = PermissionManager::getInstance();
+      $authUser = $permissionManager->getAuthUser();
       $this->setValue('creator', $authUser->getLogin());
     }
     $this->beforeUpdate();
@@ -54,8 +54,8 @@ class EntityBase extends EntityBaseBase
     // set last_editor on nodes with appropriate attribute
     if ($this->hasValue('last_editor'))
     {
-      $rightsManager = RightsManager::getInstance();
-      $authUser = $rightsManager->getAuthUser();
+      $permissionManager = PermissionManager::getInstance();
+      $authUser = $permissionManager->getAuthUser();
       $this->setValue('last_editor', $authUser->getLogin());
     }
   }

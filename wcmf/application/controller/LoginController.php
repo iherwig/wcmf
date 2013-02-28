@@ -27,7 +27,7 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\security\AuthUser;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\UserManager;
 
 /**
@@ -154,7 +154,7 @@ class LoginController extends Controller {
       if ($success) {
         // login succeeded
         $session->clear();
-        $session->set(RightsManager::getAuthUserVarname(), $authUser);
+        $session->set(PermissionManager::getAuthUserVarname(), $authUser);
 
         // did this user check the 'remember me' checkbox?
         $rememberMe = $request->getValue('remember_me');

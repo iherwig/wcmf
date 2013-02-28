@@ -30,7 +30,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\security\AuthorizationException;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * AbstractMapper provides a basic implementation for other mapper classes.
@@ -233,8 +233,8 @@ abstract class AbstractMapper {
    * @return True/False depending on success of authorization
    */
   protected function checkAuthorization(ObjectId $oid, $action) {
-    $rightsManager = RightsManager::getInstance();
-    if (!$rightsManager->authorize($oid, '', $action)) {
+    $permissionManager = PermissionManager::getInstance();
+    if (!$permissionManager->authorize($oid, '', $action)) {
       return false;
     }
     else {

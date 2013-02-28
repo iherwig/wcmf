@@ -20,7 +20,7 @@ namespace wcmf\application\controller\admintool;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * EditRightsController is used to edit rights on a resource.
@@ -69,7 +69,7 @@ class EditRightsController extends Controller
   {
     $userManager = ObjectFactory::getInstance('userManager');
     $config = ObjectFactory::getConfigurationInstance();
-    $rightsManager = RightsManager::getInstance();
+    $permissionManager = PermissionManager::getInstance();
 
     $configurations = $config->getConfigurations();
     $rightNames = array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE);
@@ -86,7 +86,7 @@ class EditRightsController extends Controller
         // for all actions files do ...
         foreach ($rightNames as $action)
         {
-          $existingRight = $rightsManager->getPermission($curConfig, $resource, $context, $action);
+          $existingRight = $permissionManager->getPermission($curConfig, $resource, $context, $action);
 
           // allow
           $controlName = $action."_allow_".str_replace(".", "", $curConfig);
@@ -95,12 +95,12 @@ class EditRightsController extends Controller
           if (is_array($newAllowedRoles))
             foreach ($newAllowedRoles as $role)
               if (!is_array($existingRight['allow']) || !in_array($role, $existingRight['allow']))
-                $rightsManager->createPermission($curConfig, $resource, $context, $action, $role, RIGHT_MODIFIER_ALLOW);
+                $permissionManager->createPermission($curConfig, $resource, $context, $action, $role, RIGHT_MODIFIER_ALLOW);
           // remove old
           if (is_array($existingRight['allow']))
             foreach ($existingRight['allow'] as $role)
               if (!is_array($newAllowedRoles) || !in_array($role, $this->_request->getValue($controlName)))
-                $rightsManager->removePermission($curConfig, $resource, $context, $action, $role);
+                $permissionManager->removePermission($curConfig, $resource, $context, $action, $role);
 
           // deny
           $controlName = $action."_deny_".str_replace(".", "", $curConfig);
@@ -109,12 +109,12 @@ class EditRightsController extends Controller
           if (is_array($newDeniedRoles))
             foreach ($newDeniedRoles as $role)
               if (!is_array($existingRight['deny']) || !in_array($role, $existingRight['deny']))
-                $rightsManager->createPermission($curConfig, $resource, $context, $action, $role, RIGHT_MODIFIER_DENY);
+                $permissionManager->createPermission($curConfig, $resource, $context, $action, $role, RIGHT_MODIFIER_DENY);
           // remove old
           if (is_array($existingRight['deny']))
             foreach ($existingRight['deny'] as $role)
               if (!is_array($newDeniedRoles) || !in_array($role, $this->_request->getValue($controlName)))
-                $rightsManager->removePermission($curConfig, $resource, $context, $action, $role);
+                $permissionManager->removePermission($curConfig, $resource, $context, $action, $role);
         }
       }
     }
@@ -124,7 +124,7 @@ class EditRightsController extends Controller
     foreach($configurations as $curConfig)
       foreach (array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE) as $action)
       {
-        $right = $rightsManager->getPermission($curConfig, $this->_request->getValue('oid'), '', $action);
+        $right = $permissionManager->getPermission($curConfig, $this->_request->getValue('oid'), '', $action);
         // flatten role array for input control
         foreach ($right as $name => $roles)
           $right[$name] = join(',', $roles);

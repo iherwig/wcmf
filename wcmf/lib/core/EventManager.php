@@ -26,69 +26,27 @@ use wcmf\lib\core\Event;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class EventManager {
-
-  private static $_instance = null;
-  private $_listeners = array();
-
-  private function __construct() {}
-
-  /**
-   * Returns the only instance of the class.
-   * @return EventManager instance
-   */
-  public static function getInstance() {
-    if (!isset(self::$_instance)) {
-      self::$_instance = new EventManager();
-    }
-    return self::$_instance;
-  }
+interface EventManager {
 
   /**
    * Register a listener for a given event
    * @param eventName The event name
    * @param callback A php callback
    */
-  public function addListener($eventName, $callback) {
-    if (!isset($this->_listeners[$eventName])) {
-      $this->_listeners[$eventName] = array();
-    }
-    $this->_listeners[$eventName][] = $callback;
-  }
+  public function addListener($eventName, $callback);
 
   /**
    * Remove a listener for a given event
    * @param eventName The event name
    * @param callback A php callback
    */
-  public function removeListener($eventName, $callback) {
-    if (isset($this->_listeners[$eventName])) {
-      $listeners = array();
-      for ($i=0, $count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
-        $curCallback = $this->_listeners[$eventName][$i];
-        if ($curCallback != $callback) {
-          $listeners[] = $curCallback;
-        }
-      }
-      $this->_listeners[$eventName] = $listeners;
-    }
-  }
+  public function removeListener($eventName, $callback);
 
   /**
    * Notify listeners about the given event.
    * @param eventName The event name
    * @param event An Event instance
    */
-  public function dispatch($eventName, Event $event) {
-    if (isset($this->_listeners[$eventName])) {
-      for ($i=0, $count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
-        $curCallback = $this->_listeners[$eventName][$i];
-        call_user_func($curCallback, $event);
-        if ($event->isStopped()) {
-          break;
-        }
-      }
-    }
-  }
+  public function dispatch($eventName, Event $event);
 }
 ?>

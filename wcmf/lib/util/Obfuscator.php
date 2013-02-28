@@ -28,23 +28,8 @@ namespace wcmf\lib\util;
  */
 class Obfuscator {
 
-  private static $_instance = null;
-
   // session name constants
   private static $VALUES_VARNAME = 'Obfuscator.values';
-
-  private function __construct() {}
-
-  /**
-   * Returns an instance of the class.
-   * @return A reference to the only instance of the Singleton object
-   */
-  public static function getInstance() {
-    if (!isset(self::$_instance)) {
-      self::$_instance = new Obfuscator();
-    }
-    return self::$_instance;
-  }
 
   /**
    * Get an obfuscated string

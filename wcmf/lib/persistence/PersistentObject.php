@@ -18,7 +18,6 @@
  */
 namespace wcmf\lib\persistence;
 
-use wcmf\lib\core\EventManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeValueIterator;
@@ -236,7 +235,7 @@ class PersistentObject {
         $this->_state = $state;
     }
     if ($oldState != $this->_state) {
-      EventManager::getInstance()->dispatch(StateChangeEvent::NAME,
+      ObjectFactory::getInstance('eventManager')->dispatch(StateChangeEvent::NAME,
               new StateChangeEvent($this, $oldState, $this->_state));
     }
   }
@@ -538,7 +537,7 @@ class PersistentObject {
         if ($trackChange) {
           self::setState(self::STATE_DIRTY);
           $this->_changedAttributes[$name] = true;
-          EventManager::getInstance()->dispatch(ValueChangeEvent::NAME,
+          ObjectFactory::getInstance('eventManager')->dispatch(ValueChangeEvent::NAME,
               new ValueChangeEvent($this, $name, $oldValue, $value));
         }
         return true;
@@ -706,7 +705,7 @@ class PersistentObject {
   public function setProperty($name, $value) {
     $oldValue = $this->getProperty($name);
     $this->_properties[$name] = $value;
-    EventManager::getInstance()->dispatch(PropertyChangeEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->dispatch(PropertyChangeEvent::NAME,
         new PropertyChangeEvent($this, $name, $oldValue, $value));
   }
 

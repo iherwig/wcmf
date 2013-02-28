@@ -23,7 +23,6 @@ use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use \wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
@@ -99,7 +98,7 @@ class SaveControllerTest extends ControllerTestCase {
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $translatedObj = Localization::getInstance()->loadTranslatedObject($oid, 'it');
+    $translatedObj = ObjectFactory::getInstance('localization')->loadTranslatedObject($oid, 'it');
     $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
 
     TestUtil::endSession();

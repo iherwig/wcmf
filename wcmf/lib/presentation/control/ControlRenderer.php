@@ -19,7 +19,6 @@
 namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\control\Control;
 use wcmf\lib\util\StringUtil;
@@ -76,7 +75,7 @@ class ControlRenderer {
    */
   public static function getControlName(PersistentObject $obj, $name, $language=null) {
     if ($language == null) {
-      $language = Localization::getInstance()->getDefaultLanguage();
+      $language = ObjectFactory::getInstance('localization')->getDefaultLanguage();
     }
     $fieldDelimiter = self::$_inputFieldNameDelimiter;
     return 'value'.$fieldDelimiter.$language.$fieldDelimiter.$name.$fieldDelimiter.$obj->getOID();

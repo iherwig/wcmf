@@ -23,7 +23,6 @@ use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -88,7 +87,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // store a 1st translation
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
@@ -143,7 +142,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $tmp = clone $testObj;
     $tmp->setValue('name', 'Herwig [de]');
     $tmp->setValue('firstname', 'Ingo [de]');
-    Localization::getInstance()->saveTranslation($tmp, 'de');
+    ObjectFactory::getInstance('localization')->saveTranslation($tmp, 'de');
     $transaction->commit();
 
     // simulate a delete call
@@ -156,7 +155,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $object = $persistenceFacade->create(self::TEST_TYPE);
     $object->setOID($oid);
-    Localization::getInstance()->loadTranslation($object, 'de');
+    ObjectFactory::getInstance('localization')->loadTranslation($object, 'de');
     $this->assertEquals(null, $object->getValue('name'));
     $this->assertEquals(null, $object->getValue('firstname'));
 

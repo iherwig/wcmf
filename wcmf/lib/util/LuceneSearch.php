@@ -18,7 +18,6 @@
  */
 namespace wcmf\lib\util;
 
-use wcmf\lib\core\EventManager;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\EncodingUtil;
@@ -35,13 +34,13 @@ require_once('Zend/Search/Lucene.php');
 
 function gShutdownSearch() {
   LuceneSearch::commitIndex();
-  EventManager::getInstance()->removeListener(StateChangeEvent::NAME,
+  ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
     array('LuceneSearch', 'stateChanged'));
 }
 register_shutdown_function('gShutdownSearch');
 
 // listen to object change events
-EventManager::getInstance()->addListener(StateChangeEvent::NAME,
+ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
   array('LuceneSearch', 'stateChanged'));
 
 /**

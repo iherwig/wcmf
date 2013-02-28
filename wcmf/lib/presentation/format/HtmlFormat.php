@@ -27,7 +27,7 @@ use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\control\Control;
 use wcmf\lib\presentation\format\AbstractFormat;
 use wcmf\lib\presentation\format\Format;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\Obfuscator;
 
 /**
@@ -104,10 +104,10 @@ class HtmlFormat extends AbstractFormat {
         }
       }
       // assign additional values
-      $rightsManager = RightsManager::getInstance();
-      $authUser = $rightsManager->getAuthUser();
+      $permissionManager = PermissionManager::getInstance();
+      $authUser = $permissionManager->getAuthUser();
       $view->assignByRef('nodeUtil', new NodeUtil());
-      $view->assignByRef('obfuscator', Obfuscator::getInstance());
+      $view->assignByRef('obfuscator', new Obfuscator());
       if ($authUser != null) {
         $view->assignByRef('authUser', $authUser);
       }

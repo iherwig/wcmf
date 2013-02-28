@@ -23,7 +23,6 @@ use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\BuildDepth;
 
 /**
@@ -106,7 +105,7 @@ class InsertControllerTest extends ControllerTestCase {
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $this->_insertOID = $response->getValue('oid');
-    $translatedObj = Localization::getInstance()->loadTranslatedObject($this->_insertOID, 'it');
+    $translatedObj = ObjectFactory::getInstance('localization')->loadTranslatedObject($this->_insertOID, 'it');
     $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
 
     TestUtil::endSession();

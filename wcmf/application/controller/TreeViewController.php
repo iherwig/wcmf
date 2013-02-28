@@ -19,11 +19,10 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * TreeViewController is used to visualize cms data in a tree view.
@@ -71,7 +70,7 @@ class TreeViewController extends Controller {
 
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest()) {
-        $localization = Localization::getInstance();
+        $localization = ObjectFactory::getInstance('localization');
         for ($i=0; $i<sizeof($nodes); $i++) {
           $localization->loadTranslation($nodes[$i], $this->_request->getValue('language'), true, true);
         }
@@ -130,12 +129,12 @@ class TreeViewController extends Controller {
   protected function getChildren($oid)
   {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $rightsManager = RightsManager::getInstance();
+    $permissionManager = PermissionManager::getInstance();
 
     $nodes = array();
     if ($oid != 'root' && ObjectId::isValidOID($oid)) {
       // load children
-      if ($rightsManager->authorize($oid, '', PersistenceAction::READ)) {
+      if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
         $parentNode = $persistenceFacade->load($oid, 1);
         $nodes = $parentNode->getChildren();
       }
@@ -144,7 +143,7 @@ class TreeViewController extends Controller {
       // first call or reload
       $rootOIDs = $this->getRootOIDs();
       foreach ($rootOIDs as $rootOID) {
-        if ($rightsManager->authorize($rootOID, '', PersistenceAction::READ)) {
+        if ($permissionManager->authorize($rootOID, '', PersistenceAction::READ)) {
           $node = $persistenceFacade->load($rootOID, BuildDepth::SINGLE);
           $nodes[sizeof($nodes)] = &$node;
         }

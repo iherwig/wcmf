@@ -19,10 +19,8 @@
 namespace wcmf\lib\presentation\control;
 
 use wcmf\application\controller\DisplayController;
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\ObjectQuery;
@@ -46,7 +44,7 @@ function g_getOIDs($type, $queryStr=null, $orderbyStr=null, $realOIDs=false, $la
   if (!$persistenceFacade->isKnownType($type)) {
     throw new IllegalArgumentException("Illegal type given: ".$type);
   }
-  $localization = Localization::getInstance();
+  $localization = ObjectFactory::getInstance('localization');
 
   // see if the type has a display value defined (via the 'display_value' property)
   $hasDisplayValue = false;

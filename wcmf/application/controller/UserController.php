@@ -18,12 +18,11 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * UserController is used to edit data of the current users.
@@ -70,14 +69,14 @@ class UserController extends Controller {
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
-    $rightsManager = RightsManager::getInstance();
+    $permissionManager = PermissionManager::getInstance();
 
     // process actions
 
     // save changes
     if ($this->_request->getAction() == 'save') {
       // load model
-      $user = $rightsManager->getAuthUser();
+      $user = $permissionManager->getAuthUser();
       $oid = new ObjectId(ObjectFactory::getInstance('userManager')->getUserType(), $user->getUserId());
       $principal = $this->_userManager->getPrincipal($oid);
 

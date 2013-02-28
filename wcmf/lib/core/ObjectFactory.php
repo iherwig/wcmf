@@ -166,18 +166,21 @@ class ObjectFactory {
         foreach ($configuration as $key => $value) {
           // exclude properties starting with __
           if (strpos($key, '__') !== 0) {
-            // replace variables denoted by a leading $
-            if (strpos($value, '$') === 0) {
-              $value = self::getInstance(preg_replace('/^\$/', '', $value));
-            }
-            // convert booleans
+            // special treatments, if value is a string
             if (is_string($value)) {
-              $lower = strtolower($value);
-              if ($lower === 'true') {
-                $value = true;
+              // replace variables denoted by a leading $
+              if (strpos($value, '$') === 0) {
+                $value = self::getInstance(preg_replace('/^\$/', '', $value));
               }
-              if ($lower === 'false') {
-                $value = false;
+              else {
+                // convert booleans
+                $lower = strtolower($value);
+                if ($lower === 'true') {
+                  $value = true;
+                }
+                if ($lower === 'false') {
+                  $value = false;
+                }
               }
             }
             // set the property

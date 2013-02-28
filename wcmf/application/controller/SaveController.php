@@ -20,7 +20,6 @@ namespace wcmf\application\controller;
 
 use \Exception;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\BuildDepth;
@@ -203,7 +202,7 @@ class SaveController extends Controller {
 
       // commit changes
       if ($needCommit) {
-        $localization = Localization::getInstance();
+        $localization = ObjectFactory::getInstance('localization');
         $saveOids = array_keys($saveOids);
         for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
           $curObject = &$nodeArray[$saveOids[$i]];

@@ -19,7 +19,6 @@
 namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\presentation\View;
-use wcmf\lib\presentation\control\BaseControl;
 use wcmf\lib\util\Obfuscator;
 
 /**
@@ -43,7 +42,7 @@ class AsyncListControl extends ListControl {
       $filter = join('', $parts);
       $view->assign('entityType', $entityType);
       $view->assign('filter', $filter);
-      $view->assign('obfuscator', Obfuscator::getInstance());
+      $view->assign('obfuscator', new Obfuscator());
 
       // get the translated value
       $listMap = $view->getTemplateVars('listMap');

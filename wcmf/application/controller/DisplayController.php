@@ -20,14 +20,13 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\RightsManager;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * DisplayController is used to read a node.
@@ -81,14 +80,14 @@ class DisplayController extends Controller {
    */
   protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $rightsManager = RightsManager::getInstance();
+    $permissionManager = PermissionManager::getInstance();
     $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
     // load model
     $oid = ObjectId::parse($request->getValue('oid'));
-    if ($oid && $rightsManager->authorize($oid, '', PersistenceAction::READ)) {
+    if ($oid && $permissionManager->authorize($oid, '', PersistenceAction::READ)) {
       // determine the builddepth
       $buildDepth = BuildDepth::SINGLE;
       if ($request->hasValue('depth')) {
@@ -99,7 +98,7 @@ class DisplayController extends Controller {
 
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest()) {
-        $localization = Localization::getInstance();
+        $localization = ObjectFactory::getInstance('localization');
         $localization->loadTranslation($node, $request->getValue('language'), true, true);
       }
 

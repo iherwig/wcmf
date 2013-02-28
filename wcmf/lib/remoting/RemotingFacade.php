@@ -18,7 +18,6 @@
  */
 namespace wcmf\lib\remoting;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\remoting\HTTPClient;
@@ -43,7 +42,7 @@ class RemotingFacade {
    */
   public static function getInstance() {
     if (!isset(self::$_instance)) {
-      self::$_instance = new RightsManager();
+      self::$_instance = new RemotingFacade();
     }
     return self::$_instance;
   }

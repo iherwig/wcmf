@@ -520,7 +520,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Retrieve parsed ini data from the filesystem and update the current instance.
    * If the current instance is modified or the last file given in parsedFiles
-   * is newer than the seriralized data, this call is ignored.
+   * is newer than the serialized data, this call is ignored.
+   * If InifileConfiguration class changed, the call will be ignored as well.
    * @param parsedFiles An array of ini filenames that must be contained in the data.
    * @param True/False wether the data could be retrieved or not
    */
@@ -528,6 +529,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if ($this->_useCache && !$this->isModified()) {
       $cacheFile = $this->getSerializeFilename($parsedFiles);
       if (file_exists($cacheFile)) {
+        $parsedFiles[] = __FILE__;
         if (!$this->checkFileDate($parsedFiles, $cacheFile)) {
           $vars = unserialize(file_get_contents($cacheFile));
 

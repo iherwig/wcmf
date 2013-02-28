@@ -22,7 +22,6 @@ require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
 use \Exception;
-use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Application;
 
 $application = new Application();
@@ -31,7 +30,7 @@ try {
   $request = $application->initialize();
 
   // process the requested action
-  ActionMapper::processAction($request);
+  ObjectFactory::getInstance('actionMapper')->processAction($request);
 
   // store the last successful request
   $session = ObjectFactory::getInstance('session');

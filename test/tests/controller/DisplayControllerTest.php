@@ -23,7 +23,6 @@ use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
@@ -92,7 +91,7 @@ class DisplayControllerTest extends ControllerTestCase {
     $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     $tmp = clone $testObj;
     $tmp->setValue('name', 'Administrator [de]');
-    Localization::getInstance()->saveTranslation($tmp, 'de');
+    ObjectFactory::getInstance('localization')->saveTranslation($tmp, 'de');
     $transaction->commit();
 
     // simulate a localized display call
@@ -126,7 +125,7 @@ class DisplayControllerTest extends ControllerTestCase {
     $testObj2 = $persistenceFacade->load($oid2, BuildDepth::SINGLE);
 
     // store a translations
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
     $tmp1 = clone $testObj1;
     $tmp1->setValue('name', 'Administrator [de]');
     $localization->saveTranslation($tmp1, 'de');

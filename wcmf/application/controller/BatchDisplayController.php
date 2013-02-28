@@ -21,7 +21,6 @@ namespace wcmf\application\controller;
 use wcmf\application\controller\BatchController;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
@@ -235,7 +234,7 @@ class BatchDisplayController extends BatchController {
 
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
-      $localization = Localization::getInstance();
+      $localization = ObjectFactory::getInstance('localization');
       $localization->loadTranslation($node, $request->getValue('language'), true, true);
     }
 

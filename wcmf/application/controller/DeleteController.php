@@ -21,7 +21,6 @@ namespace wcmf\application\controller;
 use \Exception;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
@@ -74,7 +73,7 @@ class DeleteController extends Controller {
         else {
           if($this->confirmDelete($doomedNode)) {
             // commit changes
-            $localization = Localization::getInstance();
+            $localization = ObjectFactory::getInstance('localization');
             if ($this->isLocalizedRequest()) {
               // delete the translations for the requested language
               $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));

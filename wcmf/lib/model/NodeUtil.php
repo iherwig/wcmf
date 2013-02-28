@@ -19,7 +19,6 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
@@ -205,7 +204,7 @@ class NodeUtil {
    */
   public static function getDisplayValues(Node $node, $useDisplayType=false, $language=null) {
     // localize node if requested
-    $localization = Localization::getInstance();
+    $localization = ObjectFactory::getInstance('localization');
     if ($language != null) {
       $localization->loadTranslation($node, $language);
     }
