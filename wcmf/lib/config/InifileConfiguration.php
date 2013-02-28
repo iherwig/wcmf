@@ -39,9 +39,12 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   private $_comments = array(); // an assoziate array that holds the comments/blank lines in the file
                                 // (each comment is attached to the following section/key)
                                 // the key ';' holds the comments at the end of the file
+  private $_lookupTable = array(); // an assoziate array that has lowercased section or section:key
+                                   // keys and array(section, key) values for fast lookup
+
   private $_isModified = false;
   private $_parsedFiles = array();
-  private $_useCache = false;
+  private $_useCache = true;
 
   private $_configPath = null;
   private $_configExtension = 'ini';
@@ -96,9 +99,12 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       if (!$this->unserialize($tmpSequence)) {
         // merge new with old values, overwrite redefined values
         $this->_configArray = $this->configMerge($this->_configArray, $this->_parse_ini_file($filename, true), true);
+        // re-build lookup table
+        $this->buildLookupTable();
 
         // merge referenced ini files, don't override values
-        if (($includes = $this->getValue('include', 'config')) !== false) {
+        if ($this->hasValue('include', 'config')) {
+          $includes = $this->getValue('include', 'config');
           $this->processValue($includes);
           foreach($includes as $include) {
             $this->_configArray = $this->configMerge($this->_configArray, $this->_parse_ini_file($this->_configPath.$include, true), false);
@@ -109,6 +115,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
         }
         // store the filename
         $this->_parsedFiles[] = $filename;
+
+        // re-build lookup table
+        $this->buildLookupTable();
 
         // serialize the parsed ini file sequence
         $this->serialize();
@@ -130,20 +139,19 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @see Configuration::hasSection()
    */
   public function hasSection($section) {
-    $sectionLower = strtolower($section);
-    return isset($this->_configArray[$sectionLower]);
+    return ($this->lookup($section) != null);
   }
 
   /**
    * @see Configuration::getSection()
    */
   public function getSection($section) {
-    $sectionLower = strtolower($section);
-    if (!isset($this->_configArray[$sectionLower])) {
+    $lookupEntry = $this->lookup($section);
+    if ($lookupEntry == null) {
       throw new ConfigurationException('Section \''.$section.'\' not found!');
     }
     else {
-      return $this->_configArray[$sectionLower];
+      return $this->_configArray[$lookupEntry[0]];
     }
   }
 
@@ -151,23 +159,19 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @see Configuration::hasValue()
    */
   public function hasValue($key, $section) {
-    $keyLower = strtolower($key);
-    $sectionLower = strtolower($section);
-    return isset($this->_configArray[$sectionLower], $this->_configArray[$sectionLower][$keyLower]);
+    return ($this->lookup($section, $key) != null);
   }
 
   /**
    * @see Configuration::getValue()
    */
   public function getValue($key, $section) {
-    $keyLower = strtolower($key);
-
-    $sectionArray = $this->getSection($section);
-    if (!isset($sectionArray[$keyLower])) {
+    $lookupEntry = $this->lookup($section, $key);
+    if ($lookupEntry == null) {
       throw new ConfigurationException('Key \''.$key.'\' not found in section \''.$section.'\'!');
     }
     else {
-      return $sectionArray[$keyLower];
+      return $this->_configArray[$lookupEntry[0]][$lookupEntry[1]];
     }
   }
 
@@ -219,8 +223,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if ($this->hasSection($section)) {
       throw new IllegalArgumentException('Section \''.$section.'\' already exists!');
     }
-    $sectionLower = strtolower($section);
-    $this->_configArray[$sectionLower] = '';
+    $this->_configArray[$section] = '';
+    $this->buildLookupTable();
     $this->_isModified = true;
     return true;
   }
@@ -232,9 +236,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (!$this->isEditable($section)) {
       throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
-    if ($this->hasSection($section)) {
-      $sectionLower = strtolower($section);
-      unset($this->_configArray[$sectionLower]);
+    $lookupEntry = $this->lookup($section);
+    if ($lookupEntry != null) {
+      unset($this->_configArray[$lookupEntry[0]]);
+      $this->buildLookupTable();
       $this->_isModified = true;
     }
   }
@@ -247,18 +252,19 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (strlen($newname) == 0) {
       throw new IllegalArgumentException('Empty section names are not allowed!');
     }
-    if (!$this->hasSection($oldname)) {
+    $lookupEntryOld = $this->lookup($oldname);
+    if ($lookupEntryOld != null) {
       throw new IllegalArgumentException('Section \''.$oldname.'\' does not exist!');
     }
     if (!$this->isEditable($oldname)) {
       throw new IllegalArgumentException('Section \''.$oldname.'\' is not editable!');
     }
-    if ($this->hasSection($newname)) {
+    $lookupEntryNew = $this->lookup($newname);
+    if ($lookupEntryNew != null) {
       throw new IllegalArgumentException('Section \''.$newname.'\' already exists!');
     }
-    $oldnameLower = strtolower($oldname);
-    $newnameLower = strtolower($newname);
-    ArrayUtil::key_array_rename($this->_configArray, $oldnameLower, $newnameLower);
+    ArrayUtil::key_array_rename($this->_configArray, $lookupEntryOld[0], $newname);
+    $this->buildLookupTable();
     $this->_isModified = true;
   }
 
@@ -270,23 +276,39 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (strlen($key) == 0) {
       throw new IllegalArgumentException('Empty key names are not allowed!');
     }
-    $sectionExists = $this->hasSection($section);
-    if (!$sectionExists && !$createSection) {
+    $lookupEntrySection = $this->lookup($section);
+    if ($lookupEntrySection == null && !$createSection) {
       throw new IllegalArgumentException('Section \''.$section.'\' does not exist!');
     }
-    if ($sectionExists && !$this->isEditable($section)) {
+    if ($lookupEntrySection != null && !$this->isEditable($section)) {
       throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
 
-    $sectionLower = strtolower($section);
-    $keyLower = strtolower($key);
-
-    // create section if requested
-    if (!$sectionExists && $createSection) {
-      $sectionLower = trim($sectionLower);
-      $this->_configArray[$sectionLower] = array();
+    // create section if requested and determine section name
+    if ($lookupEntrySection == null && $createSection) {
+      $section = trim($section);
+      $this->_configArray[$section] = array();
+      $finalSectionName = $section;
     }
-    $this->_configArray[$sectionLower][$keyLower] = $value;
+    else {
+      $finalSectionName = $lookupEntrySection[0];
+    }
+    // determine key name
+    if ($lookupEntrySection != null) {
+      $lookupEntryKey = $this->lookup($section, $key);
+      if ($lookupEntryKey == null) {
+        // key does not exist yet
+        $finalKeyName = $key;
+      }
+      else {
+        $finalKeyName = $lookupEntryKey[1];
+      }
+    }
+    else {
+      $finalKeyName = $key;
+    }
+    $this->_configArray[$finalSectionName][$finalKeyName] = $value;
+    $this->buildLookupTable();
     $this->_isModified = true;
   }
 
@@ -297,10 +319,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (!$this->isEditable($section)) {
       throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
-    if ($this->hasSection($section)) {
-      $sectionLower = strtolower($section);
-      $keyLower = strtolower($key);
-      unset($this->_configArray[$sectionLower][$keyLower]);
+    $lookupEntry = $this->lookup($section, $key);
+    if ($lookupEntry != null) {
+      unset($this->_configArray[$lookupEntry[0]][$lookupEntry[1]]);
+      $this->buildLookupTable();
       $this->_isModified = true;
     }
   }
@@ -319,16 +341,16 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (!$this->isEditable($section)) {
       throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
-    if (!$this->hasValue($oldname, $section)) {
+    $lookupEntryOld = $this->lookup($section, $oldname);
+    if ($lookupEntryOld != null) {
       throw new IllegalArgumentException('Key \''.$oldname.'\' does not exist in section \''.$section.'\'!');
     }
-    if ($this->hasValue($newname, $section)) {
+    $lookupEntryNew = $this->lookup($section, $newname);
+    if ($lookupEntryNew != null) {
       throw new IllegalArgumentException('Key \''.$newname.'\' already exists in section \''.$section.'\'!');
     }
-    $oldnameLower = strtolower($oldname);
-    $newnameLower = strtolower($newname);
-    $sectionLower = strtolower($section);
-    ArrayUtil::key_array_rename($this->_configArray[$sectionLower], $oldnameLower, $newnameLower);
+    ArrayUtil::key_array_rename($this->_configArray[$lookupEntryOld[0]], $lookupEntryOld[1], $newname);
+    $this->buildLookupTable();
     $this->_isModified = true;
   }
 
@@ -384,7 +406,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   protected function _parse_ini_file($filename) {
     if (!file_exists($filename)) {
-      throw new ConfigurationException("The config file ".$filename." does not exist.");
+      throw new ConfigurationException('The config file '.$filename.' does not exist.');
     }
     $configArray = array();
     $sectionName = '';
@@ -399,7 +421,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       }
 
       if($line[0] == '[' && $line[strlen($line)-1] == ']') {
-        $sectionName = strtolower(substr($line, 1, strlen($line)-2));
+        $sectionName = substr($line, 1, strlen($line)-2);
         $configArray[$sectionName] = array();
 
         // store comments/blank lines for section
@@ -408,7 +430,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       }
       else {
         $parts = explode('=', $line, 2);
-        $key = strtolower(trim($parts[0]));
+        $key = trim($parts[0]);
         $value = trim($parts[1]);
         $configArray[$sectionName][$key] = $value;
 
@@ -537,10 +559,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Get the filename for the serialized data that correspond to the the given ini file sequence.
    * @param parsedFiles An array of parsed filenames
+   * @return Filename
    */
   protected function getSerializeFilename($parsedFiles) {
     $path = session_save_path();
-    $filename = $path.'/'.urlencode(realpath($this->_configPath)."/".join('_', $parsedFiles));
+    $filename = $path.'/'.urlencode(realpath($this->_configPath).'/'.join('_', $parsedFiles));
     return $filename;
   }
 
@@ -557,6 +580,37 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       }
     }
     return false;
+  }
+
+  /**
+   * Build the internal lookup table
+   */
+  protected function buildLookupTable() {
+    $this->_lookupTable = array();
+    foreach ($this->_configArray as $section => $entry) {
+      // create section entry
+      $lookupSectionKey = strtolower($section).':';
+      $this->_lookupTable[$lookupSectionKey] = array($section);
+      // create key entries
+      foreach ($entry as $key => $value) {
+        $lookupKey = $lookupSectionKey.strtolower($key);
+        $this->_lookupTable[$lookupKey] = array($section, $key);
+      }
+    }
+  }
+
+  /**
+   * Lookup section and key.
+   * @param section The section to lookup
+   * @param key The key to lookup (optional)
+   * @return Array with section as first entry and key as second or null if not found
+   */
+  protected function lookup($section, $key=null) {
+    $lookupKey = strtolower($section).':'.strtolower($key);
+    if (isset($this->_lookupTable[$lookupKey])) {
+      return $this->_lookupTable[$lookupKey];
+    }
+    return null;
   }
 }
 ?>

@@ -32,22 +32,8 @@ use wcmf\lib\util\StringUtil;
 /**
  * PersistentObject is the base class of all persistent objects.
  * It implements the basic persistence methods (save(), delete())
- * which will be delegated to the PersistenceMapper class that contsructed the object.
- * The PersistentObject holds the object data in an associative array of the following structure:
- * @verbatim
- * valueName1---value
- *              properties---propertyName1---value
- *                                       propertyName2---value
- *                                       ...
- * valueName2---value
- *              properties---propertyName1---value
- *                                       ...
- * ...
+ * which will be delegated to the PersistenceMapper class that constructed the object.
  *
- * e.g.: $this->_data['name']['value']                 gives the value of the attribute 'name'
- *       $this->_data['name']['properties']['visible'] gives the value of the visibility property
- *                                                     of the attribute 'name'
- * @endverbatim
  * @author ingo herwig <ingo@wemove.com>
  */
 class PersistentObject {
@@ -60,11 +46,14 @@ class PersistentObject {
   private $_oid = null;                // object identifier
   private $_type = '';                 // the object type
   private $_data = array();            // associative array holding the data
-  private $_properties = array();      // associative array holding the properties
+  private $_valueProperties = array(); // associative array holding the value properties
+  private $_properties = array();      // associative array holding the object properties
   private $_state = self::STATE_CLEAN;       // the state of the PersistentObject
   private $_isImmutable = false;       // immutable state
   private $_changedAttributes = array(); // used to track changes, see setValue method
   private $_originalData = array();    // data provided to the initialize method
+
+  // TODO: add static cache for frequently requested entity type data
 
   /**
    * Constructor.
@@ -409,11 +398,9 @@ class PersistentObject {
    */
   public function getValue($name) {
     if (isset($this->_data[$name])) {
-      return $this->_data[$name]['value'];
+      return $this->_data[$name];
     }
-    else {
-      return null;
-    }
+    return null;
   }
 
   /**
@@ -570,12 +557,7 @@ class PersistentObject {
    * @param value The value
    */
   protected function setValueInternal($name, $value) {
-    if (!isset($this->_data[$name])) {
-      $this->_data[$name] = array('value' => $value);
-    }
-    else {
-      $this->_data[$name]['value'] = $value;
-    }
+    $this->_data[$name] = $value;
   }
 
   /**
@@ -601,7 +583,7 @@ class PersistentObject {
    * @return The value property/null if not found.
    */
   public function getValueProperty($name, $property) {
-    if (!isset($this->_data[$name]['properties']) || !isset($this->_data[$name]['properties'][$property])) {
+    if (!isset($this->_valueProperties[$name]) || !isset($this->_valueProperties[$name][$property])) {
       // get the default property value from the mapper
       $mapper = $this->getMapper();
       if ($mapper) {
@@ -616,7 +598,7 @@ class PersistentObject {
     }
     else {
       // the default property value is overidden
-      return $this->_data[$name]['properties'][$property];
+      return $this->_valueProperties[$name][$property];
     }
     return false;
   }
@@ -628,10 +610,10 @@ class PersistentObject {
    * @param value The value to set on the property.
    */
   public function setValueProperty($name, $property, $value) {
-    if (!isset($this->_data[$name]['properties'])) {
-      $this->_data[$name]['properties'] = array();
+    if (!isset($this->_valueProperties[$name])) {
+      $this->_valueProperties[$name] = array();
     }
-    $this->_data[$name]['properties'][$property] = $value;
+    $this->_valueProperties[$name][$property] = $value;
   }
 
   /**
@@ -649,7 +631,7 @@ class PersistentObject {
         }
       }
     }
-    return array_merge($result, array_keys($this->_data[$name]['properties']));
+    return array_merge($result, array_keys($this->_valueProperties[$name]));
   }
 
   /**

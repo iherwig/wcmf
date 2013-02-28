@@ -46,11 +46,13 @@ and open the template in the editor.
       <file>tests/model/NodeUtilTest.php</file>
     </testsuite>
     <testsuite name="Persistence">
+      <file>tests/persistence/LockingTest.php</file>
       <file>tests/persistence/ManyToManyTest.php</file>
       <file>tests/persistence/NodeRelationTest.php</file>
       <file>tests/persistence/NodeUnifiedRDBMapperTest.php</file>
       <file>tests/persistence/ObjectIdTest.php</file>
       <file>tests/persistence/ObjectQueryTest.php</file>
+      <file>tests/persistence/PersistentObjectPerformanceTest.php</file>
       <file>tests/persistence/PersistentObjectProxyTest.php</file>
       <file>tests/persistence/PersistentObjectTest.php</file>
       <file>tests/persistence/RelationDescriptionTest.php</file>
@@ -62,7 +64,7 @@ and open the template in the editor.
   <groups>
     <exclude>
       <!--group>controller</group-->
-      <!--group>performance</group-->
+      <group>performance</group>
     </exclude>
   </groups>
 </phpunit>

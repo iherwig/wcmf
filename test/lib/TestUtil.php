@@ -111,6 +111,12 @@ class TestUtil {
     }
   }
 
+  public static function getSizeof($var) {
+      $startMemory = memory_get_usage();
+      $var = unserialize(serialize($var));
+      return memory_get_usage() - $startMemory - PHP_INT_SIZE * 8;
+  }
+
   /**
    * Enable the Zend_Db_Profiler for a given entity type.
    * @param type The entity type

@@ -42,7 +42,7 @@ class Action {
     // check resource?context?action
     if (strlen($resource) > 0 && strlen($context) > 0 && strlen($action) > 0) {
       $key = $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
-      if ($config->getValue($key, $section, false) !== false) {
+      if ($config->hasValue($key, $section)) {
         return $key;
       }
     }
@@ -50,7 +50,7 @@ class Action {
     // check resource??action
     if (strlen($resource) > 0 && strlen($action) > 0) {
       $key = $resource.self::$_actionDelimiter.self::$_actionDelimiter.$action;
-      if ($config->getValue($key, $section, false) !== false) {
+      if ($config->hasValue($key, $section)) {
         return $key;
       }
     }
@@ -58,7 +58,7 @@ class Action {
     // check resource?context?
     if (strlen($resource) > 0 && strlen($context) > 0) {
       $key = $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter;
-      if ($config->getValue($key, $section, false) !== false) {
+      if ($config->hasValue($key, $section)) {
         return $key;
       }
     }
@@ -66,7 +66,7 @@ class Action {
     // check ?context?action
     if (strlen($context) > 0 && strlen($action) > 0) {
       $key = self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
-      if ($config->getValue($key, $section, false) !== false) {
+      if ($config->hasValue($key, $section)) {
         return $key;
       }
     }
@@ -74,7 +74,7 @@ class Action {
     // check ??action
     if (strlen($action) > 0) {
       $key = self::$_actionDelimiter.self::$_actionDelimiter.$action;
-      if ($config->getValue($key, $section, false) !== false) {
+      if ($config->hasValue($key, $section)) {
         return $key;
       }
     }
@@ -82,7 +82,7 @@ class Action {
     // check resource??
     if (strlen($resource) > 0) {
       $key = $resource.self::$_actionDelimiter.self::$_actionDelimiter;
-      if ($config->getValue($key, $section, false) !== false) {
+      if ($config->hasValue($key, $section)) {
         return $key;
       }
     }
@@ -90,14 +90,14 @@ class Action {
     // check ?context?
     if (strlen($context) > 0) {
       $key = self::$_actionDelimiter.$context.self::$_actionDelimiter;
-      if ($config->getValue($key, $section, false) !== false) {
+      if ($config->hasValue($key, $section)) {
         return $key;
       }
     }
 
     // check ??
     $key = self::$_actionDelimiter.self::$_actionDelimiter;
-    if ($config->getValue($key, $section, false) !== false) {
+    if ($config->hasValue($key, $section)) {
       return $key;
     }
     return '';
