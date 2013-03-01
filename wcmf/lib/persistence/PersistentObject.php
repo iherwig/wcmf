@@ -60,10 +60,13 @@ class PersistentObject {
    * if the PersistenceFacade knows the type. The object id is needed to extract
    * the type. If the id parameter of the object id is a dummy id, the object
    * is supposed to be a newly created object (@see ObjectId::containsDummyIds()).
-   * @param oid ObjectId instance
+   * @param oid ObjectId instance (optional)
    */
-  public function __construct(ObjectId $oid) {
+  public function __construct(ObjectId $oid=null) {
     // set oid and state (avoid calling listeners)
+    if ($oid == null) {
+      $oid = ObjectId::NULL_OID();
+    }
     if (ObjectId::isValid($oid)) {
       $this->_type = $oid->getType();
       $this->_oid = $oid;

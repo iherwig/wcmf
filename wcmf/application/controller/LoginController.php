@@ -26,8 +26,6 @@ use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\security\AuthUser;
-use wcmf\lib\security\UserManager;
 
 /**
  * LoginController is a controller that handles the login process.
@@ -134,7 +132,7 @@ class LoginController extends Controller {
 
     if ($request->getAction() == 'dologin') {
       // create AuthUser instance
-      $authUser = new AuthUser();
+      $authUser = ObjectFactory::getInstance('authUser');
 
       $isPasswordEncrypted = false;
       if ($request->hasValue('password_is_encrypted')) {
@@ -161,7 +159,7 @@ class LoginController extends Controller {
         if($rememberMe === 'true' || $rememberMe === true) {
           // if yes store the password login combination in a cookie
           $expire = time() + 1728000; // expire in 20 days
-          $cookiePassword = UserManager::encryptPassword($request->getValue('password'));
+          $cookiePassword = ObjectFactory::getInstance('userManager')->encryptPassword($request->getValue('password'));
 
           setcookie($this->getCookieName('user'), $request->getValue('user'), $expire);
           setcookie($this->getCookieName('password'), $cookiePassword, $expire);

@@ -28,7 +28,7 @@ use testapp\application\model\Image;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\format\JsonFormat;
+use wcmf\lib\presentation\format\impl\JsonFormat;
 
 /**
  * JsonFormatTest.

@@ -19,7 +19,6 @@
 namespace wcmf\lib\presentation\renderer;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\renderer\DisplayType;
 
 /**

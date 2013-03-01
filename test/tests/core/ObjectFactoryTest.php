@@ -30,7 +30,7 @@ class ObjectFactoryTest extends BaseTestCase {
 
   public function testDIShared() {
     $obj = ObjectFactory::getInstance('persistenceFacade');
-    $this->assertEquals('wcmf\lib\persistence\DefaultPersistenceFacade', get_class($obj));
+    $this->assertEquals('wcmf\lib\persistence\impl\DefaultPersistenceFacade', get_class($obj));
     $this->assertFalse($obj->isLogging());
 
     // modify instance
@@ -39,13 +39,13 @@ class ObjectFactoryTest extends BaseTestCase {
 
     // get second time (same instance)
     $obj2 = ObjectFactory::getInstance('persistenceFacade');
-    $this->assertEquals('wcmf\lib\persistence\DefaultPersistenceFacade', get_class($obj2));
+    $this->assertEquals('wcmf\lib\persistence\impl\DefaultPersistenceFacade', get_class($obj2));
     $this->assertTrue($obj2->isLogging());
   }
 
   public function testDINonShared() {
     $obj = ObjectFactory::getInstance('view');
-    $this->assertEquals('wcmf\lib\presentation\SmartyView', get_class($obj));
+    $this->assertEquals('wcmf\lib\presentation\view\impl\SmartyView', get_class($obj));
 
     // modify instance
     $obj->assign('test', 'value1');
@@ -53,7 +53,7 @@ class ObjectFactoryTest extends BaseTestCase {
 
     // get second time (same instance)
     $obj2 = ObjectFactory::getInstance('view');
-    $this->assertEquals('wcmf\lib\presentation\SmartyView', get_class($obj2));
+    $this->assertEquals('wcmf\lib\presentation\view\impl\SmartyView', get_class($obj2));
 
     // modify instance
     $obj2->assign('test', 'value2');
@@ -67,7 +67,7 @@ class ObjectFactoryTest extends BaseTestCase {
     $obj = ObjectFactory::getInstance('controlRenderer');
     $this->assertEquals('wcmf\lib\presentation\control\ControlRenderer', get_class($obj));
     $ctrl = $obj->getControl('text');
-    $this->assertEquals('wcmf\lib\presentation\control\BaseControl', get_class($ctrl));
+    $this->assertEquals('wcmf\lib\presentation\control\impl\BaseControl', get_class($ctrl));
   }
 }
 ?>

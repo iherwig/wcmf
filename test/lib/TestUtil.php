@@ -20,7 +20,6 @@ namespace test\lib;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
-use wcmf\lib\security\AuthUser;
 
 /**
  * TestUtil provides helper methods for testing wCMF functionality.
@@ -64,7 +63,7 @@ class TestUtil {
    */
   public static function startSession($user, $password) {
     $session = ObjectFactory::getInstance('session');
-    $authUser = new AuthUser();
+    $authUser = ObjectFactory::getInstance('authUser');
     $success = $authUser->login($user, $password, false);
     if ($success) {
       $permissionManager = ObjectFactory::getInstance('permissionManager');

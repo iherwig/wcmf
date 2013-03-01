@@ -25,6 +25,7 @@ use wcmf\lib\util\StringUtil;
 
 /**
  * ObjectFactory loads class definitions and instantiates classes.
+ * TODO add a list of known entries and the required interfaces
  *
  * @author ingo herwig <ingo@wemove.com>
  */

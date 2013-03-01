@@ -7,7 +7,7 @@ define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
 require_once(WCMF_BASE."wcmf/lib/core/Log.php");
-require_once(WCMF_BASE."wcmf/lib/security/UserManager.php");
+require_once(WCMF_BASE."wcmf/lib/core/ObjectFactory.php");
 
 ?>
 <html>
@@ -21,7 +21,7 @@ require_once(WCMF_BASE."wcmf/lib/security/UserManager.php");
 </form>
 <?php
   if (array_key_exists("password", $_POST))
-	  echo("encypted password: ".UserManager::encryptPassword($_POST["password"]));
+	  echo("encypted password: ".ObjectFactory::getInstance('userManager')->encryptPassword($_POST["password"]));
 ?>
 </body>
 </html>

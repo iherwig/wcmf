@@ -43,6 +43,8 @@ class ObjectId {
   private static $_idPattern = null;
   private static $_numPkKeys = array();
 
+  private static $_nullOID = null;
+
   /**
    * Constructor.
    * @param type The type of the object (string)
@@ -80,6 +82,17 @@ class ObjectId {
     // set strVal immediatly otherwise object comparison will fail in
     // cases where __toString was only called on one instance
     $this->_strVal = $this->__toString();
+  }
+
+  /**
+   * Get the prefix
+   * @return String
+   */
+  public static function NULL_OID() {
+    if (self::$_nullOID == null) {
+      self::$_nullOID = new ObjectId('NULL');
+    }
+    return self::$_nullOID;
   }
 
   /**

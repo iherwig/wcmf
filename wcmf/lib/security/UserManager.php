@@ -22,8 +22,8 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\security\Role;
-use wcmf\lib\security\User;
+use wcmf\lib\security\principal\Role;
+use wcmf\lib\security\principal\User;
 
 /**
  * Some constants describing user properties
@@ -106,7 +106,7 @@ abstract class UserManager {
    * @param password The password to encrypt
    * @return The encrypted password.
    */
-  public static function encryptPassword($password) {
+  public function encryptPassword($password) {
     return md5($password);
   }
 

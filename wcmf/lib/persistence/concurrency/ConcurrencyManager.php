@@ -18,16 +18,8 @@
  */
 namespace wcmf\lib\persistence\concurrency;
 
-use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\NodeValueIterator;
-use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\persistence\concurrency\Lock;
-use wcmf\lib\persistence\concurrency\LockHandler;
-use wcmf\lib\persistence\concurrency\OptimisticLockException;
-use wcmf\lib\persistence\concurrency\PessimisticLockException;
 
 /**
  * ConcurrencyManager is used to handle concurrency for objects.
@@ -45,17 +37,7 @@ use wcmf\lib\persistence\concurrency\PessimisticLockException;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ConcurrencyManager {
-
-  private $_lockHandler = null;
-
-  /**
-   * Set the LockHandler used for locking.
-   * @param lockHandler
-   */
-  public function setLockHandler(LockHandler $lockHandler) {
-    $this->_lockHandler = $lockHandler;
-  }
+interface ConcurrencyManager {
 
   /**
    * Aquire a lock on an ObjectId for the current user. Throws an exception if
@@ -66,101 +48,28 @@ class ConcurrencyManager {
    *    for an optimistic lock (optional, if not given, the current state will
    *    be loaded from the store)
    */
-  public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null) {
-    if (!ObjectId::isValid($oid) || ($type != Lock::TYPE_OPTIMISTIC &&
-            $type != Lock::TYPE_PESSIMISTIC)) {
-      throw new IllegalArgumentException("Invalid object id or locktype given");
-    }
-
-    // load the current state if not provided
-    if ($type == Lock::TYPE_OPTIMISTIC && $currentState == null) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $currentState = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-    }
-
-    $this->_lockHandler->aquireLock($oid, $type, $currentState);
-  }
+  public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null);
 
   /**
    * Release a lock on an ObjectId for the current user.
    * @param oid object id of the object to release.
    */
-  public function releaseLock(ObjectId $oid) {
-    if (!ObjectId::isValid($oid)) {
-      throw new IllegalArgumentException("Invalid object id given");
-    }
-    $this->_lockHandler->releaseLock($oid);
-  }
+  public function releaseLock(ObjectId $oid);
 
   /**
    * Release all locks on an ObjectId regardless of the user.
    * @param oid object id of the object to release.
    */
-  public function releaseLocks(ObjectId $oid) {
-    if (!ObjectId::isValid($oid)) {
-      throw new IllegalArgumentException("Invalid object id given");
-    }
-    $this->_lockHandler->releaseLocks($oid);
-  }
+  public function releaseLocks(ObjectId $oid);
 
   /**
    * Release all locks for the current user.
    */
-  public function releaseAllLocks() {
-    $this->_lockHandler->releaseAllLocks();
-  }
+  public function releaseAllLocks();
 
   /**
    * Check if the given object can be persisted. Throws an exception if not.
    */
-  public function checkPersist(PersistentObject $object) {
-    $oid = $object->getOID();
-    $lock = $this->_lockHandler->getLock($oid);
-    if ($lock != null) {
-      $type = $lock->getType();
-
-      // if there is a pessimistic lock on the object and it's not
-      // owned by the current user, throw a PessimisticLockException
-      if ($type == Lock::TYPE_PESSIMISTIC) {
-        $permissionManager = ObjectFactory::getInstance('permissionManager');
-        $currentUser = $permissionManager->getAuthUser();
-        if ($lock->getUserOID() != $currentUser->getOID()) {
-            throw new PessimisticLockException($lock);
-        }
-      }
-
-      // if there is an optimistic lock on the object and the object was updated
-      // in the meantime, throw a OptimisticLockException
-      if ($type == Lock::TYPE_OPTIMISTIC) {
-        $originalState = $lock->getCurrentState();
-        // temporarily detach the object from the transaction in order to get
-        // the latest version from the store
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-        $transaction = $persistenceFacade->getTransaction();
-        $transaction->detach($object);
-        $currentState = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-        // check for deletion
-        if ($currentState == null) {
-          throw new OptimisticLockException(null);
-        }
-        // check for modifications
-        $it = new NodeValueIterator($originalState, false);
-        foreach($it as $valueName => $originalValue) {
-          $currentValue = $currentState->getValue($valueName);
-          if ($currentValue != $originalValue) {
-            throw new OptimisticLockException($currentState);
-          }
-        }
-        // if there was no concurrent update, attach the object again
-        if ($object->getState() == PersistentObject::STATE_DIRTY) {
-          $transaction->registerDirty($object);
-        }
-        elseif ($object->getState() == PersistentObject::STATE_DELETED) {
-          $transaction->registerDeleted($object);
-        }
-      }
-    }
-    // everything is ok
-  }
+  public function checkPersist(PersistentObject $object);
 }
 ?>
