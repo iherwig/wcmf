@@ -28,7 +28,6 @@ use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\LockHandler;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * ConcurrencyManager is used to handle concurrency for objects.
@@ -123,7 +122,7 @@ class ConcurrencyManager {
       // if there is a pessimistic lock on the object and it's not
       // owned by the current user, throw a PessimisticLockException
       if ($type == Lock::TYPE_PESSIMISTIC) {
-        $permissionManager = PermissionManager::getInstance();
+        $permissionManager = ObjectFactory::getInstance('permissionManager');
         $currentUser = $permissionManager->getAuthUser();
         if ($lock->getUserOID() != $currentUser->getOID()) {
             throw new PessimisticLockException($lock);

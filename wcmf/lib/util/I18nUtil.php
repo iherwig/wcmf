@@ -33,7 +33,8 @@ class I18nUtil {
    * @param directory The directory to search in
    * @param pattern The pattern the names of the files to search in must match
    * @param depth Internal use only
-   * @return An assoziative array with the filenames as keys and the values as array of strings.
+   * @return An assoziative array with the filenames as keys and the values as
+   *     array of strings.
    * @see I18nUtil::getMessagesFromFile
    */
   public static function getMessages($directory, $pattern, $depth=0) {
@@ -104,9 +105,9 @@ class I18nUtil {
   }
 
   /**
-   * Create a message catalog (*.PO file) for use with 'gettext'. The file will be created in
-   * the directory 'localeDir/language/LC_MESSAGES/' where 'localeDir' must be given in the configuration
-   * file section 'i18n'.
+   * Create a message catalog (*.PO file) for use with 'gettext'. The file will
+   * be created in the directory 'localeDir/language/LC_MESSAGES/' where
+   * 'localeDir' must be given in the configuration file section 'application'.
    * @param projectID The name of the project
    * @param teamName The name of the translation team
    * @param teamEmail The email of the translation team
@@ -117,11 +118,12 @@ class I18nUtil {
    * @param messages An assoziative array with the messages as keys (becomes 'msgid' in the *.PO file)
    * and assoziative array values with keys 'translation' (becomes 'msgstr' in the *.PO file), 'files' (becomes the reference comment)
    * @return True/False whether successful or not.
+   * TODO: create array file directly
    */
   public static function createPOFile($projectID, $teamName, $teamEmail, $language, $country, $charset, $filename, $messages) {
     // get locale directory
     $config = ObjectFactory::getConfigurationInstance();
-    $localDir = $config->getValue('localeDir', 'i18n');
+    $localDir = $config->getValue('localeDir', 'application');
     if (substr($localDir, -1) != '/') {
       $localDir .= '/';
     }

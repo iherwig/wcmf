@@ -20,7 +20,6 @@ namespace wcmf\application\controller\admintool;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * EditRightsController is used to edit rights on a resource.
@@ -69,7 +68,7 @@ class EditRightsController extends Controller
   {
     $userManager = ObjectFactory::getInstance('userManager');
     $config = ObjectFactory::getConfigurationInstance();
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
 
     $configurations = $config->getConfigurations();
     $rightNames = array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE);
@@ -95,7 +94,8 @@ class EditRightsController extends Controller
           if (is_array($newAllowedRoles))
             foreach ($newAllowedRoles as $role)
               if (!is_array($existingRight['allow']) || !in_array($role, $existingRight['allow']))
-                $permissionManager->createPermission($curConfig, $resource, $context, $action, $role, RIGHT_MODIFIER_ALLOW);
+                $permissionManager->createPermission($curConfig, $resource, $context, $action, $role,
+                        PermissionManager::RIGHT_MODIFIER_ALLOW);
           // remove old
           if (is_array($existingRight['allow']))
             foreach ($existingRight['allow'] as $role)
@@ -109,7 +109,8 @@ class EditRightsController extends Controller
           if (is_array($newDeniedRoles))
             foreach ($newDeniedRoles as $role)
               if (!is_array($existingRight['deny']) || !in_array($role, $existingRight['deny']))
-                $permissionManager->createPermission($curConfig, $resource, $context, $action, $role, RIGHT_MODIFIER_DENY);
+                $permissionManager->createPermission($curConfig, $resource, $context, $action, $role,
+                        PermissionManager::RIGHT_MODIFIER_DENY);
           // remove old
           if (is_array($existingRight['deny']))
             foreach ($existingRight['deny'] as $role)

@@ -23,7 +23,6 @@ use wcmf\lib\model\Node;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * User is the abstract base class for user classes that represent a system user.
@@ -192,7 +191,7 @@ abstract class User extends Node {
       // make sure that the roles are loaded
 
       // allow this in any case (prevent infinite loops when trying to authorize)
-      $permissionManager = PermissionManager::getInstance();
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
       $isAnonymous = $permissionManager->isAnonymous();
       if (!$isAnonymous) {
         $permissionManager->deactivate();

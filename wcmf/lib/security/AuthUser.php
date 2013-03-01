@@ -21,7 +21,6 @@ namespace wcmf\lib\security;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\User;
 use wcmf\lib\security\UserManager;
 
@@ -54,7 +53,7 @@ class AuthUser extends User {
     }
     // because there is no authorized user already, we propably have to deactivate the
     // PermissionManager for this operation to allow user retrieval from the persistent storage
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     $isAnonymous = $permissionManager->isAnonymous();
     if (!$isAnonymous) {
       $permissionManager->deactivate();

@@ -42,14 +42,6 @@ if (!ensureDatabases($config)) {
   exit();
 }
 
-// message globals
-$GLOBALS['MESSAGE_LOCALE_DIR'] = $config->getValue('localeDir', 'i18n');
-$GLOBALS['MESSAGE_LANGUAGE'] = $config->getValue('language', 'i18n');
-
-// set locale
-if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {
-  setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
-}
 // parse tables.sql
 $tables = array();
 $readingTable = false;

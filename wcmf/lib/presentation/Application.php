@@ -25,7 +25,6 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * @class Application
@@ -132,7 +131,7 @@ class Application {
     $session->clearErrors();
 
     // load user configuration
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     $authUser = $permissionManager->getAuthUser();
     if ($authUser && strlen($authUser->getConfig()) > 0) {
       $config->addConfiguration($authUser->getConfig(), true);

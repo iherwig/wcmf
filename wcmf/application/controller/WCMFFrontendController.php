@@ -21,7 +21,6 @@ namespace wcmf\application\controller;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * WCMFFrontendController is used to display the wCMF frontend.
@@ -76,7 +75,7 @@ class WCMFFrontendController extends Controller {
    */
   protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     $config = ObjectFactory::getConfigurationInstance();
     $request = $this->getRequest();
     $response = $this->getResponse();

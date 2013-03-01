@@ -18,6 +18,9 @@
  */
 namespace wcmf\lib\persistence\converter;
 
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\converter\IDataConverter;
+
 /**
  * MySQLDateConverter converts MySQL dates to a date localized to the users or
  * application settings.
@@ -34,8 +37,7 @@ class MySQLDateConverter implements IDataConverter
     $type = strtolower($type);
     if ($data != '' && ($type == 'datetime' || $type == 'date'))
     {
-      global $MESSAGE_LANGUAGE;
-      $locale = strtolower($MESSAGE_LANGUAGE);
+      $locale = strtolower(ObjectFactory::getInstance('localization')->getUILanguage());
 
       // handle empty dates
       if (strpos($data, "0000-00-00") === 0)
@@ -61,8 +63,7 @@ class MySQLDateConverter implements IDataConverter
   {
     if ($data != '')
     {
-      global $MESSAGE_LANGUAGE;
-      $locale = strtolower($MESSAGE_LANGUAGE);
+      $locale = strtolower(ObjectFactory::getInstance('localization')->getUILanguage());
       $type = strtolower($type);
 
       if ($type == 'datetime' || $type == 'date')

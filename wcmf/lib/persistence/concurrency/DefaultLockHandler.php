@@ -27,7 +27,6 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\concurrency\ILockHandler;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * DefaultLockHandler implements the ILockHandler interface for relational databases.
@@ -206,7 +205,7 @@ class DefaultLockHandler implements LockHandler {
    * @return User instance
    */
   protected function getCurrentUser() {
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     return $permissionManager->getAuthUser();
   }
 

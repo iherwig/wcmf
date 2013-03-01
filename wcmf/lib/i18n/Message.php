@@ -21,10 +21,11 @@ namespace wcmf\lib\i18n;
 use wcmf\lib\core\ObjectFactory;
 
 /**
- * Message is used to get localized messages.
- * The localization directory must be given in the configuration value 'localeDir' in section 'i18n'.
- * Inside this directory there must be a messages_$lang.php files for each language
- * defining the translation for each message.
+ * Message is used to get localized messages to be used in the user interface.
+ * The localization directory must be given in the configuration value
+ * 'localeDir' in section 'application'.
+ * Inside this directory there must be a messages_$lang.php files for each
+ * language defining the translation for each message.
  * For example the messages_de_DE file could have the following content:
  * @code
  * $messages_de_DE = array(
@@ -34,7 +35,7 @@ use wcmf\lib\core\ObjectFactory;
  * );
  * @endcode
  * @note The language is determined in one of 3 ways (in this order):
- * -# use the value of the configuration value 'language' in section 'i18n'
+ * -# use the value of the configuration value 'language' in section 'application'
  * -# use the value of the global variable $_SERVER['HTTP_ACCEPT_LANGUAGE']
  * -# use the value of the lang parameter passed to Message::get()
  *
@@ -56,8 +57,8 @@ class Message {
    */
   private static function initialize() {
     $config = ObjectFactory::getConfigurationInstance();
-    self::$localeDir = $config->getValue('localeDir', 'localization');
-    self::$language = $config->getValue('language', 'localization');
+    self::$localeDir = $config->getValue('localeDir', 'application');
+    self::$language = $config->getValue('language', 'application');
     setlocale(LC_ALL, self::$language);
     self::$initialized = true;
   }

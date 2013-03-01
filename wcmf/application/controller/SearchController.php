@@ -25,7 +25,6 @@ use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\format\JSONFormat;
-use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\LuceneSearch;
 
 /**
@@ -178,7 +177,7 @@ class SearchController extends ListController {
    * @see AsyncPagingController::getObjects()
    */
   protected function getObjects($type, $filter, $sortArray, PagingInfo $pagingInfo) {
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     $session = ObjectFactory::getInstance('session');
 
     if (!$session->exist($this->OIDS_VARNAME)) {

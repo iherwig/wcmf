@@ -29,34 +29,29 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 
 /**
- * Localization is used to store localized entity instances
- * and retrieve them back. Entity instances are localized value by value,
- * where a translation of a value of one instance into a specific language
- * is represented by one instance of the entity type that is defined
- * in the key 'translationType' in the configuration section 'localization' (e.g. Translation).
+ * DefaultLocalization is a Localization implementation that saves translations
+ * in the store. Entity instances are localized value by value, where a
+ * translation of a value of one instance into a specific language
+ * is represented by one instance of the translation entity type (e.g. Translation).
  *
- * The translation entity type must have the attributes 'objectid',
- * 'attribute', 'translation', 'language' with the
- * appropriate getter and setter methods.
+ * The translation entity type must have the attributes 'objectid', 'attribute',
+ * 'translation', 'language' with the appropriate getter and setter methods. It
+ * is defined calling the Localization::setTranslationType() method.
  *
- * Localization is done against a default language, which is defined
- * in the configuration key 'defaultLanguage' in section 'localization'. This means
- * that all entity data in the store is supposed to use the default language
- * except those data stored in Translation instances.
+ * The default language is defined in the configuration key 'defaultLanguage'
+ * in section 'localization'.
  *
  * All languages available for translation are either defined in the configuration
  * section 'languages', where each language has it's own entry: e.g. en = English
- * or in an entity type that is defined in the key 'languageType' in the
- * configuration section 'localization' (e.g. Language).  The entity type must have the
- * attributes 'code' and 'name' with the appropriate getter and setter methods.
- * If entity type and configuration section are defined, the configuration section is preferred.
- * Language key names may conform to ISO 639 language codes, but this is not mandatory.
- * One of the keys must be equal to the value of defaultLanguage.
+ * or in a language entity type (e.g. Language). The language entity type must
+ * have the attributes 'code' and 'name' with the appropriate getter and setter
+ * methods. It is defined calling the Localization::setLanguageType() method.
+ * If translation entity type and configuration section are defined, the
+ * configuration section is preferred.
  *
- * Generally only values are translatable.
  * To exclude values of a special type (like date values) from the translation,
- * they may be omitted in the array that is given in the key 'inputTypes' in
- * the configuration section 'localization'. This array lists all input_types whose
+ * they may be omitted in the array that is defined calling the
+ * Localization::setInputTypes() method. This array lists all input_types whose
  * translations are stored.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -64,26 +59,63 @@ use wcmf\lib\persistence\PersistentObject;
 class DefaultLocalization implements Localization {
 
   private $_supportedLanguages = null;
+  private $_defaultLanguage = null;
+  private $_translationType = null;
+  private $_languageType = null;
+  private $_inputTypes = array();
 
   /**
-   * Get the default language that is used in the store.
-   * Reads the key 'defaultLanguage' in the configuation section 'localization'.
-   * @return The default language value (e.g. en)
+   * Set the default language.
+   * @param defaultLanguage
    */
-  public function getDefaultLanguage() {
-    $config = ObjectFactory::getConfigurationInstance();
-
-    $defaultLanguage = $config->getValue('defaultLanguage', 'localization');
+  public function setDefaultLanguage($defaultLanguage) {
     $supportedLanguages = $this->getSupportedLanguages();
     if (!isset($supportedLanguages[$defaultLanguage])) {
-      throw new ConfigurationException("No supported language equals the default language '".$defaultLanguage."'");
+      throw new ConfigurationException('No supported language equals the default language \''.$defaultLanguage.'\'');
     }
-    return $defaultLanguage;
+    $this->_defaultLanguage = $defaultLanguage;
   }
 
   /**
-   * Get all supported languages.
-   * @return An associative array with the language codes as keys and the names as values.
+   * Set the type to store translations in.
+   * @param translationType Entity type name
+   */
+  public function setTranslationType($translationType) {
+    if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($translationType)) {
+      throw new IllegalArgumentException('The translation type \''.$translationType.'\' is unknown.');
+    }
+    $this->_translationType = $translationType;
+  }
+
+  /**
+   * Set the type to store languages in.
+   * @param languageType Entity type name
+   */
+  public function setLanguageType($languageType) {
+    if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($languageType)) {
+      throw new IllegalArgumentException('The language type \''.$languageType.'\' is unknown.');
+    }
+    $this->_languageType = $languageType;
+  }
+
+  /**
+   * Set the input_types whose translations are stored.
+   * @param inputTypes Array
+   */
+  public function setInputTypes(Array $inputTypes) {
+    $this->_inputTypes = $inputTypes;
+  }
+
+  /**
+   * @see Localization::getDefaultLanguage()
+   */
+  public function getDefaultLanguage() {
+    return $this->_defaultLanguage;
+  }
+
+  /**
+   * @see Localization::getSupportedLanguages()
+   * Reads the configuration section 'languages'
    */
   public function getSupportedLanguages() {
     if ($this->_supportedLanguages == null) {
@@ -94,9 +126,8 @@ class DefaultLocalization implements Localization {
       }
       // if not, use the languageType
       else {
-        $languageType = $config->getValue('languageType', 'localization');
         $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-        $languages = $persistenceFacade->loadObjects($languageType, BuildDepth::SINGLE);
+        $languages = $persistenceFacade->loadObjects($this->_languageType, BuildDepth::SINGLE);
         for($i=0; $i<sizeof($languages); $i++) {
           $curLanguage = $languages[$i];
           $this->_supportedLanguages[$curLanguage->getCode()] = $curLanguage->getName();
@@ -107,43 +138,7 @@ class DefaultLocalization implements Localization {
   }
 
   /**
-   * Get the type name of the translation instances.
-   * @return The type name.
-   */
-  public static function getTranslationType() {
-    $config = ObjectFactory::getConfigurationInstance();
-    $type = $config->getValue('translationType', 'localization');
-    return $type;
-  }
-
-  /**
-   * Get the input types that are translatable.
-   * @return The input type names.
-   */
-  protected static function getIncludedInputTypes() {
-    $config = ObjectFactory::getConfigurationInstance();
-    $inputTypes = $config->getValue('inputTypes', 'localization');
-    return $inputTypes;
-  }
-
-  /**
-   * Get a newly created instance of the type defined in
-   * the key 'type' in the configuration section 'localization'.
-   * @return An instance.
-   */
-  public static function createTranslationInstance() {
-    $obj = ObjectFactory::getInstance('persistenceFacade')->create(
-            self::getTranslationType(), BuildDepth::SINGLE);
-    return $obj;
-  }
-
-  /**
-   * Load a single translated object. The object is always loaded with BuildDepth::SINGLE.
-   * @param oid The object id of the object to load the translation for.
-   * @param lang The language of the translation to load.
-   * @param useDefaults True/False wether to use the default language values
-   *    for untranslated/empty values or not. Optional, default is true
-   * @return A reference to the translated object.
+   * @see Localization::loadTranslatedObject()
    */
   public function loadTranslatedObject(ObjectId $oid, $lang, $useDefaults=true) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -154,20 +149,11 @@ class DefaultLocalization implements Localization {
   }
 
   /**
-   * Load a translation of an entity for a specific language.
-   * @note The object state will be changed to dirty by this operation, so make
-   * sure that the object is not attached to the transaction.
-   * @param object A reference to the object to load the translation into. The object
-   *    is supposed to have it's values in the default language.
-   * @param lang The language of the translation to load.
-   * @param useDefaults True/False wether to use the default language values
-   *    for untranslated/empty values or not. Optional, default is true.
-   * @param recursive True/False wether to load translations for children too or not.
-   *    Optional, default is true. For recursive use, the object must have a getChildren method.
+   * @see Localization::loadTranslation()
    */
   public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true) {
     if ($object == null) {
-      throw new IllegalArgumentException("Cannot load translation for null");
+      throw new IllegalArgumentException('Cannot load translation for null');
     }
     // if the requested language is the default language, return the original object
     if ($lang == $this->getDefaultLanguage()) {
@@ -175,11 +161,10 @@ class DefaultLocalization implements Localization {
     }
     // load the translations and translate the object for any other language
     else {
-      $type = self::getTranslationType();
-      $query = new ObjectQuery($type);
-      $tpl = $query->getObjectTemplate($type);
-      $tpl->setObjectid(Criteria::asValue("=", $object->getOID()->__toString()));
-      $tpl->setLanguage(Criteria::asValue("=", $lang));
+      $query = new ObjectQuery($this->_translationType);
+      $tpl = $query->getObjectTemplate($this->_translationType);
+      $tpl->setObjectid(Criteria::asValue('=', $object->getOID()->__toString()));
+      $tpl->setLanguage(Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
 
       // set the translated values in the object
@@ -201,16 +186,9 @@ class DefaultLocalization implements Localization {
   }
 
   /**
-   * Save a translation of an entity for a specific language. Only the
-   * values that have a non-empty value are considered as translations and stored.
-   * Only values whose input_type property is listed in the 'inputTypes' key in
-   * the configuration 'localization' are stored.
-   * @param object An instance of the entity type that holds the translations as values.
-   * @param lang The language of the translation.
-   * @param saveEmptyValues True/False wether to save empty translations or not.
-   *    Optional, default is false
-   * @param recursive True/False wether to save translations for children too or not.
-   *    Optional, default is true. For recursive use, the object must have a getChildren method.
+   * @see Localization::loadTranslation()
+   * @note Only values whose input_type property is listed in the 'inputTypes'
+   * key in the configuration 'localization' are stored.
    */
   public function saveTranslation(PersistentObject $object, $lang, $saveEmptyValues=false, $recursive=true) {
     // if the requested language is the default language, do nothing
@@ -222,11 +200,10 @@ class DefaultLocalization implements Localization {
       $object->beforeUpdate();
 
       // get the existing translations for the requested language
-      $type = self::getTranslationType();
-      $query = new ObjectQuery($type);
-      $tpl = $query->getObjectTemplate($type);
-      $tpl->setObjectid(Criteria::asValue("=", $object->getOID()->__toString()));
-      $tpl->setLanguage(Criteria::asValue("=", $lang));
+      $query = new ObjectQuery($this->_translationType);
+      $tpl = $query->getObjectTemplate($this->_translationType);
+      $tpl->setObjectid(Criteria::asValue('=', $object->getOID()->__toString()));
+      $tpl->setLanguage(Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
 
       // save the translations, ignore pk values
@@ -253,10 +230,7 @@ class DefaultLocalization implements Localization {
   }
 
   /**
-   * Remove translations for a given entity.
-   * @param oid The id of the object
-   * @param lang The language of the translation to remove. If null, all translations
-   *    will be deleted [default: null]
+   * @see Localization::deleteTranslation()
    */
   public function deleteTranslation(ObjectId $oid, $lang=null) {
     // if the requested language is the default language, do nothing
@@ -266,12 +240,11 @@ class DefaultLocalization implements Localization {
     // delete the translations for any other language
     else {
       // get the existing translations for the requested language or all languages
-      $type = self::getTranslationType();
-      $query = new ObjectQuery($type);
-      $tpl = $query->getObjectTemplate($type);
-      $tpl->setObjectid(Criteria::asValue("=", $oid->__toString()));
+      $query = new ObjectQuery($this->_translationType);
+      $tpl = $query->getObjectTemplate($this->_translationType);
+      $tpl->setObjectid(Criteria::asValue('=', $oid->__toString()));
       if ($lang != null) {
-        $tpl->setLanguage(Criteria::asValue("=", $lang));
+        $tpl->setLanguage(Criteria::asValue('=', $lang));
       }
       $translations = $query->execute(BuildDepth::SINGLE);
 
@@ -283,8 +256,7 @@ class DefaultLocalization implements Localization {
   }
 
   /**
-   * Delete all translations for a given language.
-   * @param lang The language of the translations to remove
+   * @see Localization::deleteLanguage()
    */
   public function deleteLanguage($lang) {
     // if the requested language is the default language, do nothing
@@ -294,10 +266,9 @@ class DefaultLocalization implements Localization {
     // delete the translations for any other language
     else {
       // get the existing translations for the requested language
-      $type = self::getTranslationType();
-      $query = new ObjectQuery($type);
-      $tpl = $query->getObjectTemplate($type);
-      $tpl->setLanguage(Criteria::asValue("=", $lang));
+      $query = new ObjectQuery($this->_translationType);
+      $tpl = $query->getObjectTemplate($this->_translationType);
+      $tpl->setLanguage(Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
 
       // delete the found tranlations
@@ -313,13 +284,12 @@ class DefaultLocalization implements Localization {
    *    is supposed to have it's values in the default language.
    * @param valueName The name of the value to translate
    * @param translations An array of translation instances for the object.
-   * @param useDefaults True/False wether to use the default language if no translation is
-   *    found or not.
+   * @param useDefaults True/False wether to use the default language if no
+   *    translation is found or not.
    */
   private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults) {
     $inputType = $object->getValueProperty($valueName, 'input_type');
-    $inputTypes = self::getIncludedInputTypes();
-    if (in_array($inputType, $inputTypes)) {
+    if (in_array($inputType, $this->_inputTypes)) {
       // empty the value, if the default language values should not be used
       if (!$useDefaults) {
         $object->setValue($valueName, null);
@@ -342,14 +312,14 @@ class DefaultLocalization implements Localization {
    * Save translated values for the given object
    * @param object The object to save the translations on
    * @param valueName The name of the value to translate
-   * @param existingTranslations An array of already existing translation instances for the object.
+   * @param existingTranslations An array of already existing translation
+   *    instances for the object.
    * @param lang The language of the translations.
    * @param saveEmptyValues True/False wether to also save empty translations or not.
    */
   private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang, $saveEmptyValues) {
     $inputType = $object->getValueProperty($valueName, 'input_type');
-    $inputTypes = self::getIncludedInputTypes();
-    if (in_array($inputType, $inputTypes)) {
+    if (in_array($inputType, $this->_inputTypes)) {
       $value = $object->getValue($valueName);
       if ($saveEmptyValues || strlen($value) > 0) {
         $translation = null;
@@ -366,7 +336,7 @@ class DefaultLocalization implements Localization {
         // if not, create a new translation
         if ($translation == null) {
           $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-          $translation = $persistenceFacade->create(self::getTranslationType());
+          $translation = $persistenceFacade->create($this->_translationType);
         }
 
         // set all required properties

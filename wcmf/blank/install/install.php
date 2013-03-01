@@ -26,7 +26,6 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\DBUtil;
 
 Log::configure('log4php.properties');
@@ -39,15 +38,7 @@ Log::info("configuration file: ".$configFile, "install");
 $config = new InifileConfiguration($configPath);
 $config->addConfiguration($configFile);
 
-// message globals
-$GLOBALS['MESSAGE_LOCALE_DIR'] = $config->getValue('localeDir', 'i18n');
-$GLOBALS['MESSAGE_LANGUAGE'] = $config->getValue('language', 'i18n');
-
-// set locale
-if ($GLOBALS['MESSAGE_LANGUAGE'] !== false) {
-  setlocale(LC_ALL, $GLOBALS['MESSAGE_LANGUAGE']);
-}
-$permissionManager = PermissionManager::getInstance();
+$permissionManager = ObjectFactory::getInstance('permissionManager');
 $permissionManager->deactivate();
 
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

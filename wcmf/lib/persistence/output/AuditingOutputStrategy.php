@@ -21,7 +21,7 @@ namespace wcmf\lib\persistence\output;
 use wcmf\lib\core\Log;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\output\OutputStrategy;
-use wcmf\lib\security\PermissionManager;
+
 /**
  * LogOutputStrategy outputs object changes to the logger category
  * LogOutputStrategy, loglevel info
@@ -48,7 +48,7 @@ class AuditingOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     $user = $permissionManager->getAuthUser();
 
     switch ($state = $obj->getState()) {

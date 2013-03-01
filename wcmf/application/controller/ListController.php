@@ -27,7 +27,6 @@ use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\UnknownFieldException;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\Obfuscator;
 
 /**
@@ -94,7 +93,7 @@ class ListController extends Controller {
    */
   protected function executeKernel() {
     $request = $this->getRequest();
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
 
     // unveil the query value if it is ofuscated
     $query = null;

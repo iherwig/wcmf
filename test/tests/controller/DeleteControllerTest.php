@@ -115,8 +115,8 @@ class DeleteControllerTest extends ControllerTestCase {
     $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE);
     $this->assertTrue(in_array($oid, $oids), $oid." still exists after deleting the translation");
 
-    $query = new ObjectQuery(Localization::getTranslationType());
-    $tpl = $query->getObjectTemplate(Localization::getTranslationType());
+    $query = new ObjectQuery('Translation');
+    $tpl = $query->getObjectTemplate('Translation');
     $tpl->setObjectid($oid);
     $translations = $query->execute(BuildDepth::SINGLE);
     $this->assertTrue(sizeof($translations) > 0, "Not all translations are deleted");

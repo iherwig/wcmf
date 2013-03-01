@@ -18,7 +18,7 @@ $config = new InifileConfiguration('./');
 $config->addConfiguration('config.ini');
 
 // get config values
-$localeDir = $config->getValue("localeDir", "cms");
+$localeDir = $config->getValue("localeDir", "application");
 $languages = $config->getValue("languages", "i18n");
 if (substr($localeDir, -1) != '/') {
   $localeDir .= '/';

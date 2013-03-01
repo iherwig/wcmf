@@ -19,6 +19,7 @@ namespace testapp\application\model;
 
 use testapp\application\model\EntityBaseBase;
 // PROTECTED REGION ID(testapp/application/model/EntityBase.php/Import) ENABLED START
+use wcmf\lib\core\ObjectFactory;
 // PROTECTED REGION END
 
 /**
@@ -30,6 +31,45 @@ use testapp\application\model\EntityBaseBase;
  */
 class EntityBase extends EntityBaseBase {
 // PROTECTED REGION ID(testapp/application/model/EntityBase.php/Body) ENABLED START
+  /**
+   * Set creator and created attribute on the node.
+   */
+  public function beforeInsert()
+  {
+    parent::beforeInsert();
+
+    // set creation date on nodes with appropriate attribute
+    if ($this->hasValue('created')) {
+      $this->setValue('created', date("Y-m-d H:i:s"));
+    }
+    // set creator on nodes with appropriate attribute
+    if ($this->hasValue('creator'))
+    {
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
+      $authUser = $permissionManager->getAuthUser();
+      $this->setValue('creator', $authUser->getLogin());
+    }
+    $this->beforeUpdate();
+  }
+  /**
+   * Set last_editor and modified attribute on the node.
+   */
+  public function beforeUpdate()
+  {
+    parent::beforeUpdate();
+
+    // set modified date on nodes with appropriate attribute
+    if ($this->hasValue('modified')) {
+      $this->setValue('modified', date("Y-m-d H:i:s"));
+    }
+    // set last_editor on nodes with appropriate attribute
+    if ($this->hasValue('last_editor'))
+    {
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
+      $authUser = $permissionManager->getAuthUser();
+      $this->setValue('last_editor', $authUser->getLogin());
+    }
+  }
 // PROTECTED REGION END
 }
 ?>

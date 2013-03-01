@@ -22,7 +22,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * TreeViewController is used to visualize cms data in a tree view.
@@ -129,7 +128,7 @@ class TreeViewController extends Controller {
   protected function getChildren($oid)
   {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
 
     $nodes = array();
     if ($oid != 'root' && ObjectId::isValidOID($oid)) {

@@ -26,7 +26,6 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * DisplayController is used to read a node.
@@ -80,7 +79,7 @@ class DisplayController extends Controller {
    */
   protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
     $request = $this->getRequest();
     $response = $this->getResponse();

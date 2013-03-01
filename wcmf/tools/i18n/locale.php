@@ -18,8 +18,8 @@ $config = new InifileConfiguration('./');
 $config->addConfiguration('config.ini');
 
 // get config values
+$localeDir = getConfigValue("localeDir", "application", true);
 $searchDir = getConfigValue("searchDir", "i18n", true);
-$localeDir = getConfigValue("localeDir", "cms", true);
 $languages = getConfigValue("languages", "i18n");
 
 $i18nUtil = new I18nUtil();

@@ -27,7 +27,6 @@ use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\Formatter;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * Default ActionMapper implementation.
@@ -59,7 +58,7 @@ class DefaultActionMapper implements ActionMapper {
     $this->_lastControllers[] = $referrer;
 
     $config = ObjectFactory::getConfigurationInstance();
-    $permissionManager = PermissionManager::getInstance();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
 
     // check authorization for controller/context/action triple
     if (!$permissionManager->authorize($referrer, $context, $action)) {
