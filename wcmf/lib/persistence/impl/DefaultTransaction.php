@@ -330,7 +330,7 @@ class DefaultTransaction implements Transaction {
    */
   protected function processUpdates() {
     $updateOids = array_keys($this->_dirtyObjects);
-    $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
+    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
     while (sizeof($updateOids) > 0) {
       $key = array_shift($updateOids);
       Log::info("Process update on object: ".$key, __CLASS__);
@@ -350,7 +350,7 @@ class DefaultTransaction implements Transaction {
    */
   protected function processDeletes() {
     $deleteOids = array_keys($this->_deletedObjects);
-    $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
+    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
     while (sizeof($deleteOids) > 0) {
       $key = array_shift($deleteOids);
       Log::info("Process delete on object: ".$key, __CLASS__);

@@ -25,11 +25,33 @@ use wcmf\lib\util\StringUtil;
 
 /**
  * ObjectFactory loads class definitions and instantiates classes.
- * TODO add a list of known entries and the required interfaces
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class ObjectFactory {
+
+  /**
+   * Interfaces that must be implemented by the given instances used
+   * in the framework.
+   */
+  private static $_requiredInterfaces = array(
+      'eventManager' =>       'wcmf\lib\core\EventManager',
+      'session' =>            'wcmf\lib\core\Session',
+      'configuration' =>      'wcmf\lib\config\Configuration',
+      'localization' =>       'wcmf\lib\i18n\Localization',
+      'persistenceFacade' =>  'wcmf\lib\persistence\PersistenceFacade',
+      'transaction' =>        'wcmf\lib\persistence\Transaction',
+      'concurrencyManager' => 'wcmf\lib\persistence\concurrency\ConcurrencyManager',
+      'actionMapper' =>       'wcmf\lib\presentation\ActionMapper',
+      'view' =>               'wcmf\lib\presentation\view\View',
+      'permissionManager' =>  'wcmf\lib\security\PermissionManager',
+      'userManager' =>        'wcmf\lib\security\UserManager',
+      'authUser' =>           'wcmf\lib\security\principal\AuthUser',
+
+      /*'formats' =>            'wcmf\lib\presentation\format\Format',*/
+      /*'controlRenderer' =>    'wcmf\lib\presentation\control\ControlRenderer',*/
+      /*'valueRenderer' =>      'wcmf\lib\presentation\renderer\ValueRenderer',*/
+  );
 
   /**
    * The registry for already created instances
@@ -66,7 +88,7 @@ class ObjectFactory {
       require_once($classFile);
     }
     else {
-      throw new ConfigurationException("Classfile ".$classFile." not found for classname: ".$className);
+      throw new ConfigurationException('Classfile \''.$classFile.'\' not found for classname: '.$className);
     }
   }
 
@@ -97,7 +119,7 @@ class ObjectFactory {
     // check if the instance is registered already
     if (!isset(self::$_instances[$name])) {
       if (self::$_configuration == null) {
-        throw new ConfigurationException("No Configuration instance provided. Do this by calling the configure() method.");
+        throw new ConfigurationException('No Configuration instance provided. Do this by calling the configure() method.');
       }
       // load class definition
       $instanceConfig = self::$_configuration->getSection($name);
@@ -163,6 +185,12 @@ class ObjectFactory {
       if (class_exists($className)) {
         // create the instance
         $obj = new $className;
+        // check against interface
+        $interface = self::getInterface($name);
+        if ($interface != null && !($obj instanceof $interface)) {
+          throw new ConfigurationException('Class \''.$className.
+                  '\' is required to implement interface \''.$interface.'\'.');
+        }
         // set the instance properties
         foreach ($configuration as $key => $value) {
           // exclude properties starting with __
@@ -201,7 +229,7 @@ class ObjectFactory {
         $instance = $obj;
       }
       else {
-        throw new ConfigurationException("Class ".$className." is not found.");
+        throw new ConfigurationException('Class \''.$className.'\' is not found.');
       }
     }
     else {
@@ -217,6 +245,18 @@ class ObjectFactory {
       $instance = $configuration;
     }
     return $instance;
+  }
+
+  /**
+   * Get the interface that is required to be implemented by the given instance
+   * @param name The name of the instance
+   * @return Interface or null, if undefined
+   */
+  protected static function getInterface($name) {
+    if (isset(self::$_requiredInterfaces[$name])) {
+      return self::$_requiredInterfaces[$name];
+    }
+    return null;
   }
 }
 ?>

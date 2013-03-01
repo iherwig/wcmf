@@ -95,8 +95,7 @@ class RemotingFacade {
     if (!isset($this->_users[$serverKey])) {
       $config = ObjectFactory::getConfigurationInstance();
       $remoteLogin = $config->getValue($serverKey, 'remoteuser');
-      $objectFactory = ObjectFactory::getInstance();
-      $userManager = $objectFactory->getInstance('userManager');
+      $userManager = ObjectFactory::getInstance('userManager');
       $user = $userManager->getUser($remoteLogin);
       if ($user != null) {
         $this->_users[$serverKey] = $user;

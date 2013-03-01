@@ -64,7 +64,7 @@ class ConcurrencyController extends Controller
    */
   function executeKernel()
   {
-    $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
+    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
     $oid = $this->_request->getValue('oid');
 
     // process actions

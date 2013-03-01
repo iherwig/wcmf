@@ -61,7 +61,7 @@ class LockingTest extends DatabaseTestCase {
     // lock
     $sid1 = TestUtil::startSession('user1', 'user1');
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
-    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
+    ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
     TestUtil::endSession();
 
@@ -72,7 +72,7 @@ class LockingTest extends DatabaseTestCase {
     $sid2 = TestUtil::startSession('user1', 'user1');
     $this->assertNotEquals($sid1, $sid2);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
-    ObjectFactory::getInstance('concurrencymanager')->releaseLock($oid);
+    ObjectFactory::getInstance('concurrencyManager')->releaseLock($oid);
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
     TestUtil::endSession();
 
@@ -88,14 +88,14 @@ class LockingTest extends DatabaseTestCase {
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
-    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
+    ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
     TestUtil::endSession();
 
     // user 2 tries to lock the object
     $sid2 = TestUtil::startSession('user2', 'user2');
     try {
-      ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
+      ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     }
     catch (PessimisticLockException $ex) {
       // check if no lock was aquired
@@ -114,7 +114,7 @@ class LockingTest extends DatabaseTestCase {
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
-    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
+    ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
     TestUtil::endSession();
 
@@ -147,7 +147,7 @@ class LockingTest extends DatabaseTestCase {
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
-    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
+    ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
     TestUtil::endSession();
 
@@ -178,7 +178,7 @@ class LockingTest extends DatabaseTestCase {
     $transaction1 = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction1->begin();
     $object1 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object1);
+    ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object1);
     $newFirstname = time();
     $object1->setFirstname($newFirstname);
     $transaction1->commit();
@@ -200,7 +200,7 @@ class LockingTest extends DatabaseTestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
+    ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
     $originalFirstname = $object->getFirstname();
     $object->setFirstname($originalFirstname.'modified');
 
@@ -231,7 +231,7 @@ class LockingTest extends DatabaseTestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-    ObjectFactory::getInstance('concurrencymanager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
+    ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
     $originalFirstname = $object->getFirstname();
     $object->setFirstname($originalFirstname.'modified');
 

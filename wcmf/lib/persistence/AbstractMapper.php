@@ -219,7 +219,7 @@ abstract class AbstractMapper {
       $object->afterDelete();
 
       // release any locks on the object
-      $concurrencyManager = ObjectFactory::getInstance('concurrencymanager');
+      $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
       $concurrencyManager->releaseLocks($oid);
     }
     return $result;
