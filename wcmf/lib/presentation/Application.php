@@ -35,8 +35,6 @@ use wcmf\lib\presentation\Request;
  */
 class Application {
 
-  private static $_instance = null;
-
   private $_requestValues = array();
   private $_rawPostBody = null;
   private $_rawPostBodyIsJson = false;

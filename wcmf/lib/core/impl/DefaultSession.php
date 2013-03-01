@@ -27,7 +27,6 @@ use wcmf\lib\core\Session;
  */
 class DefaultSession implements Session {
 
-  private static $_instance = null;
   private static $ERROR_VARNAME = 'Session.errors';
 
   public function __construct() {
@@ -94,7 +93,6 @@ class DefaultSession implements Session {
   public function destroy() {
     $_SESSION = array();
     @session_destroy();
-    self::$_instance = null;
   }
 
   /**
