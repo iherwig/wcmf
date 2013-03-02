@@ -3,9 +3,9 @@
     {configvalue section="cms" key="libDir" varname="libDir"}
   <script type="text/javascript">
 
-    var CKEDITOR_BASEPATH = '{$libDir}3rdparty/ckeditor/';
+    var CKEDITOR_BASEPATH = '{$libDir}vendor/ckeditor/';
   </script>
-  <script type="text/javascript" src="{$libDir}3rdparty/ckeditor/ckeditor.js"></script>
+  <script type="text/javascript" src="{$libDir}vendor/ckeditor/ckeditor.js"></script>
   {/if}
 
   {$validationString=''}

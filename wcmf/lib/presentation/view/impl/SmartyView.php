@@ -21,7 +21,7 @@ namespace wcmf\lib\presentation\view\impl;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\view\View;
 
-require_once(WCMF_BASE."wcmf/3rdparty/smarty/libs/Smarty.class.php");
+require_once(WCMF_BASE."wcmf/vendor/smarty/libs/Smarty.class.php");
 
 /**
  * View is used by Controller to handle the view presentation in MVC pattern.
@@ -54,7 +54,7 @@ class SmartyView extends \Smarty implements View
     $this->caching = $caching;
     $this->cache_lifetime = $cacheLifetime;
     $this->plugins_dir = array(
-      WCMF_BASE.'wcmf/3rdparty/smarty/libs/plugins/',
+      WCMF_BASE.'wcmf/vendor/smarty/libs/plugins/',
       WCMF_BASE.'wcmf/lib/presentation/smarty_plugins/'
     );
     if ($debugView) {

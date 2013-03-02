@@ -22,10 +22,10 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\URIUtil;
 
-include_once(WCMF_BASE."wcmf/3rdparty/elfinder/php/elFinderConnector.class.php");
-include_once(WCMF_BASE."wcmf/3rdparty/elfinder/php/elFinder.class.php");
-include_once(WCMF_BASE."wcmf/3rdparty/elfinder/php/elFinderVolumeDriver.class.php");
-include_once(WCMF_BASE."wcmf/3rdparty/elfinder/php/elFinderVolumeLocalFileSystem.class.php");
+include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinderConnector.class.php");
+include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinder.class.php");
+include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinderVolumeDriver.class.php");
+include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinderVolumeLocalFileSystem.class.php");
 
 /**
  * ElFinderController integrates elFinder (http://elrte.org/elfinder)

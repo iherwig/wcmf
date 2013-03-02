@@ -11,16 +11,16 @@
 
     <!-- Le styles -->
 
-    <link href="{$libDir}3rdparty/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="{$libDir}vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
     <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
-    <link href="{$libDir}3rdparty/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="{$libDir}vendor/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
-    <link href="{$libDir}3rdparty/dojo/dijit/themes/claro/claro.css" rel="stylesheet">
-    <link href="{$libDir}3rdparty/dojo/dgrid/css/skins/claro.css" rel="stylesheet">
+    <link href="{$libDir}vendor/dojo/dijit/themes/claro/claro.css" rel="stylesheet">
+    <link href="{$libDir}vendor/dojo/dgrid/css/skins/claro.css" rel="stylesheet">
 
     <link href="style/wcmf.css" rel="stylesheet">
 
@@ -81,9 +81,9 @@
         }
       } : {};
     </script>
-    <script src="{$libDir}3rdparty/dojo/dojo/dojo.js" data-dojo-config="parseOnLoad:false, isDebug:true"></script>
-    <script src="{$libDir}3rdparty/jquery/jquery.js"></script>
-    <script src="{$libDir}3rdparty/bootstrap/js/bootstrap.js"></script>
+    <script src="{$libDir}vendor/dojo/dojo/dojo.js" data-dojo-config="parseOnLoad:false, isDebug:true"></script>
+    <script src="{$libDir}vendor/jquery/jquery.js"></script>
+    <script src="{$libDir}vendor/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="js.php?file={$libDir}application/js/net/sourceforge/wcmf/Message.js.php&lang={$lang}"></script>
     <script type="text/javascript">
       /**

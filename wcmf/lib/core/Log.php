@@ -22,7 +22,7 @@ use wcmf\lib\config\ConfigurationException;
 
 use \Logger;
 
-require_once(WCMF_BASE."wcmf/3rdparty/log4php/Logger.php");
+require_once(WCMF_BASE."wcmf/vendor/log4php/Logger.php");
 
 /**
  * Log is used to log application events. The implementation

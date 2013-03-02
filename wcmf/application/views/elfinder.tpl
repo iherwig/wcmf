@@ -1,6 +1,6 @@
 {configvalue key="libDir" section="cms" varname="libDir"}
 {configvalue key="language" section="cms" varname="lang"}
-{$elFinderBaseDir=$libDir|cat:"3rdparty/elfinder/"}
+{$elFinderBaseDir=$libDir|cat:"vendor/elfinder/"}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
   "http://www.w3.org/TR/html4/strict.dtd">

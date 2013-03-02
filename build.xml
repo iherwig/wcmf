@@ -1,0 +1,6 @@
+<project name="wCMF" default="redist" basedir=".">
+
+    <property file="build.properties"/>
+	<!-- TODO: wcmf build, build boilerplate from testapp -->
+
+</project>

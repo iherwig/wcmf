@@ -17,7 +17,7 @@
  * $Id: modifier.textile.php 1148 2010-02-09 02:08:44Z iherwig $
  */
  namespace wcmf\lib\presentation\smarty_plugins;
- 
+
 /*
 * Smarty plugin
 * -------------------------------------------------------------
@@ -28,7 +28,7 @@
 * Usage:    e.g. {$text|textile}
 * -------------------------------------------------------------
 */
-require_once(WCMF_BASE."wcmf/3rdparty/textile/classTextile.php");
+require_once(WCMF_BASE."wcmf/vendor/textile/classTextile.php");
 
 function smarty_modifier_textile($text)
 {

@@ -1,0 +1,12 @@
+[submodule "testapp/public/js/vendor/dojo/dojo"]
+	path = testapp/public/js/vendor/dojo/dojo
+	url = git://github.com/dojo/dojo.git
+[submodule "testapp/public/js/vendor/dojo/dijit"]
+	path = testapp/public/js/vendor/dojo/dijit
+	url = git://github.com/dojo/dijit.git
+[submodule "testapp/public/js/vendor/dojo/dojox"]
+	path = testapp/public/js/vendor/dojo/dojox
+	url = git://github.com/dojo/dojox.git
+[submodule "testapp/public/js/vendor/dojo/util"]
+	path = testapp/public/js/vendor/dojo/util
+	url = git://github.com/dojo/util.git

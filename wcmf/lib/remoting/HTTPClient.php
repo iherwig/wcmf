@@ -26,7 +26,7 @@ use wcmf\lib\presentation\format\Formatter;
 
 $includePath = get_include_path();
 if (strpos($includePath, 'Zend') === false) {
-  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/3rdparty/zend');
+  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/vendor/zend');
 }
 require_once('Zend/Http/Client.php');
 
