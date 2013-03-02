@@ -1,38 +1,116 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
-    <title>Dojo Boilerplate</title>
-    <!-- Application-specific CSS should be stored in your application’s package to ensure portability and to allow
-         the build system to combine & minify it. -->
-    <link rel="stylesheet" href="css/app.css">
-</head>
-<body class="claro">
-    <!-- dojo.js is an AMD-compliant loader script. It accepts configuration either from a data-dojo-config attribute,
-         as shown here, from a global dojoConfig object (which must be defined *before* dojo.js is loaded), or from
-         a global require object.
+    <title>wCMF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-         Configuration options for the loader can be viewed at http://dojotoolkit.org/reference-guide/loader/amd.html
-         along with a bunch of additional information about its features.
+    <link href="css/app.css" rel="stylesheet" media="screen">
 
-         Below, we’re doing the following:
+    <script>
+      document.write('<style media="all">#static { display: none; }</style>');
+    </script>
+  </head>
 
-         1. Enabling the AMD loader. (async: 1)
-         2. Fixing the loader to use normal AMD resolution of unregistered module paths (relative to baseDir)
-            instead of the traditional Dojo resolution method (relative to the parent of baseDir).
-            (tlmSiblingOfDojo: 0)
-         3. Enabling debugging. (isDebug: 1)
+  <body>
 
-         The remainder of Dojo configuration, as well as our application’s instantiation, occurs within
-         app/run.js.
+    <!-- Part 1: Wrap all page content here -->
+    <div id="wrap">
 
-		 NOTE: `build.sh` is responsible for removing the "isDebug" flag when deploying to production. If you modify
-		 this flag at all, you will break the build! -->
-    <script data-dojo-config="async: 1, tlmSiblingOfDojo: 0, isDebug: 1" src="js/vendor/dojo/dojo/dojo.js"></script>
+      <!-- Title page head -->
+      <!--div class="masthead">
+        <h3 class="muted">wCMF TestApp</h3>
+      </div-->
 
-    <!-- Load the loader configuration script. Note that this module ID is hard-coded in build.sh in order to provide
-         an optimised build that loads as few as one script for the entire application. If you change the name or
-         location of this module, you will need to update build.sh too. -->
-    <script src="js/run.js"></script>
-</body>
+      <!-- Fixed navbar -->
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <span class="brand">wCMF TestApp</span>
+            <!--div class="nav-collapse collapse">
+              <ul class="nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li class="nav-header">Nav header</li>
+                    <li><a href="#">Separated link</a></li>
+                    <li><a href="#">One more separated link</a></li>
+                  </ul>
+                </li>
+              </ul>
+              <ul class="nav pull-right">
+                <li></li>
+              </ul>
+            </div-->
+          </div>
+        </div>
+      </div>
+
+      <!-- Begin page content -->
+      <div class="container">
+
+        <div id="static" class="alert alert-error">
+          <strong>Warning!</strong> Please enable JavaScript in your browser.
+        </div>
+
+        <form class="form-login">
+          <h2 class="form-login-heading">Please log in</h2>
+          <input type="text" class="input-block-level" placeholder="Login">
+          <input type="password" class="input-block-level" placeholder="Password">
+          <label class="checkbox">
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+          <button class="btn btn-primary pull-right" type="submit">Log in</button>
+          <span class="clearfix"></span>
+        </form>
+      </div>
+
+      <div id="push"></div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="pull-right muted">created with
+          <a href="http://sourceforge.net/projects/wcmf/" target="_blank">wCMF</a></p>
+        <p class="muted">&copy; 2013</p>
+      </div>
+    </div>
+
+    <script>
+      var dojoConfig = {
+        baseUrl: '',
+        async: 1,
+        tlmSiblingOfDojo: 0,
+        isDebug: 1,
+        packages: [
+          { name: 'dojo', location: 'vendor/dojo/dojo', map: {} },
+          { name: 'dijit', location: 'vendor/dojo/dijit', map: {} },
+          { name: 'dojox', location: 'vendor/dojo/dojox', map: {} },
+          { name: 'bootstrap', location: 'vendor/dojo-bootstrap' },
+
+          { name: 'app', location: 'js', map: {} }
+        ]
+       };
+     </script>
+
+    <script src="vendor/dojo/dojo/dojo.js"></script>
+
+    <!--script>
+      require(['app']);
+    </script-->
+  </body>
 </html>

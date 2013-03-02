@@ -1,10 +1,60 @@
-/**
- * If you are developing a project that makes use of Dijit widgets, you will probably want to include the two files
- * below; otherwise, you can remove them. When building for release, Dojo will automatically combine all of your
- * @imported CSS files into a single file.
- *
- * It is highly, highly recommended that you develop your CSS using Stylus: http://learnboost.github.com/stylus/.
- */
+/*@import '../vendor/dojo/dojo/resources/dojo.css';*/
+/*@import '../vendor/dojo/dijit/themes/claro/claro.css';*/
+@import '../vendor/twitter-bootstrap/css/bootstrap.css';
+@import '../vendor/twitter-bootstrap/css/bootstrap-responsive.css';
 
-@import '../js/vendor/dojo/dojo/resources/dojo.css';
-@import '../js/vendor/dojo/dijit/themes/claro/claro.css';
+/* Sticky footer styles
+-------------------------------------------------- */
+
+html,
+body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+  background-color: #f5f5f5;
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -30px;
+}
+
+/* Set the fixed height of the footer here */
+#push,
+#footer {
+  height: 30px;
+}
+#footer {
+  background-color: #f5f5f5;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+  #footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+#wrap > .container {
+  padding-top: 60px;
+}
+
+.form-login {
+  max-width: 300px;
+  padding: 19px 29px 29px;
+  margin: 0 auto 20px;
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+          border-radius: 5px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+          box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}

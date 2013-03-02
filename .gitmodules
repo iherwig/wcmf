@@ -1,12 +1,18 @@
-[submodule "testapp/public/js/vendor/dojo/dojo"]
-	path = testapp/public/js/vendor/dojo/dojo
+[submodule "testapp/public/vendor/dojo/dojo"]
+	path = testapp/public/vendor/dojo/dojo
 	url = git://github.com/dojo/dojo.git
-[submodule "testapp/public/js/vendor/dojo/dijit"]
-	path = testapp/public/js/vendor/dojo/dijit
+[submodule "testapp/public/vendor/dojo/dijit"]
+	path = testapp/public/vendor/dojo/dijit
 	url = git://github.com/dojo/dijit.git
-[submodule "testapp/public/js/vendor/dojo/dojox"]
-	path = testapp/public/js/vendor/dojo/dojox
+[submodule "testapp/public/vendor/dojo/dojox"]
+	path = testapp/public/vendor/dojo/dojox
 	url = git://github.com/dojo/dojox.git
-[submodule "testapp/public/js/vendor/dojo/util"]
-	path = testapp/public/js/vendor/dojo/util
+[submodule "testapp/public/vendor/dojo/util"]
+	path = testapp/public/vendor/dojo/util
 	url = git://github.com/dojo/util.git
+[submodule "testapp/public/vendor/dojo-bootstrap"]
+	path = testapp/public/vendor/dojo-bootstrap
+	url = git://github.com/xsokev/Dojo-Bootstrap.git
+[submodule "testapp/public/vendor/twitter-bootstrap"]
+	path = testapp/public/vendor/twitter-bootstrap
+	url = git://github.com/twitter/bootstrap.git
