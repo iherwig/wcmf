@@ -13,3 +13,9 @@
 [submodule "testapp/public/vendor/dojo/util"]
 	path = testapp/public/vendor/dojo/util
 	url = git://github.com/dojo/util.git
+[submodule "testapp/public/vendor/dojomat"]
+	path = testapp/public/vendor/dojomat
+	url = git://github.com/sirprize/dojomat.git
+[submodule "testapp/public/vendor/routed"]
+	path = testapp/public/vendor/routed
+	url = git://github.com/sirprize/routed.git

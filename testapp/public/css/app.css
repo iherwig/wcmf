@@ -13,6 +13,10 @@ body {
   background-color: #f5f5f5;
 }
 
+#page {
+  height: 100%;
+}
+
 /* Wrapper for page content to push down footer */
 #wrap {
   min-height: 100%;
