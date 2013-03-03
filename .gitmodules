@@ -1,3 +1,6 @@
+[submodule "testapp/public/vendor/dojo-bootstrap"]
+	path = testapp/public/vendor/dojo-bootstrap
+	url = git://github.com/xsokev/Dojo-Bootstrap.git
 [submodule "testapp/public/vendor/dojo/dojo"]
 	path = testapp/public/vendor/dojo/dojo
 	url = git://github.com/dojo/dojo.git
@@ -10,9 +13,3 @@
 [submodule "testapp/public/vendor/dojo/util"]
 	path = testapp/public/vendor/dojo/util
 	url = git://github.com/dojo/util.git
-[submodule "testapp/public/vendor/dojo-bootstrap"]
-	path = testapp/public/vendor/dojo-bootstrap
-	url = git://github.com/xsokev/Dojo-Bootstrap.git
-[submodule "testapp/public/vendor/twitter-bootstrap"]
-	path = testapp/public/vendor/twitter-bootstrap
-	url = git://github.com/twitter/bootstrap.git

@@ -19,16 +19,19 @@ body {
   height: auto !important;
   height: 100%;
   /* Negative indent footer by it's height */
-  margin: 0 auto -30px;
+  margin: 0 auto -40px;
 }
 
 /* Set the fixed height of the footer here */
 #push,
 #footer {
-  height: 30px;
+  height: 40px;
 }
 #footer {
-  background-color: #f5f5f5;
+  background-color: #2f2f2f;
+}
+#footer p {
+  margin-top: 10px;
 }
 
 /* Lastly, apply responsive CSS fixes as necessary */
@@ -42,7 +45,7 @@ body {
 }
 
 #wrap > .container {
-  padding-top: 60px;
+  padding-top: 80px;
 }
 
 .form-login {
@@ -50,7 +53,7 @@ body {
   padding: 19px 29px 29px;
   margin: 0 auto 20px;
   background-color: #fff;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #d5d5d5;
   -webkit-border-radius: 5px;
      -moz-border-radius: 5px;
           border-radius: 5px;
