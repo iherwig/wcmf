@@ -50,7 +50,7 @@
         <strong>Warning!</strong> Please enable JavaScript in your browser.
       </div>
 
-      <div id="message" class="alert alert-error" style="display:none">
+      <div id="error" class="alert alert-error" style="display:none">
       </div>
 
       <form class="form-login" id="loginForm">
@@ -60,7 +60,7 @@
         <label class="checkbox">
           <input type="checkbox" value="remember-me"> Remember me
         </label>
-        <button class="btn btn-primary pull-right" type="submit" data-dojo-attach-event="onClick:_login">Log in</button>
+        <button class="btn btn-primary pull-right" type="submit" data-loading-text="Logging in..." data-dojo-attach-event="onClick:_login">Log in</button>
         <span class="clearfix"></span>
       </form>
     </div>

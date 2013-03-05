@@ -4,14 +4,14 @@ define([
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
-    "dojo",
+    "bootstrap/Button",
     "dojo/_base/lang",
-    "dojo/dom",
     "dojo/dom-attr",
     "dojo/dom-form",
     "dojo/query",
     "dojo/request",
     "dojo/on",
+    "app/Error",
     "dojo/text!./template/LoginPage.html"
 ], function (
     declare,
@@ -19,14 +19,14 @@ define([
     _TemplatedMixin,
     _AppAware,
     _StateAware,
-    dojo,
+    button,
     lang,
-    dom,
     domAttr,
     domForm,
     query,
     request,
     on,
+    error,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware], {
@@ -74,13 +74,15 @@ define([
             data.action = 'dologin';
             data.responseFormat = 'json';
 
+            query('.btn').button('loading');
+            error.hide();
             request.post('../main.php?XDEBUG_SESSION_START=netbeans-xdebug', {
-                data: data
+                data: data,
+                handleAs: 'json'
 
             }).then(function(response){
-                var messageNode = dom.byId('message');
-                messageNode.innerHTML = response;
-                dojo.style(messageNode, 'display', '')
+                query('.btn').button('reset');
+                error.show(response.errorMessage);
             });
         }
     });
