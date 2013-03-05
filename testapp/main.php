@@ -22,6 +22,7 @@ require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
 use \Exception;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Application;
 
 $application = new Application();

@@ -24,7 +24,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\control\Control;
+use wcmf\lib\presentation\control\ControlRenderer;
 use wcmf\lib\presentation\format\impl\AbstractFormat;
 use wcmf\lib\util\Obfuscator;
 
@@ -54,7 +54,7 @@ class HtmlFormat extends AbstractFormat {
     $data = $request->getValues();
     $nodeValues = array();
     foreach ($data as $key => $value) {
-      $valueDef = Control::getValueDefFromInputControlName($key);
+      $valueDef = ControlRenderer::getValueDefFromInputControlName($key);
       if ($valueDef != null && strlen($valueDef['oid']) > 0) {
         $node = &$this->getNode($valueDef['oid']);
         $node->setValue($valueDef['name'], $value);

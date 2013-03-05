@@ -19,7 +19,7 @@
 namespace wcmf\lib\presentation;
 
 use \Exception;
-use wcmf\lib\config\InifileConfiguration;
+use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;

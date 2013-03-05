@@ -64,7 +64,7 @@ class LoginController extends Controller {
       $request->clearValues();
     }
     $config = ObjectFactory::getConfigurationInstance();
-    $this->_anonymous = $config->getValue('anonymous', 'application');
+    $this->_anonymous = $config->getBooleanValue('anonymous', 'application');
 
     parent::initialize($request, $response);
   }
@@ -84,8 +84,8 @@ class LoginController extends Controller {
         $invalidParameters[] = 'password';
       }
 
-      if (sizeof($invalidParameters) > 0)
-      {
+      if (sizeof($invalidParameters) > 0) {
+        Log::error("invalid parameters", __CLASS__);
         $response->addError(ApplicationError::get('PARAMETER_INVALID',
           array('invalidParameters' => $invalidParameters)));
         return false;
@@ -179,6 +179,7 @@ class LoginController extends Controller {
       }
       else {
         // login failed
+        Log::error("ADD ERROR", __CLASS__);
         $response->addError(ApplicationError::get('AUTHENTICATION_FAILED'));
         return false;
       }

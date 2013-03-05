@@ -99,7 +99,7 @@ class Formatter {
         if (!($instance instanceof Format)) {
           throw new ConfigurationException(get_class($instance)." must implement Format.");
         }
-        self::$_formats[strtolower($formatName)] = $instance;
+        self::$_formats[strtolower($name)] = $instance;
       }
     }
     if (isset(self::$_formats[$formatName])) {
