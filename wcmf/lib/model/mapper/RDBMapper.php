@@ -101,6 +101,15 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
+   * Get the connection parameters.
+   * @return Assoziative array with the following keys:
+   *               dbType, dbHostName, dbUserName, dbPassword, dbName, dbPrefix
+   */
+  public function getConnectionParams() {
+    return $this->_connectionParams;
+  }
+
+  /**
    * Actually connect to the database using the configuration parameters given
    * to the constructor. The implementation ensures that only one connection is
    * used for all RDBMappers with the same configuration parameters.

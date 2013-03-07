@@ -1,2 +1,4 @@
 /test/model/log.txt
 /test/model/model-transformed
+
+/testapp/log/*.log

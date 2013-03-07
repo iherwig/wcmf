@@ -21,7 +21,7 @@ error_reporting(E_ERROR | E_PARSE);
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
-use wcmf\lib\config\InifileConfiguration;
+use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
@@ -33,10 +33,9 @@ Log::info("initializing wCMF database tables...", "install");
 
 // get configuration from file
 $configPath = realpath('../config/').'/';
-$configFile = $configPath.'config.ini';
-Log::info("configuration file: ".$configFile, "install");
 $config = new InifileConfiguration($configPath);
-$config->addConfiguration($configFile);
+$config->addConfiguration('config.ini');
+ObjectFactory::configure($config);
 
 $permissionManager = ObjectFactory::getInstance('permissionManager');
 $permissionManager->deactivate();
@@ -47,9 +46,9 @@ $transaction = $persistenceFacade->getTransaction();
 $transaction->begin();
 try {
   // initialize database sequence, create default user/role
-  if(sizeof($persistenceFacade->getOIDs("Adodbseq")) == 0) {
+  if(sizeof($persistenceFacade->getOIDs("DBSequence")) == 0) {
     Log::info("initializing database sequence...", "install");
-    $seq = $persistenceFacade->create("Adodbseq", BuildDepth::SINGLE);
+    $seq = $persistenceFacade->create("DBSequence", BuildDepth::SINGLE);
     $seq->setValue("id", 1);
   }
 

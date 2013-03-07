@@ -22,7 +22,7 @@ error_reporting(E_ERROR | E_PARSE);
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
 use \Exception;
-use wcmf\lib\config\InifileConfiguration;
+use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
@@ -33,10 +33,9 @@ Log::info("updating wCMF database tables...", "dbupdate");
 
 // get configuration from file
 $configPath = realpath('../config/').'/';
-$configFile = $configPath.'config.ini';
-Log::info("configuration file: ".$configFile, "dbupdate");
 $config = new InifileConfiguration($configPath);
-$config->addConfiguration($configFile);
+$config->addConfiguration('config.ini');
+ObjectFactory::configure($config);
 
 if (!ensureDatabases($config)) {
   exit();
@@ -47,11 +46,9 @@ $tables = array();
 $readingTable = false;
 $tableDef = '';
 $lines = file('tables.sql');
-foreach($lines as $line)
-{
+foreach($lines as $line) {
   $line = trim($line);
-  if(strlen($line) > 0)
-  {
+  if(strlen($line) > 0) {
     // check table start
     if (preg_match('/CREATE\s+TABLE/', $line)) {
       // table definition
@@ -62,8 +59,7 @@ foreach($lines as $line)
       $tableDef .= $line."\n";
     }
     // check table end
-    if ($readingTable && strpos($line, ';') !== false)
-    {
+    if ($readingTable && strpos($line, ';') !== false) {
       // end table definition
       $readingTable = false;
       processTableDef($tableDef, $tables);
@@ -74,15 +70,13 @@ foreach($lines as $line)
 
 // process table definitions
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-foreach ($tables as $tableDef)
-{
+foreach ($tables as $tableDef) {
   Log::info(("processing table ".$tableDef['name']."..."), "dbupdate");
   $mapper = $persistenceFacade->getMapper($tableDef['entityType']);
   $connection = $mapper->getConnection();
   $connection->beginTransaction();
 
-  if (ensureUpdateTable($connection))
-  {
+  if (ensureUpdateTable($connection)) {
     $oldValue = getOldValue($connection, $tableDef['id'], null, 'table');
     $oldColumns = getMetaData($connection, $tableDef['name']);
 
@@ -91,10 +85,8 @@ foreach ($tables as $tableDef)
       // the table has no update entry and does not exist
       createTable($connection, $tableDef);
     }
-    else
-    {
-      if ($oldValue != null && $oldColumns === null)
-      {
+    else {
+      if ($oldValue != null && $oldColumns === null) {
         // the old table needs to be renamed
         alterTable($connection, $oldValue['table'], $tableDef['name']);
         $oldColumns = getMetaData($connection, $tableDef['name']);
@@ -109,12 +101,10 @@ foreach ($tables as $tableDef)
 }
 
 // execute custom scripts from the directory 'custom-dbupdate'
-if (is_dir('custom-dbupdate'))
-{
+if (is_dir('custom-dbupdate')) {
   $sqlScripts = FileUtil::getFiles('custom-dbupdate', '/[^_]+_.*\.sql$/', true);
   sort($sqlScripts);
-  foreach ($sqlScripts as $script)
-  {
+  foreach ($sqlScripts as $script) {
     // extract the initSection from the filename
     $initSection = array_shift(preg_split('/_/', basename($script)));
     DBUtil::executeScript($script, $initSection);
@@ -129,25 +119,26 @@ Log::info("done.", "dbupdate");
  * @param parser The inifile parser
  * @return True/False
  */
-function ensureDatabases($parser)
-{
-  $requiredInikeys = array('dbHostName', 'dbName', 'dbUserName', 'dbPassword', 'dbType');
+function ensureDatabases() {
   $createdDatabases = array();
   // check all initparams sections for database connections
-  $initSections = array_values($parser->getSection('initparams'));
-  foreach ($initSections as $sectionName)
-  {
-    $sectionData = $parser->getSection($sectionName);
-    if (sizeof(array_intersect($requiredInikeys, array_keys($sectionData))) == 5)
-    {
-      // the section contains the required database connection parameters
-      if (strtolower($sectionData['dbType']) == 'mysql')
+  $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+  foreach ($persistenceFacade->getKnownTypes() as $type) {
+    $mapper = $persistenceFacade->getMapper($type);
+    if ($mapper instanceof wcmf\lib\model\mapper\RDBMapper) {
+      $connectionParams = $mapper->getConnectionParams();
+      if (strtolower($connectionParams['dbType']) == 'mysql')
       {
-        $dbKey = join(':', array_values($sectionData));
+        $dbKey = join(':', array_values($connectionParams));
         if (!in_array($dbKey, $createdDatabases))
         {
-          Log::info('Creating database '.$sectionData['dbName'], "dbupdate");
-          DBUtil::createDatabase($sectionData['dbName'], $sectionData['dbHostName'], $sectionData['dbUserName'], $sectionData['dbPassword']);
+          Log::info('Creating database '.$connectionParams['dbName'], "dbupdate");
+          DBUtil::createDatabase(
+                  $connectionParams['dbName'],
+                  $connectionParams['dbHostName'],
+                  $connectionParams['dbUserName'],
+                  $connectionParams['dbPassword']
+          );
           $createdDatabases[] = $dbKey;
         }
       }
@@ -161,8 +152,7 @@ function ensureDatabases($parser)
  * @param connection The database connection
  * @return True/False
  */
-function ensureUpdateTable(&$connection)
-{
+function ensureUpdateTable($connection) {
   try {
     $connection->query('SELECT count(*) FROM dbupdate');
   }
@@ -188,25 +178,21 @@ function ensureUpdateTable(&$connection)
  * @param type 'table' or 'column'
  * @return An array with keys 'table' and 'column' or null if not stored
  */
-function getOldValue(&$connection, $tableId, $columnId, $type)
-{
+function getOldValue($connection, $tableId, $columnId, $type) {
   $result = null;
-  if ($type == 'column')
-  {
+  if ($type == 'column') {
     // selection for columns
     $st = $connection->prepare('SELECT * FROM `dbupdate` WHERE `table_id`=? AND `column_id`=? AND `type`=\'column\'');
     $st->execute(array($tableId, $columnId));
     $result = $st->fetchAll(PDO::FETCH_ASSOC);
   }
-  else
-  {
+  else {
     // selection for tables
     $st = $connection->prepare('SELECT * FROM `dbupdate` WHERE `table_id`=? AND `type`=\'table\'');
     $st->execute(array($tableId));
     $result = $st->fetchAll(PDO::FETCH_ASSOC);
   }
-  if (sizeof($result) > 0)
-  {
+  if (sizeof($result) > 0) {
     $data = $result[0];
     return array('table' => $data['table'], 'column' => $data['column']);
   }
@@ -222,18 +208,15 @@ function getOldValue(&$connection, $tableId, $columnId, $type)
  * @param table The table name
  * @param column The column name
  */
-function updateValue(&$connection, $tableId, $columnId, $type, $table, $column)
-{
+function updateValue($connection, $tableId, $columnId, $type, $table, $column) {
   $oldValue = getOldValue($connection, $tableId, $columnId, $type);
   $result = false;
   try {
-    if ($oldValue === null)
-    {
+    if ($oldValue === null) {
       $st = $connection->prepare('INSERT INTO `dbupdate` (`table_id`, `column_id`, `type`, `table`, `column`, `updated`) VALUES (?, ?, ?, ?, ?, ?)');
       $result = $st->execute(array($tableId, $columnId, $type, $table, $column, date("Y-m-d H:i:s")));
     }
-    else
-    {
+    else {
       $st = $connection->prepare('UPDATE `dbupdate` SET `table`=?, `column`=?, `updated`=? WHERE `table_id`=? AND `column_id`=? AND `type`=?');
       $result = $st->execute(array($table, $column, date("Y-m-d H:i:s"), $tableId, $columnId, $type));
     }
@@ -248,11 +231,9 @@ function updateValue(&$connection, $tableId, $columnId, $type, $table, $column)
  * @param connection The database connection
  * @param tableDef The table definition array as provided by processTableDef
  */
-function updateEntry($connection, $tableDef)
-{
+function updateEntry($connection, $tableDef) {
   updateValue($connection, $tableDef['id'], '-', 'table', $tableDef['name'], '-');
-  foreach ($tableDef['columns'] as $columnDef)
-  {
+  foreach ($tableDef['columns'] as $columnDef) {
     if ($columnDef['id']) {
       updateValue($connection, $tableDef['id'], $columnDef['id'], 'column', $tableDef['name'], $columnDef['name']);
     }
@@ -264,8 +245,7 @@ function updateEntry($connection, $tableDef)
  * @param connection The database connection
  * @param tableDef The table definition array as provided by processTableDef
  */
-function createTable(&$connection, $tableDef)
-{
+function createTable($connection, $tableDef) {
   Log::info("> create table '".$tableDef['name']."'", "dbupdate");
   $sql = $tableDef['create'];
   try {
@@ -282,8 +262,7 @@ function createTable(&$connection, $tableDef)
  * @param oldName The old name
  * @param name The new name
  */
-function alterTable(&$connection, $oldName, $name)
-{
+function alterTable($connection, $oldName, $name) {
   Log::info("> alter table '".$name."'", "dbupdate");
   $sql = 'ALTER TABLE `'.$oldName.'` RENAME `'.$name.'`';
   try {
@@ -300,8 +279,7 @@ function alterTable(&$connection, $oldName, $name)
  * @param table The name of the table
  * @param columnDef An associative array with keys 'name' and 'type'
  */
-function createColumn(&$connection, $table, $columnDef)
-{
+function createColumn($connection, $table, $columnDef) {
   Log::info("> create column '".$table.".".$columnDef['name'], "dbupdate");
   $sql = 'ALTER TABLE `'.$table.'` ADD `'.$columnDef['name'].'` '.$columnDef['type'];
   try {
@@ -319,8 +297,7 @@ function createColumn(&$connection, $table, $columnDef)
  * @param oldColumnDef An associative array with keys 'name' and 'type'
  * @param columnDef An associative array with keys 'name' and 'type'
  */
-function alterColumn(&$connection, $table, $oldColumnDef, $columnDef)
-{
+function alterColumn(&$connection, $table, $oldColumnDef, $columnDef) {
   Log::info("> alter column '".$table.".".$columnDef['name'], "dbupdate");
   $sql = 'ALTER TABLE `'.$table.'` CHANGE `'.$oldColumnDef['name'].'` `'.$columnDef['name'].'` '.$columnDef['type'];
   try {
@@ -337,10 +314,8 @@ function alterColumn(&$connection, $table, $oldColumnDef, $columnDef)
  * @param tableDef The table definition array as provided by processTableDef
  * @param columnDefs The column definitions as provided by conncetion->MetaColumns
  */
-function updateColumns(&$connection, $tableDef, $oldColumnDefs)
-{
-  foreach ($tableDef['columns'] as $columnDef)
-  {
+function updateColumns($connection, $tableDef, $oldColumnDefs) {
+  foreach ($tableDef['columns'] as $columnDef) {
     Log::debug("> process column '".$columnDef['name'], "dbupdate");
     $oldValue = getOldValue($connection, $tableDef['id'], $columnDef['id'], 'column');
     if ($oldValue) {
@@ -356,13 +331,12 @@ function updateColumns(&$connection, $tableDef, $oldColumnDefs)
     }
     $oldColumnDefTransl = array('name' => $oldColumnDef['Field'], 'type' => $oldColumnType);
 
-    if ($oldValue === null && $oldColumnDef === null)
-    {
+    if ($oldValue === null && $oldColumnDef === null) {
       // the column has no update entry and does not exist
       createColumn($connection, $tableDef['name'], $columnDef);
     }
-    else if (($oldValue != null && $oldValue['column'] != $columnDef['name']) || strtolower($oldColumnDefTransl['type']) != strtolower($columnDef['type']))
-    {
+    else if (($oldValue != null && $oldValue['column'] != $columnDef['name']) ||
+            strtolower($oldColumnDefTransl['type']) != strtolower($columnDef['type'])) {
       // ignore changes in 'not null' for primary keys ('not null' is set anyway)
       $typeDiffersInNotNull = strtolower(trim(str_replace($columnDef['type'], "", $oldColumnDefTransl['type']))) == 'not null';
       if ($typeDiffersInNotNull && in_array($columnDef['name'], $tableDef['pks'])) {
@@ -377,8 +351,7 @@ function updateColumns(&$connection, $tableDef, $oldColumnDefs)
 /**
  * Extract table information from a sql command string
  */
-function processTableDef($tableDef, &$tables)
-{
+function processTableDef($tableDef, &$tables) {
   preg_match('/CREATE\s+TABLE\s+`(.*?)`.+entityType=(.*?)\s+tableId=(.*?)\s+\((.*)\)/s', $tableDef, $matches);
   $tableName = $matches[1];
   $entityType = $matches[2];
@@ -389,21 +362,16 @@ function processTableDef($tableDef, &$tables)
   $columns = array();
   $pks = array();
   $columnDef = preg_split('/\n/', $matches[4]);
-  foreach ($columnDef as $columnDef)
-  {
-    if (strlen(trim($columnDef)) > 0)
-    {
+  foreach ($columnDef as $columnDef) {
+    if (strlen(trim($columnDef)) > 0) {
       preg_match_all('/`(.*?)`\s+(.*?),([^`]*)/', $columnDef, $matches);
-      if (isset($matches))
-      {
+      if (isset($matches)) {
         $columnNames = $matches[1];
         $columnTypes = $matches[2];
         $comments = $matches[3];
-        for($i=0; $i<sizeof($columnNames); $i++)
-        {
+        for($i=0; $i<sizeof($columnNames); $i++) {
           preg_match('/columnId=([^\s]+)/', $comments[$i], $matches1);
-          if (isset($matches1[1]))
-          {
+          if (isset($matches1[1])) {
             if ($matches1[1] == 'UNDEFINED') {
               $matches1[1] = '';
             }
@@ -412,8 +380,7 @@ function processTableDef($tableDef, &$tables)
         }
       }
       preg_match_all('/PRIMARY KEY \(`(.*?)`\)/', $columnDef, $matches);
-      if (isset($matches))
-      {
+      if (isset($matches)) {
         if (sizeof($matches[1]) > 0) {
           $pks = preg_split('/`\s*,\s*`/', $matches[1][0]);
         }
@@ -431,8 +398,7 @@ function processTableDef($tableDef, &$tables)
  * @return An associative array with the column names as keys and
  * associative arrays with keys 'Field', 'Type', 'Null'[YES|NO], 'Key' [empty|PRI], 'Default', 'Extra' as values
  */
-function getMetaData(&$connection, $table)
-{
+function getMetaData(&$connection, $table) {
   $result = array();
   try {
     $columns = $connection->query('SHOW COLUMNS FROM '.$table, PDO::FETCH_ASSOC);

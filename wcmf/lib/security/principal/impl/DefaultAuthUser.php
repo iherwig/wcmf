@@ -18,11 +18,13 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
+use \ReflectionClass;
+
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\security\Policy;
 use wcmf\lib\security\principal\AuthUser;
-use wcmf\lib\security\principal\impl\AbstractUser;
 
 /**
  * Default AuthUser implementation. The class holds an internal User
@@ -31,7 +33,7 @@ use wcmf\lib\security\principal\impl\AbstractUser;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DefaultAuthUser extends AbstractUser implements AuthUser {
+class DefaultAuthUser implements AuthUser {
 
   private $_login_time = "";
   private $_policies = array();
@@ -64,21 +66,26 @@ class DefaultAuthUser extends AbstractUser implements AuthUser {
     // check if user exists
     $loginOk = false;
     if ($user != null) {
-      // login succeeded, store the user instance
-      $this->_user = clone $user;
-      $this->setOID($user->getOID());
+      $uRC = new ReflectionClass($user);
+      if ($uRC->implementsInterface('wcmf\lib\security\principal\User')) {
+        // login succeeded, store the user instance
+        $this->_user = clone $user;
 
-      // load user config initially
-      $userConfig = $this->getConfig();
-      if (strlen($userConfig) > 0) {
-        $config->addConfiguation($userConfig);
+        // load user config initially
+        $userConfig = $this->getConfig();
+        if (strlen($userConfig) > 0) {
+          $config->addConfiguation($userConfig);
+        }
+
+        // add policies
+        $policies = $config->getSection('authorization');
+        $this->addPolicies($policies);
+        $this->_login_time = strftime("%c", time());
+        $loginOk = true;
       }
-
-      // add policies
-      $policies = $config->getSection('authorization');
-      $this->addPolicies($policies);
-      $this->_login_time = strftime("%c", time());
-      $loginOk = true;
+      else {
+        throw new ConfigurationException($userType.' does not implement wcmf\lib\security\principal\User');
+      }
     }
 
     // reactivate the PermissionManager if necessary
@@ -159,6 +166,24 @@ class DefaultAuthUser extends AbstractUser implements AuthUser {
    * Implementation of abstract base class methods.
    * Delegates to internal user instance.
    */
+
+  /**
+   * @see User::getUser()
+   */
+  public function getUser($login, $password) {
+    if ($this->_user != null) {
+      $this->_user->getUser($login, $password);
+    }
+  }
+
+  /**
+   * @see User::getUserId()
+   */
+  public function getUserId() {
+    if ($this->_user != null) {
+      $this->_user->getUserId();
+    }
+  }
 
   /**
    * @see User::setLogin()
@@ -247,6 +272,60 @@ class DefaultAuthUser extends AbstractUser implements AuthUser {
   public function getConfig() {
     if ($this->_user != null) {
       $this->_user->getConfig();
+    }
+  }
+
+  /**
+   * @see User::addRole()
+   */
+  public function addRole($rolename) {
+    if ($this->_user != null) {
+      $this->_user->addRole($rolename);
+    }
+  }
+
+  /**
+   * @see User::removeRole()
+   */
+  public function removeRole($rolename) {
+    if ($this->_user != null) {
+      $this->_user->removeRole($rolename);
+    }
+  }
+
+  /**
+   * @see User::hasRole()
+   */
+  public function hasRole($rolename) {
+    if ($this->_user != null) {
+      $this->_user->hasRole($rolename);
+    }
+  }
+
+  /**
+   * @see User::getRoles()
+   */
+  public function getRoles() {
+    if ($this->_user != null) {
+      $this->_user->getRoles();
+    }
+  }
+
+  /**
+   * @see User::resetRoleCache()
+   */
+  public function resetRoleCache() {
+    if ($this->_user != null) {
+      $this->_user->resetRoleCache();
+    }
+  }
+
+  /**
+   * Delegate everything else to internal User instance
+   */
+  public function __call($name, array $arguments) {
+    if ($this->_user != null) {
+      return call_user_func_array(array($this->_user, $name), $arguments);
     }
   }
 }
