@@ -1,5 +1,10 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^(.*)$ index.html [QSA,L]
-</IfModule>
+RewriteEngine On
+RewriteBase /ingo/wcmf/testapp/public
+
+# remove leading path caused by application's virtual paths
+RewriteCond %{REQUEST_URI} (js|vendor|css|images|)/.+\..+
+RewriteRule ^[^/]+/((js|vendor|css|images|)/.*)$ $1
+
+# map all requests to not existing files to index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.html [QSA,L]

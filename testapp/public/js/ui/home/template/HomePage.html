@@ -12,6 +12,22 @@
             <span class="icon-bar"></span>
           </button>
           <span class="brand">Test Application</span>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#" class="push" data-dojorama-route="home">Home</a></li>
+              <li><a href="#" class="push" data-dojorama-route="dataIndex" data-dojorama-pathparams="type: 'Page'">Content</a></li>
+              <li><a href="#" class="push" data-dojorama-route="admin">Administration</a></li>
+            </ul>
+            <ul class="nav pull-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"><b class="caret"></b></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">Profile</a></li>
+                  <li><a href="#">Logout</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -26,16 +42,6 @@
       <div id="error" class="alert alert-error" style="display:none">
       </div>
 
-      <form class="form-login" id="loginForm">
-        <h3 class="form-login-heading">Please log in</h3>
-        <input type="text" name="user" class="input-block-level" placeholder="Login">
-        <input type="password" name="password" class="input-block-level" placeholder="Password">
-        <label class="checkbox">
-          <input type="checkbox" value="remember-me"> Remember me
-        </label>
-        <button class="btn btn-primary pull-right" type="submit" data-loading-text="Logging in..." data-dojo-attach-event="onClick:_login">Log in</button>
-        <span class="clearfix"></span>
-      </form>
     </div>
 
     <div id="push"></div>

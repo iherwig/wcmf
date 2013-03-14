@@ -4,28 +4,23 @@ define([
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
-    "bootstrap/Button",
     "dojo/_base/lang",
-    "dojo/dom-attr",
     "dojo/dom-form",
     "dojo/query",
     "dojo/request",
-    "dojo/on",
     "app/Error",
-    "dojo/text!./template/LoginPage.html"
+    "dojo/text!./template/LoginPage.html",
+    "bootstrap/Button"
 ], function (
     declare,
     _WidgetBase,
     _TemplatedMixin,
     _AppAware,
     _StateAware,
-    button,
     lang,
-    domAttr,
     domForm,
     query,
     request,
-    on,
     error,
     template
 ) {
@@ -45,19 +40,6 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.setTitle('Login');
-
-            query('a.push', this.domNode).forEach(lang.hitch(this, function(node) {
-                var url, route = this.router.getRoute(domAttr.get(node, 'data-dojorama-route')); // valid route name in data-dojo-props attribute of node?
-                if (!route) { return; }
-
-                url = route.assemble();
-                node.href = url;
-
-                this.own(on(node, 'click', lang.hitch(this, function (ev) {
-                    ev.preventDefault();
-                    this.push(url);
-                })));
-            }));
         },
 
         startup: function() {
@@ -76,14 +58,21 @@ define([
 
             query('.btn').button('loading');
             error.hide();
-            request.post('../main.php?XDEBUG_SESSION_START=netbeans-xdebug', {
+            request.post('../main.php', {
                 data: data,
                 handleAs: 'json'
 
-            }).then(function(response){
-                query('.btn').button('reset');
-                error.show(response.errorMessage);
-            });
+            }).then(lang.hitch(this, function(response){
+                if (response.errorMessage) {
+                    query('.btn').button('reset');
+                    error.show(response.errorMessage);
+                }
+                else {
+                    var route = this.router.getRoute('home');
+                    var url = route.assemble();
+                    this.push(url);
+                }
+            }));
         }
     });
 });

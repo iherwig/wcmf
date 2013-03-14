@@ -11,6 +11,21 @@ define(["dojo/_base/config", "require"], function (config, require) {
             schema: p + '',
             widget: mid('./ui/login/LoginPage'),
             layers: l.login || []
-        }
+        },
+        home: {
+            schema: p + '/home',
+            widget: mid('./ui/home/HomePage'),
+            layers: l.home || []
+        },
+        dataIndex: {
+            schema: p + '/data/:type',
+            widget: mid('./ui/data/ListPage'),
+            layers: l.data || []
+        },
+        admin: {
+            schema: p + '/admin',
+            widget: mid('./ui/admin/AdminPage'),
+            layers: l.admin || []
+        },
     };
 });
