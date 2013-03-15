@@ -4,6 +4,9 @@ define([
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
+    "../_include/NavigationWidget",
+    "../_include/FooterWidget",
+    "../../Error",
     "bootstrap/Button",
     "bootstrap/Dropdown",
     "dojo/_base/lang",
@@ -13,7 +16,6 @@ define([
     "dojo/query",
     "dojo/request",
     "dojo/on",
-    "app/Error",
     "dojo/text!./template/ListPage.html"
 ], function (
     declare,
@@ -21,6 +23,9 @@ define([
     _TemplatedMixin,
     _AppAware,
     _StateAware,
+    NavigationWidget,
+    FooterWidget,
+    error,
     button,
     dropdown,
     lang,
@@ -30,7 +35,6 @@ define([
     query,
     request,
     on,
-    error,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware], {
@@ -49,6 +53,8 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.setTitle('List');
+            new NavigationWidget({activeRoute: "dataIndex"}, this.navigationNode);
+            new FooterWidget({}, this.footerNode);
 
             query('a.push', this.domNode).forEach(lang.hitch(this, function(node) {
                 var routeName = domAttr.get(node, 'data-dojorama-route');

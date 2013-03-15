@@ -1,36 +1,7 @@
 <div>
 
   <div id="wrap">
-
-    <!-- Fixed navbar -->
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <span class="brand">Test Application</span>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="active"><a href="#" class="push" data-dojorama-route="home">Home</a></li>
-              <li><a href="#" class="push" data-dojorama-route="dataIndex" data-dojorama-pathparams="type: 'Page'">Content</a></li>
-              <li><a href="#" class="push" data-dojorama-route="admin">Administration</a></li>
-            </ul>
-            <ul class="nav pull-right">
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"><b class="caret"></b></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a href="#">Profile</a></li>
-                  <li><a href="#">Logout</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div data-dojo-attach-point="navigationNode"></div>
 
     <!-- Begin page content -->
     <div class="container">
@@ -43,16 +14,10 @@
       </div>
 
     </div>
+    <!-- End page content -->
 
     <div id="push"></div>
   </div>
-
-  <div id="footer">
-    <div class="container">
-      <p class="pull-right muted">created with
-        <a href="http://sourceforge.net/projects/wcmf/" target="_blank">wCMF</a></p>
-      <p class="muted">&copy; 2013</p>
-    </div>
-  </div>
+  <div data-dojo-attach-point="footerNode"></div>
 
 </div>
