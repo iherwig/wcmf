@@ -1,33 +1,13 @@
 <div>
 
   <div id="wrap">
-
-    <!-- Fixed navbar -->
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <span class="brand">Test Application</span>
-        </div>
-      </div>
-    </div>
+    <div data-dojo-attach-point="navigationNode"></div>
 
     <!-- Begin page content -->
     <div class="container">
-
-      <div id="static" class="alert alert-error">
-        <strong>Warning!</strong> Please enable JavaScript in your browser.
-      </div>
-
-      <div id="error" class="alert alert-error" style="display:none">
-      </div>
-
       <form class="form-login" id="loginForm">
         <h3 class="form-login-heading">Please log in</h3>
+        <div data-dojo-attach-point="notificationNode"></div>
         <input type="text" name="user" class="input-block-level" placeholder="Login">
         <input type="password" name="password" class="input-block-level" placeholder="Password">
         <label class="checkbox">
@@ -37,16 +17,10 @@
         <span class="clearfix"></span>
       </form>
     </div>
+    <!-- End page content -->
 
     <div id="push"></div>
   </div>
-
-  <div id="footer">
-    <div class="container">
-      <p class="pull-right muted">created with
-        <a href="http://sourceforge.net/projects/wcmf/" target="_blank">wCMF</a></p>
-      <p class="muted">&copy; 2013</p>
-    </div>
-  </div>
+  <div data-dojo-attach-point="footerNode"></div>
 
 </div>

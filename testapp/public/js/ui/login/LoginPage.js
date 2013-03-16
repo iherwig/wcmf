@@ -4,35 +4,40 @@ define([
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
+    "../_include/_PageMixin",
+    "../_include/_NotificationMixin",
+    "../_include/NavigationWidget",
+    "../_include/FooterWidget",
+    "bootstrap/Button",
     "dojo/_base/lang",
     "dojo/dom-form",
     "dojo/query",
     "dojo/request",
-    "app/Error",
     "dojo/text!./template/LoginPage.html",
-    "bootstrap/Button"
 ], function (
     declare,
     _WidgetBase,
     _TemplatedMixin,
     _AppAware,
     _StateAware,
+    _Page,
+    _Notification,
+    NavigationWidget,
+    FooterWidget,
+    button,
     lang,
     domForm,
     query,
     request,
-    error,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware], {
+    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
 
-        router: null,
         request: null,
         session: null,
         templateString: template,
 
         constructor: function(params) {
-            this.router = params.router;
             this.request = params.request;
             this.session = params.session;
         },
@@ -40,6 +45,10 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.setTitle('Login');
+            new NavigationWidget({titleOnly: true}, this.navigationNode);
+            new FooterWidget({}, this.footerNode);
+
+            this.setupRoutes();
         },
 
         startup: function() {
@@ -57,7 +66,8 @@ define([
             data.responseFormat = 'json';
 
             query('.btn').button('loading');
-            error.hide();
+
+            this.hideNotification();
             request.post('../main.php', {
                 data: data,
                 handleAs: 'json'
@@ -65,7 +75,10 @@ define([
             }).then(lang.hitch(this, function(response){
                 if (response.errorMessage) {
                     query('.btn').button('reset');
-                    error.show(response.errorMessage);
+                    this.showNotification({
+                      type: 'error',
+                      message: response.errorMessage
+                    });
                 }
                 else {
                     var route = this.router.getRoute('home');
