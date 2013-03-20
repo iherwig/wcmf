@@ -129,9 +129,8 @@ class HTTPClient {
         '',
         'dologin',
         array(
-          'login' => $this->_user->getLogin(),
-          'password' => $this->_user->getPassword(),
-          'password_is_encrypted' => true
+          'login' => $this->_user['login'],
+          'password' => $this->_user['password']
         )
       );
       $response = $this->doRemoteCall($request, true);

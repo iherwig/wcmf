@@ -18,7 +18,6 @@
  */
 namespace wcmf\lib\remoting;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
@@ -148,9 +147,8 @@ class RPCClient {
         '',
         'dologin',
         array(
-          'login' => $this->_user->getLogin(),
-          'password' => $this->_user->getPassword(),
-          'password_is_encrypted' => true
+          'login' => $this->_user['login'],
+          'password' => $this->_user['password']
         )
       );
       $response = $this->doRemoteCall($request, true);

@@ -27,8 +27,8 @@ define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
-use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\core\Log;
+use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\util\StringUtil;
@@ -38,6 +38,7 @@ $filesToRemove = $_POST["removeFiles"];
 
 $config = new InifileConfiguration('./');
 $config->addConfiguration('config.ini');
+ObjectFactory::configure($config);
 
 // media directory
 $mediaDir = $config->getValue('mediaDir', 'cleanupdir');

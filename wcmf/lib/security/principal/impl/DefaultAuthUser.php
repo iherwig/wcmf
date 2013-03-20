@@ -23,6 +23,7 @@ use \ReflectionClass;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\security\Policy;
 use wcmf\lib\security\principal\AuthUser;
 
@@ -43,13 +44,9 @@ class DefaultAuthUser implements AuthUser {
   /**
    * @see AuthUser::login()
    */
-  public function login($login, $password, $isPasswordEncrypted=false) {
+  public function login($login, $password) {
     $config = ObjectFactory::getConfigurationInstance();
 
-    // encrypt password if not done already
-    if (!$isPasswordEncrypted) {
-      $password = ObjectFactory::getInstance('userManager')->encryptPassword($password);
-    }
     // because there is no authorized user already, we propably have to deactivate the
     // PermissionManager for this operation to allow user retrieval from the persistent storage
     $permissionManager = ObjectFactory::getInstance('permissionManager');
@@ -59,29 +56,35 @@ class DefaultAuthUser implements AuthUser {
     }
     // try to receive the user with given credentials
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $userType = ObjectFactory::getInstance('userManager')->getUserType();
-    $userInstance = $persistenceFacade->create($userType, BuildDepth::SINGLE);
-    $user = $userInstance->getUser($login, $password);
+    $userManager = ObjectFactory::getInstance('userManager');
+    $userType = $userManager->getUserType();
+    $user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE,
+                  array(
+                      new Criteria($userType, 'login', '=', $login)
+                  ), null);
 
     // check if user exists
     $loginOk = false;
     if ($user != null) {
       $uRC = new ReflectionClass($user);
       if ($uRC->implementsInterface('wcmf\lib\security\principal\User')) {
-        // login succeeded, store the user instance
-        $this->_user = clone $user;
+        // check password
+        $loginOk = $userManager->verifyPassword($password, $user->getPassword());
+        if ($loginOk) {
+          // login succeeded, store the user instance
+          $this->_user = clone $user;
 
-        // load user config initially
-        $userConfig = $this->getConfig();
-        if (strlen($userConfig) > 0) {
-          $config->addConfiguation($userConfig);
+          // load user config initially
+          $userConfig = $this->getConfig();
+          if (strlen($userConfig) > 0) {
+            $config->addConfiguation($userConfig);
+          }
+
+          // add policies
+          $policies = $config->getSection('authorization');
+          $this->addPolicies($policies);
+          $this->_login_time = strftime("%c", time());
         }
-
-        // add policies
-        $policies = $config->getSection('authorization');
-        $this->addPolicies($policies);
-        $this->_login_time = strftime("%c", time());
-        $loginOk = true;
       }
       else {
         throw new ConfigurationException($userType.' does not implement wcmf\lib\security\principal\User');

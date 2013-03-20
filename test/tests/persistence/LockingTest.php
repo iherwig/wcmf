@@ -45,8 +45,8 @@ class LockingTest extends DatabaseTestCase {
         array('id' => 1),
       ),
       'user' => array(
-        array('id' => 555, 'login' => 'user1', 'password' => '24c9e15e52afc47c225b757e7bee1f9d'),
-        array('id' => 666, 'login' => 'user2', 'password' => '7e58d63b60197ceb55a1c487989a3720'),
+        array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02'),
+        array('id' => 666, 'login' => 'user2', 'password' => '$2y$10$.q/JnbXAWDI8pZUqZmjON.YbZsSeQCLgh3aKMYC/Nmsx5VMRti8v.'),
         array('id' => 777),
       ),
       'locktable' => array(

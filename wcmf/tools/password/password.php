@@ -6,14 +6,20 @@ error_reporting(E_ERROR | E_PARSE);
 define("WCMF_BASE", realpath ("../../../")."/");
 define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
-require_once(WCMF_BASE."wcmf/lib/core/Log.php");
-require_once(WCMF_BASE."wcmf/lib/core/ObjectFactory.php");
+require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\impl\InifileConfiguration;
+
+// read config file
+$config = new InifileConfiguration('../../../testapp/config/');
+$config->addConfiguration('config.ini');
+ObjectFactory::configure($config);
 ?>
 <html>
 <body>
 <?php
-  echo("password to encrypt:");
+  echo("password to hash:");
 ?>
 <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
   <input name="password" type="password" />
@@ -21,7 +27,7 @@ require_once(WCMF_BASE."wcmf/lib/core/ObjectFactory.php");
 </form>
 <?php
   if (array_key_exists("password", $_POST))
-	  echo("encypted password: ".ObjectFactory::getInstance('userManager')->encryptPassword($_POST["password"]));
+	  echo("hashed password: ".ObjectFactory::getInstance('userManager')->hashPassword($_POST["password"]));
 ?>
 </body>
 </html>

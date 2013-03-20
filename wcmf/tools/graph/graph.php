@@ -8,8 +8,8 @@ define("LOG4PHP_CONFIGURATION", "../log4php.properties");
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
-use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\core\Log;
+use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\output\DotOutputStrategy;
@@ -17,6 +17,7 @@ use wcmf\lib\model\visitor\OutputVisitor;
 
 $config = new InifileConfiguration('./');
 $config->addConfiguration('config.ini');
+ObjectFactory::configure($config);
 
 // get root oids
 $oids = array();

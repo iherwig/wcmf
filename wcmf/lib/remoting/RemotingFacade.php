@@ -19,6 +19,7 @@
 namespace wcmf\lib\remoting;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\remoting\HTTPClient;
 use wcmf\lib\remoting\RPCClient;
@@ -87,21 +88,24 @@ class RemotingFacade {
   }
 
   /**
-   * Get the remote user name for a given server key
+   * Get the remote user login and password for a given server key
    * @param serverKey An entry in the configuration section 'remoteuser'
-   * @return A user instance
+   * @return Array with keys 'login', 'password'
    */
   private function getRemoteUser($serverKey) {
     if (!isset($this->_users[$serverKey])) {
       $config = ObjectFactory::getConfigurationInstance();
-      $remoteLogin = $config->getValue($serverKey, 'remoteuser');
-      $userManager = ObjectFactory::getInstance('userManager');
-      $user = $userManager->getUser($remoteLogin);
-      if ($user != null) {
-        $this->_users[$serverKey] = $user;
+      $remoteUser = $config->getValue($serverKey, 'remoteuser');
+      if (is_array($remoteUser) && sizeof($remoteUser) == 2) {
+        $this->_users[$serverKey] = array(
+            'login' => $remoteUser[0],
+            'password' => $remoteUser[1]);
       }
       else {
-        throw new RuntimeException("The remote user with login '".$remoteLogin."' does not exist.\n");
+        throw new IllegialConfigurationException(
+                "Remote user definition of '".$serverKey.
+                "' must be an array of login and password."
+        );
       }
     }
     return $this->_users[$serverKey];

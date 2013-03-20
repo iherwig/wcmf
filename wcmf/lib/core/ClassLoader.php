@@ -25,8 +25,6 @@ namespace wcmf\lib\core;
  */
 class ClassLoader {
 
-  private static $classMapping = array();
-
   /**
    * Constructor.
    */

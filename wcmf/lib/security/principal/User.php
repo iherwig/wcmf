@@ -26,14 +26,6 @@ namespace wcmf\lib\security\principal;
 interface User {
 
   /**
-   * Get a User instance by login and password.
-   * @param login The login
-   * @param password The (encryped) password as used in the store
-   * @return A reference to the instance or null if not found.
-   */
-  public function getUser($login, $password);
-
-  /**
    * Get the id of the user.
    * @return The id.
    */
@@ -59,7 +51,7 @@ interface User {
 
   /**
    * Get the password of the user.
-   * @return The unencrypted password of the user.
+   * @return The encrypted password of the user.
    */
   public function getPassword();
 

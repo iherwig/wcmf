@@ -35,25 +35,6 @@ abstract class AbstractUser extends Node implements User {
   private $_hasOwnRolesLoaded = false;
 
   /**
-   * @see User::getUser()
-   */
-  public function getUser($login, $password) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $userType = ObjectFactory::getInstance('userManager')->getUserType();
-    $user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE,
-                  array(
-                      new Criteria($userType, 'login', '=', $login),
-                      new Criteria($userType, 'password', '=', $password)
-                  ), null);
-    if ($user != null) {
-      // initially load roles
-      $user->getRoles();
-      return $user;
-    }
-    return null;
-  }
-
-  /**
    * @see User::getUserId()
    */
   public function getUserId() {

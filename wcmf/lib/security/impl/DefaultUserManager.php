@@ -25,6 +25,8 @@ use wcmf\lib\security\UserManager;
 use wcmf\lib\security\principal\Role;
 use wcmf\lib\security\principal\User;
 
+require_once(WCMF_BASE."wcmf/vendor/password_compat/lib/password.php");
+
 /**
  * DefaultUserManager is a UserManager that stores user and role information
  * in the store using their mappers. The User and Role implementation classes
@@ -34,6 +36,20 @@ use wcmf\lib\security\principal\User;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultUserManager extends UserManager {
+
+  /**
+   * @see UserManager::hashPassword
+   */
+  public function hashPassword($password) {
+    return password_hash($password, PASSWORD_BCRYPT);
+  }
+
+  /**
+   * @see UserManager::verifyPassword
+   */
+  public function verifyPassword($password, $passwordHash) {
+    return password_verify($password, $passwordHash);
+  }
 
   /**
    * @see UserManager::getUsersAndRoles

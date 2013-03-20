@@ -64,11 +64,14 @@ class TestUtil {
   public static function startSession($user, $password) {
     $session = ObjectFactory::getInstance('session');
     $authUser = ObjectFactory::getInstance('authUser');
-    $success = $authUser->login($user, $password, false);
+    $success = $authUser->login($user, $password);
     if ($success) {
       $permissionManager = ObjectFactory::getInstance('permissionManager');
       $session->clear();
       $session->set($permissionManager->getAuthUserVarname(), $authUser);
+    }
+    else {
+      throw new \RuntimeException("Session could not be started for user '$user'");
     }
     return $session->getID();
   }

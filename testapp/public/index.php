@@ -1,3 +1,28 @@
+<?php
+error_reporting(E_ALL | E_PARSE);
+
+define('WCMF_BASE', realpath( dirname(__FILE__).'/../..').'/');
+require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+
+use \Exception;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\Application;
+
+$application = new Application();
+try {
+  // initialize the application
+  $application->initialize('../config/');
+
+  // check for authenticated user
+  $permissionManager = ObjectFactory::getInstance('permissionManager');
+  $loggedIn = $permissionManager->getAuthUser() != null;
+  $scriptPath = dirname($_SERVER['SCRIPT_NAME']).'/';
+  $requestPath = str_replace($scriptPath, '', $_SERVER['REQUEST_URI']);
+}
+catch (Exception $ex) {
+  $application->handleException($ex);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>

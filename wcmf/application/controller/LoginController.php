@@ -42,8 +42,6 @@ use wcmf\lib\presentation\Response;
  * @param[in] user The name of the user to log in
  * @param[in] password The password the user is authenticated with
  *
- * @param[in] remember_me If given with a value of 'true' or true, a login cookie will be created in the browser [optional]
- * @param[in] password_is_encrypted True/False wether the given password is encrypted on not [optional, default: false]
  * @param[out] sid The newly established session id
  * @param[out] roles All roles assigned to the logged in user
  *
@@ -134,15 +132,10 @@ class LoginController extends Controller {
       // create AuthUser instance
       $authUser = ObjectFactory::getInstance('authUser');
 
-      $isPasswordEncrypted = false;
-      if ($request->hasValue('password_is_encrypted')) {
-        $isPasswordEncrypted = $request->getValue('password_is_encrypted');
-      }
-
       // try to login
       $success = false;
       try {
-        $success = $authUser->login($request->getValue('user'), $request->getValue('password'), $isPasswordEncrypted);
+        $success = $authUser->login($request->getValue('user'), $request->getValue('password'));
       }
       catch (Exception $ex) {
         Log::error("Could not log in: ".$ex, __CLASS__);
@@ -153,17 +146,6 @@ class LoginController extends Controller {
         $permissionManager = ObjectFactory::getInstance('permissionManager');
         $session->clear();
         $session->set($permissionManager->getAuthUserVarname(), $authUser);
-
-        // did this user check the 'remember me' checkbox?
-        $rememberMe = $request->getValue('remember_me');
-        if($rememberMe === 'true' || $rememberMe === true) {
-          // if yes store the password login combination in a cookie
-          $expire = time() + 1728000; // expire in 20 days
-          $cookiePassword = ObjectFactory::getInstance('userManager')->encryptPassword($request->getValue('password'));
-
-          setcookie($this->getCookieName('user'), $request->getValue('user'), $expire);
-          setcookie($this->getCookieName('password'), $cookiePassword, $expire);
-        }
 
         // return role names of the user
         $roleNames = array();
@@ -185,17 +167,6 @@ class LoginController extends Controller {
       }
     }
     elseif ($request->getAction() == 'logout') {
-      // delete cookies (also clientside) / avoid header warning
-      if (!headers_sent()) {
-        setcookie($this->getCookieName('user'), '', time()-3600, '/');
-        setcookie($this->getCookieName('password'), '', time()-3600, '/');
-        setcookie(session_name(), '', time()-3600, '/');
-        print '<script type="text/javascript">
-        document.cookie = "'.$this->getCookieName('user').'=; expires=Wed, 1 Mar 2006 00:00:00";
-        document.cookie = "'.$this->getCookieName('password').'=; expires=Wed, 1 Mar 2006 00:00:00";
-        </script>';
-      }
-
       // clear all session data
       $session->destroy();
 
@@ -204,41 +175,9 @@ class LoginController extends Controller {
       return false;
     }
     else {
-      // check if the user and password is stored in a cookie
-      if ($this->isCookieLogin()) {
-        // if yes redirect to login process
-        $response->setValue('user', $_COOKIE[$this->getCookieName('user')]);
-        $response->setValue('password', $_COOKIE[$this->getCookieName('password')]);
-        $response->setValue('password_is_encrypted', true);
-
-        $response->setAction('dologin');
-        return true;
-      }
-      else {
-        // present the login dialog
-        return false;
-      }
+      // present the login dialog
+      return false;
     }
-  }
-
-  /**
-   * Check if the user logs in via cookies
-   * @return True/False
-   */
-  protected function isCookieLogin() {
-    $request = $this->getRequest();
-    $isCookieLogin = ($request->getAction() == 'login' &&
-            isset($_COOKIE[$this->getCookieName('user')], $_COOKIE[$this->getCookieName('password')]));
-    return $isCookieLogin;
-  }
-
-  /**
-   * Get a unique cookie name for the given variable name
-   * @param name The name of the variable
-   * @return String
-   */
-  protected function getCookieName($name) {
-    return Application::getId()."_".$name;
   }
 }
 ?>

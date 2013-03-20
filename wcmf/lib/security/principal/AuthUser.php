@@ -31,10 +31,9 @@ interface AuthUser extends User {
    * Log a user into the application.
    * @param login The login string of the user
    * @param password The password string of the user
-   * @param isPasswordEncrypted True/False wether the password is encrypted or not [default: false]
    * @return Boolean whether login succeeded.
    */
-  public function login($login, $password, $isPasswordEncrypted=false);
+  public function login($login, $password);
 
   /**
    * Checks, if the user is authorized for this action.

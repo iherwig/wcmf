@@ -10,12 +10,13 @@ define("APPEND", 5);
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
-use wcmf\lib\config\InifileConfiguration;
 use wcmf\lib\core\Log;
+use wcmf\lib\config\impl\InifileConfiguration;
 
 // read config file
 $config = new InifileConfiguration('./');
 $config->addConfiguration('config.ini');
+ObjectFactory::configure($config);
 
 // get config values
 $localeDir = $config->getValue("localeDir", "application");

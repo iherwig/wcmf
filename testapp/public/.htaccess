@@ -7,4 +7,4 @@ RewriteRule ^[^/]+/((js|vendor|css|images|)/.*)$ $1
 
 # map all requests to not existing files to index.html
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ index.html [QSA,L]
+RewriteRule ^(.*)$ index.php [QSA,L]

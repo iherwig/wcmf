@@ -18,8 +18,7 @@
  */
 namespace wcmf\application\controller\admintool;
 
-use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\config\InifileConfiguration;
+use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;

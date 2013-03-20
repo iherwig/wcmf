@@ -113,7 +113,7 @@
                   <ownedComment xmi:id="_CCPc2IKHEeKbV7xBnUy1BQ" annotatedElement="_CCPc14KHEeKbV7xBnUy1BQ">
                     <body>?</body>
                   </ownedComment>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_CCPc2YKHEeKbV7xBnUy1BQ" value="{Page, Document}"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_CCPc2YKHEeKbV7xBnUy1BQ" value="{Author, Book, Publisher}"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:id="_CCPc2oKHEeKbV7xBnUy1BQ" name="language" type="_CCPcqIKHEeKbV7xBnUy1BQ">
                   <ownedComment xmi:id="_CCPc24KHEeKbV7xBnUy1BQ" annotatedElement="_CCPc2oKHEeKbV7xBnUy1BQ">
@@ -308,7 +308,7 @@
                   <ownedComment xmi:id="_CCPdMoKHEeKbV7xBnUy1BQ" annotatedElement="_CCPdMYKHEeKbV7xBnUy1BQ">
                     <body>?</body>
                   </ownedComment>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_CCPdM4KHEeKbV7xBnUy1BQ" value="{Page, Document, UserRDB, RoleRDB, Locktable}"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_CCPdM4KHEeKbV7xBnUy1BQ" value="{Author, Book, Publisher, UserRDB, RoleRDB, Locktable}"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Package" xmi:id="_CCPdNIKHEeKbV7xBnUy1BQ" name="admin.ini">

@@ -142,9 +142,9 @@ class Log {
    */
   public static function getLogger($category) {
     $logger = Logger::getLogger($category);
-    if (!self::$_initialized) {
-      throw new ConfigurationException("Logging is not configured. Please call Log::configure().");
-    }
+//    if (!self::$_initialized) {
+//      throw new ConfigurationException("Logging is not configured. Please call Log::configure().");
+//    }
     return $logger;
   }
 

@@ -102,13 +102,19 @@ abstract class UserManager {
   }
 
   /**
-   * Encrypt a password using the md5 algorithm.
-   * @param password The password to encrypt
-   * @return The encrypted password.
+   * Hash a password.
+   * @param password The plaintext password to hash
+   * @return The hash password.
    */
-  public function encryptPassword($password) {
-    return md5($password);
-  }
+  public abstract function hashPassword($password);
+
+  /**
+   * Verify a password.
+   * @param password The plaintext password to verify
+   * @param passwordHash The password hash to match
+   * @return Boolean.
+   */
+  public abstract function verifyPassword($password, $passwordHash);
 
   /**
    * Create a user login with a given password.
@@ -135,7 +141,7 @@ abstract class UserManager {
       throw new IllegalArgumentException(Message::get("The login '%1%' already exists", array($login)));
     }
     // encrypt password
-    $password = $this->encryptPassword($password);
+    $password = $this->hashPassword($password);
 
     $user = $this->createUserImpl($name, $firstname, $login, $password);
 
@@ -217,7 +223,7 @@ abstract class UserManager {
       throw new IllegalArgumentException(Message::get("The given passwords don't match"));
     }
     // encrypt password
-    $newPassword = $this->encryptPassword($newPassword);
+    $newPassword = $this->hashPassword($newPassword);
 
     $this->setUserPropertyImpl($user, 'password', $newPassword);
 
@@ -238,7 +244,7 @@ abstract class UserManager {
       throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
     }
     // encrypt password
-    $oldPassword = $this->encryptPassword($oldPassword);
+    $oldPassword = $this->hashPassword($oldPassword);
 
     if ($user->getPassword() != $oldPassword) {
       throw new IllegalArgumentException(Message::get("The old password is incorrect"));
@@ -247,7 +253,7 @@ abstract class UserManager {
       throw new IllegalArgumentException(Message::get("The given passwords don't match"));
     }
     // encrypt password
-    $newPassword = $this->encryptPassword($newPassword);
+    $newPassword = $this->hashPassword($newPassword);
 
     $this->setUserPropertyImpl($user, 'password', $newPassword);
 
