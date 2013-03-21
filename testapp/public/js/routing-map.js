@@ -12,6 +12,11 @@ define(["dojo/_base/config", "require"], function (config, require) {
             widget: mid('./ui/login/LoginPage'),
             layers: l.login || []
         },
+        logout: {
+            schema: p + '/logout',
+            widget: mid('./ui/login/LogoutPage'),
+            layers: l.logout || []
+        },
         home: {
             schema: p + '/home',
             widget: mid('./ui/home/HomePage'),

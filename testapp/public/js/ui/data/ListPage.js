@@ -34,7 +34,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle('List');
+            this.setTitle(appConfig.title+' - List');
             new NavigationWidget({activeRoute: "dataIndex"}, this.navigationNode);
             new FooterWidget({}, this.footerNode);
 

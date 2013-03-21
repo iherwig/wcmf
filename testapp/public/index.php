@@ -15,9 +15,21 @@ try {
 
   // check for authenticated user
   $permissionManager = ObjectFactory::getInstance('permissionManager');
-  $loggedIn = $permissionManager->getAuthUser() != null;
-  $scriptPath = dirname($_SERVER['SCRIPT_NAME']).'/';
-  $requestPath = str_replace($scriptPath, '', $_SERVER['REQUEST_URI']);
+  $isLoggedIn = $permissionManager->getAuthUser() != null;
+
+  // get configuration
+  $config = ObjectFactory::getConfigurationInstance();
+  $appTitle = $config->getValue('applicationTitle', 'application');
+
+  // check if the user should be redirected to the login page
+  $pathPrefix = dirname($_SERVER['SCRIPT_NAME']);
+  $basePath = dirname($_SERVER['SCRIPT_NAME']).'/';
+  $requestPath = str_replace($basePath, '', $_SERVER['REQUEST_URI']);
+  if (!$isLoggedIn && strlen($requestPath) > 0 && !preg_match('/\?route=/', $_SERVER['REQUEST_URI'])) {
+    if ($requestPath != 'logout') {
+      $redirectUrl = $basePath.'?route='.$requestPath;
+    }
+  }
 }
 catch (Exception $ex) {
   $application->handleException($ex);
@@ -27,7 +39,7 @@ catch (Exception $ex) {
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>wCMF</title>
+    <title><?php echo $appTitle; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -41,6 +53,9 @@ catch (Exception $ex) {
 
   <body>
     <script>
+<?php if (isset($redirectUrl)) : ?>
+      window.location.href = '<?php echo $redirectUrl; ?>';
+<?php endif; ?>
       var dojoConfig = {
         baseUrl: '',
         async: 1,
@@ -57,10 +72,13 @@ catch (Exception $ex) {
           { name: 'app', location: 'js', map: {} }
         ],
         'routing-map': {
-          pathPrefix: '/ingo/wcmf/testapp/public'
+          pathPrefix: '<?php echo $pathPrefix; ?>'
         }
-       };
-     </script>
+      };
+      var appConfig = {
+        title: '<?php echo $appTitle; ?>'
+      };
+    </script>
 
     <script src="vendor/dojo/dojo/dojo.js"></script>
 

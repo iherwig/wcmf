@@ -44,7 +44,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle('Login');
+            this.setTitle(appConfig.title+' - Login');
             new NavigationWidget({titleOnly: true}, this.navigationNode);
             new FooterWidget({}, this.footerNode);
 
@@ -74,16 +74,26 @@ define([
 
             }).then(lang.hitch(this, function(response){
                 if (response.errorMessage) {
+                    // error
                     query('.btn').button('reset');
                     this.showNotification({
-                      type: 'error',
-                      message: response.errorMessage
+                        type: 'error',
+                        message: response.errorMessage
                     });
                 }
                 else {
-                    var route = this.router.getRoute('home');
-                    var url = route.assemble();
-                    this.push(url);
+                    // success:
+                    // redirect to initially requested route if given
+                    var redirectRoute = this.request.getQueryParam('route');
+                    if (redirectRoute) {
+                        window.location.href = this.request.getPathname()+redirectRoute;
+                    }
+                    else {
+                        // redirect to default route
+                        var route = this.router.getRoute('home');
+                        var url = route.assemble();
+                        this.push(url);
+                    }
                 }
             }));
         }

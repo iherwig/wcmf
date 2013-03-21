@@ -25,6 +25,7 @@ use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\concurrency\Lock;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**

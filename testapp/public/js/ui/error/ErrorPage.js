@@ -30,7 +30,7 @@ define([
 
         postCreate: function () {
             this.inherited(arguments);
-            this.setTitle('An error has occured');
+            this.setTitle(appConfig.title+' - Error');
             this.messageNode.innerHTML = this.error.message;
         },
 
