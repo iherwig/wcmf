@@ -33,13 +33,13 @@ define([
         postCreate: function() {
             // mark active route
             if (this.activeRoute !== null) {
-              query("[data-dojorama-route='"+this.activeRoute+"']").parent().forEach(function(node){
-                domClass.add(node, "active");
-              });
+                query("[data-dojorama-route='"+this.activeRoute+"']").parent().forEach(function(node){
+                    domClass.add(node, "active");
+                });
             }
             // hide buttons, if titleOnly
             if (this.titleOnly) {
-              query("ul.nav").style("display", "none");
+                query("ul.nav").style("display", "none");
             }
         }
     });

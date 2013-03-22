@@ -7,6 +7,7 @@ require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 use \Exception;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Application;
+use wcmf\lib\util\URIUtil;
 
 $application = new Application();
 try {
@@ -20,14 +21,17 @@ try {
   // get configuration
   $config = ObjectFactory::getConfigurationInstance();
   $appTitle = $config->getValue('applicationTitle', 'application');
+  $rootTypes = $config->getValue('rootTypes', 'application');
 
   // check if the user should be redirected to the login page
+  // if yes, we do this and add the requested path as route parameter
   $pathPrefix = dirname($_SERVER['SCRIPT_NAME']);
   $basePath = dirname($_SERVER['SCRIPT_NAME']).'/';
   $requestPath = str_replace($basePath, '', $_SERVER['REQUEST_URI']);
   if (!$isLoggedIn && strlen($requestPath) > 0 && !preg_match('/\?route=/', $_SERVER['REQUEST_URI'])) {
     if ($requestPath != 'logout') {
-      $redirectUrl = $basePath.'?route='.$requestPath;
+      $redirectUrl = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$basePath.'?route='.$requestPath;
+      header("Location: ".$redirectUrl);
     }
   }
 }
@@ -53,9 +57,6 @@ catch (Exception $ex) {
 
   <body>
     <script>
-<?php if (isset($redirectUrl)) : ?>
-      window.location.href = '<?php echo $redirectUrl; ?>';
-<?php endif; ?>
       var dojoConfig = {
         baseUrl: '',
         async: 1,
@@ -76,7 +77,8 @@ catch (Exception $ex) {
         }
       };
       var appConfig = {
-        title: '<?php echo $appTitle; ?>'
+        title: '<?php echo $appTitle; ?>',
+        rootTypes: [<?php if ($rootTypes && sizeof($rootTypes) > 0) { echo "'".join("', '", $rootTypes)."'"; } ?>]
       };
     </script>
 
