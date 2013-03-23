@@ -13,6 +13,7 @@ define([
     "dojo/dom-form",
     "dojo/query",
     "dojo/request",
+    "../../Session",
     "dojo/text!./template/LoginPage.html",
 ], function (
     declare,
@@ -29,6 +30,7 @@ define([
     domForm,
     query,
     request,
+    Session,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -82,7 +84,9 @@ define([
                     });
                 }
                 else {
-                    // success:
+                    // success
+                    Session.set("user", data.user);
+
                     // redirect to initially requested route if given
                     var redirectRoute = this.request.getQueryParam('route');
                     if (redirectRoute) {

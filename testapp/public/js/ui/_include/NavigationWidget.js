@@ -7,7 +7,8 @@ define([
     "bootstrap/Dropdown",
     "dojo/query",
     "dojo/dom-class",
-    "dojo/dom-style",
+    "dojo/NodeList-dom",
+    "../../Session",
     "dojo/text!./template/NavigationWidget.html"
 ], function (
     declare,
@@ -16,7 +17,8 @@ define([
     dropdown,
     query,
     domClass,
-    domStyle,
+    nodeListDom,
+    Session,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
@@ -37,10 +39,22 @@ define([
                     domClass.add(node, "active");
                 });
             }
+
             // hide buttons, if titleOnly
             if (this.titleOnly) {
                 query("ul.nav").style("display", "none");
             }
+
+            // set first root type on dataIndex route
+            var firstRootType = appConfig.rootTypes[0];
+            dojo.query("[data-dojorama-route='dataIndex']").
+                     attr("data-dojorama-pathparams", "type: '"+firstRootType+"'");
+
+            // set app title
+            dojo.query(".brand").attr("innerHTML", appConfig.title);
+
+            // set user name
+            dojo.query(".user").attr("innerHTML", Session.get("user"));
         }
     });
 });
