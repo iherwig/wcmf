@@ -8,7 +8,6 @@ define([
     "dojo/query",
     "dojo/dom-class",
     "dojo/NodeList-dom",
-    "../../Session",
     "dojo/text!./template/NavigationWidget.html"
 ], function (
     declare,
@@ -18,7 +17,6 @@ define([
     query,
     domClass,
     nodeListDom,
-    Session,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
@@ -52,9 +50,6 @@ define([
 
             // set app title
             dojo.query(".brand").attr("innerHTML", appConfig.title);
-
-            // set user name
-            dojo.query(".user").attr("innerHTML", Session.get("user"));
         }
     });
 });
