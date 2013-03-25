@@ -19,3 +19,12 @@
 [submodule "testapp/public/vendor/routed"]
 	path = testapp/public/vendor/routed
 	url = git://github.com/sirprize/routed.git
+[submodule "testapp/public/vendor/dgrid"]
+	path = testapp/public/vendor/dgrid
+	url = https://github.com/SitePen/dgrid.git
+[submodule "testapp/public/vendor/xstyle"]
+	path = testapp/public/vendor/xstyle
+	url = https://github.com/kriszyp/xstyle.git
+[submodule "testapp/public/vendor/put-selector"]
+	path = testapp/public/vendor/put-selector
+	url = https://github.com/kriszyp/put-selector.git

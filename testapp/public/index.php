@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL | E_PARSE);
 
-define('WCMF_BASE', realpath( dirname(__FILE__).'/../..').'/');
+require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
 use \Exception;
@@ -57,28 +57,32 @@ catch (Exception $ex) {
 
   <body>
     <script>
-      var dojoConfig = {
-        baseUrl: '',
-        async: 1,
-        tlmSiblingOfDojo: 0,
-        isDebug: 1,
-        packages: [
-          { name: 'dojo', location: 'vendor/dojo/dojo', map: {} },
-          { name: 'dijit', location: 'vendor/dojo/dijit', map: {} },
-          { name: 'dojox', location: 'vendor/dojo/dojox', map: {} },
-          { name: 'bootstrap', location: 'vendor/dojo-bootstrap' },
-          { name: 'routed', location: 'vendor/routed' },
-          { name: 'dojomat', location: 'vendor/dojomat' },
-
-          { name: 'app', location: 'js', map: {} }
-        ],
-        'routing-map': {
-          pathPrefix: '<?php echo $pathPrefix; ?>'
-        }
-      };
       var appConfig = {
-        title: '<?php echo $appTitle; ?>',
-        rootTypes: [<?php if ($rootTypes && sizeof($rootTypes) > 0) { echo "'".join("', '", $rootTypes)."'"; } ?>]
+          title: '<?php echo $appTitle; ?>',
+          rootTypes: [<?php if ($rootTypes && sizeof($rootTypes) > 0) { echo "'".join("', '", $rootTypes)."'"; } ?>],
+          pathPrefix: '<?php echo $pathPrefix; ?>'
+      };
+      var dojoConfig = {
+          baseUrl: '',
+          async: 1,
+          tlmSiblingOfDojo: 0,
+          isDebug: 1,
+          packages: [
+              { name: 'dojo', location: 'vendor/dojo/dojo', map: {} },
+              { name: 'dijit', location: 'vendor/dojo/dijit', map: {} },
+              { name: 'dojox', location: 'vendor/dojo/dojox', map: {} },
+              { name: 'bootstrap', location: 'vendor/dojo-bootstrap' },
+              { name: 'routed', location: 'vendor/routed' },
+              { name: 'dojomat', location: 'vendor/dojomat' },
+              { name: 'dgrid', location: 'vendor/dgrid' },
+              { name: 'xstyle', location: 'vendor/xstyle' },
+              { name: 'put-selector', location: 'vendor/put-selector' },
+
+              { name: 'app', location: 'js', map: {} }
+          ],
+          'routing-map': {
+              pathPrefix: appConfig.pathPrefix
+          }
       };
     </script>
 

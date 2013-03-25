@@ -18,6 +18,7 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Controller;
 

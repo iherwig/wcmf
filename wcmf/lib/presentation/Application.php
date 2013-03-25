@@ -67,7 +67,7 @@ class Application {
    * TODO: return request instance, maybe use default parameters from a config section?
    * TODO: allow configPath array to search from different locations, simplifies inclusion
    */
-  public function initialize($configPath='config/', $mainConfigFile='config.ini',
+  public function initialize($configPath='../config/', $mainConfigFile='config.ini',
     $defaultController='wcmf\application\controller\LoginController', $defaultContext='', $defaultAction='login',
     $defaultResponseFormat='html') {
 

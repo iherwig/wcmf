@@ -9,6 +9,8 @@ define([
     "../_include/_NotificationMixin",
     "../_include/NavigationWidget",
     "../_include/FooterWidget",
+    "./widget/GridWidget",
+    "dojo/store/JsonRest",
     "bootstrap/Tab",
     "dojo/dom-construct",
     "dojo/query",
@@ -25,6 +27,8 @@ define([
     _Notification,
     NavigationWidget,
     FooterWidget,
+    GridWidget,
+    JsonRest,
     Tab,
     domConstruct,
     query,
@@ -39,6 +43,8 @@ define([
         selectedType: null,
 
         tabContainer: null,
+
+        gridWidget: null,
 
         constructor: function(params) {
             this.request = params.request;
@@ -64,6 +70,7 @@ define([
                 }, tcTabs);
 
                 var tabLink = domConstruct.create("a", {
+                    href: "#"+typeName,
                     'data-dojorama-route': "dataIndex",
                     'data-dojorama-pathparams': "type: '"+typeName+"'",
                     'data-toggle': "tab",
@@ -71,18 +78,30 @@ define([
                     innerHTML: typeName
                 }, tabItem);
 
-                var content = domConstruct.create("div", {
-                    id: typeName+"Tab",
-                    class: isSelected ? "tab-pane fade in active" : "tab-pane fade",
-                    innerHTML: "<p>"+typeName+"! Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>"
-                }, tcContent);
+                if (isSelected) {
+                  var content = domConstruct.create("div", {
+                      id: typeName+"Tab",
+                      class: isSelected ? "tab-pane fade in active" : "tab-pane fade",
+                      innerHTML: '<div id="typeGrid"></div>'
+                  }, tcContent);
+                  var store = new JsonRest({
+                      target: appConfig.pathPrefix+"/rest/en/"+typeName+"/"
+                  });
+                  this.gridWidget = new GridWidget({
+                      request: this.request,
+                      router: this.router,
+                      store: store
+                  }, "typeGrid");
+                }
             }
+            query('#typesTabContainer a[href="#'+this.selectedType+'"]').tab('show');
 
             this.setupRoutes();
         },
 
         startup: function() {
             this.inherited(arguments);
+            this.gridWidget.startup();
         }
     });
 });

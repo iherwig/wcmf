@@ -38,7 +38,7 @@ define([
             data.action = 'logout';
             data.responseFormat = 'json';
 
-            request.post('../main.php', {
+            request.post('main.php', {
                 data: data,
                 handleAs: 'json'
 

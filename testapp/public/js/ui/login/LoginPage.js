@@ -70,7 +70,7 @@ define([
             query('.btn').button('loading');
 
             this.hideNotification();
-            request.post('../main.php', {
+            request.post('main.php', {
                 data: data,
                 handleAs: 'json'
 
