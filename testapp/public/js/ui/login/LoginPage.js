@@ -62,24 +62,26 @@ define([
             e.stopPropagation();
             e.preventDefault();
 
-            var data = domForm.toObject('loginForm');
-            data.controller = 'wcmf\\application\\controller\\LoginController';
-            data.action = 'dologin';
-            data.responseFormat = 'json';
+            var data = domForm.toObject("loginForm");
+            data.controller = "wcmf\\application\\controller\\LoginController";
+            data.action = "login";
 
-            query('.btn').button('loading');
+            query(".btn").button("loading");
 
             this.hideNotification();
-            request.post('main.php', {
+            request.post("main.php", {
                 data: data,
+                headers: {
+                    "Accept" : "application/json"
+                },
                 handleAs: 'json'
 
             }).then(lang.hitch(this, function(response){
                 if (response.errorMessage) {
                     // error
-                    query('.btn').button('reset');
+                    query(".btn").button("reset");
                     this.showNotification({
-                        type: 'error',
+                        type: "error",
                         message: response.errorMessage
                     });
                 }
@@ -88,13 +90,13 @@ define([
                     Session.set("user", data.user);
 
                     // redirect to initially requested route if given
-                    var redirectRoute = this.request.getQueryParam('route');
+                    var redirectRoute = this.request.getQueryParam("route");
                     if (redirectRoute) {
                         window.location.href = this.request.getPathname()+redirectRoute;
                     }
                     else {
                         // redirect to default route
-                        var route = this.router.getRoute('home');
+                        var route = this.router.getRoute("home");
                         var url = route.assemble();
                         this.push(url);
                     }

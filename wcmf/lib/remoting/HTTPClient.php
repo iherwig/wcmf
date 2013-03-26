@@ -127,7 +127,7 @@ class HTTPClient {
       $request = new Request(
         'wcmf\application\controller\LoginController',
         '',
-        'dologin',
+        'login',
         array(
           'login' => $this->_user['login'],
           'password' => $this->_user['password']

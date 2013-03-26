@@ -30,8 +30,7 @@ use wcmf\lib\presentation\Response;
  * LoginController is a controller that handles the login process.
  *
  * <b>Input actions:</b>
- * - @em login Present the login dialog
- * - @em dologin Try to login the user with the given user/password parameters
+ * - @em login Try to login the user with the given user/password parameters
  * - @em logout Terminate the user session
  *
  * <b>Output actions:</b>
@@ -57,7 +56,7 @@ class LoginController extends Controller {
    */
   public function initialize(Request $request, Response $response) {
     // delete all data, if not in login process
-    if ($request->getAction() != 'dologin') {
+    if ($request->getAction() != 'login') {
       $request->clearValues();
     }
     $config = ObjectFactory::getConfigurationInstance();
@@ -72,7 +71,7 @@ class LoginController extends Controller {
   protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if ($request->getAction() == 'dologin' && !$this->_anonymous) {
+    if ($request->getAction() == 'login' && !$this->_anonymous) {
       $invalidParameters = array();
       if(!$request->hasValue('user')) {
         $invalidParameters[] = 'user';
@@ -97,7 +96,7 @@ class LoginController extends Controller {
   public function hasView() {
     $request = $this->getRequest();
     if (!$request->hasErrors() &&
-      ($request->getAction() == 'dologin' || $this->_anonymous || $this->isCookieLogin())) {
+      ($request->getAction() == 'login' || $this->_anonymous)) {
       return false;
     }
     else {
@@ -106,8 +105,8 @@ class LoginController extends Controller {
   }
 
   /**
-   * If called with any action except 'dologin' this Controller presents the login dialog else
-   * if action is 'dologin' it checks the login data ('user' & 'password') and creates AuthUser object in the Session on
+   * If called with any action except 'login' this Controller presents the login dialog else
+   * if action is 'login' it checks the login data ('user' & 'password') and creates AuthUser object in the Session on
    * success.
    * @return Boolean
    * @see Controller::executeKernel()
@@ -124,10 +123,6 @@ class LoginController extends Controller {
     }
 
     if ($request->getAction() == 'login') {
-      $session->clear();
-    }
-
-    if ($request->getAction() == 'dologin') {
       // create AuthUser instance
       $authUser = ObjectFactory::getInstance('authUser');
 

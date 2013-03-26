@@ -1,7 +1,7 @@
 <div id="navmeta">
   <ul>
 {if $_controller == "LoginController"}
-    <li><a href="javascript:submitAction('dologin');" id="navlogin">{translate text="Log in"}</a></li>
+    <li><a href="javascript:submitAction('login');" id="navlogin">{translate text="Log in"}</a></li>
 {else}
   {if $_controller == "AdminController"}
     <li><a href="javascript:newWindowEx('', '', 'indexAll', 'indexWindow', 'width=360,height=120,scrollbars=no,resizable=yes,locationbar=no', '&sid={sessionid}')" id="navinadexall">{translate text="Create Search Index"}</a></li>
@@ -40,4 +40,3 @@
 </div>
 
 <span class="separator"></span>
- 

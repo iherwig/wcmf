@@ -40,7 +40,7 @@ class DefaultPermissionManager implements PermissionManager {
    * Actions that do not require authorization
    * TODO: make this configurable
    */
-  private static $_PUBLIC_ACTIONS = array('fatal', 'login', 'dologin', 'logout');
+  private static $_PUBLIC_ACTIONS = array('fatal', 'login', 'logout');
 
   private $_anonymousUser = null;
 

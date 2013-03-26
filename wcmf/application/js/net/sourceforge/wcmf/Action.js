@@ -16,7 +16,7 @@ dojo.declare("wcmf.Action", null, {
 wcmf.Action.login = function() {
   wcmf.Error.hide();
   new wcmf.persistence.Request().sendAjax({
-    action: 'dologin',
+    action: 'login',
     responseFormat: 'json'
   }, 'loginForm').then(function(data) {
     // redirect on success

@@ -34,17 +34,19 @@ define([
 
         _logout: function() {
             var data = {};
-            data.controller = 'wcmf\\application\\controller\\LoginController';
-            data.action = 'logout';
-            data.responseFormat = 'json';
+            data.controller = "wcmf\\application\\controller\\LoginController";
+            data.action = "logout";
 
-            request.post('main.php', {
+            request.post("main.php", {
                 data: data,
-                handleAs: 'json'
+                headers: {
+                    "Accept" : "application/json"
+                },
+                handleAs: "json"
 
             }).then(lang.hitch(this, function(response){
                 // redirect to login
-                var route = this.router.getRoute('login');
+                var route = this.router.getRoute("login");
                 var url = route.assemble();
                 window.document.location.href = url;
             }));
