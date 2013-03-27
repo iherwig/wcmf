@@ -7,11 +7,11 @@ define([
 ) {
     var Node = declare(null, {
 
-        name: '',
+        typeName: '',
         isSortable: false,
+        displayValues: [],
         attributes: [],
         relations: [],
-        displayValues: [],
 
         /**
          * Get a relation definition for a given role name

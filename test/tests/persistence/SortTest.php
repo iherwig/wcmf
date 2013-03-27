@@ -69,7 +69,7 @@ class SortTest extends DatabaseTestCase {
     $publisherMapper = $persistenceFacade->getMapper('Publisher');
     $defaultAuthorOrder = $publisherMapper->getDefaultOrder('Author');
     $this->assertEquals('sortkey_author', $defaultAuthorOrder['sortFieldName']);
-    $this->assertEquals('NMPublisherAuthor', $defaultAuthorOrder['sortType']);
+    $this->assertEquals('testapp\application\model\NMPublisherAuthor', $defaultAuthorOrder['sortType']);
     $this->assertEquals(true, $defaultAuthorOrder['isSortkey']);
     $this->assertEquals('ASC', $defaultAuthorOrder['sortDirection']);
 
