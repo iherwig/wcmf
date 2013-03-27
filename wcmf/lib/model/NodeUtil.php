@@ -97,7 +97,8 @@ class NodeUtil {
       $pathFound = null;
       $nextType = $relationDesc->getOtherType();
       $nextRole = $relationDesc->getOtherRole();
-      if (($otherRole != null && $nextRole == $otherRole) || ($otherType != null && $nextType == $otherType)) {
+      $otherTypeFq = $otherType != null ? $persistenceFacade->getFullyQualifiedType($otherType) : null;
+      if (($otherRole != null && $nextRole == $otherRole) || ($otherType != null && $nextType == $otherTypeFq)) {
         // other end found -> terminate
         $pathFound = $currentPath;
         $pathFound[] = $relationDesc;

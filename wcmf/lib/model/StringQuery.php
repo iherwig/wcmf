@@ -58,6 +58,7 @@ class StringQuery extends ObjectQuery {
   protected function buildQuery($orderby=null, $attribs=null) {
     $queryType = $this->getQueryType();
     $mapper = self::getMapper($queryType);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $quoteIdentifierSymbol = '`';
 
@@ -85,7 +86,11 @@ class StringQuery extends ObjectQuery {
             if ($pos > 0) {
               // token is type/role.attribute
               list($typeOrRole, $attribute) = explode('.', $token, 2);
-              if ($typeOrRole != $queryType) {
+              // check if the token is a type
+              $fqType = $persistenceFacade->isKnownType($typeOrRole) ?
+                      $persistenceFacade->getFullyQualifiedType($typeOrRole) : null;
+              if ($fqType == null || $fqType != $queryType) {
+                // find connection if the token does not match the queryType
                 if (!isset($otherRoles[$typeOrRole])) {
                   // find the path from the queryType to the other type/role
                   // (role is preferred)
@@ -131,7 +136,6 @@ class StringQuery extends ObjectQuery {
     }
 
     // get relation conditions
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $rootNode = $persistenceFacade->create($queryType);
     foreach ($otherRoles as $typeOrRole => $pathDescription) {
       $relationDescriptions = $pathDescription->getPath();

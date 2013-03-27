@@ -103,7 +103,7 @@ class InsertController extends Controller {
     $transaction->begin();
     try {
       // construct the Node to insert
-      $newType = $request->getValue('className');
+      $newType = $persistenceFacade->getFullyQualifiedType($request->getValue('className'));
       $newNode = $persistenceFacade->create($newType, BuildDepth::REQUIRED);
 
       // look for a node template in the request parameters

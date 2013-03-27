@@ -38,6 +38,7 @@ use wcmf\lib\persistence\output\OutputStrategy;
 class DefaultPersistenceFacade implements PersistenceFacade {
 
   private $_mappers = array();
+  private $_simpleToFqNames = array();
   private $_createdOIDs = array();
   private $_logging = false;
   private $_logStrategy = null;
@@ -63,11 +64,19 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 
   /**
    * Set the PersistentMapper instances.
-   * @param mappers Associative array with the
+   * @param mappers Associative array with the fully qualified
    *   mapped class names as keys and the mapper instances as values
    */
   public function setMappers($mappers) {
     $this->_mappers = $mappers;
+    // register simple type names
+    foreach ($mappers as $fqName => $mapper) {
+      $name = $this->getSimpleType($fqName);
+      if (!isset($this->_mappers[$name])) {
+        $this->_mappers[$name] = $mapper;
+        $this->_simpleToFqNames[$name] = $fqName;
+      }
+    }
   }
 
   /**
@@ -82,7 +91,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::getKnownTypes()
    */
   public function getKnownTypes() {
-    return array_keys($this->_mappers);
+    return array_values($this->_simpleToFqNames);
   }
 
   /**
@@ -90,6 +99,30 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function isKnownType($type) {
     return (isset($this->_mappers[$type]));
+  }
+
+  /**
+   * @see PersistenceFacade::getFullyQualifiedType()
+   */
+  public function getFullyQualifiedType($type) {
+    if (isset($this->_simpleToFqNames[$type])) {
+      return $this->_simpleToFqNames[$type];
+    }
+    if ($this->isKnownType($type)) {
+      return $type;
+    }
+    throw new ConfigurationException("Type '".$type."' is unknown.");
+  }
+
+  /**
+   * @see PersistenceFacade::getSimpleType()
+   */
+  public function getSimpleType($type) {
+    $pos = strrpos($type, '\\');
+    if ($pos !== false) {
+      return substr($type, $pos+1);
+    }
+    return $type;
   }
 
   /**
@@ -106,8 +139,12 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $transaction = $this->getTransaction();
     // extract type specific build attribs
     $attribs = null;
-    if ($buildAttribs !== null && isset($buildAttribs[$oid->getType()])) {
-      $attribs = $buildAttribs[$oid->getType()];
+    if ($buildAttribs !== null) {
+      // either fully qualified or simple type may be included
+      $type = $oid->getType();
+      $simpleType = $this->getSimpleType($type);
+      $attribs = isset($buildAttribs[$type]) ? $buildAttribs[$type] :
+        (isset($buildAttribs[$simpleType]) ? $buildAttribs[$simpleType] : $attribs);
     }
     $obj = $transaction->getLoaded($oid, $attribs);
 
@@ -130,16 +167,15 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::create()
    */
-  public function create($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null) {
+  public function create($type, $buildDepth=BuildDepth::SINGLE) {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE, BuildDepth::REQUIRED))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
-    $this->checkArrayParameter($buildAttribs, 'buildAttribs');
 
     $obj = null;
     $mapper = $this->getMapper($type);
     if ($mapper != null) {
-      $obj = $mapper->create($type, $buildDepth, $buildAttribs);
+      $obj = $mapper->create($type, $buildDepth);
 
       // register the object with the transaction, if it is active
       $transaction = $this->getTransaction();

@@ -35,7 +35,7 @@ use wcmf\lib\core\ObjectFactory;
 class ObjectId {
 
   private $_prefix;
-  private $_type;
+  private $_fqType;
   private $_id;
   private $_strVal = null;
 
@@ -47,7 +47,7 @@ class ObjectId {
 
   /**
    * Constructor.
-   * @param type The type of the object (string)
+   * @param type The type name of the object (either fully qualified or simple, if not ambiguous)
    * @param id Either a single value or an array of values (for compound primary keys) identifying
    * the object between others of the same type. If not given, a dummy id will be
    * assigned. [optional, default: null]
@@ -58,7 +58,8 @@ class ObjectId {
    */
   public function __construct($type, $id=null, $prefix=null) {
     $this->_prefix = $prefix;
-    $this->_type = $type;
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $this->_fqType = $persistenceFacade->getFullyQualifiedType($type);
 
     // get given primary keys
     if ($id != null) {
@@ -104,11 +105,11 @@ class ObjectId {
   }
 
   /**
-   * Get the type
+   * Get the type (including namespace)
    * @return String
    */
   public function getType() {
-    return $this->_type;
+    return $this->_fqType;
   }
 
   /**
@@ -199,7 +200,7 @@ class ObjectId {
    */
   public function __toString() {
     if ($this->_strVal == null) {
-      $oidStr = $this->_type.':'.join(':', $this->_id);
+      $oidStr = $this->_fqType.':'.join(':', $this->_id);
       if (strlen(trim($this->_prefix)) > 0) {
         $oidStr = $this->_prefix.':'.$oidStr;
       }

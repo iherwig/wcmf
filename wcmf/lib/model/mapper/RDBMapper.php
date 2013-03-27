@@ -643,20 +643,14 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see AbstractMapper::createImpl()
    * @note The type parameter is not used here because this class only constructs one type
    */
-  protected function createImpl($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null) {
+  protected function createImpl($type, $buildDepth=BuildDepth::SINGLE) {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::SINGLE, BuildDepth::REQUIRED))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    // get attributes to load
-    $attribs = null;
-    if ($buildAttribs !== null && isset($buildAttribs[$this->getType()])) {
-      $attribs = $buildAttribs[$this->getType()];
-    }
-
     // create the object
-    $object = $this->createObjectFromData(array(), $attribs);
+    $object = $this->createObjectFromData(array());
 
     // recalculate build depth for the next generation
     $newBuildDepth = $buildDepth;
@@ -676,10 +670,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         )) ) {
           $childObject = null;
           if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
-            $childObject = $persistenceFacade->create($curRelationDesc->getOtherType(), BuildDepth::SINGLE, $buildAttribs);
+            $childObject = $persistenceFacade->create($curRelationDesc->getOtherType(), BuildDepth::SINGLE);
           }
           else {
-            $childObject = $persistenceFacade->create($curRelationDesc->getOtherType(), $newBuildDepth, $buildAttribs);
+            $childObject = $persistenceFacade->create($curRelationDesc->getOtherType(), $newBuildDepth);
           }
           $object->setValue($curRelationDesc->getOtherRole(), array($childObject), true, false);
         }
@@ -878,8 +872,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
       // get attributes to load
       $attribs = null;
-      if ($buildAttribs !== null && isset($buildAttribs[$type])) {
-        $attribs = $buildAttribs[$type];
+      if ($buildAttribs !== null) {
+        // either fully qualified or simple type may be included
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $simpleType = $persistenceFacade->getSimpleType($type);
+        $attribs = isset($buildAttribs[$type]) ? $buildAttribs[$type] :
+          (isset($buildAttribs[$simpleType]) ? $buildAttribs[$simpleType] : $attribs);
       }
 
       // create query
@@ -908,16 +906,19 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
-    $objects = array();
 
     // check buildTypes
     if ($buildTypes !== null && !in_array($type, $buildTypes)) {
-      return $objects;
+      return array();
     }
     // get attributes to load
     $attribs = null;
-    if ($buildAttribs !== null && isset($buildAttribs[$type])) {
-      $attribs = $buildAttribs[$type];
+    if ($buildAttribs !== null) {
+      // either fully qualified or simple type may be included
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $simpleType = $persistenceFacade->getSimpleType($type);
+      $attribs = isset($buildAttribs[$type]) ? $buildAttribs[$type] :
+        (isset($buildAttribs[$simpleType]) ? $buildAttribs[$simpleType] : $attribs);
     }
 
     // create query

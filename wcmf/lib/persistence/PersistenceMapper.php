@@ -184,12 +184,9 @@ interface PersistenceMapper {
    * @param type The type of object to build
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::INFINITE, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param buildAttribs An assoziative array listing the attributes to create (default: null, creates all attributes)
-   *        (keys: the types, values: an array of attributes of the type to create)
-   *        Use this to create only a subset of attributes
    * @return PersistentObject
    */
-  public function create($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null);
+  public function create($type, $buildDepth=BuildDepth::SINGLE);
 
   /**
    * Save a PersistentObject instance.

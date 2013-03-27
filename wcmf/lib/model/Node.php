@@ -21,6 +21,7 @@ namespace wcmf\lib\model;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
@@ -111,7 +112,8 @@ class Node extends PersistentObject {
    * Get Nodes that match given conditions from a list.
    * @param nodeList An array of nodes to filter or a single Node.
    * @param oid The object id that the Nodes should match [maybe null, default: null].
-   * @param type The type that the Nodes should match [maybe null, default: null].
+   * @param type The type that the Nodes should match (either fully qualified or simple, if not ambiguous)
+   *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the Node values should match
    *        [values are interpreted as regular expression, parameter maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the Node properties should match
@@ -132,8 +134,12 @@ class Node extends PersistentObject {
           $match = false;
         }
         // check type
-        if ($type != null && $curNode->getType() != $type) {
-          $match = false;
+        if ($type != null) {
+          $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+          $fqType = $persistenceFacade->getFullyQualifiedType($type);
+          if ($fqType != null && $curNode->getType() != $fqType) {
+            $match = false;
+          }
         }
         // check values
         if ($values != null && is_array($values)) {
@@ -248,7 +254,7 @@ class Node extends PersistentObject {
    * Add a Node to the given relation. Delegates to setValue internally.
    * @param other PersistentObject or PersistentObjectProxy
    * @param role The role of the Node in the created relation. If null, the role will be
-   *        the Node's type. [default: null]
+   *        the Node's simple type (without namespace). [default: null]
    * @param forceSet @see PersistentObject::setValue()
    * @param trackChange @see PersistentObject::setValue()
    * @param updateOtherSide True/False wether to update also the other side of the relation [default: true]
@@ -261,7 +267,7 @@ class Node extends PersistentObject {
         "PersistentObjectProxy as first argument.", __CLASS__);
     }
     if ($role == null) {
-      $role = $other->getType();
+      $role = $this->mapTypeToRole($other->getType());
     }
 
     // get the relation description
@@ -296,7 +302,7 @@ class Node extends PersistentObject {
     // propagate add action to the other object
     $result2 = true;
     if ($updateOtherSide) {
-      $thisRole = $this->getType();
+      $thisRole = $this->mapTypeToRole($this->getType());
       if ($relDesc) {
         $thisRole = $relDesc->getThisRole();
       }
@@ -318,12 +324,12 @@ class Node extends PersistentObject {
   /**
    * Delete a Node from the given relation.
    * @param oid The object id of the Node to delete.
-   * @param role The role of the Node. If null, the role is the Node's type. [default: null]
+   * @param role The role of the Node. If null, the role is the Node's type (without namespace). [default: null]
    * @param updateOtherSide True/False wether to update also the other side of the relation [default: true]
    */
   public function deleteNode(PersistentObject $other, $role=null, $updateOtherSide=true) {
     if ($role == null) {
-      $role = $other->getType();
+      $role = $this->mapTypeToRole($other->getType());
     }
 
     $nodes = $this->getValue($role);
@@ -368,7 +374,7 @@ class Node extends PersistentObject {
 
     // propagate add action to the other object
     if ($updateOtherSide) {
-      $thisRole = $this->getType();
+      $thisRole = $this->mapTypeToRole($this->getType());
       if ($relDesc) {
         $thisRole = $relDesc->getThisRole();
       }
@@ -428,7 +434,8 @@ class Node extends PersistentObject {
   /**
    * Get the first child that matches given conditions.
    * @param role The role that the child should match [maybe null, default: null].
-   * @param type The type that the child should match [maybe null, default: null].
+   * @param type The type that the child should match (either fully qualified or simple, if not ambiguous)
+   *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the child values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the child properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
@@ -460,7 +467,8 @@ class Node extends PersistentObject {
    * list afterwards.
    * @param oid The object id that the children should match [maybe null, default: null].
    * @param role The role that the children should match [maybe null, default: null].
-   * @param type The type that the children should match [maybe null, default: null].
+   * @param type The type that the children should match (either fully qualified or simple, if not ambiguous)
+   *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the children values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the children properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
@@ -550,7 +558,8 @@ class Node extends PersistentObject {
   /**
    * Get the first parent that matches given conditions.
    * @param role The role that the parent should match [maybe null, default: null].
-   * @param type The type that the parent should match [maybe null, default: null].
+   * @param type The type that the parent should match (either fully qualified or simple, if not ambiguous)
+   *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
@@ -583,7 +592,8 @@ class Node extends PersistentObject {
    * list afterwards.
    * @param oid The object id that the parent should match [maybe null, default: null].
    * @param role The role that the parents should match [maybe null, default: null].
-   * @param type The type that the parents should match [maybe null, default: null].
+   * @param type The type that the parents should match (either fully qualified or simple, if not ambiguous)
+   *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
    * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
@@ -751,6 +761,16 @@ class Node extends PersistentObject {
    */
   protected function getNumRelatives($hierarchyType, $memOnly=true) {
     return sizeof($this->getRelatives($hierarchyType, $memOnly));
+  }
+
+  /**
+   * Geth the default role name from a given type.
+   * @param type The type name
+   * @return The role name.
+   */
+  protected function mapTypeToRole($type) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    return $persistenceFacade->getSimpleType($type);
   }
 
   /**

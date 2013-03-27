@@ -145,11 +145,11 @@ abstract class AbstractMapper {
   /**
    * @see PersistenceMapper::create()
    */
-  public function create($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null) {
+  public function create($type, $buildDepth=BuildDepth::SINGLE) {
     // Don't check rights here, because object creation may be needed
     // for internal purposes. That newly created objects may not be saved
     // to the storage is asured by the save method.
-    $object = $this->createImpl($type, $buildDepth, $buildAttribs);
+    $object = $this->createImpl($type, $buildDepth);
 
     $this->initialize($object);
 
@@ -277,7 +277,7 @@ abstract class AbstractMapper {
    * @see PersistenceFacade::create()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function createImpl($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null);
+  abstract protected function createImpl($type, $buildDepth=BuildDepth::SINGLE);
 
   /**
    * @see PersistenceMapper::save()
