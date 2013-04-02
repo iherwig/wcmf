@@ -7,7 +7,6 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/NavigationWidget",
-    "../_include/FooterWidget",
     "dojo/text!./template/HomePage.html"
 ], function (
     declare,
@@ -18,7 +17,6 @@ define([
     _Page,
     _Notification,
     NavigationWidget,
-    FooterWidget,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -36,7 +34,6 @@ define([
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - Home');
             new NavigationWidget({activeRoute: "home"}, this.navigationNode);
-            new FooterWidget({}, this.footerNode);
 
             this.setupRoutes();
         },

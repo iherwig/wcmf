@@ -8,13 +8,13 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/NavigationWidget",
-    "../_include/FooterWidget",
     "./widget/GridWidget",
-    "dojo/store/JsonRest",
+    "../../persistence/Store",
     "bootstrap/Tab",
     "dojo/dom-construct",
     "dojo/query",
     "dojo/on",
+    "../../model/meta/Model",
     "dojo/text!./template/ListPage.html"
 ], function (
     declare,
@@ -26,13 +26,13 @@ define([
     _Page,
     _Notification,
     NavigationWidget,
-    FooterWidget,
     GridWidget,
-    JsonRest,
+    Store,
     Tab,
     domConstruct,
     query,
     on,
+    Model,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -56,7 +56,6 @@ define([
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - '+this.selectedType);
             new NavigationWidget({activeRoute: "dataIndex"}, this.navigationNode);
-            new FooterWidget({}, this.footerNode);
 
             // create type tab panes
             var tcTabs = query("#typesTabContainer .nav-tabs")[0];
@@ -84,13 +83,20 @@ define([
                       class: isSelected ? "tab-pane fade in active" : "tab-pane fade",
                       innerHTML: '<div id="typeGrid"></div>'
                   }, tcContent);
-                  var store = new JsonRest({
+
+                  /*
+                  var store = dojo.store.Cache(
+                      dojo.store.JsonRest({target:appConfig.pathPrefix+"/rest/en/"+typeName+"/"}),
+                      dojo.store.Memory());
+                  */
+                  var store = new Store({
                       target: appConfig.pathPrefix+"/rest/en/"+typeName+"/"
                   });
                   this.gridWidget = new GridWidget({
                       request: this.request,
                       router: this.router,
-                      store: store
+                      store: store,
+                      type: Model.getType(typeName)
                   }, "typeGrid");
                 }
             }

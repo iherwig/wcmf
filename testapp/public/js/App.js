@@ -1,26 +1,45 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dijit/registry",
     "routed/Request",
     "dojomat/Application",
     "dojomat/populateRouter",
     "./routing-map",
     "require",
+    "dojo/query",
+    "dojo/dom-construct",
     "dojo/domReady!"
 ], function (
     declare,
     lang,
+    registry,
     Request,
     Application,
     populateRouter,
     routingMap,
-    require
+    require,
+    query,
+    domConstruct
 ) {
     return declare([Application], {
 
         constructor: function () {
             populateRouter(this, routingMap);
             this.run();
+        },
+
+        setPageNode: function () {
+            var tag = 'div',
+                attributes = { id: this.pageNodeId },
+                refNode = query('#wrap')[0],
+                position = 'first';
+
+            if (registry.byId(this.pageNodeId)) {
+                registry.byId(this.pageNodeId).destroyRecursive();
+            }
+
+            domConstruct.create(tag, attributes, refNode, position);
         },
 
         makeNotFoundPage: function () {

@@ -1,26 +1,21 @@
 <div>
 
-  <div id="wrap">
-    <div data-dojo-attach-point="navigationNode"></div>
+  <div data-dojo-attach-point="navigationNode"></div>
 
-    <!-- Begin page content -->
-    <div class="container">
-      <form class="form-login" id="loginForm">
-        <h3 class="form-login-heading">Please log in</h3>
-        <div data-dojo-attach-point="notificationNode"></div>
-        <input type="text" name="user" class="input-block-level" placeholder="Login">
-        <input type="password" name="password" class="input-block-level" placeholder="Password">
-        <!--label class="checkbox">
-          <input type="checkbox" value="remember-me"> Remember me
-        </label-->
-        <button class="btn btn-primary pull-right" type="submit" data-loading-text="Logging in..." data-dojo-attach-event="onClick:_login">Log in</button>
-        <span class="clearfix"></span>
-      </form>
-    </div>
-    <!-- End page content -->
-
-    <div id="push"></div>
+  <!-- Begin page content -->
+  <div class="container">
+    <form class="form-login" id="loginForm">
+      <h3 class="form-login-heading">Please log in</h3>
+      <div data-dojo-attach-point="notificationNode"></div>
+      <input type="text" name="user" class="input-block-level" placeholder="Login">
+      <input type="password" name="password" class="input-block-level" placeholder="Password">
+      <!--label class="checkbox">
+        <input type="checkbox" value="remember-me"> Remember me
+      </label-->
+      <button class="btn btn-primary pull-right" type="submit" data-loading-text="Logging in..." data-dojo-attach-event="onClick:_login">Log in</button>
+      <span class="clearfix"></span>
+    </form>
   </div>
-  <div data-dojo-attach-point="footerNode"></div>
+  <!-- End page content -->
 
 </div>

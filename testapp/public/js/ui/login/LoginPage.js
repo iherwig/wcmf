@@ -7,7 +7,6 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/NavigationWidget",
-    "../_include/FooterWidget",
     "bootstrap/Button",
     "dojo/_base/lang",
     "dojo/dom-form",
@@ -24,7 +23,6 @@ define([
     _Page,
     _Notification,
     NavigationWidget,
-    FooterWidget,
     button,
     lang,
     domForm,
@@ -48,7 +46,6 @@ define([
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - Login');
             new NavigationWidget({titleOnly: true}, this.navigationNode);
-            new FooterWidget({}, this.footerNode);
 
             this.setupRoutes();
         },

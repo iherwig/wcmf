@@ -13,6 +13,7 @@ define([
     "dojo/dom-construct",
     "dojo/dom-style",
     "dojo/dom-attr",
+    "dojo/window",
     "dojo/aspect",
     "dojo/topic",
     "dojo/on",
@@ -32,6 +33,7 @@ define([
     domConstruct,
     domStyle,
     domAttr,
+    win,
     aspect,
     topic,
     on,
@@ -43,6 +45,7 @@ define([
 
         router: null,
         store: null,
+        type: null,
         templateString: template,
         gridWidget: null,
 
@@ -50,6 +53,7 @@ define([
             this.request = params.request;
             this.router = params.router;
             this.store = params.store;
+            this.type = params.type;
         },
 
         postCreate: function () {
@@ -57,9 +61,14 @@ define([
             this.store = Observable(this.store);
             this.gridWidget = this.buildGrid();
             this.gridWidget.set("store", this.store); // set store and run query
+            this.own(
+                on(window, "resize", lang.hitch(this, this.onResize))
+            );
+            this.onResize();
         },
 
         startup: function () {
+            this.inherited(arguments);
         },
 
         buildGrid: function () {
@@ -67,21 +76,20 @@ define([
                     selector: {
                         label: ' ',
                         sortable: false
-                    },
-
-                    title: {
-                        label: "Title",
-                        field: "title",
-                        sortable: true
-                    },
-
-                    date: {
-                        label: "Date",
-                        field: "date",
-                        sortable: true
                     }
-                },
-                gridWidget = new (declare([OnDemandGrid, Selection]))({
+                };
+
+            var displayValues = this.type.displayValues;
+            for (var i=0, count=displayValues.length; i<count; i++) {
+                var curValue = displayValues[i];
+                columns[curValue] = {
+                    label: curValue,
+                    field: curValue,
+                    sortable: true
+                };
+            }
+
+            var gridWidget = new (declare([OnDemandGrid, Selection]))({
                     getBeforePut: true,
                     columns: columns,
                     selectionMode: 'none', // we'll do programmatic selection with a checkbox
@@ -155,6 +163,14 @@ define([
             }));
 
             return gridWidget;
+        },
+
+        onResize: function() {
+            var vs = win.getBox();
+            var h = vs.h-185;
+            if (h >= 0){
+                domAttr.set(this.gridWidget.domNode, "style", {height: h+"px"});
+            }
         }
     });
 });

@@ -63,6 +63,9 @@ catch (Exception $ex) {
           pathPrefix: '<?php echo $pathPrefix; ?>'
       };
       var dojoConfig = {
+          has: {
+              "dijit": true
+          },
           baseUrl: '',
           async: 1,
           tlmSiblingOfDojo: 0,
@@ -89,11 +92,23 @@ catch (Exception $ex) {
     <script src="vendor/dojo/dojo/dojo.js"></script>
 
     <script>
-      require(['app/App'], function (App) { new App(); });
+      require(["app/App"], function (App) { new App(); });
     </script>
 
     <div id="static" class="alert alert-error">
       <strong>Warning!</strong> Please enable JavaScript in your browser.
     </div>
+
+    <div id="wrap">
+      <div id="push"></div>
+    </div>
+    <div id="footer">
+      <div class="container">
+        <p class="pull-right muted">created with
+          <a href="http://sourceforge.net/projects/wcmf/" target="_blank">wCMF</a></p>
+        <p class="muted">&copy; 2013</p>
+      </div>
+    </div>
+
   </body>
 </html>

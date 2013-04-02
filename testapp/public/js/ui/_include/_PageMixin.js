@@ -21,6 +21,10 @@ define([
             this.router = params.router;
         },
 
+        postCreate: function () {
+            this.inherited(arguments);
+        },
+
         /**
          * Set up routing for links with class push.
          * The route name is defined in the link's data-dojorama-route attribute,

@@ -15,7 +15,16 @@ define([
      * @param type A Node subclass
      */
     Model.registerType = function(type) {
-        Model.types[type.typeName] = type;
+        var typeName = type.typeName;
+        Model.types[typeName] = type;
+        // also register simple type name
+        var pos = typeName.lastIndexOf('\\');
+        if (pos !== -1) {
+            var simpleTypeName = typeName.substring(pos+1);
+            if (Model.types[simpleTypeName] === undefined) {
+                Model.types[simpleTypeName] = type;
+            }
+        }
     };
 
     /**
@@ -24,7 +33,7 @@ define([
      * @return Node instance
      */
     Model.getType = function(typeName) {
-      return Model.types[typeName];
+        return Model.types[typeName];
     };
 
     /**
@@ -33,8 +42,8 @@ define([
      * @return Node instance
      */
     Model.getTypeFromOid = function(oid) {
-      var typeName = Node.getTypeFromOid(oid);
-      return Model.types[typeName];
+        var typeName = Node.getTypeFromOid(oid);
+        return Model.types[typeName];
     };
 
     /**
@@ -42,17 +51,17 @@ define([
      * @return An array of Node instances
      */
     Model.getAllTypes = function() {
-      var types = [];
-      for (var typeName in Model.types) {
-        types.push(Model.types[typeName]);
-      }
-      return types;
+        var types = [];
+        for (var typeName in Model.types) {
+            types.push(Model.types[typeName]);
+        }
+        return types;
     };
 
     // register types
     Model.types = {};
     for (var i=0, count=TypeList.length; i<count; i++) {
-      Model.registerType(TypeList[i]);
+        Model.registerType(TypeList[i]);
     }
 
     return Model;
