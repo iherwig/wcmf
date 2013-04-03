@@ -45,6 +45,7 @@ define([
             // hide buttons, if titleOnly
             if (this.titleOnly) {
                 query("ul.nav").style("display", "none");
+                query("a.btn-navbar").style("display", "none");
             }
 
             // set first root type on dataIndex route
