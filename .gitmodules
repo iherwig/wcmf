@@ -1,6 +1,3 @@
-[submodule "testapp/public/vendor/dojo-bootstrap"]
-	path = testapp/public/vendor/dojo-bootstrap
-	url = git://github.com/xsokev/Dojo-Bootstrap.git
 [submodule "testapp/public/vendor/dojo/dojo"]
 	path = testapp/public/vendor/dojo/dojo
 	url = git://github.com/dojo/dojo.git
@@ -19,12 +16,15 @@
 [submodule "testapp/public/vendor/routed"]
 	path = testapp/public/vendor/routed
 	url = git://github.com/sirprize/routed.git
+[submodule "testapp/public/vendor/dojo-bootstrap"]
+	path = testapp/public/vendor/dojo-bootstrap
+	url = git://github.com/xsokev/Dojo-Bootstrap.git
 [submodule "testapp/public/vendor/dgrid"]
 	path = testapp/public/vendor/dgrid
 	url = git://github.com/SitePen/dgrid.git
-[submodule "testapp/public/vendor/xstyle"]
-	path = testapp/public/vendor/xstyle
-	url = git://github.com/kriszyp/xstyle.git
 [submodule "testapp/public/vendor/put-selector"]
 	path = testapp/public/vendor/put-selector
 	url = git://github.com/kriszyp/put-selector.git
+[submodule "testapp/public/vendor/xstyle"]
+	path = testapp/public/vendor/xstyle
+	url = git://github.com/kriszyp/xstyle.git
