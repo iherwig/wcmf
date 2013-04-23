@@ -19,11 +19,9 @@
 namespace wcmf\lib\presentation\format;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\EncodingUtil;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\format\Format;
 
 /**
  * Formatter is is the single entry point for request/response formatting.
@@ -34,25 +32,12 @@ use wcmf\lib\presentation\format\Format;
  */
 class Formatter {
 
-  private static $_formats = array();
-
   /**
    * Deserialize Request data into objects.
    * @note UTF-8 encoded request data is decoded automatically
    * @param request A reference to the Request instance
    */
   public static function deserialize(Request $request) {
-    // get the formatter that should be used for this request format
-    $format = $request->getFormat();
-    if ($format == null || strlen($format) == 0) {
-      // default to html (POST/GET variables) format
-      $format = MSG_FORMAT_HTML;
-    }
-    $formatter = self::getFormatImplementation($format);
-    if ($formatter === null) {
-      throw new ConfigurationException("No Format implementation registered for ".$format.
-      	".\nRequest: ".$request->__toString());
-    }
 
     // decode UTF-8
     $data = $request->getValues();
@@ -63,6 +48,12 @@ class Formatter {
     }
     $request->setValues($data);
 
+    // get the formatter that should be used for this request format
+    $formatter = $request->getFormat();
+    if ($formatter == null) {
+      // the format must be given!
+      throw new ConfigurationException("No content format defined for ".$request->__toString());
+    }
     $formatter->deserialize($request);
   }
 
@@ -72,40 +63,15 @@ class Formatter {
    */
   public static function serialize(Response $response) {
     // get the formatter that should be used for this response format
-    $format = $response->getFormat();
-    if ($format == null) {
+    $formatter = $response->getFormat();
+    if ($formatter == null) {
       // the response format must be given!
       throw new ConfigurationException("No response format defined for ".$response->__toString());
     }
-    $formatter = self::getFormatImplementation($format);
-    if ($formatter === null) {
-      throw new ConfigurationException("No Format implementation registered for ".$format.
-      	".\nResponse: ".$response->__toString());
+    foreach ($response->getHeaders() as $name => $value) {
+      header($name.': '.$value);
     }
     $formatter->serialize($response);
-  }
-
-  /**
-   * Get the format implementation
-   * @param formatName The name of the format
-   * @return Format implementation
-   */
-  private static function getFormatImplementation($formatName) {
-    $formatName = strtolower($formatName);
-    if (self::$_formats == null) {
-      // initially get formats from configuration
-      $formats = ObjectFactory::getInstance('formats');
-      foreach ($formats as $name => $instance) {
-        if (!($instance instanceof Format)) {
-          throw new ConfigurationException(get_class($instance)." must implement Format.");
-        }
-        self::$_formats[strtolower($name)] = $instance;
-      }
-    }
-    if (isset(self::$_formats[$formatName])) {
-      return new self::$_formats[$formatName];
-    }
-    return null;
   }
 }
 ?>

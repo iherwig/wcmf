@@ -93,7 +93,10 @@ class RPCClient {
     $jsonResponse = null;
     $returnValue = -1;
 
-    $request->setResponseFormat(MSG_FORMAT_JSON);
+    $formats = ObjectFactory::getInstance('formats');
+    $jsonFormat = $formats['json'];
+
+    $request->setResponseFormat($jsonFormat);
     $serializedRequest = base64_encode(serialize($request));
 
     $arguments = array(
@@ -117,7 +120,7 @@ class RPCClient {
 
     $responseData = json_decode($jsonResponse[0], true);
     $response = new Response('', '', '', $responseData);
-    $response->setFormat(MSG_FORMAT_JSON);
+    $response->setFormat($jsonFormat);
     Formatter::deserialize($response);
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Response:\n".$response->toString(), __CLASS__);

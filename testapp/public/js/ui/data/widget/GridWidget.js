@@ -94,7 +94,7 @@ define([
                     columns: columns,
                     selectionMode: 'none', // we'll do programmatic selection with a checkbox
                     //query: { find: 'xx' },
-                    queryOptions: { sort: [{ attribute: 'title', descending: false }] },
+                    //queryOptions: { sort: [{ attribute: 'title', descending: false }] },
                     loadingMessage: "Loading",
                     noDataMessage: "No data"
                 }, this.gridNode),

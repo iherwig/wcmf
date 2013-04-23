@@ -84,14 +84,7 @@ define([
                       innerHTML: '<div id="typeGrid"></div>'
                   }, tcContent);
 
-                  /*
-                  var store = dojo.store.Cache(
-                      dojo.store.JsonRest({target:appConfig.pathPrefix+"/rest/en/"+typeName+"/"}),
-                      dojo.store.Memory());
-                  */
-                  var store = new Store({
-                      target: appConfig.pathPrefix+"/rest/en/"+typeName+"/"
-                  });
+                  var store = Store.getStore(typeName, 'en');
                   this.gridWidget = new GridWidget({
                       request: this.request,
                       router: this.router,

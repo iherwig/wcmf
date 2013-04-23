@@ -32,6 +32,12 @@ use wcmf\lib\presentation\Response;
 interface Format {
 
   /**
+   * Get the MIME type of the format
+   * @return String
+   */
+  function getMimeType();
+
+  /**
    * Deserialize Request data from the external representation into Nodes and scalars/arrays.
    * @param request A reference to the Request instance
    */

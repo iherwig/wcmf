@@ -48,7 +48,7 @@ class ObjectFactory {
       'userManager' =>        'wcmf\lib\security\UserManager',
       'authUser' =>           'wcmf\lib\security\principal\AuthUser',
 
-      /*'formats' =>            'wcmf\lib\presentation\format\Format',*/
+      'formats' =>            'wcmf\lib\presentation\format\Format',
       /*'controlRenderer' =>    'wcmf\lib\presentation\control\ControlRenderer',*/
       /*'valueRenderer' =>      'wcmf\lib\presentation\renderer\ValueRenderer',*/
   );
@@ -234,10 +234,20 @@ class ObjectFactory {
     }
     else {
       // the instance is a map
+
+      // get interface that map values should implement
+      $interface = self::getInterface($name);
+
       foreach ($configuration as $key => $value) {
-        // replace variables denoted by a leading $
+        // create instances for variables denoted by a leading $
         if (strpos($value, '$') === 0) {
-          $configuration[$key] = self::getInstance(preg_replace('/^\$/', '', $value));
+          $obj = self::getInstance(preg_replace('/^\$/', '', $value));
+          // check against interface
+          if ($interface != null && !($obj instanceof $interface)) {
+            throw new ConfigurationException('Class of \''.$name.'.'.$key.
+                    '\' is required to implement interface \''.$interface.'\'.');
+          }
+          $configuration[$key] = $obj;
         }
       }
       // always register maps

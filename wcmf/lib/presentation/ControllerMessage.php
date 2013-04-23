@@ -18,8 +18,11 @@
  */
 namespace wcmf\lib\presentation;
 
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\format\Format;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -51,6 +54,11 @@ class ControllerMessage {
    * The format of the message (used for de-, serialization).
    */
   private $_format = null;
+
+  /**
+   * The message headers
+   */
+  private $_headers = array();
 
   /**
    * Key value pairs of data contained in this message.
@@ -128,18 +136,81 @@ class ControllerMessage {
 
   /**
    * Set the message format
-   * @param format One of the MSG_FORMAT constants
+   * @param format Format instance
    */
-  public function setFormat($format) {
+  public function setFormat(Format $format) {
     $this->_format = $format;
   }
 
   /**
-   * Get the message format
-   * @return format One of the MSG_FORMAT constants
+   * Get the message format. If no explicit format is set, the
+   * format is derived from the Content-Type header value, if existing.
+   * If no format can be derived, the first format in the configuration
+   * key 'Formats' will be used.
+   * @return Format instance
    */
   public function getFormat() {
+    if ($this->_format == null) {
+      $this->_format = self::getFormatFromMimeType($this->getHeader('Content-Type'));
+    }
     return $this->_format;
+  }
+
+  /**
+   * Set a header value
+   * @param name The header name
+   * @param value The header value
+   */
+  public function setHeader($name, $value) {
+    $this->_headers[$name] = $value;
+  }
+
+  /**
+   * Get a header value
+   * @param name The header name
+   */
+  public function getHeader($name) {
+    return $this->_headers[$name];
+  }
+
+  /**
+   * Check for existance of a header
+   * @param name The name of the header
+   * @return Boolean wether the header exists or not exist
+   */
+  public function hasHeader($name) {
+    return array_key_exists($name, $this->_headers);
+  }
+
+  /**
+   * Get all key headers
+   * @return An associative array
+   */
+  public function getHeaders() {
+    return $this->_headers;
+  }
+
+  /**
+   * Set all headers at once
+   * @param headers The associative array
+   */
+  public function setHeaders(array $headers) {
+    $this->_headers = $headers;
+  }
+
+  /**
+   * Remove a header
+   * @param name The name of the header
+   */
+  public function clearHeader($name) {
+    unset($this->_headers[$name]);
+  }
+
+  /**
+   * Remove all headers
+   */
+  public function clearHeaders() {
+    $this->_headers = array();
   }
 
   /**
@@ -169,7 +240,7 @@ class ControllerMessage {
   /**
    * Check for existance of a value
    * @param name The name of the variable
-   * @return True/False wether the value exists or not exist
+   * @return Boolean wether the value exists or not exist
    */
   public function hasValue($name) {
     return array_key_exists($name, $this->_values);
@@ -246,7 +317,7 @@ class ControllerMessage {
 
   /**
    * Check if errors exist.
-   * @return True/False wether there are errors or not.
+   * @return Boolean wether there are errors or not.
    */
   public function hasErrors() {
     return sizeof($this->_errors) > 0;
@@ -287,6 +358,26 @@ class ControllerMessage {
     $str .= 'values='.StringUtil::getDump($this->_values);
     $str .= 'errors='.StringUtil::getDump($this->_errors);
     return $str;
+  }
+
+  /**
+   * Get the format instance for the given mime type.
+   * @param mimeType The mime type
+   * @return Format instance
+   */
+  protected static function getFormatFromMimeType($mimeType) {
+    $formats = ObjectFactory::getInstance('formats');
+    $firstFormat = null;
+    foreach ($formats as $name => $instance) {
+      $firstFormat = $firstFormat == null ? $name : $firstFormat;
+      if (strpos($mimeType, $instance->getMimeType()) !== false) {
+        return $instance;
+      }
+    }
+    if (!isset($formats[$firstFormat])) {
+      throw new ConfigurationException("Configuration section 'Formats' does not contain any format definitions.");
+    }
+    return $formats[$firstFormat];
   }
 }
 ?>

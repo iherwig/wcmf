@@ -23,11 +23,6 @@ use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 
 /**
- * Define the message format
- */
-define("MSG_FORMAT_JSON", "json");
-
-/**
  * JsonFormat realizes the JSON request/response format. All data will
  * be serialized using the json_encode method except for Nodes.
  * Nodes are serialized into an array before encoding (see JsonFormat::serializeValue)
@@ -61,6 +56,13 @@ class JsonFormat extends HierarchicalFormat {
         }
       }
     }
+  }
+
+  /**
+   * @see Format::getMimeType()
+   */
+  public function getMimeType() {
+    return 'application/json';
   }
 
   /**

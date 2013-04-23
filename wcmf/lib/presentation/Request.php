@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\presentation\ControllerMessage;
+use wcmf\lib\presentation\format\Format;
 
 /**
  * Request holds the request values that are used as input to
@@ -33,17 +34,23 @@ class Request extends ControllerMessage {
 
   /**
    * Set the desired response format
-   * @param format One of the MSG_FORMAT constants
+   * @param format Format instance
    */
-  public function setResponseFormat($format) {
+  public function setResponseFormat(Format $format) {
     $this->_responseFormat = $format;
   }
 
   /**
-   * Get the desired response format
-   * @return One of the MSG_FORMAT constants
+   * Get the message response format. If no explicit format is set, the
+   * format is derived from the Content-Type header value, if existing.
+   * If no format can be derived, the first format in the configuration
+   * key 'Formats' will be used.
+   * @return Format instance
    */
   public function getResponseFormat() {
+    if ($this->_responseFormat == null) {
+      $this->_responseFormat = self::getFormatFromMimeType($this->getHeader('Accept'));
+    }
     return $this->_responseFormat;
   }
 }

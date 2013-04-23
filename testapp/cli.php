@@ -61,12 +61,15 @@ if ($numArguments == 2) {
 
 // initialize the remote application
 $application = new Application();
-$application->initialize('config/', 'config.ini', 'wcmf\application\controller\LoginController', '', 'login', 'Null');
+$application->initialize('config/', 'config.ini', 'wcmf\application\controller\LoginController', '', 'login');
 
 // process the requested action
 $serializedRequest = base64_decode($arguments[0]);
 $request = unserialize($serializedRequest);
 if ($request) {
+  $formats = ObjectFactory::getInstance('formats');
+  $request->setFormat($formats['null']);
+  $request->setResponseFormat($formats['null']);
   Log::debug("Process remote request:\n".$request->toString(), "cli");
 
   $response = ObjectFactory::getInstance('actionMapper')->processAction($request);

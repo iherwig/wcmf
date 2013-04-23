@@ -23,17 +23,19 @@ use wcmf\lib\presentation\Response; // ambiguous
 use wcmf\lib\presentation\format\Format;
 
 /**
- * Define the message format
- */
-define("MSG_FORMAT_NULL", "null");
-
-/**
  * NullFormat passes through the original request and response objects
  * without modifying or transforming them.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class NullFormat implements Format {
+
+  /**
+   * @see Format::getMimeType()
+   */
+  public function getMimeType() {
+    return 'null';
+  }
 
   /**
    * @see Format::deserialize()

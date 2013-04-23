@@ -25,17 +25,19 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 
 /**
- * Define the message format
- */
-define("MSG_FORMAT_SOAP", "soap");
-
-/**
  * SoapFormat realizes the SOAP request/response format. Nodes are serialized
  * into an array (the nusoap library creates the XML)
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class SoapFormat extends HierarchicalFormat {
+
+  /**
+   * @see Format::getMimeType()
+   */
+  public function getMimeType() {
+    return 'application/soap+xml';
+  }
 
   /**
    * @see HierarchicalFormat::isSerializedNode()

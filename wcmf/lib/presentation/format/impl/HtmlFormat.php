@@ -29,11 +29,6 @@ use wcmf\lib\presentation\format\impl\AbstractFormat;
 use wcmf\lib\util\Obfuscator;
 
 /**
- * Define the message format
- */
-define("MSG_FORMAT_HTML", "html");
-
-/**
  * HtmlFormat realizes the HTML request/response format. Since all data
  * from the external representation arrives in form fields, grouping of values
  * has to be done via the field names. So Nodes are represented by their values
@@ -46,6 +41,14 @@ define("MSG_FORMAT_HTML", "html");
 class HtmlFormat extends AbstractFormat {
 
   /**
+   * @see Format::getMimeType()
+   */
+  public function getMimeType() {
+    return 'text/html';
+  }
+
+  /**
+  }
    * @see Format::deserialize()
    */
   public function deserialize(Request $request) {

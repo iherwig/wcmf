@@ -62,14 +62,12 @@ class Application {
    * @param defaultController The controller to call if none is given in request parameters, optional [default: 'wcmf\application\controller\LoginController']
    * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
    * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
-   * @param defaultResponseFormat The response format if none is given in request parameters, optional [default: html]
    * @return Request instance representing the current HTTP request
-   * TODO: return request instance, maybe use default parameters from a config section?
+   * TODO: maybe setup request with default values from a config section?
    * TODO: allow configPath array to search from different locations, simplifies inclusion
    */
   public function initialize($configPath='../config/', $mainConfigFile='config.ini',
-    $defaultController='wcmf\application\controller\LoginController', $defaultContext='', $defaultAction='login',
-    $defaultResponseFormat='html') {
+    $defaultController='wcmf\application\controller\LoginController', $defaultContext='', $defaultAction='login') {
 
     // collect all request data
     $this->_requestValues = array_merge($_GET, $_POST, $_FILES);
@@ -79,6 +77,7 @@ class Application {
     if (is_array($json)) {
       $this->_rawPostBodyIsJson = true;
       foreach ($json as $key => $value) {
+        // TODO: filter values
         $this->_requestValues[$key] = $value;
       }
     }
@@ -94,33 +93,14 @@ class Application {
     $action = $this->getRequestValue('action', $defaultAction);
     $readonly = $this->getRequestValue('readonly', false);
 
-    // determine message formats based on request headers
-    if (isset($_SERVER['CONTENT_TYPE'])) {
-      $headerRequestFormat = self::getMessageFormatFromHeader(strtolower($_SERVER['CONTENT_TYPE']), $defaultResponseFormat);
-      $requestFormat = $this->getRequestValue('requestFormat', $headerRequestFormat);
-    }
-    else {
-      $requestFormat = $this->getRequestValue('requestFormat', $defaultResponseFormat);
-    }
-    if (isset($_SERVER['HTTP_ACCEPT'])) {
-      $headerResponseFormat = self::getMessageFormatFromHeader(strtolower($_SERVER['HTTP_ACCEPT']), $defaultResponseFormat);
-      $responseFormat = $this->getRequestValue('responseFormat', $headerResponseFormat);
-    }
-    else {
-      $responseFormat = $this->getRequestValue('responseFormat', $defaultResponseFormat);
-    }
-
     // create the Request instance
     $this->_initialRequest = new Request($controller, $context, $action);
-    $this->_initialRequest->setFormat($requestFormat);
-    $this->_initialRequest->setResponseFormat($responseFormat);
     $this->_initialRequest->setValues($this->_requestValues);
 
-  // TODO:
-  // - request headers should be added to the Request class
-  //   foreach (getallheaders() as $name => $value) {
-  //     Log::error("$name: $value", __CLASS__);
-  //   }
+    // add header values to request
+    foreach (getallheaders() as $name => $value) {
+      $this->_initialRequest->setHeader($name, $value);
+    }
 
     // initialize session
     $session = ObjectFactory::getInstance('session');
@@ -223,23 +203,6 @@ class Application {
    */
   public static function getId() {
     return md5(realpath($_SERVER['PHP_SELF']));
-  }
-
-  /**
-   * Determine the message format from a HTTP header value
-   * @param header The header value
-   * @param defaultFormat The default format to be used if no other can be determined
-   * @return One of the message formats (JSON, SOAP, ...)
-   */
-  protected static function getMessageFormatFromHeader($header, $defaultFormat) {
-    $format = $defaultFormat;
-    if (strpos($header, 'application/json') !== false) {
-      $format = 'JSON';
-    }
-    else if (strpos($header, 'application/soap') !== false) {
-      $format = 'SOAP';
-    }
-    return $format;
   }
 }
 ?>

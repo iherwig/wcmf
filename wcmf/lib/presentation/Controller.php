@@ -22,6 +22,7 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\format\impl\HtmlFormat;
 
 /**
  * Controller is the base class of all controllers. If a Controller has a view
@@ -92,7 +93,7 @@ abstract class Controller {
   /**
    * Check if the data given by initialize() meet the requirements of the Controller.
    * Subclasses will override this method to validate against their special requirements.
-   * @return True/False whether the data are ok or not.
+   * @return Boolean whether the data are ok or not.
    */
   protected function validate() {
     return true;
@@ -100,18 +101,18 @@ abstract class Controller {
 
   /**
    * Check if the Controller has a view. The default implementation
-   * returns true, if the execution result is false and the response format is MSG_FORMAT_HTML.
-   * @return True/False whether the Controller has a view or not.
+   * returns true, if the execution result is false and the response format is an instance of HtmlFormat.
+   * @return Boolean whether the Controller has a view or not.
    */
   public function hasView() {
     $hasView = $this->_executionResult === false &&
-      $this->_response->getFormat() == MSG_FORMAT_HTML;
+      ($this->_response->getFormat() instanceof HtmlFormat);
     return $hasView;
   }
 
   /**
    * Execute the Controller resulting in its Action processed and/or its View beeing displayed.
-   * @return True/False wether following Controllers should be executed or not.
+   * @return Boolean wether following Controllers should be executed or not.
    */
   public function execute() {
     if (Log::isDebugEnabled(__CLASS__)) {
@@ -159,7 +160,7 @@ abstract class Controller {
    * Delegate the current request to another action. The context is the same as
    * the current context and the source controller will be set to TerminateController,
    * which means that the application flow will return after the action (and possible
-   * sub actions) are executed. The request and response format will be MSG_FORMAT_NULL
+   * sub actions) are executed. The request and response format will be NullFormat
    * which means that all request values should be passed in the application internal
    * format and all response values will have that format.
    * @param action The name of the action to execute
@@ -170,12 +171,12 @@ abstract class Controller {
   protected function executeSubAction($action, array $requestValues=array()) {
     $curRequest = $this->getRequest();
     $subRequest = new Request('TerminateController', $curRequest->getContext(), $action);
+    $subRequest->setHeaders($curRequest->getHeaders());
     $subRequest->setValues($curRequest->getValues());
-    foreach ($requestValues as $key => $value) {
-      $subRequest->setValue($key, $value);
-    }
-    $subRequest->setFormat(MSG_FORMAT_NULL);
-    $subRequest->setResponseFormat(MSG_FORMAT_NULL);
+    $formats = ObjectFactory::getInstance('formats');
+    $nullFormat = $formats['null'];
+    $subRequest->setFormat($nullFormat);
+    $subRequest->setResponseFormat($nullFormat);
     $response = ObjectFactory::getInstance('actionMapper')->processAction($subRequest);
     return $response;
   }
@@ -243,7 +244,7 @@ abstract class Controller {
   /**
    * Check if the current request is localized. This is true,
    * if it has a language parameter that is not equal to Localization::getDefaultLanguage().
-   * @return True/False wether the request is localized or not
+   * @return Boolean wether the request is localized or not
    */
   protected function isLocalizedRequest() {
     $localization = ObjectFactory::getInstance('localization');

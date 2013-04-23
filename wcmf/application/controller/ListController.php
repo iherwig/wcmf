@@ -26,6 +26,7 @@ use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\UnknownFieldException;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\Obfuscator;
 

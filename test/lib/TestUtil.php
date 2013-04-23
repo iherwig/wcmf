@@ -44,8 +44,10 @@ class TestUtil {
    */
   public static function simulateRequest($request) {
     // set formatter
-    $request->setFormat('null');
-    $request->setResponseFormat('null');
+    $formats = ObjectFactory::getInstance('formats');
+    $nullFormat = $formats['null'];
+    $request->setFormat($nullFormat);
+    $request->setResponseFormat($nullFormat);
 
     // reset the action mapper, because otherwise all requests would be cumulated
     $actionMapper = ObjectFactory::getInstance('actionMapper');

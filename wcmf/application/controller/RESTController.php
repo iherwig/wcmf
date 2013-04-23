@@ -117,9 +117,39 @@ class RESTController extends Controller
     }
     else {
       // read all objects of the given type
-      // delegate further processing to AsyncPagingController
+      // delegate further processing to ListController
+
+      // transform range header
+      if ($request->hasHeader('Range')) {
+        if (preg_match('/^items=([\-]?[0-9]+)-([\-]?[0-9]+)$/', $request->getHeader('Range'), $matches)) {
+          $offset = intval($matches[1]);
+          $limit = intval($matches[2])-$offset;
+          $request->setValue('offset', $offset);
+          $request->setValue('limit', $limit);
+        }
+      }
+      // transform sort definition
+      foreach ($request->getValues() as $key => $value) {
+        if (preg_match('/^sort\(([^\)]+)\)$|sortBy=([.]+)$/', $key, $matches)) {
+          $sortDefs = preg_split('/,/', $matches[1]);
+          // ListController allows only one sortfield
+          $sortDef = $sortDefs[0];
+          $sortFieldName = substr($sortDef, 1);
+          $sortDirection = preg_match('/^-/', $sortDef) ? 'desc' : 'asc';
+          $request->setValue('sortFieldName', $sortFieldName);
+          $request->setValue('sortDirection', $sortDirection);
+          break;
+        }
+      }
+
       $subResponse = $this->executeSubAction('list');
       $response->setValues($subResponse->getValues());
+
+      // set response range header
+      $objects = $subResponse->getValue('list');
+      $limit = sizeof($objects);
+      $total = $subResponse->getValue('totalCount');
+      $response->setHeader('Content-Range', 'items '.$offset.'-'.$limit.'/'.$total);
     }
 
     return false;
