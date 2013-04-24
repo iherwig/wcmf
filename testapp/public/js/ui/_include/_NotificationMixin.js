@@ -1,7 +1,7 @@
 define([
     "dojo/_base/declare",
     "dojo/dom-construct",
-    "./NotificationWidget"
+    "./widget/NotificationWidget"
 ], function (
     declare,
     domConstruct,

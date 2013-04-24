@@ -6,7 +6,7 @@ define([
     "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
-    "../_include/NavigationWidget",
+    "../_include/widget/NavigationWidget",
     "bootstrap/Button",
     "dojo/_base/lang",
     "dojo/dom-form",

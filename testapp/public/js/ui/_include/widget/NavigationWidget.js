@@ -9,7 +9,7 @@ define([
     "dojo/query",
     "dojo/dom-class",
     "dojo/NodeList-dom",
-    "../../Session",
+    "../../../Session",
     "dojo/text!./template/NavigationWidget.html"
 ], function (
     declare,

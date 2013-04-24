@@ -7,8 +7,8 @@ define([
     "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
-    "../_include/NavigationWidget",
-    "./widget/GridWidget",
+    "../_include/widget/NavigationWidget",
+    "../_include/widget/GridWidget",
     "../../persistence/Store",
     "bootstrap/Tab",
     "dojo/dom-construct",
@@ -84,12 +84,30 @@ define([
                       innerHTML: '<div id="typeGrid"></div>'
                   }, tcContent);
 
+                  var actions = [{
+                      iconClass: 'icon-edit',
+                      execute: function(data) {
+                          console.log(data);
+                      }
+                  }, {
+                      iconClass:  'icon-duplicate',
+                      execute: function(data) {
+                          console.log(data);
+                      }
+                  }, {
+                      iconClass:  'icon-delete',
+                      execute: function(data) {
+                          console.log(data);
+                      }
+                  }];
+
                   var store = Store.getStore(typeName, 'en');
                   this.gridWidget = new GridWidget({
                       request: this.request,
                       router: this.router,
                       store: store,
-                      type: Model.getType(typeName)
+                      type: Model.getType(typeName),
+                      actions: actions
                   }, "typeGrid");
                 }
             }

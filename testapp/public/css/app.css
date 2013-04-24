@@ -48,6 +48,10 @@ body {
   }
 }
 
+.nav-collapse .nav > li > a, .nav-collapse .dropdown-menu a {
+  font-weight: normal;
+}
+
 .form-login {
   max-width: 300px;
   padding: 19px 29px 29px;
@@ -62,9 +66,13 @@ body {
           box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
 
+:focus {
+  outline: 1px dashed #555;
+}​
+
 /* dgrid */
 .dgrid-column-selector {
-   width: 25px;
+  width: 25px;
 }
 
 .dgrid-row-odd {
@@ -83,6 +91,43 @@ th {
   font-weight: normal;
 }
 
-.nav-collapse .nav > li > a, .nav-collapse .dropdown-menu a {
-  font-weight: normal;
+th.field-action, td.field-action {
+  width: 30px;
+}
+
+td.field-action span {
+  cursor: pointer;
+  margin-left: 5px;
+  vertical-align: middle;
+  background-position: 0 0;
+}
+
+.dgrid-cell .icon-edit .disabled {
+  background-image: url("../images/icons/gray_light/pen_alt2_12x12.png");
+}
+.dgrid-cell .icon-edit {
+  background-image: url("../images/icons/gray_dark/pen_alt2_12x12.png");
+}
+.dgrid-cell .icon-edit:hover {
+  background-image: url("../images/icons/cyan/pen_alt2_12x12.png");
+}
+
+.dgrid-cell .icon-duplicate .disabled {
+  background-image: url("../images/icons/gray_light/new_window_12x12.png");
+}
+.dgrid-cell .icon-duplicate {
+  background-image: url("../images/icons/gray_dark/new_window_12x12.png");
+}
+.dgrid-cell .icon-duplicate:hover {
+  background-image: url("../images/icons/cyan/new_window_12x12.png");
+}
+
+.dgrid-cell .icon-delete .disabled {
+  background-image: url("../images/icons/gray_light/trash_stroke_12x12.png");
+}
+.dgrid-cell .icon-delete {
+  background-image: url("../images/icons/gray_dark/trash_stroke_12x12.png");
+}
+.dgrid-cell .icon-delete:hover {
+  background-image: url("../images/icons/cyan/trash_stroke_12x12.png");
 }

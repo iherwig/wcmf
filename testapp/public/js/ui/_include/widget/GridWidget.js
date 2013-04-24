@@ -8,11 +8,14 @@ define([
     "dojomat/_StateAware",
     "dgrid/OnDemandGrid",
     "dgrid/Selection",
+    "dgrid/Keyboard",
+    "dgrid/extensions/ColumnHider",
     "dgrid/editor",
     "dojo/store/Observable",
     "dojo/dom-construct",
     "dojo/dom-style",
     "dojo/dom-attr",
+    "dojo/dom-class",
     "dojo/window",
     "dojo/aspect",
     "dojo/topic",
@@ -28,11 +31,14 @@ define([
     _StateAware,
     OnDemandGrid,
     Selection,
+    Keyboard,
+    ColumnHider,
     editor,
     Observable,
     domConstruct,
     domStyle,
     domAttr,
+    domClass,
     win,
     aspect,
     topic,
@@ -46,6 +52,7 @@ define([
         router: null,
         store: null,
         type: null,
+        actions: [],
         templateString: template,
         gridWidget: null,
 
@@ -54,6 +61,7 @@ define([
             this.router = params.router;
             this.store = params.store;
             this.type = params.type;
+            this.actions = params.actions;
         },
 
         postCreate: function () {
@@ -62,7 +70,19 @@ define([
             this.gridWidget = this.buildGrid();
             this.gridWidget.set("store", this.store); // set store and run query
             this.own(
-                on(window, "resize", lang.hitch(this, this.onResize))
+                on(window, "resize", lang.hitch(this, this.onResize)),
+                on(this.gridWidget, "click", lang.hitch(this.gridWidget, function(event) {
+                    if (event.target) {
+                      var columnNode = event.target.parentNode;
+                      if (domClass.contains(columnNode, "field-action")) {
+                          var row = this.row(columnNode);
+                          var column = this.column(columnNode);
+                          if (column && column.action) {
+                              column.action.call(column, row.data);
+                          }
+                      }
+                    }
+                }))
             );
             this.onResize();
         },
@@ -72,27 +92,41 @@ define([
         },
 
         buildGrid: function () {
-            var columns = {
-                    selector: {
-                        label: ' ',
-                        sortable: false
-                    }
-                };
+            var columns = [{
+                label: 'oid',
+                field: 'oid',
+                hidden: true,
+                sortable: true
+            }];
 
             var displayValues = this.type.displayValues;
             for (var i=0, count=displayValues.length; i<count; i++) {
                 var curValue = displayValues[i];
-                columns[curValue] = {
+                columns.push({
                     label: curValue,
                     field: curValue,
                     sortable: true
-                };
+                });
             }
 
-            var gridWidget = new (declare([OnDemandGrid, Selection]))({
+            // add cells for actions
+            for(var i=0, count=this.actions.length; i<count; i++) {
+                columns.push({
+                    label: " ",
+                    field: "action",
+                    formatter: lang.hitch(this.actions[i], function(data, obj) {
+                        return '<span class="'+this.iconClass+'"></span>';
+                    }),
+                    action: lang.hitch(this.actions[i], function(data) {
+                        this.execute.call(this, data);
+                    })
+                });
+            }
+
+            var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, ColumnHider]))({
                     getBeforePut: true,
                     columns: columns,
-                    selectionMode: 'none', // we'll do programmatic selection with a checkbox
+                    selectionMode: "extended",
                     //query: { find: 'xx' },
                     //queryOptions: { sort: [{ attribute: 'title', descending: false }] },
                     loadingMessage: "Loading",
