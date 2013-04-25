@@ -123,7 +123,7 @@ class RESTController extends Controller
       if ($request->hasHeader('Range')) {
         if (preg_match('/^items=([\-]?[0-9]+)-([\-]?[0-9]+)$/', $request->getHeader('Range'), $matches)) {
           $offset = intval($matches[1]);
-          $limit = intval($matches[2])-$offset;
+          $limit = intval($matches[2])-$offset+1;
           $request->setValue('offset', $offset);
           $request->setValue('limit', $limit);
         }
@@ -143,17 +143,26 @@ class RESTController extends Controller
       }
 
       $subResponse = $this->executeSubAction('list');
-      $response->setValues($subResponse->getValues());
+      $objects = $subResponse->getValue('list');
+      $response->clearValues();
+      $response->setValues($objects);
 
       // set response range header
-      $objects = $subResponse->getValue('list');
       $limit = sizeof($objects);
       $total = $subResponse->getValue('totalCount');
-      $response->setHeader('Content-Range', 'items '.$offset.'-'.$limit.'/'.$total);
+      $response->setHeader('Content-Range', 'items '.$offset.'-'.($offset+$limit-1).'/'.$total);
     }
 
     return false;
   }
+
+  /**
+   * @see Controller::assignResponseDefaults()
+   */
+  protected function assignResponseDefaults() {
+    // don't add anything
+  }
+
   /**
    * Handle a POST request (create/update an object of a given type)
    */
@@ -170,6 +179,7 @@ class RESTController extends Controller
 
     return false;
   }
+
   /**
    * Handle a PUT request (create/update an object of a given type)
    */
@@ -186,6 +196,7 @@ class RESTController extends Controller
 
     return false;
   }
+
   /**
    * Handle a DELETE request (delete an object of a given type)
    */
@@ -201,6 +212,7 @@ class RESTController extends Controller
 
     return false;
   }
+
   /**
    * Set the location response header according to the given object id
    * @param oid The serialized object id

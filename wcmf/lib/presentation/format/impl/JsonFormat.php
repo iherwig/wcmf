@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\core\Log;
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 
@@ -40,6 +41,8 @@ class JsonFormat extends HierarchicalFormat {
 
   private static $_jsonData = array();
   private static $_jsonUsed = false;
+
+  protected $_serializer = null;
 
   public static function printJSONResult() {
     if (self::$_jsonUsed) {
@@ -66,6 +69,14 @@ class JsonFormat extends HierarchicalFormat {
   }
 
   /**
+   * Set the NodeSerializer instance to use
+   * @param serializer NodeSerializer
+   */
+  public function setSerializer(NodeSerializer $serializer) {
+    $this->_serializer = $serializer;
+  }
+
+  /**
    * @see HierarchicalFormat::afterSerialize()
    */
   protected function afterSerialize(array $values) {
@@ -84,16 +95,20 @@ class JsonFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::isSerializedNode()
    */
   protected function isSerializedNode($value) {
-    // use NodeSerializer to test
-    return NodeSerializer::isSerializedNode($value);
+    if ($this->_serializer == null) {
+      throw new ConfigurationException("The serializer is not set.");
+    }
+    return $this->_serializer->isSerializedNode($value);
   }
 
   /**
    * @see HierarchicalFormat::serializeNode()
    */
   protected function serializeNode($value) {
-    // use NodeSerializer to serialize
-    $node = NodeSerializer::serializeNode($value);
+    if ($this->_serializer == null) {
+      throw new ConfigurationException("The serializer is not set.");
+    }
+    $node = $this->_serializer->serializeNode($value);
     return $node;
   }
 
@@ -101,8 +116,10 @@ class JsonFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::deserializeNode()
    */
   protected function deserializeNode($value) {
-    // use NodeSerializer to deserialize
-    $result = NodeSerializer::deserializeNode($value);
+    if ($this->_serializer == null) {
+      throw new ConfigurationException("The serializer is not set.");
+    }
+    $result = $this->_serializer->deserializeNode($value);
     return $result;
   }
 }

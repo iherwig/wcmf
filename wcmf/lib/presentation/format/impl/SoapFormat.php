@@ -32,11 +32,21 @@ use wcmf\lib\presentation\format\impl\HierarchicalFormat;
  */
 class SoapFormat extends HierarchicalFormat {
 
+  protected $_serializer = null;
+
   /**
    * @see Format::getMimeType()
    */
   public function getMimeType() {
     return 'application/soap+xml';
+  }
+
+  /**
+   * Set the NodeSerializer instance to use
+   * @param serializer NodeSerializer
+   */
+  public function setSerializer(NodeSerializer $serializer) {
+    $this->_serializer = $serializer;
   }
 
   /**
@@ -50,14 +60,19 @@ class SoapFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::serializeNode()
    */
   protected function serializeNode($value) {
-    // use NodeSerializer to serialize
-    return NodeSerializer::serializeNode($value);
+    if ($this->_serializer == null) {
+      throw new ConfigurationException("The serializer is not set.");
+    }
+    $node = $this->_serializer->serializeNode($value);
   }
 
   /**
    * @see HierarchicalFormat::deserializeNode()
    */
   protected function deserializeNode($value) {
+    if ($this->_serializer == null) {
+      throw new ConfigurationException("The serializer is not set.");
+    }
     $oidStr = $key;
     $oid = ObjectId::parse($oidStr);
     if ($oid == null) {
@@ -65,7 +80,7 @@ class SoapFormat extends HierarchicalFormat {
     }
 
     // use NodeSerializer to deserialize
-    $node = NodeSerializer::deserializeNode($value);
+    $node = $this->_serializer->deserializeNode($value);
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug($node->toString(), __CLASS__);
     }

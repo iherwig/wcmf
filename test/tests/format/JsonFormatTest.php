@@ -25,6 +25,7 @@ use testapp\application\model\Book;
 use testapp\application\model\Chapter;
 use testapp\application\model\Image;
 
+use wcmf\lib\model\impl\DionysosNodeSerializer;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -55,6 +56,7 @@ class JsonFormatTest extends BaseTestCase {
             ));
 
     $format = new JsonFormat();
+    $format->setSerializer(new DionysosNodeSerializer());
     $format->deserialize($message);
 
     // test
@@ -89,6 +91,7 @@ class JsonFormatTest extends BaseTestCase {
             ));
 
     $format = new JsonFormat();
+    $format->setSerializer(new DionysosNodeSerializer());
     $format->deserialize($message);
 
     // test
@@ -154,6 +157,7 @@ class JsonFormatTest extends BaseTestCase {
             ));
 
     $format = new JsonFormat();
+    $format->setSerializer(new DionysosNodeSerializer());
     $format->deserialize($message);
 
     // test
@@ -211,6 +215,7 @@ class JsonFormatTest extends BaseTestCase {
                     )));
 
     $format = new JsonFormat();
+    $format->setSerializer(new DionysosNodeSerializer());
     $format->deserialize($message);
 
     // test
@@ -247,6 +252,7 @@ class JsonFormatTest extends BaseTestCase {
             ));
 
     $format = new JsonFormat();
+    $format->setSerializer(new DionysosNodeSerializer());
     $format->serialize($message);
 
     // test
@@ -281,6 +287,7 @@ class JsonFormatTest extends BaseTestCase {
             ));
 
     $format = new JsonFormat();
+    $format->setSerializer(new DionysosNodeSerializer());
     $format->serialize($message);
 
     // test
@@ -329,6 +336,7 @@ class JsonFormatTest extends BaseTestCase {
         ));
 
     $format = new JsonFormat();
+    $format->setSerializer(new DionysosNodeSerializer());
     $format->serialize($message);
 
     // test
@@ -387,6 +395,7 @@ class JsonFormatTest extends BaseTestCase {
                 'list' => $list1));
 
     $format = new JsonFormat();
+    $format->setSerializer(new DionysosNodeSerializer());
     $format->serialize($message);
 
     // test

@@ -17,54 +17,14 @@ define([
 ) {
     var Store = declare([JsonRest], {
 
-      query: function(query, options){
-        options = options || {};
+      idProperty: 'oid'
 
-        var headers = lang.mixin({ Accept: this.accepts }, this.headers, options.headers);
+      // NOTE: use dojo/request/notify to intercept communication with server
+      // http://dojotoolkit.org/reference-guide/1.8/dojo/request/notify.html#dojo-request-notify
 
-        if(options.start >= 0 || options.count >= 0){
-          headers.Range = headers["X-Range"] //set X-Range for Opera since it blocks "Range" header
-             = "items=" + (options.start || '0') + '-' +
-            (("count" in options && options.count != Infinity) ?
-              (options.count + (options.start || 0) - 1) : '');
-        }
-        var hasQuestionMark = this.target.indexOf("?") > -1;
-        if(query && typeof query == "object"){
-          query = xhr.objectToQuery(query);
-          query = query ? (hasQuestionMark ? "&" : "?") + query: "";
-        }
-        if(options && options.sort){
-          var sortParam = this.sortParam;
-          query += (query || hasQuestionMark ? "&" : "?") + (sortParam ? sortParam + '=' : "sort(");
-          for(var i = 0; i<options.sort.length; i++){
-            var sort = options.sort[i];
-            query += (i > 0 ? "," : "") + (sort.descending ? this.descendingPrefix : this.ascendingPrefix) + encodeURIComponent(sort.attribute);
-          }
-          if(!sortParam){
-            query += ")";
-          }
-        }
-        var results = xhr("GET", {
-          url: this.target + (query || ""),
-          handleAs: "json",
-          headers: headers,
-          load: function(response, ioArgs) {
-            var objects = [];
-            // extruct objects from response
-            if (response.list) {
-              for (var i=0, count=response.list.length; i<count; i++) {
-                objects.push(response.list[i].attributes);
-              }
-            }
-            return objects;
-          }
-        });
-        results.total = results.then(function(){
-          var range = results.ioArgs.xhr.getResponseHeader("Content-Range");
-          return range && (range = range.match(/\/(.*)/)) && +range[1];
-        });
-        return QueryResults(results);
-      }
+      // TODO:
+      // implement DojoNodeSerializer on server that uses refs
+      // http://dojotoolkit.org/reference-guide/1.7/dojox/json/ref.html#dojox-json-ref
     });
 
     /**

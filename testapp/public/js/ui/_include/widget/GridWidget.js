@@ -10,6 +10,7 @@ define([
     "dgrid/Selection",
     "dgrid/Keyboard",
     "dgrid/extensions/ColumnHider",
+    "dgrid/extensions/ColumnResizer",
     "dgrid/editor",
     "dojo/store/Observable",
     "dojo/dom-construct",
@@ -33,6 +34,7 @@ define([
     Selection,
     Keyboard,
     ColumnHider,
+    ColumnResizer,
     editor,
     Observable,
     domConstruct,
@@ -95,7 +97,8 @@ define([
             var columns = [{
                 label: 'oid',
                 field: 'oid',
-                hidden: true,
+                //hidden: true,
+                unhidable: true,
                 sortable: true
             }];
 
@@ -114,6 +117,9 @@ define([
                 columns.push({
                     label: " ",
                     field: "action",
+                    unhidable: true,
+                    sortable: false,
+                    resizable: false,
                     formatter: lang.hitch(this.actions[i], function(data, obj) {
                         return '<span class="'+this.iconClass+'"></span>';
                     }),
@@ -123,7 +129,7 @@ define([
                 });
             }
 
-            var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, ColumnHider]))({
+            var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, ColumnHider, ColumnResizer]))({
                     getBeforePut: true,
                     columns: columns,
                     selectionMode: "extended",
