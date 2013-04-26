@@ -19,6 +19,8 @@
 namespace wcmf\application\controller\admintool;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -38,34 +40,31 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class EditRightsController extends Controller
-{
+class EditRightsController extends Controller {
+
   /**
    * @see Controller::validate()
    */
-  function validate()
-  {
-    if(strlen($this->_request->getValue('oid')) == 0)
-    {
-      $this->setErrorMsg("No 'oid' given in data.");
+  function validate() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $oid = ObjectId::parse($request->getValue('oid'));
+    if(!$oid) {
+      $response->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => array($request->getValue('oid')))));
       return false;
     }
     return true;
   }
-  /**
-   * @see Controller::hasView()
-   */
-  function hasView()
-  {
-    return true;
-  }
+
   /**
    * Assign Node data to View.
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
+  function executeKernel() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     $userManager = ObjectFactory::getInstance('userManager');
     $config = ObjectFactory::getConfigurationInstance();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
@@ -74,73 +73,83 @@ class EditRightsController extends Controller
     $rightNames = array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE);
 
     // process actions
-    if ($this->_request->getAction() == 'save')
-    {
-      $resource = $this->_request->getValue('oid');
+    if ($request->getAction() == 'save') {
+      $resource = $request->getValue('oid');
       $context = '';
 
       // for all configuration files do ...
-      foreach($configurations as $curConfig)
-      {
+      foreach($configurations as $curConfig) {
         // for all actions files do ...
-        foreach ($rightNames as $action)
-        {
+        foreach ($rightNames as $action) {
           $existingRight = $permissionManager->getPermission($curConfig, $resource, $context, $action);
 
           // allow
           $controlName = $action."_allow_".str_replace(".", "", $curConfig);
-          $newAllowedRoles = $this->_request->getValue($controlName);
+          $newAllowedRoles = $request->getValue($controlName);
           // add new
-          if (is_array($newAllowedRoles))
-            foreach ($newAllowedRoles as $role)
-              if (!is_array($existingRight['allow']) || !in_array($role, $existingRight['allow']))
+          if (is_array($newAllowedRoles)) {
+            foreach ($newAllowedRoles as $role) {
+              if (!is_array($existingRight['allow']) || !in_array($role, $existingRight['allow'])) {
                 $permissionManager->createPermission($curConfig, $resource, $context, $action, $role,
                         PermissionManager::RIGHT_MODIFIER_ALLOW);
+              }
+            }
+          }
           // remove old
-          if (is_array($existingRight['allow']))
-            foreach ($existingRight['allow'] as $role)
-              if (!is_array($newAllowedRoles) || !in_array($role, $this->_request->getValue($controlName)))
+          if (is_array($existingRight['allow'])) {
+            foreach ($existingRight['allow'] as $role) {
+              if (!is_array($newAllowedRoles) || !in_array($role, $request->getValue($controlName))) {
                 $permissionManager->removePermission($curConfig, $resource, $context, $action, $role);
+              }
+            }
+          }
 
           // deny
           $controlName = $action."_deny_".str_replace(".", "", $curConfig);
-          $newDeniedRoles = $this->_request->getValue($controlName);
+          $newDeniedRoles = $request->getValue($controlName);
           // add new
-          if (is_array($newDeniedRoles))
-            foreach ($newDeniedRoles as $role)
-              if (!is_array($existingRight['deny']) || !in_array($role, $existingRight['deny']))
+          if (is_array($newDeniedRoles)) {
+            foreach ($newDeniedRoles as $role) {
+              if (!is_array($existingRight['deny']) || !in_array($role, $existingRight['deny'])) {
                 $permissionManager->createPermission($curConfig, $resource, $context, $action, $role,
                         PermissionManager::RIGHT_MODIFIER_DENY);
+              }
+            }
+          }
           // remove old
-          if (is_array($existingRight['deny']))
-            foreach ($existingRight['deny'] as $role)
-              if (!is_array($newDeniedRoles) || !in_array($role, $this->_request->getValue($controlName)))
+          if (is_array($existingRight['deny'])) {
+            foreach ($existingRight['deny'] as $role) {
+              if (!is_array($newDeniedRoles) || !in_array($role, $request->getValue($controlName))) {
                 $permissionManager->removePermission($curConfig, $resource, $context, $action, $role);
+              }
+            }
+          }
         }
       }
     }
 
     // load model
     $rights = array();
-    foreach($configurations as $curConfig)
-      foreach (array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE) as $action)
-      {
-        $right = $permissionManager->getPermission($curConfig, $this->_request->getValue('oid'), '', $action);
+    foreach($configurations as $curConfig) {
+      foreach (array(PersistenceAction::READ, PersistenceAction::MODIFY, PersistenceAction::DELETE, PersistenceAction::CREATE) as $action) {
+        $right = $permissionManager->getPermission($curConfig, $request->getValue('oid'), '', $action);
         // flatten role array for input control
-        foreach ($right as $name => $roles)
+        foreach ($right as $name => $roles) {
           $right[$name] = join(',', $roles);
+        }
         $rights[$curConfig][$action] = $right;
       }
+    }
 
     // assign model to view
-    $this->_response->setValue('oid', $this->_request->getValue('oid'));
-    $this->_response->setValue('allroles', join("|", $userManager->listRoles()));
-    $this->_response->setValue('rights', $rights);
-    $this->_response->setValue('rightnames', $rightNames);
-    $this->_response->setValue('configfiles', $configurations);
+    $response->setValue('oid', $request->getValue('oid'));
+    $response->setValue('allroles', join("|", $userManager->listRoles()));
+    $response->setValue('rights', $rights);
+    $response->setValue('rightnames', $rightNames);
+    $response->setValue('configfiles', $configurations);
 
     // success
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return false;
   }
 }

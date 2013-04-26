@@ -34,21 +34,13 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class TerminateController extends Controller
-{
-  /**
-   * @see Controller::hasView()
-   */
-  public function hasView()
-  {
-    return false;
-  }
+class TerminateController extends Controller {
+
   /**
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  public function executeKernel()
-  {
+  public function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $response->setValues($request->getValues());

@@ -47,8 +47,8 @@ use wcmf\lib\io\FileUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class BackupController extends BatchController
-{
+class BackupController extends BatchController {
+
   // session name constants
   var $BACKUP_NAME_VARNAME = 'BackupController.backupName';
   var $SOURCE_DIR_VARNAME = 'BackupController.sourceDir';
@@ -56,55 +56,60 @@ class BackupController extends BatchController
   /**
    * @see Controller::validate()
    */
-  function validate()
-  {
+  function validate() {
     $session = ObjectFactory::getInstance('session');
+    $request = $this->getRequest();
+    $response = $this->getResponse();
 
-    if(strlen($this->_request->getValue('backupName')) == 0 && !$session->exist($this->BACKUP_NAME_VARNAME))
-    {
-      $this->setErrorMsg("No 'backupName' given in data.");
-      return false;
+    $invalidParameters = array();
+    if(strlen($request->getValue('backupName')) == 0 && !$session->exist($this->BACKUP_NAME_VARNAME)) {
+      $invalidParameters[] = 'backupName';
     }
-    if(strlen($this->_request->getValue('sourceDir')) == 0 && !$session->exist($this->SOURCE_DIR_VARNAME))
-    {
-      $this->setErrorMsg("No 'sourceDir' given in data.");
+    if(strlen($request->getValue('sourceDir')) == 0 && !$session->exist($this->SOURCE_DIR_VARNAME)) {
+      $invalidParameters[] = 'sourceDir';
+    }
+    if (sizeof($invalidParameters) > 0) {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => $invalidParameters)));
       return false;
     }
     return true;
   }
+
   /**
    * @see Controller::initialize()
    */
-  function initialize(&$request, &$response)
-  {
+  function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
     // store parameters in session
-    if ($request->getAction() != 'continue')
-    {
+    if ($request->getAction() != 'continue') {
       $session = ObjectFactory::getInstance('session');
 
       // replace illegal characters in backupname
-      $this->_request->setValue('backupName', preg_replace("/[^a-zA-Z0-9\-_\.]+/", "_", $this->_request->getValue('backupName')));
+      $request->setValue('backupName', preg_replace("/[^a-zA-Z0-9\-_\.]+/", "_", $request->getValue('backupName')));
 
-      $session->set($this->BACKUP_NAME_VARNAME, $this->_request->getValue('backupName'));
-      $session->set($this->SOURCE_DIR_VARNAME, $this->_request->getValue('sourceDir'));
+      $session->set($this->BACKUP_NAME_VARNAME, $request->getValue('backupName'));
+      $session->set($this->SOURCE_DIR_VARNAME, $request->getValue('sourceDir'));
     }
   }
+
   /**
    * @see BatchController::getWorkPackage()
    */
-  function getWorkPackage($number)
-  {
-    if ($number == 0)
-    {
-      if ($this->_request->getAction() == 'makebackup')
+  function getWorkPackage($number) {
+    $request = $this->getRequest();
+    if ($number == 0) {
+      if ($request->getAction() == 'makebackup') {
         return array('name' => 'backup files', 'size' => 1, 'oids' => array(1), 'callback' => 'backupFiles');
-      else if ($this->_request->getAction() == 'restorebackup')
+      }
+      else if ($request->getAction() == 'restorebackup') {
         return array('name' => 'restore files', 'size' => 1, 'oids' => array(1), 'callback' => 'restoreFiles');
+      }
     }
-    else
-      return $this->getAdditionalWorkPackage($number, $this->_request->getAction());
+    else {
+      return $this->getAdditionalWorkPackage($number, $request->getAction());
+    }
   }
 
   /**
@@ -114,34 +119,33 @@ class BackupController extends BatchController
    * @param action 'makebackup' or 'restorebackup'
    * @note subclasses will override this method to implement special application requirements.
    */
-  function getAdditionalWorkPackage($number, $action)
-  {
+  function getAdditionalWorkPackage($number, $action) {
     return null;
   }
 
   /**
    * Copy all files from sourceDir to the backup location defined by backupDir and backupName.
    */
-  function backupFiles()
-  {
+  function backupFiles() {
     $session = ObjectFactory::getInstance('session');
     $sourceDir = $session->get($this->SOURCE_DIR_VARNAME);
 
     FileUtil::copyRecDir($sourceDir, $this->getBackupDir().$sourceDir);
   }
+
   /**
    * Copy all files from the backup location defined by backupDir and backupName to sourceDir.
    * It empties the source directory first.
    */
-  function restoreFiles()
-  {
+  function restoreFiles() {
+    $response = $this->getResponse();
     $session = ObjectFactory::getInstance('session');
     $sourceDir = $session->get($this->SOURCE_DIR_VARNAME);
 
     // return on error
-    if (!file_exists($this->getBackupDir().$sourceDir))
-    {
-      $this->setErrorMsg(Message::get("Can't restore backup from %1%. The directory does not exists.", array($this->getBackupDir().$sourceDir)));
+    if (!file_exists($this->getBackupDir().$sourceDir)) {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => array('backupDir'))));
       return;
     }
 

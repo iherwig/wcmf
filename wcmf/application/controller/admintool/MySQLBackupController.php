@@ -19,9 +19,9 @@
 namespace wcmf\application\controller\admintool;
 
 use wcmf\application\controller\admintool\BackupController;
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -50,10 +50,13 @@ class MySQLBackupController extends BackupController {
    * @see Controller::validate()
    */
   protected function validate() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     $session = ObjectFactory::getInstance('session');
 
-    if(strlen($this->_request->getValue('paramsSection')) == 0 && !$session->exist($this->PARAMS_SECTION_VARNAME)) {
-      $this->setErrorMsg("No 'paramsSection' given in data.");
+    if(strlen($request->getValue('paramsSection')) == 0 && !$session->exist($this->PARAMS_SECTION_VARNAME)) {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => array('paramsSection'))));
       return false;
     }
     return parent::validate();
@@ -62,13 +65,13 @@ class MySQLBackupController extends BackupController {
   /**
    * @see Controller::initialize()
    */
-  protected function initialize($request, $response) {
+  protected function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
     // store parameters in session
     if ($request->getAction() != 'continue') {
       $session = ObjectFactory::getInstance('session');
-      $session->set($this->PARAMS_SECTION_VARNAME, $this->_request->getValue('paramsSection'));
+      $session->set($this->PARAMS_SECTION_VARNAME, $request->getValue('paramsSection'));
     }
   }
 
@@ -76,11 +79,12 @@ class MySQLBackupController extends BackupController {
    * @see BackupController::getAdditionalWorkPackage()
    */
   protected function getAdditionalWorkPackage($number, $action) {
+    $request = $this->getRequest();
     if ($number == 1) {
-      if ($this->_request->getAction() == 'makebackup') {
+      if ($request->getAction() == 'makebackup') {
         return array('name' => 'make mysql backup', 'size' => 1, 'oids' => array(1), 'callback' => 'backupMySQL');
       }
-      else if ($this->_request->getAction() == 'restorebackup') {
+      else if ($request->getAction() == 'restorebackup') {
         return array('name' => 'restore mysql backup', 'size' => 1, 'oids' => array(1), 'callback' => 'restoreMySQL');
       }
     }

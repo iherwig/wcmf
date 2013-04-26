@@ -73,13 +73,13 @@ define([
                 },
                 handleAs: 'json'
 
-            }).then(lang.hitch(this, function(response){
-                if (response.errorMessage) {
+            }).then(lang.hitch(this, function(response) {
+                if (!response.success) {
                     // error
                     query(".btn").button("reset");
                     this.showNotification({
                         type: "error",
-                        message: response.errorMessage
+                        message: response.errorMessage || "Backend error"
                     });
                 }
                 else {

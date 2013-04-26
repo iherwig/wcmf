@@ -41,13 +41,6 @@ use wcmf\lib\util\Obfuscator;
 class ListboxController extends Controller
 {
   /**
-   * @see Controller::hasView()
-   */
-  function hasView()
-  {
-    return false;
-  }
-  /**
    * Do processing and assign Node data to View.
    * @return False in every case.
    * @see Controller::executeKernel()

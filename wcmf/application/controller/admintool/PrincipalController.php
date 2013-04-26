@@ -81,37 +81,30 @@ class PrincipalController extends Controller {
    * @see Controller::validate()
    */
   protected function validate() {
-    if($this->_request->getAction() == 'newprincipal') {
-      if(strlen($this->_request->getValue('newtype')) == 0) {
-        $this->setErrorMsg("No 'newtype' given in data.");
-        return false;
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $invalidParameters = array();
+    if($request->getAction() == 'newprincipal') {
+      if(strlen($request->getValue('newtype')) == 0) {
+        $invalidParameters[] = 'newtype';
       }
     }
-    if(in_array($this->_request->getAction(), array('editprincipal', 'save'))) {
-      if(strlen($this->_request->getValue('oid')) == 0) {
-        $this->setErrorMsg("No 'oid' given in data.");
-        return false;
+    if(in_array($request->getAction(), array('editprincipal', 'save'))) {
+      if(strlen($request->getValue('oid')) == 0) {
+        $invalidParameters[] = 'oid';
       }
     }
-    if($this->_request->getAction() == 'delprincipal') {
-      if(strlen($this->_request->getValue('deleteoids')) == 0) {
-        $this->setErrorMsg("No 'deleteoids' given in data.");
-        return false;
+    if($request->getAction() == 'delprincipal') {
+      if(strlen($request->getValue('deleteoids')) == 0) {
+        $invalidParameters[] = 'deleteoids';
       }
     }
-    return true;
-  }
-
-  /**
-   * @see Controller::hasView()
-   */
-  protected function hasView() {
-    if ($this->_request->getAction() == 'delprincipal') {
+    if (sizeof($invalidParameters) > 0) {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => $invalidParameters)));
       return false;
     }
-    else {
-      return true;
-    }
+    return true;
   }
 
   /**
@@ -121,26 +114,28 @@ class PrincipalController extends Controller {
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     $this->_userManager->beginTransaction();
 
     // process actions
 
     // DELETE
-    if($this->_request->getAction() == 'delprincipal') {
-      $deleteOIDs = split(',', $this->_request->getValue('deleteoids'));
+    if($request->getAction() == 'delprincipal') {
+      $deleteOIDs = split(',', $request->getValue('deleteoids'));
       foreach($deleteOIDs as $oid) {
         $this->beforeDelete($this->_userManager->getPrincipal($oid));
         $this->_userManager->removePrincipal($oid);
       }
       // return
       $this->_userManager->commitTransaction();
-      $this->_response->setAction('overview');
+      $response->setAction('overview');
       return true;
     }
 
     // NEW
-    if($this->_request->getAction() == 'newprincipal') {
-      $newType = $this->_request->getValue('newtype');
+    if($request->getAction() == 'newprincipal') {
+      $newType = $request->getValue('newtype');
       $newNode = new Node($newType);
 
       if($newType == 'user')
@@ -158,18 +153,18 @@ class PrincipalController extends Controller {
       $this->afterInsert($newPrincipal);
 
       // redirect to edit view by changing the request parameters for the following code
-      $this->_request->setAction('editprincipal');
-      $this->_request->setValue('oid', $newPrincipal->getOID());
+      $request->setAction('editprincipal');
+      $request->setValue('oid', $newPrincipal->getOID());
     }
 
     // EDIT, SAVE
-    if (in_array($this->_request->getAction(), array('editprincipal', 'save')) || in_array($this->_request->getContext(), array('user', 'role'))) {
+    if (in_array($request->getAction(), array('editprincipal', 'save')) || in_array($request->getContext(), array('user', 'role'))) {
       // load model
-      $principal = $this->_userManager->getPrincipal($this->_request->getValue('oid'));
+      $principal = $this->_userManager->getPrincipal($request->getValue('oid'));
 
       // save changes
-      if ($this->_request->getAction() == 'save') {
-        $saveNode = $this->_request->getValue($this->_request->getValue('oid'));
+      if ($request->getAction() == 'save') {
+        $saveNode = $request->getValue($request->getValue('oid'));
 
         if ($principal instanceof User) {
           // properties
@@ -182,14 +177,14 @@ class PrincipalController extends Controller {
             }
           }
           // password
-          if ($this->_request->hasValue('changepassword')) {
-            $this->_userManager->resetPassword($principal->getLogin(), $this->_request->getValue('newpassword1'),
-                                                 $this->_request->getValue('newpassword2'));
+          if ($request->hasValue('changepassword')) {
+            $this->_userManager->resetPassword($principal->getLogin(), $request->getValue('newpassword1'),
+                                                 $request->getValue('newpassword2'));
           }
           // roles
           $roles = $this->_userManager->listRoles();
           $userRoles = $this->_userManager->listUserRoles($principal->getLogin());
-          $principals = $this->_request->getValue('principals');
+          $principals = $request->getValue('principals');
           foreach($roles as $curRole) {
             if ((is_array($principals) && in_array($curRole, $principals)) && (!is_array($userRoles) || !in_array($curRole, $userRoles)))
               $this->_userManager->addUserToRole($curRole, $principal->getLogin());
@@ -209,7 +204,7 @@ class PrincipalController extends Controller {
           // members
           $users = $this->_userManager->listUsers();
           $roleMembers = $this->_userManager->listRoleMembers($principal->getName());
-          $principals = $this->_request->getValue('principals');
+          $principals = $request->getValue('principals');
           foreach($users as $curUser) {
             if (in_array($curUser, $principals) && !in_array($curUser, $roleMembers)) {
               $this->_userManager->addUserToRole($principal->getName(), $curUser);
@@ -219,11 +214,11 @@ class PrincipalController extends Controller {
             }
           }
         }
-        $this->afterUpdate($this->_userManager->getPrincipal($this->_request->getValue('oid')));
+        $this->afterUpdate($this->_userManager->getPrincipal($request->getValue('oid')));
       }
 
       // reload model
-      $principal = $this->_userManager->getPrincipal($this->_request->getValue('oid'));
+      $principal = $this->_userManager->getPrincipal($request->getValue('oid'));
       if ($principal instanceof User) {
         $principalBaseList = $this->_userManager->listRoles();
         $principalList = $this->_userManager->listUserRoles($principal->getLogin());
@@ -234,21 +229,21 @@ class PrincipalController extends Controller {
       }
 
       // assign model to view
-      $this->_response->setValue('oid', $this->_request->getValue('oid'));
-      $this->_response->setValue('newtype', $this->_request->getValue('newtype'));
-      $this->_response->setValue('principal', $principal);
-      $this->_response->setValue('principalBaseList', join("|", $principalBaseList));
-      $this->_response->setValue('principalList', join(",", $principalList));
+      $response->setValue('oid', $request->getValue('oid'));
+      $response->setValue('newtype', $request->getValue('newtype'));
+      $response->setValue('principal', $principal);
+      $response->setValue('principalBaseList', join("|", $principalBaseList));
+      $response->setValue('principalList', join(",", $principalList));
 
       $configurations = ObjectFactory::getConfigurationInstance()->getConfigurations();
       array_push($configurations, '');
-      $this->_response->setValue('configFiles', join("|", $configurations));
+      $response->setValue('configFiles', join("|", $configurations));
     }
 
     $this->_userManager->commitTransaction();
 
     // success
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return false;
   }
 

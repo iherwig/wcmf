@@ -21,7 +21,9 @@ namespace wcmf\application\controller\admintool;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\DBUtil;
 
@@ -44,34 +46,35 @@ class CreateInstanceController extends Controller {
    * @see Controller::validate()
    */
   protected function validate() {
-    if(strlen($this->_request->getValue('newInstanceName')) == 0) {
-      $this->setErrorMsg("No 'newInstanceName' given in data.");
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    if(strlen($request->getValue('newInstanceName')) == 0) {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => array('newInstanceName'))));
       return false;
     }
     if (!is_writable($this->getBaseLocation())) {
-      $this->setErrorMsg("The target path is not writable.");
+      $response->addError(new ApplicationError('ERROR',
+        Message::get("The target path is not writable."), ERROR_LEVEL_ERROR));
       return false;
     }
-    $name = $this->_request->getValue('newInstanceName');
+    $name = $request->getValue('newInstanceName');
     if(file_exists($this->getNewInstanceLocation($name))) {
-      $this->setErrorMsg("The instance '".$name."' already exists. Please choose a different name.");
+      $response->addError(new ApplicationError('ERROR',
+        Message::get("The instance '%1%' already exists. Please choose a different name.", $name),
+              ERROR_LEVEL_ERROR));
       return false;
     }
     return parent::validate();
   }
 
   /**
-   * @see Controller::hasView()
-   */
-  protected function hasView() {
-    return false;
-  }
-
-  /**
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
-    $appName = $this->_request->getValue('newInstanceName');
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $appName = $request->getValue('newInstanceName');
     $newLocation = $this->getNewInstanceLocation($appName);
     $newDatabase = $this->getNewInstanceDatabase($appName);
 
@@ -101,7 +104,7 @@ class CreateInstanceController extends Controller {
     $newConfiguration->setValue('dbName', $newDatabase, 'database', false);
     $newConfiguration->writeConfiguration($newConfigFile);
 
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return true;
   }
 

@@ -152,9 +152,10 @@ class Application {
   /**
    * Default exception handling method. Rolls back the transaction and
    * re-executes the last request (expected in the session variable 'lastRequest').
-   * @param exception The exception instance
+   * @param exception The Exception instance
+   * @param request The Request instance
    */
-  public function handleException(Exception $exception) {
+  public function handleException(Exception $exception, Request $request) {
     if ($exception instanceof ApplicationException) {
       $error = $exception->getError();
       if ($error->getCode() == 'SESSION_INVALID') {
@@ -179,7 +180,9 @@ class Application {
       ObjectFactory::getInstance('actionMapper')->processAction($lastRequest);
     }
     else {
-      print $exception;
+      $request->addError(ApplicationError::get('GENERAL_FATAL'));
+      $request->setAction('failure');
+      ObjectFactory::getInstance('actionMapper')->processAction($request);
     }
   }
 

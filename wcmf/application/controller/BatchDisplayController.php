@@ -24,7 +24,9 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -85,12 +87,13 @@ class BatchDisplayController extends BatchController {
    * @see Controller::validate()
    */
   protected function validate() {
-    if ($this->_request->getAction() != 'continue') {
-      // check request values
-      if(strlen($this->_request->getValue('oid')) == 0) {
-        $this->appendErrorMsg("No 'oid' given in data.");
-        return false;
-      }
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $oid = ObjectId::parse($request->getValue('oid'));
+    if(!$oid) {
+      $response->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => array($request->getValue('oid')))));
+      return false;
     }
     // do default validation
     return parent::validate();

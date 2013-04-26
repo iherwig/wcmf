@@ -45,13 +45,6 @@ use wcmf\lib\presentation\Controller;
 class SOAPController extends Controller
 {
   /**
-   * @see Controller::hasView()
-   */
-  function hasView()
-  {
-      return false;
-  }
-  /**
    * Execute the requested soap action and add 'soapResult' to the data array
    * @see Controller::executeKernel()
    */

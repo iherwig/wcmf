@@ -22,6 +22,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -51,13 +52,6 @@ use wcmf\lib\presentation\Controller;
 class SortController extends Controller {
 
   const ORDER_BOTTOM = 'ORDER_BOTTOM';
-
-  /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    return false;
-  }
 
   /**
    * @see Controller::validate()

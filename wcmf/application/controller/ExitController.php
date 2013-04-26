@@ -35,13 +35,6 @@ use wcmf\lib\presentation\Controller;
 class ExitController extends Controller
 {
   /**
-   * @see Controller::hasView()
-   */
-  function hasView()
-  {
-    return false;
-  }
-  /**
    * @see Controller::executeKernel()
    */
   function executeKernel()

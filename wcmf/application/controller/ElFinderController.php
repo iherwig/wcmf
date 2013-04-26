@@ -47,19 +47,6 @@ include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinderVolumeLocalFileSystem.c
 class ElFinderController extends Controller
 {
   /**
-   * @see Controller::hasView()
-   */
-  public function hasView()
-  {
-    $request = $this->getRequest();
-    if ($request->getAction() == "browseResources") {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-  /**
    * Process finder actions.
    * @return True in every case.
    * @see Controller::executeKernel()

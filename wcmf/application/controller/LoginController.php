@@ -81,27 +81,12 @@ class LoginController extends Controller {
       }
 
       if (sizeof($invalidParameters) > 0) {
-        Log::error("invalid parameters", __CLASS__);
         $response->addError(ApplicationError::get('PARAMETER_INVALID',
           array('invalidParameters' => $invalidParameters)));
         return false;
       }
     }
     return true;
-  }
-
-  /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    $request = $this->getRequest();
-    if (!$request->hasErrors() &&
-      ($request->getAction() == 'login' || $this->_anonymous)) {
-      return false;
-    }
-    else {
-      return true;
-    }
   }
 
   /**

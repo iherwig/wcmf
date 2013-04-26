@@ -43,13 +43,6 @@ use wcmf\lib\presentation\Controller;
 class DeleteController extends Controller {
 
   /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    return false;
-  }
-
-  /**
    * Delete given Nodes.
    * @see Controller::executeKernel()
    */

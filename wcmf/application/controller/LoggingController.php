@@ -38,13 +38,6 @@ use wcmf\lib\presentation\Controller;
 class LoggingController extends Controller
 {
   /**
-   * @see Controller::hasView()
-   */
-  public function hasView()
-  {
-    return false;
-  }
-  /**
    * Log the message.
    * @return True in any case
    * @see Controller::executeKernel()

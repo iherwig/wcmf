@@ -56,13 +56,6 @@ class UserController extends Controller {
   }
 
   /**
-   * @see Controller::hasView()
-   */
-  protected function hasView() {
-    return true;
-  }
-
-  /**
    * Process action and assign data to View.
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()

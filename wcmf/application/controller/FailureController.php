@@ -24,35 +24,26 @@ use wcmf\lib\presentation\Controller;
  * FailureController is a controller that shows an error page to the user.
  *
  * <b>Input actions:</b>
- * - unspecified: Display the error message
+ * - unspecified: Display the errors contained in the request
  *
  * <b>Output actions:</b>
  * - @em ok In any case
- *
- * @param[in,out] errorMsg The message to display
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class FailureController extends Controller
 {
   /**
-   * @see Controller::hasView()
-   */
-  function hasView()
-  {
-    return true;
-  }
-  /**
-   * Assign error message to View.
+   * Assign error message to Response.
    * @return False in every case.
    * @see Controller::executeKernel()
    */
   function executeKernel()
   {
-    // assign model to view
-    $this->_response->setValue('errorMsg', $this->_request->getValue('errorMsg'));
-
-    $this->_response->setAction('ok');
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $response->setErrors($request->getErrors());
+    $response->setAction('ok');
     return false;
   }
 }

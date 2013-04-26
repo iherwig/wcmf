@@ -80,18 +80,6 @@ class SearchController extends ListController {
   }
 
   /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    if ($this->_request->getAction() == 'list') {
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
-
-  /**
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {

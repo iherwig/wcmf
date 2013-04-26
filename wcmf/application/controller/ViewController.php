@@ -32,21 +32,13 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ViewController extends Controller
-{
-  /**
-   * @see Controller::hasView()
-   */
-  function hasView()
-  {
-    return true;
-  }
+class ViewController extends Controller {
+
   /**
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
+  function executeKernel() {
     $this->_response->setAction('ok');
     return false;
   }

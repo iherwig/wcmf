@@ -53,13 +53,6 @@ class SaveController extends Controller {
   private $_graphicsUtil = null;
 
   /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    return false;
-  }
-
-  /**
    * Save Node data.
    * @see Controller::executeKernel()
    */

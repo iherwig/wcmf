@@ -37,23 +37,22 @@ use wcmf\lib\presentation\InternalLink;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ResourceTreeController extends TreeViewController
-{
+class ResourceTreeController extends TreeViewController {
   /**
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
+  function executeKernel() {
     $result = parent::executeKernel();
-    if ($this->hasView())
+    if ($this->hasView()) {
       $this->_response->setValue('fieldName', $this->_request->getValue('fieldName'));
+    }
     return $result;
   }
+
   /**
    * @see TreeViewController::getClickAction()
    */
-  function getClickAction(&$node)
-  {
+  function getClickAction(&$node) {
     return "javascript:setUrl('".str_replace("'", "\'", InternalLink::makeLink($node->getOID()))."');";
   }
 }

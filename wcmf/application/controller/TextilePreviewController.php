@@ -32,21 +32,13 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class TextilePreviewController extends Controller
-{
-  /**
-   * @see Controller::hasView()
-   */
-  public function hasView()
-  {
-    return true;
-  }
+class TextilePreviewController extends Controller {
+
   /**
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  public function executeKernel()
-  {
+  public function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $response->setValue('text', $request->getValue('text'));

@@ -22,6 +22,7 @@ use \Exception;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -83,13 +84,6 @@ class AssociateController extends Controller {
       }
     }
     return true;
-  }
-
-  /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    return false;
   }
 
   /**

@@ -102,13 +102,6 @@ abstract class LongTaskController extends Controller {
   }
 
   /**
-   * @see Controller::hasView()
-   */
-  protected function hasView() {
-    return true;
-  }
-
-  /**
    * Do processing and assign Node data to View.
    * @return Array of given context and action 'done' if finished.
    *         False else.

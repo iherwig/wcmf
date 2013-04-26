@@ -30,6 +30,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\presentation\ApplicationError;
 
 /**
  * CopyController is a controller that copies Nodes.
@@ -94,25 +95,31 @@ class CopyController extends BatchController {
    * @see Controller::validate()
    */
   protected function validate() {
-    if ($this->_request->getAction() != 'continue') {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    if ($request->getAction() != 'continue') {
       // check request values
-      if(strlen($this->_request->getValue('oid')) == 0) {
-        $this->appendErrorMsg("No 'oid' given in data.");
+      $oid = ObjectId::parse($request->getValue('oid'));
+      if(!$oid) {
+        $response->addError(ApplicationError::get('OID_INVALID',
+          array('invalidOids' => array($request->getValue('oid')))));
         return false;
       }
-      if($this->_request->hasValue('targetoid') &&
-        !ObjectId::isValidOID($this->_request->getValue('targetoid')))
-      {
-        $this->appendErrorMsg("Invalid 'targetoid' parameter given in data.");
-        return false;
+      if($request->hasValue('targetoid')) {
+        $targetoid = ObjectId::parse($request->getValue('targetoid'));
+        if(!$targetoid) {
+          $response->addError(ApplicationError::get('OID_INVALID',
+            array('invalidOids' => array($request->getValue('targetoid')))));
+          return false;
+        }
       }
 
       // check if the parent accepts this node type (only when not adding to root)
       $addOk = true;
-      if ($this->_request->hasValue('targetoid')) {
+      if ($request->hasValue('targetoid')) {
         $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-        $targetOID = $this->_request->getValue('targetoid');
-        $nodeOID = $this->_request->getValue('oid');
+        $targetOID = $request->getValue('targetoid');
+        $nodeOID = $request->getValue('oid');
 
         $targetNode = $this->getTargetNode($targetOID);
         $nodeType = $nodeOID->getType();
@@ -121,15 +128,13 @@ class CopyController extends BatchController {
         $tplNode = $persistenceFacade->create($targetType, 1);
         $possibleChildren = NodeUtil::getPossibleChildren($targetNode, $tplNode);
         if (!in_array($nodeType, array_keys($possibleChildren))) {
-          $this->appendErrorMsg(Message::get("%1% does not accept children of type %2%. The parent type is not compatible.",
-              array($targetOID, $nodeType)));
+          $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
           $addOk = false;
         }
         else {
           $template = &$possibleChildren[$nodeType];
           if (!$template->getProperty('canCreate')) {
-            $this->appendErrorMsg(Message::get("%1% does not accept children of type %2%. The maximum number of children of that type is reached.",
-                array($targetOID, $nodeType)));
+            $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
             $addOk = false;
           }
         }
@@ -146,14 +151,15 @@ class CopyController extends BatchController {
    * @see BatchController::getWorkPackage()
    */
   protected function getWorkPackage($number) {
+    $request = $this->getRequest();
     $name = '';
-    if ($this->_request->getAction() == 'move') {
+    if ($request->getAction() == 'move') {
       $name = Message::get('Moving');
     }
-    else if ($this->_request->getAction() == 'copy') {
+    else if ($request->getAction() == 'copy') {
       $name = Message::get('Copying');
     }
-    $name .= ': '.$this->_request->getValue('oid');
+    $name .= ': '.$request->getValue('oid');
 
     if ($number == 0) {
       return array('name' => $name, 'size' => 1, 'oids' => array(1), 'callback' => 'startProcess');

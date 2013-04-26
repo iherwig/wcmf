@@ -24,6 +24,7 @@ namespace wcmf\application\controller;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Request;
 
 /**
@@ -88,21 +89,17 @@ class MultipleActionController extends Controller {
    */
   protected function validate() {
     // check if we have an array of arrays
-    $data = &$this->_request->getValue('data');
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $data = $request->getValue('data');
     foreach($data as $key => $value) {
       if (!is_array($value)) {
-        $this->setErrorMsg("Data should be an associative array of action definition arrays.");
+        $response->addError(ApplicationError::get('PARAMETER_INVALID',
+          array('invalidParameters' => array('data'))));
         return false;
       }
     }
     return true;
-  }
-
-  /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    return false;
   }
 
   /**
@@ -112,8 +109,10 @@ class MultipleActionController extends Controller {
    */
   protected function executeKernel() {
     // create and execute requests for the actions given in data
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     $results = array();
-    $data = &$this->_request->getValue('data');
+    $data = $request->getValue('data');
     $actions = array_keys($data);
     $numActions = sizeof($actions);
     $actionMapper = ObjectFactory::getInstance('actionMapper');
@@ -138,8 +137,8 @@ class MultipleActionController extends Controller {
         $data[$action]['action'],
         $data[$action]
       );
-      $request->setFormat($this->_request->getFormat());
-      $request->setResponseFormat($this->_request->getResponseFormat());
+      $request->setFormat($request->getFormat());
+      $request->setResponseFormat($request->getResponseFormat());
 
       // execute the request
       $response = $actionMapper->processAction($request);
@@ -150,8 +149,8 @@ class MultipleActionController extends Controller {
     if (Log::isDebugEnabled(__CLASS__))
       Log::debug($results, __CLASS__);
 
-    $this->_response->setValue('data', $results);
-    $this->_response->setAction('ok');
+    $response->setValue('data', $results);
+    $response->setAction('ok');
     return true;
   }
 

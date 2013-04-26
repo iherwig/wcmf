@@ -19,7 +19,9 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\ApplicationError;
 
 /**
  * ConcurrencyController is a controller that allows to lock/unlock objects.
@@ -36,47 +38,44 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ConcurrencyController extends Controller
-{
+class ConcurrencyController extends Controller {
+
   /**
    * @see Controller::validate()
    */
-  function validate()
-  {
-    if(!ObjectId::isValidOID($this->_request->getValue('oid')))
-    {
-      $this->setErrorMsg("No valid 'oid' given in data.");
+  function validate() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $oid = ObjectId::parse($request->getValue('oid'));
+    if(!$oid) {
+      $response->addError(ApplicationError::get('OID_INVALID',
+        array('invalidOids' => array($request->getValue('oid')))));
       return false;
     }
     return true;
   }
-  /**
-   * @see Controller::hasView()
-   */
-  function hasView()
-  {
-    return false;
-  }
+
   /**
    * (Un-)Lock the Node.
    * @return Array of given context and action 'ok' in every case.
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
+  function executeKernel() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
-    $oid = $this->_request->getValue('oid');
+    $oid = $request->getValue('oid');
 
     // process actions
-    if ($this->_request->getAction() == 'lock') {
+    if ($request->getAction() == 'lock') {
       $concurrencyManager->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     }
-    elseif ($this->_request->getAction() == 'unlock') {
+    elseif ($request->getAction() == 'unlock') {
       $concurrencyManager->releaseLock($oid);
     }
 
-    $this->_response->setValue('oid', $oid);
-    $this->_response->setAction('ok');
+    $response->setValue('oid', $oid);
+    $response->setAction('ok');
     return true;
   }
 }

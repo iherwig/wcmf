@@ -37,20 +37,12 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RESTController extends Controller
-{
-  /**
-   * @see Controller::hasView()
-   */
-  public function hasView()
-  {
-    return false;
-  }
+class RESTController extends Controller {
+
   /**
    * @see Controller::validate()
    */
-  function validate()
-  {
+  function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     if ($request->hasValue('className') &&
@@ -63,16 +55,15 @@ class RESTController extends Controller
     // do default validation
     return parent::validate();
   }
+
   /**
    * Execute the requested REST action
    * @see Controller::executeKernel()
    */
-  public function executeKernel()
-  {
+  public function executeKernel() {
     $method = $_SERVER['REQUEST_METHOD'];
     $result = false;
-    switch ($method)
-    {
+    switch ($method) {
       case 'GET':
         $result = $this->handleGet();
         break;
@@ -91,11 +82,11 @@ class RESTController extends Controller
     }
     return $result;
   }
+
   /**
    * Handle a GET request (read object(s) of a given type)
    */
-  protected function handleGet()
-  {
+  protected function handleGet() {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -166,8 +157,7 @@ class RESTController extends Controller
   /**
    * Handle a POST request (create/update an object of a given type)
    */
-  protected function handlePost()
-  {
+  protected function handlePost() {
     $subResponse = $this->executeSubAction('create');
 
     $response = $this->getResponse();
@@ -183,8 +173,7 @@ class RESTController extends Controller
   /**
    * Handle a PUT request (create/update an object of a given type)
    */
-  protected function handlePut()
-  {
+  protected function handlePut() {
     $subResponse = $this->executeSubAction('update');
 
     $response = $this->getResponse();
@@ -200,8 +189,7 @@ class RESTController extends Controller
   /**
    * Handle a DELETE request (delete an object of a given type)
    */
-  protected function handleDelete()
-  {
+  protected function handleDelete() {
     $subResponse = $this->executeSubAction('delete');
 
     $response = $this->getResponse();
@@ -217,8 +205,7 @@ class RESTController extends Controller
    * Set the location response header according to the given object id
    * @param oid The serialized object id
    */
-  protected function setLocationHeaderFromOid($oid)
-  {
+  protected function setLocationHeaderFromOid($oid) {
     $oid = ObjectId::parse($oid);
     if ($oid) {
       header("Location: ".$oid->__toString());

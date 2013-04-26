@@ -44,54 +44,36 @@ class AdminController extends Controller {
   /**
    * @see Controller::initialize()
    */
-  public function initialize(&$request, &$response)
-  {
+  public function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
-    // create UserManager instance
+    // get UserManager instance
     $this->_userManager = ObjectFactory::getInstance('userManager');
   }
-  /**
-   * @see Controller::validate()
-   */
-  function validate()
-  {
-    if($this->_userManager == null)
-    {
-      $this->setErrorMsg("No user manager defined.");
-      return false;
-    }
-    return true;
-  }
-  /**
-   * @see Controller::hasView()
-   */
-  function hasView()
-  {
-    return true;
-  }
+
   /**
    * Process action and assign data to View.
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
+  function executeKernel() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $this->_userManager->beginTransaction();
 
     // assign model to view
     $userType = $this->_userManager->getUserClassName();
-    $this->_response->setValue('userType', $userType);
-    $this->_response->setValue('userTemplateNode', $persistenceFacade->create($userType, BuildDepth::REQUIRED));
+    $response->setValue('userType', $userType);
+    $response->setValue('userTemplateNode', $persistenceFacade->create($userType, BuildDepth::REQUIRED));
     $roleType = $this->_userManager->getRoleClassName();
-    $this->_response->setValue('roleType', $roleType);
-    $this->_response->setValue('roleTemplateNode', $persistenceFacade->create($roleType, BuildDepth::REQUIRED));
+    $response->setValue('roleType', $roleType);
+    $response->setValue('roleTemplateNode', $persistenceFacade->create($roleType, BuildDepth::REQUIRED));
 
     $this->_userManager->commitTransaction();
 
     // success
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return false;
   }
 }

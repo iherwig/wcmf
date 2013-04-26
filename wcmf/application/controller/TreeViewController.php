@@ -19,6 +19,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\presentation\Controller;
@@ -41,22 +42,9 @@ use wcmf\lib\presentation\Controller;
 class TreeViewController extends Controller {
 
   /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    if ($this->_request->getAction() == 'loadChildren') {
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
-
-  /**
    * Assign data to View.
    * @return Array of given context and action 'failure' on failure.
    *         False on success (Stop action processing chain).
-   *         In case of 'failure' a detailed description is provided by getErrorMsg().
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
@@ -109,7 +97,7 @@ class TreeViewController extends Controller {
     $config = ObjectFactory::getConfigurationInstance();
     $rootTypes = $config->getValue('rootTypes', 'application');
     if ($rootTypes === false || !is_array($rootTypes) ||  $rootTypes[0] == '') {
-      $this->setErrorMsg("No root types defined.");
+      throw new ConfigurationException("No root types defined.");
     }
     else {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

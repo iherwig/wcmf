@@ -81,13 +81,6 @@ class InsertController extends Controller {
   }
 
   /**
-   * @see Controller::hasView()
-   */
-  public function hasView() {
-    return false;
-  }
-
-  /**
    * Create a new Node.
    * @see Controller::executeKernel()
    */

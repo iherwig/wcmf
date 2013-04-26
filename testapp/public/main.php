@@ -38,6 +38,6 @@ try {
   $session->set('lastRequest', $request);
 }
 catch (Exception $ex) {
-  $application->handleException($ex);
+  $application->handleException($ex, $request);
 }
 ?>
