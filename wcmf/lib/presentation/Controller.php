@@ -238,7 +238,6 @@ abstract class Controller {
     $this->_response->setValue('controller', get_class($this));
     $this->_response->setValue('context', $this->_response->getContext());
     $this->_response->setValue('action', $this->_response->getAction());
-    $this->_response->setValue('responseFormat', $this->_response->getFormat());
   }
 
   /**
