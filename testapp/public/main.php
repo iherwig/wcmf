@@ -16,13 +16,12 @@
  *
  * $Id$
  */
-error_reporting(E_ALL | E_PARSE);
+error_reporting(E_ALL);
 
 require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
 use \Exception;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Application;
 
 $application = new Application();
@@ -30,12 +29,8 @@ try {
   // initialize the application
   $request = $application->initialize();
 
-  // process the requested action
-  ObjectFactory::getInstance('actionMapper')->processAction($request);
-
-  // store the last successful request
-  $session = ObjectFactory::getInstance('session');
-  $session->set('lastRequest', $request);
+  // run the application
+  $application->run($request);
 }
 catch (Exception $ex) {
   $application->handleException($ex, $request);

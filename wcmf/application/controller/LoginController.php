@@ -140,7 +140,6 @@ class LoginController extends Controller {
       }
       else {
         // login failed
-        Log::error("ADD ERROR", __CLASS__);
         $response->addError(ApplicationError::get('AUTHENTICATION_FAILED'));
         return false;
       }

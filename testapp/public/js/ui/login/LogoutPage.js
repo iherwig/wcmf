@@ -49,6 +49,13 @@ define([
                 var route = this.router.getRoute("login");
                 var url = route.assemble();
                 window.document.location.href = url;
+            }), lang.hitch(this, function(error){
+                // error
+                query(".btn").button("reset");
+                this.showNotification({
+                    type: "error",
+                    message: "Backend error"
+                });
             }));
         }
     });

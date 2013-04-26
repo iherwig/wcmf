@@ -74,6 +74,7 @@ define([
                 handleAs: 'json'
 
             }).then(lang.hitch(this, function(response) {
+                // callback completes
                 if (!response.success) {
                     // error
                     query(".btn").button("reset");
@@ -98,6 +99,13 @@ define([
                         this.push(url);
                     }
                 }
+            }), lang.hitch(this, function(error) {
+                // error
+                query(".btn").button("reset");
+                this.showNotification({
+                    type: "error",
+                    message: "Backend error"
+                });
             }));
         }
     });

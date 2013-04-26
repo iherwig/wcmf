@@ -49,6 +49,7 @@ class Application {
     new ErrorHandler();
     $this->_startTime = microtime(true);
     register_shutdown_function(array($this, "shutdown"));
+    ob_start(array($this, "outputHandler"));
   }
 
   /**
@@ -126,27 +127,16 @@ class Application {
   }
 
   /**
-   * This method is automatically called after script execution
+   * Run the application with the given request
+   * @param request
    */
-  public function shutdown() {
-    // log resource usage
-    if (Log::isDebugEnabled(__CLASS__)) {
-      $timeDiff = microtime(true)-$this->_startTime;
-      $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
-      $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
-      if ($this->_initialRequest != null) {
-        $msg .= " Request[".$this->_initialRequest->getSender()."?".
-                $this->_initialRequest->getContext()."?".$this->_initialRequest->getAction()."]";
-      }
-      Log::debug($msg, __CLASS__);
-    }
+  public function run(Request $request) {
+    // process the requested action
+    ObjectFactory::getInstance('actionMapper')->processAction($request);
 
-    // log last error
-    $error = error_get_last();
-    if ($error !== NULL) {
-      $info = "Error: ".$error['message']." in ".$error['file']." on line ".$error['line'];
-      Log::error($info, __CLASS__);
-    }
+    // store the last successful request
+    $session = ObjectFactory::getInstance('session');
+    $session->set('lastRequest', $request);
   }
 
   /**
@@ -173,16 +163,58 @@ class Application {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $persistenceFacade->getTransaction()->rollback();
 
-    // process last successful request
     $session = ObjectFactory::getInstance('session');
     $lastRequest = $session->get('lastRequest');
     if ($lastRequest) {
+      // process last successful request if existing
       ObjectFactory::getInstance('actionMapper')->processAction($lastRequest);
     }
     else {
+      // redirect to failure action
       $request->addError(ApplicationError::get('GENERAL_FATAL'));
       $request->setAction('failure');
       ObjectFactory::getInstance('actionMapper')->processAction($request);
+    }
+  }
+
+  /**
+   * This method is called on script shutdown
+   * NOTE: must be public
+   */
+  public function shutdown() {
+    // log resource usage
+    if (Log::isDebugEnabled(__CLASS__)) {
+      $timeDiff = microtime(true)-$this->_startTime;
+      $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
+      $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
+      if ($this->_initialRequest != null) {
+        $msg .= " Request[".$this->_initialRequest->getSender()."?".
+                $this->_initialRequest->getContext()."?".$this->_initialRequest->getAction()."]";
+      }
+      Log::debug($msg, __CLASS__);
+    }
+
+    ob_end_flush();
+  }
+
+  /**
+   * This method is run as ob_start callback
+   * @param buffer The content to be returned to the client
+   * @return String
+   */
+  protected function outputHandler($buffer) {
+    // log last error
+    $error = error_get_last();
+    if ($error !== NULL) {
+      $info = "Error: ".$error['message']." in ".$error['file']." on line ".$error['line'];
+      Log::error($info, __CLASS__);
+
+      // suppress error message in browser
+      header('HTTP/1.1 500 Internal Server Error');
+      exit(0);
+    }
+    else {
+      return $buffer;
     }
   }
 
