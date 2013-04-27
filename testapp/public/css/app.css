@@ -2,6 +2,7 @@
 /*@import '../vendor/dojo/dijit/themes/claro/claro.css';*/
 @import '../vendor/twitter-bootstrap/css/bootstrap.css';
 @import '../vendor/twitter-bootstrap/css/bootstrap-responsive.css';
+@import '../vendor/font-awesome/css/font-awesome.css';
 
 /* Sticky footer styles
 -------------------------------------------------- */
@@ -67,7 +68,7 @@ body {
 }
 
 :focus {
-  outline: 1px dashed #555;
+  outline: 1px dashed #ccc;
 }​
 
 /* dgrid */
@@ -91,43 +92,6 @@ th {
   font-weight: normal;
 }
 
-th.field-action, td.field-action {
-  width: 30px;
-}
-
-td.field-action span {
-  cursor: pointer;
-  margin-left: 5px;
-  vertical-align: middle;
-  background-position: 0 0;
-}
-
-.dgrid-cell .icon-edit .disabled {
-  background-image: url("../images/icons/gray_light/pen_alt2_12x12.png");
-}
-.dgrid-cell .icon-edit {
-  background-image: url("../images/icons/gray_dark/pen_alt2_12x12.png");
-}
-.dgrid-cell .icon-edit:hover {
-  background-image: url("../images/icons/cyan/pen_alt2_12x12.png");
-}
-
-.dgrid-cell .icon-duplicate .disabled {
-  background-image: url("../images/icons/gray_light/new_window_12x12.png");
-}
-.dgrid-cell .icon-duplicate {
-  background-image: url("../images/icons/gray_dark/new_window_12x12.png");
-}
-.dgrid-cell .icon-duplicate:hover {
-  background-image: url("../images/icons/cyan/new_window_12x12.png");
-}
-
-.dgrid-cell .icon-delete .disabled {
-  background-image: url("../images/icons/gray_light/trash_stroke_12x12.png");
-}
-.dgrid-cell .icon-delete {
-  background-image: url("../images/icons/gray_dark/trash_stroke_12x12.png");
-}
-.dgrid-cell .icon-delete:hover {
-  background-image: url("../images/icons/cyan/trash_stroke_12x12.png");
+th.field-actions-3, td.field-actions-3 {
+  width: 76px;
 }

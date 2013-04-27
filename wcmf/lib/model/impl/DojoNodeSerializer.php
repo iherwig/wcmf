@@ -27,30 +27,14 @@ use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
 /**
- * DionysosNodeSerializer is used to serialize Nodes into the Dionysos format and
- * vice versa. The format of serialized Nodes is defined in the Dionysos
- * specification (See: http://olympos.svn.sourceforge.net/viewvc/olympos/trunk/olympos/dionysos/docs/Dionysos%20Specification%20JSON.odt)
+ * DojoNodeSerializer is used to serialize Nodes into the Dojo rest format and
+ * vice versa. The format of serialized Nodes is defined in the Dojo documentation (See:
+ * http://dojotoolkit.org/reference-guide/1.8/quickstart/rest.html)
  *
- * The array representation is an associative array where the keys are:
- *
- * - className: The type of the Node (optional, if oid is given)
- * - oid: The object id of the Node (optional, if className is given)
- * - isReference: Boolean wether this Node is a reference or complete
- * - lastChange: A timestamp defining the point in time of the last change of the Node
- * - attributes: An associative array with the value names as keys and the appropriate values
- *               Relations to other Nodes are also contained in this array, where the relation
- *               name is the array key
  * @author ingo herwig <ingo@wemove.com>
  */
-class DionysosNodeSerializer implements NodeSerializer {
+class DojoNodeSerializer implements NodeSerializer {
 
-  private static $NODE_KEYS = array(
-      'className',
-      'oid',
-      'isReference',
-      'lastChange',
-      'attributes'
-  );
   private $_serializedOIDs = array();
 
   /**
@@ -61,8 +45,7 @@ class DionysosNodeSerializer implements NodeSerializer {
       $data = (array)$data;
     }
     $syntaxOk = (is_array($data) &&
-            (isset($data['oid']) || isset($data['className'])) &&
-            isset($data['attributes']));
+            (isset($data['oid'])));
     // check for oid variables
     if ($syntaxOk && isset($data['oid']) && preg_match('/^\{.+\}$/', $data['oid'])) {
       $syntaxOk = false;
@@ -74,19 +57,12 @@ class DionysosNodeSerializer implements NodeSerializer {
    * @see NodeSerializer::deserializeNode
    */
   public function deserializeNode($data, Node $parent=null, $role=null) {
-    if (!isset($data['className']) && !isset($data['oid'])) {
-      throw new IllegalArgumentException("Serialized Node data must contain an 'className' or 'oid' parameter");
-    }
-    // create a dummy oid, if not given
-    $oid = null;
     if (!isset($data['oid'])) {
-      $oid = new ObjectId($data['className']);
+      throw new IllegalArgumentException("Serialized Node data must contain an 'oid' parameter");
     }
-    else {
-      $oid = ObjectId::parse($data['oid']);
-      if ($oid == null) {
-        throw new IllegalArgumentException("The object id '".$oid."' is invalid");
-      }
+    $oid = ObjectId::parse($data['oid']);
+    if ($oid == null) {
+      throw new IllegalArgumentException("The object id '".$oid."' is invalid");
     }
 
     // don't create all values by default (-> don't use PersistenceFacade::create() directly,
@@ -96,8 +72,8 @@ class DionysosNodeSerializer implements NodeSerializer {
     $node = new $class;
     $node->setOID($oid);
 
-    if (isset($data['attributes'])) {
-      foreach($data['attributes'] as $key => $value) {
+    foreach($data as $key => $value) {
+      if ($key != 'oid') {
         $this->deserializeValue($node, $key, $value);
       }
     }
@@ -105,13 +81,7 @@ class DionysosNodeSerializer implements NodeSerializer {
       $parent->addNode($node, $role);
     }
 
-    // get remaining part of data
-    foreach ($data as $key => $value) {
-      if (in_array($key, self::$NODE_KEYS)) {
-        unset($data[$key]);
-      }
-    }
-    return array('node' => $node, 'data' => $data);
+    return array('node' => $node, 'data' => array());
   }
 
   /**
@@ -158,55 +128,34 @@ class DionysosNodeSerializer implements NodeSerializer {
       return null;
     }
     $curResult = array();
-    $curResult['className'] = $node->getType();
     $curResult['oid'] = $node->getOID()->__toString();
-    $curResult['lastChange'] = strtotime($node->getValue('modified'));
 
-    $oidStr = $node->getOID()->__toString();
-    if (in_array($oidStr, $this->_serializedOIDs)) {
-      // the node is serialized already
-      $curResult['isReference'] = true;
+    // serialize attributes
+    // use NodeValueIterator to iterate over all Node values
+    $valueIter = new NodeValueIterator($node, false);
+    foreach($valueIter as $valueName => $value) {
+      $curResult[$valueName] = $value;
     }
-    else {
-      // the node is not serialized yet
-      $curResult['isReference'] = false;
-      $this->_serializedOIDs[] = $oidStr;
 
-      // serialize attributes
-      // use NodeValueIterator to iterate over all Node values
-      $values = array();
-      $valueIter = new NodeValueIterator($node, false);
-      foreach($valueIter as $valueName => $value) {
-        $values[$valueName] = $value;
-      }
-      $curResult['attributes'] = $values;
-
-      // add related objects by creating an attribute that is named as the role of the object
-      // multivalued relations will be serialized into an array
-      $mapper = $node->getMapper();
-      foreach ($mapper->getRelations() as $relation) {
-        $role = $relation->getOtherRole();
-        $relatedNodes = $node->getValue($role);
-        if ($relatedNodes) {
-          // serialize the nodes
-          $isMultiValued = $relation->isMultiValued();
-          if ($isMultiValued) {
-            $curResult['attributes'][$role] = array();
-            foreach ($relatedNodes as $relatedNode) {
-              $data = $this->serializeNodeImpl($relatedNode);
-              if ($data != null) {
-                // add the data to the relation attribute
-                $curResult['attributes'][$role][] = $data;
-              }
-            }
+    // add related objects by creating an attribute that is named as the role of the object
+    // multivalued relations will be serialized into an array
+    $mapper = $node->getMapper();
+    foreach ($mapper->getRelations() as $relation) {
+      $role = $relation->getOtherRole();
+      $relatedNodes = $node->getValue($role);
+      if ($relatedNodes) {
+        // serialize the nodes
+        $isMultiValued = $relation->isMultiValued();
+        if ($isMultiValued) {
+          $curResult[$role] = array();
+          foreach ($relatedNodes as $relatedNode) {
+            // add the reference to the relation attribute
+            $curResult[$role][] = array('$ref' => $relatedNode->getOID()->__toString());
           }
-          else {
-            $data = $this->serializeNodeImpl($relatedNodes);
-            if ($data != null) {
-              // add the data to the relation attribute
-              $curResult['attributes'][$role] = $data;
-            }
-          }
+        }
+        else {
+          // add the reference to the relation attribute
+          $curResult[$role] = array('$ref' => $relatedNode->getOID()->__toString());
         }
       }
     }

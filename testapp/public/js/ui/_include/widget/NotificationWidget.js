@@ -18,7 +18,7 @@ define([
         templateString: template,
 
         _setContentAttr: function (val) {
-            this.contentNode.innerHTML = val;
+            this.contentNode.innerHTML = '<i class="icon-exclamation-sign"></i> '+val;
         },
 
         _setClassAttr: function (val) {

@@ -17,6 +17,8 @@ define([
     "dojo/dom-style",
     "dojo/dom-attr",
     "dojo/dom-class",
+    "dojo/query",
+    "dojo/NodeList-traverse",
     "dojo/window",
     "dojo/aspect",
     "dojo/topic",
@@ -41,6 +43,8 @@ define([
     domStyle,
     domAttr,
     domClass,
+    query,
+    traverse,
     win,
     aspect,
     topic,
@@ -55,15 +59,19 @@ define([
         store: null,
         type: null,
         actions: [],
+        actionsByName: {},
         templateString: template,
         gridWidget: null,
 
         constructor: function (params) {
-            this.request = params.request;
-            this.router = params.router;
-            this.store = params.store;
-            this.type = params.type;
-            this.actions = params.actions;
+            declare.safeMixin(this, params);
+
+            if (params.actions) {
+              for (var i=0,count=params.actions.length; i<count; i++) {
+                var action = params.actions[i];
+                this.actionsByName[action.name] = action;
+              }
+            }
         },
 
         postCreate: function () {
@@ -73,15 +81,19 @@ define([
             this.gridWidget.set("store", this.store); // set store and run query
             this.own(
                 on(window, "resize", lang.hitch(this, this.onResize)),
-                on(this.gridWidget, "click", lang.hitch(this.gridWidget, function(event) {
-                    if (event.target) {
-                      var columnNode = event.target.parentNode;
-                      if (domClass.contains(columnNode, "field-action")) {
-                          var row = this.row(columnNode);
-                          var column = this.column(columnNode);
-                          if (column && column.action) {
-                              column.action.call(column, row.data);
-                          }
+                on(this.gridWidget, "click", lang.hitch(this, function(e) {
+                    // process grid clicks
+                    var links = query(e.target).closest("a");
+                    if (links.length > 0) {
+                      var actionName = domAttr.get(links[0], "data-action");
+                      var action = this.actionsByName[actionName];
+                      if (action) {
+                          // cell action
+                          e.stopPropagation();
+                          e.preventDefault();
+                          var columnNode = e.target.parentNode;
+                          var row = this.gridWidget.row(columnNode);
+                          action.execute.call(action, row.data);
                       }
                     }
                 }))
@@ -97,7 +109,7 @@ define([
             var columns = [{
                 label: 'oid',
                 field: 'oid',
-                //hidden: true,
+                hidden: true,
                 unhidable: true,
                 sortable: true
             }];
@@ -112,22 +124,23 @@ define([
                 });
             }
 
-            // add cells for actions
-            for(var i=0, count=this.actions.length; i<count; i++) {
-                columns.push({
-                    label: " ",
-                    field: "action",
-                    unhidable: true,
-                    sortable: false,
-                    resizable: false,
-                    formatter: lang.hitch(this.actions[i], function(data, obj) {
-                        return '<span class="'+this.iconClass+'"></span>';
-                    }),
-                    action: lang.hitch(this.actions[i], function(data) {
-                        this.execute.call(this, data);
-                    })
-                });
-            }
+            // add actions column
+            columns.push({
+                label: " ",
+                field: "actions-"+this.actions.length,
+                unhidable: true,
+                sortable: false,
+                resizable: false,
+                formatter: lang.hitch(this, function(data, obj) {
+                    var html = '<div class="btn-group">';
+                    for(var name in this.actionsByName) {
+                        var action = this.actionsByName[name];
+                        html += '<a class="btn btn-mini" href="#" data-action="'+name+'"><i class="'+action.iconClass+'"></i></a>';
+                    }
+                    html += '</div>';
+                    return html;
+                })
+            });
 
             var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, ColumnHider, ColumnResizer]))({
                     getBeforePut: true,

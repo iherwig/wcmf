@@ -36,7 +36,7 @@ interface NodeSerializer {
   public function isSerializedNode($data);
 
   /**
-   * Deserialize a Node from serialized data. Only values given in data are be set.
+   * Deserialize a Node from serialized data. Only values given in data are being set.
    * @param data An array containing the serialized Node data
    * @param parent The parent Node [default: null]
    * @param role The role of the serialized Node in relation to parent [default: null]

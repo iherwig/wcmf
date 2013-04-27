@@ -85,19 +85,22 @@ define([
                   }, tcContent);
 
                   var actions = [{
-                      iconClass: 'icon-edit',
+                      name: 'edit',
+                      iconClass: 'icon-pencil',
                       execute: function(data) {
-                          console.log(data);
+                          console.log('edit '+data.oid);
                       }
                   }, {
-                      iconClass:  'icon-duplicate',
+                      name: 'duplicate',
+                      iconClass:  'icon-copy',
                       execute: function(data) {
-                          console.log(data);
+                          console.log('duplicate '+data.oid);
                       }
                   }, {
-                      iconClass:  'icon-delete',
+                      name: 'delete',
+                      iconClass:  'icon-trash',
                       execute: function(data) {
-                          console.log(data);
+                          console.log('delete '+data.oid);
                       }
                   }];
 

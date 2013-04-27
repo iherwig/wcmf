@@ -14,13 +14,18 @@ define([
 ) {
     return declare(null, {
       /**
+       * The localized name
+       */
+      name: "",
+
+      /**
        * The icon class
        */
       iconClass: "",
 
       /**
-       * The action function (receives the row data as parameter)
+       * The action function
        */
-      execute: function (data) {}
+      execute: function () {}
     });
 });
