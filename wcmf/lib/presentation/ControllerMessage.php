@@ -354,7 +354,7 @@ class ControllerMessage {
     $str = 'sender='.$this->_sender.', ';
     $str .= 'context='.$this->_context.', ';
     $str .= 'action='.$this->_action.', ';
-    $str .= 'format='.$this->_format.', ';
+    $str .= 'format='.get_class($this->_format).', ';
     $str .= 'values='.StringUtil::getDump($this->_values);
     $str .= 'errors='.StringUtil::getDump($this->_errors);
     return $str;

@@ -225,6 +225,7 @@ abstract class Controller {
       $this->_response->setValue('errorCode', $error->getCode());
       $this->_response->setValue('errorMessage', $error->getMessage());
       $this->_response->setValue('errorData', $error->getData());
+      $this->_response->setStatus('400 Bad Request');
     }
     // set the success flag
     if (sizeof($errors) > 0) {

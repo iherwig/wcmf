@@ -30,6 +30,7 @@ use wcmf\lib\presentation\ControllerMessage;
 class Response extends ControllerMessage {
 
   private $_controller = null;
+  private $_status = '200 OK';
 
   /**
    * Set the controller that returns this response
@@ -45,6 +46,22 @@ class Response extends ControllerMessage {
    */
   public function getController() {
     return $this->_controller;
+  }
+
+  /**
+   * Set the response HTTP status code
+   * @param status The HTTP status code
+   */
+  public function setStatus($status) {
+    $this->_status = $status;
+  }
+
+  /**
+   * Get the response HTTP status code
+   * @return String
+   */
+  public function getStatus() {
+    return $this->_status;
   }
 }
 ?>

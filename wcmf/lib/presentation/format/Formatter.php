@@ -68,6 +68,8 @@ class Formatter {
       // the response format must be given!
       throw new ConfigurationException("No response format defined for ".$response->__toString());
     }
+    
+    header('HTTP/1.1 '.$response->getStatus());
     foreach ($response->getHeaders() as $name => $value) {
       header($name.': '.$value);
     }

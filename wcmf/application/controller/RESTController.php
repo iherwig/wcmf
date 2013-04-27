@@ -20,6 +20,7 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -103,7 +104,7 @@ class RESTController extends Controller {
       $response->setValues($subResponse->getValues());
 
       // set the response headers
-      header("HTTP/1.1 200 OK");
+      $response->setStatus('200 OK');
       //$this->setLocationHeaderFromOid($request->getValue('oid'));
     }
     else {
@@ -151,7 +152,10 @@ class RESTController extends Controller {
    * @see Controller::assignResponseDefaults()
    */
   protected function assignResponseDefaults() {
-    // don't add anything
+    if (sizeof($this->getResponse()->getErrors()) > 0) {
+      parent::assignResponseDefaults();
+    }
+    // don't add anything in case of success
   }
 
   /**
@@ -164,7 +168,7 @@ class RESTController extends Controller {
     $response->setValues($subResponse->getValues());
 
     // set the response headers
-    header("HTTP/1.1 201 Created");
+    $response->setStatus('201 Created');
     $this->setLocationHeaderFromOid($response->getValue('oid'));
 
     return false;
@@ -180,7 +184,7 @@ class RESTController extends Controller {
     $response->setValues($subResponse->getValues());
 
     // set the response headers
-    header("HTTP/1.1 200 OK");
+    $response->setStatus('200 OK');
     $this->setLocationHeaderFromOid($response->getValue('oid'));
 
     return false;
@@ -196,7 +200,7 @@ class RESTController extends Controller {
     $response->setValues($subResponse->getValues());
 
     // set the response headers
-    header("HTTP/1.1 204 No Content");
+    $response->setStatus('204 No Content');
 
     return false;
   }
@@ -208,7 +212,8 @@ class RESTController extends Controller {
   protected function setLocationHeaderFromOid($oid) {
     $oid = ObjectId::parse($oid);
     if ($oid) {
-      header("Location: ".$oid->__toString());
+      $response = $this->getResponse();
+      $response->setHeader('Location', $oid->__toString());
     }
   }
 }
