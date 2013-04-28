@@ -62,9 +62,9 @@ class RESTController extends Controller {
    * @see Controller::executeKernel()
    */
   public function executeKernel() {
-    $method = $_SERVER['REQUEST_METHOD'];
+    $request = $this->getRequest();
     $result = false;
-    switch ($method) {
+    switch ($request->getMethod()) {
       case 'GET':
         $result = $this->handleGet();
         break;

@@ -7,12 +7,12 @@ RewriteRule ^[^/]+/((js|vendor|css|images|)/.*)$ $1
 
 # rest
 # we expect urls like:
-#    rest/en/Document
+#    rest/en/Document/
 #    rest/en/Document/12
 #    rest/en/Document/Document:12
 RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/?$ main.php?action=restAction&language=$1&className=$2 [QSA,L]
 RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)$ main.php?action=restAction&language=$1&className=$2&id=$3 [QSA,L]
-RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([A-Za-z0-9\:]+)$ main.php?action=restAction&language=$1&className=$2&oid=$3 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([A-Za-z0-9\.\:]+)$ main.php?action=restAction&language=$1&className=$2&oid=$3 [QSA,L]
 
 # map all requests to not existing files to index.html
 RewriteCond %{REQUEST_FILENAME} !-f

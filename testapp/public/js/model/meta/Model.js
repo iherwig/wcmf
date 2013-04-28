@@ -18,7 +18,7 @@ define([
         var typeName = type.typeName;
         Model.types[typeName] = type;
         // also register simple type name
-        var pos = typeName.lastIndexOf('\\');
+        var pos = typeName.lastIndexOf('.');
         if (pos !== -1) {
             var simpleTypeName = typeName.substring(pos+1);
             if (Model.types[simpleTypeName] === undefined) {

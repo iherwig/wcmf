@@ -15,6 +15,7 @@ define([
     "dojo/query",
     "dojo/on",
     "../../model/meta/Model",
+    "../../model/meta/Node",
     "dojo/text!./template/ListPage.html"
 ], function (
     declare,
@@ -33,6 +34,7 @@ define([
     query,
     on,
     Model,
+    Node,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -84,6 +86,7 @@ define([
                       innerHTML: '<div id="typeGrid"></div>'
                   }, tcContent);
 
+                  var self = this;
                   var actions = [{
                       name: 'edit',
                       iconClass: 'icon-pencil',
@@ -101,6 +104,17 @@ define([
                       iconClass:  'icon-trash',
                       execute: function(data) {
                           console.log('delete '+data.oid);
+                          var typeName = Node.getTypeFromOid(data.oid);
+                          var store = Store.getStore(typeName, 'en');
+                          store.remove(data.oid).then(lang.hitch(self, function(results) {
+                              // callback completes
+                          }), lang.hitch(self, function(error) {
+                              // error
+                              this.showNotification({
+                                  type: "error",
+                                  message: "Backend error"
+                              });
+                          }));
                       }
                   }];
 

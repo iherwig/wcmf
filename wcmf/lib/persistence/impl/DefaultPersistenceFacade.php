@@ -118,7 +118,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::getSimpleType()
    */
   public function getSimpleType($type) {
-    $pos = strrpos($type, '\\');
+    $pos = strrpos($type, '.');
     if ($pos !== false) {
       return substr($type, $pos+1);
     }

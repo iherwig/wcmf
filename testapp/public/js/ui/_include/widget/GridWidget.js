@@ -76,9 +76,7 @@ define([
 
         postCreate: function () {
             this.inherited(arguments);
-            this.store = Observable(this.store);
             this.gridWidget = this.buildGrid();
-            this.gridWidget.set("store", this.store); // set store and run query
             this.own(
                 on(window, "resize", lang.hitch(this, this.onResize)),
                 on(this.gridWidget, "click", lang.hitch(this, function(e) {
@@ -93,7 +91,7 @@ define([
                           e.preventDefault();
                           var columnNode = e.target.parentNode;
                           var row = this.gridWidget.row(columnNode);
-                          action.execute.call(action, row.data);
+                          action.execute(row.data);
                       }
                     }
                 }))
@@ -143,6 +141,7 @@ define([
             });
 
             var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, ColumnHider, ColumnResizer]))({
+                    store: Observable(this.store),
                     getBeforePut: true,
                     columns: columns,
                     selectionMode: "extended",

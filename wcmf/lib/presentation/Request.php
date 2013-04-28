@@ -33,6 +33,14 @@ class Request extends ControllerMessage {
   private $_responseFormat = null;
 
   /**
+   * Get the HTTP method of the request
+   * @return String
+   */
+  public function getMethod() {
+    return $_SERVER['REQUEST_METHOD'];
+  }
+
+  /**
    * Set the desired response format
    * @param format Format instance
    */

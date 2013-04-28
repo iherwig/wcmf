@@ -43,13 +43,24 @@ define([
             Store.instances[typeName] = {};
         }
         if (!Store.instances[typeName][language]) {
-            var store = Cache(
-                Store({target: appConfig.pathPrefix+"/rest/"+language+"/"+typeName/*+"/?XDEBUG_SESSION_START=netbeans-xdebug"*/}),
-                Memory()
+            var memory = new Memory();
+            var jsonRest = new Store({
+                target: appConfig.pathPrefix+"/rest/"+language+"/"+typeName+"/"/*+"/?XDEBUG_SESSION_START=netbeans-xdebug"*/,
+                headers: {
+                    Accept: 'application/javascript, application/json'
+                }
+            });
+            var cache = new Cache(
+                jsonRest,
+                memory
             );
-            Store.instances[typeName][language] = store;
+            Store.instances[typeName][language] = {
+                cache: cache,
+                jsonRest: jsonRest,
+                memory: memory
+            };
         }
-        return Store.instances[typeName][language];
+        return Store.instances[typeName][language].cache;
     };
 
     return Store;
