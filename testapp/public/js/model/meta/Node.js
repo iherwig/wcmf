@@ -48,8 +48,25 @@ define([
      * @return String
      */
     Node.getTypeFromOid = function(oid) {
-        var parts = oid.split(":", 1);
-        return parts[0];
+        var pos = oid.indexOf(':');
+        if (pos !== -1) {
+            return oid.substring(0, pos);
+        }
+        return oid;
+    };
+
+    /**
+     * Get the id parameter from an object id. Object ids have
+     * the format type:id1:id2..
+     * @param oid The object id
+     * @return String
+     */
+    Node.getIdFromOid = function(oid) {
+        var pos = oid.indexOf(':');
+        if (pos !== -1) {
+            return oid.substring(pos+1);
+        }
+        return oid;
     };
 
     /**

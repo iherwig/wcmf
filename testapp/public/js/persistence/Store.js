@@ -2,25 +2,62 @@ define([
     "dojo/_base/xhr",
     "dojo/_base/lang",
     "dojo/_base/declare",
+    "dojo/aspect",
     "dojo/store/JsonRest",
     "dojo/store/Cache",
     "dojo/store/Memory",
-    "dojo/store/util/QueryResults"
+    "dojo/store/Observable",
+    "../model/meta/Model",
+    "../model/meta/Node"
 ], function (
     xhr,
     lang,
     declare,
+    aspect,
     JsonRest,
     Cache,
     Memory,
-    QueryResults
+    Observable,
+    Model,
+    Node
 ) {
     var Store = declare([JsonRest], {
 
-      idProperty: 'oid'
+      idProperty: 'oid',
 
-      // NOTE: use dojo/request/notify to intercept communication with server
-      // http://dojotoolkit.org/reference-guide/1.8/dojo/request/notify.html#dojo-request-notify
+      constructor: function(options) {
+          options.headers = {
+              Accept: 'application/javascript, application/json'
+          };
+          this.inherited(arguments);
+
+          // replace oid by id in xhr calls (makes simpler urls)
+          aspect.around(this, "get", function(original) {
+              return function(oid, options) {
+                  var id = Node.getIdFromOid(oid);
+                  return original.call(this, id, options);
+              };
+          });
+          aspect.around(this, "put", function(original) {
+              return function(object, options) {
+                  var object2 = lang.clone(object);
+                  if (object2.oid !== undefined) {
+                      object2.oid = Node.getIdFromOid(object2.oid);
+                  }
+                  var options2 = lang.clone(options);
+                  if (options2.id !== undefined) {
+                      options2.id = Node.getIdFromOid(options2.id);
+                  }
+                  return original.call(this, object2, options2);
+              };
+          });
+          aspect.around(this, "remove", function(original) {
+              return function(oid, options) {
+                  var id = Node.getIdFromOid(oid);
+                  return original.call(this, id, options);
+              };
+          });
+      }
 
       // TODO:
       // implement DojoNodeSerializer on server that uses refs
@@ -39,28 +76,26 @@ define([
      * @return Store instance
      */
     Store.getStore = function(typeName, language) {
-        if (!Store.instances[typeName]) {
-            Store.instances[typeName] = {};
+        // register store under the fully qualified type name
+        var fqTypeName = Model.getFullyQualifiedTypeName(typeName);
+
+        if (!Store.instances[fqTypeName]) {
+            Store.instances[fqTypeName] = {};
         }
-        if (!Store.instances[typeName][language]) {
-            var memory = new Memory();
-            var jsonRest = new Store({
-                target: appConfig.pathPrefix+"/rest/"+language+"/"+typeName+"/"/*+"/?XDEBUG_SESSION_START=netbeans-xdebug"*/,
-                headers: {
-                    Accept: 'application/javascript, application/json'
-                }
+        if (!Store.instances[fqTypeName][language]) {
+            var memory = new Memory({
+                idProperty: 'oid'
             });
-            var cache = new Cache(
+            var jsonRest = new Store({
+                target: appConfig.pathPrefix+"/rest/"+language+"/"+fqTypeName+"/"/*+"/?XDEBUG_SESSION_START=netbeans-xdebug"*/
+            });
+            var cache = new Observable(new Cache(
                 jsonRest,
                 memory
-            );
-            Store.instances[typeName][language] = {
-                cache: cache,
-                jsonRest: jsonRest,
-                memory: memory
-            };
+            ));
+            Store.instances[fqTypeName][language] = cache;
         }
-        return Store.instances[typeName][language].cache;
+        return Store.instances[fqTypeName][language];
     };
 
     return Store;

@@ -15,16 +15,64 @@ define([
      * @param type A Node subclass
      */
     Model.registerType = function(type) {
-        var typeName = type.typeName;
-        Model.types[typeName] = type;
+        // register fully qualified type name
+        var fqTypeName = type.typeName;
+        Model.types[fqTypeName] = type;
         // also register simple type name
+        var simpleTypeName = Model.getSimpleTypeName(fqTypeName);
+        if (Model.types[simpleTypeName] === undefined) {
+            Model.types[simpleTypeName] = type;
+            Model.simpleToFqNames[simpleTypeName] = fqTypeName;
+        }
+    };
+
+    /**
+     * Get the known types
+     * @return Array of simple type names
+     */
+    Model.getKnownTypes = function() {
+        var result = [];
+        for (var typeName in simpleToFqNames) {
+            result.push(typeName);
+        }
+        return result;
+    };
+
+    /**
+     * Check if a type is known
+     * @param typeName Simple or fully qualified type name
+     * @return Boolean
+     */
+    Model.isKnownType = function(typeName) {
+        return Model.types[typeName] !== undefined;
+    };
+
+    /**
+     * Get the fully qualified type name for a given type name
+     * @param typeName Simple or fully qualified type name
+     * @return String
+     */
+    Model.getFullyQualifiedTypeName = function(typeName) {
+        if (Model.simpleToFqNames[typeName] !== undefined) {
+            return Model.simpleToFqNames[typeName];
+        }
+        if (Model.isKnownType(typeName)) {
+            return typeName;
+        }
+        return null;
+    };
+
+    /**
+     * Get the simple type name for a given type name
+     * @param typeName Simple or fully qualified type name
+     * @return String
+     */
+    Model.getSimpleTypeName = function(typeName) {
         var pos = typeName.lastIndexOf('.');
         if (pos !== -1) {
-            var simpleTypeName = typeName.substring(pos+1);
-            if (Model.types[simpleTypeName] === undefined) {
-                Model.types[simpleTypeName] = type;
-            }
+            return typeName.substring(pos+1);
         }
+        return typeName;
     };
 
     /**
@@ -60,6 +108,7 @@ define([
 
     // register types
     Model.types = {};
+    Model.simpleToFqNames = {};
     for (var i=0, count=TypeList.length; i<count; i++) {
         Model.registerType(TypeList[i]);
     }

@@ -7,6 +7,7 @@ define([
     "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
+    "../_include/_ConfirmDlgMixin",
     "../_include/widget/NavigationWidget",
     "../_include/widget/GridWidget",
     "../../persistence/Store",
@@ -26,6 +27,7 @@ define([
     _StateAware,
     _Page,
     _Notification,
+    _ConfirmDlg,
     NavigationWidget,
     GridWidget,
     Store,
@@ -37,7 +39,7 @@ define([
     Node,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification, _ConfirmDlg], {
 
         request: null,
         session: null,
@@ -104,6 +106,9 @@ define([
                       iconClass:  'icon-trash',
                       execute: function(data) {
                           console.log('delete '+data.oid);
+                          self.showConfirm({
+                              message: 'Do you really want to delete?'
+                          });
                           var typeName = Node.getTypeFromOid(data.oid);
                           var store = Store.getStore(typeName, 'en');
                           store.remove(data.oid).then(lang.hitch(self, function(results) {

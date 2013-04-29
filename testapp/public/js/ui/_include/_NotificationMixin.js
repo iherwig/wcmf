@@ -10,8 +10,8 @@ define([
     "use strict";
 
     return declare([], {
-        alertNode: null,
-        alertWidget: null,
+        node: null,
+        widget: null,
 
         showNotification: function (notification) {
             var alertClass = 'alert-info';
@@ -24,24 +24,24 @@ define([
 
             this.hideNotification();
 
-            if (this.alertNode) {
-                domConstruct.destroy(this.alertNode);
+            if (this.node) {
+                domConstruct.destroy(this.node);
             }
 
-            this.alertNode = domConstruct.create('div', {}, this.notificationNode, 'first');
+            this.node = domConstruct.create('div', {}, this.notificationNode, 'first');
 
-            this.alertWidget = new Notification({
+            this.widget = new Notification({
                 'class': alertClass,
                 content: notification.message,
                 closable: true
-            }, this.alertNode);
+            }, this.node);
 
-            this.alertWidget.startup();
+            this.widget.startup();
         },
 
         hideNotification: function () {
-            if (this.alertWidget) {
-                this.alertWidget.destroyRecursive();
+            if (this.widget) {
+                this.widget.destroyRecursive();
             }
         }
     });

@@ -77,6 +77,7 @@ define([
         postCreate: function () {
             this.inherited(arguments);
             this.gridWidget = this.buildGrid();
+            this.gridWidget.set("store", this.store);
             this.own(
                 on(window, "resize", lang.hitch(this, this.onResize)),
                 on(this.gridWidget, "click", lang.hitch(this, function(e) {
@@ -141,33 +142,14 @@ define([
             });
 
             var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, ColumnHider, ColumnResizer]))({
-                    store: Observable(this.store),
-                    getBeforePut: true,
-                    columns: columns,
-                    selectionMode: "extended",
-                    //query: { find: 'xx' },
-                    //queryOptions: { sort: [{ attribute: 'title', descending: false }] },
-                    loadingMessage: "Loading",
-                    noDataMessage: "No data"
-                }, this.gridNode),
-                countSelectedItems = function () {
-                    var count = 0, i;
-
-                    for (i in gridWidget.selection) {
-                        if (gridWidget.selection.hasOwnProperty(i)) {
-                            count = count + 1;
-                        }
-                    }
-
-                    return count;
-                }
-            ;
-
-            if (this.request.getQueryParam('find')) {
-                gridWidget.set('query', {
-                    title: this.request.getQueryParam('find')
-                });
-            }
+                getBeforePut: true,
+                columns: columns,
+                selectionMode: "extended",
+                //query: { find: 'xx' },
+                //queryOptions: { sort: [{ attribute: 'title', descending: false }] },
+                loadingMessage: "Loading",
+                noDataMessage: "No data"
+            }, this.gridNode)
 
             gridWidget.on("dgrid-error", function (evt) {
                 topic.publish('ui/data/widget/GridWidget/unknown-error', {
@@ -199,9 +181,11 @@ define([
             }));
 
             gridWidget.on("dgrid-datachange", lang.hitch(this, function (evt) {
+                //console.dir(evt);
             }));
 
             //var loadHandle = aspect.after(gridWidget, '_trackError', lang.hitch(this, function (promiseOrResult) {
+            /*
             var loadHandle = aspect.after(this.store, 'query', lang.hitch(this, function (promiseOrResult) {
                 when(
                     promiseOrResult,
@@ -212,7 +196,7 @@ define([
                     })
                 );
                 return promiseOrResult;
-            }));
+            }));*/
 
             return gridWidget;
         },

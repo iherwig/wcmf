@@ -110,6 +110,7 @@ class RESTController extends Controller {
     else {
       // read all objects of the given type
       // delegate further processing to ListController
+      $offset = 0;
 
       // transform range header
       if ($request->hasHeader('Range')) {
