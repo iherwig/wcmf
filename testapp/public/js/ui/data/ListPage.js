@@ -110,7 +110,7 @@ define([
                               callback: function() {
                                   var typeName = Model.getTypeNameFromOid(data.oid);
                                   var store = Store.getStore(typeName, 'en');
-                                  store.remove(data.oid).then(lang.hitch(self, function(results) {
+                                  var promise = store.remove(data.oid).then(lang.hitch(self, function(results) {
                                       // callback completes
                                   }), lang.hitch(self, function(error) {
                                       // error
@@ -119,6 +119,7 @@ define([
                                           message: "Backend error"
                                       });
                                   }));
+                                  return promise;
                               }
                           });
                       }

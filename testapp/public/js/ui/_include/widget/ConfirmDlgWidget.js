@@ -3,6 +3,7 @@ define([
     "dojo/_base/lang",
     "dojo/on",
     "dojo/query",
+    "dojo/promise/Promise",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "bootstrap/Modal",
@@ -12,6 +13,7 @@ define([
     lang,
     on,
     query,
+    Promise,
     _WidgetBase,
     _TemplatedMixin,
     Confirm,
@@ -32,11 +34,13 @@ define([
         },
 
         _setContentAttr: function (val) {
-            this.contentNode.innerHTML = '<i class="icon-question-sign icon-3x"></i> &nbsp;'+val;
+            this.contentNode.innerHTML = '<i class="icon-question-sign icon-3x pull-left"></i> &nbsp;'+val;
         },
 
         postCreate: function () {
             this.inherited(arguments);
+
+            this.hideSpinner();
             query('#confirmDlg').modal({});
             query('#confirmDlg').on('hidden', lang.hitch(this, function () {
                 this.destroyRecursive();
@@ -57,9 +61,22 @@ define([
             if (this.callback instanceof Function) {
                 e.stopPropagation();
                 e.preventDefault();
-                this.callback();
-                query('#confirmDlg').modal('hide');
+                this.showSpinner();
+                var result = this.callback();
+                if (result instanceof Promise) {
+                  result.then(function() {
+                    query('#confirmDlg').modal('hide');
+                  });
+                }
             }
+        },
+
+        hideSpinner: function() {
+            query(this.spinnerNode).style("display", "none");
+        },
+
+        showSpinner: function() {
+            query(this.spinnerNode).style("display", "block");
         }
     });
 });
