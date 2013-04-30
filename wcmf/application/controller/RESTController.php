@@ -22,6 +22,8 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
  * RESTController is a controller that handles REST requests.
@@ -41,9 +43,21 @@ use wcmf\lib\presentation\Controller;
 class RESTController extends Controller {
 
   /**
+   * @see Controller::initialize()
+   */
+  public function initialize(Request $request, Response $response) {
+    // construct oid from className and id
+    if ($request->hasValue('className') && $request->hasValue('id')) {
+      $oid = new ObjectId($request->getValue('className'), $request->getValue('id'));
+      $request->setValue('oid', $oid->__toString());
+    }
+    parent::initialize($request, $response);
+  }
+
+  /**
    * @see Controller::validate()
    */
-  function validate() {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     if ($request->hasValue('className') &&
@@ -90,12 +104,6 @@ class RESTController extends Controller {
   protected function handleGet() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-
-    // construct oid from className and id
-    if ($request->hasValue('className') && $request->hasValue('id')) {
-      $oid = new ObjectId($request->getValue('className'), $request->hasValue('id'));
-      $request->setValue('oid', $oid->__toString());
-    }
 
     if ($request->hasValue('oid')) {
       // read a specific object

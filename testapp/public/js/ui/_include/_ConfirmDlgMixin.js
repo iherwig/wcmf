@@ -1,14 +1,10 @@
 define([
     "dojo/_base/declare",
     "dojo/dom-construct",
-    "dojo/query",
-    "bootstrap/Modal",
     "./widget/ConfirmDlgWidget"
 ], function (
     declare,
     domConstruct,
-    query,
-    modal,
     Confirm
 ) {
     "use strict";
@@ -17,7 +13,7 @@ define([
         node: null,
         widget: null,
 
-        showConfirm: function (question) {
+        showConfirm: function (options) {
             this.hideConfirm();
 
             if (this.node) {
@@ -28,12 +24,12 @@ define([
 
             this.widget = new Confirm({
                 id: 'confirmDlg',
-                content: question.message,
-                closable: true
+                title: options.title,
+                content: options.message,
+                callback: options.callback
             }, this.node);
 
             this.widget.startup();
-            query('#confirmDlg').modal({});
         },
 
         hideConfirm: function () {

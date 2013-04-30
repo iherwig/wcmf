@@ -16,7 +16,6 @@ define([
     "dojo/query",
     "dojo/on",
     "../../model/meta/Model",
-    "../../model/meta/Node",
     "dojo/text!./template/ListPage.html"
 ], function (
     declare,
@@ -36,7 +35,6 @@ define([
     query,
     on,
     Model,
-    Node,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification, _ConfirmDlg], {
@@ -107,19 +105,22 @@ define([
                       execute: function(data) {
                           console.log('delete '+data.oid);
                           self.showConfirm({
-                              message: 'Do you really want to delete?'
+                              title: "Confirm Object Deletion",
+                              message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
+                              callback: function() {
+                                  var typeName = Model.getTypeNameFromOid(data.oid);
+                                  var store = Store.getStore(typeName, 'en');
+                                  store.remove(data.oid).then(lang.hitch(self, function(results) {
+                                      // callback completes
+                                  }), lang.hitch(self, function(error) {
+                                      // error
+                                      this.showNotification({
+                                          type: "error",
+                                          message: "Backend error"
+                                      });
+                                  }));
+                              }
                           });
-                          var typeName = Node.getTypeFromOid(data.oid);
-                          var store = Store.getStore(typeName, 'en');
-                          store.remove(data.oid).then(lang.hitch(self, function(results) {
-                              // callback completes
-                          }), lang.hitch(self, function(error) {
-                              // error
-                              this.showNotification({
-                                  type: "error",
-                                  message: "Backend error"
-                              });
-                          }));
                       }
                   }];
 

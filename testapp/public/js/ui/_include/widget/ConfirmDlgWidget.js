@@ -1,28 +1,65 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/lang",
+    "dojo/on",
+    "dojo/query",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "bootstrap/Alert",
-    "dojo/dom-class",
+    "bootstrap/Modal",
     "dojo/text!./template/ConfirmDlgWidget.html"
 ], function (
     declare,
+    lang,
+    on,
+    query,
     _WidgetBase,
     _TemplatedMixin,
-    Alert,
-    domClass,
+    Confirm,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
 
         templateString: template,
+        modal: null,
+        callback: null,
 
-        _setHeaderAttr: function (val) {
-            this.headerNode.innerHTML = val;
+        constructor: function(params) {
+            this.callback = params.callback;
+        },
+
+        _setTitleAttr: function (val) {
+            this.titleNode.innerHTML = val;
         },
 
         _setContentAttr: function (val) {
-            this.contentNode.innerHTML = val;
+            this.contentNode.innerHTML = '<i class="icon-question-sign icon-3x"></i> &nbsp;'+val;
+        },
+
+        postCreate: function () {
+            this.inherited(arguments);
+            query('#confirmDlg').modal({});
+            query('#confirmDlg').on('hidden', lang.hitch(this, function () {
+                this.destroyRecursive();
+            }));
+            this.own(
+                on(this.okBtn, "click", lang.hitch(this, function(e) {
+                    this.doCallback(e);
+                })),
+                on(dojo.body(), 'keyup', lang.hitch(this, function (e) {
+                    if (e.which === 13) {
+                        this.doCallback(e);
+                    }
+                }))
+            );
+        },
+
+        doCallback: function(e) {
+            if (this.callback instanceof Function) {
+                e.stopPropagation();
+                e.preventDefault();
+                this.callback();
+                query('#confirmDlg').modal('hide');
+            }
         }
     });
 });

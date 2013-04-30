@@ -1,11 +1,9 @@
 define([
     "dojo/_base/declare",
-    "./_TypeList",
-    "./Node"
+    "./_TypeList"
 ], function(
     declare,
-    TypeList,
-    Node
+    TypeList
 ) {
     var Model = declare(null, {
     });
@@ -76,6 +74,64 @@ define([
     };
 
     /**
+     * Get the type parameter from an object id. Object ids have
+     * the format type:id1:id2..
+     * @param oid The object id
+     * @return String
+     */
+    Model.getTypeNameFromOid = function(oid) {
+        var pos = oid.indexOf(':');
+        if (pos !== -1) {
+            return oid.substring(0, pos);
+        }
+        return oid;
+    };
+
+    /**
+     * Get the id parameter from an object id. Object ids have
+     * the format type:id1:id2..
+     * @param oid The object id
+     * @return String
+     */
+    Model.getIdFromOid = function(oid) {
+        var pos = oid.indexOf(':');
+        if (pos !== -1) {
+            return oid.substring(pos+1);
+        }
+        return oid;
+    };
+
+    /**
+     * Get the display value of an object.
+     * @param object The object
+     * @return String
+     */
+    Model.getDisplayValue = function(object) {
+        var result = '';
+        var type = Model.getTypeFromOid(object.oid);
+        if (type) {
+            for (var i=0; i<type.displayValues.length; i++) {
+                result += object[type.displayValues[i]]+" | ";
+            }
+            result = result.substring(0, result.length-3);
+        }
+        else {
+            result = object.oid || "unknown";
+        }
+        return result;
+    };
+
+    /**
+     * Get a random unique object id for a given type
+     * @param type The type
+     * @return String
+     */
+    Model.createRandomOid = function(type) {
+        var oid = type+":"+dojox.uuid.generateRandomUuid();
+        return oid;
+    };
+
+    /**
      * Get a type from it's name
      * @param typeName The name of the type
      * @return Node instance
@@ -90,7 +146,7 @@ define([
      * @return Node instance
      */
     Model.getTypeFromOid = function(oid) {
-        var typeName = Node.getTypeFromOid(oid);
+        var typeName = Model.getTypeNameFromOid(oid);
         return Model.types[typeName];
     };
 

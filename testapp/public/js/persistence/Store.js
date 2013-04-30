@@ -7,8 +7,7 @@ define([
     "dojo/store/Cache",
     "dojo/store/Memory",
     "dojo/store/Observable",
-    "../model/meta/Model",
-    "../model/meta/Node"
+    "../model/meta/Model"
 ], function (
     xhr,
     lang,
@@ -18,8 +17,7 @@ define([
     Cache,
     Memory,
     Observable,
-    Model,
-    Node
+    Model
 ) {
     var Store = declare([JsonRest], {
 
@@ -34,7 +32,7 @@ define([
           // replace oid by id in xhr calls (makes simpler urls)
           aspect.around(this, "get", function(original) {
               return function(oid, options) {
-                  var id = Node.getIdFromOid(oid);
+                  var id = Model.getIdFromOid(oid);
                   return original.call(this, id, options);
               };
           });
@@ -42,18 +40,18 @@ define([
               return function(object, options) {
                   var object2 = lang.clone(object);
                   if (object2.oid !== undefined) {
-                      object2.oid = Node.getIdFromOid(object2.oid);
+                      object2.oid = Model.getIdFromOid(object2.oid);
                   }
                   var options2 = lang.clone(options);
                   if (options2.id !== undefined) {
-                      options2.id = Node.getIdFromOid(options2.id);
+                      options2.id = Model.getIdFromOid(options2.id);
                   }
                   return original.call(this, object2, options2);
               };
           });
           aspect.around(this, "remove", function(original) {
               return function(oid, options) {
-                  var id = Node.getIdFromOid(oid);
+                  var id = Model.getIdFromOid(oid);
                   return original.call(this, id, options);
               };
           });
