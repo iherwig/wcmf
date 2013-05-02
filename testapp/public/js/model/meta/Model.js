@@ -89,7 +89,7 @@ define([
 
     /**
      * Get the id parameter from an object id. Object ids have
-     * the format type:id1:id2..
+     * the format type:id1:id2.. Returns type name, if no id is contained
      * @param oid The object id
      * @return String
      */

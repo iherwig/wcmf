@@ -1,5 +1,3 @@
-/*jshint strict:false */
-
 define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
@@ -9,7 +7,7 @@ define([
     "dojo/query",
     "dojo/dom-class",
     "dojo/NodeList-dom",
-    "../../../Session",
+    "../../../Cookie",
     "dojo/text!./template/NavigationWidget.html"
 ], function (
     declare,
@@ -20,7 +18,7 @@ define([
     query,
     domClass,
     nodeListDom,
-    Session,
+    Cookie,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
@@ -57,7 +55,7 @@ define([
             dojo.query(".brand").attr("innerHTML", appConfig.title);
 
             // set user name
-            dojo.query(".user").attr("innerHTML", Session.get("user"));
+            dojo.query(".user").attr("innerHTML", Cookie.get("user"));
         }
     });
 });

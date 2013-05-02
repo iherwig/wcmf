@@ -1,7 +1,7 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/_base/connect",
+    "dojo/topic",
     "dojo/dom-construct",
     "dojo/query",
     "dojo/on",
@@ -14,6 +14,7 @@ define([
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "../_include/widget/GridWidget",
+    "./widget/NodeTabWidget",
     "../../persistence/Store",
     "../../action/Delete",
     "../../model/meta/Model",
@@ -21,7 +22,7 @@ define([
 ], function (
     declare,
     lang,
-    connect,
+    topic,
     domConstruct,
     query,
     on,
@@ -34,6 +35,7 @@ define([
     _Notification,
     NavigationWidget,
     GridWidget,
+    NodeTabWidget,
     Store,
     Delete,
     Model,
@@ -46,10 +48,6 @@ define([
         templateString: template,
         selectedType: null,
 
-        tabContainer: null,
-
-        gridWidget: null,
-
         constructor: function(params) {
             this.request = params.request;
             this.session = params.session;
@@ -59,56 +57,34 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - '+this.selectedType);
-            new NavigationWidget({activeRoute: "dataIndex"}, this.navigationNode);
+            new NavigationWidget({
+                activeRoute: "nodeList"
+            }, this.navigationNode);
 
-            // create type tab panes
-            var tcTabs = query("#typesTabContainer .nav-tabs")[0];
-            var tcContent = query("#typesTabContainer .tab-content")[0];
-            for (var i=0, count=appConfig.rootTypes.length; i<count; i++) {
-                var typeName = appConfig.rootTypes[i];
-                var isSelected = typeName === this.selectedType;
+            // create tab panel widget
+            var store = Store.getStore(this.selectedType, 'en');
+            var gridWidget = new GridWidget({
+                request: this.request,
+                router: this.router,
+                store: store,
+                type: Model.getType(this.selectedType),
+                actions: this.getGridActions()
+            });
 
-                var tabItem = domConstruct.create("li", {
-                    class: isSelected ? "active" : ""
-                }, tcTabs);
-
-                var tabLink = domConstruct.create("a", {
-                    href: "#"+typeName,
-                    'data-dojorama-route': "dataIndex",
-                    'data-dojorama-pathparams': "type: '"+typeName+"'",
-                    'data-toggle': "tab",
-                    class: "push",
-                    innerHTML: typeName
-                }, tabItem);
-
-                if (isSelected) {
-                  var content = domConstruct.create("div", {
-                      id: typeName+"Tab",
-                      class: isSelected ? "tab-pane fade in active" : "tab-pane fade",
-                      innerHTML: '<div id="typeGrid"></div>'
-                  }, tcContent);
-
-                  var store = Store.getStore(typeName, 'en');
-                  this.gridWidget = new GridWidget({
-                      request: this.request,
-                      router: this.router,
-                      store: store,
-                      type: Model.getType(typeName),
-                      actions: this.getGridActions()
-                  }, "typeGrid");
+            // create type tab panel
+            new NodeTabWidget({
+                selectedTab: {
+                    oid: this.selectedType,
+                    widget: gridWidget
                 }
-            }
-            query('#typesTabContainer a[href="#'+this.selectedType+'"]').tab('show');
+            }, this.tabNode);
 
-            connect.subscribe('ui/data/widget/GridWidget/unknown-error', lang.hitch(this, function(data) {
-                this.showNotification(data.notification);
-            }));
+            this.own(
+                topic.subscribe('ui/_include/widget/GridWidget/unknown-error', lang.hitch(this, function(data) {
+                    this.showNotification(data.notification);
+                }))
+            );
             this.setupRoutes();
-        },
-
-        startup: function() {
-            this.inherited(arguments);
-            this.gridWidget.startup();
         },
 
         getGridActions: function() {

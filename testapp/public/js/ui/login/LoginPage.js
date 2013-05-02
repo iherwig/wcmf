@@ -7,12 +7,12 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
+    "../../Cookie",
     "bootstrap/Button",
     "dojo/_base/lang",
     "dojo/dom-form",
     "dojo/query",
     "dojo/request",
-    "../../Session",
     "dojo/text!./template/LoginPage.html",
 ], function (
     declare,
@@ -23,12 +23,12 @@ define([
     _Page,
     _Notification,
     NavigationWidget,
+    Cookie,
     button,
     lang,
     domForm,
     query,
     request,
-    Session,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -45,7 +45,9 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - Login');
-            new NavigationWidget({titleOnly: true}, this.navigationNode);
+            new NavigationWidget({
+                titleOnly: true
+            }, this.navigationNode);
 
             this.setupRoutes();
         },
@@ -85,7 +87,7 @@ define([
                 }
                 else {
                     // success
-                    Session.set("user", data.user);
+                    Cookie.set("user", data.user);
 
                     // redirect to initially requested route if given
                     var redirectRoute = this.request.getQueryParam("route");

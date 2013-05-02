@@ -7,7 +7,7 @@ define([
     cookie,
     json
 ) {
-    var Session = declare(null, {
+    var Cookie = declare(null, {
 
         name: appConfig.title.replace(/\s/g, '_'),
 
@@ -25,8 +25,12 @@ define([
         getAll: function() {
             var cookieValue = cookie(this.name) || '{}';
             return JSON.parse(cookieValue, true);
+        },
+
+        destroy: function() {
+            cookie(this.name, '', { path: '/' });
         }
     });
 
-    return new Session();
+    return new Cookie();
 });

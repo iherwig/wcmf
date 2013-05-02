@@ -1,5 +1,3 @@
-/*jshint strict:false */
-
 define([
     "dojo/_base/declare"
 ], function (

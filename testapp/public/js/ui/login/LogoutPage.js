@@ -5,6 +5,7 @@ define([
     "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
+    "../../Cookie",
     "dojo/_base/lang",
     "dojo/request"
 ], function (
@@ -14,6 +15,7 @@ define([
     _StateAware,
     _Page,
     _Notification,
+    Cookie,
     lang,
     request
 ) {
@@ -46,6 +48,7 @@ define([
 
             }).then(lang.hitch(this, function(response){
                 // redirect to login
+                Cookie.destroy();
                 var route = this.router.getRoute("login");
                 var url = route.assemble();
                 window.document.location.href = url;

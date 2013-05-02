@@ -1,5 +1,3 @@
-/*jshint strict:false */
-
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
@@ -100,10 +98,6 @@ define([
             this.onResize();
         },
 
-        startup: function () {
-            this.inherited(arguments);
-        },
-
         buildGrid: function () {
             var columns = [{
                 label: 'oid',
@@ -152,7 +146,7 @@ define([
             }, this.gridNode)
 
             gridWidget.on("dgrid-error", function (evt) {
-                topic.publish('ui/data/widget/GridWidget/unknown-error', {
+                topic.publish('ui/_include/widget/GridWidget/unknown-error', {
                     notification: {
                         message: "Backend error",
                         type: 'error'
