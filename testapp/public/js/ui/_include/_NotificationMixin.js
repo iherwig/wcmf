@@ -1,24 +1,37 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dojo/dom-construct",
+    "dojo/_base/fx",
     "./widget/NotificationWidget"
 ], function (
     declare,
+    lang,
     domConstruct,
+    fx,
     Notification
 ) {
-    "use strict";
-
+    /**
+     * Notification mixin. Expects a data-dojo-attach-point="notificationNode" in
+     * the template. Usage:
+     * @code
+     * showNotification({
+     *      type: "error",
+     *      message: "Backend error",
+     *      fadeOut: false
+     * });
+     * @endcode
+     */
     return declare([], {
         node: null,
         widget: null,
 
-        showNotification: function (notification) {
+        showNotification: function (options) {
             var alertClass = 'alert-info';
 
-            if (notification.type === 'ok') {
+            if (options.type === 'ok') {
                 alertClass = 'alert-success';
-            } else if (notification.type === 'error') {
+            } else if (options.type === 'error') {
                 alertClass = 'alert-error';
             }
 
@@ -32,11 +45,22 @@ define([
 
             this.widget = new Notification({
                 'class': alertClass,
-                content: notification.message,
+                content: options.message,
                 closable: true
             }, this.node);
 
             this.widget.startup();
+
+            if (options.fadeOut) {
+                fx.fadeOut({
+                    node: this.widget.domNode,
+                    delay: 1000,
+                    duration: 1000,
+                    onEnd: lang.hitch(this, function() {
+                        this.hideNotification();
+                    })
+                }).play();
+            }
         },
 
         hideNotification: function () {

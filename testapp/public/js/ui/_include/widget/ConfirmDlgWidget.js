@@ -3,6 +3,7 @@ define([
     "dojo/_base/lang",
     "dojo/on",
     "dojo/query",
+    "dojo/dom-construct",
     "dojo/promise/Promise",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
@@ -13,13 +14,29 @@ define([
     lang,
     on,
     query,
+    domConstruct,
     Promise,
     _WidgetBase,
     _TemplatedMixin,
-    Confirm,
+    Modal,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin], {
+    /**
+     * Modal confirmation dialog. Usage:
+     * @code
+     * ConfirmDlg.showConfirm({
+     *      title: "Confirm Object Deletion",
+     *      message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
+     *      callback: function() {
+     *          // will be called when OK button is clicked
+     *          var deferred = new Deferred();
+     *          // do something
+     *          return deferred;
+     *      })
+     * });
+     * @endcode
+     */
+    var ConfirmDlg = declare([_WidgetBase, _TemplatedMixin], {
 
         templateString: template,
         modal: null,
@@ -64,7 +81,7 @@ define([
                 this.showSpinner();
                 var result = this.callback();
                 if (result instanceof Promise) {
-                  result.then(function() {
+                  result.always(function() {
                     query('#confirmDlg').modal('hide');
                   });
                 }
@@ -79,4 +96,34 @@ define([
             query(this.spinnerNode).style("display", "block");
         }
     });
+
+    ConfirmDlg.node = null;
+    ConfirmDlg.widget = null;
+
+    ConfirmDlg.showConfirm = function(options) {
+        ConfirmDlg.hideConfirm();
+
+        if (ConfirmDlg.node) {
+            domConstruct.destroy(ConfirmDlg.node);
+        }
+
+        ConfirmDlg.node = domConstruct.create('div', {}, dojo.body());
+
+        ConfirmDlg.widget = new ConfirmDlg({
+            id: 'confirmDlg',
+            title: options.title,
+            content: options.message,
+            callback: options.callback
+        }, ConfirmDlg.node);
+
+        this.widget.startup();
+    };
+
+    ConfirmDlg.hideConfirm = function () {
+        if (ConfirmDlg.widget) {
+            ConfirmDlg.widget.destroyRecursive();
+        }
+    };
+
+    return ConfirmDlg;
 });

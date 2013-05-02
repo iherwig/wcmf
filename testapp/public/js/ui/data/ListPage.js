@@ -1,43 +1,45 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/_base/connect",
+    "dojo/dom-construct",
+    "dojo/query",
+    "dojo/on",
+    "bootstrap/Tab",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
-    "../_include/_ConfirmDlgMixin",
     "../_include/widget/NavigationWidget",
     "../_include/widget/GridWidget",
     "../../persistence/Store",
-    "bootstrap/Tab",
-    "dojo/dom-construct",
-    "dojo/query",
-    "dojo/on",
+    "../../action/Delete",
     "../../model/meta/Model",
     "dojo/text!./template/ListPage.html"
 ], function (
     declare,
     lang,
+    connect,
+    domConstruct,
+    query,
+    on,
+    Tab,
     _WidgetBase,
     _TemplatedMixin,
     _AppAware,
     _StateAware,
     _Page,
     _Notification,
-    _ConfirmDlg,
     NavigationWidget,
     GridWidget,
     Store,
-    Tab,
-    domConstruct,
-    query,
-    on,
+    Delete,
     Model,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification, _ConfirmDlg], {
+    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
 
         request: null,
         session: null,
@@ -86,63 +88,66 @@ define([
                       innerHTML: '<div id="typeGrid"></div>'
                   }, tcContent);
 
-                  var self = this;
-                  var actions = [{
-                      name: 'edit',
-                      iconClass: 'icon-pencil',
-                      execute: function(data) {
-                          console.log('edit '+data.oid);
-                      }
-                  }, {
-                      name: 'duplicate',
-                      iconClass:  'icon-copy',
-                      execute: function(data) {
-                          console.log('duplicate '+data.oid);
-                      }
-                  }, {
-                      name: 'delete',
-                      iconClass:  'icon-trash',
-                      execute: function(data) {
-                          console.log('delete '+data.oid);
-                          self.showConfirm({
-                              title: "Confirm Object Deletion",
-                              message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
-                              callback: function() {
-                                  var typeName = Model.getTypeNameFromOid(data.oid);
-                                  var store = Store.getStore(typeName, 'en');
-                                  var promise = store.remove(data.oid).then(lang.hitch(self, function(results) {
-                                      // callback completes
-                                  }), lang.hitch(self, function(error) {
-                                      // error
-                                      this.showNotification({
-                                          type: "error",
-                                          message: "Backend error"
-                                      });
-                                  }));
-                                  return promise;
-                              }
-                          });
-                      }
-                  }];
-
                   var store = Store.getStore(typeName, 'en');
                   this.gridWidget = new GridWidget({
                       request: this.request,
                       router: this.router,
                       store: store,
                       type: Model.getType(typeName),
-                      actions: actions
+                      actions: this.getGridActions()
                   }, "typeGrid");
                 }
             }
             query('#typesTabContainer a[href="#'+this.selectedType+'"]').tab('show');
 
+            connect.subscribe('ui/data/widget/GridWidget/unknown-error', lang.hitch(this, function(data) {
+                this.showNotification(data.notification);
+            }));
             this.setupRoutes();
         },
 
         startup: function() {
             this.inherited(arguments);
             this.gridWidget.startup();
+        },
+
+        getGridActions: function() {
+
+            var editAction = {
+                name: 'edit',
+                iconClass: 'icon-pencil',
+                execute: function(data) {
+                    console.log('edit '+data.oid);
+                }
+            };
+
+            var duplicateAction = {
+                name: 'duplicate',
+                iconClass:  'icon-copy',
+                execute: function(data) {
+                    console.log('duplicate '+data.oid);
+                }
+            };
+
+            var deleteAction = new Delete(lang.hitch(this, function(data) {
+                    this.hideNotification();
+                }), lang.hitch(this, function(data, result) {
+                    // success
+                    this.showNotification({
+                        type: "ok",
+                        message: "'"+Model.getDisplayValue(data)+"' was successfully deleted",
+                        fadeOut: true
+                    });
+                }), lang.hitch(this, function(data, result) {
+                    // error
+                    this.showNotification({
+                        type: "error",
+                        message: "Backend error"
+                    });
+                })
+            );
+
+            return [editAction, duplicateAction, deleteAction];
         }
     });
 });

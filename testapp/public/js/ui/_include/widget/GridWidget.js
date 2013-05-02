@@ -154,7 +154,7 @@ define([
             gridWidget.on("dgrid-error", function (evt) {
                 topic.publish('ui/data/widget/GridWidget/unknown-error', {
                     notification: {
-                        message: "Unknown Error",
+                        message: "Backend error",
                         type: 'error'
                     }
                 });
