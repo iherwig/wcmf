@@ -76,7 +76,6 @@ define([
 
         doCallback: function(e) {
             if (this.callback instanceof Function) {
-                e.stopPropagation();
                 e.preventDefault();
                 this.showSpinner();
                 var result = this.callback();

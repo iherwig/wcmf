@@ -86,7 +86,6 @@ define([
                       var action = this.actionsByName[actionName];
                       if (action) {
                           // cell action
-                          e.stopPropagation();
                           e.preventDefault();
                           var columnNode = e.target.parentNode;
                           var row = this.gridWidget.row(columnNode);

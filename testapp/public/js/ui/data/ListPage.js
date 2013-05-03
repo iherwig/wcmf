@@ -73,10 +73,11 @@ define([
 
             // create type tab panel
             new NodeTabWidget({
+                router: this.router,
                 selectedTab: {
-                    oid: this.selectedType,
-                    widget: gridWidget
-                }
+                    oid: this.selectedType
+                },
+                selectedPanel: gridWidget
             }, this.tabNode);
 
             this.own(
@@ -92,9 +93,15 @@ define([
             var editAction = {
                 name: 'edit',
                 iconClass: 'icon-pencil',
-                execute: function(data) {
+                execute: lang.hitch(this, function(data) {
                     console.log('edit '+data.oid);
-                }
+                    var route = this.router.getRoute("node");
+                    var type = Model.getSimpleTypeName(Model.getTypeNameFromOid(data.oid));
+                    var id = Model.getIdFromOid(data.oid);
+                    var pathParams = { type:type, id:id };
+                    var url = route.assemble(pathParams);
+                    this.push(url);
+                })
             };
 
             var duplicateAction = {

@@ -34,6 +34,7 @@ try {
       header("Location: ".$redirectUrl);
     }
   }
+  $baseHref = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
 }
 catch (Exception $ex) {
   $application->handleException($ex);
@@ -47,6 +48,7 @@ catch (Exception $ex) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <base href="<?php echo $baseHref; ?>">
 
     <link href="css/app.css" rel="stylesheet" media="screen">
 

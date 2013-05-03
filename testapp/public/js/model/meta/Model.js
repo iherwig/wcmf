@@ -102,6 +102,16 @@ define([
     };
 
     /**
+     * Assemble an (fully qualified) object id from the given parameters.
+     * @param type The object's type
+     * @param id The object's id
+     * @return String
+     */
+    Model.getOid = function(type, id) {
+        return Model.getFullyQualifiedTypeName(type)+":"+id;
+    };
+
+    /**
      * Get the display value of an object.
      * @param object The object
      * @return String

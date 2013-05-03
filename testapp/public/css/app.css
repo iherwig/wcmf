@@ -95,3 +95,7 @@ th {
 th.field-actions-3, td.field-actions-3 {
   width: 76px;
 }
+
+.close-tab {
+  cursor: pointer;
+}

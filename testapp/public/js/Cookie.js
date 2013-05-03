@@ -17,8 +17,11 @@ define([
             cookie(this.name, JSON.stringify(data), { path: '/' });
         },
 
-        get: function(name) {
+        get: function(name, defaultValue) {
             var data = this.getAll();
+            if (data[name] === undefined) {
+                data[name] = defaultValue;
+            }
             return data[name];
         },
 

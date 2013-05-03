@@ -58,7 +58,6 @@ define([
 
         _login: function(e) {
             // prevent the page from navigating after submit
-            e.stopPropagation();
             e.preventDefault();
 
             var data = domForm.toObject("loginForm");

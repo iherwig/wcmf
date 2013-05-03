@@ -108,11 +108,21 @@ class RESTController extends Controller {
     if ($request->hasValue('oid')) {
       // read a specific object
       // delegate further processing to DisplayController
+
+      // execute action
       $subResponse = $this->executeSubAction('read');
-      $response->setValues($subResponse->getValues());
+
+      // return object list only
+      $object = $subResponse->getValue('object');
+      $response->clearValues();
+      if ($object != null) {
+        $response->setValue($object->getOID()->__toString(), $object);
+      }
+      else {
+        $response->setStatus('404 Not Found');
+      }
 
       // set the response headers
-      $response->setStatus('200 OK');
       //$this->setLocationHeaderFromOid($request->getValue('oid'));
     }
     else {
@@ -129,6 +139,7 @@ class RESTController extends Controller {
           $request->setValue('limit', $limit);
         }
       }
+
       // transform sort definition
       foreach ($request->getValues() as $key => $value) {
         if (preg_match('/^sort\(([^\)]+)\)$|sortBy=([.]+)$/', $key, $matches)) {
@@ -143,7 +154,10 @@ class RESTController extends Controller {
         }
       }
 
+      // execute action
       $subResponse = $this->executeSubAction('list');
+
+      // return object list only
       $objects = $subResponse->getValue('list');
       $response->clearValues();
       $response->setValues($objects);
