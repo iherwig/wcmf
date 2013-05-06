@@ -1,9 +1,11 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/_base/Deferred",
     "dojo/topic",
     "dojo/dom-construct",
     "dojo/query",
+    "dojo/promise/Promise",
     "dojo/on",
     "bootstrap/Tab",
     "dijit/_WidgetBase",
@@ -18,13 +20,16 @@ define([
     "../../persistence/Store",
     "../../action/Delete",
     "../../model/meta/Model",
+    "../../Loader",
     "dojo/text!./template/NodePage.html"
 ], function (
     declare,
     lang,
+    Deferred,
     topic,
     domConstruct,
     query,
+    Promise,
     on,
     Tab,
     _WidgetBase,
@@ -39,6 +44,7 @@ define([
     Store,
     Delete,
     Model,
+    Loader,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -65,17 +71,38 @@ define([
 
             // create tab panel widget
             var store = Store.getStore(this.type, 'en');
+            var id = Model.getIdFromOid(this.oid);
+            var result = store.get(Model.getOid(this.type, id));
+            if (result instanceof Promise) {
+                return result.then(lang.hitch(this, function(node) {
+                    this.buildForm(node);
+                }));
+            }
+            else {
+                this.buildForm(result);
+            }
+        },
 
-            // create type tab panel
-            new NodeTabWidget({
-                router: this.router,
-                selectedTab: {
-                    oid: this.oid
-                },
-                selectedPanel: {}
-            }, this.tabNode);
+        buildForm: function(node) {
+            this.setTitle(appConfig.title+' - '+Model.getDisplayValue(node));
 
-            this.setupRoutes();
+            new Loader("js/ui/data/widget/NodeFormWidget").then(lang.hitch(this, function(Widget) {
+                // create the node form
+                var form = new Widget({
+                    node: node
+                });
+
+                // create type tab panel
+                new NodeTabWidget({
+                    router: this.router,
+                    selectedTab: {
+                        oid: this.oid
+                    },
+                    selectedPanel: form
+                }, this.tabNode);
+
+                this.setupRoutes();
+            }));
         }
     });
 });
