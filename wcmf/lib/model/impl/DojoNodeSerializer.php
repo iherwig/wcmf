@@ -72,8 +72,9 @@ class DojoNodeSerializer implements NodeSerializer {
     $node = new $class;
     $node->setOID($oid);
 
+    $mapper = $node->getMapper();
     foreach($data as $key => $value) {
-      if ($key != 'oid') {
+      if ($mapper->hasAttribute($key)) {
         $this->deserializeValue($node, $key, $value);
       }
     }

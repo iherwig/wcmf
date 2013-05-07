@@ -207,7 +207,7 @@ class RESTController extends Controller {
     $response->setValues($subResponse->getValues());
 
     // set the response headers
-    $response->setStatus('200 OK');
+    $response->setStatus('202 Accepted');
     $this->setLocationHeaderFromOid($response->getValue('oid'));
 
     return false;

@@ -11,6 +11,16 @@ function(
     return declare([TextBox], {
 
         templateString: template,
-        label: ""
+        nodeData: {},
+        attribute: {},
+
+        constructor: function(args) {
+            declare.safeMixin(this, args);
+
+            this.label = this.attribute.name;
+            this.disabled = !this.attribute.isEditable;
+            this.name = this.attribute.name;
+            this.value = this.nodeData[this.attribute.name];
+        }
     });
 });

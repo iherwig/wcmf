@@ -1,8 +1,10 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/array",
     "./Model"
 ], function(
     declare,
+    array,
     Model
 ) {
     var Node = declare(null, {
@@ -12,6 +14,14 @@ define([
         displayValues: [],
         attributes: [],
         relations: [],
+
+        /**
+         * Get all relation definitions
+         * @return Array
+         */
+        getRelations: function() {
+            return this.relations;
+        },
 
         /**
          * Get a relation definition for a given role name
@@ -38,6 +48,22 @@ define([
                 return Model.getType(relation.type);
             }
             return null;
+        },
+
+        /**
+         * Get the Node attributes
+         * @param tag Optional tag that the attributes should have
+         * @return Array
+         */
+        getAttributes: function(tag) {
+            var result = [];
+            for (var i=0, count=this.attributes.length; i<count; i++) {
+                var attribute = this.attributes[i];
+                if (!tag || array.indexOf(attribute.tags, tag) !== -1) {
+                    result.push(attribute);
+                }
+            }
+            return result;
         }
     });
 

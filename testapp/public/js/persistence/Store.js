@@ -38,15 +38,8 @@ define([
           });
           aspect.around(this, "put", function(original) {
               return function(object, options) {
-                  var object2 = lang.clone(object);
-                  if (object2.oid !== undefined) {
-                      object2.oid = Model.getIdFromOid(object2.oid);
-                  }
-                  var options2 = lang.clone(options);
-                  if (options2.id !== undefined) {
-                      options2.id = Model.getIdFromOid(options2.id);
-                  }
-                  return original.call(this, object2, options2);
+                  options.id = Model.getIdFromOid(object.oid);
+                  return original.call(this, object, options);
               };
           });
           aspect.around(this, "remove", function(original) {

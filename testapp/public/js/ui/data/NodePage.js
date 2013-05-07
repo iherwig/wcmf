@@ -89,7 +89,7 @@ define([
             new Loader("js/ui/data/widget/NodeFormWidget").then(lang.hitch(this, function(Widget) {
                 // create the node form
                 var form = new Widget({
-                    node: node
+                    nodeData: node
                 });
 
                 // create type tab panel

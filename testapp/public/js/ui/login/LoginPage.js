@@ -1,5 +1,6 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
@@ -9,13 +10,13 @@ define([
     "../_include/widget/NavigationWidget",
     "../../Cookie",
     "bootstrap/Button",
-    "dojo/_base/lang",
     "dojo/dom-form",
     "dojo/query",
     "dojo/request",
     "dojo/text!./template/LoginPage.html",
 ], function (
     declare,
+    lang,
     _WidgetBase,
     _TemplatedMixin,
     _AppAware,
@@ -25,7 +26,6 @@ define([
     NavigationWidget,
     Cookie,
     button,
-    lang,
     domForm,
     query,
     request,
@@ -105,7 +105,7 @@ define([
                 query(".btn").button("reset");
                 this.showNotification({
                     type: "error",
-                    message: "Backend error"
+                    message: error.response.data.errorMessage || "Backend error"
                 });
             }));
         }
