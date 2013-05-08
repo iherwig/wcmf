@@ -44,6 +44,10 @@ function(
             this.headline = Model.getDisplayValue(this.nodeData);
         },
 
+        _setHeadlineAttr: function (val) {
+            this.headlineNode.innerHTML = val;
+        },
+
         postCreate: function() {
             this.inherited(arguments);
 
@@ -97,23 +101,13 @@ function(
                 this.hideNotification();
                 store.put(this.nodeData, {overwrite: true}).then(lang.hitch(this, function(response) {
                     query(".btn").button("reset");
-                    // callback completes
-                    if (!response.success) {
-                        // error
-                        this.showNotification({
-                            type: "error",
-                            message: response.errorMessage || "Backend error"
-                        });
-                    }
-                    else {
-                        // success
-                        this.showNotification({
-                            type: "ok",
-                            message: "'"+Model.getDisplayValue(this.nodeData)+"' was successfully updated",
-                            fadeOut: true
-                        });
-                        this.headline = Model.getDisplayValue(this.nodeData);
-                    }
+                    // success
+                    this.showNotification({
+                        type: "ok",
+                        message: "'"+Model.getDisplayValue(this.nodeData)+"' was successfully updated",
+                        fadeOut: true
+                    });
+                    this.set("headline", Model.getDisplayValue(this.nodeData));
                 }), lang.hitch(this, function(error) {
                     // error
                     query(".btn").button("reset");

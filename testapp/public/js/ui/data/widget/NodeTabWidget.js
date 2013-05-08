@@ -172,17 +172,12 @@ define([
             else {
                 // node tab
                 var store = Store.getStore(typeName, 'en');
-                var result = store.get(Model.getOid(typeName, id));
-                if (result instanceof Promise) {
-                    return result.then(lang.hitch(this, function(node) {
+                dojo.when(store.get(Model.getOid(typeName, id), lang.hitch(this, function(node) {
                         this.setNodeTabName(node, tabLink);
                     }), lang.hitch(this, function(error) {
                         closeTab(oid);
-                    }));
-                }
-                else {
-                    this.setNodeTabName(result, tabLink);
-                }
+                    })
+                ));
             }
         },
 

@@ -58,7 +58,8 @@ define([
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - '+this.selectedType);
             new NavigationWidget({
-                activeRoute: "nodeList"
+				// TODO: rename route and adapt it to the currently selected node
+                activeRoute: "dataIndex"
             }, this.navigationNode);
 
             // create tab panel widget

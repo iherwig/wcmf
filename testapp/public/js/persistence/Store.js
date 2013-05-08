@@ -48,6 +48,16 @@ define([
                   return original.call(this, id, options);
               };
           });
+      },
+
+      get: function(id, options) {
+        if (options.updated) {
+            // TODO: if updated object data are given,
+            // return a promise and immediatly resolve it with the data
+        }
+        else {
+            return this.inherited(arguments);
+        }
       }
 
       // TODO:

@@ -60,7 +60,7 @@ class Application {
    * - Extracts the application parameters
    * @param configPath The path where config files reside (as seen from main.php), optional [default: 'config/']
    * @param mainConfigFile The main configuration file to use, optional [default: 'config.ini']
-   * @param defaultController The controller to call if none is given in request parameters, optional [default: 'wcmf\application\controller\LoginController']
+   * @param defaultController The controller to call if none is given in request parameters, optional [default: 'wcmf\application\controller\TerminateController']
    * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
    * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
    * @return Request instance representing the current HTTP request
@@ -68,7 +68,7 @@ class Application {
    * TODO: allow configPath array to search from different locations, simplifies inclusion
    */
   public function initialize($configPath='../config/', $mainConfigFile='config.ini',
-    $defaultController='wcmf\application\controller\LoginController', $defaultContext='', $defaultAction='login') {
+    $defaultController='wcmf\application\controller\TerminateController', $defaultContext='', $defaultAction='login') {
 
     // collect all request data
     $this->_requestValues = array_merge($_GET, $_POST, $_FILES);
