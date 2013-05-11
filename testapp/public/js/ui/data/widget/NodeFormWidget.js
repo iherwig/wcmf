@@ -91,7 +91,7 @@ function(
             for (var key in data) {
                 if (this.nodeData.hasOwnProperty(key)) {
                     if (this.nodeData[key] !== data[key]) {
-                        this.nodeData[key] = data[key];
+                        this.nodeData.set(key, data[key]);
                         modified = true;
                     }
                 }

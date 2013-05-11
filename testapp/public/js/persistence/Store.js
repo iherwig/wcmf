@@ -7,6 +7,7 @@ define([
     "dojo/store/Cache",
     "dojo/store/Memory",
     "dojo/store/Observable",
+    "./Entity",
     "../model/meta/Model"
 ], function (
     xhr,
@@ -17,6 +18,7 @@ define([
     Cache,
     Memory,
     Observable,
+    Entity,
     Model
 ) {
     var Store = declare([JsonRest], {
@@ -51,12 +53,13 @@ define([
       },
 
       get: function(id, options) {
-        if (options.updated) {
+        if (options && options.updated) {
             // TODO: if updated object data are given,
             // return a promise and immediatly resolve it with the data
         }
         else {
-            return this.inherited(arguments);
+            var promise = this.inherited(arguments);
+            return Entity(promise);
         }
       }
 

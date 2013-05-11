@@ -7,6 +7,8 @@ define([
     "dojo/query",
     "dojo/promise/Promise",
     "dojo/on",
+    "dojo/when",
+    "dojo/topic",
     "bootstrap/Tab",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
@@ -31,6 +33,8 @@ define([
     query,
     Promise,
     on,
+    when,
+    topic,
     Tab,
     _WidgetBase,
     _TemplatedMixin,
@@ -72,15 +76,17 @@ define([
             // create tab panel widget
             var store = Store.getStore(this.type, 'en');
             var id = Model.getIdFromOid(this.oid);
-            var result = store.get(Model.getOid(this.type, id));
-            if (result instanceof Promise) {
-                return result.then(lang.hitch(this, function(node) {
-                    this.buildForm(node);
+            when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(node) {
+                this.buildForm(node);
+                node.watch(lang.hitch(this, function(name, oldValue, newValue) {
+                    topic.publish("entity-datachange", {
+                        node: node,
+                        name: name,
+                        oldValue: oldValue,
+                        newValue: newValue
+                    });
                 }));
-            }
-            else {
-                this.buildForm(result);
-            }
+            }));
         },
 
         buildForm: function(node) {

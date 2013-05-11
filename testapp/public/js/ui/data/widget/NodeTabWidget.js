@@ -1,10 +1,13 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/dom",
     "dojo/dom-construct",
     "dojo/dom-attr",
     "dojo/query",
     "dojo/on",
+    "dojo/when",
+    "dojo/topic",
     "dojo/promise/Promise",
     "bootstrap/Tab",
     "dojomat/_StateAware",
@@ -17,10 +20,13 @@ define([
 ], function (
     declare,
     lang,
+    dom,
     domConstruct,
     domAttr,
     query,
     on,
+    when,
+    topic,
     Promise,
     Tab,
     _StateAware,
@@ -71,6 +77,15 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.buildTabs();
+
+            // subscribe to node change events to change tab links
+            topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
+                console.log(data);
+                var tablinks = query("a", dom.byId(this.getTabLinkIdFromOid(data.node.oid)));
+                if (tablinks.length > 0) {
+                    this.setNodeTabName(data.node, tablinks[0]);
+                }
+            }));
         },
 
         buildTabs: function() {
@@ -93,11 +108,11 @@ define([
                 }
             }
             NodeTabWidget.lastTabDef = this.selectedTab;
-       },
+        },
 
         closeTab: function(oid) {
             this.unpersistTab({ oid:oid });
-            domConstruct.destroy("tab-"+oid);
+            domConstruct.destroy(this.getTabLinkIdFromOid(oid));
             if (this.isSelected(oid)) {
                 if (this.lastTab.oid && this.lastTab.oid !== oid) {
                     this.selectTab(this.lastTab.oid);
@@ -172,12 +187,12 @@ define([
             else {
                 // node tab
                 var store = Store.getStore(typeName, 'en');
-                dojo.when(store.get(Model.getOid(typeName, id), lang.hitch(this, function(node) {
+                when(store.get(Model.getOid(typeName, id)), lang.hitch(this, function(node) {
                         this.setNodeTabName(node, tabLink);
                     }), lang.hitch(this, function(error) {
                         closeTab(oid);
                     })
-                ));
+                );
             }
         },
 
@@ -187,14 +202,13 @@ define([
                 class: "close-tab",
                 innerHTML: '&times;'
             }, tabLink);
-
             this.own(on(closeLink, 'click', lang.hitch(this, function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 var tabItems = query(e.target).closest("li");
                 if (tabItems.length > 0) {
                     var tabItem = tabItems[0];
-                    var oid = domAttr.get(tabItem, "id").replace(/^tab-/, '');
+                    var oid = this.getOidFromTabLinkId(domAttr.get(tabItem, "id"));
                     this.closeTab(oid);
                 }
             })));
@@ -202,7 +216,7 @@ define([
 
         createTabLink: function(oid, isSelected) {
             var tabItem = domConstruct.create("li", {
-                id: "tab-"+oid,
+                id: this.getTabLinkIdFromOid(oid),
                 class: isSelected ? "active" : ""
             }, this.tabNode);
 
@@ -223,11 +237,18 @@ define([
                 innerHTML: '<i class="icon-spinner icon-spin"></i>'
             }, tabItem);
             this.setTabName(oid, tabLink);
-
             if (isSelected) {
                 query(tabLink).tab('show');
             }
             return tabLink;
+        },
+
+        getTabLinkIdFromOid: function(oid) {
+            return "tab-"+oid.replace(':', '-');
+        },
+
+        getOidFromTabLinkId: function(tablinkId) {
+            return tablinkId.replace(/^tab-/, '').replace(/-/, ':');
         }
     });
 
