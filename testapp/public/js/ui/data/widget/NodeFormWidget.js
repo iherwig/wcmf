@@ -114,8 +114,14 @@ function(
                     }
                     else {
                         response.oid = this.nodeData.oid;
-                        declare.safeMixin(this.nodeData, response);
-                        store.updateCache(response);
+                        for (var key in response) {
+                            if (this.nodeData.hasOwnProperty(key)) {
+                                if (this.nodeData[key] !== response[key]) {
+                                    this.nodeData.set(key, response[key]);
+                                }
+                            }
+                        }
+                        store.updateCache(this.nodeData);
                         this.showNotification({
                             type: "ok",
                             message: "'"+Model.getDisplayValue(this.nodeData)+"' was successfully updated",

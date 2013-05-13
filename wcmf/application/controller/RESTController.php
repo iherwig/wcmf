@@ -203,10 +203,26 @@ class RESTController extends Controller {
    * Handle a PUT request (create/update an object of a given type)
    */
   protected function handlePut() {
-    $subResponse = $this->executeSubAction('update');
+    // get oid of the object to store (supposed to be one object in the request)
+    $request = $this->getRequest();
+    foreach ($request->getValues() as $key => $value) {
+      if (ObjectId::isValid($key)) {
+        $oidStr = $key;
+      }
+    }
 
+    $subResponse = $this->executeSubAction('update');
     $response = $this->getResponse();
-    $response->setValues($subResponse->getValues());
+
+    // return object only
+    if (!$subResponse->hasErrors() && $subResponse->hasValue($oidStr)) {
+      $object = $subResponse->getValue($oidStr);
+      $response->clearValues();
+      $response->setValue($oidStr, $object);
+    }
+    else {
+      $response->setValues($subResponse->getValues());
+    }
 
     // set the response headers
     $response->setStatus('202 Accepted');
