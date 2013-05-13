@@ -80,7 +80,6 @@ define([
 
             // subscribe to node change events to change tab links
             topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                console.log(data);
                 var tablinks = query("a", dom.byId(this.getTabLinkIdFromOid(data.node.oid)));
                 if (tablinks.length > 0) {
                     this.setNodeTabName(data.node, tablinks[0]);

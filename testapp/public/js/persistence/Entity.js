@@ -1,30 +1,25 @@
 define([
-    "dojo/_base/lang",
-    "dojo/when",
+    "dojo/_base/declare",
+    "dojo/topic",
     "dojo/Stateful"
 ], function(
-    lang,
-    when,
+    declare,
+    topic,
     Stateful
-){
-    var Entity = function(results) {
+) {
+    return declare([Stateful], {
 
-	if(!results){
-		return results;
-	}
-	// if it is a promise it may be frozen
-	if(results.then){
-		results = lang.delegate(results);
-	}
-        results = when(results, function(results) {
-                var stateful = new Stateful();
-                for (var key in results) {
-                    stateful.set(key, results[key]);
-                }
-                return stateful;
-        });
-	return results; // Object
-    };
+        constructor: function() {
+            this.inherited(arguments);
 
-    return Entity;
+            this.watch(function(name, oldValue, newValue) {
+                topic.publish("entity-datachange", {
+                    node: this,
+                    name: name,
+                    oldValue: oldValue,
+                    newValue: newValue
+                });
+            });
+        }
+    });
 });

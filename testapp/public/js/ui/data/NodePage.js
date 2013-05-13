@@ -2,7 +2,6 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/_base/Deferred",
-    "dojo/topic",
     "dojo/dom-construct",
     "dojo/query",
     "dojo/promise/Promise",
@@ -20,7 +19,7 @@ define([
     "../_include/widget/GridWidget",
     "./widget/NodeTabWidget",
     "../../persistence/Store",
-    "../../action/Delete",
+    "../../persistence/Entity",
     "../../model/meta/Model",
     "../../Loader",
     "dojo/text!./template/NodePage.html"
@@ -28,7 +27,6 @@ define([
     declare,
     lang,
     Deferred,
-    topic,
     domConstruct,
     query,
     Promise,
@@ -46,7 +44,7 @@ define([
     GridWidget,
     NodeTabWidget,
     Store,
-    Delete,
+    Entity,
     Model,
     Loader,
     template
@@ -77,15 +75,11 @@ define([
             var store = Store.getStore(this.type, 'en');
             var id = Model.getIdFromOid(this.oid);
             when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(node) {
+                node = new Entity(node);
                 this.buildForm(node);
-                node.watch(lang.hitch(this, function(name, oldValue, newValue) {
-                    topic.publish("entity-datachange", {
-                        node: node,
-                        name: name,
-                        oldValue: oldValue,
-                        newValue: newValue
-                    });
-                }));
+            }));
+            topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
+                this.setTitle(appConfig.title+' - '+Model.getDisplayValue(data.node));
             }));
         },
 

@@ -105,7 +105,7 @@ class RESTController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    if ($request->hasValue('oid')) {
+    if ($request->getBooleanValue('collection') === false) {
       // read a specific object
       // delegate further processing to DisplayController
 
@@ -153,6 +153,8 @@ class RESTController extends Controller {
           break;
         }
       }
+
+      // TODO: create query from optional GET values
 
       // execute action
       $subResponse = $this->executeSubAction('list');

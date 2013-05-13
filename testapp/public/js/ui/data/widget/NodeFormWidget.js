@@ -3,6 +3,7 @@ define( [
     "dojo/_base/lang",
     "dojo/dom-form",
     "dojo/query",
+    "dojo/when",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "../../_include/_NotificationMixin",
@@ -18,6 +19,7 @@ function(
     lang,
     domForm,
     query,
+    when,
     _WidgetBase,
     _TemplatedMixin,
     _Notification,
@@ -102,12 +104,25 @@ function(
                 store.put(this.nodeData, {overwrite: true}).then(lang.hitch(this, function(response) {
                     query(".btn").button("reset");
                     // success
-                    this.showNotification({
-                        type: "ok",
-                        message: "'"+Model.getDisplayValue(this.nodeData)+"' was successfully updated",
-                        fadeOut: true
-                    });
-                    this.set("headline", Model.getDisplayValue(this.nodeData));
+                    if (response.errorMessage) {
+                        // error
+                        query(".btn").button("reset");
+                        this.showNotification({
+                            type: "error",
+                            message: response.errorMessage || "Backend error"
+                        });
+                    }
+                    else {
+                        response.oid = this.nodeData.oid;
+                        declare.safeMixin(this.nodeData, response);
+                        store.updateCache(response);
+                        this.showNotification({
+                            type: "ok",
+                            message: "'"+Model.getDisplayValue(this.nodeData)+"' was successfully updated",
+                            fadeOut: true
+                        });
+                        this.set("headline", Model.getDisplayValue(this.nodeData));
+                    }
                 }), lang.hitch(this, function(error) {
                     // error
                     query(".btn").button("reset");

@@ -2,6 +2,7 @@ define([
     "dojo/_base/xhr",
     "dojo/_base/lang",
     "dojo/_base/declare",
+    "dojo/_base/kernel",
     "dojo/aspect",
     "dojo/store/JsonRest",
     "dojo/store/Cache",
@@ -13,6 +14,7 @@ define([
     xhr,
     lang,
     declare,
+    kernel,
     aspect,
     JsonRest,
     Cache,
@@ -24,6 +26,8 @@ define([
     var Store = declare([JsonRest], {
 
       idProperty: 'oid',
+      typeName: '',
+      language: '',
 
       constructor: function(options) {
           options.headers = {
@@ -52,15 +56,9 @@ define([
           });
       },
 
-      get: function(id, options) {
-        if (options && options.updated) {
-            // TODO: if updated object data are given,
-            // return a promise and immediatly resolve it with the data
-        }
-        else {
-            var promise = this.inherited(arguments);
-            return Entity(promise);
-        }
+      updateCache: function(object) {
+          var memory = kernel.global.storeInstances[this.typeName][this.language].memory;
+          memory.put(object);
       }
 
       // TODO:
@@ -71,7 +69,7 @@ define([
     /**
      * Registry for shared instances
      */
-    Store.instances = {};
+    kernel.global.storeInstances = {};
 
     /**
      * Get the store for a given type and language
@@ -83,23 +81,29 @@ define([
         // register store under the fully qualified type name
         var fqTypeName = Model.getFullyQualifiedTypeName(typeName);
 
-        if (!Store.instances[fqTypeName]) {
-            Store.instances[fqTypeName] = {};
+        if (!kernel.global.storeInstances[fqTypeName]) {
+            kernel.global.storeInstances[fqTypeName] = {};
         }
-        if (!Store.instances[fqTypeName][language]) {
+        if (!kernel.global.storeInstances[fqTypeName][language]) {
             var memory = new Memory({
                 idProperty: 'oid'
             });
             var jsonRest = new Store({
+                typeName: fqTypeName,
+                language: language,
                 target: appConfig.pathPrefix+"/rest/"+language+"/"+fqTypeName+"/"/*+"/?XDEBUG_SESSION_START=netbeans-xdebug"*/
             });
             var cache = new Observable(new Cache(
                 jsonRest,
                 memory
             ));
-            Store.instances[fqTypeName][language] = cache;
+            kernel.global.storeInstances[fqTypeName][language] = {
+                cache: cache,
+                jsonRest: jsonRest,
+                memory: memory
+            }
         }
-        return Store.instances[fqTypeName][language];
+        return kernel.global.storeInstances[fqTypeName][language].cache;
     };
 
     return Store;
