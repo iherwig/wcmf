@@ -3,7 +3,6 @@ define( [
     "dojo/_base/lang",
     "dojo/dom-form",
     "dojo/query",
-    "dojo/when",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "../../_include/_NotificationMixin",
@@ -19,7 +18,6 @@ function(
     lang,
     domForm,
     query,
-    when,
     _WidgetBase,
     _TemplatedMixin,
     _Notification,
@@ -37,6 +35,7 @@ function(
         type: null,
         formId: "",
         headline: "",
+        modified: false,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -60,12 +59,15 @@ function(
                 var attributes = this.type.getAttributes('DATATYPE_ATTRIBUTE');
                 for (var i=0, count=attributes.length; i<count; i++) {
                     var attribute = attributes[i];
-                    var textBox = new TextBox({
+                    var attributeWidget = new TextBox({
                         nodeData: this.nodeData,
                         attribute: attribute
                     });
+                    this.own(attributeWidget.on('change', lang.hitch(this, function(value) {
+                        this.setModified(true);
+                    })));
                     var nodeToAppend = (attribute.isEditable) ? this.fieldsNodeLeft : this.fieldsNodeRight;
-                    nodeToAppend.appendChild(textBox.domNode);
+                    nodeToAppend.appendChild(attributeWidget.domNode);
                 }
 
                 // add relation widgets
@@ -81,42 +83,39 @@ function(
             }));
         },
 
+        setModified: function(modified) {
+            this.modified = modified;
+        },
+
         _save: function(e) {
             // prevent the page from navigating after submit
             e.preventDefault();
 
-            var data = domForm.toObject(this.formId);
-            var store = Store.getStore(this.type.typeName, 'en');
+            if (this.modified) {
+                // update node from form data
+                var data = domForm.toObject(this.formId);
+                var store = Store.getStore(this.type.typeName, 'en');
+                data = lang.mixin(lang.clone(this.nodeData), data);
 
-            // update node from form data
-            var modified = false;
-            for (var key in data) {
-                if (this.nodeData.hasOwnProperty(key)) {
-                    if (this.nodeData[key] !== data[key]) {
-                        this.nodeData.set(key, data[key]);
-                        modified = true;
-                    }
-                }
-            }
-            if (modified) {
-                query(".btn").button("loading");
+                query(".btn.save").button("loading");
                 this.hideNotification();
-                store.put(this.nodeData, {overwrite: true}).then(lang.hitch(this, function(response) {
-                    query(".btn").button("reset");
-                    // success
+
+                store.put(data, {overwrite: true}).then(lang.hitch(this, function(response) {
+                    // callback completes
+                    query(".btn.save").button("reset");
                     if (response.errorMessage) {
                         // error
-                        query(".btn").button("reset");
                         this.showNotification({
                             type: "error",
                             message: response.errorMessage || "Backend error"
                         });
                     }
                     else {
-                        response.oid = this.nodeData.oid;
+                        // success
                         for (var key in response) {
                             if (this.nodeData.hasOwnProperty(key)) {
                                 if (this.nodeData[key] !== response[key]) {
+                                    // notify listeners
                                     this.nodeData.set(key, response[key]);
                                 }
                             }
@@ -128,10 +127,11 @@ function(
                             fadeOut: true
                         });
                         this.set("headline", Model.getDisplayValue(this.nodeData));
+                        this.setModified(false);
                     }
                 }), lang.hitch(this, function(error) {
                     // error
-                    query(".btn").button("reset");
+                    query(".btn.save").button("reset");
                     this.showNotification({
                         type: "error",
                         message: error.response.data.errorMessage || "Backend error"

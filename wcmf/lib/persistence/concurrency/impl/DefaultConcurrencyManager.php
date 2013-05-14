@@ -93,6 +93,13 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
   }
 
   /**
+   * @see ConcurrencyManager::getLock()
+   */
+  public function getLock(ObjectId $oid) {
+    return $this->_lockHandler->getLock($oid);
+  }
+
+  /**
    * @see ConcurrencyManager::checkPersist()
    */
   public function checkPersist(PersistentObject $object) {
@@ -143,6 +150,13 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
       }
     }
     // everything is ok
+  }
+
+  /**
+   * @see ConcurrencyManager::updateLock()
+   */
+  public function updateLock(ObjectId $oid, PersistentObject $object) {
+    return $this->_lockHandler->updateLock($oid, $object);
   }
 }
 ?>

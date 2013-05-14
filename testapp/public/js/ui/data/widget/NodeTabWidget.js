@@ -79,12 +79,14 @@ define([
             this.buildTabs();
 
             // subscribe to node change events to change tab links
-            topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                var tablinks = query("a", dom.byId(this.getTabLinkIdFromOid(data.node.oid)));
-                if (tablinks.length > 0) {
-                    this.setNodeTabName(data.node, tablinks[0]);
-                }
-            }));
+            this.own(
+                topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
+                    var tablinks = query("a", dom.byId(this.getTabLinkIdFromOid(data.node.oid)));
+                    if (tablinks.length > 0) {
+                        this.setNodeTabName(data.node, tablinks[0]);
+                    }
+                }))
+            );
         },
 
         buildTabs: function() {
@@ -169,7 +171,7 @@ define([
             var id = Model.getIdFromOid(oid);
             var isTypeTab = (id === typeName);
             var route = {
-                route: isTypeTab ? "dataIndex" : "node",
+                route: isTypeTab ? "nodeList" : "node",
                 routeParams: isTypeTab ? { type:typeName } : { type:typeName, id: id }
             };
             return route;

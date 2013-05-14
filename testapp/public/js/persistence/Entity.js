@@ -7,11 +7,16 @@ define([
     topic,
     Stateful
 ) {
+    /**
+     * Entity inherits observer capabilities from Stateful
+     * and emits entity-datachange event, if properties change.
+     */
     return declare([Stateful], {
 
-        constructor: function() {
+        postscript: function(params) {
             this.inherited(arguments);
 
+            // watch after initial set
             this.watch(function(name, oldValue, newValue) {
                 topic.publish("entity-datachange", {
                     node: this,

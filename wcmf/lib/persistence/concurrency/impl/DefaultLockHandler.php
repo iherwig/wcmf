@@ -29,7 +29,7 @@ use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 
 /**
- * DefaultLockHandler implements the ILockHandler interface for relational databases.
+ * DefaultLockHandler implements the LockHandler interface for relational databases.
  * Locks are represented by the entity type 'Locktable' with attributes
  * 'sessionid', 'objectid', 'since'. Locktable instances are children of the user entity.
  *
@@ -42,7 +42,7 @@ class DefaultLockHandler implements LockHandler {
   private $_userType = null;
 
   /**
-   * @see ILockHandler::aquireLock()
+   * @see LockHandler::aquireLock()
    */
   public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null) {
     $currentUser = $this->getCurrentUser();
@@ -82,7 +82,7 @@ class DefaultLockHandler implements LockHandler {
   }
 
   /**
-   * @see ILockHandler::releaseLock()
+   * @see LockHandler::releaseLock()
    */
   public function releaseLock(ObjectId $oid) {
     $currentUser = $this->getCurrentUser();
@@ -105,7 +105,7 @@ class DefaultLockHandler implements LockHandler {
   }
 
   /**
-   * @see ILockHandler::releaseLocks()
+   * @see LockHandler::releaseLocks()
    */
   public function releaseLocks(ObjectId $oid) {
     // delete locks for the given oid
@@ -120,7 +120,7 @@ class DefaultLockHandler implements LockHandler {
   }
 
   /**
-   * @see ILockHandler::releaseAllLocks()
+   * @see LockHandler::releaseAllLocks()
    */
   public function releaseAllLocks() {
     $currentUser = $this->getCurrentUser();
@@ -142,9 +142,7 @@ class DefaultLockHandler implements LockHandler {
   }
 
   /**
-   * Get an existing Lock instance if existing
-   * @param oid ObjectId of the locked object
-   * @return Lock instance or null
+   * @see LockHandler::getLock()
    */
   public function getLock(ObjectId $oid) {
     // check if a lock is stored in the session (maybe optimistic
@@ -175,6 +173,22 @@ class DefaultLockHandler implements LockHandler {
       return $lock;
     }
     return null;
+  }
+
+  /**
+   * @see LockHandler::updateLock()
+   */
+  public function updateLock(ObjectId $oid, PersistentObject $object) {
+    $lock = $this->getLock($oid);
+    if ($lock) {
+      if ($lock->getType() == Lock::TYPE_OPTIMISTIC) {
+        $currentUser = $this->getCurrentUser();
+        if ($currentUser && $lock->getUserOID() == $currentUser->getOID()) {
+          $lock->setCurrentState($object);
+          $this->storeLock($lock);
+        }
+      }
+    }
   }
 
   /**

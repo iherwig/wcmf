@@ -45,6 +45,7 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - Login');
+
             new NavigationWidget({
                 titleOnly: true
             }, this.navigationNode);
@@ -76,9 +77,9 @@ define([
 
             }).then(lang.hitch(this, function(response) {
                 // callback completes
+                query(".btn").button("reset");
                 if (!response.success) {
                     // error
-                    query(".btn").button("reset");
                     this.showNotification({
                         type: "error",
                         message: response.errorMessage || "Backend error"

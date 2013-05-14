@@ -23,39 +23,45 @@ define([
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
 
-        activeRoute: null,
         titleOnly: false,
         templateString: template,
 
         constructor: function (params) {
-            this.activeRoute = params.activeRoute;
             this.titleOnly = params.titleOnly;
         },
 
         postCreate: function() {
-            // mark active route
-            if (this.activeRoute !== null) {
-                query("[data-dojorama-route='"+this.activeRoute+"']").parent().forEach(function(node){
-                    domClass.add(node, "active");
-                });
-            }
-
             // hide buttons, if titleOnly
             if (this.titleOnly) {
                 query("ul.nav").style("display", "none");
                 query("a.btn-navbar").style("display", "none");
             }
 
-            // set first root type on dataIndex route
+            // set first root type on nodeList route
             var firstRootType = appConfig.rootTypes[0];
-            dojo.query("[data-dojorama-route='dataIndex']").
-                     attr("data-dojorama-pathparams", "type: '"+firstRootType+"'");
+            this.setContentRoute(firstRootType);
 
             // set app title
             dojo.query(".brand").attr("innerHTML", appConfig.title);
 
             // set user name
             dojo.query(".user").attr("innerHTML", Cookie.get("user"));
+        },
+
+        setContentRoute: function(type, id) {
+            var contentNavNode = dojo.query("#navContent");
+            contentNavNode.attr("data-dojorama-route", id !== undefined ? "node" : "nodeList");
+            var routeParamStr = "type: '"+type+"'";
+            if (id !== undefined) {
+              routeParamStr += ", id: '"+id+"'";
+            }
+            contentNavNode.attr("data-dojorama-pathparams", routeParamStr);
+        },
+
+        setActiveRoute: function(route) {
+            query("[data-dojorama-route='"+route+"']").parent().forEach(function(node){
+                domClass.add(node, "active");
+            });
         }
     });
 });

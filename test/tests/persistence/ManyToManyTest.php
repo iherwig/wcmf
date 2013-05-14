@@ -59,7 +59,7 @@ class ManyToManyTest extends DatabaseTestCase {
 
     $userMapper = $persistenceFacade->getMapper('UserRDB');
     $relationDescription = $userMapper->getRelation('RoleRDB');
-    $this->assertEquals('testapp\application\model\wcmf\RoleRDB', $relationDescription->getOtherType(), "The type is RoleRDB");
+    $this->assertEquals('testapp.application.model.wcmf.RoleRDB', $relationDescription->getOtherType(), "The type is RoleRDB");
     $this->assertEquals('RoleRDB', $relationDescription->getOtherRole(), "The role is RoleRDB");
     $this->assertEquals('0', $relationDescription->getOtherMinMultiplicity(), "The minimum multiplicity is 0");
     $this->assertEquals('none', $relationDescription->getOtherAggregationKind(), "The aggregation kind is none");

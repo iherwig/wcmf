@@ -31,13 +31,13 @@ class ObjectIdTest extends BaseTestCase {
   public function testSerialize() {
     // simple
     $oid1 = new ObjectId('UserRDB', 10);
-    $this->assertEquals('testapp\application\model\wcmf\UserRDB:10', $oid1->__toString(),
-            "The oid is 'testapp\application\model\wcmf\UserRDB:10'");
+    $this->assertEquals('testapp.application.model.wcmf.UserRDB:10', $oid1->__toString(),
+            "The oid is 'testapp.application.model.wcmf.UserRDB:10'");
 
     // multiple primary keys
     $oid2 = new ObjectId('NMUserRole', array(10, 11));
-    $this->assertEquals('testapp\application\model\wcmf\NMUserRole:10:11', $oid2->__toString(),
-            "The oid is 'testapp\application\model\wcmf\NMUserRole:10:11'");
+    $this->assertEquals('testapp.application.model.wcmf.NMUserRole:10:11', $oid2->__toString(),
+            "The oid is 'testapp.application.model.wcmf.NMUserRole:10:11'");
   }
 
   public function testValidate() {
@@ -58,13 +58,13 @@ class ObjectIdTest extends BaseTestCase {
     // simple
     $oid1 = ObjectId::parse('UserRDB:10');
     $id1 = $oid1->getId();
-    $this->assertTrue($oid1->getType() === 'testapp\application\model\wcmf\UserRDB' &&
+    $this->assertTrue($oid1->getType() === 'testapp.application.model.wcmf.UserRDB' &&
             is_array($id1) && sizeof($id1) === 1 && $id1[0] === 10, "The oid is valid");
 
     // multiple primary keys
     $oid2 = ObjectId::parse('NMUserRole:10:11');
     $id2 = $oid2->getId();
-    $this->assertTrue($oid2->getType() === 'testapp\application\model\wcmf\NMUserRole' &&
+    $this->assertTrue($oid2->getType() === 'testapp.application.model.wcmf.NMUserRole' &&
             is_array($id2) && sizeof($id2) === 2 && $id2[0] === 10 && $id2[1] === 11, "The oid is valid");
   }
 

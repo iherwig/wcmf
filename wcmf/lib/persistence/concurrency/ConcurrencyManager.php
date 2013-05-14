@@ -68,8 +68,24 @@ interface ConcurrencyManager {
   public function releaseAllLocks();
 
   /**
+   * Get the lock for an object id.
+   * @param oid object id of the object to get the lock data for.
+   * @return Lock instance or null
+   */
+  public function getLock(ObjectId $oid);
+
+  /**
    * Check if the given object can be persisted. Throws an exception if not.
+   * @param object The object to check.
    */
   public function checkPersist(PersistentObject $object);
+
+  /**
+   * Update the current state of the lock belonging to the given object
+   * if existing and owned by the current.
+   * @param oid The object id.
+   * @param object The updated object data.
+   */
+  public function updateLock(ObjectId $oid, PersistentObject $object);
 }
 ?>

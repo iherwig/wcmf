@@ -31,30 +31,35 @@ use wcmf\lib\persistence\concurrency\LockHandler;
 class NullLockHandler implements LockHandler {
 
   /**
-   * @see ILockHandler::aquireLock()
+   * @see LockHandler::aquireLock()
    */
   public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null) {}
 
   /**
-   * @see ILockHandler::releaseLock()
+   * @see LockHandler::releaseLock()
    */
   public function releaseLock(ObjectId $oid) {}
 
   /**
-   * @see ILockHandler::releaseLocks()
+   * @see LockHandler::releaseLocks()
    */
   public function releaseLocks(ObjectId $oid) {}
 
   /**
-   * @see ILockHandler::releaseAllLocks()
+   * @see LockHandler::releaseAllLocks()
    */
   public function releaseAllLocks() {}
 
   /**
-   * @see ILockHandler::getLocks()
+   * @see LockHandler::getLocks()
    */
   public function getLock(ObjectId $oid) {
     return null;
   }
+
+  /**
+   * @see LockHandler::updateLock()
+   */
+  public function updateLock(ObjectId $oid, PersistentObject $object) {}
 }
 ?>

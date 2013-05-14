@@ -46,29 +46,30 @@ define([
         request: null,
         session: null,
         templateString: template,
-        selectedType: null,
+        type: null,
 
         constructor: function(params) {
             this.request = params.request;
             this.session = params.session;
-            this.selectedType = this.request.getPathParam("type");
+            this.type = this.request.getPathParam("type");
         },
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+this.selectedType);
-            new NavigationWidget({
-				// TODO: rename route and adapt it to the currently selected node
-                activeRoute: "dataIndex"
+            this.setTitle(appConfig.title+' - '+this.type);
+            
+            var navi = new NavigationWidget({
             }, this.navigationNode);
+            navi.setContentRoute(this.type);
+            navi.setActiveRoute("nodeList");
 
             // create tab panel widget
-            var store = Store.getStore(this.selectedType, 'en');
+            var store = Store.getStore(this.type, 'en');
             var gridWidget = new GridWidget({
                 request: this.request,
                 router: this.router,
                 store: store,
-                type: Model.getType(this.selectedType),
+                type: Model.getType(this.type),
                 actions: this.getGridActions()
             });
 
@@ -76,7 +77,7 @@ define([
             new NodeTabWidget({
                 router: this.router,
                 selectedTab: {
-                    oid: this.selectedType
+                    oid: this.type
                 },
                 selectedPanel: gridWidget
             }, this.tabNode);

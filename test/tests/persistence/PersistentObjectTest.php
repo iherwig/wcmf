@@ -62,7 +62,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter21->setName('Chapter 2');
     $chapter1->setCreated('2011-05-31');
     $chapter1->copyValues($chapter21, false);
-    $this->assertEquals('testapp\application\model\Chapter:23', $chapter21->getOID()->__toString());
+    $this->assertEquals('testapp.application.model.Chapter:23', $chapter21->getOID()->__toString());
     $this->assertEquals('Chapter 1', $chapter21->getName());
     $this->assertEquals('2011-05-31', $chapter21->getCreated());
 
@@ -71,7 +71,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter22->setName('Chapter 2');
     $chapter1->setCreated('2011-05-31');
     $chapter1->copyValues($chapter22, true);
-    $this->assertEquals('testapp\application\model\Chapter:12', $chapter22->getOID()->__toString());
+    $this->assertEquals('testapp.application.model.Chapter:12', $chapter22->getOID()->__toString());
     $this->assertEquals('Chapter 1', $chapter22->getName());
     $this->assertEquals('2011-05-31', $chapter22->getCreated());
 
@@ -89,7 +89,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter2->setName('Chapter 2');
     $chapter1->setCreated(null);
     $chapter2->mergeValues($chapter1);
-    $this->assertEquals('testapp\application\model\Chapter:23', $chapter2->getOID()->__toString());
+    $this->assertEquals('testapp.application.model.Chapter:23', $chapter2->getOID()->__toString());
     $this->assertEquals('Chapter 2', $chapter2->getName());
     $this->assertEquals(null, $chapter2->getCreated());
     $this->assertEquals('admin', $chapter2->getCreator());
@@ -104,7 +104,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter1->setCreated('2011-05-31');
 
     $chapter1->clearValues();
-    $this->assertEquals('testapp\application\model\Chapter:12', $chapter1->getOID()->__toString());
+    $this->assertEquals('testapp.application.model.Chapter:12', $chapter1->getOID()->__toString());
     $this->assertEquals(null, $chapter1->getName());
     $this->assertEquals(null, $chapter1->getCreated());
 

@@ -33,9 +33,10 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - Home');
-            new NavigationWidget({
-                activeRoute: "home"
+
+            var navi = new NavigationWidget({
             }, this.navigationNode);
+            navi.setActiveRoute("home");
 
             this.setupRoutes();
         },

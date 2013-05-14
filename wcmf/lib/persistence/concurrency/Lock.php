@@ -111,18 +111,18 @@ class Lock {
   }
 
   /**
-   * Get the original state of the object in case of an
+   * Set the original state of the object in case of an
    * optimistic lock.
-   * @return PersistentObject instance
+   * @param currentState PersistentObject instance or null
    */
-  public function setCurrentState($_currentState) {
-    $this->_currentState = serialize($_currentState);
+  public function setCurrentState($currentState) {
+    $this->_currentState = serialize($currentState);
   }
 
   /**
    * Get the original state of the object in case of an
    * optimistic lock.
-   * @return PersistentObject instance
+   * @return PersistentObject instance or null
    */
   public function getCurrentState() {
     return unserialize($this->_currentState);

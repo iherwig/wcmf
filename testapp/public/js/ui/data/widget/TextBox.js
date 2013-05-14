@@ -15,6 +15,7 @@ function(
     return declare([TextBox], {
 
         templateString: template,
+        intermediateChanges: true,
         nodeData: {},
         attribute: {},
 
@@ -31,11 +32,13 @@ function(
             this.inherited(arguments);
 
             // subscribe to node change events to change tab links
-            topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                if (data.name === this.attribute.name) {
-                    this.set("value", data.newValue);
-                }
-            }));
+            this.own(
+                topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
+                    if (data.name === this.attribute.name) {
+                        this.set("value", data.newValue);
+                    }
+                }))
+            );
         }
     });
 });

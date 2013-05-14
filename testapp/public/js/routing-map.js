@@ -21,7 +21,7 @@ define(["dojo/_base/config", "require"], function (config, require) {
             widget: mid('./ui/home/HomePage'),
             layers: l.home || []
         },
-        dataIndex: {
+        nodeList: {
             schema: p + '/data/:type',
             widget: mid('./ui/data/ListPage'),
             layers: l.data || []

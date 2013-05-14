@@ -62,5 +62,13 @@ interface LockHandler {
    * @return Lock instance or null
    */
   public function getLock(ObjectId $oid);
+
+  /**
+   * Update the current state of the lock belonging to the given object
+   * if existing and owned by the current.
+   * @param oid The object id.
+   * @param object The updated object data.
+   */
+  public function updateLock(ObjectId $oid, PersistentObject $object);
 }
 ?>

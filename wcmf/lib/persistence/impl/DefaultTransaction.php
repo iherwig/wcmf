@@ -340,6 +340,7 @@ class DefaultTransaction implements Transaction {
       if ($mapper) {
         $mapper->save($object);
       }
+      $concurrencyManager->updateLock($object->getOID(), $object);
       unset($this->_dirtyObjects[$key]);
       $updateOids = array_keys($this->_dirtyObjects);
     }
@@ -360,6 +361,7 @@ class DefaultTransaction implements Transaction {
       if ($mapper) {
         $mapper->delete($object);
       }
+      $concurrencyManager->updateLock($object->getOID(), $object);
       unset($this->_deletedObjects[$key]);
       $deleteOids = array_keys($this->_deletedObjects);
     }

@@ -35,7 +35,9 @@ define([
           };
           this.inherited(arguments);
 
-          // replace oid by id in xhr calls (makes simpler urls)
+          // set id property in order to have url like /{type}/{id}
+          // instead of /{type}/{oid}
+          // NOTE: this has to be set on cloned options!
           aspect.around(this, "get", function(original) {
               return function(oid, options) {
                   var id = Model.getIdFromOid(oid);
@@ -44,8 +46,9 @@ define([
           });
           aspect.around(this, "put", function(original) {
               return function(object, options) {
-                  options.id = Model.getIdFromOid(object.oid);
-                  return original.call(this, object, options);
+                  var optionsTmp = lang.clone(options);
+                  optionsTmp.id = Model.getIdFromOid(object.oid);
+                  return original.call(this, object, optionsTmp);
               };
           });
           aspect.around(this, "remove", function(original) {

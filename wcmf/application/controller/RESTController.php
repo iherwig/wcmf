@@ -188,9 +188,19 @@ class RESTController extends Controller {
    */
   protected function handlePost() {
     $subResponse = $this->executeSubAction('create');
-
     $response = $this->getResponse();
-    $response->setValues($subResponse->getValues());
+
+    // in case of success, return object only
+    $oidStr = $this->getFirstRequestOid();
+    if (!$subResponse->hasErrors() && $subResponse->hasValue($oidStr)) {
+      $object = $subResponse->getValue($oidStr);
+      $response->clearValues();
+      $response->setValue($oidStr, $object);
+    }
+    else {
+      // in case of error, return default response
+      $response->setValues($subResponse->getValues());
+    }
 
     // set the response headers
     $response->setStatus('201 Created');
@@ -203,24 +213,18 @@ class RESTController extends Controller {
    * Handle a PUT request (create/update an object of a given type)
    */
   protected function handlePut() {
-    // get oid of the object to store (supposed to be one object in the request)
-    $request = $this->getRequest();
-    foreach ($request->getValues() as $key => $value) {
-      if (ObjectId::isValid($key)) {
-        $oidStr = $key;
-      }
-    }
-
     $subResponse = $this->executeSubAction('update');
     $response = $this->getResponse();
 
-    // return object only
+    // in case of success, return object only
+    $oidStr = $this->getFirstRequestOid();
     if (!$subResponse->hasErrors() && $subResponse->hasValue($oidStr)) {
       $object = $subResponse->getValue($oidStr);
       $response->clearValues();
       $response->setValue($oidStr, $object);
     }
     else {
+      // in case of error, return default response
       $response->setValues($subResponse->getValues());
     }
 
@@ -256,6 +260,20 @@ class RESTController extends Controller {
       $response = $this->getResponse();
       $response->setHeader('Location', $oid->__toString());
     }
+  }
+
+  /**
+   * Get the first oid from the request
+   * @return String
+   */
+  protected function getFirstRequestOid() {
+    $request = $this->getRequest();
+    foreach ($request->getValues() as $key => $value) {
+      if (ObjectId::isValid($key)) {
+        return $key;
+      }
+    }
+    return '';
   }
 }
 ?>
