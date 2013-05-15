@@ -1,13 +1,9 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/_base/Deferred",
-    "dojo/dom-construct",
-    "dojo/query",
-    "dojo/promise/Promise",
-    "dojo/on",
     "dojo/when",
     "dojo/topic",
+    "dojo/Deferred",
     "bootstrap/Tab",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
@@ -16,23 +12,19 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
-    "../_include/widget/GridWidget",
-    "./widget/NodeTabWidget",
+    "../_include/widget/ConfirmDlgWidget",
+    "./widget/EntityTabWidget",
     "../../persistence/Store",
     "../../persistence/Entity",
     "../../model/meta/Model",
     "../../Loader",
-    "dojo/text!./template/NodePage.html"
+    "dojo/text!./template/EntityPage.html"
 ], function (
     declare,
     lang,
-    Deferred,
-    domConstruct,
-    query,
-    Promise,
-    on,
     when,
     topic,
+    Deferred,
     Tab,
     _WidgetBase,
     _TemplatedMixin,
@@ -41,8 +33,8 @@ define([
     _Page,
     _Notification,
     NavigationWidget,
-    GridWidget,
-    NodeTabWidget,
+    ConfirmDlg,
+    EntityTabWidget,
     Store,
     Entity,
     Model,
@@ -56,6 +48,7 @@ define([
         templateString: template,
         type: null,
         oid: null,
+        entity: null,
 
         constructor: function(params) {
             this.request = params.request;
@@ -73,14 +66,14 @@ define([
             var navi = new NavigationWidget({
             }, this.navigationNode);
             navi.setContentRoute(this.type, id);
-            navi.setActiveRoute("node");
+            navi.setActiveRoute("entity");
 
             // create tab panel widget
             var store = Store.getStore(this.type, 'en');
-            when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(node) {
+            when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(entity) {
                 // allow to watch for changes of the object data
-                node = new Entity(node);
-                this.buildForm(node);
+                this.entity = new Entity(entity);
+                this.buildForm();
             }), lang.hitch(this, function(error) {
                 // error
                 this.showNotification({
@@ -90,22 +83,40 @@ define([
             }));
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                    this.setTitle(appConfig.title+' - '+Model.getDisplayValue(data.node));
+                    this.setTitle(appConfig.title+' - '+Model.getDisplayValue(data.entity));
                 }))
             );
         },
 
-        buildForm: function(node) {
-            this.setTitle(appConfig.title+' - '+Model.getDisplayValue(node));
+        confirmLeave: function(url) {
+            if (this.entity.getState() === 'dirty') {
+                var deferred = new Deferred();
+                ConfirmDlg.showConfirm({
+                    title: "Confirm Leave Page",
+                    content: "'"+Model.getDisplayValue(this.entity)+"' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
+                    okCallback: lang.hitch(this, function() {
+                        deferred.resolve(true);
+                    }),
+                    cancelCallback: lang.hitch(this, function() {
+                        deferred.resolve(false);
+                    })
+                });
+                return deferred.promise;
+            }
+            return this.inherited(arguments);
+        },
 
-            new Loader("js/ui/data/widget/NodeFormWidget").then(lang.hitch(this, function(Widget) {
-                // create the node form
+        buildForm: function() {
+            this.setTitle(appConfig.title+' - '+Model.getDisplayValue(this.entity));
+
+            new Loader("js/ui/data/widget/EntityFormWidget").then(lang.hitch(this, function(Widget) {
+                // create the entity form
                 var form = new Widget({
-                    nodeData: node
+                    entity: this.entity
                 });
 
                 // create type tab panel
-                new NodeTabWidget({
+                new EntityTabWidget({
                     router: this.router,
                     selectedTab: {
                         oid: this.oid
@@ -113,6 +124,7 @@ define([
                     selectedPanel: form
                 }, this.tabNode);
 
+                // setup routes on tab container after loading
                 this.setupRoutes();
             }));
         }

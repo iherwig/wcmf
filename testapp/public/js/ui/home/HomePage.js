@@ -37,8 +37,6 @@ define([
             var navi = new NavigationWidget({
             }, this.navigationNode);
             navi.setActiveRoute("home");
-
-            this.setupRoutes();
         },
 
         startup: function() {

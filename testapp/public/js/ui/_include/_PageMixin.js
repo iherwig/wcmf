@@ -1,12 +1,16 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/when",
+    "dojo/aspect",
     "dojo/dom-attr",
     "dojo/query",
     "dojo/on"
 ], function (
     declare,
     lang,
+    when,
+    aspect,
     domAttr,
     query,
     on
@@ -17,10 +21,19 @@ define([
 
         constructor: function(params) {
             this.router = params.router;
-        },
 
-        postCreate: function () {
-            this.inherited(arguments);
+            // setup navigation routes even if an error occurs
+            aspect.around(this, "postCreate", function(original) {
+                return function() {
+                    try {
+                        original.call(this);
+                    }
+                    catch (e) {}
+                    finally {
+                        this.setupRoutes();
+                    }
+                };
+            });
         },
 
         /**
@@ -41,11 +54,27 @@ define([
                 var url = route.assemble(pathParams);
                 node.href = url;
 
-                this.own(on(node, 'click', lang.hitch(this, function (ev) {
-                    ev.preventDefault();
-                    this.push(url);
+                this.own(on(node, 'click', lang.hitch(this, function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    when(this.confirmLeave(url), lang.hitch(this, function(result) {
+                        if (result === true) {
+                            this.push(url);
+                        }
+                    }));
                 })));
             }));
+        },
+
+        /**
+         * Method to be called before the page is left.
+         * Subclasses may override this in order to do some validation and veto
+         * page leave. The default implementation returns true.
+         * @param url The url to navigate to
+         * @return Boolean or Promise that resolves to Boolean
+         */
+        confirmLeave: function(url) {
+            return true;
         }
     });
 });

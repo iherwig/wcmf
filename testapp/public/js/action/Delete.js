@@ -16,18 +16,18 @@ define([
     return declare([ActionBase], {
 
         name: 'delete',
-        iconClass:  'icon-trash',
+        iconClass: 'icon-trash',
 
         /**
          * Execute the delete action on the store
          * @param data Object to delete
          */
         execute: function(data) {
-            this.init(data)
+            this.init(data);
             ConfirmDlg.showConfirm({
                 title: "Confirm Object Deletion",
-                message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
-                callback: lang.hitch(this, function() {
+                content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
+                okCallback: lang.hitch(this, function() {
                     var typeName = Model.getTypeNameFromOid(data.oid);
                     var store = Store.getStore(typeName, 'en');
                     var deferred = store.remove(data.oid).then(lang.hitch(this, function(results) {

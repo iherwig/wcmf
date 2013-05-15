@@ -26,13 +26,17 @@ define([
      * @code
      * ConfirmDlg.showConfirm({
      *      title: "Confirm Object Deletion",
-     *      message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
-     *      callback: function() {
+     *      content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
+     *      okCallback: function() {
      *          // will be called when OK button is clicked
      *          var deferred = new Deferred();
      *          // do something
      *          return deferred;
-     *      })
+     *      },
+     *      cancelCallback: function() {
+     *          // will be called when Cancel button is clicked
+     *          ....
+     *      }
      * });
      * @endcode
      */
@@ -40,10 +44,11 @@ define([
 
         templateString: template,
         modal: null,
-        callback: null,
+        okCallback: null,
+        cancelCallback: null,
 
-        constructor: function(params) {
-            this.callback = params.callback;
+        constructor: function(args) {
+            declare.safeMixin(this, args);
         },
 
         _setTitleAttr: function (val) {
@@ -64,25 +69,34 @@ define([
             }));
             this.own(
                 on(this.okBtn, "click", lang.hitch(this, function(e) {
-                    this.doCallback(e);
+                    this.doCallback(e, this.okCallback);
+                })),
+                on(this.cancelBtn, "click", lang.hitch(this, function(e) {
+                    this.doCallback(e, this.cancelCallback);
                 })),
                 on(dojo.body(), 'keyup', lang.hitch(this, function (e) {
                     if (e.which === 13) {
-                        this.doCallback(e);
+                        this.doCallback(e, this.okCallback);
+                    }
+                    if (e.which === 27) {
+                        this.doCallback(e, this.cancelCallback);
                     }
                 }))
             );
         },
 
-        doCallback: function(e) {
-            if (this.callback instanceof Function) {
+        doCallback: function(e, callback) {
+            if (callback instanceof Function) {
                 e.preventDefault();
-                this.showSpinner();
-                var result = this.callback();
+                var result = callback();
                 if (result instanceof Promise) {
-                  result.always(function() {
-                    query('#confirmDlg').modal('hide');
-                  });
+                    this.showSpinner();
+                    result.always(function() {
+                        ConfirmDlg.hideConfirm();
+                    });
+                }
+                else {
+                    ConfirmDlg.hideConfirm();
                 }
             }
         },
@@ -108,20 +122,14 @@ define([
 
         ConfirmDlg.node = domConstruct.create('div', {}, dojo.body());
 
-        ConfirmDlg.widget = new ConfirmDlg({
-            id: 'confirmDlg',
-            title: options.title,
-            content: options.message,
-            callback: options.callback
-        }, ConfirmDlg.node);
+        var params = declare.safeMixin({id: 'confirmDlg'}, options);
+        ConfirmDlg.widget = new ConfirmDlg(params, ConfirmDlg.node);
 
         this.widget.startup();
     };
 
     ConfirmDlg.hideConfirm = function () {
-        if (ConfirmDlg.widget) {
-            ConfirmDlg.widget.destroyRecursive();
-        }
+        query('#confirmDlg').modal('hide');
     };
 
     return ConfirmDlg;

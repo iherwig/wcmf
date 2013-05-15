@@ -16,7 +16,7 @@ define([
     "../../../Cookie",
     "../../../model/meta/Model",
     "../../../persistence/Store",
-    "dojo/text!./template/NodeTabWidget.html"
+    "dojo/text!./template/EntityTabWidget.html"
 ], function (
     declare,
     lang,
@@ -38,19 +38,20 @@ define([
     template
 ) {
     /**
-     * Tab panel for types and nodes. Tabs are identified by oid. Type
-     * tabs are not closable, node tabs are. Opened node tabs are stored
-     * in a cookie. Switching tabs is done by calling the appropriate route
-     * for either the type or node.
+     * Tab panel for entity types and entity instances.
+     * Tabs are identified by oid. Type tabs are not closable, instance tabs are.
+     * Opened instance tabs are stored in a cookie.
+     * Switching tabs is done by calling the appropriate route for either the type
+     * or instance.
      * That implies that the tab panel is expected to be newly instantiated
      * on each view and while all tab links are created only the currently
      * displayed tab panel (given in the selectedPanel property) is added.
      *
-     * Example usage to instantiate the tab panel to display nodes of
+     * Example usage to instantiate the tab panel to display entities of
      * the type 'Author':
      *
      * @code
-     * new NodeTabWidget({
+     * new EntityTabWidget({
      *     router: this.router,
      *     selectedTab: {
      *         oid: 'Author'
@@ -59,7 +60,7 @@ define([
      * }, this.tabNode);
      * @endcode
      */
-    var NodeTabWidget = declare([_WidgetBase, _TemplatedMixin, _StateAware], {
+    var EntityTabWidget = declare([_WidgetBase, _TemplatedMixin, _StateAware], {
 
         router: null,
         selectedTab: {},
@@ -70,7 +71,7 @@ define([
         constructor: function(params) {
             declare.safeMixin(this, params);
 
-            this.lastTab =  NodeTabWidget.lastTabDef;
+            this.lastTab =  EntityTabWidget.lastTabDef;
             Cookie.set("lastTab", this.lastTab);
         },
 
@@ -78,12 +79,12 @@ define([
             this.inherited(arguments);
             this.buildTabs();
 
-            // subscribe to node change events to change tab links
+            // subscribe to entity change events to change tab links
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                    var tablinks = query("a", dom.byId(this.getTabLinkIdFromOid(data.node.oid)));
+                    var tablinks = query("a", dom.byId(this.getTabLinkIdFromOid(data.entity.oid)));
                     if (tablinks.length > 0) {
-                        this.setNodeTabName(data.node, tablinks[0]);
+                        this.setInstanceTabName(data.entity, tablinks[0]);
                     }
                 }))
             );
@@ -94,7 +95,7 @@ define([
             this.persistTab(this.selectedTab);
 
             // iterate over all panels
-            for (var oid in NodeTabWidget.tabDefs) {
+            for (var oid in EntityTabWidget.tabDefs) {
                 var isSelected = (oid === this.selectedTab.oid);
                 this.createTabLink(oid, isSelected);
 
@@ -108,7 +109,7 @@ define([
                     }
                 }
             }
-            NodeTabWidget.lastTabDef = this.selectedTab;
+            EntityTabWidget.lastTabDef = this.selectedTab;
         },
 
         closeTab: function(oid) {
@@ -134,8 +135,8 @@ define([
         },
 
         selectFirstTab: function() {
-            for (var key in NodeTabWidget.tabDefs) {
-                this.selectTab(NodeTabWidget.tabDefs[key].oid);
+            for (var key in EntityTabWidget.tabDefs) {
+                this.selectTab(EntityTabWidget.tabDefs[key].oid);
                 break;
             }
         },
@@ -145,24 +146,24 @@ define([
         },
 
         isPersisted: function(tabDef) {
-            return NodeTabWidget.tabDefs[tabDef.oid] !== undefined;
+            return EntityTabWidget.tabDefs[tabDef.oid] !== undefined;
         },
 
         persistTab: function(tabDef) {
             if (!this.isPersisted(tabDef)) {
-                NodeTabWidget.tabDefs[tabDef.oid] = tabDef;
-                var openNodeTabs = Cookie.get("openNodeTabs", {});
-                openNodeTabs[tabDef.oid] = tabDef;
-                Cookie.set("openNodeTabs", openNodeTabs);
+                EntityTabWidget.tabDefs[tabDef.oid] = tabDef;
+                var openInstanceTabs = Cookie.get("openInstanceTabs", {});
+                openInstanceTabs[tabDef.oid] = tabDef;
+                Cookie.set("openInstanceTabs", openInstanceTabs);
             }
         },
 
         unpersistTab: function(tabDef) {
             if (this.isPersisted(tabDef)) {
-                delete NodeTabWidget.tabDefs[tabDef.oid];
-                var openNodeTabs = Cookie.get("openNodeTabs", {});
-                delete openNodeTabs[tabDef.oid];
-                Cookie.set("openNodeTabs", openNodeTabs);
+                delete EntityTabWidget.tabDefs[tabDef.oid];
+                var openInstanceTabs = Cookie.get("openInstanceTabs", {});
+                delete openInstanceTabs[tabDef.oid];
+                Cookie.set("openInstanceTabs", openInstanceTabs);
             }
         },
 
@@ -171,7 +172,7 @@ define([
             var id = Model.getIdFromOid(oid);
             var isTypeTab = (id === typeName);
             var route = {
-                route: isTypeTab ? "nodeList" : "node",
+                route: isTypeTab ? "entityList" : "entity",
                 routeParams: isTypeTab ? { type:typeName } : { type:typeName, id: id }
             };
             return route;
@@ -183,13 +184,13 @@ define([
             var isTypeTab = (id === typeName);
             if (isTypeTab) {
                 // type tab
-                tabLink.innerHTML = '<i class="icon-reorder"></i> '+typeName;
+                this.setTypeTabName(typeName, tabLink);
             }
             else {
-                // node tab
+                // instance tab
                 var store = Store.getStore(typeName, 'en');
-                when(store.get(Model.getOid(typeName, id)), lang.hitch(this, function(node) {
-                        this.setNodeTabName(node, tabLink);
+                when(store.get(Model.getOid(typeName, id)), lang.hitch(this, function(entity) {
+                        this.setInstanceTabName(entity, tabLink);
                     }), lang.hitch(this, function(error) {
                         closeTab(oid);
                     })
@@ -197,8 +198,12 @@ define([
             }
         },
 
-        setNodeTabName: function(node, tabLink) {
-            tabLink.innerHTML = '<i class="icon-file"></i> '+Model.getDisplayValue(node)+' ';
+        setTypeTabName: function(typeName, tabLink) {
+            tabLink.innerHTML = '<i class="icon-reorder"></i> '+typeName;
+        },
+
+        setInstanceTabName: function(entity, tabLink) {
+            tabLink.innerHTML = '<i class="icon-file"></i> '+Model.getDisplayValue(entity)+' ';
             var closeLink = domConstruct.create("span", {
                 class: "close-tab",
                 innerHTML: '&times;'
@@ -253,29 +258,29 @@ define([
         }
     });
 
-    NodeTabWidget.lastTabDef = {};
-    NodeTabWidget.tabDefs = null;
-    NodeTabWidget.initializeTabs = function() {
-        if (NodeTabWidget.tabDefs === null) {
-            NodeTabWidget.tabDefs = {};
+    EntityTabWidget.lastTabDef = {};
+    EntityTabWidget.tabDefs = null;
+    EntityTabWidget.initializeTabs = function() {
+        if (EntityTabWidget.tabDefs === null) {
+            EntityTabWidget.tabDefs = {};
             // initially add all root types
             for (var i=0, count=appConfig.rootTypes.length; i<count; i++) {
                 var typeName = appConfig.rootTypes[i];
-                NodeTabWidget.tabDefs[typeName] = {
+                EntityTabWidget.tabDefs[typeName] = {
                     oid: typeName
                 };
             }
             // add tabs opened by the user (stored in cookie)
-            var openNodeTabs = Cookie.get("openNodeTabs", {});
-            for (var key in openNodeTabs) {
-                var tabDef = openNodeTabs[key];
-                NodeTabWidget.tabDefs[tabDef.oid] = tabDef;
+            var openInstanceTabs = Cookie.get("openInstanceTabs", {});
+            for (var key in openInstanceTabs) {
+                var tabDef = openInstanceTabs[key];
+                EntityTabWidget.tabDefs[tabDef.oid] = tabDef;
             }
             var lastTab = Cookie.get("lastTab", {});
-            NodeTabWidget.lastTabDef = lastTab;
+            EntityTabWidget.lastTabDef = lastTab;
         }
     };
-    NodeTabWidget.initializeTabs();
+    EntityTabWidget.initializeTabs();
 
-    return NodeTabWidget;
+    return EntityTabWidget;
 });

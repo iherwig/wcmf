@@ -2,7 +2,7 @@ define( [
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dojo/text!./template/NodeRelationWidget.html"
+    "dojo/text!./template/EntityRelationWidget.html"
 ],
 function(
     declare,
@@ -13,7 +13,7 @@ function(
     return declare([_WidgetBase, _TemplatedMixin], {
 
         templateString: template,
-        nodeData: {},
+        entity: {},
         relation: {},
         headline: "",
 

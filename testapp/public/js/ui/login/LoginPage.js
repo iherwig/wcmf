@@ -49,8 +49,6 @@ define([
             new NavigationWidget({
                 titleOnly: true
             }, this.navigationNode);
-
-            this.setupRoutes();
         },
 
         startup: function() {

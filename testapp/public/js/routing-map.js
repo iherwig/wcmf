@@ -21,14 +21,14 @@ define(["dojo/_base/config", "require"], function (config, require) {
             widget: mid('./ui/home/HomePage'),
             layers: l.home || []
         },
-        nodeList: {
+        entityList: {
             schema: p + '/data/:type',
-            widget: mid('./ui/data/ListPage'),
+            widget: mid('./ui/data/EntityListPage'),
             layers: l.data || []
         },
-        node: {
+        entity: {
             schema: p + '/data/:type/:id',
-            widget: mid('./ui/data/NodePage'),
+            widget: mid('./ui/data/EntityPage'),
             layers: l.data || []
         },
         admin: {

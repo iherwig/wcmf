@@ -14,11 +14,11 @@ define([
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "../_include/widget/GridWidget",
-    "./widget/NodeTabWidget",
+    "./widget/EntityTabWidget",
     "../../persistence/Store",
     "../../action/Delete",
     "../../model/meta/Model",
-    "dojo/text!./template/ListPage.html"
+    "dojo/text!./template/EntityListPage.html"
 ], function (
     declare,
     lang,
@@ -35,7 +35,7 @@ define([
     _Notification,
     NavigationWidget,
     GridWidget,
-    NodeTabWidget,
+    EntityTabWidget,
     Store,
     Delete,
     Model,
@@ -57,11 +57,11 @@ define([
         postCreate: function() {
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - '+this.type);
-            
+
             var navi = new NavigationWidget({
             }, this.navigationNode);
             navi.setContentRoute(this.type);
-            navi.setActiveRoute("nodeList");
+            navi.setActiveRoute("entityList");
 
             // create tab panel widget
             var store = Store.getStore(this.type, 'en');
@@ -74,7 +74,7 @@ define([
             });
 
             // create type tab panel
-            new NodeTabWidget({
+            new EntityTabWidget({
                 router: this.router,
                 selectedTab: {
                     oid: this.type
@@ -87,7 +87,6 @@ define([
                     this.showNotification(data.notification);
                 }))
             );
-            this.setupRoutes();
         },
 
         getGridActions: function() {
@@ -96,8 +95,7 @@ define([
                 name: 'edit',
                 iconClass: 'icon-pencil',
                 execute: lang.hitch(this, function(data) {
-                    console.log('edit '+data.oid);
-                    var route = this.router.getRoute("node");
+                    var route = this.router.getRoute("entity");
                     var type = Model.getSimpleTypeName(Model.getTypeNameFromOid(data.oid));
                     var id = Model.getIdFromOid(data.oid);
                     var pathParams = { type:type, id:id };

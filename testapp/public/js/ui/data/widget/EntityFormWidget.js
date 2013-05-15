@@ -10,8 +10,8 @@ define( [
     "../../../model/meta/Model",
     "../../../persistence/Store",
     "../../../Loader",
-    "./NodeRelationWidget",
-    "dojo/text!./template/NodeFormWidget.html"
+    "./EntityRelationWidget",
+    "dojo/text!./template/EntityFormWidget.html"
 ],
 function(
     declare,
@@ -25,13 +25,13 @@ function(
     Model,
     Store,
     Loader,
-    NodeRelationWidget,
+    EntityRelationWidget,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _Notification], {
 
         templateString: template,
-        nodeData: {},
+        entity: {},
         type: null,
         formId: "",
         headline: "",
@@ -40,9 +40,9 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            this.type = Model.getTypeFromOid(this.nodeData.oid);
-            this.formId = "nodeForm_"+this.nodeData.oid;
-            this.headline = Model.getDisplayValue(this.nodeData);
+            this.type = Model.getTypeFromOid(this.entity.oid);
+            this.formId = "entityForm_"+this.entity.oid;
+            this.headline = Model.getDisplayValue(this.entity);
         },
 
         _setHeadlineAttr: function (val) {
@@ -60,7 +60,7 @@ function(
                 for (var i=0, count=attributes.length; i<count; i++) {
                     var attribute = attributes[i];
                     var attributeWidget = new TextBox({
-                        nodeData: this.nodeData,
+                        entity: this.entity,
                         attribute: attribute
                     });
                     this.own(attributeWidget.on('change', lang.hitch(this, function(value) {
@@ -74,8 +74,8 @@ function(
                 var relations = this.type.getRelations();
                 for (var i=0, count=relations.length; i<count; i++) {
                     var relation = relations[i];
-                    var relationWidget = new NodeRelationWidget({
-                        node: this.nodeData,
+                    var relationWidget = new EntityRelationWidget({
+                        entity: this.entity,
                         relation: relation
                     });
                     this.relationsNode.appendChild(relationWidget.domNode);
@@ -85,6 +85,9 @@ function(
 
         setModified: function(modified) {
             this.modified = modified;
+
+            var state = modified === true ? 'dirty' : 'clean';
+            this.entity.setState(state);
         },
 
         _save: function(e) {
@@ -92,10 +95,10 @@ function(
             e.preventDefault();
 
             if (this.modified) {
-                // update node from form data
+                // update entity from form data
                 var data = domForm.toObject(this.formId);
                 var store = Store.getStore(this.type.typeName, 'en');
-                data = lang.mixin(lang.clone(this.nodeData), data);
+                data = lang.mixin(lang.clone(this.entity), data);
 
                 query(".btn.save").button("loading");
                 this.hideNotification();
@@ -113,20 +116,19 @@ function(
                     else {
                         // success
                         for (var key in response) {
-                            if (this.nodeData.hasOwnProperty(key)) {
-                                if (this.nodeData[key] !== response[key]) {
+                            if (this.entity.hasOwnProperty(key)) {
+                                if (this.entity[key] !== response[key]) {
                                     // notify listeners
-                                    this.nodeData.set(key, response[key]);
+                                    this.entity.set(key, response[key]);
                                 }
                             }
                         }
-                        store.updateCache(this.nodeData);
                         this.showNotification({
                             type: "ok",
-                            message: "'"+Model.getDisplayValue(this.nodeData)+"' was successfully updated",
+                            message: "'"+Model.getDisplayValue(this.entity)+"' was successfully updated",
                             fadeOut: true
                         });
-                        this.set("headline", Model.getDisplayValue(this.nodeData));
+                        this.set("headline", Model.getDisplayValue(this.entity));
                         this.setModified(false);
                     }
                 }), lang.hitch(this, function(error) {
