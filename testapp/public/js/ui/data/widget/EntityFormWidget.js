@@ -63,9 +63,13 @@ function(
                         entity: this.entity,
                         attribute: attribute
                     });
-                    this.own(attributeWidget.on('change', lang.hitch(this, function(value) {
-                        this.setModified(true);
-                    })));
+                    this.own(attributeWidget.on('change', lang.hitch(this, function(widget) {
+                        var widgetValue = widget.get("value");
+                        var entityValue = this.entity.get(widget.attribute.name) || "";
+                        if (widgetValue !== entityValue) {
+                            this.setModified(true);
+                        }
+                    }, attributeWidget)));
                     var nodeToAppend = (attribute.isEditable) ? this.fieldsNodeLeft : this.fieldsNodeRight;
                     nodeToAppend.appendChild(attributeWidget.domNode);
                 }
@@ -86,7 +90,7 @@ function(
         setModified: function(modified) {
             this.modified = modified;
 
-            var state = modified === true ? 'dirty' : 'clean';
+            var state = modified === true ? "dirty" : "clean";
             this.entity.setState(state);
         },
 
@@ -139,6 +143,15 @@ function(
                         message: error.response.data.errorMessage || "Backend error"
                     });
                 }));
+            }
+        },
+
+        _reset: function(e) {
+            // prevent the page from navigating after submit
+            e.preventDefault();
+
+            if (this.modified) {
+                this.entity.reset();
             }
         }
     });
