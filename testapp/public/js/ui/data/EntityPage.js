@@ -90,7 +90,7 @@ define([
         },
 
         confirmLeave: function(url) {
-            if (this.entity.getState() === 'dirty') {
+            if (this.entity && this.entity.getState() === 'dirty') {
                 var deferred = new Deferred();
                 ConfirmDlg.showConfirm({
                     title: "Confirm Leave Page",
