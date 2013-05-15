@@ -68,7 +68,7 @@ define([
             navi.setContentRoute(this.type, id);
             navi.setActiveRoute("entity");
 
-            // create tab panel widget
+            // create widget when entity is loaded
             var store = Store.getStore(this.type, 'en');
             when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(entity) {
                 // allow to watch for changes of the object data
@@ -81,6 +81,7 @@ define([
                     message: error.message || "Backend error"
                 });
             }));
+
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
                     this.setTitle(appConfig.title+' - '+Model.getDisplayValue(data.entity));
@@ -107,21 +108,23 @@ define([
         },
 
         buildForm: function() {
+            // update title to real entity data
             this.setTitle(appConfig.title+' - '+Model.getDisplayValue(this.entity));
 
             new Loader("js/ui/data/widget/EntityFormWidget").then(lang.hitch(this, function(Widget) {
-                // create the entity form
-                var form = new Widget({
-                    entity: this.entity
+                // create the tab panel
+                var panel = new Widget({
+                    entity: this.entity,
+                    router: this.router
                 });
 
-                // create type tab panel
+                // create the tab container
                 new EntityTabWidget({
                     router: this.router,
                     selectedTab: {
                         oid: this.oid
                     },
-                    selectedPanel: form
+                    selectedPanel: panel
                 }, this.tabNode);
 
                 // setup routes on tab container after loading

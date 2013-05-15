@@ -13,11 +13,8 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
-    "../_include/widget/GridWidget",
     "./widget/EntityTabWidget",
-    "../../persistence/Store",
-    "../../action/Delete",
-    "../../model/meta/Model",
+    "../../Loader",
     "dojo/text!./template/EntityListPage.html"
 ], function (
     declare,
@@ -34,11 +31,8 @@ define([
     _Page,
     _Notification,
     NavigationWidget,
-    GridWidget,
     EntityTabWidget,
-    Store,
-    Delete,
-    Model,
+    Loader,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -63,24 +57,8 @@ define([
             navi.setContentRoute(this.type);
             navi.setActiveRoute("entityList");
 
-            // create tab panel widget
-            var store = Store.getStore(this.type, 'en');
-            var gridWidget = new GridWidget({
-                request: this.request,
-                router: this.router,
-                store: store,
-                type: Model.getType(this.type),
-                actions: this.getGridActions()
-            });
-
-            // create type tab panel
-            new EntityTabWidget({
-                router: this.router,
-                selectedTab: {
-                    oid: this.type
-                },
-                selectedPanel: gridWidget
-            }, this.tabNode);
+            // create widget
+            this.buildForm();
 
             this.own(
                 topic.subscribe('ui/_include/widget/GridWidget/unknown-error', lang.hitch(this, function(data) {
@@ -89,48 +67,26 @@ define([
             );
         },
 
-        getGridActions: function() {
+        buildForm: function() {
+            new Loader("js/ui/data/widget/EntityListWidget").then(lang.hitch(this, function(Widget) {
+                // create the tab panel
+                var panel = new Widget({
+                    type: this.type,
+                    router: this.router
+                });
 
-            var editAction = {
-                name: 'edit',
-                iconClass: 'icon-pencil',
-                execute: lang.hitch(this, function(data) {
-                    var route = this.router.getRoute("entity");
-                    var type = Model.getSimpleTypeName(Model.getTypeNameFromOid(data.oid));
-                    var id = Model.getIdFromOid(data.oid);
-                    var pathParams = { type:type, id:id };
-                    var url = route.assemble(pathParams);
-                    this.push(url);
-                })
-            };
+                // create the tab container
+                new EntityTabWidget({
+                    router: this.router,
+                    selectedTab: {
+                        oid: this.type
+                    },
+                    selectedPanel: panel
+                }, this.tabNode);
 
-            var duplicateAction = {
-                name: 'duplicate',
-                iconClass:  'icon-copy',
-                execute: function(data) {
-                    console.log('duplicate '+data.oid);
-                }
-            };
-
-            var deleteAction = new Delete(lang.hitch(this, function(data) {
-                    this.hideNotification();
-                }), lang.hitch(this, function(data, result) {
-                    // success
-                    this.showNotification({
-                        type: "ok",
-                        message: "'"+Model.getDisplayValue(data)+"' was successfully deleted",
-                        fadeOut: true
-                    });
-                }), lang.hitch(this, function(data, result) {
-                    // error
-                    this.showNotification({
-                        type: "error",
-                        message: "Backend error"
-                    });
-                })
-            );
-
-            return [editAction, duplicateAction, deleteAction];
+                // setup routes on tab container after loading
+                this.setupRoutes();
+            }));
         }
     });
 });

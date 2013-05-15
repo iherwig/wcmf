@@ -3,58 +3,40 @@ define([
     "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dojomat/_StateAware",
     "dgrid/OnDemandGrid",
     "dgrid/Selection",
     "dgrid/Keyboard",
     "dgrid/extensions/ColumnHider",
     "dgrid/extensions/ColumnResizer",
-    "dgrid/editor",
-    "dojo/store/Observable",
-    "dojo/dom-construct",
-    "dojo/dom-style",
     "dojo/dom-attr",
-    "dojo/dom-class",
     "dojo/query",
-    "dojo/NodeList-traverse",
     "dojo/window",
-    "dojo/aspect",
     "dojo/topic",
     "dojo/on",
-    "dojo/when",
-    "dojo/promise/all",
+    "../../../model/meta/Model",
+    "../../../persistence/Store",
     "dojo/text!./template/GridWidget.html"
 ], function (
     declare,
     lang,
     _WidgetBase,
     _TemplatedMixin,
-    _StateAware,
     OnDemandGrid,
     Selection,
     Keyboard,
     ColumnHider,
     ColumnResizer,
-    editor,
-    Observable,
-    domConstruct,
-    domStyle,
     domAttr,
-    domClass,
     query,
-    traverse,
     win,
-    aspect,
     topic,
     on,
-    when,
-    all,
+    Model,
+    Store,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _StateAware], {
+    return declare([_WidgetBase, _TemplatedMixin], {
 
-        router: null,
-        store: null,
         type: null,
         actions: [],
         actionsByName: {},
@@ -65,17 +47,17 @@ define([
             declare.safeMixin(this, params);
 
             if (params.actions) {
-              for (var i=0,count=params.actions.length; i<count; i++) {
-                var action = params.actions[i];
-                this.actionsByName[action.name] = action;
-              }
+                for (var i=0,count=params.actions.length; i<count; i++) {
+                    var action = params.actions[i];
+                    this.actionsByName[action.name] = action;
+                }
             }
         },
 
         postCreate: function () {
             this.inherited(arguments);
             this.gridWidget = this.buildGrid();
-            this.gridWidget.set("store", this.store);
+            this.gridWidget.set("store", Store.getStore(this.type, 'en'));
             this.own(
                 on(window, "resize", lang.hitch(this, this.onResize)),
                 on(this.gridWidget, "click", lang.hitch(this, function(e) {
@@ -106,7 +88,8 @@ define([
                 sortable: true
             }];
 
-            var displayValues = this.type.displayValues;
+            var typeClass = Model.getType(this.type);
+            var displayValues = typeClass.displayValues;
             for (var i=0, count=displayValues.length; i<count; i++) {
                 var curValue = displayValues[i];
                 columns.push({
@@ -177,26 +160,13 @@ define([
                 //console.dir(evt);
             }));
 
-            //var loadHandle = aspect.after(gridWidget, '_trackError', lang.hitch(this, function (promiseOrResult) {
-            /*
-            var loadHandle = aspect.after(this.store, 'query', lang.hitch(this, function (promiseOrResult) {
-                when(
-                    promiseOrResult,
-                    lang.hitch(this, function (data) {
-                        if (data.length) {
-                            loadHandle.remove(); // only run once and remove when data has loaded
-                        }
-                    })
-                );
-                return promiseOrResult;
-            }));*/
-
             return gridWidget;
         },
 
         onResize: function() {
+            // TODO: remove magic number
             var vs = win.getBox();
-            var h = vs.h-185;
+            var h = vs.h-220;
             if (h >= 0){
                 domAttr.set(this.gridWidget.domNode, "style", {height: h+"px"});
             }
