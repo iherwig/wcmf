@@ -50,7 +50,7 @@ define([
 
         setContentRoute: function(type, id) {
             var contentNavNode = dojo.query("#navContent");
-            contentNavNode.attr("data-dojorama-route", id !== undefined ? "node" : "nodeList");
+            contentNavNode.attr("data-dojorama-route", id !== undefined ? "entity" : "entityList");
             var routeParamStr = "type: '"+type+"'";
             if (id !== undefined) {
               routeParamStr += ", id: '"+id+"'";

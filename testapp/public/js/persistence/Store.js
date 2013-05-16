@@ -8,6 +8,7 @@ define([
     "dojo/store/Cache",
     "dojo/store/Memory",
     "dojo/store/Observable",
+    "dojox/uuid/generateRandomUuid",
     "./Entity",
     "../model/meta/Model"
 ], function (
@@ -20,6 +21,7 @@ define([
     Cache,
     Memory,
     Observable,
+    uuid,
     Entity,
     Model
 ) {
@@ -46,9 +48,17 @@ define([
           });
           aspect.around(this, "put", function(original) {
               return function(object, options) {
+                  var isUpdate = options.overwrite;
+                  var objectTmp = object.getCleanCopy ? object.getCleanCopy() : object;
                   var optionsTmp = lang.clone(options);
-                  optionsTmp.id = Model.getIdFromOid(object.oid);
-                  return original.call(this, object, optionsTmp);
+
+                  // set real id only if an existing object is updated
+                  // otherwise set to undefined
+                  optionsTmp.id = isUpdate ? Model.getIdFromOid(object.oid) : undefined;
+                  if (!isUpdate) {
+                      objectTmp.oid = Model.getOid(Model.getTypeNameFromOid(objectTmp.oid), this.createBackEndDummyId());
+                  }
+                  return original.call(this, objectTmp, optionsTmp);
               };
           });
           aspect.around(this, "remove", function(original) {
@@ -62,7 +72,12 @@ define([
       updateCache: function(object) {
           var memory = kernel.global.storeInstances[this.typeName][this.language].memory;
           memory.put(object);
+      },
+
+      createBackEndDummyId: function() {
+          return 'wcmf'+uuid().replace(/-/g, '');
       }
+
 
       // TODO:
       // implement DojoNodeSerializer on server that uses refs

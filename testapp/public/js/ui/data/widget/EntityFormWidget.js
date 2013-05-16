@@ -1,6 +1,7 @@
 define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/topic",
     "dojo/dom-form",
     "dojo/query",
     "dijit/_WidgetBase",
@@ -9,6 +10,7 @@ define( [
     "bootstrap/Button",
     "../../../model/meta/Model",
     "../../../persistence/Store",
+    "../../../action/Edit",
     "../../../Loader",
     "./EntityRelationWidget",
     "dojo/text!./template/EntityFormWidget.html"
@@ -16,6 +18,7 @@ define( [
 function(
     declare,
     lang,
+    topic,
     domForm,
     query,
     _WidgetBase,
@@ -24,6 +27,7 @@ function(
     Button,
     Model,
     Store,
+    Edit,
     Loader,
     EntityRelationWidget,
     template
@@ -33,16 +37,19 @@ function(
         templateString: template,
         entity: {},
         type: null,
+        router: null,
         formId: "",
         headline: "",
+        isNew: false,
         modified: false,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            this.type = Model.getTypeFromOid(this.entity.oid);
+            this.type = Model.getTypeNameFromOid(this.entity.oid);
             this.formId = "entityForm_"+this.entity.oid;
             this.headline = Model.getDisplayValue(this.entity);
+            this.isNew = Model.isDummyOid(this.entity.oid);
         },
 
         _setHeadlineAttr: function (val) {
@@ -54,9 +61,10 @@ function(
 
             // TODO: load input widgets referenced in attributes' input type
             new Loader("js/ui/data/widget/TextBox").then(lang.hitch(this, function(TextBox) {
+                var typeClass = Model.getType(this.type);
 
                 // add attribute widgets
-                var attributes = this.type.getAttributes('DATATYPE_ATTRIBUTE');
+                var attributes = typeClass.getAttributes('DATATYPE_ATTRIBUTE');
                 for (var i=0, count=attributes.length; i<count; i++) {
                     var attribute = attributes[i];
                     var attributeWidget = new TextBox({
@@ -75,7 +83,7 @@ function(
                 }
 
                 // add relation widgets
-                var relations = this.type.getRelations();
+                var relations = typeClass.getRelations();
                 for (var i=0, count=relations.length; i<count; i++) {
                     var relation = relations[i];
                     var relationWidget = new EntityRelationWidget({
@@ -101,13 +109,14 @@ function(
             if (this.modified) {
                 // update entity from form data
                 var data = domForm.toObject(this.formId);
-                var store = Store.getStore(this.type.typeName, 'en');
+                var store = Store.getStore(this.type, 'en');
                 data = lang.mixin(lang.clone(this.entity), data);
 
                 query(".btn.save").button("loading");
                 this.hideNotification();
 
-                store.put(data, {overwrite: true}).then(lang.hitch(this, function(response) {
+                var storeMethod = this.isNew ? "add" : "put";
+                store[storeMethod](data, {overwrite: !this.isNew}).then(lang.hitch(this, function(response) {
                     // callback completes
                     query(".btn.save").button("reset");
                     if (response.errorMessage) {
@@ -119,18 +128,31 @@ function(
                     }
                     else {
                         // success
-                        for (var key in response) {
-                            if (this.entity.hasOwnProperty(key)) {
-                                if (this.entity[key] !== response[key]) {
-                                    // notify listeners
-                                    this.entity.set(key, response[key]);
-                                }
+                        var typeClass = Model.getType(this.type);
+                        var attributes = typeClass.getAttributes();
+                        for (var i=0, count=attributes.length; i<count; i++) {
+                            var attributeName = attributes[i].name;
+                            if (this.entity[attributeName] !== response[attributeName]) {
+                                // notify listeners
+                                this.entity.set(attributeName, response[attributeName]);
                             }
                         }
+                        this.entity.set('oid', response.oid);
                         this.showNotification({
                             type: "ok",
-                            message: "'"+Model.getDisplayValue(this.entity)+"' was successfully updated",
-                            fadeOut: true
+                            message: "'"+Model.getDisplayValue(this.entity)+"' was successfully " + (this.isNew ? "created" : "updated"),
+                            fadeOut: true,
+                            onHide: lang.hitch(this, function() {
+                                if (this.isNew) {
+                                    this.isNew = false;
+                                    // destroy page before navigage in order to notify tab panel
+                                    topic.publish("tab-closed", Model.createDummyOid(this.type));
+                                    // navigate to edit page
+                                    new Edit({
+                                        router: this.router
+                                    }).execute(this.entity);
+                                }
+                            })
                         });
                         this.set("headline", Model.getDisplayValue(this.entity));
                         this.setModified(false);

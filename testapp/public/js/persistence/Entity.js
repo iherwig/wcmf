@@ -2,12 +2,14 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
-    "dojo/Stateful"
+    "dojo/Stateful",
+    "../model/meta/Model"
 ], function(
     declare,
     lang,
     topic,
-    Stateful
+    Stateful,
+    Model
 ) {
     /**
      * Entity inherits observer capabilities from Stateful
@@ -17,7 +19,7 @@ define([
      */
     return declare([Stateful], {
 
-        _state: 'clean', /* clean, dirty, new, deleted */
+        _state: "clean", /* clean, dirty, new, deleted */
         _initialData: {},
 
         constructor: function(args) {
@@ -67,6 +69,18 @@ define([
                 this.set(key, this._initialData[key]);
             }
             this.setState("clean");
+        },
+
+        getCleanCopy: function() {
+            var typeClass = Model.getTypeFromOid(this.oid);
+            var attributes = typeClass.getAttributes();
+            var copy = {};
+            for (var i=0, count=attributes.length; i<count; i++) {
+                var attributeName = attributes[i].name;
+                copy[attributeName] = this[attributeName] || "";
+            }
+            copy.oid = this.oid;
+            return copy;
         }
-    });
+  });
 });

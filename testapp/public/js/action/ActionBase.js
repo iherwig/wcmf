@@ -1,28 +1,30 @@
 define([
-    "dojo/_base/declare"
+    "dojo/_base/declare",
+    "dojomat/_StateAware"
 ], function (
-    declare
+    declare,
+    _StateAware
 ) {
-    return declare(null, {
+    return declare([_StateAware], {
 
         name: '',
         iconClass:  'icon-asterisk',
+        router: null,
+        init: null,
         callback: null,
         errback: null,
         progback: null,
 
         /**
          * Constructor
-         * @param init Function to be before action is executed
-         * @param callback Function to be called on success
-         * @param errback Function to be called on error
-         * @param progback Functoin to be called to signal a progress
+         * @param router Instance of routed/Router
+         * @param init Function to be before action is executed (optional)
+         * @param callback Function to be called on success (optional)
+         * @param errback Function to be called on error (optional)
+         * @param progback Function to be called to signal a progress (optional)
          */
-        constructor: function(init, callback, errback, progback) {
-            this.init = init;
-            this.callback = callback;
-            this.errback = errback;
-            this.progback = progback;
+        constructor: function(args) {
+            declare.safeMixin(this, args);
         },
 
         /**

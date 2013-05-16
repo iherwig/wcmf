@@ -28,7 +28,15 @@ define([
                     try {
                         original.call(this);
                     }
-                    catch (e) {}
+                    catch (e) {
+                        console.error(e.message);
+                        if (this.showNotification) {
+                            this.showNotification({
+                                type: "error",
+                                message: e
+                            });
+                        }
+                    }
                     finally {
                         this.setupRoutes();
                     }

@@ -18,7 +18,8 @@ define([
      * showNotification({
      *      type: "error",
      *      message: "Backend error",
-     *      fadeOut: false
+     *      fadeOut: false,
+     *      onHide: function () {}
      * });
      * @endcode
      */
@@ -61,11 +62,19 @@ define([
                     })
                 }).play();
             }
+
+            this.onHide = undefined;
+            if (options.onHide instanceof Function) {
+                this.onHide = options.onHide;
+            }
         },
 
         hideNotification: function () {
             if (this.widget) {
                 this.widget.destroyRecursive();
+            }
+            if (this.onHide instanceof Function) {
+                this.onHide();
             }
         }
     });

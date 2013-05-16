@@ -3,11 +3,12 @@ define( [
     "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dojomat/_StateAware",
     "../../_include/_NotificationMixin",
     "../../_include/widget/GridWidget",
     "bootstrap/Button",
     "../../../model/meta/Model",
+    "../../../action/Create",
+    "../../../action/Edit",
     "../../../action/Delete",
     "dojo/text!./template/EntityListWidget.html"
 ],
@@ -16,15 +17,16 @@ function(
     lang,
     _WidgetBase,
     _TemplatedMixin,
-    _StateAware,
     _Notification,
     GridWidget,
     Button,
     Model,
+    Create,
+    Edit,
     Delete,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _StateAware, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _Notification], {
 
         templateString: template,
         type: null,
@@ -45,18 +47,9 @@ function(
 
         getGridActions: function() {
 
-            var editAction = {
-                name: 'edit',
-                iconClass: 'icon-pencil',
-                execute: lang.hitch(this, function(data) {
-                    var route = this.router.getRoute("entity");
-                    var type = Model.getSimpleTypeName(Model.getTypeNameFromOid(data.oid));
-                    var id = Model.getIdFromOid(data.oid);
-                    var pathParams = { type:type, id:id };
-                    var url = route.assemble(pathParams);
-                    this.push(url);
-                })
-            };
+            var editAction = new Edit({
+                router: this.router
+            });
 
             var duplicateAction = {
                 name: 'duplicate',
@@ -66,23 +59,27 @@ function(
                 }
             };
 
-            var deleteAction = new Delete(lang.hitch(this, function(data) {
+            var deleteAction = new Delete({
+                router: this.router,
+                init: lang.hitch(this, function(data) {
                     this.hideNotification();
-                }), lang.hitch(this, function(data, result) {
+                }),
+                callback: lang.hitch(this, function(data, result) {
                     // success
                     this.showNotification({
                         type: "ok",
                         message: "'"+Model.getDisplayValue(data)+"' was successfully deleted",
                         fadeOut: true
                     });
-                }), lang.hitch(this, function(data, result) {
+                }),
+                errback: lang.hitch(this, function(data, result) {
                     // error
                     this.showNotification({
                         type: "error",
                         message: "Backend error"
                     });
                 })
-            );
+            });
 
             return [editAction, duplicateAction, deleteAction];
         },
@@ -90,7 +87,10 @@ function(
         _create: function(e) {
             // prevent the page from navigating after submit
             e.preventDefault();
-            console.log("create "+this.type);
+
+            new Create({
+                router: this.router
+            }).execute(this.type);
         }
     });
 });

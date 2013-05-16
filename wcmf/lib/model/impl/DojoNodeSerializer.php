@@ -44,8 +44,7 @@ class DojoNodeSerializer implements NodeSerializer {
     if (is_object($data)) {
       $data = (array)$data;
     }
-    $syntaxOk = (is_array($data) &&
-            (isset($data['oid'])));
+    $syntaxOk = (is_array($data) && (isset($data['oid'])));
     // check for oid variables
     if ($syntaxOk && isset($data['oid']) && preg_match('/^\{.+\}$/', $data['oid'])) {
       $syntaxOk = false;

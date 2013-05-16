@@ -8,7 +8,6 @@ define([
     "dojo/on",
     "dojo/when",
     "dojo/topic",
-    "dojo/promise/Promise",
     "bootstrap/Tab",
     "dojomat/_StateAware",
     "dijit/_WidgetBase",
@@ -27,7 +26,6 @@ define([
     on,
     when,
     topic,
-    Promise,
     Tab,
     _StateAware,
     _WidgetBase,
@@ -46,6 +44,9 @@ define([
      * That implies that the tab panel is expected to be newly instantiated
      * on each view and while all tab links are created only the currently
      * displayed tab panel (given in the selectedPanel property) is added.
+     *
+     * Tab panel subscribes to the 'tab-closed' event, which may be emitted in order
+     * to close a specific tab programatically.
      *
      * Example usage to instantiate the tab panel to display entities of
      * the type 'Author':
@@ -86,6 +87,9 @@ define([
                     if (tablinks.length > 0) {
                         this.setInstanceTabName(data.entity, tablinks[0]);
                     }
+                })),
+                topic.subscribe("tab-closed", lang.hitch(this, function(oid) {
+                    this.unpersistTab({ oid:oid });
                 }))
             );
         },
@@ -188,13 +192,19 @@ define([
             }
             else {
                 // instance tab
-                var store = Store.getStore(typeName, 'en');
-                when(store.get(Model.getOid(typeName, id)), lang.hitch(this, function(entity) {
-                        this.setInstanceTabName(entity, tabLink);
-                    }), lang.hitch(this, function(error) {
-                        closeTab(oid);
-                    })
-                );
+                var isNew = Model.isDummyOid(oid);
+                if (isNew) {
+                    this.setInstanceTabName({ oid:oid }, tabLink);
+                }
+                else {
+                    var store = Store.getStore(typeName, 'en');
+                    when(store.get(Model.getOid(typeName, id)), lang.hitch(this, function(entity) {
+                            this.setInstanceTabName(entity, tabLink);
+                        }), lang.hitch(this, function(error) {
+                            this.closeTab(oid);
+                        })
+                    );
+                }
             }
         },
 
@@ -202,7 +212,7 @@ define([
             tabLink.innerHTML = '<i class="icon-reorder"></i> '+typeName;
         },
 
-        setInstanceTabName: function(entity, tabLink) {
+        setInstanceTabName: function(entity, tabLink, create) {
             tabLink.innerHTML = '<i class="icon-file"></i> '+Model.getDisplayValue(entity)+' ';
             var closeLink = domConstruct.create("span", {
                 class: "close-tab",

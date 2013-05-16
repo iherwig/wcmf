@@ -49,17 +49,20 @@ define([
         type: null,
         oid: null,
         entity: null,
+        isNew: false,
 
         constructor: function(params) {
             this.request = params.request;
             this.session = params.session;
             this.type = this.request.getPathParam("type");
-            this.oid = Model.getOid(this.type, this.request.getPathParam("id"));
+
+            var idParam = this.request.getPathParam("id");
+            this.oid = Model.getOid(this.type, idParam);
+            this.isNew = Model.isDummyOid(this.oid);
         },
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+this.oid);
 
             var id = Model.getIdFromOid(this.oid);
 
@@ -68,19 +71,33 @@ define([
             navi.setContentRoute(this.type, id);
             navi.setActiveRoute("entity");
 
-            // create widget when entity is loaded
-            var store = Store.getStore(this.type, 'en');
-            when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(entity) {
-                // allow to watch for changes of the object data
-                this.entity = new Entity(entity);
-                this.buildForm();
-            }), lang.hitch(this, function(error) {
-                // error
-                this.showNotification({
-                    type: "error",
-                    message: error.message || "Backend error"
+            if (!this.isNew) {
+                this.setTitle(appConfig.title+' - '+this.oid);
+
+                // create widget when entity is loaded
+                var store = Store.getStore(this.type, 'en');
+                when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(entity) {
+                    // allow to watch for changes of the object data
+                    this.entity = new Entity(entity);
+                    this.buildForm();
+                    this.setTitle(appConfig.title+' - '+Model.getDisplayValue(this.entity));
+                }), lang.hitch(this, function(error) {
+                    // error
+                    this.showNotification({
+                        type: "error",
+                        message: error.message || "Backend error"
+                    });
+                }));
+            }
+            else {
+                // create a new entity instance
+                this.entity = new Entity({
+                    oid: this.oid
                 });
-            }));
+                this.entity.setState("new");
+                this.buildForm();
+                this.setTitle(appConfig.title+' - New '+this.type);
+            }
 
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
@@ -108,9 +125,6 @@ define([
         },
 
         buildForm: function() {
-            // update title to real entity data
-            this.setTitle(appConfig.title+' - '+Model.getDisplayValue(this.entity));
-
             new Loader("js/ui/data/widget/EntityFormWidget").then(lang.hitch(this, function(Widget) {
                 // create the tab panel
                 var panel = new Widget({

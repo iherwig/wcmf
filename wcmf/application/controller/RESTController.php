@@ -191,7 +191,7 @@ class RESTController extends Controller {
     $response = $this->getResponse();
 
     // in case of success, return object only
-    $oidStr = $this->getFirstRequestOid();
+    $oidStr = $subResponse->hasValue('oid') ? $subResponse->getValue('oid')->__toString() : '';
     if (!$subResponse->hasErrors() && $subResponse->hasValue($oidStr)) {
       $object = $subResponse->getValue($oidStr);
       $response->clearValues();

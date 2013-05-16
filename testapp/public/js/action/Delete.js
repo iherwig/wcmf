@@ -23,7 +23,9 @@ define([
          * @param data Object to delete
          */
         execute: function(data) {
-            this.init(data);
+            if (this.init instanceof Function) {
+                this.init(data);
+            }
             ConfirmDlg.showConfirm({
                 title: "Confirm Object Deletion",
                 content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",

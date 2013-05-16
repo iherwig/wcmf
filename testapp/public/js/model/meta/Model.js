@@ -120,10 +120,15 @@ define([
         var result = '';
         var type = Model.getTypeFromOid(object.oid);
         if (type) {
-            for (var i=0; i<type.displayValues.length; i++) {
-                result += object[type.displayValues[i]]+" | ";
+            if (Model.isDummyOid(object.oid)) {
+                result = "New "+Model.getSimpleTypeName(type.typeName);
             }
-            result = result.substring(0, result.length-3);
+            else {
+                for (var i=0; i<type.displayValues.length; i++) {
+                    result += object[type.displayValues[i]]+" | ";
+                }
+                result = result.substring(0, result.length-3);
+            }
         }
         else {
             result = object.oid || "unknown";
@@ -132,13 +137,22 @@ define([
     };
 
     /**
-     * Get a random unique object id for a given type
+     * Get a dummy object id for a given type
      * @param type The type
      * @return String
      */
-    Model.createRandomOid = function(type) {
-        var oid = type+":"+dojox.uuid.generateRandomUuid();
+    Model.createDummyOid = function(type) {
+        var oid = type+":~";
         return oid;
+    };
+
+    /**
+     * Get if the given oid is a dummy id
+     * @param oid The object id
+     * @return Boolean
+     */
+    Model.isDummyOid = function(oid) {
+        return oid.match(/:~$/) !== null;
     };
 
     /**
