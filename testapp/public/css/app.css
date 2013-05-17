@@ -2,7 +2,7 @@
 /*@import '../vendor/dojo/dijit/themes/claro/claro.css';*/
 @import '../vendor/twitter-bootstrap/css/bootstrap.css';
 @import '../vendor/twitter-bootstrap/css/bootstrap-responsive.css';
-@import '../vendor/font-awesome/css/font-awesome.css';
+@import '../vendor/font-awesome/build/assets/font-awesome/css/font-awesome.css';
 
 /* Sticky footer styles
 -------------------------------------------------- */
@@ -92,8 +92,16 @@ th {
   font-weight: normal;
 }
 
+th.field-actions-2, td.field-actions-2 {
+  width: 51px;
+}
+
 th.field-actions-3, td.field-actions-3 {
   width: 76px;
+}
+
+th.field-actions-4, td.field-actions-4 {
+  width: 101px;
 }
 
 .close-tab {

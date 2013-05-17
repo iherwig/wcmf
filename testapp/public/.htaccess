@@ -5,15 +5,15 @@ RewriteBase /ingo/wcmf/testapp/public
 RewriteCond %{REQUEST_URI} (js|vendor|css|images|)/.+\..+
 RewriteRule ^[^/]+/((js|vendor|css|images|)/.*)$ $1
 
-# rest
+# restful interface handled by main.php
 # we expect urls like:
-#    rest/en/Document/
-#    rest/en/Document/12
-#    rest/en/Document/Document:12
+#    rest/en/Author/
+#    rest/en/Author/12
+#    rest/en/Author/12/Book
 RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2 [QSA,L]
 RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)$ main.php?action=restAction&collection=0&language=$1&className=$2&id=$3 [QSA,L]
-RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([A-Za-z0-9\.\:]+)$ main.php?action=restAction&collection=0&language=$1&className=$2&oid=$3 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)/([^\/]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2&id=$3&relation=$4 [QSA,L]
 
-# map all requests to not existing files to index.html
+# map all requests to not existing files to index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php [QSA,L]

@@ -89,7 +89,7 @@ define([
                     }
                 })),
                 topic.subscribe("tab-closed", lang.hitch(this, function(oid) {
-                    this.unpersistTab({ oid:oid });
+                    this.closeTab(oid);
                 }))
             );
         },

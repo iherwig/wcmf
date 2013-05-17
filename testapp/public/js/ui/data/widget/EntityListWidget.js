@@ -7,6 +7,7 @@ define( [
     "../../_include/widget/GridWidget",
     "bootstrap/Button",
     "../../../model/meta/Model",
+    "../../../persistence/Store",
     "../../../action/Create",
     "../../../action/Edit",
     "../../../action/Delete",
@@ -21,6 +22,7 @@ function(
     GridWidget,
     Button,
     Model,
+    Store,
     Create,
     Edit,
     Delete,
@@ -41,6 +43,7 @@ function(
 
             new GridWidget({
                 type: this.type,
+                store: Store.getStore(this.type, 'en'),
                 actions: this.getGridActions()
             }, this.gridNode);
         },

@@ -1,5 +1,4 @@
 define([
-    "dojo/_base/xhr",
     "dojo/_base/lang",
     "dojo/_base/declare",
     "dojo/_base/kernel",
@@ -9,10 +8,8 @@ define([
     "dojo/store/Memory",
     "dojo/store/Observable",
     "dojox/uuid/generateRandomUuid",
-    "./Entity",
     "../model/meta/Model"
 ], function (
-    xhr,
     lang,
     declare,
     kernel,
@@ -22,66 +19,65 @@ define([
     Memory,
     Observable,
     uuid,
-    Entity,
     Model
 ) {
     var Store = declare([JsonRest], {
 
-      idProperty: 'oid',
-      typeName: '',
-      language: '',
+        idProperty: 'oid',
+        typeName: '',
+        language: '',
 
-      constructor: function(options) {
-          options.headers = {
-              Accept: 'application/javascript, application/json'
-          };
-          this.inherited(arguments);
+        constructor: function(options) {
+            options.headers = {
+                Accept: 'application/javascript, application/json'
+            };
+            this.inherited(arguments);
 
-          // set id property in order to have url like /{type}/{id}
-          // instead of /{type}/{oid}
-          // NOTE: this has to be set on cloned options!
-          aspect.around(this, "get", function(original) {
-              return function(oid, options) {
-                  var id = Model.getIdFromOid(oid);
-                  return original.call(this, id, options);
-              };
-          });
-          aspect.around(this, "put", function(original) {
-              return function(object, options) {
-                  var isUpdate = options.overwrite;
-                  var objectTmp = object.getCleanCopy ? object.getCleanCopy() : object;
-                  var optionsTmp = lang.clone(options);
+            // set id property in order to have url like /{type}/{id}
+            // instead of /{type}/{oid}
+            // NOTE: this has to be set on cloned options!
+            aspect.around(this, "get", function(original) {
+                return function(oid, options) {
+                    var id = Model.getIdFromOid(oid);
+                    return original.call(this, id, options);
+                };
+            });
+            aspect.around(this, "put", function(original) {
+                return function(object, options) {
+                    var isUpdate = options.overwrite;
+                    var objectTmp = object.getCleanCopy ? object.getCleanCopy() : object;
+                    var optionsTmp = lang.clone(options);
 
-                  // set real id only if an existing object is updated
-                  // otherwise set to undefined
-                  optionsTmp.id = isUpdate ? Model.getIdFromOid(object.oid) : undefined;
-                  if (!isUpdate) {
-                      objectTmp.oid = Model.getOid(Model.getTypeNameFromOid(objectTmp.oid), this.createBackEndDummyId());
-                  }
-                  return original.call(this, objectTmp, optionsTmp);
-              };
-          });
-          aspect.around(this, "remove", function(original) {
-              return function(oid, options) {
-                  var id = Model.getIdFromOid(oid);
-                  return original.call(this, id, options);
-              };
-          });
-      },
+                    // set real id only if an existing object is updated
+                    // otherwise set to undefined
+                    optionsTmp.id = isUpdate ? Model.getIdFromOid(object.oid) : undefined;
+                    if (!isUpdate) {
+                        objectTmp.oid = Model.getOid(Model.getTypeNameFromOid(objectTmp.oid), this.createBackEndDummyId());
+                    }
+                    return original.call(this, objectTmp, optionsTmp);
+                };
+            });
+            aspect.around(this, "remove", function(original) {
+                return function(oid, options) {
+                    var id = Model.getIdFromOid(oid);
+                    return original.call(this, id, options);
+                };
+            });
+        },
 
-      updateCache: function(object) {
-          var memory = kernel.global.storeInstances[this.typeName][this.language].memory;
-          memory.put(object);
-      },
+        updateCache: function(object) {
+            var memory = kernel.global.storeInstances[this.typeName][this.language].memory;
+            memory.put(object);
+        },
 
-      createBackEndDummyId: function() {
-          return 'wcmf'+uuid().replace(/-/g, '');
-      }
+        createBackEndDummyId: function() {
+            return 'wcmf'+uuid().replace(/-/g, '');
+        }
 
 
-      // TODO:
-      // implement DojoNodeSerializer on server that uses refs
-      // http://dojotoolkit.org/reference-guide/1.7/dojox/json/ref.html#dojox-json-ref
+        // TODO:
+        // implement DojoNodeSerializer on server that uses refs
+        // http://dojotoolkit.org/reference-guide/1.7/dojox/json/ref.html#dojox-json-ref
     });
 
     /**
@@ -109,7 +105,7 @@ define([
             var jsonRest = new Store({
                 typeName: fqTypeName,
                 language: language,
-                target: appConfig.pathPrefix+"/rest/"+language+"/"+fqTypeName+"/"/*+"/?XDEBUG_SESSION_START=netbeans-xdebug"*/
+                target: appConfig.pathPrefix+"/rest/"+language+"/"+fqTypeName+"/"
             });
             var cache = new Observable(new Cache(
                 jsonRest,

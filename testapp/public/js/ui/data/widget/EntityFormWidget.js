@@ -11,6 +11,7 @@ define( [
     "../../../model/meta/Model",
     "../../../persistence/Store",
     "../../../action/Edit",
+    "../../../action/Delete",
     "../../../Loader",
     "./EntityRelationWidget",
     "dojo/text!./template/EntityFormWidget.html"
@@ -28,6 +29,7 @@ function(
     Model,
     Store,
     Edit,
+    Delete,
     Loader,
     EntityRelationWidget,
     template
@@ -88,7 +90,8 @@ function(
                     var relation = relations[i];
                     var relationWidget = new EntityRelationWidget({
                         entity: this.entity,
-                        relation: relation
+                        relation: relation,
+                        router: this.router
                     });
                     this.relationsNode.appendChild(relationWidget.domNode);
                 }
@@ -100,6 +103,15 @@ function(
 
             var state = modified === true ? "dirty" : "clean";
             this.entity.setState(state);
+        },
+
+        _reset: function(e) {
+            // prevent the page from navigating after submit
+            e.preventDefault();
+
+            if (this.modified) {
+                this.entity.reset();
+            }
         },
 
         _save: function(e) {
@@ -145,7 +157,7 @@ function(
                             onHide: lang.hitch(this, function() {
                                 if (this.isNew) {
                                     this.isNew = false;
-                                    // destroy page before navigage in order to notify tab panel
+                                    // notify tab panel to close tab
                                     topic.publish("tab-closed", Model.createDummyOid(this.type));
                                     // navigate to edit page
                                     new Edit({
@@ -168,13 +180,33 @@ function(
             }
         },
 
-        _reset: function(e) {
+        _delete: function(e) {
             // prevent the page from navigating after submit
             e.preventDefault();
 
-            if (this.modified) {
-                this.entity.reset();
+            if (this.isNew) {
+                return;
             }
+
+            new Delete({
+                router: this.router,
+                init: lang.hitch(this, function(data) {
+                    this.hideNotification();
+                }),
+                callback: lang.hitch(this, function(data, result) {
+                    // success
+                    // notify tab panel to close tab
+                    topic.publish("tab-closed", this.entity.oid);
+                    this.destroyRecursive();
+                }),
+                errback: lang.hitch(this, function(data, result) {
+                    // error
+                    this.showNotification({
+                        type: "error",
+                        message: "Backend error"
+                    });
+                })
+            }).execute(this.entity);
         }
     });
 });

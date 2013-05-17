@@ -156,6 +156,11 @@ class RESTController extends Controller {
 
       // TODO: create query from optional GET values
 
+      // rewrite query if querying for a relation
+      if ($request->hasValue("relation")) {
+        
+      }
+
       // execute action
       $subResponse = $this->executeSubAction('list');
 

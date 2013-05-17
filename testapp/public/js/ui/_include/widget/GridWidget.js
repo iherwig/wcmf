@@ -14,7 +14,6 @@ define([
     "dojo/topic",
     "dojo/on",
     "../../../model/meta/Model",
-    "../../../persistence/Store",
     "dojo/text!./template/GridWidget.html"
 ], function (
     declare,
@@ -32,12 +31,12 @@ define([
     topic,
     on,
     Model,
-    Store,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
 
         type: null,
+        store: null,
         actions: [],
         actionsByName: {},
         templateString: template,
@@ -57,7 +56,7 @@ define([
         postCreate: function () {
             this.inherited(arguments);
             this.gridWidget = this.buildGrid();
-            this.gridWidget.set("store", Store.getStore(this.type, 'en'));
+            this.gridWidget.set("store", this.store);
             this.own(
                 on(window, "resize", lang.hitch(this, this.onResize)),
                 on(this.gridWidget, "click", lang.hitch(this, function(e) {
@@ -166,8 +165,8 @@ define([
         onResize: function() {
             // TODO: remove magic number
             var vs = win.getBox();
-            var h = vs.h-220;
-            if (h >= 0){
+            var h = this.height ? this.height : vs.h-220;
+            if (h >= 0) {
                 domAttr.set(this.gridWidget.domNode, "style", {height: h+"px"});
             }
         }
