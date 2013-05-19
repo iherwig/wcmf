@@ -71,17 +71,22 @@ class DojoNodeSerializer implements NodeSerializer {
     $node = new $class;
     $node->setOID($oid);
 
+    $remainingData = array();
+
     $mapper = $node->getMapper();
     foreach($data as $key => $value) {
       if ($mapper->hasAttribute($key)) {
         $this->deserializeValue($node, $key, $value);
+      }
+      else {
+        $remainingData[$key] = $value;
       }
     }
     if ($parent != null) {
       $parent->addNode($node, $role);
     }
 
-    return array('node' => $node, 'data' => array());
+    return array('node' => $node, 'data' => $remainingData);
   }
 
   /**
@@ -155,6 +160,7 @@ class DojoNodeSerializer implements NodeSerializer {
         }
         else {
           // add the reference to the relation attribute
+          $relatedNode = $relatedNodes;
           $curResult[$role] = array('$ref' => $relatedNode->getOID()->__toString());
         }
       }

@@ -9,6 +9,7 @@ define( [
     "../../../persistence/RelationStore",
     "../../../action/Edit",
     "../../../action/Link",
+    "../../../action/Unlink",
     "dojo/text!./template/EntityRelationWidget.html"
 ],
 function(
@@ -22,6 +23,7 @@ function(
     RelationStore,
     Edit,
     Link,
+    Unlink,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _NotificationMixin], {
@@ -54,13 +56,11 @@ function(
                 router: this.router
             });
 
-            var unlinkAction = {
-                name: 'unlink',
-                iconClass:  'icon-unlink',
-                execute: function(data) {
-                    console.log('unlink '+data.oid);
-                }
-            };
+            var unlinkAction = new Unlink({
+                router: this.router,
+                source: this.entity,
+                relation: this.relation
+            });
 
             return [editAction, unlinkAction];
         },
@@ -77,6 +77,8 @@ function(
 
             new Link({
                 router: this.router,
+                source: this.entity,
+                relation: this.relation,
                 init: lang.hitch(this, function(data) {
                     this.hideNotification();
                 }),
@@ -90,7 +92,7 @@ function(
                         message: "Backend error"
                     });
                 })
-            }).execute(this.entity, this.relation);
+            }).execute();
         }
     });
 });

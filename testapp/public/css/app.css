@@ -108,10 +108,14 @@ th.field-actions-4, td.field-actions-4 {
   cursor: pointer;
 }
 
-.relationContainer {
+.relation-container {
   margin: 20px 0;
 }
 
-.relationContainer legend {
+.relation-container legend {
   margin-bottom: 0;
+}
+
+.padding-bottom {
+  padding-bottom: 10px;
 }

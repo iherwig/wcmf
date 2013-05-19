@@ -42,6 +42,8 @@ class Application {
   private $_startTime = null;
   private $_initialRequest = null;
 
+  private $_debug = true;
+
   /**
    * Constructor
    */
@@ -157,7 +159,7 @@ class Application {
       }
     }
 
-    Log::error($exception->getMessage()."\n".$exception->getTraceAsString(), 'main');
+    Log::error($exception->getMessage()."\n".$exception->getTraceAsString(), __CLASS__);
 
     // rollback current transaction
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -210,12 +212,12 @@ class Application {
       Log::error($info, __CLASS__);
 
       // suppress error message in browser
-      header('HTTP/1.1 500 Internal Server Error');
-      exit(0);
+      if (!$this->_debug) {
+        header('HTTP/1.1 500 Internal Server Error');
+        exit(0);
+      }
     }
-    else {
-      return $buffer;
-    }
+    return $buffer;
   }
 
   /**

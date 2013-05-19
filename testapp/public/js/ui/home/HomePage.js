@@ -7,6 +7,7 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
+    "../../model/meta/Model",
     "dojo/text!./template/HomePage.html"
 ], function (
     declare,
@@ -17,6 +18,7 @@ define([
     _Page,
     _Notification,
     NavigationWidget,
+    Model,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -37,10 +39,19 @@ define([
             var navi = new NavigationWidget({
             }, this.navigationNode);
             navi.setActiveRoute("home");
+
+            dojo.query("#title").attr("innerHTML", appConfig.title);
         },
 
-        startup: function() {
-            this.inherited(arguments);
+        _navigateContent: function(e) {
+            // prevent the page from navigating after submit
+            e.preventDefault();
+
+            var type = Model.getSimpleTypeName(appConfig.rootTypes[0]);
+            var route = this.router.getRoute("entityList");
+            var pathParams = { type:type };
+            var url = route.assemble(pathParams);
+            this.push(url);
         }
     });
 });

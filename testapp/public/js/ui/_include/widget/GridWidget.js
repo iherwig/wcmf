@@ -43,14 +43,14 @@ define([
         gridWidget: null,
 
         constructor: function (params) {
-            declare.safeMixin(this, params);
-
             if (params.actions) {
+                params.actionsByName = {};
                 for (var i=0,count=params.actions.length; i<count; i++) {
                     var action = params.actions[i];
-                    this.actionsByName[action.name] = action;
+                    params.actionsByName[action.name] = action;
                 }
             }
+            declare.safeMixin(this, params);
         },
 
         postCreate: function () {
@@ -72,6 +72,11 @@ define([
                           var row = this.gridWidget.row(columnNode);
                           action.execute(row.data);
                       }
+                    }
+                })),
+                topic.subscribe("store-datachange", lang.hitch(this, function(data) {
+                    if (data.store.target === this.store.target) {
+                        this.gridWidget.refresh();
                     }
                 }))
             );

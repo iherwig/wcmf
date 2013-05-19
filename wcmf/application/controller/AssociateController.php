@@ -21,6 +21,7 @@ namespace wcmf\application\controller;
 use \Exception;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;

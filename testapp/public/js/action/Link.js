@@ -1,6 +1,7 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/promise/all",
     "./ActionBase",
     "../ui/_include/widget/ObjectSelectDlgWidget",
     "../persistence/RelationStore",
@@ -8,6 +9,7 @@ define([
 ], function (
     declare,
     lang,
+    all,
     ActionBase,
     ObjectSelectDlg,
     RelationStore,
@@ -15,38 +17,39 @@ define([
 ) {
     return declare([ActionBase], {
 
-        name: 'delete',
-        iconClass: 'icon-trash',
+        name: 'link',
+        iconClass: 'icon-link',
+        source: null,
+        relation: null,
 
         /**
          * Execute the link action on the store
-         * @param data Object to link to
-         * @param relation Relation to link to
          */
-        execute: function(data, relation) {
+        execute: function(data) {
             if (this.init instanceof Function) {
-                this.init(data, relation);
+                this.init(data);
             }
             ObjectSelectDlg.show({
-                type: Model.getTypeNameFromOid(data.oid),
+                type: this.relation.type,
                 title: "Choose Objects",
-                content: "Select objects, you want to link to '"+Model.getDisplayValue(data)+"'",
+                content: "Select '"+this.relation.type+"' objects, you want to link to '"+Model.getDisplayValue(this.source)+"'",
                 okCallback: lang.hitch(this, function(dlg) {
-                    var typeName = Model.getTypeNameFromOid(data.oid);
-                    var store = RelationStore.getStore(typeName, 'en', relation.name);
+                    var store = RelationStore.getStore(this.source.oid, this.relation.name, 'en');
 
                     var oids = dlg.getSelectedOids();
-                    // TODO add oids to relation
-                    /*
-                    var deferred = store.add(data.oid).then(lang.hitch(this, function(results) {
+                    var deferredList = [];
+                    for (var i=0, count=oids.length; i<count; i++) {
+                        var entity = { oid:oids[i] };
+                        deferredList.push(store.add(entity));
+                    }
+                    all(deferredList).then(lang.hitch(this, function(results) {
                         // callback completes
                         this.callback(data, results);
                     }), lang.hitch(this, function(error) {
                         // error
                         this.errback(data, error);
                     }));
-                    return deferred;
-                    */
+                    return all(deferredList);
                 })
             });
         }

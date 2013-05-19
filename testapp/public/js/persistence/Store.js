@@ -3,6 +3,7 @@ define([
     "dojo/_base/declare",
     "dojo/_base/kernel",
     "dojo/aspect",
+    "dojo/topic",
     "dojo/store/JsonRest",
     "dojo/store/Cache",
     "dojo/store/Memory",
@@ -14,6 +15,7 @@ define([
     declare,
     kernel,
     aspect,
+    topic,
     JsonRest,
     Cache,
     Memory,
@@ -54,13 +56,27 @@ define([
                     if (!isUpdate) {
                         objectTmp.oid = Model.getOid(Model.getTypeNameFromOid(objectTmp.oid), this.createBackEndDummyId());
                     }
-                    return original.call(this, objectTmp, optionsTmp);
+                    var results = original.call(this, objectTmp, optionsTmp);
+                    results.then(lang.hitch(this, function() {
+                        topic.publish("store-datachange", {
+                            store: this,
+                            action: options.overwrite ? "put" : "add"
+                        });
+                    }));
+                    return results;
                 };
             });
             aspect.around(this, "remove", function(original) {
                 return function(oid, options) {
                     var id = Model.getIdFromOid(oid);
-                    return original.call(this, id, options);
+                    var results = original.call(this, id, options);
+                    results.then(lang.hitch(this, function() {
+                        topic.publish("store-datachange", {
+                            store: this,
+                            action: "remove"
+                        });
+                    }));
+                    return results;
                 };
             });
         },

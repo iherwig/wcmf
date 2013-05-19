@@ -10,9 +10,11 @@ RewriteRule ^[^/]+/((js|vendor|css|images|)/.*)$ $1
 #    rest/en/Author/
 #    rest/en/Author/12
 #    rest/en/Author/12/Book
+#    rest/en/Author/12/Book/13
 RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2 [QSA,L]
 RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)$ main.php?action=restAction&collection=0&language=$1&className=$2&id=$3 [QSA,L]
-RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)/([^\/]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2&id=$3&relation=$4 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)/([^\/]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2&sourceId=$3&relation=$4 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)/([^\/]+)\/([0-9]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2&sourceId=$3&relation=$4&targetId=$5 [QSA,L]
 
 # map all requests to not existing files to index.php
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -52,7 +52,6 @@ use wcmf\lib\util\Obfuscator;
  *              all attributes will be returned [optional]
  * @param[in] query A query condition executed with StringQuery
  *
- * @param[in] poid The parent object id of the entities if any (this is used to set relation information on the result)
  * @param[in] renderValues True/False wether to render the values using NodeUtil::renderValues or not
  *              (optional, default: false)
  * @param[in] completeObjects True/False wether to return all object attributes objects or only the display values

@@ -2,12 +2,14 @@ define([
     "dojo/_base/lang",
     "dojo/_base/declare",
     "dojo/aspect",
+    "dojo/topic",
     "dojo/store/JsonRest",
     "../model/meta/Model"
 ], function (
     lang,
     declare,
     aspect,
+    topic,
     JsonRest,
     Model
 ) {
@@ -35,23 +37,29 @@ define([
             });
             aspect.around(this, "put", function(original) {
                 return function(object, options) {
-                    var isUpdate = options.overwrite;
-                    var objectTmp = object.getCleanCopy ? object.getCleanCopy() : object;
                     var optionsTmp = lang.clone(options);
-
-                    // set real id only if an existing object is updated
-                    // otherwise set to undefined
-                    optionsTmp.id = isUpdate ? Model.getIdFromOid(object.oid) : undefined;
-                    if (!isUpdate) {
-                        objectTmp.oid = Model.getOid(Model.getTypeNameFromOid(objectTmp.oid), this.createBackEndDummyId());
-                    }
-                    return original.call(this, objectTmp, optionsTmp);
+                    optionsTmp.id = undefined;
+                    var results = original.call(this, object, optionsTmp);
+                    results.then(lang.hitch(this, function() {
+                        topic.publish("store-datachange", {
+                            store: this,
+                            action: options.overwrite ? "put" : "add"
+                        });
+                    }));
+                    return results;
                 };
             });
             aspect.around(this, "remove", function(original) {
                 return function(oid, options) {
                     var id = Model.getIdFromOid(oid);
-                    return original.call(this, id, options);
+                    var results = original.call(this, id, options);
+                    results.then(lang.hitch(this, function() {
+                        topic.publish("store-datachange", {
+                            store: this,
+                            action: "remove"
+                        });
+                    }));
+                    return results;
                 };
             });
         }
@@ -72,7 +80,7 @@ define([
             oid: oid,
             relationName: relationName,
             language: language,
-            target: appConfig.pathPrefix+"/rest/"+language+"/"+fqTypeName+"/"+id+"/"+relationName
+            target: appConfig.pathPrefix+"/rest/"+language+"/"+fqTypeName+"/"+id+"/"+relationName+"/"
         });
         return jsonRest;
     };

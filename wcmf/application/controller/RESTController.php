@@ -19,6 +19,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -50,6 +51,11 @@ class RESTController extends Controller {
     if ($request->hasValue('className') && $request->hasValue('id')) {
       $oid = new ObjectId($request->getValue('className'), $request->getValue('id'));
       $request->setValue('oid', $oid->__toString());
+    }
+    // construct sourceOid from className and sourceId
+    if ($request->hasValue('className') && $request->hasValue('sourceId')) {
+      $sourceOid = new ObjectId($request->getValue('className'), $request->getValue('sourceId'));
+      $request->setValue('sourceOid', $sourceOid->__toString());
     }
     parent::initialize($request, $response);
   }
@@ -157,8 +163,22 @@ class RESTController extends Controller {
       // TODO: create query from optional GET values
 
       // rewrite query if querying for a relation
-      if ($request->hasValue("relation")) {
-        
+      if ($request->hasValue("relation") && $request->hasValue('sourceOid')) {
+        $relationName = $request->getValue("relation");
+
+        // set the query
+        $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $sourceNode = $persistenceFacade->load($sourceOid);
+        if ($sourceNode) {
+          $query = NodeUtil::getRelationQueryCondition($sourceNode, $relationName);
+          $request->setValue('query', $query);
+
+          // set the class name
+          $mapper = $sourceNode->getMapper();
+          $relation = $mapper->getRelation($relationName);
+          $request->setValue('className', $relation->getOtherType());
+        }
       }
 
       // execute action
@@ -192,15 +212,27 @@ class RESTController extends Controller {
    * Handle a POST request (create/update an object of a given type)
    */
   protected function handlePost() {
-    $subResponse = $this->executeSubAction('create');
+    $request = $this->getRequest();
+    if ($request->hasValue('relation') && $request->hasValue('sourceOid')) {
+      // add to relation (oid is expected to be a request parameter)
+      $request->setValue('targetOid', $request->getValue('oid'));
+      $request->setValue('role', $request->getValue('relation'));
+      $subResponse = $this->executeSubAction('associate');
+    }
+    else {
+      // create object
+      $subResponse = $this->executeSubAction('create');
+    }
     $response = $this->getResponse();
 
     // in case of success, return object only
     $oidStr = $subResponse->hasValue('oid') ? $subResponse->getValue('oid')->__toString() : '';
-    if (!$subResponse->hasErrors() && $subResponse->hasValue($oidStr)) {
-      $object = $subResponse->getValue($oidStr);
+    if (!$subResponse->hasErrors()) {
       $response->clearValues();
-      $response->setValue($oidStr, $object);
+      if ($subResponse->hasValue($oidStr)) {
+        $object = $subResponse->getValue($oidStr);
+        $response->setValue($oidStr, $object);
+      }
     }
     else {
       // in case of error, return default response
@@ -244,7 +276,22 @@ class RESTController extends Controller {
    * Handle a DELETE request (delete an object of a given type)
    */
   protected function handleDelete() {
-    $subResponse = $this->executeSubAction('delete');
+    $request = $this->getRequest();
+    if ($request->hasValue('relation') && $request->hasValue('sourceOid')) {
+      // remove from relation
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $sourceMapper = $persistenceFacade->getMapper($request->getValue('className'));
+      $relationName = $request->getValue('relation');
+      $relation = $sourceMapper->getRelation($relationName);
+      $targetOid = new ObjectId($relation->getOtherType(), $request->getValue('targetId'));
+      $request->setValue('targetOid', $targetOid->__toString());
+      $request->setValue('role', $relationName);
+      $subResponse = $this->executeSubAction('disassociate');
+    }
+    else {
+      // delete object
+      $subResponse = $this->executeSubAction('delete');
+    }
 
     $response = $this->getResponse();
     $response->setValues($subResponse->getValues());
