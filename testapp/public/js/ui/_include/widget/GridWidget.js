@@ -99,22 +99,24 @@ define([
             }
 
             // add actions column
-            columns.push({
-                label: " ",
-                field: "actions-"+this.actions.length,
-                unhidable: true,
-                sortable: false,
-                resizable: false,
-                formatter: lang.hitch(this, function(data, obj) {
-                    var html = '<div class="btn-group">';
-                    for(var name in this.actionsByName) {
-                        var action = this.actionsByName[name];
-                        html += '<a class="btn btn-mini" href="#" data-action="'+name+'"><i class="'+action.iconClass+'"></i></a>';
-                    }
-                    html += '</div>';
-                    return html;
-                })
-            });
+            if (this.actions.length > 0) {
+                columns.push({
+                    label: " ",
+                    field: "actions-"+this.actions.length,
+                    unhidable: true,
+                    sortable: false,
+                    resizable: false,
+                    formatter: lang.hitch(this, function(data, obj) {
+                        var html = '<div class="btn-group">';
+                        for(var name in this.actionsByName) {
+                            var action = this.actionsByName[name];
+                            html += '<a class="btn btn-mini" href="#" data-action="'+name+'"><i class="'+action.iconClass+'"></i></a>';
+                        }
+                        html += '</div>';
+                        return html;
+                    })
+                });
+            }
 
             var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, ColumnHider, ColumnResizer]))({
                 getBeforePut: true,
@@ -160,6 +162,16 @@ define([
             }));
 
             return gridWidget;
+        },
+
+        getSelectedOids: function() {
+            var oids = [];
+            for (var oid in this.gridWidget.selection) {
+                if (this.gridWidget.selection[oid]) {
+                    oids.push(oid);
+                }
+            }
+            return oids;
         },
 
         onResize: function() {

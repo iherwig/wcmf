@@ -26,10 +26,10 @@ define([
             if (this.init instanceof Function) {
                 this.init(data);
             }
-            ConfirmDlg.showConfirm({
+            ConfirmDlg.show({
                 title: "Confirm Object Deletion",
                 content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
-                okCallback: lang.hitch(this, function() {
+                okCallback: lang.hitch(this, function(dlg) {
                     var typeName = Model.getTypeNameFromOid(data.oid);
                     var store = Store.getStore(typeName, 'en');
                     var deferred = store.remove(data.oid).then(lang.hitch(this, function(results) {

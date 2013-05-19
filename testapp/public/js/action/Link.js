@@ -27,14 +27,15 @@ define([
             if (this.init instanceof Function) {
                 this.init(data, relation);
             }
-            ObjectSelectDlg.showConfirm({
+            ObjectSelectDlg.show({
                 type: Model.getTypeNameFromOid(data.oid),
                 title: "Choose Objects",
                 content: "Select objects, you want to link to '"+Model.getDisplayValue(data)+"'",
-                okCallback: lang.hitch(this, function(oids) {
+                okCallback: lang.hitch(this, function(dlg) {
                     var typeName = Model.getTypeNameFromOid(data.oid);
                     var store = RelationStore.getStore(typeName, 'en', relation.name);
 
+                    var oids = dlg.getSelectedOids();
                     // TODO add oids to relation
                     /*
                     var deferred = store.add(data.oid).then(lang.hitch(this, function(results) {

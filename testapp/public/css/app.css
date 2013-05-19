@@ -107,3 +107,11 @@ th.field-actions-4, td.field-actions-4 {
 .close-tab {
   cursor: pointer;
 }
+
+.relationContainer {
+  margin: 20px 0;
+}
+
+.relationContainer legend {
+  margin-bottom: 0;
+}
