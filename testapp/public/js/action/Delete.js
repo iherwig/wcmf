@@ -20,9 +20,10 @@ define([
 
         /**
          * Execute the delete action on the store
+         * @param e The event that triggered execution, might be null
          * @param data Object to delete
          */
-        execute: function(data) {
+        execute: function(e, data) {
             if (this.init instanceof Function) {
                 this.init(data);
             }

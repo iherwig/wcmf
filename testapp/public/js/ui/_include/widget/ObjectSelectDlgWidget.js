@@ -14,7 +14,7 @@ define([
     /**
      * Modal link dialog. Usage:
      * @code
-     * ObjectSelectDlg.showConfirm({
+     * ObjectSelectDlg.show({
      *      type: "Author",
      *      title: "Choose Objects",
      *      content: "Select objects, you want to link to '"+Model.getDisplayValue(data)+"'",

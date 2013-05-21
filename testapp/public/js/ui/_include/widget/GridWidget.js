@@ -6,6 +6,7 @@ define([
     "dgrid/OnDemandGrid",
     "dgrid/Selection",
     "dgrid/Keyboard",
+    "dgrid/extensions/DnD",
     "dgrid/extensions/ColumnHider",
     "dgrid/extensions/ColumnResizer",
     "dojo/dom-attr",
@@ -13,6 +14,7 @@ define([
     "dojo/window",
     "dojo/topic",
     "dojo/on",
+    "dojo/Deferred",
     "../../../model/meta/Model",
     "dojo/text!./template/GridWidget.html"
 ], function (
@@ -23,6 +25,7 @@ define([
     OnDemandGrid,
     Selection,
     Keyboard,
+    DnD,
     ColumnHider,
     ColumnResizer,
     domAttr,
@@ -30,6 +33,7 @@ define([
     win,
     topic,
     on,
+    Deferred,
     Model,
     template
 ) {
@@ -41,6 +45,7 @@ define([
         actionsByName: {},
         templateString: template,
         gridWidget: null,
+        listeningStoreChanges: true,
 
         constructor: function (params) {
             if (params.actions) {
@@ -68,15 +73,19 @@ define([
                       if (action) {
                           // cell action
                           e.preventDefault();
+
                           var columnNode = e.target.parentNode;
                           var row = this.gridWidget.row(columnNode);
-                          action.execute(row.data);
+                          action.execute(e, row.data);
                       }
                     }
                 })),
                 topic.subscribe("store-datachange", lang.hitch(this, function(data) {
                     if (data.store.target === this.store.target) {
-                        this.gridWidget.refresh();
+                        if (this.listeningStoreChanges) {
+                            this.gridWidget.refresh();
+                        }
+                        this.needsRefresh = true;
                     }
                 }))
             );
@@ -113,7 +122,7 @@ define([
                     resizable: false,
                     formatter: lang.hitch(this, function(data, obj) {
                         var html = '<div class="btn-group">';
-                        for(var name in this.actionsByName) {
+                        for (var name in this.actionsByName) {
                             var action = this.actionsByName[name];
                             html += '<a class="btn btn-mini" href="#" data-action="'+name+'"><i class="'+action.iconClass+'"></i></a>';
                         }
@@ -123,7 +132,7 @@ define([
                 });
             }
 
-            var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, ColumnHider, ColumnResizer]))({
+            var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, DnD, ColumnHider, ColumnResizer]))({
                 getBeforePut: true,
                 columns: columns,
                 selectionMode: "extended",
@@ -177,6 +186,18 @@ define([
                 }
             }
             return oids;
+        },
+
+        refresh: function() {
+            this.gridWidget.refresh();
+        },
+
+        postponeRefresh: function(deferred) {
+            this.listeningStoreChanges = false;
+            deferred.then(lang.hitch(this, function() {
+                this.refresh();
+                this.listeningStoreChanges = true;
+            }));
         },
 
         onResize: function() {

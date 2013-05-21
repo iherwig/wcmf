@@ -24,10 +24,11 @@ define([
 
         /**
          * Execute the link action on the store
+         * @param e The event that triggered execution, might be null
          */
-        execute: function(data) {
+        execute: function(e) {
             if (this.init instanceof Function) {
-                this.init(data);
+                this.init();
             }
             ObjectSelectDlg.show({
                 type: this.relation.type,
@@ -44,10 +45,10 @@ define([
                     }
                     all(deferredList).then(lang.hitch(this, function(results) {
                         // callback completes
-                        this.callback(data, results);
+                        this.callback(results);
                     }), lang.hitch(this, function(error) {
                         // error
-                        this.errback(data, error);
+                        this.errback(error);
                     }));
                     return all(deferredList);
                 })

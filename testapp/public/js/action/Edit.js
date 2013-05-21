@@ -14,9 +14,10 @@ define([
 
         /**
          * Navigate to edit page
+         * @param e The event that triggered execution, might be null
          * @param data Object to edit
          */
-        execute: function(data) {
+        execute: function(e, data) {
             if (this.init instanceof Function) {
                 this.init(data);
             }
