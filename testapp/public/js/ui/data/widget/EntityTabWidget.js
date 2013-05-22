@@ -88,8 +88,8 @@ define([
                         this.setInstanceTabName(data.entity, tablinks[0]);
                     }
                 })),
-                topic.subscribe("tab-closed", lang.hitch(this, function(oid) {
-                    this.closeTab(oid);
+                topic.subscribe("tab-closed", lang.hitch(this, function(data) {
+                    this.closeTab(data.oid, data.selectLast);
                 }))
             );
         },
@@ -116,14 +116,18 @@ define([
             EntityTabWidget.lastTabDef = this.selectedTab;
         },
 
-        closeTab: function(oid) {
+        closeTab: function(oid, selectLast) {
             this.unpersistTab({ oid:oid });
             domConstruct.destroy(this.getTabLinkIdFromOid(oid));
-            if (this.isSelected(oid)) {
-                if (this.lastTab.oid && this.lastTab.oid !== oid) {
-                    this.selectTab(this.lastTab.oid);
+            if (selectLast && this.isSelected(oid)) {
+                var lastTabOid = this.lastTab.oid;
+                var selected = false;
+                if (lastTabOid && lastTabOid !== oid && EntityTabWidget.tabDefs[lastTabOid]) {
+                    this.selectTab(lastTabOid);
+                    selected = true;
                 }
-                else {
+                if (!selected) {
+                    // fallback
                     this.selectFirstTab();
                 }
             }
@@ -201,7 +205,7 @@ define([
                     when(store.get(Model.getOid(typeName, id)), lang.hitch(this, function(entity) {
                             this.setInstanceTabName(entity, tabLink);
                         }), lang.hitch(this, function(error) {
-                            this.closeTab(oid);
+                            this.closeTab(oid, true);
                         })
                     );
                 }
@@ -225,7 +229,7 @@ define([
                 if (tabItems.length > 0) {
                     var tabItem = tabItems[0];
                     var oid = this.getOidFromTabLinkId(domAttr.get(tabItem, "id"));
-                    this.closeTab(oid);
+                    this.closeTab(oid, true);
                 }
             })));
         },

@@ -2,6 +2,7 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
+    "dojo/dom-class",
     "dojo/dom-form",
     "dojo/query",
     "dijit/_WidgetBase",
@@ -21,6 +22,7 @@ function(
     declare,
     lang,
     topic,
+    domClass,
     domForm,
     query,
     _WidgetBase,
@@ -106,6 +108,23 @@ function(
                     }
                 }
             }));
+
+            // set button states
+            if (this.isNew) {
+                this.setBtnState("reset", false);
+                this.setBtnState("delete", false);
+            }
+        },
+
+        setBtnState: function(btnName, isEnabled) {
+            query(".btn."+btnName, this.domNode).forEach(function(node) {
+                if (isEnabled) {
+                    domClass.remove(node, "disabled");
+                }
+                else {
+                    domClass.add(node, "disabled");
+                }
+            })
         },
 
         setModified: function(modified) {
@@ -173,14 +192,28 @@ function(
                                         // attach to source object
                                         var relationStore = RelationStore.getStore(this.sourceOid, this.relation, 'en');
                                         relationStore.add(this.entity).then(lang.hitch(this, function() {
+                                            // success
                                             // notify tab panel to close tab
-                                            topic.publish("tab-closed", Model.createDummyOid(this.type));
+                                            topic.publish("tab-closed", {
+                                                oid: Model.createDummyOid(this.type),
+                                                selectLast: true
+                                            });
                                             this.destroyRecursive();
-                                        }))
+                                        }), lang.hitch(this, function(error) {
+                                            // error
+                                            query(".btn.save").button("reset");
+                                            this.showNotification({
+                                                type: "error",
+                                                message: error.response.data.errorMessage || "Backend error"
+                                            });
+                                        }));
                                     }
                                     else {
                                         // notify tab panel to close tab
-                                        topic.publish("tab-closed", Model.createDummyOid(this.type));
+                                        topic.publish("tab-closed", {
+                                            oid: Model.createDummyOid(this.type),
+                                            selectLast: false
+                                        });
                                         // navigate to edit page
                                         new Edit({
                                             router: this.router
@@ -219,7 +252,10 @@ function(
                 callback: lang.hitch(this, function(data, result) {
                     // success
                     // notify tab panel to close tab
-                    topic.publish("tab-closed", this.entity.oid);
+                    topic.publish("tab-closed", {
+                        oid: this.entity.oid,
+                        selectLast: true
+                    });
                     this.destroyRecursive();
                 }),
                 errback: lang.hitch(this, function(data, result) {
