@@ -3,7 +3,8 @@ define([
     "dojo/_base/lang",
     "dojo/on",
     "dojo/query",
-    "dojo/dom-construct",
+    "dojo/dom-style",
+    "dojo/Deferred",
     "dojo/promise/Promise",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
@@ -14,7 +15,8 @@ define([
     lang,
     on,
     query,
-    domConstruct,
+    domStyle,
+    Deferred,
     Promise,
     _WidgetBase,
     _TemplatedMixin,
@@ -24,7 +26,7 @@ define([
     /**
      * Modal popup dialog. Usage:
      * @code
-     * PopupDlg.show({
+     * new PopupDlg({
      *      title: "Confirm Object Deletion",
      *      content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
      *      okCallback: function() {
@@ -37,7 +39,7 @@ define([
      *          // will be called when Cancel button is clicked
      *          ....
      *      }
-     * });
+     * }).show();
      * @endcode
      */
     var PopupDlg = declare([_WidgetBase, _TemplatedMixin], {
@@ -46,6 +48,7 @@ define([
         modal: null,
         okCallback: null,
         cancelCallback: null,
+        deferred: null,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -62,12 +65,18 @@ define([
         postCreate: function () {
             this.inherited(arguments);
 
+            this.placeAt(dojo.body());
+            domStyle.set(this.domNode, {
+                display: "none"
+            });
             this.hideSpinner();
 
-            var dlgNode = this.getDlgNode();
-            dlgNode.modal({});
-            dlgNode.on('hidden', lang.hitch(this, function () {
+            query(this.domNode).modal({});
+            query(this.domNode).on('hidden', lang.hitch(this, function () {
                 this.destroyRecursive();
+                if (this.deferred) {
+                    this.deferred.resolve();
+                }
             }));
             this.own(
                 on(this.okBtn, "click", lang.hitch(this, function(e) {
@@ -88,75 +97,49 @@ define([
         },
 
         doCallback: function(e, callback) {
-            var dlgNode = this.getDlgNode();
             if (callback instanceof Function) {
                 e.preventDefault();
                 var result = callback(this);
                 if (result instanceof Promise) {
                     this.showSpinner();
                     result.always(function() {
-                        dlgNode.modal('hide');
+                        this.hide();
                     });
                 }
                 else {
-                    dlgNode.modal('hide');
+                    this.hide();
                 }
             }
         },
 
-        getDlgNode: function() {
-          return query('#'+PopupDlg._dlgId);
+        /**
+         * Show the dialog
+         * @return Deferred instance that will resolve, when the dialog is
+         * closed.
+         */
+        show: function() {
+            domStyle.set(this.domNode, {
+                display: "block"
+            });
+            this.deferred = new Deferred();
+            return this.deferred;
         },
 
-        hideSpinner: function() {
-            query(this.spinnerNode).style("display", "none");
+        /**
+         * Hide the dialog
+         */
+        hide: function () {
+            query(this.domNode).modal('hide');
         },
 
         showSpinner: function() {
             query(this.spinnerNode).style("display", "block");
+        },
+
+        hideSpinner: function() {
+            query(this.spinnerNode).style("display", "none");
         }
     });
-
-    PopupDlg._node = null;
-    PopupDlg._dlgId = "popupDlg";
-    PopupDlg._widgetClass = PopupDlg;
-
-    /**
-     * Show the dialog
-     */
-    PopupDlg.show = function(options) {
-        PopupDlg.hide();
-
-        if (PopupDlg._node) {
-            domConstruct.destroy(PopupDlg._node);
-        }
-
-        PopupDlg._node = domConstruct.create('div', {}, dojo.body());
-
-        var params = declare.safeMixin({id: PopupDlg._dlgId}, options);
-        var widget = new PopupDlg.widgetClass(params, PopupDlg._node);
-        widget.startup();
-    };
-
-    /**
-     * Hide the dialog
-     */
-    PopupDlg.hide = function () {
-        query('#'+PopupDlg._dlgId).modal('hide');
-    };
-
-    /**
-     * Use this method to create a subclass that inherits the static
-     * methods and uses the given subclass as actual widget
-     * @param subclass PopupDlg subclass
-     * @returns Enhanced class
-     */
-    PopupDlg.extend = function (subclass) {
-        PopupDlg.widgetClass = subclass;
-        subclass.show = PopupDlg.show;
-        subclass.hide = PopupDlg.hide;
-        return subclass;
-    };
 
     return PopupDlg;
 });

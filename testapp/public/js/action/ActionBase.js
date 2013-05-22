@@ -4,6 +4,7 @@ define([
     "dojo/aspect",
     "dojo/query",
     "dojo/dom-class",
+    "dojo/Deferred",
     "dojomat/_StateAware"
 ], function (
     declare,
@@ -11,6 +12,7 @@ define([
     aspect,
     query,
     domClass,
+    Deferred,
     _StateAware
 ) {
     return declare([_StateAware], {
@@ -42,7 +44,7 @@ define([
                 return function() {
                     var deferred = original.apply(this, arguments);
 
-                    if (deferred && deferred.then) {
+                    if (deferred instanceof Deferred) {
                         // set spinner icon
                         this._event = null;
                         this._hasSpinner = false;
@@ -72,7 +74,8 @@ define([
 
         /**
          * Execute the action. Before start, call this.init. When done, call
-         * this.callback, this.errback, this.progback
+         * this.callback, this.errback, this.progback. Longer running actions should
+         * return a Deferred instance.
          * depending on the execution result.
          * @param e The event that triggered execution, might be null
          */

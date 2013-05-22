@@ -109,7 +109,7 @@ define([
         confirmLeave: function(url) {
             if (this.entity && this.entity.getState() === 'dirty') {
                 var deferred = new Deferred();
-                ConfirmDlg.show({
+                new ConfirmDlg({
                     title: "Confirm Leave Page",
                     content: "'"+Model.getDisplayValue(this.entity)+"' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
                     okCallback: lang.hitch(this, function(dlg) {
@@ -118,7 +118,7 @@ define([
                     cancelCallback: lang.hitch(this, function(dlg) {
                         deferred.resolve(false);
                     })
-                });
+                }).show();
                 return deferred.promise;
             }
             return this.inherited(arguments);

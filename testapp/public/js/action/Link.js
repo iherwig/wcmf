@@ -25,12 +25,13 @@ define([
         /**
          * Execute the link action on the store
          * @param e The event that triggered execution, might be null
+         * @return Deferred instance
          */
         execute: function(e) {
             if (this.init instanceof Function) {
                 this.init();
             }
-            ObjectSelectDlg.show({
+            return new ObjectSelectDlg({
                 type: this.relation.type,
                 title: "Choose Objects",
                 content: "Select '"+this.relation.type+"' objects, you want to link to '"+Model.getDisplayValue(this.source)+"'",
@@ -52,7 +53,7 @@ define([
                     }));
                     return all(deferredList);
                 })
-            });
+            }).show();
         }
     });
 });

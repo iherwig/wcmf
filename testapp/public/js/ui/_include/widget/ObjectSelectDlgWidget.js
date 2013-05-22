@@ -14,7 +14,7 @@ define([
     /**
      * Modal link dialog. Usage:
      * @code
-     * ObjectSelectDlg.show({
+     * new ObjectSelectDlg({
      *      type: "Author",
      *      title: "Choose Objects",
      *      content: "Select objects, you want to link to '"+Model.getDisplayValue(data)+"'",
@@ -28,10 +28,10 @@ define([
      *          // will be called when Cancel button is clicked
      *          ....
      *      }
-     * });
+     * }).show();
      * @endcode
      */
-    var ObjectSelectDlg = declare([PopupDlg], {
+    return declare([PopupDlg], {
 
         type: "",
         grid: null,
@@ -52,6 +52,4 @@ define([
             return this.grid.getSelectedOids();
         }
     });
-
-    return PopupDlg.extend(ObjectSelectDlg);
 });

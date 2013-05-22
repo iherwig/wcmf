@@ -22,12 +22,13 @@ define([
          * Execute the delete action on the store
          * @param e The event that triggered execution, might be null
          * @param data Object to delete
+         * @return Deferred instance
          */
         execute: function(e, data) {
             if (this.init instanceof Function) {
                 this.init(data);
             }
-            ConfirmDlg.show({
+            return new ConfirmDlg({
                 title: "Confirm Object Deletion",
                 content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
                 okCallback: lang.hitch(this, function(dlg) {
@@ -42,7 +43,7 @@ define([
                     }));
                     return deferred;
                 })
-            });
+            }).show();
         }
     });
 });

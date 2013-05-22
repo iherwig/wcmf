@@ -8,7 +8,7 @@ define([
     /**
      * Modal confirmation dialog. Usage:
      * @code
-     * ConfirmDlg.show({
+     * new ConfirmDlg({
      *      title: "Confirm Object Deletion",
      *      content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
      *      okCallback: function() {
@@ -21,15 +21,13 @@ define([
      *          // will be called when Cancel button is clicked
      *          ....
      *      }
-     * });
+     * }).show();
      * @endcode
      */
-    var ConfirmDlg = declare([PopupDlg], {
+    return declare([PopupDlg], {
 
         _setContentAttr: function (val) {
             this.inherited(arguments, ['<i class="icon-question-sign icon-3x pull-left"></i> &nbsp;'+val]);
         }
     });
-
-    return PopupDlg.extend(ConfirmDlg);
 });

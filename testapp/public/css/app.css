@@ -119,3 +119,7 @@ th.field-actions-4, td.field-actions-4 {
 .padding-bottom {
   padding-bottom: 10px;
 }
+
+.dgrid-loading, .dgrid-no-data {
+  padding: 10px;
+}
