@@ -84,7 +84,7 @@ define([
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
                     var tablinks = query("a", dom.byId(this.getTabLinkIdFromOid(data.entity.oid)));
-                    if (tablinks.length > 0) {
+                    if (tablinks.length === 1) {
                         this.setInstanceTabName(data.entity, tablinks[0]);
                     }
                 })),

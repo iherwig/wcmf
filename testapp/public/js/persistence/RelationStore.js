@@ -4,6 +4,9 @@ define([
     "dojo/aspect",
     "dojo/topic",
     "dojo/store/JsonRest",
+    "dojo/store/Cache",
+    "dojo/store/Memory",
+    "dojo/store/Observable",
     "../model/meta/Model"
 ], function (
     lang,
@@ -11,6 +14,9 @@ define([
     aspect,
     topic,
     JsonRest,
+    Cache,
+    Memory,
+    Observable,
     Model
 ) {
     var RelationStore = declare([JsonRest], {
@@ -76,13 +82,20 @@ define([
         var fqTypeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(oid));
         var id = Model.getIdFromOid(oid);
 
+        var memory = new Memory({
+            idProperty: 'oid'
+        });
         var jsonRest = new RelationStore({
             oid: oid,
             relationName: relationName,
             language: language,
             target: appConfig.pathPrefix+"/rest/"+language+"/"+fqTypeName+"/"+id+"/"+relationName+"/"
         });
-        return jsonRest;
+        var cache = new Observable(new Cache(
+            jsonRest,
+            memory
+        ));
+        return cache;
     };
 
     return RelationStore;

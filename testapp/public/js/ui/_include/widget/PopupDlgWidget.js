@@ -5,7 +5,6 @@ define([
     "dojo/query",
     "dojo/dom-style",
     "dojo/Deferred",
-    "dojo/promise/Promise",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "bootstrap/Modal",
@@ -17,7 +16,6 @@ define([
     query,
     domStyle,
     Deferred,
-    Promise,
     _WidgetBase,
     _TemplatedMixin,
     Modal,
@@ -100,11 +98,11 @@ define([
             if (callback instanceof Function) {
                 e.preventDefault();
                 var result = callback(this);
-                if (result instanceof Promise) {
+                if (result && result.always instanceof Function) {
                     this.showSpinner();
-                    result.always(function() {
+                    result.always(lang.hitch(this, function() {
                         this.hide();
-                    });
+                    }));
                 }
                 else {
                     this.hide();

@@ -42,10 +42,11 @@ define([
         type: null,
         store: null,
         actions: [],
+        autoReload: true,
+
         actionsByName: {},
         templateString: template,
         gridWidget: null,
-        listeningStoreChanges: true,
 
         constructor: function (params) {
             if (params.actions) {
@@ -82,7 +83,7 @@ define([
                 })),
                 topic.subscribe("store-datachange", lang.hitch(this, function(data) {
                     if (data.store.target === this.store.target) {
-                        if (this.listeningStoreChanges) {
+                        if (this.autoReload) {
                             this.gridWidget.refresh();
                         }
                         this.needsRefresh = true;
@@ -193,10 +194,11 @@ define([
         },
 
         postponeRefresh: function(deferred) {
-            this.listeningStoreChanges = false;
+            var oldAutoReload = this.autoReload;
+            this.autoReload = false;
             deferred.then(lang.hitch(this, function() {
                 this.refresh();
-                this.listeningStoreChanges = true;
+                this.autoReload = oldAutoReload;
             }));
         },
 

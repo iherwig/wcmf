@@ -19,7 +19,7 @@ define([
         iconClass: 'icon-trash',
 
         /**
-         * Execute the delete action on the store
+         * Shows confirm dialog and executes the delete action on the store
          * @param e The event that triggered execution, might be null
          * @param data Object to delete
          * @return Deferred instance

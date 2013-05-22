@@ -47,9 +47,14 @@ define([
         session: null,
         templateString: template,
         type: null,
-        oid: null,
+        oid: null, // object id of the object to edit
+        isNew: false, // boolean weather the object exists or not
+
+        sourceOid: null, // object id of the source object of a relation
+                         // (ignored if isNew == false)
+        relation: null, // the relation in which the object should be created
+                        // related to sourceOid (ignored if isNew == false)
         entity: null,
-        isNew: false,
 
         constructor: function(params) {
             this.request = params.request;
@@ -59,6 +64,9 @@ define([
             var idParam = this.request.getPathParam("id");
             this.oid = Model.getOid(this.type, idParam);
             this.isNew = Model.isDummyOid(this.oid);
+
+            this.sourceOid = this.request.getQueryParam("oid");
+            this.relation = this.request.getQueryParam("relation");
         },
 
         postCreate: function() {
@@ -129,6 +137,8 @@ define([
                 // create the tab panel
                 var panel = new Widget({
                     entity: this.entity,
+                    sourceOid: this.isNew ? this.sourceOid : undefined,
+                    relation: this.isNew ? this.relation : undefined,
                     router: this.router
                 });
 

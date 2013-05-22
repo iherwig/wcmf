@@ -10,6 +10,7 @@ define( [
     "bootstrap/Button",
     "../../../model/meta/Model",
     "../../../persistence/Store",
+    "../../../persistence/RelationStore",
     "../../../action/Edit",
     "../../../action/Delete",
     "../../../Loader",
@@ -28,6 +29,7 @@ function(
     Button,
     Model,
     Store,
+    RelationStore,
     Edit,
     Delete,
     Loader,
@@ -37,9 +39,15 @@ function(
     return declare([_WidgetBase, _TemplatedMixin, _Notification], {
 
         templateString: template,
-        entity: {},
-        type: null,
+
+        entity: {}, // entity to edit
+        sourceOid: null, // object id of the source object of a relation
+                         // (ignored if isNew == false)
+        relation: null, // the relation in which the object should be created
+                        // related to sourceOid (ignored if isNew == false)
         router: null,
+
+        type: null,
         formId: "",
         headline: "",
         isNew: false,
@@ -85,15 +93,17 @@ function(
                 }
 
                 // add relation widgets
-                var relations = typeClass.getRelations();
-                for (var i=0, count=relations.length; i<count; i++) {
-                    var relation = relations[i];
-                    var relationWidget = new EntityRelationWidget({
-                        entity: this.entity,
-                        relation: relation,
-                        router: this.router
-                    });
-                    this.relationsNode.appendChild(relationWidget.domNode);
+                if (!this.isNew) {
+                    var relations = typeClass.getRelations();
+                    for (var i=0, count=relations.length; i<count; i++) {
+                        var relation = relations[i];
+                        var relationWidget = new EntityRelationWidget({
+                            entity: this.entity,
+                            relation: relation,
+                            router: this.router
+                        });
+                        this.relationsNode.appendChild(relationWidget.domNode);
+                    }
                 }
             }));
         },
@@ -157,12 +167,25 @@ function(
                             onHide: lang.hitch(this, function() {
                                 if (this.isNew) {
                                     this.isNew = false;
-                                    // notify tab panel to close tab
-                                    topic.publish("tab-closed", Model.createDummyOid(this.type));
-                                    // navigate to edit page
-                                    new Edit({
-                                        router: this.router
-                                    }).execute(this.entity);
+
+                                    // object was created in a relation
+                                    if (this.sourceOid && this.relation) {
+                                        // attach to source object
+                                        var relationStore = RelationStore.getStore(this.sourceOid, this.relation, 'en');
+                                        relationStore.add(this.entity).then(lang.hitch(this, function() {
+                                            // notify tab panel to close tab
+                                            topic.publish("tab-closed", Model.createDummyOid(this.type));
+                                            this.destroyRecursive();
+                                        }))
+                                    }
+                                    else {
+                                        // notify tab panel to close tab
+                                        topic.publish("tab-closed", Model.createDummyOid(this.type));
+                                        // navigate to edit page
+                                        new Edit({
+                                            router: this.router
+                                        }).execute(e, this.entity);
+                                    }
                                 }
                             })
                         });
@@ -206,7 +229,7 @@ function(
                         message: "Backend error"
                     });
                 })
-            }).execute(this.entity);
+            }).execute(e, this.entity);
         }
     });
 });

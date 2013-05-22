@@ -209,15 +209,23 @@ class RESTController extends Controller {
   }
 
   /**
-   * Handle a POST request (create/update an object of a given type)
+   * Handle a POST request (create an object of a given type)
    */
   protected function handlePost() {
     $request = $this->getRequest();
     if ($request->hasValue('relation') && $request->hasValue('sourceOid')) {
       // add to relation (oid is expected to be a request parameter)
-      $request->setValue('targetOid', $request->getValue('oid'));
+      $targetOidStr = $request->getValue('oid');
+      $request->setValue('targetOid', $targetOidStr);
       $request->setValue('role', $request->getValue('relation'));
       $subResponse = $this->executeSubAction('associate');
+
+      // add related object to subresponse similar to default create action
+      $targetOid = ObjectId::parse($targetOidStr);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $targetObj = $persistenceFacade->load($targetOid);
+      $subResponse->setValue('oid', $targetOid);
+      $subResponse->setValue($targetOidStr, $targetObj);
     }
     else {
       // create object
@@ -247,7 +255,7 @@ class RESTController extends Controller {
   }
 
   /**
-   * Handle a PUT request (create/update an object of a given type)
+   * Handle a PUT request (update an object of a given type)
    */
   protected function handlePut() {
     $subResponse = $this->executeSubAction('update');

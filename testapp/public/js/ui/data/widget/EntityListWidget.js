@@ -44,7 +44,8 @@ function(
             new GridWidget({
                 type: this.type,
                 store: Store.getStore(this.type, 'en'),
-                actions: this.getGridActions()
+                actions: this.getGridActions(),
+                autoReload: false
             }, this.gridNode);
         },
 
@@ -93,7 +94,7 @@ function(
 
             new Create({
                 router: this.router
-            }).execute(this.type);
+            }).execute(e, this.type);
         }
     });
 });

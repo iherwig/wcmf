@@ -23,7 +23,8 @@ define([
         relation: null,
 
         /**
-         * Execute the link action on the store
+         * Show a object selection dialog and execute the link action for
+         * the selected objects on the store
          * @param e The event that triggered execution, might be null
          * @return Deferred instance
          */

@@ -91,7 +91,7 @@ function(
                         message: "Backend error"
                     });
                 })
-            }).execute(this.relation.type);
+            }).execute(e, this.relation.type);
         },
 
         _link: function(e) {
@@ -119,7 +119,7 @@ function(
                     });
                     gridRefresh.resolve();
                 })
-            }).execute();
+            }).execute(e);
         }
     });
 });
