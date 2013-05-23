@@ -43,7 +43,7 @@ define([
                     var deferredList = [];
                     for (var i=0, count=oids.length; i<count; i++) {
                         var entity = { oid:oids[i] };
-                        deferredList.push(store.add(entity));
+                        deferredList.push(store.put(entity, {overwrite: true}));
                     }
                     all(deferredList).then(lang.hitch(this, function(results) {
                         // callback completes

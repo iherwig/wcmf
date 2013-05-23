@@ -35,9 +35,9 @@ use wcmf\lib\presentation\Response;
  * <b>Output actions:</b>
  * - depends on the controller, to that the action is delegated
  *
- * @param [in] className The type of the object(s) to perform the action on
- * @param [in] id The id of the object to perform the action on [optional]
- * @param [out] ...
+ * For details about the paramters, see documentation for the methods
+ * RESTController::handleGet(), RESTController::handlePost(),
+ * RESTController::handlePut(), RESTController::handleDelete()
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -56,6 +56,13 @@ class RESTController extends Controller {
     if ($request->hasValue('className') && $request->hasValue('sourceId')) {
       $sourceOid = new ObjectId($request->getValue('className'), $request->getValue('sourceId'));
       $request->setValue('sourceOid', $sourceOid->__toString());
+    }
+    // construct targetOid from sourceOid, relation and targetId
+    if ($request->hasValue('sourceOid') && $request->hasValue('relation') && $request->hasValue('targetId')) {
+      $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
+      $relatedType = $this->getRelatedType($sourceOid, $request->getValue('relation'));
+      $targetOid = new ObjectId($relatedType, $request->getValue('targetId'));
+      $request->setValue('targetOid', $targetOid->__toString());
     }
     parent::initialize($request, $response);
   }
@@ -106,6 +113,26 @@ class RESTController extends Controller {
 
   /**
    * Handle a GET request (read object(s) of a given type)
+   *
+   * Request parameters:
+   * - collection: Boolean wether to load one object or a list of objects
+   * - language: The language of the returned object(s)
+   * - className: The type of returned object(s)
+   * - id: If collection is false, the object with className/id will be loaded
+   *
+   * - sortBy: ?sortBy=+foo for sorting the list by foo ascending or
+   * - sort: ?sort(+foo) for sorting the list by foo ascending
+   *
+   * - relation: relation name if objects in relation to another object should
+   *             be loaded (determines the type of the returned objects)
+   * - sourceId: id of the object to which the returned objects are related
+   *             (determines the object id together with className)
+   *
+   * Range header is used to get only part of the list
+   *
+   * Response parameters:
+   * - Single object or list of objects. In case of a list, the Content-Range
+   *   header will be set.
    */
   protected function handleGet() {
     $request = $this->getRequest();
@@ -210,17 +237,37 @@ class RESTController extends Controller {
 
   /**
    * Handle a POST request (create an object of a given type)
+   *
+   * Request parameters:
+   * - language: The language of the object
+   * - className: Type of object to create
+   *
+   * - relation: relation name if the object should be created/added in
+   *             relation to another object (determines the type of the created/added object)
+   * - sourceId: id of the object to which the created/added object is related
+   *             (determines the object id together with className)
+   *
+   * The object data is contained in POST content. If an existing object
+   * should be added, an 'oid' parameter is sufficient
+   *
+   * Response parameters:
+   * - Created object data
    */
   protected function handlePost() {
     $request = $this->getRequest();
     if ($request->hasValue('relation') && $request->hasValue('sourceOid')) {
-      // add to relation (oid is expected to be a request parameter)
-      $targetOidStr = $request->getValue('oid');
-      $request->setValue('targetOid', $targetOidStr);
+      $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
+      $relatedType = $this->getRelatedType($sourceOid, $request->getValue('relation'));
+      $request->setValue('className', $relatedType);
+      $subResponseCreate = $this->executeSubAction('create');
+
+      // add new object to relation
+      $request->setValue('targetOid', $subResponseCreate->getValue('oid')->__toString());
       $request->setValue('role', $request->getValue('relation'));
       $subResponse = $this->executeSubAction('associate');
 
-      // add related object to subresponse similar to default create action
+      // add related object to subresponse similar to default update action
+      $targetOidStr = $request->getValue('targetOid');
       $targetOid = ObjectId::parse($targetOidStr);
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $targetObj = $persistenceFacade->load($targetOid);
@@ -228,7 +275,6 @@ class RESTController extends Controller {
       $subResponse->setValue($targetOidStr, $targetObj);
     }
     else {
-      // create object
       $subResponse = $this->executeSubAction('create');
     }
     $response = $this->getResponse();
@@ -256,9 +302,45 @@ class RESTController extends Controller {
 
   /**
    * Handle a PUT request (update an object of a given type)
+   *
+   * Request parameters:
+   * - language: The language of the object
+   * - className: Type of object to update
+   * - id: Id of object to update
+   *
+   * - relation: relation name if an existing object should be added to a
+   *             relation (determines the type of the added object)
+   * - sourceId: id of the object to which the added object is related
+   *             (determines the object id together with className)
+   * - targetId: id of the object to be added to the relation
+   *             (determines the object id together with relation)
+   *
+   * The object data is contained in POST content.
+   *
+   * Response parameters:
+   * - Updated object data
    */
   protected function handlePut() {
-    $subResponse = $this->executeSubAction('update');
+    $request = $this->getRequest();
+    if ($request->hasValue('relation') && $request->hasValue('sourceOid') &&
+            $request->hasValue('targetOid')) {
+      // add existing object to relation
+      $request->setValue('role', $request->getValue('relation'));
+      $subResponse = $this->executeSubAction('associate');
+
+      // add related object to subresponse similar to default update action
+      $targetOidStr = $request->getValue('targetOid');
+      $targetOid = ObjectId::parse($targetOidStr);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $targetObj = $persistenceFacade->load($targetOid);
+      $subResponse->setValue('oid', $targetOid);
+      $subResponse->setValue($targetOidStr, $targetObj);
+    }
+    else {
+      // update object
+      $subResponse = $this->executeSubAction('update');
+    }
+
     $response = $this->getResponse();
 
     // in case of success, return object only
@@ -282,18 +364,28 @@ class RESTController extends Controller {
 
   /**
    * Handle a DELETE request (delete an object of a given type)
+   *
+   * Request parameters:
+   * - language: The language of the object
+   * - className: Type of object to delete
+   * - id: Id of object to delete
+   *
+   * - relation: relation name if the object should be deleted from a
+   *             relation to another object (determines the type of the deleted object)
+   * - sourceId: id of the object to which the deleted object is related
+   *             (determines the object id together with className)
+   * - targetId: id of the object to be deleted from the relation
+   *             (determines the object id together with relation)
+   *
+   * Response parameters:
+   * empty
    */
   protected function handleDelete() {
     $request = $this->getRequest();
-    if ($request->hasValue('relation') && $request->hasValue('sourceOid')) {
-      // remove from relation
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $sourceMapper = $persistenceFacade->getMapper($request->getValue('className'));
-      $relationName = $request->getValue('relation');
-      $relation = $sourceMapper->getRelation($relationName);
-      $targetOid = new ObjectId($relation->getOtherType(), $request->getValue('targetId'));
-      $request->setValue('targetOid', $targetOid->__toString());
-      $request->setValue('role', $relationName);
+    if ($request->hasValue('relation') && $request->hasValue('sourceOid') &&
+            $request->hasValue('targetOid')) {
+      // remove existing object from relation
+      $request->setValue('role', $request->getValue('relation'));
       $subResponse = $this->executeSubAction('disassociate');
     }
     else {
@@ -334,6 +426,20 @@ class RESTController extends Controller {
       }
     }
     return '';
+  }
+
+  /**
+   * Get the type that is used in the given role related to the
+   * given source object.
+   * @param sourceOid ObjectId of the source object
+   * @param role The role name
+   * @return String
+   */
+  protected function getRelatedType(ObjectId $sourceOid, $role) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $sourceMapper = $persistenceFacade->getMapper($sourceOid->getType());
+    $relation = $sourceMapper->getRelation($role);
+    return $relation->getOtherType();
   }
 }
 ?>

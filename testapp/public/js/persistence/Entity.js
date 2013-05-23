@@ -15,18 +15,15 @@ define([
      * Entity inherits observer capabilities from Stateful
      * and emits entity-datachange event, if properties change.
      * Entities may exist in different states (clean, dirty, new, deleted).
-     * If the state changes a entity-staechange event is emitted.
+     * If the state changes a entity-statechange event is emitted.
      */
     return declare([Stateful], {
 
         _state: "clean", /* clean, dirty, new, deleted */
-        _initialData: {},
 
         constructor: function(args) {
             this.inherited(arguments);
 
-            // record initial state
-            this._initialData = lang.mixin({}, args);
             this._state = "clean";
         },
 
@@ -61,14 +58,6 @@ define([
 
         getState: function() {
             return this.get("_state");
-        },
-
-        reset: function() {
-            for (var key in this._initialData) {
-                // notify listeners
-                this.set(key, this._initialData[key]);
-            }
-            this.setState("clean");
         },
 
         getCleanCopy: function() {

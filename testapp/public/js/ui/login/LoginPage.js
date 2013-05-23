@@ -104,7 +104,7 @@ define([
                 query(".btn").button("reset");
                 this.showNotification({
                     type: "error",
-                    message: error.response.data.errorMessage || "Backend error"
+                    message: error.message || error.response.data.errorMessage || "Backend error"
                 });
             }));
         }

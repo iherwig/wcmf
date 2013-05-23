@@ -124,7 +124,7 @@ function(
                 else {
                     domClass.add(node, "disabled");
                 }
-            })
+            });
         },
 
         setModified: function(modified) {
@@ -134,13 +134,8 @@ function(
             this.entity.setState(state);
         },
 
-        _reset: function(e) {
-            // prevent the page from navigating after submit
-            e.preventDefault();
-
-            if (this.modified) {
-                this.entity.reset();
-            }
+        isRelatedObject: function() {
+            return (this.sourceOid && this.relation);
         },
 
         _save: function(e) {
@@ -150,11 +145,18 @@ function(
             if (this.modified) {
                 // update entity from form data
                 var data = domForm.toObject(this.formId);
-                var store = Store.getStore(this.type, 'en');
                 data = lang.mixin(lang.clone(this.entity), data);
 
                 query(".btn.save").button("loading");
                 this.hideNotification();
+
+                var store = null;
+                if (this.isRelatedObject()) {
+                    store = RelationStore.getStore(this.sourceOid, this.relation, 'en');
+                }
+                else {
+                    store = Store.getStore(this.type, 'en');
+                }
 
                 var storeMethod = this.isNew ? "add" : "put";
                 store[storeMethod](data, {overwrite: !this.isNew}).then(lang.hitch(this, function(response) {
@@ -187,29 +189,16 @@ function(
                                 if (this.isNew) {
                                     this.isNew = false;
 
-                                    // object was created in a relation
-                                    if (this.sourceOid && this.relation) {
-                                        // attach to source object
-                                        var relationStore = RelationStore.getStore(this.sourceOid, this.relation, 'en');
-                                        relationStore.add(this.entity).then(lang.hitch(this, function() {
-                                            // success
-                                            // notify tab panel to close tab
-                                            topic.publish("tab-closed", {
-                                                oid: Model.createDummyOid(this.type),
-                                                selectLast: true
-                                            });
-                                            this.destroyRecursive();
-                                        }), lang.hitch(this, function(error) {
-                                            // error
-                                            query(".btn.save").button("reset");
-                                            this.showNotification({
-                                                type: "error",
-                                                message: error.response.data.errorMessage || "Backend error"
-                                            });
-                                        }));
+                                    if (this.isRelatedObject()) {
+                                        // close own tab and select last tab
+                                        topic.publish("tab-closed", {
+                                            oid: Model.createDummyOid(this.type),
+                                            selectLast: true
+                                        });
+                                        this.destroyRecursive();
                                     }
                                     else {
-                                        // notify tab panel to close tab
+                                        // update current tab
                                         topic.publish("tab-closed", {
                                             oid: Model.createDummyOid(this.type),
                                             selectLast: false
@@ -230,7 +219,7 @@ function(
                     query(".btn.save").button("reset");
                     this.showNotification({
                         type: "error",
-                        message: error.response.data.errorMessage || "Backend error"
+                        message: error.message || error.response.data.errorMessage || "Backend error"
                     });
                 }));
             }

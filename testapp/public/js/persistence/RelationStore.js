@@ -1,74 +1,22 @@
 define([
-    "dojo/_base/lang",
     "dojo/_base/declare",
-    "dojo/aspect",
-    "dojo/topic",
-    "dojo/store/JsonRest",
     "dojo/store/Cache",
     "dojo/store/Memory",
     "dojo/store/Observable",
+    "./BaseStore",
     "../model/meta/Model"
 ], function (
-    lang,
     declare,
-    aspect,
-    topic,
-    JsonRest,
     Cache,
     Memory,
     Observable,
+    BaseStore,
     Model
 ) {
-    var RelationStore = declare([JsonRest], {
-
-        idProperty: 'oid',
+    var RelationStore = declare([BaseStore], {
         oid: '',
         relationName: '',
-        language: '',
-
-        constructor: function(options) {
-            options.headers = {
-                Accept: 'application/javascript, application/json'
-            };
-            this.inherited(arguments);
-
-            // set id property in order to have url like /{type}/{id}/{relation}/{other_id}
-            // instead of /{type}/{id}/{relation}/{other_oid}
-            // NOTE: this has to be set on cloned options!
-            aspect.around(this, "get", function(original) {
-                return function(oid, options) {
-                    var id = Model.getIdFromOid(oid);
-                    return original.call(this, id, options);
-                };
-            });
-            aspect.around(this, "put", function(original) {
-                return function(object, options) {
-                    var optionsTmp = lang.clone(options);
-                    optionsTmp.id = undefined;
-                    var results = original.call(this, object, optionsTmp);
-                    results.then(lang.hitch(this, function() {
-                        topic.publish("store-datachange", {
-                            store: this,
-                            action: options.overwrite ? "put" : "add"
-                        });
-                    }));
-                    return results;
-                };
-            });
-            aspect.around(this, "remove", function(original) {
-                return function(oid, options) {
-                    var id = Model.getIdFromOid(oid);
-                    var results = original.call(this, id, options);
-                    results.then(lang.hitch(this, function() {
-                        topic.publish("store-datachange", {
-                            store: this,
-                            action: "remove"
-                        });
-                    }));
-                    return results;
-                };
-            });
-        }
+        language: ''
     });
 
     /**
