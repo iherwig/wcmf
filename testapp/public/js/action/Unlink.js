@@ -24,7 +24,7 @@ define([
             if (this.init instanceof Function) {
                 this.init(data);
             }
-            var store = RelationStore.getStore(this.source.oid, this.relation.name, appConfig.defaultLanguage);
+            var store = RelationStore.getStore(this.source.oid, this.relation.name);
             var deferred = store.remove(data.oid);
             return deferred;
         }

@@ -4,6 +4,7 @@ define( [
     "dojo/topic",
     "dojo/dom-class",
     "dojo/dom-form",
+    "dojo/dom-construct",
     "dojo/query",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
@@ -24,6 +25,7 @@ function(
     topic,
     domClass,
     domForm,
+    domConstruct,
     query,
     _WidgetBase,
     _TemplatedMixin,
@@ -55,6 +57,9 @@ function(
         isNew: false,
         modified: false,
 
+        language: appConfig.defaultLanguage,
+        isTranslation: false,
+
         constructor: function(args) {
             declare.safeMixin(this, args);
 
@@ -62,6 +67,7 @@ function(
             this.formId = "entityForm_"+this.entity.oid;
             this.headline = Model.getDisplayValue(this.entity);
             this.isNew = Model.isDummyOid(this.entity.oid);
+            this.isTranslation = this.language !== appConfig.defaultLanguage;
         },
 
         _setHeadlineAttr: function (val) {
@@ -114,6 +120,29 @@ function(
                 this.setBtnState("reset", false);
                 this.setBtnState("delete", false);
             }
+
+            if (!this.isNew) {
+                this.buildLanguageMenu();
+            }
+        },
+
+        buildLanguageMenu: function() {
+            this.defaultLanguageNode.innerHTML = appConfig.languages[this.language];
+            for (var langKey in appConfig.languages) {
+                var menuEntry = domConstruct.create("li", {
+                }, this.languageMenuNode);
+                var linkParams = {
+                    href: "#",
+                    'data-dojorama-route': "entity",
+                    'data-dojorama-pathparams': "type: '"+Model.getSimpleTypeName(this.type)+"', id: '"+Model.getIdFromOid(this.entity.oid)+"'",
+                    class: "push",
+                    innerHTML: appConfig.languages[langKey]
+                };
+                if (langKey !== appConfig.defaultLanguage) {
+                    linkParams['data-dojorama-queryparams'] = "?lang="+langKey;
+                }
+                domConstruct.create("a", linkParams, menuEntry);
+            }
         },
 
         setBtnState: function(btnName, isEnabled) {
@@ -152,10 +181,10 @@ function(
 
                 var store = null;
                 if (this.isRelatedObject()) {
-                    store = RelationStore.getStore(this.sourceOid, this.relation, appConfig.defaultLanguage);
+                    store = RelationStore.getStore(this.sourceOid, this.relation);
                 }
                 else {
-                    store = Store.getStore(this.type, appConfig.defaultLanguage);
+                    store = Store.getStore(this.type, this.language);
                 }
 
                 var storeMethod = this.isNew ? "add" : "put";

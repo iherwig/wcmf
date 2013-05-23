@@ -181,7 +181,7 @@ define([
             var isTypeTab = (id === typeName);
             var route = {
                 route: isTypeTab ? "entityList" : "entity",
-                routeParams: isTypeTab ? { type:typeName } : { type:typeName, id: id }
+                routeParams: isTypeTab ? { type:typeName } : { type:typeName, id:id }
             };
             return route;
         },

@@ -56,6 +56,9 @@ define([
                         // related to sourceOid (ignored if isNew == false)
         entity: null,
 
+        language: appConfig.defaultLanguage,
+        isTranslation: false,
+
         constructor: function(params) {
             this.request = params.request;
             this.session = params.session;
@@ -67,6 +70,12 @@ define([
 
             this.sourceOid = this.request.getQueryParam("oid");
             this.relation = this.request.getQueryParam("relation");
+
+            this.language = this.request.getQueryParam("lang") || appConfig.defaultLanguage;
+            if (!appConfig.languages[this.language]) {
+                this.language = appConfig.defaultLanguage;
+            }
+            this.isTranslation = this.language !== appConfig.defaultLanguage;
         },
 
         postCreate: function() {
@@ -83,7 +92,7 @@ define([
                 this.setTitle(appConfig.title+' - '+this.oid);
 
                 // create widget when entity is loaded
-                var store = Store.getStore(this.type, appConfig.defaultLanguage);
+                var store = Store.getStore(this.type, this.language);
                 when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(entity) {
                     // allow to watch for changes of the object data
                     this.entity = new Entity(entity);
@@ -139,6 +148,7 @@ define([
                     entity: this.entity,
                     sourceOid: this.isNew ? this.sourceOid : undefined,
                     relation: this.isNew ? this.relation : undefined,
+                    language: this.language,
                     router: this.router
                 });
 

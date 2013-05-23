@@ -62,6 +62,11 @@ define([
                 var url = route.assemble(pathParams);
                 node.href = url;
 
+                var queryStr = domAttr.get(node, 'data-dojorama-queryparams');
+                if (queryStr) {
+                    url += queryStr;
+                }
+
                 this.own(on(node, 'click', lang.hitch(this, function (e) {
                     e.preventDefault();
                     e.stopPropagation();

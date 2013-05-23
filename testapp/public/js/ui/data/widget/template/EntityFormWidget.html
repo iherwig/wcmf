@@ -9,9 +9,17 @@
                 <div class="span5" data-dojo-attach-point="fieldsNodeRight">
                 </div>
             </div>
-            <div class="btn-toolbar pull-right">
-                <button class="btn save btn-primary" type="submit" data-loading-text="Saving..." data-dojo-attach-event="onClick:_save">Save</button>
-                <button class="btn delete btn-danger" type="submit" data-loading-text="Deleting..." data-dojo-attach-event="onClick:_delete">Delete</button>
+            <div class="btn-toolbar">
+                <div class="btn-group pull-left">
+                    <button class="btn dropdown-toggle" data-toggle="dropdown">
+                        Language: <span data-dojo-attach-point="defaultLanguageNode"></span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" data-dojo-attach-point="languageMenuNode">
+                    </ul>
+                </div>
+                <button class="btn delete btn-danger pull-right" type="submit" data-loading-text="Deleting..." data-dojo-attach-event="onClick:_delete">Delete</button>
+                <button class="btn save btn-primary pull-right" type="submit" data-loading-text="Saving..." data-dojo-attach-event="onClick:_save">Save</button>
             </div>
         </fieldset>
         <div data-dojo-attach-point="relationsNode">

@@ -15,18 +15,16 @@ define([
 ) {
     var RelationStore = declare([BaseStore], {
         oid: '',
-        relationName: '',
-        language: ''
+        relationName: ''
     });
 
     /**
-     * Get the store for a given object id, relation and language
+     * Get the store for a given object id, relation
      * @param oid The object id
      * @param relationName The name of the relation
-     * @param language The language
      * @return RelationStore instance
      */
-    RelationStore.getStore = function(oid, relationName, language) {
+    RelationStore.getStore = function(oid, relationName) {
         var fqTypeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(oid));
         var id = Model.getIdFromOid(oid);
 
@@ -36,8 +34,7 @@ define([
         var jsonRest = new RelationStore({
             oid: oid,
             relationName: relationName,
-            language: language,
-            target: appConfig.pathPrefix+"/rest/"+language+"/"+fqTypeName+"/"+id+"/"+relationName+"/"
+            target: appConfig.pathPrefix+"/rest/"+appConfig.defaultLanguage+"/"+fqTypeName+"/"+id+"/"+relationName+"/"
         });
         var cache = new Observable(new Cache(
             jsonRest,
