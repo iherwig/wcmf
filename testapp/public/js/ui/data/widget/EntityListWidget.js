@@ -43,7 +43,7 @@ function(
 
             new GridWidget({
                 type: this.type,
-                store: Store.getStore(this.type, 'en'),
+                store: Store.getStore(this.type, appConfig.defaultLanguage),
                 actions: this.getGridActions(),
                 autoReload: false
             }, this.gridNode);

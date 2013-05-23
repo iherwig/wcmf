@@ -201,7 +201,7 @@ define([
                     this.setInstanceTabName({ oid:oid }, tabLink);
                 }
                 else {
-                    var store = Store.getStore(typeName, 'en');
+                    var store = Store.getStore(typeName, appConfig.defaultLanguage);
                     when(store.get(Model.getOid(typeName, id)), lang.hitch(this, function(entity) {
                             this.setInstanceTabName(entity, tabLink);
                         }), lang.hitch(this, function(error) {

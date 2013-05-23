@@ -152,10 +152,10 @@ function(
 
                 var store = null;
                 if (this.isRelatedObject()) {
-                    store = RelationStore.getStore(this.sourceOid, this.relation, 'en');
+                    store = RelationStore.getStore(this.sourceOid, this.relation, appConfig.defaultLanguage);
                 }
                 else {
-                    store = Store.getStore(this.type, 'en');
+                    store = Store.getStore(this.type, appConfig.defaultLanguage);
                 }
 
                 var storeMethod = this.isNew ? "add" : "put";

@@ -49,7 +49,7 @@ function(
 
             this.gridWidget = new GridWidget({
                 type: Model.getTypeNameFromOid(this.entity.oid),
-                store: RelationStore.getStore(this.entity.oid, this.relation.name, 'en'),
+                store: RelationStore.getStore(this.entity.oid, this.relation.name, appConfig.defaultLanguage),
                 actions: this.getGridActions(),
                 height: 198
             }, this.gridNode);

@@ -22,6 +22,8 @@ try {
   $config = ObjectFactory::getConfigurationInstance();
   $appTitle = $config->getValue('applicationTitle', 'application');
   $rootTypes = $config->getValue('rootTypes', 'application');
+  $defaultLanguage = $config->getValue('defaultLanguage', 'localization');
+  $languages = $config->getSection('languages');
 
   // check if the user should be redirected to the login page
   // if yes, we do this and add the requested path as route parameter
@@ -62,7 +64,13 @@ catch (Exception $ex) {
       var appConfig = {
           title: '<?php echo $appTitle; ?>',
           rootTypes: [<?php if ($rootTypes && sizeof($rootTypes) > 0) { echo "'".join("', '", $rootTypes)."'"; } ?>],
-          pathPrefix: '<?php echo $pathPrefix; ?>'
+          pathPrefix: '<?php echo $pathPrefix; ?>',
+          defaultLanguage: '<?php echo $defaultLanguage; ?>',
+          languages: {
+<?php foreach($languages as $key => $value): ?>
+              '<?php echo $key; ?>': '<?php echo $value; ?>',
+<?php endforeach; ?>
+          }
       };
       var dojoConfig = {
           has: {

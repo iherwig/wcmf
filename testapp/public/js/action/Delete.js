@@ -33,7 +33,7 @@ define([
                 content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
                 okCallback: lang.hitch(this, function(dlg) {
                     var typeName = Model.getTypeNameFromOid(data.oid);
-                    var store = Store.getStore(typeName, 'en');
+                    var store = Store.getStore(typeName, appConfig.defaultLanguage);
                     var deferred = store.remove(data.oid).then(lang.hitch(this, function(results) {
                         // callback completes
                         this.callback(data, results);

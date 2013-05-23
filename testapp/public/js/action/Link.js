@@ -37,7 +37,7 @@ define([
                 title: "Choose Objects",
                 content: "Select '"+this.relation.type+"' objects, you want to link to '"+Model.getDisplayValue(this.source)+"'",
                 okCallback: lang.hitch(this, function(dlg) {
-                    var store = RelationStore.getStore(this.source.oid, this.relation.name, 'en');
+                    var store = RelationStore.getStore(this.source.oid, this.relation.name, appConfig.defaultLanguage);
 
                     var oids = dlg.getSelectedOids();
                     var deferredList = [];

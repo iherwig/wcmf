@@ -83,7 +83,7 @@ define([
                 this.setTitle(appConfig.title+' - '+this.oid);
 
                 // create widget when entity is loaded
-                var store = Store.getStore(this.type, 'en');
+                var store = Store.getStore(this.type, appConfig.defaultLanguage);
                 when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(entity) {
                     // allow to watch for changes of the object data
                     this.entity = new Entity(entity);

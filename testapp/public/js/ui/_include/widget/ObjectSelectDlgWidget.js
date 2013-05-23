@@ -42,7 +42,7 @@ define([
             var gridNode = domConstruct.create("div", null, this.contentNode.parentNode);
             this.grid = new GridWidget({
                 type: this.type,
-                store: Store.getStore(this.type, 'en'),
+                store: Store.getStore(this.type, appConfig.defaultLanguage),
                 actions: [],
                 height: 198
             }, gridNode);
