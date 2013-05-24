@@ -17,7 +17,6 @@ define([
     "../../persistence/Store",
     "../../persistence/Entity",
     "../../model/meta/Model",
-    "../../Loader",
     "dojo/text!./template/EntityPage.html"
 ], function (
     declare,
@@ -38,7 +37,6 @@ define([
     Store,
     Entity,
     Model,
-    Loader,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -149,28 +147,38 @@ define([
         },
 
         buildForm: function() {
-            new Loader("js/ui/data/widget/EntityFormWidget").then(lang.hitch(this, function(Widget) {
-                // create the tab panel
-                var panel = new Widget({
-                    entity: this.entity,
-                    original: this.original,
-                    sourceOid: this.isNew ? this.sourceOid : undefined,
-                    relation: this.isNew ? this.relation : undefined,
-                    language: this.language,
-                    router: this.router
-                });
+            var typeClass = Model.getType(this.type);
+            require([typeClass.detailView || 'js/ui/data/widget/EntityFormWidget'], lang.hitch(this, function(View) {
+                if (View instanceof Function) {
+                    // create the tab panel
+                    var panel = new View({
+                        entity: this.entity,
+                        original: this.original,
+                        sourceOid: this.isNew ? this.sourceOid : undefined,
+                        relation: this.isNew ? this.relation : undefined,
+                        language: this.language,
+                        router: this.router
+                    });
 
-                // create the tab container
-                new EntityTabWidget({
-                    router: this.router,
-                    selectedTab: {
-                        oid: this.oid
-                    },
-                    selectedPanel: panel
-                }, this.tabNode);
+                    // create the tab container
+                    new EntityTabWidget({
+                        router: this.router,
+                        selectedTab: {
+                            oid: this.oid
+                        },
+                        selectedPanel: panel
+                    }, this.tabNode);
 
-                // setup routes on tab container after loading
-                this.setupRoutes();
+                    // setup routes on tab container after loading
+                    this.setupRoutes();
+                }
+                else {
+                    // error
+                    this.showNotification({
+                        type: "error",
+                        message: "Detail view class for type '"+this.type+"' not found."
+                    });
+                }
             }));
         }
     });

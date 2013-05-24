@@ -14,7 +14,7 @@ define([
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "./widget/EntityTabWidget",
-    "../../Loader",
+    "../../model/meta/Model",
     "dojo/text!./template/EntityListPage.html"
 ], function (
     declare,
@@ -32,7 +32,7 @@ define([
     _Notification,
     NavigationWidget,
     EntityTabWidget,
-    Loader,
+    Model,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
@@ -68,24 +68,34 @@ define([
         },
 
         buildForm: function() {
-            new Loader("js/ui/data/widget/EntityListWidget").then(lang.hitch(this, function(Widget) {
-                // create the tab panel
-                var panel = new Widget({
-                    type: this.type,
-                    router: this.router
-                });
+            var typeClass = Model.getType(this.type);
+            require([typeClass.listView || 'js/ui/data/widget/EntityListWidget'], lang.hitch(this, function(View) {
+                if (View instanceof Function) {
+                    // create the tab panel
+                    var panel = new View({
+                        type: this.type,
+                        router: this.router
+                    });
 
-                // create the tab container
-                new EntityTabWidget({
-                    router: this.router,
-                    selectedTab: {
-                        oid: this.type
-                    },
-                    selectedPanel: panel
-                }, this.tabNode);
+                    // create the tab container
+                    new EntityTabWidget({
+                        router: this.router,
+                        selectedTab: {
+                            oid: this.type
+                        },
+                        selectedPanel: panel
+                    }, this.tabNode);
 
-                // setup routes on tab container after loading
-                this.setupRoutes();
+                    // setup routes on tab container after loading
+                    this.setupRoutes();
+                }
+                else {
+                    // error
+                    this.showNotification({
+                        type: "error",
+                        message: "List view class for type '"+this.type+"' not found."
+                    });
+                }
             }));
         }
     });

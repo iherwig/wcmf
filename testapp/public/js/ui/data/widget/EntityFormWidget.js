@@ -15,7 +15,7 @@ define( [
     "../../../persistence/RelationStore",
     "../../../action/Edit",
     "../../../action/Delete",
-    "../../../Loader",
+    "../input/Factory",
     "./EntityRelationWidget",
     "dojo/text!./template/EntityFormWidget.html"
 ],
@@ -36,7 +36,7 @@ function(
     RelationStore,
     Edit,
     Delete,
-    Loader,
+    ControlFactory,
     EntityRelationWidget,
     template
 ) {
@@ -78,15 +78,16 @@ function(
         postCreate: function() {
             this.inherited(arguments);
 
-            // TODO: load input widgets referenced in attributes' input type
-            new Loader("js/ui/data/widget/TextBox").then(lang.hitch(this, function(TextBox) {
+            // load input widgets referenced in attributes' input type
+            ControlFactory.loadControlClasses(this.type).then(lang.hitch(this, function(controls) {
                 var typeClass = Model.getType(this.type);
 
                 // add attribute widgets
                 var attributes = typeClass.getAttributes('DATATYPE_ATTRIBUTE');
                 for (var i=0, count=attributes.length; i<count; i++) {
                     var attribute = attributes[i];
-                    var attributeWidget = new TextBox({
+                    var controlClass = controls[attribute.inputType];
+                    var attributeWidget = new controlClass({
                         entity: this.entity,
                         attribute: attribute,
                         original: this.original
@@ -115,6 +116,12 @@ function(
                         this.relationsNode.appendChild(relationWidget.domNode);
                     }
                 }
+            }), lang.hitch(this, function(error) {
+                // error
+                this.showNotification({
+                    type: "error",
+                    message: error.message || "Backend error"
+                });
             }));
 
             // set button states
@@ -172,7 +179,7 @@ function(
 
             var state = modified === true ? "dirty" : "clean";
             this.entity.setState(state);
-            this.setBtnState("save", true);
+            this.setBtnState("save", modified);
         },
 
         isRelatedObject: function() {
@@ -227,6 +234,7 @@ function(
                             message: "'"+Model.getDisplayValue(this.entity)+"' was successfully " + (this.isNew ? "created" : "updated"),
                             fadeOut: true,
                             onHide: lang.hitch(this, function() {
+                                this.setBtnState("save", false);
                                 if (this.isNew) {
                                     this.isNew = false;
 
