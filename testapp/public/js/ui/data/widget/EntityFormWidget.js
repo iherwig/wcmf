@@ -59,6 +59,7 @@ function(
 
         language: appConfig.defaultLanguage,
         isTranslation: false,
+        original: null, // untranslated entity
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -87,7 +88,8 @@ function(
                     var attribute = attributes[i];
                     var attributeWidget = new TextBox({
                         entity: this.entity,
-                        attribute: attribute
+                        attribute: attribute,
+                        original: this.original
                     });
                     this.own(attributeWidget.on('change', lang.hitch(this, function(widget) {
                         var widgetValue = widget.get("value");
@@ -116,6 +118,7 @@ function(
             }));
 
             // set button states
+            this.setBtnState("save", false);
             if (this.isNew) {
                 this.setBtnState("reset", false);
                 this.setBtnState("delete", false);
@@ -128,9 +131,10 @@ function(
 
         buildLanguageMenu: function() {
             this.defaultLanguageNode.innerHTML = appConfig.languages[this.language];
+            var languageCount = 0;
             for (var langKey in appConfig.languages) {
                 var menuEntry = domConstruct.create("li", {
-                }, this.languageMenuNode);
+                }, this.languageMenuPopupNode);
                 var linkParams = {
                     href: "#",
                     'data-dojorama-route': "entity",
@@ -141,7 +145,14 @@ function(
                 if (langKey !== appConfig.defaultLanguage) {
                     linkParams['data-dojorama-queryparams'] = "?lang="+langKey;
                 }
+                else {
+                    linkParams['innerHTML'] = "<b>"+linkParams['innerHTML']+"</b>";
+                }
                 domConstruct.create("a", linkParams, menuEntry);
+                languageCount++;
+            }
+            if (languageCount <= 1) {
+                domClass.add(this.languageMenuNode, "hide");
             }
         },
 
@@ -161,6 +172,7 @@ function(
 
             var state = modified === true ? "dirty" : "clean";
             this.entity.setState(state);
+            this.setBtnState("save", true);
         },
 
         isRelatedObject: function() {

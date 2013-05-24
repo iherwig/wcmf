@@ -10,12 +10,12 @@
                 </div>
             </div>
             <div class="btn-toolbar">
-                <div class="btn-group pull-left">
+                <div class="btn-group pull-left" data-dojo-attach-point="languageMenuNode">
                     <button class="btn dropdown-toggle" data-toggle="dropdown">
                         Language: <span data-dojo-attach-point="defaultLanguageNode"></span>
                         <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu" data-dojo-attach-point="languageMenuNode">
+                    <ul class="dropdown-menu" data-dojo-attach-point="languageMenuPopupNode">
                     </ul>
                 </div>
                 <button class="btn delete btn-danger pull-right" type="submit" data-loading-text="Deleting..." data-dojo-attach-event="onClick:_delete">Delete</button>

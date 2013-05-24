@@ -1,7 +1,7 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/when",
+    "dojo/promise/all",
     "dojo/topic",
     "dojo/Deferred",
     "bootstrap/Tab",
@@ -22,7 +22,7 @@ define([
 ], function (
     declare,
     lang,
-    when,
+    all,
     topic,
     Deferred,
     Tab,
@@ -54,10 +54,11 @@ define([
                          // (ignored if isNew == false)
         relation: null, // the relation in which the object should be created
                         // related to sourceOid (ignored if isNew == false)
-        entity: null,
+        entity: null, // entity to edit
 
         language: appConfig.defaultLanguage,
         isTranslation: false,
+        original: null, // untranslated entity
 
         constructor: function(params) {
             this.request = params.request;
@@ -89,10 +90,19 @@ define([
                 this.setTitle(appConfig.title+' - '+this.oid);
 
                 // create widget when entity is loaded
+                var loadPromises = [];
+                var oid = Model.getOid(this.type, id);
                 var store = Store.getStore(this.type, this.language);
-                when(store.get(Model.getOid(this.type, id)), lang.hitch(this, function(entity) {
+                loadPromises.push(store.get(oid));
+                if (this.isTranslation) {
+                  // provide original entity for reference
+                  var storeOrig = Store.getStore(this.type, appConfig.defaultLanguage);
+                  loadPromises.push(storeOrig.get(oid));
+                }
+                all(loadPromises).then(lang.hitch(this, function(loadResults) {
                     // allow to watch for changes of the object data
-                    this.entity = new Entity(entity);
+                    this.entity = new Entity(loadResults[0]);
+                    this.original = this.isTranslation ? loadResults[1] : {};
                     this.buildForm();
                     this.setTitle(appConfig.title+' - '+Model.getDisplayValue(this.entity));
                 }), lang.hitch(this, function(error) {
@@ -143,6 +153,7 @@ define([
                 // create the tab panel
                 var panel = new Widget({
                     entity: this.entity,
+                    original: this.original,
                     sourceOid: this.isNew ? this.sourceOid : undefined,
                     relation: this.isNew ? this.relation : undefined,
                     language: this.language,

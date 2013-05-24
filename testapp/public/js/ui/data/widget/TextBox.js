@@ -18,6 +18,7 @@ function(
         intermediateChanges: true,
         entity: {},
         attribute: {},
+        original: {},
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -30,6 +31,8 @@ function(
 
         postCreate: function() {
             this.inherited(arguments);
+
+            this.helpNode.innerHTML = this.original[this.attribute.name] || "";
 
             // subscribe to entity change events to change tab links
             this.own(
