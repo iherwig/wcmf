@@ -95,6 +95,9 @@ class BatchDisplayController extends BatchController {
         array('invalidOids' => array($request->getValue('oid')))));
       return false;
     }
+    if (!$this->checkLanguageParameter()) {
+      return false;
+    }
     // do default validation
     return parent::validate();
   }

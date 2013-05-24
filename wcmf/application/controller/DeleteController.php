@@ -43,6 +43,17 @@ use wcmf\lib\presentation\Controller;
 class DeleteController extends Controller {
 
   /**
+   * @see Controller::validate()
+   */
+  protected function validate() {
+    if (!$this->checkLanguageParameter()) {
+      return false;
+    }
+    // do default validation
+    return parent::validate();
+  }
+
+  /**
    * Delete given Nodes.
    * @see Controller::executeKernel()
    */

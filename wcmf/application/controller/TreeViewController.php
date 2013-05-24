@@ -42,6 +42,17 @@ use wcmf\lib\presentation\Controller;
 class TreeViewController extends Controller {
 
   /**
+   * @see Controller::validate()
+   */
+  protected function validate() {
+    if (!$this->checkLanguageParameter()) {
+      return false;
+    }
+    // do default validation
+    return parent::validate();
+  }
+
+  /**
    * Assign data to View.
    * @return Array of given context and action 'failure' on failure.
    *         False on success (Stop action processing chain).

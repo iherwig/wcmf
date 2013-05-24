@@ -54,6 +54,17 @@ class SaveController extends Controller {
   private $_graphicsUtil = null;
 
   /**
+   * @see Controller::validate()
+   */
+  protected function validate() {
+    if (!$this->checkLanguageParameter()) {
+      return false;
+    }
+    // do default validation
+    return parent::validate();
+  }
+
+  /**
    * Save Node data.
    * @see Controller::executeKernel()
    */

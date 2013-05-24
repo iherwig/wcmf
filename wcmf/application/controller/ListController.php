@@ -82,8 +82,12 @@ class ListController extends Controller {
         $response->addError(ApplicationError::get('SORT_DIRECTION_UNKNOWN'));
       }
     }
+    if (!$this->checkLanguageParameter()) {
+      return false;
+    }
     // we can't check for offset out of bounds here
-    return true;
+    // do default validation
+    return parent::validate();
   }
 
   /**

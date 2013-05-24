@@ -244,15 +244,36 @@ abstract class Controller {
   /**
    * Check if the current request is localized. This is true,
    * if it has a language parameter that is not equal to Localization::getDefaultLanguage().
+   * Throws an exception if a language is given which is not supported
    * @return Boolean wether the request is localized or not
    */
   protected function isLocalizedRequest() {
-    $localization = ObjectFactory::getInstance('localization');
-    if ($this->_request->hasValue('language') &&
-      $this->_request->getValue('language') != $localization->getDefaultLanguage()) {
-      return true;
+    if ($this->_request->hasValue('language')) {
+      $language = $this->_request->hasValue('language');
+      $localization = ObjectFactory::getInstance('localization');
+      if ($language != $localization->getDefaultLanguage()) {
+        return true;
+      }
     }
     return false;
+  }
+
+  /**
+   * Checks the language request parameter and adds an respons eerror,
+   * if it is not contained in the Localization::getSupportedLanguages() list.
+   * @return Boolean
+   */
+  protected function checkLanguageParameter() {
+    if ($this->_request->hasValue('language')) {
+      $language = $this->_request->getValue('language');
+      $localization = ObjectFactory::getInstance('localization');
+      if (!in_array($language, array_keys($localization->getSupportedLanguages()))) {
+        $this->_response->addError(ApplicationError::get('PARAMETER_INVALID',
+                array('invalidParameters' => array('language'))));
+        return false;
+      }
+    }
+    return true;
   }
 }
 ?>

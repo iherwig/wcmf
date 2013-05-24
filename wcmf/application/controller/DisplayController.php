@@ -70,7 +70,11 @@ class DisplayController extends Controller {
         $response->addError(ApplicationError::get('DEPTH_INVALID'));
       }
     }
-    return true;
+    if (!$this->checkLanguageParameter()) {
+      return false;
+    }
+    // do default validation
+    return parent::validate();
   }
 
   /**

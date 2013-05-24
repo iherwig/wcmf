@@ -38,20 +38,32 @@ use wcmf\lib\util\Obfuscator;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ListboxController extends Controller
-{
+class ListboxController extends Controller {
+
+  /**
+   * @see Controller::validate()
+   */
+  protected function validate() {
+    if (!$this->checkLanguageParameter()) {
+      return false;
+    }
+    // do default validation
+    return parent::validate();
+  }
+
   /**
    * Do processing and assign Node data to View.
    * @return False in every case.
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
+  function executeKernel() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+
     // unveil the filter value if it is ofuscated
-    $filter = $this->_request->getValue('filter');
+    $filter = $request->getValue('filter');
     $unveiled = Obfuscator::unveil($filter);
-    if (strlen($filter) > 0)
-    {
+    if (strlen($filter) > 0) {
       if (strlen($unveiled) > 0) {
         $filter = $unveiled;
       }
@@ -60,13 +72,13 @@ class ListboxController extends Controller
       }
     }
 
-    $objects = g_getOIDs($this->_request->getValue('type'), $filter);
+    $objects = g_getOIDs($request->getValue('type'), $filter);
     if ($this->isLocalizedRequest()) {
-      $objects = g_getOIDs($this->_request->getValue('type'), $filter, null, false,
-	      $this->_request->getValue('language'));
+      $objects = g_getOIDs($request->getValue('type'), $filter, null, false,
+	      $request->getValue('language'));
 	  }
     else {
-      $objects = g_getOIDs($this->_request->getValue('type'), $filter);
+      $objects = g_getOIDs($request->getValue('type'), $filter);
     }
 
     // translate all nodes to the requested language if requested
@@ -74,14 +86,13 @@ class ListboxController extends Controller
     {
       $localization = ObjectFactory::getInstance('localization');
       for ($i=0; $i<sizeof($objects); $i++) {
-        $localization->loadTranslation($objects[$i], $this->_request->getValue('language'), true, true);
+        $localization->loadTranslation($objects[$i], $request->getValue('language'), true, true);
       }
     }
 
     // apply displayFilter, if given
-    $regexp = $this->_request->getValue('displayFilter');
-    if (strlen($regexp) > 0)
-    {
+    $regexp = $request->getValue('displayFilter');
+    if (strlen($regexp) > 0) {
       $regexp = '/'.$regexp.'/i';
       $tmp = array();
       foreach ($objects as $key => $val)
@@ -93,14 +104,14 @@ class ListboxController extends Controller
       $objects = $tmp;
     }
 
-    $this->_response->setValue('totalCount', sizeof($objects));
+    $response->setValue('totalCount', sizeof($objects));
     $responseObjects = array();
     foreach($objects as $key => $val)
       array_push($responseObjects, array('key' => $key, 'val' => $val));
-    $this->_response->setValue('objects', $responseObjects);
+    $response->setValue('objects', $responseObjects);
 
     // success
-    $this->_response->setAction('ok');
+    $response->setAction('ok');
     return false;
   }
 }

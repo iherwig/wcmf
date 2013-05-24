@@ -72,9 +72,6 @@ define([
             this.relation = this.request.getQueryParam("relation");
 
             this.language = this.request.getQueryParam("lang") || appConfig.defaultLanguage;
-            if (!appConfig.languages[this.language]) {
-                this.language = appConfig.defaultLanguage;
-            }
             this.isTranslation = this.language !== appConfig.defaultLanguage;
         },
 

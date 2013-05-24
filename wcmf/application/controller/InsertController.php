@@ -77,7 +77,11 @@ class InsertController extends Controller {
         array('invalidParameters' => array('className'))));
       return false;
     }
-    return true;
+    if (!$this->checkLanguageParameter()) {
+      return false;
+    }
+    // do default validation
+    return parent::validate();
   }
 
   /**
