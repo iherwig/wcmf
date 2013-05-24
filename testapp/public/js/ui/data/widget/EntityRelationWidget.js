@@ -48,7 +48,7 @@ function(
             this.inherited(arguments);
 
             this.gridWidget = new GridWidget({
-                type: Model.getTypeNameFromOid(this.entity.oid),
+                type: this.relation.type,
                 store: RelationStore.getStore(this.entity.oid, this.relation.name),
                 actions: this.getGridActions(),
                 height: 198

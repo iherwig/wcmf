@@ -102,20 +102,6 @@ function(
                     var nodeToAppend = (attribute.isEditable) ? this.fieldsNodeLeft : this.fieldsNodeRight;
                     nodeToAppend.appendChild(attributeWidget.domNode);
                 }
-
-                // add relation widgets
-                if (!this.isNew) {
-                    var relations = typeClass.getRelations();
-                    for (var i=0, count=relations.length; i<count; i++) {
-                        var relation = relations[i];
-                        var relationWidget = new EntityRelationWidget({
-                            entity: this.entity,
-                            relation: relation,
-                            router: this.router
-                        });
-                        this.relationsNode.appendChild(relationWidget.domNode);
-                    }
-                }
             }), lang.hitch(this, function(error) {
                 // error
                 this.showNotification({
@@ -123,6 +109,21 @@ function(
                     message: error.message || "Backend error"
                 });
             }));
+
+            // add relation widgets
+            if (!this.isNew) {
+                var typeClass = Model.getType(this.type);
+                var relations = typeClass.getRelations();
+                for (var i=0, count=relations.length; i<count; i++) {
+                    var relation = relations[i];
+                    var relationWidget = new EntityRelationWidget({
+                        entity: this.entity,
+                        relation: relation,
+                        router: this.router
+                    });
+                    this.relationsNode.appendChild(relationWidget.domNode);
+                }
+            }
 
             // set button states
             this.setBtnState("save", false);
