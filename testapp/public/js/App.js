@@ -24,6 +24,8 @@ define([
 ) {
     return declare([Application], {
 
+        _location: '',
+
         constructor: function () {
             populateRouter(this, routingMap);
             this.run();
@@ -40,6 +42,13 @@ define([
             }
 
             domConstruct.create(tag, attributes, refNode, position);
+        },
+
+        handleState: function () {
+            if (window.location.href !== this._location) {
+                this.inherited(arguments);
+                this._location = window.location.href;
+            }
         },
 
         makeNotFoundPage: function () {

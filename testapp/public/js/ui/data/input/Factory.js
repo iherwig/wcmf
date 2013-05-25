@@ -68,6 +68,9 @@ function(
         else if (inputType === 'date') {
             return "js/ui/data/input/widget/Date";
         }
+        else if (inputType === 'ckeditor') {
+            return "js/ui/data/input/widget/CKEditor";
+        }
 
         return "js/ui/data/input/widget/TextBox";
     };

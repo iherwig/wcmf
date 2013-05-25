@@ -36,7 +36,7 @@ try {
       header("Location: ".$redirectUrl);
     }
   }
-  $baseHref = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+  $baseHref = dirname(URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']).'/';
 }
 catch (Exception $ex) {
   $application->handleException($ex);
@@ -90,6 +90,7 @@ catch (Exception $ex) {
               { name: 'dgrid', location: 'vendor/dgrid' },
               { name: 'xstyle', location: 'vendor/xstyle' },
               { name: 'put-selector', location: 'vendor/put-selector' },
+              { name: 'ckeditor', location: 'vendor/ckeditor' },
 
               { name: 'app', location: 'js', map: {} }
           ],
