@@ -39,8 +39,10 @@ function(
 
             this.editorInstance = CKEDITOR.replace(this.textbox, {
                 customConfig: appConfig.pathPrefix+'/js/config/ckeditor_config.js',
-                filebrowserBrowseUrl: 'main.php?usr_action=browseresources&type=image&subtype=resource',
-                filebrowserUploadUrl: 'main.php?usr_action=browseresources&type=link&subtype=content'
+                filebrowserBrowseUrl: 'main.php?usr_action=browsemedia',
+                filebrowserLinkBrowseUrl: 'main.php?usr_action=browsecontent',
+                filebrowserWindowWidth: '800',
+                filebrowserWindowHeight: '700'
             });
             this.helpNode.innerHTML = this.original[this.attribute.name] || "";
 
