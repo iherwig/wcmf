@@ -2,13 +2,15 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/array",
     "dojo/Deferred",
-    "../../../model/meta/Model"
+    "../../../model/meta/Model",
+    "../../../model/meta/_InputTypeList"
 ],
 function(
     declare,
     array,
     Deferred,
-    Model
+    Model,
+    InputTypeList
 ) {
     var Factory = declare(null, {
     });
@@ -59,17 +61,8 @@ function(
     };
 
     Factory.getControlClass = function(inputType) {
-        if (inputType === 'text') {
-            return "js/ui/data/input/widget/TextBox";
-        }
-        else if (inputType === 'textarea') {
-            return "js/ui/data/input/widget/TextArea";
-        }
-        else if (inputType === 'date') {
-            return "js/ui/data/input/widget/Date";
-        }
-        else if (inputType === 'ckeditor') {
-            return "js/ui/data/input/widget/CKEditor";
+        if (InputTypeList[inputType]) {
+            return InputTypeList[inputType];
         }
 
         return "js/ui/data/input/widget/TextBox";
