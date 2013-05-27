@@ -2,8 +2,8 @@ RewriteEngine On
 RewriteBase /ingo/wcmf/testapp/public
 
 # remove leading path caused by application's virtual paths
-RewriteCond %{REQUEST_URI} (js|vendor|css|images|)/.+\..+
-RewriteRule ^[^/]+/((js|vendor|css|images|)/.*)$ $1
+RewriteCond %{REQUEST_URI} (css|images|js|media|vendor|)/.+\..+
+RewriteRule ^[^/]+/((css|images|js|media|vendor|)/.*)$ $1
 
 # restful interface handled by main.php
 # we expect urls like:

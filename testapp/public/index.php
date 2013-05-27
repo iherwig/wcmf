@@ -91,6 +91,7 @@ catch (Exception $ex) {
               { name: 'xstyle', location: 'vendor/xstyle' },
               { name: 'put-selector', location: 'vendor/put-selector' },
               { name: 'ckeditor', location: 'vendor/ckeditor' },
+              { name: 'elfinder', location: 'vendor/elfinder' },
 
               { name: 'app', location: 'js', map: {} }
           ],

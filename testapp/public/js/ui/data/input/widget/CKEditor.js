@@ -39,8 +39,8 @@ function(
 
             this.editorInstance = CKEDITOR.replace(this.textbox, {
                 customConfig: appConfig.pathPrefix+'/js/config/ckeditor_config.js',
-                filebrowserBrowseUrl: 'main.php?usr_action=browsemedia',
-                filebrowserLinkBrowseUrl: 'main.php?usr_action=browsecontent',
+                filebrowserBrowseUrl: appConfig.pathPrefix+'/media',
+                filebrowserLinkBrowseUrl: appConfig.pathPrefix+'/media',
                 filebrowserWindowWidth: '800',
                 filebrowserWindowHeight: '700'
             });

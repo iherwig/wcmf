@@ -20,15 +20,16 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
 
-include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinderConnector.class.php");
-include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinder.class.php");
-include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinderVolumeDriver.class.php");
-include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinderVolumeLocalFileSystem.class.php");
+include_once(WCMF_BASE."wcmf/vendor/elfinder/elFinder.class.php");
+include_once(WCMF_BASE."wcmf/vendor/elfinder/elFinderConnector.class.php");
+include_once(WCMF_BASE."wcmf/vendor/elfinder/elFinderVolumeDriver.class.php");
+include_once(WCMF_BASE."wcmf/vendor/elfinder/elFinderVolumeLocalFileSystem.class.php");
 
 /**
- * ElFinderController integrates elFinder (http://elrte.org/elfinder)
+ * MediaController integrates elFinder (http://elrte.org/elfinder)
  * into wCMF.
  * @note elFinder defines action names in the 'cmd' parameter.
  *
@@ -44,23 +45,23 @@ include_once(WCMF_BASE."wcmf/vendor/elfinder/php/elFinderVolumeLocalFileSystem.c
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ElFinderController extends Controller
-{
+class MediaController extends Controller {
+
   /**
    * Process finder actions.
    * @return True in every case.
    * @see Controller::executeKernel()
    */
-  protected function executeKernel()
-  {
+  protected function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
     // get root path and root url for the browser
-    $config = ObjectFactory::getConfigurationInstance();
-    $rootPath = $config->getValue('uploadDir', 'media').'/';
+    $rootPath = $this->getResourceBaseDir();
     $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $rootUrl = URIUtil::makeAbsolute($rootPath, $refURL);
+
+    $directory = $request->hasValue('directory') ? $request->getValue('directory') : $rootPath;
 
     // set common response values
     if ($request->hasValue('fieldName')) {
@@ -69,8 +70,7 @@ class ElFinderController extends Controller
     $response->setValue('rootUrl', $rootUrl);
     $response->setValue('rootPath', $rootPath);
 
-    if ($request->getAction() != "browseResources")
-    {
+    if ($request->getAction() == "browsemedia") {
       $opts = array(
         // 'debug' => true,
         'roots' => array(
@@ -78,28 +78,85 @@ class ElFinderController extends Controller
             'driver' => 'LocalFileSystem', // driver for accessing file system (REQUIRED)
             'path' => $rootPath,           // path to files (REQUIRED)
             'URL' => $rootUrl,             // URL to files (REQUIRED)
-            'alias' => 'Media'
+            'alias' => 'Media',
+            'tmbBgColor' => 'transparent',
+            'startPath' => $directory
           )
+        ),
+        'bind' => array(
+          'rename rm paste' => array($this, 'onFileMoved')
         )
       );
 
       // run elFinder
-      $connector = new elFinderConnector(new elFinder($opts));
+      $connector = new \elFinderConnector(new \elFinder($opts));
       $connector->run();
 
       $response->setAction('ok');
       return true;
     }
     else {
-      // handle special actions (given in the cmd parameter from elfinder)
-      $action = $request->getValue('cmd');
-      if ($action == 'rename') {
+      // custom crop action
+      if ($request->getAction() == 'crop') {
+        $file = $request->getValue('oid');
+        $response->setValue('oid', $file);
+        if ($request->hasValue('cropX') && $request->hasValue('cropY') &&
+                $request->hasValue('cropWidth') && $request->hasValue('cropHeight')) {
+          // extract crop info
+          $x = $request->getValue('cropX');
+          $y = $request->getValue('cropY');
+          $w = $request->getValue('cropWidth');
+          $h = $request->getValue('cropHeight');
 
+          // define target file name
+          $cropInfo = 'x'.$x.'y'.$y.'w'.$w.'h'.$h;
+          $pathParts = pathinfo($file);
+          $targetFile = $pathParts['dirname'].'/'.$pathParts['filename'].'_'.$cropInfo.'.'.$pathParts['extension'];
+
+          // crop the image
+          $graphicsUtil = new GraphicsUtil();
+          $graphicsUtil->cropImage($file, $targetFile, $w, $h, $x, $y);
+          $response->setValue('fieldName', $request->getValue('fieldName'));
+          $response->setAction('browsemedia');
+          return true;
+        }
       }
-
       $response->setAction('ok');
       return false;
     }
+  }
+
+  /**
+   * Called when file is moved
+   * @param  cmd elFinder command name
+   * @param  result Command result as array
+   * @param  args Command arguments from client
+   * @param  elfinder elFinder instance
+   * @return void|true
+  **/
+  protected function onFileMoved($cmd, $result, $args, $elfinder) {
+    $addedFiles = $result['added'];
+    $removedFiles = $result['removed'];
+    for ($i=0, $count=sizeof($removedFiles); $i<$count; $i++) {
+      $source = $removedFiles[$i]['realpath'];
+      $target = $elfinder->realpath($addedFiles[$i]['hash']);
+    }
+    Log::debug($cmd." file: ".$source." -> ".$target, __CLASS__);
+  }
+
+  /**
+   * Get the base directory for resources. The default implementation
+   * returns the directory configured by the 'uploadDir' key in section 'media'.
+   * @return The directory name
+   * @note Subclasses will override this method to implement special application requirements
+   */
+  protected function getResourceBaseDir() {
+    $config = ObjectFactory::getConfigurationInstance();
+    $rootPath = $config->getValue('uploadDir', 'media');
+    if (!preg_match('/\/$/', $rootPath)) {
+      $rootPath .= '/';
+    }
+    return $rootPath;
   }
 }
 ?>

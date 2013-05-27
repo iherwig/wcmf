@@ -168,9 +168,16 @@ class ControllerMessage {
   /**
    * Get a header value
    * @param name The header name
+   * @param default The default value if the header is not defined [default: null]
+   * @return The header value or default, if it does not exist
    */
-  public function getHeader($name) {
-    return $this->_headers[$name];
+  public function getHeader($name, $default=null) {
+    if ($this->hasHeader($name)) {
+      return $this->_headers[$name];
+    }
+    else {
+      return $default;
+    }
   }
 
   /**

@@ -31,6 +31,11 @@ define(["dojo/_base/config", "require"], function (config, require) {
             widget: mid('./ui/data/EntityPage'),
             layers: l.data || []
         },
+        media: {
+            schema: p + '/media',
+            widget: mid('./ui/media/BrowsePage'),
+            layers: l.data || []
+        },
         admin: {
             schema: p + '/admin',
             widget: mid('./ui/admin/AdminPage'),

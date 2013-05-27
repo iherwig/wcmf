@@ -13,7 +13,7 @@ define([
     "dojo/dom-form",
     "dojo/query",
     "dojo/request",
-    "dojo/text!./template/LoginPage.html",
+    "dojo/text!./template/LoginPage.html"
 ], function (
     declare,
     lang,
@@ -104,7 +104,7 @@ define([
                 query(".btn").button("reset");
                 this.showNotification({
                     type: "error",
-                    message: error.message || error.response.data.errorMessage || "Backend error"
+                    message: error.response.data.errorMessage || error.message || "Backend error"
                 });
             }));
         }
