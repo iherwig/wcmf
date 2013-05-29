@@ -22,7 +22,7 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\Obfuscator;
 
 /**
- * ListboxController is a controller that uses g_getOIDs to retrieve listbox data.
+ * ListControlController is a controller that uses g_getOIDs to retrieve listbox data.
  *
  * <b>Input actions:</b>
  * - unspecified: List Nodes of given type
@@ -38,7 +38,7 @@ use wcmf\lib\util\Obfuscator;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ListboxController extends Controller {
+class ListControlController extends Controller {
 
   /**
    * @see Controller::validate()

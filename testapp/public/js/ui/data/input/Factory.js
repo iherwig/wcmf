@@ -1,6 +1,7 @@
 define( [
     "dojo/_base/declare",
     "dojo/_base/array",
+    "dojo/_base/kernel",
     "dojo/Deferred",
     "../../../model/meta/Model",
     "../../../model/meta/_InputTypeList"
@@ -8,12 +9,18 @@ define( [
 function(
     declare,
     array,
+    kernel,
     Deferred,
     Model,
-    InputTypeList
+    InputTypeDefinitions
 ) {
     var Factory = declare(null, {
     });
+
+    /**
+     * Registry for cached list definitions
+     */
+    kernel.global.listDefinitions = {};
 
     /**
      * Load the control classes for a given entity type.
@@ -42,6 +49,7 @@ function(
                 controls.push(controlClass);
             }
         }
+
         require(controls, function() {
             // store loaded classes in inputTyp -> control map
             var result = {};
@@ -61,11 +69,31 @@ function(
     };
 
     Factory.getControlClass = function(inputType) {
-        if (InputTypeList[inputType]) {
-            return InputTypeList[inputType];
+        // get best matching control
+        var bestMatch = '';
+        for (var controlDef in InputTypeDefinitions) {
+            if (inputType.indexOf(controlDef) === 0 && controlDef.length > bestMatch.length) {
+                bestMatch = controlDef;
+            }
         }
-
+        // get the control
+        if (bestMatch.length > 0) {
+          var controlClass = InputTypeDefinitions[bestMatch];
+          return controlClass;
+        }
+        // default
         return "js/ui/data/input/widget/TextBox";
+    };
+
+    /**
+     * Called by list controls to retrive the list of values
+     * @param inputType The input type (contains the list definition after '#' char)
+     * @returns Array with keys, values
+     */
+    Factory.getListValues = function(inputType) {
+        var deferred = new Deferred();
+        // TODO: get list from server and cache if allowed by server
+        return deferred;
     };
 
     return Factory;

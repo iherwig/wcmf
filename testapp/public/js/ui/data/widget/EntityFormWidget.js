@@ -101,6 +101,7 @@ function(
                     }, attributeWidget)));
                     var nodeToAppend = (attribute.isEditable) ? this.fieldsNodeLeft : this.fieldsNodeRight;
                     nodeToAppend.appendChild(attributeWidget.domNode);
+                    attributeWidget.startup();
                 }
             }), lang.hitch(this, function(error) {
                 // error
