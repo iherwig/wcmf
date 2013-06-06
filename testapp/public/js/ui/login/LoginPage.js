@@ -3,13 +3,16 @@ define([
     "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
+    "dijit/_WidgetsInTemplateMixin",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "../../Cookie",
-    "bootstrap/Button",
+    "dijit/form/TextBox",
+    "dijit/Dialog",
+    "dijit/form/Button",
     "dojo/dom-form",
     "dojo/query",
     "dojo/request",
@@ -19,19 +22,22 @@ define([
     lang,
     _WidgetBase,
     _TemplatedMixin,
+    _WidgetsInTemplateMixin,
     _AppAware,
     _StateAware,
     _Page,
     _Notification,
     NavigationWidget,
     Cookie,
-    button,
+    TextBox,
+    Dialog,
+    Button,
     domForm,
     query,
     request,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware, _Page, _Notification], {
 
         request: null,
         session: null,
@@ -46,9 +52,10 @@ define([
             this.inherited(arguments);
             this.setTitle(appConfig.title+' - Login');
 
-            new NavigationWidget({
+            var navi = new NavigationWidget({
                 titleOnly: true
             }, this.navigationNode);
+            navi.startup();
         },
 
         startup: function() {
@@ -63,7 +70,9 @@ define([
             data.controller = "wcmf\\application\\controller\\LoginController";
             data.action = "login";
 
-            query(".btn").button("loading");
+            var oldBtnLabel = this.loginBtn.get("label");
+              this.loginBtn.set("label", oldBtnLabel+' <i class="icon-spinner icon-spin"></i>');
+            this.loginBtn.set("disabled", true);
 
             this.hideNotification();
             request.post("main.php", {
@@ -75,7 +84,8 @@ define([
 
             }).then(lang.hitch(this, function(response) {
                 // callback completes
-                query(".btn").button("reset");
+                this.loginBtn.set("label", oldBtnLabel);
+                this.loginBtn.set("disabled", false);
                 if (!response.success) {
                     // error
                     this.showNotification({
@@ -101,7 +111,8 @@ define([
                 }
             }), lang.hitch(this, function(error) {
                 // error
-                query(".btn").button("reset");
+                this.loginBtn.set("label", oldBtnLabel);
+                this.loginBtn.set("disabled", false);
                 this.showNotification({
                     type: "error",
                     message: error.response.data.errorMessage || error.message || "Backend error"

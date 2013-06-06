@@ -1,14 +1,14 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/dom-construct",
     "dojo/_base/fx",
+    "dojo/dom-construct",
     "./widget/NotificationWidget"
 ], function (
     declare,
     lang,
-    domConstruct,
     fx,
+    domConstruct,
     Notification
 ) {
     /**
@@ -46,8 +46,7 @@ define([
 
             this.widget = new Notification({
                 'class': alertClass,
-                content: options.message,
-                closable: true
+                content: options.message
             }, this.node);
 
             this.widget.startup();

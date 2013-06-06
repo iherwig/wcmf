@@ -1,9 +1,16 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/lang",
+    "dijit/registry",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "bootstrap/Dropdown",
-    "bootstrap/Collapse",
+    "dijit/_WidgetsInTemplateMixin",
+    "dijit/MenuBar",
+    "dijit/MenuBarItem",
+    "dijit/PopupMenuBarItem",
+    "dijit/Menu",
+    "dijit/MenuSeparator",
+    "dijit/MenuItem",
     "dojo/query",
     "dojo/dom-class",
     "dojo/NodeList-dom",
@@ -11,17 +18,24 @@ define([
     "dojo/text!./template/NavigationWidget.html"
 ], function (
     declare,
+    lang,
+    registry,
     _WidgetBase,
     _TemplatedMixin,
-    dropdown,
-    collapse,
+    _WidgetsInTemplateMixin,
+    MenuBar,
+    MenuBarItem,
+    PopupMenuBarItem,
+    Menu,
+    MenuSeparator,
+    MenuItem,
     query,
     domClass,
     nodeListDom,
     Cookie,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
 
         titleOnly: false,
         templateString: template,
@@ -33,8 +47,7 @@ define([
         postCreate: function() {
             // hide buttons, if titleOnly
             if (this.titleOnly) {
-                query("ul.nav").style("display", "none");
-                query("a.btn-navbar").style("display", "none");
+                query(".main-menu").style("display", "none");
             }
 
             // set first root type on nodeList route
@@ -59,9 +72,9 @@ define([
         },
 
         setActiveRoute: function(route) {
-            query("[data-dojorama-route='"+route+"']").parent().forEach(function(node){
-                domClass.add(node, "active");
-            });
+            query("[data-dojorama-route='"+route+"']").forEach(lang.hitch(this, function(node) {
+                this.menuBar.focusChild(registry.byId(node.id));
+            }));
         }
     });
 });

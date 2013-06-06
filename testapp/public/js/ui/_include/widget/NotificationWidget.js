@@ -2,14 +2,12 @@ define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "bootstrap/Alert",
     "dojo/dom-class",
     "dojo/text!./template/NotificationWidget.html"
 ], function (
     declare,
     _WidgetBase,
     _TemplatedMixin,
-    Alert,
     domClass,
     template
 ) {

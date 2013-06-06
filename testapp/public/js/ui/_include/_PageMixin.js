@@ -50,7 +50,7 @@ define([
          * optional path parameters in data-dojorama-pathparams (e.g. "type: Page, id: 12")
          */
         setupRoutes: function() {
-            query('a.push', this.domNode).forEach(lang.hitch(this, function(node) {
+            query('.push', this.domNode).forEach(lang.hitch(this, function(node) {
                 var routeName = domAttr.get(node, 'data-dojorama-route');
                 var route = this.router.getRoute(routeName);
                 if (!route) { return; }

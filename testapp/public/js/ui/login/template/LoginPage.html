@@ -5,12 +5,11 @@
   <!-- Begin page content -->
   <div class="container">
     <form class="form-login" id="loginForm">
-      <h3 class="form-login-heading"><i class="icon-comment-alt icon-2x"></i> Please log in</h3>
+      <h3><i class="icon-comment-alt"></i> Please log in</h3>
       <div data-dojo-attach-point="notificationNode"></div>
-      <input type="text" name="user" class="input-block-level" placeholder="Login">
-      <input type="password" name="password" class="input-block-level" placeholder="Password">
-      <button class="btn btn-primary pull-right" type="submit" data-loading-text="Logging in..." data-dojo-attach-event="onClick:_login">Log in</button>
-      <span class="clearfix"></span>
+      <input data-dojo-type="dijit/form/TextBox" type="text" name="user" placeholder="Login">
+      <input data-dojo-type="dijit/form/TextBox" type="password" name="password" placeholder="Password">
+      <button data-dojo-type="dijit/form/Button" data-dojo-props="'class':'primary'" type="submit" data-dojo-attach-point="loginBtn" data-dojo-attach-event="onClick:_login">Log in</button>
     </form>
   </div>
   <!-- End page content -->

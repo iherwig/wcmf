@@ -39,6 +39,7 @@ define([
             var navi = new NavigationWidget({
             }, this.navigationNode);
             navi.setActiveRoute("home");
+            navi.startup();
 
             dojo.query("#title").attr("innerHTML", appConfig.title);
         },

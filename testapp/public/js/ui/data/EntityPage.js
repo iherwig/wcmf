@@ -4,7 +4,6 @@ define([
     "dojo/promise/all",
     "dojo/topic",
     "dojo/Deferred",
-    "bootstrap/Tab",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
@@ -24,7 +23,6 @@ define([
     all,
     topic,
     Deferred,
-    Tab,
     _WidgetBase,
     _TemplatedMixin,
     _AppAware,
@@ -83,6 +81,7 @@ define([
             }, this.navigationNode);
             navi.setContentRoute(this.type, id);
             navi.setActiveRoute("entity");
+            navi.startup();
 
             if (!this.isNew) {
                 this.setTitle(appConfig.title+' - '+this.oid);

@@ -1,7 +1,7 @@
 /*@import '../vendor/dojo/dojo/resources/dojo.css';*/
 /*@import '../vendor/dojo/dijit/themes/claro/claro.css';*/
-@import '../vendor/twitter-bootstrap/css/bootstrap.css';
-@import '../vendor/twitter-bootstrap/css/bootstrap-responsive.css';
+/*@import '../vendor/twitter-bootstrap/css/bootstrap.css';
+@import '../vendor/twitter-bootstrap/css/bootstrap-responsive.css';*/
 @import '../vendor/font-awesome/build/assets/font-awesome/css/font-awesome.css';
 
 /* Sticky footer styles
@@ -23,30 +23,14 @@ body {
   margin: 0 auto -40px;
 }
 
-/* Set the fixed height of the footer here */
-#push, #footer {
+#push, #header, #footer {
   height: 40px;
 }
 #footer {
   background-color: #2f2f2f;
 }
 #footer p {
-  margin-top: 10px;
-}
-
-/* Lastly, apply responsive CSS fixes as necessary */
-@media (max-width: 767px) {
-  #footer {
-    margin-left: -20px;
-    margin-right: -20px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-@media (min-width: 979px) {
-  #page {
-      padding-top: 60px;
-  }
+  padding: 10px;
 }
 
 .nav-collapse .nav > li > a, .nav-collapse .dropdown-menu a {
@@ -54,9 +38,9 @@ body {
 }
 
 .form-login {
-  max-width: 300px;
-  padding: 19px 29px 29px;
-  margin: 0 auto 20px;
+  max-width: 320px;
+  padding: 9px 29px 29px;
+  margin: 20px auto 20px;
   background-color: #fff;
   border: 1px solid #d5d5d5;
   -webkit-border-radius: 5px;

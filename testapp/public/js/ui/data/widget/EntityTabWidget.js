@@ -8,14 +8,12 @@ define([
     "dojo/on",
     "dojo/when",
     "dojo/topic",
-    "bootstrap/Tab",
     "dojomat/_StateAware",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
+    "dijit/layout/TabContainer",
+    "dijit/layout/ContentPane",
     "../../../Cookie",
     "../../../model/meta/Model",
-    "../../../persistence/Store",
-    "dojo/text!./template/EntityTabWidget.html"
+    "../../../persistence/Store"
 ], function (
     declare,
     lang,
@@ -26,14 +24,12 @@ define([
     on,
     when,
     topic,
-    Tab,
     _StateAware,
-    _WidgetBase,
-    _TemplatedMixin,
+    TabContainer,
+    ContentPane,
     Cookie,
     Model,
-    Store,
-    template
+    Store
 ) {
     /**
      * Tab panel for entity types and entity instances.
@@ -61,13 +57,12 @@ define([
      * }, this.tabNode);
      * @endcode
      */
-    var EntityTabWidget = declare([_WidgetBase, _TemplatedMixin, _StateAware], {
+    var EntityTabWidget = declare([TabContainer, _StateAware], {
 
         router: null,
         selectedTab: {},
         selectedPanel: {},
         lastTab: {},
-        templateString: template,
 
         constructor: function(params) {
             declare.safeMixin(this, params);
@@ -92,6 +87,11 @@ define([
                     this.closeTab(data.oid, data.selectLast);
                 }))
             );
+            this.watch("selectedChildWidget", function(name, oval, nval) {
+                console.log("selected child changed from ", oval, " to ", nval);
+            });
+
+            this.startup();
         },
 
         buildTabs: function() {
@@ -186,19 +186,19 @@ define([
             return route;
         },
 
-        setTabName: function(oid, tabLink) {
+        setTabName: function(oid, tabItem) {
             var typeName = Model.getTypeNameFromOid(oid);
             var id = Model.getIdFromOid(oid);
             var isTypeTab = (id === typeName);
             if (isTypeTab) {
                 // type tab
-                this.setTypeTabName(typeName, tabLink);
+                this.setTypeTabName(typeName, tabItem);
             }
             else {
                 // instance tab
                 var isNew = Model.isDummyOid(oid);
                 if (isNew) {
-                    this.setInstanceTabName({ oid:oid }, tabLink);
+                    this.setInstanceTabName({ oid:oid }, tabItem);
                 }
                 else {
                     var store = Store.getStore(typeName, appConfig.defaultLanguage);
@@ -212,12 +212,12 @@ define([
             }
         },
 
-        setTypeTabName: function(typeName, tabLink) {
-            tabLink.innerHTML = '<i class="icon-reorder"></i> '+typeName;
+        setTypeTabName: function(typeName, tabItem) {
+            tabItem.set("title", '<i class="icon-reorder"></i> '+typeName);
         },
 
-        setInstanceTabName: function(entity, tabLink, create) {
-            tabLink.innerHTML = '<i class="icon-file"></i> '+Model.getDisplayValue(entity)+' ';
+        setInstanceTabName: function(entity, tabItem, create) {
+            tabItem.set("title", '<i class="icon-file"></i> '+Model.getDisplayValue(entity)+' ');
             var closeLink = domConstruct.create("span", {
                 class: "close-tab",
                 innerHTML: '&times;'
@@ -235,11 +235,14 @@ define([
         },
 
         createTabLink: function(oid, isSelected) {
-            var tabItem = domConstruct.create("li", {
+            var tabItem = new ContentPane({
                 id: this.getTabLinkIdFromOid(oid),
-                class: isSelected ? "active" : ""
-            }, this.tabNode);
-
+                title: '<i class="icon-spinner icon-spin"></i>',
+                content: ""
+            });
+            this.addChild(tabItem);
+            this.setTabName(oid, tabItem);
+            /*
             var tabRoute = this.getRouteForTab(oid);
             var routeParamsStr = '';
             for (var key in tabRoute.routeParams) {
@@ -256,11 +259,10 @@ define([
                 class: "push",
                 innerHTML: '<i class="icon-spinner icon-spin"></i>'
             }, tabItem);
-            this.setTabName(oid, tabLink);
             if (isSelected) {
                 query(tabLink).tab('show');
             }
-            return tabLink;
+            */
         },
 
         getTabLinkIdFromOid: function(oid) {

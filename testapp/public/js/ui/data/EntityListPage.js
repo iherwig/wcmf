@@ -5,7 +5,6 @@ define([
     "dojo/dom-construct",
     "dojo/query",
     "dojo/on",
-    "bootstrap/Tab",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
@@ -23,7 +22,6 @@ define([
     domConstruct,
     query,
     on,
-    Tab,
     _WidgetBase,
     _TemplatedMixin,
     _AppAware,
@@ -56,6 +54,7 @@ define([
             }, this.navigationNode);
             navi.setContentRoute(this.type);
             navi.setActiveRoute("entityList");
+            navi.startup();
 
             // create widget
             this.buildForm();
