@@ -67,6 +67,7 @@ define([
         constructor: function(params) {
             declare.safeMixin(this, params);
 
+            this.doLayout = false;
             this.lastTab =  EntityTabWidget.lastTabDef;
             Cookie.set("lastTab", this.lastTab);
         },
@@ -75,21 +76,25 @@ define([
             this.inherited(arguments);
             this.buildTabs();
 
-            // subscribe to entity change events to change tab links
+            // event handlers
             this.own(
+                // subscribe to entity change events to change tab links
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                    var tablinks = query("a", dom.byId(this.getTabLinkIdFromOid(data.entity.oid)));
+                    var tablinks = query("a", dom.byId(this.getTabIdFromOid(data.entity.oid)));
                     if (tablinks.length === 1) {
                         this.setInstanceTabName(data.entity, tablinks[0]);
                     }
                 })),
+                // allow to close tabs by sending tab-closed event
                 topic.subscribe("tab-closed", lang.hitch(this, function(data) {
-                    this.closeTab(data.oid, data.selectLast);
+                    this.removeChild(this.getTabByOid(data.oid));
+                    //this.closeTab(data.oid, data.selectLast);
+                })),
+                // navigate to tab url instead of default behaviour
+                this.watch("selectedChildWidget", lang.hitch(this, function(name, oval, nval) {
+                    this.selectTab(this.getOidFromTabId(nval.get("id")));
                 }))
             );
-            this.watch("selectedChildWidget", function(name, oval, nval) {
-                console.log("selected child changed from ", oval, " to ", nval);
-            });
 
             this.startup();
         },
@@ -98,27 +103,17 @@ define([
             // add selected tab
             this.persistTab(this.selectedTab);
 
-            // iterate over all panels
+            // create all panels
             for (var oid in EntityTabWidget.tabDefs) {
                 var isSelected = (oid === this.selectedTab.oid);
-                this.createTabLink(oid, isSelected);
-
-                if (isSelected) {
-                    // create tab content for selected tab only
-                    if (this.selectedPanel && this.selectedPanel.domNode) {
-                        var content = domConstruct.create("div", {
-                            class: isSelected ? "tab-pane fade in active" : "tab-pane fade"
-                        }, this.panelNode);
-                        content.appendChild(this.selectedPanel.domNode);
-                    }
-                }
+                this.createTab(oid, isSelected ? this.selectedPanel : null);
             }
             EntityTabWidget.lastTabDef = this.selectedTab;
         },
-
+/*
         closeTab: function(oid, selectLast) {
             this.unpersistTab({ oid:oid });
-            domConstruct.destroy(this.getTabLinkIdFromOid(oid));
+            domConstruct.destroy(this.getTabIdFromOid(oid));
             if (selectLast && this.isSelected(oid)) {
                 var lastTabOid = this.lastTab.oid;
                 var selected = false;
@@ -132,7 +127,7 @@ define([
                 }
             }
         },
-
+*/
         selectTab: function(oid) {
             if (oid !== undefined) {
                 var routDef = this.getRouteForTab(oid);
@@ -155,6 +150,12 @@ define([
 
         isPersisted: function(tabDef) {
             return EntityTabWidget.tabDefs[tabDef.oid] !== undefined;
+        },
+
+        isInstanceTab: function(oid) {
+            var typeName = Model.getTypeNameFromOid(oid);
+            var id = Model.getIdFromOid(oid);
+            return (id !== typeName);
         },
 
         persistTab: function(tabDef) {
@@ -188,9 +189,7 @@ define([
 
         setTabName: function(oid, tabItem) {
             var typeName = Model.getTypeNameFromOid(oid);
-            var id = Model.getIdFromOid(oid);
-            var isTypeTab = (id === typeName);
-            if (isTypeTab) {
+            if (!this.isInstanceTab(oid)) {
                 // type tab
                 this.setTypeTabName(typeName, tabItem);
             }
@@ -202,10 +201,10 @@ define([
                 }
                 else {
                     var store = Store.getStore(typeName, appConfig.defaultLanguage);
-                    when(store.get(Model.getOid(typeName, id)), lang.hitch(this, function(entity) {
-                            this.setInstanceTabName(entity, tabLink);
+                    when(store.get(oid), lang.hitch(this, function(entity) {
+                            this.setInstanceTabName(entity, tabItem);
                         }), lang.hitch(this, function(error) {
-                            this.closeTab(oid, true);
+                            this.removeChild(tabItem);
                         })
                     );
                 }
@@ -216,61 +215,52 @@ define([
             tabItem.set("title", '<i class="icon-reorder"></i> '+typeName);
         },
 
-        setInstanceTabName: function(entity, tabItem, create) {
+        setInstanceTabName: function(entity, tabItem) {
             tabItem.set("title", '<i class="icon-file"></i> '+Model.getDisplayValue(entity)+' ');
-            var closeLink = domConstruct.create("span", {
-                class: "close-tab",
-                innerHTML: '&times;'
-            }, tabLink);
-            this.own(on(closeLink, 'click', lang.hitch(this, function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var tabItems = query(e.target).closest("li");
-                if (tabItems.length > 0) {
-                    var tabItem = tabItems[0];
-                    var oid = this.getOidFromTabLinkId(domAttr.get(tabItem, "id"));
-                    this.closeTab(oid, true);
-                }
-            })));
         },
 
-        createTabLink: function(oid, isSelected) {
+        createTab: function(oid, content) {
+            // create panel with spinner icon as title, since the
+            // real title may be resolved async
             var tabItem = new ContentPane({
-                id: this.getTabLinkIdFromOid(oid),
-                title: '<i class="icon-spinner icon-spin"></i>',
-                content: ""
+                id: this.getTabIdFromOid(oid),
+                title: '<i class="icon-spinner icon-spin"></i>'
             });
+            // instance tabs are closable
+            if (this.isInstanceTab(oid)) {
+                tabItem.set("closable", true);
+                tabItem.set("onClose", lang.hitch(tabItem, function(container) {
+                    container.unpersistTab({ oid:container.getOidFromTabId(this.get("id")) });
+                    return true;
+                }));
+            }
+
+            // set the content for the selected tab
+            if (content !== null) {
+                tabItem.set("content", content);
+                tabItem.set("selected", true);
+            }
             this.addChild(tabItem);
             this.setTabName(oid, tabItem);
-            /*
-            var tabRoute = this.getRouteForTab(oid);
-            var routeParamsStr = '';
-            for (var key in tabRoute.routeParams) {
-                routeParamsStr += key+": '"+tabRoute.routeParams[key]+"', ";
-            }
-            if (routeParamsStr.length > 0) {
-                routeParamsStr = routeParamsStr.substring(0, routeParamsStr.length-2);
-            }
-            var tabLink = domConstruct.create("a", {
-                href: "#",
-                'data-dojorama-route': tabRoute.route,
-                'data-dojorama-pathparams': routeParamsStr,
-                'data-toggle': "tab",
-                class: "push",
-                innerHTML: '<i class="icon-spinner icon-spin"></i>'
-            }, tabItem);
-            if (isSelected) {
-                query(tabLink).tab('show');
-            }
-            */
         },
 
-        getTabLinkIdFromOid: function(oid) {
+        getTabIdFromOid: function(oid) {
             return "tab-"+oid.replace(':', '-');
         },
 
-        getOidFromTabLinkId: function(tablinkId) {
-            return tablinkId.replace(/^tab-/, '').replace(/-/, ':');
+        getOidFromTabId: function(tabId) {
+            return tabId.replace(/^tab-/, '').replace(/-/, ':');
+        },
+
+        getTabByOid: function(oid) {
+            var tabId = this.getTabIdFromOid(oid);
+            var tabs = this.getChildren();
+            for (var i=0; i<tabs.length; i++) {
+                if(tabs[i].id !== tabId) {
+                    return tabs[i];
+                }
+            }
+            return null;
         }
     });
 

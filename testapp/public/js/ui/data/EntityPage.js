@@ -156,20 +156,21 @@ define([
                         sourceOid: this.isNew ? this.sourceOid : undefined,
                         relation: this.isNew ? this.relation : undefined,
                         language: this.language,
-                        router: this.router
-                    });
-
-                    // create the tab container
-                    new EntityTabWidget({
                         router: this.router,
-                        selectedTab: {
-                            oid: this.oid
-                        },
-                        selectedPanel: panel
-                    }, this.tabNode);
+                        onCreated: lang.hitch(this, function(panel) {
+                            // create the tab container
+                            var tabs = new EntityTabWidget({
+                                router: this.router,
+                                selectedTab: {
+                                    oid: this.oid
+                                },
+                                selectedPanel: panel
+                            }, this.tabNode);
 
-                    // setup routes on tab container after loading
-                    this.setupRoutes();
+                            // setup routes on tab container after loading
+                            this.setupRoutes();
+                        })
+                    });
                 }
                 else {
                     // error

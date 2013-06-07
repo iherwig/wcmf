@@ -23,7 +23,7 @@ body {
   margin: 0 auto -40px;
 }
 
-#push, #header, #footer {
+#push, #footer {
   height: 40px;
 }
 #footer {
@@ -77,15 +77,19 @@ th {
 }
 
 th.field-actions-2, td.field-actions-2 {
-  width: 51px;
+  width: 50px;
 }
 
 th.field-actions-3, td.field-actions-3 {
-  width: 76px;
+  width: 70px;
 }
 
 th.field-actions-4, td.field-actions-4 {
-  width: 101px;
+  width: 90px;
+}
+
+.btn i {
+  padding: 0 4px;
 }
 
 .close-tab {

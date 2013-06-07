@@ -85,7 +85,7 @@ catch (Exception $ex) {
               { name: 'dijit', location: 'vendor/dojo/dijit', map: {} },
               { name: 'dojox', location: 'vendor/dojo/dojox', map: {} },
               { name: 'dbootstrap', location: 'vendor/dbootstrap' },
-              /*{ name: 'bootstrap', location: 'vendor/dojo-bootstrap' },*/
+              { name: 'bootstrap', location: 'vendor/dojo-bootstrap' },
               { name: 'routed', location: 'vendor/routed' },
               { name: 'dojomat', location: 'vendor/dojomat' },
               { name: 'dgrid', location: 'vendor/dgrid' },

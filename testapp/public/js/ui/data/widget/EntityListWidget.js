@@ -1,11 +1,12 @@
 define( [
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "../../_include/_NotificationMixin",
     "../../_include/widget/GridWidget",
-    "bootstrap/Button",
+    "../../_include/widget/Button",
     "../../../model/meta/Model",
     "../../../persistence/Store",
     "../../../action/Create",
@@ -14,6 +15,7 @@ define( [
     "dojo/text!./template/EntityListWidget.html"
 ],
 function(
+    require,
     declare,
     lang,
     _WidgetBase,
@@ -31,8 +33,11 @@ function(
     return declare([_WidgetBase, _TemplatedMixin, _Notification], {
 
         templateString: template,
+        contextRequire: require,
+
         type: null,
         router: null,
+        onCreated: null, // function to be called after the widget is created
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -47,6 +52,10 @@ function(
                 actions: this.getGridActions(),
                 autoReload: false
             }, this.gridNode);
+
+            if (this.onCreated instanceof Function) {
+                this.onCreated(this);
+            }
         },
 
         getGridActions: function() {

@@ -1,28 +1,20 @@
 <div>
     <div data-dojo-attach-point="notificationNode" class="container"></div>
     <form class="form" id="${formId}">
-        <fieldset>
-            <legend><span data-dojo-attach-point="headlineNode">${headline}</span></legend>
-            <div class="row">
-                <div class="span6" data-dojo-attach-point="fieldsNodeLeft">
-                </div>
-                <div class="span6" data-dojo-attach-point="fieldsNodeRight">
-                </div>
+        <h3 data-dojo-attach-point="headlineNode">${headline}</h3>
+        <div data-dojo-type="dojox.layout.TableContainer" data-dojo-props="cols:2" data-dojo-attach-point="fieldsNode"></div>
+        <div class="btn-toolbar">
+            <div class="btn-group pull-left" data-dojo-attach-point="languageMenuNode">
+                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    Language: <span data-dojo-attach-point="defaultLanguageNode"></span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" data-dojo-attach-point="languageMenuPopupNode">
+                </ul>
             </div>
-            <div class="btn-toolbar">
-                <div class="btn-group pull-left" data-dojo-attach-point="languageMenuNode">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown">
-                        Language: <span data-dojo-attach-point="defaultLanguageNode"></span>
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" data-dojo-attach-point="languageMenuPopupNode">
-                    </ul>
-                </div>
-                <button class="btn delete btn-danger pull-right" type="submit" data-loading-text="Deleting..." data-dojo-attach-event="onClick:_delete">Delete</button>
-                <button class="btn save btn-primary pull-right" type="submit" data-loading-text="Saving..." data-dojo-attach-event="onClick:_save">Save</button>
-            </div>
-        </fieldset>
-        <div data-dojo-attach-point="relationsNode">
+            <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'btn-danger pull-right'" type="submit" data-dojo-attach-event="onClick:_delete">Delete</button>
+            <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'primary pull-right'" type="submit" data-dojo-attach-event="onClick:_save">Save</button>
         </div>
     </form>
+    <div data-dojo-attach-point="relationsNode"></div>
 </div>

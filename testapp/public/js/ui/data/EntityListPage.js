@@ -73,20 +73,21 @@ define([
                     // create the tab panel
                     var panel = new View({
                         type: this.type,
-                        router: this.router
-                    });
-
-                    // create the tab container
-                    new EntityTabWidget({
                         router: this.router,
-                        selectedTab: {
-                            oid: this.type
-                        },
-                        selectedPanel: panel
-                    }, this.tabNode);
+                        onCreated: lang.hitch(this, function(panel) {
+                            // create the tab container
+                            var tabs = new EntityTabWidget({
+                                router: this.router,
+                                selectedTab: {
+                                    oid: this.type
+                                },
+                                selectedPanel: panel
+                            }, this.tabNode);
 
-                    // setup routes on tab container after loading
-                    this.setupRoutes();
+                            // setup routes on tab container after loading
+                            this.setupRoutes();
+                        })
+                    });
                 }
                 else {
                     // error

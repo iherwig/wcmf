@@ -1,4 +1,5 @@
 define( [
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
@@ -6,10 +7,13 @@ define( [
     "dojo/dom-form",
     "dojo/dom-construct",
     "dojo/query",
+    "dijit/registry",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
+    "dijit/_WidgetsInTemplateMixin",
+    "dojox/layout/TableContainer",
     "../../_include/_NotificationMixin",
-    "bootstrap/Button",
+    "../../_include/widget/Button",
     "../../../model/meta/Model",
     "../../../persistence/Store",
     "../../../persistence/RelationStore",
@@ -20,6 +24,7 @@ define( [
     "dojo/text!./template/EntityFormWidget.html"
 ],
 function(
+    require,
     declare,
     lang,
     topic,
@@ -27,8 +32,11 @@ function(
     domForm,
     domConstruct,
     query,
+    registry,
     _WidgetBase,
     _TemplatedMixin,
+    _WidgetsInTemplateMixin,
+    TableContainer,
     _Notification,
     Button,
     Model,
@@ -40,9 +48,10 @@ function(
     EntityRelationWidget,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Notification], {
 
         templateString: template,
+        contextRequire: require,
 
         entity: {}, // entity to edit
         sourceOid: null, // object id of the source object of a relation
@@ -53,6 +62,7 @@ function(
 
         type: null,
         formId: "",
+        fieldContainerId: "",
         headline: "",
         isNew: false,
         modified: false,
@@ -61,11 +71,14 @@ function(
         isTranslation: false,
         original: null, // untranslated entity
 
+        onCreated: null, // function to be called after the widget is created
+
         constructor: function(args) {
             declare.safeMixin(this, args);
 
             this.type = Model.getTypeNameFromOid(this.entity.oid);
             this.formId = "entityForm_"+this.entity.oid;
+            this.fieldContainerId = "fieldContainer_"+this.entity.oid;
             this.headline = Model.getDisplayValue(this.entity);
             this.isNew = Model.isDummyOid(this.entity.oid);
             this.isTranslation = this.language !== appConfig.defaultLanguage;
@@ -81,6 +94,7 @@ function(
             // load input widgets referenced in attributes' input type
             ControlFactory.loadControlClasses(this.type).then(lang.hitch(this, function(controls) {
                 var typeClass = Model.getType(this.type);
+                var layoutWidget = registry.byNode(this.fieldsNode.domNode);
 
                 // add attribute widgets
                 var attributes = typeClass.getAttributes('DATATYPE_ATTRIBUTE');
@@ -99,9 +113,12 @@ function(
                             this.setModified(true);
                         }
                     }, attributeWidget)));
-                    var nodeToAppend = (attribute.isEditable) ? this.fieldsNodeLeft : this.fieldsNodeRight;
-                    nodeToAppend.appendChild(attributeWidget.domNode);
-                    attributeWidget.startup();
+                    //attributeWidget.startup();
+                    layoutWidget.addChild(attributeWidget);
+                }
+                layoutWidget.startup();
+                if (this.onCreated instanceof Function) {
+                    this.onCreated(this);
                 }
             }), lang.hitch(this, function(error) {
                 // error

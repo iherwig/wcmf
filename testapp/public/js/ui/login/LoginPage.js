@@ -1,4 +1,5 @@
 define([
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dijit/_WidgetBase",
@@ -9,15 +10,14 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
+    "../_include/widget/Button",
     "../../Cookie",
     "dijit/form/TextBox",
-    "dijit/Dialog",
-    "dijit/form/Button",
     "dojo/dom-form",
-    "dojo/query",
     "dojo/request",
     "dojo/text!./template/LoginPage.html"
 ], function (
+    require,
     declare,
     lang,
     _WidgetBase,
@@ -28,12 +28,10 @@ define([
     _Page,
     _Notification,
     NavigationWidget,
+    Button,
     Cookie,
     TextBox,
-    Dialog,
-    Button,
     domForm,
-    query,
     request,
     template
 ) {
@@ -42,6 +40,7 @@ define([
         request: null,
         session: null,
         templateString: template,
+        contextRequire: require,
 
         constructor: function(params) {
             this.request = params.request;
@@ -70,9 +69,7 @@ define([
             data.controller = "wcmf\\application\\controller\\LoginController";
             data.action = "login";
 
-            var oldBtnLabel = this.loginBtn.get("label");
-              this.loginBtn.set("label", oldBtnLabel+' <i class="icon-spinner icon-spin"></i>');
-            this.loginBtn.set("disabled", true);
+            this.loginBtn.setProcessing();
 
             this.hideNotification();
             request.post("main.php", {
@@ -84,8 +81,7 @@ define([
 
             }).then(lang.hitch(this, function(response) {
                 // callback completes
-                this.loginBtn.set("label", oldBtnLabel);
-                this.loginBtn.set("disabled", false);
+                this.loginBtn.reset();
                 if (!response.success) {
                     // error
                     this.showNotification({
@@ -111,8 +107,7 @@ define([
                 }
             }), lang.hitch(this, function(error) {
                 // error
-                this.loginBtn.set("label", oldBtnLabel);
-                this.loginBtn.set("disabled", false);
+                this.loginBtn.reset();
                 this.showNotification({
                     type: "error",
                     message: error.response.data.errorMessage || error.message || "Backend error"
