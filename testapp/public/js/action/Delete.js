@@ -30,7 +30,7 @@ define([
             }
             return new ConfirmDlg({
                 title: "Confirm Object Deletion",
-                content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
+                message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
                 okCallback: lang.hitch(this, function(dlg) {
                     var typeName = Model.getTypeNameFromOid(data.oid);
                     var store = Store.getStore(typeName, appConfig.defaultLanguage);

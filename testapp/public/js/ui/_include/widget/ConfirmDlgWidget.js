@@ -10,7 +10,7 @@ define([
      * @code
      * new ConfirmDlg({
      *      title: "Confirm Object Deletion",
-     *      content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
+     *      message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
      *      okCallback: function() {
      *          // will be called when OK button is clicked
      *          var deferred = new Deferred();

@@ -132,7 +132,7 @@ define([
                 var deferred = new Deferred();
                 new ConfirmDlg({
                     title: "Confirm Leave Page",
-                    content: "'"+Model.getDisplayValue(this.entity)+"' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
+                    message: "'"+Model.getDisplayValue(this.entity)+"' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
                     okCallback: lang.hitch(this, function(dlg) {
                         deferred.resolve(true);
                     }),

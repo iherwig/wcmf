@@ -7,7 +7,9 @@ define([
     "dojo/Deferred",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "bootstrap/Modal",
+    "dijit/_WidgetsInTemplateMixin",
+    "dijit/Dialog",
+    "dijit/form/Button",
     "dojo/text!./template/PopupDlgWidget.html"
 ], function (
     declare,
@@ -18,7 +20,9 @@ define([
     Deferred,
     _WidgetBase,
     _TemplatedMixin,
-    Modal,
+    _WidgetsInTemplateMixin,
+    Dialog,
+    Button,
     template
 ) {
     /**
@@ -26,7 +30,7 @@ define([
      * @code
      * new PopupDlg({
      *      title: "Confirm Object Deletion",
-     *      content: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
+     *      message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
      *      okCallback: function() {
      *          // will be called when OK button is clicked
      *          var deferred = new Deferred();
@@ -40,47 +44,33 @@ define([
      * }).show();
      * @endcode
      */
-    var PopupDlg = declare([_WidgetBase, _TemplatedMixin], {
+    var PopupDlg = declare([Dialog], {
 
-        templateString: template,
-        modal: null,
         okCallback: null,
         cancelCallback: null,
         deferred: null,
 
         constructor: function(args) {
-            declare.safeMixin(this, args);
-        },
+            lang.mixin(this, args);
 
-        _setTitleAttr: function (val) {
-            this.titleNode.innerHTML = val;
-        },
-
-        _setContentAttr: function (val) {
-            this.contentNode.innerHTML = val;
+            var message = this.message || '';
+            var contentWidget = new (declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+                templateString: template, //get template via dojo loader or so
+                message: message
+            }));
+            contentWidget.startup();
+            this.content = contentWidget;
         },
 
         postCreate: function () {
             this.inherited(arguments);
-
-            this.placeAt(dojo.body());
-            domStyle.set(this.domNode, {
-                display: "none"
-            });
             this.hideSpinner();
 
-            query(this.domNode).modal({});
-            query(this.domNode).on('hidden', lang.hitch(this, function () {
-                this.destroyRecursive();
-                if (this.deferred) {
-                    this.deferred.resolve();
-                }
-            }));
             this.own(
-                on(this.okBtn, "click", lang.hitch(this, function(e) {
+                on(this.content.okBtn, "click", lang.hitch(this, function(e) {
                     this.doCallback(e, this.okCallback);
                 })),
-                on(this.cancelBtn, "click", lang.hitch(this, function(e) {
+                on(this.content.cancelBtn, "click", lang.hitch(this, function(e) {
                     this.doCallback(e, this.cancelCallback);
                 })),
                 on(dojo.body(), 'keyup', lang.hitch(this, function (e) {
@@ -116,18 +106,9 @@ define([
          * closed.
          */
         show: function() {
-            domStyle.set(this.domNode, {
-                display: "block"
-            });
+            this.inherited(arguments);
             this.deferred = new Deferred();
             return this.deferred;
-        },
-
-        /**
-         * Hide the dialog
-         */
-        hide: function () {
-            query(this.domNode).modal('hide');
         },
 
         showSpinner: function() {

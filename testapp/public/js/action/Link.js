@@ -35,7 +35,7 @@ define([
             return new ObjectSelectDlg({
                 type: this.relation.type,
                 title: "Choose Objects",
-                content: "Select '"+this.relation.type+"' objects, you want to link to '"+Model.getDisplayValue(this.source)+"'",
+                message: "Select '"+this.relation.type+"' objects, you want to link to '"+Model.getDisplayValue(this.source)+"'",
                 okCallback: lang.hitch(this, function(dlg) {
                     var store = RelationStore.getStore(this.source.oid, this.relation.name);
 
