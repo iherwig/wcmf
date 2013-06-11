@@ -73,7 +73,7 @@ define([
 
         setActiveRoute: function(route) {
             query("[data-dojorama-route='"+route+"']").forEach(lang.hitch(this, function(node) {
-                this.menuBar.focusChild(registry.byId(node.id));
+                registry.byId(node.id)._setSelected(true);
             }));
         }
     });

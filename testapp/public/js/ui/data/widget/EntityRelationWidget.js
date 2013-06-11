@@ -4,6 +4,7 @@ define( [
     "dojo/Deferred",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
+    "dijit/_WidgetsInTemplateMixin",
     "../../_include/_NotificationMixin",
     "../../_include/widget/GridWidget",
     "../../../model/meta/Model",
@@ -20,6 +21,7 @@ function(
     Deferred,
     _WidgetBase,
     _TemplatedMixin,
+    _WidgetsInTemplateMixin,
     _NotificationMixin,
     GridWidget,
     Model,
@@ -30,7 +32,7 @@ function(
     CreateInRelation,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _NotificationMixin], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _NotificationMixin], {
 
         templateString: template,
         entity: {},

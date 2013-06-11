@@ -4,6 +4,7 @@ define( [
     "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
+    "dijit/_WidgetsInTemplateMixin",
     "../../_include/_NotificationMixin",
     "../../_include/widget/GridWidget",
     "../../_include/widget/Button",
@@ -20,6 +21,7 @@ function(
     lang,
     _WidgetBase,
     _TemplatedMixin,
+    _WidgetsInTemplateMixin,
     _Notification,
     GridWidget,
     Button,
@@ -30,7 +32,7 @@ function(
     Delete,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Notification], {
 
         templateString: template,
         contextRequire: require,

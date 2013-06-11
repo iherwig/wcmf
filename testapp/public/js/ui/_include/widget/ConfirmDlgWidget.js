@@ -26,8 +26,11 @@ define([
      */
     return declare([PopupDlg], {
 
-        _setContentAttr: function (val) {
-            this.inherited(arguments, ['<i class="icon-question-sign icon-3x pull-left"></i> &nbsp;'+val]);
+        style: "width: 400px",
+
+        constructor: function(args) {
+            args['message'] = '<i class="icon-question-sign icon-3x pull-left"></i> &nbsp;'+args['message'];
+            this.inherited(arguments);
         }
     });
 });

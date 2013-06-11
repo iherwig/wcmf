@@ -73,6 +73,9 @@ define([
                 on(this.content.cancelBtn, "click", lang.hitch(this, function(e) {
                     this.doCallback(e, this.cancelCallback);
                 })),
+                on(this, "hide", lang.hitch(this, function(e) {
+                    this.deferred.resolve();
+                })),
                 on(dojo.body(), 'keyup', lang.hitch(this, function (e) {
                     if (e.which === 13) {
                         this.doCallback(e, this.okCallback);
@@ -98,6 +101,9 @@ define([
                     this.hide();
                 }
             }
+            else {
+                this.hide();
+            }
         },
 
         /**
@@ -112,11 +118,11 @@ define([
         },
 
         showSpinner: function() {
-            query(this.spinnerNode).style("display", "block");
+            query(this.content.spinnerNode).style("display", "block");
         },
 
         hideSpinner: function() {
-            query(this.spinnerNode).style("display", "none");
+            query(this.content.spinnerNode).style("display", "none");
         }
     });
 

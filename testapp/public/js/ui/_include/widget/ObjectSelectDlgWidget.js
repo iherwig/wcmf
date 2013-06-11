@@ -35,11 +35,12 @@ define([
 
         type: "",
         grid: null,
+        style: "width: 500px",
 
         postCreate: function () {
             this.inherited(arguments);
 
-            var gridNode = domConstruct.create("div", null, this.contentNode.parentNode);
+            var gridNode = domConstruct.create("div", null, this.content.contentNode.parentNode);
             this.grid = new GridWidget({
                 type: this.type,
                 store: Store.getStore(this.type, appConfig.defaultLanguage),
