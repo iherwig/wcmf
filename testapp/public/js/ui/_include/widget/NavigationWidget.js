@@ -56,6 +56,7 @@ define([
 
             // set app title
             dojo.query(".brand").attr("innerHTML", appConfig.title);
+            dojo.query(".brand").attr("style", {cursor: "default", opacity: 1});
 
             // set user name
             dojo.query(".user").attr("innerHTML", Cookie.get("user"));

@@ -4,14 +4,12 @@
         <h3 data-dojo-attach-point="headlineNode">${headline}</h3>
         <div data-dojo-type="dojox.layout.TableContainer" data-dojo-props="cols:2" data-dojo-attach-point="fieldsNode"></div>
         <div class="btn-toolbar">
-            <div class="btn-group pull-left" data-dojo-attach-point="languageMenuNode">
-                <button class="btn dropdown-toggle" data-toggle="dropdown">
-                    Language: <span data-dojo-attach-point="defaultLanguageNode"></span>
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" data-dojo-attach-point="languageMenuPopupNode">
-                </ul>
+
+            <div data-dojo-type="dijit/form/DropDownButton" data-dojo-props="iconClass:'dijitIconEdit'">
+                <span>Language: ${languageName}</span>
+                <div data-dojo-type="dijit/Menu" data-dojo-attach-point="languageMenuPopupNode" style="display: none;"></div>
             </div>
+
             <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'btn-danger pull-right'" type="submit" data-dojo-attach-event="onClick:_delete">Delete</button>
             <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'primary pull-right'" type="submit" data-dojo-attach-event="onClick:_save">Save</button>
         </div>

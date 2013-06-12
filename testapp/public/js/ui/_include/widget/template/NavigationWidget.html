@@ -2,7 +2,9 @@
     <div id="header"
         data-dojo-type="dijit/MenuBar" data-dojo-attach-point="menuBar"
         data-dojo-props="region:'top', 'class':'primary'">
-        <span class='brand'></span>
+        <div data-dojo-type="dijit/MenuBarItem" data-dojo-props="disabled:true">
+            <span class="brand"></span>
+        </div>
         <div data-dojo-type="dijit/MenuBarItem" class="main-menu push" id="navHome" data-dojorama-route="home">
             <span>Home</span>
         </div>
@@ -12,13 +14,13 @@
         <div data-dojo-type="dijit/MenuBarItem" class="main-menu push" id="navAdmin" data-dojorama-route="admin">
             <span>Administration</span>
         </div>
-        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu pull-right">
-            <span><i class="icon-user"></i> <span class="user"></span> <b class="caret"></span>
+        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu">
+            <span><i class="icon-user"></i> <span class="user"></span> <b class="caret"></b></span>
             <div data-dojo-type="dijit/Menu">
                 <div data-dojo-type="dijit/MenuItem" class="push" id="navSettings" data-dojorama-route="profile">
                   <span><i class="icon-wrench"></i> Settings</span>
                 </div>
-                <div data-dojo-type="dijit/MenuSeparator" id="separator"></div>
+                <div data-dojo-type="dijit/MenuSeparator"></div>
                 <div data-dojo-type="dijit/MenuItem" class="push" id="navLogout" data-dojorama-route="logout">
                   <span><i class="icon-off"></i> Logout</span>
                 </div>

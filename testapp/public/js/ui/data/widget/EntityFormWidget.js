@@ -11,6 +11,9 @@ define( [
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
+    "dijit/form/DropDownButton",
+    "dijit/Menu",
+    "dijit/MenuItem",
     "dojox/layout/TableContainer",
     "../../_include/_NotificationMixin",
     "../../_include/widget/Button",
@@ -36,6 +39,9 @@ function(
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
+    DropDownButton,
+    Menu,
+    MenuItem,
     TableContainer,
     _Notification,
     Button,
@@ -82,6 +88,8 @@ function(
             this.headline = Model.getDisplayValue(this.entity);
             this.isNew = Model.isDummyOid(this.entity.oid);
             this.isTranslation = this.language !== appConfig.defaultLanguage;
+
+            this.languageName = appConfig.languages[this.language];
         },
 
         _setHeadlineAttr: function (val) {
@@ -156,11 +164,13 @@ function(
         },
 
         buildLanguageMenu: function() {
-            this.defaultLanguageNode.innerHTML = appConfig.languages[this.language];
             var languageCount = 0;
+            var menu = registry.byId(this.languageMenuPopupNode.get("id"));
             for (var langKey in appConfig.languages) {
-                var menuEntry = domConstruct.create("li", {
-                }, this.languageMenuPopupNode);
+                var menuItem = new MenuItem({
+                    label: appConfig.languages[langKey]
+                });
+                menu.addChild(menuItem);
                 var linkParams = {
                     href: "#",
                     'data-dojorama-route': "entity",
@@ -174,7 +184,7 @@ function(
                 else {
                     linkParams['innerHTML'] = "<b>"+linkParams['innerHTML']+"</b>";
                 }
-                domConstruct.create("a", linkParams, menuEntry);
+                domConstruct.create("a", linkParams, menuItem.domNode);
                 languageCount++;
             }
             if (languageCount <= 1) {
