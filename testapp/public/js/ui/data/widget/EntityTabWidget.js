@@ -1,14 +1,10 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/dom",
-    "dojo/dom-construct",
-    "dojo/dom-attr",
-    "dojo/query",
-    "dojo/on",
     "dojo/when",
     "dojo/topic",
     "dojomat/_StateAware",
+    "dijit/registry",
     "dijit/layout/TabContainer",
     "dijit/layout/ContentPane",
     "../../../Cookie",
@@ -17,14 +13,10 @@ define([
 ], function (
     declare,
     lang,
-    dom,
-    domConstruct,
-    domAttr,
-    query,
-    on,
     when,
     topic,
     _StateAware,
+    registry,
     TabContainer,
     ContentPane,
     Cookie,
@@ -69,6 +61,7 @@ define([
 
             this.doLayout = false;
             this.lastTab =  EntityTabWidget.lastTabDef;
+            this.isListeningToSelect = true;
             Cookie.set("lastTab", this.lastTab);
         },
 
@@ -80,19 +73,30 @@ define([
             this.own(
                 // subscribe to entity change events to change tab links
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                    var tablinks = query("a", dom.byId(this.getTabIdFromOid(data.entity.oid)));
-                    if (tablinks.length === 1) {
-                        this.setInstanceTabName(data.entity, tablinks[0]);
+                    var tab = this.getTabByOid(data.entity.oid);
+                    if (tab !== null) {
+                        this.setInstanceTabName(data.entity, tab);
                     }
                 })),
                 // allow to close tabs by sending tab-closed event
+                // data is expected to have the following properties:
+                // - oid: the oid of the tab to close
+                // - nextOid: optional, the oid of the next tab to open
                 topic.subscribe("tab-closed", lang.hitch(this, function(data) {
-                    this.removeChild(this.getTabByOid(data.oid));
-                    //this.closeTab(data.oid, data.selectLast);
+                    this.unpersistTab({ oid:data.oid });
+                    if (data.nextOid) {
+                        // prevent selecting the previous tab
+                        this.isListeningToSelect = false;
+                    }
+                    this.closeTab(this.getTabByOid(data.oid));
+                    this.selectTab(data.nextOid);
+                    this.isListeningToSelect = true;
                 })),
                 // navigate to tab url instead of default behaviour
                 this.watch("selectedChildWidget", lang.hitch(this, function(name, oval, nval) {
-                    this.selectTab(this.getOidFromTabId(nval.get("id")));
+                    if (this.isListeningToSelect) {
+                        this.selectTab(this.getOidFromTabId(nval.get("id")));
+                    }
                 }))
             );
 
@@ -110,24 +114,7 @@ define([
             }
             EntityTabWidget.lastTabDef = this.selectedTab;
         },
-/*
-        closeTab: function(oid, selectLast) {
-            this.unpersistTab({ oid:oid });
-            domConstruct.destroy(this.getTabIdFromOid(oid));
-            if (selectLast && this.isSelected(oid)) {
-                var lastTabOid = this.lastTab.oid;
-                var selected = false;
-                if (lastTabOid && lastTabOid !== oid && EntityTabWidget.tabDefs[lastTabOid]) {
-                    this.selectTab(lastTabOid);
-                    selected = true;
-                }
-                if (!selected) {
-                    // fallback
-                    this.selectFirstTab();
-                }
-            }
-        },
-*/
+
         selectTab: function(oid) {
             if (oid !== undefined) {
                 var routDef = this.getRouteForTab(oid);
@@ -137,10 +124,15 @@ define([
             }
         },
 
-        selectFirstTab: function() {
-            for (var key in EntityTabWidget.tabDefs) {
-                this.selectTab(EntityTabWidget.tabDefs[key].oid);
-                break;
+        closeTab: function(tab) {
+            try {
+                this.removeChild(tab);
+            }
+            catch(e) {
+                // tab container tries to set a style on a not existing node
+            }
+            finally {
+                registry.byId(tab.get("id")).destroy();
             }
         },
 
@@ -204,7 +196,7 @@ define([
                     when(store.get(oid), lang.hitch(this, function(entity) {
                             this.setInstanceTabName(entity, tabItem);
                         }), lang.hitch(this, function(error) {
-                            this.removeChild(tabItem);
+                            this.closeTab(tabItem);
                         })
                     );
                 }
@@ -230,8 +222,10 @@ define([
             if (this.isInstanceTab(oid)) {
                 tabItem.set("closable", true);
                 tabItem.set("onClose", lang.hitch(tabItem, function(container) {
+                    // close by ourselves (return false)
                     container.unpersistTab({ oid:container.getOidFromTabId(this.get("id")) });
-                    return true;
+                    container.closeTab(tabItem);
+                    return false;
                 }));
             }
 
@@ -256,7 +250,7 @@ define([
             var tabId = this.getTabIdFromOid(oid);
             var tabs = this.getChildren();
             for (var i=0; i<tabs.length; i++) {
-                if(tabs[i].id !== tabId) {
+                if(tabs[i].id === tabId) {
                     return tabs[i];
                 }
             }

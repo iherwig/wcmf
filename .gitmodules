@@ -16,9 +16,6 @@
 [submodule "testapp/public/vendor/routed"]
 	path = testapp/public/vendor/routed
 	url = git://github.com/sirprize/routed.git
-[submodule "testapp/public/vendor/dojo-bootstrap"]
-	path = testapp/public/vendor/dojo-bootstrap
-	url = git://github.com/xsokev/Dojo-Bootstrap.git
 [submodule "testapp/public/vendor/dgrid"]
 	path = testapp/public/vendor/dgrid
 	url = git://github.com/SitePen/dgrid.git

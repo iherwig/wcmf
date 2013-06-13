@@ -7,6 +7,7 @@ define( [
     "dojo/dom-form",
     "dojo/dom-construct",
     "dojo/query",
+    "dojomat/_StateAware",
     "dijit/registry",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
@@ -20,7 +21,6 @@ define( [
     "../../../model/meta/Model",
     "../../../persistence/Store",
     "../../../persistence/RelationStore",
-    "../../../action/Edit",
     "../../../action/Delete",
     "../input/Factory",
     "./EntityRelationWidget",
@@ -35,6 +35,7 @@ function(
     domForm,
     domConstruct,
     query,
+    _StateAware,
     registry,
     _WidgetBase,
     _TemplatedMixin,
@@ -48,13 +49,12 @@ function(
     Model,
     Store,
     RelationStore,
-    Edit,
     Delete,
     ControlFactory,
     EntityRelationWidget,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _StateAware, _Notification], {
 
         templateString: template,
         contextRequire: require,
@@ -166,29 +166,29 @@ function(
         buildLanguageMenu: function() {
             var languageCount = 0;
             var menu = registry.byId(this.languageMenuPopupNode.get("id"));
+            var form = this;
             for (var langKey in appConfig.languages) {
                 var menuItem = new MenuItem({
-                    label: appConfig.languages[langKey]
+                    label: appConfig.languages[langKey],
+                    langKey: langKey,
+                    onClick: function() {
+                        var route = form.router.getRoute("entity");
+                        var queryParams = this.langKey !== appConfig.defaultLanguage ? {lang: this.langKey} : undefined;
+                        var url = route.assemble({
+                            type: Model.getSimpleTypeName(form.type),
+                            id: Model.getIdFromOid(form.entity.oid)
+                        }, queryParams);
+                        form.push(url);
+                    }
                 });
+                if (langKey === this.language) {
+                    menuItem.set("disabled", true);
+                }
                 menu.addChild(menuItem);
-                var linkParams = {
-                    href: "#",
-                    'data-dojorama-route': "entity",
-                    'data-dojorama-pathparams': "type: '"+Model.getSimpleTypeName(this.type)+"', id: '"+Model.getIdFromOid(this.entity.oid)+"'",
-                    class: "push",
-                    innerHTML: appConfig.languages[langKey]
-                };
-                if (langKey !== appConfig.defaultLanguage) {
-                    linkParams['data-dojorama-queryparams'] = "?lang="+langKey;
-                }
-                else {
-                    linkParams['innerHTML'] = "<b>"+linkParams['innerHTML']+"</b>";
-                }
-                domConstruct.create("a", linkParams, menuItem.domNode);
                 languageCount++;
             }
             if (languageCount <= 1) {
-                domClass.add(this.languageMenuNode, "hide");
+                domConstruct.destroy(this.languageMenuNode);
             }
         },
 
@@ -224,7 +224,7 @@ function(
                 var data = domForm.toObject(this.formId);
                 data = lang.mixin(lang.clone(this.entity), data);
 
-                query(".btn.save").button("loading");
+                this.saveBtn.setProcessing();
                 this.hideNotification();
 
                 var store = null;
@@ -238,7 +238,7 @@ function(
                 var storeMethod = this.isNew ? "add" : "put";
                 store[storeMethod](data, {overwrite: !this.isNew}).then(lang.hitch(this, function(response) {
                     // callback completes
-                    query(".btn.save").button("reset");
+                    this.saveBtn.reset();
                     if (response.errorMessage) {
                         // error
                         this.showNotification({
@@ -268,10 +268,9 @@ function(
                                     this.isNew = false;
 
                                     if (this.isRelatedObject()) {
-                                        // close own tab and select last tab
+                                        // close own tab
                                         topic.publish("tab-closed", {
-                                            oid: Model.createDummyOid(this.type),
-                                            selectLast: true
+                                            oid: Model.createDummyOid(this.type)
                                         });
                                         this.destroyRecursive();
                                     }
@@ -279,12 +278,8 @@ function(
                                         // update current tab
                                         topic.publish("tab-closed", {
                                             oid: Model.createDummyOid(this.type),
-                                            selectLast: false
+                                            nextOid: this.entity.oid
                                         });
-                                        // navigate to edit page
-                                        new Edit({
-                                            router: this.router
-                                        }).execute(e, this.entity);
                                     }
                                 }
                             })
@@ -294,7 +289,7 @@ function(
                     }
                 }), lang.hitch(this, function(error) {
                     // error
-                    query(".btn.save").button("reset");
+                    this.saveBtn.setProcessing();
                     this.showNotification({
                         type: "error",
                         message: error.message || error.response.data.errorMessage || "Backend error"
@@ -320,8 +315,7 @@ function(
                     // success
                     // notify tab panel to close tab
                     topic.publish("tab-closed", {
-                        oid: this.entity.oid,
-                        selectLast: true
+                        oid: this.entity.oid
                     });
                     this.destroyRecursive();
                 }),

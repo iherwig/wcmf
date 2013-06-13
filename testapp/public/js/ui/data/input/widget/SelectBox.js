@@ -3,20 +3,19 @@ define( [
     "dojo/_base/lang",
     "dojo/topic",
     "dijit/form/FilteringSelect",
-    "../../../../persistence/Store",
-    "dojo/text!./template/SelectBox.html"
+    "dojo/store/Memory",
+    "../../../../persistence/Store"
 ],
 function(
     declare,
     lang,
     topic,
     FilteringSelect,
-    Store,
-    template
+    Memory,
+    Store
 ) {
     return declare([FilteringSelect], {
 
-        templateString: template,
         intermediateChanges: true,
         entity: {},
         attribute: {},
@@ -25,27 +24,32 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            //https://github.com/thesociable/dbootstrap
-
             this.label = this.attribute.name;
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];
-            this.store = Store.getStore('Author');
 
-            this.options = [
-                { label: "TN", value: "Tennessee" },
-                { label: "VA", value: "Virginia", selected: true },
-                { label: "WA", value: "Washington" },
-                { label: "FL", value: "Florida" },
-                { label: "CA", value: "California" }
-            ];
+            var stateStore = new Memory({
+                 data: [
+                     {name:"Alabama", id:"AL"},
+                     {name:"Alaska", id:"AK"},
+                     {name:"American Samoa", id:"AS"},
+                     {name:"Arizona", id:"AZ"},
+                     {name:"Arkansas", id:"AR"},
+                     {name:"Armed Forces Europe", id:"AE"},
+                     {name:"Armed Forces Pacific", id:"AP"},
+                     {name:"Armed Forces the Americas", id:"AA"},
+                     {name:"California", id:"CA"},
+                     {name:"Colorado", id:"CO"},
+                     {name:"Connecticut", id:"CT"},
+                     {name:"Delaware", id:"DE"}
+                 ]
+             });
+            this.store = stateStore;
         },
 
         postCreate: function() {
             this.inherited(arguments);
-
-            this.helpNode.innerHTML = this.original[this.attribute.name] || "";
 
             // subscribe to entity change events to change tab links
             this.own(

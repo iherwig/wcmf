@@ -2,19 +2,16 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
-    "dijit/form/Textarea",
-    "dojo/text!./template/TextArea.html"
+    "dijit/form/Textarea"
 ],
 function(
     declare,
     lang,
     topic,
-    TextArea,
-    template
+    TextArea
 ) {
     return declare([TextArea], {
 
-        templateString: template,
         intermediateChanges: true,
         entity: {},
         attribute: {},
@@ -31,8 +28,6 @@ function(
 
         postCreate: function() {
             this.inherited(arguments);
-
-            this.helpNode.innerHTML = this.original[this.attribute.name] || "";
 
             // subscribe to entity change events to change tab links
             this.own(

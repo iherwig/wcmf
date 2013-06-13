@@ -124,10 +124,10 @@ define([
                     sortable: false,
                     resizable: false,
                     formatter: lang.hitch(this, function(data, obj) {
-                        var html = '<div class="btn-group">';
+                        var html = '<div>';
                         for (var name in this.actionsByName) {
                             var action = this.actionsByName[name];
-                            html += '<a class="btn btn-mini" href="#" data-action="'+name+'"><i class="'+action.iconClass+'"></i></a>';
+                            html += '<a class="btn" href="#" data-action="'+name+'"><i class="'+action.iconClass+'"></i></a>';
                         }
                         html += '</div>';
                         return html;

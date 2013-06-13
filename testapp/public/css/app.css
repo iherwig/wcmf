@@ -1,11 +1,22 @@
-/*@import '../vendor/dojo/dojo/resources/dojo.css';*/
-/*@import '../vendor/dojo/dijit/themes/claro/claro.css';*/
-/*@import '../vendor/twitter-bootstrap/css/bootstrap.css';
-@import '../vendor/twitter-bootstrap/css/bootstrap-responsive.css';*/
+/*@import '../vendor/twitter-bootstrap/css/bootstrap.css';*/
+@import '../vendor/twitter-bootstrap/css/bootstrap-responsive.css';
+@import '../vendor/dbootstrap/theme/dbootstrap/dbootstrap.css';
 @import '../vendor/font-awesome/build/assets/font-awesome/css/font-awesome.css';
 
-/* Sticky footer styles
--------------------------------------------------- */
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  *zoom: 1;
+}
 
 html,
 body {
@@ -30,11 +41,18 @@ body {
   background-color: #2f2f2f;
 }
 #footer p {
-  padding: 10px;
+  margin-top: 10px;
+  padding: 0 10px;
 }
 
-.nav-collapse .nav > li > a, .nav-collapse .dropdown-menu a {
-  font-weight: normal;
+/* responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+  #footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 .form-login {
@@ -72,6 +90,10 @@ body {
   background: #999; /* Make selected rows be gray */
 }
 
+.dgrid-loading, .dgrid-no-data {
+  padding: 10px;
+}
+
 th {
   font-weight: normal;
 }
@@ -88,26 +110,79 @@ th.field-actions-4, td.field-actions-4 {
   width: 90px;
 }
 
+/* buttons */
+.btn-toolbar {
+  padding: 10px 0;
+}
+
 .btn i {
   padding: 0 4px;
 }
 
-.close-tab {
-  cursor: pointer;
+.btn-mini .dijitButtonNode {
+  padding: 2px !important;
+}
+
+/* containers */
+@media
+only screen and (min-width: 980px) {
+  .container {
+    width: 980px;
+  }
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  *zoom: 1;
+}
+
+.container:before,
+.container:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.container:after {
+  clear: both;
 }
 
 .relation-container {
   margin: 20px 0;
 }
 
-.relation-container legend {
-  margin-bottom: 0;
-}
-
 .padding-bottom {
   padding-bottom: 10px;
 }
 
-.dgrid-loading, .dgrid-no-data {
-  padding: 10px;
+/* entity form */
+.entity-form-valueCell {
+  padding: 10px 0;
+}
+
+/*
+  Responsive table layout for form
+  http://css-tricks.com/responsive-data-tables/
+*/
+@media
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+	/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr {
+		display: block;
+	}
+
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	td {
+		/* Behave like a "row" */
+		position: relative;
+	}
 }

@@ -1,11 +1,11 @@
-<div>
-    <fieldset class="relation-container">
-        <legend>${relationName}</legend>
-        <div class="btn-toolbar btn-group pull-right">
-            <button class="btn create btn-mini" type="submit" data-dojo-attach-event="onClick:_create"><i class="icon-plus-sign"></i> ${relationName}</button>
-            <button class="btn link btn-mini" type="submit" data-dojo-attach-event="onClick:_link"><i class="icon-link"></i> ${relationName}</button>
-        </div>
-        <div data-dojo-attach-point="notificationNode" class="container"></div>
-        <div data-dojo-attach-point="gridNode"></div>
-    </fieldset>
+<div class="relation-container">
+    <div class="clearfix">
+      <h4 class="pull-left">${relationName}</h4>
+      <div class="btn-toolbar pull-right">
+          <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'btn-mini'" type="submit" data-dojo-attach-event="onClick:_create"><i class="icon-plus-sign"></i></button>
+          <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'btn-mini'" type="submit" data-dojo-attach-event="onClick:_link"><i class="icon-link"></i></button>
+      </div>
+    </div>
+    <div data-dojo-attach-point="notificationNode"></div>
+    <div data-dojo-attach-point="gridNode"></div>
 </div>

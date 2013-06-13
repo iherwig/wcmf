@@ -7,7 +7,7 @@ define( [
     "dijit/_WidgetsInTemplateMixin",
     "../../_include/_NotificationMixin",
     "../../_include/widget/GridWidget",
-    "../../../model/meta/Model",
+    "../../_include/widget/Button",
     "../../../persistence/RelationStore",
     "../../../action/Edit",
     "../../../action/Link",
@@ -24,7 +24,7 @@ function(
     _WidgetsInTemplateMixin,
     _NotificationMixin,
     GridWidget,
-    Model,
+    Button,
     RelationStore,
     Edit,
     Link,
@@ -53,7 +53,7 @@ function(
                 type: this.relation.type,
                 store: RelationStore.getStore(this.entity.oid, this.relation.name),
                 actions: this.getGridActions(),
-                height: 198
+                height: 211
             }, this.gridNode);
         },
 

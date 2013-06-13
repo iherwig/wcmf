@@ -84,8 +84,6 @@ catch (Exception $ex) {
               { name: 'dojo', location: 'vendor/dojo/dojo', map: {} },
               { name: 'dijit', location: 'vendor/dojo/dijit', map: {} },
               { name: 'dojox', location: 'vendor/dojo/dojox', map: {} },
-              { name: 'dbootstrap', location: 'vendor/dbootstrap' },
-              { name: 'bootstrap', location: 'vendor/dojo-bootstrap' },
               { name: 'routed', location: 'vendor/routed' },
               { name: 'dojomat', location: 'vendor/dojomat' },
               { name: 'dgrid', location: 'vendor/dgrid' },
@@ -105,7 +103,7 @@ catch (Exception $ex) {
     <script src="vendor/dojo/dojo/dojo.js"></script>
 
     <script>
-      require(["dbootstrap", "app/App"], function (dbootstrap, App) { new App(); });
+      require(["app/App"], function (App) { new App(); });
     </script>
 
     <div id="static" class="alert alert-error">

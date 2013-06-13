@@ -1,26 +1,19 @@
 define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/query",
     "dojo/topic",
-    "bootstrap/Datepicker",
-    "dijit/form/TextBox",
-    "dojo/text!./template/Date.html",
-    "xstyle/css!bootstrap/assets/datepicker.css"
+    "dijit/form/DateTextBox"
 ],
 function(
     declare,
     lang,
-    query,
     topic,
-    Datepicker,
-    TextBox,
-    template
+    DateTextBox
 ) {
-    return declare([TextBox], {
+    return declare([DateTextBox], {
 
-        templateString: template,
         intermediateChanges: true,
+        hasDownArrow: false,
         entity: {},
         attribute: {},
         original: {},
@@ -37,22 +30,12 @@ function(
         postCreate: function() {
             this.inherited(arguments);
 
-            var pickerNode = query(".date", this.domNode);
-            pickerNode.datepicker({
-                format: 'dd.mm.yyyy'
-            });
-            this.helpNode.innerHTML = this.original[this.attribute.name] || "";
-
             // subscribe to entity change events to change tab links
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
                     if (data.name === this.attribute.name) {
                         this.set("value", data.newValue);
                     }
-                })),
-                pickerNode.datepicker().on('changeDate', lang.hitch(this, function(e) {
-                    // notify listeners immediatly
-                    this.setValue();
                 }))
             );
         }
