@@ -30,14 +30,30 @@ define([
             aspect.around(this, "get", function(original) {
                 return function(oid, options) {
                     var id = Model.getIdFromOid(oid);
-                    return original.call(this, id, options);
+
+                    // do call
+                    var results = original.call(this, id, options);
+                    return results;
                 };
             });
             aspect.around(this, "put", function(original) {
                 return function(object, options) {
+
                     var isUpdate = options.overwrite;
                     var objectTmp = object.getCleanCopy ? object.getCleanCopy() : object;
                     var optionsTmp = lang.clone(options);
+
+                    // reorder request
+                    if ("before" in options) {
+                        var position = "last"; // default if before is undefined
+                        if (options.before) {
+                            position = "before "+options.before.oid;
+                        }
+                        optionsTmp.headers = {
+                            Position: position
+                        };
+                        isUpdate = true;
+                    }
 
                     // set real id only if an existing object is updated
                     // otherwise set to undefined
@@ -45,6 +61,8 @@ define([
                     if (!isUpdate) {
                         objectTmp.oid = Model.getOid(Model.getTypeNameFromOid(objectTmp.oid), this.createBackEndDummyId());
                     }
+
+                    // do call
                     var results = original.call(this, objectTmp, optionsTmp);
                     results.then(lang.hitch(this, function() {
                         topic.publish("store-datachange", {
@@ -58,6 +76,8 @@ define([
             aspect.around(this, "remove", function(original) {
                 return function(oid, options) {
                     var id = Model.getIdFromOid(oid);
+
+                    // do call
                     var results = original.call(this, id, options);
                     results.then(lang.hitch(this, function() {
                         topic.publish("store-datachange", {
@@ -72,6 +92,9 @@ define([
 
         createBackEndDummyId: function() {
             return 'wcmf'+uuid().replace(/-/g, '');
+        },
+
+        reorder: function(object, options) {
         }
 
         // TODO:

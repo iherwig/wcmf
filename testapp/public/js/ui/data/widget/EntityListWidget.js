@@ -48,10 +48,17 @@ function(
         postCreate: function() {
             this.inherited(arguments);
 
+            var typeClass = Model.getType(this.type);
+            var enabledFeatures = [];
+            if (typeClass.isSortable) {
+                enabledFeatures.push('DnD');
+            }
+
             new GridWidget({
                 type: this.type,
                 store: Store.getStore(this.type, appConfig.defaultLanguage),
                 actions: this.getGridActions(),
+                enabledFeatures: enabledFeatures,
                 autoReload: false
             }, this.gridNode);
 

@@ -8,6 +8,7 @@ define( [
     "../../_include/_NotificationMixin",
     "../../_include/widget/GridWidget",
     "../../_include/widget/Button",
+    "../../../model/meta/Model",
     "../../../persistence/RelationStore",
     "../../../action/Edit",
     "../../../action/Link",
@@ -25,6 +26,7 @@ function(
     _NotificationMixin,
     GridWidget,
     Button,
+    Model,
     RelationStore,
     Edit,
     Link,
@@ -49,10 +51,17 @@ function(
         postCreate: function() {
             this.inherited(arguments);
 
+            var typeClass = Model.getType(this.relation.type);
+            var enabledFeatures = [];
+            if (typeClass.isSortable) {
+                enabledFeatures.push('DnD');
+            }
+
             this.gridWidget = new GridWidget({
                 type: this.relation.type,
                 store: RelationStore.getStore(this.entity.oid, this.relation.name),
                 actions: this.getGridActions(),
+                enabledFeatures: enabledFeatures,
                 height: 211
             }, this.gridNode);
         },

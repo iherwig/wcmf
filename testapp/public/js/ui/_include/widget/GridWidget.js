@@ -15,7 +15,6 @@ define([
     "dojo/window",
     "dojo/topic",
     "dojo/on",
-    "dojo/Deferred",
     "../../../model/meta/Model",
     "dojo/text!./template/GridWidget.html"
 ], function (
@@ -35,7 +34,6 @@ define([
     win,
     topic,
     on,
-    Deferred,
     Model,
     template
 ) {
@@ -45,10 +43,14 @@ define([
         store: null,
         actions: [],
         autoReload: true,
+        enabledFeatures: [], // array of strings matching items in optionalFeatures
 
         actionsByName: {},
         templateString: template,
         gridWidget: null,
+
+        defaultFeatures: [Selection, Keyboard, ColumnHider, ColumnResizer],
+        optionalFeatures: [DnD],
 
         constructor: function (params) {
             if (params.actions) {
@@ -135,7 +137,17 @@ define([
                 });
             }
 
-            var gridWidget = new (declare([OnDemandGrid, Selection, Keyboard, DnD, ColumnHider, ColumnResizer]))({
+            // select features
+            var features = this.defaultFeatures;
+            for (var idx in this.enabledFeatures) {
+                var featureFct = eval(this.enabledFeatures[idx]);
+                if (featureFct instanceof Function) {
+                    features.push(featureFct);
+                }
+            }
+
+            // create widget
+            var gridWidget = new (declare([OnDemandGrid].concat(features)))({
                 getBeforePut: true,
                 columns: columns,
                 selectionMode: "extended",
@@ -143,7 +155,7 @@ define([
                 //queryOptions: { sort: [{ attribute: 'title', descending: false }] },
                 loadingMessage: "Loading",
                 noDataMessage: "No data"
-            }, this.gridNode)
+            }, this.gridNode);
 
             gridWidget.on("dgrid-error", function (evt) {
                 topic.publish('ui/_include/widget/GridWidget/unknown-error', {
