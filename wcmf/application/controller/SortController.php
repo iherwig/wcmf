@@ -20,6 +20,7 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
@@ -45,7 +46,8 @@ use wcmf\lib\presentation\Controller;
  * @param[in] referenceOid The oid of the object to insert the inserted object before.
  *            If the inserted object should be the last in the container order,
  *            the referenceOid contains the special value ORDER_BOTTOM
- * @param[in] role The role, that the inserted object should have in the container object.
+ * @param[in] role The role, that the inserted object should have in the container object
+ *            (insertBefore action only).
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
@@ -256,10 +258,13 @@ class SortController extends Controller {
       $children = $containerObject->getChildren();
       $newChildren = array();
       foreach ($children as $curChild) {
-        if ($curChild->getOID() == $referenceOid) {
+        $oid = $curChild->getOID();
+        if ($oid == $referenceOid) {
           $newChildren[] = $insertObject;
         }
-        $newChildren[] = $curChild;
+        if ($oid != $insertOid) {
+          $newChildren[] = $curChild;
+        }
       }
       $containerObject->setNodeOrder($newChildren);
     }

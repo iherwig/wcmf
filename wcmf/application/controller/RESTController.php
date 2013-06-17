@@ -80,6 +80,14 @@ class RESTController extends Controller {
         array('invalidParameters' => array('className'))));
       return false;
     }
+    if ($request->hasHeader('Position')) {
+      $position = $request->getHeader('Position');
+      if (!preg_match('/^before /', $position)) {
+        $response->addError(ApplicationError::get('PARAMETER_INVALID',
+          array('invalidParameters' => array('Position'))));
+        return false;
+      }
+    }
     // do default validation
     return parent::validate();
   }
@@ -204,7 +212,16 @@ class RESTController extends Controller {
           // set the class name
           $mapper = $sourceNode->getMapper();
           $relation = $mapper->getRelation($relationName);
-          $request->setValue('className', $relation->getOtherType());
+          $otherType = $relation->getOtherType();
+          $request->setValue('className', $otherType);
+
+          // set order
+          $otherMapper = $persistenceFacade->getMapper($otherType);
+          $sortDef = $otherMapper->getDefaultOrder($relation->getThisRole());
+          if ($sortDef) {
+            $request->setValue('sortFieldName', $sortDef['sortFieldName']);
+            $request->setValue('sortDirection', $sortDef['sortDirection']);
+          }
         }
       }
 
@@ -256,6 +273,7 @@ class RESTController extends Controller {
   protected function handlePost() {
     $request = $this->getRequest();
     if ($request->hasValue('relation') && $request->hasValue('sourceOid')) {
+      // create new object
       $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
       $relatedType = $this->getRelatedType($sourceOid, $request->getValue('relation'));
       $request->setValue('className', $relatedType);
@@ -322,11 +340,30 @@ class RESTController extends Controller {
    */
   protected function handlePut() {
     $request = $this->getRequest();
+
+    // check position header for reordering
+    $orderReferenceOid = null;
+    if ($request->hasHeader('Position')) {
+      $position = $request->getHeader('Position');
+      list($ignore, $orderReferenceOidStr) = preg_split('/ /', $position);
+      $orderReferenceOid = ObjectId::parse($orderReferenceOidStr);
+    }
+
     if ($request->hasValue('relation') && $request->hasValue('sourceOid') &&
             $request->hasValue('targetOid')) {
-      // add existing object to relation
-      $request->setValue('role', $request->getValue('relation'));
-      $subResponse = $this->executeSubAction('associate');
+      if ($orderReferenceOid != null) {
+        // change order in a relation
+        $request->setValue('containerOid', $request->getValue('sourceOid'));
+        $request->setValue('insertOid', $request->getValue('targetOid'));
+        $request->setValue('referenceOid', $orderReferenceOid);
+        $request->setValue('role', $request->getValue('relation'));
+        $subResponse = $this->executeSubAction('insertBefore');
+      }
+      else {
+        // add existing object to relation
+        $request->setValue('role', $request->getValue('relation'));
+        $subResponse = $this->executeSubAction('associate');
+      }
 
       // add related object to subresponse similar to default update action
       $targetOidStr = $request->getValue('targetOid');
@@ -337,10 +374,17 @@ class RESTController extends Controller {
       $subResponse->setValue($targetOidStr, $targetObj);
     }
     else {
-      // update object
-      $subResponse = $this->executeSubAction('update');
+      if ($orderReferenceOid != null) {
+        // change order in a relation
+        $request->setValue('insertOid', $this->getFirstRequestOid());
+        $request->setValue('referenceOid', $orderReferenceOid);
+        $subResponse = $this->executeSubAction('moveBefore');
+      }
+      else {
+        // update object
+        $subResponse = $this->executeSubAction('update');
+      }
     }
-
     $response = $this->getResponse();
 
     // in case of success, return object only
