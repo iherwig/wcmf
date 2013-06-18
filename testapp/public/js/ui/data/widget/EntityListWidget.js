@@ -58,8 +58,8 @@ function(
                 type: this.type,
                 store: Store.getStore(this.type, appConfig.defaultLanguage),
                 actions: this.getGridActions(),
-                enabledFeatures: enabledFeatures,
-                autoReload: false
+                enabledFeatures: enabledFeatures/*,
+                autoReload: false*/
             }, this.gridNode);
 
             if (this.onCreated instanceof Function) {

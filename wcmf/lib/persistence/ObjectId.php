@@ -59,7 +59,7 @@ class ObjectId {
   public function __construct($type, $id=null, $prefix=null) {
     $this->_prefix = $prefix;
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $this->_fqType = $persistenceFacade->getFullyQualifiedType($type);
+    $this->_fqType = $type != 'NULL' ? $persistenceFacade->getFullyQualifiedType($type) : 'NULL';
 
     // get given primary keys
     if ($id != null) {

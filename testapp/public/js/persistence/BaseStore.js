@@ -44,10 +44,14 @@ define([
                     var optionsTmp = lang.clone(options);
 
                     // reorder request
+                    // use position header according to http://www.ietf.org/rfc/rfc3648.txt
                     if ("before" in options) {
                         var position = "last"; // default if before is undefined
                         if (options.before) {
                             position = "before "+options.before.oid;
+                        }
+                        else {
+                            position = "last";
                         }
                         optionsTmp.headers = {
                             Position: position

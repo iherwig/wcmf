@@ -82,7 +82,7 @@ class RESTController extends Controller {
     }
     if ($request->hasHeader('Position')) {
       $position = $request->getHeader('Position');
-      if (!preg_match('/^before /', $position)) {
+      if (!preg_match('/^before /', $position) && !preg_match('/^last$/', $position)) {
         $response->addError(ApplicationError::get('PARAMETER_INVALID',
           array('invalidParameters' => array('Position'))));
         return false;
@@ -345,8 +345,13 @@ class RESTController extends Controller {
     $orderReferenceOid = null;
     if ($request->hasHeader('Position')) {
       $position = $request->getHeader('Position');
-      list($ignore, $orderReferenceOidStr) = preg_split('/ /', $position);
-      $orderReferenceOid = ObjectId::parse($orderReferenceOidStr);
+      if ($position == 'last') {
+        $orderReferenceOid = 'ORDER_BOTTOM';
+      }
+      else {
+        list($ignore, $orderReferenceOidStr) = preg_split('/ /', $position);
+        $orderReferenceOid = ObjectId::parse($orderReferenceOidStr);
+      }
     }
 
     if ($request->hasValue('relation') && $request->hasValue('sourceOid') &&

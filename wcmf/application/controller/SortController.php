@@ -19,6 +19,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\NullNode;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
@@ -54,6 +55,7 @@ use wcmf\lib\presentation\Controller;
 class SortController extends Controller {
 
   const ORDER_BOTTOM = 'ORDER_BOTTOM';
+  const UNBOUND = 'UNBOUND';
 
   /**
    * @see Controller::validate()
@@ -63,7 +65,7 @@ class SortController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    $isOrderBottom = ($request->getValue('referenceOid') == self::ORDER_BOTTOM);
+    $isOrderBottom = $this->isOrderBotton($request);
 
     // check object id validity
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
@@ -83,7 +85,7 @@ class SortController extends Controller {
 
     if ($request->getAction() == 'moveBefore') {
       // check matching classes for move operation
-      if ($insertOid->getType() != $referenceOid->getType()) {
+      if (!$isOrderBottom && $insertOid->getType() != $referenceOid->getType()) {
         $response->addError(ApplicationError::get('CLASSES_DO_NOT_MATCH'));
         return false;
       }
@@ -165,12 +167,13 @@ class SortController extends Controller {
   protected function doMoveBefore() {
     $request = $this->getRequest();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $isOrderBottom = $this->isOrderBotton($request);
 
     // load the moved object and the reference object
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
     $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
     $insertObject = $persistenceFacade->load($insertOid);
-    $referenceObject = $persistenceFacade->load($referenceOid);
+    $referenceObject = $isOrderBottom ? new NullNode() : $persistenceFacade->load($referenceOid);
     // check object existence
     $objectMap = array('insertOid' => $insertObject,
         'referenceOid' => $referenceObject);
@@ -181,12 +184,12 @@ class SortController extends Controller {
       $sortkey = $sortDef['sortFieldName'];
 
       // determine the sort boundaries
-      $referenceValue = $referenceObject->getValue($sortkey);
+      $referenceValue = $isOrderBottom ? self::UNBOUND : $referenceObject->getValue($sortkey);
       $insertValue = $insertObject->getValue($sortkey);
 
       // determine the sort direction
       $isSortup = false;
-      if ($referenceValue > $insertValue) {
+      if ($referenceValue == self::UNBOUND || $referenceValue > $insertValue) {
         $isSortup = true;
       }
 
@@ -232,6 +235,7 @@ class SortController extends Controller {
   protected function doInsertBefore() {
     $request = $this->getRequest();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $isOrderBottom = $this->isOrderBotton($request);
 
     // load the moved object, the reference object and the conainer object
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
@@ -239,11 +243,18 @@ class SortController extends Controller {
     $containerOid = ObjectId::parse($request->getValue('containerOid'));
     $insertObject = $persistenceFacade->load($insertOid);
     $containerObject = $persistenceFacade->load($containerOid, 1);
-    $referenceObjects = $containerObject->getChildrenEx($referenceOid);
+
     $referenceObject = null;
-    if (sizeof($referenceObjects) == 1) {
-      $referenceObject = $referenceObjects[0];
+    if ($isOrderBottom) {
+      $referenceObject = new NullNode();
     }
+    else {
+      $referenceObjects = $containerObject->getChildrenEx($referenceOid);
+      if (sizeof($referenceObjects) == 1) {
+        $referenceObject = $referenceObjects[0];
+      }
+    }
+
     // check object existence
     $objectMap = array('insertOid' => $insertObject,
         'referenceOid' => $referenceObject,
@@ -266,6 +277,9 @@ class SortController extends Controller {
           $newChildren[] = $curChild;
         }
       }
+      if ($isOrderBottom) {
+        $newChildren[] = $insertObject;
+      }
       $containerObject->setNodeOrder($newChildren);
     }
   }
@@ -274,15 +288,19 @@ class SortController extends Controller {
    * Load all objects between two sortkey values
    * @param type The type of objects
    * @param sortkeyName The name of the sortkey attribute
-   * @param lowerValue The lower value of the sortkey
-   * @param upperValue The upper value of the sortkey
+   * @param lowerValue The lower value of the sortkey or UNBOUND
+   * @param upperValue The upper value of the sortkey or UNBOUND
    */
   protected function loadObjectsInSortkeyRange($type, $sortkeyName, $lowerValue, $upperValue) {
     $query = new ObjectQuery($type);
     $tpl1 = $query->getObjectTemplate($type);
     $tpl2 = $query->getObjectTemplate($type);
-    $tpl1->setValue($sortkeyName, Criteria::asValue('>', $lowerValue));
-    $tpl2->setValue($sortkeyName, Criteria::asValue('<', $upperValue));
+    if ($lowerValue != self::UNBOUND) {
+      $tpl1->setValue($sortkeyName, Criteria::asValue('>', $lowerValue));
+    }
+    if ($upperValue != self::UNBOUND) {
+      $tpl2->setValue($sortkeyName, Criteria::asValue('<', $upperValue));
+    }
     $objects = $query->execute(BuildDepth::SINGLE);
     return $objects;
   }
@@ -307,6 +325,15 @@ class SortController extends Controller {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Check if the node should be moved to the bottom of the list
+   * @param request The request
+   * @return Boolean
+   */
+  protected function isOrderBotton($request) {
+    return ($request->getValue('referenceOid') == self::ORDER_BOTTOM);
   }
 }
 ?>

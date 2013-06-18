@@ -88,11 +88,17 @@ define([
                 topic.subscribe("store-datachange", lang.hitch(this, function(data) {
                     if (data.store.target === this.store.target) {
                         if (this.autoReload) {
-                            this.gridWidget.refresh();
+                            this.gridWidget.refresh({
+                                keepScrollPosition: true
+                            });
                         }
                         this.needsRefresh = true;
                     }
-                }))
+                })),
+                topic.subscribe("/dnd/drop", function(source, nodes, copy, target) {
+                    // TODO: check if we really need a refresh
+                    console.log("drop");
+                })
             );
             this.onResize();
         },
@@ -204,7 +210,9 @@ define([
         },
 
         refresh: function() {
-            this.gridWidget.refresh();
+            this.gridWidget.refresh({
+                keepScrollPosition: true
+            });
         },
 
         postponeRefresh: function(deferred) {
