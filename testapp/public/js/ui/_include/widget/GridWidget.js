@@ -53,7 +53,7 @@ define([
         optionalFeatures: [DnD],
 
         constructor: function (params) {
-            if (params.actions) {
+            if (params && params.actions) {
                 params.actionsByName = {};
                 for (var i=0,count=params.actions.length; i<count; i++) {
                     var action = params.actions[i];

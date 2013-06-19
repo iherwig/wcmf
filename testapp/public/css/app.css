@@ -110,6 +110,11 @@ th.field-actions-4, td.field-actions-4 {
   width: 90px;
 }
 
+/* dnd */
+.dojoDndAvatarHeader {
+  background-position:3px 3px !important;
+}
+
 /* buttons */
 .btn-toolbar {
   padding: 10px 0;
