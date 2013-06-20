@@ -4,7 +4,8 @@ define( [
     "dojo/_base/kernel",
     "dojo/Deferred",
     "../../../model/meta/Model",
-    "../../../model/meta/_InputTypeList"
+    "../../../model/meta/_InputTypeList",
+    "../../../persistence/ListStore"
 ],
 function(
     declare,
@@ -12,7 +13,8 @@ function(
     kernel,
     Deferred,
     Model,
-    InputTypeDefinitions
+    InputTypeDefinitions,
+    ListStore
 ) {
     var Factory = declare(null, {
     });
@@ -78,22 +80,25 @@ function(
         }
         // get the control
         if (bestMatch.length > 0) {
-          var controlClass = InputTypeDefinitions[bestMatch];
-          return controlClass;
+            var controlClass = InputTypeDefinitions[bestMatch];
+            return controlClass;
         }
         // default
         return "js/ui/data/input/widget/TextBox";
     };
 
     /**
-     * Called by list controls to retrive the list of values
+     * Called by list controls to retrive the value store
      * @param inputType The input type (contains the list definition after '#' char)
-     * @returns Array with keys, values
+     * @returns Store
      */
-    Factory.getListValues = function(inputType) {
-        var deferred = new Deferred();
-        // TODO: get list from server and cache if allowed by server
-        return deferred;
+    Factory.getListStore = function(inputType) {
+        var parts = inputType.split("#");
+        if (parts.length === 1) {
+            throw "Input type '"+inputType+"' does not contain a list definition";
+        }
+        var listDef = parts[1];
+        return ListStore.getStore(listDef, appConfig.defaultLanguage);
     };
 
     return Factory;

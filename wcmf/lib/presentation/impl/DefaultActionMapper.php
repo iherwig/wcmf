@@ -133,7 +133,7 @@ class DefaultActionMapper implements ActionMapper {
       $response = $this->processAction($nextRequest);
     }
     else {
-      throw new ErrorException("Controller::execute must return true or false. Executed controller was ".$controllerClass.".");
+      throw new \ErrorException("Controller::execute must return true or false. Executed controller was ".$controllerClass.".");
     }
     return $response;
   }

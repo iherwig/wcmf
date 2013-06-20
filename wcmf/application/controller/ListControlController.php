@@ -19,22 +19,20 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\util\Obfuscator;
 
 /**
- * ListControlController is a controller that uses g_getOIDs to retrieve listbox data.
+ * ListControlController is a controller that resolves lists for
+ * input_type definitions
  *
  * <b>Input actions:</b>
- * - unspecified: List Nodes of given type
+ * - unspecified: List key/values
  *
  * <b>Output actions:</b>
  * - @em ok In any case
  *
- * @param[in] type The entity type to list
- * @param[in] filter A query passed to g_getOIDs
- * @param[in] displayFilter A regular expression that the returned 'val' values should match
- * @param[out] totalCount The total number of all entities that match the criteria
- * @param[out] objects An associative array with keys 'key' and 'val'
+ * @param[in] listDef The list definition (expected to be base64 encoded)
+ * @param[in] displayFilter A regular expression that the returned 'value' values should match (optional)
+ * @param[out] list Array of associative arrays with keys 'key', 'value'
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -44,6 +42,13 @@ class ListControlController extends Controller {
    * @see Controller::validate()
    */
   protected function validate() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    if(!$request->hasValue('listDef')) {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => array('listDef'))));
+      return false;
+    }
     if (!$this->checkLanguageParameter()) {
       return false;
     }
@@ -52,11 +57,44 @@ class ListControlController extends Controller {
   }
 
   /**
+   * @see Controller::executeKernel()
+   */
+  function executeKernel() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+
+    $listDef = base64_decode($request->getValue('listDef'));
+
+
+    $data = array(
+          array('value' => "Alabama", 'key' => "AL"),
+          array('value' => "Alaska", 'key' => "AK"),
+          array('value' => "American Samoa", 'key' => "AS"),
+          array('value' => "Arizona", 'key' => "AZ"),
+          array('value' => "Arkansas", 'key' => "AR"),
+          array('value' => "Armed Forces Europe", 'key' => "AE"),
+          array('value' => "Armed Forces Pacific", 'key' => "AP"),
+          array('value' => "Armed Forces the Americas", 'key' => "AA"),
+          array('value' => "California", 'key' => "CA"),
+          array('value' => "Colorado", 'key' => "CO"),
+          array('value' => "Connecticut", 'key' => "CT"),
+          array('value' => "Delaware", 'key' => "DE")
+    );
+
+    $response->setValue('list', $data);
+
+    // success
+    $response->setAction('ok');
+    return false;
+  }
+
+
+  /**
    * Do processing and assign Node data to View.
    * @return False in every case.
    * @see Controller::executeKernel()
    */
-  function executeKernel() {
+  function __executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
 

@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation\control\lists\impl;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 
 /**
@@ -37,7 +38,7 @@ class FixedListStrategy implements ListStrategy {
   /**
    * @see ListStrategy::getListMap
    */
-  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null) {
+  public function getListMap($configuration, $language=null) {
     // see if we have an array variable or a list definition
     if (strPos($configuration, '$') === 0) {
       $entries = $GLOBALS[subStr($configuration, 1)];
@@ -52,13 +53,15 @@ class FixedListStrategy implements ListStrategy {
     foreach($entries as $curEntry) {
       preg_match_all("/([^\[]*)\[*([^\]]*)\]*/", $curEntry, $matches);
       if (sizeOf($matches) > 0) {
+        $val1 = $matches[1][0];
+        $val2 = $matches[2][0];
         if ($val2 != '') {
           // value given
-          $map[$val1] = $val2;
+          $map[$val1] = Message::get($val2, null, $language);
         }
         else {
           // only key given
-          $map[$val1] = $val1;
+          $map[$val1] = Message::get($val1, null, $language);
         }
       }
     }

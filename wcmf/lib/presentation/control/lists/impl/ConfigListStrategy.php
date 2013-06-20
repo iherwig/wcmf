@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation\control\lists\impl;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 
 /**
@@ -36,10 +37,14 @@ class ConfigListStrategy implements ListStrategy {
   /**
    * @see ListStrategy::getListMap
    */
-  public function getListMap($configuration, $value=null, $nodeOid=null, $language=null) {
+  public function getListMap($configuration, $language=null) {
     $config = ObjectFactory::getConfigurationInstance();
     $map = $config->getSection($configuration);
-    return $map;
+    $result = array();
+    foreach ($map as $key => $value) {
+      $result[$key] = Message::get($value, null, $language);
+    }
+    return $result;
   }
 }
 ?>

@@ -148,6 +148,8 @@ define('ACTION_INVALID', serialize(array('ACTION_INVALID',
   Message::get('The requested action is unknown.'), ERROR_LEVEL_ERROR)));
 define('SESSION_INVALID', serialize(array('SESSION_INVALID',
   Message::get('The session is invalid.'), ERROR_LEVEL_ERROR)));
+define('PARAMETER_MISSING', serialize(array('PARAMETER_MISSING',
+  Message::get('One or more parameters are missing.'), ERROR_LEVEL_ERROR)));
 define('PARAMETER_INVALID', serialize(array('PARAMETER_INVALID',
   Message::get('One or more parameters are invalid.'), ERROR_LEVEL_ERROR)));
 define('OID_INVALID', serialize(array('OID_INVALID',

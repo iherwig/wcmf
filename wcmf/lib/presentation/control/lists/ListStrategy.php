@@ -27,15 +27,13 @@ namespace wcmf\lib\presentation\control\lists;
 interface ListStrategy {
 
   /**
-   * Get a list of key/value pairs defined by the given description.
+   * Get a list of key/value pairs defined by the given configuration.
    * @param configuration The list type specific configuration of the list as
    *                 used in the input_type definition
-   * @param value The selected value (maybe null, default: null)
-   * @param nodeOid Serialized oid of the node containing this value (for determining remote oids) [default: null]
-   * @param language The lanugage if Control should be localization aware. Optional,
+   * @param language The lanugage if the list should be localized. Optional,
    *                 default is Localization::getDefaultLanguage()
    * @return An assoziative array containing the key/value pairs
    */
-  function getListMap($configuration, $value=null, $nodeOid=null, $language=null);
+  function getListMap($configuration, $language=null);
 }
 ?>

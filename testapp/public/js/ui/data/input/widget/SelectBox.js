@@ -3,20 +3,19 @@ define( [
     "dojo/_base/lang",
     "dojo/topic",
     "dijit/form/FilteringSelect",
-    "dojo/store/Memory",
-    "../../../../persistence/Store"
+    "../Factory"
 ],
 function(
     declare,
     lang,
     topic,
     FilteringSelect,
-    Memory,
-    Store
+    ControlFactory
 ) {
     return declare([FilteringSelect], {
 
         intermediateChanges: true,
+        searchAttr: "value",
         entity: {},
         attribute: {},
         original: {},
@@ -29,23 +28,7 @@ function(
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];
 
-            var stateStore = new Memory({
-                 data: [
-                     {name:"Alabama", id:"AL"},
-                     {name:"Alaska", id:"AK"},
-                     {name:"American Samoa", id:"AS"},
-                     {name:"Arizona", id:"AZ"},
-                     {name:"Arkansas", id:"AR"},
-                     {name:"Armed Forces Europe", id:"AE"},
-                     {name:"Armed Forces Pacific", id:"AP"},
-                     {name:"Armed Forces the Americas", id:"AA"},
-                     {name:"California", id:"CA"},
-                     {name:"Colorado", id:"CO"},
-                     {name:"Connecticut", id:"CT"},
-                     {name:"Delaware", id:"DE"}
-                 ]
-             });
-            this.store = stateStore;
+            this.store = ControlFactory.getListStore(this.attribute.inputType);
         },
 
         postCreate: function() {

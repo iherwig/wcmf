@@ -18,38 +18,33 @@
  */
 namespace wcmf\lib\presentation\control\lists\impl;
 
-use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 
 /**
- * FunctionListStrategy implements list of key value pairs that is retrieved
- * by a global function.
+ * NodeListStrategy implements a list of entities that is retrieved
+ * from the store, where the keys are the object ids and the
+ * values are the display values.
  * The following list definition(s) must be used in the input_type configuraton:
  * @code
- * fkt:name|param1,param2,... // where name is the name of a global function and
- *                               param1, param2, ... are used as parameters in the call
- *                               to that function
+ * node:type // list with all entities of the given type
+ * node:type1,type2,... // list with all entities of the given types
+ *
+ * node:type|type.name LIKE 'A%' ... // list with all entities of the given type that
+ *                                      match the given query (@see StringQuery)
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class FunctionListStrategy implements ListStrategy {
+class NodeListStrategy implements ListStrategy {
 
   /**
    * @see ListStrategy::getListMap
    */
   public function getListMap($configuration, $language=null) {
-    // maybe there are '|' chars in parameters
-    $parts = preg_split('/\|/', $configuration);
-    $name = array_shift($parts);
-    $params = join('|', $parts);
-    if (function_exists($name)) {
-      $map = call_user_func_array($name, preg_split('/,/', $params));
-    }
-    else {
-      throw new ConfigurationException('Function '.$name.' is not defined globally!');
-    }
-    return $map;
+    $result = array();
+    // TODO: implement node fetching
+    return $result;
   }
 }
 ?>
