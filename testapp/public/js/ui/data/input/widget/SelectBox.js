@@ -1,6 +1,10 @@
 define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/aspect",
+    "dojo/on",
+    "dojo/query",
+    "dojo/dom-construct",
     "dojo/topic",
     "dijit/form/FilteringSelect",
     "../Factory"
@@ -8,6 +12,10 @@ define( [
 function(
     declare,
     lang,
+    aspect,
+    on,
+    query,
+    domConstruct,
     topic,
     FilteringSelect,
     ControlFactory
@@ -15,10 +23,11 @@ function(
     return declare([FilteringSelect], {
 
         intermediateChanges: true,
-        searchAttr: "value",
         entity: {},
         attribute: {},
         original: {},
+
+        spinnerNode: null,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -29,6 +38,17 @@ function(
             this.value = this.entity[this.attribute.name];
 
             this.store = ControlFactory.getListStore(this.attribute.inputType);
+
+            aspect.before(this, "_startSearch", function(text) {
+                // create spinner
+                if (!this.spinnerNode) {
+                    this.spinnerNode = domConstruct.create("p", {
+                        innerHTML: '<i class="icon-spinner icon-spin"></i>'
+                    }, this.domNode.parentNode, "last");
+                }
+                this.showSpinner();
+                return text;
+            });
         },
 
         postCreate: function() {
@@ -40,8 +60,19 @@ function(
                     if (data.name === this.attribute.name) {
                         this.set("value", data.newValue);
                     }
+                })),
+                on(this, 'search', lang.hitch(this, function() {
+                    this.hideSpinner();
                 }))
             );
+        },
+
+        showSpinner: function() {
+            query(this.spinnerNode).style("display", "block");
+        },
+
+        hideSpinner: function() {
+            query(this.spinnerNode).style("display", "none");
         }
     });
 });

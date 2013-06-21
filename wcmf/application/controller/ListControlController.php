@@ -19,6 +19,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\control\ValueListProvider;
 
 /**
  * ListControlController is a controller that resolves lists for
@@ -32,7 +33,8 @@ use wcmf\lib\presentation\Controller;
  *
  * @param[in] listDef The list definition (expected to be base64 encoded)
  * @param[in] displayFilter A regular expression that the returned 'value' values should match (optional)
- * @param[out] list Array of associative arrays with keys 'key', 'value'
+ * @param[out] list Array of associative arrays with keys 'id', 'name'
+ * @param[out] static Boolean indicating whether returned data are static or not
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -64,89 +66,16 @@ class ListControlController extends Controller {
     $response = $this->getResponse();
 
     $listDef = base64_decode($request->getValue('listDef'));
+    $language = $request->getValue('language');
 
-
-    $data = array(
-          array('value' => "Alabama", 'key' => "AL"),
-          array('value' => "Alaska", 'key' => "AK"),
-          array('value' => "American Samoa", 'key' => "AS"),
-          array('value' => "Arizona", 'key' => "AZ"),
-          array('value' => "Arkansas", 'key' => "AR"),
-          array('value' => "Armed Forces Europe", 'key' => "AE"),
-          array('value' => "Armed Forces Pacific", 'key' => "AP"),
-          array('value' => "Armed Forces the Americas", 'key' => "AA"),
-          array('value' => "California", 'key' => "CA"),
-          array('value' => "Colorado", 'key' => "CO"),
-          array('value' => "Connecticut", 'key' => "CT"),
-          array('value' => "Delaware", 'key' => "DE")
-    );
-
-    $response->setValue('list', $data);
-
-    // success
-    $response->setAction('ok');
-    return false;
-  }
-
-
-  /**
-   * Do processing and assign Node data to View.
-   * @return False in every case.
-   * @see Controller::executeKernel()
-   */
-  function __executeKernel() {
-    $request = $this->getRequest();
-    $response = $this->getResponse();
-
-    // unveil the filter value if it is ofuscated
-    $filter = $request->getValue('filter');
-    $unveiled = Obfuscator::unveil($filter);
-    if (strlen($filter) > 0) {
-      if (strlen($unveiled) > 0) {
-        $filter = $unveiled;
-      }
-      else {
-        $filter = stripslashes($filter);
-      }
+    $list = ValueListProvider::getList($listDef, $language);
+    $items = array();
+    foreach($list['items'] as $id => $name) {
+      $items[] = array('id' => $id, 'name' => $name);
     }
 
-    $objects = g_getOIDs($request->getValue('type'), $filter);
-    if ($this->isLocalizedRequest()) {
-      $objects = g_getOIDs($request->getValue('type'), $filter, null, false,
-	      $request->getValue('language'));
-	  }
-    else {
-      $objects = g_getOIDs($request->getValue('type'), $filter);
-    }
-
-    // translate all nodes to the requested language if requested
-    if ($this->isLocalizedRequest())
-    {
-      $localization = ObjectFactory::getInstance('localization');
-      for ($i=0; $i<sizeof($objects); $i++) {
-        $localization->loadTranslation($objects[$i], $request->getValue('language'), true, true);
-      }
-    }
-
-    // apply displayFilter, if given
-    $regexp = $request->getValue('displayFilter');
-    if (strlen($regexp) > 0) {
-      $regexp = '/'.$regexp.'/i';
-      $tmp = array();
-      foreach ($objects as $key => $val)
-      {
-        if (preg_match($regexp, $val)) {
-          $tmp[$key] = $val;
-        }
-      }
-      $objects = $tmp;
-    }
-
-    $response->setValue('totalCount', sizeof($objects));
-    $responseObjects = array();
-    foreach($objects as $key => $val)
-      array_push($responseObjects, array('key' => $key, 'val' => $val));
-    $response->setValue('objects', $responseObjects);
+    $response->setValue('list', $items);
+    $response->setValue('static', $list['isStatic']);
 
     // success
     $response->setAction('ok');

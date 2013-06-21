@@ -24,7 +24,7 @@ define([
         language: '',
         target: '',
 
-        idProperty: "key",
+        idProperty: "id",
         data: null,
         index: null,
 
@@ -81,6 +81,10 @@ define([
                     for (var i=0, l=this.data.length; i<l; i++) {
                         this.index[this.data[i][this.idProperty]] = i;
                     }
+                    // persist store, if static
+                    if (data.static) {
+                        this.persist();
+                    }
                     deferred.resolve({
                         data: this.data,
                         index: this.index
@@ -94,6 +98,17 @@ define([
                 data: this.data,
                 index: this.index
             };
+        },
+
+        persist: function() {
+            var listDef = this.listDef;
+            var language = this.language;
+
+            // register store under the list definition
+            if (!kernel.global.listStoreInstances[listDef]) {
+                kernel.global.listStoreInstances[listDef] = {};
+            }
+            kernel.global.listStoreInstances[listDef][language] = this;
         }
     });
 
@@ -118,9 +133,11 @@ define([
                 listDef: listDef,
                 language: language
             });
-            kernel.global.listStoreInstances[listDef][language] = store;
+            return store;
         }
-        return kernel.global.listStoreInstances[listDef][language];
+        else {
+            return kernel.global.listStoreInstances[listDef][language];
+        }
     };
 
     return ListStore;

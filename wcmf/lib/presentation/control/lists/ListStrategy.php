@@ -30,10 +30,17 @@ interface ListStrategy {
    * Get a list of key/value pairs defined by the given configuration.
    * @param configuration The list type specific configuration of the list as
    *                 used in the input_type definition
-   * @param language The lanugage if the list should be localized. Optional,
+   * @param language The lanugage if the values should be localized. Optional,
    *                 default is Localization::getDefaultLanguage()
    * @return An assoziative array containing the key/value pairs
    */
-  function getListMap($configuration, $language=null);
+  function getList($configuration, $language=null);
+
+  /**
+   * Check if the list values are static or changing.
+   * @return Boolean
+   */
+  function isStatic();
+
 }
 ?>

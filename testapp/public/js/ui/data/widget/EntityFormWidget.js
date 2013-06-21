@@ -4,7 +4,6 @@ define( [
     "dojo/_base/lang",
     "dojo/topic",
     "dojo/dom-class",
-    "dojo/dom-form",
     "dojo/dom-construct",
     "dojo/query",
     "dojomat/_StateAware",
@@ -32,7 +31,6 @@ function(
     lang,
     topic,
     domClass,
-    domForm,
     domConstruct,
     query,
     _StateAware,
@@ -79,6 +77,8 @@ function(
 
         onCreated: null, // function to be called after the widget is created
 
+        attributeWidgets: [],
+
         constructor: function(args) {
             declare.safeMixin(this, args);
 
@@ -121,8 +121,9 @@ function(
                             this.setModified(true);
                         }
                     }, attributeWidget)));
-                    //attributeWidget.startup();
+                    attributeWidget.startup();
                     layoutWidget.addChild(attributeWidget);
+                    this.attributeWidgets.push(attributeWidget);
                 }
                 layoutWidget.startup();
                 if (this.onCreated instanceof Function) {
@@ -221,7 +222,11 @@ function(
 
             if (this.modified) {
                 // update entity from form data
-                var data = domForm.toObject(this.formId);
+                var data = {};
+                for (var i=0, c=this.attributeWidgets.length; i<c; i++) {
+                    var widget = this.attributeWidgets[i];
+                    data[widget.get("name")] = widget.get("value");
+                }
                 data = lang.mixin(lang.clone(this.entity), data);
 
                 this.saveBtn.setProcessing();

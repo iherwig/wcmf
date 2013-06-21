@@ -36,9 +36,9 @@ use wcmf\lib\presentation\control\lists\ListStrategy;
 class FunctionListStrategy implements ListStrategy {
 
   /**
-   * @see ListStrategy::getListMap
+   * @see ListStrategy::getList
    */
-  public function getListMap($configuration, $language=null) {
+  public function getList($configuration, $language=null) {
     // maybe there are '|' chars in parameters
     $parts = preg_split('/\|/', $configuration);
     $name = array_shift($parts);
@@ -50,6 +50,13 @@ class FunctionListStrategy implements ListStrategy {
       throw new ConfigurationException('Function '.$name.' is not defined globally!');
     }
     return $map;
+  }
+
+  /**
+   * @see ListStrategy::isStatic
+   */
+  public function isStatic() {
+    return false;
   }
 }
 ?>

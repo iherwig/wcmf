@@ -18,7 +18,8 @@
  */
 namespace wcmf\lib\presentation\control\lists\impl;
 
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 
 /**
@@ -39,12 +40,53 @@ use wcmf\lib\presentation\control\lists\ListStrategy;
 class NodeListStrategy implements ListStrategy {
 
   /**
-   * @see ListStrategy::getListMap
+   * @see ListStrategy::getList
    */
-  public function getListMap($configuration, $language=null) {
-    $result = array();
-    // TODO: implement node fetching
-    return $result;
+  public function getList($configuration, $language=null) {
+
+    $listConfig = $this->parseConfiguration($configuration);
+
+    $list = array();
+    foreach ($listConfig['types'] as $type) {
+      $query = new StringQuery($type);
+      if ($listConfig['query']) {
+        $query->setConditionString($listConfig['query']);
+      }
+      $objects = $query->execute(BuildDepth::SINGLE);
+      foreach ($objects as $object) {
+        $list[$object->getOID()->__toString()] = $object->getDisplayValue();
+      }
+    }
+
+    return $list;
+  }
+
+  /**
+   * Parse the given list configuration
+   * @param configuration The configuration
+   * @return Associative array with keys 'types' and 'query'
+   */
+  protected function parseConfiguration($configuration) {
+    $query = null;
+    if (strPos($configuration, '|')) {
+      list($typeDef, $query) = preg_split('/\|/', $configuration, 2);
+    }
+    else {
+      $typeDef = $configuration;
+    }
+    $types = preg_split('/,/', $typeDef);
+
+    return array(
+      'types' => $types,
+      'query' => $query
+    );
+  }
+
+  /**
+   * @see ListStrategy::isStatic
+   */
+  public function isStatic() {
+    return false;
   }
 }
 ?>

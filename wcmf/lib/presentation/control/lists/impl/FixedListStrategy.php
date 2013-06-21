@@ -36,9 +36,9 @@ use wcmf\lib\presentation\control\lists\ListStrategy;
 class FixedListStrategy implements ListStrategy {
 
   /**
-   * @see ListStrategy::getListMap
+   * @see ListStrategy::getList
    */
-  public function getListMap($configuration, $language=null) {
+  public function getList($configuration, $language=null) {
     // see if we have an array variable or a list definition
     if (strPos($configuration, '$') === 0) {
       $entries = $GLOBALS[subStr($configuration, 1)];
@@ -66,6 +66,13 @@ class FixedListStrategy implements ListStrategy {
       }
     }
     return $map;
+  }
+
+  /**
+   * @see ListStrategy::isStatic
+   */
+  public function isStatic() {
+    return true;
   }
 }
 ?>

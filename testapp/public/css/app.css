@@ -166,6 +166,10 @@ only screen and (min-width: 980px) {
   padding: 10px 0;
 }
 
+.checkBoxLabel {
+  padding: 0 10px 0 5px;
+}
+
 /*
   Responsive table layout for form
   http://css-tricks.com/responsive-data-tables/

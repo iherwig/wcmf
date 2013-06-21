@@ -26,6 +26,7 @@ use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PathDescription;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\presentation\control\ValueListProvider;
 use wcmf\lib\presentation\renderer\ValueRenderer;
 use wcmf\lib\util\StringUtil;
 
@@ -215,7 +216,6 @@ class NodeUtil {
     if (strlen($displayValueDef) > 0) {
       $displayValuesNames = preg_split('/\|/', $displayValueDef);
       foreach($displayValuesNames as $displayValueName) {
-        $tmpDisplay = '';
         $inputType = ''; // needed for the translation of a list value
         if ($displayValueName != '') {
           $curNode = $node;
@@ -228,12 +228,10 @@ class NodeUtil {
           }
         }
 
-        $controlRenderer = ObjectFactory::getInstance('controlRenderer');
-        $control = $controlRenderer->getControl($inputType);
-        if ($control != null) {
-          $tmpDisplay = $control->translateValue($tmpDisplay, $inputType, false, null, $language);
-        }
+        // translate any list value
+        $tmpDisplay = ValueListProvider::translateValue($tmpDisplay, $inputType, $language);
         if (strlen($tmpDisplay) == 0) {
+          // fallback to oid
           $tmpDisplay = $node->getOID();
         }
 

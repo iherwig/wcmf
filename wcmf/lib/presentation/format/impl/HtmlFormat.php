@@ -24,8 +24,8 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\control\ControlRenderer;
 use wcmf\lib\presentation\format\impl\AbstractFormat;
+use wcmf\lib\util\StringUtil;
 use wcmf\lib\util\Obfuscator;
 
 /**
@@ -39,6 +39,8 @@ use wcmf\lib\util\Obfuscator;
  * @author ingo herwig <ingo@wemove.com>
  */
 class HtmlFormat extends AbstractFormat {
+
+  private static $_inputFieldNameDelimiter = '-';
 
   /**
    * @see Format::getMimeType()
@@ -57,7 +59,7 @@ class HtmlFormat extends AbstractFormat {
     $data = $request->getValues();
     $nodeValues = array();
     foreach ($data as $key => $value) {
-      $valueDef = ControlRenderer::getValueDefFromInputControlName($key);
+      $valueDef = self::getValueDefFromInputControlName($key);
       if ($valueDef != null && strlen($valueDef['oid']) > 0) {
         $node = &$this->getNode($valueDef['oid']);
         $node->setValue($valueDef['name'], $value);
@@ -139,6 +141,30 @@ class HtmlFormat extends AbstractFormat {
     $config = ObjectFactory::getConfigurationInstance();
     $view = $config->getValue($actionKey, 'views', false);
     return $view;
+  }
+
+  /**
+   * Get the object value definition from a HTML input field name.
+   * @param name The name of input field in the format value-<name>-<oid>, where name is the name
+   *              of the attribute belonging to the node defined by oid
+   * @return An associative array with keys 'oid', 'language', 'name' or null if the name is not valid
+   */
+  protected static function getValueDefFromInputControlName($name) {
+    if (!(strpos($name, 'value') == 0)) {
+      return null;
+    }
+    $def = array();
+    $fieldDelimiter = StringUtil::escapeForRegex(self::$_inputFieldNameDelimiter);
+    $pieces = preg_split('/'.$fieldDelimiter.'/', $name);
+    if (sizeof($pieces) != 3) {
+      return null;
+    }
+    $ignore = array_shift($pieces);
+    $def['language'] = array_shift($pieces);
+    $def['name'] = array_shift($pieces);
+    $def['oid'] = array_shift($pieces);
+
+    return $def;
   }
 }
 ?>

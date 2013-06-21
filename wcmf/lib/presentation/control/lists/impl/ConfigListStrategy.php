@@ -35,9 +35,9 @@ use wcmf\lib\presentation\control\lists\ListStrategy;
 class ConfigListStrategy implements ListStrategy {
 
   /**
-   * @see ListStrategy::getListMap
+   * @see ListStrategy::getList
    */
-  public function getListMap($configuration, $language=null) {
+  public function getList($configuration, $language=null) {
     $config = ObjectFactory::getConfigurationInstance();
     $map = $config->getSection($configuration);
     $result = array();
@@ -45,6 +45,13 @@ class ConfigListStrategy implements ListStrategy {
       $result[$key] = Message::get($value, null, $language);
     }
     return $result;
+  }
+
+  /**
+   * @see ListStrategy::isStatic
+   */
+  public function isStatic() {
+    return true;
   }
 }
 ?>

@@ -27,7 +27,7 @@ function(
         "filebrowser": "js/ui/data/input/widget/FileBrowser",
         "linkbrowser": "js/ui/data/input/widget/LinkBrowser",
         "password": "js/ui/data/input/widget/Password",
-        "radio": "js/ui/data/input/widget/RadioBox",
+        "radio": "js/ui/data/input/widget/RadioButton",
         "select": "js/ui/data/input/widget/SelectBox",
         "text": "js/ui/data/input/widget/TextBox",
         "textarea": "js/ui/data/input/widget/TextArea",
