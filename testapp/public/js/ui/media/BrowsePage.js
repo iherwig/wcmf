@@ -1,5 +1,7 @@
 define([
     "dojo/_base/declare",
+    "dojo/dom",
+    "dojo/_base/window",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
@@ -12,6 +14,8 @@ define([
     "xstyle/css!elfinder/css/elfinder.min.css"
 ], function (
     declare,
+    dom,
+    win,
     _WidgetBase,
     _TemplatedMixin,
     _AppAware,
@@ -37,14 +41,23 @@ define([
             this.setTitle(appConfig.title+' - Media');
 
             var funcNum = this.request.getQueryParam('CKEditorFuncNum');
+            var fieldId = this.request.getQueryParam('fieldId');
 
-            $("#elfinder").elfinder({
+            var elFinder = $("#elfinder").elfinder({
                 lang: appConfig.defaultLanguage,
                 url: 'main.php?action=browsemedia',
                 height: 658,
                 resizable: false,
                 getFileCallback : function(file) {
-                    window.opener.CKEDITOR.tools.callFunction(funcNum, file);
+                    var fileRel = file.replace(appConfig.mediaBase, '');
+                    if (window.opener.CKEDITOR && funcNum) {
+                        window.opener.CKEDITOR.tools.callFunction(funcNum, file);
+                    }
+                    else if (fieldId) {
+                      console.log(elFinder);
+                        win.setContext(window, window.opener.document);
+                        dom.byId(fieldId).value = fileRel;
+                    }
                     window.close();
                 }
             }).elfinder('instance');

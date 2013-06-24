@@ -170,6 +170,22 @@ only screen and (min-width: 980px) {
   padding: 0 10px 0 5px;
 }
 
+td {
+  vertical-align: top;
+}
+
+.tableContainer-labelCell {
+  padding-top: 14px;
+}
+
+.entity-page .dijitTextBox {
+  width: 350px;
+}
+
+.entity-page .dijitContentPane {
+  padding: 0 !important;
+}
+
 /*
   Responsive table layout for form
   http://css-tricks.com/responsive-data-tables/
@@ -193,5 +209,9 @@ only screen and (max-width: 760px),
 	td {
 		/* Behave like a "row" */
 		position: relative;
+	}
+
+	.entity-page .dijitTextBox {
+		width: auto;
 	}
 }

@@ -37,14 +37,13 @@ function(
         postCreate: function() {
             this.inherited(arguments);
 
-            this.editorInstance = CKEDITOR.replace(this.textbox, {
+            this.editorInstance = CKEDITOR.replace(this.focusNode, {
                 customConfig: appConfig.pathPrefix+'/js/config/ckeditor_config.js',
                 filebrowserBrowseUrl: appConfig.pathPrefix+'/media',
                 filebrowserLinkBrowseUrl: appConfig.pathPrefix+'/media',
                 filebrowserWindowWidth: '800',
                 filebrowserWindowHeight: '700'
             });
-            this.helpNode.innerHTML = this.original[this.attribute.name] || "";
 
             // subscribe to entity change events to change tab links
             this.own(

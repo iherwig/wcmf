@@ -24,6 +24,7 @@ try {
   $rootTypes = $config->getValue('rootTypes', 'application');
   $defaultLanguage = $config->getValue('defaultLanguage', 'localization');
   $languages = $config->getSection('languages');
+  $mediaPath = $config->getValue('uploadDir', 'media');
 
   // check if the user should be redirected to the login page
   // if yes, we do this and add the requested path as route parameter
@@ -65,6 +66,7 @@ catch (Exception $ex) {
           title: '<?php echo $appTitle; ?>',
           rootTypes: [<?php if ($rootTypes && sizeof($rootTypes) > 0) { echo "'".join("', '", $rootTypes)."'"; } ?>],
           pathPrefix: '<?php echo $pathPrefix; ?>',
+          mediaBase: '<?php echo $baseHref.$mediaPath; ?>',
           defaultLanguage: '<?php echo $defaultLanguage; ?>',
           languages: {
 <?php foreach($languages as $key => $value): ?>

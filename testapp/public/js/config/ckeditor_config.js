@@ -10,10 +10,10 @@ CKEDITOR.editorConfig = function( config ) {
       config.theme = 'default';
       config.toolbarStartupExpanded = false;
       config.uiColor = "#E0E0D6";
-      config.width = 410;
       config.toolbar_wcmf = [
-          ['Maximize'],['Source'],['Cut','Copy','Paste'],['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],'/',
-          ['Bold','Italic'],['Image','Link','Unlink','Anchor'],['Table','BulletedList','HorizontalRule','SpecialChar'],['About']
+          ['Maximize'],['Source'],['Cut','Copy','Paste'],['Image','Link','Unlink','Anchor'],
+          ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+          ['Bold','Italic'],['Table','BulletedList','HorizontalRule','SpecialChar'],['About']
       ];
       config.toolbar = 'wcmf';
 };
