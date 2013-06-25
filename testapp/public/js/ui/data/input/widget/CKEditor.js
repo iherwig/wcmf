@@ -37,10 +37,14 @@ function(
         postCreate: function() {
             this.inherited(arguments);
 
+            var mediaBrowserRoute = appConfig.pathPrefix+'/media';
+            var mediaFileBasePath = appConfig.pathPrefix+'/media';
+
             this.editorInstance = CKEDITOR.replace(this.focusNode, {
                 customConfig: appConfig.pathPrefix+'/js/config/ckeditor_config.js',
-                filebrowserBrowseUrl: appConfig.pathPrefix+'/media',
-                filebrowserLinkBrowseUrl: appConfig.pathPrefix+'/media',
+                filebrowserBrowseUrl: mediaBrowserRoute,
+                filebrowserLinkBrowseUrl: mediaBrowserRoute,
+                baseHref: mediaFileBasePath,
                 filebrowserWindowWidth: '800',
                 filebrowserWindowHeight: '700'
             });

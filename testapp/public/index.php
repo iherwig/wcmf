@@ -66,7 +66,8 @@ catch (Exception $ex) {
           title: '<?php echo $appTitle; ?>',
           rootTypes: [<?php if ($rootTypes && sizeof($rootTypes) > 0) { echo "'".join("', '", $rootTypes)."'"; } ?>],
           pathPrefix: '<?php echo $pathPrefix; ?>',
-          mediaBase: '<?php echo $baseHref.$mediaPath; ?>',
+          mediaBaseUrl: '<?php echo $baseHref.$mediaPath; ?>',
+          mediaBasePath: '<?php echo $mediaPath; ?>',
           defaultLanguage: '<?php echo $defaultLanguage; ?>',
           languages: {
 <?php foreach($languages as $key => $value): ?>

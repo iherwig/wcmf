@@ -49,9 +49,9 @@ define([
                 height: 658,
                 resizable: false,
                 getFileCallback : function(file) {
-                    var fileRel = file.replace(appConfig.mediaBase, '');
+                    var fileRel = appConfig.mediaBasePath+file.replace(appConfig.mediaBaseUrl, '');
                     if (window.opener.CKEDITOR && funcNum) {
-                        window.opener.CKEDITOR.tools.callFunction(funcNum, file);
+                        window.opener.CKEDITOR.tools.callFunction(funcNum, fileRel);
                     }
                     else if (fieldId) {
                       console.log(elFinder);
