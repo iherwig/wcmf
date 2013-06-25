@@ -64,7 +64,9 @@ define([
         },
 
         onItemClick: function(item) {
-            // TODO only nodes with real oid should be clickable (no type nodes)
+            if (item.isFolder) {
+                return;
+            }
             var funcNum = this.request.getQueryParam('CKEditorFuncNum');
             var callback = this.request.getQueryParam('callback');
 

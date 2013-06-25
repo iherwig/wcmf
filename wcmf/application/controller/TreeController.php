@@ -38,7 +38,7 @@ use wcmf\lib\presentation\Controller;
  *
  * @param[in] oid The object id of the parent Node whose children should be loaded (optional)
  * @param[in] sort The attribute to sort the children by (optional)
- * @param[out] list An array of associative arrays with keys 'oid', 'displayText', 'hasChildren'
+ * @param[out] list An array of associative arrays with keys 'oid', 'displayText', 'isFolder', 'hasChildren'
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -148,10 +148,13 @@ class TreeController extends Controller {
     if (strlen($displayText) == 0) {
       $displayText = '-';
     }
-    $hasChildren = $this->isLinkableTypeNode($node->getOID()) || sizeof($node->getNumChildren()) > 0;
+    $oid = $node->getOID();
+    $isFolder = ObjectId::isDummyId($oid->getFirstId());
+    $hasChildren = $this->isLinkableTypeNode($oid) || sizeof($node->getNumChildren()) > 0;
     return array(
       'oid' => $node->getOID()->__toString(),
       'displayText' => $displayText,
+      'isFolder' => $isFolder,
       'hasChildren' => $hasChildren
     );
   }

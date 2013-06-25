@@ -1,7 +1,9 @@
 define([
+    "require",
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
+    "dijit/_WidgetsInTemplateMixin",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
     "../_include/_PageMixin",
@@ -10,9 +12,11 @@ define([
     "../../model/meta/Model",
     "dojo/text!./template/HomePage.html"
 ], function (
+    require,
     declare,
     _WidgetBase,
     _TemplatedMixin,
+    _WidgetsInTemplateMixin,
     _AppAware,
     _StateAware,
     _Page,
@@ -21,11 +25,12 @@ define([
     Model,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware, _Page, _Notification], {
 
         request: null,
         session: null,
         templateString: template,
+        contextRequire: require,
 
         constructor: function(params) {
             this.request = params.request;
@@ -53,6 +58,15 @@ define([
             var pathParams = { type:type };
             var url = route.assemble(pathParams);
             this.push(url);
+        },
+
+        _navigateMedia: function(e) {
+            // prevent the page from navigating after submit
+            e.preventDefault();
+
+            var route = this.router.getRoute("media");
+            var url = route.assemble();
+            window.open(url, '_blank', 'width=800,height=700');
         }
     });
 });

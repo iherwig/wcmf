@@ -61,23 +61,19 @@ function(
                     }
                 })),
                 this.editorInstance.on("instanceReady", lang.hitch(this, function() {
-                    this.editorInstance.on("key", lang.hitch(this, function() {
-                        setTimeout(lang.hitch(this, function() {
-                            this.editorValueChanged();
-                        }, 0));
-                    }));
-                })),
-                on(this.textbox, "change", lang.hitch(this, function(value) {
-                    // TODO handle changes caused by pasting image/link. the code does not work yet
-                    this.set("value", value);
-                    // send change event
-                    this.emit("change", this);
+                    this.editorInstance.on("key", lang.hitch(this, this.editorValueChanged));
+                    this.editorInstance.on("paste", lang.hitch(this, this.editorValueChanged));
+                    this.editorInstance.on("afterCommandExec", lang.hitch(this, this.editorValueChanged));
                 }))
             );
         },
 
         editorValueChanged: function() {
-            this.set("value", this.editorInstance.getData());
+            setTimeout(lang.hitch(this, function() {
+                this.set("value", this.editorInstance.getData());
+                // send change event
+                this.emit("change", this);
+            }, 0));
         }
     });
 });
