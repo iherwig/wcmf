@@ -166,7 +166,7 @@ class ObjectId {
     $nextPart = array_pop($oidParts);
     while($nextPart !== null && preg_match(self::$_idPattern, $nextPart) == 1) {
       $intNextPart = (int)$nextPart;
-      if ($nextPart == $intNextPart) {
+      if ($nextPart == (string)$intNextPart) {
         $ids[] = $intNextPart;
       }
       else {

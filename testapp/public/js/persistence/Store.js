@@ -60,7 +60,7 @@ define([
                 cache: cache,
                 jsonRest: jsonRest,
                 memory: memory
-            }
+            };
         }
         return kernel.global.storeInstances[fqTypeName][language].cache;
     };

@@ -24,7 +24,7 @@ define([
         language: '',
         target: '',
 
-        idProperty: "id",
+        idProperty: "oid",
         data: null,
         index: null,
 

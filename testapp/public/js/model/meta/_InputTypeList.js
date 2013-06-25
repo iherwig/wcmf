@@ -26,11 +26,9 @@ function(
         "date": "js/ui/data/input/widget/Date",
         "filebrowser": "js/ui/data/input/widget/FileBrowser",
         "linkbrowser": "js/ui/data/input/widget/LinkBrowser",
-        "password": "js/ui/data/input/widget/Password",
         "radio": "js/ui/data/input/widget/RadioButton",
         "select": "js/ui/data/input/widget/SelectBox",
         "text": "js/ui/data/input/widget/TextBox",
-        "textarea": "js/ui/data/input/widget/TextArea",
-        "textile": "js/ui/data/input/widget/TextileEditor"
+        "textarea": "js/ui/data/input/widget/TextArea"
     };
 });

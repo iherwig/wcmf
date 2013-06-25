@@ -8,6 +8,6 @@ function(
 ) {
     return declare([_BrowserControl], {
 
-        browserUrl: appConfig.pathPrefix+'/media'
+        browserUrl: appConfig.pathPrefix+'/link'
     });
 });

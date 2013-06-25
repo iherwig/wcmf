@@ -37,7 +37,6 @@ use wcmf\lib\presentation\format\impl\HtmlFormat;
  *    (the message will be displayed in the next view)
  *
  * @param[in/out] action The action to be executed
- * @param[in/out] sid The session id of the current user session
  * @param[in/out] language The language of the requested data, optional
  * @param[out] controller The name of the executed controller
  * @param[out] success True/False whether the action completed successfully or not
@@ -214,10 +213,6 @@ abstract class Controller {
    * @attention Internal use only.
    */
   protected function assignResponseDefaults() {
-    // set default values on the response
-    $session = ObjectFactory::getInstance('session');
-    $this->_response->setValue('sid', $session->getID());
-
     // return the first error
     $errors = $this->_response->getErrors();
     if (sizeof($errors) > 0) {

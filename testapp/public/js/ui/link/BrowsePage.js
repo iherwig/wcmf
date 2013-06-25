@@ -1,27 +1,33 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/dom",
+    "dojo/query",
+    "dojo/_base/window",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
-    "elfinder/jquery/jquery-1.8.1.min",
-    "elfinder/jquery/jquery-ui-1.8.23.custom.min",
-    "elfinder/js/elFinder.min",
+    "dijit/tree/ObjectStoreModel",
+    "dijit/Tree",
+    "../../model/meta/Model",
+    "../../persistence/TreeStore",
     "dojo/text!./template/BrowsePage.html",
-    "xstyle/css!elfinder/jquery/ui-themes/smoothness-1.8.23/jquery-ui-1.8.23.custom.css",
-    "xstyle/css!elfinder/css/elfinder.min.css",
     "dojo/domReady!"
 ], function (
     declare,
     lang,
+    dom,
+    query,
+    win,
     _WidgetBase,
     _TemplatedMixin,
     _AppAware,
     _StateAware,
-    jQuery,
-    jQueryUi,
-    elFinder,
+    ObjectStoreModel,
+    Tree,
+    Model,
+    TreeStore,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware], {
@@ -37,24 +43,32 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - Media');
+            this.setTitle(appConfig.title+' - Content');
 
-            $("#elfinder").elfinder({
-                lang: appConfig.defaultLanguage,
-                url: 'main.php?action=browseMedia',
-                height: 658,
-                resizable: false,
-                getFileCallback: lang.hitch(this, function(file) {
-                    this.onItemClick(file);
+            var store = TreeStore.getStore();
+            var model = new ObjectStoreModel({
+                store: store,
+                labelAttr: "displayText",
+                query: {oid: 'init'}
+            });
+
+            var tree = new Tree({
+                model: model,
+                showRoot: false,
+                onClick: lang.hitch(this, function(item) {
+                  this.onItemClick(item);
                 })
-            }).elfinder('instance');
+            });
+            tree.placeAt(dom.byId('resourcetree'));
+            tree.startup();
         },
 
         onItemClick: function(item) {
+            // TODO only nodes with real oid should be clickable (no type nodes)
             var funcNum = this.request.getQueryParam('CKEditorFuncNum');
             var callback = this.request.getQueryParam('callback');
 
-            var value = this.getItemUrl(item);
+            var value = 'link:'+this.getItemUrl(item);
             if (window.opener.CKEDITOR && funcNum) {
                 window.opener.CKEDITOR.tools.callFunction(funcNum, value);
             }
@@ -67,7 +81,12 @@ define([
         },
 
         getItemUrl: function(item) {
-            return appConfig.mediaBasePath+item.replace(appConfig.mediaBaseUrl, '');
+            var route = this.router.getRoute("entity");
+            var type = Model.getSimpleTypeName(Model.getTypeNameFromOid(item.oid));
+            var id = Model.getIdFromOid(item.oid);
+            var pathParams = { type:type, id:id };
+            var url = route.assemble(pathParams);
+            return url;
         }
     });
 });

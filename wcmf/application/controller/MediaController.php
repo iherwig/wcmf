@@ -70,7 +70,7 @@ class MediaController extends Controller {
     $response->setValue('rootUrl', $rootUrl);
     $response->setValue('rootPath', $rootPath);
 
-    if ($request->getAction() == "browsemedia") {
+    if ($request->getAction() == "browseMedia") {
       $opts = array(
         // 'debug' => true,
         'roots' => array(
@@ -117,7 +117,7 @@ class MediaController extends Controller {
           $graphicsUtil = new GraphicsUtil();
           $graphicsUtil->cropImage($file, $targetFile, $w, $h, $x, $y);
           $response->setValue('fieldName', $request->getValue('fieldName'));
-          $response->setAction('browsemedia');
+          $response->setAction('browseMedia');
           return true;
         }
       }

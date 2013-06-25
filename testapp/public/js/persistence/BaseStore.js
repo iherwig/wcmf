@@ -98,9 +98,6 @@ define([
             return 'wcmf'+uuid().replace(/-/g, '');
         },
 
-        reorder: function(object, options) {
-        }
-
         // TODO:
         // implement DojoNodeSerializer on server that uses refs
         // http://dojotoolkit.org/reference-guide/1.7/dojox/json/ref.html#dojox-json-ref

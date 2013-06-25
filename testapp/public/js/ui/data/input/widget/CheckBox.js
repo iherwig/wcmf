@@ -12,21 +12,24 @@ function(
 ) {
     return declare([_BinaryItemsControl], {
 
-        multiValued: false,
+        multiValued: true,
 
         buildItemWidget: function(item) {
+            var itemId = this.store.getIdentity(item);
+            var itemLabel = item.displayText;
+
             // create checkbox
             var widget = new CheckBox({
                 name: this.name,
-                value: ""+item.id,
-                checked: (this.value == item.id) // value may be string or number
+                value: ""+itemId,
+                checked: (this.value == itemId) // value may be string or number
             });
             widget.startup();
             this.addChild(widget);
 
             // create label
             domConstruct.create("span", {
-                innerHTML: item.name,
+                innerHTML: itemLabel,
                 class: "checkBoxLabel"
             }, widget.domNode, "after");
 

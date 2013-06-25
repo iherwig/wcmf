@@ -453,7 +453,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the Node's children.
-   * @param memOnly True/False wether to only get the loaded children or all children [default: true].
+   * @param memOnly Boolean whether to only get the loaded children or all children [default: true].
    * @return An array of Node and/or PersistentObjectProxy instances.
    */
   public function getChildren($memOnly=true) {

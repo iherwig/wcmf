@@ -29,6 +29,8 @@ function(
 
         spinnerNode: null,
 
+        searchAttr: "displayText",
+
         constructor: function(args) {
             declare.safeMixin(this, args);
 

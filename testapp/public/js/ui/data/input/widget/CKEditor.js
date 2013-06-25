@@ -3,6 +3,7 @@ CKEDITOR_BASEPATH = appConfig.pathPrefix+'/vendor/ckeditor/';
 define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/on",
     "dojo/topic",
     "dijit/form/TextBox",
     "ckeditor/ckeditor",
@@ -11,6 +12,7 @@ define( [
 function(
     declare,
     lang,
+    on,
     topic,
     TextBox,
     CKEditor,
@@ -38,12 +40,13 @@ function(
             this.inherited(arguments);
 
             var mediaBrowserRoute = appConfig.pathPrefix+'/media';
+            var linkBrowserRoute = appConfig.pathPrefix+'/link';
             var mediaFileBasePath = appConfig.pathPrefix+'/media';
 
-            this.editorInstance = CKEDITOR.replace(this.focusNode, {
+            this.editorInstance = CKEDITOR.replace(this.textbox, {
                 customConfig: appConfig.pathPrefix+'/js/config/ckeditor_config.js',
                 filebrowserBrowseUrl: mediaBrowserRoute,
-                filebrowserLinkBrowseUrl: mediaBrowserRoute,
+                filebrowserLinkBrowseUrl: linkBrowserRoute,
                 baseHref: mediaFileBasePath,
                 filebrowserWindowWidth: '800',
                 filebrowserWindowHeight: '700'
@@ -63,6 +66,12 @@ function(
                             this.editorValueChanged();
                         }, 0));
                     }));
+                })),
+                on(this.textbox, "change", lang.hitch(this, function(value) {
+                    // TODO handle changes caused by pasting image/link. the code does not work yet
+                    this.set("value", value);
+                    // send change event
+                    this.emit("change", this);
                 }))
             );
         },

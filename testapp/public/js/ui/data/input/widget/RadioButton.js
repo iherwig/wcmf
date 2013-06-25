@@ -15,18 +15,21 @@ function(
         multiValued: false,
 
         buildItemWidget: function(item) {
+            var itemId = this.store.getIdentity(item);
+            var itemLabel = item.displayText;
+
             // create radio button
             var widget = new RadioButton({
                 name: this.name,
-                value: ""+item.id,
-                checked: (this.value == item.id) // value may be string or number
+                value: ""+itemId,
+                checked: (this.value == itemId) // value may be string or number
             });
             widget.startup();
             this.addChild(widget);
 
             // create label
             domConstruct.create("span", {
-                innerHTML: item.name,
+                innerHTML: itemLabel,
                 class: "checkBoxLabel"
             }, widget.domNode, "after");
 

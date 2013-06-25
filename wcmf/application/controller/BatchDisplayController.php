@@ -44,7 +44,7 @@ use wcmf\lib\presentation\Controller;
  * @param[in] translateValues True/False. If true, list values will be translated using Control::translateValue. If not given,
  *                        all values will be returned as is, default: true
  * @param[in] nodes_per_call The number of nodes to process in one call, default: 50
- * @param[out] objects An array of Nodes
+ * @param[out] list An array of Nodes
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -292,18 +292,18 @@ class BatchDisplayController extends BatchController {
   }
 
   /**
-   * Add a given node to the objects variable of the response
+   * Add a given node to the list variable of the response
    * @param node A reference to the node to add
    */
   protected function addNodeToResponse($node) {
-    if (!$this->_response->hasValue('objects')) {
+    if (!$this->_response->hasValue('list')) {
       $objects = array();
-      $this->_response->setValue('objects', $objects);
+      $this->_response->setValue('list', $objects);
     }
 
-    $objects = &$this->_response->getValue('objects');
-    $objects[sizeof($objects)] = &$node;
-    $this->_response->setValue('objects', $objects);
+    $objects = $this->_response->getValue('list');
+    $objects[sizeof($objects)] = $node;
+    $this->_response->setValue('list', $objects);
   }
 }
 ?>

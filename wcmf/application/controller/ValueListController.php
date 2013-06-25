@@ -22,7 +22,7 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\control\ValueListProvider;
 
 /**
- * ListControlController is a controller that resolves lists for
+ * ValueListController is a controller that resolves lists for
  * input_type definitions
  *
  * <b>Input actions:</b>
@@ -33,12 +33,12 @@ use wcmf\lib\presentation\control\ValueListProvider;
  *
  * @param[in] listDef The list definition (expected to be base64 encoded)
  * @param[in] displayFilter A regular expression that the returned 'value' values should match (optional)
- * @param[out] list Array of associative arrays with keys 'id', 'name'
+ * @param[out] list Array of associative arrays with keys 'oid', 'displayText'
  * @param[out] static Boolean indicating whether returned data are static or not
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ListControlController extends Controller {
+class ValueListController extends Controller {
 
   /**
    * @see Controller::validate()
@@ -71,7 +71,7 @@ class ListControlController extends Controller {
     $list = ValueListProvider::getList($listDef, $language);
     $items = array();
     foreach($list['items'] as $id => $name) {
-      $items[] = array('id' => $id, 'name' => $name);
+      $items[] = array('oid' => $id, 'displayText' => $name);
     }
 
     $response->setValue('list', $items);
