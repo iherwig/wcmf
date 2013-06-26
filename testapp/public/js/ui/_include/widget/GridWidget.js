@@ -227,7 +227,7 @@ define([
         onResize: function() {
             // TODO: remove magic number
             var vs = win.getBox();
-            var h = this.height ? this.height : vs.h-220;
+            var h = this.height ? this.height : vs.h-222;
             if (h >= 0) {
                 domAttr.set(this.gridWidget.domNode, "style", {height: h+"px"});
             }

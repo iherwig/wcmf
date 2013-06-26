@@ -41,6 +41,11 @@ define(["dojo/_base/config", "require"], function (config, require) {
             widget: mid('./ui/link/BrowsePage'),
             layers: l.data || []
         },
+        settings: {
+            schema: p + '/settings',
+            widget: mid('./ui/settings/SettingsPage'),
+            layers: l.admin || []
+        },
         admin: {
             schema: p + '/admin',
             widget: mid('./ui/admin/AdminPage'),
