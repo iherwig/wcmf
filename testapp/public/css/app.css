@@ -186,6 +186,14 @@ td {
   padding: 0 !important;
 }
 
+.pull-right {
+  float: right;
+}
+
+.pull-left {
+  float: left;
+}
+
 /*
   Responsive table layout for form
   http://css-tricks.com/responsive-data-tables/
