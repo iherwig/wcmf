@@ -15,20 +15,15 @@
  * Manual modifications should be placed inside the protected regions.
  */
 
-define([
-],
-function(
-) {
-    return {
-        "binarycheckbox": "js/ui/data/input/widget/BinaryCheckBox",
-        "checkbox": "js/ui/data/input/widget/CheckBox",
-        "ckeditor": "js/ui/data/input/widget/CKEditor",
-        "date": "js/ui/data/input/widget/Date",
-        "filebrowser": "js/ui/data/input/widget/FileBrowser",
-        "linkbrowser": "js/ui/data/input/widget/LinkBrowser",
-        "radio": "js/ui/data/input/widget/RadioButton",
-        "select": "js/ui/data/input/widget/SelectBox",
-        "text": "js/ui/data/input/widget/TextBox",
-        "textarea": "js/ui/data/input/widget/TextArea"
-    };
+define({
+    "binarycheckbox": "js/ui/data/input/widget/BinaryCheckBox",
+    "checkbox": "js/ui/data/input/widget/CheckBox",
+    "ckeditor": "js/ui/data/input/widget/CKEditor",
+    "date": "js/ui/data/input/widget/Date",
+    "filebrowser": "js/ui/data/input/widget/FileBrowser",
+    "linkbrowser": "js/ui/data/input/widget/LinkBrowser",
+    "radio": "js/ui/data/input/widget/RadioButton",
+    "select": "js/ui/data/input/widget/SelectBox",
+    "text": "js/ui/data/input/widget/TextBox",
+    "textarea": "js/ui/data/input/widget/TextArea"
 });

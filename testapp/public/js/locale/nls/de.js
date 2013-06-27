@@ -1,3 +1,3 @@
-window.texts = {
+define({
   "Settings": "Einstellungen"
-};
+});

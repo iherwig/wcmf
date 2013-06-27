@@ -28,14 +28,14 @@ define([
     NavigationWidget,
     FormLayout,
     Button,
-    Dictionary,
+    Dict,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware, _Page, _Notification], {
 
         request: null,
         session: null,
-        templateString: lang.replace(template, Dictionary),
+        templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
 
         constructor: function(params) {
@@ -45,7 +45,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - Settings');
+            this.setTitle(appConfig.title+' - '+Dict.translate('Settings'));
 
             var navi = new NavigationWidget({
             }, this.navigationNode);

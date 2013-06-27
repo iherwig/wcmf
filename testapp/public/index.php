@@ -62,7 +62,6 @@ catch (Exception $ex) {
   </head>
 
   <body class="dbootstrap">
-    <script src="js/locale/nls/<?php echo $uiLanguage; ?>.js"></script>
     <script>
       var appConfig = {
           title: '<?php echo $appTitle; ?>',
@@ -70,6 +69,7 @@ catch (Exception $ex) {
           pathPrefix: '<?php echo $pathPrefix; ?>',
           mediaBaseUrl: '<?php echo $baseHref.$mediaPath; ?>',
           mediaBasePath: '<?php echo $mediaPath; ?>',
+          uiLanguage: '<?php echo $uiLanguage; ?>',
           defaultLanguage: '<?php echo $defaultLanguage; ?>',
           languages: {
 <?php foreach($languages as $key => $value): ?>
