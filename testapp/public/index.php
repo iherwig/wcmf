@@ -22,6 +22,7 @@ try {
   $config = ObjectFactory::getConfigurationInstance();
   $appTitle = $config->getValue('applicationTitle', 'application');
   $rootTypes = $config->getValue('rootTypes', 'application');
+  $uiLanguage = $config->getValue('language', 'application');
   $defaultLanguage = $config->getValue('defaultLanguage', 'localization');
   $languages = $config->getSection('languages');
   $mediaPath = $config->getValue('uploadDir', 'media');
@@ -61,6 +62,7 @@ catch (Exception $ex) {
   </head>
 
   <body class="dbootstrap">
+    <script src="js/locale/nls/<?php echo $uiLanguage; ?>.js"></script>
     <script>
       var appConfig = {
           title: '<?php echo $appTitle; ?>',

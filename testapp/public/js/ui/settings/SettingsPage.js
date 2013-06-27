@@ -1,6 +1,7 @@
 define([
     "require",
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
@@ -11,10 +12,12 @@ define([
     "../_include/widget/NavigationWidget",
     "../_include/FormLayout",
     "../_include/widget/Button",
+    "../../locale/Dictionary",
     "dojo/text!./template/SettingsPage.html"
 ], function (
     require,
     declare,
+    lang,
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
@@ -25,13 +28,14 @@ define([
     NavigationWidget,
     FormLayout,
     Button,
+    Dictionary,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware, _Page, _Notification], {
 
         request: null,
         session: null,
-        templateString: template,
+        templateString: lang.replace(template, Dictionary),
         contextRequire: require,
 
         constructor: function(params) {
@@ -52,7 +56,7 @@ define([
         },
 
         _save: function() {
-  
+
         }
     });
 });

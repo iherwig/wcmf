@@ -1,0 +1,3 @@
+window.texts = {
+  "Settings": "Einstellungen"
+};
