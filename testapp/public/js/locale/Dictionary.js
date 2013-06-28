@@ -1,12 +1,12 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "./nls/"+appConfig.uiLanguage
+    "dojo/request"
 ],
 function(
     declare,
     lang,
-    dict
+    request
 ) {
     var Dictionary = declare(null, {
     });
@@ -23,8 +23,9 @@ function(
      * @returns String
      */
     Dictionary.tplTranslate = function(_, text) {
+        var dict = Dictionary.getDictionary();
         var key = text.replace(/^translate:/, "");
-        // dict maybe "not-a-module", if language file does not exist
+        // dict maybe "not-found", if language file does not exist
         return (typeof dict === "string" | !dict[key]) ? key : dict[key];
     };
 
@@ -37,7 +38,8 @@ function(
      * @returns String
      */
     Dictionary.translate = function(text, params) {
-        // dict maybe "not-a-module", if language file does not exist
+        var dict = Dictionary.getDictionary();
+        // dict maybe "not-found", if language file does not exist
         var translation = (typeof dict === "string" | !dict[text]) ? text : dict[text];
         // replace parameters
         if (typeof params === "object") {
@@ -45,6 +47,45 @@ function(
         }
         else {
             return translation;
+        }
+    };
+
+    Dictionary.dict = null;
+
+    Dictionary.getDictionary = function() {
+        if (Dictionary.dict === null) {
+            // load dictionary on first call
+            request.post("main.php", {
+                sync: true,
+                timeout: 100,
+                data: {
+                    action: "messages",
+                    language: appConfig.uiLanguage
+                },
+                headers: {
+                    "Accept" : "application/json"
+                },
+                handleAs: 'json'
+
+            }).then(function(response) {
+                // callback completes
+                Dictionary.dict = response;
+            }, function(error) {
+                // error
+                Dictionary.dict = "not-found";
+            });
+            // wait until resolved
+            // TODO is there a better way to do that?
+            for (var i=0; i<10000; i++) {
+              if (Dictionary.dict !== null) {
+                  break;
+              }
+            };
+            return Dictionary.dict;
+        }
+        else {
+            // already loaded
+            return Dictionary.dict;
         }
     };
 

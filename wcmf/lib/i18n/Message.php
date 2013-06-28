@@ -25,19 +25,21 @@ use wcmf\lib\core\ObjectFactory;
  * The localization directory must be given in the configuration value
  * 'localeDir' in section 'application'.
  * Inside this directory there must be a messages_$lang.php files for each
- * language defining the translation for each message.
- * For example the messages_de_DE file could have the following content:
+ * language defining the translation for each message in an associative array
+ * called $messages.
+ *
+ * For example the messages_de file could have the following content:
  * @code
- * $messages_de_DE = array(
+ * $messages = array(
  *   'up' => 'hoch',
  *   'down' => 'runter',
  *   ...
  * );
  * @endcode
  * @note The language is determined in one of 3 ways (in this order):
+ * -# use the value of the lang parameter passed to Message::get()
  * -# use the value of the configuration value 'language' in section 'application'
  * -# use the value of the global variable $_SERVER['HTTP_ACCEPT_LANGUAGE']
- * -# use the value of the lang parameter passed to Message::get()
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -58,8 +60,12 @@ class Message {
   private static function initialize() {
     $config = ObjectFactory::getConfigurationInstance();
     self::$localeDir = $config->getValue('localeDir', 'application');
-    self::$language = $config->getValue('language', 'application');
-    setlocale(LC_ALL, self::$language);
+    if ($config->hasValue('language', 'application')) {
+      self::$language = $config->getValue('language', 'application');
+    }
+    else if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+      self::$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+    }
     self::$initialized = true;
   }
 
@@ -80,6 +86,7 @@ class Message {
     }
 
     // get the translations
+    $lang = strlen($lang) == 0 ? self::$language : $lang;
     $translations = self::getTranslations($lang);
     if (isset($translations[$message])) {
       $localizedMessage = $translations[$message];
@@ -116,50 +123,20 @@ class Message {
   }
 
   /**
-   * Get the requested language in the language_COUNTRY format
-   * @param lang The language, optional, default: ''.
-   * @return The language code
-   */
-  private static function getQualifiedLanguage($lang) {
-    // select language
-    if ($lang == '') {
-      if (strlen(self::$language) > 0) {
-        $lang = self::$language;
-      }
-      else if ($lang == '' && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-        $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-      }
-    }
-
-    // convert lang to language_COUNTRY format if not already done
-    $lang = preg_replace("/\-/", "_", $lang);
-    $lang = preg_replace("/(\w+)_(\w+)/e", "'\\1_'.strtoupper('\\2')", $lang);
-    // if _COUNTRY is missing, use language as country
-    if (strpos($lang, '_') === false) {
-      $lang = $lang.'_'.strtoupper($lang);
-    }
-    return $lang;
-  }
-
-  /**
    * Get all translations for a language.
    * @param lang The language, optional, default: ''.
    * @return The translations as associative array
    */
   private static function getTranslations($lang) {
     if (!isset(self::$translations[$lang])) {
-      $qualifiedLang = self::getQualifiedLanguage($lang);
-
-      $messageFile = self::$localeDir."/messages_".$qualifiedLang.".php";
+      $messageFile = self::$localeDir."/messages_".$lang.".php";
       if (file_exists($messageFile)) {
         require_once($messageFile);
-        // store as requested and qualified language for later reference
+        // store for later reference
         self::$translations[$lang] = ${"messages_$lang"};
-        self::$translations[$qualifiedLang] = ${"messages_$lang"};
       }
       else {
         self::$translations[$lang] = array();
-        self::$translations[$qualifiedLang] = array();
       }
     }
     return self::$translations[$lang];

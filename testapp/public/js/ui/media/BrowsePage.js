@@ -8,6 +8,7 @@ define([
     "elfinder/jquery/jquery-1.8.1.min",
     "elfinder/jquery/jquery-ui-1.8.23.custom.min",
     "elfinder/js/elFinder.min",
+    "../../locale/Dictionary",
     "dojo/text!./template/BrowsePage.html",
     "xstyle/css!elfinder/jquery/ui-themes/smoothness-1.8.23/jquery-ui-1.8.23.custom.css",
     "xstyle/css!elfinder/css/elfinder.min.css",
@@ -22,13 +23,14 @@ define([
     jQuery,
     jQueryUi,
     elFinder,
+    Dict,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware], {
 
         request: null,
         session: null,
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
 
         constructor: function(params) {
             this.request = params.request;
@@ -37,7 +39,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - Media');
+            this.setTitle(appConfig.title+' - '+Dict.translate('Media'));
 
             $("#elfinder").elfinder({
                 lang: appConfig.defaultLanguage,

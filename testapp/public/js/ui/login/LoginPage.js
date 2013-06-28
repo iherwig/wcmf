@@ -2,9 +2,12 @@ define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/request",
+    "dojo/dom-form",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
+    "dijit/form/TextBox",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
     "../_include/_PageMixin",
@@ -12,17 +15,18 @@ define([
     "../_include/widget/NavigationWidget",
     "../_include/widget/Button",
     "../../Cookie",
-    "dijit/form/TextBox",
-    "dojo/dom-form",
-    "dojo/request",
+    "../../locale/Dictionary",
     "dojo/text!./template/LoginPage.html"
 ], function (
     require,
     declare,
     lang,
+    request,
+    domForm,
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
+    TextBox,
     _AppAware,
     _StateAware,
     _Page,
@@ -30,16 +34,14 @@ define([
     NavigationWidget,
     Button,
     Cookie,
-    TextBox,
-    domForm,
-    request,
+    Dict,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware, _Page, _Notification], {
 
         request: null,
         session: null,
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
 
         constructor: function(params) {
@@ -49,7 +51,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - Login');
+            this.setTitle(appConfig.title+' - '+Dict.translate('Login'));
 
             var navi = new NavigationWidget({
                 titleOnly: true
@@ -86,7 +88,7 @@ define([
                     // error
                     this.showNotification({
                         type: "error",
-                        message: response.errorMessage || "Backend error"
+                        message: response.errorMessage || Dict.translate("Backend error")
                     });
                 }
                 else {
@@ -110,7 +112,7 @@ define([
                 this.loginBtn.reset();
                 this.showNotification({
                     type: "error",
-                    message: error.response.data.errorMessage || error.message || "Backend error"
+                    message: error.response.data.errorMessage || error.message || Dict.translate("Backend error")
                 });
             }));
         }
