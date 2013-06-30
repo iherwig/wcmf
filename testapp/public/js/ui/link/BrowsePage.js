@@ -1,4 +1,5 @@
 define([
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/dom",
@@ -6,15 +7,17 @@ define([
     "dojo/_base/window",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dojomat/_AppAware",
-    "dojomat/_StateAware",
+    "dijit/_WidgetsInTemplateMixin",
+    "../_include/_PageMixin",
     "dijit/tree/ObjectStoreModel",
     "dijit/Tree",
     "../../model/meta/Model",
     "../../persistence/TreeStore",
+    "../../locale/Dictionary",
     "dojo/text!./template/BrowsePage.html",
     "dojo/domReady!"
 ], function (
+    require,
     declare,
     lang,
     dom,
@@ -22,28 +25,23 @@ define([
     win,
     _WidgetBase,
     _TemplatedMixin,
-    _AppAware,
-    _StateAware,
+    _WidgetsInTemplateMixin,
+    _Page,
     ObjectStoreModel,
     Tree,
     Model,
     TreeStore,
+    Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page], {
 
-        request: null,
-        session: null,
-        templateString: template,
-
-        constructor: function(params) {
-            this.request = params.request;
-            this.session = params.session;
-        },
+        templateString: lang.replace(template, Dict.tplTranslate),
+        contextRequire: require,
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - Content');
+            this.setTitle(appConfig.title+' - '+Dict.translate('Inhalt'));
 
             var store = TreeStore.getStore();
             var model = new ObjectStoreModel({

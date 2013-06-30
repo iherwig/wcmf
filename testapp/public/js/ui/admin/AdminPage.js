@@ -1,47 +1,40 @@
 define([
     "require",
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
-    "dojomat/_AppAware",
-    "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "../_include/FormLayout",
     "../_include/widget/Button",
+    "../../locale/Dictionary",
     "dojo/text!./template/AdminPage.html"
 ], function (
     require,
     declare,
+    lang,
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
-    _AppAware,
-    _StateAware,
     _Page,
     _Notification,
     NavigationWidget,
     FormLayout,
     Button,
+    Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware, _Page, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page, _Notification], {
 
-        request: null,
-        session: null,
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
-
-        constructor: function(params) {
-            this.request = params.request;
-            this.session = params.session;
-        },
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - Settings');
+            this.setTitle(appConfig.title+' - '+Dict.translage('Settings'));
 
             var navi = new NavigationWidget({
             }, this.navigationNode);

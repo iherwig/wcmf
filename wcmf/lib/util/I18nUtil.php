@@ -80,7 +80,7 @@ class I18nUtil {
    * @param file The file to search in
    * @return An array of strings.
    * @note This method searches for occurences of 'Message::get('Text to translate')',
-   * 'Dict.translate ("Text to translate")' or { translate:"Text to translate"} where
+   * 'Dict.translate("Text to translate")' or {translate:"Text to translate"} where
    * 'Text to translate' is supposed to be the message to translate. So it might not
    * find the usage of the Message::get() method with concatenated strings
    * (like Message::get($login." says hello")). For replacements
@@ -95,7 +95,7 @@ class I18nUtil {
       $messagePatterns = array(
           'Message::get\(([\'"])(.*?)\\1',    // usage in PHP code, e.g. Message::get("Text to translate")
           'Dict\.translate\(([\'"])(.*?)\\3', // usage in JS code, e.g. Dict.translate("Text to translate")
-          '\{translate:(.*?)\}', // usage in dojo template, e.g. {translate:Text to translate}
+          '\{translate:(.*)\}', // usage in dojo template, e.g. {translate:Text to translate}
       );
       preg_match_all('/'.join('|', $messagePatterns).'/i', $content, $matchesTmp);
       $matches = array();
@@ -143,14 +143,14 @@ class I18nUtil {
     $header = <<<EOT
 <?php
 \$messages_{$language} = array();
-\$messages_{$language}[""] = "";
+\$messages_{$language}[''] = '';
 EOT;
     fwrite($fh, $header."\n");
 
     // write messages
     foreach($messages as $message => $attributes) {
       $lines = '// file(s): '.$attributes['files']."\n";
-      $lines .= '$messages_'.$language.'["'.str_replace('"', '\"', $message).'"] = "'.str_replace('"', '\"', $attributes['translation']).'";'."\n";
+      $lines .= "\$messages_".$language."['".str_replace("'", "\'", $message)."'] = '".str_replace("'", "\'", $attributes['translation'])."';"."\n";
       fwrite($fh, $lines);
     }
 

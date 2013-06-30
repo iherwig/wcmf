@@ -1,4 +1,5 @@
 define([
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/promise/all",
@@ -6,8 +7,7 @@ define([
     "dojo/Deferred",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dojomat/_AppAware",
-    "dojomat/_StateAware",
+    "dijit/_WidgetsInTemplateMixin",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
@@ -16,8 +16,10 @@ define([
     "../../persistence/Store",
     "../../persistence/Entity",
     "../../model/meta/Model",
+    "../../locale/Dictionary",
     "dojo/text!./template/EntityPage.html"
 ], function (
+    require,
     declare,
     lang,
     all,
@@ -25,8 +27,7 @@ define([
     Deferred,
     _WidgetBase,
     _TemplatedMixin,
-    _AppAware,
-    _StateAware,
+    _WidgetsInTemplateMixin,
     _Page,
     _Notification,
     NavigationWidget,
@@ -35,13 +36,14 @@ define([
     Store,
     Entity,
     Model,
+    Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page, _Notification], {
 
-        request: null,
-        session: null,
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
+        contextRequire: require,
+
         type: null,
         oid: null, // object id of the object to edit
         isNew: false, // boolean weather the object exists or not
@@ -57,8 +59,6 @@ define([
         original: null, // untranslated entity
 
         constructor: function(params) {
-            this.request = params.request;
-            this.session = params.session;
             this.type = this.request.getPathParam("type");
 
             var idParam = this.request.getPathParam("id");
@@ -106,7 +106,7 @@ define([
                     // error
                     this.showNotification({
                         type: "error",
-                        message: error.message || "Backend error"
+                        message: error.message || Dict.translate("Backend error")
                     });
                 }));
             }
@@ -117,7 +117,7 @@ define([
                 });
                 this.entity.setState("new");
                 this.buildForm();
-                this.setTitle(appConfig.title+' - New '+this.type);
+                this.setTitle(appConfig.title+' - '+Dict.translate("New %0%", [this.type]));
             }
 
             this.own(
@@ -131,8 +131,9 @@ define([
             if (this.entity && this.entity.getState() === 'dirty') {
                 var deferred = new Deferred();
                 new ConfirmDlg({
-                    title: "Confirm Leave Page",
-                    message: "'"+Model.getDisplayValue(this.entity)+"' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
+                    title: Dict.translate("Confirm Leave Page"),
+                    message: Dict.translate("'%0%' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
+                        [Model.getDisplayValue(this.entity)]),
                     okCallback: lang.hitch(this, function(dlg) {
                         deferred.resolve(true);
                     }),
@@ -156,11 +157,11 @@ define([
                         sourceOid: this.isNew ? this.sourceOid : undefined,
                         relation: this.isNew ? this.relation : undefined,
                         language: this.language,
-                        router: this.router,
+                        page: this,
                         onCreated: lang.hitch(this, function(panel) {
                             // create the tab container
                             var tabs = new EntityTabWidget({
-                                router: this.router,
+                                page: this,
                                 selectedTab: {
                                     oid: this.oid
                                 },
@@ -176,7 +177,7 @@ define([
                     // error
                     this.showNotification({
                         type: "error",
-                        message: "Detail view class for type '"+this.type+"' not found."
+                        message: Dict.translate("Detail view class for type '%0%' not found.", [this.type])
                     });
                 }
             }));

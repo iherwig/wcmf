@@ -3,7 +3,6 @@ define([
     "dojo/_base/lang",
     "dojo/when",
     "dojo/topic",
-    "dojomat/_StateAware",
     "dijit/registry",
     "dijit/layout/TabContainer",
     "dijit/layout/ContentPane",
@@ -15,7 +14,6 @@ define([
     lang,
     when,
     topic,
-    _StateAware,
     registry,
     TabContainer,
     ContentPane,
@@ -41,7 +39,7 @@ define([
      *
      * @code
      * new EntityTabWidget({
-     *     router: this.router,
+     *     page: this,
      *     selectedTab: {
      *         oid: 'Author'
      *     },
@@ -49,9 +47,9 @@ define([
      * }, this.tabNode);
      * @endcode
      */
-    var EntityTabWidget = declare([TabContainer, _StateAware], {
+    var EntityTabWidget = declare([TabContainer], {
 
-        router: null,
+        page: null,
         selectedTab: {},
         selectedPanel: {},
         lastTab: {},
@@ -118,9 +116,9 @@ define([
         selectTab: function(oid) {
             if (oid !== undefined) {
                 var routDef = this.getRouteForTab(oid);
-                var route = this.router.getRoute(routDef.route);
+                var route = this.page.getRoute(routDef.route);
                 var url = route.assemble(routDef.routeParams);
-                this.push(url);
+                this.page.pushConfirmed(url);
             }
         },
 

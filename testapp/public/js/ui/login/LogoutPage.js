@@ -3,8 +3,6 @@ define([
     "dojo/_base/lang",
     "dojo/request",
     "dijit/_WidgetBase",
-    "dojomat/_AppAware",
-    "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../../Cookie",
@@ -14,22 +12,12 @@ define([
     lang,
     request,
     _WidgetBase,
-    _AppAware,
-    _StateAware,
     _Page,
     _Notification,
     Cookie,
     Dict
 ) {
-    return declare([_WidgetBase, _AppAware, _StateAware, _Page, _Notification], {
-
-        request: null,
-        session: null,
-
-        constructor: function(params) {
-            this.request = params.request;
-            this.session = params.session;
-        },
+    return declare([_WidgetBase, _Page, _Notification], {
 
         startup: function() {
             this.inherited(arguments);

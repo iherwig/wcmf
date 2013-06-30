@@ -1,26 +1,35 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/when",
     "dojo/aspect",
     "dojo/dom-attr",
     "dojo/query",
-    "dojo/on"
+    "dojo/on",
+    "dojo/when",
+    "dojomat/_AppAware",
+    "dojomat/_StateAware"
 ], function (
     declare,
     lang,
-    when,
     aspect,
     domAttr,
     query,
-    on
+    on,
+    when,
+    _AppAware,
+    _StateAware
 ) {
-    return declare([], {
+    return declare([_AppAware, _StateAware], {
 
+        request: null,
         router: null,
+        session: null,
+        inConfirmLeave: false,
 
         constructor: function(params) {
+            this.request = params.request;
             this.router = params.router;
+            this.session = params.session;
 
             // setup navigation routes even if an error occurs
             aspect.around(this, "postCreate", function(original) {
@@ -70,13 +79,28 @@ define([
                 this.own(on(node, 'click', lang.hitch(this, function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    when(this.confirmLeave(url), lang.hitch(this, function(result) {
-                        if (result === true) {
-                            this.push(url);
-                        }
-                    }));
+                    this.pushConfirmed(url);
                 })));
             }));
+        },
+
+        getRoute: function(path) {
+            return this.router.getRoute(path);
+        },
+
+        /**
+         * Push with asking for confimation
+         */
+        pushConfirmed: function (url) {
+            if (!this.inConfirmLeave) {
+                this.inConfirmLeave = true;
+                when(this.confirmLeave(url), lang.hitch(this, function(result) {
+                    this.inConfirmLeave = false;
+                    if (result === true) {
+                        this.push(url);
+                    }
+                }));
+            }
         },
 
         /**

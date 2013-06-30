@@ -54,7 +54,7 @@ class JsonFormat extends HierarchicalFormat {
           Log::debug($encoded, 'JsonFormat');
         }
         if (!headers_sent()) {
-          header("Content-Type: application/json");
+          header("Content-Type: application/json; charset=utf-8");
           print($encoded);
         }
       }

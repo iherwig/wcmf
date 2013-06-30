@@ -6,7 +6,6 @@ define( [
     "dojo/dom-class",
     "dojo/dom-construct",
     "dojo/query",
-    "dojomat/_StateAware",
     "dijit/registry",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
@@ -21,6 +20,7 @@ define( [
     "../../../persistence/Store",
     "../../../persistence/RelationStore",
     "../../../action/Delete",
+    "../../../locale/Dictionary",
     "../input/Factory",
     "./EntityRelationWidget",
     "dojo/text!./template/EntityFormWidget.html"
@@ -33,7 +33,6 @@ function(
     domClass,
     domConstruct,
     query,
-    _StateAware,
     registry,
     _WidgetBase,
     _TemplatedMixin,
@@ -48,13 +47,14 @@ function(
     Store,
     RelationStore,
     Delete,
+    Dict,
     ControlFactory,
     EntityRelationWidget,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _StateAware, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Notification], {
 
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
 
         entity: {}, // entity to edit
@@ -62,7 +62,7 @@ function(
                          // (ignored if isNew == false)
         relation: null, // the relation in which the object should be created
                         // related to sourceOid (ignored if isNew == false)
-        router: null,
+        page: null,
 
         type: null,
         formId: "",
@@ -133,7 +133,7 @@ function(
                 // error
                 this.showNotification({
                     type: "error",
-                    message: error.message || "Backend error"
+                    message: error.message || Dict.translate("Backend error")
                 });
             }));
 
@@ -146,7 +146,7 @@ function(
                     var relationWidget = new EntityRelationWidget({
                         entity: this.entity,
                         relation: relation,
-                        router: this.router
+                        page: this.page
                     });
                     this.relationsNode.appendChild(relationWidget.domNode);
                 }
@@ -173,13 +173,13 @@ function(
                     label: appConfig.languages[langKey],
                     langKey: langKey,
                     onClick: function() {
-                        var route = form.router.getRoute("entity");
+                        var route = form.page.getRoute("entity");
                         var queryParams = this.langKey !== appConfig.defaultLanguage ? {lang: this.langKey} : undefined;
                         var url = route.assemble({
                             type: Model.getSimpleTypeName(form.type),
                             id: Model.getIdFromOid(form.entity.oid)
                         }, queryParams);
-                        form.push(url);
+                        form.page.pushConfirmed(url);
                     }
                 });
                 if (langKey === this.language) {
@@ -248,7 +248,7 @@ function(
                         // error
                         this.showNotification({
                             type: "error",
-                            message: response.errorMessage || "Backend error"
+                            message: response.errorMessage || Dict.translate("Backend error")
                         });
                     }
                     else {
@@ -265,7 +265,8 @@ function(
                         this.entity.set('oid', response.oid);
                         this.showNotification({
                             type: "ok",
-                            message: "'"+Model.getDisplayValue(this.entity)+"' was successfully " + (this.isNew ? "created" : "updated"),
+                            message: Dict.translate("'%0%' was successfully %1%",
+                                [Model.getDisplayValue(this.entity), this.isNew ? Dict.translate("created") : Dict.translate("updated")]),
                             fadeOut: true,
                             onHide: lang.hitch(this, function() {
                                 this.setBtnState("save", false);
@@ -297,7 +298,7 @@ function(
                     this.saveBtn.setProcessing();
                     this.showNotification({
                         type: "error",
-                        message: error.message || error.response.data.errorMessage || "Backend error"
+                        message: error.message || error.response.data.errorMessage || Dict.translate("Backend error")
                     });
                 }));
             }
@@ -312,7 +313,7 @@ function(
             }
 
             new Delete({
-                router: this.router,
+                page: this.page,
                 init: lang.hitch(this, function(data) {
                     this.hideNotification();
                 }),
@@ -328,7 +329,7 @@ function(
                     // error
                     this.showNotification({
                         type: "error",
-                        message: "Backend error"
+                        message: Dict.translate("Backend error")
                     });
                 })
             }).execute(e, this.entity);

@@ -1,36 +1,37 @@
 define([
+    "require",
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dojomat/_AppAware",
-    "dojomat/_StateAware",
+    "dijit/_WidgetsInTemplateMixin",
+    "../_include/_PageMixin",
+    "../../locale/Dictionary",
     "dojo/text!./template/ErrorPage.html"
 ], function (
+    require,
     declare,
+    lang,
     _WidgetBase,
     _TemplatedMixin,
-    _AppAware,
-    _StateAware,
+    _WidgetsInTemplateMixin,
+    _Page,
+    Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page], {
 
-        router: null,
-        request: null,
-        session: null,
         error: null,
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
+        contextRequire: require,
 
         constructor: function (params) {
-            this.router = params.router;
-            this.request = params.request;
-            this.session = params.session;
             this.error = params.error;
         },
 
         postCreate: function () {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - Error');
+            this.setTitle(appConfig.title+' - '+Dict.translate('Error'));
             this.messageNode.innerHTML = this.error.message;
         },
 

@@ -31,7 +31,7 @@ function(
 
     /**
      * Translate the given text into the ui language. Use params array
-     * to replace {0}, {1}, .... variables in the text.
+     * to replace %0%, %1%, .... variables in the text.
      *
      * @param text Text to be translated
      * @param params Array of replacements [optional]
@@ -43,7 +43,7 @@ function(
         var translation = (typeof dict === "string" | !dict[text]) ? text : dict[text];
         // replace parameters
         if (typeof params === "object") {
-            return lang.replace(translation, params);
+            return lang.replace(translation, params, /\%([^\%]+)\%/g);
         }
         else {
             return translation;

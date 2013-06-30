@@ -1,10 +1,11 @@
 define([
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dojomat/_AppAware",
-    "dojomat/_StateAware",
+    "dijit/_WidgetsInTemplateMixin",
+    "../_include/_PageMixin",
     "elfinder/jquery/jquery-1.8.1.min",
     "elfinder/jquery/jquery-ui-1.8.23.custom.min",
     "elfinder/js/elFinder.min",
@@ -14,28 +15,23 @@ define([
     "xstyle/css!elfinder/css/elfinder.min.css",
     "dojo/domReady!"
 ], function (
+    require,
     declare,
     lang,
     _WidgetBase,
     _TemplatedMixin,
-    _AppAware,
-    _StateAware,
+    _WidgetsInTemplateMixin,
+    _Page,
     jQuery,
     jQueryUi,
     elFinder,
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page], {
 
-        request: null,
-        session: null,
         templateString: lang.replace(template, Dict.tplTranslate),
-
-        constructor: function(params) {
-            this.request = params.request;
-            this.session = params.session;
-        },
+        contextRequire: require,
 
         postCreate: function() {
             this.inherited(arguments);

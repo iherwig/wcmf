@@ -21,12 +21,12 @@ define([
             if (this.init instanceof Function) {
                 this.init(data);
             }
-            var route = this.router.getRoute("entity");
+            var route = this.page.getRoute("entity");
             var type = Model.getSimpleTypeName(Model.getTypeNameFromOid(data.oid));
             var id = Model.getIdFromOid(data.oid);
             var pathParams = { type:type, id:id };
             var url = route.assemble(pathParams);
-            this.push(url);
+            this.page.pushConfirmed(url);
         }
     });
 });

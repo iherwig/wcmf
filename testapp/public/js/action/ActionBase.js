@@ -3,21 +3,18 @@ define([
     "dojo/_base/lang",
     "dojo/aspect",
     "dojo/query",
-    "dojo/dom-class",
-    "dojomat/_StateAware"
+    "dojo/dom-class"
 ], function (
     declare,
     lang,
     aspect,
     query,
-    domClass,
-    _StateAware
+    domClass
 ) {
-    return declare([_StateAware], {
+    return declare([], {
 
         name: '',
         iconClass:  'icon-asterisk',
-        router: null,
         init: null,
         callback: null,
         errback: null,
@@ -26,9 +23,11 @@ define([
         _iconNode: null,
         _hasSpinner: false,
 
+        page: null,
+
         /**
          * Constructor
-         * @param router Instance of routed/Router
+         * @param page Instance of _PageMixin
          * @param init Function to be before action is executed (optional)
          * @param callback Function to be called on success (optional)
          * @param errback Function to be called on error (optional)

@@ -1,42 +1,42 @@
 define([
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dojomat/_AppAware",
-    "dojomat/_StateAware",
+    "dijit/_WidgetsInTemplateMixin",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "./widget/EntityTabWidget",
     "../../model/meta/Model",
+    "../../locale/Dictionary",
     "dojo/text!./template/EntityListPage.html"
 ], function (
+    require,
     declare,
     lang,
     topic,
     _WidgetBase,
     _TemplatedMixin,
-    _AppAware,
-    _StateAware,
+    _WidgetsInTemplateMixin,
     _Page,
     _Notification,
     NavigationWidget,
     EntityTabWidget,
     Model,
+    Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _AppAware, _StateAware, _Page, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page, _Notification], {
 
-        request: null,
-        session: null,
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
+        contextRequire: require,
+
         type: null,
 
         constructor: function(params) {
-            this.request = params.request;
-            this.session = params.session;
             this.type = this.request.getPathParam("type");
         },
 
@@ -67,11 +67,11 @@ define([
                     // create the tab panel
                     var panel = new View({
                         type: this.type,
-                        router: this.router,
+                        page: this,
                         onCreated: lang.hitch(this, function(panel) {
                             // create the tab container
                             var tabs = new EntityTabWidget({
-                                router: this.router,
+                                page: this,
                                 selectedTab: {
                                     oid: this.type
                                 },
@@ -87,7 +87,7 @@ define([
                     // error
                     this.showNotification({
                         type: "error",
-                        message: "List view class for type '"+this.type+"' not found."
+                        message: Dict.translate("List view class for type '%0%' not found.", [this.type])
                     });
                 }
             }));

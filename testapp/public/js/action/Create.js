@@ -21,11 +21,11 @@ define([
             if (this.init instanceof Function) {
                 this.init(type);
             }
-            var route = this.router.getRoute("entity");
+            var route = this.page.getRoute("entity");
             var oid = Model.createDummyOid(type);
             var pathParams = { type:type, id:Model.getIdFromOid(oid) };
             var url = route.assemble(pathParams);
-            this.push(url);
+            this.page.pushConfirmed(url);
         }
     });
 });

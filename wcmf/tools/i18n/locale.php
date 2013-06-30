@@ -25,7 +25,7 @@ $exclude = getConfigValue("exclude", "i18n");
 $languages = getConfigValue("languages", "i18n");
 
 // get messages from search directory
-$allMessages = I18nUtil::getMessages($searchDir, $exclude, "/\.php$|\.js$/");
+$allMessages = I18nUtil::getMessages($searchDir, $exclude, "/\.php$|\.js$|\.html$/");
 
 foreach ($languages as $language) {
   // get translations from old file (I18nUtil::createPHPLanguageFile), if existing
@@ -46,10 +46,12 @@ foreach ($languages as $language) {
       else {
         $messages[$message]['files'] .= ', '.$file;
       }
-      Log::info($language." ".$message." = ".$messages[$message]['translation'], "locale");
     }
   }
   $messages = natcaseksort($messages);
+  foreach ($messages as $message => $attributes) {
+    Log::info($language." ".$message." = ".$attributes['translation'], "locale");
+  }
 
   I18nUtil::createPHPLanguageFile($language, $messages);
 }

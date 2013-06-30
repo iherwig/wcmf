@@ -14,6 +14,7 @@ define( [
     "../../../action/Link",
     "../../../action/Unlink",
     "../../../action/CreateInRelation",
+    "../../../locale/Dictionary",
     "dojo/text!./template/EntityRelationWidget.html"
 ],
 function(
@@ -32,14 +33,15 @@ function(
     Link,
     Unlink,
     CreateInRelation,
+    Dict,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _NotificationMixin], {
 
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
         entity: {},
         relation: {},
-        router: null,
+        page: null,
         gridWidget: null,
 
         constructor: function(args) {
@@ -69,11 +71,11 @@ function(
         getGridActions: function() {
 
             var editAction = new Edit({
-                router: this.router
+                page: this.page
             });
 
             var unlinkAction = new Unlink({
-                router: this.router,
+                page: this.page,
                 source: this.entity,
                 relation: this.relation
             });
@@ -86,7 +88,7 @@ function(
             e.preventDefault();
 
             new CreateInRelation({
-                router: this.router,
+                page: this.page,
                 source: this.entity,
                 relation: this.relation,
                 init: lang.hitch(this, function(data) {
@@ -99,7 +101,7 @@ function(
                     // error
                     this.showNotification({
                         type: "error",
-                        message: "Backend error"
+                        message: Dict.translate("Backend error")
                     });
                 })
             }).execute(e, this.relation.type);
@@ -111,7 +113,7 @@ function(
 
             var gridRefresh = new Deferred();
             new Link({
-                router: this.router,
+                page: this.page,
                 source: this.entity,
                 relation: this.relation,
                 init: lang.hitch(this, function(data) {
@@ -126,7 +128,7 @@ function(
                     // error
                     this.showNotification({
                         type: "error",
-                        message: "Backend error"
+                        message: Dict.translate("Backend error")
                     });
                     gridRefresh.resolve();
                 })

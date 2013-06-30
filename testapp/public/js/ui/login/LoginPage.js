@@ -8,8 +8,6 @@ define([
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
     "dijit/form/TextBox",
-    "dojomat/_AppAware",
-    "dojomat/_StateAware",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
@@ -27,8 +25,6 @@ define([
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
     TextBox,
-    _AppAware,
-    _StateAware,
     _Page,
     _Notification,
     NavigationWidget,
@@ -37,17 +33,10 @@ define([
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware, _Page, _Notification], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page, _Notification], {
 
-        request: null,
-        session: null,
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
-
-        constructor: function(params) {
-            this.request = params.request;
-            this.session = params.session;
-        },
 
         postCreate: function() {
             this.inherited(arguments);

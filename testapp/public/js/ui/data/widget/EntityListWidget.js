@@ -13,6 +13,7 @@ define( [
     "../../../action/Create",
     "../../../action/Edit",
     "../../../action/Delete",
+    "../../../locale/Dictionary",
     "dojo/text!./template/EntityListWidget.html"
 ],
 function(
@@ -30,15 +31,16 @@ function(
     Create,
     Edit,
     Delete,
+    Dict,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Notification], {
 
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
 
         type: null,
-        router: null,
+        page: null,
         onCreated: null, // function to be called after the widget is created
 
         constructor: function(args) {
@@ -70,7 +72,7 @@ function(
         getGridActions: function() {
 
             var editAction = new Edit({
-                router: this.router
+                page: this.page
             });
 
             var duplicateAction = {
@@ -82,7 +84,7 @@ function(
             };
 
             var deleteAction = new Delete({
-                router: this.router,
+                page: this.page,
                 init: lang.hitch(this, function(data) {
                     this.hideNotification();
                 }),
@@ -90,7 +92,7 @@ function(
                     // success
                     this.showNotification({
                         type: "ok",
-                        message: "'"+Model.getDisplayValue(data)+"' was successfully deleted",
+                        message: Dict.translate("'%0%' was successfully deleted", [Model.getDisplayValue(data)]),
                         fadeOut: true
                     });
                 }),
@@ -98,7 +100,7 @@ function(
                     // error
                     this.showNotification({
                         type: "error",
-                        message: "Backend error"
+                        message: Dict.translate("Backend error")
                     });
                 })
             });
@@ -111,7 +113,7 @@ function(
             e.preventDefault();
 
             new Create({
-                router: this.router
+                page: this.page
             }).execute(e, this.type);
         }
     });
