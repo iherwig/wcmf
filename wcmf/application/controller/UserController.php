@@ -22,6 +22,8 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
  * UserController is used to edit data of the current users.
@@ -48,7 +50,7 @@ class UserController extends Controller {
   /**
    * @see Controller::initialize()
    */
-  protected function initialize(&$request, &$response) {
+  public function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
     // create UserManager instance
@@ -60,13 +62,15 @@ class UserController extends Controller {
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  protected function executeKernel() {
+  public function executeKernel() {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $request = $this->getRequest();
+    $response = $this->getResponse();
 
     // process actions
 
     // save changes
-    if ($this->_request->getAction() == 'save') {
+    if ($request->getAction() == 'save') {
       // load model
       $user = $permissionManager->getAuthUser();
       $oid = new ObjectId(ObjectFactory::getInstance('userManager')->getUserType(), $user->getUserId());
@@ -74,17 +78,17 @@ class UserController extends Controller {
 
       // password
       $this->_userManager->beginTransaction();
-      if ($this->_request->getValue('changepassword') == 'yes') {
+      if ($request->getValue('changepassword') == 'yes') {
         $this->_userManager->changePassword($principal->getLogin(), $this->_request->getValue('oldpassword'),
-        $this->_request->getValue('newpassword1'), $this->_request->getValue('newpassword2'));
+        $request->getValue('newpassword1'), $this->_request->getValue('newpassword2'));
         $message .= Message::get("The password was successfully changed.");
       }
       $this->_userManager->commitTransaction();
     }
-    $this->_response->setValue("message", $message);
+    $response->setValue("message", $message);
 
     // success
-    $this->_response->setAction('edituser');
+    $response->setAction('edituser');
     return false;
   }
 }

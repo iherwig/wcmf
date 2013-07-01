@@ -149,10 +149,10 @@ $messages_de['Initialization'] = 'Initialisierung';
 $messages_de['Instances of this class are used to localize entity attributes. Each instance defines a translation of one attribute of one entity into one language.'] = '';
 // file(s): testapp/application/model/wcmf/UserConfigBase.php
 $messages_de['key'] = '';
-// file(s): testapp/application/model/wcmf/TranslationBase.php
-$messages_de['language'] = '';
 // file(s): testapp/application/model/wcmf/LanguageBase.php, testapp/public/js/ui/data/widget/template/EntityFormWidget.html
 $messages_de['Language'] = 'Sprache';
+// file(s): testapp/application/model/wcmf/TranslationBase.php
+$messages_de['language'] = '';
 // file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/PublisherBase.php
 $messages_de['last_editor'] = 'Zuletzt geändert von';
 // file(s): testapp/public/js/ui/data/EntityListPage.js
@@ -163,12 +163,12 @@ $messages_de['Loading'] = 'Lade...';
 $messages_de['Loading tree: continue with %0%'] = '';
 // file(s): testapp/application/model/wcmf/LocktableBase.php
 $messages_de['Locktable'] = '';
+// file(s): testapp/public/js/ui/login/template/LoginPage.html
+$messages_de['Log in'] = 'Anmelden';
 // file(s): testapp/application/model/wcmf/UserRDBBase.php
 $messages_de['login'] = 'Anmeldename';
 // file(s): testapp/public/js/ui/login/LoginPage.js, testapp/public/js/ui/login/template/LoginPage.html
 $messages_de['Login'] = 'Anmeldename';
-// file(s): testapp/public/js/ui/login/template/LoginPage.html
-$messages_de['Log in'] = 'Anmelden';
 // file(s): testapp/public/js/ui/_include/widget/template/NavigationWidget.html
 $messages_de['Logout'] = 'Abmelden';
 // file(s): testapp/public/js/ui/home/template/HomePage.html
@@ -185,6 +185,10 @@ $messages_de['Moving'] = '';
 $messages_de['name'] = 'Name';
 // file(s): testapp/public/js/model/meta/Model.js, testapp/public/js/ui/data/EntityPage.js
 $messages_de['New %0%'] = '*%0%';
+// file(s): testapp/public/js/ui/settings/template/SettingsPage.html
+$messages_de['New password'] = 'Neues Passwort';
+// file(s): testapp/public/js/ui/settings/template/SettingsPage.html
+$messages_de['New password repeated'] = 'Passwortwiederholung';
 // file(s): testapp/application/model/NMPublisherAuthorBase.php
 $messages_de['NMPublisherAuthor'] = '';
 // file(s): testapp/application/model/wcmf/NMUserRoleBase.php
@@ -197,6 +201,8 @@ $messages_de['No data'] = 'Keine Daten';
 $messages_de['objectid'] = 'Objekt ID';
 // file(s): testapp/public/js/ui/_include/widget/template/PopupDlgWidget.html
 $messages_de['OK'] = 'OK';
+// file(s): testapp/public/js/ui/settings/template/SettingsPage.html
+$messages_de['Old password'] = 'Altes Passwort';
 // file(s): wcmf/lib/presentation/ApplicationError.php
 $messages_de['One or more classes are invalid.'] = '';
 // file(s): wcmf/lib/presentation/ApplicationError.php
@@ -211,10 +217,10 @@ $messages_de['Only PersistenceMappers of type RDBMapper are supported.'] = '';
 $messages_de['Optimizing index'] = '';
 // file(s): testapp/public/js/ui/error/NotFoundPage.js
 $messages_de['Page not found'] = 'Seite nicht gefunden';
-// file(s): testapp/application/model/wcmf/UserRDBBase.php
-$messages_de['password'] = 'Passwort';
 // file(s): testapp/public/js/ui/login/template/LoginPage.html
 $messages_de['Password'] = 'Passwort';
+// file(s): testapp/application/model/wcmf/UserRDBBase.php
+$messages_de['password'] = 'Passwort';
 // file(s): testapp/public/js/ui/login/template/LoginPage.html
 $messages_de['Please log in'] = 'Anmelden';
 // file(s): wcmf/application/controller/SaveController.php, wcmf/lib/io/FileUtil.php
@@ -328,9 +334,9 @@ $messages_de['This is the main entry point of this wCMF application.'] = '';
 // file(s): testapp/application/model/BookBase.php
 $messages_de['title'] = 'Titel';
 // file(s): testapp/application/model/wcmf/TranslationBase.php
-$messages_de['Translation'] = '';
-// file(s): testapp/application/model/wcmf/TranslationBase.php
 $messages_de['translation'] = '';
+// file(s): testapp/application/model/wcmf/TranslationBase.php
+$messages_de['Translation'] = '';
 // file(s): wcmf/lib/util/GraphicsUtil.php
 $messages_de['unknown FONTTYPE'] = 'unbekannter FONTTYPE';
 // file(s): wcmf/lib/security/UserManager.php

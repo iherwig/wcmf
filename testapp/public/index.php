@@ -65,6 +65,7 @@ catch (Exception $ex) {
     <script>
       var appConfig = {
           title: '<?php echo $appTitle; ?>',
+          backendUrl: '<?php echo $pathPrefix.'/main.php'; ?>',
           rootTypes: [<?php if ($rootTypes && sizeof($rootTypes) > 0) { echo "'".join("', '", $rootTypes)."'"; } ?>],
           pathPrefix: '<?php echo $pathPrefix; ?>',
           mediaBaseUrl: '<?php echo $baseHref.$mediaPath; ?>',

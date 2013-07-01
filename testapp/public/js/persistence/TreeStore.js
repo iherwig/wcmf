@@ -68,7 +68,7 @@ define([
     Store.getStore = function() {
         if (!kernel.global.treeStoreInstance) {
             var jsonRest = new Store({
-                target: appConfig.pathPrefix+"/main.php?action=browseTree"
+                target: appConfig.backendUrl+"?action=browseTree"
             });
             var observable = new Observable(jsonRest);
             kernel.global.treeStoreInstance = {

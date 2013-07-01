@@ -39,7 +39,7 @@ define([
 
             $("#elfinder").elfinder({
                 lang: appConfig.defaultLanguage,
-                url: 'main.php?action=browseMedia',
+                url: appConfig.backendUrl+'?action=browseMedia',
                 height: 658,
                 resizable: false,
                 getFileCallback: lang.hitch(this, function(file) {

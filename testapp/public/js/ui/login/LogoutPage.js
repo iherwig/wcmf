@@ -29,7 +29,7 @@ define([
             data.controller = "wcmf\\application\\controller\\LoginController";
             data.action = "logout";
 
-            request.post("main.php", {
+            request.post(appConfig.backendUrl, {
                 data: data,
                 headers: {
                     "Accept" : "application/json"

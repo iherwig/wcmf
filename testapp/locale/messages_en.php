@@ -149,10 +149,10 @@ $messages_en['Initialization'] = '';
 $messages_en['Instances of this class are used to localize entity attributes. Each instance defines a translation of one attribute of one entity into one language.'] = '';
 // file(s): testapp/application/model/wcmf/UserConfigBase.php
 $messages_en['key'] = '';
-// file(s): testapp/application/model/wcmf/TranslationBase.php
-$messages_en['language'] = '';
 // file(s): testapp/application/model/wcmf/LanguageBase.php, testapp/public/js/ui/data/widget/template/EntityFormWidget.html
 $messages_en['Language'] = '';
+// file(s): testapp/application/model/wcmf/TranslationBase.php
+$messages_en['language'] = '';
 // file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/PublisherBase.php
 $messages_en['last_editor'] = '';
 // file(s): testapp/public/js/ui/data/EntityListPage.js
@@ -163,12 +163,12 @@ $messages_en['Loading'] = '';
 $messages_en['Loading tree: continue with %0%'] = '';
 // file(s): testapp/application/model/wcmf/LocktableBase.php
 $messages_en['Locktable'] = '';
+// file(s): testapp/public/js/ui/login/template/LoginPage.html
+$messages_en['Log in'] = '';
 // file(s): testapp/application/model/wcmf/UserRDBBase.php
 $messages_en['login'] = '';
 // file(s): testapp/public/js/ui/login/LoginPage.js, testapp/public/js/ui/login/template/LoginPage.html
 $messages_en['Login'] = '';
-// file(s): testapp/public/js/ui/login/template/LoginPage.html
-$messages_en['Log in'] = '';
 // file(s): testapp/public/js/ui/_include/widget/template/NavigationWidget.html
 $messages_en['Logout'] = '';
 // file(s): testapp/public/js/ui/home/template/HomePage.html
@@ -185,6 +185,10 @@ $messages_en['Moving'] = '';
 $messages_en['name'] = '';
 // file(s): testapp/public/js/model/meta/Model.js, testapp/public/js/ui/data/EntityPage.js
 $messages_en['New %0%'] = '';
+// file(s): testapp/public/js/ui/settings/template/SettingsPage.html
+$messages_en['New password'] = '';
+// file(s): testapp/public/js/ui/settings/template/SettingsPage.html
+$messages_en['New password repeated'] = '';
 // file(s): testapp/application/model/NMPublisherAuthorBase.php
 $messages_en['NMPublisherAuthor'] = '';
 // file(s): testapp/application/model/wcmf/NMUserRoleBase.php
@@ -197,6 +201,8 @@ $messages_en['No data'] = '';
 $messages_en['objectid'] = '';
 // file(s): testapp/public/js/ui/_include/widget/template/PopupDlgWidget.html
 $messages_en['OK'] = '';
+// file(s): testapp/public/js/ui/settings/template/SettingsPage.html
+$messages_en['Old password'] = '';
 // file(s): wcmf/lib/presentation/ApplicationError.php
 $messages_en['One or more classes are invalid.'] = '';
 // file(s): wcmf/lib/presentation/ApplicationError.php
@@ -211,10 +217,10 @@ $messages_en['Only PersistenceMappers of type RDBMapper are supported.'] = '';
 $messages_en['Optimizing index'] = '';
 // file(s): testapp/public/js/ui/error/NotFoundPage.js
 $messages_en['Page not found'] = '';
-// file(s): testapp/application/model/wcmf/UserRDBBase.php
-$messages_en['password'] = '';
 // file(s): testapp/public/js/ui/login/template/LoginPage.html
 $messages_en['Password'] = '';
+// file(s): testapp/application/model/wcmf/UserRDBBase.php
+$messages_en['password'] = '';
 // file(s): testapp/public/js/ui/login/template/LoginPage.html
 $messages_en['Please log in'] = '';
 // file(s): wcmf/application/controller/SaveController.php, wcmf/lib/io/FileUtil.php
@@ -328,9 +334,9 @@ $messages_en['This is the main entry point of this wCMF application.'] = '';
 // file(s): testapp/application/model/BookBase.php
 $messages_en['title'] = '';
 // file(s): testapp/application/model/wcmf/TranslationBase.php
-$messages_en['Translation'] = '';
-// file(s): testapp/application/model/wcmf/TranslationBase.php
 $messages_en['translation'] = '';
+// file(s): testapp/application/model/wcmf/TranslationBase.php
+$messages_en['Translation'] = '';
 // file(s): wcmf/lib/util/GraphicsUtil.php
 $messages_en['unknown FONTTYPE'] = '';
 // file(s): wcmf/lib/security/UserManager.php

@@ -63,7 +63,7 @@ define([
             this.loginBtn.setProcessing();
 
             this.hideNotification();
-            request.post("main.php", {
+            request.post(appConfig.backendUrl, {
                 data: data,
                 headers: {
                     "Accept" : "application/json"

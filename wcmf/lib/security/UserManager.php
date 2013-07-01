@@ -21,6 +21,7 @@ namespace wcmf\lib\security;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\security\principal\Role;
 use wcmf\lib\security\principal\User;

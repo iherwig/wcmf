@@ -74,7 +74,7 @@ function(
     Dictionary.getDictionary = function() {
         if (Dictionary.dict === null) {
             // load dictionary on first call
-            request.post("main.php", {
+            request.post(appConfig.backendUrl, {
                 sync: true,
                 timeout: 100,
                 data: {
