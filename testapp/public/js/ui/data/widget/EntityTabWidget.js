@@ -89,12 +89,6 @@ define([
                     this.closeTab(this.getTabByOid(data.oid));
                     this.selectTab(data.nextOid);
                     this.isListeningToSelect = true;
-                })),
-                // navigate to tab url instead of default behaviour
-                this.watch("selectedChildWidget", lang.hitch(this, function(name, oval, nval) {
-                    if (this.isListeningToSelect) {
-                        this.selectTab(this.getOidFromTabId(nval.get("id")));
-                    }
                 }))
             );
 
@@ -113,12 +107,26 @@ define([
             EntityTabWidget.lastTabDef = this.selectedTab;
         },
 
+        /**
+         * Overwritten from StackContainer to detect tab changes
+         */
+        selectChild: function(page, animate) {
+            var oid = this.getOidFromTabId(page.id);
+            this.selectTab(oid);
+        },
+
         selectTab: function(oid) {
             if (oid !== undefined) {
                 var routDef = this.getRouteForTab(oid);
                 var route = this.page.getRoute(routDef.route);
                 var url = route.assemble(routDef.routeParams);
-                this.page.pushConfirmed(url);
+                if (this.getTabByOid(this.selectedTab.oid)) {
+                    // if the tab for the current oid is opened, we need to confirm
+                    this.page.pushConfirmed(url);
+                }
+                else {
+                    this.page.push(url);
+                }
             }
         },
 
@@ -222,7 +230,11 @@ define([
                 tabItem.set("onClose", lang.hitch(tabItem, function(container) {
                     // close by ourselves (return false)
                     container.unpersistTab({ oid:container.getOidFromTabId(this.get("id")) });
-                    container.closeTab(tabItem);
+                    when(container.page.confirmLeave(null), function(result) {
+                        if (result === true) {
+                            container.closeTab(tabItem);
+                        }
+                    });
                     return false;
                 }));
             }
