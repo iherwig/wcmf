@@ -1,12 +1,10 @@
 define([
     "dojo/_base/declare",
-    "dojo/_base/lang",
     "dojo/topic",
     "dojo/Stateful",
     "../model/meta/Model"
 ], function(
     declare,
-    lang,
     topic,
     Stateful,
     Model

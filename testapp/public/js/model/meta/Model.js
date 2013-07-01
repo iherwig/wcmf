@@ -1,9 +1,11 @@
 define([
     "dojo/_base/declare",
-    "./_TypeList"
+    "./_TypeList",
+    "../../locale/Dictionary"
 ], function(
     declare,
-    TypeList
+    TypeList,
+    Dict
 ) {
     var Model = declare(null, {
     });
@@ -121,7 +123,8 @@ define([
         var type = Model.getTypeFromOid(object.oid);
         if (type) {
             if (Model.isDummyOid(object.oid)) {
-                result = "New "+Model.getSimpleTypeName(type.typeName);
+                result = Dict.translate("New %0%",
+                    [Dict.translate(Model.getSimpleTypeName(type.typeName))]);
             }
             else {
                 for (var i=0; i<type.displayValues.length; i++) {

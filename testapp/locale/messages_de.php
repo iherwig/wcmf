@@ -4,9 +4,11 @@ $messages_de[''] = '';
 // file(s): testapp/public/js/ui/data/EntityPage.js
 $messages_de['\'%0%\' has unsaved changes. Leaving the page will discard these. Do you want to proceed?'] = '\'%0%\' hat nicht gespeicherte Änderungen. Wenn Sie die Seite verlassen, gehen diese verloren. Wollen Sie fortfahren?';
 // file(s): testapp/public/js/ui/data/widget/EntityFormWidget.js
-$messages_de['\'%0%\' was successfully %1%'] = '\'%0%\' wurde erfolgreich %1%';
+$messages_de['\'%0%\' was successfully created'] = '\'%0%\' wurde erfolgreich erstellt';
 // file(s): testapp/public/js/ui/data/widget/EntityListWidget.js
 $messages_de['\'%0%\' was successfully deleted'] = '\'%0%\' wurde erfolgreich gelöscht';
+// file(s): testapp/public/js/ui/data/widget/EntityFormWidget.js
+$messages_de['\'%0%\' was successfully updated'] = '\'%0%\' wurde erfolgreich aktualisiert';
 // file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/NMPublisherAuthorBase.php, testapp/application/model/PublisherBase.php, testapp/application/model/wcmf/DBSequenceBase.php, testapp/application/model/wcmf/LanguageBase.php, testapp/application/model/wcmf/LocktableBase.php, testapp/application/model/wcmf/NMUserRoleBase.php, testapp/application/model/wcmf/RoleRDBBase.php, testapp/application/model/wcmf/UserConfigBase.php, testapp/application/model/wcmf/UserRDBBase.php
 $messages_de['?'] = '';
 // file(s): testapp/application/model/PublisherBase.php
@@ -75,7 +77,7 @@ $messages_de['Could not create thumbnail image %0%.'] = 'Thumbnail Datei %0% kon
 $messages_de['Could not open source image %0%.'] = 'Quelldatei %0% konnte nicht geöffnet werden.';
 // file(s): testapp/public/js/ui/data/widget/template/EntityListWidget.html
 $messages_de['Create %0%'] = 'Erstelle %0%';
-// file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/PublisherBase.php, testapp/public/js/ui/data/widget/EntityFormWidget.js
+// file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/PublisherBase.php
 $messages_de['created'] = 'Erstellt';
 // file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/PublisherBase.php
 $messages_de['creator'] = 'Erstellt von';
@@ -181,7 +183,7 @@ $messages_de['modified'] = 'Zuletzt geändert';
 $messages_de['Moving'] = '';
 // file(s): testapp/application/model/AuthorBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/PublisherBase.php, testapp/application/model/wcmf/LanguageBase.php, testapp/application/model/wcmf/RoleRDBBase.php, testapp/application/model/wcmf/UserRDBBase.php
 $messages_de['name'] = 'Name';
-// file(s): testapp/public/js/ui/data/EntityPage.js
+// file(s): testapp/public/js/model/meta/Model.js, testapp/public/js/ui/data/EntityPage.js
 $messages_de['New %0%'] = '*%0%';
 // file(s): testapp/application/model/NMPublisherAuthorBase.php
 $messages_de['NMPublisherAuthor'] = '';
@@ -209,10 +211,10 @@ $messages_de['Only PersistenceMappers of type RDBMapper are supported.'] = '';
 $messages_de['Optimizing index'] = '';
 // file(s): testapp/public/js/ui/error/NotFoundPage.js
 $messages_de['Page not found'] = 'Seite nicht gefunden';
-// file(s): testapp/public/js/ui/login/template/LoginPage.html
-$messages_de['Password'] = 'Passwort';
 // file(s): testapp/application/model/wcmf/UserRDBBase.php
 $messages_de['password'] = 'Passwort';
+// file(s): testapp/public/js/ui/login/template/LoginPage.html
+$messages_de['Password'] = 'Passwort';
 // file(s): testapp/public/js/ui/login/template/LoginPage.html
 $messages_de['Please log in'] = 'Anmelden';
 // file(s): wcmf/application/controller/SaveController.php, wcmf/lib/io/FileUtil.php
@@ -335,8 +337,6 @@ $messages_de['unknown FONTTYPE'] = 'unbekannter FONTTYPE';
 $messages_de['Unknown object type: \'%0%\''] = 'Unbekannter Objekttyp: \'%0%\'';
 // file(s): wcmf/lib/security/UserManager.php
 $messages_de['Unknown role property: \'%0%\''] = 'Unbekannte Gruppeneigenschaft: \'%0%\'';
-// file(s): testapp/public/js/ui/data/widget/EntityFormWidget.js
-$messages_de['updated'] = 'Aktualisiert';
 // file(s): wcmf/application/controller/SaveController.php
 $messages_de['Upload failed for %0%.'] = 'Upload fehlgeschlagen für %0%.';
 // file(s): testapp/application/model/wcmf/UserConfigBase.php

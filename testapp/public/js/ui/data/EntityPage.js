@@ -117,7 +117,8 @@ define([
                 });
                 this.entity.setState("new");
                 this.buildForm();
-                this.setTitle(appConfig.title+' - '+Dict.translate("New %0%", [this.type]));
+                this.setTitle(appConfig.title+' - '+Dict.translate("New %0%",
+                        [Dict.translate(this.type)]));
             }
 
             this.own(

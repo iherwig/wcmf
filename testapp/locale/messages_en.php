@@ -4,9 +4,11 @@ $messages_en[''] = '';
 // file(s): testapp/public/js/ui/data/EntityPage.js
 $messages_en['\'%0%\' has unsaved changes. Leaving the page will discard these. Do you want to proceed?'] = '';
 // file(s): testapp/public/js/ui/data/widget/EntityFormWidget.js
-$messages_en['\'%0%\' was successfully %1%'] = '';
+$messages_en['\'%0%\' was successfully created'] = '';
 // file(s): testapp/public/js/ui/data/widget/EntityListWidget.js
 $messages_en['\'%0%\' was successfully deleted'] = '';
+// file(s): testapp/public/js/ui/data/widget/EntityFormWidget.js
+$messages_en['\'%0%\' was successfully updated'] = '';
 // file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/NMPublisherAuthorBase.php, testapp/application/model/PublisherBase.php, testapp/application/model/wcmf/DBSequenceBase.php, testapp/application/model/wcmf/LanguageBase.php, testapp/application/model/wcmf/LocktableBase.php, testapp/application/model/wcmf/NMUserRoleBase.php, testapp/application/model/wcmf/RoleRDBBase.php, testapp/application/model/wcmf/UserConfigBase.php, testapp/application/model/wcmf/UserRDBBase.php
 $messages_en['?'] = '';
 // file(s): testapp/application/model/PublisherBase.php
@@ -75,7 +77,7 @@ $messages_en['Could not create thumbnail image %0%.'] = '';
 $messages_en['Could not open source image %0%.'] = '';
 // file(s): testapp/public/js/ui/data/widget/template/EntityListWidget.html
 $messages_en['Create %0%'] = '';
-// file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/PublisherBase.php, testapp/public/js/ui/data/widget/EntityFormWidget.js
+// file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/PublisherBase.php
 $messages_en['created'] = '';
 // file(s): testapp/application/model/AuthorBase.php, testapp/application/model/BookBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/EntityBaseBase.php, testapp/application/model/ImageBase.php, testapp/application/model/PublisherBase.php
 $messages_en['creator'] = '';
@@ -181,7 +183,7 @@ $messages_en['modified'] = '';
 $messages_en['Moving'] = '';
 // file(s): testapp/application/model/AuthorBase.php, testapp/application/model/ChapterBase.php, testapp/application/model/PublisherBase.php, testapp/application/model/wcmf/LanguageBase.php, testapp/application/model/wcmf/RoleRDBBase.php, testapp/application/model/wcmf/UserRDBBase.php
 $messages_en['name'] = '';
-// file(s): testapp/public/js/ui/data/EntityPage.js
+// file(s): testapp/public/js/model/meta/Model.js, testapp/public/js/ui/data/EntityPage.js
 $messages_en['New %0%'] = '';
 // file(s): testapp/application/model/NMPublisherAuthorBase.php
 $messages_en['NMPublisherAuthor'] = '';
@@ -209,10 +211,10 @@ $messages_en['Only PersistenceMappers of type RDBMapper are supported.'] = '';
 $messages_en['Optimizing index'] = '';
 // file(s): testapp/public/js/ui/error/NotFoundPage.js
 $messages_en['Page not found'] = '';
-// file(s): testapp/public/js/ui/login/template/LoginPage.html
-$messages_en['Password'] = '';
 // file(s): testapp/application/model/wcmf/UserRDBBase.php
 $messages_en['password'] = '';
+// file(s): testapp/public/js/ui/login/template/LoginPage.html
+$messages_en['Password'] = '';
 // file(s): testapp/public/js/ui/login/template/LoginPage.html
 $messages_en['Please log in'] = '';
 // file(s): wcmf/application/controller/SaveController.php, wcmf/lib/io/FileUtil.php
@@ -335,8 +337,6 @@ $messages_en['unknown FONTTYPE'] = '';
 $messages_en['Unknown object type: \'%0%\''] = '';
 // file(s): wcmf/lib/security/UserManager.php
 $messages_en['Unknown role property: \'%0%\''] = '';
-// file(s): testapp/public/js/ui/data/widget/EntityFormWidget.js
-$messages_en['updated'] = '';
 // file(s): wcmf/application/controller/SaveController.php
 $messages_en['Upload failed for %0%.'] = '';
 // file(s): testapp/application/model/wcmf/UserConfigBase.php

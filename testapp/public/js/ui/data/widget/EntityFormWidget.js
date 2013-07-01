@@ -263,10 +263,11 @@ function(
                             }
                         }
                         this.entity.set('oid', response.oid);
+                        var message = this.isNew ? Dict.translate("'%0%' was successfully created", [Model.getDisplayValue(this.entity)]) :
+                                Dict.translate("'%0%' was successfully updated", [Model.getDisplayValue(this.entity)]);
                         this.showNotification({
                             type: "ok",
-                            message: Dict.translate("'%0%' was successfully %1%",
-                                [Model.getDisplayValue(this.entity), this.isNew ? Dict.translate("created") : Dict.translate("updated")]),
+                            message: message,
                             fadeOut: true,
                             onHide: lang.hitch(this, function() {
                                 this.setBtnState("save", false);
