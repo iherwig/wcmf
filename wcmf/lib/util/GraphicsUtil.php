@@ -88,7 +88,7 @@ class GraphicsUtil {
       else {
         $constraint = Message::get("smaller than");
       }
-      throw new Exception(Message::get("Wrong image width. Image width must be %1% %2%px - actual image width is %3%px.",
+      throw new Exception(Message::get("Wrong image width. Image width must be %0% %1%px - actual image width is %2%px.",
         array($constraint, $width, $properties[0])));
     }
     return $dimOk;
@@ -121,7 +121,7 @@ class GraphicsUtil {
       else {
         $constraint = Message::get("smaller than");
       }
-      throw new Exception(Message::get("Wrong image height. Image height must be %1% %2%px - actual image height is %3%px.",
+      throw new Exception(Message::get("Wrong image height. Image height must be %0% %1%px - actual image height is %2%px.",
         array($constraint, $height, $properties[1])));
     }
     return $dimOk;
@@ -164,7 +164,7 @@ class GraphicsUtil {
     // create thumbnail canvas to save to
     $destImg = imagecreatetruecolor($width, $height);
     if (!$destImg) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not create thumbnail image %1%.", array($destName)),
+      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not create thumbnail image %0%.", array($destName)),
         false, $oldErrorLevel);
     }
     // define image functions
@@ -177,7 +177,7 @@ class GraphicsUtil {
     // create thumbnail
     $srcImg = $imagecreationFunction ($srcName);
     if (!$srcImg) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not open source image %1%.", array($srcName)),
+      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not open source image %0%.", array($srcName)),
         false, $oldErrorLevel);
     }
     imagecopyresampled ($destImg, $srcImg, 0, 0, 0, 0, $width, $height, $srcData[0], $srcData[1]);
@@ -243,7 +243,7 @@ class GraphicsUtil {
     // create cropped image canvas to save to
     $destImg = imagecreatetruecolor($width, $height);
     if (!$destImg) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not create cropped image %1%.", array($destName)),
+      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not create cropped image %0%.", array($destName)),
         false, $oldErrorLevel);
     }
     // define image functions
@@ -256,7 +256,7 @@ class GraphicsUtil {
     // create thumbnail
     $srcImg = $imagecreationFunction ($srcName);
     if (!$srcImg) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not open source image %1%.", array($srcName)),
+      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not open source image %0%.", array($srcName)),
         false, $oldErrorLevel);
     }
     if ($x === null)
@@ -362,12 +362,12 @@ class GraphicsUtil {
 
     // load the font to use
     if (!file_exists($fontfile)) {
-      throw new IllegalArgumentException(Message::get("Font file '%1%' not found.", array($fontfile)));
+      throw new IllegalArgumentException(Message::get("Font file '%0%' not found.", array($fontfile)));
     }
 
     $font = @imagepsloadfont($fontfile);
     if ($font === false) {
-      throw new IllegalArgumentException(Message::get("Format of font file '%1%' not supported.", array($fontfile)));
+      throw new IllegalArgumentException(Message::get("Format of font file '%0%' not supported.", array($fontfile)));
     }
     if ($encoding != null) {
       imagepsencodefont($font, $encoding);
@@ -413,7 +413,7 @@ class GraphicsUtil {
 
     // load the font to use
     if (!file_exists($fontfile)) {
-      throw new IllegalArgumentException(Message::get("Font file '%1%' not found.", array($fontfile)));
+      throw new IllegalArgumentException(Message::get("Font file '%0%' not found.", array($fontfile)));
     }
 
     // create the image file

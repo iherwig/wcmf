@@ -249,7 +249,7 @@ abstract class AbstractMapper {
    */
   protected function authorizationFailedError(ObjectId $oid, $action) {
     // when reading only log the error to avoid errors on the display
-    $msg = Message::get("Authorization failed for action '%1%' on '%2%'.", array($action, $oid));
+    $msg = Message::get("Authorization failed for action '%0%' on '%1%'.", array($action, $oid));
     if ($action == PersistenceAction::READ) {
       Log::error($msg."\n".ErrorHandler::getStackTrace(), __CLASS__);
     }

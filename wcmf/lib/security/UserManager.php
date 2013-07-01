@@ -138,7 +138,7 @@ abstract class UserManager {
       throw new IllegalArgumentException(Message::get("The user requires a login name"));
     }
     if ($this->getUser($login) != null) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' already exists", array($login)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' already exists", array($login)));
     }
     // encrypt password
     $password = $this->hashPassword($password);
@@ -161,7 +161,7 @@ abstract class UserManager {
     }
 
     if (($user = $this->getUser($login)) == null) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' does not exist", array($login)));
     }
     $this->removeUserImpl($user);
 
@@ -181,16 +181,16 @@ abstract class UserManager {
    */
   public function setUserProperty($login, $property, $value) {
     if (!in_array($property, array(USER_PROPERTY_LOGIN, USER_PROPERTY_NAME, USER_PROPERTY_FIRSTNAME, USER_PROPERTY_CONFIG))) {
-      throw new IllegalArgumentException("Unknown user property: '%1%'", array($property));
+      throw new IllegalArgumentException("Unknown user property: '%0%'", array($property));
     }
     if (($property == USER_PROPERTY_LOGIN) && ($value == '')) {
       throw new IllegalArgumentException(Message::get("The user requires a login name"));
     }
     if (($property == USER_PROPERTY_LOGIN) && ($this->getUser($value) != null)) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' already exists", array($value)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' already exists", array($value)));
     }
     if (($user = $this->getUser($login)) == null) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' does not exist", array($login)));
     }
     // get the repository user first, because the login may change
     $user = $this->getUser($login);
@@ -216,7 +216,7 @@ abstract class UserManager {
    */
   public function resetPassword($login, $newPassword, $newPasswordRepeated) {
     if (($user = $this->getUser($login)) == null) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' does not exist", array($login)));
     }
 
     if ($newPassword != $newPasswordRepeated) {
@@ -241,7 +241,7 @@ abstract class UserManager {
    */
   public function changePassword($login, $oldPassword, $newPassword, $newPasswordRepeated) {
     if (($user = $this->getUser($login)) == null) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' does not exist", array($login)));
     }
     // encrypt password
     $oldPassword = $this->hashPassword($oldPassword);
@@ -276,7 +276,7 @@ abstract class UserManager {
       throw new IllegalArgumentException(Message::get("The role requires a name"));
     }
     if ($this->getRole($name) != null) {
-      throw new IllegalArgumentException(Message::get("The role '%1%' already exists", array($name)));
+      throw new IllegalArgumentException(Message::get("The role '%0%' already exists", array($name)));
     }
     $role = $this->createRoleImpl($name);
 
@@ -296,7 +296,7 @@ abstract class UserManager {
     }
 
     if (($role = $this->getRole($name)) == null) {
-      throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($name)));
+      throw new IllegalArgumentException(Message::get("The role '%0%' does not exist", array($name)));
     }
     $this->removeRoleImpl($role);
 
@@ -316,16 +316,16 @@ abstract class UserManager {
    */
   public function setRoleProperty($name, $property, $value) {
     if (!in_array($property, array(ROLE_PROPERTY_NAME))) {
-      throw new IllegalArgumentException(Message::get("Unknown role property: '%1%'", array($property)));
+      throw new IllegalArgumentException(Message::get("Unknown role property: '%0%'", array($property)));
     }
     if (($property == ROLE_PROPERTY_NAME) && ($value == '')) {
       throw new IllegalArgumentException(Message::get("The role requires a name"));
     }
     if (($property == ROLE_PROPERTY_NAME) && ($this->getRole($value) != null)) {
-      throw new IllegalArgumentException(Message::get("The role '%1%' already exists", array($value)));
+      throw new IllegalArgumentException(Message::get("The role '%0%' already exists", array($value)));
     }
     if (($role = $this->getRole($name)) == null) {
-      throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($name)));
+      throw new IllegalArgumentException(Message::get("The role '%0%' does not exist", array($name)));
     }
     // get the repository role first, because the name may change
     $role = $this->getRole($name);
@@ -350,13 +350,13 @@ abstract class UserManager {
    */
   public function addUserToRole($rolename, $login) {
     if (($role = $this->getRole($rolename)) == null) {
-      throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($rolename)));
+      throw new IllegalArgumentException(Message::get("The role '%0%' does not exist", array($rolename)));
     }
     if (($user = $this->getUser($login)) == null) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' does not exist", array($login)));
     }
     if ($user != null && $user->hasRole($rolename)) {
-      throw new IllegalArgumentException(Message::get("The user '%1%' already has the role '%2%'", array($login, $rolename)));
+      throw new IllegalArgumentException(Message::get("The user '%0%' already has the role '%1%'", array($login, $rolename)));
     }
     $this->addUserToRoleImpl($role, $user);
 
@@ -373,13 +373,13 @@ abstract class UserManager {
    */
   public function removeUserFromRole($rolename, $login) {
     if (($role = $this->getRole($rolename)) == null) {
-      throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($rolename)));
+      throw new IllegalArgumentException(Message::get("The role '%0%' does not exist", array($rolename)));
     }
     if (($user = $this->getUser($login)) == null) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' does not exist", array($login)));
     }
     if ($user != null && !$user->hasRole($rolename)) {
-      throw new IllegalArgumentException(Message::get("The user '%1%' does not have the role '%2%'", array($login, $rolename)));
+      throw new IllegalArgumentException(Message::get("The user '%0%' does not have the role '%1%'", array($login, $rolename)));
     }
     $this->removeUserFromRoleImpl($role, $user);
 
@@ -427,7 +427,7 @@ abstract class UserManager {
    */
   public function listUserRoles($login) {
     if (($user = $this->getUser($login)) == null) {
-      throw new IllegalArgumentException(Message::get("The login '%1%' does not exist", array($login)));
+      throw new IllegalArgumentException(Message::get("The login '%0%' does not exist", array($login)));
     }
     $roles = $user->getRoles();
     $result = array();
@@ -447,7 +447,7 @@ abstract class UserManager {
     }
 
     if (($role = &$this->getRole($rolename)) == null) {
-      throw new IllegalArgumentException(Message::get("The role '%1%' does not exist", array($rolename)));
+      throw new IllegalArgumentException(Message::get("The role '%0%' does not exist", array($rolename)));
     }
     $result = array();
     for($i=0, $count=sizeof($this->_userRepository['users']); $i<$count; $i++) {
@@ -513,7 +513,7 @@ abstract class UserManager {
       $principalArray = $this->_userRepository['roles'];
     }
     else {
-      throw new IllegalArgumentException(Message::get("Unknown object type: '%1%'", array($type)));
+      throw new IllegalArgumentException(Message::get("Unknown object type: '%0%'", array($type)));
     }
     for($i=0, $count=sizeof($principalArray); $i<$count; $i++) {
       $curPrincipal = $principalArray[$i];
@@ -540,11 +540,11 @@ abstract class UserManager {
         $this->removeRole($principal->getName());
       }
       else {
-        throw new IllegalArgumentException(Message::get("Unknown object type: '%1%'", array($type)));
+        throw new IllegalArgumentException(Message::get("Unknown object type: '%0%'", array($type)));
       }
     }
     else {
-      throw new IllegalArgumentException(Message::get("The principal does not exist: '%1%'", array($oid)));
+      throw new IllegalArgumentException(Message::get("The principal does not exist: '%0%'", array($oid)));
     }
   }
 

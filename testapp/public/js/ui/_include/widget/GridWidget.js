@@ -16,6 +16,7 @@ define([
     "dojo/topic",
     "dojo/on",
     "../../../model/meta/Model",
+    "../../../locale/Dictionary",
     "dojo/text!./template/GridWidget.html"
 ], function (
     declare,
@@ -35,6 +36,7 @@ define([
     topic,
     on,
     Model,
+    Dict,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
@@ -46,7 +48,7 @@ define([
         enabledFeatures: [], // array of strings matching items in optionalFeatures
 
         actionsByName: {},
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
         gridWidget: null,
 
         defaultFeatures: [Selection, Keyboard, ColumnHider, ColumnResizer],
@@ -117,7 +119,7 @@ define([
             for (var i=0, count=displayValues.length; i<count; i++) {
                 var curValue = displayValues[i];
                 columns.push({
-                    label: curValue,
+                    label: Dict.translate(curValue),
                     field: curValue,
                     sortable: true
                 });
@@ -159,14 +161,14 @@ define([
                 selectionMode: "extended",
                 //query: { find: 'xx' },
                 //queryOptions: { sort: [{ attribute: 'title', descending: false }] },
-                loadingMessage: "Loading",
-                noDataMessage: "No data"
+                loadingMessage: Dict.translate("Loading"),
+                noDataMessage: Dict.translate("No data")
             }, this.gridNode);
 
             gridWidget.on("dgrid-error", function (evt) {
                 topic.publish('ui/_include/widget/GridWidget/unknown-error', {
                     notification: {
-                        message: "Backend error",
+                        message: Dict.translate("Backend error"),
                         type: 'error'
                     }
                 });

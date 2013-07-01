@@ -72,10 +72,10 @@ class Message {
   /**
    * Get a localized string.
    * @note It is not recommended to use this method with concatenated strings because this
-   * restricts the positions of words in translations. E.g. 'She was born in %1% on %2%'
-   * translates to the german sentance 'Sie wurde am \%2% in \%1% geboren' with the variables
+   * restricts the positions of words in translations. E.g. 'She was born in %0% on %1%'
+   * translates to the german sentence 'Sie wurde am %1% in %0% geboren' with the variables
    * flipped.
-   * @param message The message to translate (\%0%, \%1%, ... will be replaced by given parameters).
+   * @param message The message to translate (%0%, %1%, ... will be replaced by given parameters).
    * @param parameters An array of values for parameter substitution in the message.
    * @param lang The language, optional, default: ''.
    * @return The localized string

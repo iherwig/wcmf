@@ -4,14 +4,16 @@ define([
     "./ActionBase",
     "../ui/_include/widget/ConfirmDlgWidget",
     "../persistence/Store",
-    "../model/meta/Model"
+    "../model/meta/Model",
+    "../locale/Dictionary"
 ], function (
     declare,
     lang,
     ActionBase,
     ConfirmDlg,
     Store,
-    Model
+    Model,
+    Dict
 ) {
     return declare([ActionBase], {
 
@@ -29,8 +31,8 @@ define([
                 this.init(data);
             }
             return new ConfirmDlg({
-                title: "Confirm Object Deletion",
-                message: "Do you really want to delete '"+Model.getDisplayValue(data)+"'?",
+                title: Dict.translate("Confirm Object Deletion"),
+                message: Dict.translate("Do you really want to delete '%0%'?", [Model.getDisplayValue(data)]),
                 okCallback: lang.hitch(this, function(dlg) {
                     var typeName = Model.getTypeNameFromOid(data.oid);
                     var store = Store.getStore(typeName, appConfig.defaultLanguage);

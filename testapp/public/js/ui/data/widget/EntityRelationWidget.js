@@ -47,7 +47,7 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            this.relationName = this.relation.name;
+            this.relationName = Dict.translate(this.relation.name);
         },
 
         postCreate: function() {

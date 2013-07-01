@@ -7,6 +7,7 @@ define( [
     "dojo/topic",
     "dijit/form/TextBox",
     "ckeditor/ckeditor",
+    "../../../../locale/Dictionary",
     "dojo/text!./template/CKEditor.html"
 ],
 function(
@@ -16,6 +17,7 @@ function(
     topic,
     TextBox,
     CKEditor,
+    Dict,
     template
 ) {
     return declare([TextBox], {
@@ -30,7 +32,7 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            this.label = this.attribute.name;
+            this.label = Dict.translate(this.attribute.name);
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];

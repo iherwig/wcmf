@@ -2,13 +2,15 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
-    "dijit/form/Textarea"
+    "dijit/form/Textarea",
+    "../../../../locale/Dictionary"
 ],
 function(
     declare,
     lang,
     topic,
-    TextArea
+    TextArea,
+    Dict
 ) {
     return declare([TextArea], {
 
@@ -20,7 +22,7 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            this.label = this.attribute.name;
+            this.label = Dict.translate(this.attribute.name);
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];

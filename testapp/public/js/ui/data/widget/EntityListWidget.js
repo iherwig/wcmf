@@ -45,6 +45,8 @@ function(
 
         constructor: function(args) {
             declare.safeMixin(this, args);
+            
+            this.typeName = Dict.translate(this.type);
         },
 
         postCreate: function() {

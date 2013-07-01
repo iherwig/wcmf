@@ -14,7 +14,7 @@ function(
     /**
      * Translate templates to the ui language.
      * It will translate text_to_translate in occurences of {translate:text_to_translate}
-     * in the given template. Usage:
+     * or {translate:text_%0%_%1%|r0,r1} in the given template. Usage:
      *
      * lang.replace(template, Dict.tplReplace)
      *
@@ -24,9 +24,28 @@ function(
      */
     Dictionary.tplTranslate = function(_, text) {
         var dict = Dictionary.getDictionary();
-        var key = text.replace(/^translate:/, "");
-        // dict maybe "not-found", if language file does not exist
-        return (typeof dict === "string" | !dict[key]) ? key : dict[key];
+        if (text.match(/^translate:/)) {
+            var key = text.replace(/^translate:/, "");
+            // check for message|params combination
+            var params = [];
+            if (key.indexOf("|") >= 0) {
+                var splitKey = key.split("|");
+                key = splitKey[0];
+                params = splitKey[1].split(",");
+            }
+            // dict maybe "not-found", if language file does not exist
+            var translation = (typeof dict === "string" | !dict[key]) ? key : dict[key];
+            // replace parameters
+            if (typeof params === "object") {
+                return lang.replace(translation, params, /\%([^\%]+)\%/g);
+            }
+            else {
+                return translation;
+            }
+        }
+        else {
+            return _;
+        }
     };
 
     /**

@@ -8,7 +8,8 @@ define( [
     "dojo/when",
     "dojo/on",
     "dijit/layout/ContentPane",
-    "../Factory"
+    "../Factory",
+    "../../../../locale/Dictionary"
 ],
 function(
     declare,
@@ -20,7 +21,8 @@ function(
     when,
     on,
     ContentPane,
-    ControlFactory
+    ControlFactory,
+    Dict
 ) {
     return declare([ContentPane], {
 
@@ -35,7 +37,7 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            this.label = this.attribute.name;
+            this.label = Dict.translate(this.attribute.name);
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];

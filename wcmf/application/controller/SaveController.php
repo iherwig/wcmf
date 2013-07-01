@@ -263,7 +263,7 @@ class SaveController extends Controller {
         }
         // check if file was actually uploaded
         if (!is_uploaded_file($data['tmp_name'])) {
-          $message = Message::get("Possible file upload attack: filename %1%.", array($data['name']));
+          $message = Message::get("Possible file upload attack: filename %0%.", array($data['name']));
           $response->addError(ApplicationError::get('GENERAL_ERROR', array('message' => $message)));
           return false;
         }
@@ -295,7 +295,7 @@ class SaveController extends Controller {
       }
       else {
         $response->addError(ApplicationError::get('GENERAL_ERROR',
-          array('message' => Message::get("Upload failed for %1%.", array($data['name'])))));
+          array('message' => Message::get("Upload failed for %0%.", array($data['name'])))));
         return false;
       }
     }
@@ -323,7 +323,7 @@ class SaveController extends Controller {
       $mimeTypes = $this->getMimeTypes($oid, $valueName);
       if ($mimeTypes != null && !in_array($mimeType, $mimeTypes)) {
         $response->addError(ApplicationError::get('GENERAL_ERROR',
-          array('message' => Message::get("File '%1%' has wrong mime type: %2%. Allowed types: %3%.", array($filename, $mimeType, join(", ", $mimeTypes))))));
+          array('message' => Message::get("File '%0%' has wrong mime type: %1%. Allowed types: %2%.", array($filename, $mimeType, join(", ", $mimeTypes))))));
         return false;
       }
     }

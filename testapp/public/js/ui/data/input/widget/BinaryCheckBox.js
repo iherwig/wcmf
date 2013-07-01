@@ -1,10 +1,12 @@
 define( [
     "dojo/_base/declare",
-    "dijit/form/CheckBox"
+    "dijit/form/CheckBox",
+    "../../../../locale/Dictionary"
 ],
 function(
     declare,
-    CheckBox
+    CheckBox,
+    Dict
 ) {
     return declare([CheckBox], {
 
@@ -15,7 +17,7 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            this.label = this.attribute.name;
+            this.label = Dict.translate(this.attribute.name);
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];

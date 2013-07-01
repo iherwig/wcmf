@@ -61,7 +61,7 @@ class CreateInstanceController extends Controller {
     $name = $request->getValue('newInstanceName');
     if(file_exists($this->getNewInstanceLocation($name))) {
       $response->addError(new ApplicationError('ERROR',
-        Message::get("The instance '%1%' already exists. Please choose a different name.", $name),
+        Message::get("The instance '%0%' already exists. Please choose a different name.", $name),
               ERROR_LEVEL_ERROR));
       return false;
     }

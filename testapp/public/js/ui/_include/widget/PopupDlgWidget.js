@@ -10,6 +10,7 @@ define([
     "dijit/_WidgetsInTemplateMixin",
     "dijit/Dialog",
     "dijit/form/Button",
+    "../../../locale/Dictionary",
     "dojo/text!./template/PopupDlgWidget.html"
 ], function (
     declare,
@@ -23,6 +24,7 @@ define([
     _WidgetsInTemplateMixin,
     Dialog,
     Button,
+    Dict,
     template
 ) {
     /**
@@ -55,7 +57,7 @@ define([
 
             var message = this.message || '';
             var contentWidget = new (declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-                templateString: template, //get template via dojo loader or so
+                templateString: lang.replace(template, Dict.tplTranslate),
                 message: message
             }));
             contentWidget.startup();

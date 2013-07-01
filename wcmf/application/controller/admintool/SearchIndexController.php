@@ -72,7 +72,7 @@ class SearchIndexController extends BatchController {
       if (sizeof($oids) == 0) {
         $oids = array(1);
       }
-      $this->addWorkPackage(Message::get('Indexing %1%', array($type)), 10, $oids, 'index');
+      $this->addWorkPackage(Message::get('Indexing %0%', array($type)), 10, $oids, 'index');
     }
   }
 

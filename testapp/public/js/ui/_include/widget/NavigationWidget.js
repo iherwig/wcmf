@@ -15,6 +15,7 @@ define([
     "dojo/dom-class",
     "dojo/NodeList-dom",
     "../../../Cookie",
+    "../../../locale/Dictionary",
     "dojo/text!./template/NavigationWidget.html"
 ], function (
     declare,
@@ -33,12 +34,13 @@ define([
     domClass,
     nodeListDom,
     Cookie,
+    Dict,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
 
         titleOnly: false,
-        templateString: template,
+        templateString: lang.replace(template, Dict.tplTranslate),
 
         constructor: function (params) {
             this.titleOnly = params.titleOnly;

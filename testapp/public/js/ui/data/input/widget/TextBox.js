@@ -2,13 +2,15 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
-    "dijit/form/TextBox"
+    "dijit/form/TextBox",
+    "../../../../locale/Dictionary"
 ],
 function(
     declare,
     lang,
     topic,
-    TextBox
+    TextBox,
+    Dict
 ) {
     return declare([TextBox], {
 
@@ -20,7 +22,7 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
-            this.label = this.attribute.name;
+            this.label = Dict.translate(this.attribute.name);
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];

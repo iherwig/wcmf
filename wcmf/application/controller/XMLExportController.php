@@ -149,7 +149,7 @@ class XMLExportController extends BatchController {
     $session->set($this->ROOT_OIDS, $rootOIDs);
 
     // create work package for first root node
-    $this->addWorkPackage(Message::get('Exporting tree: start with %1%', array($nextOID)), 1, array($nextOID), 'exportNodes');
+    $this->addWorkPackage(Message::get('Exporting tree: start with %0%', array($nextOID)), 1, array($nextOID), 'exportNodes');
   }
 
   /**
@@ -212,7 +212,7 @@ class XMLExportController extends BatchController {
       $tmp = null;
       $session->set($this->ITERATOR_ID, $tmp);
 
-      $name = Message::get('Exporting tree: start with %1%', array($nextOID));
+      $name = Message::get('Exporting tree: start with %0%', array($nextOID));
       $this->addWorkPackage($name, 1, array($nextOID), 'exportNodes');
     }
     elseif ($iterator->valid()) {
@@ -220,7 +220,7 @@ class XMLExportController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Exporting tree: continue with %1%', array($iterator->current()));
+      $name = Message::get('Exporting tree: continue with %0%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'exportNodes');
     }
     else {

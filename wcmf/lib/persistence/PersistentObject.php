@@ -199,7 +199,7 @@ class PersistentObject {
       $this->setState(self::STATE_DELETED);
     }
     else {
-      throw new PersistenceException(Message::get("Cannot delete immutable object '%1%'.", array($this->getOID())));
+      throw new PersistenceException(Message::get("Cannot delete immutable object '%0%'.", array($this->getOID())));
     }
   }
 
@@ -490,7 +490,7 @@ class PersistentObject {
       return;
     }
     // construct the error message
-    $errorMessage = Message::get("Wrong value for %1% (%2%). ", array($name, $value));
+    $errorMessage = Message::get("Wrong value for %0% (%1%). ", array($name, $value));
 
     // use configured message if existing
     $restrictionsDescription = $this->getValueProperty($name, 'restrictions_description');
@@ -500,10 +500,10 @@ class PersistentObject {
     else {
       // construct default message
       if (strlen($restrictionsMatch) > 0) {
-        $errorMessage .= Message::get("The value must match %1%.", array($restrictionsMatch));
+        $errorMessage .= Message::get("The value must match %0%.", array($restrictionsMatch));
       }
       if (strlen($restrictionsNotMatch) > 0) {
-        $errorMessage .= Message::get("The value must NOT match %1%.", array($restrictionsNotMatch));
+        $errorMessage .= Message::get("The value must NOT match %0%.", array($restrictionsNotMatch));
       }
     }
     throw new ValidationException($errorMessage);
@@ -547,7 +547,7 @@ class PersistentObject {
       }
     }
     else {
-      throw new PersistenceException(Message::get("Cannot modify immutable object '%1%'.", array($this->getOID())));
+      throw new PersistenceException(Message::get("Cannot modify immutable object '%0%'.", array($this->getOID())));
     }
     return false;
   }

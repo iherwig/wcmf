@@ -52,18 +52,18 @@ class FileUtil {
         }
         $result = move_uploaded_file($mediaFile['tmp_name'], $destName);
         if ($result === false) {
-          throw new IOException("Failed to move %1% to %2%.", array($mediaFile['tmp_name'], $destName));
+          throw new IOException("Failed to move %0% to %1%.", array($mediaFile['tmp_name'], $destName));
         }
         chmod($destName, 0644);
         $filename = basename($destName);
       }
       else {
-        throw new IOException(Message::get("File '%1%' has wrong mime type: %2%. Allowed types: %3%.",
+        throw new IOException(Message::get("File '%0%' has wrong mime type: %1%. Allowed types: %2%.",
           array($mediaFile['name'], $mediaFile['type'], join(", ", $mimeTypes))));
       }
     }
     else {
-      $msg = Message::get("Possible file upload attack: filename %1%.", array($mediaFile['name']));
+      $msg = Message::get("Possible file upload attack: filename %0%.", array($mediaFile['name']));
       throw new IOException($msg);
     }
     return $filename;
@@ -114,7 +114,7 @@ class FileUtil {
       $d->close();
     }
     else {
-      throw new IllegalArgumentException(Message::get("The directory '%1%' does not exist.", array($directory)));
+      throw new IllegalArgumentException(Message::get("The directory '%0%' does not exist.", array($directory)));
     }
     krsort($result);
     return array_values($result);
@@ -160,7 +160,7 @@ class FileUtil {
       $d->close();
     }
     else {
-      throw new IllegalArgumentException(Message::get("The directory '%1%' does not exist.", array($directory)));
+      throw new IllegalArgumentException(Message::get("The directory '%0%' does not exist.", array($directory)));
     }
     return $result;
   }
@@ -179,7 +179,7 @@ class FileUtil {
       self::copyRecDir($source, $dest);
     }
     else {
-      throw new IllegalArgumentException(Message::get("Cannot copy %1% (it's neither a file nor a directory).", array($source)));
+      throw new IllegalArgumentException(Message::get("Cannot copy %0% (it's neither a file nor a directory).", array($source)));
     }
   }
 

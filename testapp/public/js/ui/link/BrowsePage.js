@@ -41,7 +41,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+Dict.translate('Inhalt'));
+            this.setTitle(appConfig.title+' - '+Dict.translate('Content'));
 
             var store = TreeStore.getStore();
             var model = new ObjectStoreModel({

@@ -34,7 +34,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+Dict.translage('Settings'));
+            this.setTitle(appConfig.title+' - '+Dict.translate('Settings'));
 
             var navi = new NavigationWidget({
             }, this.navigationNode);

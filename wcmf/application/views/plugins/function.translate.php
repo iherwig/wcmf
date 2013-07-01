@@ -27,7 +27,7 @@ use wcmf\lib\i18n\Message;
 * Type:     function
 * Name:     translate
 * Purpose:  translate a text
-* Usage:    e.g. {translate text="Logged in as %1% since %2%" r0="$login" r1="$logindate" [varname="loginText"]}
+* Usage:    e.g. {translate text="Logged in as %0% since %1%" r0="$login" r1="$logindate" [varname="loginText"]}
 * -------------------------------------------------------------
 */
 function smarty_function_translate($params, &$smarty)

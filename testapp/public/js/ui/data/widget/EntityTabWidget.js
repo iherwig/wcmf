@@ -8,7 +8,8 @@ define([
     "dijit/layout/ContentPane",
     "../../../Cookie",
     "../../../model/meta/Model",
-    "../../../persistence/Store"
+    "../../../persistence/Store",
+    "../../../locale/Dictionary"
 ], function (
     declare,
     lang,
@@ -19,7 +20,8 @@ define([
     ContentPane,
     Cookie,
     Model,
-    Store
+    Store,
+    Dict
 ) {
     /**
      * Tab panel for entity types and entity instances.
@@ -210,7 +212,7 @@ define([
         },
 
         setTypeTabName: function(typeName, tabItem) {
-            tabItem.set("title", '<i class="icon-reorder"></i> '+typeName);
+            tabItem.set("title", '<i class="icon-reorder"></i> '+Dict.translate(typeName));
         },
 
         setInstanceTabName: function(entity, tabItem) {

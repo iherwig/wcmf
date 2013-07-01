@@ -95,7 +95,7 @@ class I18nUtil {
       $messagePatterns = array(
           'Message::get\(([\'"])(.*?)\\1',    // usage in PHP code, e.g. Message::get("Text to translate")
           'Dict\.translate\(([\'"])(.*?)\\3', // usage in JS code, e.g. Dict.translate("Text to translate")
-          '\{translate:(.*)\}', // usage in dojo template, e.g. {translate:Text to translate}
+          '\{translate:(.*?)[\|\}]', // usage in dojo template, e.g. {translate:Text to translate}, {translate:Text to translate|...}
       );
       preg_match_all('/'.join('|', $messagePatterns).'/i', $content, $matchesTmp);
       $matches = array();

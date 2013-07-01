@@ -147,7 +147,7 @@ class BatchDisplayController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Loading tree: continue with %1%', array($iterator->current()));
+      $name = Message::get('Loading tree: continue with %0%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'loadNodes');
     }
     else {
@@ -195,7 +195,7 @@ class BatchDisplayController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Loading tree: continue with %1%', array($iterator->current()));
+      $name = Message::get('Loading tree: continue with %0%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'loadNodes');
     }
     else {
