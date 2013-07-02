@@ -41,6 +41,8 @@ define([
      *
      * @code
      * new EntityTabWidget({
+     *     context: 'content',
+     *     types: appConfig.rootTypes,
      *     page: this,
      *     selectedTab: {
      *         oid: 'Author'
@@ -51,18 +53,22 @@ define([
      */
     var EntityTabWidget = declare([TabContainer], {
 
+        context: '', // used as cookie prefix
+        types: [],
         page: null,
         selectedTab: {},
         selectedPanel: {},
-        lastTab: {},
+
+        // data persisted in cookie
+        tabDefs: {},
 
         constructor: function(params) {
             declare.safeMixin(this, params);
 
+            this.restoreFromCookie();
+
             this.doLayout = false;
-            this.lastTab =  EntityTabWidget.lastTabDef;
             this.isListeningToSelect = true;
-            Cookie.set("lastTab", this.lastTab);
         },
 
         postCreate: function() {
@@ -102,11 +108,10 @@ define([
             this.persistTab(this.selectedTab);
 
             // create all panels
-            for (var oid in EntityTabWidget.tabDefs) {
+            for (var oid in this.tabDefs) {
                 var isSelected = (oid === this.selectedTab.oid);
                 this.createTab(oid, isSelected ? this.selectedPanel : null);
             }
-            EntityTabWidget.lastTabDef = this.selectedTab;
         },
 
         /**
@@ -149,7 +154,7 @@ define([
         },
 
         isPersisted: function(tabDef) {
-            return EntityTabWidget.tabDefs[tabDef.oid] !== undefined;
+            return this.tabDefs[tabDef.oid] !== undefined;
         },
 
         isInstanceTab: function(oid) {
@@ -160,19 +165,19 @@ define([
 
         persistTab: function(tabDef) {
             if (!this.isPersisted(tabDef)) {
-                EntityTabWidget.tabDefs[tabDef.oid] = tabDef;
-                var openInstanceTabs = Cookie.get("openInstanceTabs", {});
+                this.tabDefs[tabDef.oid] = tabDef;
+                var openInstanceTabs = this.getCookieValue("openInstanceTabs");
                 openInstanceTabs[tabDef.oid] = tabDef;
-                Cookie.set("openInstanceTabs", openInstanceTabs);
+                this.setCookieValue("openInstanceTabs", openInstanceTabs);
             }
         },
 
         unpersistTab: function(tabDef) {
             if (this.isPersisted(tabDef)) {
-                delete EntityTabWidget.tabDefs[tabDef.oid];
-                var openInstanceTabs = Cookie.get("openInstanceTabs", {});
+                delete this.tabDefs[tabDef.oid];
+                var openInstanceTabs = this.getCookieValue("openInstanceTabs");
                 delete openInstanceTabs[tabDef.oid];
-                Cookie.set("openInstanceTabs", openInstanceTabs);
+                this.setCookieValue("openInstanceTabs", openInstanceTabs);
             }
         },
 
@@ -267,32 +272,33 @@ define([
                 }
             }
             return null;
-        }
-    });
+        },
 
-    EntityTabWidget.lastTabDef = {};
-    EntityTabWidget.tabDefs = null;
-    EntityTabWidget.initializeTabs = function() {
-        if (EntityTabWidget.tabDefs === null) {
-            EntityTabWidget.tabDefs = {};
-            // initially add all root types
-            for (var i=0, count=appConfig.rootTypes.length; i<count; i++) {
-                var typeName = appConfig.rootTypes[i];
-                EntityTabWidget.tabDefs[typeName] = {
+        restoreFromCookie: function() {
+            this.tabDefs = {};
+            // initially add all configured types
+            for (var i=0, count=this.types.length; i<count; i++) {
+                var typeName = this.types[i];
+                this.tabDefs[typeName] = {
                     oid: typeName
                 };
             }
             // add tabs opened by the user (stored in cookie)
-            var openInstanceTabs = Cookie.get("openInstanceTabs", {});
+            var openInstanceTabs = this.getCookieValue("openInstanceTabs");
             for (var key in openInstanceTabs) {
                 var tabDef = openInstanceTabs[key];
-                EntityTabWidget.tabDefs[tabDef.oid] = tabDef;
+                this.tabDefs[tabDef.oid] = tabDef;
             }
-            var lastTab = Cookie.get("lastTab", {});
-            EntityTabWidget.lastTabDef = lastTab;
+        },
+
+        getCookieValue: function(name) {
+            return Cookie.get(this.context+"_"+name, {});
+        },
+
+        setCookieValue: function(name, value) {
+            Cookie.set(this.context+"_"+name, value);
         }
-    };
-    EntityTabWidget.initializeTabs();
+    });
 
     return EntityTabWidget;
 });

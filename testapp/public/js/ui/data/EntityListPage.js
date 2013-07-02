@@ -9,7 +9,7 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
-    "./widget/EntityTabWidget",
+    "../_include/widget/EntityTabWidget",
     "../../model/meta/Model",
     "../../locale/Dictionary",
     "dojo/text!./template/EntityListPage.html"
@@ -71,6 +71,8 @@ define([
                         onCreated: lang.hitch(this, function(panel) {
                             // create the tab container
                             var tabs = new EntityTabWidget({
+                                context: 'content',
+                                types: appConfig.rootTypes,
                                 page: this,
                                 selectedTab: {
                                     oid: this.type
