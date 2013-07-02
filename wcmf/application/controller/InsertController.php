@@ -148,7 +148,7 @@ class InsertController extends Controller {
       $transaction->commit();
     }
     catch (Exception $ex) {
-      $response->addError(ApplicationError::get('GENERAL_ERROR'));
+      $response->addError(ApplicationError::fromException($ex));
       $transaction->rollback();
     }
 

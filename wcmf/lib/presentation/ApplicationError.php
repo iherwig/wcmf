@@ -122,6 +122,7 @@ class ApplicationError {
    * @param code An error code
    * @param data Some error codes required to transmit further information
    *             to the client, optional [default: null]
+   * @return ApplicationError
    */
   public static function get($code, $data=null) {
     if (defined($code)) {
@@ -131,6 +132,15 @@ class ApplicationError {
     else {
       throw new IllegalArgumentException("The error code '".$code."' is not defined");
     }
+  }
+
+  /**
+   * Factory method for transforming an exception into an ApplicationError instance.
+   * @param ex Exception
+   * @return ApplicationError
+   */
+  public static function fromException(\Exception $ex) {
+    return new ApplicationError('GENERAL_ERROR', $ex->getMessage(), ERROR_LEVEL_ERROR);
   }
 }
 

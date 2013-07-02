@@ -91,7 +91,8 @@ abstract class UserManager {
    * @param userType
    */
   public function setUserType($userType) {
-    $this->_userType = $userType;
+    $persistenceFacade = ObjectFactory::getInstance('PersistenceFacade');
+    $this->_userType = $persistenceFacade->getFullyQualifiedType($userType);
   }
 
   /**
@@ -99,7 +100,8 @@ abstract class UserManager {
    * @param roleType
    */
   public function setRoleType($roleType) {
-    $this->_roleType = $roleType;
+    $persistenceFacade = ObjectFactory::getInstance('PersistenceFacade');
+    $this->_roleType = $persistenceFacade->getFullyQualifiedType($roleType);
   }
 
   /**
@@ -244,10 +246,8 @@ abstract class UserManager {
     if (($user = $this->getUser($login)) == null) {
       throw new IllegalArgumentException(Message::get("The login '%0%' does not exist", array($login)));
     }
-    // encrypt password
-    $oldPassword = $this->hashPassword($oldPassword);
-
-    if ($user->getPassword() != $oldPassword) {
+    // check old password
+    if (!$this->verifyPassword($oldPassword, $user->getPassword())) {
       throw new IllegalArgumentException(Message::get("The old password is incorrect"));
     }
     if ($newPassword != $newPasswordRepeated) {
@@ -505,6 +505,10 @@ abstract class UserManager {
    * @return A reference to the matching User/Role object or null if the principal does not exist
    */
   public function getPrincipal(ObjectId $oid) {
+    if ($this->_userRepository == null) {
+      $this->_userRepository = $this->getUsersAndRoles();
+    }
+
     $principal = null;
     $type = $oid->getType();
     if ($type == self::getUserType()) {

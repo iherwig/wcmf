@@ -21,6 +21,7 @@ namespace wcmf\application\controller;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -29,17 +30,15 @@ use wcmf\lib\presentation\Response;
  * UserController is used to edit data of the current users.
  *
  * <b>Input actions:</b>
- * - @em save Save the new password
+ * - @em changePassword Save the new password
  * - unspecified: Show the change password screen
  *
  * <b>Output actions:</b>
- * - @em edituser In any case
+ * - @em ok In any case
  *
- * @param[in] changepassword Must be 'yes' to initiate password change action
  * @param[in] oldpassword The old password
  * @param[in] newpassword1 The new password
  * @param[in] newpassword2 The new password
- * @param[out] message The message describing the result
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -64,31 +63,35 @@ class UserController extends Controller {
    */
   public function executeKernel() {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
     // process actions
 
-    // save changes
-    if ($request->getAction() == 'save') {
+    // change password
+    if ($request->getAction() == 'changePassword') {
       // load model
       $user = $permissionManager->getAuthUser();
       $oid = new ObjectId(ObjectFactory::getInstance('userManager')->getUserType(), $user->getUserId());
       $principal = $this->_userManager->getPrincipal($oid);
 
-      // password
-      $this->_userManager->beginTransaction();
-      if ($request->getValue('changepassword') == 'yes') {
-        $this->_userManager->changePassword($principal->getLogin(), $this->_request->getValue('oldpassword'),
-        $request->getValue('newpassword1'), $this->_request->getValue('newpassword2'));
-        $message .= Message::get("The password was successfully changed.");
+      // start the persistence transaction
+      $transaction = $persistenceFacade->getTransaction();
+      $transaction->begin();
+      try {
+        $this->_userManager->changePassword($principal->getLogin(), $request->getValue('oldpassword'),
+          $request->getValue('newpassword1'), $request->getValue('newpassword2'));
+        $transaction->commit();
       }
-      $this->_userManager->commitTransaction();
+      catch(\Exception $ex) {
+        $response->addError(ApplicationError::fromException($ex));
+        $transaction->rollback();
+      }
     }
-    $response->setValue("message", $message);
 
     // success
-    $response->setAction('edituser');
+    $response->setAction('ok');
     return false;
   }
 }

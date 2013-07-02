@@ -232,7 +232,7 @@ class SaveController extends Controller {
       $transaction->rollback();
     }
     catch (Exception $ex) {
-      $response->addError(ApplicationError::get('GENERAL_ERROR'));
+      $response->addError(ApplicationError::fromException($ex));
       $transaction->rollback();
     }
 

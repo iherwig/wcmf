@@ -101,15 +101,19 @@ abstract class AbstractUser extends Node implements User {
       if (!$isAnonymous) {
         $permissionManager->deactivate();
       }
-      $this->loadChildren($roleType);
-
+      $mapper = $this->getMapper();
+      foreach ($mapper->getRelations() as $relation) {
+        if ($relation->getOtherType() == $roleType) {
+          $this->loadChildren($relation->getOtherRole());
+        }
+      }
       // reactivate the PermissionManager if necessary
       if (!$isAnonymous) {
         $permissionManager->activate();
       }
       $this->_hasOwnRolesLoaded = true;
     }
-    return $this->getChildrenEx(null, $roleType, null, null);
+    return $this->getChildrenEx(null, null, $roleType, null);
   }
 
   /**

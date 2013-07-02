@@ -77,7 +77,7 @@ class DefaultAuthUser implements AuthUser {
           // load user config initially
           $userConfig = $this->getConfig();
           if (strlen($userConfig) > 0) {
-            $config->addConfiguation($userConfig);
+            $config->addConfiguration($userConfig);
           }
 
           // add policies
@@ -175,8 +175,9 @@ class DefaultAuthUser implements AuthUser {
    */
   public function getUser($login, $password) {
     if ($this->_user != null) {
-      $this->_user->getUser($login, $password);
+      return $this->_user->getUser($login, $password);
     }
+    return null;
   }
 
   /**
@@ -184,8 +185,9 @@ class DefaultAuthUser implements AuthUser {
    */
   public function getUserId() {
     if ($this->_user != null) {
-      $this->_user->getUserId();
+      return $this->_user->getUserId();
     }
+    return null;
   }
 
   /**
@@ -204,6 +206,7 @@ class DefaultAuthUser implements AuthUser {
     if ($this->_user != null) {
       return $this->_user->getLogin();
     }
+    return null;
   }
 
   /**
@@ -220,8 +223,9 @@ class DefaultAuthUser implements AuthUser {
    */
   public function getPassword() {
     if ($this->_user != null) {
-      $this->_user->getPassword();
+      return $this->_user->getPassword();
     }
+    return null;
   }
 
   /**
@@ -238,8 +242,9 @@ class DefaultAuthUser implements AuthUser {
    */
   public function getName() {
     if ($this->_user != null) {
-      $this->_user->getName();
+      return $this->_user->getName();
     }
+    return null;
   }
 
   /**
@@ -256,8 +261,9 @@ class DefaultAuthUser implements AuthUser {
    */
   public function getFirstname() {
     if ($this->_user != null) {
-      $this->_user->getFirstname();
+      return $this->_user->getFirstname();
     }
+    return null;
   }
 
   /**
@@ -274,8 +280,9 @@ class DefaultAuthUser implements AuthUser {
    */
   public function getConfig() {
     if ($this->_user != null) {
-      $this->_user->getConfig();
+      return $this->_user->getConfig();
     }
+    return null;
   }
 
   /**
@@ -301,8 +308,9 @@ class DefaultAuthUser implements AuthUser {
    */
   public function hasRole($rolename) {
     if ($this->_user != null) {
-      $this->_user->hasRole($rolename);
+      return $this->_user->hasRole($rolename);
     }
+    return false;
   }
 
   /**
@@ -310,8 +318,9 @@ class DefaultAuthUser implements AuthUser {
    */
   public function getRoles() {
     if ($this->_user != null) {
-      $this->_user->getRoles();
+      return $this->_user->getRoles();
     }
+    return array();
   }
 
   /**
@@ -330,6 +339,7 @@ class DefaultAuthUser implements AuthUser {
     if ($this->_user != null) {
       return call_user_func_array(array($this->_user, $name), $arguments);
     }
+    return null;
   }
 }
 ?>

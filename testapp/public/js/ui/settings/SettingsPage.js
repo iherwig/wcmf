@@ -55,8 +55,8 @@ define([
             e.preventDefault();
 
             var data = domForm.toObject("settingsForm");
-            data.controller = "wcmf\\application\\controller\\UserController";
-            data.action = "save";
+            data.controller = "wcmf\\application\\controller\\TerminateController";
+            data.action = "changePassword";
 
             this.saveBtn.setProcessing();
 
