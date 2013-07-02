@@ -12,7 +12,7 @@ define([
     "../data/widget/EntityTabWidget",
     "../../model/meta/Model",
     "../../locale/Dictionary",
-    "dojo/text!./template/EntityListPage.html"
+    "dojo/text!./template/PrincipalListPage.html"
 ], function (
     require,
     declare,
@@ -46,8 +46,7 @@ define([
 
             var navi = new NavigationWidget({
             }, this.navigationNode);
-            navi.setContentRoute(this.type);
-            navi.setActiveRoute("entityList");
+            navi.setActiveRoute("principalList");
             navi.startup();
 
             // create widget
@@ -68,12 +67,12 @@ define([
                     var panel = new View({
                         type: this.type,
                         page: this,
-                        route: "entity",
+                        route: "principal",
                         onCreated: lang.hitch(this, function(panel) {
                             // create the tab container
                             var tabs = new EntityTabWidget({
-                                route: "entity",
-                                types: appConfig.rootTypes,
+                                route: "principal",
+                                types: ["UserRDB", "RoleRDB"],
                                 page: this,
                                 selectedTab: {
                                     oid: this.type

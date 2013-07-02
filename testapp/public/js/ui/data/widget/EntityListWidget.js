@@ -41,11 +41,12 @@ function(
 
         type: null,
         page: null,
+        route: '',
         onCreated: null, // function to be called after the widget is created
 
         constructor: function(args) {
             declare.safeMixin(this, args);
-            
+
             this.typeName = Dict.translate(this.type);
         },
 
@@ -74,7 +75,8 @@ function(
         getGridActions: function() {
 
             var editAction = new Edit({
-                page: this.page
+                page: this.page,
+                route: this.route
             });
 
             var duplicateAction = {
@@ -115,7 +117,8 @@ function(
             e.preventDefault();
 
             new Create({
-                page: this.page
+                page: this.page,
+                route: this.route
             }).execute(e, this.type);
         }
     });

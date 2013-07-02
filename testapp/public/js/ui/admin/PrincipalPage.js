@@ -17,7 +17,7 @@ define([
     "../../persistence/Entity",
     "../../model/meta/Model",
     "../../locale/Dictionary",
-    "dojo/text!./template/EntityPage.html"
+    "dojo/text!./template/PrincipalPage.html"
 ], function (
     require,
     declare,
@@ -79,8 +79,7 @@ define([
 
             var navi = new NavigationWidget({
             }, this.navigationNode);
-            navi.setContentRoute(this.type, id);
-            navi.setActiveRoute("entity");
+            navi.setActiveRoute("principal");
             navi.startup();
 
             if (!this.isNew) {
@@ -162,8 +161,8 @@ define([
                         onCreated: lang.hitch(this, function(panel) {
                             // create the tab container
                             var tabs = new EntityTabWidget({
-                                route: "entity",
-                                types: appConfig.rootTypes,
+                                route: "principal",
+                                types: ["UserRDB", "RoleRDB"],
                                 page: this,
                                 selectedTab: {
                                     oid: this.oid

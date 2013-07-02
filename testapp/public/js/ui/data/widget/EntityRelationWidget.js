@@ -71,7 +71,8 @@ function(
         getGridActions: function() {
 
             var editAction = new Edit({
-                page: this.page
+                page: this.page,
+                route: "entity"
             });
 
             var unlinkAction = new Unlink({
@@ -89,6 +90,7 @@ function(
 
             new CreateInRelation({
                 page: this.page,
+                route: "entity",
                 source: this.entity,
                 relation: this.relation,
                 init: lang.hitch(this, function(data) {

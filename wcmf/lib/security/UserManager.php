@@ -137,7 +137,6 @@ abstract class UserManager {
       throw new IllegalArgumentException(Message::get("The given passwords don't match"));
     }
     if ($login == '') {
-      $this->rollbackTransaction();
       throw new IllegalArgumentException(Message::get("The user requires a login name"));
     }
     if ($this->getUser($login) != null) {

@@ -11,6 +11,7 @@ define([
 
         name: 'edit',
         iconClass: 'icon-pencil',
+        route: '',
 
         /**
          * Navigate to edit page
@@ -21,7 +22,7 @@ define([
             if (this.init instanceof Function) {
                 this.init(data);
             }
-            var route = this.page.getRoute("entity");
+            var route = this.page.getRoute(this.route);
             var type = Model.getSimpleTypeName(Model.getTypeNameFromOid(data.oid));
             var id = Model.getIdFromOid(data.oid);
             var pathParams = { type:type, id:id };

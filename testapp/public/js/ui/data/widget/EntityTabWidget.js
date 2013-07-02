@@ -33,6 +33,10 @@ define([
      * on each view and while all tab links are created only the currently
      * displayed tab panel (given in the selectedPanel property) is added.
      *
+     * The route name is derived from the route property:
+     * - type route: route+'List'
+     * - instance route: route
+     *
      * Tab panel subscribes to the 'tab-closed' event, which may be emitted in order
      * to close a specific tab programatically.
      *
@@ -41,7 +45,7 @@ define([
      *
      * @code
      * new EntityTabWidget({
-     *     context: 'content',
+     *     route: 'entity',
      *     types: appConfig.rootTypes,
      *     page: this,
      *     selectedTab: {
@@ -53,7 +57,7 @@ define([
      */
     var EntityTabWidget = declare([TabContainer], {
 
-        context: '', // used as cookie prefix
+        route: '',
         types: [],
         page: null,
         selectedTab: {},
@@ -186,7 +190,7 @@ define([
             var id = Model.getIdFromOid(oid);
             var isTypeTab = (id === typeName);
             var route = {
-                route: isTypeTab ? "entityList" : "entity",
+                route: isTypeTab ? this.route+"List" : this.route,
                 routeParams: isTypeTab ? { type:typeName } : { type:typeName, id:id }
             };
             return route;
@@ -292,11 +296,11 @@ define([
         },
 
         getCookieValue: function(name) {
-            return Cookie.get(this.context+"_"+name, {});
+            return Cookie.get(this.route+"_"+name, {});
         },
 
         setCookieValue: function(name, value) {
-            Cookie.set(this.context+"_"+name, value);
+            Cookie.set(this.route+"_"+name, value);
         }
     });
 

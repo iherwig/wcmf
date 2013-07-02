@@ -11,8 +11,17 @@
         <div data-dojo-type="dijit/MenuBarItem" class="main-menu push" id="navContent" data-dojorama-route="entityList">
             <span>{translate:Content}</span>
         </div>
-        <div data-dojo-type="dijit/MenuBarItem" class="main-menu push" id="navAdmin" data-dojorama-route="admin">
-            <span>{translate:Administration}</span>
+        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu">
+            <span>{translate:Administration} <b class="caret"></b></span>
+            <div data-dojo-type="dijit/Menu">
+                <div data-dojo-type="dijit/MenuItem" class="push" id="navAdmin" data-dojorama-route="admin">
+                  <span><i class="icon-wrench"></i> {translate:Settings}</span>
+                </div>
+                <div data-dojo-type="dijit/MenuSeparator"></div>
+                <div data-dojo-type="dijit/MenuItem" class="push" id="navUsers" data-dojorama-route="principalList" data-dojorama-pathparams="type:'UserRDB'">
+                  <span><i class="icon-user"></i> {translate:Usermanagement}</span>
+                </div>
+            </div>
         </div>
         <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu">
             <span><i class="icon-user"></i> <span class="user"></span> <b class="caret"></b></span>

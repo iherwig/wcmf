@@ -11,6 +11,7 @@ define([
 
         name: 'create',
         iconClass: 'icon-star',
+        route: '',
         source: null,
         relation: null,
 
@@ -23,7 +24,7 @@ define([
             if (this.init instanceof Function) {
                 this.init(type);
             }
-            var route = this.page.getRoute("entity");
+            var route = this.page.getRoute(this.route);
             var oid = Model.createDummyOid(type);
             var pathParams = { type:type, id:Model.getIdFromOid(oid) };
             var url = route.assemble(pathParams);
