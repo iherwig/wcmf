@@ -2,9 +2,6 @@ define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin",
     "../_include/_PageMixin",
     "elfinder/jquery/jquery-1.8.1.min",
     "elfinder/jquery/jquery-ui-1.8.23.custom.min",
@@ -18,9 +15,6 @@ define([
     require,
     declare,
     lang,
-    _WidgetBase,
-    _TemplatedMixin,
-    _WidgetsInTemplateMixin,
     _Page,
     jQuery,
     jQueryUi,
@@ -28,14 +22,14 @@ define([
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page], {
+    return declare([_Page], {
 
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
+        title: Dict.translate('Media'),
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+Dict.translate('Media'));
 
             $("#elfinder").elfinder({
                 lang: appConfig.defaultLanguage,

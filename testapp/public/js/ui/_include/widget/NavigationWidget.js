@@ -8,15 +8,15 @@ define([
     "dijit/MenuBar",
     "dijit/MenuBarItem",
     "dijit/PopupMenuBarItem",
-    "dijit/Menu",
+    "dijit/DropDownMenu",
     "dijit/MenuSeparator",
     "dijit/MenuItem",
     "dojo/query",
-    "dojo/dom-class",
     "dojo/NodeList-dom",
     "../../../Cookie",
     "../../../locale/Dictionary",
-    "dojo/text!./template/NavigationWidget.html"
+    "dojo/text!./template/NavigationWidget.html",
+    "dojo/domReady!"
 ], function (
     declare,
     lang,
@@ -31,7 +31,6 @@ define([
     MenuSeparator,
     MenuItem,
     query,
-    domClass,
     nodeListDom,
     Cookie,
     Dict,
@@ -41,43 +40,43 @@ define([
 
         titleOnly: false,
         templateString: lang.replace(template, Dict.tplTranslate),
+        selected: null,
 
         constructor: function (params) {
             this.titleOnly = params.titleOnly;
+
+            // template variables
+            this.title = appConfig.title;
+            this.userName = Cookie.get("user") || '';
+            this.firstRootType = appConfig.rootTypes[0];
         },
 
         postCreate: function() {
+            // set selected menu
+            if (this.selected) {
+                registry.byId(this.selected)._setSelected(true);
+            }
+        },
+
+        startup: function() {
+            this.inherited(arguments);
+
             // hide buttons, if titleOnly
             if (this.titleOnly) {
                 query(".main-menu").style("display", "none");
             }
-
-            // set first root type on nodeList route
-            var firstRootType = appConfig.rootTypes[0];
-            this.setContentRoute(firstRootType);
-
-            // set app title
-            dojo.query(".brand").attr("innerHTML", appConfig.title);
-            dojo.query(".brand").attr("style", {cursor: "default", opacity: 1});
-
-            // set user name
-            dojo.query(".user").attr("innerHTML", Cookie.get("user"));
+            // remove disabled cursor from title
+            query(".brand").attr("style", {cursor: "default", opacity: 1});
         },
 
         setContentRoute: function(type, id) {
-            var contentNavNode = dojo.query("#navContent");
+            var contentNavNode = query("#navContent");
             contentNavNode.attr("data-dojorama-route", id !== undefined ? "entity" : "entityList");
             var routeParamStr = "type: '"+type+"'";
             if (id !== undefined) {
               routeParamStr += ", id: '"+id+"'";
             }
             contentNavNode.attr("data-dojorama-pathparams", routeParamStr);
-        },
-
-        setActiveRoute: function(route) {
-            query("[data-dojorama-route='"+route+"']").forEach(lang.hitch(this, function(node) {
-                registry.byId(node.id)._setSelected(true);
-            }));
         }
     });
 });

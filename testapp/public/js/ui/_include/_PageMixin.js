@@ -2,29 +2,40 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/aspect",
+    "dojo/_base/window",
     "dojo/dom-attr",
     "dojo/query",
     "dojo/on",
     "dojo/when",
     "dojomat/_AppAware",
-    "dojomat/_StateAware"
+    "dojomat/_StateAware",
+    "dijit/_WidgetBase",
+    "dijit/_TemplatedMixin",
+    "dijit/_WidgetsInTemplateMixin"
 ], function (
     declare,
     lang,
     aspect,
+    win,
     domAttr,
     query,
     on,
     when,
     _AppAware,
-    _StateAware
+    _StateAware,
+    _WidgetBase,
+    _TemplatedMixin,
+    _WidgetsInTemplateMixin
 ) {
-    return declare([_AppAware, _StateAware], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware], {
 
         request: null,
         router: null,
         session: null,
         inConfirmLeave: false,
+
+        // attributes to be overridden by subclasses
+        title: appConfig.title,
 
         constructor: function(params) {
             this.request = params.request;
@@ -32,7 +43,7 @@ define([
             this.session = params.session;
 
             // setup navigation routes even if an error occurs
-            aspect.around(this, "postCreate", function(original) {
+            aspect.around(this, "startup", function(original) {
                 return function() {
                     try {
                         original.call(this);
@@ -47,19 +58,24 @@ define([
                         }
                     }
                     finally {
+                        this.setTitle(this.title);
                         this.setupRoutes();
                     }
                 };
             });
         },
 
+        setTitle: function(title) {
+            this.inherited(arguments, [appConfig.title+' - '+title]);
+        },
+
         /**
          * Set up routing for links with class push.
          * The route name is defined in the link's data-dojorama-route attribute,
-         * optional path parameters in data-dojorama-pathparams (e.g. "type: Page, id: 12")
+         * optional path parameters in data-dojorama-pathparams (e.g. "type:'Page', id:12")
          */
         setupRoutes: function() {
-            query('.push', dojo.body()).forEach(lang.hitch(this, function(node) {
+            query('.push', win.body()).forEach(lang.hitch(this, function(node) {
                 var routeName = domAttr.get(node, 'data-dojorama-route');
                 var route = this.router.getRoute(routeName);
                 if (!route) { return; }
@@ -70,6 +86,8 @@ define([
                 }
                 var url = route.assemble(pathParams);
                 node.href = url;
+
+                console.log(url);
 
                 var queryStr = domAttr.get(node, 'data-dojorama-queryparams');
                 if (queryStr) {

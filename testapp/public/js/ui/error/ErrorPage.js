@@ -2,9 +2,7 @@ define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin",
+    "../_include/widget/NavigationWidget",
     "../_include/_PageMixin",
     "../../locale/Dictionary",
     "dojo/text!./template/ErrorPage.html"
@@ -12,18 +10,17 @@ define([
     require,
     declare,
     lang,
-    _WidgetBase,
-    _TemplatedMixin,
-    _WidgetsInTemplateMixin,
+    NavigationWidget,
     _Page,
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page], {
+    return declare([_Page], {
 
         error: null,
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
+        title: Dict.translate('Error'),
 
         constructor: function (params) {
             this.error = params.error;
@@ -31,12 +28,7 @@ define([
 
         postCreate: function () {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+Dict.translate('Error'));
             this.messageNode.innerHTML = this.error.message;
-        },
-
-        startup: function () {
-            this.inherited(arguments);
         }
     });
 });

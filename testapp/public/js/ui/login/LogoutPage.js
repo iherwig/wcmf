@@ -1,23 +1,31 @@
 define([
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/request",
-    "dijit/_WidgetBase",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
+    "../_include/widget/NavigationWidget",
     "../../Cookie",
-    "../../locale/Dictionary"
+    "../../locale/Dictionary",
+    "dojo/text!./template/LogoutPage.html"
 ], function (
+    require,
     declare,
     lang,
     request,
-    _WidgetBase,
     _Page,
     _Notification,
+    NavigationWidget,
     Cookie,
-    Dict
+    Dict,
+    template
 ) {
-    return declare([_WidgetBase, _Page, _Notification], {
+    return declare([_Page, _Notification], {
+
+        templateString: lang.replace(template, Dict.tplTranslate),
+        contextRequire: require,
+        title: Dict.translate('Logout'),
 
         startup: function() {
             this.inherited(arguments);

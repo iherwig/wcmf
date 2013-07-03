@@ -5,9 +5,6 @@ define([
     "dojo/dom",
     "dojo/query",
     "dojo/_base/window",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin",
     "../_include/_PageMixin",
     "dijit/tree/ObjectStoreModel",
     "dijit/Tree",
@@ -23,9 +20,6 @@ define([
     dom,
     query,
     win,
-    _WidgetBase,
-    _TemplatedMixin,
-    _WidgetsInTemplateMixin,
     _Page,
     ObjectStoreModel,
     Tree,
@@ -34,14 +28,14 @@ define([
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page], {
+    return declare([_Page], {
 
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
+        title: Dict.translate('Content'),
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+Dict.translate('Content'));
 
             var store = TreeStore.getStore();
             var model = new ObjectStoreModel({

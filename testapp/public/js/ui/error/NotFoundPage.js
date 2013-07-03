@@ -2,9 +2,7 @@ define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin",
+    "../_include/widget/NavigationWidget",
     "../_include/_PageMixin",
     "../../locale/Dictionary",
     "dojo/text!./template/NotFoundPage.html"
@@ -12,26 +10,20 @@ define([
     require,
     declare,
     lang,
-    _WidgetBase,
-    _TemplatedMixin,
-    _WidgetsInTemplateMixin,
+    NavigationWidget,
     _Page,
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page], {
+    return declare([_Page], {
 
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
+        title: Dict.translate('Page not found'),
 
         postCreate: function () {
             this.inherited(arguments);
-            this.setTitle(Dict.translate('Page not found'));
             this.messageNode.innerHTML = Dict.translate('Page not found');
-        },
-
-        startup: function () {
-            this.inherited(arguments);
         }
     });
 });

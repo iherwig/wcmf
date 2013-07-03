@@ -3,9 +3,6 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
@@ -18,9 +15,6 @@ define([
     declare,
     lang,
     topic,
-    _WidgetBase,
-    _TemplatedMixin,
-    _WidgetsInTemplateMixin,
     _Page,
     _Notification,
     NavigationWidget,
@@ -29,11 +23,14 @@ define([
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page, _Notification], {
+    return declare([_Page, _Notification], {
 
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
+        title: Dict.translate('Content'),
 
+        baseRoute: "entity",
+        types: appConfig.rootTypes,
         type: null,
 
         constructor: function(params) {
@@ -42,13 +39,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+this.type);
-
-            var navi = new NavigationWidget({
-            }, this.navigationNode);
-            navi.setContentRoute(this.type);
-            navi.setActiveRoute("entityList");
-            navi.startup();
+            this.setTitle(this.title+" - "+Dict.translate(this.type));
 
             // create widget
             this.buildForm();
@@ -68,21 +59,18 @@ define([
                     var panel = new View({
                         type: this.type,
                         page: this,
-                        route: "entity",
+                        route: this.baseRoute,
                         onCreated: lang.hitch(this, function(panel) {
                             // create the tab container
                             var tabs = new EntityTabWidget({
-                                route: "entity",
-                                types: appConfig.rootTypes,
+                                route: this.baseRoute,
+                                types: this.types,
                                 page: this,
                                 selectedTab: {
                                     oid: this.type
                                 },
                                 selectedPanel: panel
                             }, this.tabNode);
-
-                            // setup routes on tab container after loading
-                            this.setupRoutes();
                         })
                     });
                 }

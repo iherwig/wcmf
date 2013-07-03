@@ -2,9 +2,6 @@ define([
     "require",
     "dojo/_base/lang",
     "dojo/_base/declare",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
@@ -15,9 +12,6 @@ define([
     require,
     lang,
     declare,
-    _WidgetBase,
-    _TemplatedMixin,
-    _WidgetsInTemplateMixin,
     _Page,
     _Notification,
     NavigationWidget,
@@ -25,21 +19,14 @@ define([
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page, _Notification], {
+    return declare([_Page, _Notification], {
 
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
+        title: Dict.translate('Home'),
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(appConfig.title+' - '+Dict.translate('Home'));
-
-            var navi = new NavigationWidget({
-            }, this.navigationNode);
-            navi.setActiveRoute("home");
-            navi.startup();
-
-            dojo.query("#title").attr("innerHTML", appConfig.title);
         },
 
         _navigateContent: function(e) {

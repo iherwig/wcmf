@@ -3,34 +3,34 @@
         data-dojo-type="dijit/MenuBar" data-dojo-attach-point="menuBar"
         data-dojo-props="region:'top', 'class':'navbar-fixed-top'">
         <div data-dojo-type="dijit/MenuBarItem" data-dojo-props="disabled:true">
-            <span class="brand"></span>
+            <span class="brand">${title}</span>
         </div>
         <div data-dojo-type="dijit/MenuBarItem" class="main-menu push" id="navHome" data-dojorama-route="home">
             <span>{translate:Home}</span>
         </div>
-        <div data-dojo-type="dijit/MenuBarItem" class="main-menu push" id="navContent" data-dojorama-route="entityList">
+        <div data-dojo-type="dijit/MenuBarItem" class="main-menu push" id="navContent" data-dojorama-route="entityList" data-dojorama-pathparams="type:'${firstRootType}'">
             <span>{translate:Content}</span>
         </div>
-        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu">
+        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu" id="navAdmin">
             <span>{translate:Administration} <b class="caret"></b></span>
-            <div data-dojo-type="dijit/Menu">
-                <div data-dojo-type="dijit/MenuItem" class="push" id="navAdmin" data-dojorama-route="admin">
+            <div data-dojo-type="dijit/DropDownMenu">
+                <div data-dojo-type="dijit/MenuItem" class="push" data-dojorama-route="admin">
                   <span><i class="icon-wrench"></i> {translate:Settings}</span>
                 </div>
                 <div data-dojo-type="dijit/MenuSeparator"></div>
-                <div data-dojo-type="dijit/MenuItem" class="push" id="navUsers" data-dojorama-route="principalList" data-dojorama-pathparams="type:'UserRDB'">
+                <div data-dojo-type="dijit/MenuItem" class="push" data-dojorama-route="principalList" data-dojorama-pathparams="type:'UserRDB'">
                   <span><i class="icon-user"></i> {translate:Usermanagement}</span>
                 </div>
             </div>
         </div>
-        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu">
-            <span><i class="icon-user"></i> <span class="user"></span> <b class="caret"></b></span>
-            <div data-dojo-type="dijit/Menu">
-                <div data-dojo-type="dijit/MenuItem" class="push" id="navSettings" data-dojorama-route="settings">
+        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu" id="navSettings">
+            <span><i class="icon-user"></i> <span class="user">${userName}</span> <b class="caret"></b></span>
+            <div data-dojo-type="dijit/DropDownMenu">
+                <div data-dojo-type="dijit/MenuItem" class="push" data-dojorama-route="settings">
                   <span><i class="icon-wrench"></i> {translate:Settings}</span>
                 </div>
                 <div data-dojo-type="dijit/MenuSeparator"></div>
-                <div data-dojo-type="dijit/MenuItem" class="push" id="navLogout" data-dojorama-route="logout">
+                <div data-dojo-type="dijit/MenuItem" class="push" data-dojorama-route="logout">
                   <span><i class="icon-off"></i> {translate:Logout}</span>
                 </div>
             </div>

@@ -5,9 +5,6 @@ define([
     "dojo/promise/all",
     "dojo/topic",
     "dojo/Deferred",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
@@ -25,9 +22,6 @@ define([
     all,
     topic,
     Deferred,
-    _WidgetBase,
-    _TemplatedMixin,
-    _WidgetsInTemplateMixin,
     _Page,
     _Notification,
     NavigationWidget,
@@ -39,11 +33,14 @@ define([
     Dict,
     template
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Page, _Notification], {
+    return declare([_Page, _Notification], {
 
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
+        title: Dict.translate('Content'),
 
+        baseRoute: "entity",
+        types: appConfig.rootTypes,
         type: null,
         oid: null, // object id of the object to edit
         isNew: false, // boolean weather the object exists or not
@@ -77,14 +74,8 @@ define([
 
             var id = Model.getIdFromOid(this.oid);
 
-            var navi = new NavigationWidget({
-            }, this.navigationNode);
-            navi.setContentRoute(this.type, id);
-            navi.setActiveRoute("entity");
-            navi.startup();
-
             if (!this.isNew) {
-                this.setTitle(appConfig.title+' - '+this.oid);
+                this.setTitle(this.title+" - "+this.oid);
 
                 // create widget when entity is loaded
                 var loadPromises = [];
@@ -101,7 +92,7 @@ define([
                     this.entity = new Entity(loadResults[0]);
                     this.original = this.isTranslation ? loadResults[1] : {};
                     this.buildForm();
-                    this.setTitle(appConfig.title+' - '+Model.getDisplayValue(this.entity));
+                    this.setTitle(this.title+" - "+Model.getDisplayValue(this.entity));
                 }), lang.hitch(this, function(error) {
                     // error
                     this.showNotification({
@@ -117,13 +108,13 @@ define([
                 });
                 this.entity.setState("new");
                 this.buildForm();
-                this.setTitle(appConfig.title+' - '+Dict.translate("New %0%",
+                this.setTitle(this.title+" - "+Dict.translate("New %0%",
                         [Dict.translate(this.type)]));
             }
 
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                    this.setTitle(appConfig.title+' - '+Model.getDisplayValue(data.entity));
+                    this.setTitle(this.title+" - "+Model.getDisplayValue(data.entity));
                 }))
             );
         },
@@ -162,17 +153,14 @@ define([
                         onCreated: lang.hitch(this, function(panel) {
                             // create the tab container
                             var tabs = new EntityTabWidget({
-                                route: "entity",
-                                types: appConfig.rootTypes,
+                                route: this.baseRoute,
+                                types: this.types,
                                 page: this,
                                 selectedTab: {
                                     oid: this.oid
                                 },
                                 selectedPanel: panel
                             }, this.tabNode);
-
-                            // setup routes on tab container after loading
-                            this.setupRoutes();
                         })
                     });
                 }
