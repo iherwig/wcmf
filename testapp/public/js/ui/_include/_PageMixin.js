@@ -87,8 +87,6 @@ define([
                 var url = route.assemble(pathParams);
                 node.href = url;
 
-                console.log(url);
-
                 var queryStr = domAttr.get(node, 'data-dojorama-queryparams');
                 if (queryStr) {
                     url += queryStr;

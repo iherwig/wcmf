@@ -25,7 +25,7 @@ function(
     /**
      * Load the control classes for a given entity type.
      * @param type The entity type name
-     * @returns Deferred which returns an map with attribute names as
+     * @returns Deferred which returns a map with attribute names as
      * keys and control classes as values
      */
     Factory.loadControlClasses = function(type) {
@@ -69,18 +69,18 @@ function(
     };
 
     Factory.getControlClass = function(inputType) {
-        var inputTypeDefinitions = appConfig.inputTypes;
+        var inputTypes = appConfig.inputTypes;
 
         // get best matching control
         var bestMatch = '';
-        for (var controlDef in inputTypeDefinitions) {
+        for (var controlDef in inputTypes) {
             if (inputType.indexOf(controlDef) === 0 && controlDef.length > bestMatch.length) {
                 bestMatch = controlDef;
             }
         }
         // get the control
         if (bestMatch.length > 0) {
-            var controlClass = inputTypeDefinitions[bestMatch];
+            var controlClass = inputTypes[bestMatch];
             return controlClass;
         }
         // default
