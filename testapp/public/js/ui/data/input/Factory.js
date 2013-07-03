@@ -4,7 +4,6 @@ define( [
     "dojo/_base/kernel",
     "dojo/Deferred",
     "../../../model/meta/Model",
-    "../../../model/meta/_InputTypeList",
     "../../../persistence/ListStore"
 ],
 function(
@@ -13,7 +12,6 @@ function(
     kernel,
     Deferred,
     Model,
-    InputTypeDefinitions,
     ListStore
 ) {
     var Factory = declare(null, {
@@ -71,16 +69,18 @@ function(
     };
 
     Factory.getControlClass = function(inputType) {
+        var inputTypeDefinitions = appConfig.inputTypes;
+
         // get best matching control
         var bestMatch = '';
-        for (var controlDef in InputTypeDefinitions) {
+        for (var controlDef in inputTypeDefinitions) {
             if (inputType.indexOf(controlDef) === 0 && controlDef.length > bestMatch.length) {
                 bestMatch = controlDef;
             }
         }
         // get the control
         if (bestMatch.length > 0) {
-            var controlClass = InputTypeDefinitions[bestMatch];
+            var controlClass = inputTypeDefinitions[bestMatch];
             return controlClass;
         }
         // default

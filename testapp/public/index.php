@@ -12,13 +12,13 @@ use wcmf\lib\util\URIUtil;
 $application = new Application();
 try {
   // initialize the application
-  $application->initialize('../config/');
+  $request = $application->initialize('../config/');
 
   // check for authenticated user
   $permissionManager = ObjectFactory::getInstance('permissionManager');
   $isLoggedIn = $permissionManager->getAuthUser() != null;
 
-  // get configuration
+  // get configuration values
   $config = ObjectFactory::getConfigurationInstance();
   $appTitle = $config->getValue('applicationTitle', 'application');
   $rootTypes = $config->getValue('rootTypes', 'application');
@@ -26,6 +26,8 @@ try {
   $defaultLanguage = $config->getValue('defaultLanguage', 'localization');
   $languages = $config->getSection('languages');
   $mediaPath = $config->getValue('uploadDir', 'media');
+  $inputTypes = $config->getSection('inputTypes');
+  $displayTypes = $config->getSection('displayTypes');
 
   // check if the user should be redirected to the login page
   // if yes, we do this and add the requested path as route parameter
@@ -39,9 +41,24 @@ try {
     }
   }
   $baseHref = dirname(URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']).'/';
+
+  // define client configuration
+  $clientConfig = array(
+    'title' => $appTitle,
+    'backendUrl' => $pathPrefix.'/main.php',
+    'rootTypes' => $rootTypes,
+    'pathPrefix' => $pathPrefix,
+    'mediaBaseUrl' => $baseHref.$mediaPath,
+    'mediaBasePath' => $mediaPath,
+    'uiLanguage' => $uiLanguage,
+    'defaultLanguage' => $defaultLanguage,
+    'languages' => $languages,
+    'inputTypes' => $inputTypes,
+    'displayTypes' => $displayTypes
+  );
 }
 catch (Exception $ex) {
-  $application->handleException($ex);
+  $application->handleException($ex, $request);
 }
 ?>
 <!DOCTYPE html>
@@ -63,21 +80,8 @@ catch (Exception $ex) {
 
   <body class="dbootstrap">
     <script>
-      var appConfig = {
-          title: '<?php echo $appTitle; ?>',
-          backendUrl: '<?php echo $pathPrefix.'/main.php'; ?>',
-          rootTypes: [<?php if ($rootTypes && sizeof($rootTypes) > 0) { echo "'".join("', '", $rootTypes)."'"; } ?>],
-          pathPrefix: '<?php echo $pathPrefix; ?>',
-          mediaBaseUrl: '<?php echo $baseHref.$mediaPath; ?>',
-          mediaBasePath: '<?php echo $mediaPath; ?>',
-          uiLanguage: '<?php echo $uiLanguage; ?>',
-          defaultLanguage: '<?php echo $defaultLanguage; ?>',
-          languages: {
-<?php foreach($languages as $key => $value): ?>
-              '<?php echo $key; ?>': '<?php echo $value; ?>',
-<?php endforeach; ?>
-          }
-      };
+      var appConfig = <?php echo json_encode($clientConfig); ?>;
+      
       var dojoConfig = {
           has: {
               "dijit": true
