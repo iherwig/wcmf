@@ -49,9 +49,9 @@
     // user grid
     var grid = new wcmf.grid.Grid();
     var columDefs = [];
-    {count_items varname="numColumns" array=$userTemplateNode->getDisplayValues(true)}
+    {count_items varname="numColumns" array=$userTemplateNode->getDisplayValues()}
     {math equation="361/x" x=$numColumns assign="columnWidth" format="%d"}
-    {foreach key=name item=value from=$userTemplateNode->getDisplayValues(true)}
+    {foreach key=name item=value from=$userTemplateNode->getDisplayValues()}
     columDefs.push({ldelim}id:"{$name|default:"-"}", dataIndex:"{$name}", header:"{$name|default:"-"}", width:{$columnWidth}, sortable:true, renderer:grid.renderColumnDefault.createDelegate(grid){rdelim});
     {/foreach}
 
@@ -65,9 +65,9 @@
     // role grid
     var grid = new wcmf.grid.Grid();
     var columDefs = [];
-    {count_items varname="numColumns" array=$roleTemplateNode->getDisplayValues(true)}
+    {count_items varname="numColumns" array=$roleTemplateNode->getDisplayValues()}
     {math equation="361/x" x=$numColumns assign="columnWidth" format="%d"}
-    {foreach key=name item=value from=$roleTemplateNode->getDisplayValues(true)}
+    {foreach key=name item=value from=$roleTemplateNode->getDisplayValues()}
     columDefs.push({ldelim}id:"{$name|default:"-"}", dataIndex:"{$name}", header:"{$name|default:"-"}", width:{$columnWidth}, sortable:true, renderer:grid.renderColumnDefault.createDelegate(grid){rdelim});
     {/foreach}
 

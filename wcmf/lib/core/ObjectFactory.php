@@ -49,8 +49,7 @@ class ObjectFactory {
       'authUser' =>           'wcmf\lib\security\principal\AuthUser',
 
       'formats' =>            'wcmf\lib\presentation\format\Format',
-      'listStrategies' =>     'wcmf\lib\presentation\control\lists\ListStrategy',
-      /*'valueRenderer' =>      'wcmf\lib\presentation\renderer\ValueRenderer',*/
+      'listStrategies' =>     'wcmf\lib\presentation\control\lists\ListStrategy'
   );
 
   /**

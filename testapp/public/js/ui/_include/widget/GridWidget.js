@@ -17,6 +17,7 @@ define([
     "dojo/on",
     "../../../model/meta/Model",
     "../../../locale/Dictionary",
+    "../../data/display/Renderer",
     "dojo/text!./template/GridWidget.html"
 ], function (
     declare,
@@ -37,6 +38,7 @@ define([
     on,
     Model,
     Dict,
+    Renderer,
     template
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
@@ -118,10 +120,14 @@ define([
             var displayValues = typeClass.displayValues;
             for (var i=0, count=displayValues.length; i<count; i++) {
                 var curValue = displayValues[i];
+                var curAttributeDef = typeClass.getAttribute(curValue);
                 columns.push({
                     label: Dict.translate(curValue),
                     field: curValue,
-                    sortable: true
+                    sortable: true,
+                    formatter: lang.hitch(curAttributeDef, function(data, obj) {
+                        return Renderer.render(data, this.displayType);
+                    })
                 });
             }
 

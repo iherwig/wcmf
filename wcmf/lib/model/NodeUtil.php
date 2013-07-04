@@ -27,7 +27,6 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PathDescription;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\control\ValueListProvider;
-use wcmf\lib\presentation\renderer\ValueRenderer;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -184,27 +183,24 @@ class NodeUtil {
    * If search for 'display_value' gives no result the function returns an empty string.
    * Example: 'name|text' shows the name of the Node together with the content of the text attribute
    * @param node A reference to the Node to display
-   * @param useDisplayType True/False wether to use the display types that are associated with the values which the display value contains [default: false]
    * @param language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
    * @note The display type is configured via the display_type property of a value. It describes how the value should be displayed.
    *       The description is of the form @code type @endcode or @code type[attributes] @endcode
    *       - type: text|image|link
    *       - attributes: a string of attributes used in the HTML definition (e.g. 'height="50"')
    * @return The display string
-   * @see ValueRenderer::render
    */
-  public static function getDisplayValue(Node $node, $useDisplayType=false, $language=null) {
-    return join(' - ', array_values(self::getDisplayValues($node, $useDisplayType, $language)));
+  public static function getDisplayValue(Node $node, $language=null) {
+    return join(' - ', array_values(self::getDisplayValues($node, $language)));
   }
 
   /**
    * Does the same as NodeUtil::getDisplayValue but returns the display value as associative array
    * @param node A reference to the Node to display
-   * @param useDisplayType True/False wether to use the display types that are associated with the values which the display value contains [default: false]
    * @param language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
    * @return The display array
    */
-  public static function getDisplayValues(Node $node, $useDisplayType=false, $language=null) {
+  public static function getDisplayValues(Node $node, $language=null) {
     // localize node if requested
     $localization = ObjectFactory::getInstance('localization');
     if ($language != null) {
@@ -223,7 +219,6 @@ class NodeUtil {
           if (in_array($displayValueName, $curNode->getPersistentValueNames())) {
             $attribute = $mapper->getAttribute($displayValueName);
             $inputType = $attribute->getInputType();
-            $displayType = $attribute->getDisplayType();
             $tmpDisplay = $curNode->getValue($displayValueName);
           }
         }
@@ -235,21 +230,6 @@ class NodeUtil {
           $tmpDisplay = $node->getOID();
         }
 
-        if ($useDisplayType) {
-          // get type and attributes from definition
-          preg_match_all("/[\w][^\[\]]+/", $displayType, $matches);
-          if (sizeOf($matches[0]) > 0) {
-            list($displayType, $attributes) = $matches[0];
-          }
-          if (!$displayType || $displayType == '') {
-            $displayType = 'text';
-          }
-          $valueRenderer = ObjectFactory::getInstance('valueRenderer');
-          $renderer = $valueRenderer->getControl($displayType);
-          if ($renderer != null) {
-            $tmpDisplay = $renderer->render($tmpDisplay, $attributes);
-          }
-        }
         $displayArray[$displayValueName] = $tmpDisplay;
       }
     }
@@ -311,8 +291,7 @@ class NodeUtil {
   }
 
   /**
-   * Render all values in a list of Nodes using the appropriate ValueRenderer.
-   * @note Values will be translated before rendering using Control::translateValue
+   * Translate all values in a list of Nodes using the appropriate input types.
    * @param nodes A reference to the array of Nodes
    * @param language The language code, if the translated values should be localized.
    *                 Optional, default is Localization::getDefaultLanguage()
@@ -338,12 +317,6 @@ class NodeUtil {
     // translate list values
     $value = Control::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
 
-    // render the value to html
-    $displayType = $object->getValueProperty($valueName, 'display_type');
-    if (strlen($displayType) == 0) {
-      $displayType = 'text';
-    }
-    $value = ValueRenderer::render($displayType, $value, "");
     // force set (the rendered value may not be satisfy validation rules)
     $object->setValue($valueName, $value, true);
   }

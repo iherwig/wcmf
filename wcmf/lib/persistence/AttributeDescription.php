@@ -47,7 +47,7 @@ class AttributeDescription {
    * @param restrictionsDescription A description of the resticitions
    * @param isEditable True/False whether the attribute should be editable, see Control::render()
    * @param inputType The input type for the value, see Control::render()
-   * @param displayType The display type for the value, see NodeUtil::getDisplayValue()
+   * @param displayType The display type for the value
    */
   public function __construct($name, $type, array $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
     $restrictionsDescription, $isEditable, $inputType, $displayType) {

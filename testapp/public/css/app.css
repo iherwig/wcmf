@@ -194,6 +194,15 @@ td {
   float: left;
 }
 
+img.thumb {
+  width: auto !important;
+  height: 46px !important;
+}
+
+.tabLabel img.thumb {
+  height: 20px !important;
+}
+
 /*
   Responsive table layout for form
   http://css-tricks.com/responsive-data-tables/

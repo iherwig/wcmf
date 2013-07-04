@@ -51,7 +51,7 @@ define([
         },
 
         /**
-         * Get the Node attributes
+         * Get the attribute definitions
          * @param tag Optional tag that the attributes should have
          * @return Array
          */
@@ -64,6 +64,21 @@ define([
                 }
             }
             return result;
+        },
+
+        /**
+         * Get the attribute definition for a given name
+         * @param name The name of the attribute
+         * @return Object
+         */
+        getAttribute: function(name) {
+            for (var i=0, count=this.attributes.length; i<count; i++) {
+                var attribute = this.attributes[i];
+                if (attribute.name === name) {
+                    return attribute;
+                }
+            }
+            return null;
         }
     });
 

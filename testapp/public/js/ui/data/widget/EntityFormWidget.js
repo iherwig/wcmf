@@ -105,6 +105,7 @@ function(
                 var layoutWidget = registry.byNode(this.fieldsNode.domNode);
 
                 // add attribute widgets
+                this.attributeWidgets = [];
                 var attributes = typeClass.getAttributes('DATATYPE_ATTRIBUTE');
                 for (var i=0, count=attributes.length; i<count; i++) {
                     var attribute = attributes[i];

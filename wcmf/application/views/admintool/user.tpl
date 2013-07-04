@@ -16,7 +16,7 @@
 
 {*------ Edit ------*}
 <div class="contentblock">
-  <h2 title="{translate text="object ID"}: {$oid|default:"-"}">{$principal->getDisplayValue(true)}&nbsp;</h2>
+  <h2 title="{translate text="object ID"}: {$oid|default:"-"}">{$principal->getDisplayValue()}&nbsp;</h2>
   <span class="spacer"></span>
 {assign var="value_names" value=$principal->getValueNames($cur_data_type)}
 {section name=value_name_index loop=$value_names}

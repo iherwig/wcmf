@@ -20,13 +20,6 @@ function(
     var Renderer = declare(null, {
     });
 
-    Renderer.renderers = {};
-    var i=0;
-    for (var key in displayTypes) {
-        renderers[key] = arguments[++i];
-    }
-
-
     /**
      * Render the given value according to the given display type.
      * @param value The value
@@ -53,12 +46,19 @@ function(
         }
         // get the renderer
         if (bestMatch.length > 0) {
-            var controlClass = displayTypes[bestMatch];
-            return controlClass;
+            var renderer = displayTypes[bestMatch];
+            return renderer;
         }
         // default
         return "js/ui/data/display/renderer/Text";
     };
+
+    // initialize renderers
+    Renderer.renderers = {};
+    var i=0;
+    for (var key in appConfig.displayTypes) {
+        Renderer.renderers[key] = arguments[++i];
+    }
 
     return Renderer;
 });

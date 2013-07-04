@@ -831,15 +831,15 @@ class Node extends PersistentObject {
    * @see PersistentObject::getDisplayValue()
    * Delegates to NodeUtil::getDisplayValue
    */
-  public function getDisplayValue($useDisplayType=false) {
-    return NodeUtil::getDisplayValue($this, $useDisplayType);
+  public function getDisplayValue() {
+    return NodeUtil::getDisplayValue($this);
   }
 
   /**
    * Delegates to NodeUtil::getDisplayValues
    */
-  public function getDisplayValues($useDisplayType=false) {
-    return NodeUtil::getDisplayValues($this, $useDisplayType);
+  public function getDisplayValues() {
+    return NodeUtil::getDisplayValues($this);
   }
 
   /**
@@ -848,9 +848,9 @@ class Node extends PersistentObject {
    */
   public function __toString() {
     $pStr = parent::__toString();
-    $str = $this->getDisplayValue(false);
+    $str = $this->getDisplayValue();
     if ($pStr != $str) {
-      return $this->getDisplayValue(false).' ['.$pStr.']';
+      return $this->getDisplayValue().' ['.$pStr.']';
     }
     return $str;
   }

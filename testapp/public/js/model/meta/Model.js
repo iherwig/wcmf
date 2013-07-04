@@ -1,11 +1,13 @@
 define([
     "dojo/_base/declare",
     "./_TypeList",
-    "../../locale/Dictionary"
+    "../../locale/Dictionary",
+    "../../ui/data/display/Renderer"
 ], function(
     declare,
     TypeList,
-    Dict
+    Dict,
+    Renderer
 ) {
     var Model = declare(null, {
     });
@@ -128,7 +130,9 @@ define([
             }
             else {
                 for (var i=0; i<type.displayValues.length; i++) {
-                    result += object[type.displayValues[i]]+" | ";
+                    var curValue = type.displayValues[i];
+                    var curAttribute = type.getAttribute(curValue);
+                    result += Renderer.render(object[curValue], curAttribute.displayType)+" | ";
                 }
                 result = result.substring(0, result.length-3);
             }
