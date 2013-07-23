@@ -27,7 +27,7 @@ ObjectFactory::configure($config);
 </form>
 <?php
   if (array_key_exists("password", $_POST))
-	  echo("hashed password: ".ObjectFactory::getInstance('userManager')->hashPassword($_POST["password"]));
+	  echo("hashed password: ".ObjectFactory::getInstance('User')->hashPassword($_POST["password"]));
 ?>
 </body>
 </html>

@@ -62,12 +62,5 @@ class ObjectFactoryTest extends BaseTestCase {
     // check first instance
     $this->assertEquals('value1', $obj->getTemplateVars('test'));
   }
-
-  public function test() {
-    $obj = ObjectFactory::getInstance('controlRenderer');
-    $this->assertEquals('wcmf\lib\presentation\control\ControlRenderer', get_class($obj));
-    $ctrl = $obj->getControl('text');
-    $this->assertEquals('wcmf\lib\presentation\control\impl\BaseControl', get_class($ctrl));
-  }
 }
 ?>

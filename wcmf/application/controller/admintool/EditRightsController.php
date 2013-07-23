@@ -65,7 +65,6 @@ class EditRightsController extends Controller {
   function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $userManager = ObjectFactory::getInstance('userManager');
     $config = ObjectFactory::getConfigurationInstance();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
 
@@ -143,7 +142,8 @@ class EditRightsController extends Controller {
 
     // assign model to view
     $response->setValue('oid', $request->getValue('oid'));
-    $response->setValue('allroles', join("|", $userManager->listRoles()));
+    // TODO: retrieve all role names
+    $response->setValue('allroles', join("|", array()));
     $response->setValue('rights', $rights);
     $response->setValue('rightnames', $rightNames);
     $response->setValue('configfiles', $configurations);

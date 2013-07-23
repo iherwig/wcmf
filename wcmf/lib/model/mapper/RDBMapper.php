@@ -429,9 +429,22 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
+   * @see PersistenceMapper::getRelationsByType()
+   */
+  public function getRelationsByType($type) {
+    $this->initRelations();
+    if (isset($this->_relations['bytype'][$type])) {
+      return $this->_relations['bytype'][$type];
+    }
+    else {
+      throw new PersistenceException("No relation to '".$type."' exists in '".$this->getType()."'");
+    }
+  }
+
+  /**
    * Internal implementation of PersistenceMapper::getRelation()
    * @param roleName The role name of the relation
-   * @param includeManyToMany Boolean wether to also search in relations to many to many
+   * @param includeManyToMany Boolean whether to also search in relations to many to many
    *    objects or not
    */
   protected function getRelationImpl($roleName, $includeManyToMany) {
@@ -454,12 +467,19 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     if ($this->_relations == null) {
       $this->_relations = array();
       $this->_relations['byrole'] = $this->getRelationDescriptions();
+      $this->_relations['bytype'] = array();
       $this->_relations['parent'] = array();
       $this->_relations['child'] = array();
       $this->_relations['undefined'] = array();
       $this->_relations['nm'] = array();
 
       foreach ($this->_relations['byrole'] as $role => $desc) {
+        $otherType = $desc->getOtherType();
+        if (!isset($this->_relations['bytype'][$otherType])) {
+          $this->_relations['bytype'][$otherType] = array();
+        }
+        $this->_relations['bytype'][$otherType][] = $desc;
+
         $hierarchyType = $desc->getHierarchyType();
         if ($hierarchyType == 'parent') {
           $this->_relations['parent'][] = $desc;

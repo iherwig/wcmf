@@ -34,7 +34,7 @@ use wcmf\lib\persistence\output\OutputStrategy;
 interface PersistenceMapper {
 
   /**
-   * Get the mapper type.
+   * Get the entity type that this mapper handles.
    * @return String
    */
   public function getType();
@@ -80,6 +80,13 @@ interface PersistenceMapper {
    * @return RelationDescription or null if the relation does not exist
    */
   public function getRelation($roleName);
+
+  /**
+   * Get the definitions for relations to a given type
+   * @param type The type name
+   * @return Array of RelationDescription instances
+   */
+  public function getRelationsByType($type);
 
   /**
    * PersistentObject values may be tagged with application specific tags.

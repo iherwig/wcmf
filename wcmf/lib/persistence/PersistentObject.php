@@ -24,7 +24,9 @@ use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistentObjectProxy;
+use wcmf\lib\persistence\PropertyChangeEvent;
 use wcmf\lib\persistence\StateChangeEvent;
+use wcmf\lib\persistence\ValueChangeEvent;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\util\StringUtil;
 
@@ -103,14 +105,6 @@ class PersistentObject {
   }
 
   /**
-   * Set the type of the object.
-   * @param type The objects type.
-   */
-  public function setType($type) {
-    $this->_type = $type;
-  }
-
-  /**
    * Get the object id of the PersistentObject.
    * @return ObjectId
    */
@@ -133,6 +127,7 @@ class PersistentObject {
    * notified or not
    */
   protected function setOIDInternal(ObjectId $oid, $triggerListeners) {
+    $this->_type = $oid->getType();
     $this->_oid = $oid;
     $mapper = $this->getMapper();
     if ($mapper != null) {
@@ -313,7 +308,7 @@ class PersistentObject {
       $valueName = $iter->key();
       if (!in_array($valueName, $pkNames)) {
         $curNode = $iter->currentNode();
-        $curNode->setValue($valueName, null);
+        $curNode->setValue($valueName, null, true);
       }
     }
   }
@@ -576,6 +571,16 @@ class PersistentObject {
    */
   public function getOriginalValues() {
     return $this->_originalData;
+  }
+
+  /**
+   * Get the list of objects that must exist in the store, before
+   * this object may be persisted. Subclasses may use this method to
+   * manage dependencies.
+   * @return Array of PersistentObject instances
+   */
+  public function getIndispensableObjects() {
+    return array();
   }
 
   /**

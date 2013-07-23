@@ -44,8 +44,8 @@ class LocalizationTest extends DatabaseTestCase {
         array('id' => 1),
       ),
       'user' => array(
-        array('id' => 301, 'name' => 'Herwig', 'firstname' => 'Ingo'),
-        array('id' => 302),
+        array('id' => 301, 'login' => 'ingo', 'name' => 'Herwig', 'firstname' => 'Ingo'),
+        array('id' => 302, 'login' => 'user'),
       ),
       'translation' => array(
       ),

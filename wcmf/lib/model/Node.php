@@ -109,6 +109,14 @@ class Node extends PersistentObject {
   }
 
   /**
+   * @see PersistentObject::getIndispensableObjects()
+   */
+  public function getIndispensableObjects() {
+    // return the parent objects
+    return $this->getParents();
+  }
+
+  /**
    * Get Nodes that match given conditions from a list.
    * @param nodeList An array of nodes to filter or a single Node.
    * @param oid The object id that the Nodes should match [maybe null, default: null].
@@ -296,7 +304,7 @@ class Node extends PersistentObject {
       if (!isset($this->_addedNodes[$role])) {
         $this->_addedNodes[$role] = array();
       }
-      $this->_addedNodes[$role][] = $other->getOID();
+      $this->_addedNodes[$role][] = $other;
     }
 
     // propagate add action to the other object
@@ -314,7 +322,7 @@ class Node extends PersistentObject {
   /**
    * Get the object ids of the nodes that were added since the node was loaded.
    * Persistence mappers use this method when persisting the node relations.
-   * @return Associative array with the roles as keys and an array of ObjectId instances
+   * @return Associative array with the roles as keys and an array of PersistentObject instances
    *  as values
    */
   public function getAddedNodes() {

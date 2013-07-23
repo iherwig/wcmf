@@ -45,7 +45,8 @@ class ObjectFactory {
       'actionMapper' =>       'wcmf\lib\presentation\ActionMapper',
       'view' =>               'wcmf\lib\presentation\view\View',
       'permissionManager' =>  'wcmf\lib\security\PermissionManager',
-      'userManager' =>        'wcmf\lib\security\UserManager',
+      'user' =>               'wcmf\lib\security\principal\User',
+      'role' =>               'wcmf\lib\security\principal\Role',
       'authUser' =>           'wcmf\lib\security\principal\AuthUser',
 
       'formats' =>            'wcmf\lib\presentation\format\Format',
@@ -120,7 +121,7 @@ class ObjectFactory {
       if (self::$_configuration == null) {
         throw new ConfigurationException('No Configuration instance provided. Do this by calling the configure() method.');
       }
-      // load class definition
+      // get instance configuration
       $instanceConfig = self::$_configuration->getSection($name);
       $instance = self::createInstance($name, $instanceConfig);
     }

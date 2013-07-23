@@ -38,8 +38,10 @@ use wcmf\lib\persistence\concurrency\PessimisticLockException;
 class DefaultLockHandler implements LockHandler {
 
   const SESSION_VARNAME = 'DefaultLockHandler.locks';
+  const LOCKTYPE = 'Locktable';
 
   private $_userType = null;
+  private $_lockUserRelationName = null;
 
   /**
    * @see LockHandler::aquireLock()
@@ -91,8 +93,8 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // delete locks for the given oid and current user
-    $query = new ObjectQuery('Locktable');
-    $tpl = $query->getObjectTemplate('Locktable');
+    $query = new ObjectQuery(self::LOCKTYPE);
+    $tpl = $query->getObjectTemplate(self::LOCKTYPE);
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $userTpl = $query->getObjectTemplate($this->getUserType());
     $userTpl->setOID($currentUser->getOID());
@@ -109,8 +111,8 @@ class DefaultLockHandler implements LockHandler {
    */
   public function releaseLocks(ObjectId $oid) {
     // delete locks for the given oid
-    $query = new ObjectQuery('Locktable');
-    $tpl = $query->getObjectTemplate('Locktable');
+    $query = new ObjectQuery(self::LOCKTYPE);
+    $tpl = $query->getObjectTemplate(self::LOCKTYPE);
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
@@ -129,8 +131,8 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // delete locks for the current user
-    $query = new ObjectQuery('Locktable');
-    $tpl = $query->getObjectTemplate('Locktable');
+    $query = new ObjectQuery(self::LOCKTYPE);
+    $tpl = $query->getObjectTemplate(self::LOCKTYPE);
     $userTpl = $query->getObjectTemplate($this->getUserType());
     $userTpl->setOID($currentUser->getOID());
     $userTpl->addNode($tpl);
@@ -154,13 +156,13 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // check if a lock is stored in the database (only pessimistic)
-    $query = new ObjectQuery('Locktable');
-    $tpl = $query->getObjectTemplate('Locktable');
+    $query = new ObjectQuery(self::LOCKTYPE);
+    $tpl = $query->getObjectTemplate(self::LOCKTYPE);
     $tpl->setValue('objectid', Criteria::asValue('=', $oid));
     $locks = $query->execute(BuildDepth::SINGLE);
     if (sizeof($locks) > 0) {
       $lockObj = $locks[0];
-      $user = $lockObj->getValue($this->getUserType());
+      $user = $lockObj->getValue($this->getLockUserRelationName());
       $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $user->getOID(), $user->getLogin(),
               $lockObj->getValue('sessionid'), $lockObj->getValue('since'));
 
@@ -200,7 +202,7 @@ class DefaultLockHandler implements LockHandler {
       // pessimistic locks must be stored in the database in order
       // to be seen by other users
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $lockObj = $persistenceFacade->create('Locktable', BuildDepth::REQUIRED);
+      $lockObj = $persistenceFacade->create(self::LOCKTYPE, BuildDepth::REQUIRED);
       $lockObj->setValue('sessionid', $lock->getSessionID());
       $lockObj->setValue('objectid', $lock->getOID());
       $lockObj->setValue('since', $lock->getCreated());
@@ -264,9 +266,23 @@ class DefaultLockHandler implements LockHandler {
    */
   protected function getUserType() {
     if ($this->_userType == null) {
-      $this->_userType = ObjectFactory::getInstance('userManager')->getUserType();
+      $this->_userType = ObjectFactory::getInstance('User')->getType();
     }
     return $this->_userType;
+  }
+
+  /**
+   * Get the name of the relation between the lock type and the user type.
+   * @return String
+   */
+  protected function getLockUserRelationName() {
+    if ($this->_lockUserRelationName == null) {
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $mapper = $persistenceFacade->getMapper(self::LOCKTYPE);
+      $relDescs = $mapper->getRelationsByType($this->getUserType());
+      $this->_lockUserRelationName = $relDescs[0]->getOtherRole();
+    }
+    return $this->_lockUserRelationName;
   }
 }
 ?>

@@ -311,17 +311,37 @@ class DefaultTransaction implements Transaction {
    * Process the new objects queue
    */
   protected function processInserts() {
+    $pendingInserts = array();
     $insertOids = array_keys($this->_newObjects);
     while (sizeof($insertOids) > 0) {
       $key = array_shift($insertOids);
       Log::info("Process insert on object: ".$key, __CLASS__);
       $object = $this->_newObjects[$key];
-      $mapper = $object->getMapper();
-      if ($mapper) {
-        $mapper->save($object);
+      // postpone insert, if the object has required objects that are
+      // not persisted yet
+      $canInsert = true;
+      $requiredObjects = $object->getIndispensableObjects();
+      foreach ($requiredObjects as $requiredObject) {
+        if ($requiredObject->getState() == PersistentObject::STATE_NEW) {
+          Log::info("Postpone insert of object: ".$key.". Required objects are not saved yet.", __CLASS__);
+          $pendingInserts[] = $object;
+          $canInsert = false;
+          break;
+        }
+      }
+      if ($canInsert) {
+        $mapper = $object->getMapper();
+        if ($mapper) {
+          $mapper->save($object);
+        }
       }
       unset($this->_newObjects[$key]);
       $insertOids = array_keys($this->_newObjects);
+    }
+    // re-add pending inserts
+    foreach ($pendingInserts as $object) {
+      $key = $object->getOID()->__toString();
+      $this->_newObjects[$key] = $object;
     }
   }
 
@@ -391,6 +411,13 @@ class DefaultTransaction implements Transaction {
           break;
       }
     //}
+  }
+
+  /**
+   * @see Transaction::getObjects()
+   */
+  public function getObjects() {
+    return $this->_observedObjects;
   }
 }
 ?>

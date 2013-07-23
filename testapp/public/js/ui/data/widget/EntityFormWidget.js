@@ -101,12 +101,11 @@ function(
 
             // load input widgets referenced in attributes' input type
             ControlFactory.loadControlClasses(this.type).then(lang.hitch(this, function(controls) {
-                var typeClass = Model.getType(this.type);
                 var layoutWidget = registry.byNode(this.fieldsNode.domNode);
 
                 // add attribute widgets
                 this.attributeWidgets = [];
-                var attributes = typeClass.getAttributes('DATATYPE_ATTRIBUTE');
+                var attributes = this.getAttributes();
                 for (var i=0, count=attributes.length; i<count; i++) {
                     var attribute = attributes[i];
                     var controlClass = controls[attribute.inputType];
@@ -140,8 +139,7 @@ function(
 
             // add relation widgets
             if (!this.isNew) {
-                var typeClass = Model.getType(this.type);
-                var relations = typeClass.getRelations();
+                var relations = this.getRelations();
                 for (var i=0, count=relations.length; i<count; i++) {
                     var relation = relations[i];
                     var relationWidget = new EntityRelationWidget({
@@ -163,6 +161,24 @@ function(
             if (!this.isNew) {
                 this.buildLanguageMenu();
             }
+        },
+
+        /**
+         * Get the type's attributes to display in the widget
+         * @returns Array
+         */
+        getAttributes: function() {
+            var typeClass = Model.getType(this.type);
+            return typeClass.getAttributes('DATATYPE_ATTRIBUTE');
+        },
+
+        /**
+         * Get the type's relations to display in the widget
+         * @returns Array
+         */
+        getRelations: function() {
+            var typeClass = Model.getType(this.type);
+            return typeClass.getRelations();
         },
 
         buildLanguageMenu: function() {

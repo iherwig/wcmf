@@ -101,14 +101,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
       // added nodes
       $addedNodes = $object->getAddedNodes();
-      foreach ($addedNodes as $role => $oids) {
+      foreach ($addedNodes as $role => $addedNodes) {
         $relationDesc = $this->getRelation($role);
         // for a many to one relation, we need to update the appropriate
         // foreign key in the object
         if ($relationDesc instanceof RDBManyToOneRelationDescription) {
           // in a many to one only one parent is possible
           // so we take the last oid
-          $poid = array_pop($oids);
+          $parent = array_pop($addedNodes);
+          $poid = $parent->getOID();
           if (ObjectId::isValid($poid)) {
             // set the foreign key to the parent id value
             $fkAttr = $this->getAttribute($relationDesc->getFkName());
@@ -122,7 +123,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           foreach ($relatives as $relative) {
             // check if the relation already exists
             $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
-                PersistentObjectProxy::fromObject($relative), $relationDesc);
+                PersistentObjectProxy::fromObject($relative), $relationDesc, true);
             if (sizeof($nmObjects) == 0) {
               $thisEndRelation = $relationDesc->getThisEndRelation();
               $otherEndRelation = $relationDesc->getOtherEndRelation();
@@ -131,7 +132,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
               // don't use PersistenceFacade::create to instantiate the object,
               // because it would be attached to the transaction, but we want
               // to save it explicitly (see below)
-              $nmObj = $nmMapper->create($nmType);
+              //$nmObj = $nmMapper->create($nmType);
+              $nmObj = $persistenceFacade->create($nmType);
               // add the parent nodes to the many to many object, don't
               // update the other side of the relation, because there may be no
               // relation defined to the many to many object
@@ -140,7 +142,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
               // this relation must be saved immediatly, in order to be
               // available when the other side of the relation is processed
               // (otherwise two objects would be inserted)
-              $nmMapper->save($nmObj);
+              //$nmMapper->save($nmObj);
             }
           }
         }
@@ -543,23 +545,44 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @param objectProxy The proxy at this end of the relation.
    * @param relativeProxy The proxy at the other end of the relation.
    * @param relationDesc The RDBManyToManyRelationDescription instance describing the relation.
+   * @param includeTransaction Boolean whether to also search in the current transaction (default: false)
    * @return Array of PersistentObject instances
    */
   protected function loadRelationObjects(PersistentObjectProxy $objectProxy,
-          PersistentObjectProxy $relativeProxy, RDBManyToManyRelationDescription $relationDesc) {
+          PersistentObjectProxy $relativeProxy, RDBManyToManyRelationDescription $relationDesc,
+          $includeTransaction=false) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $nmMapper = $persistenceFacade->getMapper($relationDesc->getThisEndRelation()->getOtherType());
+    $nmType = $nmMapper->getType();
 
     $thisId = $objectProxy->getOID()->getFirstId();
     $otherId = $relativeProxy->getOID()->getFirstId();
-    $thisFkAttr = $nmMapper->getAttribute($relationDesc->getThisEndRelation()->getFkName());
-    $otherFkAttr = $nmMapper->getAttribute($relationDesc->getOtherEndRelation()->getFkName());
+    $thisEndRelation = $relationDesc->getThisEndRelation();
+    $otherEndRelation = $relationDesc->getOtherEndRelation();
+    $thisFkAttr = $nmMapper->getAttribute($thisEndRelation->getFkName());
+    $otherFkAttr = $nmMapper->getAttribute($otherEndRelation->getFkName());
 
-    $criteria1 = new Criteria($nmMapper->getType(), $thisFkAttr->getName(), "=", $thisId);
-    $criteria2 = new Criteria($nmMapper->getType(), $otherFkAttr->getName(), "=", $otherId);
+    $criteria1 = new Criteria($nmType, $thisFkAttr->getName(), "=", $thisId);
+    $criteria2 = new Criteria($nmType, $otherFkAttr->getName(), "=", $otherId);
     $criteria = array($criteria1, $criteria2);
-    $nmObjects = $nmMapper->loadObjects($nmMapper->getType(), BuildDepth::SINGLE, $criteria);
+    $nmObjects = $nmMapper->loadObjects($nmType, BuildDepth::SINGLE, $criteria);
+
+    if ($includeTransaction) {
+      $transaction = $persistenceFacade->getTransaction();
+      $objects = $transaction->getObjects();
+      foreach ($objects as $object) {
+        if ($object->getType() == $nmType && $object instanceof Node) {
+          // we expect single valued relation ends
+          $thisEndObject = $object->getValue($thisEndRelation->getThisRole());
+          $otherEndObject = $object->getValue($otherEndRelation->getOtherRole());
+          if ($objectProxy->getRealSubject() == $thisEndObject &&
+                  $relativeProxy->getRealSubject() == $otherEndObject) {
+            $nmObjects[] = $object;
+          }
+        }
+      }
+    }
     return $nmObjects;
   }
 

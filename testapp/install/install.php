@@ -41,7 +41,6 @@ $permissionManager = ObjectFactory::getInstance('permissionManager');
 $permissionManager->deactivate();
 
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-$userManager = ObjectFactory::getInstance('userManager');
 $transaction = $persistenceFacade->getTransaction();
 $transaction->begin();
 try {
@@ -52,19 +51,27 @@ try {
     $seq->setValue("id", 1);
   }
 
-  if (!$userManager->getRole("administrators")) {
+  $roleTypeInst = ObjectFactory::getInstance('Role');
+  $userTypeInst = ObjectFactory::getInstance('User');
+
+  $adminRole = $roleTypeInst::getByName("administrators");
+  if (!$adminRole) {
     Log::info("creating role with name 'administrators'...", "install");
-    $userManager->createRole("administrators");
+    $adminRole = $persistenceFacade->create($roleTypeInst->getType());
+    $adminRole->setName("administrators");
   }
-  if (!$userManager->getUser("admin")) {
+  $adminUser = $userTypeInst::getByLogin("admin");
+  if (!$adminUser) {
     Log::info("creating user with login 'admin' password 'admin'...", "install");
-    $userManager->createUser("Administrator", "", "admin", "admin", "admin");
-    $userManager->setUserProperty("admin", USER_PROPERTY_CONFIG, "admin.ini");
+    $adminUser = $persistenceFacade->create($userTypeInst->getType());
+    $adminUser->setLogin("admin");
+    $adminUser->setPassword("admin");
+    $adminUser->setName("Administrator");
+    $adminUser->setConfig("admin.ini");
   }
-  $admin = $userManager->getUser("admin");
-  if ($admin && !$admin->hasRole('administrators')) {
+  if (!$adminUser->hasRole("administrators")) {
     Log::info("adding user 'admin' to role 'administrators'...", "install");
-    $userManager->addUserToRole("administrators", "admin");
+    $adminUser->addRole($adminRole);
   }
 
   // execute custom scripts from the directory 'custom-install'

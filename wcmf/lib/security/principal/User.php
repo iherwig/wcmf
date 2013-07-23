@@ -18,6 +18,8 @@
  */
 namespace wcmf\lib\security\principal;
 
+use wcmf\lib\security\principal\Role;
+
 /**
  * User is the interface for users.
  *
@@ -44,16 +46,34 @@ interface User {
   public function getLogin();
 
   /**
-   * Set the password of the user.
-   * @param password The unencrypted password of the user.
+   * Set the password of the user. Implementations of User must
+   * hash the password before persisting it.
+   * @param password The plaintext password of the user.
    */
   public function setPassword($password);
 
   /**
-   * Get the password of the user.
-   * @return The encrypted password of the user.
+   * Get the password of the user. The result is expected to
+   * be hashed, if the user was persisted already. If not
+   * persisted, the result may be the plaintext password.
+   * @return The password of the user,
    */
   public function getPassword();
+
+  /**
+   * Hash a password.
+   * @param password The plaintext password to hash
+   * @return The hashed password.
+   */
+  public function hashPassword($password);
+
+  /**
+   * Verify a password.
+   * @param password The plaintext password to verify
+   * @param passwordHash The password hash to match
+   * @return Boolean.
+   */
+  public function verifyPassword($password, $passwordHash);
 
   /**
    * Set the name of the user.
@@ -93,9 +113,9 @@ interface User {
 
   /**
    * Assign a role to the user.
-   * @param rolename The role name. e.g. "administrators"
+   * @param role Role instance
    */
-  public function addRole($rolename);
+  public function addRole(Role $role);
 
   /**
    * Remove a role from the user.
@@ -106,13 +126,13 @@ interface User {
   /**
    * Check for a certain role in the user roles.
    * @param rolename The role name to check for. e.g. "administrators"
-   * @return True/False whether the user has the role
+   * @return Boolean whether the user has the role
    */
   public function hasRole($rolename);
 
   /**
    * Get the roles of a user.
-   * @return An array holding the role names
+   * @return Array of role names
    */
   public function getRoles();
 
@@ -122,5 +142,12 @@ interface User {
    * necessary after retrieving an instance from the session.
    */
   public function resetRoleCache();
+
+  /**
+   * Get a User instance by login.
+   * @param name The user's login
+   * @return User instance.
+   */
+  public static function getByLogin($login);
 }
 ?>

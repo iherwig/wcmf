@@ -244,7 +244,7 @@ abstract class Controller {
    */
   protected function isLocalizedRequest() {
     if ($this->_request->hasValue('language')) {
-      $language = $this->_request->hasValue('language');
+      $language = $this->_request->getValue('language');
       $localization = ObjectFactory::getInstance('localization');
       if ($language != $localization->getDefaultLanguage()) {
         return true;

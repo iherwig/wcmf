@@ -293,7 +293,7 @@ class DefaultLocalization implements Localization {
     if (in_array($inputType, $this->_inputTypes)) {
       // empty the value, if the default language values should not be used
       if (!$useDefaults) {
-        $object->setValue($valueName, null);
+        $object->setValue($valueName, null, true);
       }
       // translate the value
       for ($i=0, $count=sizeof($translations); $i<$count; $i++) {
@@ -301,7 +301,7 @@ class DefaultLocalization implements Localization {
         if ($curValueName == $valueName) {
           $translation = $translations[$i]->getTranslation();
           if (!($useDefaults && strlen($translation) == 0)) {
-            $object->setValue($valueName, $translation);
+            $object->setValue($valueName, $translation, true);
           }
           break;
         }

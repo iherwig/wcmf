@@ -60,15 +60,16 @@ class SaveControllerTest extends ControllerTestCase {
     $oid = ObjectId::parse(self::TEST_OID);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    // simulate a simple save call
+    // simulate a simple update call
     $type = $oid->getType();
     $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $testObj->setOID($oid);
+    $testObj->setValue('login', 'admin');
     $testObj->setValue('name', 'Administrator');
     $data = array(
       $oid->__toString() => $testObj
     );
-    $response = $this->runRequest('save', $data);
+    $response = $this->runRequest('update', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -89,17 +90,17 @@ class SaveControllerTest extends ControllerTestCase {
     $type = $oid->getType();
     $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
     $testObj->setOID($oid);
-    $testObj->setValue('name', 'Administrator [it]');
+    $testObj->setValue('name', 'Administrator [de]');
     $data = array(
       $oid->__toString() => $testObj,
-      'language' => 'it'
+      'language' => 'de'
     );
-    $response = $this->runRequest('save', $data);
+    $response = $this->runRequest('update', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $translatedObj = ObjectFactory::getInstance('localization')->loadTranslatedObject($oid, 'it');
-    $this->assertEquals('Administrator [it]', $translatedObj->getValue('name'));
+    $translatedObj = ObjectFactory::getInstance('localization')->loadTranslatedObject($oid, 'de');
+    $this->assertEquals('Administrator [de]', $translatedObj->getValue('name'));
 
     TestUtil::endSession();
   }

@@ -19,12 +19,11 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
+use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\Response;
+use wcmf\lib\security\principal\User;
 
 /**
  * UserController is used to edit data of the current users.
@@ -44,18 +43,6 @@ use wcmf\lib\presentation\Response;
  */
 class UserController extends Controller {
 
-  private $_userManager = null;
-
-  /**
-   * @see Controller::initialize()
-   */
-  public function initialize(Request $request, Response $response) {
-    parent::initialize($request, $response);
-
-    // create UserManager instance
-    $this->_userManager = ObjectFactory::getInstance('userManager');
-  }
-
   /**
    * Process action and assign data to View.
    * @return False (Stop action processing chain).
@@ -72,15 +59,15 @@ class UserController extends Controller {
     // change password
     if ($request->getAction() == 'changePassword') {
       // load model
-      $user = $permissionManager->getAuthUser();
-      $oid = new ObjectId(ObjectFactory::getInstance('userManager')->getUserType(), $user->getUserId());
-      $principal = $this->_userManager->getPrincipal($oid);
+      $authUser = $permissionManager->getAuthUser();
+      $oid = new ObjectId(ObjectFactory::getInstance('User')->getType(), $authUser->getUserId());
+      $user = $persistenceFacade->load($oid);
 
       // start the persistence transaction
       $transaction = $persistenceFacade->getTransaction();
       $transaction->begin();
       try {
-        $this->_userManager->changePassword($principal->getLogin(), $request->getValue('oldpassword'),
+        $this->changePassword($user, $request->getValue('oldpassword'),
           $request->getValue('newpassword1'), $request->getValue('newpassword2'));
         $transaction->commit();
       }
@@ -93,6 +80,25 @@ class UserController extends Controller {
     // success
     $response->setAction('ok');
     return false;
+  }
+
+  /**
+   * Change a users password.
+   * @param user The User instance
+   * @param oldPassword The old password of the user
+   * @param newPassword The new password for the user
+   * @param newPasswordRepeated The new password of the user again
+   */
+  public function changePassword(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
+    // check old password
+    if (!$user->verifyPassword($oldPassword, $user->getPassword())) {
+      throw new IllegalArgumentException(Message::get("The old password is incorrect"));
+    }
+    if ($newPassword != $newPasswordRepeated) {
+      throw new IllegalArgumentException(Message::get("The given passwords don't match"));
+    }
+    // set password
+    $user->setPassword($newPassword);
   }
 }
 ?>

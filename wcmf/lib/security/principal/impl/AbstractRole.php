@@ -18,7 +18,10 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\security\principal\Role;
 
 /**
@@ -27,5 +30,37 @@ use wcmf\lib\security\principal\Role;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class AbstractRole extends Node implements Role {
+
+  /**
+   * @see Role::getByName()
+   */
+  public static function getByName($name) {
+    $roleTypeName = ObjectFactory::getInstance('Role')->getType();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $role = $persistenceFacade->loadFirstObject($roleTypeName, BuildDepth::SINGLE,
+                array(
+                    new Criteria($roleTypeName, 'name', '=', $name)
+                ), null);
+    return $role;
+  }
+
+  /**
+   * @see PersistentObject::validateValue()
+   */
+  public function validateValue($name, $value) {
+    parent::validateValue($name, $value);
+
+    // validate the name property
+    // the name is expected to be stored in the 'name' value
+    if ($name == 'name') {
+      if (strlen(trim($value)) == 0) {
+        throw new ValidationException(Message::get("The role requires a name"));
+      }
+      $role = self::getByName($value);
+      if ($role != null && $role->getOID() != $this->getOID()) {
+        throw new ValidationException(Message::get("The role '%0%' already exists", array($value)));
+      }
+    }
+  }
 }
 ?>

@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2013 The Olympos Development Team.
- * 
+ *
  * http://sourceforge.net/projects/olympos/
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,11 +125,10 @@ define([
 
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/wcmf/UserRDBClass.js/Body) ENABLED START
         , listView: 'js/ui/data/widget/EntityListWidget'
-        , detailView: 'js/ui/data/widget/EntityFormWidget'
+        , detailView: 'js/ui/admin/widget/UserFormWidget'
 // PROTECTED REGION END
     });
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/wcmf/UserRDBClass.js/Static) ENABLED START
 // PROTECTED REGION END
     return UserRDB;
 });
-  

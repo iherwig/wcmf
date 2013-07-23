@@ -63,11 +63,11 @@ class DisplayControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID1);
 
-    // simulate a simple display call
+    // simulate a simple read call
     $data = array(
       'oid' => $oid->__toString()
     );
-    $response = $this->runRequest('display', $data);
+    $response = $this->runRequest('read', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -94,12 +94,12 @@ class DisplayControllerTest extends ControllerTestCase {
     ObjectFactory::getInstance('localization')->saveTranslation($tmp, 'de');
     $transaction->commit();
 
-    // simulate a localized display call
+    // simulate a localized read call
     $data = array(
       'oid' => $oid->__toString(),
       'language' => 'de'
     );
-    $response = $this->runRequest('display', $data);
+    $response = $this->runRequest('read', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -134,13 +134,13 @@ class DisplayControllerTest extends ControllerTestCase {
     $localization->saveTranslation($tmp2, 'de');
     $transaction->commit();
 
-    // simulate a localized display call
+    // simulate a localized read call
     $data = array(
       'oid' => $oid1->__toString(),
       'depth' => -1,
       'language' => 'de'
     );
-    $response = $this->runRequest('display', $data);
+    $response = $this->runRequest('read', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');

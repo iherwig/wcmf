@@ -20,9 +20,14 @@ namespace wcmf\lib\security\principal\impl;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\security\principal\User;
+use wcmf\lib\security\principal\Role;
+
+require_once(WCMF_BASE."wcmf/vendor/password_compat/lib/password.php");
 
 /**
  * Default implementation of a user.
@@ -34,6 +39,8 @@ abstract class AbstractUser extends Node implements User {
   private $_cachedRoles = array();
   private $_hasOwnRolesLoaded = false;
 
+  private static $_roleConfig = null;
+
   /**
    * @see User::getUserId()
    */
@@ -42,23 +49,44 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
-   * Assign a role to the user.
-   * @param rolename The role name. e.g. "administrators"
+   * @see User::hashPassword()
    */
-  public function addRole($rolename) {
+  public function hashPassword($password) {
+    return password_hash($password, PASSWORD_BCRYPT);
+  }
+
+  /**
+   * @see User::verifyPassword()
+   */
+  public function verifyPassword($password, $passwordHash) {
+    return password_verify($password, $passwordHash);
+  }
+
+  /**
+   * @see User::addRole()
+   */
+  public function addRole(Role $role) {
+    $rolename = $role->getName();
     if ($this->hasRole($rolename)) {
       return;
     }
-    // add the role if existing
-    $role = $this->getRoleByName($rolename);
-    if ($role != null) {
-      $this->addNode($role);
+    $this->addNode($role);
+
+    // set role config
+    if (self::$_roleConfig == null) {
+      // load role config if existing
+      $config = ObjectFactory::getConfigurationInstance();
+      if (($roleConfig = $config->getSection('roleconfig')) !== false) {
+        self::$_roleConfig = $roleConfig;
+      }
+    }
+    if (self::$_roleConfig && isset(self::$_roleConfig[$rolename])) {
+      $this->setConfig(self::$_roleConfig[$rolename]);
     }
   }
 
   /**
-   * Remove a role from the user.
-   * @param rolename The role name. e.g. "administrators"
+   * @see User::removeRole()
    */
   public function removeRole($rolename) {
     if (!$this->hasRole($rolename)) {
@@ -72,9 +100,7 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
-   * Check for a certain role in the user roles.
-   * @param rolename The role name to check for. e.g. "administrators"
-   * @return True/False whether the user has the role
+   * @see User::hasRole()
    */
   public function hasRole($rolename) {
     $roles = $this->getRoles();
@@ -87,11 +113,10 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
-   * Get the roles of a user.
-   * @return An array holding the role names
+   * @see User::getRoles()
    */
   public function getRoles() {
-    $roleType = ObjectFactory::getInstance('userManager')->getRoleType();
+    $roleTypeName = ObjectFactory::getInstance('Role')->getType();
     if (!$this->_hasOwnRolesLoaded) {
       // make sure that the roles are loaded
 
@@ -102,10 +127,8 @@ abstract class AbstractUser extends Node implements User {
         $permissionManager->deactivate();
       }
       $mapper = $this->getMapper();
-      foreach ($mapper->getRelations() as $relation) {
-        if ($relation->getOtherType() == $roleType) {
-          $this->loadChildren($relation->getOtherRole());
-        }
+      foreach ($mapper->getRelationsByType($roleTypeName) as $relation) {
+        $this->loadChildren($relation->getOtherRole());
       }
       // reactivate the PermissionManager if necessary
       if (!$isAnonymous) {
@@ -113,7 +136,7 @@ abstract class AbstractUser extends Node implements User {
       }
       $this->_hasOwnRolesLoaded = true;
     }
-    return $this->getChildrenEx(null, null, $roleType, null);
+    return $this->getChildrenEx(null, null, $roleTypeName, null);
   }
 
   /**
@@ -124,12 +147,8 @@ abstract class AbstractUser extends Node implements User {
   protected function getRoleByName($rolename) {
     if (!isset($this->_cachedRoles[$rolename])) {
       // load the role
-      $roleType = ObjectFactory::getInstance('userManager')->getRoleType();
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $role = $persistenceFacade->loadFirstObject($roleType, BuildDepth::SINGLE,
-                  array(
-                      new Criteria($roleType, 'name', '=', $rolename)
-                  ), null);
+      $roleType = ObjectFactory::getInstance('Role');
+      $role = $roleType::getByName($rolename);
       if ($role != null) {
         $this->_cachedRoles[$rolename] = $role;
       }
@@ -141,13 +160,72 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
-   * This class caches loaded roles for performance reasons. After retrieving
-   * an instance from the session, the cache is invalid and must be reseted using
-   * this method.
+   * @see User::resetRoleCache()
    */
   public function resetRoleCache() {
     $this->_cachedRoles = array();
     $this->_hasOwnRolesLoaded = false;
+  }
+
+
+  /**
+   * @see User::getByLogin()
+   */
+  public static function getByLogin($login) {
+    $userTypeName = ObjectFactory::getInstance('User')->getType();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $user = $persistenceFacade->loadFirstObject($userTypeName, BuildDepth::SINGLE,
+                array(
+                    new Criteria($userTypeName, 'login', '=', $login)
+                ), null);
+    return $user;
+  }
+
+  /**
+   * @see PersistentObject::beforeInsert()
+   */
+  public function beforeInsert() {
+    $this->ensureHashedPassword();
+  }
+
+  /**
+   * @see PersistentObject::beforeUpdate()
+   */
+  public function beforeUpdate() {
+    $this->ensureHashedPassword();
+  }
+
+  /**
+   * Hash password property if not done already.
+   */
+  protected function ensureHashedPassword() {
+    // the password is expected to be stored in the 'password' value
+    $password = $this->getValue('password');
+    if (strlen($password) > 0) {
+      $info = password_get_info($password);
+      if ($info['algo'] != PASSWORD_BCRYPT) {
+        $this->setValue('password', $this->hashPassword($password));
+      }
+    }
+  }
+
+  /**
+   * @see PersistentObject::validateValue()
+   */
+  public function validateValue($name, $value) {
+    parent::validateValue($name, $value);
+
+    // validate the login property
+    // the login is expected to be stored in the 'login' value
+    if ($name == 'login') {
+      if (strlen(trim($value)) == 0) {
+        throw new ValidationException(Message::get("The user requires a login name"));
+      }
+      $user = self::getByLogin($value);
+      if ($user != null && $user->getOID() != $this->getOID()) {
+        throw new ValidationException(Message::get("The login '%0%' already exists", array($value)));
+      }
+    }
   }
 }
 ?>

@@ -18,14 +18,10 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
-use \ReflectionClass;
-
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\Criteria;
 use wcmf\lib\security\Policy;
 use wcmf\lib\security\principal\AuthUser;
+use wcmf\lib\security\principal\Role;
 
 /**
  * Default AuthUser implementation. The class holds an internal User
@@ -55,39 +51,28 @@ class DefaultAuthUser implements AuthUser {
       $permissionManager->deactivate();
     }
     // try to receive the user with given credentials
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $userManager = ObjectFactory::getInstance('userManager');
-    $userType = $userManager->getUserType();
-    $user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE,
-                  array(
-                      new Criteria($userType, 'login', '=', $login)
-                  ), null);
+    $userTypeInst = ObjectFactory::getInstance('User');
+    $user = $userTypeInst::getByLogin($login);
 
     // check if user exists
     $loginOk = false;
     if ($user != null) {
-      $uRC = new ReflectionClass($user);
-      if ($uRC->implementsInterface('wcmf\lib\security\principal\User')) {
-        // check password
-        $loginOk = $userManager->verifyPassword($password, $user->getPassword());
-        if ($loginOk) {
-          // login succeeded, store the user instance
-          $this->_user = clone $user;
+      // check password
+      $loginOk = $user->verifyPassword($password, $user->getPassword());
+      if ($loginOk) {
+        // login succeeded, store the user instance
+        $this->_user = clone $user;
 
-          // load user config initially
-          $userConfig = $this->getConfig();
-          if (strlen($userConfig) > 0) {
-            $config->addConfiguration($userConfig);
-          }
-
-          // add policies
-          $policies = $config->getSection('authorization');
-          $this->addPolicies($policies);
-          $this->_login_time = strftime("%c", time());
+        // load user config initially
+        $userConfig = $this->getConfig();
+        if (strlen($userConfig) > 0) {
+          $config->addConfiguration($userConfig);
         }
-      }
-      else {
-        throw new ConfigurationException($userType.' does not implement wcmf\lib\security\principal\User');
+
+        // add policies
+        $policies = $config->getSection('authorization');
+        $this->addPolicies($policies);
+        $this->_login_time = strftime("%c", time());
       }
     }
 
@@ -229,6 +214,26 @@ class DefaultAuthUser implements AuthUser {
   }
 
   /**
+   * @see User::hashPassword
+   */
+  public function hashPassword($password) {
+    if ($this->_user != null) {
+      return $this->_user->hashPassword($password);
+    }
+    return $password;
+  }
+
+  /**
+   * @see User::verifyPassword
+   */
+  public function verifyPassword($password, $passwordHash) {
+    if ($this->_user != null) {
+      return $this->_user->verifyPassword($password, $passwordHash);
+    }
+    return false;
+  }
+
+  /**
    * @see User::setName()
    */
   public function setName($name) {
@@ -288,9 +293,9 @@ class DefaultAuthUser implements AuthUser {
   /**
    * @see User::addRole()
    */
-  public function addRole($rolename) {
+  public function addRole(Role $role) {
     if ($this->_user != null) {
-      $this->_user->addRole($rolename);
+      $this->_user->addRole($role);
     }
   }
 
@@ -330,6 +335,16 @@ class DefaultAuthUser implements AuthUser {
     if ($this->_user != null) {
       $this->_user->resetRoleCache();
     }
+  }
+
+  /**
+   * @see User::getByLogin()
+   */
+  public static function getByLogin($login) {
+    if ($this->_user != null) {
+      $this->_user->getByLogin($login);
+    }
+    return null;
   }
 
   /**
