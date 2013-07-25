@@ -88,10 +88,11 @@ class Message {
     // get the translations
     $lang = strlen($lang) == 0 ? self::$language : $lang;
     $translations = self::getTranslations($lang);
+    $localizedMessage = '';
     if (isset($translations[$message])) {
       $localizedMessage = $translations[$message];
     }
-    else {
+    if (strlen($localizedMessage) == 0) {
       $localizedMessage = $message;
     }
 

@@ -20,6 +20,7 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -93,6 +94,9 @@ class UserController extends Controller {
     // check old password
     if (!$user->verifyPassword($oldPassword, $user->getPassword())) {
       throw new IllegalArgumentException(Message::get("The old password is incorrect"));
+    }
+    if (strlen($newPassword) == 0) {
+      throw new IllegalArgumentException(Message::get("The password can't be empty"));
     }
     if ($newPassword != $newPasswordRepeated) {
       throw new IllegalArgumentException(Message::get("The given passwords don't match"));
