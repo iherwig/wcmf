@@ -78,36 +78,20 @@ body {
   width: 25px;
 }
 
-.dgrid-row-odd {
-  background: #F2F5F9;
-}
-
-.dgrid-cell {
-  border: none;
-}
-
-.dgrid-selected {
-  background: #999; /* Make selected rows be gray */
-}
-
 .dgrid-loading, .dgrid-no-data {
   padding: 10px;
 }
 
-th {
-  font-weight: normal;
-}
-
 th.field-actions-2, td.field-actions-2 {
-  width: 50px;
+  width: 60px;
 }
 
 th.field-actions-3, td.field-actions-3 {
-  width: 70px;
+  width: 90px;
 }
 
 th.field-actions-4, td.field-actions-4 {
-  width: 90px;
+  width: 120px;
 }
 
 /* dnd */
