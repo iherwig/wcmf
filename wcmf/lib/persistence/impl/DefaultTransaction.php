@@ -40,6 +40,7 @@ class DefaultTransaction implements Transaction {
   protected $_newObjects = array();
   protected $_dirtyObjects = array();
   protected $_deletedObjects = array();
+  protected $_detachedObjects = array();
 
   /**
    * Contains all loaded objects no matter which state they have
@@ -280,6 +281,7 @@ class DefaultTransaction implements Transaction {
       unset($this->_loadedObjects[$key]);
     }
     unset($this->_observedObjects[$key]);
+    $this->_detachedObjects[$key] = $object;
   }
 
   /**
@@ -305,6 +307,8 @@ class DefaultTransaction implements Transaction {
       unset($this->_observedObjects[$object->getOID()->__toString()]);
     }
     $this->_loadedObjects = array();
+
+    $this->_detachedObjects = array();
   }
 
   /**
@@ -393,6 +397,12 @@ class DefaultTransaction implements Transaction {
    */
   public function stateChanged(StateChangeEvent $event) {
     $object = $event->getObject();
+
+    // don't listen to detached object changes
+    $key = $object->getOID()->__toString();
+    if (isset($this->_detachedObjects[$key])) {
+      return;
+    }
     //if (isset($this->_observedObjects[$object->getOID()->__toString()])) {
       $oldState = $event->getOldValue();
       $newState = $event->getNewValue();

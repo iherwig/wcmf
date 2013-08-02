@@ -148,7 +148,8 @@ abstract class AbstractMapper {
   public function create($type, $buildDepth=BuildDepth::SINGLE) {
     // Don't check rights here, because object creation may be needed
     // for internal purposes. That newly created objects may not be saved
-    // to the storage is asured by the save method.
+    // to the storage unless they are valid and the user is authorized
+    // is assured by the save method.
     $object = $this->createImpl($type, $buildDepth);
 
     $this->initialize($object);
@@ -184,7 +185,10 @@ abstract class AbstractMapper {
       $object->beforeInsert();
     }
 
-    // modify object
+    // validate object
+    $object->validateValues();
+
+    // save object
     return $this->saveImpl($object);
 
     // call lifecycle callback

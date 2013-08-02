@@ -122,7 +122,8 @@ class DionysosNodeSerializer implements NodeSerializer {
    */
   protected function deserializeValue(Node $node, $key, $value) {
     if (!is_array($value)) {
-      $node->setValue($key, $value);
+      // force set value to avoid exceptions in this stage
+      $node->setValue($key, $value, true);
     }
     else {
       $role = $key;

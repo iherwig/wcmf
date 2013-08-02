@@ -19,12 +19,14 @@
 namespace wcmf\application\controller;
 
 use \Exception;
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\presentation\ApplicationError;
@@ -107,23 +109,19 @@ class SaveController extends Controller {
             // save uploaded file/ process array values
             $isFile = false;
             if (is_array($curRequestValue)) {
-              // save file
-              $result = $this->saveUploadFile($curOid, $curValueName, $curRequestValue);
-              // upload failed (present an error message and save the rest)
-              if ($result === false) {
-                ; // $response->setAction('ok'); return true;
-              }
-              if ($result === true) {
-                // no upload
-                // connect array values to a comma separated string
-                if (sizeof($curRequestValue) > 0) {
-                  $curRequestValue = join($curRequestValue, ",");
+              if ($this->isFileUpload($curRequestValue)) {
+                // save file
+                $filename = $this->saveUploadFile($curOid, $curValueName, $curRequestValue);
+                if ($filename != null) {
+                  // success with probably altered filename
+                  $curRequestValue = $filename;
                 }
+                $isFile = true;
               }
               else {
-                // success with probably altered filename
-                $curRequestValue = $result;
-                $isFile = true;
+                // no upload
+                // connect array values to a comma separated string
+                $curRequestValue = join($curRequestValue, ",");
               }
             }
 
@@ -156,29 +154,26 @@ class SaveController extends Controller {
               $curNode = &$nodeArray[$curOidStr];
             }
 
-            // continue only if the new value differs from the old value
+            // set data in node (prevent overwriting old image values, if no image is uploaded)
             $curRequestValue = stripslashes($curRequestValue);
-            $oldValue = $curNode->getValue($curValueName);
-            if ($oldValue != $curRequestValue) {
-              // set data in node (prevent overwriting old image values, if no image is uploaded)
-              if (!$isFile || ($isFile && sizeof($curRequestValue) > 0)) {
+            if (!$isFile || ($isFile && sizeof($curRequestValue) > 0)) {
+              try {
                 // validate the new value
-                $validationMsg = $curNode->validateValue($curValueName, $curRequestValue);
-                $validationFailed = strlen($validationMsg) > 0 ? true : false;
-                if (!$validationFailed) {
-                  if ($this->confirmSave($curNode, $curValueName, $curRequestValue))
-                  {
-                    // set the new value
-                    $curNode->setValue($curValueName, $curRequestValue);
+                $curNode->validateValue($curValueName, $curRequestValue);
+                if ($this->confirmSave($curNode, $curValueName, $curRequestValue)) {
+                  // set the new value
+                  $oldValue = $curNode->getValue($curValueName);
+                  $curNode->setValue($curValueName, $curRequestValue);
+                  if ($oldValue != $curRequestValue) {
                     $needCommit = true;
                   }
                 }
-                else {
-                  $invalidAttributeValues[] = array('oid' => $curOidStr,
-                    'parameter' => $curValueName, 'message' => $validationMsg);
-                  // add error to session
-                  $session->addError($curOidStr, $validationMsg);
-                }
+              }
+              catch(ValidationException $ex) {
+                $invalidAttributeValues[] = array('oid' => $curOidStr,
+                  'parameter' => $curValueName, 'message' => $ex->getMessage());
+                // add error to session
+                $session->addError($curOidStr, $ex->getMessage());
               }
             }
 
@@ -206,7 +201,7 @@ class SaveController extends Controller {
       }
 
       // commit changes
-      if ($needCommit) {
+      if ($needCommit && !$response->hasErrors()) {
         $localization = ObjectFactory::getInstance('localization');
         $saveOids = array_keys($saveOids);
         for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
@@ -216,8 +211,11 @@ class SaveController extends Controller {
             $localization->saveTranslation($curObject, $request->getValue('language'));
           }
         }
+        $transaction->commit();
       }
-      $transaction->commit();
+      else {
+        $transaction->rollback();
+      }
     }
     catch (PessimisticLockException $ex) {
       $lock = $ex->getLock();
@@ -232,6 +230,7 @@ class SaveController extends Controller {
       $transaction->rollback();
     }
     catch (Exception $ex) {
+      Log::error($ex, __CLASS__);
       $response->addError(ApplicationError::fromException($ex));
       $transaction->rollback();
     }
@@ -249,8 +248,8 @@ class SaveController extends Controller {
    * Save uploaded file. This method calls checkFile which will prevent upload if returning false.
    * @param oid The ObjectId of the object to which the file is associated
    * @param valueName The name of the value to which the file is associated
-   * @param data An assoziative array with keys 'name', 'type', 'size', 'tmp_name', 'error' as contained in the php $_FILES array.
-   * @return True if no upload happened (because no file was given) / False on error / The final filename if the upload was successful
+   * @param data An assoziative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
+   * @return The final filename if the upload was successful, null on error
    */
   protected function saveUploadFile(ObjectId $oid, $valueName, array $data) {
     $response = $this->getResponse();
@@ -265,7 +264,7 @@ class SaveController extends Controller {
         if (!is_uploaded_file($data['tmp_name'])) {
           $message = Message::get("Possible file upload attack: filename %0%.", array($data['name']));
           $response->addError(ApplicationError::get('GENERAL_ERROR', array('message' => $message)));
-          return false;
+          return null;
         }
 
         // get upload directory
@@ -276,7 +275,7 @@ class SaveController extends Controller {
 
         // check file validity
         if (!$this->checkFile($oid, $valueName, $uploadFilename, $data['type'])) {
-          return false;
+          return null;
         }
 
         // get upload parameters
@@ -287,7 +286,7 @@ class SaveController extends Controller {
         if (!$filename) {
           $response->addError(ApplicationError::get('GENERAL_ERROR',
             array('message' => $this->_fileUtil->getErrorMsg())));
-          return false;
+          return null;
         }
         else {
           return $filename;
@@ -296,11 +295,20 @@ class SaveController extends Controller {
       else {
         $response->addError(ApplicationError::get('GENERAL_ERROR',
           array('message' => Message::get("Upload failed for %0%.", array($data['name'])))));
-        return false;
+        return null;
       }
     }
-    // return true if no upload happened
-    return true;
+    return null;
+  }
+
+  /**
+   * Check if the given data defines a file upload. File uploads are defined in
+   * an assoziative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
+   * @param data Array
+   * @return Boolean
+   */
+  protected function isFileUpload(array $data) {
+    return isset($data['name']) && isset($data['tmp_name']) && isset($data['type']);
   }
 
   /**

@@ -165,18 +165,10 @@ class Application {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $persistenceFacade->getTransaction()->rollback();
 
-    $session = ObjectFactory::getInstance('session');
-    $lastRequest = $session->get('lastRequest');
-    if ($lastRequest) {
-      // process last successful request if existing
-      ObjectFactory::getInstance('actionMapper')->processAction($lastRequest);
-    }
-    else {
-      // redirect to failure action
-      $request->addError(ApplicationError::get('GENERAL_FATAL'));
-      $request->setAction('failure');
-      ObjectFactory::getInstance('actionMapper')->processAction($request);
-    }
+    // redirect to failure action
+    $request->addError(ApplicationError::fromException($exception));
+    $request->setAction('failure');
+    ObjectFactory::getInstance('actionMapper')->processAction($request);
   }
 
   /**

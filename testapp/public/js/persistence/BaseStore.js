@@ -20,9 +20,9 @@ define([
         idProperty: 'oid',
 
         constructor: function(options) {
-            options.headers = {
+            lang.mixin(this.headers, {
                 Accept: 'application/javascript, application/json'
-            };
+            });
 
             // set id property in order to have url like /{type}/{id}
             // instead of /{type}/{oid}

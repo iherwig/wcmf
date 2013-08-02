@@ -20,8 +20,6 @@ namespace wcmf\application\controller;
 
 use \Exception;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\NodeIterator;
-use wcmf\lib\model\visitor\CommitVisitor;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
@@ -104,20 +102,12 @@ class InsertController extends Controller {
       $newNode = $persistenceFacade->create($newType, BuildDepth::REQUIRED);
 
       // look for a node template in the request parameters
-      $localizationTpl = null;
       $saveData = $request->getValues();
       foreach($saveData as $curOidStr => $curRequestObject) {
         if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
                 && $curOid->getType() == $newType) {
-          if ($this->isLocalizedRequest()) {
-            // copy values from the node template to the localization template for later use
-            $localizationTpl = $persistenceFacade->create($newType, BuildDepth::SINGLE);
-            $curRequestObject->copyValues($localizationTpl, false);
-          }
-          else {
-            // copy values from the node template to the new node
-            $curRequestObject->copyValues($newNode, false);
-          }
+          // copy values from the node template to the new node
+          $curRequestObject->copyValues($newNode, false);
           break;
         }
       }
@@ -125,27 +115,19 @@ class InsertController extends Controller {
       if ($this->confirmInsert($newNode)) {
         $this->modify($newNode);
 
-        // commit the new node and its descendants
-        // we need to use the CommitVisitor because many to many objects maybe included
-        $nIter = new NodeIterator($newNode);
-        $cv = new CommitVisitor();
-        $cv->startIterator($nIter);
+        if ($this->isLocalizedRequest()) {
+          // store a translation for localized data
+          $localization = ObjectFactory::getInstance('localization');
+          $localization->saveTranslation($newNode, $request->getValue('language'));
+        }
 
         // after insert
         $this->afterInsert($newNode);
+        $transaction->commit();
       }
-      $transaction->commit();
-
-      // if the request is localized, use the localization template as translation
-      // NOTE: this has to be done after the new node got it's oid by committing the
-      // transaction
-      $transaction->begin();
-      if ($this->isLocalizedRequest() && $localizationTpl != null) {
-        $localizationTpl->setOID($newNode->getOID());
-        $localization = ObjectFactory::getInstance('localization');
-        $localization->saveTranslation($localizationTpl, $request->getValue('language'));
+      else {
+        $transaction->rollback();
       }
-      $transaction->commit();
     }
     catch (Exception $ex) {
       $response->addError(ApplicationError::fromException($ex));

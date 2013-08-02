@@ -20,6 +20,7 @@ namespace test\lib;
 
 use test\lib\DatabaseTestCase;
 use test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 
 
@@ -36,11 +37,15 @@ abstract class ControllerTestCase extends DatabaseTestCase {
    * Make a request to the controller. This method makes sure that the
    * requested action is routed to the controller to be tested.
    * The calling method has to make sure that a session is started, if necessary
-   * (e.g. by calling TestUtil::startSession()).
+   * (e.g. by calling TestUtil::startSession()). The transaction will be rolled
+   * back before the request is run in order to avoid side effects.
    * @param data An associative array with additional key/value pairs for the Request instance
    * @return Response instance
    */
   protected function runRequest($action, $data) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade->getTransaction()->rollback();
+
     // add action key
     TestUtil::setConfigValue('??'.$action, $this->getControllerName(), 'actionmapping');
 

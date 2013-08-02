@@ -57,9 +57,9 @@ define([
 
             var message = this.message || '';
             var contentWidget = new (declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-                templateString: lang.replace(template, Dict.tplTranslate),
-                message: message
+                templateString: lang.replace(template, Dict.tplTranslate)
             }));
+            contentWidget.contentNode.innerHTML = message;
             contentWidget.startup();
             this.content = contentWidget;
         },

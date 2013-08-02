@@ -8,6 +8,13 @@ function(
 ) {
     return declare([TextBox], {
 
-        type: "password"
+        type: "password",
+
+        postCreate: function() {
+            this.inherited(arguments);
+
+            // empty value
+            this.set("value", "");
+        }
     });
 });

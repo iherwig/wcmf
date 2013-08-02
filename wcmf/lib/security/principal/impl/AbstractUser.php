@@ -210,6 +210,17 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
+   * @see PersistentObject::setValue()
+   */
+  public function setValue($name, $value, $forceSet=false, $trackChange=true) {
+    // prevent overwriting the password with an empty value
+    // the password is expected to be stored in the 'password' value
+    if (!($name == 'password' && strlen(trim($value)) == 0)) {
+      parent::setValue($name, $value, $forceSet, $trackChange);
+    }
+  }
+
+  /**
    * @see PersistentObject::validateValue()
    */
   public function validateValue($name, $value) {
@@ -224,6 +235,14 @@ abstract class AbstractUser extends Node implements User {
       $user = self::getByLogin($value);
       if ($user != null && $user->getOID() != $this->getOID()) {
         throw new ValidationException(Message::get("The login '%0%' already exists", array($value)));
+      }
+    }
+
+    // validate the password property if the user is newly created
+    // the password is expected to be stored in the 'password' value
+    if ($name == 'password') {
+      if ($this->getState() == self::STATE_NEW && strlen(trim($value)) == 0) {
+        throw new ValidationException(Message::get("The password can't be empty"));
       }
     }
   }

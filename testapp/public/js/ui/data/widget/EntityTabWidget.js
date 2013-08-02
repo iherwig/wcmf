@@ -99,8 +99,8 @@ define([
                         this.isListeningToSelect = false;
                     }
                     this.closeTab(this.getTabByOid(data.oid));
-                    this.selectTab(data.nextOid);
                     this.isListeningToSelect = true;
+                    this.selectTab(data.nextOid);
                 }))
             );
 
@@ -127,16 +127,18 @@ define([
         },
 
         selectTab: function(oid) {
-            if (oid !== undefined) {
-                var routDef = this.getRouteForTab(oid);
-                var route = this.page.getRoute(routDef.route);
-                var url = route.assemble(routDef.routeParams);
-                if (this.getTabByOid(this.selectedTab.oid)) {
-                    // if the tab for the current oid is opened, we need to confirm
-                    this.page.pushConfirmed(url);
-                }
-                else {
-                    this.page.push(url);
+            if (this.isListeningToSelect) {
+                if (oid !== undefined) {
+                    var routDef = this.getRouteForTab(oid);
+                    var route = this.page.getRoute(routDef.route);
+                    var url = route.assemble(routDef.routeParams);
+                    if (this.getTabByOid(this.selectedTab.oid)) {
+                        // if the tab for the current oid is opened, we need to confirm
+                        this.page.pushConfirmed(url);
+                    }
+                    else {
+                        this.page.push(url);
+                    }
                 }
             }
         },

@@ -31,7 +31,7 @@ class FileUtil {
 
   /**
    * Copy an uploaded file to a given destination (only if the mime type mathes the given one).
-   * @param mediaFile An assoziative array with the following keys: 'name', 'type', 'size', 'tmp_name' (typically a $HTTP_POST_FILES entry)
+   * @param mediaFile An assoziative array with the following keys: 'name', 'type', 'tmp_name' (typically a $_FILES entry)
    * @param destName The destination file name
    * @param mimeType An array holding the allowed mimetypes, null if arbitrary [default: null]
    * @param override True/False whether an existing file should be overridden, if false an unque id will be placed in the filename to prevent overriding [default: true]

@@ -61,11 +61,9 @@ class SaveControllerTest extends ControllerTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a simple update call
-    $type = $oid->getType();
-    $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
-    $testObj->setOID($oid);
-    $testObj->setValue('login', 'admin');
-    $testObj->setValue('name', 'Administrator');
+    $testObj = $persistenceFacade->load($oid);
+    $persistenceFacade->getTransaction()->detach($testObj);
+    $testObj->setValue('name', 'AdministratorModified');
     $data = array(
       $oid->__toString() => $testObj
     );
@@ -74,7 +72,7 @@ class SaveControllerTest extends ControllerTestCase {
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-    $this->assertEquals('Administrator', $obj->getValue('name'));
+    $this->assertEquals('AdministratorModified', $obj->getValue('name'));
 
     TestUtil::endSession();
   }
@@ -85,11 +83,11 @@ class SaveControllerTest extends ControllerTestCase {
   public function testSaveTranslation() {
     TestUtil::startSession('admin', 'admin');
     $oid = ObjectId::parse(self::TEST_OID);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a translate call
-    $type = $oid->getType();
-    $testObj = ObjectFactory::getInstance('persistenceFacade')->create($type, BuildDepth::SINGLE);
-    $testObj->setOID($oid);
+    $testObj = $persistenceFacade->load($oid);
+    $persistenceFacade->getTransaction()->detach($testObj);
     $testObj->setValue('name', 'Administrator [de]');
     $data = array(
       $oid->__toString() => $testObj,
