@@ -123,7 +123,7 @@ class PersistentObject {
   /**
    * Set the object id of the PersistentObject.
    * @param oid The PersistentObject's oid.
-   * @param triggerListeners Boolean, wether value CahngeListeners should be
+   * @param triggerListeners Boolean, whether value CahngeListeners should be
    * notified or not
    */
   protected function setOIDInternal(ObjectId $oid, $triggerListeners) {

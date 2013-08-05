@@ -75,6 +75,10 @@ define([
             if (this.onHide instanceof Function) {
                 this.onHide();
             }
+        },
+
+        showError: function (errorData) {
+            // TODO analyse error data and create message
         }
     });
 });

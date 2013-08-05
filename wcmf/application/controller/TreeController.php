@@ -149,7 +149,7 @@ class TreeController extends Controller {
       $displayText = '-';
     }
     $oid = $node->getOID();
-    $isFolder = ObjectId::isDummyId($oid->getFirstId());
+    $isFolder = $oid->containsDummyIds();
     $hasChildren = $this->isLinkableTypeNode($oid) || sizeof($node->getNumChildren()) > 0;
     return array(
       'oid' => $node->getOID()->__toString(),
@@ -220,7 +220,7 @@ class TreeController extends Controller {
    * @return Boolean
    */
   protected function isLinkableTypeNode(ObjectId $oid) {
-    if (ObjectId::isDummyId($oid->getFirstId())) {
+    if ($oid->containsDummyIds()) {
       $type = $oid->getType();
       $linkableTypes = $this->getLinkableTypes();
       foreach ($linkableTypes as $linkableType) {

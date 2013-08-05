@@ -182,6 +182,9 @@ function(
         },
 
         buildLanguageMenu: function() {
+            if (!this.languageMenuPopupNode) {
+                return;
+            }
             var languageCount = 0;
             var menu = registry.byId(this.languageMenuPopupNode.get("id"));
             var form = this;
@@ -206,7 +209,12 @@ function(
                 languageCount++;
             }
             if (languageCount <= 1) {
+                // destroy menu
                 domConstruct.destroy(this.languageMenuNode);
+            }
+            else {
+                // show menu
+                query(this.languageMenuNode).style("display", "block");
             }
         },
 
@@ -313,7 +321,7 @@ function(
                     }
                 }), lang.hitch(this, function(error) {
                     // error
-                    this.saveBtn.setProcessing();
+                    this.saveBtn.reset();
                     this.showNotification({
                         type: "error",
                         message: error.message || error.response.data.errorMessage || Dict.translate("Backend error")

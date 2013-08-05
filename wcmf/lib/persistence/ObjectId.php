@@ -227,7 +227,7 @@ class ObjectId {
   }
 
   /**
-   * Check if a given object id contains a dummy id.
+   * Check if this object id contains a dummy id.
    * @return Boolean
    */
   public function containsDummyIds() {

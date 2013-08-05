@@ -23,7 +23,7 @@ use test\lib\ControllerTestCase;
 use test\lib\TestUtil;
 
 use wcmf\lib\core\ObjectFactory;
-use \wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
 /**
@@ -34,6 +34,7 @@ use wcmf\lib\persistence\ObjectId;
 class SaveControllerTest extends ControllerTestCase {
 
   const TEST_OID = 'UserRDB:0';
+  const TEST_TYPE = 'UserRDB';
 
   protected function getControllerName() {
     return 'wcmf\application\controller\SaveController';
@@ -46,6 +47,10 @@ class SaveControllerTest extends ControllerTestCase {
       ),
       'user' => array(
         array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm'),
+      ),
+      'locktable' => array(
+      ),
+      'role' => array(
       ),
       'translation' => array(
       ),
@@ -99,6 +104,63 @@ class SaveControllerTest extends ControllerTestCase {
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = ObjectFactory::getInstance('localization')->loadTranslatedObject($oid, 'de');
     $this->assertEquals('Administrator [de]', $translatedObj->getValue('name'));
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testInsert() {
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
+    // simulate a simple create call with initial data
+    $type = self::TEST_TYPE;
+    $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
+    $testObj->setValue('login', 'user');
+    $testObj->setValue('password', 'user');
+    $data = array(
+      'className' => self::TEST_TYPE,
+      $testObj->getOid()->__toString() => $testObj
+    );
+    $response = $this->runRequest('create', $data);
+
+    // test
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $this->_insertOID = $response->getValue('oid');
+    $obj = $persistenceFacade->load($this->_insertOID, BuildDepth::SINGLE);
+    $this->assertNotNull($obj);
+    $this->assertEquals('user', $obj->getValue('login'));
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testInsertTranslation() {
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
+    // simulate a translate call
+    $type = self::TEST_TYPE;
+    $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
+    $testObj->setValue('login', 'user [de]');
+    $testObj->setValue('password', 'user');
+    $data = array(
+      'className' => self::TEST_TYPE,
+      $testObj->getOid()->__toString() => $testObj,
+      'language' => 'de'
+    );
+    $response = $this->runRequest('create', $data);
+
+    // test (can't insert translations for non existing objects)
+    $this->assertFalse($response->getValue('success'), 'The request was not successful');
+    $errors = $response->getErrors();
+    $this->assertEquals(1, sizeof($errors));
+    $error = $errors[0];
+    $this->assertEquals("PARAMETER_INVALID", $error->getCode());
 
     TestUtil::endSession();
   }

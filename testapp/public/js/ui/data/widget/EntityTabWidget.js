@@ -93,7 +93,7 @@ define([
                 // - oid: the oid of the tab to close
                 // - nextOid: optional, the oid of the next tab to open
                 topic.subscribe("tab-closed", lang.hitch(this, function(data) {
-                    this.unpersistTab({ oid:data.oid });
+                    this.unpersistTab(data.oid);
                     if (data.nextOid) {
                         // prevent selecting the previous tab
                         this.isListeningToSelect = false;
@@ -159,8 +159,8 @@ define([
             return (oid === this.selectedTab.oid);
         },
 
-        isPersisted: function(tabDef) {
-            return this.tabDefs[tabDef.oid] !== undefined;
+        isPersisted: function(oid) {
+            return this.tabDefs[oid] !== undefined;
         },
 
         isInstanceTab: function(oid) {
@@ -170,19 +170,20 @@ define([
         },
 
         persistTab: function(tabDef) {
-            if (!this.isPersisted(tabDef)) {
-                this.tabDefs[tabDef.oid] = tabDef;
+            var oid = tabDef.oid;
+            if (!this.isPersisted(oid)) {
+                this.tabDefs[oid] = tabDef;
                 var openInstanceTabs = this.getCookieValue("openInstanceTabs");
-                openInstanceTabs[tabDef.oid] = tabDef;
+                openInstanceTabs[oid] = tabDef;
                 this.setCookieValue("openInstanceTabs", openInstanceTabs);
             }
         },
 
-        unpersistTab: function(tabDef) {
-            if (this.isPersisted(tabDef)) {
-                delete this.tabDefs[tabDef.oid];
+        unpersistTab: function(oid) {
+            if (this.isPersisted(oid)) {
+                delete this.tabDefs[oid];
                 var openInstanceTabs = this.getCookieValue("openInstanceTabs");
-                delete openInstanceTabs[tabDef.oid];
+                delete openInstanceTabs[oid];
                 this.setCookieValue("openInstanceTabs", openInstanceTabs);
             }
         },
@@ -216,6 +217,7 @@ define([
                             this.setInstanceTabName(entity, tabItem);
                         }), lang.hitch(this, function(error) {
                             this.closeTab(tabItem);
+                            this.unpersistTab(oid);
                         })
                     );
                 }
@@ -242,7 +244,7 @@ define([
                 tabItem.set("closable", true);
                 tabItem.set("onClose", lang.hitch(tabItem, function(container) {
                     // close by ourselves (return false)
-                    container.unpersistTab({ oid:container.getOidFromTabId(this.get("id")) });
+                    container.unpersistTab(container.getOidFromTabId(this.get("id")));
                     when(container.page.confirmLeave(null), function(result) {
                         if (result === true) {
                             container.closeTab(tabItem);

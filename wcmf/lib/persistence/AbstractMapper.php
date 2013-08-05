@@ -124,7 +124,7 @@ abstract class AbstractMapper {
       return;
     }
 
-    if (!ObjectId::isValid($oid)) {
+    if (!ObjectId::isValid($oid) || $oid->containsDummyIds()) {
       return null;
     }
     // load object

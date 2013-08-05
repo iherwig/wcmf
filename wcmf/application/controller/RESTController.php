@@ -279,14 +279,15 @@ class RESTController extends Controller {
       $request->setValue('className', $relatedType);
       $subResponseCreate = $this->executeSubAction('create');
 
+      $targetOid = $subResponseCreate->getValue('oid');
+      $targetOidStr = $targetOid->__toString();
+
       // add new object to relation
-      $request->setValue('targetOid', $subResponseCreate->getValue('oid')->__toString());
+      $request->setValue('targetOid', $targetOidStr);
       $request->setValue('role', $request->getValue('relation'));
       $subResponse = $this->executeSubAction('associate');
 
       // add related object to subresponse similar to default update action
-      $targetOidStr = $request->getValue('targetOid');
-      $targetOid = ObjectId::parse($targetOidStr);
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $targetObj = $persistenceFacade->load($targetOid);
       $subResponse->setValue('oid', $targetOid);

@@ -69,7 +69,6 @@ class DojoNodeSerializer implements NodeSerializer {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $class = get_class($persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
-    $node->setOID($oid);
 
     $remainingData = array();
 
@@ -82,6 +81,12 @@ class DojoNodeSerializer implements NodeSerializer {
         $remainingData[$key] = $value;
       }
     }
+
+    // set oid after attributes in order to
+    // avoid it being changed from missing pk values
+    $node->setOID($oid);
+
+    // create hierarchy
     if ($parent != null) {
       $parent->addNode($node, $role);
     }

@@ -45,6 +45,7 @@ use wcmf\lib\util\GraphicsUtil;
  * @param[in,out] Key/value pairs of serialized object ids and PersistentObject instances to save.
  * @param[in] uploadDir The directory where attached files should be stored on the server,
  *                      optional (see SaveController::getUploadDir())
+ * @param[out] oid The object id of the last newly created object
  *
  * Errors concerning single input fields are added to the session (the keys are the input field names)
  *
@@ -76,11 +77,14 @@ class SaveController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    // for saving existing nodes we need not know the correct relations between the nodes
-    // so we store the nodes to save in an assoziative array (with their oids as keys) and iterate over it when saving
+    // array of all involved nodes
     $nodeArray = array();
+
+    // array of oids to actually save
     $saveOids = array();
-    $needCommit = false;
+
+    // array of oids to insert (subset of saveOids)
+    $insertOids = array();
 
     // start the persistence transaction
     $transaction = $persistenceFacade->getTransaction();
@@ -90,6 +94,7 @@ class SaveController extends Controller {
       $invalidOids = array();
       $invalidAttributeNames = array();
       $invalidAttributeValues = array();
+      $needCommit = false;
       $curNode = null;
 
       // iterate over request values and check for oid/object pairs
@@ -97,13 +102,23 @@ class SaveController extends Controller {
       foreach ($saveData as $curOidStr => $curRequestObject) {
         if ($curRequestObject instanceof PersistentObject && ($curOid = ObjectId::parse($curOidStr)) != null
                 && $curRequestObject->getOID() == $curOid) {
+
+          // if the oid is a dummy, the object is supposed to be created instead of updated
+          $isNew = $curOid->containsDummyIds();
+
           // iterate over all values given in the node
           $mapper = $curRequestObject->getMapper();
+          $pkValueNames = $curRequestObject->getPkNames();
           foreach ($curRequestObject->getValueNames() as $curValueName) {
             // check if the attribute exists
             if ($mapper && !$mapper->hasAttribute($curValueName) && !$mapper->hasRelation($curValueName)) {
               $invalidAttributeNames[] = $curValueName;
             }
+            // ignore primary key values, because they are immutable
+            if (in_array($curValueName, $pkValueNames)) {
+              continue;
+            }
+
             $curRequestValue = $curRequestObject->getValue($curValueName);
 
             // save uploaded file/ process array values
@@ -126,12 +141,13 @@ class SaveController extends Controller {
             }
 
             // get the requested node
-            // see if we have modified the node before or if we have to initially load it
+            // see if we have already handled valued of the node before or
+            // if we have to initially load/create it
             if (!isset($nodeArray[$curOidStr])) {
-              // load the node initially
+              // load/create the node initially
               if ($this->isLocalizedRequest()) {
-                // create an empty object, if this is a localization request in order to
-                // make sure that only translated values are stored
+                // create a detached object, if this is a localization request in order to
+                // save it manually later
                 $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
                 // don't store changes on the original object
                 $transaction->detach($curNode);
@@ -139,11 +155,20 @@ class SaveController extends Controller {
                 $nodeArray[$curOidStr] = &$curNode;
               }
               else {
-                // load the existing object, if this is a save request in order to merge
-                // the new with the existing values
-                $curNode = $persistenceFacade->load($curOid, BuildDepth::SINGLE);
+                if ($isNew) {
+                  // create a new object, if this is an insert request. set the object id
+                  // of the request object for correct assignement in save arrays
+                  $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
+                  $curNode->setOid($curOid);
+                }
+                else {
+                  // load the existing object, if this is a save request in order to merge
+                  // the new with the existing values
+                  $curNode = $persistenceFacade->load($curOid, BuildDepth::SINGLE);
+                }
                 $nodeArray[$curOidStr] = &$curNode;
               }
+              // the node could not be created from the oid
               if ($curNode == null) {
                 $invalidOids[] = $curOidStr;
                 continue;
@@ -160,7 +185,7 @@ class SaveController extends Controller {
               try {
                 // validate the new value
                 $curNode->validateValue($curValueName, $curRequestValue);
-                if ($this->confirmSave($curNode, $curValueName, $curRequestValue)) {
+                if ($this->confirmSaveValue($curNode, $curValueName, $curRequestValue)) {
                   // set the new value
                   $oldValue = $curNode->getValue($curValueName);
                   $curNode->setValue($curValueName, $curRequestValue);
@@ -181,6 +206,9 @@ class SaveController extends Controller {
             if ($curNode->getState() != PersistentObject::STATE_CLEAN) {
               // associative array to asure uniqueness
               $saveOids[$curOidStr] = $curOidStr;
+              if ($isNew) {
+                $insertOids[$curOidStr] = $curOidStr;
+              }
             }
           }
         }
@@ -205,10 +233,29 @@ class SaveController extends Controller {
         $localization = ObjectFactory::getInstance('localization');
         $saveOids = array_keys($saveOids);
         for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
-          $curObject = &$nodeArray[$saveOids[$i]];
-          if ($this->isLocalizedRequest()) {
-            // store a translation for localized data
-            $localization->saveTranslation($curObject, $request->getValue('language'));
+          $curOidStr = $saveOids[$i];
+          $curObject = &$nodeArray[$curOidStr];
+          $curOid = $curObject->getOid();
+
+          // ask for confirmation
+          if ($this->confirmSave($curObject)) {
+            $this->beforeSave($curObject);
+            if ($this->isLocalizedRequest()) {
+              if (isset($insertOids[$curOidStr])) {
+                // translations are only allowed for existing objects
+                $response->addError(ApplicationError::get('PARAMETER_INVALID',
+                  array('invalidParameters' => array('language'))));
+              }
+              else {
+                // store a translation for localized data
+                $localization->saveTranslation($curObject, $request->getValue('language'));
+              }
+            }
+            $this->afterSave($curObject);
+          }
+          else {
+            // detach object if not confirmed
+            $transaction->detach($curObject);
           }
         }
         $transaction->commit();
@@ -237,7 +284,15 @@ class SaveController extends Controller {
 
     // return the saved nodes
     foreach ($nodeArray as $oidStr => $node) {
-      $response->setValue($oidStr, $node);
+      $response->setValue($node->getOid()->__toString(), $node);
+    }
+
+    // return oid of the lastly created node
+    if (sizeof($insertOids) > 0) {
+      $keys = array_keys($insertOids);
+      $lastCreatedNode = $nodeArray[array_pop($keys)];
+      $lastCreatedOid = $lastCreatedNode->getOid();
+      $response->setValue('oid', $lastCreatedOid);
     }
 
     $response->setAction('ok');
@@ -465,11 +520,37 @@ class SaveController extends Controller {
    * @param node A reference to the Node to confirm.
    * @param valueName The name of the value to save.
    * @param newValue The new value to set.
-   * @return True/False whether the value should be changed [default: true]. In case of false
-   *    the assigned error message will be displayed
+   * @return Boolean whether the value should be changed [default: true].
    */
-  protected function confirmSave($node, $valueName, $newValue) {
+  protected function confirmSaveValue($node, $valueName, $newValue) {
     return true;
   }
+
+  /**
+   * Confirm save action on given Node. This method is called before modify()
+   * @note subclasses will override this to implement special application requirements.
+   * @param node A reference to the Node to confirm.
+   * @return Boolean whether the Node should be saved [default: true].
+   */
+  protected function confirmSave($node) {
+    return true;
+  }
+
+  /**
+   * Called before save.
+   * @note subclasses will override this to implement special application requirements.
+   * @param node A reference to the Node to be saved.
+   * @return Boolean whether the Node was modified [default: false].
+   */
+  protected function beforeSave($node) {
+    return false;
+  }
+
+  /**
+   * Called after save.
+   * @note subclasses will override this to implement special application requirements.
+   * @param node A reference to the Node saved.
+   */
+  protected function afterSave($node) {}
 }
 ?>

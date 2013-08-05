@@ -101,6 +101,12 @@ class DionysosNodeSerializer implements NodeSerializer {
         $this->deserializeValue($node, $key, $value);
       }
     }
+
+    // set oid after attributes in order to
+    // avoid it being changed from missing pk values
+    $node->setOID($oid);
+
+    // create hierarchy
     if ($parent != null) {
       $parent->addNode($node, $role);
     }

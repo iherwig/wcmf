@@ -28,7 +28,6 @@ and open the template in the editor.
       <file>tests/controller/ListControllerTest.php</file>
       <file>tests/controller/DeleteControllerTest.php</file>
       <file>tests/controller/DisplayControllerTest.php</file>
-      <file>tests/controller/InsertControllerControllerTest.php</file>
       <file>tests/controller/SaveControllerTest.php</file>
     </testsuite>
     <testsuite name="Core">

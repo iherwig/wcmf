@@ -12,9 +12,10 @@ function(
 
         postCreate: function() {
             this.inherited(arguments);
+        },
 
-            // empty value
-            this.set("value", "");
+        _setValueAttr: function(value) {
+            this.value = "";
         }
     });
 });
