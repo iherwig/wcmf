@@ -306,15 +306,14 @@ class RESTController extends Controller {
         $object = $subResponse->getValue($oidStr);
         $response->setValue($oidStr, $object);
       }
+      $response->setStatus('201 Created');
+      $this->setLocationHeaderFromOid($response->getValue('oid'));
     }
     else {
       // in case of error, return default response
       $response->setValues($subResponse->getValues());
+      $response->setStatus('400 Bad Request');
     }
-
-    // set the response headers
-    $response->setStatus('201 Created');
-    $this->setLocationHeaderFromOid($response->getValue('oid'));
 
     return false;
   }
@@ -399,15 +398,14 @@ class RESTController extends Controller {
       $object = $subResponse->getValue($oidStr);
       $response->clearValues();
       $response->setValue($oidStr, $object);
+      $response->setStatus('202 Accepted');
+      $this->setLocationHeaderFromOid($response->getValue('oid'));
     }
     else {
       // in case of error, return default response
       $response->setValues($subResponse->getValues());
+      $response->setStatus('400 Bad Request');
     }
-
-    // set the response headers
-    $response->setStatus('202 Accepted');
-    $this->setLocationHeaderFromOid($response->getValue('oid'));
 
     return false;
   }

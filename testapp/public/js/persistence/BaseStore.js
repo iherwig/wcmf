@@ -68,12 +68,6 @@ define([
 
                     // do call
                     var results = original.call(this, objectTmp, optionsTmp);
-                    // TODO call error handler without throwing "already resolved" exception
-                    results.then(function(result) {
-                        if (result.errorMessage) {
-                            results.reject(result);
-                        }
-                    });
                     results.then(lang.hitch(this, function() {
                         topic.publish("store-datachange", {
                             store: this,
