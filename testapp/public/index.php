@@ -28,6 +28,8 @@ try {
   $mediaPath = $config->getValue('uploadDir', 'media');
   $inputTypes = $config->getSection('inputTypes');
   $displayTypes = $config->getSection('displayTypes');
+  $userType = str_replace('\\', '.', $config->getValue('__class', 'user'));
+  $roleType = str_replace('\\', '.', $config->getValue('__class', 'role'));
 
   // check if the user should be redirected to the login page
   // if yes, we do this and add the requested path as route parameter
@@ -54,7 +56,9 @@ try {
     'defaultLanguage' => $defaultLanguage,
     'languages' => $languages,
     'inputTypes' => $inputTypes,
-    'displayTypes' => $displayTypes
+    'displayTypes' => $displayTypes,
+    'userType' => $userType,
+    'roleType' => $roleType
   );
 }
 catch (Exception $ex) {
@@ -81,7 +85,7 @@ catch (Exception $ex) {
   <body class="dbootstrap">
     <script>
       var appConfig = <?php echo json_encode($clientConfig); ?>;
-      
+
       var dojoConfig = {
           has: {
               "dijit": true

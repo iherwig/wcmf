@@ -36,7 +36,7 @@ use wcmf\lib\presentation\format\Formatter;
  */
 class DefaultActionMapper implements ActionMapper {
 
-  private $_lastControllers = array();
+  private $_lastResponses = array();
 
   /**
    * @see ActionMapper::processAction()
@@ -52,11 +52,6 @@ class DefaultActionMapper implements ActionMapper {
     $context = $request->getContext();
     $action = $request->getAction();
     $response = new Response($referrer, $context, $action);
-
-    // this array stores all controllers executed since the last view displayed (the last call of main.php)
-
-    // store last controller
-    $this->_lastControllers[] = $referrer;
 
     $config = ObjectFactory::getConfigurationInstance();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
@@ -84,9 +79,9 @@ class DefaultActionMapper implements ActionMapper {
 
     $controllerClass = null;
     if (strlen($actionKey) == 0) {
-      // re-execute the initial referrer
-      $controllerClass = $this->_lastControllers[0];
-      Log::warn("No actionkey found for ".$referrer."?".$context."?".$action.". Executing ".$controllerClass." ...", __CLASS__);
+      // return last response, if action key is not defined
+      $lastResponse = array_pop($this->_lastResponses);
+      return $lastResponse;
     }
     else {
       // get next controller
@@ -124,6 +119,9 @@ class DefaultActionMapper implements ActionMapper {
       return $response;
     }
     else if ($result === true) {
+      // store last response
+      $this->_lastResponses[] = $response;
+
       // proceed based on the result
       $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction());
       $nextRequest->setFormat($response->getFormat());
@@ -142,7 +140,7 @@ class DefaultActionMapper implements ActionMapper {
    * @see ActionMapper::reset()
    */
   public function reset() {
-    $this->_lastControllers = array();
+    $this->_lastResponses = array();
   }
 }
 ?>

@@ -3,6 +3,7 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "../data/EntityPage",
+    "../../model/meta/Model",
     "../../locale/Dictionary",
     "dojo/text!./template/PrincipalPage.html"
 ], function (
@@ -10,6 +11,7 @@ define([
     declare,
     lang,
     EntityPage,
+    Model,
     Dict,
     template
 ) {
@@ -20,6 +22,9 @@ define([
         title: Dict.translate('User Management'),
 
         baseRoute: "principal",
-        types: ["UserRDB", "RoleRDB"]
+        types: [
+          Model.getSimpleTypeName(appConfig.userType),
+          Model.getSimpleTypeName(appConfig.roleType)
+        ]
     });
 });

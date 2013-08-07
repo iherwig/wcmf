@@ -14,6 +14,7 @@ define([
     "dojo/query",
     "dojo/NodeList-dom",
     "../../../Cookie",
+    "../../../model/meta/Model",
     "../../../locale/Dictionary",
     "dojo/text!./template/NavigationWidget.html",
     "dojo/domReady!"
@@ -33,6 +34,7 @@ define([
     query,
     nodeListDom,
     Cookie,
+    Model,
     Dict,
     template
 ) {
@@ -48,7 +50,8 @@ define([
             // template variables
             this.title = appConfig.title;
             this.userName = Cookie.get("user") || '';
-            this.firstRootType = appConfig.rootTypes[0];
+            this.firstRootType = Model.getSimpleTypeName(appConfig.rootTypes[0]);
+            this.userType = Model.getSimpleTypeName(appConfig.userType);
         },
 
         postCreate: function() {

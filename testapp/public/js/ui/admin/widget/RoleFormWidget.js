@@ -27,7 +27,7 @@ function(
          */
         getRelations: function() {
             var typeClass = Model.getType(this.type);
-            return [typeClass.getRelation(Model.getSimpleTypeName(appConfig.roleType))];
+            return [typeClass.getRelation(Model.getSimpleTypeName(appConfig.userType))];
         }
     });
 });
