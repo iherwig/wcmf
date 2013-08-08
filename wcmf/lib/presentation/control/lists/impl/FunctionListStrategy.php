@@ -40,11 +40,11 @@ class FunctionListStrategy implements ListStrategy {
    */
   public function getList($configuration, $language=null) {
     // maybe there are '|' chars in parameters
-    $parts = preg_split('/\|/', $configuration);
+    $parts = explode('|', $configuration);
     $name = array_shift($parts);
     $params = join('|', $parts);
     if (function_exists($name)) {
-      $map = call_user_func_array($name, preg_split('/,/', $params));
+      $map = call_user_func_array($name, explode(',', $params));
     }
     else {
       throw new ConfigurationException('Function '.$name.' is not defined globally!');

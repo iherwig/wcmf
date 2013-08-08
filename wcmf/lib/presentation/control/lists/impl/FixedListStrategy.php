@@ -44,7 +44,7 @@ class FixedListStrategy implements ListStrategy {
       $entries = $GLOBALS[subStr($configuration, 1)];
     }
     else {
-      $entries = preg_split('/\|/', $configuration);
+      $entries = explode('|', $configuration);
     }
     if (!is_array($entries)) {
       throw new ConfigurationException($configuration." is no array.");

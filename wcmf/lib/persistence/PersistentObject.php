@@ -22,7 +22,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\PropertyChangeEvent;
 use wcmf\lib\persistence\StateChangeEvent;

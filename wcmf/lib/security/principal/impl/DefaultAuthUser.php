@@ -291,24 +291,6 @@ class DefaultAuthUser implements AuthUser {
   }
 
   /**
-   * @see User::addRole()
-   */
-  public function addRole(Role $role) {
-    if ($this->_user != null) {
-      $this->_user->addRole($role);
-    }
-  }
-
-  /**
-   * @see User::removeRole()
-   */
-  public function removeRole($rolename) {
-    if ($this->_user != null) {
-      $this->_user->removeRole($rolename);
-    }
-  }
-
-  /**
    * @see User::hasRole()
    */
   public function hasRole($rolename) {

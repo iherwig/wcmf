@@ -23,9 +23,9 @@ use wcmf\lib\model\Node;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\security\principal\User;
-use wcmf\lib\security\principal\Role;
 
 require_once(WCMF_BASE."wcmf/vendor/password_compat/lib/password.php");
 
@@ -40,6 +40,33 @@ abstract class AbstractUser extends Node implements User {
   private $_hasOwnRolesLoaded = false;
 
   private static $_roleConfig = null;
+  private static $_roleTypeName = null;
+  private static $_roleRelationNames = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct(ObjectId $oid=null) {
+    parent::__construct($oid);
+
+    // set role config
+    if (self::$_roleConfig == null) {
+      // load role config if existing
+      $config = ObjectFactory::getConfigurationInstance();
+      if (($roleConfig = $config->getSection('roleconfig')) !== false) {
+        self::$_roleConfig = $roleConfig;
+      }
+    }
+    // initialize role relation definition
+    if (self::$_roleTypeName == null) {
+      self::$_roleTypeName = ObjectFactory::getInstance('Role')->getType();
+      self::$_roleRelationNames = array();
+      $mapper = $this->getMapper();
+      foreach ($mapper->getRelationsByType(self::$_roleTypeName) as $relation) {
+        self::$_roleRelationNames[] = $relation->getOtherRole();
+      }
+    }
+  }
 
   /**
    * @see User::getUserId()
@@ -63,43 +90,6 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
-   * @see User::addRole()
-   */
-  public function addRole(Role $role) {
-    $rolename = $role->getName();
-    if ($this->hasRole($rolename)) {
-      return;
-    }
-    $this->addNode($role);
-
-    // set role config
-    if (self::$_roleConfig == null) {
-      // load role config if existing
-      $config = ObjectFactory::getConfigurationInstance();
-      if (($roleConfig = $config->getSection('roleconfig')) !== false) {
-        self::$_roleConfig = $roleConfig;
-      }
-    }
-    if (self::$_roleConfig && isset(self::$_roleConfig[$rolename])) {
-      $this->setConfig(self::$_roleConfig[$rolename]);
-    }
-  }
-
-  /**
-   * @see User::removeRole()
-   */
-  public function removeRole($rolename) {
-    if (!$this->hasRole($rolename)) {
-      return;
-    }
-    // remove the role if existing
-    $role = $this->getRoleByName($rolename);
-    if ($role != null) {
-      $this->deleteNode($role);
-    }
-  }
-
-  /**
    * @see User::hasRole()
    */
   public function hasRole($rolename) {
@@ -116,7 +106,6 @@ abstract class AbstractUser extends Node implements User {
    * @see User::getRoles()
    */
   public function getRoles() {
-    $roleTypeName = ObjectFactory::getInstance('Role')->getType();
     if (!$this->_hasOwnRolesLoaded) {
       // make sure that the roles are loaded
 
@@ -126,9 +115,8 @@ abstract class AbstractUser extends Node implements User {
       if (!$isAnonymous) {
         $permissionManager->deactivate();
       }
-      $mapper = $this->getMapper();
-      foreach ($mapper->getRelationsByType($roleTypeName) as $relation) {
-        $this->loadChildren($relation->getOtherRole());
+      foreach (self::$_roleRelationNames as $roleName) {
+        $this->loadChildren($roleName);
       }
       // reactivate the PermissionManager if necessary
       if (!$isAnonymous) {
@@ -136,27 +124,8 @@ abstract class AbstractUser extends Node implements User {
       }
       $this->_hasOwnRolesLoaded = true;
     }
-    return $this->getChildrenEx(null, null, $roleTypeName, null);
-  }
-
-  /**
-   * Get a Role instance whose name is given
-   * @param rolename The name of the role
-   * @return A reference to the role or null if nor existing
-   */
-  protected function getRoleByName($rolename) {
-    if (!isset($this->_cachedRoles[$rolename])) {
-      // load the role
-      $roleType = ObjectFactory::getInstance('Role');
-      $role = $roleType::getByName($rolename);
-      if ($role != null) {
-        $this->_cachedRoles[$rolename] = $role;
-      }
-      else {
-        return null;
-      }
-    }
-    return $this->_cachedRoles[$rolename];
+    // TODO add role nodes from addedNodes array
+    return $this->getChildrenEx(null, null, self::$_roleTypeName, null);
   }
 
   /**
@@ -166,7 +135,6 @@ abstract class AbstractUser extends Node implements User {
     $this->_cachedRoles = array();
     $this->_hasOwnRolesLoaded = false;
   }
-
 
   /**
    * @see User::getByLogin()
@@ -193,6 +161,7 @@ abstract class AbstractUser extends Node implements User {
    */
   public function beforeUpdate() {
     $this->ensureHashedPassword();
+    $this->setRoleConfig();
   }
 
   /**
@@ -205,6 +174,25 @@ abstract class AbstractUser extends Node implements User {
       $info = password_get_info($password);
       if ($info['algo'] != PASSWORD_BCRYPT) {
         $this->setValue('password', $this->hashPassword($password));
+      }
+    }
+  }
+
+  /**
+   * Set the configuration of the currently associated role, if no
+   * configuration is set already.
+   */
+  protected function setRoleConfig() {
+    if (strlen($this->getConfig()) == 0) {
+      foreach ($this->getAddedNodes() as $role => $nodes) {
+        if (in_array($role, self::$_roleRelationNames)) {
+          foreach ($nodes as $role) {
+            $rolename = $role->getName();
+            if (self::$_roleConfig && isset(self::$_roleConfig[$rolename])) {
+              $this->setConfig(self::$_roleConfig[$rolename]);
+            }
+          }
+        }
       }
     }
   }

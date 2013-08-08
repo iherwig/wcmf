@@ -71,7 +71,7 @@ try {
   }
   if (!$adminUser->hasRole("administrators")) {
     Log::info("adding user 'admin' to role 'administrators'...", "install");
-    $adminUser->addRole($adminRole);
+    $adminUser->addNode($adminRole);
   }
 
   // execute custom scripts from the directory 'custom-install'

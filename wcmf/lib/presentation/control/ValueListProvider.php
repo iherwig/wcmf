@@ -19,6 +19,7 @@
 namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\util\StringUtil;
 
 /**

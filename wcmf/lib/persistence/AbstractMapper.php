@@ -181,7 +181,7 @@ abstract class AbstractMapper implements PersistenceMapper {
     $object->validateValues();
 
     // save object
-    return $this->saveImpl($object);
+    $this->saveImpl($object);
 
     // call lifecycle callback
     if ($isDirty) {

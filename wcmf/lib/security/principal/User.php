@@ -112,18 +112,6 @@ interface User {
   public function getConfig();
 
   /**
-   * Assign a role to the user.
-   * @param role Role instance
-   */
-  public function addRole(Role $role);
-
-  /**
-   * Remove a role from the user.
-   * @param rolename The role name. e.g. "administrators"
-   */
-  public function removeRole($rolename);
-
-  /**
    * Check for a certain role in the user roles.
    * @param rolename The role name to check for. e.g. "administrators"
    * @return Boolean whether the user has the role

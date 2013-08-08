@@ -92,7 +92,7 @@ define([
             name: "config",
             type: "String",
             isEditable: true,
-            inputType: 'text',
+            inputType: 'select#file:../config/|/\..ini$/',
             displayType: 'text',
             regexp: '',
             regexpDesc: '',

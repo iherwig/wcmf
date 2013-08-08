@@ -69,12 +69,12 @@ class NodeListStrategy implements ListStrategy {
   protected function parseConfiguration($configuration) {
     $query = null;
     if (strPos($configuration, '|')) {
-      list($typeDef, $query) = preg_split('/\|/', $configuration, 2);
+      list($typeDef, $query) = explode('|', $configuration, 2);
     }
     else {
       $typeDef = $configuration;
     }
-    $types = preg_split('/,/', $typeDef);
+    $types = explode(',', $typeDef);
 
     return array(
       'types' => $types,

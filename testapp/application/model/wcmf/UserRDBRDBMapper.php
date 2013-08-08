@@ -1,9 +1,9 @@
 <?php
 /*
  * Copyright (c) 2013 The Olympos Development Team.
- * 
+ *
  * http://sourceforge.net/projects/olympos/
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ use wcmf\lib\persistence\ObjectId;
  * UserRDBRDBMapper maps UserRDB Nodes to the database.
  * UserRDB description: ?
  *
- * @author 
+ * @author
  * @version 1.0
  */
 class UserRDBRDBMapper extends NodeUnifiedRDBMapper {
@@ -104,7 +104,7 @@ class UserRDBRDBMapper extends NodeUnifiedRDBMapper {
   protected function getAttributeDescriptions() {
     return array(
      /**
-      * Value description: 
+      * Value description:
       */
       'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'user', 'id'),
      /**
@@ -126,7 +126,7 @@ class UserRDBRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: ?
       */
-      'config' => new RDBAttributeDescription('config', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'user', 'config'),
+      'config' => new RDBAttributeDescription('config', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'select#file:../config/|/\..ini$/', 'text', 'user', 'config'),
     );
   }
 
