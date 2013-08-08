@@ -180,12 +180,5 @@ interface PersistenceFacade {
    * @return Boolean whether the PersistenceMapper is logging.
    */
   function isLogging();
-
-  /**
-   * Set state to readonly. If set to true, PersistenceFacade will return only immutable
-   * objects and save/delete methods are disabled.
-   * @param isReadOnly Boolean whether objects should be readonly or not
-   */
-  function setReadOnly($isReadOnly);
 }
 ?>

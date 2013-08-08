@@ -94,7 +94,6 @@ class Application {
     $controller = $this->getRequestValue('controller', $defaultController);
     $context = $this->getRequestValue('context', $defaultContext);
     $action = $this->getRequestValue('action', $defaultAction);
-    $readonly = $this->getRequestValue('readonly', false);
 
     // create the Request instance
     $this->_initialRequest = new Request($controller, $context, $action);
@@ -116,12 +115,6 @@ class Application {
     $authUser = $permissionManager->getAuthUser();
     if ($authUser && strlen($authUser->getConfig()) > 0) {
       $config->addConfiguration($authUser->getConfig(), true);
-    }
-
-    // prepare PersistenceFacade
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    if ($readonly) {
-      $persistenceFacade->setReadOnly(true);
     }
 
     // return the request

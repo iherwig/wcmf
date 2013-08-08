@@ -55,7 +55,7 @@ class FunctionListStrategy implements ListStrategy {
   /**
    * @see ListStrategy::isStatic
    */
-  public function isStatic() {
+  public function isStatic($configuration) {
     return false;
   }
 }

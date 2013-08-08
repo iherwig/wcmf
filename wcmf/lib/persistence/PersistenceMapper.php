@@ -23,7 +23,6 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\output\OutputStrategy;
 
  /**
@@ -226,7 +225,8 @@ interface PersistenceMapper {
 
   /**
    * Load the objects of the specified role. The implementation must check the navigability of
-   * the relation and return null, if the requested direction is not navigable.
+   * the relation and return null, if the requested direction is not navigable. The result
+   * depends on the multiplicity of the relation (singlevalued or multivalued).
    * @param object The object for which the objects are loaded
    * @param role The role of the objects in relation to the given object
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
@@ -238,29 +238,10 @@ interface PersistenceMapper {
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
-   * @return Array of PersistentObject instances or null, if not navigable
+   * @return Array of PersistentObject instances, a PersistentObject instance or null, if not navigable
    */
   public function loadRelation(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
-
-  /**
-   * Load the objects of the own type that are related to a given object. The implementation must
-   * check the navigability of the relation and return null, if the requested direction is not navigable.
-   * @param otherObjectProxy A PersistentObjectProxy for the object that the objects to load are related to
-   * @param otherRole The role of the other object in relation to the objects to load
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null). [default: null]
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
-   * @param buildAttribs An assoziative array listing the attributes to load [default: null, loads all attributes]
-   *        (keys: the types, values: an array of attributes of the type to load)
-   *        Use this to load only a subset of attributes
-   * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
-   * @return Array of PersistentObject instances or null, if not navigable
-   */
-  public function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BuildDepth::SINGLE,
-    $criteria=null, $orderby=null, PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
 
   /**
    * Execute a PersistenceOperation. PersistenceOperation.type must be the type that

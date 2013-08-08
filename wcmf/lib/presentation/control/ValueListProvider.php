@@ -53,7 +53,7 @@ class ValueListProvider {
 
     // build list
     $result['items'] = $strategy->getList($listDef['config'], $language);
-    $result['isStatic'] = $strategy->isStatic();
+    $result['isStatic'] = $strategy->isStatic($listDef['config']);
 
     return $result;
   }

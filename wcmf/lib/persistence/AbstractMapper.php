@@ -38,7 +38,7 @@ use wcmf\lib\security\AuthorizationException;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class AbstractMapper {
+abstract class AbstractMapper implements PersistenceMapper {
 
   private $_dataConverter = null; // a DataConverter object that converts data before writing and after reading from storage
   private $_logging = false;
@@ -130,12 +130,6 @@ abstract class AbstractMapper {
     // load object
     $object = $this->loadImpl($oid, $buildDepth, $buildAttribs, $buildTypes);
     if ($object != null) {
-      // set immutable if not authorized for modification
-      if (!$this->checkAuthorization($oid, PersistenceAction::MODIFY)) {
-        $object->setImmutable();
-      }
-      $this->initialize($object);
-
       // call lifecycle callback
       $object->afterLoad();
     }
@@ -151,8 +145,6 @@ abstract class AbstractMapper {
     // to the storage unless they are valid and the user is authorized
     // is assured by the save method.
     $object = $this->createImpl($type, $buildDepth);
-
-    $this->initialize($object);
 
     // call lifecycle callback
     $object->afterCreate();
@@ -230,6 +222,71 @@ abstract class AbstractMapper {
   }
 
   /**
+   * @see PersistenceMapper::getOIDs()
+   */
+  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+    $oids = $this->getOIDsImpl($type, $criteria, $orderby, $pagingInfo);
+
+    // remove oids for which the user is not authorized
+    $result = array();
+    for ($i=0, $count=sizeof($oids); $i<$count; $i++) {
+      $oid = $oids[$i];
+      if ($this->checkAuthorization($oid, PersistenceAction::READ)) {
+        $result[] = $oid;
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * @see PersistenceMapper::loadObjects()
+   */
+  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
+    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null) {
+    $objects = $this->loadObjectsImpl($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
+
+    // remove objects for which the user is not authorized
+    $result = array();
+    for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
+      $object = $objects[$i];
+      if ($this->checkAuthorization($object->getOID(), PersistenceAction::READ)) {
+        $result[] = $object;
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * @see PersistenceMapper::loadRelation()
+   */
+  public function loadRelation(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
+    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null) {
+    $objects = $this->loadRelationImpl($object, $role, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
+
+    // remove objects for which the user is not authorized
+    if ($objects != null) {
+      if (is_array($objects)) {
+        // multivalued
+        $result = array();
+        for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
+          $object = $objects[$i];
+          if ($this->checkAuthorization($object->getOID(), PersistenceAction::READ)) {
+            $result[] = $object;
+          }
+        }
+        return $result;
+      }
+      else {
+        // singlevalued
+        if ($this->checkAuthorization($objects->getOID(), PersistenceAction::READ)) {
+          return $objects;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Check authorization on an type/OID and a given action.
    * @param oid The object id of the Object to authorize (its type will be checked too)
    * @param action Action to authorize
@@ -263,14 +320,6 @@ abstract class AbstractMapper {
   }
 
   /**
-   * Initialize the object after creation/loading and before handing it over to the application.
-   * @note Subclasses may override this to implement special requirements (e.g. install listeners).
-   * Remember to always call parent::initialize().
-   * @param object A reference to the object
-   */
-  protected function initialize(PersistentObject $object) {}
-
-  /**
    * @see PersistenceFacade::load()
    * @note Precondition: Object rights have been checked already
    *
@@ -294,5 +343,22 @@ abstract class AbstractMapper {
    * @note Precondition: Object rights have been checked already
    */
   abstract protected function deleteImpl(PersistentObject $object);
+
+  /**
+   * @see PersistenceMapper::getOIDs()
+   */
+  abstract protected function getOIDsImpl($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+
+  /**
+   * @see PersistenceMapper::loadObjects()
+   */
+  abstract protected function loadObjectsImpl($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
+    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
+
+  /**
+   * @see PersistenceMapper::loadRelation()
+   */
+  abstract protected function loadRelationImpl(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
+    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
 }
 ?>

@@ -42,7 +42,6 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   private $_createdOIDs = array();
   private $_logging = false;
   private $_logStrategy = null;
-  private $_isReadOnly = false;
   private $_currentTransaction = null;
 
   /**
@@ -154,12 +153,6 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       if ($mapper != null) {
         $obj = $mapper->load($oid, $buildDepth, $buildAttribs, $buildTypes);
       }
-      if ($obj != null) {
-        // prepare the object (readonly/locked)
-        if ($this->_isReadOnly) {
-          $obj->setImmutable();
-        }
-      }
     }
     return $obj;
   }
@@ -240,14 +233,6 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $mapper = $this->getMapper($type);
     if ($mapper != null) {
       $result = $mapper->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
-      foreach($result as $obj) {
-        if ($obj != null) {
-          // prepare the object (readonly/locked)
-          if ($this->_isReadOnly) {
-            $obj->setImmutable();
-          }
-        }
-      }
     }
     return $result;
   }
@@ -315,13 +300,6 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function isLogging() {
     return $this->_logging;
-  }
-
-  /**
-   * @see PersistenceFacade::setReadOnly()
-   */
-  public function setReadOnly($isReadOnly) {
-    $this->_isReadOnly = $isReadOnly;
   }
 
   /**

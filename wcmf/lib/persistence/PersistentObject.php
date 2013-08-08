@@ -50,7 +50,6 @@ class PersistentObject {
   private $_valueProperties = array(); // associative array holding the value properties
   private $_properties = array();      // associative array holding the object properties
   private $_state = self::STATE_CLEAN;       // the state of the PersistentObject
-  private $_isImmutable = false;       // immutable state
   private $_changedAttributes = array(); // used to track changes, see setValue method
   private $_originalData = array();    // data provided to the initialize method
 
@@ -189,13 +188,8 @@ class PersistentObject {
    * Delete the object
    */
   public function delete() {
-    if (!$this->_isImmutable) {
-      // delete the object (will be done in the transaction)
-      $this->setState(self::STATE_DELETED);
-    }
-    else {
-      throw new PersistenceException(Message::get("Cannot delete immutable object '%0%'.", array($this->getOID())));
-    }
+    // delete the object (will be done in the transaction)
+    $this->setState(self::STATE_DELETED);
   }
 
   /**
@@ -239,19 +233,6 @@ class PersistentObject {
   }
 
   /**
-   * Set object immutable. Sets the editable property of each value to false.
-   * and disables save/delete methods.
-   * @note This operation is not reversible (reload the object to get a mutable one)
-   */
-  public function setImmutable() {
-    // set editable attribute of all values to false
-    foreach($this->getValueNames() as $name) {
-      $this->setValueProperty($name, 'is_editable', false);
-    }
-    $this->_isImmutable = true;
-  }
-
-  /**
    * Get a copy of the object (ChangeListeners and Lock are not copied)
    * @return PersistentObject
    */
@@ -263,7 +244,6 @@ class PersistentObject {
     $copy->_data = $this->_data;
     $copy->_properties = $this->_properties;
     $copy->_state = $this->_state;
-    $copy->_isImmutable = $this->_isImmutable;
 
     return $copy;
   }
@@ -515,34 +495,29 @@ class PersistentObject {
    * @return Boolean wether the operation succeeds or not
    */
   public function setValue($name, $value, $forceSet=false, $trackChange=true) {
-    if (!$this->_isImmutable) {
-      if (!$forceSet) {
-        try {
-          $this->validateValue($name, $value);
-        }
-        catch(ValidationException $ex) {
-          $msg = "Invalid value (".$value.") for ".$this->getOID().".".$name.": ".$ex->getMessage();
-          throw new ValidationException($msg);
-        }
+    if (!$forceSet) {
+      try {
+        $this->validateValue($name, $value);
       }
-      $oldValue = self::getValue($name);
-      if ($forceSet || $oldValue !== $value) {
-        $this->setValueInternal($name, $value);
-        $mapper = $this->getMapper();
-        if ($mapper != null && in_array($name, $mapper->getPKNames())) {
-          $this->updateOID();
-        }
-        if ($trackChange) {
-          self::setState(self::STATE_DIRTY);
-          $this->_changedAttributes[$name] = true;
-          ObjectFactory::getInstance('eventManager')->dispatch(ValueChangeEvent::NAME,
-              new ValueChangeEvent($this, $name, $oldValue, $value));
-        }
-        return true;
+      catch(ValidationException $ex) {
+        $msg = "Invalid value (".$value.") for ".$this->getOID().".".$name.": ".$ex->getMessage();
+        throw new ValidationException($msg);
       }
     }
-    else {
-      throw new PersistenceException(Message::get("Cannot modify immutable object '%0%'.", array($this->getOID())));
+    $oldValue = self::getValue($name);
+    if ($forceSet || $oldValue !== $value) {
+      $this->setValueInternal($name, $value);
+      $mapper = $this->getMapper();
+      if ($mapper != null && in_array($name, $mapper->getPKNames())) {
+        $this->updateOID();
+      }
+      if ($trackChange) {
+        self::setState(self::STATE_DIRTY);
+        $this->_changedAttributes[$name] = true;
+        ObjectFactory::getInstance('eventManager')->dispatch(ValueChangeEvent::NAME,
+            new ValueChangeEvent($this, $name, $oldValue, $value));
+      }
+      return true;
     }
     return false;
   }

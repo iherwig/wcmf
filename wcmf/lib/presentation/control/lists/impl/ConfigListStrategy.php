@@ -50,7 +50,7 @@ class ConfigListStrategy implements ListStrategy {
   /**
    * @see ListStrategy::isStatic
    */
-  public function isStatic() {
+  public function isStatic($configuration) {
     return true;
   }
 }

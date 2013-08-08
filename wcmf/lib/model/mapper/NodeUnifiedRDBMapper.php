@@ -31,7 +31,6 @@ use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
-use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\InsertOperation;
 use wcmf\lib\persistence\ObjectId;
@@ -49,11 +48,6 @@ use wcmf\lib\persistence\UpdateOperation;
 abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   private $_fkRelations = null;
-
-  /**
-   * @see PersistenceMapper::initialize()
-   */
-  protected function initialize(PersistentObject $object) {}
 
   /**
    * @see RDBMapper::prepareForStorage()

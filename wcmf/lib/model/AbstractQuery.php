@@ -24,6 +24,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceException;
@@ -114,7 +115,18 @@ abstract class AbstractQuery {
 
     // execute the query
     $mapper = self::getMapper($type);
-    $result = $mapper->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo, $buildAttribs);
+    $objects = $mapper->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo, $buildAttribs);
+
+    // remove objects for which the user is not authorized
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+
+    $result = array();
+    for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
+      $object = $objects[$i];
+      if ($permissionManager->authorize($object->getOID(), '', PersistenceAction::READ)) {
+        $result[] = $object;
+      }
+    }
 
     // transform the result
     if ($loadOidsOnly) {

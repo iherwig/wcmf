@@ -845,10 +845,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceMapper::getOIDs()
+   * @see PersistenceMapper::getOIDsImpl()
    * @note The type parameter is not used here because this class only constructs one type
    */
-  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  protected function getOIDsImpl($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $oids = array();
 
     // create query (load only pk columns and no children oids)
@@ -864,9 +864,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceFacade::loadObjects()
+   * @see PersistenceFacade::loadObjectsImpl()
    */
-  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
+  protected function loadObjectsImpl($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null) {
     $objects = $this->loadObjectsFromQueryParts($type, $buildDepth, $criteria, $orderby,
             $pagingInfo, $buildAttribs, $buildTypes);
@@ -874,9 +874,22 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceMapper::loadRelatedObjects()
+   * Load the objects of the own type that are related to a given object. The implementation must
+   * check the navigability of the relation and return null, if the requested direction is not navigable.
+   * @param otherObjectProxy A PersistentObjectProxy for the object that the objects to load are related to
+   * @param otherRole The role of the other object in relation to the objects to load
+   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
+   * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null). [default: null]
+   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
+   * @param buildAttribs An assoziative array listing the attributes to load [default: null, loads all attributes]
+   *        (keys: the types, values: an array of attributes of the type to load)
+   *        Use this to load only a subset of attributes
+   * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
+   * @return Array of PersistentObject instances or null, if not navigable
    */
-  public function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BuildDepth::SINGLE,
+  protected function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BuildDepth::SINGLE,
     $criteria=null, $orderby=null, PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null) {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
@@ -920,6 +933,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include
+   * @return Array of PersistentObject instances
    */
   protected function loadObjectsFromQueryParts($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null) {
@@ -961,7 +975,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    *        (keys: the types, values: an array of attributes of the type to load)
    *        Use this to load only a subset of attributes
    * @param buildTypes An array listing the (sub-)types to include
-   * @return An array of PersistentObject instances
+   * @return Array of PersistentObject instances
    */
   public function loadObjectsFromSQL(Zend_Db_Select $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null,
     $buildAttribs=null, $buildTypes=null) {
@@ -975,8 +989,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       return $objects;
     }
 
-    $numObjects = sizeof($data);
-    for ($i=0; $i<$numObjects; $i++) {
+    for ($i=0, $count=sizeof($data); $i<$count; $i++) {
       // create the object
       // (since we only loaded the requested attributes, we can set the attribs parameter null safely)
       $object = $this->createObjectFromData($data[$i], null);
@@ -1119,9 +1132,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceMapper::loadRelation()
+   * @see PersistenceMapper::loadRelationImpl()
    */
-  public function loadRelation(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE,
+  protected function loadRelationImpl(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE,
     $criteria=null, $orderby=null, PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null) {
 
     $relatives = array();

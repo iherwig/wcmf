@@ -38,9 +38,11 @@ interface ListStrategy {
 
   /**
    * Check if the list values are static or changing.
+   * @param configuration The list type specific configuration of the list as
+   *                 used in the input_type definition
    * @return Boolean
    */
-  function isStatic();
+  function isStatic($configuration);
 
 }
 ?>
