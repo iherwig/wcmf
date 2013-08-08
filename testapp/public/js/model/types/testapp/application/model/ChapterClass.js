@@ -138,42 +138,42 @@ define([
         relations: [{
             name: "SubChapter",
             type: "Chapter",
-            aggregrationKind: "composite",
+            aggregationKind: "composite",
             maxMultiplicity: "unbounded",
             thisEndName: "ParentChapter",
             relationType: "child"
         }, {
             name: "TitleImage",
             type: "Image",
-            aggregrationKind: "shared",
+            aggregationKind: "shared",
             maxMultiplicity: "1",
             thisEndName: "TitleChapter",
             relationType: "child"
         }, {
             name: "NormalImage",
             type: "Image",
-            aggregrationKind: "shared",
+            aggregationKind: "shared",
             maxMultiplicity: "unbounded",
             thisEndName: "NormalChapter",
             relationType: "child"
         }, {
             name: "Author",
             type: "Author",
-            aggregrationKind: "none",
+            aggregationKind: "none",
             maxMultiplicity: "1",
             thisEndName: "Chapter",
             relationType: "parent"
     }, {
             name: "Book",
             type: "Book",
-            aggregrationKind: "none",
+            aggregationKind: "none",
             maxMultiplicity: "1",
             thisEndName: "Chapter",
             relationType: "parent"
     }, {
             name: "ParentChapter",
             type: "Chapter",
-            aggregrationKind: "none",
+            aggregationKind: "none",
             maxMultiplicity: "1",
             thisEndName: "SubChapter",
             relationType: "parent"

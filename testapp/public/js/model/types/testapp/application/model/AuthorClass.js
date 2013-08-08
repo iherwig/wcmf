@@ -103,14 +103,14 @@ define([
         relations: [{
             name: "Chapter",
             type: "Chapter",
-            aggregrationKind: "composite",
+            aggregationKind: "composite",
             maxMultiplicity: "unbounded",
             thisEndName: "Author",
             relationType: "child"
         }, {
             name: "Publisher",
             type: "Publisher",
-            aggregrationKind: "none",
+            aggregationKind: "none",
             maxMultiplicity: "unbounded",
             thisEndName: "Author",
             relationType: "child"

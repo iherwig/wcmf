@@ -61,7 +61,7 @@ dojo.declare("wcmf.model.{$type}Class", wcmf.model.meta.Node, {
       name: "{$relation->getOtherRole()}",
       type: "{$relation->getOtherType()}",
       maxMultiplicity: "{$relation->getOtherMaxMultiplicity()}",
-      aggregrationKind: "{$relation->getOtherAggregationKind()}",
+      aggregationKind: "{$relation->getOtherAggregationKind()}",
       navigability: "{$relation->getOtherNavigability()}",
       thisEndName: "{$relation->getThisRole()}"
     }{if !$relation@last},

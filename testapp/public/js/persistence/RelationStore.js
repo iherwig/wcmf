@@ -15,7 +15,8 @@ define([
 ) {
     var RelationStore = declare([BaseStore], {
         oid: '',
-        relationName: ''
+        relationName: '',
+        typeName: ''
     });
 
     /**
@@ -27,6 +28,8 @@ define([
     RelationStore.getStore = function(oid, relationName) {
         var fqTypeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(oid));
         var id = Model.getIdFromOid(oid);
+        var relation = Model.getType(fqTypeName).getRelation(relationName);
+        var relationTypeName = Model.getFullyQualifiedTypeName(relation.type);
 
         var memory = new Memory({
             idProperty: 'oid'
@@ -34,6 +37,7 @@ define([
         var jsonRest = new RelationStore({
             oid: oid,
             relationName: relationName,
+            typeName: relationTypeName,
             target: appConfig.pathPrefix+"/rest/"+appConfig.defaultLanguage+"/"+fqTypeName+"/"+id+"/"+relationName+"/"
         });
         var cache = new Observable(new Cache(

@@ -1,4 +1,5 @@
 define( [
+    "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/Deferred",
@@ -13,11 +14,13 @@ define( [
     "../../../action/Edit",
     "../../../action/Link",
     "../../../action/Unlink",
+    "../../../action/Delete",
     "../../../action/CreateInRelation",
     "../../../locale/Dictionary",
     "dojo/text!./template/EntityRelationWidget.html"
 ],
 function(
+    require,
     declare,
     lang,
     Deferred,
@@ -32,6 +35,7 @@ function(
     Edit,
     Link,
     Unlink,
+    Delete,
     CreateInRelation,
     Dict,
     template
@@ -39,6 +43,8 @@ function(
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _NotificationMixin], {
 
         templateString: lang.replace(template, Dict.tplTranslate),
+        contextRequire: require,
+
         entity: {},
         relation: {},
         page: null,
@@ -48,6 +54,7 @@ function(
             declare.safeMixin(this, args);
 
             this.relationName = Dict.translate(this.relation.name);
+            this.multiplicity = this.relation.maxMultiplicity;
         },
 
         postCreate: function() {
@@ -66,6 +73,9 @@ function(
                 enabledFeatures: enabledFeatures,
                 height: 211
             }, this.gridNode);
+
+            this.createBtn.set("disabled", this.relation.aggregationKind === "none");
+            this.linkBtn.set("disabled", this.relation.aggregationKind === "composite");
         },
 
         getGridActions: function() {
@@ -81,7 +91,16 @@ function(
                 relation: this.relation
             });
 
-            return [editAction, unlinkAction];
+            var deleteAction = new Delete({
+                page: this.page
+            });
+
+            if (this.relation.aggregationKind === "composite") {
+                return [editAction, deleteAction];
+            }
+            else {
+                return [editAction, unlinkAction];
+            }
         },
 
         _create: function(e) {

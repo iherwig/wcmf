@@ -90,7 +90,9 @@ define([
                     }
                 })),
                 topic.subscribe("store-datachange", lang.hitch(this, function(data) {
-                    if (data.store.target === this.store.target) {
+                    var typeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(data.oid));
+                    if (data.store.target === this.store.target ||
+                            this.store.typeName === typeName) {
                         if (this.autoReload) {
                             this.gridWidget.refresh({
                                 keepScrollPosition: true

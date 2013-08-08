@@ -103,21 +103,21 @@ define([
         relations: [{
             name: "Locktable",
             type: "Locktable",
-            aggregrationKind: "composite",
+            aggregationKind: "composite",
             maxMultiplicity: "unbounded",
             thisEndName: "UserRDB",
             relationType: "child"
         }, {
             name: "UserConfig",
             type: "UserConfig",
-            aggregrationKind: "composite",
+            aggregationKind: "composite",
             maxMultiplicity: "unbounded",
             thisEndName: "UserRDB",
             relationType: "child"
         }, {
             name: "RoleRDB",
             type: "RoleRDB",
-            aggregrationKind: "none",
+            aggregationKind: "none",
             maxMultiplicity: "unbounded",
             thisEndName: "UserRDB",
             relationType: "child"

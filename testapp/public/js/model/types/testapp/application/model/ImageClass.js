@@ -123,14 +123,14 @@ define([
         relations: [{
             name: "TitleChapter",
             type: "Chapter",
-            aggregrationKind: "none",
+            aggregationKind: "none",
             maxMultiplicity: "1",
             thisEndName: "TitleImage",
             relationType: "parent"
     }, {
             name: "NormalChapter",
             type: "Chapter",
-            aggregrationKind: "none",
+            aggregationKind: "none",
             maxMultiplicity: "1",
             thisEndName: "NormalImage",
             relationType: "parent"

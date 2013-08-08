@@ -92,7 +92,7 @@ define([
         relations: [{
             name: "UserRDB",
             type: "UserRDB",
-            aggregrationKind: "none",
+            aggregationKind: "none",
             maxMultiplicity: "1",
             thisEndName: "Locktable",
             relationType: "parent"

@@ -71,6 +71,7 @@ define([
                     results.then(lang.hitch(this, function() {
                         topic.publish("store-datachange", {
                             store: this,
+                            oid: object.oid,
                             action: options.overwrite ? "put" : "add"
                         });
                     }));
@@ -86,6 +87,7 @@ define([
                     results.then(lang.hitch(this, function() {
                         topic.publish("store-datachange", {
                             store: this,
+                            oid: oid,
                             action: "remove"
                         });
                     }));

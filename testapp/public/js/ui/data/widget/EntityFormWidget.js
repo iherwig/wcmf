@@ -154,7 +154,6 @@ function(
             // set button states
             this.setBtnState("save", false);
             if (this.isNew) {
-                this.setBtnState("reset", false);
                 this.setBtnState("delete", false);
             }
 
@@ -219,14 +218,10 @@ function(
         },
 
         setBtnState: function(btnName, isEnabled) {
-            query(".btn."+btnName, this.domNode).forEach(function(node) {
-                if (isEnabled) {
-                    domClass.remove(node, "disabled");
-                }
-                else {
-                    domClass.add(node, "disabled");
-                }
-            });
+            var btn = this[btnName+"Btn"];
+            if (btn) {
+                btn.set('disabled', !isEnabled);
+            }
         },
 
         setModified: function(modified) {
