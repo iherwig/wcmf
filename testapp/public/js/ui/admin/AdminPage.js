@@ -31,7 +31,7 @@ define([
             this.inherited(arguments);
         },
 
-        _save: function() {
+        _index: function() {
 
         }
     });
