@@ -35,15 +35,15 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class LoggingController extends Controller
-{
+class LoggingController extends Controller {
+
   /**
    * Log the message.
    * @return True in any case
    * @see Controller::executeKernel()
    */
-  protected function executeKernel()
-  {
+  protected function executeKernel() {
+
     $request = $this->getRequest();
     $response = $this->getResponse();
 

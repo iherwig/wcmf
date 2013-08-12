@@ -40,21 +40,30 @@ use wcmf\lib\presentation\Controller;
 abstract class BatchController extends LongTaskController {
 
   // session name constants
-  private $WORK_PACKAGES_VARNAME = 'BatchController.workPackages';
-  private $NUM_STEPS_VARNAME = 'BatchController.numSteps';
+  const ONE_CALL_SESSION_VARNAME = 'LongTaskController.oneCall';
+  const STEP_SESSION_VARNAME = 'LongTaskController.curStep';
+  const NUM_STEPS_VARNAME = 'BatchController.numSteps';
+  const WORK_PACKAGES_VARNAME = 'BatchController.workPackages';
 
+  private $_curStep = 1;
   private $_workPackages = array();
 
   /**
    * @see Controller::initialize()
    */
-  protected function initialize($request, $response) {
+  public function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
-    // define work packages
     $session = ObjectFactory::getInstance('session');
     if ($request->getAction() == 'continue') {
-      // get export definition for current call from session
+      // get step for current call from session
+      if ($session->exist(self::STEP_SESSION_VARNAME)) {
+        $this->_curStep = $session->get(self::STEP_SESSION_VARNAME);
+      }
+      else {
+        throw new RuntimeException("Error initializing BatchController: ".get_class($this));
+      }
+      // get workpackage definition for current call from session
       if ($session->exist($this->WORK_PACKAGES_VARNAME)) {
         $this->_workPackages = $session->get($this->WORK_PACKAGES_VARNAME);
       }
@@ -63,7 +72,11 @@ abstract class BatchController extends LongTaskController {
       }
     }
     else {
-      // first call, initialize session variable
+      // first call, initialize step session variable
+      $this->_curStep = 1;
+      $this->initializeTask();
+      $session->set(self::ONE_CALL_SESSION_VARNAME, $request->getBooleanValue('oneCall', false));
+
       $tmpArray = array();
       $session->set($this->WORK_PACKAGES_VARNAME, $tmpArray);
 
@@ -83,6 +96,65 @@ abstract class BatchController extends LongTaskController {
         throw new RuntimeException("Error initializing BatchController: ".get_class($this));
       }
     }
+    $step = $this->_curStep+1;
+    $session->set(self::STEP_SESSION_VARNAME, $step);
+  }
+
+  /**
+   * Do processing and assign Node data to View.
+   * @return Array of given context and action 'done' if finished.
+   *         False else.
+   * @see Controller::executeKernel()
+   */
+  protected function executeKernel() {
+    $response = $this->getResponse();
+
+    // call processPart() in the second step,
+    // in the first step show status only
+    if ($this->_curStep > 1) {
+      $this->processPart();
+    }
+    if ($this->_curStep <= $this->getNumberOfSteps()+1) {
+      $response->setValue('stepNumber', $this->_curStep);
+      $response->setValue('numberOfSteps', $this->getNumberOfSteps());
+      // assign an array holding number of steps elements for use with
+      // smarty section command
+      $stepsArray = array();
+      for ($i=0; $i<$this->getNumberOfSteps(); $i++) {
+        $stepsArray[] = '.';
+      }
+      $response->setValue('stepsArray', $stepsArray);
+      $response->setValue('displayText', $this->getDisplayText($this->_curStep));
+
+      // add the summary message
+      $response->setValue('summaryText', $this->getSummaryText());
+
+      $session = ObjectFactory::getInstance('session');
+      if ($session->get(self::ONE_CALL_SESSION_VARNAME) == false) {
+        // show progress bar
+        return false;
+      }
+      else {
+        // proceed
+        $response->setAction('continue');
+        return true;
+      }
+    }
+    else {
+      // return control to application
+      $response->setAction('done');
+      return true;
+    }
+  }
+
+  /**
+   * Get the number of the current step (1..number of steps).
+   * @return The number of the current step
+   */
+  protected function getStepNumber() {
+    // since we actally call processPart() in the second step,
+    // return the real step number reduced by one
+    return $this->_curStep-1;
   }
 
   /**
@@ -141,22 +213,33 @@ abstract class BatchController extends LongTaskController {
       array_push($workPackages, $curWorkPackage);
       $counter += $size;
     }
-    $session->set($this->WORK_PACKAGES_VARNAME, $workPackages);
-    $session->set($this->NUM_STEPS_VARNAME, sizeOf($workPackages));
+    $session->set(self::WORK_PACKAGES_VARNAME, $workPackages);
+    $session->set(self::NUM_STEPS_VARNAME, sizeOf($workPackages));
 
     $this->_workPackages = $workPackages;
   }
 
   /**
-   * Get definitions of work packages.
-   * @param number The number of the work package (first number is 0, number is incremented on every call)
-   * @note This function gets called on first initialization run as often until it returns null.
-   * This allows to define different static work packages. If you would like to add work packages dynamically on
-   * subsequent runs this may be done by directly calling the BatchController::addWorkPackage() method.
-   * @return A work packages description as assoziative array with keys 'name', 'size', 'oids', 'callback'
-   *         as required for BatchController::addWorkPackage() method or null to terminate.
+   * @see LongTaskController::processPart()
    */
-  protected abstract function getWorkPackage($number);
+  protected function processPart() {
+    if ($this->getStepNumber()-1 == $this->getNumberOfSteps()) {
+      return;
+    }
+
+    $curWorkPackageDef = $this->_workPackages[$this->getStepNumber()-1];
+    if (strlen($curWorkPackageDef['callback']) == 0) {
+      throw new RuntimeException("Empty callback name.");
+    }
+    else {
+      if (!method_exists($this, $curWorkPackageDef['callback'])) {
+        throw new RuntimeException("Method '".$curWorkPackageDef['callback']."' must be implemented by ".get_class($this));
+      }
+      else {
+        call_user_method($curWorkPackageDef['callback'], &$this, $curWorkPackageDef['oids'], $curWorkPackageDef['args']);
+      }
+    }
+  }
 
   /**
    * @see LongTaskController::getNumberOfSteps()
@@ -182,25 +265,21 @@ abstract class BatchController extends LongTaskController {
   }
 
   /**
-   * @see LongTaskController::processPart()
+   * Initialize the task e.g. store some configuration in the session.
+   * This method is called on start up.
+   * @note subclasses override this method to implement special application requirements.
    */
-  protected function processPart() {
-    if ($this->getStepNumber()-1 == $this->getNumberOfSteps()) {
-      return;
-    }
+  protected function initializeTask() {}
 
-    $curWorkPackageDef = $this->_workPackages[$this->getStepNumber()-1];
-    if (strlen($curWorkPackageDef['callback']) == 0) {
-      throw new RuntimeException("Empty callback name.");
-    }
-    else {
-      if (!method_exists($this, $curWorkPackageDef['callback'])) {
-        throw new RuntimeException("Method '".$curWorkPackageDef['callback']."' must be implemented by ".get_class($this));
-      }
-      else {
-        call_user_method($curWorkPackageDef['callback'], &$this, $curWorkPackageDef['oids'], $curWorkPackageDef['args']);
-      }
-    }
-  }
+  /**
+   * Get definitions of work packages.
+   * @param number The number of the work package (first number is 0, number is incremented on every call)
+   * @note This function gets called on first initialization run as often until it returns null.
+   * This allows to define different static work packages. If you would like to add work packages dynamically on
+   * subsequent runs this may be done by directly calling the BatchController::addWorkPackage() method.
+   * @return A work packages description as assoziative array with keys 'name', 'size', 'oids', 'callback'
+   *         as required for BatchController::addWorkPackage() method or null to terminate.
+   */
+  protected abstract function getWorkPackage($number);
 }
 ?>
