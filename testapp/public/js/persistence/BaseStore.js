@@ -98,7 +98,7 @@ define([
 
         createBackEndDummyId: function() {
             return 'wcmf'+uuid().replace(/-/g, '');
-        },
+        }
 
         // TODO:
         // implement DojoNodeSerializer on server that uses refs

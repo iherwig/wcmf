@@ -30,7 +30,7 @@ function(
             // create label
             domConstruct.create("span", {
                 innerHTML: itemLabel,
-                class: "checkBoxLabel"
+                "class": "checkBoxLabel"
             }, widget.domNode, "after");
 
             return widget;

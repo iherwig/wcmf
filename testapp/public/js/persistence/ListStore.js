@@ -82,7 +82,7 @@ define([
                         this.index[this.data[i][this.idProperty]] = i;
                     }
                     // persist store, if static
-                    if (data.static) {
+                    if (data["static"]) {
                         this.persist();
                     }
                     deferred.resolve({

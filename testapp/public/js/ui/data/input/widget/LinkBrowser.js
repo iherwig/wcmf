@@ -19,7 +19,7 @@ function(
 
             var testBtn = new Button({
                 innerHTML: '<i class="icon-external-link"></i>',
-                class: "btn-mini",
+                "class": "btn-mini",
                 onClick: lang.hitch(this, function() {
                     var url = this.getLinkUrl();
                     if (url) {

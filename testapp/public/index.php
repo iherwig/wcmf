@@ -9,6 +9,8 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\util\URIUtil;
 
+define("RELEASE", 0);
+
 $application = new Application();
 try {
   // initialize the application
@@ -114,7 +116,12 @@ catch (Exception $ex) {
       };
     </script>
 
+    <?php if (!RELEASE) : ?>
     <script src="vendor/dojo/dojo/dojo.js"></script>
+    <?php else: ?>
+    <script src="../../release/app/dojo/dojo.js"></script>
+    <script src="../../release/app/app/App.js"></script>
+    <?php endif; ?>
 
     <script>
       require(["app/App"], function (App) { new App(); });

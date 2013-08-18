@@ -58,7 +58,7 @@ function(
             if (this.browserUrl) {
                 var browseBtn = new Button({
                     innerHTML: '<i class="icon-folder-open"></i>',
-                    class: "btn-mini",
+                    "class": "btn-mini",
                     onClick: lang.hitch(this, function() {
                         window.open(this.browserUrl+'?callback='+this.callbackName, '_blank', 'width=800,height=700');
                     })
