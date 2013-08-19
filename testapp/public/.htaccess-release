@@ -1,0 +1,24 @@
+RewriteEngine On
+RewriteBase /ingo/wcmf/testapp/release
+
+# remove leading path caused by application's virtual paths
+RewriteCond %{REQUEST_URI} (css|images|js|media|vendor|)/.+\..+
+RewriteRule ^[^/]+/((css|images|js|media|vendor|)/.*)$ $1
+
+# restful interface handled by main.php
+# we expect urls like:
+#    rest/en/Author/
+#    rest/en/Author/12
+#    rest/en/Author/12/Book
+#    rest/en/Author/12/Book/13
+RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)$ main.php?action=restAction&collection=0&language=$1&className=$2&id=$3 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)/([^\/]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2&sourceId=$3&relation=$4 [QSA,L]
+RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)/([^\/]+)\/([0-9]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2&sourceId=$3&relation=$4&targetId=$5 [QSA,L]
+
+# list control values
+RewriteRule ^.*list\/([^\/]+)\/([^\/]+)\/?$ main.php?action=listValues&language=$1&listDef=$2 [QSA,L]
+
+# map all requests to not existing files to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php [QSA,L]

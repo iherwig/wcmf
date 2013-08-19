@@ -12,8 +12,6 @@ var profile = (function(){
 
         copyOnly = function(filename, mid){
             var list = {
-                "app/app.profile": true,
-                // we shouldn't touch our profile
                 "app/package.json": true
                 // we shouldn't touch our package.json
             };

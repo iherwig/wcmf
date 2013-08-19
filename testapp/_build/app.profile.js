@@ -13,9 +13,9 @@
  */
 
 var profile = {
-    basePath: "../",
+    basePath: "../public",
     releaseDir: "../release",
-    releaseName: "app",
+    releaseName: "",
     action: "release",
 
     layerOptimize: "closure",
@@ -68,19 +68,77 @@ var profile = {
         "extend-dojo": 1
     },
 
-    packages: [
-        { name: 'dojo', location: 'public/vendor/dojo/dojo', map: {} },
-        { name: 'dijit', location: 'public/vendor/dojo/dijit', map: {} },
-        { name: 'dojox', location: 'public/vendor/dojo/dojox', map: {} },
-        { name: 'routed', location: 'public/vendor/routed' },
-        { name: 'dojomat', location: 'public/vendor/dojomat' },
-        { name: 'dgrid', location: 'public/vendor/dgrid' },
-        { name: 'xstyle', location: 'public/vendor/xstyle' },
-        { name: 'put-selector', location: 'public/vendor/put-selector' },
-        { name: 'ckeditor', location: 'public/vendor/ckeditor' },
-        { name: 'elfinder', location: 'public/vendor/elfinder' },
+    packages: [{
+        name: 'dojo',
+        location: 'vendor/dojo/dojo',
+        destLocation: 'vendor/dojo/dojo'
+    }, {
+        name: 'dijit',
+        location: 'vendor/dojo/dijit',
+        destLocation: 'vendor/dojo/dijit'
+    }, {
+        name: 'dojox',
+        location: 'vendor/dojo/dojox',
+        destLocation: 'vendor/dojo/dojox'
+    }, {
+        name: 'routed',
+        location: 'vendor/routed',
+        destLocation: 'vendor/routed'
+    }, {
+        name: 'dojomat',
+        location: 'vendor/dojomat',
+        destLocation: 'vendor/dojomat'
+    }, {
+        name: 'dgrid',
+        location: 'vendor/dgrid',
+        destLocation: 'vendor/dgrid'
+    }, {
+        name: 'xstyle',
+        location: 'vendor/xstyle',
+        destLocation: 'vendor/xstyle'
+    }, {
+        name: 'put-selector',
+        location: 'vendor/put-selector',
+        destLocation: 'vendor/put-selector'
+    }, {
+        name: 'ckeditor',
+        location: 'vendor/ckeditor',
+        destLocation: 'vendor/ckeditor'
+    }, {
+        name: 'elfinder',
+        location: 'vendor/elfinder',
+        destLocation: 'vendor/elfinder'
+    }, {
+        name: 'dbootstrap',
+        location: 'vendor/dbootstrap',
+        destLocation: 'vendor/dbootstrap'
+    }, {
+        name: 'font-awesome',
+        location: 'vendor/font-awesome',
+        destLocation: 'vendor/font-awesome'
+    }, {
+        name: 'twitter-bootstrap',
+        location: 'vendor/twitter-bootstrap',
+        destLocation: 'vendor/twitter-bootstrap'
+    }, {
+        name: 'app',
+        location: 'js',
+        destLocation: 'js'
+    }, {
+        name: 'styles',
+        location: 'css',
+        destLocation: 'css'
+    }],
 
-        { name: 'app', location: 'public/js', map: {} }
+    dirs: [
+      ['images', 'images'],
+      ['media', 'media', /media\/.+/]
+    ],
+    files: [
+      ['.htaccess-release', '.htaccess'],
+      ['base_dir.php', 'base_dir.php'],
+      ['index.php', 'index.php'],
+      ['main.php', 'main.php']
     ],
 
     layers: {

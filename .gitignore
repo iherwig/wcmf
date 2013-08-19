@@ -2,3 +2,4 @@
 /test/model/model-transformed
 
 /testapp/log/*.log
+/testapp/release
