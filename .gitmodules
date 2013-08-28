@@ -31,3 +31,6 @@
 [submodule "testapp/public/vendor/ckeditor"]
 	path = testapp/public/vendor/ckeditor
 	url = git://github.com/ckeditor/ckeditor-releases.git
+[submodule "wcmf/vendor/elfinder"]
+	path = wcmf/vendor/elfinder
+	url = https://github.com/Studio-42/elFinder.git
