@@ -1,6 +1,76 @@
-<project name="wCMF" default="redist" basedir=".">
+<project name="wCMF" default="dist" basedir=".">
+	<description>
+		wCMf build file
+	</description>
 
-    <property file="build.properties"/>
-	<!-- TODO: wcmf build, build boilerplate from testapp -->
+	<property file="build.properties"/>
 
+	<target name="init">
+		<tstamp/>
+	</target>
+
+	<target name="buildinfo" depends="init">
+		<propertyfile file="${build.info}"
+		 comment="Build Information File - DO NOT MODIFY">
+		    <entry key="version"
+		     value="${version}"/>
+		    <entry key="build"
+		     type="int" default="0000"
+		     operation="+" pattern="0000"/>
+		</propertyfile>		
+	    <property file="${build.info}"/>
+	</target>
+	
+	<target name="compile" depends="buildinfo">
+		<exec dir="${basedir}/${app.name}/public/vendor/dojo/util/buildscripts/" executable="${basedir}/${app.name}/public/vendor/dojo/util/buildscripts/build.bat">
+			<arg line="profile=../../../../../_build/app.profile.js"/>
+		</exec>
+	</target>
+	
+	<target name="dist" depends="compile"
+		description="generate the distribution" >
+		<mkdir dir="${dist.dir}"/>
+		<copy todir="${dist.dir}/wcmf">
+			<fileset dir="wcmf/">
+				<exclude name="tools/"/>
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/${app.name}">
+			<fileset dir="${app.name}/">
+				<exclude name="public/"/>
+				<exclude name="release/"/>
+				<exclude name="_build/"/>
+				<exclude name="_install/"/>
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/${app.name}/public">
+			<fileset dir="${app.name}/release">
+				<exclude name="js/"/>
+				<exclude name="vendor/"/>
+				<exclude name="build-report.txt"/>
+				<include name="**"/>
+			</fileset>
+			<fileset dir="${app.name}/release">
+				<exclude name="**/*.js.map"/>
+				<exclude name="**/*.js.uncompressed.js"/>
+				<include name="js/App.js"/>
+				<include name="**/nls/**/*.*"/>
+				<include name="vendor/dojo/dojo/dojo.js"/>
+				<include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
+			</fileset>
+		</copy>
+		<copy file="${build.info}" todir="${dist.dir}"/>
+	</target>
+	
+	<target name="package" depends="dist">
+		<zip destfile="${app.name}_${version}.zip" basedir="${dist.dir}"/>
+	</target>
+	
+	<target name="clean"
+		description="clean up" >
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+	</target>
 </project>

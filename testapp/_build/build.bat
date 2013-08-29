@@ -5,4 +5,4 @@
 @rem
 
 cd ..\public\vendor\dojo\util\buildscripts\
-build.sh --profile ..\..\..\..\..\_build\app.profile.js
+build.bat --profile ..\..\..\..\..\_build\app.profile.js

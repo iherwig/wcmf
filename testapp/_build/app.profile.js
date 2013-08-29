@@ -135,7 +135,7 @@ var profile = {
       ['media', 'media', /media\/.+/]
     ],
     files: [
-      ['.htaccess-release', '.htaccess'],
+      ['.htaccess', '.htaccess'],
       ['base_dir.php', 'base_dir.php'],
       ['index.php', 'index.php'],
       ['main.php', 'main.php']
