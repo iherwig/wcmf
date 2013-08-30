@@ -17,16 +17,16 @@
 		    <entry key="build"
 		     type="int" default="0000"
 		     operation="+" pattern="0000"/>
-		</propertyfile>		
+		</propertyfile>
 	    <property file="${build.info}"/>
 	</target>
-	
+
 	<target name="compile" depends="buildinfo">
 		<exec dir="${basedir}/${app.name}/public/vendor/dojo/util/buildscripts/" executable="${basedir}/${app.name}/public/vendor/dojo/util/buildscripts/build.bat">
 			<arg line="profile=../../../../../_build/app.profile.js"/>
 		</exec>
 	</target>
-	
+
 	<target name="dist" depends="compile"
 		description="generate the distribution" >
 		<mkdir dir="${dist.dir}"/>
@@ -63,14 +63,15 @@
 		</copy>
 		<copy file="${build.info}" todir="${dist.dir}"/>
 	</target>
-	
+
 	<target name="package" depends="dist">
 		<zip destfile="${app.name}_${version}.zip" basedir="${dist.dir}"/>
 	</target>
-	
+
 	<target name="clean"
 		description="clean up" >
-		<delete dir="${build.dir}"/>
+		<delete dir="${app.name}/release"/>
 		<delete dir="${dist.dir}"/>
+		<delete file="${app.name}_${version}.zip"/>
 	</target>
 </project>
