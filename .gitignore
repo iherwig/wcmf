@@ -3,3 +3,4 @@
 
 /testapp/log/*.log
 /testapp/release
+/dist
