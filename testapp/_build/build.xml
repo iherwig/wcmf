@@ -4,12 +4,17 @@
 	</description>
 
 	<property file="build.properties"/>
+        <property name="app.name"
+                  location="../"
+                  relative="true"
+                  basedir="../../"/>
 
 	<target name="init">
 		<tstamp/>
 	</target>
 
-	<target name="buildinfo" depends="init">
+	<target name="buildinfo" depends="init"
+		description="generate the build version file" >
 		<propertyfile file="${build.info}"
 		 comment="Build Information File - DO NOT MODIFY">
 		    <entry key="version"
@@ -17,27 +22,28 @@
 		    <entry key="build"
 		     type="int" default="0000"
 		     operation="+" pattern="0000"/>
-		</propertyfile>		
+		</propertyfile>
 	    <property file="${build.info}"/>
 	</target>
-	
-	<target name="compile" depends="buildinfo">
-		<exec dir="${basedir}/${app.name}/public/vendor/dojo/util/buildscripts/" executable="${basedir}/${app.name}/public/vendor/dojo/util/buildscripts/build.bat">
-			<arg line="profile=../../../../../_build/app.profile.js"/>
+
+	<target name="compile" depends="buildinfo"
+		description="build the frontend" >
+		<exec dir="${dojo.build.base}" executable="${dojo.build.script}" output="dojobuild.log">
+			<arg line="profile=${dojo.build.profile}"/>
 		</exec>
 	</target>
-	
+
 	<target name="dist" depends="compile"
-		description="generate the distribution" >
+		description="build the distribution" >
 		<mkdir dir="${dist.dir}"/>
 		<copy todir="${dist.dir}/wcmf">
-			<fileset dir="wcmf/">
+			<fileset dir="../../wcmf/">
 				<exclude name="tools/"/>
 				<include name="**"/>
 			</fileset>
 		</copy>
 		<copy todir="${dist.dir}/${app.name}">
-			<fileset dir="${app.name}/">
+			<fileset dir="../">
 				<exclude name="public/"/>
 				<exclude name="release/"/>
 				<exclude name="_build/"/>
@@ -46,13 +52,13 @@
 			</fileset>
 		</copy>
 		<copy todir="${dist.dir}/${app.name}/public">
-			<fileset dir="${app.name}/release">
+			<fileset dir="../release">
 				<exclude name="js/"/>
 				<exclude name="vendor/"/>
 				<exclude name="build-report.txt"/>
 				<include name="**"/>
 			</fileset>
-			<fileset dir="${app.name}/release">
+			<fileset dir="../release">
 				<exclude name="**/*.js.map"/>
 				<exclude name="**/*.js.uncompressed.js"/>
 				<include name="js/App.js"/>
@@ -62,12 +68,14 @@
 			</fileset>
 		</copy>
 		<copy file="${build.info}" todir="${dist.dir}"/>
+		<delete dir="../release"/>
 	</target>
-	
-	<target name="package" depends="dist">
+
+	<target name="package" depends="dist"
+                description="pack the distribution" >
 		<zip destfile="${app.name}_${version}.zip" basedir="${dist.dir}"/>
 	</target>
-	
+
 	<target name="clean"
 		description="clean up" >
 		<delete dir="${build.dir}"/>
