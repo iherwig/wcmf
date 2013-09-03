@@ -4,10 +4,17 @@
 	</description>
 
 	<property file="build.properties"/>
-        <property name="app.name"
-                  location="../"
-                  relative="true"
-                  basedir="../../"/>
+  <property name="app.name"
+            location="../"
+            relative="true"
+            basedir="../../"/>
+
+  <condition property="dojo.build.script" value="${dojo.build.script_windows}">
+     <os family="windows"/>
+  </condition>
+  <condition property="dojo.build.script" value="${dojo.build.script_unix}">
+     <os family="unix"/>
+  </condition>
 
 	<target name="init">
 		<tstamp/>
