@@ -1,4 +1,5 @@
 RewriteEngine On
+RewriteBase /ingo/wcmf/testapp/public
 
 # remove leading path caused by application's virtual paths
 RewriteCond %{REQUEST_URI} (css|images|js|media|vendor|)/.+\..+

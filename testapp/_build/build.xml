@@ -56,19 +56,23 @@
 				<exclude name="js/"/>
 				<exclude name="vendor/"/>
 				<exclude name="build-report.txt"/>
+				<exclude name="**/*.js.map"/>
+				<exclude name="**/*.js.uncompressed.js"/>
 				<include name="**"/>
 			</fileset>
 			<fileset dir="../release">
-				<exclude name="**/*.js.map"/>
-				<exclude name="**/*.js.uncompressed.js"/>
 				<include name="js/App.js"/>
+				<include name="js/App.js.map"/>
+				<include name="js/App.js.uncompressed.js"/>
 				<include name="**/nls/**/*.*"/>
 				<include name="vendor/dojo/dojo/dojo.js"/>
+				<include name="vendor/dojo/dojo/dojo.js.map"/>
+				<include name="vendor/dojo/dojo/dojo.js.uncompressed.js"/>
 				<include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
 			</fileset>
 		</copy>
 		<copy file="${build.info}" todir="${dist.dir}"/>
-		<delete dir="../release"/>
+		<!--delete dir="../release"/-->
 	</target>
 
 	<target name="package" depends="dist"
