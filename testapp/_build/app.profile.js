@@ -20,7 +20,7 @@ var profile = {
 
     layerOptimize: "closure",
     optimize: "closure",
-    cssOptimize: "comments",
+    cssOptimize: "comments.keepLines",
     mini: true,
     stripConsole: "warn",
     selectorEngine: "lite",

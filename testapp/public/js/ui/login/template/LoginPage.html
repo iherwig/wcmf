@@ -1,15 +1,17 @@
 <div class="login-page">
 
-  <div data-dojo-type="../_include/widget/NavigationWidget" data-dojo-props="titleOnly:true"></div>
-
   <!-- Begin page content -->
+  <header class="jumbotron">
+    <h1>${title}</h1>
+  </header>
+
   <div class="container">
     <form class="form-login" id="loginForm">
       <h3><i class="icon-comment-alt"></i> {translate:Please log in}</h3>
       <div data-dojo-attach-point="notificationNode"></div>
       <input data-dojo-type="dijit/form/TextBox" type="text" name="user" placeholder="{translate:Login}">
       <input data-dojo-type="dijit/form/TextBox" type="password" name="password" placeholder="{translate:Password}">
-      <button data-dojo-type="../_include/widget/Button" data-dojo-props="'class':'primary'" type="submit" data-dojo-attach-point="loginBtn" data-dojo-attach-event="onClick:_login">{translate:Log in}</button>
+      <button data-dojo-type="../_include/widget/Button" data-dojo-props="" type="submit" data-dojo-attach-point="loginBtn" data-dojo-attach-event="onClick:_login">{translate:Log in}</button>
     </form>
   </div>
   <!-- End page content -->

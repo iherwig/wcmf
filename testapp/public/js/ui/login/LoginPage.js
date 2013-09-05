@@ -33,6 +33,11 @@ define([
         contextRequire: require,
         title: Dict.translate('Login'),
 
+        constructor: function (params) {
+            // template variables
+            this.title = appConfig.title;
+        },
+
         postCreate: function() {
             this.inherited(arguments);
         },

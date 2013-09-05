@@ -68,8 +68,6 @@ define([
             if (this.titleOnly) {
                 query(".main-menu").style("display", "none");
             }
-            // remove disabled cursor from title
-            query(".brand").attr("style", {cursor: "default", opacity: 1});
         },
 
         setContentRoute: function(type, id) {

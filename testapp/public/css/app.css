@@ -38,7 +38,7 @@ body {
   height: 40px;
 }
 #footer {
-  background-color: #2f2f2f;
+  background: linear-gradient(45deg, #2f2f2f 0%, #07425F 100%) repeat scroll 0 0 transparent;
 }
 #footer p {
   margin-top: 10px;
@@ -55,10 +55,43 @@ body {
   }
 }
 
+.jumbotron, .dbootstrap .dijitMenuBar {
+  background: linear-gradient(45deg, #2f2f2f 0%, #07425F 100%) repeat scroll 0 0 transparent;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2), 0 -3px 7px rgba(0, 0, 0, 0.2) inset;
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+}
+
+.jumbotron {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.jumbotron h1 {
+  font-size: 40px;
+  font-weight: normal;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.dbootstrap .dijitMenuBar .dijitMenuItem {
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+}
+
+.dbootstrap .dijitMenuBar .brand {
+  color: #999;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+}
+
+.dbootstrap .dijitMenuBar .dijitMenuItemSelected {
+  background-color: #08c;
+}
+
 .form-login {
   max-width: 340px;
   padding: 9px 29px 29px;
-  margin: 20px auto 20px;
+  margin: 60px auto 20px;
   background-color: #fff;
   border: 1px solid #d5d5d5;
   -webkit-border-radius: 5px;
@@ -195,24 +228,24 @@ img.thumb {
 only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px)  {
 
-	/* Force table to not be like tables anymore */
-	table, thead, tbody, th, td, tr {
-		display: block;
-	}
+  /* Force table to not be like tables anymore */
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
 
-	/* Hide table headers (but not display: none;, for accessibility) */
-	thead tr {
-		position: absolute;
-		top: -9999px;
-		left: -9999px;
-	}
+  /* Hide table headers (but not display: none;, for accessibility) */
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
 
-	td {
-		/* Behave like a "row" */
-		position: relative;
-	}
+  td {
+    /* Behave like a "row" */
+    position: relative;
+  }
 
-	.entity-page .dijitTextBox {
-		width: auto;
-	}
+  .entity-page .dijitTextBox {
+    width: auto;
+  }
 }
