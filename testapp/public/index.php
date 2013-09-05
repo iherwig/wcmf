@@ -116,7 +116,6 @@ catch (Exception $ex) {
     </script>
 
     <script src="vendor/dojo/dojo/dojo.js"></script>
-    <script src="js/App.js"></script>
 
     <script>
       require(["app/App", "dojo/i18n"], function (App) { new App(); });

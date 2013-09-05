@@ -33,7 +33,7 @@
 
   <target name="compile" depends="buildinfo"
     description="build the frontend" >
-    <exec dir="${dojo.build.base}" executable="${dojo.build.script}" output="dojobuild.log">
+    <exec dir="${dojo.build.base}" executable="${dojo.build.script}" output="${dojo.build.log}">
       <arg line="profile=${dojo.build.profile}"/>
     </exec>
   </target>
@@ -77,7 +77,7 @@
       </fileset>
     </copy>
     <copy file="${build.info}" todir="${dist.dir}"/>
-    <!--delete dir="../release"/-->
+    <delete dir="../release"/>
   </target>
 
   <target name="package" depends="dist"
@@ -89,5 +89,6 @@
     description="clean up" >
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
+    <delete file="${dojo.build.log}"/>
   </target>
 </project>

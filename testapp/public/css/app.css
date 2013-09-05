@@ -126,6 +126,10 @@ body {
   color: #fff;
 }
 
+.dbootstrap .dgrid .dgrid-cell {
+  text-shadow: none;
+}
+
 .form-login {
   max-width: 340px;
   padding: 9px 29px 29px;
@@ -163,6 +167,15 @@ th.field-actions-3, td.field-actions-3 {
 
 th.field-actions-4, td.field-actions-4 {
   width: 120px;
+}
+
+.dgrid-row {
+  height: 35px;
+}
+
+.dgrid-cell {
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* dnd */

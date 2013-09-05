@@ -9,6 +9,7 @@ define([
     "dgrid/extensions/DnD",
     "dgrid/extensions/ColumnHider",
     "dgrid/extensions/ColumnResizer",
+    "dgrid/extensions/DijitRegistry",
     "dojo/dom-attr",
     "dojo/query",
     "dojo/NodeList-traverse",
@@ -30,6 +31,7 @@ define([
     DnD,
     ColumnHider,
     ColumnResizer,
+    DijitRegistry,
     domAttr,
     query,
     traverse,
@@ -53,7 +55,7 @@ define([
         templateString: lang.replace(template, Dict.tplTranslate),
         gridWidget: null,
 
-        defaultFeatures: [Selection, Keyboard, ColumnHider, ColumnResizer],
+        defaultFeatures: [Selection, Keyboard, ColumnHider, ColumnResizer, DijitRegistry],
         optionalFeatures: [DnD],
 
         constructor: function (params) {
@@ -204,6 +206,10 @@ define([
 
             gridWidget.on("dgrid-datachange", lang.hitch(this, function (evt) {
                 //console.dir(evt);
+            }));
+
+            gridWidget.on("dgrid-refresh-complete", lang.hitch(this, function (evt) {
+                gridWidget.resize();
             }));
 
             return gridWidget;
