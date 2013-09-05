@@ -86,25 +86,44 @@ body {
   background-color: #08c;
 }
 
-.dbootstrap .primary .dijitButtonNode, .dbootstrap .danger .dijitButtonNode {
+.dbootstrap .dijitButton .dijitButtonNode,
+.dbootstrap .primary .dijitButtonNode,
+.dbootstrap .danger .dijitButtonNode {
   background-image: none;
   text-shadow: none;
 }
 
+.dbootstrap .dijitButtonHover.dijitButton .dijitButtonNode,
+.dbootstrap .dijitButtonHover.primary .dijitButtonNode,
+.dbootstrap .dijitButtonHover.danger .dijitButtonNode {
+  opacity: 1;
+}
+
+.dbootstrap .dijitButton .dijitButtonNode {
+  background-color: #f5f5f5;
+  opacity: 0.7;
+}
+
 .dbootstrap .primary .dijitButtonNode {
   background-color: #08c;
+  opacity: 0.9;
 }
 
 .dbootstrap .danger .dijitButtonNode {
   background-color: #ee5f5b;
+  opacity: 0.9;
 }
 
 .dbootstrap .dgrid .dgrid-row:hover, .dbootstrap .dgrid .dgrid-row:hover .dgrid-cell {
-  background-color: #2f2f2f;
+  background-color: #08c;
 }
 
 .dbootstrap .dgrid-selected, .dbootstrap .dgrid-selected .dgrid-cell {
-  background-color: #2f2f2f;
+  background-color: #08c;
+}
+
+.dbootstrap .dgrid .dgrid-row:hover, .dbootstrap .dgrid .dgrid-row:hover .dgrid-cell a {
+  color: #fff;
 }
 
 .form-login {
