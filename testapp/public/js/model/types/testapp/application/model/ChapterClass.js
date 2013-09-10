@@ -180,8 +180,8 @@ define([
         }]
 
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/ChapterClass.js/Body) ENABLED START
-        , listView: 'js/ui/data/widget/EntityListWidget'
-        , detailView: 'js/ui/data/widget/EntityFormWidget'
+        , listView: 'app/ui/data/widget/EntityListWidget'
+        , detailView: 'app/ui/data/widget/EntityFormWidget'
 // PROTECTED REGION END
     });
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/ChapterClass.js/Static) ENABLED START

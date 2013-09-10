@@ -53,7 +53,7 @@ define([
 
         buildForm: function() {
             var typeClass = Model.getType(this.type);
-            require([typeClass.listView || 'js/ui/data/widget/EntityListWidget'], lang.hitch(this, function(View) {
+            require([typeClass.listView || 'app/ui/data/widget/EntityListWidget'], lang.hitch(this, function(View) {
                 if (View instanceof Function) {
                     // create the tab panel
                     var panel = new View({

@@ -117,8 +117,8 @@ define([
         }]
 
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/PublisherClass.js/Body) ENABLED START
-        , listView: 'js/ui/data/widget/EntityListWidget'
-        , detailView: 'js/ui/data/widget/EntityFormWidget'
+        , listView: 'app/ui/data/widget/EntityListWidget'
+        , detailView: 'app/ui/data/widget/EntityFormWidget'
 // PROTECTED REGION END
     });
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/PublisherClass.js/Static) ENABLED START

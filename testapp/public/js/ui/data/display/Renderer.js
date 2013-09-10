@@ -50,7 +50,7 @@ function(
             return renderer;
         }
         // default
-        return "js/ui/data/display/renderer/Text";
+        return "app/ui/data/display/renderer/Text";
     };
 
     // initialize renderers

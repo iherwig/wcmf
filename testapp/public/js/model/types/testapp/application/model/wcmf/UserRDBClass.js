@@ -124,8 +124,8 @@ define([
         }]
 
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/wcmf/UserRDBClass.js/Body) ENABLED START
-        , listView: 'js/ui/data/widget/EntityListWidget'
-        , detailView: 'js/ui/admin/widget/UserFormWidget'
+        , listView: 'app/ui/data/widget/EntityListWidget'
+        , detailView: 'app/ui/admin/widget/UserFormWidget'
 // PROTECTED REGION END
     });
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/wcmf/UserRDBClass.js/Static) ENABLED START

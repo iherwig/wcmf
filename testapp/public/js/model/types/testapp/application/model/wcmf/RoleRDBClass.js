@@ -70,8 +70,8 @@ define([
         }]
 
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/wcmf/RoleRDBClass.js/Body) ENABLED START
-        , listView: 'js/ui/data/widget/EntityListWidget'
-        , detailView: 'js/ui/admin/widget/RoleFormWidget'
+        , listView: 'app/ui/data/widget/EntityListWidget'
+        , detailView: 'app/ui/admin/widget/RoleFormWidget'
 // PROTECTED REGION END
     });
 // PROTECTED REGION ID(testapp/public/js/model/types/testapp/application/model/wcmf/RoleRDBClass.js/Static) ENABLED START
