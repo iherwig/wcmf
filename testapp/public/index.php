@@ -107,7 +107,7 @@ catch (Exception $ex) {
               { name: 'ckeditor', location: 'vendor/ckeditor' },
               { name: 'elfinder', location: 'vendor/elfinder' },
 
-              { name: 'app', location: 'js', map: {} }
+              { name: 'app', location: '.', map: {} }
           ],
           'routing-map': {
               pathPrefix: appConfig.pathPrefix
@@ -118,7 +118,7 @@ catch (Exception $ex) {
     <script src="vendor/dojo/dojo/dojo.js"></script>
 
     <script>
-      require(["app/App", "dojo/i18n"], function (App) { new App(); });
+      require(["app/js/App"], function (App) { new App(); });
     </script>
 
     <div id="static" class="alert alert-error">

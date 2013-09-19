@@ -6,7 +6,7 @@ define([
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
-    "../data/widget/EntityTabWidget",
+    "./widget/EntityTabWidget",
     "../../model/meta/Model",
     "../../locale/Dictionary",
     "dojo/text!./template/EntityListPage.html"
@@ -53,7 +53,7 @@ define([
 
         buildForm: function() {
             var typeClass = Model.getType(this.type);
-            require([typeClass.listView || 'js/ui/data/widget/EntityListWidget'], lang.hitch(this, function(View) {
+            require([typeClass.listView || './widget/EntityListWidget'], lang.hitch(this, function(View) {
                 if (View instanceof Function) {
                     // create the tab panel
                     var panel = new View({

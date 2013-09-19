@@ -1,7 +1,11 @@
 /*@import '../vendor/twitter-bootstrap/css/bootstrap.css';*/
-@import '../vendor/twitter-bootstrap/css/bootstrap-responsive.css';
-@import '../vendor/dbootstrap/theme/dbootstrap/dbootstrap.css';
-@import '../vendor/font-awesome/css/font-awesome.css';
+@import url('../vendor/twitter-bootstrap/css/bootstrap-responsive.css');
+@import url('../vendor/dbootstrap/theme/dbootstrap/dbootstrap.css');
+@import url('../vendor/font-awesome/css/font-awesome.css');
+@import url('../vendor/dgrid/css/dgrid.css');
+@import url('../vendor/dojo/dojo/resources/dnd.css');
+@import url('../vendor/dgrid/css/extensions/ColumnHider.css');
+@import url('../vendor/dgrid/css/extensions/ColumnResizer.css');
 
 .clearfix:before,
 .clearfix:after {

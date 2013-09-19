@@ -11,6 +11,76 @@
  *
  * See: http://dojotoolkit.org/reference-guide/1.9/build/buildSystem.html
  */
+var appSrc = [
+    "app/js/App",
+    "app/js/Cookie",
+    "app/js/routing-map",
+    "app/js/action/ActionBase",
+    "app/js/action/Create",
+    "app/js/action/CreateInRelation",
+    "app/js/action/Delete",
+    "app/js/action/Edit",
+    "app/js/action/Link",
+    "app/js/action/Unlink",
+    "app/js/locale/Dictionary",
+    "app/js/model/meta/Model",
+    "app/js/model/meta/Node",
+    "app/js/model/meta/_TypeList",
+    "app/js/persistence/BaseStore",
+    "app/js/persistence/Entity",
+    "app/js/persistence/ListStore",
+    "app/js/persistence/RelationStore",
+    "app/js/persistence/Store",
+    "app/js/persistence/TreeStore",
+    "app/js/ui/admin/AdminPage",
+    "app/js/ui/admin/PrincipalListPage",
+    "app/js/ui/admin/PrincipalPage",
+    "app/js/ui/admin/widget/RoleFormWidget",
+    "app/js/ui/admin/widget/UserFormWidget",
+    "app/js/ui/data/EntityListPage",
+    "app/js/ui/data/EntityPage",
+    "app/js/ui/data/display/Renderer",
+    "app/js/ui/data/display/renderer/Image",
+    "app/js/ui/data/display/renderer/Text",
+    "app/js/ui/data/input/Factory",
+    "app/js/ui/data/input/widget/BinaryCheckBox",
+    "app/js/ui/data/input/widget/CheckBox",
+    "app/js/ui/data/input/widget/CKEditor",
+    "app/js/ui/data/input/widget/Date",
+    "app/js/ui/data/input/widget/FileBrowser",
+    "app/js/ui/data/input/widget/LinkBrowser",
+    "app/js/ui/data/input/widget/PasswordBox",
+    "app/js/ui/data/input/widget/RadioButton",
+    "app/js/ui/data/input/widget/SelectBox",
+    "app/js/ui/data/input/widget/TextArea",
+    "app/js/ui/data/input/widget/TextBox",
+    "app/js/ui/data/input/widget/_BinaryItemsControl",
+    "app/js/ui/data/input/widget/_BrowserControl",
+    "app/js/ui/data/widget/EntityFormWidget",
+    "app/js/ui/data/widget/EntityListWidget",
+    "app/js/ui/data/widget/EntityRelationWidget",
+    "app/js/ui/data/widget/EntityTabWidget",
+    "app/js/ui/error/ErrorPage",
+    "app/js/ui/error/NotFoundPage",
+    "app/js/ui/home/HomePage",
+    "app/js/ui/link/BrowsePage",
+    "app/js/ui/login/LoginPage",
+    "app/js/ui/login/LogoutPage",
+    "app/js/ui/media/BrowsePage",
+    "app/js/ui/settings/SettingsPage",
+    "app/js/ui/_include/FormLayout",
+    "app/js/ui/_include/_NotificationMixin",
+    "app/js/ui/_include/_PageMixin",
+    "app/js/ui/_include/widget/Button",
+    "app/js/ui/_include/widget/ConfirmDlgWidget",
+    "app/js/ui/_include/widget/GridWidget",
+    "app/js/ui/_include/widget/NavigationWidget",
+    "app/js/ui/_include/widget/NotificationWidget",
+    "app/js/ui/_include/widget/ObjectSelectDlgWidget",
+    "app/js/ui/_include/widget/PopupDlgWidget",
+
+    "xstyle/core/load-css"
+];
 
 var profile = {
     basePath: "../public",
@@ -20,7 +90,7 @@ var profile = {
 
     layerOptimize: "closure",
     optimize: "closure",
-    cssOptimize: "comments.keepLines",
+    cssOptimize: "comments",
     mini: true,
     stripConsole: "warn",
     selectorEngine: "lite",
@@ -57,7 +127,7 @@ var profile = {
         "dojo-publish-privates": 0,
         "dojo-requirejs-api": 0,
         "dojo-sniff": 0,
-        "dojo-sync-loader": 0,
+        "dojo-sync-loader": 1,
         "dojo-test-sniff": 0,
         "dojo-timeout-api": 0,
         "dojo-trace-api": 0,
@@ -68,67 +138,20 @@ var profile = {
         "extend-dojo": 1
     },
 
-    packages: [{
-        name: 'dojo',
-        location: 'vendor/dojo/dojo',
-        destLocation: 'vendor/dojo/dojo'
-    }, {
-        name: 'dijit',
-        location: 'vendor/dojo/dijit',
-        destLocation: 'vendor/dojo/dijit'
-    }, {
-        name: 'dojox',
-        location: 'vendor/dojo/dojox',
-        destLocation: 'vendor/dojo/dojox'
-    }, {
-        name: 'routed',
-        location: 'vendor/routed',
-        destLocation: 'vendor/routed'
-    }, {
-        name: 'dojomat',
-        location: 'vendor/dojomat',
-        destLocation: 'vendor/dojomat'
-    }, {
-        name: 'dgrid',
-        location: 'vendor/dgrid',
-        destLocation: 'vendor/dgrid'
-    }, {
-        name: 'xstyle',
-        location: 'vendor/xstyle',
-        destLocation: 'vendor/xstyle'
-    }, {
-        name: 'put-selector',
-        location: 'vendor/put-selector',
-        destLocation: 'vendor/put-selector'
-    }, {
-        name: 'ckeditor',
-        location: 'vendor/ckeditor',
-        destLocation: 'vendor/ckeditor'
-    }, {
-        name: 'elfinder',
-        location: 'vendor/elfinder',
-        destLocation: 'vendor/elfinder'
-    }, {
-        name: 'dbootstrap',
-        location: 'vendor/dbootstrap',
-        destLocation: 'vendor/dbootstrap'
-    }, {
-        name: 'font-awesome',
-        location: 'vendor/font-awesome',
-        destLocation: 'vendor/font-awesome'
-    }, {
-        name: 'twitter-bootstrap',
-        location: 'vendor/twitter-bootstrap',
-        destLocation: 'vendor/twitter-bootstrap'
-    }, {
-        name: 'app',
-        location: 'js',
-        destLocation: 'js'
-    }, {
-        name: 'styles',
-        location: 'css',
-        destLocation: 'css'
-    }],
+    packages: [
+      { name: 'dojo', location: 'vendor/dojo/dojo', destLocation: 'vendor/dojo/dojo' },
+      { name: 'dijit', location: 'vendor/dojo/dijit', destLocation: 'vendor/dojo/dijit' },
+      { name: 'dojox', location: 'vendor/dojo/dojox', destLocation: 'vendor/dojo/dojox' },
+      { name: 'routed', location: 'vendor/routed', destLocation: 'vendor/routed' },
+      { name: 'dojomat', location: 'vendor/dojomat', destLocation: 'vendor/dojomat' },
+      { name: 'dgrid', location: 'vendor/dgrid', destLocation: 'vendor/dgrid' },
+      { name: 'xstyle', location: 'vendor/xstyle', destLocation: 'vendor/xstyle' },
+      { name: 'put-selector', location: 'vendor/put-selector', destLocation: 'vendor/put-selector' },
+      { name: 'ckeditor', location: 'vendor/ckeditor', destLocation: 'vendor/ckeditor' },
+      { name: 'elfinder', location: 'vendor/elfinder', destLocation: 'vendor/elfinder' },
+
+      { name: 'app', location: '.', destLocation: '.' },
+    ],
 
     dirs: [
       ['images', 'images'],
@@ -142,75 +165,11 @@ var profile = {
     ],
 
     layers: {
-        'app/App': {
-            include: [
-                "app/App",
-                "app/Cookie",
-                "app/routing-map",
-                "app/action/ActionBase",
-                "app/action/Create",
-                "app/action/CreateInRelation",
-                "app/action/Delete",
-                "app/action/Edit",
-                "app/action/Link",
-                "app/action/Unlink",
-                "app/locale/Dictionary",
-                "app/model/meta/Model",
-                "app/model/meta/Node",
-                "app/model/meta/_TypeList",
-                "app/persistence/BaseStore",
-                "app/persistence/Entity",
-                "app/persistence/ListStore",
-                "app/persistence/RelationStore",
-                "app/persistence/Store",
-                "app/persistence/TreeStore",
-                "app/ui/admin/AdminPage",
-                "app/ui/admin/PrincipalListPage",
-                "app/ui/admin/PrincipalPage",
-                "app/ui/admin/widget/RoleFormWidget",
-                "app/ui/admin/widget/UserFormWidget",
-                "app/ui/data/EntityListPage",
-                "app/ui/data/EntityPage",
-                "app/ui/data/display/Renderer",
-                "app/ui/data/display/renderer/Image",
-                "app/ui/data/display/renderer/Text",
-                "app/ui/data/input/Factory",
-                "app/ui/data/input/widget/BinaryCheckBox",
-                "app/ui/data/input/widget/CheckBox",
-                "app/ui/data/input/widget/CKEditor",
-                "app/ui/data/input/widget/Date",
-                "app/ui/data/input/widget/FileBrowser",
-                "app/ui/data/input/widget/LinkBrowser",
-                "app/ui/data/input/widget/PasswordBox",
-                "app/ui/data/input/widget/RadioButton",
-                "app/ui/data/input/widget/SelectBox",
-                "app/ui/data/input/widget/TextArea",
-                "app/ui/data/input/widget/TextBox",
-                "app/ui/data/input/widget/_BinaryItemsControl",
-                "app/ui/data/input/widget/_BrowserControl",
-                "app/ui/data/widget/EntityFormWidget",
-                "app/ui/data/widget/EntityListWidget",
-                "app/ui/data/widget/EntityRelationWidget",
-                "app/ui/data/widget/EntityTabWidget",
-                "app/ui/error/ErrorPage",
-                "app/ui/error/NotFoundPage",
-                "app/ui/home/HomePage",
-                "app/ui/link/BrowsePage",
-                "app/ui/login/LoginPage",
-                "app/ui/login/LogoutPage",
-                "app/ui/media/BrowsePage",
-                "app/ui/settings/SettingsPage",
-                "app/ui/_include/FormLayout",
-                "app/ui/_include/_NotificationMixin",
-                "app/ui/_include/_PageMixin",
-                "app/ui/_include/widget/Button",
-                "app/ui/_include/widget/ConfirmDlgWidget",
-                "app/ui/_include/widget/GridWidget",
-                "app/ui/_include/widget/NavigationWidget",
-                "app/ui/_include/widget/NotificationWidget",
-                "app/ui/_include/widget/ObjectSelectDlgWidget",
-                "app/ui/_include/widget/PopupDlgWidget"
-            ]
+        'dojo/dojo': {
+            customBase: true
+        },
+        'app/js/App': {
+            include: appSrc
         }
     }
 };

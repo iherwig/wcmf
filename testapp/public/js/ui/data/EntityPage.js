@@ -9,7 +9,7 @@ define([
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "../_include/widget/ConfirmDlgWidget",
-    "../data/widget/EntityTabWidget",
+    "./widget/EntityTabWidget",
     "../../persistence/Store",
     "../../persistence/Entity",
     "../../model/meta/Model",
@@ -140,7 +140,7 @@ define([
 
         buildForm: function() {
             var typeClass = Model.getType(this.type);
-            require([typeClass.detailView || 'js/ui/data/widget/EntityFormWidget'], lang.hitch(this, function(View) {
+            require([typeClass.detailView || './widget/EntityFormWidget'], lang.hitch(this, function(View) {
                 if (View instanceof Function) {
                     // create the tab panel
                     var panel = new View({

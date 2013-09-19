@@ -84,7 +84,7 @@ function(
             return controlClass;
         }
         // default
-        return "js/ui/data/input/widget/TextBox";
+        return "app/js/ui/data/input/widget/TextBox";
     };
 
     /**
