@@ -73,7 +73,14 @@
         <include name="vendor/dojo/dojo/dojo.js"/>
         <include name="vendor/dojo/dojo/dojo.js.map"/>
         <include name="vendor/dojo/dojo/dojo.js.uncompressed.js"/>
+      </fileset>
+      <fileset dir="../public">
+        <!-- fonts -->
         <include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
+        <!-- elfinder -->
+        <include name="vendor/elfinder/js/elFinder.min.js"/>
+        <include name="vendor/elfinder/jquery/ui-themes/smoothness-1.8.23/jquery-ui-1.8.23.custom.css"/>
+        <include name="vendor/elfinder/css/elfinder.min.css"/>
       </fileset>
     </copy>
     <copy file="${build.info}" todir="${dist.dir}"/>
