@@ -1,3 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF - Database update</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="../public/vendor/twitter-bootstrap/css/bootstrap.css" rel="stylesheet">
+  <link href="../public/vendor/twitter-bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+<div class="page-header"><h1>Database update</h1></div>
+<pre>
 <?php
 /**
  * wCMF - wemove Content Management Framework
@@ -132,7 +146,7 @@ function ensureDatabases() {
         $dbKey = join(':', array_values($connectionParams));
         if (!in_array($dbKey, $createdDatabases))
         {
-          Log::info('Creating database '.$connectionParams['dbName'], "dbupdate");
+          Log::info('creating database '.$connectionParams['dbName'], "dbupdate");
           DBUtil::createDatabase(
                   $connectionParams['dbName'],
                   $connectionParams['dbHostName'],
@@ -411,3 +425,7 @@ function getMetaData(&$connection, $table) {
   }
   return $result;
 }
+?>
+</pre>
+</div>
+</html>

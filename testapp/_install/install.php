@@ -1,3 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF - Installation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="../public/vendor/twitter-bootstrap/css/bootstrap.css" rel="stylesheet">
+  <link href="../public/vendor/twitter-bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+<div class="page-header"><h1>Installation</h1></div>
+<pre>
 <?php
 /**
  * wCMF - wemove Content Management Framework
@@ -91,3 +105,7 @@ catch (Exception $ex) {
   Log::error($ex, "install");
   $transaction->rollback();
 }
+?>
+</pre>
+</div>
+</html>
