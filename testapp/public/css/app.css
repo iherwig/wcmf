@@ -201,8 +201,7 @@ th.field-actions-4, td.field-actions-4 {
 }
 
 /* containers */
-@media
-only screen and (min-width: 980px) {
+@media only screen and (min-width: 980px) {
   .container {
     width: 980px;
   }
@@ -279,8 +278,7 @@ img.thumb {
   Responsive table layout for form
   http://css-tricks.com/responsive-data-tables/
 */
-@media
-only screen and (max-width: 760px),
+@media only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px)  {
 
   /* Force table to not be like tables anymore */
