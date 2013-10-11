@@ -81,7 +81,9 @@ try {
     $adminUser->setLogin("admin");
     $adminUser->setPassword("admin");
     $adminUser->setName("Administrator");
-    $adminUser->setConfig("admin.ini");
+    if (in_array("admin.ini", $config->getConfigurations())) {
+      $adminUser->setConfig("admin.ini");
+    }
   }
   if (!$adminUser->hasRole("administrators")) {
     Log::info("adding user 'admin' to role 'administrators'...", "install");
