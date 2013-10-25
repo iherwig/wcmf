@@ -43,7 +43,7 @@ interface Configuration {
    * Get a list of available configurations.
    * @return Array of configuration names.
    */
-  public static function getConfigurations();
+  public function getConfigurations();
 
   /**
    * Parses the given configuration and merges it with already added configurations.

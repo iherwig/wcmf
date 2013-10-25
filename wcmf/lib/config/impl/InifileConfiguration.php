@@ -72,7 +72,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::getConfigurations()
    */
-  public static function getConfigurations() {
+  public function getConfigurations() {
     $fileUtil = new FileUtil();
     return $fileUtil->getFiles($this->_configPath, '/\.'.$this->_configExtension.'$/', true);
   }
