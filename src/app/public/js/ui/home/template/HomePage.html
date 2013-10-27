@@ -1,0 +1,19 @@
+<div class="home-page">
+
+  <div data-dojo-type="../_include/widget/NavigationWidget" data-dojo-props="selected:'navHome'"></div>
+  <div data-dojo-attach-point="notificationNode"></div>
+
+  <!-- Begin page content -->
+  <div class="container">
+    <div class="span9">
+      <div class="hero-unit">
+        <h1 id="title">{translate:Welcome}</h1>
+        <p>{translate:This is the main entry point of this wCMF application.}</p>
+        <p><a href="#" data-dojo-attach-event="onClick:_navigateContent">{translate:Manage Content &raquo;}</a></p>
+        <p><a href="#" data-dojo-attach-event="onClick:_navigateMedia">{translate:Media Pool &raquo;}</a></p>
+      </div>
+    </div>
+  </div>
+  <!-- End page content -->
+
+</div>

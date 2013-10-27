@@ -1,0 +1,25 @@
+<div>
+    <div data-dojo-attach-point="notificationNode"></div>
+    <div class="clearfix">
+        <h3 class="pull-left" data-dojo-attach-point="headlineNode">${headline}</h3>
+        <div class="btn-toolbar pull-right">
+          <div data-dojo-attach-point="languageMenuNode" style="display: none;">
+            <div data-dojo-type="dijit/form/DropDownButton" data-dojo-props="iconClass:'dijitIconEdit', 'class':'btn-mini'">
+              <span>{translate:Language}: ${languageName}</span>
+              <div data-dojo-type="dijit/Menu" data-dojo-attach-point="languageMenuPopupNode" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <form class="form" id="${formId}">
+        <div data-dojo-type="../../_include/FormLayout" data-dojo-attach-point="fieldsNode"></div>
+    </form>
+    <div class="btn-toolbar clearfix">
+        <div class="pull-right">
+          <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'primary'" type="submit" data-dojo-attach-point="saveBtn" data-dojo-attach-event="onClick:_save">{translate:Save}</button>
+          <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'danger'" type="submit" data-dojo-attach-point="deleteBtn" data-dojo-attach-event="onClick:_delete">{translate:Delete}</button>
+        </div>
+    </div>
+    <hr>
+    <div data-dojo-attach-point="relationsNode"></div>
+</div>

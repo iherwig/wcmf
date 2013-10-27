@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!-- see http://www.phpunit.de/wiki/Documentation -->
+<phpunit backupGlobals="true"
+         backupStaticAttributes="false"
+         bootstrap="bootstrap.php"
+         colors="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="false"
+         mapTestClassNameToCoveredClassName="false"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         syntaxCheck="false"
+         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
+         strict="false"
+         verbose="true">
+  <testsuites>
+    <testsuite name="Controller">
+      <file>tests/controller/ListControllerTest.php</file>
+      <file>tests/controller/DeleteControllerTest.php</file>
+      <file>tests/controller/DisplayControllerTest.php</file>
+      <file>tests/controller/SaveControllerTest.php</file>
+    </testsuite>
+    <testsuite name="Core">
+      <file>tests/core/ObjectFactoryTest.php</file>
+    </testsuite>
+    <testsuite name="Format">
+      <file>tests/format/JSONFormatTest.php</file>
+    </testsuite>
+    <testsuite name="I18N">
+      <file>tests/i18n/LocalizationTest.php</file>
+    </testsuite>
+    <testsuite name="Model">
+      <file>tests/model/IteratorTest.php</file>
+      <file>tests/model/NodeTest.php</file>
+      <file>tests/model/NodeUtilTest.php</file>
+    </testsuite>
+    <testsuite name="Persistence">
+      <file>tests/persistence/LockingTest.php</file>
+      <file>tests/persistence/ManyToManyTest.php</file>
+      <file>tests/persistence/NodeRelationTest.php</file>
+      <file>tests/persistence/NodeUnifiedRDBMapperTest.php</file>
+      <file>tests/persistence/ObjectIdTest.php</file>
+      <file>tests/persistence/ObjectQueryTest.php</file>
+      <file>tests/persistence/PersistentObjectPerformanceTest.php</file>
+      <file>tests/persistence/PersistentObjectProxyTest.php</file>
+      <file>tests/persistence/PersistentObjectTest.php</file>
+      <file>tests/persistence/RelationDescriptionTest.php</file>
+      <file>tests/persistence/SortTest.php</file>
+      <file>tests/persistence/StringQueryTest.php</file>
+      <file>tests/persistence/TransactionTest.php</file>
+    </testsuite>
+  </testsuites>
+  <groups>
+    <exclude>
+      <!--group>controller</group-->
+      <group>performance</group>
+    </exclude>
+  </groups>
+</phpunit>
