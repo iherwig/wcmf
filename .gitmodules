@@ -1,33 +1,33 @@
-[submodule "testapp/public/vendor/dojo/dojo"]
-	path = testapp/public/vendor/dojo/dojo
+[submodule "src/app/public/vendor/dojo/dojo"]
+	path = src/app/public/vendor/dojo/dojo
 	url = git://github.com/dojo/dojo.git
-[submodule "testapp/public/vendor/dojo/dijit"]
-	path = testapp/public/vendor/dojo/dijit
+[submodule "src/app/public/vendor/dojo/dijit"]
+	path = src/app/public/vendor/dojo/dijit
 	url = git://github.com/dojo/dijit.git
-[submodule "testapp/public/vendor/dojo/dojox"]
-	path = testapp/public/vendor/dojo/dojox
+[submodule "src/app/public/vendor/dojo/dojox"]
+	path = src/app/public/vendor/dojo/dojox
 	url = git://github.com/dojo/dojox.git
-[submodule "testapp/public/vendor/dojo/util"]
-	path = testapp/public/vendor/dojo/util
+[submodule "src/app/public/vendor/dojo/util"]
+	path = src/app/public/vendor/dojo/util
 	url = git://github.com/dojo/util.git
-[submodule "testapp/public/vendor/dojomat"]
-	path = testapp/public/vendor/dojomat
+[submodule "src/app/public/vendor/dojomat"]
+	path = src/app/public/vendor/dojomat
 	url = git://github.com/sirprize/dojomat.git
-[submodule "testapp/public/vendor/routed"]
-	path = testapp/public/vendor/routed
+[submodule "src/app/public/vendor/routed"]
+	path = src/app/public/vendor/routed
 	url = git://github.com/sirprize/routed.git
-[submodule "testapp/public/vendor/dgrid"]
-	path = testapp/public/vendor/dgrid
+[submodule "src/app/public/vendor/dgrid"]
+	path = src/app/public/vendor/dgrid
 	url = git://github.com/SitePen/dgrid.git
-[submodule "testapp/public/vendor/put-selector"]
-	path = testapp/public/vendor/put-selector
+[submodule "src/app/public/vendor/put-selector"]
+	path = src/app/public/vendor/put-selector
 	url = git://github.com/kriszyp/put-selector.git
-[submodule "testapp/public/vendor/xstyle"]
-	path = testapp/public/vendor/xstyle
+[submodule "src/app/public/vendor/xstyle"]
+	path = src/app/public/vendor/xstyle
 	url = git://github.com/kriszyp/xstyle.git
-[submodule "testapp/public/vendor/font-awesome"]
-	path = testapp/public/vendor/font-awesome
+[submodule "src/app/public/vendor/font-awesome"]
+	path = src/app/public/vendor/font-awesome
 	url = https://github.com/FortAwesome/Font-Awesome
-[submodule "testapp/public/vendor/ckeditor"]
-	path = testapp/public/vendor/ckeditor
+[submodule "src/app/public/vendor/ckeditor"]
+	path = src/app/public/vendor/ckeditor
 	url = git://github.com/ckeditor/ckeditor-releases.git

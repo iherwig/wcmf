@@ -1,6 +1,6 @@
-/test/model/log.txt
-/test/model/model-transformed
+src/test/model/log.txt
+src/test/model/model-transformed
 
 *.log
-/testapp/release
-/dist
+src/app/release
+src/dist
