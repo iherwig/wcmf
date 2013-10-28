@@ -84,7 +84,7 @@ var appSrc = [
 
 var profile = {
     basePath: "../app/public",
-    releaseDir: "../app/release",
+    releaseDir: "../release",
     releaseName: "",
     action: "release",
 

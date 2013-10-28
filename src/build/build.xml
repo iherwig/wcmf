@@ -2,10 +2,7 @@
   <description>wCMf build file</description>
 
   <property file="build.properties"/>
-  <property name="app.name"
-            location="../app/"
-            relative="true"
-            basedir="../"/>
+  <property name="app.name" value="app" />
 
   <condition property="dojo.build.script" value="${dojo.build.script_windows}">
      <os family="windows"/>
@@ -48,14 +45,14 @@
       </fileset>
     </copy>
     <copy todir="${dist.dir}/${app.name}">
-      <fileset dir="../app/">
+      <fileset dir="../${app.name}/">
         <exclude name="public/"/>
         <exclude name="release/"/>
         <include name="**"/>
       </fileset>
     </copy>
     <copy todir="${dist.dir}/${app.name}/public">
-      <fileset dir="../app/release">
+      <fileset dir="../${app.name}/release">
         <exclude name="js/"/>
         <exclude name="vendor/"/>
         <exclude name="build-report.txt"/>
@@ -63,7 +60,7 @@
         <exclude name="**/*.js.uncompressed.js"/>
         <include name="**"/>
       </fileset>
-      <fileset dir="../app/release">
+      <fileset dir="../${app.name}/release">
         <include name="js/App.js"/>
         <include name="js/App.js.map"/>
         <include name="js/App.js.uncompressed.js"/>
@@ -72,7 +69,7 @@
         <include name="vendor/dojo/dojo/dojo.js.map"/>
         <include name="vendor/dojo/dojo/dojo.js.uncompressed.js"/>
       </fileset>
-      <fileset dir="../app/public">
+      <fileset dir="../${app.name}/public">
         <!-- fonts -->
         <include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
         <!-- elfinder -->
@@ -80,12 +77,12 @@
       </fileset>
     </copy>
     <copy file="${build.info}" todir="${dist.dir}"/>
-    <!--delete dir="../app/release"/-->
+    <delete dir="../${app.name}/release"/>
   </target>
 
   <target name="package" depends="dist"
     description="pack the distribution" >
-    <zip destfile="${app.name}_${version}.zip" basedir="${dist.dir}"/>
+    <zip destfile="../${app.name}_${version}.zip" basedir="${dist.dir}"/>
   </target>
 
   <target name="clean"
@@ -93,5 +90,6 @@
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
     <delete file="${dojo.build.log}"/>
+    <delete file="../${app.name}_${version}.zip"/>
   </target>
 </project>
