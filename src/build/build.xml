@@ -15,6 +15,18 @@
     <tstamp/>
   </target>
 
+  <target name="generate"
+    description="generate the code from the model" >
+    <java jar="${generator.base}/ChronosGenerator.jar"
+          dir="${generator.workdir}" fork="true" >
+      <sysproperty key="java.library.path" path="${generator.base}/lib"/>
+      <arg value="${generator.base}/cartridge/Wcmf/workflow/wcmf.oaw"/>
+      <arg value="-basePath=${generator.base}/"/>
+      <arg value="-propertyFile=${generator.workdir}/workflow.properties"/>
+      <arg value="-targetDir=${generator.target}"/>
+    </java>
+  </target>
+
   <target name="buildinfo" depends="init"
     description="generate the build version file" >
     <propertyfile file="${build.info}"

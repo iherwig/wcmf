@@ -1,6 +1,4 @@
-src/test/model/log.txt
-src/test/model/model-transformed
-
 *.log
+log.txt
 src/app/release
 src/dist
