@@ -113,7 +113,7 @@ define([
                 when(this.confirmLeave(url), lang.hitch(this, function(result) {
                     this.inConfirmLeave = false;
                     if (result === true) {
-                        this.push(url);
+                        this.pushState(url);
                     }
                 }));
             }

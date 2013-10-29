@@ -37,7 +37,7 @@ define([
             var route = this.router.getRoute("entityList");
             var pathParams = { type:type };
             var url = route.assemble(pathParams);
-            this.push(url);
+            this.pushState(url);
         },
 
         _navigateMedia: function(e) {

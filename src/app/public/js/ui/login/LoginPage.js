@@ -83,7 +83,7 @@ define([
                         // redirect to default route
                         var route = this.router.getRoute("home");
                         var url = route.assemble();
-                        this.push(url);
+                        this.pushState(url);
                     }
                 }
             }), lang.hitch(this, function(error) {

@@ -118,7 +118,7 @@ catch (Exception $ex) {
     <script src="vendor/dojo/dojo/dojo.js"></script>
 
     <script>
-      require(["app/js/App"], function (App) { new App(); });
+      require(["app/js/App"], function (App) { new App({}, 'push'); });
     </script>
 
     <div id="static" class="alert alert-error">
