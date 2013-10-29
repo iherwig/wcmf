@@ -1,17 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>wCMF - Database update</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link href="../app/public/vendor/twitter-bootstrap/css/bootstrap.css" rel="stylesheet">
-  <link href="../app/public/vendor/twitter-bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-</head>
-<body>
-<div class="container">
-<div class="page-header"><h1>Database update</h1></div>
-<pre>
 <?php
 /**
  * wCMF - wemove Content Management Framework
@@ -30,7 +16,7 @@
  *
  * $Id$
  */
-define('WCMF_BASE', realpath( dirname(__FILE__).'/..').'/');
+define('WCMF_BASE', realpath( dirname(__FILE__).'/../../..').'/');
 error_reporting(E_ERROR | E_PARSE);
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
@@ -46,12 +32,13 @@ Log::configure('log4php.properties');
 Log::info("updating wCMF database tables...", "dbupdate");
 
 // get configuration from file
-$configPath = realpath('../app/config/').'/';
+$configPath = realpath(WCMF_BASE.'app/config/').'/';
 $config = new InifileConfiguration($configPath);
 $config->addConfiguration('config.ini');
+$config->addConfiguration('../../wcmf/tools/database/config.ini');
 ObjectFactory::configure($config);
 
-if (!ensureDatabases($config)) {
+if (!ensureDatabases()) {
   exit();
 }
 
@@ -59,7 +46,7 @@ if (!ensureDatabases($config)) {
 $tables = array();
 $readingTable = false;
 $tableDef = '';
-$lines = file('tables.sql');
+$lines = file($config->getValue('ddlFile', 'installation'));
 foreach($lines as $line) {
   $line = trim($line);
   if(strlen($line) > 0) {
@@ -115,8 +102,9 @@ foreach ($tables as $tableDef) {
 }
 
 // execute custom scripts from the directory 'custom-dbupdate'
-if (is_dir('custom-dbupdate')) {
-  $sqlScripts = FileUtil::getFiles('custom-dbupdate', '/[^_]+_.*\.sql$/', true);
+$migrationScriptsDir = $config->getValue('migrationScriptsDir', 'installation');
+if (is_dir($migrationScriptsDir)) {
+  $sqlScripts = FileUtil::getFiles($migrationScriptsDir, '/[^_]+_.*\.sql$/', true);
   sort($sqlScripts);
   foreach ($sqlScripts as $script) {
     // extract the initSection from the filename
@@ -141,12 +129,10 @@ function ensureDatabases() {
     $mapper = $persistenceFacade->getMapper($type);
     if ($mapper instanceof wcmf\lib\model\mapper\RDBMapper) {
       $connectionParams = $mapper->getConnectionParams();
-      if (strtolower($connectionParams['dbType']) == 'mysql')
-      {
+      if (strtolower($connectionParams['dbType']) === 'mysql') {
         $dbKey = join(':', array_values($connectionParams));
-        if (!in_array($dbKey, $createdDatabases))
-        {
-          Log::info('creating database '.$connectionParams['dbName'], "dbupdate");
+        if (!in_array($dbKey, $createdDatabases)) {
+          Log::info('preparing database '.$connectionParams['dbName'], "dbupdate");
           DBUtil::createDatabase(
                   $connectionParams['dbName'],
                   $connectionParams['dbHostName'],
@@ -426,6 +412,3 @@ function getMetaData(&$connection, $table) {
   return $result;
 }
 ?>
-</pre>
-</div>
-</html>

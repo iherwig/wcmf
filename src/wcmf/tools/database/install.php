@@ -1,17 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>wCMF - Installation</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link href="../app/public/vendor/twitter-bootstrap/css/bootstrap.css" rel="stylesheet">
-  <link href="../app/public/vendor/twitter-bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-</head>
-<body>
-<div class="container">
-<div class="page-header"><h1>Installation</h1></div>
-<pre>
 <?php
 /**
  * wCMF - wemove Content Management Framework
@@ -30,7 +16,7 @@
  *
  * $Id$
  */
-define('WCMF_BASE', realpath( dirname(__FILE__).'/..').'/');
+define('WCMF_BASE', realpath( dirname(__FILE__).'/../../..').'/');
 error_reporting(E_ERROR | E_PARSE);
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
@@ -46,9 +32,10 @@ Log::configure('log4php.properties');
 Log::info("initializing wCMF database tables...", "install");
 
 // get configuration from file
-$configPath = realpath('../app/config/').'/';
+$configPath = realpath(WCMF_BASE.'app/config/').'/';
 $config = new InifileConfiguration($configPath);
 $config->addConfiguration('config.ini');
+$config->addConfiguration('../../wcmf/tools/database/config.ini');
 ObjectFactory::configure($config);
 
 $permissionManager = ObjectFactory::getInstance('permissionManager');
@@ -91,8 +78,9 @@ try {
   }
 
   // execute custom scripts from the directory 'custom-install'
-  if (is_dir('custom-install')) {
-    $sqlScripts = FileUtil::getFiles('custom-install', '/[^_]+_.*\.sql$/', true);
+  $installScriptsDir = $config->getValue('installScriptsDir', 'installation');
+  if (is_dir($installScriptsDir)) {
+    $sqlScripts = FileUtil::getFiles($installScriptsDir, '/[^_]+_.*\.sql$/', true);
     sort($sqlScripts);
     foreach ($sqlScripts as $script) {
       // extract the initSection from the filename
@@ -108,6 +96,3 @@ catch (Exception $ex) {
   $transaction->rollback();
 }
 ?>
-</pre>
-</div>
-</html>
