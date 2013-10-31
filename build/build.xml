@@ -2,8 +2,6 @@
   <description>wCMF build file</description>
 
   <property file="build.properties"/>
-  <property name="build.base" value="../"/>
-  <property name="package.file" value="${build.base}wcmf_${version}.zip"/>
 
   <target name="init">
     <tstamp/>
@@ -19,10 +17,15 @@
          type="int" default="0000"
          operation="+" pattern="0000"/>
     </propertyfile>
-    <property file="${build.info}"/>
   </target>
 
-  <target name="dist" depends="buildinfo"
+  <target name="properties" description="define properties">
+    <property file="${build.info}"/>
+    <property name="build.base" value="../"/>
+    <property name="package.file" value="${build.base}wcmf_${version}.${build}.zip"/>
+  </target>
+
+  <target name="dist" depends="buildinfo,properties"
     description="build the distribution" >
     <mkdir dir="${dist.dir}"/>
     <copy todir="${dist.dir}">
@@ -56,7 +59,7 @@
     <zip destfile="${package.file}" basedir="${dist.dir}"/>
   </target>
 
-  <target name="clean"
+  <target name="clean" depends="properties"
     description="clean up" >
     <delete dir="${dist.dir}"/>
     <delete file="${package.file}"/>
