@@ -81,8 +81,8 @@ define([
         }],
 
         relations: [{
-            name: "UserRDB",
-            type: "UserRDB",
+            name: "User",
+            type: "User",
             aggregationKind: "none",
             maxMultiplicity: "1",
             thisEndName: "UserConfig",

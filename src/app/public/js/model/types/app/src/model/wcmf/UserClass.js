@@ -17,19 +17,19 @@
 define([
     "dojo/_base/declare",
     "app/js/model/meta/Node"
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserRDBClass.js/Define) ENABLED START
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserClass.js/Define) ENABLED START
 // PROTECTED REGION END
 ], function(
     declare,
     Node
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserRDBClass.js/Params) ENABLED START
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserClass.js/Params) ENABLED START
 // PROTECTED REGION END
 ) {
-    var UserRDB = declare([Node
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserRDBClass.js/Declare) ENABLED START
+    var User = declare([Node
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.wcmf.UserRDB',
+        typeName: 'app.src.model.wcmf.User',
         isSortable: false,
         displayValues: [
             "login"
@@ -105,31 +105,31 @@ define([
             type: "Locktable",
             aggregationKind: "composite",
             maxMultiplicity: "unbounded",
-            thisEndName: "UserRDB",
+            thisEndName: "User",
             relationType: "child"
         }, {
             name: "UserConfig",
             type: "UserConfig",
             aggregationKind: "composite",
             maxMultiplicity: "unbounded",
-            thisEndName: "UserRDB",
+            thisEndName: "User",
             relationType: "child"
         }, {
-            name: "RoleRDB",
-            type: "RoleRDB",
+            name: "Role",
+            type: "Role",
             aggregationKind: "none",
             maxMultiplicity: "unbounded",
-            thisEndName: "UserRDB",
+            thisEndName: "User",
             relationType: "child"
         }]
 
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserRDBClass.js/Body) ENABLED START
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserClass.js/Body) ENABLED START
         , listView: 'app/js/ui/data/widget/EntityListWidget'
         , detailView: 'app/js/ui/data/widget/EntityFormWidget'
 // PROTECTED REGION END
     });
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserRDBClass.js/Static) ENABLED START
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserClass.js/Static) ENABLED START
 // PROTECTED REGION END
-    return UserRDB;
+    return User;
 });
   

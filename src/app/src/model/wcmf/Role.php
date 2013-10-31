@@ -17,19 +17,19 @@
  */
 namespace app\src\model\wcmf;
 
-use app\src\model\wcmf\UserRDBBase;
-// PROTECTED REGION ID(app/src/model/wcmf/UserRDB.php/Import) ENABLED START
+use app\src\model\wcmf\RoleBase;
+// PROTECTED REGION ID(app/src/model/wcmf/Role.php/Import) ENABLED START
 // PROTECTED REGION END
 
 /**
- * @class UserRDB
- * UserRDB description: ?
+ * @class Role
+ * Role description: ?
  *
  * @author 
  * @version 1.0
  */
-class UserRDB extends UserRDBBase {
-// PROTECTED REGION ID(app/src/model/wcmf/UserRDB.php/Body) ENABLED START
+class Role extends RoleBase {
+// PROTECTED REGION ID(app/src/model/wcmf/Role.php/Body) ENABLED START
 // PROTECTED REGION END
 }
 ?>

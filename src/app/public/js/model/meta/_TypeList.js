@@ -24,10 +24,10 @@ define([
 ,    "../types/app/src/model/wcmf/DBSequenceClass"
 ,    "../types/app/src/model/wcmf/LanguageClass"
 ,    "../types/app/src/model/wcmf/LocktableClass"
-,    "../types/app/src/model/wcmf/RoleRDBClass"
+,    "../types/app/src/model/wcmf/RoleClass"
 ,    "../types/app/src/model/wcmf/TranslationClass"
 ,    "../types/app/src/model/wcmf/UserConfigClass"
-,    "../types/app/src/model/wcmf/UserRDBClass"
+,    "../types/app/src/model/wcmf/UserClass"
 ], function(
     app_src_model_Publisher
 ,    app_src_model_Author
@@ -37,10 +37,10 @@ define([
 ,    app_src_model_wcmf_DBSequence
 ,    app_src_model_wcmf_Language
 ,    app_src_model_wcmf_Locktable
-,    app_src_model_wcmf_RoleRDB
+,    app_src_model_wcmf_Role
 ,    app_src_model_wcmf_Translation
 ,    app_src_model_wcmf_UserConfig
-,    app_src_model_wcmf_UserRDB
+,    app_src_model_wcmf_User
 ) {
     return [
         new app_src_model_Publisher()
@@ -51,10 +51,10 @@ define([
 ,        new app_src_model_wcmf_DBSequence()
 ,        new app_src_model_wcmf_Language()
 ,        new app_src_model_wcmf_Locktable()
-,        new app_src_model_wcmf_RoleRDB()
+,        new app_src_model_wcmf_Role()
 ,        new app_src_model_wcmf_Translation()
 ,        new app_src_model_wcmf_UserConfig()
-,        new app_src_model_wcmf_UserRDB()
+,        new app_src_model_wcmf_User()
 
     ];
 });

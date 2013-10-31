@@ -23,13 +23,13 @@ use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 
 /**
- * @class RoleRDB
- * RoleRDB description: ?
+ * @class Role
+ * Role description: ?
  *
  * @author 
  * @version 1.0
  */
-class RoleRDBBase extends AbstractRole {
+class RoleBase extends AbstractRole {
 
     /**
      * Constructor
@@ -37,7 +37,7 @@ class RoleRDBBase extends AbstractRole {
      */
     public function __construct($oid=null) {
       if ($oid == null) {
-        $oid = new ObjectId('RoleRDB');
+        $oid = new ObjectId('Role');
     }
       parent::__construct($oid);
     }
@@ -46,7 +46,7 @@ class RoleRDBBase extends AbstractRole {
      * @see PersistentObject::getObjectDisplayName()
      */
     public function getObjectDisplayName() {
-      return Message::get("RoleRDB");
+      return Message::get("Role");
     }
 
     /**
@@ -116,21 +116,21 @@ class RoleRDBBase extends AbstractRole {
     }
      
     /**
-     * Get the UserRDB instances in the UserRDB relation
-     * @return Array of UserRDB instances
+     * Get the User instances in the User relation
+     * @return Array of User instances
      */
-    public function getUserRDBList() {
-      return $this->getChildrenEx(null, 'UserRDB', null, null, null, false);
+    public function getUserList() {
+      return $this->getChildrenEx(null, 'User', null, null, null, false);
     }
 
     /**
-     * Set the UserRDB instances in the UserRDB relation
-     * @param nodeList Array of UserRDB instances
+     * Set the User instances in the User relation
+     * @param nodeList Array of User instances
      */
-    public function setUserRDBList(array $nodeList) {
-      $this->setValue('UserRDB', null);
+    public function setUserList(array $nodeList) {
+      $this->setValue('User', null);
       foreach ($nodeList as $node) {
-        $this->addNode($node, 'UserRDB');
+        $this->addNode($node, 'User');
         }
       }
 }

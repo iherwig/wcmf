@@ -77,8 +77,8 @@ class UserConfigRDBMapper extends NodeUnifiedRDBMapper {
    */
   protected function getRelationDescriptions() {
     return array(
-      'UserRDB' => new RDBManyToOneRelationDescription(
-        'app.src.model.wcmf.UserConfig', 'UserConfig', 'app.src.model.wcmf.UserRDB', 'UserRDB',
+      'User' => new RDBManyToOneRelationDescription(
+        'app.src.model.wcmf.UserConfig', 'UserConfig', 'app.src.model.wcmf.User', 'User',
         '0', 'unbounded', '1', '1', 'composite', 'none', 'true', 'true', 'parent', 'id', 'fk_user_id'
       ),
     );

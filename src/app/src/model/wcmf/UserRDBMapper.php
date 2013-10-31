@@ -17,7 +17,7 @@
  */
 namespace app\src\model\wcmf;
 
-use app\src\model\wcmf\UserRDB;
+use app\src\model\wcmf\User;
 
 use wcmf\lib\model\mapper\NodeUnifiedRDBMapper;
 use wcmf\lib\model\mapper\RDBAttributeDescription;
@@ -28,20 +28,20 @@ use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\ObjectId;
 
 /**
- * @class UserRDBRDBMapper
- * UserRDBRDBMapper maps UserRDB Nodes to the database.
- * UserRDB description: ?
+ * @class UserRDBMapper
+ * UserRDBMapper maps User Nodes to the database.
+ * User description: ?
  *
  * @author 
  * @version 1.0
  */
-class UserRDBRDBMapper extends NodeUnifiedRDBMapper {
+class UserRDBMapper extends NodeUnifiedRDBMapper {
 
   /**
    * @see RDBMapper::getType()
    */
   public function getType() {
-    return 'app.src.model.wcmf.UserRDB';
+    return 'app.src.model.wcmf.User';
   }
 
   /**
@@ -60,7 +60,7 @@ class UserRDBRDBMapper extends NodeUnifiedRDBMapper {
       'display_value' => 'login',
       'parent_order' => '',
       'child_order' => '',
-// PROTECTED REGION ID(app/src/model/wcmf/UserRDBRDBMapper.php/Properties) ENABLED START
+// PROTECTED REGION ID(app/src/model/wcmf/UserRDBMapper.php/Properties) ENABLED START
 // PROTECTED REGION END
     );
   }
@@ -78,20 +78,20 @@ class UserRDBRDBMapper extends NodeUnifiedRDBMapper {
   protected function getRelationDescriptions() {
     return array(
       'Locktable' => new RDBOneToManyRelationDescription(
-        'app.src.model.wcmf.UserRDB', 'UserRDB', 'app.src.model.wcmf.Locktable', 'Locktable',
+        'app.src.model.wcmf.User', 'User', 'app.src.model.wcmf.Locktable', 'Locktable',
         '1', '1', '0', 'unbounded', 'none', 'composite', 'true', 'true', 'child', 'id', 'fk_user_id'
       ),
       'UserConfig' => new RDBOneToManyRelationDescription(
-        'app.src.model.wcmf.UserRDB', 'UserRDB', 'app.src.model.wcmf.UserConfig', 'UserConfig',
+        'app.src.model.wcmf.User', 'User', 'app.src.model.wcmf.UserConfig', 'UserConfig',
         '1', '1', '0', 'unbounded', 'none', 'composite', 'true', 'true', 'child', 'id', 'fk_user_id'
       ),
-      'RoleRDB' => new RDBManyToManyRelationDescription(
+      'Role' => new RDBManyToManyRelationDescription(
       /* this -> nm  */ new RDBOneToManyRelationDescription(
-        'app.src.model.wcmf.UserRDB', 'UserRDB', 'app.src.model.wcmf.NMUserRole', 'NMUserRole',
+        'app.src.model.wcmf.User', 'User', 'app.src.model.wcmf.NMUserRole', 'NMUserRole',
         '1', '1', '0', 'unbounded', 'none', 'composite', 'true', 'true', 'child', 'id', 'fk_user_id'
       ),
       /* nm -> other */ new RDBManyToOneRelationDescription(
-        'app.src.model.wcmf.NMUserRole', 'NMUserRole', 'app.src.model.wcmf.RoleRDB', 'RoleRDB',
+        'app.src.model.wcmf.NMUserRole', 'NMUserRole', 'app.src.model.wcmf.Role', 'Role',
         '0', 'unbounded', '1', '1', 'composite', 'none', 'true', 'true', 'parent', 'id', 'fk_role_id'
       )
       ),
@@ -134,7 +134,7 @@ class UserRDBRDBMapper extends NodeUnifiedRDBMapper {
    * @see RDBMapper::createObject()
    */
   protected function createObject(ObjectId $oid=null) {
-    return new UserRDB($oid);
+    return new User($oid);
   }
 
   /**

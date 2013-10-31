@@ -38,7 +38,7 @@ DROP TABLE IF EXISTS `locktable`;
 CREATE TABLE `locktable` # entityType=Locktable tableId=Chi048Nod
 (
   `id` INT(11) NOT NULL, # columnId=Chi048Nod.id 
-  `fk_user_id` INT(11), # columnId=Chi048Nod.fk_user_id referencedTable=UserRDB
+  `fk_user_id` INT(11), # columnId=Chi048Nod.fk_user_id referencedTable=User
   `objectid` VARCHAR(255), # columnId=Chi048Nod.objectid 
   `sessionid` VARCHAR(255), # columnId=Chi048Nod.sessionid 
   `since` DATETIME, # columnId=Chi048Nod.since 
@@ -52,7 +52,7 @@ CREATE TABLE `locktable` # entityType=Locktable tableId=Chi048Nod
 # init params database
 #
 DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` # entityType=RoleRDB tableId=Chi049Nod
+CREATE TABLE `role` # entityType=Role tableId=Chi049Nod
 (
   `id` INT(11) NOT NULL, # columnId=Chi049Nod.id 
   `name` VARCHAR(255), # columnId=Chi049Nod.name 
@@ -84,7 +84,7 @@ DROP TABLE IF EXISTS `user_config`;
 CREATE TABLE `user_config` # entityType=UserConfig tableId=Chi051Nod
 (
   `id` INT(11) NOT NULL, # columnId=Chi051Nod.id 
-  `fk_user_id` INT(11), # columnId=Chi051Nod.fk_user_id referencedTable=UserRDB
+  `fk_user_id` INT(11), # columnId=Chi051Nod.fk_user_id referencedTable=User
   `key` VARCHAR(255), # columnId=Chi051Nod.key 
   `val` VARCHAR(255), # columnId=Chi051Nod.val 
   PRIMARY KEY (`id`)
@@ -97,7 +97,7 @@ CREATE TABLE `user_config` # entityType=UserConfig tableId=Chi051Nod
 # init params database
 #
 DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` # entityType=UserRDB tableId=Chi052Nod
+CREATE TABLE `user` # entityType=User tableId=Chi052Nod
 (
   `id` INT(11) NOT NULL, # columnId=Chi052Nod.id 
   `login` VARCHAR(255), # columnId=Chi052Nod.login 
@@ -116,8 +116,8 @@ CREATE TABLE `user` # entityType=UserRDB tableId=Chi052Nod
 DROP TABLE IF EXISTS `nm_user_role`;
 CREATE TABLE `nm_user_role` # entityType=NMUserRole tableId=Chi001
 (
-  `fk_user_id` INT(11), # columnId=Chi001.fk_user_id referencedTable=UserRDB
-  `fk_role_id` INT(11), # columnId=Chi001.fk_role_id referencedTable=RoleRDB
+  `fk_user_id` INT(11), # columnId=Chi001.fk_user_id referencedTable=User
+  `fk_role_id` INT(11), # columnId=Chi001.fk_role_id referencedTable=Role
   PRIMARY KEY (`fk_user_id`,`fk_role_id`)
 ) ENGINE=MyISAM;
 #

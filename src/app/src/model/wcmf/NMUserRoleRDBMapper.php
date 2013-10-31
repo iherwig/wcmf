@@ -56,7 +56,7 @@ class NMUserRoleRDBMapper extends NodeUnifiedRDBMapper {
    */
   public function getProperties() {
     return array(
-      'manyToMany' => array('RoleRDB', 'UserRDB'),
+      'manyToMany' => array('Role', 'User'),
       'is_searchable' => false,
       'display_value' => '',
       'parent_order' => '',
@@ -78,12 +78,12 @@ class NMUserRoleRDBMapper extends NodeUnifiedRDBMapper {
    */
   protected function getRelationDescriptions() {
     return array(
-      'RoleRDB' => new RDBManyToOneRelationDescription(
-        'app.src.model.wcmf.NMUserRole', 'NMUserRole', 'app.src.model.wcmf.RoleRDB', 'RoleRDB',
+      'Role' => new RDBManyToOneRelationDescription(
+        'app.src.model.wcmf.NMUserRole', 'NMUserRole', 'app.src.model.wcmf.Role', 'Role',
         '0', 'unbounded', '1', '1', 'composite', 'none', 'true', 'true', 'parent', 'id', 'fk_role_id'
       ),
-      'UserRDB' => new RDBManyToOneRelationDescription(
-        'app.src.model.wcmf.NMUserRole', 'NMUserRole', 'app.src.model.wcmf.UserRDB', 'UserRDB',
+      'User' => new RDBManyToOneRelationDescription(
+        'app.src.model.wcmf.NMUserRole', 'NMUserRole', 'app.src.model.wcmf.User', 'User',
         '0', 'unbounded', '1', '1', 'composite', 'none', 'true', 'true', 'parent', 'id', 'fk_user_id'
       ),
     );

@@ -17,7 +17,7 @@
  */
 namespace app\src\model\wcmf;
 
-use app\src\model\wcmf\RoleRDB;
+use app\src\model\wcmf\Role;
 
 use wcmf\lib\model\mapper\NodeUnifiedRDBMapper;
 use wcmf\lib\model\mapper\RDBAttributeDescription;
@@ -28,20 +28,20 @@ use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\ObjectId;
 
 /**
- * @class RoleRDBRDBMapper
- * RoleRDBRDBMapper maps RoleRDB Nodes to the database.
- * RoleRDB description: ?
+ * @class RoleRDBMapper
+ * RoleRDBMapper maps Role Nodes to the database.
+ * Role description: ?
  *
  * @author 
  * @version 1.0
  */
-class RoleRDBRDBMapper extends NodeUnifiedRDBMapper {
+class RoleRDBMapper extends NodeUnifiedRDBMapper {
 
   /**
    * @see RDBMapper::getType()
    */
   public function getType() {
-    return 'app.src.model.wcmf.RoleRDB';
+    return 'app.src.model.wcmf.Role';
   }
 
   /**
@@ -60,7 +60,7 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper {
       'display_value' => 'name',
       'parent_order' => '',
       'child_order' => '',
-// PROTECTED REGION ID(app/src/model/wcmf/RoleRDBRDBMapper.php/Properties) ENABLED START
+// PROTECTED REGION ID(app/src/model/wcmf/RoleRDBMapper.php/Properties) ENABLED START
 // PROTECTED REGION END
     );
   }
@@ -77,13 +77,13 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper {
    */
   protected function getRelationDescriptions() {
     return array(
-      'UserRDB' => new RDBManyToManyRelationDescription(
+      'User' => new RDBManyToManyRelationDescription(
       /* this -> nm  */ new RDBOneToManyRelationDescription(
-        'app.src.model.wcmf.RoleRDB', 'RoleRDB', 'app.src.model.wcmf.NMUserRole', 'NMUserRole',
+        'app.src.model.wcmf.Role', 'Role', 'app.src.model.wcmf.NMUserRole', 'NMUserRole',
         '1', '1', '0', 'unbounded', 'none', 'composite', 'true', 'true', 'child', 'id', 'fk_role_id'
       ),
       /* nm -> other */ new RDBManyToOneRelationDescription(
-        'app.src.model.wcmf.NMUserRole', 'NMUserRole', 'app.src.model.wcmf.UserRDB', 'UserRDB',
+        'app.src.model.wcmf.NMUserRole', 'NMUserRole', 'app.src.model.wcmf.User', 'User',
         '0', 'unbounded', '1', '1', 'composite', 'none', 'true', 'true', 'parent', 'id', 'fk_user_id'
       )
       ),
@@ -110,7 +110,7 @@ class RoleRDBRDBMapper extends NodeUnifiedRDBMapper {
    * @see RDBMapper::createObject()
    */
   protected function createObject(ObjectId $oid=null) {
-    return new RoleRDB($oid);
+    return new Role($oid);
   }
 
   /**

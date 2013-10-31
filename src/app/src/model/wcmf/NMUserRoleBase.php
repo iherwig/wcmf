@@ -116,39 +116,39 @@ class NMUserRoleBase extends Node {
     }
      
     /**
-     * Get the RoleRDB instances in the RoleRDB relation
-     * @return Array of RoleRDB instances
+     * Get the Role instances in the Role relation
+     * @return Array of Role instances
      */
-    public function getRoleRDBList() {
-      return $this->getParentsEx(null, 'RoleRDB');
+    public function getRoleList() {
+      return $this->getParentsEx(null, 'Role');
         }
 
     /**
-     * Set the RoleRDB instances in the RoleRDB relation
-     * @param nodeList Array of RoleRDB instances
+     * Set the Role instances in the Role relation
+     * @param nodeList Array of Role instances
      */
-    public function setRoleRDBList(array $nodeList) {
-      $this->setValue('RoleRDB', null);
+    public function setRoleList(array $nodeList) {
+      $this->setValue('Role', null);
       foreach ($nodeList as $node) {
-        $this->addNode($node, 'RoleRDB');
+        $this->addNode($node, 'Role');
       }
       }
     /**
-     * Get the UserRDB instances in the UserRDB relation
-     * @return Array of UserRDB instances
+     * Get the User instances in the User relation
+     * @return Array of User instances
      */
-    public function getUserRDBList() {
-      return $this->getParentsEx(null, 'UserRDB');
+    public function getUserList() {
+      return $this->getParentsEx(null, 'User');
         }
 
     /**
-     * Set the UserRDB instances in the UserRDB relation
-     * @param nodeList Array of UserRDB instances
+     * Set the User instances in the User relation
+     * @param nodeList Array of User instances
      */
-    public function setUserRDBList(array $nodeList) {
-      $this->setValue('UserRDB', null);
+    public function setUserList(array $nodeList) {
+      $this->setValue('User', null);
       foreach ($nodeList as $node) {
-        $this->addNode($node, 'UserRDB');
+        $this->addNode($node, 'User');
       }
       }
 }

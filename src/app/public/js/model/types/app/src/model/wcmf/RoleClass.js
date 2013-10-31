@@ -17,19 +17,19 @@
 define([
     "dojo/_base/declare",
     "app/js/model/meta/Node"
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleRDBClass.js/Define) ENABLED START
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleClass.js/Define) ENABLED START
 // PROTECTED REGION END
 ], function(
     declare,
     Node
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleRDBClass.js/Params) ENABLED START
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleClass.js/Params) ENABLED START
 // PROTECTED REGION END
 ) {
-    var RoleRDB = declare([Node
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleRDBClass.js/Declare) ENABLED START
+    var Role = declare([Node
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.wcmf.RoleRDB',
+        typeName: 'app.src.model.wcmf.Role',
         isSortable: false,
         displayValues: [
             "name"
@@ -61,21 +61,21 @@ define([
         }],
 
         relations: [{
-            name: "UserRDB",
-            type: "UserRDB",
+            name: "User",
+            type: "User",
             aggregationKind: "none",
             maxMultiplicity: "unbounded",
-            thisEndName: "RoleRDB",
+            thisEndName: "Role",
             relationType: "child"
         }]
 
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleRDBClass.js/Body) ENABLED START
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleClass.js/Body) ENABLED START
         , listView: 'app/js/ui/data/widget/EntityListWidget'
         , detailView: 'app/js/ui/data/widget/EntityFormWidget'
 // PROTECTED REGION END
     });
-// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleRDBClass.js/Static) ENABLED START
+// PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleClass.js/Static) ENABLED START
 // PROTECTED REGION END
-    return RoleRDB;
+    return Role;
 });
   

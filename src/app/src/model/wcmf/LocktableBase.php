@@ -179,21 +179,21 @@ class LocktableBase extends Node {
     }
      
     /**
-     * Get the UserRDB instances in the UserRDB relation
-     * @return Array of UserRDB instances
+     * Get the User instances in the User relation
+     * @return Array of User instances
      */
-    public function getUserRDBList() {
-      return $this->getParentsEx(null, 'UserRDB');
+    public function getUserList() {
+      return $this->getParentsEx(null, 'User');
         }
 
     /**
-     * Set the UserRDB instances in the UserRDB relation
-     * @param nodeList Array of UserRDB instances
+     * Set the User instances in the User relation
+     * @param nodeList Array of User instances
      */
-    public function setUserRDBList(array $nodeList) {
-      $this->setValue('UserRDB', null);
+    public function setUserList(array $nodeList) {
+      $this->setValue('User', null);
       foreach ($nodeList as $node) {
-        $this->addNode($node, 'UserRDB');
+        $this->addNode($node, 'User');
       }
       }
 }
