@@ -1,0 +1,1668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+  <uml:Model xmi:id="_nYgPsEJ6EeO0ls4lvh-HlQ" name="uml-generated">
+    <packagedElement xmi:type="uml:Package" xmi:id="_nYgPsUJ6EeO0ls4lvh-HlQ" name="wcmf base">
+      <packagedElement xmi:type="uml:Package" xmi:id="_nYgPskJ6EeO0ls4lvh-HlQ" name="PrimitiveTypes">
+        <ownedComment xmi:id="_nYgPs0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgPskJ6EeO0ls4lvh-HlQ">
+          <body>?</body>
+        </ownedComment>
+        <packagedElement xmi:type="uml:Class" xmi:id="_nYgPtEJ6EeO0ls4lvh-HlQ" name="Date">
+          <eAnnotations xmi:id="_nYgPtUJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_nYgPtkJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:530"/>
+          </eAnnotations>
+          <ownedComment xmi:id="_nYgPt0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgPtEJ6EeO0ls4lvh-HlQ">
+            <body>?</body>
+          </ownedComment>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_nYgPuEJ6EeO0ls4lvh-HlQ" name="String">
+          <eAnnotations xmi:id="_nYgPuUJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_nYgPukJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:531"/>
+          </eAnnotations>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_nYgPu0J6EeO0ls4lvh-HlQ" name="Integer">
+          <eAnnotations xmi:id="_nYgPvEJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_nYgPvUJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:3463"/>
+          </eAnnotations>
+          <ownedComment xmi:id="_nYgPvkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgPu0J6EeO0ls4lvh-HlQ">
+            <body>?</body>
+          </ownedComment>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_nYgPv0J6EeO0ls4lvh-HlQ" name="Boolean">
+          <eAnnotations xmi:id="_nYgPwEJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+            <details xmi:id="_nYgPwUJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:3476"/>
+          </eAnnotations>
+          <ownedComment xmi:id="_nYgPwkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgPv0J6EeO0ls4lvh-HlQ">
+            <body>?</body>
+          </ownedComment>
+        </packagedElement>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_nYgPw0J6EeO0ls4lvh-HlQ" name="root">
+        <ownedComment xmi:id="_nYgPxEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgPw0J6EeO0ls4lvh-HlQ">
+          <body>?</body>
+        </ownedComment>
+        <packagedElement xmi:type="uml:Package" xmi:id="_nYgPxUJ6EeO0ls4lvh-HlQ" name="configuration">
+          <packagedElement xmi:type="uml:Package" xmi:id="_nYgPxkJ6EeO0ls4lvh-HlQ" name="default">
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgPx0J6EeO0ls4lvh-HlQ" name="config.ini">
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgPyEJ6EeO0ls4lvh-HlQ" name="Config">
+                <ownedComment xmi:id="_nYgPyUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgPyEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgPykJ6EeO0ls4lvh-HlQ" name="include" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgPy0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgPykJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgPzEJ6EeO0ls4lvh-HlQ" value="{server.ini, persistence.ini, presentation.ini}"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgPzUJ6EeO0ls4lvh-HlQ" name="TypeMapping">
+                <ownedComment xmi:id="_nYgPzkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgPzUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgPz0J6EeO0ls4lvh-HlQ" name="ActionMapping">
+                <ownedComment xmi:id="_nYgP0EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgPz0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgP0UJ6EeO0ls4lvh-HlQ" name="??failure" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP0kJ6EeO0ls4lvh-HlQ" value="wcmf\application\controller\FailureController"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgP00J6EeO0ls4lvh-HlQ" name="Views">
+                <ownedComment xmi:id="_nYgP1EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP00J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgP1UJ6EeO0ls4lvh-HlQ" name="Application">
+                <ownedComment xmi:id="_nYgP1kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP1UJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgP10J6EeO0ls4lvh-HlQ" name="applicationTitle" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP2EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP10J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP2UJ6EeO0ls4lvh-HlQ" value="WCMF APP"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgP2kJ6EeO0ls4lvh-HlQ" name="libDir" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP20J6EeO0ls4lvh-HlQ" annotatedElement="_nYgP2kJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP3EJ6EeO0ls4lvh-HlQ" value="../wcmf/"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgP3UJ6EeO0ls4lvh-HlQ" name="localeDir" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP3kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP3UJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP30J6EeO0ls4lvh-HlQ" value="../locale/"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgP4EJ6EeO0ls4lvh-HlQ" name="rootTypes" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP4UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP4EJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP4kJ6EeO0ls4lvh-HlQ" value="{}"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgP40J6EeO0ls4lvh-HlQ" name="language" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP5EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP40J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP5UJ6EeO0ls4lvh-HlQ" value="en"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgP5kJ6EeO0ls4lvh-HlQ" name="anonymous" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP50J6EeO0ls4lvh-HlQ" annotatedElement="_nYgP5kJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP6EJ6EeO0ls4lvh-HlQ" value="false"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgP6UJ6EeO0ls4lvh-HlQ" name="Media">
+                <ownedComment xmi:id="_nYgP6kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP6UJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgP60J6EeO0ls4lvh-HlQ" name="uploadDir" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP7EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP60J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP7UJ6EeO0ls4lvh-HlQ" value="media/"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgP7kJ6EeO0ls4lvh-HlQ" name="RoleConfig">
+                <ownedComment xmi:id="_nYgP70J6EeO0ls4lvh-HlQ" annotatedElement="_nYgP7kJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgP8EJ6EeO0ls4lvh-HlQ" name="administrators" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP8UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP8EJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP8kJ6EeO0ls4lvh-HlQ" value="admin.ini"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgP80J6EeO0ls4lvh-HlQ" name="Authorization">
+                <ownedComment xmi:id="_nYgP9EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP80J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgP9UJ6EeO0ls4lvh-HlQ" name="Localization">
+                <ownedComment xmi:id="_nYgP9kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP9UJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgP90J6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgP-EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP90J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP-UJ6EeO0ls4lvh-HlQ" value="wcmf\lib\i18n\impl\DefaultLocalization"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgP-kJ6EeO0ls4lvh-HlQ" name="inputTypes" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP-0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgP-kJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP_EJ6EeO0ls4lvh-HlQ" value="{text, textarea, filebrowser, linkbrowser, ckeditor}"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgP_UJ6EeO0ls4lvh-HlQ" name="languageType" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgP_kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgP_UJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgP_0J6EeO0ls4lvh-HlQ" value="Language"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQAEJ6EeO0ls4lvh-HlQ" name="translationType" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQAUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQAEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQAkJ6EeO0ls4lvh-HlQ" value="Translation"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQA0J6EeO0ls4lvh-HlQ" name="Search">
+                <ownedComment xmi:id="_nYgQBEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQA0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQBUJ6EeO0ls4lvh-HlQ" name="indexPath" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQBkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQBUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQB0J6EeO0ls4lvh-HlQ" value="searchIndex/"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQCEJ6EeO0ls4lvh-HlQ" name="Boolean">
+                <ownedComment xmi:id="_nYgQCUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQCEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQCkJ6EeO0ls4lvh-HlQ" name="0" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQC0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQCkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQDEJ6EeO0ls4lvh-HlQ" value="no"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQDUJ6EeO0ls4lvh-HlQ" name="1" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQDkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQDUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQD0J6EeO0ls4lvh-HlQ" value="yes"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQEEJ6EeO0ls4lvh-HlQ" name="User">
+                <ownedComment xmi:id="_nYgQEUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQEEJ6EeO0ls4lvh-HlQ">
+                  <body>User implementation</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQEkJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQE0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQEkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQFEJ6EeO0ls4lvh-HlQ" value="app\src\model\wcmf\User"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQFUJ6EeO0ls4lvh-HlQ" name="Role">
+                <ownedComment xmi:id="_nYgQFkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQFUJ6EeO0ls4lvh-HlQ">
+                  <body>Role implementation</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQF0J6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgQGEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQF0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQGUJ6EeO0ls4lvh-HlQ" value="app\src\model\wcmf\Role"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQGkJ6EeO0ls4lvh-HlQ" name="Session">
+                <ownedComment xmi:id="_nYgQG0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQGkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQHEJ6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgQHUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQHEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQHkJ6EeO0ls4lvh-HlQ" value="wcmf\lib\core\impl\DefaultSession"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQH0J6EeO0ls4lvh-HlQ" name="EventManager">
+                <ownedComment xmi:id="_nYgQIEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQH0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQIUJ6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgQIkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQIUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQI0J6EeO0ls4lvh-HlQ" value="wcmf\lib\core\impl\DefaultEventManager"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQJEJ6EeO0ls4lvh-HlQ" name="ActionMapper">
+                <ownedComment xmi:id="_nYgQJUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQJEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQJkJ6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgQJ0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQJkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQKEJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\impl\DefaultActionMapper"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQKUJ6EeO0ls4lvh-HlQ" name="PermissionManager">
+                <ownedComment xmi:id="_nYgQKkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQKUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQK0J6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgQLEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQK0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQLUJ6EeO0ls4lvh-HlQ" value="wcmf\lib\security\impl\DefaultPermissionManager"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQLkJ6EeO0ls4lvh-HlQ" name="AuthUser">
+                <ownedComment xmi:id="_nYgQL0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQLkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQMEJ6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgQMUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQMEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQMkJ6EeO0ls4lvh-HlQ" value="wcmf\lib\security\principal\impl\DefaultAuthUser"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgQM0J6EeO0ls4lvh-HlQ" name="config.ini">
+                <ownedComment xmi:id="_nYgQNEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQM0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgQNUJ6EeO0ls4lvh-HlQ" name="admin.ini">
+              <ownedComment xmi:id="_nYgQNkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQNUJ6EeO0ls4lvh-HlQ">
+                <body>?</body>
+              </ownedComment>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgQN0J6EeO0ls4lvh-HlQ" name="admin.ini">
+                <ownedComment xmi:id="_nYgQOEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQN0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgQOUJ6EeO0ls4lvh-HlQ" name="server.ini">
+              <ownedComment xmi:id="_nYgQOkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQOUJ6EeO0ls4lvh-HlQ">
+                <body>?</body>
+              </ownedComment>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQO0J6EeO0ls4lvh-HlQ" name="Database">
+                <ownedComment xmi:id="_nYgQPEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQO0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQPUJ6EeO0ls4lvh-HlQ" name="dbType" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQPkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQPUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQP0J6EeO0ls4lvh-HlQ" value="mysql"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQQEJ6EeO0ls4lvh-HlQ" name="dbHostName" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQQUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQQEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQQkJ6EeO0ls4lvh-HlQ" value="localhost"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQQ0J6EeO0ls4lvh-HlQ" name="dbName" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQREJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQQ0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQRUJ6EeO0ls4lvh-HlQ" value="wcmf_app"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQRkJ6EeO0ls4lvh-HlQ" name="dbUserName" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQR0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQRkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQSEJ6EeO0ls4lvh-HlQ" value="root"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQSUJ6EeO0ls4lvh-HlQ" name="dbPassword" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQSkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQSUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQS0J6EeO0ls4lvh-HlQ" name="dbCharSet" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQTEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQS0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQTUJ6EeO0ls4lvh-HlQ" value="utf8"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQTkJ6EeO0ls4lvh-HlQ" name="Localization">
+                <ownedComment xmi:id="_nYgQT0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQTkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQUEJ6EeO0ls4lvh-HlQ" name="defaultLanguage" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQUUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQUEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQUkJ6EeO0ls4lvh-HlQ" value="en"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQU0J6EeO0ls4lvh-HlQ" name="Languages">
+                <ownedComment xmi:id="_nYgQVEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQU0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQVUJ6EeO0ls4lvh-HlQ" name="de" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQVkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQVUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQV0J6EeO0ls4lvh-HlQ" value="Deutsch"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQWEJ6EeO0ls4lvh-HlQ" name="en" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQWUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQWEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQWkJ6EeO0ls4lvh-HlQ" value="English"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQW0J6EeO0ls4lvh-HlQ" name="NewInstance">
+                <ownedComment xmi:id="_nYgQXEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQW0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQXUJ6EeO0ls4lvh-HlQ" name="dbPrefix" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQXkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQXUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQX0J6EeO0ls4lvh-HlQ" value="wcmf_"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQYEJ6EeO0ls4lvh-HlQ" name="targetDir" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQYUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQYEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQYkJ6EeO0ls4lvh-HlQ" value="../../"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQY0J6EeO0ls4lvh-HlQ" name="RemoteServer">
+                <ownedComment xmi:id="_nYgQZEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQY0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQZUJ6EeO0ls4lvh-HlQ" name="RemoteUser">
+                <ownedComment xmi:id="_nYgQZkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQZUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgQZ0J6EeO0ls4lvh-HlQ" name="server.ini">
+                <ownedComment xmi:id="_nYgQaEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQZ0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgQaUJ6EeO0ls4lvh-HlQ" name="persistence.ini">
+              <ownedComment xmi:id="_nYgQakJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQaUJ6EeO0ls4lvh-HlQ">
+                <body>?</body>
+              </ownedComment>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQa0J6EeO0ls4lvh-HlQ" name="PersistenceFacade">
+                <ownedComment xmi:id="_nYgQbEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQa0J6EeO0ls4lvh-HlQ">
+                  <body>PersistenceFacade implementation</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQbUJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQbkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQbUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQb0J6EeO0ls4lvh-HlQ" value="wcmf\lib\persistence\impl\DefaultPersistenceFacade"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQcEJ6EeO0ls4lvh-HlQ" name="mappers" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQcUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQcEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQckJ6EeO0ls4lvh-HlQ" value="$typeMapping"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQc0J6EeO0ls4lvh-HlQ" name="logging" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQdEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQc0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQdUJ6EeO0ls4lvh-HlQ" value="false"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQdkJ6EeO0ls4lvh-HlQ" name="logStrategy" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQd0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQdkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQeEJ6EeO0ls4lvh-HlQ" value="$auditingLogStragegy"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQeUJ6EeO0ls4lvh-HlQ" name="AuditingLogStragegy">
+                <ownedComment xmi:id="_nYgQekJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQeUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQe0J6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQfEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQe0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQfUJ6EeO0ls4lvh-HlQ" value="wcmf\lib\persistence\output\impl\AuditingOutputStrategy"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQfkJ6EeO0ls4lvh-HlQ" name="Transaction">
+                <ownedComment xmi:id="_nYgQf0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQfkJ6EeO0ls4lvh-HlQ">
+                  <body>Transaction implementation</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQgEJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQgUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQgEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQgkJ6EeO0ls4lvh-HlQ" value="wcmf\lib\persistence\impl\DefaultTransaction"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQg0J6EeO0ls4lvh-HlQ" name="Converter">
+                <ownedComment xmi:id="_nYgQhEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQg0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQhUJ6EeO0ls4lvh-HlQ" name="LockHandler">
+                <ownedComment xmi:id="_nYgQhkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQhUJ6EeO0ls4lvh-HlQ">
+                  <body>LockHandler implementation</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQh0J6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQiEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQh0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQiUJ6EeO0ls4lvh-HlQ" value="wcmf\lib\persistence\concurrency\impl\DefaultLockHandler"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQikJ6EeO0ls4lvh-HlQ" name="ConcurrencyManager">
+                <ownedComment xmi:id="_nYgQi0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQikJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQjEJ6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgQjUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQjEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQjkJ6EeO0ls4lvh-HlQ" value="wcmf\lib\persistence\concurrency\impl\DefaultConcurrencyManager"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQj0J6EeO0ls4lvh-HlQ" name="lockHandler">
+                  <ownedComment xmi:id="_nYgQkEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQj0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQkUJ6EeO0ls4lvh-HlQ" value="$lockHandler"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgQkkJ6EeO0ls4lvh-HlQ" name="persistence.ini">
+                <ownedComment xmi:id="_nYgQk0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQkkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgQlEJ6EeO0ls4lvh-HlQ" name="presentation.ini">
+              <ownedComment xmi:id="_nYgQlUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQlEJ6EeO0ls4lvh-HlQ">
+                <body>?</body>
+              </ownedComment>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQlkJ6EeO0ls4lvh-HlQ" name="View">
+                <ownedComment xmi:id="_nYgQl0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQlkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQmEJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQmUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQmEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQmkJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\view\impl\SmartyView"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQm0J6EeO0ls4lvh-HlQ" name="__shared" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQnEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQm0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQnUJ6EeO0ls4lvh-HlQ" value="false"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQnkJ6EeO0ls4lvh-HlQ" name="templateDir" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQn0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQnkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQoEJ6EeO0ls4lvh-HlQ" value="include/views/"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQoUJ6EeO0ls4lvh-HlQ" name="compileCheck" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQokJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQoUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQo0J6EeO0ls4lvh-HlQ" value="true"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQpEJ6EeO0ls4lvh-HlQ" name="debugView" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQpUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQpEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQpkJ6EeO0ls4lvh-HlQ" value="false"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQp0J6EeO0ls4lvh-HlQ" name="caching" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQqEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQp0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQqUJ6EeO0ls4lvh-HlQ" value="false"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQqkJ6EeO0ls4lvh-HlQ" name="cacheLifetime" type="_nYgPu0J6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQq0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQqkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQrEJ6EeO0ls4lvh-HlQ" value="3600"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQrUJ6EeO0ls4lvh-HlQ" name="Formats">
+                <ownedComment xmi:id="_nYgQrkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQrUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQr0J6EeO0ls4lvh-HlQ" name="html" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQsEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQr0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQsUJ6EeO0ls4lvh-HlQ" value="$htmlFormat"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQskJ6EeO0ls4lvh-HlQ" name="json" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQs0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQskJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQtEJ6EeO0ls4lvh-HlQ" value="$jsonFormat"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQtUJ6EeO0ls4lvh-HlQ" name="soap" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQtkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQtUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQt0J6EeO0ls4lvh-HlQ" value="$soapFormat"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQuEJ6EeO0ls4lvh-HlQ" name="null" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQuUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQuEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQukJ6EeO0ls4lvh-HlQ" value="$nullFormat"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQu0J6EeO0ls4lvh-HlQ" name="HtmlFormat">
+                <ownedComment xmi:id="_nYgQvEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQu0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQvUJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQvkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQvUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQv0J6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\format\impl\HtmlFormat"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQwEJ6EeO0ls4lvh-HlQ" name="JsonFormat">
+                <ownedComment xmi:id="_nYgQwUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQwEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQwkJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQw0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQwkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQxEJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\format\impl\JsonFormat"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQxUJ6EeO0ls4lvh-HlQ" name="serializer">
+                  <ownedComment xmi:id="_nYgQxkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQxUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQx0J6EeO0ls4lvh-HlQ" value="$dojoSerializer"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQyEJ6EeO0ls4lvh-HlQ" name="SoapFormat">
+                <ownedComment xmi:id="_nYgQyUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQyEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQykJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQy0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQykJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQzEJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\format\impl\SoapFormat"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQzUJ6EeO0ls4lvh-HlQ" name="serializer">
+                  <ownedComment xmi:id="_nYgQzkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQzUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQz0J6EeO0ls4lvh-HlQ" value="$dojoSerializer"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQ0EJ6EeO0ls4lvh-HlQ" name="NullFormat">
+                <ownedComment xmi:id="_nYgQ0UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ0EJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQ0kJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ00J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ0kJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ1EJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\format\impl\NullFormat"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQ1UJ6EeO0ls4lvh-HlQ" name="ListStrategies">
+                <ownedComment xmi:id="_nYgQ1kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ1UJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQ10J6EeO0ls4lvh-HlQ" name="fix" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ2EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ10J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ2UJ6EeO0ls4lvh-HlQ" value="$fixedListStrategy"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQ2kJ6EeO0ls4lvh-HlQ" name="function" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ20J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ2kJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ3EJ6EeO0ls4lvh-HlQ" value="$functionListStrategy"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQ3UJ6EeO0ls4lvh-HlQ" name="config" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ3kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ3UJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ30J6EeO0ls4lvh-HlQ" value="$configListStrategy"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQ4EJ6EeO0ls4lvh-HlQ" name="node" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ4UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ4EJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ4kJ6EeO0ls4lvh-HlQ" value="$nodeListStrategy"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQ40J6EeO0ls4lvh-HlQ" name="file">
+                  <ownedComment xmi:id="_nYgQ5EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ40J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ5UJ6EeO0ls4lvh-HlQ" value="$fileListStrategy"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQ5kJ6EeO0ls4lvh-HlQ" name="FixedListStrategy">
+                <ownedComment xmi:id="_nYgQ50J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ5kJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQ6EJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ6UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ6EJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ6kJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\control\lists\impl\FixedListStrategy"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQ60J6EeO0ls4lvh-HlQ" name="FunctionListStrategy">
+                <ownedComment xmi:id="_nYgQ7EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ60J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQ7UJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ7kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ7UJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ70J6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\control\lists\impl\FunctionListStrategy"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQ8EJ6EeO0ls4lvh-HlQ" name="ConfigListStrategy">
+                <ownedComment xmi:id="_nYgQ8UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ8EJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQ8kJ6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ80J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ8kJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ9EJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\control\lists\impl\ConfigListStrategy"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQ9UJ6EeO0ls4lvh-HlQ" name="NodeListStrategy">
+                <ownedComment xmi:id="_nYgQ9kJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ9UJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQ90J6EeO0ls4lvh-HlQ" name="__class" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ-EJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ90J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ-UJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\control\lists\impl\NodeListStrategy"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgQ-kJ6EeO0ls4lvh-HlQ" name="DisplayTypes">
+                <ownedComment xmi:id="_nYgQ-0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ-kJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgQ_EJ6EeO0ls4lvh-HlQ" name="text" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgQ_UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ_EJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgQ_kJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/display/renderer/Text"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgQ_0J6EeO0ls4lvh-HlQ" name="image" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRAEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgQ_0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRAUJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/display/renderer/Image"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRAkJ6EeO0ls4lvh-HlQ" name="InputTypes">
+                <ownedComment xmi:id="_nYgRA0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRAkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgRBEJ6EeO0ls4lvh-HlQ" name="checkbox" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRBUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRBEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRBkJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/CheckBox"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRB0J6EeO0ls4lvh-HlQ" name="ckeditor" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRCEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRB0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRCUJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/CKEditor"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRCkJ6EeO0ls4lvh-HlQ" name="date" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRC0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRCkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRDEJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/Date"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRDUJ6EeO0ls4lvh-HlQ" name="filebrowser" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRDkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRDUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRD0J6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/FileBrowser"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgREEJ6EeO0ls4lvh-HlQ" name="linkbrowser" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgREUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgREEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgREkJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/LinkBrowser"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRE0J6EeO0ls4lvh-HlQ" name="password" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRFEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRE0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRFUJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/PasswordBox"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRFkJ6EeO0ls4lvh-HlQ" name="radio" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRF0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRFkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRGEJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/RadioButton"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRGUJ6EeO0ls4lvh-HlQ" name="select" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRGkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRGUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRG0J6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/SelectBox"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRHEJ6EeO0ls4lvh-HlQ" name="text" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRHUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRHEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRHkJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/TextBox"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRH0J6EeO0ls4lvh-HlQ" name="textarea" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRIEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRH0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRIUJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/TextArea"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRIkJ6EeO0ls4lvh-HlQ" name="binarycheckbox" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgRI0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRIkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRJEJ6EeO0ls4lvh-HlQ" value="app/js/ui/data/input/widget/BinaryCheckBox"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRJUJ6EeO0ls4lvh-HlQ" name="DionysosSerializer">
+                <ownedComment xmi:id="_nYgRJkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRJUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgRJ0J6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgRKEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRJ0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRKUJ6EeO0ls4lvh-HlQ" value="wcmf\lib\model\impl\DionysosNodeSerializer"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRKkJ6EeO0ls4lvh-HlQ" name="DojoSerializer">
+                <ownedComment xmi:id="_nYgRK0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRKkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgRLEJ6EeO0ls4lvh-HlQ" name="__class">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRLUJ6EeO0ls4lvh-HlQ" value="wcmf\lib\model\impl\DojoNodeSerializer"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRLkJ6EeO0ls4lvh-HlQ" name="FileListStrategy">
+                <ownedComment xmi:id="_nYgRL0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRLkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgRMEJ6EeO0ls4lvh-HlQ" name="__class">
+                  <ownedComment xmi:id="_nYgRMUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRMEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nYgRMkJ6EeO0ls4lvh-HlQ" value="wcmf\lib\presentation\control\lists\impl\FileListStrategy"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgRM0J6EeO0ls4lvh-HlQ" name="presentation.ini">
+                <ownedComment xmi:id="_nYgRNEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRM0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+            </packagedElement>
+          </packagedElement>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="_nYgRNUJ6EeO0ls4lvh-HlQ" name="wcmf">
+          <packagedElement xmi:type="uml:Package" xmi:id="_nYgRNkJ6EeO0ls4lvh-HlQ" name="application">
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgRN0J6EeO0ls4lvh-HlQ" name="controller">
+              <ownedComment xmi:id="_nYgROEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRN0J6EeO0ls4lvh-HlQ">
+                <body>?</body>
+              </ownedComment>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgROUJ6EeO0ls4lvh-HlQ" name="AssociateController">
+                <ownedComment xmi:id="_nYgROkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgROUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRO0J6EeO0ls4lvh-HlQ" name="BatchController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRPEJ6EeO0ls4lvh-HlQ" name="BatchDisplayController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRPUJ6EeO0ls4lvh-HlQ" name="ConcurrencyController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRPkJ6EeO0ls4lvh-HlQ" name="CopyController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRP0J6EeO0ls4lvh-HlQ" name="DeleteController">
+                <ownedComment xmi:id="_nYgRQEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRP0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRQUJ6EeO0ls4lvh-HlQ" name="DisplayController">
+                <ownedComment xmi:id="_nYgRQkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRQUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRQ0J6EeO0ls4lvh-HlQ" name="ExitController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRREJ6EeO0ls4lvh-HlQ" name="FailureController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRRUJ6EeO0ls4lvh-HlQ" name="ListController">
+                <ownedComment xmi:id="_nYgRRkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRRUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRR0J6EeO0ls4lvh-HlQ" name="LoggingController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRSEJ6EeO0ls4lvh-HlQ" name="LoginController">
+                <ownedComment xmi:id="_nYgRSUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRSEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgRSkJ6EeO0ls4lvh-HlQ" name="" type="_nYgRSEJ6EeO0ls4lvh-HlQ" association="_nYgRbEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRS0J6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRTEJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRTUJ6EeO0ls4lvh-HlQ" name="LongTaskController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRTkJ6EeO0ls4lvh-HlQ" name="MediaController">
+                <ownedComment xmi:id="_nYgRT0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRTkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRUEJ6EeO0ls4lvh-HlQ" name="MessageController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRUUJ6EeO0ls4lvh-HlQ" name="PageExportController">
+                <ownedComment xmi:id="_nYgRUkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRUUJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRU0J6EeO0ls4lvh-HlQ" name="MultipleActionController">
+                <ownedComment xmi:id="_nYgRVEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRU0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRVUJ6EeO0ls4lvh-HlQ" name="RESTController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRVkJ6EeO0ls4lvh-HlQ" name="SOAPController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRV0J6EeO0ls4lvh-HlQ" name="SaveController">
+                <ownedComment xmi:id="_nYgRWEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRV0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRWUJ6EeO0ls4lvh-HlQ" name="SearchController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRWkJ6EeO0ls4lvh-HlQ" name="SortController">
+                <ownedComment xmi:id="_nYgRW0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRWkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRXEJ6EeO0ls4lvh-HlQ" name="TerminateController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRXUJ6EeO0ls4lvh-HlQ" name="TextilePreviewController"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRXkJ6EeO0ls4lvh-HlQ" name="TreeController">
+                <ownedComment xmi:id="_nYgRX0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRXkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRYEJ6EeO0ls4lvh-HlQ" name="UserController">
+                <ownedComment xmi:id="_nYgRYUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRYEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRYkJ6EeO0ls4lvh-HlQ" name="ValueListController">
+                <ownedComment xmi:id="_nYgRY0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgRYkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRZEJ6EeO0ls4lvh-HlQ" name="XMLExportController"/>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgRZUJ6EeO0ls4lvh-HlQ" name="admintool">
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgRZkJ6EeO0ls4lvh-HlQ" name="BackupController"/>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgRZ0J6EeO0ls4lvh-HlQ" name="CreateInstanceController"/>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgRaEJ6EeO0ls4lvh-HlQ" name="EditRightsController"/>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgRaUJ6EeO0ls4lvh-HlQ" name="MySQLBackupController"/>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgRakJ6EeO0ls4lvh-HlQ" name="PrincipalController"/>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgRa0J6EeO0ls4lvh-HlQ" name="SearchIndexController"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRbEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRbUJ6EeO0ls4lvh-HlQ _nYgRSkJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRbUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRSEJ6EeO0ls4lvh-HlQ" association="_nYgRbEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRbkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRb0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRcEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRcUJ6EeO0ls4lvh-HlQ _nYgRvUJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRcUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRcEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRckJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRc0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRdEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRdUJ6EeO0ls4lvh-HlQ _nYgRwEJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRdUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRdEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRdkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRd0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgReEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgReUJ6EeO0ls4lvh-HlQ _nYgRw0J6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgReUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgReEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRekJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRe0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRfEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRfUJ6EeO0ls4lvh-HlQ _nYgRxkJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRfUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRfEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRfkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRf0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRgEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRgUJ6EeO0ls4lvh-HlQ _nYgRyUJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRgUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRgEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRgkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRg0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRhEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRhUJ6EeO0ls4lvh-HlQ _nYgRzEJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRhUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRhEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRhkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRh0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRiEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRiUJ6EeO0ls4lvh-HlQ _nYgRz0J6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRiUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRiEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRikJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRi0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRjEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRjUJ6EeO0ls4lvh-HlQ _nYgR0kJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRjUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRjEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRjkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRj0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRkEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRkUJ6EeO0ls4lvh-HlQ _nYgR1UJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRkUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRkEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRkkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRk0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRlEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRlUJ6EeO0ls4lvh-HlQ _nYgR2EJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRlUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRlEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRlkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRl0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRmEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRmUJ6EeO0ls4lvh-HlQ _nYgR20J6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRmUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRmEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRmkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRm0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRnEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRnUJ6EeO0ls4lvh-HlQ _nYgR3kJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRnUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRnEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRnkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRn0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRoEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRoUJ6EeO0ls4lvh-HlQ _nYgR4UJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRoUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRoEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRokJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRo0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRpEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRpUJ6EeO0ls4lvh-HlQ _nYgR5EJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRpUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRpEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRpkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRp0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRqEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRqUJ6EeO0ls4lvh-HlQ _nYgR50J6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRqUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRqEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRqkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRq0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRrEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRrUJ6EeO0ls4lvh-HlQ _nYgR6kJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRrUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRrEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRrkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRr0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_nYgRsEJ6EeO0ls4lvh-HlQ" memberEnd="_nYgRsUJ6EeO0ls4lvh-HlQ _nYgR7UJ6EeO0ls4lvh-HlQ">
+                <ownedEnd xmi:id="_nYgRsUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRu0J6EeO0ls4lvh-HlQ" association="_nYgRsEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRskJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRs0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+            </packagedElement>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Package" xmi:id="_nYgRtEJ6EeO0ls4lvh-HlQ" name="lib">
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgRtUJ6EeO0ls4lvh-HlQ" name="model">
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRtkJ6EeO0ls4lvh-HlQ" name="Node" isAbstract="true">
+                <eAnnotations xmi:id="_nYgRt0J6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYgRuEJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:255"/>
+                </eAnnotations>
+                <ownedComment xmi:id="_nYgRuUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRtkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgRukJ6EeO0ls4lvh-HlQ" name="presentation">
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgRu0J6EeO0ls4lvh-HlQ" name="Controller">
+                <ownedComment xmi:id="_nYgRvEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgRu0J6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <ownedAttribute xmi:id="_nYgRvUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRSEJ6EeO0ls4lvh-HlQ" association="_nYgRcEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRvkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRv0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRwEJ6EeO0ls4lvh-HlQ" name="" type="_nYgRSEJ6EeO0ls4lvh-HlQ" association="_nYgRdEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRwUJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRwkJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRw0J6EeO0ls4lvh-HlQ" name="" type="_nYgRVUJ6EeO0ls4lvh-HlQ" association="_nYgReEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRxEJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRxUJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRxkJ6EeO0ls4lvh-HlQ" name="" type="_nYgRRUJ6EeO0ls4lvh-HlQ" association="_nYgRfEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRx0J6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRyEJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRyUJ6EeO0ls4lvh-HlQ" name="" type="_nYgRQUJ6EeO0ls4lvh-HlQ" association="_nYgRgEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRykJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRy0J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRzEJ6EeO0ls4lvh-HlQ" name="" type="_nYgRV0J6EeO0ls4lvh-HlQ" association="_nYgRhEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgRzUJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgRzkJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgRz0J6EeO0ls4lvh-HlQ" name="" type="_nYgRV0J6EeO0ls4lvh-HlQ" association="_nYgRiEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR0EJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR0UJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR0kJ6EeO0ls4lvh-HlQ" name="" type="_nYgRP0J6EeO0ls4lvh-HlQ" association="_nYgRjEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR00J6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR1EJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR1UJ6EeO0ls4lvh-HlQ" name="" type="_nYgROUJ6EeO0ls4lvh-HlQ" association="_nYgRkEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR1kJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR10J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR2EJ6EeO0ls4lvh-HlQ" name="" type="_nYgROUJ6EeO0ls4lvh-HlQ" association="_nYgRlEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR2UJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR2kJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR20J6EeO0ls4lvh-HlQ" name="" type="_nYgRWkJ6EeO0ls4lvh-HlQ" association="_nYgRmEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR3EJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR3UJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR3kJ6EeO0ls4lvh-HlQ" name="" type="_nYgRWkJ6EeO0ls4lvh-HlQ" association="_nYgRnEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR30J6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR4EJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR4UJ6EeO0ls4lvh-HlQ" name="" type="_nYgRYkJ6EeO0ls4lvh-HlQ" association="_nYgRoEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR4kJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR40J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR5EJ6EeO0ls4lvh-HlQ" name="" type="_nYgRTkJ6EeO0ls4lvh-HlQ" association="_nYgRpEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR5UJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR5kJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR50J6EeO0ls4lvh-HlQ" name="" type="_nYgRXkJ6EeO0ls4lvh-HlQ" association="_nYgRqEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR6EJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR6UJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR6kJ6EeO0ls4lvh-HlQ" name="" type="_nYgRYEJ6EeO0ls4lvh-HlQ" association="_nYgRrEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR60J6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR7EJ6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgR7UJ6EeO0ls4lvh-HlQ" name="" type="_nYgRUEJ6EeO0ls4lvh-HlQ" association="_nYgRsEJ6EeO0ls4lvh-HlQ">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgR7kJ6EeO0ls4lvh-HlQ" value="1"/>
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgR70J6EeO0ls4lvh-HlQ" value="1"/>
+                </ownedAttribute>
+              </packagedElement>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgR8EJ6EeO0ls4lvh-HlQ" name="security">
+              <ownedComment xmi:id="_nYgR8UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgR8EJ6EeO0ls4lvh-HlQ">
+                <body>?</body>
+              </ownedComment>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgR8kJ6EeO0ls4lvh-HlQ" name="principal">
+                <ownedComment xmi:id="_nYgR80J6EeO0ls4lvh-HlQ" annotatedElement="_nYgR8kJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <packagedElement xmi:type="uml:Package" xmi:id="_nYgR9EJ6EeO0ls4lvh-HlQ" name="impl">
+                  <ownedComment xmi:id="_nYgR9UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgR9EJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <packagedElement xmi:type="uml:Class" xmi:id="_nYgR9kJ6EeO0ls4lvh-HlQ" name="AbstractUser">
+                    <eAnnotations xmi:id="_nYgR90J6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                      <details xmi:id="_nYgR-EJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:4384"/>
+                    </eAnnotations>
+                    <ownedComment xmi:id="_nYgR-UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgR9kJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </packagedElement>
+                  <packagedElement xmi:type="uml:Class" xmi:id="_nYgR-kJ6EeO0ls4lvh-HlQ" name="AbstractRole">
+                    <eAnnotations xmi:id="_nYgR-0J6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                      <details xmi:id="_nYgR_EJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:4398"/>
+                    </eAnnotations>
+                    <ownedComment xmi:id="_nYgR_UJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgR-kJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </packagedElement>
+                </packagedElement>
+              </packagedElement>
+            </packagedElement>
+          </packagedElement>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="_nYgR_kJ6EeO0ls4lvh-HlQ" name="app">
+          <ownedComment xmi:id="_nYgR_0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgR_kJ6EeO0ls4lvh-HlQ">
+            <body>?</body>
+          </ownedComment>
+          <packagedElement xmi:type="uml:Package" xmi:id="_nYgSAEJ6EeO0ls4lvh-HlQ" name="src">
+            <ownedComment xmi:id="_nYgSAUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSAEJ6EeO0ls4lvh-HlQ">
+              <body>?</body>
+            </ownedComment>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgSAkJ6EeO0ls4lvh-HlQ" name="backend">
+              <ownedComment xmi:id="_nYgSA0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSAkJ6EeO0ls4lvh-HlQ">
+                <body>?</body>
+              </ownedComment>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgSBEJ6EeO0ls4lvh-HlQ" name="controller"/>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgSBUJ6EeO0ls4lvh-HlQ" name="views"/>
+            <packagedElement xmi:type="uml:Package" xmi:id="_nYgSBkJ6EeO0ls4lvh-HlQ" name="model">
+              <ownedComment xmi:id="_nYgSB0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSBkJ6EeO0ls4lvh-HlQ">
+                <body>?</body>
+              </ownedComment>
+              <packagedElement xmi:type="uml:Class" xmi:id="_nYgSCEJ6EeO0ls4lvh-HlQ" name="EntityBase" isAbstract="true">
+                <eAnnotations xmi:id="_nYgSCUJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                  <details xmi:id="_nYgSCkJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:278"/>
+                </eAnnotations>
+                <ownedComment xmi:id="_nYgSC0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSCEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <generalization xmi:id="_nYgSDEJ6EeO0ls4lvh-HlQ" general="_nYgRtkJ6EeO0ls4lvh-HlQ"/>
+                <ownedAttribute xmi:id="_nYgSDUJ6EeO0ls4lvh-HlQ" name="created" type="_nYgPtEJ6EeO0ls4lvh-HlQ"/>
+                <ownedAttribute xmi:id="_nYgSDkJ6EeO0ls4lvh-HlQ" name="creator" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgSD0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSDkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgSEEJ6EeO0ls4lvh-HlQ" name="modified" type="_nYgPtEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgSEUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSEEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+                <ownedAttribute xmi:id="_nYgSEkJ6EeO0ls4lvh-HlQ" name="last_editor" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                  <ownedComment xmi:id="_nYgSE0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSEkJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgSFEJ6EeO0ls4lvh-HlQ" name="model">
+                <ownedComment xmi:id="_nYgSFUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSFEJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Package" xmi:id="_nYgSFkJ6EeO0ls4lvh-HlQ" name="wcmf">
+                <ownedComment xmi:id="_nYgSF0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSFkJ6EeO0ls4lvh-HlQ">
+                  <body>?</body>
+                </ownedComment>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgSGEJ6EeO0ls4lvh-HlQ" name="User">
+                  <eAnnotations xmi:id="_nYgSGUJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nYgSGkJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:337"/>
+                  </eAnnotations>
+                  <ownedComment xmi:id="_nYgSG0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSGEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <generalization xmi:id="_nYgSHEJ6EeO0ls4lvh-HlQ" general="_nYgR9kJ6EeO0ls4lvh-HlQ"/>
+                  <generalization xmi:id="_nYgSHUJ6EeO0ls4lvh-HlQ" general="_nYgRtkJ6EeO0ls4lvh-HlQ"/>
+                  <ownedAttribute xmi:id="_nYgSHkJ6EeO0ls4lvh-HlQ" name="login" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSH0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSHkJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSIEJ6EeO0ls4lvh-HlQ" name="password" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSIUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSIEJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSIkJ6EeO0ls4lvh-HlQ" name="name" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSI0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSIkJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSJEJ6EeO0ls4lvh-HlQ" name="firstname" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSJUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSJEJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSJkJ6EeO0ls4lvh-HlQ" name="config" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSJ0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSJkJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSKEJ6EeO0ls4lvh-HlQ" name="" type="_nYg2w0J6EeO0ls4lvh-HlQ" aggregation="composite" association="_nYg2zUJ6EeO0ls4lvh-HlQ">
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgSKUJ6EeO0ls4lvh-HlQ" value="*"/>
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgSKkJ6EeO0ls4lvh-HlQ"/>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSK0J6EeO0ls4lvh-HlQ" name="" type="_nYgSVUJ6EeO0ls4lvh-HlQ" aggregation="composite" association="_nYg2zkJ6EeO0ls4lvh-HlQ">
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgSLEJ6EeO0ls4lvh-HlQ" value="*"/>
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgSLUJ6EeO0ls4lvh-HlQ"/>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSLkJ6EeO0ls4lvh-HlQ" name="" type="_nYgSPEJ6EeO0ls4lvh-HlQ" aggregation="composite" association="_nYg2z0J6EeO0ls4lvh-HlQ">
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgSL0J6EeO0ls4lvh-HlQ" value="*"/>
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgSMEJ6EeO0ls4lvh-HlQ"/>
+                  </ownedAttribute>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgSMUJ6EeO0ls4lvh-HlQ" name="Role">
+                  <eAnnotations xmi:id="_nYgSMkJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nYgSM0J6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:323"/>
+                  </eAnnotations>
+                  <ownedComment xmi:id="_nYgSNEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSMUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <generalization xmi:id="_nYgSNUJ6EeO0ls4lvh-HlQ" general="_nYgR-kJ6EeO0ls4lvh-HlQ"/>
+                  <generalization xmi:id="_nYgSNkJ6EeO0ls4lvh-HlQ" general="_nYgRtkJ6EeO0ls4lvh-HlQ"/>
+                  <ownedAttribute xmi:id="_nYgSN0J6EeO0ls4lvh-HlQ" name="name" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSOEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSN0J6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSOUJ6EeO0ls4lvh-HlQ" name="" type="_nYg2w0J6EeO0ls4lvh-HlQ" aggregation="composite" association="_nYg20EJ6EeO0ls4lvh-HlQ">
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgSOkJ6EeO0ls4lvh-HlQ" value="*"/>
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgSO0J6EeO0ls4lvh-HlQ"/>
+                  </ownedAttribute>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgSPEJ6EeO0ls4lvh-HlQ" name="UserConfig">
+                  <eAnnotations xmi:id="_nYgSPUJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nYgSPkJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:332"/>
+                  </eAnnotations>
+                  <ownedComment xmi:id="_nYgSP0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSPEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <generalization xmi:id="_nYgSQEJ6EeO0ls4lvh-HlQ" general="_nYgRtkJ6EeO0ls4lvh-HlQ"/>
+                  <ownedAttribute xmi:id="_nYgSQUJ6EeO0ls4lvh-HlQ" name="key" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSQkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSQUJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSQ0J6EeO0ls4lvh-HlQ" name="val" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSREJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSQ0J6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSRUJ6EeO0ls4lvh-HlQ" name="" type="_nYgSGEJ6EeO0ls4lvh-HlQ" association="_nYg2z0J6EeO0ls4lvh-HlQ">
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgSRkJ6EeO0ls4lvh-HlQ" value="1"/>
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgSR0J6EeO0ls4lvh-HlQ" value="1"/>
+                  </ownedAttribute>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgSSEJ6EeO0ls4lvh-HlQ" name="Translation">
+                  <eAnnotations xmi:id="_nYgSSUJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nYgSSkJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:326"/>
+                  </eAnnotations>
+                  <ownedComment xmi:id="_nYgSS0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSSEJ6EeO0ls4lvh-HlQ">
+                    <body>Instances of this class are used to localize entity attributes. Each instance defines a translation of one attribute of one entity into one language.</body>
+                  </ownedComment>
+                  <generalization xmi:id="_nYgSTEJ6EeO0ls4lvh-HlQ" general="_nYgRtkJ6EeO0ls4lvh-HlQ"/>
+                  <ownedAttribute xmi:id="_nYgSTUJ6EeO0ls4lvh-HlQ" name="objectid" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSTkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSTUJ6EeO0ls4lvh-HlQ">
+                      <body>The object id of the object to which the translation belongs</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgST0J6EeO0ls4lvh-HlQ" name="attribute" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSUEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgST0J6EeO0ls4lvh-HlQ">
+                      <body>The attribute of the object that is translated</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSUUJ6EeO0ls4lvh-HlQ" name="translation" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSUkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSUUJ6EeO0ls4lvh-HlQ">
+                      <body>The translation</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSU0J6EeO0ls4lvh-HlQ" name="language" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSVEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSU0J6EeO0ls4lvh-HlQ">
+                      <body>The language of the translation</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgSVUJ6EeO0ls4lvh-HlQ" name="Locktable">
+                  <eAnnotations xmi:id="_nYgSVkJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nYgSV0J6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:317"/>
+                  </eAnnotations>
+                  <ownedComment xmi:id="_nYgSWEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSVUJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <generalization xmi:id="_nYgSWUJ6EeO0ls4lvh-HlQ" general="_nYgRtkJ6EeO0ls4lvh-HlQ"/>
+                  <ownedAttribute xmi:id="_nYgSWkJ6EeO0ls4lvh-HlQ" name="objectid" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSW0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSWkJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSXEJ6EeO0ls4lvh-HlQ" name="sessionid" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSXUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSXEJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSXkJ6EeO0ls4lvh-HlQ" name="since" type="_nYgPtEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSX0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSXkJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSYEJ6EeO0ls4lvh-HlQ" name="" type="_nYgSGEJ6EeO0ls4lvh-HlQ" association="_nYg2zkJ6EeO0ls4lvh-HlQ">
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYgSYUJ6EeO0ls4lvh-HlQ" value="1"/>
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYgSYkJ6EeO0ls4lvh-HlQ" value="1"/>
+                  </ownedAttribute>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgSY0J6EeO0ls4lvh-HlQ" name="Language">
+                  <eAnnotations xmi:id="_nYgSZEJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nYgSZUJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:313"/>
+                  </eAnnotations>
+                  <ownedComment xmi:id="_nYgSZkJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSY0J6EeO0ls4lvh-HlQ">
+                    <body>A llanguage for which a translation of the model can be created. The code is arbitrary but it is recommended to use the ISO language codes (en, de, it, ...).</body>
+                  </ownedComment>
+                  <generalization xmi:id="_nYgSZ0J6EeO0ls4lvh-HlQ" general="_nYgRtkJ6EeO0ls4lvh-HlQ"/>
+                  <ownedAttribute xmi:id="_nYgSaEJ6EeO0ls4lvh-HlQ" name="name" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSaUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSaEJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYgSakJ6EeO0ls4lvh-HlQ" name="code" type="_nYgPuEJ6EeO0ls4lvh-HlQ">
+                    <ownedComment xmi:id="_nYgSa0J6EeO0ls4lvh-HlQ" annotatedElement="_nYgSakJ6EeO0ls4lvh-HlQ">
+                      <body>?</body>
+                    </ownedComment>
+                  </ownedAttribute>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYgSbEJ6EeO0ls4lvh-HlQ" name="DBSequence">
+                  <eAnnotations xmi:id="_nYgSbUJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+                    <details xmi:id="_nYg2wEJ6EeO0ls4lvh-HlQ" key="CHRONOS_ID_KEYWORD_ChiNode:311"/>
+                  </eAnnotations>
+                  <ownedComment xmi:id="_nYg2wUJ6EeO0ls4lvh-HlQ" annotatedElement="_nYgSbEJ6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <generalization xmi:id="_nYg2wkJ6EeO0ls4lvh-HlQ" general="_nYgRtkJ6EeO0ls4lvh-HlQ"/>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Class" xmi:id="_nYg2w0J6EeO0ls4lvh-HlQ" name="NMUserRole">
+                  <ownedComment xmi:id="_nYg2xEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYg2w0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                  <ownedAttribute xmi:id="_nYg2xUJ6EeO0ls4lvh-HlQ" name="" type="_nYgSGEJ6EeO0ls4lvh-HlQ" association="_nYg2zUJ6EeO0ls4lvh-HlQ">
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYg2xkJ6EeO0ls4lvh-HlQ" value="1"/>
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYg2x0J6EeO0ls4lvh-HlQ" value="1"/>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:id="_nYg2yEJ6EeO0ls4lvh-HlQ" name="" type="_nYgSMUJ6EeO0ls4lvh-HlQ" association="_nYg20EJ6EeO0ls4lvh-HlQ">
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nYg2yUJ6EeO0ls4lvh-HlQ" value="1"/>
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nYg2ykJ6EeO0ls4lvh-HlQ" value="1"/>
+                  </ownedAttribute>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Package" xmi:id="_nYg2y0J6EeO0ls4lvh-HlQ" name="wcmf">
+                  <ownedComment xmi:id="_nYg2zEJ6EeO0ls4lvh-HlQ" annotatedElement="_nYg2y0J6EeO0ls4lvh-HlQ">
+                    <body>?</body>
+                  </ownedComment>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Association" xmi:id="_nYg2zUJ6EeO0ls4lvh-HlQ" name="Composition" memberEnd="_nYgSKEJ6EeO0ls4lvh-HlQ _nYg2xUJ6EeO0ls4lvh-HlQ"/>
+                <packagedElement xmi:type="uml:Association" xmi:id="_nYg2zkJ6EeO0ls4lvh-HlQ" memberEnd="_nYgSK0J6EeO0ls4lvh-HlQ _nYgSYEJ6EeO0ls4lvh-HlQ">
+                  <name xsi:nil="true"/>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Association" xmi:id="_nYg2z0J6EeO0ls4lvh-HlQ" memberEnd="_nYgSLkJ6EeO0ls4lvh-HlQ _nYgSRUJ6EeO0ls4lvh-HlQ">
+                  <name xsi:nil="true"/>
+                </packagedElement>
+                <packagedElement xmi:type="uml:Association" xmi:id="_nYg20EJ6EeO0ls4lvh-HlQ" name="Composition" memberEnd="_nYgSOUJ6EeO0ls4lvh-HlQ _nYg2yEJ6EeO0ls4lvh-HlQ"/>
+              </packagedElement>
+            </packagedElement>
+          </packagedElement>
+        </packagedElement>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_nYg20UJ6EeO0ls4lvh-HlQ" name="Referenced Nodes"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_nYg20kJ6EeO0ls4lvh-HlQ" name="PrimitiveTypes"/>
+    <profileApplication xmi:id="_nYg200J6EeO0ls4lvh-HlQ">
+      <eAnnotations xmi:id="_nYg21EJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw"/>
+      </eAnnotations>
+      <appliedProfile href="chronos.profile.uml#873fb1a3-cfa7-11de-9e87-d74203c08737"/>
+    </profileApplication>
+    <profileApplication xmi:id="_nYg21UJ6EeO0ls4lvh-HlQ">
+      <eAnnotations xmi:id="_nYg21kJ6EeO0ls4lvh-HlQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="ouranos.profile.uml#_fmnPK1vpEd6-GfKcCJahig"/>
+      </eAnnotations>
+      <appliedProfile href="ouranos.profile.uml#_fmnPKVvpEd6-GfKcCJahig"/>
+    </profileApplication>
+  </uml:Model>
+  <Chronos:ChiNode xmi:id="_nYg210J6EeO0ls4lvh-HlQ" Alias="Chi182Nod" created="2012-05-11 08:50:57" creator="admin" last_editor="admin" modified="2013-02-20 00:36:44" base_Class="_nYgPtEJ6EeO0ls4lvh-HlQ" display_value="name" is_searchable="true"/>
+  <Chronos:ChiNode xmi:id="_nYg22EJ6EeO0ls4lvh-HlQ" Alias="Chi183Nod" created="2012-05-11 08:50:57" creator="admin" last_editor="admin" modified="2012-05-11 08:50:57" base_Class="_nYgPuEJ6EeO0ls4lvh-HlQ" display_value="name" is_searchable="true"/>
+  <Chronos:ChiNode xmi:id="_nYg22UJ6EeO0ls4lvh-HlQ" Alias="Chi218Nod" created="2012-06-23 02:17:25" creator="admin" last_editor="admin" modified="2012-06-23 02:18:00" base_Class="_nYgPu0J6EeO0ls4lvh-HlQ" is_searchable="true"/>
+  <Chronos:ChiNode xmi:id="_nYg22kJ6EeO0ls4lvh-HlQ" Alias="Chi219Nod" created="2012-06-23 02:18:19" creator="admin" last_editor="admin" modified="2012-06-23 02:18:54" base_Class="_nYgPv0J6EeO0ls4lvh-HlQ" is_searchable="true"/>
+  <Chronos:ChiSystem xmi:id="_nYg220J6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgPyEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg23EJ6EeO0ls4lvh-HlQ" base_Property="_nYgPykJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYg23UJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgPzUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYg23kJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgPz0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg230J6EeO0ls4lvh-HlQ" base_Property="_nYgP0UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYg24EJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgP00J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYg24UJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgP1UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg24kJ6EeO0ls4lvh-HlQ" base_Property="_nYgP10J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg240J6EeO0ls4lvh-HlQ" base_Property="_nYgP2kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg25EJ6EeO0ls4lvh-HlQ" base_Property="_nYgP3UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg25UJ6EeO0ls4lvh-HlQ" base_Property="_nYgP4EJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg25kJ6EeO0ls4lvh-HlQ" base_Property="_nYgP40J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg250J6EeO0ls4lvh-HlQ" base_Property="_nYgP5kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYg26EJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgP6UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg26UJ6EeO0ls4lvh-HlQ" base_Property="_nYgP60J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYg26kJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgP7kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYg260J6EeO0ls4lvh-HlQ" base_Property="_nYgP8EJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYg27EJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgP80J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd0EJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgP9UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd0UJ6EeO0ls4lvh-HlQ" base_Property="_nYgP90J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd0kJ6EeO0ls4lvh-HlQ" base_Property="_nYgP-kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd00J6EeO0ls4lvh-HlQ" base_Property="_nYgP_UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd1EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQAEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd1UJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQA0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd1kJ6EeO0ls4lvh-HlQ" base_Property="_nYgQBUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd10J6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQCEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd2EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQCkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd2UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQDUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd2kJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQEEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd20J6EeO0ls4lvh-HlQ" base_Property="_nYgQEkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd3EJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQFUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd3UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQF0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd3kJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQGkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd30J6EeO0ls4lvh-HlQ" base_Property="_nYgQHEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd4EJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQH0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd4UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQIUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd4kJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQJEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd40J6EeO0ls4lvh-HlQ" base_Property="_nYgQJkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd5EJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQKUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd5UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQK0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYhd5kJ6EeO0ls4lvh-HlQ" plattform="wcmf" base_Class="_nYgQLkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYhd50J6EeO0ls4lvh-HlQ" base_Property="_nYgQMEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiDiagram xmi:id="_nYhd6EJ6EeO0ls4lvh-HlQ" Alias="Chi002Dia" base_Package="_nYgQM0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiDiagram xmi:id="_nYhd6UJ6EeO0ls4lvh-HlQ" Alias="Chi005Dia" base_Package="_nYgQN0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE4EJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="server.ini" base_Class="_nYgQO0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE4UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQPUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE4kJ6EeO0ls4lvh-HlQ" base_Property="_nYgQQEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE40J6EeO0ls4lvh-HlQ" base_Property="_nYgQQ0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE5EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQRkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE5UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQSUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE5kJ6EeO0ls4lvh-HlQ" base_Property="_nYgQS0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE50J6EeO0ls4lvh-HlQ" plattform="wcmf" config="server.ini" base_Class="_nYgQTkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE6EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQUEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE6UJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="server.ini" base_Class="_nYgQU0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE6kJ6EeO0ls4lvh-HlQ" base_Property="_nYgQVUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE60J6EeO0ls4lvh-HlQ" base_Property="_nYgQWEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE7EJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="server.ini" base_Class="_nYgQW0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE7UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQXUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE7kJ6EeO0ls4lvh-HlQ" base_Property="_nYgQYEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE70J6EeO0ls4lvh-HlQ" plattform="wcmf" config="server.ini" base_Class="_nYgQY0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE8EJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="server.ini" base_Class="_nYgQZUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiDiagram xmi:id="_nYiE8UJ6EeO0ls4lvh-HlQ" Alias="Chi006Dia" base_Package="_nYgQZ0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE8kJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="persistence.ini" base_Class="_nYgQa0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE80J6EeO0ls4lvh-HlQ" base_Property="_nYgQbUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE9EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQcEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE9UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQc0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE9kJ6EeO0ls4lvh-HlQ" base_Property="_nYgQdkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE90J6EeO0ls4lvh-HlQ" plattform="wcmf" config="persistence.ini" base_Class="_nYgQeUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE-EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQe0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE-UJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="persistence.ini" base_Class="_nYgQfkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYiE-kJ6EeO0ls4lvh-HlQ" base_Property="_nYgQgEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYiE-0J6EeO0ls4lvh-HlQ" plattform="wcmf" config="persistence.ini" base_Class="_nYgQg0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYir8EJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="persistence.ini" base_Class="_nYgQhUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir8UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQh0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYir8kJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="persistence.ini" base_Class="_nYgQikJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir80J6EeO0ls4lvh-HlQ" base_Property="_nYgQjEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir9EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQj0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiDiagram xmi:id="_nYir9UJ6EeO0ls4lvh-HlQ" Alias="Chi007Dia" base_Package="_nYgQkkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYir9kJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQlkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir90J6EeO0ls4lvh-HlQ" base_Property="_nYgQmEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir-EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQm0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir-UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQnkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir-kJ6EeO0ls4lvh-HlQ" base_Property="_nYgQoUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir-0J6EeO0ls4lvh-HlQ" base_Property="_nYgQpEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir_EJ6EeO0ls4lvh-HlQ" base_Property="_nYgQp0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir_UJ6EeO0ls4lvh-HlQ" base_Property="_nYgQqkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYir_kJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQrUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYir_0J6EeO0ls4lvh-HlQ" base_Property="_nYgQr0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYisAEJ6EeO0ls4lvh-HlQ" base_Property="_nYgQskJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYisAUJ6EeO0ls4lvh-HlQ" base_Property="_nYgQtUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYisAkJ6EeO0ls4lvh-HlQ" base_Property="_nYgQuEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYisA0J6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQu0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYisBEJ6EeO0ls4lvh-HlQ" base_Property="_nYgQvUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYisBUJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQwEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYisBkJ6EeO0ls4lvh-HlQ" base_Property="_nYgQwkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYisB0J6EeO0ls4lvh-HlQ" base_Property="_nYgQxUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYisCEJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQyEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYisCUJ6EeO0ls4lvh-HlQ" base_Property="_nYgQykJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYisCkJ6EeO0ls4lvh-HlQ" base_Property="_nYgQzUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYisC0J6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQ0EJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTAEJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ0kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYjTAUJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQ1UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTAkJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ10J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTA0J6EeO0ls4lvh-HlQ" base_Property="_nYgQ2kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTBEJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ3UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTBUJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ4EJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTBkJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ40J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYjTB0J6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQ5kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTCEJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ6EJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYjTCUJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQ60J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTCkJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ7UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYjTC0J6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQ8EJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTDEJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ8kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYjTDUJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQ9UJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTDkJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ90J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYjTD0J6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgQ-kJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTEEJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ_EJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTEUJ6EeO0ls4lvh-HlQ" base_Property="_nYgQ_0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYjTEkJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgRAkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTE0J6EeO0ls4lvh-HlQ" base_Property="_nYgRBEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTFEJ6EeO0ls4lvh-HlQ" base_Property="_nYgRB0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTFUJ6EeO0ls4lvh-HlQ" base_Property="_nYgRCkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTFkJ6EeO0ls4lvh-HlQ" base_Property="_nYgRDUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTF0J6EeO0ls4lvh-HlQ" base_Property="_nYgREEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTGEJ6EeO0ls4lvh-HlQ" base_Property="_nYgRE0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTGUJ6EeO0ls4lvh-HlQ" base_Property="_nYgRFkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTGkJ6EeO0ls4lvh-HlQ" base_Property="_nYgRGUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYjTG0J6EeO0ls4lvh-HlQ" base_Property="_nYgRHEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYj6EEJ6EeO0ls4lvh-HlQ" base_Property="_nYgRH0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYj6EUJ6EeO0ls4lvh-HlQ" base_Property="_nYgRIkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYj6EkJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgRJUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYj6E0J6EeO0ls4lvh-HlQ" base_Property="_nYgRJ0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYj6FEJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgRKkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYj6FUJ6EeO0ls4lvh-HlQ" base_Property="_nYgRLEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiSystem xmi:id="_nYj6FkJ6EeO0ls4lvh-HlQ" plattform="wcmf" config="presentation.ini" base_Class="_nYgRLkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYj6F0J6EeO0ls4lvh-HlQ" base_Property="_nYgRMEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiDiagram xmi:id="_nYj6GEJ6EeO0ls4lvh-HlQ" Alias="Chi008Dia" base_Package="_nYgRM0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6GUJ6EeO0ls4lvh-HlQ" base_Class="_nYgROUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6GkJ6EeO0ls4lvh-HlQ" base_Class="_nYgRO0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6G0J6EeO0ls4lvh-HlQ" base_Class="_nYgRPEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6HEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRPUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6HUJ6EeO0ls4lvh-HlQ" base_Class="_nYgRPkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6HkJ6EeO0ls4lvh-HlQ" base_Class="_nYgRP0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6H0J6EeO0ls4lvh-HlQ" base_Class="_nYgRQUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6IEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRQ0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6IUJ6EeO0ls4lvh-HlQ" base_Class="_nYgRREJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6IkJ6EeO0ls4lvh-HlQ" base_Class="_nYgRRUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6I0J6EeO0ls4lvh-HlQ" base_Class="_nYgRR0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6JEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRSEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6JUJ6EeO0ls4lvh-HlQ" base_Class="_nYgRTUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6JkJ6EeO0ls4lvh-HlQ" base_Class="_nYgRTkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6J0J6EeO0ls4lvh-HlQ" base_Class="_nYgRUEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6KEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRUUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6KUJ6EeO0ls4lvh-HlQ" base_Class="_nYgRU0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6KkJ6EeO0ls4lvh-HlQ" base_Class="_nYgRVUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6K0J6EeO0ls4lvh-HlQ" base_Class="_nYgRVkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6LEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRV0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6LUJ6EeO0ls4lvh-HlQ" base_Class="_nYgRWUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6LkJ6EeO0ls4lvh-HlQ" base_Class="_nYgRWkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6L0J6EeO0ls4lvh-HlQ" base_Class="_nYgRXEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6MEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRXUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYj6MUJ6EeO0ls4lvh-HlQ" base_Class="_nYgRXkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhIEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRYEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhIUJ6EeO0ls4lvh-HlQ" base_Class="_nYgRYkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhIkJ6EeO0ls4lvh-HlQ" base_Class="_nYgRZEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhI0J6EeO0ls4lvh-HlQ" base_Class="_nYgRZkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhJEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRZ0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhJUJ6EeO0ls4lvh-HlQ" base_Class="_nYgRaEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhJkJ6EeO0ls4lvh-HlQ" base_Class="_nYgRaUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhJ0J6EeO0ls4lvh-HlQ" base_Class="_nYgRakJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiController xmi:id="_nYkhKEJ6EeO0ls4lvh-HlQ" base_Class="_nYgRa0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhKUJ6EeO0ls4lvh-HlQ" action="failure" base_Association="_nYgRbEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhKkJ6EeO0ls4lvh-HlQ" action="logout" base_Association="_nYgRcEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhK0J6EeO0ls4lvh-HlQ" action="login" base_Association="_nYgRdEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhLEJ6EeO0ls4lvh-HlQ" action="restAction" base_Association="_nYgReEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhLUJ6EeO0ls4lvh-HlQ" action="list" base_Association="_nYgRfEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhLkJ6EeO0ls4lvh-HlQ" action="read" base_Association="_nYgRgEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhL0J6EeO0ls4lvh-HlQ" action="create" base_Association="_nYgRhEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhMEJ6EeO0ls4lvh-HlQ" action="update" base_Association="_nYgRiEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhMUJ6EeO0ls4lvh-HlQ" action="delete" base_Association="_nYgRjEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhMkJ6EeO0ls4lvh-HlQ" action="associate" base_Association="_nYgRkEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhM0J6EeO0ls4lvh-HlQ" action="disassociate" base_Association="_nYgRlEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhNEJ6EeO0ls4lvh-HlQ" action="insertBefore" base_Association="_nYgRmEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhNUJ6EeO0ls4lvh-HlQ" action="moveBefore" base_Association="_nYgRnEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhNkJ6EeO0ls4lvh-HlQ" action="listValues" base_Association="_nYgRoEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhN0J6EeO0ls4lvh-HlQ" action="browseMedia" base_Association="_nYgRpEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYkhOEJ6EeO0ls4lvh-HlQ" action="browseTree" base_Association="_nYgRqEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYlIMEJ6EeO0ls4lvh-HlQ" action="changePassword" base_Association="_nYgRrEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiActionKey xmi:id="_nYlIMUJ6EeO0ls4lvh-HlQ" action="messages" base_Association="_nYgRsEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlIMkJ6EeO0ls4lvh-HlQ" Alias="Chi040Nod" created="2012-05-11 08:49:22" creator="admin" last_editor="admin" modified="2012-06-23 23:49:00" base_Class="_nYgRtkJ6EeO0ls4lvh-HlQ" display_value="name"/>
+  <Chronos:ChiController xmi:id="_nYlIM0J6EeO0ls4lvh-HlQ" base_Class="_nYgRu0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlINEJ6EeO0ls4lvh-HlQ" Alias="Chi220Nod" created="2012-06-26 23:51:50" creator="admin" last_editor="admin" modified="2013-03-01 15:59:12" base_Class="_nYgR9kJ6EeO0ls4lvh-HlQ" display_value="name"/>
+  <Chronos:ChiNode xmi:id="_nYlINUJ6EeO0ls4lvh-HlQ" Alias="Chi221Nod" created="2012-06-26 23:52:41" creator="admin" last_editor="admin" modified="2013-03-01 15:59:29" base_Class="_nYgR-kJ6EeO0ls4lvh-HlQ" display_value="name"/>
+  <Chronos:ChiDiagram xmi:id="_nYlINkJ6EeO0ls4lvh-HlQ" Alias="Chi009Dia" base_Package="_nYgSAkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlIN0J6EeO0ls4lvh-HlQ" Alias="Chi043Nod" created="2012-05-11 08:49:25" creator="admin" last_editor="admin" modified="2013-02-21 22:13:33" base_Class="_nYgSCEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlIOEJ6EeO0ls4lvh-HlQ" db_data_type="DATETIME" base_Property="_nYgSDUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlIOUJ6EeO0ls4lvh-HlQ" base_Property="_nYgSDkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvQEJ6EeO0ls4lvh-HlQ" db_data_type="DATETIME" base_Property="_nYgSEEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvQUJ6EeO0ls4lvh-HlQ" base_Property="_nYgSEkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiDiagram xmi:id="_nYlvQkJ6EeO0ls4lvh-HlQ" Alias="Chi003Dia" base_Package="_nYgSFEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlvQ0J6EeO0ls4lvh-HlQ" Alias="Chi052Nod" created="2012-05-11 08:49:33" creator="admin" last_editor="admin" modified="2013-10-31 23:05:35" base_Class="_nYgSGEJ6EeO0ls4lvh-HlQ" display_value="login" orderby="name" table_name="user"/>
+  <Chronos:ChiValue xmi:id="_nYlvREJ6EeO0ls4lvh-HlQ" is_editable="true" base_Property="_nYgSHkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvRUJ6EeO0ls4lvh-HlQ" is_editable="true" input_type="password" base_Property="_nYgSIEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvRkJ6EeO0ls4lvh-HlQ" is_editable="true" base_Property="_nYgSIkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvR0J6EeO0ls4lvh-HlQ" is_editable="true" base_Property="_nYgSJEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvSEJ6EeO0ls4lvh-HlQ" is_editable="true" input_type="select#file:../config/|/\..ini$/" base_Property="_nYgSJkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlvSUJ6EeO0ls4lvh-HlQ" Alias="Chi049Nod" created="2012-05-11 08:49:31" creator="admin" last_editor="admin" modified="2013-10-31 23:05:35" base_Class="_nYgSMUJ6EeO0ls4lvh-HlQ" display_value="name" orderby="name" table_name="role"/>
+  <Chronos:ChiValue xmi:id="_nYlvSkJ6EeO0ls4lvh-HlQ" is_editable="true" base_Property="_nYgSN0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlvS0J6EeO0ls4lvh-HlQ" Alias="Chi051Nod" created="2012-05-11 08:49:33" creator="admin" last_editor="admin" modified="2013-10-31 23:05:35" base_Class="_nYgSPEJ6EeO0ls4lvh-HlQ" display_value="key" table_name="user_config"/>
+  <Chronos:ChiValue xmi:id="_nYlvTEJ6EeO0ls4lvh-HlQ" base_Property="_nYgSQUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvTUJ6EeO0ls4lvh-HlQ" is_editable="true" base_Property="_nYgSQ0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlvTkJ6EeO0ls4lvh-HlQ" Alias="Chi050Nod" created="2012-05-11 08:49:32" creator="admin" last_editor="admin" modified="2013-10-31 23:05:35" base_Class="_nYgSSEJ6EeO0ls4lvh-HlQ" display_value="objectid|attribute|language" table_name="translation"/>
+  <Chronos:ChiValue xmi:id="_nYlvT0J6EeO0ls4lvh-HlQ" base_Property="_nYgSTUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvUEJ6EeO0ls4lvh-HlQ" base_Property="_nYgST0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvUUJ6EeO0ls4lvh-HlQ" db_data_type="TEXT" input_type="textarea" base_Property="_nYgSUUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvUkJ6EeO0ls4lvh-HlQ" base_Property="_nYgSU0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlvU0J6EeO0ls4lvh-HlQ" Alias="Chi048Nod" created="2012-05-11 08:49:30" creator="admin" last_editor="admin" modified="2013-10-31 23:05:35" base_Class="_nYgSVUJ6EeO0ls4lvh-HlQ" table_name="locktable"/>
+  <Chronos:ChiValue xmi:id="_nYlvVEJ6EeO0ls4lvh-HlQ" base_Property="_nYgSWkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvVUJ6EeO0ls4lvh-HlQ" base_Property="_nYgSXEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYlvVkJ6EeO0ls4lvh-HlQ" db_data_type="DATETIME" base_Property="_nYgSXkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYlvV0J6EeO0ls4lvh-HlQ" Alias="Chi047Nod" created="2012-05-11 08:49:30" creator="admin" last_editor="admin" modified="2013-10-31 23:05:35" base_Class="_nYgSY0J6EeO0ls4lvh-HlQ" display_value="name" orderby="name" table_name="language"/>
+  <Chronos:ChiValue xmi:id="_nYlvWEJ6EeO0ls4lvh-HlQ" base_Property="_nYgSaEJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiValue xmi:id="_nYmWUEJ6EeO0ls4lvh-HlQ" base_Property="_nYgSakJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiNode xmi:id="_nYmWUUJ6EeO0ls4lvh-HlQ" Alias="Chi046Nod" created="2012-05-11 08:49:30" creator="admin" last_editor="admin" modified="2013-10-31 23:05:35" base_Class="_nYgSbEJ6EeO0ls4lvh-HlQ" table_name="dbsequence"/>
+  <Chronos:ChiManyToMany xmi:id="_nYmWUkJ6EeO0ls4lvh-HlQ" Alias="Chi001" created="2012-06-26 23:29:14" creator="admin" last_editor="admin" modified="2013-10-31 23:05:35" base_Class="_nYg2w0J6EeO0ls4lvh-HlQ" pk_name="fk_user_id|fk_role_id" table_name="nm_user_role"/>
+  <Chronos:ChiDiagram xmi:id="_nYmWU0J6EeO0ls4lvh-HlQ" Alias="Chi004Dia" base_Package="_nYg2y0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiAssociation xmi:id="_nYmWVEJ6EeO0ls4lvh-HlQ" fk_name="fk_user_id" base_Association="_nYg2zUJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiAssociation xmi:id="_nYmWVUJ6EeO0ls4lvh-HlQ" fk_name="fk_user_id" base_Association="_nYg2zkJ6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiAssociation xmi:id="_nYmWVkJ6EeO0ls4lvh-HlQ" fk_name="fk_user_id" base_Association="_nYg2z0J6EeO0ls4lvh-HlQ"/>
+  <Chronos:ChiAssociation xmi:id="_nYmWV0J6EeO0ls4lvh-HlQ" fk_name="fk_role_id" base_Association="_nYg20EJ6EeO0ls4lvh-HlQ"/>
+</xmi:XMI>
