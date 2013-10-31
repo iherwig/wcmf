@@ -1,8 +1,9 @@
-<project name="wCMF" default="dist" basedir=".">
-  <description>wCMf build file</description>
+<project name="wCMF app" default="dist" basedir=".">
+  <description>wCMF application build file</description>
 
   <property file="build.properties"/>
-  <property name="app.name" value="app" />
+  <property name="build.base" value="../"/>
+  <property name="package.file" value="${build.base}${app.name}_${version}.zip"/>
 
   <condition property="dojo.build.script" value="${dojo.build.script_windows}">
      <os family="windows"/>
@@ -51,20 +52,20 @@
     description="build the distribution" >
     <mkdir dir="${dist.dir}"/>
     <copy todir="${dist.dir}/wcmf">
-      <fileset dir="../wcmf/">
+      <fileset dir="${build.base}wcmf/">
         <exclude name="tools/"/>
         <include name="**"/>
       </fileset>
     </copy>
     <copy todir="${dist.dir}/${app.name}">
-      <fileset dir="../${app.name}/">
+      <fileset dir="${build.base}${app.name}/">
         <exclude name="public/"/>
         <exclude name="release/"/>
         <include name="**"/>
       </fileset>
     </copy>
     <copy todir="${dist.dir}/${app.name}/public">
-      <fileset dir="../${app.name}/release">
+      <fileset dir="${build.base}${app.name}/release">
         <exclude name="js/"/>
         <exclude name="vendor/"/>
         <exclude name="build-report.txt"/>
@@ -72,7 +73,7 @@
         <exclude name="**/*.js.uncompressed.js"/>
         <include name="**"/>
       </fileset>
-      <fileset dir="../${app.name}/release">
+      <fileset dir="${build.base}${app.name}/release">
         <include name="js/App.js"/>
         <include name="js/App.js.map"/>
         <include name="js/App.js.uncompressed.js"/>
@@ -81,20 +82,24 @@
         <include name="vendor/dojo/dojo/dojo.js.map"/>
         <include name="vendor/dojo/dojo/dojo.js.uncompressed.js"/>
       </fileset>
-      <fileset dir="../${app.name}/public">
+      <fileset dir="${build.base}${app.name}/public">
         <!-- fonts -->
         <include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
         <!-- elfinder -->
         <include name="vendor/elfinder/**/*.*"/>
       </fileset>
     </copy>
+    <replaceregexp file="${dist.dir}/${app.name}/public/.htaccess"
+      match="RewriteBase (.*)/${app.name}/public"
+      replace="RewriteBase \1/dist/${app.name}/public"
+    />
     <copy file="${build.info}" todir="${dist.dir}"/>
-    <delete dir="../${app.name}/release"/>
+    <delete dir="${build.base}${app.name}/release"/>
   </target>
 
   <target name="package" depends="dist"
     description="pack the distribution" >
-    <zip destfile="../${app.name}_${version}.zip" basedir="${dist.dir}"/>
+    <zip destfile="${package.file}" basedir="${dist.dir}"/>
   </target>
 
   <target name="clean"
@@ -102,6 +107,6 @@
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
     <delete file="${dojo.build.log}"/>
-    <delete file="../${app.name}_${version}.zip"/>
+    <delete file="${package.file}"/>
   </target>
 </project>

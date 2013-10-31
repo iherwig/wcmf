@@ -1,0 +1,64 @@
+<project name="wCMF" default="package" basedir=".">
+  <description>wCMF build file</description>
+
+  <property file="build.properties"/>
+  <property name="build.base" value="../"/>
+  <property name="package.file" value="${build.base}wcmf_${version}.zip"/>
+
+  <target name="init">
+    <tstamp/>
+  </target>
+
+  <target name="buildinfo" depends="init"
+    description="generate the build version file" >
+    <propertyfile file="${build.info}"
+     comment="Build Information File - DO NOT MODIFY">
+        <entry key="version"
+         value="${version}"/>
+        <entry key="build"
+         type="int" default="0000"
+         operation="+" pattern="0000"/>
+    </propertyfile>
+    <property file="${build.info}"/>
+  </target>
+
+  <target name="dist" depends="buildinfo"
+    description="build the distribution" >
+    <mkdir dir="${dist.dir}"/>
+    <copy todir="${dist.dir}">
+      <fileset dir="../src/">
+        <exclude name="**/*.log"/>
+        <exclude name="**/cache/**"/>
+        <exclude name="**/config/*.ini"/>
+        <exclude name="**/app/public/js/model/meta/_TypeList.js"/>
+        <exclude name="**/app/public/js/model/types/**"/>
+        <exclude name="**/app/public/media/**"/>
+        <exclude name="**/app/src/**"/>
+        <exclude name="**/install/tables.sql"/>
+        <exclude name="**/model/**/*.uml"/>
+        <exclude name="**/test/model/**"/>
+        <exclude name="**/test/tests/**"/>
+        <include name="**"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${dist.dir}/cache"/>
+    <mkdir dir="${dist.dir}/app/public/js/model/types"/>
+    <mkdir dir="${dist.dir}/app/public/media"/>
+    <mkdir dir="${dist.dir}/app/src/model"/>
+    <mkdir dir="${dist.dir}/app/src/view"/>
+    <mkdir dir="${dist.dir}/app/src/controller"/>
+    <mkdir dir="${dist.dir}/test/tests"/>
+    <copy file="${build.info}" todir="${dist.dir}"/>
+  </target>
+
+  <target name="package" depends="dist"
+    description="pack the distribution" >
+    <zip destfile="${package.file}" basedir="${dist.dir}"/>
+  </target>
+
+  <target name="clean"
+    description="clean up" >
+    <delete dir="${dist.dir}"/>
+    <delete file="${package.file}"/>
+  </target>
+</project>
