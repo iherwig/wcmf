@@ -54,7 +54,6 @@ define([
         makeNotFoundPage: function () {
             var request = new Request(window.location.href),
                 makePage = function (Page) {
-                    this.setStylesheets();
                     this.setCss();
                     this.setPageNode();
 
@@ -74,7 +73,6 @@ define([
         makeErrorPage: function (error) {
             var request = new Request(window.location.href),
                 makePage = function (Page) {
-                    this.setStylesheets();
                     this.setCss();
                     this.setPageNode();
 

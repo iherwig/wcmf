@@ -137,7 +137,7 @@ define([
                         this.page.pushConfirmed(url);
                     }
                     else {
-                        this.page.push(url);
+                        this.page.pushState(url);
                     }
                 }
             }
