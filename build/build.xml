@@ -29,7 +29,7 @@
     description="build the distribution" >
     <mkdir dir="${dist.dir}"/>
     <copy todir="${dist.dir}">
-      <fileset dir="../src/">
+      <fileset dir="${build.base}src/">
         <exclude name="**/*.log"/>
         <exclude name="**/cache/**"/>
         <exclude name="**/config/*.ini"/>
@@ -37,8 +37,11 @@
         <exclude name="**/app/public/js/model/types/**"/>
         <exclude name="**/app/public/media/**"/>
         <exclude name="**/app/src/**"/>
+        <exclude name="**/dist/**"/>
         <exclude name="**/install/tables.sql"/>
-        <exclude name="**/model/**/*.uml"/>
+        <exclude name="**/model/base/**"/>
+        <exclude name="**/model/model-transformed/**"/>
+        <exclude name="**/model/*.*"/>
         <exclude name="**/test/model/**"/>
         <exclude name="**/test/tests/**"/>
         <include name="**"/>
@@ -51,12 +54,20 @@
     <mkdir dir="${dist.dir}/app/src/view"/>
     <mkdir dir="${dist.dir}/app/src/controller"/>
     <mkdir dir="${dist.dir}/test/tests"/>
+    <copy todir="${dist.dir}/model/" flatten="true">
+      <fileset dir="${build.base}src/model/">
+        <include name="base/cwm-export.uml"/>
+        <include name="base/workflow.properties"/>
+        <include name="chronos.profile.uml"/>
+      </fileset>
+    </copy>
     <copy file="${build.info}" todir="${dist.dir}"/>
   </target>
 
   <target name="package" depends="dist"
     description="pack the distribution" >
     <zip destfile="${package.file}" basedir="${dist.dir}"/>
+    <delete dir="${dist.dir}"/>
   </target>
 
   <target name="clean" depends="properties"

@@ -103,11 +103,12 @@
   <target name="package" depends="dist"
     description="pack the distribution" >
     <zip destfile="${package.file}" basedir="${dist.dir}"/>
+    <delete dir="${dist.dir}"/>
+    <delete file="${dojo.build.log}"/>
   </target>
 
   <target name="clean" depends="properties"
     description="clean up" >
-    <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
     <delete file="${dojo.build.log}"/>
     <delete file="${package.file}"/>
