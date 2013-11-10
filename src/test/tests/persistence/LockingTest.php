@@ -35,9 +35,9 @@ use wcmf\lib\persistence\concurrency\PessimisticLockException;
  */
 class LockingTest extends DatabaseTestCase {
 
-  private $_user1OidStr = 'UserRDB:555';
-  private $_user2OidStr = 'UserRDB:666';
-  private $_user3OidStr = 'UserRDB:777';
+  private $_user1OidStr = 'User:555';
+  private $_user2OidStr = 'User:666';
+  private $_user3OidStr = 'User:777';
 
   protected function getDataSet() {
     return new ArrayDataSet(array(

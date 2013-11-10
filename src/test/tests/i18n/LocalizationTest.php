@@ -34,8 +34,8 @@ class LocalizationTest extends DatabaseTestCase {
 
   const EXPECTED_DEFAULT_LANGUAGE_CODE = 'en';
   const EXPECTED_DEFAULT_LANGUAGE_NAME = 'English';
-  const TEST_OID1 = 'UserRDB:301';
-  const TEST_OID2 = 'UserRDB:302';
+  const TEST_OID1 = 'User:301';
+  const TEST_OID2 = 'User:302';
   const TRANSLATION_TYPE = 'Translation';
 
   protected function getDataSet() {

@@ -18,7 +18,7 @@
  */
 namespace test\tests\persistence;
 
-use testapp\application\model\wcmf\RoleRDB;
+use app\src\model\wcmf\Role;
 
 use test\lib\ArrayDataSet;
 use test\lib\DatabaseTestCase;
@@ -57,10 +57,10 @@ class ManyToManyTest extends DatabaseTestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $userMapper = $persistenceFacade->getMapper('UserRDB');
-    $relationDescription = $userMapper->getRelation('RoleRDB');
-    $this->assertEquals('testapp.application.model.wcmf.RoleRDB', $relationDescription->getOtherType(), "The type is RoleRDB");
-    $this->assertEquals('RoleRDB', $relationDescription->getOtherRole(), "The role is RoleRDB");
+    $userMapper = $persistenceFacade->getMapper('User');
+    $relationDescription = $userMapper->getRelation('Role');
+    $this->assertEquals('app.src.model.wcmf.Role', $relationDescription->getOtherType(), "The type is Role");
+    $this->assertEquals('Role', $relationDescription->getOtherRole(), "The role is Role");
     $this->assertEquals('0', $relationDescription->getOtherMinMultiplicity(), "The minimum multiplicity is 0");
     $this->assertEquals('none', $relationDescription->getOtherAggregationKind(), "The aggregation kind is none");
 
@@ -71,14 +71,14 @@ class ManyToManyTest extends DatabaseTestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $user1 = $persistenceFacade->load(new ObjectId('UserRDB', 50), 1);
-    $role1 = $user1->getFirstChild('RoleRDB', null, null);
-    $this->assertTrue($role1 instanceof RoleRDB, "The role is loaded as direct child");
+    $user1 = $persistenceFacade->load(new ObjectId('User', 50), 1);
+    $role1 = $user1->getFirstChild('Role', null, null);
+    $this->assertTrue($role1 instanceof Role, "The role is loaded as direct child");
 
-    $user2 = $persistenceFacade->load(new ObjectId('UserRDB', 50), BuildDepth::SINGLE);
-    $user2->loadChildren('RoleRDB');
-    $role2 = $user2->getFirstChild('RoleRDB', null, null);
-    $this->assertTrue($role2 instanceof RoleRDB, "The role is loaded as direct child");
+    $user2 = $persistenceFacade->load(new ObjectId('User', 50), BuildDepth::SINGLE);
+    $user2->loadChildren('Role');
+    $role2 = $user2->getFirstChild('Role', null, null);
+    $this->assertTrue($role2 instanceof Role, "The role is loaded as direct child");
 
     TestUtil::runAnonymous(false);
   }
@@ -87,13 +87,13 @@ class ManyToManyTest extends DatabaseTestCase {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $newUser1 = $persistenceFacade->create('UserRDB', BuildDepth::SINGLE);
+    $newUser1 = $persistenceFacade->create('User', BuildDepth::SINGLE);
     $children = $newUser1->getPossibleChildren();
-    $this->assertContains('RoleRDB', array_keys($children), "RoleRDB is a possible child of UserRDB");
+    $this->assertContains('Role', array_keys($children), "Role is a possible child of User");
 
-    $newUser2 = $persistenceFacade->create('UserRDB', 1);
-    $role = $newUser2->getFirstChild('RoleRDB');
-    $this->assertTrue($role instanceof RoleRDB, "RoleRDB is a possible child of UserRDB");
+    $newUser2 = $persistenceFacade->create('User', 1);
+    $role = $newUser2->getFirstChild('Role');
+    $this->assertTrue($role instanceof Role, "Role is a possible child of User");
 
     TestUtil::runAnonymous(false);
   }
@@ -107,10 +107,10 @@ class ManyToManyTest extends DatabaseTestCase {
     $roleId = 61;
 
     $transaction->begin();
-    $user = $persistenceFacade->load(new ObjectId('UserRDB', array($userId)), 1);
-    $role = $persistenceFacade->load(new ObjectId('RoleRDB', array($roleId)), 1);
-    $this->assertEquals(0, sizeof($user->getFirstChild('RoleRDB', null, null)), "No connection yet");
-    $this->assertEquals(0, sizeof($role->getFirstChild('UserRDB', null, null)), "No connection yet");
+    $user = $persistenceFacade->load(new ObjectId('User', array($userId)), 1);
+    $role = $persistenceFacade->load(new ObjectId('Role', array($roleId)), 1);
+    $this->assertEquals(0, sizeof($user->getFirstChild('Role', null, null)), "No connection yet");
+    $this->assertEquals(0, sizeof($role->getFirstChild('User', null, null)), "No connection yet");
 
     // add role first time
     $user->addNode($role);

@@ -33,8 +33,8 @@ use wcmf\lib\persistence\ObjectId;
  */
 class SaveControllerTest extends ControllerTestCase {
 
-  const TEST_OID = 'UserRDB:0';
-  const TEST_TYPE = 'UserRDB';
+  const TEST_OID = 'User:0';
+  const TEST_TYPE = 'User';
 
   protected function getControllerName() {
     return 'wcmf\application\controller\SaveController';

@@ -34,7 +34,7 @@ use wcmf\lib\persistence\ObjectId;
  */
 class ListControllerTest extends ControllerTestCase {
 
-  const TEST_OID = 'UserRDB:0';
+  const TEST_OID = 'User:0';
 
   protected function getControllerName() {
     return 'wcmf\application\controller\ListController';

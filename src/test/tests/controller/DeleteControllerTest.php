@@ -35,8 +35,8 @@ use wcmf\lib\persistence\ObjectId;
  */
 class DeleteControllerTest extends ControllerTestCase {
 
-  const TEST_TYPE = 'UserRDB';
-  const TEST_OID = 'UserRDB:1';
+  const TEST_TYPE = 'User';
+  const TEST_OID = 'User:1';
 
   protected function getControllerName() {
     return 'wcmf\application\controller\DeleteController';

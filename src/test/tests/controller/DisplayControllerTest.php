@@ -33,7 +33,7 @@ use wcmf\lib\persistence\ObjectId;
  */
 class DisplayControllerTest extends ControllerTestCase {
 
-  const TEST_OID1 = 'UserRDB:0';
+  const TEST_OID1 = 'User:0';
   const TEST_OID2 = 'Locktable:0';
 
   protected function getControllerName() {

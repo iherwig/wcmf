@@ -18,12 +18,12 @@
  */
 namespace test\tests\persistence;
 
-use testapp\application\model\Author;
-use testapp\application\model\AuthorRDBMapper;
-use testapp\application\model\PublisherRDBMapper;
-use testapp\application\model\ImageRDBMapper;
-use testapp\application\model\Chapter;
-use testapp\application\model\ChapterRDBMapper;
+use app\src\model\Author;
+use app\src\model\AuthorRDBMapper;
+use app\src\model\PublisherRDBMapper;
+use app\src\model\ImageRDBMapper;
+use app\src\model\Chapter;
+use app\src\model\ChapterRDBMapper;
 
 use test\lib\BaseTestCase;
 use test\lib\TestUtil;
@@ -247,7 +247,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertEquals('wcmf\lib\persistence\InsertOperation:type=testapp.application.model.Chapter,values=(id=1,fk_chapter_id=3,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin),criteria=()', $str);
+    $this->assertEquals('wcmf\lib\persistence\InsertOperation:type=app.src.model.Chapter,values=(id=1,fk_chapter_id=3,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin),criteria=()', $str);
   }
 
   public function testUpdateSQL() {
@@ -270,7 +270,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertEquals('wcmf\lib\persistence\UpdateOperation:type=testapp.application.model.Chapter,values=(id=1,fk_chapter_id=3,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin),criteria=([AND] testapp.application.model.Chapter.id = 1)', $str);
+    $this->assertEquals('wcmf\lib\persistence\UpdateOperation:type=app.src.model.Chapter,values=(id=1,fk_chapter_id=3,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin),criteria=([AND] app.src.model.Chapter.id = 1)', $str);
   }
 
   public function testDeleteSQL() {
@@ -282,7 +282,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertEquals('wcmf\lib\persistence\DeleteOperation:type=testapp.application.model.Chapter,values=(),criteria=([AND] testapp.application.model.Chapter.id = 1)', $str);
+    $this->assertEquals('wcmf\lib\persistence\DeleteOperation:type=app.src.model.Chapter,values=(),criteria=([AND] app.src.model.Chapter.id = 1)', $str);
   }
 }
 ?>
