@@ -22,6 +22,7 @@ require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
 use \Exception;
+use wcmf\lib\core\Log;
 use wcmf\lib\presentation\Application;
 
 $application = new Application();
@@ -34,5 +35,8 @@ try {
 }
 catch (Exception $ex) {
   $application->handleException($ex, $request);
+}
+if (Log::isDebugEnabled('main')) {
+  Log::debug(memory_get_peak_usage(), 'main');
 }
 ?>

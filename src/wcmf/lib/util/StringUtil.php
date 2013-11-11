@@ -148,6 +148,32 @@ class StringUtil {
   }
 
   /**
+   * Split string preserving quoted strings
+   * code based on: http://www.php.net/manual/en/function.explode.php#94024
+   * @param str String to split
+   * @param delim Regexp to use in preg_split
+   * @param quoteChr Quote character
+   * @param preserve Boolean whether to preserve the quote character or not
+   * @return Array
+   */
+  public static function splitQuoted($str, $delim='/ /', $quoteChr='"', $preserve=false){
+    $resArr = array();
+    $n = 0;
+    $expEncArr = explode($quoteChr, $str);
+    foreach($expEncArr as $encItem) {
+      if ($n++%2) {
+        array_push($resArr, array_pop($resArr) . ($preserve?$quoteChr:'') . $encItem.($preserve?$quoteChr:''));
+      }
+      else {
+        $expDelArr = preg_split($delim, $encItem);
+        array_push($resArr, array_pop($resArr) . array_shift($expDelArr));
+        $resArr = array_merge($resArr, $expDelArr);
+      }
+    }
+    return $resArr;
+  }
+
+  /**
    * Convert a string in underscore notation to camel case notation.
    * Code from http://snipt.net/hongster/underscore-to-camelcase/
    * @param string The string to convert

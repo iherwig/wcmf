@@ -421,19 +421,30 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
                 $references[$otherTable] = array();
                 $references[$otherTable]['attributes'] = array();
 
+                $tableNameQ = $this->quoteIdentifier($tableName);
+                $otherTableQ = $this->quoteIdentifier($otherTable);
+
                 // determine the join condition
                 if ($relationDesc instanceof RDBManyToOneRelationDescription) {
                   // reference from parent
-                  $thisAttr = $this->getAttribute($relationDesc->getFkName());
-                  $otherAttr = $otherMapper->getAttribute($relationDesc->getIdName());
+                  $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getFkName())->getColumn());
+                  $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getIdName())->getColumn());
+                  $additionalCond = "";
                 }
                 else if ($relationDesc instanceof RDBOneToManyRelationDescription) {
                   // reference from child
-                  $thisAttr = $this->getAttribute($relationDesc->getIdName());
-                  $otherAttr = $otherMapper->getAttribute($relationDesc->getFkName());
+                  $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getIdName())->getColumn());
+                  $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getFkName())->getColumn());
+                  $otherPkNames = $otherMapper->getPkNames();
+                  $otherPkNameQ = $this->quoteIdentifier($otherMapper->getAttribute($otherPkNames[0])->getColumn());
+                  $additionalCond = " AND ".$otherTableQ.".".$otherPkNameQ.
+                          " = (SELECT MIN(".$otherTableQ.".".$otherPkNameQ.") FROM ".$otherTableQ.
+                          " WHERE ".$otherTableQ.".".$otherAttrNameQ."=".$tableNameQ.".".$thisAttrNameQ.")";
                 }
-                $joinCond = $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($thisAttr->getName()).
-                        "=".$this->quoteIdentifier($otherTable).".".$this->quoteIdentifier($otherAttr->getName());
+                $joinCond = $tableNameQ.".".$thisAttrNameQ."=".$otherTableQ.".".$otherAttrNameQ;
+                if (strlen($additionalCond) > 0) {
+                  $joinCond = "(".$joinCond.$additionalCond.")";
+                }
                 $references[$otherTable]['joinCond'] = $joinCond;
               }
 

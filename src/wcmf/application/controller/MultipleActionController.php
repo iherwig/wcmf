@@ -25,6 +25,7 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
 
 /**
@@ -115,15 +116,15 @@ class MultipleActionController extends Controller {
     $data = $request->getValue('data');
     $actions = array_keys($data);
     $numActions = sizeof($actions);
+    $exceptions = array();
     $actionMapper = ObjectFactory::getInstance('actionMapper');
-    for($i=0; $i<$numActions; $i++)
-    {
+    for($i=0; $i<$numActions; $i++) {
       $action = $actions[$i];
       $GLOBALS['gJSONData'] = array();
 
-      if (Log::isDebugEnabled(__CLASS__))
+      if (Log::isDebugEnabled(__CLASS__)) {
         Log::debug("processing action: ".$action.":\n".StringUtil::getDump($data[$action]), __CLASS__);
-
+      }
       // replace special variables
       $this->replaceVariables($data[$action]);
 
@@ -141,14 +142,45 @@ class MultipleActionController extends Controller {
       $request->setResponseFormat($request->getResponseFormat());
 
       // execute the request
-      $response = $actionMapper->processAction($request);
+      try {
+        $response = $actionMapper->processAction($request);
+      }
+      catch (ApplicationException $ex)
+      {
+        Log::error($ex->__toString(), __CLASS__);
+        $response = $ex->getResponse();
+        if ($response == null) {
+          $response = new Response('', '', $action, array());
+          $response->setFormat($request->getResponseFormat());
+          $requestData = $request->getData();
+          foreach ($requestData as $key => $value) {
+            $response->setValue($key, $value);
+          }
+        }
+        $response->setValue('success', false);
+        $response->setValue('errorCode', $ex->getCodeString());
+        $response->setValue('errorMessage', $ex->getMessage());
+        $exceptions[] = $ex;
+      }
+      catch (Exception $ex)
+      {
+        Log::error($ex->__toString(), __CLASS__);
+        $exceptions[] = $ex;
+      }
 
       // collect the result
       $results[$action] = &$response->getValues();
     }
-    if (Log::isDebugEnabled(__CLASS__))
+    if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug($results, __CLASS__);
-
+    }
+    // add error from first exception to mark the action set execution as failed
+    if (sizeof($exceptions) > 0) {
+      $ex = $exceptions[0];
+      $response->setValue('success', false);
+      $response->setValue('errorCode', $ex->getCodeString());
+      $response->setValue('errorMessage', $ex->getMessage());
+    }
     $response->setValue('data', $results);
     $response->setAction('ok');
     return true;
@@ -208,7 +240,7 @@ class MultipleActionController extends Controller {
           }
         }
 
-        // Dionysos oid reference
+        // oid reference
         if (ObjectFactory::getInstance('persistenceFacade')->isKnownType($variableName)) {
           $type = $variableName;
           $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

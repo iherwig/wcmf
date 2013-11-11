@@ -34,17 +34,23 @@ use wcmf\lib\presentation\control\lists\ListStrategy;
  */
 class ConfigListStrategy implements ListStrategy {
 
+  private $_lists = array();
+
   /**
    * @see ListStrategy::getList
    */
   public function getList($configuration, $language=null) {
-    $config = ObjectFactory::getConfigurationInstance();
-    $map = $config->getSection($configuration);
-    $result = array();
-    foreach ($map as $key => $value) {
-      $result[$key] = Message::get($value, null, $language);
+    $listKey = $configuration.$language;
+    if (!isset($this->_lists[$listKey])) {
+      $config = ObjectFactory::getConfigurationInstance();
+      $map = $config->getSection($configuration);
+      $result = array();
+      foreach ($map as $key => $value) {
+        $result[$key] = Message::get($value, null, $language);
+      }
+      $this->_lists[$listKey] = $result;
     }
-    return $result;
+    return $this->_lists[$listKey];
   }
 
   /**

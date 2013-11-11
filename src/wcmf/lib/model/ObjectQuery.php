@@ -460,18 +460,31 @@ class ObjectQuery extends AbstractQuery {
         $orderByParts = preg_split('/ /', $curOrderBy);
         $orderAttribute = $orderByParts[0];
         $orderDirection = sizeof($orderByParts) > 1 ? $orderByParts[1] : 'ASC';
-        $orderTableName = null;
+        $orderType = null;
 
-        // check all involved types
-        foreach (array_keys($this->_involvedTypes) as $curType) {
-          $mapper = $persistenceFacade->getMapper($curType);
-          if ($mapper->hasAttribute($orderAttribute)) {
-            $orderTableName = $mapper->getRealTableName();
-            break;
+        if (strpos($orderAttribute, '.') > 0) {
+          // the type is included in the attribute
+          $orderAttributeParts = preg_split('/\./', $orderAttribute);
+          $orderType = $orderAttributeParts[0];
+          $orderAttribute = $orderAttributeParts[1];
+          $orderTypeMapper = $persistenceFacade->getMapper($orderType);
+        }
+        else {
+          // check all involved types
+          foreach (array_keys($this->_involvedTypes) as $curType) {
+            $mapper = $persistenceFacade->getMapper($curType);
+            if ($mapper->hasAttribute($orderAttribute)) {
+              $orderTypeMapper = $mapper;
+              break;
+            }
           }
         }
+        $orderTableName = $orderTypeMapper->getRealTableName();
+        $orderAttributeDesc = $orderTypeMapper->getAttribute($orderAttribute);
+        $orderColumnName = $orderAttributeDesc->getColumn();
+
         if ($orderTableName) {
-          $orderAttributeFinal = $orderTableName.".".$orderAttribute;
+          $orderAttributeFinal = $orderTableName.".".$orderColumnName;
           $selectStmt->order(array($orderAttributeFinal." ".$orderDirection));
         }
         else {

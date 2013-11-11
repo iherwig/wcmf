@@ -12,7 +12,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\config\impl\InifileConfiguration;
 
 // read config file
-$config = new InifileConfiguration('../../../testapp/config/');
+$config = new InifileConfiguration('../../../app/config/');
 $config->addConfiguration('config.ini');
 ObjectFactory::configure($config);
 ?>

@@ -117,15 +117,20 @@ class ListController extends Controller {
       $pagingInfo = new PagingInfo($request->getValue('limit'));
       $pagingInfo->setOffset($request->getValue('offset'));
     }
+    $className = $request->getValue('className');
 
     // add sort term
     $sortArray = null;
     $orderBy = $request->getValue('sortFieldName');
     if (strlen($orderBy) > 0) {
+      // add type in orderby to avoid ambiguousness
+      if (strpos($orderBy, ".") === false) {
+        $orderBy = $className.".".$orderBy;
+      }
       $sortArray = array($orderBy." ".$request->getValue('sortDirection'));
     }
     // get the object ids
-    $objects = $this->getObjects($request->getValue('className'), $query, $sortArray, $pagingInfo);
+    $objects = $this->getObjects($className, $query, $sortArray, $pagingInfo);
 
     // collect the nodes
     $nodes = array();

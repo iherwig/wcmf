@@ -35,37 +35,43 @@ use wcmf\lib\presentation\control\lists\ListStrategy;
  */
 class FixedListStrategy implements ListStrategy {
 
+  private $_lists = array();
+
   /**
    * @see ListStrategy::getList
    */
   public function getList($configuration, $language=null) {
-    // see if we have an array variable or a list definition
-    if (strPos($configuration, '$') === 0) {
-      $entries = $GLOBALS[subStr($configuration, 1)];
-    }
-    else {
-      $entries = explode('|', $configuration);
-    }
-    if (!is_array($entries)) {
-      throw new ConfigurationException($configuration." is no array.");
-    }
-    // process list
-    foreach($entries as $curEntry) {
-      preg_match_all("/([^\[]*)\[*([^\]]*)\]*/", $curEntry, $matches);
-      if (sizeOf($matches) > 0) {
-        $val1 = $matches[1][0];
-        $val2 = $matches[2][0];
-        if ($val2 != '') {
-          // value given
-          $map[$val1] = Message::get($val2, null, $language);
-        }
-        else {
-          // only key given
-          $map[$val1] = Message::get($val1, null, $language);
+    $listKey = $configuration.$language;
+    if (!isset($this->_lists[$listKey])) {
+      // see if we have an array variable or a list definition
+      if (strPos($configuration, '$') === 0) {
+        $entries = $GLOBALS[subStr($configuration, 1)];
+      }
+      else {
+        $entries = explode('|', $configuration);
+      }
+      if (!is_array($entries)) {
+        throw new ConfigurationException($configuration." is no array.");
+      }
+      // process list
+      foreach($entries as $curEntry) {
+        preg_match_all("/([^\[]*)\[*([^\]]*)\]*/", $curEntry, $matches);
+        if (sizeOf($matches) > 0) {
+          $val1 = $matches[1][0];
+          $val2 = $matches[2][0];
+          if ($val2 != '') {
+            // value given
+            $map[$val1] = Message::get($val2, null, $language);
+          }
+          else {
+            // only key given
+            $map[$val1] = Message::get($val1, null, $language);
+          }
         }
       }
+      $this->_lists[$listKey] = $map;
     }
-    return $map;
+    return $this->_lists[$listKey];
   }
 
   /**

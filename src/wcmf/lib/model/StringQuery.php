@@ -23,6 +23,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\util\StringUtil;
 
 /**
  * StringQuery executes queries from a string representation. Queries are
@@ -70,7 +71,7 @@ class StringQuery extends ObjectQuery {
     // attributes to column names
     $conditionString = $this->_condition;
     $otherRoles = array();
-    $tokens = preg_split("/[\s=<>()!]+/", $conditionString);
+    $tokens = StringUtil::splitQuoted($conditionString, "/[\s=<>()!]+/", "'", true);
     $operators = array('and', 'or', 'not', 'like', 'is', 'null');
     foreach ($tokens as $token) {
       if (strlen($token) > 0) {

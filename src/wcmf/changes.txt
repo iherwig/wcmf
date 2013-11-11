@@ -1,1 +1,1 @@
-Version 3 -> 4- PHP5 only- introduced ObjectId Class- removed dataTypes from PersistentObject- PDO- UMIcurrent 3.0 rev. 1265
+Version 3 -> 4- PHP5 only- introduced ObjectId Class- removed dataTypes from PersistentObject- PDO- UMIcurrent 3.0 rev. 1381

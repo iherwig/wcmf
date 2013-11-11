@@ -133,8 +133,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           $pdoParams = array(
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
           );
-          if ($this->_connectionParams['dbType'] == 'mysql') {
+          // mysql specific
+          if (strtolower($this->_connectionParams['dbType'] == 'mysql')) {
             $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+            $charSet = isset($this->_connectionParams['dbCharSet']) ?
+                    $this->_connectionParams['dbCharSet'] : 'utf8';
+            $pdoParams[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES ".$charSet;
           }
           $params = array(
             'host' => $this->_connectionParams['dbHostName'],
@@ -205,15 +209,24 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   protected function getNextId() {
     try {
+      // get sequence table mapper
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $sequenceMapper = $persistenceFacade->getMapper(self::$SEQUENCE_CLASS);
+      if (!($sequenceMapper instanceof RDBMapper)) {
+        throw new PersistenceException(self::$SEQUENCE_CLASS." is nor mapped by RDBMapper.");
+      }
+      $sequenceTable = $sequenceMapper->getTableName();
+      $sequenceConn = $sequenceMapper->getConnection();
+
       $id = 0;
       if ($this->_idSelectStmt == null) {
-        $this->_idSelectStmt = $this->_conn->prepare("SELECT id FROM ".$this->getSequenceTablename());
+        $this->_idSelectStmt = $sequenceConn->prepare("SELECT id FROM ".$sequenceTable);
       }
       if ($this->_idInsertStmt == null) {
-        $this->_idInsertStmt = $this->_conn->prepare("INSERT INTO ".$this->getSequenceTablename()." (id) VALUES (0)");
+        $this->_idInsertStmt = $sequenceConn->prepare("INSERT INTO ".$sequenceTable." (id) VALUES (0)");
       }
       if ($this->_idUpdateStmt == null) {
-        $this->_idUpdateStmt = $this->_conn->prepare("UPDATE ".$this->getSequenceTablename()." SET id=LAST_INSERT_ID(id+1);");
+        $this->_idUpdateStmt = $sequenceConn->prepare("UPDATE ".$sequenceTable." SET id=LAST_INSERT_ID(id+1);");
       }
       $this->_idSelectStmt->execute();
       $rows = $this->_idSelectStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -239,14 +252,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @return The name.
    */
   protected function getSequenceTablename() {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $mapper = $persistenceFacade->getMapper(self::$SEQUENCE_CLASS);
-    if ($mapper instanceof RDBMapper) {
-      return $mapper->getTableName();
-    }
-    else {
-      throw new PersistenceException(self::$SEQUENCE_CLASS." is nor mapped by RDBMapper.");
-    }
   }
 
   /**
@@ -322,7 +327,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         // make a count query if requested
         if (!$pagingInfo->isIgnoringTotalCount()) {
           $columnPart = $selectStmt->getPart(Zend_Db_Select::COLUMNS);
+          $orderPart = $selectStmt->getPart(Zend_Db_Select::ORDER);
           $selectStmt->reset(Zend_Db_Select::COLUMNS);
+          $selectStmt->reset(Zend_Db_Select::ORDER);
           $selectStmt->columns(array('nRows' => new Zend_Db_Expr('COUNT(*)')));
           $row = $selectStmt->getAdapter()->fetchRow($selectStmt);
           $nRows = $row['nRows'];
@@ -332,6 +339,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           $selectStmt->reset(Zend_Db_Select::COLUMNS);
           foreach ($columnPart as $columnDef) {
             $selectStmt->columns(array($columnDef[2] => $columnDef[1]), $columnDef[0]);
+          }
+          foreach ($orderPart as $orderDef) {
+            $selectStmt->order($orderDef[0]." ".$orderDef[1]);
           }
         }
         // return empty array, if page size <= 0
@@ -715,10 +725,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     // escape all values (except for primary key values)
     $appValues = array();
     if ($this->_dataConverter) {
-      foreach ($object->getValueNames() as $valueName)
-      {
-        if (!$this->isPkValue($valueName))
-        {
+      foreach ($object->getValueNames() as $valueName) {
+        if (!$this->isPkValue($valueName)) {
           $value = $object->getValue($valueName);
           $appValues[$valueName] = $value;
           $convertedValue = $this->_dataConverter->convertApplicationToStorage($value, $object->getValueProperty($valueName, 'type'), $valueName);
@@ -757,8 +765,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
     // set converted values back to application values
     if ($this->_dataConverter) {
-      foreach ($object->getValueNames() as $valueName)
-      {
+      foreach ($object->getValueNames() as $valueName) {
         if (!$this->isPkValue($valueName)) {
           $object->setValue($valueName, $appValues[$valueName], true, false);
         }

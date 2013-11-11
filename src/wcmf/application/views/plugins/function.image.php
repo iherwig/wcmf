@@ -33,13 +33,20 @@ use wcmf\lib\util\URIUtil;
 *           in the cache directory that is used by the View class, which means that invalidating the View
 *           cache invalidates the image cache too. The content of the 'params' parameter will be put as is in the
 *           created image tag. If the image url has to be translated, use the 'base' parameter (see
-*           smarty_function_translate_url). The 'sizemode' parameter can have one of the followig values:
+*           smarty_function_translate_url).
+*           The 'sizemode' parameter can have one of the followig values:
 *           - resize: The browser scales the image to fit inside the given dimensions
 *           - resample: The image will be physically scaled to fit inside the given dimensions
 *           - crop: The image will be clipped from the middle to fit inside the given dimensions
 *           If the parameter is not given, it defaults to resample.
+*           The 'valueMode' parameter can have one of the following values:
+*           - fitInto: The image is resized if it's width or height exceeds one of the given values. Image proportions will be kept.
+*           - scaleTo: The image is resized if it's width or height differs from the given values. Image proportions will be kept.
+*           - default: The image is resized if it's width or height differs from the given values. Image proportions will be ignored.
+*           The image will be resized according to the given sizemode. The image won't be cropped with 'valuemode' set to anything else than default.
+*           If the parameter is not given, default is used. Size attributes may be skipped using the nosizeoutput parameter.
 * Usage:    {image src=$image->getFile() base="cms/application/" width="100" alt="Image 1" params='border="0"'
-*           default="images/blank.gif" sizemode=resize}
+*           default="images/blank.gif" sizemode="resize" nosizeoutput=true}
 * -------------------------------------------------------------
 */
 function smarty_function_image($params, &$smarty)
@@ -48,6 +55,7 @@ function smarty_function_image($params, &$smarty)
   $base = $params['base'];
   $default = $params['default'];
   $sizemode = $params['sizemode'];
+  $valuemode = $params['valuemode'];
 
   if (strlen($file) == 0 && strlen($default) == 0) {
     return;
@@ -84,6 +92,45 @@ function smarty_function_image($params, &$smarty)
 
   $requestedWidth = isset($params['width']) ? $params['width']: null;
   $requestedHeight = isset($params['height']) ? $params['height']: null;
+
+  // calculate new dimensions if value mode is set
+  if ($valuemode == 'scaleTo' || $valuemode == 'fitInto')
+  {
+    if ($valuemode == 'fitInto' && $requestedHeight && $requestedHeight > $imageSize[1])
+    {
+      // if image should fit into a rectangle and it's height is smaller than the requested, leave image untouched
+      $requestedHeight = $imageSize[1];
+    }
+    else if ($valuemode == 'fitInto' && $requestedWidth && $requestedWidth > $imageSize[0])
+    {
+      // if image should fit into a rectangle and it's width is smaller than the requested, leave image untouched
+      $requestedWidth = $imageSize[0];
+    }
+    if ($requestedHeight == null)
+    {
+      // calculate height if only width is given
+      $requestedHeight = floor(($imageSize[1] * $requestedWidth) / $imageSize[0]);
+    }
+    else if ($requestedWidth == null)
+    {
+      // calculate width if only height is given
+      $requestedWidth = floor(($imageSize[0] * $requestedHeight) / $imageSize[1]);
+    }
+    else
+    {
+      // calculate either width or height depending on the ratio
+      $requestedAspectRatio = $requestedHeight / $requestedWidth;
+      $imageAspectRatio = $imageSize[1] / $imageSize[0];
+      if ($requestedAspectRatio >= $imageAspectRatio) {
+        // scale based on width, keep requestedWidth
+        $requestedHeight = ($imageSize[1] * $requestedWidth) / $imageSize[0];
+      }
+      else {
+        // scale based on height, keep requestedHeight
+        $requestedWidth = ($imageSize[0] * $requestedHeight) / $imageSize[1];
+      }
+    }
+  }
 
   if (strlen($sizemode) == 0) {
   	$sizemode = 'resample';
@@ -128,15 +175,15 @@ function smarty_function_image($params, &$smarty)
 
   $widthStr = "";
   $heightStr = "";
-  if ($sizemode == 'resize')
-  {
+  if (!isset($params['nosizeoutput']) || $params['nosizeoutput'] == false) {
     if ($requestedWidth != null) {
-      $widthStr = ' width="'.$requestedWidth.'px"';
+      $widthStr = ' width="'.$requestedWidth.'"';
     }
     if ($requestedHeight != null) {
-      $heightStr = ' height="'.$requestedHeight.'px"';
+      $heightStr = ' height="'.$requestedHeight.'"';
     }
   }
-  echo '<img src="'.$file.'"'.$widthStr.$heightStr.' alt="'.$params['alt'].'" '.$params['params'].'/>';
+
+  echo '<img src="'.$file.'"'.$widthStr.$heightStr.' alt="'.$params['alt'].'" '.$params['params'].'>';
 }
 ?>
