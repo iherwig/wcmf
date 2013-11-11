@@ -46,6 +46,7 @@ var appSrc = [
     "app/js/ui/data/input/widget/BinaryCheckBox",
     "app/js/ui/data/input/widget/CheckBox",
     "app/js/ui/data/input/widget/CKEditor",
+    "app/js/ui/data/input/widget/Color",
     "app/js/ui/data/input/widget/Date",
     "app/js/ui/data/input/widget/FileBrowser",
     "app/js/ui/data/input/widget/LinkBrowser",
