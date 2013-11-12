@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/ChapterClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.Chapter',
+        typeName: "app.src.model.Chapter",
+        description: "A book is divided into chapters. A chapter may contain subchapters.",
         isSortable: true,
         displayValues: [
             "name"
@@ -41,6 +42,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -51,6 +53,7 @@ define([
         }, {
             name: "fk_chapter_id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -61,6 +64,7 @@ define([
         }, {
             name: "fk_book_id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -71,6 +75,7 @@ define([
         }, {
             name: "fk_author_id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -81,6 +86,7 @@ define([
         }, {
             name: "name",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'text',
             displayType: 'text',
@@ -91,6 +97,7 @@ define([
         }, {
             name: "created",
             type: "Date",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -101,6 +108,7 @@ define([
         }, {
             name: "creator",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -111,6 +119,7 @@ define([
         }, {
             name: "modified",
             type: "Date",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -121,6 +130,7 @@ define([
         }, {
             name: "last_editor",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -163,14 +173,14 @@ define([
             maxMultiplicity: "1",
             thisEndName: "Chapter",
             relationType: "parent"
-    }, {
+        }, {
             name: "Book",
             type: "Book",
             aggregationKind: "none",
             maxMultiplicity: "1",
             thisEndName: "Chapter",
             relationType: "parent"
-    }, {
+        }, {
             name: "ParentChapter",
             type: "Chapter",
             aggregationKind: "none",

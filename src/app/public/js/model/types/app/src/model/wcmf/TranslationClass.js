@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/TranslationClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.wcmf.Translation',
+        typeName: "app.src.model.wcmf.Translation",
+        description: "Instances of this class are used to localize entity attributes. Each instance defines a translation of one attribute of one entity into one language.",
         isSortable: false,
         displayValues: [
             "objectid"
@@ -43,6 +44,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -53,6 +55,7 @@ define([
         }, {
             name: "objectid",
             type: "String",
+            description: "The object id of the object to which the translation belongs",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -63,6 +66,7 @@ define([
         }, {
             name: "attribute",
             type: "String",
+            description: "The attribute of the object that is translated",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -73,6 +77,7 @@ define([
         }, {
             name: "translation",
             type: "String",
+            description: "The translation",
             isEditable: false,
             inputType: 'textarea',
             displayType: 'text',
@@ -83,6 +88,7 @@ define([
         }, {
             name: "language",
             type: "String",
+            description: "The language of the translation",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',

@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/AuthorClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.Author',
+        typeName: "app.src.model.Author",
+        description: "?",
         isSortable: false,
         displayValues: [
             "name"
@@ -41,6 +42,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -51,6 +53,7 @@ define([
         }, {
             name: "name",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'text',
             displayType: 'text',
@@ -61,6 +64,7 @@ define([
         }, {
             name: "created",
             type: "Date",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -71,6 +75,7 @@ define([
         }, {
             name: "creator",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -81,6 +86,7 @@ define([
         }, {
             name: "modified",
             type: "Date",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -91,6 +97,7 @@ define([
         }, {
             name: "last_editor",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',

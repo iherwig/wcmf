@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/LocktableClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.wcmf.Locktable',
+        typeName: "app.src.model.wcmf.Locktable",
+        description: "?",
         isSortable: false,
         displayValues: [
         ],
@@ -40,6 +41,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -50,6 +52,7 @@ define([
         }, {
             name: "fk_user_id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -60,6 +63,7 @@ define([
         }, {
             name: "objectid",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -70,6 +74,7 @@ define([
         }, {
             name: "sessionid",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -80,6 +85,7 @@ define([
         }, {
             name: "since",
             type: "Date",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',

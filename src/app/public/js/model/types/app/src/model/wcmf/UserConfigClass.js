@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserConfigClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.wcmf.UserConfig',
+        typeName: "app.src.model.wcmf.UserConfig",
+        description: "?",
         isSortable: false,
         displayValues: [
             "key"
@@ -41,6 +42,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -51,6 +53,7 @@ define([
         }, {
             name: "fk_user_id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -61,6 +64,7 @@ define([
         }, {
             name: "key",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -71,6 +75,7 @@ define([
         }, {
             name: "val",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'text',
             displayType: 'text',

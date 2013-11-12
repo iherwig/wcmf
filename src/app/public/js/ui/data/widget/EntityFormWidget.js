@@ -13,6 +13,7 @@ define( [
     "dijit/form/DropDownButton",
     "dijit/Menu",
     "dijit/MenuItem",
+    "dijit/Tooltip",
     "../../_include/FormLayout",
     "../../_include/_NotificationMixin",
     "../../_include/widget/Button",
@@ -40,6 +41,7 @@ function(
     DropDownButton,
     Menu,
     MenuItem,
+    Tooltip,
     FormLayout,
     _Notification,
     Button,
@@ -123,6 +125,10 @@ function(
                     }, attributeWidget)));
                     attributeWidget.startup();
                     layoutWidget.addChild(attributeWidget);
+                    new Tooltip({
+                        connectId: [attributeWidget.id],
+                        label: Dict.translate(attribute.description)
+                    });
                     this.attributeWidgets.push(attributeWidget);
                 }
                 layoutWidget.startup();

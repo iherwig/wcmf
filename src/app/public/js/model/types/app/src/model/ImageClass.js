@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/ImageClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.Image',
+        typeName: "app.src.model.Image",
+        description: "?",
         isSortable: true,
         displayValues: [
             "filename"
@@ -41,6 +42,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -51,6 +53,7 @@ define([
         }, {
             name: "fk_chapter_id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -61,6 +64,7 @@ define([
         }, {
             name: "fk_titlechapter_id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -71,6 +75,7 @@ define([
         }, {
             name: "filename",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'filebrowser',
             displayType: 'image',
@@ -81,6 +86,7 @@ define([
         }, {
             name: "created",
             type: "Date",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -91,6 +97,7 @@ define([
         }, {
             name: "creator",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -101,6 +108,7 @@ define([
         }, {
             name: "modified",
             type: "Date",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -111,6 +119,7 @@ define([
         }, {
             name: "last_editor",
             type: "String",
+            description: "?",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -127,7 +136,7 @@ define([
             maxMultiplicity: "1",
             thisEndName: "TitleImage",
             relationType: "parent"
-    }, {
+        }, {
             name: "NormalChapter",
             type: "Chapter",
             aggregationKind: "none",

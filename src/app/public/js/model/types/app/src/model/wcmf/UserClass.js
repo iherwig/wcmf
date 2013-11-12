@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/UserClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.wcmf.User',
+        typeName: "app.src.model.wcmf.User",
+        description: "?",
         isSortable: false,
         displayValues: [
             "login"
@@ -41,6 +42,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -51,6 +53,7 @@ define([
         }, {
             name: "login",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'text',
             displayType: 'text',
@@ -61,6 +64,7 @@ define([
         }, {
             name: "password",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'password',
             displayType: 'text',
@@ -71,6 +75,7 @@ define([
         }, {
             name: "name",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'text',
             displayType: 'text',
@@ -81,6 +86,7 @@ define([
         }, {
             name: "firstname",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'text',
             displayType: 'text',
@@ -91,6 +97,7 @@ define([
         }, {
             name: "config",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'select#file:../config/|/\..ini$/',
             displayType: 'text',

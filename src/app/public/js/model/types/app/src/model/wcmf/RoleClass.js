@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/RoleClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.wcmf.Role',
+        typeName: "app.src.model.wcmf.Role",
+        description: "?",
         isSortable: false,
         displayValues: [
             "name"
@@ -41,6 +42,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
@@ -51,6 +53,7 @@ define([
         }, {
             name: "name",
             type: "String",
+            description: "?",
             isEditable: true,
             inputType: 'text',
             displayType: 'text',

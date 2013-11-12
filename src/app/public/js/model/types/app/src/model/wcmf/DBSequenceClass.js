@@ -29,7 +29,8 @@ define([
 // PROTECTED REGION ID(app/public/js/model/types/app/src/model/wcmf/DBSequenceClass.js/Declare) ENABLED START
 // PROTECTED REGION END
     ], {
-        typeName: 'app.src.model.wcmf.DBSequence',
+        typeName: "app.src.model.wcmf.DBSequence",
+        description: "?",
         isSortable: false,
         displayValues: [
         ],
@@ -40,6 +41,7 @@ define([
         attributes: [{
             name: "id",
             type: "",
+            description: "",
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
