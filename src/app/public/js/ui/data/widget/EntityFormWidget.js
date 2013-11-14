@@ -13,10 +13,10 @@ define( [
     "dijit/form/DropDownButton",
     "dijit/Menu",
     "dijit/MenuItem",
-    "dijit/Tooltip",
     "../../_include/FormLayout",
     "../../_include/_NotificationMixin",
     "../../_include/widget/Button",
+    "../../_include/widget/HelpIcon",
     "../../../model/meta/Model",
     "../../../persistence/Store",
     "../../../persistence/RelationStore",
@@ -41,10 +41,10 @@ function(
     DropDownButton,
     Menu,
     MenuItem,
-    Tooltip,
     FormLayout,
     _Notification,
     Button,
+    HelpIcon,
     Model,
     Store,
     RelationStore,
@@ -124,11 +124,21 @@ function(
                         }
                     }, attributeWidget)));
                     attributeWidget.startup();
-                    layoutWidget.addChild(attributeWidget);
-                    new Tooltip({
-                        connectId: [attributeWidget.id],
-                        label: Dict.translate(attribute.description)
-                    });
+
+                    var description = Dict.translate(attribute.description);
+                    if (description && description.length > 0) {
+                      var helpIcon = new HelpIcon({
+                        text: Dict.translate(attribute.name)+": "+description
+                      });
+                    }
+
+                    var node = domConstruct.create("div");
+                    domConstruct.place(attributeWidget.domNode, node);
+                    domConstruct.place(helpIcon.domNode, node);
+                    domConstruct.place(node, layoutWidget.domNode);
+
+                    //layoutWidget.addChild(node);
+
                     this.attributeWidgets.push(attributeWidget);
                 }
                 layoutWidget.startup();

@@ -465,8 +465,8 @@ class ObjectQuery extends AbstractQuery {
         if (strpos($orderAttribute, '.') > 0) {
           // the type is included in the attribute
           $orderAttributeParts = preg_split('/\./', $orderAttribute);
-          $orderType = $orderAttributeParts[0];
-          $orderAttribute = $orderAttributeParts[1];
+          $orderAttribute = array_pop($orderAttributeParts);
+          $orderType = join('.', $orderAttributeParts);
           $orderTypeMapper = $persistenceFacade->getMapper($orderType);
         }
         else {

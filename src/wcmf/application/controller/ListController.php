@@ -123,10 +123,6 @@ class ListController extends Controller {
     $sortArray = null;
     $orderBy = $request->getValue('sortFieldName');
     if (strlen($orderBy) > 0) {
-      // add type in orderby to avoid ambiguousness
-      if (strpos($orderBy, ".") === false) {
-        $orderBy = $className.".".$orderBy;
-      }
       $sortArray = array($orderBy." ".$request->getValue('sortDirection'));
     }
     // get the object ids
