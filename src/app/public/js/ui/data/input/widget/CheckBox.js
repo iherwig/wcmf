@@ -2,15 +2,17 @@ define( [
     "dojo/_base/declare",
     "dojo/dom-construct",
     "dijit/form/CheckBox",
-    "./_BinaryItemsControl"
+    "./_BinaryItemsControl",
+    "../../../_include/_HelpMixin"
 ],
 function(
     declare,
     domConstruct,
     CheckBox,
-    _BinaryItemsControl
+    _BinaryItemsControl,
+    HelpIcon
 ) {
-    return declare([_BinaryItemsControl], {
+    return declare([_BinaryItemsControl, HelpIcon], {
 
         multiValued: true,
 

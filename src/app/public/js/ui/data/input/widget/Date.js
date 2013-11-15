@@ -3,6 +3,7 @@ define( [
     "dojo/_base/lang",
     "dojo/topic",
     "dijit/form/DateTextBox",
+    "../../../_include/_HelpMixin",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -10,9 +11,10 @@ function(
     lang,
     topic,
     DateTextBox,
+    HelpIcon,
     Dict
 ) {
-    return declare([DateTextBox], {
+    return declare([DateTextBox, HelpIcon], {
 
         intermediateChanges: true,
         hasDownArrow: false,

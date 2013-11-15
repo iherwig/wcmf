@@ -3,6 +3,7 @@ define( [
     "dojo/_base/lang",
     "dojo/topic",
     "dijit/form/Textarea",
+    "../../../_include/_HelpMixin",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -10,9 +11,10 @@ function(
     lang,
     topic,
     TextArea,
+    HelpIcon,
     Dict
 ) {
-    return declare([TextArea], {
+    return declare([TextArea, HelpIcon], {
 
         intermediateChanges: true,
         entity: {},

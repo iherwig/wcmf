@@ -3,6 +3,7 @@ define( [
     "dojo/_base/lang",
     "dojo/topic",
     "dojox/widget/ColorPicker",
+    "../../../_include/_HelpMixin",
     "../../../../locale/Dictionary",
     "xstyle/css!dojox/widget/ColorPicker/ColorPicker.css"
 ],
@@ -11,9 +12,10 @@ function(
     lang,
     topic,
     ColorPicker,
+    HelpIcon,
     Dict
 ) {
-    return declare([ColorPicker], {
+    return declare([ColorPicker, HelpIcon], {
 
         intermediateChanges: true,
         animatePoint: false,

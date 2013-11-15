@@ -7,6 +7,7 @@ define( [
     "dojo/dom-construct",
     "dojo/topic",
     "dijit/form/FilteringSelect",
+    "../../../_include/_HelpMixin",
     "../Factory",
     "../../../../locale/Dictionary"
 ],
@@ -19,10 +20,11 @@ function(
     domConstruct,
     topic,
     FilteringSelect,
+    HelpIcon,
     ControlFactory,
     Dict
 ) {
-    return declare([FilteringSelect], {
+    return declare([FilteringSelect, HelpIcon], {
 
         intermediateChanges: true,
         entity: {},

@@ -3,6 +3,7 @@ define( [
     "dojo/_base/lang",
     "dojo/topic",
     "dijit/form/TextBox",
+    "../../../_include/_HelpMixin",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -10,9 +11,10 @@ function(
     lang,
     topic,
     TextBox,
+    HelpIcon,
     Dict
 ) {
-    return declare([TextBox], {
+    return declare([TextBox, HelpIcon], {
 
         intermediateChanges: true,
         entity: {},

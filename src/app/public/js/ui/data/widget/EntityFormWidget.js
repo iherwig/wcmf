@@ -16,7 +16,6 @@ define( [
     "../../_include/FormLayout",
     "../../_include/_NotificationMixin",
     "../../_include/widget/Button",
-    "../../_include/widget/HelpIcon",
     "../../../model/meta/Model",
     "../../../persistence/Store",
     "../../../persistence/RelationStore",
@@ -44,7 +43,6 @@ function(
     FormLayout,
     _Notification,
     Button,
-    HelpIcon,
     Model,
     Store,
     RelationStore,
@@ -124,20 +122,7 @@ function(
                         }
                     }, attributeWidget)));
                     attributeWidget.startup();
-
-                    var description = Dict.translate(attribute.description);
-                    if (description && description.length > 0) {
-                      var helpIcon = new HelpIcon({
-                        text: Dict.translate(attribute.name)+": "+description
-                      });
-                    }
-
-                    var node = domConstruct.create("div");
-                    domConstruct.place(attributeWidget.domNode, node);
-                    domConstruct.place(helpIcon.domNode, node);
-                    domConstruct.place(node, layoutWidget.domNode);
-
-                    //layoutWidget.addChild(node);
+                    layoutWidget.addChild(attributeWidget);
 
                     this.attributeWidgets.push(attributeWidget);
                 }
