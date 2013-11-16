@@ -25,12 +25,19 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Type:     function
 * Name:     sessionvalue
 * Purpose:  output a session variable value
-* Usage:    e.g. {sessionvalue name="platform"}
+* Usage:    e.g. {sessionvalue name="platform"} or
+*           {sessionvalue name="platform" varname="platform"}
 * -------------------------------------------------------------
 */
 function smarty_function_sessionvalue($params, &$smarty)
 {
   $session = ObjectFactory::getInstance('session');
-  echo $session->get($params['name']);
+  $value = $session->get($params['name']);
+  if (isset($params['varname'])) {
+    $smarty->assign($params['varname'], $value);
+  }
+  else {
+    echo $value;
+  }
 }
 ?>

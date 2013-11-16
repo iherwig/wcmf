@@ -21,8 +21,8 @@ define([
         postCreate: function() {
             this.inherited(arguments);
 
-            var text = Dict.translate(this.attribute.description);
-            if (text.length > 0) {
+            var text = this.helpText;
+            if (text && text.length > 0) {
                 this.own(
                     on(this.domNode, 'mouseover', lang.hitch(this, function() {
                         popup.open({

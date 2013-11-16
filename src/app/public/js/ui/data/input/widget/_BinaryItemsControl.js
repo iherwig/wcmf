@@ -8,6 +8,7 @@ define( [
     "dojo/when",
     "dojo/on",
     "dijit/layout/ContentPane",
+    "../../../_include/_HelpMixin",
     "../Factory",
     "../../../../locale/Dictionary"
 ],
@@ -21,10 +22,11 @@ function(
     when,
     on,
     ContentPane,
+    HelpIcon,
     ControlFactory,
     Dict
 ) {
-    return declare([ContentPane], {
+    return declare([ContentPane, HelpIcon], {
 
         entity: {},
         attribute: {},
@@ -41,6 +43,7 @@ function(
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];
+            this.helpText = Dict.translate(this.attribute.description);
 
             this.store = ControlFactory.getListStore(this.attribute.inputType);
         },

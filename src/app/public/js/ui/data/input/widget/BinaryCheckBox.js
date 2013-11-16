@@ -24,6 +24,7 @@ function(
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];
             this.checked = this.value == 1; // value may be string or number
+            this.helpText = Dict.translate(this.attribute.description);
         },
 
         _getValueAttr: function() {

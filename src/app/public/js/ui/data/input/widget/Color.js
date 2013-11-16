@@ -31,6 +31,7 @@ function(
             this.name = this.attribute.name;
             var value = this.entity[this.attribute.name];
             this.value = value.match(/#[0-9a-f]{6}/i) ? value : '#FFFFFF';
+            this.helpText = Dict.translate(this.attribute.description);
         },
 
         postCreate: function() {

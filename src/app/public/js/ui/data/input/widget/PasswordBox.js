@@ -1,14 +1,12 @@
 define( [
     "dojo/_base/declare",
-    "./TextBox",
-    "../../../_include/_HelpMixin",
+    "./TextBox"
 ],
 function(
     declare,
-    TextBox,
-    HelpIcon
+    TextBox
 ) {
-    return declare([TextBox, HelpIcon], {
+    return declare([TextBox], {
 
         type: "password",
 

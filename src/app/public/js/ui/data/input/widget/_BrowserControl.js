@@ -6,6 +6,7 @@ define( [
     "dijit/form/TextBox",
     "../../../_include/widget/Button",
     "dijit/layout/ContentPane",
+    "../../../_include/_HelpMixin",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -16,9 +17,10 @@ function(
     TextBox,
     Button,
     ContentPane,
+    HelpIcon,
     Dict
 ) {
-    return declare([ContentPane], {
+    return declare([ContentPane, HelpIcon], {
 
         entity: {},
         attribute: {},
@@ -34,6 +36,7 @@ function(
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];
+            this.helpText = Dict.translate(this.attribute.description);
         },
 
         postCreate: function() {

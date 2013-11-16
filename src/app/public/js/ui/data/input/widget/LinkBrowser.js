@@ -2,17 +2,15 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "../../../_include/widget/Button",
-    "./_BrowserControl",
-    "../../../_include/_HelpMixin"
+    "./_BrowserControl"
 ],
 function(
     declare,
     lang,
     Button,
-    _BrowserControl,
-    HelpIcon
+    _BrowserControl
 ) {
-    return declare([_BrowserControl, HelpIcon], {
+    return declare([_BrowserControl], {
 
         browserUrl: appConfig.pathPrefix+'/link',
 

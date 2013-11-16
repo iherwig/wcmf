@@ -1,14 +1,12 @@
 define( [
     "dojo/_base/declare",
-    "./_BrowserControl",
-    "../../../_include/_HelpMixin"
+    "./_BrowserControl"
 ],
 function(
     declare,
-    _BrowserControl,
-    HelpIcon
+    _BrowserControl
 ) {
-    return declare([_BrowserControl, HelpIcon], {
+    return declare([_BrowserControl], {
 
         browserUrl: appConfig.pathPrefix+'/media'
     });

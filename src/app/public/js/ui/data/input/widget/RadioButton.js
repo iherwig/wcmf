@@ -2,17 +2,15 @@ define( [
     "dojo/_base/declare",
     "dojo/dom-construct",
     "dijit/form/RadioButton",
-    "./_BinaryItemsControl",
-    "../../../_include/_HelpMixin"
+    "./_BinaryItemsControl"
 ],
 function(
     declare,
     domConstruct,
     RadioButton,
-    _BinaryItemsControl,
-    HelpIcon
+    _BinaryItemsControl
 ) {
-    return declare([_BinaryItemsControl, HelpIcon], {
+    return declare([_BinaryItemsControl], {
 
         multiValued: false,
 

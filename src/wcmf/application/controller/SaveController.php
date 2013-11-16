@@ -444,14 +444,38 @@ class SaveController extends Controller {
    * @return An assoziative array with keys 'width' and 'height', which hold false meaning 'don't care' or arrays where the
    *         first entry is a pixel value and the second is 0 or 1 indicating that the dimension may be smaller than (0)
    *         or must exactly be (1) the pixel value.
-   * @note The default implementation will look for 'imgWidth' and 'imgHeight' keys in the configuration file (section 'media').
+   * @note The default implementation will look for type.valueName.width or imgWidth and type.valueName.height or imgHeight
+   * keys in the configuration file (section 'media').
    */
   protected function getImageConstraints(ObjectId $oid, $valueName) {
-    // get required image dimensions
+    $type = null;
+    if (ObjectId::isValid($oid)) {
+      $type = $oid->getType();
+    }
     $config = ObjectFactory::getConfigurationInstance();
-    $imgWidth = $config->getValue('imgWidth', 'media');
-    $imgHeight = $config->getValue('imgHeight', 'media');
-    return array('width' => $imgWidth, 'height' => $imgHeight);
+
+    // defaults
+    $constraints = array('width' => false, 'height' => false);
+
+    // check if type.valueName.width is defined in the configuration
+    if ($type && ($width = $config->getValue($type.'.'.$valueName.'.width', 'Media', false)) !== false) {
+      $constraints['width'] = $width;
+    }
+    // check if imgWidth is defined in the configuration
+    else if (($width = $config->getValue('imgWidth', 'Media', false)) !== false) {
+      $constraints['width'] = $width;
+    }
+
+    // check if type.valueName.height is defined in the configuration
+    if ($type && ($height = $config->getValue($type.'.'.$valueName.'.height', 'Media', false)) !== false) {
+      $constraints['height'] = $height;
+    }
+    // check if imgHeight is defined in the configuration
+    else if (($width = $config->getValue('imgHeight', 'Media', false)) !== false) {
+      $constraints['width'] = $width;
+    }
+
+    return $constraints;
   }
 
   /**

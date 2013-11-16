@@ -29,6 +29,7 @@ function(
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];
+            this.helpText = Dict.translate(this.attribute.description);
         },
 
         postCreate: function() {
