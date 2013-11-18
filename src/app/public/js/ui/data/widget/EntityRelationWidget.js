@@ -99,7 +99,7 @@ function(
                 return [editAction, deleteAction];
             }
             else {
-                return [editAction, unlinkAction];
+                return [editAction, unlinkAction, deleteAction];
             }
         },
 

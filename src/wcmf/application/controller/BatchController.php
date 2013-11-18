@@ -236,7 +236,7 @@ abstract class BatchController extends LongTaskController {
         throw new RuntimeException("Method '".$curWorkPackageDef['callback']."' must be implemented by ".get_class($this));
       }
       else {
-        call_user_method($curWorkPackageDef['callback'], &$this, $curWorkPackageDef['oids'], $curWorkPackageDef['args']);
+        call_user_method($curWorkPackageDef['callback'], $this, $curWorkPackageDef['oids'], $curWorkPackageDef['args']);
       }
     }
   }

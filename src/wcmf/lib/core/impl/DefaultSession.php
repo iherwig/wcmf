@@ -31,6 +31,10 @@ class DefaultSession implements Session {
 
   public function __construct() {
     @session_start();
+    // regenerate session id if cookie is lost
+    if (strlen($_COOKIE[ini_get('session.name')]) == 0) {
+      session_regenerate_id();
+    }
   }
 
   /**
