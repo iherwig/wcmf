@@ -118,6 +118,10 @@ class MultipleActionController extends Controller {
     $numActions = sizeof($actions);
     $exceptions = array();
     $actionMapper = ObjectFactory::getInstance('actionMapper');
+
+    $formats = ObjectFactory::getInstance('formats');
+    $nullFormat = $formats['null'];
+
     for($i=0; $i<$numActions; $i++) {
       $action = $actions[$i];
       $GLOBALS['gJSONData'] = array();
@@ -138,7 +142,7 @@ class MultipleActionController extends Controller {
         $data[$action]['action'],
         $data[$action]
       );
-      $request->setFormat($request->getFormat());
+      $request->setFormat($nullFormat);
       $request->setResponseFormat($request->getResponseFormat());
 
       // execute the request

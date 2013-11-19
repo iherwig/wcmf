@@ -17,6 +17,7 @@
  * $Id$
  */
 error_reporting(E_ALL);
+$startTime = microtime(true);
 
 require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
@@ -37,6 +38,8 @@ catch (Exception $ex) {
   $application->handleException($ex, $request);
 }
 if (Log::isDebugEnabled('main')) {
-  Log::debug(memory_get_peak_usage(), 'main');
+  Log::debug(number_format(memory_get_peak_usage()/(1024*1024), 2)." MB used [".
+        $callParams['controller']."?".$callParams['context']."?".$callParams['action']."]", 'main');
+  Log::debug((microtime(true) - $startTime).' seconds', 'main');
 }
 ?>

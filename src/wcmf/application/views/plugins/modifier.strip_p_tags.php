@@ -17,7 +17,7 @@
  * $Id$
  */
  namespace wcmf\lib\presentation\smarty_plugins;
- 
+
 /*
 * Smarty plugin
 * -------------------------------------------------------------
@@ -30,7 +30,7 @@
 */
 function smarty_modifier_strip_p_tags($text)
 {
-    return preg_replace('/^<p>|<\/p>$/', '', $text);
+    return preg_replace('/^\s*<p>|<\/p>\s*$/', '', $text);
 }
 ?>
 

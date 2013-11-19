@@ -26,18 +26,23 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Name:     image_size
 * Purpose:  determine the size of an image file and assign width
 *           and heigth to smarty variables (widthvar or heightvar parameter
-*           may be omitted, if the result should be ignored)
+*           may be omitted, if the result should be ignored). an optional
+*           boolean parameter halfsize may be used to return sizes divided
+*           by two (usefull for retina displays).
 * Usage:    e.g. {image_size image=$node->getImage() widthvar="width" heightvar="height"}
 * -------------------------------------------------------------
 */
 function smarty_function_image_size($params, &$smarty)
 {
   $size = getimagesize($params['image']);
+  $dividyByTwo = isset($params['halfsize']) && $params['halfsize'] == true;
+  $width = $dividyByTwo ? intval($size[0]/2) : $size[0];
+  $height = $dividyByTwo ? intval($size[1]/2) : $size[1];
   if (isset($params['widthvar'])) {
-    $smarty->assign($params['widthvar'], $size[0]);
+    $smarty->assign($params['widthvar'], $width);
   }
   if (isset($params['heightvar'])) {
-    $smarty->assign($params['heightvar'], $size[1]);
+    $smarty->assign($params['heightvar'], $height);
   }
 }
 ?>

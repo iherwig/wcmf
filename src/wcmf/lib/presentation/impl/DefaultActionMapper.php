@@ -95,6 +95,9 @@ class DefaultActionMapper implements ActionMapper {
     $controllerObj = new $controllerClass();
 
     // everything is right in place, start processing
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Request: ".$request->__toString(), __CLASS__);
+    }
     Formatter::deserialize($request);
 
     // create the response
@@ -102,6 +105,9 @@ class DefaultActionMapper implements ActionMapper {
     $response->setFormat($request->getResponseFormat());
 
     // initialize controller
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Execute ".$controllerClass." with request: ".$request->__toString(), __CLASS__);
+    }
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_INITIALIZE_CONTROLLER, $request, $response, $controllerObj));
     $controllerObj->initialize($request, $response);

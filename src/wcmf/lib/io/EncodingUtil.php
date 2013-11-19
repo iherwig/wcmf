@@ -112,7 +112,7 @@ class EncodingUtil {
       }
     }
     else {
-      if (!is_int($input) && !is_float($input) && !is_bool($input)) {
+      if (!is_int($input) && !is_float($input) && !is_bool($input) && !self::isUtf8($input)) {
         $result = self::convertIsoToCp1252Utf8($input);
       } else {
         $result = $input;

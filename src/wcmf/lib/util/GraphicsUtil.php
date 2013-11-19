@@ -128,6 +128,30 @@ class GraphicsUtil {
   }
 
   /**
+   * Calculate image dimension to fit into a square, preserving the aspect ratio
+   * @param srcName The source file name
+   * @param maxDimension The maximum dimension the image should have (either width or height)
+   * @return Array with width and height value
+   */
+  public static function fitIntoSquare($srcName, $maxDimension) {
+    list($sourceWidth, $sourceHeight, $type, $attr) = getimagesize($srcName);
+    if ($sourceWidth < $sourceHeight) {
+      $height = $maxDimension;
+      $width = floor($sourceWidth*$height/$sourceHeight);
+    }
+    else {
+      $width = $maxDimension;
+      $height = floor($sourceHeight*$width/$sourceWidth);
+    }
+    // if image is actually smaller, leave small
+    if ($width > $sourceWidth && $height > $sourceHeigth) {
+      $width = $sourceWidth;
+      $height = $sourceHeight;
+    }
+    return array($width, $height);
+  }
+
+  /**
    * Create a thumbnail of an image file.
    * @param srcName The source file name
    * @param destName The destination file name

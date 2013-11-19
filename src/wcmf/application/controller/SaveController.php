@@ -513,8 +513,8 @@ class SaveController extends Controller {
    * @param valueName The name of the value which will hold the association to the file
    * @return The directory name
    * @note The default implementation will first look for a parameter 'uploadDir'
-   * and then, if it is not given, for an 'uploadDir' key in the configuration file
-   * (section 'media')
+   * and then, if it is not given, for an 'uploadDir.'.type key in the configuration file
+   * (section 'media') and finally for an 'uploadDir' key at the same place.
    */
   protected function getUploadDir(ObjectId $oid, $valueName) {
     $request = $this->getRequest();
@@ -523,8 +523,18 @@ class SaveController extends Controller {
     }
     else {
       $config = ObjectFactory::getConfigurationInstance();
-      if(($dir = $config->getValue('uploadDir', 'media')) !== false) {
-        $uploadDir = $dir;
+      if (ObjectId::isValid($oid)) {
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $type = $persistenceFacade->getSimpleType($oid->getType());
+        // check if uploadDir.type is defined in the configuration
+        if ($type && ($dir = $config->getValue('uploadDir.'.$type, 'Media', false)) !== false) {
+          $uploadDir = $dir;
+        }
+        else {
+          if(($dir = $config->getValue('uploadDir', 'media')) !== false) {
+            $uploadDir = $dir;
+          }
+        }
       }
     }
 
