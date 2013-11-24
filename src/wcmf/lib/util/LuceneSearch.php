@@ -20,7 +20,6 @@ namespace wcmf\lib\util;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\io\EncodingUtil;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
@@ -57,27 +56,39 @@ class LuceneSearch {
   const INI_SECTION = 'search';
   const INI_INDEX_PATH = 'indexPath';
 
+  private static $isActivated = null;
   private static $index;
   private static $indexPath;
   private static $indexIsDirty = false;
 
   /**
    * Get the search index.
-   * @param create True/False wether to create the index, if it does not exist [default: true]
-   * @return An instance of Zend_Search_Lucene_Interface
+   * @param create Boolean whether to create the index, if it does not exist [default: true]
+   * @return An instance of Zend_Search_Lucene_Interface or null
    */
   public static function getIndex($create = true) {
+    if (!self::isActivated()) {
+      return null;
+    }
     if (!self::$index && $create) {
       $indexPath = self::getIndexPath();
 
-      Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
-      if (defined('Zend_Search_Lucene_Search_Query_Wildcard')) {
-        Zend_Search_Lucene_Search_Query_Wildcard::setMinPrefixLength(0);
-      }
+      $analyzer = new Analyzer();
+
+      // add stop words filter
+      $stopWords = self::getStopWords();
+      $stopWordsFilter = new Zend_Search_Lucene_Analysis_TokenFilter_StopWords($stopWords);
+      $analyzer->addFilter($stopWordsFilter);
+
+      Zend_Search_Lucene_Analysis_Analyzer::setDefault($analyzer);
+      Zend_Search_Lucene_Search_Query_Wildcard::setMinPrefixLength(0);
+      Zend_Search_Lucene_Search_QueryParser::setDefaultEncoding('UTF-8');
       Zend_Search_Lucene_Search_QueryParser::setDefaultOperator(Zend_Search_Lucene_Search_QueryParser::B_AND);
 
       try {
         self::$index = Zend_Search_Lucene::open($indexPath);
+        //self::$index->setMaxMergeDocs(5);
+        //self::$index->setMergeFactor(5);
       }
       catch (Zend_Search_Lucene_Exception $ex) {
         self::$index = self::resetIndex();
@@ -90,8 +101,10 @@ class LuceneSearch {
    * Reset the search index.
    */
   public static function resetIndex() {
+    if (!self::isActivated()) {
+      return;
+    }
     $indexPath = self::getIndexPath();
-
     return Zend_Search_Lucene::create($indexPath);
   }
 
@@ -101,39 +114,33 @@ class LuceneSearch {
    * @param obj The PersistentObject instance.
    */
   public static function indexInSearch(PersistentObject $obj) {
+    if (!self::isActivated()) {
+      return;
+    }
     if (self::isIndexInSearch($obj)) {
       Log::debug("Add/Update index for: ".$obj->getOID(), __CLASS__);
       $index = self::getIndex();
-      $encoding = new EncodingUtil();
 
       $doc = new Zend_Search_Lucene_Document();
 
       $valueNames = $obj->getValueNames();
 
-      $doc->addField(Zend_Search_Lucene_Field::unIndexed('oid', $obj->getOID()->__toString(), 'utf-8'));
-      $typeField = Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'utf-8');
+      $doc->addField(Zend_Search_Lucene_Field::unIndexed('oid', $obj->getOID()->__toString(), 'UTF-8'));
+      $typeField = Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'UTF-8');
       $typeField->isStored = false;
       $doc->addField($typeField);
 
-      foreach ($valueNames as $currValueName) {
+      foreach ($valueNames as $curValueName) {
         $inputType = $obj->getProperty('input_type');
-        $value = $obj->getValue($currValueName);
-        switch($inputType) {
-          case 'text':
-            $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName, $encoding->convertIsoToCp1252Utf8($value), 'utf-8'));
-            break;
-
-          case 'fckeditor':
-            $doc->addField(Zend_Search_Lucene_Field::unStored($currValueName,
-              html_entity_decode($encoding->convertIsoToCp1252Utf8(strip_tags($value)), ENT_QUOTES,'utf-8'), 'utf-8'));
-            break;
-
-          default:
-            if (is_scalar($value)) {
-              $field = Zend_Search_Lucene_Field::keyword($currValueName, $value, 'utf-8');
-              $field->isStored = false;
-              $doc->addField($field);
-            }
+        $value = self::encodeValue($obj->getValue($curValueName), $inputType);
+        if (preg_match('/^text|^f?ckeditor/', $inputType)) {
+          $value = strip_tags($value);
+          $doc->addField(Zend_Search_Lucene_Field::unStored($curValueName, $value, 'UTF-8'));
+        }
+        else {
+          $field = Zend_Search_Lucene_Field::keyword($curValueName, $value, 'UTF-8');
+          $field->isStored = false;
+          $doc->addField($field);
         }
       }
 
@@ -148,11 +155,22 @@ class LuceneSearch {
     }
   }
 
+  private static function encodeValue($value, $inputType)
+  {
+    if (preg_match('/^f?ckeditor/', $inputType)) {
+      $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+    }
+    return trim($value);
+  }
+
   /**
    * Delete a PersistentObject instance from the search index.
    * @param obj The PersistentObject instance.
    */
   public static function deleteFromSearch(PersistentObject $obj) {
+    if (!self::isActivated()) {
+      return;
+    }
     if (self::isIndexInSearch($obj)) {
       Log::debug("Delete from index: ".$obj->getOID(), __CLASS__);
       $index = self::getIndex();
@@ -168,19 +186,48 @@ class LuceneSearch {
 
   /**
    * Commit any changes made by using LuceneSearch::indexInSearch() and SearchIndex::deleteFromSearch().
-   * @note By default this method only commits the index if changes were made using the methods mentioned above.
-   * If you want to make sure that the index is committed in any case, set forceCommit to true.
-   * @param forceCommit True/False wether the index should be committed even if no changes were made
-   *   using the methods mentioned above [default: false].
+   * @note This method only commits the index if changes were made using the methods mentioned above.
+   * @param optimize Boolean whether the index should be optimized after commit [default: true].
    */
   public static function commitIndex($forceCommit = false) {
+    if (!self::isActivated()) {
+      return;
+    }
     Log::debug("Commit index", __CLASS__);
-    if (self::$indexIsDirty || $forceCommit) {
+    if (self::$indexIsDirty) {
       $index = self::getIndex(false);
       if ($index) {
         $index->commit();
+        if ($optimize) {
+          $index->optimize();
+        }
       }
     }
+  }
+
+  /**
+   * Optimize the index
+   */
+  public static function optimizeIndex() {
+    if (!self::isActivated()) {
+      return;
+    }
+    $index = self::getIndex(false);
+    if ($index) {
+      $index->optimize();
+    }
+  }
+
+  /**
+   * Check if a index path is defined in the configuration.
+   * @return Boolean
+   */
+  public static function isActivated() {
+    if (self::$isActivated === null) {
+      $config = ObjectFactory::getConfigurationInstance();
+      self::$isActivated = $config->getValue(self::INI_INDEX_PATH, self::INI_SECTION) !== false;
+    }
+    return self::$isActivated;
   }
 
   /**
@@ -210,7 +257,7 @@ class LuceneSearch {
    * Check if the instance object is contained in the search index
    * (defined by the property 'is_searchable')
    * @param obj PersistentObject instance
-   * @return True/False wether the object is contained or not
+   * @return Boolean wether the object is contained or not
    */
   private static function isIndexInSearch(PersistentObject $obj) {
     return (boolean) $obj->getProperty('is_searchable');
@@ -232,4 +279,168 @@ class LuceneSearch {
       self::deleteFromSearch($object);
     }
   }
+
+  /**
+   * Get a list of words that are forbidden to search for
+   * @return Array
+   */
+  public static function getStopWords() {
+    return explode("\n", $GLOBALS['STOP_WORDS']);
+  }
+
+  /**
+   * Search for searchTerm in index
+   * @param searchTerm
+   * @return Associative array with object ids as keys and
+   * associative array with keys 'oid', 'score', 'summary' as value
+   */
+  public static function find($searchTerm) {
+    $results = array();
+    if (!self::isActivated()) {
+      return $results;
+    }
+    $index = self::getIndex(false);
+    if ($index) {
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $query = Zend_Search_Lucene_Search_QueryParser::parse($searchTerm, 'UTF-8');
+      try {
+        $hits = $index->find($query);
+        foreach($hits as $hit) {
+          $oid = $hit->oid;
+
+          // get the summary with highlighted text
+          $summary = '';
+          $highlightedRegex = '/((<b style="color:black;background-color:#[0-9a-f]{6}">)+)([^<]+?)((<\/b>)+)/';
+          $obj = $persistenceFacade->load($oid);
+          $valueNames = $obj->getValueNames();
+          foreach ($valueNames as $curValueName) {
+            $inputType = $obj->getProperty('input_type');
+            $value = self::encodeValue($obj->getValue($curValueName), $inputType);
+            if (strlen($value) > 0) {
+              $highlighted = $query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
+              $matches = array();
+              if (preg_match($highlightedRegex, $highlighted, $matches)) {
+                $hit = $matches[3];
+                $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
+                $highlighted = trim(preg_replace('/&#13;|[\n\r\t]/', ' ', $highlighted));
+                $excerpt = StringUtil::excerpt($highlighted, $hit, 300, '');
+                $summary = $excerpt;
+                break;
+              }
+            }
+          }
+          $results[$oid] = array(
+              'oid' => $oid,
+              'score' => $hit->score,
+              'summary' => $summary
+          );
+        }
+      }
+      catch (Exception $ex) {
+        // do nothing, return empty result
+      }
+    }
+    return $results;
+  }
 }
+
+class Analyzer extends Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive {
+  /**
+   * Override method to make sure we are using utf-8
+   */
+  public function setInput($data, $encoding = '')
+  {
+    parent::setInput($data, 'UTF-8');
+  }
+}
+
+/**
+ * Standard german/english stop words taken from Lucene's StopAnalyzer
+ */
+$GLOBALS['STOP_WORDS'] = <<<'EOD'
+ein
+einer
+eine
+eines
+einem
+einen
+der
+die
+das
+dass
+daß
+du
+er
+sie
+es
+was
+wer
+wie
+wir
+und
+oder
+ohne
+mit
+am
+im
+in
+aus
+auf
+ist
+sein
+war
+wird
+ihr
+ihre
+ihres
+als
+für
+von
+mit
+dich
+dir
+mich
+mir
+mein
+sein
+kein
+durch
+wegen
+wird
+a
+an
+and
+are
+as
+at
+be
+but
+by
+for
+if
+in
+into
+is
+it
+no
+not
+of
+on
+or
+s
+such
+t
+that
+the
+their
+then
+there
+these
+they
+this
+to
+was
+will
+with
+EOD;
+?>

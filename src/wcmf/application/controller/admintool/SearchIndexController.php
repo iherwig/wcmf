@@ -42,18 +42,24 @@ class SearchIndexController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      // get all types to index
-      $types = array();
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      foreach ($persistenceFacade->getKnownTypes() as $type) {
-        $tpl = $persistenceFacade->create($type, BuildDepth::SINGLE);
-        if ($tpl->isIndexInSearch()) {
-          array_push($types, $type);
+      if (LuceneSearch::isActivated()) {
+        // get all types to index
+        $types = array();
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        foreach ($persistenceFacade->getKnownTypes() as $type) {
+          $tpl = $persistenceFacade->create($type, BuildDepth::SINGLE);
+          if ($tpl->isIndexInSearch()) {
+            array_push($types, $type);
+          }
         }
-      }
-      LuceneSearch::resetIndex();
+        LuceneSearch::resetIndex();
 
-      return array('name' => Message::get('Collect objects'), 'size' => 1, 'oids' => $types, 'callback' => 'collect');
+        return array('name' => Message::get('Collect objects'), 'size' => 1, 'oids' => $types, 'callback' => 'collect');
+      }
+      else {
+        // search is deactivated
+        return null;
+      }
     }
     else {
       return null;
@@ -90,8 +96,7 @@ class SearchIndexController extends BatchController {
       }
     }
 
-    $index = LuceneSearch::getIndex();
-    $index->commit();
+    LuceneSearch::commitIndex(false);
 
     if ($this->getStepNumber() == $this->getNumberOfSteps() - 1) {
       $this->addWorkPackage(Message::get('Optimizing index'), 1, array(0), 'optimize');
@@ -99,8 +104,7 @@ class SearchIndexController extends BatchController {
   }
 
   function optimize($oids) {
-    $index = LuceneSearch::getIndex();
-    $index->optimize();
+    LuceneSearch::optimizeIndex();
   }
   // PROTECTED REGION END
 }

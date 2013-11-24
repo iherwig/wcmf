@@ -260,6 +260,39 @@ class StringUtil {
   }
 
   /**
+   * Create an excerpt from the given text around the given phrase
+   * code based on: http://stackoverflow.com/questions/1292121/how-to-generate-the-snippet-like-generated-by-google-with-php-and-mysql
+   */
+  function excerpt($text, $phrase, $radius = 100) {
+    $phraseLen = strlen($phrase);
+    if ($radius < $phraseLen) {
+        $radius = $phraseLen;
+    }
+    $pos = strpos(strtolower($text), strtolower($phrase));
+
+    $startPos = 0;
+    if ($pos > $radius) {
+      $startPos = $pos - $radius;
+    }
+    $textLen = strlen($text);
+
+    $endPos = $pos + $phraseLen + $radius;
+    if ($endPos >= $textLen) {
+      $endPos = $textLen;
+    }
+
+    // make sure to cut at spaces
+    $firstSpacePos = strpos($text, " ", $startPos);
+    $lastSpacePos = strrpos($text, " ", -(strlen($text)-$endPos));
+
+    $excerpt1 = substr($text, $firstSpacePos, $lastSpacePos-$firstSpacePos);
+
+    // remove open tags
+    $excerpt = preg_replace('/^[^<]*?>|<[^>]*?$/', '', $excerpt1);
+    return $excerpt;
+  }
+
+  /**
    * Convert a string in underscore notation to camel case notation.
    * Code from http://snipt.net/hongster/underscore-to-camelcase/
    * @param string The string to convert
