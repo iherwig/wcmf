@@ -13,28 +13,13 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Db
- * @subpackage Profiler
+ * @package    Zend_Search_Lucene
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exception.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id: MultiSearcher.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
-/**
- * @see Zend_Db_Exception
- */
-require_once 'Zend/Db/Exception.php';
-
-
-/**
- * @category   Zend
- * @package    Zend_Db
- * @subpackage Profiler
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
- */
-class Zend_Db_Profiler_Exception extends Zend_Db_Exception
-{
-}
+/** Zend_Search_Lucene_MultiSearcher */
+require_once 'Zend/Search/Lucene/MultiSearcher.php';
 
