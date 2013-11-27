@@ -18,6 +18,8 @@
  */
 namespace wcmf\lib\search;
 
+use wcmf\lib\persistence\PersistentObject;
+
 /**
  * Search implementations are used to search entity objects.
  *

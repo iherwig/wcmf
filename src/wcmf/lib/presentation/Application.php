@@ -145,7 +145,7 @@ class Application {
    * @param exception The Exception instance
    * @param request The Request instance
    */
-  public function handleException(Exception $exception, Request $request) {
+  public function handleException(Exception $exception, Request $request=null) {
     if ($exception instanceof ApplicationException) {
       $error = $exception->getError();
       if ($error->getCode() == 'SESSION_INVALID') {
@@ -164,6 +164,9 @@ class Application {
     $persistenceFacade->getTransaction()->rollback();
 
     // redirect to failure action
+    if ($request == null) {
+      $request = $this->_initialRequest;
+    }
     $request->addError(ApplicationError::fromException($exception));
     $request->setAction('failure');
     ObjectFactory::getInstance('actionMapper')->processAction($request);

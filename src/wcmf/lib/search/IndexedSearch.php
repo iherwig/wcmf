@@ -18,6 +18,9 @@
  */
 namespace wcmf\lib\search;
 
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\search\Search;
+
 /**
  * IndexedSearch implementations are used to search entity objects
  * in a search index

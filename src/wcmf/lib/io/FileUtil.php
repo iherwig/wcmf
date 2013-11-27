@@ -207,13 +207,7 @@ class FileUtil {
    * @param dirname The name of the directory
    */
   public static function mkdirRec($dirname) {
-    $folder_list = preg_split('/\//', $dirname);
-    $len = sizeof($folder_list);
-    for( $i=0; $i<$len; $i++ ) {
-      $tmp .= $folder_list[$i] . '/';
-      @mkdir($tmp);
-      chmod($tmp, 0755);
-    }
+    mkdir($dirname, 0755, true);
   }
 
   /**
