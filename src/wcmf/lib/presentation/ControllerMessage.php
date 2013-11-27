@@ -255,6 +255,7 @@ class ControllerMessage {
 
   /**
    * Get a value
+   * TODO add filter parameter
    * @param name The name of the variable
    * @param default The default value if the value is not defined [default: null]
    * @return The value or default, if it does not exist

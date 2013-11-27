@@ -22,7 +22,7 @@ use wcmf\application\controller\BatchController;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\util\LuceneSearch;
+use wcmf\lib\search\IndexedSearch;
 
 /**
  * SearchIndexController creates a Lucene index from the complete datastore.
@@ -42,22 +42,22 @@ class SearchIndexController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      if (LuceneSearch::isActivated()) {
+      $search = ObjectFactory::getInstance('search');
+      if ($search instanceof IndexedSearch) {
         // get all types to index
         $types = array();
         $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
         foreach ($persistenceFacade->getKnownTypes() as $type) {
           $tpl = $persistenceFacade->create($type, BuildDepth::SINGLE);
-          if ($tpl->isIndexInSearch()) {
+          if ($search->isSearchable($tpl)) {
             array_push($types, $type);
           }
         }
-        LuceneSearch::resetIndex();
-
+        $search->resetIndex();
         return array('name' => Message::get('Collect objects'), 'size' => 1, 'oids' => $types, 'callback' => 'collect');
       }
       else {
-        // search is deactivated
+        // no index to be updated
         return null;
       }
     }
@@ -89,14 +89,14 @@ class SearchIndexController extends BatchController {
    */
   protected function index($oids) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $search = ObjectFactory::getInstance('search');
     foreach($oids as $oid) {
       if (ObjectId::isValidOID($oid)) {
         $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-        $obj->indexInSearch();
+        $search->addToIndex($obj);
       }
     }
-
-    LuceneSearch::commitIndex(false);
+    $search->commitIndex(false);
 
     if ($this->getStepNumber() == $this->getNumberOfSteps() - 1) {
       $this->addWorkPackage(Message::get('Optimizing index'), 1, array(0), 'optimize');
@@ -104,7 +104,8 @@ class SearchIndexController extends BatchController {
   }
 
   function optimize($oids) {
-    LuceneSearch::optimizeIndex();
+    $search = ObjectFactory::getInstance('search');
+    $search->optimizeIndex();
   }
   // PROTECTED REGION END
 }

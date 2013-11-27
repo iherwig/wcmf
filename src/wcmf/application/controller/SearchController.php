@@ -22,7 +22,6 @@ use wcmf\application\controller\ListController;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\util\LuceneSearch;
 
 /**
  *  * @class SearchController
@@ -87,7 +86,8 @@ class SearchController extends ListController {
 
     if (!$session->exist($this->HITS_VARNAME)) {
       // search with searchterm (even if empty) if no query is given
-      $hits = LuceneSearch::find($filter);
+      $search = ObjectFactory::getInstance('search');
+      $hits = $search->find($filter);
 
       // store the hits in the session for later use
       $session->set($this->HITS_VARNAME, $hits);

@@ -80,7 +80,6 @@ class Application {
     if (is_array($json)) {
       $this->_rawPostBodyIsJson = true;
       foreach ($json as $key => $value) {
-        // TODO: filter values
         $this->_requestValues[$key] = $value;
       }
     }
@@ -115,6 +114,12 @@ class Application {
     $authUser = $permissionManager->getAuthUser();
     if ($authUser && strlen($authUser->getConfig()) > 0) {
       $config->addConfiguration($authUser->getConfig(), true);
+    }
+
+    // load event listeners
+    $listeners = $config->getValue('listeners', 'application');
+    foreach ($listeners as $key) {
+      $listener = ObjectFactory::getInstance($key);
     }
 
     // return the request
