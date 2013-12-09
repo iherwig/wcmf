@@ -6,6 +6,7 @@ define([
     "dojo/dom-attr",
     "dojo/query",
     "dojo/on",
+    "dojo/topic",
     "dojo/when",
     "dojomat/_AppAware",
     "dojomat/_StateAware",
@@ -20,6 +21,7 @@ define([
     domAttr,
     query,
     on,
+    topic,
     when,
     _AppAware,
     _StateAware,
@@ -63,6 +65,20 @@ define([
                     }
                 };
             });
+        },
+
+        postCreate: function() {
+            this.inherited(arguments);
+            this.own(
+                // listen to navigate topic
+                topic.subscribe("navigate", lang.hitch(this, function(routeName, pathParams, queryParams) {
+                    var route = this.router.getRoute(routeName);
+                    if (!route) { return; }
+
+                    var url = route.assemble(pathParams, queryParams);
+                    this.pushConfirmed(url);
+                }))
+            );
         },
 
         setTitle: function(title) {

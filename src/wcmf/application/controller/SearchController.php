@@ -33,7 +33,7 @@ use wcmf\lib\presentation\Controller;
  * - @em list Actually do the search
  *
  * <b>Output actions:</b>
- * - see AsyncPagingController in case of list action
+ * - see ListController in case of list action
  * - @em ok If any other case
  *
  * @param [in,out] searchterm The term to search for (The actual searchterm in simple search, empty in advanced search)

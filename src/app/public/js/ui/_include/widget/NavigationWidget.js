@@ -13,6 +13,9 @@ define([
     "dijit/MenuItem",
     "dijit/form/TextBox",
     "dojo/query",
+    "dojo/on",
+    "dojo/topic",
+    "dojo/keys",
     "dojo/NodeList-dom",
     "../../../Cookie",
     "../../../model/meta/Model",
@@ -34,6 +37,9 @@ define([
     MenuItem,
     TextBox,
     query,
+    on,
+    topic,
+    keys,
     nodeListDom,
     Cookie,
     Model,
@@ -61,6 +67,16 @@ define([
             if (this.selected) {
                 registry.byId(this.selected)._setSelected(true);
             }
+
+            // search field
+            this.own(
+                on(this.searchField, "keydown", lang.hitch(this, function(event) {
+                    if (event.keyCode === keys.ENTER) {
+                        event.preventDefault();
+                        topic.publish('navigate', 'search', null, {q: this.searchField.get("value")});
+                    }
+                }))
+            );
         },
 
         startup: function() {

@@ -31,6 +31,11 @@ define(["dojo/_base/config", "require"], function (config, require) {
             widget: mid('./ui/data/EntityPage'),
             layers: l.data || []
         },
+        search: {
+            schema: p + '/search',
+            widget: mid('./ui/search/SearchResultPage'),
+            layers: l.data || []
+        },
         media: {
             schema: p + '/media',
             widget: mid('./ui/media/BrowsePage'),

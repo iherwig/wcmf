@@ -20,7 +20,8 @@
                 </div>
             </div>
         </div>
-        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu pull-right" id="navSettings">
+      <span><input type="text" name="search" data-dojo-type="dijit/form/TextBox" data-dojo-props="'class':'search-query'" data-dojo-attach-point="searchField" placeholder="{translate:Search}" /></span>
+        <div data-dojo-type="dijit/PopupMenuBarItem" class="main-menu" id="navSettings">
             <span><i class="icon-user"></i> <span class="user">${userName}</span> <b class="caret"></b></span>
             <div data-dojo-type="dijit/DropDownMenu">
                 <div data-dojo-type="dijit/MenuItem" class="push" data-dojorama-route="settings">
@@ -32,7 +33,5 @@
                 </div>
             </div>
         </div>
-        <span class="brand pull-right">${title}</span>
-        <span class="pull-right"><input type="text" name="search" data-dojo-type="dijit/form/TextBox" data-dojo-props="'class':'search-query'" placeholder="Search" /></span>
     </div>
 </div>
