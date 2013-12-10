@@ -52,16 +52,13 @@ use wcmf\lib\util\Obfuscator;
  *              all attributes will be returned [optional]
  * @param[in] query A query condition executed with StringQuery
  *
- * @param[in] renderValues True/False wether to render the values using NodeUtil::renderValues or not
+ * @param[in] renderValues Boolean whether to render the values using NodeUtil::renderValues or not
  *              (optional, default: false)
- * @param[in] completeObjects True/False wether to return all object attributes objects or only the display values
+ * @param[in] completeObjects Boolean whether to return all object attributes objects or only the display values
  *              using NodeUtil::removeNonDisplayValues (optional, default: false)
 
  * @param[out] list The list of objects according to the given input parameters
  * @param[out] totalCount The total number of instances matching the passed parameters
- *
- * Additional properties are 'realSubject', 'realSubjectType' and 'composition' for many-to-many entities
- * and 'clientOID'
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -149,7 +146,7 @@ class ListController extends Controller {
     }
 
     // allow subclasses to modify the model
-    //$this->modifyModel($nodes);
+    $this->modifyModel($nodes);
 
     // assign response values
     $response = $this->getResponse();

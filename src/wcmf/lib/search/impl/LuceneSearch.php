@@ -22,9 +22,11 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\search\IndexedSearch;
+use wcmf\lib\util\StringUtil;
 
 if (strpos(get_include_path(), 'Zend') === false) {
   set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/vendor/zend');
@@ -104,7 +106,8 @@ class LuceneSearch implements IndexedSearch {
       try {
         $hits = $index->find($query);
         foreach($hits as $hit) {
-          $oid = $hit->oid;
+          $oidStr = $hit->oid;
+          $oid = ObjectId::parse($oidStr);
 
           // get the summary with highlighted text
           $summary = '';
@@ -118,17 +121,17 @@ class LuceneSearch implements IndexedSearch {
               $highlighted = $query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
               $matches = array();
               if (preg_match($highlightedRegex, $highlighted, $matches)) {
-                $hit = $matches[3];
+                $hitStr = $matches[3];
                 $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
                 $highlighted = trim(preg_replace('/&#13;|[\n\r\t]/', ' ', $highlighted));
-                $excerpt = StringUtil::excerpt($highlighted, $hit, 300, '');
+                $excerpt = StringUtil::excerpt($highlighted, $hitStr, 300, '');
                 $summary = $excerpt;
                 break;
               }
             }
           }
-          $results[$oid] = array(
-              'oid' => $oid,
+          $results[$oidStr] = array(
+              'oid' => $oidStr,
               'score' => $hit->score,
               'summary' => $summary
           );
@@ -264,7 +267,7 @@ class LuceneSearch implements IndexedSearch {
    * @return An instance of Zend_Search_Lucene_Interface or null
    */
   private function getIndex($create = true) {
-    if (!$this->_index && $create) {
+    if (!$this->_index || $create) {
       $indexPath = $this->getIndexPath();
 
       $analyzer = new Analyzer();

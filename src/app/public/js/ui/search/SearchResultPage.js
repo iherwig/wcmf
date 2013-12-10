@@ -36,7 +36,7 @@ define([
         title: Dict.translate('Searchresult'),
 
         constructor: function(params) {
-            this.searchTerm = this.request.getQueryParam("q");
+            this.searchterm = this.request.getQueryParam("q");
 
             // register search result type if not done already
             if (!Model.isKnownType("SearchResult")) {
@@ -46,7 +46,7 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
-            this.setTitle(this.title+" - "+this.searchTerm);
+            this.setTitle(this.title+" - "+this.searchterm);
 
             // create widget
             this.buildForm();
@@ -61,7 +61,7 @@ define([
         buildForm: function() {
             new GridWidget({
                 type: "SearchResult",
-                store: SearchStore.getStore(appConfig.defaultLanguage),
+                store: SearchStore.getStore(this.searchterm),
                 actions: this.getGridActions(),
                 enabledFeatures: []
             }, this.gridNode);

@@ -263,7 +263,7 @@ class StringUtil {
    * Create an excerpt from the given text around the given phrase
    * code based on: http://stackoverflow.com/questions/1292121/how-to-generate-the-snippet-like-generated-by-google-with-php-and-mysql
    */
-  function excerpt($text, $phrase, $radius = 100) {
+  public static function excerpt($text, $phrase, $radius = 100) {
     $phraseLen = strlen($phrase);
     if ($radius < $phraseLen) {
         $radius = $phraseLen;
