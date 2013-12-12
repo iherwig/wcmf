@@ -70,8 +70,8 @@ define([
         getGridActions: function() {
 
             var editAction = new Edit({
-                page: this.page,
-                route: this.route
+                page: this,
+                route: "entity"
             });
 
             return [editAction];

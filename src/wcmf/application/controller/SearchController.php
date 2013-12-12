@@ -93,13 +93,13 @@ class SearchController extends ListController {
   protected function modifyModel($nodes) {
     parent::modifyModel($nodes);
 
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
       $curNode = &$nodes[$i];
       $hit = $this->_hits[$curNode->getOID()->__toString()];
-      $curNode->setValue('summary', $curNode->getDisplayValue()."<hr>... ".$hit['summary']." ...");
-
-      $curNode->setValue('type', $curNode->getType());
       $curNode->setValue('displayValue', $curNode->getDisplayValue());
+      $curNode->setValue('summary', "... ".$hit['summary']." ...");
+      $curNode->setValue('type', $persistenceFacade->getSimpleType($curNode->getType()));
     }
   }
 }

@@ -264,6 +264,9 @@ class StringUtil {
    * code based on: http://stackoverflow.com/questions/1292121/how-to-generate-the-snippet-like-generated-by-google-with-php-and-mysql
    */
   public static function excerpt($text, $phrase, $radius = 100) {
+    if ($radius > strlen($text)) {
+      return $text;
+    }
     $phraseLen = strlen($phrase);
     if ($radius < $phraseLen) {
         $radius = $phraseLen;

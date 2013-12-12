@@ -11,7 +11,7 @@ define([
         description: "?",
         isSortable: false,
         displayValues: [
-            "summary", "type"
+            "displayValue", "summary", "type"
         ],
         pkNames: [
             "id"
@@ -27,6 +27,17 @@ define([
             regexp: '',
             regexpDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            isReference: false
+        }, {
+            name: "displayValue",
+            type: "String",
+            description: "?",
+            isEditable: false,
+            inputType: 'text',
+            displayType: 'text',
+            regexp: '',
+            regexpDesc: '',
+            tags: ['DATATYPE_ATTRIBUTE'],
             isReference: false
         }, {
             name: "summary",

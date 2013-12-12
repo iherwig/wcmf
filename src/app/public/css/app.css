@@ -161,6 +161,10 @@ body {
   padding: 10px;
 }
 
+th.field-actions-1, td.field-actions-1 {
+  width: 30px;
+}
+
 th.field-actions-2, td.field-actions-2 {
   width: 60px;
 }
