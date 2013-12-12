@@ -31,6 +31,7 @@ use wcmf\lib\persistence\PersistentObjectProxy;
 /**
  * Node adds the concept of relations to PersistentObject. It is the basic component for
  * building object trees (although a Node can have more than one parents).
+ * Relations are stored as values where the value name is the role name.
  * The Node class implements the 'Composite Pattern'.
  * Use the methods addNode(), deleteNode() to build/modify trees.
  *
@@ -50,6 +51,28 @@ class Node extends PersistentObject {
   private $_addedNodes = array();
   private $_deletedNodes = array();
   private $_orderedNodes = array();
+
+  /**
+   * Get the names of all items.
+   * @param includeRelations Boolean whether to include relations or not [default: true]
+   * @return An array of item names.
+   */
+  public function getValueNames($includeRelations=true) {
+    if ($includeRelations) {
+      return parent::getValueNames();
+    }
+    else {
+      $names = array();
+      $namesAll = parent::getValueNames();
+      $mapper = $this->getMapper();
+      foreach ($namesAll as $name) {
+        if (!$mapper->hasRelation($name)) {
+          $names[] = $name;
+        }
+      }
+      return $names;
+    }
+  }
 
   /**
    * @see PersistentObject::getValue

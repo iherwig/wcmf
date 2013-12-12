@@ -20,7 +20,6 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\ListController;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 

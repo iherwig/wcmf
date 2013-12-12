@@ -59,12 +59,12 @@ class NodeValueIterator implements \Iterator {
   /**
    * Constructor.
    * @param node The node to start from.
-   * @param recursive True/False wether the iterator should also process child nodes
+   * @param recursive Boolean whether the iterator should also process child nodes
    */
   public function __construct(Node $node, $recursive) {
     $this->_recursive = $recursive;
     $this->_nodeIterator = new NodeIterator($node);
-    $this->_currentAttributes = $node->getPersistentValueNames();
+    $this->_currentAttributes = $node->getValueNames(false);
     $this->_currentAttribute = current($this->_currentAttributes);
     $this->_end = sizeof($this->_currentAttributes) == 0;
   }
@@ -102,7 +102,7 @@ class NodeValueIterator implements \Iterator {
         }
         else {
           $nextNode = $this->_nodeIterator->current();
-          $this->_currentAttributes = $nextNode->getPersistentValueNames();
+          $this->_currentAttributes = $nextNode->getValueNames(false);
           $this->_currentAttribute = current($this->_currentAttributes);
         }
       }
@@ -118,7 +118,7 @@ class NodeValueIterator implements \Iterator {
    */
   public function rewind() {
     $this->_nodeIterator->rewind();
-    $this->_currentAttributes = $this->_nodeIterator->current()->getPersistentValueNames();
+    $this->_currentAttributes = $this->_nodeIterator->current()->getValueNames(false);
     $this->_currentAttribute = current($this->_currentAttributes);
     $this->_end = (sizeof($this->_currentAttributes) == 0);
   }

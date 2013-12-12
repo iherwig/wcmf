@@ -216,7 +216,7 @@ class NodeUtil {
         if ($displayValueName != '') {
           $curNode = $node;
           $mapper = $curNode->getMapper();
-          if (in_array($displayValueName, $curNode->getPersistentValueNames())) {
+          if ($mapper->hasAttribute($displayValueName)) {
             $attribute = $mapper->getAttribute($displayValueName);
             $inputType = $attribute->getInputType();
             $tmpDisplay = $curNode->getValue($displayValueName);
@@ -361,7 +361,7 @@ class NodeUtil {
    */
   public static function removeNonDisplayValues(Node $node) {
     $displayValues = $node->getDisplayValueNames($node);
-    $valueNames = $node->getPersistentValueNames();
+    $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $displayValues)) {
         $node->removeValue($name);
@@ -376,7 +376,7 @@ class NodeUtil {
   public static function removeNonPkValues(Node $node) {
     $mapper = $node->getMapper();
     $pkValues = $mapper->getPkNames();
-    $valueNames = $node->getPersistentValueNames();
+    $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $pkValues)) {
         $node->removeValue($name);
