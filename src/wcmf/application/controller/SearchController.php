@@ -52,27 +52,11 @@ class SearchController extends ListController {
 
     // search with searchterm (even if empty) if no query is given
     $search = ObjectFactory::getInstance('search');
-    $this->_hits = $search->find($queryCondition);
+    $this->_hits = $search->find($queryCondition, $pagingInfo);
 
-    $allOIDs = array();
+    $oids = array();
     foreach ($this->_hits as $hit) {
-      $allOIDs[] = ObjectId::parse($hit['oid']);
-    }
-    $allOIDs = array_unique($allOIDs);
-    $oids = $allOIDs;
-
-    // update pagingInfo
-    if ($pagingInfo) {
-      $pagingInfo->setTotalCount(sizeof($allOIDs));
-
-      // select the requested slice
-      if ($pagingInfo->getPageSize() == -1) {
-        $size = $pagingInfo->getTotalCount();
-      }
-      else {
-        $size = $pagingInfo->getPageSize();
-      }
-      $oids = array_slice($allOIDs, ($pagingInfo->getPage()-1)*$size, $size);
+      $oids[] = ObjectId::parse($hit['oid']);
     }
 
     // load the objects
