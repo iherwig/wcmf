@@ -19,9 +19,12 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Action;
+use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 use wcmf\lib\util\URIUtil;
 
 /**
@@ -92,7 +95,7 @@ abstract class PageExportController extends BatchController {
   /**
    * @see Controller::initialize()
    */
-  protected function initialize($request, $response) {
+  protected function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
     if ($request->getAction() != 'preview') {
       // do export batch
@@ -129,10 +132,13 @@ abstract class PageExportController extends BatchController {
 
       $callback = $this->getPreviewCallback($this->_request->getContext());
       if (!method_exists($this, $callback)) {
-        throw new RuntimeException("Method ".$callback." must be implemented by ".get_class($this));
+        $request = $this->getRequest();
+        $response = $this->getResponse();
+        throw new ApplicationException($request, $response,
+                ApplicationError::getGeneral("Method ".$callback." must be implemented by ".get_class($this)));
       }
       else {
-        call_user_method($callback, &$this, array($previewItem));
+        call_user_func(array($this, $callback), array($previewItem));
       }
     }
     else {

@@ -95,10 +95,7 @@ define([
                     this.setTitle(this.title+" - "+Model.getDisplayValue(this.entity));
                 }), lang.hitch(this, function(error) {
                     // error
-                    this.showNotification({
-                        type: "error",
-                        message: error.message || Dict.translate("Backend error")
-                    });
+                    this.showBackendError(error);
                 }));
             }
             else {

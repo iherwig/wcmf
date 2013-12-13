@@ -31,6 +31,9 @@ use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
  * CopyController is a controller that copies Nodes.
@@ -69,7 +72,7 @@ class CopyController extends BatchController {
   /**
    * @see Controller::initialize()
    */
-  protected function initialize($request, $response) {
+  protected function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
     // initialize controller
@@ -193,7 +196,9 @@ class CopyController extends BatchController {
     // do the action
     if ($action == 'move') {
       if ($request->hasValue('target_initparams')) {
-        throw new RuntimeException("Moving nodes to a different store is not supported. Use the 'copy' action instead.");
+        $response = $this->getResponse();
+        throw new ApplicationException($request, $response,
+                ApplicationError::getGeneral("Moving nodes to a different store is not supported. Use the 'copy' action instead."));
       }
 
       // with move action, we only need to attach the Node to the new target

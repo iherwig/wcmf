@@ -22,6 +22,7 @@ use wcmf\application\controller\BatchController;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\search\IndexedSearch;
 
 /**
@@ -48,7 +49,7 @@ class SearchIndexController extends BatchController {
         $types = array();
         $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
         foreach ($persistenceFacade->getKnownTypes() as $type) {
-          $tpl = $persistenceFacade->create($type, BuildDepth::SINGLE);
+          $tpl = $persistenceFacade->create($type);
           if ($search->isSearchable($tpl)) {
             array_push($types, $type);
           }
@@ -91,14 +92,14 @@ class SearchIndexController extends BatchController {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $search = ObjectFactory::getInstance('search');
     foreach($oids as $oid) {
-      if (ObjectId::isValidOID($oid)) {
-        $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
+      if (ObjectId::isValid($oid)) {
+        $obj = $persistenceFacade->load($oid);
         $search->addToIndex($obj);
       }
     }
     $search->commitIndex(false);
 
-    if ($this->getStepNumber() == $this->getNumberOfSteps() - 1) {
+    if ($this->getStepNumber() == $this->getNumberOfSteps()) {
       $this->addWorkPackage(Message::get('Optimizing index'), 1, array(0), 'optimize');
     }
   }

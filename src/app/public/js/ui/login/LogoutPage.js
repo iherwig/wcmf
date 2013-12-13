@@ -53,10 +53,7 @@ define([
             }), lang.hitch(this, function(error){
                 // error
                 query(".btn").button("reset");
-                this.showNotification({
-                    type: "error",
-                    message: Dict.translate("Backend error")
-                });
+                this.showBackendError(error);
             }));
         }
     });

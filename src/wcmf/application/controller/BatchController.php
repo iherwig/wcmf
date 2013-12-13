@@ -18,30 +18,38 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\application\controller\LongTaskController;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
  * BatchController allows to define work packages that will be processed
- * in a sequence. It simplifies the usage of LongTaskController functionality
- * for splitting different bigger tasks into many smaller (similar) tasks where
- * the whole number of tasks isn't known at designtime.
+ * in a sequence.
  *
  * <b>Input actions:</b>
  * - @em continue Process next work package if any
  * - unspecified: Initialized work packages
  *
  * <b>Output actions:</b>
- * - see LongTaskController
+ * - @em done If finished
+ *
+ * @param[in] oneCall Boolean whether to accomplish the task in one call (optional, default: false)
+ * @param[out] stepNumber The current step starting with 1, ending with numberOfSteps+1
+ * @param[out] numberOfSteps Total number of steps
+ * @param[out] displayText The display text for the current step
+ * @param[out] summaryText The summary text (only available in the last step)
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class BatchController extends LongTaskController {
+abstract class BatchController extends Controller {
 
   // session name constants
-  const ONE_CALL_SESSION_VARNAME = 'LongTaskController.oneCall';
-  const STEP_SESSION_VARNAME = 'LongTaskController.curStep';
+  const ONE_CALL_SESSION_VARNAME = 'BatchController.oneCall';
+  const STEP_SESSION_VARNAME = 'BatchController.curStep';
   const NUM_STEPS_VARNAME = 'BatchController.numSteps';
   const WORK_PACKAGES_VARNAME = 'BatchController.workPackages';
 
@@ -61,14 +69,14 @@ abstract class BatchController extends LongTaskController {
         $this->_curStep = $session->get(self::STEP_SESSION_VARNAME);
       }
       else {
-        throw new RuntimeException("Error initializing BatchController: ".get_class($this));
+        throw new ApplicationException($request, $response, ApplicationError::getGeneral("Current step undefined."));
       }
       // get workpackage definition for current call from session
-      if ($session->exist($this->WORK_PACKAGES_VARNAME)) {
-        $this->_workPackages = $session->get($this->WORK_PACKAGES_VARNAME);
+      if ($session->exist(self::WORK_PACKAGES_VARNAME)) {
+        $this->_workPackages = $session->get(self::WORK_PACKAGES_VARNAME);
       }
       else {
-        throw new RuntimeException("Error initializing BatchController: ".get_class($this));
+        throw new ApplicationException($request, $response, ApplicationError::getGeneral("Work packages undefined."));
       }
     }
     else {
@@ -78,26 +86,27 @@ abstract class BatchController extends LongTaskController {
       $session->set(self::ONE_CALL_SESSION_VARNAME, $request->getBooleanValue('oneCall', false));
 
       $tmpArray = array();
-      $session->set($this->WORK_PACKAGES_VARNAME, $tmpArray);
+      $session->set(self::WORK_PACKAGES_VARNAME, $tmpArray);
 
       // define work packages
       $number = 0;
       while (($workPackage = $this->getWorkPackage($number)) !== null) {
         if (!isset($workPackage['name']) || !isset($workPackage['size']) ||
           !isset($workPackage['oids']) || !isset($workPackage['callback'])) {
-          throw new RuntimeException("Incomplete work package description.");
+          throw new ApplicationException($request, $response, ApplicationError::getGeneral("Incomplete work package description."));
         }
         else {
-          $this->addWorkPackage($workPackage['name'], $workPackage['size'], $workPackage['oids'], $workPackage['callback'], $workPackage['args']);
+          $args = isset($workPackage['args']) ? $workPackage['args'] : null;
+          $this->addWorkPackage($workPackage['name'], $workPackage['size'], $workPackage['oids'], $workPackage['callback'], $args);
           $number++;
         }
       }
       if ($number == 0) {
-        throw new RuntimeException("Error initializing BatchController: ".get_class($this));
+        throw new ApplicationException($request, $response, ApplicationError::getGeneral("No work packages."));
       }
     }
-    $step = $this->_curStep+1;
-    $session->set(self::STEP_SESSION_VARNAME, $step);
+    $nextStep = $this->_curStep+1;
+    $session->set(self::STEP_SESSION_VARNAME, $nextStep);
   }
 
   /**
@@ -108,43 +117,35 @@ abstract class BatchController extends LongTaskController {
    */
   protected function executeKernel() {
     $response = $this->getResponse();
+    $curStep = $this->getStepNumber();
+    $numberOfSteps = $this->getNumberOfSteps();
 
-    // call processPart() in the second step,
-    // in the first step show status only
-    if ($this->_curStep > 1) {
+    if ($curStep <= $numberOfSteps) {
       $this->processPart();
-    }
-    if ($this->_curStep <= $this->getNumberOfSteps()+1) {
-      $response->setValue('stepNumber', $this->_curStep);
-      $response->setValue('numberOfSteps', $this->getNumberOfSteps());
-      // assign an array holding number of steps elements for use with
-      // smarty section command
-      $stepsArray = array();
-      for ($i=0; $i<$this->getNumberOfSteps(); $i++) {
-        $stepsArray[] = '.';
-      }
-      $response->setValue('stepsArray', $stepsArray);
-      $response->setValue('displayText', $this->getDisplayText($this->_curStep));
+
+      $response->setValue('stepNumber', $curStep);
+      $response->setValue('numberOfSteps', $numberOfSteps);
+      $response->setValue('displayText', $this->getDisplayText($curStep));
 
       // add the summary message
       $response->setValue('summaryText', $this->getSummaryText());
-
-      $session = ObjectFactory::getInstance('session');
-      if ($session->get(self::ONE_CALL_SESSION_VARNAME) == false) {
-        // show progress bar
-        return false;
-      }
-      else {
-        // proceed
-        $response->setAction('continue');
-        return true;
-      }
     }
-    else {
+
+    // check if we are finished or should continue
+    // (number of packages may be changed)
+    $numberOfSteps = $this->getNumberOfSteps();
+    if ($curStep > $numberOfSteps) {
       // return control to application
       $response->setAction('done');
-      return true;
     }
+    else {
+      $session = ObjectFactory::getInstance('session');
+      if ($session->get(self::ONE_CALL_SESSION_VARNAME) != false) {
+        // proceed
+        $response->setAction('continue');
+      }
+    }
+    return false;
   }
 
   /**
@@ -154,7 +155,7 @@ abstract class BatchController extends LongTaskController {
   protected function getStepNumber() {
     // since we actally call processPart() in the second step,
     // return the real step number reduced by one
-    return $this->_curStep-1;
+    return $this->_curStep;
   }
 
   /**
@@ -170,18 +171,23 @@ abstract class BatchController extends LongTaskController {
    * @param args Assoziative array of additional callback arguments (application specific) [default: null]
    */
   protected function addWorkPackage($name, $size, $oids, $callback, $args=null) {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     if ($size < 1) {
-      throw new RuntimeException("Wrong work package description '".$name."': Size must be at least 1.");
+      throw new ApplicationException($request, $response,
+              ApplicationError::getGeneral("Wrong work package description '".$name."': Size must be at least 1."));
     }
     if (sizeOf($oids) == 0) {
-      throw new RuntimeException("Wrong work package description '".$name."': No oids given.");
+      throw new ApplicationException($request, $response,
+              ApplicationError::getGeneral("Wrong work package description '".$name."': No oids given."));
     }
     if (strlen($callback) == 0) {
-      throw new RuntimeException("Wrong work package description '".$name."': No callback given.");
+      throw new ApplicationException($request, $response,
+              ApplicationError::getGeneral("Wrong work package description '".$name."': No callback given."));
     }
 
     $session = ObjectFactory::getInstance('session');
-    $workPackages = $session->get($this->WORK_PACKAGES_VARNAME);
+    $workPackages = $session->get(self::WORK_PACKAGES_VARNAME);
 
     $counter = 1;
     $total = sizeOf($oids);
@@ -223,20 +229,17 @@ abstract class BatchController extends LongTaskController {
    * @see LongTaskController::processPart()
    */
   protected function processPart() {
-    if ($this->getStepNumber()-1 == $this->getNumberOfSteps()) {
-      return;
-    }
-
     $curWorkPackageDef = $this->_workPackages[$this->getStepNumber()-1];
     if (strlen($curWorkPackageDef['callback']) == 0) {
-      throw new RuntimeException("Empty callback name.");
+      throw new ApplicationException($request, $response, ApplicationError::getGeneral("Empty callback name."));
     }
     else {
       if (!method_exists($this, $curWorkPackageDef['callback'])) {
-        throw new RuntimeException("Method '".$curWorkPackageDef['callback']."' must be implemented by ".get_class($this));
+        throw new ApplicationException($request, $response,
+                ApplicationError::getGeneral("Method '".$curWorkPackageDef['callback']."' must be implemented by ".get_class($this)));
       }
       else {
-        call_user_method($curWorkPackageDef['callback'], $this, $curWorkPackageDef['oids'], $curWorkPackageDef['args']);
+        call_user_func(array($this, $curWorkPackageDef['callback']), $curWorkPackageDef['oids'], $curWorkPackageDef['args']);
       }
     }
   }
@@ -246,7 +249,7 @@ abstract class BatchController extends LongTaskController {
    */
   protected function getNumberOfSteps() {
     $session = ObjectFactory::getInstance('session');
-    return $session->get($this->NUM_STEPS_VARNAME);
+    return $session->get(self::NUM_STEPS_VARNAME);
   }
 
   /**

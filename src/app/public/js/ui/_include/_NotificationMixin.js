@@ -3,12 +3,14 @@ define([
     "dojo/_base/lang",
     "dojo/_base/fx",
     "dojo/dom-construct",
+    "../../locale/Dictionary",
     "./widget/NotificationWidget"
 ], function (
     declare,
     lang,
     fx,
     domConstruct,
+    Dict,
     Notification
 ) {
     /**
@@ -77,8 +79,24 @@ define([
             }
         },
 
-        showError: function (errorData) {
-            // TODO analyse error data and create message
+        showBackendError: function (errorData) {
+            var message = Dict.translate("Backend error");
+
+            // check for most specific (message is in response data)
+            if (errorData.response && errorData.response.data && errorData.response.data.errorMessage) {
+                message = errorData.response.data.errorMessage;
+            }
+            else if (errorData.errorMessage) {
+                message = errorData.errorMessage;
+            }
+            else if (errorData.message) {
+                message = errorData.message;
+            }
+
+            this.showNotification({
+                type: "error",
+                message: message
+            })
         }
     });
 });

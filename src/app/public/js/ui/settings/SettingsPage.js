@@ -60,10 +60,7 @@ define([
                 this.saveBtn.reset();
                 if (!response.success) {
                     // error
-                    this.showNotification({
-                        type: "error",
-                        message: response.errorMessage || Dict.translate("Backend error")
-                    });
+                    this.showBackendError(response);
                 }
                 else {
                     // success
@@ -76,10 +73,7 @@ define([
             }), lang.hitch(this, function(error) {
                 // error
                 this.saveBtn.reset();
-                this.showNotification({
-                    type: "error",
-                    message: error.response.data.errorMessage || error.message || Dict.translate("Backend error")
-                });
+                this.showBackendError(error);
             }));
         }
     });

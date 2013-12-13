@@ -132,10 +132,7 @@ function(
                 }
             }), lang.hitch(this, function(error) {
                 // error
-                this.showNotification({
-                    type: "error",
-                    message: error.message || Dict.translate("Backend error")
-                });
+                this.showBackendError(error);
             }));
 
             // add relation widgets
@@ -267,10 +264,7 @@ function(
                     this.saveBtn.reset();
                     if (response.errorMessage) {
                         // error
-                        this.showNotification({
-                            type: "error",
-                            message: response.errorMessage || Dict.translate("Backend error")
-                        });
+                        this.showBackendError(response);
                     }
                     else {
                         // success
@@ -318,10 +312,7 @@ function(
                 }), lang.hitch(this, function(error) {
                     // error
                     this.saveBtn.reset();
-                    this.showNotification({
-                        type: "error",
-                        message: error.message || error.response.data.errorMessage || Dict.translate("Backend error")
-                    });
+                    this.showBackendError(error);
                 }));
             }
         },
@@ -349,10 +340,7 @@ function(
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // error
-                    this.showNotification({
-                        type: "error",
-                        message: Dict.translate("Backend error")
-                    });
+                    this.showBackendError(result);
                 })
             }).execute(e, this.entity);
         }

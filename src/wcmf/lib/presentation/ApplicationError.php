@@ -135,6 +135,15 @@ class ApplicationError {
   }
 
   /**
+   * Factory method for creating a general error instance.
+   * @param message Error message
+   * @return ApplicationError
+   */
+  public static function getGeneral($message) {
+    return new ApplicationError('GENERAL_ERROR', $message, ERROR_LEVEL_ERROR);
+  }
+
+  /**
    * Factory method for transforming an exception into an ApplicationError instance.
    * @param ex Exception
    * @return ApplicationError

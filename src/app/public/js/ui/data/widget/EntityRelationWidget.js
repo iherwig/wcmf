@@ -120,10 +120,7 @@ function(
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // error
-                    this.showNotification({
-                        type: "error",
-                        message: Dict.translate("Backend error")
-                    });
+                    this.showBackendError(result);
                 })
             }).execute(e, this.relation.type);
         },
@@ -147,10 +144,7 @@ function(
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // error
-                    this.showNotification({
-                        type: "error",
-                        message: Dict.translate("Backend error")
-                    });
+                    this.showBackendError(result);
                     gridRefresh.resolve();
                 })
             }).execute(e);
