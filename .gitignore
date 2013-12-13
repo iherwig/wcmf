@@ -1,5 +1,6 @@
 *.log
 log.txt
 src/app/release
+src/app/searchIndex
 src/dist
 dist
