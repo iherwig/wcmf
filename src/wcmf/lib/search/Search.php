@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\search;
 
+use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistentObject;
 
 /**
@@ -30,10 +31,11 @@ interface Search {
   /**
    * Search for searchTerm
    * @param searchTerm
+   * @param pagingInfo A PagingInfo instance, optional [default: null]
    * @return Associative array with object ids as keys and
    * associative array with keys 'oid', 'score', 'summary' as value
    */
-  public function find($searchTerm);
+  public function find($searchTerm, PagingInfo $pagingInfo=null);
 
   /**
    * Check if the instance object is searchable

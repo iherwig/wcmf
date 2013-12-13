@@ -23,6 +23,7 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\search\IndexedSearch;
@@ -97,7 +98,7 @@ class LuceneSearch implements IndexedSearch {
   /**
    * @see Search::find()
    */
-  public function find($searchTerm) {
+  public function find($searchTerm, PagingInfo $pagingInfo=null) {
     $results = array();
     $index = $this->getIndex(false);
     if ($index) {
@@ -105,6 +106,10 @@ class LuceneSearch implements IndexedSearch {
       $query = \Zend_Search_Lucene_Search_QueryParser::parse($searchTerm, 'UTF-8');
       try {
         $hits = $index->find($query);
+        if ($pagingInfo != null && $pagingInfo->getPageSize() > 0) {
+          $pagingInfo->setTotalCount(sizeof($hits));
+          $hits = array_slice($hits, $pagingInfo->getOffset(), $pagingInfo->getPageSize());
+        }
         foreach($hits as $hit) {
           $oidStr = $hit->oid;
           $oid = ObjectId::parse($oidStr);

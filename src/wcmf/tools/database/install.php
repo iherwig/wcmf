@@ -38,6 +38,18 @@ $config->addConfiguration('config.ini');
 $config->addConfiguration('../../wcmf/tools/database/config.ini');
 ObjectFactory::configure($config);
 
+// execute custom scripts from the directory 'custom-install'
+$installScriptsDir = $config->getValue('installScriptsDir', 'installation');
+if (is_dir($installScriptsDir)) {
+  $sqlScripts = FileUtil::getFiles($installScriptsDir, '/[^_]+_.*\.sql$/', true);
+  sort($sqlScripts);
+  foreach ($sqlScripts as $script) {
+    // extract the initSection from the filename
+    $initSection = array_shift(preg_split('/_/', basename($script)));
+    DBUtil::executeScript($script, $initSection);
+  }
+}
+
 $permissionManager = ObjectFactory::getInstance('permissionManager');
 $permissionManager->deactivate();
 
@@ -77,17 +89,6 @@ try {
     $adminUser->addNode($adminRole);
   }
 
-  // execute custom scripts from the directory 'custom-install'
-  $installScriptsDir = $config->getValue('installScriptsDir', 'installation');
-  if (is_dir($installScriptsDir)) {
-    $sqlScripts = FileUtil::getFiles($installScriptsDir, '/[^_]+_.*\.sql$/', true);
-    sort($sqlScripts);
-    foreach ($sqlScripts as $script) {
-      // extract the initSection from the filename
-      $initSection = array_shift(preg_split('/_/', basename($script)));
-      DBUtil::executeScript($script, $initSection);
-    }
-  }
   $transaction->commit();
   Log::info("done.", "install");
 }

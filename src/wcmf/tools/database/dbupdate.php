@@ -42,6 +42,18 @@ if (!ensureDatabases()) {
   exit();
 }
 
+// execute custom scripts from the directory 'custom-dbupdate'
+$migrationScriptsDir = $config->getValue('migrationScriptsDir', 'installation');
+if (is_dir($migrationScriptsDir)) {
+  $sqlScripts = FileUtil::getFiles($migrationScriptsDir, '/[^_]+_.*\.sql$/', true);
+  sort($sqlScripts);
+  foreach ($sqlScripts as $script) {
+    // extract the initSection from the filename
+    $initSection = array_shift(preg_split('/_/', basename($script)));
+    DBUtil::executeScript($script, $initSection);
+  }
+}
+
 // parse tables.sql
 $tables = array();
 $readingTable = false;
@@ -99,18 +111,6 @@ foreach ($tables as $tableDef) {
     updateEntry($connection, $tableDef);
   }
   $connection->commit();
-}
-
-// execute custom scripts from the directory 'custom-dbupdate'
-$migrationScriptsDir = $config->getValue('migrationScriptsDir', 'installation');
-if (is_dir($migrationScriptsDir)) {
-  $sqlScripts = FileUtil::getFiles($migrationScriptsDir, '/[^_]+_.*\.sql$/', true);
-  sort($sqlScripts);
-  foreach ($sqlScripts as $script) {
-    // extract the initSection from the filename
-    $initSection = array_shift(preg_split('/_/', basename($script)));
-    DBUtil::executeScript($script, $initSection);
-  }
 }
 
 Log::info("done.", "dbupdate");
