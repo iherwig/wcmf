@@ -2,5 +2,6 @@
 log.txt
 src/app/release
 src/app/searchIndex
+src/app/public/media
 src/dist
 dist

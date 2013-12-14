@@ -56,20 +56,13 @@ define([
                 handleAs: 'json'
 
             }).then(lang.hitch(this, function(response) {
-                // callback completes
+                // success
                 this.saveBtn.reset();
-                if (!response.success) {
-                    // error
-                    this.showBackendError(response);
-                }
-                else {
-                    // success
-                    this.showNotification({
-                        type: "ok",
-                        message: Dict.translate("The password was successfully changed"),
-                        fadeOut: true
-                    });
-                }
+                this.showNotification({
+                    type: "ok",
+                    message: Dict.translate("The password was successfully changed"),
+                    fadeOut: true
+                });
             }), lang.hitch(this, function(error) {
                 // error
                 this.saveBtn.reset();

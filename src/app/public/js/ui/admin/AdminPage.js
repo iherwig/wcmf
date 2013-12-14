@@ -2,24 +2,26 @@ define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/request",
+    "dojo/dom-construct",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "../_include/FormLayout",
     "../_include/widget/Button",
+    "../../action/Process",
     "../../locale/Dictionary",
     "dojo/text!./template/AdminPage.html"
 ], function (
     require,
     declare,
     lang,
-    request,
+    domConstruct,
     _Page,
     _Notification,
     NavigationWidget,
     FormLayout,
     Button,
+    Process,
     Dict,
     template
 ) {
@@ -38,67 +40,34 @@ define([
             e.preventDefault();
 
             this.indexBtn.setProcessing();
-            this.doCall("", "indexAll");
-
             this.hideNotification();
-        },
 
-        handleResponse: function(response) {
-            var stepNumber = parseInt(response['stepNumber']);
-            var numberOfSteps = parseInt(response['numberOfSteps']);
-            var stepName = response['displayText'];
-            var controller = response['controller'];
-
-            if (response.action === "done") {
-                // call the success handler if the task is finished
-                if (this.successHandler instanceof Function) {
-                    this.successHandler(response);
-                }
-            }
-            else {
-                if (this.processHandler instanceof Function) {
-                    this.processHandler(stepName, stepNumber, numberOfSteps, response);
-                }
-
-                // do the proceeding calls
-                this.doCall(controller, "continue");
-            }
-        },
-
-        processHandler: function(stepName, stepNumber, numberOfSteps, response) {
-            console.log(stepName+" "+stepNumber+"/"+numberOfSteps);
+            var process = new Process({
+                callback: lang.hitch(this, this.successHandler),
+                errback: lang.hitch(this, this.errorHandler),
+                progback: lang.hitch(this, this.progressHandler)
+            });
+            process.run("indexAll");
         },
 
         successHandler: function(response) {
+            domConstruct.empty(this.statusNode);
             this.indexBtn.reset();
+            this.showNotification({
+                type: "ok",
+                message: Dict.translate("The search index was successfully updated."),
+                fadeOut: true
+            });
         },
 
-        doCall: function(controller, action) {
-            request.post(appConfig.backendUrl, {
-                data: {
-                    controller: controller,
-                    action: action
-                },
-                headers: {
-                    "Accept" : "application/json"
-                },
-                handleAs: 'json'
+        errorHandler: function(error) {
+            this.indexBtn.reset();
+            this.showBackendError(error);
+        },
 
-            }).then(lang.hitch(this, function(response) {
-                // callback completes
-                if (!response.success) {
-                    // error
-                    this.showBackendError(response);
-                }
-                else {
-                    // success
-                    this.handleResponse(response);
-                }
-            }), lang.hitch(this, function(error) {
-                // error
-                this.indexBtn.reset();
-                this.showBackendError(error);
-            }));
+        progressHandler: function(stepName, stepNumber, numberOfSteps, response) {
+            var text = domConstruct.toDom("<p>"+stepName+"</p>");
+            domConstruct.place(text, this.statusNode, "only");
         }
     });
 });

@@ -61,27 +61,20 @@ define([
                 handleAs: 'json'
 
             }).then(lang.hitch(this, function(response) {
-                // callback completes
+                // success
                 this.loginBtn.reset();
-                if (!response.success) {
-                    // error
-                    this.showBackendError(response);
+                Cookie.set("user", data.user);
+
+                // redirect to initially requested route if given
+                var redirectRoute = this.request.getQueryParam("route");
+                if (redirectRoute) {
+                    window.location.href = this.request.getPathname()+redirectRoute;
                 }
                 else {
-                    // success
-                    Cookie.set("user", data.user);
-
-                    // redirect to initially requested route if given
-                    var redirectRoute = this.request.getQueryParam("route");
-                    if (redirectRoute) {
-                        window.location.href = this.request.getPathname()+redirectRoute;
-                    }
-                    else {
-                        // redirect to default route
-                        var route = this.router.getRoute("home");
-                        var url = route.assemble();
-                        this.pushState(url);
-                    }
+                    // redirect to default route
+                    var route = this.router.getRoute("home");
+                    var url = route.assemble();
+                    this.pushState(url);
                 }
             }), lang.hitch(this, function(error) {
                 // error
