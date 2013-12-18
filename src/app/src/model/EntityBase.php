@@ -1,9 +1,9 @@
 <?php
 /*
  * Copyright (c) 2013 The Olympos Development Team.
- * 
+ *
  * http://sourceforge.net/projects/olympos/
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,17 +19,76 @@ namespace app\src\model;
 
 use app\src\model\EntityBaseBase;
 // PROTECTED REGION ID(app/src/model/EntityBase.php/Import) ENABLED START
+use wcmf\lib\core\ObjectFactory;
 // PROTECTED REGION END
 
 /**
  * @class EntityBase
  * EntityBase description: ?
  *
- * @author 
+ * @author
  * @version 1.0
  */
 class EntityBase extends EntityBaseBase {
 // PROTECTED REGION ID(app/src/model/EntityBase.php/Body) ENABLED START
+
+  /**
+   * Set creator and created attribute on the node.
+   */
+  function beforeInsert() {
+    parent::beforeInsert();
+
+    // set creation date on nodes with appropriate attribute
+    if ($this->hasValue('created')) {
+      $this->setValue('created', date("Y-m-d H:i:s"));
+    }
+    // set creator on nodes with appropriate attribute
+    if ($this->hasValue('creator')) {
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
+      $authUser = $permissionManager->getAuthUser();
+      $this->setValue('creator', $authUser->getLogin());
+    }
+    $this->beforeUpdate();
+  }
+
+  /**
+   * Set last_editor and modified attribute on the node.
+   */
+  function beforeUpdate() {
+    parent::beforeUpdate();
+
+    // set modified date on nodes with appropriate attribute
+    if ($this->hasValue('modified')) {
+      $this->setValue('modified', date("Y-m-d H:i:s"));
+    }
+    // set last_editor on nodes with appropriate attribute
+    if ($this->hasValue('last_editor')) {
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
+      $authUser = $permissionManager->getAuthUser();
+      $this->setValue('last_editor', $authUser->getLogin());
+    }
+  }
+
+  /**
+   * Set the sortkey initially if existing.
+   */
+  function afterInsert() {
+    parent::afterInsert();
+
+    // set the sortkey to the id value
+    if ($this->hasValue('sortkey')) {
+      $this->setSortkey($this->getInitialSortkey());
+      $this->save();
+    }
+  }
+
+  /**
+   * Get the initial sortkey. The default implementation returns the db id.
+   * @note Subclasses may override this for special requirements
+   */
+  function getInitialSortkey() {
+    return $this->getDBID();
+  }
 // PROTECTED REGION END
 }
 ?>

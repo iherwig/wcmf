@@ -32,13 +32,12 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ExitController extends Controller
-{
+class ExitController extends Controller {
+  
   /**
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
+  function executeKernel() {
     exit;
   }
 }

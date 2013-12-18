@@ -31,15 +31,14 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class FailureController extends Controller
-{
+class FailureController extends Controller {
+
   /**
    * Assign error message to Response.
    * @return False in every case.
    * @see Controller::executeKernel()
    */
-  function executeKernel()
-  {
+  function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $response->setErrors($request->getErrors());
