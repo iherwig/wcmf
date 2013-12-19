@@ -3,15 +3,15 @@ define([
     "dojo/_base/lang",
     "dojo/_base/fx",
     "dojo/dom-construct",
-    "../../locale/Dictionary",
-    "./widget/NotificationWidget"
+    "./widget/NotificationWidget",
+    "../../persistence/BackendError"
 ], function (
     declare,
     lang,
     fx,
     domConstruct,
-    Dict,
-    Notification
+    Notification,
+    BackendError
 ) {
     /**
      * Notification mixin. Expects a data-dojo-attach-point="notificationNode" in
@@ -80,23 +80,11 @@ define([
         },
 
         showBackendError: function (errorData) {
-            var message = Dict.translate("Backend error");
-
-            // check for most specific (message is in response data)
-            if (errorData.response && errorData.response.data && errorData.response.data.errorMessage) {
-                message = errorData.response.data.errorMessage;
-            }
-            else if (errorData.errorMessage) {
-                message = errorData.errorMessage;
-            }
-            else if (errorData.message) {
-                message = errorData.message;
-            }
-
+            var error = BackendError.parseResponse(errorData);
             this.showNotification({
                 type: "error",
-                message: message
-            })
+                message: error.message
+            });
         }
     });
 });
