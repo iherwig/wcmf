@@ -25,8 +25,8 @@ namespace wcmf\lib\persistence\concurrency;
  */
 class Lock {
 
-  const TYPE_OPTIMISTIC = 0;
-  const TYPE_PESSIMISTIC = 1; // pessimistic write lock
+  const TYPE_OPTIMISTIC = 'optimistic';
+  const TYPE_PESSIMISTIC = 'pessimistic'; // pessimistic write lock
 
   private $_oid = null;
   private $_useroid = null;

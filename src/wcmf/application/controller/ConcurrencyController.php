@@ -20,6 +20,7 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\ApplicationError;
 
@@ -34,6 +35,7 @@ use wcmf\lib\presentation\ApplicationError;
  * - @em ok In any case
  *
  * @param[in] oid The object id of the entity to lock/unlock
+ * @param[in] type The lock type [optimistic|pessimistic, optional [default: optimistic]
  * @param[out] oid The object id of the entity to lock/unlock
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -52,6 +54,11 @@ class ConcurrencyController extends Controller {
         array('invalidOids' => array($request->getValue('oid')))));
       return false;
     }
+    $lockType = $request->getValue('type', Lock::TYPE_OPTIMISTIC);
+    if (!in_array($lockType, array(Lock::TYPE_OPTIMISTIC, Lock::TYPE_PESSIMISTIC))) {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => array('type'))));
+    }
     return true;
   }
 
@@ -64,11 +71,12 @@ class ConcurrencyController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
-    $oid = $request->getValue('oid');
+    $oid = ObjectId::parse($request->getValue('oid'));
+    $lockType = $request->getValue('type', Lock::TYPE_OPTIMISTIC);
 
     // process actions
     if ($request->getAction() == 'lock') {
-      $concurrencyManager->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
+      $concurrencyManager->aquireLock($oid, $lockType);
     }
     elseif ($request->getAction() == 'unlock') {
       $concurrencyManager->releaseLock($oid);

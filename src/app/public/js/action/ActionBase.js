@@ -70,11 +70,12 @@ define([
         },
 
         /**
-         * Execute the action. Before start, call this.init. When done, call
-         * this.callback, this.errback, this.progback. Longer running actions should
-         * return a Deferred instance.
-         * depending on the execution result.
+         * Execute the action.
          * @param e The event that triggered execution, might be null
+         *
+         * Implementation hints: Before start, call this.init. When done, call
+         * this.callback, this.errback, this.progback depending on the execution result.
+         * Longer running actions should return a Deferred instance.
          */
         execute: function(e) {
             throw("Method execute() must be implemented by concrete action.");

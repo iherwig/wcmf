@@ -98,7 +98,7 @@ class DisplayController extends Controller {
         $buildDepth = $request->getValue('depth');
       }
       $node = $persistenceFacade->load($oid, $buildDepth);
-      $concurrencyManager->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $node);
+      //$concurrencyManager->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $node);
 
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest()) {

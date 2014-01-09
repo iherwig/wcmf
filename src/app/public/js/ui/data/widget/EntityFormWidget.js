@@ -17,6 +17,7 @@ define( [
     "../../_include/_NotificationMixin",
     "../../_include/widget/Button",
     "../../../model/meta/Model",
+    "../../../persistence/BackendError",
     "../../../persistence/Store",
     "../../../persistence/RelationStore",
     "../../../action/Delete",
@@ -44,6 +45,7 @@ function(
     _Notification,
     Button,
     Model,
+    BackendError,
     Store,
     RelationStore,
     Delete,
@@ -234,6 +236,18 @@ function(
             return (this.sourceOid && this.relation);
         },
 
+        aquireLock: function() {
+            new Lock({
+                page: this.page,
+                init: lang.hitch(this, function(data) {}),
+                callback: lang.hitch(this, function(data, result) {}),
+                errback: lang.hitch(this, function(data, result) {
+                    // error
+                    this.showBackendError(result);
+                })
+            }).execute({}, this.entity);
+        },
+
         _save: function(e) {
             // prevent the page from navigating after submit
             e.preventDefault();
@@ -308,11 +322,23 @@ function(
                         });
                         this.set("headline", Model.getDisplayValue(this.entity));
                         this.setModified(false);
+                        this.aquireLock();
                     }
                 }), lang.hitch(this, function(error) {
                     // error
                     this.saveBtn.reset();
-                    this.showBackendError(error);
+
+                    // check for concurrent update
+                    var error = BackendError.parseResponse(error);
+                    if (error.code === "CONCURRENT_UPDATE") {
+                        this.showNotification({
+                            type: "error",
+                            message: error.message+' <a href="'+location.href+'" class="alert-error"><i class="icon-refresh"></i></a>'
+                        });
+                    }
+                    else {
+                        this.showBackendError(error);
+                    }
                 }));
             }
         },

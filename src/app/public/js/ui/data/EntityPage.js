@@ -10,6 +10,7 @@ define([
     "../_include/widget/NavigationWidget",
     "../_include/widget/ConfirmDlgWidget",
     "./widget/EntityTabWidget",
+    "../../action/Lock",
     "../../persistence/Store",
     "../../persistence/Entity",
     "../../model/meta/Model",
@@ -27,6 +28,7 @@ define([
     NavigationWidget,
     ConfirmDlg,
     EntityTabWidget,
+    Lock,
     Store,
     Entity,
     Model,
@@ -93,6 +95,7 @@ define([
                     this.original = this.isTranslation ? loadResults[1] : {};
                     this.buildForm();
                     this.setTitle(this.title+" - "+Model.getDisplayValue(this.entity));
+                    this.aquireLock();
                 }), lang.hitch(this, function(error) {
                     // error
                     this.showBackendError(error);
@@ -133,6 +136,18 @@ define([
                 return deferred.promise;
             }
             return this.inherited(arguments);
+        },
+
+        aquireLock: function() {
+            new Lock({
+                page: this.page,
+                init: lang.hitch(this, function(data) {}),
+                callback: lang.hitch(this, function(data, result) {}),
+                errback: lang.hitch(this, function(data, result) {
+                    // error
+                    this.showBackendError(result);
+                })
+            }).execute({}, this.entity);
         },
 
         buildForm: function() {
