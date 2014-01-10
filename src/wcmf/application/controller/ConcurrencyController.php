@@ -36,8 +36,12 @@ use wcmf\lib\presentation\ApplicationError;
  * - @em ok In any case
  *
  * @param[in] oid The object id of the entity to lock/unlock
- * @param[in] type The lock type [optimistic|pessimistic, optional [default: optimistic]
+ * @param[in] type The lock type [optimistic|pessimistic], optional [default: optimistic]
  * @param[out] oid The object id of the entity to lock/unlock
+ * @param[out] type The lock type [optimistic|pessimistic] in case of lock action
+ *
+ * Note: if the user already holds a pessimistic lock, and tries to aquire an optimistic lock,
+ * the returned type is still pessimistic.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -79,9 +83,11 @@ class ConcurrencyController extends Controller {
     try {
       if ($request->getAction() == 'lock') {
         $concurrencyManager->aquireLock($oid, $lockType);
+        $lock = $concurrencyManager->getLock($oid);
+        $response->setValue('type', $lock->getType());
       }
       elseif ($request->getAction() == 'unlock') {
-        $concurrencyManager->releaseLock($oid);
+        $concurrencyManager->releaseLock($oid, $lockType);
       }
     }
     catch (PessimisticLockException $ex) {

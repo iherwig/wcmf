@@ -53,8 +53,9 @@ interface ConcurrencyManager {
   /**
    * Release a lock on an ObjectId for the current user.
    * @param oid object id of the object to release.
+   * @param type One of the Lock::Type constants or null for all types [default: null]
    */
-  public function releaseLock(ObjectId $oid);
+  public function releaseLock(ObjectId $oid, $type=null);
 
   /**
    * Release all locks on an ObjectId regardless of the user.

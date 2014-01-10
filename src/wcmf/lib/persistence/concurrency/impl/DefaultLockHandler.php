@@ -86,7 +86,7 @@ class DefaultLockHandler implements LockHandler {
   /**
    * @see LockHandler::releaseLock()
    */
-  public function releaseLock(ObjectId $oid) {
+  public function releaseLock(ObjectId $oid, $type=null) {
     $currentUser = $this->getCurrentUser();
     if (!$currentUser) {
       return;
@@ -103,6 +103,7 @@ class DefaultLockHandler implements LockHandler {
     foreach($locks as $lock) {
       // delete lock immediatly
       $lock->getMapper()->delete($lock);
+      $this->removeSessionLock($oid, $type);
     }
   }
 
@@ -118,6 +119,7 @@ class DefaultLockHandler implements LockHandler {
     foreach($locks as $lock) {
       // delete lock immediatly
       $lock->getMapper()->delete($lock);
+      $this->removeSessionLock($oid);
     }
   }
 
@@ -140,6 +142,7 @@ class DefaultLockHandler implements LockHandler {
     foreach($locks as $lock) {
       // delete lock immediatly
       $lock->getMapper()->delete($lock);
+      $this->removeSessionLock($lock->getValue('objectid'));
     }
   }
 
@@ -259,13 +262,19 @@ class DefaultLockHandler implements LockHandler {
 
   /**
    * Remove a given Lock instance from the session
-   * @param lock Lock instance
+   * @param oid The locked oid
+   * @param type One of the Lock::Type constants or null for all types [default: null]
    */
-  protected function removeSessionLock(Lock $lock) {
+  protected function removeSessionLock(ObjectId $oid, $type) {
     $session = ObjectFactory::getInstance('session');
     $locks = $this->getSessionLocks();
-    unset($locks[$lock->getOID->__toString()]);
-    $session->set(self::SESSION_VARNAME, $locks);
+    if (isset($locks[$oid->__toString()])) {
+      $lock = $locks[$oid->__toString()];
+      if ($type == null || $type != null && $lock->getType() == $type) {
+        unset($locks[$oid->__toString()]);
+        $session->set(self::SESSION_VARNAME, $locks);
+      }
+    }
   }
 
   /**

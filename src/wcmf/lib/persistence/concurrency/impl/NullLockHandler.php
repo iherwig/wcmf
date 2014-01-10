@@ -38,7 +38,7 @@ class NullLockHandler implements LockHandler {
   /**
    * @see LockHandler::releaseLock()
    */
-  public function releaseLock(ObjectId $oid) {}
+  public function releaseLock(ObjectId $oid, $type=null) {}
 
   /**
    * @see LockHandler::releaseLocks()

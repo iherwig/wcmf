@@ -3,6 +3,7 @@ define([
     "dojo/_base/lang",
     "dojo/_base/fx",
     "dojo/dom-construct",
+    "dojo/on",
     "./widget/NotificationWidget",
     "../../persistence/BackendError"
 ], function (
@@ -10,6 +11,7 @@ define([
     lang,
     fx,
     domConstruct,
+    on,
     Notification,
     BackendError
 ) {
@@ -52,6 +54,10 @@ define([
             }, this.node);
 
             this.widget.startup();
+            on(this.widget.domNode, "click", lang.hitch(this, function() {
+                    this.hideNotification();
+                })
+            );
 
             if (options.fadeOut) {
                 fx.fadeOut({

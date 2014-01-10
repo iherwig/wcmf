@@ -68,11 +68,11 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
   /**
    * @see ConcurrencyManager::releaseLock()
    */
-  public function releaseLock(ObjectId $oid) {
+  public function releaseLock(ObjectId $oid, $type=null) {
     if (!ObjectId::isValid($oid)) {
       throw new IllegalArgumentException("Invalid object id given");
     }
-    $this->_lockHandler->releaseLock($oid);
+    $this->_lockHandler->releaseLock($oid, $type);
   }
 
   /**

@@ -247,7 +247,7 @@ function(
             if (isLocked && !isLockOwner) {
                 for (var i=0, c=this.attributeWidgets.length; i<c; i++) {
                     var widget = this.attributeWidgets[i];
-                    widget.set("disabled", true);
+                    widget.set("readonly", true);
                 }
                 this.setBtnState("save", false);
                 this.setBtnState("delete", false);
@@ -272,7 +272,12 @@ function(
                 action: "lock",
                 lockType: "optimistic",
                 init: lang.hitch(this, function(data) {}),
-                callback: lang.hitch(this, function(data, result) {}),
+                callback: lang.hitch(this, function(data, result) {
+                    // success
+                    if (result.type === "pessimistic") {
+                        this.setLockState(true, true);
+                    }
+                }),
                 errback: lang.hitch(this, function(data, result) {
                     // check for existing lock
                     var error = BackendError.parseResponse(result);
@@ -378,8 +383,7 @@ function(
                             type: "error",
                             message: error.message+' <a href="'+location.href+'" class="alert-error"><i class="icon-refresh"></i></a>'
                         });
-                        this.setBtnState("save", false);
-                        this.setBtnState("delete", false);
+                        this.setLockState(true, false);
                     }
                     else {
                         this.showBackendError(error);
@@ -432,10 +436,16 @@ function(
                 callback: lang.hitch(this, function(data, result) {
                     // success
                     this.setLockState(!this.isLocked, true);
+                    // update optimistic lock
+                    this.aquireLock();
                 }),
                 errback: lang.hitch(this, function(data, result) {
-                    // error
-                    this.showBackendError(result);
+                    // check for existing lock
+                    var error = BackendError.parseResponse(result);
+                    if (error.code === "OBJECT_IS_LOCKED") {
+                        this.setLockState(true, false);
+                    }
+                    this.showBackendError(error);
                 })
             }).execute(e, this.entity);
         }
