@@ -162,8 +162,13 @@ function(
             }
 
             // handle locking
-            this.setLockState(false, true);
-            this.aquireLock();
+            if (!this.isNew) {
+                this.setLockState(false, true);
+                this.aquireLock();
+            }
+            else {
+                query(this.lockNode).style("display", "none");
+            }
 
             if (!this.isNew) {
                 this.buildLanguageMenu();
