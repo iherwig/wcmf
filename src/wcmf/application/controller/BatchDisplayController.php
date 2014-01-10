@@ -28,6 +28,8 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
  * BatchDisplayController is a controller that loads a tree of Nodes recursivly and
@@ -61,7 +63,7 @@ class BatchDisplayController extends BatchController {
   /**
    * @see Controller::initialize()
    */
-  protected function initialize($request, $response) {
+  protected function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
     // initialize controller
@@ -77,7 +79,7 @@ class BatchDisplayController extends BatchController {
       }
 
       // store request in session
-      $session->set($this->REQUEST, $request, array(WCMF_BASE."wcmf/lib/presentation/ControllerMessage.php"));
+      $session->set($this->REQUEST, $request);
       $reg = array();
       $session->set($this->REGISTRY, $reg);
     }
@@ -115,14 +117,7 @@ class BatchDisplayController extends BatchController {
   }
 
   /**
-   * @see LongTaskController::getDisplayText()
-   */
-  protected function getDisplayText($step) {
-    return $this->_workPackages[$step-1]['name']." ...";
-  }
-
-  /**
-   * Copy/Move the first node (oids parameter will be ignored)
+   * Initialize the iterator (oids parameter will be ignored)
    * @param oids The oids to process
    */
   protected function startProcess($oids) {

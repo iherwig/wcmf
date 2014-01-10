@@ -65,7 +65,7 @@ class SearchController extends ListController {
     foreach($oids as $oid) {
       if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
         $obj = $persistenceFacade->load($oid);
-        $objects[] = &$obj;
+        $objects[] = $obj;
       }
     }
     return $objects;

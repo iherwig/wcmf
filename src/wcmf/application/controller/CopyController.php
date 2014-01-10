@@ -88,7 +88,7 @@ class CopyController extends BatchController {
       }
 
       // store request in session
-      $session->set($this->REQUEST, $request, array(WCMF_BASE."wcmf/lib/presentation/ControllerMessage.php"));
+      $session->set($this->REQUEST, $request);
       $map = array();
       $session->set($this->OBJECT_MAP, $map);
     }
@@ -170,13 +170,6 @@ class CopyController extends BatchController {
     else {
       return null;
     }
-  }
-
-  /**
-   * @see LongTaskController::getDisplayText()
-   */
-  protected function getDisplayText($step) {
-    return $this->_workPackages[$step-1]['name']." ...";
   }
 
   /**
