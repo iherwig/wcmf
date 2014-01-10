@@ -151,30 +151,38 @@ class DefaultLockHandler implements LockHandler {
     // or pessimistic)
     $locks = $this->getSessionLocks();
     $oidStr = $oid->__toString();
+    $sessionLock = null;
     if (isset($locks[$oidStr])) {
-      return $locks[$oidStr];
+      $sessionLock = $locks[$oidStr];
     }
 
-    // check if a lock is stored in the database (only pessimistic)
-    $query = new ObjectQuery(self::LOCKTYPE);
-    $tpl = $query->getObjectTemplate(self::LOCKTYPE);
-    $tpl->setValue('objectid', Criteria::asValue('=', $oid));
-    $locks = $query->execute(BuildDepth::SINGLE);
-    if (sizeof($locks) > 0) {
-      $lockObj = $locks[0];
-      $user = $lockObj->getValue($this->getLockUserRelationName());
-      $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $user->getOID(), $user->getLogin(),
-              $lockObj->getValue('sessionid'), $lockObj->getValue('since'));
+    // if the session lock is pessimistic (exclusive), return it
+    if ($sessionLock != null && $sessionLock->getType() == Lock::TYPE_PESSIMISTIC) {
+      return $sessionLock;
+    }
+    else {
+      // otherwise we need to check for a pessimistic lock in the store
+      $query = new ObjectQuery(self::LOCKTYPE);
+      $tpl = $query->getObjectTemplate(self::LOCKTYPE);
+      $tpl->setValue('objectid', Criteria::asValue('=', $oid));
+      $locks = $query->execute(BuildDepth::SINGLE);
+      if (sizeof($locks) > 0) {
+        $lockObj = $locks[0];
+        $user = $lockObj->getValue($this->getLockUserRelationName());
+        $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $user->getOID(), $user->getLogin(),
+                $lockObj->getValue('sessionid'), $lockObj->getValue('since'));
 
-      // if the lock belongs to the current user, we store
-      // it in the session for later retrieval
-      $currentUser = $this->getCurrentUser();
-      if ($currentUser && $user->getOID() == $currentUser->getOID()) {
-        $this->addSessionLock($lock);
+        // if the lock belongs to the current user, we store
+        // it in the session for later retrieval
+        $currentUser = $this->getCurrentUser();
+        if ($currentUser && $user->getOID() == $currentUser->getOID()) {
+          $this->addSessionLock($lock);
+        }
+        return $lock;
       }
-      return $lock;
     }
-    return null;
+
+    return $sessionLock;
   }
 
   /**

@@ -163,12 +163,8 @@ $messages_en['Loading'] = '';
 $messages_en['Loading tree: continue with %0%'] = '';
 // file(s): app/src/model/wcmf/LocktableBase.php
 $messages_en['Locktable'] = '';
-// file(s): app/public/js/ui/login/template/LoginPage.html
-$messages_en['Log in'] = '';
 // file(s): app/src/model/wcmf/UserBase.php
 $messages_en['login'] = '';
-// file(s): app/public/js/ui/login/LoginPage.js, app/public/js/ui/login/template/LoginPage.html
-$messages_en['Login'] = '';
 // file(s): app/public/js/ui/_include/widget/template/NavigationWidget.html
 $messages_en['Logout'] = '';
 // file(s): app/public/js/ui/home/template/HomePage.html
@@ -222,7 +218,7 @@ $messages_en['Password'] = '';
 // file(s): app/src/model/wcmf/UserBase.php
 $messages_en['password'] = '';
 // file(s): app/public/js/ui/login/template/LoginPage.html
-$messages_en['Please log in'] = '';
+$messages_en['Sign in'] = '';
 // file(s): wcmf/application/controller/SaveController.php, wcmf/lib/io/FileUtil.php
 $messages_en['Possible file upload attack: filename %0%.'] = '';
 // file(s): wcmf/application/controller/BatchController.php
@@ -239,6 +235,8 @@ $messages_en['Select \'%0%\' objects, you want to link to \'%1%\''] = '';
 $messages_en['sessionid'] = '';
 // file(s): app/public/js/ui/admin/AdminPage.js, app/public/js/ui/settings/SettingsPage.js, app/public/js/ui/settings/template/SettingsPage.html, app/public/js/ui/_include/widget/template/NavigationWidget.html
 $messages_en['Settings'] = '';
+// file(s): app/public/js/ui/login/template/LoginPage.html
+$messages_de['Sign in'] = '';
 // file(s): app/src/model/wcmf/LocktableBase.php
 $messages_en['since'] = '';
 // file(s): wcmf/lib/util/GraphicsUtil.php

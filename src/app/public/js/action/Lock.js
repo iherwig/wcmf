@@ -13,6 +13,8 @@ define([
 
         name: 'lock',
         iconClass: 'icon-lock',
+        action: "lock", // "lock|unlock"
+        lockType: "optimistic", // "optimistic|pessimistic"
 
         /**
          * Create a pessimistic lock on the object
@@ -25,9 +27,9 @@ define([
             }
             request.post(appConfig.backendUrl, {
                 data: {
-                    action: "lock",
+                    action: this.action,
                     oid: data.oid,
-                    type: "optimistic"
+                    type: this.lockType
                 },
                 headers: {
                     "Accept" : "application/json"

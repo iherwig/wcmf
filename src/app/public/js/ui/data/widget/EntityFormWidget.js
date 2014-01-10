@@ -16,6 +16,7 @@ define( [
     "../../_include/FormLayout",
     "../../_include/_NotificationMixin",
     "../../_include/widget/Button",
+    "../../../action/Lock",
     "../../../model/meta/Model",
     "../../../persistence/BackendError",
     "../../../persistence/Store",
@@ -44,6 +45,7 @@ function(
     FormLayout,
     _Notification,
     Button,
+    Lock,
     Model,
     BackendError,
     Store,
@@ -71,7 +73,9 @@ function(
         fieldContainerId: "",
         headline: "",
         isNew: false,
-        modified: false,
+        isModified: false,
+        isLocked: false,
+        isLockOwner: true,
 
         language: appConfig.defaultLanguage,
         isTranslation: false,
@@ -157,6 +161,10 @@ function(
                 this.setBtnState("delete", false);
             }
 
+            // handle locking
+            this.setLockState(false, true);
+            this.aquireLock();
+
             if (!this.isNew) {
                 this.buildLanguageMenu();
             }
@@ -220,12 +228,34 @@ function(
         setBtnState: function(btnName, isEnabled) {
             var btn = this[btnName+"Btn"];
             if (btn) {
-                btn.set('disabled', !isEnabled);
+                btn.set("disabled", !isEnabled);
+            }
+        },
+
+        setLockState: function(isLocked, isLockOwner) {
+            this.isLocked = isLocked;
+            this.isLockOwner = isLockOwner;
+            if (this.isLocked) {
+                domClass.remove(this.lockNode, "icon-unlock");
+                domClass.add(this.lockNode, "icon-lock");
+            }
+            else {
+                domClass.remove(this.lockNode, "icon-lock");
+                domClass.add(this.lockNode, "icon-unlock");
+            }
+            // set controls, if locked by another user
+            if (isLocked && !isLockOwner) {
+                for (var i=0, c=this.attributeWidgets.length; i<c; i++) {
+                    var widget = this.attributeWidgets[i];
+                    widget.set("disabled", true);
+                }
+                this.setBtnState("save", false);
+                this.setBtnState("delete", false);
             }
         },
 
         setModified: function(modified) {
-            this.modified = modified;
+            this.isModified = modified;
 
             var state = modified === true ? "dirty" : "clean";
             this.entity.setState(state);
@@ -239,11 +269,24 @@ function(
         aquireLock: function() {
             new Lock({
                 page: this.page,
+                action: "lock",
+                lockType: "optimistic",
                 init: lang.hitch(this, function(data) {}),
                 callback: lang.hitch(this, function(data, result) {}),
                 errback: lang.hitch(this, function(data, result) {
-                    // error
-                    this.showBackendError(result);
+                    // check for existing lock
+                    var error = BackendError.parseResponse(result);
+                    if (error.code === "OBJECT_IS_LOCKED") {
+                        this.setLockState(true, false);
+                        this.showNotification({
+                            type: "ok",
+                            fadeOut: true,
+                            message: error.message
+                        });
+                    }
+                    else {
+                        this.showBackendError(error);
+                    }
                 })
             }).execute({}, this.entity);
         },
@@ -252,7 +295,7 @@ function(
             // prevent the page from navigating after submit
             e.preventDefault();
 
-            if (this.modified) {
+            if (this.isModified) {
                 // update entity from form data
                 var data = {};
                 for (var i=0, c=this.attributeWidgets.length; i<c; i++) {
@@ -330,11 +373,13 @@ function(
 
                     // check for concurrent update
                     var error = BackendError.parseResponse(error);
-                    if (error.code === "CONCURRENT_UPDATE") {
+                    if (error.code === "CONCURRENT_UPDATE" || "OBJECT_IS_LOCKED") {
                         this.showNotification({
                             type: "error",
                             message: error.message+' <a href="'+location.href+'" class="alert-error"><i class="icon-refresh"></i></a>'
                         });
+                        this.setBtnState("save", false);
+                        this.setBtnState("delete", false);
                     }
                     else {
                         this.showBackendError(error);
@@ -363,6 +408,30 @@ function(
                         oid: this.entity.oid
                     });
                     this.destroyRecursive();
+                }),
+                errback: lang.hitch(this, function(data, result) {
+                    // error
+                    this.showBackendError(result);
+                })
+            }).execute(e, this.entity);
+        },
+
+        _toggleLock: function(e) {
+            // prevent the page from navigating after submit
+            e.preventDefault();
+
+            if (!this.isLockOwner) {
+                return;
+            }
+
+            new Lock({
+                page: this.page,
+                action: this.isLocked ? "unlock" : "lock",
+                lockType: "pessimistic",
+                init: lang.hitch(this, function(data) {}),
+                callback: lang.hitch(this, function(data, result) {
+                    // success
+                    this.setLockState(!this.isLocked, true);
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // error

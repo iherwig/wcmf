@@ -163,12 +163,8 @@ $messages_de['Loading'] = 'Lade...';
 $messages_de['Loading tree: continue with %0%'] = '';
 // file(s): app/src/model/wcmf/LocktableBase.php
 $messages_de['Locktable'] = '';
-// file(s): app/public/js/ui/login/template/LoginPage.html
-$messages_de['Log in'] = 'Anmelden';
 // file(s): app/src/model/wcmf/UserRDBBase.php
 $messages_de['login'] = 'Anmeldename';
-// file(s): app/public/js/ui/login/LoginPage.js, app/public/js/ui/login/template/LoginPage.html
-$messages_de['Login'] = 'Anmeldename';
 // file(s): app/public/js/ui/_include/widget/template/NavigationWidget.html
 $messages_de['Logout'] = 'Abmelden';
 // file(s): app/public/js/ui/home/template/HomePage.html
@@ -221,8 +217,6 @@ $messages_de['Page not found'] = 'Seite nicht gefunden';
 $messages_de['Password'] = 'Passwort';
 // file(s): app/src/model/wcmf/UserRDBBase.php
 $messages_de['password'] = 'Passwort';
-// file(s): app/public/js/ui/login/template/LoginPage.html
-$messages_de['Please log in'] = 'Anmelden';
 // file(s): wcmf/application/controller/SaveController.php, wcmf/lib/io/FileUtil.php
 $messages_de['Possible file upload attack: filename %0%.'] = 'Möglicher Datei Upload Angriff: filename %0%.';
 // file(s): wcmf/application/controller/BatchController.php
@@ -239,6 +233,8 @@ $messages_de['Select \'%0%\' objects, you want to link to \'%1%\''] = 'Wählen S
 $messages_de['sessionid'] = '';
 // file(s): app/public/js/ui/admin/AdminPage.js, app/public/js/ui/settings/SettingsPage.js, app/public/js/ui/settings/template/SettingsPage.html, app/public/js/ui/_include/widget/template/NavigationWidget.html
 $messages_de['Settings'] = 'Einstellungen';
+// file(s): app/public/js/ui/login/template/LoginPage.html
+$messages_de['Sign in'] = 'Anmelden';
 // file(s): app/src/model/wcmf/LocktableBase.php
 $messages_de['since'] = 'Seit';
 // file(s): wcmf/lib/util/GraphicsUtil.php

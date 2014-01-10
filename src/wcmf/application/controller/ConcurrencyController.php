@@ -21,6 +21,7 @@ namespace wcmf\application\controller;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\concurrency\Lock;
+use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\ApplicationError;
 
@@ -75,11 +76,17 @@ class ConcurrencyController extends Controller {
     $lockType = $request->getValue('type', Lock::TYPE_OPTIMISTIC);
 
     // process actions
-    if ($request->getAction() == 'lock') {
-      $concurrencyManager->aquireLock($oid, $lockType);
+    try {
+      if ($request->getAction() == 'lock') {
+        $concurrencyManager->aquireLock($oid, $lockType);
+      }
+      elseif ($request->getAction() == 'unlock') {
+        $concurrencyManager->releaseLock($oid);
+      }
     }
-    elseif ($request->getAction() == 'unlock') {
-      $concurrencyManager->releaseLock($oid);
+    catch (PessimisticLockException $ex) {
+      $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
+        array('lockedOids' => array($oid->__toString()))));
     }
 
     $response->setValue('oid', $oid);

@@ -95,7 +95,6 @@ class DeleteController extends Controller {
       $transaction->commit();
     }
     catch (PessimisticLockException $ex) {
-      $lock = $ex->getLock();
       $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
         array('lockedOids' => array($oid->__toString()))));
       $transaction->rollback();
