@@ -21,6 +21,8 @@ function(
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
 
+        baseRoute: "principal",
+
         /**
          * Get the type's relations to display in the widget
          * @returns Array

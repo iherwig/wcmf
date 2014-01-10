@@ -61,6 +61,7 @@ function(
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
 
+        baseRoute: "entity",
         entity: {}, // entity to edit
         sourceOid: null, // object id of the source object of a relation
                          // (ignored if isNew == false)
@@ -147,6 +148,7 @@ function(
                 for (var i=0, count=relations.length; i<count; i++) {
                     var relation = relations[i];
                     var relationWidget = new EntityRelationWidget({
+                        route: this.baseRoute,
                         entity: this.entity,
                         relation: relation,
                         page: this.page

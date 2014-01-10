@@ -45,6 +45,7 @@ function(
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
 
+        route: '',
         entity: {},
         relation: {},
         page: null,
@@ -82,7 +83,7 @@ function(
 
             var editAction = new Edit({
                 page: this.page,
-                route: "entity"
+                route: this.route
             });
 
             var unlinkAction = new Unlink({
@@ -109,7 +110,7 @@ function(
 
             new CreateInRelation({
                 page: this.page,
-                route: "entity",
+                route: this.route,
                 source: this.entity,
                 relation: this.relation,
                 init: lang.hitch(this, function(data) {
