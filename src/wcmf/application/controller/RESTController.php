@@ -123,7 +123,7 @@ class RESTController extends Controller {
    * Handle a GET request (read object(s) of a given type)
    *
    * Request parameters:
-   * - collection: Boolean wether to load one object or a list of objects
+   * - collection: Boolean whether to load one object or a list of objects
    * - language: The language of the returned object(s)
    * - className: The type of returned object(s)
    * - id: If collection is false, the object with className/id will be loaded

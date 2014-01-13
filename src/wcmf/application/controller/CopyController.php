@@ -19,19 +19,15 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
-use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\ApplicationError;
-use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
@@ -49,9 +45,7 @@ use wcmf\lib\presentation\Response;
  * @param[in] targetoid The oid of the parent to attach the copy to (if it does not accept the
  *              Node type an error occurs) (optional, if empty the new Node has no parent)
  * @param[in] nodes_per_call The number of nodes to process in one call, default: 50
- * @param[in] target_initparams The name of the configuration section that holds the initparams for the target mappers.
- *              This allows to copy nodes to a different store, optional, does not work for move action
- * @param[in] recursive True/False wether to copy children too, only applies when copy action, default: true
+ * @param[in] recursive Boolean whether to copy children too, only applies when copy action, default: true
  * @param[out] oid The object id of the newly created Node.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -64,7 +58,6 @@ class CopyController extends BatchController {
   private $ITERATOR_ID = 'CopyController.iteratorid';
 
   private $_targetNode = null;
-  private $_targetMapper = array();
 
   // default values, maybe overriden by corresponding request values (see above)
   private $_NODES_PER_CALL = 50;
@@ -72,7 +65,7 @@ class CopyController extends BatchController {
   /**
    * @see Controller::initialize()
    */
-  protected function initialize(Request $request, Response $response) {
+  public function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
     // initialize controller
@@ -121,8 +114,8 @@ class CopyController extends BatchController {
       $addOk = true;
       if ($request->hasValue('targetoid')) {
         $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-        $targetOID = $request->getValue('targetoid');
-        $nodeOID = $request->getValue('oid');
+        $targetOID = ObjectId::parse($request->getValue('targetoid'));
+        $nodeOID = ObjectId::parse($request->getValue('oid'));
 
         $targetNode = $this->getTargetNode($targetOID);
         $nodeType = $nodeOID->getType();
@@ -135,7 +128,7 @@ class CopyController extends BatchController {
           $addOk = false;
         }
         else {
-          $template = &$possibleChildren[$nodeType];
+          $template = $possibleChildren[$nodeType];
           if (!$template->getProperty('canCreate')) {
             $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
             $addOk = false;
@@ -178,33 +171,29 @@ class CopyController extends BatchController {
    */
   protected function startProcess($oids) {
     $session = ObjectFactory::getInstance('session');
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
     $action = $request->getAction();
-    $targetOID = $request->getValue('targetoid');
-    $nodeOID = $request->getValue('oid');
+    $targetOID = ObjectId::parse($request->getValue('targetoid'));
+    $nodeOID = ObjectId::parse($request->getValue('oid'));
 
     // do the action
     if ($action == 'move') {
-      if ($request->hasValue('target_initparams')) {
-        $response = $this->getResponse();
-        throw new ApplicationException($request, $response,
-                ApplicationError::getGeneral("Moving nodes to a different store is not supported. Use the 'copy' action instead."));
-      }
-
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $transaction = $persistenceFacade->getTransaction();
+      $transaction->begin();
       // with move action, we only need to attach the Node to the new target
       // the children will not be loaded, they will be moved automatically
-      $nodeCopy = $persistenceFacade->load($nodeOID, BuildDepth::SINGLE);
+      $nodeCopy = $persistenceFacade->load($nodeOID);
       if ($nodeCopy) {
-        // attach the node to the target node
-        $parentNode = $this->getTargetNode($targetOID);
-        $parentNode->addNode($nodeCopy);
+        if ($targetOID != null) {
+          // attach the node to the target node
+          $parentNode = $this->getTargetNode($targetOID);
+          $parentNode->addNode($nodeCopy);
+        }
 
-        // save changes
         $this->modify($nodeCopy);
-        $nodeCopy->save();
 
         // set the result and finish
         $this->endProcess($nodeCopy->getOID());
@@ -213,24 +202,25 @@ class CopyController extends BatchController {
           Log::info("Moved: ".$nodeOID." to ".$parentNode->getOID(), __CLASS__);
         }
       }
+      $transaction->commit();
     }
     else if ($action == 'copy') {
       // with copy action, we need to attach a copy of the Node to the new target,
       // the children need to be loaded and treated in the same way too
-      $iterator = new PersistentIterator($nodeOID);
+      $iterator = new PersistentIterator($nodeOID, array('composite'));
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
       // copy the first node in order to reduce the number of calls for a single copy
       $nodeCopy = $this->copyNode($iterator->current());
       if ($nodeCopy) {
-        // attach the copy to the target node
-        $parentNode = $this->getTargetNode($targetOID);
-        $parentNode->addNode($nodeCopy);
+        if ($targetOID != null) {
+          // attach the copy to the target node
+          $parentNode = $this->getTargetNode($targetOID);
+          $parentNode->addNode($nodeCopy);
+        }
 
-        // save changes
         $this->modify($nodeCopy);
-        $this->saveToTarget($nodeCopy);
 
         $iterator->next();
 
@@ -260,8 +250,8 @@ class CopyController extends BatchController {
     // restore the request from session
     $request = $session->get($this->REQUEST);
     $action = $request->getAction();
-    $targetOID = $request->getValue('targetoid');
-    $nodeOID = $request->getValue('oid');
+    $targetOID = ObjectId::parse($request->getValue('targetoid'));
+    $nodeOID = ObjectId::parse($request->getValue('oid'));
 
     // check for iterator in session
     $iterator = null;
@@ -306,7 +296,8 @@ class CopyController extends BatchController {
    * @param oid The object id of the newly created Node
    */
   protected function endProcess(ObjectId $oid) {
-    $this->_response->setValue('oid', $oid);
+    $response = $this->getResponse();
+    $response->setValue('oid', $oid);
 
     $session = ObjectFactory::getInstance('session');
 
@@ -328,9 +319,11 @@ class CopyController extends BatchController {
       Log::debug("Copying node ".$oid, __CLASS__);
     }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
 
     // load the original node
-    $node = $persistenceFacade->load($oid, BUIDLDEPTH_SINGLE);
+    $node = $persistenceFacade->load($oid);
     if ($node == null) {
       throw new PersistenceException("Can't load node '".$oid."'");
     }
@@ -338,71 +331,60 @@ class CopyController extends BatchController {
     // check if we already have a copy of the node
     $nodeCopy = $this->getCopy($node->getOID());
     if ($nodeCopy == null) {
-      // if not, create a copy
-      $nodeCopy = $persistenceFacade->create($node->getType(), BuildDepth::SINGLE);
+      // if not, create it
+      $nodeCopy = $persistenceFacade->create($node->getType());
       $node->copyValues($nodeCopy, false);
     }
 
-    // create the connections to already copied parents
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Parents: ".join(', ', $node->getProperty('parentoids')), __CLASS__);
-    }
-    foreach ($node->getProperty('parentoids') as $parentOID) {
-      $copiedParent = $this->getCopy($parentOID);
-      if ($copiedParent != null) {
-        $copiedParent->addNode($nodeCopy);
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Added ".$nodeCopy->getOID()." to ".$copiedParent->getOID(), __CLASS__);
-        }
-      }
-    }
-
     // save copy
-    $this->saveToTarget($nodeCopy);
     $this->registerCopy($node, $nodeCopy);
 
     if (Log::isInfoEnabled(__CLASS__)) {
       Log::info("Copied: ".$node->getOID()." to ".$nodeCopy->getOID(), __CLASS__);
     }
     if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($nodeCopy->toString(), __CLASS__);
+      Log::debug($nodeCopy->__toString(), __CLASS__);
     }
 
-    // create the connections to already copied children
+    // create the connections to already copied relatives
     // this must be done after saving the node in order to have a correct oid
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Children: ".join(', ', $node->getProperty('childoids')), __CLASS__);
-    }
-    foreach ($node->getProperty('childoids') as $childOID) {
-      $copiedChild = $this->getCopy($childOID);
-      if ($copiedChild != null) {
-        $nodeCopy->addNode($copiedChild);
-        $this->saveToTarget($copiedChild);
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Added ".$copiedChild->getOID()." to ".$nodeCopy->getOID(), __CLASS__);
-          Log::debug($copiedChild->toString(), __CLASS__);
+    $mapper = $node->getMapper();
+    $relations = $mapper->getRelations();
+    foreach ($relations as $relation) {
+      if ($relation->getOtherNavigability()) {
+        $otherRole = $relation->getOtherRole();
+        $relativeValue = $node->getValue($otherRole);
+        $relatives = $relation->isMultiValued() ? $relativeValue :
+                ($relativeValue != null ? array($relativeValue) : array());
+        foreach ($relatives as $relative) {
+          $copiedRelative = $this->getCopy($relative->getOID());
+          if ($copiedRelative != null) {
+            $nodeCopy->addNode($copiedRelative, $otherRole);
+            if (Log::isDebugEnabled(__CLASS__)) {
+              Log::debug("Added ".$copiedRelative->getOID()." to ".$nodeCopy->getOID(), __CLASS__);
+              Log::debug($copiedRelative->__toString(), __CLASS__);
+            }
+          }
         }
       }
     }
+    $changedOids = $transaction->commit();
+    $this->updateCopyOIDs($changedOids);
 
     return $nodeCopy;
   }
 
   /**
    * Get the target node from the request parameter targetoid
-   * @param targetOID The oid of the target node or null
-   * @return A reference to the node, an empty node, if targetoid is null
+   * @param targetOID The oid of the target node
+   * @return A reference to the node
    */
   protected function getTargetNode(ObjectId $targetOID) {
     if ($this->_targetNode == null) {
-      // load parent node or create an empty node if adding to root
-      if ($targetOID == null) {
-        $targetNode = new Node('');
-      }
-      else {
-        $targetNode = $this->loadFromTarget($targetOID, BuildDepth::SINGLE);
-      }
-      $this->_targetNode = &$targetNode;
+      // load parent node
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $targetNode = $persistenceFacade->load($targetOID);
+      $this->_targetNode = $targetNode;
     }
     return $this->_targetNode;
   }
@@ -415,10 +397,31 @@ class CopyController extends BatchController {
   protected function registerCopy(PersistentObject $origNode, PersistentObject $copyNode) {
     $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->OBJECT_MAP);
-    // store oid and corresponding base oid in the registry
-    $registry[$origNode->getOID()] = $copyNode->getOID();
-    $registry[$origNode->getBaseOID()] = $copyNode->getOID();
+    // store oid in the registry
+    $registry[$origNode->getOID()->__toString()] = $copyNode->getOID()->__toString();
     $session->set($this->OBJECT_MAP, $registry);
+  }
+
+  /**
+   * Update the copied oids in the registry
+   * @param oidMap Map of changed oids (key: old value, value: new value)
+   */
+  protected function updateCopyOIDs(array $oidMap) {
+    $session = ObjectFactory::getInstance('session');
+    $registry = $session->get($this->OBJECT_MAP);
+    // registry maybe deleted already if it's the last step
+    if ($registry) {
+      $flippedRegistry = array_flip($registry);
+      foreach ($oidMap as $oldOid => $newOid) {
+        if (isset($flippedRegistry[$oldOid])) {
+          $key = $flippedRegistry[$oldOid];
+          unset($flippedRegistry[$oldOid]);
+          $flippedRegistry[$newOid] = $key;
+        }
+      }
+      $registry = array_flip($flippedRegistry);
+      $session->set($this->OBJECT_MAP, $registry);
+    }
   }
 
   /**
@@ -430,32 +433,16 @@ class CopyController extends BatchController {
     $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->OBJECT_MAP);
 
-    $oid = $origOID;
-    $requestedType = $oid->getType();
-
     // check if the oid exists in the registry
-    if (!isset($registry[$origOID])) {
-      // check if the corresponding base oid exists in the registry
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $origNodeType = $persistenceFacade->create($requestedType, BuildDepth::SINGLE);
-      $baseOID = new ObjectId($origNodeType->getBaseType(), $oid->getId());
-      if (!isset($registry[$baseOID])) {
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Copy of ".$oid." not found.", __CLASS__);
-        }
-        return null;
+    $oidStr = $origOID->__toString();
+    if (!isset($registry[$oidStr])) {
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Copy of ".$oidStr." not found.", __CLASS__);
       }
-      else {
-        $oid = $baseOID;
-      }
+      return null;
     }
 
-    $copyOID = $registry[$oid];
-
-    // make sure to return the oid in the requested role
-    if ($copyOID->getType() != $requestedType) {
-      $copyOID = new ObjectId($requestedType, $copyOID->getId());
-    }
+    $copyOID = ObjectId::parse($registry[$oidStr]);
     return $copyOID;
   }
 
@@ -467,73 +454,12 @@ class CopyController extends BatchController {
   protected function getCopy(ObjectId $origOID) {
     $copyOID = $this->getCopyOID($origOID);
     if ($copyOID != null) {
-      $nodeCopy = $this->loadFromTarget($copyOID);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $nodeCopy = $persistenceFacade->load($copyOID);
       return $nodeCopy;
     }
     else {
       return null;
-    }
-  }
-
-  /**
-   * Save a node to the target store
-   * @param node A reference to the node
-   */
-  protected function saveToTarget(PersistentObject $node) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $originalMapper = $persistenceFacade->getMapper($node->getType());
-
-    $targetMapper = $this->getTargetMapper($originalMapper);
-    $persistenceFacade->setMapper($node->getType(), $targetMapper);
-    $node->save();
-
-    $persistenceFacade->setMapper($node->getType(), $originalMapper);
-  }
-
-  /**
-   * Load a node from the target store
-   * @param oid The object id of the node
-   * @return A reference to the node
-   */
-  protected function loadFromTarget(ObjectId $oid) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $type = $oid->getType();
-    $originalMapper = $persistenceFacade->getMapper($type);
-
-    $targetMapper = $this->getTargetMapper($originalMapper);
-    $persistenceFacade->setMapper($type, $targetMapper);
-    $node = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-
-    $persistenceFacade->setMapper($node->getType(), $originalMapper);
-
-    return $node;
-  }
-
-  /**
-   * Get the target mapper for a source mapper (maybe saving to another store)
-   * @param sourceMapper A reference to the source mapper
-   * @param targetMapper A reference to the target mapper
-   */
-  protected function getTargetMapper(PersistenceMapper $sourceMapper) {
-    // restore the request from session
-    $session = ObjectFactory::getInstance('session');
-    $request = $session->get($this->REQUEST);
-    if ($request->hasValue('target_initparams')) {
-      // get a mapper wih the target initparams
-      $mapperClass = get_class($sourceMapper);
-      if (!isset($this->_targetMapper[$mapperClass])) {
-        $initSection = $request->getValue('target_initparams');
-        $config = ObjectFactory::getConfigurationInstance();
-        if (($initParams = $config->getSection($initSection)) === false) {
-          throw new ConfigurationException("No '".$initSection."' section given in configfile.");
-        }
-        $targetMapper = new $mapperClass($initParams);
-        $this->_targetMapper[$mapperClass] = &$targetMapper;
-      }
-      return $this->_targetMapper[$mapperClass];
-    }
-    else {
-      return $sourceMapper;
     }
   }
 

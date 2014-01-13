@@ -48,17 +48,21 @@ class NodeIterator implements \Iterator {
   protected $_nodeIdList;   // the list of seen object ids
   protected $_currentNode;  // the node the iterator points to
   protected $_startNode;    // the start node
+  protected $_aggregationKinds; // array of aggregation kind values to follow (empty: all)
 
   /**
    * Constructor.
    * @param node The node to start from.
+   * @param aggregationKinds Array of aggregation kind values of relations to follow
+   *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
-  public function __construct(Node $node) {
+  public function __construct(Node $node, $aggregationKinds=array()) {
     $this->_end = false;
     $this->_nodeList = array();
     $this->_nodeIdList = array();
     $this->_currentNode = $node;
     $this->_startNode = $node;
+    $this->_aggregationKinds = $aggregationKinds;
   }
 
   /**
@@ -81,12 +85,26 @@ class NodeIterator implements \Iterator {
    * Move forward to next element
    */
   public function next() {
-    $childrenArray = $this->_currentNode->getChildren();
+    // collect navigable children for the given aggregation kinds
+    $childrenArray = array();
+    $mapper = $this->_currentNode->getMapper();
+    $relations = $mapper->getRelations('child');
+    $followAll = sizeof($this->_aggregationKinds) == 0;
+    foreach ($relations as $relation) {
+      $aggregationKind = $relation->getOtherAggregationKind();
+      if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->_aggregationKinds))) {
+        $childValue = $this->_currentNode->getValue($relation->getOtherRole());
+        $children = $relation->isMultiValued() ? $childValue : ($childValue != null ? array($childValue) : array());
+        foreach ($children as $child) {
+          $childrenArray[] = $child;
+        }
+      }
+    }
     $this->addToSeenList($childrenArray);
 
     if (sizeOf($this->_nodeList) != 0) {
       // array_pop destroys the reference to the node
-      $this->_currentNode = &$this->_nodeList[sizeOf($this->_nodeList)-1];
+      $this->_currentNode = $this->_nodeList[sizeOf($this->_nodeList)-1];
       array_pop($this->_nodeList);
     }
     else {

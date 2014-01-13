@@ -38,10 +38,14 @@ define([
 
             }).then(lang.hitch(this, function(response) {
                 // success
-                this.callback(data, response);
+                if (this.errback instanceof Function) {
+                    this.callback(data, response);
+                }
             }), lang.hitch(this, function(error) {
                 // error
-                this.errback(data, error);
+                if (this.errback instanceof Function) {
+                    this.errback(data, error);
+                }
             }));
         }
     });

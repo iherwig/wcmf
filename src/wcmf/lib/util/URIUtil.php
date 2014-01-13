@@ -65,7 +65,7 @@ class URIUtil {
    * code from http://www.webmasterworld.com/forum88/334.htm
    * @param rel_uri Relative URI to convert
    * @param base Base URI
-   * @param REMOVE_LEADING_DOTS True/False wether to remove leading dots or not [default: true]
+   * @param REMOVE_LEADING_DOTS Boolean whether to remove leading dots or not [default: true]
    */
   public static function makeAbsolute($rel_uri, $base, $REMOVE_LEADING_DOTS = true) {
     preg_match("'^([^:]+://[^/]+)/'", $base, $m);
@@ -91,7 +91,7 @@ class URIUtil {
         if ($i > 1) {
           $i--;
           if ($i == count($base_array)) {
-            array_push($base_array, "");
+            $base_array[] = "";
           }
         }
       }
@@ -149,7 +149,7 @@ class URIUtil {
    * code from http://de.php.net/fsockopen
    * @param url The url to check
    * @param timeout The timeout in seconds (default: 10)
-   * @return True/False wether the url is available
+   * @return Boolean whether the url is available
    */
   public static function validateUrl($url, $timeout=10) {
     $url_parts = @parse_url($url);

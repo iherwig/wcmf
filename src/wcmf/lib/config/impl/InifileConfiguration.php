@@ -473,7 +473,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
         $arrayValues = StringUtil::quotesplit(substr($value, 1, -1));
         $value = array();
         foreach ($arrayValues as $arrayValue) {
-          array_push($value, trim($arrayValue));
+          $value[] = trim($arrayValue);
         }
       }
     }
@@ -523,7 +523,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * is newer than the serialized data, this call is ignored.
    * If InifileConfiguration class changed, the call will be ignored as well.
    * @param parsedFiles An array of ini filenames that must be contained in the data.
-   * @param True/False wether the data could be retrieved or not
+   * @param Boolean whether the data could be retrieved or not
    */
   protected function unserialize($parsedFiles) {
     if ($this->_useCache && !$this->isModified()) {

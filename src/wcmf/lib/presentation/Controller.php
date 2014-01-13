@@ -111,7 +111,7 @@ abstract class Controller {
 
   /**
    * Execute the Controller resulting in its Action processed and/or its View beeing displayed.
-   * @return Boolean wether following Controllers should be executed or not.
+   * @return Boolean whether following Controllers should be executed or not.
    */
   public function execute() {
     if (Log::isDebugEnabled(__CLASS__)) {
@@ -240,7 +240,7 @@ abstract class Controller {
    * Check if the current request is localized. This is true,
    * if it has a language parameter that is not equal to Localization::getDefaultLanguage().
    * Throws an exception if a language is given which is not supported
-   * @return Boolean wether the request is localized or not
+   * @return Boolean whether the request is localized or not
    */
   protected function isLocalizedRequest() {
     if ($this->_request->hasValue('language')) {

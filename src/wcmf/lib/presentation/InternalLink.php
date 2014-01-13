@@ -54,7 +54,7 @@ class InternalLink
   /**
    * Test if a link is an internal link
    * @param link The link to test
-   * @return True/False wether the link is an internal link or not
+   * @return Boolean whether the link is an internal link or not
    */
   function isLink($link)
   {

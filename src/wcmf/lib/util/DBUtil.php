@@ -83,7 +83,7 @@ class DBUtil {
    * Execute a sql script. Execution is done inside a transaction, which is rolled back in case of failure.
    * @param file The filename of the sql script
    * @param initSection The name of the configuration section that defines the database connection
-   * @return True/False wether execution succeeded or not.
+   * @return True/False whether execution succeeded or not.
    */
   public static function executeScript($file, $initSection) {
     if (file_exists($file)) {

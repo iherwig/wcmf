@@ -39,7 +39,7 @@ interface PersistenceFacade {
   /**
    * Check if a type is defined in the application.
    * @param type The type to check (either fully qualified or simple, if not ambiguous)
-   * @return True/False wether the type is defined or not
+   * @return Boolean whether the type is defined or not
    */
   function isKnownType($type);
 

@@ -63,7 +63,7 @@ class BatchDisplayController extends BatchController {
   /**
    * @see Controller::initialize()
    */
-  protected function initialize(Request $request, Response $response) {
+  public function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
     // initialize controller
@@ -270,14 +270,14 @@ class BatchDisplayController extends BatchController {
   protected function register($oid) {
     $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->REGISTRY);
-    array_push($registry, $oid);
+    $registry[] = $oid;
     $session->set($this->REGISTRY, $registry);
   }
 
   /**
    * Check if an object id is registered in the registry
    * @param oid The object id to check
-   * @return True/False wether the oid is registered or not
+   * @return Boolean whether the oid is registered or not
    */
   protected function isRegistered($oid) {
     $session = ObjectFactory::getInstance('session');

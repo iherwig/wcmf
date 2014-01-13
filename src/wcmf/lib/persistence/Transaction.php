@@ -54,6 +54,7 @@ interface Transaction {
   /**
    * Commit the object changes to the storage.
    * Sets the transaction to inactive.
+   * @return Map of oid changes (key: oid string before commit, value: oid string after commit)
    */
   function commit();
 

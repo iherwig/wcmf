@@ -131,19 +131,20 @@ abstract class BatchController extends Controller {
       $response->setValue('summaryText', $this->getSummaryText());
     }
 
+    // see if it should be one call only
+    $session = ObjectFactory::getInstance('session');
+    $oneCall = $session->get(self::ONE_CALL_SESSION_VARNAME);
+
     // check if we are finished or should continue
     // (number of packages may be changed)
     $numberOfSteps = $this->getNumberOfSteps();
-    if ($curStep > $numberOfSteps) {
+    if ($curStep >= $numberOfSteps || $oneCall == true) {
       // return control to application
       $response->setAction('done');
     }
     else {
-      $session = ObjectFactory::getInstance('session');
-      if ($session->get(self::ONE_CALL_SESSION_VARNAME) != false) {
-        // proceed
-        $response->setAction('continue');
-      }
+      // proceed
+      $response->setAction('continue');
     }
     return false;
   }
@@ -216,7 +217,7 @@ abstract class BatchController extends Controller {
                          'oids' => $items,
                          'callback' => $callback,
                          'args' => $args);
-      array_push($workPackages, $curWorkPackage);
+      $workPackages[] = $curWorkPackage;
       $counter += $size;
     }
     $session->set(self::WORK_PACKAGES_VARNAME, $workPackages);

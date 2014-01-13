@@ -285,7 +285,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Execute a query on the connection.
    * @param sql The SQL statement as string
-   * @param isSelect True/False wether the statement is a select statement, optional [default: false]
+   * @param isSelect Boolean whether the statement is a select statement, optional [default: false]
    * @param bindValues An array of data to bind to the placeholders, optional [default: empty array]
    * @return If isSelect is true, an array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC),
    * the number of affected rows else
@@ -607,7 +607,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $pkNames = $this->getPkNames();
     $ids = array();
     foreach ($pkNames as $pkName) {
-      array_push($ids, $data[$pkName]);
+      $ids[] = $data[$pkName];
     }
     return new ObjectId($this->getType(), $ids);
   }
@@ -615,7 +615,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Render a Criteria instance as string.
    * @param criteria The Criteria instance
-   * @param usePlaceholder True/False wether to use a placeholder ('?') instead of the value, optional [default: false]
+   * @param usePlaceholder Boolean whether to use a placeholder ('?') instead of the value, optional [default: false]
    * @param tableName The table name to use (may differ from criteria's type attribute), optional
    * @param columnName The column name to use (may differ from criteria's attribute attribute), optional
    * @return String
@@ -1235,7 +1235,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Set the transaction state for the connection
-   * @param isInTransaction Boolean wether the connection is in a transaction or not
+   * @param isInTransaction Boolean whether the connection is in a transaction or not
    */
   protected function setIsInTransaction($isInTransaction) {
     self::$inTransaction[$this->_connId] = $isInTransaction;

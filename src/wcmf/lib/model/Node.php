@@ -149,7 +149,7 @@ class Node extends PersistentObject {
    *        [values are interpreted as regular expression, parameter maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the Node properties should match
    *        [values are interpreted as regular expression, parameter maybe null, default: null].
-   * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
+   * @param useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
    * @return An Array holding references to the Nodes that matched.
    */
   public static function filter(array $nodeList, ObjectId $oid=null, $type=null, $values=null,
@@ -274,7 +274,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the number of children of the Node.
-   * @param memOnly True/False wether to only get the number of loaded children or all children [default: true].
+   * @param memOnly Boolean whether to only get the number of loaded children or all children [default: true].
    * @return The number of children.
    */
   public function getNumChildren($memOnly=true) {
@@ -288,8 +288,8 @@ class Node extends PersistentObject {
    *        the Node's simple type (without namespace). [default: null]
    * @param forceSet @see PersistentObject::setValue()
    * @param trackChange @see PersistentObject::setValue()
-   * @param updateOtherSide True/False wether to update also the other side of the relation [default: true]
-   * @return Boolean wether the operation succeeds or not
+   * @param updateOtherSide Boolean whether to update also the other side of the relation [default: true]
+   * @return Boolean whether the operation succeeds or not
    */
   public function addNode($other, $role=null, $forceSet=false, $trackChange=true, $updateOtherSide=true) {
 
@@ -356,7 +356,7 @@ class Node extends PersistentObject {
    * Delete a Node from the given relation.
    * @param oid The object id of the Node to delete.
    * @param role The role of the Node. If null, the role is the Node's type (without namespace). [default: null]
-   * @param updateOtherSide True/False wether to update also the other side of the relation [default: true]
+   * @param updateOtherSide Boolean whether to update also the other side of the relation [default: true]
    */
   public function deleteNode(PersistentObject $other, $role=null, $updateOtherSide=true) {
     if ($role == null) {
@@ -469,7 +469,7 @@ class Node extends PersistentObject {
    *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the child values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the child properties should match [maybe null, default: null].
-   * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
+   * @param useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
    * @return Node instance or null.
    */
   public function getFirstChild($role=null, $type=null, $values=null, $properties=null, $useRegExp=true) {
@@ -502,7 +502,7 @@ class Node extends PersistentObject {
    *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the children values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the children properties should match [maybe null, default: null].
-   * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
+   * @param useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
    * @return Array containing children Nodes that matched (proxies not included).
    */
   public function getChildrenEx(ObjectId $oid=null, $role=null, $type=null, $values=null,
@@ -564,7 +564,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the number of parents of the Node.
-   * @param memOnly True/False wether to only get the number of loaded parents or all parents [default: true].
+   * @param memOnly Boolean whether to only get the number of loaded parents or all parents [default: true].
    * @return The number of parents.
    */
   public function getNumParents($memOnly=true) {
@@ -593,7 +593,7 @@ class Node extends PersistentObject {
    *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
-   * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
+   * @param useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
    * @return Node instance or null.
    */
   public function getFirstParent($role=null, $type=null, $values=null, $properties=null, $useRegExp=true) {
@@ -609,7 +609,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the Nodes parents.
-   * @param memOnly True/False wether to only get the loaded parents or all parents [default: true].
+   * @param memOnly Boolean whether to only get the loaded parents or all parents [default: true].
    * @return An array of Node and/or PersistentObjectProxy instances.
    */
   public function getParents($memOnly=true) {
@@ -627,7 +627,7 @@ class Node extends PersistentObject {
    *        [maybe null, default: null].
    * @param values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
    * @param properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
-   * @param useRegExp True/False wether to interpret the given values/properties as regular expressions or not [default:true]
+   * @param useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
    * @return Array containing parent Nodes that matched (proxies not included).
    */
   public function getParentsEx(ObjectId $oid=null, $role=null, $type=null, $values=null,
@@ -752,10 +752,10 @@ class Node extends PersistentObject {
   /**
    * Get the relatives of a given hierarchyType.
    * @param hierarchyType @see PersistenceMapper::getRelations
-   * @param memOnly Boolean wether to only get the relatives in memory or all relatives (including proxies) [default: true].
+   * @param memOnly Boolean whether to only get the relatives in memory or all relatives (including proxies) [default: true].
    * @return An array containing the relatives.
    */
-  protected function getRelatives($hierarchyType, $memOnly=true) {
+  public function getRelatives($hierarchyType, $memOnly=true) {
     $relatives = array();
     $relations = $this->getRelations($hierarchyType);
     foreach ($relations as $curRelation) {
@@ -787,10 +787,10 @@ class Node extends PersistentObject {
   /**
    * Get the number of relatives of a given hierarchyType.
    * @param hierarchyType @see PersistenceMapper::getRelations
-   * @param memOnly True/False wether to only get the number of the relatives in memory or all relatives [default: true].
+   * @param memOnly Boolean whether to only get the number of the relatives in memory or all relatives [default: true].
    * @return The number of relatives.
    */
-  protected function getNumRelatives($hierarchyType, $memOnly=true) {
+  public function getNumRelatives($hierarchyType, $memOnly=true) {
     return sizeof($this->getRelatives($hierarchyType, $memOnly));
   }
 

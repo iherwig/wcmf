@@ -174,9 +174,9 @@ class XMLOutputStrategy implements OutputStrategy {
   }
 
   /**
-   * Determine wether the oid should be written to the file. The default implementation returns true.
+   * Determine whether the oid should be written to the file. The default implementation returns true.
    * @note subclasses will override this to implement special application requirements.
-   * @return True/False wether the oid should be written
+   * @return Boolean whether the oid should be written
    */
   protected function isWritingOIDs() {
     return true;

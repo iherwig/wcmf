@@ -127,6 +127,7 @@ class DefaultTransaction implements Transaction {
    * @see Transaction::commit()
    */
   public function commit() {
+    $changedOids = array();
     if ($this->_isActive) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $knowTypes = $persistenceFacade->getKnownTypes();
@@ -141,7 +142,7 @@ class DefaultTransaction implements Transaction {
         // loop until all queues are empty
         $commitDone = false;
         while (!$commitDone) {
-          $this->processInserts();
+          $changedOids = array_merge($changedOids, $this->processInserts());
           $this->processUpdates();
           $this->processDeletes();
           // check if all queues are empty
@@ -169,6 +170,7 @@ class DefaultTransaction implements Transaction {
     }
     // forget changes
     $this->rollback();
+    return $changedOids;
   }
 
   /**
@@ -313,8 +315,10 @@ class DefaultTransaction implements Transaction {
 
   /**
    * Process the new objects queue
+   * @return Map of oid changes (key: oid string before commit, value: oid string after commit)
    */
   protected function processInserts() {
+    $changedOids = array();
     $pendingInserts = array();
     $insertOids = array_keys($this->_newObjects);
     while (sizeof($insertOids) > 0) {
@@ -336,7 +340,9 @@ class DefaultTransaction implements Transaction {
       if ($canInsert) {
         $mapper = $object->getMapper();
         if ($mapper) {
+          $oldOid = $object->getOID();
           $mapper->save($object);
+          $changedOids[$oldOid->__toString()] = $object->getOID()->__toString();
         }
       }
       unset($this->_newObjects[$key]);
@@ -347,6 +353,7 @@ class DefaultTransaction implements Transaction {
       $key = $object->getOID()->__toString();
       $this->_newObjects[$key] = $object;
     }
+    return $changedOids;
   }
 
   /**

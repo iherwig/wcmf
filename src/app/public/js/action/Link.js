@@ -50,10 +50,14 @@ define([
                     }
                     all(deferredList).then(lang.hitch(this, function(results) {
                         // callback completes
-                        this.callback(results);
+                        if (this.callback instanceof Function) {
+                            this.callback(results);
+                        }
                     }), lang.hitch(this, function(error) {
                         // error
-                        this.errback(error);
+                        if (this.errback instanceof Function) {
+                            this.errback(error);
+                        }
                     }));
                     return all(deferredList);
                 })

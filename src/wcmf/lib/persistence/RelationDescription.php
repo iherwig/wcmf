@@ -58,8 +58,8 @@ class RelationDescription {
    * @param otherMaxMultiplicity The maximum number of instances at the other end (number or 'unbound')
    * @param thisAggregationKind The aggregation kind at this end ('none', 'shared' or 'composite')
    * @param otherAggregationKind The aggregation kind at the other end ('none', 'shared' or 'composite')
-   * @param thisNavigability True/False wether this end is navigable from the other end or not
-   * @param otherNavigability True/False wether the other end is navigable from this end or not
+   * @param thisNavigability Boolean whether this end is navigable from the other end or not
+   * @param otherNavigability Boolean whether the other end is navigable from this end or not
    * @param hierarchyType The hierarchy type that the other end has in relation to this end ('parent', 'child', 'undefined')
    */
   public function __construct($thisType, $thisRole, $otherType, $otherRole, $thisMinMultiplicity, $thisMaxMultiplicity,
@@ -196,7 +196,7 @@ class RelationDescription {
   }
 
   /**
-   * Check wether this end is navigable from the other end or not
+   * Check whether this end is navigable from the other end or not
    * @return Boolean
    */
   public function getThisNavigability() {
@@ -204,7 +204,7 @@ class RelationDescription {
   }
 
   /**
-   * Check wether the other end is navigable from this end or not
+   * Check whether the other end is navigable from this end or not
    * @return Boolean
    */
   public function getOtherNavigability() {

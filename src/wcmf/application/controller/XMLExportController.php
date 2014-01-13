@@ -283,7 +283,7 @@ class XMLExportController extends BatchController {
   protected function writeNode($fileHandle, $oid, $depth, $documentInfo) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $node = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-    $numChildren = sizeof($node->getChildOIDs());
+    $numChildren = sizeof($node->getChildren(false));
 
     $lastIndent = $documentInfo['lastIndent'];
     $curIndent = $depth;

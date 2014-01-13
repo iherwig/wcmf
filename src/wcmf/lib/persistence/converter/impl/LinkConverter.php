@@ -132,7 +132,7 @@ class LinkConverter implements DataConverter {
   /**
    * Check if an url is absolute
    * @param url The url to check
-   * @return True/False wether the url is absolute
+   * @return Boolean whether the url is absolute
    */
   private static function isAbsoluteUrl($url) {
     return strpos($url, 'http://') === 0 || strpos($url, 'https://');
@@ -141,7 +141,7 @@ class LinkConverter implements DataConverter {
   /**
    * Check if an url is external
    * @param url The url to check
-   * @return True/False wether the url is external
+   * @return Boolean whether the url is external
    */
   private function isExternalUrl($url) {
     return !(strpos($url, URIUtil::getProtocolStr().$_SERVER['HTTP_HOST']) === 0 ||

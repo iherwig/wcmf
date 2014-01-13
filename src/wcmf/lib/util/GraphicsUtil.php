@@ -489,7 +489,7 @@ class GraphicsUtil {
         foreach ($wordsTmp as $word) {
           $wordParts = preg_split('/ /', str_replace(array('-', '/'), array('- ', '/ '), $word));
           foreach ($wordParts as $wordPart) {
-            array_push($words, $wordPart);
+            $words[] = $wordPart;
           }
         }
         for ($i=0; $i<sizeof($words); $i++) {

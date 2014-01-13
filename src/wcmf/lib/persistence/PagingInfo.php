@@ -36,7 +36,7 @@ class PagingInfo {
    * set to true, if the count is to be ignored. This may speed up loading
    * of objects, because an extra count query may be omitted.
    * @param pageSize The pageSize (-1 to set no page size)
-   * @param ignoreTotalCount True/False wether this instance ignores the
+   * @param ignoreTotalCount Boolean whether this instance ignores the
    *    total count or not, optional [default: false]
    */
   public function __construct($pageSize, $ignoreTotalCount=false) {

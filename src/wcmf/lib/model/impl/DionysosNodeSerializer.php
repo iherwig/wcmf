@@ -35,7 +35,7 @@ use wcmf\lib\persistence\ObjectId;
  *
  * - className: The type of the Node (optional, if oid is given)
  * - oid: The object id of the Node (optional, if className is given)
- * - isReference: Boolean wether this Node is a reference or complete
+ * - isReference: Boolean whether this Node is a reference or complete
  * - lastChange: A timestamp defining the point in time of the last change of the Node
  * - attributes: An associative array with the value names as keys and the appropriate values
  *               Relations to other Nodes are also contained in this array, where the relation

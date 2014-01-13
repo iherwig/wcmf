@@ -51,7 +51,7 @@ class SearchIndexController extends BatchController {
         foreach ($persistenceFacade->getKnownTypes() as $type) {
           $tpl = $persistenceFacade->create($type);
           if ($search->isSearchable($tpl)) {
-            array_push($types, $type);
+            $types[] = $type;
           }
         }
         $search->resetIndex();

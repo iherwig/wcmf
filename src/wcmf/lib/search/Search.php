@@ -41,7 +41,7 @@ interface Search {
    * Check if the instance object is searchable
    * (defined by the property 'is_searchable')
    * @param obj PersistentObject instance
-   * @return Boolean wether the object is searchable or not
+   * @return Boolean whether the object is searchable or not
    */
   public function isSearchable(PersistentObject $obj);
 }

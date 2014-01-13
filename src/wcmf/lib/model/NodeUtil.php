@@ -251,7 +251,7 @@ class NodeUtil {
    * Make all urls matching a given base url in a Node relative.
    * @param node A reference to the Node the holds the value
    * @param baseUrl The baseUrl to which matching urls will be made relative
-   * @param recursive True/False wether to recurse into child Nodes or not (default: true)
+   * @param recursive Boolean whether to recurse into child Nodes or not (default: true)
    */
   public static function makeNodeUrlsRelative(Node $node, $baseUrl, $recursive=true) {
     // use NodeValueIterator to iterate over all Node values
@@ -275,7 +275,7 @@ class NodeUtil {
     $urls = StringUtil::getUrls($value);
     // find direct attribute urls
     if (strpos($value, 'http://') === 0 || strpos($value, 'https://') === 0) {
-      array_push($urls, $value);
+      $urls[] = $value;
     }
     // process urls
     foreach ($urls as $url) {

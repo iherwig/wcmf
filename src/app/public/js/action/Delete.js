@@ -38,10 +38,14 @@ define([
                     var store = Store.getStore(typeName, appConfig.defaultLanguage);
                     var deferred = store.remove(data.oid).then(lang.hitch(this, function(results) {
                         // callback completes
-                        this.callback(data, results);
+                        if (this.callback instanceof Function) {
+                            this.callback(data, results);
+                        }
                     }), lang.hitch(this, function(error) {
                         // error
-                        this.errback(data, error);
+                        if (this.errback instanceof Function) {
+                            this.errback(data, error);
+                        }
                     }));
                     return deferred;
                 })

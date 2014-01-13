@@ -32,7 +32,7 @@ class ArrayOutputStrategy implements OutputStrategy {
 
   /**
    * Constructor
-   * @param writeValueProperties True/False wether to write value properties or not [default: false]
+   * @param writeValueProperties Boolean whether to write value properties or not [default: false]
    */
   public function __construct($writeValueProperties=false) {
     $this->_writeValueProperties = $writeValueProperties;
@@ -90,7 +90,7 @@ class ArrayOutputStrategy implements OutputStrategy {
     if (is_array($value)) {
       $content = array();
       for ($i=0; $i<sizeof($value); $i++) {
-        array_push($content, utf8_encode($value[$i]));
+        $content[] = utf8_encode($value[$i]);
       }
     }
     else if ($value instanceof PersistentObject) {

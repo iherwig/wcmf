@@ -46,7 +46,7 @@ interface PermissionManager {
   /**
    * See if the PermissionManager is working in anonymous mode. In anonymous mode all
    * authorization requests answered positive and AuthUser is an instance of AnonymousUser.
-   * @return Boolean wether in anonymous mode
+   * @return Boolean whether in anonymous mode
    */
   public function isAnonymous();
 

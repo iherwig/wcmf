@@ -50,7 +50,7 @@ class CSVUtil {
       $line = fgets($csv, 4096);
       if (strlen($line) > 0) {
         $values = self::getValues($line, $separator, $fielddelimiter);
-        array_push($result['values'], $values);
+        $result['values'][] = $values;
       }
     }
 

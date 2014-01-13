@@ -77,7 +77,7 @@ class ObjectId {
     // add dummy ids for missing primary key values
     $numPKs = self::getNumberOfPKs($type);
     while (sizeof($this->_id) < $numPKs) {
-      array_push($this->_id, self::getDummyId());
+      $this->_id[] = self::getDummyId();
     }
 
     // set strVal immediatly otherwise object comparison will fail in

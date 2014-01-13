@@ -375,7 +375,7 @@ function processTableDef($tableDef, &$tables) {
             if ($matches1[1] == 'UNDEFINED') {
               $matches1[1] = '';
             }
-            array_push($columns, array('name' => $columnNames[$i], 'type' => $columnTypes[$i], 'id' => $matches1[1]));
+            $columns[] = array('name' => $columnNames[$i], 'type' => $columnTypes[$i], 'id' => $matches1[1]);
           }
         }
       }

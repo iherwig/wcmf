@@ -19,6 +19,7 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\ObjectId;
 
 /**
  * PersistentIterator is used to iterate over a tree/list build of oids
@@ -28,7 +29,7 @@ use wcmf\lib\core\ObjectFactory;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistentIterator implements Iterator {
+class PersistentIterator implements \Iterator {
 
   protected $_end;        // indicates if the iteration is ended
   protected $_oidList;    // the list of oids to process
@@ -36,18 +37,22 @@ class PersistentIterator implements Iterator {
   protected $_currentOID; // the oid the iterator points to
   protected $_startOID;   // the oid the iterator started with
   protected $_currentDepth; // the depth in the tree of the oid the iterator points to
+  protected $_aggregationKinds; // array of aggregation kind values to follow (empty: all)
 
   /**
    * Constructor.
    * @param oid The oid to start from.
+   * @param aggregationKinds Array of aggregation kind values of relations to follow
+   *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
-  public function __construct($oid) {
+  public function __construct(ObjectId $oid, $aggregationKinds=array()) {
     $this->_end = false;
     $this->_oidList = array();
     $this->_allList = array();
     $this->_currentOID = $oid;
     $this->_startOID = $oid;
     $this->_currentDepth = 0;
+    $this->_aggregationKinds = $aggregationKinds;
   }
 
   /**
@@ -59,7 +64,7 @@ class PersistentIterator implements Iterator {
 
     $uid = md5(uniqid(""));
     $state = array('end' => $this->_end, 'oidList' => $this->_oidList, 'allList' => $this->_allList, 'currentOID' => $this->_currentOID,
-      'currentDepth' => $this->_currentDepth);
+      'currentDepth' => $this->_currentDepth, 'aggregationKinds' => $this->_aggregationKinds);
     $session->set('PersistentIterator.'.$uid, $state);
     return $uid;
   }
@@ -82,6 +87,7 @@ class PersistentIterator implements Iterator {
     $instance->_oidList = $state['oidList'];
     $instance->_allList = $state['allList'];
     $instance->_currentDepth = $state['currentDepth'];
+    $instance->_aggregationKinds = $state['aggregationKinds'];
     return $instance;
   }
 
@@ -90,7 +96,7 @@ class PersistentIterator implements Iterator {
    * @return ObjectId, the current object id
    */
   public function current() {
-    return $this->_currentOID->__toString();
+    return $this->_currentOID;
   }
 
   /**
@@ -106,9 +112,23 @@ class PersistentIterator implements Iterator {
    */
   public function next() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $node = $persistenceFacade->load($this->_currentOID, BuildDepth::SINGLE);
+    $node = $persistenceFacade->load($this->_currentOID);
 
-    $childOIDs = $node->getProperty('childoids');
+    // collect navigable children for the given aggregation kinds
+    $childOIDs = array();
+    $mapper = $node->getMapper();
+    $relations = $mapper->getRelations('child');
+    $followAll = sizeof($this->_aggregationKinds) == 0;
+    foreach ($relations as $relation) {
+      $aggregationKind = $relation->getOtherAggregationKind();
+      if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->_aggregationKinds))) {
+        $childValue = $node->getValue($relation->getOtherRole());
+        $children = $relation->isMultiValued() ? $childValue : ($childValue != null ? array($childValue) : array());
+        foreach ($children as $child) {
+          $childOIDs[] = $child->getOID();
+        }
+      }
+    }
     $this->addToSeenList($childOIDs, ++$this->_currentDepth);
 
     if (sizeOf($this->_oidList) != 0) {
@@ -147,8 +167,8 @@ class PersistentIterator implements Iterator {
   protected function addToSeenList($oidList, $depth) {
     for ($i=sizeOf($oidList)-1; $i>=0; $i--) {
       if (!in_array($oidList[$i], $this->_allList)) {
-        array_push($this->_oidList, array($oidList[$i], $depth));
-        array_push($this->_allList, $oidList[$i]);
+        $this->_oidList[] = array($oidList[$i], $depth);
+        $this->_allList[] = $oidList[$i];
       }
     }
   }

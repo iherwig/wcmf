@@ -97,7 +97,7 @@ class SOAPController extends Controller
           $object['type'] = $node->getType();
           $object['oid'] = $node->getOID();
           $object['displayName'] = strip_tags(preg_replace("/[\r\n']/", " ", NodeUtil::getDisplayValue($node)));
-          array_push($objectList, $object);
+          $objectList[] = $object;
         }
       }
     }
@@ -121,7 +121,7 @@ class SOAPController extends Controller
       $object['type'] = $node->getType();
       $object['oid'] = $node->getOID();
       $object['displayName'] = strip_tags(preg_replace("/[\r\n']/", " ", NodeUtil::getDisplayValue($node)));
-      array_push($objectList, $object);
+      $objectList[] = $object;
     }
     $this->_response->setValue('soapResult', $objectList);
   }

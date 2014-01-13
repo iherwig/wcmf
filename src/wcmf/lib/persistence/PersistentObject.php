@@ -250,7 +250,7 @@ class PersistentObject {
   /**
    * Copy all non-empty values to a given instance (ChangeListeners are triggered)
    * @param object PersistentObject instance to copy the values to.
-   * @param copyPkValues True/False wether primary key values should be copied
+   * @param copyPkValues Boolean whether primary key values should be copied
    */
   public function copyValues(PersistentObject $object, $copyPkValues=true) {
     $pkNames = $this->getPkNames();
@@ -361,7 +361,7 @@ class PersistentObject {
   /**
    * Check if the node has a given item.
    * @param name The name of the item to query.
-   * @return True/False wether the item exists or not.
+   * @return Boolean whether the item exists or not.
    */
   public function hasValue($name) {
     return isset($this->_data[$name]);
@@ -487,11 +487,11 @@ class PersistentObject {
    * Set the value of a named item if it exists.
    * @param name The name of the item to set.
    * @param value The value of the item.
-   * @param forceSet Boolean wether to set the value even if it is already set
+   * @param forceSet Boolean whether to set the value even if it is already set
    *   and to bypass validation (used to notify listeners) [default: false]
-   * @param trackChange Boolean wether to track the change (change state, notify listeners) or not [default: true]
+   * @param trackChange Boolean whether to track the change (change state, notify listeners) or not [default: true]
    *      Only set this false, if you know, what you are doing
-   * @return Boolean wether the operation succeeds or not
+   * @return Boolean whether the operation succeeds or not
    */
   public function setValue($name, $value, $forceSet=false, $trackChange=true) {
     if (!$forceSet) {
@@ -695,7 +695,7 @@ class PersistentObject {
    * Get the names of all properties in the object. Properties are
    * either defined by using the PersistentObject::setProperty() method
    * or by the PersistentMapper.
-   * @param excludeDefaultProperties True/False wether to only return the
+   * @param excludeDefaultProperties Boolean whether to only return the
    *   properties defined by the PersistentObject::setProperty() method or
    *   also the properties defined by the mapper [default: false]
    * @return An array consisting of the names.

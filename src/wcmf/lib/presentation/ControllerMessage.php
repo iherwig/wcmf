@@ -183,7 +183,7 @@ class ControllerMessage {
   /**
    * Check for existance of a header
    * @param name The name of the header
-   * @return Boolean wether the header exists or not exist
+   * @return Boolean whether the header exists or not exist
    */
   public function hasHeader($name) {
     return array_key_exists($name, $this->_headers);
@@ -247,7 +247,7 @@ class ControllerMessage {
   /**
    * Check for existance of a value
    * @param name The name of the variable
-   * @return Boolean wether the value exists or not exist
+   * @return Boolean whether the value exists or not exist
    */
   public function hasValue($name) {
     return array_key_exists($name, $this->_values);
@@ -325,7 +325,7 @@ class ControllerMessage {
 
   /**
    * Check if errors exist.
-   * @return Boolean wether there are errors or not.
+   * @return Boolean whether there are errors or not.
    */
   public function hasErrors() {
     return sizeof($this->_errors) > 0;

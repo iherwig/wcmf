@@ -152,7 +152,7 @@ class FileUtil {
               if ($prependDirectoryName) {
                 $file = $directory.$file;
               }
-              array_push($result, $file);
+              $result[] = $file;
             }
           }
         }

@@ -78,7 +78,8 @@ class EntityBase extends EntityBaseBase {
     // set the sortkey to the id value
     if ($this->hasValue('sortkey')) {
       $this->setSortkey($this->getInitialSortkey());
-      $this->save();
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $persistenceFacade->getTransaction()->commit();
     }
   }
 
@@ -87,7 +88,7 @@ class EntityBase extends EntityBaseBase {
    * @note Subclasses may override this for special requirements
    */
   function getInitialSortkey() {
-    return $this->getDBID();
+    return $this->getOID()->getFirstId();
   }
 // PROTECTED REGION END
 }

@@ -51,12 +51,14 @@ define([
         },
 
         successHandler: function(response) {
-            domConstruct.empty(this.statusNode);
             this.indexBtn.reset();
             this.showNotification({
                 type: "ok",
                 message: Dict.translate("The search index was successfully updated."),
-                fadeOut: true
+                fadeOut: true,
+                onHide: lang.hitch(this, function () {
+                    domConstruct.empty(this.statusNode);
+                })
             });
         },
 

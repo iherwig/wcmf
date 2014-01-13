@@ -70,7 +70,7 @@ class HTTPClient {
   /**
    * Do a remote call.
    * @param request The Request instance
-   * @param isLogin True/False wether this request is a login request or not
+   * @param isLogin Boolean whether this request is a login request or not
    * @return The Response instance
    */
   protected function doRemoteCall($request, $isLogin) {

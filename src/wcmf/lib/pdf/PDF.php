@@ -109,7 +109,7 @@ class PDF extends FPDI {
   /**
    * If the height h would cause an overflow, add a new page immediately
    * @param h The height
-   * @return True/False wether a new page was inserted or not
+   * @return Boolean whether a new page was inserted or not
    */
   function CheckPageBreak($h) {
     if($this->GetY()+$h>$this->PageBreakTrigger) {

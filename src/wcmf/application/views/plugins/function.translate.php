@@ -33,10 +33,9 @@ use wcmf\lib\i18n\Message;
 function smarty_function_translate($params, &$smarty)
 {
   $variables = array();
-  foreach (array_keys($params) as $key)
-  {
+  foreach (array_keys($params) as $key) {
     if (preg_match("/^r[0-9]+$/", $key)) {
-      array_push($variables, $params[$key]);
+      $variables[] = $params[$key];
     }
   }
   $value = Message::get($params['text'], $variables, $params['lang']);
@@ -44,7 +43,7 @@ function smarty_function_translate($params, &$smarty)
     $smarty->assign($params['varname'], $value);
   }
   else {
-  	echo $value;
+    echo $value;
   }
 }
 ?>

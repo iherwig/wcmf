@@ -126,7 +126,8 @@ body {
   background-color: #08c;
 }
 
-.dbootstrap .dgrid .dgrid-row:hover, .dbootstrap .dgrid .dgrid-row:hover .dgrid-cell a {
+.dbootstrap .dgrid .dgrid-row:hover, .dbootstrap .dgrid .dgrid-row:hover .dgrid-cell a,
+.dbootstrap .dgrid-selected .dgrid-cell a {
   color: #fff;
 }
 

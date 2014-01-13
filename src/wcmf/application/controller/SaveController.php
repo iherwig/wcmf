@@ -499,7 +499,7 @@ class SaveController extends Controller {
    * @param oid The ObjectId of the object
    * @param valueName The name of the value of the object identified by oid
    * @param filename The name of the file to upload (including path)
-   * @return True/False wether to override the file or to create a new unique filename
+   * @return Boolean whether to override the file or to create a new unique filename
    * @note The default implementation returns true.
    */
   protected function shouldOverride(ObjectId $oid, $valueName, $filename) {

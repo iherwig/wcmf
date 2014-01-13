@@ -248,11 +248,11 @@ class StringUtil {
     $expEncArr = explode($quoteChr, $str);
     foreach($expEncArr as $encItem) {
       if ($n++%2) {
-        array_push($resArr, array_pop($resArr) . ($preserve?$quoteChr:'') . $encItem.($preserve?$quoteChr:''));
+        $resArr[] = array_pop($resArr) . ($preserve?$quoteChr:'') . $encItem.($preserve?$quoteChr:'');
       }
       else {
         $expDelArr = preg_split($delim, $encItem);
-        array_push($resArr, array_pop($resArr) . array_shift($expDelArr));
+        $resArr[] = array_pop($resArr) . array_shift($expDelArr);
         $resArr = array_merge($resArr, $expDelArr);
       }
     }
@@ -299,7 +299,7 @@ class StringUtil {
    * Convert a string in underscore notation to camel case notation.
    * Code from http://snipt.net/hongster/underscore-to-camelcase/
    * @param string The string to convert
-   * @param firstLowerCase True/False wether the first character should be lowercase or not [default: false]
+   * @param firstLowerCase Boolean whether the first character should be lowercase or not [default: false]
    * @return The converted string
    */
   public static function underScoreToCamelCase($string, $firstLowerCase=false) {

@@ -205,7 +205,7 @@ class SortController extends Controller {
 
       // add insert (and reference) object at the correct end of the list
       if ($isSortup) {
-        array_push($objects, $insertObject);
+        $objects[] = $insertObject;
         // sortkey of reference object does not change
         // update sort keys
         $count=sizeof($objects);

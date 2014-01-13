@@ -329,7 +329,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       if (!array_key_exists($type, $this->_createdOIDs)) {
         $this->_createdOIDs[$type] = array();
       }
-      array_push($this->_createdOIDs[$type], $object->getOID());
+      $this->_createdOIDs[$type][] = $object->getOID();
     }
   }
 }

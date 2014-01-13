@@ -12,6 +12,7 @@ define( [
     "../../../persistence/Store",
     "../../../action/Create",
     "../../../action/Edit",
+    "../../../action/Copy",
     "../../../action/Delete",
     "../../../locale/Dictionary",
     "dojo/text!./template/EntityListWidget.html"
@@ -30,6 +31,7 @@ function(
     Store,
     Create,
     Edit,
+    Copy,
     Delete,
     Dict,
     template
@@ -79,13 +81,24 @@ function(
                 route: this.route
             });
 
-            var duplicateAction = {
-                name: 'duplicate',
-                iconClass:  'icon-copy',
-                execute: function(data) {
-                    console.log('duplicate '+data.oid);
-                }
-            };
+            var copyAction = new Copy({
+                page: this.page,
+                init: lang.hitch(this, function(data) {
+                    this.hideNotification();
+                }),
+                callback: lang.hitch(this, function(data, result) {
+                    // success
+                    this.showNotification({
+                        type: "ok",
+                        message: Dict.translate("'%0%' was successfully copied", [Model.getDisplayValue(data)]),
+                        fadeOut: true
+                    });
+                }),
+                errback: lang.hitch(this, function(data, result) {
+                    // error
+                    this.showBackendError(result);
+                })
+            });
 
             var deleteAction = new Delete({
                 page: this.page,
@@ -106,7 +119,7 @@ function(
                 })
             });
 
-            return [editAction, duplicateAction, deleteAction];
+            return [editAction, copyAction, deleteAction];
         },
 
         _create: function(e) {

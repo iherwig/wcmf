@@ -80,7 +80,7 @@ if (is_array($rootTypes))
                 $mediaFilesDB[$value] = array();
               }
               if (!in_array($node->getOID(), $mediaFilesDB[$value])) {
-                array_push($mediaFilesDB[$value], $node->getOID());
+                $mediaFilesDB[$value][] = $node->getOID();
               }
             }
           }
@@ -96,7 +96,7 @@ if (is_array($rootTypes))
                   $mediaFilesDB[basename($url)] = array();
                 }
                 if (!in_array($node->getOID(), $mediaFilesDB[basename($url)])) {
-                  array_push($mediaFilesDB[basename($url)], $node->getOID());
+                  $mediaFilesDB[basename($url)][] = $node->getOID();
                 }
               }
             }

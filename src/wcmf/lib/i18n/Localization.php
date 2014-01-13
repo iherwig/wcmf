@@ -55,7 +55,7 @@ interface Localization {
    * Load a single translated object. The object is always loaded with BuildDepth::SINGLE.
    * @param oid The object id of the object to load the translation for.
    * @param lang The language of the translation to load.
-   * @param useDefaults Boolean wether to use the default language values
+   * @param useDefaults Boolean whether to use the default language values
    *    for untranslated/empty values or not. Optional, default is true
    * @return A reference to the translated object.
    */
@@ -68,9 +68,9 @@ interface Localization {
    * @param object A reference to the object to load the translation into. The object
    *    is supposed to have it's values in the default language.
    * @param lang The language of the translation to load.
-   * @param useDefaults Boolean wether to use the default language values
+   * @param useDefaults Boolean whether to use the default language values
    *    for untranslated/empty values or not. Optional, default is true.
-   * @param recursive Boolean wether to load translations for children too or not.
+   * @param recursive Boolean whether to load translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    */
   public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true);
@@ -80,9 +80,9 @@ interface Localization {
    * values that have a non-empty value are considered as translations and stored.
    * @param object An instance of the entity type that holds the translations as values.
    * @param lang The language of the translation.
-   * @param saveEmptyValues Boolean wether to save empty translations or not.
+   * @param saveEmptyValues Boolean whether to save empty translations or not.
    *    Optional, default is false
-   * @param recursive Boolean wether to save translations for children too or not.
+   * @param recursive Boolean whether to save translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    */
   public function saveTranslation(PersistentObject $object, $lang, $saveEmptyValues=false, $recursive=true);

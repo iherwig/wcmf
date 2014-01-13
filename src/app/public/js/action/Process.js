@@ -36,22 +36,25 @@ define([
         /**
          * Initiate the process with the initial action.
          * @param action The action to be called on the backend
+         * @param params Additional parameters to be passed with the first call
          */
-        run: function(action) {
-            this.doCall(action, "");
+        run: function(action, params) {
+            this.doCall(action, "", params);
         },
 
         /**
          * Make a backend call.
          * @param action The action to be called on the backend
          * @param controller The controller that initiates the action
+         * @param params Additional parameters to be passed with the call
          */
-        doCall: function(action, controller) {
+        doCall: function(action, controller, params) {
+            var data = lang.mixin({
+                controller: controller,
+                action: action
+            }, params);
             request.post(appConfig.backendUrl, {
-                data: {
-                    controller: controller,
-                    action: action
-                },
+                data: data,
                 headers: {
                     "Accept" : "application/json"
                 },
@@ -73,10 +76,16 @@ define([
          * @param response The response
          */
         handleResponse: function(response) {
+            if (!response) {
+                return;
+            }
             var stepNumber = parseInt(response['stepNumber']);
             var numberOfSteps = parseInt(response['numberOfSteps']);
             var stepName = response['displayText'];
             var controller = response['controller'];
+            if (this.progback instanceof Function) {
+                this.progback(stepName, stepNumber, numberOfSteps, response);
+            }
 
             if (response.action === "done") {
                 // call the success handler if the task is finished
@@ -85,10 +94,6 @@ define([
                 }
             }
             else {
-                if (this.progback instanceof Function) {
-                    this.progback(stepName, stepNumber, numberOfSteps, response);
-                }
-
                 // do the proceeding calls
                 this.doCall("continue", controller);
             }

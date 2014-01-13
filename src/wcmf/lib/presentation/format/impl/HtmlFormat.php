@@ -63,7 +63,7 @@ class HtmlFormat extends AbstractFormat {
       if ($valueDef != null && strlen($valueDef['oid']) > 0) {
         $node = &$this->getNode($valueDef['oid']);
         $node->setValue($valueDef['name'], $value);
-        array_push($nodeValues, $key);
+        $nodeValues[] = $key;
       }
     }
 
