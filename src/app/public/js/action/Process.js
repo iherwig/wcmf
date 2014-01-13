@@ -1,17 +1,11 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/aspect",
-    "dojo/query",
-    "dojo/request",
-    "dojo/dom-class"
+    "dojo/request"
 ], function (
     declare,
     lang,
-    aspect,
-    query,
-    request,
-    domClass
+    request
 ) {
     /**
      * Process wrapper class. A process is typically executed

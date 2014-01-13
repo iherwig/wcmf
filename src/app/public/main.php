@@ -38,8 +38,11 @@ catch (Exception $ex) {
   $application->handleException($ex, $request);
 }
 if (Log::isDebugEnabled('main')) {
+  $controller = isset($callParams['controller']) ? $callParams['controller'] : "";
+  $context = isset($callParams['context']) ? $callParams['context'] : "";
+  $action = isset($callParams['action']) ? $callParams['action'] : "";
   Log::debug(number_format(memory_get_peak_usage()/(1024*1024), 2)." MB used [".
-        $callParams['controller']."?".$callParams['context']."?".$callParams['action']."]", 'main');
+        $controller."?".$context."?".$action."]", 'main');
   Log::debug((microtime(true) - $startTime).' seconds', 'main');
 }
 ?>

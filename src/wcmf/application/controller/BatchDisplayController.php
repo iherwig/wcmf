@@ -43,7 +43,7 @@ use wcmf\lib\presentation\Response;
  * - see BatchController
  *
  * @param[in,out] oid The oid of the Node to start loading from
- * @param[in] translateValues True/False. If true, list values will be translated using Control::translateValue. If not given,
+ * @param[in] translateValues Boolean. If true, list values will be translated using Control::translateValue. If not given,
  *                        all values will be returned as is, default: true
  * @param[in] nodes_per_call The number of nodes to process in one call, default: 50
  * @param[out] list An array of Nodes

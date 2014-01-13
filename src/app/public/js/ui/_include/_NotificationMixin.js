@@ -65,7 +65,16 @@ define([
                     delay: 1000,
                     duration: 1000,
                     onEnd: lang.hitch(this, function() {
-                        this.hideNotification();
+                        fx.animateProperty({
+                            node: this.widget.domNode,
+                            duration: 100,
+                            properties: {
+                              height: 0
+                            },
+                            onEnd: lang.hitch(this, function() {
+                                this.hideNotification();
+                            })
+                        }).play();
                     })
                 }).play();
             }

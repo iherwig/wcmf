@@ -36,6 +36,16 @@ class Log {
   private static $_initialized = false;
 
   /**
+   * Print a trace message for a category
+   * @param message The message
+   * @param category The category
+   */
+  public static function trace($message, $category) {
+    $logger = Log::getLogger($category);
+    $logger->trace($message);
+  }
+
+  /**
    * Print a debug message for a category
    * @param message The message
    * @param category The category

@@ -49,8 +49,11 @@ class LoggingController extends Controller {
 
     $logType = $request->getValue('type');
     $message = $request->getValue('message');
-    switch($logType)
-    {
+    switch($logType) {
+      case 'TRACE':
+        Log::trace($message, __CLASS__);
+        break;
+
       case 'DEBUG':
         Log::debug($message, __CLASS__);
         break;
