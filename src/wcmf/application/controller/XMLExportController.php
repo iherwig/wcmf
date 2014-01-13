@@ -76,13 +76,13 @@ class XMLExportController extends BatchController {
     if ($request->getAction() != 'continue') {
       $session = ObjectFactory::getInstance('session');
 
-      $docFile = $this->_request->hasValue('docfile') ? $this->_request->getValue('docfile') : $this->_DOCFILE;
-      $docType = $this->_request->hasValue('doctype') ? $this->_request->getValue('doctype') : $this->_DOCTYPE;
-      $dtd = $this->_request->hasValue('dtd') ? $this->_request->getValue('dtd') : $this->_DTD;
-      $docRootElement = $this->_request->hasValue('docrootelement') ? $this->_request->getValue('docrootelement') : $this->_DOCROOTELEMENT;
-      $docLinebreak = $this->_request->hasValue('doclinebreak') ? $this->_request->getValue('doclinebreak') : $this->_DOCLINEBREAK;
-      $docIndent = $this->_request->hasValue('docindent') ? $this->_request->getValue('docindent') : $this->_DOCINDENT;
-      $nodesPerCall = $this->_request->hasValue('nodes_per_call') ? $this->_request->getValue('nodes_per_call') : $this->_NODES_PER_CALL;
+      $docFile = $request->hasValue('docfile') ? $request->getValue('docfile') : $this->_DOCFILE;
+      $docType = $request->hasValue('doctype') ? $request->getValue('doctype') : $this->_DOCTYPE;
+      $dtd = $request->hasValue('dtd') ? $request->getValue('dtd') : $this->_DTD;
+      $docRootElement = $request->hasValue('docrootelement') ? $request->getValue('docrootelement') : $this->_DOCROOTELEMENT;
+      $docLinebreak = $request->hasValue('doclinebreak') ? $request->getValue('doclinebreak') : $this->_DOCLINEBREAK;
+      $docIndent = $request->hasValue('docindent') ? $request->getValue('docindent') : $this->_DOCINDENT;
+      $nodesPerCall = $request->hasValue('nodes_per_call') ? $request->getValue('nodes_per_call') : $this->_NODES_PER_CALL;
 
       $documentInfo = array('docFile' => $docFile, 'docType' => $docType, 'dtd' => $dtd, 'docRootElement' => $docRootElement,
         'docLinebreak' => $docLinebreak, 'docIndent' => $docIndent, 'nodesPerCall' => $nodesPerCall,
@@ -96,7 +96,7 @@ class XMLExportController extends BatchController {
   /**
    * @see BatchController::getWorkPackage()
    */
-  public function getWorkPackage($number) {
+  protected function getWorkPackage($number) {
     if ($number == 0) {
       return array('name' => Message::get('Initialization'), 'size' => 1, 'oids' => array(1), 'callback' => 'initExport');
     }
@@ -106,27 +106,23 @@ class XMLExportController extends BatchController {
   }
 
   /**
-   * @see LongTaskController::getDisplayText()
-   */
-  public function getDisplayText($step) {
-    return $this->_workPackages[$step-1]['name']." ...";
-  }
-
-  /**
    * Initialize the XML export (oids parameter will be ignored)
    * @param oids The oids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
-  public function initExport($oids) {
+  protected function initExport($oids) {
     $session = ObjectFactory::getInstance('session');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
+    $filename = $documentInfo['docFile'];
 
     // delete export file
-    unlink($documentInfo['docFile']);
+    if (file_exists($filename)) {
+      unlink($filename);
+    }
 
     // start document
-    $fileHandle = fopen($documentInfo['docFile'], "a");
+    $fileHandle = fopen($filename, "a");
     FileUtil::fputsUnicode($fileHandle, '<?xml version="1.0" encoding="UTF-8"?>'.$documentInfo['docLinebreak']);
     if ($documentInfo['docType'] != "") {
       FileUtil::fputsUnicode($fileHandle, '<!DOCTYPE '.$documentInfo['docType'].' SYSTEM "'.$documentInfo['dtd'].'">'.$documentInfo['docLinebreak']);
@@ -265,7 +261,7 @@ class XMLExportController extends BatchController {
 
     // write last opened and not closed tags
     if ($curIndent < $lastIndent) {
-      for ($i=$lastIndent-$curIndent;$i>0;$i--) {
+      for ($i=$lastIndent-$curIndent; $i>0; $i--) {
         $closeTag = array_shift($documentInfo['tagsToClose']);
         FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $closeTag["indent"]).'</'.$closeTag["name"].'>'.$documentInfo['docLinebreak']);
       }
@@ -282,9 +278,10 @@ class XMLExportController extends BatchController {
    */
   protected function writeNode($fileHandle, $oid, $depth, $documentInfo) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $node = $persistenceFacade->load($oid, BuildDepth::SINGLE);
-    $numChildren = sizeof($node->getChildren(false));
+    $node = $persistenceFacade->load($oid);
+    $mapper = $node->getMapper();
 
+    $numChildren = sizeof($node->getChildren(false));
     $lastIndent = $documentInfo['lastIndent'];
     $curIndent = $depth;
     $this->endTags($fileHandle, $curIndent, $documentInfo);
@@ -303,10 +300,12 @@ class XMLExportController extends BatchController {
     // write object id
     FileUtil::fputsUnicode($fileHandle, ' id="'.$node->getOID().'"');
     // write object attributes
-    $attributeNames = $node->getValueNames();
-    foreach ($attributeNames as $curAttribute) {
-      if ($node->getValue($curAttribute) != '') {
-        FileUtil::fputsUnicode($fileHandle, ' '.$curAttribute.'="'.$this->formatValue($node->getValue($curAttribute)).'"');
+    $attributes = $mapper->getAttributes();
+    foreach ($attributes as $curAttribute) {
+      $attributeName = $curAttribute->getName();
+      $value = $node->getValue($attributeName);
+      if ($value != '') {
+        FileUtil::fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
       }
     }
     // close tag

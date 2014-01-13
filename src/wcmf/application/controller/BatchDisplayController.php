@@ -22,6 +22,7 @@ use wcmf\application\controller\BatchController;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\persistence\ObjectId;
@@ -91,14 +92,16 @@ class BatchDisplayController extends BatchController {
   protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $oid = ObjectId::parse($request->getValue('oid'));
-    if(!$oid) {
-      $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => array($request->getValue('oid')))));
-      return false;
-    }
-    if (!$this->checkLanguageParameter()) {
-      return false;
+    if ($request->getAction() != 'continue') {
+      $oid = ObjectId::parse($request->getValue('oid'));
+      if(!$oid) {
+        $response->addError(ApplicationError::get('OID_INVALID',
+          array('invalidOids' => array($request->getValue('oid')))));
+        return false;
+      }
+      if (!$this->checkLanguageParameter()) {
+        return false;
+      }
     }
     // do default validation
     return parent::validate();
@@ -125,7 +128,7 @@ class BatchDisplayController extends BatchController {
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
-    $nodeOID = $request->getValue('oid');
+    $nodeOID = ObjectId::parse($request->getValue('oid'));
 
     // do the action
     $iterator = new PersistentIterator($nodeOID);
@@ -216,7 +219,7 @@ class BatchDisplayController extends BatchController {
    * Load the node with the given object id and assign it to the response.
    * @param oid The oid of the node to copy
    */
-  protected function loadNode($oid) {
+  protected function loadNode(ObjectId $oid) {
     // check if we already loaded the node
     if ($this->isRegistered($oid)) {
       return;
@@ -228,7 +231,7 @@ class BatchDisplayController extends BatchController {
     $request = $session->get($this->REQUEST);
 
     // load the node
-    $node = $persistenceFacade->load($oid, BUIDLDEPTH_SINGLE);
+    $node = $persistenceFacade->load($oid);
     if ($node == null) {
       throw new PersistenceException("Can't load node '".$oid."'");
     }
@@ -267,7 +270,7 @@ class BatchDisplayController extends BatchController {
    * Register an object id in the registry
    * @param oid The object id to register
    */
-  protected function register($oid) {
+  protected function register(ObjectId $oid) {
     $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->REGISTRY);
     $registry[] = $oid;
@@ -279,7 +282,7 @@ class BatchDisplayController extends BatchController {
    * @param oid The object id to check
    * @return Boolean whether the oid is registered or not
    */
-  protected function isRegistered($oid) {
+  protected function isRegistered(ObjectId $oid) {
     $session = ObjectFactory::getInstance('session');
     $registry = $session->get($this->REGISTRY);
 
@@ -290,15 +293,16 @@ class BatchDisplayController extends BatchController {
    * Add a given node to the list variable of the response
    * @param node A reference to the node to add
    */
-  protected function addNodeToResponse($node) {
-    if (!$this->_response->hasValue('list')) {
+  protected function addNodeToResponse(Node $node) {
+    $response = $this->getResponse();
+    if (!$response->hasValue('list')) {
       $objects = array();
-      $this->_response->setValue('list', $objects);
+      $response->setValue('list', $objects);
     }
 
-    $objects = $this->_response->getValue('list');
-    $objects[sizeof($objects)] = $node;
-    $this->_response->setValue('list', $objects);
+    $objects = $response->getValue('list');
+    $objects[] = $node;
+    $response->setValue('list', $objects);
   }
 }
 ?>

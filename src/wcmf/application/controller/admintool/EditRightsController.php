@@ -45,7 +45,7 @@ class EditRightsController extends Controller {
   /**
    * @see Controller::validate()
    */
-  function validate() {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $oid = ObjectId::parse($request->getValue('oid'));
@@ -62,7 +62,7 @@ class EditRightsController extends Controller {
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  function executeKernel() {
+  protected function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $config = ObjectFactory::getConfigurationInstance();

@@ -332,11 +332,10 @@ class NodeUtil {
    */
   public static function translateValues(&$nodes, $language=null) {
     // translate the node values
-    for($i=0; $i<sizeof($nodes); $i++)
-    {
+    for($i=0; $i<sizeof($nodes); $i++) {
       $iter = new NodeValueIterator($nodes[$i], false);
       for($iter->rewind(); $iter->valid(); $iter->next()) {
-        self::translateValue($iter->currentNode(), $iter->key(), $baseUrl);
+        self::translateValue($iter->currentNode(), $iter->key(), $language);
       }
     }
   }
@@ -350,7 +349,7 @@ class NodeUtil {
   private static function translateValue(PersistentObject $object, $valueName, $language) {
     $value = $object->getValue($valueName);
     // translate list values
-    $value = Control::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
+    $value = ValueListProvider::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
     // force set (the rendered value may not be satisfy validation rules)
     $object->setValue($valueName, $value, true);
   }
