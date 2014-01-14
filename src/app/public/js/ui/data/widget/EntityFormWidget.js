@@ -142,6 +142,16 @@ function(
                 this.showBackendError(error);
             }));
 
+            // handle locking
+            if (!this.isNew) {
+                // assume the object is locked
+                this.setLockState(true, false);
+                this.acquireLock();
+            }
+            else {
+                query(this.lockNode).style("display", "none");
+            }
+
             // add relation widgets
             if (!this.isNew) {
                 var relations = this.getRelations();
@@ -161,15 +171,6 @@ function(
             this.setBtnState("save", false);
             if (this.isNew) {
                 this.setBtnState("delete", false);
-            }
-
-            // handle locking
-            if (!this.isNew) {
-                this.setLockState(false, true);
-                this.aquireLock();
-            }
-            else {
-                query(this.lockNode).style("display", "none");
             }
 
             if (!this.isNew) {
@@ -273,7 +274,7 @@ function(
             return (this.sourceOid && this.relation);
         },
 
-        aquireLock: function() {
+        acquireLock: function() {
             new Lock({
                 page: this.page,
                 action: "lock",
@@ -281,7 +282,10 @@ function(
                 init: lang.hitch(this, function(data) {}),
                 callback: lang.hitch(this, function(data, result) {
                     // success
+                    // not locked by other user
+                    this.setLockState(false, true);
                     if (result.type === "pessimistic") {
+                        // pessimistic lock owned by user
                         this.setLockState(true, true);
                     }
                 }),
@@ -377,7 +381,7 @@ function(
                         });
                         this.set("headline", Model.getDisplayValue(this.entity));
                         this.setModified(false);
-                        this.aquireLock();
+                        this.acquireLock();
                     }
                 }), lang.hitch(this, function(error) {
                     // error
@@ -444,7 +448,7 @@ function(
                     // success
                     this.setLockState(!this.isLocked, true);
                     // update optimistic lock
-                    this.aquireLock();
+                    this.acquireLock();
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // check for existing lock
