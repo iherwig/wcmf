@@ -50,6 +50,7 @@ class XMLExportController extends BatchController {
 
   // session name constants
   private $ROOT_OIDS = 'XMLExportController.rootoids';
+  private $EXPORTED_OIDS = 'XMLExportController.exportedoids';
   private $ITERATOR_ID = 'XMLExportController.iteratorid';
 
   // documentInfo passes the current document info/status from one call to the next:
@@ -145,6 +146,10 @@ class XMLExportController extends BatchController {
     // store root object ids in session
     $nextOID = array_shift($rootOIDs);
     $session->set($this->ROOT_OIDS, $rootOIDs);
+
+    // empty exported oids
+    $tmp = array();
+    $session->set($this->EXPORTED_OIDS, $tmp);
 
     // create work package for first root node
     $this->addWorkPackage(Message::get('Exporting tree: start with %0%', array($nextOID)), 1, array($nextOID), 'exportNodes');
@@ -277,6 +282,11 @@ class XMLExportController extends BatchController {
    * @return The updated document state
    */
   protected function writeNode($fileHandle, $oid, $depth, $documentInfo) {
+    $session = ObjectFactory::getInstance('session');
+    $exportedOids = $session->get($this->EXPORTED_OIDS);
+    if (in_array($oid->__toString(), $exportedOids)) {
+      return $documentInfo;
+    }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $node = $persistenceFacade->load($oid);
     $mapper = $node->getMapper();
@@ -286,9 +296,11 @@ class XMLExportController extends BatchController {
     $curIndent = $depth;
     $this->endTags($fileHandle, $curIndent, $documentInfo);
 
+    $tagName = $persistenceFacade->getSimpleType($node->getType());
+
     if (!$documentInfo['endTag']) {
       if ($numChildren > 0) {
-        $closeTag = array("name" => $node->getType(), "indent" => $curIndent);
+        $closeTag = array("name" => $tagName, "indent" => $curIndent);
         array_unshift($documentInfo['tagsToClose'], $closeTag);
         $documentInfo['endTag'] = true;
       }
@@ -296,7 +308,7 @@ class XMLExportController extends BatchController {
 
     // write object's content
     // open tag
-    FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$node->getType());
+    FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$tagName);
     // write object id
     FileUtil::fputsUnicode($fileHandle, ' id="'.$node->getOID().'"');
     // write object attributes
@@ -316,14 +328,18 @@ class XMLExportController extends BatchController {
 
     // remember open tag if not closed
     if ($numChildren > 0) {
-      $closeTag = array("name" => $node->getType(), "indent" => $curIndent);
+      $closeTag = array("name" => $tagName, "indent" => $curIndent);
       array_unshift($documentInfo['tagsToClose'], $closeTag);
     }
     else {
-      FileUtil::fputsUnicode($fileHandle, '</'.$node->getType().'>'.$documentInfo['docLinebreak']);
+      FileUtil::fputsUnicode($fileHandle, '</'.$tagName.'>'.$documentInfo['docLinebreak']);
     }
     // remember current indent
     $documentInfo['lastIndent'] = $curIndent;
+
+    // register exported node
+    $exportedOids[] = $oid->__toString();
+    $session->set($this->EXPORTED_OIDS, $exportedOids);
 
     // return the updated document info
     return $documentInfo;
