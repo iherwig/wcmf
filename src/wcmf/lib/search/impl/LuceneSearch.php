@@ -123,7 +123,7 @@ class LuceneSearch implements IndexedSearch {
             $inputType = $obj->getValueProperty($curValueName, 'input_type');
             $value = $this->encodeValue($obj->getValue($curValueName), $inputType);
             if (strlen($value) > 0) {
-              $highlighted = $query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
+              $highlighted = @$query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
               $matches = array();
               if (preg_match($highlightedRegex, $highlighted, $matches)) {
                 $hitStr = $matches[3];
