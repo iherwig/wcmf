@@ -22,7 +22,9 @@ use wcmf\application\controller\BatchController;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\model\Node;
 use wcmf\lib\model\PersistentIterator;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
@@ -191,13 +193,13 @@ class XMLExportController extends BatchController {
     // process _NODES_PER_CALL nodes
     $fileHandle = fopen($documentInfo['docFile'], "a");
     $counter = 0;
-    $documentInfo['endTag'] = false;
     while ($iterator->valid() && $counter < $documentInfo['nodesPerCall']) {
       // write node
       $documentInfo = $this->writeNode($fileHandle, $iterator->current(), $iterator->key()+1, $documentInfo);
       $iterator->next();
       $counter++;
     }
+    $this->endTags($fileHandle, 0, $documentInfo);
     fclose($fileHandle);
 
     // save document state to session
@@ -244,7 +246,7 @@ class XMLExportController extends BatchController {
 
     // end document
     $fileHandle = fopen($documentInfo['docFile'], "a");
-    $this->endTags($fileHandle, 1, $documentInfo);
+    $this->endTags($fileHandle, 0, $documentInfo);
     FileUtil::fputsUnicode($fileHandle, '</'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
     fclose($fileHandle);
 
@@ -259,16 +261,18 @@ class XMLExportController extends BatchController {
    * Ends all tags up to $curIndent level
    * @param fileHandle The file handle to write to
    * @param curIndent The depth of the node in the tree
-   * @param documentInfo An assoziative array (see DOCUMENT_INFO)
+   * @param documentInfo A reference to an assoziative array (see DOCUMENT_INFO)
    */
-  protected function endTags($fileHandle, $curIndent, $documentInfo) {
+  protected function endTags($fileHandle, $curIndent, &$documentInfo) {
     $lastIndent = $documentInfo['lastIndent'];
 
     // write last opened and not closed tags
     if ($curIndent < $lastIndent) {
       for ($i=$lastIndent-$curIndent; $i>0; $i--) {
         $closeTag = array_shift($documentInfo['tagsToClose']);
-        FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $closeTag["indent"]).'</'.$closeTag["name"].'>'.$documentInfo['docLinebreak']);
+        if ($closeTag) {
+          FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $closeTag["indent"]).'</'.$closeTag["name"].'>'.$documentInfo['docLinebreak']);
+        }
       }
     }
   }
@@ -281,33 +285,27 @@ class XMLExportController extends BatchController {
    * @param documentInfo An assoziative array (see DOCUMENT_INFO)
    * @return The updated document state
    */
-  protected function writeNode($fileHandle, $oid, $depth, $documentInfo) {
+  protected function writeNode($fileHandle, ObjectId $oid, $depth, $documentInfo) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $session = ObjectFactory::getInstance('session');
     $exportedOids = $session->get($this->EXPORTED_OIDS);
     if (in_array($oid->__toString(), $exportedOids)) {
       return $documentInfo;
     }
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
     $node = $persistenceFacade->load($oid);
     $mapper = $node->getMapper();
 
-    $numChildren = sizeof($node->getChildren(false));
+    $hasUnvisitedChildren = $this->getNumUnvisitedChildren($node) > 0;
+
     $lastIndent = $documentInfo['lastIndent'];
     $curIndent = $depth;
     $this->endTags($fileHandle, $curIndent, $documentInfo);
 
     $tagName = $persistenceFacade->getSimpleType($node->getType());
 
-    if (!$documentInfo['endTag']) {
-      if ($numChildren > 0) {
-        $closeTag = array("name" => $tagName, "indent" => $curIndent);
-        array_unshift($documentInfo['tagsToClose'], $closeTag);
-        $documentInfo['endTag'] = true;
-      }
-    }
-
     // write object's content
-    // open tag
+    // open start tag
     FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$tagName);
     // write object id
     FileUtil::fputsUnicode($fileHandle, ' id="'.$node->getOID().'"');
@@ -320,14 +318,14 @@ class XMLExportController extends BatchController {
         FileUtil::fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
       }
     }
-    // close tag
+    // close start tag
     FileUtil::fputsUnicode($fileHandle, '>');
-    if ($numChildren > 0) {
+    if ($hasUnvisitedChildren) {
       FileUtil::fputsUnicode($fileHandle, $documentInfo['docLinebreak']);
     }
 
-    // remember open tag if not closed
-    if ($numChildren > 0) {
+    // remember end tag if not closed
+    if ($hasUnvisitedChildren) {
       $closeTag = array("name" => $tagName, "indent" => $curIndent);
       array_unshift($documentInfo['tagsToClose'], $closeTag);
     }
@@ -343,6 +341,33 @@ class XMLExportController extends BatchController {
 
     // return the updated document info
     return $documentInfo;
+  }
+
+  protected function getNumUnvisitedChildren(Node $node) {
+    $session = ObjectFactory::getInstance('session');
+    $exportedOids = $session->get($this->EXPORTED_OIDS);
+
+    $childOIDs = array();
+    $mapper = $node->getMapper();
+    $relations = $mapper->getRelations('child');
+    foreach ($relations as $relation) {
+      if ($relation->getOtherNavigability()) {
+        $childValue = $node->getValue($relation->getOtherRole());
+        if ($childValue != null) {
+          $children = $relation->isMultiValued() ? $childValue : array($childValue);
+          foreach ($children as $child) {
+            $childOIDs[] = $child->getOID();
+          }
+        }
+      }
+    }
+    $numUnvisitedChildren = 0;
+    foreach ($childOIDs as $childOid) {
+      if (!in_array($childOid->__toString(), $exportedOids)) {
+        $numUnvisitedChildren++;
+      }
+    }
+    return $numUnvisitedChildren;
   }
 
   /**

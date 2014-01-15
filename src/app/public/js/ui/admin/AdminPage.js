@@ -43,14 +43,29 @@ define([
             this.hideNotification();
 
             var process = new Process({
-                callback: lang.hitch(this, this.successHandler),
+                callback: lang.hitch(this, this.successIndexHandler),
                 errback: lang.hitch(this, this.errorHandler),
                 progback: lang.hitch(this, this.progressHandler)
             });
             process.run("indexAll");
         },
 
-        successHandler: function(response) {
+        _export: function(e) {
+            // prevent the page from navigating after submit
+            e.preventDefault();
+
+            this.exportBtn.setProcessing();
+            this.hideNotification();
+
+            var process = new Process({
+                callback: lang.hitch(this, this.successExportHandler),
+                errback: lang.hitch(this, this.errorHandler),
+                progback: lang.hitch(this, this.progressHandler)
+            });
+            process.run("exportAll");
+        },
+
+        successIndexHandler: function(response) {
             this.indexBtn.reset();
             this.showNotification({
                 type: "ok",
@@ -62,8 +77,21 @@ define([
             });
         },
 
+        successExportHandler: function(response) {
+            this.exportBtn.reset();
+            this.showNotification({
+                type: "ok",
+                message: Dict.translate("The content was successfully exported."),
+                fadeOut: true,
+                onHide: lang.hitch(this, function () {
+                    domConstruct.empty(this.statusNode);
+                })
+            });
+        },
+
         errorHandler: function(error) {
             this.indexBtn.reset();
+            this.exportBtn.reset();
             this.showBackendError(error);
         },
 

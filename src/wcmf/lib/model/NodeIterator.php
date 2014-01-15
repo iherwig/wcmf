@@ -43,11 +43,11 @@ use wcmf\lib\model\Node;
  */
 class NodeIterator implements \Iterator {
 
-  protected $_end;          // indicates if the iteration is ended
-  protected $_nodeList;     // the list of seen nodes
-  protected $_nodeIdList;   // the list of seen object ids
-  protected $_currentNode;  // the node the iterator points to
-  protected $_startNode;    // the start node
+  protected $_end;              // indicates if the iteration is ended
+  protected $_nodeList;         // the list of seen nodes
+  protected $_processedOidList; // the list of processed object ids
+  protected $_currentNode;      // the node the iterator points to
+  protected $_startNode;        // the start node
   protected $_aggregationKinds; // array of aggregation kind values to follow (empty: all)
 
   /**
@@ -59,7 +59,7 @@ class NodeIterator implements \Iterator {
   public function __construct(Node $node, $aggregationKinds=array()) {
     $this->_end = false;
     $this->_nodeList = array();
-    $this->_nodeIdList = array();
+    $this->_processedOidList = array();
     $this->_currentNode = $node;
     $this->_startNode = $node;
     $this->_aggregationKinds = $aggregationKinds;
@@ -85,6 +85,9 @@ class NodeIterator implements \Iterator {
    * Move forward to next element
    */
   public function next() {
+    // the current node was processed
+    $this->_processedOidList[] = $this->_currentNode->getOID()->__toString();
+
     // collect navigable children for the given aggregation kinds
     $childrenArray = array();
     $mapper = $this->_currentNode->getMapper();
@@ -94,18 +97,30 @@ class NodeIterator implements \Iterator {
       $aggregationKind = $relation->getOtherAggregationKind();
       if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->_aggregationKinds))) {
         $childValue = $this->_currentNode->getValue($relation->getOtherRole());
-        $children = $relation->isMultiValued() ? $childValue : ($childValue != null ? array($childValue) : array());
-        foreach ($children as $child) {
-          $childrenArray[] = $child;
+        if ($childValue != null) {
+          $children = $relation->isMultiValued() ? $childValue : array($childValue);
+          foreach ($children as $child) {
+            $childrenArray[] = $child;
+          }
         }
       }
     }
-    $this->addToSeenList($childrenArray);
+    $this->addToQueue($childrenArray);
 
-    if (sizeOf($this->_nodeList) != 0) {
-      // array_pop destroys the reference to the node
-      $this->_currentNode = $this->_nodeList[sizeOf($this->_nodeList)-1];
-      array_pop($this->_nodeList);
+    // set current node
+    if (sizeof($this->_nodeList) != 0) {
+      $node = array_pop($this->_nodeList);
+      $oidStr = $node->getOID()->__toString();
+      // not the last node -> search for unprocessed nodes
+      while (sizeof($this->_nodeList) > 0 && in_array($oidStr, $this->_processedOidList)) {
+        $node = array_pop($this->_nodeList);
+        $oidStr = $node->getOID()->__toString();
+      }
+      // last node found, but it was processed already
+      if (sizeof($this->_nodeList) == 0 && in_array($oidStr, $this->_processedOidList)) {
+        $this->_end = true;
+      }
+      $this->_currentNode = $node;
     }
     else {
       $this->_end = true;
@@ -119,7 +134,7 @@ class NodeIterator implements \Iterator {
   public function rewind() {
     $this->_end = false;
     $this->_nodeList = array();
-    $this->_nodeIdList = array();
+    $this->_processedOidList = array();
     $this->_currentNode = $this->_startNode;
   }
 
@@ -131,16 +146,13 @@ class NodeIterator implements \Iterator {
   }
 
   /**
-   * Add nodes, only if they are not already in the internal processed node list.
+   * Add nodes to the processing queue.
    * @param nodeList An array of nodes.
    */
-  protected function addToSeenList($nodeList) {
-    for ($i=sizeOf($nodeList)-1; $i>=0; $i--) {
+  protected function addToQueue($nodeList) {
+    for ($i=sizeof($nodeList)-1; $i>=0; $i--) {
       if ($nodeList[$i] instanceof Node) {
-        if (!in_array($nodeList[$i]->getOID()->__toString(), $this->_nodeIdList)) {
-          $this->_nodeList[] = $nodeList[$i];
-          $this->_nodeIdList[] = $nodeList[$i]->getOID()->__toString();
-        }
+        $this->_nodeList[] = $nodeList[$i];
       }
     }
   }
