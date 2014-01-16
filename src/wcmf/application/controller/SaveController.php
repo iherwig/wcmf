@@ -115,7 +115,7 @@ class SaveController extends Controller {
               $invalidAttributeNames[] = $curValueName;
             }
             // ignore primary key values, because they are immutable
-            if (in_array($curValueName, $pkValueNames)) {
+            if (!$isNew && in_array($curValueName, $pkValueNames)) {
               continue;
             }
 
@@ -141,7 +141,7 @@ class SaveController extends Controller {
             }
 
             // get the requested node
-            // see if we have already handled valued of the node before or
+            // see if we have already handled values of the node before or
             // if we have to initially load/create it
             if (!isset($nodeArray[$curOidStr])) {
               // load/create the node initially
@@ -159,7 +159,6 @@ class SaveController extends Controller {
                   // create a new object, if this is an insert request. set the object id
                   // of the request object for correct assignement in save arrays
                   $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
-                  $curNode->setOid($curOid);
                 }
                 else {
                   // load the existing object, if this is a save request in order to merge

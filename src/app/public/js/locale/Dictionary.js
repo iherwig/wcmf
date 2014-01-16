@@ -82,7 +82,7 @@ function(
                     language: appConfig.uiLanguage
                 },
                 headers: {
-                    "Accept" : "application/json"
+                    Accept: "application/json"
                 },
                 handleAs: 'json'
 

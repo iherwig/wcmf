@@ -62,8 +62,8 @@ define([
             var data = {
                 action1: {
                     action: "create",
-                    className: "Author",
-                    oid: "app.src.model.Author:wcmffb298f3784dd49548a05d43d7bf88590"
+                    oid: "Author:wcmffb298f3784dd49548a05d43d7bf88590",
+                    name: "Ingo Herwig"
                 },
                 action2: {
                     action: "read",
@@ -73,6 +73,7 @@ define([
             request.post(appConfig.backendUrl, {
                 data: json.stringify({action: "actionSet", data: data}),
                 headers: {
+                    "Content-Type": "application/json",
                     "Accept" : "application/json"
                 },
                 handleAs: 'json'

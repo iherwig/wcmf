@@ -45,7 +45,7 @@ define([
               type: level
           },
           headers: {
-              "Accept" : "application/json"
+              Accept: "application/json"
           },
           handleAs: 'json'
       });

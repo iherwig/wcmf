@@ -39,11 +39,12 @@ class EntityBase extends EntityBaseBase {
     parent::beforeInsert();
 
     // set creation date on nodes with appropriate attribute
-    if ($this->hasValue('created')) {
+    $mapper = $this->getMapper();
+    if ($mapper->hasAttribute('created')) {
       $this->setValue('created', date("Y-m-d H:i:s"));
     }
     // set creator on nodes with appropriate attribute
-    if ($this->hasValue('creator')) {
+    if ($mapper->hasAttribute('creator')) {
       $permissionManager = ObjectFactory::getInstance('permissionManager');
       $authUser = $permissionManager->getAuthUser();
       $this->setValue('creator', $authUser->getLogin());
@@ -58,11 +59,12 @@ class EntityBase extends EntityBaseBase {
     parent::beforeUpdate();
 
     // set modified date on nodes with appropriate attribute
-    if ($this->hasValue('modified')) {
+    $mapper = $this->getMapper();
+    if ($mapper->hasAttribute('modified')) {
       $this->setValue('modified', date("Y-m-d H:i:s"));
     }
     // set last_editor on nodes with appropriate attribute
-    if ($this->hasValue('last_editor')) {
+    if ($mapper->hasAttribute('last_editor')) {
       $permissionManager = ObjectFactory::getInstance('permissionManager');
       $authUser = $permissionManager->getAuthUser();
       $this->setValue('last_editor', $authUser->getLogin());
@@ -76,7 +78,8 @@ class EntityBase extends EntityBaseBase {
     parent::afterInsert();
 
     // set the sortkey to the id value
-    if ($this->hasValue('sortkey')) {
+    $mapper = $this->getMapper();
+    if ($mapper->hasAttribute('sortkey')) {
       $this->setSortkey($this->getInitialSortkey());
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $persistenceFacade->getTransaction()->commit();

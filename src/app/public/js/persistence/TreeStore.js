@@ -17,7 +17,7 @@ define([
 
         constructor: function(options) {
             options.headers = {
-                Accept: 'application/javascript, application/json'
+                Accept: "application/json"
             };
         },
 

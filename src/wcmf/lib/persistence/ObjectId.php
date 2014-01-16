@@ -148,12 +148,16 @@ class ObjectId {
    */
   public static function parse($oid) {
     // fast checks first
+    if ($oid instanceof ObjectId) {
+      return $oid;
+    }
+
     if (strlen($oid) == 0) {
       return null;
     }
 
     $oidParts = preg_split('/:/', $oid);
-    if (!is_array($oidParts)) {
+    if (sizeof($oidParts) < 2) {
       return null;
     }
 

@@ -40,7 +40,7 @@ define([
             request.post(appConfig.backendUrl, {
                 data: data,
                 headers: {
-                    "Accept" : "application/json"
+                    Accept: "application/json"
                 },
                 handleAs: "json"
 

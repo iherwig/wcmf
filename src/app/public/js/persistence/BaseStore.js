@@ -21,7 +21,7 @@ define([
 
         constructor: function(options) {
             lang.mixin(this.headers, {
-                Accept: 'application/javascript, application/json'
+                Accept: "application/json"
             });
 
             // set id property in order to have url like /{type}/{id}

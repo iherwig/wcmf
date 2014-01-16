@@ -184,8 +184,9 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::getLastCreatedOID()
    */
   public function getLastCreatedOID($type) {
-    if (isset($this->_createdOIDs[$type]) && sizeof($this->_createdOIDs[$type]) > 0) {
-      return $this->_createdOIDs[$type][sizeof($this->_createdOIDs[$type])-1];
+    $fqType = $this->getFullyQualifiedType($type);
+    if (isset($this->_createdOIDs[$fqType]) && sizeof($this->_createdOIDs[$fqType]) > 0) {
+      return $this->_createdOIDs[$fqType][sizeof($this->_createdOIDs[$fqType])-1];
     }
     return null;
   }

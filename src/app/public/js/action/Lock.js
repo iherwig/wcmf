@@ -32,7 +32,7 @@ define([
                     type: this.lockType
                 },
                 headers: {
-                    "Accept" : "application/json"
+                    Accept: "application/json"
                 },
                 handleAs: 'json'
 

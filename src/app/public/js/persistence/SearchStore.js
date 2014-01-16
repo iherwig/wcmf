@@ -27,7 +27,7 @@ define([
                 url: this.target,
                 handleAs: "json",
                 headers: {
-                    Accept: 'application/javascript, application/json'
+                    Accept: "application/json"
                 }
             }).then(lang.hitch(this, function(data) {
                 deferred.resolve(data.list);

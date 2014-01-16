@@ -49,8 +49,8 @@ use wcmf\lib\presentation\Request;
     data: {
       action1: {
         action: "create",
-        className: "Author",
-        oid: "app.src.model.Author:wcmffb298f3784dd49548a05d43d7bf88590"
+        oid: "Author:wcmffb298f3784dd49548a05d43d7bf88590",
+        name: "Ingo Herwig"
       },
       action2: {
         action: "read",
@@ -63,20 +63,16 @@ use wcmf\lib\presentation\Request;
  * @code
    data: {
      action1: {
-       oid: "ChiGoal:123",
-       success: "1"
+       oid: "Author:123",
+       ...
      },
      action2: {
-       oid: "ChiGoal:123",
-       node: {
-         "0": {
-           modified: "2001-01-01 01:01",
-           creator: "admin"
-           ...
-         }
+       object: {
+         oid: "Author:123",
+         modified: "2001-01-01 01:01",
+         creator: "admin"
          ...
-       },
-       success: "1"
+       }
      }
    }
  * @endcode
@@ -206,6 +202,9 @@ class MultipleActionController extends Controller {
    * @return The string
    */
   private function replaceVariablesString($value) {
+    if (!is_string($value)) {
+      return $value;
+    }
     preg_match_all('/\{([^\{]+)\}/', $value, $variableMatches);
     $variables = $variableMatches[1];
     foreach($variables as $variable) {
@@ -213,21 +212,20 @@ class MultipleActionController extends Controller {
       if (sizeof($matches > 0)) {
         $variableName = $matches[1];
         $parameters = $matches[2];
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
         // last_created_oid
         if ($variableName == 'last_created_oid') {
           $type = $parameters;
-          if (ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
-            $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+          if ($persistenceFacade->isKnownType($type)) {
             $oid = $persistenceFacade->getLastCreatedOID($type);
             $value = preg_replace("/{".$variable."}/", $oid, $value);
           }
         }
 
         // oid reference
-        if (ObjectFactory::getInstance('persistenceFacade')->isKnownType($variableName)) {
+        if ($persistenceFacade->isKnownType($variableName)) {
           $type = $variableName;
-          $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
           $oid = $persistenceFacade->getLastCreatedOID($type);
           $value = $oid;
         }
