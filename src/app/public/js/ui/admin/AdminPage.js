@@ -56,7 +56,7 @@ define([
             this.hideNotification();
             var process = new Process({
                 callback: lang.hitch(this, lang.partial(this.finishProcess, btn, message)),
-                errback: lang.hitch(this, this.errorHandler),
+                errback: lang.hitch(this, lang.partial(this.errorHandler, btn)),
                 progback: lang.hitch(this, this.progressHandler)
             });
             process.run(action);
@@ -74,9 +74,8 @@ define([
             });
         },
 
-        errorHandler: function(error) {
-            this.indexBtn.reset();
-            this.exportBtn.reset();
+        errorHandler: function(btn, error) {
+            btn.reset();
             this.showBackendError(error);
         },
 

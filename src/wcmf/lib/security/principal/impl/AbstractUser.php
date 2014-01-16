@@ -115,8 +115,10 @@ abstract class AbstractUser extends Node implements User {
       if (!$isAnonymous) {
         $permissionManager->deactivate();
       }
-      foreach (self::$_roleRelationNames as $roleName) {
-        $this->loadChildren($roleName);
+      if (self::$_roleRelationNames) {
+        foreach (self::$_roleRelationNames as $roleName) {
+          $this->loadChildren($roleName);
+        }
       }
       // reactivate the PermissionManager if necessary
       if (!$isAnonymous) {

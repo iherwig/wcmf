@@ -147,7 +147,7 @@ class DefaultAuthUser implements AuthUser {
         }
       }
     }
-    return $val['default'];
+    return isset($val['default']) ? $val['default'] : false;
   }
 
   /**
