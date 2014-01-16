@@ -2,6 +2,8 @@ define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/request",
+    "dojo/json",
     "dojo/dom-construct",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
@@ -15,6 +17,8 @@ define([
     require,
     declare,
     lang,
+    request,
+    json,
     domConstruct,
     _Page,
     _Notification,
@@ -39,49 +43,65 @@ define([
             // prevent the page from navigating after submit
             e.preventDefault();
 
-            this.indexBtn.setProcessing();
-            this.hideNotification();
-
-            var process = new Process({
-                callback: lang.hitch(this, this.successIndexHandler),
-                errback: lang.hitch(this, this.errorHandler),
-                progback: lang.hitch(this, this.progressHandler)
-            });
-            process.run("indexAll");
+            this.startProcess("indexAll", this.indexBtn,
+                Dict.translate("The search index was successfully updated."));
         },
 
         _export: function(e) {
             // prevent the page from navigating after submit
             e.preventDefault();
 
-            this.exportBtn.setProcessing();
-            this.hideNotification();
+            this.startProcess("exportAll", this.exportBtn,
+                Dict.translate("The content was successfully exported."));
+        },
 
+        _actionSet: function(e) {
+            // prevent the page from navigating after submit
+            e.preventDefault();
+
+            var data = {
+                action1: {
+                    action: "create",
+                    className: "Author",
+                    oid: "app.src.model.Author:wcmffb298f3784dd49548a05d43d7bf88590"
+                },
+                action2: {
+                    action: "read",
+                    oid: "{last_created_oid:Author}"
+                }
+            };
+            request.post(appConfig.backendUrl, {
+                data: json.stringify({action: "actionSet", data: data}),
+                headers: {
+                    "Accept" : "application/json"
+                },
+                handleAs: 'json'
+
+            }).then(lang.hitch(this, function(response) {
+                // success
+                console.log(response);
+            }), lang.hitch(this, function(error) {
+                // error
+                console.log(error);
+            }));
+        },
+
+        startProcess: function(action, btn, message) {
+            btn.setProcessing();
+            this.hideNotification();
             var process = new Process({
-                callback: lang.hitch(this, this.successExportHandler),
+                callback: lang.hitch(this, lang.partial(this.finishProcess, btn, message)),
                 errback: lang.hitch(this, this.errorHandler),
                 progback: lang.hitch(this, this.progressHandler)
             });
-            process.run("exportAll");
+            process.run(action);
         },
 
-        successIndexHandler: function(response) {
-            this.indexBtn.reset();
+        finishProcess: function(btn, message) {
+            btn.reset();
             this.showNotification({
                 type: "ok",
-                message: Dict.translate("The search index was successfully updated."),
-                fadeOut: true,
-                onHide: lang.hitch(this, function () {
-                    domConstruct.empty(this.statusNode);
-                })
-            });
-        },
-
-        successExportHandler: function(response) {
-            this.exportBtn.reset();
-            this.showNotification({
-                type: "ok",
-                message: Dict.translate("The content was successfully exported."),
+                message: message,
                 fadeOut: true,
                 onHide: lang.hitch(this, function () {
                     domConstruct.empty(this.statusNode);

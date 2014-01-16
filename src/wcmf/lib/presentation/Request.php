@@ -33,6 +33,18 @@ class Request extends ControllerMessage {
   private $_responseFormat = null;
 
   /**
+   * Constructor
+   * @see ControllerMessage::__construct
+   */
+  public function __construct($sender, $context, $action) {
+    parent::__construct($sender, $context, $action);
+    // add header values to request
+    foreach (getallheaders() as $name => $value) {
+      $this->setHeader($name, $value);
+    }
+  }
+
+  /**
    * Get the HTTP method of the request
    * @return String
    */

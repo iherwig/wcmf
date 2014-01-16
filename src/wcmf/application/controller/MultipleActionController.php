@@ -48,13 +48,13 @@ use wcmf\lib\presentation\Request;
  * @code
     data: {
       action1: {
-        action: "new",
-        type: "ChiGoal"
-      }
+        action: "create",
+        className: "Author",
+        oid: "app.src.model.Author:wcmffb298f3784dd49548a05d43d7bf88590"
+      },
       action2: {
-        action: "display",
-        oid: {last_created_oid:ChiGoal},
-        omitMetaData: true
+        action: "read",
+        oid: "{last_created_oid:Author}"
       }
     }
  * @endcode
@@ -65,7 +65,7 @@ use wcmf\lib\presentation\Request;
      action1: {
        oid: "ChiGoal:123",
        success: "1"
-     }
+     },
      action2: {
        oid: "ChiGoal:123",
        node: {
@@ -104,8 +104,7 @@ class MultipleActionController extends Controller {
   }
 
   /**
-   * (Dis-)Associate the Nodes.
-   * @return Array of given context and action 'ok' in every case.
+   * Execute actions.
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
@@ -123,57 +122,36 @@ class MultipleActionController extends Controller {
     $nullFormat = $formats['null'];
 
     for($i=0; $i<$numActions; $i++) {
-      $action = $actions[$i];
-      $GLOBALS['gJSONData'] = array();
-
+      $actionId = $actions[$i];
       if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("processing action: ".$action.":\n".StringUtil::getDump($data[$action]), __CLASS__);
+        Log::debug("processing action: ".$actionId.":\n".StringUtil::getDump($data[$actionId]), __CLASS__);
       }
       // replace special variables
-      $this->replaceVariables($data[$action]);
+      $this->replaceVariables($data[$actionId]);
 
       // for all requests we choose TerminateController as source controller
       // to make sure that we process the action and return to here
 
       // create the request
-      $request = new Request(
-        'TerminateController',
-        $data[$action]['context'],
-        $data[$action]['action'],
-        $data[$action]
-      );
-      $request->setFormat($nullFormat);
-      $request->setResponseFormat($request->getResponseFormat());
+      $actionData = $data[$actionId];
+      $context = isset($actionData['context']) ? $actionData['context'] : '';
+      $action = isset($actionData['action']) ? $actionData['action'] : '';
+      $requestPart = new Request('TerminateController', $context, $action);
+      $requestPart->setValues($actionData);
+      $requestPart->setFormat($nullFormat);
+      $requestPart->setResponseFormat($nullFormat);
 
       // execute the request
       try {
-        $response = $actionMapper->processAction($request);
+        $responsePart = $actionMapper->processAction($requestPart);
       }
-      catch (ApplicationException $ex)
-      {
-        Log::error($ex->__toString(), __CLASS__);
-        $response = $ex->getResponse();
-        if ($response == null) {
-          $response = new Response('', '', $action, array());
-          $response->setFormat($request->getResponseFormat());
-          $requestData = $request->getData();
-          foreach ($requestData as $key => $value) {
-            $response->setValue($key, $value);
-          }
-        }
-        $response->setValue('success', false);
-        $response->setValue('errorCode', $ex->getCodeString());
-        $response->setValue('errorMessage', $ex->getMessage());
-        $exceptions[] = $ex;
-      }
-      catch (Exception $ex)
-      {
+      catch (Exception $ex) {
         Log::error($ex->__toString(), __CLASS__);
         $exceptions[] = $ex;
       }
 
       // collect the result
-      $results[$action] = &$response->getValues();
+      $results[$actionId] = $responsePart->getValues();
     }
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug($results, __CLASS__);
@@ -187,7 +165,7 @@ class MultipleActionController extends Controller {
     }
     $response->setValue('data', $results);
     $response->setAction('ok');
-    return true;
+    return false;
   }
 
   /**
@@ -208,10 +186,12 @@ class MultipleActionController extends Controller {
       // replace entry
       if ($key != $newKey || $value != $newValue) {
         if (Log::isDebugEnabled(__CLASS__)) {
-          if ($key != $newKey)
+          if ($key != $newKey) {
             Log::debug("Replace $key by $newKey", __CLASS__);
-          if ($value != $newValue)
+          }
+          if ($value != $newValue) {
             Log::debug("Replace $value by $newValue", __CLASS__);
+          }
         }
         unset($data[$key]);
         $data[$newKey] = $newValue;

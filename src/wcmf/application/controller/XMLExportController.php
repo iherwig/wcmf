@@ -137,7 +137,6 @@ class XMLExportController extends BatchController {
     $rootOIDs = array();
     $config = ObjectFactory::getConfigurationInstance();
     $rootTypes = $config->getValue('rootTypes', 'application');
-
     if (is_array($rootTypes)) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       foreach($rootTypes as $rootType) {
@@ -288,61 +287,64 @@ class XMLExportController extends BatchController {
   protected function writeNode($fileHandle, ObjectId $oid, $depth, $documentInfo) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $session = ObjectFactory::getInstance('session');
-    $exportedOids = $session->get($this->EXPORTED_OIDS);
-    if (in_array($oid->__toString(), $exportedOids)) {
-      return $documentInfo;
-    }
 
+    // load node and get element name
     $node = $persistenceFacade->load($oid);
-    $mapper = $node->getMapper();
+    $elementName = $persistenceFacade->getSimpleType($node->getType());
 
-    $hasUnvisitedChildren = $this->getNumUnvisitedChildren($node) > 0;
+    // check if the node is written already
+    $exportedOids = $session->get($this->EXPORTED_OIDS);
+    if (!in_array($oid->__toString(), $exportedOids)) {
+      // write node
+      $mapper = $node->getMapper();
 
-    $lastIndent = $documentInfo['lastIndent'];
-    $curIndent = $depth;
-    $this->endTags($fileHandle, $curIndent, $documentInfo);
+      $hasUnvisitedChildren = $this->getNumUnvisitedChildren($node) > 0;
 
-    $tagName = $persistenceFacade->getSimpleType($node->getType());
+      $curIndent = $depth;
+      $this->endTags($fileHandle, $curIndent, $documentInfo);
 
-    // write object's content
-    // open start tag
-    FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$tagName);
-    // write object id
-    FileUtil::fputsUnicode($fileHandle, ' id="'.$node->getOID().'"');
-    // write object attributes
-    $attributes = $mapper->getAttributes();
-    foreach ($attributes as $curAttribute) {
-      $attributeName = $curAttribute->getName();
-      $value = $node->getValue($attributeName);
-      if ($value != '') {
-        FileUtil::fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
+      // write object's content
+      // open start tag
+      FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$elementName);
+      // write object attributes
+      $attributes = $mapper->getAttributes();
+      foreach ($attributes as $curAttribute) {
+        $attributeName = $curAttribute->getName();
+        $value = $node->getValue($attributeName);
+        if ($value) {
+          FileUtil::fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
+        }
       }
-    }
-    // close start tag
-    FileUtil::fputsUnicode($fileHandle, '>');
-    if ($hasUnvisitedChildren) {
-      FileUtil::fputsUnicode($fileHandle, $documentInfo['docLinebreak']);
-    }
+      // close start tag
+      FileUtil::fputsUnicode($fileHandle, '>');
+      if ($hasUnvisitedChildren) {
+        FileUtil::fputsUnicode($fileHandle, $documentInfo['docLinebreak']);
+      }
 
-    // remember end tag if not closed
-    if ($hasUnvisitedChildren) {
-      $closeTag = array("name" => $tagName, "indent" => $curIndent);
-      array_unshift($documentInfo['tagsToClose'], $closeTag);
-    }
-    else {
-      FileUtil::fputsUnicode($fileHandle, '</'.$tagName.'>'.$documentInfo['docLinebreak']);
-    }
-    // remember current indent
-    $documentInfo['lastIndent'] = $curIndent;
+      // remember end tag if not closed
+      if ($hasUnvisitedChildren) {
+        $closeTag = array("name" => $elementName, "indent" => $curIndent);
+        array_unshift($documentInfo['tagsToClose'], $closeTag);
+      }
+      else {
+        FileUtil::fputsUnicode($fileHandle, '</'.$elementName.'>'.$documentInfo['docLinebreak']);
+      }
+      // remember current indent
+      $documentInfo['lastIndent'] = $curIndent;
 
-    // register exported node
-    $exportedOids[] = $oid->__toString();
-    $session->set($this->EXPORTED_OIDS, $exportedOids);
-
+      // register exported node
+      $exportedOids[] = $oid->__toString();
+      $session->set($this->EXPORTED_OIDS, $exportedOids);
+    }
     // return the updated document info
     return $documentInfo;
   }
 
+  /**
+   * Get number of children of the given node, that were not visited yet
+   * @param node
+   * @return integer
+   */
   protected function getNumUnvisitedChildren(Node $node) {
     $session = ObjectFactory::getInstance('session');
     $exportedOids = $session->get($this->EXPORTED_OIDS);

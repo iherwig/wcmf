@@ -36,8 +36,6 @@ use wcmf\lib\presentation\Request;
 class Application {
 
   private $_requestValues = array();
-  private $_rawPostBody = null;
-  private $_rawPostBodyIsJson = false;
 
   private $_startTime = null;
   private $_initialRequest = null;
@@ -74,11 +72,10 @@ class Application {
 
     // collect all request data
     $this->_requestValues = array_merge($_GET, $_POST, $_FILES);
-    $this->_rawPostBody = file_get_contents('php://input');
+    $rawPostBody = file_get_contents('php://input');
     // add the raw post data if they are json encoded
-    $json = json_decode($this->_rawPostBody, true);
+    $json = json_decode($rawPostBody, true);
     if (is_array($json)) {
-      $this->_rawPostBodyIsJson = true;
       foreach ($json as $key => $value) {
         $this->_requestValues[$key] = $value;
       }
@@ -97,11 +94,6 @@ class Application {
     // create the Request instance
     $this->_initialRequest = new Request($controller, $context, $action);
     $this->_initialRequest->setValues($this->_requestValues);
-
-    // add header values to request
-    foreach (getallheaders() as $name => $value) {
-      $this->_initialRequest->setHeader($name, $value);
-    }
 
     // initialize session
     $session = ObjectFactory::getInstance('session');
