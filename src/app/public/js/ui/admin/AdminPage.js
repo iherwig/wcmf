@@ -55,38 +55,6 @@ define([
                 Dict.translate("The content was successfully exported."));
         },
 
-        _actionSet: function(e) {
-            // prevent the page from navigating after submit
-            e.preventDefault();
-
-            var data = {
-                action1: {
-                    action: "create",
-                    oid: "Author:wcmffb298f3784dd49548a05d43d7bf88590",
-                    name: "Ingo Herwig"
-                },
-                action2: {
-                    action: "read",
-                    oid: "{last_created_oid:Author}"
-                }
-            };
-            request.post(appConfig.backendUrl, {
-                data: json.stringify({action: "actionSet", data: data}),
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept" : "application/json"
-                },
-                handleAs: 'json'
-
-            }).then(lang.hitch(this, function(response) {
-                // success
-                console.log(response);
-            }), lang.hitch(this, function(error) {
-                // error
-                console.log(error);
-            }));
-        },
-
         startProcess: function(action, btn, message) {
             btn.setProcessing();
             this.hideNotification();
