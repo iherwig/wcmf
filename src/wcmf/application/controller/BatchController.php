@@ -28,7 +28,11 @@ use wcmf\lib\presentation\Response;
 
 /**
  * BatchController allows to define work packages that will be processed
- * in a sequence.
+ * in a sequence. The controller sets the following actions as result of one
+ * execution:
+ * - continue: The process is not finished and continue should be called as next action
+ * - download: The process is finished and the next call to continue will trigger the file download
+ * - done: The process is finished
  *
  * <b>Input actions:</b>
  * - @em continue Process next work package if any
@@ -41,7 +45,6 @@ use wcmf\lib\presentation\Response;
  * @param[out] stepNumber The current step starting with 1, ending with numberOfSteps+1
  * @param[out] numberOfSteps Total number of steps
  * @param[out] displayText The display text for the current step
- * @param[out] summaryText The summary text (only available in the last step)
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -51,6 +54,7 @@ abstract class BatchController extends Controller {
   const ONE_CALL_SESSION_VARNAME = 'BatchController.oneCall';
   const STEP_SESSION_VARNAME = 'BatchController.curStep';
   const NUM_STEPS_VARNAME = 'BatchController.numSteps';
+  const DOWNLOAD_STEP = 'BatchController.downloadStep'; // signals that the next continue action triggers the download
   const WORK_PACKAGES_VARNAME = 'BatchController.workPackages';
 
   private $_curStep = 1;
@@ -82,11 +86,11 @@ abstract class BatchController extends Controller {
     else {
       // first call, initialize step session variable
       $this->_curStep = 1;
-      $this->initializeTask();
       $session->set(self::ONE_CALL_SESSION_VARNAME, $request->getBooleanValue('oneCall', false));
 
       $tmpArray = array();
       $session->set(self::WORK_PACKAGES_VARNAME, $tmpArray);
+      $session->set(self::DOWNLOAD_STEP, false);
 
       // define work packages
       $number = 0;
@@ -116,31 +120,44 @@ abstract class BatchController extends Controller {
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
+    $session = ObjectFactory::getInstance('session');
     $response = $this->getResponse();
+
+    // check if a download was triggered in the last step
+    if ($session->get(self::DOWNLOAD_STEP) == true) {
+      $file = $this->getDownloadFile();
+      header("Content-Type: application/force-download");
+      header("Content-Type: application/octet-stream");
+      header("Content-Type: application/download");
+      header('Content-Disposition: attachment; filename="'.basename($file).'"');
+      echo file_get_contents($file);
+      exit;
+    }
+
+    // continue processing
     $curStep = $this->getStepNumber();
     $numberOfSteps = $this->getNumberOfSteps();
-
     if ($curStep <= $numberOfSteps) {
       $this->processPart();
 
       $response->setValue('stepNumber', $curStep);
       $response->setValue('numberOfSteps', $numberOfSteps);
       $response->setValue('displayText', $this->getDisplayText($curStep));
-
-      // add the summary message
-      $response->setValue('summaryText', $this->getSummaryText());
     }
 
-    // see if it should be one call only
-    $session = ObjectFactory::getInstance('session');
-    $oneCall = $session->get(self::ONE_CALL_SESSION_VARNAME);
-
     // check if we are finished or should continue
-    // (number of packages may be changed)
+    // (number of packages may have changed while processing)
     $numberOfSteps = $this->getNumberOfSteps();
-    if ($curStep >= $numberOfSteps || $oneCall == true) {
-      // return control to application
-      $response->setAction('done');
+    if ($curStep >= $numberOfSteps || $session->get(self::ONE_CALL_SESSION_VARNAME) == true) {
+      // finished -> check for download
+      $file = $this->getDownloadFile();
+      if ($file) {
+        $response->setAction('download');
+        $session->set(self::DOWNLOAD_STEP, true);
+      }
+      else {
+        $response->setAction('done');
+      }
     }
     else {
       // proceed
@@ -227,7 +244,7 @@ abstract class BatchController extends Controller {
   }
 
   /**
-   * @see LongTaskController::processPart()
+   * Process the next step.
    */
   protected function processPart() {
     $curWorkPackageDef = $this->_workPackages[$this->getStepNumber()-1];
@@ -246,7 +263,8 @@ abstract class BatchController extends Controller {
   }
 
   /**
-   * @see LongTaskController::getNumberOfSteps()
+   * Get the number of steps to process.
+   * @return integer
    */
   protected function getNumberOfSteps() {
     $session = ObjectFactory::getInstance('session');
@@ -254,26 +272,19 @@ abstract class BatchController extends Controller {
   }
 
   /**
-   * @see LongTaskController::getDisplayText()
+   * Get the text to display for the current step.
    */
   protected function getDisplayText($step) {
     return Message::get("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
   }
 
   /**
-   * @see LongTaskController::getSummaryText()
-   * The default implementation returns an empty string
+   * Get the filename of the file to download at the end of processing.
+   * @return String of null, if no download is created.
    */
-  protected function getSummaryText() {
-    return "";
+  protected function getDownloadFile() {
+    return null;
   }
-
-  /**
-   * Initialize the task e.g. store some configuration in the session.
-   * This method is called on start up.
-   * @note subclasses override this method to implement special application requirements.
-   */
-  protected function initializeTask() {}
 
   /**
    * Get definitions of work packages.

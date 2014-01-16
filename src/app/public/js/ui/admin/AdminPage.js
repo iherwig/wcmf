@@ -2,8 +2,6 @@ define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/request",
-    "dojo/json",
     "dojo/dom-construct",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
@@ -17,8 +15,6 @@ define([
     require,
     declare,
     lang,
-    request,
-    json,
     domConstruct,
     _Page,
     _Notification,
@@ -43,16 +39,16 @@ define([
             // prevent the page from navigating after submit
             e.preventDefault();
 
-            this.startProcess("indexAll", this.indexBtn,
-                Dict.translate("The search index was successfully updated."));
+            this.startProcess("indexAll",
+                this.indexBtn, Dict.translate("The search index was successfully updated."));
         },
 
         _export: function(e) {
             // prevent the page from navigating after submit
             e.preventDefault();
 
-            this.startProcess("exportAll", this.exportBtn,
-                Dict.translate("The content was successfully exported."));
+            this.startProcess("exportAll",
+                this.exportBtn, Dict.translate("The content was successfully exported."));
         },
 
         startProcess: function(action, btn, message) {

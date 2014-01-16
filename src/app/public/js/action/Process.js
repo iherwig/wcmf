@@ -1,11 +1,13 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/request"
+    "dojo/request",
+    "dojo/request/iframe",
 ], function (
     declare,
     lang,
-    request
+    request,
+    iframe
 ) {
     /**
      * Process wrapper class. A process is typically executed
@@ -81,7 +83,18 @@ define([
                 this.progback(stepName, stepNumber, numberOfSteps, response);
             }
 
-            if (response.action === "done") {
+            if (response.action === "download") {
+                iframe.post(appConfig.backendUrl, {
+                    data: {
+                        controller: controller,
+                        action: "continue"
+                    }
+                });
+                if (this.callback instanceof Function) {
+                    this.callback(response);
+                }
+            }
+            else if (response.action === "done") {
                 // call the success handler if the task is finished
                 if (this.callback instanceof Function) {
                     this.callback(response);

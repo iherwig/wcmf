@@ -109,6 +109,13 @@ class XMLExportController extends BatchController {
   }
 
   /**
+   * @see BatchController::getDownloadFile()
+   */
+  protected function getDownloadFile() {
+    return $this->_DOCFILE;
+  }
+
+  /**
    * Initialize the XML export (oids parameter will be ignored)
    * @param oids The oids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
