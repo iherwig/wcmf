@@ -1,0 +1,26 @@
+/** @page credits
+ *
+ * @section credits Thanks
+ *
+ * wCMF uses the following Open Source Projects
+ *
+ * - <a href="http://adodb.sourceforge.net" target="_blank">ADOdb Database Library for PHP</a>
+ * <table border="0"><tr><td align="left">@image html adodb.gif</td></tr></table>
+ * - <a href="http://smarty.php.net" target="_blank">Smarty Template Engine</a>
+ * <table border="0"><tr><td align="left">@image html smarty_icon.gif</td></tr></table>
+ * - <a href="http://extjs.com/" target="_blank">Ext JS</a>
+ * - <a href="http://www.fckeditor.net/" target="_blank">FCKeditor</a>
+ * - <a href="http://www.fpdf.org/" target="_blank">FPDF</a> / <a href="http://www.setasign.de/products/pdf-php-solutions/fpdi/about/" target="_blank">FPDI</a>
+ * - <a href="http://logging.apache.org/log4php/" target="_blank">log4php</a>
+ * - <a href="http://sourceforge.net/projects/phpxpath/" target="_blank">Php.XPath</a> and
+ *   <a href="http://sourceforge.net/projects/phpxmldb/" target="_blank">phpXmlDb</a>
+ * - Zip file creation class by Eric Mueller
+ *
+ * Furthermore the author likes to thank 
+ * - Enno Herwig for translating texts and designing the wCMF default application,
+ * - Kerstin Ruppel for designing the Cookbook tutorial application and 
+ * - <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a> for giving him the opportunity to realize the project.
+ *
+ * Back to the @ref intro | Previous section @ref howtostart
+ *
+ */

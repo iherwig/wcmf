@@ -1,0 +1,521 @@
+/** @page configuration
+ *
+ * @section configuration Configuration
+ * 
+ * The application is configured via one (or more) configuration file(s), which are parsed by the
+ * WCMFInifileParser class. The configuration parameters are defined by key-value pairs as they are
+ * used in the @em ini file format. The application interprets values, which are enclosed in curly brackets
+ * (@em {}), as arrays. Related parameters are arranged in sections.
+ * @note Please note, that the framework interprets paths - if not explicitly indicated otherwise - as relative
+ * to the BASE path, which is defined in /application/base_dir.php. This is the root directory of /wcmf
+ * and /application by default.
+ * 
+ * - @ref actionkey
+ * - @ref userconfig
+ * - @ref sections
+ * - @ref configexample
+ *
+ * @subsection actionkey Action Keys
+ *
+ * An important concept of the application's configuration is that of @em Action @em Keys. An action key
+ * describes the state of the application together with the action to be performed next. The state, which
+ * the application is in, results from the current controller and the context, in which it is executed.
+ * Controllers must exist as classes, whereas contexts and actions can be defined freely. They must only be
+ * taken care of in the controllers and if necessary transported between the views (as form data, see also
+ * @ref howtoapplication, @ref howtoviews).@n
+ * The format of the action keys is the following: 
+ *
+ * @verbatim controller?context?action @endverbatim
+ *
+ * In the configuration file an action key has the controller assigned, which should be executed next if
+ * the action key is valid by the application's current state and the user action or the return value of
+ * the current controller (see also @ref applicationflow).@n
+ * Since parts of the action key can be omitted in the definition, an algorithm has to choose,
+ * which action key fits a given value triplet. This algorithm is implemented in the method
+ * WCMFInifileParser::getBestActionKey. In this method the %InifileParser searches in the configuration
+ * file for the a list of combinations successively and ends the search when it found one. After
+ * that the controller, which is assigned to that combination, is executed. The order of the combinations
+ * is the following:
+ * 
+ * @verbatim
+ 1. controller?context?action
+ 2. controller??action
+ 3. controller?context?
+ 4. ?context?action
+ 5. ??action
+ 6. controller??
+ 7. ?context? @endverbatim
+ *  
+ * As a rule of thumb the action key which describes the state of the application the most
+ * accurate is favoured.@n
+ * Frequent examples are:@n@n
+ *  
+ * Always execute the %SaveController when action @em save is selected, no matter which state the application is in:
+ * @verbatim ??save = SaveController @endverbatim
+ *  
+ * Always execute the %ProjektController when the context is @em project as long as no action is specified,
+ * return to the ProjektController respectively from all controllers, which have no specific action assigned
+ * upon termination:
+ * @verbatim ?project? = ProjectController @endverbatim
+ *
+ * If no matching action key can be found, the %ActionMapper tries to execute the last %Controller that had a view attached again.
+ * This can save some typing. For example you don't need to configure an action key for the @em ok return action of 
+ * SaveController, if you always want to execute the %Controller afterwards, from which the @em save action was initiated.
+ *  
+ * @subsection userconfig Configuration for individual users
+ *
+ * In the table @em user of the database scheme (see also @ref dbschema) each user can have her own configuration
+ * file assigned. This will be loaded after the standard configuration (config.ini) and extends its settings.
+ * If two keys have the same name the one from the user configuration overwrites the standard one. Using the @em roleconfig
+ * configuration section, you can easily asign configuration files to groups (see below).
+ *
+ * @subsection sections Configuration file sections
+ * 
+ * The following sections are known to the framework classes. Whatever parameter is necessary for the application
+ * can be defined in further sections and can be read using the methods of the WCMFIniFileParser.
+ *
+ * @subsubsection secconfig [config]
+ * This section refers to the configuration files. The following keys are known to the framework::
+ * @verbatim
+ include          = array with configuration files
+                  ; allows the inclusion of further configuration files
+                  ; (Included values don't overwrite the current)
+                  ; used in: class.InifileParser.php
+ hiddenSections   = array with sections
+                  ; allows the hiding of sections in the admintool
+                  ; used in: class.InifileParser.php
+ readonlySections = array with sections
+                  ; allows the protection of sections in the admintool
+                  ; used in: class.InifileParser.php 
+ @endverbatim
+ *
+ * @subsubsection secclassmapping [classmapping]
+ * Since %Controller, %PersistenceMapper and other classes in the configuration file's sections are only
+ * labeled with their classnames, the framework needs information, in which files the class definitions can be
+ * found. In the section @em classmapping therefore a corresponding definition file for each class is given.
+ * @verbatim classname = path_to/classfilename @endverbatim
+ *
+ * @subsubsection sectypemapping [typemapping]
+ * The relation between domain classes and their PersistenceMappers (see @ref persistence) is set in the
+ * section @em typemapping. A @em * as key means that all types, which are not specified, will be handled by
+ * the assigned %PersistenceMapper. The PersistenceFacade uses these information to find the appropriate
+ * %PersistenceMapper classes for the domain classes.
+ * @verbatim type = mapperClass @endverbatim
+ * 
+ * @subsubsection secimplementation [implementation]
+ * In some cases the framework offers different implementations for abstract classes. At the moment this refers 
+ * to basic services, which access the data storage (database, XML), e.g. AuthUser. The implementation, which
+ * should be used by the framework can be specified in this section. For the following classes an implementation
+ * can be chosen:
+ * @verbatim
+ LockManager = LockManagerRDB|BusyLockManager|NullLockManager
+ UserManager = UserManagerRDB|UserManagerXML
+ User = UserRDB|UserXML
+ Role = RoleRDB|RoleXML
+ UserRole = NMUserRole
+ View = View|NullView
+ ControlRenderer = DefaultControlRenderer
+ ValueRenderer = DefaultValueRenderer
+ HTMLFormat = HTMLFormat
+ JSONFormat = JSONFormat
+ SOAPFormat = SOAPFormat @endverbatim
+ * Furthermore this mechanism allows developers to provide own implementations of the abstract classes.
+ *
+ * @subsubsection secinitparams [initparams]
+ * Since some classes require specific parameters in their constructors (e.g. database connection),
+ * these parameters can be grouped in sections (e.g. @em [database]) and referenced in the section
+ * @em initparams. The keys are the classnames and the values the corresponding parameter sections.
+ * The key-value pairs of the parameter section will be passed as associative array to the constructor
+ * upon creation of the objects.
+ * @verbatim class = initsection @endverbatim
+ *
+ * @subsubsection secconverter [converter]
+ * In this section DataConverters for types are configured (see @ref persistence):
+ * @verbatim type = converterClass @endverbatim
+ *
+ * @subsubsection secactionmapping [actionmapping]
+ * In the section @em actionmapping the actual application flow is defined. This is achieved by defining
+ * the transition from one controller to the next.@n
+ * The key is an action key (see @ref actionkey), which clearly describes the state the application is
+ * in before the transition. The value sets the next controller to execute. The ActionMapper uses this
+ * information to determine which Controller is executed next.
+ * @verbatim controllerA?context?action = controllerB @endverbatim
+ *
+ * @subsubsection secviews [views]
+ * For each controller a view can be defined dependent on its context and action, which is described
+ * by its Smarty template (.tpl file). In the section @em views each action key can have a view template
+ * assigned (see @ref actionkey). The controller uses this information to determine its view.
+ * @verbatim controllerA?context?action = view @endverbatim
+ *
+ * @subsubsection secauthorization [authorization]
+ * The Authorization is based on action keys (see @ref actionkey), whereby the following actions can be
+ * defined by the individual parts of the key:
+ * @verbatim
+ controller?context?action ; an action in the application flow
+ type?context?action       ; an action on a domain class (read, modify, delete, create)
+ oid?context?action        ; an action on a domain object (read, modify, delete, create) @endverbatim
+ * To each of these actions different roles can be assigned (comma separated), for which a permission
+ * is granted (@em +) or denied (@em -). The role @em * stands for all roles.@n
+ * If a permission is not explicitly granted, it is considered as denied. For not listed Aktion Keys the
+ * decision is made by the _defaultPolicy of the AuthUser. The RightsManager uses this information to
+ * authorize an AuthUser for an action.
+ *
+ * The following code shows an example, where the creation of Category instances is only allowed for users having
+ * the @em administrators role:
+ * @verbatim Category??create = -authors +administrators @endverbatim
+ * 
+ * @subsubsection secroleconfig [roleconfig]
+ * Allows auto assignment of an additional configuration file for different user roles. If a user is added 
+ * to a listed role, then the given configuration file will be automatically assigned by the UserManager
+ * (see also @ref userconfig).
+ * @verbatim rolename = configurationfile @endverbatim
+ *
+ * For example if users of the @em administrators role should always use the admin.ini configuration file
+ * you could add the following entry:
+ * @verbatim administrators = admin.ini @endverbatim
+ *
+ * @subsubsection seccms [cms]
+ * This section refers to the general application configuration. The following keys are known to the framework::
+ * @verbatim
+ applicationTitle = application title
+                  ; specifies the title which appears in the default application
+                  ; used in: class.Controller.php, locale.php
+ rootTypes        = array of domain classes
+                  ; declaration of types, which don't have parent types to allow them to be created
+                  ; on the top level of the default application
+                  ; used in: class.DisplayController.php, class.TreeViewController.php, 
+                  ;               class.XMLExportController.php, graph.php
+ anonymous        = 0|1
+                  ; indicates, if the user must authenticate himself upon application start.
+                  ; If the value is 1 the rights management is also disabled.
+                  ; used in: class.LoginController.php, class.RightsManager.php
+ exportDir        = path (relative to main.php !)
+                  ; sets the root directory for the export of static pages
+                  ; used in: class.PageExportController.php
+ htmlBaseDir      = path (relative to main.php !)
+                  ; sets the root directory for the html output
+                  ; used in: class.LinkConverter.php
+ backupDir        = path (relative to main.php !)
+                  ; sets the root directory for backups
+                  ; used in: class.BackupController.php
+ libDir           = path (relative to main.php !)
+                  ; sets the root directory of the framework
+                  ; used in: class.TreeViewController.php, resource.lib.php, class.FormUtil.php
+ localeDir        = path (relative to main.php !)
+                  ; sets the language directory of the application
+                  ; used in: main.php, class.I18nUtil.php, po2array.php
+ logDBActions     = 0|1
+                  ; specifies, whether database access should be logged in the logfile
+                  ; used in: main.php
+ logSQL           = 0|1
+                  ; specifies, whether the logging of the database layer is activated
+                  ; ADOdb then logs all access in the table adodb_logsql
+                  ; used in: class.NodeRDBMapper.php, class.NodeToSingleTableMapper.php, 
+                  ;               class.LockManagerRDB.php, class.AuthUserRDB.php, class.UserManagerRDB.php
+ logExecuteTime   = 0|1
+                  ; specifies, whether to log the time each controller needs to execute
+                  ; used in: class.ActionMapper.php
+ debugView        = 0|1
+                  ; specifies, whether Smarty should create debug output in a popup window
+                  ; used in: class.Controller.php
+ language         = language code (e.g. en_EN)
+                  ; specifies the application's language (see Message::get)
+                  ; used in: main.php, locale.php
+ usegettext       = 0|1
+                  ; specifies, whether the function gettext should be used for the localization of the
+                  ; application (see Message::get).
+                  ; used in: class.Message.php
+ locking          = 0|1
+                  ; specifies, whether data is locked when it's opened by another user
+                  ; used in: class.LockManager.php
+ @endverbatim
+ *
+ * @subsubsection sechtmlform [htmlform]
+ * The definition of the input controls, that are used in the application, 
+ * is done in Smarty templates (see @ref DefaultControlRenderer). In this section the templates
+ * are assigned to control names.@n
+ * The following input controls are already defined by the framework:
+ * @verbatim
+ text
+ textarea
+ password
+ select
+ radio
+ checkbox
+ file
+ fileex
+ filebrowser
+ linkbrowser
+ fckeditor
+ date @endverbatim
+ *
+ * Furthermore the following keys are known to the framework:
+ * @verbatim
+ maxFileSize             = number
+                         ; specifies the maximum size of files to upload (in bytes)
+                         ; used in: class.FormUtil.php, class.NodeUtil.php, 
+                                         class.SaveController.php, class.FileUtil.php
+ inputFieldNameDelimiter = char
+                         ; specifies the separator, which is used for creation of inputfield names
+                         ; (e.g. separator "-": "value-1-name-Author:0")
+                         ; used in: class.SaveController.php, class.NodeUtil.php, 
+                                         class.FormUtil.php
+ @endverbatim
+ *
+ * @subsubsection sechtmldisplay [htmldisplay]
+ * The definition of the value display types, that are used in the application, 
+ * is done in Smarty templates (see @ref DefaultValueRenderer). In this section the templates
+ * are assigned to value type names.@n
+ * The following value types are already defined by the framework:
+ * @verbatim
+ text
+ image @endverbatim
+ *
+ * @subsubsection secsmarty [smarty]
+ * The @em smarty section contains configuration parameters for the <a href="http://smarty.php.net/" target="_blank">
+ * Smarty</a> Template Engine.
+ * @verbatim
+ compileCheck = 0|1
+                ; specifies, whether Smarty should test for modifications
+                ; in the templates upon each call
+                ; used in: class.Controller.php
+ templateDir  = path (relative to main.php !)
+                ; specifies the smarty directory (the paths /smarty/templates_c
+                ; and in case of caching=1 /smarty/cache must exist in that directory)
+                ; used in: class.Controller.php
+ caching = 0|1
+                ; specifies, whether Smarty should use caching
+                ; in case of a cms application caching is a good alternative to exporting 
+                ; static pages
+                ; used in: class.Controller.php
+ cacheLifetime = -1|number of seconds
+                ; specifies, the lifetime of the Smarty cache in seconds
+                ; the value is ignored if caching is not enabled
+                ; used in: class.Controller.php
+ @endverbatim
+ *
+ * @subsubsection secmedia [media]
+ * In this section settings for the upload of media files are specified.
+ * @verbatim
+ imgWidth  = array of a number and 0|1
+           ; sets - if specified - the width of an upload image
+           ; the second parameter specifies if the value must be matched exactly (1)
+           ; or if it is a maximum (0)
+           ; e.g. {625, 0}
+           ; used in: class.SaveController.php
+ imgHeight = array of a number and 0|1
+           ; sets - if specified - the height of an upload image
+           ; the second parameter specifies if the value must be matched exactly (1)
+           ; or if it is a maximum (0)
+           ; e.g. {625, 1}
+           ; used in: class.SaveController.php
+ uploadDir = path (relative to main.php !)
+           ; specifies the directory, into which the SaveController uploads media files
+           ; used in: class.SaveController.php, class.FormUtil.php
+ @endverbatim
+ *
+ * @subsection configexample Example of a configuration file
+ * 
+ * @verbatim
+ 
+ [config]
+ 
+ [classmapping]
+ BackupController = wcmf/application/controller/admintool/class.BackupController.php
+ AdminController = wcmf/application/controller/admintool/class.AdminController.php
+ ConfigController = wcmf/application/controller/admintool/class.ConfigController.php
+ PrincipalController = wcmf/application/controller/admintool/class.PrincipalController.php
+ EditRightsController = wcmf/application/controller/admintool/class.EditRightsController.php
+ MySQLBackupController = wcmf/application/controller/admintool/class.MySQLBackupController.php
+ BatchController = wcmf/application/controller/class.BatchController.php
+ LongTaskController = wcmf/application/controller/class.LongTaskController.php
+ DeleteController = wcmf/application/controller/class.DeleteController.php
+ DisplayController = wcmf/application/controller/class.DisplayController.php
+ FailureController = wcmf/application/controller/class.FailureController.php
+ InsertController = wcmf/application/controller/class.InsertController.php
+ LoginController = wcmf/application/controller/class.LoginController.php
+ PageExportController = wcmf/application/controller/class.PageExportController.php
+ SimplePagingController = wcmf/application/controller/class.SimplePagingController.php
+ SortController = wcmf/application/controller/class.SortController.php
+ AssociateController = wcmf/application/controller/class.AssociateController.php
+ ResourceTreeController = wcmf/application/controller/class.ResourceTreeController.php
+ PagingController = wcmf/application/controller/class.PagingController.php
+ SaveController = wcmf/application/controller/class.SaveController.php
+ SimpleBatchController = wcmf/application/controller/class.SimpleBatchController.php
+ SimpleLongTaskController = wcmf/application/controller/class.SimpleLongTaskController.php
+ TreeViewController = wcmf/application/controller/class.TreeViewController.php
+ ViewController = wcmf/application/controller/class.ViewController.php
+ XMLExportController = wcmf/application/controller/class.XMLExportController.php
+ CopyController = wcmf/application/controller/class.CopyController.php
+ UserController = wcmf/application/controller/class.UserController.php
+ ResourceListController = wcmf/application/controller/class.ResourceListController.php
+ SearchController = wcmf/application/controller/class.SearchController.php
+ SOAPController = wcmf/application/controller/class.SOAPController.php
+ ChildrenListController = wcmf/application/controller/class.ChildrenListController.php
+ NodeListController = wcmf/application/controller/class.NodeListController.php
+ Controller = wcmf/lib/presentation/class.Controller.php
+ UserRDB = application_1/include/model/wcmf/class.UserRDB.php
+ UserRDBRDBMapper = application_1/include/model/wcmf/class.UserRDBRDBMapper.php
+ RoleRDB = application_1/include/model/wcmf/class.RoleRDB.php
+ RoleRDBRDBMapper = application_1/include/model/wcmf/class.RoleRDBRDBMapper.php
+ NMUserRole = application_1/include/model/wcmf/class.NMUserRole.php
+ NMUserRoleRDBMapper = application_1/include/model/wcmf/class.NMUserRoleRDBMapper.php
+ Locktable = application_1/include/model/wcmf/class.Locktable.php
+ LocktableRDBMapper = application_1/include/model/wcmf/class.LocktableRDBMapper.php
+ Adodbseq = application_1/include/model/wcmf/class.Adodbseq.php
+ AdodbseqRDBMapper = application_1/include/model/wcmf/class.AdodbseqRDBMapper.php
+ LockManagerRDB = wcmf/lib/persistence/class.LockManagerRDB.php
+ UserManagerRDB = wcmf/lib/security/class.UserManagerRDB.php
+ View = wcmf/lib/presentation/class.View.php
+ DefaultControlRenderer = wcmf/lib/presentation/class.DefaultControlRenderer.php
+ DefaultValueRenderer = wcmf/lib/presentation/class.DefaultValueRenderer.php
+ HTMLFormat = wcmf/lib/presentation/format/class.HTMLFormat.php
+ JSONFormat = wcmf/lib/presentation/format/class.JSONFormat.php
+ SOAPFormat = wcmf/lib/presentation/format/class.SOAPFormat.php
+
+ [typemapping]
+ UserRDB = UserRDBRDBMapper
+ RoleRDB = RoleRDBRDBMapper
+ NMUserRole = NMUserRoleRDBMapper
+ Locktable = LocktableRDBMapper
+ Adodbseq = AdodbseqRDBMapper
+ 
+ [implementation]
+ LockManager = LockManagerRDB
+ UserManager = UserManagerRDB
+ User = UserRDB
+ Role = RoleRDB
+ UserRole = NMUserRole
+ View = View
+ ControlRenderer = DefaultControlRenderer
+ ValueRenderer = DefaultValueRenderer
+ HTMLFormat = HTMLFormat
+ JSONFormat = JSONFormat
+ SOAPFormat = SOAPFormat
+ 
+ [initparams]
+ UserRDBRDBMapper = database
+ RoleRDBRDBMapper = database
+ NMUserRoleRDBMapper = database
+ LocktableRDBMapper = database
+ AdodbseqRDBMapper = database
+ 
+ [converter]
+ 
+ [actionmapping]
+ ??fatal = FailureController
+ ??delete = DeleteController
+ DisplayController?? = DisplayController
+ DisplayController??treeview = TreeViewController
+ DisplayController??failure = FailureController
+ DisplayController??definesearch = SearchController
+ DisplayController??list = NodeListController
+ DisplayController??edituser = UserController
+ DisplayController??search = SearchController
+ DisplayController??listchildren = ChildrenListController
+ LoginController??ok = DisplayController
+ UserController??ok = DisplayController
+ ??cms = DisplayController
+ ??display = DisplayController
+ ??new = InsertController
+ LoginController??failure = LoginController
+ LoginController??dologin = LoginController
+ ??login = LoginController
+ ??logout = LoginController
+ SimplePagingController?? = SimplePagingController
+ ??sortup = SortController
+ ??sortdown = SortController
+ ??disassociate = AssociateController
+ ??associate = AssociateController
+ ResourceTreeController?? = ResourceTreeController
+ ??browseresourcetree = ResourceTreeController
+ ??save = SaveController
+ TreeViewController?? = TreeViewController
+ ??copy = CopyController
+ UserController??save = UserController
+ UserController?? = UserController
+ ResourceListController?? = ResourceListController
+ ResourceListController??delete = ResourceListController
+ ??browseresources = ResourceListController
+ SearchController?? = SearchController
+ ??soapList = SOAPController
+ ??soapCreate = SOAPController
+ ??soapUpdate = SOAPController
+ ??soapRead = SOAPController
+ ??soapDelete = SOAPController
+ ChildrenListController?? = ChildrenListController
+ NodeListController?? = NodeListController
+ 
+ [views]
+ DisplayController?? = wcmf/application/views/displaynode.tpl
+ FailureController?? = wcmf/application/views/displayfailure.tpl
+ LoginController?? = wcmf/application/views/login.tpl
+ ResourceTreeController?? = wcmf/application/views/resourcetree.tpl
+ TreeViewController?? = wcmf/application/views/treeview.tpl
+ UserController?? = wcmf/application/views/user.tpl
+ ResourceListController?? = wcmf/application/views/resourcelist.tpl
+ SearchController??definesearch = wcmf/application/views/searchpanel.tpl
+ SearchController?? = wcmf/application/views/searchresult.tpl
+ ChildrenListController?? = wcmf/application/views/childrenlist.tpl
+ NodeListController?? = wcmf/application/views/nodelist.tpl
+ 
+ [authorization]
+ 
+ [roleconfig]
+ administrators = admin.ini
+ 
+ [database]
+ dbType = mysql
+ dbHostName = localhost
+ dbName = wcmf
+ dbUserName = wcmf
+ dbPassword = geheim
+ 
+ [smarty]
+ templateDir = include/views/
+ compileCheck = 1
+ 
+ [cms]
+ applicationTitle = DEFAULT
+ localeDir = locale/
+ libDir = ../wcmf/
+ exportDir = ../../html/
+ htmlBaseDir = ../../html/
+ backupDir = backup/
+ language = en_EN
+ usegettext = 0
+ debugView = 0
+ logDBActions = 0
+ logSQL = 0
+ logExecuteTime = 0
+ anonymous = 0
+ locking = 1
+ rootTypes = {}
+ 
+ [media]
+ uploadDir = ../../html/images/
+ 
+ [htmlform]
+ inputFieldNameDelimiter = -
+ maxFileSize = 200000
+ text = wcmf/application/views/forms/text.tpl
+ textarea = wcmf/application/views/forms/textarea.tpl
+ password = wcmf/application/views/forms/password.tpl
+ select = wcmf/application/views/forms/select.tpl
+ radio = wcmf/application/views/forms/radio.tpl
+ checkbox = wcmf/application/views/forms/checkbox.tpl
+ file = wcmf/application/views/forms/file.tpl
+ fileex = wcmf/application/views/forms/fileex.tpl
+ filebrowser = wcmf/application/views/forms/filebrowser.tpl
+ linkbrowser = wcmf/application/views/forms/linkbrowser.tpl
+ fckeditor = wcmf/application/views/forms/fckeditor.tpl
+ 
+ [htmldisplay]
+ text = wcmf/application/views/display/text.tpl
+ image = wcmf/application/views/display/image.tpl
+      
+ @endverbatim
+ *
+ * Back to the @ref intro | Previous section @ref extensionpoints | Next section @ref dbschema
+ *
+ */

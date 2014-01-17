@@ -1,0 +1,104 @@
+/** @page dbschema
+ *
+ * @section dbschema Database scheme
+ *
+ * @note The following section applies only, if a database and the
+ * appropriate classes (UserRDB, RoleRDB, NMUserRole, LockManagerRDB, UserManagerRDB) are used
+ * in the application. At the moment locking is not supported when using XML files as
+ * data storage. For storing users and roles there is a DTD given in the class
+ * UserManagerXML.
+ *
+ * For its infrastructure (user, locking, ...) the framework needs some
+ * base tables, which are defined in the file tables.sql (directory
+ * @em blank/install in the framework) of the application template (see @ref howtostart).
+ * The definition of the data model's tables is completely free (see
+ * @ref howtotype).
+ * 
+ * The tables have the following definitions:
+ * 
+ * @subsection seqtable ID Sequence
+ *
+ * When rows are inserted in the data tables, ADOdb creates an unique ID.
+ * In the table @em adodbseq this ID is counted up. Please note, that when inserting
+ * data manually into the data tables the id attribute of the adodbseq table
+ * has to be set to a value higher than the highest ID to assure that ADOdb
+ * doesn't generate already existing IDs.
+ *
+ * @verbatim
+ DROP TABLE IF EXISTS `adodbseq`;
+ CREATE TABLE `adodbseq` (
+   `id` int(11) NOT NULL default '0'
+ ) TYPE=MyISAM;
+ 
+ INSERT INTO `adodbseq` (`id`) VALUES (100); @endverbatim
+ *
+ * @subsection usertables User Tables
+ *
+ * There are three tables for the user management, which are used by UserManagerRDB and UserRDB upon login: 
+ * @em user, @em role and @em nm_user_role. %User data is stored in the table user, the definition of groups in
+ * the table roles.@n
+ * The rights management is based on roles (see @ref secauthorization). As a result it's crucial for authorization 
+ * to which group the user belongs, who is logged in.
+ * This assignment is made in the table nm_user_role, where the two foreign keys fk_user_id and fk_role_id
+ * point to the corresponding tables. This means that a user can be in several groups and one group can
+ * contain several users.@n
+ * Upon installation the group @em administrators and the user @em admin (password admin)is created. 
+ * admin is assigned to group administrators. Furthermore
+ * the user admin obtains the configuration file include/admin.ini.
+ * @note Passwords are stored encrypted in the database. For the creation of passwords the tool
+ * /wcmf/tools/password/password.php can be used. The encryption is carried out in the method
+ * UserManager::encryptPassword.
+ *
+ * @verbatim
+ DROP TABLE IF EXISTS `user`;
+ CREATE TABLE `user` (
+   `id` int(11) NOT NULL default '0',
+   `name` varchar(50) default NULL,
+   `firstname` varchar(50) default NULL,
+   `login` varchar(50) default NULL,
+   `password` varchar(50) default NULL,
+   `config` varchar(255) NOT NULL default '',
+   PRIMARY KEY  (`id`)
+ ) TYPE=MyISAM;
+ 
+ INSERT INTO `user` (`id`, `name`, `firstname`, `login`, `password`, `config`) 
+ VALUES (0, 'Administrator', '', 'admin', '21232f297a57a5a743894a0e4a801fc3', 
+         'include/admin.ini');
+ 
+ DROP TABLE IF EXISTS `role`;
+ CREATE TABLE `role` (
+   `id` int(11) NOT NULL default '0',
+   `name` varchar(50) default NULL,
+   PRIMARY KEY  (`id`)
+ ) TYPE=MyISAM ;
+ 
+ INSERT INTO `role` (`id`, `name`) VALUES (0, 'administrators');
+ 
+ DROP TABLE IF EXISTS `nm_user_role`;
+ CREATE TABLE `nm_user_role` (
+   `fk_user_id` int(11) NOT NULL default '0',
+   `fk_role_id` int(11) NOT NULL default '0',
+   KEY `fk_user_id` (`fk_user_id`,`fk_role_id`)
+ ) TYPE=MyISAM;
+ 
+ INSERT INTO `nm_user_role` (`fk_user_id`, `fk_role_id`) VALUES (0, 0); @endverbatim
+ *
+ * @subsection locktable Lock Table
+ *
+ * When the application is used concurrently, the LockManager can be activated in order to protect
+ * the user's work (see @ref howtoconcurrency). For the storage of locks on data records the
+ * %LockManager's database implementation (LockManagerRDB) uses the following table:
+ *
+ * @verbatim
+ DROP TABLE IF EXISTS `locktable`;
+ CREATE TABLE `locktable` (
+   `oid` varchar(255) NOT NULL default '',
+   `sid` varchar(255) NOT NULL default '',
+   `fk_user_id` int(11) NOT NULL default '0',
+   `since` datetime NOT NULL default '0000-00-00',
+   PRIMARY KEY  (`oid`)
+ ) TYPE=MyISAM; @endverbatim
+ *
+ * Back to the @ref intro | Previous section @ref configuration | Next section @ref howto
+ *
+ */

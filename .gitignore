@@ -1,5 +1,6 @@
 *.log
 log.txt
+docs/api-gen
 src/app/release
 src/app/searchIndex
 src/app/public/media
