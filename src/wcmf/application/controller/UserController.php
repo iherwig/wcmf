@@ -62,6 +62,13 @@ class UserController extends Controller {
       // load model
       $authUser = $permissionManager->getAuthUser();
       $oid = new ObjectId(ObjectFactory::getInstance('User')->getType(), $authUser->getUserId());
+
+      // since user should be able to change their own user instance, we propably have to deactivate the
+      // PermissionManager for this operation to allow user retrieval from the persistent storage
+      $isAnonymous = $permissionManager->isAnonymous();
+      if (!$isAnonymous) {
+        $permissionManager->deactivate();
+      }
       $user = $persistenceFacade->load($oid);
 
       // start the persistence transaction
@@ -75,6 +82,10 @@ class UserController extends Controller {
       catch(\Exception $ex) {
         $response->addError(ApplicationError::fromException($ex));
         $transaction->rollback();
+      }
+      // reactivate the PermissionManager if necessary
+      if (!$isAnonymous) {
+        $permissionManager->activate();
       }
     }
 

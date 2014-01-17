@@ -21,7 +21,6 @@ namespace wcmf\lib\security\principal\impl;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\security\Policy;
 use wcmf\lib\security\principal\AuthUser;
-use wcmf\lib\security\principal\Role;
 
 /**
  * Default AuthUser implementation. The class holds an internal User
