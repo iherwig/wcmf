@@ -176,12 +176,7 @@ define([
             }, this.gridNode);
 
             gridWidget.on("dgrid-error", function (evt) {
-                topic.publish('ui/_include/widget/GridWidget/unknown-error', {
-                    notification: {
-                        message: Dict.translate("Backend error"),
-                        type: 'error'
-                    }
-                });
+                topic.publish('ui/_include/widget/GridWidget/unknown-error', evt.error);
             });
 
             // click on title column header

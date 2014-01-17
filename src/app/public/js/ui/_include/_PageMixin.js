@@ -4,6 +4,7 @@ define([
     "dojo/aspect",
     "dojo/_base/window",
     "dojo/dom-attr",
+    "dojo/dom-style",
     "dojo/query",
     "dojo/on",
     "dojo/topic",
@@ -12,13 +13,15 @@ define([
     "dojomat/_StateAware",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin"
+    "dijit/_WidgetsInTemplateMixin",
+    "../../User"
 ], function (
     declare,
     lang,
     aspect,
     win,
     domAttr,
+    domStyle,
     query,
     on,
     topic,
@@ -27,7 +30,8 @@ define([
     _StateAware,
     _WidgetBase,
     _TemplatedMixin,
-    _WidgetsInTemplateMixin
+    _WidgetsInTemplateMixin,
+    User
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _AppAware, _StateAware], {
 
@@ -62,6 +66,7 @@ define([
                     finally {
                         this.setTitle(this.title);
                         this.setupRoutes();
+                        this.removeRestricted();
                     }
                 };
             });
@@ -87,23 +92,23 @@ define([
 
         /**
          * Set up routing for links with class push.
-         * The route name is defined in the link's data-dojorama-route attribute,
-         * optional path parameters in data-dojorama-pathparams (e.g. "type:'Page', id:12")
+         * The route name is defined in the link's data-wcmf-route attribute,
+         * optional path parameters in data-wcmf-pathparams (e.g. "type:'Page', id:12")
          */
         setupRoutes: function() {
             query('.push', win.body()).forEach(lang.hitch(this, function(node) {
-                var routeName = domAttr.get(node, 'data-dojorama-route');
+                var routeName = domAttr.get(node, 'data-wcmf-route');
                 var route = this.router.getRoute(routeName);
                 if (!route) { return; }
 
-                var pathParams, pathParamsStr = domAttr.get(node, 'data-dojorama-pathparams');
+                var pathParams, pathParamsStr = domAttr.get(node, 'data-wcmf-pathparams');
                 if (pathParamsStr) {
                   pathParams = eval("({ "+pathParamsStr+" })");
                 }
                 var url = route.assemble(pathParams);
                 node.href = url;
 
-                var queryStr = domAttr.get(node, 'data-dojorama-queryparams');
+                var queryStr = domAttr.get(node, 'data-wcmf-queryparams');
                 if (queryStr) {
                     url += queryStr;
                 }
@@ -144,6 +149,21 @@ define([
          */
         confirmLeave: function(url) {
             return true;
+        },
+
+        /**
+         * Remove elements that are restricted to certain roles.
+         * The role names are defined in the elements data-wcmf-restrict-roles
+         */
+        removeRestricted: function() {
+            query('[data-wcmf-restrict-roles]', win.body()).forEach(lang.hitch(this, function(node) {
+                var roles = domAttr.get(node, 'data-wcmf-restrict-roles').split(",");
+                for (var i=0, count=roles.length; i<count; i++) {
+                    if (!User.hasRole(roles[i])) {
+                        domStyle.set(node, "display", "none");
+                    }
+                }
+            }));
         }
     });
 });

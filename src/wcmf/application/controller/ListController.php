@@ -20,6 +20,8 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -169,8 +171,14 @@ class ListController extends Controller {
    * @return An array of object instances
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
-    if(!ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    if (!$persistenceFacade->isKnownType($type)) {
       return array();
+    }
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    if (!$permissionManager->authorize($type, '', PersistenceAction::READ)) {
+      throw new AuthorizationException(Message::get("Authorization failed for action '%0%' on '%1%'.",
+              array(Message::get('read'), $persistenceFacade->getSimpleType($type))));
     }
     $objects = array();
     $query = new StringQuery($type);

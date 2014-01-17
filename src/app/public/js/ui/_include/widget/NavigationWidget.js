@@ -17,7 +17,7 @@ define([
     "dojo/topic",
     "dojo/keys",
     "dojo/NodeList-dom",
-    "../../../Cookie",
+    "../../../User",
     "../../../model/meta/Model",
     "../../../locale/Dictionary",
     "dojo/text!./template/NavigationWidget.html",
@@ -41,7 +41,7 @@ define([
     topic,
     keys,
     nodeListDom,
-    Cookie,
+    User,
     Model,
     Dict,
     template
@@ -57,7 +57,7 @@ define([
 
             // template variables
             this.title = appConfig.title;
-            this.userName = Cookie.get("user") || '';
+            this.userName = User.getLogin();
             this.firstRootType = Model.getSimpleTypeName(appConfig.rootTypes[0]);
             this.userType = Model.getSimpleTypeName(appConfig.userType);
         },
@@ -90,12 +90,12 @@ define([
 
         setContentRoute: function(type, id) {
             var contentNavNode = query("#navContent");
-            contentNavNode.attr("data-dojorama-route", id !== undefined ? "entity" : "entityList");
+            contentNavNode.attr("data-wcmf-route", id !== undefined ? "entity" : "entityList");
             var routeParamStr = "type: '"+type+"'";
             if (id !== undefined) {
               routeParamStr += ", id: '"+id+"'";
             }
-            contentNavNode.attr("data-dojorama-pathparams", routeParamStr);
+            contentNavNode.attr("data-wcmf-pathparams", routeParamStr);
         }
     });
 });

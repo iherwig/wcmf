@@ -20,11 +20,12 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
-use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
@@ -123,6 +124,10 @@ class DisplayController extends Controller {
 
       // assign node data
       $response->setValue('object', $node);
+    }
+    else {
+      throw new AuthorizationException(Message::get("Authorization failed for action '%0%' on '%1%'.",
+              array(Message::get('read'), $oid)));
     }
     // success
     $response->setAction('ok');

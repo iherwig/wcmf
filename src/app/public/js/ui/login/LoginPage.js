@@ -9,7 +9,7 @@ define([
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
     "../_include/widget/Button",
-    "../../Cookie",
+    "../../User",
     "../../locale/Dictionary",
     "dojo/text!./template/LoginPage.html"
 ], function (
@@ -23,7 +23,7 @@ define([
     _Notification,
     NavigationWidget,
     Button,
-    Cookie,
+    User,
     Dict,
     template
 ) {
@@ -63,7 +63,7 @@ define([
             }).then(lang.hitch(this, function(response) {
                 // success
                 this.loginBtn.reset();
-                Cookie.set("user", data.user);
+                User.create(data.user, response.roles);
 
                 // redirect to initially requested route if given
                 var redirectRoute = this.request.getQueryParam("route");

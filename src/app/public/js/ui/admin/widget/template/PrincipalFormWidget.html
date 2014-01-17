@@ -2,6 +2,7 @@
     <div data-dojo-attach-point="notificationNode"></div>
     <div class="clearfix">
         <h3 class="pull-left" data-dojo-attach-point="headlineNode">${headline}</h3>
+        <a href="#" data-dojo-attach-event="onClick:_toggleLock"><i class="icon-unlock" data-dojo-attach-point="lockNode"></i></a>
     </div>
     <form class="form" id="${formId}">
         <div data-dojo-type="../../_include/FormLayout" data-dojo-attach-point="fieldsNode"></div>
