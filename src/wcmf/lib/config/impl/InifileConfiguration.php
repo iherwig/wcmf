@@ -253,7 +253,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       throw new IllegalArgumentException('Empty section names are not allowed!');
     }
     $lookupEntryOld = $this->lookup($oldname);
-    if ($lookupEntryOld != null) {
+    if ($lookupEntryOld == null) {
       throw new IllegalArgumentException('Section \''.$oldname.'\' does not exist!');
     }
     if (!$this->isEditable($oldname)) {
@@ -263,7 +263,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if ($lookupEntryNew != null) {
       throw new IllegalArgumentException('Section \''.$newname.'\' already exists!');
     }
-    ArrayUtil::key_array_rename($this->_configArray, $lookupEntryOld[0], $newname);
+    // do rename
+    $value = $this->_configArray[$lookupEntryOld[0]];
+    $this->_configArray[$newname] = $value;
+    unset($this->_configArray[$lookupEntryOld[0]]);
     $this->buildLookupTable();
     $this->_isModified = true;
   }
@@ -342,14 +345,17 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
     $lookupEntryOld = $this->lookup($section, $oldname);
-    if ($lookupEntryOld != null) {
+    if ($lookupEntryOld == null) {
       throw new IllegalArgumentException('Key \''.$oldname.'\' does not exist in section \''.$section.'\'!');
     }
     $lookupEntryNew = $this->lookup($section, $newname);
     if ($lookupEntryNew != null) {
       throw new IllegalArgumentException('Key \''.$newname.'\' already exists in section \''.$section.'\'!');
     }
-    ArrayUtil::key_array_rename($this->_configArray[$lookupEntryOld[0]], $lookupEntryOld[1], $newname);
+    // do rename
+    $value = $this->_configArray[$lookupEntryOld[0]][$lookupEntryOld[1]];
+    $this->_configArray[$lookupEntryOld[0]][$newname] = $value;
+    unset($this->_configArray[$lookupEntryOld[0]][$lookupEntryOld[1]]);
     $this->buildLookupTable();
     $this->_isModified = true;
   }
