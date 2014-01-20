@@ -44,31 +44,6 @@ abstract class AbstractUser extends Node implements User {
   private static $_roleRelationNames = null;
 
   /**
-   * Constructor
-   */
-  public function __construct(ObjectId $oid=null) {
-    parent::__construct($oid);
-
-    // set role config
-    if (self::$_roleConfig == null) {
-      // load role config if existing
-      $config = ObjectFactory::getConfigurationInstance();
-      if (($roleConfig = $config->getSection('roleconfig')) !== false) {
-        self::$_roleConfig = $roleConfig;
-      }
-    }
-    // initialize role relation definition
-    if (self::$_roleTypeName == null) {
-      self::$_roleTypeName = ObjectFactory::getInstance('Role')->getType();
-      self::$_roleRelationNames = array();
-      $mapper = $this->getMapper();
-      foreach ($mapper->getRelationsByType(self::$_roleTypeName) as $relation) {
-        self::$_roleRelationNames[] = $relation->getOtherRole();
-      }
-    }
-  }
-
-  /**
    * @see User::getUserId()
    */
   public function getUserId() {
@@ -115,10 +90,8 @@ abstract class AbstractUser extends Node implements User {
       if (!$isAnonymous) {
         $permissionManager->deactivate();
       }
-      if (self::$_roleRelationNames) {
-        foreach (self::$_roleRelationNames as $roleName) {
-          $this->loadChildren($roleName);
-        }
+      foreach ($this->getRoleRelationNames() as $roleName) {
+        $this->loadChildren($roleName);
       }
       // reactivate the PermissionManager if necessary
       if (!$isAnonymous) {
@@ -127,7 +100,7 @@ abstract class AbstractUser extends Node implements User {
       $this->_hasOwnRolesLoaded = true;
     }
     // TODO add role nodes from addedNodes array
-    return $this->getChildrenEx(null, null, self::$_roleTypeName, null);
+    return $this->getChildrenEx(null, null, self::getRoleTypeName(), null);
   }
 
   /**
@@ -187,11 +160,12 @@ abstract class AbstractUser extends Node implements User {
   protected function setRoleConfig() {
     if (strlen($this->getConfig()) == 0) {
       foreach ($this->getAddedNodes() as $role => $nodes) {
-        if (in_array($role, self::$_roleRelationNames)) {
+        if (in_array($role, $this->getRoleRelationNames())) {
           foreach ($nodes as $role) {
             $rolename = $role->getName();
-            if (self::$_roleConfig && isset(self::$_roleConfig[$rolename])) {
-              $this->setConfig(self::$_roleConfig[$rolename]);
+            $roleConfigs = self::getRoleConfigs();
+            if (isset($roleConfigs[$rolename])) {
+              $this->setConfig($roleConfigs[$rolename]);
             }
           }
         }
@@ -235,6 +209,48 @@ abstract class AbstractUser extends Node implements User {
         throw new ValidationException(Message::get("The password can't be empty"));
       }
     }
+  }
+
+  /**
+   * Get the role relation names
+   * @return Array
+   */
+  protected function getRoleRelationNames() {
+    // initialize role relation definition
+    if (self::$_roleRelationNames == null) {
+      self::$_roleRelationNames = array();
+      $mapper = $this->getMapper();
+      foreach ($mapper->getRelationsByType(self::getRoleTypeName()) as $relation) {
+        self::$_roleRelationNames[] = $relation->getOtherRole();
+      }
+    }
+    return self::$_roleRelationNames;
+  }
+
+  /**
+   * Get the role type name from the application configuration
+   * @return String
+   */
+  protected static function getRoleTypeName() {
+    if (self::$_roleTypeName == null) {
+      self::$_roleTypeName = ObjectFactory::getInstance('Role')->getType();
+    }
+    return self::$_roleTypeName;
+  }
+
+  /**
+   * Get the role configurations from the application configuration
+   * @return Array with rolenames as keys and config file names as values
+   */
+  protected static function getRoleConfigs() {
+    if (self::$_roleConfig == null) {
+      // load role config if existing
+      $config = ObjectFactory::getConfigurationInstance();
+      if (($roleConfig = $config->getSection('roleconfig')) !== false) {
+        self::$_roleConfig = $roleConfig;
+      }
+    }
+    return self::$_roleConfig;
   }
 }
 ?>
