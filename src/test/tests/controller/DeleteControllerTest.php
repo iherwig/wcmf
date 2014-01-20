@@ -51,6 +51,14 @@ class DeleteControllerTest extends ControllerTestCase {
         array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm'),
         array('id' => 1, 'login' => 'user1', 'name' => 'User 1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02'),
       ),
+      'nm_user_role' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
+      'locktable' => array(
+      ),
       'translation' => array(
       ),
     ));

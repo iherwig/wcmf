@@ -22,6 +22,7 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -178,10 +179,11 @@ class DefaultLocalization implements Localization {
 
     // recurse if requested
     if ($recursive) {
-      // translate children
-      $children = $object->getChildren();
-      for($i=0, $count=sizeOf($children); $i<$count; $i++) {
-        $this->loadTranslation($children[$i], $lang, $useDefaults, $recursive);
+      $iterator = new NodeIterator($object);
+      foreach($iterator as $oidStr => $obj) {
+        if ($obj->getOID() != $object->getOID()) {
+          $this->loadTranslation($obj, $lang, $useDefaults, false);
+        }
       }
     }
   }
@@ -220,12 +222,12 @@ class DefaultLocalization implements Localization {
     }
 
     // recurse if requested
-    if ($recursive)
-    {
-      // translate children
-      $children = $object->getChildren();
-      for($i=0; $i<sizeOf($children); $i++) {
-        $this->saveTranslation($children[$i], $lang, $saveEmptyValues, $recursive);
+    if ($recursive) {
+      $iterator = new NodeIterator($object);
+      foreach($iterator as $oidStr => $obj) {
+        if ($obj->getOID() != $object->getOID()) {
+          $this->saveTranslation($obj, $lang, $saveEmptyValues, false);
+        }
       }
     }
   }

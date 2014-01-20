@@ -28,16 +28,13 @@ use wcmf\lib\core\Session;
 class DefaultSession implements Session {
 
   private static $ERROR_VARNAME = 'Session.errors';
-  private $_id = null;
 
   public function __construct() {
-    @session_start();
     // regenerate session id if cookie is lost
     $sessionName = ini_get('session.name');
     if (!isset($_COOKIE[$sessionName]) || strlen($_COOKIE[$sessionName]) == 0) {
       session_regenerate_id();
     }
-    $this->_id = session_id();
     session_write_close();
   }
 
@@ -46,7 +43,7 @@ class DefaultSession implements Session {
    * @return The id of the current session.
    */
   public function getID() {
-    return $this->_id;
+    return session_id();
   }
 
   /**

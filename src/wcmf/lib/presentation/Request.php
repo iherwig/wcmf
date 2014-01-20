@@ -39,7 +39,7 @@ class Request extends ControllerMessage {
   public function __construct($sender, $context, $action) {
     parent::__construct($sender, $context, $action);
     // add header values to request
-    foreach (getallheaders() as $name => $value) {
+    foreach (self::getAllHeaders() as $name => $value) {
       $this->setHeader($name, $value);
     }
   }
@@ -72,6 +72,27 @@ class Request extends ControllerMessage {
       $this->_responseFormat = self::getFormatFromMimeType($this->getHeader('Accept'));
     }
     return $this->_responseFormat;
+  }
+
+  /**
+   * Get all http headers
+   * @return Associative array
+   */
+  private static function getAllHeaders() {
+    $headers = array();
+    foreach ($_SERVER as $name => $value) {
+      if (substr($name, 0, 5) == 'HTTP_') {
+        $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+        $headers[$name] = $value;
+      }
+      else if ($name == "CONTENT_TYPE") {
+        $headers["Content-Type"] = $value;
+      }
+      else if ($name == "CONTENT_LENGTH") {
+        $headers["Content-Length"] = $value;
+      }
+    }
+    return $headers;
   }
 }
 ?>

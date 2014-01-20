@@ -84,19 +84,14 @@ abstract class AbstractUser extends Node implements User {
     if (!$this->_hasOwnRolesLoaded) {
       // make sure that the roles are loaded
 
-      // allow this in any case (prevent infinite loops when trying to authorize)
+      // add permissions for loading (prevent infinite loops when trying to authorize)
       $permissionManager = ObjectFactory::getInstance('permissionManager');
-      $isAnonymous = $permissionManager->isAnonymous();
-      if (!$isAnonymous) {
-        $permissionManager->deactivate();
-      }
+      $permissionManager->addTempPermission(self::getRoleTypeName(), '', 'read');
       foreach ($this->getRoleRelationNames() as $roleName) {
         $this->loadChildren($roleName);
       }
-      // reactivate the PermissionManager if necessary
-      if (!$isAnonymous) {
-        $permissionManager->activate();
-      }
+      // remove temporary permissions
+      $permissionManager->clearTempPermissions();
       $this->_hasOwnRolesLoaded = true;
     }
     // TODO add role nodes from addedNodes array

@@ -51,12 +51,12 @@ interface PermissionManager {
   public function isAnonymous();
 
   /**
-   * Deactivate rights checking by setting the anonymous confguration value.
+   * Deactivate permission checking by setting the anonymous confguration value.
    */
   public function deactivate();
 
   /**
-   * (Re-)activate rights checking by unsetting the anonymous confguration value.
+   * (Re-)activate permission checking by unsetting the anonymous confguration value.
    */
   public function activate();
 
@@ -68,6 +68,21 @@ interface PermissionManager {
    * @return Boolean whether authorization succeded/failed.
    */
   public function authorize($resource, $context, $action);
+
+  /**
+   * Add a temporary permission for the current user. The permission
+   * is valid only until end of execution or a call to
+   * PermissionManager::clearTempPermissions().
+   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId).
+   * @param context The context in which the action takes place.
+   * @param action The action to process.
+   */
+  public function addTempPermission($resource, $context, $action);
+
+  /**
+   * Reset all temporary permissions
+   */
+  public function clearTempPermissions();
 
   /**
    * Permission management

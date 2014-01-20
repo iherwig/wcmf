@@ -48,6 +48,14 @@ class ListControllerTest extends ControllerTestCase {
       'user' => array(
         array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm'),
       ),
+      'nm_user_role' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
+      'locktable' => array(
+      ),
       'translation' => array(
       ),
     ));

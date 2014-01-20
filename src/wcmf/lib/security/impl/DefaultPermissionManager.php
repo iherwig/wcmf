@@ -43,6 +43,7 @@ class DefaultPermissionManager implements PermissionManager {
   private static $_PUBLIC_ACTIONS = array('fatal', 'login', 'logout', 'messages');
 
   private $_anonymousUser = null;
+  private $_tempPermissions = array();
 
   /**
    * Constructor
@@ -125,6 +126,11 @@ class DefaultPermissionManager implements PermissionManager {
 
       $actionKey = Action::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
 
+      // check temporary permissions
+      if (in_array($actionKey, $this->_tempPermissions)) {
+        return true;
+      }
+
       $authUser = $this->getAuthUser();
       if (!($authUser && $authUser->authorize($actionKey))) {
         if ($authUser) {
@@ -141,15 +147,30 @@ class DefaultPermissionManager implements PermissionManager {
   }
 
   /**
+   * @see PermissionManager::addTempPermission()
+   */
+  public function addTempPermission($resource, $context, $action) {
+    $actionKey = Action::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
+    $this->_tempPermissions[] = $actionKey;
+  }
+
+  /**
+   * @see PermissionManager::clearTempPermissions()
+   */
+  public function clearTempPermissions() {
+    $this->_tempPermissions = array();
+  }
+
+  /**
    * @see PermissionManager::getPermission()
    */
   public function getPermission($config, $resource, $context, $action) {
     $configuration = new IniFileConfiguration(dirname($config));
     $configuration->addConfiguration(basename($config));
 
-    $rightDef = $resource."?".$context."?".$action;
-    if ($configuration->getValue($rightDef, self::AUTHORIZATION_SECTION) !== false) {
-      return Policy::parse($configuration->getValue($rightDef, self::AUTHORIZATION_SECTION));
+    $permDef = $resource."?".$context."?".$action;
+    if ($configuration->getValue($permDef, self::AUTHORIZATION_SECTION) !== false) {
+      return Policy::parse($configuration->getValue($permDef, self::AUTHORIZATION_SECTION));
     }
     else {
       return array();
@@ -177,23 +198,23 @@ class DefaultPermissionManager implements PermissionManager {
     $configuration = new IniFileConfiguration(dirname($config));
     $configuration->addConfiguration(basename($config));
 
-    $rightDef = $resource."?".$context."?".$action;
-    $rightVal = '';
+    $permDef = $resource."?".$context."?".$action;
+    $permVal = '';
     if ($modifier != null) {
-      $rightVal = $modifier.$role;
+      $permVal = $modifier.$role;
     }
-    if ($configuration->getValue($rightDef, self::AUTHORIZATION_SECTION) === false && $modifier != null) {
-      $configuration->setValue($rightDef, $rightVal, self::AUTHORIZATION_SECTION, true);
+    if ($configuration->getValue($permDef, self::AUTHORIZATION_SECTION) === false && $modifier != null) {
+      $configuration->setValue($permDef, $permVal, self::AUTHORIZATION_SECTION, true);
     }
     else {
-      $value = $configuration->getValue($rightDef, self::AUTHORIZATION_SECTION);
+      $value = $configuration->getValue($permDef, self::AUTHORIZATION_SECTION);
       // remove role from value
       $value = trim(preg_replace("/[+\-]*".$role."/", "", $value));
       if ($value != '') {
-        $configuration->setValue($rightDef, $value." ".$rightVal, self::AUTHORIZATION_SECTION, false);
+        $configuration->setValue($permDef, $value." ".$permVal, self::AUTHORIZATION_SECTION, false);
       }
       else {
-        $configuration->removeKey($rightDef, self::AUTHORIZATION_SECTION);
+        $configuration->removeKey($permDef, self::AUTHORIZATION_SECTION);
       }
     }
 

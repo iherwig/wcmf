@@ -171,9 +171,14 @@ class DefaultLockHandler implements LockHandler {
       $locks = $query->execute(BuildDepth::SINGLE);
       if (sizeof($locks) > 0) {
         $lockObj = $locks[0];
+        // add permission to read user informations
+        $permissionManager = ObjectFactory::getInstance('permissionManager');
+        $permissionManager->addTempPermission($this->getUserType(), '', 'read');
         $user = $lockObj->getValue($this->getLockUserRelationName());
         $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $user->getOID(), $user->getLogin(),
                 $lockObj->getValue('sessionid'), $lockObj->getValue('since'));
+        // remove temporary permissions
+        $permissionManager->clearTempPermissions();
 
         // if the lock belongs to the current user, we store
         // it in the session for later retrieval

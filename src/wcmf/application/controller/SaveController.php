@@ -135,8 +135,10 @@ class SaveController extends Controller {
               }
               else {
                 // no upload
-                // connect array values to a comma separated string
-                $curRequestValue = join($curRequestValue, ",");
+                // connect array values to a comma separated string if it's no a relation
+                if (!$mapper->hasRelation($curValueName)) {
+                  $curRequestValue = join($curRequestValue, ",");
+                }
               }
             }
 
@@ -179,7 +181,6 @@ class SaveController extends Controller {
             }
 
             // set data in node (prevent overwriting old image values, if no image is uploaded)
-            $curRequestValue = stripslashes($curRequestValue);
             if (!$isFile || ($isFile && sizeof($curRequestValue) > 0)) {
               try {
                 // validate the new value

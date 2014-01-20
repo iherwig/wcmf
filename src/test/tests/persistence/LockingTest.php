@@ -37,7 +37,7 @@ class LockingTest extends DatabaseTestCase {
 
   private $_user1OidStr = 'User:555';
   private $_user2OidStr = 'User:666';
-  private $_user3OidStr = 'User:777';
+  private $_bookOidStr = 'Book:777';
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
@@ -47,7 +47,9 @@ class LockingTest extends DatabaseTestCase {
       'user' => array(
         array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02'),
         array('id' => 666, 'login' => 'user2', 'password' => '$2y$10$.q/JnbXAWDI8pZUqZmjON.YbZsSeQCLgh3aKMYC/Nmsx5VMRti8v.'),
-        array('id' => 777, 'login' => 'user3', 'password' => '$2y$10$.q/JnbXAWDI8pZUqZmjON.YbZsSeQCLgh3aKMYC/Nmsx5VMRti8v.'),
+      ),
+      'Book' => array(
+        array('id' => 777),
       ),
       'locktable' => array(
       ),
@@ -55,7 +57,7 @@ class LockingTest extends DatabaseTestCase {
   }
 
   public function testPessimisticLock() {
-    $oid = ObjectId::parse($this->_user3OidStr);
+    $oid = ObjectId::parse($this->_bookOidStr);
     $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
 
     // lock
@@ -81,7 +83,7 @@ class LockingTest extends DatabaseTestCase {
   }
 
   public function testPessimisticConcurrentLock() {
-    $oid = ObjectId::parse($this->_user3OidStr);
+    $oid = ObjectId::parse($this->_bookOidStr);
     $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
     $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
 
@@ -107,7 +109,7 @@ class LockingTest extends DatabaseTestCase {
   }
 
   public function testPessimisticConcurrentUpdate() {
-    $oid = ObjectId::parse($this->_user3OidStr);
+    $oid = ObjectId::parse($this->_bookOidStr);
     $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
     $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
 
@@ -120,19 +122,19 @@ class LockingTest extends DatabaseTestCase {
 
     // user 2 tries to update the object
     $sid2 = TestUtil::startSession('user2', 'user2');
-    $objectName = '';
+    $objectTitle = '';
     try {
       $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-      $objectName = $object->getName();
-      $object->setValue('name', $objectName.'modified');
+      $objectTitle = $object->getTitle();
+      $object->setTitle($objectTitle.'modified');
       $transaction->commit();
     }
     catch (PessimisticLockException $ex) {
       // check if the object is not modified
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-      $this->assertEquals($objectName, $object->getName());
+      $this->assertEquals($objectTitle, $object->getTitle());
       TestUtil::endSession();
       return;
     }
@@ -140,7 +142,7 @@ class LockingTest extends DatabaseTestCase {
   }
 
   public function testPessimisticConcurrentDelete() {
-    $oid = ObjectId::parse($this->_user3OidStr);
+    $oid = ObjectId::parse($this->_bookOidStr);
     $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
     $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
 
@@ -171,7 +173,7 @@ class LockingTest extends DatabaseTestCase {
   }
 
   public function testOptimisticLock() {
-    $oid = ObjectId::parse($this->_user3OidStr);
+    $oid = ObjectId::parse($this->_bookOidStr);
 
     // user 1 locks the object and modifies it
     $sid1 = TestUtil::startSession('user1', 'user1');
@@ -179,21 +181,21 @@ class LockingTest extends DatabaseTestCase {
     $transaction1->begin();
     $object1 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object1);
-    $newFirstname = time();
-    $object1->setFirstname($newFirstname);
+    $newTitle = time();
+    $object1->setTitle($newTitle);
     $transaction1->commit();
 
     // check if the object was updated
     $transaction2 = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction2->begin();
     $object2 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-    $this->assertEquals($newFirstname, $object2->getFirstname());
+    $this->assertEquals($newTitle, $object2->getTitle());
     $transaction2->rollback();
     TestUtil::endSession();
   }
 
   public function testOptimisticConcurrentUpdate() {
-    $oid = ObjectId::parse($this->_user3OidStr);
+    $oid = ObjectId::parse($this->_bookOidStr);
 
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
@@ -201,13 +203,13 @@ class LockingTest extends DatabaseTestCase {
     $transaction->begin();
     $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
-    $originalFirstname = $object->getFirstname();
-    $object->setFirstname($originalFirstname.'modified');
+    $originalTitle = $object->getTitle();
+    $object->setTitle($originalTitle.'modified');
 
     // simulate update by user 2
-    $newFirstname = time();
+    $newTitle = time();
     $connection = $object->getMapper()->getConnection();
-    $connection->exec("UPDATE user SET firstname='".$newFirstname."' WHERE id=777");
+    $connection->exec("UPDATE Book SET title='".$newTitle."' WHERE id=777");
 
     try {
       // user 1 tries to commit
@@ -216,7 +218,7 @@ class LockingTest extends DatabaseTestCase {
     catch (OptimisticLockException $ex) {
       // check if the object still has the value set by user 2
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-      $this->assertEquals($newFirstname, $object->getFirstname());
+      $this->assertEquals($newTitle, $object->getTitle());
       TestUtil::endSession();
       return;
     }
@@ -224,7 +226,7 @@ class LockingTest extends DatabaseTestCase {
   }
 
   public function testOptimisticConcurrentDelete() {
-    $oid = ObjectId::parse($this->_user3OidStr);
+    $oid = ObjectId::parse($this->_bookOidStr);
 
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
@@ -232,12 +234,12 @@ class LockingTest extends DatabaseTestCase {
     $transaction->begin();
     $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
-    $originalFirstname = $object->getFirstname();
-    $object->setFirstname($originalFirstname.'modified');
+    $originalTitle = $object->getTitle();
+    $object->setTitle($originalTitle.'modified');
 
     // simulate delete by user 2
     $connection = $object->getMapper()->getConnection();
-    $connection->exec("DELETE FROM user WHERE id=777");
+    $connection->exec("DELETE FROM Book WHERE id=777");
 
     try {
       // user 1 tries to commit
