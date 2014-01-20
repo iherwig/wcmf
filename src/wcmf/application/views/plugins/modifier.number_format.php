@@ -16,8 +16,7 @@
  *
  * $Id$
  */
- namespace wcmf\lib\presentation\smarty_plugins;
- 
+
 /*
 * Smarty plugin
 * -------------------------------------------------------------
@@ -28,9 +27,8 @@
 * Usage:    e.g. {$number|number_format:2:,:.}
 * -------------------------------------------------------------
 */
-function smarty_modifier_number_format($number, $decimals="2", $dec_point=",", $thousands_sep=".")
-{
-    return number_format($number, $decimals, $dec_point, $thousands_sep);
+function smarty_modifier_number_format($number, $decimals="2", $dec_point=",", $thousands_sep=".") {
+  return number_format($number, $decimals, $dec_point, $thousands_sep);
 }
 ?>
 

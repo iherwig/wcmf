@@ -26,13 +26,12 @@
 * Purpose:  remove closing slashes from void tags according to html5
 * -------------------------------------------------------------
 */
-function smarty_outputfilter_html5_void_tags($tpl_output, &$smarty)
-{
+function smarty_outputfilter_html5_void_tags($output, \Smarty_Internal_Template $template) {
   // remove slashes from image tags
-  $tpl_output = preg_replace('/<img([^>]+) ?\/\>/i', "<img $1>", $tpl_output);
+  $output = preg_replace('/<img([^>]+) ?\/\>/i', "<img $1>", $output);
   // replace brs
-  $tpl_output = preg_replace("/<br ?\/\>/i", "<br>", $tpl_output);
-  
-  return $tpl_output;
-} 
-?> 
+  $output = preg_replace("/<br ?\/\>/i", "<br>", $output);
+
+  return $output;
+}
+?>

@@ -16,8 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
-
 use wcmf\lib\i18n\Message;
 
 /*
@@ -30,8 +28,7 @@ use wcmf\lib\i18n\Message;
 * Usage:    e.g. {translate text="Logged in as %0% since %1%" r0="$login" r1="$logindate" [varname="loginText"]}
 * -------------------------------------------------------------
 */
-function smarty_function_translate($params, &$smarty)
-{
+function smarty_function_translate($params, \Smarty_Internal_Template $template) {
   $variables = array();
   foreach (array_keys($params) as $key) {
     if (preg_match("/^r[0-9]+$/", $key)) {
@@ -40,7 +37,7 @@ function smarty_function_translate($params, &$smarty)
   }
   $value = Message::get($params['text'], $variables, $params['lang']);
   if (isset($params['varname'])) {
-    $smarty->assign($params['varname'], $value);
+    $template->assign($params['varname'], $value);
   }
   else {
     echo $value;

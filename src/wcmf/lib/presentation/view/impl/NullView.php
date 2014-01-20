@@ -25,28 +25,53 @@ use wcmf\lib\presentation\view\View;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullView implements View
-{
-  public function setup() {}
+class NullView implements View {
 
-  public function clearAllCache()
-  {
-    return true;
+  /**
+   * @see View::setValue()
+   */
+  public function setValue($name, $value) {}
+
+  /**
+   * @see View::getValue()
+   */
+  public function getValue($name) {
+    return null;
   }
-  public function clearCache($tplFile=null, $cacheId=null)
-  {
-    return true;
+
+  /**
+   * @see View::getValues()
+   */
+  public function getValues() {
+    return array();
   }
-  public function isCached($tplFile, $cacheId=null)
-  {
+
+  /**
+   * @see View::clearAllValues()
+   */
+  public function clearAllValues() {}
+
+  /**
+   * @see View::display()
+   */
+  public function render($tplFile, $cacheId=null, $display=true) {
+    if (!$display) {
+      return '';
+    }
+  }
+
+  /**
+   * @see View::clearCache()
+   */
+  public static function clearCache() {
+    return 0;
+  }
+
+  /**
+   * @see View::isCached()
+   */
+  public static function isCached($tplFile, $cacheId=null) {
     return false;
   }
-
-  public function assign($tpl_var, $value=null) {}
-  public function assignByRef($tpl_var, &$value) {}
-  public function display($resource_name, $cache_id=null, $compile_id=null) {}
-  public function fetch($resource_name, $cache_id=null, $compile_id=null, $display=false) {}
-  public function getTemplateVars($name=null) {}
-  public function clearAllAssign() {}
 }
 ?>

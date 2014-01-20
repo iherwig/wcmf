@@ -16,8 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
-
 use wcmf\lib\util\URIUtil;
 
 /*
@@ -41,8 +39,7 @@ use wcmf\lib\util\URIUtil;
 *           {translate_url url=$image->getFile() base="cms/application/" varname="imageFile" absolute=true}
 * -------------------------------------------------------------
 */
-function smarty_function_translate_url($params, &$smarty)
-{
+function smarty_function_translate_url($params, \Smarty_Internal_Template $template) {
   $url = $params['url'];
   $base = $params['base'];
 
@@ -53,10 +50,10 @@ function smarty_function_translate_url($params, &$smarty)
     $result = $urls['absolute'];
   }
   if (isset($params['varname'])) {
-    $smarty->assign($params['varname'], $result);
+    $template->assign($params['varname'], $result);
   }
   else {
-  	echo $result;
+    echo $result;
   }
 }
 ?>

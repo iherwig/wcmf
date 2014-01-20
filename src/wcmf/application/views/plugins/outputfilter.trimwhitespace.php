@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -24,51 +23,51 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * File:     smarty_outputfilter_trimwhitespace
 * -------------------------------------------------------------
 */
-function smarty_outputfilter_trimwhitespace($source, &$smarty)
-{
+function smarty_outputfilter_trimwhitespace($output, \Smarty_Internal_Template $template) {
     // Pull out the script blocks
-    preg_match_all("!<script[^>]*?>.*?</script>!is", $source, $match);
+    preg_match_all("!<script[^>]*?>.*?</script>!is", $output, $match);
     $_script_blocks = $match[0];
-    $source = preg_replace("!<script[^>]*?>.*?</script>!is",
-                           '@@@SMARTY:TRIM:SCRIPT@@@', $source);
+    $output = preg_replace("!<script[^>]*?>.*?</script>!is",
+                           '@@@SMARTY:TRIM:SCRIPT@@@', $output);
 
     // Pull out the pre blocks
-    preg_match_all("!<pre[^>]*?>.*?</pre>!is", $source, $match);
+    preg_match_all("!<pre[^>]*?>.*?</pre>!is", $output, $match);
     $_pre_blocks = $match[0];
-    $source = preg_replace("!<pre[^>]*?>.*?</pre>!is",
-                           '@@@SMARTY:TRIM:PRE@@@', $source);
+    $output = preg_replace("!<pre[^>]*?>.*?</pre>!is",
+                           '@@@SMARTY:TRIM:PRE@@@', $output);
 
     // Pull out the textarea blocks
-    preg_match_all("!<textarea[^>]*?>.*?</textarea>!is", $source, $match);
+    preg_match_all("!<textarea[^>]*?>.*?</textarea>!is", $output, $match);
     $_textarea_blocks = $match[0];
-    $source = preg_replace("!<textarea[^>]*?>.*?</textarea>!is",
-                           '@@@SMARTY:TRIM:TEXTAREA@@@', $source);
+    $output = preg_replace("!<textarea[^>]*?>.*?</textarea>!is",
+                           '@@@SMARTY:TRIM:TEXTAREA@@@', $output);
 
     // remove all leading spaces, tabs and carriage returns NOT
     // preceeded by a php close tag.
-    $source = trim(preg_replace('/((?<!\?>)\n)[\s]+/m', '\1', $source));
+    $output = trim(preg_replace('/((?<!\?>)\n)[\s]+/m', '\1', $output));
 
     // replace textarea blocks
-    smarty_outputfilter_trimwhitespace_replace("@@@SMARTY:TRIM:TEXTAREA@@@",$_textarea_blocks, $source);
+    smarty_outputfilter_trimwhitespace_replace("@@@SMARTY:TRIM:TEXTAREA@@@",$_textarea_blocks, $output);
 
     // replace pre blocks
-    smarty_outputfilter_trimwhitespace_replace("@@@SMARTY:TRIM:PRE@@@",$_pre_blocks, $source);
+    smarty_outputfilter_trimwhitespace_replace("@@@SMARTY:TRIM:PRE@@@",$_pre_blocks, $output);
 
     // replace script blocks
-    smarty_outputfilter_trimwhitespace_replace("@@@SMARTY:TRIM:SCRIPT@@@",$_script_blocks, $source);
+    smarty_outputfilter_trimwhitespace_replace("@@@SMARTY:TRIM:SCRIPT@@@",$_script_blocks, $output);
 
-    return $source;
+    return $output;
 }
 
 function smarty_outputfilter_trimwhitespace_replace($search_str, $replace, &$subject) {
-    $_len = strlen($search_str);
-    $_pos = 0;
-    for ($_i=0, $_count=count($replace); $_i<$_count; $_i++)
-        if (($_pos=strpos($subject, $search_str, $_pos))!==false)
-            $subject = substr_replace($subject, $replace[$_i], $_pos, $_len);
-        else
-            break;
-
+  $_len = strlen($search_str);
+  $_pos = 0;
+  for ($_i=0, $_count=count($replace); $_i<$_count; $_i++) {
+    if (($_pos=strpos($subject, $search_str, $_pos))!==false) {
+      $subject = substr_replace($subject, $replace[$_i], $_pos, $_len);
+    }
+    else {
+      break;
+    }
+  }
 }
-
 ?>

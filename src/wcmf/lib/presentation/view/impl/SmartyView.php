@@ -18,8 +18,8 @@
  */
 namespace wcmf\lib\presentation\view\impl;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\view\View;
+use wcmf\lib\io\FileUtil;
 
 require_once(WCMF_BASE."wcmf/vendor/smarty/libs/Smarty.class.php");
 
@@ -29,93 +29,127 @@ require_once(WCMF_BASE."wcmf/vendor/smarty/libs/Smarty.class.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SmartyView extends \Smarty implements View
-{
+class SmartyView implements View {
+
+  protected $_view = null;
+
   /**
-   * Setup the View for display (set directories, attributes, ...).
+   * Constructor
    */
-  public function setup()
-  {
-    $config = ObjectFactory::getConfigurationInstance();
-    if (($debugView = $config->getValue('debugView', 'smarty')) === false) {
-      $debugView = 0;
-    }
-    if (($compileCheck = $config->getValue('compileCheck', 'smarty')) === false) {
-      $compileCheck = 0;
-    }
-    if (($caching = $config->getValue('caching', 'smarty')) === false) {
-      $caching = 0;
-    }
-    if (($cacheLifetime = $config->getValue('cacheLifetime', 'smarty')) === false) {
-      $cacheLifetime = 3600;
-    }
-    $this->debugging = $debugView;
-    $this->compile_check = $compileCheck;
-    $this->caching = $caching;
-    $this->cache_lifetime = $cacheLifetime;
-    $this->plugins_dir = array(
+  public function __construct() {
+    $this->_view = new \Smarty();
+    $this->_view->error_reporting = E_ALL;
+
+    // set plugins directories
+    $this->_view->plugins_dir = array(
       WCMF_BASE.'wcmf/vendor/smarty/libs/plugins/',
-      WCMF_BASE.'wcmf/lib/presentation/smarty_plugins/'
+      WCMF_BASE.'wcmf/application/views/plugins/'
     );
-    if ($debugView) {
-      $this->error_reporting = E_ALL;
-    }
-    else {
-      $this->error_reporting = E_ALL & ~E_NOTICE;
-    }
 
     // load filter
-    $this->loadFilter('pre','removeprids');
-    $this->loadFilter('output','trimwhitespace');
+    $this->_view->loadFilter('pre', 'removeprids');
+    $this->_view->loadFilter('output', 'trimwhitespace');
+  }
 
-    // get template path
-    if (($smartyPath = $config->getValue('templateDir', 'smarty')) === false) {
-      throw new ConfigurationException("No 'smarty.templateDir' given in configfile.");
+  /**
+   * Set the base directory for smarty's internal directories
+   * (templates_c, cache, ...)
+   * @param smartyDir
+   */
+  public function setSmartyDir($smartyDir) {
+    if (substr($smartyDir, -1) != '/') {
+      $smartyDir .= '/';
     }
-    if (substr($smartyPath,-1) != '/') {
-      $smartyPath .= '/';
-    }
-    $this->template_dir = $smartyPath;
-    $this->compile_dir = $smartyPath.'smarty/templates_c/';
-    $this->config_dir = $smartyPath.'smarty/configs/';
-    $this->cache_dir = $smartyPath.'smarty/cache/';
+    $this->_view->compile_dir = $smartyDir.'templates_c/';
+    $this->_view->cache_dir = $smartyDir.'cache/';
 
-    if (!file_exists($this->compile_dir)) {
-      FileUtil::mkdirRec($this->compile_dir);
+    if (!file_exists($this->_view->compile_dir)) {
+      FileUtil::mkdirRec($this->_view->compile_dir);
     }
-    if (!file_exists($this->cache_dir)) {
-      FileUtil::mkdirRec($this->cache_dir);
+    if (!file_exists($this->_view->cache_dir)) {
+      FileUtil::mkdirRec($this->_view->cache_dir);
     }
   }
 
   /**
-   * Static cache control methods
+   * Set whether the view should check for
+   * template modifications or not
+   * @param compileCheck Boolean
    */
+  public function setCompileCheck($compileCheck) {
+    $this->_view->compile_check = $compileCheck;
+  }
 
   /**
-   * Clear the complete cache
-   * @see Smarty::clearAllCache()
+   * Set whether views should be cached
+   * @param caching Boolean
    */
-  public function clearAllCache($expTime=null, $type=null)
-  {
-    return $this->clearAllCache($expTime, $type);
+  public function setCaching($caching) {
+    $this->_view->caching = $caching;
   }
+
   /**
-   * Clear parts of cache
-   * @see Smarty::clearCache()
+   * Set the time a view should be cached
+   * @param cacheLifeTime Integer (seconds)
    */
-  public function clearCache($tplFile=null, $cacheId=null, $compileId=null, $expTime=null, $type=null)
-  {
-    return $this->clearCache($tplFile, $cacheId, $compileId, $expTime, $type);
+  public function setCacheLifetime($cacheLifeTime) {
+    $this->_view->cache_lifetime = $cacheLifeTime;
   }
+
   /**
-   * Check if a view is cached. Returns also false, if caching is disabled
-   * to make sure that views get regenerated every time when expected.
-   * @see Smarty::isCached()
+   * @see View::setValue()
    */
-  public function isCached($tplFile, $cacheId=null, $compileId=null, $parent=null)
-  {
-    return ($this->caching && $this->isCached($tplFile, $cacheId, $compileId, $parent));
+  public function setValue($name, $value) {
+    $this->_view->assign($name, $value);
+  }
+
+  /**
+   * @see View::getValue()
+   */
+  public function getValue($name) {
+    return $this->_view->getTemplateVars($name);
+  }
+
+  /**
+   * @see View::getValues()
+   */
+  public function getValues() {
+    return $this->_view->getTemplateVars();
+  }
+
+  /**
+   * @see View::clearAllValues()
+   */
+  public function clearAllValues() {
+    $this->_view->clearAllAssign();
+  }
+
+  /**
+   * @see View::display()
+   */
+  public function render($tplFile, $cacheId=null, $display=true) {
+    if ($display) {
+      $this->_view->display($tplFile, $cacheId);
+    }
+    else {
+      return $this->_view->fetch($tplFile, $cacheId);
+    }
+  }
+
+  /**
+   * @see View::clearCache()
+   */
+  public static function clearCache() {
+    return $this->_view->clearAllCache();
+  }
+
+  /**
+   * @see View::isCached()
+   * Returns also false, if caching is disabled to make sure that
+   * views get regenerated every time when expected.
+   */
+  public static function isCached($tplFile, $cacheId=null) {
+    return ($this->_view->caching && $this->_view->isCached($tplFile, $cacheId));
   }
 }
 ?>

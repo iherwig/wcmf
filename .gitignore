@@ -5,4 +5,5 @@ src/app/release
 src/app/searchIndex
 src/app/public/media
 src/dist
+src/cache
 dist

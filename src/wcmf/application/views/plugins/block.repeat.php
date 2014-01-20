@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -40,36 +39,36 @@ namespace wcmf\lib\presentation\smarty_plugins;
 *           Ingo Herwig <ingo@wemove.com> (index, separator enhancement)
 * -------------------------------------------------------------
 */
-function smarty_block_repeat($params, $content, &$smarty)
-{
-    if (!empty($content))
-    {
-        $intCount = intval($params['count']);
-        if($intCount < 0)
-        {
-            $smarty->trigger_error("block: negative 'count' parameter");
-            return;
-        }
-
-        $strRepeat = '';
-        for ($i=0; $i<$intCount; $i++)
-        {
-          $index = $i + intval($params['startindex']);
-          if (isset($params['strformat']))
-            $indexStr = sprintf($params['strformat'], $index);
-          else
-            $indexStr = $index;
-
-          $strRepeat .= str_replace('{$index}', $indexStr, $content);
-
-          if (isset($params['separator']) && $i<$intCount-1)
-            $strRepeat .= $params['separator'];
-        }
-
-        if (!empty($params['assign']))
-            $smarty->assign($params['assign'], $strRepeat);
-        else
-            echo $strRepeat;
+function smarty_block_repeat($params, $content, \Smarty_Internal_Template $template, &$repeat) {
+  if (!empty($content)) {
+    $intCount = intval($params['count']);
+    if($intCount < 0) {
+      $template->trigger_error("block: negative 'count' parameter");
+      return;
     }
+
+    $strRepeat = '';
+    for ($i=0; $i<$intCount; $i++) {
+      $index = $i + intval($params['startindex']);
+      if (isset($params['strformat'])) {
+        $indexStr = sprintf($params['strformat'], $index);
+      }
+      else {
+        $indexStr = $index;
+      }
+      $strRepeat .= str_replace('{$index}', $indexStr, $content);
+
+      if (isset($params['separator']) && $i<$intCount-1) {
+        $strRepeat .= $params['separator'];
+      }
+    }
+
+    if (!empty($params['assign'])) {
+      $template->assign($params['assign'], $strRepeat);
+    }
+    else {
+      echo $strRepeat;
+    }
+  }
 }
 ?>

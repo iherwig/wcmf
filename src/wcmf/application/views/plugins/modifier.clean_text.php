@@ -3,7 +3,7 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2009 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses 
+ * Licensed under the terms of any of the following licenses
  * at your choice:
  *
  * - GNU Lesser General Public License (LGPL)
@@ -11,7 +11,7 @@
  * - Eclipse Public License (EPL)
  *   http://www.eclipse.org/org/documents/epl-v10.php
  *
- * See the license.txt file distributed with this work for 
+ * See the license.txt file distributed with this work for
  * additional information.
  *
  * $Id: modifier.utf8encode.php 929 2009-02-22 23:20:49Z iherwig $
@@ -27,8 +27,7 @@
 * Usage:    e.g. {$text|clean_text}
 * -------------------------------------------------------------
 */
-function smarty_modifier_clean_text($text)
-{
+function smarty_modifier_clean_text($text) {
   $text = strip_tags($text);
   $text = preg_replace('/&nbsp;/', '', $text);
   return trim($text);

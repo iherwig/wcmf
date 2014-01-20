@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -32,17 +31,16 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Usage:    e.g. {image_size image=$node->getImage() widthvar="width" heightvar="height"}
 * -------------------------------------------------------------
 */
-function smarty_function_image_size($params, &$smarty)
-{
+function smarty_function_image_size($params, \Smarty_Internal_Template $template) {
   $size = getimagesize($params['image']);
   $dividyByTwo = isset($params['halfsize']) && $params['halfsize'] == true;
   $width = $dividyByTwo ? intval($size[0]/2) : $size[0];
   $height = $dividyByTwo ? intval($size[1]/2) : $size[1];
   if (isset($params['widthvar'])) {
-    $smarty->assign($params['widthvar'], $width);
+    $template->assign($params['widthvar'], $width);
   }
   if (isset($params['heightvar'])) {
-    $smarty->assign($params['heightvar'], $height);
+    $template->assign($params['heightvar'], $height);
   }
 }
 ?>

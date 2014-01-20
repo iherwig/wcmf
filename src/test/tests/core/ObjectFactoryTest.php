@@ -48,19 +48,19 @@ class ObjectFactoryTest extends BaseTestCase {
     $this->assertEquals('wcmf\lib\presentation\view\impl\SmartyView', get_class($obj));
 
     // modify instance
-    $obj->assign('test', 'value1');
-    $this->assertEquals('value1', $obj->getTemplateVars('test'));
+    $obj->setValue('test', 'value1');
+    $this->assertEquals('value1', $obj->getValue('test'));
 
     // get second time (same instance)
     $obj2 = ObjectFactory::getInstance('view');
     $this->assertEquals('wcmf\lib\presentation\view\impl\SmartyView', get_class($obj2));
 
     // modify instance
-    $obj2->assign('test', 'value2');
-    $this->assertEquals('value2', $obj2->getTemplateVars('test'));
+    $obj2->setValue('test', 'value2');
+    $this->assertEquals('value2', $obj2->getValue('test'));
 
     // check first instance
-    $this->assertEquals('value1', $obj->getTemplateVars('test'));
+    $this->assertEquals('value1', $obj->getValue('test'));
   }
 }
 ?>

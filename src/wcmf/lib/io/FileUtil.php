@@ -276,5 +276,14 @@ class FileUtil {
     }
     return $path;
   }
+
+  /**
+   * Get a sanitized filename
+   * @param file
+   * @return String
+   */
+  public static function sanitizeFilename($file) {
+    return preg_replace("([^\w\s\d\-_~,;:\[\]\(\]]|[\.]{2,})", '', $file);
+  }
 }
 ?>

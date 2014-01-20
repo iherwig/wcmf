@@ -28,6 +28,7 @@ use wcmf\lib\core\Session;
 class DefaultSession implements Session {
 
   private static $ERROR_VARNAME = 'Session.errors';
+  private $_id = null;
 
   public function __construct() {
     @session_start();
@@ -36,6 +37,8 @@ class DefaultSession implements Session {
     if (!isset($_COOKIE[$sessionName]) || strlen($_COOKIE[$sessionName]) == 0) {
       session_regenerate_id();
     }
+    $this->_id = session_id();
+    session_write_close();
   }
 
   /**
@@ -43,7 +46,7 @@ class DefaultSession implements Session {
    * @return The id of the current session.
    */
   public function getID() {
-    return session_id();
+    return $this->_id;
   }
 
   /**
@@ -52,10 +55,12 @@ class DefaultSession implements Session {
    * @return The session var or null if it doesn't exist.
    */
   public function get($key) {
+    session_start();
     $value = null;
     if (isset($_SESSION[$key])) {
       $value = $_SESSION[$key];
     }
+    session_write_close();
     return $value;
   }
 
@@ -65,7 +70,9 @@ class DefaultSession implements Session {
    * @param value The value of the session variable.
    */
   public function set($key, $value) {
+    session_start();
     $_SESSION[$key] = $value;
+    session_write_close();
   }
 
   /**
@@ -73,7 +80,9 @@ class DefaultSession implements Session {
    * @param key The key (name) of the session variable.
    */
   public function remove($key) {
+    session_start();
     unset($_SESSION[$key]);
+    session_write_close();
   }
 
   /**
@@ -82,20 +91,26 @@ class DefaultSession implements Session {
    * @return A boolean flag. true if the session variable is set, false if not.
    */
   public function exist($key) {
-    return isset($_SESSION[$key]);
+    session_start();
+    $result = isset($_SESSION[$key]);
+    session_write_close();
+    return $result;
   }
 
   /**
    * Clear the session data.
    */
   public function clear() {
+    session_start();
     $_SESSION = array();
+    session_write_close();
   }
 
   /**
    * Destroy the session.
    */
   public function destroy() {
+    session_start();
     $_SESSION = array();
     @session_destroy();
   }
@@ -106,10 +121,12 @@ class DefaultSession implements Session {
    * @param error The error message
    */
   public function addError($key, $error) {
+    session_start();
     if (isset($_SESSION[self::$ERROR_VARNAME])) {
       $_SESSION[self::$ERROR_VARNAME] = array();
     }
     $_SESSION[self::$ERROR_VARNAME][$key] = $error;
+    session_write_close();
   }
 
   /**
@@ -118,10 +135,13 @@ class DefaultSession implements Session {
    * @return The error message
    */
   public function getError($key) {
+    session_start();
+    $error = null;
     if (isset($_SESSION[self::$ERROR_VARNAME])) {
-      return $_SESSION[self::$ERROR_VARNAME][$key];
+      $error = $_SESSION[self::$ERROR_VARNAME][$key];
     }
-    return null;
+    session_write_close();
+    return $error;
   }
 
   /**
@@ -129,13 +149,18 @@ class DefaultSession implements Session {
    * @return The error message
    */
   public function getErrors() {
-    return $_SESSION[self::$ERROR_VARNAME];
+    session_start();
+    $errors = $_SESSION[self::$ERROR_VARNAME];
+    session_write_close();
+    return $errors;
   }
 
   /**
    * Clear the session error data.
    */
   public function clearErrors() {
+    session_start();
     unset($_SESSION[self::$ERROR_VARNAME]);
+    session_write_close();
   }
 }

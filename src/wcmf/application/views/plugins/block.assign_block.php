@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -34,11 +33,9 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Author:   Ingo Herwig <ingo@wemove.com>
 * -------------------------------------------------------------
 */
-function smarty_block_assign_block($params, $content, &$smarty)
-{
-    if (!empty($content))
-    {
-      $smarty->assign($params['var'], $content);
-    }
+function smarty_block_assign_block($params, $content, \Smarty_Internal_Template $template, &$repeat) {
+  if (!empty($content)) {
+    $template->assign($params['var'], $content);
+  }
 }
 ?>

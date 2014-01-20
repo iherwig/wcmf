@@ -16,8 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
-
 use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
 
@@ -49,8 +47,7 @@ use wcmf\lib\util\URIUtil;
 *           default="images/blank.gif" sizemode="resize" nosizeoutput=true}
 * -------------------------------------------------------------
 */
-function smarty_function_image($params, &$smarty)
-{
+function smarty_function_image($params, \Smarty_Internal_Template $template) {
   $file = $params['src'];
   $base = $params['base'];
   $default = $params['default'];
@@ -62,8 +59,7 @@ function smarty_function_image($params, &$smarty)
   }
 
   // translate the file url using base
-  if (isset($params['base']))
-  {
+  if (isset($params['base'])) {
     // translate file url
     $urls = URIUtil::translate($file, $base);
     $file = $urls['relative'];
@@ -73,8 +69,7 @@ function smarty_function_image($params, &$smarty)
   }
 
   // check if the file exists
-  if (!is_file($file))
-  {
+  if (!is_file($file)) {
     // try the default
     $file = $default;
     if (!is_file($file)) {
@@ -84,8 +79,7 @@ function smarty_function_image($params, &$smarty)
 
   // get the image size in order to see if we have to resize
   $imageSize = getimagesize($file);
-  if ($imageSize == false)
-  {
+  if ($imageSize == false) {
     // the file is no image
     return;
   }
@@ -94,30 +88,24 @@ function smarty_function_image($params, &$smarty)
   $requestedHeight = isset($params['height']) ? $params['height']: null;
 
   // calculate new dimensions if value mode is set
-  if ($valuemode == 'scaleTo' || $valuemode == 'fitInto')
-  {
-    if ($valuemode == 'fitInto' && $requestedHeight && $requestedHeight > $imageSize[1])
-    {
+  if ($valuemode == 'scaleTo' || $valuemode == 'fitInto') {
+    if ($valuemode == 'fitInto' && $requestedHeight && $requestedHeight > $imageSize[1]) {
       // if image should fit into a rectangle and it's height is smaller than the requested, leave image untouched
       $requestedHeight = $imageSize[1];
     }
-    else if ($valuemode == 'fitInto' && $requestedWidth && $requestedWidth > $imageSize[0])
-    {
+    else if ($valuemode == 'fitInto' && $requestedWidth && $requestedWidth > $imageSize[0]) {
       // if image should fit into a rectangle and it's width is smaller than the requested, leave image untouched
       $requestedWidth = $imageSize[0];
     }
-    if ($requestedHeight == null)
-    {
+    if ($requestedHeight == null) {
       // calculate height if only width is given
       $requestedHeight = floor(($imageSize[1] * $requestedWidth) / $imageSize[0]);
     }
-    else if ($requestedWidth == null)
-    {
+    else if ($requestedWidth == null) {
       // calculate width if only height is given
       $requestedWidth = floor(($imageSize[0] * $requestedHeight) / $imageSize[1]);
     }
-    else
-    {
+    else {
       // calculate either width or height depending on the ratio
       $requestedAspectRatio = $requestedHeight / $requestedWidth;
       $imageAspectRatio = $imageSize[1] / $imageSize[0];
@@ -133,7 +121,7 @@ function smarty_function_image($params, &$smarty)
   }
 
   if (strlen($sizemode) == 0) {
-  	$sizemode = 'resample';
+    $sizemode = 'resample';
   }
 
   // don't resize big images, because of resource limits
@@ -142,8 +130,7 @@ function smarty_function_image($params, &$smarty)
   }
 
   if (($sizemode != 'resize') && ($requestedWidth != null || $requestedHeight != null) &&
-    ($requestedWidth < $imageSize[0] || $requestedHeight < $imageSize[1]))
-  {
+    ($requestedWidth < $imageSize[0] || $requestedHeight < $imageSize[1])) {
     // if 'width' or 'height' are given and they differ from the image values,
     // we have to resize the image
 
@@ -151,13 +138,12 @@ function smarty_function_image($params, &$smarty)
     preg_match('/\.(\w+)$/', $file, $matches);
     $extension = $matches[1];
 
-    $destName = $smarty->cache_dir.md5($file.filectime($file).$requestedWidth.$requestedHeight.$sizemode).'.'.$extension;
+    $destName = $template->cache_dir.md5($file.filectime($file).$requestedWidth.$requestedHeight.$sizemode).'.'.$extension;
 
     // if the file does not exist in the cache, we have to create it
     $dateOrig = fileatime($file);
     $dateCache = fileatime($destName);
-    if (!file_exists($destName) || $dateOrig > $dateCache)
-    {
+    if (!file_exists($destName) || $dateOrig > $dateCache) {
       $graphicsUtil = new GraphicsUtil();
       if ($sizemode == 'resample') {
         $graphicsUtil->createThumbnail($file, $destName, $requestedWidth, $requestedHeight);

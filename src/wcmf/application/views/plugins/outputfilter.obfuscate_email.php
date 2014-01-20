@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -25,14 +24,14 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * code from: http://www.phpinsider.com/smarty-forum/viewtopic.php?t=2166
 * -------------------------------------------------------------
 */
-function smarty_outputfilter_obfuscate_email( $tpl_source, &$smarty ) {
+function smarty_outputfilter_obfuscate_email($output, \Smarty_Internal_Template $template) {
   global $obfuscated_email_count;
   $obfuscated_email_count = 0;
-  $tpl_source = preg_replace_callback(
+  $output = preg_replace_callback(
     '!<a\s([^>]*)href=["\']mailto:([^"\']+)["\']([^>]*)>(.*?)</a[^>]*>!is',
     'do_it',
-    $tpl_source);
-    return $tpl_source;
+    $output);
+  return $output;
 }
 
 function do_it($matches) {

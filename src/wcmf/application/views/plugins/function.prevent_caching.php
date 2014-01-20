@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -25,16 +24,14 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Type:     function
 * Name:     prevent_caching
 * Purpose:  prevents caching of an url by adding a unique parameter to the url
-*           (default parameter name is chacheKiller, to change it pass a name in the
+*           (default parameter name is cacheKiller, to change it pass a name in the
             'name' parameter)
 * Usage:    e.g. {prevent_cache url="title.gif"} or {prevent_cache url="title.gif" name="uid"}
 * -------------------------------------------------------------
 */
-function smarty_function_prevent_caching($params, &$smarty)
-{
-  $variables = array();
+function smarty_function_prevent_caching($params, \Smarty_Internal_Template $template) {
   if (isset($params['name'])) {
-    $params['name'] = 'cahceKiller';
+    $params['name'] = 'cacheKiller';
   }
   echo $params['url']."?".$params['name']."=".uniqid((double)microtime()*1000000,1);
 }

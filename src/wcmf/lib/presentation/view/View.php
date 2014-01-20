@@ -23,26 +23,52 @@ namespace wcmf\lib\presentation\view;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface View
-{
-  function setup();
+interface View {
 
-  function clearAllCache();
+  /**
+   * Assign a value to the view
+   * @param name The variable name
+   * @param value The value
+   */
+  public function setValue($name, $value);
 
-  function clearCache($tplFile=null, $cacheId=null);
+  /**
+   * Get a value from the view
+   * @param name The variable name
+   * @return Mixed
+   */
+  public function getValue($name);
 
-  function isCached($tplFile, $cacheId=null);
+  /**
+   * Get all values from the view
+   * @return Array
+   */
+  public function getValues();
 
-  function assign($tpl_var, $value=null);
+  /**
+   * Clear all values in the view
+   */
+  public function clearAllValues();
 
-  function assignByRef($tpl_var, &$value);
+  /**
+   * Render the given template
+   * @param tplFile The template file
+   * @param cacheId The id of the view (@see Controller::getCacheId())
+   * @param display Boolean whether to output the result or return it [default: true]
+   */
+  public function render($tplFile, $cacheId=null, $display=true);
 
-  function display($resource_name, $cache_id=null, $compile_id=null);
+  /**
+   * Clear the cache
+   * @return Integer number of cache files deleted
+   */
+  public static function clearCache();
 
-  function fetch($resource_name, $cache_id=null, $compile_id=null, $display=false);
-
-  function getTemplateVars($name=null);
-
-  function clearAllAssign();
+  /**
+   * Check if a view is cached
+   * @param tplFile The template file
+   * @param cacheId The id of the view (@see Controller::getCacheId())
+   */
+  public static function isCached($tplFile, $cacheId=null);
 }
 ?>

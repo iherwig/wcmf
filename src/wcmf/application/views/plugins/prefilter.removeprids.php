@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -27,8 +26,7 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Purpose: Remove protected region ids (used by wCMFGenerator).
 * -------------------------------------------------------------
 */
-function smarty_prefilter_removeprids($tpl_source, &$smarty)
-{
+function smarty_prefilter_removeprids($tpl_source, \Smarty_Internal_Template $template) {
   // remove protected regions
   $tpl_source = preg_replace("/<!-- PROTECTED REGION .*? -->/U", "", $tpl_source);
 

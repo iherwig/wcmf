@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
+use wcmf\lib\core\ObjectFactory;
 
 /*
 * Smarty plugin
@@ -29,12 +29,11 @@ namespace wcmf\lib\presentation\smarty_plugins;
 *           {sessionvalue name="platform" varname="platform"}
 * -------------------------------------------------------------
 */
-function smarty_function_sessionvalue($params, &$smarty)
-{
+function smarty_function_sessionvalue($params, \Smarty_Internal_Template $template) {
   $session = ObjectFactory::getInstance('session');
   $value = $session->get($params['name']);
   if (isset($params['varname'])) {
-    $smarty->assign($params['varname'], $value);
+    $template->assign($params['varname'], $value);
   }
   else {
     echo $value;

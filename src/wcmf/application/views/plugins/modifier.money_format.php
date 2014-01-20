@@ -16,7 +16,6 @@
  *
  * $Id$
  */
- namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -28,10 +27,8 @@
 * Usage:    e.g. {$number|money_format:2:,:.}
 * -------------------------------------------------------------
 */
-function smarty_modifier_money_format($number, $leftFill='0')
-{
-  if (function_exists('money_format'))
-  {
+function smarty_modifier_money_format($number, $leftFill='0') {
+  if (function_exists('money_format')) {
     setlocale(LC_MONETARY, 'de_DE.UTF8');
     $format = (!empty($leftFill))?'%!#'.$leftFill.'n':'%!n';
     return str_replace(' ','&nbsp;',money_format($format, $number));

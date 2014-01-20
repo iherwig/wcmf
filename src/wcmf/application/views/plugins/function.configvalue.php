@@ -16,8 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
-
 use wcmf\lib\core\ObjectFactory;
 
 /*
@@ -32,15 +30,14 @@ use wcmf\lib\core\ObjectFactory;
 *           {configvalue key="exportDir" section="cms" varname="exportDir"}
 * -------------------------------------------------------------
 */
-function smarty_function_configvalue($params, $smarty)
-{
+function smarty_function_configvalue($params, \Smarty_Internal_Template $template) {
   $config = ObjectFactory::getConfigurationInstance();
   $value = $config->getValue($params['key'], $params['section'], false);
   if (isset($params['varname'])) {
-    $smarty->assign($params['varname'], $value);
+    $template->assign($params['varname'], $value);
   }
   else {
-  	echo $value;
+    echo $value;
   }
 }
 ?>

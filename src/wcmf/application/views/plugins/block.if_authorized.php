@@ -16,8 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
-
 use wcmf\lib\core\ObjectFactory;
 
 /*
@@ -39,17 +37,13 @@ use wcmf\lib\core\ObjectFactory;
 * Author:   Ingo Herwig <ingo@wemove.com>
 * -------------------------------------------------------------
 */
-function smarty_block_if_authorized($params, $content, &$smarty)
-{
-  if(!$repeat)
-  {
+function smarty_block_if_authorized($params, $content, \Smarty_Internal_Template $template, &$repeat) {
+  if(!$repeat) {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
-    if ($permissionManager->authorize($params['resource'], $params['context'], $params['action']))
-    {
+    if ($permissionManager->authorize($params['resource'], $params['context'], $params['action'])) {
       return $content;
     }
-    else
-    {
+    else {
       return $params['alternative_content'];
     }
   }

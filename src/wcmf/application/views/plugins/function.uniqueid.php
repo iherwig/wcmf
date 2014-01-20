@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -28,14 +27,13 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Usage:    e.g. {uniqueid} or {uniqueid varname="uid"}
 * -------------------------------------------------------------
 */
-function smarty_function_uniqueid($params, &$smarty)
-{
+function smarty_function_uniqueid($params, \Smarty_Internal_Template $template) {
   $uid = md5(uniqid(ip2long($_SERVER['REMOTE_ADDR']) ^ (int)$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space('/tmp'), 1));
   if (isset($params['varname'])) {
-    $smarty->assign($params['varname'], $uid);
+    $template->assign($params['varname'], $uid);
   }
   else {
-  	echo $uid;
+    echo $uid;
   }
 }
 ?>

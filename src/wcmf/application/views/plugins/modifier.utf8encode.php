@@ -16,8 +16,7 @@
  *
  * $Id$
  */
- namespace wcmf\lib\presentation\smarty_plugins;
- 
+
 /*
 * Smarty plugin
 * -------------------------------------------------------------
@@ -28,9 +27,8 @@
 * Usage:    e.g. {$stext|utf8encode}
 * -------------------------------------------------------------
 */
-function smarty_modifier_utf8encode($text)
-{
-    return htmlspecialchars(utf8_encode($text));
+function smarty_modifier_utf8encode($text) {
+  return htmlspecialchars(utf8_encode($text));
 }
 ?>
 

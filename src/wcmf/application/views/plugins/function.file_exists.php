@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -28,8 +27,7 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Usage:    {file_exists file="images/test.png" varname="imageExists"}
 * -------------------------------------------------------------
 */
-function smarty_function_file_exists($params, &$smarty)
-{
-  $smarty->assign($params['varname'], file_exists($params['file']));
+function smarty_function_file_exists($params, \Smarty_Internal_Template $template) {
+  $template->assign($params['varname'], file_exists($params['file']));
 }
 ?>

@@ -16,7 +16,6 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation\smarty_plugins;
 
 /*
 * Smarty plugin
@@ -28,8 +27,7 @@ namespace wcmf\lib\presentation\smarty_plugins;
 * Usage:    e.g. {header value="Content-Type: text/javascript"}
 * -------------------------------------------------------------
 */
-function smarty_function_header($params, &$smarty)
-{
+function smarty_function_header($params, \Smarty_Internal_Template $template) {
   if (isset($params['value'])) {
     header($params['value']);
   }
