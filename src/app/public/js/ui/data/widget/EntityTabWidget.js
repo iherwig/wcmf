@@ -101,6 +101,10 @@ define([
                     this.closeTab(this.getTabByOid(data.oid));
                     this.isListeningToSelect = true;
                     this.selectTab(data.nextOid);
+                })),
+                topic.subscribe(this.id+"-selectChild", lang.hitch(this, function(page) {
+                    var oid = this.getOidFromTabId(page.id);
+                    this.selectTab(oid);
                 }))
             );
 
@@ -116,14 +120,6 @@ define([
                 var isSelected = (oid === this.selectedTab.oid);
                 this.createTab(oid, isSelected ? this.selectedPanel : null);
             }
-        },
-
-        /**
-         * Overwritten from StackContainer to detect tab changes
-         */
-        selectChild: function(page, animate) {
-            var oid = this.getOidFromTabId(page.id);
-            this.selectTab(oid);
         },
 
         selectTab: function(oid) {

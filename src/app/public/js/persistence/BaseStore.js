@@ -38,8 +38,9 @@ define([
             });
             aspect.around(this, "put", function(original) {
                 return function(object, options) {
+                    options = options === undefined ? {} : options;
 
-                    var isUpdate = options.overwrite;
+                    var isUpdate = (options.overwrite) || (object.oid && !Model.isDummyOid(object.oid));
                     var objectTmp = object.getCleanCopy ? object.getCleanCopy() : object;
                     var optionsTmp = lang.clone(options);
 

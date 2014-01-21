@@ -50,6 +50,7 @@ function(
             declare.safeMixin(this, args);
 
             this.typeName = Dict.translate(this.type);
+            this.headline = this.typeName;
         },
 
         postCreate: function() {

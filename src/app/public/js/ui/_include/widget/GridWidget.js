@@ -10,14 +10,17 @@ define([
     "dgrid/extensions/ColumnHider",
     "dgrid/extensions/ColumnResizer",
     "dgrid/extensions/DijitRegistry",
+    "dgrid/editor",
     "dojo/dom-attr",
     "dojo/query",
     "dojo/NodeList-traverse",
     "dojo/window",
     "dojo/topic",
     "dojo/on",
+    "dojo/has",
     "../../../model/meta/Model",
     "../../../locale/Dictionary",
+    "../../data/input/Factory",
     "../../data/display/Renderer",
     "dojo/text!./template/GridWidget.html"
 ], function (
@@ -32,14 +35,17 @@ define([
     ColumnHider,
     ColumnResizer,
     DijitRegistry,
+    editor,
     domAttr,
     query,
     traverse,
     win,
     topic,
     on,
+    has,
     Model,
     Dict,
+    ControlFactory,
     Renderer,
     template
 ) {
@@ -71,47 +77,51 @@ define([
 
         postCreate: function () {
             this.inherited(arguments);
-            this.gridWidget = this.buildGrid();
-            this.gridWidget.set("store", this.store);
-            this.own(
-                on(window, "resize", lang.hitch(this, this.onResize)),
-                on(this.gridWidget, "click", lang.hitch(this, function(e) {
-                    // process grid clicks
-                    var links = query(e.target).closest("a");
-                    if (links.length > 0) {
-                      var actionName = domAttr.get(links[0], "data-action");
-                      var action = this.actionsByName[actionName];
-                      if (action) {
-                          // cell action
-                          e.preventDefault();
 
-                          var columnNode = e.target.parentNode;
-                          var row = this.gridWidget.row(columnNode);
-                          action.execute(e, row.data);
-                      }
-                    }
-                })),
-                topic.subscribe("store-datachange", lang.hitch(this, function(data) {
-                    var typeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(data.oid));
-                    if (data.store.target === this.store.target ||
-                            this.store.typeName === typeName) {
-                        if (this.autoReload) {
-                            this.gridWidget.refresh({
-                                keepScrollPosition: true
-                            });
+            ControlFactory.loadControlClasses(this.type).then(lang.hitch(this, function(controls) {
+
+                this.gridWidget = this.buildGrid(controls);
+                this.gridWidget.set("store", this.store);
+                this.own(
+                    on(window, "resize", lang.hitch(this, this.onResize)),
+                    on(this.gridWidget, "click", lang.hitch(this, function(e) {
+                        // process grid clicks
+                        var links = query(e.target).closest("a");
+                        if (links.length > 0) {
+                          var actionName = domAttr.get(links[0], "data-action");
+                          var action = this.actionsByName[actionName];
+                          if (action) {
+                              // cell action
+                              e.preventDefault();
+
+                              var columnNode = e.target.parentNode;
+                              var row = this.gridWidget.row(columnNode);
+                              action.execute(e, row.data);
+                          }
                         }
-                        this.needsRefresh = true;
-                    }
-                })),
-                topic.subscribe("/dnd/drop", function(source, nodes, copy, target) {
-                    // TODO: check if we really need a refresh
-                    console.log("drop");
-                })
-            );
-            this.onResize();
+                    })),
+                    topic.subscribe("store-datachange", lang.hitch(this, function(data) {
+                        var typeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(data.oid));
+                        if (data.store.target === this.store.target ||
+                                this.store.typeName === typeName) {
+                            if (this.autoReload) {
+                                this.gridWidget.refresh({
+                                    keepScrollPosition: true
+                                });
+                            }
+                            this.needsRefresh = true;
+                        }
+                    })),
+                    topic.subscribe("/dnd/drop", function(source, nodes, copy, target) {
+                        // TODO: check if we really need a refresh
+                        console.log("drop");
+                    })
+                );
+                this.onResize();
+            }));
         },
 
-        buildGrid: function () {
+        buildGrid: function (controls) {
             var columns = [{
                 label: 'oid',
                 field: 'oid',
@@ -125,14 +135,24 @@ define([
             for (var i=0, count=displayValues.length; i<count; i++) {
                 var curValue = displayValues[i];
                 var curAttributeDef = typeClass.getAttribute(curValue);
-                columns.push({
+                var controlClass = controls[curAttributeDef.inputType];
+                columns.push(editor({
                     label: Dict.translate(curValue),
                     field: curValue,
+                    editor: controlClass,
+                    editorArgs: {
+                        attribute: curAttributeDef
+                    },
+                    editOn: "click",
+                    canEdit: lang.hitch(curAttributeDef, function(obj, value) {
+                        return this.isEditable;
+                    }),
+                    autoSave: true,
                     sortable: true,
-                    formatter: lang.hitch(curAttributeDef, function(data, obj) {
-                        return Renderer.render(data, this.displayType);
+                    formatter: lang.hitch(curAttributeDef, function(value) {
+                        return Renderer.render(value, this.displayType);
                     })
-                });
+                }));
             }
 
             // add actions column
@@ -238,7 +258,7 @@ define([
         onResize: function() {
             // TODO: remove magic number
             var vs = win.getBox();
-            var h = this.height ? this.height : vs.h-222;
+            var h = this.height ? this.height : vs.h-280;
             if (h >= 0) {
                 domAttr.set(this.gridWidget.domNode, "style", {height: h+"px"});
             }
