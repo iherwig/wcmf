@@ -18,8 +18,6 @@
  */
 namespace wcmf\lib\security\principal;
 
-use wcmf\lib\security\principal\Role;
-
 /**
  * User is the interface for users.
  *

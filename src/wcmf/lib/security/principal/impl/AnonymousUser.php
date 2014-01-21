@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\security\principal\AuthUser;
 use wcmf\lib\security\principal\impl\DefaultAuthUser;
 
@@ -27,6 +28,19 @@ use wcmf\lib\security\principal\impl\DefaultAuthUser;
  * @author ingo herwig <ingo@wemove.com>
  */
 class AnonymousUser extends DefaultAuthUser implements AuthUser {
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    // all actions are forbidden if not stated otherwise
+    $this->setDefaultPolicy(false);
+
+    // parse policies
+    $config = ObjectFactory::getConfigurationInstance();
+    $policies = $config->getSection('authorization');
+    $this->addPolicies($policies);
+  }
 
   /**
    * @see AuthUser::login()

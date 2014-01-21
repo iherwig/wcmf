@@ -36,12 +36,6 @@ class DefaultPermissionManager implements PermissionManager {
 
   const AUTHORIZATION_SECTION = 'authorization';
 
-  /**
-   * Actions that do not require authorization
-   * TODO: make this configurable
-   */
-  private static $_PUBLIC_ACTIONS = array('fatal', 'login', 'logout', 'messages');
-
   private $_anonymousUser = null;
   private $_tempPermissions = array();
 
@@ -49,7 +43,7 @@ class DefaultPermissionManager implements PermissionManager {
    * Constructor
    */
   public function __construct() {
-    $this->_anonymousUser = new AnonymousUser(new ObjectId('', ''));
+    $this->_anonymousUser = new AnonymousUser();
   }
 
   /**
@@ -63,20 +57,17 @@ class DefaultPermissionManager implements PermissionManager {
    * @see PermissionManager::getAuthUser()
    */
   public function getAuthUser() {
-    if (self::isAnonymous()) {
-      return $this->_anonymousUser;
-    }
-    else {
-      // include this later to avoid circular includes
+    $user = $this->_anonymousUser;
+    if (!$this->isAnonymous()) {
+      // check for auth user in session
       $session = ObjectFactory::getInstance('session');
-      $user = null;
       $userVarname = self::getAuthUserVarname();
       if ($session->exist($userVarname)) {
         $user = $session->get($userVarname);
         $user->resetRoleCache();
       }
-      return $user;
     }
+    return $user;
   }
 
   /**
@@ -111,39 +102,30 @@ class DefaultPermissionManager implements PermissionManager {
     if ($this->isAnonymous()) {
       return true;
     }
-    if (!in_array($action, self::$_PUBLIC_ACTIONS)) {
-      // if authorization is requested for an oid, we check the type first
-      $oid = null;
-      if ($resource instanceof ObjectId) {
-        $oid = $resource;
-      }
-      else if (ObjectId::isValid($resource)) {
-        $oid = ObjectId::parse($resource);
-      }
-      if ($oid && !$this->authorize($oid->getType(), $context, $action)) {
-        return false;
-      }
-
-      $actionKey = Action::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
-
-      // check temporary permissions
-      if (in_array($actionKey, $this->_tempPermissions)) {
-        return true;
-      }
-
-      $authUser = $this->getAuthUser();
-      if (!($authUser && $authUser->authorize($actionKey))) {
-        if ($authUser) {
-          // valid user but authorization for action failed
-          return false;
-        }
-        else {
-          // no valid user
-          return false;
-        }
-      }
+    // if authorization is requested for an oid, we check the type first
+    $oid = null;
+    if ($resource instanceof ObjectId) {
+      $oid = $resource;
     }
-    return true;
+    else if (ObjectId::isValid($resource)) {
+      $oid = ObjectId::parse($resource);
+    }
+    if ($oid && !$this->authorize($oid->getType(), $context, $action)) {
+      return false;
+    }
+
+    $actionKey = Action::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
+
+    // check temporary permissions
+    if (in_array($actionKey, $this->_tempPermissions)) {
+      return true;
+    }
+
+    $authUser = $this->getAuthUser();
+    if ($authUser && $authUser->authorize($actionKey)) {
+      return true;
+    }
+    return false;
   }
 
   /**
