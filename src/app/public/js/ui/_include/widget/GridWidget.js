@@ -109,13 +109,13 @@ define([
                                     keepScrollPosition: true
                                 });
                             }
-                            this.needsRefresh = true;
                         }
                     })),
-                    topic.subscribe("/dnd/drop", function(source, nodes, copy, target) {
-                        // TODO: check if we really need a refresh
-                        console.log("drop");
-                    })
+                    topic.subscribe("/dnd/drop", lang.hitch(this, function(source, nodes, copy, target) {
+                        this.gridWidget.refresh({
+                            keepScrollPosition: true
+                        });
+                    }))
                 );
                 this.onResize();
             }));
@@ -141,7 +141,8 @@ define([
                     field: curValue,
                     editor: controlClass,
                     editorArgs: {
-                        attribute: curAttributeDef
+                        attribute: curAttributeDef,
+                        style: 'height:20px; padding:0;'
                     },
                     editOn: "click",
                     canEdit: lang.hitch(curAttributeDef, function(obj, value) {

@@ -240,6 +240,13 @@ function(
             }
         },
 
+        setCtrlState: function(isEnabled) {
+            for (var i=0, c=this.attributeWidgets.length; i<c; i++) {
+                var widget = this.attributeWidgets[i];
+                widget.set("readonly", !isEnabled);
+            }
+        },
+
         setLockState: function(isLocked, isLockOwner) {
             this.isLocked = isLocked;
             this.isLockOwner = isLockOwner;
@@ -253,12 +260,12 @@ function(
             }
             // set controls, if locked by another user
             if (isLocked && !isLockOwner) {
-                for (var i=0, c=this.attributeWidgets.length; i<c; i++) {
-                    var widget = this.attributeWidgets[i];
-                    widget.set("readonly", true);
-                }
+                this.setCtrlState(false);
                 this.setBtnState("save", false);
                 this.setBtnState("delete", false);
+            }
+            else {
+                this.setCtrlState(true);
             }
         },
 
