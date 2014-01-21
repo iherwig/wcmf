@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="../app/public/vendor/twitter-bootstrap/css/bootstrap.css" rel="stylesheet">
-  <link href="../app/public/vendor/twitter-bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+  <link href="../app/public/css/app.css" rel="stylesheet">
 
   <style>
     section {
@@ -17,10 +17,9 @@
     function runScript(script, btn) {
       var xhr = new XMLHttpRequest();
       var oldBtnText = btn.innerHTML;
-      btn.innerHTML = oldBtnText+" ...";
+      btn.innerHTML = oldBtnText+' <i class="icon-spinner icon-spin"></i>';
       document.getElementById("result").innerHTML =
-              '<p><div class="progress progress-info progress-striped active">'+
-              '<div class="bar" style="width:100%;"></div></p>';
+              '<p></p>';
       xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
           var resultText = '';
