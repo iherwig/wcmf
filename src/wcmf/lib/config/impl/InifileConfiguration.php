@@ -24,7 +24,6 @@ use wcmf\lib\config\WritableConfiguration;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\IOException;
-use wcmf\lib\util\ArrayUtil;
 use wcmf\lib\util\StringUtil;
 
 /**

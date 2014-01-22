@@ -90,7 +90,7 @@ class EditRightsController extends Controller {
             foreach ($newAllowedRoles as $role) {
               if (!is_array($existingRight['allow']) || !in_array($role, $existingRight['allow'])) {
                 $permissionManager->createPermission($curConfig, $resource, $context, $action, $role,
-                        PermissionManager::RIGHT_MODIFIER_ALLOW);
+                        PermissionManager::PERMISSION_MODIFIER_ALLOW);
               }
             }
           }
@@ -111,7 +111,7 @@ class EditRightsController extends Controller {
             foreach ($newDeniedRoles as $role) {
               if (!is_array($existingRight['deny']) || !in_array($role, $existingRight['deny'])) {
                 $permissionManager->createPermission($curConfig, $resource, $context, $action, $role,
-                        PermissionManager::RIGHT_MODIFIER_DENY);
+                        PermissionManager::PERMISSION_MODIFIER_DENY);
               }
             }
           }

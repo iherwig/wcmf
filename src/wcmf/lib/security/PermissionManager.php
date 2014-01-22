@@ -28,8 +28,8 @@ use wcmf\lib\security\AuthUser;
  */
 interface PermissionManager {
 
-  const RIGHT_MODIFIER_ALLOW = '+';
-  const RIGHT_MODIFIER_DENY = '-';
+  const PERMISSION_MODIFIER_ALLOW = '+';
+  const PERMISSION_MODIFIER_DENY = '-';
 
   /**
    * Get session variable name for the authenticated user.
@@ -90,36 +90,33 @@ interface PermissionManager {
 
   /**
    * Get the permission on a resource, context, action combination.
-   * @param config The configuration to get the permission from.
    * @param resource The resource (e.g. class name of the Controller or OID).
    * @param context The context in which the action takes place.
    * @param action The action to process.
    * @return An assoziative array with keys 'default', 'allow', 'deny' and the attached roles as values.
    * @see AuthUser::parsePolicy
    */
-  public function getPermission($config, $resource, $context, $action);
+  public function getPermission($resource, $context, $action);
 
   /**
    * Create/Change a permission for a role on a resource, context, action combination.
-   * @param config The configuration to create the permission in.
    * @param resource The resource (e.g. class name of the Controller or OID).
    * @param context The context in which the action takes place.
    * @param action The action to process.
    * @param role The role to authorize.
-   * @param modifier One of the RIGHT_MODIFIER_ constants.
+   * @param modifier One of the PERMISSION_MODIFIER_ constants.
    * @return Boolean whether creation succeded/failed.
    */
-  public function createPermission($config, $resource, $context, $action, $role, $modifier);
+  public function createPermission($resource, $context, $action, $role, $modifier);
 
   /**
    * Remove a role from a permission on a resource, context, action combination.
-   * @param config The configuration to remove the right from.
    * @param resource The resource (e.g. class name of the Controller or OID).
    * @param context The context in which the action takes place.
    * @param action The action to process.
    * @param role The role to remove.
    * @return Boolean whether removal succeded/failed.
    */
-  public function removePermission($config, $resource, $context, $action, $role);
+  public function removePermission($resource, $context, $action, $role);
 }
 ?>

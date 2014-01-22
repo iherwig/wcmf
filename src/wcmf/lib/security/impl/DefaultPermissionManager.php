@@ -146,13 +146,11 @@ class DefaultPermissionManager implements PermissionManager {
   /**
    * @see PermissionManager::getPermission()
    */
-  public function getPermission($config, $resource, $context, $action) {
-    $configuration = new IniFileConfiguration(dirname($config));
-    $configuration->addConfiguration(basename($config));
-
-    $permDef = $resource."?".$context."?".$action;
-    if ($configuration->getValue($permDef, self::AUTHORIZATION_SECTION) !== false) {
-      return Policy::parse($configuration->getValue($permDef, self::AUTHORIZATION_SECTION));
+  public function getPermission($resource, $context, $action) {
+    $config = ObjectFactory::getConfigurationInstance();
+    $permDef = Action::createKey($resource, $context, $action);
+    if ($config->getValue($permDef, self::AUTHORIZATION_SECTION) !== false) {
+      return Policy::parse($config->getValue($permDef, self::AUTHORIZATION_SECTION));
     }
     else {
       return array();
@@ -162,45 +160,62 @@ class DefaultPermissionManager implements PermissionManager {
   /**
    * @see PermissionManager::createPermission()
    */
-  public function createPermission($config, $resource, $context, $action, $role, $modifier) {
-    return self::modifyPermission($config, $resource, $context, $action, $role, $modifier);
+  public function createPermission($resource, $context, $action, $role, $modifier) {
+    return self::modifyPermission($resource, $context, $action, $role, $modifier);
   }
 
   /**
    * @see PermissionManager::removePermission()
    */
-  public function removePermission($config, $resource, $context, $action, $role) {
-    return self::modifyPermission($config, $resource, $context, $action, $role, null);
+  public function removePermission($resource, $context, $action, $role) {
+    return self::modifyPermission($resource, $context, $action, $role, null);
   }
 
   /**
-   * @see PermissionManager::modifyPermission()
+   * Modify a permission for the given role.
+   * @param resource The resource (e.g. class name of the Controller or OID).
+   * @param context The context in which the action takes place.
+   * @param action The action to process.
+   * @param role The role to authorize.
+   * @param modifier One of the PERMISSION_MODIFIER_ constants, null, if the permission
+   *    should be removed.
+   * @return boolean
    */
-  protected function modifyPermission($config, $resource, $context, $action, $role, $modifier) {
-    $configuration = new IniFileConfiguration(dirname($config));
-    $configuration->addConfiguration(basename($config));
+  protected function modifyPermission($resource, $context, $action, $role, $modifier) {
+    // get config file to modify
+    $appConfig = ObjectFactory::getConfigurationInstance();
+    $configFiles = $appConfig->getConfigurations();
+    if (sizeof($configFiles) == 0) {
+      return false;
+    }
 
-    $permDef = $resource."?".$context."?".$action;
+    // create a writable configuration and modify the permission
+    $mainConfig = $configFiles[0];
+    $newConfig = new IniFileConfiguration(dirname($mainConfig));
+    $newConfig->addConfiguration(basename($mainConfig));
+
+    $permDef = Action::createKey($resource, $context, $action);
     $permVal = '';
     if ($modifier != null) {
       $permVal = $modifier.$role;
     }
-    if ($configuration->getValue($permDef, self::AUTHORIZATION_SECTION) === false && $modifier != null) {
-      $configuration->setValue($permDef, $permVal, self::AUTHORIZATION_SECTION, true);
+    if ($newConfig->getValue($permDef, self::AUTHORIZATION_SECTION) === false && $modifier != null) {
+      $newConfig->setValue($permDef, $permVal, self::AUTHORIZATION_SECTION, true);
     }
     else {
-      $value = $configuration->getValue($permDef, self::AUTHORIZATION_SECTION);
+      $value = $newConfig->getValue($permDef, self::AUTHORIZATION_SECTION);
       // remove role from value
-      $value = trim(preg_replace("/[+\-]*".$role."/", "", $value));
-      if ($value != '') {
-        $configuration->setValue($permDef, $value." ".$permVal, self::AUTHORIZATION_SECTION, false);
+      $newValue = str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
+                    PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value);
+      if ($newValue != '') {
+        $newConfig->setValue($permDef, $newValue." ".$permVal, self::AUTHORIZATION_SECTION, false);
       }
       else {
-        $configuration->removeKey($permDef, self::AUTHORIZATION_SECTION);
+        $newConfig->removeKey($permDef, self::AUTHORIZATION_SECTION);
       }
     }
 
-    $configuration->writeConfiguration(basename($config));
+    $newConfig->writeConfiguration(basename($mainConfig));
     return true;
   }
 }

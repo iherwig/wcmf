@@ -30,18 +30,29 @@ class Action {
   private static $_actionDelimiter = '?';
 
   /**
-   * Get an ini file key that matches a given combination of resource, context, action best.
-   * @param section The section to search in.
-   * @param resource The given resource.
-   * @param context The given context.
-   * @param action The given action.
+   * Create an action from the given values
+   * @param resource The resource
+   * @param context The context
+   * @param action The action
+   * @return String
+   */
+  public static function createKey($resource, $context, $action) {
+    return $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
+  }
+
+  /**
+   * Get a configuration key that matches a given combination of resource, context, action best.
+   * @param section The section to search in
+   * @param resource The given resource
+   * @param context The given context
+   * @param action The given action
    * @return The best matching key or an empty string if nothing matches.
    */
   public static function getBestMatch($section, $resource, $context, $action) {
     $config = ObjectFactory::getConfigurationInstance();
     // check resource?context?action
     if (strlen($resource) > 0 && strlen($context) > 0 && strlen($action) > 0) {
-      $key = $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
+      $key = self::createKey($resource, $context, $action);
       if ($config->hasValue($key, $section)) {
         return $key;
       }
@@ -49,7 +60,7 @@ class Action {
 
     // check resource??action
     if (strlen($resource) > 0 && strlen($action) > 0) {
-      $key = $resource.self::$_actionDelimiter.self::$_actionDelimiter.$action;
+      $key = self::createKey($resource, '', $action);
       if ($config->hasValue($key, $section)) {
         return $key;
       }
@@ -57,7 +68,7 @@ class Action {
 
     // check resource?context?
     if (strlen($resource) > 0 && strlen($context) > 0) {
-      $key = $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter;
+      $key = self::createKey($resource, $context, '');
       if ($config->hasValue($key, $section)) {
         return $key;
       }
@@ -65,7 +76,7 @@ class Action {
 
     // check ?context?action
     if (strlen($context) > 0 && strlen($action) > 0) {
-      $key = self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
+      $key = self::createKey('', $context, $action);
       if ($config->hasValue($key, $section)) {
         return $key;
       }
@@ -73,7 +84,7 @@ class Action {
 
     // check ??action
     if (strlen($action) > 0) {
-      $key = self::$_actionDelimiter.self::$_actionDelimiter.$action;
+      $key = self::createKey('', '', $action);
       if ($config->hasValue($key, $section)) {
         return $key;
       }
@@ -81,7 +92,7 @@ class Action {
 
     // check resource??
     if (strlen($resource) > 0) {
-      $key = $resource.self::$_actionDelimiter.self::$_actionDelimiter;
+      $key = self::createKey($resource, '', '');
       if ($config->hasValue($key, $section)) {
         return $key;
       }
@@ -89,14 +100,14 @@ class Action {
 
     // check ?context?
     if (strlen($context) > 0) {
-      $key = self::$_actionDelimiter.$context.self::$_actionDelimiter;
+      $key = self::createKey('', $context, '');
       if ($config->hasValue($key, $section)) {
         return $key;
       }
     }
 
     // check ??
-    $key = self::$_actionDelimiter.self::$_actionDelimiter;
+    $key = self::createKey('', '', '');
     if ($config->hasValue($key, $section)) {
       return $key;
     }
