@@ -69,7 +69,9 @@ class LocktableRDBMapper extends NodeUnifiedRDBMapper {
    * @see RDBMapper::getOwnDefaultOrder()
    */
   public function getOwnDefaultOrder($roleName=null) {
-    return null;
+    $orderDefs = array();
+    $orderDefs[] = array('sortFieldName' => 'none', 'sortDirection' => 'ASC', 'isSortkey' => false);
+    return $orderDefs;
   }
 
   /**

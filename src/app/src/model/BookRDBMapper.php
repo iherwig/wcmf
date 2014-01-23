@@ -69,7 +69,9 @@ class BookRDBMapper extends NodeUnifiedRDBMapper {
    * @see RDBMapper::getOwnDefaultOrder()
    */
   public function getOwnDefaultOrder($roleName=null) {
-    return array('sortFieldName' => 'title', 'sortDirection' => 'DESC', 'isSortkey' => false);
+    $orderDefs = array();
+    $orderDefs[] = array('sortFieldName' => 'title', 'sortDirection' => 'DESC', 'isSortkey' => false);
+    return $orderDefs;
   }
 
   /**

@@ -69,16 +69,18 @@ class ChapterRDBMapper extends NodeUnifiedRDBMapper {
    * @see RDBMapper::getOwnDefaultOrder()
    */
   public function getOwnDefaultOrder($roleName=null) {
+    $orderDefs = array();
     if ($roleName == 'Author') {
-      return array('sortFieldName' => 'sortkey_author', 'sortDirection' => 'ASC', 'isSortkey' => true);
+      $orderDefs[] = array('sortFieldName' => 'sortkey_author', 'sortDirection' => 'ASC', 'isSortkey' => true);
     }
     if ($roleName == 'Book') {
-      return array('sortFieldName' => 'sortkey_book', 'sortDirection' => 'ASC', 'isSortkey' => true);
+      $orderDefs[] = array('sortFieldName' => 'sortkey_book', 'sortDirection' => 'ASC', 'isSortkey' => true);
     }
     if ($roleName == 'ParentChapter') {
-      return array('sortFieldName' => 'sortkey_parentchapter', 'sortDirection' => 'ASC', 'isSortkey' => true);
+      $orderDefs[] = array('sortFieldName' => 'sortkey_parentchapter', 'sortDirection' => 'ASC', 'isSortkey' => true);
     }
-    return array('sortFieldName' => 'sortkey', 'sortDirection' => 'ASC', 'isSortkey' => true);
+    $orderDefs[] = array('sortFieldName' => 'sortkey', 'sortDirection' => 'ASC', 'isSortkey' => true);
+    return $orderDefs;
   }
 
   /**

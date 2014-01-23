@@ -69,7 +69,9 @@ class AuthorRDBMapper extends NodeUnifiedRDBMapper {
    * @see RDBMapper::getOwnDefaultOrder()
    */
   public function getOwnDefaultOrder($roleName=null) {
-    return array('sortFieldName' => 'name', 'sortDirection' => 'ASC', 'isSortkey' => false);
+    $orderDefs = array();
+    $orderDefs[] = array('sortFieldName' => 'name', 'sortDirection' => 'ASC', 'isSortkey' => false);
+    return $orderDefs;
   }
 
   /**

@@ -69,13 +69,15 @@ class ImageRDBMapper extends NodeUnifiedRDBMapper {
    * @see RDBMapper::getOwnDefaultOrder()
    */
   public function getOwnDefaultOrder($roleName=null) {
+    $orderDefs = array();
     if ($roleName == 'TitleChapter') {
-      return array('sortFieldName' => 'sortkey_titlechapter', 'sortDirection' => 'ASC', 'isSortkey' => true);
+      $orderDefs[] = array('sortFieldName' => 'sortkey_titlechapter', 'sortDirection' => 'ASC', 'isSortkey' => true);
     }
     if ($roleName == 'NormalChapter') {
-      return array('sortFieldName' => 'sortkey_normalchapter', 'sortDirection' => 'ASC', 'isSortkey' => true);
+      $orderDefs[] = array('sortFieldName' => 'sortkey_normalchapter', 'sortDirection' => 'ASC', 'isSortkey' => true);
     }
-    return array('sortFieldName' => 'sortkey', 'sortDirection' => 'ASC', 'isSortkey' => true);
+    $orderDefs[] = array('sortFieldName' => 'sortkey', 'sortDirection' => 'ASC', 'isSortkey' => true);
+    return $orderDefs;
   }
 
   /**
