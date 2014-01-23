@@ -12,6 +12,7 @@ define([
     "dgrid/extensions/DijitRegistry",
     "dgrid/editor",
     "dojo/dom-attr",
+    "dojo/dom-construct",
     "dojo/query",
     "dojo/NodeList-traverse",
     "dojo/window",
@@ -37,6 +38,7 @@ define([
     DijitRegistry,
     editor,
     domAttr,
+    domConstruct,
     query,
     traverse,
     win,
@@ -115,9 +117,17 @@ define([
                         topic.publish('ui/_include/widget/GridWidget/error', error);
                     })),
                     topic.subscribe("/dnd/drop", lang.hitch(this, function(source, nodes, copy, target) {
-                        this.gridWidget.refresh({
-                            keepScrollPosition: true
+                        var targetRow;
+                        var anchor = source._targetAnchor;
+                        if (anchor) { // (falsy if drop occurred in empty space after rows)
+                            targetRow = target.before ? anchor.previousSibling : anchor.nextSibling;
+                        }
+                        nodes.forEach(function(node) {
+                            domConstruct.place(node, targetRow, targetRow ? "before" : "after");
                         });
+//                        this.gridWidget.refresh({
+//                            keepScrollPosition: true
+//                        });
                     }))
                 );
                 this.onResize();

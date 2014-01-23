@@ -217,10 +217,10 @@ class RESTController extends Controller {
 
           // set order
           $otherMapper = $persistenceFacade->getMapper($otherType);
-          $sortDef = $otherMapper->getDefaultOrder($relation->getThisRole());
-          if ($sortDef) {
-            $request->setValue('sortFieldName', $sortDef['sortFieldName']);
-            $request->setValue('sortDirection', $sortDef['sortDirection']);
+          $sortkeyDef = $otherMapper->getSortkey($relation->getThisRole());
+          if ($sortkeyDef != null) {
+            $request->setValue('sortFieldName', $sortkeyDef['sortFieldName']);
+            $request->setValue('sortDirection', $sortkeyDef['sortDirection']);
           }
         }
       }
