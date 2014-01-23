@@ -111,6 +111,9 @@ define([
                             }
                         }
                     })),
+                    topic.subscribe("store-error", lang.hitch(this, function(error) {
+                        topic.publish('ui/_include/widget/GridWidget/error', error);
+                    })),
                     topic.subscribe("/dnd/drop", lang.hitch(this, function(source, nodes, copy, target) {
                         this.gridWidget.refresh({
                             keepScrollPosition: true
@@ -197,7 +200,7 @@ define([
             }, this.gridNode);
 
             gridWidget.on("dgrid-error", function (evt) {
-                topic.publish('ui/_include/widget/GridWidget/unknown-error', evt.error);
+                topic.publish('ui/_include/widget/GridWidget/error', evt.error);
             });
 
             // click on title column header

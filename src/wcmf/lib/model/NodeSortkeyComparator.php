@@ -98,8 +98,8 @@ class NodeSortkeyComparator {
         $relationDesc = $referenceMapper->getRelation($nodeRole);
         $referenceRole = $relationDesc->getThisRole();
       }
-      $sortDef = $mapper->getDefaultOrder($referenceRole);
-      return $node->getValue($sortDef['sortFieldName']);
+      $sortkeyDef = $mapper->getSortkey($referenceRole);
+      return $node->getValue($sortkeyDef['sortFieldName']);
     }
     return 0;
   }

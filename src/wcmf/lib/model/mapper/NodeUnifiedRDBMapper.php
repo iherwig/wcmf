@@ -77,14 +77,14 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       if ($this->isSortable()) {
         $value = join('', $object->getOID()->getId());
         foreach ($this->getRelations() as $curRelationDesc) {
-          $sortDef = $this->getDefaultOrder($curRelationDesc->getOtherRole());
-          if ($sortDef && isset($sortDef['sortFieldName'])) {
-            $object->setValue($sortDef['sortFieldName'], $value);
+          $sortkeyDef = $this->getSortkey($curRelationDesc->getOtherRole());
+          if ($sortkeyDef != null) {
+            $object->setValue($sortkeyDef['sortFieldName'], $value);
           }
         }
-        $sortDef = $this->getDefaultOrder();
-        if ($sortDef && isset($sortDef['sortFieldName'])) {
-          $object->setValue($sortDef['sortFieldName'], $value);
+        $sortkeyDef = $this->getSortkey();
+        if ($sortkeyDef != null) {
+          $object->setValue($sortkeyDef['sortFieldName'], $value);
         }
       }
     }
@@ -176,9 +176,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           if ($curRelationDesc != null) {
             // find the sortkey
             $otherMapper = $curRelationDesc->getOtherMapper();
-            $defaultOrder = $otherMapper->getDefaultOrder($curRelationDesc->getThisRole());
-            if ($defaultOrder != null && $defaultOrder['isSortkey'] == true) {
-              $sortkeyName = $defaultOrder['sortFieldName'];
+            $sortkeyDef = $otherMapper->getSortkey($curRelationDesc->getThisRole());
+            if ($sortkeyDef != null) {
+              $sortkeyName = $sortkeyDef['sortFieldName'];
               // in a many to many relation, we have to modify the order of the relation objects
               if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
                   $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
@@ -301,9 +301,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $selectStmt->where($this->quoteIdentifier($nmTablename).".".
               $this->quoteIdentifier($otherFkAttr->getName())."= ?", $dbid);
       // order (in this case we use the order of the many to many objects)
-      $nmSortDef = $nmMapper->getDefaultOrder($otherRole);
-      $this->addOrderBy($selectStmt, $orderby, $nmTablename, $nmSortDef);
-      if ($nmSortDef) {
+      $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);
+      $this->addOrderBy($selectStmt, $orderby, $nmTablename, $nmSortDefs);
+      foreach($nmSortDefs as $nmSortDef) {
         // add the sort attribute from the many to many object
         $nmSortAttributeDesc = $nmMapper->getAttribute($nmSortDef['sortFieldName']);
         $selectStmt->columns(array($nmSortAttributeDesc->getName() => $nmSortAttributeDesc->getColumn()), $nmTablename);
@@ -497,12 +497,12 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   protected function addOrderBy(Zend_Db_Select $selectStmt, $orderby, $tableName, $defaultOrder) {
     $orderbyFinal = array();
     if ($orderby == null) {
+      $orderby = array();
       // use default ordering
-      if ($defaultOrder) {
-        $orderby = array($defaultOrder['sortFieldName']." ".$defaultOrder['sortDirection']);
-      }
-      else {
-        $orderby = array();
+      if ($defaultOrder && sizeof($defaultOrder) > 0) {
+        foreach ($defaultOrder as $orderDef) {
+          $orderby[] = $orderDef['sortFieldName']." ".$orderDef['sortDirection'];
+        }
       }
     }
     foreach($orderby as $orderExpression) {

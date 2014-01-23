@@ -33,6 +33,10 @@ define([
 
                     // do call
                     var results = original.call(this, id, options);
+                    results.then(function(value) {
+                    }, function(error) {
+                        topic.publish("store-error", error);
+                    });
                     return results;
                 };
             });
@@ -75,7 +79,9 @@ define([
                             oid: object.oid,
                             action: options.overwrite ? "put" : "add"
                         });
-                    }));
+                    }), function(error) {
+                        topic.publish("store-error", error);
+                    });
                     return results;
                 };
             });
@@ -91,7 +97,9 @@ define([
                             oid: oid,
                             action: "remove"
                         });
-                    }));
+                    }), function(error) {
+                        topic.publish("store-error", error);
+                    });
                     return results;
                 };
             });

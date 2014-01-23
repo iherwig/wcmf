@@ -556,8 +556,18 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see PersistenceMapper::isSortable()
    */
   public function isSortable($roleName=null) {
-    $sortDef = $this->getDefaultOrder($roleName);
-    return ($sortDef['isSortkey'] == true);
+    return $this->getSortkey($roleName) != null;
+  }
+
+  /**
+   * @see PersistenceMapper::getSortkey()
+   */
+  public function getSortkey($roleName=null) {
+    $sortDefs = $this->getDefaultOrder($roleName);
+    if (sizeof($sortDefs) > 0 && $sortDefs[0]['isSortkey'] == true) {
+      return $sortDefs[0];
+    }
+    return null;
   }
 
   /**
@@ -581,8 +591,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $sortType = $this->getType();
     }
     // add the sortType parameter to the result
-    if ($sortDef != null) {
-      $sortDef['sortType'] = $sortType;
+    for ($i=0, $count=sizeof($sortDef); $i<$count; $i++) {
+      $sortDef[$i]['sortType'] = $sortType;
     }
     return $sortDef;
   }
@@ -1255,10 +1265,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
 
   /**
-   * Get the name of the attribute in the mapped class to order by default and the sort direction
+   * Get the names of the attributes in the mapped class to order by default and the sort directions
    * (ASC or DESC). The roleName parameter allows to ask for the order with respect to a specific role.
    * @param rolename The role name of the relation, maybe null [default: null]
-   * @return An assciative array with the keys sortFieldName and sortDirection (ASC or DESC)
+   * @return An array of assciative arrays with the keys sortFieldName and sortDirection (ASC or DESC)
    */
   abstract protected function getOwnDefaultOrder($roleName=null);
 

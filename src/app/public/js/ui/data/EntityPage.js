@@ -112,6 +112,9 @@ define([
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
                     this.setTitle(this.title+" - "+Model.getDisplayValue(data.entity));
+                })),
+                topic.subscribe('ui/_include/widget/GridWidget/error', lang.hitch(this, function(error) {
+                    this.showBackendError(error);
                 }))
             );
         },

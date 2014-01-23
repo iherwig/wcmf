@@ -70,7 +70,6 @@ class DBSequenceRDBMapper extends NodeUnifiedRDBMapper {
    */
   public function getOwnDefaultOrder($roleName=null) {
     $orderDefs = array();
-    $orderDefs[] = array('sortFieldName' => 'none', 'sortDirection' => 'ASC', 'isSortkey' => false);
     return $orderDefs;
   }
 

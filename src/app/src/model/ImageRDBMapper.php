@@ -76,7 +76,9 @@ class ImageRDBMapper extends NodeUnifiedRDBMapper {
     if ($roleName == 'NormalChapter') {
       $orderDefs[] = array('sortFieldName' => 'sortkey_normalchapter', 'sortDirection' => 'ASC', 'isSortkey' => true);
     }
-    $orderDefs[] = array('sortFieldName' => 'sortkey', 'sortDirection' => 'ASC', 'isSortkey' => true);
+    if ($roleName == null) {
+      $orderDefs[] = array('sortFieldName' => 'sortkey', 'sortDirection' => 'ASC', 'isSortkey' => true);
+    }
     return $orderDefs;
   }
 

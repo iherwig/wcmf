@@ -64,20 +64,28 @@ class SortController extends Controller {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $isOrderBottom = $this->isOrderBotton($request);
 
     // check object id validity
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
-    if(!$insertOid) {
+    if (!$insertOid) {
       $response->addError(ApplicationError::get('OID_INVALID',
         array('invalidOids' => array($request->getValue('insertOid')))));
       return false;
     }
     $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
-    if(!$referenceOid && !$isOrderBottom) {
+    if (!$referenceOid && !$isOrderBottom) {
       $response->addError(ApplicationError::get('OID_INVALID',
         array('invalidOids' => array($request->getValue('referenceOid')))));
+      return false;
+    }
+
+    // check if the type of insertOid is sortable
+    $mapper = $persistenceFacade->getMapper($insertOid->getType());
+    if ($mapper->getSortkey() == null) {
+      $response->addError(ApplicationError::get('ORDER_UNDEFINED'));
       return false;
     }
 
@@ -90,7 +98,7 @@ class SortController extends Controller {
         return false;
       }
       // check if the class supports order
-      $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($insertOid->getType());
+      $mapper = $persistenceFacade->getMapper($insertOid->getType());
       if (!$mapper->isSortable()) {
         $response->addError(ApplicationError::get('ORDER_UNDEFINED'));
         return false;
@@ -107,7 +115,7 @@ class SortController extends Controller {
       }
 
       // check association for insert operation
-      $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($containerOid->getType());
+      $mapper = $persistenceFacade->getMapper($containerOid->getType());
       $relationDesc = null;
       // try role
       if ($request->hasValue('role')) {
@@ -180,8 +188,8 @@ class SortController extends Controller {
     if ($this->checkObjects($objectMap)) {
       // determine the sort key
       $mapper = $insertObject->getMapper();
-      $sortDef = $mapper->getDefaultOrder();
-      $sortkey = $sortDef['sortFieldName'];
+      $sortkeyDef = $mapper->getSortkey();
+      $sortkey = $sortkeyDef['sortFieldName'];
 
       // determine the sort boundaries
       $referenceValue = $isOrderBottom ? self::UNBOUND : $referenceObject->getValue($sortkey);

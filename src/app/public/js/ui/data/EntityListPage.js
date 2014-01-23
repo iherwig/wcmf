@@ -45,7 +45,7 @@ define([
             this.buildForm();
 
             this.own(
-                topic.subscribe('ui/_include/widget/GridWidget/unknown-error', lang.hitch(this, function(error) {
+                topic.subscribe('ui/_include/widget/GridWidget/error', lang.hitch(this, function(error) {
                     this.showBackendError(error);
                 }))
             );

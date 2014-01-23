@@ -79,7 +79,9 @@ class ChapterRDBMapper extends NodeUnifiedRDBMapper {
     if ($roleName == 'ParentChapter') {
       $orderDefs[] = array('sortFieldName' => 'sortkey_parentchapter', 'sortDirection' => 'ASC', 'isSortkey' => true);
     }
-    $orderDefs[] = array('sortFieldName' => 'sortkey', 'sortDirection' => 'ASC', 'isSortkey' => true);
+    if ($roleName == null) {
+      $orderDefs[] = array('sortFieldName' => 'sortkey', 'sortDirection' => 'ASC', 'isSortkey' => true);
+    }
     return $orderDefs;
   }
 
