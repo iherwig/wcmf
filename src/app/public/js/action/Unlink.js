@@ -10,7 +10,7 @@ define([
     return declare([ActionBase], {
 
         name: 'unlink',
-        iconClass: 'icon-unlink',
+        iconClass: 'fa fa-unlink',
         source: null,
         relation: null,
 

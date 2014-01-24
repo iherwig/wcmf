@@ -51,7 +51,7 @@ function(
         postCreate: function() {
             this.inherited(arguments);
             this.spinnerNode = domConstruct.create("p", {
-                innerHTML: '<i class="icon-spinner icon-spin"></i>'
+                innerHTML: '<i class="fa fa-spinner fa-spin"></i>'
             }, this.domNode, "first");
             this.showSpinner();
 

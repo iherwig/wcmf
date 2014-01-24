@@ -18,7 +18,7 @@ define([
     return declare([ActionBase], {
 
         name: 'delete',
-        iconClass: 'icon-trash',
+        iconClass: 'fa fa-trash-o',
 
         /**
          * Shows confirm dialog and executes the delete action on the store

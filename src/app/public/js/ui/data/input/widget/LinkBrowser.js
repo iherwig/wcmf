@@ -18,7 +18,7 @@ function(
             this.inherited(arguments);
 
             var testBtn = new Button({
-                innerHTML: '<i class="icon-external-link"></i>',
+                innerHTML: '<i class="fa fa-external-link"></i>',
                 "class": "btn-mini",
                 onClick: lang.hitch(this, function() {
                     var url = this.getLinkUrl();

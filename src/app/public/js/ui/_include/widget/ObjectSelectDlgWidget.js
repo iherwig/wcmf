@@ -45,6 +45,7 @@ define([
                 type: this.type,
                 store: Store.getStore(this.type, appConfig.defaultLanguage),
                 actions: [],
+                canEdit: false,
                 height: 198
             }, gridNode);
         },

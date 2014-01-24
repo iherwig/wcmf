@@ -221,11 +221,11 @@ define([
         },
 
         setTypeTabName: function(typeName, tabItem) {
-            tabItem.set("title", '<i class="icon-reorder"></i> '+Dict.translate(typeName));
+            tabItem.set("title", '<i class="fa fa-list"></i> '+Dict.translate(typeName));
         },
 
         setInstanceTabName: function(entity, tabItem) {
-            tabItem.set("title", '<i class="icon-file"></i> '+Model.getDisplayValue(entity)+' ');
+            tabItem.set("title", '<i class="fa fa-file"></i> '+Model.getDisplayValue(entity)+' ');
         },
 
         createTab: function(oid, content) {
@@ -233,7 +233,7 @@ define([
             // real title may be resolved async
             var tabItem = new ContentPane({
                 id: this.getTabIdFromOid(oid),
-                title: '<i class="icon-spinner icon-spin"></i>'
+                title: '<i class="fa fa-spinner fa-spin"></i>'
             });
             // instance tabs are closable
             if (this.isInstanceTab(oid)) {

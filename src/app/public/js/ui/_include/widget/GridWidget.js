@@ -56,8 +56,8 @@ define([
         type: null,
         store: null,
         actions: [],
-        autoReload: true,
         enabledFeatures: [], // array of strings matching items in optionalFeatures
+        canEdit: true,
 
         actionsByName: {},
         templateString: lang.replace(template, Dict.tplTranslate),
@@ -106,11 +106,9 @@ define([
                         var typeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(data.oid));
                         if (data.store.target === this.store.target ||
                                 this.store.typeName === typeName) {
-                            if (this.autoReload) {
-                                this.gridWidget.refresh({
-                                    keepScrollPosition: true
-                                });
-                            }
+                            this.gridWidget.refresh({
+                                keepScrollPosition: true
+                            });
                         }
                     })),
                     topic.subscribe("store-error", lang.hitch(this, function(error) {
@@ -158,9 +156,9 @@ define([
                         style: 'height:20px; padding:0;'
                     },
                     editOn: "click",
-                    canEdit: lang.hitch(curAttributeDef, function(obj, value) {
+                    canEdit: this.canEdit ? lang.hitch(curAttributeDef, function(obj, value) {
                         return this.isEditable;
-                    }),
+                    }) : function(obj, value) {return false; },
                     autoSave: true,
                     sortable: true,
                     formatter: lang.hitch(curAttributeDef, function(value) {
@@ -258,15 +256,6 @@ define([
             this.gridWidget.refresh({
                 keepScrollPosition: true
             });
-        },
-
-        postponeRefresh: function(deferred) {
-            var oldAutoReload = this.autoReload;
-            this.autoReload = false;
-            deferred.then(lang.hitch(this, function() {
-                this.refresh();
-                this.autoReload = oldAutoReload;
-            }));
         },
 
         onResize: function() {

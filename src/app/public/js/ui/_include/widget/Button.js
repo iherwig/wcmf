@@ -11,7 +11,7 @@ define([
 
         setProcessing: function() {
             this.initialLabel = this.get("label");
-            this.set("label", this.initialLabel+' <i class="icon-spinner icon-spin"></i>');
+            this.set("label", this.initialLabel+' <i class="fa fa-spinner fa-spin"></i>');
             this.set("disabled", true);
         },
 

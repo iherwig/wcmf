@@ -10,7 +10,7 @@ define([
     return declare([ActionBase], {
 
         name: 'edit',
-        iconClass: 'icon-pencil',
+        iconClass: 'fa fa-pencil',
         route: '',
 
         /**

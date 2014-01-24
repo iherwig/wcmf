@@ -10,7 +10,7 @@ define([
     return declare([ActionBase], {
 
         name: 'create',
-        iconClass: 'icon-star',
+        iconClass: 'fa fa-star',
         route: '',
         source: null,
         relation: null,

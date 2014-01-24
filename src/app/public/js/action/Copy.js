@@ -18,7 +18,7 @@ define([
     return declare([ActionBase], {
 
         name: 'copy',
-        iconClass: 'icon-copy',
+        iconClass: 'fa fa-copy',
         action: "copy",
         targetOid: null,
 

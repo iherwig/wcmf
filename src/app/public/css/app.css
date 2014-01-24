@@ -159,7 +159,7 @@ body {
 }
 
 .dgrid-loading, .dgrid-no-data {
-  padding: 20px;
+  padding: 10px;
 }
 
 th.field-actions-1, td.field-actions-1 {
@@ -256,10 +256,6 @@ td {
 
 .entity-page .dijitTextBox {
   width: 350px;
-}
-
-.entity-page .dijitContentPane {
-  padding: 0 !important;
 }
 
 .pull-right {

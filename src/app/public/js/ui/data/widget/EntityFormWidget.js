@@ -251,12 +251,12 @@ function(
             this.isLocked = isLocked;
             this.isLockOwner = isLockOwner;
             if (this.isLocked) {
-                domClass.remove(this.lockNode, "icon-unlock");
-                domClass.add(this.lockNode, "icon-lock");
+                domClass.remove(this.lockNode, "fa fa-unlock");
+                domClass.add(this.lockNode, "fa fa-lock");
             }
             else {
-                domClass.remove(this.lockNode, "icon-lock");
-                domClass.add(this.lockNode, "icon-unlock");
+                domClass.remove(this.lockNode, "fa fa-lock");
+                domClass.add(this.lockNode, "fa fa-unlock");
             }
             // set controls, if locked by another user
             if (isLocked && !isLockOwner) {
@@ -399,7 +399,7 @@ function(
                     if (error.code === "CONCURRENT_UPDATE" || "OBJECT_IS_LOCKED") {
                         this.showNotification({
                             type: "error",
-                            message: error.message+' <a href="'+location.href+'" class="alert-error"><i class="icon-refresh"></i></a>'
+                            message: error.message+' <a href="'+location.href+'" class="alert-error"><i class="fa fa-refresh"></i></a>'
                         });
                         this.setLockState(true, false);
                     }

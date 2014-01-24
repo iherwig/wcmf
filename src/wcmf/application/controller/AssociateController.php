@@ -20,10 +20,12 @@ namespace wcmf\application\controller;
 
 use \Exception;
 
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -121,8 +123,8 @@ class AssociateController extends Controller {
             $sourceNode->addNode($targetNode, $role);
           }
           catch (Exception $ex) {
-            $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
-            throw $ex;
+            throw new ApplicationException($request, $response,
+                    ApplicationError::get('ASSOCIATION_INVALID'));
           }
         }
         elseif ($request->getAction() == 'disassociate') {
@@ -130,8 +132,8 @@ class AssociateController extends Controller {
             $sourceNode->deleteNode($targetNode, $role);
           }
           catch (Exception $ex) {
-            $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
-            throw $ex;
+            throw new ApplicationException($request, $response,
+                    ApplicationError::get('ASSOCIATION_INVALID'));
           }
         }
       }
@@ -148,6 +150,8 @@ class AssociateController extends Controller {
       $transaction->commit();
     }
     catch (Exception $ex) {
+      Log::error($ex, __CLASS__);
+      $response->addError(ApplicationError::fromException($ex));
       $transaction->rollback();
     }
 

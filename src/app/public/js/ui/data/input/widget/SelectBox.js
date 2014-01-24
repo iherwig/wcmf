@@ -50,7 +50,7 @@ function(
                 // create spinner
                 if (!this.spinnerNode) {
                     this.spinnerNode = domConstruct.create("p", {
-                        innerHTML: '<i class="icon-spinner icon-spin"></i>'
+                        innerHTML: '<i class="fa fa-spinner fa-spin"></i>'
                     }, this.domNode.parentNode, "last");
                 }
                 this.showSpinner();

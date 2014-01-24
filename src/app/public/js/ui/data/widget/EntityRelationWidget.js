@@ -100,7 +100,7 @@ function(
                 return [editAction, deleteAction];
             }
             else {
-                return [editAction, unlinkAction, deleteAction];
+                return [editAction, unlinkAction];
             }
         },
 
@@ -137,7 +137,6 @@ function(
                 relation: this.relation,
                 init: lang.hitch(this, function(data) {
                     this.hideNotification();
-                    this.gridWidget.postponeRefresh(gridRefresh);
                 }),
                 callback: lang.hitch(this, function(data, result) {
                     // success

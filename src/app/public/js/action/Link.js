@@ -20,7 +20,7 @@ define([
     return declare([ActionBase], {
 
         name: 'link',
-        iconClass: 'icon-link',
+        iconClass: 'fa fa-link',
         source: null,
         relation: null,
 

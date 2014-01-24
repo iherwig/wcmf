@@ -20,6 +20,7 @@ namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -149,6 +150,9 @@ class ApplicationError {
    * @return ApplicationError
    */
   public static function fromException(\Exception $ex) {
+    if ($ex instanceof ApplicationException) {
+      return $ex->getError();
+    }
     return new ApplicationError('GENERAL_ERROR', $ex->getMessage(), ERROR_LEVEL_ERROR);
   }
 }

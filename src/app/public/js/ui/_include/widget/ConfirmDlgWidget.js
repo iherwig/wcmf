@@ -29,7 +29,7 @@ define([
         style: "width: 400px",
 
         constructor: function(args) {
-            args['message'] = '<i class="icon-question-sign icon-2x pull-left"></i> &nbsp;'+args['message'];
+            args['message'] = '<i class="fa fa-question-circle fa-2x pull-left"></i> &nbsp;'+args['message'];
             this.inherited(arguments);
         }
     });

@@ -12,7 +12,7 @@ define([
     return declare([ActionBase], {
 
         name: 'lock',
-        iconClass: 'icon-lock',
+        iconClass: 'fa fa-lock',
         action: "lock", // "lock|unlock"
         lockType: "optimistic", // "optimistic|pessimistic"
 
