@@ -1074,8 +1074,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           if ($this->_dataConverter && !is_null($value)) {
             $value = $this->_dataConverter->convertStorageToApplication($value, $curAttributeDesc->getType(), $name);
           }
+          $values[$name] = $value;
         }
-        $values[$name] = $value;
       }
     }
     $object->initialize($values);
