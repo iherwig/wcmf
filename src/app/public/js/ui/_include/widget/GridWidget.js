@@ -66,6 +66,8 @@ define([
         defaultFeatures: [Selection, Keyboard, ColumnHider, ColumnResizer, DijitRegistry],
         optionalFeatures: [DnD],
 
+        refreshPosponed: false,
+
         constructor: function (params) {
             if (params && params.actions) {
                 params.actionsByName = {};
@@ -103,12 +105,12 @@ define([
                         }
                     })),
                     topic.subscribe("store-datachange", lang.hitch(this, function(data) {
-                        var typeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(data.oid));
-                        if (data.store.target === this.store.target ||
-                                this.store.typeName === typeName) {
-                            this.gridWidget.refresh({
-                                keepScrollPosition: true
-                            });
+                        if (data.store.target === this.store.target || this.isSameType(data)) {
+                            if (!this.refreshPosponed) {
+                                this.gridWidget.refresh({
+                                    keepScrollPosition: true
+                                });
+                            }
                         }
                     })),
                     topic.subscribe("store-error", lang.hitch(this, function(error) {
@@ -117,15 +119,19 @@ define([
                     topic.subscribe("/dnd/drop", lang.hitch(this, function(source, nodes, copy, target) {
                         var targetRow;
                         var anchor = source._targetAnchor;
-                        if (anchor) { // (falsy if drop occurred in empty space after rows)
+                        if (anchor) {
+                            // drop on row
                             targetRow = target.before ? anchor.previousSibling : anchor.nextSibling;
+                            nodes.forEach(function(node) {
+                                domConstruct.place(node, targetRow, source._targetAnchor ? "before" : "after");
+                            });
                         }
-                        nodes.forEach(function(node) {
-                            domConstruct.place(node, targetRow, targetRow ? "before" : "after");
-                        });
-//                        this.gridWidget.refresh({
-//                            keepScrollPosition: true
-//                        });
+                        else {
+                            // drop on empty space after rows
+                            nodes.forEach(function(node) {
+                                domConstruct.place(node, node.parentNode, "last");
+                            });
+                        }
                     }))
                 );
                 this.onResize();
@@ -201,6 +207,15 @@ define([
                 getBeforePut: true,
                 columns: columns,
                 selectionMode: "extended",
+                dndParams: {
+                    checkAcceptance: lang.hitch(this, function(source, nodes) {
+                        var row = this.gridWidget.row(nodes[0]);
+                        if (!row) {
+                            return false;
+                        }
+                        return this.isSameType(row.data);
+                    })
+                },
                 //query: { find: 'xx' },
                 //queryOptions: { sort: [{ attribute: 'title', descending: false }] },
                 loadingMessage: Dict.translate("Loading"),
@@ -242,6 +257,12 @@ define([
             return gridWidget;
         },
 
+        isSameType: function(data) {
+            var oid = data.oid;
+            var typeName = Model.getFullyQualifiedTypeName(Model.getTypeNameFromOid(oid));
+            return this.store.typeName === typeName;
+        },
+
         getSelectedOids: function() {
             var oids = [];
             for (var oid in this.gridWidget.selection) {
@@ -256,6 +277,14 @@ define([
             this.gridWidget.refresh({
                 keepScrollPosition: true
             });
+        },
+
+        postponeRefresh: function(deferred) {
+            this.refreshPosponed = true;
+            deferred.then(lang.hitch(this, function() {
+                this.refresh();
+                this.refreshPosponed = false;
+            }));
         },
 
         onResize: function() {

@@ -82,13 +82,6 @@ class SortController extends Controller {
       return false;
     }
 
-    // check if the type of insertOid is sortable
-    $mapper = $persistenceFacade->getMapper($insertOid->getType());
-    if ($mapper->getSortkey() == null) {
-      $response->addError(ApplicationError::get('ORDER_UNDEFINED'));
-      return false;
-    }
-
     // action specific
 
     if ($request->getAction() == 'moveBefore') {
