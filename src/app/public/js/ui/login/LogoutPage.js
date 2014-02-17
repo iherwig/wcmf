@@ -34,7 +34,6 @@ define([
 
         _logout: function() {
             var data = {};
-            data.controller = "wcmf\\application\\controller\\LoginController";
             data.action = "logout";
 
             request.post(appConfig.backendUrl, {

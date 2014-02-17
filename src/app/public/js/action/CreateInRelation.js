@@ -11,6 +11,7 @@ define([
 
         name: 'create',
         iconClass: 'fa fa-star',
+        
         route: '',
         source: null,
         relation: null,

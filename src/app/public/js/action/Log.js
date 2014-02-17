@@ -40,7 +40,7 @@ define([
     Log.log = function(message, level) {
       request.post(appConfig.backendUrl, {
           data: {
-              action: 'log',
+              action: "log",
               message: message,
               type: level
           },

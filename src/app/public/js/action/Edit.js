@@ -11,6 +11,7 @@ define([
 
         name: 'edit',
         iconClass: 'fa fa-pencil',
+        
         route: '',
 
         /**

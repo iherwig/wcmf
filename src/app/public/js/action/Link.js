@@ -21,6 +21,7 @@ define([
 
         name: 'link',
         iconClass: 'fa fa-link',
+        
         source: null,
         relation: null,
 

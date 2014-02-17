@@ -47,7 +47,6 @@ define([
             e.preventDefault();
 
             var data = domForm.toObject("loginForm");
-            data.controller = "wcmf\\application\\controller\\LoginController";
             data.action = "login";
 
             this.loginBtn.setProcessing();

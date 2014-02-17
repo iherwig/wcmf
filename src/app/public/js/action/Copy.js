@@ -19,9 +19,8 @@ define([
 
         name: 'copy',
         iconClass: 'fa fa-copy',
-        action: "copy",
-        targetOid: null,
 
+        targetOid: null,
         data: null,
         deferred: null,
 
