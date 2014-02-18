@@ -31,12 +31,12 @@ use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
-use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\InsertOperation;
+use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
-use wcmf\lib\persistence\UpdateOperation;
+use wcmf\lib\persistence\ReferenceDescription;
 
 /**
  * NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node
@@ -403,54 +403,50 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // collect all references first
     $references = array();
-    $attributeDescs = $this->getAttributes();
-    foreach($attributeDescs as $curAttributeDesc) {
-      if ($curAttributeDesc instanceof ReferenceDescription) {
-        $curReferenceDesc = $curAttributeDesc;
-        if ($attribs === null || in_array($curReferenceDesc->getName(), $attribs)) {
-          $referencedType = $curReferenceDesc->getOtherType();
-          $referencedValue = $curReferenceDesc->getOtherName();
-          $relationDesc = $this->getRelation($referencedType);
-          $otherMapper = $persistenceFacade->getMapper($relationDesc->getOtherType());
-          if ($otherMapper) {
-            $otherTable = $otherMapper->getRealTableName();
-            $otherAttributeDesc = $otherMapper->getAttribute($referencedValue);
-            if ($otherAttributeDesc instanceof RDBAttributeDescription) {
-              // set up the join definition if not already defined
-              if (!isset($references[$otherTable])) {
-                $references[$otherTable] = array();
-                $references[$otherTable]['attributes'] = array();
+    foreach($this->getReferences() as $curReferenceDesc) {
+      if ($attribs === null || in_array($curReferenceDesc->getName(), $attribs)) {
+        $referencedType = $curReferenceDesc->getOtherType();
+        $referencedValue = $curReferenceDesc->getOtherName();
+        $relationDesc = $this->getRelation($referencedType);
+        $otherMapper = $persistenceFacade->getMapper($relationDesc->getOtherType());
+        if ($otherMapper) {
+          $otherTable = $otherMapper->getRealTableName();
+          $otherAttributeDesc = $otherMapper->getAttribute($referencedValue);
+          if ($otherAttributeDesc instanceof RDBAttributeDescription) {
+            // set up the join definition if not already defined
+            if (!isset($references[$otherTable])) {
+              $references[$otherTable] = array();
+              $references[$otherTable]['attributes'] = array();
 
-                $tableNameQ = $this->quoteIdentifier($tableName);
-                $otherTableQ = $this->quoteIdentifier($otherTable);
+              $tableNameQ = $this->quoteIdentifier($tableName);
+              $otherTableQ = $this->quoteIdentifier($otherTable);
 
-                // determine the join condition
-                if ($relationDesc instanceof RDBManyToOneRelationDescription) {
-                  // reference from parent
-                  $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getFkName())->getColumn());
-                  $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getIdName())->getColumn());
-                  $additionalCond = "";
-                }
-                else if ($relationDesc instanceof RDBOneToManyRelationDescription) {
-                  // reference from child
-                  $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getIdName())->getColumn());
-                  $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getFkName())->getColumn());
-                  $otherPkNames = $otherMapper->getPkNames();
-                  $otherPkNameQ = $this->quoteIdentifier($otherMapper->getAttribute($otherPkNames[0])->getColumn());
-                  $additionalCond = " AND ".$otherTableQ.".".$otherPkNameQ.
-                          " = (SELECT MIN(".$otherTableQ.".".$otherPkNameQ.") FROM ".$otherTableQ.
-                          " WHERE ".$otherTableQ.".".$otherAttrNameQ."=".$tableNameQ.".".$thisAttrNameQ.")";
-                }
-                $joinCond = $tableNameQ.".".$thisAttrNameQ."=".$otherTableQ.".".$otherAttrNameQ;
-                if (strlen($additionalCond) > 0) {
-                  $joinCond = "(".$joinCond.$additionalCond.")";
-                }
-                $references[$otherTable]['joinCond'] = $joinCond;
+              // determine the join condition
+              if ($relationDesc instanceof RDBManyToOneRelationDescription) {
+                // reference from parent
+                $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getFkName())->getColumn());
+                $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getIdName())->getColumn());
+                $additionalCond = "";
               }
-
-              // add the attributes
-              $references[$otherTable]['attributes'][$curReferenceDesc->getName()] = $otherAttributeDesc->getColumn();
+              else if ($relationDesc instanceof RDBOneToManyRelationDescription) {
+                // reference from child
+                $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getIdName())->getColumn());
+                $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getFkName())->getColumn());
+                $otherPkNames = $otherMapper->getPkNames();
+                $otherPkNameQ = $this->quoteIdentifier($otherMapper->getAttribute($otherPkNames[0])->getColumn());
+                $additionalCond = " AND ".$otherTableQ.".".$otherPkNameQ.
+                        " = (SELECT MIN(".$otherTableQ.".".$otherPkNameQ.") FROM ".$otherTableQ.
+                        " WHERE ".$otherTableQ.".".$otherAttrNameQ."=".$tableNameQ.".".$thisAttrNameQ.")";
+              }
+              $joinCond = $tableNameQ.".".$thisAttrNameQ."=".$otherTableQ.".".$otherAttrNameQ;
+              if (strlen($additionalCond) > 0) {
+                $joinCond = "(".$joinCond.$additionalCond.")";
+              }
+              $references[$otherTable]['joinCond'] = $joinCond;
             }
+
+            // add the attributes
+            $references[$otherTable]['attributes'][$curReferenceDesc->getName()] = $otherAttributeDesc->getColumn();
           }
         }
       }

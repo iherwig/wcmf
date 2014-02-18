@@ -43,6 +43,7 @@ use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
+use wcmf\lib\persistence\ReferenceDescription;
 
 $includePath = get_include_path();
 if (strpos($includePath, 'Zend') === false) {
@@ -543,12 +544,27 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
+   * Get the references to other entities
+   * @return Array of AttributeDescription instances
+   */
+  protected function getReferences() {
+    $this->initAttributes();
+    return $this->_attributes['refs'];
+  }
+
+  /**
    * Get the relation descriptions defined in the subclass and add them to internal arrays.
    */
   private function initAttributes() {
     if ($this->_attributes == null) {
       $this->_attributes = array();
       $this->_attributes['byname'] = $this->getAttributeDescriptions();
+      $this->_attributes['refs'] = array();
+      foreach ($this->_attributes['byname'] as $name => $attrDesc) {
+        if ($attrDesc instanceof ReferenceDescription) {
+          $this->_attributes['refs'][] = $attrDesc;
+        }
+      }
     }
   }
 
