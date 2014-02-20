@@ -118,28 +118,30 @@ class LuceneSearch implements IndexedSearch {
           $summary = '';
           $highlightedRegex = '/((<b style="color:black;background-color:#[0-9a-f]{6}">)+)([^<]+?)((<\/b>)+)/';
           $obj = $persistenceFacade->load($oid);
-          $valueNames = $obj->getPersistentValueNames();
-          foreach ($valueNames as $curValueName) {
-            $inputType = $obj->getValueProperty($curValueName, 'input_type');
-            $value = $this->encodeValue($obj->getValue($curValueName), $inputType);
-            if (strlen($value) > 0) {
-              $highlighted = @$query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
-              $matches = array();
-              if (preg_match($highlightedRegex, $highlighted, $matches)) {
-                $hitStr = $matches[3];
-                $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
-                $highlighted = trim(preg_replace('/&#13;|[\n\r\t]/', ' ', $highlighted));
-                $excerpt = StringUtil::excerpt($highlighted, $hitStr, 300, '');
-                $summary = $excerpt;
-                break;
+          if ($obj) {
+            $valueNames = $obj->getPersistentValueNames();
+            foreach ($valueNames as $curValueName) {
+              $inputType = $obj->getValueProperty($curValueName, 'input_type');
+              $value = $this->encodeValue($obj->getValue($curValueName), $inputType);
+              if (strlen($value) > 0) {
+                $highlighted = @$query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
+                $matches = array();
+                if (preg_match($highlightedRegex, $highlighted, $matches)) {
+                  $hitStr = $matches[3];
+                  $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
+                  $highlighted = trim(preg_replace('/&#13;|[\n\r\t]/', ' ', $highlighted));
+                  $excerpt = StringUtil::excerpt($highlighted, $hitStr, 300, '');
+                  $summary = $excerpt;
+                  break;
+                }
               }
             }
+            $results[$oidStr] = array(
+                'oid' => $oidStr,
+                'score' => $hit->score,
+                'summary' => $summary
+            );
           }
-          $results[$oidStr] = array(
-              'oid' => $oidStr,
-              'score' => $hit->score,
-              'summary' => $summary
-          );
         }
       }
       catch (Exception $ex) {

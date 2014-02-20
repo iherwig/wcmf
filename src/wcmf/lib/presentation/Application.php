@@ -121,14 +121,16 @@ class Application {
   /**
    * Run the application with the given request
    * @param request
+   * @return Response instance
    */
   public function run(Request $request) {
     // process the requested action
-    ObjectFactory::getInstance('actionMapper')->processAction($request);
+    $response = ObjectFactory::getInstance('actionMapper')->processAction($request);
 
     // store the last successful request
     $session = ObjectFactory::getInstance('session');
     $session->set('lastRequest', $request);
+    return $response;
   }
 
   /**

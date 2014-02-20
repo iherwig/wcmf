@@ -25,7 +25,6 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\ApplicationError;
-use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
 
 /**
@@ -88,13 +87,20 @@ class MultipleActionController extends Controller {
     // check if we have an array of arrays
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $data = $request->getValue('data');
-    foreach($data as $key => $value) {
-      if (!is_array($value)) {
-        $response->addError(ApplicationError::get('PARAMETER_INVALID',
-          array('invalidParameters' => array('data'))));
-        return false;
+    if ($request->hasValue('data')) {
+      $data = $request->getValue('data');
+      foreach($data as $key => $value) {
+        if (!is_array($value)) {
+          $response->addError(ApplicationError::get('PARAMETER_INVALID',
+            array('invalidParameters' => array('data'))));
+          return false;
+        }
       }
+    }
+    else {
+      $response->addError(ApplicationError::get('PARAMETER_MISSING',
+        array('missingParameters' => array('data'))));
+      return false;
     }
     return true;
   }

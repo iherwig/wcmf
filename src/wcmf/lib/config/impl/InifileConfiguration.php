@@ -166,7 +166,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   public function getValue($key, $section) {
     $lookupEntry = $this->lookup($section, $key);
-    if ($lookupEntry == null) {
+    if ($lookupEntry == null || sizeof($lookupEntry) == 1) {
       throw new ConfigurationException('Key \''.$key.'\' not found in section \''.$section.'\'!');
     }
     else {
