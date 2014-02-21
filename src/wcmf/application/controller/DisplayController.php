@@ -44,7 +44,7 @@ use wcmf\lib\presentation\Controller;
  *                    as complete objects. Below this level, objects are returned as references.
  *                    If omitted, 1 is assumed. The value -1 has the special meaning of unlimited depth.
  *
- * @param[in] translateValues True/False. If true, list values will be translated using Control::translateValue. If not given,
+ * @param[in] translateValues Boolean. If true, list values will be translated using Control::translateValue. If not given,
  *                        all values will be returned as is.
  *
  * @param[out] object The Node object to display
