@@ -19,6 +19,7 @@
 namespace wcmf\lib\util;
 
 use \Exception;
+use \RuntimeException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\util\GraphicsUtil;

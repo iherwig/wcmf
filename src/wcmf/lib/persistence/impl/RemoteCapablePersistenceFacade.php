@@ -27,7 +27,7 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\impl\DefaultPersistenceFacade;
 use wcmf\lib\presentation\Request;
-use wcmf\lib\remoting\RemotingFacade;
+use wcmf\lib\service\RemotingServer;
 
 /**
  * RemoteCapablePersistenceFacade delegates local persistence operations to the
@@ -44,6 +44,8 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   private $_isResolvingProxies = true;
   private $_isTranslatingValues = true;
 
+  private $_remotingServer = null;
+
   /**
    * Constructor
    */
@@ -58,6 +60,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       $objs = array();
       $session->set(self::REMOTE_OBJECTS_SESSION_VARNAME, $objs);
     }
+    $this->_remotingServer = new RemotingServer();
     parent::__construct();
   }
 
@@ -230,8 +233,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       Log::debug("Request:\n".$request->toString(), __CLASS__);
 
       // do the remote call
-      $facade = RemotingFacade::getInstance();
-      $response = $facade->doCall($serverKey, $request);
+      $response = $this->_remotingServer->doCall($serverKey, $request);
       $obj = $response->getValue('node');
       if ($obj) {
         // set umis instead of oids

@@ -18,6 +18,7 @@
  */
 namespace wcmf\lib\pdf;
 
+use \RuntimeException;
 use wcmf\lib\pdf\PDF;
 use wcmf\lib\pdf\PDFPage;
 

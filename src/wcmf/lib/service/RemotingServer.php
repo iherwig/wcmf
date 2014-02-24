@@ -16,37 +16,40 @@
  *
  * $Id$
  */
-namespace wcmf\lib\remoting;
+namespace wcmf\lib\service;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\remoting\HTTPClient;
-use wcmf\lib\remoting\RPCClient;
+use wcmf\lib\service\impl\HTTPClient;
+use wcmf\lib\service\impl\RPCClient;
 
 /**
- * RemotingFacade is used to communicate with other wCMF instances.
+ * RemotingServer is used to communicate with other wCMF instances.
+ * The url and login credentials of a remote instance are configured
+ * using the configuration sections RemoteServer and RemoteUser.
+ * Each remote instance is identified by a unique server key. The following
+ * example configures ServerKeyA over http and ServerKeyB over command
+ * line:
+ *
+ * @code
+ * [remoteserver]
+ * ServerKeyA = http://localhost/wcmfA
+ * ServerKeyB = /path/to/wcmfB/main.php
+ *
+ * [remoteuser]
+ * ServerKeyA = {loginA, passwordA}
+ * ServerKeyB = {loginB, passwordB}
+ *
+ * [system]
+ * php = /path/to/php-cli
+ * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RemotingFacade {
+class RemotingServer {
 
-  private static $_instance = null;
   private $_clients = array();
   private $_users = array();
-
-  private function __construct() {}
-
-  /**
-   * Get the singleton instance.
-   * @return A reference to a RemotingFacade instance
-   */
-  public static function getInstance() {
-    if (!isset(self::$_instance)) {
-      self::$_instance = new RemotingFacade();
-    }
-    return self::$_instance;
-  }
 
   /**
    * Send a request to the server identified by serverKey.
@@ -98,8 +101,9 @@ class RemotingFacade {
       $remoteUser = $config->getValue($serverKey, 'remoteuser');
       if (is_array($remoteUser) && sizeof($remoteUser) == 2) {
         $this->_users[$serverKey] = array(
-            'login' => $remoteUser[0],
-            'password' => $remoteUser[1]);
+          'login' => $remoteUser[0],
+          'password' => $remoteUser[1]
+        );
       }
       else {
         throw new IllegialConfigurationException(

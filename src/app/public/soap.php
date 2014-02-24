@@ -9,7 +9,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
-use wcmf\lib\presentation\SoapServer;
+use wcmf\lib\service\SoapServer;
 // PROTECTED REGION ID(/soap/Import) ENABLED START
 // PROTECTED REGION END
 

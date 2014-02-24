@@ -16,14 +16,16 @@
  *
  * $Id$
  */
-namespace wcmf\lib\remoting;
+namespace wcmf\lib\service\impl;
 
 use \Exception;
+use \RuntimeException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ControllerMessage;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\service\RemotingClient;
 
 $includePath = get_include_path();
 if (strpos($includePath, 'Zend') === false) {
@@ -33,10 +35,11 @@ require_once('Zend/Http/Client.php');
 
 /**
  * HTTPClient is used to do calls to other wCMF instances over HTTP.
+ * @see RemotingFacade
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class HTTPClient {
+class HTTPClient implements RemotingClient {
 
   private $_client = null;
   private $_user = null;
@@ -62,7 +65,7 @@ class HTTPClient {
    * @param request A Request instance
    * @return A Response instance
    */
-  public function call($request) {
+  public function call(Request $request) {
     $response = $this->doRemoteCall($request, false);
     return $response;
   }
@@ -73,7 +76,7 @@ class HTTPClient {
    * @param isLogin Boolean whether this request is a login request or not
    * @return The Response instance
    */
-  protected function doRemoteCall($request, $isLogin) {
+  protected function doRemoteCall(Request $request, $isLogin) {
     // initially login, if no cookie is set
     $cookyJar = $this->_client->getCookieJar();
     if (!$isLogin && sizeof($cookyJar->getAllCookies()) == 0) {

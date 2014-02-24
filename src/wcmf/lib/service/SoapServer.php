@@ -16,7 +16,7 @@
  *
  * $Id$
  */
-namespace wcmf\lib\presentation;
+namespace wcmf\lib\service;
 
 use \Exception;
 use wcmf\lib\core\Log;

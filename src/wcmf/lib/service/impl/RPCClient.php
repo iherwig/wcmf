@@ -16,21 +16,23 @@
  *
  * $Id$
  */
-namespace wcmf\lib\remoting;
+namespace wcmf\lib\service\impl;
 
+use \RuntimeException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\service\RemotingClient;
 
 /**
- * RPCClient is used to do calls to other wCMF instances on
- * the same maschine.
+ * RPCClient is used to do calls to other wCMF instances on the same mashine.
+ * @see RemotingFacade
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RPCClient {
+class RPCClient implements RemotingClient {
 
   // constants
   const SIDS_SESSION_VARNAME = 'RPCClient.sids';
@@ -69,7 +71,7 @@ class RPCClient {
    * @param request A Request instance
    * @return A Response instance
    */
-  public function call($request) {
+  public function call(Request $request) {
     $response = $this->doRemoteCall($request, false);
     return $response;
   }
@@ -80,7 +82,7 @@ class RPCClient {
    * @param isLogin Boolean whether this request is a login request or not
    * @return The Response instance
    */
-  protected function doRemoteCall($request, $isLogin) {
+  protected function doRemoteCall(Request $request, $isLogin) {
     // initially login, if no sessionId is set
     $sessionId = $this->getSessionId();
     if (!$isLogin && $sessionId == null) {
@@ -146,7 +148,7 @@ class RPCClient {
   protected function doLogin() {
     if ($this->_user) {
       $request = new Request(
-        'wcmf\application\controller\LoginController',
+        '',
         '',
         'login',
         array(
