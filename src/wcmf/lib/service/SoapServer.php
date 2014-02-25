@@ -30,9 +30,9 @@ use wcmf\lib\presentation\Response;
 require_once(WCMF_BASE."wcmf/vendor/nusoap/lib/nusoap.php");
 
 /**
- * @class SoapFacade
+ * @class SoapServer
  * @ingroup Presentation
- * @brief SoapFacade is used by nusoap server to actually process
+ * @brief SoapServer extends nusoap server to actually process
  * requests inside the application context.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -97,6 +97,21 @@ class SoapServer extends \nusoap_server {
   }
 
   /**
+   * @see nusoap_server::service
+   */
+  public function service($data) {
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug($data, __CLASS__);
+    }
+    try {
+      parent::service($data);
+    }
+    catch (Exception $ex) {
+      $this->handleException($ex);
+    }
+  }
+
+  /**
    * Get a dummy object id to be used in a request
    * @param $type The entity type
    * @return ObjectId
@@ -113,41 +128,37 @@ class SoapServer extends \nusoap_server {
    */
   public function doCall($action, $params) {
     $authHeader = $this->requestHeader['Security']['UsernameToken'];
-    try {
-      $formats = ObjectFactory::getInstance('formats');
+    $formats = ObjectFactory::getInstance('formats');
 
-      $request = new Request('', '', 'actionSet');
-      $request->setResponseFormat($formats['null']);
-      $request->setValues(array(
-        'data' => array(
-          'action1' => array(
-            'action' => 'login',
-            'user' => $authHeader['Username'],
-            'password' => $authHeader['Password']['!']
-          ),
-          'action2' => array_merge(array('action' => $action), $params),
-          'action3' => array(
-            'action' => 'logout'
-          )
+    $request = new Request('', '', 'actionSet');
+    $request->setResponseFormat($formats['null']);
+    $request->setValues(array(
+      'data' => array(
+        'action1' => array(
+          'action' => 'login',
+          'user' => $authHeader['Username'],
+          'password' => $authHeader['Password']['!']
+        ),
+        'action2' => array_merge(array('action' => $action), $params),
+        'action3' => array(
+          'action' => 'logout'
         )
-      ));
+      )
+    ));
 
-      // run the application
-      $response = $this->_application->run($request);
-      if ($response->hasErrors()) {
-        $errors = $response->getErrors();
-        throw new ApplicationException($request, $response, $errors[0]);
-      }
-      $responseData = $response->getValue('data');
-      $data = $responseData['action2'];
-      $actionResponse = new Response($data['controller'], $data['context'], $data['action']);
-      $actionResponse->setValues($data);
-      return $actionResponse;
+    // run the application
+    $response = $this->_application->run($request);
+    if ($response->hasErrors()) {
+      $errors = $response->getErrors();
+      throw new ApplicationException($request, $response, $errors[0]);
     }
-    catch (Exception $ex) {
-      $this->handleException($ex);
-    }
-    return null;
+    $responseData = $response->getValue('data');
+    $data = $responseData['action2'];
+    $actionResponse = new Response($data['controller'], $data['context'], $data['action']);
+    $actionResponse->setFormat($formats['soap']);
+    $actionResponse->setValues($data);
+    \wcmf\lib\presentation\format\Formatter::serialize($actionResponse);
+    return $actionResponse;
   }
 
   /**
@@ -155,8 +166,9 @@ class SoapServer extends \nusoap_server {
    * @param $ex
    */
   private function handleException($ex) {
-    $this->fault('SOAP-ENV:SERVER', $ex->getMessage(), '', '');
     Log::error($ex->getMessage()."\n".$ex->getTraceAsString(), __CLASS__);
+    $this->fault('SOAP-ENV:SERVER', $ex->getMessage(), '', '');
+    $this->send_response();
   }
 }
 ?>

@@ -22,7 +22,7 @@ use test\lib\BaseTestCase;
 use wcmf\lib\core\ObjectFactory;
 
 /**
- * JSONFormatTest.
+ * ObjectFactoryTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

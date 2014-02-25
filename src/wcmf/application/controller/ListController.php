@@ -50,8 +50,6 @@ use wcmf\lib\util\Obfuscator;
  *              the type selected by the className parameter. If omitted, the sorting is undefined [optional]
  * @param[in] sortDirection The direction to sort the list. Must be either "asc" for ascending or "desc"
  *              for descending. If omitted, "asc" is assumed [optional]
- * @param[in] attributes The list of attributes of the entity type to return. If omitted,
- *              all attributes will be returned [optional]
  * @param[in] query A query condition executed with StringQuery
  *
  * @param[in] renderValues Boolean whether to render the values using NodeUtil::renderValues or not

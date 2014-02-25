@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="wcmf" resourceRoot="${projectDir}" soapui-version="4.6.4" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SOAPServiceBinding" type="wsdl" bindingName="{http://wcmf.sourceforge.net}SOAPServiceBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl"><con:part><con:url>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="http://wcmf.sourceforge.net" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://wcmf.sourceforge.net" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<con:soapui-project activeEnvironment="Default" name="wcmf" resourceRoot="" soapui-version="4.6.4" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SOAPServiceBinding" type="wsdl" bindingName="{http://wcmf.sourceforge.net}SOAPServiceBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost/wcmf/src/app/public/soap?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost/wcmf/src/app/public/soap?wsdl"><con:part><con:url>http://localhost/wcmf/src/app/public/soap?wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="http://wcmf.sourceforge.net" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://wcmf.sourceforge.net" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
     <xsd:schema elementFormDefault="qualified" targetNamespace="http://wcmf.sourceforge.net">
       <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
@@ -26,6 +26,16 @@
           <xsd:element name="summary" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
+      <xsd:complexType name="searchRequestType">
+        <xsd:all>
+          <xsd:element name="query" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="searchResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:SearchResultList" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
       <xsd:complexType name="Publisher">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
@@ -34,10 +44,8 @@
           <xsd:element name="creator" type="xsd:string"/>
           <xsd:element name="modified" type="xsd:string"/>
           <xsd:element name="last_editor" type="xsd:string"/>
-          <xsd:element name="Book" type="tns:BookList"/>
-          <xsd:element name="NMPublisherAuthor" type="tns:NMPublisherAuthorList"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="Book" type="tns:OidList"/>
+          <xsd:element name="Author" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="PublisherList">
@@ -47,6 +55,12 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="PublisherListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:PublisherList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="Author">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
@@ -55,10 +69,8 @@
           <xsd:element name="creator" type="xsd:string"/>
           <xsd:element name="modified" type="xsd:string"/>
           <xsd:element name="last_editor" type="xsd:string"/>
-          <xsd:element name="Chapter" type="tns:ChapterList"/>
-          <xsd:element name="NMPublisherAuthor" type="tns:NMPublisherAuthorList"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="Chapter" type="tns:OidList"/>
+          <xsd:element name="Publisher" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="AuthorList">
@@ -67,6 +79,68 @@
             <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Author[]" xmlns:wsdl1="http://schemas.xmlsoap.org/wsdl/"/>
           </xsd:restriction>
         </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="AuthorListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:AuthorList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="getAuthorListRequestType">
+        <xsd:all>
+          <xsd:element name="limit" type="xsd:integer" form="unqualified"/>
+          <xsd:element name="offset" type="xsd:integer" form="unqualified"/>
+          <xsd:element name="sortFieldName" type="xsd:string" form="unqualified"/>
+          <xsd:element name="sortDirection" type="xsd:string" form="unqualified"/>
+          <xsd:element name="query" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="getAuthorListResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:AuthorListResult" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="createAuthorRequestType">
+        <xsd:all>
+          <xsd:element name="Author" type="tns:Author" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="createAuthorResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="readAuthorRequestType">
+        <xsd:all>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+          <xsd:element name="depth" type="xsd:integer" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="readAuthorResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:Author" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="updateAuthorRequestType">
+        <xsd:all>
+          <xsd:element name="Author" type="tns:Author" form="unqualified"/>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="updateAuthorResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="deleteAuthorRequestType">
+        <xsd:all>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="deleteAuthorResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
       </xsd:complexType>
       <xsd:complexType name="Book">
         <xsd:sequence>
@@ -79,9 +153,8 @@
           <xsd:element name="creator" type="xsd:string"/>
           <xsd:element name="modified" type="xsd:string"/>
           <xsd:element name="last_editor" type="xsd:string"/>
-          <xsd:element name="Chapter" type="tns:ChapterList"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="Publisher" type="tns:OidList"/>
+          <xsd:element name="Chapter" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="BookList">
@@ -90,6 +163,68 @@
             <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Book[]" xmlns:wsdl1="http://schemas.xmlsoap.org/wsdl/"/>
           </xsd:restriction>
         </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="BookListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:BookList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="getBookListRequestType">
+        <xsd:all>
+          <xsd:element name="limit" type="xsd:integer" form="unqualified"/>
+          <xsd:element name="offset" type="xsd:integer" form="unqualified"/>
+          <xsd:element name="sortFieldName" type="xsd:string" form="unqualified"/>
+          <xsd:element name="sortDirection" type="xsd:string" form="unqualified"/>
+          <xsd:element name="query" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="getBookListResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:BookListResult" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="createBookRequestType">
+        <xsd:all>
+          <xsd:element name="Book" type="tns:Book" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="createBookResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="readBookRequestType">
+        <xsd:all>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+          <xsd:element name="depth" type="xsd:integer" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="readBookResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:Book" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="updateBookRequestType">
+        <xsd:all>
+          <xsd:element name="Book" type="tns:Book" form="unqualified"/>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="updateBookResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="deleteBookRequestType">
+        <xsd:all>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="deleteBookResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
       </xsd:complexType>
       <xsd:complexType name="Chapter">
         <xsd:sequence>
@@ -102,11 +237,12 @@
           <xsd:element name="creator" type="xsd:string"/>
           <xsd:element name="modified" type="xsd:string"/>
           <xsd:element name="last_editor" type="xsd:string"/>
+          <xsd:element name="author_name" type="xsd:string"/>
           <xsd:element name="sortkey" type="xsd:string"/>
-          <xsd:element name="Chapter" type="tns:ChapterList"/>
-          <xsd:element name="Image" type="tns:ImageList"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="Author" type="tns:OidList"/>
+          <xsd:element name="Book" type="tns:OidList"/>
+          <xsd:element name="Chapter" type="tns:OidList"/>
+          <xsd:element name="Image" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="ChapterList">
@@ -115,6 +251,68 @@
             <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Chapter[]" xmlns:wsdl1="http://schemas.xmlsoap.org/wsdl/"/>
           </xsd:restriction>
         </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="ChapterListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:ChapterList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="getChapterListRequestType">
+        <xsd:all>
+          <xsd:element name="limit" type="xsd:integer" form="unqualified"/>
+          <xsd:element name="offset" type="xsd:integer" form="unqualified"/>
+          <xsd:element name="sortFieldName" type="xsd:string" form="unqualified"/>
+          <xsd:element name="sortDirection" type="xsd:string" form="unqualified"/>
+          <xsd:element name="query" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="getChapterListResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:ChapterListResult" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="createChapterRequestType">
+        <xsd:all>
+          <xsd:element name="Chapter" type="tns:Chapter" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="createChapterResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="readChapterRequestType">
+        <xsd:all>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+          <xsd:element name="depth" type="xsd:integer" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="readChapterResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:Chapter" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="updateChapterRequestType">
+        <xsd:all>
+          <xsd:element name="Chapter" type="tns:Chapter" form="unqualified"/>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="updateChapterResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="deleteChapterRequestType">
+        <xsd:all>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="deleteChapterResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
       </xsd:complexType>
       <xsd:complexType name="Image">
         <xsd:sequence>
@@ -127,8 +325,7 @@
           <xsd:element name="modified" type="xsd:string"/>
           <xsd:element name="last_editor" type="xsd:string"/>
           <xsd:element name="sortkey" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="Chapter" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="ImageList">
@@ -138,6 +335,68 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="ImageListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:ImageList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="getImageListRequestType">
+        <xsd:all>
+          <xsd:element name="limit" type="xsd:integer" form="unqualified"/>
+          <xsd:element name="offset" type="xsd:integer" form="unqualified"/>
+          <xsd:element name="sortFieldName" type="xsd:string" form="unqualified"/>
+          <xsd:element name="sortDirection" type="xsd:string" form="unqualified"/>
+          <xsd:element name="query" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="getImageListResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:ImageListResult" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="createImageRequestType">
+        <xsd:all>
+          <xsd:element name="Image" type="tns:Image" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="createImageResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="readImageRequestType">
+        <xsd:all>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+          <xsd:element name="depth" type="xsd:integer" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="readImageResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="tns:Image" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="updateImageRequestType">
+        <xsd:all>
+          <xsd:element name="Image" type="tns:Image" form="unqualified"/>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="updateImageResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="deleteImageRequestType">
+        <xsd:all>
+          <xsd:element name="oid" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="deleteImageResponseType">
+        <xsd:all>
+          <xsd:element name="return" type="xsd:string" form="unqualified"/>
+        </xsd:all>
+      </xsd:complexType>
       <xsd:complexType name="EntityBase">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
@@ -145,8 +404,6 @@
           <xsd:element name="creator" type="xsd:string"/>
           <xsd:element name="modified" type="xsd:string"/>
           <xsd:element name="last_editor" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="EntityBaseList">
@@ -156,14 +413,20 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="EntityBaseListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:EntityBaseList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="NMPublisherAuthor">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
           <xsd:element name="fk_author_id" type="xsd:string"/>
           <xsd:element name="fk_publisher_id" type="xsd:string"/>
           <xsd:element name="sortkey" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="Publisher" type="tns:OidList"/>
+          <xsd:element name="Author" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="NMPublisherAuthorList">
@@ -173,11 +436,15 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="NMPublisherAuthorListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:NMPublisherAuthorList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="DBSequence">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="DBSequenceList">
@@ -187,13 +454,17 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="DBSequenceListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:DBSequenceList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="Language">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
           <xsd:element name="name" type="xsd:string"/>
           <xsd:element name="code" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="LanguageList">
@@ -203,6 +474,12 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="LanguageListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:LanguageList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="Locktable">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
@@ -210,8 +487,7 @@
           <xsd:element name="objectid" type="xsd:string"/>
           <xsd:element name="sessionid" type="xsd:string"/>
           <xsd:element name="since" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="User" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="LocktableList">
@@ -221,13 +497,17 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="LocktableListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:LocktableList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="Role">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
           <xsd:element name="name" type="xsd:string"/>
-          <xsd:element name="NMUserRole" type="tns:NMUserRoleList"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="User" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="RoleList">
@@ -237,6 +517,12 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="RoleListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:RoleList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="Translation">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
@@ -244,8 +530,6 @@
           <xsd:element name="attribute" type="xsd:string"/>
           <xsd:element name="translation" type="xsd:string"/>
           <xsd:element name="language" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="TranslationList">
@@ -255,14 +539,19 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="TranslationListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:TranslationList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="UserConfig">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
           <xsd:element name="fk_user_id" type="xsd:string"/>
           <xsd:element name="key" type="xsd:string"/>
           <xsd:element name="val" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="User" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="UserConfigList">
@@ -272,6 +561,12 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="UserConfigListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:UserConfigList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="User">
         <xsd:sequence>
           <xsd:element name="id" type="xsd:string"/>
@@ -280,11 +575,9 @@
           <xsd:element name="name" type="xsd:string"/>
           <xsd:element name="firstname" type="xsd:string"/>
           <xsd:element name="config" type="xsd:string"/>
-          <xsd:element name="Locktable" type="tns:LocktableList"/>
-          <xsd:element name="UserConfig" type="tns:UserConfigList"/>
-          <xsd:element name="NMUserRole" type="tns:NMUserRoleList"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="Locktable" type="tns:OidList"/>
+          <xsd:element name="UserConfig" type="tns:OidList"/>
+          <xsd:element name="Role" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="UserList">
@@ -294,12 +587,18 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+      <xsd:complexType name="UserListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:UserList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="NMUserRole">
         <xsd:sequence>
           <xsd:element name="fk_user_id" type="xsd:string"/>
           <xsd:element name="fk_role_id" type="xsd:string"/>
-          <xsd:element name="parentoids" type="tns:OidList"/>
-          <xsd:element name="childoids" type="tns:OidList"/>
+          <xsd:element name="Role" type="tns:OidList"/>
+          <xsd:element name="User" type="tns:OidList"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="NMUserRoleList">
@@ -309,151 +608,187 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-      <xsd:complexType name="searchRequestType">
-        <xsd:all>
-          <xsd:element name="query" type="xsd:string" form="unqualified"/>
-        </xsd:all>
-      </xsd:complexType>
-      <xsd:complexType name="searchResponseType">
-        <xsd:all>
-          <xsd:element name="return" type="tns:SearchResultList" form="unqualified"/>
-        </xsd:all>
+      <xsd:complexType name="NMUserRoleListResult">
+        <xsd:sequence>
+          <xsd:element name="list" type="tns:NMUserRoleList"/>
+          <xsd:element name="totalCount" type="xsd:integer"/>
+        </xsd:sequence>
       </xsd:complexType>
       <xsd:element name="search" type="tns:searchRequestType"/>
       <xsd:element name="searchResponse" type="tns:searchResponseType"/>
+      <xsd:element name="getAuthorList" type="tns:getAuthorListRequestType"/>
+      <xsd:element name="getAuthorListResponse" type="tns:getAuthorListResponseType"/>
+      <xsd:element name="createAuthor" type="tns:createAuthorRequestType"/>
+      <xsd:element name="createAuthorResponse" type="tns:createAuthorResponseType"/>
+      <xsd:element name="readAuthor" type="tns:readAuthorRequestType"/>
+      <xsd:element name="readAuthorResponse" type="tns:readAuthorResponseType"/>
+      <xsd:element name="updateAuthor" type="tns:updateAuthorRequestType"/>
+      <xsd:element name="updateAuthorResponse" type="tns:updateAuthorResponseType"/>
+      <xsd:element name="deleteAuthor" type="tns:deleteAuthorRequestType"/>
+      <xsd:element name="deleteAuthorResponse" type="tns:deleteAuthorResponseType"/>
+      <xsd:element name="getBookList" type="tns:getBookListRequestType"/>
+      <xsd:element name="getBookListResponse" type="tns:getBookListResponseType"/>
+      <xsd:element name="createBook" type="tns:createBookRequestType"/>
+      <xsd:element name="createBookResponse" type="tns:createBookResponseType"/>
+      <xsd:element name="readBook" type="tns:readBookRequestType"/>
+      <xsd:element name="readBookResponse" type="tns:readBookResponseType"/>
+      <xsd:element name="updateBook" type="tns:updateBookRequestType"/>
+      <xsd:element name="updateBookResponse" type="tns:updateBookResponseType"/>
+      <xsd:element name="deleteBook" type="tns:deleteBookRequestType"/>
+      <xsd:element name="deleteBookResponse" type="tns:deleteBookResponseType"/>
+      <xsd:element name="getChapterList" type="tns:getChapterListRequestType"/>
+      <xsd:element name="getChapterListResponse" type="tns:getChapterListResponseType"/>
+      <xsd:element name="createChapter" type="tns:createChapterRequestType"/>
+      <xsd:element name="createChapterResponse" type="tns:createChapterResponseType"/>
+      <xsd:element name="readChapter" type="tns:readChapterRequestType"/>
+      <xsd:element name="readChapterResponse" type="tns:readChapterResponseType"/>
+      <xsd:element name="updateChapter" type="tns:updateChapterRequestType"/>
+      <xsd:element name="updateChapterResponse" type="tns:updateChapterResponseType"/>
+      <xsd:element name="deleteChapter" type="tns:deleteChapterRequestType"/>
+      <xsd:element name="deleteChapterResponse" type="tns:deleteChapterResponseType"/>
+      <xsd:element name="getImageList" type="tns:getImageListRequestType"/>
+      <xsd:element name="getImageListResponse" type="tns:getImageListResponseType"/>
+      <xsd:element name="createImage" type="tns:createImageRequestType"/>
+      <xsd:element name="createImageResponse" type="tns:createImageResponseType"/>
+      <xsd:element name="readImage" type="tns:readImageRequestType"/>
+      <xsd:element name="readImageResponse" type="tns:readImageResponseType"/>
+      <xsd:element name="updateImage" type="tns:updateImageRequestType"/>
+      <xsd:element name="updateImageResponse" type="tns:updateImageResponseType"/>
+      <xsd:element name="deleteImage" type="tns:deleteImageRequestType"/>
+      <xsd:element name="deleteImageResponse" type="tns:deleteImageResponseType"/>
     </xsd:schema>
   </types>
-  <message name="getAuthorListRequest"/>
-  <message name="getAuthorListResponse">
-    <part name="return" type="tns:AuthorList"/>
-  </message>
-  <message name="createAuthorRequest">
-    <part name="Author" type="tns:Author"/>
-    <part name="parentoid" type="xsd:string"/>
-  </message>
-  <message name="createAuthorResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="readAuthorRequest">
-    <part name="oid" type="xsd:string"/>
-    <part name="depth" type="xsd:integer"/>
-  </message>
-  <message name="readAuthorResponse">
-    <part name="return" type="tns:Author"/>
-  </message>
-  <message name="updateAuthorRequest">
-    <part name="Author" type="tns:Author"/>
-    <part name="oid" type="xsd:string"/>
-  </message>
-  <message name="updateAuthorResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="deleteAuthorRequest">
-    <part name="oid" type="xsd:string"/>
-  </message>
-  <message name="deleteAuthorResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="getBookListRequest"/>
-  <message name="getBookListResponse">
-    <part name="return" type="tns:BookList"/>
-  </message>
-  <message name="createBookRequest">
-    <part name="Book" type="tns:Book"/>
-    <part name="parentoid" type="xsd:string"/>
-  </message>
-  <message name="createBookResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="readBookRequest">
-    <part name="oid" type="xsd:string"/>
-    <part name="depth" type="xsd:integer"/>
-  </message>
-  <message name="readBookResponse">
-    <part name="return" type="tns:Book"/>
-  </message>
-  <message name="updateBookRequest">
-    <part name="Book" type="tns:Book"/>
-    <part name="oid" type="xsd:string"/>
-  </message>
-  <message name="updateBookResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="deleteBookRequest">
-    <part name="oid" type="xsd:string"/>
-  </message>
-  <message name="deleteBookResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="getChapterListRequest"/>
-  <message name="getChapterListResponse">
-    <part name="return" type="tns:ChapterList"/>
-  </message>
-  <message name="createChapterRequest">
-    <part name="Chapter" type="tns:Chapter"/>
-    <part name="parentoid" type="xsd:string"/>
-  </message>
-  <message name="createChapterResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="readChapterRequest">
-    <part name="oid" type="xsd:string"/>
-    <part name="depth" type="xsd:integer"/>
-  </message>
-  <message name="readChapterResponse">
-    <part name="return" type="tns:Chapter"/>
-  </message>
-  <message name="updateChapterRequest">
-    <part name="Chapter" type="tns:Chapter"/>
-    <part name="oid" type="xsd:string"/>
-  </message>
-  <message name="updateChapterResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="deleteChapterRequest">
-    <part name="oid" type="xsd:string"/>
-  </message>
-  <message name="deleteChapterResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="getImageListRequest"/>
-  <message name="getImageListResponse">
-    <part name="return" type="tns:ImageList"/>
-  </message>
-  <message name="createImageRequest">
-    <part name="Image" type="tns:Image"/>
-    <part name="parentoid" type="xsd:string"/>
-  </message>
-  <message name="createImageResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="readImageRequest">
-    <part name="oid" type="xsd:string"/>
-    <part name="depth" type="xsd:integer"/>
-  </message>
-  <message name="readImageResponse">
-    <part name="return" type="tns:Image"/>
-  </message>
-  <message name="updateImageRequest">
-    <part name="Image" type="tns:Image"/>
-    <part name="oid" type="xsd:string"/>
-  </message>
-  <message name="updateImageResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
-  <message name="deleteImageRequest">
-    <part name="oid" type="xsd:string"/>
-  </message>
-  <message name="deleteImageResponse">
-    <part name="return" type="xsd:string"/>
-  </message>
   <message name="searchRequest">
     <part name="parameters" element="tns:search"/>
   </message>
   <message name="searchResponse">
     <part name="parameters" element="tns:searchResponse"/>
   </message>
+  <message name="getAuthorListRequest">
+    <part name="parameters" element="tns:getAuthorList"/>
+  </message>
+  <message name="getAuthorListResponse">
+    <part name="parameters" element="tns:getAuthorListResponse"/>
+  </message>
+  <message name="createAuthorRequest">
+    <part name="parameters" element="tns:createAuthor"/>
+  </message>
+  <message name="createAuthorResponse">
+    <part name="parameters" element="tns:createAuthorResponse"/>
+  </message>
+  <message name="readAuthorRequest">
+    <part name="parameters" element="tns:readAuthor"/>
+  </message>
+  <message name="readAuthorResponse">
+    <part name="parameters" element="tns:readAuthorResponse"/>
+  </message>
+  <message name="updateAuthorRequest">
+    <part name="parameters" element="tns:updateAuthor"/>
+  </message>
+  <message name="updateAuthorResponse">
+    <part name="parameters" element="tns:updateAuthorResponse"/>
+  </message>
+  <message name="deleteAuthorRequest">
+    <part name="parameters" element="tns:deleteAuthor"/>
+  </message>
+  <message name="deleteAuthorResponse">
+    <part name="parameters" element="tns:deleteAuthorResponse"/>
+  </message>
+  <message name="getBookListRequest">
+    <part name="parameters" element="tns:getBookList"/>
+  </message>
+  <message name="getBookListResponse">
+    <part name="parameters" element="tns:getBookListResponse"/>
+  </message>
+  <message name="createBookRequest">
+    <part name="parameters" element="tns:createBook"/>
+  </message>
+  <message name="createBookResponse">
+    <part name="parameters" element="tns:createBookResponse"/>
+  </message>
+  <message name="readBookRequest">
+    <part name="parameters" element="tns:readBook"/>
+  </message>
+  <message name="readBookResponse">
+    <part name="parameters" element="tns:readBookResponse"/>
+  </message>
+  <message name="updateBookRequest">
+    <part name="parameters" element="tns:updateBook"/>
+  </message>
+  <message name="updateBookResponse">
+    <part name="parameters" element="tns:updateBookResponse"/>
+  </message>
+  <message name="deleteBookRequest">
+    <part name="parameters" element="tns:deleteBook"/>
+  </message>
+  <message name="deleteBookResponse">
+    <part name="parameters" element="tns:deleteBookResponse"/>
+  </message>
+  <message name="getChapterListRequest">
+    <part name="parameters" element="tns:getChapterList"/>
+  </message>
+  <message name="getChapterListResponse">
+    <part name="parameters" element="tns:getChapterListResponse"/>
+  </message>
+  <message name="createChapterRequest">
+    <part name="parameters" element="tns:createChapter"/>
+  </message>
+  <message name="createChapterResponse">
+    <part name="parameters" element="tns:createChapterResponse"/>
+  </message>
+  <message name="readChapterRequest">
+    <part name="parameters" element="tns:readChapter"/>
+  </message>
+  <message name="readChapterResponse">
+    <part name="parameters" element="tns:readChapterResponse"/>
+  </message>
+  <message name="updateChapterRequest">
+    <part name="parameters" element="tns:updateChapter"/>
+  </message>
+  <message name="updateChapterResponse">
+    <part name="parameters" element="tns:updateChapterResponse"/>
+  </message>
+  <message name="deleteChapterRequest">
+    <part name="parameters" element="tns:deleteChapter"/>
+  </message>
+  <message name="deleteChapterResponse">
+    <part name="parameters" element="tns:deleteChapterResponse"/>
+  </message>
+  <message name="getImageListRequest">
+    <part name="parameters" element="tns:getImageList"/>
+  </message>
+  <message name="getImageListResponse">
+    <part name="parameters" element="tns:getImageListResponse"/>
+  </message>
+  <message name="createImageRequest">
+    <part name="parameters" element="tns:createImage"/>
+  </message>
+  <message name="createImageResponse">
+    <part name="parameters" element="tns:createImageResponse"/>
+  </message>
+  <message name="readImageRequest">
+    <part name="parameters" element="tns:readImage"/>
+  </message>
+  <message name="readImageResponse">
+    <part name="parameters" element="tns:readImageResponse"/>
+  </message>
+  <message name="updateImageRequest">
+    <part name="parameters" element="tns:updateImage"/>
+  </message>
+  <message name="updateImageResponse">
+    <part name="parameters" element="tns:updateImageResponse"/>
+  </message>
+  <message name="deleteImageRequest">
+    <part name="parameters" element="tns:deleteImage"/>
+  </message>
+  <message name="deleteImageResponse">
+    <part name="parameters" element="tns:deleteImageResponse"/>
+  </message>
   <portType name="SOAPServicePortType">
+    <operation name="search">
+      <input message="tns:searchRequest"/>
+      <output message="tns:searchResponse"/>
+    </operation>
     <operation name="getAuthorList">
       <input message="tns:getAuthorListRequest"/>
       <output message="tns:getAuthorListResponse"/>
@@ -534,16 +869,20 @@
       <input message="tns:deleteImageRequest"/>
       <output message="tns:deleteImageResponse"/>
     </operation>
-    <operation name="search">
-      <documentation>N/A</documentation>
-      <input message="tns:searchRequest"/>
-      <output message="tns:searchResponse"/>
-    </operation>
   </portType>
   <binding name="SOAPServiceBinding" type="tns:SOAPServicePortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="search">
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#search" style="document"/>
+      <input>
+        <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
+      </output>
+    </operation>
     <operation name="getAuthorList">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/getAuthorList" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#getAuthorList" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -552,7 +891,7 @@
       </output>
     </operation>
     <operation name="createAuthor">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/createAuthor" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#createAuthor" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -561,7 +900,7 @@
       </output>
     </operation>
     <operation name="readAuthor">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/readAuthor" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#readAuthor" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -570,7 +909,7 @@
       </output>
     </operation>
     <operation name="updateAuthor">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/updateAuthor" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#updateAuthor" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -579,7 +918,7 @@
       </output>
     </operation>
     <operation name="deleteAuthor">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/deleteAuthor" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#deleteAuthor" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -588,7 +927,7 @@
       </output>
     </operation>
     <operation name="getBookList">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/getBookList" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#getBookList" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -597,7 +936,7 @@
       </output>
     </operation>
     <operation name="createBook">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/createBook" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#createBook" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -606,7 +945,7 @@
       </output>
     </operation>
     <operation name="readBook">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/readBook" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#readBook" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -615,7 +954,7 @@
       </output>
     </operation>
     <operation name="updateBook">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/updateBook" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#updateBook" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -624,7 +963,7 @@
       </output>
     </operation>
     <operation name="deleteBook">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/deleteBook" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#deleteBook" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -633,7 +972,7 @@
       </output>
     </operation>
     <operation name="getChapterList">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/getChapterList" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#getChapterList" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -642,7 +981,7 @@
       </output>
     </operation>
     <operation name="createChapter">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/createChapter" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#createChapter" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -651,7 +990,7 @@
       </output>
     </operation>
     <operation name="readChapter">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/readChapter" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#readChapter" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -660,7 +999,7 @@
       </output>
     </operation>
     <operation name="updateChapter">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/updateChapter" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#updateChapter" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -669,7 +1008,7 @@
       </output>
     </operation>
     <operation name="deleteChapter">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/deleteChapter" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#deleteChapter" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -678,7 +1017,7 @@
       </output>
     </operation>
     <operation name="getImageList">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/getImageList" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#getImageList" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -687,7 +1026,7 @@
       </output>
     </operation>
     <operation name="createImage">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/createImage" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#createImage" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -696,7 +1035,7 @@
       </output>
     </operation>
     <operation name="readImage">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/readImage" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#readImage" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -705,7 +1044,7 @@
       </output>
     </operation>
     <operation name="updateImage">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/updateImage" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#updateImage" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
@@ -714,21 +1053,12 @@
       </output>
     </operation>
     <operation name="deleteImage">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php/deleteImage" style="Document"/>
+      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#deleteImage" style="document"/>
       <input>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
       </input>
       <output>
         <soap:body use="literal" namespace="http://wcmf.sourceforge.net"/>
-      </output>
-    </operation>
-    <operation name="search">
-      <soap:operation soapAction="http://localhost/wcmf/src/app/public/soap.php#search" style="document"/>
-      <input>
-        <soap:body use="literal" namespace="http://wcmf.sourceforge.net" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </input>
-      <output>
-        <soap:body use="literal" namespace="http://wcmf.sourceforge.net" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
   </binding>
@@ -737,217 +1067,277 @@
       <soap:address location="http://localhost/wcmf/src/app/public/soap.php"/>
     </port>
   </service>
-</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/createAuthor" name="createAuthor" bindingOperationName="createAuthor" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#createAuthor" name="createAuthor" bindingOperationName="createAuthor" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
    <soapenv:Header/>
    <soapenv:Body>
-      <Author>
-         <wcmf:id>?</wcmf:id>
-         <wcmf:name>?</wcmf:name>
-         <wcmf:created>?</wcmf:created>
-         <wcmf:creator>?</wcmf:creator>
-         <wcmf:modified>?</wcmf:modified>
-         <wcmf:last_editor>?</wcmf:last_editor>
-         <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:NMPublisherAuthor soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:parentoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:childoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </Author>
-      <parentoid>?</parentoid>
+      <wcmf:createAuthor>
+         <Author>
+            <wcmf:id>?</wcmf:id>
+            <wcmf:name>?</wcmf:name>
+            <wcmf:created>?</wcmf:created>
+            <wcmf:creator>?</wcmf:creator>
+            <wcmf:modified>?</wcmf:modified>
+            <wcmf:last_editor>?</wcmf:last_editor>
+            <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Publisher soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+         </Author>
+      </wcmf:createAuthor>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/createAuthor"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/createBook" name="createBook" bindingOperationName="createBook" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#createAuthor"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#createBook" name="createBook" bindingOperationName="createBook" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
    <soapenv:Header/>
    <soapenv:Body>
-      <Book>
-         <wcmf:id>?</wcmf:id>
-         <wcmf:fk_publisher_id>?</wcmf:fk_publisher_id>
-         <wcmf:title>?</wcmf:title>
-         <wcmf:description>?</wcmf:description>
-         <wcmf:year>?</wcmf:year>
-         <wcmf:created>?</wcmf:created>
-         <wcmf:creator>?</wcmf:creator>
-         <wcmf:modified>?</wcmf:modified>
-         <wcmf:last_editor>?</wcmf:last_editor>
-         <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:parentoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:childoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </Book>
-      <parentoid>?</parentoid>
+      <wcmf:createBook>
+         <Book>
+            <wcmf:id>?</wcmf:id>
+            <wcmf:fk_publisher_id>?</wcmf:fk_publisher_id>
+            <wcmf:title>?</wcmf:title>
+            <wcmf:description>?</wcmf:description>
+            <wcmf:year>?</wcmf:year>
+            <wcmf:created>?</wcmf:created>
+            <wcmf:creator>?</wcmf:creator>
+            <wcmf:modified>?</wcmf:modified>
+            <wcmf:last_editor>?</wcmf:last_editor>
+            <wcmf:Publisher soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+         </Book>
+      </wcmf:createBook>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/createBook"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/createChapter" name="createChapter" bindingOperationName="createChapter" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#createBook"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#createChapter" name="createChapter" bindingOperationName="createChapter" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
    <soapenv:Header/>
    <soapenv:Body>
-      <Chapter>
-         <wcmf:id>?</wcmf:id>
-         <wcmf:fk_chapter_id>?</wcmf:fk_chapter_id>
-         <wcmf:fk_book_id>?</wcmf:fk_book_id>
-         <wcmf:fk_author_id>?</wcmf:fk_author_id>
-         <wcmf:name>?</wcmf:name>
-         <wcmf:created>?</wcmf:created>
-         <wcmf:creator>?</wcmf:creator>
-         <wcmf:modified>?</wcmf:modified>
-         <wcmf:last_editor>?</wcmf:last_editor>
-         <wcmf:sortkey>?</wcmf:sortkey>
-         <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:Image soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:parentoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:childoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </Chapter>
-      <parentoid>?</parentoid>
+      <wcmf:createChapter>
+         <Chapter>
+            <wcmf:id>?</wcmf:id>
+            <wcmf:fk_chapter_id>?</wcmf:fk_chapter_id>
+            <wcmf:fk_book_id>?</wcmf:fk_book_id>
+            <wcmf:fk_author_id>?</wcmf:fk_author_id>
+            <wcmf:name>?</wcmf:name>
+            <wcmf:created>?</wcmf:created>
+            <wcmf:creator>?</wcmf:creator>
+            <wcmf:modified>?</wcmf:modified>
+            <wcmf:last_editor>?</wcmf:last_editor>
+            <wcmf:author_name>?</wcmf:author_name>
+            <wcmf:sortkey>?</wcmf:sortkey>
+            <wcmf:Author soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Book soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Image soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+         </Chapter>
+      </wcmf:createChapter>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/createChapter"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/createImage" name="createImage" bindingOperationName="createImage" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#createChapter"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#createImage" name="createImage" bindingOperationName="createImage" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
    <soapenv:Header/>
    <soapenv:Body>
-      <Image>
-         <wcmf:id>?</wcmf:id>
-         <wcmf:fk_chapter_id>?</wcmf:fk_chapter_id>
-         <wcmf:fk_titlechapter_id>?</wcmf:fk_titlechapter_id>
-         <wcmf:filename>?</wcmf:filename>
-         <wcmf:created>?</wcmf:created>
-         <wcmf:creator>?</wcmf:creator>
-         <wcmf:modified>?</wcmf:modified>
-         <wcmf:last_editor>?</wcmf:last_editor>
-         <wcmf:sortkey>?</wcmf:sortkey>
-         <wcmf:parentoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:childoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </Image>
-      <parentoid>?</parentoid>
+      <wcmf:createImage>
+         <Image>
+            <wcmf:id>?</wcmf:id>
+            <wcmf:fk_chapter_id>?</wcmf:fk_chapter_id>
+            <wcmf:fk_titlechapter_id>?</wcmf:fk_titlechapter_id>
+            <wcmf:filename>?</wcmf:filename>
+            <wcmf:created>?</wcmf:created>
+            <wcmf:creator>?</wcmf:creator>
+            <wcmf:modified>?</wcmf:modified>
+            <wcmf:last_editor>?</wcmf:last_editor>
+            <wcmf:sortkey>?</wcmf:sortkey>
+            <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+         </Image>
+      </wcmf:createImage>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/createImage"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/deleteAuthor" name="deleteAuthor" bindingOperationName="deleteAuthor" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#createImage"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#deleteAuthor" name="deleteAuthor" bindingOperationName="deleteAuthor" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
-      <oid>?</oid>
+      <wcmf:deleteAuthor>
+         <oid>?</oid>
+      </wcmf:deleteAuthor>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/deleteAuthor"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/deleteBook" name="deleteBook" bindingOperationName="deleteBook" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#deleteAuthor"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#deleteBook" name="deleteBook" bindingOperationName="deleteBook" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
-      <oid>?</oid>
+      <wcmf:deleteBook>
+         <oid>?</oid>
+      </wcmf:deleteBook>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/deleteBook"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/deleteChapter" name="deleteChapter" bindingOperationName="deleteChapter" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#deleteBook"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#deleteChapter" name="deleteChapter" bindingOperationName="deleteChapter" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
-      <oid>?</oid>
+      <wcmf:deleteChapter>
+         <oid>?</oid>
+      </wcmf:deleteChapter>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/deleteChapter"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/deleteImage" name="deleteImage" bindingOperationName="deleteImage" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#deleteChapter"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#deleteImage" name="deleteImage" bindingOperationName="deleteImage" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
-      <oid>?</oid>
+      <wcmf:deleteImage>
+         <oid>?</oid>
+      </wcmf:deleteImage>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/deleteImage"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/getAuthorList" name="getAuthorList" bindingOperationName="getAuthorList" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-   &lt;soapenv:Header/>
-   &lt;soapenv:Body/>
-&lt;/soapenv:Envelope></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/getAuthorList"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/getBookList" name="getBookList" bindingOperationName="getBookList" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-   &lt;soapenv:Header/>
-   &lt;soapenv:Body/>
-&lt;/soapenv:Envelope></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/getBookList"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/getChapterList" name="getChapterList" bindingOperationName="getChapterList" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-   &lt;soapenv:Header/>
-   &lt;soapenv:Body/>
-&lt;/soapenv:Envelope></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/getChapterList"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/getImageList" name="getImageList" bindingOperationName="getImageList" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-   &lt;soapenv:Header/>
-   &lt;soapenv:Body/>
-&lt;/soapenv:Envelope></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/getImageList"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/readAuthor" name="readAuthor" bindingOperationName="readAuthor" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#deleteImage"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#getAuthorList" name="getAuthorList" bindingOperationName="getAuthorList" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="AuthorList" wssPasswordType="PasswordText"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
-      <oid>?</oid>
-      <depth>?</depth>
+      <wcmf:getAuthorList>
+      </wcmf:getAuthorList>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/readAuthor"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/readBook" name="readBook" bindingOperationName="readBook" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>admin</con:username><con:password>admin</con:password><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#getAuthorList"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#getBookList" name="getBookList" bindingOperationName="getBookList" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
-      <oid>?</oid>
-      <depth>?</depth>
+      <wcmf:getBookList>
+         <!--You may enter the following 5 items in any order-->
+         <limit>?</limit>
+         <offset>?</offset>
+         <sortFieldName>?</sortFieldName>
+         <sortDirection>?</sortDirection>
+         <query>?</query>
+      </wcmf:getBookList>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/readBook"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/readChapter" name="readChapter" bindingOperationName="readChapter" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#getBookList"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#getChapterList" name="getChapterList" bindingOperationName="getChapterList" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
-      <oid>?</oid>
-      <depth>?</depth>
+      <wcmf:getChapterList>
+         <!--You may enter the following 5 items in any order-->
+         <limit>?</limit>
+         <offset>?</offset>
+         <sortFieldName>?</sortFieldName>
+         <sortDirection>?</sortDirection>
+         <query>?</query>
+      </wcmf:getChapterList>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/readChapter"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/readImage" name="readImage" bindingOperationName="readImage" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#getChapterList"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#getImageList" name="getImageList" bindingOperationName="getImageList" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
-      <oid>?</oid>
-      <depth>?</depth>
+      <wcmf:getImageList>
+         <!--You may enter the following 5 items in any order-->
+         <limit>?</limit>
+         <offset>?</offset>
+         <sortFieldName>?</sortFieldName>
+         <sortDirection>?</sortDirection>
+         <query>?</query>
+      </wcmf:getImageList>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/readImage"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#search" name="search" bindingOperationName="search" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordText"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#getImageList"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#readAuthor" name="readAuthor" bindingOperationName="readAuthor" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <wcmf:readAuthor>
+         <!--You may enter the following 2 items in any order-->
+         <oid>?</oid>
+         <depth>?</depth>
+      </wcmf:readAuthor>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#readAuthor"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#readBook" name="readBook" bindingOperationName="readBook" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <wcmf:readBook>
+         <!--You may enter the following 2 items in any order-->
+         <oid>?</oid>
+         <depth>?</depth>
+      </wcmf:readBook>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#readBook"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#readChapter" name="readChapter" bindingOperationName="readChapter" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <wcmf:readChapter>
+         <!--You may enter the following 2 items in any order-->
+         <oid>?</oid>
+         <depth>?</depth>
+      </wcmf:readChapter>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#readChapter"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#readImage" name="readImage" bindingOperationName="readImage" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <wcmf:readImage>
+         <!--You may enter the following 2 items in any order-->
+         <oid>?</oid>
+         <depth>?</depth>
+      </wcmf:readImage>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#readImage"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#search" name="search" bindingOperationName="search" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Search" wssPasswordType="PasswordText"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net">
    <soapenv:Header/>
    <soapenv:Body>
       <wcmf:search>
-         <query>Ingo</query>
+         <query>Test</query>
       </wcmf:search>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:username>admin</con:username><con:password>admin</con:password><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#search"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/updateAuthor" name="updateAuthor" bindingOperationName="updateAuthor" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>admin</con:username><con:password>admin</con:password><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#search"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#updateAuthor" name="updateAuthor" bindingOperationName="updateAuthor" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
    <soapenv:Header/>
    <soapenv:Body>
-      <Author>
-         <wcmf:id>?</wcmf:id>
-         <wcmf:name>?</wcmf:name>
-         <wcmf:created>?</wcmf:created>
-         <wcmf:creator>?</wcmf:creator>
-         <wcmf:modified>?</wcmf:modified>
-         <wcmf:last_editor>?</wcmf:last_editor>
-         <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:NMPublisherAuthor soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:parentoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:childoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </Author>
-      <oid>?</oid>
+      <wcmf:updateAuthor>
+         <!--You may enter the following 2 items in any order-->
+         <Author>
+            <wcmf:id>?</wcmf:id>
+            <wcmf:name>?</wcmf:name>
+            <wcmf:created>?</wcmf:created>
+            <wcmf:creator>?</wcmf:creator>
+            <wcmf:modified>?</wcmf:modified>
+            <wcmf:last_editor>?</wcmf:last_editor>
+            <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Publisher soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+         </Author>
+         <oid>?</oid>
+      </wcmf:updateAuthor>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/updateAuthor"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/updateBook" name="updateBook" bindingOperationName="updateBook" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#updateAuthor"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#updateBook" name="updateBook" bindingOperationName="updateBook" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
    <soapenv:Header/>
    <soapenv:Body>
-      <Book>
-         <wcmf:id>?</wcmf:id>
-         <wcmf:fk_publisher_id>?</wcmf:fk_publisher_id>
-         <wcmf:title>?</wcmf:title>
-         <wcmf:description>?</wcmf:description>
-         <wcmf:year>?</wcmf:year>
-         <wcmf:created>?</wcmf:created>
-         <wcmf:creator>?</wcmf:creator>
-         <wcmf:modified>?</wcmf:modified>
-         <wcmf:last_editor>?</wcmf:last_editor>
-         <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:parentoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:childoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </Book>
-      <oid>?</oid>
+      <wcmf:updateBook>
+         <!--You may enter the following 2 items in any order-->
+         <Book>
+            <wcmf:id>?</wcmf:id>
+            <wcmf:fk_publisher_id>?</wcmf:fk_publisher_id>
+            <wcmf:title>?</wcmf:title>
+            <wcmf:description>?</wcmf:description>
+            <wcmf:year>?</wcmf:year>
+            <wcmf:created>?</wcmf:created>
+            <wcmf:creator>?</wcmf:creator>
+            <wcmf:modified>?</wcmf:modified>
+            <wcmf:last_editor>?</wcmf:last_editor>
+            <wcmf:Publisher soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+         </Book>
+         <oid>?</oid>
+      </wcmf:updateBook>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/updateBook"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/updateChapter" name="updateChapter" bindingOperationName="updateChapter" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#updateBook"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#updateChapter" name="updateChapter" bindingOperationName="updateChapter" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
    <soapenv:Header/>
    <soapenv:Body>
-      <Chapter>
-         <wcmf:id>?</wcmf:id>
-         <wcmf:fk_chapter_id>?</wcmf:fk_chapter_id>
-         <wcmf:fk_book_id>?</wcmf:fk_book_id>
-         <wcmf:fk_author_id>?</wcmf:fk_author_id>
-         <wcmf:name>?</wcmf:name>
-         <wcmf:created>?</wcmf:created>
-         <wcmf:creator>?</wcmf:creator>
-         <wcmf:modified>?</wcmf:modified>
-         <wcmf:last_editor>?</wcmf:last_editor>
-         <wcmf:sortkey>?</wcmf:sortkey>
-         <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:Image soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:parentoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:childoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </Chapter>
-      <oid>?</oid>
+      <wcmf:updateChapter>
+         <!--You may enter the following 2 items in any order-->
+         <Chapter>
+            <wcmf:id>?</wcmf:id>
+            <wcmf:fk_chapter_id>?</wcmf:fk_chapter_id>
+            <wcmf:fk_book_id>?</wcmf:fk_book_id>
+            <wcmf:fk_author_id>?</wcmf:fk_author_id>
+            <wcmf:name>?</wcmf:name>
+            <wcmf:created>?</wcmf:created>
+            <wcmf:creator>?</wcmf:creator>
+            <wcmf:modified>?</wcmf:modified>
+            <wcmf:last_editor>?</wcmf:last_editor>
+            <wcmf:author_name>?</wcmf:author_name>
+            <wcmf:sortkey>?</wcmf:sortkey>
+            <wcmf:Author soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Book soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+            <wcmf:Image soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+         </Chapter>
+         <oid>?</oid>
+      </wcmf:updateChapter>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/updateChapter"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php/updateImage" name="updateImage" bindingOperationName="updateImage" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug&amp;wsdl</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#updateChapter"/></con:call></con:operation><con:operation isOneWay="false" action="http://localhost/wcmf/src/app/public/soap.php#updateImage" name="updateImage" bindingOperationName="updateImage" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost/wcmf/src/app/public/soap.php?XDEBUG_SESSION_START=netbeans-xdebug</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wcmf="http://wcmf.sourceforge.net" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
    <soapenv:Header/>
    <soapenv:Body>
-      <Image>
-         <wcmf:id>?</wcmf:id>
-         <wcmf:fk_chapter_id>?</wcmf:fk_chapter_id>
-         <wcmf:fk_titlechapter_id>?</wcmf:fk_titlechapter_id>
-         <wcmf:filename>?</wcmf:filename>
-         <wcmf:created>?</wcmf:created>
-         <wcmf:creator>?</wcmf:creator>
-         <wcmf:modified>?</wcmf:modified>
-         <wcmf:last_editor>?</wcmf:last_editor>
-         <wcmf:sortkey>?</wcmf:sortkey>
-         <wcmf:parentoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-         <wcmf:childoids soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </Image>
-      <oid>?</oid>
+      <wcmf:updateImage>
+         <!--You may enter the following 2 items in any order-->
+         <Image>
+            <wcmf:id>?</wcmf:id>
+            <wcmf:fk_chapter_id>?</wcmf:fk_chapter_id>
+            <wcmf:fk_titlechapter_id>?</wcmf:fk_titlechapter_id>
+            <wcmf:filename>?</wcmf:filename>
+            <wcmf:created>?</wcmf:created>
+            <wcmf:creator>?</wcmf:creator>
+            <wcmf:modified>?</wcmf:modified>
+            <wcmf:last_editor>?</wcmf:last_editor>
+            <wcmf:sortkey>?</wcmf:sortkey>
+            <wcmf:Chapter soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
+         </Image>
+         <oid>?</oid>
+      </wcmf:updateImage>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php/updateImage"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://localhost/wcmf/src/app/public/soap.php#updateImage"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:sensitiveInformation/></con:soapui-project>

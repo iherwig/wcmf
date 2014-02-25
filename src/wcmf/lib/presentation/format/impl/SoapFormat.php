@@ -18,10 +18,7 @@
  */
 namespace wcmf\lib\presentation\format\impl;
 
-use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\Log;
 use wcmf\lib\model\NodeSerializer;
-use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 
 /**
@@ -53,7 +50,10 @@ class SoapFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::isSerializedNode()
    */
   protected function isSerializedNode($value) {
-    return ObjectID::isValid($value);
+    if ($this->_serializer == null) {
+      throw new ConfigurationException("The serializer is not set.");
+    }
+    return $this->_serializer->isSerializedNode($value);
   }
 
   /**
@@ -64,6 +64,7 @@ class SoapFormat extends HierarchicalFormat {
       throw new ConfigurationException("The serializer is not set.");
     }
     $node = $this->_serializer->serializeNode($value);
+    return $node;
   }
 
   /**
@@ -73,19 +74,8 @@ class SoapFormat extends HierarchicalFormat {
     if ($this->_serializer == null) {
       throw new ConfigurationException("The serializer is not set.");
     }
-    $oidStr = $key;
-    $oid = ObjectId::parse($oidStr);
-    if ($oid == null) {
-      throw new IllegalArgumentException("The object id '".$oid."' is invalid");
-    }
-
-    // use NodeSerializer to deserialize
-    $node = $this->_serializer->deserializeNode($value);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($node->toString(), __CLASS__);
-    }
-
-    return $node;
+    $result = $this->_serializer->deserializeNode($value);
+    return $result;
   }
 }
 ?>

@@ -16,6 +16,9 @@ RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)$ main.php?action=restAction&co
 RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)/([^\/]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2&sourceId=$3&relation=$4 [QSA,L]
 RewriteRule ^.*rest\/([^\/]+)\/([^\/]+)\/([0-9]+)/([^\/]+)\/([0-9]+)\/?$ main.php?action=restAction&collection=1&language=$1&className=$2&sourceId=$3&relation=$4&targetId=$5 [QSA,L]
 
+# soap interface handled by soap.php
+RewriteRule ^.*soap$ soap.php [QSA,L]
+
 # list control values
 RewriteRule ^.*list\/([^\/]+)\/([^\/]+)\/?$ main.php?action=listValues&language=$1&listDef=$2 [QSA,L]
 
