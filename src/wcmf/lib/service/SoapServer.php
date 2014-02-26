@@ -24,6 +24,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\presentation\ApplicationException;
+use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
@@ -127,6 +128,10 @@ class SoapServer extends \nusoap_server {
    * @return The Response instance from the executed Controller
    */
   public function doCall($action, $params) {
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("SoapServer action: ".$action, __CLASS__);
+      Log::debug($params, __CLASS__);
+    }
     $authHeader = $this->requestHeader['Security']['UsernameToken'];
     $formats = ObjectFactory::getInstance('formats');
 
@@ -157,7 +162,10 @@ class SoapServer extends \nusoap_server {
     $actionResponse = new Response($data['controller'], $data['context'], $data['action']);
     $actionResponse->setFormat($formats['soap']);
     $actionResponse->setValues($data);
-    \wcmf\lib\presentation\format\Formatter::serialize($actionResponse);
+    Formatter::serialize($actionResponse);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug($actionResponse->__toString(), __CLASS__);
+    }
     return $actionResponse;
   }
 

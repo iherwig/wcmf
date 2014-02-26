@@ -50,15 +50,27 @@ class SoapTest extends DatabaseTestCase {
     $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
     $params = array('query' => 'Test');
     $result = $client->call("search", $params);
-    $this->assertEquals(1, $result);
+    $this->assertEquals(1, sizeof($result));
   }
 
   public function testList() {
     $options = array('trace' => 1, 'exceptions' => 0);
     $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
     $result = $client->call("getAuthorList");
-    $this->assertEquals(1, $result);
+    $list = $result->list;
+    $this->assertEquals(1, $result->totalCount);
+    $this->assertEquals(1, sizeof($list));
+    $this->assertEquals('app.src.model.Author:12345', $list[0]->oid);
+    $this->assertEquals('Test Author', $list[0]->name);
   }
 
+  public function testRead() {
+    $options = array('trace' => 1, 'exceptions' => 0);
+    $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
+    $params = array('oid' => 'app.src.model.Author:12345', 'depth' => 1);
+    $result = $client->call("readAuthor", $params);
+    $this->assertEquals('app.src.model.Author:12345', $result->oid);
+    $this->assertEquals('Test Author', $result->name);
+  }
 }
 ?>

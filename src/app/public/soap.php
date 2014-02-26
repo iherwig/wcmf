@@ -30,13 +30,11 @@ $server->register('search',
 function search($query) {
   global $server;
   $response = $server->doCall('search', array('query' => $query));
-  if ($response) {
-    $result = array();
-    foreach ($response->getValue('list') as $item) {
-      $result[] = array('type' => $item->getType(), 'oid' => $item->getOID()->__toString(),
-        'displayValue' => $item->getValue('displayValue'), 'summary' => $item->getValue('summary')
-      );
-    }
+  $result = array();
+  foreach ($response->getValue('list') as $item) {
+    $result[] = array('type' => $item['type'], 'oid' => $item['oid'],
+      'displayValue' => $item['displayValue'], 'summary' => $item['summary']
+    );
   }
   return array('return' => $result);
 }
@@ -589,7 +587,9 @@ function createAuthor($Author) {
 function readAuthor($oid, $depth) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/readAuthor) ENABLED START
-  $response = $server->doCall('read', array('oid' => $oid, 'depth' => $depth));
+  $params = array('oid' => $oid);
+  if ($depth) { $params['depth'] = $depth; }
+  $response = $server->doCall('read', $params);
   return array('return' => $response->getValue('object'));
 // PROTECTED REGION END
 }  
@@ -597,12 +597,12 @@ function readAuthor($oid, $depth) {
 /**  
  * SOAP Method updateAuthor 
  * @param Author The serialized object data
- * @param oid The object id of the object to update
  * @return tns:Author on success
  */  
-function updateAuthor($Author, $oid) {
+function updateAuthor($Author) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/updateAuthor) ENABLED START
+  $oid = $Author['oid'];
   $response = $server->doCall('update', array($oid => $Author));
   return array('return' => $response->getValue($oid));
 // PROTECTED REGION END
@@ -661,7 +661,9 @@ function createBook($Book) {
 function readBook($oid, $depth) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/readBook) ENABLED START
-  $response = $server->doCall('read', array('oid' => $oid, 'depth' => $depth));
+  $params = array('oid' => $oid);
+  if ($depth) { $params['depth'] = $depth; }
+  $response = $server->doCall('read', $params);
   return array('return' => $response->getValue('object'));
 // PROTECTED REGION END
 }  
@@ -669,12 +671,12 @@ function readBook($oid, $depth) {
 /**  
  * SOAP Method updateBook 
  * @param Book The serialized object data
- * @param oid The object id of the object to update
  * @return tns:Book on success
  */  
-function updateBook($Book, $oid) {
+function updateBook($Book) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/updateBook) ENABLED START
+  $oid = $Book['oid'];
   $response = $server->doCall('update', array($oid => $Book));
   return array('return' => $response->getValue($oid));
 // PROTECTED REGION END
@@ -733,7 +735,9 @@ function createChapter($Chapter) {
 function readChapter($oid, $depth) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/readChapter) ENABLED START
-  $response = $server->doCall('read', array('oid' => $oid, 'depth' => $depth));
+  $params = array('oid' => $oid);
+  if ($depth) { $params['depth'] = $depth; }
+  $response = $server->doCall('read', $params);
   return array('return' => $response->getValue('object'));
 // PROTECTED REGION END
 }  
@@ -741,12 +745,12 @@ function readChapter($oid, $depth) {
 /**  
  * SOAP Method updateChapter 
  * @param Chapter The serialized object data
- * @param oid The object id of the object to update
  * @return tns:Chapter on success
  */  
-function updateChapter($Chapter, $oid) {
+function updateChapter($Chapter) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/updateChapter) ENABLED START
+  $oid = $Chapter['oid'];
   $response = $server->doCall('update', array($oid => $Chapter));
   return array('return' => $response->getValue($oid));
 // PROTECTED REGION END
@@ -805,7 +809,9 @@ function createImage($Image) {
 function readImage($oid, $depth) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/readImage) ENABLED START
-  $response = $server->doCall('read', array('oid' => $oid, 'depth' => $depth));
+  $params = array('oid' => $oid);
+  if ($depth) { $params['depth'] = $depth; }
+  $response = $server->doCall('read', $params);
   return array('return' => $response->getValue('object'));
 // PROTECTED REGION END
 }  
@@ -813,12 +819,12 @@ function readImage($oid, $depth) {
 /**  
  * SOAP Method updateImage 
  * @param Image The serialized object data
- * @param oid The object id of the object to update
  * @return tns:Image on success
  */  
-function updateImage($Image, $oid) {
+function updateImage($Image) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/updateImage) ENABLED START
+  $oid = $Image['oid'];
   $response = $server->doCall('update', array($oid => $Image));
   return array('return' => $response->getValue($oid));
 // PROTECTED REGION END
