@@ -92,7 +92,7 @@ class MultipleActionController extends Controller {
       foreach($data as $key => $value) {
         if (!is_array($value)) {
           $response->addError(ApplicationError::get('PARAMETER_INVALID',
-            array('invalidParameters' => array('data'))));
+            array('invalidParameters' => array('data.'.$key))));
           return false;
         }
       }

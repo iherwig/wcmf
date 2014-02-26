@@ -51,8 +51,8 @@ $server->wsdl->addComplexType('Publisher', 'complexType', 'struct', 'sequence', 
         'creator' => array('name' => 'creator', 'type' => 'xsd:string'),
         'modified' => array('name' => 'modified', 'type' => 'xsd:string'),
         'last_editor' => array('name' => 'last_editor', 'type' => 'xsd:string'),
-        'Book' => array('name' => 'Book', 'type' => 'tns:OidList'),
-        'Author' => array('name' => 'Author', 'type' => 'tns:OidList'),
+        'Book' => array('name' => 'Book', 'type' => 'tns:BookList'),
+        'Author' => array('name' => 'Author', 'type' => 'tns:AuthorList'),
     )
 );
 $server->wsdl->addComplexType('PublisherList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -81,8 +81,8 @@ $server->wsdl->addComplexType('Author', 'complexType', 'struct', 'sequence', '',
         'creator' => array('name' => 'creator', 'type' => 'xsd:string'),
         'modified' => array('name' => 'modified', 'type' => 'xsd:string'),
         'last_editor' => array('name' => 'last_editor', 'type' => 'xsd:string'),
-        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:OidList'),
-        'Publisher' => array('name' => 'Publisher', 'type' => 'tns:OidList'),
+        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:ChapterList'),
+        'Publisher' => array('name' => 'Publisher', 'type' => 'tns:PublisherList'),
     )
 );
 $server->wsdl->addComplexType('AuthorList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -104,15 +104,15 @@ $server->register('getAuthorList',
   
 $server->register('createAuthor',
   array('Author' => 'tns:Author'),
-  array('return' => 'xsd:string'), $server::TNS, $server->wsdl->endpoint.'#createAuthor', 'document', 'literal');
+  array('return' => 'tns:Author'), $server::TNS, $server->wsdl->endpoint.'#createAuthor', 'document', 'literal');
   
 $server->register('readAuthor',
   array('oid' => 'xsd:string', 'depth' => 'xsd:integer'),
   array('return' => 'tns:Author'), $server::TNS, $server->wsdl->endpoint.'#readAuthor', 'document', 'literal');
   
 $server->register('updateAuthor',
-  array('Author' => 'tns:Author', 'oid' => 'xsd:string'),
-  array('return' => 'xsd:string'), $server::TNS, $server->wsdl->endpoint.'#updateAuthor', 'document', 'literal');
+  array('Author' => 'tns:Author'),
+  array('return' => 'tns:Author'), $server::TNS, $server->wsdl->endpoint.'#updateAuthor', 'document', 'literal');
   
 $server->register('deleteAuthor',
   array('oid' => 'xsd:string'),
@@ -133,8 +133,8 @@ $server->wsdl->addComplexType('Book', 'complexType', 'struct', 'sequence', '',
         'creator' => array('name' => 'creator', 'type' => 'xsd:string'),
         'modified' => array('name' => 'modified', 'type' => 'xsd:string'),
         'last_editor' => array('name' => 'last_editor', 'type' => 'xsd:string'),
-        'Publisher' => array('name' => 'Publisher', 'type' => 'tns:OidList'),
-        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:OidList'),
+        'Publisher' => array('name' => 'Publisher', 'type' => 'tns:PublisherList'),
+        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:ChapterList'),
     )
 );
 $server->wsdl->addComplexType('BookList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -156,15 +156,15 @@ $server->register('getBookList',
   
 $server->register('createBook',
   array('Book' => 'tns:Book'),
-  array('return' => 'xsd:string'), $server::TNS, $server->wsdl->endpoint.'#createBook', 'document', 'literal');
+  array('return' => 'tns:Book'), $server::TNS, $server->wsdl->endpoint.'#createBook', 'document', 'literal');
   
 $server->register('readBook',
   array('oid' => 'xsd:string', 'depth' => 'xsd:integer'),
   array('return' => 'tns:Book'), $server::TNS, $server->wsdl->endpoint.'#readBook', 'document', 'literal');
   
 $server->register('updateBook',
-  array('Book' => 'tns:Book', 'oid' => 'xsd:string'),
-  array('return' => 'xsd:string'), $server::TNS, $server->wsdl->endpoint.'#updateBook', 'document', 'literal');
+  array('Book' => 'tns:Book'),
+  array('return' => 'tns:Book'), $server::TNS, $server->wsdl->endpoint.'#updateBook', 'document', 'literal');
   
 $server->register('deleteBook',
   array('oid' => 'xsd:string'),
@@ -187,12 +187,12 @@ $server->wsdl->addComplexType('Chapter', 'complexType', 'struct', 'sequence', ''
         'last_editor' => array('name' => 'last_editor', 'type' => 'xsd:string'),
         'author_name' => array('name' => 'author_name', 'type' => 'xsd:string'),
         'sortkey' => array('name' => 'sortkey', 'type' => 'xsd:string'),
-        'Author' => array('name' => 'Author', 'type' => 'tns:OidList'),
-        'Book' => array('name' => 'Book', 'type' => 'tns:OidList'),
-        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:OidList'),
-        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:OidList'),
-        'Image' => array('name' => 'Image', 'type' => 'tns:OidList'),
-        'Image' => array('name' => 'Image', 'type' => 'tns:OidList'),
+        'Author' => array('name' => 'Author', 'type' => 'tns:AuthorList'),
+        'Book' => array('name' => 'Book', 'type' => 'tns:BookList'),
+        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:ChapterList'),
+        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:ChapterList'),
+        'Image' => array('name' => 'Image', 'type' => 'tns:ImageList'),
+        'Image' => array('name' => 'Image', 'type' => 'tns:ImageList'),
     )
 );
 $server->wsdl->addComplexType('ChapterList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -214,15 +214,15 @@ $server->register('getChapterList',
   
 $server->register('createChapter',
   array('Chapter' => 'tns:Chapter'),
-  array('return' => 'xsd:string'), $server::TNS, $server->wsdl->endpoint.'#createChapter', 'document', 'literal');
+  array('return' => 'tns:Chapter'), $server::TNS, $server->wsdl->endpoint.'#createChapter', 'document', 'literal');
   
 $server->register('readChapter',
   array('oid' => 'xsd:string', 'depth' => 'xsd:integer'),
   array('return' => 'tns:Chapter'), $server::TNS, $server->wsdl->endpoint.'#readChapter', 'document', 'literal');
   
 $server->register('updateChapter',
-  array('Chapter' => 'tns:Chapter', 'oid' => 'xsd:string'),
-  array('return' => 'xsd:string'), $server::TNS, $server->wsdl->endpoint.'#updateChapter', 'document', 'literal');
+  array('Chapter' => 'tns:Chapter'),
+  array('return' => 'tns:Chapter'), $server::TNS, $server->wsdl->endpoint.'#updateChapter', 'document', 'literal');
   
 $server->register('deleteChapter',
   array('oid' => 'xsd:string'),
@@ -243,8 +243,8 @@ $server->wsdl->addComplexType('Image', 'complexType', 'struct', 'sequence', '',
         'modified' => array('name' => 'modified', 'type' => 'xsd:string'),
         'last_editor' => array('name' => 'last_editor', 'type' => 'xsd:string'),
         'sortkey' => array('name' => 'sortkey', 'type' => 'xsd:string'),
-        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:OidList'),
-        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:OidList'),
+        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:ChapterList'),
+        'Chapter' => array('name' => 'Chapter', 'type' => 'tns:ChapterList'),
     )
 );
 $server->wsdl->addComplexType('ImageList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -266,15 +266,15 @@ $server->register('getImageList',
   
 $server->register('createImage',
   array('Image' => 'tns:Image'),
-  array('return' => 'xsd:string'), $server::TNS, $server->wsdl->endpoint.'#createImage', 'document', 'literal');
+  array('return' => 'tns:Image'), $server::TNS, $server->wsdl->endpoint.'#createImage', 'document', 'literal');
   
 $server->register('readImage',
   array('oid' => 'xsd:string', 'depth' => 'xsd:integer'),
   array('return' => 'tns:Image'), $server::TNS, $server->wsdl->endpoint.'#readImage', 'document', 'literal');
   
 $server->register('updateImage',
-  array('Image' => 'tns:Image', 'oid' => 'xsd:string'),
-  array('return' => 'xsd:string'), $server::TNS, $server->wsdl->endpoint.'#updateImage', 'document', 'literal');
+  array('Image' => 'tns:Image'),
+  array('return' => 'tns:Image'), $server::TNS, $server->wsdl->endpoint.'#updateImage', 'document', 'literal');
   
 $server->register('deleteImage',
   array('oid' => 'xsd:string'),
@@ -317,8 +317,8 @@ $server->wsdl->addComplexType('NMPublisherAuthor', 'complexType', 'struct', 'seq
         'fk_author_id' => array('name' => 'fk_author_id', 'type' => 'xsd:string'),
         'fk_publisher_id' => array('name' => 'fk_publisher_id', 'type' => 'xsd:string'),
         'sortkey' => array('name' => 'sortkey', 'type' => 'xsd:string'),
-        'Publisher' => array('name' => 'Publisher', 'type' => 'tns:OidList'),
-        'Author' => array('name' => 'Author', 'type' => 'tns:OidList'),
+        'Publisher' => array('name' => 'Publisher', 'type' => 'tns:PublisherList'),
+        'Author' => array('name' => 'Author', 'type' => 'tns:AuthorList'),
     )
 );
 $server->wsdl->addComplexType('NMPublisherAuthorList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -394,7 +394,7 @@ $server->wsdl->addComplexType('Locktable', 'complexType', 'struct', 'sequence', 
         'objectid' => array('name' => 'objectid', 'type' => 'xsd:string'),
         'sessionid' => array('name' => 'sessionid', 'type' => 'xsd:string'),
         'since' => array('name' => 'since', 'type' => 'xsd:string'),
-        'User' => array('name' => 'User', 'type' => 'tns:OidList'),
+        'User' => array('name' => 'User', 'type' => 'tns:UserList'),
     )
 );
 $server->wsdl->addComplexType('LocktableList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -419,7 +419,7 @@ $server->wsdl->addComplexType('Role', 'complexType', 'struct', 'sequence', '',
         'oid' => array('name' => 'oid', 'type' => 'xsd:string'),
         'id' => array('name' => 'id', 'type' => 'xsd:string'),
         'name' => array('name' => 'name', 'type' => 'xsd:string'),
-        'User' => array('name' => 'User', 'type' => 'tns:OidList'),
+        'User' => array('name' => 'User', 'type' => 'tns:UserList'),
     )
 );
 $server->wsdl->addComplexType('RoleList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -473,7 +473,7 @@ $server->wsdl->addComplexType('UserConfig', 'complexType', 'struct', 'sequence',
         'fk_user_id' => array('name' => 'fk_user_id', 'type' => 'xsd:string'),
         'key' => array('name' => 'key', 'type' => 'xsd:string'),
         'val' => array('name' => 'val', 'type' => 'xsd:string'),
-        'User' => array('name' => 'User', 'type' => 'tns:OidList'),
+        'User' => array('name' => 'User', 'type' => 'tns:UserList'),
     )
 );
 $server->wsdl->addComplexType('UserConfigList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -502,9 +502,9 @@ $server->wsdl->addComplexType('User', 'complexType', 'struct', 'sequence', '',
         'name' => array('name' => 'name', 'type' => 'xsd:string'),
         'firstname' => array('name' => 'firstname', 'type' => 'xsd:string'),
         'config' => array('name' => 'config', 'type' => 'xsd:string'),
-        'Locktable' => array('name' => 'Locktable', 'type' => 'tns:OidList'),
-        'UserConfig' => array('name' => 'UserConfig', 'type' => 'tns:OidList'),
-        'Role' => array('name' => 'Role', 'type' => 'tns:OidList'),
+        'Locktable' => array('name' => 'Locktable', 'type' => 'tns:LocktableList'),
+        'UserConfig' => array('name' => 'UserConfig', 'type' => 'tns:UserConfigList'),
+        'Role' => array('name' => 'Role', 'type' => 'tns:RoleList'),
     )
 );
 $server->wsdl->addComplexType('UserList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -529,8 +529,8 @@ $server->wsdl->addComplexType('NMUserRole', 'complexType', 'struct', 'sequence',
         'oid' => array('name' => 'oid', 'type' => 'xsd:string'),
         'fk_user_id' => array('name' => 'fk_user_id', 'type' => 'xsd:string'),
         'fk_role_id' => array('name' => 'fk_role_id', 'type' => 'xsd:string'),
-        'Role' => array('name' => 'Role', 'type' => 'tns:OidList'),
-        'User' => array('name' => 'User', 'type' => 'tns:OidList'),
+        'Role' => array('name' => 'Role', 'type' => 'tns:RoleList'),
+        'User' => array('name' => 'User', 'type' => 'tns:UserList'),
     )
 );
 $server->wsdl->addComplexType('NMUserRoleList', 'complexType', 'array', '', 'SOAP-ENC:Array',
@@ -573,8 +573,10 @@ function getAuthorList($limit, $offset, $sortFieldName, $sortDirection, $query) 
 function createAuthor($Author) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/createAuthor) ENABLED START
-  $response = $server->doCall('create', array($server->getDummyOid('Author') => $Author));
-  return array('return' => $response->getValue('oid')->__toString());
+  $oidStr = $server->getDummyOid('Author')->__toString();
+  $Author['oid'] = $oidStr;
+  $response = $server->doCall('create', array($oidStr => $Author));
+  return array('return' => $response->getValues());
 // PROTECTED REGION END
 }  
   
@@ -602,9 +604,8 @@ function readAuthor($oid, $depth) {
 function updateAuthor($Author) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/updateAuthor) ENABLED START
-  $oid = $Author['oid'];
-  $response = $server->doCall('update', array($oid => $Author));
-  return array('return' => $response->getValue($oid));
+  $response = $server->doCall('update', array($Author['oid'] => $Author));
+  return array('return' => $response->getValues());
 // PROTECTED REGION END
 }  
   
@@ -647,8 +648,10 @@ function getBookList($limit, $offset, $sortFieldName, $sortDirection, $query) {
 function createBook($Book) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/createBook) ENABLED START
-  $response = $server->doCall('create', array($server->getDummyOid('Book') => $Book));
-  return array('return' => $response->getValue('oid')->__toString());
+  $oidStr = $server->getDummyOid('Book')->__toString();
+  $Book['oid'] = $oidStr;
+  $response = $server->doCall('create', array($oidStr => $Book));
+  return array('return' => $response->getValues());
 // PROTECTED REGION END
 }  
   
@@ -676,9 +679,8 @@ function readBook($oid, $depth) {
 function updateBook($Book) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/updateBook) ENABLED START
-  $oid = $Book['oid'];
-  $response = $server->doCall('update', array($oid => $Book));
-  return array('return' => $response->getValue($oid));
+  $response = $server->doCall('update', array($Book['oid'] => $Book));
+  return array('return' => $response->getValues());
 // PROTECTED REGION END
 }  
   
@@ -721,8 +723,10 @@ function getChapterList($limit, $offset, $sortFieldName, $sortDirection, $query)
 function createChapter($Chapter) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/createChapter) ENABLED START
-  $response = $server->doCall('create', array($server->getDummyOid('Chapter') => $Chapter));
-  return array('return' => $response->getValue('oid')->__toString());
+  $oidStr = $server->getDummyOid('Chapter')->__toString();
+  $Chapter['oid'] = $oidStr;
+  $response = $server->doCall('create', array($oidStr => $Chapter));
+  return array('return' => $response->getValues());
 // PROTECTED REGION END
 }  
   
@@ -750,9 +754,8 @@ function readChapter($oid, $depth) {
 function updateChapter($Chapter) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/updateChapter) ENABLED START
-  $oid = $Chapter['oid'];
-  $response = $server->doCall('update', array($oid => $Chapter));
-  return array('return' => $response->getValue($oid));
+  $response = $server->doCall('update', array($Chapter['oid'] => $Chapter));
+  return array('return' => $response->getValues());
 // PROTECTED REGION END
 }  
   
@@ -795,8 +798,10 @@ function getImageList($limit, $offset, $sortFieldName, $sortDirection, $query) {
 function createImage($Image) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/createImage) ENABLED START
-  $response = $server->doCall('create', array($server->getDummyOid('Image') => $Image));
-  return array('return' => $response->getValue('oid')->__toString());
+  $oidStr = $server->getDummyOid('Image')->__toString();
+  $Image['oid'] = $oidStr;
+  $response = $server->doCall('create', array($oidStr => $Image));
+  return array('return' => $response->getValues());
 // PROTECTED REGION END
 }  
   
@@ -824,9 +829,8 @@ function readImage($oid, $depth) {
 function updateImage($Image) {
   global $server;
 // PROTECTED REGION ID(soap/Methods/updateImage) ENABLED START
-  $oid = $Image['oid'];
-  $response = $server->doCall('update', array($oid => $Image));
-  return array('return' => $response->getValue($oid));
+  $response = $server->doCall('update', array($Image['oid'] => $Image));
+  return array('return' => $response->getValues());
 // PROTECTED REGION END
 }  
   

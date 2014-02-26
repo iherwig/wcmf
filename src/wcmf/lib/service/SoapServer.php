@@ -136,6 +136,7 @@ class SoapServer extends \nusoap_server {
     $formats = ObjectFactory::getInstance('formats');
 
     $request = new Request('', '', 'actionSet');
+    $request->setFormat($formats['soap']);
     $request->setResponseFormat($formats['null']);
     $request->setValues(array(
       'data' => array(

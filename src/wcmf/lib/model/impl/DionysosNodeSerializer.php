@@ -23,6 +23,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\model\impl\AbstractNodeSerializer;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
@@ -42,7 +43,7 @@ use wcmf\lib\persistence\ObjectId;
  *               name is the array key
  * @author ingo herwig <ingo@wemove.com>
  */
-class DionysosNodeSerializer implements NodeSerializer {
+class DionysosNodeSerializer extends AbstractNodeSerializer {
 
   private static $NODE_KEYS = array(
       'className',
@@ -121,46 +122,9 @@ class DionysosNodeSerializer implements NodeSerializer {
   }
 
   /**
-   * Deserialize a node value
-   * @param node A reference to the node
-   * @param key The value name or type if value is an array
-   * @param value The value or child data, if value is an array
-   */
-  protected function deserializeValue(Node $node, $key, $value) {
-    if (!is_array($value)) {
-      // force set value to avoid exceptions in this stage
-      $node->setValue($key, $value, true);
-    }
-    else {
-      $role = $key;
-      if ($this->isMultiValued($node, $role)) {
-        // deserialize children
-        foreach($value as $childData) {
-          $this->deserializeNode($childData, $node, $role);
-        }
-      }
-      else {
-        $this->deserializeNode($value, $node, $role);
-      }
-    }
-  }
-
-  /**
    * @see NodeSerializer::serializeNode
    */
   public function serializeNode(Node $node) {
-    $this->_serializedOIDs = array();
-    $serializedNode = $this->serializeNodeImpl($node);
-    return $serializedNode;
-  }
-
-  /**
-   * Actually serialize a Node into an array
-   * @param node A reference to the node to serialize
-   * @return The node serialized into an associated array or null, if
-   *  the node parameter is not a Node instance (e.g. PersistentObjectProxy)
-   */
-  protected function serializeNodeImpl($node) {
     if (!($node instanceof Node)) {
       return null;
     }
@@ -200,7 +164,7 @@ class DionysosNodeSerializer implements NodeSerializer {
           if ($isMultiValued) {
             $curResult['attributes'][$role] = array();
             foreach ($relatedNodes as $relatedNode) {
-              $data = $this->serializeNodeImpl($relatedNode);
+              $data = $this->serializeNode($relatedNode);
               if ($data != null) {
                 // add the data to the relation attribute
                 $curResult['attributes'][$role][] = $data;
@@ -208,7 +172,7 @@ class DionysosNodeSerializer implements NodeSerializer {
             }
           }
           else {
-            $data = $this->serializeNodeImpl($relatedNodes);
+            $data = $this->serializeNode($relatedNodes);
             if ($data != null) {
               // add the data to the relation attribute
               $curResult['attributes'][$role] = $data;
@@ -218,21 +182,6 @@ class DionysosNodeSerializer implements NodeSerializer {
       }
     }
     return $curResult;
-  }
-
-  /**
-   * Check if a relation is multi valued
-   * @param node The Node that has the relation
-   * @param role The role of the relation
-   */
-  protected function isMultiValued(Node $node, $role) {
-    $isMultiValued = false;
-    $mapper = $node->getMapper();
-    if ($mapper->hasRelation($role)) {
-      $relation = $mapper->getRelation($role);
-      $isMultiValued = $relation->isMultiValued();
-    }
-    return $isMultiValued;
   }
 }
 ?>

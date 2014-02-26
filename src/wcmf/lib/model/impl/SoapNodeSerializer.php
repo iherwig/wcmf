@@ -28,13 +28,14 @@ use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 
 /**
- * DojoNodeSerializer is used to serialize Nodes into the Dojo rest format and
- * vice versa. The format of serialized Nodes is defined in the Dojo documentation (See:
- * http://dojotoolkit.org/reference-guide/1.8/quickstart/rest.html)
+ * SoapNodeSerializer is used to serialize Nodes into the soap format and
+ * vice versa. The format of serialized Nodes is defined by the wCMF soap server.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DojoNodeSerializer extends AbstractNodeSerializer {
+class SoapNodeSerializer extends AbstractNodeSerializer {
+
+  private $_serializedOIDs = array();
 
   /**
    * @see NodeSerializer::isSerializedNode
@@ -71,14 +72,21 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
 
     $remainingData = array();
 
+    $foundNodeAttribute = false;
     $mapper = $node->getMapper();
     foreach($data as $key => $value) {
-      if ($mapper->hasAttribute($key)) {
+      if ($mapper->hasAttribute($key) || $mapper->hasRelation($key)) {
         $this->deserializeValue($node, $key, $value);
+        $foundNodeAttribute = true;
       }
       else {
         $remainingData[$key] = $value;
       }
+    }
+
+    if ($foundNodeAttribute) {
+      // a node was deserialized -> remove oid from remaining data
+      unset($remainingData['oid']);
     }
 
     // set oid after attributes in order to
@@ -101,35 +109,40 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
       return null;
     }
     $curResult = array();
-    $curResult['oid'] = $node->getOID()->__toString();
+    $oidStr = $node->getOID()->__toString();
+    $curResult['oid'] = $oidStr;
 
-    // serialize attributes
-    // use NodeValueIterator to iterate over all Node values
-    $valueIter = new NodeValueIterator($node, false);
-    foreach($valueIter as $valueName => $value) {
-      $curResult[$valueName] = $value;
-    }
+    if (!in_array($oidStr, $this->_serializedOIDs)) {
+      $this->_serializedOIDs[] = $oidStr;
 
-    // add related objects by creating an attribute that is named as the role of the object
-    // multivalued relations will be serialized into an array
-    $mapper = $node->getMapper();
-    foreach ($mapper->getRelations() as $relation) {
-      $role = $relation->getOtherRole();
-      $relatedNodes = $node->getValue($role);
-      if ($relatedNodes) {
-        // serialize the nodes
-        $isMultiValued = $relation->isMultiValued();
-        if ($isMultiValued) {
+      // serialize attributes
+      // use NodeValueIterator to iterate over all Node values
+      $valueIter = new NodeValueIterator($node, false);
+      foreach($valueIter as $valueName => $value) {
+        $curResult[$valueName] = $value;
+      }
+
+      // add related objects by creating an attribute that is named as the role of the object
+      // multivalued relations will be serialized into an array
+      $mapper = $node->getMapper();
+      foreach ($mapper->getRelations() as $relation) {
+        $role = $relation->getOtherRole();
+        $relatedNodes = $node->getValue($role);
+        if ($relatedNodes) {
+          // serialize the nodes
           $curResult[$role] = array();
-          foreach ($relatedNodes as $relatedNode) {
-            // add the reference to the relation attribute
-            $curResult[$role][] = array('$ref' => $relatedNode->getOID()->__toString());
+          $isMultiValued = $relation->isMultiValued();
+          if ($isMultiValued) {
+            foreach ($relatedNodes as $relatedNode) {
+              // add serialized node
+              $curResult[$role][] = $this->serializeNode($relatedNode);
+            }
           }
-        }
-        else {
-          // add the reference to the relation attribute
-          $relatedNode = $relatedNodes;
-          $curResult[$role] = array('$ref' => $relatedNode->getOID()->__toString());
+          else {
+              // add serialized node
+            $relatedNode = $relatedNodes;
+            $curResult[$role][] = $this->serializeNode($relatedNode);
+          }
         }
       }
     }

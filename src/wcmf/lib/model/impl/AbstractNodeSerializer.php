@@ -1,0 +1,71 @@
+<?php
+/**
+ * wCMF - wemove Content Management Framework
+ * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ *
+ * Licensed under the terms of any of the following licenses
+ * at your choice:
+ *
+ * - GNU Lesser General Public License (LGPL)
+ *   http://www.gnu.org/licenses/lgpl.html
+ * - Eclipse Public License (EPL)
+ *   http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * See the license.txt file distributed with this work for
+ * additional information.
+ *
+ * $Id$
+ */
+namespace wcmf\lib\model\impl;
+
+use wcmf\lib\model\Node;
+use wcmf\lib\model\NodeSerializer;
+
+/**
+ * NodeSerializerBase is a base class for NodeSerialize implementations.
+ *
+ * @author ingo herwig <ingo@wemove.com>
+ */
+abstract class AbstractNodeSerializer implements NodeSerializer {
+
+  /**
+   * Deserialize a node value
+   * @param node A reference to the node
+   * @param key The value name or type if value is an array
+   * @param value The value or child data, if value is an array
+   */
+  protected function deserializeValue(Node $node, $key, $value) {
+    if (!is_array($value)) {
+      // force set value to avoid exceptions in this stage
+      $node->setValue($key, $value, true);
+    }
+    else {
+      $role = $key;
+      if ($this->isMultiValued($node, $role)) {
+        // deserialize children
+        foreach($value as $childData) {
+          $this->deserializeNode($childData, $node, $role);
+        }
+      }
+      else {
+        $this->deserializeNode($value, $node, $role);
+      }
+    }
+  }
+
+  /**
+   * Check if a relation is multi valued
+   * @param node The Node that has the relation
+   * @param role The role of the relation
+   */
+  protected function isMultiValued(Node $node, $role) {
+    $isMultiValued = false;
+    $mapper = $node->getMapper();
+    if ($mapper->hasRelation($role)) {
+      $relation = $mapper->getRelation($role);
+      $isMultiValued = $relation->isMultiValued();
+    }
+    return $isMultiValued;
+  }
+}
+?>

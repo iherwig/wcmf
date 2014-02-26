@@ -76,10 +76,10 @@ abstract class HierarchicalFormat extends AbstractFormat {
           // array/object value
           $result = $this->deserializeValues($value);
           // flatten the array, if the deserialization result is only an array
-          // with size 1 (e.g. if a node was deserialized)
-          if (is_array($result) && sizeof($result) == 1) {
-            $values[key($result)] = current($result);
+          // with size 1 and the key is an oid (e.g. if a node was deserialized)
+          if (is_array($result) && sizeof($result) == 1 && ObjectId::isValid(key($result))) {
             unset($values[$key]);
+            $values[key($result)] = current($result);
           }
           else {
             $values[$key] = $result;

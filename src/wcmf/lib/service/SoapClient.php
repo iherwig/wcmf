@@ -61,7 +61,7 @@ class SoapClient extends \SoapClient {
     $header = $this->generateWSSecurityHeader($this->_user, $this->_password);
     $response = $this->__soapCall($method, sizeof($params) > 0 ? array($params) : array(), null, $header);
     // in document/literal style the "return" parameter holds the result
-    return $response->return;
+    return property_exists($response, 'return') ? $response->return : $response;
   }
 
   /**
