@@ -72,7 +72,7 @@ class DeleteController extends Controller {
       if ($oid) {
         $doomedNode = $persistenceFacade->load($oid, BuildDepth::SINGLE);
         if ($doomedNode == null) {
-          Log::warn(Message::get("An object with oid %0% is does not exist.", array($oid)), __CLASS__);
+          Log::warn("An object with oid ".$oid." is does not exist.", __CLASS__);
         }
         else {
           if($this->confirmDelete($doomedNode)) {

@@ -123,6 +123,15 @@ class SoapTest extends DatabaseTestCase {
 
     $this->assertEquals('app.src.model.Author:202', $result->oid);
     $this->assertEquals('Test Author Modified', $result->name);
+
+    // test read updated object
+    $oid = $result->oid;
+    $params2 = array('oid' => $oid, 'depth' => 0);
+    $result2 = $client->call("readAuthor", $params2);
+
+    $this->assertFalse($result2 instanceof \SoapFault);
+    $this->assertEquals($oid, $result2->oid);
+    $this->assertEquals('Test Author Modified', $result2->name);
   }
 
   public function testCreate() {
@@ -130,7 +139,7 @@ class SoapTest extends DatabaseTestCase {
     $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
-    $author->oid = '';
+    $author->oid = 'app.src.model.Author:wcmfa3934eb734bd3ebfbd674da8d6bcd7c9';
     $author->id = '';
     $author->name = 'Test Author New';
     $author->created = '';
@@ -142,10 +151,37 @@ class SoapTest extends DatabaseTestCase {
 
     $params = array('Author' => $author);
     $result = $client->call("createAuthor", $params);
-    echo $client->getDebugInfos();
     $this->assertFalse($result instanceof \SoapFault);
 
     $this->assertEquals('Test Author New', $result->name);
+
+    // test read new object
+    $oid = $result->oid;
+    $params2 = array('oid' => $oid, 'depth' => 0);
+    $result2 = $client->call("readAuthor", $params2);
+
+    $this->assertFalse($result2 instanceof \SoapFault);
+    $this->assertEquals($oid, $result2->oid);
+    $this->assertEquals('Test Author New', $result2->name);
+  }
+
+  public function testDelete() {
+    $options = array('trace' => 1, 'exceptions' => 0);
+    $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
+
+    $params = array('oid' => 'app.src.model.Author:202');
+    $result = $client->call("deleteAuthor", $params);
+    $this->assertFalse($result instanceof \SoapFault);
+
+    $this->assertEquals('app.src.model.Author:202', $result);
+
+    // test read deleted object
+    $oid = $result;
+    $params2 = array('oid' => $oid, 'depth' => 0);
+    $result2 = $client->call("readAuthor", $params2);
+
+    $this->assertFalse($result2 instanceof \SoapFault);
+    $this->assertEquals('O:8:"stdClass":0:{}', serialize($result2));
   }
 }
 ?>
