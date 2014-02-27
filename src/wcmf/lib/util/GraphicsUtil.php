@@ -17,10 +17,11 @@
 namespace wcmf\lib\util;
 
 use \Exception;
-use \RuntimeException;
-use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\util\GraphicsUtil;
+
+require_once(BASE."wcmf/vendor/PHPImageWorkshop/ImageWorkshop.php");
+require_once(BASE."wcmf/vendor/PHPImageWorkshop/GifFrameExtractor.php");
+require_once(BASE."wcmf/vendor/PHPImageWorkshop/GifCreator.php");
 
 /**
  * GraphicsUtil provides support for graphic manipulation.
@@ -29,20 +30,27 @@ use wcmf\lib\util\GraphicsUtil;
  */
 class GraphicsUtil {
 
-  const FONTTYPE_PS = 1;  // postscript type 1
-  const FONTTYPE_TTF = 2; // true type
+  private $_errorMsg = '';
+
+  /**
+   * Get last error message.
+   * @return The error string
+   */
+  public function getErrorMsg() {
+    return $this->_errorMsg;
+  }
 
   /**
    * Check if a given file is an image.
    * @param imgname Name of the imagefile to check
-   * @return True/False whether the file is an image
+   * @return Boolean whether the file is an image
    */
-  public static function isImage($imgname) {
-    if(getimagesize($imgname)==false) {
-      return false;
-    }
-    else {
+  public function isImage($imgname) {
+    try {
+      ImageWorkshop::initFromPath($imgname);
       return true;
+    } catch (Exception $ex) {
+      return false;
     }
   }
 
@@ -51,12 +59,12 @@ class GraphicsUtil {
    * @param imgname Name of the imagefile to check
    * @param width Width of the image, -1 means don't care
    * @param height Height of the image, -1 means don't care
-   * @param exact True/False whether the image should match the dimension exactly or might be smaller [default: true]
-   * @return True/False whether the image meets the dimensions
+   * @param exact Boolean whether the image should match the dimension exactly or might be smaller [default: true]
+   * @return Boolean whether the image meets the dimensions, error string provided by getErrorMsg()
    */
-  public static function isValidImageDimension($imgname, $width, $height, $exact=true) {
-    $widthOk = self::isValidImageWidth($imgname, $width, $exact);
-    $heightOk = self::isValidImageHeight($imgname, $height, $exact);
+  public function isValidImageDimension($imgname, $width, $height, $exact=true) {
+    $widthOk = ($width == -1) || $this->isValidImageWidth($imgname, $width, $exact);
+    $heightOk = ($height == -1) || $this->isValidImageHeight($imgname, $height, $exact);
     return ($widthOk && $heightOk);
   }
 
@@ -64,31 +72,23 @@ class GraphicsUtil {
    * Check image width.
    * @param imgname Name of the imagefile to check
    * @param width Width of the image
-   * @param exact True/False whether the image width should match exactly or might be smaller [default: true]
-   * @return True/False whether the image width meets the criteria
+   * @param exact Boolean whether the image width should match exactly or might be smaller [default: true]
+   * @return Boolean whether the image width meets the criteria, error string provided by getErrorMsg()
    * @note This method returns true if the file does not exist.
    */
-  public static function isValidImageWidth($imgname, $width, $exact=true) {
-    if (!file_exists($imgname)) {
+  public function isValidImageWidth($imgname, $width, $exact=true) {
+    try {
+      $image = ImageWorkshop::initFromPath($imgname);
+    } catch (Exception $ex) {
       return true;
     }
-    $properties = getimagesize($imgname);
-    $dimOk = true;
-    if ($exact && $properties[0] != $width) {
-      $dimOk = false;
-    }
-    else if ($properties[0] > $width) {
-      $dimOk = false;
-    }
+    $imgWitdh = $image->getWidth();
+    $dimOk = ($exact && $imgWitdh == $width) || (!$exact && $imgWitdh <= $width);
     if (!$dimOk) {
-      if ($exact) {
-        $constraint = Message::get("exactly");
-      }
-      else {
-        $constraint = Message::get("smaller than");
-      }
-      throw new Exception(Message::get("Wrong image width. Image width must be %0% %1%px - actual image width is %2%px.",
-        array($constraint, $width, $properties[0])));
+      $constraint = $exact ? Message::get("exactly") : Message::get("smaller than");
+      $this->_errorMsg = Message::get("Wrong image width. Image width must be %1% %2%px - actual image width is %3%px.",
+        array($constraint, $width, $imgWitdh));
+      $this->_errorMsg .= "\n";
     }
     return $dimOk;
   }
@@ -97,31 +97,23 @@ class GraphicsUtil {
    * Check image height.
    * @param imgname Name of the imagefile to check
    * @param height Height of the image
-   * @param exact True/False whether the image height should match exactly or might be smaller [default: true]
-   * @return True/False whether the image width meets the criteria
+   * @param exact Boolean whether the image height should match exactly or might be smaller [default: true]
+   * @return Boolean whether the image width meets the criteria, error string provided by getErrorMsg()
    * @note This method returns true if the file does not exist.
    */
-  public static function isValidImageHeight($imgname, $height, $exact=true) {
-    if (!file_exists($imgname)) {
+  public function isValidImageHeight($imgname, $height, $exact=true) {
+    try {
+      $image = ImageWorkshop::initFromPath($imgname);
+    } catch (Exception $ex) {
       return true;
     }
-    $properties = getimagesize($imgname);
-    $dimOk = true;
-    if ($exact && $properties[1] != $height) {
-      $dimOk = false;
-    }
-    else if ($properties[1] > $height) {
-      $dimOk = false;
-    }
+    $imgHeight = $image->getHeight();
+    $dimOk = ($exact && $imgHeight == $height) || (!$exact && $imgHeight <= $height);
     if (!$dimOk) {
-      if ($exact) {
-        $constraint = Message::get("exactly");
-      }
-      else {
-        $constraint = Message::get("smaller than");
-      }
-      throw new Exception(Message::get("Wrong image height. Image height must be %0% %1%px - actual image height is %2%px.",
-        array($constraint, $height, $properties[1])));
+      $constraint = $exact ? Message::get("exactly") : Message::get("smaller than");
+      $this->_errorMsg .= Message::get("Wrong image width. Image height must be %1% %2%px - actual image height is %3%px.",
+        array($constraint, $height, $imgHeight));
+      $this->_errorMsg .= "\n";
     }
     return $dimOk;
   }
@@ -130,24 +122,31 @@ class GraphicsUtil {
    * Calculate image dimension to fit into a square, preserving the aspect ratio
    * @param srcName The source file name
    * @param maxDimension The maximum dimension the image should have (either width or height)
-   * @return Array with width and height value
+   * @return Array with width and height value or null, on error, error string provided by getErrorMsg()
    */
-  public static function fitIntoSquare($srcName, $maxDimension) {
-    list($sourceWidth, $sourceHeight, $type, $attr) = getimagesize($srcName);
-    if ($sourceWidth < $sourceHeight) {
-      $height = $maxDimension;
-      $width = floor($sourceWidth*$height/$sourceHeight);
+  public function fitIntoSquare($srcName, $maxDimension) {
+    try {
+      $image = ImageWorkshop::initFromPath($srcName);
+      $sourceWidth = $image->getWidth();
+      $sourceHeight = $image->getHeight();
+      if ($sourceWidth < $sourceHeight) {
+        $height = $maxDimension;
+        $width = floor($sourceWidth*$height/$sourceHeight);
+      }
+      else {
+        $width = $maxDimension;
+        $height = floor($sourceHeight*$width/$sourceWidth);
+      }
+      // if image is actually smaller, leave small
+      if ($width > $sourceWidth && $height > $sourceHeigth) {
+        $width = $sourceWidth;
+        $height = $sourceHeight;
+      }
+      return array($width, $height);
+    } catch (Exception $ex) {
+      $this->_errorMsg = $ex->getMessage();
+      return null;
     }
-    else {
-      $width = $maxDimension;
-      $height = floor($sourceHeight*$width/$sourceWidth);
-    }
-    // if image is actually smaller, leave small
-    if ($width > $sourceWidth && $height > $sourceHeigth) {
-      $width = $sourceWidth;
-      $height = $sourceHeight;
-    }
-    return array($width, $height);
   }
 
   /**
@@ -156,75 +155,19 @@ class GraphicsUtil {
    * @param destName The destination file name
    * @param width The width of the thumbnail (maybe null)
    * @param height The height of the thumbnail (maybe null)
-   * @return True/False whether the operation succeeded
+   * @return Boolean whether the operation succeeded, error string provided by getErrorMsg()
    * @note: supported image formats are GIF, JPG, PNG
    *        if only width or height are given the other dimension is calculated to preserve the aspect
    */
-  public static function createThumbnail($srcName, $destName, $width, $height) {
-    self::checkImageSupport();
-
-    $oldErrorLevel = error_reporting (0);
-    $srcImg = null;
-    $destImg = null;
-
-    if ($width == null && $height == null) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Either width or height must be given."), false, $oldErrorLevel);
+  public function createThumbnail($srcName, $destName, $width, $height) {
+    try {
+      $keepAspect = $width === null || $height === null;
+      $this->processImageFunction($srcName, $destName, "resizeInPixel", array($width, $height, $keepAspect));
+      return true;
+    } catch (Exception $ex) {
+      $this->_errorMsg = $ex->getMessage();
+      return false;
     }
-    if ($width) $width = intval($width);
-    if ($height) $height = intval($height);
-
-    if ($width === 0 || $height === 0) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Dimension 0 is not allowed."), false, $oldErrorLevel);
-    }
-    // get image information to calculate aspect
-    $srcData = getimagesize($srcName);
-    if ($width == null) {
-      $width = $srcData[0]/$srcData[1]*$height;
-    }
-    elseif ($height == null) {
-      $height = $srcData[1]/$srcData[0]*$width;
-    }
-    // create thumbnail canvas to save to
-    $destImg = imagecreatetruecolor($width, $height);
-    if (!$destImg) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not create thumbnail image %0%.", array($destName)),
-        false, $oldErrorLevel);
-    }
-    // define image functions
-    $imagecreationFunction = self::getImageCreationFunction($srcName);
-    if ($imagecreationFunction === false) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Image format not supported."), false, $oldErrorLevel);
-    }
-    $imageoutputFunction = self::getImageOutputFunction($destName);
-
-    // create thumbnail
-    $srcImg = $imagecreationFunction ($srcName);
-    if (!$srcImg) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not open source image %0%.", array($srcName)),
-        false, $oldErrorLevel);
-    }
-    imagecopyresampled ($destImg, $srcImg, 0, 0, 0, 0, $width, $height, $srcData[0], $srcData[1]);
-    // the last parameter gives the quality and will only be used with imagejpeg
-    if ($imageoutputFunction == "imagejpeg") {
-      $imageoutputFunction ($destImg, $destName, 100);
-    }
-    else {
-      $imageoutputFunction ($destImg, $destName);
-    }
-    chmod($destName, 0644);
-
-    return self::exitThumbnail($srcImg, $destImg, "", true, $oldErrorLevel);
-  }
-
-  /**
-   */
-  private static function exitThumbnail($srcImg, $destImg, $msg, $created, $oldErrorLevel) {
-    // free resources
-    if ($srcImg) imagedestroy($srcImg);
-    if ($destImg) imagedestroy($destImg);
-
-    error_reporting($oldErrorLevel);
-    return $created;
   }
 
   /**
@@ -235,173 +178,71 @@ class GraphicsUtil {
    * @param height The height of the cropped image (maybe null)
    * @param x The start point x coordinate (maybe null, default null)
    * @param y The start point y coordinate (maybe null, default null)
-   * @return True/False whether the operation succeeded
+   * @return Boolean whether the operation succeeded, error string provided by getErrorMsg()
    * @note: supported image formats are GIF, JPG, PNG
    *        if only width or height are given the other dimension is taken from the original image
    */
-  public static function cropImage($srcName, $destName, $width, $height, $x=null, $y=null) {
-    self::checkImageSupport();
+  public function cropImage($srcName, $destName, $width, $height, $x=null, $y=null) {
+    try {
+      // calculate parameters based on image (or first frame of gif animation)
+      $image = ImageWorkshop::initFromPath($srcName);
+      list($width, $height) = $this->calculateSizeParams($width, $height, $image->getWidth(), $image->getHeight());
+      $x = ($x === null) ? $image->getWidth()/2 : $x;
+      $y = ($y === null) ? $image->getHeight()/2 : $y;
 
-    $oldErrorLevel = error_reporting (0);
-    $srcImg = null;
-    $destImg = null;
-
-    if ($width == null && $height == null) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Either width or height must be given."), false, $oldErrorLevel);
+      $this->processImageFunction($srcName, $destName, "cropInPixel", array($width, $height, $x, $y, 'LT'));
+      return true;
+    } catch (Exception $ex) {
+      $this->_errorMsg = $ex->getMessage();
+      return false;
     }
-    if ($width) $width = intval($width);
-    if ($height) $height = intval($height);
-
-    if ($width === 0 || $height === 0) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Dimension 0 is not allowed."), false, $oldErrorLevel);
-    }
-    // get image information to calculate missing dimension
-    $srcData = getimagesize($srcName);
-    if ($width == null) {
-      $width = $srcData[0];
-    }
-    elseif ($height == null) {
-      $height = $srcData[1];
-    }
-    // create cropped image canvas to save to
-    $destImg = imagecreatetruecolor($width, $height);
-    if (!$destImg) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not create cropped image %0%.", array($destName)),
-        false, $oldErrorLevel);
-    }
-    // define image functions
-    $imagecreationFunction = GraphicsUtil::getImageCreationFunction($srcName);
-    if ($imagecreationFunction === false) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Image format not supported."), false, $oldErrorLevel);
-    }
-    $imageoutputFunction = GraphicsUtil::getImageOutputFunction($destName);
-
-    // create thumbnail
-    $srcImg = $imagecreationFunction ($srcName);
-    if (!$srcImg) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Could not open source image %0%.", array($srcName)),
-        false, $oldErrorLevel);
-    }
-    if ($x === null)
-      $x = $srcData[0]/2;
-    if ($y === null)
-      $y = $srcData[1]/2;
-    imagecopyresampled ($destImg, $srcImg, 0, 0, $x, $y, $width, $height, $width, $height);
-    // the last parameter gives the quality and will only be used with imagejpeg
-    if ($imageoutputFunction == "imagejpeg") {
-      $imageoutputFunction ($destImg, $destName, 100);
-    }
-    else {
-      $imageoutputFunction ($destImg, $destName);
-    }
-    chmod($destName, 0644);
-
-    return self::exitThumbnail($srcImg, $destImg, "", true, $oldErrorLevel);
   }
 
   /**
    * Create a black and white copy of an image.
-   * Code is from http://php.about.com/od/gdlibrary/ss/grayscale_gd.htm
    * @param srcName The source file name
    * @param destName The destination file name
    */
-  public static function createBlackWhiteImage($srcName, $destName) {
-    // define image functions
-    $imagecreationFunction = self::getImageCreationFunction($srcName);
-    if ($imagecreationFunction === false) {
-      return self::exitThumbnail($srcImg, $destImg, Message::get("Image format not supported."), false, $oldErrorLevel);
+  public function createBlackWhiteImage($srcName, $destName) {
+    try {
+      $this->processImageFunction($srcName, $destName, "applyFilter", array(IMG_FILTER_GRAYSCALE));
+      return true;
+    } catch (Exception $ex) {
+      $this->_errorMsg = $ex->getMessage();
+      return false;
     }
-    $imageoutputFunction = self::getImageOutputFunction($destName);
-
-    // get the dimensions
-    list($width, $height) = getimagesize($srcName);
-
-    // define the source image
-    $source = $imagecreationFunction($srcName);
-
-    // create the canvas
-    $bwimage= imagecreate($width, $height);
-
-    // create the 256 color palette
-    $palette = array(255);
-    for ($c=0; $c<256; $c++) {
-      $palette[$c] = imagecolorallocate($bwimage, $c, $c, $c);
-    }
-
-    // read the original colors pixel by pixel
-    for ($y=0; $y<$height; $y++) {
-      for ($x=0; $x<$width; $x++) {
-        $rgb = imagecolorat($source, $x, $y);
-        $r = ($rgb >> 16) & 0xFF;
-        $g = ($rgb >> 8) & 0xFF;
-        $b = $rgb & 0xFF;
-
-        //This is where we actually use yiq to modify our rbg values, and then convert them to our grayscale palette
-        $gs = ($r*0.299) + ($g*0.587) + ($b*0.114);
-        imagesetpixel($bwimage, $x, $y, $palette[$gs]);
-      }
-    }
-
-    // output a jpg image
-    $imageoutputFunction($bwimage, $destName);
-
-    // destroy temp image buffers
-    imagedestroy($source);
-    imagedestroy($bwimage);
   }
 
   /**
-   * Render a text to an image. Using the default parameters the text will
-   * be rendered into a box that fits the text. If the width parameter is not null and the
-   * text exceeds the width, the text will be wrapped and the height parameter will be
-   * used as lineheight.
-   * @param text The text to render
-   * @param fontfile The font file to use
-   * @param encoding The encoding file to use (e.g. IsoLatin1.enc, maybe null for default encoding)
-   * @param fontsize The font size to use (in pixels)
-   * @param color The color to use for the text (as HEX value)
-   * @param bgcolor The color to use for the background (as HEX value)
-   * @param filename The name of the file to write to
-   * @param width The width of the image (or null if it should fit the text) [default: null]
-   * @param height The height of the image (or null if it should fit the text) [default: null]
-   * @param x The x offset of the text (or null if it should be centered) [default: null]
-   * @param y The y offset of the text (or null if the baseline should be the image border) [default: null]
-   * @param space The value of the space character in the font (optional) [default: 0]
-   * @param tightness The amount of white space between characters (optional) [default: 0]
-   * @param angle The angle of the characters (optional) [default: 0]
-   * @return True/False whether the operation succeeded
-   * @note The image type will be determined by the file extension (gif, jpg or png). Default
-   * is jpg if the extension is unknown.
+   * Process the given function on the given source image (supports animated gifs)
+   * and save the result in the given destination image.
+   * @param srcName The source file name
+   * @param destName The destination file name
+   * @param function The name of the function
+   * @param params The paremeters to be passed to the function
    */
-  public static function renderTextPS($text, $fontfile, $encoding, $fontsize, $color, $bgcolor, $filename,
-    $width=null, $height=null, $x=null, $y=null, $space=0, $tightness=0, $angle=0) {
-
-    self::checkImageSupport();
-
-    // check postscript type1 support
-    if (!function_exists(imagepsloadfont)) {
-      throw new Exception('t1lib missing');
+  public function processImageFunction($srcName, $destName, $function, $params) {
+    if (GifFrameExtractor::isAnimatedGif($srcName)) {
+      // for animated gifs we need to process each frame
+      $gfe = new GifFrameExtractor();
+      $frames = $gfe->extract($srcName);
+      $retouchedFrames = array();
+      foreach ($frames as $frame) {
+        $frameLayer = ImageWorkshop::initFromResourceVar($frame['image']);
+        call_user_func_array(array($frameLayer, $function), $params);
+        $retouchedFrames[] = $frameLayer->getResult();
+      }
+      $gc = new GifCreator();
+      $gc->create($retouchedFrames, $gfe->getFrameDurations(), 0);
+      file_put_contents($destName, $gc->getGif());
     }
-
-    // load the font to use
-    if (!file_exists($fontfile)) {
-      throw new IllegalArgumentException(Message::get("Font file '%0%' not found.", array($fontfile)));
+    else {
+        // all other images
+      $image = ImageWorkshop::initFromPath($srcName);
+      call_user_func_array(array($image, $function), $params);
+      $image->save(dirname($destName), basename($destName), true, null, 100);
     }
-
-    $font = @imagepsloadfont($fontfile);
-    if ($font === false) {
-      throw new IllegalArgumentException(Message::get("Format of font file '%0%' not supported.", array($fontfile)));
-    }
-    if ($encoding != null) {
-      imagepsencodefont($font, $encoding);
-    }
-    // create the image file
-    self::createTextImage(self::FONTTYPE_PS, $text, $font, null, $fontsize, $color, $bgcolor, $filename,
-      $width, $height, $x, $y, $space, $tightness, $angle);
-
-    // destroy font to free memory
-    imagepsfreefont($font);
-    return true;
+    chmod($destName, 0644);
   }
 
   /**
@@ -409,8 +250,9 @@ class GraphicsUtil {
    * be rendered into a box that fits the text. If the width parameter is not null and the
    * text exceeds the width, the text will be wrapped and the height parameter will be
    * used as lineheight.
+   * Wrapping code is from http://de.php.net/manual/de/function.imagettfbbox.php#60673
    * @param text The text to render
-   * @param fontfile The font file to use
+   * @param fontfile The ttf font file to use
    * @param fontsize The font size to use (in pixels)
    * @param color The color to use for the text (as HEX value)
    * @param bgcolor The color to use for the background (as HEX value)
@@ -420,205 +262,111 @@ class GraphicsUtil {
    * @param x The x offset of the text (or null if it should be centered) [default: null]
    * @param y The y offset of the text (or null if the baseline should be the image border) [default: null]
    * @param angle The angle of the text (optional) [default: 0]
-   * @return True/False whether the operation succeeded
-   * @note The image type will be determined by the file extension (gif, jpg or png). Default
-   * is jpg if the extension is unknown.
+   * @return Boolean whether the operation succeeded, error string provided by getErrorMsg()
    */
-  public static function renderTextTTF($text, $fontfile, $fontsize, $color, $bgcolor, $filename,
+  public function renderText($text, $fontfile, $fontsize, $color, $bgcolor, $filename,
     $width=null, $height=null, $x=null, $y=null, $angle=0) {
+    try {
+      // the destination lines array
+      $dstLines = array();
+      $lineheight = $height;
 
-    self::checkImageSupport();
-
-    // check postscript type1 support
-    if (!function_exists(imagettfbbox)) {
-      throw new Exception('FreeType library missing');
-    }
-
-    // load the font to use
-    if (!file_exists($fontfile)) {
-      throw new IllegalArgumentException(Message::get("Font file '%0%' not found.", array($fontfile)));
-    }
-
-    // create the image file
-    self::createTextImage(self::FONTTYPE_TTF, $text, null, $fontfile, $fontsize, $color, $bgcolor, $filename,
-      $width, $height, $x, $y, 0, 0, $angle);
-
-    return true;
-  }
-
-  /**
-   * Render a text to an image. This method is used by GraphicsUtil::renderTextPS
-   * and GraphicsUtil::renderTextTTF.
-   * Wrapping code is from http://de.php.net/manual/de/function.imagettfbbox.php#60673
-   * @param fonttype One of the FONTTYPE constants
-   * @param text The text
-   * @param font The font identifier (ignored when using FONTYPE_TTF)
-   * @param fontfile The font file (ignored when using FONTYPE_PS)
-   * @param fontsize The font size (in pixels)
-   * @param color The foreground color (as HEX value)
-   * @param bgcolor The background color (as HEX value)
-   * @param filename The name of the file to write to
-   * @param width The width of the image (or null if it should fit the text)
-   * @param height The height of the image (or null if it should fit the text)
-   * @param x The x offset of the text (or null if it should be centered)
-   * @param y The y offset of the text (or null if the baseline should be the image border)
-   * @param space The value of the space character in the font
-   * @param tightness The amount of white space between characters
-   * @param angle The angle of the text
-   */
-  private static function createTextImage($fonttype, $text, $font, $fontfile, $fontsize, $color, $bgcolor, $filename,
-    $width, $height, $x, $y, $space, $tightness, $angle) {
-    // the destination lines array
-    $dstLines = array();
-    $lineheight = $height;
-
-    // if a width is given, we wrap the text if necessary
-    if ($width != null)
-    {
-      // remove windows line-breaks
-      $text = str_replace("\r", '', $text);
-      // split text into "lines"
-      $srcLines = preg_split ('/\n/', $text);
-      foreach ($srcLines as $currentL) {
-        $line = '';
-        // split line into words
-        $wordsTmp = preg_split('/ /', $currentL);
-        // split at hyphens
-        $words = array();
-        foreach ($wordsTmp as $word) {
-          $wordParts = preg_split('/ /', str_replace(array('-', '/'), array('- ', '/ '), $word));
-          foreach ($wordParts as $wordPart) {
-            $words[] = $wordPart;
+      // if a width is given, we wrap the text if necessary
+      if ($width != null) {
+        // remove windows line-breaks
+        $text = str_replace("\r", '', $text);
+        // split text into "lines"
+        $srcLines = split ("\n", $text);
+        foreach ($srcLines as $currentL) {
+          $line = '';
+          // split line into words
+          $wordsTmp = split(" ", $currentL);
+          // split at hyphens
+          $words = array();
+          foreach ($wordsTmp as $word) {
+            $wordParts = split(' ', str_replace(array('-', '/'), array('- ', '/ '), $word));
+            foreach ($wordParts as $wordPart) {
+              $words[] = $wordPart;
+            }
           }
+          for ($i=0, $count=sizeof($words); $i<$count; $i++) {
+            $word = $words[$i];
+
+            // get the length of this line, if the word is to be included
+            list($linewidth, $lineheight) = $this->getTextDimension($fontsize, $angle, $fontfile, $text);
+
+            // check if it is too big if the word was added, if so, then move on
+            if ($linewidth > $width && !empty($line)) {
+               // add the line like it was without spaces
+              $dstLines[] = trim($line);
+              $line = '';
+            }
+            // add the trailing space only if the word does not end with a hyphen
+            // and it is not the last word
+            if (preg_match('/-$/', $word) || $i==sizeof($words)-1) {
+              $line .= $word;
+            }
+            else {
+              $line .= $word.' ';
+            }
+          }
+          // add the line when the line ends
+          $dstLines[] = trim($line);
         }
-        for ($i=0; $i<sizeof($words); $i++) {
-          $word = $words[$i];
-
-          // get the length of this line, if the word is to be included
-          list($linewidth, $lineheight) = self::getTextDimension($fonttype, $line.$word,
-            $font, $fontfile, $fontsize, $space, $tightness, $angle);
-
-          // check if it is too big if the word was added, if so, then move on
-          if ($linewidth > $width && !empty($line)) {
-             // add the line like it was without spaces
-            $dstLines[] = trim($line);
-            $line = '';
-          }
-          // add the trailing space only if the word does not end with a hyphen
-          // and it is not the last word
-          if (preg_match('/-$/', $word) || $i==sizeof($words)-1) {
-            $line .= $word;
-          }
-          else {
-            $line .= $word.' ';
-          }
+        // get the text dimensions
+        $textwidth = $width;
+        if ($height != null) {
+          $lineheight = $height;
         }
-        // add the line when the line ends
-        $dstLines[] = trim($line);
+        $textheight = sizeof($dstLines)*$lineheight;
+        $height = $textheight;
       }
-      // get the text dimensions
-      $textwidth = $width;
-      if ($height != null) {
-        $lineheight = $height;
+      else {
+        $dstLines[] = $text;
+        // get the text dimensions
+        list($textwidth, $textheight) = $this->getTextDimension($fontsize, $angle, $fontfile, $text);
+
+        // add 5 pixels to the width.
+        // @todo make this a parameter
+        $textwidth += 5;
+
+        // calculate offset and dimensions
+        list($width, $height, $x, $y) = $this->calculateTextParams($width, $height, $x, $y, $textwidth, $textheight);
       }
-      $textheight = sizeof($dstLines)*$lineheight;
-      $height = $textheight;
-    }
-    else {
-      $dstLines[] = $text;
-      // get the text dimensions
-      list($textwidth, $textheight) = self::getTextDimension($fonttype, $text, $font, $fontfile,
-        $fontsize, $space, $tightness, $angle);
 
-      // add 5 pixels to the width.
-      // @todo make this a parameter
-      $textwidth += 5;
+      // create the image
+      $image = ImageWorkshop::initVirginLayer($width, $height, $bgcolor);
 
-      // calculate offset and dimensions
-      list($width, $height, $x, $y) = self::calculateTextParams($width, $height, $x, $y,
-        $textwidth, $textheight);
-    }
+      // render the text onto the image
+      foreach ($dstLines as $nr => $line) {
+        // calculate offset and dimensions
+        list($width, $height, $x, $y) = $this->calculateTextParams($width, $height, $x, $y, $textwidth, $textheight);
+        // print the line
+        $image->write("$line", $fontfile, $fontsize, $color, $x, $y, $angle);
+        $y += $lineheight;
+      }
 
-    // create the image
-    list($im, $foreground, $background) = self::createImage($width, $height, $color, $bgcolor);
-
-    // render the text onto the image
-    foreach ($dstLines as $nr => $line) {
-      // calculate offset and dimensions
-      list($width, $height, $x, $y) = self::calculateTextParams($width, $height, $x, $y,
-        $textwidth, $textheight);
-      // print the line
-      self::renderText($fonttype, $im, $line, $font, $fontfile, $fontsize, $foreground, $background,
-        $x, $y, $space, $tightness, $angle);
-      $y += $lineheight;
-    }
-
-    // write the image
-    $imageoutputFunction = self::getImageOutputFunction($filename);
-    $imageoutputFunction($im, $filename);
-    chmod($filename, 0775);
-
-    // destroy the image to free memory
-    imagedestroy($im);
-  }
-
-  /**
-   * Render text onto an image
-   * @param fonttype One of the FONTTYPE constants
-   * @param im The image to render onto
-   * @param text The text
-   * @param font The font identifier (ignored when using FONTYPE_TTF)
-   * @param fontfile The font file (ignored when using FONTYPE_PS)
-   * @param fontsize The font size (in pixels)
-   * @param foreground The foreground color (provided by imagecolorallocate)
-   * @param background The background color (provided by imagecolorallocate)
-   * @param x The x position
-   * @param y The y position
-   * @param space The value of the space character in the font (optional, ignored when using FONTYPE_TTF) [default: null]
-   * @param tightness The amount of white space between characters (optional, ignored when using FONTYPE_TTF) [default: null]
-   * @param angle The angle of the characters (optional) [default: 0]
-   */
-  private static function renderText($fonttype, $im, $text, $font, $fontfile, $fontsize, $foreground, $background,
-    $x, $y, $space, $tightness, $angle) {
-
-    if ($fonttype == self::FONTTYPE_PS) {
-      imagepstext($im, "$text", $font, $fontsize, $foreground, $background, $x, $y, $space, $tightness, $angle, 16);
-    }
-    elseif ($fonttype == self::FONTTYPE_TTF) {
-      imagettftext($im, $fontsize, $angle, $x, $y, $foreground, $fontfile, "$text");
-    }
-    else {
-      throw new IllegalArgumentException(Message::get('unknown FONTTYPE'));
+      // write the image
+      $image->save(dirname($filename), basename($filename), true, null, 100);
+      chmod($filename, 0644);
+      return true;
+    } catch (Exception $ex) {
+      $this->_errorMsg = $ex->getMessage();
+      return false;
     }
   }
 
   /**
    * Calculate the dimension of the given text
-   * @param fonttype One of the FONTTYPE constants
-   * @param text The text
-   * @param font The font identifier (ignored when using FONTYPE_TTF)
-   * @param fontfile The font file (ignored when using FONTYPE_PS)
    * @param fontsize The font size (in pixels)
-   * @param space The value of the space character in the font (optional, ignored when using FONTYPE_TTF) [default: null]
-   * @param tightness The amount of white space between characters (optional, ignored when using FONTYPE_TTF) [default: null]
    * @param angle The angle of the characters (optional) [default: 0]
+   * @param fontfile The font file
+   * @param text The text
    * @return An array with the width and height values
    */
-  private static function getTextDimension($fonttype, $text, $font, $fontfile, $fontsize,
-          $space=null, $tightness=null, $angle=0) {
-
-    if ($fonttype == self::FONTTYPE_PS) {
-      list($x0, $y0, $x3, $y3) = imagepsbbox($text , $font, $fontsize, $space, $tightness, $angle);
-      return array($x3-$x0, $y3-$y0);
-    }
-    elseif ($fonttype == self::FONTTYPE_TTF) {
-      list($x2, $y2, $x3, $y3, $x1, $y1, $x0, $y0) = imagettfbbox($fontsize, $angle, $fontfile, $text);
-      return array($x1-$x2, $y2-$y1);
-    }
-    else
-    {
-      throw new IllegalArgumentException(Message::get('unknown FONTTYPE'));
-    }
+  private function getTextDimension($fontsize, $angle, $fontfile, $text) {
+    list($x2, $y2, $x3, $y3, $x1, $y1, $x0, $y0) = imagettfbbox($fontsize, $angle, $fontfile, $text);
+    return array($x1-$x2, $y2-$y1);
   }
 
   /**
@@ -631,115 +379,41 @@ class GraphicsUtil {
    * @param textheight The height of the text
    * @return An array with width, height, x, y values
    */
-  private static function calculateTextParams($width, $height, $x, $y, $textwidth, $textheight) {
+  private function calculateTextParams($width, $height, $x, $y, $textwidth, $textheight) {
     // calculate dimensions
-    if ($width === null) $width = $textwidth;
-    if ($height === null) $height = $textheight;
-
+    if ($width === null) {
+      $width = $textwidth;
+    }
+    if ($height === null) {
+      $height = $textheight;
+    }
     // calculate offset
-    if ($x === null) $x = ($width-$textwidth)/2;
-    if ($y === null) $y = $height;
-
+    if ($x === null) {
+      $x = ($width-$textwidth)/2;
+    }
+    if ($y === null) {
+      $y = $height;
+    }
     return array($width, $height, $x, $y);
   }
 
   /**
-   * Create a true color image with given parameters
-   * @param width The width of the image
-   * @param height The height of the image
-   * @param color The foreground color (as HEX value)
-   * @param bgcolor The background color (as HEX value)
-   * @return An array with the image object, the foreground and background color
+   * Calculate the size based on the image aspect, if only width or height
+   * are given.
+   * @param width The requested width (maybe null)
+   * @param height The requested height (maybe null)
+   * @param imageWidth The image's width
+   * @param imageHeight The image's height
+   * @return Array with width, height
    */
-  private static function createImage($width, $height, $color, $bgcolor) {
-    // create the image
-    $im = imagecreatetruecolor($width, $height);
-
-    // define the colors
-    list($r, $g, $b) = self::HEX2RGB($color);
-    $foreground = imagecolorallocate($im, $r, $g, $b);
-    list($r, $g, $b) = self::HEX2RGB($bgcolor);
-    $background = imagecolorallocate($im, $r, $g, $b);
-    imagefill($im, 0, 0, $background);
-    return array($im, $foreground, $background);
-  }
-
-  /**
-   * Get the image output function depending on the filename to write
-   * to (e.g. *.jpg -> imagejpeg)
-   * @param filename The filename
-   * @return The PHP function to use for output to the required image format. Default is imagejpeg.
-   */
-  private static function getImageOutputFunction($filename) {
-    $extension = substr($filename, strrpos($filename, ".")+1);
-    $imageoutputFunction = "imagejpeg";
-    if (strtolower($extension) == 'gif') {
-      $imageoutputFunction = "imagegif";
+  private function calculateSizeParams($width, $height, $imageWidth, $imageHeight) {
+    if ($width == null) {
+      $width = $imageWidth/$imageHeight*$height;
     }
-    elseif (strtolower($extension) == 'jpg') {
-      $imageoutputFunction = "imagejpeg";
+    elseif ($height == null) {
+      $height = $imageHeight/$imageWidth*$width;
     }
-    elseif (strtolower($extension) == 'png') {
-      $imageoutputFunction = "imagepng";
-    }
-    return $imageoutputFunction;
-  }
-
-  /**
-   * Get the image creation function depending on the file to read from
-   * @param filename The filename
-   * @return The PHP function to use for create an image in the required image format
-   * or false if the format is not supported.
-   */
-  private static function getImageCreationFunction($filename) {
-    $srcData = getimagesize($filename);
-    $type = $srcData[2];
-
-    if ($type == 1 && imagetypes() & IMG_GIF) {
-      $imagecreationFunction = "imagecreatefromgif";
-    }
-    elseif ($type == 2 && imagetypes() & IMG_JPG) {
-      $imagecreationFunction = "imagecreatefromjpeg";
-    }
-    elseif ($type == 3 && imagetypes() & IMG_PNG) {
-      $imagecreationFunction = "imagecreatefrompng";
-    }
-    else {
-      $imagecreationFunction = false;
-    }
-    return $imagecreationFunction;
-  }
-
-  /**
-   * Convert a HEX color value to an array containing the RGB components
-   * @param hexColor The HEX color value
-   * @return An array with Red, Green and Blue components
-   */
-  private static function HEX2RGB($hexColor) {
-    $rgbValues = array();
-
-    // Split the HEX color representation
-    $hexColor = chunk_split($hexColor, 2, "");
-    $rh = substr($hexColor, 0, 2);
-    $gh = substr($hexColor, 2, 2);
-    $bh = substr($hexColor, 4, 2);
-
-    // Convert HEX values to DECIMAL
-    $rgbValues[0] = hexdec("0x{$rh}");
-    $rgbValues[1] = hexdec("0x{$gh}");
-    $rgbValues[2] = hexdec("0x{$bh}");
-
-    return $rgbValues;
-  }
-
-  /**
-   * See if gd lib is installed. We assume the version is ok.
-   * Throws an exception if not.
-   */
-  private static function checkImageSupport() {
-    if (!function_exists(imagecreatetruecolor)) {
-      throw new RuntimeException(Message::get('gd library missing'));
-    }
+    return array(intval($width), intval($height));
   }
 }
 ?>
