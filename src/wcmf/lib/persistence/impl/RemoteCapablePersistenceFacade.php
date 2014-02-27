@@ -13,8 +13,6 @@
  *
  * See the license.txt file distributed with this work for
  * additional information.
- *
- * $Id$
  */
 namespace wcmf\lib\persistence\impl;
 

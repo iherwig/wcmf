@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ * Copyright (C) 2005-2014 wemove digital solutions GmbH
  *
  * Licensed under the terms of any of the following licenses
  * at your choice:
@@ -13,8 +13,6 @@
  *
  * See the license.txt file distributed with this work for
  * additional information.
- *
- * $Id$
  */
 namespace wcmf\lib\pdf;
 
@@ -25,7 +23,7 @@ namespace wcmf\lib\pdf;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class PDFPage {
-  
+
   /**
    * Render data onto a pdf.
    * @param pdf A reference to the FPDF/FPDI instance to render onto

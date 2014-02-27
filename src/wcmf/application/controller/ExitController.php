@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2009 wemove digital solutions GmbH
+ * Copyright (C) 2005-2014 wemove digital solutions GmbH
  *
  * Licensed under the terms of any of the following licenses
  * at your choice:
@@ -13,8 +13,6 @@
  *
  * See the license.txt file distributed with this work for
  * additional information.
- *
- * $Id$
  */
 namespace wcmf\application\controller;
 
@@ -33,7 +31,7 @@ use wcmf\lib\presentation\Controller;
  * @author ingo herwig <ingo@wemove.com>
  */
 class ExitController extends Controller {
-  
+
   /**
    * @see Controller::executeKernel()
    */
