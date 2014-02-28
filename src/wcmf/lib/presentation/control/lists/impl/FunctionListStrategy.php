@@ -24,7 +24,7 @@ use wcmf\lib\presentation\control\lists\ListStrategy;
  * by a global function.
  * The following list definition(s) must be used in the input_type configuraton:
  * @code
- * fkt:name|param1,param2,... // where name is the name of a global function and
+ * func:name|param1,param2,... // where name is the name of a global function and
  *                               param1, param2, ... are used as parameters in the call
  *                               to that function
  * @endcode

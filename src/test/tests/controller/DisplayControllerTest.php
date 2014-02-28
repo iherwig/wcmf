@@ -161,7 +161,7 @@ class DisplayControllerTest extends ControllerTestCase {
   public function testDisplayTranslationOfReferencedValues() {
     $this->markTestIncomplete('This test is not ready to run yet.');
 
-    // TODO: implement for input_type = select#async:ReferencedType, select#fkt:g_getOIDs|ReferencedType
+    // TODO: implement for input_type = select#async:ReferencedType, select#func:g_getOIDs|ReferencedType
   }
 }
 ?>

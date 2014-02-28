@@ -43,7 +43,7 @@ class AnonymousUser extends DefaultAuthUser implements AuthUser {
   /**
    * @see AuthUser::login()
    */
-  public function login($login, $password, $isPasswordEncrypted=false) {
+  public function login($login, $password) {
     // do nothing
   }
 

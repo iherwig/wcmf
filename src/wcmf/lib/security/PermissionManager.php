@@ -37,7 +37,7 @@ interface PermissionManager {
 
   /**
    * Get authenticated user.
-   * @return AuthUser object or null if not logged in.
+   * @return AuthUser object or AnonymousUser if not logged in.
    */
   public function getAuthUser();
 

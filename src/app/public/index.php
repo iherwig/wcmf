@@ -8,6 +8,7 @@ use \Exception;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\util\URIUtil;
+use wcmf\lib\security\principal\impl\AnonymousUser;
 
 $application = new Application();
 try {
@@ -16,7 +17,7 @@ try {
 
   // check for authenticated user
   $permissionManager = ObjectFactory::getInstance('permissionManager');
-  $isLoggedIn = $permissionManager->getAuthUser() != null;
+  $isLoggedIn = !($permissionManager->getAuthUser() instanceof AnonymousUser);
 
   // get configuration values
   $config = ObjectFactory::getConfigurationInstance();
