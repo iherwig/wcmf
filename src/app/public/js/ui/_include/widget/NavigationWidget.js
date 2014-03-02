@@ -5,18 +5,14 @@ define([
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
-    "dijit/MenuBar",
-    "dijit/MenuBarItem",
-    "dijit/PopupMenuBarItem",
-    "dijit/DropDownMenu",
-    "dijit/MenuSeparator",
-    "dijit/MenuItem",
-    "dijit/form/TextBox",
     "dojo/query",
     "dojo/on",
     "dojo/topic",
     "dojo/keys",
     "dojo/NodeList-dom",
+    "dojo/dom-class",
+    "dojo/dom-style",
+    "bootstrap/Dropdown",
     "../../../User",
     "../../../model/meta/Model",
     "../../../locale/Dictionary",
@@ -29,18 +25,14 @@ define([
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
-    MenuBar,
-    MenuBarItem,
-    PopupMenuBarItem,
-    Menu,
-    MenuSeparator,
-    MenuItem,
-    TextBox,
     query,
     on,
     topic,
     keys,
     nodeListDom,
+    domClass,
+    domStyle,
+    dropdown,
     User,
     Model,
     Dict,
@@ -63,11 +55,6 @@ define([
         },
 
         postCreate: function() {
-            // set selected menu
-            if (this.selected) {
-                registry.byId(this.selected)._setSelected(true);
-            }
-
             // search field
             this.own(
                 on(this.searchField, "keydown", lang.hitch(this, function(event) {
@@ -75,6 +62,10 @@ define([
                         event.preventDefault();
                         topic.publish('navigate', 'search', null, {q: this.searchField.get("value")});
                     }
+                })),
+                on(this.collapseToggleBtn, "click", lang.hitch(this, function(event) {
+                    var height = domStyle.get(this.menuCollapse, "height");
+                    domStyle.set(this.menuCollapse, "height", height == 0 ? "auto" : 0);
                 }))
             );
         },
@@ -85,6 +76,13 @@ define([
             // hide buttons, if titleOnly
             if (this.titleOnly) {
                 query(".main-menu").style("display", "none");
+            }
+            else {
+                // set selected menu
+                query(".main-menu").removeClass("active");
+                if (this.selected) {
+                    query("#"+this.selected).addClass("active");
+                }
             }
         },
 

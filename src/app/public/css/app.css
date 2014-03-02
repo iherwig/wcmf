@@ -1,6 +1,5 @@
-/*@import '../vendor/twitter-bootstrap/css/bootstrap.css';*/
+@import url('../vendor/twitter-bootstrap/css/bootstrap.css');
 @import url('../vendor/twitter-bootstrap/css/bootstrap-responsive.css');
-@import url('../vendor/dbootstrap/theme/dbootstrap/dbootstrap.css');
 @import url('../vendor/font-awesome/css/font-awesome.css');
 @import url('../vendor/dgrid/css/dgrid.css');
 @import url('../vendor/dojo/dojo/resources/dnd.css');
@@ -29,18 +28,6 @@ body {
   background-color: #f5f5f5;
 }
 
-#wrap  {
-  padding: 40px 0;
-}
-
-#header {
-  z-index: 9999;
-  position: fixed;
-  top: 0px;
-  width: 100%;
-  height: 40px;
-}
-
 #footer {
   position: fixed;
   bottom: 0px;
@@ -54,23 +41,10 @@ body {
   padding: 0 10px;
 }
 
-/* responsive CSS fixes as necessary */
-@media (max-width: 767px) {
-  #footer {
-    margin-left: -20px;
-    margin-right: -20px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
-.jumbotron, .dbootstrap .dijitMenuBar {
+.jumbotron {
   color: #FFFFFF;
   background: #2f2f2f;
-}
-
-.jumbotron {
-  padding: 40px 20px;
+  padding: 50px 20px;
   text-align: center;
 }
 
@@ -81,63 +55,25 @@ body {
   line-height: 1;
 }
 
-.dbootstrap .dijitMenuBar .dijitMenuItem {
-  color: #FFFFFF;
-  text-shadow: none;
-}
-
-.dbootstrap .dijitMenuBar .brand {
-  color: #f5f5f5;
-  text-shadow: none;
-}
-
-.dbootstrap .dijitMenuBar .dijitMenuItemSelected {
+.dgrid .dgrid-row:hover, .dgrid .dgrid-row:hover .dgrid-cell {
   background-color: #08c;
 }
 
-.dbootstrap .dijitButton .dijitButtonNode,
-.dbootstrap .primary .dijitButtonNode,
-.dbootstrap .danger .dijitButtonNode {
-  background-image: none;
-  text-shadow: none;
-}
-
-.dbootstrap .dijitButtonHover.dijitButton .dijitButtonNode,
-.dbootstrap .dijitButtonHover.primary .dijitButtonNode,
-.dbootstrap .dijitButtonHover.danger .dijitButtonNode {
-  opacity: 1;
-}
-
-.dbootstrap .dijitButton .dijitButtonNode {
-  background-color: #f5f5f5;
-  opacity: 0.7;
-}
-
-.dbootstrap .primary .dijitButtonNode {
-  background-color: #08c;
-  opacity: 0.9;
-}
-
-.dbootstrap .danger .dijitButtonNode {
-  background-color: #ee5f5b;
-  opacity: 0.9;
-}
-
-.dbootstrap .dgrid .dgrid-row:hover, .dbootstrap .dgrid .dgrid-row:hover .dgrid-cell {
+.dgrid-selected, .dgrid-selected .dgrid-cell {
   background-color: #08c;
 }
 
-.dbootstrap .dgrid-selected, .dbootstrap .dgrid-selected .dgrid-cell {
-  background-color: #08c;
-}
-
-.dbootstrap .dgrid .dgrid-row:hover, .dbootstrap .dgrid .dgrid-row:hover .dgrid-cell a,
-.dbootstrap .dgrid-selected .dgrid-cell a {
+.dgrid .dgrid-row:hover, .dgrid .dgrid-row:hover .dgrid-cell a,
+.dgrid-selected .dgrid-cell a {
   color: #fff;
 }
 
-.dbootstrap .dgrid .dgrid-cell {
+.dgrid .dgrid-cell {
   text-shadow: none;
+}
+
+.login-page {
+  margin-top: -50px;
 }
 
 .form-login {
@@ -210,13 +146,13 @@ th.field-actions-4, td.field-actions-4 {
   padding: 2px !important;
 }
 
-/* containers */
-@media only screen and (min-width: 980px) {
-  .container {
-    width: 980px;
-  }
+/* tabs */
+.nav-tabs > li .close {
+  margin: -20px 0 0 10px;
+  font-size: 18px;
 }
 
+/* containers */
 .container {
   margin-right: auto;
   margin-left: auto;
@@ -278,6 +214,28 @@ img.thumb {
 
 .tabLabel img.thumb {
   height: 20px !important;
+}
+
+@media only screen and (min-width: 980px) {
+  .container {
+    width: 980px;
+  }
+  #wrap  {
+    padding: 50px 0;
+  }
+}
+
+@media only screen and (max-width: 980px) {
+  #wrap  {
+    padding-bottom: 50px;
+  }
+}
+
+@media (max-width: 767px) {
+  #footer {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
 }
 
 /*

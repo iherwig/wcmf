@@ -3,25 +3,45 @@ define([
     "dojo/_base/lang",
     "dojo/when",
     "dojo/topic",
+    "dojo/dom-construct",
+    "dojo/dom-class",
+    "dojo/dom-attr",
+    "dojo/query",
+    "dojo/on",
+    "dojo/NodeList-manipulate",
     "dijit/registry",
-    "dijit/layout/TabContainer",
+    "dijit/_WidgetBase",
+    "dijit/_TemplatedMixin",
+    "dijit/_WidgetsInTemplateMixin",
     "dijit/layout/ContentPane",
+    "bootstrap/Tab",
     "../../../Cookie",
     "../../../model/meta/Model",
     "../../../persistence/Store",
-    "../../../locale/Dictionary"
+    "../../../locale/Dictionary",
+    "dojo/text!./template/EntityTabWidget.html"
 ], function (
     declare,
     lang,
     when,
     topic,
+    domConstruct,
+    domClass,
+    domAttr,
+    query,
+    on,
+    manipulate,
     registry,
-    TabContainer,
+    _WidgetBase,
+    _TemplatedMixin,
+    _WidgetsInTemplateMixin,
     ContentPane,
+    Tab,
     Cookie,
     Model,
     Store,
-    Dict
+    Dict,
+    template
 ) {
     /**
      * Tab panel for entity types and entity instances.
@@ -55,7 +75,10 @@ define([
      * }, this.tabNode);
      * @endcode
      */
-    var EntityTabWidget = declare([TabContainer], {
+    var EntityTabWidget = declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+
+        templateString: lang.replace(template, Dict.tplTranslate),
+        contextRequire: require,
 
         route: '',
         types: [],
@@ -72,7 +95,6 @@ define([
             this.restoreFromCookie();
 
             this.doLayout = false;
-            this.isListeningToSelect = true;
         },
 
         postCreate: function() {
@@ -93,13 +115,7 @@ define([
                 // - oid: the oid of the tab to close
                 // - nextOid: optional, the oid of the next tab to open
                 topic.subscribe("tab-closed", lang.hitch(this, function(data) {
-                    this.unpersistTab(data.oid);
-                    if (data.nextOid) {
-                        // prevent selecting the previous tab
-                        this.isListeningToSelect = false;
-                    }
-                    this.closeTab(this.getTabByOid(data.oid));
-                    this.isListeningToSelect = true;
+                    this.closeTab(data.oid);
                     this.selectTab(data.nextOid);
                 })),
                 topic.subscribe(this.id+"-selectChild", lang.hitch(this, function(page) {
@@ -123,32 +139,30 @@ define([
         },
 
         selectTab: function(oid) {
-            if (this.isListeningToSelect) {
-                if (oid !== undefined) {
-                    var routDef = this.getRouteForTab(oid);
-                    var route = this.page.getRoute(routDef.route);
-                    var url = route.assemble(routDef.routeParams);
-                    if (this.getTabByOid(this.selectedTab.oid)) {
-                        // if the tab for the current oid is opened, we need to confirm
-                        this.page.pushConfirmed(url);
-                    }
-                    else {
-                        this.page.pushState(url);
-                    }
+            if (oid !== undefined) {
+                var routDef = this.getRouteForTab(oid);
+                var route = this.page.getRoute(routDef.route);
+                var url = route.assemble(routDef.routeParams);
+                if (this.getTabByOid(this.selectedTab.oid)) {
+                    // if the tab for the current oid is opened, we need to confirm
+                    this.page.pushConfirmed(url);
+                }
+                else {
+                    this.page.pushState(url);
+                }
+            }
+            else {
+                // select last tab
+                for (var key in this.tabDefs) {
+                    this.selectTab(this.tabDefs[key].oid);
                 }
             }
         },
 
-        closeTab: function(tab) {
-            try {
-                this.removeChild(tab);
-            }
-            catch(e) {
-                // tab container tries to set a style on a not existing node
-            }
-            finally {
-                registry.byId(tab.get("id")).destroy();
-            }
+        closeTab: function(oid) {
+            this.unpersistTab(oid);
+            registry.byId(this.getTabIdFromOid(oid)).destroy();
+            domConstruct.destroy(this.getNavTabIdFromOid(oid));
         },
 
         isSelected: function(oid) {
@@ -195,24 +209,63 @@ define([
             return route;
         },
 
-        setTabName: function(oid, tabItem) {
+        createTab: function(oid, content) {
+            var isSelected = content !== null;
+
+            // create panel with spinner icon as title, since the
+            // real title may be resolved async
+            var title = '<i class="fa fa-spinner fa-spin"></i>';
+
+            // get the tab url
+            var routDef = this.getRouteForTab(oid);
+            var route = this.page.getRoute(routDef.route);
+            var url = route.assemble(routDef.routeParams);
+
+            // create nav tab
+            var tabNavNode = domConstruct.create("li", null, this.navTabNode);
+            var linkNode = domConstruct.create("a", {
+                id: this.getNavTabIdFromOid(oid),
+                innerHTML: title
+            }, tabNavNode);
+            if (!isSelected) {
+                domAttr.set(linkNode, "href", url);
+            }
+
+            // create the content for the selected tab
+            if (isSelected) {
+                var tabItem = new ContentPane({
+                    id: this.getTabIdFromOid(oid),
+                    content: content
+                });
+                domConstruct.place(tabItem.domNode, this.tabContentNode);
+                domClass.add(tabItem.domNode, "tab-pane");
+
+                // mark as active
+                domClass.add(tabItem.domNode, "active");
+                domClass.add(tabNavNode, "active");
+            }
+
+            this.setTabName(oid);
+        },
+
+        setTabName: function(oid) {
             var typeName = Model.getTypeNameFromOid(oid);
             if (!this.isInstanceTab(oid)) {
                 // type tab
-                this.setTypeTabName(typeName, tabItem);
+                this.setTypeTabName(typeName, oid);
             }
             else {
                 // instance tab
                 var isNew = Model.isDummyOid(oid);
                 if (isNew) {
-                    this.setInstanceTabName({ oid:oid }, tabItem);
+                    this.setInstanceTabName({ oid:oid }, oid);
                 }
                 else {
                     var store = Store.getStore(typeName, appConfig.defaultLanguage);
                     when(store.get(oid), lang.hitch(this, function(entity) {
-                            this.setInstanceTabName(entity, tabItem);
+                            this.setInstanceTabName(entity, oid);
                         }), lang.hitch(this, function(error) {
-                            this.closeTab(tabItem);
+                            this.closeTab(oid);
                             this.unpersistTab(oid);
                         })
                     );
@@ -220,47 +273,34 @@ define([
             }
         },
 
-        setTypeTabName: function(typeName, tabItem) {
-            tabItem.set("title", '<i class="fa fa-list"></i> '+Dict.translate(typeName));
+        setTypeTabName: function(typeName, oid) {
+            var id = this.getNavTabIdFromOid(oid);
+            query("#"+id).innerHTML('<i class="fa fa-list"></i> '+Dict.translate(typeName));
         },
 
-        setInstanceTabName: function(entity, tabItem) {
-            tabItem.set("title", '<i class="fa fa-file"></i> '+Model.getDisplayValue(entity)+' ');
-        },
-
-        createTab: function(oid, content) {
-            // create panel with spinner icon as title, since the
-            // real title may be resolved async
-            var tabItem = new ContentPane({
-                id: this.getTabIdFromOid(oid),
-                title: '<i class="fa fa-spinner fa-spin"></i>'
-            });
-            // instance tabs are closable
-            if (this.isInstanceTab(oid)) {
-                tabItem.set("closable", true);
-                tabItem.set("onClose", lang.hitch(tabItem, function(container) {
-                    // close by ourselves (return false)
-                    container.unpersistTab(container.getOidFromTabId(this.get("id")));
-                    when(container.page.confirmLeave(null), function(result) {
-                        if (result === true) {
-                            container.closeTab(tabItem);
-                        }
-                    });
-                    return false;
+        setInstanceTabName: function(entity) {
+            var oid = entity.oid;
+            var id = this.getNavTabIdFromOid(oid);
+            var queryId = id.replace(/\./g, '\\.');
+            query("#"+queryId).innerHTML('<i class="fa fa-file"></i> '+Model.getDisplayValue(entity)+
+                    ' <span class="close" id="close-'+id+'">×</span>');
+            on(query("#close-"+queryId), "click", lang.hitch(this, function(e) {
+                e.preventDefault();
+                when(this.page.confirmLeave(null), lang.hitch(this, function(result) {
+                    if (result === true) {
+                        this.closeTab(oid);
+                        this.selectTab();
+                    }
                 }));
-            }
+            }));
+        },
 
-            // set the content for the selected tab
-            if (content !== null) {
-                tabItem.set("content", content);
-                tabItem.set("selected", true);
-            }
-            this.addChild(tabItem);
-            this.setTabName(oid, tabItem);
+        getNavTabIdFromOid: function(oid) {
+            return "nav-"+this.getTabIdFromOid(oid);
         },
 
         getTabIdFromOid: function(oid) {
-            return "tab-"+oid.replace(':', '-');
+            return "tab-"+oid.replace(/:/, '-');
         },
 
         getOidFromTabId: function(tabId) {
@@ -268,14 +308,7 @@ define([
         },
 
         getTabByOid: function(oid) {
-            var tabId = this.getTabIdFromOid(oid);
-            var tabs = this.getChildren();
-            for (var i=0; i<tabs.length; i++) {
-                if(tabs[i].id === tabId) {
-                    return tabs[i];
-                }
-            }
-            return null;
+            return registry.byId(this.getTabIdFromOid(oid));
         },
 
         restoreFromCookie: function() {

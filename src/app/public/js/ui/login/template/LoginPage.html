@@ -9,9 +9,9 @@
     <form class="form-login" id="loginForm">
       <h3><i class="fa fa-sign-in"></i> {translate:Sign in}</h3>
       <div data-dojo-attach-point="notificationNode"></div>
-      <input data-dojo-type="dijit/form/TextBox" type="text" name="user" placeholder="{translate:Username}">
-      <input data-dojo-type="dijit/form/TextBox" type="password" name="password" placeholder="{translate:Password}">
-      <button data-dojo-type="../_include/widget/Button" data-dojo-props="'class':'primary'" type="submit" data-dojo-attach-point="loginBtn" data-dojo-attach-event="onClick:_login">{translate:Sign in}</button>
+      <input data-dojo-type="dijit/form/TextBox" type="text" name="user" data-dojo-props="placeholder:'{translate:Username}'">
+      <input data-dojo-type="dijit/form/TextBox" type="password" name="password" data-dojo-props="placeholder:'{translate:Password}'">
+      <button data-dojo-type="../_include/widget/Button" data-dojo-props="'class':'btn primary'" type="submit" data-dojo-attach-point="loginBtn" data-dojo-attach-event="onClick:_login">{translate:Sign in}</button>
     </form>
   </div>
   <!-- End page content -->

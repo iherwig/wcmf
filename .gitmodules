@@ -42,3 +42,7 @@
 	path = src/app/public/vendor/ckeditor
 	url = git://github.com/ckeditor/ckeditor-releases.git
 	branch = master
+[submodule "src/app/public/vendor/dojo-bootstrap"]
+	path = src/app/public/vendor/dojo-bootstrap
+	url = git://github.com/xsokev/Dojo-Bootstrap.git
+	branch = master

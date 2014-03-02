@@ -3,16 +3,16 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
-    "dojo/dom-class",
     "dojo/dom-construct",
+    "dojo/dom-class",
+    "dojo/dom-attr",
     "dojo/query",
+    "dojo/on",
     "dijit/registry",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
-    "dijit/form/DropDownButton",
-    "dijit/Menu",
-    "dijit/MenuItem",
+    "bootstrap/Dropdown",
     "../../_include/FormLayout",
     "../../_include/_NotificationMixin",
     "../../_include/widget/Button",
@@ -32,16 +32,16 @@ function(
     declare,
     lang,
     topic,
-    domClass,
     domConstruct,
+    domClass,
+    domAttr,
     query,
+    on,
     registry,
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
-    DropDownButton,
-    Menu,
-    MenuItem,
+    Dropdown,
     FormLayout,
     _Notification,
     Button,
@@ -201,26 +201,26 @@ function(
                 return;
             }
             var languageCount = 0;
-            var menu = registry.byId(this.languageMenuPopupNode.get("id"));
-            var form = this;
             for (var langKey in appConfig.languages) {
-                var menuItem = new MenuItem({
-                    label: appConfig.languages[langKey],
-                    langKey: langKey,
-                    onClick: function() {
-                        var route = form.page.getRoute("entity");
-                        var queryParams = this.langKey !== appConfig.defaultLanguage ? {lang: this.langKey} : undefined;
+                var entryNode = domConstruct.create("li", null, this.languageMenuPopupNode);
+                var linkNode = domConstruct.create("a", {
+                    href: "#",
+                    innerHTML: appConfig.languages[langKey]
+                }, entryNode);
+                domAttr.set(linkNode, "data-wcmf-lang", langKey);
+                this.own(
+                    on(linkNode, "click", lang.hitch(this, function(event) {
+                        event.preventDefault();
+                        var langKey = domAttr.get(event.target, "data-wcmf-lang");
+                        var route = this.page.getRoute("entity");
+                        var queryParams = langKey !== appConfig.defaultLanguage ? {lang: langKey} : undefined;
                         var url = route.assemble({
-                            type: Model.getSimpleTypeName(form.type),
-                            id: Model.getIdFromOid(form.entity.oid)
+                            type: Model.getSimpleTypeName(this.type),
+                            id: Model.getIdFromOid(this.entity.oid)
                         }, queryParams);
-                        form.page.pushConfirmed(url);
-                    }
-                });
-                if (langKey === this.language) {
-                    menuItem.set("disabled", true);
-                }
-                menu.addChild(menuItem);
+                        this.page.pushConfirmed(url);
+                    }))
+                );
                 languageCount++;
             }
             if (languageCount <= 1) {
