@@ -2,22 +2,28 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/topic",
-    "dijit/form/DateTextBox",
+    "dijit/_TemplatedMixin",
+    "bootstrap/Datepicker",
     "../../../_include/_HelpMixin",
-    "../../../../locale/Dictionary"
+    "../../../../locale/Dictionary",
+    "dojo/text!./template/Date.html"
 ],
 function(
     declare,
     lang,
     topic,
-    DateTextBox,
+    _TemplatedMixin,
+    Datepicker,
     HelpIcon,
-    Dict
+    Dict,
+    template
 ) {
-    return declare([DateTextBox, HelpIcon], {
+    return declare([Datepicker, _TemplatedMixin, HelpIcon], {
 
+        templateString: lang.replace(template, Dict.tplTranslate),
         intermediateChanges: true,
-        hasDownArrow: false,
+        format: Dict.translate("dd.M.yyyy"),
+        trigger: "click",
         entity: {},
         attribute: {},
         original: {},
@@ -41,8 +47,8 @@ function(
                     if (data.name === this.attribute.name) {
                         this.set("value", data.newValue);
                     }
-                }))
-            );
+                })
+            ));
         }
     });
 });

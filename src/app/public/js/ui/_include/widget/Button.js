@@ -15,6 +15,7 @@ define([
 
         postCreate:function () {
             this.own(on(this.domNode, "click", lang.hitch(this, function(e) {
+                // translate to dijit button event
                 this.emit("onClick", e);
             })));
             this.initialLabel = this.domNode.innerHTML;

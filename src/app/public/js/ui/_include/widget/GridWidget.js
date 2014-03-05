@@ -185,7 +185,7 @@ define([
                         var html = '<div>';
                         for (var name in this.actionsByName) {
                             var action = this.actionsByName[name];
-                            html += '<a class="btn" href="#" data-action="'+name+'"><i class="'+action.iconClass+'"></i></a>';
+                            html += '<a class="btn-mini" href="#" data-action="'+name+'"><i class="'+action.iconClass+'"></i></a>';
                         }
                         html += '</div>';
                         return html;

@@ -142,10 +142,6 @@ th.field-actions-4, td.field-actions-4 {
   padding: 0 4px;
 }
 
-.btn-mini .dijitButtonNode {
-  padding: 2px !important;
-}
-
 /* tabs */
 .nav-tabs > li .close {
   margin: -20px 0 0 10px;
