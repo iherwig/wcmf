@@ -17,7 +17,8 @@
                     <li class="main-menu push" id="navContent" data-wcmf-route="entityList" data-wcmf-pathparams="type:'${firstRootType}'">
                         <a href="#">{translate:Content}</a>
                     </li>
-                    <li class="main-menu dropdown" id="navAdmin" data-dojo-type="bootstrap/Dropdown" data-wcmf-restrict-roles="administrators">
+
+                    <li class="main-menu dropdown" id="navAdmin" data-wcmf-restrict-roles="administrators">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             {translate:Administration} <b class="caret"></b>
                         </a>
@@ -38,7 +39,7 @@
                         </form>
                     </li>
                     <li class="divider-vertical"></li>
-                    <li class="main-menu dropdown" id="navSettings" data-dojo-type="bootstrap/Dropdown">
+                    <li class="main-menu dropdown" id="navSettings">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-user"></i> <span class="user">${userName}</span> <b class="caret"></b>
                         </a>

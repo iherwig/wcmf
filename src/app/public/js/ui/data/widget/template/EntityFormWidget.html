@@ -5,9 +5,9 @@
         <a href="#" data-dojo-attach-event="onClick:_toggleLock"><i class="fa fa-unlock" data-dojo-attach-point="lockNode"></i></a>
         <div class="pull-right">
           <div data-dojo-attach-point="languageMenuNode" style="display: none;">
-            <div class="dropdown" data-dojo-type="bootstrap/Dropdown">
-              <a class="dropdown-toggle" role="button" href="#">{translate:Language}: ${languageName} <b class="caret"></b></a>
-              <ul class="dropdown-menu" role="menu" data-dojo-attach-point="languageMenuPopupNode"></ul>
+            <div data-dojo-type="dijit/form/DropDownButton" data-dojo-props="iconClass:'dijitIconEdit', 'class':'btn-mini'">
+              <span>{translate:Language}: ${languageName}</span>
+              <div data-dojo-type="dijit/Menu" data-dojo-attach-point="languageMenuPopupNode" style="display: none;"></div>
             </div>
           </div>
         </div>
@@ -17,8 +17,8 @@
     </form>
     <div class="clearfix">
         <div class="pull-right">
-            <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'btn btn-primary'" type="submit" data-dojo-attach-point="saveBtn" data-dojo-attach-event="onClick:_save">{translate:Save}</button>
-            <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'btn btn-danger'" type="submit" data-dojo-attach-point="deleteBtn" data-dojo-attach-event="onClick:_delete">{translate:Delete}</button>
+            <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'btn btn-primary primary'" type="submit" data-dojo-attach-point="saveBtn" data-dojo-attach-event="onClick:_save">{translate:Save}</button>
+            <button data-dojo-type="../../_include/widget/Button" data-dojo-props="'class':'btn btn-danger danger'" type="submit" data-dojo-attach-point="deleteBtn" data-dojo-attach-event="onClick:_delete">{translate:Delete}</button>
         </div>
     </div>
     <hr>

@@ -1,5 +1,6 @@
 @import url('../vendor/twitter-bootstrap/css/bootstrap.css');
 @import url('../vendor/twitter-bootstrap/css/bootstrap-responsive.css');
+@import url('../vendor/dbootstrap/theme/dbootstrap/dbootstrap.css');
 @import url('../vendor/font-awesome/css/font-awesome.css');
 @import url('../vendor/dgrid/css/dgrid.css');
 @import url('../vendor/dojo/dojo/resources/dnd.css');
@@ -98,6 +99,28 @@ body {
   outline: 1px dashed #ccc;
 }​
 
+/* input */
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+  margin-bottom: 0;
+}
+
+
 /* dgrid */
 .dgrid-column-selector {
   width: 25px;
@@ -144,6 +167,10 @@ th.field-actions-4, td.field-actions-4 {
 
 .btn i {
   padding: 0 4px;
+}
+
+.btn-mini .dijitButtonNode {
+  padding: 2px !important;
 }
 
 .btn-mini {

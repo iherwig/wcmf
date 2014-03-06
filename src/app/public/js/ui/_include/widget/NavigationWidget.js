@@ -1,7 +1,6 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dijit/registry",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
@@ -9,10 +8,8 @@ define([
     "dojo/on",
     "dojo/topic",
     "dojo/keys",
-    "dojo/NodeList-dom",
     "dojo/dom-class",
     "dojo/dom-style",
-    "bootstrap/Dropdown",
     "../../../User",
     "../../../model/meta/Model",
     "../../../locale/Dictionary",
@@ -21,7 +18,6 @@ define([
 ], function (
     declare,
     lang,
-    registry,
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
@@ -29,10 +25,8 @@ define([
     on,
     topic,
     keys,
-    nodeListDom,
     domClass,
     domStyle,
-    dropdown,
     User,
     Model,
     Dict,
@@ -57,13 +51,13 @@ define([
         postCreate: function() {
             // search field
             this.own(
-                on(this.searchField, "keydown", lang.hitch(this, function(event) {
-                    if (event.keyCode === keys.ENTER) {
-                        event.preventDefault();
+                on(this.searchField, "keydown", lang.hitch(this, function(e) {
+                    if (e.keyCode === keys.ENTER) {
+                        e.preventDefault();
                         topic.publish('navigate', 'search', null, {q: this.searchField.get("value")});
                     }
                 })),
-                on(this.collapseToggleBtn, "click", lang.hitch(this, function(event) {
+                on(this.collapseToggleBtn, "click", lang.hitch(this, function(e) {
                     var height = domStyle.get(this.menuCollapse, "height");
                     domStyle.set(this.menuCollapse, "height", height == 0 ? "auto" : 0);
                 }))
@@ -72,6 +66,20 @@ define([
 
         startup: function() {
             this.inherited(arguments);
+
+            // initialize dropdowns
+            query(".dropdown-toggle").on("click", lang.hitch(this, function(e) {
+                e.preventDefault();
+                var menu = query(e.target).closest(".main-menu.dropdown")[0];
+                if (menu) {
+                    if (domClass.contains(menu, "open")) {
+                        domClass.remove(menu, "open");
+                    }
+                    else {
+                        domClass.add(menu, "open");
+                    }
+                }
+            }));
 
             // hide buttons, if titleOnly
             if (this.titleOnly) {

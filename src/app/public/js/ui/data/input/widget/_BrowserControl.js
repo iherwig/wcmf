@@ -61,13 +61,11 @@ function(
             if (this.browserUrl) {
                 var browseBtn = new Button({
                     innerHTML: '<i class="fa fa-folder-open"></i>',
-                    "class": "btn btn-mini"
-                });
-                this.own(
-                    on(browseBtn, "onClick", lang.hitch(this, function() {
+                    "class": "btn-mini",
+                    onClick: lang.hitch(this, function() {
                         window.open(this.browserUrl+'?callback='+this.callbackName, '_blank', 'width=800,height=700');
-                    }))
-                );
+                    })
+                });
                 this.addChild(browseBtn);
             }
 

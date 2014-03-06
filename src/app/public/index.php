@@ -83,7 +83,7 @@ catch (Exception $ex) {
     </script>
   </head>
 
-  <body>
+  <body class="dbootstrap">
     <script>
       var appConfig = <?php echo json_encode($clientConfig); ?>;
 
@@ -107,7 +107,6 @@ catch (Exception $ex) {
               { name: 'put-selector', location: 'vendor/put-selector' },
               { name: 'ckeditor', location: 'vendor/ckeditor' },
               { name: 'elfinder', location: 'vendor/elfinder' },
-              { name: "bootstrap", location: 'vendor/dojo-bootstrap' },
 
               { name: 'app', location: '.', map: {} }
           ],
