@@ -72,6 +72,10 @@ body {
   text-shadow: none;
 }
 
+.dgrid-cell-padding {
+  padding: 6px;
+}
+
 .login-page {
   margin-top: -50px;
 }
@@ -140,6 +144,10 @@ th.field-actions-4, td.field-actions-4 {
 
 .btn i {
   padding: 0 4px;
+}
+
+.btn-mini {
+  font-size: 12.5px;
 }
 
 /* tabs */

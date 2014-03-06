@@ -40,7 +40,7 @@ define([
         postCreate: function () {
             this.inherited(arguments);
 
-            var gridNode = domConstruct.create("div", null, this.content.contentNode.parentNode);
+            var gridNode = domConstruct.create("div", null, this.containerNode);
             this.grid = new GridWidget({
                 type: this.type,
                 store: Store.getStore(this.type, appConfig.defaultLanguage),

@@ -3,29 +3,19 @@ define([
     "dojo/_base/lang",
     "dojo/on",
     "dojo/query",
-    "dojo/dom-style",
+    "dojo/dom-construct",
     "dojo/Deferred",
-    "dijit/_WidgetBase",
-    "dijit/_TemplatedMixin",
-    "dijit/_WidgetsInTemplateMixin",
-    "dijit/Dialog",
-    "dijit/form/Button",
-    "../../../locale/Dictionary",
-    "dojo/text!./template/PopupDlgWidget.html"
+    "bootstrap/Modal",
+    "../../../locale/Dictionary"
 ], function (
     declare,
     lang,
     on,
     query,
-    domStyle,
+    domConstruct,
     Deferred,
-    _WidgetBase,
-    _TemplatedMixin,
-    _WidgetsInTemplateMixin,
-    Dialog,
-    Button,
-    Dict,
-    template
+    Modal,
+    Dict
 ) {
     /**
      * Modal popup dialog. Usage:
@@ -46,8 +36,11 @@ define([
      * }).show();
      * @endcode
      */
-    var PopupDlg = declare([Dialog], {
+    var PopupDlg = declare([Modal], {
 
+        spinner: null,
+        okBtn: null,
+        cancelBtn: null,
         okCallback: null,
         cancelCallback: null,
         deferred: null,
@@ -55,13 +48,22 @@ define([
         constructor: function(args) {
             lang.mixin(this, args);
 
-            var message = this.message || '';
-            var contentWidget = new (declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-                templateString: lang.replace(template, Dict.tplTranslate)
-            }));
-            contentWidget.contentNode.innerHTML = message;
-            contentWidget.startup();
-            this.content = contentWidget;
+            this.spinner = domConstruct.toDom("<i></i>");
+            query(this.spinner).addClass("fa fa-spinner fa-spin fa-2x pull-left");
+
+            this.okBtn = domConstruct.toDom("<button>"+Dict.translate("OK")+"</button>");
+            query(this.okBtn).addClass("btn btn-primary");
+
+            this.cancelBtn = domConstruct.toDom("<button class='btn'>"+Dict.translate("Cancel")+"</button>");
+
+            var buttonContainer = domConstruct.toDom("<div></div>");
+            domConstruct.place(this.cancelBtn, buttonContainer);
+            domConstruct.place(this.okBtn, buttonContainer);
+            domConstruct.place(this.spinner, buttonContainer);
+
+            this.header = this.title;
+            this.footer = buttonContainer;
+            this.content = this.message || '';
         },
 
         postCreate: function () {
@@ -69,10 +71,10 @@ define([
             this.hideSpinner();
 
             this.own(
-                on(this.content.okBtn, "click", lang.hitch(this, function(e) {
+                on(this.okBtn, "click", lang.hitch(this, function(e) {
                     this.doCallback(e, this.okCallback);
                 })),
-                on(this.content.cancelBtn, "click", lang.hitch(this, function(e) {
+                on(this.cancelBtn, "click", lang.hitch(this, function(e) {
                     this.doCallback(e, this.cancelCallback);
                 })),
                 on(this, "hide", lang.hitch(this, function(e) {
@@ -120,11 +122,11 @@ define([
         },
 
         showSpinner: function() {
-            query(this.content.spinnerNode).style("display", "block");
+            query(this.spinner).style("display", "block");
         },
 
         hideSpinner: function() {
-            query(this.content.spinnerNode).style("display", "none");
+            query(this.spinner).style("display", "none");
         }
     });
 

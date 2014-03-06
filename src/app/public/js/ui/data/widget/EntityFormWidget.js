@@ -121,7 +121,7 @@ function(
                         attribute: attribute,
                         original: this.original
                     });
-                    this.own(attributeWidget.on('change', lang.hitch(this, function(widget) {
+                    this.own(attributeWidget.on("change", lang.hitch(this, function(widget) {
                         var widgetValue = widget.get("value");
                         var entityValue = this.entity.get(widget.attribute.name) || "";
                         if (widgetValue !== entityValue) {
