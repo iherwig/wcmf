@@ -159,7 +159,8 @@ define([
                     editor: controlClass,
                     editorArgs: {
                         attribute: curAttributeDef,
-                        style: 'height:20px; padding:0;'
+                        style: 'height:20px; padding:0;',
+                        isInlineEditor: true
                     },
                     editOn: "click",
                     canEdit: this.canEdit ? lang.hitch(curAttributeDef, function(obj, value) {

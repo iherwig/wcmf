@@ -1,46 +1,32 @@
 define([
     "dojo/_base/declare",
-    "dojo/_base/lang",
-    "dijit/TooltipDialog",
-    "dijit/popup",
-    "dojo/on",
-    "../../locale/Dictionary",
-    "dojo/domReady!"
+    "bootstrap/Tooltip",
+    "dojo/query",
+    "dojo/dom-construct",
+    "../../locale/Dictionary"
 ], function (
     declare,
-    lang,
-    TooltipDialog,
-    popup,
-    on,
+    Tooltip,
+    query,
+    domConstruct,
     Dict
 ) {
     return declare([], {
-
-        dialog: null,
 
         postCreate: function() {
             this.inherited(arguments);
 
             var text = this.helpText;
             if (text && text.length > 0) {
-                this.own(
-                    on(this.domNode, 'mouseover', lang.hitch(this, function() {
-                        popup.open({
-                            popup: this.dialog,
-                            orient: ["below", "below-alt", "above", "above-alt"],
-                            around: this.domNode
-                        });
-                    })),
-                    on(this.domNode, 'mouseleave', lang.hitch(this, function() {
-                        popup.close(this.dialog);
-                    }))
-                );
-                this.dialog = new TooltipDialog({
-                    content: text,
-                    onMouseLeave: lang.hitch(this, function() {
-                        popup.close(this.dialog);
-                    })
-                });
+                if (this.focusNode && !this.isInlineEditor) {
+                    var questionSign = domConstruct.toDom(' <a href="#"><i class="icon-question-sign"></i></a>');
+                    domConstruct.place(questionSign, this.focusNode, "after");
+                    new Tooltip({
+                        "placement": "top",
+                        title: Dict.translate(text)
+                    },
+                    query("a", this.focusNode.parentNode)[0]);
+                }
             }
         }
     });
