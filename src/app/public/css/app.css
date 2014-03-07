@@ -56,6 +56,10 @@ body {
   line-height: 1;
 }
 
+.hero-unit {
+  background: #ffffff;
+}
+
 .dgrid .dgrid-row:hover, .dgrid .dgrid-row:hover .dgrid-cell {
   background-color: #08c;
 }
@@ -120,6 +124,57 @@ input[type="color"],
   margin-bottom: 0;
 }
 
+select:focus,
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus {
+  border: none;
+  box-shadow: none;
+  outline: 0 none;
+}
+
+select:disabled,
+textarea:disabled,
+input[type="text"]:disabled,
+input[type="password"]:disabled,
+input[type="datetime"]:disabled,
+input[type="datetime-local"]:disabled,
+input[type="date"]:disabled,
+input[type="month"]:disabled,
+input[type="time"]:disabled,
+input[type="week"]:disabled,
+input[type="number"]:disabled,
+input[type="email"]:disabled,
+input[type="url"]:disabled,
+input[type="search"]:disabled,
+input[type="tel"]:disabled,
+input[type="color"]:disabled,
+.uneditable-input:disabled {
+  border: none;
+  box-shadow: none;
+  outline: 0 none;
+}
+
+.login-page .dijitTextBox {
+  margin: 5px;
+}
+
+.entity-page .dijitTextBox, .principal-page .dijitTextBox {
+  width: 350px;
+}
 
 /* dgrid */
 .dgrid-column-selector {
@@ -183,6 +238,11 @@ th.field-actions-4, td.field-actions-4 {
   font-size: 18px;
 }
 
+.dbootstrap .dijitTabPaneWrapper {
+  border: none;
+  border-top: 1px solid #d5d5d5;
+}
+
 /* containers */
 .container {
   margin-right: auto;
@@ -224,10 +284,6 @@ td {
 
 .tableContainer-labelCell {
   padding-top: 14px;
-}
-
-.entity-page .dijitTextBox {
-  width: 350px;
 }
 
 .pull-right {
@@ -273,7 +329,7 @@ img.thumb {
   Responsive table layout for form
   http://css-tricks.com/responsive-data-tables/
 */
-@media only screen and (max-width: 760px),
+@media only screen and (max-width: 980px),
 (min-device-width: 768px) and (max-device-width: 1024px)  {
 
   /* Force table to not be like tables anymore */
@@ -293,7 +349,7 @@ img.thumb {
     position: relative;
   }
 
-  .entity-page .dijitTextBox {
-    width: auto;
+  .entity-page .dijitTextBox, .principal-page .dijitTextBox {
+    width: 95%;
   }
 }

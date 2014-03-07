@@ -11,8 +11,11 @@ define([
     "dgrid/extensions/ColumnResizer",
     "dgrid/extensions/DijitRegistry",
     "dgrid/editor",
+    "dojo/dom",
     "dojo/dom-attr",
     "dojo/dom-construct",
+    "dojo/dom-style",
+    "dojo/dom-geometry",
     "dojo/query",
     "dojo/NodeList-traverse",
     "dojo/window",
@@ -37,8 +40,11 @@ define([
     ColumnResizer,
     DijitRegistry,
     editor,
+    dom,
     domAttr,
     domConstruct,
+    domStyle,
+    domGeom,
     query,
     traverse,
     win,
@@ -291,7 +297,20 @@ define([
         onResize: function() {
             // TODO: remove magic number
             var vs = win.getBox();
-            var h = this.height ? this.height : vs.h-280;
+
+            // calculate height of dynamic navbar and footer
+            var navbarHeight = 0;
+            var footerHeight = 0;
+
+            var navbar = query(".navbar");
+            if (navbar.length > 0) {
+              navbarHeight = domGeom.getMarginBox(navbar[0]).h;
+            }
+            var footer = dom.byId("footer");
+            if (footer) {
+              footerHeight = domGeom.getMarginBox(footer).h;
+            }
+            var h = this.height ? this.height : vs.h-navbarHeight-footerHeight-210;
             if (h >= 0) {
                 domAttr.set(this.gridWidget.domNode, "style", {height: h+"px"});
             }
