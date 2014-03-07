@@ -419,7 +419,7 @@ class PersistentObject {
   /**
    * Validate all values
    * @return Empty string if validation succeeded, an error string else. The default implementation returns the result of
-   *        PersistentObject::validateValueAgainstRestrictions().
+   *        PersistentObject::validateValueAgainstValidateType().
    */
   public function validateValues() {
     $errorMsg = '';
@@ -440,42 +440,37 @@ class PersistentObject {
    * Throws a ValidationException in case of invalid data.
    * @param name The name of the item to set.
    * @param value The value of the item.
-   * The default implementation calls PersistentObject::validateValueAgainstRestrictions().
+   * The default implementation calls PersistentObject::validateValueAgainstValidateType().
    * @note Subclasses will override this method to implement special application requirements.
    */
   public function validateValue($name, $value) {
-    $this->validateValueAgainstRestrictions($name, $value);
+    $this->validateValueAgainstValidateType($name, $value);
   }
 
   /**
-   * Check a value's value against the restrictions set on it. This method uses the
-   * restrictionsMatch and restrictionsNotMatch properties of the attribute definition.
-   * Throws a ValidationException if the restrictions don't match.
+   * Check a value's value against the validation type set on it. This method uses the
+   * validateType property of the attribute definition.
+   * Throws a ValidationException if the valud is not valid.
    * @param name The name of the item to set.
    * @param value The value of the item.
    */
-  protected function validateValueAgainstRestrictions($name, $value) {
-    $restrictionsMatch = $this->getValueProperty($name, 'restrictions_match');
-    $restrictionsNotMatch = $this->getValueProperty($name, 'restrictions_not_match');
-    if (($restrictionsMatch == '' || preg_match("/".$restrictionsMatch."/m", $value)) &&
-        ($restrictionsNotMatch == '' || !preg_match("/".$restrictionsNotMatch."/m", $value))) {
+  protected function validateValueAgainstValidateType($name, $value) {
+    $validateType = $this->getValueProperty($name, 'validate_type');
+    if (($validateType == '' || preg_match("/".$validateType."/m", $value))) {
       return;
     }
     // construct the error message
     $errorMessage = Message::get("Wrong value for %0% (%1%). ", array($name, $value));
 
     // use configured message if existing
-    $restrictionsDescription = $this->getValueProperty($name, 'restrictions_description');
-    if (strlen($restrictionsDescription) > 0) {
-      $errorMessage .= Message::get($restrictionsDescription);
+    $validateDescription = $this->getValueProperty($name, 'validate_description');
+    if (strlen($validateDescription) > 0) {
+      $errorMessage .= Message::get($validateDescription);
     }
     else {
       // construct default message
-      if (strlen($restrictionsMatch) > 0) {
-        $errorMessage .= Message::get("The value must match %0%.", array($restrictionsMatch));
-      }
-      if (strlen($restrictionsNotMatch) > 0) {
-        $errorMessage .= Message::get("The value must NOT match %0%.", array($restrictionsNotMatch));
+      if (strlen($validateType) > 0) {
+        $errorMessage .= Message::get("The value must match %0%.", array($validateType));
       }
     }
     throw new ValidationException($errorMessage);

@@ -35,11 +35,11 @@ class RDBAttributeDescription extends AttributeDescription {
    * @param table The table name
    * @param column The column name
    */
-  public function __construct($name, $type, array $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
-    $restrictionsDescription, $isEditable, $inputType, $displayType, $table, $column) {
+  public function __construct($name, $type, array $tags, $defaultValue, $validateType,
+    $validateDescription, $isEditable, $inputType, $displayType, $table, $column) {
 
-    parent::__construct($name, $type, $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
-      $restrictionsDescription, $isEditable, $inputType, $displayType);
+    parent::__construct($name, $type, $tags, $defaultValue, $validateType,
+      $validateDescription, $isEditable, $inputType, $displayType);
 
     $this->table = $table;
     $this->column = $column;

@@ -93,30 +93,21 @@ class ReferenceDescription extends AttributeDescription {
   }
 
   /**
-   * Get the regular expression that the value must match
+   * Get the validation type for the value
    * @return String
    */
-  public function getRestrictionsMatch() {
+  public function getValidateType() {
     $attribute = $this->getReferencedAttribute();
-    return $attribute->getRestrictionsMatch();
+    return $attribute->getValidateType();
   }
 
   /**
-   * Get the regular expression that the value must NOT match
+   * Get the description for the validation type
    * @return String
    */
-  public function getRestrictionsNotMatch() {
+  public function getValidateDescription() {
     $attribute = $this->getReferencedAttribute();
-    return $attribute->getRestrictionsNotMatch();
-  }
-
-  /**
-   * Get the description of the resticitions
-   * @return String
-   */
-  public function getRestrictionsDescription() {
-    $attribute = $this->getReferencedAttribute();
-    return $attribute->getRestrictionsDescription();
+    return $attribute->getValidateDescription();
   }
 
   /**

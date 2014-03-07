@@ -27,9 +27,8 @@ class AttributeDescription {
   protected $type = 'string';
   protected $tags = array();
   protected $defaultValue = null;
-  protected $restrictionsMatch = '';
-  protected $restrictionsNotMatch = '';
-  protected $restrictionsDescription = '';
+  protected $validateType = '';
+  protected $validateDescription = '';
   protected $isEditable = true;
   protected $inputType = 'text';
   protected $displayType = 'text';
@@ -40,23 +39,21 @@ class AttributeDescription {
    * @param type The attribute type. This may be used to decide on value conversions in the assoziated DataConverter class
    * @param tags An array of application specific tags that this attribute is tagged with
    * @param defaultValue The default value (will be set when creating a blank object, see PersistenceMapper::create())
-   * @param restrictionsMatch A regular expression that the value must match (e.g. '[0-3][0-9]\.[0-1][0-9]\.[0-9][0-9][0-9][0-9]' for date values)
-   * @param restrictionsNotMatch A regular expression that the value must NOT match
-   * @param restrictionsDescription A description of the resticitions
-   * @param isEditable True/False whether the attribute should be editable, see Control::render()
+   * @param validateType A validation type for the value
+   * @param validateDescription A description for the validation type
+   * @param isEditable Boolean whether the attribute should be editable, see Control::render()
    * @param inputType The input type for the value, see Control::render()
    * @param displayType The display type for the value
    */
-  public function __construct($name, $type, array $tags, $defaultValue, $restrictionsMatch, $restrictionsNotMatch,
-    $restrictionsDescription, $isEditable, $inputType, $displayType) {
+  public function __construct($name, $type, array $tags, $defaultValue, $validateType,
+    $validateDescription, $isEditable, $inputType, $displayType) {
 
     $this->name = $name;
     $this->type = $type;
     $this->tags = $tags;
     $this->defaultValue = $defaultValue;
-    $this->restrictionsMatch = $restrictionsMatch;
-    $this->restrictionsNotMatch = $restrictionsNotMatch;
-    $this->restrictionsDescription = $restrictionsDescription;
+    $this->validateType = $validateType;
+    $this->validateDescription = $validateDescription;
     $this->isEditable = $isEditable;
     $this->inputType = $inputType;
     $this->displayType = $displayType;
@@ -94,8 +91,8 @@ class AttributeDescription {
    * @return An array of names
    */
   public function getPropertyNames() {
-    return array('name', 'type', 'tags', 'defaultValue', 'restrictionsMatch', 'restrictionsNotMatch',
-      'restrictionsDescription', 'isEditable', 'inputType', 'displayType');
+    return array('name', 'type', 'tags', 'defaultValue', 'validateType',
+      'validateDescription', 'isEditable', 'inputType', 'displayType');
   }
 
   /**
@@ -131,27 +128,19 @@ class AttributeDescription {
   }
 
   /**
-   * Get the regular expression that the value must match
+   * Get the validation type for the value
    * @return String
    */
-  public function getRestrictionsMatch() {
-    return $this->restrictionsMatch;
+  public function getValidateType() {
+    return $this->validateType;
   }
 
   /**
-   * Get the regular expression that the value must NOT match
+   * Get the description for the validation type
    * @return String
    */
-  public function getRestrictionsNotMatch() {
-    return $this->restrictionsNotMatch;
-  }
-
-  /**
-   * Get the description of the resticitions
-   * @return String
-   */
-  public function getRestrictionsDescription() {
-    return $this->restrictionsDescription;
+  public function getValidateDescription() {
+    return $this->validateDescription;
   }
 
   /**
