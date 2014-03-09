@@ -106,47 +106,47 @@ class ImageRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Image', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Image', 'id'),
      /**
       * Value description: 
       */
-      'fk_chapter_id' => new RDBAttributeDescription('fk_chapter_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Image', 'fk_chapter_id'),
+      'fk_chapter_id' => new RDBAttributeDescription('fk_chapter_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Image', 'fk_chapter_id'),
      /**
       * Value description: 
       */
-      'fk_titlechapter_id' => new RDBAttributeDescription('fk_titlechapter_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Image', 'fk_titlechapter_id'),
+      'fk_titlechapter_id' => new RDBAttributeDescription('fk_titlechapter_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Image', 'fk_titlechapter_id'),
      /**
       * Value description: ?
       */
-      'filename' => new RDBAttributeDescription('filename', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'filebrowser', 'image', 'Image', 'file'),
+      'filename' => new RDBAttributeDescription('filename', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'filebrowser', 'image', 'Image', 'file'),
      /**
       * Value description: 
       */
-      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Image', 'created'),
+      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Image', 'created'),
      /**
       * Value description: ?
       */
-      'creator' => new RDBAttributeDescription('creator', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Image', 'creator'),
+      'creator' => new RDBAttributeDescription('creator', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Image', 'creator'),
      /**
       * Value description: ?
       */
-      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Image', 'modified'),
+      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Image', 'modified'),
      /**
       * Value description: ?
       */
-      'last_editor' => new RDBAttributeDescription('last_editor', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Image', 'last_editor'),
+      'last_editor' => new RDBAttributeDescription('last_editor', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Image', 'last_editor'),
       /**
        * Value description: Sort key for ordering in relation to TitleChapter
        */
-      'sortkey_titlechapter' => new RDBAttributeDescription('sortkey_titlechapter', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'Image', 'sortkey_titlechapter'),
+      'sortkey_titlechapter' => new RDBAttributeDescription('sortkey_titlechapter', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'Image', 'sortkey_titlechapter'),
       /**
        * Value description: Sort key for ordering in relation to NormalChapter
        */
-      'sortkey_normalchapter' => new RDBAttributeDescription('sortkey_normalchapter', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'Image', 'sortkey_normalchapter'),
+      'sortkey_normalchapter' => new RDBAttributeDescription('sortkey_normalchapter', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'Image', 'sortkey_normalchapter'),
       /**
        * Value description: Sort key for ordering
        */
-      'sortkey' => new RDBAttributeDescription('sortkey', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'Image', 'sortkey'),
+      'sortkey' => new RDBAttributeDescription('sortkey', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'Image', 'sortkey'),
     );
   }
 

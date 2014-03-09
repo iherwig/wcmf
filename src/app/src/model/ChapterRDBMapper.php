@@ -125,55 +125,55 @@ class ChapterRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Chapter', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Chapter', 'id'),
      /**
       * Value description: 
       */
-      'fk_chapter_id' => new RDBAttributeDescription('fk_chapter_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Chapter', 'fk_chapter_id'),
+      'fk_chapter_id' => new RDBAttributeDescription('fk_chapter_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Chapter', 'fk_chapter_id'),
      /**
       * Value description: 
       */
-      'fk_book_id' => new RDBAttributeDescription('fk_book_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Chapter', 'fk_book_id'),
+      'fk_book_id' => new RDBAttributeDescription('fk_book_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Chapter', 'fk_book_id'),
      /**
       * Value description: 
       */
-      'fk_author_id' => new RDBAttributeDescription('fk_author_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Chapter', 'fk_author_id'),
+      'fk_author_id' => new RDBAttributeDescription('fk_author_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Chapter', 'fk_author_id'),
      /**
       * Value description: ?
       */
-      'name' => new RDBAttributeDescription('name', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'Chapter', 'name'),
+      'name' => new RDBAttributeDescription('name', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'text', 'text', 'Chapter', 'name'),
      /**
       * Value description: 
       */
-      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Chapter', 'created'),
+      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Chapter', 'created'),
      /**
       * Value description: ?
       */
-      'creator' => new RDBAttributeDescription('creator', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Chapter', 'creator'),
+      'creator' => new RDBAttributeDescription('creator', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Chapter', 'creator'),
      /**
       * Value description: ?
       */
-      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Chapter', 'modified'),
+      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Chapter', 'modified'),
      /**
       * Value description: ?
       */
-      'last_editor' => new RDBAttributeDescription('last_editor', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Chapter', 'last_editor'),
+      'last_editor' => new RDBAttributeDescription('last_editor', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Chapter', 'last_editor'),
       /**
        * Value description: Sort key for ordering in relation to Author
        */
-      'sortkey_author' => new RDBAttributeDescription('sortkey_author', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'Chapter', 'sortkey_author'),
+      'sortkey_author' => new RDBAttributeDescription('sortkey_author', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'Chapter', 'sortkey_author'),
       /**
        * Value description: Sort key for ordering in relation to Book
        */
-      'sortkey_book' => new RDBAttributeDescription('sortkey_book', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'Chapter', 'sortkey_book'),
+      'sortkey_book' => new RDBAttributeDescription('sortkey_book', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'Chapter', 'sortkey_book'),
       /**
        * Value description: Sort key for ordering in relation to ParentChapter
        */
-      'sortkey_parentchapter' => new RDBAttributeDescription('sortkey_parentchapter', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'Chapter', 'sortkey_parentchapter'),
+      'sortkey_parentchapter' => new RDBAttributeDescription('sortkey_parentchapter', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'Chapter', 'sortkey_parentchapter'),
       /**
        * Value description: Sort key for ordering
        */
-      'sortkey' => new RDBAttributeDescription('sortkey', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'Chapter', 'sortkey'),
+      'sortkey' => new RDBAttributeDescription('sortkey', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'Chapter', 'sortkey'),
      /* 
       * Value description: A book is divided into chapters. A chapter may contain subchapters. 
       */

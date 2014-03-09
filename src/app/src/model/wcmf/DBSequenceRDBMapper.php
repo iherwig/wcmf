@@ -89,7 +89,7 @@ class DBSequenceRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'dbsequence', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'dbsequence', 'id'),
     );
   }
 

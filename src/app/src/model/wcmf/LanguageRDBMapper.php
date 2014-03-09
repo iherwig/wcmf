@@ -90,15 +90,15 @@ class LanguageRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'language', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'language', 'id'),
      /**
       * Value description: ?
       */
-      'name' => new RDBAttributeDescription('name', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'language', 'name'),
+      'name' => new RDBAttributeDescription('name', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'language', 'name'),
      /**
       * Value description: ?
       */
-      'code' => new RDBAttributeDescription('code', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'language', 'code'),
+      'code' => new RDBAttributeDescription('code', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'language', 'code'),
     );
   }
 

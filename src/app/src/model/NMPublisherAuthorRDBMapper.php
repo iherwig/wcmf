@@ -107,27 +107,27 @@ class NMPublisherAuthorRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'NMPublisherAuthor', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'NMPublisherAuthor', 'id'),
      /**
       * Value description: 
       */
-      'fk_author_id' => new RDBAttributeDescription('fk_author_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'NMPublisherAuthor', 'fk_author_id'),
+      'fk_author_id' => new RDBAttributeDescription('fk_author_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'NMPublisherAuthor', 'fk_author_id'),
      /**
       * Value description: 
       */
-      'fk_publisher_id' => new RDBAttributeDescription('fk_publisher_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'NMPublisherAuthor', 'fk_publisher_id'),
+      'fk_publisher_id' => new RDBAttributeDescription('fk_publisher_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'NMPublisherAuthor', 'fk_publisher_id'),
       /**
        * Value description: Sort key for ordering in relation to Publisher
        */
-      'sortkey_publisher' => new RDBAttributeDescription('sortkey_publisher', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'NMPublisherAuthor', 'sortkey_publisher'),
+      'sortkey_publisher' => new RDBAttributeDescription('sortkey_publisher', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'NMPublisherAuthor', 'sortkey_publisher'),
       /**
        * Value description: Sort key for ordering in relation to Author
        */
-      'sortkey_author' => new RDBAttributeDescription('sortkey_author', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'NMPublisherAuthor', 'sortkey_author'),
+      'sortkey_author' => new RDBAttributeDescription('sortkey_author', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'NMPublisherAuthor', 'sortkey_author'),
       /**
        * Value description: Sort key for ordering
        */
-      'sortkey' => new RDBAttributeDescription('sortkey', 'integer', array('DATATYPE_IGNORE'), null, '[0-9]*', '', '', true, 'text[class="tiny"]', 'text', 'NMPublisherAuthor', 'sortkey'),
+      'sortkey' => new RDBAttributeDescription('sortkey', 'integer', array('DATATYPE_IGNORE'), null, 'regexp:[0-9]*', '', true, 'text[class="tiny"]', 'text', 'NMPublisherAuthor', 'sortkey'),
     );
   }
 

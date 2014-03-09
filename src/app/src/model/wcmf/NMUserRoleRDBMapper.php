@@ -98,11 +98,11 @@ class NMUserRoleRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'fk_user_id' => new RDBAttributeDescription('fk_user_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'nm_user_role', 'fk_user_id'),
+      'fk_user_id' => new RDBAttributeDescription('fk_user_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'nm_user_role', 'fk_user_id'),
      /**
       * Value description: 
       */
-      'fk_role_id' => new RDBAttributeDescription('fk_role_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'nm_user_role', 'fk_role_id'),
+      'fk_role_id' => new RDBAttributeDescription('fk_role_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'nm_user_role', 'fk_role_id'),
     );
   }
 

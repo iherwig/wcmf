@@ -45,8 +45,8 @@ define([
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
-            regexp: '',
-            regexpDesc: '',
+            validateType: '',
+            validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
             isReference: false
         }, {
@@ -56,8 +56,8 @@ define([
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
-            regexp: '',
-            regexpDesc: '',
+            validateType: '',
+            validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
             isReference: false
         }, {
@@ -67,8 +67,8 @@ define([
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
-            regexp: '',
-            regexpDesc: '',
+            validateType: '',
+            validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
             isReference: false
         }, {
@@ -78,8 +78,8 @@ define([
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
-            regexp: '',
-            regexpDesc: '',
+            validateType: '',
+            validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
             isReference: false
         }, {
@@ -89,8 +89,8 @@ define([
             isEditable: false,
             inputType: 'text',
             displayType: 'text',
-            regexp: '',
-            regexpDesc: '',
+            validateType: '',
+            validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
             isReference: false
         }],

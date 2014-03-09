@@ -10,6 +10,7 @@ define([
     "dojo/keys",
     "dojo/NodeList-dom",
     "dojo/dom-class",
+    "dojo/dom-attr",
     "dojo/dom-style",
     "../../../User",
     "../../../model/meta/Model",
@@ -28,6 +29,7 @@ define([
     keys,
     nodeListDom,
     domClass,
+    domAttr,
     domStyle,
     User,
     Model,
@@ -56,8 +58,12 @@ define([
                 on(this.searchField, "keydown", lang.hitch(this, function(e) {
                     if (e.keyCode === keys.ENTER) {
                         e.preventDefault();
-                        topic.publish('navigate', 'search', null, {q: this.searchField.get("value")});
+                        topic.publish('navigate', 'search', null, {q: domAttr.get(this.searchField, "value")});
                     }
+                })),
+                on(this.searchBtn, "click", lang.hitch(this, function(e) {
+                    e.preventDefault();
+                    topic.publish('navigate', 'search', null, {q: domAttr.get(this.searchField, "value")});
                 })),
                 on(this.collapseToggleBtn, "click", lang.hitch(this, function(e) {
                     var height = domStyle.get(this.menuCollapse, "height");

@@ -93,19 +93,19 @@ class UserConfigRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'user_config', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'user_config', 'id'),
      /**
       * Value description: 
       */
-      'fk_user_id' => new RDBAttributeDescription('fk_user_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'user_config', 'fk_user_id'),
+      'fk_user_id' => new RDBAttributeDescription('fk_user_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'user_config', 'fk_user_id'),
      /**
       * Value description: ?
       */
-      'key' => new RDBAttributeDescription('key', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'user_config', 'key'),
+      'key' => new RDBAttributeDescription('key', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'user_config', 'key'),
      /**
       * Value description: ?
       */
-      'val' => new RDBAttributeDescription('val', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'user_config', 'val'),
+      'val' => new RDBAttributeDescription('val', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'text', 'text', 'user_config', 'val'),
     );
   }
 

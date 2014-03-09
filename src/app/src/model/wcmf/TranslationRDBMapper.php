@@ -89,23 +89,23 @@ class TranslationRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'translation', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'translation', 'id'),
      /**
       * Value description: The object id of the object to which the translation belongs
       */
-      'objectid' => new RDBAttributeDescription('objectid', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'translation', 'objectid'),
+      'objectid' => new RDBAttributeDescription('objectid', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'translation', 'objectid'),
      /**
       * Value description: The attribute of the object that is translated
       */
-      'attribute' => new RDBAttributeDescription('attribute', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'translation', 'attribute'),
+      'attribute' => new RDBAttributeDescription('attribute', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'translation', 'attribute'),
      /**
       * Value description: The translation
       */
-      'translation' => new RDBAttributeDescription('translation', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'textarea', 'text', 'translation', 'translation'),
+      'translation' => new RDBAttributeDescription('translation', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'textarea', 'text', 'translation', 'translation'),
      /**
       * Value description: The language of the translation
       */
-      'language' => new RDBAttributeDescription('language', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'translation', 'language'),
+      'language' => new RDBAttributeDescription('language', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'translation', 'language'),
     );
   }
 

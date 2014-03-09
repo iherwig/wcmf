@@ -98,39 +98,39 @@ class BookRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Book', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Book', 'id'),
      /**
       * Value description: 
       */
-      'fk_publisher_id' => new RDBAttributeDescription('fk_publisher_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'Book', 'fk_publisher_id'),
+      'fk_publisher_id' => new RDBAttributeDescription('fk_publisher_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'Book', 'fk_publisher_id'),
      /**
       * Value description: ?
       */
-      'title' => new RDBAttributeDescription('title', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'Book', 'title'),
+      'title' => new RDBAttributeDescription('title', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'text', 'text', 'Book', 'title'),
      /**
       * Value description: ?
       */
-      'description' => new RDBAttributeDescription('description', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'textarea', 'text', 'Book', 'description'),
+      'description' => new RDBAttributeDescription('description', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'textarea', 'text', 'Book', 'description'),
      /**
       * Value description: ?
       */
-      'year' => new RDBAttributeDescription('year', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'date', 'text', 'Book', 'year'),
+      'year' => new RDBAttributeDescription('year', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'date', 'text', 'Book', 'year'),
      /**
       * Value description: 
       */
-      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Book', 'created'),
+      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Book', 'created'),
      /**
       * Value description: ?
       */
-      'creator' => new RDBAttributeDescription('creator', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Book', 'creator'),
+      'creator' => new RDBAttributeDescription('creator', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Book', 'creator'),
      /**
       * Value description: ?
       */
-      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Book', 'modified'),
+      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Book', 'modified'),
      /**
       * Value description: ?
       */
-      'last_editor' => new RDBAttributeDescription('last_editor', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'Book', 'last_editor'),
+      'last_editor' => new RDBAttributeDescription('last_editor', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Book', 'last_editor'),
     );
   }
 

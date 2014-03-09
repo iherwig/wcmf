@@ -122,6 +122,9 @@ input[type="tel"],
 input[type="color"],
 .uneditable-input {
   margin-bottom: 0;
+  border: none;
+  box-shadow: none;
+  outline: 0 none;
 }
 
 select:focus,

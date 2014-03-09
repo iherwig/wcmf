@@ -93,23 +93,23 @@ class LocktableRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'locktable', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'locktable', 'id'),
      /**
       * Value description: 
       */
-      'fk_user_id' => new RDBAttributeDescription('fk_user_id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'locktable', 'fk_user_id'),
+      'fk_user_id' => new RDBAttributeDescription('fk_user_id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'locktable', 'fk_user_id'),
      /**
       * Value description: ?
       */
-      'objectid' => new RDBAttributeDescription('objectid', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'locktable', 'objectid'),
+      'objectid' => new RDBAttributeDescription('objectid', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'locktable', 'objectid'),
      /**
       * Value description: ?
       */
-      'sessionid' => new RDBAttributeDescription('sessionid', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'locktable', 'sessionid'),
+      'sessionid' => new RDBAttributeDescription('sessionid', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'locktable', 'sessionid'),
      /**
       * Value description: ?
       */
-      'since' => new RDBAttributeDescription('since', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', '', false, 'text', 'text', 'locktable', 'since'),
+      'since' => new RDBAttributeDescription('since', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'locktable', 'since'),
     );
   }
 

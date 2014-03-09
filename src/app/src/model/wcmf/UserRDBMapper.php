@@ -108,27 +108,27 @@ class UserRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', '', false, 'text', 'text', 'user', 'id'),
+      'id' => new RDBAttributeDescription('id', '', array('DATATYPE_IGNORE'), null, '', '', false, 'text', 'text', 'user', 'id'),
      /**
       * Value description: ?
       */
-      'login' => new RDBAttributeDescription('login', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'user', 'login'),
+      'login' => new RDBAttributeDescription('login', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'text', 'text', 'user', 'login'),
      /**
       * Value description: ?
       */
-      'password' => new RDBAttributeDescription('password', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'password', 'text', 'user', 'password'),
+      'password' => new RDBAttributeDescription('password', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'password', 'text', 'user', 'password'),
      /**
       * Value description: ?
       */
-      'name' => new RDBAttributeDescription('name', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'user', 'name'),
+      'name' => new RDBAttributeDescription('name', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'text', 'text', 'user', 'name'),
      /**
       * Value description: ?
       */
-      'firstname' => new RDBAttributeDescription('firstname', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'text', 'text', 'user', 'firstname'),
+      'firstname' => new RDBAttributeDescription('firstname', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'text', 'text', 'user', 'firstname'),
      /**
       * Value description: ?
       */
-      'config' => new RDBAttributeDescription('config', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', '', true, 'select#file:../config/|/\..ini$/', 'text', 'user', 'config'),
+      'config' => new RDBAttributeDescription('config', 'String', array('DATATYPE_ATTRIBUTE'), null, '', '', true, 'select#file:../config/|/\..ini$/', 'text', 'user', 'config'),
     );
   }
 
