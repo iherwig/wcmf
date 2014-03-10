@@ -25,6 +25,7 @@ use wcmf\lib\persistence\PropertyChangeEvent;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\ValueChangeEvent;
 use wcmf\lib\persistence\ValidationException;
+use wcmf\lib\persistence\validator\Validator;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -456,7 +457,7 @@ class PersistentObject {
    */
   protected function validateValueAgainstValidateType($name, $value) {
     $validateType = $this->getValueProperty($name, 'validate_type');
-    if (($validateType == '' || preg_match("/".$validateType."/m", $value))) {
+    if (($validateType == '' || Validator::validate($value, $validateType))) {
       return;
     }
     // construct the error message

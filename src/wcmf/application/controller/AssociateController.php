@@ -137,11 +137,11 @@ class AssociateController extends Controller {
       }
       else {
         if ($sourceNode == null) {
-          $this->addError(ApplicationError::get('OID_INVALID',
+          $response->addError(ApplicationError::get('OID_INVALID',
             array('invalidOids' => array('sourceOid'))));
         }
         if ($targetNode == null) {
-          $this->addError(ApplicationError::get('OID_INVALID',
+          $response->addError(ApplicationError::get('OID_INVALID',
             array('invalidOids' => array('targetOid'))));
         }
       }

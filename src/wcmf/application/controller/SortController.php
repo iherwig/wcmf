@@ -319,7 +319,7 @@ class SortController extends Controller {
       }
     }
     if (sizeof($invalidOids) > 0) {
-      $this->addError(ApplicationError::get('OID_INVALID',
+      $response->addError(ApplicationError::get('OID_INVALID',
         array('invalidOids' => $invalidOids)));
       return false;
     }

@@ -381,7 +381,7 @@ class ControllerMessage {
       }
     }
     if (!isset($formats[$firstFormat])) {
-      throw new ConfigurationException("Configuration section 'Formats' does not contain any format definitions.");
+      throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition for: ".$mimeType);
     }
     return $formats[$firstFormat];
   }
