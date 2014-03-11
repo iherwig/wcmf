@@ -396,12 +396,23 @@ function(
 
                     // check for concurrent update
                     var error = BackendError.parseResponse(error);
-                    if (error.code === "CONCURRENT_UPDATE" || "OBJECT_IS_LOCKED") {
+                    if (error.code === "CONCURRENT_UPDATE" || error.code === "OBJECT_IS_LOCKED") {
                         this.showNotification({
                             type: "error",
                             message: error.message+' <a href="'+location.href+'" class="alert-error"><i class="fa fa-refresh"></i></a>'
                         });
                         this.setLockState(true, false);
+                    }
+                    else if (error.code === "ATTRIBUTE_VALUE_INVALID") {
+                        var message = '';
+                        var attributes = error.data.invalidAttributeValues;
+                        for (var i=0, count=attributes.length; i<count; i++) {
+                            message += attributes[i].message+"<br>";
+                        }
+                        this.showNotification({
+                            type: "error",
+                            message: message
+                        });
                     }
                     else {
                         this.showBackendError(error);
