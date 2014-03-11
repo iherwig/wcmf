@@ -36,7 +36,7 @@ class AttributeDescription {
   /**
    * Constructor.
    * @param name The attribute name
-   * @param type The attribute type. This may be used to decide on value conversions in the assoziated DataConverter class
+   * @param type The attribute type
    * @param tags An array of application specific tags that this attribute is tagged with
    * @param defaultValue The default value (will be set when creating a blank object, see PersistenceMapper::create())
    * @param validateType A validation type for the value

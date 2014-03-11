@@ -75,8 +75,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   private $_idInsertStmt = null;
   private $_idUpdateStmt = null;
 
-  private $_dataConverter = null;
-
   // keeps track of currently loading relations to avoid circular loading
   private $_loadingRelations = array();
 
@@ -745,20 +743,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $this->connect();
     }
 
-    // prepare object data
-    // escape all values (except for primary key values)
-    $appValues = array();
-    if ($this->_dataConverter) {
-      foreach ($object->getValueNames() as $valueName) {
-        if (!$this->isPkValue($valueName)) {
-          $value = $object->getValue($valueName);
-          $appValues[$valueName] = $value;
-          $convertedValue = $this->_dataConverter->convertApplicationToStorage($value, $object->getValueProperty($valueName, 'type'), $valueName);
-          $object->setValue($valueName, $convertedValue, true, false);
-        }
-      }
-    }
-
     // set all missing attributes
     $this->prepareForStorage($object);
 
@@ -787,14 +771,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
     }
 
-    // set converted values back to application values
-    if ($this->_dataConverter) {
-      foreach ($object->getValueNames() as $valueName) {
-        if (!$this->isPkValue($valueName)) {
-          $object->setValue($valueName, $appValues[$valueName], true, false);
-        }
-      }
-    }
     $object->setState(PersistentObject::STATE_CLEAN);
 
     // postcondition: the object is saved to the db
@@ -1082,12 +1058,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $values = array();
     foreach($objectData as $name => $value) {
       if ($attribs == null || in_array($name, $attribs)) {
-        // convert the value, if the attribute is known
         if ($this->hasAttribute($name)) {
-          $curAttributeDesc = $this->getAttribute($name);
-          if ($this->_dataConverter && !is_null($value)) {
-            $value = $this->_dataConverter->convertStorageToApplication($value, $curAttributeDesc->getType(), $name);
-          }
           $values[$name] = $value;
         }
       }
@@ -1108,11 +1079,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     foreach($attributeDescriptions as $curAttributeDesc) {
       $name = $curAttributeDesc->getName();
       if ($attribs == null || in_array($name, $attribs)) {
-        $value = $curAttributeDesc->getDefaultValue();
-        if ($this->_dataConverter && !is_null($value)) {
-          $value = $this->_dataConverter->convertStorageToApplication($value, $curAttributeDesc->getType(), $name);
-        }
-        $values[$name] = $value;
+        $values[$name] = $curAttributeDesc->getDefaultValue();
       }
     }
     $object->initialize($values);

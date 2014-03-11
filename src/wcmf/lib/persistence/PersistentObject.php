@@ -171,18 +171,6 @@ class PersistentObject {
   }
 
   /**
-   * Get the DataConverter used when loading/saving values.
-   * @return DataConverter
-   */
-  public function getDataConverter() {
-    $mapper = $this->getMapper();
-    if ($mapper != null) {
-      return $mapper->getDataConverter();
-    }
-    return null;
-  }
-
-  /**
    * Delete the object
    */
   public function delete() {
@@ -386,35 +374,6 @@ class PersistentObject {
     if ($this->hasValue($name)) {
       unset($this->_data[$name]);
     }
-  }
-
-  /**
-   * Get the unconverted value of a named item.
-   * @param name The name of the item to query.
-   * @return The unconverted value of the item / null if it doesn't exits.
-   */
-  public function getUnconvertedValue($name) {
-    $value = $this->getValue($name);
-    $dataConverter = $this->getDataConverter();
-    if (is_object($dataConverter) && $value != null) {
-      $value = $dataConverter->convertApplicationToStorage($value, $this->getValueProperty($name, 'db_data_type'), $name);
-    }
-    return $value;
-  }
-
-  /**
-   * Get the converted value of a named item.
-   * @param name The name of the item to query.
-   * @return The converted value of the item / null if it doesn't exits.
-   * @note The result is normally equal to that of PersistentObject::getValue() except, when the value is unconverted
-   */
-  public function getConvertedValue($name) {
-    $value = $this->getValue($name);
-    $dataConverter = $this->getDataConverter();
-    if (is_object($dataConverter) && $value != null) {
-      $value = $dataConverter->convertStorageToApplication($value, $this->getValueProperty($name, 'type'), $name);
-    }
-    return $value;
   }
 
   /**

@@ -38,7 +38,6 @@ use wcmf\lib\security\AuthorizationException;
  */
 abstract class AbstractMapper implements PersistenceMapper {
 
-  private $_dataConverter = null; // a DataConverter object that converts data before writing and after reading from storage
   private $_logging = false;
   private $_logStrategy = null;
 
@@ -66,20 +65,6 @@ abstract class AbstractMapper implements PersistenceMapper {
       }
     }
     return false;
-  }
-
-  /**
-   * @see PersistenceMapper::setDataConverter()
-   */
-  public function setDataConverter(DataConverter $dataConverter) {
-    $this->_dataConverter = $dataConverter;
-  }
-
-  /**
-   * @see PersistenceMapper::getDataConverter()
-   */
-  public function getDataConverter() {
-    return $this->_dataConverter;
   }
 
   /**

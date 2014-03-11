@@ -147,18 +147,6 @@ interface PersistenceMapper {
   public function getDefaultOrder($roleName=null);
 
   /**
-   * Set the DataConverter that should be used on load() and save().
-   * @param dataConverter The DataConverter object.
-   */
-  public function setDataConverter(DataConverter $dataConverter);
-
-  /**
-   * Get the DataConverter that is used on load() and save().
-   * @return DataConverter
-   */
-  public function getDataConverter();
-
-  /**
    * Enable logging using a given OutputStrategy to log insert/update/delete actions to a file.
    * @param logStrategy The OutputStrategy to use.
    */
