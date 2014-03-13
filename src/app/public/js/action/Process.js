@@ -2,7 +2,7 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/request",
-    "dojo/request/iframe",
+    "dojo/request/iframe"
 ], function (
     declare,
     lang,

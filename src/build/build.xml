@@ -93,8 +93,8 @@
       </fileset>
     </copy>
     <replaceregexp file="${dist.dir}/${app.name}/public/.htaccess"
-      match="RewriteBase (.*)/${app.name}/public"
-      replace="RewriteBase \1/dist/${app.name}/public"
+      match="RewriteBase (.*)/src/${app.name}/public"
+      replace="RewriteBase \1/src/dist/${app.name}/public"
     />
     <copy file="${build.info}" todir="${dist.dir}"/>
     <delete dir="${build.base}${app.name}/release"/>
