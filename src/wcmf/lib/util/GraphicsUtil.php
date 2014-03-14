@@ -111,7 +111,7 @@ class GraphicsUtil {
     $dimOk = ($exact && $imgHeight == $height) || (!$exact && $imgHeight <= $height);
     if (!$dimOk) {
       $constraint = $exact ? Message::get("exactly") : Message::get("smaller than");
-      $this->_errorMsg .= Message::get("Wrong image width. Image height must be %1% %2%px - actual image height is %3%px.",
+      $this->_errorMsg .= Message::get("Wrong image height. Image height must be %1% %2%px - actual image height is %3%px.",
         array($constraint, $height, $imgHeight));
       $this->_errorMsg .= "\n";
     }

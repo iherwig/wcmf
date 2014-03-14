@@ -59,6 +59,7 @@ define([
         },
 
         getItemUrl: function(item) {
+            item = decodeURIComponent(item);
             return appConfig.mediaBasePath+item.replace(appConfig.mediaBaseUrl, '');
         }
     });

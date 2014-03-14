@@ -297,12 +297,12 @@ td {
   float: left;
 }
 
-img.thumb {
-  width: auto !important;
-  height: 46px !important;
+.dijitContentPane img.thumb {
+  width: auto;
+  height: 46px;
 }
 
-.tabLabel img.thumb {
+.tabLabel img.thumb, .dgrid-content img.thumb {
   height: 20px !important;
 }
 
