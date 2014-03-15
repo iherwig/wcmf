@@ -152,16 +152,21 @@ class Application {
     Log::error($exception->getMessage()."\n".$exception->getTraceAsString(), __CLASS__);
 
     // rollback current transaction
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $persistenceFacade->getTransaction()->rollback();
+    if (ObjectFactory::getConfigurationInstance() != null) {
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $persistenceFacade->getTransaction()->rollback();
 
-    // redirect to failure action
-    if ($request == null) {
-      $request = $this->_initialRequest;
+      // redirect to failure action
+      if ($request == null) {
+        $request = $this->_initialRequest;
+      }
+      $request->addError(ApplicationError::fromException($exception));
+      $request->setAction('failure');
+      ObjectFactory::getInstance('actionMapper')->processAction($request);
     }
-    $request->addError(ApplicationError::fromException($exception));
-    $request->setAction('failure');
-    ObjectFactory::getInstance('actionMapper')->processAction($request);
+    else {
+      throw $exception;
+    }
   }
 
   /**

@@ -31,19 +31,19 @@
     <copy todir="${dist.dir}">
       <fileset dir="${build.base}src/">
         <exclude name="**/*.log"/>
-        <exclude name="**/cache/**"/>
-        <exclude name="**/config/*.ini"/>
-        <exclude name="**/app/public/js/model/meta/_TypeList.js"/>
-        <exclude name="**/app/public/js/model/types/**"/>
-        <exclude name="**/app/public/media/**"/>
-        <exclude name="**/app/src/**"/>
-        <exclude name="**/dist/**"/>
-        <exclude name="**/install/tables.sql"/>
-        <exclude name="**/model/base/**"/>
-        <exclude name="**/model/model-transformed/**"/>
-        <exclude name="**/model/*.*"/>
-        <exclude name="**/test/model/**"/>
-        <exclude name="**/test/tests/**"/>
+        <exclude name="cache/**"/>
+        <exclude name="app/config/*.ini"/>
+        <exclude name="app/public/js/model/meta/_TypeList.js"/>
+        <exclude name="app/public/js/model/types/**"/>
+        <exclude name="app/public/media/**"/>
+        <exclude name="app/src/**"/>
+        <exclude name="dist/**"/>
+        <exclude name="install/tables.sql"/>
+        <exclude name="model/base/**"/>
+        <exclude name="model/model-transformed/**"/>
+        <exclude name="model/*.*"/>
+        <exclude name="test/model/**"/>
+        <exclude name="test/tests/**"/>
         <include name="**"/>
       </fileset>
     </copy>

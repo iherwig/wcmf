@@ -63,18 +63,22 @@ try {
   );
 }
 catch (Exception $ex) {
-  $application->handleException($ex, $request);
+  try {
+    $application->handleException($ex, isset($request) ? $request : null);
+  } catch (Exception $unhandledEx) {
+    $error = "An unhandled exception occured. Please see log file for details.";
+  }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><?php echo $appTitle; ?></title>
+    <title><?php echo isset($appTitle) ? $appTitle : ""; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <base href="<?php echo $baseHref; ?>">
+    <base href="<?php echo isset($baseHref) ? $baseHref : ""; ?>">
 
     <link href="css/app.css" rel="stylesheet" media="screen">
 
@@ -84,8 +88,14 @@ catch (Exception $ex) {
   </head>
 
   <body class="dbootstrap">
+    <?php if (isset($error)) : ?>
+    <div id="error" class="alert alert-error">
+      <strong>Error!</strong> <?php echo $error; ?>
+    </div>
+    <?php endif; ?>
+
     <script>
-      var appConfig = <?php echo json_encode($clientConfig); ?>;
+      var appConfig = <?php echo isset($clientConfig) ? json_encode($clientConfig) : ""; ?>;
 
       var dojoConfig = {
           has: {
