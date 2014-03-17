@@ -445,7 +445,7 @@
         <eLiterals xmi:id="_jARm2s-nEd6fypAGO026Fw" name="Persistence" value="2"/>
         <eLiterals xmi:id="_jARm28-nEd6fypAGO026Fw" name="Performance" value="3"/>
         <eLiterals xmi:id="_jARm3M-nEd6fypAGO026Fw" name="Security" value="4"/>
-        <eLiterals xmi:id="_jARm3c-nEd6fypAGO026Fw" name="Business Rule" value="5"/>
+        <eLiterals xmi:id="_jARm3c-nEd6fypAGO026Fw" name="BusinessRule" value="5"/>
       </eClassifiers>
     </contents>
   </eAnnotations>
@@ -1172,11 +1172,13 @@ Delete  (Destroy)</body>
     <ownedComment xmi:id="_ivR8Ic-nEd6fypAGO026Fw">
       <body>A Node value type used in Chronos. These values reference values of other Node types and are not persistent</body>
     </ownedComment>
-    <ownedAttribute xmi:id="{F5E41E84-22F5-4af2-9B39-AC2B717904AE}" name="reference_value" visibility="public" type="{B6022402-0B86-47c7-BE5A-375652A97BE5}">
+    <ownedAttribute xmi:id="{F5E41E84-22F5-4af2-9B39-AC2B717904AE}" name="reference_value" visibility="public">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i9ld68-nEd6fypAGO026Fw" value="1"/>
       <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i9ld6s-nEd6fypAGO026Fw" value="1"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="8beee263-cfa7-11de-9e87-d74203c08737" name="reference_type" visibility="public" type="{7F7AA52E-6BDE-4726-9FC6-64A8B4050FED}">
+    <ownedAttribute xmi:id="8beee263-cfa7-11de-9e87-d74203c08737" name="reference_type" visibility="public">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i-xwxs-nEd6fypAGO026Fw" value="1"/>
       <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i-xwxc-nEd6fypAGO026Fw" value="1"/>
     </ownedAttribute>
@@ -1267,10 +1269,6 @@ Delete  (Destroy)</body>
     <ownedAttribute xmi:id="_i_FSws-nEd6fypAGO026Fw" name="base_Property" association="8bf1537a-cfa7-11de-9e87-d74203c08737">
       <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Property"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="_vSAIcCk6EeCSJrdTVcR-Cw" name="chiValueRef" visibility="private" type="{2C925856-F61D-4e5d-BC20-75ECC7E20DAF}" association="_vR9sMCk6EeCSJrdTVcR-Cw">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_vSCksCk6EeCSJrdTVcR-Cw" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_vSBWkCk6EeCSJrdTVcR-Cw" value="1"/>
-    </ownedAttribute>
   </packagedElement>
   <packagedElement xmi:type="uml:Stereotype" xmi:id="{99861427-93A7-48d5-AED2-44B16BE235D9}" name="ChiSystem">
     <ownedComment xmi:id="_ix-Dwc-nEd6fypAGO026Fw">
@@ -1350,7 +1348,7 @@ Delete  (Destroy)</body>
     <ownedLiteral xmi:id="_i2leAs-nEd6fypAGO026Fw" name="Persistence"/>
     <ownedLiteral xmi:id="_i2leA8-nEd6fypAGO026Fw" name="Performance"/>
     <ownedLiteral xmi:id="_i2leBM-nEd6fypAGO026Fw" name="Security"/>
-    <ownedLiteral xmi:id="_i2leBc-nEd6fypAGO026Fw" name="Business Rule"/>
+    <ownedLiteral xmi:id="_i2leBc-nEd6fypAGO026Fw" name="BusinessRule"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Enumeration" xmi:id="{C2687679-7197-4b1b-BA2C-D66E2AC9FED9}" name="boolean">
     <ownedLiteral xmi:id="_i24Y8M-nEd6fypAGO026Fw" name="false"/>
@@ -1489,12 +1487,6 @@ Delete  (Destroy)</body>
     <ownedEnd xmi:id="8bf39d74-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{ADD449B8-782B-4039-BA02-BE5CFE19ACBF}" association="{33841C5E-5631-44b3-950C-78032091DCB5}">
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i_OctM-nEd6fypAGO026Fw" value="1"/>
       <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i_Ocs8-nEd6fypAGO026Fw" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_vR9sMCk6EeCSJrdTVcR-Cw" name="has" memberEnd="_vSAIcCk6EeCSJrdTVcR-Cw _vSDy0Ck6EeCSJrdTVcR-Cw">
-    <ownedEnd xmi:id="_vSDy0Ck6EeCSJrdTVcR-Cw" name="chiValue" visibility="private" type="{B6022402-0B86-47c7-BE5A-375652A97BE5}" association="_vR9sMCk6EeCSJrdTVcR-Cw">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_vSEZ4Sk6EeCSJrdTVcR-Cw" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_vSEZ4Ck6EeCSJrdTVcR-Cw" value="1"/>
     </ownedEnd>
   </packagedElement>
 </uml:Profile>
