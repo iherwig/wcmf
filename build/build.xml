@@ -39,7 +39,6 @@
         <exclude name="app/src/**"/>
         <exclude name="dist/**"/>
         <exclude name="install/tables.sql"/>
-        <exclude name="model/base/**"/>
         <exclude name="model/model-transformed/**"/>
         <exclude name="model/*.*"/>
         <exclude name="test/model/**"/>
