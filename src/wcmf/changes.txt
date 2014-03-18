@@ -1,1 +1,1 @@
-Version 3 -> 4- PHP5 only- introduced ObjectId Class- removed dataTypes from PersistentObject- PDO- UMIcurrent 3.x rev. 1467TODO: validateType -> filter, implemented in requestTODO: dokuwikiTODO: Model: delete config: NewInstance, Views?
+Version 3 -> 4- PHP5 only- introduced ObjectId Class- removed dataTypes from PersistentObject- PDO- UMIcurrent 3.x rev. 1467TODO: validateType -> filter, implemented in requestTODO: dokuwikiTODO: Model: delete config: NewInstance, Views?TODO: generator workflow: delete frameworkFile
