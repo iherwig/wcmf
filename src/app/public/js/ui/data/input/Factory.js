@@ -1,7 +1,6 @@
 define( [
     "dojo/_base/declare",
     "dojo/_base/array",
-    "dojo/_base/kernel",
     "dojo/Deferred",
     "../../../model/meta/Model",
     "../../../persistence/ListStore"
@@ -9,18 +8,12 @@ define( [
 function(
     declare,
     array,
-    kernel,
     Deferred,
     Model,
     ListStore
 ) {
     var Factory = declare(null, {
     });
-
-    /**
-     * Registry for cached list definitions
-     */
-    kernel.global.listDefinitions = {};
 
     /**
      * Load the control classes for a given entity type.

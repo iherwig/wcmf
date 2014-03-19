@@ -1,7 +1,6 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/_base/kernel",
     "dojo/_base/xhr",
     "dojo/Deferred",
     "dojo/when",
@@ -11,7 +10,6 @@ define([
 ], function (
     declare,
     lang,
-    kernel,
     xhr,
     Deferred,
     when,
@@ -105,17 +103,17 @@ define([
             var language = this.language;
 
             // register store under the list definition
-            if (!kernel.global.listStoreInstances[listDef]) {
-                kernel.global.listStoreInstances[listDef] = {};
+            if (!ListStore.storeInstances[listDef]) {
+                ListStore.storeInstances[listDef] = {};
             }
-            kernel.global.listStoreInstances[listDef][language] = this;
+            ListStore.storeInstances[listDef][language] = this;
         }
     });
 
     /**
      * Registry for shared instances
      */
-    kernel.global.listStoreInstances = {};
+    ListStore.storeInstances = {};
 
     /**
      * Get the store for a given list definition and language
@@ -125,10 +123,10 @@ define([
      */
     ListStore.getStore = function(listDef, language) {
         // register store under the list definition
-        if (!kernel.global.listStoreInstances[listDef]) {
-            kernel.global.listStoreInstances[listDef] = {};
+        if (!ListStore.storeInstances[listDef]) {
+            ListStore.storeInstances[listDef] = {};
         }
-        if (!kernel.global.listStoreInstances[listDef][language]) {
+        if (!ListStore.storeInstances[listDef][language]) {
             var store = new ListStore({
                 listDef: listDef,
                 language: language
@@ -136,7 +134,7 @@ define([
             return store;
         }
         else {
-            return kernel.global.listStoreInstances[listDef][language];
+            return ListStore.storeInstances[listDef][language];
         }
     };
 

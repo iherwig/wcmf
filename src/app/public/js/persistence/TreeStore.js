@@ -1,17 +1,15 @@
 define([
     "dojo/_base/declare",
-    "dojo/_base/kernel",
     "dojo/store/Observable",
     "dojo/store/JsonRest",
     "dojo/store/util/QueryResults"
 ], function (
     declare,
-    kernel,
     Observable,
     JsonRest,
     QueryResults
 ) {
-    var Store = declare([JsonRest], {
+    var TreeStore = declare([JsonRest], {
 
         idProperty: 'oid',
 
@@ -59,25 +57,25 @@ define([
     /**
      * Registry for shared instances
      */
-    kernel.global.treeStoreInstance = null;
+    TreeStore.treeStoreInstance = null;
 
     /**
      * Get the store
      * @return Store instance
      */
-    Store.getStore = function() {
-        if (!kernel.global.treeStoreInstance) {
-            var jsonRest = new Store({
+    TreeStore.getStore = function() {
+        if (!TreeStore.treeStoreInstance) {
+            var jsonRest = new TreeStore({
                 target: appConfig.backendUrl+"?action=browseTree"
             });
             var observable = new Observable(jsonRest);
-            kernel.global.treeStoreInstance = {
+            TreeStore.treeStoreInstance = {
                 observable: observable,
                 jsonRest: jsonRest
             };
         }
-        return kernel.global.treeStoreInstance.observable;
+        return TreeStore.treeStoreInstance.observable;
     };
 
-    return Store;
+    return TreeStore;
 });

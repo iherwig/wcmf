@@ -1,6 +1,5 @@
 define([
     "dojo/_base/declare",
-    "dojo/_base/kernel",
     "dojo/store/Cache",
     "dojo/store/Memory",
     "dojo/store/Observable",
@@ -8,7 +7,6 @@ define([
     "../model/meta/Model"
 ], function (
     declare,
-    kernel,
     Cache,
     Memory,
     Observable,
@@ -20,7 +18,7 @@ define([
         language: '',
 
         updateCache: function(object) {
-            var memory = kernel.global.storeInstances[this.typeName][this.language].memory;
+            var memory = Store.storeInstances[this.typeName][this.language].memory;
             memory.put(object);
         }
     });
@@ -28,7 +26,7 @@ define([
     /**
      * Registry for shared instances
      */
-    kernel.global.storeInstances = {};
+    Store.storeInstances = {};
 
     /**
      * Get the store for a given type and language
@@ -40,10 +38,10 @@ define([
         // register store under the fully qualified type name
         var fqTypeName = Model.getFullyQualifiedTypeName(typeName);
 
-        if (!kernel.global.storeInstances[fqTypeName]) {
-            kernel.global.storeInstances[fqTypeName] = {};
+        if (!Store.storeInstances[fqTypeName]) {
+            Store.storeInstances[fqTypeName] = {};
         }
-        if (!kernel.global.storeInstances[fqTypeName][language]) {
+        if (!Store.storeInstances[fqTypeName][language]) {
             var memory = new Memory({
                 idProperty: 'oid'
             });
@@ -56,13 +54,13 @@ define([
                 jsonRest,
                 memory
             ));
-            kernel.global.storeInstances[fqTypeName][language] = {
+            Store.storeInstances[fqTypeName][language] = {
                 cache: cache,
                 jsonRest: jsonRest,
                 memory: memory
             };
         }
-        return kernel.global.storeInstances[fqTypeName][language].cache;
+        return Store.storeInstances[fqTypeName][language].cache;
     };
 
     return Store;
