@@ -18,8 +18,10 @@ namespace wcmf\lib\security\principal\impl;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\security\principal\Role;
 
 /**

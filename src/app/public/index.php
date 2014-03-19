@@ -143,7 +143,7 @@ catch (Exception $ex) {
       <div class="container">
         <p class="pull-right muted">created with
           <a href="http://sourceforge.net/projects/wcmf/" target="_blank">wCMF</a></p>
-        <p class="muted">&copy; 2013</p>
+        <p class="muted">&copy; 2014</p>
       </div>
     </div>
 
