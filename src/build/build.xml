@@ -14,7 +14,23 @@
     <tstamp/>
   </target>
 
-  <target name="generate"
+  <target name="m2m-papyrus"
+    description="transform the input model from papyrus to cwm format" >
+    <replaceregexp file="../model/model.uml"
+               match='xmi:version="20110701"'
+               replace='xmi:version="2.1"'
+    />
+    <replaceregexp file="../model/model.uml"
+               match='xmlns:xmi="http://www.omg.org/spec/XMI/20110701"'
+               replace='xmlns:xmi="http://www.omg.org/spec/XMI/2.1"'
+    />
+    <replaceregexp file="../model/model.uml"
+               match='xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML"'
+               replace='xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML"'
+    />
+  </target>
+
+  <target name="generate" depends="m2m-papyrus"
     description="generate the code from the model" >
     <java jar="${generator.base}/ChronosGenerator.jar"
           dir="${generator.workdir}" fork="true" >
