@@ -31,6 +31,7 @@
     <copy todir="${dist.dir}">
       <fileset dir="${build.base}src/">
         <exclude name="**/*.log"/>
+        <exclude name="**/log.txt"/>
         <exclude name="cache/**"/>
         <exclude name="app/config/*.ini"/>
         <exclude name="app/public/js/model/meta/_TypeList.js"/>
