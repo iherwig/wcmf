@@ -1013,14 +1013,6 @@ Delete  (Destroy)</body>
       <body>A many to many node used in Chronos. It is used to realize a many to many relation between two ChiNodes.</body>
     </ownedComment>
     <generalization xmi:id="_i9Si_c-nEd6fypAGO026Fw" general="{7F7AA52E-6BDE-4726-9FC6-64A8B4050FED}"/>
-    <ownedAttribute xmi:id="8beee267-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{7F7AA52E-6BDE-4726-9FC6-64A8B4050FED}" association="{8DB28B9C-B132-489d-81A9-32784F7EF052}">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i-7huc-nEd6fypAGO026Fw" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i-7huM-nEd6fypAGO026Fw" value="1"/>
-    </ownedAttribute>
-    <ownedAttribute xmi:id="8bf39d70-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{7F7AA52E-6BDE-4726-9FC6-64A8B4050FED}" association="{A3CD7D4C-7D35-4c01-A101-8FD8B94906D1}">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i_Ocps-nEd6fypAGO026Fw" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i_Ocpc-nEd6fypAGO026Fw" value="1"/>
-    </ownedAttribute>
   </packagedElement>
   <packagedElement xmi:type="uml:Stereotype" xmi:id="{6209C081-009D-40ba-B852-7A05D5BACB4C}" name="ChiRelationEnd">
     <ownedComment xmi:id="_imMRkM-nEd6fypAGO026Fw">
@@ -1388,12 +1380,6 @@ Delete  (Destroy)</body>
   <packagedElement xmi:type="uml:Extension" xmi:id="8beee265-cfa7-11de-9e87-d74203c08737" name="Actor_ChiStakeHolder" memberEnd="_i-7hsc-nEd6fypAGO026Fw _i-7hss-nEd6fypAGO026Fw">
     <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_i-7hsc-nEd6fypAGO026Fw" name="extension_ChiStakeHolder" type="{085AA623-4A49-4b10-92C9-C25CC2FBD381}" aggregation="composite" association="8beee265-cfa7-11de-9e87-d74203c08737"/>
   </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="{8DB28B9C-B132-489d-81A9-32784F7EF052}" name="nodeB" memberEnd="8beee266-cfa7-11de-9e87-d74203c08737 8beee267-cfa7-11de-9e87-d74203c08737">
-    <ownedEnd xmi:id="8beee266-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{DB8D46B6-0FDA-452a-9E7C-1C7DDCF607A1}" association="{8DB28B9C-B132-489d-81A9-32784F7EF052}">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i-7hts-nEd6fypAGO026Fw" value="*"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i-7htc-nEd6fypAGO026Fw"/>
-    </ownedEnd>
-  </packagedElement>
   <packagedElement xmi:type="uml:Extension" xmi:id="8beee268-cfa7-11de-9e87-d74203c08737" name="Association_ChiRelationEnd" memberEnd="_i-7hu8-nEd6fypAGO026Fw _i-7hvM-nEd6fypAGO026Fw">
     <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_i-7hu8-nEd6fypAGO026Fw" name="extension_ChiRelationEnd" type="{6209C081-009D-40ba-B852-7A05D5BACB4C}" aggregation="composite" association="8beee268-cfa7-11de-9e87-d74203c08737"/>
   </packagedElement>
@@ -1466,12 +1452,6 @@ Delete  (Destroy)</body>
   </packagedElement>
   <packagedElement xmi:type="uml:Extension" xmi:id="8bf1537e-cfa7-11de-9e87-d74203c08737" name="Association_ChiActionKey" memberEnd="_i_FSzc-nEd6fypAGO026Fw _i_FSzs-nEd6fypAGO026Fw">
     <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_i_FSzc-nEd6fypAGO026Fw" name="extension_ChiActionKey" type="{E5810749-DAF4-4eae-881C-F5B6F8777EA7}" aggregation="composite" association="8bf1537e-cfa7-11de-9e87-d74203c08737"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="{A3CD7D4C-7D35-4c01-A101-8FD8B94906D1}" name="nodeA" memberEnd="8bf39d6f-cfa7-11de-9e87-d74203c08737 8bf39d70-cfa7-11de-9e87-d74203c08737">
-    <ownedEnd xmi:id="8bf39d6f-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{DB8D46B6-0FDA-452a-9E7C-1C7DDCF607A1}" association="{A3CD7D4C-7D35-4c01-A101-8FD8B94906D1}">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i_Oco8-nEd6fypAGO026Fw" value="*"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i_Ocos-nEd6fypAGO026Fw"/>
-    </ownedEnd>
   </packagedElement>
   <packagedElement xmi:type="uml:Association" xmi:id="{4F93296C-0EA9-401c-B304-3265BDECD682}" name="" memberEnd="8bf39d71-cfa7-11de-9e87-d74203c08737 8bf39d72-cfa7-11de-9e87-d74203c08737">
     <ownedEnd xmi:id="8bf39d71-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{A59A19CD-77D2-4018-9BB1-768011088E88}" association="{4F93296C-0EA9-401c-B304-3265BDECD682}">
