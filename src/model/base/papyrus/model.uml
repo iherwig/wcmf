@@ -1447,7 +1447,7 @@
   <Chronos:ChiValue xmi:id="_y4vJYLTQEeOYkOsR5IzpsA" base_Property="_mThnQLTOEeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_59MqoLTQEeOYkOsR5IzpsA" base_Property="_4sa_QLTQEeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_6ql8ILTQEeOYkOsR5IzpsA" base_Property="_4vqggLTQEeOYkOsR5IzpsA"/>
-  <Chronos:ChiValue xmi:id="_7QW7oLTQEeOYkOsR5IzpsA" input_type="textarea" base_Property="_4zGPALTQEeOYkOsR5IzpsA"/>
+  <Chronos:ChiValue xmi:id="_7QW7oLTQEeOYkOsR5IzpsA" db_data_type="TEXT" input_type="textarea" base_Property="_4zGPALTQEeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_8K6fYLTQEeOYkOsR5IzpsA" base_Property="_42VwQLTQEeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_Q_JjULTREeOYkOsR5IzpsA" is_editable="true" base_Property="_P0GFcLTREeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_RzmfELTREeOYkOsR5IzpsA" is_editable="true" input_type="password" base_Property="_P23FkLTREeOYkOsR5IzpsA"/>
