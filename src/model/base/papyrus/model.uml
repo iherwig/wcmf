@@ -1279,9 +1279,6 @@
                 <packagedElement xmi:type="uml:Association" xmi:id="_l0_Xg7TWEeOYkOsR5IzpsA" name="" memberEnd="_l0_XhLTWEeOYkOsR5IzpsA _l0_XgLTWEeOYkOsR5IzpsA"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_ylwfELQ4EeOQ5oJFa1i8cg" name="EntityBase" isAbstract="true">
-                <ownedComment xmi:type="uml:Comment" xmi:id="_CvBosLQ5EeOQ5oJFa1i8cg">
-                  <body>+ created : wemove::PrimitiveTypes::Date</body>
-                </ownedComment>
                 <generalization xmi:type="uml:Generalization" xmi:id="_vqJ0ILQ5EeOQ5oJFa1i8cg" general="_6z2NkLQGEeOIMOFxCilDfw"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_GAGX4LQ5EeOQ5oJFa1i8cg" name="created" visibility="public" type="_X7HiELQwEeOLlbB2YLI0iw" isUnique="false">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_GhyvsLQ5EeOQ5oJFa1i8cg" value="1"/>
