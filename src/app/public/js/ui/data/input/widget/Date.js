@@ -5,6 +5,7 @@ define( [
     "dijit/form/DateTextBox",
     "dojo/date/locale",
     "../../../_include/_HelpMixin",
+    "./_AttributeWidgetMixin",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -13,10 +14,11 @@ function(
     topic,
     DateTextBox,
     locale,
-    HelpIcon,
+    _HelpMixin,
+    _AttributeWidgetMixin,
     Dict
 ) {
-    return declare([DateTextBox, HelpIcon], {
+    return declare([DateTextBox, _HelpMixin, _AttributeWidgetMixin], {
 
         intermediateChanges: true,
         hasDownArrow: false,

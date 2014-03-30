@@ -7,8 +7,9 @@ define( [
     "dojo/topic",
     "dijit/form/TextBox",
     "ckeditor/ckeditor",
-    "../../../_include/_HelpMixin",
     "../../../../locale/Dictionary",
+    "../../../_include/_HelpMixin",
+    "./_AttributeWidgetMixin",
     "dojo/text!./template/CKEditor.html"
 ],
 function(
@@ -18,11 +19,12 @@ function(
     topic,
     TextBox,
     CKEditor,
-    HelpIcon,
     Dict,
+    _HelpMixin,
+    _AttributeWidgetMixin,
     template
 ) {
-    return declare([TextBox, HelpIcon], {
+    return declare([TextBox, _HelpMixin, _AttributeWidgetMixin], {
 
         templateString: template,
         intermediateChanges: true,

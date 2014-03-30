@@ -4,6 +4,7 @@ define( [
     "dojo/topic",
     "dojox/widget/ColorPicker",
     "../../../_include/_HelpMixin",
+    "./_AttributeWidgetMixin",
     "../../../../locale/Dictionary",
     "xstyle/css!dojox/widget/ColorPicker/ColorPicker.css"
 ],
@@ -12,10 +13,11 @@ function(
     lang,
     topic,
     ColorPicker,
-    HelpIcon,
+    _HelpMixin,
+    _AttributeWidgetMixin,
     Dict
 ) {
-    return declare([ColorPicker, HelpIcon], {
+    return declare([ColorPicker, _HelpMixin, _AttributeWidgetMixin], {
 
         intermediateChanges: true,
         animatePoint: false,
@@ -30,7 +32,7 @@ function(
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
             var value = this.entity[this.attribute.name];
-            this.value = value.match(/#[0-9a-f]{6}/i) ? value : '#FFFFFF';
+            this.value = value ? (value.match(/#[0-9a-f]{6}/i) ? value : '#FFFFFF') : '#FFFFFF';
             this.helpText = Dict.translate(this.attribute.description);
         },
 

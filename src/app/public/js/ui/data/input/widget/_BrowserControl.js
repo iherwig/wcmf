@@ -7,6 +7,7 @@ define( [
     "../../../_include/widget/Button",
     "dijit/layout/ContentPane",
     "../../../_include/_HelpMixin",
+    "./_AttributeWidgetMixin",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -17,10 +18,11 @@ function(
     TextBox,
     Button,
     ContentPane,
-    HelpIcon,
+    _HelpMixin,
+    _AttributeWidgetMixin,
     Dict
 ) {
-    return declare([ContentPane, HelpIcon], {
+    return declare([ContentPane, _HelpMixin, _AttributeWidgetMixin], {
 
         entity: {},
         attribute: {},

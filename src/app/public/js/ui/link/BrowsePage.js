@@ -4,8 +4,10 @@ define([
     "dojo/_base/lang",
     "dojo/dom",
     "dojo/query",
+    "dojo/topic",
     "dojo/_base/window",
     "../_include/_PageMixin",
+    "../_include/_NotificationMixin",
     "dijit/tree/ObjectStoreModel",
     "dijit/Tree",
     "../../model/meta/Model",
@@ -19,8 +21,10 @@ define([
     lang,
     dom,
     query,
+    topic,
     win,
     _Page,
+    _Notification,
     ObjectStoreModel,
     Tree,
     Model,
@@ -28,7 +32,7 @@ define([
     Dict,
     template
 ) {
-    return declare([_Page], {
+    return declare([_Page, _Notification], {
 
         templateString: lang.replace(template, Dict.tplTranslate),
         contextRequire: require,
@@ -48,9 +52,12 @@ define([
                 model: model,
                 showRoot: false,
                 onClick: lang.hitch(this, function(item) {
-                  this.onItemClick(item);
+                    this.onItemClick(item);
                 })
             });
+            topic.subscribe("store-error", lang.hitch(this, function(error) {
+                this.showBackendError(error);
+            }));
             tree.placeAt(dom.byId('resourcetree'));
             tree.startup();
         },
