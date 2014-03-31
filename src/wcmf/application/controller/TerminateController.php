@@ -38,7 +38,7 @@ class TerminateController extends Controller {
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  public function executeKernel() {
+  protected function executeKernel() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $response->setValues($request->getValues());

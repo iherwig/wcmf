@@ -882,14 +882,6 @@ This requirement's proofreader	's name and role in the project</body>
       <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i8_oD8-nEd6fypAGO026Fw" value="1"/>
       <defaultValue xmi:type="uml:LiteralString" xmi:id="_i8_oEc-nEd6fypAGO026Fw" value="config.ini"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="8be7b669-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{ADD449B8-782B-4039-BA02-BE5CFE19ACBF}" association="{DE4D62D8-67C3-43b9-A83B-8851B26A622F}">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i-Vr1c-nEd6fypAGO026Fw" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i-Vr1M-nEd6fypAGO026Fw" value="1"/>
-    </ownedAttribute>
-    <ownedAttribute xmi:id="8beee273-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{ADD449B8-782B-4039-BA02-BE5CFE19ACBF}" association="{3CF29E4A-F7AD-4ffb-A3B5-1ACB8A4CFF5A}">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i-7h3s-nEd6fypAGO026Fw" value="1"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i-7h3c-nEd6fypAGO026Fw" value="1"/>
-    </ownedAttribute>
     <ownedAttribute xmi:id="_i_FSzs-nEd6fypAGO026Fw" name="base_Association" association="8bf1537e-cfa7-11de-9e87-d74203c08737">
       <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Association"/>
     </ownedAttribute>
@@ -1346,12 +1338,6 @@ Delete  (Destroy)</body>
     <ownedLiteral xmi:id="_i24Y8M-nEd6fypAGO026Fw" name="false"/>
     <ownedLiteral xmi:id="_i24Y8c-nEd6fypAGO026Fw" name="true"/>
   </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="{DE4D62D8-67C3-43b9-A83B-8851B26A622F}" name="to" memberEnd="8be7b668-cfa7-11de-9e87-d74203c08737 8be7b669-cfa7-11de-9e87-d74203c08737">
-    <ownedEnd xmi:id="8be7b668-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{E5810749-DAF4-4eae-881C-F5B6F8777EA7}" association="{DE4D62D8-67C3-43b9-A83B-8851B26A622F}">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i-Vr0s-nEd6fypAGO026Fw" value="*"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i-Vr0c-nEd6fypAGO026Fw" value="1"/>
-    </ownedEnd>
-  </packagedElement>
   <packagedElement xmi:type="uml:Extension" xmi:id="8bea276a-cfa7-11de-9e87-d74203c08737" name="Association_ChiAssociation" memberEnd="_i-omwc-nEd6fypAGO026Fw _i-omws-nEd6fypAGO026Fw">
     <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_i-omwc-nEd6fypAGO026Fw" name="extension_ChiAssociation" type="{3759B94E-BCD0-429f-8FCF-9CBE47610F37}" aggregation="composite" association="8bea276a-cfa7-11de-9e87-d74203c08737"/>
   </packagedElement>
@@ -1409,12 +1395,6 @@ Delete  (Destroy)</body>
   </packagedElement>
   <packagedElement xmi:type="uml:Extension" xmi:id="8beee271-cfa7-11de-9e87-d74203c08737" name="Package_Diagram" memberEnd="_i-7h1s-nEd6fypAGO026Fw _i-7h18-nEd6fypAGO026Fw">
     <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_i-7h1s-nEd6fypAGO026Fw" name="extension_Diagram" type="{26E587FB-8DD0-4d6c-ADA0-BBD264E9EAD8}" aggregation="composite" association="8beee271-cfa7-11de-9e87-d74203c08737"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="{3CF29E4A-F7AD-4ffb-A3B5-1ACB8A4CFF5A}" name="from" memberEnd="8beee272-cfa7-11de-9e87-d74203c08737 8beee273-cfa7-11de-9e87-d74203c08737">
-    <ownedEnd xmi:id="8beee272-cfa7-11de-9e87-d74203c08737" name="" visibility="public" type="{E5810749-DAF4-4eae-881C-F5B6F8777EA7}" association="{3CF29E4A-F7AD-4ffb-A3B5-1ACB8A4CFF5A}">
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i-7h28-nEd6fypAGO026Fw" value="*"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i-7h2s-nEd6fypAGO026Fw" value="1"/>
-    </ownedEnd>
   </packagedElement>
   <packagedElement xmi:type="uml:Extension" xmi:id="8beee274-cfa7-11de-9e87-d74203c08737" name="Association_ChiAccord" memberEnd="_i-7h4M-nEd6fypAGO026Fw _i-7h4c-nEd6fypAGO026Fw">
     <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_i-7h4M-nEd6fypAGO026Fw" name="extension_ChiAccord" type="{FF0FB275-D54E-4a6f-94EC-EDFEB1571976}" aggregation="composite" association="8beee274-cfa7-11de-9e87-d74203c08737"/>

@@ -55,7 +55,7 @@ class DeleteController extends Controller {
    * Delete given Nodes.
    * @see Controller::executeKernel()
    */
-  public function executeKernel() {
+  protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();

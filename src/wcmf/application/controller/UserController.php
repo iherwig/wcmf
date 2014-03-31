@@ -47,7 +47,7 @@ class UserController extends Controller {
    * @return False (Stop action processing chain).
    * @see Controller::executeKernel()
    */
-  public function executeKernel() {
+  protected function executeKernel() {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();

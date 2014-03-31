@@ -94,7 +94,7 @@ class RESTController extends Controller {
    * Execute the requested REST action
    * @see Controller::executeKernel()
    */
-  public function executeKernel() {
+  protected function executeKernel() {
     $request = $this->getRequest();
     $result = false;
     switch ($request->getMethod()) {
