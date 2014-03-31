@@ -1,10 +1,16 @@
 define([
     "dojo/_base/declare",
+    "dojo/aspect",
+    "dojo/when",
+    "dojo/topic",
     "dojo/store/Observable",
     "dojo/store/JsonRest",
     "dojo/store/util/QueryResults"
 ], function (
     declare,
+    aspect,
+    when,
+    topic,
     Observable,
     JsonRest,
     QueryResults
@@ -17,6 +23,16 @@ define([
             options.headers = {
                 Accept: "application/json"
             };
+
+            aspect.after(this, 'query', function(QueryResults) {
+                when(QueryResults, function() {}, function(error) {
+                    if (error.dojoType && error.dojoType === 'cancel') {
+                        return; // ignore cancellations
+                    }
+                    topic.publish("store-error", error);
+                });
+                return QueryResults;
+            });
         },
 
       	get: function(id, options) {
@@ -57,24 +73,25 @@ define([
     /**
      * Registry for shared instances
      */
-    TreeStore.treeStoreInstance = null;
+    TreeStore.storeInstances = {};
 
     /**
-     * Get the store
+     * Get the tree store with the given root types
+     * @param rootTypes The root types configuration value
      * @return Store instance
      */
-    TreeStore.getStore = function() {
-        if (!TreeStore.treeStoreInstance) {
+    TreeStore.getStore = function(rootTypes) {
+        if (!TreeStore.storeInstances[rootTypes]) {
             var jsonRest = new TreeStore({
-                target: appConfig.backendUrl+"?action=browseTree"
+                target: appConfig.backendUrl+"?action=browseTree&rootTypes=linkableTypes"
             });
             var observable = new Observable(jsonRest);
-            TreeStore.treeStoreInstance = {
+            TreeStore.storeInstances[rootTypes] = {
                 observable: observable,
                 jsonRest: jsonRest
             };
         }
-        return TreeStore.treeStoreInstance.observable;
+        return TreeStore.storeInstances[rootTypes].observable;
     };
 
     return TreeStore;

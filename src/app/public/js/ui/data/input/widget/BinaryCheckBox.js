@@ -1,16 +1,18 @@
 define( [
     "dojo/_base/declare",
     "dijit/form/CheckBox",
+    "../../../../locale/Dictionary",
     "../../../_include/_HelpMixin",
-    "../../../../locale/Dictionary"
+    "./_AttributeWidgetMixin"
 ],
 function(
     declare,
     CheckBox,
-    HelpIcon,
-    Dict
+    Dict,
+    _HelpMixin,
+    _AttributeWidgetMixin
 ) {
-    return declare([CheckBox, HelpIcon], {
+    return declare([CheckBox, _HelpMixin, _AttributeWidgetMixin], {
 
         entity: {},
         attribute: {},

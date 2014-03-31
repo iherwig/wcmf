@@ -26,7 +26,7 @@ use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\Controller;
 
 /**
- * TreeController is used to visualize cms data in a tree view.
+ * TreeController is used to visualize nodes in a tree view.
  *
  * <b>Input actions:</b>
  * - unspecified: Load the cild nodes of the given Node
@@ -36,6 +36,8 @@ use wcmf\lib\presentation\Controller;
  *
  * @param[in] oid The object id of the parent Node whose children should be loaded (optional)
  * @param[in] sort The attribute to sort the children by (optional)
+ * @param[in] rootTypes Name of a configuration value in configuration section 'application', that
+ *                      defines an array of root types of the tree (optional, defaults to 'rootTypes')
  * @param[out] list An array of associative arrays with keys 'oid', 'displayText', 'isFolder', 'hasChildren'
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -51,8 +53,8 @@ class TreeController extends Controller {
 
     $oidStr = $request->getValue('oid');
     if ($oidStr == 'root') {
-      // linkable types below root node
-      $objects = $this->getLinkableTypes();
+      // types below root node
+      $objects = $this->getRootTypes();
     }
     else {
       $oid = ObjectId::parse($oidStr);
@@ -99,7 +101,7 @@ class TreeController extends Controller {
     }
 
     $objectsTmp = array();
-    if ($this->isLinkableTypeNode($oid)) {
+    if ($this->isRootTypeNode($oid)) {
       // load instances of type
       $objectsTmp = $persistenceFacade->loadObjects($type, BuildDepth::SINGLE);
     }
@@ -129,8 +131,8 @@ class TreeController extends Controller {
    * @return An array of object ids.
    */
   protected function getRootOIDs() {
-    // linkable types below root node
-    return $this->getLinkableTypes();
+    // types below root node
+    return $this->getRootTypes();
   }
 
   /**
@@ -148,7 +150,7 @@ class TreeController extends Controller {
     }
     $oid = $node->getOID();
     $isFolder = $oid->containsDummyIds();
-    $hasChildren = $this->isLinkableTypeNode($oid) || sizeof($node->getNumChildren()) > 0;
+    $hasChildren = $this->isRootTypeNode($oid) || sizeof($node->getNumChildren()) > 0;
     return array(
       'oid' => $node->getOID()->__toString(),
       'displayText' => $displayText,
@@ -172,7 +174,7 @@ class TreeController extends Controller {
    * @return The display text.
    */
   protected function getDisplayText(Node $node) {
-    if ($this->isLinkableTypeNode($node->getOID())) {
+    if ($this->isRootTypeNode($node->getOID())) {
       return $node->getObjectDisplayName();
     }
     else {
@@ -181,18 +183,22 @@ class TreeController extends Controller {
   }
 
   /**
-   * Get all linkable types
+   * Get all root types
    * @return Array of Node instances
    */
-  protected function getLinkableTypes() {
-    // get linkable types from configuration
+  protected function getRootTypes() {
+    $request = $this->getRequest();
     $config = ObjectFactory::getConfigurationInstance();
     $appConfig = $config->getSection('application');
-    if (isset($appConfig['linkableTypes']) && is_array($appConfig['linkableTypes'])) {
-      $types = $appConfig['linkableTypes'];
+
+    // get root types from configuration
+    // try request value first
+    $rootTypeVar = $request->getValue('rootTypes');
+    if (isset($appConfig[$rootTypeVar]) && is_array($appConfig[$rootTypeVar])) {
+      $types = $appConfig[$rootTypeVar];
     }
     else if (isset($appConfig['rootTypes']) && is_array($appConfig['rootTypes'])) {
-      // try to get root types
+      // fall back to root types
       $types = $appConfig['rootTypes'];
     }
     else {
@@ -213,16 +219,16 @@ class TreeController extends Controller {
   }
 
   /**
-   * Check if the given oid belongs to a linkable type node
+   * Check if the given oid belongs to a root type node
    * @param oid The object id
    * @return Boolean
    */
-  protected function isLinkableTypeNode(ObjectId $oid) {
+  protected function isRootTypeNode(ObjectId $oid) {
     if ($oid->containsDummyIds()) {
       $type = $oid->getType();
-      $linkableTypes = $this->getLinkableTypes();
-      foreach ($linkableTypes as $linkableType) {
-        if ($linkableType->getType() == $type) {
+      $rootTypes = $this->getRootTypes();
+      foreach ($rootTypes as $rootType) {
+        if ($rootType->getType() == $type) {
           return true;
         }
       }

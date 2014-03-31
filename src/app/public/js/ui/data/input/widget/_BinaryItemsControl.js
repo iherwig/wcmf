@@ -8,8 +8,9 @@ define( [
     "dojo/when",
     "dojo/on",
     "dijit/layout/ContentPane",
-    "../../../_include/_HelpMixin",
     "../Factory",
+    "../../../_include/_HelpMixin",
+    "./_AttributeWidgetMixin",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -22,11 +23,12 @@ function(
     when,
     on,
     ContentPane,
-    HelpIcon,
     ControlFactory,
+    _HelpMixin,
+    _AttributeWidgetMixin,
     Dict
 ) {
-    return declare([ContentPane, HelpIcon], {
+    return declare([ContentPane, _HelpMixin, _AttributeWidgetMixin], {
 
         entity: {},
         attribute: {},

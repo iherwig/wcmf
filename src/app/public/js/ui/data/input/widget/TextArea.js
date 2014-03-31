@@ -4,6 +4,7 @@ define( [
     "dojo/topic",
     "dijit/form/Textarea",
     "../../../_include/_HelpMixin",
+    "./_AttributeWidgetMixin",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -11,10 +12,11 @@ function(
     lang,
     topic,
     TextArea,
-    HelpIcon,
+    _HelpMixin,
+    _AttributeWidgetMixin,
     Dict
 ) {
-    return declare([TextArea, HelpIcon], {
+    return declare([TextArea, _HelpMixin, _AttributeWidgetMixin], {
 
         intermediateChanges: true,
         entity: {},

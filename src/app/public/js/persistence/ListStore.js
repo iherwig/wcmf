@@ -131,11 +131,9 @@ define([
                 listDef: listDef,
                 language: language
             });
-            return store;
+            ListStore.storeInstances[listDef][language] = store;
         }
-        else {
-            return ListStore.storeInstances[listDef][language];
-        }
+        return ListStore.storeInstances[listDef][language];
     };
 
     return ListStore;

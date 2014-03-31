@@ -2,12 +2,18 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "../../../_include/widget/Button",
+    "../../../_include/widget/ConfirmDlgWidget",
+    "../../../../model/meta/Model",
+    "../../../../locale/Dictionary",
     "./_BrowserControl"
 ],
 function(
     declare,
     lang,
     Button,
+    ConfirmDlg,
+    Model,
+    Dict,
     _BrowserControl
 ) {
     return declare([_BrowserControl], {
@@ -23,7 +29,19 @@ function(
                 onClick: lang.hitch(this, function() {
                     var url = this.getLinkUrl();
                     if (url) {
-                        location.href = url;
+                        if (this.isDirty()) {
+                            new ConfirmDlg({
+                                title: Dict.translate("Confirm Leave Page"),
+                                message: Dict.translate("'%0%' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
+                                    [Model.getDisplayValue(this.entity)]),
+                                okCallback: lang.hitch(this, function(dlg) {
+                                    location.href = url;
+                                })
+                            }).show();
+                        }
+                        else {
+                            location.href = url;
+                        }
                     }
                 })
             });

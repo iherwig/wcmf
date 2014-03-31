@@ -348,6 +348,8 @@ function(
                     }
                     else {
                         // success
+
+                        // update entity
                         var typeClass = Model.getType(this.type);
                         var attributes = typeClass.getAttributes();
                         for (var i=0, count=attributes.length; i<count; i++) {
@@ -358,6 +360,12 @@ function(
                             }
                         }
                         this.entity.set('oid', response.oid);
+
+                        // reset attribute widgets
+                        for (var i=0, c=this.attributeWidgets.length; i<c; i++) {
+                            this.attributeWidgets[i].setDirty(false);
+                        }
+
                         var message = this.isNew ? Dict.translate("'%0%' was successfully created", [Model.getDisplayValue(this.entity)]) :
                                 Dict.translate("'%0%' was successfully updated", [Model.getDisplayValue(this.entity)]);
                         this.showNotification({
