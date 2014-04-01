@@ -36,7 +36,9 @@
         <exclude name="app/config/*.ini"/>
         <exclude name="app/public/js/model/meta/_TypeList.js"/>
         <exclude name="app/public/js/model/types/**"/>
+        <exclude name="app/public/vendor/**"/>
         <exclude name="app/public/media/**"/>
+        <exclude name="app/public/export.xml"/>
         <exclude name="app/src/**"/>
         <exclude name="dist/**"/>
         <exclude name="install/tables.sql"/>
@@ -44,7 +46,37 @@
         <exclude name="model/*.*"/>
         <exclude name="test/model/**"/>
         <exclude name="test/tests/**"/>
+        <exclude name="test/tests/**"/>
+        <exclude name="wcmf/changes.txt"/>
         <include name="**"/>
+      </fileset>
+    </copy>
+    <copy todir="${dist.dir}/app/public/vendor">
+      <fileset dir="${build.base}src/app/public/vendor/">
+        <include name="dojo/dijit/**"/>
+        <include name="dojo/dojo/**"/>
+        <include name="dojo/dojox/encoding/**"/>
+        <include name="dojo/dojox/layout/**"/>
+        <include name="dojo/dojox/uuid/**"/>
+        <include name="dojo/dojox/widget/**"/>
+        <include name="dojo/util/*.*"/>
+        <include name="dojo/util/buildscripts/*.*"/>
+        <include name="dojo/util/build/**"/>
+        <include name="dojo/util/closureCompiler/**"/>
+        <include name="dojo/util/shrinksafe/**"/>
+        <include name="ckeditor/**"/>
+        <include name="ckeditor-plugins/**"/>
+        <include name="dbootstrap/**"/>
+        <include name="dgrid/**"/>
+        <include name="dojomat/**"/>
+        <include name="elfinder/**"/>
+        <include name="font-awesome/**"/>
+        <include name="put-selector/**"/>
+        <include name="routed/**"/>
+        <include name="twitter-bootstrap/**"/>
+        <include name="xstyle/**"/>
+        <exclude name="**/tests/**"/>
+        <exclude name="**/.git*"/>
       </fileset>
     </copy>
     <mkdir dir="${dist.dir}/cache"/>

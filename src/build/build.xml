@@ -3,13 +3,6 @@
 
   <property file="build.properties"/>
 
-  <condition property="dojo.build.script" value="${dojo.build.script_windows}">
-     <os family="windows"/>
-  </condition>
-  <condition property="dojo.build.script" value="${dojo.build.script_unix}">
-     <os family="unix"/>
-  </condition>
-
   <target name="init">
     <tstamp/>
   </target>
@@ -60,14 +53,19 @@
     <property name="package.file" value="${build.base}${app.name}_${version}.${build}.zip"/>
   </target>
 
-  <target name="compile" depends="buildinfo,properties"
-    description="build the frontend" >
+  <target name="compile" description="build the frontend" >
+    <condition property="dojo.build.script" value="${dojo.build.script_windows}">
+       <os family="windows"/>
+    </condition>
+    <condition property="dojo.build.script" value="${dojo.build.script_unix}">
+       <os family="unix"/>
+    </condition>
     <exec dir="${dojo.build.base}" executable="${dojo.build.script}" output="${dojo.build.log}">
       <arg line="profile=${dojo.build.profile}"/>
     </exec>
   </target>
 
-  <target name="dist" depends="compile"
+  <target name="dist" depends="buildinfo,properties,compile"
     description="build the distribution" >
     <mkdir dir="${dist.dir}"/>
     <copy todir="${dist.dir}/wcmf">
@@ -125,6 +123,7 @@
 
   <target name="clean" depends="properties"
     description="clean up" >
+    <delete dir="${build.base}${app.name}/release"/>
     <delete dir="${dist.dir}"/>
     <delete file="${dojo.build.log}"/>
     <delete file="${package.file}"/>
