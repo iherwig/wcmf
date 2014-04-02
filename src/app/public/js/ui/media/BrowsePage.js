@@ -5,7 +5,7 @@ define([
     "../_include/_PageMixin",
     "elfinder/jquery/jquery-1.8.1.min",
     "elfinder/jquery/jquery-ui-1.8.23.custom.min",
-    "elfinder/js/elFinder.min",
+    "elfinder/js/elfinder.min",
     "../../locale/Dictionary",
     "dojo/text!./template/BrowsePage.html",
     "xstyle/css!elfinder/jquery/ui-themes/smoothness-1.8.23/jquery-ui-1.8.23.custom.css",

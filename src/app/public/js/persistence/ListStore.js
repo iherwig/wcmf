@@ -74,13 +74,13 @@ define([
                         Accept: "application/json"
                     }
                 }).then(lang.hitch(this, function(data) {
-                    this.data = data.list;
+                    this.data = data ? data.list : {};
                     this.index = {};
                     for (var i=0, l=this.data.length; i<l; i++) {
                         this.index[this.data[i][this.idProperty]] = i;
                     }
                     // persist store, if static
-                    if (data["static"]) {
+                    if (this.data["static"]) {
                         this.persist();
                     }
                     deferred.resolve({

@@ -47,12 +47,12 @@ class Formatter {
     $request->setValues($data);
 
     // get the formatter that should be used for this request format
-    $formatter = $request->getFormat();
-    if ($formatter == null) {
+    $format = $request->getFormat();
+    if ($format == null) {
       // the format must be given!
       throw new ConfigurationException("No content format defined for ".$request->__toString());
     }
-    $formatter->deserialize($request);
+    $format->deserialize($request);
   }
 
   /**
@@ -61,19 +61,20 @@ class Formatter {
    */
   public static function serialize(Response $response) {
     // get the formatter that should be used for this response format
-    $formatter = $response->getFormat();
-    if ($formatter == null) {
+    $format = $response->getFormat();
+    if ($format == null) {
       // the response format must be given!
       throw new ConfigurationException("No response format defined for ".$response->__toString());
     }
 
     if (!headers_sent()) {
       header('HTTP/1.1 '.$response->getStatus());
+      header("Content-Type: ".$format->getMimeType()."; charset=utf-8");
       foreach ($response->getHeaders() as $name => $value) {
         header($name.': '.$value);
       }
     }
-    $formatter->serialize($response);
+    $format->serialize($response);
   }
 }
 ?>

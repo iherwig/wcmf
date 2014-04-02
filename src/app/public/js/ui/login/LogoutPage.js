@@ -51,7 +51,6 @@ define([
                 window.document.location.href = url;
             }), lang.hitch(this, function(error){
                 // error
-                query(".btn").button("reset");
                 this.showBackendError(error);
             }));
         }
