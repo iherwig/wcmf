@@ -58,6 +58,15 @@ define([
             return this.get("_state");
         },
 
+        setDefaults: function() {
+            var typeClass = Model.getTypeFromOid(this.oid);
+            var attributes = typeClass.getAttributes();
+            for (var i=0, count=attributes.length; i<count; i++) {
+                var attribute = attributes[i];
+                this.set(attribute.name, attribute.defaultValue);
+            }
+        },
+
         getCleanCopy: function() {
             var typeClass = Model.getTypeFromOid(this.oid);
             var attributes = typeClass.getAttributes();

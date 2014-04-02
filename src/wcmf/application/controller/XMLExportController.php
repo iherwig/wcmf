@@ -185,7 +185,7 @@ class XMLExportController extends BatchController {
       $iterator = PersistentIterator::load($iteratorID);
     }
     // no iterator but oid given, start with new root oid
-    if ($iterator == null && $oids[0] != null) {
+    if ($iterator == null && sizeof($oids) > 0 && $oids[0] != null) {
       $iterator = new PersistentIterator($oids[0]);
     }
     // no iterator, no oid, finish

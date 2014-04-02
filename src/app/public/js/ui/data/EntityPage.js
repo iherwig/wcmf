@@ -103,6 +103,7 @@ define([
                 this.entity = new Entity({
                     oid: this.oid
                 });
+                this.entity.setDefaults();
                 this.entity.setState("new");
                 this.buildForm();
                 this.setTitle(this.title+" - "+Dict.translate("New %0%",
