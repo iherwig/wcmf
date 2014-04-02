@@ -34,7 +34,12 @@ function(
             this.label = Dict.translate(this.attribute.name);
             this.disabled = !this.attribute.isEditable;
             this.name = this.attribute.name;
-            this.value = locale.parse(this.entity[this.attribute.name], this.dateFormat);
+            // add time, if missing
+            var value = this.entity[this.attribute.name];
+            if (value && value.length === 10) {
+              value = value+" 00:00:00";
+            }
+            this.value = locale.parse(value, this.dateFormat);
             this.helpText = Dict.translate(this.attribute.description);
         },
 
