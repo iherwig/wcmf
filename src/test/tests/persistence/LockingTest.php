@@ -39,17 +39,17 @@ class LockingTest extends DatabaseTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'dbsequence' => array(
+      'DBSequence' => array(
         array('id' => 1),
       ),
-      'user' => array(
+      'User' => array(
         array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02'),
         array('id' => 666, 'login' => 'user2', 'password' => '$2y$10$.q/JnbXAWDI8pZUqZmjON.YbZsSeQCLgh3aKMYC/Nmsx5VMRti8v.'),
       ),
       'Book' => array(
         array('id' => 777),
       ),
-      'locktable' => array(
+      'Locktable' => array(
       ),
     ));
   }
@@ -125,14 +125,14 @@ class LockingTest extends DatabaseTestCase {
       $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-      $objectTitle = $object->getTitle();
-      $object->setTitle($objectTitle.'modified');
+      $objectTitle = $object->getValue('title');
+      $object->setValue('title', $objectTitle.'modified');
       $transaction->commit();
     }
     catch (PessimisticLockException $ex) {
       // check if the object is not modified
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-      $this->assertEquals($objectTitle, $object->getTitle());
+      $this->assertEquals($objectTitle, $object->getValue('title'));
       TestUtil::endSession();
       return;
     }
@@ -180,14 +180,14 @@ class LockingTest extends DatabaseTestCase {
     $object1 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object1);
     $newTitle = time();
-    $object1->setTitle($newTitle);
+    $object1->setValue('title', $newTitle);
     $transaction1->commit();
 
     // check if the object was updated
     $transaction2 = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction2->begin();
     $object2 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-    $this->assertEquals($newTitle, $object2->getTitle());
+    $this->assertEquals($newTitle, $object2->getValue('title'));
     $transaction2->rollback();
     TestUtil::endSession();
   }
@@ -201,8 +201,8 @@ class LockingTest extends DatabaseTestCase {
     $transaction->begin();
     $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
-    $originalTitle = $object->getTitle();
-    $object->setTitle($originalTitle.'modified');
+    $originalTitle = $object->getValue('title');
+    $object->setValue('title', $originalTitle.'modified');
 
     // simulate update by user 2
     $newTitle = time();
@@ -216,7 +216,7 @@ class LockingTest extends DatabaseTestCase {
     catch (OptimisticLockException $ex) {
       // check if the object still has the value set by user 2
       $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
-      $this->assertEquals($newTitle, $object->getTitle());
+      $this->assertEquals($newTitle, $object->getValue('title'));
       TestUtil::endSession();
       return;
     }
@@ -232,8 +232,8 @@ class LockingTest extends DatabaseTestCase {
     $transaction->begin();
     $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $object);
-    $originalTitle = $object->getTitle();
-    $object->setTitle($originalTitle.'modified');
+    $originalTitle = $object->getValue('title');
+    $object->setValue('title', $originalTitle.'modified');
 
     // simulate delete by user 2
     $connection = $object->getMapper()->getConnection();
@@ -254,7 +254,7 @@ class LockingTest extends DatabaseTestCase {
   }
 
   protected function getNumPessimisticLocks($oid, $userId) {
-    return $this->getConnection()->getRowCount('locktable', "objectid = '".
+    return $this->getConnection()->getRowCount('Locktable', "objectid = '".
             mysql_real_escape_string($oid)."' AND fk_user_id = ".mysql_real_escape_string($userId));
   }
 }

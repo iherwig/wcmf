@@ -72,30 +72,6 @@ interface User {
   public function verifyPassword($password, $passwordHash);
 
   /**
-   * Set the name of the user.
-   * @param name The name of the user.
-   */
-  public function setName($name);
-
-  /**
-   * Get name of the user.
-   * @return The name of the user.
-   */
-  public function getName();
-
-  /**
-   * Set the firstname of the user.
-   * @param firstname The firstname of the user.
-   */
-  public function setFirstname($firstname);
-
-  /**
-   * Get the firstname of the user.
-   * @return The firstname of the user.
-   */
-  public function getFirstname();
-
-  /**
    * Set the configuration file of the user.
    * @param config The configuration file of the user.
    */

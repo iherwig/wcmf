@@ -77,7 +77,6 @@ try {
     $adminUser = $persistenceFacade->create($userTypeInst->getType());
     $adminUser->setLogin("admin");
     $adminUser->setPassword("admin");
-    $adminUser->setName("Administrator");
     if (in_array("admin.ini", $config->getConfigurations())) {
       $adminUser->setConfig("admin.ini");
     }

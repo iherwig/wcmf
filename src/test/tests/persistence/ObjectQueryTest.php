@@ -182,9 +182,9 @@ class ObjectQueryTest extends BaseTestCase {
     $tpl->setValue('sessionid', Criteria::asValue("=", "7pkt0i3ojm67s9qb66dih5nd60"));
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $sql = $query->getQueryString();
-    $expected = "SELECT `locktable`.`id`, `locktable`.`fk_user_id`, `locktable`.`objectid`, `locktable`.`sessionid`, ".
-      "`locktable`.`since` FROM `locktable` WHERE (`locktable`.`objectid` = 'app.src.model.wcmf.User:2' AND ".
-      "`locktable`.`sessionid` = '7pkt0i3ojm67s9qb66dih5nd60')";
+    $expected = "SELECT `Locktable`.`id`, `Locktable`.`fk_user_id`, `Locktable`.`objectid`, `Locktable`.`sessionid`, ".
+      "`Locktable`.`since` FROM `Locktable` WHERE (`Locktable`.`objectid` = 'app.src.model.wcmf.User:2' AND ".
+      "`Locktable`.`sessionid` = '7pkt0i3ojm67s9qb66dih5nd60')";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);

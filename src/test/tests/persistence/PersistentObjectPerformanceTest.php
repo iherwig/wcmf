@@ -37,7 +37,7 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
     }
 
     return new ArrayDataSet(array(
-      'dbsequence' => array(
+      'DBSequence' => array(
         array('id' => 1),
       ),
       'Chapter' => $chapters,

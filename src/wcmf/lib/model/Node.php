@@ -42,8 +42,6 @@ class Node extends PersistentObject {
   const RELATION_STATE_INITIALIZED = -3;
   const RELATION_STATE_LOADED = -4;
 
-  private $_depth = -1;
-  private $_path = '';
   private $_relationStates = array();
 
   private $_addedNodes = array();
@@ -800,35 +798,6 @@ class Node extends PersistentObject {
   protected function mapTypeToRole($type) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     return $persistenceFacade->getSimpleType($type);
-  }
-
-  /**
-   * Get the Nodes depth.
-   * @return The number of parents of the Node.
-   */
-  public function getDepth() {
-    $this->_depth = 0;
-    $parent = $this->getParent();
-    while ($parent != null && $parent instanceof Node) {
-      $this->_depth++;
-      $parent = $parent->getParent();
-    }
-    return $this->_depth;
-  }
-
-  /**
-   * Get the Nodes path (to root).
-   * @return The Node path.
-   */
-  public function getPath() {
-    $this->_path = $this->getType();
-    $parent = $this->getParent();
-    while ($parent != null && $parent instanceof Node)
-    {
-      $this->_path = $parent->getType().'/'.$this->_path;
-      $parent = $parent->getParent();
-    }
-    return $this->_path;
   }
 
   /**

@@ -68,7 +68,7 @@ class IteratorTest extends DatabaseTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'dbsequence' => array(
+      'DBSequence' => array(
         array('id' => 1),
       ),
       'Publisher' => array(
@@ -164,15 +164,15 @@ class IteratorTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $node = $persistenceFacade->load(ObjectId::parse($this->_publisherOid));
-    $node->setName('original name');
+    $node->setValue('name', 'original name');
     $nodeIter = new NodeIterator($node);
     $count = 0;
     foreach($nodeIter as $oidStr => $obj) {
       // change a value to check if obj is really a reference
-      $obj->setName('modified name');
+      $obj->setValue('name', 'modified name');
       $count++;
     }
-    $this->assertEquals('modified name', $node->getName());
+    $this->assertEquals('modified name', $node->getValue('name'));
     $this->assertEquals(1, $count);
 
     TestUtil::runAnonymous(false);

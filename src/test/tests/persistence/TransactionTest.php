@@ -34,7 +34,7 @@ class TransactionTest extends DatabaseTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'dbsequence' => array(
+      'DBSequence' => array(
         array('id' => 1),
       ),
       'Publisher' => array(
@@ -58,14 +58,14 @@ class TransactionTest extends DatabaseTestCase {
     // create a new object
     $newPublisher1 = $persistenceFacade->create('Publisher');
     $newName = time();
-    $newPublisher1->setName($newName);
+    $newPublisher1->setValue('name', $newName);
     $id1 = $newPublisher1->getOID()->getFirstId();
     $this->assertTrue(ObjectId::isDummyId($id1));
     // modify an existing object
     $existingPublisher1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
-    $modifiedName = $existingPublisher1->getName()." modified";
-    $existingPublisher1->setName($modifiedName);
-    $this->assertEquals($modifiedName, $existingPublisher1->getName());
+    $modifiedName = $existingPublisher1->getValue('name')." modified";
+    $existingPublisher1->setValue('name', $modifiedName);
+    $this->assertEquals($modifiedName, $existingPublisher1->getValue('name'));
     // delete an existing object
     $author1 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
     $author1->delete();
@@ -77,9 +77,9 @@ class TransactionTest extends DatabaseTestCase {
 
     // load the objects again
     $newPublisher2 = $persistenceFacade->load($newPublisher1->getOID());
-    $this->assertEquals($newName, $newPublisher2->getName());
+    $this->assertEquals($newName, $newPublisher2->getValue('name'));
     $existingPublisher2 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
-    $this->assertEquals($modifiedName, $existingPublisher2->getName());
+    $this->assertEquals($modifiedName, $existingPublisher2->getValue('name'));
     $author2 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
     $this->assertNull($author2);
 
@@ -94,20 +94,20 @@ class TransactionTest extends DatabaseTestCase {
     // load the object inside the transaction
     $transaction->begin();
     $chapter1 = $persistenceFacade->loadFirstObject('Publisher');
-    $oldName = $chapter1->getName();
+    $oldName = $chapter1->getValue('name');
     $transaction->rollback();
 
     // modify the object in another transaction (should also
     // change the object)
     $transaction->begin();
     $modifiedName = $oldName." modified";
-    $chapter1->setName($modifiedName);
-    $this->assertEquals($modifiedName, $chapter1->getName());
+    $chapter1->setValue('name', $modifiedName);
+    $this->assertEquals($modifiedName, $chapter1->getValue('name'));
     $transaction->commit();
 
     // load the object
     $chapter2 = $persistenceFacade->load($chapter1->getOID());
-    $this->assertEquals($modifiedName, $chapter2->getName());
+    $this->assertEquals($modifiedName, $chapter2->getValue('name'));
 
     TestUtil::runAnonymous(false);
   }
@@ -120,8 +120,8 @@ class TransactionTest extends DatabaseTestCase {
     $transaction->begin();
     // modify an object
     $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
-    $oldName = $chapter1->getName();
-    $chapter1->setName($oldName." modified");
+    $oldName = $chapter1->getValue('name');
+    $chapter1->setValue('name', $oldName." modified");
     // delete an object
     $author1 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
     $author1->delete();
@@ -129,7 +129,7 @@ class TransactionTest extends DatabaseTestCase {
 
     // load the objects again
     $chapter2 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
-    $this->assertEquals($oldName, $chapter2->getName());
+    $this->assertEquals($oldName, $chapter2->getValue('name'));
     $author2 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
     $this->assertNotNull($author2);
 
@@ -144,22 +144,22 @@ class TransactionTest extends DatabaseTestCase {
     $transaction->begin();
     // modify objects
     $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr), 1);
-    $modifiedName = $chapter1->getName()." modified";
-    $chapter1->setName($modifiedName);
-    $this->assertEquals($modifiedName, $chapter1->getName());
+    $modifiedName = $chapter1->getValue('name')." modified";
+    $chapter1->setValue('name', $modifiedName);
+    $this->assertEquals($modifiedName, $chapter1->getValue('name'));
     $author1 = $chapter1->getFirstChild('Author');
-    $modifiedName = $author1->getName()." modified";
-    $author1->setName($modifiedName);
-    $this->assertEquals($modifiedName, $author1->getName());
+    $modifiedName = $author1->getValue('name')." modified";
+    $author1->setValue('name', $modifiedName);
+    $this->assertEquals($modifiedName, $author1->getValue('name'));
     // reload objects
     $chapter2 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr), 1);
-    $this->assertEquals($modifiedName, $chapter2->getName());
+    $this->assertEquals($modifiedName, $chapter2->getValue('name'));
     $author2 = $chapter2->getFirstChild('Author');
-    $this->assertEquals($modifiedName, $author2->getName());
+    $this->assertEquals($modifiedName, $author2->getValue('name'));
     $author3 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr), 1);
-    $this->assertEquals($modifiedName, $author3->getName());
+    $this->assertEquals($modifiedName, $author3->getValue('name'));
     $publisher3 = $author3->getFirstChild('Publisher');
-    $this->assertEquals($modifiedName, $publisher3->getName());
+    $this->assertEquals($modifiedName, $publisher3->getValue('name'));
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);

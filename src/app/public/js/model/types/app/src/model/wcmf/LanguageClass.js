@@ -49,6 +49,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "name",
@@ -60,6 +61,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "code",
@@ -71,6 +73,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }],
 

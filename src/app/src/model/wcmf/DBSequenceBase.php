@@ -74,25 +74,5 @@ class DBSequenceBase extends Node {
       return Message::get($description);
     }
 
-    /**
-     * Get the value of the id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('id'); }
-      else { $value = $this->getValue('id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the id attribute
-     * @param id The value to set
-     */
-    public function setId($id) {
-      return $this->setValue('id', $id);
-    }
-     
 }
 ?>

@@ -231,44 +231,6 @@ class DefaultAuthUser implements AuthUser {
   }
 
   /**
-   * @see User::setName()
-   */
-  public function setName($name) {
-    if ($this->_user != null) {
-      $this->_user->setName($name);
-    }
-  }
-
-  /**
-   * @see User::getName()
-   */
-  public function getName() {
-    if ($this->_user != null) {
-      return $this->_user->getName();
-    }
-    return null;
-  }
-
-  /**
-   * @see User::setFirstname()
-   */
-  public function setFirstname($firstname) {
-    if ($this->_user != null) {
-      $this->_user->setFirstname($firstname);
-    }
-  }
-
-  /**
-   * @see User::getFirstname()
-   */
-  public function getFirstname() {
-    if ($this->_user != null) {
-      return $this->_user->getFirstname();
-    }
-    return null;
-  }
-
-  /**
    * @see User::setConfig()
    */
   public function setConfig($config) {

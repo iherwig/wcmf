@@ -136,7 +136,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $mapper1->setConnectionParams($this->dbParams);
 
     $chapter = new Chapter(new ObjectId('Chapter', array(1)));
-    $chapter->setFkAuthorId(12);
+    $chapter->setValue('fk_author_id', 12);
 
     // parent (pk only)
     $relationDescription1 = $mapper1->getRelation('Author');

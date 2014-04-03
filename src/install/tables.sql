@@ -11,7 +11,7 @@
 DROP TABLE IF EXISTS `DBSequence`;
 CREATE TABLE `DBSequence` # entityType=DBSequence tableId=_s2Ve4LTMEeOYkOsR5IzpsA
 (
-  `id` INT(11) NOT NULL, # columnId=_zdrU8LU9EeOOP7WaEYP_ww 
+  `id` INT(11) NOT NULL, # columnId=_bfe2wLstEeOfRLAdhEyUtA 
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM;
 #
@@ -23,8 +23,8 @@ CREATE TABLE `DBSequence` # entityType=DBSequence tableId=_s2Ve4LTMEeOYkOsR5Izps
 DROP TABLE IF EXISTS `Locktable`;
 CREATE TABLE `Locktable` # entityType=Locktable tableId=_s73fILTMEeOYkOsR5IzpsA
 (
-  `id` INT(11) NOT NULL, # columnId=_zdhj9bU9EeOOP7WaEYP_ww 
-  `fk_user_id` INT(11), # columnId=_zdhj8LU9EeOOP7WaEYP_ww referencedTable=User
+  `id` INT(11) NOT NULL, # columnId=_bfTQk7stEeOfRLAdhEyUtA 
+  `fk_user_id` INT(11), # columnId=_bfSpgLstEeOfRLAdhEyUtA referencedTable=User
   `objectid` VARCHAR(255), # columnId=_EVGnsLTTEeOYkOsR5IzpsA 
   `sessionid` VARCHAR(255), # columnId=_EXZGsLTTEeOYkOsR5IzpsA 
   `since` DATETIME, # columnId=_EZrlsLTTEeOYkOsR5IzpsA 
@@ -40,7 +40,7 @@ CREATE TABLE `Locktable` # entityType=Locktable tableId=_s73fILTMEeOYkOsR5IzpsA
 DROP TABLE IF EXISTS `Language`;
 CREATE TABLE `Language` # entityType=Language tableId=_s5AYYLTMEeOYkOsR5IzpsA
 (
-  `id` INT(11) NOT NULL, # columnId=_zdSTYLU9EeOOP7WaEYP_ww 
+  `id` INT(11) NOT NULL, # columnId=_bfA8sLstEeOfRLAdhEyUtA 
   `name` VARCHAR(255), # columnId=_mThnQLTOEeOYkOsR5IzpsA 
   `code` VARCHAR(255), # columnId=_mWMgwLTOEeOYkOsR5IzpsA 
   PRIMARY KEY (`id`)
@@ -54,7 +54,7 @@ CREATE TABLE `Language` # entityType=Language tableId=_s5AYYLTMEeOYkOsR5IzpsA
 DROP TABLE IF EXISTS `Translation`;
 CREATE TABLE `Translation` # entityType=Translation tableId=_tCKUYLTMEeOYkOsR5IzpsA
 (
-  `id` INT(11) NOT NULL, # columnId=_zdJJcLU9EeOOP7WaEYP_ww 
+  `id` INT(11) NOT NULL, # columnId=_be2koLstEeOfRLAdhEyUtA 
   `objectid` VARCHAR(255), # columnId=_4sa_QLTQEeOYkOsR5IzpsA 
   `attribute` VARCHAR(255), # columnId=_4vqggLTQEeOYkOsR5IzpsA 
   `translation` TEXT, # columnId=_4zGPALTQEeOYkOsR5IzpsA 
@@ -70,7 +70,7 @@ CREATE TABLE `Translation` # entityType=Translation tableId=_tCKUYLTMEeOYkOsR5Iz
 DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` # entityType=User tableId=_tJBxYLTMEeOYkOsR5IzpsA
 (
-  `id` INT(11) NOT NULL, # columnId=_zd-P4LU9EeOOP7WaEYP_ww 
+  `id` INT(11) NOT NULL, # columnId=_bf1cELstEeOfRLAdhEyUtA 
   `login` VARCHAR(255), # columnId=_P0GFcLTREeOYkOsR5IzpsA 
   `password` VARCHAR(255), # columnId=_P23FkLTREeOYkOsR5IzpsA 
   `name` VARCHAR(255), # columnId=_P5h_ELTREeOYkOsR5IzpsA 
@@ -87,8 +87,8 @@ CREATE TABLE `User` # entityType=User tableId=_tJBxYLTMEeOYkOsR5IzpsA
 DROP TABLE IF EXISTS `UserConfig`;
 CREATE TABLE `UserConfig` # entityType=UserConfig tableId=_tFTvALTMEeOYkOsR5IzpsA
 (
-  `id` INT(11) NOT NULL, # columnId=_zc__gLU9EeOOP7WaEYP_ww 
-  `fk_user_id` INT(11), # columnId=_zc_YcLU9EeOOP7WaEYP_ww referencedTable=User
+  `id` INT(11) NOT NULL, # columnId=_bepwUrstEeOfRLAdhEyUtA 
+  `fk_user_id` INT(11), # columnId=_bepJQLstEeOfRLAdhEyUtA referencedTable=User
   `key` VARCHAR(255), # columnId=_1-0UELTREeOYkOsR5IzpsA 
   `val` VARCHAR(255), # columnId=_2AoR8LTREeOYkOsR5IzpsA 
   PRIMARY KEY (`id`)
@@ -103,7 +103,7 @@ CREATE TABLE `UserConfig` # entityType=UserConfig tableId=_tFTvALTMEeOYkOsR5Izps
 DROP TABLE IF EXISTS `Role`;
 CREATE TABLE `Role` # entityType=Role tableId=_s_A5wLTMEeOYkOsR5IzpsA
 (
-  `id` INT(11) NOT NULL, # columnId=_zd0e4LU9EeOOP7WaEYP_ww 
+  `id` INT(11) NOT NULL, # columnId=_bfp14LstEeOfRLAdhEyUtA 
   `name` VARCHAR(255), # columnId=_blxxgLTWEeOYkOsR5IzpsA 
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM;
@@ -116,8 +116,8 @@ CREATE TABLE `Role` # entityType=Role tableId=_s_A5wLTMEeOYkOsR5IzpsA
 DROP TABLE IF EXISTS `NMUserRole`;
 CREATE TABLE `NMUserRole` # entityType=NMUserRole tableId=_tM8BALTMEeOYkOsR5IzpsA
 (
-  `fk_role_id` INT(11), # columnId=_zclv0LU9EeOOP7WaEYP_ww referencedTable=Role
-  `fk_user_id` INT(11), # columnId=_zckhsLU9EeOOP7WaEYP_ww referencedTable=User
+  `fk_role_id` INT(11), # columnId=_beWOULstEeOfRLAdhEyUtA referencedTable=Role
+  `fk_user_id` INT(11), # columnId=_beVAMLstEeOfRLAdhEyUtA referencedTable=User
   PRIMARY KEY (`fk_role_id`,`fk_user_id`)
 ) ENGINE=MyISAM;
 #
@@ -129,12 +129,12 @@ CREATE TABLE `NMUserRole` # entityType=NMUserRole tableId=_tM8BALTMEeOYkOsR5Izps
 DROP TABLE IF EXISTS `Publisher`;
 CREATE TABLE `Publisher` # entityType=Publisher tableId=_BDrKMLU2EeORdpT3S9OOtw
 (
-  `id` INT(11) NOT NULL, # columnId=_zcUDALU9EeOOP7WaEYP_ww 
+  `id` INT(11) NOT NULL, # columnId=_beCFQLstEeOfRLAdhEyUtA 
   `name` VARCHAR(255), # columnId=_UsqjALU2EeORdpT3S9OOtw 
-  `created` DATETIME, # columnId=_zcBIELU9EeOOP7WaEYP_ww 
-  `creator` VARCHAR(255), # columnId=_zcFZg7U9EeOOP7WaEYP_ww 
-  `modified` DATETIME, # columnId=_zcGnpbU9EeOOP7WaEYP_ww 
-  `last_editor` VARCHAR(255), # columnId=_zcK5FLU9EeOOP7WaEYP_ww 
+  `created` DATETIME, # columnId=_bdt8MLstEeOfRLAdhEyUtA 
+  `creator` VARCHAR(255), # columnId=_bdy0tLstEeOfRLAdhEyUtA 
+  `modified` DATETIME, # columnId=_bd0p5bstEeOfRLAdhEyUtA 
+  `last_editor` VARCHAR(255), # columnId=_bd47VLstEeOfRLAdhEyUtA 
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM;
 #
@@ -146,12 +146,12 @@ CREATE TABLE `Publisher` # entityType=Publisher tableId=_BDrKMLU2EeORdpT3S9OOtw
 DROP TABLE IF EXISTS `Author`;
 CREATE TABLE `Author` # entityType=Author tableId=_BGWqwLU2EeORdpT3S9OOtw
 (
-  `id` INT(11) NOT NULL, # columnId=_zb82oLU9EeOOP7WaEYP_ww 
+  `id` INT(11) NOT NULL, # columnId=_bdpqwLstEeOfRLAdhEyUtA 
   `name` VARCHAR(255), # columnId=_rq2WALU2EeORdpT3S9OOtw 
-  `created` DATETIME, # columnId=_zblDMLU9EeOOP7WaEYP_ww 
-  `creator` VARCHAR(255), # columnId=_zbrJ1LU9EeOOP7WaEYP_ww 
-  `modified` DATETIME, # columnId=_zbtmFLU9EeOOP7WaEYP_ww 
-  `last_editor` VARCHAR(255), # columnId=_zbzFpLU9EeOOP7WaEYP_ww 
+  `created` DATETIME, # columnId=_bdR3ULstEeOfRLAdhEyUtA 
+  `creator` VARCHAR(255), # columnId=_bdX98rstEeOfRLAdhEyUtA 
+  `modified` DATETIME, # columnId=_bdZzJbstEeOfRLAdhEyUtA 
+  `last_editor` VARCHAR(255), # columnId=_bdf5xLstEeOfRLAdhEyUtA 
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM;
 #
@@ -163,15 +163,15 @@ CREATE TABLE `Author` # entityType=Author tableId=_BGWqwLU2EeORdpT3S9OOtw
 DROP TABLE IF EXISTS `Book`;
 CREATE TABLE `Book` # entityType=Book tableId=_BJe3QLU2EeORdpT3S9OOtw
 (
-  `id` INT(11) NOT NULL, # columnId=_zbgKsLU9EeOOP7WaEYP_ww 
-  `fk_publisher_id` INT(11), # columnId=_zbfjoLU9EeOOP7WaEYP_ww referencedTable=Publisher
+  `id` INT(11) NOT NULL, # columnId=_bdMXw7stEeOfRLAdhEyUtA 
+  `fk_publisher_id` INT(11), # columnId=_bdLwsLstEeOfRLAdhEyUtA referencedTable=Publisher
   `title` VARCHAR(255), # columnId=__mzRoLU3EeORdpT3S9OOtw 
   `description` VARCHAR(255), # columnId=__p_vkLU3EeORdpT3S9OOtw 
   `year` VARCHAR(255), # columnId=__svhkLU3EeORdpT3S9OOtw 
-  `created` DATETIME, # columnId=_za9_MLU9EeOOP7WaEYP_ww 
-  `creator` VARCHAR(255), # columnId=_zbEs5LU9EeOOP7WaEYP_ww 
-  `modified` DATETIME, # columnId=_zbHwMbU9EeOOP7WaEYP_ww 
-  `last_editor` VARCHAR(255), # columnId=_zbOd5LU9EeOOP7WaEYP_ww 
+  `created` DATETIME, # columnId=_bcoXELstEeOfRLAdhEyUtA 
+  `creator` VARCHAR(255), # columnId=_bcvr1LstEeOfRLAdhEyUtA 
+  `modified` DATETIME, # columnId=_bcyvIrstEeOfRLAdhEyUtA 
+  `last_editor` VARCHAR(255), # columnId=_bc6D47stEeOfRLAdhEyUtA 
   PRIMARY KEY (`id`)
   ,KEY `fk_publisher_id` (`fk_publisher_id`)
 ) ENGINE=MyISAM;
@@ -184,15 +184,15 @@ CREATE TABLE `Book` # entityType=Book tableId=_BJe3QLU2EeORdpT3S9OOtw
 DROP TABLE IF EXISTS `Chapter`;
 CREATE TABLE `Chapter` # entityType=Chapter tableId=_BMnDwLU2EeORdpT3S9OOtw
 (
-  `id` INT(11) NOT NULL, # columnId=_za4fpbU9EeOOP7WaEYP_ww 
-  `fk_chapter_id` INT(11), # columnId=_za4foLU9EeOOP7WaEYP_ww referencedTable=Chapter
-  `fk_book_id` INT(11), # columnId=_za34kLU9EeOOP7WaEYP_ww referencedTable=Book
-  `fk_author_id` INT(11), # columnId=_za2qcLU9EeOOP7WaEYP_ww referencedTable=Author
+  `id` INT(11) NOT NULL, # columnId=_bciQdLstEeOfRLAdhEyUtA 
+  `fk_chapter_id` INT(11), # columnId=_bchpZLstEeOfRLAdhEyUtA referencedTable=Chapter
+  `fk_book_id` INT(11), # columnId=_bchCU7stEeOfRLAdhEyUtA referencedTable=Book
+  `fk_author_id` INT(11), # columnId=_bcgbQLstEeOfRLAdhEyUtA referencedTable=Author
   `name` VARCHAR(255), # columnId=_kq-u8LU4EeORdpT3S9OOtw 
-  `created` DATETIME, # columnId=_zaLVALU9EeOOP7WaEYP_ww 
-  `creator` VARCHAR(255), # columnId=_zaWUIrU9EeOOP7WaEYP_ww 
-  `modified` DATETIME, # columnId=_zaZXdLU9EeOOP7WaEYP_ww 
-  `last_editor` VARCHAR(255), # columnId=_zaihYrU9EeOOP7WaEYP_ww 
+  `created` DATETIME, # columnId=_bbypkLstEeOfRLAdhEyUtA 
+  `creator` VARCHAR(255), # columnId=_bb-PwrstEeOfRLAdhEyUtA 
+  `modified` DATETIME, # columnId=_bcB6JbstEeOfRLAdhEyUtA 
+  `last_editor` VARCHAR(255), # columnId=_bcMSMrstEeOfRLAdhEyUtA 
   `sortkey_author` INT(11), # columnId=sortkey_author
   `sortkey_book` INT(11), # columnId=sortkey_book
   `sortkey_parentchapter` INT(11), # columnId=sortkey_parentchapter
@@ -211,14 +211,14 @@ CREATE TABLE `Chapter` # entityType=Chapter tableId=_BMnDwLU2EeORdpT3S9OOtw
 DROP TABLE IF EXISTS `Image`;
 CREATE TABLE `Image` # entityType=Image tableId=_BQLVILU2EeORdpT3S9OOtw
 (
-  `id` INT(11) NOT NULL, # columnId=_zaEAQLU9EeOOP7WaEYP_ww 
-  `fk_chapter_id` INT(11), # columnId=_zaCyJLU9EeOOP7WaEYP_ww referencedTable=Chapter
-  `fk_titlechapter_id` INT(11), # columnId=_zaCLELU9EeOOP7WaEYP_ww referencedTable=Chapter
+  `id` INT(11) NOT NULL, # columnId=_bbqGsLstEeOfRLAdhEyUtA 
+  `fk_chapter_id` INT(11), # columnId=_bboRhLstEeOfRLAdhEyUtA referencedTable=Chapter
+  `fk_titlechapter_id` INT(11), # columnId=_bbnqcLstEeOfRLAdhEyUtA referencedTable=Chapter
   `file` VARCHAR(255), # columnId=_0UxuULU4EeORdpT3S9OOtw 
-  `created` DATETIME, # columnId=_zZWOkLU9EeOOP7WaEYP_ww 
-  `creator` VARCHAR(255), # columnId=_zZib07U9EeOOP7WaEYP_ww 
-  `modified` DATETIME, # columnId=_zZmGNbU9EeOOP7WaEYP_ww 
-  `last_editor` VARCHAR(255), # columnId=_zZv3NLU9EeOOP7WaEYP_ww 
+  `created` DATETIME, # columnId=_ba1AQLstEeOfRLAdhEyUtA 
+  `creator` VARCHAR(255), # columnId=_bbDCtLstEeOfRLAdhEyUtA 
+  `modified` DATETIME, # columnId=_bbH7NbstEeOfRLAdhEyUtA 
+  `last_editor` VARCHAR(255), # columnId=_bbThZLstEeOfRLAdhEyUtA 
   `sortkey_titlechapter` INT(11), # columnId=sortkey_titlechapter
   `sortkey_normalchapter` INT(11), # columnId=sortkey_normalchapter
   `sortkey` INT(11), # columnId=sortkey
@@ -235,9 +235,9 @@ CREATE TABLE `Image` # entityType=Image tableId=_BQLVILU2EeORdpT3S9OOtw
 DROP TABLE IF EXISTS `NMPublisherAuthor`;
 CREATE TABLE `NMPublisherAuthor` # entityType=NMPublisherAuthor tableId=_BTThoLU2EeORdpT3S9OOtw
 (
-  `id` INT(11) NOT NULL, # columnId=_zY-bILU9EeOOP7WaEYP_ww 
-  `fk_author_id` INT(11), # columnId=_zY90ELU9EeOOP7WaEYP_ww referencedTable=Author
-  `fk_publisher_id` INT(11), # columnId=_zY8l8LU9EeOOP7WaEYP_ww referencedTable=Publisher
+  `id` INT(11) NOT NULL, # columnId=_bab-sLstEeOfRLAdhEyUtA 
+  `fk_author_id` INT(11), # columnId=_babXoLstEeOfRLAdhEyUtA referencedTable=Author
+  `fk_publisher_id` INT(11), # columnId=_baaJgLstEeOfRLAdhEyUtA referencedTable=Publisher
   `sortkey_publisher` INT(11), # columnId=sortkey_publisher
   `sortkey_author` INT(11), # columnId=sortkey_author
   `sortkey` INT(11), # columnId=sortkey

@@ -40,21 +40,21 @@ class SaveControllerTest extends ControllerTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'dbsequence' => array(
+      'DBSequence' => array(
         array('id' => 1),
       ),
-      'user' => array(
+      'User' => array(
         array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm'),
       ),
-      'nm_user_role' => array(
+      'NMUserRole' => array(
         array('fk_user_id' => 0, 'fk_role_id' => 0),
       ),
-      'role' => array(
+      'Role' => array(
         array('id' => 0, 'name' => 'administrators'),
       ),
-      'locktable' => array(
+      'Locktable' => array(
       ),
-      'translation' => array(
+      'Translation' => array(
       ),
     ));
   }

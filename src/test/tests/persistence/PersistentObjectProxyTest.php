@@ -34,7 +34,7 @@ class PersistentObjectProxyTest extends DatabaseTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'dbsequence' => array(
+      'DBSequence' => array(
         array('id' => 1),
       ),
       'Chapter' => array(
@@ -47,13 +47,13 @@ class PersistentObjectProxyTest extends DatabaseTestCase {
   public function testLoadSimple() {
     TestUtil::runAnonymous(true);
     $proxy1 = new PersistentObjectProxy(ObjectId::parse($this->_chapter1OidStr));
-    $this->assertEquals("Chapter1", $proxy1->getName());
-    $this->assertEquals(123451, $proxy1->getSortkey());
+    $this->assertEquals("Chapter1", $proxy1->getValue('name'));
+    $this->assertEquals(123451, $proxy1->getValue('sortkey'));
     $this->assertTrue($proxy1->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
 
     $proxy2 = PersistentObjectProxy::fromObject($proxy1->getRealSubject());
-    $this->assertEquals("Chapter1", $proxy2->getName());
-    $this->assertEquals(123451, $proxy2->getSortkey());
+    $this->assertEquals("Chapter1", $proxy2->getValue('name'));
+    $this->assertEquals(123451, $proxy2->getValue('sortkey'));
     $this->assertTrue($proxy2->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
     TestUtil::runAnonymous(false);
   }
@@ -62,15 +62,15 @@ class PersistentObjectProxyTest extends DatabaseTestCase {
     TestUtil::runAnonymous(true);
     $proxy = new PersistentObjectProxy(ObjectId::parse($this->_chapter1OidStr));
     $chapter1 = $proxy->getRealSubject();
-    $this->assertEquals("Chapter1", $proxy->getName());
-    $this->assertEquals(123451, $proxy->getSortkey());
+    $this->assertEquals("Chapter1", $proxy->getValue('name'));
+    $this->assertEquals(123451, $proxy->getValue('sortkey'));
     $this->assertTrue($chapter1 instanceof PersistentObject, "Real subject is PersistentObject instance");
 
     // implicitly load relation
     $subChapters = $chapter1->getValue("SubChapter");
     $chapter2 = $subChapters[0];
-    $this->assertEquals("Chapter2", $chapter2->getName());
-    $this->assertEquals(123452, $chapter2->getSortkey());
+    $this->assertEquals("Chapter2", $chapter2->getValue('name'));
+    $this->assertEquals(123452, $chapter2->getValue('sortkey'));
   }
 }
 ?>

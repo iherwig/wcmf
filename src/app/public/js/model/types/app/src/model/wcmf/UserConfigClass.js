@@ -49,6 +49,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "fk_user_id",
@@ -60,6 +61,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "key",
@@ -71,6 +73,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "val",
@@ -82,6 +85,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }],
 

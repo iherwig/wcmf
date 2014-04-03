@@ -48,6 +48,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "fk_user_id",
@@ -59,6 +60,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "objectid",
@@ -70,6 +72,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "sessionid",
@@ -81,6 +84,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "since",
@@ -92,6 +96,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }],
 

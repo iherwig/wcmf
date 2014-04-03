@@ -48,6 +48,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }],
 

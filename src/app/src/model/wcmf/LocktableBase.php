@@ -83,108 +83,12 @@ class LocktableBase extends Node {
     }
 
     /**
-     * Get the value of the id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('id'); }
-      else { $value = $this->getValue('id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the id attribute
-     * @param id The value to set
-     */
-    public function setId($id) {
-      return $this->setValue('id', $id);
-    }
-    /**
-     * Get the value of the fk_user_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkUserId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_user_id'); }
-      else { $value = $this->getValue('fk_user_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_user_id attribute
-     * @param fk_user_id The value to set
-     */
-    public function setFkUserId($fk_user_id) {
-      return $this->setValue('fk_user_id', $fk_user_id);
-    }
-    /**
-     * Get the value of the objectid attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getObjectid($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('objectid'); }
-      else { $value = $this->getValue('objectid'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the objectid attribute
-     * @param objectid The value to set
-     */
-    public function setObjectid($objectid) {
-      return $this->setValue('objectid', $objectid);
-    }
-    /**
-     * Get the value of the sessionid attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getSessionid($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('sessionid'); }
-      else { $value = $this->getValue('sessionid'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the sessionid attribute
-     * @param sessionid The value to set
-     */
-    public function setSessionid($sessionid) {
-      return $this->setValue('sessionid', $sessionid);
-    }
-    /**
-     * Get the value of the since attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getSince($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('since'); }
-      else { $value = $this->getValue('since'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the since attribute
-     * @param since The value to set
-     */
-    public function setSince($since) {
-      return $this->setValue('since', $since);
-    }
-     
-    /**
      * Get the User instances in the User relation
      * @return Array of User instances
      */
     public function getUserList() {
       return $this->getParentsEx(null, 'User');
-        }
+    }
 
     /**
      * Set the User instances in the User relation
@@ -195,6 +99,6 @@ class LocktableBase extends Node {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'User');
       }
-      }
+    }
 }
 ?>

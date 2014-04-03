@@ -49,6 +49,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "name",
@@ -60,6 +61,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "created",
@@ -71,6 +73,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "creator",
@@ -82,6 +85,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "modified",
@@ -93,6 +97,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "last_editor",
@@ -104,6 +109,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }],
 

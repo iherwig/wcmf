@@ -81,89 +81,12 @@ class UserConfigBase extends Node {
     }
 
     /**
-     * Get the value of the id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('id'); }
-      else { $value = $this->getValue('id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the id attribute
-     * @param id The value to set
-     */
-    public function setId($id) {
-      return $this->setValue('id', $id);
-    }
-    /**
-     * Get the value of the fk_user_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkUserId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_user_id'); }
-      else { $value = $this->getValue('fk_user_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_user_id attribute
-     * @param fk_user_id The value to set
-     */
-    public function setFkUserId($fk_user_id) {
-      return $this->setValue('fk_user_id', $fk_user_id);
-    }
-    /**
-     * Get the value of the key attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getKey($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('key'); }
-      else { $value = $this->getValue('key'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the key attribute
-     * @param key The value to set
-     */
-    public function setKey($key) {
-      return $this->setValue('key', $key);
-    }
-    /**
-     * Get the value of the val attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getVal($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('val'); }
-      else { $value = $this->getValue('val'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the val attribute
-     * @param val The value to set
-     */
-    public function setVal($val) {
-      return $this->setValue('val', $val);
-    }
-     
-    /**
      * Get the User instances in the User relation
      * @return Array of User instances
      */
     public function getUserList() {
       return $this->getParentsEx(null, 'User');
-        }
+    }
 
     /**
      * Set the User instances in the User relation
@@ -174,6 +97,6 @@ class UserConfigBase extends Node {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'User');
       }
-      }
+    }
 }
 ?>

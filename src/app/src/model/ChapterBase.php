@@ -91,176 +91,12 @@ class ChapterBase extends EntityBase {
     }
 
     /**
-     * Get the value of the id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('id'); }
-      else { $value = $this->getValue('id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the id attribute
-     * @param id The value to set
-     */
-    public function setId($id) {
-      return $this->setValue('id', $id);
-    }
-    /**
-     * Get the value of the fk_chapter_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkChapterId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_chapter_id'); }
-      else { $value = $this->getValue('fk_chapter_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_chapter_id attribute
-     * @param fk_chapter_id The value to set
-     */
-    public function setFkChapterId($fk_chapter_id) {
-      return $this->setValue('fk_chapter_id', $fk_chapter_id);
-    }
-    /**
-     * Get the value of the fk_book_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkBookId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_book_id'); }
-      else { $value = $this->getValue('fk_book_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_book_id attribute
-     * @param fk_book_id The value to set
-     */
-    public function setFkBookId($fk_book_id) {
-      return $this->setValue('fk_book_id', $fk_book_id);
-    }
-    /**
-     * Get the value of the fk_author_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkAuthorId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_author_id'); }
-      else { $value = $this->getValue('fk_author_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_author_id attribute
-     * @param fk_author_id The value to set
-     */
-    public function setFkAuthorId($fk_author_id) {
-      return $this->setValue('fk_author_id', $fk_author_id);
-    }
-    /**
-     * Get the value of the name attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getName($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('name'); }
-      else { $value = $this->getValue('name'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the name attribute
-     * @param name The value to set
-     */
-    public function setName($name) {
-      return $this->setValue('name', $name);
-    }
-    /**
-     * Get the sortkey for the Author relation
-     * @return Number
-     */
-    public function getSortkeyAuthor() {
-      return $this->getValue('sortkey_author');
-    }
-
-    /**
-     * Set the sortkey for the Author relation
-     * @param sortkey The sortkey value
-     */
-    public function setSortkeyAuthor($sortkey) {
-      return $this->setValue('sortkey_author', $sortkey);
-    }
-    /**
-     * Get the sortkey for the Book relation
-     * @return Number
-     */
-    public function getSortkeyBook() {
-      return $this->getValue('sortkey_book');
-    }
-
-    /**
-     * Set the sortkey for the Book relation
-     * @param sortkey The sortkey value
-     */
-    public function setSortkeyBook($sortkey) {
-      return $this->setValue('sortkey_book', $sortkey);
-    }
-    /**
-     * Get the sortkey for the ParentChapter relation
-     * @return Number
-     */
-    public function getSortkeyParentchapter() {
-      return $this->getValue('sortkey_parentchapter');
-    }
-
-    /**
-     * Set the sortkey for the ParentChapter relation
-     * @param sortkey The sortkey value
-     */
-    public function setSortkeyParentchapter($sortkey) {
-      return $this->setValue('sortkey_parentchapter', $sortkey);
-    }
-
-    /**
-     * Get the default sortkey
-     * @return Number
-     */
-    public function getSortkey() {
-      return $this->getValue('sortkey');
-    }
-
-    /**
-     * Set the default sortkey
-     * @param sortkey The sortkey value
-     */
-    public function setSortkey($sortkey) {
-      return $this->setValue('sortkey', $sortkey);
-    }
-     
-    /**
-     * Get the value of the author_name reference attribute
-     * @return Mixed
-     */
-    public function getAuthorName() {
-      return $this->getValue('author_name');
-    }
-    /**
      * Get the Author instances in the Author relation
      * @return Array of Author instances
      */
     public function getAuthorList() {
       return $this->getParentsEx(null, 'Author');
-        }
+    }
 
     /**
      * Set the Author instances in the Author relation
@@ -271,14 +107,14 @@ class ChapterBase extends EntityBase {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Author');
       }
-      }
+    }
     /**
      * Get the Book instances in the Book relation
      * @return Array of Book instances
      */
     public function getBookList() {
       return $this->getParentsEx(null, 'Book');
-        }
+    }
 
     /**
      * Set the Book instances in the Book relation
@@ -289,14 +125,14 @@ class ChapterBase extends EntityBase {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Book');
       }
-      }
+    }
     /**
      * Get the Chapter instances in the ParentChapter relation
      * @return Array of Chapter instances
      */
     public function getParentChapterList() {
       return $this->getParentsEx(null, 'ParentChapter');
-        }
+    }
 
     /**
      * Set the Chapter instances in the ParentChapter relation
@@ -307,7 +143,7 @@ class ChapterBase extends EntityBase {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'ParentChapter');
       }
-      }
+    }
     /**
      * Get the Chapter instances in the SubChapter relation
      * @return Array of Chapter instances
@@ -324,8 +160,8 @@ class ChapterBase extends EntityBase {
       $this->setValue('SubChapter', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'SubChapter');
-        }
       }
+    }
     /**
      * Get the Image instances in the TitleImage relation
      * @return Array of Image instances
@@ -342,8 +178,8 @@ class ChapterBase extends EntityBase {
       $this->setValue('TitleImage', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'TitleImage');
-        }
       }
+    }
     /**
      * Get the Image instances in the NormalImage relation
      * @return Array of Image instances
@@ -360,7 +196,7 @@ class ChapterBase extends EntityBase {
       $this->setValue('NormalImage', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'NormalImage');
-        }
       }
+    }
 }
 ?>

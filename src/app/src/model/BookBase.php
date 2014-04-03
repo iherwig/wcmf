@@ -91,108 +91,12 @@ class BookBase extends EntityBase {
     }
 
     /**
-     * Get the value of the id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('id'); }
-      else { $value = $this->getValue('id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the id attribute
-     * @param id The value to set
-     */
-    public function setId($id) {
-      return $this->setValue('id', $id);
-    }
-    /**
-     * Get the value of the fk_publisher_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkPublisherId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_publisher_id'); }
-      else { $value = $this->getValue('fk_publisher_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_publisher_id attribute
-     * @param fk_publisher_id The value to set
-     */
-    public function setFkPublisherId($fk_publisher_id) {
-      return $this->setValue('fk_publisher_id', $fk_publisher_id);
-    }
-    /**
-     * Get the value of the title attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getTitle($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('title'); }
-      else { $value = $this->getValue('title'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the title attribute
-     * @param title The value to set
-     */
-    public function setTitle($title) {
-      return $this->setValue('title', $title);
-    }
-    /**
-     * Get the value of the description attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getDescription($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('description'); }
-      else { $value = $this->getValue('description'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the description attribute
-     * @param description The value to set
-     */
-    public function setDescription($description) {
-      return $this->setValue('description', $description);
-    }
-    /**
-     * Get the value of the year attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getYear($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('year'); }
-      else { $value = $this->getValue('year'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the year attribute
-     * @param year The value to set
-     */
-    public function setYear($year) {
-      return $this->setValue('year', $year);
-    }
-     
-    /**
      * Get the Publisher instances in the Publisher relation
      * @return Array of Publisher instances
      */
     public function getPublisherList() {
       return $this->getParentsEx(null, 'Publisher');
-        }
+    }
 
     /**
      * Set the Publisher instances in the Publisher relation
@@ -203,7 +107,7 @@ class BookBase extends EntityBase {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Publisher');
       }
-      }
+    }
     /**
      * Get the Chapter instances in the Chapter relation
      * @return Array of Chapter instances
@@ -220,7 +124,7 @@ class BookBase extends EntityBase {
       $this->setValue('Chapter', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Chapter');
-        }
       }
+    }
 }
 ?>

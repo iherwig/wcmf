@@ -34,18 +34,18 @@ class ManyToManyTest extends DatabaseTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'dbsequence' => array(
+      'DBSequence' => array(
         array('id' => 1),
       ),
-      'user' => array(
+      'User' => array(
         array('id' => 50, 'login' => 'user1'),
         array('id' => 60, 'login' => 'user2'),
       ),
-      'role' => array(
+      'Role' => array(
         array('id' => 51, 'name' => 'group1'),
         array('id' => 61, 'name' => 'group2'),
       ),
-      'nm_user_role' => array(
+      'NMUserRole' => array(
         array('fk_user_id' => 50, 'fk_role_id' => 51),
       ),
     ));
@@ -115,7 +115,7 @@ class ManyToManyTest extends DatabaseTestCase {
     $transaction->commit();
 
     $transaction->begin();
-    $numNM1 = $this->getConnection()->getRowCount('nm_user_role', "fk_user_id = ".$userId." AND fk_role_id = ".$roleId);
+    $numNM1 = $this->getConnection()->getRowCount('NMUserRole', "fk_user_id = ".$userId." AND fk_role_id = ".$roleId);
     $this->assertEquals(1, $numNM1, "A connection was created");
 
     // add role second time
@@ -123,7 +123,7 @@ class ManyToManyTest extends DatabaseTestCase {
     $transaction->commit();
 
     $transaction->begin();
-    $numNM2 = $this->getConnection()->getRowCount('nm_user_role', "fk_user_id = ".$userId." AND fk_role_id = ".$roleId);
+    $numNM2 = $this->getConnection()->getRowCount('NMUserRole', "fk_user_id = ".$userId." AND fk_role_id = ".$roleId);
     $this->assertEquals(1, $numNM2, "The connection is only created if not existing already");
 
     // delete user
@@ -131,7 +131,7 @@ class ManyToManyTest extends DatabaseTestCase {
     $transaction->commit();
 
     $transaction->begin();
-    $numNM3 = $this->getConnection()->getRowCount('nm_user_role', "fk_user_id = ".$userId." AND fk_role_id = ".$roleId);
+    $numNM3 = $this->getConnection()->getRowCount('NMUserRole', "fk_user_id = ".$userId." AND fk_role_id = ".$roleId);
     $this->assertEquals(0, $numNM3, "The connection was deleted");
     $transaction->commit();
 

@@ -77,51 +77,12 @@ class NMUserRoleBase extends Node {
     }
 
     /**
-     * Get the value of the fk_role_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkRoleId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_role_id'); }
-      else { $value = $this->getValue('fk_role_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_role_id attribute
-     * @param fk_role_id The value to set
-     */
-    public function setFkRoleId($fk_role_id) {
-      return $this->setValue('fk_role_id', $fk_role_id);
-    }
-    /**
-     * Get the value of the fk_user_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkUserId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_user_id'); }
-      else { $value = $this->getValue('fk_user_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_user_id attribute
-     * @param fk_user_id The value to set
-     */
-    public function setFkUserId($fk_user_id) {
-      return $this->setValue('fk_user_id', $fk_user_id);
-    }
-     
-    /**
      * Get the User instances in the User relation
      * @return Array of User instances
      */
     public function getUserList() {
       return $this->getParentsEx(null, 'User');
-        }
+    }
 
     /**
      * Set the User instances in the User relation
@@ -132,14 +93,14 @@ class NMUserRoleBase extends Node {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'User');
       }
-      }
+    }
     /**
      * Get the Role instances in the Role relation
      * @return Array of Role instances
      */
     public function getRoleList() {
       return $this->getParentsEx(null, 'Role');
-        }
+    }
 
     /**
      * Set the Role instances in the Role relation
@@ -150,6 +111,6 @@ class NMUserRoleBase extends Node {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Role');
       }
-      }
+    }
 }
 ?>

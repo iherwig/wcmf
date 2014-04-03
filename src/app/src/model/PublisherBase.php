@@ -85,45 +85,6 @@ class PublisherBase extends EntityBase {
     }
 
     /**
-     * Get the value of the id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('id'); }
-      else { $value = $this->getValue('id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the id attribute
-     * @param id The value to set
-     */
-    public function setId($id) {
-      return $this->setValue('id', $id);
-    }
-    /**
-     * Get the value of the name attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getName($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('name'); }
-      else { $value = $this->getValue('name'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the name attribute
-     * @param name The value to set
-     */
-    public function setName($name) {
-      return $this->setValue('name', $name);
-    }
-     
-    /**
      * Get the Book instances in the Book relation
      * @return Array of Book instances
      */
@@ -139,8 +100,8 @@ class PublisherBase extends EntityBase {
       $this->setValue('Book', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Book');
-        }
       }
+    }
     /**
      * Get the Author instances in the Author relation
      * @return Array of Author instances
@@ -157,7 +118,7 @@ class PublisherBase extends EntityBase {
       $this->setValue('Author', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Author');
-        }
       }
+    }
 }
 ?>

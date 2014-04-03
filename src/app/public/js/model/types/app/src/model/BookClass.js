@@ -49,6 +49,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "fk_publisher_id",
@@ -60,6 +61,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_IGNORE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "title",
@@ -71,6 +73,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "description",
@@ -82,6 +85,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "year",
@@ -93,6 +97,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "created",
@@ -104,6 +109,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "creator",
@@ -115,6 +121,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "modified",
@@ -126,6 +133,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }, {
             name: "last_editor",
@@ -137,6 +145,7 @@ define([
             validateType: '',
             validateDesc: '',
             tags: ['DATATYPE_ATTRIBUTE'],
+            defaultValue: null,
             isReference: false
         }],
 

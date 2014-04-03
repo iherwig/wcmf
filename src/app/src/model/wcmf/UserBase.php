@@ -85,121 +85,6 @@ class UserBase extends AbstractUser {
     }
 
     /**
-     * Get the value of the id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('id'); }
-      else { $value = $this->getValue('id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the id attribute
-     * @param id The value to set
-     */
-    public function setId($id) {
-      return $this->setValue('id', $id);
-    }
-    /**
-     * Get the value of the login attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getLogin($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('login'); }
-      else { $value = $this->getValue('login'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the login attribute
-     * @param login The value to set
-     */
-    public function setLogin($login) {
-      return $this->setValue('login', $login);
-    }
-    /**
-     * Get the value of the password attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getPassword($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('password'); }
-      else { $value = $this->getValue('password'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the password attribute
-     * @param password The value to set
-     */
-    public function setPassword($password) {
-      return $this->setValue('password', $password);
-    }
-    /**
-     * Get the value of the name attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getName($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('name'); }
-      else { $value = $this->getValue('name'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the name attribute
-     * @param name The value to set
-     */
-    public function setName($name) {
-      return $this->setValue('name', $name);
-    }
-    /**
-     * Get the value of the firstname attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFirstname($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('firstname'); }
-      else { $value = $this->getValue('firstname'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the firstname attribute
-     * @param firstname The value to set
-     */
-    public function setFirstname($firstname) {
-      return $this->setValue('firstname', $firstname);
-    }
-    /**
-     * Get the value of the config attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getConfig($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('config'); }
-      else { $value = $this->getValue('config'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the config attribute
-     * @param config The value to set
-     */
-    public function setConfig($config) {
-      return $this->setValue('config', $config);
-    }
-     
-    /**
      * Get the Locktable instances in the Locktable relation
      * @return Array of Locktable instances
      */
@@ -215,8 +100,8 @@ class UserBase extends AbstractUser {
       $this->setValue('Locktable', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Locktable');
-        }
       }
+    }
     /**
      * Get the UserConfig instances in the UserConfig relation
      * @return Array of UserConfig instances
@@ -233,8 +118,8 @@ class UserBase extends AbstractUser {
       $this->setValue('UserConfig', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'UserConfig');
-        }
       }
+    }
     /**
      * Get the Role instances in the Role relation
      * @return Array of Role instances
@@ -251,7 +136,7 @@ class UserBase extends AbstractUser {
       $this->setValue('Role', null);
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Role');
-        }
       }
+    }
 }
 ?>

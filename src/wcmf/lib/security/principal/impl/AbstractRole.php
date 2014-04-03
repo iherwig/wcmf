@@ -32,6 +32,20 @@ use wcmf\lib\security\principal\Role;
 abstract class AbstractRole extends Node implements Role {
 
   /**
+   * @see Role::setName()
+   */
+  public function setName($name) {
+    $this->setValue('name', $name);
+  }
+
+  /**
+   * @see Role::getName()
+   */
+  public function getName() {
+    return $this->getValue('name');
+  }
+
+  /**
    * @see Role::getByName()
    */
   public static function getByName($name) {

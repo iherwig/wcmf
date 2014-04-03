@@ -42,7 +42,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     }
 
     return new ArrayDataSet(array(
-      'dbsequence' => array(
+      'DBSequence' => array(
         array('id' => 1),
       ),
       'Chapter' => $chapters,
@@ -52,26 +52,26 @@ class PersistentObjectTest extends DatabaseTestCase {
   public function testCopyValues() {
     TestUtil::runAnonymous(true);
     $chapter1 = new Chapter(new ObjectId('Chapter', 12));
-    $chapter1->setName('Chapter 1');
-    $chapter1->setCreated(null);
+    $chapter1->setValue('name', 'Chapter 1');
+    $chapter1->setValue('created', null);
 
     // copy values without pks
     $chapter21 = new Chapter(new ObjectId('Chapter', 23));
-    $chapter21->setName('Chapter 2');
-    $chapter1->setCreated('2011-05-31');
+    $chapter21->setValue('name', 'Chapter 2');
+    $chapter1->setValue('created', '2011-05-31');
     $chapter1->copyValues($chapter21, false);
     $this->assertEquals('app.src.model.Chapter:23', $chapter21->getOID()->__toString());
-    $this->assertEquals('Chapter 1', $chapter21->getName());
-    $this->assertEquals('2011-05-31', $chapter21->getCreated());
+    $this->assertEquals('Chapter 1', $chapter21->getValue('name'));
+    $this->assertEquals('2011-05-31', $chapter21->getValue('created'));
 
     // copy values without pks
     $chapter22 = new Chapter(new ObjectId('Chapter', 23));
-    $chapter22->setName('Chapter 2');
-    $chapter1->setCreated('2011-05-31');
+    $chapter22->setValue('name', 'Chapter 2');
+    $chapter1->setValue('created', '2011-05-31');
     $chapter1->copyValues($chapter22, true);
     $this->assertEquals('app.src.model.Chapter:12', $chapter22->getOID()->__toString());
-    $this->assertEquals('Chapter 1', $chapter22->getName());
-    $this->assertEquals('2011-05-31', $chapter22->getCreated());
+    $this->assertEquals('Chapter 1', $chapter22->getValue('name'));
+    $this->assertEquals('2011-05-31', $chapter22->getValue('created'));
 
     TestUtil::runAnonymous(false);
   }
@@ -79,18 +79,18 @@ class PersistentObjectTest extends DatabaseTestCase {
   public function testMergeValues() {
     TestUtil::runAnonymous(true);
     $chapter1 = new Chapter(new ObjectId('Chapter', 12));
-    $chapter1->setName('Chapter 1');
-    $chapter1->setCreated('2011-05-31');
-    $chapter1->setCreator('admin');
+    $chapter1->setValue('name', 'Chapter 1');
+    $chapter1->setValue('created', '2011-05-31');
+    $chapter1->setValue('creator', 'admin');
 
     $chapter2 = new Chapter(new ObjectId('Chapter', 23));
-    $chapter2->setName('Chapter 2');
-    $chapter1->setCreated(null);
+    $chapter2->setValue('name', 'Chapter 2');
+    $chapter1->setValue('created', null);
     $chapter2->mergeValues($chapter1);
     $this->assertEquals('app.src.model.Chapter:23', $chapter2->getOID()->__toString());
-    $this->assertEquals('Chapter 2', $chapter2->getName());
-    $this->assertEquals(null, $chapter2->getCreated());
-    $this->assertEquals('admin', $chapter2->getCreator());
+    $this->assertEquals('Chapter 2', $chapter2->getValue('name'));
+    $this->assertEquals(null, $chapter2->getValue('created'));
+    $this->assertEquals('admin', $chapter2->getValue('creator'));
 
     TestUtil::runAnonymous(false);
   }
@@ -98,13 +98,13 @@ class PersistentObjectTest extends DatabaseTestCase {
   public function testClearValues() {
     TestUtil::runAnonymous(true);
     $chapter1 = new Chapter(new ObjectId('Chapter', 12));
-    $chapter1->setName('Chapter 1');
-    $chapter1->setCreated('2011-05-31');
+    $chapter1->setValue('name', 'Chapter 1');
+    $chapter1->setValue('created', '2011-05-31');
 
     $chapter1->clearValues();
     $this->assertEquals('app.src.model.Chapter:12', $chapter1->getOID()->__toString());
-    $this->assertEquals(null, $chapter1->getName());
-    $this->assertEquals(null, $chapter1->getCreated());
+    $this->assertEquals(null, $chapter1->getValue('name'));
+    $this->assertEquals(null, $chapter1->getValue('created'));
 
     TestUtil::runAnonymous(false);
   }
@@ -114,11 +114,11 @@ class PersistentObjectTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $chapterPartially = $persistenceFacade->load(ObjectId::parse('Chapter:99'), BuildDepth::SINGLE, array('Chapter' => array()));
     $this->assertFalse($chapterPartially->hasValue('sortkey'));
-    $this->assertEquals(null, $chapterPartially->getSortkey());
+    $this->assertEquals(null, $chapterPartially->getValue('sortkey'));
 
     $chapterComplete = $persistenceFacade->load(ObjectId::parse('Chapter:99'), BuildDepth::SINGLE);
     $this->assertTrue($chapterPartially->hasValue('sortkey'));
-    $this->assertEquals(99, $chapterComplete->getSortkey());
+    $this->assertEquals(99, $chapterComplete->getValue('sortkey'));
 
     TestUtil::runAnonymous(false);
   }

@@ -163,8 +163,8 @@ class DefaultLocalization implements Localization {
     else {
       $query = new ObjectQuery($this->_translationType);
       $tpl = $query->getObjectTemplate($this->_translationType);
-      $tpl->setObjectid(Criteria::asValue('=', $object->getOID()->__toString()));
-      $tpl->setLanguage(Criteria::asValue('=', $lang));
+      $tpl->setValue('objectid', Criteria::asValue('=', $object->getOID()->__toString()));
+      $tpl->setValue('language', Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
 
       // set the translated values in the object
@@ -203,8 +203,8 @@ class DefaultLocalization implements Localization {
       // get the existing translations for the requested language
       $query = new ObjectQuery($this->_translationType);
       $tpl = $query->getObjectTemplate($this->_translationType);
-      $tpl->setObjectid(Criteria::asValue('=', $object->getOID()->__toString()));
-      $tpl->setLanguage(Criteria::asValue('=', $lang));
+      $tpl->setValue('objectid', Criteria::asValue('=', $object->getOID()->__toString()));
+      $tpl->setValue('language', Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
 
       // save the translations, ignore pk values
@@ -243,9 +243,9 @@ class DefaultLocalization implements Localization {
       // get the existing translations for the requested language or all languages
       $query = new ObjectQuery($this->_translationType);
       $tpl = $query->getObjectTemplate($this->_translationType);
-      $tpl->setObjectid(Criteria::asValue('=', $oid->__toString()));
+      $tpl->setValue('objectid', Criteria::asValue('=', $oid->__toString()));
       if ($lang != null) {
-        $tpl->setLanguage(Criteria::asValue('=', $lang));
+        $tpl->setValue('language', Criteria::asValue('=', $lang));
       }
       $translations = $query->execute(BuildDepth::SINGLE);
 
@@ -269,7 +269,7 @@ class DefaultLocalization implements Localization {
       // get the existing translations for the requested language
       $query = new ObjectQuery($this->_translationType);
       $tpl = $query->getObjectTemplate($this->_translationType);
-      $tpl->setLanguage(Criteria::asValue('=', $lang));
+      $tpl->setValue('language', Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
 
       // delete the found tranlations
@@ -297,9 +297,9 @@ class DefaultLocalization implements Localization {
       }
       // translate the value
       for ($i=0, $count=sizeof($translations); $i<$count; $i++) {
-        $curValueName = $translations[$i]->getAttribute();
+        $curValueName = $translations[$i]->getValue('attribute');
         if ($curValueName == $valueName) {
-          $translation = $translations[$i]->getTranslation();
+          $translation = $translations[$i]->getValue('translation');
           if (!($useDefaults && strlen($translation) == 0)) {
             $object->setValue($valueName, $translation, true);
           }
@@ -327,7 +327,7 @@ class DefaultLocalization implements Localization {
 
         // check if a translation already exists
         for ($i=0, $count=sizeof($existingTranslations); $i<$count; $i++) {
-          $curValueName = $existingTranslations[$i]->getAttribute();
+          $curValueName = $existingTranslations[$i]->getValue('attribute');
           if ($curValueName == $valueName) {
             $translation = &$existingTranslations[$i];
             break;
@@ -341,10 +341,10 @@ class DefaultLocalization implements Localization {
         }
 
         // set all required properties
-        $translation->setObjectid($object->getOID()->__toString());
-        $translation->setAttribute($valueName);
-        $translation->setTranslation($object->getValue($valueName));
-        $translation->setLanguage($lang);
+        $translation->setValue('objectid', $object->getOID()->__toString());
+        $translation->setValue('attribute', $valueName);
+        $translation->setValue('translation', $object->getValue($valueName));
+        $translation->setValue('language', $lang);
       }
     }
   }

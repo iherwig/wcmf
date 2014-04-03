@@ -79,116 +79,12 @@ class NMPublisherAuthorBase extends Node {
     }
 
     /**
-     * Get the value of the id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('id'); }
-      else { $value = $this->getValue('id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the id attribute
-     * @param id The value to set
-     */
-    public function setId($id) {
-      return $this->setValue('id', $id);
-    }
-    /**
-     * Get the value of the fk_author_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkAuthorId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_author_id'); }
-      else { $value = $this->getValue('fk_author_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_author_id attribute
-     * @param fk_author_id The value to set
-     */
-    public function setFkAuthorId($fk_author_id) {
-      return $this->setValue('fk_author_id', $fk_author_id);
-    }
-    /**
-     * Get the value of the fk_publisher_id attribute
-     * @param unconverted Boolean wether to get the converted or stored value (default: false)
-     * @return Mixed
-     */
-    public function getFkPublisherId($unconverted=false) {
-      $value = null;
-      if ($unconverted) { $value = $this->getUnconvertedValue('fk_publisher_id'); }
-      else { $value = $this->getValue('fk_publisher_id'); }
-      return $value;
-    }
-
-    /**
-     * Set the value of the fk_publisher_id attribute
-     * @param fk_publisher_id The value to set
-     */
-    public function setFkPublisherId($fk_publisher_id) {
-      return $this->setValue('fk_publisher_id', $fk_publisher_id);
-    }
-    /**
-     * Get the sortkey for the Publisher relation
-     * @return Number
-     */
-    public function getSortkeyPublisher() {
-      return $this->getValue('sortkey_publisher');
-    }
-
-    /**
-     * Set the sortkey for the Publisher relation
-     * @param sortkey The sortkey value
-     */
-    public function setSortkeyPublisher($sortkey) {
-      return $this->setValue('sortkey_publisher', $sortkey);
-    }
-    /**
-     * Get the sortkey for the Author relation
-     * @return Number
-     */
-    public function getSortkeyAuthor() {
-      return $this->getValue('sortkey_author');
-    }
-
-    /**
-     * Set the sortkey for the Author relation
-     * @param sortkey The sortkey value
-     */
-    public function setSortkeyAuthor($sortkey) {
-      return $this->setValue('sortkey_author', $sortkey);
-    }
-
-    /**
-     * Get the default sortkey
-     * @return Number
-     */
-    public function getSortkey() {
-      return $this->getValue('sortkey');
-    }
-
-    /**
-     * Set the default sortkey
-     * @param sortkey The sortkey value
-     */
-    public function setSortkey($sortkey) {
-      return $this->setValue('sortkey', $sortkey);
-    }
-     
-    /**
      * Get the Publisher instances in the Publisher relation
      * @return Array of Publisher instances
      */
     public function getPublisherList() {
       return $this->getParentsEx(null, 'Publisher');
-        }
+    }
 
     /**
      * Set the Publisher instances in the Publisher relation
@@ -199,14 +95,14 @@ class NMPublisherAuthorBase extends Node {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Publisher');
       }
-      }
+    }
     /**
      * Get the Author instances in the Author relation
      * @return Array of Author instances
      */
     public function getAuthorList() {
       return $this->getParentsEx(null, 'Author');
-        }
+    }
 
     /**
      * Set the Author instances in the Author relation
@@ -217,6 +113,6 @@ class NMPublisherAuthorBase extends Node {
       foreach ($nodeList as $node) {
         $this->addNode($node, 'Author');
       }
-      }
+    }
 }
 ?>

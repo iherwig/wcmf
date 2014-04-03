@@ -239,7 +239,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       return $id;
     }
     catch (Exception $ex) {
-      Log::error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
+      Log::error("The next id query caused the following exception:\n".$ex->getMessage(), __CLASS__);
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
   }

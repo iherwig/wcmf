@@ -48,6 +48,34 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
+   * @see User::setLogin()
+   */
+  public function setLogin($login) {
+    $this->setValue('login', $login);
+  }
+
+  /**
+   * @see User::getLogin()
+   */
+  public function getLogin() {
+    return $this->getValue('login');
+  }
+
+  /**
+   * @see User::setPassword()
+   */
+  public function setPassword($password) {
+    $this->setValue('password', $password);
+  }
+
+  /**
+   * @see User::getPassword()
+   */
+  public function getPassword() {
+    return $this->getValue('password');
+  }
+
+  /**
    * @see User::hashPassword()
    */
   public function hashPassword($password) {
@@ -59,6 +87,20 @@ abstract class AbstractUser extends Node implements User {
    */
   public function verifyPassword($password, $passwordHash) {
     return password_verify($password, $passwordHash);
+  }
+
+  /**
+   * @see User::setConfig()
+   */
+  public function setConfig($config) {
+    $this->setValue('config', $config);
+  }
+
+  /**
+   * @see User::getConfig()
+   */
+  public function getConfig() {
+    return $this->getValue('config');
   }
 
   /**

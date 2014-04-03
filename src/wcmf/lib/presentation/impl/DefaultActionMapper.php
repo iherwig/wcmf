@@ -62,7 +62,7 @@ class DefaultActionMapper implements ActionMapper {
         throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
       }
       else {
-        $login = $authUser->getName();
+        $login = $authUser->getLogin();
         Log::error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$login."'", __CLASS__);
         throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
       }
