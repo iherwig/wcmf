@@ -17,7 +17,6 @@
 namespace wcmf\lib\presentation\format;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\io\EncodingUtil;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
@@ -32,19 +31,9 @@ class Formatter {
 
   /**
    * Deserialize Request data into objects.
-   * @note UTF-8 encoded request data is decoded automatically
    * @param request A reference to the Request instance
    */
   public static function deserialize(Request $request) {
-
-    // decode UTF-8
-    $data = $request->getValues();
-    foreach ($data as $key => $value) {
-      if (is_string($value) && EncodingUtil::isUtf8($value)) {
-        $data[$key] = EncodingUtil::convertCp1252Utf8ToIso($value);
-      }
-    }
-    $request->setValues($data);
 
     // get the formatter that should be used for this request format
     $format = $request->getFormat();

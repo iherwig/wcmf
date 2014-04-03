@@ -92,7 +92,7 @@ define([
                     this.entity = new Entity(loadResults[0]);
                     this.original = this.isTranslation ? loadResults[1] : {};
                     this.buildForm();
-                    this.setTitle(this.title+" - "+Model.getDisplayValue(this.entity));
+                    this.setTitle(this.title+" - "+Entity.getDisplayValue(this.entity));
                 }), lang.hitch(this, function(error) {
                     // error
                     this.showBackendError(error);
@@ -112,7 +112,7 @@ define([
 
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                    this.setTitle(this.title+" - "+Model.getDisplayValue(data.entity));
+                    this.setTitle(this.title+" - "+Entity.getDisplayValue(data.entity));
                 })),
                 topic.subscribe('ui/_include/widget/GridWidget/error', lang.hitch(this, function(error) {
                     this.showBackendError(error);
@@ -126,7 +126,7 @@ define([
                 new ConfirmDlg({
                     title: Dict.translate("Confirm Leave Page"),
                     message: Dict.translate("'%0%' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
-                        [Model.getDisplayValue(this.entity)]),
+                        [Entity.getDisplayValue(this.entity)]),
                     okCallback: lang.hitch(this, function(dlg) {
                         deferred.resolve(true);
                     }),

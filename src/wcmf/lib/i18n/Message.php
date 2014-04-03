@@ -132,12 +132,7 @@ class Message {
       if (file_exists($messageFile)) {
         require_once($messageFile);
         // store for later reference
-        $messages = ${"messages_$lang"};
-        $encodedMessage = array();
-        foreach ($messages as $key => $value) {
-          $encodedMessage[utf8_encode($key)] = utf8_encode($value);
-        }
-        self::$translations[$lang] = $encodedMessage;
+        self::$translations[$lang] = ${"messages_$lang"};
       }
       else {
         self::$translations[$lang] = array();

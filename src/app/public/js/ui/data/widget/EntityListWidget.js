@@ -10,6 +10,7 @@ define( [
     "../../_include/widget/Button",
     "../../../model/meta/Model",
     "../../../persistence/Store",
+    "../../../persistence/Entity",
     "../../../action/Create",
     "../../../action/Edit",
     "../../../action/Copy",
@@ -29,6 +30,7 @@ function(
     Button,
     Model,
     Store,
+    Entity,
     Create,
     Edit,
     Copy,
@@ -90,7 +92,7 @@ function(
                     // success
                     this.showNotification({
                         type: "ok",
-                        message: Dict.translate("'%0%' was successfully copied", [Model.getDisplayValue(data)]),
+                        message: Dict.translate("'%0%' was successfully copied", [Entity.getDisplayValue(data)]),
                         fadeOut: true
                     });
                 }),
@@ -109,7 +111,7 @@ function(
                     // success
                     this.showNotification({
                         type: "ok",
-                        message: Dict.translate("'%0%' was successfully deleted", [Model.getDisplayValue(data)]),
+                        message: Dict.translate("'%0%' was successfully deleted", [Entity.getDisplayValue(data)]),
                         fadeOut: true
                     });
                 }),

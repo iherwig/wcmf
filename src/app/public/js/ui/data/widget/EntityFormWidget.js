@@ -21,6 +21,7 @@ define( [
     "../../../persistence/BackendError",
     "../../../persistence/Store",
     "../../../persistence/RelationStore",
+    "../../../persistence/Entity",
     "../../../action/Delete",
     "../../../locale/Dictionary",
     "../input/Factory",
@@ -50,6 +51,7 @@ function(
     BackendError,
     Store,
     RelationStore,
+    Entity,
     Delete,
     Dict,
     ControlFactory,
@@ -92,7 +94,7 @@ function(
             this.type = Model.getTypeNameFromOid(this.entity.oid);
             this.formId = "entityForm_"+this.entity.oid;
             this.fieldContainerId = "fieldContainer_"+this.entity.oid;
-            this.headline = Model.getDisplayValue(this.entity);
+            this.headline = Entity.getDisplayValue(this.entity);
             this.isNew = Model.isDummyOid(this.entity.oid);
             this.isTranslation = this.language !== appConfig.defaultLanguage;
 
@@ -366,8 +368,8 @@ function(
                             this.attributeWidgets[i].setDirty(false);
                         }
 
-                        var message = this.isNew ? Dict.translate("'%0%' was successfully created", [Model.getDisplayValue(this.entity)]) :
-                                Dict.translate("'%0%' was successfully updated", [Model.getDisplayValue(this.entity)]);
+                        var message = this.isNew ? Dict.translate("'%0%' was successfully created", [Entity.getDisplayValue(this.entity)]) :
+                                Dict.translate("'%0%' was successfully updated", [Entity.getDisplayValue(this.entity)]);
                         this.showNotification({
                             type: "ok",
                             message: message,
@@ -394,7 +396,7 @@ function(
                                 }
                             })
                         });
-                        this.set("headline", Model.getDisplayValue(this.entity));
+                        this.set("headline", Entity.getDisplayValue(this.entity));
                         this.setModified(false);
                         this.acquireLock();
                     }

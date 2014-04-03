@@ -2,12 +2,16 @@ define([
     "dojo/_base/declare",
     "dojo/topic",
     "dojo/Stateful",
-    "../model/meta/Model"
+    "../model/meta/Model",
+    "../locale/Dictionary",
+    "../ui/data/display/Renderer"
 ], function(
     declare,
     topic,
     Stateful,
-    Model
+    Model,
+    Dict,
+    Renderer
 ) {
     /**
      * Entity inherits observer capabilities from Stateful
@@ -15,7 +19,7 @@ define([
      * Entities may exist in different states (clean, dirty, new, deleted).
      * If the state changes a entity-statechange event is emitted.
      */
-    return declare([Stateful], {
+    var Entity = declare([Stateful], {
 
         _state: "clean", /* clean, dirty, new, deleted */
 
@@ -58,6 +62,10 @@ define([
             return this.get("_state");
         },
 
+        getDisplayValue: function() {
+            return Entity.getDisplayValue(this);
+        },
+
         setDefaults: function() {
             var typeClass = Model.getTypeFromOid(this.oid);
             var attributes = typeClass.getAttributes();
@@ -79,4 +87,34 @@ define([
             return copy;
         }
   });
+
+    /**
+     * Get the display value of an object.
+     * @param object The object
+     * @return String
+     */
+    Entity.getDisplayValue = function(object) {
+        var result = '';
+        var type = Model.getTypeFromOid(object.oid);
+        if (type) {
+            if (Model.isDummyOid(object.oid)) {
+                result = Dict.translate("New %0%",
+                    [Dict.translate(Model.getSimpleTypeName(type.typeName))]);
+            }
+            else {
+                for (var i=0; i<type.displayValues.length; i++) {
+                    var curValue = type.displayValues[i];
+                    var curAttribute = type.getAttribute(curValue);
+                    result += Renderer.render(object[curValue], curAttribute)+" | ";
+                }
+                result = result.substring(0, result.length-3);
+            }
+        }
+        else {
+            result = object.oid || "unknown";
+        }
+        return result;
+    };
+
+    return Entity;
 });

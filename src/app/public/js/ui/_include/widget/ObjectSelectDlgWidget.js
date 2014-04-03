@@ -17,7 +17,7 @@ define([
      * new ObjectSelectDlg({
      *      type: "Author",
      *      title: "Choose Objects",
-     *      message: "Select objects, you want to link to '"+Model.getDisplayValue(data)+"'",
+     *      message: "Select objects, you want to link to '"+Entity.getDisplayValue(data)+"'",
      *      okCallback: function() {
      *          // will be called when OK button is clicked
      *          var deferred = new Deferred();

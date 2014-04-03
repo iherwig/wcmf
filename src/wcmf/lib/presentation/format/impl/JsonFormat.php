@@ -18,7 +18,6 @@ namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\io\EncodingUtil;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 
@@ -47,7 +46,6 @@ class JsonFormat extends HierarchicalFormat {
     if (self::$_jsonUsed) {
       $data = self::$_jsonData;
       if ($data != null) {
-        $data = EncodingUtil::utf8EncodeMix(($data));
         $encoded = json_encode($data);
         if (Log::isDebugEnabled('JsonFormat')) {
           Log::debug($data, 'JsonFormat');

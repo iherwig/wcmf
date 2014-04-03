@@ -175,7 +175,7 @@ define([
                     autoSave: true,
                     sortable: true,
                     formatter: lang.hitch(curAttributeDef, function(value) {
-                        return Renderer.render(value, this.displayType);
+                        return Renderer.render(value, this);
                     })
                 }));
             }

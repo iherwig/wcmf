@@ -1,14 +1,18 @@
 define( [
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dojo/_base/array",
     "dojo/Deferred",
+    "dojo/when",
     "../../../model/meta/Model",
     "../../../persistence/ListStore"
 ],
 function(
     declare,
+    lang,
     array,
     Deferred,
+    when,
     Model,
     ListStore
 ) {
@@ -86,12 +90,50 @@ function(
      * @returns Store
      */
     Factory.getListStore = function(inputType) {
-        var parts = inputType.split("#");
-        if (parts.length === 1) {
+        var listDef = Factory.getListDefinition(inputType);
+        if (!listDef) {
             throw "Input type '"+inputType+"' does not contain a list definition";
         }
-        var listDef = parts[1];
         return ListStore.getStore(listDef, appConfig.defaultLanguage);
+    };
+
+    /**
+     * Translate the given value according to the list definition that
+     * might be contained in the input type
+     * @param inputType The input type (contains the list definition after '#' char)
+     * @param value The value
+     * @returns Deferred
+     */
+    Factory.translateValue = function(inputType, value) {
+        var deferred = new Deferred();
+        var listDef = Factory.getListDefinition(inputType);
+        if (listDef) {
+            var store = ListStore.getStore(listDef, appConfig.defaultLanguage);
+            when(store.query(), lang.hitch(value, function(list) {
+                for (var i=0, c=list.length; i<c; i++) {
+                    var item = list[i];
+                    // intentionally ==
+                    if (store.getIdentity(item) == this) {
+                        deferred.resolve(item.displayText);
+                    }
+                }
+                deferred.resolve(this);
+            }));
+        }
+        else {
+            deferred.resolve(value);
+        }
+        return deferred;
+    };
+
+    /**
+     * Get the list definition from the given input type
+     * @param inputType The input type
+     * @returns String or null, if no list input type
+     */
+    Factory.getListDefinition = function(inputType) {
+        var parts = inputType.split("#");
+        return parts.length === 2 ? parts[1] : null;
     };
 
     return Factory;

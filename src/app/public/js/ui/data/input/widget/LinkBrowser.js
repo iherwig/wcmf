@@ -3,7 +3,7 @@ define( [
     "dojo/_base/lang",
     "../../../_include/widget/Button",
     "../../../_include/widget/ConfirmDlgWidget",
-    "../../../../model/meta/Model",
+    "../../../../persistence/Entity",
     "../../../../locale/Dictionary",
     "./_BrowserControl"
 ],
@@ -12,7 +12,7 @@ function(
     lang,
     Button,
     ConfirmDlg,
-    Model,
+    Entity,
     Dict,
     _BrowserControl
 ) {
@@ -33,7 +33,7 @@ function(
                             new ConfirmDlg({
                                 title: Dict.translate("Confirm Leave Page"),
                                 message: Dict.translate("'%0%' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
-                                    [Model.getDisplayValue(this.entity)]),
+                                    [Entity.getDisplayValue(this.entity)]),
                                 okCallback: lang.hitch(this, function(dlg) {
                                     location.href = url;
                                 })

@@ -21,15 +21,15 @@ function(
     });
 
     /**
-     * Render the given value according to the given display type.
+     * Render the given value according to the given attribute definition.
      * @param value The value
-     * @param displayType The display type
+     * @param attribute The attribute definition
      * @returns String
      */
-    Renderer.render = function(value, displayType) {
-        var renderer = Renderer.getRenderer(displayType);
+    Renderer.render = function(value, attribute) {
+        var renderer = Renderer.getRenderer(attribute.displayType);
         if (renderer instanceof Function) {
-            return renderer(value);
+            return renderer(value, attribute);
         }
         return value;
     };

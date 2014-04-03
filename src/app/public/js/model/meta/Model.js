@@ -1,13 +1,9 @@
 define([
     "dojo/_base/declare",
-    "../types/_TypeList",
-    "../../locale/Dictionary",
-    "../../ui/data/display/Renderer"
+    "../types/_TypeList"
 ], function(
     declare,
-    TypeList,
-    Dict,
-    Renderer
+    TypeList
 ) {
     var Model = declare(null, {
     });
@@ -113,34 +109,6 @@ define([
      */
     Model.getOid = function(type, id) {
         return Model.getFullyQualifiedTypeName(type)+":"+id;
-    };
-
-    /**
-     * Get the display value of an object.
-     * @param object The object
-     * @return String
-     */
-    Model.getDisplayValue = function(object) {
-        var result = '';
-        var type = Model.getTypeFromOid(object.oid);
-        if (type) {
-            if (Model.isDummyOid(object.oid)) {
-                result = Dict.translate("New %0%",
-                    [Dict.translate(Model.getSimpleTypeName(type.typeName))]);
-            }
-            else {
-                for (var i=0; i<type.displayValues.length; i++) {
-                    var curValue = type.displayValues[i];
-                    var curAttribute = type.getAttribute(curValue);
-                    result += Renderer.render(object[curValue], curAttribute.displayType)+" | ";
-                }
-                result = result.substring(0, result.length-3);
-            }
-        }
-        else {
-            result = object.oid || "unknown";
-        }
-        return result;
     };
 
     /**

@@ -53,7 +53,7 @@ use wcmf\lib\util\Obfuscator;
  * @param[in] renderValues Boolean whether to render the values using NodeUtil::renderValues or not
  *              (optional, default: false)
  * @param[in] completeObjects Boolean whether to return all object attributes objects or only the display values
- *              using NodeUtil::removeNonDisplayValues (optional, default: false)
+ *              using NodeUtil::removeNonDisplayValues (optional, default: true)
 
  * @param[out] list The list of objects according to the given input parameters
  * @param[out] totalCount The total number of instances matching the passed parameters
@@ -208,7 +208,7 @@ class ListController extends Controller {
     // TODO: put this into subclass ListController
 
     // remove all attributes except for display_values
-    if ($request->getBooleanValue('completeObjects', false) == false) {
+    if ($request->getBooleanValue('completeObjects', true) == false) {
       for($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         NodeUtil::removeNonDisplayValues($nodes[$i]);
       }

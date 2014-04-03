@@ -16,7 +16,6 @@
  */
 namespace wcmf\lib\presentation\format\impl;
 
-use wcmf\lib\io\EncodingUtil;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Request;
@@ -83,12 +82,6 @@ abstract class HierarchicalFormat extends AbstractFormat {
             $values[$key] = $result;
           }
         }
-        else {
-          // string value
-          if (is_string($value) && EncodingUtil::isUtf8($value)) {
-            $values[$key] = EncodingUtil::convertCp1252Utf8ToIso($value);
-          }
-        }
       }
     }
     return $values;
@@ -113,12 +106,6 @@ abstract class HierarchicalFormat extends AbstractFormat {
           }
           else {
             $values[$key] = $result;
-          }
-        }
-        else {
-          // string value
-          if (is_string($value) && EncodingUtil::isUtf8($value)) {
-            $values[$key] = EncodingUtil::convertCp1252Utf8ToIso($value);
           }
         }
       }

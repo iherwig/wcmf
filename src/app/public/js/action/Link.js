@@ -5,7 +5,7 @@ define([
     "./ActionBase",
     "../ui/_include/widget/ObjectSelectDlgWidget",
     "../persistence/RelationStore",
-    "../model/meta/Model",
+    "../persistence/Entity",
     "../locale/Dictionary"
 ], function (
     declare,
@@ -14,7 +14,7 @@ define([
     ActionBase,
     ObjectSelectDlg,
     RelationStore,
-    Model,
+    Entity,
     Dict
 ) {
     return declare([ActionBase], {
@@ -39,7 +39,7 @@ define([
                 type: this.relation.type,
                 title: Dict.translate("Choose Objects"),
                 message: Dict.translate("Select '%0%' objects, you want to link to '%1%'",
-                    [Dict.translate(this.relation.type), Model.getDisplayValue(this.source)]),
+                    [Dict.translate(this.relation.type), Entity.getDisplayValue(this.source)]),
                 okCallback: lang.hitch(this, function(dlg) {
                     var store = RelationStore.getStore(this.source.oid, this.relation.name);
 

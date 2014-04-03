@@ -2,7 +2,7 @@ define([
 ],
 function(
 ) {
-    return function(value) {
-        return '<img src="'+value+'" class="thumb">';
+    return function(value, attribute) {
+        return '<a href="'+value+'" target="_blank"><img src="'+value+'" class="thumb"></a>';
     };
 });
