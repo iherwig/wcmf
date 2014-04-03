@@ -1,6 +1,6 @@
 define([
     "dojo/_base/declare",
-    "./_TypeList",
+    "../types/_TypeList",
     "../../locale/Dictionary",
     "../../ui/data/display/Renderer"
 ], function(
