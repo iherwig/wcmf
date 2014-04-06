@@ -77,6 +77,10 @@ body {
   text-shadow: none;
 }
 
+.dgrid .dgrid-cell .dijitInputField {
+  margin-top: -8px;
+}
+
 .dgrid-cell-padding {
   padding: 6px;
 }

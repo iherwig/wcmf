@@ -21,6 +21,7 @@ define([
     "dojo/window",
     "dojo/topic",
     "dojo/on",
+    "dojo/when",
     "dojo/has",
     "../../../model/meta/Model",
     "../../../locale/Dictionary",
@@ -50,6 +51,7 @@ define([
     win,
     topic,
     on,
+    when,
     has,
     Model,
     Dict,
@@ -174,8 +176,10 @@ define([
                     }) : function(obj, value) {return false; },
                     autoSave: true,
                     sortable: true,
-                    formatter: lang.hitch(curAttributeDef, function(value) {
-                        return Renderer.render(value, this);
+                    renderCell: lang.hitch(curAttributeDef, function(object, data, td, options) {
+                        when(Renderer.render(data, this), function(value) {
+                            td.innerHTML = value;
+                        });
                     })
                 }));
             }

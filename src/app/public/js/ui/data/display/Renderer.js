@@ -24,12 +24,13 @@ function(
      * Render the given value according to the given attribute definition.
      * @param value The value
      * @param attribute The attribute definition
-     * @returns String
+     * @param synch Boolean, if true, return a string immediatly
+     * @returns Deferred/String
      */
-    Renderer.render = function(value, attribute) {
+    Renderer.render = function(value, attribute, synch) {
         var renderer = Renderer.getRenderer(attribute.displayType);
         if (renderer instanceof Function) {
-            return renderer(value, attribute);
+            return renderer(value, attribute, synch);
         }
         return value;
     };

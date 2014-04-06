@@ -37,6 +37,8 @@ function(
         multiValued: true,
 
         spinnerNode: null,
+        itemWidgets: {},
+        listenToWidgetChanges: true,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -61,12 +63,17 @@ function(
             when(this.store.query(), lang.hitch(this, function(list) {
                 this.hideSpinner();
                 for (var i=0, c=list.length; i<c; i++) {
-                    var itemWidget = this.buildItemWidget(list[i]);
+                    var item = list[i];
+                    var itemId = this.store.getIdentity(item);
+                    var itemWidget = this.buildItemWidget(item);
                     this.own(
                         on(itemWidget, "change", function(isSelected) {
-                            _control.updateValue(this.value, isSelected);
+                            if (_control.listenToWidgetChanges) {
+                                _control.updateValue(this.value, isSelected);
+                            }
                         })
                     );
+                    this.itemWidgets[itemId] = itemWidget;
                 }
             }));
 
@@ -76,6 +83,19 @@ function(
                     if (data.name === this.attribute.name) {
                         this.set("value", data.newValue);
                     }
+                })),
+                on(this, "attrmodified-value", lang.hitch(this, function(e){
+                    // update item widgets
+                    var oldListenValue = this.listenToWidgetChanges;
+                    this.listenToWidgetChanges = false;
+                    var value = e.detail.newValue;
+                    var values = value.split(",");
+                    for (var itemId in this.itemWidgets) {
+                        var widget = this.itemWidgets[itemId];
+                        var isChecked = array.indexOf(values, itemId) !== -1;
+                        widget.set("checked", isChecked);
+                    }
+                    this.listenToWidgetChanges = oldListenValue;
                 }))
             );
         },

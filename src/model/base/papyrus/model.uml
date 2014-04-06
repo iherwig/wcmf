@@ -589,6 +589,9 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fi_lgLRIEeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_fjAzoLRIEeOQ5oJFa1i8cg" value="app/js/ui/data/display/renderer/Color"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_o0qxAL1jEeO1KMg8cXW3Mg" name="date" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_sUwMkL1jEeO1KMg8cXW3Mg" value="app/js/ui/data/display/renderer/Date"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_nvfmsLRlEeOfbtYsPp7Oyg" name="InputTypes">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_v3JqULRlEeOfbtYsPp7Oyg" name="checkbox" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
@@ -1326,9 +1329,9 @@
   <Chronos:ChiSystem xmi:id="_v3idwLQWEeOIMOFxCilDfw" plattform="wcmf" config="server.ini" base_Class="_sYqjILQWEeOIMOFxCilDfw"/>
   <Chronos:ChiSystem xmi:id="__sbsULQ2EeOQ5oJFa1i8cg" plattform="wcmf" config="server.ini" base_Class="_4Y0UwLQ2EeOQ5oJFa1i8cg"/>
   <Chronos:ChiNode xmi:id="_4B7M0LQ4EeOQ5oJFa1i8cg" base_Class="_ylwfELQ4EeOQ5oJFa1i8cg"/>
-  <Chronos:ChiValue xmi:id="_Hrj0ILQ5EeOQ5oJFa1i8cg" db_data_type="DATETIME" input_type="date" base_Property="_GAGX4LQ5EeOQ5oJFa1i8cg"/>
+  <Chronos:ChiValue xmi:id="_Hrj0ILQ5EeOQ5oJFa1i8cg" db_data_type="DATETIME" base_Property="_GAGX4LQ5EeOQ5oJFa1i8cg"/>
   <Chronos:ChiValue xmi:id="_RRfzoLQ5EeOQ5oJFa1i8cg" base_Property="_QGL3ELQ5EeOQ5oJFa1i8cg"/>
-  <Chronos:ChiValue xmi:id="_WYoFgLQ5EeOQ5oJFa1i8cg" db_data_type="DATETIME" input_type="date" base_Property="_VDL8kLQ5EeOQ5oJFa1i8cg"/>
+  <Chronos:ChiValue xmi:id="_WYoFgLQ5EeOQ5oJFa1i8cg" db_data_type="DATETIME" base_Property="_VDL8kLQ5EeOQ5oJFa1i8cg"/>
   <Chronos:ChiValue xmi:id="_bCo9kLQ5EeOQ5oJFa1i8cg" base_Property="_Z6PLELQ5EeOQ5oJFa1i8cg"/>
   <Chronos:ChiSystem xmi:id="_e9d-8LQ6EeOQ5oJFa1i8cg" plattform="wcmf" config="server.ini" base_Class="_bbJHsLQ6EeOQ5oJFa1i8cg"/>
   <Chronos:ChiSystem xmi:id="__0gtcLQ6EeOQ5oJFa1i8cg" plattform="wcmf" config="server.ini" base_Class="_92pSkLQ6EeOQ5oJFa1i8cg"/>

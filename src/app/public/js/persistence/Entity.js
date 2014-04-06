@@ -105,7 +105,7 @@ define([
                 for (var i=0; i<type.displayValues.length; i++) {
                     var curValue = type.displayValues[i];
                     var curAttribute = type.getAttribute(curValue);
-                    result += Renderer.render(object[curValue], curAttribute)+" | ";
+                    result += Renderer.render(object[curValue], curAttribute, true)+" | ";
                 }
                 result = result.substring(0, result.length-3);
             }
