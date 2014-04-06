@@ -117,7 +117,7 @@ function(
                         deferred.resolve(item.displayText);
                     }
                 }
-                deferred.resolve(this);
+                deferred.resolve(null);
             }));
         }
         else {

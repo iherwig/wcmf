@@ -89,11 +89,13 @@ function(
                     var oldListenValue = this.listenToWidgetChanges;
                     this.listenToWidgetChanges = false;
                     var value = e.detail.newValue;
-                    var values = value.split(",");
-                    for (var itemId in this.itemWidgets) {
-                        var widget = this.itemWidgets[itemId];
-                        var isChecked = array.indexOf(values, itemId) !== -1;
-                        widget.set("checked", isChecked);
+                    if (value) {
+                        var values = value.split(",");
+                        for (var itemId in this.itemWidgets) {
+                            var widget = this.itemWidgets[itemId];
+                            var isChecked = array.indexOf(values, itemId) !== -1;
+                            widget.set("checked", isChecked);
+                        }
                     }
                     this.listenToWidgetChanges = oldListenValue;
                 }))
