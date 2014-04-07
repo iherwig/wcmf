@@ -51,6 +51,11 @@
         <include name="**"/>
       </fileset>
     </copy>
+    <copy todir="${dist.dir}/app/src">
+      <fileset dir="${build.base}src/app/src/">
+        <include name="model/EntityBase.php"/>
+      </fileset>
+    </copy>
     <copy todir="${dist.dir}/app/public/vendor">
       <fileset dir="${build.base}src/app/public/vendor/">
         <include name="dojo/dijit/**"/>
