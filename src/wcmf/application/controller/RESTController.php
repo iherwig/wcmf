@@ -382,6 +382,14 @@ class RESTController extends Controller {
         $request->setValue('insertOid', $this->getFirstRequestOid());
         $request->setValue('referenceOid', $orderReferenceOid);
         $subResponse = $this->executeSubAction('moveBefore');
+
+        // add sorted object to subresponse similar to default update action
+        $targetOidStr = $this->getFirstRequestOid();
+        $targetOid = ObjectId::parse($targetOidStr);
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $targetObj = $persistenceFacade->load($targetOid);
+        $subResponse->setValue('oid', $targetOid);
+        $subResponse->setValue($targetOidStr, $targetObj);
       }
       else {
         // update object

@@ -80,7 +80,7 @@ class EntityBase extends EntityBaseBase {
     // set the sortkey to the id value
     $mapper = $this->getMapper();
     if ($mapper->hasAttribute('sortkey')) {
-      $this->setSortkey($this->getInitialSortkey());
+      $this->setValue('sortkey', $this->getInitialSortkey());
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $persistenceFacade->getTransaction()->commit();
     }

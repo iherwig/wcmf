@@ -89,7 +89,16 @@ function(
             var unlinkAction = new Unlink({
                 page: this.page,
                 source: this.entity,
-                relation: this.relation
+                relation: this.relation,
+                callback: lang.hitch(this, function(data, result) {
+                    // success
+                    this.gridWidget.refresh();
+                }),
+                errback: lang.hitch(this, function(data, result) {
+                    // error
+                    this.showBackendError(result);
+                    this.gridWidget.refresh();
+                })
             });
 
             var deleteAction = new Delete({
@@ -130,23 +139,21 @@ function(
             // prevent the page from navigating after submit
             e.preventDefault();
 
-            var gridRefresh = new Deferred();
             new Link({
                 page: this.page,
                 source: this.entity,
                 relation: this.relation,
                 init: lang.hitch(this, function(data) {
                     this.hideNotification();
-                    this.gridWidget.postponeRefresh(gridRefresh);
                 }),
                 callback: lang.hitch(this, function(data, result) {
                     // success
-                    gridRefresh.resolve();
+                    this.gridWidget.refresh();
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // error
                     this.showBackendError(result);
-                    gridRefresh.resolve();
+                    this.gridWidget.refresh();
                 })
             }).execute(e);
         }

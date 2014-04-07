@@ -74,7 +74,7 @@ define([
         defaultFeatures: [Selection, Keyboard, ColumnHider, ColumnResizer, DijitRegistry],
         optionalFeatures: [DnD],
 
-        refreshPosponed: false,
+        dndBefore: true,
 
         constructor: function (params) {
             if (params && params.actions) {
@@ -112,26 +112,20 @@ define([
                           }
                         }
                     })),
-                    topic.subscribe("store-datachange", lang.hitch(this, function(data) {
-                        if (data.store.target === this.store.target || this.isSameType(data)) {
-                            if (!this.refreshPosponed) {
-                                this.gridWidget.refresh({
-                                    keepScrollPosition: true
-                                });
-                            }
-                        }
-                    })),
                     topic.subscribe("store-error", lang.hitch(this, function(error) {
                         topic.publish('ui/_include/widget/GridWidget/error', error);
                     })),
+                    topic.subscribe("/dnd/drop/before", lang.hitch(this, function(source, nodes, copy) {
+                        // capture correct value of "before" flag to be used in /dnd/drop handler
+                        this.dndBefore = source.before;
+                    })),
                     topic.subscribe("/dnd/drop", lang.hitch(this, function(source, nodes, copy, target) {
-                        var targetRow;
-                        var anchor = source._targetAnchor;
-                        if (anchor) {
+                        var targetRow = target._targetAnchor;
+                        if (targetRow) {
                             // drop on row
-                            targetRow = target.before ? anchor.previousSibling : anchor.nextSibling;
+                            var before = this.dndBefore;
                             nodes.forEach(function(node) {
-                                domConstruct.place(node, targetRow, source._targetAnchor ? "before" : "after");
+                                domConstruct.place(node, targetRow, before ? "before" : "after");
                             });
                         }
                         else {
@@ -288,14 +282,6 @@ define([
             this.gridWidget.refresh({
                 keepScrollPosition: true
             });
-        },
-
-        postponeRefresh: function(deferred) {
-            this.refreshPosponed = true;
-            deferred.then(lang.hitch(this, function() {
-                this.refresh();
-                this.refreshPosponed = false;
-            }));
         },
 
         onResize: function() {

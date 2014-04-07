@@ -2,7 +2,7 @@ define([
     "dojo/_base/declare",
     "dojo/store/Cache",
     "dojo/store/Memory",
-    "dojo/store/Observable",
+    "./Observable",
     "./BaseStore",
     "../model/meta/Model"
 ], function (

@@ -86,7 +86,7 @@ define([
             copy.oid = this.oid;
             return copy;
         }
-  });
+    });
 
     /**
      * Get the display value of an object.

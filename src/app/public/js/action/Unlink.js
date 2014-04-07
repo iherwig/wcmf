@@ -1,9 +1,11 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "./ActionBase",
     "../persistence/RelationStore"
 ], function (
     declare,
+    lang,
     ActionBase,
     RelationStore
 ) {
@@ -11,7 +13,7 @@ define([
 
         name: 'unlink',
         iconClass: 'fa fa-unlink',
-        
+
         source: null,
         relation: null,
 
@@ -26,7 +28,17 @@ define([
                 this.init(data);
             }
             var store = RelationStore.getStore(this.source.oid, this.relation.name);
-            var deferred = store.remove(data.oid);
+            var deferred = store.remove(data.oid).then(lang.hitch(this, function(results) {
+                // callback completes
+                if (this.callback instanceof Function) {
+                    this.callback(data, results);
+                }
+            }), lang.hitch(this, function(error) {
+                // error
+                if (this.errback instanceof Function) {
+                    this.errback(data, error);
+                }
+            }));
             return deferred;
         }
     });

@@ -3,7 +3,7 @@ define([
     "dojo/aspect",
     "dojo/when",
     "dojo/topic",
-    "dojo/store/Observable",
+    "./Observable",
     "dojo/store/JsonRest",
     "dojo/store/util/QueryResults"
 ], function (
