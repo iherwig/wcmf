@@ -68,8 +68,8 @@ class ValueListProvider {
    */
   public static function translateValue($value, $inputType, $language=null) {
     // get definition and list from inputType
-    $translated = '';
-    if (strPos($inputType, '#') && $value != '') {
+    if (strPos($inputType, '#') && strlen($value) > 0) {
+      $translated = '';
       list(, $listDef) = preg_split('/#/', $inputType, 2);
       $list = self::getList($listDef, $language);
       if (strPos($value, ',')) {
@@ -77,12 +77,14 @@ class ValueListProvider {
       }
       if (is_array($value)) {
         foreach($value as $curValue) {
-          $translated .= $list[trim($curValue)].", ";
+          $curValue = trim($curValue);
+          $translated .= (isset($list[$curValue]) ? $list[$curValue] : $value).", ";
         }
         $translated = StringUtil::removeTrailingComma($translated);
       }
       else {
-        $translated = $list[$value];
+        $value = trim($value);
+        $translated = isset($list[$value]) ? $list[$value] : $value;
       }
       return $translated;
     }

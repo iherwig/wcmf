@@ -17,7 +17,6 @@
 namespace wcmf\lib\util;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\util\URIUtil;
 
 /**
  * URIUtil provides support for uri manipulation.
