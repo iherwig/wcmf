@@ -108,9 +108,9 @@ catch (Exception $ex) {
           tlmSiblingOfDojo: 0,
           isDebug: 1,
           packages: [
-              { name: 'dojo', location: 'vendor/dojo/dojo', map: {} },
-              { name: 'dijit', location: 'vendor/dojo/dijit', map: {} },
-              { name: 'dojox', location: 'vendor/dojo/dojox', map: {} },
+              { name: 'dojo', location: 'vendor/dojo/dojo' },
+              { name: 'dijit', location: 'vendor/dojo/dijit' },
+              { name: 'dojox', location: 'vendor/dojo/dojox' },
               { name: 'routed', location: 'vendor/routed' },
               { name: 'dojomat', location: 'vendor/dojomat' },
               { name: 'dgrid', location: 'vendor/dgrid' },
@@ -119,7 +119,7 @@ catch (Exception $ex) {
               { name: 'ckeditor', location: 'vendor/ckeditor' },
               { name: 'elfinder', location: 'vendor/elfinder' },
 
-              { name: 'app', location: '.', map: {} }
+              { name: 'app', location: '.' }
           ],
           'routing-map': {
               pathPrefix: appConfig.pathPrefix

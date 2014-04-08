@@ -1,5 +1,5 @@
-define(["dojo/_base/kernel", "dojo/_base/lang", "dojo/when", "dojo/_base/array", "dojo/when" /*=====, "./api/Store" =====*/
-], function(kernel, lang, when, array, when /*=====, Store =====*/){
+define(["dojo/_base/kernel", "dojo/_base/lang", "dojo/when", "dojo/_base/array" /*=====, "./api/Store" =====*/
+], function(kernel, lang, when, array /*=====, Store =====*/){
 
 // module:
 //		dojo/store/Observable

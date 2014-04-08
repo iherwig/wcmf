@@ -30,11 +30,12 @@ var appSrc = [
     "app/js/locale/Dictionary",
     "app/js/model/meta/Model",
     "app/js/model/meta/Node",
-    "app/js/model/meta/_TypeList",
+    "app/js/model/types/_TypeList",
     "app/js/persistence/BackendError",
     "app/js/persistence/BaseStore",
     "app/js/persistence/Entity",
     "app/js/persistence/ListStore",
+    "app/js/persistence/Observable",
     "app/js/persistence/RelationStore",
     "app/js/persistence/SearchStore",
     "app/js/persistence/Store",
@@ -50,6 +51,7 @@ var appSrc = [
     "app/js/ui/data/display/renderer/Color",
     "app/js/ui/data/display/renderer/Image",
     "app/js/ui/data/display/renderer/Text",
+    "app/js/ui/data/display/renderer/Date",
     "app/js/ui/data/input/Factory",
     "app/js/ui/data/input/widget/BinaryCheckBox",
     "app/js/ui/data/input/widget/CKEditor",
@@ -77,7 +79,7 @@ var appSrc = [
     "app/js/ui/login/LoginPage",
     "app/js/ui/login/LogoutPage",
     "app/js/ui/media/BrowsePage",
-    "app/js/ui/search/SearchPage",
+    "app/js/ui/search/SearchResult",
     "app/js/ui/search/SearchResultPage",
     "app/js/ui/settings/SettingsPage",
     "app/js/ui/_include/FormLayout",
@@ -163,7 +165,7 @@ var profile = {
       { name: 'ckeditor', location: 'vendor/ckeditor', destLocation: 'vendor/ckeditor' },
       { name: 'elfinder', location: 'vendor/elfinder', destLocation: 'vendor/elfinder' },
 
-      { name: 'app', location: '.', destLocation: '.' },
+      { name: 'app', location: '.', destLocation: '.' }
     ],
 
     dirs: [
@@ -181,10 +183,18 @@ var profile = {
 
     layers: {
         'dojo/dojo': {
-            customBase: true
+            include: ["dojo/dojo", "dijit/dijit"],
+            boot: true
         },
         'app/js/App': {
-            include: appSrc
+            include: appSrc,
+            exclude: [
+                "elfinder/jquery/jquery-1.8.1.min",
+                "elfinder/jquery/jquery-ui-1.8.23.custom.min",
+                "elfinder/js/elfinder.min"
+            ]
         }
     }
 };
+
+Packages.com.google.javascript.jscomp.Compiler.setLoggingLevel(Packages.java.util.logging.Level.SEVERE);
