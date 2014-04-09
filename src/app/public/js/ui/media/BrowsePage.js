@@ -34,7 +34,7 @@ define([
             var directory = this.request.getQueryParam("directory");
             var config = {
                 lang: appConfig.defaultLanguage,
-                url: appConfig.backendUrl+'?action=browseMedia&directory='+directory+"&XDEBUG_SESSION_START=netbeans-xdebug",
+                url: appConfig.backendUrl+'?action=browseMedia&directory='+directory,
                 height: 658,
                 rememberLastDir: false,
                 resizable: false,

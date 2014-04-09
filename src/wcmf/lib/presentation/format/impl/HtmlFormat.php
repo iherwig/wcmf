@@ -79,47 +79,36 @@ class HtmlFormat extends AbstractFormat {
    * @see Format::serialize()
    */
   public function serialize(Response $response) {
-    // assign the data to the view if one exists
-    $controller = $response->getController();
-    if ($controller->hasView()) {
-      // check if a view template is defined
-      $request = $controller->getRequest();
-      $viewTpl = self::getViewTemplate($response->getSender(),
-                    $request->getContext(), $request->getAction());
-      if (!$viewTpl) {
-        throw new ConfigurationException("View definition missing for ".
-                    "request: ".$request->__toString());
-      }
-      // create the view
-      $view = ObjectFactory::getInstnace('view');
-      $view->setup();
+    // check if a view template is defined
+    $viewTpl = self::getViewTemplate($response->getSender(),
+                  $response->getContext(), $response->getAction());
+    if (!$viewTpl) {
+      throw new ConfigurationException("View definition missing for ".
+                  "response: ".$response->__toString());
+    }
+    // create the view
+    $view = ObjectFactory::getInstance('view');
 
-      // assign the response data to the view
-      $data = $response->getValues();
-      foreach (array_keys($data) as $variable) {
-        if (is_scalar($data[$variable])) {
-          $view->assign($variable, $data[$variable]);
-        }
-        else {
-          $view->assignByRef($variable, $data[$variable]);
-        }
-      }
-      // assign additional values
-      $permissionManager = ObjectFactory::getInstance('permissionManager');
-      $authUser = $permissionManager->getAuthUser();
-      $view->assignByRef('nodeUtil', new NodeUtil());
-      $view->assignByRef('obfuscator', new Obfuscator());
-      if ($authUser != null) {
-        $view->assignByRef('authUser', $authUser);
-      }
+    // assign the response data to the view
+    $data = $response->getValues();
+    foreach (array_keys($data) as $variable) {
+      $view->setValue($variable, $data[$variable]);
+    }
+    // assign additional values
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $authUser = $permissionManager->getAuthUser();
+    $view->assignByRef('nodeUtil', new NodeUtil());
+    $view->assignByRef('obfuscator', new Obfuscator());
+    if ($authUser != null) {
+      $view->assignByRef('authUser', $authUser);
+    }
 
-      // display the view
-      if ($view->caching && ($cacheId = $controller->getCacheId()) !== null) {
-        $view->display(WCMF_BASE.$viewTpl, $cacheId);
-      }
-      else {
-        $view->display(WCMF_BASE.$viewTpl);
-      }
+    // display the view
+    if ($view->caching && ($cacheId = $controller->getCacheId()) !== null) {
+      $view->display(WCMF_BASE.$viewTpl, $cacheId);
+    }
+    else {
+      $view->display(WCMF_BASE.$viewTpl);
     }
   }
 
