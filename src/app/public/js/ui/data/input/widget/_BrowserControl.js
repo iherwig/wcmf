@@ -65,7 +65,7 @@ function(
                     innerHTML: '<i class="fa fa-folder-open"></i>',
                     "class": "btn-mini",
                     onClick: lang.hitch(this, function() {
-                        window.open(this.browserUrl+'?callback='+this.callbackName, '_blank', 'width=800,height=700');
+                        window.open(this.browserUrl+'?callback='+this.callbackName+"&directory="+this.getDirectory(), '_blank', 'width=800,height=700');
                     })
                 });
                 this.addChild(browseBtn);
@@ -84,6 +84,11 @@ function(
                     this.emit("change", this);
                 }))
             );
+        },
+
+        getDirectory: function() {
+            var value = this.get("value");
+            return value ? value.replace(/[^\/]*$/, '') : '';
         },
 
         destroy: function() {

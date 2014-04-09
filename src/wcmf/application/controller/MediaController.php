@@ -90,6 +90,7 @@ class MediaController extends Controller {
       $connector = new \elFinderConnector(new \elFinder($opts));
       $connector->run();
 
+      // unreachable, since elFinder calls exit()
       $response->setAction('ok');
       return true;
     }

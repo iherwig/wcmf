@@ -217,6 +217,18 @@ th.field-actions-4, td.field-actions-4 {
   white-space: nowrap;
 }
 
+.dbootstrap .dijitCheckBox, .dbootstrap .dijitRadio {
+  color: #999;
+  padding: 0;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.dijitCheckBox, .dijitRadio, .dijitCheckBoxInput {
+  width: 15px;
+  height: 15px;
+}
+
 /* dnd */
 .dojoDndAvatarHeader {
   background-position:3px 3px !important;

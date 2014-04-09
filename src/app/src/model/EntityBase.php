@@ -1,9 +1,9 @@
 <?php
 /*
- * Copyright (c) 2013 The Olympos Development Team.
- * 
+ * Copyright (c) 2014 The Olympos Development Team.
+ *
  * http://sourceforge.net/projects/olympos/
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ use wcmf\lib\core\ObjectFactory;
 
 /**
  * @class EntityBase
- * EntityBase description: 
+ * EntityBase description:
  *
- * @author 
+ * @author
  * @version 1.0
  */
 class EntityBase extends EntityBaseBase {
@@ -35,7 +35,7 @@ class EntityBase extends EntityBaseBase {
   /**
    * Set creator and created attribute on the node.
    */
-  function beforeInsert() {
+  public function beforeInsert() {
     parent::beforeInsert();
 
     // set creation date on nodes with appropriate attribute
@@ -55,7 +55,7 @@ class EntityBase extends EntityBaseBase {
   /**
    * Set last_editor and modified attribute on the node.
    */
-  function beforeUpdate() {
+  public function beforeUpdate() {
     parent::beforeUpdate();
 
     // set modified date on nodes with appropriate attribute
@@ -73,8 +73,9 @@ class EntityBase extends EntityBaseBase {
 
   /**
    * Set the sortkey initially if existing.
+   * Invalidate cache.
    */
-  function afterInsert() {
+  public function afterInsert() {
     parent::afterInsert();
 
     // set the sortkey to the id value
@@ -90,7 +91,7 @@ class EntityBase extends EntityBaseBase {
    * Get the initial sortkey. The default implementation returns the db id.
    * @note Subclasses may override this for special requirements
    */
-  function getInitialSortkey() {
+  protected function getInitialSortkey() {
     return $this->getOID()->getFirstId();
   }
 // PROTECTED REGION END

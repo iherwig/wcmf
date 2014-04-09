@@ -52,7 +52,7 @@ try {
     'backendUrl' => $pathPrefix.'/main.php',
     'rootTypes' => $rootTypes,
     'pathPrefix' => $pathPrefix,
-    'mediaBaseUrl' => $baseHref.$mediaPath,
+    'mediaBaseUrl' => URIUtil::makeAbsolute($mediaPath, $baseHref),
     'mediaBasePath' => $mediaPath,
     'uiLanguage' => $uiLanguage,
     'defaultLanguage' => $defaultLanguage,

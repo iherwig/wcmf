@@ -31,15 +31,18 @@ define([
         postCreate: function() {
             this.inherited(arguments);
 
-            $("#elfinder").elfinder({
+            var directory = this.request.getQueryParam("directory");
+            var config = {
                 lang: appConfig.defaultLanguage,
-                url: appConfig.backendUrl+'?action=browseMedia',
+                url: appConfig.backendUrl+'?action=browseMedia&directory='+directory+"&XDEBUG_SESSION_START=netbeans-xdebug",
                 height: 658,
+                rememberLastDir: false,
                 resizable: false,
                 getFileCallback: lang.hitch(this, function(file) {
                     this.onItemClick(file);
                 })
-            }).elfinder('instance');
+            };
+            $("#elfinder").elfinder(config).elfinder('instance');
         },
 
         onItemClick: function(item) {
