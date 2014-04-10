@@ -53,7 +53,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7c_osLQ8EeOQ5oJFa1i8cg" name="cacheDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NGOwQLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NGOwQbQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_NGQlcLQ9EeOQ5oJFa1i8cg" value="../cache/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_NGQlcLQ9EeOQ5oJFa1i8cg" value="../../cache/"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7gMtsLQ8EeOQ5oJFa1i8cg" name="listeners" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OYK5QLQ9EeOQ5oJFa1i8cg" value="1"/>
@@ -65,7 +65,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_VJMhILQ9EeOQ5oJFa1i8cg" name="uploadDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Zr4pMLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Zr5QQLQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Zr6eYLQ9EeOQ5oJFa1i8cg" value="media/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Zr6eYLQ9EeOQ5oJFa1i8cg" value="../../../media/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_dXAQELQ9EeOQ5oJFa1i8cg" name="Localization">
@@ -433,7 +433,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_wBs7ALRFEeOQ5oJFa1i8cg" name="smartyDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_36omILRFEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_36pNMLRFEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_36qbULRFEeOQ5oJFa1i8cg" value="../cache/smarty/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_36qbULRFEeOQ5oJFa1i8cg" value="../../cache/smarty/"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_wEX0gLRFEeOQ5oJFa1i8cg" name="compileCheck" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_5z_UcLRFEeOQ5oJFa1i8cg" value="1"/>
