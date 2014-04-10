@@ -110,7 +110,7 @@
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_gZ5j4LQ-EeOQ5oJFa1i8cg" name="Authorization">
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_jfusYLQ-EeOQ5oJFa1i8cg" name="??fatal" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_jfusYLQ-EeOQ5oJFa1i8cg" name="??failure" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_o-jFgLQ-EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_o-jskLQ-EeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_o-k6sLQ-EeOQ5oJFa1i8cg" value="+*"/>

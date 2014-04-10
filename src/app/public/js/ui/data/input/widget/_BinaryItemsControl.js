@@ -36,8 +36,8 @@ function(
 
         multiValued: true,
 
-        spinnerNode: null,
         itemWidgets: {},
+        spinnerNode: null,
         listenToWidgetChanges: true,
 
         constructor: function(args) {
@@ -138,6 +138,18 @@ function(
                     this.set("value", value);
                     // send change event
                     this.emit("change", this);
+                }
+            }
+        },
+
+        focus: function() {
+            // focus first widget, because otherwise focus loss
+            // is not reported to grid editor resulting in empty grid value
+            for (var itemId in this.itemWidgets) {
+                var widget = this.itemWidgets[itemId];
+                if (widget.focus) {
+                    widget.focus();
+                    break;
                 }
             }
         }

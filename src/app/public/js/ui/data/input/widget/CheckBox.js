@@ -22,7 +22,8 @@ function(
             var widget = new CheckBox({
                 name: this.name,
                 value: ""+itemId,
-                checked: (this.value == itemId) // value may be string or number
+                checked: (this.value == itemId), // value may be string or number
+                disabled: !this.attribute.isEditable
             });
             widget.startup();
             this.addChild(widget);

@@ -268,6 +268,7 @@ function(
             }
             else {
                 this.setCtrlState(true);
+                this.setBtnState("delete", true);
             }
         },
 

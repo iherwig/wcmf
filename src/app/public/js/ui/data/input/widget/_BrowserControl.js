@@ -30,6 +30,8 @@ function(
 
         callbackName: null,
         browserUrl: null,
+        textbox: null,
+        listenToWidgetChanges: true,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -45,17 +47,17 @@ function(
             this.inherited(arguments);
 
             // create textbox
-            var widget = new TextBox({
+            this.textbox = new TextBox({
                 intermediateChanges: true,
                 name: this.name,
                 value: this.value
             });
-            widget.startup();
-            this.addChild(widget);
+            this.textbox.startup();
+            this.addChild(this.textbox);
 
             // create callback
-            this.callbackName = "field_cb_"+widget.id;
-            window[this.callbackName] = lang.hitch(widget, function(value) {
+            this.callbackName = "field_cb_"+this.textbox.id;
+            window[this.callbackName] = lang.hitch(this.textbox, function(value) {
                 this.set("value", value);
             });
 
@@ -78,10 +80,19 @@ function(
                         this.set("value", data.newValue);
                     }
                 })),
-                on(widget, "change", lang.hitch(this, function(value) {
-                    this.set("value", value);
-                    // send change event
-                    this.emit("change", this);
+                on(this.textbox, "change", lang.hitch(this, function(value) {
+                    if (this.listenToWidgetChanges) {
+                        this.set("value", value);
+                        // send change event
+                        this.emit("change", this);
+                    }
+                })),
+                on(this, "attrmodified-value", lang.hitch(this, function(e) {
+                    // update textbox
+                    var oldListenValue = this.listenToWidgetChanges;
+                    this.listenToWidgetChanges = false;
+                    this.textbox.set("value", e.detail.newValue);
+                    this.listenToWidgetChanges = oldListenValue;
                 }))
             );
         },
@@ -96,6 +107,12 @@ function(
                 delete window[this.callbackName];
             }
             this.inherited(arguments);
+        },
+
+        focus: function() {
+            // focus the widget, because otherwise focus loss
+            // is not reported to grid editor resulting in empty grid value
+            this.textbox.focus();
         }
     });
 });

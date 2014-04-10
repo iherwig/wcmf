@@ -16,6 +16,7 @@
  */
 namespace wcmf\lib\presentation\view\impl;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\view\View;
 use wcmf\lib\io\FileUtil;
 
@@ -138,7 +139,8 @@ class SmartyView implements View {
    * @see View::clearCache()
    */
   public static function clearCache() {
-    return $this->_view->clearAllCache();
+    $view = ObjectFactory::getInstance('view');
+    return $view->_view->clearAllCache();
   }
 
   /**
@@ -147,7 +149,8 @@ class SmartyView implements View {
    * views get regenerated every time when expected.
    */
   public static function isCached($tplFile, $cacheId=null) {
-    return ($this->_view->caching && $this->_view->isCached($tplFile, $cacheId));
+    $view = ObjectFactory::getInstance('view');
+    return ($view->_view->caching && $view->_view->isCached($tplFile, $cacheId));
   }
 }
 ?>
