@@ -55,6 +55,7 @@ function(
                 filebrowserBrowseUrl: mediaBrowserRoute,
                 filebrowserLinkBrowseUrl: linkBrowserRoute,
                 baseHref: mediaFileBasePath,
+                toolbar: this.getToolbarName(),
                 filebrowserWindowWidth: '800',
                 filebrowserWindowHeight: '700'
             });
@@ -81,6 +82,11 @@ function(
                 // send change event
                 this.emit("change", this);
             }, 0));
+        },
+
+        getToolbarName: function() {
+            var toolbar = this.attribute.inputType.match(/ToolbarSet="(.+?)"/);
+            return (toolbar.length > 1) ? toolbar[1] : "wcmf";
         }
     });
 });

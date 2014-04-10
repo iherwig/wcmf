@@ -5,6 +5,7 @@ require_once("base_dir.php");
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 
 use \Exception;
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\util\URIUtil;
@@ -31,6 +32,11 @@ try {
   $displayTypes = $config->getSection('displayTypes');
   $userType = str_replace('\\', '.', $config->getValue('__class', 'user'));
   $roleType = str_replace('\\', '.', $config->getValue('__class', 'role'));
+
+  // validate config
+  if (!is_array($rootTypes) || sizeof($rootTypes) == 0) {
+    throw new ConfigurationException("No root types defined.");
+  }
 
   // check if the user should be redirected to the login page
   // if yes, we do this and add the requested path as route parameter

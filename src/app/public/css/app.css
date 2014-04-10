@@ -181,6 +181,7 @@ input[type="color"]:disabled,
 
 .entity-page .dijitTextBox, .principal-page .dijitTextBox {
   width: 350px;
+  display: block;
 }
 
 /* dgrid */
@@ -311,6 +312,10 @@ td {
 
 .pull-left {
   float: left;
+}
+
+.dbootstrap .dijitContentPane {
+  padding: 0;
 }
 
 .dijitContentPane img.thumb {
