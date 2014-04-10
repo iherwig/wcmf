@@ -50,6 +50,7 @@ class DefaultActionMapper implements ActionMapper {
     $context = $request->getContext();
     $action = $request->getAction();
     $response = new Response($referrer, $context, $action);
+    $response->setFormat($request->getResponseFormat());
 
     $config = ObjectFactory::getConfigurationInstance();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
@@ -97,10 +98,6 @@ class DefaultActionMapper implements ActionMapper {
       Log::debug("Request: ".$request->__toString(), __CLASS__);
     }
     Formatter::deserialize($request);
-
-    // create the response
-    $response->setSender($controllerClass);
-    $response->setFormat($request->getResponseFormat());
 
     // initialize controller
     if (Log::isDebugEnabled(__CLASS__)) {

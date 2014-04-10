@@ -27,23 +27,26 @@ use wcmf\lib\presentation\ControllerMessage;
  */
 class Response extends ControllerMessage {
 
-  private $_controller = null;
+  private $_cacheId = null;
   private $_status = '200 OK';
 
   /**
-   * Set the controller that returns this response
-   * @param controller A reference to the controller instance
+   * Set a string value that uniquely identifies the request data
+   * that cause the current response. This value maybe used to compare
+   * two requests and return cached responses based on the result.
+   * @param cacheId
    */
-  public function setController($controller) {
-    $this->_controller = $controller;
+  public function setCacheId($cacheId) {
+    $this->_cacheId = $cacheId;
   }
 
   /**
-   * Get the controller that returns this response
-   * @return A reference to the controller instance
+   * Get the cache id.
+   * @see Response::setCacheId()
+   * @return The id
    */
-  public function getController() {
-    return $this->_controller;
+  public function getCacheId() {
+    return $this->_cacheId;
   }
 
   /**

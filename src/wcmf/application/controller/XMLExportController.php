@@ -77,7 +77,7 @@ class XMLExportController extends BatchController {
     if ($request->getAction() != 'continue') {
       $session = ObjectFactory::getInstance('session');
 
-      $docFile = $request->hasValue('docfile') ? $request->getValue('docfile') : $this->_DOCFILE;
+      $docFile = $request->hasValue('docfile') ? $request->getValue('docfile') : $this->getDownloadFile();
       $docType = $request->hasValue('doctype') ? $request->getValue('doctype') : $this->_DOCTYPE;
       $dtd = $request->hasValue('dtd') ? $request->getValue('dtd') : $this->_DTD;
       $docRootElement = $request->hasValue('docrootelement') ? $request->getValue('docrootelement') : $this->_DOCROOTELEMENT;
@@ -110,7 +110,9 @@ class XMLExportController extends BatchController {
    * @see BatchController::getDownloadFile()
    */
   protected function getDownloadFile() {
-    return $this->_DOCFILE;
+    $config = ObjectFactory::getConfigurationInstance();
+    $cacheDir = $config->getValue('cacheDir', 'Application');
+    return $cacheDir.$this->_DOCFILE;
   }
 
   /**

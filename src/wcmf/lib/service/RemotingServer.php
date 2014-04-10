@@ -61,7 +61,7 @@ class RemotingServer {
       $response = $client->call($request);
       return $response;
     }
-    return new Response();
+    return new Response(null, null, null);
   }
 
   /**

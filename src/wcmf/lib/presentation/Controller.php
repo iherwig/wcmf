@@ -74,8 +74,6 @@ abstract class Controller {
    * are no data stored in the response.
    */
   public function initialize(Request $request, Response $response) {
-    $response->setController($this);
-
     $this->_request = $request;
     $this->_response = $response;
 
@@ -192,17 +190,6 @@ abstract class Controller {
    */
   public function getResponse() {
     return $this->_response;
-  }
-
-  /**
-   * Get a string value that uniquely identifies the current request data. This value
-   * maybe used to compare two requests and return cached responses based on the result.
-   * The default implementation returns null. Subclasses should override this to
-   * return reasonable values based on the expected requests.
-   * @return The id or null, if no cache id should be used.
-   */
-  public function getCacheId() {
-    return null;
   }
 
   /**

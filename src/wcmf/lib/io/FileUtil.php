@@ -205,7 +205,9 @@ class FileUtil {
    * @param dirname The name of the directory
    */
   public static function mkdirRec($dirname) {
-    mkdir($dirname, 0755, true);
+    if (!is_dir($dirname)) {
+      mkdir($dirname, 0755, true);
+    }
   }
 
   /**

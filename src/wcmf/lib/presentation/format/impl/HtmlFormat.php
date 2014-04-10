@@ -94,22 +94,9 @@ class HtmlFormat extends AbstractFormat {
     foreach (array_keys($data) as $variable) {
       $view->setValue($variable, $data[$variable]);
     }
-    // assign additional values
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $authUser = $permissionManager->getAuthUser();
-    $view->assignByRef('nodeUtil', new NodeUtil());
-    $view->assignByRef('obfuscator', new Obfuscator());
-    if ($authUser != null) {
-      $view->assignByRef('authUser', $authUser);
-    }
 
     // display the view
-    if ($view->caching && ($cacheId = $controller->getCacheId()) !== null) {
-      $view->display(WCMF_BASE.$viewTpl, $cacheId);
-    }
-    else {
-      $view->display(WCMF_BASE.$viewTpl);
-    }
+    $view->render(WCMF_BASE.$viewTpl, $response->getCacheId());
   }
 
   /**

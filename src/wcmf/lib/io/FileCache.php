@@ -89,6 +89,7 @@ class FileCache {
   private static function saveCache($section) {
     $content = serialize(self::$cache[$section]);
     $file = self::getCacheFile($section);
+    FileUtil::mkdirRec(dirname($file));
     $fh = fopen($file, "w");
     fwrite($fh, $content);
     fclose($fh);

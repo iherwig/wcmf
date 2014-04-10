@@ -119,7 +119,7 @@ class RPCClient implements RemotingClient {
     chdir($currentDir);
 
     $responseData = json_decode($jsonResponse[0], true);
-    $response = new Response('', '', '', $responseData);
+    $response = new Response(null, null, null, $responseData);
     $response->setFormat($jsonFormat);
     Formatter::deserialize($response);
     if (Log::isDebugEnabled(__CLASS__)) {

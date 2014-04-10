@@ -33,7 +33,7 @@ function smarty_function_translate($params, \Smarty_Internal_Template $template)
       $variables[] = $params[$key];
     }
   }
-  $value = Message::get($params['text'], $variables, $params['lang']);
+  $value = isset($params['text']) ? Message::get($params['text'], $variables, isset($params['lang']) ? $params['lang'] : null) : "";
   if (isset($params['varname'])) {
     $template->assign($params['varname'], $value);
   }
