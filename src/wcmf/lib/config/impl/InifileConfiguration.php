@@ -16,6 +16,7 @@
  */
 namespace wcmf\lib\config\impl;
 
+use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\WritableConfiguration;
@@ -517,6 +518,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
           @fclose($f);
         }
       }
+      // clear action key cache
+      ActionKey::clearCache();
     }
   }
 

@@ -59,7 +59,7 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
         $inc++;
       }
       $title = substr(str_shuffle($alphanum), 0, 15);
-      $chapter->setName(ucfirst($title));
+      $chapter->setValue('name', ucfirst($title));
     }
     TestUtil::runAnonymous(false);
   }

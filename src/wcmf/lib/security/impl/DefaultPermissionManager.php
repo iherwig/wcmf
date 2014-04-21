@@ -16,9 +16,9 @@
  */
 namespace wcmf\lib\security\impl;
 
+use wcmf\lib\config\ActionKey;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\Policy;
@@ -112,7 +112,7 @@ class DefaultPermissionManager implements PermissionManager {
       return false;
     }
 
-    $actionKey = Action::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
+    $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
 
     // check temporary permissions
     if (in_array($actionKey, $this->_tempPermissions)) {
@@ -130,7 +130,7 @@ class DefaultPermissionManager implements PermissionManager {
    * @see PermissionManager::addTempPermission()
    */
   public function addTempPermission($resource, $context, $action) {
-    $actionKey = Action::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
+    $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
     $this->_tempPermissions[] = $actionKey;
   }
 
@@ -146,7 +146,7 @@ class DefaultPermissionManager implements PermissionManager {
    */
   public function getPermission($resource, $context, $action) {
     $config = ObjectFactory::getConfigurationInstance();
-    $permDef = Action::createKey($resource, $context, $action);
+    $permDef = ActionKey::createKey($resource, $context, $action);
     if ($config->getValue($permDef, self::AUTHORIZATION_SECTION) !== false) {
       return Policy::parse($config->getValue($permDef, self::AUTHORIZATION_SECTION));
     }
@@ -192,7 +192,7 @@ class DefaultPermissionManager implements PermissionManager {
     $newConfig = new IniFileConfiguration(dirname($mainConfig));
     $newConfig->addConfiguration(basename($mainConfig));
 
-    $permDef = Action::createKey($resource, $context, $action);
+    $permDef = ActionKey::createKey($resource, $context, $action);
     $permVal = '';
     if ($modifier != null) {
       $permVal = $modifier.$role;

@@ -16,9 +16,9 @@
  */
 namespace wcmf\lib\presentation\impl;
 
+use wcmf\lib\config\ActionKey;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationEvent;
@@ -70,7 +70,7 @@ class DefaultActionMapper implements ActionMapper {
     }
 
     // get best matching action key from inifile
-    $actionKey = Action::getBestMatch('actionmapping', $referrer, $context, $action);
+    $actionKey = ActionKey::getBestMatch('actionmapping', $referrer, $context, $action);
 
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug($referrer."?".$context."?".$action.' -> '.$actionKey, __CLASS__);

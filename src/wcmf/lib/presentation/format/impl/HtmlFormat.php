@@ -16,15 +16,14 @@
  */
 namespace wcmf\lib\presentation\format\impl;
 
+use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\Action;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\impl\AbstractFormat;
 use wcmf\lib\util\StringUtil;
-use wcmf\lib\util\Obfuscator;
 
 /**
  * HtmlFormat realizes the HTML request/response format. Since all data
@@ -107,7 +106,7 @@ class HtmlFormat extends AbstractFormat {
    * @return The filename of the template or false, if no view is defined
    */
   protected static function getViewTemplate($controller, $context, $action) {
-    $actionKey = Action::getBestMatch('views', $controller, $context, $action);
+    $actionKey = ActionKey::getBestMatch('views', $controller, $context, $action);
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug('HtmlFormat::getViewTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
     }

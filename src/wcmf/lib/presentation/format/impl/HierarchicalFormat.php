@@ -82,6 +82,10 @@ abstract class HierarchicalFormat extends AbstractFormat {
             $values[$key] = $result;
           }
         }
+        else {
+          // string value
+          $values[$key] = $value;
+        }
       }
     }
     return $values;
@@ -107,6 +111,10 @@ abstract class HierarchicalFormat extends AbstractFormat {
           else {
             $values[$key] = $result;
           }
+        }
+        else {
+          // string value
+          $values[$key] = $value;
         }
       }
     }

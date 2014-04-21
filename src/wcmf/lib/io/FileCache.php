@@ -47,11 +47,14 @@ class FileCache {
    * Get a value from the specified cache
    * @param section The caching section
    * @param key The cache key
-   * @return String
+   * @return Mixed
    */
   public static function get($section, $key) {
     self::initializeCache($section);
-    return self::$cache[$section][$key];
+    if (isset(self::$cache[$section][$key])) {
+      return self::$cache[$section][$key];
+    }
+    return null;
   }
 
   /**
@@ -64,6 +67,15 @@ class FileCache {
     self::initializeCache($section);
     self::$cache[$section][$key] = $value;
     self::saveCache($section);
+  }
+
+  /**
+   * Clear the given cache section
+   * @param section The caching section
+   */
+  public static function clear($section) {
+    $file = self::getCacheFile($section);
+    unlink($file);
   }
 
   /**
