@@ -84,7 +84,7 @@ function(
                         this.set("value", data.newValue);
                     }
                 })),
-                on(this, "attrmodified-value", lang.hitch(this, function(e){
+                on(this, "attrmodified-value", lang.hitch(this, function(e) {
                     // update item widgets
                     var oldListenValue = this.listenToWidgetChanges;
                     this.listenToWidgetChanges = false;

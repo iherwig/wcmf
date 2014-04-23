@@ -43,6 +43,7 @@ class NodeListStrategy implements ListStrategy {
   public function getList($configuration, $language=null) {
 
     $listConfig = $this->parseConfiguration($configuration);
+    $isSingleType = sizeof($listConfig['types']) == 1;
 
     $list = array();
     foreach ($listConfig['types'] as $type) {
@@ -52,7 +53,8 @@ class NodeListStrategy implements ListStrategy {
       }
       $objects = $query->execute(BuildDepth::SINGLE);
       foreach ($objects as $object) {
-        $list[$object->getOID()->__toString()] = $object->getDisplayValue();
+        $id = $isSingleType ? $object->getOID()->getFirstId() : $object->getOID()->__toString();
+        $list[$id] = $object->getDisplayValue();
       }
     }
 
