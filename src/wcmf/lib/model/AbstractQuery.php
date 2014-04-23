@@ -48,24 +48,22 @@ abstract class AbstractQuery {
    * or false if only object ids should be returned
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference paging info instance, optional [default null].
-   * @param attribs An array of attributes to load (null to load all). [default: null]
    * @return A list of objects that match the given conditions or a list of object ids
    */
-  public function execute($buildDepth, $orderby=null, $pagingInfo=null, $attribs=null) {
+  public function execute($buildDepth, $orderby=null, $pagingInfo=null) {
     // build the query
-    $this->_selectStmt = $this->buildQuery($orderby, $attribs);
+    $this->_selectStmt = $this->buildQuery($orderby);
 
-    return $this->executeInternal($this->_selectStmt, $buildDepth, $pagingInfo, $attribs);
+    return $this->executeInternal($this->_selectStmt, $buildDepth, $pagingInfo);
   }
 
   /**
    * Get the query serialized to a string.
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param attribs An array of attributes to load (null to load all). [default: null]
    * @return String
    */
-  public function getQueryString($orderby=null, $attribs=null) {
-    $selectStmt = $this->buildQuery($orderby, $attribs);
+  public function getQueryString($orderby=null) {
+    $selectStmt = $this->buildQuery($orderby);
     return $selectStmt->__toString();
   }
 
@@ -83,10 +81,9 @@ abstract class AbstractQuery {
   /**
    * Build the query
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param attribs An array of attributes to load (null to load all). [default: null]
    * @return Zend_Db_Select instance
    */
-  protected abstract function buildQuery($orderby=null, $attribs=null);
+  protected abstract function buildQuery($orderby=null);
 
   /**
    * Execute the query and return the results.
@@ -94,26 +91,20 @@ abstract class AbstractQuery {
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
    *        or false if only object ids should be returned
    * @param pagingInfo A reference paging info instance. [default: null]
-   * @param attribs An array of attributes to load (null to load all). [default: null]
    * @return A list of objects that match the given conditions or a list of object ids
    */
-  protected function executeInternal(Zend_Db_Select $selectStmt, $buildDepth, PagingInfo
-          $pagingInfo=null, $attribs=null) {
+  protected function executeInternal(Zend_Db_Select $selectStmt, $buildDepth, PagingInfo $pagingInfo=null) {
     $type = $this->getQueryType();
     $loadOidsOnly = ($buildDepth === false);
 
     // load only the necessary attributes if only object ids are requested
     if ($loadOidsOnly) {
-      $attribs = array();
       $buildDepth = BuildDepth::SINGLE;
     }
 
-    // convert attribs to buildAttribs format used by the mapper
-    $buildAttribs = array($type => $attribs);
-
     // execute the query
     $mapper = self::getMapper($type);
-    $objects = $mapper->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo, $buildAttribs);
+    $objects = $mapper->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo);
 
     // remove objects for which the user is not authorized
     $permissionManager = ObjectFactory::getInstance('permissionManager');

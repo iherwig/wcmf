@@ -54,7 +54,7 @@ class StringQuery extends ObjectQuery {
   /**
    * @see AbstractQuery::buildQuery()
    */
-  protected function buildQuery($orderby=null, $attribs=null) {
+  protected function buildQuery($orderby=null) {
     $queryType = $this->getQueryType();
     $mapper = self::getMapper($queryType);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -63,7 +63,7 @@ class StringQuery extends ObjectQuery {
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $selectStmt = $mapper->getSelectSQL(null, null, null, $attribs);
+    $selectStmt = $mapper->getSelectSQL(null, null, null);
 
     // get all referenced types/roles from the condition and translate
     // attributes to column names

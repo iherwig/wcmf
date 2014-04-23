@@ -79,10 +79,9 @@ interface Transaction {
   /**
    * Get a loaded object.
    * @param oid ObjectId of the object
-   * @param buildAttribs An array listing the attributes to load (default: null, loads all attributes)
    * @return PersistentObject instance or null if not loaded yet
    */
-  function getLoaded(ObjectId $oid, $buildAttribs=null);
+  function getLoaded(ObjectId $oid);
 
   /**
    * Detach an object from the transaction. All local changes will not

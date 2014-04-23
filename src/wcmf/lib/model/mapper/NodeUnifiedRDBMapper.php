@@ -205,7 +205,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * @see RDBMapper::getSelectSQL()
    */
-  public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $attribs=null) {
+  public function getSelectSQL($criteria=null, $alias=null, $orderby=null) {
     $connection = $this->getConnection();
     $selectStmt = $connection->select();
 
@@ -220,7 +220,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
 
     // columns
-    $this->addColumns($selectStmt, $attribs, $tableName);
+    $this->addColumns($selectStmt, $tableName);
 
     // condition
     $this->addCriteria($selectStmt, $criteria, $tableName);
@@ -235,7 +235,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
-          $criteria=null, $orderby=null, $attribs=null) {
+          $criteria=null, $orderby=null) {
     $connection = $this->getConnection();
     $selectStmt = $connection->select();
 
@@ -252,7 +252,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
 
       $selectStmt->from($tableName, '');
-      $this->addColumns($selectStmt, $attribs, $tableName);
+      $this->addColumns($selectStmt, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).".".
               $this->quoteIdentifier($thisAttr->getName())."= ?", $dbid);
       // order
@@ -268,7 +268,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
 
       $selectStmt->from($tableName, '');
-      $this->addColumns($selectStmt, $attribs, $tableName);
+      $this->addColumns($selectStmt, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).".".
               $this->quoteIdentifier($thisAttr->getName())."= ?", $fkValue);
       // order
@@ -291,7 +291,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $nmTablename = $nmMapper->getRealTableName();
 
       $selectStmt->from($tableName, '');
-      $this->addColumns($selectStmt, $attribs, $tableName);
+      $this->addColumns($selectStmt, $tableName);
 
       $joinCond = $this->quoteIdentifier($nmTablename).".".$this->quoteIdentifier($thisFkAttr->getName())."=".
               $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($thisIdAttr->getName());
@@ -364,28 +364,20 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * Add the columns to a given select statement.
    * @param selectStmt The select statement (instance of Zend_Db_Select)
-   * @param attribs The attributes to select (maybe null to select all)
    * @param tableName The table name
    * @return Zend_Db_Select
    */
-  protected function addColumns(Zend_Db_Select $selectStmt, $attribs, $tableName) {
-    // make sure that at least the primary keys are selected
-    if ($attribs !== null) {
-      $attribs = array_unique(array_merge($this->getPKNames(), $attribs));
-    }
-
+  protected function addColumns(Zend_Db_Select $selectStmt, $tableName) {
     // columns
     $attributeDescs = $this->getAttributes();
     foreach($attributeDescs as $curAttributeDesc) {
       if (!($curAttributeDesc instanceof ReferenceDescription)) {
-        if ($attribs === null || in_array($curAttributeDesc->getName(), $attribs)) {
-          $selectStmt->columns(array($curAttributeDesc->getName() => $curAttributeDesc->getColumn()), $tableName);
-        }
+        $selectStmt->columns(array($curAttributeDesc->getName() => $curAttributeDesc->getColumn()), $tableName);
       }
     }
 
     // references
-    $selectStmt = $this->addReferences($selectStmt, $tableName, $attribs);
+    $selectStmt = $this->addReferences($selectStmt, $tableName);
     return $selectStmt;
   }
 
@@ -393,59 +385,56 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * Add the columns and joins to select references to a given select statement.
    * @param selectStmt The select statement (instance of Zend_Db_Select)
    * @param tableName The name for this table (the alias, if used).
-   * @param attribs The attributes to select or null to select all
    * @return Zend_Db_Select
    */
-  protected function addReferences(Zend_Db_Select $selectStmt, $tableName, $attribs=null) {
+  protected function addReferences(Zend_Db_Select $selectStmt, $tableName) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // collect all references first
     $references = array();
     foreach($this->getReferences() as $curReferenceDesc) {
-      if ($attribs === null || in_array($curReferenceDesc->getName(), $attribs)) {
-        $referencedType = $curReferenceDesc->getOtherType();
-        $referencedValue = $curReferenceDesc->getOtherName();
-        $relationDesc = $this->getRelation($referencedType);
-        $otherMapper = $persistenceFacade->getMapper($relationDesc->getOtherType());
-        if ($otherMapper) {
-          $otherTable = $otherMapper->getRealTableName();
-          $otherAttributeDesc = $otherMapper->getAttribute($referencedValue);
-          if ($otherAttributeDesc instanceof RDBAttributeDescription) {
-            // set up the join definition if not already defined
-            if (!isset($references[$otherTable])) {
-              $references[$otherTable] = array();
-              $references[$otherTable]['attributes'] = array();
+      $referencedType = $curReferenceDesc->getOtherType();
+      $referencedValue = $curReferenceDesc->getOtherName();
+      $relationDesc = $this->getRelation($referencedType);
+      $otherMapper = $persistenceFacade->getMapper($relationDesc->getOtherType());
+      if ($otherMapper) {
+        $otherTable = $otherMapper->getRealTableName();
+        $otherAttributeDesc = $otherMapper->getAttribute($referencedValue);
+        if ($otherAttributeDesc instanceof RDBAttributeDescription) {
+          // set up the join definition if not already defined
+          if (!isset($references[$otherTable])) {
+            $references[$otherTable] = array();
+            $references[$otherTable]['attributes'] = array();
 
-              $tableNameQ = $this->quoteIdentifier($tableName);
-              $otherTableQ = $this->quoteIdentifier($otherTable);
+            $tableNameQ = $this->quoteIdentifier($tableName);
+            $otherTableQ = $this->quoteIdentifier($otherTable);
 
-              // determine the join condition
-              if ($relationDesc instanceof RDBManyToOneRelationDescription) {
-                // reference from parent
-                $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getFkName())->getColumn());
-                $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getIdName())->getColumn());
-                $additionalCond = "";
-              }
-              else if ($relationDesc instanceof RDBOneToManyRelationDescription) {
-                // reference from child
-                $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getIdName())->getColumn());
-                $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getFkName())->getColumn());
-                $otherPkNames = $otherMapper->getPkNames();
-                $otherPkNameQ = $this->quoteIdentifier($otherMapper->getAttribute($otherPkNames[0])->getColumn());
-                $additionalCond = " AND ".$otherTableQ.".".$otherPkNameQ.
-                        " = (SELECT MIN(".$otherTableQ.".".$otherPkNameQ.") FROM ".$otherTableQ.
-                        " WHERE ".$otherTableQ.".".$otherAttrNameQ."=".$tableNameQ.".".$thisAttrNameQ.")";
-              }
-              $joinCond = $tableNameQ.".".$thisAttrNameQ."=".$otherTableQ.".".$otherAttrNameQ;
-              if (strlen($additionalCond) > 0) {
-                $joinCond = "(".$joinCond.$additionalCond.")";
-              }
-              $references[$otherTable]['joinCond'] = $joinCond;
+            // determine the join condition
+            if ($relationDesc instanceof RDBManyToOneRelationDescription) {
+              // reference from parent
+              $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getFkName())->getColumn());
+              $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getIdName())->getColumn());
+              $additionalCond = "";
             }
-
-            // add the attributes
-            $references[$otherTable]['attributes'][$curReferenceDesc->getName()] = $otherAttributeDesc->getColumn();
+            else if ($relationDesc instanceof RDBOneToManyRelationDescription) {
+              // reference from child
+              $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getIdName())->getColumn());
+              $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getFkName())->getColumn());
+              $otherPkNames = $otherMapper->getPkNames();
+              $otherPkNameQ = $this->quoteIdentifier($otherMapper->getAttribute($otherPkNames[0])->getColumn());
+              $additionalCond = " AND ".$otherTableQ.".".$otherPkNameQ.
+                      " = (SELECT MIN(".$otherTableQ.".".$otherPkNameQ.") FROM ".$otherTableQ.
+                      " WHERE ".$otherTableQ.".".$otherAttrNameQ."=".$tableNameQ.".".$thisAttrNameQ.")";
+            }
+            $joinCond = $tableNameQ.".".$thisAttrNameQ."=".$otherTableQ.".".$otherAttrNameQ;
+            if (strlen($additionalCond) > 0) {
+              $joinCond = "(".$joinCond.$additionalCond.")";
+            }
+            $references[$otherTable]['joinCond'] = $joinCond;
           }
+
+          // add the attributes
+          $references[$otherTable]['attributes'][$curReferenceDesc->getName()] = $otherAttributeDesc->getColumn();
         }
       }
     }

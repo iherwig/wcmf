@@ -125,31 +125,19 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null) {
+  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
     }
-    $this->checkArrayParameter($buildAttribs, 'buildAttribs');
-    $this->checkArrayParameter($buildTypes, 'buildTypes');
-
     // check if the object is already part of the transaction
     $transaction = $this->getTransaction();
-    // extract type specific build attribs
-    $attribs = null;
-    if ($buildAttribs !== null) {
-      // either fully qualified or simple type may be included
-      $type = $oid->getType();
-      $simpleType = $this->getSimpleType($type);
-      $attribs = isset($buildAttribs[$type]) ? $buildAttribs[$type] :
-        (isset($buildAttribs[$simpleType]) ? $buildAttribs[$simpleType] : $attribs);
-    }
-    $obj = $transaction->getLoaded($oid, $attribs);
+    $obj = $transaction->getLoaded($oid);
 
     // if not cached, load
     if ($obj == null) {
       $mapper = $this->getMapper($oid->getType());
       if ($mapper != null) {
-        $obj = $mapper->load($oid, $buildDepth, $buildAttribs, $buildTypes);
+        $obj = $mapper->load($oid, $buildDepth);
       }
     }
     return $obj;
@@ -223,15 +211,14 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    $buildAttribs=null, $buildTypes=null) {
+  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $this->checkArrayParameter($criteria, 'criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
     $result = array();
     $mapper = $this->getMapper($type);
     if ($mapper != null) {
-      $result = $mapper->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
+      $result = $mapper->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
     }
     return $result;
   }
@@ -239,12 +226,11 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::loadFirstObject()
    */
-  public function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    $buildAttribs=null, $buildTypes=null) {
+  public function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     if ($pagingInfo == null) {
       $pagingInfo = new PagingInfo(1);
     }
-    $objects = $this->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
+    $objects = $this->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
     if (sizeof($objects) > 0) {
       return $objects[0];
     }

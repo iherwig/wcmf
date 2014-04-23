@@ -58,20 +58,16 @@ interface PersistenceFacade {
   /**
    * Load an object from the storage. The object will be attached to the transaction,
    * if the transaction is active.
-   * @note The parameters buildDepth, buildAttribs and buildTypes are used to improve fetching
-   * from the storage, but objects returned by this method are not guaranteed to only contain
-   * the parameter values. This is especially true, if the same object was loaded before with
-   * a wider fetch definition (e.g. greater buildDeph value)
+   * @note The parameter buildDepth is used to improve fetching from the storage, but objects
+   * returned by this method are not guaranteed to only contain the parameter values.
+   * This is especially true, if the same object was loaded before with a wider fetch definition
+   * (e.g. greater buildDeph value)
    * @param oid The object id of the object to construct
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param buildAttribs An assoziative array listing the attributes to load (default: null, loads all attributes)
-   *        (keys: the types, values: an array of attributes of the type to load)
-   *        Use this to load only a subset of attributes
-   * @param buildTypes An array listing the (sub-)types to include (default: null, includes all types)
    * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
    */
-  function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null);
+  function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE);
 
   /**
    * Construct the template of an object of a given type. The object will be
@@ -120,14 +116,9 @@ interface PersistenceFacade {
    * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
-   * @param buildAttribs An assoziative array listing the attributes to load [default: null, loads all attributes]
-   *        (keys: the types, values: an array of attributes of the type to load)
-   *        Use this to load only a subset of attributes
-   * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
    * @return Array containing the PersistentObject instances
    */
-  function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-      $buildAttribs=null, $buildTypes=null);
+  function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Load the first object matching a given condition. If a PagingInfo instance is passed it will be used and updated.
@@ -137,14 +128,9 @@ interface PersistenceFacade {
    * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance. [default: null]
-   * @param buildAttribs An assoziative array listing the attributes to load [default: null, loads all attributes]
-   *        (keys: the types, values: an array of attributes of the type to load)
-   *        Use this to load only a subset of attributes
-   * @param buildTypes An array listing the (sub-)types to include [default: null, loads all types]
    * @return PersistentObject or null
    */
-  function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    $buildAttribs=null, $buildTypes=null);
+  function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Get the current business transaction.

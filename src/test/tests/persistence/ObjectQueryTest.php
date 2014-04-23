@@ -65,33 +65,15 @@ class ObjectQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(false);
   }
 
-  public function testAttribs() {
-    TestUtil::runAnonymous(true);
-
-    $query = new ObjectQuery('Author');
-    $authorTpl = $query->getObjectTemplate('Author');
-    $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
-    $authorTpl->setValue("creator", Criteria::asValue("IN", array("admin", "ingo"))); // explicit set
-    //
-    // we need to execute the query first in order to define the attributes
-    $query->execute(BuildDepth::SINGLE, null, null, array('name'));
-    $sql = $query->getLastQueryString();
-    $expected = "SELECT `Author`.`id`, `Author`.`name` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' AND ".
-      "`Author`.`creator` IN ('admin', 'ingo')) ORDER BY `Author`.`name` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql));
-
-    TestUtil::runAnonymous(false);
-  }
-
   public function testOrderby() {
     TestUtil::runAnonymous(true);
 
     $query = new ObjectQuery('Author');
     //
     // we need to execute the query first in order to define the attributes
-    $query->execute(BuildDepth::SINGLE, array('name ASC', 'created DESC'), null, array());
+    $query->execute(BuildDepth::SINGLE, array('name ASC', 'created DESC'));
     $sql = $query->getLastQueryString();
-    $expected = "SELECT `Author`.`id` FROM `Author` ORDER BY `Author`.`name` ASC, `Author`.`created` DESC";
+    $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor` FROM `Author` ORDER BY `Author`.`name` ASC, `Author`.`created` DESC";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 
     TestUtil::runAnonymous(false);

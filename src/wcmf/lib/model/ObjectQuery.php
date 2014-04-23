@@ -261,14 +261,14 @@ class ObjectQuery extends AbstractQuery {
   /**
    * @see AbstractQuery::buildQuery()
    */
-  protected function buildQuery($orderby=null, $attribs=null) {
+  protected function buildQuery($orderby=null) {
     $mapper = self::getMapper($this->_typeNode->getType());
     $this->_involvedTypes[$this->_typeNode->getType()] = true;
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
     $tableName = self::processTableName($this->_typeNode);
-    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), $attribs);
+    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array());
 
     // process all root nodes except for grouped nodes
     foreach ($this->_rootNodes as $curNode) {

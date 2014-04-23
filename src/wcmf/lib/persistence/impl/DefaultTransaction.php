@@ -237,28 +237,11 @@ class DefaultTransaction implements Transaction {
   /**
    * @see Transaction::getLoaded()
    */
-  public function getLoaded(ObjectId $oid, $buildAttribs=null) {
+  public function getLoaded(ObjectId $oid) {
     $registeredObject = null;
     $key = $oid->__toString();
     if (isset($this->_loadedObjects[$key])) {
       $registeredObject = $this->_loadedObjects[$key];
-      // check requested attributes
-      if (!$registeredObject->isComplete()) {
-        if ($buildAttribs == null) {
-          // all attributes are expected, but the object is not complete
-          return null;
-        }
-        else {
-          // compare existing attributes with requested ones
-          foreach ($buildAttribs as $attributeName) {
-            if (!$registeredObject->hasValue($attributeName)) {
-              // immediatly return, if buildAttrib does not exist
-              Log::debug("Build attribute constraint not fullfilled for: ".$key.".".$attributeName, __CLASS__);
-              return null;
-            }
-          }
-        }
-      }
     }
     return $registeredObject;
   }

@@ -112,7 +112,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null) {
+  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
     if (!$this->checkAuthorization($oid, PersistenceAction::READ)) {
       $this->authorizationFailedError($oid, PersistenceAction::READ);
       return;
@@ -122,7 +122,7 @@ abstract class AbstractMapper implements PersistenceMapper {
       return null;
     }
     // load object
-    $object = $this->loadImpl($oid, $buildDepth, $buildAttribs, $buildTypes);
+    $object = $this->loadImpl($oid, $buildDepth);
     if ($object != null) {
       // call lifecycle callback
       $object->afterLoad();
@@ -236,8 +236,8 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @see PersistenceMapper::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null) {
-    $objects = $this->loadObjectsImpl($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
+    PagingInfo $pagingInfo=null) {
+    $objects = $this->loadObjectsImpl($type, $buildDepth, $criteria, $orderby, $pagingInfo);
 
     // remove objects for which the user is not authorized
     $result = array();
@@ -254,8 +254,8 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @see PersistenceMapper::loadRelation()
    */
   public function loadRelation(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null) {
-    $objects = $this->loadRelationImpl($object, $role, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
+    PagingInfo $pagingInfo=null) {
+    $objects = $this->loadRelationImpl($object, $role, $buildDepth, $criteria, $orderby, $pagingInfo);
 
     // remove objects for which the user is not authorized
     if ($objects != null) {
@@ -318,7 +318,7 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @note Precondition: Object rights have been checked already
    *
    */
-  abstract protected function loadImpl(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null);
+  abstract protected function loadImpl(ObjectId $oid, $buildDepth=BuildDepth::SINGLE);
 
   /**
    * @see PersistenceFacade::create()
@@ -347,12 +347,12 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @see PersistenceMapper::loadObjects()
    */
   abstract protected function loadObjectsImpl($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
+    PagingInfo $pagingInfo=null);
 
   /**
    * @see PersistenceMapper::loadRelation()
    */
-  abstract protected function loadRelationImpl(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null, $buildAttribs=null, $buildTypes=null);
+  abstract protected function loadRelationImpl(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null,
+    $orderby=null, PagingInfo $pagingInfo=null);
 }
 ?>

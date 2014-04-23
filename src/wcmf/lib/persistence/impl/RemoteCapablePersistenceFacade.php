@@ -97,14 +97,14 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   /**
    * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null, $buildTypes=null) {
+  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
     $obj = null;
     if ($this->isResolvingProxies() && strlen($oid->getPrefix()) > 0) {
       // load real subject
       $obj = $this->loadRemoteObject($oid, $buildDepth);
     }
     else {
-      $obj = parent::load($oid, $buildDepth, $buildAttribs, $buildTypes);
+      $obj = parent::load($oid, $buildDepth);
       if ($obj && $this->isResolvingProxies() && strlen($umi = $obj->getValue('umi')) > 0) {
         // store proxy for later reference
         $this->registerProxyObject($umi, $obj, $buildDepth);
@@ -118,8 +118,8 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   /**
    * @see PersistenceFacade::create()
    */
-  public function create($type, $buildDepth=BuildDepth::SINGLE, $buildAttribs=null) {
-    $obj = parent::create($type, $buildDepth, $buildAttribs);
+  public function create($type, $buildDepth=BuildDepth::SINGLE) {
+    $obj = parent::create($type, $buildDepth);
     return $obj;
   }
 
@@ -134,10 +134,9 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   /**
    * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null,
-    $buildAttribs=null, $buildTypes=null) {
+  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
 
-    $tmpResult = parent::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo, $buildAttribs, $buildTypes);
+    $tmpResult = parent::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
     $result = array();
     foreach($tmpResult as $obj) {
       if ($obj && $this->isResolvingProxies() && strlen($umi = $obj->getValue('umi')) > 0) {
