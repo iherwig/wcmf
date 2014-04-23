@@ -1057,7 +1057,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       // currently loading, we load the complete objects and add them
       if ($loadNextGeneration && !isset($this->_loadingRelations[$relationId])) {
         $this->_loadingRelations[$relationId] = true;
-        $relatives = $this->loadRelation($object, $role, $newBuildDepth, null, null, null);
+        $relatives = $this->loadRelation($object, $role, $newBuildDepth);
         // set the value
         $object->setValue($role, $relatives, true, false);
         unset($this->_loadingRelations[$relationId]);
@@ -1087,31 +1087,27 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $otherType = $relationDescription->getOtherType();
       $otherMapper = $persistenceFacade->getMapper($otherType);
 
-      // for proxies only load single depth
+      $relatedObjects = $otherMapper->loadRelatedObjects(
+          PersistentObjectProxy::fromObject($object),
+          $relationDescription->getThisRole(),
+          ($buildDepth == BuildDepth::PROXIES_ONLY) ? BuildDepth::SINGLE : $buildDepth,
+          $criteria, $orderby, $pagingInfo
+      );
+
+      // create proxies if demanded
       if ($buildDepth == BuildDepth::PROXIES_ONLY) {
-        $relatedObjects = $otherMapper->loadRelatedObjects(PersistentObjectProxy::fromObject($object),
-                $relationDescription->getThisRole(), BuildDepth::SINGLE, $criteria, $orderby, $pagingInfo);
-        if ($relationDescription->isMultiValued()) {
-          foreach ($relatedObjects as $relatedObject) {
-            $relatives[] = new PersistentObjectProxy($relatedObject->getOID());
-          }
-        }
-        else {
-          if (sizeof($relatedObjects) > 0) {
-            $relatives = new PersistentObjectProxy($relatedObjects[0]->getOID());
-          }
-          else {
-            $relatives = null;
-          }
+        for ($i=0, $count=sizeof($relatedObjects); $i<$count; $i++) {
+          $relatedObjects[$i] = new PersistentObjectProxy($relatedObjects[$i]->getOID());
         }
       }
-      // load all objects in all other cases
+
+      if ($relationDescription->isMultiValued()) {
+        // multi valued
+        $relatives = $relatedObjects;
+      }
       else {
-        $relatives = $otherMapper->loadRelatedObjects(PersistentObjectProxy::fromObject($object),
-                $relationDescription->getThisRole(), $buildDepth, $criteria, $orderby, $pagingInfo);
-        if (!$relationDescription->isMultiValued() && sizeof($relatives) > 0) {
-          $relatives = $relatives[0];
-        }
+        // single valued
+        $relatives = (sizeof($relatedObjects) > 0) ? $relatedObjects[0] : null;
       }
     }
     return $relatives;
