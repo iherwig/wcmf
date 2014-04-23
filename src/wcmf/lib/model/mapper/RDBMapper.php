@@ -861,7 +861,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     // create query (load only pk columns and no children oids)
     $type = $this->getType();
     $objects = $this->loadObjectsFromQueryParts($type, BuildDepth::SINGLE, $criteria, $orderby,
-            $pagingInfo, array($type => array()), array($type));
+            $pagingInfo);
 
     // collect oids
     for ($i=0; $i<sizeof($objects); $i++) {
@@ -1146,8 +1146,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       // for proxies only load the oid information
       if ($buildDepth == BuildDepth::PROXIES_ONLY) {
         $relatedObjects = $otherMapper->loadRelatedObjects(PersistentObjectProxy::fromObject($object),
-                $relationDescription->getThisRole(), BuildDepth::SINGLE, $criteria, $orderby, $pagingInfo,
-                array($otherType => array()));
+                $relationDescription->getThisRole(), BuildDepth::SINGLE, $criteria, $orderby, $pagingInfo);
         if ($relationDescription->isMultiValued()) {
           foreach ($relatedObjects as $relatedObject) {
             $relatives[] = new PersistentObjectProxy($relatedObject->getOID());

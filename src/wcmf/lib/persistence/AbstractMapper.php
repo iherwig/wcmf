@@ -41,13 +41,20 @@ abstract class AbstractMapper implements PersistenceMapper {
   private $_logging = false;
   private $_logStrategy = null;
 
+  private $_attributeNames = array();
+  private $_relationNames = array();
+
   /**
    * @see PersistenceMapper::hasRelation()
    */
   public function hasRelation($roleName) {
+    if (isset($this->_relationNames[$roleName])) {
+      return true;
+    }
     $relations = $this->getRelations();
     foreach ($relations as $relation) {
       if ($relation->getOtherRole() == $roleName) {
+        $this->_relationNames[$roleName] = true;
         return true;
       }
     }
@@ -58,9 +65,13 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @see PersistenceMapper::hasAttribute()
    */
   public function hasAttribute($name) {
+    if (isset($this->_attributeNames[$name])) {
+      return true;
+    }
     $attributes = $this->getAttributes();
     foreach ($attributes as $attribute) {
       if ($attribute->getName() == $name) {
+        $this->_attributeNames[$name] = true;
         return true;
       }
     }

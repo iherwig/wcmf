@@ -113,13 +113,18 @@ class FileCache {
    * @return String
    */
   private static function getCacheFile($section) {
-    $config = ObjectFactory::getConfigurationInstance();
     if (self::$cacheDir == null) {
-      if ((self::$cacheDir = $config->getValue('cacheDir', 'application')) === false) {
-        throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.", __FILE__, __LINE__);
+      $config = ObjectFactory::getConfigurationInstance();
+      if ($config) {
+        if ((self::$cacheDir = $config->getValue('cacheDir', 'application')) === false) {
+          throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.", __FILE__, __LINE__);
+        }
+        if (substr(self::$cacheDir, -1) != '/') {
+          self::$cacheDir .= '/';
+        }
       }
-      if (substr(self::$cacheDir, -1) != '/') {
-        self::$cacheDir .= '/';
+      else {
+        self::$cacheDir = session_save_path();
       }
     }
     return self::$cacheDir.FileUtil::sanitizeFilename($section);

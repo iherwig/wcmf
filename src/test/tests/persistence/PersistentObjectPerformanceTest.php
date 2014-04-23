@@ -67,26 +67,12 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
   /**
    * @group performance
    */
-  public function testLoadManyWithAllAttributes() {
+  public function testLoadMany() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $start = time();
     $chapters = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE);
-    Log::info("Loaded ".sizeof($chapters)." chapters with all attributes in ".(time()-$start)." seconds", __CLASS__);
-    Log::info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes", __CLASS__);
-    TestUtil::runAnonymous(false);
-  }
-
-  /**
-   * @group performance
-   */
-  public function testLoadManyWithOneAttribute() {
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $start = time();
-    $chapters = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE,
-            null, null, null, array('Chapter' => array('id')));
-    Log::info("Loaded ".sizeof($chapters)." chapters with one attribute in ".(time()-$start)." seconds", __CLASS__);
+    Log::info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds", __CLASS__);
     Log::info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes", __CLASS__);
     TestUtil::runAnonymous(false);
   }

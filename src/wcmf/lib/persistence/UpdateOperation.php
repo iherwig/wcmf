@@ -20,7 +20,7 @@ use wcmf\lib\persistence\PersistenceOperation;
 
 /**
  * UpdateOperation instances hold data necessary to accomplish
- * an upate operation on the persistent store.
+ * an update operation on the persistent store.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

@@ -109,20 +109,6 @@ class PersistentObjectTest extends DatabaseTestCase {
     TestUtil::runAnonymous(false);
   }
 
-  public function testLoadPartially() {
-    TestUtil::runAnonymous(true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $chapterPartially = $persistenceFacade->load(ObjectId::parse('Chapter:99'), BuildDepth::SINGLE, array('Chapter' => array()));
-    $this->assertFalse($chapterPartially->hasValue('sortkey'));
-    $this->assertEquals(null, $chapterPartially->getValue('sortkey'));
-
-    $chapterComplete = $persistenceFacade->load(ObjectId::parse('Chapter:99'), BuildDepth::SINGLE);
-    $this->assertTrue($chapterPartially->hasValue('sortkey'));
-    $this->assertEquals(99, $chapterComplete->getValue('sortkey'));
-
-    TestUtil::runAnonymous(false);
-  }
-
   public function testLoadPaging() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
