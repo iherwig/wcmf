@@ -16,10 +16,9 @@
  */
 namespace wcmf\lib\model;
 
-use \Zend_Db_Select;
-
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\model\SelectStatement;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceAction;
@@ -81,19 +80,19 @@ abstract class AbstractQuery {
   /**
    * Build the query
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @return Zend_Db_Select instance
+   * @return SelectStatement instance
    */
   protected abstract function buildQuery($orderby=null);
 
   /**
    * Execute the query and return the results.
-   * @param selectStmt A Zend_Db_Select instance
+   * @param selectStmt A SelectStatement instance
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
    *        or false if only object ids should be returned
    * @param pagingInfo A reference paging info instance. [default: null]
    * @return A list of objects that match the given conditions or a list of object ids
    */
-  protected function executeInternal(Zend_Db_Select $selectStmt, $buildDepth, PagingInfo $pagingInfo=null) {
+  protected function executeInternal(SelectStatement $selectStmt, $buildDepth, PagingInfo $pagingInfo=null) {
     $type = $this->getQueryType();
     $loadOidsOnly = ($buildDepth === false);
 

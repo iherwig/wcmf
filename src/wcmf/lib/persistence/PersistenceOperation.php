@@ -53,7 +53,7 @@ abstract class PersistenceOperation {
   }
 
   /**
-   * Get the type of PersistentObject on which the operation should be executed
+   * Get values to apply
    * @return Array of attribute/value pairs
    */
   public function getValues() {
@@ -61,7 +61,7 @@ abstract class PersistenceOperation {
   }
 
   /**
-   * Get the type of PersistentObject on which the operation should be executed
+   * Get criteria to match
    * @return Array of Criteria instances
    */
   public function getCriteria() {

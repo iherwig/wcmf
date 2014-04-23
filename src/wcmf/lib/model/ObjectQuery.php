@@ -16,13 +16,12 @@
  */
 namespace wcmf\lib\model;
 
-use \Zend_Db_Select;
-
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
+use wcmf\lib\model\SelectStatement;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
@@ -280,14 +279,14 @@ class ObjectQuery extends AbstractQuery {
     // process groups
     for ($i=0, $countI=sizeof($this->_groups); $i<$countI; $i++) {
       $group = $this->_groups[$i];
-      $tmpSelectStmt = $this->getConnection($this->_typeNode->getType())->select();
+      $tmpSelectStmt = new SelectStatement($this->getConnection($this->_typeNode->getType()));
       $tmpSelectStmt->from($this->_typeNode->getProperty(self::PROPERTY_TABLE_NAME));
       for ($j=0, $countJ=sizeof($group['tpls']); $j<$countJ; $j++) {
         $tpl = $group['tpls'][$j];
         $this->processObjectTemplate($tpl, $tmpSelectStmt);
       }
       $condition = '';
-      $wherePart = $tmpSelectStmt->getPart(Zend_Db_Select::WHERE);
+      $wherePart = $tmpSelectStmt->getPart(SelectStatement::WHERE);
       foreach($wherePart as $where) {
         $condition .= " ".$where;
       }
@@ -316,9 +315,9 @@ class ObjectQuery extends AbstractQuery {
   /**
    * Process an object template
    * @param tpl The object template
-   * @param selectStmt A Zend_Db_Select instance
+   * @param selectStmt A SelectStatement instance
    */
-  protected function processObjectTemplate(PersistentObject $tpl, Zend_Db_Select $selectStmt) {
+  protected function processObjectTemplate(PersistentObject $tpl, SelectStatement $selectStmt) {
     // avoid infinite recursion
     $oidStr = $tpl->getOID()->__toString();
     if (isset($this->_processedNodes[$oidStr])) {
@@ -383,7 +382,7 @@ class ObjectQuery extends AbstractQuery {
           if (!isset($this->_processedNodes[$curChild->getOID()->__toString()])) {
             // don't join the tables twice
             $childTableName = self::processTableName($curChild);
-            $fromPart = $selectStmt->getPart(Zend_Db_Select::FROM);
+            $fromPart = $selectStmt->getPart(SelectStatement::FROM);
             if (!isset($fromPart[$childTableName['alias']])) {
               $childMapper = self::getMapper($curChild->getType());
               if ($relationDescription instanceof RDBManyToOneRelationDescription) {
@@ -446,12 +445,12 @@ class ObjectQuery extends AbstractQuery {
   /**
    * Process an object template
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
-   * @param selectStmt A Zend_Db_Select instance
+   * @param selectStmt A SelectStatement instance
    */
-  protected function processOrderBy($orderby, Zend_Db_Select $selectStmt) {
+  protected function processOrderBy($orderby, SelectStatement $selectStmt) {
     if ($orderby) {
       // reset current order by
-      $selectStmt->reset(Zend_Db_Select::ORDER);
+      $selectStmt->reset(SelectStatement::ORDER);
 
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       foreach ($orderby as $curOrderBy) {

@@ -16,16 +16,15 @@
  */
 namespace wcmf\lib\model\mapper;
 
-use \Zend_Db_Expr;
-use \Zend_Db_Select;
-
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
+use wcmf\lib\model\SelectStatement;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\model\mapper\SQLConst;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
@@ -144,7 +143,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           if (ObjectId::isValid($poid)) {
             // set the foreign key to the null
             $fkAttr = $this->getAttribute($relationDesc->getFkName());
-            $object->setValue($fkAttr->getName(), new Zend_Db_Expr('NULL'));
+            $object->setValue($fkAttr->getName(), SQLConst::NULL());
           }
         }
         elseif ($relationDesc instanceof RDBManyToManyRelationDescription) {
@@ -207,7 +206,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    */
   public function getSelectSQL($criteria=null, $alias=null, $orderby=null) {
     $connection = $this->getConnection();
-    $selectStmt = $connection->select();
+    $selectStmt = new SelectStatement($connection);
 
     // table
     $tableName = $this->getRealTableName();
@@ -237,7 +236,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
           $criteria=null, $orderby=null) {
     $connection = $this->getConnection();
-    $selectStmt = $connection->select();
+    $selectStmt = new SelectStatement($connection);
 
     $relationDescription = $this->getRelationImpl($otherRole, true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -248,7 +247,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $thisAttr = $this->getAttribute($relationDescription->getFkName());
       $dbid = $oid->getFirstId();
       if ($dbid === null) {
-        $dbid = new Zend_Db_Expr('NULL');
+        $dbid = SQLConst::NULL();
       }
 
       $selectStmt->from($tableName, '');
@@ -264,7 +263,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $thisAttr = $this->getAttribute($relationDescription->getIdName());
       $fkValue = $otherObjectProxy->getValue($relationDescription->getFkName());
       if ($fkValue === null) {
-        $fkValue = new Zend_Db_Expr('NULL');
+        $fkValue = SQLConst::NULL();
       }
 
       $selectStmt->from($tableName, '');
@@ -282,7 +281,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
       $dbid = $oid->getFirstId();
       if ($dbid === null) {
-        $dbid = new Zend_Db_Expr('NULL');
+        $dbid = SQLConst::NULL();
       }
       $nmMapper = $persistenceFacade->getMapper($thisRelationDesc->getOtherType());
       $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
@@ -363,11 +362,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Add the columns to a given select statement.
-   * @param selectStmt The select statement (instance of Zend_Db_Select)
+   * @param selectStmt The select statement (instance of SelectStatement)
    * @param tableName The table name
-   * @return Zend_Db_Select
+   * @return SelectStatement
    */
-  protected function addColumns(Zend_Db_Select $selectStmt, $tableName) {
+  protected function addColumns(SelectStatement $selectStmt, $tableName) {
     // columns
     $attributeDescs = $this->getAttributes();
     foreach($attributeDescs as $curAttributeDesc) {
@@ -383,11 +382,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Add the columns and joins to select references to a given select statement.
-   * @param selectStmt The select statement (instance of Zend_Db_Select)
+   * @param selectStmt The select statement (instance of SelectStatement)
    * @param tableName The name for this table (the alias, if used).
-   * @return Zend_Db_Select
+   * @return SelectStatement
    */
-  protected function addReferences(Zend_Db_Select $selectStmt, $tableName) {
+  protected function addReferences(SelectStatement $selectStmt, $tableName) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // collect all references first
@@ -447,11 +446,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Add the given criteria to the select statement
-   * @param selectStmt The select statement (instance of Zend_Db_Select)
+   * @param selectStmt The select statement (instance of SelectStatement)
    * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null)
    * @param tableName The table name
    */
-  protected function addCriteria(Zend_Db_Select $selectStmt, $criteria, $tableName) {
+  protected function addCriteria(SelectStatement $selectStmt, $criteria, $tableName) {
     if ($criteria != null) {
       foreach ($criteria as $curCriteria) {
         if ($curCriteria instanceof Criteria) {
@@ -472,12 +471,12 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Add the given order to the select statement
-   * @param selectStmt The select statement (instance of Zend_Db_Select)
+   * @param selectStmt The select statement (instance of SelectStatement)
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
    * @param tableName The table name
    * @param defaultOrder The default order definition to use, if orderby is null (@see PersistenceMapper::getDefaultOrder())
    */
-  protected function addOrderBy(Zend_Db_Select $selectStmt, $orderby, $tableName, $defaultOrder) {
+  protected function addOrderBy(SelectStatement $selectStmt, $orderby, $tableName, $defaultOrder) {
     $orderbyFinal = array();
     if ($orderby == null) {
       $orderby = array();

@@ -19,15 +19,15 @@ namespace wcmf\lib\model\mapper;
 use \Exception;
 use \PDO;
 use \Zend_Db;
-use \Zend_Db_Expr;
-use \Zend_Db_Select;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
+use wcmf\lib\model\SelectStatement;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\model\mapper\SQLConst;
 use wcmf\lib\persistence\AbstractMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
@@ -311,11 +311,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Execute a select query on the connection.
-   * @param selectStmt A Zend_Db_Select instance
+   * @param selectStmt A SelectStatement instance
    * @param pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
    * @return An array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC)
    */
-  protected function select(Zend_Db_Select $selectStmt, PagingInfo $pagingInfo=null) {
+  protected function select(SelectStatement $selectStmt, PagingInfo $pagingInfo=null) {
     if ($this->_conn == null) {
       $this->connect();
     }
@@ -323,17 +323,17 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       if ($pagingInfo != null) {
         // make a count query if requested
         if (!$pagingInfo->isIgnoringTotalCount()) {
-          $columnPart = $selectStmt->getPart(Zend_Db_Select::COLUMNS);
-          $orderPart = $selectStmt->getPart(Zend_Db_Select::ORDER);
-          $selectStmt->reset(Zend_Db_Select::COLUMNS);
-          $selectStmt->reset(Zend_Db_Select::ORDER);
-          $selectStmt->columns(array('nRows' => new Zend_Db_Expr('COUNT(*)')));
+          $columnPart = $selectStmt->getPart(SelectStatement::COLUMNS);
+          $orderPart = $selectStmt->getPart(SelectStatement::ORDER);
+          $selectStmt->reset(SelectStatement::COLUMNS);
+          $selectStmt->reset(SelectStatement::ORDER);
+          $selectStmt->columns(array('nRows' => SQLConst::COUNT()));
           $row = $selectStmt->getAdapter()->fetchRow($selectStmt);
           $nRows = $row['nRows'];
           // update pagingInfo
           $pagingInfo->setTotalCount($nRows);
           // reset the query
-          $selectStmt->reset(Zend_Db_Select::COLUMNS);
+          $selectStmt->reset(SelectStatement::COLUMNS);
           foreach ($columnPart as $columnDef) {
             $selectStmt->columns(array($columnDef[2] => $columnDef[1]), $columnDef[0]);
           }
@@ -932,7 +932,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Load objects defined by a select statement.
-   * @param selectStmt A Zend_Db_Select instance
+   * @param selectStmt A SelectStatement instance
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
    * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
@@ -941,7 +941,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @return Array of PersistentObject instances
    */
-  public function loadObjectsFromSQL(Zend_Db_Select $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null) {
+  public function loadObjectsFromSQL(SelectStatement $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null) {
     if ($this->_conn == null) {
       $this->connect();
     }
@@ -1227,7 +1227,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param alias The alias for the table name [default: null uses none].
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @return Zend_Db_Select instance that selects all object data that match the condition or an array with the query parts.
+   * @return SelectStatement instance that selects all object data that match the condition or an array with the query parts.
    * @note The names of the data item columns MUST match the data item names provided in the '_datadef' array from RDBMapper::getObjectDefinition()
    *       Use alias names if not! The selected data will be put into the '_data' array of the object definition.
    */
@@ -1241,7 +1241,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param otherRole The role of the other object in relation to the objects to load.
    * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @return Zend_Db_Select instance
+   * @return SelectStatement instance
    */
   abstract protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
           $criteria=null, $orderby=null);
