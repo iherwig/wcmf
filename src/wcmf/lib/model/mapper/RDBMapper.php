@@ -24,10 +24,10 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
-use wcmf\lib\model\SelectStatement;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\SQLConst;
+use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\persistence\AbstractMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
@@ -388,7 +388,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     // transform criteria
     $where = array();
     foreach ($operation->getCriteria() as $curCriteria) {
-      $condition = $this->renderCriteria($curCriteria, true, $tableName);
+      $condition = $this->renderCriteria($curCriteria, '?', $tableName);
       $where[$condition] = $curCriteria->getValue();
     }
 
@@ -637,12 +637,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Render a Criteria instance as string.
    * @param criteria The Criteria instance
-   * @param usePlaceholder Boolean whether to use a placeholder ('?') instead of the value, optional [default: false]
+   * @param placeholder Placeholder (':columnName', '?') used instead of the value, optional [default: null]
    * @param tableName The table name to use (may differ from criteria's type attribute), optional
    * @param columnName The column name to use (may differ from criteria's attribute attribute), optional
    * @return String
    */
-  public function renderCriteria(Criteria $criteria, $usePlaceholder=false, $tableName=null, $columnName=null) {
+  public function renderCriteria(Criteria $criteria, $placeholder=null, $tableName=null, $columnName=null) {
     $type = $criteria->getType();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if (!$persistenceFacade->isKnownType($type)) {
@@ -662,10 +662,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $result = $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($columnName).
                 " ".$criteria->getOperator()." ";
     $value = $criteria->getValue();
-    $valueStr = '?';
-    if (!$usePlaceholder) {
-      $valueStr = $this->quoteValue($value);
-    }
+    $valueStr = !$placeholder ? $this->quoteValue($value) : $placeholder;
     if (is_array($value)) {
       $result .= "(".$valueStr.")";
     }

@@ -18,8 +18,8 @@ namespace wcmf\lib\model;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\model\SelectStatement;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceMapper;

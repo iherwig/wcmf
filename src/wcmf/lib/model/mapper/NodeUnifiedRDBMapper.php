@@ -17,13 +17,14 @@
 namespace wcmf\lib\model\mapper;
 
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
-use wcmf\lib\model\SelectStatement;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\mapper\SQLConst;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
@@ -205,8 +206,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @see RDBMapper::getSelectSQL()
    */
   public function getSelectSQL($criteria=null, $alias=null, $orderby=null) {
+    $cacheKey = $this->getCacheKey($alias, $criteria, $orderby);
+
     $connection = $this->getConnection();
-    $selectStmt = new SelectStatement($connection);
+    $selectStmt = new SelectStatement($this);
 
     // table
     $tableName = $this->getRealTableName();
@@ -235,8 +238,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    */
   protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
           $criteria=null, $orderby=null) {
+    $cacheKey = $this->getCacheKey($otherRole, $criteria, $orderby);
+
     $connection = $this->getConnection();
-    $selectStmt = new SelectStatement($connection);
+    $selectStmt = new SelectStatement($this);
 
     $relationDescription = $this->getRelationImpl($otherRole, true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -252,8 +257,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
+      $placeholder = ":".$thisAttr->getName();
       $selectStmt->where($this->quoteIdentifier($tableName).".".
-              $this->quoteIdentifier($thisAttr->getName())."= ?", $dbid);
+              $this->quoteIdentifier($thisAttr->getName())."=".$placeholder);
+      $selectStmt->addBind(array($placeholder => $dbid));
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
@@ -268,8 +275,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
+      $placeholder = ":".$thisAttr->getName();
       $selectStmt->where($this->quoteIdentifier($tableName).".".
-              $this->quoteIdentifier($thisAttr->getName())."= ?", $fkValue);
+              $this->quoteIdentifier($thisAttr->getName())."=".$placeholder);
+      $selectStmt->addBind(array($placeholder => $fkValue));
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
@@ -294,9 +303,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
       $joinCond = $this->quoteIdentifier($nmTablename).".".$this->quoteIdentifier($thisFkAttr->getName())."=".
               $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($thisIdAttr->getName());
+      $placeholder = ":".$otherFkAttr->getName();
       $selectStmt->join($nmTablename, $joinCond, array());
       $selectStmt->where($this->quoteIdentifier($nmTablename).".".
-              $this->quoteIdentifier($otherFkAttr->getName())."= ?", $dbid);
+              $this->quoteIdentifier($otherFkAttr->getName())."=".$placeholder);
+      $selectStmt->addBind(array($placeholder => $dbid));
       // order (in this case we use the order of the many to many objects)
       $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);
       $this->addOrderBy($selectStmt, $orderby, $nmTablename, $nmSortDefs);
@@ -454,13 +465,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     if ($criteria != null) {
       foreach ($criteria as $curCriteria) {
         if ($curCriteria instanceof Criteria) {
-          $condition = $this->renderCriteria($curCriteria, true, $tableName);
+          $placeholder = ":".$curCriteria->getAttribute();
+          $condition = $this->renderCriteria($curCriteria, $placeholder, $tableName);
           if ($curCriteria->getCombineOperator() == Criteria::OPERATOR_AND) {
-            $selectStmt->where($condition, $curCriteria->getValue());
+            $selectStmt->where($condition);
           }
           else {
-            $selectStmt->orWhere($condition, $curCriteria->getValue());
+            $selectStmt->orWhere($condition);
           }
+          $selectStmt->addBind(array($placeholder => $curCriteria->getValue()));
         }
         else {
           throw new IllegalArgumentException("The select condition must be an instance of Criteria");
@@ -639,6 +652,26 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $expression = $tableName.".".$expression;
     }
     return $expression;
+  }
+
+  /**
+   * Get a unique string for the given parameter values
+   * @param string
+   * @param criteriaArray
+   * @param stringArray
+   * @return String
+   */
+  protected function getCacheKey($string, $criteriaArray, $stringArray) {
+    $result = $this->getType().','.$string.',';
+    if ($criteriaArray != null) {
+      foreach ($criteriaArray as $c) {
+        $result .= $c->getType().','.$c->getAttribute().','.$c->getOperator().','.$c->getCombineOperator().',';
+      }
+    }
+    if ($stringArray != null) {
+      $result .= join(',', $stringArray);
+    }
+    return $result;
   }
 }
 ?>
