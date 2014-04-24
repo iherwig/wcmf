@@ -57,7 +57,7 @@ class Message {
    */
   private static function initialize() {
     $config = ObjectFactory::getConfigurationInstance();
-    self::$localeDir = $config->getValue('localeDir', 'application');
+    self::$localeDir = $config->getDirectoryValue('localeDir', 'application');
     if ($config->hasValue('language', 'application')) {
       self::$language = $config->getValue('language', 'application');
     }

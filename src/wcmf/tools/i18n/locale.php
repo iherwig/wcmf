@@ -70,11 +70,11 @@ function natcaseksort($array) {
 
 function getConfigValue($key, $section, $isDirectory=false) {
   $config = ObjectFactory::getConfigurationInstance();
-  $value = $config->getValue($key, $section);
-
-  // add slash
-  if ($isDirectory && substr($value, -1) != '/') {
-    $value .= '/';
+  if ($isDirectory) {
+    $value = $config->getDirectoryValue($key, $section);
+  }
+  else {
+    $value = $config->getValue($key, $section);
   }
   return $value;
 }

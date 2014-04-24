@@ -1,9 +1,10 @@
 *.log
 log.txt
 docs/api-gen
-src/app/release
+src/app/cache
+src/app/log
 src/app/searchIndex
+src/app/release
 src/app/public/media
 src/dist
-src/cache
 dist

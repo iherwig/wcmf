@@ -16,7 +16,6 @@
  */
 namespace wcmf\lib\config\impl;
 
-use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\WritableConfiguration;
@@ -179,6 +178,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   public function getBooleanValue($key, $section) {
     $value = $this->getValue($key, $section);
     return StringUtil::getBoolean($value);
+  }
+
+  public function getDirectoryValue($key, $section) {
+    $value = $this->getValue($key, $section);
+    return FileUtil::realpath(WCMF_BASE.$value).'/';
   }
 
   /**
@@ -390,6 +394,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       throw new IOException('Can\'t write ini file \''.$filename.'\'!');
     }
     fclose($fh);
+    // clear the application cache, because it may become invalid
+    $this->clearAllCache();
     $this->_isModified = false;
   }
 
@@ -518,8 +524,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
           @fclose($f);
         }
       }
-      // clear action key cache
-      ActionKey::clearCache();
+      // clear the application cache, because it may become invalid
+      $this->clearAllCache();
     }
   }
 
@@ -588,6 +594,15 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       }
     }
     return false;
+  }
+
+  /**
+   * Clear application cache.
+   */
+  protected function clearAllCache() {
+    if (($cacheDir = $this->getDirectoryValue('cacheDir', 'application')) !== false) {
+      FileUtil::emptyDir($cacheDir);
+    }
   }
 
   /**

@@ -21,10 +21,10 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
-use wcmf\lib\model\SelectStatement;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
+use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
@@ -261,8 +261,9 @@ class ObjectQuery extends AbstractQuery {
    * @see AbstractQuery::buildQuery()
    */
   protected function buildQuery($orderby=null) {
-    $mapper = self::getMapper($this->_typeNode->getType());
-    $this->_involvedTypes[$this->_typeNode->getType()] = true;
+    $type = $this->_typeNode->getType();
+    $mapper = self::getMapper($type);
+    $this->_involvedTypes[$type] = true;
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
@@ -279,7 +280,7 @@ class ObjectQuery extends AbstractQuery {
     // process groups
     for ($i=0, $countI=sizeof($this->_groups); $i<$countI; $i++) {
       $group = $this->_groups[$i];
-      $tmpSelectStmt = new SelectStatement($this->getConnection($this->_typeNode->getType()));
+      $tmpSelectStmt = new SelectStatement($mapper);
       $tmpSelectStmt->from($this->_typeNode->getProperty(self::PROPERTY_TABLE_NAME));
       for ($j=0, $countJ=sizeof($group['tpls']); $j<$countJ; $j++) {
         $tpl = $group['tpls'][$j];
@@ -345,7 +346,7 @@ class ObjectQuery extends AbstractQuery {
                 $condition .= " ".$curCriteria->getCombineOperator()." ";
               }
               // because the attributes are not selected with alias, the column name has to be used
-              $condition .= $mapper->renderCriteria($curCriteria, false,
+              $condition .= $mapper->renderCriteria($curCriteria, null,
                   $tpl->getProperty(self::PROPERTY_TABLE_NAME), $attributeDesc->getColumn());
             }
           }

@@ -39,7 +39,7 @@ class Criteria {
    * Constructor.
    * @param type The PersistentObject type that has the attribute
    * @param attribute The name of the attribute
-   * @param operator The comparison operator used to compare the giben value with
+   * @param operator The comparison operator used to compare the given value with
    *   the attribute's value
    * @param value The value to compare the object with
    * @param combineOperator The Criteria::OPERATOR to use, when this criteria is
@@ -56,7 +56,7 @@ class Criteria {
   /**
    * Factory method for constructing a Critera that may be used as value on
    * a PersistentObject's attribute (no type, attribute parameter needed)
-   * @param operator The comparison operator used to compare the giben value with
+   * @param operator The comparison operator used to compare the given value with
    *  the attribute's value
    * @param value The value to compare the object with
    * @return Criteria
@@ -98,7 +98,7 @@ class Criteria {
   }
 
   /**
-   * Set the comparison operator used to compare the giben value with
+   * Set the comparison operator used to compare the given value with
    * the attribute's value
    * @param operator The operator
    */
@@ -107,7 +107,7 @@ class Criteria {
   }
 
   /**
-   * Get the comparison operator used to compare the giben value with
+   * Get the comparison operator used to compare the given value with
    * the attribute's value
    * @return String
    */

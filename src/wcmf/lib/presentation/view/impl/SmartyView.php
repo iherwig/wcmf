@@ -48,26 +48,17 @@ class SmartyView implements View {
     // load filter
     $this->_view->loadFilter('pre', 'removeprids');
     $this->_view->loadFilter('output', 'trimwhitespace');
-  }
 
-  /**
-   * Set the base directory for smarty's internal directories
-   * (templates_c, cache, ...)
-   * @param smartyDir
-   */
-  public function setSmartyDir($smartyDir) {
-    if (substr($smartyDir, -1) != '/') {
-      $smartyDir .= '/';
+    // setup smarty directories
+    $config = ObjectFactory::getConfigurationInstance();
+    if (($cacheDir = $config->getDirectoryValue('cacheDir', 'application')) === false) {
+      throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.", __FILE__, __LINE__);
     }
+    $smartyDir = $cacheDir.'smarty/';
     $this->_view->compile_dir = $smartyDir.'templates_c/';
     $this->_view->cache_dir = $smartyDir.'cache/';
-
-    if (!file_exists($this->_view->compile_dir)) {
-      FileUtil::mkdirRec($this->_view->compile_dir);
-    }
-    if (!file_exists($this->_view->cache_dir)) {
-      FileUtil::mkdirRec($this->_view->cache_dir);
-    }
+    FileUtil::mkdirRec($this->_view->compile_dir);
+    FileUtil::mkdirRec($this->_view->cache_dir);
   }
 
   /**

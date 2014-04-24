@@ -48,7 +48,7 @@ use wcmf\lib\presentation\Response;
  * @author ingo herwig <ingo@wemove.com>
  */
 class XMLExportController extends BatchController {
-  const CACHE_SECTION = __CLASS__;
+  const CACHE_SECTION = 'xmlexport';
   const CACHE_KEY_ROOT_OIDS = 'rootOids';
   const CACHE_KEY_EXPORTED_OIDS = 'exportedOids';
 
@@ -113,7 +113,7 @@ class XMLExportController extends BatchController {
    */
   protected function getDownloadFile() {
     $config = ObjectFactory::getConfigurationInstance();
-    $cacheDir = $config->getValue('cacheDir', 'Application');
+    $cacheDir = $config->getDirectoryValue('cacheDir', 'Application');
     return $cacheDir.$this->_DOCFILE;
   }
 

@@ -18,6 +18,7 @@ namespace wcmf\lib\util;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileUtil;
 
 /**
  * I18nUtil provides support i18n functionality.
@@ -122,13 +123,8 @@ class I18nUtil {
   public static function createPHPLanguageFile($language, $messages) {
     // get locale directory
     $config = ObjectFactory::getConfigurationInstance();
-    $localeDir = $config->getValue('localeDir', 'application');
-    if (substr($localeDir, -1) != '/') {
-      $localeDir .= '/';
-    }
-    if (!file_exists($localeDir)) {
-      mkdir($localeDir);
-    }
+    $localeDir = $config->getDirectoryValue('localeDir', 'application');
+    FileUtil::mkdirRec($localeDir);
     $file = $localeDir.'messages_'.$language.'.php';
 
     // backup old file

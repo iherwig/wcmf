@@ -25,15 +25,10 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-qgtkLQ8EeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_-qh7sLQ8EeOQ5oJFa1i8cg" value="wcmf base"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_7NKc8LQ8EeOQ5oJFa1i8cg" name="libDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_DnPtULQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_DnPtUbQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_DnQ7cLQ9EeOQ5oJFa1i8cg" value="../wcmf/"/>
-                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7QHDQLQ8EeOQ5oJFa1i8cg" name="localeDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_FIxxgLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FIxxgbQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_FIy_oLQ9EeOQ5oJFa1i8cg" value="../locale/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_FIy_oLQ9EeOQ5oJFa1i8cg" value="app/locale/"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7TEQoLQ8EeOQ5oJFa1i8cg" name="rootTypes" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_H-uq8LQ9EeOQ5oJFa1i8cg" value="1"/>
@@ -53,7 +48,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7c_osLQ8EeOQ5oJFa1i8cg" name="cacheDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NGOwQLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NGOwQbQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_NGQlcLQ9EeOQ5oJFa1i8cg" value="../../cache/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_NGQlcLQ9EeOQ5oJFa1i8cg" value="app/cache/"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7gMtsLQ8EeOQ5oJFa1i8cg" name="listeners" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OYK5QLQ9EeOQ5oJFa1i8cg" value="1"/>
@@ -65,7 +60,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_VJMhILQ9EeOQ5oJFa1i8cg" name="uploadDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Zr4pMLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Zr5QQLQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Zr6eYLQ9EeOQ5oJFa1i8cg" value="../../../media/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Zr6eYLQ9EeOQ5oJFa1i8cg" value="app/public/media/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_dXAQELQ9EeOQ5oJFa1i8cg" name="Localization">
@@ -99,7 +94,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_GT6ScLQ-EeOQ5oJFa1i8cg" name="indexPath" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OCfuwLQ-EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OCgV0LQ-EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OChj8LQ-EeOQ5oJFa1i8cg" value="../searchIndex/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OChj8LQ-EeOQ5oJFa1i8cg" value="app/searchIndex/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_VV5D4LQ-EeOQ5oJFa1i8cg" name="RoleConfig">
@@ -429,11 +424,6 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2ij_8LRFEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2ij_8bRFEeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_2ilOELRFEeOQ5oJFa1i8cg" value="false"/>
-                </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_wBs7ALRFEeOQ5oJFa1i8cg" name="smartyDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_36omILRFEeOQ5oJFa1i8cg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_36pNMLRFEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_36qbULRFEeOQ5oJFa1i8cg" value="../../cache/smarty/"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_wEX0gLRFEeOQ5oJFa1i8cg" name="compileCheck" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_5z_UcLRFEeOQ5oJFa1i8cg" value="1"/>

@@ -135,12 +135,5 @@ class ActionKey {
     }
     return $cachedKeys[$reqKey];
   }
-
-  /**
-   * Clear the action key cache.
-   */
-  public static function clearCache() {
-    FileCache::clear(self::CACHE_KEY);
-  }
 }
 ?>

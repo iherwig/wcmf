@@ -278,6 +278,27 @@ class FileUtil {
   }
 
   /**
+   * Realpath function that also works for non existing paths
+   * code from http://www.php.net/manual/en/function.realpath.php
+   * @param path
+   * @return String
+   */
+  public static function realpath($path) {
+    $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+    $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+    $absolutes = array();
+    foreach ($parts as $part) {
+      if ('.' == $part) continue;
+      if ('..' == $part) {
+        array_pop($absolutes);
+      } else {
+        $absolutes[] = $part;
+      }
+    }
+    return implode(DIRECTORY_SEPARATOR, $absolutes);
+  }
+
+  /**
    * Get a sanitized filename
    * @param file
    * @return String
