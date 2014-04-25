@@ -151,10 +151,7 @@ class MediaController extends Controller {
    */
   protected function getResourceBaseDir() {
     $config = ObjectFactory::getConfigurationInstance();
-    $rootPath = $config->getValue('uploadDir', 'media');
-    if (!preg_match('/\/$/', $rootPath)) {
-      $rootPath .= '/';
-    }
+    $rootPath = $config->getDirectoryValue('uploadDir', 'media');
     return $rootPath;
   }
 }

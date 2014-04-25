@@ -73,15 +73,11 @@ class LuceneSearch implements IndexedSearch {
    * @param indexPath Directory relative to main
    */
   public function setIndexPath($indexPath) {
-    if (!is_dir($indexPath)) {
-      FileUtil::mkdirRec($indexPath);
-    }
-
-    if (!is_writeable($indexPath)) {
+    $this->_indexPath = FileUtil::realpath(WCMF_BASE.$indexPath).'/';
+    FileUtil::mkdirRec($this->_indexPath);
+    if (!is_writeable($this->_indexPath)) {
       throw new ConfigurationException("Index path '".$indexPath."' is not writeable.");
     }
-    $this->_indexPath = realpath($indexPath);
-
     Log::debug("Lucene index location: ".$this->_indexPath, __CLASS__);
   }
 

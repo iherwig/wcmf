@@ -116,11 +116,8 @@ class FileCache {
     if (self::$cacheDir == null) {
       $config = ObjectFactory::getConfigurationInstance();
       if ($config) {
-        if ((self::$cacheDir = $config->getValue('cacheDir', 'application')) === false) {
+        if ((self::$cacheDir = $config->getDirectoryValue('cacheDir', 'application')) === false) {
           throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.", __FILE__, __LINE__);
-        }
-        if (substr(self::$cacheDir, -1) != '/') {
-          self::$cacheDir .= '/';
         }
       }
       else {

@@ -17,8 +17,8 @@
 namespace wcmf\lib\model\mapper;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileCache;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
@@ -44,6 +44,8 @@ use wcmf\lib\persistence\ReferenceDescription;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class NodeUnifiedRDBMapper extends RDBMapper {
+
+  const CACHE_KEY = 'mapper';
 
   private $_fkRelations = null;
 
@@ -259,7 +261,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $this->addColumns($selectStmt, $tableName);
       $placeholder = ":".$thisAttr->getName();
       $selectStmt->where($this->quoteIdentifier($tableName).".".
-              $this->quoteIdentifier($thisAttr->getName())."=".$placeholder);
+              $this->quoteIdentifier($thisAttr->getName())." = ".$placeholder);
       $selectStmt->addBind(array($placeholder => $dbid));
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
@@ -277,7 +279,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $this->addColumns($selectStmt, $tableName);
       $placeholder = ":".$thisAttr->getName();
       $selectStmt->where($this->quoteIdentifier($tableName).".".
-              $this->quoteIdentifier($thisAttr->getName())."=".$placeholder);
+              $this->quoteIdentifier($thisAttr->getName())." = ".$placeholder);
       $selectStmt->addBind(array($placeholder => $fkValue));
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
@@ -306,7 +308,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $placeholder = ":".$otherFkAttr->getName();
       $selectStmt->join($nmTablename, $joinCond, array());
       $selectStmt->where($this->quoteIdentifier($nmTablename).".".
-              $this->quoteIdentifier($otherFkAttr->getName())."=".$placeholder);
+              $this->quoteIdentifier($otherFkAttr->getName())." = ".$placeholder);
       $selectStmt->addBind(array($placeholder => $dbid));
       // order (in this case we use the order of the many to many objects)
       $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);

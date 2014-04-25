@@ -517,7 +517,7 @@ class SaveController extends Controller {
   protected function getUploadDir(ObjectId $oid, $valueName) {
     $request = $this->getRequest();
     if ($request->hasValue('uploadDir')) {
-      $uploadDir = $request->getValue('uploadDir').'/';
+      $uploadDir = FileUtil::realpath($request->getValue('uploadDir'));
     }
     else {
       $config = ObjectFactory::getConfigurationInstance();
@@ -525,24 +525,18 @@ class SaveController extends Controller {
         $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
         $type = $persistenceFacade->getSimpleType($oid->getType());
         // check if uploadDir.type is defined in the configuration
-        if ($type && ($dir = $config->getValue('uploadDir.'.$type, 'Media', false)) !== false) {
+        if ($type && ($dir = $config->getDirectoryValue('uploadDir.'.$type, 'media')) !== false) {
           $uploadDir = $dir;
         }
         else {
-          if(($dir = $config->getValue('uploadDir', 'media')) !== false) {
+          if(($dir = $config->getDirectoryValue('uploadDir', 'media')) !== false) {
             $uploadDir = $dir;
           }
         }
       }
     }
-
-    if (substr($uploadDir,-1) != '/') {
-      $uploadDir .= '/';
-    }
     // asure that the directory exists
-    if (!is_dir($uploadDir)) {
-      FileUtil::mkdirRec($uploadDir);
-    }
+    FileUtil::mkdirRec($uploadDir);
     return $uploadDir;
   }
 

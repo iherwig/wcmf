@@ -82,17 +82,11 @@
                   </ownedComment>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAvlKanKEeOVNtGD2QYLMA" value="WCMF BASE"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:id="_nAvlKqnKEeOVNtGD2QYLMA" name="libDir" type="_nAvlCKnKEeOVNtGD2QYLMA">
-                  <ownedComment xmi:id="_nAvlK6nKEeOVNtGD2QYLMA" annotatedElement="_nAvlKqnKEeOVNtGD2QYLMA">
-                    <body>?</body>
-                  </ownedComment>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAvlLKnKEeOVNtGD2QYLMA" value="../wcmf/"/>
-                </ownedAttribute>
                 <ownedAttribute xmi:id="_nAvlLanKEeOVNtGD2QYLMA" name="localeDir" type="_nAvlCKnKEeOVNtGD2QYLMA">
                   <ownedComment xmi:id="_nAvlLqnKEeOVNtGD2QYLMA" annotatedElement="_nAvlLanKEeOVNtGD2QYLMA">
                     <body>?</body>
                   </ownedComment>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAvlL6nKEeOVNtGD2QYLMA" value="../locale/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAvlL6nKEeOVNtGD2QYLMA" value="app/locale/"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:id="_nAvlMKnKEeOVNtGD2QYLMA" name="rootTypes" type="_nAvlCKnKEeOVNtGD2QYLMA">
                   <ownedComment xmi:id="_nAvlManKEeOVNtGD2QYLMA" annotatedElement="_nAvlMKnKEeOVNtGD2QYLMA">
@@ -133,7 +127,7 @@
                   <ownedComment xmi:id="_nAwMEKnKEeOVNtGD2QYLMA" annotatedElement="_nAvlQanKEeOVNtGD2QYLMA">
                     <body>?</body>
                   </ownedComment>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAwMEanKEeOVNtGD2QYLMA" value="media/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAwMEanKEeOVNtGD2QYLMA" value="app/public/media/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_nAwMEqnKEeOVNtGD2QYLMA" name="RoleConfig">
@@ -306,7 +300,7 @@
                   <ownedComment xmi:id="_nAwMZanKEeOVNtGD2QYLMA" annotatedElement="_nAwMZKnKEeOVNtGD2QYLMA">
                     <body>?</body>
                   </ownedComment>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAwMZqnKEeOVNtGD2QYLMA" value="../searchIndex/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAwMZqnKEeOVNtGD2QYLMA" value="app/searchIndex/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_nAwMZ6nKEeOVNtGD2QYLMA" name="Boolean">
@@ -671,12 +665,6 @@
                     <body>?</body>
                   </ownedComment>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAwNDKnKEeOVNtGD2QYLMA" value="false"/>
-                </ownedAttribute>
-                <ownedAttribute xmi:id="_nAwNDanKEeOVNtGD2QYLMA" name="smartyDir" type="_nAvlCKnKEeOVNtGD2QYLMA">
-                  <ownedComment xmi:id="_nAwNDqnKEeOVNtGD2QYLMA" annotatedElement="_nAwNDanKEeOVNtGD2QYLMA">
-                    <body>?</body>
-                  </ownedComment>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nAwND6nKEeOVNtGD2QYLMA" value="../cache/smarty/"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:id="_nAwNEKnKEeOVNtGD2QYLMA" name="compileCheck" type="_nAvlCKnKEeOVNtGD2QYLMA">
                   <ownedComment xmi:id="_nAwNEanKEeOVNtGD2QYLMA" annotatedElement="_nAwNEKnKEeOVNtGD2QYLMA">
