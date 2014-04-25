@@ -63,7 +63,7 @@ class StringQuery extends ObjectQuery {
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $selectStmt = $mapper->getSelectSQL(null, null, null);
+    $selectStmt = $mapper->getSelectSQL(null, null, null, true);
 
     // get all referenced types/roles from the condition and translate
     // attributes to column names

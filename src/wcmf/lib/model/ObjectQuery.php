@@ -268,7 +268,7 @@ class ObjectQuery extends AbstractQuery {
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
     $tableName = self::processTableName($this->_typeNode);
-    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array());
+    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), true);
 
     // process all root nodes except for grouped nodes
     foreach ($this->_rootNodes as $curNode) {
@@ -335,18 +335,18 @@ class ObjectQuery extends AbstractQuery {
     foreach($iter as $valueName => $value) {
       // check if the value was set when building the query
       if (isset($this->_conditions[$oidStr][$valueName])) {
-        $curCriteria = $this->_conditions[$oidStr][$valueName];
-        if ($curCriteria instanceof Criteria) {
+        $criterion = $this->_conditions[$oidStr][$valueName];
+        if ($criterion instanceof Criteria) {
           $attributeDesc = $mapper->getAttribute($valueName);
           if ($attributeDesc) {
             // ignore foreign keys
             if (!$mapper->isForeignKey($valueName)) {
               // add the combine operator, if there are already other conditions
               if (strlen($condition) > 0) {
-                $condition .= " ".$curCriteria->getCombineOperator()." ";
+                $condition .= " ".$criterion->getCombineOperator()." ";
               }
               // because the attributes are not selected with alias, the column name has to be used
-              $condition .= $mapper->renderCriteria($curCriteria, null,
+              $condition .= $mapper->renderCriteria($criterion, null,
                   $tpl->getProperty(self::PROPERTY_TABLE_NAME), $attributeDesc->getColumn());
             }
           }

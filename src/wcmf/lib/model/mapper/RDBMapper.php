@@ -26,7 +26,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
-use wcmf\lib\model\mapper\SQLConst;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\persistence\AbstractMapper;
 use wcmf\lib\persistence\BuildDepth;
@@ -95,6 +94,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   public function setConnectionParams($params) {
     $this->_connectionParams = $params;
+    if (isset($this->_connectionParams['dbPrefix'])) {
+      $this->_dbPrefix = $this->_connectionParams['dbPrefix'];
+    }
   }
 
   /**
@@ -215,7 +217,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $sequenceTable = $sequenceMapper->getTableName();
       $sequenceConn = $sequenceMapper->getConnection();
 
-      $id = 0;
       if ($this->_idSelectStmt == null) {
         $this->_idSelectStmt = $sequenceConn->prepare("SELECT id FROM ".$sequenceTable);
       }
@@ -230,7 +231,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       if (sizeof($rows) == 0) {
         $this->_idInsertStmt->execute();
         $this->_idInsertStmt->closeCursor();
-        $row = array(array('id' => 0));
+        $rows = array(array('id' => 0));
       }
       $id = $rows[0]['id'];
       $this->_idUpdateStmt->execute();
@@ -242,13 +243,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       Log::error("The next id query caused the following exception:\n".$ex->getMessage(), __CLASS__);
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
-  }
-
-  /**
-   * Get the name of the sequence table
-   * @return The name.
-   */
-  protected function getSequenceTablename() {
   }
 
   /**
@@ -323,23 +317,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       if ($pagingInfo != null) {
         // make a count query if requested
         if (!$pagingInfo->isIgnoringTotalCount()) {
-          $columnPart = $selectStmt->getPart(SelectStatement::COLUMNS);
-          $orderPart = $selectStmt->getPart(SelectStatement::ORDER);
-          $selectStmt->reset(SelectStatement::COLUMNS);
-          $selectStmt->reset(SelectStatement::ORDER);
-          $selectStmt->columns(array('nRows' => SQLConst::COUNT()));
-          $row = $selectStmt->getAdapter()->fetchRow($selectStmt);
-          $nRows = $row['nRows'];
           // update pagingInfo
-          $pagingInfo->setTotalCount($nRows);
-          // reset the query
-          $selectStmt->reset(SelectStatement::COLUMNS);
-          foreach ($columnPart as $columnDef) {
-            $selectStmt->columns(array($columnDef[2] => $columnDef[1]), $columnDef[0]);
-          }
-          foreach ($orderPart as $orderDef) {
-            $selectStmt->order($orderDef[0]." ".$orderDef[1]);
-          }
+          $pagingInfo->setTotalCount($selectStmt->getRowCount());
         }
         // return empty array, if page size <= 0
         if ($pagingInfo->getPageSize() <= 0) {
@@ -387,9 +366,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
     // transform criteria
     $where = array();
-    foreach ($operation->getCriteria() as $curCriteria) {
-      $condition = $this->renderCriteria($curCriteria, '?', $tableName);
-      $where[$condition] = $curCriteria->getValue();
+    foreach ($operation->getCriteria() as $criterion) {
+      $condition = $this->renderCriteria($criterion, '?', $tableName);
+      $where[$condition] = $criterion->getValue();
     }
 
     // execute the statement
@@ -453,6 +432,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param roleName The role name of the relation
    * @param includeManyToMany Boolean whether to also search in relations to many to many
    *    objects or not
+   * @return RelationDescription
    */
   protected function getRelationImpl($roleName, $includeManyToMany) {
     $this->initRelations();
@@ -659,10 +639,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $columnName = $attrDesc->getColumn();
     }
 
-    $result = $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($columnName).
+    $result = $mapper->quoteIdentifier($tableName).".".$mapper->quoteIdentifier($columnName).
                 " ".$criteria->getOperator()." ";
     $value = $criteria->getValue();
-    $valueStr = !$placeholder ? $this->quoteValue($value) : $placeholder;
+    $valueStr = !$placeholder ? $mapper->quoteValue($value) : $placeholder;
     if (is_array($value)) {
       $result .= "(".$valueStr.")";
     }
@@ -1220,11 +1200,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param alias The alias for the table name [default: null uses none].
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param noCache Boolean wheter to allow to return a cached statement or not (maybe null). [default: false]
    * @return SelectStatement instance that selects all object data that match the condition or an array with the query parts.
    * @note The names of the data item columns MUST match the data item names provided in the '_datadef' array from RDBMapper::getObjectDefinition()
    *       Use alias names if not! The selected data will be put into the '_data' array of the object definition.
    */
-  abstract public function getSelectSQL($criteria=null, $alias=null, $orderby=null);
+  abstract public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $noCache=false);
 
   /**
    * Get the SQL command to select those objects from the database that are related to the given object.

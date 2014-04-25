@@ -35,6 +35,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
+use wcmf\lib\persistence\RelationDescription;
 
 /**
  * NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node
@@ -207,109 +208,192 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * @see RDBMapper::getSelectSQL()
    */
-  public function getSelectSQL($criteria=null, $alias=null, $orderby=null) {
+  public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $noCache=false) {
     $cacheKey = $this->getCacheKey($alias, $criteria, $orderby);
+    if ($noCache || !FileCache::exists(self::CACHE_KEY, $cacheKey)) {
+      $selectStmt = new SelectStatement($this);
 
-    $connection = $this->getConnection();
-    $selectStmt = new SelectStatement($this);
+      // table
+      $tableName = $this->getRealTableName();
+      if ($alias != null) {
+        $selectStmt->from(array($alias => $tableName), '');
+        $tableName = $alias;
+      }
+      else {
+        $selectStmt->from($tableName, '');
+      }
 
-    // table
-    $tableName = $this->getRealTableName();
-    if ($alias != null) {
-      $selectStmt->from(array($alias => $tableName), '');
-      $tableName = $alias;
+      // columns
+      $this->addColumns($selectStmt, $tableName);
+
+      // condition
+      $bind = $this->addCriteria($selectStmt, $criteria, $tableName);
+
+      // order
+      $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder());
+
+      // cache statement
+      if (!$noCache) {
+        FileCache::put(self::CACHE_KEY, $cacheKey, $selectStmt);
+      }
     }
     else {
-      $selectStmt->from($tableName, '');
+      // use cached statement
+      $selectStmt = FileCache::get(self::CACHE_KEY, $cacheKey);
+      $bind = $this->getBind($criteria);
     }
 
-    // columns
-    $this->addColumns($selectStmt, $tableName);
-
-    // condition
-    $this->addCriteria($selectStmt, $criteria, $tableName);
-
-    // order
-    $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder());
-
+    // set parameters
+    $selectStmt->bind($bind);
     return $selectStmt;
   }
 
   /**
    * @see RDBMapper::getRelationSelectSQL()
    */
-  protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
-          $criteria=null, $orderby=null) {
-    $cacheKey = $this->getCacheKey($otherRole, $criteria, $orderby);
-
-    $connection = $this->getConnection();
-    $selectStmt = new SelectStatement($this);
-
+  protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy,
+          $otherRole, $criteria=null, $orderby=null) {
     $relationDescription = $this->getRelationImpl($otherRole, true);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $oid = $otherObjectProxy->getOID();
-    $tableName = $this->getRealTableName();
-
     if ($relationDescription instanceof RDBManyToOneRelationDescription) {
-      $thisAttr = $this->getAttribute($relationDescription->getFkName());
-      $dbid = $oid->getFirstId();
-      if ($dbid === null) {
-        $dbid = SQLConst::NULL();
-      }
-
-      $selectStmt->from($tableName, '');
-      $this->addColumns($selectStmt, $tableName);
-      $placeholder = ":".$thisAttr->getName();
-      $selectStmt->where($this->quoteIdentifier($tableName).".".
-              $this->quoteIdentifier($thisAttr->getName())." = ".$placeholder);
-      $selectStmt->addBind(array($placeholder => $dbid));
-      // order
-      $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
-      // additional conditions
-      $this->addCriteria($selectStmt, $criteria, $tableName);
+      return $this->getManyToOneRelationSelectSQL($relationDescription,
+              $otherObjectProxy, $otherRole, $criteria, $orderby);
     }
     elseif ($relationDescription instanceof RDBOneToManyRelationDescription) {
-      $thisAttr = $this->getAttribute($relationDescription->getIdName());
-      $fkValue = $otherObjectProxy->getValue($relationDescription->getFkName());
-      if ($fkValue === null) {
-        $fkValue = SQLConst::NULL();
-      }
+      return $this->getOneToManyRelationSelectSQL($relationDescription,
+              $otherObjectProxy, $otherRole, $criteria, $orderby);
+    }
+    elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
+      return $this->getManyToManyRelationSelectSQL($relationDescription,
+              $otherObjectProxy, $otherRole, $criteria, $orderby);
+    }
+    throw new IllegalArgumentException("Unknown RelationDescription for role: ".$otherRole);
+  }
 
+  /**
+   * Get the statement for selecting a many to one relation
+   * @see RDBMapper::getRelationSelectSQL()
+   */
+  protected function getManyToOneRelationSelectSQL(RelationDescription $relationDescription,
+          PersistentObjectProxy $otherObjectProxy, $otherRole, $criteria=null, $orderby=null) {
+    // id bind parameter
+    $thisAttr = $this->getAttribute($relationDescription->getFkName());
+    $idPlaceholder = ":".$thisAttr->getName();
+    $oid = $otherObjectProxy->getOID();
+    $dbid = $oid->getFirstId();
+    if ($dbid === null) {
+      $dbid = SQLConst::NULL();
+    }
+    $bind = array($idPlaceholder => $dbid);
+
+    // statement
+    $cacheKey = $this->getCacheKey($otherRole, $criteria, $orderby);
+    if (!FileCache::exists(self::CACHE_KEY, $cacheKey)) {
+      $selectStmt = new SelectStatement($this);
+
+      $tableName = $this->getRealTableName();
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
-      $placeholder = ":".$thisAttr->getName();
       $selectStmt->where($this->quoteIdentifier($tableName).".".
-              $this->quoteIdentifier($thisAttr->getName())." = ".$placeholder);
-      $selectStmt->addBind(array($placeholder => $fkValue));
+              $this->quoteIdentifier($thisAttr->getName())." = ".$idPlaceholder);
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
-      $this->addCriteria($selectStmt, $criteria, $tableName);
+      $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $tableName));
+      // cache statement
+      FileCache::put(self::CACHE_KEY, $cacheKey, $selectStmt);
     }
-    elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
-      $thisRelationDesc = $relationDescription->getThisEndRelation();
-      $otherRelationDesc = $relationDescription->getOtherEndRelation();
+    else {
+      // use cached statement
+      $selectStmt = FileCache::get(self::CACHE_KEY, $cacheKey);
+      $bind = array_merge($bind, $this->getBind($criteria));
+    }
 
-      $dbid = $oid->getFirstId();
-      if ($dbid === null) {
-        $dbid = SQLConst::NULL();
-      }
-      $nmMapper = $persistenceFacade->getMapper($thisRelationDesc->getOtherType());
-      $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
+    // set parameters
+    $selectStmt->bind($bind);
+    return $selectStmt;
+  }
+
+  /**
+   * Get the statement for selecting a one to many relation
+   * @see RDBMapper::getRelationSelectSQL()
+   */
+  protected function getOneToManyRelationSelectSQL(RelationDescription $relationDescription,
+          PersistentObjectProxy $otherObjectProxy, $otherRole, $criteria=null, $orderby=null) {
+    // id bind parameter
+    $thisAttr = $this->getAttribute($relationDescription->getIdName());
+    $idPlaceholder = ":".$thisAttr->getName();
+    $fkValue = $otherObjectProxy->getValue($relationDescription->getFkName());
+    if ($fkValue === null) {
+      $fkValue = SQLConst::NULL();
+    }
+    $bind = array($idPlaceholder => $fkValue);
+
+    // statement
+    $cacheKey = $this->getCacheKey($otherRole, $criteria, $orderby);
+    if (!FileCache::exists(self::CACHE_KEY, $cacheKey)) {
+      $selectStmt = new SelectStatement($this);
+
+      $tableName = $this->getRealTableName();
+      $selectStmt->from($tableName, '');
+      $this->addColumns($selectStmt, $tableName);
+      $selectStmt->where($this->quoteIdentifier($tableName).".".
+              $this->quoteIdentifier($thisAttr->getName())." = ".$idPlaceholder);
+      // order
+      $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
+      // additional conditions
+      $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $tableName));
+      // cache statement
+      FileCache::put(self::CACHE_KEY, $cacheKey, $selectStmt);
+    }
+    else {
+      // use cached statement
+      $selectStmt = FileCache::get(self::CACHE_KEY, $cacheKey);
+      $bind = array_merge($bind, $this->getBind($criteria));
+    }
+
+    // set parameters
+    $selectStmt->bind($bind);
+    return $selectStmt;
+  }
+
+  /**
+   * Get the statement for selecting a many to many relation
+   * @see RDBMapper::getRelationSelectSQL()
+   */
+  protected function getManyToManyRelationSelectSQL(RelationDescription $relationDescription,
+          PersistentObjectProxy $otherObjectProxy, $otherRole, $criteria=null, $orderby=null) {
+    // id bind parameter
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $thisRelationDesc = $relationDescription->getThisEndRelation();
+    $otherRelationDesc = $relationDescription->getOtherEndRelation();
+    $nmMapper = $persistenceFacade->getMapper($thisRelationDesc->getOtherType());
+    $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
+    $idPlaceholder = ":".$otherFkAttr->getName();
+    $oid = $otherObjectProxy->getOID();
+    $dbid = $oid->getFirstId();
+    if ($dbid === null) {
+      $dbid = SQLConst::NULL();
+    }
+    $bind = array($idPlaceholder => $dbid);
+
+    // statement
+    $cacheKey = $this->getCacheKey($otherRole, $criteria, $orderby);
+    if (!FileCache::exists(self::CACHE_KEY, $cacheKey)) {
+      $selectStmt = new SelectStatement($this);
+
       $thisFkAttr = $nmMapper->getAttribute($thisRelationDesc->getFkName());
       $thisIdAttr = $this->getAttribute($thisRelationDesc->getIdName());
       $nmTablename = $nmMapper->getRealTableName();
 
+      $tableName = $this->getRealTableName();
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
 
       $joinCond = $this->quoteIdentifier($nmTablename).".".$this->quoteIdentifier($thisFkAttr->getName())."=".
               $this->quoteIdentifier($tableName).".".$this->quoteIdentifier($thisIdAttr->getName());
-      $placeholder = ":".$otherFkAttr->getName();
       $selectStmt->join($nmTablename, $joinCond, array());
       $selectStmt->where($this->quoteIdentifier($nmTablename).".".
-              $this->quoteIdentifier($otherFkAttr->getName())." = ".$placeholder);
-      $selectStmt->addBind(array($placeholder => $dbid));
+              $this->quoteIdentifier($otherFkAttr->getName())." = ".$idPlaceholder);
       // order (in this case we use the order of the many to many objects)
       $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);
       $this->addOrderBy($selectStmt, $orderby, $nmTablename, $nmSortDefs);
@@ -319,9 +403,18 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
         $selectStmt->columns(array($nmSortAttributeDesc->getName() => $nmSortAttributeDesc->getColumn()), $nmTablename);
       }
       // additional conditions
-      $this->addCriteria($selectStmt, $criteria, $nmTablename);
+      $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $nmTablename));
+      // cache statement
+      FileCache::put(self::CACHE_KEY, $cacheKey, $selectStmt);
+    }
+    else {
+      // use cached statement
+      $selectStmt = FileCache::get(self::CACHE_KEY, $cacheKey);
+      $bind = array_merge($bind, $this->getBind($criteria));
     }
 
+    // set parameters
+    $selectStmt->bind($bind);
     return $selectStmt;
   }
 
@@ -462,26 +555,50 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @param selectStmt The select statement (instance of SelectStatement)
    * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null)
    * @param tableName The table name
+   * @return Array of placeholder value pairs for bind
    */
   protected function addCriteria(SelectStatement $selectStmt, $criteria, $tableName) {
+    $bind = array();
     if ($criteria != null) {
-      foreach ($criteria as $curCriteria) {
-        if ($curCriteria instanceof Criteria) {
-          $placeholder = ":".$curCriteria->getAttribute();
-          $condition = $this->renderCriteria($curCriteria, $placeholder, $tableName);
-          if ($curCriteria->getCombineOperator() == Criteria::OPERATOR_AND) {
+      foreach ($criteria as $criterion) {
+        if ($criterion instanceof Criteria) {
+          $placeholder = ":".$criterion->getAttribute();
+          $condition = $this->renderCriteria($criterion, $placeholder, $tableName);
+          if ($criterion->getCombineOperator() == Criteria::OPERATOR_AND) {
             $selectStmt->where($condition);
           }
           else {
             $selectStmt->orWhere($condition);
           }
-          $selectStmt->addBind(array($placeholder => $curCriteria->getValue()));
+          $bind[$placeholder] = $criterion->getValue();
         }
         else {
           throw new IllegalArgumentException("The select condition must be an instance of Criteria");
         }
       }
     }
+    return $bind;
+  }
+
+  /**
+   * Get an array of placeholder value pairs for bind
+   * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null)
+   * @return Array of placeholder value pairs for bind
+   */
+  protected function getBind($criteria) {
+    $bind = array();
+    if ($criteria != null) {
+      foreach ($criteria as $criterion) {
+        if ($criterion instanceof Criteria) {
+          $placeholder = ":".$criterion->getAttribute();
+          $bind[$placeholder] = $criterion->getValue();
+        }
+        else {
+          throw new IllegalArgumentException("The select condition must be an instance of Criteria");
+        }
+      }
+    }
+    return $bind;
   }
 
   /**
@@ -664,7 +781,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @return String
    */
   protected function getCacheKey($string, $criteriaArray, $stringArray) {
-    $result = $this->getType().','.$string.',';
+    $result = $this->getRealTableName().','.$string.',';
     if ($criteriaArray != null) {
       foreach ($criteriaArray as $c) {
         $result .= $c->getType().','.$c->getAttribute().','.$c->getOperator().','.$c->getCombineOperator().',';
