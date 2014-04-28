@@ -118,7 +118,7 @@ class BookRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'date', 'text', 'Book', 'created'),
+      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Book', 'created'),
      /**
       * Value description: 
       */
@@ -126,7 +126,7 @@ class BookRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'date', 'text', 'Book', 'modified'),
+      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Book', 'modified'),
      /**
       * Value description: 
       */

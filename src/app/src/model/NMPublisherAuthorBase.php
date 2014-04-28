@@ -83,7 +83,7 @@ class NMPublisherAuthorBase extends Node {
      * @return Array of Publisher instances
      */
     public function getPublisherList() {
-      return $this->getParentsEx(null, 'Publisher');
+      return $this->getValue('Publisher');
     }
 
     /**
@@ -101,7 +101,7 @@ class NMPublisherAuthorBase extends Node {
      * @return Array of Author instances
      */
     public function getAuthorList() {
-      return $this->getParentsEx(null, 'Author');
+      return $this->getValue('Author');
     }
 
     /**

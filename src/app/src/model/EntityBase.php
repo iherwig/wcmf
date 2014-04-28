@@ -1,9 +1,9 @@
 <?php
 /*
- * Copyright (c) 2014 The Olympos Development Team.
- *
+ * Copyright (c) 2013 The Olympos Development Team.
+ * 
  * http://sourceforge.net/projects/olympos/
- *
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ use wcmf\lib\core\ObjectFactory;
 
 /**
  * @class EntityBase
- * EntityBase description:
+ * EntityBase description: 
  *
- * @author
+ * @author 
  * @version 1.0
  */
 class EntityBase extends EntityBaseBase {

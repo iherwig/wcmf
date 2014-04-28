@@ -87,7 +87,7 @@ class LocktableBase extends Node {
      * @return Array of User instances
      */
     public function getUserList() {
-      return $this->getParentsEx(null, 'User');
+      return $this->getValue('User');
     }
 
     /**

@@ -16,18 +16,18 @@
  */
 
 define([
-    "../types/app/src/model/wcmf/DBSequenceClass"
-,    "../types/app/src/model/wcmf/LocktableClass"
-,    "../types/app/src/model/wcmf/LanguageClass"
-,    "../types/app/src/model/wcmf/TranslationClass"
-,    "../types/app/src/model/wcmf/UserClass"
-,    "../types/app/src/model/wcmf/UserConfigClass"
-,    "../types/app/src/model/wcmf/RoleClass"
-,    "../types/app/src/model/PublisherClass"
-,    "../types/app/src/model/AuthorClass"
-,    "../types/app/src/model/BookClass"
-,    "../types/app/src/model/ChapterClass"
-,    "../types/app/src/model/ImageClass"
+    "./app/src/model/wcmf/DBSequenceClass"
+,    "./app/src/model/wcmf/LocktableClass"
+,    "./app/src/model/wcmf/LanguageClass"
+,    "./app/src/model/wcmf/TranslationClass"
+,    "./app/src/model/wcmf/UserClass"
+,    "./app/src/model/wcmf/UserConfigClass"
+,    "./app/src/model/wcmf/RoleClass"
+,    "./app/src/model/PublisherClass"
+,    "./app/src/model/AuthorClass"
+,    "./app/src/model/BookClass"
+,    "./app/src/model/ChapterClass"
+,    "./app/src/model/ImageClass"
 ], function(
     app_src_model_wcmf_DBSequence
 ,    app_src_model_wcmf_Locktable

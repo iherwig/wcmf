@@ -95,7 +95,7 @@ class BookBase extends EntityBase {
      * @return Array of Publisher instances
      */
     public function getPublisherList() {
-      return $this->getParentsEx(null, 'Publisher');
+      return $this->getValue('Publisher');
     }
 
     /**
@@ -113,7 +113,7 @@ class BookBase extends EntityBase {
      * @return Array of Chapter instances
      */
     public function getChapterList() {
-      return $this->getChildrenEx(null, 'Chapter', null, null, null, false);
+      return $this->getValue('Chapter');
     }
 
     /**

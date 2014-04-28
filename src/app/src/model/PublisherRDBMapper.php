@@ -112,7 +112,7 @@ class PublisherRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'date', 'text', 'Publisher', 'created'),
+      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Publisher', 'created'),
      /**
       * Value description: 
       */
@@ -120,7 +120,7 @@ class PublisherRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'date', 'text', 'Publisher', 'modified'),
+      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Publisher', 'modified'),
      /**
       * Value description: 
       */

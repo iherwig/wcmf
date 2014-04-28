@@ -95,7 +95,7 @@ class ChapterBase extends EntityBase {
      * @return Array of Author instances
      */
     public function getAuthorList() {
-      return $this->getParentsEx(null, 'Author');
+      return $this->getValue('Author');
     }
 
     /**
@@ -113,7 +113,7 @@ class ChapterBase extends EntityBase {
      * @return Array of Book instances
      */
     public function getBookList() {
-      return $this->getParentsEx(null, 'Book');
+      return $this->getValue('Book');
     }
 
     /**
@@ -131,7 +131,7 @@ class ChapterBase extends EntityBase {
      * @return Array of Chapter instances
      */
     public function getParentChapterList() {
-      return $this->getParentsEx(null, 'ParentChapter');
+      return $this->getValue('ParentChapter');
     }
 
     /**
@@ -149,7 +149,7 @@ class ChapterBase extends EntityBase {
      * @return Array of Chapter instances
      */
     public function getSubChapterList() {
-      return $this->getChildrenEx(null, 'SubChapter', null, null, null, false);
+      return $this->getValue('SubChapter');
     }
 
     /**
@@ -167,7 +167,7 @@ class ChapterBase extends EntityBase {
      * @return Array of Image instances
      */
     public function getTitleImageList() {
-      return $this->getChildrenEx(null, 'TitleImage', null, null, null, false);
+      return $this->getValue('TitleImage');
     }
 
     /**
@@ -185,7 +185,7 @@ class ChapterBase extends EntityBase {
      * @return Array of Image instances
      */
     public function getNormalImageList() {
-      return $this->getChildrenEx(null, 'NormalImage', null, null, null, false);
+      return $this->getValue('NormalImage');
     }
 
     /**

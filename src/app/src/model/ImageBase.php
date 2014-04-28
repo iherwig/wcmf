@@ -93,7 +93,7 @@ class ImageBase extends EntityBase {
      * @return Array of Chapter instances
      */
     public function getTitleChapterList() {
-      return $this->getParentsEx(null, 'TitleChapter');
+      return $this->getValue('TitleChapter');
     }
 
     /**
@@ -111,7 +111,7 @@ class ImageBase extends EntityBase {
      * @return Array of Chapter instances
      */
     public function getNormalChapterList() {
-      return $this->getParentsEx(null, 'NormalChapter');
+      return $this->getValue('NormalChapter');
     }
 
     /**

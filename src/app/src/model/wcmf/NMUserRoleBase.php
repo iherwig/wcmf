@@ -81,7 +81,7 @@ class NMUserRoleBase extends Node {
      * @return Array of User instances
      */
     public function getUserList() {
-      return $this->getParentsEx(null, 'User');
+      return $this->getValue('User');
     }
 
     /**
@@ -99,7 +99,7 @@ class NMUserRoleBase extends Node {
      * @return Array of Role instances
      */
     public function getRoleList() {
-      return $this->getParentsEx(null, 'Role');
+      return $this->getValue('Role');
     }
 
     /**

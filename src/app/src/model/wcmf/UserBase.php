@@ -89,7 +89,7 @@ class UserBase extends AbstractUser {
      * @return Array of Locktable instances
      */
     public function getLocktableList() {
-      return $this->getChildrenEx(null, 'Locktable', null, null, null, false);
+      return $this->getValue('Locktable');
     }
 
     /**
@@ -107,7 +107,7 @@ class UserBase extends AbstractUser {
      * @return Array of UserConfig instances
      */
     public function getUserConfigList() {
-      return $this->getChildrenEx(null, 'UserConfig', null, null, null, false);
+      return $this->getValue('UserConfig');
     }
 
     /**
@@ -125,7 +125,7 @@ class UserBase extends AbstractUser {
      * @return Array of Role instances
      */
     public function getRoleList() {
-      return $this->getChildrenEx(null, 'Role', null, null, null, false);
+      return $this->getValue('Role');
     }
 
     /**

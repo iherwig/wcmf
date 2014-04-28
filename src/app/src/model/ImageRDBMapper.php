@@ -122,7 +122,7 @@ class ImageRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'date', 'text', 'Image', 'created'),
+      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Image', 'created'),
      /**
       * Value description: 
       */
@@ -130,7 +130,7 @@ class ImageRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'date', 'text', 'Image', 'modified'),
+      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Image', 'modified'),
      /**
       * Value description: 
       */

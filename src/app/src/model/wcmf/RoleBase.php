@@ -81,7 +81,7 @@ class RoleBase extends AbstractRole {
      * @return Array of User instances
      */
     public function getUserList() {
-      return $this->getChildrenEx(null, 'User', null, null, null, false);
+      return $this->getValue('User');
     }
 
     /**

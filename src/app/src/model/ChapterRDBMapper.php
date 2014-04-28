@@ -145,7 +145,7 @@ class ChapterRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'date', 'text', 'Chapter', 'created'),
+      'created' => new RDBAttributeDescription('created', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Chapter', 'created'),
      /**
       * Value description: 
       */
@@ -153,7 +153,7 @@ class ChapterRDBMapper extends NodeUnifiedRDBMapper {
      /**
       * Value description: 
       */
-      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'date', 'text', 'Chapter', 'modified'),
+      'modified' => new RDBAttributeDescription('modified', 'Date', array('DATATYPE_ATTRIBUTE'), null, '', '', false, 'text', 'text', 'Chapter', 'modified'),
      /**
       * Value description: 
       */
