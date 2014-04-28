@@ -124,7 +124,7 @@ class FileCache {
         self::$cacheDir = session_save_path();
       }
     }
-    return self::$cacheDir.FileUtil::sanitizeFilename($section);
+    return self::$cacheDir.$section;
   }
 }
 ?>

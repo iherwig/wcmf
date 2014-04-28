@@ -60,7 +60,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $sql2 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL', array(array($criteria)))->__toString();
     $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
-      "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :name) ".
+      "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
       "ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql2));
 
@@ -70,7 +70,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`ChapterAlias`.`created`, `ChapterAlias`.`creator`, `ChapterAlias`.`modified`, `ChapterAlias`.`last_editor`, ".
       "`ChapterAlias`.`sortkey_author`, `ChapterAlias`.`sortkey_book`, `ChapterAlias`.`sortkey_parentchapter`, `ChapterAlias`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` AS `ChapterAlias` ".
-      "LEFT JOIN `Author` ON `ChapterAlias`.`fk_author_id`=`Author`.`id` WHERE (`ChapterAlias`.`name` = :name) ".
+      "LEFT JOIN `Author` ON `ChapterAlias`.`fk_author_id`=`Author`.`id` WHERE (`ChapterAlias`.`name` = :ChapterAlias_name) ".
       "ORDER BY `ChapterAlias`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql3));
 
@@ -80,7 +80,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` ".
-      "FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :name) ".
+      "FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
       "ORDER BY `Chapter`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql4));
 
@@ -90,7 +90,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` ".
-      "FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :name) ".
+      "FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
       "ORDER BY `Chapter`.`name` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql5));
 
@@ -105,7 +105,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`WCMF_Chapter`.`created`, `WCMF_Chapter`.`creator`, `WCMF_Chapter`.`modified`, `WCMF_Chapter`.`last_editor`, ".
       "`WCMF_Chapter`.`sortkey_author`, `WCMF_Chapter`.`sortkey_book`, `WCMF_Chapter`.`sortkey_parentchapter`, `WCMF_Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `WCMF_Chapter` LEFT JOIN `Author` ON `WCMF_Chapter`.`fk_author_id`=`Author`.`id` ".
-      "WHERE (`WCMF_Chapter`.`name` = :name) ORDER BY `WCMF_Chapter`.`sortkey` ASC";
+      "WHERE (`WCMF_Chapter`.`name` = :WCMF_Chapter_name) ORDER BY `WCMF_Chapter`.`sortkey` ASC";
     $this->assertEquals($expected, str_replace("\n", "", $sql9));
   }
 
@@ -123,7 +123,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $sql2 = TestUtil::callProtectedMethod($otherMapper2, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($chapter), $relationDescription2->getThisRole()))->__toString();
     $expected2 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
-      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :id) ORDER BY `Author`.`name` ASC";
+      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :Author_id) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected2, str_replace("\n", "", $sql2));
 
     // parent (order)
@@ -133,7 +133,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $sql3 = TestUtil::callProtectedMethod($otherMapper3, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($chapter), $relationDescription3->getThisRole(), null, array('name')))->__toString();
     $expected3 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
-      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :id) ORDER BY `Author`.`name` ASC";
+      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :Author_id) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected3, str_replace("\n", "", $sql3));
 
     // parent (criteria)
@@ -144,7 +144,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $sql4 = TestUtil::callProtectedMethod($otherMapper4, 'getRelationSelectSQL',
             array(PersistentObjectProxy::fromObject($chapter), $relationDescription4->getThisRole(), array($criteria4)))->__toString();
     $expected4 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
-      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :id) AND (`Author`.`name` = :name) ".
+      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :Author_id) AND (`Author`.`name` = :Author_name) ".
       "ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected4, str_replace("\n", "", $sql4));
 
@@ -157,7 +157,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $expected6 = "SELECT `Image`.`id`, `Image`.`fk_chapter_id`, `Image`.`fk_titlechapter_id`, `Image`.`file` AS `filename`, ".
       "`Image`.`created`, `Image`.`creator`, `Image`.`modified`, `Image`.`last_editor`, ".
       "`Image`.`sortkey_titlechapter`, `Image`.`sortkey_normalchapter`, `Image`.`sortkey` ".
-      "FROM `Image` WHERE (`Image`.`fk_chapter_id` = :fk_chapter_id) ORDER BY `Image`.`sortkey_normalchapter` ASC";
+      "FROM `Image` WHERE (`Image`.`fk_chapter_id` = :Image_fk_chapter_id) ORDER BY `Image`.`sortkey_normalchapter` ASC";
     $this->assertEquals($expected6, str_replace("\n", "", $sql6));
 
     $mapper2 = new PublisherRDBMapper();
@@ -171,7 +171,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $expected8 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
       "`Author`.`modified`, `Author`.`last_editor`, `NMPublisherAuthor`.`sortkey_publisher` FROM `Author` ".
       "INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_author_id`=`Author`.`id` ".
-      "WHERE (`NMPublisherAuthor`.`fk_publisher_id` = :fk_publisher_id) ORDER BY `NMPublisherAuthor`.`sortkey_publisher` ASC";
+      "WHERE (`NMPublisherAuthor`.`fk_publisher_id` = :NMPublisherAuthor_fk_publisher_id) ORDER BY `NMPublisherAuthor`.`sortkey_publisher` ASC";
     $this->assertEquals($expected8, str_replace("\n", "", $sql8));
   }
 

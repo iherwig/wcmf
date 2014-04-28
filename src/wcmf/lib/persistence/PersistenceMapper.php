@@ -223,7 +223,7 @@ interface PersistenceMapper {
    * @param role The role of the objects in relation to the given object
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null). [default: null]
+   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @return Array of PersistentObject instances, a PersistentObject instance or null, if not navigable

@@ -21,7 +21,6 @@ use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\Criteria;
-use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PathDescription;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\control\ValueListProvider;
@@ -116,34 +115,6 @@ class NodeUtil {
   }
 
   /**
-   * Get the query condition used to select all Nodes of a type.
-   * @param nodeType The Node type
-   * @return The condition string to be used with StringQuery.
-   */
-  public static function getNodeQueryCondition($nodeType) {
-    $query = new ObjectQuery($nodeType);
-    return $query->getQueryCondition();
-  }
-
-  /**
-   * Get the query condition used to select a special Node.
-   * @param nodeType The Node type
-   * @param oid The object id of the node
-   * @return The condition string to be used with StringQuery.
-   */
-  public static function getSelfQueryCondition($nodeType, ObjectId $oid) {
-    $query = new ObjectQuery($nodeType);
-    $tpl = $query->getObjectTemplate($nodeType);
-    $mapper = $tpl->getMapper();
-    $ids = $oid->getId();
-    $i = 0;
-    foreach ($mapper->getPkNames() as $pkName) {
-      $tpl->setValue($pkName, Criteria::asValue("=", $ids[$i++]));
-    }
-    return $query->getQueryString();
-  }
-
-  /**
    * Get the query condition used to select all related Nodes of a given role.
    * @param node The Node to select the relatives for
    * @param otherRole The role of the other nodes
@@ -154,7 +125,7 @@ class NodeUtil {
     $relationDescription = $mapper->getRelation($otherRole);
     $otherType = $relationDescription->getOtherType();
 
-    $query = new ObjectQuery($otherType);
+    $query = new ObjectQuery($otherType, __CLASS__.__METHOD__.$node->getType().$otherRole);
     // add the primary keys of the node
     // using the role name as alias (avoids ambiguous paths)
     $nodeTpl = $query->getObjectTemplate($node->getType(), $relationDescription->getThisRole());

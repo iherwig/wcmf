@@ -161,7 +161,7 @@ class DefaultLocalization implements Localization {
     }
     // load the translations and translate the object for any other language
     else {
-      $query = new ObjectQuery($this->_translationType);
+      $query = new ObjectQuery($this->_translationType, __CLASS__.'load_save');
       $tpl = $query->getObjectTemplate($this->_translationType);
       $tpl->setValue('objectid', Criteria::asValue('=', $object->getOID()->__toString()));
       $tpl->setValue('language', Criteria::asValue('=', $lang));
@@ -201,7 +201,7 @@ class DefaultLocalization implements Localization {
       $object->beforeUpdate();
 
       // get the existing translations for the requested language
-      $query = new ObjectQuery($this->_translationType);
+      $query = new ObjectQuery($this->_translationType, __CLASS__.'load_save');
       $tpl = $query->getObjectTemplate($this->_translationType);
       $tpl->setValue('objectid', Criteria::asValue('=', $object->getOID()->__toString()));
       $tpl->setValue('language', Criteria::asValue('=', $lang));
@@ -241,7 +241,7 @@ class DefaultLocalization implements Localization {
     // delete the translations for any other language
     else {
       // get the existing translations for the requested language or all languages
-      $query = new ObjectQuery($this->_translationType);
+      $query = new ObjectQuery($this->_translationType, __CLASS__.'delete_trans'.($lang != null));
       $tpl = $query->getObjectTemplate($this->_translationType);
       $tpl->setValue('objectid', Criteria::asValue('=', $oid->__toString()));
       if ($lang != null) {
@@ -267,7 +267,7 @@ class DefaultLocalization implements Localization {
     // delete the translations for any other language
     else {
       // get the existing translations for the requested language
-      $query = new ObjectQuery($this->_translationType);
+      $query = new ObjectQuery($this->_translationType, __CLASS__.'delete_lang');
       $tpl = $query->getObjectTemplate($this->_translationType);
       $tpl->setValue('language', Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);

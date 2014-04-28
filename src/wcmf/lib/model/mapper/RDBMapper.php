@@ -348,21 +348,16 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       if ($pagingInfo != null) {
         // make a count query if requested
         if (!$pagingInfo->isIgnoringTotalCount()) {
-          // update pagingInfo
           $pagingInfo->setTotalCount($selectStmt->getRowCount());
         }
         // return empty array, if page size <= 0
         if ($pagingInfo->getPageSize() <= 0) {
           return array();
         }
-        else {
-          // set the limit on the query (NOTE: not supported by all databases)
-          $limit = $pagingInfo->getPageSize();
-          $offset = $pagingInfo->getOffset();
-          $selectStmt->limit($limit, $offset);
-        }
       }
       $result = $selectStmt->query();
+      // save statement on success
+      $selectStmt->save();
       return $result->fetchAll();
     }
     catch (Exception $ex) {
@@ -893,7 +888,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param otherRole The role of the other object in relation to the objects to load
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param criteria An array of Criteria instances that define conditions on the objects's attributes (maybe null). [default: null]
+   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @return Array of PersistentObject instances or null, if not navigable
@@ -909,7 +904,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $type = $this->getType();
 
       // create query
-      $selectStmt = $this->getRelationSelectSQL($otherObjectProxy, $otherRole, $criteria, $orderby);
+      $selectStmt = $this->getRelationSelectSQL($otherObjectProxy, $otherRole, $criteria, $orderby, $pagingInfo);
       $objects = $this->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo);
     }
     return $objects;
@@ -932,7 +927,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     }
 
     // create query
-    $selectStmt = $this->getSelectSQL($criteria, null, $orderby);
+    $selectStmt = $this->getSelectSQL($criteria, null, $orderby, $pagingInfo);
 
     $objects = $this->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo);
     return $objects;
@@ -1231,12 +1226,13 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param alias The alias for the table name [default: null uses none].
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
    * @param queryId Identifier for the query cache (maybe null to let implementers handle it). [default: null]
    * @return SelectStatement instance that selects all object data that match the condition or an array with the query parts.
    * @note The names of the data item columns MUST match the data item names provided in the '_datadef' array from RDBMapper::getObjectDefinition()
    *       Use alias names if not! The selected data will be put into the '_data' array of the object definition.
    */
-  abstract public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $queryId=null);
+  abstract public function getSelectSQL($criteria=null, $alias=null, $orderby=null, PagingInfo $pagingInfo=null, $queryId=null);
 
   /**
    * Get the SQL command to select those objects from the database that are related to the given object.
@@ -1246,10 +1242,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param otherRole The role of the other object in relation to the objects to load.
    * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
    * @return SelectStatement instance
    */
   abstract protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
-          $criteria=null, $orderby=null);
+          $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Get the SQL command to insert a object into the database.

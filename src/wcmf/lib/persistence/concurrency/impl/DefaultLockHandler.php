@@ -91,7 +91,7 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // delete locks for the given oid and current user
-    $query = new ObjectQuery(self::LOCKTYPE);
+    $query = new ObjectQuery(self::LOCKTYPE, __CLASS__.__METHOD__);
     $tpl = $query->getObjectTemplate(self::LOCKTYPE);
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $userTpl = $query->getObjectTemplate($this->getUserType());
@@ -110,7 +110,7 @@ class DefaultLockHandler implements LockHandler {
    */
   public function releaseLocks(ObjectId $oid) {
     // delete locks for the given oid
-    $query = new ObjectQuery(self::LOCKTYPE);
+    $query = new ObjectQuery(self::LOCKTYPE, __CLASS__.__METHOD__);
     $tpl = $query->getObjectTemplate(self::LOCKTYPE);
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $locks = $query->execute(BuildDepth::SINGLE);
@@ -131,7 +131,7 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // delete locks for the current user
-    $query = new ObjectQuery(self::LOCKTYPE);
+    $query = new ObjectQuery(self::LOCKTYPE, __CLASS__.__METHOD__);
     $tpl = $query->getObjectTemplate(self::LOCKTYPE);
     $userTpl = $query->getObjectTemplate($this->getUserType());
     $userTpl->setOID($currentUser->getOID());
@@ -163,7 +163,7 @@ class DefaultLockHandler implements LockHandler {
     }
     else {
       // otherwise we need to check for a pessimistic lock in the store
-      $query = new ObjectQuery(self::LOCKTYPE);
+      $query = new ObjectQuery(self::LOCKTYPE, __CLASS__.__METHOD__);
       $tpl = $query->getObjectTemplate(self::LOCKTYPE);
       $tpl->setValue('objectid', Criteria::asValue('=', $oid));
       $locks = $query->execute(BuildDepth::SINGLE);

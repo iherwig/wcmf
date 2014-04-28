@@ -21,6 +21,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -54,13 +55,13 @@ class StringQuery extends ObjectQuery {
   /**
    * @see AbstractQuery::buildQuery()
    */
-  protected function buildQuery($orderby=null) {
+  protected function buildQuery($orderby=null, PagingInfo $pagingInfo=null) {
     $queryType = $this->getQueryType();
     $mapper = self::getMapper($queryType);
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $selectStmt = $mapper->getSelectSQL(null, null, null, $this->getId());
+    $selectStmt = $mapper->getSelectSQL(null, null, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $quoteIdentifierSymbol = '`';

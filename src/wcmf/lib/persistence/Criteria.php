@@ -148,6 +148,16 @@ class Criteria {
   }
 
   /**
+   * Get an identifier for the instance
+   * @return String
+   */
+  public function getId() {
+    $str = "[".$this->combineOperator."] ".$this->type.".".$this->attribute.
+            " ".$this->operator;
+    return $str;
+  }
+
+  /**
    * Get a string representation of the operation
    * @return String
    */

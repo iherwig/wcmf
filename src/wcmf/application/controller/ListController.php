@@ -186,8 +186,7 @@ class ListController extends Controller {
       // check if the sort field is illegal
       $response = $this->getResponse();
       $request = $this->getRequest();
-      if($request->hasValue('sortFieldName'))
-      {
+      if($request->hasValue('sortFieldName')) {
         $sortFieldName = $request->getValue('sortFieldName');
         if ($sortFieldName == $ex->getField()) {
           $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));

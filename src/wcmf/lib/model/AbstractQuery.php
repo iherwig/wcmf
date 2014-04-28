@@ -51,19 +51,25 @@ abstract class AbstractQuery {
    */
   public function execute($buildDepth, $orderby=null, $pagingInfo=null) {
     // build the query
-    $this->_selectStmt = $this->buildQuery($orderby);
+    $this->_selectStmt = $this->buildQuery($orderby, $pagingInfo);
 
     return $this->executeInternal($this->_selectStmt, $buildDepth, $pagingInfo);
   }
 
   /**
-   * Get the query serialized to a string.
+   * Get the query serialized to a string. Placeholder are replaced with quoted values.
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @return String
    */
   public function getQueryString($orderby=null) {
     $selectStmt = $this->buildQuery($orderby);
-    return $selectStmt->__toString();
+    $str = $selectStmt->__toString();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $mapper = $persistenceFacade->getMapper($selectStmt->getType());
+    foreach ($selectStmt->getBind() as $value) {
+      $str = preg_replace('/\?/', $mapper->quoteValue($value), $str, 1);
+    }
+    return $str;
   }
 
   /**
@@ -80,9 +86,10 @@ abstract class AbstractQuery {
   /**
    * Build the query
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param pagingInfo A reference paging info instance, optional [default null].
    * @return SelectStatement instance
    */
-  protected abstract function buildQuery($orderby=null);
+  protected abstract function buildQuery($orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Execute the query and return the results.

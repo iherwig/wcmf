@@ -35,26 +35,29 @@ require_once('Zend/Db/Select.php');
  */
 class SelectStatement extends Zend_Db_Select {
 
+  const NO_CACHE = 'no_cache';
   const CACHE_KEY = 'select';
 
   protected $_id = null;
   protected $_type = null;
+  protected $_meta = array();
   protected $_cachedSql = array();
 
   /**
    * Get the SelectStatement instance with the given id.
-   * If the id is null or is not cached, a new one will be created.
+   * If the id equals SelectStatement::NO_CACHE or is not cached, a new one will be created.
    * @param mapper RDBMapper instance used to retrieve the database connection
-   * @param id The statement id
+   * @param id The statement id, optional [default: NO_CACHE]
    * @return SelectStatement
    */
-  public static function get(RDBMapper $mapper, $id=null) {
+  public static function get(RDBMapper $mapper, $id=self::NO_CACHE) {
     $cacheSection = self::getCacheSection($mapper->getType());
-    if ($id == null || !FileCache::exists($cacheSection, $id)) {
+    $cacheId = self::getCacheId($id);
+    if ($id == self::NO_CACHE || !FileCache::exists($cacheSection, $cacheId)) {
       $selectStmt = new SelectStatement($mapper, $id);
     }
     else {
-      $selectStmt = FileCache::get($cacheSection, $id);
+      $selectStmt = FileCache::get($cacheSection, $cacheId);
     }
     return $selectStmt;
   }
@@ -62,19 +65,20 @@ class SelectStatement extends Zend_Db_Select {
   /**
    * Constructor
    * @param mapper RDBMapper instance
-   * @param id The statement id
+   * @param id The statement id, optional [default: NO_CACHE]
    */
-  public function __construct(RDBMapper $mapper, $id=null) {
+  public function __construct(RDBMapper $mapper, $id=self::NO_CACHE) {
     parent::__construct($mapper->getConnection());
-    $this->_id = $id == null ? __CLASS__.'_'.ObjectId::getDummyId() : $id;
+    $this->_id = $id;
     $this->_type = $mapper->getType();
   }
 
   /**
-   * Destructor
+   * Get the entity type associated with the statement
+   * @return String
    */
-  public function __destruct() {
-    $this->save();
+  public function getType() {
+    return $this->_type;
   }
 
   /**
@@ -82,7 +86,8 @@ class SelectStatement extends Zend_Db_Select {
    * @return Boolean
    */
   public function isCached() {
-    return FileCache::exists(self::getCacheSection($this->_type), $this->_id);
+    return $this->_id == self::NO_CACHE ? false :
+            FileCache::exists(self::getCacheSection($this->_type), self::getCacheId($this->_id));
   }
 
   /**
@@ -91,15 +96,7 @@ class SelectStatement extends Zend_Db_Select {
    * @return String
    */
   protected static function getCacheSection($type) {
-    return self::CACHE_KEY.'_'.$type;
-  }
-
-  /**
-   * Get the query id
-   * @return String
-   */
-  public function getId() {
-    return $this->_id;
+    return self::CACHE_KEY.'/'.$type;
   }
 
   /**
@@ -124,6 +121,27 @@ class SelectStatement extends Zend_Db_Select {
    */
   public function addBind(array $bind) {
     $this->_bind = array_merge($this->_bind, $bind);
+  }
+
+  /**
+   * Add customt meta value
+   * @param key
+   * @param value
+   */
+  public function setMeta($key, $value) {
+    $this->_meta[$key] = $value;
+  }
+
+  /**
+   * Get customt meta value
+   * @param key
+   * @return Mixed
+   */
+  public function getMeta($key) {
+    if (isset($this->_meta[$key])) {
+      return $this->_meta[$key];
+    }
+    return null;
   }
 
   /**
@@ -161,7 +179,9 @@ class SelectStatement extends Zend_Db_Select {
    * Put the statement into the cache
    */
   public function save() {
-    FileCache::put(self::getCacheSection($this->_type), $this->_id, $this);
+    if ($this->_id != self::NO_CACHE) {
+      FileCache::put(self::getCacheSection($this->_type), self::getCacheId($this->_id), $this);
+    }
   }
 
   /**
@@ -172,10 +192,6 @@ class SelectStatement extends Zend_Db_Select {
     if (!isset($this->_cachedSql[$cacheKey])) {
       $sql = parent::assemble();
       $this->_cachedSql[$cacheKey] = $sql;
-      \wcmf\lib\core\Log::error("BUILD: ".$cacheKey, __CLASS__);
-    }
-    else {
-      \wcmf\lib\core\Log::error("REUSE: ".$cacheKey, __CLASS__);
     }
     return $this->_cachedSql[$cacheKey];
   }
@@ -185,7 +201,16 @@ class SelectStatement extends Zend_Db_Select {
    * @return String
    */
   protected function getCacheKey() {
-    return json_encode($this->_parts);
+    return md5(json_encode($this->_parts));
+  }
+
+  /**
+   * Get the compressed cache id from the id
+   * @param id
+   * @return String
+   */
+  protected static function getCacheId($id) {
+    return md5($id);
   }
 
   /**
@@ -193,7 +218,7 @@ class SelectStatement extends Zend_Db_Select {
    */
 
   public function __sleep() {
-    return array('_type', '_cachedSql', '_parts');
+    return array('_id', '_type', '_meta', '_cachedSql', '_parts');
   }
 
   public function __wakeup() {
