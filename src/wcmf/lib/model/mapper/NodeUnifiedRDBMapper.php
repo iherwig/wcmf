@@ -18,7 +18,6 @@ namespace wcmf\lib\model\mapper;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\io\FileCache;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
@@ -208,10 +207,13 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * @see RDBMapper::getSelectSQL()
    */
-  public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $noCache=false) {
-    $cacheKey = $this->getCacheKey($alias, $criteria, $orderby);
-    if ($noCache || !FileCache::exists(self::CACHE_KEY, $cacheKey)) {
-      $selectStmt = new SelectStatement($this);
+  public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $queryId=null) {
+    // use own query id, if none is given
+    $queryId = $queryId == null ? $this->getCacheKey($alias, $criteria, $orderby) : $queryId;
+
+    $selectStmt = SelectStatement::get($this, $queryId);
+    if (!$selectStmt->isCached()) {
+      // initialize the statement
 
       // table
       $tableName = $this->getRealTableName();
@@ -231,15 +233,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder());
-
-      // cache statement
-      if (!$noCache) {
-        FileCache::put(self::CACHE_KEY, $cacheKey, $selectStmt);
-      }
     }
     else {
-      // use cached statement
-      $selectStmt = FileCache::get(self::CACHE_KEY, $cacheKey);
+      // on used statements only set bind
       $bind = $this->getBind($criteria);
     }
 
@@ -286,9 +282,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $bind = array($idPlaceholder => $dbid);
 
     // statement
-    $cacheKey = $this->getCacheKey($otherRole, $criteria, $orderby);
-    if (!FileCache::exists(self::CACHE_KEY, $cacheKey)) {
-      $selectStmt = new SelectStatement($this);
+    $queryId = $this->getCacheKey($otherRole, $criteria, $orderby);
+    $selectStmt = SelectStatement::get($this, $queryId);
+    if (!$selectStmt->isCached()) {
+      // initialize the statement
 
       $tableName = $this->getRealTableName();
       $selectStmt->from($tableName, '');
@@ -299,12 +296,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
       $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $tableName));
-      // cache statement
-      FileCache::put(self::CACHE_KEY, $cacheKey, $selectStmt);
     }
     else {
-      // use cached statement
-      $selectStmt = FileCache::get(self::CACHE_KEY, $cacheKey);
+      // on used statements only set bind
       $bind = array_merge($bind, $this->getBind($criteria));
     }
 
@@ -329,9 +323,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $bind = array($idPlaceholder => $fkValue);
 
     // statement
-    $cacheKey = $this->getCacheKey($otherRole, $criteria, $orderby);
-    if (!FileCache::exists(self::CACHE_KEY, $cacheKey)) {
-      $selectStmt = new SelectStatement($this);
+    $queryId = $this->getCacheKey($otherRole, $criteria, $orderby);
+    $selectStmt = SelectStatement::get($this, $queryId);
+    if (!$selectStmt->isCached()) {
+      // initialize the statement
 
       $tableName = $this->getRealTableName();
       $selectStmt->from($tableName, '');
@@ -342,12 +337,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
       $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $tableName));
-      // cache statement
-      FileCache::put(self::CACHE_KEY, $cacheKey, $selectStmt);
     }
     else {
-      // use cached statement
-      $selectStmt = FileCache::get(self::CACHE_KEY, $cacheKey);
+      // on used statements only set bind
       $bind = array_merge($bind, $this->getBind($criteria));
     }
 
@@ -377,9 +369,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $bind = array($idPlaceholder => $dbid);
 
     // statement
-    $cacheKey = $this->getCacheKey($otherRole, $criteria, $orderby);
-    if (!FileCache::exists(self::CACHE_KEY, $cacheKey)) {
-      $selectStmt = new SelectStatement($this);
+    $queryId = $this->getCacheKey($otherRole, $criteria, $orderby);
+    $selectStmt = SelectStatement::get($this, $queryId);
+    if (!$selectStmt->isCached()) {
+      // initialize the statement
 
       $thisFkAttr = $nmMapper->getAttribute($thisRelationDesc->getFkName());
       $thisIdAttr = $this->getAttribute($thisRelationDesc->getIdName());
@@ -404,12 +397,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
       // additional conditions
       $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $nmTablename));
-      // cache statement
-      FileCache::put(self::CACHE_KEY, $cacheKey, $selectStmt);
     }
     else {
-      // use cached statement
-      $selectStmt = FileCache::get(self::CACHE_KEY, $cacheKey);
+      // on used statements only set bind
       $bind = array_merge($bind, $this->getBind($criteria));
     }
 

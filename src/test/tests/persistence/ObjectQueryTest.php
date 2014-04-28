@@ -34,7 +34,7 @@ class ObjectQueryTest extends BaseTestCase {
   public function testSimple() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Author');
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
       "`Author`.`last_editor` FROM `Author` ORDER BY `Author`.`name` ASC";
@@ -49,7 +49,7 @@ class ObjectQueryTest extends BaseTestCase {
   public function testOneNode() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Author');
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."2");
     $authorTpl = $query->getObjectTemplate('Author');
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
     $authorTpl->setValue("creator", "admin"); // implicit LIKE
@@ -68,7 +68,7 @@ class ObjectQueryTest extends BaseTestCase {
   public function testOrderby() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Author');
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."3");
     //
     // we need to execute the query first in order to define the attributes
     $query->execute(BuildDepth::SINGLE, array('name ASC', 'created DESC'));
@@ -87,7 +87,7 @@ class ObjectQueryTest extends BaseTestCase {
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
     $authorTpl->setValue("creator", "admin"); // implicit LIKE
 
-    $query = new ObjectQuery('Author');
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."4");
     $query->registerObjectTemplate($authorTpl);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
@@ -101,7 +101,7 @@ class ObjectQueryTest extends BaseTestCase {
   public function testParentChild() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Author');
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."5");
     $authorTpl = $query->getObjectTemplate('Author');
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
     $chapterTpl = $query->getObjectTemplate('Chapter');
@@ -119,7 +119,7 @@ class ObjectQueryTest extends BaseTestCase {
   public function testParentChildSameType() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Chapter');
+    $query = new ObjectQuery('Chapter', __CLASS__.__METHOD__."6");
     $page1Tpl = $query->getObjectTemplate('Chapter');
     $page1Tpl->setValue("creator", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
     $page2Tpl = $query->getObjectTemplate('Chapter');
@@ -140,7 +140,7 @@ class ObjectQueryTest extends BaseTestCase {
   public function testManyToMany() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Publisher');
+    $query = new ObjectQuery('Publisher', __CLASS__.__METHOD__."7");
     $publisherTpl = $query->getObjectTemplate('Publisher');
     $publisherTpl->setValue("name", Criteria::asValue("LIKE", "%Publisher 1%")); // explicit LIKE
     $authorTpl = $query->getObjectTemplate('Author');
@@ -159,7 +159,7 @@ class ObjectQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(true);
 
     $oid = new ObjectId('User', array(2));
-    $query = new ObjectQuery('Locktable');
+    $query = new ObjectQuery('Locktable', __CLASS__.__METHOD__."8");
     $tpl = $query->getObjectTemplate('Locktable');
     $tpl->setValue('sessionid', Criteria::asValue("=", "7pkt0i3ojm67s9qb66dih5nd60"));
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
@@ -175,7 +175,7 @@ class ObjectQueryTest extends BaseTestCase {
   public function testSortManyToManyRelation() {
     TestUtil::runAnonymous(true);
 
-    $query = new ObjectQuery('Publisher');
+    $query = new ObjectQuery('Publisher', __CLASS__.__METHOD__."9");
     $publisherTpl = $query->getObjectTemplate('Publisher');
     $publisherTpl->setValue("name", Criteria::asValue("LIKE", "%Publisher 1%")); // explicit LIKE
     $authorTpl = $query->getObjectTemplate('Author');
@@ -198,7 +198,7 @@ class ObjectQueryTest extends BaseTestCase {
       (Chapter.created >= '2004-01-01') AND (Chapter.created < '2005-01-01') AND ((Chapter.name LIKE 'Chapter 1%') OR (Chapter.creator = 'admin'))
      */
 
-    $query = new ObjectQuery('Author');
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."10");
 
     // (Author.name LIKE '%ingo%' AND Author.creator LIKE '%admin%')
     $authorTpl1 = $query->getObjectTemplate('Author');

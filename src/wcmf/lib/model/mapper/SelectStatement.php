@@ -19,6 +19,7 @@ namespace wcmf\lib\model\mapper;
 use \Zend_Db_Select;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileCache;
 use wcmf\lib\model\mapper\RDBMapper;
 
 $includePath = get_include_path();
@@ -34,16 +35,87 @@ require_once('Zend/Db/Select.php');
  */
 class SelectStatement extends Zend_Db_Select {
 
+  const CACHE_KEY = 'select';
+
+  protected $_id = null;
   protected $_type = null;
   protected $_cachedSql = array();
 
   /**
+   * Get the SelectStatement instance with the given id.
+   * If the id is null or is not cached, a new one will be created.
+   * @param mapper RDBMapper instance used to retrieve the database connection
+   * @param id The statement id
+   * @return SelectStatement
+   */
+  public static function get(RDBMapper $mapper, $id=null) {
+    $cacheSection = self::getCacheSection($mapper->getType());
+    if ($id == null || !FileCache::exists($cacheSection, $id)) {
+      $selectStmt = new SelectStatement($mapper, $id);
+    }
+    else {
+      $selectStmt = FileCache::get($cacheSection, $id);
+    }
+    return $selectStmt;
+  }
+
+  /**
    * Constructor
    * @param mapper RDBMapper instance
+   * @param id The statement id
    */
-  public function __construct(RDBMapper $mapper) {
+  public function __construct(RDBMapper $mapper, $id=null) {
     parent::__construct($mapper->getConnection());
+    $this->_id = $id == null ? __CLASS__.'_'.ObjectId::getDummyId() : $id;
     $this->_type = $mapper->getType();
+  }
+
+  /**
+   * Destructor
+   */
+  public function __destruct() {
+    $this->save();
+  }
+
+  /**
+   * Check if the statement is cached already
+   * @return Boolean
+   */
+  public function isCached() {
+    return FileCache::exists(self::getCacheSection($this->_type), $this->_id);
+  }
+
+  /**
+   * Get the cache section
+   * @param type The type
+   * @return String
+   */
+  protected static function getCacheSection($type) {
+    return self::CACHE_KEY.'_'.$type;
+  }
+
+  /**
+   * Get the query id
+   * @return String
+   */
+  public function getId() {
+    return $this->_id;
+  }
+
+  /**
+   * Get the types involved in the query
+   * @return Array of type names
+   */
+  public function getInvolvedTypes() {
+    $types = array();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $mapper = $persistenceFacade->getMapper($this->_type);
+    $connParams = $mapper->getConnectionParams();
+    foreach ($this->getPart(self::FROM) as $name => $from) {
+      $tableName = $from['tableName'];
+      $types[] = RDBMapper::getTypeForTableName($tableName, $connParams);
+    }
+    return $types;
   }
 
   /**
@@ -86,6 +158,13 @@ class SelectStatement extends Zend_Db_Select {
   }
 
   /**
+   * Put the statement into the cache
+   */
+  public function save() {
+    FileCache::put(self::getCacheSection($this->_type), $this->_id, $this);
+  }
+
+  /**
    * @see Select::assemble()
    */
   public function assemble() {
@@ -93,6 +172,10 @@ class SelectStatement extends Zend_Db_Select {
     if (!isset($this->_cachedSql[$cacheKey])) {
       $sql = parent::assemble();
       $this->_cachedSql[$cacheKey] = $sql;
+      \wcmf\lib\core\Log::error("BUILD: ".$cacheKey, __CLASS__);
+    }
+    else {
+      \wcmf\lib\core\Log::error("REUSE: ".$cacheKey, __CLASS__);
     }
     return $this->_cachedSql[$cacheKey];
   }

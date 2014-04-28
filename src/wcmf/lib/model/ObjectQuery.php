@@ -119,20 +119,20 @@ class ObjectQuery extends AbstractQuery {
   private $_groups = array();
   private $_groupedOIDs = array();
   private $_processedNodes = array();
-  private $_involvedTypes = array();
   private $_aliasCounter = 1;
   private $_observedObjects = array();
 
   /**
    * Constructor.
-   * @param type The type to search for.
+   * @param type The type to search for
+   * @param queryId Identifier for the query cache (maybe null to let the class handle it). [default: null]
    */
-  public function __construct($type) {
+  public function __construct($type, $queryId=null) {
     // don't use PersistenceFacade::create, because template instances must be transient
     $mapper = $this->getMapper($type);
     $this->_typeNode = $mapper->create($type, BuildDepth::SINGLE);
     $this->_rootNodes[] = $this->_typeNode;
-    $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
+    $this->_id = $queryId == null ? __CLASS__.'_'.ObjectId::getDummyId() : $queryId;
     ObjectFactory::getInstance('eventManager')->addListener(ValueChangeEvent::NAME,
       array($this, 'valueChanged'));
   }
@@ -143,6 +143,14 @@ class ObjectQuery extends AbstractQuery {
   public function __destruct() {
     ObjectFactory::getInstance('eventManager')->removeListener(ValueChangeEvent::NAME,
       array($this, 'valueChanged'));
+  }
+
+  /**
+   * Get the query id
+   * @return String
+   */
+  public function getId() {
+    return $this->_id;
   }
 
   /**
@@ -157,15 +165,17 @@ class ObjectQuery extends AbstractQuery {
     $template = null;
 
     // use the typeNode, the first time a node template of the query type is requested
-    if ($type == $this->_typeNode->getType() && !$this->_isTypeNodeInQuery) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $fqType = $persistenceFacade->getFullyQualifiedType($type);
+    if ($fqType == $this->_typeNode->getType() && !$this->_isTypeNodeInQuery) {
       $template = $this->_typeNode;
       $this->_isTypeNodeInQuery = true;
       // the typeNode is contained already in the rootNodes array
     }
     else {
       // don't use PersistenceFacade::create, because template instances must be transient
-      $mapper = $this->getMapper($type);
-      $template = $mapper->create($type, BuildDepth::SINGLE);
+      $mapper = $this->getMapper($fqType);
+      $template = $mapper->create($fqType, BuildDepth::SINGLE);
       $this->_rootNodes[] = $template;
     }
     $template->setProperty(self::PROPERTY_COMBINE_OPERATOR, $combineOperator);
@@ -263,42 +273,42 @@ class ObjectQuery extends AbstractQuery {
   protected function buildQuery($orderby=null) {
     $type = $this->_typeNode->getType();
     $mapper = self::getMapper($type);
-    $this->_involvedTypes[$type] = true;
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
     $tableName = self::processTableName($this->_typeNode);
-    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), true);
-
-    // process all root nodes except for grouped nodes
-    foreach ($this->_rootNodes as $curNode) {
-      if (!in_array($curNode->getOID(), $this->_groupedOIDs)) {
-        $this->processObjectTemplate($curNode, $selectStmt);
-      }
-    }
-
-    // process groups
-    for ($i=0, $countI=sizeof($this->_groups); $i<$countI; $i++) {
-      $group = $this->_groups[$i];
-      $tmpSelectStmt = new SelectStatement($mapper);
-      $tmpSelectStmt->from($this->_typeNode->getProperty(self::PROPERTY_TABLE_NAME));
-      for ($j=0, $countJ=sizeof($group['tpls']); $j<$countJ; $j++) {
-        $tpl = $group['tpls'][$j];
-        $this->processObjectTemplate($tpl, $tmpSelectStmt);
-      }
-      $condition = '';
-      $wherePart = $tmpSelectStmt->getPart(SelectStatement::WHERE);
-      foreach($wherePart as $where) {
-        $condition .= " ".$where;
-      }
-      $condition = trim($condition);
-      if (strlen($condition) > 0) {
-        $combineOperator = $group[self::PROPERTY_COMBINE_OPERATOR];
-        if ($combineOperator == Criteria::OPERATOR_OR) {
-          $selectStmt->orWhere($condition);
+    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), $this->getId());
+    if (!$selectStmt->isCached()) {
+      // process all root nodes except for grouped nodes
+      foreach ($this->_rootNodes as $curNode) {
+        if (!in_array($curNode->getOID(), $this->_groupedOIDs)) {
+          $this->processObjectTemplate($curNode, $selectStmt);
         }
-        else {
-          $selectStmt->where($condition);
+      }
+
+      // process groups
+      for ($i=0, $countI=sizeof($this->_groups); $i<$countI; $i++) {
+        $group = $this->_groups[$i];
+        $tmpSelectStmt = SelectStatement::get($mapper, $this->getId().'_g'.$i);
+        $tmpSelectStmt->from($this->_typeNode->getProperty(self::PROPERTY_TABLE_NAME));
+        for ($j=0, $countJ=sizeof($group['tpls']); $j<$countJ; $j++) {
+          $tpl = $group['tpls'][$j];
+          $this->processObjectTemplate($tpl, $tmpSelectStmt);
+        }
+        $condition = '';
+        $wherePart = $tmpSelectStmt->getPart(SelectStatement::WHERE);
+        foreach($wherePart as $where) {
+          $condition .= " ".$where;
+        }
+        $condition = trim($condition);
+        if (strlen($condition) > 0) {
+          $combineOperator = $group[self::PROPERTY_COMBINE_OPERATOR];
+          if ($combineOperator == Criteria::OPERATOR_OR) {
+            $selectStmt->orWhere($condition);
+          }
+          else {
+            $selectStmt->where($condition);
+          }
         }
       }
     }
@@ -327,7 +337,6 @@ class ObjectQuery extends AbstractQuery {
 
     $mapper = self::getMapper($tpl->getType());
     $tableName = self::processTableName($tpl);
-    $this->_involvedTypes[$tpl->getType()] = true;
 
     // add condition
     $condition = '';
@@ -427,9 +436,6 @@ class ObjectQuery extends AbstractQuery {
 
                 $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, '');
                 $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, '');
-
-                // register the nm type
-                $this->_involvedTypes[$nmMapper->getType()] = true;
               }
             }
           }
@@ -450,6 +456,8 @@ class ObjectQuery extends AbstractQuery {
    */
   protected function processOrderBy($orderby, SelectStatement $selectStmt) {
     if ($orderby) {
+      $ok = false;
+
       // reset current order by
       $selectStmt->reset(SelectStatement::ORDER);
 
@@ -469,7 +477,7 @@ class ObjectQuery extends AbstractQuery {
         }
         else {
           // check all involved types
-          foreach (array_keys($this->_involvedTypes) as $curType) {
+          foreach ($selectStmt->getInvolvedTypes() as $curType) {
             $mapper = $persistenceFacade->getMapper($curType);
             if ($mapper->hasAttribute($orderAttribute)) {
               $orderTypeMapper = $mapper;
@@ -477,17 +485,20 @@ class ObjectQuery extends AbstractQuery {
             }
           }
         }
-        $orderTableName = $orderTypeMapper->getRealTableName();
-        $orderAttributeDesc = $orderTypeMapper->getAttribute($orderAttribute);
-        $orderColumnName = $orderAttributeDesc->getColumn();
+        if ($orderTypeMapper) {
+          $orderTableName = $orderTypeMapper->getRealTableName();
+          $orderAttributeDesc = $orderTypeMapper->getAttribute($orderAttribute);
+          $orderColumnName = $orderAttributeDesc->getColumn();
 
-        if ($orderTableName) {
-          $orderAttributeFinal = $orderTableName.".".$orderColumnName;
-          $selectStmt->order(array($orderAttributeFinal." ".$orderDirection));
+          if ($orderTableName) {
+            $orderAttributeFinal = $orderTableName.".".$orderColumnName;
+            $selectStmt->order(array($orderAttributeFinal." ".$orderDirection));
+            $ok = true;
+          }
         }
-        else {
-          throw new UnknownFieldException($orderAttribute, "The sort field name '"+$orderAttribute+"' is unknown");
-        }
+      }
+      if (!$ok) {
+        throw new UnknownFieldException($orderAttribute, "The sort field name '"+$orderAttribute+"' is unknown");
       }
     }
   }
@@ -497,7 +508,6 @@ class ObjectQuery extends AbstractQuery {
    */
   protected function resetInternals() {
     $this->_processedNodes = array();
-    $this->_involvedTypes = array();
     $this->_aliasCounter = 1;
   }
 

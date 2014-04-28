@@ -96,7 +96,7 @@ class NodeUtilTest extends BaseTestCase {
     $condition1 = NodeUtil::getRelationQueryCondition($node1, 'NormalImage');
     $this->assertEquals('(`NormalChapter`.`id` = 10)', $condition1);
     // test with query
-    $query1 = new StringQuery('Image');
+    $query1 = new StringQuery('Image', __CLASS__.__METHOD__."1");
     $query1->setConditionString($condition1);
     $sql1 = $query1->getQueryString();
     $expected1 = "SELECT `Image`.`id`, `Image`.`fk_chapter_id`, `Image`.`fk_titlechapter_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
@@ -111,7 +111,7 @@ class NodeUtilTest extends BaseTestCase {
     $condition2 = NodeUtil::getRelationQueryCondition($node2, 'ParentChapter');
     $this->assertEquals('(`SubChapter`.`id` = 10)', $condition2);
     // test with query
-    $query2 = new StringQuery('Chapter');
+    $query2 = new StringQuery('Chapter', __CLASS__.__METHOD__."2");
     $query2->setConditionString($condition2);
     $sql2 = $query2->getQueryString();
     $expected2 = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
@@ -127,7 +127,7 @@ class NodeUtilTest extends BaseTestCase {
     $condition3 = NodeUtil::getRelationQueryCondition($node3, 'SubChapter');
     $this->assertEquals('(`ParentChapter`.`id` = 10)', $condition3);
     // test with query
-    $query3 = new StringQuery('Chapter');
+    $query3 = new StringQuery('Chapter', __CLASS__.__METHOD__."3");
     $query3->setConditionString($condition3);
     $sql3 = $query3->getQueryString();
     $expected3 = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".

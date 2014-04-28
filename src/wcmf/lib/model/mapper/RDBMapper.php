@@ -60,6 +60,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   private static $SEQUENCE_CLASS = 'DBSequence';
   private static $connections = array();   // registry for connections, key: connId
   private static $inTransaction = array(); // registry for transaction status (boolean), key: connId
+  private static $tableTypeMapping = array(); // table name to type mapping
 
   private $_connectionParams = null; // database connection parameters
   private $_connId = null;     // a connection identifier composed of the connection parameters
@@ -271,6 +272,36 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   public function getRealTableName() {
     return $this->_dbPrefix.$this->getTableName();
+  }
+
+  /**
+   * Get the mapper for a given table name and connection parameters
+   * @param tableName The table name
+   * @param connectionParams The connection parameters
+   * @return String
+   */
+  public static function getTypeForTableName($tableName, $connectionParams) {
+    $tableKey = $connectionParams['dbHostName'].$connectionParams['dbName'].$tableName;
+    if (!isset(self::$tableTypeMapping[$tableKey])) {
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $found = false;
+      foreach ($persistenceFacade->getKnownTypes() as $type) {
+        $mapper = $persistenceFacade->getMapper($type);
+        if ($mapper instanceof RDBMapper) {
+          $curParams = $mapper->getConnectionParams();
+          $curTableKey = $curParams['dbHostName'].$curParams['dbName'].$mapper->getRealTableName();
+          if ($curTableKey === $tableKey) {
+            self::$tableTypeMapping[$tableKey] = $type;
+            $found = true;
+            break;
+          }
+        }
+      }
+      if (!$found) {
+        throw new IllegalArgumentException("No type found for table name: ".$tableName);
+      }
+    }
+    return self::$tableTypeMapping[$tableKey];
   }
 
   /**
@@ -1200,12 +1231,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
    * @param alias The alias for the table name [default: null uses none].
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param noCache Boolean wheter to allow to return a cached statement or not (maybe null). [default: false]
+   * @param queryId Identifier for the query cache (maybe null to let implementers handle it). [default: null]
    * @return SelectStatement instance that selects all object data that match the condition or an array with the query parts.
    * @note The names of the data item columns MUST match the data item names provided in the '_datadef' array from RDBMapper::getObjectDefinition()
    *       Use alias names if not! The selected data will be put into the '_data' array of the object definition.
    */
-  abstract public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $noCache=false);
+  abstract public function getSelectSQL($criteria=null, $alias=null, $orderby=null, $queryId=null);
 
   /**
    * Get the SQL command to select those objects from the database that are related to the given object.

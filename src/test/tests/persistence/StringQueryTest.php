@@ -31,7 +31,7 @@ class StringQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%'";
-    $query = new StringQuery('Author');
+    $query = new StringQuery('Author', __CLASS__.__METHOD__."1");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor` ".
@@ -44,7 +44,7 @@ class StringQueryTest extends BaseTestCase {
   public function testNoCondition() {
     TestUtil::runAnonymous(true);
 
-    $query = new StringQuery('Author');
+    $query = new StringQuery('Author', __CLASS__.__METHOD__."2");
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor` ".
       "FROM `Author` ORDER BY `Author`.`name` ASC";
@@ -57,7 +57,7 @@ class StringQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Chapter`.`name` LIKE 'Chapter 1%'";
-    $query = new StringQuery('Author');
+    $query = new StringQuery('Author', __CLASS__.__METHOD__."3");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
@@ -72,7 +72,7 @@ class StringQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Chapter`.`creator` LIKE '%ingo%' AND `SubChapter`.`name` LIKE 'Chapter 1%'";
-    $query = new StringQuery('Chapter');
+    $query = new StringQuery('Chapter', __CLASS__.__METHOD__."4");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
@@ -89,7 +89,7 @@ class StringQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`NormalChapter`.`id` = 10";
-    $query = new StringQuery('Image');
+    $query = new StringQuery('Image', __CLASS__.__METHOD__."5");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Image`.`id`, `Image`.`fk_chapter_id`, `Image`.`fk_titlechapter_id`, `Image`.`file` AS `filename`, `Image`.`created`, ".
@@ -105,7 +105,7 @@ class StringQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`ParentChapter`.`id` = 10";
-    $query = new StringQuery('Chapter');
+    $query = new StringQuery('Chapter', __CLASS__.__METHOD__."6");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
@@ -122,7 +122,7 @@ class StringQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Publisher`.`name` LIKE '%Publisher 1%' AND `Author`.`name` = 'Author 2'";
-    $query = new StringQuery('Publisher');
+    $query = new StringQuery('Publisher', __CLASS__.__METHOD__."7");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Publisher`.`id`, `Publisher`.`name`, ".
@@ -142,7 +142,7 @@ class StringQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(true);
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `Image`.`file` = 'image.jpg'";
-    $query = new StringQuery('Author');
+    $query = new StringQuery('Author', __CLASS__.__METHOD__."8");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
@@ -160,7 +160,7 @@ class StringQueryTest extends BaseTestCase {
 
     $queryStr = "`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`filename` = 'image.jpg' ".
       "AND `TitleImage`.`filename` = 'title_image.jpg'";
-    $query = new StringQuery('Author');
+    $query = new StringQuery('Author', __CLASS__.__METHOD__."9");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
     $expected = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
