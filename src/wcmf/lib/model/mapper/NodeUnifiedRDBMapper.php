@@ -593,28 +593,6 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   }
 
   /**
-   * Get an array of placeholder value pairs for bind
-   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
-   * @param tableName The table name
-   * @return Array of placeholder value pairs for bind
-   */
-  protected function getBind($criteria, $tableName) {
-    $bind = array();
-    if ($criteria != null) {
-      foreach ($criteria as $criterion) {
-        if ($criterion instanceof Criteria) {
-          $placeholder = ':'.$tableName.'_'.$criterion->getAttribute();
-          $bind[$placeholder] = $criterion->getValue();
-        }
-        else {
-          throw new IllegalArgumentException("The select condition must be an instance of Criteria");
-        }
-      }
-    }
-    return $bind;
-  }
-
-  /**
    * Add the given order to the select statement
    * @param selectStmt The select statement (instance of SelectStatement)
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
@@ -638,6 +616,28 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     if (sizeof($orderby) > 0) {
       $selectStmt->order($orderbyFinal);
     }
+  }
+
+  /**
+   * Get an array of placeholder value pairs for bind
+   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
+   * @param tableName The table name
+   * @return Array of placeholder value pairs for bind
+   */
+  protected function getBind($criteria, $tableName) {
+    $bind = array();
+    if ($criteria != null) {
+      foreach ($criteria as $criterion) {
+        if ($criterion instanceof Criteria) {
+          $placeholder = ':'.$tableName.'_'.$criterion->getAttribute();
+          $bind[$placeholder] = $criterion->getValue();
+        }
+        else {
+          throw new IllegalArgumentException("The select condition must be an instance of Criteria");
+        }
+      }
+    }
+    return $bind;
   }
 
   /**

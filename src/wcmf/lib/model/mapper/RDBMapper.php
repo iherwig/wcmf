@@ -60,7 +60,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   private static $SEQUENCE_CLASS = 'DBSequence';
   private static $connections = array();   // registry for connections, key: connId
   private static $inTransaction = array(); // registry for transaction status (boolean), key: connId
-  private static $tableTypeMapping = array(); // table name to type mapping
 
   private $_connectionParams = null; // database connection parameters
   private $_connId = null;     // a connection identifier composed of the connection parameters
@@ -272,36 +271,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   public function getRealTableName() {
     return $this->_dbPrefix.$this->getTableName();
-  }
-
-  /**
-   * Get the mapper for a given table name and connection parameters
-   * @param tableName The table name
-   * @param connectionParams The connection parameters
-   * @return String
-   */
-  public static function getTypeForTableName($tableName, $connectionParams) {
-    $tableKey = $connectionParams['dbHostName'].$connectionParams['dbName'].$tableName;
-    if (!isset(self::$tableTypeMapping[$tableKey])) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $found = false;
-      foreach ($persistenceFacade->getKnownTypes() as $type) {
-        $mapper = $persistenceFacade->getMapper($type);
-        if ($mapper instanceof RDBMapper) {
-          $curParams = $mapper->getConnectionParams();
-          $curTableKey = $curParams['dbHostName'].$curParams['dbName'].$mapper->getRealTableName();
-          if ($curTableKey === $tableKey) {
-            self::$tableTypeMapping[$tableKey] = $type;
-            $found = true;
-            break;
-          }
-        }
-      }
-      if (!$found) {
-        throw new IllegalArgumentException("No type found for table name: ".$tableName);
-      }
-    }
-    return self::$tableTypeMapping[$tableKey];
   }
 
   /**

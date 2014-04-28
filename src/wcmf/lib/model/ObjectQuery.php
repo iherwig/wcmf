@@ -119,6 +119,7 @@ class ObjectQuery extends AbstractQuery {
   private $_groups = array();
   private $_groupedOIDs = array();
   private $_processedNodes = array();
+  private $_involvedTypes = array();
   private $_aliasCounter = 1;
   private $_observedObjects = array();
   private $_bindOrder = array();
@@ -274,6 +275,7 @@ class ObjectQuery extends AbstractQuery {
   protected function buildQuery($orderby=null, PagingInfo $pagingInfo=null) {
     $type = $this->_typeNode->getType();
     $mapper = self::getMapper($type);
+    $this->_involvedTypes[$type] = true;
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
@@ -346,6 +348,7 @@ class ObjectQuery extends AbstractQuery {
 
     $mapper = self::getMapper($tpl->getType());
     $tableName = self::processTableName($tpl);
+    $this->_involvedTypes[$tpl->getType()] = true;
 
     // add condition
     $condition = '';
@@ -446,6 +449,9 @@ class ObjectQuery extends AbstractQuery {
 
                 $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, '');
                 $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, '');
+
+                // register the nm type
+                $this->_involvedTypes[$nmMapper->getType()] = true;
               }
             }
           }
@@ -487,7 +493,7 @@ class ObjectQuery extends AbstractQuery {
         }
         else {
           // check all involved types
-          foreach ($selectStmt->getInvolvedTypes() as $curType) {
+          foreach (array_keys($this->_involvedTypes) as $curType) {
             $mapper = $persistenceFacade->getMapper($curType);
             if ($mapper->hasAttribute($orderAttribute)) {
               $orderTypeMapper = $mapper;
@@ -566,6 +572,7 @@ class ObjectQuery extends AbstractQuery {
   protected function resetInternals() {
     $this->_processedNodes = array();
     $this->_bindOrder = array();
+    $this->_involvedTypes = array();
     $this->_aliasCounter = 1;
   }
 

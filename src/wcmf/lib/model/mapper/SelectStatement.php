@@ -91,39 +91,6 @@ class SelectStatement extends Zend_Db_Select {
   }
 
   /**
-   * Get the cache section
-   * @param type The type
-   * @return String
-   */
-  protected static function getCacheSection($type) {
-    return self::CACHE_KEY.'/'.$type;
-  }
-
-  /**
-   * Get the types involved in the query
-   * @return Array of type names
-   */
-  public function getInvolvedTypes() {
-    $types = array();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $mapper = $persistenceFacade->getMapper($this->_type);
-    $connParams = $mapper->getConnectionParams();
-    foreach ($this->getPart(self::FROM) as $name => $from) {
-      $tableName = $from['tableName'];
-      $types[] = RDBMapper::getTypeForTableName($tableName, $connParams);
-    }
-    return $types;
-  }
-
-  /**
-   * Add to bind variables
-   * @param bind
-   */
-  public function addBind(array $bind) {
-    $this->_bind = array_merge($this->_bind, $bind);
-  }
-
-  /**
    * Add customt meta value
    * @param key
    * @param value
@@ -161,7 +128,7 @@ class SelectStatement extends Zend_Db_Select {
 
     // do count query
     $this->columns(array('nRows' => SQLConst::COUNT()));
-    $stmt = $this->getAdapter()->prepare($this->assemble());
+    $stmt = $this->getAdapter()->prepare($this->assemble('count'));
     $stmt->execute($this->getBind());
     $row = $stmt->fetch();
     $nRows = $row['nRows'];
@@ -187,8 +154,7 @@ class SelectStatement extends Zend_Db_Select {
   /**
    * @see Select::assemble()
    */
-  public function assemble() {
-    $cacheKey = $this->getCacheKey();
+  public function assemble($cacheKey=null) {
     if (!isset($this->_cachedSql[$cacheKey])) {
       $sql = parent::assemble();
       $this->_cachedSql[$cacheKey] = $sql;
@@ -197,11 +163,21 @@ class SelectStatement extends Zend_Db_Select {
   }
 
   /**
-   * Get a unique string for the current parts
+   * @see Select::query()
+   */
+  public function query($fetchMode = null, $bind = array()) {
+    $stmt = $this->getAdapter()->prepare($this->assemble('select'));
+    $stmt->execute($this->getBind());
+    return $stmt;
+  }
+
+  /**
+   * Get the cache section
+   * @param type The type
    * @return String
    */
-  protected function getCacheKey() {
-    return md5(json_encode($this->_parts));
+  protected static function getCacheSection($type) {
+    return self::CACHE_KEY.'/'.$type;
   }
 
   /**
