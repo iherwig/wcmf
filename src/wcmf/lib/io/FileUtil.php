@@ -206,7 +206,7 @@ class FileUtil {
    */
   public static function mkdirRec($dirname) {
     if (!is_dir($dirname)) {
-      mkdir($dirname, 0755, true);
+      @mkdir($dirname, 0755, true);
     }
   }
 
@@ -217,11 +217,11 @@ class FileUtil {
   public static function emptyDir($dirname) {
     $files = self::getFiles($dirname, '/./', true, true);
     foreach ($files as $file) {
-      unlink($file);
+      @unlink($file);
     }
     $dirs = self::getDirectories($dirname, '/./', true, true);
     foreach ($dirs as $dir) {
-      rmdir($dir);
+      @rmdir($dir);
     }
   }
 
@@ -284,18 +284,27 @@ class FileUtil {
    * @return String
    */
   public static function realpath($path) {
-    $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
-    $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
-    $absolutes = array();
-    foreach ($parts as $part) {
-      if ('.' == $part) continue;
-      if ('..' == $part) {
-        array_pop($absolutes);
-      } else {
-        $absolutes[] = $part;
-      }
+    if (file_exists($path)) {
+      return realpath($path);
     }
-    return implode(DIRECTORY_SEPARATOR, $absolutes);
+    else {
+      $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
+      $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+      $absolutes = array();
+      foreach ($parts as $part) {
+        if ('.' == $part) continue;
+        if ('..' == $part) {
+          array_pop($absolutes);
+        } else {
+          $absolutes[] = $part;
+        }
+      }
+      $result = implode(DIRECTORY_SEPARATOR, $absolutes);
+      if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
+        $result = '/'.$result;
+      }
+      return $result;
+    }
   }
 
   /**

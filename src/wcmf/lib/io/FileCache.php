@@ -75,7 +75,7 @@ class FileCache {
    */
   public static function clear($section) {
     $file = self::getCacheFile($section);
-    unlink($file);
+    @unlink($file);
   }
 
   /**
@@ -103,8 +103,13 @@ class FileCache {
     $file = self::getCacheFile($section);
     FileUtil::mkdirRec(dirname($file));
     $fh = fopen($file, "w");
-    fwrite($fh, $content);
-    fclose($fh);
+    if ($fh !== false) {
+      fwrite($fh, $content);
+      fclose($fh);
+    }
+    else {
+      throw new ConfigurationException("The cache path is not writable: ".$file);
+    }
   }
 
   /**
@@ -117,7 +122,7 @@ class FileCache {
       $config = ObjectFactory::getConfigurationInstance();
       if ($config) {
         if ((self::$cacheDir = $config->getDirectoryValue('cacheDir', 'application')) === false) {
-          throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.", __FILE__, __LINE__);
+          throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.");
         }
       }
       else {

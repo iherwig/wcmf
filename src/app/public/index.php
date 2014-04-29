@@ -7,6 +7,7 @@ require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 use \Exception;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\util\URIUtil;
 use wcmf\lib\security\principal\impl\AnonymousUser;
@@ -27,7 +28,7 @@ try {
   $uiLanguage = $config->getValue('language', 'application');
   $defaultLanguage = $config->getValue('defaultLanguage', 'localization');
   $languages = $config->getSection('languages');
-  $mediaPath = $config->getValue('uploadDir', 'media');
+  $mediaAbsPath = $config->getDirectoryValue('uploadDir', 'media');
   $inputTypes = $config->getSection('inputTypes');
   $displayTypes = $config->getSection('displayTypes');
   $userType = str_replace('\\', '.', $config->getValue('__class', 'user'));
@@ -51,6 +52,7 @@ try {
     }
   }
   $baseHref = dirname(URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']).'/';
+  $mediaPath = FileUtil::getRelativePath(dirname($_SERVER['SCRIPT_FILENAME']), $mediaAbsPath);
 
   // define client configuration
   $clientConfig = array(

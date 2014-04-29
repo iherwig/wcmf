@@ -2120,10 +2120,6 @@
           <element xmi:type="uml:Property" href="model.uml#_v_CBgLRFEeOQ5oJFa1i8cg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_xorf4bRFEeOQ5oJFa1i8cg"/>
         </children>
-        <children xmi:type="notation:Shape" xmi:id="_xorf4rRFEeOQ5oJFa1i8cg" type="3012" lineColor="0">
-          <element xmi:type="uml:Property" href="model.uml#_wBs7ALRFEeOQ5oJFa1i8cg"/>
-          <layoutConstraint xmi:type="notation:Location" xmi:id="_xorf47RFEeOQ5oJFa1i8cg"/>
-        </children>
         <children xmi:type="notation:Shape" xmi:id="_xorf5LRFEeOQ5oJFa1i8cg" type="3012" lineColor="0">
           <element xmi:type="uml:Property" href="model.uml#_wEX0gLRFEeOQ5oJFa1i8cg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_xorf5bRFEeOQ5oJFa1i8cg"/>

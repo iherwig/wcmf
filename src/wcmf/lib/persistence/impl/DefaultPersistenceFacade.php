@@ -127,7 +127,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE))) {
-      throw new IllegalArgumentException("Build depth not supported: $buildDepth", __FILE__, __LINE__);
+      throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
     // check if the object is already part of the transaction
     $transaction = $this->getTransaction();

@@ -97,7 +97,7 @@ class HTTPClient implements RemotingClient {
       $httpResponse = $this->_client->request();
     }
     catch (Exception $ex) {
-      Log::error("Error in remote call to ".$url.":\n".$ex, __FILE__, __LINE__);
+      Log::error("Error in remote call to ".$url.":\n".$ex, __FILE__);
       throw new RuntimeException("Error in remote call to ".$url.": ".$ex->getMessage());
     }
 
@@ -116,7 +116,7 @@ class HTTPClient implements RemotingClient {
         $this->doLogin();
       }
       $url = $this->_client->getUri();
-      Log::error("Error in remote call to ".$url.": ".$errorMsg."\n".$response->toString(), __FILE__, __LINE__);
+      Log::error("Error in remote call to ".$url.": ".$errorMsg."\n".$response->toString(), __FILE__);
       throw new RuntimeException("Error in remote call: $errorMsg");
     }
     return $response;
@@ -155,7 +155,7 @@ class HTTPClient implements RemotingClient {
    */
   protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');
-    Log::error("Error in remote call to ".$this->_serverBase.": ".$errorMsg."\n".$response->toString(), __FILE__, __LINE__);
+    Log::error("Error in remote call to ".$this->_serverBase.": ".$errorMsg."\n".$response->toString(), __FILE__);
     throw new RuntimeException("Error in remote call to ".$this->_serverBase.": ".$errorMsg);
   }
 }

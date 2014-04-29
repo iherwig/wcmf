@@ -52,7 +52,7 @@ class SmartyView implements View {
     // setup smarty directories
     $config = ObjectFactory::getConfigurationInstance();
     if (($cacheDir = $config->getDirectoryValue('cacheDir', 'application')) === false) {
-      throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.", __FILE__, __LINE__);
+      throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.");
     }
     $smartyDir = $cacheDir.'smarty/';
     $this->_view->compile_dir = $smartyDir.'templates_c/';

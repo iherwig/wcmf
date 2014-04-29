@@ -17,6 +17,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
@@ -56,10 +57,12 @@ class MediaController extends Controller {
 
     // get root path and root url for the browser
     $rootPath = $this->getResourceBaseDir();
+    $relRootPath = FileUtil::getRelativePath(dirname($_SERVER['SCRIPT_FILENAME']), $rootPath);
     $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-    $rootUrl = URIUtil::makeAbsolute($rootPath, $refURL);
+    $rootUrl = URIUtil::makeAbsolute($relRootPath, $refURL);
 
     $directory = $request->hasValue('directory') ? $request->getValue('directory') : $rootPath;
+    $absDirectory = realpath($directory);
 
     // set common response values
     if ($request->hasValue('fieldName')) {
@@ -78,7 +81,7 @@ class MediaController extends Controller {
             'URL' => $rootUrl,             // URL to files (REQUIRED)
             'alias' => 'Media',
             'tmbBgColor' => 'transparent',
-            'startPath' => $directory
+            'startPath' => $absDirectory
           )
         ),
         'bind' => array(

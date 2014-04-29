@@ -103,6 +103,9 @@ class ObjectFactory {
    * @return Configuration
    */
   public static function getConfigurationInstance() {
+    if (self::$_configuration == null) {
+      throw new ConfigurationException('No Configuration instance provided. Do this by calling the configure() method.');
+    }
     return self::$_configuration;
   }
 
