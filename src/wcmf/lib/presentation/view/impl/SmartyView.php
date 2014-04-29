@@ -16,6 +16,8 @@
  */
 namespace wcmf\lib\presentation\view\impl;
 
+use wcmf\lib\config\ActionKey;
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\view\View;
 use wcmf\lib\io\FileUtil;
@@ -29,6 +31,8 @@ require_once(WCMF_BASE."wcmf/vendor/smarty/libs/Smarty.class.php");
  * @author ingo herwig <ingo@wemove.com>
  */
 class SmartyView implements View {
+
+  protected static $_sharedView = null;
 
   protected $_view = null;
 
@@ -130,8 +134,10 @@ class SmartyView implements View {
    * @see View::clearCache()
    */
   public static function clearCache() {
-    $view = ObjectFactory::getInstance('view');
-    return $view->_view->clearAllCache();
+    if (self::$_sharedView == null) {
+      self::$_sharedView = ObjectFactory::getInstance('view');
+    }
+    return self::$_sharedView->_view->clearAllCache();
   }
 
   /**
@@ -140,8 +146,24 @@ class SmartyView implements View {
    * views get regenerated every time when expected.
    */
   public static function isCached($tplFile, $cacheId=null) {
-    $view = ObjectFactory::getInstance('view');
-    return ($view->_view->caching && $view->_view->isCached($tplFile, $cacheId));
+    if (self::$_sharedView == null) {
+      self::$_sharedView = ObjectFactory::getInstance('view');
+    }
+    return (self::$_sharedView->_view->caching && self::$_sharedView->_view->isCached($tplFile, $cacheId));
+  }
+
+  /**
+   * @see View::getTemplate()
+   */
+  public static function getTemplate($controller, $context, $action) {
+    $actionKey = ActionKey::getBestMatch('views', $controller, $context, $action);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug('SmartyView::getTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
+    }
+    // get corresponding view
+    $config = ObjectFactory::getConfigurationInstance();
+    $view = $config->getValue($actionKey, 'views', false);
+    return $view;
   }
 }
 ?>

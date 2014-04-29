@@ -71,5 +71,10 @@ class NullView implements View {
   public static function isCached($tplFile, $cacheId=null) {
     return false;
   }
+
+  /**
+   * @see View::getTemplate()
+   */
+  public static function getTemplate($controller, $context, $action);
 }
 ?>

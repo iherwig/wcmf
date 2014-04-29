@@ -78,15 +78,16 @@ class HtmlFormat extends AbstractFormat {
    * @see Format::serialize()
    */
   public function serialize(Response $response) {
+    // create the view
+    $view = ObjectFactory::getInstance('view');
+
     // check if a view template is defined
-    $viewTpl = self::getViewTemplate($response->getSender(),
+    $viewTpl = $view->getTemplate($response->getSender(),
                   $response->getContext(), $response->getAction());
     if (!$viewTpl) {
       throw new ConfigurationException("View definition missing for ".
                   "response: ".$response->__toString());
     }
-    // create the view
-    $view = ObjectFactory::getInstance('view');
 
     // assign the response data to the view
     $data = $response->getValues();
@@ -96,24 +97,6 @@ class HtmlFormat extends AbstractFormat {
 
     // display the view
     $view->render(WCMF_BASE.$viewTpl, $response->getCacheId());
-  }
-
-  /**
-   * Get the template filename for the view from the configfile.
-   * @param controller The name of the controller
-   * @param context The name of the context
-   * @param action The name of the action
-   * @return The filename of the template or false, if no view is defined
-   */
-  protected static function getViewTemplate($controller, $context, $action) {
-    $actionKey = ActionKey::getBestMatch('views', $controller, $context, $action);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug('HtmlFormat::getViewTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
-    }
-    // get corresponding view
-    $config = ObjectFactory::getConfigurationInstance();
-    $view = $config->getValue($actionKey, 'views', false);
-    return $view;
   }
 
   /**
