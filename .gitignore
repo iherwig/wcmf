@@ -6,5 +6,5 @@ src/app/log
 src/app/searchIndex
 src/app/release
 src/app/public/media
-src/dist
 dist
+dist-wcmf

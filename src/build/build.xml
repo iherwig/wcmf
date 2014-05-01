@@ -9,15 +9,15 @@
 
   <target name="m2m-papyrus"
     description="transform the input model from papyrus to cwm format" >
-    <replaceregexp file="../model/model.uml"
+    <replaceregexp file="${generator.workdir}/model.uml"
                match='xmi:version="20110701"'
                replace='xmi:version="2.1"'
     />
-    <replaceregexp file="../model/model.uml"
+    <replaceregexp file="${generator.workdir}/model.uml"
                match='xmlns:xmi="http://www.omg.org/spec/XMI/20110701"'
                replace='xmlns:xmi="http://www.omg.org/spec/XMI/2.1"'
     />
-    <replaceregexp file="../model/model.uml"
+    <replaceregexp file="${generator.workdir}/model.uml"
                match='xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML"'
                replace='xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML"'
     />
@@ -94,31 +94,51 @@
         <include name="js/App.js"/>
         <include name="js/App.js.map"/>
         <include name="js/App.js.uncompressed.js"/>
-        <include name="**/nls/**/*.*"/>
+        <include name="**/nls/**/*_de.*"/>
+        <include name="**/nls/**/*_en-us.*"/>
         <include name="vendor/dojo/dojo/dojo.js"/>
         <include name="vendor/dojo/dojo/dojo.js.map"/>
         <include name="vendor/dojo/dojo/dojo.js.uncompressed.js"/>
       </fileset>
       <fileset dir="${build.base}${app.name}/public">
+        <include name=".htaccess" />
+        <include name="*.php" />
         <!-- fonts -->
         <include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
         <!-- elfinder -->
         <include name="vendor/elfinder/**/*.*"/>
       </fileset>
     </copy>
+    <!-- replace rewriteBase in .htaccess -->
+    <property name="path.app" location="${build.base}/${app.name}/public"/>
+    <property name="path.dist" location="${dist.dir}/${app.name}/public"/>
+    <script language="javascript"><![CDATA[
+      var path1 = project.getProperty("path.app");
+      var path2 = project.getProperty("path.dist");
+      project.setProperty("rewritebase.search", getPathFromBase(path1, path2, 1));
+      project.setProperty("rewritebase.replace", getPathFromBase(path1, path2, 2));
+      function getPathFromBase(path1, path2, index) {
+        var path1Parts = path1.replace("\\", "/").split("/");
+        var path2Parts = path2.replace("\\", "/").split("/");
+        for(var i=0, count=Math.min(path1Parts.length, path2Parts.length); i<count; i++) {
+          if (path1Parts[i] == path2Parts[i]) {
+            path1Parts[i] = path2Parts[i] = "";
+          }
+          else {
+            break;
+          }
+        }
+        path1 = path1Parts.join("/").replace(/\/\/+/, "/");
+        path2 = path2Parts.join("/").replace(/\/\/+/, "/");
+        return index == 1 ? path1 : path2;
+      }
+    ]]></script>
     <replaceregexp file="${dist.dir}/${app.name}/public/.htaccess"
-      match="RewriteBase (.*)/src/${app.name}/public"
-      replace="RewriteBase \1/src/dist/${app.name}/public"
+      match="RewriteBase (.*)${rewritebase.search}"
+      replace="RewriteBase \1${rewritebase.replace}"
     />
     <copy file="${build.info}" todir="${dist.dir}"/>
     <delete dir="${build.base}${app.name}/release"/>
-  </target>
-
-  <target name="package" depends="dist"
-    description="pack the distribution" >
-    <zip destfile="${package.file}" basedir="${dist.dir}"/>
-    <delete dir="${dist.dir}"/>
-    <delete file="${dojo.build.log}"/>
   </target>
 
   <target name="clean" depends="properties"

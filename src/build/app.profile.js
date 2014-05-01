@@ -168,19 +168,6 @@ var profile = {
       { name: 'app', location: '.', destLocation: '.' }
     ],
 
-    dirs: [
-      ['images', 'images'],
-      ['media', 'media', /media\/.+/]
-    ],
-    files: [
-      ['.htaccess', '.htaccess'],
-      ['base_dir.php', 'base_dir.php'],
-      ['cli.php', 'cli.php'],
-      ['index.php', 'index.php'],
-      ['main.php', 'main.php'],
-      ['soap.php', 'soap.php']
-    ],
-
     layers: {
         'dojo/dojo': {
             include: ["dojo/dojo", "dijit/dijit"],
