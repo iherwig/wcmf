@@ -113,8 +113,7 @@ catch (Exception $ex) {
           baseUrl: '',
           locale: appConfig.uiLanguage,
           async: 1,
-          tlmSiblingOfDojo: 0,
-          isDebug: 1,
+          isDebug: 0,
           packages: [
               { name: 'dojo', location: 'vendor/dojo/dojo' },
               { name: 'dijit', location: 'vendor/dojo/dijit' },

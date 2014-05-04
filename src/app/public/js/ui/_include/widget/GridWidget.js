@@ -72,7 +72,9 @@ define([
         gridWidget: null,
 
         defaultFeatures: [Selection, Keyboard, ColumnHider, ColumnResizer, DijitRegistry],
-        optionalFeatures: [DnD],
+        optionalFeatures: {
+          'DnD': DnD
+        },
 
         dndBefore: true,
 
@@ -201,9 +203,9 @@ define([
             // select features
             var features = this.defaultFeatures;
             for (var idx in this.enabledFeatures) {
-                var featureFct = eval(this.enabledFeatures[idx]);
-                if (featureFct instanceof Function) {
-                    features.push(featureFct);
+                var featureName = this.enabledFeatures[idx];
+                if (this.optionalFeatures[featureName]) {
+                    features.push(this.optionalFeatures[featureName]);
                 }
             }
 

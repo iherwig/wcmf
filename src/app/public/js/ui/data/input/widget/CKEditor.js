@@ -67,13 +67,13 @@ function(
                         this.set("value", data.newValue);
                         this.editorInstance.setData(data.newValue);
                     }
-                })),
+                }))
+            );
                 this.editorInstance.on("instanceReady", lang.hitch(this, function() {
                     this.editorInstance.on("key", lang.hitch(this, this.editorValueChanged));
                     this.editorInstance.on("paste", lang.hitch(this, this.editorValueChanged));
                     this.editorInstance.on("afterCommandExec", lang.hitch(this, this.editorValueChanged));
                 }))
-            );
         },
 
         editorValueChanged: function() {
@@ -87,6 +87,11 @@ function(
         getToolbarName: function() {
             var toolbar = this.attribute.inputType.match(/ToolbarSet="(.+?)"/);
             return (toolbar.length > 1) ? toolbar[1] : "wcmf";
+        },
+
+        destroy: function() {
+            this.editorInstance.removeAllListeners();
+            this.inherited(arguments);
         }
     });
 });

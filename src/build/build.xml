@@ -103,10 +103,19 @@
       <fileset dir="${build.base}${app.name}/public">
         <include name=".htaccess" />
         <include name="*.php" />
+        <!-- dojo resources -->
+        <include name="vendor/dojo/dojo/resources/**/*.*"/>
+        <include name="vendor/dgrid/css/images/*.*"/>
         <!-- fonts -->
         <include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
+        <include name="vendor/font-awesome/fonts/*.*"/>
         <!-- elfinder -->
         <include name="vendor/elfinder/**/*.*"/>
+        <!-- ckeditor -->
+        <include name="vendor/ckeditor/**/*.*"/>
+        <include name="vendor/ckeditor-plugins/**/*.*"/>
+        <!-- config -->
+        <include name="js/config/*.*"/>
       </fileset>
     </copy>
     <!-- replace rewriteBase in .htaccess -->

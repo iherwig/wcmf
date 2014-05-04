@@ -107,8 +107,9 @@ var profile = {
     optimize: "closure",
     cssOptimize: "comments",
     mini: true,
-    stripConsole: "warn",
+    stripConsole: "none",
     selectorEngine: "lite",
+    localeList: "en,de",
 
     defaultConfig: {
         hasCache:{
@@ -170,7 +171,7 @@ var profile = {
 
     layers: {
         'dojo/dojo': {
-            include: ["dojo/dojo", "dijit/dijit"],
+            include: ["dojo/dojo", "dijit/dijit", "dojox/main"],
             boot: true
         },
         'app/js/App': {
@@ -178,7 +179,8 @@ var profile = {
             exclude: [
                 "elfinder/jquery/jquery-1.8.1.min",
                 "elfinder/jquery/jquery-ui-1.8.23.custom.min",
-                "elfinder/js/elfinder.min"
+                "elfinder/js/elfinder.min",
+                "ckeditor/ckeditor"
             ]
         }
     }

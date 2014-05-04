@@ -60,10 +60,7 @@
       <fileset dir="${build.base}src/app/public/vendor/">
         <include name="dojo/dijit/**"/>
         <include name="dojo/dojo/**"/>
-        <include name="dojo/dojox/encoding/**"/>
-        <include name="dojo/dojox/layout/**"/>
-        <include name="dojo/dojox/uuid/**"/>
-        <include name="dojo/dojox/widget/**"/>
+        <include name="dojo/dojox/**"/>
         <include name="dojo/util/*.*"/>
         <include name="dojo/util/buildscripts/*.*"/>
         <include name="dojo/util/build/**"/>
@@ -80,15 +77,19 @@
         <include name="routed/**"/>
         <include name="twitter-bootstrap/**"/>
         <include name="xstyle/**"/>
+        <exclude name="**/demos/**"/>
+        <exclude name="**/samples/**"/>
+        <exclude name="**/src/**"/>
+        <exclude name="**/test/**"/>
         <exclude name="**/tests/**"/>
         <exclude name="**/.git*"/>
       </fileset>
     </copy>
-    <mkdir dir="${dist.dir}/cache"/>
+    <mkdir dir="${dist.dir}/app/cache"/>
     <mkdir dir="${dist.dir}/app/public/js/model/types"/>
     <mkdir dir="${dist.dir}/app/public/media"/>
     <mkdir dir="${dist.dir}/app/src/model"/>
-    <mkdir dir="${dist.dir}/app/src/view"/>
+    <mkdir dir="${dist.dir}/app/src/views"/>
     <mkdir dir="${dist.dir}/app/src/controller"/>
     <mkdir dir="${dist.dir}/test/tests"/>
     <copy todir="${dist.dir}/model/" flatten="true">
