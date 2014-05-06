@@ -143,59 +143,34 @@ class URIUtil {
 
   /**
    * Check if an url is available (HTTP-Code: 200)
-   * code from http://de.php.net/fsockopen
+   * @note requires cURL library
    * @param url The url to check
-   * @param timeout The timeout in seconds (default: 10)
+   * @param timeout The timeout in seconds (default: 5)
    * @return Boolean whether the url is available
    */
-  public static function validateUrl($url, $timeout=10) {
+  public static function validateUrl($url, $timeout=5) {
     $url_parts = @parse_url($url);
+    // check local relative url
     if (empty($url_parts["host"])) {
-      // check local relative url
       $fh = @fopen($url, "r");
-      if ($fh === false) {
-        return(false);
-      }
-      else {
-        return(true);
-      }
+      return ($fh !== false);
     }
 
-    if (!empty($url_parts["path"])) {
-      $documentpath = $url_parts["path"];
+    // check remote url
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_NOBODY, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+    $r = curl_exec($ch);
+    $headers = split("\n", $r);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("$url: HTTP-Response: ".  json_encode($headers), __CLASS__);
     }
-    else {
-      $documentpath = "/";
-    }
-    if (!empty($url_parts["query"])) {
-      $documentpath .= "?" . $url_parts["query"];
-    }
-    $host = $url_parts["host"];
-    $port = $url_parts["port"];
 
-    // Now (HTTP-)GET $documentpath at $host";
-    if (empty($port)) {
-      $port = "80";
-    }
-    $socket = @fsockopen($host, $port, $errno, $errstr, $timeout);
-    if (!$socket) {
-      return(false);
-    }
-    else {
-      fwrite ($socket, "HEAD ".$documentpath." HTTP/1.0\r\nHost: $host\r\n\r\n");
-      $http_response = fgets($socket, 22);
-      preg_match('/.+ ([0-9]{3}) .+/', $http_response, $matches);
-      if (intval($matches[1]) < 400) {
-        fclose($socket);
-        return(true);
-      }
-      else {
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("$url: HTTP-Response: $http_response", __CLASS__);
-        }
-        return(false);
-      }
-    }
+    preg_match('/.+ ([0-9]{3}) .+/', $headers[0], $matches);
+    return (intval($matches[1]) < 400);
   }
 
   /*

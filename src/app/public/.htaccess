@@ -1,6 +1,10 @@
 RewriteEngine On
 RewriteBase /wcmf/src/app/public
 
+# remove index.php
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(.*)index\.php($|\ |\?)
+RewriteRule ^ /%1 [R,L]
+
 # remove leading path caused by application's virtual paths
 RewriteCond %{REQUEST_URI} (css|images|js|media|vendor|)/.+\..+
 RewriteRule ^[^/]+/((css|images|js|media|vendor|)/.*)$ $1
