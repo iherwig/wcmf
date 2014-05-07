@@ -36,11 +36,8 @@ catch (Exception $ex) {
   $application->handleException($ex, $request);
 }
 if (Log::isDebugEnabled('main')) {
-  $controller = isset($callParams['controller']) ? $callParams['controller'] : "";
-  $context = isset($callParams['context']) ? $callParams['context'] : "";
-  $action = isset($callParams['action']) ? $callParams['action'] : "";
   Log::debug(number_format(memory_get_peak_usage()/(1024*1024), 2)." MB used [".
-        $controller."?".$context."?".$action."]", 'main');
+        $request->getSender()."?".$request->getContext()."?".$request->getAction()."]", 'main');
   Log::debug((microtime(true) - $startTime).' seconds', 'main');
 }
 ?>

@@ -56,7 +56,7 @@ class Application {
    * - Sets global variables
    * - Initialize the session and other main application classes
    * - Extracts the application parameters
-   * @param configPath The path where config files reside (as seen from main.php), optional [default: 'config/']
+   * @param configPath The path where config files reside (as seen from main.php), optional [default: '../config/']
    * @param mainConfigFile The main configuration file to use, optional [default: 'config.ini']
    * @param defaultController The controller to call if none is given in request parameters, optional [default: 'wcmf\application\controller\TerminateController']
    * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
