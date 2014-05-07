@@ -17,8 +17,10 @@
 namespace wcmf\lib\search\impl;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
@@ -93,6 +95,14 @@ class LuceneSearch implements IndexedSearch {
    * @see Search::find()
    */
   public function find($searchTerm, PagingInfo $pagingInfo=null) {
+    // check for length and stopwords
+    if (strlen($searchTerm) < 3) {
+      throw new IllegalArgumentException(Message::get("The search term is too short"));
+    }
+    if (in_array($query, $this->getStopWords())) {
+      throw new IllegalArgumentException(Message::get("The search terms are too common"));
+    }
+
     $results = array();
     $index = $this->getIndex(false);
     if ($index) {
