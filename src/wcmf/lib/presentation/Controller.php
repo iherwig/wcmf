@@ -52,14 +52,6 @@ abstract class Controller {
   private $_executionResult = false;
 
   /**
-   * Constructor.
-   */
-  public function __construct() {
-    $this->_request = new Request(null, null, null);
-    $this->_response = new Response(null, null, null);
-  }
-
-  /**
    * Initialize the Controller with request/response data. Which data is required is defined by the Controller.
    * The base class method just stores the parameters in a member variable. Specialized Controllers may overide
    * this behaviour for further initialization.
@@ -74,8 +66,8 @@ abstract class Controller {
    * are no data stored in the response.
    */
   public function initialize(Request $request, Response $response) {
-    $this->_request = $request;
-    $this->_response = $response;
+    // set sender on response
+    $response->setSender(get_class($this));
 
     // restore the error messages of a previous call
     if ($request->hasErrors()) {
@@ -83,6 +75,9 @@ abstract class Controller {
         $response->addError($error);
       }
     }
+
+    $this->_request = $request;
+    $this->_response = $response;
   }
 
   /**

@@ -20,6 +20,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\WritableConfiguration;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\Log;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\IOException;
 use wcmf\lib\util\StringUtil;
@@ -80,11 +81,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @note ini files referenced in section 'config' key 'include' are parsed afterwards
    */
   public function addConfiguration($name, $processValues=true) {
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Add configuration: ".$name, __CLASS__);
+    }
     $filename = $name;
 
     // do nothing, if the requested file was the last parsed file
     $numParsedFiles = sizeof($this->_parsedFiles);
-    if ($numParsedFiles > 0 && $this->_parsedFiles[sizeof($this->_parsedFiles)-1] == $filename) {
+    if ($numParsedFiles > 0 && $this->_parsedFiles[$numParsedFiles-1] == $filename) {
       return;
     }
 
@@ -94,24 +98,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       $tmpSequence = $this->_parsedFiles;
       $tmpSequence[] = $filename;
       if (!$this->unserialize($tmpSequence)) {
-        // merge new with old values, overwrite redefined values
-        $this->_configArray = $this->configMerge($this->_configArray, $this->_parse_ini_file($filename, true), true);
-        // re-build lookup table
-        $this->buildLookupTable();
-
-        // merge referenced ini files, don't override values
-        if ($this->hasValue('include', 'config')) {
-          $includes = $this->getValue('include', 'config');
-          $this->processValue($includes);
-          foreach($includes as $include) {
-            $this->_configArray = $this->configMerge($this->_configArray, $this->_parse_ini_file($this->_configPath.$include, true), false);
+          $this->_configArray = $this->processFile($filename, $this->_configArray);
+          if ($processValues) {
+            $this->processValues();
           }
-        }
-        if ($processValues) {
-          $this->processValues();
-        }
-        // store the filename
-        $this->_parsedFiles[] = $filename;
 
         // re-build lookup table
         $this->buildLookupTable();
@@ -123,6 +113,31 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     else {
       throw new ConfigurationException('Configuration file '.$filename.' not found!');
     }
+  }
+
+  /**
+   * Process the given file recursivly
+   * @param filename
+   */
+  protected function processFile($filename, $configArray=array()) {
+    $content = $this->_parse_ini_file($filename);
+
+    // process includes
+    $includes = $this->getConfigIncludes($content);
+    if ($includes) {
+      $this->processValue($includes);
+      foreach ($includes as $include) {
+        $configArray = $this->configMerge($configArray, $this->processFile($this->_configPath.$include, $configArray), true);
+      }
+    }
+
+    // process self
+    $configArray = $this->configMerge($configArray, $content, true);
+
+    // store the filename
+    $this->_parsedFiles[] = $filename;
+
+    return $configArray;
   }
 
   /**
@@ -196,12 +211,12 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if ($this->hasValue('readonlySections', 'config')) {
       $readonlySections = $this->getValue('readonlySections', 'config');
       $sectionLower = strtolower($section);
-      $this->processValue($readonlySections);
-      if (is_array($readonlySections) && in_array($sectionLower, $readonlySections)) {
-        return true;
-      }
-      else {
-        return false;
+      if (is_array($readonlySections)) {
+        foreach($readonlySections as $readonlySection) {
+          if ($sectionLower == strtolower($readonlySection)) {
+            return false;
+          }
+        }
       }
     }
     return true;
@@ -406,9 +421,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Load in the ini file specified in filename, and return
    * the settings in a multidimensional array, with the section names and
-   * settings included.
+   * settings included. All section names and keys are lowercased.
    * @param filename The filename of the ini file to parse
-   * @return An associative array containing the data / false if any error occured
+   * @return An associative array containing the data
    *
    * @author: Sebastien Cevey <seb@cine7.net>
    *          Original Code base: <info@megaman.nl>
@@ -494,7 +509,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * overridden by ones in the second.
    * @param array1 First array.
    * @param array2 Second array.
-   * @param override True/False whether values defined in array1 should be overriden by values defined in array2.
+   * @param override Boolean whether values defined in array1 should be overriden by values defined in array2.
    * @return The merged array.
    */
   protected function configMerge($array1, $array2, $override) {
@@ -511,6 +526,25 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       }
     }
     return $result;
+  }
+
+  /**
+   * Search the given value for a 'include' key in a section named 'config' (case-insensivite)
+   * @param array The array to search in
+   * @return Mixed
+   */
+  protected function getConfigIncludes($array) {
+    $sectionMatches = null;
+    if (preg_match('/(?:^|,)(config)(?:,|$)/i', join(',', array_keys($array)), $sectionMatches)) {
+      $sectionKey = sizeof($sectionMatches) > 0 ? $sectionMatches[1] : null;
+      if ($sectionKey) {
+      $keyMatches = null;
+        if (preg_match('/(?:^|,)(include)(?:,|$)/i', join(',', array_keys($array[$sectionKey])), $keyMatches)) {
+          return sizeof($keyMatches) > 0 ? $array[$sectionKey][$keyMatches[1]] : null;
+        }
+      }
+    }
+    return null;
   }
 
   /**
@@ -546,16 +580,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
           $vars = unserialize(file_get_contents($cacheFile));
 
           // check if included ini files were updated since last cache time
-          if (isset($vars['_configArray']['config'])) {
-            $includes = $vars['_configArray']['config']['include'];
-            if (is_array($includes)) {
-              $includedFiles = array();
-              foreach($includes as $include) {
-                $includedFiles[] = $this->_configPath.$include;
-              }
-              if ($this->checkFileDate($includedFiles, $cacheFile)) {
-                return false;
-              }
+          $includes = $this->getConfigIncludes($vars['_configArray']);
+          if (is_array($includes)) {
+            $includedFiles = array();
+            foreach($includes as $include) {
+              $includedFiles[] = $this->_configPath.$include;
+            }
+            if ($this->checkFileDate($includedFiles, $cacheFile)) {
+              return false;
             }
           }
 
@@ -612,11 +644,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $this->_lookupTable = array();
     foreach ($this->_configArray as $section => $entry) {
       // create section entry
-      $lookupSectionKey = strtolower($section).':';
+      $lookupSectionKey = strtolower($section.':');
       $this->_lookupTable[$lookupSectionKey] = array($section);
       // create key entries
       foreach ($entry as $key => $value) {
-        $lookupKey = $lookupSectionKey.strtolower($key);
+        $lookupKey = strtolower($lookupSectionKey.$key);
         $this->_lookupTable[$lookupKey] = array($section, $key);
       }
     }

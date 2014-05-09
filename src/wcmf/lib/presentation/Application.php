@@ -56,7 +56,7 @@ class Application {
    * - Sets global variables
    * - Initialize the session and other main application classes
    * - Extracts the application parameters
-   * @param configPath The path where config files reside (as seen from main.php), optional [default: '../config/']
+   * @param configPath The path where config files reside (as seen from main.php), optional [default: 'config/']
    * @param mainConfigFile The main configuration file to use, optional [default: 'config.ini']
    * @param defaultController The controller to call if none is given in request parameters, optional [default: 'wcmf\application\controller\TerminateController']
    * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
@@ -79,7 +79,7 @@ class Application {
       }
     }
 
-    Log::configure($configPath.'log4php.properties');
+    Log::configure($configPath.'log4php.php');
     $config = new InifileConfiguration($configPath);
     $config->addConfiguration($mainConfigFile);
     ObjectFactory::configure($config);
@@ -191,10 +191,11 @@ class Application {
 
   /**
    * This method is run as ob_start callback
+   * @note must be public
    * @param buffer The content to be returned to the client
    * @return String
    */
-  protected function outputHandler($buffer) {
+  public function outputHandler($buffer) {
     // log last error
     $error = error_get_last();
     if ($error !== NULL) {

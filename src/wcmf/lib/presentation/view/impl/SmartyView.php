@@ -17,10 +17,11 @@
 namespace wcmf\lib\presentation\view\impl;
 
 use wcmf\lib\config\ActionKey;
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\view\View;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\presentation\view\View;
 
 require_once(WCMF_BASE."wcmf/vendor/smarty/libs/Smarty.class.php");
 
@@ -44,10 +45,10 @@ class SmartyView implements View {
     $this->_view->error_reporting = E_ALL;
 
     // set plugins directories
-    $this->_view->plugins_dir = array(
+    $this->_view->setPluginsDir(array(
       WCMF_BASE.'wcmf/vendor/smarty/libs/plugins/',
       WCMF_BASE.'wcmf/application/views/plugins/'
-    );
+    ));
 
     // load filter
     $this->_view->loadFilter('pre', 'removeprids');
@@ -59,10 +60,10 @@ class SmartyView implements View {
       throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.");
     }
     $smartyDir = $cacheDir.'smarty/';
-    $this->_view->compile_dir = $smartyDir.'templates_c/';
-    $this->_view->cache_dir = $smartyDir.'cache/';
-    FileUtil::mkdirRec($this->_view->compile_dir);
-    FileUtil::mkdirRec($this->_view->cache_dir);
+    $this->_view->setCompileDir($smartyDir.'templates_c/');
+    $this->_view->setCacheDir($smartyDir.'cache/');
+    FileUtil::mkdirRec($this->_view->getCompileDir());
+    FileUtil::mkdirRec($this->_view->getCacheDir());
   }
 
   /**
@@ -88,6 +89,24 @@ class SmartyView implements View {
    */
   public function setCacheLifetime($cacheLifeTime) {
     $this->_view->cache_lifetime = $cacheLifeTime;
+  }
+
+  /**
+   * Set a additional plugins directory
+   * @param pluginsDir
+   */
+  public function setPluginsDir($pluginsDir) {
+    $this->_view->addPluginsDir($pluginsDir);
+  }
+
+  /**
+   * Set additional output filters
+   * @param outputFilter
+   */
+  public function setOutputFilter($outputFilter) {
+    foreach ($outputFilter as $filter) {
+      $this->_view->loadFilter('output', $filter);
+    }
   }
 
   /**
@@ -162,7 +181,11 @@ class SmartyView implements View {
     }
     // get corresponding view
     $config = ObjectFactory::getConfigurationInstance();
-    $view = $config->getValue($actionKey, 'views', false);
+    try {
+      $view = $config->getValue($actionKey, 'views', false);
+    } catch (\Exception $ex) {
+      throw new ConfigurationException("No view defined for ".$controller."?".$context."?".$action);
+    }
     return $view;
   }
 }

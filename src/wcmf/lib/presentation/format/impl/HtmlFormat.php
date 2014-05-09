@@ -16,9 +16,7 @@
  */
 namespace wcmf\lib\presentation\format\impl;
 
-use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;

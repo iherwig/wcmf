@@ -181,7 +181,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::getOIDs()
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    $this->checkArrayParameter($criteria, 'criteria');
+    $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
     $result = array();
@@ -212,7 +212,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::loadObjects()
    */
   public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    $this->checkArrayParameter($criteria, 'criteria');
+    $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
     $result = array();
@@ -292,11 +292,23 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * throw an exception if not
    * @param param The parameter
    * @param name The name of the parameter (used in the exception text)
+   * @param className Classname to match if, instances of a specific type are expected (optional)
    */
-  private function checkArrayParameter($param, $paramName) {
-    if ($param != null && !is_array($param)) {
+  private function checkArrayParameter($param, $paramName, $className=null) {
+    if ($param == null) {
+      return;
+    }
+    if (!is_array($param)) {
       throw new IllegalArgumentException("The parameter '".$paramName.
               "' is expected to be null or an array");
+    }
+    if ($className != null) {
+      foreach ($param as $instance) {
+        if (!($instance instanceof $className)) {
+          throw new IllegalArgumentException("The parameter '".$paramName.
+              "' is expected to contain only instances of '".$className."'");
+        }
+      }
     }
   }
 

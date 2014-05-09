@@ -24,7 +24,7 @@ function check(state) {
 <?php
 error_reporting(E_ERROR | E_PARSE);
 define("WCMF_BASE", realpath ("../../../")."/");
-define("LOG4PHP_CONFIGURATION", "../log4php.properties");
+define("LOG4PHP_CONFIGURATION", "../log4php.php");
 
 require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
 

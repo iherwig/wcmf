@@ -25,7 +25,7 @@ use wcmf\lib\presentation\Controller;
  * - unspecified: Display the errors contained in the request
  *
  * <b>Output actions:</b>
- * - @em ok In any case
+ * - @em failure In any case
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -40,7 +40,7 @@ class FailureController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $response->setErrors($request->getErrors());
-    $response->setAction('ok');
+    $response->setAction('failure');
     return false;
   }
 }

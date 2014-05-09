@@ -16,10 +16,10 @@
  */
 namespace wcmf\lib\util;
 
-use \PDO;
-use \Zend_Db;
-
+use PDO;
+use Zend_Db;
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceException;
