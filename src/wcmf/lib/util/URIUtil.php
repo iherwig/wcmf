@@ -47,7 +47,7 @@ class URIUtil {
       array_pop($base_array);
     }
     // ignore common path
-    while ($abs_array[0] == $base_array[0] && sizeof($abs_array) > 0) {
+    while (sizeof($abs_array) > 0 && sizeof($base_array) > 0 && $abs_array[0] == $base_array[0]) {
       array_shift($abs_array);
       array_shift($base_array);
     }

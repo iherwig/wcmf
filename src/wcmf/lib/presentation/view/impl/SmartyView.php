@@ -64,6 +64,7 @@ class SmartyView implements View {
     $this->_view->setCacheDir($smartyDir.'cache/');
     FileUtil::mkdirRec($this->_view->getCompileDir());
     FileUtil::mkdirRec($this->_view->getCacheDir());
+    $this->_view->setTemplateDir(WCMF_BASE);
   }
 
   /**
@@ -93,10 +94,10 @@ class SmartyView implements View {
 
   /**
    * Set a additional plugins directory
-   * @param pluginsDir
+   * @param pluginsDir Directory relative to WCMF_BASE
    */
   public function setPluginsDir($pluginsDir) {
-    $this->_view->addPluginsDir($pluginsDir);
+    $this->_view->addPluginsDir(WCMF_BASE.$pluginsDir);
   }
 
   /**

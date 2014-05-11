@@ -48,9 +48,9 @@ use wcmf\lib\util\URIUtil;
 function smarty_function_image($params, \Smarty_Internal_Template $template) {
   $file = $params['src'];
   $base = $params['base'];
-  $default = $params['default'];
-  $sizemode = $params['sizemode'];
-  $valuemode = $params['valuemode'];
+  $default = isset($params['default']) ? $params['default'] : '';
+  $sizemode = isset($params['sizemode']) ? $params['sizemode'] : 'resample';
+  $valuemode = isset($params['valuemode']) ? $params['valuemode'] : 'default';
 
   if (strlen($file) == 0 && strlen($default) == 0) {
     return;
@@ -116,10 +116,6 @@ function smarty_function_image($params, \Smarty_Internal_Template $template) {
         $requestedWidth = ($imageSize[0] * $requestedHeight) / $imageSize[1];
       }
     }
-  }
-
-  if (strlen($sizemode) == 0) {
-    $sizemode = 'resample';
   }
 
   // don't resize big images, because of resource limits
