@@ -30,7 +30,7 @@
 * -------------------------------------------------------------
 */
 function smarty_function_image_size($params, \Smarty_Internal_Template $template) {
-  $size = getimagesize($params['image']);
+  $size = @getimagesize($params['image']);
   $dividyByTwo = isset($params['halfsize']) && $params['halfsize'] == true;
   $width = $dividyByTwo ? intval($size[0]/2) : $size[0];
   $height = $dividyByTwo ? intval($size[1]/2) : $size[1];

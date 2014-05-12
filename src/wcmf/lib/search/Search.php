@@ -27,6 +27,13 @@ use wcmf\lib\persistence\PersistentObject;
 interface Search {
 
   /**
+   * Check if the search word is valid
+   * @param word
+   * @return True, if valid, error message else
+   */
+  public function check($word);
+
+  /**
    * Search for searchTerm
    * @param searchTerm
    * @param pagingInfo A PagingInfo instance, optional [default: null]

@@ -41,7 +41,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
                                    // keys and array(section, key) values for fast lookup
 
   private $_isModified = false;
-  private $_parsedFiles = array();
+  private $_addedFiles = array(); // files added to the configuration
+  private $_containedFiles = array(); // all included files (also by config include)
   private $_useCache = true;
 
   private $_configPath = null;
@@ -87,21 +88,24 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $filename = $name;
 
     // do nothing, if the requested file was the last parsed file
-    $numParsedFiles = sizeof($this->_parsedFiles);
-    if ($numParsedFiles > 0 && $this->_parsedFiles[$numParsedFiles-1] == $filename) {
+    // we don't only check if it's parsed, because order matters
+    $numParsedFiles = sizeof($this->_addedFiles);
+    if ($numParsedFiles > 0 && $this->_addedFiles[$numParsedFiles-1] == $filename) {
       return;
     }
 
     $filename = $this->_configPath.$filename;
     if (file_exists($filename)) {
       // try to unserialize an already parsed ini file sequence
-      $tmpSequence = $this->_parsedFiles;
-      $tmpSequence[] = $filename;
-      if (!$this->unserialize($tmpSequence)) {
-          $this->_configArray = $this->processFile($filename, $this->_configArray);
-          if ($processValues) {
-            $this->processValues();
-          }
+      $this->_addedFiles[] = $filename;
+      if (!$this->unserialize($this->_addedFiles)) {
+        $result = $this->processFile($filename, $this->_configArray, $this->_containedFiles);
+        $this->_configArray = $result['config'];
+        $this->_containedFiles = array_unique($result['files']);
+
+        if ($processValues) {
+        $this->processValues();
+        }
 
         // re-build lookup table
         $this->buildLookupTable();
@@ -118,8 +122,16 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Process the given file recursivly
    * @param filename
+   * @return Associative array with keys 'config' (configuration array) and 'files'
+   * (array of parsed files)
    */
-  protected function processFile($filename, $configArray=array()) {
+  protected function processFile($filename, $configArray=array(), $parsedFiles=array()) {
+    // avoid circular includes
+    if (in_array($filename, $parsedFiles)) {
+      return $configArray;
+    }
+    $parsedFiles[] = $filename;
+
     $content = $this->_parse_ini_file($filename);
 
     // process includes
@@ -127,17 +139,16 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if ($includes) {
       $this->processValue($includes);
       foreach ($includes as $include) {
-        $configArray = $this->configMerge($configArray, $this->processFile($this->_configPath.$include, $configArray), true);
+        $result = $this->processFile($this->_configPath.$include, $configArray, $parsedFiles);
+        $configArray = $this->configMerge($configArray, $result['config'], true);
+        $parsedFiles = $result['files'];
       }
     }
 
     // process self
     $configArray = $this->configMerge($configArray, $content, true);
 
-    // store the filename
-    $this->_parsedFiles[] = $filename;
-
-    return $configArray;
+    return array('config' => $configArray, 'files' => $parsedFiles);
   }
 
   /**
@@ -552,14 +563,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   protected function serialize() {
     if ($this->_useCache && !$this->isModified()) {
-      $cacheFile = $this->getSerializeFilename($this->_parsedFiles);
+      $cacheFile = $this->getSerializeFilename($this->_addedFiles);
       if($fh = @fopen($cacheFile, "w")) {
         if(@fwrite($fh, serialize(get_object_vars($this)))) {
-          @fclose($f);
+          @fclose($fh);
         }
+        // clear the application cache, because it may become invalid
+        $this->clearAllCache();
       }
-      // clear the application cache, because it may become invalid
-      $this->clearAllCache();
     }
   }
 
@@ -580,13 +591,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
           $vars = unserialize(file_get_contents($cacheFile));
 
           // check if included ini files were updated since last cache time
-          $includes = $this->getConfigIncludes($vars['_configArray']);
+          $includes = $vars['_containedFiles'];
           if (is_array($includes)) {
-            $includedFiles = array();
-            foreach($includes as $include) {
-              $includedFiles[] = $this->_configPath.$include;
-            }
-            if ($this->checkFileDate($includedFiles, $cacheFile)) {
+            if ($this->checkFileDate($includes, $cacheFile)) {
               return false;
             }
           }
@@ -609,7 +616,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   protected function getSerializeFilename($parsedFiles) {
     $path = session_save_path();
-    $filename = $path.'/'.urlencode(realpath($this->_configPath).'/'.join('_', $parsedFiles));
+    $filename = $path.'/wcmf_config_'.md5(realpath($this->_configPath).'/'.join('_', $parsedFiles));
     return $filename;
   }
 
@@ -632,6 +639,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Clear application cache.
    */
   protected function clearAllCache() {
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Clear all caches", __CLASS__);
+    }
     if (($cacheDir = $this->getDirectoryValue('cacheDir', 'application')) !== false) {
       FileUtil::emptyDir($cacheDir);
     }

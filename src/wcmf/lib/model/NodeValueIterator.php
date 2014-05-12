@@ -59,7 +59,7 @@ class NodeValueIterator implements \Iterator {
    * @param node The node to start from.
    * @param recursive Boolean whether the iterator should also process child nodes
    */
-  public function __construct(Node $node, $recursive) {
+  public function __construct($node, $recursive) {
     $this->_recursive = $recursive;
     $this->_nodeIterator = new NodeIterator($node);
     $this->_currentAttributes = $node->getValueNames(false);

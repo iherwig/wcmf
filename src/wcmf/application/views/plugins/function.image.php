@@ -47,10 +47,11 @@ use wcmf\lib\util\URIUtil;
 */
 function smarty_function_image($params, \Smarty_Internal_Template $template) {
   $file = $params['src'];
-  $base = $params['base'];
   $default = isset($params['default']) ? $params['default'] : '';
   $sizemode = isset($params['sizemode']) ? $params['sizemode'] : 'resample';
   $valuemode = isset($params['valuemode']) ? $params['valuemode'] : 'default';
+  $alt = isset($params['alt']) ? $params['alt'] : '';
+  $imageParams = isset($params['params']) ? $params['params'] : '';
 
   if (strlen($file) == 0 && strlen($default) == 0) {
     return;
@@ -58,6 +59,7 @@ function smarty_function_image($params, \Smarty_Internal_Template $template) {
 
   // translate the file url using base
   if (isset($params['base'])) {
+    $base = $params['base'];
     // translate file url
     $urls = URIUtil::translate($file, $base);
     $file = $urls['relative'];
@@ -164,6 +166,6 @@ function smarty_function_image($params, \Smarty_Internal_Template $template) {
     }
   }
 
-  echo '<img src="'.$file.'"'.$widthStr.$heightStr.' alt="'.$params['alt'].'" '.$params['params'].'>';
+  echo '<img src="'.$file.'"'.$widthStr.$heightStr.' alt="'.$alt.'" '.$imageParams.'>';
 }
 ?>

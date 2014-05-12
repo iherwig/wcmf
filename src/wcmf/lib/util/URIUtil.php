@@ -59,67 +59,41 @@ class URIUtil {
 
   /**
    * Convert a relative URI to an absolute
-   * code from http://www.webmasterworld.com/forum88/334.htm
+   * code from http://99webtools.com/relative-path-into-absolute-url.php
    * @param rel_uri Relative URI to convert
    * @param base Base URI
-   * @param REMOVE_LEADING_DOTS Boolean whether to remove leading dots or not [default: true]
    */
-  public static function makeAbsolute($rel_uri, $base, $REMOVE_LEADING_DOTS = true) {
-    preg_match("'^([^:]+://[^/]+)/'", $base, $m);
-    $base_start = $m[1];
-    if (preg_match("'^/'", $rel_uri)) {
-      return $base_start.$rel_uri;
+  public static function makeAbsolute($rel_uri, $base) {
+    if(strpos($rel_uri, "//") === 0) {
+      return "http:".$rel_uri;
     }
-    $base = preg_replace("{[^/]+$}", '', $base);
-    $base .= $rel_uri;
-    $base = preg_replace("{^[^:]+://[^/]+}", '', $base);
-    $base_array = explode('/', $base);
-    if (count($base_array) && !strlen($base_array[0])) {
-      array_shift($base_array);
+    /* return if already absolute URL */
+    if (parse_url($rel_uri, PHP_URL_SCHEME) != '') {
+      return $rel_uri;
     }
-    $i = 1;
-    while ($i < count($base_array)) {
-      if ($base_array[$i - 1] == ".") {
-        array_splice($base_array, $i - 1, 1);
-        if ($i > 1) $i--;
-      }
-      elseif ($base_array[$i] == ".." && $base_array[$i - 1]!= "..") {
-        array_splice($base_array, $i - 1, 2);
-        if ($i > 1) {
-          $i--;
-          if ($i == count($base_array)) {
-            $base_array[] = "";
-          }
-        }
-      }
-      else {
-        $i++;
-      }
+    /* add slash to base if missing */
+    if (!preg_match('/\/$/', $base)) {
+      $base .= '/';
     }
-
-    if (count($base_array) && isset($base_array[-1]) && $base_array[-1] == ".") {
-      $base_array[-1] = "";
+    /* queries and anchors */
+    if ($rel_uri[0] == '#' || $rel_uri[0] == '?') {
+      return $base.$rel_uri;
     }
-    /* How do we treat the case where there are still some leading ../
-       segments left? According to RFC2396 we are free to handle that
-       any way we want. The default is to remove them.
-     #
-       "If the resulting buffer string still begins with one or more
-       complete path segments of "..", then the reference is considered
-       to be in error. Implementations may handle this error by
-       retaining these components in the resolved path (i.e., treating
-       them as part of the final URI), by removing them from the
-       resolved path (i.e., discarding relative levels above the root),
-       or by avoiding traversal of the reference."
-     #
-       http://www.faqs.org/rfcs/rfc2396.html  5.2.6.g
-    */
-
-    if ($REMOVE_LEADING_DOTS) {
-      while (count($base_array) && preg_match("/^\.\.?$/", $base_array[0]))
-        array_shift($base_array);
+    /* parse base URL and convert to local variables: $scheme, $host, $path */
+    extract(parse_url($base));
+    /* remove non-directory element from path */
+    $path = preg_replace('#/[^/]*$#', '', $path);
+    /* destroy path if relative url points to root */
+    if ($rel_uri[0] == '/') {
+      $path = '';
     }
-    return($base_start . '/' . implode("/", $base_array));
+    /* dirty absolute URL */
+    $abs = "$host$path/$rel_uri";
+    /* replace '//' or '/./' or '/foo/../' with '/' */
+    $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+    for ($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
+    /* absolute URL is ready! */
+    return $scheme.'://'.$abs;
   }
 
   /**
@@ -135,8 +109,8 @@ class URIUtil {
   public static function translate($rel_uri, $base) {
     $self = UriUtil::getProtocolStr().$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
     $path = dirname($self).'/';
-    $absUrl = URIUtil::makeAbsolute($rel_uri, $path.$base);
-    $relUrl = URIUtil::makeRelative($absUrl, $self);
+    $absUrl = self::makeAbsolute($rel_uri, $path.$base);
+    $relUrl = self::makeRelative($absUrl, $self);
 
     return array('absolute' => $absUrl, 'relative' => $relUrl);
   }
@@ -191,7 +165,7 @@ class URIUtil {
    * @return The url of the page
    */
   public static function getPageURL() {
-    $pageURL = URIUtil::getProtocolStr();
+    $pageURL = self::getProtocolStr();
     if ($_SERVER["SERVER_PORT"] != "80") {
       $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
     }

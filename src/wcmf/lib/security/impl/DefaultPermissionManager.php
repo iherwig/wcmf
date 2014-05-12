@@ -56,14 +56,12 @@ class DefaultPermissionManager implements PermissionManager {
    */
   public function getAuthUser() {
     $user = $this->_anonymousUser;
-    if (!$this->isAnonymous()) {
-      // check for auth user in session
-      $session = ObjectFactory::getInstance('session');
-      $userVarname = self::getAuthUserVarname();
-      if ($session->exist($userVarname)) {
-        $user = $session->get($userVarname);
-        $user->resetRoleCache();
-      }
+    // check for auth user in session
+    $session = ObjectFactory::getInstance('session');
+    $userVarname = self::getAuthUserVarname();
+    if ($session->exist($userVarname)) {
+      $user = $session->get($userVarname);
+      $user->resetRoleCache();
     }
     return $user;
   }

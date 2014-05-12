@@ -92,17 +92,23 @@ class LuceneSearch implements IndexedSearch {
   }
 
   /**
+   * @see Search::check()
+   */
+  public function check($word) {
+    // check for length and stopwords
+    if (strlen($word) < 3) {
+      return (Message::get("The search term is too short"));
+    }
+    if (in_array($word, $this->getStopWords())) {
+      return (Message::get("The search terms are too common"));
+    }
+    return true;
+  }
+
+  /**
    * @see Search::find()
    */
   public function find($searchTerm, PagingInfo $pagingInfo=null) {
-    // check for length and stopwords
-    if (strlen($searchTerm) < 3) {
-      throw new IllegalArgumentException(Message::get("The search term is too short"));
-    }
-    if (in_array($query, $this->getStopWords())) {
-      throw new IllegalArgumentException(Message::get("The search terms are too common"));
-    }
-
     $results = array();
     $index = $this->getIndex(false);
     if ($index) {
