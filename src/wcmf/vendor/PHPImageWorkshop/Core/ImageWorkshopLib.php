@@ -5,7 +5,7 @@ namespace PHPImageWorkshop\Core;
 use PHPImageWorkshop\Core\Exception\ImageWorkshopLibException as ImageWorkshopLibException;
 
 // If no autoloader, uncomment these lines:
-//require_once(__DIR__.'/Exception/ImageWorkshopLibException.php');
+require_once(__DIR__.'/Exception/ImageWorkshopLibException.php');
 
 /**
  * ImageWorkshopLib class
@@ -23,7 +23,7 @@ class ImageWorkshopLib
      * @var integer
      */
     const ERROR_FONT_NOT_FOUND = 3;
-    
+
     /**
      * Calculate the left top positions of a layer inside a parent layer container
      * $position: http://phpimageworkshop.com/doc/22/corners-positions-schema-of-an-image.html
@@ -84,7 +84,7 @@ class ImageWorkshopLib
             'y' => $layerPositionY,
         );
     }
-    
+
     /**
      * Convert Hex color to RGB color format
      *
@@ -100,7 +100,7 @@ class ImageWorkshopLib
             'B' => (int) base_convert(substr($hex, 4, 2), 16, 10),
         );
     }
-    
+
     /**
      * Generate a new image resource var
      *
@@ -122,7 +122,7 @@ class ImageWorkshopLib
 
         return $image;
     }
-    
+
     /**
      * Return dimension of a text
      *
@@ -138,7 +138,7 @@ class ImageWorkshopLib
         if (!file_exists($fontFile)) {
             throw new ImageWorkshopLibException('Can\'t find a font file at this path : "'.$fontFile.'".', static::ERROR_FONT_NOT_FOUND);
         }
-        
+
         $box = imagettfbbox($fontSize, $fontAngle, $fontFile, $text);
 
 		if (!$box) {
@@ -193,7 +193,7 @@ class ImageWorkshopLib
             'height' => $rbottom - $rtop + 1,
         );
     }
-    
+
     /**
      * Copy an image on another one and converse transparency
      *
@@ -227,29 +227,29 @@ class ImageWorkshopLib
 
                     $destPixel = imageColorsForIndex($destImg, imageColorat($destImg, $x + $destX, $y + $destY));
                     $srcImgColorat = imageColorat($srcImg, $x + $srcX, $y + $srcY);
-                    
+
                     if ($srcImgColorat >= 0) {
-                    
+
                         $srcPixel = imageColorsForIndex($srcImg, $srcImgColorat);
-    
+
                         $srcAlpha = 1 - ($srcPixel['alpha'] / 127);
                         $destAlpha = 1 - ($destPixel['alpha'] / 127);
                         $opacity = $srcAlpha * $pct / 100;
-    
+
                         if ($destAlpha >= $opacity) {
     						$alpha = $destAlpha;
     					}
-    
+
                         if ($destAlpha < $opacity) {
     						$alpha = $opacity;
     					}
-    
+
                         if ($alpha > 1) {
     						$alpha = 1;
     					}
-    
+
                         if ($opacity > 0) {
-                            
+
                             $destRed = round((($destPixel['red'] * $destAlpha * (1 - $opacity))));
                             $destGreen = round((($destPixel['green'] * $destAlpha * (1 - $opacity))));
                             $destBlue = round((($destPixel['blue'] * $destAlpha * (1 - $opacity))));
@@ -259,19 +259,19 @@ class ImageWorkshopLib
                             $red = round(($destRed + $srcRed  ) / ($destAlpha * (1 - $opacity) + $opacity));
                             $green = round(($destGreen + $srcGreen) / ($destAlpha * (1 - $opacity) + $opacity));
                             $blue = round(($destBlue + $srcBlue ) / ($destAlpha * (1 - $opacity) + $opacity));
-    
+
                             if ($red   > 255) {
     							$red   = 255;
     						}
-    
+
                             if ($green > 255) {
     							$green = 255;
                             }
-    
+
     						if ($blue  > 255) {
     							$blue  = 255;
     						}
-    
+
                             $alpha = round((1 - $alpha) * 127);
                             $color = imageColorAllocateAlpha($destImg, $red, $green, $blue, $alpha);
                             imageSetPixel($destImg, $x + $destX, $y + $destY, $color);
@@ -281,7 +281,7 @@ class ImageWorkshopLib
             }
         }
     }
-    
+
     /**
      * Merge two image var
      *

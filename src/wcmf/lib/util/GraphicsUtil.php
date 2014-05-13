@@ -19,9 +19,11 @@ namespace wcmf\lib\util;
 use \Exception;
 use wcmf\lib\i18n\Message;
 
-require_once(BASE."wcmf/vendor/PHPImageWorkshop/ImageWorkshop.php");
-require_once(BASE."wcmf/vendor/PHPImageWorkshop/GifFrameExtractor.php");
-require_once(BASE."wcmf/vendor/PHPImageWorkshop/GifCreator.php");
+require_once(WCMF_BASE."wcmf/vendor/PHPImageWorkshop/ImageWorkshop.php");
+require_once(WCMF_BASE."wcmf/vendor/PHPImageWorkshop/GifFrameExtractor.php");
+require_once(WCMF_BASE."wcmf/vendor/PHPImageWorkshop/GifCreator.php");
+
+use PHPImageWorkshop\ImageWorkshop;
 
 /**
  * GraphicsUtil provides support for graphic manipulation.
@@ -222,9 +224,9 @@ class GraphicsUtil {
    * @param params The paremeters to be passed to the function
    */
   public function processImageFunction($srcName, $destName, $function, $params) {
-    if (GifFrameExtractor::isAnimatedGif($srcName)) {
+    if (\GifFrameExtractor::isAnimatedGif($srcName)) {
       // for animated gifs we need to process each frame
-      $gfe = new GifFrameExtractor();
+      $gfe = new \GifFrameExtractor();
       $frames = $gfe->extract($srcName);
       $retouchedFrames = array();
       foreach ($frames as $frame) {
@@ -237,7 +239,7 @@ class GraphicsUtil {
       file_put_contents($destName, $gc->getGif());
     }
     else {
-        // all other images
+      // all other images
       $image = ImageWorkshop::initFromPath($srcName);
       call_user_func_array(array($image, $function), $params);
       $image->save(dirname($destName), basename($destName), true, null, 100);
