@@ -65,8 +65,8 @@
     </exec>
   </target>
 
-  <target name="dist" depends="buildinfo,properties,compile"
-    description="build the distribution" >
+  <target name="dist-fe" depends="buildinfo,properties"
+    description="build the distribution without compile target" >
     <mkdir dir="${dist.dir}"/>
     <copy todir="${dist.dir}/wcmf">
       <fileset dir="${build.base}wcmf/">
@@ -82,40 +82,9 @@
       </fileset>
     </copy>
     <copy todir="${dist.dir}/${app.name}/public">
-      <fileset dir="${build.base}${app.name}/release">
-        <exclude name="js/"/>
-        <exclude name="vendor/"/>
-        <exclude name="build-report.txt"/>
-        <exclude name="**/*.js.map"/>
-        <exclude name="**/*.js.uncompressed.js"/>
-        <include name="**"/>
-      </fileset>
-      <fileset dir="${build.base}${app.name}/release">
-        <include name="js/App.js"/>
-        <include name="js/App.js.map"/>
-        <include name="js/App.js.uncompressed.js"/>
-        <include name="**/nls/**/*_de.*"/>
-        <include name="**/nls/**/*_en-us.*"/>
-        <include name="vendor/dojo/dojo/dojo.js"/>
-        <include name="vendor/dojo/dojo/dojo.js.map"/>
-        <include name="vendor/dojo/dojo/dojo.js.uncompressed.js"/>
-      </fileset>
       <fileset dir="${build.base}${app.name}/public">
         <include name=".htaccess" />
         <include name="*.php" />
-        <!-- dojo resources -->
-        <include name="vendor/dojo/dojo/resources/**/*.*"/>
-        <include name="vendor/dgrid/css/images/*.*"/>
-        <!-- fonts -->
-        <include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
-        <include name="vendor/font-awesome/fonts/*.*"/>
-        <!-- elfinder -->
-        <include name="vendor/elfinder/**/*.*"/>
-        <!-- ckeditor -->
-        <include name="vendor/ckeditor/**/*.*"/>
-        <include name="vendor/ckeditor-plugins/**/*.*"/>
-        <!-- config -->
-        <include name="js/config/*.*"/>
       </fileset>
     </copy>
     <!-- replace rewriteBase in .htaccess -->
@@ -147,6 +116,48 @@
       replace="RewriteBase \1${rewritebase.replace}"
     />
     <copy file="${build.info}" todir="${dist.dir}"/>
+  </target>
+
+  <target name="dist" depends="buildinfo,properties,compile"
+    description="build the distribution" >
+    <antcall target="dist-fe" />
+    <copy todir="${dist.dir}/${app.name}/public">
+      <fileset dir="${build.base}${app.name}/release">
+        <exclude name="js/"/>
+        <exclude name="vendor/"/>
+        <exclude name="build-report.txt"/>
+        <exclude name="**/*.js.map"/>
+        <exclude name="**/*.js.uncompressed.js"/>
+        <include name="**"/>
+      </fileset>
+      <fileset dir="${build.base}${app.name}/release">
+        <include name="js/App.js"/>
+        <include name="js/App.js.map"/>
+        <include name="js/App.js.uncompressed.js"/>
+        <include name="**/nls/**/*_de.*"/>
+        <include name="**/nls/**/*_en-us.*"/>
+        <include name="vendor/dojo/dojo/dojo.js"/>
+        <include name="vendor/dojo/dojo/dojo.js.map"/>
+        <include name="vendor/dojo/dojo/dojo.js.uncompressed.js"/>
+      </fileset>
+    </copy>
+    <copy todir="${dist.dir}/${app.name}/public">
+      <fileset dir="${build.base}${app.name}/public">
+        <!-- dojo resources -->
+        <include name="vendor/dojo/dojo/resources/**/*.*"/>
+        <include name="vendor/dgrid/css/images/*.*"/>
+        <!-- fonts -->
+        <include name="vendor/dbootstrap/theme/dbootstrap/font/*.*"/>
+        <include name="vendor/font-awesome/fonts/*.*"/>
+        <!-- elfinder -->
+        <include name="vendor/elfinder/**/*.*"/>
+        <!-- ckeditor -->
+        <include name="vendor/ckeditor/**/*.*"/>
+        <include name="vendor/ckeditor-plugins/**/*.*"/>
+        <!-- config -->
+        <include name="js/config/*.*"/>
+      </fileset>
+    </copy>
     <delete dir="${build.base}${app.name}/release"/>
   </target>
 

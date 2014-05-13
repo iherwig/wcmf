@@ -44,10 +44,13 @@ try {
   $pathPrefix = dirname($_SERVER['SCRIPT_NAME']);
   $basePath = dirname($_SERVER['SCRIPT_NAME']).'/';
   $script = basename($_SERVER['SCRIPT_NAME']);
-  $requestPath = preg_replace('/^'.$script.'/', '', str_replace($basePath, '', $_SERVER['REQUEST_URI']));
-  if (!$isLoggedIn && strlen($requestPath) > 0 && !preg_match('/\?route=/', $_SERVER['REQUEST_URI'])) {
+  $requestPath = $_SERVER['REQUEST_URI'];
+  // remove basepath & script from request path to get the requested resource
+  $requestedResource = strpos($requestPath, $basePath) === 0 ?
+          preg_replace('/^'.$script.'/', '', str_replace($basePath, '', $requestPath)) : '';
+  if (!$isLoggedIn && strlen($requestedResource) > 0 && !preg_match('/\?route=/', $requestPath)) {
     if ($requestPath != 'logout') {
-      $redirectUrl = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$basePath.'?route='.$requestPath;
+      $redirectUrl = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$basePath.'?route='.$requestedResource;
       header("Location: ".$redirectUrl);
     }
   }
