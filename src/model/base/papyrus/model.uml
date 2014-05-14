@@ -397,6 +397,9 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Bts4IbRFEeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_BtuGQLRFEeOQ5oJFa1i8cg" value="$filterValidator"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_eC5dMNuDEeOY091wVmwqBA" name="image" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_jp9zYNuDEeOY091wVmwqBA" value="$imageValidator"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_Eg6moLRFEeOQ5oJFa1i8cg" name="RegExpValidator">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_JvKNILRFEeOQ5oJFa1i8cg" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
@@ -410,6 +413,13 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ZwEE8LRFEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ZwEsALRFEeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_ZwF6ILRFEeOQ5oJFa1i8cg" value="wcmf\lib\persistence\validator\impl\Filter"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_lJ2RwNuDEeOY091wVmwqBA" name="ImageValidator">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_lJ2RwduDEeOY091wVmwqBA" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lJ2RwtuDEeOY091wVmwqBA" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_lJ2Rw9uDEeOY091wVmwqBA" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_lJ2RxNuDEeOY091wVmwqBA" value="wcmf\lib\persistence\validator\impl\Image"/>
                 </ownedAttribute>
               </packagedElement>
             </packagedElement>
@@ -1450,4 +1460,5 @@
   <Chronos:ChiValue xmi:id="_GmcYMLTTEeOYkOsR5IzpsA" base_Property="_EXZGsLTTEeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_HSyg0LTTEeOYkOsR5IzpsA" db_data_type="DATETIME" input_type="date" base_Property="_EZrlsLTTEeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_eH_2oLTWEeOYkOsR5IzpsA" is_editable="true" base_Property="_blxxgLTWEeOYkOsR5IzpsA"/>
+  <Chronos:ChiSystem xmi:id="_lJ240NuDEeOY091wVmwqBA" plattform="wcmf" config="persistence.ini" base_Class="_lJ2RwNuDEeOY091wVmwqBA"/>
 </xmi:XMI>

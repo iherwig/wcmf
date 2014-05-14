@@ -58,7 +58,7 @@ class MediaController extends Controller {
     // get root path and root url for the browser
     $rootPath = $this->getResourceBaseDir();
     $relRootPath = FileUtil::getRelativePath(dirname($_SERVER['SCRIPT_FILENAME']), $rootPath);
-    $refURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+    $refURL = dirname(URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']).'/';
     $rootUrl = URIUtil::makeAbsolute($relRootPath, $refURL);
 
     $directory = $request->hasValue('directory') ? $request->getValue('directory') : $rootPath;

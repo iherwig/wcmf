@@ -371,109 +371,11 @@ class SaveController extends Controller {
    * @param valueName The name of the value of the object identified by oid
    * @param filename The name of the file to upload (including path)
    * @param mimeType The mime type of the file (if null it will not be checked) [default: null]
-   * @return True/False whether the file is ok or not.
-   * @note The default implementation checks if the files mime type is contained in the mime types provided
-   * by the getMimeTypes method and if the dimensions provided by the getImageConstraints method are met. How to
-   * disable the image dimension check is described in the documentation of the getImageConstraints method.
+   * @return Boolean whether the file is ok or not.
+   * @note The default implementation returns true.
    */
   protected function checkFile(ObjectId $oid, $valueName, $filename, $mimeType=null) {
-    $response = $this->getResponse();
-
-    // check mime type
-    if ($mimeType != null) {
-      $mimeTypes = $this->getMimeTypes($oid, $valueName);
-      if ($mimeTypes != null && !in_array($mimeType, $mimeTypes)) {
-        $response->addError(ApplicationError::get('GENERAL_ERROR',
-          array('message' => Message::get("File '%0%' has wrong mime type: %1%. Allowed types: %2%.", array($filename, $mimeType, join(", ", $mimeTypes))))));
-        return false;
-      }
-    }
-
-    // get required image dimensions
-    $imgConstraints = $this->getImageConstraints($oid, $valueName);
-    $imgWidth = $imgConstraints['width'];
-    $imgHeight = $imgConstraints['height'];
-
-    if ($imgWidth === false && $imgHeight === false) {
-      return true;
-    }
-    // create GraphicsUtil instance if not done already
-    if ($this->_graphicsUtil == null) {
-      $this->_graphicsUtil = new GraphicsUtil();
-    }
-    // check dimensions of new image
-    if ($imgWidth !== false) {
-      $checkWidth = $this->_graphicsUtil->isValidImageWidth($filename, $imgWidth[0], $imgWidth[1]);
-    }
-    else {
-      $checkWidth = true;
-    }
-    if ($imgHeight !== false) {
-      $checkHeight = $this->_graphicsUtil->isValidImageHeight($filename, $imgHeight[0], $imgHeight[1]);
-    }
-    else {
-      $checkHeight = true;
-    }
-    if(!($checkWidth && $checkHeight)) {
-      $response->addError(ApplicationError::get('GENERAL_ERROR',
-        array('message' => $this->_graphicsUtil->getErrorMsg())));
-      return false;
-    }
     return true;
-  }
-
-  /**
-   * Determine possible mime types for an object value.
-   * @note subclasses will override this to implement special application requirements.
-   * @param oid The ObjectId of the object
-   * @param valueName The name of the value of the object identified by oid
-   * @return An array containing the possible mime types or null meaning 'don't care'.
-   * @note The default implementation will return null.
-   */
-  protected function getMimeTypes(ObjectId $oid, $valueName) {
-    return null;
-  }
-
-  /**
-   * Get the image constraints for an object value.
-   * @note subclasses will override this to implement special application requirements.
-   * @param oid The ObjectId of the object
-   * @param valueName The name of the value of the object identified by oid
-   * @return An assoziative array with keys 'width' and 'height', which hold false meaning 'don't care' or arrays where the
-   *         first entry is a pixel value and the second is 0 or 1 indicating that the dimension may be smaller than (0)
-   *         or must exactly be (1) the pixel value.
-   * @note The default implementation will look for type.valueName.width or imgWidth and type.valueName.height or imgHeight
-   * keys in the configuration file (section 'media').
-   */
-  protected function getImageConstraints(ObjectId $oid, $valueName) {
-    $type = null;
-    if (ObjectId::isValid($oid)) {
-      $type = $oid->getType();
-    }
-    $config = ObjectFactory::getConfigurationInstance();
-
-    // defaults
-    $constraints = array('width' => false, 'height' => false);
-
-    // check if type.valueName.width is defined in the configuration
-    if ($type && ($width = $config->getValue($type.'.'.$valueName.'.width', 'Media', false)) !== false) {
-      $constraints['width'] = $width;
-    }
-    // check if imgWidth is defined in the configuration
-    else if (($width = $config->getValue('imgWidth', 'Media', false)) !== false) {
-      $constraints['width'] = $width;
-    }
-
-    // check if type.valueName.height is defined in the configuration
-    if ($type && ($height = $config->getValue($type.'.'.$valueName.'.height', 'Media', false)) !== false) {
-      $constraints['height'] = $height;
-    }
-    // check if imgHeight is defined in the configuration
-    else if (($width = $config->getValue('imgHeight', 'Media', false)) !== false) {
-      $constraints['width'] = $width;
-    }
-
-    return $constraints;
   }
 
   /**

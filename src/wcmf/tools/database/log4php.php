@@ -27,7 +27,7 @@ return array(
     'echo' => array(
       'class' => 'LoggerAppenderEcho',
       'params' => array(
-        'threshold' => 'FATAL'
+        'threshold' => 'INFO'
       )
     )
   )
