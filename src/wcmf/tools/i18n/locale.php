@@ -16,16 +16,20 @@ use wcmf\lib\util\I18nUtil;
 $config = new InifileConfiguration('./');
 $config->addConfiguration('config.ini');
 ObjectFactory::configure($config);
-Log::configure('../log4php.properties');
+Log::configure('../log4php.php');
 
 // get config values
 $localeDir = getConfigValue("localeDir", "application", true);
-$searchDir = getConfigValue("searchDir", "i18n", true);
+$searchDirs = getConfigValue("searchDirs", "i18n", true);
 $exclude = getConfigValue("exclude", "i18n");
 $languages = getConfigValue("languages", "i18n");
+Log::info($searchDirs, "locale");
 
-// get messages from search directory
-$allMessages = I18nUtil::getMessages($searchDir, $exclude, "/\.php$|\.js$|\.html$/");
+// get messages from search directories
+$allMessages = array();
+foreach ($searchDirs as $searchDir) {
+  $allMessages = array_merge($allMessages, I18nUtil::getMessages($searchDir, $exclude, "/\.php$|\.js$|\.html$/"));
+}
 
 foreach ($languages as $language) {
   // get translations from old file (I18nUtil::createPHPLanguageFile), if existing
@@ -50,7 +54,7 @@ foreach ($languages as $language) {
   }
   $messages = natcaseksort($messages);
   foreach ($messages as $message => $attributes) {
-    Log::info($language." ".$message." = ".$attributes['translation'], "locale");
+    Log::info($language." ".$message." = ".$attributes['translation']." [".$attributes['files']."]", "locale");
   }
 
   I18nUtil::createPHPLanguageFile($language, $messages);

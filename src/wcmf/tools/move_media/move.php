@@ -17,7 +17,7 @@ use wcmf\lib\io\FileUtil;
 $config = new InifileConfiguration('./');
 $config->addConfiguration('config.ini');
 ObjectFactory::configure($config);
-Log::configure('../log4php.properties');
+Log::configure('../log4php.php');
 
 // get config values
 $dbParams = $config->getSection("database", true);

@@ -29,6 +29,6 @@ function smarty_prefilter_removeprids($tpl_source, \Smarty_Internal_Template $te
   $tpl_source = preg_replace("/<!-- PROTECTED REGION .*? -->/U", "", $tpl_source);
 
   // remove any wCMFGenerator generated comments
-  return preg_replace("/<!--.*?wCMFGenerator.*?-->/s", "", $tpl_source);
+  return preg_replace("/<!--.*?ChronosGenerator.*?-->/s", "", $tpl_source);
 }
 ?>

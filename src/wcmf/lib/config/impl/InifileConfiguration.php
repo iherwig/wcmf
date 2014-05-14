@@ -208,6 +208,13 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   public function getDirectoryValue($key, $section) {
     $value = $this->getValue($key, $section);
+    if (is_array($value)) {
+      $result = array();
+      foreach ($value as $dir) {
+        $result[] = FileUtil::realpath(WCMF_BASE.$dir).'/';
+      }
+      return $result;
+    }
     return FileUtil::realpath(WCMF_BASE.$value).'/';
   }
 
@@ -642,7 +649,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Clear all caches", __CLASS__);
     }
-    if (($cacheDir = $this->getDirectoryValue('cacheDir', 'application')) !== false) {
+    if ($this->hasValue('cacheDir', 'application')) {
+      $cacheDir = $this->getDirectoryValue('cacheDir', 'application');
       FileUtil::emptyDir($cacheDir);
     }
   }
