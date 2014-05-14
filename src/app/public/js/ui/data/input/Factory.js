@@ -66,19 +66,21 @@ function(
     };
 
     Factory.getControlClass = function(inputType) {
-        var inputTypes = appConfig.inputTypes;
+        if (inputType) {
+            var inputTypes = appConfig.inputTypes;
 
-        // get best matching control
-        var bestMatch = '';
-        for (var controlDef in inputTypes) {
-            if (inputType.indexOf(controlDef) === 0 && controlDef.length > bestMatch.length) {
-                bestMatch = controlDef;
+            // get best matching control
+            var bestMatch = '';
+            for (var controlDef in inputTypes) {
+                if (inputType.indexOf(controlDef) === 0 && controlDef.length > bestMatch.length) {
+                    bestMatch = controlDef;
+                }
             }
-        }
-        // get the control
-        if (bestMatch.length > 0) {
-            var controlClass = inputTypes[bestMatch];
-            return controlClass;
+            // get the control
+            if (bestMatch.length > 0) {
+                var controlClass = inputTypes[bestMatch];
+                return controlClass;
+            }
         }
         // default
         return "app/js/ui/data/input/widget/TextBox";

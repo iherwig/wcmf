@@ -36,19 +36,21 @@ function(
     };
 
     Renderer.getRenderer = function(displayType) {
-        var displayTypes = Renderer.renderers;
+        if (displayType) {
+            var displayTypes = Renderer.renderers;
 
-        // get best matching renderer
-        var bestMatch = '';
-        for (var rendererDef in displayTypes) {
-            if (displayType.indexOf(rendererDef) === 0 && rendererDef.length > bestMatch.length) {
-                bestMatch = rendererDef;
+            // get best matching renderer
+            var bestMatch = '';
+            for (var rendererDef in displayTypes) {
+                if (displayType.indexOf(rendererDef) === 0 && rendererDef.length > bestMatch.length) {
+                    bestMatch = rendererDef;
+                }
             }
-        }
-        // get the renderer
-        if (bestMatch.length > 0) {
-            var renderer = displayTypes[bestMatch];
-            return renderer;
+            // get the renderer
+            if (bestMatch.length > 0) {
+                var renderer = displayTypes[bestMatch];
+                return renderer;
+            }
         }
         // default
         return "app/js/ui/data/display/renderer/Text";

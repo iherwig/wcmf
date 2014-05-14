@@ -102,7 +102,16 @@ function(
             });
 
             var deleteAction = new Delete({
-                page: this.page
+                page: this.page,
+                callback: lang.hitch(this, function(data, result) {
+                    // success
+                    this.gridWidget.refresh();
+                }),
+                errback: lang.hitch(this, function(data, result) {
+                    // error
+                    this.showBackendError(result);
+                    this.gridWidget.refresh();
+                })
             });
 
             if (this.relation.aggregationKind === "composite") {
