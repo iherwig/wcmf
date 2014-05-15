@@ -105,7 +105,8 @@ abstract class Controller {
    * @return Boolean whether following Controllers should be executed or not.
    */
   public function execute() {
-    if (Log::isDebugEnabled(__CLASS__)) {
+    $isDebugEnabled = Log::isDebugEnabled(__CLASS__);
+    if ($isDebugEnabled) {
       Log::debug('Executing: '.get_class($this), __CLASS__);
       Log::debug('Request: '.$this->_request, __CLASS__);
     }
@@ -127,7 +128,7 @@ abstract class Controller {
 
     // prepare the response
     $this->assignResponseDefaults();
-    if (Log::isDebugEnabled(__CLASS__)) {
+    if ($isDebugEnabled) {
       Log::debug('Response: '.$this->_response, __CLASS__);
     }
 

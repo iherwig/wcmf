@@ -253,29 +253,24 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::loadRelation()
    */
-  public function loadRelation(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
+  public function loadRelation(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null) {
-    $objects = $this->loadRelationImpl($object, $role, $buildDepth, $criteria, $orderby, $pagingInfo);
+    $relatedObjects = $this->loadRelationImpl($objects, $role, $buildDepth, $criteria, $orderby, $pagingInfo);
 
     // remove objects for which the user is not authorized
-    if ($objects != null) {
-      if (is_array($objects)) {
-        // multivalued
-        $result = array();
-        for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
-          $object = $objects[$i];
+    if ($relatedObjects != null) {
+      $result = array();
+      foreach ($relatedObjects as $oidStr => $curObjects) {
+        $curResult = array();
+        for ($i=0, $count=sizeof($curObjects); $i<$count; $i++) {
+          $object = $curObjects[$i];
           if ($this->checkAuthorization($object->getOID(), PersistenceAction::READ)) {
-            $result[] = $object;
+            $curResult[] = $object;
           }
         }
-        return $result;
+        $result[$oidStr] = $curObjects;
       }
-      else {
-        // singlevalued
-        if ($this->checkAuthorization($objects->getOID(), PersistenceAction::READ)) {
-          return $objects;
-        }
-      }
+      return $result;
     }
     return null;
   }
@@ -352,7 +347,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::loadRelation()
    */
-  abstract protected function loadRelationImpl(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null,
+  abstract protected function loadRelationImpl(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null,
     $orderby=null, PagingInfo $pagingInfo=null);
 }
 ?>

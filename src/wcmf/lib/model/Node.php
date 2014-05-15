@@ -48,6 +48,21 @@ class Node extends PersistentObject {
   private $_deletedNodes = array();
   private $_orderedNodes = array();
 
+  private static $_parentGetValueMethod = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct(ObjectId $oid=null) {
+    parent::__construct($oid);
+    // get parent::getValue method bz refelction
+    if (self::$_parentGetValueMethod == null) {
+      $reflector = new \ReflectionClass(__CLASS__);
+      $parent = $reflector->getParentClass();
+      self::$_parentGetValueMethod = $parent->getMethod('getValue');
+    }
+  }
+
   /**
    * Get the names of all items.
    * @param includeRelations Boolean whether to include relations or not [default: true]
@@ -82,14 +97,16 @@ class Node extends PersistentObject {
       $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZING;
       $mapper = $this->getMapper();
       if ($mapper) {
-        $relatives = $mapper->loadRelation($this, $name, BuildDepth::PROXIES_ONLY);
+        $allRelatives = $mapper->loadRelation(array($this), $name, BuildDepth::PROXIES_ONLY);
+        $oidStr = $this->getOID()->__toString();
+        $relatives = isset($allRelatives[$oidStr]) ? $allRelatives[$oidStr] : null;
         $relDesc = $mapper->getRelation($name);
         if ($relDesc->isMultiValued()) {
           $mergeResult = self::mergeObjectLists($value, $relatives);
           $value = $mergeResult['result'];
         }
         else {
-          $value = $relatives;
+          $value = $relatives != null ? $relatives[0] : null;
         }
         $this->setValueInternal($name, $value);
         $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZED;
@@ -213,16 +230,14 @@ class Node extends PersistentObject {
       foreach ($mapper->getRelations() as $curRelationDesc) {
         $valueName = $curRelationDesc->getOtherRole();
         // use parent getters to avoid loading relations
-        $existingValue = parent::getValue($valueName);
-        $newValue = parent::getValue($valueName);
-        if ($curRelationDesc->isMultiValued()) {
-          $mergeResult = self::mergeObjectLists($existingValue, $newValue);
-          $newValue = $mergeResult['result'];
+        $existingValue = self::$_parentGetValueMethod->invokeArgs($this, array($valueName));
+        $newValue = self::$_parentGetValueMethod->invokeArgs($object, array($valueName));
+        if ($newValue != null) {
+          if ($curRelationDesc->isMultiValued()) {
+            $mergeResult = self::mergeObjectLists($existingValue, $newValue);
+            $newValue = $mergeResult['result'];
+          }
           $this->setValueInternal($valueName, $newValue);
-        }
-        elseif ($existingValue instanceof PersistentObjectProxy &&
-                  $newValue instanceof PersistentObject) {
-            $this->setValueInternal($valueName, $newValue);
         }
       }
     }
@@ -722,7 +737,13 @@ class Node extends PersistentObject {
         else {
           $mapper = $this->getMapper();
           if ($mapper) {
-            $relatives = $mapper->loadRelation($this, $curRole, $buildDepth);
+            $allRelatives = $mapper->loadRelation(array($this), $curRole, $buildDepth);
+            $oidStr = $this->getOID()->__toString();
+            $relatives = isset($allRelatives[$oidStr]) ? $allRelatives[$oidStr] : null;
+            $relDesc = $mapper->getRelation($curRole);
+            if (!$relDesc->isMultiValued()) {
+              $relatives = $relatives != null ? $relatives[0] : null;
+            }
           }
         }
         $this->setValueInternal($curRole, $relatives);

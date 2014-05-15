@@ -60,6 +60,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   private static $SEQUENCE_CLASS = 'DBSequence';
   private static $connections = array();   // registry for connections, key: connId
   private static $inTransaction = array(); // registry for transaction status (boolean), key: connId
+  private static $isDebugEnabled = false;
 
   private $_connectionParams = null; // database connection parameters
   private $_connId = null;     // a connection identifier composed of the connection parameters
@@ -77,11 +78,20 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   // keeps track of currently loading relations to avoid circular loading
   private $_loadingRelations = array();
 
+  const INTERNAL_VALUE_PREFIX = '_mapper_internal_';
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    self::$isDebugEnabled = Log::isDebugEnabled(__CLASS__);
+  }
+
   /**
    * Select data to be stored in the session.
    * PDO throws an excetption if tried to be (un-)serialized.
    */
-  function __sleep() {
+  public function __sleep() {
     return array('_connectionParams', '_dbPrefix');
   }
 
@@ -324,10 +334,18 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           return array();
         }
       }
+      if (self::$isDebugEnabled) {
+        Log::debug("Execute statement: ".$selectStmt->__toString(), __CLASS__);
+        Log::debug($selectStmt->getBind(), __CLASS__);
+      }
       $result = $selectStmt->query();
       // save statement on success
       $selectStmt->save();
-      return $result->fetchAll();
+      $rows = $result->fetchAll();
+      if (self::$isDebugEnabled) {
+        Log::debug("Result: ".sizeof($rows)." row(s)", __CLASS__);
+      }
+      return $rows;
     }
     catch (Exception $ex) {
       Log::error("The query: ".$selectStmt."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
@@ -651,6 +669,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see AbstractMapper::loadImpl()
    */
   protected function loadImpl(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
+    if (self::$isDebugEnabled) {
+      Log::debug("Load object: ".$oid->__toString(), __CLASS__);
+    }
     // delegate to loadObjects
     $criteria = $this->createPKCondition($oid);
     $pagingInfo = new PagingInfo(1, true);
@@ -790,20 +811,22 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         // load related objects
         $otherType = $relationDesc->getOtherType();
         $otherMapper = $persistenceFacade->getMapper($otherType);
-        $objects = $otherMapper->loadRelatedObjects($proxy, $relationDesc->getThisRole(),
-                BuildDepth::SINGLE);
-        foreach($objects as $object) {
-          if ($isManyToMany) {
-            // delete the many to many object immediatly
-            $otherMapper->delete($object);
-          }
-          elseif ($isComposite) {
-            // delete composite and relation object children
-            $object->delete();
-          }
-          else {
-            // unlink shared children
-            $object->setValue($relationDesc->getThisRole(), null, true, false);
+        $allObjects = $this->loadRelationImpl(array($proxy), $relationDesc->getOtherRole());
+        $oidStr = $proxy->getOID()->__toString();
+        if (isset($allObjects[$oidStr])) {
+          foreach($allObjects[$oidStr] as $object) {
+            if ($isManyToMany) {
+              // delete the many to many object immediatly
+              $otherMapper->delete($object);
+            }
+            elseif ($isComposite) {
+              // delete composite and relation object children
+              $object->delete();
+            }
+            else {
+              // unlink shared children
+              $object->setValue($relationDesc->getThisRole(), null, true, false);
+            }
           }
         }
       }
@@ -846,36 +869,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see PersistenceFacade::loadObjectsImpl()
    */
   protected function loadObjectsImpl($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+    if (self::$isDebugEnabled) {
+      Log::debug("Load objects: ".$type, __CLASS__);
+    }
     $objects = $this->loadObjectsFromQueryParts($type, $buildDepth, $criteria, $orderby, $pagingInfo);
-    return $objects;
-  }
-
-  /**
-   * Load the objects of the own type that are related to a given object. The implementation must
-   * check the navigability of the relation and return null, if the requested direction is not navigable.
-   * @param otherObjectProxy A PersistentObjectProxy for the object that the objects to load are related to
-   * @param otherRole The role of the other object in relation to the objects to load
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
-   * @return Array of PersistentObject instances or null, if not navigable
-   */
-  protected function loadRelatedObjects(PersistentObjectProxy $otherObjectProxy, $otherRole, $buildDepth=BuildDepth::SINGLE,
-    $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE))) {
-      throw new IllegalArgumentException("Build depth not supported: $buildDepth");
-    }
-    $objects = array();
-    $relationDescription = $this->getRelationImpl($otherRole, true);
-    if ($relationDescription->getOtherNavigability() == true) {
-      $type = $this->getType();
-
-      // create query
-      $selectStmt = $this->getRelationSelectSQL($otherObjectProxy, $otherRole, $criteria, $orderby, $pagingInfo);
-      $objects = $this->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo);
-    }
     return $objects;
   }
 
@@ -924,6 +921,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       return $objects;
     }
 
+    $tx = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     for ($i=0, $count=sizeof($data); $i<$count; $i++) {
       // create the object
       $object = $this->createObjectFromData($data[$i]);
@@ -931,15 +929,17 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       // don't set the state recursive, because otherwise relations would be initialized
       $object->setState(PersistentObject::STATE_CLEAN);
 
-      // add related objects
-      $this->addRelatedObjects($object, $buildDepth);
-
-      // register the object with the transaction
-      $object = ObjectFactory::getInstance('persistenceFacade')->getTransaction()->registerLoaded($object);
-
       $objects[] = $object;
     }
-    return $objects;
+    // add related objects
+    $this->addRelatedObjects($objects, $buildDepth);
+
+    // register objects with the transaction
+    $registeredObjects = array();
+    for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
+      $registeredObjects[] = $tx->registerLoaded($objects[$i]);
+    }
+    return $registeredObjects;
   }
 
   /**
@@ -981,7 +981,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     // set object data
     $values = array();
     foreach($objectData as $name => $value) {
-      if ($this->hasAttribute($name)) {
+      if ($this->hasAttribute($name) || strpos($name, self::INTERNAL_VALUE_PREFIX) === 0) {
         $values[$name] = $value;
       }
     }
@@ -1005,12 +1005,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * Append the child data to an object. If the buildDepth does not determine to load a
+   * Append the child data to a list of object. If the buildDepth does not determine to load a
    * child generation, only the oids of the children will be loaded.
-   * @param object A reference to the object to append the children to
+   * @param objects Array of PersistentObject instances to append the children to
    * @param buildDepth @see PersistenceFacade::loadObjects()
    */
-  protected function addRelatedObjects(PersistentObject $object, $buildDepth=BuildDepth::SINGLE) {
+  protected function addRelatedObjects(array $objects, $buildDepth=BuildDepth::SINGLE) {
 
     // recalculate build depth for the next generation
     $newBuildDepth = $buildDepth;
@@ -1024,63 +1024,78 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     foreach($relationDescs as $relationDesc) {
       $role = $relationDesc->getOtherRole();
 
-      $relationId = $object->getOID()->__toString().$role;
+      $relationId = $role.$relationDesc->getThisRole();
       // if the build depth is not satisfied already and the relation is not
       // currently loading, we load the complete objects and add them
       if ($loadNextGeneration && !isset($this->_loadingRelations[$relationId])) {
         $this->_loadingRelations[$relationId] = true;
-        $relatives = $this->loadRelation($object, $role, $newBuildDepth);
-        // set the value
-        $object->setValue($role, $relatives, true, false);
+        $relatives = $this->loadRelation($objects, $role, $newBuildDepth);
+        // set the values
+        foreach ($objects as $object) {
+          $oidStr = $object->getOID()->__toString();
+          $object->setValue($role, isset($relatives[$oidStr]) ? $relatives[$oidStr] : null, true, false);
+        }
         unset($this->_loadingRelations[$relationId]);
       }
       // otherwise set the value to not initialized.
       // the Node will initialize it with the proxies for the relation objects
       // on first access
       else {
-        if ($object instanceof Node) {
-          $object->addRelation($role);
+        foreach ($objects as $object) {
+          if ($object instanceof Node) {
+            $object->addRelation($role);
+          }
         }
       }
     }
   }
 
   /**
-   * @see PersistenceMapper::loadRelationImpl()
+   * @see AbstractMapper::loadRelationImpl()
    */
-  protected function loadRelationImpl(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE,
+  protected function loadRelationImpl(array $objects, $role, $buildDepth=BuildDepth::SINGLE,
     $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-
+    if (self::$isDebugEnabled) {
+      Log::debug("Load relation: ".$role, __CLASS__);
+    }
     $relatives = array();
+    if (sizeof($objects) == 0) {
+      return $relatives;
+    }
+    $type = $objects[0]->getType();
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $relationDescription = $this->getRelationImpl($role, true);
-    if ($relationDescription->getOtherNavigability() == true) {
-      $otherType = $relationDescription->getOtherType();
+    $otherRelationDescription = $this->getRelationImpl($role, true);
+    if ($otherRelationDescription->getOtherNavigability() == true) {
+      $otherType = $otherRelationDescription->getOtherType();
       $otherMapper = $persistenceFacade->getMapper($otherType);
-
-      $relatedObjects = $otherMapper->loadRelatedObjects(
-          PersistentObjectProxy::fromObject($object),
-          $relationDescription->getThisRole(),
-          ($buildDepth == BuildDepth::PROXIES_ONLY) ? BuildDepth::SINGLE : $buildDepth,
-          $criteria, $orderby, $pagingInfo
-      );
-
-      // create proxies if demanded
-      if ($buildDepth == BuildDepth::PROXIES_ONLY) {
-        for ($i=0, $count=sizeof($relatedObjects); $i<$count; $i++) {
-          $relatedObjects[$i] = new PersistentObjectProxy($relatedObjects[$i]->getOID());
-        }
+      if (!($otherMapper instanceof RDBMapper)) {
+        throw new PersistenceException("Can only load related objects, if they are mapped by an RDBMapper instance.");
       }
 
-      if ($relationDescription->isMultiValued()) {
-        // multi valued
-        $relatives = $relatedObjects;
+      // load related objects from other mapper
+      $relatedObjects = array();
+      $thisRole = $otherRelationDescription->getThisRole();
+      $thisRelationDescription = $otherMapper->getRelationImpl($thisRole, true);
+      if ($thisRelationDescription->getOtherNavigability() == true) {
+        list($selectStmt, $objValueName, $relValueName) = $otherMapper->getRelationSelectSQL($objects, $thisRole, $criteria, $orderby, $pagingInfo);
+        $relatedObjects = $otherMapper->loadObjectsFromSQL($selectStmt, ($buildDepth == BuildDepth::PROXIES_ONLY) ? BuildDepth::SINGLE : $buildDepth, $pagingInfo);
       }
-      else {
-        // single valued
-        $relatives = (sizeof($relatedObjects) > 0) ? $relatedObjects[0] : null;
+    }
+    // group relatedObjects by original objects
+    $relativeMap = array();
+    foreach ($relatedObjects as $relatedObject) {
+      $key = $relatedObject->getValue($relValueName);
+      if (!isset($relativeMap[$key])) {
+        $relativeMap[$key] = array();
       }
+      $relativeMap[$key][] = ($buildDepth != BuildDepth::PROXIES_ONLY) ? $relatedObject :
+              new PersistentObjectProxy($relatedObject->getOID());
+    }
+    foreach ($objects as $object) {
+      $oidStr = $object->getOID()->__toString();
+      $key = $object->getValue($objValueName);
+      $relatives[$oidStr] = isset($relativeMap[$key]) ? $relativeMap[$key] : array();
     }
     return $relatives;
   }
@@ -1206,15 +1221,16 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Get the SQL command to select those objects from the database that are related to the given object.
    * @note Navigability may not be checked in this method
-   * @note In case of a aortable many to many relation, the sortkey value must also be selected
-   * @param otherObjectProxy A PersistentObjectProxy for the object to load the relatives for.
+   * @note In case of a sortable many to many relation, the sortkey value must also be selected
+   * @param otherObjectProxies Array of PersistentObjectProxy instances for the objects to load the relatives for.
    * @param otherRole The role of the other object in relation to the objects to load.
    * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
-   * @return SelectStatement instance
+   * @return Array with SelectStatement instance and the attribute names which establish the relation between
+   * the loaded objects and the proxies (proxies's attribute name first)
    */
-  abstract protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy, $otherRole,
+  abstract protected function getRelationSelectSQL(array $otherObjectProxies, $otherRole,
           $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**

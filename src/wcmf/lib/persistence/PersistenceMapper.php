@@ -216,19 +216,20 @@ interface PersistenceMapper {
     PagingInfo $pagingInfo=null);
 
   /**
-   * Load the objects of the specified role. The implementation must check the navigability of
+   * Load the objects for the specified role. The implementation must check the navigability of
    * the relation and return null, if the requested direction is not navigable. The result
    * depends on the multiplicity of the relation (singlevalued or multivalued).
-   * @param object The object for which the objects are loaded
-   * @param role The role of the objects in relation to the given object
+   * @param object Array of PersistenceObject or PersstenceObjectProxy instances for which the related objects are loaded
+   * @param role The role of the objects in relation to the given objects
    * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
    * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
    * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
-   * @return Array of PersistentObject instances, a PersistentObject instance or null, if not navigable
+   * @return Associative array with the object ids of the origin objects as keys and arrays of related
+   * PersistentObject instances as values or null, if not navigable
    */
-  public function loadRelation(PersistentObject $object, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
+  public function loadRelation(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null);
 
   /**

@@ -67,7 +67,8 @@ class NodeRelationTest extends DatabaseTestCase {
       'author' => new ObjectId('Author', 202),
       'book' => new ObjectId('Book', 203),
       'chapter' => new ObjectId('Chapter', 300),
-      'subChapter' => new ObjectId('Chapter', 302),
+      'subChapter1' => new ObjectId('Chapter', 302),
+      'subChapter2' => new ObjectId('Chapter', 300),
       'parentChapter' => new ObjectId('Chapter', 303),
       'titleImage' => new ObjectId('Image', 305),
       'normalImage' => new ObjectId('Image', 306)
@@ -92,28 +93,37 @@ class NodeRelationTest extends DatabaseTestCase {
     $chapters = $author->getChildrenEx(null, 'Chapter', null);
     $this->assertEquals(3, sizeof($chapters));
 
-    $chapter = $author->getFirstChild(null, 'Chapter', null);
-    $subChapters = $chapter->getChildrenEx(null, 'SubChapter', null);
-    $this->assertEquals(1, sizeof($subChapters));
-    $this->assertEquals($this->oids['subChapter'], $subChapters[0]->getOID());
+    $chapter1 = $author->getFirstChild(null, 'Chapter', null);
+    $subChapters1 = $chapter1->getChildrenEx(null, 'SubChapter', null);
+    $this->assertEquals(1, sizeof($subChapters1));
+    $this->assertEquals($this->oids['subChapter1'], $subChapters1[0]->getOID());
 
-    $parentChapters = $chapter->getParentsEx(null, 'ParentChapter', null);
+    $chapter2 = $chapters[1];
+    $subChapters2 = $chapter2->getChildrenEx(null, 'SubChapter', null);
+    $this->assertEquals(0, sizeof($subChapters2));
+
+    $chapter3 = $chapters[2];
+    $subChapters3 = $chapter3->getChildrenEx(null, 'SubChapter', null);
+    $this->assertEquals(1, sizeof($subChapters3));
+    $this->assertEquals($this->oids['subChapter2'], $subChapters3[0]->getOID());
+
+    $parentChapters = $chapter1->getParentsEx(null, 'ParentChapter', null);
     $this->assertEquals(1, sizeof($parentChapters));
     $this->assertEquals($this->oids['parentChapter'], $parentChapters[0]->getOID());
 
-    $authors2 = $chapter->getParentsEx(null, 'Author', null);
+    $authors2 = $chapter1->getParentsEx(null, 'Author', null);
     $this->assertEquals(1, sizeof($authors2));
     $this->assertEquals($this->oids['author'], $authors2[0]->getOID());
 
-    $titleImages = $chapter->getChildrenEx(null, 'TitleImage', null);
+    $titleImages = $chapter1->getChildrenEx(null, 'TitleImage', null);
     $this->assertEquals(1, sizeof($titleImages));
     $this->assertEquals($this->oids['titleImage'], $titleImages[0]->getOID());
 
-    $normalImages = $chapter->getChildrenEx(null, 'NormalImage', null);
+    $normalImages = $chapter1->getChildrenEx(null, 'NormalImage', null);
     $this->assertEquals(1, sizeof($normalImages));
     $this->assertEquals($this->oids['normalImage'], $normalImages[0]->getOID());
 
-    $images = $chapter->getChildrenEx(null, null, 'Image');
+    $images = $chapter1->getChildrenEx(null, null, 'Image');
     $this->assertEquals(2, sizeof($images));
     $transaction->rollback();
 
@@ -131,7 +141,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $transaction->begin();
     $chapter1 = $persistenceFacade->load($this->oids['chapter'], 1);
     $chapter1->deleteNode($persistenceFacade->load($this->oids['book']));
-    $chapter1->deleteNode($persistenceFacade->load($this->oids['subChapter']), 'SubChapter');
+    $chapter1->deleteNode($persistenceFacade->load($this->oids['subChapter1']), 'SubChapter');
     $chapter1->deleteNode($persistenceFacade->load($this->oids['parentChapter']), 'ParentChapter');
     $chapter1->deleteNode($persistenceFacade->load($this->oids['author']));
     $chapter1->deleteNode($persistenceFacade->load($this->oids['titleImage']), 'TitleImage');
@@ -151,7 +161,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $book = $persistenceFacade->load($this->oids['book'], 1);
     $this->assertEquals(0, sizeof($book->getChildrenEx(null, 'Chapter', null)));
 
-    $subChapter = $persistenceFacade->load($this->oids['subChapter'], 1);
+    $subChapter = $persistenceFacade->load($this->oids['subChapter1'], 1);
     $this->assertEquals(0, sizeof($subChapter->getParentsEx(null, 'ParentChapter', null)));
 
     $parentChapter = $persistenceFacade->load($this->oids['parentChapter'], 1);
@@ -202,7 +212,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $transaction->begin();
     $this->assertEquals(null, $persistenceFacade->load($this->oids['chapter']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['book']));
-    $this->assertEquals(null, $persistenceFacade->load($this->oids['subChapter']));
+    $this->assertEquals(null, $persistenceFacade->load($this->oids['subChapter1']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['parentChapter']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['author']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['titleImage']));

@@ -9,7 +9,7 @@ use wcmf\lib\core\ObjectFactory;
 ob_start();
 $configPath = WCMF_BASE.'app/config/';
 
-Log::configure('log4php.properties');
+Log::configure('log4php.php');
 $config = new InifileConfiguration($configPath);
 $config->addConfiguration('config.ini');
 ObjectFactory::configure($config);

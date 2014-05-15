@@ -41,6 +41,8 @@ class DefaultActionMapper implements ActionMapper {
    * @see ActionMapper::processAction()
    */
   public function processAction(Request $request) {
+    $isDebugEnabled = Log::isDebugEnabled(__CLASS__);
+
     // allow static call
     $eventManager = ObjectFactory::getInstance('eventManager');
 
@@ -73,7 +75,7 @@ class DefaultActionMapper implements ActionMapper {
     // get best matching action key from inifile
     $actionKey = ActionKey::getBestMatch('actionmapping', $referrer, $context, $action);
 
-    if (Log::isDebugEnabled(__CLASS__)) {
+    if ($isDebugEnabled) {
       Log::debug($referrer."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
     }
 
@@ -95,13 +97,13 @@ class DefaultActionMapper implements ActionMapper {
     $controllerObj = new $controllerClass();
 
     // everything is right in place, start processing
-    if (Log::isDebugEnabled(__CLASS__)) {
+    if ($isDebugEnabled) {
       Log::debug("Request: ".$request->__toString(), __CLASS__);
     }
     Formatter::deserialize($request);
 
     // initialize controller
-    if (Log::isDebugEnabled(__CLASS__)) {
+    if ($isDebugEnabled) {
       Log::debug("Execute ".$controllerClass." with request: ".$request->__toString(), __CLASS__);
     }
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(

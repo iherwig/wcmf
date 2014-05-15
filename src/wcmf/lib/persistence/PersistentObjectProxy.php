@@ -79,6 +79,24 @@ class PersistentObjectProxy {
   }
 
   /**
+   * Get the value of a named item.
+   * @param name The name of the item to query.
+   * @return The value of the item / null if it doesn't exits.
+   */
+  public function getValue($name) {
+    // return pk values as they are parts of the oid
+    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($this->getType());
+    $pkNames = $mapper->getPkNames();
+    for ($i=0, $count=sizeof($pkNames); $i<$count; $i++) {
+      if ($name == $pkNames[$i]) {
+        $ids = $this->_oid->getId();
+        return $ids[$i];
+      }
+    }
+    return $this->__call('getValue', array($name));
+  }
+
+  /**
    * Get the PersistentObject instance.
    * @return PersistentObject
    */

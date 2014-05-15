@@ -75,8 +75,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
 
     // filter values according to type
-    $iter = new NodeValueIterator($object, false);
-    foreach($iter as $valueName => $value) {
+    $values = $this->getPersistentValues($object);
+    foreach($values as $valueName => $value) {
       $type = $this->getAttribute($valueName)->getType();
       // integer
       if (strpos(strtolower($type), 'int') === 0) {
@@ -266,20 +266,20 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * @see RDBMapper::getRelationSelectSQL()
    */
-  protected function getRelationSelectSQL(PersistentObjectProxy $otherObjectProxy,
+  protected function getRelationSelectSQL(array $otherObjectProxies,
           $otherRole, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $relationDescription = $this->getRelationImpl($otherRole, true);
     if ($relationDescription instanceof RDBManyToOneRelationDescription) {
       return $this->getManyToOneRelationSelectSQL($relationDescription,
-              $otherObjectProxy, $otherRole, $criteria, $orderby, $pagingInfo);
+              $otherObjectProxies, $otherRole, $criteria, $orderby, $pagingInfo);
     }
     elseif ($relationDescription instanceof RDBOneToManyRelationDescription) {
       return $this->getOneToManyRelationSelectSQL($relationDescription,
-              $otherObjectProxy, $otherRole, $criteria, $orderby, $pagingInfo);
+              $otherObjectProxies, $otherRole, $criteria, $orderby, $pagingInfo);
     }
     elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
       return $this->getManyToManyRelationSelectSQL($relationDescription,
-              $otherObjectProxy, $otherRole, $criteria, $orderby, $pagingInfo);
+              $otherObjectProxies, $otherRole, $criteria, $orderby, $pagingInfo);
     }
     throw new IllegalArgumentException("Unknown RelationDescription for role: ".$otherRole);
   }
@@ -289,21 +289,24 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getManyToOneRelationSelectSQL(RelationDescription $relationDescription,
-          PersistentObjectProxy $otherObjectProxy, $otherRole, $criteria=null, $orderby=null,
+          array $otherObjectProxies, $otherRole, $criteria=null, $orderby=null,
           PagingInfo $pagingInfo=null) {
-    // id bind parameter
     $thisAttr = $this->getAttribute($relationDescription->getFkName());
     $tableName = $this->getRealTableName();
+
+    // id bind parameters
+    $bind = array();
     $idPlaceholder = ':'.$tableName.'_'.$thisAttr->getName();
-    $oid = $otherObjectProxy->getOID();
-    $dbid = $oid->getFirstId();
-    if ($dbid === null) {
-      $dbid = SQLConst::NULL();
+    for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
+      $dbid = $otherObjectProxies[$i]->getValue($relationDescription->getIdName());
+      if ($dbid === null) {
+        $dbid = SQLConst::NULL();
+      }
+      $bind[$idPlaceholder.$i] = $dbid;
     }
-    $bind = array($idPlaceholder => $dbid);
 
     // statement
-    $queryId = $this->getCacheKey($otherRole, $criteria, $orderby, $pagingInfo);
+    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), $criteria, $orderby, $pagingInfo);
     $selectStmt = SelectStatement::get($this, $queryId);
     if (!$selectStmt->isCached()) {
       // initialize the statement
@@ -311,7 +314,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).'.'.
-              $this->quoteIdentifier($thisAttr->getName()).' = '.$idPlaceholder);
+              $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($bind)).')');
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
@@ -328,7 +331,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // set parameters
     $selectStmt->bind($bind);
-    return $selectStmt;
+    return array($selectStmt, $relationDescription->getIdName(), $relationDescription->getFkName());
   }
 
   /**
@@ -336,20 +339,24 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getOneToManyRelationSelectSQL(RelationDescription $relationDescription,
-          PersistentObjectProxy $otherObjectProxy, $otherRole, $criteria=null, $orderby=null,
+          array $otherObjectProxies, $otherRole, $criteria=null, $orderby=null,
           PagingInfo $pagingInfo=null) {
-    // id bind parameter
     $thisAttr = $this->getAttribute($relationDescription->getIdName());
     $tableName = $this->getRealTableName();
+
+    // id bind parameters
+    $bind = array();
     $idPlaceholder = ':'.$tableName.'_'.$thisAttr->getName();
-    $fkValue = $otherObjectProxy->getValue($relationDescription->getFkName());
-    if ($fkValue === null) {
-      $fkValue = SQLConst::NULL();
+    for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
+      $fkValue = $otherObjectProxies[$i]->getValue($relationDescription->getFkName());
+      if ($fkValue === null) {
+        $fkValue = SQLConst::NULL();
+      }
+       $bind[$idPlaceholder.$i] = $fkValue;
     }
-    $bind = array($idPlaceholder => $fkValue);
 
     // statement
-    $queryId = $this->getCacheKey($otherRole, $criteria, $orderby, $pagingInfo);
+    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), $criteria, $orderby, $pagingInfo);
     $selectStmt = SelectStatement::get($this, $queryId);
     if (!$selectStmt->isCached()) {
       // initialize the statement
@@ -357,7 +364,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).'.'.
-              $this->quoteIdentifier($thisAttr->getName()).' = '.$idPlaceholder);
+              $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($bind)).')');
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
@@ -374,7 +381,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // set parameters
     $selectStmt->bind($bind);
-    return $selectStmt;
+    return array($selectStmt, $relationDescription->getFkName(), $relationDescription->getIdName());
   }
 
   /**
@@ -382,25 +389,28 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getManyToManyRelationSelectSQL(RelationDescription $relationDescription,
-          PersistentObjectProxy $otherObjectProxy, $otherRole, $criteria=null, $orderby=null,
+          array $otherObjectProxies, $otherRole, $criteria=null, $orderby=null,
           PagingInfo $pagingInfo=null) {
-    // id bind parameter
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $thisRelationDesc = $relationDescription->getThisEndRelation();
     $otherRelationDesc = $relationDescription->getOtherEndRelation();
     $nmMapper = $persistenceFacade->getMapper($thisRelationDesc->getOtherType());
     $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
     $nmTablename = $nmMapper->getRealTableName();
+
+    // id bind parameters
+    $bind = array();
     $idPlaceholder = ':'.$nmTablename.'_'.$otherFkAttr->getName();
-    $oid = $otherObjectProxy->getOID();
-    $dbid = $oid->getFirstId();
-    if ($dbid === null) {
-      $dbid = SQLConst::NULL();
+    for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
+      $dbid = $otherObjectProxies[$i]->getValue($thisRelationDesc->getIdName());
+      if ($dbid === null) {
+        $dbid = SQLConst::NULL();
+      }
+      $bind[$idPlaceholder.$i] = $dbid;
     }
-    $bind = array($idPlaceholder => $dbid);
 
     // statement
-    $queryId = $this->getCacheKey($otherRole, $criteria, $orderby, $pagingInfo);
+    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), $criteria, $orderby, $pagingInfo);
     $selectStmt = SelectStatement::get($this, $queryId);
     if (!$selectStmt->isCached()) {
       // initialize the statement
@@ -411,12 +421,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $tableName = $this->getRealTableName();
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
-
       $joinCond = $this->quoteIdentifier($nmTablename).'.'.$this->quoteIdentifier($thisFkAttr->getName()).'='.
               $this->quoteIdentifier($tableName).'.'.$this->quoteIdentifier($thisIdAttr->getName());
       $selectStmt->join($nmTablename, $joinCond, array());
       $selectStmt->where($this->quoteIdentifier($nmTablename).'.'.
-              $this->quoteIdentifier($otherFkAttr->getName()).' = '.$idPlaceholder);
+              $this->quoteIdentifier($otherFkAttr->getName()).' IN('.join(',', array_keys($bind)).')');
       // order (in this case we use the order of the many to many objects)
       $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);
       $this->addOrderBy($selectStmt, $orderby, $nmTablename, $nmSortDefs);
@@ -425,6 +434,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
         $nmSortAttributeDesc = $nmMapper->getAttribute($nmSortDef['sortFieldName']);
         $selectStmt->columns(array($nmSortAttributeDesc->getName() => $nmSortAttributeDesc->getColumn()), $nmTablename);
       }
+      // add proxy id
+      $selectStmt->columns(array(self::INTERNAL_VALUE_PREFIX.'id' => $otherFkAttr->getName()), $nmTablename);
       // additional conditions
       $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $nmTablename));
       // limit
@@ -439,7 +450,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // set parameters
     $selectStmt->bind($bind);
-    return $selectStmt;
+    return array($selectStmt, $thisRelationDesc->getIdName(), self::INTERNAL_VALUE_PREFIX.'id');
   }
 
   /**
@@ -654,7 +665,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Get an associative array of attribute name-value pairs to be stored for a
-   * given oject (primary keys and references are not included)
+   * given oject (references are not included)
    * @param object The PeristentObject.
    * @return Array
    */
@@ -803,6 +814,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @param string
    * @param criteriaArray
    * @param stringArray
+   * @param pagingInfo
    * @return String
    */
   protected function getCacheKey($string, $criteriaArray, $stringArray, PagingInfo $pagingInfo=null) {

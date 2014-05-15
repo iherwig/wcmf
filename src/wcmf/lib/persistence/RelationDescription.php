@@ -44,6 +44,8 @@ class RelationDescription {
 
   protected $hierarchyType = 'undefined';
 
+  private $isMultiValued = null;
+
   /**
    * Constructor.
    * @param thisType The PersistentObject type at this end
@@ -88,13 +90,11 @@ class RelationDescription {
    * @return Boolean
    */
   public function isMultiValued() {
-    $maxMultiplicity = $this->getOtherMaxMultiplicity();
-    if ($maxMultiplicity > 1 || $maxMultiplicity == 'unbounded') {
-      return true;
+    if ($this->isMultiValued == null) {
+      $maxMultiplicity = $this->getOtherMaxMultiplicity();
+      $this->isMultiValued = ($maxMultiplicity > 1 || $maxMultiplicity == 'unbounded');
     }
-    else {
-      return false;
-    }
+    return $this->isMultiValued;
   }
 
   /**

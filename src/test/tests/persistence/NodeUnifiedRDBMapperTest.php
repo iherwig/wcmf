@@ -120,20 +120,26 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $relationDescription2 = $mapper1->getRelation('Author');
     $otherMapper2 = new AuthorRDBMapper();
     $otherMapper2->setConnectionParams($this->dbParams);
-    $sql2 = TestUtil::callProtectedMethod($otherMapper2, 'getRelationSelectSQL',
-            array(PersistentObjectProxy::fromObject($chapter), $relationDescription2->getThisRole()))->__toString();
+    list($selectStmt2, $objValueName2, $relValueName2) = TestUtil::callProtectedMethod($otherMapper2, 'getRelationSelectSQL',
+            array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription2->getThisRole()));
+    $this->assertEquals('fk_author_id', $objValueName2);
+    $this->assertEquals('id', $relValueName2);
+    $sql2 = $selectStmt2->__toString();
     $expected2 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
-      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :Author_id) ORDER BY `Author`.`name` ASC";
+      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` IN(:Author_id0)) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected2, str_replace("\n", "", $sql2));
 
     // parent (order)
     $relationDescription3 = $mapper1->getRelation('Author');
     $otherMapper3 = new AuthorRDBMapper();
     $otherMapper3->setConnectionParams($this->dbParams);
-    $sql3 = TestUtil::callProtectedMethod($otherMapper3, 'getRelationSelectSQL',
-            array(PersistentObjectProxy::fromObject($chapter), $relationDescription3->getThisRole(), null, array('name')))->__toString();
+    list($selectStmt3, $objValueName3, $relValueName3) = TestUtil::callProtectedMethod($otherMapper3, 'getRelationSelectSQL',
+            array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription3->getThisRole(), null, array('name')));
+    $this->assertEquals('fk_author_id', $objValueName3);
+    $this->assertEquals('id', $relValueName3);
+    $sql3 = $selectStmt3->__toString();
     $expected3 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
-      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :Author_id) ORDER BY `Author`.`name` ASC";
+      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` IN(:Author_id0)) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected3, str_replace("\n", "", $sql3));
 
     // parent (criteria)
@@ -141,10 +147,13 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $relationDescription4 = $mapper1->getRelation('Author');
     $otherMapper4 = new AuthorRDBMapper();
     $otherMapper4->setConnectionParams($this->dbParams);
-    $sql4 = TestUtil::callProtectedMethod($otherMapper4, 'getRelationSelectSQL',
-            array(PersistentObjectProxy::fromObject($chapter), $relationDescription4->getThisRole(), array($criteria4)))->__toString();
+    list($selectStmt4, $objValueName4, $relValueName4) = TestUtil::callProtectedMethod($otherMapper4, 'getRelationSelectSQL',
+            array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription4->getThisRole(), array($criteria4)));
+    $this->assertEquals('fk_author_id', $objValueName4);
+    $this->assertEquals('id', $relValueName4);
+    $sql4 = $selectStmt4->__toString();
     $expected4 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
-      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` = :Author_id) AND (`Author`.`name` = :Author_name) ".
+      "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` IN(:Author_id0)) AND (`Author`.`name` = :Author_name) ".
       "ORDER BY `Author`.`name` ASC";
     $this->assertEquals($expected4, str_replace("\n", "", $sql4));
 
@@ -152,12 +161,15 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $relationDescription6 = $mapper1->getRelation('NormalImage');
     $otherMapper6 = new ImageRDBMapper();
     $otherMapper6->setConnectionParams($this->dbParams);
-    $sql6 = TestUtil::callProtectedMethod($otherMapper6, 'getRelationSelectSQL',
-            array(PersistentObjectProxy::fromObject($chapter), $relationDescription6->getThisRole()))->__toString();
+    list($selectStmt6, $objValueName6, $relValueName6) = TestUtil::callProtectedMethod($otherMapper6, 'getRelationSelectSQL',
+            array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription6->getThisRole()));
+    $this->assertEquals('id', $objValueName6);
+    $this->assertEquals('fk_chapter_id', $relValueName6);
+    $sql6 = $selectStmt6->__toString();
     $expected6 = "SELECT `Image`.`id`, `Image`.`fk_chapter_id`, `Image`.`fk_titlechapter_id`, `Image`.`file` AS `filename`, ".
       "`Image`.`created`, `Image`.`creator`, `Image`.`modified`, `Image`.`last_editor`, ".
       "`Image`.`sortkey_titlechapter`, `Image`.`sortkey_normalchapter`, `Image`.`sortkey` ".
-      "FROM `Image` WHERE (`Image`.`fk_chapter_id` = :Image_fk_chapter_id) ORDER BY `Image`.`sortkey_normalchapter` ASC";
+      "FROM `Image` WHERE (`Image`.`fk_chapter_id` IN(:Image_fk_chapter_id0)) ORDER BY `Image`.`sortkey_normalchapter` ASC";
     $this->assertEquals($expected6, str_replace("\n", "", $sql6));
 
     $mapper2 = new PublisherRDBMapper();
@@ -166,12 +178,15 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $relationDescription8 = $mapper2->getRelation('Author');
     $otherMapper8 = new AuthorRDBMapper();
     $otherMapper8->setConnectionParams($this->dbParams);
-    $sql8 = TestUtil::callProtectedMethod($otherMapper8, 'getRelationSelectSQL',
-            array(PersistentObjectProxy::fromObject($chapter), $relationDescription8->getThisRole()))->__toString();
+    list($selectStmt8, $objValueName8, $relValueName8) = TestUtil::callProtectedMethod($otherMapper8, 'getRelationSelectSQL',
+            array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription8->getThisRole()));
+    $this->assertEquals('id', $objValueName8);
+    $this->assertEquals('_mapper_internal_id', $relValueName8);
+    $sql8 = $selectStmt8->__toString();
     $expected8 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
-      "`Author`.`modified`, `Author`.`last_editor`, `NMPublisherAuthor`.`sortkey_publisher` FROM `Author` ".
+      "`Author`.`modified`, `Author`.`last_editor`, `NMPublisherAuthor`.`sortkey_publisher`, `NMPublisherAuthor`.`fk_publisher_id` AS `_mapper_internal_id` FROM `Author` ".
       "INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_author_id`=`Author`.`id` ".
-      "WHERE (`NMPublisherAuthor`.`fk_publisher_id` = :NMPublisherAuthor_fk_publisher_id) ORDER BY `NMPublisherAuthor`.`sortkey_publisher` ASC";
+      "WHERE (`NMPublisherAuthor`.`fk_publisher_id` IN(:NMPublisherAuthor_fk_publisher_id0)) ORDER BY `NMPublisherAuthor`.`sortkey_publisher` ASC";
     $this->assertEquals($expected8, str_replace("\n", "", $sql8));
   }
 
