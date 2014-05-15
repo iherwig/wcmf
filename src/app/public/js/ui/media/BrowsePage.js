@@ -3,12 +3,13 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "../_include/_PageMixin",
-    "elfinder/jquery/jquery-1.8.1.min",
-    "elfinder/jquery/jquery-ui-1.8.23.custom.min",
+    "elfinder/jquery/jquery.min",
+    "elfinder/jquery/jquery-ui.min",
     "elfinder/js/elfinder.min",
+    "elfinder/js/i18n/elfinder."+appConfig.uiLanguage,
     "../../locale/Dictionary",
     "dojo/text!./template/BrowsePage.html",
-    "xstyle/css!elfinder/jquery/ui-themes/smoothness-1.8.23/jquery-ui-1.8.23.custom.css",
+    "xstyle/css!elfinder/jquery/jquery-ui.css",
     "xstyle/css!elfinder/css/elfinder.min.css",
     "dojo/domReady!"
 ], function (
@@ -19,6 +20,7 @@ define([
     jQuery,
     jQueryUi,
     elFinder,
+    elFinderLang,
     Dict,
     template
 ) {
@@ -33,7 +35,7 @@ define([
 
             var directory = this.request.getQueryParam("directory");
             var config = {
-                lang: appConfig.defaultLanguage,
+                lang: appConfig.uiLanguage,
                 url: appConfig.backendUrl+'?action=browseMedia&directory='+directory,
                 height: 658,
                 rememberLastDir: false,

@@ -18,8 +18,6 @@ namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\impl\AbstractFormat;
 
 /**
@@ -33,31 +31,7 @@ use wcmf\lib\presentation\format\impl\AbstractFormat;
 abstract class HierarchicalFormat extends AbstractFormat {
 
   /**
-   * @see Format::deserialize()
-   */
-  public function deserialize(Request $request) {
-    $values = $request->getValues();
-    $values = $this->beforeDeserialize($values);
-    $values = $this->deserializeValues($values);
-    $values = $this->afterDeserialize($values);
-    $request->setValues($values);
-  }
-
-  /**
-   * @see Format::serialize()
-   */
-  public function serialize(Response $response) {
-    $values = $response->getValues();
-    $values = $this->beforeSerialize($values);
-    $values = $this->serializeValues($values);
-    $values = $this->afterSerialize($values);
-    $response->setValues($values);
-  }
-
-  /**
-   * Deserialize an array of values.
-   * @param values The array/object of values
-   *
+   * @see AbstractFormat::deserializeValues()
    */
   protected function deserializeValues($values) {
     if ($this->isSerializedNode($values)) {
@@ -92,8 +66,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
   }
 
   /**
-   * Serialize an array of values.
-   * @param values The array/object of values
+   * @see AbstractFormat::serializeValues()
    */
   protected function serializeValues($values) {
     if ($this->isDeserializedNode($values)) {
@@ -118,50 +91,6 @@ abstract class HierarchicalFormat extends AbstractFormat {
         }
       }
     }
-    return $values;
-  }
-
-  /**
-   * Template methods
-   */
-
-  /**
-   * Modify data before deserialization. The default implementation does nothing.
-   * @param values The request values
-   * @return The modified values array
-   * @note Subclasses override this if necessary
-   */
-  protected function beforeDeserialize(array $values) {
-    return $values;
-  }
-
-  /**
-   * Modify data after deserialization. The default implementation does nothing.
-   * @param values The request values
-   * @return The modified values array
-   * @note Subclasses override this if necessary
-   */
-  protected function afterDeserialize(array $values) {
-    return $values;
-  }
-
-  /**
-   * Modify data before serialization. The default implementation does nothing.
-   * @param values The response values
-   * @return The modified values array
-   * @note Subclasses override this if necessary
-   */
-  protected function beforeSerialize(array $values) {
-    return $values;
-  }
-
-  /**
-   * Modify data after serialization. The default implementation does nothing.
-   * @param values The response values
-   * @return The modified values array
-   * @note Subclasses override this if necessary
-   */
-  protected function afterSerialize(array $values) {
     return $values;
   }
 

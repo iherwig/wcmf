@@ -9,7 +9,7 @@ basePath = basePath.substr(0, basePath.indexOf("ckeditor/"));
 })();
 
 CKEDITOR.editorConfig = function( config ) {
-      config.language = appConfig.defaultLanguage;
+      config.language = appConfig.uiLanguage;
       config.stylesSet = 'default:'+appConfig.pathPrefix+'/js/config/ckeditor_styles.js';
       config.forcePasteAsPlainText = true;
       config.resize_dir = 'vertical';

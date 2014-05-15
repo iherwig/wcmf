@@ -18,8 +18,6 @@ namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\impl\AbstractFormat;
 use wcmf\lib\util\StringUtil;
 
@@ -45,41 +43,35 @@ class HtmlFormat extends AbstractFormat {
   }
 
   /**
-  }
-   * @see Format::deserialize()
+   * @see AbstractFormat::deserializeValues()
    */
-  public function deserialize(Request $request) {
+  protected function deserializeValues($values) {
     // construct nodes from values serialized as form fields
     // nodes are encoded in separated fields with names value-<name>-<oid>
-    $data = $request->getValues();
-    $nodeValues = array();
-    foreach ($data as $key => $value) {
+    foreach ($values as $key => $value) {
       $valueDef = self::getValueDefFromInputControlName($key);
-      if ($valueDef != null && strlen($valueDef['oid']) > 0) {
-        $node = &$this->getNode($valueDef['oid']);
-        $node->setValue($valueDef['name'], $value);
-        $nodeValues[] = $key;
+      if ($valueDef != null) {
+        $oidStr = $valueDef['oid'];
+        if (strlen($oidStr) > 0) {
+          $node = &$this->getNode($oidStr);
+          $node->setValue($valueDef['name'], $value);
+          unset($values[$key]);
+          $values[$oidStr] = $node;
+        }
       }
     }
-
-    // replace node values by nodes
-    foreach ($nodeValues as $key) {
-      $request->clearValue($key);
-    }
-    $deserializedNodes = $this->getNodes();
-    foreach (array_keys($deserializedNodes) as $oid) {
-      $request->setValue($oid, $deserializedNodes[$oid]);
-    }
+    return $values;
   }
 
   /**
-   * @see Format::serialize()
+   * @see AbstractFormat::serializeValues()
    */
-  public function serialize(Response $response) {
+  protected function serializeValues($values) {
     // create the view
     $view = ObjectFactory::getInstance('view');
 
     // check if a view template is defined
+    $response = $this->getResponse();
     $viewTpl = $view->getTemplate($response->getSender(),
                   $response->getContext(), $response->getAction());
     if (!$viewTpl) {
@@ -88,13 +80,13 @@ class HtmlFormat extends AbstractFormat {
     }
 
     // assign the response data to the view
-    $data = $response->getValues();
-    foreach (array_keys($data) as $variable) {
-      $view->setValue($variable, $data[$variable]);
+    foreach ($values as $key => $value) {
+      $view->setValue($key, $value);
     }
 
     // display the view
     $view->render(WCMF_BASE.$viewTpl, $response->getCacheId());
+    return $values;
   }
 
   /**

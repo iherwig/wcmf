@@ -28,7 +28,7 @@ class StringUtil {
    * @param var The variable to dump.
    * @return String
    */
-  public static function getDump ($var) {
+  public static function getDump($var) {
     ob_start();
     var_dump($var);
     $out = ob_get_contents();
@@ -137,12 +137,39 @@ class StringUtil {
   }
 
   /**
-   * Remove a trailing comma, if existing.
-   * @param string The string to crop
-   * @return The string
+   * Create an excerpt from the given text around the given phrase
+   * code based on: http://stackoverflow.com/questions/1292121/how-to-generate-the-snippet-like-generated-by-google-with-php-and-mysql
    */
-  public static function removeTrailingComma($string) {
-    return preg_replace('/, ?$/', '', $string);
+  public static function excerpt($text, $phrase, $radius = 100) {
+    if ($radius > strlen($text)) {
+      return $text;
+    }
+    $phraseLen = strlen($phrase);
+    if ($radius < $phraseLen) {
+        $radius = $phraseLen;
+    }
+    $pos = strpos(strtolower($text), strtolower($phrase));
+
+    $startPos = 0;
+    if ($pos > $radius) {
+      $startPos = $pos - $radius;
+    }
+    $textLen = strlen($text);
+
+    $endPos = $pos + $phraseLen + $radius;
+    if ($endPos >= $textLen) {
+      $endPos = $textLen;
+    }
+
+    // make sure to cut at spaces
+    $firstSpacePos = strpos($text, " ", $startPos);
+    $lastSpacePos = strrpos($text, " ", -(strlen($text)-$endPos));
+
+    $excerpt1 = substr($text, $firstSpacePos, $lastSpacePos-$firstSpacePos);
+
+    // remove open tags
+    $excerpt = preg_replace('/^[^<]*?>|<[^>]*?$/', '', $excerpt1);
+    return $excerpt;
   }
 
   /**
@@ -258,42 +285,6 @@ class StringUtil {
   }
 
   /**
-   * Create an excerpt from the given text around the given phrase
-   * code based on: http://stackoverflow.com/questions/1292121/how-to-generate-the-snippet-like-generated-by-google-with-php-and-mysql
-   */
-  public static function excerpt($text, $phrase, $radius = 100) {
-    if ($radius > strlen($text)) {
-      return $text;
-    }
-    $phraseLen = strlen($phrase);
-    if ($radius < $phraseLen) {
-        $radius = $phraseLen;
-    }
-    $pos = strpos(strtolower($text), strtolower($phrase));
-
-    $startPos = 0;
-    if ($pos > $radius) {
-      $startPos = $pos - $radius;
-    }
-    $textLen = strlen($text);
-
-    $endPos = $pos + $phraseLen + $radius;
-    if ($endPos >= $textLen) {
-      $endPos = $textLen;
-    }
-
-    // make sure to cut at spaces
-    $firstSpacePos = strpos($text, " ", $startPos);
-    $lastSpacePos = strrpos($text, " ", -(strlen($text)-$endPos));
-
-    $excerpt1 = substr($text, $firstSpacePos, $lastSpacePos-$firstSpacePos);
-
-    // remove open tags
-    $excerpt = preg_replace('/^[^<]*?>|<[^>]*?$/', '', $excerpt1);
-    return $excerpt;
-  }
-
-  /**
    * Convert a string in underscore notation to camel case notation.
    * Code from http://snipt.net/hongster/underscore-to-camelcase/
    * @param string The string to convert
@@ -327,6 +318,15 @@ class StringUtil {
   }
 
   /**
+   * Remove a trailing comma, if existing.
+   * @param string The string to crop
+   * @return The string
+   */
+  public static function removeTrailingComma($string) {
+    return preg_replace('/, ?$/', '', $string);
+  }
+
+  /**
    * Get the boolean value of a string
    * @param string
    * @return Boolean or the string, if it does not represent a boolean.
@@ -337,6 +337,21 @@ class StringUtil {
       return $string;
     }
     return $val;
+  }
+
+  /**
+   * Converts all accent characters to ASCII characters.
+   * Code from http://stackoverflow.com/questions/2103797/url-friendly-username-in-php/2103815#2103815
+   * @param string Text that might have accent characters
+   * @return string Filtered string with replaced "nice" characters.
+   */
+  public static function slug($string) {
+    $search = array('Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß');
+    $replace = array('AE', 'OE', 'UE', 'ae', 'oe', 'ue', 'ss');
+    $string = str_replace($search, $replace, $string);
+    return strtolower(trim(preg_replace('~[^0-9a-z]+~i', '-',
+            html_entity_decode(preg_replace('~&([a-z]{1,2})(?:acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1',
+                    htmlentities($string, ENT_QUOTES, 'UTF-8')), ENT_QUOTES, 'UTF-8')), '-'));
   }
 }
 ?>

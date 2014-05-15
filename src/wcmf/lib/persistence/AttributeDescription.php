@@ -24,7 +24,7 @@ namespace wcmf\lib\persistence;
 class AttributeDescription {
 
   protected $name = '';
-  protected $type = 'string';
+  protected $type = 'String';
   protected $tags = array();
   protected $defaultValue = null;
   protected $validateType = '';

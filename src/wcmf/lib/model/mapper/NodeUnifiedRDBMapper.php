@@ -18,24 +18,25 @@ namespace wcmf\lib\model\mapper;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\Node;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
-use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\mapper\SQLConst;
+use wcmf\lib\model\Node;
+use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
 use wcmf\lib\persistence\InsertOperation;
-use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\RelationDescription;
+use wcmf\lib\persistence\UpdateOperation;
 
 /**
  * NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node
@@ -70,6 +71,17 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           $nextId = $this->getNextId();
           $object->setValue($pkName, $nextId);
         }
+      }
+    }
+
+    // filter values according to type
+    $iter = new NodeValueIterator($object, false);
+    foreach($iter as $valueName => $value) {
+      $type = $this->getAttribute($valueName)->getType();
+      // integer
+      if (strpos(strtolower($type), 'int') === 0) {
+        $value = (strlen($value) == 0) ? null : intval($value);
+        $object->setValue($valueName, $value);
       }
     }
 

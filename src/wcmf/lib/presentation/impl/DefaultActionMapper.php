@@ -23,9 +23,10 @@ use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationEvent;
 use wcmf\lib\presentation\ApplicationException;
+use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\security\principal\impl\AnonymousUser;
 
 /**
  * Default ActionMapper implementation.
@@ -58,7 +59,7 @@ class DefaultActionMapper implements ActionMapper {
     // check authorization for controller/context/action triple
     if (!$permissionManager->authorize($referrer, $context, $action)) {
       $authUser = $permissionManager->getAuthUser();
-      if (!$authUser) {
+      if (!$permissionManager->isAnonymous() && ($authUser instanceof AnonymousUser)) {
         Log::error("Session invalid. The request was: ".$request->__toString(), __CLASS__);
         throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
       }

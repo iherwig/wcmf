@@ -74,7 +74,7 @@ class JsonFormat extends HierarchicalFormat {
   /**
    * @see HierarchicalFormat::afterSerialize()
    */
-  protected function afterSerialize(array $values) {
+  protected function afterSerialize($values) {
     // TODO: check if merging is required for multiple actions
     /*
     // merge data into global data array
