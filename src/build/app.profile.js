@@ -177,8 +177,8 @@ var profile = {
         'app/js/App': {
             include: appSrc,
             exclude: [
-                "elfinder/jquery/jquery-1.8.1.min",
-                "elfinder/jquery/jquery-ui-1.8.23.custom.min",
+                "elfinder/jquery/jquery.min",
+                "elfinder/jquery/jquery-ui.min",
                 "elfinder/js/elfinder.min",
                 "ckeditor/ckeditor"
             ]
