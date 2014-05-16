@@ -326,7 +326,7 @@ $messages_de['The value must match %0%.'] = 'Der Wert muss die Form %0% besitzen
 // file(s): wcmf/lib/persistence/PersistentObject.php
 $messages_de['The value must NOT match %0%.'] = 'Der Wert darf nicht die Form %0% besitzen.';
 // file(s): app/public/js/ui/home/template/HomePage.html
-$messages_de['This is the main entry point of this wCMF application.'] = '';
+$messages_de['What do you want to do next?'] = 'Was möchten Sie als nächstes tun?';
 // file(s): app/src/model/BookBase.php
 $messages_de['title'] = 'Titel';
 // file(s): app/src/model/wcmf/TranslationBase.php

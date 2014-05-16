@@ -328,7 +328,7 @@ $messages_en['The value must match %0%.'] = '';
 // file(s): wcmf/lib/persistence/PersistentObject.php
 $messages_en['The value must NOT match %0%.'] = '';
 // file(s): app/public/js/ui/home/template/HomePage.html
-$messages_en['This is the main entry point of this wCMF application.'] = '';
+$messages_en['What do you want to do next?'] = '';
 // file(s): app/src/model/BookBase.php
 $messages_en['title'] = '';
 // file(s): app/src/model/wcmf/TranslationBase.php
