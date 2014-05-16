@@ -29,7 +29,8 @@ class DefaultSession implements Session {
 
   public function __construct() {
     // regenerate session id if cookie is lost
-    $sessionName = ini_get('session.name');
+    $sessionName = 'wcmf'.md5(__FILE__);
+    session_name($sessionName);
     if (!isset($_COOKIE[$sessionName]) || strlen($_COOKIE[$sessionName]) == 0) {
       session_regenerate_id();
     }

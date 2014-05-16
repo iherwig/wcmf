@@ -230,7 +230,7 @@ class Application {
    * @return The id
    */
   public static function getId() {
-    return md5(realpath($_SERVER['PHP_SELF']));
+    return md5(__FILE__);
   }
 }
 ?>
