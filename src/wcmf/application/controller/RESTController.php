@@ -366,6 +366,8 @@ class RESTController extends Controller {
         // add existing object to relation
         $request->setValue('role', $request->getValue('relation'));
         $subResponse = $this->executeSubAction('associate');
+        // and update object
+        $subResponse = $this->executeSubAction('update');
       }
 
       // add related object to subresponse similar to default update action

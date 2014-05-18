@@ -89,6 +89,7 @@ var appSrc = [
     "app/js/ui/_include/widget/Button",
     "app/js/ui/_include/widget/ConfirmDlgWidget",
     "app/js/ui/_include/widget/GridWidget",
+    "app/js/ui/_include/widget/LoginDlgWidget",
     "app/js/ui/_include/widget/NavigationWidget",
     "app/js/ui/_include/widget/NotificationWidget",
     "app/js/ui/_include/widget/ObjectSelectDlgWidget",
