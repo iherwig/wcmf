@@ -135,6 +135,7 @@
         <include name="js/App.js.map"/>
         <include name="js/App.js.uncompressed.js"/>
         <include name="**/nls/**/*_de.*"/>
+        <include name="**/nls/**/*_en.*"/>
         <include name="**/nls/**/*_en-us.*"/>
         <include name="vendor/dojo/dojo/dojo.js"/>
         <include name="vendor/dojo/dojo/dojo.js.map"/>
