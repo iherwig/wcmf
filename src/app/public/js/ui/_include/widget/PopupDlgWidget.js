@@ -8,8 +8,9 @@ define([
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
+    "../_NotificationMixin",
     "dijit/Dialog",
-    "dijit/form/Button",
+    "./Button",
     "../../../locale/Dictionary",
     "dojo/text!./template/PopupDlgWidget.html"
 ], function (
@@ -22,6 +23,7 @@ define([
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
+    _Notification,
     Dialog,
     Button,
     Dict,
@@ -56,20 +58,22 @@ define([
             lang.mixin(this, args);
 
             var message = this.message || '';
-            var contentWidget = new (declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-                templateString: lang.replace(template, Dict.tplTranslate)
+            var contentWidget = new (declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _Notification], {
+                templateString: lang.replace(this.getTemplate(), Dict.tplTranslate)
             }));
-            contentWidget.contentNode.innerHTML = message;
+            if (contentWidget.contentNode) {
+              contentWidget.contentNode.innerHTML = message;
+            }
             contentWidget.startup();
             this.content = contentWidget;
         },
 
         postCreate: function () {
             this.inherited(arguments);
-            this.hideSpinner();
 
             this.own(
                 on(this.content.okBtn, "click", lang.hitch(this, function(e) {
+                    this.content.okBtn.setProcessing();
                     this.doCallback(e, this.okCallback);
                 })),
                 on(this.content.cancelBtn, "click", lang.hitch(this, function(e) {
@@ -80,6 +84,7 @@ define([
                 })),
                 on(dojo.body(), 'keyup', lang.hitch(this, function (e) {
                     if (e.which === 13) {
+                        this.content.okBtn.setProcessing();
                         this.doCallback(e, this.okCallback);
                     }
                     if (e.which === 27) {
@@ -89,15 +94,28 @@ define([
             );
         },
 
+        /**
+         * Override this method in subclasses to provide your custom template
+         * @returns String
+         */
+        getTemplate: function() {
+          return template;
+        },
+
         doCallback: function(e, callback) {
+            this.content.hideNotification();
             if (callback instanceof Function) {
                 e.preventDefault();
                 var result = callback(this);
-                if (result && result.always instanceof Function) {
-                    this.showSpinner();
-                    result.always(lang.hitch(this, function() {
+                if (result && result.then instanceof Function) {
+                    result.then(lang.hitch(this, function() {
+                        // success
                         this.hide();
-                    }));
+                    }), lang.hitch(this, function(error) {
+                        // error
+                        this.content.okBtn.reset();
+                        this.content.showBackendError(error);
+                    }))
                 }
                 else {
                     this.hide();
@@ -117,14 +135,6 @@ define([
             this.inherited(arguments);
             this.deferred = new Deferred();
             return this.deferred;
-        },
-
-        showSpinner: function() {
-            query(this.content.spinnerNode).style("display", "block");
-        },
-
-        hideSpinner: function() {
-            query(this.content.spinnerNode).style("display", "none");
         }
     });
 

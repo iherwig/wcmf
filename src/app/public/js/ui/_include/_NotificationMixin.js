@@ -96,10 +96,18 @@ define([
 
         showBackendError: function (errorData) {
             var error = BackendError.parseResponse(errorData);
-            this.showNotification({
-                type: "error",
-                message: error.message
-            });
+            if (error.code === 'SESSION_INVALID') {
+                // prevent circular dependency
+                require(["app/js/ui/_include/widget/LoginDlgWidget"], function(LoginDlg) {
+                    new LoginDlg({}).show();
+                });
+            }
+            else {
+                this.showNotification({
+                    type: "error",
+                    message: error.message
+                });
+            }
         }
     });
 });

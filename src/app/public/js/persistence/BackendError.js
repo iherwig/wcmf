@@ -26,10 +26,10 @@ define([
             response.data = json.fromJson(response.data || null);
         }
 
+        // check for most specific attributes
+
         // get message
         var message = Dict.translate("Backend error");
-
-        // check for most specific (message is in response data)
         if (response && response.data && response.data.errorMessage) {
             message = response.data.errorMessage;
         }
@@ -42,14 +42,26 @@ define([
 
         // get code
         var code = "";
-        if (response && response.data) {
+        if (response && response.data && response.data.errorCode) {
             code = response.data.errorCode;
+        }
+        else if (errorData.errorCode) {
+            code = errorData.errorCode;
+        }
+        else if (errorData.code) {
+            code = errorData.code;
         }
 
         // get optional data
         var data = {};
-        if (response && response.data) {
+        if (response && response.data && response.data.errorData) {
             data = response.data.errorData;
+        }
+        else if (errorData.errorData) {
+            code = errorData.errorData;
+        }
+        else if (errorData.data) {
+            data = errorData.data;
         }
 
         return {
