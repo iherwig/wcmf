@@ -448,12 +448,17 @@ class RESTController extends Controller {
       // delete object
       $subResponse = $this->executeSubAction('delete');
     }
-
     $response = $this->getResponse();
     $response->setValues($subResponse->getValues());
 
-    // set the response headers
-    $response->setStatus('204 No Content');
+    if (!$subResponse->hasErrors()) {
+      // set the response headers
+      $response->setStatus('204 No Content');
+    }
+    else {
+      // in case of error, return default response
+      $response->setStatus('400 Bad Request');
+    }
 
     return false;
   }

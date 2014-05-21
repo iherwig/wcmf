@@ -87,6 +87,7 @@ function(
         onCreated: null, // function to be called after the widget is created
 
         attributeWidgets: [],
+        layoutWidget: null,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -110,7 +111,7 @@ function(
 
             // load input widgets referenced in attributes' input type
             ControlFactory.loadControlClasses(this.type).then(lang.hitch(this, function(controls) {
-                var layoutWidget = registry.byNode(this.fieldsNode.domNode);
+                this.layoutWidget = registry.byNode(this.fieldsNode.domNode);
 
                 // add attribute widgets
                 this.attributeWidgets = [];
@@ -130,12 +131,10 @@ function(
                             this.setModified(true);
                         }
                     }, attributeWidget)));
-                    attributeWidget.startup();
-                    layoutWidget.addChild(attributeWidget);
+                    this.layoutWidget.addChild(attributeWidget);
 
                     this.attributeWidgets.push(attributeWidget);
                 }
-                layoutWidget.startup();
                 if (this.onCreated instanceof Function) {
                     this.onCreated(this);
                 }
@@ -178,6 +177,14 @@ function(
             if (!this.isNew) {
                 this.buildLanguageMenu();
             }
+        },
+
+        startup: function() {
+            this.inherited(arguments);
+            for (var i=0, count=this.attributeWidgets.length; i<count; i++) {
+                this.attributeWidgets[i].startup();
+            }
+            this.layoutWidget.startup();
         },
 
         /**
