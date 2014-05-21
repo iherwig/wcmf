@@ -42,7 +42,6 @@ define([
         baseRoute: "entity",
         types: appConfig.rootTypes,
         type: null,
-        typeClass: null,
         oid: null, // object id of the object to edit
         isNew: false, // boolean weather the object exists or not
 
@@ -58,7 +57,6 @@ define([
 
         constructor: function(params) {
             this.type = this.request.getPathParam("type");
-            this.typeClass = Model.getType(this.type);
 
             var idParam = this.request.getPathParam("id");
             this.oid = Model.getOid(this.type, idParam);
@@ -94,7 +92,7 @@ define([
                     this.entity = new Entity(loadResults[0]);
                     this.original = this.isTranslation ? loadResults[1] : {};
                     this.buildForm();
-                    this.setTitle(this.title+" - "+this.typeClass.getDisplayValue(this.entity));
+                    this.setTitle(this.title+" - "+Entity.getDisplayValue(this.entity));
                 }), lang.hitch(this, function(error) {
                     // error
                     this.showBackendError(error);
@@ -114,7 +112,7 @@ define([
 
             this.own(
                 topic.subscribe("entity-datachange", lang.hitch(this, function(data) {
-                    this.setTitle(this.title+" - "+this.typeClass.getDisplayValue(data.entity));
+                    this.setTitle(this.title+" - "+Entity.getDisplayValue(data.entity));
                 }))
             );
         },
@@ -125,7 +123,7 @@ define([
                 new ConfirmDlg({
                     title: Dict.translate("Confirm Leave Page"),
                     message: Dict.translate("'%0%' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
-                        [this.typeClass.getDisplayValue(this.entity)]),
+                        [Entity.getDisplayValue(this.entity)]),
                     okCallback: lang.hitch(this, function(dlg) {
                         deferred.resolve(true);
                     }),
@@ -139,7 +137,8 @@ define([
         },
 
         buildForm: function() {
-            require([this.typeClass.detailView || './widget/EntityFormWidget'], lang.hitch(this, function(View) {
+            var typeClass = Model.getType(this.type);
+            require([typeClass.detailView || './widget/EntityFormWidget'], lang.hitch(this, function(View) {
                 if (View instanceof Function) {
                     // create the tab panel
                     var panel = new View({
