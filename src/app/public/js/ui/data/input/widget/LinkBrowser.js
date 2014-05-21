@@ -4,7 +4,6 @@ define( [
     "dojo/topic",
     "../../../_include/widget/Button",
     "../../../_include/widget/ConfirmDlgWidget",
-    "../../../../persistence/Entity",
     "../../../../model/meta/Model",
     "../../../../locale/Dictionary",
     "./_BrowserControl"
@@ -15,7 +14,6 @@ function(
     topic,
     Button,
     ConfirmDlg,
-    Entity,
     Model,
     Dict,
     _BrowserControl
@@ -37,7 +35,7 @@ function(
                             new ConfirmDlg({
                                 title: Dict.translate("Confirm Leave Page"),
                                 message: Dict.translate("'%0%' has unsaved changes. Leaving the page will discard these. Do you want to proceed?",
-                                    [Entity.getDisplayValue(this.entity)]),
+                                    [Model.getTypeFromOid(this.entity.oid).getDisplayValue(this.entity)]),
                                 okCallback: lang.hitch(this, function(dlg) {
                                     topic.publish('navigate', route.name, route.pathParams);
                                 })
