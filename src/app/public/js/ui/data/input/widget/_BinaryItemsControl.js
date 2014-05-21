@@ -90,7 +90,7 @@ function(
                     this.listenToWidgetChanges = false;
                     var value = e.detail.newValue;
                     if (value) {
-                        var values = value.split(",");
+                        var values = (typeof value === "string") ? value.split(",") : (value instanceof Array ? value : [value]);
                         for (var itemId in this.itemWidgets) {
                             var widget = this.itemWidgets[itemId];
                             var isChecked = array.indexOf(values, itemId) !== -1;

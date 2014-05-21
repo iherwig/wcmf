@@ -370,10 +370,8 @@ function(
                         var attributes = typeClass.getAttributes();
                         for (var i=0, count=attributes.length; i<count; i++) {
                             var attributeName = attributes[i].name;
-                            if (this.entity[attributeName] !== response[attributeName]) {
-                                // notify listeners
-                                this.entity.set(attributeName, response[attributeName]);
-                            }
+                            // notify listeners
+                            this.entity.set(attributeName, response[attributeName]);
                         }
                         this.entity.set('oid', response.oid);
 
