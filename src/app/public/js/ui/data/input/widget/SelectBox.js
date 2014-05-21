@@ -10,6 +10,7 @@ define( [
     "../Factory",
     "../../../_include/_HelpMixin",
     "./_AttributeWidgetMixin",
+    "../../../../model/meta/Model",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -24,6 +25,7 @@ function(
     ControlFactory,
     _HelpMixin,
     _AttributeWidgetMixin,
+    Model,
     Dict
 ) {
     return declare([FilteringSelect, _HelpMixin, _AttributeWidgetMixin], {
@@ -40,8 +42,10 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
+            var typeClass = Model.getTypeFromOid(this.entity.oid);
+
             this.label = Dict.translate(this.attribute.name);
-            this.disabled = !this.attribute.isEditable;
+            this.disabled = typeClass ? !typeClass.isEditable(this.attribute, this.entity) : false;
             this.name = this.attribute.name;
             this.value = this.entity[this.attribute.name];
             this.helpText = Dict.translate(this.attribute.description);

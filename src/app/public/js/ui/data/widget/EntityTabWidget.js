@@ -8,7 +8,6 @@ define([
     "dijit/layout/ContentPane",
     "../../../Cookie",
     "../../../model/meta/Model",
-    "../../../persistence/Entity",
     "../../../persistence/Store",
     "../../../locale/Dictionary"
 ], function (
@@ -21,7 +20,6 @@ define([
     ContentPane,
     Cookie,
     Model,
-    Entity,
     Store,
     Dict
 ) {
@@ -227,7 +225,7 @@ define([
         },
 
         setInstanceTabName: function(entity, tabItem) {
-            tabItem.set("title", '<i class="fa fa-file"></i> '+Entity.getDisplayValue(entity)+' ');
+            tabItem.set("title", '<i class="fa fa-file"></i> '+Model.getTypeFromOid(entity.oid).getDisplayValue(entity)+' ');
         },
 
         createTab: function(oid, content) {

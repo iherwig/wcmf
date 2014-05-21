@@ -6,6 +6,7 @@ define( [
     "dojo/date/locale",
     "../../../_include/_HelpMixin",
     "./_AttributeWidgetMixin",
+    "../../../../model/meta/Model",
     "../../../../locale/Dictionary"
 ],
 function(
@@ -16,6 +17,7 @@ function(
     locale,
     _HelpMixin,
     _AttributeWidgetMixin,
+    Model,
     Dict
 ) {
     return declare([DateTextBox, _HelpMixin, _AttributeWidgetMixin], {
@@ -31,8 +33,10 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
+            var typeClass = Model.getTypeFromOid(this.entity.oid);
+
             this.label = Dict.translate(this.attribute.name);
-            this.disabled = !this.attribute.isEditable;
+            this.disabled = typeClass ? !typeClass.isEditable(this.attribute, this.entity) : false;
             this.name = this.attribute.name;
             // add time, if missing
             var value = this.entity[this.attribute.name];

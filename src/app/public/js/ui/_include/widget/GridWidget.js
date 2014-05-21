@@ -168,7 +168,7 @@ define([
                     },
                     editOn: "click",
                     canEdit: this.canEdit ? lang.hitch(curAttributeDef, function(obj, value) {
-                        return this.isEditable;
+                        return typeClass.isEditable(curAttributeDef, obj);
                     }) : function(obj, value) {return false; },
                     autoSave: true,
                     sortable: true,

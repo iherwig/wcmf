@@ -2,16 +2,12 @@ define([
     "dojo/_base/declare",
     "dojo/topic",
     "dojo/Stateful",
-    "../model/meta/Model",
-    "../locale/Dictionary",
-    "../ui/data/display/Renderer"
+    "../model/meta/Model"
 ], function(
     declare,
     topic,
     Stateful,
-    Model,
-    Dict,
-    Renderer
+    Model
 ) {
     /**
      * Entity inherits observer capabilities from Stateful
@@ -62,10 +58,6 @@ define([
             return this.get("_state");
         },
 
-        getDisplayValue: function() {
-            return Entity.getDisplayValue(this);
-        },
-
         setDefaults: function() {
             var typeClass = Model.getTypeFromOid(this.oid);
             var attributes = typeClass.getAttributes();
@@ -87,34 +79,6 @@ define([
             return copy;
         }
     });
-
-    /**
-     * Get the display value of an object.
-     * @param object The object
-     * @return String
-     */
-    Entity.getDisplayValue = function(object) {
-        var result = '';
-        var type = Model.getTypeFromOid(object.oid);
-        if (type) {
-            if (Model.isDummyOid(object.oid)) {
-                result = Dict.translate("New %0%",
-                    [Dict.translate(Model.getSimpleTypeName(type.typeName))]);
-            }
-            else {
-                for (var i=0; i<type.displayValues.length; i++) {
-                    var curValue = type.displayValues[i];
-                    var curAttribute = type.getAttribute(curValue);
-                    result += Renderer.render(object[curValue], curAttribute, true)+" | ";
-                }
-                result = result.substring(0, result.length-3);
-            }
-        }
-        else {
-            result = object.oid || "unknown";
-        }
-        return result;
-    };
 
     return Entity;
 });

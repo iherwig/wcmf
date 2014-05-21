@@ -2,6 +2,7 @@ define( [
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/topic",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
@@ -22,6 +23,7 @@ function(
     require,
     declare,
     lang,
+    topic,
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
@@ -44,6 +46,7 @@ function(
         contextRequire: require,
 
         type: null,
+        typeClass: null,
         page: null,
         route: '',
         onCreated: null, // function to be called after the widget is created
@@ -53,14 +56,14 @@ function(
 
             this.typeName = Dict.translate(this.type);
             this.headline = this.typeName;
+            this.typeClass = Model.getType(this.type);
         },
 
         postCreate: function() {
             this.inherited(arguments);
 
-            var typeClass = Model.getType(this.type);
             var enabledFeatures = [];
-            if (typeClass.isSortable) {
+            if (this.typeClass.isSortable) {
                 enabledFeatures.push('DnD');
             }
 
@@ -74,6 +77,12 @@ function(
             if (this.onCreated instanceof Function) {
                 this.onCreated(this);
             }
+
+            this.own(
+                topic.subscribe('ui/_include/widget/GridWidget/error', lang.hitch(this, function(error) {
+                    this.showBackendError(error);
+                }))
+            );
         },
 
         getGridActions: function() {
@@ -92,7 +101,7 @@ function(
                     // success
                     this.showNotification({
                         type: "ok",
-                        message: Dict.translate("'%0%' was successfully copied", [Entity.getDisplayValue(data)]),
+                        message: Dict.translate("'%0%' was successfully copied", [this.typeClass.getDisplayValue(data)]),
                         fadeOut: true
                     });
                 }),
@@ -111,7 +120,7 @@ function(
                     // success
                     this.showNotification({
                         type: "ok",
-                        message: Dict.translate("'%0%' was successfully deleted", [Entity.getDisplayValue(data)]),
+                        message: Dict.translate("'%0%' was successfully deleted", [this.typeClass.getDisplayValue(data)]),
                         fadeOut: true
                     });
                 }),

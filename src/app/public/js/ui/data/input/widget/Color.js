@@ -5,6 +5,7 @@ define( [
     "dojox/widget/ColorPicker",
     "../../../_include/_HelpMixin",
     "./_AttributeWidgetMixin",
+    "../../../../model/meta/Model",
     "../../../../locale/Dictionary",
     "xstyle/css!dojox/widget/ColorPicker/ColorPicker.css"
 ],
@@ -15,6 +16,7 @@ function(
     ColorPicker,
     _HelpMixin,
     _AttributeWidgetMixin,
+    Model,
     Dict
 ) {
     return declare([ColorPicker, _HelpMixin, _AttributeWidgetMixin], {
@@ -28,8 +30,10 @@ function(
         constructor: function(args) {
             declare.safeMixin(this, args);
 
+            var typeClass = Model.getTypeFromOid(this.entity.oid);
+
             this.label = Dict.translate(this.attribute.name);
-            this.disabled = !this.attribute.isEditable;
+            this.disabled = typeClass ? !typeClass.isEditable(this.attribute, this.entity) : false;
             this.name = this.attribute.name;
             var value = this.entity[this.attribute.name];
             this.value = value ? (value.match(/#[0-9a-f]{6}/i) ? value : '#FFFFFF') : '#FFFFFF';

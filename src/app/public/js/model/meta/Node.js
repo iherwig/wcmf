@@ -1,11 +1,15 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/array",
-    "./Model"
+    "./Model",
+    "../../locale/Dictionary",
+    "../../ui/data/display/Renderer"
 ], function(
     declare,
     array,
-    Model
+    Model,
+    Dict,
+    Renderer
 ) {
     var Node = declare(null, {
 
@@ -79,6 +83,44 @@ define([
                 }
             }
             return null;
+        },
+
+        /**
+         * Get the display value for the given object.
+         * @param object The object
+         * @return String
+         */
+        getDisplayValue: function(object) {
+            var result = '';
+            var type = Model.getTypeFromOid(object.oid);
+            if (type) {
+                if (Model.isDummyOid(object.oid)) {
+                    result = Dict.translate("New %0%",
+                        [Dict.translate(Model.getSimpleTypeName(type.typeName))]);
+                }
+                else {
+                    for (var i=0; i<type.displayValues.length; i++) {
+                        var curValue = type.displayValues[i];
+                        var curAttribute = type.getAttribute(curValue);
+                        result += Renderer.render(object[curValue], curAttribute, true)+" | ";
+                    }
+                    result = result.substring(0, result.length-3);
+                }
+            }
+            else {
+                result = object.oid || "unknown";
+            }
+            return result;
+        },
+
+        /**
+         * Check if the given attribute is editable in the given object.
+         * The default implementation returns the isEditable property of the attribute.
+         * @param object The object
+         * @return Boolean
+         */
+        isEditable: function(attribute, object) {
+            return attribute.isEditable;
         }
     });
 

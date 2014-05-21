@@ -1,26 +1,26 @@
 define([
-    "dojo/_base/declare",
-    "../types/_TypeList"
+    "../types/_TypeList",
+    "exports"
 ], function(
-    declare,
-    TypeList
+    TypeList,
+    exports
 ) {
-    var Model = declare(null, {
-    });
+    // use exports object to resolve circular dependencies
+    // http://dojotoolkit.org/documentation/tutorials/1.9/modules_advanced/
 
     /**
      * Register a type
      * @param type A Node subclass
      */
-    Model.registerType = function(type) {
+    exports.registerType = function(type) {
         // register fully qualified type name
         var fqTypeName = type.typeName;
-        Model.types[fqTypeName] = type;
+        exports.types[fqTypeName] = type;
         // also register simple type name
-        var simpleTypeName = Model.getSimpleTypeName(fqTypeName);
-        if (Model.types[simpleTypeName] === undefined) {
-            Model.types[simpleTypeName] = type;
-            Model.simpleToFqNames[simpleTypeName] = fqTypeName;
+        var simpleTypeName = exports.getSimpleTypeName(fqTypeName);
+        if (exports.types[simpleTypeName] === undefined) {
+            exports.types[simpleTypeName] = type;
+            exports.simpleToFqNames[simpleTypeName] = fqTypeName;
         }
     };
 
@@ -28,7 +28,7 @@ define([
      * Get the known types
      * @return Array of simple type names
      */
-    Model.getKnownTypes = function() {
+    exports.getKnownTypes = function() {
         var result = [];
         for (var typeName in simpleToFqNames) {
             result.push(typeName);
@@ -41,8 +41,8 @@ define([
      * @param typeName Simple or fully qualified type name
      * @return Boolean
      */
-    Model.isKnownType = function(typeName) {
-        return Model.types[typeName] !== undefined;
+    exports.isKnownType = function(typeName) {
+        return exports.types[typeName] !== undefined;
     };
 
     /**
@@ -50,11 +50,11 @@ define([
      * @param typeName Simple or fully qualified type name
      * @return String
      */
-    Model.getFullyQualifiedTypeName = function(typeName) {
-        if (Model.simpleToFqNames[typeName] !== undefined) {
-            return Model.simpleToFqNames[typeName];
+    exports.getFullyQualifiedTypeName = function(typeName) {
+        if (exports.simpleToFqNames[typeName] !== undefined) {
+            return exports.simpleToFqNames[typeName];
         }
-        if (Model.isKnownType(typeName)) {
+        if (exports.isKnownType(typeName)) {
             return typeName;
         }
         return null;
@@ -65,7 +65,7 @@ define([
      * @param typeName Simple or fully qualified type name
      * @return String
      */
-    Model.getSimpleTypeName = function(typeName) {
+    exports.getSimpleTypeName = function(typeName) {
         var pos = typeName.lastIndexOf('.');
         if (pos !== -1) {
             return typeName.substring(pos+1);
@@ -79,10 +79,12 @@ define([
      * @param oid The object id
      * @return String
      */
-    Model.getTypeNameFromOid = function(oid) {
-        var pos = oid.indexOf(':');
-        if (pos !== -1) {
-            return oid.substring(0, pos);
+    exports.getTypeNameFromOid = function(oid) {
+        if (oid) {
+            var pos = oid.indexOf(':');
+            if (pos !== -1) {
+                return oid.substring(0, pos);
+            }
         }
         return oid;
     };
@@ -93,10 +95,12 @@ define([
      * @param oid The object id
      * @return String
      */
-    Model.getIdFromOid = function(oid) {
-        var pos = oid.indexOf(':');
-        if (pos !== -1) {
-            return oid.substring(pos+1);
+    exports.getIdFromOid = function(oid) {
+        if (oid) {
+            var pos = oid.indexOf(':');
+            if (pos !== -1) {
+                return oid.substring(pos+1);
+            }
         }
         return oid;
     };
@@ -107,8 +111,8 @@ define([
      * @param id The object's id
      * @return String
      */
-    Model.getOid = function(type, id) {
-        return Model.getFullyQualifiedTypeName(type)+":"+id;
+    exports.getOid = function(type, id) {
+        return exports.getFullyQualifiedTypeName(type)+":"+id;
     };
 
     /**
@@ -116,7 +120,7 @@ define([
      * @param type The type
      * @return String
      */
-    Model.createDummyOid = function(type) {
+    exports.createDummyOid = function(type) {
         var oid = type+":~";
         return oid;
     };
@@ -126,7 +130,7 @@ define([
      * @param oid The object id
      * @return Boolean
      */
-    Model.isDummyOid = function(oid) {
+    exports.isDummyOid = function(oid) {
         return oid.match(/:~$/) !== null;
     };
 
@@ -135,8 +139,8 @@ define([
      * @param typeName The name of the type
      * @return Node instance
      */
-    Model.getType = function(typeName) {
-        return Model.types[typeName];
+    exports.getType = function(typeName) {
+        return exports.types[typeName];
     };
 
     /**
@@ -144,29 +148,27 @@ define([
      * @param oid The object id
      * @return Node instance
      */
-    Model.getTypeFromOid = function(oid) {
-        var typeName = Model.getTypeNameFromOid(oid);
-        return Model.types[typeName];
+    exports.getTypeFromOid = function(oid) {
+        var typeName = exports.getTypeNameFromOid(oid);
+        return exports.types[typeName];
     };
 
     /**
      * Get all types that are defined in the meta model
      * @return An array of Node instances
      */
-    Model.getAllTypes = function() {
+    exports.getAllTypes = function() {
         var types = [];
-        for (var typeName in Model.types) {
-            types.push(Model.types[typeName]);
+        for (var typeName in exports.types) {
+            types.push(exports.types[typeName]);
         }
         return types;
     };
 
     // register types
-    Model.types = {};
-    Model.simpleToFqNames = {};
+    exports.types = {};
+    exports.simpleToFqNames = {};
     for (var i=0, count=TypeList.length; i<count; i++) {
-        Model.registerType(TypeList[i]);
+        exports.registerType(TypeList[i]);
     }
-
-    return Model;
 });

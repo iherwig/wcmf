@@ -10,7 +10,6 @@ define([
     "../_include/_NotificationMixin",
     "dijit/tree/ObjectStoreModel",
     "dijit/Tree",
-    "../../model/meta/Model",
     "../../persistence/TreeStore",
     "../../locale/Dictionary",
     "dojo/text!./template/BrowsePage.html",
@@ -27,7 +26,6 @@ define([
     _Notification,
     ObjectStoreModel,
     Tree,
-    Model,
     TreeStore,
     Dict,
     template
@@ -69,7 +67,7 @@ define([
             var funcNum = this.request.getQueryParam('CKEditorFuncNum');
             var callback = this.request.getQueryParam('callback');
 
-            var value = 'link:'+this.getItemUrl(item);
+            var value = 'link://'+this.getItemUrl(item);
             if (window.opener.CKEDITOR && funcNum) {
                 window.opener.CKEDITOR.tools.callFunction(funcNum, value);
             }
@@ -82,12 +80,7 @@ define([
         },
 
         getItemUrl: function(item) {
-            var route = this.router.getRoute("entity");
-            var type = Model.getSimpleTypeName(Model.getTypeNameFromOid(item.oid));
-            var id = Model.getIdFromOid(item.oid);
-            var pathParams = { type:type, id:id };
-            var url = route.assemble(pathParams);
-            return url;
+            return item.oid;
         }
     });
 });

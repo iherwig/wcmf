@@ -72,6 +72,7 @@ function(
         page: null,
 
         type: null,
+        typeClass: null,
         formId: "",
         fieldContainerId: "",
         headline: "",
@@ -87,14 +88,16 @@ function(
         onCreated: null, // function to be called after the widget is created
 
         attributeWidgets: [],
+        layoutWidget: null,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
 
             this.type = Model.getTypeNameFromOid(this.entity.oid);
+            this.typeClass = Model.getType(this.type);
             this.formId = "entityForm_"+this.entity.oid;
             this.fieldContainerId = "fieldContainer_"+this.entity.oid;
-            this.headline = Entity.getDisplayValue(this.entity);
+            this.headline = this.typeClass.getDisplayValue(this.entity);
             this.isNew = Model.isDummyOid(this.entity.oid);
             this.isTranslation = this.language !== appConfig.defaultLanguage;
 
@@ -110,7 +113,7 @@ function(
 
             // load input widgets referenced in attributes' input type
             ControlFactory.loadControlClasses(this.type).then(lang.hitch(this, function(controls) {
-                var layoutWidget = registry.byNode(this.fieldsNode.domNode);
+                this.layoutWidget = registry.byNode(this.fieldsNode.domNode);
 
                 // add attribute widgets
                 this.attributeWidgets = [];
@@ -130,12 +133,10 @@ function(
                             this.setModified(true);
                         }
                     }, attributeWidget)));
-                    attributeWidget.startup();
-                    layoutWidget.addChild(attributeWidget);
+                    this.layoutWidget.addChild(attributeWidget);
 
                     this.attributeWidgets.push(attributeWidget);
                 }
-                layoutWidget.startup();
                 if (this.onCreated instanceof Function) {
                     this.onCreated(this);
                 }
@@ -178,6 +179,20 @@ function(
             if (!this.isNew) {
                 this.buildLanguageMenu();
             }
+
+            this.own(
+                topic.subscribe('ui/_include/widget/GridWidget/error', lang.hitch(this, function(error) {
+                    this.showBackendError(error);
+                }))
+            );
+        },
+
+        startup: function() {
+            this.inherited(arguments);
+            for (var i=0, count=this.attributeWidgets.length; i<count; i++) {
+                this.attributeWidgets[i].startup();
+            }
+            this.layoutWidget.startup();
         },
 
         /**
@@ -357,10 +372,8 @@ function(
                         var attributes = typeClass.getAttributes();
                         for (var i=0, count=attributes.length; i<count; i++) {
                             var attributeName = attributes[i].name;
-                            if (this.entity[attributeName] !== response[attributeName]) {
-                                // notify listeners
-                                this.entity.set(attributeName, response[attributeName]);
-                            }
+                            // notify listeners
+                            this.entity.set(attributeName, response[attributeName]);
                         }
                         this.entity.set('oid', response.oid);
 
@@ -369,8 +382,8 @@ function(
                             this.attributeWidgets[i].setDirty(false);
                         }
 
-                        var message = this.isNew ? Dict.translate("'%0%' was successfully created", [Entity.getDisplayValue(this.entity)]) :
-                                Dict.translate("'%0%' was successfully updated", [Entity.getDisplayValue(this.entity)]);
+                        var message = this.isNew ? Dict.translate("'%0%' was successfully created", [this.typeClass.getDisplayValue(this.entity)]) :
+                                Dict.translate("'%0%' was successfully updated", [this.typeClass.getDisplayValue(this.entity)]);
                         this.showNotification({
                             type: "ok",
                             message: message,
@@ -397,7 +410,7 @@ function(
                                 }
                             })
                         });
-                        this.set("headline", Entity.getDisplayValue(this.entity));
+                        this.set("headline", this.typeClass.getDisplayValue(this.entity));
                         this.setModified(false);
                         this.acquireLock();
                     }
