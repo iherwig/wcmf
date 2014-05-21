@@ -2,7 +2,6 @@ define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
-    "dojo/topic",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "../_include/widget/NavigationWidget",
@@ -14,7 +13,6 @@ define([
     require,
     declare,
     lang,
-    topic,
     _Page,
     _Notification,
     NavigationWidget,
@@ -43,12 +41,6 @@ define([
 
             // create widget
             this.buildForm();
-
-            this.own(
-                topic.subscribe('ui/_include/widget/GridWidget/error', lang.hitch(this, function(error) {
-                    this.showBackendError(error);
-                }))
-            );
         },
 
         buildForm: function() {

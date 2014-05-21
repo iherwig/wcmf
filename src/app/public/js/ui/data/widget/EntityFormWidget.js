@@ -177,6 +177,12 @@ function(
             if (!this.isNew) {
                 this.buildLanguageMenu();
             }
+
+            this.own(
+                topic.subscribe('ui/_include/widget/GridWidget/error', lang.hitch(this, function(error) {
+                    this.showBackendError(error);
+                }))
+            );
         },
 
         startup: function() {

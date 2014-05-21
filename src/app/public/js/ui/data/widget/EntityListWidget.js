@@ -2,6 +2,7 @@ define( [
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/topic",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
     "dijit/_WidgetsInTemplateMixin",
@@ -22,6 +23,7 @@ function(
     require,
     declare,
     lang,
+    topic,
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
@@ -74,6 +76,12 @@ function(
             if (this.onCreated instanceof Function) {
                 this.onCreated(this);
             }
+
+            this.own(
+                topic.subscribe('ui/_include/widget/GridWidget/error', lang.hitch(this, function(error) {
+                    this.showBackendError(error);
+                }))
+            );
         },
 
         getGridActions: function() {
