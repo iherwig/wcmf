@@ -2,8 +2,7 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/on",
-    "dojo/query",
-    "dojo/dom-style",
+    "dojo/dom-construct",
     "dojo/Deferred",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
@@ -17,8 +16,7 @@ define([
     declare,
     lang,
     on,
-    query,
-    domStyle,
+    domConstruct,
     Deferred,
     _WidgetBase,
     _TemplatedMixin,
@@ -35,6 +33,7 @@ define([
      * new PopupDlg({
      *      title: "Confirm Object Deletion",
      *      message: "Do you really want to delete '"+Model.getTypeFromOid(data.oid).getDisplayValue(data)+"'?",
+     *      contentWidget: myTextBox, // optional, will be set below message
      *      okCallback: function() {
      *          // will be called when OK button is clicked
      *          var deferred = new Deferred();
@@ -63,6 +62,9 @@ define([
             }));
             if (contentWidget.contentNode) {
               contentWidget.contentNode.innerHTML = message;
+            }
+            if (this.contentWidget) {
+              domConstruct.place(this.contentWidget.domNode, contentWidget.contentNode, "after");
             }
             contentWidget.startup();
             this.content = contentWidget;
