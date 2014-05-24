@@ -106,5 +106,14 @@ interface Configuration {
    * @throws ConfigurationException if the value does not exist
    */
   public function getDirectoryValue($key, $section);
+
+  /**
+   * Get a configuration key.
+   * @param value The value of the entry.
+   * @param section The section the value belongs to.
+   * @return The configuration key.
+   * @throws ConfigurationException if the key does not exist
+   */
+  public function getKey($value, $section);
 }
 ?>
