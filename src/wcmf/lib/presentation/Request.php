@@ -43,6 +43,40 @@ class Request extends ControllerMessage {
   }
 
   /**
+   * Get the default request containing all data from $_GET, $_POST, $_FILES
+   * and php://input (raw data from the request body)
+   * @param controller The controller to call if none is given in request parameters, optional
+   * @param context The context to set if none is given in request parameters, optional
+   * @param action The action to perform if none is given in request parameters, optional
+   */
+  public static function getDefault($controller=null, $context=null, $action=null) {
+    // collect all request data
+    $requestValues = array_merge($_GET, $_POST, $_FILES);
+    $rawPostBody = file_get_contents('php://input');
+    // add the raw post data if they are json encoded
+    $json = json_decode($rawPostBody, true);
+    if (is_array($json)) {
+      foreach ($json as $key => $value) {
+        $requestValues[$key] = $value;
+      }
+    }
+
+    // get controller/context/action triple
+    $controller = isset($requestValues['controller']) ? filter_var($requestValues['controller'],
+            FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) : $controller;
+    $context = isset($requestValues['context']) ? filter_var($requestValues['context'],
+            FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) : $context;
+    $action = isset($requestValues['action']) ? filter_var($requestValues['action'],
+            FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) : $action;
+
+    // setup request
+    $request = new Request($controller, $context, $action);
+    $request->setValues($requestValues);
+
+    return $request;
+  }
+
+  /**
    * Get the HTTP method of the request
    * @return String
    */

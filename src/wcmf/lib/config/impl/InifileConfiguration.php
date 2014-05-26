@@ -206,6 +206,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     return StringUtil::getBoolean($value);
   }
 
+  /**
+   * @see Configuration::getDirectoryValue()
+   */
   public function getDirectoryValue($key, $section) {
     $value = $this->getValue($key, $section);
     if (is_array($value)) {
@@ -216,6 +219,17 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       return $result;
     }
     return FileUtil::realpath(WCMF_BASE.$value).'/';
+  }
+
+  /**
+   * @see Configuration::getKey()
+   */
+  public function getKey($value, $section) {
+    $map = array_flip($this->getSection($section));
+    if (!isset($map[$value])) {
+      throw new ConfigurationException('Value \''.$value.'\' not found in section \''.$section.'\'!');
+    }
+    return $map[$value];
   }
 
   /**

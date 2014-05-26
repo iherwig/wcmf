@@ -33,8 +33,6 @@ use wcmf\lib\presentation\Request;
  */
 class Application {
 
-  private $_requestValues = array();
-
   private $_startTime = null;
   private $_initialRequest = null;
 
@@ -68,30 +66,13 @@ class Application {
   public function initialize($configPath='../config/', $mainConfigFile='config.ini',
     $defaultController='wcmf\application\controller\TerminateController', $defaultContext='', $defaultAction='login') {
 
-    // collect all request data
-    $this->_requestValues = array_merge($_GET, $_POST, $_FILES);
-    $rawPostBody = file_get_contents('php://input');
-    // add the raw post data if they are json encoded
-    $json = json_decode($rawPostBody, true);
-    if (is_array($json)) {
-      foreach ($json as $key => $value) {
-        $this->_requestValues[$key] = $value;
-      }
-    }
-
     Log::configure($configPath.'log4php.php');
     $config = new InifileConfiguration($configPath);
     $config->addConfiguration($mainConfigFile);
     ObjectFactory::configure($config);
 
-    // get controller/context/action triple
-    $controller = $this->getRequestValue('controller', $defaultController);
-    $context = $this->getRequestValue('context', $defaultContext);
-    $action = $this->getRequestValue('action', $defaultAction);
-
     // create the Request instance
-    $this->_initialRequest = new Request($controller, $context, $action);
-    $this->_initialRequest->setValues($this->_requestValues);
+    $this->_initialRequest = Request::getDefault($defaultController, $defaultContext, $defaultAction);
 
     // initialize session
     $session = ObjectFactory::getInstance('session');
@@ -209,20 +190,6 @@ class Application {
       }
     }
     return $buffer;
-  }
-
-  /**
-   * Get a value from the request parameters (GET, POST variables)
-   * @param name The name of the parameter
-   * @param default The value to return, if no value is given
-   * @return The value
-   */
-  protected function getRequestValue($name, $default) {
-    $value = $default;
-    if (array_key_exists($name, $this->_requestValues)) {
-      $value = $this->_requestValues[$name];
-    }
-    return $value;
   }
 
   /**
