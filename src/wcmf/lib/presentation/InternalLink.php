@@ -68,7 +68,7 @@ class InternalLink {
    * @return The oid or null if no valid oid is referenced
    */
   public static function getReferencedOID($link) {
-    preg_match_all("/([A-Za-z0-9]+?:[0-9]+?)/", $link, $matches);
+    preg_match_all("/([A-Za-z0-9]+(:[0-9]+)+)/", $link, $matches);
     if (sizeof($matches) > 0 && sizeof($matches[1]) > 0) {
       $oid = $matches[1][0];
       return ObjectId::parse($oid);
@@ -82,7 +82,7 @@ class InternalLink {
    * @return The oid or null if no anchor is defined
    */
   public static function getAnchorOID($link) {
-    preg_match_all("/([A-Za-z0-9]+?:[0-9]+?)/", $link, $matches);
+    preg_match_all("/([A-Za-z0-9]+(:[0-9]+)+)/", $link, $matches);
     if (sizeof($matches) > 0 && sizeof($matches[1]) > 1) {
       $oid = $matches[1][1];
       return ObjectId::parse($oid);
@@ -98,7 +98,7 @@ class InternalLink {
   public static function getAnchorName($link) {
     preg_match_all("/#(.+)$/", $link, $matches);
     if (sizeof($matches) > 0 && sizeof($matches[1]) > 0) {
-      $name = $matches[1][1];
+      $name = $matches[1][0];
       return $name;
     }
     return null;
