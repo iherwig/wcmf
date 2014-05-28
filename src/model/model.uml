@@ -657,6 +657,9 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_A6tm8OHiEeO8FYhGp6c9VA" name="media" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_F22w0OHiEeO8FYhGp6c9VA" value="app/js/ui/data/input/widget/Media"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_lPXzAOacEeOCi72e_elDVA" name="slider" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_0b5nkOacEeOCi72e_elDVA" value="app/js/ui/data/input/widget/Slider"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_M1SNkLRmEeOfbtYsPp7Oyg" name="DionysosSerializer">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_R76wMLRmEeOfbtYsPp7Oyg" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">

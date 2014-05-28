@@ -179,7 +179,8 @@ input[type="color"]:disabled,
   margin: 5px;
 }
 
-.entity-page .dijitTextBox, .principal-page .dijitTextBox {
+.entity-page .dijitTextBox, .principal-page .dijitTextBox,
+.entity-page .dijitSliderH {
   width: 350px;
   display: block;
 }

@@ -73,7 +73,7 @@ define([
             var copy = {};
             for (var i=0, count=attributes.length; i<count; i++) {
                 var attributeName = attributes[i].name;
-                copy[attributeName] = this[attributeName] || "";
+                copy[attributeName] = this[attributeName] !== undefined ? this[attributeName] : null;
             }
             copy.oid = this.oid;
             return copy;

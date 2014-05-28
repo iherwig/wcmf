@@ -2,6 +2,7 @@ define( [
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/_base/array",
+    "dojo/json",
     "dojo/Deferred",
     "dojo/when",
     "../../../model/meta/Model",
@@ -11,6 +12,7 @@ function(
     declare,
     lang,
     array,
+    JSON,
     Deferred,
     when,
     Model,
@@ -136,6 +138,17 @@ function(
     Factory.getListDefinition = function(inputType) {
         var parts = inputType.split("#");
         return parts.length === 2 ? parts[1] : null;
+    };
+
+    /**
+     * Get the options from the given input type
+     * @param inputType The input type
+     * @returns String or null, if no list input type
+     */
+    Factory.getOptions = function(inputType) {
+        var optionsStr = inputType.match(/:(\{.+\})/);
+        var options = optionsStr ? JSON.parse(optionsStr[1]) : {};
+        return options;
     };
 
     return Factory;

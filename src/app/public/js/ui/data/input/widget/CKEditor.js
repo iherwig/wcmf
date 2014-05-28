@@ -7,6 +7,7 @@ define( [
     "dojo/topic",
     "dijit/form/TextBox",
     "ckeditor/ckeditor",
+    "../Factory",
     "../../../../model/meta/Model",
     "../../../../locale/Dictionary",
     "../../../_include/_HelpMixin",
@@ -20,6 +21,7 @@ function(
     topic,
     TextBox,
     CKEditor,
+    ControlFactory,
     Model,
     Dict,
     _HelpMixin,
@@ -89,8 +91,8 @@ function(
         },
 
         getToolbarName: function() {
-            var toolbar = this.attribute.inputType.match(/ToolbarSet="(.+?)"/);
-            return (toolbar.length > 1) ? toolbar[1] : "wcmf";
+            var options = ControlFactory.getOptions(this.attribute.inputType);
+            return (options.toolbarSet) ? options.toolbarSet : "wcmf";
         },
 
         destroy: function() {
