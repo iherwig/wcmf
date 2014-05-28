@@ -63,6 +63,9 @@ class StringQuery extends ObjectQuery {
     // since we are only interested in the attributes)
     $selectStmt = $mapper->getSelectSQL(null, null, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
+      // initialize the statement
+      $selectStmt->distinct(true);
+
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $quoteIdentifierSymbol = '`';
       // get all referenced types/roles from the condition and translate

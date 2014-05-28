@@ -75,8 +75,9 @@ class URIUtil {
     if (!preg_match('/\/$/', $base)) {
       $base .= '/';
     }
+    $firstChar = (strlen($rel_uri) > 0) ? substr($rel_uri, 0, 1) : '';
     /* queries and anchors */
-    if ($rel_uri[0] == '#' || $rel_uri[0] == '?') {
+    if ($firstChar == '#' || $firstChar == '?') {
       return $base.$rel_uri;
     }
     /* parse base URL and convert to local variables: $scheme, $host, $path */
@@ -84,7 +85,7 @@ class URIUtil {
     /* remove non-directory element from path */
     $path = preg_replace('#/[^/]*$#', '', $path);
     /* destroy path if relative url points to root */
-    if ($rel_uri[0] == '/') {
+    if ($firstChar == '/') {
       $path = '';
     }
     /* dirty absolute URL */

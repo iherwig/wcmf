@@ -283,6 +283,7 @@ class ObjectQuery extends AbstractQuery {
     $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
       // initialize the statement
+      $selectStmt->distinct(true);
 
       // process all root nodes except for grouped nodes
       foreach ($this->_rootNodes as $curNode) {

@@ -256,9 +256,9 @@ class ControllerMessage {
    * TODO add filter parameter
    * @param name The name of the variable
    * @param default The default value if the value is not defined [optional, default: null]
-   * @param filter Sanitize filter constant (FILTER_SANITIZE) to be applied on the value [optional]
+   * @param filter PHP filter constant (FILTER_SANITIZE/FILTER_VALIDATE) to be applied on the value [optional]
    * @param options Filter parameters [optional]
-   * @return The value or default, if it does not exist
+   * @return The (filtered) value or default, if it does not exist
    */
   public function getValue($name, $default=null, $filter=null, $options=null) {
     if ($this->hasValue($name)) {

@@ -8,7 +8,8 @@ return array(
   'loggers' => array(
     'wcmf\lib\config\impl\InifileConfiguration' => array('level' => 'INFO'),
     'wcmf\lib\model\mapper\RDBMapper' => array('level' => 'ERROR', 'appenders' => array('dailyFile')),
-    'wcmf\lib\presentation\Controller' => array('level' => 'ERROR'),
+    'wcmf\lib\presentation\Controller' => array('level' => 'ERROR', 'appenders' => array('dailyFile')),
+    'wcmf\lib\presentation\impl\DefaultActionMapper' => array('level' => 'ERROR', 'appenders' => array('dailyFile')),
     'wcmf\lib\presentation\Application' => array('level' => 'INFO'),
     'wcmf\lib\service\SoapServer' => array('level' => 'INFO'),
     'wcmf\application\controller\LoggingController' => array('level' => 'INFO'),
