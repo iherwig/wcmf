@@ -63,6 +63,7 @@ var appSrc = [
     "app/js/ui/data/input/widget/PasswordBox",
     "app/js/ui/data/input/widget/RadioButton",
     "app/js/ui/data/input/widget/SelectBox",
+    "app/js/ui/data/input/widget/Slider",
     "app/js/ui/data/input/widget/TextArea",
     "app/js/ui/data/input/widget/TextBox",
     "app/js/ui/data/input/widget/_AttributeWidgetMixin",

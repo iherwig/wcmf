@@ -6,7 +6,7 @@ define([
     "elfinder/jquery/jquery.min",
     "elfinder/jquery/jquery-ui.min",
     "elfinder/js/elfinder.min",
-    "elfinder/js/i18n/elfinder."+appConfig.uiLanguage,
+    "elfinder/js/i18n/elfinder.de",
     "../../locale/Dictionary",
     "dojo/text!./template/BrowsePage.html",
     "xstyle/css!elfinder/jquery/jquery-ui.css",
@@ -20,7 +20,7 @@ define([
     jQuery,
     jQueryUi,
     elFinder,
-    elFinderLang,
+    elFinderDE,
     Dict,
     template
 ) {
