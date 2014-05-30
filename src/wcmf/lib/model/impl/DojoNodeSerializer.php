@@ -18,12 +18,13 @@ namespace wcmf\lib\model\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\impl\AbstractNodeSerializer;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\model\NodeValueIterator;
-use wcmf\lib\model\impl\AbstractNodeSerializer;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistentObjectProxy;
 
 /**
  * DojoNodeSerializer is used to serialize Nodes into the Dojo rest format and
@@ -94,7 +95,7 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
   /**
    * @see NodeSerializer::serializeNode
    */
-  public function serializeNode($node) {
+  public function serializeNode($node, $rolesToRefOnly=array()) {
     if (!($node instanceof Node)) {
       return null;
     }
@@ -120,14 +121,24 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
         if ($isMultiValued) {
           $curResult[$role] = array();
           foreach ($relatedNodes as $relatedNode) {
-            // add the reference to the relation attribute
-            $curResult[$role][] = array('$ref' => $relatedNode->getOID()->__toString());
+            if ($relatedNode instanceof PersistentObjectProxy || in_array($role, $rolesToRefOnly)) {
+              // add the reference to the relation attribute
+              $curResult[$role][] = array('$ref' => $relatedNode->getOID()->__toString());
+            }
+            else {
+              $curResult[$role][] = $this->serializeNode($relatedNode, array($relation->getThisRole()));
+            }
           }
         }
         else {
-          // add the reference to the relation attribute
           $relatedNode = $relatedNodes;
-          $curResult[$role] = array('$ref' => $relatedNode->getOID()->__toString());
+          if ($relatedNode instanceof PersistentObjectProxy || in_array($role, $rolesToRefOnly)) {
+            // add the reference to the relation attribute
+            $curResult[$role] = array('$ref' => $relatedNode->getOID()->__toString());
+          }
+          else {
+            $curResult[$role] = $this->serializeNode($relatedNode, array($relation->getThisRole()));
+          }
         }
       }
     }

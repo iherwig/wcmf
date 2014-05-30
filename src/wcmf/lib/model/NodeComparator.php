@@ -80,13 +80,13 @@ class NodeComparator {
       $weightedValue = ($maxWeight-$i)*($maxWeight-$i);
       $AGreaterB = 0;
       // sort by id
-      if ($criteria == self::SORTBY_OID) {
+      if ($criteria == self::ATTRIB_OID) {
         if ($a->getOID() != $b->getOID()) {
           ($a->getOID() > $b->getOID()) ? $AGreaterB = 1 : $AGreaterB = -1;
         }
       }
       // sort by type
-      else if ($criteria == self::SORTBY_TYPE) {
+      else if ($criteria == self::ATTRIB_TYPE) {
         if ($a->getType() != $b->getType()) {
           ($a->getType() > $b->getType()) ? $AGreaterB = 1 : $AGreaterB = -1;
         }
