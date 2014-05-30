@@ -183,8 +183,8 @@ class SortController extends Controller {
       $sortkey = $sortkeyDef['sortFieldName'];
 
       // determine the sort boundaries
-      $referenceValue = $isOrderBottom ? self::UNBOUND : $referenceObject->getValue($sortkey);
-      $insertValue = $insertObject->getValue($sortkey);
+      $referenceValue = $isOrderBottom ? self::UNBOUND : $this->getSortkeyValue($referenceObject, $sortkey);
+      $insertValue = $this->getSortkeyValue($insertObject, $sortkey);
 
       // determine the sort direction
       $isSortup = false;
@@ -208,9 +208,9 @@ class SortController extends Controller {
         // sortkey of reference object does not change
         // update sort keys
         $count=sizeof($objects);
-        $lastValue = $objects[$count-1]->getValue($sortkey);
+        $lastValue = $this->getSortkeyValue($objects[$count-1], $sortkey);
         for ($i=$count-1; $i>0; $i--) {
-          $objects[$i]->setValue($sortkey, $objects[$i-1]->getValue($sortkey));
+          $objects[$i]->setValue($sortkey, $this->getSortkeyValue($objects[$i-1], $sortkey));
         }
         $objects[0]->setValue($sortkey, $lastValue);
       }
@@ -219,9 +219,9 @@ class SortController extends Controller {
         array_unshift($objects, $insertObject);
         // update sort keys
         $count=sizeof($objects);
-        $firstValue = $objects[0]->getValue($sortkey);
+        $firstValue = $this->getSortkeyValue($objects[0], $sortkey);
         for ($i=0; $i<$count-1; $i++) {
-          $objects[$i]->setValue($sortkey, $objects[$i+1]->getValue($sortkey));
+          $objects[$i]->setValue($sortkey, $this->getSortkeyValue($objects[$i+1], $sortkey));
         }
         $objects[$count-1]->setValue($sortkey, $firstValue);
       }
@@ -333,6 +333,21 @@ class SortController extends Controller {
    */
   protected function isOrderBotton($request) {
     return ($request->getValue('referenceOid') == self::ORDER_BOTTOM);
+  }
+
+  /**
+   * Get the sortkey value of an object. Defaults to the object's id, if
+   * the value is null
+   * @param object The object
+   * @param valueName The name of the sortkey attribute
+   * @return String
+   */
+  protected function getSortkeyValue($object, $valueName) {
+    $value = $object->getValue($valueName);
+    if ($value == null) {
+      $value = $object->getOID()->getFirstId();
+    }
+    return $value;
   }
 }
 ?>
