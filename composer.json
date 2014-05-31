@@ -1,0 +1,7 @@
+{
+    "name": "wcmf/wcmf",
+    "description": "Web application framework",
+    "require": {
+        "php": ">=5.3.0"
+    }
+}
