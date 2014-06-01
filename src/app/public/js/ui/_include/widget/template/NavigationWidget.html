@@ -14,8 +14,12 @@
                     <li class="main-menu push" id="navHome" data-wcmf-route="home">
                         <a href="#">{translate:Home}</a>
                     </li>
-                    <li class="main-menu push" id="navContent" data-wcmf-route="entityList" data-wcmf-pathparams="type:'${firstRootType}'">
-                        <a href="#">{translate:Content}</a>
+                    <li class="main-menu push dropdown" id="navContent">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            {translate:Content} <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu" data-dojo-attach-point="contentDropDown">
+                        </ul>
                     </li>
 
                     <li class="main-menu dropdown" id="navAdmin" data-wcmf-restrict-roles="administrators">

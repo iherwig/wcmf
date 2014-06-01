@@ -8,5 +8,10 @@
         "zf1/zend-db": "1.12.6",
         "zf1/zend-http": "1.12.6",
         "zf1/zend-search": "1.12.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "wcmf\\": "src/wcmf"
+        }
     }
 }

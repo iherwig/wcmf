@@ -10,6 +10,7 @@ define([
     "dojo/keys",
     "dojo/NodeList-dom",
     "dojo/NodeList-traverse",
+    "dojo/dom-construct",
     "dojo/dom-class",
     "dojo/dom-attr",
     "dojo/dom-style",
@@ -30,6 +31,7 @@ define([
     keys,
     nodeListDom,
     nodeListTraverse,
+    domConstruct,
     domClass,
     domAttr,
     domStyle,
@@ -72,6 +74,14 @@ define([
                     domStyle.set(this.menuCollapse, "height", height == 0 ? "auto" : 0);
                 }))
             );
+
+            // add type menu items to content drop down
+            for (var i=0, count=appConfig.rootTypes.length; i<count; i++) {
+                var typeName = appConfig.rootTypes[i];
+                var menuItem = '<li class="push" data-wcmf-route="entityList" data-wcmf-pathparams="type:\''+typeName+'\'">'+
+                    '<a href="#"><i class="fa fa-list"></i> '+Dict.translate(typeName)+'</a></li>';
+                domConstruct.place(menuItem, this.contentDropDown);
+            }
         },
 
         startup: function() {
