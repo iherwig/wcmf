@@ -62,35 +62,6 @@ class ObjectFactory {
   private static $_configuration = null;
 
   /**
-   * Get the filename for a given class name. The method assumes that
-   * namespaces are equivalent to directories.
-   * @param className The fully qualified name of the class.
-   * @return String
-   */
-  private static function getClassfile($className) {
-    $classFile = WCMF_BASE.str_replace("\\", "/", $className).'.php';
-    return $classFile;
-  }
-
-  /**
-   * Load a class definition.
-   * This method uses ObjectFactory::getClassfile for finding the class definition.
-   * @param className The fully qualified name of the class.
-   */
-  private static function loadClassDefinition($className) {
-    // find class file
-    $classFile = self::getClassfile($className);
-
-    // include class definition
-    if (file_exists($classFile)) {
-      require_once($classFile);
-    }
-    else {
-      throw new ConfigurationException('Classfile \''.$classFile.'\' not found for classname: '.$className);
-    }
-  }
-
-  /**
    * Set the Configuration instance.
    * @param configuration Configuration instance used to construct instances.
    */
@@ -181,8 +152,7 @@ class ObjectFactory {
       // the instance belongs to the given class
       $className = $configuration['__class'];
 
-      // load the class definition
-      self::loadClassDefinition($className);
+      // class definition must be supplied by autoloader
       if (class_exists($className)) {
         // create the instance
         $obj = new $className;

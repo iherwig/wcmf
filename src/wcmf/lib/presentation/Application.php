@@ -16,8 +16,9 @@
  */
 namespace wcmf\lib\presentation;
 
-use \Exception;
+use Exception;
 use wcmf\lib\config\impl\InifileConfiguration;
+use wcmf\lib\core\ClassLoader;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
@@ -42,6 +43,7 @@ class Application {
    * Constructor
    */
   public function __construct() {
+    new ClassLoader();
     new ErrorHandler();
     $this->_startTime = microtime(true);
     register_shutdown_function(array($this, "shutdown"));

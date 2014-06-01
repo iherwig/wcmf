@@ -22,12 +22,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileCache;
 use wcmf\lib\model\mapper\RDBMapper;
 
-$includePath = get_include_path();
-if (strpos($includePath, 'Zend') === false) {
-  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/vendor/zend');
-}
-require_once('Zend/Db/Select.php');
-
 /**
  * Select statement
  *

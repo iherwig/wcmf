@@ -25,12 +25,6 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\service\RemotingClient;
 
-$includePath = get_include_path();
-if (strpos($includePath, 'Zend') === false) {
-  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/vendor/zend');
-}
-require_once('Zend/Http/Client.php');
-
 /**
  * HTTPClient is used to do calls to other wCMF instances over HTTP.
  * @see RemotingFacade

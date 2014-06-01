@@ -29,12 +29,6 @@ use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\search\IndexedSearch;
 use wcmf\lib\util\StringUtil;
 
-if (strpos(get_include_path(), 'Zend') === false) {
-  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/vendor/zend');
-}
-require_once('Zend/Search/Lucene.php');
-require_once('Zend/Search/Lucene/Analysis/TokenFilter/StopWords.php');
-
 /**
  * LuceneSearch provides access to the search based on Zend_Search_Lucene.
  * The search index stored in the location that is defined by the parameter 'indexPath'.

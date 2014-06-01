@@ -23,8 +23,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\view\View;
 
-require_once(WCMF_BASE."wcmf/vendor/smarty/libs/Smarty.class.php");
-
 /**
  * View is used by Controller to handle the view presentation in MVC pattern.
  * View is a subclass of Smarty that is customized for use with the wCMF.

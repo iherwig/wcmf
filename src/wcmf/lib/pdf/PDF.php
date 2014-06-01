@@ -16,8 +16,6 @@
  */
 namespace wcmf\lib\pdf;
 
-require_once(WCMF_BASE."wcmf/vendor/fpdf/fpdi.php");
-
 /**
  * PDF extends FPDF/FPDI.
  *

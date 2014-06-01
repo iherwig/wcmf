@@ -26,7 +26,7 @@ use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
-require_once(WCMF_BASE."wcmf/vendor/nusoap/lib/nusoap.php");
+use \nusoap_server;
 
 /**
  * @class SoapServer
@@ -36,7 +36,7 @@ require_once(WCMF_BASE."wcmf/vendor/nusoap/lib/nusoap.php");
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SoapServer extends \nusoap_server {
+class SoapServer extends nusoap_server {
 
   const TNS = 'http://wcmf.sourceforge.net';
 

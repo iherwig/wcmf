@@ -24,8 +24,6 @@ use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\security\principal\User;
 
-require_once(WCMF_BASE."wcmf/vendor/password_compat/lib/password.php");
-
 /**
  * Default implementation of a user.
  *

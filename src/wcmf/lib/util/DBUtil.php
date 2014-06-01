@@ -25,12 +25,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\util\DBUtil;
 
-$includePath = get_include_path();
-if (strpos($includePath, 'Zend') === false) {
-  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/vendor/zend');
-}
-require_once('Zend/Db.php');
-
 /**
  * DBUtil provides database helper functions.
  *

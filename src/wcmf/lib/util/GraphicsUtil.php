@@ -19,10 +19,6 @@ namespace wcmf\lib\util;
 use \Exception;
 use wcmf\lib\i18n\Message;
 
-require_once(WCMF_BASE."wcmf/vendor/PHPImageWorkshop/ImageWorkshop.php");
-require_once(WCMF_BASE."wcmf/vendor/PHPImageWorkshop/GifFrameExtractor.php");
-require_once(WCMF_BASE."wcmf/vendor/PHPImageWorkshop/GifCreator.php");
-
 use PHPImageWorkshop\ImageWorkshop;
 
 /**

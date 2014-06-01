@@ -22,11 +22,6 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
 
-include_once(WCMF_BASE."wcmf/vendor/elfinder/elFinder.class.php");
-include_once(WCMF_BASE."wcmf/vendor/elfinder/elFinderConnector.class.php");
-include_once(WCMF_BASE."wcmf/vendor/elfinder/elFinderVolumeDriver.class.php");
-include_once(WCMF_BASE."wcmf/vendor/elfinder/elFinderVolumeLocalFileSystem.class.php");
-
 /**
  * MediaController integrates elFinder (http://elrte.org/elfinder)
  * into wCMF.

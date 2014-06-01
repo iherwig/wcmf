@@ -42,12 +42,6 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 
-$includePath = get_include_path();
-if (strpos($includePath, 'Zend') === false) {
-  set_include_path(get_include_path().PATH_SEPARATOR.WCMF_BASE.'wcmf/vendor/zend');
-}
-require_once('Zend/Db.php');
-
 /**
  * RDBMapper maps objects of one type to a relational database schema.
  * It defines a persistence mechanism that specialized mappers customize by overriding
