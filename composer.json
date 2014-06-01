@@ -7,7 +7,8 @@
         "sybio/image-workshop": "2.0.5",
         "zf1/zend-db": "1.12.6",
         "zf1/zend-http": "1.12.6",
-        "zf1/zend-search": "1.12.6"
+        "zf1/zend-search": "1.12.6",
+        "zf1/zend-search-lucene": "1.12.6"
     },
     "autoload": {
         "psr-4": {
