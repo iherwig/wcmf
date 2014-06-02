@@ -393,20 +393,20 @@ function(
                                 if (this.isNew) {
                                     this.isNew = false;
 
-                                    if (this.isRelatedObject()) {
-                                        // close own tab
-                                        topic.publish("tab-closed", {
-                                            oid: Model.createDummyOid(this.type)
-                                        });
-                                        this.destroyRecursive();
-                                    }
-                                    else {
+//                                    if (this.isRelatedObject()) {
+//                                        // close own tab
+//                                        topic.publish("tab-closed", {
+//                                            oid: Model.createDummyOid(this.type)
+//                                        });
+//                                        this.destroyRecursive();
+//                                    }
+//                                    else {
                                         // update current tab
                                         topic.publish("tab-closed", {
                                             oid: Model.createDummyOid(this.type),
                                             nextOid: this.entity.oid
                                         });
-                                    }
+//                                    }
                                 }
                             })
                         });

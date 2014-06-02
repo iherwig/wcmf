@@ -36,6 +36,10 @@ class Image implements ValidateType {
    * @see ValidateType::validate
    */
   public function validate($value, $options=null) {
+    if (strlen($value) == 0) {
+      return true;
+    }
+
     $imageOptions = json_decode($options, true);
     $imgWidth = isset($imageOptions['width']) ? $imageOptions['width'] : false;
     $imgHeight = isset($imageOptions['height']) ? $imageOptions['height'] : false;
