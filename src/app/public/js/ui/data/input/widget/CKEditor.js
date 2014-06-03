@@ -76,9 +76,7 @@ function(
                 }))
             );
             this.editorInstance.on("instanceReady", lang.hitch(this, function() {
-                this.editorInstance.on("key", lang.hitch(this, this.editorValueChanged));
-                this.editorInstance.on("paste", lang.hitch(this, this.editorValueChanged));
-                this.editorInstance.on("afterCommandExec", lang.hitch(this, this.editorValueChanged));
+                this.editorInstance.on("change", lang.hitch(this, this.editorValueChanged));
             }))
         },
 

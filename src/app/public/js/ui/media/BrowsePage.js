@@ -53,7 +53,10 @@ define([
 
             var value = this.getItemUrl(item);
             if (window.opener.CKEDITOR && funcNum) {
-                window.opener.CKEDITOR.tools.callFunction(funcNum, value);
+                window.opener.CKEDITOR.tools.callFunction(funcNum, value, function() {
+                    // callback executed in the scope of the button that called the file browser
+                    // see: http://docs.ckeditor.com/#!/guide/dev_file_browser_api Example 4
+                });
             }
             else if (callback) {
                 if (window.opener[callback]) {

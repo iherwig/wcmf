@@ -69,7 +69,17 @@ define([
 
             var value = 'link://'+this.getItemUrl(item);
             if (window.opener.CKEDITOR && funcNum) {
-                window.opener.CKEDITOR.tools.callFunction(funcNum, value);
+                window.opener.CKEDITOR.tools.callFunction(funcNum, value, function() {
+                    // callback executed in the scope of the button that called the file browser
+                    // see: http://docs.ckeditor.com/#!/guide/dev_file_browser_api Example 4
+                    //
+                    // set the protocoll to 'other'
+                    // see: http://ckeditor.com/forums/CKEditor-3.x/Tutorial-how-modify-Links-Plugin-link-cms-pages
+                    var dialog = this.getDialog();
+                    if (dialog.getName() === 'link') {
+                        dialog.setValueOf('info', 'protocol', '');
+                    }
+                });
             }
             else if (callback) {
                 if (window.opener[callback]) {
