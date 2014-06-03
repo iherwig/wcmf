@@ -134,11 +134,12 @@ function smarty_function_image($params, \Smarty_Internal_Template $template) {
     preg_match('/\.(\w+)$/', $file, $matches);
     $extension = $matches[1];
 
-    $destName = $template->cache_dir.md5($file.filectime($file).$requestedWidth.$requestedHeight.$sizemode).'.'.$extension;
+    $destNameAbs = $template->cache_dir.md5($file.filectime($file).$requestedWidth.$requestedHeight.$sizemode).'.'.$extension;
+    $destName = URIUtil::makeRelative($destNameAbs, dirname($_SERVER['SCRIPT_FILENAME']).'/');
 
     // if the file does not exist in the cache, we have to create it
-    $dateOrig = fileatime($file);
-    $dateCache = fileatime($destName);
+    $dateOrig = @fileatime($file);
+    $dateCache = @fileatime($destName);
     if (!file_exists($destName) || $dateOrig > $dateCache) {
       $graphicsUtil = new GraphicsUtil();
       if ($sizemode == 'resample') {

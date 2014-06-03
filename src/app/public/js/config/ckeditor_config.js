@@ -25,7 +25,7 @@ CKEDITOR.editorConfig = function( config ) {
       config.toolbar_wcmf = [
           ['Maximize'],['Source'],['Cut','Copy','Paste'],['Undo','Redo','Find'],
           ['Image','MediaEmbed','Link','Unlink','Anchor'],
-          ['Bold','Italic','RemoveFormat'],['Table','BulletedList','HorizontalRule','SpecialChar'],['About']
+          ['Bold','Italic','RemoveFormat'],['Table','BulletedList','HorizontalRule','SpecialChar'],['Format','Styles'],['About']
       ];
       config.toolbar = 'wcmf';
 };

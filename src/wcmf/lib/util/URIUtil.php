@@ -108,7 +108,7 @@ class URIUtil {
    * and the absolute and relative URI (as seen from the executed script) as values
    */
   public static function translate($rel_uri, $base) {
-    $self = UriUtil::getProtocolStr().$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
+    $self = UriUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $path = dirname($self).'/';
     $absUrl = self::makeAbsolute($rel_uri, $path.$base);
     $relUrl = self::makeRelative($absUrl, $self);
