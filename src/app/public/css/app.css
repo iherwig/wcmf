@@ -328,6 +328,19 @@ td {
   height: 20px !important;
 }
 
+/* combobox button */
+.dijitComboBox {
+  height: 40px;
+}
+
+.dijitArrowButton {
+  height: 28px;
+}
+
+.dbootstrap .dijitArrowButtonInner {
+  line-height: 28px;
+}
+
 @media only screen and (min-width: 980px) {
   .container {
     width: 980px;

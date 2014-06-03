@@ -11,7 +11,8 @@ define( [
     "../../../_include/_HelpMixin",
     "./_AttributeWidgetMixin",
     "../../../../model/meta/Model",
-    "../../../../locale/Dictionary"
+    "../../../../locale/Dictionary",
+    "dojo/text!./template/Select.html"
 ],
 function(
     declare,
@@ -26,10 +27,12 @@ function(
     _HelpMixin,
     _AttributeWidgetMixin,
     Model,
-    Dict
+    Dict,
+    template
 ) {
     return declare([FilteringSelect, _HelpMixin, _AttributeWidgetMixin], {
 
+        templateString: template,
         intermediateChanges: true,
         entity: {},
         attribute: {},
