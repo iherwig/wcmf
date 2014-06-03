@@ -63,7 +63,6 @@ class Application {
    * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
    * @return Request instance representing the current HTTP request
    * TODO: maybe setup request with default values from a config section?
-   * TODO: allow configPath array to search from different locations, simplifies inclusion
    */
   public function initialize($configPath='../config/', $mainConfigFile='config.ini',
     $defaultController='wcmf\application\controller\TerminateController', $defaultContext='', $defaultAction='login') {

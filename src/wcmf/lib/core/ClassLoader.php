@@ -31,6 +31,11 @@ class ClassLoader {
   }
 
   private function load($className) {
+    if (!defined('WCMF_BASE')) {
+      throw new \Exception("Constant WCMF_BASE is not defined. "
+              . "Please define this constant to point to "
+              ."the base directory of your class files.");
+    }
     // search under WCMF_BASE assuming that namespaces
     // match directories
     $filename = WCMF_BASE.str_replace("\\", "/", $className).'.php';
@@ -67,6 +72,4 @@ class ClassLoader {
     return false;
   }
 }
-
-new ClassLoader();
 ?>
