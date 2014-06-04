@@ -122,6 +122,12 @@ define([
               routeParamStr += ", id: '"+id+"'";
             }
             contentNavNode.attr("data-wcmf-pathparams", routeParamStr);
+        },
+
+        _navigateMedia: function(e) {
+            // prevent the page from navigating after submit
+            e.preventDefault();
+            topic.publish('navigate', 'media', null, null, {name:'_blank', specs:'width=800,height=700'});
         }
     });
 });

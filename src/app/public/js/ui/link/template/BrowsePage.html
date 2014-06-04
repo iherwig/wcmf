@@ -4,7 +4,13 @@
 
   <!-- Begin page content -->
   <div>
-    <div id="resourcetree"></div>
+    <div data-dojo-type="dijit/layout/TabContainer" id="tabContainer" style="width: 800px; height: 650px;">
+      <div data-dojo-type="dijit/layout/ContentPane" title="{translate:Media Pool}" id="mediaTab">
+      </div>
+      <div data-dojo-type="dijit/layout/ContentPane" title="{translate:Content}" id="contentTab" data-dojo-props="selected:true">
+        <div id="resourcetree"></div>
+      </div>
+    </div>
   </div>
   <!-- End page content -->
 

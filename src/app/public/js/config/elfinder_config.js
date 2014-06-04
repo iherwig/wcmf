@@ -2,8 +2,8 @@
  * Configuration for elFinder
  */
 elfinderConfig = {
-    width: '100%',
-    height: '640px',
+    width: '782',
+    height: '609',
     cssClass: 'wcmfFinder',
     rememberLastDir: true,
     resizable: false,

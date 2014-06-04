@@ -76,12 +76,17 @@ define([
             this.inherited(arguments);
             this.own(
                 // listen to navigate topic
-                topic.subscribe("navigate", lang.hitch(this, function(routeName, pathParams, queryParams) {
+                topic.subscribe("navigate", lang.hitch(this, function(routeName, pathParams, queryParams, windowParams) {
                     var route = this.router.getRoute(routeName);
                     if (!route) { return; }
 
                     var url = route.assemble(pathParams, queryParams);
-                    this.pushConfirmed(url);
+                    if (windowParams) {
+                        window.open(url, windowParams.name, windowParams.specs);
+                    }
+                    else {
+                        this.pushConfirmed(url);
+                    }
                 }))
             );
         },

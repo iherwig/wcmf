@@ -6,10 +6,13 @@ define([
     "dojo/query",
     "dojo/topic",
     "dojo/_base/window",
+    "dijit/registry",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
     "dijit/tree/ObjectStoreModel",
     "dijit/Tree",
+    "dijit/layout/TabContainer",
+    "dijit/layout/ContentPane",
     "../../persistence/TreeStore",
     "../../locale/Dictionary",
     "dojo/text!./template/BrowsePage.html",
@@ -22,10 +25,13 @@ define([
     query,
     topic,
     win,
+    registry,
     _Page,
     _Notification,
     ObjectStoreModel,
     Tree,
+    TabContainer,
+    ContentPane,
     TreeStore,
     Dict,
     template
@@ -38,6 +44,13 @@ define([
 
         postCreate: function() {
             this.inherited(arguments);
+
+            // tab navigation
+            registry.byId("tabContainer").watch("selectedChildWidget", lang.hitch(this, function(name, oval, nval){
+                if (nval.id === "mediaTab") {
+                    window.location.href = appConfig.pathPrefix+'/media?'+this.request.getQueryString();
+                }
+            }));
 
             var store = TreeStore.getStore();
             var model = new ObjectStoreModel({

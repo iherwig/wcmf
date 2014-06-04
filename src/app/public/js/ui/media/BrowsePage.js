@@ -1,12 +1,18 @@
+var elFinder = {};
+
 define([
     "require",
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dijit/registry",
     "../_include/_PageMixin",
     "elfinder/jquery/jquery.min",
     "elfinder/jquery/jquery-ui.min",
+    "../../config/elfinder_config",
     "elfinder/js/elfinder.min",
     "elfinder/js/i18n/elfinder.de",
+    "dijit/layout/TabContainer",
+    "dijit/layout/ContentPane",
     "../../locale/Dictionary",
     "dojo/text!./template/BrowsePage.html",
     "xstyle/css!elfinder/jquery/jquery-ui.css",
@@ -16,11 +22,15 @@ define([
     require,
     declare,
     lang,
+    registry,
     _Page,
     jQuery,
     jQueryUi,
+    elFinderConfig,
     elFinder,
     elFinderDE,
+    TabContainer,
+    ContentPane,
     Dict,
     template
 ) {
@@ -33,18 +43,27 @@ define([
         postCreate: function() {
             this.inherited(arguments);
 
+            // tab navigation
+            registry.byId("tabContainer").watch("selectedChildWidget", lang.hitch(this, function(name, oval, nval){
+                if (nval.id === "contentTab") {
+                    window.location.href = appConfig.pathPrefix+'/link?'+this.request.getQueryString();
+                }
+            }));
+
             var directory = this.request.getQueryParam("directory");
-            var config = {
+            lang.mixin(elfinderConfig, {
                 lang: appConfig.uiLanguage,
                 url: appConfig.backendUrl+'?action=browseMedia&directory='+directory,
-                height: 658,
                 rememberLastDir: false,
                 resizable: false,
                 getFileCallback: lang.hitch(this, function(file) {
                     this.onItemClick(file);
                 })
-            };
-            $("#elfinder").elfinder(config).elfinder('instance');
+            });
+
+            setTimeout(function() {
+                $("#elfinder").elfinder(elfinderConfig).elfinder('instance');
+            }, 500);
         },
 
         onItemClick: function(item) {
