@@ -17,6 +17,7 @@
             }
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.0",
         "apache/log4php": "2.3.0",
