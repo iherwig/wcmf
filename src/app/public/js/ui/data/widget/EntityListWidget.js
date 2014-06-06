@@ -50,6 +50,7 @@ function(
         page: null,
         route: '',
         onCreated: null, // function to be called after the widget is created
+        gridWidget: null,
 
         constructor: function(args) {
             declare.safeMixin(this, args);
@@ -67,7 +68,7 @@ function(
                 enabledFeatures.push('DnD');
             }
 
-            new GridWidget({
+            this.gridWidget = new GridWidget({
                 type: this.type,
                 store: Store.getStore(this.type, appConfig.defaultLanguage),
                 actions: this.getGridActions(),
@@ -95,7 +96,10 @@ function(
             var copyAction = new Copy({
                 page: this.page,
                 init: lang.hitch(this, function(data) {
-                    this.hideNotification();
+                    this.showNotification({
+                        type: "ok",
+                        message: Dict.translate("Copying")+' <i class="fa fa-spinner fa-spin"></i>'
+                    });
                 }),
                 callback: lang.hitch(this, function(data, result) {
                     // success
@@ -104,6 +108,7 @@ function(
                         message: Dict.translate("'%0%' was successfully copied", [this.typeClass.getDisplayValue(data)]),
                         fadeOut: true
                     });
+                    this.gridWidget.refresh();
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // error

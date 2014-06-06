@@ -12,6 +12,7 @@ define( [
     "../../../model/meta/Model",
     "../../../persistence/RelationStore",
     "../../../action/Edit",
+    "../../../action/Copy",
     "../../../action/Link",
     "../../../action/Unlink",
     "../../../action/Delete",
@@ -33,6 +34,7 @@ function(
     Model,
     RelationStore,
     Edit,
+    Copy,
     Link,
     Unlink,
     Delete,
@@ -48,6 +50,7 @@ function(
         route: '',
         entity: {},
         relation: {},
+        typeClass: null,
         page: null,
         gridWidget: null,
 
@@ -61,9 +64,9 @@ function(
         postCreate: function() {
             this.inherited(arguments);
 
-            var typeClass = Model.getType(this.relation.type);
+            this.typeClass = Model.getType(this.relation.type);
             var enabledFeatures = [];
-            if (typeClass.isSortable) {
+            if (this.typeClass.isSortable) {
                 enabledFeatures.push('DnD');
             }
 
@@ -86,18 +89,46 @@ function(
                 route: this.route
             });
 
+            var copyAction = new Copy({
+                page: this.page,
+                targetoid: this.entity.oid,
+                init: lang.hitch(this, function(data) {
+                    this.showNotification({
+                        type: "ok",
+                        message: Dict.translate("Copying")+' <i class="fa fa-spinner fa-spin"></i>'
+                    });
+                }),
+                callback: lang.hitch(this, function(data, result) {
+                    // success
+                    this.showNotification({
+                        type: "ok",
+                        message: Dict.translate("'%0%' was successfully copied", [this.typeClass.getDisplayValue(data)]),
+                        fadeOut: true
+                    });
+                    this.gridWidget.refresh();
+                }),
+                errback: lang.hitch(this, function(data, result) {
+                    // error
+                    this.showBackendError(result);
+                })
+            });
+
             var unlinkAction = new Unlink({
                 page: this.page,
                 source: this.entity,
                 relation: this.relation,
                 callback: lang.hitch(this, function(data, result) {
                     // success
+                    this.showNotification({
+                        type: "ok",
+                        message: Dict.translate("'%0%' was successfully unlinked", [this.typeClass.getDisplayValue(data)]),
+                        fadeOut: true
+                    });
                     this.gridWidget.refresh();
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // error
                     this.showBackendError(result);
-                    this.gridWidget.refresh();
                 })
             });
 
@@ -105,20 +136,24 @@ function(
                 page: this.page,
                 callback: lang.hitch(this, function(data, result) {
                     // success
+                    this.showNotification({
+                        type: "ok",
+                        message: Dict.translate("'%0%' was successfully deleted", [this.typeClass.getDisplayValue(data)]),
+                        fadeOut: true
+                    });
                     this.gridWidget.refresh();
                 }),
                 errback: lang.hitch(this, function(data, result) {
                     // error
                     this.showBackendError(result);
-                    this.gridWidget.refresh();
                 })
             });
 
             if (this.relation.aggregationKind === "composite") {
-                return [editAction, deleteAction];
+                return [editAction, copyAction, deleteAction];
             }
             else {
-                return [editAction, unlinkAction];
+                return [editAction, copyAction, unlinkAction];
             }
         },
 
