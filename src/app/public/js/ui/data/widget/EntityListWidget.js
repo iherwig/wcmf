@@ -98,7 +98,7 @@ function(
                 init: lang.hitch(this, function(data) {
                     this.showNotification({
                         type: "process",
-                        message: Dict.translate("Copying")
+                        message: Dict.translate("Copying '%0%'", [this.typeClass.getDisplayValue(data)])
                     });
                 }),
                 callback: lang.hitch(this, function(data, result) {

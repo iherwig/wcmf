@@ -481,6 +481,12 @@ function(
                 return;
             }
 
+            var displayValue = this.typeClass.getDisplayValue(this.entity);
+            this.showNotification({
+                type: "process",
+                message: this.isLocked ? Dict.translate("Unlocking '%0%'", [displayValue]) :
+                        Dict.translate("Locking '%0%'", [displayValue])
+            });
             new Lock({
                 page: this.page,
                 action: this.isLocked ? "unlock" : "lock",
@@ -488,6 +494,12 @@ function(
                 init: lang.hitch(this, function(data) {}),
                 callback: lang.hitch(this, function(data, result) {
                     // success
+                    this.showNotification({
+                        type: "ok",
+                        message: this.isLocked ? Dict.translate("'%0%' was successfully unlocked", [displayValue]) :
+                                Dict.translate("'%0%' was successfully locked", [displayValue]),
+                        fadeOut: true
+                    });
                     this.setLockState(!this.isLocked, true);
                     // update optimistic lock
                     this.acquireLock();
