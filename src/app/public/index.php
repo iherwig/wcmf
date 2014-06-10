@@ -95,7 +95,7 @@ catch (Exception $ex) {
     <link href="css/app.css" rel="stylesheet" media="screen">
 
     <script>
-      document.write('<style media="all">#static { display: none; }</style>');
+      document.write('<style media="all">#no-js { display: none; }</style>');
     </script>
   </head>
 
@@ -143,7 +143,7 @@ catch (Exception $ex) {
       require(["app/js/App"], function (App) { new App({}, 'push'); });
     </script>
 
-    <div id="static" class="alert alert-error">
+    <div id="no-js" class="alert alert-error">
       <strong>Warning!</strong> Please enable JavaScript in your browser.
     </div>
 

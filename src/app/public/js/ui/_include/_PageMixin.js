@@ -5,6 +5,7 @@ define([
     "dojo/_base/window",
     "dojo/dom-attr",
     "dojo/dom-style",
+    "dojo/dom-construct",
     "dojo/query",
     "dojo/on",
     "dojo/topic",
@@ -22,6 +23,7 @@ define([
     win,
     domAttr,
     domStyle,
+    domConstruct,
     query,
     on,
     topic,
@@ -65,6 +67,7 @@ define([
                     }
                     finally {
                         this.setTitle(this.title);
+                        this.createNotificationNode();
                         this.setupRoutes();
                         this.removeRestricted();
                     }
@@ -93,6 +96,10 @@ define([
 
         setTitle: function(title) {
             this.inherited(arguments, [appConfig.title+' - '+title]);
+        },
+
+        createNotificationNode: function() {
+            domConstruct.place('<div id="notification"></div>', this.domNode);
         },
 
         /**

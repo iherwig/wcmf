@@ -2,6 +2,7 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/_base/fx",
+    "dojo/query",
     "dojo/dom-construct",
     "dojo/on",
     "./widget/NotificationWidget",
@@ -10,13 +11,14 @@ define([
     declare,
     lang,
     fx,
+    query,
     domConstruct,
     on,
     Notification,
     BackendError
 ) {
     /**
-     * Notification mixin. Expects a data-dojo-attach-point="notificationNode" in
+     * Notification mixin. Expects an element with id "notification" in
      * the template. Usage:
      * @code
      * showNotification({
@@ -38,6 +40,8 @@ define([
                 alertClass = 'alert-success';
             } else if (options.type === 'error') {
                 alertClass = 'alert-error';
+            } else if (options.type === 'process') {
+                alertClass = 'alert-info';
             }
 
             this.hideNotification();
@@ -46,11 +50,23 @@ define([
                 domConstruct.destroy(this.node);
             }
 
-            this.node = domConstruct.create('div', {}, this.notificationNode, 'first');
+            var nodes = query('#notification');
+            if (nodes.length > 0) {
+                this.node = domConstruct.create('div', {}, nodes[0], 'first');
+            }
+            else {
+                console.warn('No node with id "notification" found.');
+                return;
+            }
+
+            var content = options.message;
+            if (options.type === 'process') {
+              content += ' <i class="fa fa-spinner fa-spin"></i>';
+            }
 
             this.widget = new Notification({
                 'class': alertClass,
-                content: options.message
+                content: content
             }, this.node);
 
             this.widget.startup();

@@ -4,6 +4,7 @@ define([
     "dojo/_base/lang",
     "dojo/request",
     "dojo/dom-form",
+    "dojo/dom-construct",
     "dijit/form/TextBox",
     "../_include/_PageMixin",
     "../_include/_NotificationMixin",
@@ -18,6 +19,7 @@ define([
     lang,
     request,
     domForm,
+    domConstruct,
     TextBox,
     _Page,
     _Notification,
@@ -38,8 +40,8 @@ define([
             this.title = appConfig.title;
         },
 
-        postCreate: function() {
-            this.inherited(arguments);
+        createNotificationNode: function() {
+            // do nothing, it's defined in the template already
         },
 
         _login: function(e) {

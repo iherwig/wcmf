@@ -25,10 +25,6 @@ define([
         contextRequire: require,
         title: Dict.translate('Home'),
 
-        postCreate: function() {
-            this.inherited(arguments);
-        },
-
         _navigateContent: function(e) {
             // prevent the page from navigating after submit
             e.preventDefault();

@@ -42,6 +42,19 @@ body {
   padding: 0 10px;
 }
 
+#notification {
+  position: fixed;
+  top: 60px;
+  width: 100%;
+  z-index: 999;
+}
+
+#notification .alert {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
 .jumbotron {
   color: #FFFFFF;
   background: #2f2f2f;
@@ -177,6 +190,16 @@ input[type="color"]:disabled,
 
 .login-page .dijitTextBox {
   margin: 5px;
+}
+
+.login-page #notification {
+  position: relative;
+  top: 0;
+  width: auto;
+}
+
+.login-page #notification .alert {
+  width: auto;
 }
 
 .entity-page .dijitTextBox, .principal-page .dijitTextBox,

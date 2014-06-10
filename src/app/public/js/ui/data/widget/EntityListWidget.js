@@ -97,8 +97,8 @@ function(
                 page: this.page,
                 init: lang.hitch(this, function(data) {
                     this.showNotification({
-                        type: "ok",
-                        message: Dict.translate("Copying")+' <i class="fa fa-spinner fa-spin"></i>'
+                        type: "process",
+                        message: Dict.translate("Copying")
                     });
                 }),
                 callback: lang.hitch(this, function(data, result) {
