@@ -101,10 +101,6 @@ define([
                     this.closeTab(this.getTabByOid(data.oid));
                     this.isListeningToSelect = true;
                     this.selectTab(data.nextOid);
-                })),
-                topic.subscribe(this.id+"-selectChild", lang.hitch(this, function(page) {
-                    var oid = this.getOidFromTabId(page.id);
-                    this.selectTab(oid);
                 }))
             );
 
@@ -120,6 +116,14 @@ define([
                 var isSelected = (oid === this.selectedTab.oid);
                 this.createTab(oid, isSelected ? this.selectedPanel : null);
             }
+        },
+
+        /**
+         * Override original method to implement routing
+         */
+        selectChild: function(page) {
+            var oid = this.getOidFromTabId(page.id);
+            this.selectTab(oid);
         },
 
         selectTab: function(oid) {
