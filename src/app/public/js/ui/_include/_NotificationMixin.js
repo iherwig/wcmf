@@ -1,6 +1,7 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
+    "dojo/topic",
     "dojo/_base/fx",
     "dojo/query",
     "dojo/dom-construct",
@@ -10,6 +11,7 @@ define([
 ], function (
     declare,
     lang,
+    topic,
     fx,
     query,
     domConstruct,
@@ -115,7 +117,17 @@ define([
             if (error.code === 'SESSION_INVALID') {
                 // prevent circular dependency
                 require(["app/js/ui/_include/widget/LoginDlgWidget"], function(LoginDlg) {
-                    new LoginDlg({}).show();
+                    new LoginDlg({
+                        success: function() {
+                            topic.publish('refresh', function(request) {
+                                if (request.getPathParam('id') !== null) {
+                                    // don't refresh an entity page
+                                    return false;
+                                }
+                                return true;
+                            });
+                        }
+                    }).show();
                 });
             }
             else {

@@ -23,24 +23,19 @@ define([
      * Modal login dialog. Usage:
      * @code
      * new LoginDlg({
-     *      okCallback: function() {
-     *          // will be called when OK button is clicked
-     *          var deferred = new Deferred();
-     *          // do something
-     *          return deferred;
-     *      },
-     *      cancelCallback: function() {
-     *          // will be called when Cancel button is clicked
-     *          ....
+     *      success: function() {
+     *          // will be called, when the user is logged in
      *      }
      * }).show();
      * @endcode
      */
     var LoginDlg = declare([PopupDlg], {
 
+        success: null,
+
         style: "width: 400px",
         title: '<i class="fa fa-sign-in"></i> '+Dict.translate("Sign in"),
-        okCallback: lang.hitch(this, function(dlg) {
+        okCallback: function(dlg) {
             var data = domForm.toObject("loginForm");
             data.action = "login";
 
@@ -51,17 +46,20 @@ define([
                 },
                 handleAs: 'json'
 
-            }).then(lang.hitch(this, function(response) {
+            }).then(function(response) {
                 // success
                 User.create(data.user, response.roles);
-            }));
-        }),
+                if (dlg.success instanceof Function) {
+                    dlg.success(this);
+                }
+            });
+        },
 
         /**
          * Provide custom template
          */
         getTemplate: function() {
-          return template;
+            return template;
         },
 
         /**

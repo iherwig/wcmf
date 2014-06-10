@@ -90,6 +90,13 @@ define([
                     else {
                         this.pushConfirmed(url);
                     }
+                })),
+                // listen to reload (callback is called with the current request and returns a
+                // boolean, if indicating that the refresh should be executet or not
+                topic.subscribe("refresh", lang.hitch(this, function(callback) {
+                    if (callback(this.request)) {
+                        location.reload();
+                    }
                 }))
             );
         },
