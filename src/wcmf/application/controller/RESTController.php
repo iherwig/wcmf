@@ -158,7 +158,7 @@ class RESTController extends Controller {
         $response->setValue($object->getOID()->__toString(), $object);
       }
       else {
-        $response->setStatus('404 Not Found');
+        $response->setStatus(Response::STATUS_404);
       }
 
       // set the response headers
@@ -304,13 +304,13 @@ class RESTController extends Controller {
         $object = $subResponse->getValue($oidStr);
         $response->setValue($oidStr, $object);
       }
-      $response->setStatus('201 Created');
+      $response->setStatus(Response::STATUS_201);
       $this->setLocationHeaderFromOid($response->getValue('oid'));
     }
     else {
       // in case of error, return default response
       $response->setValues($subResponse->getValues());
-      $response->setStatus('400 Bad Request');
+      $response->setStatus(Response::STATUS_400);
     }
 
     return false;
@@ -366,17 +366,21 @@ class RESTController extends Controller {
         // add existing object to relation
         $request->setValue('role', $request->getValue('relation'));
         $subResponse = $this->executeSubAction('associate');
-        // and update object
-        $subResponse = $this->executeSubAction('update');
+        if ($subResponse->getStatus() == Response::STATUS_200) {
+          // and update object
+          $subResponse = $this->executeSubAction('update');
+        }
       }
 
       // add related object to subresponse similar to default update action
-      $targetOidStr = $request->getValue('targetOid');
-      $targetOid = ObjectId::parse($targetOidStr);
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $targetObj = $persistenceFacade->load($targetOid);
-      $subResponse->setValue('oid', $targetOid);
-      $subResponse->setValue($targetOidStr, $targetObj);
+      if ($subResponse->getStatus() == Response::STATUS_200) {
+        $targetOidStr = $request->getValue('targetOid');
+        $targetOid = ObjectId::parse($targetOidStr);
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $targetObj = $persistenceFacade->load($targetOid);
+        $subResponse->setValue('oid', $targetOid);
+        $subResponse->setValue($targetOidStr, $targetObj);
+      }
     }
     else {
       if ($orderReferenceOid != null) {
@@ -386,12 +390,14 @@ class RESTController extends Controller {
         $subResponse = $this->executeSubAction('moveBefore');
 
         // add sorted object to subresponse similar to default update action
-        $targetOidStr = $this->getFirstRequestOid();
-        $targetOid = ObjectId::parse($targetOidStr);
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-        $targetObj = $persistenceFacade->load($targetOid);
-        $subResponse->setValue('oid', $targetOid);
-        $subResponse->setValue($targetOidStr, $targetObj);
+        if ($subResponse->getStatus() == Response::STATUS_200) {
+          $targetOidStr = $this->getFirstRequestOid();
+          $targetOid = ObjectId::parse($targetOidStr);
+          $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+          $targetObj = $persistenceFacade->load($targetOid);
+          $subResponse->setValue('oid', $targetOid);
+          $subResponse->setValue($targetOidStr, $targetObj);
+        }
       }
       else {
         // update object
@@ -406,13 +412,13 @@ class RESTController extends Controller {
       $object = $subResponse->getValue($oidStr);
       $response->clearValues();
       $response->setValue($oidStr, $object);
-      $response->setStatus('202 Accepted');
+      $response->setStatus(Response::STATUS_202);
       $this->setLocationHeaderFromOid($response->getValue('oid'));
     }
     else {
       // in case of error, return default response
       $response->setValues($subResponse->getValues());
-      $response->setStatus('400 Bad Request');
+      $response->setStatus(Response::STATUS_400);
     }
 
     return false;
@@ -453,11 +459,11 @@ class RESTController extends Controller {
 
     if (!$subResponse->hasErrors()) {
       // set the response headers
-      $response->setStatus('204 No Content');
+      $response->setStatus(Response::STATUS_204);
     }
     else {
       // in case of error, return default response
-      $response->setStatus('400 Bad Request');
+      $response->setStatus(Response::STATUS_400);
     }
 
     return false;

@@ -70,30 +70,6 @@ class EntityBase extends EntityBaseBase {
       $this->setValue('last_editor', $authUser->getLogin());
     }
   }
-
-  /**
-   * Set the sortkey initially if existing.
-   * Invalidate cache.
-   */
-  public function afterInsert() {
-    parent::afterInsert();
-
-    // set the sortkey to the id value
-    $mapper = $this->getMapper();
-    if ($mapper->hasAttribute('sortkey')) {
-      $this->setValue('sortkey', $this->getInitialSortkey());
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $persistenceFacade->getTransaction()->commit();
-    }
-  }
-
-  /**
-   * Get the initial sortkey. The default implementation returns the db id.
-   * @note Subclasses may override this for special requirements
-   */
-  protected function getInitialSortkey() {
-    return $this->getOID()->getFirstId();
-  }
 // PROTECTED REGION END
 }
 ?>

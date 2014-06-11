@@ -188,7 +188,7 @@ input[type="color"]:disabled,
   outline: 0 none;
 }
 
-.login-page .dijitTextBox {
+.login-page .dijitTextBox, #loginForm .dijitTextBox  {
   margin: 5px;
 }
 

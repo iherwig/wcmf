@@ -351,7 +351,7 @@ class PersistentObject {
    * @return Boolean whether the item exists or not.
    */
   public function hasValue($name) {
-    return isset($this->_data[$name]);
+    return array_key_exists($name, $this->_data);
   }
 
   /**

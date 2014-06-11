@@ -54,7 +54,7 @@ define([
 
             var nodes = query('#notification');
             if (nodes.length > 0) {
-                this.node = domConstruct.create('div', {}, nodes[0], 'first');
+                this.node = domConstruct.create('div', {}, nodes[0], 'only');
             }
             else {
                 console.warn('No node with id "notification" found.');
@@ -63,7 +63,7 @@ define([
 
             var content = options.message;
             if (options.type === 'process') {
-              content += ' <i class="fa fa-spinner fa-spin"></i>';
+                content += ' <i class="fa fa-spinner fa-spin"></i>';
             }
 
             this.widget = new Notification({

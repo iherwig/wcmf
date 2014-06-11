@@ -27,8 +27,16 @@ use wcmf\lib\presentation\ControllerMessage;
  */
 class Response extends ControllerMessage {
 
+  const STATUS_200 = '200 OK';
+  const STATUS_201 = '201 Created';
+  const STATUS_202 = '202 Accepted';
+  const STATUS_204 = '204 No Content';
+  
+  const STATUS_400 = '400 Bad Request';
+  const STATUS_404 = '404 Not Found';
+
   private $_cacheId = null;
-  private $_status = '200 OK';
+  private $_status = self::STATUS_200;
 
   /**
    * Set a string value that uniquely identifies the request data

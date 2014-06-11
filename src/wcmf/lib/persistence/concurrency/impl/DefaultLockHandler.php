@@ -19,12 +19,12 @@ namespace wcmf\lib\persistence\concurrency\impl;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\concurrency\Lock;
+use wcmf\lib\persistence\concurrency\LockHandler;
+use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\persistence\concurrency\LockHandler;
-use wcmf\lib\persistence\concurrency\Lock;
-use wcmf\lib\persistence\concurrency\PessimisticLockException;
 
 /**
  * DefaultLockHandler implements the LockHandler interface for relational databases.

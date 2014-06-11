@@ -1194,7 +1194,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Set the object primary key and foreign key values for storing the object in the database.
    * @param object A reference to the object to insert.
-   * @note The object does not have the final object id set. If a new id value for a primary key column is needed
+   * @note The object does not have the final object id set. If a new id value for a primary key column is needed.
+   * @note The prepared object will be used in the application afterwards. So values that are only to be modified for
+   * the storage process should be changed in getInsertSQL() and getUpdateSQL() only!
    * for the insert statement, use RDBMapper::getNextId().
    */
   abstract protected function prepareForStorage(PersistentObject $object);

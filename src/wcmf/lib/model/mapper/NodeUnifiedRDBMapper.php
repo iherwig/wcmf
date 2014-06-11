@@ -25,7 +25,6 @@ use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\mapper\SQLConst;
 use wcmf\lib\model\Node;
-use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
@@ -71,17 +70,6 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           $nextId = $this->getNextId();
           $object->setValue($pkName, $nextId);
         }
-      }
-    }
-
-    // filter values according to type
-    $values = $this->getPersistentValues($object);
-    foreach($values as $valueName => $value) {
-      $type = $this->getAttribute($valueName)->getType();
-      // integer
-      if (strpos(strtolower($type), 'int') === 0) {
-        $value = (strlen($value) == 0) ? null : intval($value);
-        $object->setValue($valueName, $value);
       }
     }
 
@@ -157,9 +145,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           // so we take the last oid
           $poid = array_pop($oids);
           if (ObjectId::isValid($poid)) {
-            // set the foreign key to the null
+            // set the foreign key to null
             $fkAttr = $this->getAttribute($relationDesc->getFkName());
-            $object->setValue($fkAttr->getName(), SQLConst::NULL());
+            $object->setValue($fkAttr->getName(), null);
           }
         }
         elseif ($relationDesc instanceof RDBManyToManyRelationDescription) {
@@ -458,7 +446,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    */
   protected function getInsertSQL(PersistentObject $object) {
     // get the attributes to store
-    $values = $this->getPersistentValues($object);
+    $values = $this->convertValuesForStorage($this->getPersistentValues($object));
 
     // operations
     $insertOp = new InsertOperation($this->getType(), $values);
@@ -473,7 +461,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    */
   protected function getUpdateSQL(PersistentObject $object) {
     // get the attributes to store
-    $values = $this->getPersistentValues($object);
+    $values = $this->convertValuesForStorage($this->getPersistentValues($object));
 
     // primary key definition
     $pkCriteria = $this->createPKCondition($object->getOID());
@@ -667,7 +655,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * Get an associative array of attribute name-value pairs to be stored for a
    * given oject (references are not included)
    * @param object The PeristentObject.
-   * @return Array
+   * @return Associative array
    */
   protected function getPersistentValues(PersistentObject $object) {
     $values = array();
@@ -678,9 +666,31 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       if (!($curAttributeDesc instanceof ReferenceDescription)) {
         // add only attributes that are defined in the object
         $attribName = $curAttributeDesc->getName();
-        if ($object->hasValue($attribName)) {
+        //if ($object->hasValue($attribName)) {
           $values[$attribName] = $object->getValue($attribName);
-        }
+        //}
+      }
+    }
+    return $values;
+  }
+
+  /**
+   * Convert values for before storage
+   * @param values Associative Array
+   * @return Associative Array
+   */
+  protected function convertValuesForStorage($values) {
+    // filter values according to type
+    foreach($values as $valueName => $value) {
+      $type = $this->getAttribute($valueName)->getType();
+      // integer
+      if (strpos(strtolower($type), 'int') === 0) {
+        $value = (strlen($value) == 0) ? null : intval($value);
+        $values[$valueName] = $value;
+      }
+      // null values
+      if ($value == null) {
+        $values[$valueName] = SQLConst::NULL();
       }
     }
     return $values;

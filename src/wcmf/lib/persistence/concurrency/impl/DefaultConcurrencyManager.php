@@ -17,16 +17,18 @@
 namespace wcmf\lib\persistence\concurrency\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\LockHandler;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\ReferenceDescription;
 
 /**
  * Default ConcurrencyManager implementation.
@@ -131,11 +133,20 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
           throw new OptimisticLockException(null);
         }
         // check for modifications
+        $mapper = $persistenceFacade->getMapper($object->getType());
         $it = new NodeValueIterator($originalState, false);
         foreach($it as $valueName => $originalValue) {
-          $currentValue = $currentState->getValue($valueName);
-          if ($currentValue != $originalValue) {
-            throw new OptimisticLockException($currentState);
+          $attribute = $mapper->getAttribute($valueName);
+          // ignore references
+          if (!($attribute instanceof ReferenceDescription)) {
+            $currentValue = $currentState->getValue($valueName);
+            if (strval($currentValue) != strval($originalValue)) {
+              if (Log::isDebugEnabled(__CLASS__)) {
+                Log::debug("Current state is different to original state: ".$object->getOID()."-".$valueName.": current[".
+                        serialize($currentValue)."], original[".serialize($originalValue)."]", __CLASS__);
+              }
+              throw new OptimisticLockException($currentState);
+            }
           }
         }
         // if there was no concurrent update, attach the object again
