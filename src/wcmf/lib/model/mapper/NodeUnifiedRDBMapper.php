@@ -689,7 +689,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
         $values[$valueName] = $value;
       }
       // null values
-      if ($value == null) {
+      if ($value === null) {
         $values[$valueName] = SQLConst::NULL();
       }
     }
