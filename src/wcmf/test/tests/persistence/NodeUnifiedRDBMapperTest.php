@@ -210,7 +210,10 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertEquals('wcmf\lib\persistence\InsertOperation:type=wcmf.test.app.src.model.Chapter,values=(id=1,fk_chapter_id=3,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin),criteria=()', $str);
+    $this->assertEquals('wcmf\lib\persistence\InsertOperation:type=wcmf.test.app.src.model.Chapter,values='
+            . '(id=1,fk_chapter_id=3,fk_book_id=NULL,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin,'
+            . 'modified=NULL,last_editor=NULL,sortkey_author=NULL,sortkey_book=NULL,sortkey_parentchapter=NULL,sortkey=NULL),'
+            . 'criteria=()', $str);
   }
 
   public function testUpdateSQL() {
@@ -233,7 +236,10 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     $op = $operations[0];
     $str = $op->__toString();
-    $this->assertEquals('wcmf\lib\persistence\UpdateOperation:type=wcmf.test.app.src.model.Chapter,values=(id=1,fk_chapter_id=3,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin),criteria=([AND] wcmf.test.app.src.model.Chapter.id = 1)', $str);
+    $this->assertEquals('wcmf\lib\persistence\UpdateOperation:type=wcmf.test.app.src.model.Chapter,values='
+            . '(id=1,fk_chapter_id=3,fk_book_id=NULL,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin,'
+            . 'modified=NULL,last_editor=NULL,sortkey_author=NULL,sortkey_book=NULL,sortkey_parentchapter=NULL,sortkey=NULL),'
+            . 'criteria=([AND] wcmf.test.app.src.model.Chapter.id = 1)', $str);
   }
 
   public function testDeleteSQL() {
