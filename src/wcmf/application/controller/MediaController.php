@@ -22,6 +22,9 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
 
+use FM\ElFinderPHP\ElFinder;
+use FM\ElFinderPHP\Connector\ElFinderConnector;
+
 /**
  * MediaController integrates elFinder (http://elrte.org/elfinder)
  * into wCMF.
@@ -85,7 +88,7 @@ class MediaController extends Controller {
       );
 
       // run elFinder
-      $connector = new \elFinderConnector(new \elFinder($opts));
+      $connector = new ElFinderConnector(new ElFinder($opts));
       $connector->run();
 
       // unreachable, since elFinder calls exit()
