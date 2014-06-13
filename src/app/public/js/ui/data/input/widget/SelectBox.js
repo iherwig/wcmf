@@ -54,6 +54,8 @@ function(
             this.helpText = Dict.translate(this.attribute.description);
 
             this.store = ControlFactory.getListStore(this.attribute.inputType);
+            // add empty value for select boxes
+            this.store.setAddEmpty(true);
 
             aspect.before(this, "_startSearch", function(text) {
                 // create spinner

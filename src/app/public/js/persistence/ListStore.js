@@ -26,6 +26,8 @@ define([
         data: null,
         index: null,
 
+        addEmpty: false,
+
         constructor: function(options) {
             declare.safeMixin(this, options);
 
@@ -37,6 +39,10 @@ define([
 
             // set target for xhr requests
             this.target = appConfig.pathPrefix+"/list/"+this.language+"/"+base64.encode(b)+"/";
+        },
+
+        setAddEmpty: function(addEmpty) {
+            this.addEmpty = addEmpty;
         },
 
         get: function(id) {
@@ -75,6 +81,12 @@ define([
                     }
                 }).then(lang.hitch(this, function(data) {
                     this.data = data ? data.list : {};
+                    if (this.addEmpty) {
+                        this.data.unshift({
+                            displayText: "",
+                            oid: ""
+                        });
+                    }
                     this.index = {};
                     for (var i=0, l=this.data.length; i<l; i++) {
                         this.index[this.data[i][this.idProperty]] = i;
