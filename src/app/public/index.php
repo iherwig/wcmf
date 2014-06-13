@@ -1,8 +1,8 @@
 <?php
 error_reporting(E_ALL | E_PARSE);
 
-require_once("base_dir.php");
-require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+define('WCMF_BASE', realpath(dirname(__FILE__).'/../..').'/');
+require_once(WCMF_BASE."/vendor/autoload.php");
 
 use \Exception;
 use wcmf\lib\config\ConfigurationException;
@@ -121,13 +121,13 @@ catch (Exception $ex) {
               { name: 'dojo', location: 'vendor/dojo/dojo' },
               { name: 'dijit', location: 'vendor/dojo/dijit' },
               { name: 'dojox', location: 'vendor/dojo/dojox' },
-              { name: 'routed', location: 'vendor/routed' },
-              { name: 'dojomat', location: 'vendor/dojomat' },
-              { name: 'dgrid', location: 'vendor/dgrid' },
-              { name: 'xstyle', location: 'vendor/xstyle' },
-              { name: 'put-selector', location: 'vendor/put-selector' },
-              { name: 'ckeditor', location: 'vendor/ckeditor' },
-              { name: 'elfinder', location: 'vendor/elfinder' },
+              { name: 'routed', location: 'vendor/sirprize/routed' },
+              { name: 'dojomat', location: 'vendor/sirprize/dojomat' },
+              { name: 'dgrid', location: 'vendor/sitepen/dgrid' },
+              { name: 'xstyle', location: 'vendor/kriszyp/xstyle' },
+              { name: 'put-selector', location: 'vendor/kriszyp/put-selector' },
+              { name: 'ckeditor', location: 'vendor/ckeditor/ckeditor' },
+              { name: 'elfinder', location: 'vendor/studio-42/elfinder' },
 
               { name: 'app', location: '.' }
           ],

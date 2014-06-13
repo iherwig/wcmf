@@ -1,0 +1,17 @@
+{
+    "name": "wcmf/asset-installer",
+    "version": "0.1.0",
+    "description": "Composer asset installer for the wCMF web application framework",
+    "type": "composer-plugin",
+    "autoload": {
+        "psr-0": {
+            "wcmf\\Composer": "src/"
+        }
+    },
+    "extra": {
+        "class": "wcmf\\Composer\\AssetInstallerPlugin"
+    },
+    "require": {
+        "composer-plugin-api": "1.0.0"
+    }
+}

@@ -1,11 +1,11 @@
-@import url('../vendor/twitter-bootstrap/css/bootstrap.css');
-@import url('../vendor/twitter-bootstrap/css/bootstrap-responsive.css');
-@import url('../vendor/dbootstrap/theme/dbootstrap/dbootstrap.css');
-@import url('../vendor/font-awesome/css/font-awesome.css');
-@import url('../vendor/dgrid/css/dgrid.css');
+@import url('../vendor/twbs/bootstrap/css/bootstrap.css');
+@import url('../vendor/twbs/bootstrap/css/bootstrap-responsive.css');
+@import url('../vendor/thesociable/dbootstrap/theme/dbootstrap/dbootstrap.css');
+@import url('../vendor/fortawesome/font-awesome/css/font-awesome.css');
+@import url('../vendor/sitepen/dgrid/css/dgrid.css');
 @import url('../vendor/dojo/dojo/resources/dnd.css');
-@import url('../vendor/dgrid/css/extensions/ColumnHider.css');
-@import url('../vendor/dgrid/css/extensions/ColumnResizer.css');
+@import url('../vendor/sitepen/dgrid/css/extensions/ColumnHider.css');
+@import url('../vendor/sitepen/dgrid/css/extensions/ColumnResizer.css');
 
 .clearfix:before,
 .clearfix:after {

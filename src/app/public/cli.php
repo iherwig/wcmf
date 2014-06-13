@@ -27,10 +27,10 @@
  * - request A serialized and base64 encoded Request instance
  * - sid A session id [optional]
  */
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(E_ALL | E_PARSE);
 
-require_once("base_dir.php");
-require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+define('WCMF_BASE', realpath(dirname(__FILE__).'/../..').'/');
+require_once(WCMF_BASE."/vendor/autoload.php");
 
 use wcmf\lib\core\Log;
 use wcmf\lib\presentation\Application;
