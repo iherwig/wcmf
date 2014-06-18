@@ -3,21 +3,14 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2014 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses
- * at your choice:
+ * Licensed under the terms of the MIT License.
  *
- * - GNU Lesser General Public License (LGPL)
- *   http://www.gnu.org/licenses/lgpl.html
- * - Eclipse Public License (EPL)
- *   http://www.eclipse.org/org/documents/epl-v10.php
- *
- * See the license.txt file distributed with this work for
+ * See the LICENSE file distributed with this work for
  * additional information.
  */
 namespace wcmf\lib\search\impl;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;

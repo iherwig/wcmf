@@ -3,15 +3,9 @@
  * wCMF - wemove Content Management Framework
  * Copyright (C) 2005-2014 wemove digital solutions GmbH
  *
- * Licensed under the terms of any of the following licenses
- * at your choice:
+ * Licensed under the terms of the MIT License.
  *
- * - GNU Lesser General Public License (LGPL)
- *   http://www.gnu.org/licenses/lgpl.html
- * - Eclipse Public License (EPL)
- *   http://www.eclipse.org/org/documents/epl-v10.php
- *
- * See the license.txt file distributed with this work for
+ * See the LICENSE file distributed with this work for
  * additional information.
  */
 namespace wcmf\lib\presentation;
@@ -31,7 +25,7 @@ class Response extends ControllerMessage {
   const STATUS_201 = '201 Created';
   const STATUS_202 = '202 Accepted';
   const STATUS_204 = '204 No Content';
-  
+
   const STATUS_400 = '400 Bad Request';
   const STATUS_404 = '404 Not Found';
 
