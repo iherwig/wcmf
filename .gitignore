@@ -1,12 +1,6 @@
 *.log
 log.txt
 docs/api-gen
-src/app/cache
-src/app/log
-src/app/searchIndex
-src/app/release
-src/app/public/media
-dist
 dist-wcmf
 vendor
 /composer.lock
