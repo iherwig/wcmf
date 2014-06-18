@@ -8,11 +8,11 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-error_reporting(E_ALL);
+error_reporting(E_ALL | E_PARSE);
 $startTime = microtime(true);
 
-require_once("base_dir.php");
-require_once(WCMF_BASE."wcmf/lib/core/ClassLoader.php");
+define('WCMF_BASE', realpath(dirname(__FILE__).'/../..').'/');
+require_once(WCMF_BASE."/vendor/autoload.php");
 
 use \Exception;
 use wcmf\lib\core\Log;

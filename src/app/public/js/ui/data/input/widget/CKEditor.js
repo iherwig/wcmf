@@ -1,4 +1,4 @@
-CKEDITOR_BASEPATH = appConfig.pathPrefix+'/vendor/ckeditor/';
+var CKEDITOR_BASEPATH = appConfig.pathPrefix+'/vendor/ckeditor/ckeditor/';
 
 define( [
     "dojo/_base/declare",
