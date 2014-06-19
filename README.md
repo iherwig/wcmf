@@ -24,4 +24,4 @@ Features
 - SOAP and REST interface supporting CRUD operations on all objects
 - Code generator for model driven development (OpenArchitectureWare)
 - Also available:
-  - Dojo driven default application for content management
+  - Modern Dojo based [default application](https://github.com/iherwig/wcmf-default-app) for content management
