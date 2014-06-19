@@ -1,6 +1,14 @@
 {
     "name": "wcmf/wcmf",
+    "type": "library",
     "description": "The wCMF web application framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ingo Herwig",
+            "email": "ingo@wemove.com"
+        }
+    ],
     "repositories": [
         {
             "type": "package",
