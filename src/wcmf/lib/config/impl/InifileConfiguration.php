@@ -207,12 +207,27 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $value = $this->getValue($key, $section);
     if (is_array($value)) {
       $result = array();
-      foreach ($value as $dir) {
-        $result[] = FileUtil::realpath(WCMF_BASE.$dir).'/';
+      foreach ($value as $path) {
+        $absPath = WCMF_BASE.$path;
+        if (is_dir($path)) {
+          $result[] = FileUtil::realpath($absPath).'/';
+        }
+        else {
+          $result[] = FileUtil::realpath(dirname($absPath)).'/'.basename($absPath);
+        }
       }
       return $result;
     }
-    return FileUtil::realpath(WCMF_BASE.$value).'/';
+    else {
+      $absPath = WCMF_BASE.$value;
+      if (is_dir($path)) {
+        $result = FileUtil::realpath($absPath).'/';
+      }
+      else {
+        $result = FileUtil::realpath(dirname($absPath)).'/'.basename($absPath);
+      }
+      return $result;
+    }
   }
 
   /**
