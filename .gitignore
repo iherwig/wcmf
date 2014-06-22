@@ -2,5 +2,6 @@
 log.txt
 docs/api-gen
 dist-wcmf
+src/app
 vendor
 /composer.lock

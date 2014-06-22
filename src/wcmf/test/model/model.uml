@@ -205,14 +205,14 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_VoSJgLRAEeOQ5oJFa1i8cg" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_aa2goLRAEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_aa3HsLRAEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_aa5j8LRAEeOQ5oJFa1i8cg" value="app\src\model\wcmf\User"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_aa5j8LRAEeOQ5oJFa1i8cg" value="wcmf\test\app\src\model\wcmf\User"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_ezSggLRAEeOQ5oJFa1i8cg" name="Role">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_iFZxgLRAEeOQ5oJFa1i8cg" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nKrCMLRAEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nKrpQLRAEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nKs3YLRAEeOQ5oJFa1i8cg" value="app\src\model\wcmf\Role"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_nKs3YLRAEeOQ5oJFa1i8cg" value="wcmf\test\app\src\model\wcmf\Role"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_vGJrALRAEeOQ5oJFa1i8cg" name="AuthUser">

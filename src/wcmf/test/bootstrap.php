@@ -1,6 +1,6 @@
 <?php
 define('WCMF_BASE', realpath(dirname(__FILE__).'/../..').'/');
-require_once(dirname(dirname(WCMF_BASE))."/wcmf/vendor/autoload.php");
+require_once(dirname(WCMF_BASE)."/vendor/autoload.php");
 
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ClassLoader;

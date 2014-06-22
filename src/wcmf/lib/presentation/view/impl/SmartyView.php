@@ -37,10 +37,9 @@ class SmartyView implements View {
     $this->_view->error_reporting = E_ALL;
 
     // set plugins directories
-    $this->_view->setPluginsDir(array(
-      WCMF_BASE.'wcmf/vendor/smarty/libs/plugins/',
-      WCMF_BASE.'wcmf/application/views/plugins/'
-    ));
+    $this->_view->addPluginsDir(
+      dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/application/views/plugins/'
+    );
 
     // load filter
     $this->_view->loadFilter('pre', 'removeprids');
