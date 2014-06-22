@@ -83,6 +83,7 @@ class NodeIterator implements \Iterator {
     // collect navigable children for the given aggregation kinds
     $childrenArray = array();
     $mapper = $this->_currentNode->getMapper();
+    if ($mapper) {
     $relations = $mapper->getRelations('child');
     $followAll = sizeof($this->_aggregationKinds) == 0;
     foreach ($relations as $relation) {
@@ -96,6 +97,10 @@ class NodeIterator implements \Iterator {
           }
         }
       }
+      }
+    }
+    else {
+      $childrenArray = $this->_currentNode->getChildren();
     }
     $this->addToQueue($childrenArray);
 

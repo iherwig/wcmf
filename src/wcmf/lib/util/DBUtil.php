@@ -151,7 +151,6 @@ class DBUtil {
           if (!$result) {
             throw new PersistenceException("Couldn't create table: ".mysql_error());
           }
-          mysql_free_result($result);
 
           // insert data
           $sqlStatement = "INSERT INTO ".$destName.".".$row[0]." SELECT * FROM ".$srcName.".".$row[0];
@@ -160,7 +159,6 @@ class DBUtil {
           if (!$result) {
             throw new PersistenceException("Couldn't copy data: ".mysql_error());
           }
-          mysql_free_result($result);
         }
         mysql_free_result($tables);
         mysql_close($dbConnect);
@@ -192,7 +190,6 @@ class DBUtil {
       if ($result) {
         $created = true;
       }
-      mysql_free_result($result);
       mysql_close($dbConnect);
       if (!$created) {
 	    throw new PersistenceException("Couldn't create database: ".mysql_error());

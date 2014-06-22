@@ -10,7 +10,9 @@
  */
 namespace wcmf\lib\model\output;
 
+use wcmf\lib\model\output\Position;
 use wcmf\lib\persistence\output\OutputStrategy;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
  * ImageOutputStrategy outputs a tree of objects into an image file. It must be configured

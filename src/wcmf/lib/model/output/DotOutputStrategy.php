@@ -12,6 +12,7 @@ namespace wcmf\lib\model\output;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\persistence\output\OutputStrategy;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
  * DotOutputStrategy outputs an object's content in a dot file.
@@ -22,12 +23,14 @@ use wcmf\lib\persistence\output\OutputStrategy;
 class DotOutputStrategy implements OutputStrategy {
 
   private $DEFAULT_NODE_STYLE = 'height=0.1,width=1,shape=box,style=filled,color="#49B4CF",fillcolor="#49B4CF",fontcolor=white,fontsize=14,fontname="Helvetica-Bold"';
-  private $DEFAULT_EDGE_STYLE = 'arrowhead=none,arrowtail=none,color="#49B4CF"';
+  private $DEFAULT_EDGE_STYLE = 'color="#49B4CF"';
 
   private $_file = '';
   private $_fp = 0;
   private $_fileOk = false; // indicates if we can write to the file
   private $_nodeIndex = 0;
+  private $_nodeIndexMap = array();
+  private $_writtenNodes = array();
 
   private $_nodeStyle = '';
   private $_edgeStyle = '';
@@ -99,25 +102,45 @@ class DotOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    if (!$obj->getProperty('nodeIndex')) {
-      $obj->setProperty('nodeIndex', $this->getNextIndex());
+    if ($this->isWritten($obj)) {
+      return;
     }
     if ($this->_fileOk) {
-      fputs($this->_fp, '  n'.$obj->getProperty('nodeIndex').' [label="'.$obj->getOID().'"]'."\n");
-      $children = $obj->getChildren();
+      fputs($this->_fp, '  n'.$this->getIndex($obj).' [label="'.$obj->getDisplayValue().'"]'."\n");
+      $children = $obj->getChildren(false);
       for($i=0; $i<sizeOf($children); $i++) {
-        if (!$children[$i]->getProperty('nodeIndex')) {
-          $children[$i]->setProperty('nodeIndex', $this->getNextIndex());
-        }
-        fputs($this->_fp, '  n'.$obj->getProperty('nodeIndex').' -> n'.$children[$i]->getProperty('nodeIndex')."\n");
+        fputs($this->_fp, '  n'.$this->getIndex($obj).' -> n'.$this->getIndex($children[$i])."\n");
       }
       fputs($this->_fp, "\n");
     }
+    $oidStr = $obj->getOID()->__toString();
+    $this->_writtenNodes[$oidStr] = true;
   }
 
   /**
-   * Get the next Node index.
-   * @return The next Node index.
+   * Check if a node is written.
+   * @return Boolean
+   */
+  private function isWritten($node) {
+    $oidStr = $node->getOID()->__toString();
+    return (isset($this->_writtenNodes[$oidStr]));
+  }
+
+  /**
+   * Get the node index.
+   * @return Number
+   */
+  private function getIndex($node) {
+    $oidStr = $node->getOID()->__toString();
+    if (!isset($this->_nodeIndexMap[$oidStr])) {
+      $this->_nodeIndexMap[$oidStr] = $this->getNextIndex();
+    }
+    return $this->_nodeIndexMap[$oidStr];
+  }
+
+  /**
+   * Get the next node index.
+   * @return Number
    */
   private function getNextIndex() {
     return $this->_nodeIndex++;

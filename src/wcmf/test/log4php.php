@@ -19,8 +19,7 @@ return array(
         )
       ),
       'params' => array(
-        'file' => 'log.txt',
-        'datePattern' => 'Y-m-d'
+        'file' => 'log.txt'
       )
     ),
     'echo' => array(

@@ -92,14 +92,26 @@ interface Configuration {
   public function getBooleanValue($key, $section);
 
   /**
-   * Get a value from the configuration as directory.
-   * The value will interpreted as path relative to WCMF_BASE.
+   * Get a directory value from the configuration.
+   * The value will interpreted as directory relative to WCMF_BASE and
+   * returned as absolute path.
    * @param key The name of the entry.
    * @param section The section the key belongs to.
-   * @return String.
+   * @return The configuration value.
    * @throws ConfigurationException if the value does not exist
    */
   public function getDirectoryValue($key, $section);
+
+  /**
+   * Get a file value from the configuration.
+   * The value will interpreted as file relative to WCMF_BASE and
+   * returned as absolute path.
+   * @param key The name of the entry.
+   * @param section The section the key belongs to.
+   * @return The configuration value.
+   * @throws ConfigurationException if the value does not exist
+   */
+  public function getFileValue($key, $section);
 
   /**
    * Get a configuration key.

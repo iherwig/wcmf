@@ -24,13 +24,11 @@ use wcmf\lib\persistence\PersistentObject;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullNode extends Node
-{
+class NullNode extends Node {
   /**
    * @see PersistentObject::getOID()
    */
-  function getOID()
-  {
+  function getOID() {
     return new ObjectId($this->_type, NULL);
   }
 }

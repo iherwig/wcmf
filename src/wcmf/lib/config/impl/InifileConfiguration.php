@@ -205,29 +205,33 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   public function getDirectoryValue($key, $section) {
     $value = $this->getValue($key, $section);
-    if (is_array($value)) {
+    $isArray = is_array($value);
+    $values = !$isArray ? array($value) : $value;
+
       $result = array();
-      foreach ($value as $path) {
+    foreach ($values as $path) {
         $absPath = WCMF_BASE.$path;
-        if (is_dir($path)) {
           $result[] = FileUtil::realpath($absPath).'/';
         }
-        else {
-          $result[] = FileUtil::realpath(dirname($absPath)).'/'.basename($absPath);
-        }
+
+    return $isArray ? $result : (sizeof($result) > 0 ? $result[0] : null);
       }
-      return $result;
+
+  /**
+   * @see Configuration::getFileValue()
+   */
+  public function getFileValue($key, $section) {
+    $value = $this->getValue($key, $section);
+    $isArray = is_array($value);
+    $values = !$isArray ? array($value) : $value;
+
+    $result = array();
+    foreach ($values as $path) {
+      $absPath = WCMF_BASE.$path;
+      $result[] = FileUtil::realpath(dirname($absPath)).'/'.basename($absPath);
     }
-    else {
-      $absPath = WCMF_BASE.$value;
-      if (is_dir($path)) {
-        $result = FileUtil::realpath($absPath).'/';
-      }
-      else {
-        $result = FileUtil::realpath(dirname($absPath)).'/'.basename($absPath);
-      }
-      return $result;
-    }
+
+    return $isArray ? $result : (sizeof($result) > 0 ? $result[0] : null);
   }
 
   /**
