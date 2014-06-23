@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\presentation;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ControllerMessage;
 use wcmf\lib\presentation\format\Format;
 
@@ -42,9 +43,42 @@ class Request extends ControllerMessage {
    * @param controller The controller to call if none is given in request parameters, optional
    * @param context The context to set if none is given in request parameters, optional
    * @param action The action to perform if none is given in request parameters, optional
+   * @return Request
    */
   public static function getDefault($controller=null, $context=null, $action=null) {
-    // collect all request data
+
+    // get base request data from request path
+    $basePath = dirname($_SERVER['SCRIPT_NAME']);
+    $requestPath = str_replace($basePath, '', preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']));
+    $config = ObjectFactory::getConfigurationInstance();
+
+    $baseRequestValues = array();
+    if ($config->hasSection('routes')) {
+      $routes = $config->getSection('routes');
+      foreach ($routes as $pattern => $requestDef) {
+        $defaultPattern = '([^/]+)';
+        $params = array();
+        $pattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match) use($defaultPattern, &$params) {
+          // TODO replace defaultPattern by restriction from config, if defined
+          $params[] = $match[1];
+          return $defaultPattern;
+        }, $pattern);
+        $pattern = '/^'.str_replace('/', '\/', $pattern).'\/?$/';
+
+        $matches = array();
+        if (preg_match($pattern, $requestPath, $matches)) {
+          // set parameters from request definition
+          parse_str($requestDef, $baseRequestValues);
+          // set parameters from request path
+          for ($i=0, $count=sizeof($params); $i<$count; $i++) {
+            $baseRequestValues[$params[$i]] = isset($matches[$i+1]) ? $matches[$i+1] : null;
+          }
+          break;
+        }
+      }
+    }
+
+    // get additional request data from parameters
     $requestValues = array_merge($_GET, $_POST, $_FILES);
     $rawPostBody = file_get_contents('php://input');
     // add the raw post data if they are json encoded
@@ -56,16 +90,21 @@ class Request extends ControllerMessage {
     }
 
     // get controller/context/action triple
-    $controller = isset($requestValues['controller']) ? filter_var($requestValues['controller'],
-            FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) : $controller;
-    $context = isset($requestValues['context']) ? filter_var($requestValues['context'],
-            FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) : $context;
-    $action = isset($requestValues['action']) ? filter_var($requestValues['action'],
-            FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) : $action;
+    $controller = isset($requestValues['controller']) ?
+            filter_var($requestValues['controller'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($baseRequestValues['controller']) ? $baseRequestValues['controller'] : $controller);
+
+    $context = isset($requestValues['context']) ?
+            filter_var($requestValues['context'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($baseRequestValues['context']) ? $baseRequestValues['context'] : $context);
+
+    $action = isset($requestValues['action']) ?
+            filter_var($requestValues['action'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($baseRequestValues['action']) ? $baseRequestValues['action'] : $action);
 
     // setup request
     $request = new Request($controller, $context, $action);
-    $request->setValues($requestValues);
+    $request->setValues(array_merge($baseRequestValues, $requestValues));
 
     return $request;
   }
