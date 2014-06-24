@@ -38,8 +38,20 @@ class Request extends ControllerMessage {
   }
 
   /**
-   * Get the default request containing all data from $_GET, $_POST, $_FILES
-   * and php://input (raw data from the request body)
+   * Get the default request.
+   *
+   * The method tries to match the current request path against the routes
+   * defined in the configuration section 'routes' and constructs the request based on
+   * these parameters. It then adds all data contained in $_GET, $_POST, $_FILES and
+   * php://input (raw data from the request body).
+   *
+   * Examples for route definitions are:
+   * @code
+   * / = action=cms
+   * /rest/{language}/{className} = action=restAction&collection=1
+   * /rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
+   * @endcode
+   *
    * @param controller The controller to call if none is given in request parameters, optional
    * @param context The context to set if none is given in request parameters, optional
    * @param action The action to perform if none is given in request parameters, optional
@@ -53,18 +65,26 @@ class Request extends ControllerMessage {
     $config = ObjectFactory::getConfigurationInstance();
 
     $baseRequestValues = array();
+    $defaultValuePattern = '([^/]+)';
     if ($config->hasSection('routes')) {
       $routes = $config->getSection('routes');
       foreach ($routes as $pattern => $requestDef) {
-        $defaultPattern = '([^/]+)';
+
+        // prepare route match pattern and extract parameters
         $params = array();
-        $pattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match) use($defaultPattern, &$params) {
-          // TODO replace defaultPattern by restriction from config, if defined
-          $params[] = $match[1];
-          return $defaultPattern;
+        $pattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match) use($defaultValuePattern, &$params) {
+          // a variabel may be either defined by {name} or by {name|pattern} where
+          // name is the variable's name and pattern is an optional regex pattern, the
+          // values should match
+          $paramParts = explode('|', $match[1]);
+          // add the variable name to the parameter list
+          $params[] = $paramParts[0];
+          // return the value match pattern (defaults to defaultValuePattern)
+          return sizeof($paramParts) > 1 ? '('.$paramParts[1].')' : $defaultValuePattern;
         }, $pattern);
         $pattern = '/^'.str_replace('/', '\/', $pattern).'\/?$/';
 
+        // try to match the currrent request path
         $matches = array();
         if (preg_match($pattern, $requestPath, $matches)) {
           // set parameters from request definition
