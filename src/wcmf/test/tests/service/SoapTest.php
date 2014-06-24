@@ -22,7 +22,7 @@ use wcmf\lib\service\SoapClient;
  */
 class SoapTest extends DatabaseTestCase {
 
-  const ENDPOINT = "http://localhost/wcmf/src/wcmf/test/app/public/soap.php";
+  const ENDPOINT = "http://localhost/wcmf/src/app/public/soap";
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
@@ -71,7 +71,7 @@ class SoapTest extends DatabaseTestCase {
     $list = $result->list;
     $this->assertEquals(1, $result->totalCount);
     $this->assertEquals(1, sizeof($list));
-    $this->assertEquals('wcmf.test.app.src.model.Author:202', $list[0]->oid);
+    $this->assertEquals('app.src.model.Author:202', $list[0]->oid);
     $this->assertEquals('Test Author', $list[0]->name);
   }
 
@@ -79,18 +79,18 @@ class SoapTest extends DatabaseTestCase {
     $options = array('trace' => 1, 'exceptions' => 0);
     $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
 
-    $params = array('oid' => 'wcmf.test.app.src.model.Author:202', 'depth' => 1);
+    $params = array('oid' => 'app.src.model.Author:202', 'depth' => 1);
     $result = $client->call("readAuthor", $params);
 
     $this->assertFalse($result instanceof \SoapFault);
-    $this->assertEquals('wcmf.test.app.src.model.Author:202', $result->oid);
+    $this->assertEquals('app.src.model.Author:202', $result->oid);
     $this->assertEquals('Test Author', $result->name);
 
     $publisherList = $result->Publisher;
     $this->assertEquals(1, sizeof($publisherList));
 
     $publisher = $publisherList[0];
-    $this->assertEquals('wcmf.test.app.src.model.Publisher:200', $publisher->oid);
+    $this->assertEquals('app.src.model.Publisher:200', $publisher->oid);
     $this->assertEquals('Test Publisher', $publisher->name);
   }
 
@@ -99,7 +99,7 @@ class SoapTest extends DatabaseTestCase {
     $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
-    $author->oid = 'wcmf.test.app.src.model.Author:202';
+    $author->oid = 'app.src.model.Author:202';
     $author->id = 202;
     $author->name = 'Test Author Modified';
     $author->created = '';
@@ -113,7 +113,7 @@ class SoapTest extends DatabaseTestCase {
     $result = $client->call("updateAuthor", $params);
     $this->assertFalse($result instanceof \SoapFault);
 
-    $this->assertEquals('wcmf.test.app.src.model.Author:202', $result->oid);
+    $this->assertEquals('app.src.model.Author:202', $result->oid);
     $this->assertEquals('Test Author Modified', $result->name);
 
     // test read updated object
@@ -131,7 +131,7 @@ class SoapTest extends DatabaseTestCase {
     $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
-    $author->oid = 'wcmf.test.app.src.model.Author:wcmfa3934eb734bd3ebfbd674da8d6bcd7c9';
+    $author->oid = 'app.src.model.Author:wcmfa3934eb734bd3ebfbd674da8d6bcd7c9';
     $author->id = '';
     $author->name = 'Test Author New';
     $author->created = '';
@@ -161,11 +161,11 @@ class SoapTest extends DatabaseTestCase {
     $options = array('trace' => 1, 'exceptions' => 0);
     $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
 
-    $params = array('oid' => 'wcmf.test.app.src.model.Author:202');
+    $params = array('oid' => 'app.src.model.Author:202');
     $result = $client->call("deleteAuthor", $params);
     $this->assertFalse($result instanceof \SoapFault);
 
-    $this->assertEquals('wcmf.test.app.src.model.Author:202', $result);
+    $this->assertEquals('app.src.model.Author:202', $result);
 
     // test read deleted object
     $oid = $result;

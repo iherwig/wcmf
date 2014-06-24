@@ -3,8 +3,7 @@ log.txt
 docs/api-gen
 dist-wcmf
 src/app
-src/wcmf/test/app/cache
-src/wcmf/test/app/searchIndex
+src/install
 src/wcmf/test/model/model-transformed
 vendor
 /composer.lock

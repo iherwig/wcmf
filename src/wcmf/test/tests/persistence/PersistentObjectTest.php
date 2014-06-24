@@ -10,7 +10,7 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\test\app\src\model\Chapter;
+use app\src\model\Chapter;
 
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
@@ -54,7 +54,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter21->setValue('name', 'Chapter 2');
     $chapter1->setValue('created', '2011-05-31');
     $chapter1->copyValues($chapter21, false);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:23', $chapter21->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:23', $chapter21->getOID()->__toString());
     $this->assertEquals('Chapter 1', $chapter21->getValue('name'));
     $this->assertEquals('2011-05-31', $chapter21->getValue('created'));
 
@@ -63,7 +63,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter22->setValue('name', 'Chapter 2');
     $chapter1->setValue('created', '2011-05-31');
     $chapter1->copyValues($chapter22, true);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:12', $chapter22->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:12', $chapter22->getOID()->__toString());
     $this->assertEquals('Chapter 1', $chapter22->getValue('name'));
     $this->assertEquals('2011-05-31', $chapter22->getValue('created'));
 
@@ -81,7 +81,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter2->setValue('name', 'Chapter 2');
     $chapter1->setValue('created', null);
     $chapter2->mergeValues($chapter1);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:23', $chapter2->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:23', $chapter2->getOID()->__toString());
     $this->assertEquals('Chapter 2', $chapter2->getValue('name'));
     $this->assertEquals(null, $chapter2->getValue('created'));
     $this->assertEquals('admin', $chapter2->getValue('creator'));
@@ -96,7 +96,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter1->setValue('created', '2011-05-31');
 
     $chapter1->clearValues();
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:12', $chapter1->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:12', $chapter1->getOID()->__toString());
     $this->assertEquals(null, $chapter1->getValue('name'));
     $this->assertEquals(null, $chapter1->getValue('created'));
 

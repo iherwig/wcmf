@@ -10,7 +10,7 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\test\app\src\model\wcmf\Role;
+use app\src\model\wcmf\Role;
 
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
@@ -51,7 +51,7 @@ class ManyToManyTest extends DatabaseTestCase {
 
     $userMapper = $persistenceFacade->getMapper('User');
     $relationDescription = $userMapper->getRelation('Role');
-    $this->assertEquals('wcmf.test.app.src.model.wcmf.Role', $relationDescription->getOtherType(), "The type is Role");
+    $this->assertEquals('app.src.model.wcmf.Role', $relationDescription->getOtherType(), "The type is Role");
     $this->assertEquals('Role', $relationDescription->getOtherRole(), "The role is Role");
     $this->assertEquals('0', $relationDescription->getOtherMinMultiplicity(), "The minimum multiplicity is 0");
     $this->assertEquals('none', $relationDescription->getOtherAggregationKind(), "The aggregation kind is none");

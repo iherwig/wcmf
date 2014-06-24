@@ -159,7 +159,7 @@ class ObjectQueryTest extends BaseTestCase {
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Locktable`.`id`, `Locktable`.`fk_user_id`, `Locktable`.`objectid`, `Locktable`.`sessionid`, ".
-      "`Locktable`.`since` FROM `Locktable` WHERE (`Locktable`.`objectid` = 'wcmf.test.app.src.model.wcmf.User:2' AND ".
+      "`Locktable`.`since` FROM `Locktable` WHERE (`Locktable`.`objectid` = 'app.src.model.wcmf.User:2' AND ".
       "`Locktable`.`sessionid` = '7pkt0i3ojm67s9qb66dih5nd60')";
     $this->assertEquals($expected, str_replace("\n", "", $sql));
 

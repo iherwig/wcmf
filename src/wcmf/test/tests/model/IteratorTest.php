@@ -31,33 +31,33 @@ class IteratorTest extends DatabaseTestCase {
   private $_bookOid = 'Book:203';
 
   private $_expectedResultsAuthor = array(
-    array("wcmf.test.app.src.model.Author:202", 0),
-    array("wcmf.test.app.src.model.Chapter:303", 1),
-    array("wcmf.test.app.src.model.Chapter:300", 2),
-    array("wcmf.test.app.src.model.Chapter:302", 3),
-    array("wcmf.test.app.src.model.Image:305", 3),
-    array("wcmf.test.app.src.model.Image:306", 3),
-    array("wcmf.test.app.src.model.Publisher:200", 1),
-    array("wcmf.test.app.src.model.Book:203", 2),
+    array("app.src.model.Author:202", 0),
+    array("app.src.model.Chapter:303", 1),
+    array("app.src.model.Chapter:300", 2),
+    array("app.src.model.Chapter:302", 3),
+    array("app.src.model.Image:305", 3),
+    array("app.src.model.Image:306", 3),
+    array("app.src.model.Publisher:200", 1),
+    array("app.src.model.Book:203", 2),
   );
 
   private $_expectedResultsPublisher = array(
-    array("wcmf.test.app.src.model.Publisher:200", 0),
-    array("wcmf.test.app.src.model.Book:203", 1),
-    array("wcmf.test.app.src.model.Chapter:300", 2),
-    array("wcmf.test.app.src.model.Chapter:302", 3),
-    array("wcmf.test.app.src.model.Image:305", 3),
-    array("wcmf.test.app.src.model.Image:306", 3),
-    array("wcmf.test.app.src.model.Author:202", 1),
-    array("wcmf.test.app.src.model.Chapter:303", 2),
+    array("app.src.model.Publisher:200", 0),
+    array("app.src.model.Book:203", 1),
+    array("app.src.model.Chapter:300", 2),
+    array("app.src.model.Chapter:302", 3),
+    array("app.src.model.Image:305", 3),
+    array("app.src.model.Image:306", 3),
+    array("app.src.model.Author:202", 1),
+    array("app.src.model.Chapter:303", 2),
   );
 
   private $_expectedResultsBook = array(
-    array("wcmf.test.app.src.model.Book:203", 0),
-    array("wcmf.test.app.src.model.Chapter:300", 1),
-    array("wcmf.test.app.src.model.Chapter:302", 2),
-    array("wcmf.test.app.src.model.Image:305", 2),
-    array("wcmf.test.app.src.model.Image:306", 2),
+    array("app.src.model.Book:203", 0),
+    array("app.src.model.Chapter:300", 1),
+    array("app.src.model.Chapter:302", 2),
+    array("app.src.model.Image:305", 2),
+    array("app.src.model.Image:306", 2),
   );
 
   protected function getDataSet() {

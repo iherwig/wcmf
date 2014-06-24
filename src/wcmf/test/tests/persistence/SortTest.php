@@ -62,7 +62,7 @@ class SortTest extends DatabaseTestCase {
     $defaultAuthorOrder = $publisherMapper->getDefaultOrder('Author');
     $this->assertEquals(1, sizeof($defaultAuthorOrder));
     $this->assertEquals('sortkey_author', $defaultAuthorOrder[0]['sortFieldName']);
-    $this->assertEquals('wcmf.test.app.src.model.NMPublisherAuthor', $defaultAuthorOrder[0]['sortType']);
+    $this->assertEquals('app.src.model.NMPublisherAuthor', $defaultAuthorOrder[0]['sortType']);
     $this->assertEquals(true, $defaultAuthorOrder[0]['isSortkey']);
     $this->assertEquals('ASC', $defaultAuthorOrder[0]['sortDirection']);
 

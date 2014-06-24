@@ -10,7 +10,8 @@
  */
 namespace wcmf\lib\service;
 
-use \Exception;
+use Exception;
+use nusoap_server;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
@@ -19,8 +20,7 @@ use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-
-use \nusoap_server;
+use wcmf\lib\util\URIUtil;
 
 /**
  * @class SoapServer
@@ -40,7 +40,9 @@ class SoapServer extends nusoap_server {
    * Constructor
    */
   public function __construct() {
-    $this->configureWSDL('SOAPService', self::TNS, false, 'document');
+    $scriptURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+    $endpoint = dirname($scriptURL).'/soap';
+    $this->configureWSDL('SOAPService', self::TNS, $endpoint, 'document');
     $this->wsdl->schemaTargetNamespace = self::TNS;
 
     // register default complex types
@@ -97,7 +99,9 @@ class SoapServer extends nusoap_server {
       Log::debug($data, __CLASS__);
     }
     try {
+      $oldErrorReporting = error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
       parent::service($data);
+      error_reporting($oldErrorReporting);
     }
     catch (Exception $ex) {
       $this->handleException($ex);

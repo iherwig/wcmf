@@ -12,10 +12,10 @@ namespace wcmf\test\tests\format;
 
 use wcmf\test\lib\BaseTestCase;
 
-use wcmf\test\app\src\model\Author;
-use wcmf\test\app\src\model\Book;
-use wcmf\test\app\src\model\Chapter;
-use wcmf\test\app\src\model\Image;
+use app\src\model\Author;
+use app\src\model\Book;
+use app\src\model\Chapter;
+use app\src\model\Image;
 
 use wcmf\lib\model\impl\DionysosNodeSerializer;
 use wcmf\lib\persistence\ObjectId;
@@ -75,7 +75,7 @@ class JsonFormatTest extends BaseTestCase {
     $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
-                'oid' => 'wcmf.test.app.src.model.Book:123',
+                'oid' => 'app.src.model.Book:123',
                 'lastChange' => 1234567890,
                 'attributes' => array(
                     'title' => 'Matrix - The Original'
@@ -90,9 +90,9 @@ class JsonFormatTest extends BaseTestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
 
-    $book = $data['wcmf.test.app.src.model.Book:123'];
+    $book = $data['app.src.model.Book:123'];
     $this->assertTrue($book instanceof Book);
-    $this->assertEquals('wcmf.test.app.src.model.Book:123', $book->getOID()->__toString());
+    $this->assertEquals('app.src.model.Book:123', $book->getOID()->__toString());
     $this->assertEquals('Matrix - The Original', $book->getValue('title'));
 
     $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
@@ -105,18 +105,18 @@ class JsonFormatTest extends BaseTestCase {
     $message = new Request('controller', 'context', 'action');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
-                'oid' => 'wcmf.test.app.src.model.Book:123',
+                'oid' => 'app.src.model.Book:123',
                 'lastChange' => 1234567890,
                 'attributes' => array(
                     'title' => 'Matrix - The Original',
                     'Chapter' => array(
                         array(
-                            'oid' => 'wcmf.test.app.src.model.Chapter:1',
+                            'oid' => 'app.src.model.Chapter:1',
                             'attributes' => array(
                                 'name' => 'Chapter 1',
                                 'SubChapter' => array(
                                     array(
-                                        'oid' => 'wcmf.test.app.src.model.Chapter:3',
+                                        'oid' => 'app.src.model.Chapter:3',
                                         'attributes' => array(
                                             'name' => 'Chapter 3'
                                         )
@@ -125,19 +125,19 @@ class JsonFormatTest extends BaseTestCase {
                             )
                         ),
                         array(
-                            'oid' => 'wcmf.test.app.src.model.Chapter:2',
+                            'oid' => 'app.src.model.Chapter:2',
                             'attributes' => array(
                                 'name' => 'Chapter 2',
                                 'NormalImage' => array(
                                     array(
-                                        'oid' => 'wcmf.test.app.src.model.Image:12',
+                                        'oid' => 'app.src.model.Image:12',
                                         'attributes' => array(
                                             'file' => 'image.png'
                                         )
                                     )
                                 ),
                                 'Author' => array(
-                                    'oid' => 'wcmf.test.app.src.model.Author:1',
+                                    'oid' => 'app.src.model.Author:1',
                                     'attributes' => array(
                                         'name' => 'Unknown'
                                     )
@@ -156,25 +156,25 @@ class JsonFormatTest extends BaseTestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
 
-    $book = $data['wcmf.test.app.src.model.Book:123'];
+    $book = $data['app.src.model.Book:123'];
     $this->assertTrue($book instanceof Book);
-    $this->assertEquals('wcmf.test.app.src.model.Book:123', $book->getOID()->__toString());
+    $this->assertEquals('app.src.model.Book:123', $book->getOID()->__toString());
 
     $chapters = $book->getValue('Chapter');
     $this->assertEquals(2, sizeof($chapters));
 
     $chapter1 = $chapters[0];
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:1', $chapter1->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:1', $chapter1->getOID()->__toString());
 
     $subChapters = $chapter1->getValue('SubChapter');
     $this->assertEquals(1, sizeof($subChapters));
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:3', $subChapters[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:3', $subChapters[0]->getOID()->__toString());
 
     $chapter2 = $chapters[1];
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:2', $chapter2->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:2', $chapter2->getOID()->__toString());
 
     $author = $chapter2->getValue('Author');
-    $this->assertEquals('wcmf.test.app.src.model.Author:1', $author->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:1', $author->getOID()->__toString());
   }
 
   public function testDeserializeNodeList() {
@@ -186,19 +186,19 @@ class JsonFormatTest extends BaseTestCase {
                     'content' => array(
                         'contentType' => 'Chapter',
                         array(
-                            'oid' => 'wcmf.test.app.src.model.Chapter:1',
+                            'oid' => 'app.src.model.Chapter:1',
                             'attributes' => array(
                                 'name' => 'Chapter 1'
                             )
                         ),
                         array(
-                            'oid' => 'wcmf.test.app.src.model.Chapter:2',
+                            'oid' => 'app.src.model.Chapter:2',
                             'attributes' => array(
                                 'name' => 'Chapter 2'
                             )
                         ),
                         array(
-                            'oid' => 'wcmf.test.app.src.model.Chapter:3',
+                            'oid' => 'app.src.model.Chapter:3',
                             'attributes' => array(
                                 'name' => 'Chapter 3'
                             )
@@ -221,9 +221,9 @@ class JsonFormatTest extends BaseTestCase {
     $chapters = $list['content'];
     $this->assertEquals(4, sizeof($chapters));
     $this->assertEquals('Chapter', $chapters['contentType']);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:1', $chapters['wcmf.test.app.src.model.Chapter:1']->getOID()->__toString());
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:2', $chapters['wcmf.test.app.src.model.Chapter:2']->getOID()->__toString());
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:3', $chapters['wcmf.test.app.src.model.Chapter:3']->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:1', $chapters['app.src.model.Chapter:1']->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:2', $chapters['app.src.model.Chapter:2']->getOID()->__toString());
+    $this->assertEquals('app.src.model.Chapter:3', $chapters['app.src.model.Chapter:3']->getOID()->__toString());
   }
 
   public function testSerializeSimple() {
@@ -274,7 +274,7 @@ class JsonFormatTest extends BaseTestCase {
 
     $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
-                'wcmf.test.app.src.model.Book:123' => $book,
+                'app.src.model.Book:123' => $book,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
             ));
 
@@ -286,8 +286,8 @@ class JsonFormatTest extends BaseTestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
     $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
-    $this->assertEquals('wcmf.test.app.src.model.Book:123', $data['oid']);
-    $this->assertEquals('wcmf.test.app.src.model.Book', $data['className']);
+    $this->assertEquals('app.src.model.Book:123', $data['oid']);
+    $this->assertEquals('app.src.model.Book', $data['className']);
     $this->assertEquals(false, $data['isReference']);
     $this->assertEquals(1317420061, $data['lastChange']);
 
@@ -323,7 +323,7 @@ class JsonFormatTest extends BaseTestCase {
 
     $message = new Response('controller', 'context', 'action');
     $message->setValues(array(
-                'wcmf.test.app.src.model.Book:123' => $book1,
+                'app.src.model.Book:123' => $book1,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
         ));
 
@@ -335,8 +335,8 @@ class JsonFormatTest extends BaseTestCase {
     $data = $message->getValues();
     $this->assertTrue(is_array($data));
     $this->assertEquals('cd65fec9bce4d7ec74e341a9031f8966', $data['sid']);
-    $this->assertEquals('wcmf.test.app.src.model.Book:123', $data['oid']);
-    $this->assertEquals('wcmf.test.app.src.model.Book', $data['className']);
+    $this->assertEquals('app.src.model.Book:123', $data['oid']);
+    $this->assertEquals('app.src.model.Book', $data['className']);
     $this->assertEquals(false, $data['isReference']);
 
     $bookAttributes = $data['attributes'];
@@ -348,24 +348,24 @@ class JsonFormatTest extends BaseTestCase {
     $this->assertEquals(2, sizeof($chapters));
 
     $chapter21 = $chapters[0];
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:1', $chapter21['oid']);
+    $this->assertEquals('app.src.model.Chapter:1', $chapter21['oid']);
     $chapter1Attributes = $chapter21['attributes'];
     $this->assertEquals('Chapter 1', $chapter1Attributes['name']);
 
     $subChapters = $chapter1Attributes['SubChapter'];
     $this->assertEquals(1, sizeof($subChapters));
     $subChapter = $subChapters[0];
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:3', $subChapter['oid']);
+    $this->assertEquals('app.src.model.Chapter:3', $subChapter['oid']);
     $subChapterAttributes = $subChapter['attributes'];
     $this->assertEquals('Chapter 3', $subChapterAttributes['name']);
 
     $chapter22 = $chapters[1];
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:2', $chapter22['oid']);
+    $this->assertEquals('app.src.model.Chapter:2', $chapter22['oid']);
     $chapter2Attributes = $chapter22['attributes'];
     $this->assertEquals('Chapter 2', $chapter2Attributes['name']);
 
     $author2 = $chapter2Attributes['Author'];
-    $this->assertEquals('wcmf.test.app.src.model.Author:1', $author2['oid']);
+    $this->assertEquals('app.src.model.Author:1', $author2['oid']);
     $authorAttributes = $author2['attributes'];
     $this->assertEquals('Unknown', $authorAttributes['name']);
   }
@@ -402,12 +402,12 @@ class JsonFormatTest extends BaseTestCase {
     $this->assertEquals(4, sizeof($chapters));
     $this->assertEquals('Chapter', $chapters['contentType']);
 
-    $this->assertEquals('wcmf.test.app.src.model.Chapter', $chapters[0]['className']);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:1', $chapters[0]['oid']);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter', $chapters[1]['className']);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:2', $chapters[1]['oid']);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter', $chapters[2]['className']);
-    $this->assertEquals('wcmf.test.app.src.model.Chapter:3', $chapters[2]['oid']);
+    $this->assertEquals('app.src.model.Chapter', $chapters[0]['className']);
+    $this->assertEquals('app.src.model.Chapter:1', $chapters[0]['oid']);
+    $this->assertEquals('app.src.model.Chapter', $chapters[1]['className']);
+    $this->assertEquals('app.src.model.Chapter:2', $chapters[1]['oid']);
+    $this->assertEquals('app.src.model.Chapter', $chapters[2]['className']);
+    $this->assertEquals('app.src.model.Chapter:3', $chapters[2]['oid']);
   }
 }
 ?>
