@@ -192,9 +192,9 @@ class LuceneSearch implements IndexedSearch {
   /**
    * @see IndexedSearch::addToIndex()
    */
-  public function addToIndex(PersistentObject $obj) {
+  public function addToIndex(PersistentObject $obj, $language=null) {
     if ($this->isSearchable($obj)) {
-      Log::debug("Add/Update index for: ".$obj->getOID(), __CLASS__);
+      Log::debug("Add/Update index for: ".$obj->getOID()." language: ".$language, __CLASS__);
       $index = $this->getIndex();
 
       $doc = new \Zend_Search_Lucene_Document();
@@ -205,6 +205,11 @@ class LuceneSearch implements IndexedSearch {
       $typeField = \Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'UTF-8');
       $typeField->isStored = false;
       $doc->addField($typeField);
+      if ($language != null) {
+        $languageField = \Zend_Search_Lucene_Field::keyword('lang', $language, 'UTF-8');
+        $languageField->isStored = false;
+        $doc->addField($languageField);
+      }
 
       foreach ($valueNames as $curValueName) {
         $inputType = $obj->getValueProperty($curValueName, 'input_type');
