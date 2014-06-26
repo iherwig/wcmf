@@ -58,6 +58,11 @@ class ControllerMessage {
   private $_values = array();
 
   /**
+   * Key value pairs of user defined properties contained in this message.
+   */
+  private $_properties = array();
+
+  /**
    * A list of errors associated with this message.
    */
   private $_errors = array();
@@ -308,6 +313,27 @@ class ControllerMessage {
    */
   public function clearValues() {
     $this->_values = array();
+  }
+
+  /**
+   * Set a property
+   * @param name The name of the property
+   * @param value The value of the property
+   */
+  public function setProperty($name, $value) {
+    $this->_properties[$name] = $value;
+  }
+
+  /**
+   * Get a property
+   * @param name The name of the property
+   * @return The property value or null
+   */
+  public function getProperty($name) {
+    if (isset($this->_properties[$name])) {
+      return $this->_properties[$name];
+    }
+    return null;
   }
 
   /**

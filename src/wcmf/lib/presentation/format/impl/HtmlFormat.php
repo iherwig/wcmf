@@ -23,6 +23,14 @@ use wcmf\lib\util\StringUtil;
  * values will be removed from the request and replaced by Node instances
  * representing the data. The each node is stored under its oid in the data array.
  *
+ * HtmlFormat serializes the response to a template, which will be rendered
+ * by the View implementation defined in the configuration section 'view'.
+ * The template is determined by the current action key. The response property
+ * 'html_tpl_format' allows to select a derivate of that template file. E.g.
+ * if the template would be home.tpl, setting the 'html_tpl_format' property
+ * to 'mobile' would select the template home-mobile.tpl. If a derivate does
+ * not exist, it is ignored and the default template is used.
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
 class HtmlFormat extends AbstractFormat {
@@ -78,8 +86,21 @@ class HtmlFormat extends AbstractFormat {
       $view->setValue($key, $value);
     }
 
+    // check for html_format property in response
+    // and add the suffix if existing
+    $viewTplFile = WCMF_BASE.$viewTpl;
+    $format = $response->getProperty('html_tpl_format');
+    if (isset($format)) {
+      $ext = pathinfo($viewTplFile, PATHINFO_EXTENSION);
+      $formatViewTplFile = dirname($viewTplFile).'/'.basename($viewTplFile, ".$ext").'-'.$format.'.'.$ext;
+    }
+
+    // give precedence to format specific file
+    $finalTplFile = isset($formatViewTplFile) && file_exists($formatViewTplFile) ?
+            $formatViewTplFile : $viewTplFile;
+
     // display the view
-    $view->render(WCMF_BASE.$viewTpl, $response->getCacheId());
+    $view->render($finalTplFile, $response->getCacheId());
     return $values;
   }
 
