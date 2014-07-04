@@ -6,15 +6,15 @@
   <target name="m2m-papyrus"
     description="transform the input model from papyrus to cwm format" >
     <replaceregexp file="${generator.workdir}/model.uml"
-               match='xmi:version="20110701"'
+               match='xmi:version="20131001"'
                replace='xmi:version="2.1"'
     />
     <replaceregexp file="${generator.workdir}/model.uml"
-               match='xmlns:xmi="http://www.omg.org/spec/XMI/20110701"'
+               match='xmlns:xmi="http://www.omg.org/spec/XMI/20131001"'
                replace='xmlns:xmi="http://www.omg.org/spec/XMI/2.1"'
     />
     <replaceregexp file="${generator.workdir}/model.uml"
-               match='xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML"'
+               match='xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML"'
                replace='xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML"'
     />
   </target>

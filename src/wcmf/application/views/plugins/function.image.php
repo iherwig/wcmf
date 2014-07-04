@@ -115,7 +115,7 @@ function smarty_function_image($params, \Smarty_Internal_Template $template) {
   }
 
   // don't resize big images, because of resource limits
-  if (filesize($file) > 1500000) {
+  if (filesize($file) > 2500000) {
     $sizemode = 'resize';
   }
 
