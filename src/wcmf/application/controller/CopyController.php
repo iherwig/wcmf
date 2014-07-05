@@ -459,7 +459,7 @@ class CopyController extends BatchController {
    * Modify the given Node before save action (Called only for the copied root Node, not for its children)
    * @note subclasses will override this to implement special application requirements.
    * @param node A reference to the Node to modify.
-   * @return True/False whether the Node was modified [default: false].
+   * @return Boolean whether the Node was modified [default: false].
    */
   protected function modify(PersistentObject $node) {
     return false;

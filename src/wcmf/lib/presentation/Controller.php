@@ -31,7 +31,7 @@ use wcmf\lib\presentation\format\impl\HtmlFormat;
  * @param[in/out] action The action to be executed
  * @param[in/out] language The language of the requested data, optional
  * @param[out] controller The name of the executed controller
- * @param[out] success True/False whether the action completed successfully or not
+ * @param[out] success Boolean whether the action completed successfully or not
  * @param[out] errorMessage An error message which is displayed to the user, if success == false
  * @param[out] errorCode An error code, describing the type of error, if success == false
  * @param[out] errorData Some error codes require to transmit further information to the client,

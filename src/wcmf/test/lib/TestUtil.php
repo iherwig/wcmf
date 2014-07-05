@@ -22,7 +22,7 @@ class TestUtil {
 
   /**
    * Turn authorization validation on/off.
-   * @param True/False wether to turn it off or on
+   * @param Boolean whether to turn it off or on
    */
   public static function runAnonymous($isAnonymous) {
     $config = ObjectFactory::getConfigurationInstance();

@@ -46,7 +46,7 @@ class PDF extends FPDI {
 
   /**
    * Determine if a new page started
-   * @return True/False
+   * @return Boolean
    */
   function isPageStarted() {
     return $this->_pageStarted;
@@ -54,7 +54,7 @@ class PDF extends FPDI {
 
   /**
    * Determine if a page finished
-   * @return True/False
+   * @return Boolean
    */
   function isPageEnded() {
     return $this->_pageEnded;

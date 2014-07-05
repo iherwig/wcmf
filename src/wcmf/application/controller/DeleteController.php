@@ -105,7 +105,7 @@ class DeleteController extends Controller {
    * Confirm delete action on given Node.
    * @note subclasses will override this to implement special application requirements.
    * @param node A reference to the Node to confirm.
-   * @return True/False whether the Node should be deleted [default: true].
+   * @return Boolean whether the Node should be deleted [default: true].
    */
   protected function confirmDelete($node) {
     return true;

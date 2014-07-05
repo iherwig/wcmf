@@ -92,7 +92,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
    * Determine if the value is a serialized Node. The default
    * implementation returns false.
    * @param value The data value
-   * @return True/False
+   * @return Boolean
    * @note Subclasses override this if necessary
    */
   protected function isSerializedNode($value) {
@@ -103,7 +103,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
    * Determine if the value is a deserialized Node. The default
    * implementation checks if the value is an object of type Node.
    * @param value The data value
-   * @return True/False
+   * @return Boolean
    * @note Subclasses override this if necessary
    */
   protected function isDeserializedNode($value) {

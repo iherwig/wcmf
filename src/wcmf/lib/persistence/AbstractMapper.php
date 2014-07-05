@@ -273,7 +273,7 @@ abstract class AbstractMapper implements PersistenceMapper {
    * Check authorization on an type/OID and a given action.
    * @param oid The object id of the Object to authorize (its type will be checked too)
    * @param action Action to authorize
-   * @return True/False depending on success of authorization
+   * @return Boolean depending on success of authorization
    */
   protected function checkAuthorization(ObjectId $oid, $action) {
     $permissionManager = ObjectFactory::getInstance('permissionManager');

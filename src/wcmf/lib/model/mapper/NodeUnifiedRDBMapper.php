@@ -771,7 +771,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * Check if a given attribute is a foreign key (used to reference a parent)
    * @param name The attribute name
-   * @return True/False
+   * @return Boolean
    * @note Public in order to be callable by ObjectQuery
    */
   public function isForeignKey($name) {

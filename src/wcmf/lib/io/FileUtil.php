@@ -26,7 +26,7 @@ class FileUtil {
    * @param mediaFile An assoziative array with the following keys: 'name', 'type', 'tmp_name' (typically a $_FILES entry)
    * @param destName The destination file name
    * @param mimeType An array holding the allowed mimetypes, null if arbitrary [default: null]
-   * @param override True/False whether an existing file should be overridden, if false an unque id will be placed in the filename to prevent overriding [default: true]
+   * @param override Boolean whether an existing file should be overridden, if false an unque id will be placed in the filename to prevent overriding [default: true]
    * @return The filename of the uploaded file
    */
   public static function uploadFile($mediaFile, $destName, $mimeTypes=null, $override=true) {
@@ -74,8 +74,8 @@ class FileUtil {
    * Get the files in a directory that match a pattern
    * @param dir The directory to search in
    * @param pattern The pattern (regexp) to match [default: /./]
-   * @param prependDirectoryName True/False whether to prepend the directory name to each file [default: false]
-   * @param recursive True/False whether to recurse into subdirectories [default: false]
+   * @param prependDirectoryName Boolean whether to prepend the directory name to each file [default: false]
+   * @param recursive Boolean whether to recurse into subdirectories [default: false]
    * @return An array containing the filenames sorted by modification date or null if failed, error string provided by getErrorMsg()
    */
   public static function getFiles($directory, $pattern='/./', $prependDirectoryName=false, $recursive=false) {
@@ -116,8 +116,8 @@ class FileUtil {
    * Get the directories in a directory that match a pattern
    * @param dir The directory to search in
    * @param pattern The pattern (regexp) to match [default: /./]
-   * @param prependDirectoryName True/False whether to prepend the directory name to each directory [default: false]
-   * @param recursive True/False whether to recurse into subdirectories [default: false]
+   * @param prependDirectoryName Boolean whether to prepend the directory name to each directory [default: false]
+   * @param recursive Boolean whether to recurse into subdirectories [default: false]
    * @return An array containing the directory names or null if failed, error string provided by getErrorMsg()
    */
   public static function getDirectories($directory, $pattern='/./', $prependDirectoryName=false, $recursive=false) {

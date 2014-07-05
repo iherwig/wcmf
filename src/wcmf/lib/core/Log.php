@@ -86,7 +86,7 @@ class Log {
   /**
    * Check if debug level is enabled for a category
    * @param category The category
-   * @return True/False
+   * @return Boolean
    */
   public static function isDebugEnabled($category) {
     $logger = Log::getLogger($category);
@@ -96,7 +96,7 @@ class Log {
   /**
    * Check if info level is enabled for a category
    * @param category The category
-   * @return True/False
+   * @return Boolean
    */
   public static function isInfoEnabled($category) {
     $logger = Log::getLogger($category);
@@ -106,7 +106,7 @@ class Log {
   /**
    * Check if warn level is enabled for a category
    * @param category The category
-   * @return True/False
+   * @return Boolean
    */
   public static function isWarnEnabled($category) {
     $logger = Log::getLogger($category);
@@ -116,7 +116,7 @@ class Log {
   /**
    * Check if error level is enabled for a category
    * @param category The category
-   * @return True/False
+   * @return Boolean
    */
   public static function isErrorEnabled($category) {
     $logger = Log::getLogger($category);
@@ -126,7 +126,7 @@ class Log {
   /**
    * Check if fatal level is enabled for a category
    * @param category The category
-   * @return True/False
+   * @return Boolean
    */
   public static function isFatalEnabled($category) {
     $logger = Log::getLogger($category);

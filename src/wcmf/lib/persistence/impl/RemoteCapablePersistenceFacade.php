@@ -58,7 +58,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Tell the PersistenceFacade implementation to resolve proxies or not.
-   * @param isResolvingProxies True/False whether proxies should be resolved or not
+   * @param isResolvingProxies Boolean whether proxies should be resolved or not
    */
   public function setResolveProxies($isResolvingProxies) {
     $this->_isResolvingProxies = $isResolvingProxies;
@@ -66,7 +66,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Check if the PersistenceFacade implementation is resolving proxies or not.
-   * @return True/False whether proxies are resolved or not
+   * @return Boolean whether proxies are resolved or not
    */
   public function isResolvingProxies() {
     return $this->_isResolvingProxies;
@@ -74,7 +74,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Tell the PersistenceFacade implementation to translate remote values or not.
-   * @param isTranslatingValues True/False whether values should be translated or not
+   * @param isTranslatingValues Boolean whether values should be translated or not
    */
   public function setTranslatingValues($isTranslatingValues) {
     $this->_isTranslatingValues = $isTranslatingValues;
@@ -82,7 +82,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Check if the PersistenceFacade implementation is translating remote values or not.
-   * @return True/False whether values are tanslated or not
+   * @return Boolean whether values are tanslated or not
    */
   public function isTranslatingValues() {
     return $this->_isTranslatingValues;

@@ -593,7 +593,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Check if a value is a primary key value
    * @param name The name of the value
-   * @return True/False
+   * @return Boolean
    */
   protected function isPkValue($name) {
     $pkNames = $this->getPKNames();
