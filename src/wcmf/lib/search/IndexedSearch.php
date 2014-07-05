@@ -30,9 +30,8 @@ interface IndexedSearch extends Search {
    * Add/update a PersistentObject instance to/in the search index. This method modifies the
    * index. For that reason IndexedSearch::commitIndex() should be called afterwards.
    * @param obj The PersistentObject instance.
-   * @param language The language of the object content (optional)
    */
-  public function addToIndex(PersistentObject $obj, $language=null);
+  public function addToIndex(PersistentObject $obj);
 
   /**
    * Delete a PersistentObject instance from the search index. This method modifies the

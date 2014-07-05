@@ -35,6 +35,7 @@ use wcmf\lib\util\StringUtil;
 class LuceneSearch implements IndexedSearch {
 
   private $_indexPath = '';
+  private $_liveUpdate = true;
   private $_index;
   private $_indexIsDirty = false;
 
@@ -76,6 +77,15 @@ class LuceneSearch implements IndexedSearch {
    */
   private function getIndexPath() {
     return $this->_indexPath;
+  }
+
+  /**
+   * Set if the search index should update itself, when
+   * persistent objects are created/updated/deleted.
+   * @param indexPath Directory relative to main
+   */
+  public function setLiveUpdate($liveUpdate) {
+    $this->_liveUpdate = $liveUpdate;
   }
 
   /**
@@ -192,46 +202,56 @@ class LuceneSearch implements IndexedSearch {
   /**
    * @see IndexedSearch::addToIndex()
    */
-  public function addToIndex(PersistentObject $obj, $language=null) {
+  public function addToIndex(PersistentObject $obj) {
     if ($this->isSearchable($obj)) {
-      Log::debug("Add/Update index for: ".$obj->getOID()." language: ".$language, __CLASS__);
       $index = $this->getIndex();
 
-      $doc = new \Zend_Search_Lucene_Document();
-
-      $valueNames = $obj->getPersistentValueNames();
-
-      $doc->addField(\Zend_Search_Lucene_Field::unIndexed('oid', $obj->getOID()->__toString(), 'UTF-8'));
-      $typeField = \Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'UTF-8');
-      $typeField->isStored = false;
-      $doc->addField($typeField);
-      if ($language != null) {
-        $languageField = \Zend_Search_Lucene_Field::keyword('lang', $language, 'UTF-8');
-        $languageField->isStored = false;
-        $doc->addField($languageField);
-      }
-
-      foreach ($valueNames as $curValueName) {
-        $inputType = $obj->getValueProperty($curValueName, 'input_type');
-        $value = $this->encodeValue($obj->getValue($curValueName), $inputType);
-        if (preg_match('/^text|^f?ckeditor/', $inputType)) {
-          $value = strip_tags($value);
-          $doc->addField(\Zend_Search_Lucene_Field::unStored($curValueName, $value, 'UTF-8'));
+      // create document for each language
+      $localization = ObjectFactory::getInstance('localization');
+      foreach ($localization->getSupportedLanguages() as $language => $languageName) {
+        if (Log::isDebugEnabled(__CLASS__)) {
+          Log::debug("Add/Update index for: ".$obj->getOID()." language:".$language, __CLASS__);
         }
-        else {
-          $field = \Zend_Search_Lucene_Field::keyword($curValueName, $value, 'UTF-8');
-          $field->isStored = false;
-          $doc->addField($field);
+        // load translation
+        $localization->loadTranslation($obj, $language, false, false);
+
+        // create the document
+        $doc = new \Zend_Search_Lucene_Document();
+
+        $valueNames = $obj->getPersistentValueNames();
+
+        $doc->addField(\Zend_Search_Lucene_Field::unIndexed('oid', $obj->getOID()->__toString(), 'UTF-8'));
+        $typeField = \Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'UTF-8');
+        $typeField->isStored = false;
+        $doc->addField($typeField);
+        if ($language != null) {
+          $languageField = \Zend_Search_Lucene_Field::keyword('lang', $language, 'UTF-8');
+          $languageField->isStored = false;
+          $doc->addField($languageField);
         }
-      }
 
-      $term = new \Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
-      $docIds  = $index->termDocs($term);
-      foreach ($docIds as $id) {
-        $index->delete($id);
-      }
+        foreach ($valueNames as $curValueName) {
+          $inputType = $obj->getValueProperty($curValueName, 'input_type');
+          $value = $this->encodeValue($obj->getValue($curValueName), $inputType);
+          if (preg_match('/^text|^f?ckeditor/', $inputType)) {
+            $value = strip_tags($value);
+            $doc->addField(\Zend_Search_Lucene_Field::unStored($curValueName, $value, 'UTF-8'));
+          }
+          else {
+            $field = \Zend_Search_Lucene_Field::keyword($curValueName, $value, 'UTF-8');
+            $field->isStored = false;
+            $doc->addField($field);
+          }
+        }
 
-      $index->addDocument($doc);
+        $term = new \Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
+        $docIds  = $index->termDocs($term);
+        foreach ($docIds as $id) {
+          $index->delete($id);
+        }
+
+        $index->addDocument($doc);
+      }
       $this->_indexIsDirty = true;
     }
   }
@@ -241,7 +261,9 @@ class LuceneSearch implements IndexedSearch {
    */
   public function deleteFromIndex(PersistentObject $obj) {
     if ($this->isSearchable($obj)) {
-      Log::debug("Delete from index: ".$obj->getOID(), __CLASS__);
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Delete from index: ".$obj->getOID(), __CLASS__);
+      }
       $index = $this->getIndex();
 
       $term = new \Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
@@ -258,15 +280,17 @@ class LuceneSearch implements IndexedSearch {
    * @param event StateChangeEvent instance
    */
   public function stateChanged(StateChangeEvent $event) {
-    $object = $event->getObject();
-    $oldState = $event->getOldValue();
-    $newState = $event->getNewValue();
-    if (($oldState == PersistentObject::STATE_NEW || $oldState == PersistentObject::STATE_DIRTY)
-            && $newState == PersistentObject::STATE_CLEAN) {
-      $this->addToIndex($object);
-    }
-    elseif ($newState == PersistentObject::STATE_DELETED) {
-      $this->deleteFromIndex($object);
+    if ($this->_liveUpdate) {
+      $object = $event->getObject();
+      $oldState = $event->getOldValue();
+      $newState = $event->getNewValue();
+      if (($oldState == PersistentObject::STATE_NEW || $oldState == PersistentObject::STATE_DIRTY)
+              && $newState == PersistentObject::STATE_CLEAN) {
+        $this->addToIndex($object);
+      }
+      elseif ($newState == PersistentObject::STATE_DELETED) {
+        $this->deleteFromIndex($object);
+      }
     }
   }
 
