@@ -25,8 +25,9 @@ use wcmf\lib\security\AuthorizationException;
 
 /**
  * AbstractMapper provides a basic implementation for other mapper classes.
- * It handles authorization and calls the lifecycle callcacks of PersistentObject
- * instances.
+ * It handles authorization on entity level and calls the lifecycle callcacks
+ * of PersistentObject instances. Authorization on attribute level has to be
+ * implemented by subclasses.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
