@@ -205,22 +205,24 @@ class LuceneSearch implements IndexedSearch {
   public function addToIndex(PersistentObject $obj) {
     if ($this->isSearchable($obj)) {
       $index = $this->getIndex();
+      $oidStr = $obj->getOID()->__toString();
 
       // create document for each language
       $localization = ObjectFactory::getInstance('localization');
       foreach ($localization->getSupportedLanguages() as $language => $languageName) {
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Add/Update index for: ".$obj->getOID()." language:".$language, __CLASS__);
-        }
         // load translation
-        $localization->loadTranslation($obj, $language, false, false);
+        $indexObj = $localization->loadTranslation($obj, $language, false);
+
+        if (Log::isDebugEnabled(__CLASS__)) {
+          Log::debug("Add/Update index for: ".$oidStr." language:".$language, __CLASS__);
+        }
 
         // create the document
         $doc = new \Zend_Search_Lucene_Document();
 
-        $valueNames = $obj->getPersistentValueNames();
+        $valueNames = $indexObj->getPersistentValueNames();
 
-        $doc->addField(\Zend_Search_Lucene_Field::unIndexed('oid', $obj->getOID()->__toString(), 'UTF-8'));
+        $doc->addField(\Zend_Search_Lucene_Field::unIndexed('oid', $oidStr, 'UTF-8'));
         $typeField = \Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'UTF-8');
         $typeField->isStored = false;
         $doc->addField($typeField);
@@ -231,8 +233,8 @@ class LuceneSearch implements IndexedSearch {
         }
 
         foreach ($valueNames as $curValueName) {
-          $inputType = $obj->getValueProperty($curValueName, 'input_type');
-          $value = $this->encodeValue($obj->getValue($curValueName), $inputType);
+          $inputType = $indexObj->getValueProperty($curValueName, 'input_type');
+          $value = $this->encodeValue($indexObj->getValue($curValueName), $inputType);
           if (preg_match('/^text|^f?ckeditor/', $inputType)) {
             $value = strip_tags($value);
             $doc->addField(\Zend_Search_Lucene_Field::unStored($curValueName, $value, 'UTF-8'));
@@ -244,7 +246,7 @@ class LuceneSearch implements IndexedSearch {
           }
         }
 
-        $term = new \Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
+        $term = new \Zend_Search_Lucene_Index_Term($oidStr, 'oid');
         $docIds  = $index->termDocs($term);
         foreach ($docIds as $id) {
           $index->delete($id);

@@ -55,8 +55,6 @@ interface Localization {
 
   /**
    * Load a translation of an entity for a specific language.
-   * @note The object state will be changed to dirty by this operation, so make
-   * sure that the object is not attached to the transaction.
    * @param object A reference to the object to load the translation into. The object
    *    is supposed to have it's values in the default language.
    * @param lang The language of the translation to load.
@@ -64,8 +62,9 @@ interface Localization {
    *    for untranslated/empty values or not. Optional, default is true.
    * @param recursive Boolean whether to load translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
+   * @return A reference to the translated object.
    */
-  public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true);
+  public function loadTranslation($object, $lang, $useDefaults=true, $recursive=true);
 
   /**
    * Save a translation of an entity for a specific language. Only the
@@ -77,7 +76,7 @@ interface Localization {
    * @param recursive Boolean whether to save translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    */
-  public function saveTranslation(PersistentObject $object, $lang, $saveEmptyValues=false, $recursive=true);
+  public function saveTranslation($object, $lang, $saveEmptyValues=false, $recursive=true);
 
   /**
    * Remove translations for a given entity.

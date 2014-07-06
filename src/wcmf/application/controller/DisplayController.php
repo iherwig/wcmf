@@ -10,16 +10,17 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\AuthorizationException;
 
 /**
  * DisplayController is used to read a node.
@@ -78,7 +79,6 @@ class DisplayController extends Controller {
   protected function executeKernel() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -91,7 +91,9 @@ class DisplayController extends Controller {
         $buildDepth = $request->getValue('depth');
       }
       $node = $persistenceFacade->load($oid, $buildDepth);
-      //$concurrencyManager->aquireLock($oid, Lock::TYPE_OPTIMISTIC, $node);
+      if ($node == null) {
+        throw new IllegalArgumentException(Message::get("The object with oid '%0%' does not exist.", array($oid)));
+      }
 
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest()) {

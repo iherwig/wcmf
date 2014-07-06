@@ -10,11 +10,13 @@
  */
 namespace wcmf\application\controller;
 
+use Exception;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
+use wcmf\lib\util\StringUtil;
 
 /**
  * MultipleActionController is a controller that executes multiple actions by
@@ -151,7 +153,7 @@ class MultipleActionController extends Controller {
     if (sizeof($exceptions) > 0) {
       $ex = $exceptions[0];
       $response->setValue('success', false);
-      $response->setValue('errorCode', $ex->getCodeString());
+      $response->setValue('errorCode', $ex->getCode());
       $response->setValue('errorMessage', $ex->getMessage());
     }
     $response->setValue('data', $results);

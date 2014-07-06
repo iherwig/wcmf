@@ -138,46 +138,68 @@ class DefaultLocalization implements Localization {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
 
-    $this->loadTranslation($object, $lang, $useDefaults, false);
-    return $object;
+    return $this->loadTranslation($object, $lang, $useDefaults, false);
   }
 
   /**
    * @see Localization::loadTranslation()
    */
-  public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true) {
+  public function loadTranslation($object, $lang, $useDefaults=true, $recursive=true, $translatedOIDs=array()) {
     if ($object == null) {
       throw new IllegalArgumentException('Cannot load translation for null');
     }
+    $oidStr = $object->getOID()->__toString();
+
     // if the requested language is the default language, return the original object
-    if ($lang == $this->getDefaultLanguage()) {
+    if ($lang == $this->getDefaultLanguage() || isset($translatedOIDs[$oidStr])) {
       // nothing to do
+      $translatedObject = $object;
     }
     // load the translations and translate the object for any other language
     else {
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $transaction = $persistenceFacade->getTransaction();
+      $translatedObject = $persistenceFacade->create($object->getType());
+      $transaction->detach($translatedObject);
+      $object->copyValues($translatedObject, false);
+
       $query = new ObjectQuery($this->_translationType, __CLASS__.'load_save');
       $tpl = $query->getObjectTemplate($this->_translationType);
-      $tpl->setValue('objectid', Criteria::asValue('=', $object->getOID()->__toString()));
+      $tpl->setValue('objectid', Criteria::asValue('=', $oidStr));
       $tpl->setValue('language', Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
 
       // set the translated values in the object
       $iter = new NodeValueIterator($object, false);
       for($iter->rewind(); $iter->valid(); $iter->next()) {
-        $curIterNode = $iter->currentNode();
-        $this->setTranslatedValue($curIterNode, $iter->key(), $translations, $useDefaults);
+        $this->setTranslatedValue($translatedObject, $iter->key(), $translations, $useDefaults);
       }
-    }
 
-    // recurse if requested
-    if ($recursive) {
-      $iterator = new NodeIterator($object);
-      foreach($iterator as $oidStr => $obj) {
-        if ($obj->getOID() != $object->getOID()) {
-          $this->loadTranslation($obj, $lang, $useDefaults, false);
+      $translatedOIDs[$oidStr] = true;
+
+      // recurse if requested
+      if ($recursive) {
+        $mapper = $object->getMapper();
+        if ($mapper) {
+          $relations = $mapper->getRelations('child');
+          foreach ($relations as $relation) {
+            if ($relation->getOtherNavigability()) {
+              $role = $relation->getOtherRole();
+              $childValue = $object->getValue($role);
+              if ($childValue != null) {
+                $children = $relation->isMultiValued() ? $childValue : array($childValue);
+                foreach ($children as $child) {
+                  $translatedChild = $this->loadTranslation($child, $lang, $useDefaults, $recursive, $translatedOIDs);
+                  $translatedObject->addNode($translatedChild, $role);
+                }
+              }
+            }
+          }
         }
       }
     }
+
+    return $translatedObject;
   }
 
   /**
@@ -185,7 +207,7 @@ class DefaultLocalization implements Localization {
    * @note Only values whose input_type property is listed in the 'inputTypes'
    * key in the configuration 'localization' are stored.
    */
-  public function saveTranslation(PersistentObject $object, $lang, $saveEmptyValues=false, $recursive=true) {
+  public function saveTranslation($object, $lang, $saveEmptyValues=false, $recursive=true) {
     // if the requested language is the default language, do nothing
     if ($lang == $this->getDefaultLanguage()) {
       // nothing to do

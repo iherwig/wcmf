@@ -15,6 +15,6 @@ namespace wcmf\lib\security;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AuthorizationException extends \Exception{
+class AuthorizationException extends \Exception {
 }
 ?>

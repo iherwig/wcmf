@@ -92,16 +92,14 @@ class LocalizationTest extends DatabaseTestCase {
 
     // get a value in the default language
     $transaction->begin();
-    $testObjUntranslated = clone $testObj;
-    $localization->loadTranslation($testObjUntranslated, $localization->getDefaultLanguage());
+    $testObjUntranslated = $localization->loadTranslation($testObj, $localization->getDefaultLanguage());
     $this->assertTrue($testObjUntranslated != null,
       "The untranslated object could be retrieved by Localization class");
     $this->assertEquals('Herwig', $testObjUntranslated->getValue('name'),
       "The untranslated name is 'Herwig'");
 
     // get a value in the translation language
-    $testObjTranslated = clone $testObj;
-    $localization->loadTranslation($testObjTranslated, 'de');
+    $testObjTranslated = $localization->loadTranslation($testObj, 'de');
     $this->assertTrue($testObjTranslated != null,
       "The translated object could be retrieved by Localization class");
     $this->assertEquals('Herwig [de]', $testObjTranslated->getValue('name'),
@@ -270,14 +268,12 @@ class LocalizationTest extends DatabaseTestCase {
 
     // get the value in the translation language with loading defaults
     $transaction->begin();
-    $testObjTranslated1 = clone $testObj;
-    $localization->loadTranslation($testObjTranslated1, 'de', true);
+    $testObjTranslated1 = $localization->loadTranslation($testObj, 'de', true);
     $this->assertEquals($originalValue, $testObjTranslated1->getValue('name'),
       "The translated value is the default value");
 
     // get the value in the translation language without loading defaults
-    $testObjTranslated2 = clone $testObj;
-    $localization->loadTranslation($testObjTranslated2, 'de', false);
+    $testObjTranslated2 = $localization->loadTranslation($testObj, 'de', false);
     $this->assertEquals(0, strlen($testObjTranslated2->getValue('name')),
       "The translated value is empty");
     $transaction->rollback();
