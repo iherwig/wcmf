@@ -92,30 +92,32 @@ class DefaultPermissionManager implements PermissionManager {
     if ($this->isAnonymous()) {
       return true;
     }
-    // if authorization is requested for an oid, we check the type first
-    $oid = null;
-    if ($resource instanceof ObjectId) {
-      $oid = $resource;
-    }
-    else if (ObjectId::isValid($resource)) {
-      $oid = ObjectId::parse($resource);
-    }
-    if ($oid && !$this->authorize($oid->getType(), $context, $action)) {
-      return false;
-    }
+    // normalize resource to string
+    $resourceStr = ($resource instanceof ObjectId) ? $resource->__toString() : $resource;
 
-    $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
+    // if the resource starts with an oid, check the type as well, because
+    // if there is no permission set up for the entity instance there may still
+    // be one set up for the entity type. the type permission will be used as
+    // default policy for the authorization request (see below)
+    // the resource can be either an oid (app.src.model.wcmf.User:123) or
+    // an oid with a property appended (app.src.model.wcmf.User:123.login)
+    $oid = ObjectId::parse($resourceStr);
+    if ($oid == null) {
+      // oid with property?
+      $oidCandidate = preg_replace('/\.[^\.]$/', '', $resourceStr);
+      $oid = ObjectId::parse($oidCandidate);
+    }
+    $typeAuthorized = $oid != null ? $this->authorize($oid->getType(), $context, $action) : null;
+
+    // proceed by matching with config keys
+    $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resourceStr, $context, $action);
 
     // check temporary permissions
-    if (in_array($actionKey, $this->_tempPermissions)) {
-      return true;
-    }
-
     $authUser = $this->getAuthUser();
-    if ($authUser && $authUser->authorize($actionKey)) {
-      return true;
-    }
-    return false;
+    $resourceAuthorized = (in_array($actionKey, $this->_tempPermissions) ||
+            ($authUser && $authUser->authorize($actionKey, $typeAuthorized)));
+
+    return $resourceAuthorized;
   }
 
   /**

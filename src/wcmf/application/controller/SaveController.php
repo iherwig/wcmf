@@ -23,7 +23,6 @@ use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\util\GraphicsUtil;
 
 /**
  * SaveController is a controller that saves Node data.
@@ -46,7 +45,6 @@ use wcmf\lib\util\GraphicsUtil;
 class SaveController extends Controller {
 
   private $_fileUtil = null;
-  private $_graphicsUtil = null;
 
   /**
    * @see Controller::validate()

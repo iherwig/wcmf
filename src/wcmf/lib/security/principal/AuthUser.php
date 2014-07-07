@@ -31,9 +31,11 @@ interface AuthUser extends User {
    * Checks, if the user is authorized for this action.
    * Returns default policy if action key is not defined.
    * @param actionKey An action key string
+   * @param defaultPolicy Boolean overriding the default policy
+   *   just for this request (optional, @see AuhUser::setDefaultPolicy)
    * @return Boolean whether authorization succeeded
    */
-  public function authorize($actionKey);
+  public function authorize($actionKey, $defaultPolicy=null);
 
   /**
    * Assign the default policy that is used if no permission is set up

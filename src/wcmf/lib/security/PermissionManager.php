@@ -54,7 +54,14 @@ interface PermissionManager {
 
   /**
    * Authorize for given resource, context, action triple.
-   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId).
+   * A resource could be one of the following:
+   * - Controller class name (e.g. wcmf\application\controller\SaveController)
+   * - Type name (e.g. app.src.model.wcmf.User)
+   * - Type and propery name (e.g. app.src.model.wcmf.User.login)
+   * - Object id (e.g. app.src.model.wcmf.User:123)
+   * - Object id and propery name (e.g. app.src.model.wcmf.User:123.login)
+   *
+   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
    * @param context The context in which the action takes place.
    * @param action The action to process.
    * @return Boolean whether authorization succeded/failed.

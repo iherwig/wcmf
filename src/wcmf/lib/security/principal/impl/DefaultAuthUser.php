@@ -77,14 +77,11 @@ class DefaultAuthUser implements AuthUser {
   /**
    * @see AuthUser::authorize()
    */
-  public function authorize($actionKey) {
-    if ($actionKey == '') {
-      return $this->_defaulPolicy;
-    }
+  public function authorize($actionKey, $defaultPolicy=null) {
     if (isset($this->_policies[$actionKey])) {
       return $this->matchRoles($this->_policies[$actionKey]);
     }
-    return $this->_defaulPolicy;
+    return $defaultPolicy !== null ? $defaultPolicy : $this->_defaulPolicy;
   }
 
   /**

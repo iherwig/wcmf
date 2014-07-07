@@ -126,6 +126,7 @@ abstract class AbstractUser extends Node implements User {
       $this->_hasOwnRolesLoaded = true;
     }
     // TODO add role nodes from addedNodes array
+    // use getChildrenEx, because we are interessted in the type
     return $this->getChildrenEx(null, null, self::getRoleTypeName(), null);
   }
 

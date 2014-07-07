@@ -98,7 +98,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
         $this->_containedFiles = array_unique($result['files']);
 
         if ($processValues) {
-        $this->processValues();
+          $this->processValues();
         }
 
         // re-build lookup table
@@ -121,27 +121,25 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   protected function processFile($filename, $configArray=array(), $parsedFiles=array()) {
     // avoid circular includes
-    if (in_array($filename, $parsedFiles)) {
-      return $configArray;
-    }
-    $parsedFiles[] = $filename;
+    if (!in_array($filename, $parsedFiles)) {
+      $parsedFiles[] = $filename;
 
-    $content = $this->_parse_ini_file($filename);
+      $content = $this->_parse_ini_file($filename);
 
-    // process includes
-    $includes = $this->getConfigIncludes($content);
-    if ($includes) {
-      $this->processValue($includes);
-      foreach ($includes as $include) {
-        $result = $this->processFile($this->_configPath.$include, $configArray, $parsedFiles);
-        $configArray = $this->configMerge($configArray, $result['config'], true);
-        $parsedFiles = $result['files'];
+      // process includes
+      $includes = $this->getConfigIncludes($content);
+      if ($includes) {
+        $this->processValue($includes);
+        foreach ($includes as $include) {
+          $result = $this->processFile($this->_configPath.$include, $configArray, $parsedFiles);
+          $configArray = $this->configMerge($configArray, $result['config'], true);
+          $parsedFiles = $result['files'];
+        }
       }
+
+      // process self
+      $configArray = $this->configMerge($configArray, $content, true);
     }
-
-    // process self
-    $configArray = $this->configMerge($configArray, $content, true);
-
     return array('config' => $configArray, 'files' => $parsedFiles);
   }
 
