@@ -40,9 +40,16 @@ interface AuthUser extends User {
   /**
    * Assign the default policy that is used if no permission is set up
    * for the requested action.
-   * @param val A boolean value.
+   * @param val Boolean
    */
   public function setDefaultPolicy($val);
+
+  /**
+   * Get the default policy that is used if no permission is set up
+   * for the requested action.
+   * @return Boolean
+   */
+  public function getDefaultPolicy();
 
   /**
    * Get login time of the user.

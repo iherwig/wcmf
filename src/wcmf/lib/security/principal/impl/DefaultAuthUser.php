@@ -92,6 +92,13 @@ class DefaultAuthUser implements AuthUser {
   }
 
   /**
+   * @see AuthUser::getDefaultPolicy()
+   */
+  public function getDefaultPolicy() {
+    return $this->_defaulPolicy;
+  }
+
+  /**
    * @see AuthUser::getLoginTime()
    */
   public function getLoginTime() {

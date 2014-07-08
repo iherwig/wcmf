@@ -26,6 +26,12 @@ use wcmf\lib\security\principal\impl\AnonymousUser;
  */
 class DefaultPermissionManager implements PermissionManager {
 
+  const RESOURCE_TYPE_ENTITY_TYPE = 'entity.type';
+  const RESOURCE_TYPE_ENTITY_TYPE_PROPERTY = 'entity.type.property';
+  const RESOURCE_TYPE_ENTITY_INSTANCE = 'entity.instance';
+  const RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY = 'entity.instance.property';
+  const RESOURCE_TYPE_OTHER = 'other';
+
   const AUTHORIZATION_SECTION = 'authorization';
 
   private $_anonymousUser = null;
@@ -92,32 +98,113 @@ class DefaultPermissionManager implements PermissionManager {
     if ($this->isAnonymous()) {
       return true;
     }
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
     // normalize resource to string
     $resourceStr = ($resource instanceof ObjectId) ? $resource->__toString() : $resource;
 
-    // if the resource starts with an oid, check the type as well, because
-    // if there is no permission set up for the entity instance there may still
-    // be one set up for the entity type. the type permission will be used as
-    // default policy for the authorization request (see below)
-    // the resource can be either an oid (app.src.model.wcmf.User:123) or
-    // an oid with a property appended (app.src.model.wcmf.User:123.login)
-    $oid = ObjectId::parse($resourceStr);
-    if ($oid == null) {
-      // oid with property?
-      $oidCandidate = preg_replace('/\.[^\.]$/', '', $resourceStr);
-      $oid = ObjectId::parse($oidCandidate);
+    // determine the resource type and set entity type, oid and property if applying
+    $extensionRemoved = preg_replace('/\.[^\.]*?$/', '', $resourceStr);
+    $resourceType = null;
+    $oid = null;
+    $type = null;
+    $oidProperty = null;
+    $typeProperty = null;
+    if (($oidObj = ObjectId::parse($resourceStr)) !== null) {
+      $resourceType = self::RESOURCE_TYPE_ENTITY_INSTANCE;
+      $oid = $resourceStr;
+      $type = $oidObj->getType();
     }
-    $typeAuthorized = $oid != null ? $this->authorize($oid->getType(), $context, $action) : null;
+    elseif (($oidObj = ObjectId::parse($extensionRemoved)) !== null) {
+      $resourceType = self::RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY;
+      $oid = $extensionRemoved;
+      $type = $oidObj->getType();
+      $oidProperty = $resourceStr;
+      $typeProperty = $type.substr($resourceStr, strlen($extensionRemoved));
+    }
+    elseif ($persistenceFacade->isKnownType($resourceStr)) {
+      $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE;
+      $type = $resourceStr;
+    }
+    elseif ($persistenceFacade->isKnownType($extensionRemoved)) {
+      $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY;
+      $type = $extensionRemoved;
+      $typeProperty = $resourceStr;
+    }
+    else {
+      // defaults to other
+      $resourceType = self::RESOURCE_TYPE_OTHER;
+    }
 
-    // proceed by matching with config keys
-    $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resourceStr, $context, $action);
+    // proceed by authorizing type depending resource
+    // always start checking from most specific
+    switch ($resourceType) {
+      case (self::RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY):
+        $authorized = $this->authorizeResource($oidProperty, $context, $action);
+        if ($authorized === null) {
+          $authorized = $this->authorizeResource($typeProperty, $context, $action);
+          if ($authorized === null) {
+            $authorized = $this->authorizeResource($oid, $context, $action);
+            if ($authorized === null) {
+              $authorized = $this->authorizeResource($type, $context, $action);
+            }
+          }
+        }
+        break;
+
+      case (self::RESOURCE_TYPE_ENTITY_INSTANCE):
+        $authorized = $this->authorizeResource($oid, $context, $action);
+        if ($authorized === null) {
+          $authorized = $this->authorizeResource($type, $context, $action);
+        }
+        break;
+
+      case (self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY):
+        $authorized = $this->authorizeResource($typeProperty, $context, $action);
+        if ($authorized === null) {
+          $authorized = $this->authorizeResource($type, $context, $action);
+        }
+        break;
+
+      case (self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY):
+        $authorized = $this->authorizeResource($type, $context, $action);
+        break;
+
+      default:
+        $authorized = $this->authorizeResource($resourceStr, $context, $action);
+        break;
+    }
+
+    if ($authorized === null) {
+      $authUser = $this->getAuthUser();
+      $authorized = $authUser && $authUser->getDefaultPolicy();
+    }
+    return $authorized;
+  }
+
+  /**
+   * Authorize the given resource, context, action triple using the
+   * temporary permissions or the current user.
+   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
+   * @param context The context in which the action takes place.
+   * @param action The action to process.
+   * @param returnNullIfNoPermissionExists Optional, default: true
+   * @return Boolean
+   */
+  protected function authorizeResource($resource, $context, $action, $returnNullIfNoPermissionExists=true) {
+    $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
+    if (strlen($actionKey) == 0 && $returnNullIfNoPermissionExists) {
+      return null;
+    }
 
     // check temporary permissions
-    $authUser = $this->getAuthUser();
-    $resourceAuthorized = (in_array($actionKey, $this->_tempPermissions) ||
-            ($authUser && $authUser->authorize($actionKey, $typeAuthorized)));
-
-    return $resourceAuthorized;
+    if (in_array($actionKey, $this->_tempPermissions)) {
+      return true;
+    }
+    else {
+      $authUser = $this->getAuthUser();
+      return $authUser && $authUser->authorize($actionKey);
+    }
   }
 
   /**
