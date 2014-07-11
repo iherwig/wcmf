@@ -16,7 +16,6 @@ use \Zend_Db;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\SelectStatement;
@@ -28,7 +27,6 @@ use wcmf\lib\persistence\DeleteOperation;
 use wcmf\lib\persistence\InsertOperation;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
-use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
@@ -37,7 +35,6 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\UpdateOperation;
-use wcmf\lib\security\AuthorizationException;
 
 /**
  * RDBMapper maps objects of one type to a relational database schema.
@@ -725,18 +722,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if ($this->_conn == null) {
       $this->connect();
-    }
-
-    // check permissions for changed attributes
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $oidStr = $object->getOID()->__toString();
-    $action = PersistenceAction::MODIFY;
-    foreach ($object->getChangedValues() as $valueName) {
-      $resource = $oidStr.'.'.$valueName;
-      if (!$permissionManager->authorize($resource, '', PersistenceAction::MODIFY)) {
-        $msg = Message::get("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
-        throw new AuthorizationException($msg);
-      }
     }
 
     // set all missing attributes

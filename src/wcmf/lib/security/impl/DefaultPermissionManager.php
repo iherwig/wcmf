@@ -11,6 +11,7 @@
 namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
@@ -95,7 +96,13 @@ class DefaultPermissionManager implements PermissionManager {
    * @see PermissionManager::authorize()
    */
   public function authorize($resource, $context, $action) {
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Checking authorization for: $resource?$context?$action", __CLASS__);
+    }
     if ($this->isAnonymous()) {
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Permissions deactivated -> authorized", __CLASS__);
+      }
       return true;
     }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -134,6 +141,9 @@ class DefaultPermissionManager implements PermissionManager {
     else {
       // defaults to other
       $resourceType = self::RESOURCE_TYPE_OTHER;
+    }
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Resource type: ".$resourceType, __CLASS__);
     }
 
     // proceed by authorizing type depending resource
@@ -179,6 +189,9 @@ class DefaultPermissionManager implements PermissionManager {
       $authUser = $this->getAuthUser();
       $authorized = $authUser && $authUser->getDefaultPolicy();
     }
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Result for $resource?$context?$action: ".(!$authorized ? "not " : "")."authorized", __CLASS__);
+    }
     return $authorized;
   }
 
@@ -193,26 +206,52 @@ class DefaultPermissionManager implements PermissionManager {
    */
   protected function authorizeResource($resource, $context, $action, $returnNullIfNoPermissionExists=true) {
     $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
-    if (strlen($actionKey) == 0 && $returnNullIfNoPermissionExists) {
-      return null;
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Action key for $resource?$context?$action: '$actionKey'", __CLASS__);
     }
-
-    // check temporary permissions
-    if (in_array($actionKey, $this->_tempPermissions)) {
-      return true;
+    $authorized = null;
+    if (strlen($actionKey) != 0 || !$returnNullIfNoPermissionExists) {
+      // check temporary permissions
+      if (isset($this->_tempPermissions[$actionKey])) {
+        if (Log::isDebugEnabled(__CLASS__)) {
+          Log::debug("Has temporary permission", __CLASS__);
+        }
+        $authorized = true;
+      }
+      else {
+        if (Log::isDebugEnabled(__CLASS__)) {
+          Log::debug("Authorizing with user...", __CLASS__);
+        }
+        $authUser = $this->getAuthUser();
+        $authorized = $authUser && $authUser->authorize($actionKey);
+      }
     }
-    else {
-      $authUser = $this->getAuthUser();
-      return $authUser && $authUser->authorize($actionKey);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Result for action key '$actionKey': ".(is_bool($authorized) ? ((!$authorized ? "not " : "")."authorized") : "not defined"), __CLASS__);
     }
+    return $authorized;
   }
 
   /**
    * @see PermissionManager::addTempPermission()
    */
   public function addTempPermission($resource, $context, $action) {
-    $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
-    $this->_tempPermissions[] = $actionKey;
+    $actionKey = ActionKey::createKey($resource, $context, $action);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Adding temporary permission for '$actionKey'", __CLASS__);
+    }
+    $this->_tempPermissions[$actionKey] = true;
+  }
+
+  /**
+   * @see PermissionManager::removeTempPermission()
+   */
+  public function removeTempPermission($resource, $context, $action) {
+    $actionKey = ActionKey::createKey($resource, $context, $action);
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Removing temporary permission for '$actionKey'", __CLASS__);
+    }
+    unset($this->_tempPermissions[$actionKey]);
   }
 
   /**

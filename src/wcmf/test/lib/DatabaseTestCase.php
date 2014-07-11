@@ -10,7 +10,8 @@
  */
 namespace wcmf\test\lib;
 
-use \PDO;
+use PDO;
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 
 /**
@@ -22,11 +23,16 @@ use wcmf\lib\core\ObjectFactory;
 abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
   // only instantiate pdo once for test clean-up/fixture load
   private static $pdo = null;
+  private static $frameworkReady = false;
 
   // only instantiate PHPUnit_Extensions_Database_DB_IDatabaseConnection once per test
   private $conn = null;
 
   public final function getConnection() {
+    if (!self::$frameworkReady) {
+      TestUtil::initFramework(get_class($this), $this->getName());
+      self::$frameworkReady = true;
+    }
     if ($this->conn === null) {
       $config = ObjectFactory::getConfigurationInstance();
       $params = $config->getSection('database');
@@ -40,10 +46,16 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
   }
 
   protected function setUp() {
-    // clear object factory instance
-    ObjectFactory::clear();
-
+    Log::info("Running: ".get_class($this).".".$this->getName(), __CLASS__);
+    if (!self::$frameworkReady) {
+      TestUtil::initFramework();
+      self::$frameworkReady = true;
+    }
     parent::setUp();
+  }
+
+  protected function tearDown() {
+    self::$frameworkReady = false;
   }
 }
 ?>

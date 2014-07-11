@@ -149,6 +149,16 @@ abstract class AbstractMapper implements PersistenceMapper {
     $isNew = ($object->getState() == PersistentObject::STATE_NEW);
 
     $oid = $object->getOID();
+    // check permissions for changed attributes first, because this
+    // also includes instance and type checks
+    $oidStr = $object->getOID()->__toString();
+    foreach ($object->getChangedValues() as $valueName) {
+      $resource = $oidStr.'.'.$valueName;
+      if (!$this->checkAuthorization($resource, PersistenceAction::MODIFY)) {
+        $this->authorizationFailedError($resource, PersistenceAction::MODIFY);
+        return;
+      }
+    }
     if ($isDirty && !$this->checkAuthorization($oid, PersistenceAction::MODIFY)) {
       $this->authorizationFailedError($oid, PersistenceAction::MODIFY);
       return;
@@ -215,6 +225,7 @@ abstract class AbstractMapper implements PersistenceMapper {
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $oids = $this->getOIDsImpl($type, $criteria, $orderby, $pagingInfo);
+    $tx = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
     // remove oids for which the user is not authorized
     $result = array();
@@ -222,6 +233,9 @@ abstract class AbstractMapper implements PersistenceMapper {
       $oid = $oids[$i];
       if ($this->checkAuthorization($oid, PersistenceAction::READ)) {
         $result[] = $oid;
+      }
+      else {
+        $tx->detach($oid);
       }
     }
     return $result;
@@ -233,6 +247,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null) {
     $objects = $this->loadObjectsImpl($type, $buildDepth, $criteria, $orderby, $pagingInfo);
+    $tx = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
     // remove objects for which the user is not authorized
     $result = array();
@@ -240,6 +255,9 @@ abstract class AbstractMapper implements PersistenceMapper {
       $object = $objects[$i];
       if ($this->checkAuthorization($object->getOID(), PersistenceAction::READ)) {
         $result[] = $object;
+      }
+      else {
+        $tx->detach($object->getOID());
       }
     }
     return $result;
@@ -251,6 +269,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   public function loadRelation(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null) {
     $relatedObjects = $this->loadRelationImpl($objects, $role, $buildDepth, $criteria, $orderby, $pagingInfo);
+    $tx = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
     // remove objects for which the user is not authorized
     if ($relatedObjects != null) {
@@ -262,6 +281,9 @@ abstract class AbstractMapper implements PersistenceMapper {
           if ($this->checkAuthorization($object->getOID(), PersistenceAction::READ)) {
             $curResult[] = $object;
           }
+          else {
+            $tx->detach($object->getOID());
+          }
         }
         $result[$oidStr] = $curObjects;
       }
@@ -271,14 +293,14 @@ abstract class AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * Check authorization on an type/OID and a given action.
-   * @param oid The object id of the Object to authorize (its type will be checked too)
+   * Check authorization on a resource (type/instance/instance property) and a given action.
+   * @param resource Resource to authorize
    * @param action Action to authorize
    * @return Boolean depending on success of authorization
    */
-  protected function checkAuthorization(ObjectId $oid, $action) {
+  protected function checkAuthorization($resource, $action) {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
-    if (!$permissionManager->authorize($oid, '', $action)) {
+    if (!$permissionManager->authorize($resource, '', $action)) {
       return false;
     }
     else {
@@ -288,13 +310,13 @@ abstract class AbstractMapper implements PersistenceMapper {
 
   /**
    * Handle an authorization error.
-   * @param ObjectId oid
-   * @param type action
+   * @param resource
+   * @param action
    * @throws AuthorizationException
    */
-  protected function authorizationFailedError(ObjectId $oid, $action) {
+  protected function authorizationFailedError($resource, $action) {
     // when reading only log the error to avoid errors on the display
-    $msg = Message::get("Authorization failed for action '%0%' on '%1%'.", array($action, $oid));
+    $msg = Message::get("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
     if ($action == PersistenceAction::READ) {
       Log::error($msg."\n".ErrorHandler::getStackTrace(), __CLASS__);
     }

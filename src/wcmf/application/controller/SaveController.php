@@ -142,7 +142,7 @@ class SaveController extends Controller {
                 // save it manually later
                 $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
                 // don't store changes on the original object
-                $transaction->detach($curNode);
+                $transaction->detach($curNode->getOID());
                 $curNode->setOID($curOid);
                 $nodeArray[$curOidStr] = &$curNode;
               }
@@ -245,7 +245,7 @@ class SaveController extends Controller {
           }
           else {
             // detach object if not confirmed
-            $transaction->detach($curObject);
+            $transaction->detach($curOid);
           }
         }
         $transaction->commit();

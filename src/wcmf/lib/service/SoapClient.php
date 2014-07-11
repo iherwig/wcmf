@@ -10,8 +10,9 @@
  */
 namespace wcmf\lib\service;
 
-use \SoapVar;
-use \SoapHeader;
+use SoapHeader;
+use SoapVar;
+use wcmf\lib\core\Log;
 
 /**
  * @class SoapClient
@@ -59,9 +60,18 @@ class SoapClient extends \SoapClient {
    * @see \SoapClient::__doRequest
    */
   public function __doRequest($request, $location, $action, $version, $one_way=0){
-      $xml = explode("\r\n", parent::__doRequest($request, $location, $action, $version, $one_way));
-      $response = preg_replace('/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFE\xFF|\xFF\xFE|\xEF\xBB\xBF)/', "", $xml[1]);
-      return $response;
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Request:", __CLASS__);
+        Log::debug($request, __CLASS__);
+      }
+      $response = trim(parent::__doRequest($request, $location, $action, $version, $one_way));
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Response:", __CLASS__);
+        Log::debug($response, __CLASS__);
+        Log::debug($this->getDebugInfos(), __CLASS__);
+      }
+      $parsedResponse = preg_replace('/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFE\xFF|\xFF\xFE|\xEF\xBB\xBF)/', "", $response);
+      return $parsedResponse;
   }
 
   /**

@@ -29,8 +29,7 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 1),
       ),
       'User' => array(
-        array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02',
-            'config' => 'permissions.ini')
+        array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'config' => 'permissions.ini')
       ),
       'NMUserRole' => array(
         array('fk_user_id' => 555, 'fk_role_id' => 555),
@@ -45,6 +44,10 @@ class PermissionsTest extends DatabaseTestCase {
       'Publisher' => array(
         array('id' => 111, 'name' => 'Publisher1'),
         array('id' => 222, 'name' => 'Publisher2'),
+      ),
+      'Book' => array(
+        array('id' => 111, 'title' => 'Book1'),
+        array('id' => 222, 'title' => 'Book2'),
       ),
     ));
   }
@@ -147,6 +150,30 @@ class PermissionsTest extends DatabaseTestCase {
     $publisher2 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Publisher', 111));
     $publisher2->setValue('name', 'Tester');
     $transaction->commit();
+
+    TestUtil::endSession();
+  }
+
+  public function testRead() {
+    TestUtil::startSession('user1', 'user1');
+
+    // read list returns only one book
+    $books = ObjectFactory::getInstance('persistenceFacade')->loadObjects('Book');
+    $this->assertEquals(1, sizeof($books));
+    $this->assertEquals('app.src.model.Book:111', $books[0]->getOID()->__toString());
+    $forbidden = ObjectFactory::getInstance('persistenceFacade')->getTransaction()->getLoaded(new ObjectId('Book', 222));
+    $this->assertNull($forbidden);
+
+    TestUtil::endSession();
+  }
+
+  public function testGetOids() {
+    TestUtil::startSession('user1', 'user1');
+
+    // read list returns only one book
+    $oids = ObjectFactory::getInstance('persistenceFacade')->getOIDs('Book');
+    $this->assertEquals(1, sizeof($oids));
+    $this->assertEquals('app.src.model.Book:111', $oids[0]->__toString());
 
     TestUtil::endSession();
   }

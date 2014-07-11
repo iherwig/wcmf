@@ -122,7 +122,7 @@ abstract class AbstractUser extends Node implements User {
         $this->loadChildren($roleName);
       }
       // remove temporary permissions
-      $permissionManager->clearTempPermissions();
+      $permissionManager->removeTempPermission(self::getRoleTypeName(), '', 'read');
       $this->_hasOwnRolesLoaded = true;
     }
     // TODO add role nodes from addedNodes array

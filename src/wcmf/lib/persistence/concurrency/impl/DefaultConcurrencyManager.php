@@ -120,7 +120,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
         // the latest version from the store
         $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
         $transaction = $persistenceFacade->getTransaction();
-        $transaction->detach($object);
+        $transaction->detach($object->getOID());
         $currentState = $persistenceFacade->load($oid, BuildDepth::SINGLE);
         // check for deletion
         if ($currentState == null) {
