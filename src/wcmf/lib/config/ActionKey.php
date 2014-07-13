@@ -25,7 +25,7 @@ class ActionKey {
   private static $_actionDelimiter = '?';
 
   /**
-   * Create an action from the given values
+   * Create an action key from the given values
    * @param resource The resource
    * @param context The context
    * @param action The action
@@ -33,6 +33,16 @@ class ActionKey {
    */
   public static function createKey($resource, $context, $action) {
     return $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
+  }
+
+  /**
+   * Parse an action
+   * @param actionKey The action key
+   * @return Associative array with keys 'resouce', 'context', 'action'
+   */
+  public static function parseKey($actionKey) {
+    list($resource, $context, $action) = explode(self::$_actionDelimiter, $actionKey);
+    return array('resource' => $resource, 'context' => $context, 'action' => $action);
   }
 
   /**
