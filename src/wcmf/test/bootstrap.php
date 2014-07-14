@@ -9,7 +9,6 @@ new ClassLoader();
 // copy resources
 FileUtil::copyRecDir('resources/app/', WCMF_BASE.'app/');
 
-
 // delay any output from phpunit until the script is finished
 // in order to awoid conflicts with session headers
 ob_start();
