@@ -13,28 +13,28 @@ namespace wcmf\lib\model\mapper;
 use \Exception;
 use \PDO;
 use \Zend_Db;
-
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\Node;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\SelectStatement;
+use wcmf\lib\model\Node;
 use wcmf\lib\persistence\AbstractMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
 use wcmf\lib\persistence\InsertOperation;
-use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceException;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
+use wcmf\lib\persistence\UpdateOperation;
 
 /**
  * RDBMapper maps objects of one type to a relational database schema.

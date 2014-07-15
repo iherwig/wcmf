@@ -32,8 +32,8 @@ class ManyToManyTest extends DatabaseTestCase {
         array('id' => 1),
       ),
       'User' => array(
-        array('id' => 50, 'login' => 'user1'),
-        array('id' => 60, 'login' => 'user2'),
+        array('id' => 50, 'login' => 'user1', 'config' => ''),
+        array('id' => 60, 'login' => 'user2', 'config' => ''),
       ),
       'Role' => array(
         array('id' => 51, 'name' => 'group1'),

@@ -29,8 +29,7 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 1),
       ),
       'User' => array(
-        array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02',
-            'config' => 'permissions.ini')
+        array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'config' => 'permissions.ini')
       ),
       'NMUserRole' => array(
         array('fk_user_id' => 555, 'fk_role_id' => 555),
@@ -39,12 +38,16 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 555, 'name' => 'tester'),
       ),
       'Author' => array(
-        array('id' => 111),
-        array('id' => 222),
+        array('id' => 111, 'name' => 'Author1'),
+        array('id' => 222, 'name' => 'Author2'),
       ),
       'Publisher' => array(
-        array('id' => 111),
-        array('id' => 222),
+        array('id' => 111, 'name' => 'Publisher1'),
+        array('id' => 222, 'name' => 'Publisher2'),
+      ),
+      'Book' => array(
+        array('id' => 111, 'title' => 'Book1'),
+        array('id' => 222, 'title' => 'Book2'),
       ),
     ));
   }
@@ -52,7 +55,7 @@ class PermissionsTest extends DatabaseTestCase {
   public function testPermissionOverride() {
     TestUtil::startSession('user1', 'user1');
 
-    // reading is allowed in user's config file (overrides config.ini)
+    // reading User is allowed in user's config file (overrides config.ini)
     ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('User', 555));
 
     TestUtil::endSession();
@@ -66,7 +69,7 @@ class PermissionsTest extends DatabaseTestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
 
-    // modifying is still forbidden
+    // modifying User is still forbidden
     $user = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('User', 555));
     $user->setValue('name', 'Tester');
 
@@ -78,13 +81,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::startSession('user1', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
-    // Author:111 is allowed
-    $transaction->begin();
-    $author1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Author', 111));
-    $author1->setValue('name', 'Tester');
-    $transaction->commit();
-
-    // Author:222 is forbidden
+    // modifying Author is forbidden
     $transaction->begin();
     $author2 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Author', 222));
     $author2->setValue('name', 'Tester');
@@ -95,8 +92,90 @@ class PermissionsTest extends DatabaseTestCase {
       $transaction->rollback();
     }
 
+    // modifying Author is forbidden except for Author:111
+    $transaction->begin();
+    $author1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Author', 111));
+    $author1->setValue('name', 'Tester');
+    $transaction->commit();
+
     TestUtil::endSession();
   }
 
+  public function testPermissionOnAttributeGeneral() {
+    TestUtil::startSession('user1', 'user1');
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+
+    // modifying Author.stage is forbidden
+    $transaction->begin();
+    $author1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Author', 111));
+    $author1->setValue('stage', 2);
+    try {
+      $transaction->commit();
+      $this->fail('An expected exception has not been raised.');
+    } catch (\wcmf\lib\security\AuthorizationException $ex) {
+      $transaction->rollback();
+    }
+
+    // modifying Author.stage is forbidden
+    $transaction->begin();
+    $author2 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Author', 222));
+    $author2->setValue('stage', 2);
+    try {
+      $transaction->commit();
+      $this->fail('An expected exception has not been raised.');
+    } catch (\wcmf\lib\security\AuthorizationException $ex) {
+      $transaction->rollback();
+    }
+
+    TestUtil::endSession();
+  }
+
+  public function testPermissionOnAttributeForOnlyOneInstance() {
+    TestUtil::startSession('user1', 'user1');
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+
+    // modifying Publisher.name is forbidden
+    $transaction->begin();
+    $publisher1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Publisher', 222));
+    $publisher1->setValue('name', 'Tester');
+    try {
+      $transaction->commit();
+      $this->fail('An expected exception has not been raised.');
+    } catch (\wcmf\lib\security\AuthorizationException $ex) {
+      $transaction->rollback();
+    }
+
+    // modifying Publisher.name is forbidden except for Publisher:111.name
+    $transaction->begin();
+    $publisher2 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Publisher', 111));
+    $publisher2->setValue('name', 'Tester');
+    $transaction->commit();
+
+    TestUtil::endSession();
+  }
+
+  public function testRead() {
+    TestUtil::startSession('user1', 'user1');
+
+    // read list returns only one book
+    $books = ObjectFactory::getInstance('persistenceFacade')->loadObjects('Book');
+    $this->assertEquals(1, sizeof($books));
+    $this->assertEquals('app.src.model.Book:111', $books[0]->getOID()->__toString());
+    $forbidden = ObjectFactory::getInstance('persistenceFacade')->getTransaction()->getLoaded(new ObjectId('Book', 222));
+    $this->assertNull($forbidden);
+
+    TestUtil::endSession();
+  }
+
+  public function testGetOids() {
+    TestUtil::startSession('user1', 'user1');
+
+    // read list returns only one book
+    $oids = ObjectFactory::getInstance('persistenceFacade')->getOIDs('Book');
+    $this->assertEquals(1, sizeof($oids));
+    $this->assertEquals('app.src.model.Book:111', $oids[0]->__toString());
+
+    TestUtil::endSession();
+  }
 }
 ?>

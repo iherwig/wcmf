@@ -79,20 +79,32 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Add configuration: ".$name, __CLASS__);
     }
-    $filename = $name;
+    $filename = $this->_configPath.$name;
 
     // do nothing, if the requested file was the last parsed file
     // we don't only check if it's parsed, because order matters
     $numParsedFiles = sizeof($this->_addedFiles);
-    if ($numParsedFiles > 0 && $this->_addedFiles[$numParsedFiles-1] == $filename) {
+    $lastFile = $numParsedFiles > 0 ? $this->_addedFiles[$numParsedFiles-1] : '';
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Parsed files: ".$numParsedFiles.", last file: ".$lastFile, __CLASS__);
+    }
+    if ($numParsedFiles > 0 && $lastFile == $filename) {
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Skipping", __CLASS__);
+      }
       return;
     }
 
-    $filename = $this->_configPath.$filename;
     if (file_exists($filename)) {
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Adding...", __CLASS__);
+      }
       // try to unserialize an already parsed ini file sequence
       $this->_addedFiles[] = $filename;
       if (!$this->unserialize($this->_addedFiles)) {
+        if (Log::isDebugEnabled(__CLASS__)) {
+          Log::debug("Parse first time", __CLASS__);
+        }
         $result = $this->processFile($filename, $this->_configArray, $this->_containedFiles);
         $this->_configArray = $result['config'];
         $this->_containedFiles = array_unique($result['files']);
@@ -106,6 +118,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
         // serialize the parsed ini file sequence
         $this->serialize();
+      }
+      else {
+        if (Log::isDebugEnabled(__CLASS__)) {
+          Log::debug("Reuse from cache", __CLASS__);
+        }
       }
     }
     else {
@@ -596,8 +613,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   protected function serialize() {
     if ($this->_useCache && !$this->isModified()) {
       $cacheFile = $this->getSerializeFilename($this->_addedFiles);
-      if($fh = @fopen($cacheFile, "w")) {
-        if(@fwrite($fh, serialize(get_object_vars($this)))) {
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Serialize configuration: ".join(',', $this->_addedFiles)." to file: ".$cacheFile, __CLASS__);
+      }
+      if ($fh = @fopen($cacheFile, "w")) {
+        if (@fwrite($fh, serialize(get_object_vars($this)))) {
           @fclose($fh);
         }
         // clear the application cache, because it may become invalid

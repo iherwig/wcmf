@@ -17,7 +17,7 @@ Features
 - Configuration of the application flow through config files
 - Dependency injection support
 - Simple event processing
-- Role based permission management (for actions, types, instances)
+- Role based permission management (for actions, types, instances, instance properties)
 - Lucene search engine integration
 - I18n support
 - Flexible logging (log4php)

@@ -80,9 +80,9 @@ interface Transaction {
   /**
    * Detach an object from the transaction. All local changes will not
    * be stored. Afterwards the object is unknown to the transaction.
-   * @param object PersistentObject instance
+   * @param oid The object id of the object
    */
-  function detach(PersistentObject $object);
+  function detach(ObjectId $oid);
 
   /**
    * Get all objects currently involved in the transaction

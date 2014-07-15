@@ -71,12 +71,20 @@ interface PermissionManager {
   /**
    * Add a temporary permission for the current user. The permission
    * is valid only until end of execution or a call to
-   * PermissionManager::clearTempPermissions().
+   * PermissionManager::removeTempPermissions()/PermissionManager::clearTempPermissions().
    * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId).
    * @param context The context in which the action takes place.
    * @param action The action to process.
    */
   public function addTempPermission($resource, $context, $action);
+
+  /**
+   * Remove a temporary permission for the current user.
+   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId).
+   * @param context The context in which the action takes place.
+   * @param action The action to process.
+   */
+  public function removeTempPermission($resource, $context, $action);
 
   /**
    * Reset all temporary permissions

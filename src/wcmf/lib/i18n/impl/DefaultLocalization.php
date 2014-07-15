@@ -160,7 +160,7 @@ class DefaultLocalization implements Localization {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $transaction = $persistenceFacade->getTransaction();
       $translatedObject = $persistenceFacade->create($object->getType());
-      $transaction->detach($translatedObject);
+      $transaction->detach($translatedObject->getOID());
       $object->copyValues($translatedObject, false);
 
       $query = new ObjectQuery($this->_translationType, __CLASS__.'load_save');

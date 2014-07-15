@@ -33,17 +33,16 @@ class DefaultAuthUser implements AuthUser {
    */
   public function login($login, $password) {
     $config = ObjectFactory::getConfigurationInstance();
+    $userTypeInst = ObjectFactory::getInstance('User');
 
-    // because there is no authorized user already, we propably have to deactivate the
+    // because there is no authorized user already, we have to add a temporary permission to the
     // PermissionManager for this operation to allow user retrieval from the persistent storage
     $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $isAnonymous = $permissionManager->isAnonymous();
-    if (!$isAnonymous) {
-      $permissionManager->deactivate();
-    }
+    $permissionManager->addTempPermission($userTypeInst->getType(), '', 'read');
     // try to receive the user with given credentials
-    $userTypeInst = ObjectFactory::getInstance('User');
     $user = $userTypeInst::getByLogin($login);
+    // remove the temporary permission
+    $permissionManager->removeTempPermission($userTypeInst->getType(), '', 'read');
 
     // check if user exists
     $loginOk = false;
@@ -67,10 +66,6 @@ class DefaultAuthUser implements AuthUser {
       }
     }
 
-    // reactivate the PermissionManager if necessary
-    if (!$isAnonymous) {
-      $permissionManager->activate();
-    }
     return $loginOk;
   }
 
@@ -89,6 +84,13 @@ class DefaultAuthUser implements AuthUser {
    */
   public function setDefaultPolicy($val) {
     $this->_defaulPolicy = $val;
+  }
+
+  /**
+   * @see AuthUser::getDefaultPolicy()
+   */
+  public function getDefaultPolicy() {
+    return $this->_defaulPolicy;
   }
 
   /**

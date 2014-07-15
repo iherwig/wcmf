@@ -36,8 +36,8 @@ class LocalizationTest extends DatabaseTestCase {
         array('id' => 1),
       ),
       'User' => array(
-        array('id' => 301, 'login' => 'ingo', 'name' => 'Herwig', 'firstname' => 'Ingo'),
-        array('id' => 302, 'login' => 'user'),
+        array('id' => 301, 'login' => 'ingo', 'name' => 'Herwig', 'firstname' => 'Ingo', 'config' => ''),
+        array('id' => 302, 'login' => 'user', 'config' => ''),
       ),
       'Translation' => array(
       ),
@@ -75,7 +75,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
-    $transaction->detach($testObj);
+    $transaction->detach($oid);
 
     // there must be no translation for the object in the translation table
     $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
@@ -119,7 +119,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
-    $transaction->detach($testObj);
+    $transaction->detach($oid);
 
     // set the input type of an attribute to a not translatable type
     $testObj->setValueProperty('name', 'input_type', 'notTranslatable');
@@ -153,7 +153,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
-    $transaction->detach($testObj);
+    $transaction->detach($oid);
 
     // store a translation in the default language with saveEmptyValues = true
     $tmp = clone $testObj;
@@ -181,7 +181,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
-    $transaction->detach($testObj);
+    $transaction->detach($oid);
 
     // store a translation all values empty and saveEmptyValues = false
     $tmp = clone $testObj;
@@ -221,7 +221,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
-    $transaction->detach($testObj);
+    $transaction->detach($oid);
 
     // store a translation
     $tmp1 = clone $testObj;
@@ -256,7 +256,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
-    $transaction->detach($testObj);
+    $transaction->detach($oid);
     $originalValue = $testObj->getValue('name');
 
     // store a translation for only one value
@@ -291,7 +291,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
-    $transaction->detach($testObj);
+    $transaction->detach($oid);
 
     // store a translation in two languages
     $tmp1 = clone $testObj;
@@ -356,7 +356,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid1 = ObjectId::parse(self::TEST_OID1);
     $testObj1 = $persistenceFacade->load($oid1);
-    $transaction->detach($testObj1);
+    $transaction->detach($oid1);
 
     // store a translation in two languages
     $tmp1 = clone $testObj1;
@@ -371,7 +371,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oid2 = ObjectId::parse(self::TEST_OID2);
     $testObj2 = $persistenceFacade->load($oid2);
-    $transaction->detach($testObj2);
+    $transaction->detach($oid2);
 
     // store a translation in two languages
     $tmp3 = clone $testObj2;

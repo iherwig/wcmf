@@ -38,7 +38,7 @@ class DisplayControllerTest extends ControllerTestCase {
         array('id' => 1),
       ),
       'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm'),
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
       ),
       'NMUserRole' => array(
         array('fk_user_id' => 0, 'fk_role_id' => 0),

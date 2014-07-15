@@ -10,6 +10,9 @@
  */
 namespace wcmf\test\lib;
 
+use wcmf\lib\config\Configuration;
+use wcmf\lib\config\impl\InifileConfiguration;
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
 
@@ -19,6 +22,25 @@ use wcmf\lib\model\mapper\RDBMapper;
  * @author ingo herwig <ingo@wemove.com>
  */
 class TestUtil {
+
+  /**
+   * Set up the wcmf framework
+   */
+  public static function initFramework() {
+    ObjectFactory::clear();
+
+    $configPath = WCMF_BASE.'app/config/';
+    if (!file_exists($configPath)) {
+      throw new Exception('Configuration path '.$configPath.' does not exist. '.
+              'Did you forget to generate code from the model?');
+    }
+
+    Log::configure('log4php.php');
+
+    $config = new InifileConfiguration($configPath);
+    $config->addConfiguration('config.ini');
+    ObjectFactory::configure($config);    
+  }
 
   /**
    * Turn authorization validation on/off.
@@ -76,6 +98,7 @@ class TestUtil {
   public static function endSession() {
     $session = ObjectFactory::getInstance('session');
     $session->destroy();
+    $session->__destruct();
   }
 
   /**
