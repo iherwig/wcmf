@@ -23,8 +23,9 @@ use wcmf\lib\presentation\Controller;
  * <b>Output actions:</b>
  * - @em ok In any case
  *
- * @param[in] set Array of resource/context/action triples in the form resource?context?action
- * @param[out] result Array of boolean values indicating the permissions on the requested resources
+ * @param[in] permissions Array of resource/context/action triples in the form resource?context?action
+ * @param[out] result Associative array with the permissions as keys and boolean values indicating
+ *            if permissions are given or not
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -41,11 +42,11 @@ class PermissionsController extends Controller {
     $response = $this->getResponse();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
 
-    $set = $request->getValue('set');
+    $permissions = $request->getValue('permissions');
     $result = array();
-    foreach($set as $q) {
-      $keyParts = ActionKey::parseKey($q);
-      $result[$q] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action']);
+    foreach($permissions as $permission) {
+      $keyParts = ActionKey::parseKey($permission);
+      $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action']);
     }
     $response->setValue('result', $result);
 
@@ -54,4 +55,3 @@ class PermissionsController extends Controller {
   }
 }
 ?>
-
