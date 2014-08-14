@@ -84,17 +84,6 @@ abstract class Controller {
   }
 
   /**
-   * Check if the Controller has a view. The default implementation
-   * returns true, if the execution result is false and the response format is an instance of HtmlFormat.
-   * @return Boolean whether the Controller has a view or not.
-   */
-  public function hasView() {
-    $hasView = $this->_executionResult === false &&
-      ($this->_response->getFormat() instanceof HtmlFormat);
-    return $hasView;
-  }
-
-  /**
    * Execute the Controller resulting in its Action processed and/or its View beeing displayed.
    * @return Boolean whether following Controllers should be executed or not.
    */

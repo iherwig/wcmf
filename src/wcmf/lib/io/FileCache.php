@@ -15,7 +15,8 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 
 /**
- * @class FileCache provides simple caching functionality.
+ * FileCache provides simple caching functionality.
+ * 
  * The cache is divided into different sections. All sections share
  * the same base path.
  *

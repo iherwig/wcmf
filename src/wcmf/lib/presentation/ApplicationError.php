@@ -23,7 +23,7 @@ define('ERROR_LEVEL_ERROR',   'error');
 define('ERROR_LEVEL_FATAL',   'fatal');
 
 /**
- * @class ApplicationError is used to signal errors that occur
+ * ApplicationError is used to signal errors that occur
  * while processing a request.
  *
  * This class only allows to use predefined errors by

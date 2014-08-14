@@ -20,11 +20,23 @@ use wcmf\lib\search\IndexedSearch;
 /**
  * SearchIndexController creates a Lucene index from the complete datastore.
  *
- * <b>Input actions:</b>
- * - unspecified: Create the index
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - none
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Create the index.\n\n
+ * See [BatchController actions](@ref BatchController)
+ * </div>
+ * </div>
+ *
+ * <div class="controller-action">
+ * <div> __Action__ continue </div>
+ * <div>
+ * Continue to process the next action.\n\n
+ * See [BatchController actions](@ref BatchController)
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */

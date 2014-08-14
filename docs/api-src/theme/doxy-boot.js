@@ -53,5 +53,16 @@ $( document ).ready(function() {
 	$("div.ttname").addClass("panel-heading");
 	$("div.ttdef,div.ttdoc,div.ttdeci").addClass("panel-body");
 
+	$("table.doxtable").addClass('table');
 
+  $("em:contains('Request')").addClass('label label-info');//.before("<i class='fa fa-sign-in'></i> ");
+	$("em:contains('Response')").addClass('label label-info');//.before("<i class='fa fa-sign-out'></i> ");
+  $("em:contains('in')").addClass('label label-info');//.before("<i class='fa fa-sign-in'></i> ");
+	$("em:contains('out')").addClass('label label-info');//.before("<i class='fa fa-sign-out'></i> ");
+
+	$("div.controller-action").addClass("panel panel-info");
+	$("div.controller-action").each(function() {
+    $(this).children("div:nth(0)").addClass("panel-heading");
+    $(this).children("div:nth(1)").addClass("panel-body");
+  });
 });

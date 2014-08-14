@@ -19,24 +19,46 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * BatchController allows to define work packages that will be processed
- * in a sequence. The controller sets the following actions as result of one
- * execution:
- * - continue: The process is not finished and continue should be called as next action
- * - download: The process is finished and the next call to continue will trigger the file download
- * - done: The process is finished
+ * BatchController is used to process complex, longer running actions. They are
+ * devided into subactions (_work packages_), which are called sequentially.
+ * Depending on the progress, the controller sets different actions on the response
+ * as result of one execution. Work packages are defined by implementing the
+ * BatchController::getWorkPackage() method.
  *
- * <b>Input actions:</b>
- * - @em continue Process next work package if any
- * - unspecified: Initialized work packages
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em done If finished
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Initialize the work packages and process the first action.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_  `oneCall`       | Boolean whether to accomplish the task in one call (optional, default: _false_)
+ * | _out_ `stepNumber`    | The current step starting with 1, ending with _numberOfSteps_+1
+ * | _out_ `numberOfSteps` | Total number of steps
+ * | _out_ `displayText`   | The display text for the current step
+ * | __Response Actions__  | |
+ * | `continue`            | The process is not finished and `continue` should be called as next action
+ * | `download`            | The process is finished and the next call to `continue` will trigger the file download
+ * | `done`                | The process is finished
+ * </div>
+ * </div>
  *
- * @param[in] oneCall Boolean whether to accomplish the task in one call (optional, default: false)
- * @param[out] stepNumber The current step starting with 1, ending with numberOfSteps+1
- * @param[out] numberOfSteps Total number of steps
- * @param[out] displayText The display text for the current step
+ * <div class="controller-action">
+ * <div> __Action__ continue </div>
+ * <div>
+ * Continue to process the next action.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _out_ `stepNumber`    | The current step starting with 1, ending with _numberOfSteps_+1
+ * | _out_ `numberOfSteps` | Total number of steps
+ * | _out_ `displayText`   | The display text for the current step
+ * | __Response Actions__  | |
+ * | `continue`            | The process is not finished and `continue` should be called as next action
+ * | `download`            | The process is finished and the next call to `continue` will trigger the file download
+ * | `done`                | The process is finished
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
