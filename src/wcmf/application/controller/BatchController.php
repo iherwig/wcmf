@@ -192,15 +192,14 @@ abstract class BatchController extends Controller {
 
   /**
    * Add a work package to session. This package will be devided into sub packages of given size.
-   * @param name Display name of the package (will be supplemented by startNumber-endNumber, e.g. '1-7', '8-14', ...)
-   * @param size Size of one sub package. This defines how many of the oids will be passed to the callback in one call (e.g. '7' means pass 7 oids per call)
-   * @param oids An array of oids (or other application specific package identifiers) that will be distributed into sub packages of given size
-   * @note The array must contain at least one value
-   * @param callback The name of method to call for this package type
-   * @note The callback method must accept the following parameters:
-   *      - one array parameter (the oids to process in the current call)
-   *      - optionally array parameter (the additional arguments)
-   * @param args Assoziative array of additional callback arguments (application specific) [default: null]
+   * @param $name Display name of the package (will be supplemented by startNumber-endNumber, e.g. '1-7', '8-14', ...)
+   * @param $size Size of one sub package. This defines how many of the oids will be passed to the callback in one call (e.g. '7' means pass 7 oids per call)
+   * @param $oids An array of object ids (or other application specific package identifiers) with _at least one value_ that will be distributed into sub packages of given size
+   * @param $callback The name of method to call for this package type.
+   *      The callback method must accept the following parameters:
+   *      1. array parameter (the object ids to process in the current call)
+   *      2. optionally array parameter (the additional arguments)
+   * @param $args Assoziative array of additional callback arguments (application specific) [default: null]
    */
   protected function addWorkPackage($name, $size, $oids, $callback, $args=null) {
     $request = $this->getRequest();
@@ -278,7 +277,7 @@ abstract class BatchController extends Controller {
 
   /**
    * Get the number of steps to process.
-   * @return integer
+   * @return Integer
    */
   protected function getNumberOfSteps() {
     $session = ObjectFactory::getInstance('session');
@@ -287,6 +286,7 @@ abstract class BatchController extends Controller {
 
   /**
    * Get the text to display for the current step.
+   * @param $step The step number
    */
   protected function getDisplayText($step) {
     return Message::get("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
@@ -302,7 +302,7 @@ abstract class BatchController extends Controller {
 
   /**
    * Get definitions of work packages.
-   * @param number The number of the work package (first number is 0, number is incremented on every call)
+   * @param $number The number of the work package (first number is 0, number is incremented on every call)
    * @note This function gets called on first initialization run as often until it returns null.
    * This allows to define different static work packages. If you would like to add work packages dynamically on
    * subsequent runs this may be done by directly calling the BatchController::addWorkPackage() method.

@@ -1,33 +1,37 @@
-#MSearchBox {
+a[name] {
   position: relative;
+  top: -50px;
   display: block;
 }
 
+tr[class^='separator:'] {
+  display: none;
+}
 
 .post_image {
-	width: 100%;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+  width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .post_image_tall {
-	width: 50%;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+  width: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .post_equation {
-	width: 50%;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+  width: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .anchor{
-	padding-top: 50px;
-	margin-top: -50px;
+  padding-top: 50px;
+  margin-top: -50px;
 }
 
 .flex-video {
@@ -55,8 +59,8 @@
   .flex-video { padding-top: 0; }
 }
 
-  table.center {
-    margin-left:auto;
-    margin-right:auto;
-    width: 75%;
-  }
+table.center {
+  margin-left:auto;
+  margin-right:auto;
+  width: 75%;
+}
