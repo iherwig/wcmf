@@ -1,22 +1,23 @@
 # wCMF # {#mainpage}
 
-<blockquote>
-  A framework for building <em class="text-primary">reliable</em>,
-  <em class="text-primary">maintainable</em> and
-  <em class="text-primary">extendable</em> web applications in PHP
-</blockquote>
 
-wCMF's framework approach follows the philosophy, that the earlier developers
-deal with the underlying infrastructure of an application the easier adjustments to
-the specific needs of a project can be implemented, which - when using a out-of-the-box solutions -
-would require programming work anyway. wCMF's clear object oriented design is based
-on well known design patterns that allow for a quick introduction to the application's
-architecture.
+@htmlonly
+<div class="jumbotron">
+  <p>A PHP framework for building <em>reliable</em>, <em>maintainable</em> and <em>extendable</em> web applications</p>
+</div>
 
-### Model Driven Development ###
-
-To make application development even easier, wCMF features a model driven development
-approach.
+<div class="row">
+  <div class="col-md-4"><h3><i class="fa fa-sitemap fa-2x pull-left"></i> Model</h3>
+    Start by designing your application in an UML model. wCMF not only supports modeling of entities, controllers and views, but also of configuration and application flow.
+  </div>
+  <div class="col-md-4"><h3><i class="fa fa-gears fa-2x pull-left"></i> Build</h3>
+    Generate persistence mappers, controllers, views and configuration files from the model. After that a default application based on the Dojo Toolkit is ready to be used.
+  </div>
+  <div class="col-md-4"><h3><i class="fa fa-expand fa-2x pull-left"></i> Extend</h3>
+    wCMF's clear object oriented design is based on well known design patterns, that allow to extend the application in every aspect. Custom code is protected from subsequent generator runs.
+  </div>
+</div>
+@endhtmlonly
 
 ### Features ###
 

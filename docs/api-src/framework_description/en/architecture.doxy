@@ -54,7 +54,7 @@
  * (LayoutVisitor) oder @em output (OutputVisitor).@n
  *
  * @subsubsection oid Object Identifier
- * 
+ *
  * For handling lots of different domain objects an unique identification is crucial. In order to achieve this,
  * so-called @em Object @em Identifier (@em OID) are used. Various strategies are possible to obtain these identifiers
  * - for example a central registry. The wCMF composes these OIDs from the type (domain class or type of the
@@ -69,7 +69,7 @@
  * @subsection output Data output
  *
  * The output format of the nodes (e.g. when using the OutputVisitor) is specified in the corresponding
- * OutputStrategy. Examples are the XMLOutputStrategy for converting data to XML format for use in 
+ * OutputStrategy. Examples are the XMLOutputStrategy for converting data to XML format for use in
  * @em Flash movies for instance or further processing via XSLT, TreeViewOutputStrategy for creating HTML
  * Treeviews or DotOutputStrategy for use with @em dot, which generates a graphic representation of the
  * data.
@@ -101,12 +101,12 @@
  * @image html mvc.png "MVC Classes"
  *
  * @subsection accesscontrol Access control
- * 
+ *
  * Permissions for controller(|domain class|OID)-context-action triplets (see @ref configuration) are
  * configured based on roles (defined in the data storage). Several users can be assigned to one role
  * and each user can be assigned to different roles. The assignment of rights is made in the configuration file.
  * Here permissions can be explicitly granted or denied. During the application flow authentification/
- * authorization is accomplished by the RightsManager together with a representation of the current user (as an 
+ * authorization is accomplished by the RightsManager together with a representation of the current user (as an
  * instance of the AuthUser class, which is created upon successful login and added to the session data).
  *
  * @subsection applicationflow Application flow
@@ -117,19 +117,19 @@
  *
  * In our case this script is @em main.php. It receives parameters (@em controller, @em context, @em action, @em data)
  * over a HTTP request. These parameters could for instance origin from the previous view. They are made available
- * to the %ActionMapper in form of an Request instance using the method ActionMapper::processAction. The %ActionMapper 
- * then takes over the control of the application flow and returns after finishing its task or displaying a view, respectively. 
- * Display of a view always interrupts the application's flow and allows the user to interact. The view sends the data obtained 
+ * to the %ActionMapper in form of an Request instance using the method ActionMapper::processAction. The %ActionMapper
+ * then takes over the control of the application flow and returns after finishing its task or displaying a view, respectively.
+ * Display of a view always interrupts the application's flow and allows the user to interact. The view sends the data obtained
  * during the interaction (e.g. form data) as HTTP Request back to the script @em main.php.@n
- * 
+ *
  * For each call of the method ActionMapper::processAction the %ActionMapper on his part instanciates an appropriate
  * controller object, which is supplied with data by Controller::initialize and executed by Controller::execute.
  * The Controller baseclass provides in its method @em execute the algorithm for validating the data - and if
- * applicable - initializing the view. Concrete controller classes execute their specific tasks in the method 
+ * applicable - initializing the view. Concrete controller classes execute their specific tasks in the method
  * Controller::executeKernel.
  * If no view is assigned to a controller, the @em execute method returns @em true. The execution result is stored in the
- * Response instance, which again is converted into a Request instance and passed to the next call of the %ActionMapper's 
- * @em processAction method. Thus it's possible to cascade different controllers to compose complex tasks out of several simple. 
+ * Response instance, which again is converted into a Request instance and passed to the next call of the %ActionMapper's
+ * @em processAction method. Thus it's possible to cascade different controllers to compose complex tasks out of several simple.
  * Otherwise the controller assigns the model to the view, which is then displayed by the view with its template (here @em view.tpl).
  *
  * Request and Response instances are interpreted using IFormat implementations. This allows the framework to realise

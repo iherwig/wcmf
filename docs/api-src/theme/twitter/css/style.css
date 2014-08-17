@@ -1,3 +1,8 @@
+#MSearchBox {
+  position: relative;
+  display: block;
+}
+
 a[name] {
   position: relative;
   top: -50px;
