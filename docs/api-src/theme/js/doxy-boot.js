@@ -64,4 +64,6 @@ $(document).ready(function() {
     $("div.controller-action em:contains('in')").addClass('label label-info');//.before("<i class='fa fa-sign-in'></i> ");
     $("div.controller-action em:contains('out')").addClass('label label-info');//.before("<i class='fa fa-sign-out'></i> ");
   });
+
+  $("div.headertitle div.title.h1:contains('wCMF')").parent().hide();
 });

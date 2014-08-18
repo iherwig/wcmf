@@ -1,9 +1,9 @@
 # wCMF # {#mainpage}
 
-
 @htmlonly
 <div class="jumbotron">
-  <p>A PHP framework for building <em>reliable</em>, <em>maintainable</em> and <em>extendable</em> web applications</p>
+  <h1>wCMF</h1>
+  <h2>A PHP framework for building<br><kbd>reliable</kbd>, <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications</h2>
 </div>
 
 <div class="row">

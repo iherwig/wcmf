@@ -5,7 +5,6 @@
     <!--BEGIN PROJECT_NAME--><title>$projectname $projectnumber: $title</title><!--END PROJECT_NAME-->
     <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 
-    <!-- Enable responsive viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
@@ -13,25 +12,23 @@
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
 
-    <!-- Le styles -->
-    <link href="theme/twitter/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
-    <script src="theme/twitter/bootstrap3/js/jquery-2.1.1.min.js"></script>
-    <script src="theme/twitter/bootstrap3/js/bootstrap.min.js"></script>
-    <link href="theme/twitter/bootstrap3/css/font-awesome.min.css" rel="stylesheet">
-    <link href="theme/twitter/css/syntax.css" rel="stylesheet">
-    <script src="theme/twitter/js/application.js"></script>
-    $search
-    <script type="text/javascript" src="theme/doxy-boot.js"></script>
-    <script type="text/javascript" src="dynsections.js"></script>
-    <link href="theme/twitter/css/style.css" rel="stylesheet">
+    <script src="theme/js/jquery/jquery-2.1.1.min.js"></script>
+    <script src="theme/js/jquery/jquery-ui-1.11.1.custom.min.js"></script>
 
-    <!-- Le fav and touch icons -->
-    <!-- Update these with your own images
-        <link rel="shortcut icon" href="images/favicon.ico">
-        <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
-    -->
+    <script src="theme/bootstrap3/js/bootstrap.min.js"></script>
+    <link href="theme/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="theme/bootstrap3/css/font-awesome.min.css" rel="stylesheet">
+
+    <script src="theme/js/tocify/jquery.tocify.min.js"></script>
+    <link href="theme/js/tocify/jquery.tocify.css" rel="stylesheet">
+
+    <script src="theme/js/doxy-boot.js"></script>
+    <script src="theme/js/application.js"></script>
+    <script src="dynsections.js"></script>
+
+    <link href="theme/css/syntax.css" rel="stylesheet">
+    <link href="theme/css/style.css" rel="stylesheet">
+    $search
 
   </head>
   <body style="min-height: 200px; padding-top: 50px;">
@@ -48,10 +45,10 @@
 
             <div class="collapse navbar-collapse menu-navbar-collapse" role="navigation">
               <ul class="nav navbar-nav">
-                <li><a href="https://github.com/iherwig/wcmf"><i class="fa fa-github"></i> Code</a></li>
                 <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-hand-o-right"></i> Guides <b class="caret"></b></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Architecture</a></li>
+                    <li><a href="#">Getting started</a></li>
+                    <li><a href="a00002.html">Architecture</a></li>
                     <li><a href="#">Configuration</a></li>
                     <li><a href="#">Persistence</a></li>
                     <li><a href="#">Permissions</a></li>
@@ -66,12 +63,15 @@
                     <li><a href="annotated.html">Classes</a></li>
                   </ul>
                 </li>
-                <li>
-                  $searchbox
-                </li>
+                <li><a href="https://github.com/iherwig/wcmf" target="_blank"><i class="fa fa-github"></i> Code</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><i class="fa fa-info-circle"></i> About</a></li>
+                <form class="navbar-form navbar-left" role="search" method="get" action="search.php">
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search" name="query">
+                  </div>
+                  <button type="submit" class="btn btn-default">Submit</button>
+                </form>
               </ul>
             </div>
           </div>
