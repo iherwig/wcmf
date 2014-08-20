@@ -1,136 +1,136 @@
-/** @page architecture Architecture
- *
- * <div id="toc"></div>
- *
- * @note Method/class names in diagrams may vary from the current ones found in the framework.
- *
- * @section persistence Data storage
- *
- * The main task of the framework is to provide an easy-to-use interface to different
- * (not object oriented) persistence mechanisms (whether they're relational databases or
- * XML files).
- *
- * For this purpose the framework defines the PersistentObject class, which provides
- * operations for changing, saving and deleting data. This class and its subclasses
- * are the data's object oriented representation (@em domain @em classes or @em content
- * @em types in an CMS context), which is used by application developers. The transformation
- * into relational presentations is carried out by specialized subclasses of PersistenceMapper,
- * which for instance implement the appropriate SQL commands. The domain objects (instances
- * of the domain classes) use these classes transparently to the programmer.@n
- * %PersistenceMapper classes make use of the DataConverter classes in order to convert data between
- * application and persistent storage. In this way for instance the date format of the
- * database can be converted to the preferred format of the application.@n
- * If a direct access to the persistence layer is necessary - for example when loading
- * objects - the PersistenceFacade is used, which delegates the request to the appropriate
- * mapper.@n
- * For relational database storages wCMF uses the <a href="http://adodb.sourceforge.net/" target="_blank">ADOdb</a>
- * Database Library for PHP as abstraction layer.
- *
- * @image html persistence.png "Persistence Classes"
- *
- * @section datarepresentation Data representation
- *
- * At present the framework defines two specialized domain classes, Node and Table, of which the Node class
- * is the application development's central component. Since data is predominantly organized
- * hierarchical, this class provides a generic data container, which allows for the building of
- * tree structures. %Node objects can contain different attributes. This makes the definition of
- * different domain classes possible (which merely differ in their attributes: @em headline, @em text,
- * @em image, @em link etc. - not in their functionality). Appropriate mapper classes are
- * NodeRDBMapper, NodeXMLDBMapper a.o.
- *
- * The class NodeIterator is responsible for traversing trees composed of nodes. This class implements
- * a depth-first algorithm (the traversing follows the structure to the deepest node first before it
- * continues with the neighboring). Subclasses can implement further algorithms.@n
- * The extension of node classes with additional operations follows the visitor pattern. Subclasses
- * of Visitor for instance add behaviour like @em save (CommitVisitor), @em graphical @em display
- * (LayoutVisitor) oder @em output (OutputVisitor).@n
- *
- * @subsection oid Object Identifier
- *
- * For handling lots of different domain objects an unique identification is crucial. In order to achieve this,
- * so-called @em Object @em Identifier (@em OID) are used. Various strategies are possible to obtain these identifiers
- * - for example a central registry. The wCMF composes these OIDs from the type (domain class or type of the
- * PersistentObject) and a number, which is unique for each type. As an advantage this method prevents conflicts
- * when domain objects are generated from different database tables and an 'autoincrement' attribute of these
- * tables is used as the number. Important is, that the object's type can be derived from the OID, because
- * this enables the PersistenceFacade to deduce the PersistenceMapper for the given object via the configuration
- * file. The %PersistenceFacade provides methods for composition and interpretation of the OIDs.
- *
- * @image html domain_objects.png "Node class"
- *
- * @section output Data output
- *
- * The output format of the nodes (e.g. when using the OutputVisitor) is specified in the corresponding
- * OutputStrategy. Examples are the XMLOutputStrategy for converting data to XML format for use in
- * @em Flash movies for instance or further processing via XSLT, TreeViewOutputStrategy for creating HTML
- * Treeviews or DotOutputStrategy for use with @em dot, which generates a graphic representation of the
- * data.
- *
- * @image html data_output.png "Data output classes"
- *
- * @section userinterface User interface
- *
- * The user interface of a wCMF application is based on the @em Model-View-Controller (@em MVC) pattern.
- * According to this pattern the application instanciates a specific controller for each action,
- * which loads the data (model) required for that action and - where applicable - presents the data
- * to the user via the corresponding view. Upon execution of a controller the next action will
- * be determined. This could either depend on the result of the action (@em successful, @em failed etc.)
- * or explicitly be specified by the user (@em save, @em delete etc.). The application flow is defined
- * by stringing together controller-action pairs.
- *
- * The ActionMapper - configured via a configuration file (see @ref configuration) - controls the application
- * flow. It creates @em controller objekts, which execute actions like @em save changes, @em add
- * elements, @em delete elements or @em display data - where applicable - with the help of views. For
- * execution the Controller baseclass defines an algorithm, which is implemented by specialized
- * subclasses.@n
- * The @em model, which the controllers work with, is constituted of the domain classes - in most cases
- * a tree structure of Node objects.@n
- * The framework uses the <a href="http://smarty.php.net/" target="_blank">Smarty</a> Template Engine
- * to create the @em views. This means, that a view is defined by a @em Smarty template (*.tpl file),
- * which is displayed by an instance of the class View. Before the data is displayed the controller extracts
- * it from the model and assigns it to the view instance.
- *
- * @image html mvc.png "MVC Classes"
- *
- * @section accesscontrol Access control
- *
- * Permissions for controller(|domain class|OID)-context-action triplets (see @ref configuration) are
- * configured based on roles (defined in the data storage). Several users can be assigned to one role
- * and each user can be assigned to different roles. The assignment of rights is made in the configuration file.
- * Here permissions can be explicitly granted or denied. During the application flow authentification/
- * authorization is accomplished by the RightsManager together with a representation of the current user (as an
- * instance of the AuthUser class, which is created upon successful login and added to the session data).
- *
- * @section applicationflow Application flow
- *
- * To run the wCMF in a web browser a PHP script is necessary as entry point. This is similar to a
- * @em main method, which instanciates the initial application objects and hands the control over
- * to these objects.
- *
- * In our case this script is @em main.php. It receives parameters (@em controller, @em context, @em action, @em data)
- * over a HTTP request. These parameters could for instance origin from the previous view. They are made available
- * to the %ActionMapper in form of an Request instance using the method ActionMapper::processAction. The %ActionMapper
- * then takes over the control of the application flow and returns after finishing its task or displaying a view, respectively.
- * Display of a view always interrupts the application's flow and allows the user to interact. The view sends the data obtained
- * during the interaction (e.g. form data) as HTTP Request back to the script @em main.php.@n
- *
- * For each call of the method ActionMapper::processAction the %ActionMapper on his part instanciates an appropriate
- * controller object, which is supplied with data by Controller::initialize and executed by Controller::execute.
- * The Controller baseclass provides in its method @em execute the algorithm for validating the data - and if
- * applicable - initializing the view. Concrete controller classes execute their specific tasks in the method
- * Controller::executeKernel.
- * If no view is assigned to a controller, the @em execute method returns @em true. The execution result is stored in the
- * Response instance, which again is converted into a Request instance and passed to the next call of the %ActionMapper's
- * @em processAction method. Thus it's possible to cascade different controllers to compose complex tasks out of several simple.
- * Otherwise the controller assigns the model to the view, which is then displayed by the view with its template (here @em view.tpl).
- *
- * Request and Response instances are interpreted using IFormat implementations. This allows the framework to realise
- * different formats for sending and receiving data. Known formats are HTML, JSON and SOAP.
- *
- * The configuration of the controllers, views and actions is done in the configuration file (see @ref configuration).
- *
- * @image html mvc_sequence.png "Application flow"
- *
- * Back to the @ref intro | Next section @ref extensionpoints
- *
- */
+/*!
+\page architecture Architecture
+<div class="has-toc" />
+
+\section Architecture
+
+@note Method/class names in diagrams may vary from the current ones found in the framework.
+
+\subsection persistence Data storage
+
+The main task of the framework is to provide an easy-to-use interface to different
+(not object oriented) persistence mechanisms (whether they're relational databases or
+XML files).
+
+For this purpose the framework defines the PersistentObject class, which provides
+operations for changing, saving and deleting data. This class and its subclasses
+are the data's object oriented representation (@em domain @em classes or @em content
+@em types in an CMS context), which is used by application developers. The transformation
+into relational presentations is carried out by specialized subclasses of PersistenceMapper,
+which for instance implement the appropriate SQL commands. The domain objects (instances
+of the domain classes) use these classes transparently to the programmer.@n
+%PersistenceMapper classes make use of the DataConverter classes in order to convert data between
+application and persistent storage. In this way for instance the date format of the
+database can be converted to the preferred format of the application.@n
+If a direct access to the persistence layer is necessary - for example when loading
+objects - the PersistenceFacade is used, which delegates the request to the appropriate
+mapper.@n
+For relational database storages wCMF uses the <a href="http://adodb.sourceforge.net/" target="_blank">ADOdb</a>
+Database Library for PHP as abstraction layer.
+
+@image html persistence.png Persistence Classes
+
+\subsection datarepresentation Data representation
+
+At present the framework defines two specialized domain classes, Node and Table, of which the Node class
+is the application development's central component. Since data is predominantly organized
+hierarchical, this class provides a generic data container, which allows for the building of
+tree structures. %Node objects can contain different attributes. This makes the definition of
+different domain classes possible (which merely differ in their attributes: @em headline, @em text,
+@em image, @em link etc. - not in their functionality). Appropriate mapper classes are
+NodeRDBMapper, NodeXMLDBMapper a.o.
+
+The class NodeIterator is responsible for traversing trees composed of nodes. This class implements
+a depth-first algorithm (the traversing follows the structure to the deepest node first before it
+continues with the neighboring). Subclasses can implement further algorithms.@n
+The extension of node classes with additional operations follows the visitor pattern. Subclasses
+of Visitor for instance add behaviour like @em save (CommitVisitor), @em graphical @em display
+(LayoutVisitor) oder @em output (OutputVisitor).@n
+
+\subsubsection oid Object Identifier
+
+For handling lots of different domain objects an unique identification is crucial. In order to achieve this,
+so-called @em Object @em Identifier (@em OID) are used. Various strategies are possible to obtain these identifiers
+- for example a central registry. The wCMF composes these OIDs from the type (domain class or type of the
+PersistentObject) and a number, which is unique for each type. As an advantage this method prevents conflicts
+when domain objects are generated from different database tables and an 'autoincrement' attribute of these
+tables is used as the number. Important is, that the object's type can be derived from the OID, because
+this enables the PersistenceFacade to deduce the PersistenceMapper for the given object via the configuration
+file. The %PersistenceFacade provides methods for composition and interpretation of the OIDs.
+
+@image html domain_objects.png "Node class"
+
+\subsection output Data output
+
+The output format of the nodes (e.g. when using the OutputVisitor) is specified in the corresponding
+OutputStrategy. Examples are the XMLOutputStrategy for converting data to XML format for use in
+@em Flash movies for instance or further processing via XSLT, TreeViewOutputStrategy for creating HTML
+Treeviews or DotOutputStrategy for use with @em dot, which generates a graphic representation of the
+data.
+
+@image html data_output.png "Data output classes"
+
+\subsection userinterface User interface
+
+The user interface of a wCMF application is based on the @em Model-View-Controller (@em MVC) pattern.
+According to this pattern the application instanciates a specific controller for each action,
+which loads the data (model) required for that action and - where applicable - presents the data
+to the user via the corresponding view. Upon execution of a controller the next action will
+be determined. This could either depend on the result of the action (@em successful, @em failed etc.)
+or explicitly be specified by the user (@em save, @em delete etc.). The application flow is defined
+by stringing together controller-action pairs.
+
+The ActionMapper - configured via a configuration file (see @ref configuration) - controls the application
+flow. It creates @em controller objekts, which execute actions like @em save changes, @em add
+elements, @em delete elements or @em display data - where applicable - with the help of views. For
+execution the Controller baseclass defines an algorithm, which is implemented by specialized
+subclasses.@n
+The @em model, which the controllers work with, is constituted of the domain classes - in most cases
+a tree structure of Node objects.@n
+The framework uses the <a href="http://smarty.php.net/" target="_blank">Smarty</a> Template Engine
+to create the @em views. This means, that a view is defined by a @em Smarty template (*.tpl file),
+which is displayed by an instance of the class View. Before the data is displayed the controller extracts
+it from the model and assigns it to the view instance.
+
+@image html mvc.png "MVC Classes"
+
+\subsection accesscontrol Access control
+
+Permissions for controller(|domain class|OID)-context-action triplets (see @ref configuration) are
+configured based on roles (defined in the data storage). Several users can be assigned to one role
+and each user can be assigned to different roles. The assignment of rights is made in the configuration file.
+Here permissions can be explicitly granted or denied. During the application flow authentification/
+authorization is accomplished by the RightsManager together with a representation of the current user (as an
+instance of the AuthUser class, which is created upon successful login and added to the session data).
+
+\subsection applicationflow Application flow
+
+To run the wCMF in a web browser a PHP script is necessary as entry point. This is similar to a
+@em main method, which instanciates the initial application objects and hands the control over
+to these objects.
+
+In our case this script is @em main.php. It receives parameters (@em controller, @em context, @em action, @em data)
+over a HTTP request. These parameters could for instance origin from the previous view. They are made available
+to the %ActionMapper in form of an Request instance using the method ActionMapper::processAction. The %ActionMapper
+then takes over the control of the application flow and returns after finishing its task or displaying a view, respectively.
+Display of a view always interrupts the application's flow and allows the user to interact. The view sends the data obtained
+during the interaction (e.g. form data) as HTTP Request back to the script @em main.php.@n
+
+For each call of the method ActionMapper::processAction the %ActionMapper on his part instanciates an appropriate
+controller object, which is supplied with data by Controller::initialize and executed by Controller::execute.
+The Controller baseclass provides in its method @em execute the algorithm for validating the data - and if
+applicable - initializing the view. Concrete controller classes execute their specific tasks in the method
+Controller::executeKernel.
+If no view is assigned to a controller, the @em execute method returns @em true. The execution result is stored in the
+Response instance, which again is converted into a Request instance and passed to the next call of the %ActionMapper's
+@em processAction method. Thus it's possible to cascade different controllers to compose complex tasks out of several simple.
+Otherwise the controller assigns the model to the view, which is then displayed by the view with its template (here @em view.tpl).
+
+Request and Response instances are interpreted using IFormat implementations. This allows the framework to realise
+different formats for sending and receiving data. Known formats are HTML, JSON and SOAP.
+
+The configuration of the controllers, views and actions is done in the configuration file (see @ref configuration).
+
+@image html mvc_sequence.png Application flow
+
+*/

@@ -3,6 +3,11 @@ $(document).ready(function() {
   $("div.headertitle").addClass("page-header");
   $("div.title").addClass("h1");
 
+  if ($("h1").length > 0) {
+    // hide header, if h1 exists
+    $("div.header").hide();
+  }
+
   $('li > a[href="index.html"] > span').before("<i class='fa fa-cog'></i> ");
   $('li > a[href="index.html"] > span').text("Home");
   $('li > a[href="modules.html"] > span').before("<i class='fa fa-square'></i> ");
@@ -64,6 +69,4 @@ $(document).ready(function() {
     $("div.controller-action em:contains('in')").addClass('label label-info');//.before("<i class='fa fa-sign-in'></i> ");
     $("div.controller-action em:contains('out')").addClass('label label-info');//.before("<i class='fa fa-sign-out'></i> ");
   });
-
-  $("div.headertitle div.title.h1:contains('wCMF')").parent().hide();
 });

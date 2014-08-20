@@ -1,25 +1,31 @@
-# wCMF # {#mainpage}
+/*!
+\mainpage mainpage wCMF
 
-@htmlonly
+\htmlonly
 <div class="jumbotron">
   <h1>wCMF</h1>
   <h2>A PHP framework for building<br><kbd>reliable</kbd>, <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications</h2>
 </div>
 
+<div class="alert alert-info" role="alert">
+  <strong>Model driven development</strong> with wCMF helps focusing on the application domain and
+  <strong>increases productivity</strong> significantly.
+</div>
+
 <div class="row">
   <div class="col-md-4"><h3><i class="fa fa-sitemap fa-2x pull-left"></i> Model</h3>
-    Start by designing your application in an UML model. wCMF not only supports modeling of entities, controllers and views, but also of configuration and application flow.
+    Start by modelling your application in wCMF's UML based DSL. It not only supports modeling of the domain model, controllers and views, but also of configuration and application flow.
   </div>
   <div class="col-md-4"><h3><i class="fa fa-gears fa-2x pull-left"></i> Build</h3>
-    Generate persistence mappers, controllers, views and configuration files from the model. After that a default application based on the Dojo Toolkit is ready to be used.
+    Run the code generator to create persistence mappers, controllers, views and configuration files from the model. After that a default application based on the Dojo Toolkit is ready to be used.
   </div>
   <div class="col-md-4"><h3><i class="fa fa-expand fa-2x pull-left"></i> Extend</h3>
     wCMF's clear object oriented design is based on well known design patterns, that allow to extend the application in every aspect. Custom code is protected from subsequent generator runs.
   </div>
 </div>
-@endhtmlonly
 
-### Features ###
+<h3>Features</h3>
+\endhtmlonly
 
 - Full featured object persistence layer:
   - Flexible mapper architecture with adapter to RDBMS
@@ -39,15 +45,4 @@
 - Code generator for model driven development (OpenArchitectureWare)
 - Also available:
   - Modern Dojo based [default application](https://github.com/iherwig/wcmf-default-app) for content management
-
-
-
-
-
-- @ref architecture
-- @ref extensionpoints
-- @ref configuration
-- @ref dbschema
-- @ref howto
-- @ref howtostart
-- @ref credits
+*/
