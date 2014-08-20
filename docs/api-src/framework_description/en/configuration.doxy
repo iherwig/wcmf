@@ -2,9 +2,7 @@
 \page configuration Configuration
 <div class="has-toc" />
 
-\page configuration
-
-\section Configuration
+\section secconfiguration Configuration
 
 The application is configured via one (or more) configuration file(s), which are parsed by the
 WCMFInifileParser class. The configuration parameters are defined by key-value pairs as they are
@@ -524,7 +522,4 @@ In this section settings for the upload of media files are specified.
  image = wcmf/application/views/display/image.tpl
 
 @endverbatim
-
-Back to the @ref intro | Previous section @ref extensionpoints | Next section @ref dbschema
-
 */

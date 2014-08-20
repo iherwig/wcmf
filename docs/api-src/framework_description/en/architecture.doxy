@@ -2,7 +2,7 @@
 \page architecture Architecture
 <div class="has-toc" />
 
-\section Architecture
+\section secarchitecture Architecture
 
 @note Method/class names in diagrams may vary from the current ones found in the framework.
 
@@ -132,5 +132,4 @@ different formats for sending and receiving data. Known formats are HTML, JSON a
 The configuration of the controllers, views and actions is done in the configuration file (see @ref configuration).
 
 @image html mvc_sequence.png Application flow
-
 */
