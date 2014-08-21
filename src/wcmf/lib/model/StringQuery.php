@@ -29,7 +29,8 @@ use wcmf\lib\util\StringUtil;
  * @code
  * $queryStr = "Author.name LIKE '%ingo%' AND (Recipe.name LIKE '%Salat%' OR Recipe.portions = 4)";
  * $query = new StringQuery('Author');
- * $authorOIDs = $query->execute($queryStr, false);
+ * $query->setConditionString($queryStr);
+ * $authorOIDs = $query->execute(false);
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>

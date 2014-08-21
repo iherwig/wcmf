@@ -25,21 +25,26 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * BatchDisplayController is a controller that loads a tree of Nodes recursivly and
- * returns the Nodes in lists of a given size. The reconstruction of the tree must
- * be handled by the client.
+ * BatchDisplayController is used to load a tree of Node instances recursivly and
+ * return them in lists of a given size. The reconstruction of the tree must be
+ * handled by the client.
  *
- * <b>Input actions:</b>
- * - see BatchController
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - see BatchController
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Load the Nodes.
+ * | Parameter                 | Description
+ * |---------------------------|-------------------------
+ * | _in_ / _out_  `oid`       | The object id of the Node to start loading from
+ * | _in_ `translateValues`    | Boolean whether list values should be translated to their display values (optional, default: _true_)
+ * | _in_ `nodesPerCall`       | The number of Node instances to load in one call (default: 50)
+ * | _out_ `list`              | Array of Node instances
+ * </div>
+ * </div>
  *
- * @param[in,out] oid The oid of the Node to start loading from
- * @param[in] translateValues Boolean. If true, list values will be translated using Control::translateValue. If not given,
- *                        all values will be returned as is, default: true
- * @param[in] nodes_per_call The number of nodes to process in one call, default: 50
- * @param[out] list An array of Nodes
+ * For additional actions and parameters see [BatchController actions](@ref BatchController).
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -64,8 +69,8 @@ class BatchDisplayController extends BatchController {
       $session = ObjectFactory::getInstance('session');
 
       // set defaults
-      if (!$request->hasValue('nodes_per_call')) {
-        $request->setValue('nodes_per_call', $this->_NODES_PER_CALL);
+      if (!$request->hasValue('nodesPerCall')) {
+        $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
       }
       if (!$request->hasValue('translateValues')) {
         $request->setValue('translateValues', true);
@@ -113,7 +118,7 @@ class BatchDisplayController extends BatchController {
 
   /**
    * Initialize the iterator (oids parameter will be ignored)
-   * @param oids The oids to process
+   * @param $oids The oids to process
    */
   protected function startProcess($oids) {
     $session = ObjectFactory::getInstance('session');
@@ -148,7 +153,7 @@ class BatchDisplayController extends BatchController {
 
   /**
    * Load nodes provided by the persisted iterator (oids parameter will be ignored)
-   * @param oids The oids to process
+   * @param $oids The oids to process
    */
   protected function loadNodes($oids) {
     $session = ObjectFactory::getInstance('session');
@@ -171,7 +176,7 @@ class BatchDisplayController extends BatchController {
 
     // process _NODES_PER_CALL nodes
     $counter = 0;
-    while ($iterator->valid() && $counter < $request->getValue('nodes_per_call')) {
+    while ($iterator->valid() && $counter < $request->getValue('nodesPerCall')) {
       $currentOID = $iterator->current();
       $this->loadNode($currentOID);
 
@@ -209,7 +214,7 @@ class BatchDisplayController extends BatchController {
 
   /**
    * Load the node with the given object id and assign it to the response.
-   * @param oid The oid of the node to copy
+   * @param $oid The oid of the node to copy
    */
   protected function loadNode(ObjectId $oid) {
     // check if we already loaded the node
@@ -260,7 +265,7 @@ class BatchDisplayController extends BatchController {
 
   /**
    * Register an object id in the registry
-   * @param oid The object id to register
+   * @param $oid The object id to register
    */
   protected function register(ObjectId $oid) {
     $session = ObjectFactory::getInstance('session');
@@ -271,7 +276,7 @@ class BatchDisplayController extends BatchController {
 
   /**
    * Check if an object id is registered in the registry
-   * @param oid The object id to check
+   * @param $oid The object id to check
    * @return Boolean whether the oid is registered or not
    */
   protected function isRegistered(ObjectId $oid) {
@@ -283,7 +288,7 @@ class BatchDisplayController extends BatchController {
 
   /**
    * Add a given node to the list variable of the response
-   * @param node A reference to the node to add
+   * @param $node A reference to the node to add
    */
   protected function addNodeToResponse(Node $node) {
     $response = $this->getResponse();

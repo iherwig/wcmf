@@ -14,24 +14,28 @@ use wcmf\lib\core\Log;
 use wcmf\lib\presentation\Controller;
 
 /**
- * LoggingController is a controller that logs a message.
+ * LoggingController is used to log a message in the backend log.
  *
- * <b>Input actions:</b>
- * - unspecified: Log the message
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] type The type of message. Must be one of: DEBUG, INFO, WARNING, ERROR, FATAL
- * @param[in] message The message
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Log the message.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `type`            | The type of message. Must be one of: _DEBUG_, _INFO_, _WARNING_, _ERROR_, _FATAL_
+ * | _in_ `message`         | The message
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class LoggingController extends Controller {
 
   /**
-   * Log the message.
-   * @return True in any case
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {

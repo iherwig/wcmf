@@ -20,27 +20,53 @@ use FM\ElFinderPHP\ElFinder;
 use FM\ElFinderPHP\Connector\ElFinderConnector;
 
 /**
- * MediaController integrates elFinder (http://elrte.org/elfinder)
- * into wCMF.
- * @note elFinder defines action names in the 'cmd' parameter.
+ * MediaController integrates elFinder (https://github.com/Studio-42/elFinder) into wCMF.
  *
- * <b>Input actions:</b>
- * @see elFinder documentation
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
+ * <div class="controller-action">
+ * <div> __Action__ browseMedia </div>
+ * <div>
+ * Run elFinder.
+ * | Parameter                | Description
+ * |--------------------------|-------------------------
+ * | _in_ `directory`         | elFinder _startPath_ parameter
+ * | _in_ / _out_ `fieldName` | The name of the input field that should receive the url of the selected file. if not given, elFinder will search for a CkEditor instance and set the url on that.
+ * | _out_ `rootUrl`          | Root url of all media as derived from the configuration value _uploadDir_ in the configuration section _media_
+ * | _out_ `rootPath`         | Root path of all media as derived from the configuration value _uploadDir_ in the configuration section _media_
+ * | __Response Actions__     | |
+ * | `ok`                     | In all cases
+ * </div>
+ * </div>
  *
- * @param[in] fieldName The name of the input field that should receive the
- *                      url of the selected file. if not given, elFinder will
- *                      search for a CkEditor instance and set the url on that.
+ * <div class="controller-action">
+ * <div> __Action__ crop </div>
+ * <div>
+ * Crop the given image.
+ * | Parameter                | Description
+ * |--------------------------|-------------------------
+ * | _in_ `directory`         | elFinder _startPath_ parameter
+ * | _in_ / _out_ `fieldName` | The name of the input field that should receive the url of the selected file. if not given, elFinder will search for a CkEditor instance and set the url on that.
+ * | _in_ / _out_ `oid`       | The filename of the image to crop
+ * | _in_ `cropX`             | The x value of the top-left corner of the crop frame
+ * | _in_ `cropY`             | The y value of the top-left corner of the crop frame
+ * | _in_ `cropWidth`         | The width of the crop frame
+ * | _in_ `cropHeight`        | The height of the crop frame
+ * | _out_ `rootUrl`          | Root url of all media as derived from the configuration value _uploadDir_ in the configuration section _media_
+ * | _out_ `rootPath`         | Root path of all media as derived from the configuration value _uploadDir_ in the configuration section _media_
+ * | __Response Actions__     | |
+ * | `browseMedia`            | If all crop parameters are defined
+ * | `ok`                     | In crop parameters are missing
+ * </div>
+ * </div>
+ *
+ * @note elFinder defines action names in the _cmd_ parameter.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class MediaController extends Controller {
 
   /**
-   * Process finder actions.
-   * @return True in every case.
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
@@ -91,7 +117,7 @@ class MediaController extends Controller {
     }
     else {
       // custom crop action
-      if ($request->getAction() == 'crop') {
+      if ($request->getAction() == "crop") {
         $file = $request->getValue('oid');
         $response->setValue('oid', $file);
         if ($request->hasValue('cropX') && $request->hasValue('cropY') &&
@@ -122,11 +148,10 @@ class MediaController extends Controller {
 
   /**
    * Called when file is moved
-   * @param  cmd elFinder command name
-   * @param  result Command result as array
-   * @param  args Command arguments from client
-   * @param  elfinder elFinder instance
-   * @return void|true
+   * @param  $cmd elFinder command name
+   * @param  $result Command result as array
+   * @param  $args Command arguments from client
+   * @param  $elfinder elFinder instance
   **/
   protected function onFileMoved($cmd, $result, $args, $elfinder) {
     $addedFiles = $result['added'];

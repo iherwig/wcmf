@@ -25,18 +25,11 @@ use wcmf\lib\search\IndexedSearch;
  * <div class="controller-action">
  * <div> __Action__ _default_ </div>
  * <div>
- * Create the index.\n\n
- * See [BatchController actions](@ref BatchController)
+ * Create the index.
  * </div>
  * </div>
  *
- * <div class="controller-action">
- * <div> __Action__ continue </div>
- * <div>
- * Continue to process the next action.\n\n
- * See [BatchController actions](@ref BatchController)
- * </div>
- * </div>
+ * For additional actions and parameters see [BatchController actions](@ref BatchController).
  *
  * @author ingo herwig <ingo@wemove.com>
  */

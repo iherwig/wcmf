@@ -21,19 +21,38 @@ use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
 
 /**
- * AssociateController is a controller that (dis-)associates Nodes
- * (by setting the parent/child relations).
+ * AssociateController is used to (dis-)associates Node instances,
+ * e.g. in a parent/child association.
  *
- * <b>Input actions:</b>
- * - @em associate Associate one Node to another
- * - @em disassociate Disassociate one Node from another
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
+ * <div class="controller-action">
+ * <div> __Action__ associate </div>
+ * <div>
+ * Connect two Node instances.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ `sourceOid`      | The object id of the association's source Node
+ * | _in_ `targetOid`      | The object id of the association's target Node
+ * | _in_ `role`           | The role of the target Node in the source Node
+ * | __Response Actions__  | |
+ * | `ok`                  | In all cases
+ * </div>
+ * </div>
  *
- * @param[in] sourceOid The object id of the object to originate the association from
- * @param[in] targetOid The object id of the destination object
- * @param[in] role The role the target object should have in the source object
+ * <div class="controller-action">
+ * <div> __Action__ disassociate </div>
+ * <div>
+ * Disconnect two Node instances.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ `sourceOid`      | The object id of the association's source Node
+ * | _in_ `targetOid`      | The object id of the association's target Node
+ * | _in_ `role`           | The role of the target Node in the source Node
+ * | __Response Actions__  | |
+ * | `ok`                  | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -82,8 +101,6 @@ class AssociateController extends Controller {
   }
 
   /**
-   * (Dis-)Associate the Nodes.
-   * @return True in every case.
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {

@@ -19,11 +19,17 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * BatchController is used to process complex, longer running actions. They are
- * devided into subactions (_work packages_), which are called sequentially.
- * Depending on the progress, the controller sets different actions on the response
- * as result of one execution. Work packages are defined by implementing the
- * BatchController::getWorkPackage() method.
+ * BatchController is used to process complex, longer running actions, that need
+ * to be divided into several requests to overcome resource limits and provide
+ * progress information to the user.
+ *
+ * Conceptionally the process is divided into subactions (_work packages_),
+ * that are called sequentially. Depending on the progress, the controller sets
+ * different actions on the response as result of one execution.
+ *
+ * BatchController only sets up the infrastructure, the concrete process is defined
+ * by creating a subclass and implementing the abstract methods (mainly
+ * BatchController::getWorkPackage()).
  *
  * The controller supports the following actions:
  *
@@ -33,7 +39,7 @@ use wcmf\lib\presentation\Response;
  * Initialize the work packages and process the first action.
  * | Parameter             | Description
  * |-----------------------|-------------------------
- * | _in_  `oneCall`       | Boolean whether to accomplish the task in one call (optional, default: _false_)
+ * | _in_ `oneCall`        | Boolean whether to accomplish the task in one call (optional, default: _false_)
  * | _out_ `stepNumber`    | The current step starting with 1, ending with _numberOfSteps_+1
  * | _out_ `numberOfSteps` | Total number of steps
  * | _out_ `displayText`   | The display text for the current step
@@ -128,9 +134,6 @@ abstract class BatchController extends Controller {
   }
 
   /**
-   * Do processing and assign Node data to View.
-   * @return Array of given context and action 'done' if finished.
-   *         False else.
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {

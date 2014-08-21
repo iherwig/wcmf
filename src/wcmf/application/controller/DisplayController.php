@@ -23,24 +23,24 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\AuthorizationException;
 
 /**
- * DisplayController is used to read a node.
+ * DisplayController is used to read a Node instance.
  *
- * <b>Input actions:</b>
- * - unspecified: Display given Node if an oid is given
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em failure If a fatal error occurs
- * - @em ok In any other case
- *
- * @param[in] oid The oid of the requested object
- * @param[in] depth The number of levels referenced objects must be returned
- *                    as complete objects. Below this level, objects are returned as references.
- *                    If omitted, 1 is assumed. The value -1 has the special meaning of unlimited depth.
- *
- * @param[in] translateValues Boolean. If true, list values will be translated using Control::translateValue. If not given,
- *                        all values will be returned as is.
- *
- * @param[out] object The Node object to display
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Load the given Node instance.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `oid`             | The object id of the Node to read
+ * | _in_ `depth`           | The number of levels referenced Node must be returned as complete objects. Below this level, Nodes are returned as references. The value -1 has the special meaning of unlimited depth (optional, default: 1)
+ * | _in_ `translateValues` | Boolean whether list values should be translated to their display values (optional, default: _true_)
+ * | _out_ `object`         | The Node to read
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -72,8 +72,6 @@ class DisplayController extends Controller {
   }
 
   /**
-   * Assign Node data to View.
-   * @return False in every case.
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {

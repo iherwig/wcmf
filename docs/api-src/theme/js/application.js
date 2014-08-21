@@ -1,12 +1,12 @@
 $(function() {
-  $('a').tooltip();
+  $("a").tooltip();
 
   // create toc
   if ($(".has-toc").length > 0) {
 
-    $('<div class="col-md-1 visible-lg"><div id="toc"></div></div>').insertBefore( ".panel-default" );
+    $('<div class="col-md-1 visible-lg"><div id="toc"></div></div>').insertBefore(".panel-default");
 
-    var toc = $("#toc").tocify({
+    $("#toc").tocify({
       selectors: "h2,h3,h4,h5",
       theme: "bootstrap",
       context: ".panel-default"

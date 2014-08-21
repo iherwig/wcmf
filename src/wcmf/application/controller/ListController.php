@@ -25,32 +25,30 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\Obfuscator;
 
 /**
- * ListController is a controller that allows to navigate lists.
+ * ListController is used to load Node lists.
  *
- * <b>Input actions:</b>
- * - unspecified: List nodes
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] className The entity type to list instances of
- * @param[in] limit The maximum number of instances to return. If omitted, all instances
- *             (beginning at the offset parameter) will be returned [optional]
- * @param[in] offset The index of the first instance to return, based on the current sorting.
- *              The index is 0-based. If omitted, 0 is assumed [optional]
- * @param[in] sortFieldName The field name to sort the list by. Must be one of the fields of
- *              the type selected by the className parameter. If omitted, the sorting is undefined [optional]
- * @param[in] sortDirection The direction to sort the list. Must be either "asc" for ascending or "desc"
- *              for descending. If omitted, "asc" is assumed [optional]
- * @param[in] query A query condition executed with StringQuery
- *
- * @param[in] renderValues Boolean whether to render the values using NodeUtil::renderValues or not
- *              (optional, default: false)
- * @param[in] completeObjects Boolean whether to return all object attributes objects or only the display values
- *              using NodeUtil::removeNonDisplayValues (optional, default: true)
-
- * @param[out] list The list of objects according to the given input parameters
- * @param[out] totalCount The total number of instances matching the passed parameters
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Load the specified list of Node instances.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `className`       | The entity type to list instances of
+ * | _in_ `limit`           | The maximum number of instances to return. If omitted, all instances (beginning at the offset parameter) will be returned (optional)
+ * | _in_ `offset`          | The index of the first instance to return, based on the current sorting. The index is 0-based. If omitted, 0 is assumed (optional)
+ * | _in_ `sortFieldName`   | The field name to sort the list by. Must be one of the fields of the type selected by the className parameter. If omitted, the sorting is undefined (optional)
+ * | _in_ `sortDirection`   | The direction to sort the list. Must be either _asc_ for ascending or _desc_ for descending (optional, default: _asc_)
+ * | _in_ `query`           | A query condition to be used with StringQuery::setConditionString()
+ * | _in_ `translateValues` | Boolean whether list values should be translated to their display values (optional, default: _false_)
+ * | _in_ `completeObjects` | Boolean whether to return all object attributes or only the display values using NodeUtil::removeNonDisplayValues (optional, default: _true_)
+ * | _out_ `list`           | Array of Node instances according to the given input parameters
+ * | _out_ `totalCount`     | The total number of instances matching the passed parameters
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -80,8 +78,6 @@ class ListController extends Controller {
   }
 
   /**
-   * Do processing and assign Node data to View.
-   * @return False in every case.
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
@@ -154,11 +150,11 @@ class ListController extends Controller {
    * Get the object to display. The default implementation uses a StringQuery instance for the
    * object retrieval. Subclasses may override this. If filter is an empty string, all nodes of the given
    * type will be selected.
-   * @param type The object type
-   * @param queryCondition The query condition passed from the view (to be used with StringQuery).
-   * @param sortArray An array of attributes to order by (with an optional ASC|DESC appended)
-   * @param pagingInfo A reference to the current paging information (PagingInfo instance)
-   * @return An array of object instances
+   * @param $type The object type
+   * @param $queryCondition The query condition passed from the view (to be used with StringQuery).
+   * @param $sortArray An array of attributes to order by (with an optional ASC|DESC appended)
+   * @param $pagingInfo A reference to the current paging information (PagingInfo instance)
+   * @return Array of Node instances
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -194,7 +190,7 @@ class ListController extends Controller {
   /**
    * Modify the model passed to the view.
    * @note subclasses will override this to implement special application requirements.
-   * @param nodes A reference to the array of node references passed to the view
+   * @param $nodes A reference to the array of node references passed to the view
    */
   protected function modifyModel($nodes) {
     $request = $this->getRequest();
@@ -207,8 +203,8 @@ class ListController extends Controller {
       }
     }
     // render values
-    if ($request->getBooleanValue('renderValues', false) == true) {
-      NodeUtil::renderValues($nodes);
+    if ($request->getBooleanValue('translateValues', false) == true) {
+      NodeUtil::translateValues($nodes);
     }
   }
 }

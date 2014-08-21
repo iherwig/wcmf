@@ -18,22 +18,38 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\ApplicationError;
 
 /**
- * ConcurrencyController is a controller that allows to lock/unlock objects.
+ * ConcurrencyController is used to lock/unlock objects.
  *
- * <b>Input actions:</b>
- * - @em lock Lock an entity
- * - @em unlock Unlock an entity
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
+ * <div class="controller-action">
+ * <div> __Action__ lock </div>
+ * <div>
+ * Lock an object.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ / _out_ `oid`    | The object id of the object to lock
+ * | _in_ / _out_ `type`   | The lock type (_optimistic_ or _pessimistic_), optional [default: _optimistic_]
+ * | __Response Actions__  | |
+ * | `ok`                  | In all cases
+ * </div>
+ * </div>
  *
- * @param[in] oid The object id of the entity to lock/unlock
- * @param[in] type The lock type [optimistic|pessimistic], optional [default: optimistic]
- * @param[out] oid The object id of the entity to lock/unlock
- * @param[out] type The lock type [optimistic|pessimistic] in case of lock action
+ * <div class="controller-action">
+ * <div> __Action__ unlock </div>
+ * <div>
+ * Unlock an object.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ / _out_ `oid`    | The object id of the object to unlock
+ * | _in_ / _out_ `type`   | The lock type (_optimistic_ or _pessimistic_), optional [default: _optimistic_]
+ * | __Response Actions__  | |
+ * | `ok`                  | In all cases
+ * </div>
+ * </div>
  *
- * Note: if the user already holds a pessimistic lock, and tries to aquire an optimistic lock,
- * the returned type is still pessimistic.
+ * @note If the user already holds a pessimistic lock, and tries to aquire an
+ * optimistic lock, the returned lock type is still pessimistic.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -60,8 +76,6 @@ class ConcurrencyController extends Controller {
   }
 
   /**
-   * (Un-)Lock the Node.
-   * @return Array of given context and action 'ok' in every case.
    * @see Controller::executeKernel()
    */
   function executeKernel() {

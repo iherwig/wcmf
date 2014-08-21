@@ -13,21 +13,26 @@ namespace wcmf\application\controller;
 use wcmf\lib\presentation\Controller;
 
 /**
- * FailureController is a controller that shows an error page to the user.
+ * FailureController is used to show an error page to the user.
  *
- * <b>Input actions:</b>
- * - unspecified: Display the errors contained in the request
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em failure In any case
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Display the errors contained in the request.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | __Response Actions__  | |
+ * | `failure`             | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class FailureController extends Controller {
 
   /**
-   * Assign error message to Response.
-   * @return False in every case.
    * @see Controller::executeKernel()
    */
   function executeKernel() {

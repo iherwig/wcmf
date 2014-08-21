@@ -24,21 +24,36 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * CopyController is a controller that copies Nodes.
+ * CopyController is used to copy or move Node instances.
  *
- * <b>Input actions:</b>
- * - @em move Move the given Node and its children to the given target Node (delete original Node)
- * - @em copy Copy the given Node and its children to the given target Node (do not delete original Node)
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
+ * <div class="controller-action">
+ * <div> __Action__ move </div>
+ * <div>
+ * Move the given Node and its children to the given target Node (delete original Node).
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ `oid`            | The object id of the Node to move. The Node and all of its children will be moved
+ * | _in_ `targetOid`      | The object id of the parent to attach the moved Node to (if it does not accept the Node type an error occurs) (optional, if empty the new Node has no parent)
+ * | _out_ `oid`           | The object id of the newly created Node
+ * </div>
+ * </div>
  *
- * @param[in] oid The oid of the Node to copy. The Node and all of its children will be copied
- * @param[in] targetoid The oid of the parent to attach the copy to (if it does not accept the
- *              Node type an error occurs) (optional, if empty the new Node has no parent)
- * @param[in] nodes_per_call The number of nodes to process in one call, default: 50
- * @param[in] recursive Boolean whether to copy children too, only applies when copy action, default: true
- * @param[out] oid The object id of the newly created Node.
+ * <div class="controller-action">
+ * <div> __Action__ copy </div>
+ * <div>
+ * Copy the given Node and its children to the given target Node (keep original Node).
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ `oid`            | The object id of the Node to move. The Node and all of its children will be moved
+ * | _in_ `targetOid`      | The object id of the parent to attach the moved Node to (if it does not accept the Node type an error occurs) (optional, if empty the new Node has no parent)
+ * | _in_ `nodesPerCall`   | The number of Node instances to copy in one call (default: 50)
+ * | _in_ `recursive`      | Boolean whether to copy children too (default: _true_)
+ * </div>
+ * </div>
+ *
+ * For additional actions and parameters see [BatchController actions](@ref BatchController).
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -65,8 +80,8 @@ class CopyController extends BatchController {
       $session = ObjectFactory::getInstance('session');
 
       // set defaults
-      if (!$request->hasValue('nodes_per_call')) {
-        $request->setValue('nodes_per_call', $this->_NODES_PER_CALL);
+      if (!$request->hasValue('nodesPerCall')) {
+        $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
       }
       if (!$request->hasValue('recursive')) {
         $request->setValue('recursive', true);
@@ -159,7 +174,7 @@ class CopyController extends BatchController {
 
   /**
    * Copy/Move the first node (oids parameter will be ignored)
-   * @param oids The oids to process
+   * @param $oids The oids to process
    */
   protected function startProcess($oids) {
     $session = ObjectFactory::getInstance('session');
@@ -234,7 +249,7 @@ class CopyController extends BatchController {
 
   /**
    * Copy nodes provided by the persisted iterator (oids parameter will be ignored)
-   * @param oids The oids to process
+   * @param $oids The oids to process
    */
   protected function copyNodes($oids) {
     $session = ObjectFactory::getInstance('session');
@@ -260,7 +275,7 @@ class CopyController extends BatchController {
 
     // process _NODES_PER_CALL nodes
     $counter = 0;
-    while ($iterator->valid() && $counter < $request->getValue('nodes_per_call')) {
+    while ($iterator->valid() && $counter < $request->getValue('nodesPerCall')) {
       $currentOID = $iterator->current();
       $this->copyNode($currentOID);
 
@@ -285,7 +300,7 @@ class CopyController extends BatchController {
 
   /**
    * Finish the process and set the result
-   * @param oid The object id of the newly created Node
+   * @param $oid The object id of the newly created Node
    */
   protected function endProcess(ObjectId $oid) {
     $response = $this->getResponse();
@@ -303,8 +318,8 @@ class CopyController extends BatchController {
   /**
    * Create a copy of the node with the given object id. The returned
    * node is already persisted.
-   * @param oid The oid of the node to copy
-   * @return A reference to the copied node or null
+   * @param $oid The oid of the node to copy
+   * @return The copied Node or null
    */
   protected function copyNode(ObjectId $oid) {
     if (Log::isDebugEnabled(__CLASS__)) {
@@ -368,8 +383,8 @@ class CopyController extends BatchController {
 
   /**
    * Get the target node from the request parameter targetoid
-   * @param targetOID The oid of the target node
-   * @return A reference to the node
+   * @param $targetOID The oid of the target node
+   * @return Node instance
    */
   protected function getTargetNode(ObjectId $targetOID) {
     if ($this->_targetNode == null) {
@@ -383,8 +398,8 @@ class CopyController extends BatchController {
 
   /**
    * Register a copied node in the session for later reference
-   * @param origNode A reference to the original node
-   * @param copyNode A reference to the copied node
+   * @param $origNode A reference to the original node
+   * @param $copyNode A reference to the copied node
    */
   protected function registerCopy(PersistentObject $origNode, PersistentObject $copyNode) {
     $session = ObjectFactory::getInstance('session');
@@ -396,7 +411,7 @@ class CopyController extends BatchController {
 
   /**
    * Update the copied oids in the registry
-   * @param oidMap Map of changed oids (key: old value, value: new value)
+   * @param $oidMap Map of changed oids (key: old value, value: new value)
    */
   protected function updateCopyOIDs(array $oidMap) {
     $session = ObjectFactory::getInstance('session');
@@ -418,8 +433,8 @@ class CopyController extends BatchController {
 
   /**
    * Get the object id of the copied node for a node id
-   * @param oid The object id of the original node
-   * @return The object id or null, if it does not exist already
+   * @param $origOID The object id of the original node
+   * @return ObjectId or null, if it does not exist already
    */
   protected function getCopyOID(ObjectId $origOID) {
     $session = ObjectFactory::getInstance('session');
@@ -440,8 +455,8 @@ class CopyController extends BatchController {
 
   /**
    * Get the copied node for a node id
-   * @param oid The object id of the original node
-   * @return A reference to the copied node or null, if it does not exist already
+   * @param $origOID The object id of the original node
+   * @return Copied Node or null, if it does not exist already
    */
   protected function getCopy(ObjectId $origOID) {
     $copyOID = $this->getCopyOID($origOID);
@@ -457,9 +472,9 @@ class CopyController extends BatchController {
 
   /**
    * Modify the given Node before save action (Called only for the copied root Node, not for its children)
-   * @note subclasses will override this to implement special application requirements.
-   * @param node A reference to the Node to modify.
-   * @return Boolean whether the Node was modified [default: false].
+   * @note Subclasses will override this to implement special application requirements.
+   * @param $node A reference to the Node to modify.
+   * @return Boolean whether the Node was modified (default: false)
    */
   protected function modify(PersistentObject $node) {
     return false;

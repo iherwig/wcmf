@@ -16,11 +16,14 @@ use wcmf\lib\presentation\Controller;
  * ExitController stops the script execution immediatly by calling
  * the exit function.
  *
- * <b>Input actions:</b>
- * - unspecified: Stop script execution
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - none
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Stop the script execution.
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */

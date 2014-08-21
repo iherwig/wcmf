@@ -254,37 +254,6 @@ class NodeUtil {
   }
 
   /**
-   * Translate all values in a list of Nodes using the appropriate input types.
-   * @param nodes A reference to the array of Nodes
-   * @param language The language code, if the translated values should be localized.
-   *                 Optional, default is Localization::getDefaultLanguage()
-   */
-  public static function renderValues(&$nodes, $language=null) {
-    // render the node values
-    for($i=0, $count=sizeof($nodes); $i<$count; $i++) {
-      $iter = new NodeValueIterator($nodes[$i], false);
-      for($iter->rewind(); $iter->valid(); $iter->next()) {
-        self::renderValue($iter->currentNode(), $iter->key(), $baseUrl);
-      }
-    }
-  }
-
-  /**
-   * Render a PersistentObject value
-   * @param object The object whose value to render
-   * @param valueName The name of the value to render
-   * @param language The language to use
-   */
-  private static function renderValue(PersistentObject $object, $valueName, $language) {
-    $value = $object->getValue($valueName);
-    // translate list values
-    $value = Control::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
-
-    // force set (the rendered value may not be satisfy validation rules)
-    $object->setValue($valueName, $value, true);
-  }
-
-  /**
    * Translate all list values in a list of Nodes.
    * @note Translation in this case refers to mapping list values from the key to the value
    * and should not be confused with localization, although values maybe localized using the

@@ -43,7 +43,7 @@ $(document).ready(function() {
   $("div.summary > a").addClass("btn btn-default btn-xs");
   $("table.fieldtable").addClass("table");
   $(".fragment").addClass("well");
-  $(".memitem").addClass("panel panel-default");
+  $(".memitem").addClass("panel panel-info");
   $(".memproto").addClass("panel-heading");
   $(".memdoc").addClass("panel-body");
   $("span.mlabel").addClass("label label-info");
@@ -56,17 +56,22 @@ $(document).ready(function() {
   $("table.mlabels").css("width", "100%")
   $("td.mlabels-right").addClass("pull-right");
 
-  $("div.ttc").addClass("panel panel-info");
-  $("div.ttname").addClass("panel-heading");
-  $("div.ttdef,div.ttdoc,div.ttdeci").addClass("panel-body");
+  $("div.ttc").hide();
 
+  // controller action tables
   $("table.doxtable").addClass('table');
-
+  $("table.doxtable tr").each(function() {
+    $(this).children("td:nth(0)").addClass("text-nowrap");
+  });
   $("div.controller-action").addClass("panel panel-info");
   $("div.controller-action").each(function() {
     $(this).children("div:nth(0)").addClass("panel-heading");
     $(this).children("div:nth(1)").addClass("panel-body");
-    $("div.controller-action em:contains('in')").addClass('label label-info');//.before("<i class='fa fa-sign-in'></i> ");
-    $("div.controller-action em:contains('out')").addClass('label label-info');//.before("<i class='fa fa-sign-out'></i> ");
+    $("div.controller-action em:contains('in')").addClass('label label-info');
+    $("div.controller-action em:contains('out')").addClass('label label-info');
   });
+
+  // sections
+  $("dl.section.note").addClass("alert").addClass("alert-info");
+  $("dl.section.author").addClass("small");
 });

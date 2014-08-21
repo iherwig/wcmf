@@ -19,21 +19,31 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * LoginController is a controller that handles the login process.
+ * LoginController handles the login process.
  *
- * <b>Input actions:</b>
- * - @em login Try to login the user with the given user/password parameters
- * - @em logout Terminate the user session
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok If login succeeded
- * - @em login If login failed
+ * <div class="controller-action">
+ * <div> __Action__ login </div>
+ * <div>
+ * Try to login the user with the given user/password parameters.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `user`            | The login of the user to log in
+ * | _in_ `password`        | The password the user is authenticated with
+ * | _out_ `sid`            | The newly established session id
+ * | _out_ `roles`          | Array of role names assigned to the logged in user
+ * | __Response Actions__   | |
+ * | `ok`                   | If login succeeded
+ * </div>
+ * </div>
  *
- * @param[in] user The name of the user to log in
- * @param[in] password The password the user is authenticated with
- *
- * @param[out] sid The newly established session id
- * @param[out] roles All roles assigned to the logged in user
+ * <div class="controller-action">
+ * <div> __Action__ logout </div>
+ * <div>
+ * Terminate the user session.
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -82,10 +92,6 @@ class LoginController extends Controller {
   }
 
   /**
-   * If called with any action except 'login' this Controller presents the login dialog else
-   * if action is 'login' it checks the login data ('user' & 'password') and creates AuthUser object in the Session on
-   * success.
-   * @return Boolean
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {

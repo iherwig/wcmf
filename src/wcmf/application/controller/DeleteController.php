@@ -20,15 +20,21 @@ use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**
- * DeleteController is a controller that delete Nodes.
+ * DeleteController is used to delete Node instances.
  *
- * <b>Input actions:</b>
- * - unspecified: Delete given Nodes
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] oid The oid of the object to delete.
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Delete the given Node instance.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ / _out_ `oid`    | The object id of the Node to delete
+ * | __Response Actions__  | |
+ * | `ok`                  | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -46,7 +52,6 @@ class DeleteController extends Controller {
   }
 
   /**
-   * Delete given Nodes.
    * @see Controller::executeKernel()
    */
   protected function executeKernel() {
@@ -104,8 +109,8 @@ class DeleteController extends Controller {
   /**
    * Confirm delete action on given Node.
    * @note subclasses will override this to implement special application requirements.
-   * @param node A reference to the Node to confirm.
-   * @return Boolean whether the Node should be deleted [default: true].
+   * @param $node A reference to the Node to confirm.
+   * @return Boolean whether the Node should be deleted (default: _true_)
    */
   protected function confirmDelete($node) {
     return true;
@@ -114,7 +119,7 @@ class DeleteController extends Controller {
   /**
    * Called after delete.
    * @note subclasses will override this to implement special application requirements.
-   * @param oid The oid of the Node deleted.
+   * @param $oid The oid of the Node deleted
    */
   protected function afterDelete($oid) {}
 }
