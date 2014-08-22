@@ -52,9 +52,9 @@ class Request extends ControllerMessage {
    * /rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
    * @endcode
    *
-   * @param controller The controller to call if none is given in request parameters, optional
-   * @param context The context to set if none is given in request parameters, optional
-   * @param action The action to perform if none is given in request parameters, optional
+   * @param $controller The controller to call if none is given in request parameters, optional
+   * @param $context The context to set if none is given in request parameters, optional
+   * @param $action The action to perform if none is given in request parameters, optional
    * @return Request
    */
   public static function getDefault($controller=null, $context=null, $action=null) {
@@ -139,7 +139,7 @@ class Request extends ControllerMessage {
 
   /**
    * Set the desired response format
-   * @param format Format instance
+   * @param $format Format instance
    */
   public function setResponseFormat(Format $format) {
     $this->_responseFormat = $format;

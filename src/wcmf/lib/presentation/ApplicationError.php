@@ -52,10 +52,10 @@ class ApplicationError {
 
   /**
    * Constructor
-   * @param code An error code, describing the type of error
-   * @param message An error message which is displayed to the user
-   * @param level One of the ERROR_LEVEL constants
-   * @param data Some error codes required to transmit further information
+   * @param $code An error code, describing the type of error
+   * @param $message An error message which is displayed to the user
+   * @param $level One of the ERROR_LEVEL constants
+   * @param $data Some error codes required to transmit further information
    *             to the client, optional [default: null]
    */
   private function __construct($code, $message, $level, $data=null) {
@@ -83,7 +83,7 @@ class ApplicationError {
 
   /**
    * Set the error data
-   * @param data Some error codes require to transmit
+   * @param $data Some error codes require to transmit
    *   further information to the client
    */
   public function setData($data) {
@@ -112,8 +112,8 @@ class ApplicationError {
 
   /**
    * Factory method for retrieving a predefind error instance.
-   * @param code An error code
-   * @param data Some error codes required to transmit further information
+   * @param $code An error code
+   * @param $data Some error codes required to transmit further information
    *             to the client, optional [default: null]
    * @return ApplicationError
    */
@@ -129,7 +129,7 @@ class ApplicationError {
 
   /**
    * Factory method for creating a general error instance.
-   * @param message Error message
+   * @param $message Error message
    * @return ApplicationError
    */
   public static function getGeneral($message) {
@@ -138,7 +138,7 @@ class ApplicationError {
 
   /**
    * Factory method for transforming an exception into an ApplicationError instance.
-   * @param ex Exception
+   * @param $ex Exception
    * @return ApplicationError
    */
   public static function fromException(\Exception $ex) {

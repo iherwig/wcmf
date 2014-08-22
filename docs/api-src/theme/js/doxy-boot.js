@@ -67,9 +67,10 @@ $(document).ready(function() {
   $("div.controller-action").each(function() {
     $(this).children("div:nth(0)").addClass("panel-heading");
     $(this).children("div:nth(1)").addClass("panel-body");
-    $("div.controller-action em:contains('in')").addClass('label label-info');
-    $("div.controller-action em:contains('out')").addClass('label label-info');
   });
+  $('em').filter(function() {
+    return $(this).text() === "in" || $(this).text() === "out";
+  }).addClass('label label-info');
 
   // sections
   $("dl.section.note").addClass("alert").addClass("alert-info");

@@ -55,7 +55,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 
   /**
    * Set the PersistentMapper instances.
-   * @param mappers Associative array with the fully qualified
+   * @param $mappers Associative array with the fully qualified
    *   mapped class names as keys and the mapper instances as values
    */
   public function setMappers($mappers) {
@@ -72,7 +72,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 
   /**
    * Set the OutputStrategy used for logging persistence actions.
-   * @param logStrategy
+   * @param $logStrategy
    */
   public function setLogStrategy(OutputStrategy $logStrategy) {
     $this->_logStrategy = $logStrategy;
@@ -284,9 +284,9 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * Check if the given value is either null or an array and
    * throw an exception if not
-   * @param param The parameter
-   * @param name The name of the parameter (used in the exception text)
-   * @param className Classname to match if, instances of a specific type are expected (optional)
+   * @param $param The parameter
+   * @param $name The name of the parameter (used in the exception text)
+   * @param $className Classname to match if, instances of a specific type are expected (optional)
    */
   private function checkArrayParameter($param, $paramName, $className=null) {
     if ($param == null) {
@@ -308,7 +308,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 
   /**
    * Listen to StateChangeEvents
-   * @param event StateChangeEvent instance
+   * @param $event StateChangeEvent instance
    */
   public function stateChanged(StateChangeEvent $event) {
     $oldState = $event->getOldValue();

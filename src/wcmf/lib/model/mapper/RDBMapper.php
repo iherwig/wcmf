@@ -85,7 +85,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Set the connection parameters.
-   * @param params Initialization data given in an assoziative array with the following keys:
+   * @param $params Initialization data given in an assoziative array with the following keys:
    *               dbType, dbHostName, dbUserName, dbPassword, dbName
    *               if dbPrefix is given it will be appended to every table string, which is
    *               usefull if different cms operate on the same database
@@ -273,9 +273,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Execute a query on the connection.
-   * @param sql The SQL statement as string
-   * @param isSelect Boolean whether the statement is a select statement, optional [default: false]
-   * @param bindValues An array of data to bind to the placeholders, optional [default: empty array]
+   * @param $sql The SQL statement as string
+   * @param $isSelect Boolean whether the statement is a select statement, optional [default: false]
+   * @param $bindValues An array of data to bind to the placeholders, optional [default: empty array]
    * @return If isSelect is true, an array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC),
    * the number of affected rows else
    */
@@ -303,8 +303,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Execute a select query on the connection.
-   * @param selectStmt A SelectStatement instance
-   * @param pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
+   * @param $selectStmt A SelectStatement instance
+   * @param $pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
    * @return An array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC)
    */
   protected function select(SelectStatement $selectStmt, PagingInfo $pagingInfo=null) {
@@ -430,8 +430,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Internal implementation of PersistenceMapper::getRelation()
-   * @param roleName The role name of the relation
-   * @param includeManyToMany Boolean whether to also search in relations to many to many
+   * @param $roleName The role name of the relation
+   * @param $includeManyToMany Boolean whether to also search in relations to many to many
    *    objects or not
    * @return RelationDescription
    */
@@ -592,7 +592,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Check if a value is a primary key value
-   * @param name The name of the value
+   * @param $name The name of the value
    * @return Boolean
    */
   protected function isPkValue($name) {
@@ -602,8 +602,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Construct an object id from given row data
-   * @param type The type of object
-   * @param data An associative array with the pk column names as keys and pk values as values
+   * @param $data An associative array with the pk column names as keys and pk values as values
    * @return The oid
    */
   protected function constructOID($data) {
@@ -617,10 +616,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Render a Criteria instance as string.
-   * @param criteria The Criteria instance
-   * @param placeholder Placeholder (':columnName', '?') used instead of the value, optional [default: null]
-   * @param tableName The table name to use (may differ from criteria's type attribute), optional
-   * @param columnName The column name to use (may differ from criteria's attribute attribute), optional
+   * @param $criteria The Criteria instance
+   * @param $placeholder Placeholder (':columnName', '?') used instead of the value, optional [default: null]
+   * @param $tableName The table name to use (may differ from criteria's type attribute), optional
+   * @param $columnName The column name to use (may differ from criteria's attribute attribute), optional
    * @return String
    */
   public function renderCriteria(Criteria $criteria, $placeholder=null, $tableName=null, $columnName=null) {
@@ -866,13 +865,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Load objects defined by several query parts.
-   * @param type The type of the object
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param $type The type of the object
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param joins An array holding join conditions if other tables are involved in this query (maybe null). [default: null]
-   * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
+   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param $pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @return Array of PersistentObject instances
    */
   protected function loadObjectsFromQueryParts($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
@@ -889,13 +887,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Load objects defined by a select statement.
-   * @param selectStmt A SelectStatement instance
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param $selectStmt A SelectStatement instance
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param joins An array holding join conditions if other tables are involved in this query (maybe null). [default: null]
-   * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
+   * @param $pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @return Array of PersistentObject instances
    */
   public function loadObjectsFromSQL(SelectStatement $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null) {
@@ -932,7 +927,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Create an object of the mapper's type with the given attributes from the given data
-   * @param data An associative array with the attribute names as keys and the attribute values as values
+   * @param $data An associative array with the attribute names as keys and the attribute values as values
    * @return PersistentObject
    */
   protected function createObjectFromData(array $data) {
@@ -961,8 +956,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Apply the loaded object data to the object.
    * @note Subclasses must implement this method to define their object type.
-   * @param object A reference to the object created with createObject method to which the data should be applied
-   * @param objectData An associative array with the data returned by execution of the database select statement
+   * @param $object A reference to the object created with createObject method to which the data should be applied
+   * @param $objectData An associative array with the data returned by execution of the database select statement
    * 			(given by getSelectSQL).
    */
   protected function applyDataOnLoad(PersistentObject $object, array $objectData) {
@@ -979,7 +974,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Apply the default data to the object.
    * @note Subclasses must implement this method to define their object type.
-   * @param object A reference to the object created with createObject method to which the data should be applied
+   * @param $object A reference to the object created with createObject method to which the data should be applied
    */
   protected function applyDataOnCreate(PersistentObject $object) {
     // set object data
@@ -995,8 +990,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Append the child data to a list of object. If the buildDepth does not determine to load a
    * child generation, only the oids of the children will be loaded.
-   * @param objects Array of PersistentObject instances to append the children to
-   * @param buildDepth @see PersistenceFacade::loadObjects()
+   * @param $objects Array of PersistentObject instances to append the children to
+   * @param $buildDepth @see PersistenceFacade::loadObjects()
    */
   protected function addRelatedObjects(array $objects, $buildDepth=BuildDepth::SINGLE) {
 
@@ -1139,7 +1134,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Set the transaction state for the connection
-   * @param isInTransaction Boolean whether the connection is in a transaction or not
+   * @param $isInTransaction Boolean whether the connection is in a transaction or not
    */
   protected function setIsInTransaction($isInTransaction) {
     self::$inTransaction[$this->_connId] = $isInTransaction;
@@ -1161,7 +1156,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Get the names of the attributes in the mapped class to order by default and the sort directions
    * (ASC or DESC). The roleName parameter allows to ask for the order with respect to a specific role.
-   * @param rolename The role name of the relation, maybe null [default: null]
+   * @param $roleName The role name of the relation, maybe null [default: null]
    * @return An array of assciative arrays with the keys sortFieldName and sortDirection (ASC or DESC)
    */
   abstract protected function getOwnDefaultOrder($roleName=null);
@@ -1180,14 +1175,14 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Factory method for the supported object type.
-   * @param oid The object id (maybe null)
+   * @param $oid The object id (maybe null)
    * @return A reference to the created object.
    */
   abstract protected function createObject(ObjectId $oid=null);
 
   /**
    * Set the object primary key and foreign key values for storing the object in the database.
-   * @param object A reference to the object to insert.
+   * @param $object A reference to the object to insert.
    * @note The object does not have the final object id set. If a new id value for a primary key column is needed.
    * @note The prepared object will be used in the application afterwards. So values that are only to be modified for
    * the storage process should be changed in getInsertSQL() and getUpdateSQL() only!
@@ -1197,11 +1192,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Get the SQL command to select object data from the database.
-   * @param criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
-   * @param alias The alias for the table name [default: null uses none].
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
-   * @param queryId Identifier for the query cache (maybe null to let implementers handle it). [default: null]
+   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
+   * @param $alias The alias for the table name [default: null uses none].
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param $pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
+   * @param $queryId Identifier for the query cache (maybe null to let implementers handle it). [default: null]
    * @return SelectStatement instance that selects all object data that match the condition or an array with the query parts.
    * @note The names of the data item columns MUST match the data item names provided in the '_datadef' array from RDBMapper::getObjectDefinition()
    *       Use alias names if not! The selected data will be put into the '_data' array of the object definition.
@@ -1212,11 +1207,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * Get the SQL command to select those objects from the database that are related to the given object.
    * @note Navigability may not be checked in this method
    * @note In case of a sortable many to many relation, the sortkey value must also be selected
-   * @param otherObjectProxies Array of PersistentObjectProxy instances for the objects to load the relatives for.
-   * @param otherRole The role of the other object in relation to the objects to load.
-   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
+   * @param $otherObjectProxies Array of PersistentObjectProxy instances for the objects to load the relatives for.
+   * @param $otherRole The role of the other object in relation to the objects to load.
+   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param $pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
    * @return Array with SelectStatement instance and the attribute names which establish the relation between
    * the loaded objects and the proxies (proxies's attribute name first)
    */
@@ -1225,28 +1220,28 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Get the SQL command to insert a object into the database.
-   * @param object A reference to the object to insert.
+   * @param $object A reference to the object to insert.
    * @return Array of PersistenceOperation instances that insert a new object.
    */
   abstract protected function getInsertSQL(PersistentObject $object);
 
   /**
    * Get the SQL command to update a object in the database.
-   * @param object A reference to the object to update.
+   * @param $object A reference to the object to update.
    * @return Array of PersistenceOperation instances that update an existing object.
    */
   abstract protected function getUpdateSQL(PersistentObject $object);
 
   /**
    * Get the SQL command to delete a object from the database.
-   * @param oid The object id of the object to delete.
+   * @param $oid The object id of the object to delete.
    * @return Array of PersistenceOperation instances that delete an existing object.
    */
   abstract protected function getDeleteSQL(ObjectId $oid);
 
   /**
    * Create an array of condition Criteria instances for the primary key values
-   * @param oid The object id that defines the primary key values
+   * @param $oid The object id that defines the primary key values
    * @return Array of Criteria instances
    */
   abstract protected function createPKCondition(ObjectId $oid);

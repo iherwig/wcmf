@@ -58,7 +58,7 @@ class EncodingUtil {
 
   /**
    * Returns true if the given string is valid UTF-8 and false otherwise.
-   * @param string The string to be tested
+   * @param $string The string to be tested
    * code from: http://us2.php.net/mb_detect_encoding
    */
   public static function isUtf8($string) {
@@ -72,26 +72,26 @@ class EncodingUtil {
 
   /**
    * Decodes mixed CP1252 UTF-8 strings to ISO.
-   * @param string The string to be decode
+   * @param $string The string to be decode
    * code from: http://www.php.net/manual/en/function.utf8-decode.php#47146
    */
-  public static function convertCp1252Utf8ToIso($str) {
-    return utf8_decode(strtr($str, array_flip(self::$CP1252Map)));
+  public static function convertCp1252Utf8ToIso($string) {
+    return utf8_decode(strtr($string, array_flip(self::$CP1252Map)));
   }
 
   /**
    * Encodes ISO strings to mixed CP1252 UTF-8.
-   * @param string The string to be encode
+   * @param $string The string to be encode
    * code from: http://www.php.net/manual/en/function.utf8-decode.php#47146
    */
-  public static function convertIsoToCp1252Utf8($str) {
-    return strtr(utf8_encode($str), self::$CP1252Map);
+  public static function convertIsoToCp1252Utf8($string) {
+    return strtr(utf8_encode($string), self::$CP1252Map);
   }
 
   /**
    * Encodes an ISO-8859-1 mixed variable to UTF-8 (PHP 4, PHP 5 compat)
-   * @param input An array, associative or simple
-   * @param encodeKeys optional
+   * @param $input An array, associative or simple
+   * @param $encodeKeys optional
    * @return utf-8 encoded input
    * code from: http://de3.php.net/utf8_encode
    */

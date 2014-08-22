@@ -50,8 +50,8 @@ class NodeValueIterator implements \Iterator {
 
   /**
    * Constructor.
-   * @param node The node to start from.
-   * @param recursive Boolean whether the iterator should also process child nodes
+   * @param $node The node to start from.
+   * @param $recursive Boolean whether the iterator should also process child nodes
    */
   public function __construct($node, $recursive) {
     $this->_recursive = $recursive;

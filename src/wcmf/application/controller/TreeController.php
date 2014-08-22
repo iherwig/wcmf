@@ -22,26 +22,31 @@ use wcmf\lib\presentation\Controller;
 /**
  * TreeController is used to visualize nodes in a tree view.
  *
- * <b>Input actions:</b>
- * - unspecified: Load the cild nodes of the given Node
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] oid The object id of the parent Node whose children should be loaded (optional)
- * @param[in] sort The attribute to sort the children by (optional)
- * @param[in] rootTypes Name of a configuration value in configuration section 'application', that
- *                      defines an array of root types of the tree (optional, defaults to 'rootTypes')
- * @param[out] list An array of associative arrays with keys 'oid', 'displayText', 'isFolder', 'hasChildren'
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Load the cild nodes of the given Node.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `oid`             | The object id of the parent Node whose children should be loaded (optional)
+ * | _in_ `sort`            | The attribute to sort the children by (optional)
+ * | _in_ `rootTypes`       | Name of a configuration value in configuration section 'application', that defines an array of root types of the tree (optional, defaults to 'rootTypes')
+ * | _out_ `list`           | An array of associative arrays with keys 'oid', 'displayText', 'isFolder', 'hasChildren'
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class TreeController extends Controller {
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -75,12 +80,11 @@ class TreeController extends Controller {
 
     // success
     $response->setAction('ok');
-    return false;
   }
 
   /**
    * Get the children for a given oid.
-   * @param oid The object id
+   * @param $oid The object id
    * @return Array of Node instances.
    */
   protected function getChildren($oid) {
@@ -131,8 +135,8 @@ class TreeController extends Controller {
 
   /**
    * Get the view of a Node
-   * @param node The Node to create the view for
-   * @param displayText The text to display (will be taken from TreeController::getDisplayText() if not specified) [default: '']
+   * @param $node The Node to create the view for
+   * @param $displayText The text to display (will be taken from TreeController::getDisplayText() if not specified) [default: '']
    * @return An associative array whose keys correspond to Ext.tree.TreeNode config parameters
    */
   protected function getViewNode(Node $node, $displayText='') {
@@ -155,7 +159,7 @@ class TreeController extends Controller {
 
   /**
    * Test if a Node should be displayed in the tree
-   * @param node Node to display
+   * @param $node Node to display
    * @return Boolean
    */
   protected function isVisible(Node $node) {
@@ -164,7 +168,7 @@ class TreeController extends Controller {
 
   /**
    * Get the display text for a Node
-   * @param node Node to display
+   * @param $node Node to display
    * @return The display text.
    */
   protected function getDisplayText(Node $node) {
@@ -214,7 +218,7 @@ class TreeController extends Controller {
 
   /**
    * Check if the given oid belongs to a root type node
-   * @param oid The object id
+   * @param $oid The object id
    * @return Boolean
    */
   protected function isRootTypeNode(ObjectId $oid) {

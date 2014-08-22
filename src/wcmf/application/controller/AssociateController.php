@@ -101,9 +101,9 @@ class AssociateController extends Controller {
   }
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -165,7 +165,6 @@ class AssociateController extends Controller {
     }
 
     $response->setAction('ok');
-    return true;
   }
 }
 ?>

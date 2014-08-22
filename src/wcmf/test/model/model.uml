@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_1jaukLQuEeOLlbB2YLI0iw" name="PrimitiveTypes">
@@ -724,24 +724,6 @@
         <packagedElement xmi:type="uml:Package" xmi:id="_o5NM8LQGEeOIMOFxCilDfw" name="wcmf">
           <packagedElement xmi:type="uml:Package" xmi:id="_14j9sLRmEeOfbtYsPp7Oyg" name="application">
             <packagedElement xmi:type="uml:Package" xmi:id="_3TWgsLRmEeOfbtYsPp7Oyg" name="controller">
-              <packagedElement xmi:type="uml:Package" xmi:id="_KtCcwLRoEeOfbtYsPp7Oyg" name="admintool">
-                <packagedElement xmi:type="uml:Class" xmi:id="_MjrOQLRoEeOfbtYsPp7Oyg" name="EditRightsController">
-                  <generalization xmi:type="uml:Generalization" xmi:id="_s-pgQLRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
-                </packagedElement>
-                <packagedElement xmi:type="uml:Class" xmi:id="_MlxgALRoEeOfbtYsPp7Oyg" name="SearchIndexController">
-                  <generalization xmi:type="uml:Generalization" xmi:id="_usYC0LRxEeOfbtYsPp7Oyg" general="_f1B_oLRnEeOfbtYsPp7Oyg"/>
-                  <ownedAttribute xmi:type="uml:Property" xmi:id="_0VZywLRvEeOfbtYsPp7Oyg" name="searchIndexController" type="_MlxgALRoEeOfbtYsPp7Oyg" association="_0VZyw7RvEeOfbtYsPp7Oyg">
-                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0VZywbRvEeOfbtYsPp7Oyg" value="1"/>
-                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0VZywrRvEeOfbtYsPp7Oyg" value="1"/>
-                  </ownedAttribute>
-                </packagedElement>
-                <packagedElement xmi:type="uml:Association" xmi:id="_0VZyw7RvEeOfbtYsPp7Oyg" name="continue" memberEnd="_0VZyxLRvEeOfbtYsPp7Oyg _0VZywLRvEeOfbtYsPp7Oyg">
-                  <ownedEnd xmi:type="uml:Property" xmi:id="_0VZyxLRvEeOfbtYsPp7Oyg" name="searchIndexController" type="_MlxgALRoEeOfbtYsPp7Oyg" association="_0VZyw7RvEeOfbtYsPp7Oyg">
-                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0VZyxbRvEeOfbtYsPp7Oyg" value="1"/>
-                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0VZyxrRvEeOfbtYsPp7Oyg" value="1"/>
-                  </ownedEnd>
-                </packagedElement>
-              </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_fx-roLRnEeOfbtYsPp7Oyg" name="AssociateController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_OsfJULRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
@@ -766,9 +748,6 @@
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_gFJfQLRnEeOfbtYsPp7Oyg" name="DisplayController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_Iiba0LRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
-              </packagedElement>
-              <packagedElement xmi:type="uml:Class" xmi:id="_gIfHILRnEeOfbtYsPp7Oyg" name="ExitController">
-                <generalization xmi:type="uml:Generalization" xmi:id="_bWiaELRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_gLuoYLRnEeOfbtYsPp7Oyg" name="FailureController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_eMsH0LRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
@@ -807,11 +786,15 @@
               <packagedElement xmi:type="uml:Class" xmi:id="_go6ToLRnEeOfbtYsPp7Oyg" name="SearchController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_FE488LRyEeOfbtYsPp7Oyg" general="_gO4DALRnEeOfbtYsPp7Oyg"/>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_MlxgALRoEeOfbtYsPp7Oyg" name="SearchIndexController">
+                <generalization xmi:type="uml:Generalization" xmi:id="_usYC0LRxEeOfbtYsPp7Oyg" general="_f1B_oLRnEeOfbtYsPp7Oyg"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_0VZywLRvEeOfbtYsPp7Oyg" name="searchIndexController" type="_MlxgALRoEeOfbtYsPp7Oyg" association="_0VZyw7RvEeOfbtYsPp7Oyg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0VZywbRvEeOfbtYsPp7Oyg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0VZywrRvEeOfbtYsPp7Oyg" value="1"/>
+                </ownedAttribute>
+              </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_gsP7gLRnEeOfbtYsPp7Oyg" name="SortController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_KSlJ0LRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
-              </packagedElement>
-              <packagedElement xmi:type="uml:Class" xmi:id="_gv33QLRnEeOfbtYsPp7Oyg" name="TerminateController">
-                <generalization xmi:type="uml:Generalization" xmi:id="_g265cLRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_gzTlwLRnEeOfbtYsPp7Oyg" name="TreeController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_jskGULRxEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
@@ -845,6 +828,12 @@
                 <ownedEnd xmi:type="uml:Property" xmi:id="_ft5jRLRvEeOfbtYsPp7Oyg" name="xMLExportController" type="_g95FILRnEeOfbtYsPp7Oyg" association="_ft5jQ7RvEeOfbtYsPp7Oyg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ft5jRbRvEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ft5jRrRvEeOfbtYsPp7Oyg" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_0VZyw7RvEeOfbtYsPp7Oyg" name="continue" memberEnd="_0VZyxLRvEeOfbtYsPp7Oyg _0VZywLRvEeOfbtYsPp7Oyg">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_0VZyxLRvEeOfbtYsPp7Oyg" name="searchIndexController" type="_MlxgALRoEeOfbtYsPp7Oyg" association="_0VZyw7RvEeOfbtYsPp7Oyg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0VZyxbRvEeOfbtYsPp7Oyg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0VZyxrRvEeOfbtYsPp7Oyg" value="1"/>
                 </ownedEnd>
               </packagedElement>
             </packagedElement>
@@ -1576,7 +1565,6 @@
   <Chronos:ChiController xmi:id="_qbMGALRnEeOfbtYsPp7Oyg" base_Class="_f-qcwLRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_sLuPgLRnEeOfbtYsPp7Oyg" base_Class="_gB5-ALRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_tzSqQLRnEeOfbtYsPp7Oyg" base_Class="_gFJfQLRnEeOfbtYsPp7Oyg"/>
-  <Chronos:ChiController xmi:id="_vn1KALRnEeOfbtYsPp7Oyg" base_Class="_gIfHILRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_xIcBILRnEeOfbtYsPp7Oyg" base_Class="_gLuoYLRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_zlstwLRnEeOfbtYsPp7Oyg" base_Class="_gO4DALRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_05DMALRnEeOfbtYsPp7Oyg" base_Class="_gSHkQLRnEeOfbtYsPp7Oyg"/>
@@ -1588,12 +1576,10 @@
   <Chronos:ChiController xmi:id="_-KtkoLRnEeOfbtYsPp7Oyg" base_Class="_glqyYLRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="__psrILRnEeOfbtYsPp7Oyg" base_Class="_go6ToLRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_B3_HoLRoEeOfbtYsPp7Oyg" base_Class="_gsP7gLRnEeOfbtYsPp7Oyg"/>
-  <Chronos:ChiController xmi:id="_DPJu4LRoEeOfbtYsPp7Oyg" base_Class="_gv33QLRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_E0PdYLRoEeOfbtYsPp7Oyg" base_Class="_gzTlwLRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_GfuHwLRoEeOfbtYsPp7Oyg" base_Class="_g27hgLRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_HxvJQLRoEeOfbtYsPp7Oyg" base_Class="_g6RJYLRnEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_JevdoLRoEeOfbtYsPp7Oyg" base_Class="_g95FILRnEeOfbtYsPp7Oyg"/>
-  <Chronos:ChiController xmi:id="_OB5fwLRoEeOfbtYsPp7Oyg" base_Class="_MjrOQLRoEeOfbtYsPp7Oyg"/>
   <Chronos:ChiController xmi:id="_PbESILRoEeOfbtYsPp7Oyg" base_Class="_MlxgALRoEeOfbtYsPp7Oyg"/>
   <Chronos:ChiActionKey xmi:id="_eFe4ILRoEeOfbtYsPp7Oyg" action="associate" base_Association="_cb6SQ7RoEeOfbtYsPp7Oyg"/>
   <Chronos:ChiActionKey xmi:id="_j9dGMLRqEeOfbtYsPp7Oyg" action="disassociate" base_Association="_flu4A7RqEeOfbtYsPp7Oyg"/>

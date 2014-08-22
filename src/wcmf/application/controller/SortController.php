@@ -20,27 +20,39 @@ use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
 /**
- * SortController is a controller that changes the order of nodes.
+ * SortController is used to change the order of nodes. Nodes can either be
+ * sorted in a list of nodes of the same type (_moveBefore_ action) or in a list
+ * of child nodes of a container node (_insertBefore_ action).
  *
- * Nodes can either be sorted in a list of nodes of the same type (moveBefore
- * action) or in a list of child nodes of a container node (insertBefore action).
+ * The controller supports the following actions:
  *
- * <b>Input actions:</b>
- * - @em moveBefore Insert an object before a reference object in the list of
- * all objects of the same type
- * - @em insertBefore Insert an object before a reference object in the
- * order of a container object
+ * <div class="controller-action">
+ * <div> __Action__ moveBefore </div>
+ * <div>
+ * Insert an object before a reference object in the list of all objects of the same type.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `insertOid`       | The object id of the object to insert/move
+ * | _in_ `referenceOid`    | The object id of the object to insert the inserted object before. If the inserted object should be the last in the container order, the _referenceOid_ contains the special value `ORDER_BOTTOM`
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] containerOid The oid of the container object (insertBefore action only).
- * @param[in] insertOid The oid of the object to insert/move.
- * @param[in] referenceOid The oid of the object to insert the inserted object before.
- *            If the inserted object should be the last in the container order,
- *            the referenceOid contains the special value ORDER_BOTTOM
- * @param[in] role The role, that the inserted object should have in the container object
- *            (insertBefore action only).
+ * <div class="controller-action">
+ * <div> __Action__ insertBefore </div>
+ * <div>
+ * Insert an object before a reference object in the order of a container object.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `containerOid`    | The oid of the container object
+ * | _in_ `insertOid`       | The oid of the object to insert/move
+ * | _in_ `referenceOid`    | The object id of the object to insert the inserted object before. If the inserted object should be the last in the container order, the _referenceOid_ contains the special value `ORDER_BOTTOM`
+ * | _in_ `role`            | The role, that the inserted object should have in the container object.
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author   ingo herwig <ingo@wemove.com>
  */
@@ -131,11 +143,9 @@ class SortController extends Controller {
   }
 
   /**
-   * Sort Nodes.
-   * @return True in every case.
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -151,7 +161,6 @@ class SortController extends Controller {
     $transaction->commit();
 
     $response->setAction('ok');
-    return true;
   }
 
   /**
@@ -279,10 +288,10 @@ class SortController extends Controller {
 
   /**
    * Load all objects between two sortkey values
-   * @param type The type of objects
-   * @param sortkeyName The name of the sortkey attribute
-   * @param lowerValue The lower value of the sortkey or UNBOUND
-   * @param upperValue The upper value of the sortkey or UNBOUND
+   * @param $type The type of objects
+   * @param $sortkeyName The name of the sortkey attribute
+   * @param $lowerValue The lower value of the sortkey or UNBOUND
+   * @param $upperValue The upper value of the sortkey or UNBOUND
    */
   protected function loadObjectsInSortkeyRange($type, $sortkeyName, $lowerValue, $upperValue) {
     $query = new ObjectQuery($type);
@@ -301,7 +310,7 @@ class SortController extends Controller {
   /**
    * Check if all objects in the given array are not null and add
    * an OID_INVALID error to the response, if at least one is
-   * @param objectMap An associative array with the controller parameter names
+   * @param $objectMap An associative array with the controller parameter names
    *        as keys and the objects to check as values
    * @return Boolean
    */
@@ -322,7 +331,7 @@ class SortController extends Controller {
 
   /**
    * Check if the node should be moved to the bottom of the list
-   * @param request The request
+   * @param $request The request
    * @return Boolean
    */
   protected function isOrderBotton($request) {
@@ -332,8 +341,8 @@ class SortController extends Controller {
   /**
    * Get the sortkey value of an object. Defaults to the object's id, if
    * the value is null
-   * @param object The object
-   * @param valueName The name of the sortkey attribute
+   * @param $object The object
+   * @param $valueName The name of the sortkey attribute
    * @return String
    */
   protected function getSortkeyValue($object, $valueName) {

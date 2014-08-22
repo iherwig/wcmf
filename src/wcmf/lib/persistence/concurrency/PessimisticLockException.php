@@ -23,7 +23,7 @@ class PessimisticLockException extends \Exception {
 
   /**
    * Constructor
-   * @param lock Lock instance that cause the exception
+   * @param $lock Lock instance that cause the exception
    */
   public function __construct(Lock $lock) {
     $this->_lock = $lock;

@@ -24,20 +24,25 @@ use wcmf\lib\presentation\Response;
 /**
  * XMLExportController exports the content tree into an XML file.
  *
- * <b>Input actions:</b>
- * - @em continue Continue export
- * - unspecified: Initiate the export
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - see BatchController
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Initiate the export.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `docFile`         | The name of the file to write to (path relative to script main location) (default: 'export.xml')
+ * | _in_ `docType`         | The document type (will be written into XML header) (default: '')
+ * | _in_ `dtd`             | The dtd (will be written into XML header) (default: '')
+ * | _in_ `docRootElement`  | The root element of the document (use this to enclose different root types if necessary) (default: 'Root')
+ * | _in_ `docLinebreak`    | The linebreak character(s) to use (default: '\n')
+ * | _in_ `docIndent`       | The indent character(s) to use (default: '  ')
+ * | _in_ `nodesPerCall`    | The number of nodes to process in one call (default: 10)
+ * </div>
+ * </div>
  *
- * @param[in] docfile The name of the file to write to (path relative to script main location), default: 'export.xml'
- * @param[in] doctype The document type (will be written into XML header), default: ''
- * @param[in] dtd The dtd (will be written into XML header), default: ''
- * @param[in] docrootelement The root element of the document (use this to enclose different root types if necessary), default: 'Root'
- * @param[in] doclinebreak The linebreak character(s) to use, default: '\n'
- * @param[in] docindent The indent character(s) to use, default: '  '
- * @param[in] nodes_per_call The number of nodes to process in one call, default: 10
+ * For additional actions and parameters see [BatchController actions](@ref BatchController).
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -50,7 +55,7 @@ class XMLExportController extends BatchController {
   private $ITERATOR_ID = 'XMLExportController.iteratorid';
 
   // documentInfo passes the current document info/status from one call to the next:
-  // An assoziative array with keys 'docFile', 'doctype', 'dtd', 'docLinebreak', 'docIndent', 'nodesPerCall',
+  // An assoziative array with keys 'docFile', 'docType', 'dtd', 'docLinebreak', 'docIndent', 'nodesPerCall',
   // 'lastIndent' and 'tagsToClose' where the latter is an array of assoziative arrays with keys 'indent', 'name'
   private $DOCUMENT_INFO = 'XMLExportController.documentinfo';
 
@@ -73,13 +78,13 @@ class XMLExportController extends BatchController {
     if ($request->getAction() != 'continue') {
       $session = ObjectFactory::getInstance('session');
 
-      $docFile = $request->hasValue('docfile') ? $request->getValue('docfile') : $this->getDownloadFile();
-      $docType = $request->hasValue('doctype') ? $request->getValue('doctype') : $this->_DOCTYPE;
+      $docFile = $request->hasValue('docFile') ? $request->getValue('docFile') : $this->getDownloadFile();
+      $docType = $request->hasValue('docType') ? $request->getValue('docType') : $this->_DOCTYPE;
       $dtd = $request->hasValue('dtd') ? $request->getValue('dtd') : $this->_DTD;
-      $docRootElement = $request->hasValue('docrootelement') ? $request->getValue('docrootelement') : $this->_DOCROOTELEMENT;
-      $docLinebreak = $request->hasValue('doclinebreak') ? $request->getValue('doclinebreak') : $this->_DOCLINEBREAK;
-      $docIndent = $request->hasValue('docindent') ? $request->getValue('docindent') : $this->_DOCINDENT;
-      $nodesPerCall = $request->hasValue('nodes_per_call') ? $request->getValue('nodes_per_call') : $this->_NODES_PER_CALL;
+      $docRootElement = $request->hasValue('docRootElement') ? $request->getValue('docRootElement') : $this->_DOCROOTELEMENT;
+      $docLinebreak = $request->hasValue('docLinebreak') ? $request->getValue('docLinebreak') : $this->_DOCLINEBREAK;
+      $docIndent = $request->hasValue('docIndent') ? $request->getValue('docIndent') : $this->_DOCINDENT;
+      $nodesPerCall = $request->hasValue('nodesPerCall') ? $request->getValue('nodesPerCall') : $this->_NODES_PER_CALL;
 
       $documentInfo = array('docFile' => $docFile, 'docType' => $docType, 'dtd' => $dtd, 'docRootElement' => $docRootElement,
         'docLinebreak' => $docLinebreak, 'docIndent' => $docIndent, 'nodesPerCall' => $nodesPerCall,
@@ -113,7 +118,7 @@ class XMLExportController extends BatchController {
 
   /**
    * Initialize the XML export (oids parameter will be ignored)
-   * @param oids The oids to process
+   * @param $oids The oids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function initExport($oids) {
@@ -161,7 +166,7 @@ class XMLExportController extends BatchController {
 
   /**
    * Serialize all Nodes with given oids to XML
-   * @param oids The oids to process
+   * @param $oids The oids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function exportNodes($oids) {
@@ -238,7 +243,7 @@ class XMLExportController extends BatchController {
 
   /**
    * Finish the XML export (oids parameter will be ignored)
-   * @param oids The oids to process
+   * @param $oids The oids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function finishExport($oids) {
@@ -261,9 +266,9 @@ class XMLExportController extends BatchController {
 
   /**
    * Ends all tags up to $curIndent level
-   * @param fileHandle The file handle to write to
-   * @param curIndent The depth of the node in the tree
-   * @param documentInfo A reference to an assoziative array (see DOCUMENT_INFO)
+   * @param $fileHandle The file handle to write to
+   * @param $curIndent The depth of the node in the tree
+   * @param $documentInfo A reference to an assoziative array (see DOCUMENT_INFO)
    */
   protected function endTags($fileHandle, $curIndent, &$documentInfo) {
     $lastIndent = $documentInfo['lastIndent'];
@@ -281,10 +286,10 @@ class XMLExportController extends BatchController {
 
   /**
    * Serialize a Node to XML
-   * @param fileHandle The file handle to write to
-   * @param oid The oid of the node
-   * @param depth The depth of the node in the tree
-   * @param documentInfo An assoziative array (see DOCUMENT_INFO)
+   * @param $fileHandle The file handle to write to
+   * @param $oid The oid of the node
+   * @param $depth The depth of the node in the tree
+   * @param $documentInfo An assoziative array (see DOCUMENT_INFO)
    * @return The updated document state
    */
   protected function writeNode($fileHandle, ObjectId $oid, $depth, $documentInfo) {
@@ -345,8 +350,8 @@ class XMLExportController extends BatchController {
 
   /**
    * Get number of children of the given node, that were not visited yet
-   * @param node
-   * @return integer
+   * @param $node
+   * @return Integer
    */
   protected function getNumUnvisitedChildren(Node $node) {
     $session = ObjectFactory::getInstance('session');
@@ -377,7 +382,7 @@ class XMLExportController extends BatchController {
 
   /**
    * Format a value for XML output
-   * @param value The value to format
+   * @param $value The value to format
    * @return The formatted value
    * @note Subclasses may overrite this for special application requirements
    */

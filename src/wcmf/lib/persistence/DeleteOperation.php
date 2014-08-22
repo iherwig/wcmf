@@ -22,8 +22,8 @@ class DeleteOperation extends PersistenceOperation {
 
   /**
    * Constructor.
-   * @param entityType The type of PersistentObject to delete
-   * @param criteria An array of criteria instances to select the objects on
+   * @param $entityType The type of PersistentObject to delete
+   * @param $criteria An array of criteria instances to select the objects on
    *          which the operation will be executed
    */
   public function __construct($entityType, array $criteria) {

@@ -410,7 +410,7 @@ class DefaultTransaction implements Transaction {
 
   /**
    * Listen to StateChangeEvents
-   * @param event StateChangeEvent instance
+   * @param $event StateChangeEvent instance
    */
   public function stateChanged(StateChangeEvent $event) {
     $object = $event->getObject();

@@ -33,8 +33,8 @@ class PersistentIterator implements \Iterator {
 
   /**
    * Constructor.
-   * @param oid The oid to start from.
-   * @param aggregationKinds Array of aggregation kind values of relations to follow
+   * @param $oid The oid to start from.
+   * @param $aggregationKinds Array of aggregation kind values of relations to follow
    *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
   public function __construct(ObjectId $oid, $aggregationKinds=array()) {
@@ -63,7 +63,7 @@ class PersistentIterator implements \Iterator {
 
   /**
    * Load an iterator state from the session
-   * @param uid The unique id returned from the save method, see PersistentIterator::save()
+   * @param $uid The unique id returned from the save method, see PersistentIterator::save()
    * @return PersistentIterator instance holding the saved state or null if unique id is not found
    */
   public static function load($uid) {
@@ -170,8 +170,8 @@ class PersistentIterator implements \Iterator {
 
   /**
    * Add oids to the processing queue.
-   * @param oidList An array of oids.
-   * @param depth The depth of the oids in the tree.
+   * @param $oidList An array of oids.
+   * @param $depth The depth of the oids in the tree.
    */
   protected function addToQueue($oidList, $depth) {
     for ($i=sizeOf($oidList)-1; $i>=0; $i--) {

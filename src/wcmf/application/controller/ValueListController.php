@@ -14,19 +14,24 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\control\ValueListProvider;
 
 /**
- * ValueListController is a controller that resolves lists for
- * input_type definitions
+ * ValueListController is used to resolve lists for _input_type_ definitions.
  *
- * <b>Input actions:</b>
- * - unspecified: List key/values
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] listDef The list definition (expected to be base64 encoded)
- * @param[in] displayFilter A regular expression that the returned 'value' values should match (optional)
- * @param[out] list Array of associative arrays with keys 'oid', 'displayText'
- * @param[out] static Boolean indicating whether returned data are static or not
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * List key/values.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `listDef`         | The list definition (expected to be base64 encoded)
+ * | _in_ `displayFilter`   | A regular expression that the returned 'value' values should match (optional)
+ * | _out_ `list`           | Array of associative arrays with keys 'oid', 'displayText'
+ * | _out_ `static`         | Boolean indicating whether returned data are static or not
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -51,9 +56,9 @@ class ValueListController extends Controller {
   }
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  function executeKernel() {
+  function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -71,7 +76,6 @@ class ValueListController extends Controller {
 
     // success
     $response->setAction('ok');
-    return false;
   }
 }
 ?>

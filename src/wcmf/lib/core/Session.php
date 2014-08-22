@@ -26,28 +26,28 @@ interface Session {
 
   /**
    * Returns the value of an session variable
-   * @param key The key (name) of the session vaiable.
+   * @param $key The key (name) of the session vaiable.
    * @return The session var or null if it doesn't exist.
    */
   public function get($key);
 
   /**
    * Sets the value of an session variable.
-   * @param key The key (name) of the session vaiable.
-   * @param value The value of the session variable.
+   * @param $key The key (name) of the session vaiable.
+   * @param $value The value of the session variable.
    */
   public function set($key, $value);
 
   /**
    * Remove a session variable.
-   * @param key The key (name) of the session variable.
+   * @param $key The key (name) of the session variable.
    */
   public function remove($key);
 
   /**
    * Tests, if a certain session variable is defined.
-   * @param key The key (name) of the session variable.
-   * @return A boolean flag. true if the session variable is set, false if not.
+   * @param $key The key (name) of the session variable.
+   * @return Boolean whether the session variable is set or not.
    */
   public function exist($key);
 
@@ -63,14 +63,14 @@ interface Session {
 
   /**
    * Add an error to the session data.
-   * @param key The identifier of the error
-   * @param error The error message
+   * @param $key The identifier of the error
+   * @param $error The error message
    */
   public function addError($key, $error);
 
   /**
    * Get an error stored in the session data.
-   * @param key The identifier of the error
+   * @param $key The identifier of the error
    * @return The error message
    */
   public function getError($key);

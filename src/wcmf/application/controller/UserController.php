@@ -19,76 +19,75 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\principal\User;
 
 /**
- * UserController is used to edit data of the current users.
+ * UserController is used to change the current user's password.
  *
- * <b>Input actions:</b>
- * - @em changePassword Save the new password
- * - unspecified: Show the change password screen
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] oldpassword The old password
- * @param[in] newpassword1 The new password
- * @param[in] newpassword2 The new password
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Change the user's password.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `oldpassword`     | The old password
+ * | _in_ `newpassword1`    | The new password
+ * | _in_ `newpassword2`    | The new password
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class UserController extends Controller {
 
   /**
-   * Process action and assign data to View.
-   * @return False (Stop action processing chain).
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    // process actions
-
     // change password
-    if ($request->getAction() == 'changePassword') {
-      // load model
-      $authUser = $permissionManager->getAuthUser();
-      $oid = new ObjectId(ObjectFactory::getInstance('User')->getType(), $authUser->getUserId());
 
-      // add permissions for this operation
-      $userType = ObjectFactory::getInstance('User')->getType();
-      $permissionManager->addTempPermission($userType, '', 'read');
-      $permissionManager->addTempPermission($userType, '', 'modify');
+    // load model
+    $authUser = $permissionManager->getAuthUser();
+    $oid = new ObjectId(ObjectFactory::getInstance('User')->getType(), $authUser->getUserId());
 
-      $user = $persistenceFacade->load($oid);
+    // add permissions for this operation
+    $userType = ObjectFactory::getInstance('User')->getType();
+    $permissionManager->addTempPermission($userType, '', 'read');
+    $permissionManager->addTempPermission($userType, '', 'modify');
 
-      // start the persistence transaction
-      $transaction = $persistenceFacade->getTransaction();
-      $transaction->begin();
-      try {
-        $this->changePassword($user, $request->getValue('oldpassword'),
-          $request->getValue('newpassword1'), $request->getValue('newpassword2'));
-        $transaction->commit();
-      }
-      catch(\Exception $ex) {
-        $response->addError(ApplicationError::fromException($ex));
-        $transaction->rollback();
-      }
-      // remove temporary permissions
-      $permissionManager->clearTempPermissions();
+    $user = $persistenceFacade->load($oid);
+
+    // start the persistence transaction
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    try {
+      $this->changePassword($user, $request->getValue('oldpassword'),
+        $request->getValue('newpassword1'), $request->getValue('newpassword2'));
+      $transaction->commit();
     }
+    catch(\Exception $ex) {
+      $response->addError(ApplicationError::fromException($ex));
+      $transaction->rollback();
+    }
+    // remove temporary permissions
+    $permissionManager->clearTempPermissions();
 
     // success
     $response->setAction('ok');
-    return false;
   }
 
   /**
    * Change a users password.
-   * @param user The User instance
-   * @param oldPassword The old password of the user
-   * @param newPassword The new password for the user
-   * @param newPasswordRepeated The new password of the user again
+   * @param $user The User instance
+   * @param $oldPassword The old password of the user
+   * @param $newPassword The new password for the user
+   * @param $newPasswordRepeated The new password of the user again
    */
   public function changePassword(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
     // check old password

@@ -92,9 +92,9 @@ class LoginController extends Controller {
   }
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $session = ObjectFactory::getInstance('session');
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -102,7 +102,7 @@ class LoginController extends Controller {
     // return immediately if anonymous
     if ($this->_anonymous) {
       $request->setAction('ok');
-      return true;
+      return;
     }
 
     if ($request->getAction() == 'login') {
@@ -134,12 +134,10 @@ class LoginController extends Controller {
         $response->setValue('sid', $session->getID());
 
         $response->setAction('ok');
-        return true;
       }
       else {
         // login failed
         $response->addError(ApplicationError::get('AUTHENTICATION_FAILED'));
-        return false;
       }
     }
     elseif ($request->getAction() == 'logout') {
@@ -148,11 +146,6 @@ class LoginController extends Controller {
 
       // empty response
       $response->clearValues();
-      return false;
-    }
-    else {
-      // present the login dialog
-      return false;
     }
   }
 }

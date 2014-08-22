@@ -31,8 +31,8 @@ class RDBManyToManyRelationDescription extends RelationDescription {
   /**
    * Constructor.
    * @see RelationDescription::__construct
-   * @param thisEndRelation The RDBOneToManyRelationDescription describing the relation between 'this' end and the connecting type
-   * @param oneToManyRelationDescription The RDBManyToOneRelationDescription describing the relation between the connecting type and the 'other' end
+   * @param $thisEndRelation The RDBOneToManyRelationDescription describing the relation between 'this' end and the connecting type
+   * @param $otherEndRelation The RDBManyToOneRelationDescription describing the relation between the connecting type and the 'other' end
    */
   public function __construct(RDBOneToManyRelationDescription $thisEndRelation, RDBManyToOneRelationDescription $otherEndRelation) {
     $this->thisEndRelation = $thisEndRelation;

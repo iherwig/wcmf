@@ -120,8 +120,8 @@ class ObjectQuery extends AbstractQuery {
 
   /**
    * Constructor.
-   * @param type The type to search for
-   * @param queryId Identifier for the query cache (maybe null to prevent caching). [default: null]
+   * @param $type The type to search for
+   * @param $queryId Identifier for the query cache (maybe null to prevent caching). [default: null]
    */
   public function __construct($type, $queryId=SelectStatement::NO_CACHE) {
     // don't use PersistenceFacade::create, because template instances must be transient
@@ -151,9 +151,9 @@ class ObjectQuery extends AbstractQuery {
 
   /**
    * Get an object template for a given type.
-   * @param type The type to query for
-   * @param alias An alias name to be used in the query. if null, use the default name [default: null]
-   * @param combineOperator One of the Criteria::OPERATOR constants that precedes
+   * @param $type The type to query for
+   * @param $alias An alias name to be used in the query. if null, use the default name [default: null]
+   * @param $combineOperator One of the Criteria::OPERATOR constants that precedes
    *    the conditions described in the template [default: Criteria::OPERATOR_AND]
    * @return Node
    */
@@ -186,9 +186,9 @@ class ObjectQuery extends AbstractQuery {
 
   /**
    * Register an object template at the query.
-   * @param template A reference to the template to register (must be an instance of PersistentObject)
-   * @param alias An alias name to be used in the query. if null, use the default name [default: null]
-   * @param combineOperator One of the Criteria::OPERATOR constants that precedes
+   * @param $template A reference to the template to register (must be an instance of PersistentObject)
+   * @param $alias An alias name to be used in the query. if null, use the default name [default: null]
+   * @param $combineOperator One of the Criteria::OPERATOR constants that precedes
    *    the conditions described in the template [default: Criteria::OPERATOR_AND]
    */
   public function registerObjectTemplate(Node $template, $alias=null, $combineOperator=Criteria::OPERATOR_AND) {
@@ -225,8 +225,8 @@ class ObjectQuery extends AbstractQuery {
   /**
    * Group different templates together to realize brackets in the query.
    * @note Grouped templates will be ignored, when iterating over the object tree and appended at the end.
-   * @param templates An array of references to the templates contained in the group
-   * @param combineOperator One of the Criteria::OPERATOR constants that precedes the group [default: Criteria::OPERATOR_AND]
+   * @param $templates An array of references to the templates contained in the group
+   * @param $combineOperator One of the Criteria::OPERATOR constants that precedes the group [default: Criteria::OPERATOR_AND]
    */
   public function makeGroup($templates, $combineOperator=Criteria::OPERATOR_AND) {
     $this->_groups[] = array('tpls' => $templates, self::PROPERTY_COMBINE_OPERATOR => $combineOperator);
@@ -331,8 +331,8 @@ class ObjectQuery extends AbstractQuery {
 
   /**
    * Process an object template
-   * @param tpl The object template
-   * @param selectStmt A SelectStatement instance
+   * @param $tpl The object template
+   * @param $selectStmt A SelectStatement instance
    */
   protected function processObjectTemplate(PersistentObject $tpl, SelectStatement $selectStmt) {
     // avoid infinite recursion
@@ -462,8 +462,8 @@ class ObjectQuery extends AbstractQuery {
 
   /**
    * Process an object template
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
-   * @param selectStmt A SelectStatement instance
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
+   * @param $selectStmt A SelectStatement instance
    */
   protected function processOrderBy($orderby, SelectStatement $selectStmt) {
     if ($orderby) {
@@ -516,8 +516,8 @@ class ObjectQuery extends AbstractQuery {
 
   /**
    * Get an array of values for bind
-   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
-   * @param bindOrder Array defining the order in which the conditions should be bind
+   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
+   * @param $bindOrder Array defining the order in which the conditions should be bind
    * @return Array
    */
   protected function getBind($criteria, array $bindOrder) {
@@ -574,7 +574,7 @@ class ObjectQuery extends AbstractQuery {
   /**
    * Get the table name for the template and calculate an alias if
    * necessary.
-   * @param tpl The object template
+   * @param $tpl The object template
    * @return Associative array with keys 'name', 'alias'
    */
   protected function processTableName(Node $tpl) {
@@ -603,7 +603,7 @@ class ObjectQuery extends AbstractQuery {
 
   /**
    * Listen to ValueChangeEvents
-   * @param event ValueChangeEvent instance
+   * @param $event ValueChangeEvent instance
    */
   public function valueChanged(ValueChangeEvent $event) {
     $object = $event->getObject();

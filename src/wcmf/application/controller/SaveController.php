@@ -27,16 +27,21 @@ use wcmf\lib\presentation\Controller;
 /**
  * SaveController is a controller that saves Node data.
  *
- * <b>Input actions:</b>
- * - unspecified: Save the given Node values
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in,out] Key/value pairs of serialized object ids and PersistentObject instances to save.
- * @param[in] uploadDir The directory where attached files should be stored on the server,
- *                      optional (see SaveController::getUploadDir())
- * @param[out] oid The object id of the last newly created object
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Save the given Node values.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ / _out_           | Key/value pairs of serialized object ids and PersistentObject instances to save
+ * | _in_ `uploadDir`       | The directory where attached files should be stored on the server, optional (see SaveController::getUploadDir())
+ * | _out_ `oid`            | The object id of the last newly created object
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * Errors concerning single input fields are added to the session (the keys are the input field names)
  *
@@ -58,10 +63,9 @@ class SaveController extends Controller {
   }
 
   /**
-   * Save Node data.
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $session = ObjectFactory::getInstance('session');
     $request = $this->getRequest();
@@ -286,14 +290,13 @@ class SaveController extends Controller {
     }
 
     $response->setAction('ok');
-    return true;
   }
 
   /**
    * Save uploaded file. This method calls checkFile which will prevent upload if returning false.
-   * @param oid The ObjectId of the object to which the file is associated
-   * @param valueName The name of the value to which the file is associated
-   * @param data An assoziative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
+   * @param $oid The ObjectId of the object to which the file is associated
+   * @param $valueName The name of the value to which the file is associated
+   * @param $data An assoziative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
    * @return The final filename if the upload was successful, null on error
    */
   protected function saveUploadFile(ObjectId $oid, $valueName, array $data) {
@@ -349,7 +352,7 @@ class SaveController extends Controller {
   /**
    * Check if the given data defines a file upload. File uploads are defined in
    * an assoziative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
-   * @param data Array
+   * @param $data Array
    * @return Boolean
    */
   protected function isFileUpload(array $data) {
@@ -357,28 +360,27 @@ class SaveController extends Controller {
   }
 
   /**
-   * Check if the file is valid for a given object value.
+   * Check if the file is valid for a given object value. The implementation returns _true_.
    * @note subclasses will override this to implement special application requirements.
-   * @param oid The ObjectId of the object
-   * @param valueName The name of the value of the object identified by oid
-   * @param filename The name of the file to upload (including path)
-   * @param mimeType The mime type of the file (if null it will not be checked) [default: null]
+   * @param $oid The ObjectId of the object
+   * @param $valueName The name of the value of the object identified by oid
+   * @param $filename The name of the file to upload (including path)
+   * @param $mimeType The mime type of the file (if null it will not be checked) [default: null]
    * @return Boolean whether the file is ok or not.
-   * @note The default implementation returns true.
    */
   protected function checkFile(ObjectId $oid, $valueName, $filename, $mimeType=null) {
     return true;
   }
 
   /**
-   * Get the name for the uploaded file.
+   * Get the name for the uploaded file. The implementation replaces all non
+   * alphanumerical characters except for ., -, _ with underscores and turns the
+   * name to lower case.
    * @note subclasses will override this to implement special application requirements.
-   * @param oid The ObjectId of the object
-   * @param valueName The name of the value of the object identified by oid
-   * @param filename The name of the file to upload (including path)
+   * @param $oid The ObjectId of the object
+   * @param $valueName The name of the value of the object identified by oid
+   * @param $filename The name of the file to upload (including path)
    * @return The filename
-   * @note The default implementation replaces all non alphanumerical characters except for ., -, _
-   * with underscores and turns the name to lower case.
    */
   protected function getUploadFilename(ObjectId $oid, $valueName, $filename) {
     $filename = preg_replace("/[^a-zA-Z0-9\-_\.\/]+/", "_", $filename);
@@ -386,13 +388,13 @@ class SaveController extends Controller {
   }
 
   /**
-   * Determine what to do if a file with the same name already exists.
+   * Determine what to do if a file with the same name already exists. The
+   * implementation returns _true_.
    * @note subclasses will override this to implement special application requirements.
-   * @param oid The ObjectId of the object
-   * @param valueName The name of the value of the object identified by oid
-   * @param filename The name of the file to upload (including path)
+   * @param $oid The ObjectId of the object
+   * @param $valueName The name of the value of the object identified by oid
+   * @param $filename The name of the file to upload (including path)
    * @return Boolean whether to override the file or to create a new unique filename
-   * @note The default implementation returns true.
    */
   protected function shouldOverride(ObjectId $oid, $valueName, $filename) {
     return true;
@@ -400,13 +402,13 @@ class SaveController extends Controller {
 
   /**
    * Get the name of the directory to upload a file to and make shure that it exists.
-   * @note subclasses will override this to implement special application requirements.
-   * @param oid The ObjectId of the object which will hold the association to the file
-   * @param valueName The name of the value which will hold the association to the file
-   * @return The directory name
-   * @note The default implementation will first look for a parameter 'uploadDir'
-   * and then, if it is not given, for an 'uploadDir.'.type key in the configuration file
+   * The default implementation will first look for a parameter 'uploadDir'
+   * and then, if it is not given, for an 'uploadDir'. _type_ key in the configuration file
    * (section 'media') and finally for an 'uploadDir' key at the same place.
+   * @note subclasses will override this to implement special application requirements.
+   * @param $oid The ObjectId of the object which will hold the association to the file
+   * @param $valueName The name of the value which will hold the association to the file
+   * @return The directory name
    */
   protected function getUploadDir(ObjectId $oid, $valueName) {
     $request = $this->getRequest();
@@ -437,9 +439,9 @@ class SaveController extends Controller {
   /**
    * Confirm save action on given Node value.
    * @note subclasses will override this to implement special application requirements.
-   * @param node A reference to the Node to confirm.
-   * @param valueName The name of the value to save.
-   * @param newValue The new value to set.
+   * @param $node A reference to the Node to confirm.
+   * @param $valueName The name of the value to save.
+   * @param $newValue The new value to set.
    * @return Boolean whether the value should be changed [default: true].
    */
   protected function confirmSaveValue($node, $valueName, $newValue) {
@@ -449,7 +451,7 @@ class SaveController extends Controller {
   /**
    * Confirm save action on given Node. This method is called before modify()
    * @note subclasses will override this to implement special application requirements.
-   * @param node A reference to the Node to confirm.
+   * @param $node A reference to the Node to confirm.
    * @return Boolean whether the Node should be saved [default: true].
    */
   protected function confirmSave($node) {
@@ -459,7 +461,7 @@ class SaveController extends Controller {
   /**
    * Called before save.
    * @note subclasses will override this to implement special application requirements.
-   * @param node A reference to the Node to be saved.
+   * @param $node A reference to the Node to be saved.
    * @return Boolean whether the Node was modified [default: false].
    */
   protected function beforeSave($node) {
@@ -469,7 +471,7 @@ class SaveController extends Controller {
   /**
    * Called after save.
    * @note subclasses will override this to implement special application requirements.
-   * @param node A reference to the Node saved.
+   * @param $node A reference to the Node saved.
    */
   protected function afterSave($node) {}
 }

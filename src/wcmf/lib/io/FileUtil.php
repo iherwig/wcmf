@@ -23,10 +23,10 @@ class FileUtil {
 
   /**
    * Copy an uploaded file to a given destination (only if the mime type mathes the given one).
-   * @param mediaFile An assoziative array with the following keys: 'name', 'type', 'tmp_name' (typically a $_FILES entry)
-   * @param destName The destination file name
-   * @param mimeType An array holding the allowed mimetypes, null if arbitrary [default: null]
-   * @param override Boolean whether an existing file should be overridden, if false an unque id will be placed in the filename to prevent overriding [default: true]
+   * @param $mediaFile An assoziative array with the following keys: 'name', 'type', 'tmp_name' (typically a $_FILES entry)
+   * @param $destName The destination file name
+   * @param $mimeTypes An array holding the allowed mimetypes, null if arbitrary [default: null]
+   * @param $override Boolean whether an existing file should be overridden, if false an unque id will be placed in the filename to prevent overriding [default: true]
    * @return The filename of the uploaded file
    */
   public static function uploadFile($mediaFile, $destName, $mimeTypes=null, $override=true) {
@@ -63,8 +63,8 @@ class FileUtil {
 
   /**
    * Write unicode to file.
-   * @param fp File Handle
-   * @param str String to write
+   * @param $fp File Handle
+   * @param $str String to write
    */
   public static function fputsUnicode($fp, $str) {
     fputs($fp, utf8_encode($str));
@@ -72,10 +72,10 @@ class FileUtil {
 
   /*
    * Get the files in a directory that match a pattern
-   * @param dir The directory to search in
-   * @param pattern The pattern (regexp) to match [default: /./]
-   * @param prependDirectoryName Boolean whether to prepend the directory name to each file [default: false]
-   * @param recursive Boolean whether to recurse into subdirectories [default: false]
+   * @param $directory The directory to search in
+   * @param $pattern The pattern (regexp) to match [default: /./]
+   * @param $prependDirectoryName Boolean whether to prepend the directory name to each file [default: false]
+   * @param $recursive Boolean whether to recurse into subdirectories [default: false]
    * @return An array containing the filenames sorted by modification date or null if failed, error string provided by getErrorMsg()
    */
   public static function getFiles($directory, $pattern='/./', $prependDirectoryName=false, $recursive=false) {
@@ -114,10 +114,10 @@ class FileUtil {
 
   /*
    * Get the directories in a directory that match a pattern
-   * @param dir The directory to search in
-   * @param pattern The pattern (regexp) to match [default: /./]
-   * @param prependDirectoryName Boolean whether to prepend the directory name to each directory [default: false]
-   * @param recursive Boolean whether to recurse into subdirectories [default: false]
+   * @param $directory The directory to search in
+   * @param $pattern The pattern (regexp) to match [default: /./]
+   * @param $prependDirectoryName Boolean whether to prepend the directory name to each directory [default: false]
+   * @param $recursive Boolean whether to recurse into subdirectories [default: false]
    * @return An array containing the directory names or null if failed, error string provided by getErrorMsg()
    */
   public static function getDirectories($directory, $pattern='/./', $prependDirectoryName=false, $recursive=false) {
@@ -159,8 +159,8 @@ class FileUtil {
 
   /**
    * Recursive copy for files/directories.
-   * @param source The name of the source directory/file
-   * @param dest The name of the destination directory/file
+   * @param $source The name of the source directory/file
+   * @param $dest The name of the destination directory/file
    */
   public static function copyRec($source, $dest) {
     if (is_file($source)) {
@@ -177,8 +177,8 @@ class FileUtil {
 
   /**
    * Recursive copy for directories.
-   * @param source The name of the source directory
-   * @param dest The name of the destination directory
+   * @param $source The name of the source directory
+   * @param $dest The name of the destination directory
    */
   public static function copyRecDir($source, $dest) {
     if (!is_dir($dest)) {
@@ -196,7 +196,7 @@ class FileUtil {
 
   /**
    * Recursive directory creation.
-   * @param dirname The name of the directory
+   * @param $dirname The name of the directory
    */
   public static function mkdirRec($dirname) {
     if (!is_dir($dirname)) {
@@ -206,7 +206,7 @@ class FileUtil {
 
   /**
    * Empty a directory.
-   * @param dirname The name of the directory
+   * @param $dirname The name of the directory
    */
   public static function emptyDir($dirname) {
     $files = self::getFiles($dirname, '/./', true, true);
@@ -222,9 +222,9 @@ class FileUtil {
   /**
    * Get the relative path between two paths
    * code from http://php.net/manual/en/ref.filesystem.php
-   * @param path1 The first path
-   * @param path2 The second path
-   * @return string
+   * @param $path1 The first path
+   * @param $path2 The second path
+   * @return String
    */
   public static function getRelativePath($path1, $path2) {
     $path1 = str_replace('\\', '/', $path1);
@@ -274,7 +274,7 @@ class FileUtil {
   /**
    * Realpath function that also works for non existing paths
    * code from http://www.php.net/manual/en/function.realpath.php
-   * @param path
+   * @param $path
    * @return String
    */
   public static function realpath($path) {
@@ -303,7 +303,7 @@ class FileUtil {
 
   /**
    * Get a sanitized filename
-   * @param file
+   * @param $file
    * @return String
    */
   public static function sanitizeFilename($file) {

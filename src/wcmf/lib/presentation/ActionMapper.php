@@ -25,7 +25,7 @@ interface ActionMapper {
    * as configured in the iniFile and delegates the request to it.
    * @note This method is static so that it can be used without an instance. (This is necessary to call it in onError() which
    * cannot be a class method because php's set_error_handler() does not allow this).
-   * @param request A reference to a Request instance
+   * @param $request A reference to a Request instance
    * @return A reference to an Response instance or null on error.
    */
   public function processAction(Request $request);

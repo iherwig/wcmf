@@ -26,7 +26,7 @@ class PathDescription {
 
   /**
    * Constructor.
-   * @param path Array of RelationDescription instances
+   * @param $path Array of RelationDescription instances
    */
   public function __construct(array $path) {
     $this->path = $path;

@@ -8,7 +8,7 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\application\controller\admintool;
+namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
 
@@ -66,7 +66,7 @@ class SearchIndexController extends BatchController {
 
   /**
    * Collect all oids of the given types
-   * @param types The types to process
+   * @param $types The types to process
    * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
    */
   protected function collect($types) {
@@ -82,7 +82,7 @@ class SearchIndexController extends BatchController {
 
   /**
    * Create the lucene index from the given objects
-   * @param oids The oids to process
+   * @param $oids The oids to process
    * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
    */
   protected function index($oids) {
@@ -101,7 +101,12 @@ class SearchIndexController extends BatchController {
     }
   }
 
-  function optimize($oids) {
+  /**
+   * Optimize the search index
+   * @param $oids The oids to process
+   * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
+   */
+  protected function optimize($oids) {
     $search = ObjectFactory::getInstance('search');
     $search->optimizeIndex();
   }

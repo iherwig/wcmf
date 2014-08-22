@@ -76,9 +76,9 @@ class ConcurrencyController extends Controller {
   }
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  function executeKernel() {
+  function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
@@ -103,7 +103,6 @@ class ConcurrencyController extends Controller {
 
     $response->setValue('oid', $oid);
     $response->setAction('ok');
-    return true;
   }
 }
 ?>

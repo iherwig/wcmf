@@ -25,6 +25,7 @@ use wcmf\lib\persistence\PersistentObject;
  * @author ingo herwig <ingo@wemove.com>
  */
 class NullNode extends Node {
+  
   /**
    * @see PersistentObject::getOID()
    */

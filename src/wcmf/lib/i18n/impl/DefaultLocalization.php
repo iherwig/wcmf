@@ -60,7 +60,7 @@ class DefaultLocalization implements Localization {
 
   /**
    * Set the default language.
-   * @param defaultLanguage
+   * @param $defaultLanguage
    */
   public function setDefaultLanguage($defaultLanguage) {
     $supportedLanguages = $this->getSupportedLanguages();
@@ -72,7 +72,7 @@ class DefaultLocalization implements Localization {
 
   /**
    * Set the type to store translations in.
-   * @param translationType Entity type name
+   * @param $translationType Entity type name
    */
   public function setTranslationType($translationType) {
     if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($translationType)) {
@@ -83,7 +83,7 @@ class DefaultLocalization implements Localization {
 
   /**
    * Set the type to store languages in.
-   * @param languageType Entity type name
+   * @param $languageType Entity type name
    */
   public function setLanguageType($languageType) {
     if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($languageType)) {
@@ -94,7 +94,7 @@ class DefaultLocalization implements Localization {
 
   /**
    * Set the input_types whose translations are stored.
-   * @param inputTypes Array
+   * @param $inputTypes Array
    */
   public function setInputTypes(Array $inputTypes) {
     $this->_inputTypes = $inputTypes;
@@ -297,11 +297,11 @@ class DefaultLocalization implements Localization {
 
   /**
    * Set a translated value in the given PersistentObject instance.
-   * @param object The object to set the value on. The object
+   * @param $object The object to set the value on. The object
    *    is supposed to have it's values in the default language.
-   * @param valueName The name of the value to translate
-   * @param translations An array of translation instances for the object.
-   * @param useDefaults Boolean whether to use the default language if no
+   * @param $valueName The name of the value to translate
+   * @param $translations An array of translation instances for the object.
+   * @param $useDefaults Boolean whether to use the default language if no
    *    translation is found or not.
    */
   private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults) {
@@ -327,12 +327,12 @@ class DefaultLocalization implements Localization {
 
   /**
    * Save translated values for the given object
-   * @param object The object to save the translations on
-   * @param valueName The name of the value to translate
-   * @param existingTranslations An array of already existing translation
+   * @param $object The object to save the translations on
+   * @param $valueName The name of the value to translate
+   * @param $existingTranslations An array of already existing translation
    *    instances for the object.
-   * @param lang The language of the translations.
-   * @param saveEmptyValues Boolean whether to also save empty translations or not.
+   * @param $lang The language of the translations.
+   * @param $saveEmptyValues Boolean whether to also save empty translations or not.
    */
   private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang, $saveEmptyValues) {
     $inputType = $object->getValueProperty($valueName, 'input_type');

@@ -36,8 +36,8 @@ class NodeSortkeyComparator {
 
   /**
    * Constructor
-   * @param referenceNode Node instance to which the other nodes are related
-   * @param nodeList Array of Node instances, which should be sorted in relation
+   * @param $referenceNode Node instance to which the other nodes are related
+   * @param $nodeList Array of Node instances, which should be sorted in relation
    *   to the reference node
    * @note If the role of a node to sort is not be defined, the comparator
    * uses the first relation that has the type of the given node
@@ -55,8 +55,8 @@ class NodeSortkeyComparator {
 
   /**
    * Compare function for sorting Nodes in the given relation
-   * @param a First Node instance
-   * @param b First Node instance
+   * @param $a First Node instance
+   * @param $b First Node instance
    * @return -1, 0 or 1 whether a is less, equal or greater than b
    *   in respect of the criteria
    */
@@ -69,7 +69,7 @@ class NodeSortkeyComparator {
 
   /**
    * Get the sortkey value of a node in the given relation
-   * @param node Node
+   * @param $node Node
    * @return Number
    */
   protected function getSortkeyValue(Node $node) {

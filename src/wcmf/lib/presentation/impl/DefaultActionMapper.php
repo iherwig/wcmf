@@ -107,16 +107,21 @@ class DefaultActionMapper implements ActionMapper {
     // execute controller
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
-    $result = $controllerObj->execute();
+    $controllerObj->execute();
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::AFTER_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
 
     Formatter::serialize($response);
-    if ($result === false) {
+
+    // check if an action key exists for the return action
+    $nextActionKey = ActionKey::getBestMatch('actionmapping', $controllerClass,
+            $response->getContext(), $response->getAction());
+
+    if (strlen($nextActionKey) == 0) {
       // stop processing
       return $response;
     }
-    else if ($result === true) {
+    else {
       // store last response
       $this->_lastResponses[] = $response;
 
@@ -126,12 +131,8 @@ class DefaultActionMapper implements ActionMapper {
       $nextRequest->setValues($response->getValues());
       $nextRequest->setErrors($response->getErrors());
       $nextRequest->setResponseFormat($request->getResponseFormat());
-      $response = $this->processAction($nextRequest);
+      $this->processAction($nextRequest);
     }
-    else {
-      throw new \ErrorException("Controller::execute must return true or false. Executed controller was ".$controllerClass.".");
-    }
-    return $response;
   }
 
   /**

@@ -24,7 +24,7 @@ use wcmf\lib\pdf\PDFPage;
  * @code
  * // example Controller method to show a pdf download dialog
  * // Page1 extends PDFPage and defines what is rendered onto the template
- * function executeKernel()
+ * function doExecute()
  * {
  *   $template = new PDFTemplate(new MyPDF());
  *   // set the template
@@ -55,7 +55,7 @@ class PDFTemplate {
 
   /**
    * Constructor
-   * @param pdf The PDF instance to render onto, defaults to PDF created with default constructor
+   * @param $pdf The PDF instance to render onto, defaults to PDF created with default constructor
    */
   public function __construct($pdf) {
     if (!isset($pdf) || (!($pdf instanceof PDF))) {
@@ -68,7 +68,7 @@ class PDFTemplate {
 
   /**
    * Set the template filename
-   * @param filename The name of the file
+   * @param $filename The name of the file
    */
   public function setTemplate($filename) {
     $this->_tpl = $filename;
@@ -80,9 +80,9 @@ class PDFTemplate {
    * template page, the second to the second and so on. Use the cycle parameter to cycle the
    * instances (e.g. if the same data should be written to every template page, put one
    * instance into the pages array and set cycle to true)
-   * @param pages An array of PDFPage instances
-   * @param cycle Boolean whether to cycle the PDFPage instances or not [default: false]
-   * @param data An optional data object, that will passed to the PDFPage::render method [default: null]
+   * @param $pages An array of PDFPage instances
+   * @param $cycle Boolean whether to cycle the PDFPage instances or not [default: false]
+   * @param $data An optional data object, that will passed to the PDFPage::render method [default: null]
    */
   public function setPages($pages, $cycle=false, $data=null) {
     $this->_pages = $pages;
@@ -93,8 +93,8 @@ class PDFTemplate {
   /**
    * Output the pdf. Delegates to FPDF::Output()
    * @see http://www.fpdf.de/funktionsreferenz/Output/
-   * @param name The name of the pdf file
-   * @param dest The pdf destination ('I': browser inline, 'D': browser download, 'F': filesystem, 'S': string)
+   * @param $name The name of the pdf file
+   * @param $dest The pdf destination ('I': browser inline, 'D': browser download, 'F': filesystem, 'S': string)
    * @return The document string in case of dest = 'S', nothing else
    */
   public function output($name='', $dest='') {

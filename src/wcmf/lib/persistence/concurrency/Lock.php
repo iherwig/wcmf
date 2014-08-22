@@ -29,12 +29,12 @@ class Lock {
 
   /**
    * Creates a lock on a given object.
-   * @param type One of the Lock::Type constants
-   * @param oid ObjectId of the object to lock
-   * @param useroid ObjectId of the user who holds the lock
-   * @param login Login name of the user who holds the lock
-   * @param sessid Id of the session of the user
-   * @param created Creation date of the lock. If omitted the current date will be taken.
+   * @param $type One of the Lock::Type constants
+   * @param $oid ObjectId of the object to lock
+   * @param $useroid ObjectId of the user who holds the lock
+   * @param $login Login name of the user who holds the lock
+   * @param $sessid Id of the session of the user
+   * @param $created Creation date of the lock. If omitted the current date will be taken.
    */
   public function __construct($type, $oid, $useroid, $login, $sessid, $created='') {
     $this->_type = $type;
@@ -105,7 +105,7 @@ class Lock {
   /**
    * Set the original state of the object in case of an
    * optimistic lock.
-   * @param currentState PersistentObject instance or null
+   * @param $currentState PersistentObject instance or null
    */
   public function setCurrentState($currentState) {
     $this->_currentState = serialize($currentState);

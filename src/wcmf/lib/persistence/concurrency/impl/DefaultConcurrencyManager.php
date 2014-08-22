@@ -35,7 +35,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
 
   /**
    * Set the LockHandler used for locking.
-   * @param lockHandler
+   * @param $lockHandler
    */
   public function setLockHandler(LockHandler $lockHandler) {
     $this->_lockHandler = $lockHandler;

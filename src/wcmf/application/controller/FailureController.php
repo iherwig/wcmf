@@ -13,7 +13,7 @@ namespace wcmf\application\controller;
 use wcmf\lib\presentation\Controller;
 
 /**
- * FailureController is used to show an error page to the user.
+ * FailureController is used to signal a failure to the user.
  *
  * The controller supports the following actions:
  *
@@ -24,7 +24,7 @@ use wcmf\lib\presentation\Controller;
  * | Parameter             | Description
  * |-----------------------|-------------------------
  * | __Response Actions__  | |
- * | `failure`             | In all cases
+ * | `ok`                  | In all cases
  * </div>
  * </div>
  *
@@ -33,14 +33,13 @@ use wcmf\lib\presentation\Controller;
 class FailureController extends Controller {
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  function executeKernel() {
+  function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $response->setErrors($request->getErrors());
-    $response->setAction('failure');
-    return false;
+    $response->setAction('ok');
   }
 }
 ?>

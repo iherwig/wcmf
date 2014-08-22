@@ -22,8 +22,8 @@ class InsertOperation extends PersistenceOperation {
 
   /**
    * Constructor.
-   * @param entityType The type of PersistentObject to insert
-   * @param values An array of attribute/value pairs to apply
+   * @param $entityType The type of PersistentObject to insert
+   * @param $values An array of attribute/value pairs to apply
    */
   public function __construct($entityType, array $values) {
     parent::__construct($entityType, $values, array());

@@ -14,28 +14,27 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\format\impl\HtmlFormat;
 
 /**
- * Controller is the base class of all controllers. If a Controller has a view
- * it is expected to reside in the directory configured in section smarty.templateDir.
- * Additional smarty directories ('templates_c', 'configs', 'cache') are expected in a
- * subdirectory of the template directory named 'smarty'.
+ * Controller is the base class of all controllers.
  *
  * Error Handling:
- * - throw an Exception or use action='failure' to signal fatal errors
- *    (displays FailureController)
+ * - throw an Exception or use response action _failure_ to signal fatal errors
+ *    (calls wcmf::application::controller::FailureController)
  * - add an ApplicationError to the response to signal non fatal errors
- *    (the message will be displayed in the next view)
  *
- * @param[in/out] action The action to be executed
- * @param[in/out] language The language of the requested data, optional
- * @param[out] controller The name of the executed controller
- * @param[out] success Boolean whether the action completed successfully or not
- * @param[out] errorMessage An error message which is displayed to the user, if success == false
- * @param[out] errorCode An error code, describing the type of error, if success == false
- * @param[out] errorData Some error codes require to transmit further information to the client,
- *                       if success == false
+ * The following default request/response parameters are defined:
+ *
+ * | Parameter               | Description
+ * |-------------------------|-------------------------
+ * | _in_ / _out_ `action`   | The action to be executed
+ * | _in_ / _out_ `context`  | The context of the action
+ * | _in_ `language`         | The language of the requested data (optional)
+ * | _out_ `controller`      | The name of the executed controller
+ * | _out_ `success`         | Boolean whether the action completed successfully or not (depends on existence of error messages)
+ * | _out_ `errorMessage`    | An error message which is displayed to the user
+ * | _out_ `errorCode`       | An error code, describing the type of error
+ * | _out_ `errorData`       | Some error codes require to transmit further information to the client
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -43,18 +42,17 @@ abstract class Controller {
 
   private $_request = null;
   private $_response = null;
-  private $_executionResult = false;
 
   /**
    * Initialize the Controller with request/response data. Which data is required is defined by the Controller.
    * The base class method just stores the parameters in a member variable. Specialized Controllers may overide
    * this behaviour for further initialization.
    * @attention It lies in its responsibility to fail or do some default action if some data is missing.
-   * @param request A reference to the Request sent to the Controller. The sender attribute of the Request is the
+   * @param $request A reference to the Request sent to the Controller. The sender attribute of the Request is the
    * last controller's name, the context is the current context and the action is the requested one.
    * All data sent from the last controller are accessible using the Request::getValue method. The request is
    * supposed to be read-only. It will not be used any more after beeing passed to the controller.
-   * @param response A reference to the Response that will be modified by the Controller. The initial values for
+   * @param $response A reference to the Response that will be modified by the Controller. The initial values for
    * context and action are the same as in the request parameter and are meant to be modified according to the
    * performed action. The sender attribute of the response is set to the current controller. Initially there
    * are no data stored in the response.
@@ -84,8 +82,9 @@ abstract class Controller {
   }
 
   /**
-   * Execute the Controller resulting in its Action processed and/or its View beeing displayed.
-   * @return Boolean whether following Controllers should be executed or not.
+   * Execute the Controller resulting in its action processed. The actual
+   * processing is done in Controller::doExecute(), which is implemented
+   * by concrete Controller subclasses.
    */
   public function execute() {
     $isDebugEnabled = Log::isDebugEnabled(__CLASS__);
@@ -102,11 +101,7 @@ abstract class Controller {
 
     // execute controller logic
     if (!$validationFailed) {
-      $this->_executionResult = $this->executeKernel();
-    }
-    else {
-      // don't process further if validation failed
-      $this->_executionResult = false;
+      $this->doExecute();
     }
 
     // prepare the response
@@ -120,31 +115,26 @@ abstract class Controller {
     for ($i=0,$count=sizeof($errors); $i<$count; $i++) {
       Log::error($errors[$i]->__toString(), __CLASS__);
     }
-    return $this->_executionResult;
   }
 
   /**
-   * Do the work in execute(): Load and process model and maybe assign data to response.
-   * Subclasses process their Action and assign the Model to the response.
-   * @return Boolean whether ActionMapper should proceed with the next controller or not.
+   * Process the request.
+   * Subclasses process their action and assign the Model to the response.
    */
-  protected abstract function executeKernel();
+  protected abstract function doExecute();
 
   /**
    * Delegate the current request to another action. The context is the same as
-   * the current context and the source controller will be set to TerminateController,
-   * which means that the application flow will return after the action (and possible
-   * sub actions) are executed. The request and response format will be NullFormat
+   * the current context and the source controller will be set to this.
+   * The request and response format will be NullFormat
    * which means that all request values should be passed in the application internal
    * format and all response values will have that format.
-   * @param action The name of the action to execute
-   * @param requestValues An associative array of key value pairs overwriting,
-   *        the current request values, optional [default: empty array]
+   * @param $action The name of the action to execute
    * @return Response instance
    */
-  protected function executeSubAction($action, array $requestValues=array()) {
+  protected function executeSubAction($action) {
     $curRequest = $this->getRequest();
-    $subRequest = new Request('TerminateController', $curRequest->getContext(), $action);
+    $subRequest = new Request(get_class($this), $curRequest->getContext(), $action);
     $subRequest->setHeaders($curRequest->getHeaders());
     $subRequest->setValues($curRequest->getValues());
     $formats = ObjectFactory::getInstance('formats');
@@ -174,7 +164,6 @@ abstract class Controller {
   /**
    * Assign default variables to the response. This method is called after Controller execution.
    * This method may be used by derived controller classes for convenient response setup.
-   * @attention Internal use only.
    */
   protected function assignResponseDefaults() {
     // return the first error

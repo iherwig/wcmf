@@ -203,7 +203,7 @@ class DefaultLockHandler implements LockHandler {
 
   /**
    * Store the given Lock instance for later retrieval
-   * @param lock Lock instance
+   * @param $lock Lock instance
    */
   protected function storeLock(Lock $lock) {
     if ($lock->getType() == Lock::TYPE_PESSIMISTIC) {
@@ -248,7 +248,7 @@ class DefaultLockHandler implements LockHandler {
 
   /**
    * Add a given Lock instance to the session
-   * @param lock Lock instance
+   * @param $lock Lock instance
    */
   protected function addSessionLock(Lock $lock) {
     $session = ObjectFactory::getInstance('session');
@@ -259,8 +259,8 @@ class DefaultLockHandler implements LockHandler {
 
   /**
    * Remove a given Lock instance from the session
-   * @param oid The locked oid
-   * @param type One of the Lock::Type constants or null for all types [default: null]
+   * @param $oid The locked oid
+   * @param $type One of the Lock::Type constants or null for all types [default: null]
    */
   protected function removeSessionLock(ObjectId $oid, $type) {
     $session = ObjectFactory::getInstance('session');

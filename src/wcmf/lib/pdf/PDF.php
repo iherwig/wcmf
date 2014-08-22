@@ -62,7 +62,7 @@ class PDF extends FPDI {
 
   /**
    * Move the render position down by given units
-   * @param units The number of units to move
+   * @param $units The number of units to move
    */
   function moveDown($units) {
     $this->SetY($units+$this->GetY());
@@ -70,7 +70,7 @@ class PDF extends FPDI {
 
   /**
    * Move the render position right by given units
-   * @param units The number of units to move
+   * @param $units The number of units to move
    */
   function moveRight($units) {
     $this->SetX($units+$this->GetX());
@@ -79,8 +79,8 @@ class PDF extends FPDI {
   /**
    * Computes the number of lines a MultiCell of width w will take
    * instead of NbLines it correctly handles linebreaks
-   * @param width The width
-   * @param text The text
+   * @param $width The width
+   * @param $text The text
    */
   function numberOfLines($width, $text) {
     $nbLines = 0;
@@ -98,7 +98,7 @@ class PDF extends FPDI {
 
   /**
    * If the height h would cause an overflow, add a new page immediately
-   * @param h The height
+   * @param $h The height
    * @return Boolean whether a new page was inserted or not
    */
   function CheckPageBreak($h) {
@@ -111,8 +111,8 @@ class PDF extends FPDI {
 
   /**
    * Computes the number of lines a MultiCell of width w will take
-   * @param w The width
-   * @param txt The text
+   * @param $w The width
+   * @param $txt The text
    */
   function NbLines($w, $txt) {
     $cw=&$this->CurrentFont['cw'];

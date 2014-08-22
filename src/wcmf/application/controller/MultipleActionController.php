@@ -19,20 +19,26 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\util\StringUtil;
 
 /**
- * MultipleActionController is a controller that executes multiple actions by
- * passing them do the appropriate controllers and returning all results as once.
+ * MultipleActionController executes multiple actions by passing them do the
+ * appropriate controllers and returning all results as once.
  *
- * <b>Input actions:</b>
- * - unspecified: Execute the given actions
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] data An associative array with unique/sortable keys and values that describe an action to perform
- * @param[out] data An associative array with the same keys and values that describe the resonse of each action
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Execute the given actions.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `data`            | An associative array with unique/sortable keys and values that describe an action to perform
+ * | _out_ `data`           | An associative array with the same keys and values that describe the resonse of each action
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * The data array may contain the following special variables, that will be replaced by the described values:
- * - {last_created_oid:type}  will be replaced by the oid lastly created object of the given type
+ * - `{last_created_oid:type}`  will be replaced by the oid lastly created object of the given type
  *
  * An example of input data in JSON:
  * @code
@@ -97,10 +103,9 @@ class MultipleActionController extends Controller {
   }
 
   /**
-   * Execute actions.
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     // create and execute requests for the actions given in data
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -122,14 +127,11 @@ class MultipleActionController extends Controller {
       // replace special variables
       $this->replaceVariables($data[$actionId]);
 
-      // for all requests we choose TerminateController as source controller
-      // to make sure that we process the action and return to here
-
       // create the request
       $actionData = $data[$actionId];
       $context = isset($actionData['context']) ? $actionData['context'] : '';
       $action = isset($actionData['action']) ? $actionData['action'] : '';
-      $requestPart = new Request('TerminateController', $context, $action);
+      $requestPart = new Request('', $context, $action);
       $requestPart->setValues($actionData);
       $requestPart->setFormat($nullFormat);
       $requestPart->setResponseFormat($nullFormat);
@@ -158,13 +160,12 @@ class MultipleActionController extends Controller {
     }
     $response->setValue('data', $results);
     $response->setAction('ok');
-    return false;
   }
 
   /**
    * Check the given data array for special variables to replace
    * Variables have either the form 'variable_name' or 'variable_name:column_separated_parameters'
-   * @param data A reference to the associative data array
+   * @param $data A reference to the associative data array
    */
   private function replaceVariables(&$data) {
     $keys = array_keys($data);
@@ -195,8 +196,8 @@ class MultipleActionController extends Controller {
   /**
    * Check the given string for special variables to replace
    * Variables have either the form 'variable_name' or 'variable_name:column_separated_parameters'
-   * @param value The string
-   * @return The string
+   * @param $value The string
+   * @return String
    */
   private function replaceVariablesString($value) {
     if (!is_string($value)) {

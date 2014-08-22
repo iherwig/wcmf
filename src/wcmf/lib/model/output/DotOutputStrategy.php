@@ -37,9 +37,9 @@ class DotOutputStrategy implements OutputStrategy {
 
   /**
    * Constructor.
-   * @param file The output file name.
-   * @param nodeStyle Style definition to use for nodes (see dot documentation).
-   * @param edgeStyle Style definition to use for edges (see dot documentation).
+   * @param $file The output file name.
+   * @param $nodeStyle Style definition to use for nodes (see dot documentation).
+   * @param $edgeStyle Style definition to use for edges (see dot documentation).
    */
   public function __construct($file, $nodeStyle='', $edgeStyle='') {
     $this->_file = $file;
@@ -119,6 +119,7 @@ class DotOutputStrategy implements OutputStrategy {
 
   /**
    * Check if a node is written.
+   * @param $node The node to check
    * @return Boolean
    */
   private function isWritten($node) {
@@ -128,6 +129,7 @@ class DotOutputStrategy implements OutputStrategy {
 
   /**
    * Get the node index.
+   * @param $node The node to get the index of
    * @return Number
    */
   private function getIndex($node) {

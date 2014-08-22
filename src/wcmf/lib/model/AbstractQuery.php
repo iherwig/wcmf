@@ -37,10 +37,10 @@ abstract class AbstractQuery {
 
   /**
    * Execute the query
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
    * or false if only object ids should be returned
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param pagingInfo A reference paging info instance, optional [default null].
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param $pagingInfo A reference paging info instance, optional [default null].
    * @return A list of objects that match the given conditions or a list of object ids
    */
   public function execute($buildDepth, $orderby=null, $pagingInfo=null) {
@@ -52,7 +52,7 @@ abstract class AbstractQuery {
 
   /**
    * Get the query serialized to a string. Placeholder are replaced with quoted values.
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
    * @return String
    */
   public function getQueryString($orderby=null) {
@@ -79,18 +79,18 @@ abstract class AbstractQuery {
 
   /**
    * Build the query
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param pagingInfo A reference paging info instance, optional [default null].
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param $pagingInfo A reference paging info instance, optional [default null].
    * @return SelectStatement instance
    */
   protected abstract function buildQuery($orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Execute the query and return the results.
-   * @param selectStmt A SelectStatement instance
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
+   * @param $selectStmt A SelectStatement instance
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
    *        or false if only object ids should be returned
-   * @param pagingInfo A reference paging info instance. [default: null]
+   * @param $pagingInfo A reference paging info instance. [default: null]
    * @return A list of objects that match the given conditions or a list of object ids
    */
   protected function executeInternal(SelectStatement $selectStmt, $buildDepth, PagingInfo $pagingInfo=null) {
@@ -131,7 +131,7 @@ abstract class AbstractQuery {
 
   /**
    * Get the database connection of the given node type.
-   * @param type The node type to get the connection from connection
+   * @param $type The node type to get the connection from connection
    * @return The connection
    */
   protected static function getConnection($type) {
@@ -142,7 +142,7 @@ abstract class AbstractQuery {
 
   /**
    * Get the mapper for a Node and check if it is a supported one.
-   * @param type The type of Node to get the mapper for
+   * @param $type The type of Node to get the mapper for
    * @return RDBMapper instance
    */
   protected static function getMapper($type) {
@@ -154,8 +154,8 @@ abstract class AbstractQuery {
 
   /**
    * Check if a mapper is a supported one.
-   * @param mapper PersistenceMapper instance
-   * Throws an Exception
+   * @param $mapper PersistenceMapper instance
+   * @throws PersistenceException
    */
   protected static function checkMapper(PersistenceMapper $mapper) {
     if (!($mapper instanceof RDBMapper)) {

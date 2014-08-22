@@ -50,11 +50,11 @@ class ErrorHandler {
 
   /**
    * Actual error handling method
-   * @param type errno
-   * @param type errstr
-   * @param type errfile
-   * @param type errline
-   * @return boolean
+   * @param $errno
+   * @param $errstr
+   * @param $errfile
+   * @param $errline
+   * @return Boolean
    * @throws ErrorException
    */
   public function handleError($errno, $errstr, $errfile, $errline) {

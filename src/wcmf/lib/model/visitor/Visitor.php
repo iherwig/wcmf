@@ -29,7 +29,7 @@ abstract class Visitor {
    * Start the visiting process by iterating over all objects using
    * the given NodeIterator. The visit() method is called by every
    * visited object.
-   * @param iterator NodeIterator to use (configured with the start object).
+   * @param $iterator NodeIterator to use (configured with the start object).
    */
   public function startIterator(NodeIterator $iterator) {
     $this->doPreVisit();
@@ -42,7 +42,7 @@ abstract class Visitor {
   /**
    * Start the visiting process by iterating over all elements of a given array.
    * The visit() method is called by every visited object.
-   * @param array An array holding references to the objects to visit.
+   * @param $array An array holding references to the objects to visit.
    */
   public function startArray($array) {
     $this->doPreVisit();
@@ -56,7 +56,7 @@ abstract class Visitor {
    * Visit the current object in iteration.
    * Subclasses of Visitor override this method to implement the specialized
    * functionality.
-   * @param obj A reference to the current object.
+   * @param $obj A reference to the current object.
    */
   public abstract function visit($obj);
 

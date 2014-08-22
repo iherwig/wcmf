@@ -21,10 +21,10 @@ class UnknownFieldException extends \Exception {
 
   /**
    * Constructor
-   * @param field The name of the field
-   * @param message The error message
-   * @param code The error code
-   * @param previous The previous Exception
+   * @param $field The name of the field
+   * @param $message The error message
+   * @param $code The error code
+   * @param $previous The previous Exception
    */
   public function __construct($field, $message="", $code=0, \Exception $previous=null) {
     parent::__construct($message, $code, $previous);

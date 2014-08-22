@@ -134,9 +134,9 @@ abstract class BatchController extends Controller {
   }
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $session = ObjectFactory::getInstance('session');
     $response = $this->getResponse();
 
@@ -180,7 +180,6 @@ abstract class BatchController extends Controller {
       // proceed
       $response->setAction('continue');
     }
-    return false;
   }
 
   /**

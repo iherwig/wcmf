@@ -72,9 +72,9 @@ class DisplayController extends Controller {
   }
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $request = $this->getRequest();
@@ -123,7 +123,6 @@ class DisplayController extends Controller {
     }
     // success
     $response->setAction('ok');
-    return false;
   }
 }
 ?>

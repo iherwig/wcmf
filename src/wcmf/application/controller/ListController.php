@@ -78,9 +78,9 @@ class ListController extends Controller {
   }
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $request = $this->getRequest();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
 
@@ -143,7 +143,6 @@ class ListController extends Controller {
 
     // success
     $response->setAction('ok');
-    return false;
   }
 
   /**

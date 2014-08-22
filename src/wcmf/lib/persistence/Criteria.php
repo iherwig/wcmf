@@ -31,12 +31,12 @@ class Criteria {
 
   /**
    * Constructor.
-   * @param type The PersistentObject type that has the attribute
-   * @param attribute The name of the attribute
-   * @param operator The comparison operator used to compare the given value with
+   * @param $type The PersistentObject type that has the attribute
+   * @param $attribute The name of the attribute
+   * @param $operator The comparison operator used to compare the given value with
    *   the attribute's value
-   * @param value The value to compare the object with
-   * @param combineOperator The Criteria::OPERATOR to use, when this criteria is
+   * @param $value The value to compare the object with
+   * @param $combineOperator The Criteria::OPERATOR to use, when this criteria is
    *   combined with other criteria, optional [default: Criteria::OPERATOR_AND]
    */
   public function __construct($type, $attribute, $operator, $value, $combineOperator=Criteria::OPERATOR_AND) {
@@ -50,9 +50,9 @@ class Criteria {
   /**
    * Factory method for constructing a Critera that may be used as value on
    * a PersistentObject's attribute (no type, attribute parameter needed)
-   * @param operator The comparison operator used to compare the given value with
+   * @param $operator The comparison operator used to compare the given value with
    *  the attribute's value
-   * @param value The value to compare the object with
+   * @param $value The value to compare the object with
    * @return Criteria
    */
   public static function asValue($operator, $value) {
@@ -61,7 +61,7 @@ class Criteria {
 
   /**
    * Set the PersistentObject type that has the attribute
-   * @param type The type name
+   * @param $type The type name
    */
   public function setType($type) {
     $this->type = $type;
@@ -77,7 +77,7 @@ class Criteria {
 
   /**
    * Set the name of the attribute
-   * @param attribute The attribute name
+   * @param $attribute The attribute name
    */
   public function setAttribute($attribute) {
     $this->attribute = $attribute;
@@ -94,7 +94,7 @@ class Criteria {
   /**
    * Set the comparison operator used to compare the given value with
    * the attribute's value
-   * @param operator The operator
+   * @param $operator The operator
    */
   public function setOperator($operator) {
     $this->operator = $operator;
@@ -111,7 +111,7 @@ class Criteria {
 
   /**
    * Set the value to compare the object with
-   * @param value The value
+   * @param $value The value
    */
   public function setValue($value) {
     $this->value = $value;
@@ -127,7 +127,7 @@ class Criteria {
 
   /**
    * Set the Criteria::OPERATOR to use, when this criteria is combined with other criteria
-   * @param combineOperator One of the Criteria::OPERATOR constants
+   * @param $combineOperator One of the Criteria::OPERATOR constants
    */
   public function setCombineOperator($combineOperator) {
     $this->combineOperator = $combineOperator;

@@ -25,7 +25,7 @@ class InternalLink {
 
   /**
    * Make an internal link to an object
-   * @param oid The id of the object to link to
+   * @param $oid The id of the object to link to
    * @return The link
    */
   public static function makeLink(ObjectId $oid) {
@@ -34,9 +34,9 @@ class InternalLink {
 
   /**
    * Make an internal link to an object
-   * @param oid The object id of the object to link to
-   * @param anchorOID The object id of the subobject to link to
-   * @param anchorName The name inside the subobject to link to (null, if the object itself should be linked), [default: null]
+   * @param $oid The object id of the object to link to
+   * @param $anchorOID The object id of the subobject to link to
+   * @param $anchorName The name inside the subobject to link to (null, if the object itself should be linked), [default: null]
    * @return The link
    */
   public static function makeAnchorLink(ObjectId $oid, ObjectId $anchorOID, $anchorName=null) {
@@ -49,7 +49,7 @@ class InternalLink {
 
   /**
    * Test if a link is an internal link
-   * @param link The link to test
+   * @param $link The link to test
    * @return Boolean whether the link is an internal link or not
    */
   public static function isLink($link) {
@@ -58,7 +58,7 @@ class InternalLink {
 
   /**
    * Get the oid of the referenced object
-   * @param link The link to process
+   * @param $link The link to process
    * @return The oid or null if no valid oid is referenced
    */
   public static function getReferencedOID($link) {
@@ -72,7 +72,7 @@ class InternalLink {
 
   /**
    * Get the oid of the referenced subobject if any
-   * @param link The link to process
+   * @param $link The link to process
    * @return The oid or null if no anchor is defined
    */
   public static function getAnchorOID($link) {
@@ -86,7 +86,7 @@ class InternalLink {
 
   /**
    * Get the name of the anchor inside the referenced subobject if any
-   * @param link The link to process
+   * @param $link The link to process
    * @return The name or null if no anchor name is defined
    */
   public static function getAnchorName($link) {

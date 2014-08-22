@@ -34,9 +34,9 @@ interface ConcurrencyManager {
   /**
    * Aquire a lock on an ObjectId for the current user. Throws an exception if
    * locking fails.
-   * @param oid The object id of the object to lock.
-   * @param type One of the Lock::Type constants.
-   * @param currentState PersistentObject instance defining the current state
+   * @param $oid The object id of the object to lock.
+   * @param $type One of the Lock::Type constants.
+   * @param $currentState PersistentObject instance defining the current state
    *    for an optimistic lock (optional, if not given, the current state will
    *    be loaded from the store)
    */
@@ -44,14 +44,14 @@ interface ConcurrencyManager {
 
   /**
    * Release a lock on an ObjectId for the current user.
-   * @param oid object id of the object to release.
-   * @param type One of the Lock::Type constants or null for all types [default: null]
+   * @param $oid object id of the object to release.
+   * @param $type One of the Lock::Type constants or null for all types [default: null]
    */
   public function releaseLock(ObjectId $oid, $type=null);
 
   /**
    * Release all locks on an ObjectId regardless of the user.
-   * @param oid object id of the object to release.
+   * @param $oid object id of the object to release.
    */
   public function releaseLocks(ObjectId $oid);
 
@@ -62,22 +62,22 @@ interface ConcurrencyManager {
 
   /**
    * Get the lock for an object id.
-   * @param oid object id of the object to get the lock data for.
+   * @param $oid object id of the object to get the lock data for.
    * @return Lock instance or null
    */
   public function getLock(ObjectId $oid);
 
   /**
    * Check if the given object can be persisted. Throws an exception if not.
-   * @param object The object to check.
+   * @param $object The object to check.
    */
   public function checkPersist(PersistentObject $object);
 
   /**
    * Update the current state of the lock belonging to the given object
    * if existing and owned by the current.
-   * @param oid The object id.
-   * @param object The updated object data.
+   * @param $oid The object id.
+   * @param $object The updated object data.
    */
   public function updateLock(ObjectId $oid, PersistentObject $object);
 }

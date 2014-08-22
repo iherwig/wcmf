@@ -21,7 +21,7 @@ class OptimisticLockException extends \Exception {
 
   /**
    * Constructor
-   * @param currentState PersistentObject instance representing the current object state
+   * @param $currentState PersistentObject instance representing the current object state
    *    or null, if the object is deleted
    */
   public function __construct($currentState) {

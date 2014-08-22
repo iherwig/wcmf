@@ -36,7 +36,7 @@ class Response extends ControllerMessage {
    * Set a string value that uniquely identifies the request data
    * that cause the current response. This value maybe used to compare
    * two requests and return cached responses based on the result.
-   * @param cacheId
+   * @param $cacheId
    */
   public function setCacheId($cacheId) {
     $this->_cacheId = $cacheId;
@@ -53,7 +53,7 @@ class Response extends ControllerMessage {
 
   /**
    * Set the response HTTP status code
-   * @param status The HTTP status code
+   * @param $status The HTTP status code
    */
   public function setStatus($status) {
     $this->_status = $status;

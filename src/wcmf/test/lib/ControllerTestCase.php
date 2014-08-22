@@ -30,7 +30,8 @@ abstract class ControllerTestCase extends DatabaseTestCase {
    * The calling method has to make sure that a session is started, if necessary
    * (e.g. by calling TestUtil::startSession()). The transaction will be rolled
    * back before the request is run in order to avoid side effects.
-   * @param data An associative array with additional key/value pairs for the Request instance
+   * @param $action The action
+   * @param $data An associative array with additional key/value pairs for the Request instance
    * @return Response instance
    */
   protected function runRequest($action, $data) {
@@ -41,7 +42,7 @@ abstract class ControllerTestCase extends DatabaseTestCase {
     TestUtil::setConfigValue('??'.$action, $this->getControllerName(), 'actionmapping');
 
     // make request
-    $request = new Request('\wcmf\application\controller\TerminateController', '', $action);
+    $request = new Request('', '', $action);
     foreach ($data as $key => $value) {
       $request->setValue($key, $value);
     }

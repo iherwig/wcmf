@@ -15,35 +15,39 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 
 /**
- * PermissionsController is a controller that handles permissions.
+ * PermissionsController checks permissions for a set of operations for
+ * the current user.
  *
- * <b>Input actions:</b>
- * - checkpermissions: Check a set of resource/context/action triples
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[in] permissions Array of resource/context/action triples in the form resource?context?action
- * @param[out] result Associative array with the permissions as keys and boolean values indicating
- *            if permissions are given or not
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Check a set of operations.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `operations`      | Array of resource/context/action triples in the form _resource?context?action_
+ * | _out_ `result`         | Associative array with the operations as keys and boolean values indicating if permissions are given or not
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class PermissionsController extends Controller {
 
   /**
-   * Check the permissions.
-   * @return True in any case
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
 
-    $permissions = $request->getValue('permissions');
     $result = array();
+    $permissions = $request->hasValue('operations') ? $request->getValue('operations') : array();
     foreach($permissions as $permission) {
       $keyParts = ActionKey::parseKey($permission);
       $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action']);
@@ -51,7 +55,6 @@ class PermissionsController extends Controller {
     $response->setValue('result', $result);
 
     $response->setAction('ok');
-    return true;
   }
 }
 ?>

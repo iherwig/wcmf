@@ -26,9 +26,9 @@ class ActionKey {
 
   /**
    * Create an action key from the given values
-   * @param resource The resource
-   * @param context The context
-   * @param action The action
+   * @param $resource The resource
+   * @param $context The context
+   * @param $action The action
    * @return String
    */
   public static function createKey($resource, $context, $action) {
@@ -37,7 +37,7 @@ class ActionKey {
 
   /**
    * Parse an action
-   * @param actionKey The action key
+   * @param $actionKey The action key
    * @return Associative array with keys 'resouce', 'context', 'action'
    */
   public static function parseKey($actionKey) {
@@ -47,10 +47,10 @@ class ActionKey {
 
   /**
    * Get a configuration key that matches a given combination of resource, context, action best.
-   * @param section The section to search in
-   * @param resource The given resource
-   * @param context The given context
-   * @param action The given action
+   * @param $section The section to search in
+   * @param $resource The given resource
+   * @param $context The given context
+   * @param $action The given action
    * @return The best matching key or an empty string if nothing matches.
    */
   public static function getBestMatch($section, $resource, $context, $action) {

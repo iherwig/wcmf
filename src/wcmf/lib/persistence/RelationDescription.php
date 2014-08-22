@@ -42,19 +42,19 @@ class RelationDescription {
 
   /**
    * Constructor.
-   * @param thisType The PersistentObject type at this end
-   * @param thisRole The role name at this end
-   * @param otherType The PersistentObject type at the other end
-   * @param otherRole The role name at the other end
-   * @param thisMinMultiplicity The minimum number of instances at this end (number or 'unbound')
-   * @param thisMaxMultiplicity The maximum number of instances at this end (number or 'unbound')
-   * @param otherMinMultiplicity The minimum number of instances at the other end (number or 'unbound')
-   * @param otherMaxMultiplicity The maximum number of instances at the other end (number or 'unbound')
-   * @param thisAggregationKind The aggregation kind at this end ('none', 'shared' or 'composite')
-   * @param otherAggregationKind The aggregation kind at the other end ('none', 'shared' or 'composite')
-   * @param thisNavigability Boolean whether this end is navigable from the other end or not
-   * @param otherNavigability Boolean whether the other end is navigable from this end or not
-   * @param hierarchyType The hierarchy type that the other end has in relation to this end ('parent', 'child', 'undefined')
+   * @param $thisType The PersistentObject type at this end
+   * @param $thisRole The role name at this end
+   * @param $otherType The PersistentObject type at the other end
+   * @param $otherRole The role name at the other end
+   * @param $thisMinMultiplicity The minimum number of instances at this end (number or 'unbound')
+   * @param $thisMaxMultiplicity The maximum number of instances at this end (number or 'unbound')
+   * @param $otherMinMultiplicity The minimum number of instances at the other end (number or 'unbound')
+   * @param $otherMaxMultiplicity The maximum number of instances at the other end (number or 'unbound')
+   * @param $thisAggregationKind The aggregation kind at this end ('none', 'shared' or 'composite')
+   * @param $otherAggregationKind The aggregation kind at the other end ('none', 'shared' or 'composite')
+   * @param $thisNavigability Boolean whether this end is navigable from the other end or not
+   * @param $otherNavigability Boolean whether the other end is navigable from this end or not
+   * @param $hierarchyType The hierarchy type that the other end has in relation to this end ('parent', 'child', 'undefined')
    */
   public function __construct($thisType, $thisRole, $otherType, $otherRole, $thisMinMultiplicity, $thisMaxMultiplicity,
     $otherMinMultiplicity, $otherMaxMultiplicity, $thisAggregationKind, $otherAggregationKind, $thisNavigability, $otherNavigability,
@@ -215,7 +215,7 @@ class RelationDescription {
    * Check if another RelationDescription instance describes the same relation as
    * this one. This is true if they connect the same types using the same role names
    * (independent from the direction). All other attributes are not compared.
-   * @param other The other RelationDescription
+   * @param $other The other RelationDescription
    * @return Boolean
    */
   public function isSameRelation(RelationDescription $other) {

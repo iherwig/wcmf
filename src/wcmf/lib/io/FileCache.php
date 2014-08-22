@@ -16,7 +16,7 @@ use wcmf\lib\io\FileUtil;
 
 /**
  * FileCache provides simple caching functionality.
- * 
+ *
  * The cache is divided into different sections. All sections share
  * the same base path.
  *
@@ -29,8 +29,8 @@ class FileCache {
 
   /**
    * Check if a key exists in the specified cache
-   * @param section The caching section
-   * @param key The cache key
+   * @param $section The caching section
+   * @param $key The cache key
    * @return boolean
    */
   public static function exists($section, $key) {
@@ -40,8 +40,8 @@ class FileCache {
 
   /**
    * Get a value from the specified cache
-   * @param section The caching section
-   * @param key The cache key
+   * @param $section The caching section
+   * @param $key The cache key
    * @return Mixed
    */
   public static function get($section, $key) {
@@ -54,9 +54,9 @@ class FileCache {
 
   /**
    * Store a value in the specified cache
-   * @param section The caching section
-   * @param key The key
-   * @param value The value
+   * @param $section The caching section
+   * @param $key The key
+   * @param $value The value
    */
   public static function put($section, $key, $value) {
     self::initializeCache($section);
@@ -66,7 +66,7 @@ class FileCache {
 
   /**
    * Clear the given cache section
-   * @param section The caching section
+   * @param $section The caching section
    */
   public static function clear($section) {
     $file = self::getCacheFile($section);
@@ -75,7 +75,7 @@ class FileCache {
 
   /**
    * Initialize the cache
-   * @param section The caching section
+   * @param $section The caching section
    */
   private static function initializeCache($section) {
     if (!isset(self::$cache[$section])) {
@@ -91,7 +91,7 @@ class FileCache {
 
   /**
    * Save the cache
-   * @param section The caching section
+   * @param $section The caching section
    */
   private static function saveCache($section) {
     $content = serialize(self::$cache[$section]);
@@ -109,7 +109,7 @@ class FileCache {
 
   /**
    * Get the cache file for the specified cache
-   * @param section The caching section
+   * @param $section The caching section
    * @return String
    */
   private static function getCacheFile($section) {

@@ -44,7 +44,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Constructor.
-   * @param configPath The path, either absolute or relative to the executed script
+   * @param $configPath The path, either absolute or relative to the executed script
    */
   public function __construct($configPath) {
     $this->_configPath = $configPath;
@@ -132,7 +132,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Process the given file recursivly
-   * @param filename
+   * @param $filename The filename
+   * @param $configArray Configuration array
+   * @param $parsedFiles Parsed files
    * @return Associative array with keys 'config' (configuration array) and 'files'
    * (array of parsed files)
    */
@@ -482,7 +484,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Load in the ini file specified in filename, and return
    * the settings in a multidimensional array, with the section names and
    * settings included. All section names and keys are lowercased.
-   * @param filename The filename of the ini file to parse
+   * @param $filename The filename of the ini file to parse
    * @return An associative array containing the data
    *
    * @author: Sebastien Cevey <seb@cine7.net>
@@ -534,7 +536,6 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Process the values in the ini array.
    * This method turns string values that hold array definitions
    * (comma separated values enclosed by curly brackets) into array values.
-   * @attention Internal use only.
    */
   protected function processValues() {
     array_walk_recursive($this->_configArray, array($this, 'processValue'));
@@ -544,8 +545,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Process the values in the ini array.
    * This method turns string values that hold array definitions
    * (comma separated values enclosed by curly brackets) into array values.
-   * @param value A reference to the value
-   * @attention Internal use only.
+   * @param $value A reference to the value
    */
   protected function processValue(&$value) {
     if (!is_array($value)) {
@@ -567,9 +567,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Merge two arrays, preserving entries in first one unless they are
    * overridden by ones in the second.
-   * @param array1 First array.
-   * @param array2 Second array.
-   * @param override Boolean whether values defined in array1 should be overriden by values defined in array2.
+   * @param $array1 First array.
+   * @param $array2 Second array.
+   * @param $override Boolean whether values defined in array1 should be overriden by values defined in array2.
    * @return The merged array.
    */
   protected function configMerge($array1, $array2, $override) {
@@ -590,7 +590,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Search the given value for a 'include' key in a section named 'config' (case-insensivite)
-   * @param array The array to search in
+   * @param $array The array to search in
    * @return Mixed
    */
   protected function getConfigIncludes($array) {
@@ -631,8 +631,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * If the current instance is modified or the last file given in parsedFiles
    * is newer than the serialized data, this call is ignored.
    * If InifileConfiguration class changed, the call will be ignored as well.
-   * @param parsedFiles An array of ini filenames that must be contained in the data.
-   * @param Boolean whether the data could be retrieved or not
+   * @param $parsedFiles An array of ini filenames that must be contained in the data.
+   * @return Boolean whether the data could be retrieved or not
    */
   protected function unserialize($parsedFiles) {
     if ($this->_useCache && !$this->isModified()) {
@@ -663,7 +663,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Get the filename for the serialized data that correspond to the the given ini file sequence.
-   * @param parsedFiles An array of parsed filenames
+   * @param $parsedFiles An array of parsed filenames
    * @return Filename
    */
   protected function getSerializeFilename($parsedFiles) {
@@ -674,8 +674,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Check if one file in fileList is newer than the referenceFile.
-   * @param fileList An array of files
-   * @param referenceFile The file to check against
+   * @param $fileList An array of files
+   * @param $referenceFile The file to check against
    * @return True, if one of the files is newer, false else
    */
   protected function checkFileDate($fileList, $referenceFile) {
@@ -719,8 +719,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Lookup section and key.
-   * @param section The section to lookup
-   * @param key The key to lookup (optional)
+   * @param $section The section to lookup
+   * @param $key The key to lookup (optional)
    * @return Array with section as first entry and key as second or null if not found
    */
   protected function lookup($section, $key=null) {

@@ -46,16 +46,16 @@ class Application {
 
   /**
    * Initialize the application.
-   * 
-   * @param configPath The path where config files reside (as seen from main.php), optional [default: 'config/']
-   * @param mainConfigFile The main configuration file to use, optional [default: 'config.ini']
-   * @param defaultController The controller to call if none is given in request parameters, optional [default: 'wcmf\application\controller\TerminateController']
-   * @param defaultContext The context to set if none is given in request parameters, optional [default: '']
-   * @param defaultAction The action to perform if none is given in request parameters, optional [default: 'login']
+   *
+   * @param $configPath The path where config files reside (as seen from main.php), optional (default: 'config/')
+   * @param $mainConfigFile The main configuration file to use, optional (default: 'config.ini')
+   * @param $defaultController The controller to call if none is given in request parameters, optional (default: '')
+   * @param $defaultContext The context to set if none is given in request parameters, optional (default: '')
+   * @param $defaultAction The action to perform if none is given in request parameters, optional (default: 'login')
    * @return Request instance representing the current HTTP request
    */
   public function initialize($configPath='../config/', $mainConfigFile='config.ini',
-    $defaultController='wcmf\application\controller\TerminateController', $defaultContext='', $defaultAction='login') {
+    $defaultController='', $defaultContext='', $defaultAction='login') {
 
     Log::configure($configPath.'log4php.php');
     $config = new InifileConfiguration($configPath);
@@ -90,7 +90,7 @@ class Application {
 
   /**
    * Run the application with the given request
-   * @param request
+   * @param $request
    * @return Response instance
    */
   public function run(Request $request) {
@@ -106,8 +106,8 @@ class Application {
   /**
    * Default exception handling method. Rolls back the transaction and
    * re-executes the last request (expected in the session variable 'lastRequest').
-   * @param exception The Exception instance
-   * @param request The Request instance
+   * @param $exception The Exception instance
+   * @param $request The Request instance
    */
   public function handleException(Exception $exception, Request $request=null) {
     if ($exception instanceof ApplicationException) {
@@ -143,7 +143,7 @@ class Application {
 
   /**
    * This method is called on script shutdown
-   * NOTE: must be public
+   * @note must be public
    */
   public function shutdown() {
     // log resource usage
@@ -164,7 +164,7 @@ class Application {
   /**
    * This method is run as ob_start callback
    * @note must be public
-   * @param buffer The content to be returned to the client
+   * @param $buffer The content to be returned to the client
    * @return String
    */
   public function outputHandler($buffer) {

@@ -24,8 +24,8 @@ class Validator {
 
   /**
    * Validate the given value against the given validateType description.
-   * @param value The value to validate
-   * @param validateTypeDesc A string in the form validateType:options, where
+   * @param $value The value to validate
+   * @param $validateTypeDesc A string in the form validateType:options, where
    *     validateType is a key in the configuration section 'validators'
    * @return Boolean
    */
@@ -40,7 +40,7 @@ class Validator {
 
   /**
    * Get the ValidateType instance for the given name.
-   * @param validateTypeName The validate type's name
+   * @param $validateTypeName The validate type's name
    * @return ValidateType instance
    */
   protected static function getValidateType($validateTypeName) {
@@ -50,6 +50,5 @@ class Validator {
     }
     return $validatorTypes[$validateTypeName];
   }
-
 }
 ?>

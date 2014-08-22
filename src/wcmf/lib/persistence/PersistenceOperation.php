@@ -26,10 +26,10 @@ abstract class PersistenceOperation {
 
   /**
    * Constructor.
-   * @param type The type of PersistentObject on which the operation
+   * @param $type The type of PersistentObject on which the operation
    *          should be executed
-   * @param values An array of attribute/value pairs to apply
-   * @param criteria An array of criteria instances to select the objects on
+   * @param $values An array of attribute/value pairs to apply
+   * @param $criteria An array of criteria instances to select the objects on
    *          which the operation will be executed
    */
   public function __construct($type, array $values, array $criteria) {

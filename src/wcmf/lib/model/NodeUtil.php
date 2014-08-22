@@ -29,10 +29,10 @@ class NodeUtil {
 
   /**
    * Get the shortest paths that connect a type to another type.
-   * @param type The type to start from
-   * @param otherRole The role of the type at the other end (maybe null, if only type shoudl match)
-   * @param otherType The type at the other end (maybe null, if only role shoudl match)
-   * @param hierarchyType The hierarchy type that the other type has in relation to this type
+   * @param $type The type to start from
+   * @param $otherRole The role of the type at the other end (maybe null, if only type shoudl match)
+   * @param $otherType The type at the other end (maybe null, if only role shoudl match)
+   * @param $hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
    * @return An array of PathDescription instances
    */
@@ -56,13 +56,13 @@ class NodeUtil {
 
   /**
    * Get the relations that connect a type to another type.
-   * @param type The type to start from
-   * @param otherRole The role of the type at the other end (maybe null, if only type shoudl match)
-   * @param otherType The type at the other end (maybe null, if only role shoudl match)
-   * @param hierarchyType The hierarchy type that the other type has in relation to this type
+   * @param $type The type to start from
+   * @param $otherRole The role of the type at the other end (maybe null, if only type shoudl match)
+   * @param $otherType The type at the other end (maybe null, if only role shoudl match)
+   * @param $hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
-   * @param result Array of PathDescriptions after execution
-   * @param currentPath Internal use only
+   * @param $result Array of PathDescriptions after execution
+   * @param $currentPath Internal use only
    */
   protected static function getConnectionsImpl($type, $otherRole, $otherType,
           $hierarchyType, array &$result=array(), array $currentPath=array()) {
@@ -110,8 +110,8 @@ class NodeUtil {
 
   /**
    * Get the query condition used to select all related Nodes of a given role.
-   * @param node The Node to select the relatives for
-   * @param otherRole The role of the other nodes
+   * @param $node The Node to select the relatives for
+   * @param $otherRole The role of the other nodes
    * @return The condition string to be used with StringQuery.
    */
   public static function getRelationQueryCondition($node, $otherRole) {
@@ -145,8 +145,8 @@ class NodeUtil {
    * If the 'display_value' is an array ('|' separated strings) the pieces will be put together with ' - '.
    * If search for 'display_value' gives no result the function returns an empty string.
    * Example: 'name|text' shows the name of the Node together with the content of the text attribute
-   * @param node A reference to the Node to display
-   * @param language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
+   * @param $node A reference to the Node to display
+   * @param $language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
    * @note The display type is configured via the display_type property of a value. It describes how the value should be displayed.
    *       The description is of the form @code type @endcode or @code type[attributes] @endcode
    *       - type: text|image|link
@@ -159,8 +159,8 @@ class NodeUtil {
 
   /**
    * Does the same as NodeUtil::getDisplayValue but returns the display value as associative array
-   * @param node A reference to the Node to display
-   * @param language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
+   * @param $node A reference to the Node to display
+   * @param $language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
    * @return The display array
    */
   public static function getDisplayValues(Node $node, $language=null) {
@@ -201,7 +201,7 @@ class NodeUtil {
 
   /**
    * Get the display name for a Node type defined by the mappers 'alt' property.
-   * @param type The name of the type
+   * @param $type The name of the type
    * @return The display string
    */
   public static function getDisplayNameFromType($type) {
@@ -212,9 +212,9 @@ class NodeUtil {
 
   /**
    * Make all urls matching a given base url in a Node relative.
-   * @param node A reference to the Node the holds the value
-   * @param baseUrl The baseUrl to which matching urls will be made relative
-   * @param recursive Boolean whether to recurse into child Nodes or not (default: true)
+   * @param $node A reference to the Node the holds the value
+   * @param $baseUrl The baseUrl to which matching urls will be made relative
+   * @param $recursive Boolean whether to recurse into child Nodes or not (default: true)
    */
   public static function makeNodeUrlsRelative(Node $node, $baseUrl, $recursive=true) {
     // use NodeValueIterator to iterate over all Node values
@@ -227,9 +227,9 @@ class NodeUtil {
 
   /**
    * Make the urls matching a given base url in a PersistentObject value relative.
-   * @param node A reference to the Node the holds the value
-   * @param valueName The name of the value
-   * @param baseUrl The baseUrl to which matching urls will be made relative
+   * @param $node A reference to the Node the holds the value
+   * @param $valueName The name of the value
+   * @param $baseUrl The baseUrl to which matching urls will be made relative
    */
   private static function makeValueUrlsRelative(PersistentObject $object, $valueName, $baseUrl) {
     $value = $object->getValue($valueName);
@@ -258,8 +258,8 @@ class NodeUtil {
    * @note Translation in this case refers to mapping list values from the key to the value
    * and should not be confused with localization, although values maybe localized using the
    * language parameter.
-   * @param nodes A reference to the array of Nodes
-   * @param language The language code, if the translated values should be localized.
+   * @param $nodes A reference to the array of Nodes
+   * @param $language The language code, if the translated values should be localized.
    *                 Optional, default is Localizat$objectgetDefaultLanguage()
    */
   public static function translateValues(&$nodes, $language=null) {
@@ -274,9 +274,9 @@ class NodeUtil {
 
   /**
    * Translate a PersistentObject list value.
-   * @param object The object whose value to translate
-   * @param valueName The name of the value to translate
-   * @param language The language to use
+   * @param $object The object whose value to translate
+   * @param $valueName The name of the value to translate
+   * @param $language The language to use
    */
   private static function translateValue(PersistentObject $object, $valueName, $language) {
     $value = $object->getValue($valueName);
@@ -288,7 +288,7 @@ class NodeUtil {
 
   /**
    * Remove all values from a Node that are not a display value.
-   * @param node The Node instance
+   * @param $node The Node instance
    */
   public static function removeNonDisplayValues(Node $node) {
     $displayValues = $node->getDisplayValueNames($node);
@@ -302,7 +302,7 @@ class NodeUtil {
 
   /**
    * Remove all values from a Node that are not a primary key value.
-   * @param node The Node instance
+   * @param $node The Node instance
    */
   public static function removeNonPkValues(Node $node) {
     $mapper = $node->getMapper();

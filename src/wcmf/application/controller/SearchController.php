@@ -16,19 +16,24 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 
 /**
- *  * @class SearchController
- * @ingroup Controller
- * @brief SearchController is a controller that executes a search for oids and
- * displays them in a paged list. Internally it uses Zend Lucene indexed search.
+ * SearchController executes a search and returns matching objects in a paged list.
+ * Internally it uses Zend Lucene indexed search.
  *
- * <b>Input actions:</b>
- * - unspecified: Search
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Search.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ / _out_ `query`   | The query string
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
- * @param [in,out] query The query
- * see ListController for additional parameters
+ * For additional actions and parameters see [ListController actions](@ref ListController).
  *
  * @author ingo herwig <ingo@wemove.com>
  */

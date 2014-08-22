@@ -25,8 +25,8 @@ class Log {
 
   /**
    * Print a trace message for a category
-   * @param message The message
-   * @param category The category
+   * @param $message The message
+   * @param $category The category
    */
   public static function trace($message, $category) {
     $logger = Log::getLogger($category);
@@ -35,8 +35,8 @@ class Log {
 
   /**
    * Print a debug message for a category
-   * @param message The message
-   * @param category The category
+   * @param $message The message
+   * @param $category The category
    */
   public static function debug($message, $category) {
     $logger = Log::getLogger($category);
@@ -45,8 +45,8 @@ class Log {
 
   /**
    * Print a info message for a category
-   * @param message The message
-   * @param category The category
+   * @param $message The message
+   * @param $category The category
    */
   public static function info($message, $category) {
     $logger = Log::getLogger($category);
@@ -55,8 +55,8 @@ class Log {
 
   /**
    * Print a warn message for a category
-   * @param message The message
-   * @param category The category
+   * @param $message The message
+   * @param $category The category
    */
   public static function warn($message, $category) {
     $logger = Log::getLogger($category);
@@ -65,8 +65,8 @@ class Log {
 
   /**
    * Print a error message for a category
-   * @param message The message
-   * @param category The category
+   * @param $message The message
+   * @param $category The category
    */
   public static function error($message, $category) {
     $logger = Log::getLogger($category);
@@ -75,8 +75,8 @@ class Log {
 
   /**
    * Print a fatal message for a category
-   * @param message The message
-   * @param category The category
+   * @param $message The message
+   * @param $category The category
    */
   public static function fatal($message, $category) {
     $logger = Log::getLogger($category);
@@ -85,7 +85,7 @@ class Log {
 
   /**
    * Check if debug level is enabled for a category
-   * @param category The category
+   * @param $category The category
    * @return Boolean
    */
   public static function isDebugEnabled($category) {
@@ -95,7 +95,7 @@ class Log {
 
   /**
    * Check if info level is enabled for a category
-   * @param category The category
+   * @param $category The category
    * @return Boolean
    */
   public static function isInfoEnabled($category) {
@@ -105,7 +105,7 @@ class Log {
 
   /**
    * Check if warn level is enabled for a category
-   * @param category The category
+   * @param $category The category
    * @return Boolean
    */
   public static function isWarnEnabled($category) {
@@ -115,7 +115,7 @@ class Log {
 
   /**
    * Check if error level is enabled for a category
-   * @param category The category
+   * @param $category The category
    * @return Boolean
    */
   public static function isErrorEnabled($category) {
@@ -125,7 +125,7 @@ class Log {
 
   /**
    * Check if fatal level is enabled for a category
-   * @param category The category
+   * @param $category The category
    * @return Boolean
    */
   public static function isFatalEnabled($category) {
@@ -135,7 +135,7 @@ class Log {
 
   /**
    * Get the log4php Logger instance for a specified category
-   * @param category The category
+   * @param $category The category
    * @return A Logger  The category
    */
   public static function getLogger($category) {
@@ -148,7 +148,7 @@ class Log {
 
   /**
    * Explicitly configure the Log with the given property file
-   * @param file The name of the property file
+   * @param $file The name of the property file
    */
   public static function configure($file) {
     Logger::configure($file);

@@ -16,13 +16,20 @@ use wcmf\lib\presentation\Controller;
 /**
  * MessageController is used to get all messages translated to the given language.
  *
- * <b>Input actions:</b>
- * - unspecified: Get all messages
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - @em ok In any case
- *
- * @param[out] Associative array of messages and their translations
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Get all messages.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `language`        | The language
+ * | _out_ _message keys_   | Associative array of messages and their translations
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -40,9 +47,9 @@ class MessageController extends Controller {
   }
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -54,9 +61,6 @@ class MessageController extends Controller {
 
     // success
     $response->setAction('ok');
-    return false;
   }
-
-  protected function assignResponseDefaults() {}
 }
 ?>

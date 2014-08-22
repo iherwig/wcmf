@@ -36,9 +36,9 @@ use wcmf\lib\presentation\Controller;
 class LoggingController extends Controller {
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -75,7 +75,6 @@ class LoggingController extends Controller {
     }
 
     $response->setAction('ok');
-    return true;
   }
 }
 ?>

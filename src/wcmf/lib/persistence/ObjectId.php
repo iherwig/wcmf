@@ -39,11 +39,11 @@ class ObjectId {
 
   /**
    * Constructor.
-   * @param type The type name of the object (either fully qualified or simple, if not ambiguous)
-   * @param id Either a single value or an array of values (for compound primary keys) identifying
+   * @param $type The type name of the object (either fully qualified or simple, if not ambiguous)
+   * @param $id Either a single value or an array of values (for compound primary keys) identifying
    * the object between others of the same type. If not given, a dummy id will be
    * assigned. [optional, default: null]
-   * @param prefix A prefix for identifying a set of objects belonging to one storage in a
+   * @param $prefix A prefix for identifying a set of objects belonging to one storage in a
    * distributed enviroment.
    * @note If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
@@ -123,7 +123,7 @@ class ObjectId {
   /**
    * Check if a serialized ObjectId has a valid syntax, the type is known and
    * if the number of primary keys match the type.
-   * @param oid The serialized ObjectId.
+   * @param $oid The serialized ObjectId.
    * @return Boolean
    */
   public static function isValid($oid) {
@@ -135,7 +135,7 @@ class ObjectId {
 
   /**
    * Parse a serialized object id string into an ObjectId instance.
-   * @param oid The string
+   * @param $oid The string
    * @return ObjectId or null, if the id cannot be parsed
    */
   public static function parse($oid) {
@@ -215,7 +215,7 @@ class ObjectId {
 
   /**
    * Check if a given id is a dummy id.
-   * @param id The id to check
+   * @param $id The id to check
    * @return Boolean
    */
   public static function isDummyId($id) {
@@ -237,7 +237,7 @@ class ObjectId {
 
   /**
    * Get the number of primary keys a type has.
-   * @param type The type
+   * @param $type The type
    * @return Integer (1 if the type is unknown)
    */
   private static function getNumberOfPKs($type) {

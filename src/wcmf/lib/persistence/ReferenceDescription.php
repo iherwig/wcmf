@@ -25,9 +25,9 @@ class ReferenceDescription extends AttributeDescription {
 
   /**
    * Constructor.
-   * @param name The name of the reference
-   * @param otherType The name of the referenced type (must be the role name, @see RelationDescription)
-   * @param otherName The name of the referenced attribute in the referenced type
+   * @param $name The name of the reference
+   * @param $otherType The name of the referenced type (must be the role name, @see RelationDescription)
+   * @param $otherName The name of the referenced attribute in the referenced type
    */
   public function __construct($name, $otherType, $otherName) {
     $this->name = $name;

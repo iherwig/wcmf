@@ -14,12 +14,6 @@ use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\ControllerTestCase;
 use wcmf\test\lib\TestUtil;
 
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\Node;
-use wcmf\lib\model\ObjectQuery;
-use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\ObjectId;
-
 /**
  * PermissionsControllerTest.
  *
@@ -59,8 +53,8 @@ class PermissionsControllerTest extends ControllerTestCase {
    */
   public function testAdmin() {
     TestUtil::startSession('admin', 'admin');
-    
-    $set = array(
+
+    $operations = array(
       'app.src.model.wcmf.User??read',
       'app.src.model.wcmf.User??modify',
       'app.src.model.wcmf.User??create',
@@ -77,7 +71,7 @@ class PermissionsControllerTest extends ControllerTestCase {
 
     // simulate check permissions call
     $data = array(
-      'set' => $set
+      'operations' => $operations
     );
     $response = $this->runRequest('checkpermissions', $data);
 
@@ -85,7 +79,7 @@ class PermissionsControllerTest extends ControllerTestCase {
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $result = $response->getValue('result');
     $this->assertEquals(12, sizeof($result));
-    
+
     $this->assertTrue($result['app.src.model.wcmf.User??read']);
     $this->assertTrue($result['app.src.model.wcmf.User??modify']);
     $this->assertTrue($result['app.src.model.wcmf.User??create']);
@@ -107,8 +101,8 @@ class PermissionsControllerTest extends ControllerTestCase {
    */
   public function testTester() {
     TestUtil::startSession('user1', 'user1');
-    
-    $set = array(
+
+    $operations = array(
       'app.src.model.wcmf.User??read',
       'app.src.model.wcmf.User??modify',
       'app.src.model.wcmf.User??create',
@@ -125,7 +119,7 @@ class PermissionsControllerTest extends ControllerTestCase {
 
     // simulate check permissions call
     $data = array(
-      'set' => $set
+      'operations' => $operations
     );
     $response = $this->runRequest('checkpermissions', $data);
 
@@ -146,7 +140,7 @@ class PermissionsControllerTest extends ControllerTestCase {
     $this->assertTrue($result['app.src.model.Publisher??modify']);
     $this->assertTrue($result['app.src.model.Publisher??create']);
     $this->assertTrue($result['app.src.model.Publisher??delete']);
-    
+
     TestUtil::endSession();
   }
 }

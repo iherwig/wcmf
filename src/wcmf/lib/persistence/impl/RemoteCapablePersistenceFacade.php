@@ -58,7 +58,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Tell the PersistenceFacade implementation to resolve proxies or not.
-   * @param isResolvingProxies Boolean whether proxies should be resolved or not
+   * @param $isResolvingProxies Boolean whether proxies should be resolved or not
    */
   public function setResolveProxies($isResolvingProxies) {
     $this->_isResolvingProxies = $isResolvingProxies;
@@ -74,7 +74,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Tell the PersistenceFacade implementation to translate remote values or not.
-   * @param isTranslatingValues Boolean whether values should be translated or not
+   * @param $isTranslatingValues Boolean whether values should be translated or not
    */
   public function setTranslatingValues($isTranslatingValues) {
     $this->_isTranslatingValues = $isTranslatingValues;
@@ -150,7 +150,8 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * Get the proxy object for a remote object.
    * This method makes sure that a proxy for the given remote object exists.
    * If it does not exist, it will be created.
-   * @param umi The universal model id (oid with server prefix)
+   * @param $umi The universal model id (oid with server prefix)
+   * @param $buildDepth buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BuildDepth::REQUIRED)
    * @return The proxy object.
    */
   protected function getProxyObject(ObjectId $umi, $buildDepth) {
@@ -192,8 +193,8 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Load the real subject of a proxy from the remote instance.
-   * @param umi The universal model id (oid with server prefix)
-   * @param buildDepth buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BuildDepth::REQUIRED)
+   * @param $umi The universal model id (oid with server prefix)
+   * @param $buildDepth buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BuildDepth::REQUIRED)
    */
   protected function loadRemoteObject(ObjectId $umi, $buildDepth) {
     Log::debug("Resolve proxy object for: ".$umi, __CLASS__);
@@ -277,9 +278,9 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Save a proxy object in the session.
-   * @param umi The universal model id (oid with server prefix)
-   * @param obj The proxy object.
-   * @param buildDepth The depth the object was loaded.
+   * @param $umi The universal model id (oid with server prefix)
+   * @param $obj The proxy object.
+   * @param $buildDepth The depth the object was loaded.
    */
   protected function registerProxyObject(ObjectID $umi, PersistentObject $obj, $buildDepth) {
     $oid = $obj->getOID();
@@ -292,9 +293,9 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Save a remote object in the session.
-   * @param umi The universal model id (oid with server prefix)
-   * @param obj The remote object.
-   * @param buildDepth The depth the object was loaded.
+   * @param $umi The universal model id (oid with server prefix)
+   * @param $obj The remote object.
+   * @param $buildDepth The depth the object was loaded.
    */
   protected function registerRemoteObject(ObjectId $umi, PersistentObject $obj, $buildDepth) {
     // TODO: fix caching remote objects (invalidate cache entry, if an association to the object changes)
@@ -305,10 +306,10 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Save a object in the given session variable.
-   * @param umi The universal model id (oid with server prefix)
-   * @param obj The object to register.
-   * @param buildDepth The depth the object was loaded.
-   * @param varName The session variable name.
+   * @param $umi The universal model id (oid with server prefix)
+   * @param $obj The object to register.
+   * @param $buildDepth The depth the object was loaded.
+   * @param $varName The session variable name.
    */
   protected function registerObject(ObjectId $umi, PersistentObject $obj, $buildDepth, $varName) {
     if ($buildDepth == 0) {
@@ -327,8 +328,8 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Get a proxy object from the session.
-   * @param umi The universal model id (oid with server prefix)
-   * @param buildDepth The requested build depth.
+   * @param $umi The universal model id (oid with server prefix)
+   * @param $buildDepth The requested build depth.
    * @return The proxy object or null if not found.
    */
   protected function getRegisteredProxyObject(ObjectId $umi, $buildDepth) {
@@ -338,8 +339,8 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Get a remote object from the session.
-   * @param umi The universal model id (oid with server prefix)
-   * @param buildDepth The requested build depth.
+   * @param $umi The universal model id (oid with server prefix)
+   * @param $buildDepth The requested build depth.
    * @return The remote object or null if not found.
    */
   protected function getRegisteredRemoteObject(ObjectId $umi, $buildDepth) {
@@ -349,8 +350,9 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Get a object from the given session variable.
-   * @param umi The universal model id (oid with server prefix)
-   * @param buildDepth The requested build depth.
+   * @param $umi The universal model id (oid with server prefix)
+   * @param $buildDepth The requested build depth.
+   * @param $varName The session variable name
    * @return The object or null if not found.
    */
   protected function getRegisteredObject(ObjectId $umi, $buildDepth, $varName) {
@@ -378,8 +380,8 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   /**
    * Replace all object ids in an array with the umis according to
    * the given umiPrefix.
-   * @param oids The array of oids
-   * @param umiPrefix The umi prefix
+   * @param $oids The array of oids
+   * @param $umiPrefix The umi prefix
    * @return The array of umis
    */
   protected function makeUmis($oids, $umiPrefix) {

@@ -69,9 +69,9 @@ class ControllerMessage {
 
   /**
    * Constructor
-   * @param sender The name of the controller that sent the message
-   * @param context The name of the context of the message
-   * @param action The name of the action that the message initiates
+   * @param $sender The name of the controller that sent the message
+   * @param $context The name of the context of the message
+   * @param $action The name of the action that the message initiates
    * together with their values.
    */
   public function __construct($sender, $context, $action) {
@@ -85,7 +85,7 @@ class ControllerMessage {
 
   /**
    * Set the name of the sending Controller
-   * @param sender The name of the Controller
+   * @param $sender The name of the Controller
    */
   public function setSender($sender) {
     $this->_sender = $sender;
@@ -101,7 +101,7 @@ class ControllerMessage {
 
   /**
    * Set the name of the context
-   * @param context The name of the context
+   * @param $context The name of the context
    */
   function setContext($context) {
     $this->_context = $context;
@@ -117,7 +117,7 @@ class ControllerMessage {
 
   /**
    * Set the name of the action
-   * @param action The name of the action
+   * @param $action The name of the action
    */
   public function setAction($action) {
     $this->_action = $action;
@@ -133,7 +133,7 @@ class ControllerMessage {
 
   /**
    * Set the message format
-   * @param format Format instance
+   * @param $format Format instance
    */
   public function setFormat(Format $format) {
     $this->_format = $format;
@@ -155,8 +155,8 @@ class ControllerMessage {
 
   /**
    * Set a header value
-   * @param name The header name
-   * @param value The header value
+   * @param $name The header name
+   * @param $value The header value
    */
   public function setHeader($name, $value) {
     $this->_headers[$name] = $value;
@@ -164,8 +164,8 @@ class ControllerMessage {
 
   /**
    * Get a header value
-   * @param name The header name
-   * @param default The default value if the header is not defined [default: null]
+   * @param $name The header name
+   * @param $default The default value if the header is not defined [default: null]
    * @return The header value or default, if it does not exist
    */
   public function getHeader($name, $default=null) {
@@ -179,7 +179,7 @@ class ControllerMessage {
 
   /**
    * Check for existance of a header
-   * @param name The name of the header
+   * @param $name The name of the header
    * @return Boolean whether the header exists or not exist
    */
   public function hasHeader($name) {
@@ -196,7 +196,7 @@ class ControllerMessage {
 
   /**
    * Set all headers at once
-   * @param headers The associative array
+   * @param $headers The associative array
    */
   public function setHeaders(array $headers) {
     $this->_headers = $headers;
@@ -204,7 +204,7 @@ class ControllerMessage {
 
   /**
    * Remove a header
-   * @param name The name of the header
+   * @param $name The name of the header
    */
   public function clearHeader($name) {
     unset($this->_headers[$name]);
@@ -219,8 +219,8 @@ class ControllerMessage {
 
   /**
    * Set a value
-   * @param name The name of the variable
-   * @param value The value of the variable
+   * @param $name The name of the variable
+   * @param $value The value of the variable
    */
   public function setValue($name, $value) {
     $this->_values[$name] = $value;
@@ -229,8 +229,8 @@ class ControllerMessage {
   /**
    * Append a value to an existing variable or set it
    * if it does not exist
-   * @param name The name of the variable
-   * @param value The value to append to the variable
+   * @param $name The name of the variable
+   * @param $value The value to append to the variable
    */
   public function appendValue($name, $value) {
     if (!$this->hasValue($name)) {
@@ -243,7 +243,7 @@ class ControllerMessage {
 
   /**
    * Check for existance of a value
-   * @param name The name of the variable
+   * @param $name The name of the variable
    * @return Boolean whether the value exists or not exist
    */
   public function hasValue($name) {
@@ -252,11 +252,10 @@ class ControllerMessage {
 
   /**
    * Get a value
-   * TODO add filter parameter
-   * @param name The name of the variable
-   * @param default The default value if the value is not defined [optional, default: null]
-   * @param filter PHP filter constant (FILTER_SANITIZE/FILTER_VALIDATE) to be applied on the value [optional]
-   * @param options Filter parameters [optional]
+   * @param $name The name of the variable
+   * @param $default The default value if the value is not defined [optional, default: null]
+   * @param $filter PHP filter constant (FILTER_SANITIZE/FILTER_VALIDATE) to be applied on the value [optional]
+   * @param $options Filter parameters [optional]
    * @return The (filtered) value or default, if it does not exist
    */
   public function getValue($name, $default=null, $filter=null, $options=null) {
@@ -271,8 +270,8 @@ class ControllerMessage {
 
   /**
    * Get a value as boolean
-   * @param name The name of the variable
-   * @param default The default value if the value is not defined [default: false]
+   * @param $name The name of the variable
+   * @param $default The default value if the value is not defined [default: false]
    * @return The value or null if it does not exist
    */
   public function getBooleanValue($name, $default=false) {
@@ -294,7 +293,7 @@ class ControllerMessage {
 
   /**
    * Set all key value pairs at once
-   * @param values The associative array
+   * @param $values The associative array
    */
   public function setValues(array $values) {
     $this->_values = $values;
@@ -302,7 +301,7 @@ class ControllerMessage {
 
   /**
    * Remove a value
-   * @param name The name of the variable
+   * @param $name The name of the variable
    */
   public function clearValue($name) {
     unset($this->_values[$name]);
@@ -317,8 +316,8 @@ class ControllerMessage {
 
   /**
    * Set a property
-   * @param name The name of the property
-   * @param value The value of the property
+   * @param $name The name of the property
+   * @param $value The value of the property
    */
   public function setProperty($name, $value) {
     $this->_properties[$name] = $value;
@@ -326,7 +325,7 @@ class ControllerMessage {
 
   /**
    * Get a property
-   * @param name The name of the property
+   * @param $name The name of the property
    * @return The property value or null
    */
   public function getProperty($name) {
@@ -338,7 +337,7 @@ class ControllerMessage {
 
   /**
    * Add an error to the list of errors.
-   * @param error The error.
+   * @param $error The error.
    */
   public function addError(ApplicationError $error) {
     $this->_errors[] = $error;
@@ -362,7 +361,7 @@ class ControllerMessage {
 
   /**
    * Set all errors at once
-   * @param errora The errors array
+   * @param $errors The errors array
    */
   public function setErrors(array $errors) {
     $this->_errors = $errors;
@@ -391,7 +390,7 @@ class ControllerMessage {
 
   /**
    * Get the format instance for the given mime type.
-   * @param mimeType The mime type
+   * @param $mimeType The mime type
    * @return Format instance
    */
   protected static function getFormatFromMimeType($mimeType) {

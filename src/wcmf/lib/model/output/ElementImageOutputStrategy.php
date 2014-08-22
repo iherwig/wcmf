@@ -25,14 +25,14 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
 
   /**
    * Constructor.
-   * @param format Image format name [IMG_GIF | IMG_JPG | IMG_PNG | IMG_WBMP].
-   * @param file The output file name.
-   * @param map The position map provided by LayoutVisitor.
-   * @param lineType The linetype to use [LINETYPE_DIRECT|LINETYPE_ROUTED] DEFAULT LINETYPE_DIRECT.
-   * @param scale The image scale (will be xscale) DEFAULT 100.
-   * @param aspect The image aspect (aspect = xscale/yscale) DEFAULT 0.5.
-   * @param border The image border [px] DEFAULT 50.
-   * @param usemap Name of the HTML ImageMap to write to stdout ['' means no map] DEFAULT ''.
+   * @param $format Image format name [IMG_GIF | IMG_JPG | IMG_PNG | IMG_WBMP].
+   * @param $file The output file name.
+   * @param $map The position map provided by LayoutVisitor.
+   * @param $lineType The linetype to use [LINETYPE_DIRECT|LINETYPE_ROUTED] DEFAULT LINETYPE_DIRECT.
+   * @param $scale The image scale (will be xscale) DEFAULT 100.
+   * @param $aspect The image aspect (aspect = xscale/yscale) DEFAULT 0.5.
+   * @param $border The image border [px] DEFAULT 50.
+   * @param $usemap Name of the HTML ImageMap to write to stdout ['' means no map] DEFAULT ''.
    */
   public function __construct($format, $file, $map, $lineType=self::LINETYPE_DIRECT, $scale=100,
           $aspect=0.5, $border=50, $usemap='') {

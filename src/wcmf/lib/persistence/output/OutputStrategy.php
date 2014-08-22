@@ -33,7 +33,7 @@ interface OutputStrategy {
 
   /**
    * Write the object's content.
-   * @param obj The object to write.
+   * @param $obj The object to write.
    */
   public function writeObject(PersistentObject $obj);
 }

@@ -23,7 +23,9 @@ class Position {
 
   /**
    * Constructor.
-   * @param x, y, z The coordinates.
+   * @param $x
+   * @param $y
+   * @param $z
    */
   public function __construct($x, $y, $z) {
     $this->x = $x;

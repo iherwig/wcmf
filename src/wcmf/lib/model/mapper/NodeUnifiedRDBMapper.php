@@ -485,8 +485,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Add the columns to a given select statement.
-   * @param selectStmt The select statement (instance of SelectStatement)
-   * @param tableName The table name
+   * @param $selectStmt The select statement (instance of SelectStatement)
+   * @param $tableName The table name
    * @return SelectStatement
    */
   protected function addColumns(SelectStatement $selectStmt, $tableName) {
@@ -505,8 +505,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Add the columns and joins to select references to a given select statement.
-   * @param selectStmt The select statement (instance of SelectStatement)
-   * @param tableName The name for this table (the alias, if used).
+   * @param $selectStmt The select statement (instance of SelectStatement)
+   * @param $tableName The name for this table (the alias, if used).
    * @return SelectStatement
    */
   protected function addReferences(SelectStatement $selectStmt, $tableName) {
@@ -569,9 +569,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Add the given criteria to the select statement
-   * @param selectStmt The select statement (instance of SelectStatement)
-   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
-   * @param tableName The table name
+   * @param $selectStmt The select statement (instance of SelectStatement)
+   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
+   * @param $tableName The table name
    * @return Array of placeholder value pairs for bind
    */
   protected function addCriteria(SelectStatement $selectStmt, $criteria, $tableName) {
@@ -599,10 +599,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Add the given order to the select statement
-   * @param selectStmt The select statement (instance of SelectStatement)
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
-   * @param tableName The table name
-   * @param defaultOrder The default order definition to use, if orderby is null (@see PersistenceMapper::getDefaultOrder())
+   * @param $selectStmt The select statement (instance of SelectStatement)
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
+   * @param $tableName The table name
+   * @param $defaultOrder The default order definition to use, if orderby is null (@see PersistenceMapper::getDefaultOrder())
    */
   protected function addOrderBy(SelectStatement $selectStmt, $orderby, $tableName, $defaultOrder) {
     $orderbyFinal = array();
@@ -625,8 +625,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Get an array of placeholder value pairs for bind
-   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
-   * @param tableName The table name
+   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
+   * @param $tableName The table name
    * @return Array of placeholder value pairs for bind
    */
   protected function getBind($criteria, $tableName) {
@@ -648,7 +648,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * Get an associative array of attribute name-value pairs to be stored for a
    * given oject (references are not included)
-   * @param object The PeristentObject.
+   * @param $object The PeristentObject.
    * @return Associative array
    */
   protected function getPersistentValues(PersistentObject $object) {
@@ -670,7 +670,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Convert values for before storage
-   * @param values Associative Array
+   * @param $values Associative Array
    * @return Associative Array
    */
   protected function convertValuesForStorage($values) {
@@ -692,10 +692,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Load the relation objects in a many to many relation from the database.
-   * @param objectProxy The proxy at this end of the relation.
-   * @param relativeProxy The proxy at the other end of the relation.
-   * @param relationDesc The RDBManyToManyRelationDescription instance describing the relation.
-   * @param includeTransaction Boolean whether to also search in the current transaction (default: false)
+   * @param $objectProxy The proxy at this end of the relation.
+   * @param $relativeProxy The proxy at the other end of the relation.
+   * @param $relationDesc The RDBManyToManyRelationDescription instance describing the relation.
+   * @param $includeTransaction Boolean whether to also search in the current transaction (default: false)
    * @return Array of PersistentObject instances
    */
   protected function loadRelationObjects(PersistentObjectProxy $objectProxy,
@@ -770,7 +770,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Check if a given attribute is a foreign key (used to reference a parent)
-   * @param name The attribute name
+   * @param $name The attribute name
    * @return Boolean
    * @note Public in order to be callable by ObjectQuery
    */
@@ -786,7 +786,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Quote a value to be inserted into the database
-   * @param value The value to quote
+   * @param $value The value to quote
    * @return The quoted value
    */
   protected function quote($value) {
@@ -802,8 +802,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * Make sure that the given table name is prefixed before the given expression
    * and return the modified expression.
-   * @param expression The expression
-   * @param tableName The table name
+   * @param $expression The expression
+   * @param $tableName The table name
    * @return String
    */
   protected function ensureTablePrefix($expression, $tableName) {
@@ -815,10 +815,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Get a unique string for the given parameter values
-   * @param string
-   * @param criteriaArray
-   * @param stringArray
-   * @param pagingInfo
+   * @param $string
+   * @param $criteriaArray
+   * @param $stringArray
+   * @param $pagingInfo
    * @return String
    */
   protected function getCacheKey($string, $criteriaArray, $stringArray, PagingInfo $pagingInfo=null) {

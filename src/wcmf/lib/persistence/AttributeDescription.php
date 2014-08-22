@@ -29,15 +29,15 @@ class AttributeDescription {
 
   /**
    * Constructor.
-   * @param name The attribute name
-   * @param type The attribute type
-   * @param tags An array of application specific tags that this attribute is tagged with
-   * @param defaultValue The default value (will be set when creating a blank object, see PersistenceMapper::create())
-   * @param validateType A validation type for the value
-   * @param validateDescription A description for the validation type
-   * @param isEditable Boolean whether the attribute should be editable, see Control::render()
-   * @param inputType The input type for the value, see Control::render()
-   * @param displayType The display type for the value
+   * @param $name The attribute name
+   * @param $type The attribute type
+   * @param $tags An array of application specific tags that this attribute is tagged with
+   * @param $defaultValue The default value (will be set when creating a blank object, see PersistenceMapper::create())
+   * @param $validateType A validation type for the value
+   * @param $validateDescription A description for the validation type
+   * @param $isEditable Boolean whether the attribute should be editable, see Control::render()
+   * @param $inputType The input type for the value, see Control::render()
+   * @param $displayType The display type for the value
    */
   public function __construct($name, $type, array $tags, $defaultValue, $validateType,
     $validateDescription, $isEditable, $inputType, $displayType) {
@@ -55,8 +55,8 @@ class AttributeDescription {
 
   /**
    * Check if this attribute is tagged with the given application specific tags
-   * @param tags An array of tags that the attribute should match. Empty array results in true the given matchMode [default: empty array]
-   * @param matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags [default: 'all']
+   * @param $tags An array of tags that the attribute should match. Empty array results in true the given matchMode [default: empty array]
+   * @param $matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags [default: 'all']
    * @return True if the attribute has all data types, false else
    */
   public function matchTags(array $tags=array(), $matchMode='all') {

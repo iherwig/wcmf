@@ -53,7 +53,7 @@ class PersistentObject {
    * if the PersistenceFacade knows the type. The object id is needed to extract
    * the type. If the id parameter of the object id is a dummy id, the object
    * is supposed to be a newly created object (@see ObjectId::containsDummyIds()).
-   * @param oid ObjectId instance (optional)
+   * @param $oid ObjectId instance (optional)
    */
   public function __construct(ObjectId $oid=null) {
     // set oid and state (avoid calling listeners)
@@ -78,7 +78,7 @@ class PersistentObject {
    * Initialize the object with a set of data. This method does not validate, does not
    * change the object's state and does not call any listeners. Any existing data will
    * be overwritten. The data will also be used as base line for tracking changes.
-   * @param data An associative array with the data to set.
+   * @param $data An associative array with the data to set.
    */
   public function initialize(array $data) {
     foreach ($data as $name => $value) {
@@ -105,7 +105,7 @@ class PersistentObject {
 
   /**
    * Set the object id of the PersistentObject.
-   * @param oid The PersistentObject's oid.
+   * @param $oid The PersistentObject's oid.
    */
   public function setOID(ObjectId $oid) {
     $this->setOIDInternal($oid, true);
@@ -113,8 +113,8 @@ class PersistentObject {
 
   /**
    * Set the object id of the PersistentObject.
-   * @param oid The PersistentObject's oid.
-   * @param triggerListeners Boolean, whether value CahngeListeners should be
+   * @param $oid The PersistentObject's oid.
+   * @param $triggerListeners Boolean, whether value CahngeListeners should be
    * notified or not
    */
   protected function setOIDInternal(ObjectId $oid, $triggerListeners) {
@@ -230,8 +230,8 @@ class PersistentObject {
 
   /**
    * Copy all non-empty values to a given instance (ChangeListeners are triggered)
-   * @param object PersistentObject instance to copy the values to.
-   * @param copyPkValues Boolean whether primary key values should be copied
+   * @param $object PersistentObject instance to copy the values to.
+   * @param $copyPkValues Boolean whether primary key values should be copied
    */
   public function copyValues(PersistentObject $object, $copyPkValues=true) {
     $pkNames = $this->getPkNames();
@@ -246,7 +246,7 @@ class PersistentObject {
   /**
    * Copy all values, that don't exist yet from a given instance
    * (ChangeListeners are not triggered)
-   * @param object PersistentObject instance to copy the values from.
+   * @param $object PersistentObject instance to copy the values from.
    */
   public function mergeValues(PersistentObject $object) {
     $iter = new NodeValueIterator($object, false);
@@ -294,6 +294,7 @@ class PersistentObject {
    * Subclasses may override this to implement special application requirements.
    * The default implementations do nothing.
    */
+
   /**
    * This method is called once after creation of this object. At this time it
    * is not known in the store.
@@ -341,7 +342,7 @@ class PersistentObject {
 
   /**
    * Check if the node has a given item.
-   * @param name The name of the item to query.
+   * @param $name The name of the item to query.
    * @return Boolean whether the item exists or not.
    */
   public function hasValue($name) {
@@ -350,7 +351,7 @@ class PersistentObject {
 
   /**
    * Get the value of a named item.
-   * @param name The name of the item to query.
+   * @param $name The name of the item to query.
    * @return The value of the item / null if it doesn't exits.
    */
   public function getValue($name) {
@@ -362,7 +363,7 @@ class PersistentObject {
 
   /**
    * Remove a named item.
-   * @param name The name of the item to remove.
+   * @param $name The name of the item to remove.
    */
   public function removeValue($name) {
     if ($this->hasValue($name)) {
@@ -392,8 +393,8 @@ class PersistentObject {
    * Check if data may be set. The method is also called, when setting a value.
    * Controller may call this method before setting data and saving the object.
    * Throws a ValidationException in case of invalid data.
-   * @param name The name of the item to set.
-   * @param value The value of the item.
+   * @param $name The name of the item to set.
+   * @param $value The value of the item.
    * The default implementation calls PersistentObject::validateValueAgainstValidateType().
    * @note Subclasses will override this method to implement special application requirements.
    */
@@ -405,8 +406,8 @@ class PersistentObject {
    * Check a value's value against the validation type set on it. This method uses the
    * validateType property of the attribute definition.
    * Throws a ValidationException if the valud is not valid.
-   * @param name The name of the item to set.
-   * @param value The value of the item.
+   * @param $name The name of the item to set.
+   * @param $value The value of the item.
    */
   protected function validateValueAgainstValidateType($name, $value) {
     $validateType = $this->getValueProperty($name, 'validate_type');
@@ -432,11 +433,11 @@ class PersistentObject {
 
   /**
    * Set the value of a named item if it exists.
-   * @param name The name of the item to set.
-   * @param value The value of the item.
-   * @param forceSet Boolean whether to set the value even if it is already set
+   * @param $name The name of the item to set.
+   * @param $value The value of the item.
+   * @param $forceSet Boolean whether to set the value even if it is already set
    *   and to bypass validation (used to notify listeners) [default: false]
-   * @param trackChange Boolean whether to track the change (change state, notify listeners) or not [default: true]
+   * @param $trackChange Boolean whether to track the change (change state, notify listeners) or not [default: true]
    *      Only set this false, if you know, what you are doing
    * @return Boolean whether the operation succeeds or not
    */
@@ -471,8 +472,8 @@ class PersistentObject {
   /**
    * Internal (fast) version to set a value without any validation, state change,
    * listener notification etc.
-   * @param name The name of the value
-   * @param value The value
+   * @param $name The name of the value
+   * @param $value The value
    */
   protected function setValueInternal($name, $value) {
     $this->_data[$name] = $value;
@@ -506,8 +507,8 @@ class PersistentObject {
 
   /**
    * Get the value of one property of a named item.
-   * @param name The name of the item to get its properties.
-   * @param property The name of the property to get.
+   * @param $name The name of the item to get its properties.
+   * @param $property The name of the property to get.
    * @return The value property/null if not found.
    */
   public function getValueProperty($name, $property) {
@@ -533,9 +534,9 @@ class PersistentObject {
 
   /**
    * Set the value of one property of a named item.
-   * @param name The name of the item to set its properties.
-   * @param property The name of the property to set.
-   * @param value The value to set on the property.
+   * @param $name The name of the item to set its properties.
+   * @param $property The name of the property to set.
+   * @param $value The value to set on the property.
    */
   public function setValueProperty($name, $property, $value) {
     if (!isset($this->_valueProperties[$name])) {
@@ -606,7 +607,7 @@ class PersistentObject {
 
   /**
    * Get the value of a named property in the object.
-   * @param name The name of the property to query.
+   * @param $name The name of the property to query.
    * @return The value of the property / null if it doesn't exits.
    */
   public function getProperty($name) {
@@ -628,8 +629,8 @@ class PersistentObject {
 
   /**
    * Set the value of a named property in the object.
-   * @param name The name of the property to set.
-   * @param value The value of the property to set.
+   * @param $name The name of the property to set.
+   * @param $value The value of the property to set.
    */
   public function setProperty($name, $value) {
     $oldValue = $this->getProperty($name);
@@ -642,7 +643,7 @@ class PersistentObject {
    * Get the names of all properties in the object. Properties are
    * either defined by using the PersistentObject::setProperty() method
    * or by the PersistentMapper.
-   * @param excludeDefaultProperties Boolean whether to only return the
+   * @param $excludeDefaultProperties Boolean whether to only return the
    *   properties defined by the PersistentObject::setProperty() method or
    *   also the properties defined by the mapper [default: false]
    * @return An array consisting of the names.
@@ -708,8 +709,7 @@ class PersistentObject {
 
   /**
    * Get the name of a value used for display.
-   * @param name The name of the value.
-   * @param type The type of the value (not used by the default implementation) [default: null]
+   * @param $name The name of the value.
    * @return The name of the value.
    * @note Sublasses will override this for special application requirements
    */
@@ -719,7 +719,7 @@ class PersistentObject {
 
   /**
    * Get the description of a value.
-   * @param name The name of the value.
+   * @param $name The name of the value.
    * @return The description of the value.
    * @note Sublasses will override this for special application requirements
    */
@@ -754,7 +754,7 @@ class PersistentObject {
 
   /**
    * Get a string representation of an array of values.
-   * @param array The array to dump
+   * @param $array The array to dump
    * @return String
    */
   private static function dumpArray(array $array) {

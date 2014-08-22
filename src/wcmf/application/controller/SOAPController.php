@@ -19,23 +19,40 @@ use wcmf\lib\service\SoapServer;
 $server = null;
 
 /**
- * SOAPController is a controller that handles SOAP requests.
+ * SOAPController handles SOAP requests. The controller delegates action
+ * processing to a global instance of wcmf::lib::service::SoapServer.
  *
- * <b>Input actions:</b>
- * - unspecified: Handle action according to soap request
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - depends on the controller, to that the action is delegated
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Handle action according to soap request.
+ * </div>
+ * </div>
+ *
+ * The controller expects the definition of the soap interface in a file called
+ * __soap-interface.php__ in the application directory. The definition is done
+ * by adding types and methods to the global `$server` instance
+ *
+ @code
+   // add type to soap interface
+   $server->wsdl->addComplexType(...);
+
+   // add method to soap interface
+   $server->register();
+ @endcode
+ *
+ * @see http://sourceforge.net/projects/nusoap/
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class SOAPController extends Controller {
 
   /**
-   * Execute the requested SOAP action
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     global $server;
 
     // instantiate server
@@ -60,7 +77,7 @@ class SOAPController extends Controller {
 
   /**
    * Search
-   * @param query The search term
+   * @param $query The search term
    * @return Array of SearchResultItem on success
    */
   public static function search($query) {

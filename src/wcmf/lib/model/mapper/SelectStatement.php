@@ -34,8 +34,8 @@ class SelectStatement extends Zend_Db_Select {
   /**
    * Get the SelectStatement instance with the given id.
    * If the id equals SelectStatement::NO_CACHE or is not cached, a new one will be created.
-   * @param mapper RDBMapper instance used to retrieve the database connection
-   * @param id The statement id, optional [default: NO_CACHE]
+   * @param $mapper RDBMapper instance used to retrieve the database connection
+   * @param $id The statement id, optional [default: NO_CACHE]
    * @return SelectStatement
    */
   public static function get(RDBMapper $mapper, $id=self::NO_CACHE) {
@@ -52,8 +52,8 @@ class SelectStatement extends Zend_Db_Select {
 
   /**
    * Constructor
-   * @param mapper RDBMapper instance
-   * @param id The statement id, optional [default: NO_CACHE]
+   * @param $mapper RDBMapper instance
+   * @param $id The statement id, optional [default: NO_CACHE]
    */
   public function __construct(RDBMapper $mapper, $id=self::NO_CACHE) {
     parent::__construct($mapper->getConnection());
@@ -80,8 +80,8 @@ class SelectStatement extends Zend_Db_Select {
 
   /**
    * Add customt meta value
-   * @param key
-   * @param value
+   * @param $key
+   * @param $value
    */
   public function setMeta($key, $value) {
     $this->_meta[$key] = $value;
@@ -89,7 +89,7 @@ class SelectStatement extends Zend_Db_Select {
 
   /**
    * Get customt meta value
-   * @param key
+   * @param $key
    * @return Mixed
    */
   public function getMeta($key) {
@@ -101,7 +101,7 @@ class SelectStatement extends Zend_Db_Select {
 
   /**
    * Execute a count query and return the row count
-   * @return integer
+   * @return Integer
    */
   public function getRowCount() {
     // empty columns, order and limit
@@ -161,7 +161,7 @@ class SelectStatement extends Zend_Db_Select {
 
   /**
    * Get the cache section
-   * @param type The type
+   * @param $type The type
    * @return String
    */
   protected static function getCacheSection($type) {
@@ -170,7 +170,7 @@ class SelectStatement extends Zend_Db_Select {
 
   /**
    * Get the compressed cache id from the id
-   * @param id
+   * @param $id
    * @return String
    */
   protected static function getCacheId($id) {

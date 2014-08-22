@@ -27,9 +27,7 @@ class PersistentObjectProxy {
 
   /**
    * Constructor.
-   * @param oid The object id of the PersistentObject instance.
-   * @param object The PersistentObject instance [optional]. This parameter is useful
-   * if you want to prevent automatic loading of the subject if it is already loaded.
+   * @param $oid The object id of the PersistentObject instance.
    */
   public function __construct(ObjectId $oid) {
     $this->_oid = $oid;
@@ -39,7 +37,7 @@ class PersistentObjectProxy {
    * Create a PersistenceProxy instance from a PersistentObject. This is useful
    * if you want to prevent automatic loading of the subject if it is already loaded.
    * Returns the argument, if already an PersistentObjectProxy instance.
-   * @param object The PersistentObject or PersistentObjectProxy
+   * @param $object The PersistentObject or PersistentObjectProxy
    * @return PersistentObjectProxy
    */
   public static function fromObject($object) {
@@ -74,7 +72,7 @@ class PersistentObjectProxy {
 
   /**
    * Get the value of a named item.
-   * @param name The name of the item to query.
+   * @param $name The name of the item to query.
    * @return The value of the item / null if it doesn't exits.
    */
   public function getValue($name) {
@@ -114,7 +112,7 @@ class PersistentObjectProxy {
   /**
    * Load the PersistentObject instance. Use this method if the subject should be loaded
    * with a depth greater than BuildDepth::SINGLE
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        [default: BuildDepth::SINGLE)]
    */
   public function resolve($buildDepth=BuildDepth::SINGLE) {

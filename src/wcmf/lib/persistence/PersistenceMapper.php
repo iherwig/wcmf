@@ -38,21 +38,21 @@ interface PersistenceMapper {
 
   /**
    * Add quotation to a given identifier (like column name).
-   * @param identifier The identifier string
+   * @param $identifier The identifier string
    * @return String
    */
   public function quoteIdentifier($identifier);
 
   /**
    * Add quotation to a given value.
-   * @param value The value
+   * @param $value The value
    * @return String
    */
   public function quoteValue($value);
 
   /**
    * Get the relations for this type
-   * @param hierarchyType The hierarchy type that the other type has in relation to this type
+   * @param $hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
    * @return Array of RelationDescription instances
    */
@@ -60,21 +60,21 @@ interface PersistenceMapper {
 
   /**
    * Check if a named relation is defined.
-   * @param roleName The role name of the relation
+   * @param $roleName The role name of the relation
    * @return Boolean
    */
   public function hasRelation($roleName);
 
   /**
    * Get the definition for a relation
-   * @param roleName The role name of the relation
+   * @param $roleName The role name of the relation
    * @return RelationDescription or null if the relation does not exist
    */
   public function getRelation($roleName);
 
   /**
    * Get the definitions for relations to a given type
-   * @param type The type name
+   * @param $type The type name
    * @return Array of RelationDescription instances
    */
   public function getRelationsByType($type);
@@ -82,22 +82,22 @@ interface PersistenceMapper {
   /**
    * PersistentObject values may be tagged with application specific tags.
    * This method gets the attributes belonging to the given tags.
-   * @param tags An array of tags that the attribute should match. Empty array means all attributes independent of the given matchMode [default: empty array]
-   * @param matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags [default: 'all']
+   * @param $tags An array of tags that the attribute should match. Empty array means all attributes independent of the given matchMode [default: empty array]
+   * @param $matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags [default: 'all']
    * @return Array of AttributeDescription instances
    */
   public function getAttributes(array $tags=array(), $matchMode='all');
 
   /**
    * Check if a named attribute is defined.
-   * @param name The attribute name
+   * @param $name The attribute name
    * @return Boolean
    */
   public function hasAttribute($name);
 
   /**
    * Get the definition for an attribute.
-   * @param name The attribute name
+   * @param $name The attribute name
    * @return AttributeDescription or null if the attribute does not exist
    */
   public function getAttribute($name);
@@ -112,7 +112,7 @@ interface PersistenceMapper {
    * Check if this type may be explicitly sorted by the user using a persistent
    * attribute which stores the order. The roleName parameter allows to ask
    * for the order with respect to a specific role.
-   * @param rolename The role name of the relation, maybe null [default: null]
+   * @param $roleName The role name of the relation, maybe null [default: null]
    * @return Boolean
    */
   public function isSortable($roleName=null);
@@ -121,7 +121,7 @@ interface PersistenceMapper {
    * Get the persistent attribute that is used to store the order of the type
    * as explicitly defined by the user. The roleName parameter allows to ask
    * for the order with respect to a specific role.
-   * @param rolename The role name of the relation, maybe null [default: null]
+   * @param $roleName The role name of the relation, maybe null [default: null]
    * @return Assciative array with the keys sortType, sortFieldName, sortDirection
    * (ASC or DESC) and isSortkey (Boolean) or null, if the type is not sortable
    */
@@ -134,7 +134,7 @@ interface PersistenceMapper {
    * for the order with respect to a specific role.
    * In a many to many relation the attributes may not be contained in the mapped type,
    * so sortType may be different from the mapper type.
-   * @param rolename The role name of the relation, maybe null [default: null]
+   * @param $roleName The role name of the relation, maybe null [default: null]
    * @return An array of assciative arrays with the keys sortType, sortFieldName, sortDirection
    * (ASC or DESC) and isSortkey (Boolean)
    */
@@ -142,7 +142,7 @@ interface PersistenceMapper {
 
   /**
    * Enable logging using a given OutputStrategy to log insert/update/delete actions to a file.
-   * @param logStrategy The OutputStrategy to use.
+   * @param $logStrategy The OutputStrategy to use.
    */
   public function enableLogging(OutputStrategy $logStrategy);
 
@@ -162,8 +162,8 @@ interface PersistenceMapper {
    * @note PersistentMapper implementations must call the PersistentObject::afterLoad()
    * lifecycle callcack on each loaded object and register it at the PersistenceFacade using
    * the Transaction::registerLoaded() method.
-   * @param oid The object id of the object to construct
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param $oid The object id of the object to construct
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
    * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
    */
@@ -173,8 +173,8 @@ interface PersistenceMapper {
    * Construct a PersistentObject instance of a given type.
    * @note PersistentMapper implementations must call the PersistentObject::afterCreate()
    * lifecycle callcack on each created object.
-   * @param type The type of object to build
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param $type The type of object to build
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::INFINITE, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
    * @return PersistentObject
    */
@@ -186,7 +186,7 @@ interface PersistenceMapper {
    * PersistentObject::afterUpdate() or PersistentObject::beforeInsert()/
    * PersistentObject::afterInsert() lifecycle callcacks on each object depending
    * on it's state.
-   * @param object PersistentObject
+   * @param $object PersistentObject
    */
   public function save(PersistentObject $object);
 
@@ -194,7 +194,7 @@ interface PersistenceMapper {
    * Delete a PersistentObject instance.
    * @note PersistentMapper implementations must call the PersistentObject::beforeDelete()/
    * PersistentObject::afterDelete() lifecycle callcacks on each object.
-   * @param object PersistentObject
+   * @param $object PersistentObject
    */
   public function delete(PersistentObject $object);
 
@@ -213,13 +213,13 @@ interface PersistenceMapper {
    * Load the objects for the specified role. The implementation must check the navigability of
    * the relation and return null, if the requested direction is not navigable. The result
    * depends on the multiplicity of the relation (singlevalued or multivalued).
-   * @param object Array of PersistenceObject or PersstenceObjectProxy instances for which the related objects are loaded
-   * @param role The role of the objects in relation to the given objects
-   * @param buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param $objects Array of PersistenceObject or PersstenceObjectProxy instances for which the related objects are loaded
+   * @param $role The role of the objects in relation to the given objects
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
-   * @param orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param pagingInfo A reference PagingInfo instance (maybe null). [default: null]
+   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
+   * @param $pagingInfo A reference PagingInfo instance (maybe null). [default: null]
    * @return Associative array with the object ids of the origin objects as keys and arrays of related
    * PersistentObject instances as values or null, if not navigable
    */
@@ -229,7 +229,7 @@ interface PersistenceMapper {
   /**
    * Execute a PersistenceOperation. PersistenceOperation.type must be the type that
    * is mapped by this mapper.
-   * @param operation The operation
+   * @param $operation The operation
    * @return int The number of affected rows.
    */
   public function executeOperation(PersistenceOperation $operation);

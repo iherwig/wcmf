@@ -41,7 +41,7 @@ class StringQuery extends ObjectQuery {
 
   /**
    * Set the query condition string
-   * @param condition The query definition string
+   * @param $condition The query definition string
    */
   public function setConditionString($condition) {
     $this->_condition = $condition;
@@ -161,8 +161,8 @@ class StringQuery extends ObjectQuery {
 
   /**
    * Map a application type and value name to the appropriate database names
-   * @param type The type to map
-   * @param valueName The name of the value to map
+   * @param $type The type to map
+   * @param $valueName The name of the value to map
    * @return An array with the table and column name or null if no mapper is found
    */
   protected static function mapToDatabase($type, $valueName) {

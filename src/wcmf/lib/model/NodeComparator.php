@@ -47,7 +47,7 @@ class NodeComparator {
 
   /**
    * Constructor
-   * @param criteria An assoziative array of criteria - SORTTYPE constant pairs OR a single criteria string.
+   * @param $sortCriteria An assoziative array of criteria - SORTTYPE constant pairs OR a single criteria string.
    *        possible criteria: NodeComparator::OID, NodeComparator::TYPE or any value/property name
    *        (e.g. array(NodeComparator::OID => NodeComparator::SORTTYPE_ASC, 'name' => NodeComparator::SORTTYPE_DESC) OR 'name')
    *        @note If criteria is only a string we will sort by this criteria with NodeComparator::SORTTYPE_ASC
@@ -58,8 +58,8 @@ class NodeComparator {
 
   /**
    * Compare function for sorting Nodes by the list of criterias
-   * @param a First Node instance
-   * @param b First Node instance
+   * @param $a First Node instance
+   * @param $b First Node instance
    * @return -1, 0 or 1 whether a is less, equal or greater than b
    *   in respect of the criteria
    */

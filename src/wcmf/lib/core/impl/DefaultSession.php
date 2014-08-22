@@ -36,17 +36,14 @@ class DefaultSession implements Session {
   }
 
   /**
-   * Get the id of the session.
-   * @return The id of the current session.
+   * @see Session::getID()
    */
   public function getID() {
     return session_id();
   }
 
   /**
-   * Returns the value of an session variable
-   * @param key The key (name) of the session vaiable.
-   * @return The session var or null if it doesn't exist.
+   * @see Session::get()
    */
   public function get($key) {
     $value = null;
@@ -57,26 +54,21 @@ class DefaultSession implements Session {
   }
 
   /**
-   * Sets the value of an session variable.
-   * @param key The key (name) of the session vaiable.
-   * @param value The value of the session variable.
+   * @see Session::set()
    */
   public function set($key, $value) {
     $_SESSION[$key] = $value;
   }
 
   /**
-   * Remove a session variable.
-   * @param key The key (name) of the session variable.
+   * @see Session::remove()
    */
   public function remove($key) {
     unset($_SESSION[$key]);
   }
 
   /**
-   * Tests, if a certain session variable is defined.
-   * @param key The key (name) of the session variable.
-   * @return A boolean flag. true if the session variable is set, false if not.
+   * @see Session::exist()
    */
   public function exist($key) {
     $result = isset($_SESSION[$key]);
@@ -84,14 +76,14 @@ class DefaultSession implements Session {
   }
 
   /**
-   * Clear the session data.
+   * @see Session::clear()
    */
   public function clear() {
     $_SESSION = array();
   }
 
   /**
-   * Destroy the session.
+   * @see Session::destroy()
    */
   public function destroy() {
     $_SESSION = array();
@@ -99,9 +91,7 @@ class DefaultSession implements Session {
   }
 
   /**
-   * Add an error to the session data.
-   * @param key The identifier of the error
-   * @param error The error message
+   * @see Session::addError()
    */
   public function addError($key, $error) {
     if (isset($_SESSION[self::$ERROR_VARNAME])) {
@@ -111,9 +101,7 @@ class DefaultSession implements Session {
   }
 
   /**
-   * Get an error stored in the session data.
-   * @param key The identifier of the error
-   * @return The error message
+   * @see Session::getError()
    */
   public function getError($key) {
     $error = null;
@@ -124,8 +112,7 @@ class DefaultSession implements Session {
   }
 
   /**
-   * Get all errors stored in the session data.
-   * @return The error message
+   * @see Session::getErrors()
    */
   public function getErrors() {
     $errors = $_SESSION[self::$ERROR_VARNAME];
@@ -133,7 +120,7 @@ class DefaultSession implements Session {
   }
 
   /**
-   * Clear the session error data.
+   * @see Session::clearErrors()
    */
   public function clearErrors() {
     unset($_SESSION[self::$ERROR_VARNAME]);

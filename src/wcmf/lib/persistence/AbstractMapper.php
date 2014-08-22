@@ -294,8 +294,8 @@ abstract class AbstractMapper implements PersistenceMapper {
 
   /**
    * Check authorization on a resource (type/instance/instance property) and a given action.
-   * @param resource Resource to authorize
-   * @param action Action to authorize
+   * @param $resource Resource to authorize
+   * @param $action Action to authorize
    * @return Boolean depending on success of authorization
    */
   protected function checkAuthorization($resource, $action) {
@@ -310,8 +310,8 @@ abstract class AbstractMapper implements PersistenceMapper {
 
   /**
    * Handle an authorization error.
-   * @param resource
-   * @param action
+   * @param $resource
+   * @param $action
    * @throws AuthorizationException
    */
   protected function authorizationFailedError($resource, $action) {

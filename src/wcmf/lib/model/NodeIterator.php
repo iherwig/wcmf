@@ -44,8 +44,8 @@ class NodeIterator implements \Iterator {
 
   /**
    * Constructor.
-   * @param node The node to start from.
-   * @param aggregationKinds Array of aggregation kind values of relations to follow
+   * @param $node The node to start from.
+   * @param $aggregationKinds Array of aggregation kind values of relations to follow
    *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
   public function __construct($node, $aggregationKinds=array()) {
@@ -144,7 +144,7 @@ class NodeIterator implements \Iterator {
 
   /**
    * Add nodes to the processing queue.
-   * @param nodeList An array of nodes.
+   * @param $nodeList An array of nodes.
    */
   protected function addToQueue($nodeList) {
     for ($i=sizeof($nodeList)-1; $i>=0; $i--) {

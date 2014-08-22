@@ -62,10 +62,10 @@ class ApplicationEvent extends Event {
 
   /**
    * Constructor.
-   * @param state The stage at which the event occured.
-   * @param request The request instance.
-   * @param response The response instance (optional).
-   * @param controller The controller instance (optional).
+   * @param $stage The stage at which the event occured.
+   * @param $request The request instance.
+   * @param $response The response instance (optional).
+   * @param $controller The controller instance (optional).
    */
   public function __construct($stage, Request $request, Response $response=null, Controller $controller=null) {
     $this->_stage = $stage;

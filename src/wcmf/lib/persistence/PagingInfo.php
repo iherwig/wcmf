@@ -27,8 +27,8 @@ class PagingInfo {
    * Creates a PagingInfo object. The ignoreTotalCount parameter may be
    * set to true, if the count is to be ignored. This may speed up loading
    * of objects, because an extra count query may be omitted.
-   * @param pageSize The pageSize (-1 to set no page size)
-   * @param ignoreTotalCount Boolean whether this instance ignores the
+   * @param $pageSize The pageSize (-1 to set no page size)
+   * @param $ignoreTotalCount Boolean whether this instance ignores the
    *    total count or not, optional [default: false]
    */
   public function __construct($pageSize, $ignoreTotalCount=false) {
@@ -38,7 +38,7 @@ class PagingInfo {
 
   /**
    * Set the number of list items.
-   * @param totalCount The number of list items.
+   * @param $totalCount The number of list items.
    */
   public function setTotalCount($totalCount) {
     $this->_totalCount = intval($totalCount);
@@ -54,7 +54,7 @@ class PagingInfo {
 
   /**
    * Set the current page (1-based) (also sets the offset).
-   * @param page The current page.
+   * @param $page The current page.
    */
   public function setPage($page) {
     $this->_page = intval($page);
@@ -87,7 +87,7 @@ class PagingInfo {
 
   /**
    * Set the current offset (also selects the page).
-   * @param offset The current list offset.
+   * @param $offset The current list offset.
    */
   public function setOffset($offset) {
     $this->_offset = $offset;

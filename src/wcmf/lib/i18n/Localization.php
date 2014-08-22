@@ -45,9 +45,9 @@ interface Localization {
 
   /**
    * Load a single translated object. The object is always loaded with BuildDepth::SINGLE.
-   * @param oid The object id of the object to load the translation for.
-   * @param lang The language of the translation to load.
-   * @param useDefaults Boolean whether to use the default language values
+   * @param $oid The object id of the object to load the translation for.
+   * @param $lang The language of the translation to load.
+   * @param $useDefaults Boolean whether to use the default language values
    *    for untranslated/empty values or not. Optional, default is true
    * @return A reference to the translated object.
    */
@@ -55,12 +55,12 @@ interface Localization {
 
   /**
    * Load a translation of an entity for a specific language.
-   * @param object A reference to the object to load the translation into. The object
+   * @param $object A reference to the object to load the translation into. The object
    *    is supposed to have it's values in the default language.
-   * @param lang The language of the translation to load.
-   * @param useDefaults Boolean whether to use the default language values
+   * @param $lang The language of the translation to load.
+   * @param $useDefaults Boolean whether to use the default language values
    *    for untranslated/empty values or not. Optional, default is true.
-   * @param recursive Boolean whether to load translations for children too or not.
+   * @param $recursive Boolean whether to load translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    * @return A reference to the translated object.
    */
@@ -69,26 +69,26 @@ interface Localization {
   /**
    * Save a translation of an entity for a specific language. Only the
    * values that have a non-empty value are considered as translations and stored.
-   * @param object An instance of the entity type that holds the translations as values.
-   * @param lang The language of the translation.
-   * @param saveEmptyValues Boolean whether to save empty translations or not.
+   * @param $object An instance of the entity type that holds the translations as values.
+   * @param $lang The language of the translation.
+   * @param $saveEmptyValues Boolean whether to save empty translations or not.
    *    Optional, default is false
-   * @param recursive Boolean whether to save translations for children too or not.
+   * @param $recursive Boolean whether to save translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    */
   public function saveTranslation($object, $lang, $saveEmptyValues=false, $recursive=true);
 
   /**
    * Remove translations for a given entity.
-   * @param oid The id of the object
-   * @param lang The language of the translation to remove. If null, all translations
+   * @param $oid The id of the object
+   * @param $lang The language of the translation to remove. If null, all translations
    *    will be deleted [default: null]
    */
   public function deleteTranslation(ObjectId $oid, $lang=null);
 
   /**
    * Delete all translations for a given language.
-   * @param lang The language of the translations to remove
+   * @param $lang The language of the translations to remove
    */
   public function deleteLanguage($lang);
 }

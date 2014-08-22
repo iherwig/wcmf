@@ -57,7 +57,7 @@ class ObjectFactory {
 
   /**
    * Set the Configuration instance.
-   * @param configuration Configuration instance used to construct instances.
+   * @param $configuration Configuration instance used to construct instances.
    */
   public static function configure(Configuration $configuration) {
     self::$_configuration = $configuration;
@@ -76,7 +76,7 @@ class ObjectFactory {
 
   /**
    * Get an instance from the configuration.
-   * @param name The name of the instance (section, where the instance is defined)
+   * @param $name The name of the instance (section, where the instance is defined)
    * @return Object
    */
   public static function getInstance($name) {
@@ -107,8 +107,8 @@ class ObjectFactory {
 
   /**
    * Register a shared instance with a given name.
-   * @param name The name of the instance.
-   * @param instance The instance
+   * @param $name The name of the instance.
+   * @param $instance The instance
    */
   public static function registerInstance($name, $instance) {
     self::$_instances[$name] = $instance;
@@ -123,7 +123,7 @@ class ObjectFactory {
 
   /**
    * Get the setter method name for a property.
-   * @param property
+   * @param $property
    * @return String
    */
   private static function getSetterName($property) {
@@ -132,9 +132,9 @@ class ObjectFactory {
 
   /**
    * Create an instance from the given configuration array.
-   * @param name The name by which the instance may be retrieved later
+   * @param $name The name by which the instance may be retrieved later
    * using ObjectFactory::getInstance()
-   * @param configuration Associative array with key value pairs for instance properties
+   * @param $configuration Associative array with key value pairs for instance properties
    * and the special keys '__class' (optional, denotes the instance class name),
    * '__shared' (optional, if true, the instance may be reused using ObjectFactory::getInstance())
    * @return Object
@@ -224,7 +224,7 @@ class ObjectFactory {
 
   /**
    * Get the interface that is required to be implemented by the given instance
-   * @param name The name of the instance
+   * @param $name The name of the instance
    * @return Interface or null, if undefined
    */
   protected static function getInterface($name) {

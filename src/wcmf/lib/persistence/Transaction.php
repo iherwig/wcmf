@@ -22,19 +22,19 @@ interface Transaction {
 
   /**
    * Register a newly created object
-   * @param object PersistentObject instance
+   * @param $object PersistentObject instance
    */
   function registerNew(PersistentObject $object);
 
   /**
    * Register a dirty object.
-   * @param object PersistentObject instance
+   * @param $object PersistentObject instance
    */
   function registerDirty(PersistentObject $object);
 
   /**
    * Register a deleted object.
-   * @param object PersistentObject instance
+   * @param $object PersistentObject instance
    */
   function registerDeleted(PersistentObject $object);
 
@@ -65,14 +65,14 @@ interface Transaction {
   /**
    * Register a loaded object. Mappers must call this method on each
    * loaded object. The returned object is the registered instance.
-   * @param object PersistentObject instance
+   * @param $object PersistentObject instance
    * @return PersistentObject instance
    */
   function registerLoaded(PersistentObject $object);
 
   /**
    * Get a loaded object.
-   * @param oid ObjectId of the object
+   * @param $oid ObjectId of the object
    * @return PersistentObject instance or null if not loaded yet
    */
   function getLoaded(ObjectId $oid);
@@ -80,7 +80,7 @@ interface Transaction {
   /**
    * Detach an object from the transaction. All local changes will not
    * be stored. Afterwards the object is unknown to the transaction.
-   * @param oid The object id of the object
+   * @param $oid The object id of the object
    */
   function detach(ObjectId $oid);
 

@@ -39,8 +39,8 @@ interface Configuration {
 
   /**
    * Parses the given configuration and merges it with already added configurations.
-   * @param name The name of the configuration
-   * @param processValues Boolean whether values should be processed after parsing (e.g. make arrays) [default: true]
+   * @param $name The name of the configuration
+   * @param $processValues Boolean whether values should be processed after parsing (e.g. make arrays) [default: true]
    */
   public function addConfiguration($name, $processValues=true);
 
@@ -52,14 +52,14 @@ interface Configuration {
 
   /**
    * Check if a section exists.
-   * @param section The section to check for.
+   * @param $section The section to check for.
    * @return Boolean
    */
   public function hasSection($section);
 
   /**
    * Get a section.
-   * @param section The section to return.
+   * @param $section The section to return.
    * @return Array holding the key/value pairs belonging to the section.
    * @throws ConfigurationException if the section does not exist
    */
@@ -67,16 +67,16 @@ interface Configuration {
 
   /**
    * Check if a configuration value exists.
-   * @param key The name of the value.
-   * @param section The section the value belongs to.
+   * @param $key The name of the value.
+   * @param $section The section the value belongs to.
    * @return Boolean
    */
   public function hasValue($key, $section);
 
   /**
    * Get a configuration value.
-   * @param key The name of the entry.
-   * @param section The section the key belongs to.
+   * @param $key The name of the entry.
+   * @param $section The section the key belongs to.
    * @return The configuration value.
    * @throws ConfigurationException if the value does not exist
    */
@@ -84,8 +84,8 @@ interface Configuration {
 
   /**
    * Get a value from the configuration as boolean if it represents a boolean.
-   * @param key The name of the entry.
-   * @param section The section the key belongs to.
+   * @param $key The name of the entry.
+   * @param $section The section the key belongs to.
    * @return Boolean or the original value.
    * @throws ConfigurationException if the value does not exist
    */
@@ -95,8 +95,8 @@ interface Configuration {
    * Get a directory value from the configuration.
    * The value will interpreted as directory relative to WCMF_BASE and
    * returned as absolute path.
-   * @param key The name of the entry.
-   * @param section The section the key belongs to.
+   * @param $key The name of the entry.
+   * @param $section The section the key belongs to.
    * @return The configuration value.
    * @throws ConfigurationException if the value does not exist
    */
@@ -106,8 +106,8 @@ interface Configuration {
    * Get a file value from the configuration.
    * The value will interpreted as file relative to WCMF_BASE and
    * returned as absolute path.
-   * @param key The name of the entry.
-   * @param section The section the key belongs to.
+   * @param $key The name of the entry.
+   * @param $section The section the key belongs to.
    * @return The configuration value.
    * @throws ConfigurationException if the value does not exist
    */
@@ -115,8 +115,8 @@ interface Configuration {
 
   /**
    * Get a configuration key.
-   * @param value The value of the entry.
-   * @param section The section the value belongs to.
+   * @param $value The value of the entry.
+   * @param $section The section the value belongs to.
    * @return The configuration key.
    * @throws ConfigurationException if the key does not exist
    */

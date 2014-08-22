@@ -29,9 +29,9 @@ class StateChangeEvent extends Event {
 
   /**
    * Constructor.
-   * @param object A reference to the PersistentObject object that whose state has changed.
-   * @param oldValue The old value of the state.
-   * @param newValue The new value of the state.
+   * @param $object A reference to the PersistentObject object that whose state has changed.
+   * @param $oldValue The old value of the state.
+   * @param $newValue The new value of the state.
    */
   public function __construct(PersistentObject $object, $oldValue, $newValue) {
     $this->_object = $object;

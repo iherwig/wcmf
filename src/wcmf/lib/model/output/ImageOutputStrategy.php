@@ -43,14 +43,14 @@ class ImageOutputStrategy implements OutputStrategy {
 
   /**
    * Constructor.
-   * @param format Image format name [IMG_GIF | IMG_JPG | IMG_PNG | IMG_WBMP].
-   * @param file The output file name.
-   * @param map The position map provided by LayoutVisitor.
-   * @param lineType The linetype to use [LINETYPE_DIRECT|LINETYPE_ROUTED] DEFAULT LINETYPE_DIRECT.
-   * @param scale The image scale (will be xscale) DEFAULT 100.
-   * @param aspect The image aspect (aspect = xscale/yscale) DEFAULT 0.5.
-   * @param border The image border [px] DEFAULT 50.
-   * @param usemap Name of the HTML ImageMap to write to stdout ['' means no map] DEFAULT ''.
+   * @param $format Image format name [IMG_GIF | IMG_JPG | IMG_PNG | IMG_WBMP].
+   * @param $file The output file name.
+   * @param $map The position map provided by LayoutVisitor.
+   * @param $lineType The linetype to use [LINETYPE_DIRECT|LINETYPE_ROUTED] DEFAULT LINETYPE_DIRECT.
+   * @param $scale The image scale (will be xscale) DEFAULT 100.
+   * @param $aspect The image aspect (aspect = xscale/yscale) DEFAULT 0.5.
+   * @param $border The image border [px] DEFAULT 50.
+   * @param $usemap Name of the HTML ImageMap to write to stdout ['' means no map] DEFAULT ''.
    */
   public function __construct($format, $file, $map, $lineType=self::LINETYPE_DIRECT,
           $scale=100, $aspect=0.5, $border=50, $usemap='') {
@@ -190,9 +190,8 @@ class ImageOutputStrategy implements OutputStrategy {
 
   /**
    * Draw connection line.
-   * @attention Internal use only.
-   * @param poid The parent object's object id.
-   * @param oid The object's object id.
+   * @param $poid The parent object's object id.
+   * @param $oid The object's object id.
    */
   protected function drawConnectionLine($poid, $oid) {
     list($start, $end) = $this->calculateEndPoints($poid, $oid);
@@ -206,9 +205,8 @@ class ImageOutputStrategy implements OutputStrategy {
 
   /**
    * Draw direct line.
-   * @attention Internal use only.
-   * @param start The start point (Position).
-   * @param end The end point (Position).
+   * @param $start The start point (Position).
+   * @param $end The end point (Position).
    */
   protected function drawDirectLine($start, $end) {
     ImageLine($this->_img,
@@ -221,9 +219,8 @@ class ImageOutputStrategy implements OutputStrategy {
 
   /**
    * Draw routed line.
-   * @attention Internal use only.
-   * @param start The start point (Position).
-   * @param end The end point (Position).
+   * @param $start The start point (Position).
+   * @param $end The end point (Position).
    */
   protected function drawRoutedLine($start, $end) {
     if ($this->_map["type"] == MAPTYPE_HORIZONTAL) {
@@ -270,9 +267,8 @@ class ImageOutputStrategy implements OutputStrategy {
 
   /**
    * Calculate line end points.
-   * @attention Internal use only.
-   * @param poid The parent object's object id.
-   * @param oid The object's object id.
+   * @param $poid The parent object's object id.
+   * @param $oid The object's object id.
    * @return Array containing start and end position
    */
   private function calculateEndPoints($poid, $oid) {

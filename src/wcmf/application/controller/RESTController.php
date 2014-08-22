@@ -19,17 +19,20 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * RESTController is a controller that handles REST requests.
+ * RESTController handles REST requests.
  *
- * <b>Input actions:</b>
- * - unspecified: Handle action according to HTTP method and parameters
+ * The controller supports the following actions:
  *
- * <b>Output actions:</b>
- * - depends on the controller, to that the action is delegated
+ * <div class="controller-action">
+ * <div> __Action__ _default_ </div>
+ * <div>
+ * Handle action according to HTTP method and parameters.
  *
  * For details about the paramters, see documentation for the methods
  * RESTController::handleGet(), RESTController::handlePost(),
  * RESTController::handlePut(), RESTController::handleDelete()
+ * </div>
+ * </div>
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -85,54 +88,44 @@ class RESTController extends Controller {
   }
 
   /**
-   * Execute the requested REST action
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $request = $this->getRequest();
-    $result = false;
     switch ($request->getMethod()) {
       case 'GET':
-        $result = $this->handleGet();
+        $this->handleGet();
         break;
       case 'POST':
-        $result = $this->handlePost();
+        $this->handlePost();
         break;
       case 'PUT':
-        $result = $this->handlePut();
+        $this->handlePut();
         break;
       case 'DELETE':
-        $result = $this->handleDelete();
+        $this->handleDelete();
         break;
       default:
-        $result = $this->handleGet();
+        $this->handleGet();
         break;
     }
-    return $result;
   }
 
   /**
    * Handle a GET request (read object(s) of a given type)
    *
-   * Request parameters:
-   * - collection: Boolean whether to load one object or a list of objects
-   * - language: The language of the returned object(s)
-   * - className: The type of returned object(s)
-   * - id: If collection is false, the object with className/id will be loaded
+   * | Parameter        | Description
+   * |------------------|-------------------------
+   * | _in_ `collection`| Boolean whether to load one object or a list of objects. The _Range_ header is used to get only part of the list
+   * | _in_ `language`  | The language of the returned object(s)
+   * | _in_ `className` | The type of returned object(s)
+   * | _in_ `id`        | If collection is _false_, the object with _className_/_id_ will be loaded
+   * | _in_ `sortBy`    | _?sortBy=+foo_ for sorting the list by foo ascending or
+   * | _in_ `sort`      | _?sort(+foo)_ for sorting the list by foo ascending
+   * | _in_ `relation`  | Relation name if objects in relation to another object should be loaded (determines the type of the returned objects)
+   * | _in_ `sourceId`  | Id of the object to which the returned objects are related (determines the object id together with _className_)
+   * | _out_            | Single object or list of objects. In case of a list, the _Content-Range_ header will be set.
    *
-   * - sortBy: ?sortBy=+foo for sorting the list by foo ascending or
-   * - sort: ?sort(+foo) for sorting the list by foo ascending
-   *
-   * - relation: relation name if objects in relation to another object should
-   *             be loaded (determines the type of the returned objects)
-   * - sourceId: id of the object to which the returned objects are related
-   *             (determines the object id together with className)
-   *
-   * Range header is used to get only part of the list
-   *
-   * Response parameters:
-   * - Single object or list of objects. In case of a list, the Content-Range
-   *   header will be set.
    */
   protected function handleGet() {
     $request = $this->getRequest();
@@ -247,20 +240,16 @@ class RESTController extends Controller {
   /**
    * Handle a POST request (create an object of a given type)
    *
-   * Request parameters:
-   * - language: The language of the object
-   * - className: Type of object to create
-   *
-   * - relation: relation name if the object should be created/added in
-   *             relation to another object (determines the type of the created/added object)
-   * - sourceId: id of the object to which the created/added object is related
-   *             (determines the object id together with className)
+   * | Parameter        | Description
+   * |------------------|-------------------------
+   * | _in_ `language`  | The language of the object
+   * | _in_ `className` | Type of object to create
+   * | _in_ `relation`  | Relation name if the object should be created/added in relation to another object (determines the type of the created/added object)
+   * | _in_ `sourceId`  | Id of the object to which the created objects are added (determines the object id together with _className_)
+   * | _out_            | Created object data
    *
    * The object data is contained in POST content. If an existing object
-   * should be added, an 'oid' parameter is sufficient
-   *
-   * Response parameters:
-   * - Created object data
+   * should be added, an `oid` parameter in the object data is sufficient.
    */
   protected function handlePost() {
     $request = $this->getRequest();
@@ -313,22 +302,17 @@ class RESTController extends Controller {
   /**
    * Handle a PUT request (update an object of a given type)
    *
-   * Request parameters:
-   * - language: The language of the object
-   * - className: Type of object to update
-   * - id: Id of object to update
-   *
-   * - relation: relation name if an existing object should be added to a
-   *             relation (determines the type of the added object)
-   * - sourceId: id of the object to which the added object is related
-   *             (determines the object id together with className)
-   * - targetId: id of the object to be added to the relation
-   *             (determines the object id together with relation)
+   * | Parameter        | Description
+   * |------------------|-------------------------
+   * | _in_ `language`  | The language of the object
+   * | _in_ `className` | Type of object to update
+   * | _in_ `id`        | Id of object to update
+   * | _in_ `relation`  | Relation name if an existing object should be added to a relation (determines the type of the added object)
+   * | _in_ `sourceId`  | Id of the object to which the added object is related (determines the object id together with _className_)
+   * | _in_ `targetId`  | Id of the object to be added to the relation (determines the object id together with _relation_)
+   * | _out_            | Updated object data
    *
    * The object data is contained in POST content.
-   *
-   * Response parameters:
-   * - Updated object data
    */
   protected function handlePut() {
     $request = $this->getRequest();
@@ -421,20 +405,14 @@ class RESTController extends Controller {
   /**
    * Handle a DELETE request (delete an object of a given type)
    *
-   * Request parameters:
-   * - language: The language of the object
-   * - className: Type of object to delete
-   * - id: Id of object to delete
-   *
-   * - relation: relation name if the object should be deleted from a
-   *             relation to another object (determines the type of the deleted object)
-   * - sourceId: id of the object to which the deleted object is related
-   *             (determines the object id together with className)
-   * - targetId: id of the object to be deleted from the relation
-   *             (determines the object id together with relation)
-   *
-   * Response parameters:
-   * empty
+   * | Parameter        | Description
+   * |------------------|-------------------------
+   * | _in_ `language`  | The language of the object
+   * | _in_ `className` | Type of object to delete
+   * | _in_ `id`        | Id of object to delete
+   * | _in_ `relation`  | Relation name if the object should be deleted from a relation to another object (determines the type of the deleted object)
+   * | _in_ `sourceId`  | Id of the object to which the deleted object is related (determines the object id together with _className_)
+   * | _in_ `targetId`  | Id of the object to be deleted from the relation (determines the object id together with _relation_)
    */
   protected function handleDelete() {
     $request = $this->getRequest();
@@ -465,7 +443,7 @@ class RESTController extends Controller {
 
   /**
    * Set the location response header according to the given object id
-   * @param oid The serialized object id
+   * @param $oid The serialized object id
    */
   protected function setLocationHeaderFromOid($oid) {
     $oid = ObjectId::parse($oid);
@@ -492,8 +470,8 @@ class RESTController extends Controller {
   /**
    * Get the type that is used in the given role related to the
    * given source object.
-   * @param sourceOid ObjectId of the source object
-   * @param role The role name
+   * @param $sourceOid ObjectId of the source object
+   * @param $role The role name
    * @return String
    */
   protected function getRelatedType(ObjectId $sourceOid, $role) {

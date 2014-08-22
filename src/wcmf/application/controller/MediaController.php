@@ -67,9 +67,9 @@ use FM\ElFinderPHP\Connector\ElFinderConnector;
 class MediaController extends Controller {
 
   /**
-   * @see Controller::executeKernel()
+   * @see Controller::doExecute()
    */
-  protected function executeKernel() {
+  protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -113,7 +113,6 @@ class MediaController extends Controller {
 
       // unreachable, since elFinder calls exit()
       $response->setAction('ok');
-      return true;
     }
     else {
       // custom crop action
@@ -138,11 +137,11 @@ class MediaController extends Controller {
           $graphicsUtil->cropImage($file, $targetFile, $w, $h, $x, $y);
           $response->setValue('fieldName', $request->getValue('fieldName'));
           $response->setAction('browseMedia');
-          return true;
+        }
+        else {
+          $response->setAction('ok');
         }
       }
-      $response->setAction('ok');
-      return false;
     }
   }
 

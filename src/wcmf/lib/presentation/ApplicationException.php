@@ -27,9 +27,9 @@ class ApplicationException extends \Exception {
 
   /**
    * Constructor
-   * @param request The current request
-   * @param response The current response
-   * @param error An ApplicationError instance
+   * @param $request The current request
+   * @param $response The current response
+   * @param $error An ApplicationError instance
    */
   public function __construct(Request $request, Response $response,
     ApplicationError $error) {
