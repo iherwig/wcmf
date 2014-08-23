@@ -61,7 +61,7 @@ class SmartyView implements View {
   /**
    * Set whether the view should check for
    * template modifications or not
-   * @param compileCheck Boolean
+   * @param $compileCheck Boolean
    */
   public function setCompileCheck($compileCheck) {
     $this->_view->compile_check = $compileCheck;
@@ -69,7 +69,7 @@ class SmartyView implements View {
 
   /**
    * Set whether views should be cached
-   * @param caching Boolean
+   * @param $caching Boolean
    */
   public function setCaching($caching) {
     $this->_view->caching = $caching;
@@ -77,7 +77,7 @@ class SmartyView implements View {
 
   /**
    * Set the time a view should be cached
-   * @param cacheLifeTime Integer (seconds)
+   * @param $cacheLifeTime Integer (seconds)
    */
   public function setCacheLifetime($cacheLifeTime) {
     $this->_view->cache_lifetime = $cacheLifeTime;
@@ -85,7 +85,7 @@ class SmartyView implements View {
 
   /**
    * Set a additional plugins directory
-   * @param pluginsDir Directory relative to WCMF_BASE
+   * @param $pluginsDir Directory relative to WCMF_BASE
    */
   public function setPluginsDir($pluginsDir) {
     $this->_view->addPluginsDir(WCMF_BASE.$pluginsDir);
@@ -93,7 +93,7 @@ class SmartyView implements View {
 
   /**
    * Set additional output filters
-   * @param outputFilter
+   * @param $outputFilter
    */
   public function setOutputFilter($outputFilter) {
     foreach ($outputFilter as $filter) {

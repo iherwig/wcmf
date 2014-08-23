@@ -55,15 +55,15 @@ interface PermissionManager {
   /**
    * Authorize for given resource, context, action triple.
    * A resource could be one of the following:
-   * - Controller class name (e.g. wcmf\application\controller\SaveController)
-   * - Type name (e.g. app.src.model.wcmf.User)
-   * - Type and propery name (e.g. app.src.model.wcmf.User.login)
-   * - Object id (e.g. app.src.model.wcmf.User:123)
-   * - Object id and propery name (e.g. app.src.model.wcmf.User:123.login)
+   * - Controller class name (e.g. `wcmf\application\controller\SaveController`)
+   * - Type name (e.g. `app.src.model.wcmf.User`)
+   * - Type and propery name (e.g. `app.src.model.wcmf.User.login`)
+   * - Object id (e.g. `app.src.model.wcmf.User:123`)
+   * - Object id and propery name (e.g. `app.src.model.wcmf.User:123.login`)
    *
-   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
-   * @param context The context in which the action takes place.
-   * @param action The action to process.
+   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
    * @return Boolean whether authorization succeded/failed.
    */
   public function authorize($resource, $context, $action);
@@ -71,18 +71,18 @@ interface PermissionManager {
   /**
    * Add a temporary permission for the current user. The permission
    * is valid only until end of execution or a call to
-   * PermissionManager::removeTempPermissions()/PermissionManager::clearTempPermissions().
-   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId).
-   * @param context The context in which the action takes place.
-   * @param action The action to process.
+   * PermissionManager::removeTempPermission() or PermissionManager::clearTempPermissions().
+   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
    */
   public function addTempPermission($resource, $context, $action);
 
   /**
    * Remove a temporary permission for the current user.
-   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId).
-   * @param context The context in which the action takes place.
-   * @param action The action to process.
+   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
    */
   public function removeTempPermission($resource, $context, $action);
 
@@ -97,9 +97,9 @@ interface PermissionManager {
 
   /**
    * Get the permission on a resource, context, action combination.
-   * @param resource The resource (e.g. class name of the Controller or OID).
-   * @param context The context in which the action takes place.
-   * @param action The action to process.
+   * @param $resource The resource (e.g. class name of the Controller or OID).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
    * @return An assoziative array with keys 'default', 'allow', 'deny' and the attached roles as values.
    * @see AuthUser::parsePolicy
    */
@@ -107,21 +107,21 @@ interface PermissionManager {
 
   /**
    * Create/Change a permission for a role on a resource, context, action combination.
-   * @param resource The resource (e.g. class name of the Controller or OID).
-   * @param context The context in which the action takes place.
-   * @param action The action to process.
-   * @param role The role to authorize.
-   * @param modifier One of the PERMISSION_MODIFIER_ constants.
+   * @param $resource The resource (e.g. class name of the Controller or OID).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
+   * @param $role The role to authorize.
+   * @param $modifier One of the PERMISSION_MODIFIER_ constants.
    * @return Boolean whether creation succeded/failed.
    */
   public function createPermission($resource, $context, $action, $role, $modifier);
 
   /**
    * Remove a role from a permission on a resource, context, action combination.
-   * @param resource The resource (e.g. class name of the Controller or OID).
-   * @param context The context in which the action takes place.
-   * @param action The action to process.
-   * @param role The role to remove.
+   * @param $resource The resource (e.g. class name of the Controller or OID).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
+   * @param $role The role to remove.
    * @return Boolean whether removal succeded/failed.
    */
   public function removePermission($resource, $context, $action, $role);

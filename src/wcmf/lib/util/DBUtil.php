@@ -67,8 +67,8 @@ class DBUtil {
 
   /**
    * Execute a sql script. Execution is done inside a transaction, which is rolled back in case of failure.
-   * @param file The filename of the sql script
-   * @param initSection The name of the configuration section that defines the database connection
+   * @param $file The filename of the sql script
+   * @param $initSection The name of the configuration section that defines the database connection
    * @return Boolean whether execution succeeded or not.
    */
   public static function executeScript($file, $initSection) {
@@ -123,11 +123,11 @@ class DBUtil {
 
   /**
    * Duplicate a database on the same server (same user). This works only for MySQL databases.
-   * @param srcName The name of the source database
-   * @param destName The name of the source database
-   * @param server The name of the database server
-   * @param user The user name
-   * @param password The password
+   * @param $srcName The name of the source database
+   * @param $destName The name of the source database
+   * @param $server The name of the database server
+   * @param $user The user name
+   * @param $password The password
    */
   public static function copyDatabase($srcName, $destName, $server, $user, $password) {
     if($srcName && $destName && $server && $user) {
@@ -171,10 +171,10 @@ class DBUtil {
 
   /**
    * Crate a database on the server. This works only for MySQL databases.
-   * @param name The name of the source database
-   * @param server The name of the database server
-   * @param user The user name
-   * @param password The password
+   * @param $name The name of the source database
+   * @param $server The name of the database server
+   * @param $user The user name
+   * @param $password The password
    */
   public static function createDatabase($name, $server, $user, $password) {
     $created = false;

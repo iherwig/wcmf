@@ -57,7 +57,7 @@ class NodeListStrategy implements ListStrategy {
 
   /**
    * Parse the given list configuration
-   * @param configuration The configuration
+   * @param $configuration The configuration
    * @return Associative array with keys 'types' and 'query'
    */
   protected function parseConfiguration($configuration) {

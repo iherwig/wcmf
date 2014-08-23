@@ -35,8 +35,8 @@ class RPCClient implements RemotingClient {
 
   /**
    * Constructor
-   * @param serverCli The command line interface of the other server instance.
-   * @param user The remote user instance.
+   * @param $serverCli The command line interface of the other server instance.
+   * @param $user The remote user instance.
    */
   public function __construct($serverCli, $user) {
 
@@ -60,7 +60,7 @@ class RPCClient implements RemotingClient {
 
   /**
    * Do a call to the remote server.
-   * @param request A Request instance
+   * @param $request A Request instance
    * @return A Response instance
    */
   public function call(Request $request) {
@@ -70,8 +70,8 @@ class RPCClient implements RemotingClient {
 
   /**
    * Do a remote call.
-   * @param request The Request instance
-   * @param isLogin Boolean whether this request is a login request or not
+   * @param $request The Request instance
+   * @param $isLogin Boolean whether this request is a login request or not
    * @return The Response instance
    */
   protected function doRemoteCall(Request $request, $isLogin) {
@@ -187,7 +187,7 @@ class RPCClient implements RemotingClient {
 
   /**
    * Error handling method
-   * @param response The Response instance
+   * @param $response The Response instance
    */
   protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');

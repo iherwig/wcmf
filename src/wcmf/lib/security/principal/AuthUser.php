@@ -21,8 +21,8 @@ interface AuthUser extends User {
 
   /**
    * Log a user into the application.
-   * @param login The login string of the user
-   * @param password The password string of the user
+   * @param $login The login string of the user
+   * @param $password The password string of the user
    * @return Boolean whether login succeeded.
    */
   public function login($login, $password);
@@ -30,8 +30,8 @@ interface AuthUser extends User {
   /**
    * Checks, if the user is authorized for this action.
    * Returns default policy if action key is not defined.
-   * @param actionKey An action key string
-   * @param defaultPolicy Boolean overriding the default policy
+   * @param $actionKey An action key string
+   * @param $defaultPolicy Boolean overriding the default policy
    *   just for this request (optional, @see AuhUser::setDefaultPolicy)
    * @return Boolean whether authorization succeeded
    */
@@ -40,7 +40,7 @@ interface AuthUser extends User {
   /**
    * Assign the default policy that is used if no permission is set up
    * for the requested action.
-   * @param val Boolean
+   * @param $val Boolean
    */
   public function setDefaultPolicy($val);
 

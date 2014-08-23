@@ -1,5 +1,5 @@
 /*!
-\mainpage Home
+\mainpage Model Driven Development with PHP
 
 \htmlonly
 <div class="jumbotron">
@@ -8,7 +8,7 @@
 </div>
 
 <div class="alert alert-info" role="alert">
-  <strong>Model driven development</strong> with wCMF helps focusing on the application domain and
+  <strong>Model Driven Development</strong> with wCMF helps focusing on the application domain and
   <strong>increases productivity</strong> significantly.
 </div>
 

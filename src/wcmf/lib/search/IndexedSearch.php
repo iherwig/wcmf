@@ -29,21 +29,21 @@ interface IndexedSearch extends Search {
   /**
    * Add/update a PersistentObject instance to/in the search index. This method modifies the
    * index. For that reason IndexedSearch::commitIndex() should be called afterwards.
-   * @param obj The PersistentObject instance.
+   * @param $obj The PersistentObject instance.
    */
   public function addToIndex(PersistentObject $obj);
 
   /**
    * Delete a PersistentObject instance from the search index. This method modifies the
    * index. For that reason IndexedSearch::commitIndex() should be called afterwards.
-   * @param obj The PersistentObject instance.
+   * @param $obj The PersistentObject instance.
    */
    public function deleteFromIndex(PersistentObject $obj);
 
   /**
    * Commit changes made on the index.
    * @note This method only commits the index if changes were made using the methods mentioned above.
-   * @param optimize Boolean whether the index should be optimized after commit [default: true].
+   * @param $optimize Boolean whether the index should be optimized after commit [default: true].
    */
   public function commitIndex($optimize = true);
 

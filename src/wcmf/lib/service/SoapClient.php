@@ -30,10 +30,10 @@ class SoapClient extends \SoapClient {
 
   /**
    * Constructor
-   * @param wsdl
-   * @param user
-   * @param password
-   * @param options
+   * @param $wsdl
+   * @param $user
+   * @param $password
+   * @param $options
    */
   public function __construct($wsdl, $user, $password, $options) {
     parent::__construct($wsdl, $options);
@@ -44,9 +44,8 @@ class SoapClient extends \SoapClient {
 
   /**
    * Call the given soap method
-   * @param method
-   * @param params [optional]
-   * @param strClass instance
+   * @param $method
+   * @param $params [optional]
    */
   public function call($method, $params=array()) {
     $header = $this->generateWSSecurityHeader($this->_user, $this->_password);
@@ -57,7 +56,7 @@ class SoapClient extends \SoapClient {
 
   /**
    * Overridden in order to strip bom characters
-   * @see \SoapClient::__doRequest
+   * @see SoapClient::__doRequest
    */
   public function __doRequest($request, $location, $action, $version, $one_way=0){
       if (Log::isDebugEnabled(__CLASS__)) {
@@ -76,9 +75,9 @@ class SoapClient extends \SoapClient {
 
   /**
    * Create the WS-Security authentication header for the given credentials
-   * @param user
-   * @param password
-   * @return \SoapHeader
+   * @param $user
+   * @param $password
+   * @return SoapHeader
    */
   private function generateWSSecurityHeader($user, $password) {
     $nonce = sha1(mt_rand());
@@ -95,7 +94,7 @@ class SoapClient extends \SoapClient {
   /**
    * Get informations about the last request. Available
    * if constructor options contain 'trace' => 1
-   * @return string
+   * @return String
    */
   public function getDebugInfos() {
     $requestHeaders = $this->__getLastRequestHeaders();

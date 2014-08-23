@@ -25,7 +25,7 @@ interface User {
 
   /**
    * Set the login of the user.
-   * @param login The login of the user.
+   * @param $login The login of the user.
    */
   public function setLogin($login);
 
@@ -38,7 +38,7 @@ interface User {
   /**
    * Set the password of the user. Implementations of User must
    * hash the password before persisting it.
-   * @param password The plaintext password of the user.
+   * @param $password The plaintext password of the user.
    */
   public function setPassword($password);
 
@@ -52,22 +52,22 @@ interface User {
 
   /**
    * Hash a password.
-   * @param password The plaintext password to hash
+   * @param $password The plaintext password to hash
    * @return The hashed password.
    */
   public function hashPassword($password);
 
   /**
    * Verify a password.
-   * @param password The plaintext password to verify
-   * @param passwordHash The password hash to match
+   * @param $password The plaintext password to verify
+   * @param $passwordHash The password hash to match
    * @return Boolean.
    */
   public function verifyPassword($password, $passwordHash);
 
   /**
    * Set the configuration file of the user.
-   * @param config The configuration file of the user.
+   * @param $config The configuration file of the user.
    */
   public function setConfig($config);
 
@@ -79,7 +79,7 @@ interface User {
 
   /**
    * Check for a certain role in the user roles.
-   * @param rolename The role name to check for. e.g. "administrators"
+   * @param $rolename The role name to check for. e.g. "administrators"
    * @return Boolean whether the user has the role
    */
   public function hasRole($rolename);
@@ -99,7 +99,7 @@ interface User {
 
   /**
    * Get a User instance by login.
-   * @param name The user's login
+   * @param $login The user's login
    * @return User instance.
    */
   public static function getByLogin($login);

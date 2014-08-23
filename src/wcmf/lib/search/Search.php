@@ -22,15 +22,15 @@ interface Search {
 
   /**
    * Check if the search word is valid
-   * @param word
+   * @param $word
    * @return True, if valid, error message else
    */
   public function check($word);
 
   /**
    * Search for searchTerm
-   * @param searchTerm
-   * @param pagingInfo A PagingInfo instance, optional [default: null]
+   * @param $searchTerm
+   * @param $pagingInfo A PagingInfo instance, optional [default: null]
    * @return Associative array with object ids as keys and
    * associative array with keys 'oid', 'score', 'summary' as value
    */
@@ -39,7 +39,7 @@ interface Search {
   /**
    * Check if the instance object is searchable
    * (defined by the property 'is_searchable')
-   * @param obj PersistentObject instance
+   * @param $obj PersistentObject instance
    * @return Boolean whether the object is searchable or not
    */
   public function isSearchable(PersistentObject $obj);

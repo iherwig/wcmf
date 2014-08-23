@@ -32,8 +32,8 @@ class HTTPClient implements RemotingClient {
 
   /**
    * Constructor
-   * @param serverUrl The url of the other server instance.
-   * @param user The remote user instance.
+   * @param $serverUrl The url of the other server instance.
+   * @param $user The remote user instance.
    */
   public function __construct($serverUrl, $user) {
     $this->_client = new Zend_Http_Client($serverUrl, array(
@@ -48,7 +48,7 @@ class HTTPClient implements RemotingClient {
 
   /**
    * Do a call to the remote server.
-   * @param request A Request instance
+   * @param $request A Request instance
    * @return A Response instance
    */
   public function call(Request $request) {
@@ -58,8 +58,8 @@ class HTTPClient implements RemotingClient {
 
   /**
    * Do a remote call.
-   * @param request The Request instance
-   * @param isLogin Boolean whether this request is a login request or not
+   * @param $request The Request instance
+   * @param $isLogin Boolean whether this request is a login request or not
    * @return The Response instance
    */
   protected function doRemoteCall(Request $request, $isLogin) {
@@ -139,7 +139,7 @@ class HTTPClient implements RemotingClient {
 
   /**
    * Error handling method
-   * @param response The Response instance
+   * @param $response The Response instance
    */
   protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');

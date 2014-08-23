@@ -19,7 +19,7 @@ use wcmf\lib\util\StringUtil;
  * HtmlFormat realizes the HTML request/response format. Since all data
  * from the external representation arrives in form fields, grouping of values
  * has to be done via the field names. So Nodes are represented by their values
- * whose field names are of the form value-<name>-<oid>. All of these
+ * whose field names are of the form value-`name`-`oid`. All of these
  * values will be removed from the request and replaced by Node instances
  * representing the data. The each node is stored under its oid in the data array.
  *
@@ -106,7 +106,7 @@ class HtmlFormat extends AbstractFormat {
 
   /**
    * Get the object value definition from a HTML input field name.
-   * @param name The name of input field in the format value-<name>-<oid>, where name is the name
+   * @param $name The name of input field in the format value-`name`-`oid`, where name is the name
    *              of the attribute belonging to the node defined by oid
    * @return An associative array with keys 'oid', 'language', 'name' or null if the name is not valid
    */

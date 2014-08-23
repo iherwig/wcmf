@@ -25,7 +25,7 @@ class Formatter {
 
   /**
    * Deserialize Request data into objects.
-   * @param request A reference to the Request instance
+   * @param $request A reference to the Request instance
    */
   public static function deserialize(Request $request) {
 
@@ -40,7 +40,7 @@ class Formatter {
 
   /**
    * Serialize Response according to the output format.
-   * @param response A reference to the Response instance
+   * @param $response A reference to the Response instance
    */
   public static function serialize(Response $response) {
     // get the formatter that should be used for this response format

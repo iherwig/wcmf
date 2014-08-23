@@ -22,9 +22,9 @@ class CSVUtil {
 
   /**
    * Read a CSV file into an array
-   * @param filename The name of the CSV file
-   * @param separator The field separator used in the CSV file (e.g. \\t)
-   * @param fielddelimiter The field delimiter used in the CSV file (e.g. ")
+   * @param $filename The name of the CSV file
+   * @param $separator The field separator used in the CSV file (e.g. \\t)
+   * @param $fielddelimiter The field delimiter used in the CSV file (e.g. ")
    * @return An assoziative array with keys 'fields', 'values' where
    *         values is an array of arrays holding the values
    */
@@ -52,8 +52,8 @@ class CSVUtil {
 
   /**
    * Get the values of of field from a line
-   * @param line The line (represented as array returned from readCSVFile)
-   * @param fieldName The name of the field
+   * @param $line The line (represented as array returned from readCSVFile)
+   * @param $fieldName The name of the field
    * @return The value or false if not existing
    */
   private static function getFieldValue($line, $fieldName) {
@@ -67,9 +67,9 @@ class CSVUtil {
 
   /**
    * Get the values of of line
-   * @param line The line to split
-   * @param separator The field separator used in the CSV file (e.g. \\t)
-   * @param fielddelimiter The field delimiter used in the CSV file (e.g. ")
+   * @param $line The line to split
+   * @param $separator The field separator used in the CSV file (e.g. \\t)
+   * @param $fielddelimiter The field delimiter used in the CSV file (e.g. ")
    * @return An array of values
    */
   private static function getValues($line, $separator, $fielddelimiter) {

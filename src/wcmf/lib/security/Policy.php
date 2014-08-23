@@ -21,7 +21,7 @@ class Policy {
    * Parse an policy string and returns an associative array with the keys
    * ('default', 'allow', 'deny'). Where 'allow', 'deny' are arrays itselves holding roles.
    * 'deny' overwrites 'allow' overwrites 'default'
-   * @param val An role string (+*, +admin, -guest, entries without '+' or '-'
+   * @param $val An role string (+*, +admin, -guest, entries without '+' or '-'
    *     prefix default to allow rules).
    * @return An array containing the policy data as an associative array with the keys
    *     'default', 'allow', 'deny'.

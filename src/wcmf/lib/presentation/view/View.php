@@ -19,14 +19,14 @@ interface View {
 
   /**
    * Assign a value to the view
-   * @param name The variable name
-   * @param value The value
+   * @param $name The variable name
+   * @param $value The value
    */
   public function setValue($name, $value);
 
   /**
    * Get a value from the view
-   * @param name The variable name
+   * @param $name The variable name
    * @return Mixed
    */
   public function getValue($name);
@@ -44,9 +44,9 @@ interface View {
 
   /**
    * Render the given template
-   * @param tplFile The template file
-   * @param cacheId The id of the view (@see Controller::getCacheId())
-   * @param display Boolean whether to output the result or return it [default: true]
+   * @param $tplFile The template file
+   * @param $cacheId The id of the view (@see Controller::getCacheId())
+   * @param $display Boolean whether to output the result or return it [default: true]
    */
   public function render($tplFile, $cacheId=null, $display=true);
 
@@ -58,16 +58,16 @@ interface View {
 
   /**
    * Check if a view is cached
-   * @param tplFile The template file
-   * @param cacheId The id of the view (@see Controller::getCacheId())
+   * @param $tplFile The template file
+   * @param $cacheId The id of the view (@see Controller::getCacheId())
    */
   public static function isCached($tplFile, $cacheId=null);
 
   /**
    * Get the template filename for the view from the configfile for the given action key.
-   * @param controller The name of the controller
-   * @param context The name of the context
-   * @param action The name of the action
+   * @param $controller The name of the controller
+   * @param $context The name of the context
+   * @param $action The name of the action
    * @return The filename of the template or false, if no view is defined
    */
   public static function getTemplate($controller, $context, $action);

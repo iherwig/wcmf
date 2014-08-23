@@ -20,9 +20,9 @@ interface ListStrategy {
 
   /**
    * Get a list of key/value pairs defined by the given configuration.
-   * @param configuration The list type specific configuration of the list as
+   * @param $configuration The list type specific configuration of the list as
    *                 used in the input_type definition
-   * @param language The lanugage if the values should be localized. Optional,
+   * @param $language The lanugage if the values should be localized. Optional,
    *                 default is Localization::getDefaultLanguage()
    * @return An assoziative array containing the key/value pairs
    */
@@ -30,7 +30,7 @@ interface ListStrategy {
 
   /**
    * Check if the list values are static or changing.
-   * @param configuration The list type specific configuration of the list as
+   * @param $configuration The list type specific configuration of the list as
    *                 used in the input_type definition
    * @return Boolean
    */

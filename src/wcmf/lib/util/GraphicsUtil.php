@@ -34,7 +34,7 @@ class GraphicsUtil {
 
   /**
    * Check if a given file is an image.
-   * @param imgname Name of the imagefile to check
+   * @param $imgname Name of the imagefile to check
    * @return Boolean whether the file is an image
    */
   public function isImage($imgname) {
@@ -48,10 +48,10 @@ class GraphicsUtil {
 
   /**
    * Check image dimensions.
-   * @param imgname Name of the imagefile to check
-   * @param width Width of the image, -1 means don't care
-   * @param height Height of the image, -1 means don't care
-   * @param exact Boolean whether the image should match the dimension exactly or might be smaller [default: true]
+   * @param $imgname Name of the imagefile to check
+   * @param $width Width of the image, -1 means don't care
+   * @param $height Height of the image, -1 means don't care
+   * @param $exact Boolean whether the image should match the dimension exactly or might be smaller [default: true]
    * @return Boolean whether the image meets the dimensions, error string provided by getErrorMsg()
    */
   public function isValidImageDimension($imgname, $width, $height, $exact=true) {
@@ -62,9 +62,9 @@ class GraphicsUtil {
 
   /**
    * Check image width.
-   * @param imgname Name of the imagefile to check
-   * @param width Width of the image
-   * @param exact Boolean whether the image width should match exactly or might be smaller [default: true]
+   * @param $imgname Name of the imagefile to check
+   * @param $width Width of the image
+   * @param $exact Boolean whether the image width should match exactly or might be smaller [default: true]
    * @return Boolean whether the image width meets the criteria, error string provided by getErrorMsg()
    * @note This method returns true if the file does not exist.
    */
@@ -87,9 +87,9 @@ class GraphicsUtil {
 
   /**
    * Check image height.
-   * @param imgname Name of the imagefile to check
-   * @param height Height of the image
-   * @param exact Boolean whether the image height should match exactly or might be smaller [default: true]
+   * @param $imgname Name of the imagefile to check
+   * @param $height Height of the image
+   * @param $exact Boolean whether the image height should match exactly or might be smaller [default: true]
    * @return Boolean whether the image width meets the criteria, error string provided by getErrorMsg()
    * @note This method returns true if the file does not exist.
    */
@@ -112,8 +112,8 @@ class GraphicsUtil {
 
   /**
    * Calculate image dimension to fit into a square, preserving the aspect ratio
-   * @param srcName The source file name
-   * @param maxDimension The maximum dimension the image should have (either width or height)
+   * @param $srcName The source file name
+   * @param $maxDimension The maximum dimension the image should have (either width or height)
    * @return Array with width and height value or null, on error, error string provided by getErrorMsg()
    */
   public function fitIntoSquare($srcName, $maxDimension) {
@@ -143,10 +143,10 @@ class GraphicsUtil {
 
   /**
    * Create a thumbnail of an image file.
-   * @param srcName The source file name
-   * @param destName The destination file name
-   * @param width The width of the thumbnail (maybe null)
-   * @param height The height of the thumbnail (maybe null)
+   * @param $srcName The source file name
+   * @param $destName The destination file name
+   * @param $width The width of the thumbnail (maybe null)
+   * @param $height The height of the thumbnail (maybe null)
    * @return Boolean whether the operation succeeded, error string provided by getErrorMsg()
    * @note: supported image formats are GIF, JPG, PNG
    *        if only width or height are given the other dimension is calculated to preserve the aspect
@@ -164,12 +164,12 @@ class GraphicsUtil {
 
   /**
    * Crop an image to the given size starting from the middle of a given start point.
-   * @param srcName The source file name
-   * @param destName The destination file name
-   * @param width The width of the cropped image (maybe null)
-   * @param height The height of the cropped image (maybe null)
-   * @param x The start point x coordinate (maybe null, default null)
-   * @param y The start point y coordinate (maybe null, default null)
+   * @param $srcName The source file name
+   * @param $destName The destination file name
+   * @param $width The width of the cropped image (maybe null)
+   * @param $height The height of the cropped image (maybe null)
+   * @param $x The start point x coordinate (maybe null, default null)
+   * @param $y The start point y coordinate (maybe null, default null)
    * @return Boolean whether the operation succeeded, error string provided by getErrorMsg()
    * @note: supported image formats are GIF, JPG, PNG
    *        if only width or height are given the other dimension is taken from the original image
@@ -192,8 +192,8 @@ class GraphicsUtil {
 
   /**
    * Create a black and white copy of an image.
-   * @param srcName The source file name
-   * @param destName The destination file name
+   * @param $srcName The source file name
+   * @param $destName The destination file name
    */
   public function createBlackWhiteImage($srcName, $destName) {
     try {
@@ -208,10 +208,10 @@ class GraphicsUtil {
   /**
    * Process the given function on the given source image (supports animated gifs)
    * and save the result in the given destination image.
-   * @param srcName The source file name
-   * @param destName The destination file name
-   * @param function The name of the function
-   * @param params The paremeters to be passed to the function
+   * @param $srcName The source file name
+   * @param $destName The destination file name
+   * @param $function The name of the function
+   * @param $params The paremeters to be passed to the function
    */
   public function processImageFunction($srcName, $destName, $function, $params) {
     if (\GifFrameExtractor::isAnimatedGif($srcName)) {
@@ -243,17 +243,17 @@ class GraphicsUtil {
    * text exceeds the width, the text will be wrapped and the height parameter will be
    * used as lineheight.
    * Wrapping code is from http://de.php.net/manual/de/function.imagettfbbox.php#60673
-   * @param text The text to render
-   * @param fontfile The ttf font file to use
-   * @param fontsize The font size to use (in pixels)
-   * @param color The color to use for the text (as HEX value)
-   * @param bgcolor The color to use for the background (as HEX value)
-   * @param filename The name of the file to write to
-   * @param width The width of the image (or null if it should fit the text) [default: null]
-   * @param height The height of the image (or null if it should fit the text) [default: null]
-   * @param x The x offset of the text (or null if it should be centered) [default: null]
-   * @param y The y offset of the text (or null if the baseline should be the image border) [default: null]
-   * @param angle The angle of the text (optional) [default: 0]
+   * @param $text The text to render
+   * @param $fontfile The ttf font file to use
+   * @param $fontsize The font size to use (in pixels)
+   * @param $color The color to use for the text (as HEX value)
+   * @param $bgcolor The color to use for the background (as HEX value)
+   * @param $filename The name of the file to write to
+   * @param $width The width of the image (or null if it should fit the text) [default: null]
+   * @param $height The height of the image (or null if it should fit the text) [default: null]
+   * @param $x The x offset of the text (or null if it should be centered) [default: null]
+   * @param $y The y offset of the text (or null if the baseline should be the image border) [default: null]
+   * @param $angle The angle of the text (optional) [default: 0]
    * @return Boolean whether the operation succeeded, error string provided by getErrorMsg()
    */
   public function renderText($text, $fontfile, $fontsize, $color, $bgcolor, $filename,
@@ -350,10 +350,10 @@ class GraphicsUtil {
 
   /**
    * Calculate the dimension of the given text
-   * @param fontsize The font size (in pixels)
-   * @param angle The angle of the characters (optional) [default: 0]
-   * @param fontfile The font file
-   * @param text The text
+   * @param $fontsize The font size (in pixels)
+   * @param $angle The angle of the characters (optional) [default: 0]
+   * @param $fontfile The font file
+   * @param $text The text
    * @return An array with the width and height values
    */
   private function getTextDimension($fontsize, $angle, $fontfile, $text) {
@@ -363,12 +363,12 @@ class GraphicsUtil {
 
   /**
    * Calculate the offset of the text and the size of the image based on the given parameters
-   * @param width The width of the image (or null if it should be the textwidth)
-   * @param height The height of the image (or null if it should be the textheight)
-   * @param x The x offset of the text (or null if it should be centered)
-   * @param y The y offset of the text (or null if the baseline should be the image border)
-   * @param textwidth The width of the text
-   * @param textheight The height of the text
+   * @param $width The width of the image (or null if it should be the textwidth)
+   * @param $height The height of the image (or null if it should be the textheight)
+   * @param $x The x offset of the text (or null if it should be centered)
+   * @param $y The y offset of the text (or null if the baseline should be the image border)
+   * @param $textwidth The width of the text
+   * @param $textheight The height of the text
    * @return An array with width, height, x, y values
    */
   private function calculateTextParams($width, $height, $x, $y, $textwidth, $textheight) {
@@ -392,10 +392,10 @@ class GraphicsUtil {
   /**
    * Calculate the size based on the image aspect, if only width or height
    * are given.
-   * @param width The requested width (maybe null)
-   * @param height The requested height (maybe null)
-   * @param imageWidth The image's width
-   * @param imageHeight The image's height
+   * @param $width The requested width (maybe null)
+   * @param $height The requested height (maybe null)
+   * @param $imageWidth The image's width
+   * @param $imageHeight The image's height
    * @return Array with width, height
    */
   private function calculateSizeParams($width, $height, $imageWidth, $imageHeight) {

@@ -29,9 +29,9 @@ class ValueListProvider {
 
   /**
    * Get a list of key/value pairs defined by the given configuration.
-   * @param definition The list definition as used in the input_type definition
+   * @param $definition The list definition as used in the input_type definition
    *                  (e.g. config:ConfigSection)
-   * @param language The lanugage if the values should be localized. Optional,
+   * @param $language The lanugage if the values should be localized. Optional,
    *                  default is Localization::getDefaultLanguage()
    * @return An assoziative array with keys 'items' (array containing the key/value pairs)
    *                  and 'isStatic'
@@ -54,9 +54,9 @@ class ValueListProvider {
   /**
    * Translate a value with use of it's assoziated input type e.g get the location string from a location id.
    * (this is only done when the input type has a list definition).
-   * @param value The value to translate (maybe comma separated list for list controls)
-   * @param inputType The description of the control as given in the input_type property of a value
-   * @param language The language if the value should be localized. Optional,
+   * @param $value The value to translate (maybe comma separated list for list controls)
+   * @param $inputType The description of the control as given in the input_type property of a value
+   * @param $language The language if the value should be localized. Optional,
    *                 default is Localization::getDefaultLanguage()
    * @return The translated value
    */
@@ -87,7 +87,7 @@ class ValueListProvider {
 
   /**
    * Parse the given list definition
-   * @param definition The list definition as used in the input_type definition
+   * @param $definition The list definition as used in the input_type definition
    *                  (e.g. config:ConfigSection)
    * @return Associative array with keys 'type' and 'config'
    * @throws ConfigurationException
@@ -107,7 +107,7 @@ class ValueListProvider {
 
   /**
    * Get the ListStrategy instance for a given list type
-   * @param listType The list type
+   * @param $listType The list type
    * @return ListStrategy instance
    * @throws ConfigurationException
    */

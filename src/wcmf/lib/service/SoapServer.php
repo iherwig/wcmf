@@ -119,8 +119,8 @@ class SoapServer extends nusoap_server {
 
   /**
    * Process a soap call
-   * @param action The action
-   * @param params The action parameters
+   * @param $action The action
+   * @param $params The action parameters
    * @return The Response instance from the executed Controller
    */
   public function doCall($action, $params) {

@@ -26,10 +26,10 @@ class I18nUtil {
 
   /**
    * Get all messages from a directory recursively.
-   * @param directory The directory to search in
-   * @param exclude Array of directory names that are excluded from search
-   * @param pattern The pattern the names of the files to search in must match
-   * @param depth Internal use only
+   * @param $directory The directory to search in
+   * @param $exclude Array of directory names that are excluded from search
+   * @param $pattern The pattern the names of the files to search in must match
+   * @param $depth Internal use only
    * @return An assoziative array with the filenames as keys and the values as
    *     array of strings.
    * @see I18nUtil::getMessagesFromFile
@@ -70,7 +70,7 @@ class I18nUtil {
   /**
    * Get all messages from a file. Searches for parameters of the Message::get method
    * and usage of the smarty 'translate' function.
-   * @param file The file to search in
+   * @param $file The file to search in
    * @return An array of strings.
    * @note This method searches for occurences of 'Message::get('Text to translate')',
    * 'Dict.translate("Text to translate")' or {translate:"Text to translate"} where
@@ -109,8 +109,8 @@ class I18nUtil {
    * Create a message file for use with the Message class. The file will
    * be created in the directory defined in configutation key 'localeDir' in
    * 'application' section.
-   * @param language The language of the file (language code e.g. 'de')
-   * @param messages An assoziative array with the messages as keys
+   * @param $language The language of the file (language code e.g. 'de')
+   * @param $messages An assoziative array with the messages as keys
    * and assoziative array with keys 'translation' and 'files' (occurences of the message)
    * @return Boolean whether successful or not.
    */

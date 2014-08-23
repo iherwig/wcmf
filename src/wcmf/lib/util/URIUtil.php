@@ -22,8 +22,8 @@ class URIUtil {
   /**
    * Convert an absolute URI to a relative
    * code from http://www.webmasterworld.com/forum88/334.htm
-   * @param abs_uri Absolute URI to convert
-   * @param base Base URI
+   * @param $abs_uri Absolute URI to convert
+   * @param $base Base URI
    */
   public static function makeRelative($abs_uri, $base) {
     $abs_uri = preg_replace("{^[^:]+://[^/]+}", '', $abs_uri);
@@ -54,8 +54,8 @@ class URIUtil {
   /**
    * Convert a relative URI to an absolute
    * code from http://99webtools.com/relative-path-into-absolute-url.php
-   * @param rel_uri Relative URI to convert
-   * @param base Base URI
+   * @param $rel_uri Relative URI to convert
+   * @param $base Base URI
    */
   public static function makeAbsolute($rel_uri, $base) {
     if(strpos($rel_uri, "//") === 0) {
@@ -96,8 +96,8 @@ class URIUtil {
    * For example if a file path is stored relative to location A and should be
    * translated to the script URI (location B), use
    * URIUtil::translate($filepathAsSeenFromA, $pathFromBtoA)
-   * @param rel_uri Relative URI to translate as seen from base
-   * @param base Base URI
+   * @param $rel_uri Relative URI to translate as seen from base
+   * @param $base Base URI
    * @return An associtative array with keys 'absolute' and 'relative'
    * and the absolute and relative URI (as seen from the executed script) as values
    */
@@ -113,8 +113,8 @@ class URIUtil {
   /**
    * Check if an url is available (HTTP-Code: 200)
    * @note requires cURL library
-   * @param url The url to check
-   * @param timeout The timeout in seconds (default: 5)
+   * @param $url The url to check
+   * @param $timeout The timeout in seconds (default: 5)
    * @return Boolean whether the url is available
    */
   public static function validateUrl($url, $timeout=5) {

@@ -27,7 +27,7 @@ class Obfuscator {
 
   /**
    * Get an obfuscated string
-   * @param str The original sring
+   * @param $str The original sring
    * @return The obfuscated string
    */
   public static function obfuscate($str) {
@@ -48,7 +48,7 @@ class Obfuscator {
 
   /**
    * Get an unveiled string
-   * @param str The obfuscated sring
+   * @param $str The obfuscated sring
    * @return The original string or an empty string if it does not exist
    */
   public static function unveil($str) {

@@ -19,7 +19,7 @@ class StringUtil {
 
   /**
    * Get the dump of a variable as string.
-   * @param var The variable to dump.
+   * @param $var The variable to dump.
    * @return String
    */
   public static function getDump($var) {
@@ -33,21 +33,21 @@ class StringUtil {
   /**
    * Truncate a string up to a number of characters while preserving whole words and HTML tags
    * code from: http://alanwhipple.com/2011/05/25/php-truncate-string-preserving-html-tags-words/
-   * @param text String to truncate.
-   * @param length Length of returned string, including ellipsis.
-   * @param ending Ending to be appended to the trimmed string.
-   * @param exact If false, $text will not be cut mid-word
-   * @param considerHtml If true, HTML tags would be handled correctly
+   * @param $string String to truncate.
+   * @param $length Length of returned string, including ellipsis.
+   * @param $ending Ending to be appended to the trimmed string.
+   * @param $exact If false, $text will not be cut mid-word
+   * @param $considerHtml If true, HTML tags would be handled correctly
    * @return String
    */
-  public static function cropString($text, $length=100, $ending='...', $exact=false, $considerHtml=true) {
+  public static function cropString($string, $length=100, $ending='...', $exact=false, $considerHtml=true) {
     if ($considerHtml) {
       // if the plain text is shorter than the maximum length, return the whole text
-      if (strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
-        return $text;
+      if (strlen(preg_replace('/<.*?>/', '', $string)) <= $length) {
+        return $string;
       }
       // splits all html-tags to scanable lines
-      preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
+      preg_match_all('/(<.+?>)?([^<>]*)/s', $string, $lines, PREG_SET_ORDER);
       $total_length = strlen($ending);
       $open_tags = array();
       $truncate = '';
@@ -104,10 +104,10 @@ class StringUtil {
         }
       }
     } else {
-      if (strlen($text) <= $length) {
-        return $text;
+      if (strlen($string) <= $length) {
+        return $string;
       } else {
-        $truncate = substr($text, 0, $length - strlen($ending));
+        $truncate = substr($string, 0, $length - strlen($ending));
       }
     }
     // if the words shouldn't be cut in the middle...
@@ -133,22 +133,25 @@ class StringUtil {
   /**
    * Create an excerpt from the given text around the given phrase
    * code based on: http://stackoverflow.com/questions/1292121/how-to-generate-the-snippet-like-generated-by-google-with-php-and-mysql
+   * @param $string
+   * @param $phrase
+   * @param $radius
    */
-  public static function excerpt($text, $phrase, $radius = 100) {
-    if ($radius > strlen($text)) {
-      return $text;
+  public static function excerpt($string, $phrase, $radius = 100) {
+    if ($radius > strlen($string)) {
+      return $string;
     }
     $phraseLen = strlen($phrase);
     if ($radius < $phraseLen) {
         $radius = $phraseLen;
     }
-    $pos = strpos(strtolower($text), strtolower($phrase));
+    $pos = strpos(strtolower($string), strtolower($phrase));
 
     $startPos = 0;
     if ($pos > $radius) {
       $startPos = $pos - $radius;
     }
-    $textLen = strlen($text);
+    $textLen = strlen($string);
 
     $endPos = $pos + $phraseLen + $radius;
     if ($endPos >= $textLen) {
@@ -156,10 +159,10 @@ class StringUtil {
     }
 
     // make sure to cut at spaces
-    $firstSpacePos = strpos($text, " ", $startPos);
-    $lastSpacePos = strrpos($text, " ", -(strlen($text)-$endPos));
+    $firstSpacePos = strpos($string, " ", $startPos);
+    $lastSpacePos = strrpos($string, " ", -(strlen($string)-$endPos));
 
-    $excerpt1 = substr($text, $firstSpacePos, $lastSpacePos-$firstSpacePos);
+    $excerpt1 = substr($string, $firstSpacePos, $lastSpacePos-$firstSpacePos);
 
     // remove open tags
     $excerpt = preg_replace('/^[^<]*?>|<[^>]*?$/', '', $excerpt1);
@@ -168,7 +171,7 @@ class StringUtil {
 
   /**
    * Extraxt urls from a string.
-   * @param string The string to search in
+   * @param $string The string to search in
    * @return An array with urls
    * @note This method searches for occurences of <a..href="xxx"..>, <img..src="xxx"..>,
    * <input..src="xxx"..> or <form..action="xxx"..> and extracts xxx.
@@ -206,7 +209,7 @@ class StringUtil {
    *
    * @endcode
    *
-   * @param string The string to split
+   * @param $string The string to split
    * @return An array of strings
    */
   public static function quotesplit($string) {
@@ -255,16 +258,16 @@ class StringUtil {
   /**
    * Split string preserving quoted strings
    * code based on: http://www.php.net/manual/en/function.explode.php#94024
-   * @param str String to split
-   * @param delim Regexp to use in preg_split
-   * @param quoteChr Quote character
-   * @param preserve Boolean whether to preserve the quote character or not
+   * @param $string String to split
+   * @param $delim Regexp to use in preg_split
+   * @param $quoteChr Quote character
+   * @param $preserve Boolean whether to preserve the quote character or not
    * @return Array
    */
-  public static function splitQuoted($str, $delim='/ /', $quoteChr='"', $preserve=false){
+  public static function splitQuoted($string, $delim='/ /', $quoteChr='"', $preserve=false){
     $resArr = array();
     $n = 0;
-    $expEncArr = explode($quoteChr, $str);
+    $expEncArr = explode($quoteChr, $string);
     foreach($expEncArr as $encItem) {
       if ($n++%2) {
         $resArr[] = array_pop($resArr) . ($preserve?$quoteChr:'') . $encItem.($preserve?$quoteChr:'');
@@ -281,8 +284,8 @@ class StringUtil {
   /**
    * Convert a string in underscore notation to camel case notation.
    * Code from http://snipt.net/hongster/underscore-to-camelcase/
-   * @param string The string to convert
-   * @param firstLowerCase Boolean whether the first character should be lowercase or not [default: false]
+   * @param $string The string to convert
+   * @param $firstLowerCase Boolean whether the first character should be lowercase or not [default: false]
    * @return The converted string
    */
   public static function underScoreToCamelCase($string, $firstLowerCase=false) {
@@ -301,7 +304,7 @@ class StringUtil {
   /**
    * Escape characters of a string for use in a regular expression
    * Code from http://php.net/manual/de/function.preg-replace.php
-   * @param string The string
+   * @param $string The string
    * @return The escaped string
    */
   public static function escapeForRegex($string) {
@@ -313,7 +316,7 @@ class StringUtil {
 
   /**
    * Remove a trailing comma, if existing.
-   * @param string The string to crop
+   * @param $string The string to crop
    * @return The string
    */
   public static function removeTrailingComma($string) {
@@ -322,7 +325,7 @@ class StringUtil {
 
   /**
    * Get the boolean value of a string
-   * @param string
+   * @param $string
    * @return Boolean or the string, if it does not represent a boolean.
    */
   public static function getBoolean($string) {
@@ -336,7 +339,7 @@ class StringUtil {
   /**
    * Converts all accent characters to ASCII characters.
    * Code from http://stackoverflow.com/questions/2103797/url-friendly-username-in-php/2103815#2103815
-   * @param string Text that might have accent characters
+   * @param $string Text that might have accent characters
    * @return string Filtered string with replaced "nice" characters.
    */
   public static function slug($string) {

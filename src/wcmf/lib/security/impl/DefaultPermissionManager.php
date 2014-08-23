@@ -198,10 +198,10 @@ class DefaultPermissionManager implements PermissionManager {
   /**
    * Authorize the given resource, context, action triple using the
    * temporary permissions or the current user.
-   * @param resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
-   * @param context The context in which the action takes place.
-   * @param action The action to process.
-   * @param returnNullIfNoPermissionExists Optional, default: true
+   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
+   * @param $returnNullIfNoPermissionExists Optional, default: true
    * @return Boolean
    */
   protected function authorizeResource($resource, $context, $action, $returnNullIfNoPermissionExists=true) {
@@ -291,11 +291,11 @@ class DefaultPermissionManager implements PermissionManager {
 
   /**
    * Modify a permission for the given role.
-   * @param resource The resource (e.g. class name of the Controller or OID).
-   * @param context The context in which the action takes place.
-   * @param action The action to process.
-   * @param role The role to authorize.
-   * @param modifier One of the PERMISSION_MODIFIER_ constants, null, if the permission
+   * @param $resource The resource (e.g. class name of the Controller or OID).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
+   * @param $role The role to authorize.
+   * @param $modifier One of the PERMISSION_MODIFIER_ constants, null, if the permission
    *    should be removed.
    * @return boolean
    */

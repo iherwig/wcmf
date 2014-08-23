@@ -91,7 +91,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
   /**
    * Determine if the value is a serialized Node. The default
    * implementation returns false.
-   * @param value The data value
+   * @param $value The data value
    * @return Boolean
    * @note Subclasses override this if necessary
    */
@@ -102,7 +102,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
   /**
    * Determine if the value is a deserialized Node. The default
    * implementation checks if the value is an object of type Node.
-   * @param value The data value
+   * @param $value The data value
    * @return Boolean
    * @note Subclasses override this if necessary
    */
@@ -112,14 +112,14 @@ abstract class HierarchicalFormat extends AbstractFormat {
 
   /**
    * Serialize a Node
-   * @param value The data value
+   * @param $value The data value
    * @return The serialized Node
    */
   protected abstract function serializeNode($value);
 
   /**
    * Deserialize a Node
-   * @param value The data value
+   * @param $value The data value
    * @return An array with keys 'node' and 'data' where the node
    * value is the Node instance and the data value is the
    * remaining part of data, that is not used for deserializing the Node

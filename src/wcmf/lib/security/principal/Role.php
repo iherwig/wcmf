@@ -19,7 +19,7 @@ interface Role {
 
   /**
    * Set the name of the role.
-   * @param name The name of the role.
+   * @param $name The name of the role.
    */
   public function setName($name);
 
@@ -31,7 +31,7 @@ interface Role {
 
   /**
    * Get a Role instance by name.
-   * @param name The role's name
+   * @param $name The role's name
    * @return Role instance.
    */
   public static function getByName($name);

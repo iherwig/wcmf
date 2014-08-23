@@ -60,7 +60,7 @@ class LuceneSearch implements IndexedSearch {
 
   /**
    * Set the path to the search index.
-   * @param indexPath Directory relative to main
+   * @param $indexPath Directory relative to main
    */
   public function setIndexPath($indexPath) {
     $this->_indexPath = FileUtil::realpath(WCMF_BASE.$indexPath).'/';
@@ -82,7 +82,7 @@ class LuceneSearch implements IndexedSearch {
   /**
    * Set if the search index should update itself, when
    * persistent objects are created/updated/deleted.
-   * @param indexPath Directory relative to main
+   * @param $liveUpdate Boolean
    */
   public function setLiveUpdate($liveUpdate) {
     $this->_liveUpdate = $liveUpdate;
@@ -279,7 +279,7 @@ class LuceneSearch implements IndexedSearch {
 
   /**
    * Listen to StateChangeEvents
-   * @param event StateChangeEvent instance
+   * @param $event StateChangeEvent instance
    */
   public function stateChanged(StateChangeEvent $event) {
     if ($this->_liveUpdate) {
@@ -298,7 +298,7 @@ class LuceneSearch implements IndexedSearch {
 
   /**
    * Get the search index.
-   * @param create Boolean whether to create the index, if it does not exist [default: true]
+   * @param $create Boolean whether to create the index, if it does not exist [default: true]
    * @return An instance of Zend_Search_Lucene_Interface or null
    */
   private function getIndex($create = true) {
@@ -331,8 +331,8 @@ class LuceneSearch implements IndexedSearch {
 
   /**
    * Encode the given value according to the input type
-   * @param value
-   * @param inputType
+   * @param $value
+   * @param $inputType
    * @return String
    */
   protected function encodeValue($value, $inputType) {

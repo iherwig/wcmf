@@ -45,8 +45,8 @@ class RemotingServer {
 
   /**
    * Send a request to the server identified by serverKey.
-   * @param serverKey An entry in the configuration section 'remoteserver'
-   * @param request A Request instance
+   * @param $serverKey An entry in the configuration section 'remoteserver'
+   * @param $request A Request instance
    * @return A Response instance
    */
   public function doCall($serverKey, $request) {
@@ -60,7 +60,7 @@ class RemotingServer {
 
   /**
    * Get a client instance for a given server key
-   * @param serverKey An entry in the configuration section 'remoteserver'
+   * @param $serverKey An entry in the configuration section 'remoteserver'
    * @return A client instance or null
    */
   private function getClient($serverKey) {
@@ -84,7 +84,7 @@ class RemotingServer {
 
   /**
    * Get the remote user login and password for a given server key
-   * @param serverKey An entry in the configuration section 'remoteuser'
+   * @param $serverKey An entry in the configuration section 'remoteuser'
    * @return Array with keys 'login', 'password'
    */
   private function getRemoteUser($serverKey) {

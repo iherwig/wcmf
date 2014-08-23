@@ -22,7 +22,7 @@ interface RemotingClient {
 
   /**
    * Do a call to the remote server.
-   * @param request A Request instance
+   * @param $request A Request instance
    * @return A Response instance
    */
   public function call(Request $request);

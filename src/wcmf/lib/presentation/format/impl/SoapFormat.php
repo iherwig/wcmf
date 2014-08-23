@@ -32,7 +32,7 @@ class SoapFormat extends HierarchicalFormat {
 
   /**
    * Set the NodeSerializer instance to use
-   * @param serializer NodeSerializer
+   * @param $serializer NodeSerializer
    */
   public function setSerializer(NodeSerializer $serializer) {
     $this->_serializer = $serializer;

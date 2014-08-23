@@ -102,7 +102,7 @@ class DefaultAuthUser implements AuthUser {
 
   /**
    * Adds one ore more policies to the policy repository of the user.
-   * @param policies An associative array with the policy information
+   * @param $policies An associative array with the policy information
    *    (key=action, value=policy string).
    * @note A policy string looks like this "+*, -guest, +admin"
    */
@@ -117,7 +117,7 @@ class DefaultAuthUser implements AuthUser {
 
   /**
    * Matches the roles of the user and the roles for a certain key
-   * @param val An array containing policy information as an associative array
+   * @param $val An array containing policy information as an associative array
    *     with the keys ('default', 'allow', 'deny'). Where 'allow', 'deny' are arrays
    *     itselves holding roles. 'allow' overwrites 'deny' overwrites 'default'
    * @return Boolean whether the user has access right according to this policy.

@@ -72,7 +72,7 @@ abstract class AbstractFormat implements Format {
 
   /**
    * Modify data before deserialization. The default implementation does nothing.
-   * @param values The request values
+   * @param $values The request values
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
@@ -82,14 +82,14 @@ abstract class AbstractFormat implements Format {
 
   /**
    * Deserialize an array of values.
-   * @param values The array/object of values
+   * @param $values The array/object of values
    * @return The array/object of values
    */
   protected abstract function deserializeValues($values);
 
   /**
    * Modify data after deserialization. The default implementation does nothing.
-   * @param values The request values
+   * @param $values The request values
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
@@ -99,7 +99,7 @@ abstract class AbstractFormat implements Format {
 
   /**
    * Modify data before serialization. The default implementation does nothing.
-   * @param values The response values
+   * @param $values The response values
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
@@ -109,14 +109,14 @@ abstract class AbstractFormat implements Format {
 
   /**
    * Serialize an array of values.
-   * @param values The array/object of values
+   * @param $values The array/object of values
    * @return The array/object of values
    */
   protected abstract function serializeValues($values);
 
   /**
    * Modify data after serialization. The default implementation does nothing.
-   * @param values The response values
+   * @param $values The response values
    * @return The modified values array
    * @note Subclasses override this if necessary
    */
@@ -131,7 +131,7 @@ abstract class AbstractFormat implements Format {
   /**
    * Get a node with the given oid to deserialize values from form fields into it.
    * The method ensures that there is only one instance per oid.
-   * @param oid The oid
+   * @param $oid The oid
    * @return A reference to the Node instance
    */
   protected function getNode(ObjectId $oid) {
