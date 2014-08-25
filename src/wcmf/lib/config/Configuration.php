@@ -40,7 +40,7 @@ interface Configuration {
   /**
    * Parses the given configuration and merges it with already added configurations.
    * @param $name The name of the configuration
-   * @param $processValues Boolean whether values should be processed after parsing (e.g. make arrays) [default: true]
+   * @param $processValues Boolean whether values should be processed after parsing (e.g. make arrays) (default: _true_)
    */
   public function addConfiguration($name, $processValues=true);
 

@@ -11,7 +11,7 @@
 namespace wcmf\lib\core;
 
 /**
- * @class IllegalArgumentException
+ * IllegalArgumentException signals an exception in method arguments.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

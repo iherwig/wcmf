@@ -11,7 +11,7 @@
 namespace wcmf\lib\persistence;
 
 /**
- * @class UnknownFieldException
+ * UnknownFieldException signals an exception in a message.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

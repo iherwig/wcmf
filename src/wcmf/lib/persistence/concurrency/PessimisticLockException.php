@@ -13,7 +13,8 @@ namespace wcmf\lib\persistence\concurrency;
 use wcmf\lib\persistence\concurrency\Lock;
 
 /**
- * @class PessimisticLockException
+ * PessimisticLockException signals an exception when trying to create an
+ * pessimistic lock.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

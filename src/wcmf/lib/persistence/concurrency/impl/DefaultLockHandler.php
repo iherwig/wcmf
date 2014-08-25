@@ -260,7 +260,7 @@ class DefaultLockHandler implements LockHandler {
   /**
    * Remove a given Lock instance from the session
    * @param $oid The locked oid
-   * @param $type One of the Lock::Type constants or null for all types [default: null]
+   * @param $type One of the Lock::Type constants or null for all types (default: _null_)
    */
   protected function removeSessionLock(ObjectId $oid, $type) {
     $session = ObjectFactory::getInstance('session');

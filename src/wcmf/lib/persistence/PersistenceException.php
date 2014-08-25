@@ -11,7 +11,7 @@
 namespace wcmf\lib\persistence;
 
 /**
- * @class PersistenceException
+ * PersistenceException signals an exception in the persistence service.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

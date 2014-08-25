@@ -30,7 +30,7 @@ interface Search {
   /**
    * Search for searchTerm
    * @param $searchTerm
-   * @param $pagingInfo A PagingInfo instance, optional [default: null]
+   * @param $pagingInfo A PagingInfo instance (optional, default: _null_)
    * @return Associative array with object ids as keys and
    * associative array with keys 'oid', 'score', 'summary' as value
    */

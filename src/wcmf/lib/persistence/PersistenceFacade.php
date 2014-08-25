@@ -58,7 +58,7 @@ interface PersistenceFacade {
    * (e.g. greater buildDeph value)
    * @param $oid The object id of the object to construct
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
+   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)
    * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
    */
   function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE);
@@ -70,7 +70,7 @@ interface PersistenceFacade {
    * constructor must be used.
    * @param $type The type of object to build (either fully qualified or simple, if not ambiguous)
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BuildDepth::INFINITE, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
+   *        (except BuildDepth::INFINITE, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)
    * @return PersistentObject
    */
   function create($type, $buildDepth=BuildDepth::SINGLE);
@@ -85,9 +85,9 @@ interface PersistenceFacade {
   /**
    * Get the object ids of objects matching a given criteria. If a PagingInfo instance is passed it will be used and updated.
    * @param $type The type of the object (either fully qualified or simple, if not ambiguous)
-   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param $pagingInfo A reference PagingInfo instance. [default: null]
+   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param $pagingInfo A reference PagingInfo instance. (default: _null_)
    * @return Array containing the ObjectId instances
    */
   function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
@@ -95,9 +95,9 @@ interface PersistenceFacade {
   /**
    * Get the first object id of objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.
    * @param $type The type of the object (either fully qualified or simple, if not ambiguous)
-   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param $pagingInfo A reference PagingInfo instance. [default: null]
+   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param $pagingInfo A reference PagingInfo instance. (default: _null_)
    * @return ObjectId or null
    */
   function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
@@ -106,10 +106,10 @@ interface PersistenceFacade {
    * Load the objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.
    * @param $type The type of the object (either fully qualified or simple, if not ambiguous)
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param $pagingInfo A reference PagingInfo instance (maybe null). [default: null]
+   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
+   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (optional, default: _null_)
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param $pagingInfo A reference PagingInfo instance (optional, default: _null_)
    * @return Array containing the PersistentObject instances
    */
   function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
@@ -118,10 +118,10 @@ interface PersistenceFacade {
    * Load the first object matching a given condition. If a PagingInfo instance is passed it will be used and updated.
    * @param $type The type of the object (either fully qualified or simple, if not ambiguous)
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param $pagingInfo A reference PagingInfo instance. [default: null]
+   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
+   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param $pagingInfo A reference PagingInfo instance (default: _null_)
    * @return PersistentObject or null
    */
   function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);

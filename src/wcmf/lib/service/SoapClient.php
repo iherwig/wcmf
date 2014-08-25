@@ -15,9 +15,7 @@ use SoapVar;
 use wcmf\lib\core\Log;
 
 /**
- * @class SoapClient
- * @ingroup Presentation
- * @brief SoapClient is used to communicate with wCMF soap services.
+ * SoapClient is used to communicate with wCMF soap services.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -45,7 +43,7 @@ class SoapClient extends \SoapClient {
   /**
    * Call the given soap method
    * @param $method
-   * @param $params [optional]
+   * @param $params (optional, default: empty array)
    */
   public function call($method, $params=array()) {
     $header = $this->generateWSSecurityHeader($this->_user, $this->_password);

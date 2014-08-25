@@ -36,7 +36,7 @@ class InternalLink {
    * Make an internal link to an object
    * @param $oid The object id of the object to link to
    * @param $anchorOID The object id of the subobject to link to
-   * @param $anchorName The name inside the subobject to link to (null, if the object itself should be linked), [default: null]
+   * @param $anchorName The name inside the subobject to link to (null, if the object itself should be linked) (default: _null_)
    * @return The link
    */
   public static function makeAnchorLink(ObjectId $oid, ObjectId $anchorOID, $anchorName=null) {

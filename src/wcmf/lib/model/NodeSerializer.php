@@ -30,8 +30,8 @@ interface NodeSerializer {
   /**
    * Deserialize a Node from serialized data. Only values given in data are being set.
    * @param $data An array containing the serialized Node data
-   * @param $parent The parent Node [default: null]
-   * @param $role The role of the serialized Node in relation to parent [default: null]
+   * @param $parent The parent Node (default: _null_)
+   * @param $role The role of the serialized Node in relation to parent (default: _null_)
    * @return An array with keys 'node' and 'data' where the node
    * value is the Node instance and the data value is the
    * remaining part of data, that is not used for deserializing the Node

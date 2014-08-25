@@ -11,7 +11,7 @@
 namespace wcmf\lib\security;
 
 /**
- * @class AuthorizationException
+ * AuthorizationException signals an exception in authorization.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

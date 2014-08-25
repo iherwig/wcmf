@@ -33,7 +33,7 @@ class NodeUtil {
    * @param $otherRole The role of the type at the other end (maybe null, if only type shoudl match)
    * @param $otherType The type at the other end (maybe null, if only role shoudl match)
    * @param $hierarchyType The hierarchy type that the other type has in relation to this type
-   *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
+   *                      'parent', 'child', 'undefined' or 'all' to get all relations (default: 'all')
    * @return An array of PathDescription instances
    */
   public static function getConnections($type, $otherRole, $otherType, $hierarchyType='all') {
@@ -60,7 +60,7 @@ class NodeUtil {
    * @param $otherRole The role of the type at the other end (maybe null, if only type shoudl match)
    * @param $otherType The type at the other end (maybe null, if only role shoudl match)
    * @param $hierarchyType The hierarchy type that the other type has in relation to this type
-   *                      'parent', 'child', 'undefined' or 'all' to get all relations [default: 'all']
+   *                      'parent', 'child', 'undefined' or 'all' to get all relations (default: 'all')
    * @param $result Array of PathDescriptions after execution
    * @param $currentPath Internal use only
    */

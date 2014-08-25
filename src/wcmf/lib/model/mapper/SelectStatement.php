@@ -35,7 +35,7 @@ class SelectStatement extends Zend_Db_Select {
    * Get the SelectStatement instance with the given id.
    * If the id equals SelectStatement::NO_CACHE or is not cached, a new one will be created.
    * @param $mapper RDBMapper instance used to retrieve the database connection
-   * @param $id The statement id, optional [default: NO_CACHE]
+   * @param $id The statement id (optional, default: _SelectStatement::NO_CACHE_)
    * @return SelectStatement
    */
   public static function get(RDBMapper $mapper, $id=self::NO_CACHE) {
@@ -53,7 +53,7 @@ class SelectStatement extends Zend_Db_Select {
   /**
    * Constructor
    * @param $mapper RDBMapper instance
-   * @param $id The statement id, optional [default: NO_CACHE]
+   * @param $id The statement id (optional, default: _SelectStatement::NO_CACHE_)
    */
   public function __construct(RDBMapper $mapper, $id=self::NO_CACHE) {
     parent::__construct($mapper->getConnection());

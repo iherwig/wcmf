@@ -165,7 +165,7 @@ class ControllerMessage {
   /**
    * Get a header value
    * @param $name The header name
-   * @param $default The default value if the header is not defined [default: null]
+   * @param $default The default value if the header is not defined (default: _null_)
    * @return The header value or default, if it does not exist
    */
   public function getHeader($name, $default=null) {
@@ -253,9 +253,9 @@ class ControllerMessage {
   /**
    * Get a value
    * @param $name The name of the variable
-   * @param $default The default value if the value is not defined [optional, default: null]
-   * @param $filter PHP filter constant (FILTER_SANITIZE/FILTER_VALIDATE) to be applied on the value [optional]
-   * @param $options Filter parameters [optional]
+   * @param $default The default value if the value is not defined (optional, default: _null_)
+   * @param $filter PHP filter constant (FILTER_SANITIZE/FILTER_VALIDATE) to be applied on the value (optional, default: _null_)
+   * @param $options Filter parameters (optional, default: _null_)
    * @return The (filtered) value or default, if it does not exist
    */
   public function getValue($name, $default=null, $filter=null, $options=null) {
@@ -271,7 +271,7 @@ class ControllerMessage {
   /**
    * Get a value as boolean
    * @param $name The name of the variable
-   * @param $default The default value if the value is not defined [default: false]
+   * @param $default The default value if the value is not defined (default: _false_)
    * @return The value or null if it does not exist
    */
   public function getBooleanValue($name, $default=false) {

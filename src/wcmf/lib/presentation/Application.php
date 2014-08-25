@@ -20,9 +20,7 @@ use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
 
 /**
- * @class Application
- * @ingroup Presentation
- * @brief The main application class. Does all the initialization.
+ * Application is the main application class, that does all the initialization.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -47,11 +45,11 @@ class Application {
   /**
    * Initialize the application.
    *
-   * @param $configPath The path where config files reside (as seen from main.php), optional (default: 'config/')
-   * @param $mainConfigFile The main configuration file to use, optional (default: 'config.ini')
-   * @param $defaultController The controller to call if none is given in request parameters, optional (default: '')
-   * @param $defaultContext The context to set if none is given in request parameters, optional (default: '')
-   * @param $defaultAction The action to perform if none is given in request parameters, optional (default: 'login')
+   * @param $configPath The path where config files reside (as seen from main.php) (optional, default: 'config/')
+   * @param $mainConfigFile The main configuration file to use (optional, default: 'config.ini')
+   * @param $defaultController The controller to call if none is given in request parameters (optional, default: '')
+   * @param $defaultContext The context to set if none is given in request parameters (optional, default: '')
+   * @param $defaultAction The action to perform if none is given in request parameters (optional, default: 'login')
    * @return Request instance representing the current HTTP request
    */
   public function initialize($configPath='../config/', $mainConfigFile='config.ini',

@@ -285,7 +285,7 @@ class StringUtil {
    * Convert a string in underscore notation to camel case notation.
    * Code from http://snipt.net/hongster/underscore-to-camelcase/
    * @param $string The string to convert
-   * @param $firstLowerCase Boolean whether the first character should be lowercase or not [default: false]
+   * @param $firstLowerCase Boolean whether the first character should be lowercase or not (default: _false_)
    * @return The converted string
    */
   public static function underScoreToCamelCase($string, $firstLowerCase=false) {

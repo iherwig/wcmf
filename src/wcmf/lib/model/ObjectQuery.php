@@ -121,7 +121,7 @@ class ObjectQuery extends AbstractQuery {
   /**
    * Constructor.
    * @param $type The type to search for
-   * @param $queryId Identifier for the query cache (maybe null to prevent caching). [default: null]
+   * @param $queryId Identifier for the query cache (maybe null to prevent caching) (default: _null_)
    */
   public function __construct($type, $queryId=SelectStatement::NO_CACHE) {
     // don't use PersistenceFacade::create, because template instances must be transient
@@ -152,9 +152,9 @@ class ObjectQuery extends AbstractQuery {
   /**
    * Get an object template for a given type.
    * @param $type The type to query for
-   * @param $alias An alias name to be used in the query. if null, use the default name [default: null]
+   * @param $alias An alias name to be used in the query. if null, use the default name (default: _null_)
    * @param $combineOperator One of the Criteria::OPERATOR constants that precedes
-   *    the conditions described in the template [default: Criteria::OPERATOR_AND]
+   *    the conditions described in the template (default: _Criteria::OPERATOR_AND_)
    * @return Node
    */
   public function getObjectTemplate($type, $alias=null, $combineOperator=Criteria::OPERATOR_AND) {
@@ -187,9 +187,9 @@ class ObjectQuery extends AbstractQuery {
   /**
    * Register an object template at the query.
    * @param $template A reference to the template to register (must be an instance of PersistentObject)
-   * @param $alias An alias name to be used in the query. if null, use the default name [default: null]
+   * @param $alias An alias name to be used in the query. if null, use the default name (default: _null_)
    * @param $combineOperator One of the Criteria::OPERATOR constants that precedes
-   *    the conditions described in the template [default: Criteria::OPERATOR_AND]
+   *    the conditions described in the template (default: Criteria::OPERATOR_AND)
    */
   public function registerObjectTemplate(Node $template, $alias=null, $combineOperator=Criteria::OPERATOR_AND) {
     if ($template != null) {
@@ -226,7 +226,7 @@ class ObjectQuery extends AbstractQuery {
    * Group different templates together to realize brackets in the query.
    * @note Grouped templates will be ignored, when iterating over the object tree and appended at the end.
    * @param $templates An array of references to the templates contained in the group
-   * @param $combineOperator One of the Criteria::OPERATOR constants that precedes the group [default: Criteria::OPERATOR_AND]
+   * @param $combineOperator One of the Criteria::OPERATOR constants that precedes the group (default: _Criteria::OPERATOR_AND_)
    */
   public function makeGroup($templates, $combineOperator=Criteria::OPERATOR_AND) {
     $this->_groups[] = array('tpls' => $templates, self::PROPERTY_COMBINE_OPERATOR => $combineOperator);

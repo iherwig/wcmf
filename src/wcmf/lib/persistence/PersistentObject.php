@@ -436,8 +436,8 @@ class PersistentObject {
    * @param $name The name of the item to set.
    * @param $value The value of the item.
    * @param $forceSet Boolean whether to set the value even if it is already set
-   *   and to bypass validation (used to notify listeners) [default: false]
-   * @param $trackChange Boolean whether to track the change (change state, notify listeners) or not [default: true]
+   *   and to bypass validation (used to notify listeners) (default: _false_)
+   * @param $trackChange Boolean whether to track the change (change state, notify listeners) or not (default: _true_)
    *      Only set this false, if you know, what you are doing
    * @return Boolean whether the operation succeeds or not
    */
@@ -645,7 +645,7 @@ class PersistentObject {
    * or by the PersistentMapper.
    * @param $excludeDefaultProperties Boolean whether to only return the
    *   properties defined by the PersistentObject::setProperty() method or
-   *   also the properties defined by the mapper [default: false]
+   *   also the properties defined by the mapper (default: _false_)
    * @return An array consisting of the names.
    */
   public function getPropertyNames($excludeDefaultProperties=false) {

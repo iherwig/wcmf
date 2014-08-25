@@ -15,7 +15,7 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * @class ApplicationException
+ * ApplicationException signals a general application exception.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

@@ -46,7 +46,7 @@ interface View {
    * Render the given template
    * @param $tplFile The template file
    * @param $cacheId The id of the view (@see Controller::getCacheId())
-   * @param $display Boolean whether to output the result or return it [default: true]
+   * @param $display Boolean whether to output the result or return it (default: _true_)
    */
   public function render($tplFile, $cacheId=null, $display=true);
 

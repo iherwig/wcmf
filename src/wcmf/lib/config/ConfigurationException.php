@@ -11,7 +11,7 @@
 namespace wcmf\lib\config;
 
 /**
- * @class ConfigurationException
+ * ConfigurationException signals an exception in the configuration.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

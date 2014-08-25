@@ -298,7 +298,7 @@ class LuceneSearch implements IndexedSearch {
 
   /**
    * Get the search index.
-   * @param $create Boolean whether to create the index, if it does not exist [default: true]
+   * @param $create Boolean whether to create the index, if it does not exist (default: _true_)
    * @return An instance of Zend_Search_Lucene_Interface or null
    */
   private function getIndex($create = true) {

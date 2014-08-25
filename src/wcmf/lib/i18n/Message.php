@@ -69,7 +69,7 @@ class Message {
    * flipped.
    * @param $message The message to translate (%0%, %1%, ... will be replaced by given parameters).
    * @param $parameters An array of values for parameter substitution in the message.
-   * @param $lang The language, optional, default: ''.
+   * @param $lang The language (optional, default: '')
    * @return The localized string
    */
   public static function get($message, $parameters=null, $lang='') {
@@ -104,7 +104,7 @@ class Message {
   /**
    * The getAll() method is used to get a localized list of all defined strings.
    * See Message::get() for more information.
-   * @param $lang The language, optional, default: ''.
+   * @param $lang The language (optional, default: '')
    * @return An array of localized string
    */
   public static function getAll($lang='') {
@@ -118,7 +118,7 @@ class Message {
 
   /**
    * Get all translations for a language.
-   * @param $lang The language, optional, default: ''.
+   * @param $lang The language (optional, default: '')
    * @return The translations as associative array
    */
   private static function getTranslations($lang) {

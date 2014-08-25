@@ -37,7 +37,7 @@ class Criteria {
    *   the attribute's value
    * @param $value The value to compare the object with
    * @param $combineOperator The Criteria::OPERATOR to use, when this criteria is
-   *   combined with other criteria, optional [default: Criteria::OPERATOR_AND]
+   *   combined with other criteria (optional, default: _Criteria::OPERATOR_AND_)
    */
   public function __construct($type, $attribute, $operator, $value, $combineOperator=Criteria::OPERATOR_AND) {
     $this->type = $type;

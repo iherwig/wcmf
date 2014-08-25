@@ -113,7 +113,7 @@ class PersistentObjectProxy {
    * Load the PersistentObject instance. Use this method if the subject should be loaded
    * with a depth greater than BuildDepth::SINGLE
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        [default: BuildDepth::SINGLE)]
+   *        (default: _BuildDepth::SINGLE_)
    */
   public function resolve($buildDepth=BuildDepth::SINGLE) {
     $this->_realSubject = ObjectFactory::getInstance('persistenceFacade')->load($this->_oid, $buildDepth);

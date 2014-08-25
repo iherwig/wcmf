@@ -23,9 +23,7 @@ use wcmf\lib\presentation\Response;
 use wcmf\lib\util\URIUtil;
 
 /**
- * @class SoapServer
- * @ingroup Presentation
- * @brief SoapServer extends nusoap server to actually process
+ * SoapServer extends nusoap server to actually process
  * requests inside the application context.
  *
  * @author ingo herwig <ingo@wemove.com>

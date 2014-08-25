@@ -29,7 +29,7 @@ class PagingInfo {
    * of objects, because an extra count query may be omitted.
    * @param $pageSize The pageSize (-1 to set no page size)
    * @param $ignoreTotalCount Boolean whether this instance ignores the
-   *    total count or not, optional [default: false]
+   *    total count or not (optional, default: _false_)
    */
   public function __construct($pageSize, $ignoreTotalCount=false) {
     $this->_pageSize = intval($pageSize);

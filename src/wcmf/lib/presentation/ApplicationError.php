@@ -56,7 +56,7 @@ class ApplicationError {
    * @param $message An error message which is displayed to the user
    * @param $level One of the ERROR_LEVEL constants
    * @param $data Some error codes required to transmit further information
-   *             to the client, optional [default: null]
+   *             to the client (optional, default: _null_)
    */
   private function __construct($code, $message, $level, $data=null) {
     $this->_code = $code;
@@ -114,7 +114,7 @@ class ApplicationError {
    * Factory method for retrieving a predefind error instance.
    * @param $code An error code
    * @param $data Some error codes required to transmit further information
-   *             to the client, optional [default: null]
+   *             to the client (optional, default: _null_)
    * @return ApplicationError
    */
   public static function get($code, $data=null) {

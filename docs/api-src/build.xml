@@ -1,0 +1,23 @@
+<project name="wCMF documentation" default="dist" basedir=".">
+  <description>wCMF documentation build file</description>
+
+  <target name="properties" description="define properties">
+    <property name="dist.dir" value="../api-gen/html"/>
+  </target>
+
+  <target name="dist" depends="properties" description="build the documentation" >
+    <mkdir dir="${dist.dir}"/>
+    <copy todir="${dist.dir}/theme">
+      <fileset dir="theme/">
+        <include name="**"/>
+      </fileset>
+    </copy>
+    <exec executable="doxygen">
+      <arg value="doxyfile.txt"/>
+    </exec>
+  </target>
+
+  <target name="clean" depends="properties" description="clean up" >
+    <delete dir="${dist.dir}"/>
+  </target>
+</project>

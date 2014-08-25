@@ -31,6 +31,10 @@ use wcmf\lib\presentation\Response;
  * For details about the paramters, see documentation for the methods
  * RESTController::handleGet(), RESTController::handlePost(),
  * RESTController::handlePut(), RESTController::handleDelete()
+ *
+ * | __Response Actions__   | |
+ * |------------------------|-------------------------
+ * | `ok`                   | In all cases
  * </div>
  * </div>
  *
@@ -92,6 +96,7 @@ class RESTController extends Controller {
    */
   protected function doExecute() {
     $request = $this->getRequest();
+    $response = $this->getResponse();
     switch ($request->getMethod()) {
       case 'GET':
         $this->handleGet();
@@ -109,6 +114,7 @@ class RESTController extends Controller {
         $this->handleGet();
         break;
     }
+    $response->setAction('ok');
   }
 
   /**
@@ -223,8 +229,6 @@ class RESTController extends Controller {
       $total = $subResponse->getValue('totalCount');
       $response->setHeader('Content-Range', 'items '.$offset.'-'.($offset+$limit-1).'/'.$total);
     }
-
-    return false;
   }
 
   /**
@@ -295,8 +299,6 @@ class RESTController extends Controller {
       $response->setValues($subResponse->getValues());
       $response->setStatus(Response::STATUS_400);
     }
-
-    return false;
   }
 
   /**
@@ -398,8 +400,6 @@ class RESTController extends Controller {
       $response->setValues($subResponse->getValues());
       $response->setStatus(Response::STATUS_400);
     }
-
-    return false;
   }
 
   /**
@@ -437,8 +437,6 @@ class RESTController extends Controller {
       // in case of error, return default response
       $response->setStatus(Response::STATUS_400);
     }
-
-    return false;
   }
 
   /**

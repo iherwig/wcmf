@@ -43,7 +43,7 @@ interface IndexedSearch extends Search {
   /**
    * Commit changes made on the index.
    * @note This method only commits the index if changes were made using the methods mentioned above.
-   * @param $optimize Boolean whether the index should be optimized after commit [default: true].
+   * @param $optimize Boolean whether the index should be optimized after commit (default: _true_).
    */
   public function commitIndex($optimize = true);
 

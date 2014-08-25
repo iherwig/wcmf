@@ -34,7 +34,7 @@ interface LockHandler {
   /**
    * Release the lock the current user owns on an object id.
    * @param $oid ObjectId of the object to release.
-   * @param $type One of the Lock::Type constants or null for all types [default: null]
+   * @param $type One of the Lock::Type constants or null for all types (default: _null_)
    */
   public function releaseLock(ObjectId $oid, $type=null);
 

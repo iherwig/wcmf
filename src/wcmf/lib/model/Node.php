@@ -59,7 +59,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the names of all items.
-   * @param $includeRelations Boolean whether to include relations or not [default: true]
+   * @param $includeRelations Boolean whether to include relations or not (default: _true_)
    * @return An array of item names.
    */
   public function getValueNames($includeRelations=true) {
@@ -149,14 +149,14 @@ class Node extends PersistentObject {
   /**
    * Get Nodes that match given conditions from a list.
    * @param $nodeList An array of nodes to filter or a single Node.
-   * @param $oid The object id that the Nodes should match [maybe null, default: null].
+   * @param $oid The object id that the Nodes should match (optional, default: _null_)
    * @param $type The type that the Nodes should match (either fully qualified or simple, if not ambiguous)
-   *        [maybe null, default: null].
+   *        (optional, default: _null_)
    * @param $values An assoziative array holding key value pairs that the Node values should match
-   *        [values are interpreted as regular expression, parameter maybe null, default: null].
+   *        (values are interpreted as regular expression, optional, default: _null_)
    * @param $properties An assoziative array holding key value pairs that the Node properties should match
-   *        [values are interpreted as regular expression, parameter maybe null, default: null].
-   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
+   *        (values are interpreted as regular expression, optional, default: _null_)
+   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return An Array holding references to the Nodes that matched.
    */
   public static function filter(array $nodeList, ObjectId $oid=null, $type=null, $values=null,
@@ -279,7 +279,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the number of children of the Node.
-   * @param $memOnly Boolean whether to only get the number of loaded children or all children [default: true].
+   * @param $memOnly Boolean whether to only get the number of loaded children or all children (default: _true_).
    * @return The number of children.
    */
   public function getNumChildren($memOnly=true) {
@@ -290,10 +290,10 @@ class Node extends PersistentObject {
    * Add a Node to the given relation. Delegates to setValue internally.
    * @param $other PersistentObject or PersistentObjectProxy
    * @param $role The role of the Node in the created relation. If null, the role will be
-   *        the Node's simple type (without namespace). [default: null]
+   *        the Node's simple type (without namespace) (default: _null_)
    * @param $forceSet @see PersistentObject::setValue()
    * @param $trackChange @see PersistentObject::setValue()
-   * @param $updateOtherSide Boolean whether to update also the other side of the relation [default: true]
+   * @param $updateOtherSide Boolean whether to update also the other side of the relation (default: _true_)
    * @return Boolean whether the operation succeeds or not
    */
   public function addNode($other, $role=null, $forceSet=false, $trackChange=true, $updateOtherSide=true) {
@@ -360,8 +360,8 @@ class Node extends PersistentObject {
   /**
    * Delete a Node from the given relation.
    * @param $other The Node to delete.
-   * @param $role The role of the Node. If null, the role is the Node's type (without namespace). [default: null]
-   * @param $updateOtherSide Boolean whether to update also the other side of the relation [default: true]
+   * @param $role The role of the Node. If null, the role is the Node's type (without namespace) (default: _null_)
+   * @param $updateOtherSide Boolean whether to update also the other side of the relation (default: _true_)
    */
   public function deleteNode(PersistentObject $other, $role=null, $updateOtherSide=true) {
     if ($role == null) {
@@ -454,9 +454,9 @@ class Node extends PersistentObject {
   /**
    * Load the children of a given role and add them. If all children should be
    * loaded, set the role parameter to null.
-   * @param $role The role of children to load (maybe null, to load all children) [default: null]
+   * @param $role The role of children to load (maybe null, to load all children) (default: _null_)
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        [default: BuildDepth::SINGLE)]
+   *        (default: _BuildDepth::SINGLE_)
    */
   public function loadChildren($role=null, $buildDepth=BuildDepth::SINGLE) {
     if ($role != null) {
@@ -469,12 +469,12 @@ class Node extends PersistentObject {
 
   /**
    * Get the first child that matches given conditions.
-   * @param $role The role that the child should match [maybe null, default: null].
+   * @param $role The role that the child should match (optional, default: _null_).
    * @param $type The type that the child should match (either fully qualified or simple, if not ambiguous)
-   *        [maybe null, default: null].
-   * @param $values An assoziative array holding key value pairs that the child values should match [maybe null, default: null].
-   * @param $properties An assoziative array holding key value pairs that the child properties should match [maybe null, default: null].
-   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
+   *        (optional, default: _null_).
+   * @param $values An assoziative array holding key value pairs that the child values should match (optional, default: _null_).
+   * @param $properties An assoziative array holding key value pairs that the child properties should match (optional, default: _null_).
+   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Node instance or null.
    */
   public function getFirstChild($role=null, $type=null, $values=null, $properties=null, $useRegExp=true) {
@@ -489,7 +489,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the Node's children.
-   * @param $memOnly Boolean whether to only get the loaded children or all children [default: true].
+   * @param $memOnly Boolean whether to only get the loaded children or all children (default: _true_).
    * @return An array of Node and/or PersistentObjectProxy instances.
    */
   public function getChildren($memOnly=true) {
@@ -501,13 +501,13 @@ class Node extends PersistentObject {
    * @note This method will only return objects that are already loaded, to get all objects in
    * the given relation (including proxies), use the Node::getValue() method and filter the returned
    * list afterwards.
-   * @param $oid The object id that the children should match [maybe null, default: null].
-   * @param $role The role that the children should match [maybe null, default: null].
+   * @param $oid The object id that the children should match (optional, default: _null_).
+   * @param $role The role that the children should match (optional, default: _null_).
    * @param $type The type that the children should match (either fully qualified or simple, if not ambiguous)
-   *        [maybe null, default: null].
-   * @param $values An assoziative array holding key value pairs that the children values should match [maybe null, default: null].
-   * @param $properties An assoziative array holding key value pairs that the children properties should match [maybe null, default: null].
-   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
+   *        (optional, default: _null_).
+   * @param $values An assoziative array holding key value pairs that the children values should match (optional, default: _null_).
+   * @param $properties An assoziative array holding key value pairs that the children properties should match (optional, default: _null_).
+   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Array containing children Nodes that matched (proxies not included).
    */
   public function getChildrenEx(ObjectId $oid=null, $role=null, $type=null, $values=null,
@@ -554,9 +554,9 @@ class Node extends PersistentObject {
   /**
    * Load the parents of a given role and add them. If all parents should be
    * loaded, set the role parameter to null.
-   * @param $role The role of parents to load (maybe null, to load all parents) [default: null]
+   * @param $role The role of parents to load (maybe null, to load all parents) (default: _null_)
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        [default: BuildDepth::SINGLE)]
+   *        (default: _BuildDepth::SINGLE_)
    */
   public function loadParents($role=null, $buildDepth=BuildDepth::SINGLE) {
     if ($role != null) {
@@ -569,7 +569,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the number of parents of the Node.
-   * @param $memOnly Boolean whether to only get the number of loaded parents or all parents [default: true].
+   * @param $memOnly Boolean whether to only get the number of loaded parents or all parents (default: _true_).
    * @return The number of parents.
    */
   public function getNumParents($memOnly=true) {
@@ -593,12 +593,12 @@ class Node extends PersistentObject {
 
   /**
    * Get the first parent that matches given conditions.
-   * @param $role The role that the parent should match [maybe null, default: null].
+   * @param $role The role that the parent should match (optional, default: _null_).
    * @param $type The type that the parent should match (either fully qualified or simple, if not ambiguous)
-   *        [maybe null, default: null].
-   * @param $values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
-   * @param $properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
-   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
+   *        (optional, default: _null_).
+   * @param $values An assoziative array holding key value pairs that the parent values should match (optional, default: _null_).
+   * @param $properties An assoziative array holding key value pairs that the parent properties should match (optional, default: _null_).
+   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Node instance or null.
    */
   public function getFirstParent($role=null, $type=null, $values=null, $properties=null, $useRegExp=true) {
@@ -614,7 +614,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the Nodes parents.
-   * @param $memOnly Boolean whether to only get the loaded parents or all parents [default: true].
+   * @param $memOnly Boolean whether to only get the loaded parents or all parents (default: _true_).
    * @return An array of Node and/or PersistentObjectProxy instances.
    */
   public function getParents($memOnly=true) {
@@ -626,13 +626,13 @@ class Node extends PersistentObject {
    * @note This method will only return objects that are already loaded, to get all objects in
    * the given relation (including proxies), use the Node::getValue() method and filter the returned
    * list afterwards.
-   * @param $oid The object id that the parent should match [maybe null, default: null].
-   * @param $role The role that the parents should match [maybe null, default: null].
+   * @param $oid The object id that the parent should match (optional, default: _null_).
+   * @param $role The role that the parents should match (optional, default: _null_).
    * @param $type The type that the parents should match (either fully qualified or simple, if not ambiguous)
-   *        [maybe null, default: null].
-   * @param $values An assoziative array holding key value pairs that the parent values should match [maybe null, default: null].
-   * @param $properties An assoziative array holding key value pairs that the parent properties should match [maybe null, default: null].
-   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not [default:true]
+   *        (optional, default: _null_).
+   * @param $values An assoziative array holding key value pairs that the parent values should match (optional, default: _null_).
+   * @param $properties An assoziative array holding key value pairs that the parent properties should match (optional, default: _null_).
+   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Array containing parent Nodes that matched (proxies not included).
    */
   public function getParentsEx(ObjectId $oid=null, $role=null, $type=null, $values=null,
@@ -703,7 +703,7 @@ class Node extends PersistentObject {
    * Load all objects in the given set of relations
    * @param $roles An array of relation (=role) names
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        [default: BuildDepth::SINGLE)]
+   *        (default: _BuildDepth::SINGLE_)
    */
   protected function loadRelations(array $roles, $buildDepth=BuildDepth::SINGLE) {
     $oldState = $this->getState();
@@ -749,7 +749,7 @@ class Node extends PersistentObject {
 
   /**
    * Get the relation descriptions of a given hierarchyType.
-   * @param $hierarchyType @see PersistenceMapper::getRelations [default: 'all']
+   * @param $hierarchyType @see PersistenceMapper::getRelations (default: 'all')
    * @return An array containing the RelationDescription instances.
    */
   protected function getRelations($hierarchyType='all') {
@@ -763,7 +763,7 @@ class Node extends PersistentObject {
   /**
    * Get the relatives of a given hierarchyType.
    * @param $hierarchyType @see PersistenceMapper::getRelations
-   * @param $memOnly Boolean whether to only get the relatives in memory or all relatives (including proxies) [default: true].
+   * @param $memOnly Boolean whether to only get the relatives in memory or all relatives (including proxies) (default: _true_).
    * @return An array containing the relatives.
    */
   public function getRelatives($hierarchyType, $memOnly=true) {
@@ -798,7 +798,7 @@ class Node extends PersistentObject {
   /**
    * Get the number of relatives of a given hierarchyType.
    * @param $hierarchyType @see PersistenceMapper::getRelations
-   * @param $memOnly Boolean whether to only get the number of the relatives in memory or all relatives [default: true].
+   * @param $memOnly Boolean whether to only get the number of the relatives in memory or all relatives (default: _true_).
    * @return The number of relatives.
    */
   public function getNumRelatives($hierarchyType, $memOnly=true) {

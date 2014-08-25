@@ -81,8 +81,8 @@ class PDFTemplate {
    * instances (e.g. if the same data should be written to every template page, put one
    * instance into the pages array and set cycle to true)
    * @param $pages An array of PDFPage instances
-   * @param $cycle Boolean whether to cycle the PDFPage instances or not [default: false]
-   * @param $data An optional data object, that will passed to the PDFPage::render method [default: null]
+   * @param $cycle Boolean whether to cycle the PDFPage instances or not (default: _false_)
+   * @param $data An optional data object, that will passed to the PDFPage::render method (default: _null_)
    */
   public function setPages($pages, $cycle=false, $data=null) {
     $this->_pages = $pages;

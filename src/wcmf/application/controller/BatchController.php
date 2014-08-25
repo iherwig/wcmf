@@ -201,7 +201,7 @@ abstract class BatchController extends Controller {
    *      The callback method must accept the following parameters:
    *      1. array parameter (the object ids to process in the current call)
    *      2. optionally array parameter (the additional arguments)
-   * @param $args Assoziative array of additional callback arguments (application specific) [default: null]
+   * @param $args Assoziative array of additional callback arguments (application specific) (default: _null_)
    */
   protected function addWorkPackage($name, $size, $oids, $callback, $args=null) {
     $request = $this->getRequest();

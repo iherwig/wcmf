@@ -11,7 +11,8 @@
 namespace wcmf\lib\persistence\concurrency;
 
 /**
- * @class OptimisticLockException
+ * OptimisticLockException signals an exception when trying to create an
+ * optimistic lock.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

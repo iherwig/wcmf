@@ -11,7 +11,7 @@
 namespace wcmf\lib\persistence;
 
 /**
- * @class ValidationException
+ * ValidationException signals an exception in validation.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

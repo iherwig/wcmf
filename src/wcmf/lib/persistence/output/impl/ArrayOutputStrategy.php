@@ -24,7 +24,7 @@ class ArrayOutputStrategy implements OutputStrategy {
 
   /**
    * Constructor
-   * @param $writeValueProperties Boolean whether to write value properties or not [default: false]
+   * @param $writeValueProperties Boolean whether to write value properties or not (default: _false_)
    */
   public function __construct($writeValueProperties=false) {
     $this->_writeValueProperties = $writeValueProperties;

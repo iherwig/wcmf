@@ -11,7 +11,7 @@
 namespace wcmf\lib\io;
 
 /**
- * @class IOException
+ * IOException signals an exception in i/o operations.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

@@ -82,7 +82,7 @@ interface Localization {
    * Remove translations for a given entity.
    * @param $oid The id of the object
    * @param $lang The language of the translation to remove. If null, all translations
-   *    will be deleted [default: null]
+   *    will be deleted (default: _null_)
    */
   public function deleteTranslation(ObjectId $oid, $lang=null);
 

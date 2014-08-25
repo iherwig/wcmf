@@ -42,9 +42,9 @@ class ObjectId {
    * @param $type The type name of the object (either fully qualified or simple, if not ambiguous)
    * @param $id Either a single value or an array of values (for compound primary keys) identifying
    * the object between others of the same type. If not given, a dummy id will be
-   * assigned. [optional, default: null]
+   * assigned (optional, default: _null_)
    * @param $prefix A prefix for identifying a set of objects belonging to one storage in a
-   * distributed enviroment.
+   * distributed enviroment
    * @note If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
    */

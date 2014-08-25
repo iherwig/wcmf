@@ -18,11 +18,11 @@
 * Purpose:  repeat a template block a given number of times and replace
 *           {literal}{$index}{/literal} by the current index
 *           (NOTE: $index has to be enclosed by literal)
-* Parameters: count [required]  - number of times to repeat
-*             assign [optional] - variable to collect output
-*             startindex [optional] - index value to start from
-*             strformat [optional] - format string to apply on index
-*             separator [optional] - separator to be added inbetween
+* Parameters: count (required)  - number of times to repeat
+*             assign (optional) - variable to collect output
+*             startindex (optional) - index value to start from
+*             strformat (optional) - format string to apply on index
+*             separator (optional) - separator to be added inbetween
 * Usage:    {repeat count=$content->getValue("numPages") startindex="1" strformat="%02s" separator=" | "}
 *               ... text to repeat {literal}{$index}{/literal} ...
 *           {/repeat}

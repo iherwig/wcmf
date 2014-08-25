@@ -36,7 +36,7 @@ use wcmf\lib\presentation\Controller;
  * | Parameter              | Description
  * |------------------------|-------------------------
  * | _in_ / _out_           | Key/value pairs of serialized object ids and PersistentObject instances to save
- * | _in_ `uploadDir`       | The directory where attached files should be stored on the server, optional (see SaveController::getUploadDir())
+ * | _in_ `uploadDir`       | The directory where attached files should be stored on the server (optional) (see SaveController::getUploadDir())
  * | _out_ `oid`            | The object id of the last newly created object
  * | __Response Actions__   | |
  * | `ok`                   | In all cases
@@ -365,7 +365,7 @@ class SaveController extends Controller {
    * @param $oid The ObjectId of the object
    * @param $valueName The name of the value of the object identified by oid
    * @param $filename The name of the file to upload (including path)
-   * @param $mimeType The mime type of the file (if null it will not be checked) [default: null]
+   * @param $mimeType The mime type of the file (if null it will not be checked) (default: _null_)
    * @return Boolean whether the file is ok or not.
    */
   protected function checkFile(ObjectId $oid, $valueName, $filename, $mimeType=null) {
@@ -442,7 +442,7 @@ class SaveController extends Controller {
    * @param $node A reference to the Node to confirm.
    * @param $valueName The name of the value to save.
    * @param $newValue The new value to set.
-   * @return Boolean whether the value should be changed [default: true].
+   * @return Boolean whether the value should be changed (default: _true_).
    */
   protected function confirmSaveValue($node, $valueName, $newValue) {
     return true;
@@ -452,7 +452,7 @@ class SaveController extends Controller {
    * Confirm save action on given Node. This method is called before modify()
    * @note subclasses will override this to implement special application requirements.
    * @param $node A reference to the Node to confirm.
-   * @return Boolean whether the Node should be saved [default: true].
+   * @return Boolean whether the Node should be saved (default: _true_).
    */
   protected function confirmSave($node) {
     return true;
@@ -462,7 +462,7 @@ class SaveController extends Controller {
    * Called before save.
    * @note subclasses will override this to implement special application requirements.
    * @param $node A reference to the Node to be saved.
-   * @return Boolean whether the Node was modified [default: false].
+   * @return Boolean whether the Node was modified (default: _false_).
    */
   protected function beforeSave($node) {
     return false;

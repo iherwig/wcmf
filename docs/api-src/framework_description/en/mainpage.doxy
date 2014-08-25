@@ -7,24 +7,30 @@
   <h2>A PHP framework for building<br><kbd>reliable</kbd>, <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications</h2>
 </div>
 
-<div class="alert alert-info" role="alert">
-  <strong>Model Driven Development</strong> with wCMF helps focusing on the application domain and
-  <strong>increases productivity</strong> significantly.
-</div>
+<h2>Model-Driven Software Development</h2>
+wCMF strongly encourages Model-Driven Software Development (<em>MDSD</em>) to let you focus on the application domain and
+increase productivity significantly. Creating a wCMF-based application basically involves three steps:
 
 <div class="row">
   <div class="col-md-4"><h3><i class="fa fa-sitemap fa-2x pull-left"></i> Model</h3>
-    Start by modelling your application in wCMF's UML based DSL. It not only supports modeling of the domain model, controllers and views, but also of configuration and application flow.
+    Start by modeling your application in wCMF's UML based Domain Specific Language (<em>DSL</em>).
+    It not only supports defining the domain model, controllers and views, but also configuration and application flow.
+    Graphical editors are available from the <a href="http://www.eclipse.org/papyrus/" target="_blank">Eclipse</a> and
+    <a href="http://sourceforge.net/projects/olympos/" target="_blank">Olympos</a> project.
   </div>
   <div class="col-md-4"><h3><i class="fa fa-gears fa-2x pull-left"></i> Build</h3>
-    Run the code generator to create persistence mappers, controllers, views and configuration files from the model. After that a default application based on the Dojo Toolkit is ready to be used.
+    Run the code generator to create persistence mappers, controllers, views and configuration files from the model.
+    After that a web application based on the <a href="http://dojotoolkit.org/" target="_blank">Dojo Toolkit</a> is ready to be used.
+    It allows to manage entity instances and includes a full text search, localization support and user and role management.
   </div>
   <div class="col-md-4"><h3><i class="fa fa-expand fa-2x pull-left"></i> Extend</h3>
-    wCMF's clear object oriented design is based on well known design patterns, that allow to extend the application in every aspect. Custom code is protected from subsequent generator runs.
+    wCMF's clear object oriented design is based on well known design patterns, that allow to extend the application in every aspect.
+    Custom code is protected from subsequent generator runs, which ensures that future requirements can be implemented
+    while model and code stay in synch.
   </div>
 </div>
 
-<h3>Features</h3>
+<h2>Features</h2>
 \endhtmlonly
 
 - Full featured object persistence layer:
@@ -33,16 +39,14 @@
   - Searching using template based object query and criteria api
   - Query caching and eager relation loading
   - Transaction support
-- Presentation layer based on the Smarty template engine
+- Presentation layer based on the <a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a>
 - Configuration of the application flow through config files
 - Dependency injection support
 - Simple event processing
 - Role based permission management (for actions, types, instances, instance properties)
-- Lucene search engine integration
+- <a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene</a> search engine integration
 - I18n support
-- Flexible logging (log4php)
+- Flexible logging (<a href="http://logging.apache.org/log4php/" target="_blank">Apache log4php</a>)
 - SOAP and REST interface supporting CRUD operations on all objects
-- Code generator for model driven development (OpenArchitectureWare)
-- Also available:
-  - Modern Dojo based [default application](https://github.com/iherwig/wcmf-default-app) for content management
+- Code generator for model-driven software development
 */

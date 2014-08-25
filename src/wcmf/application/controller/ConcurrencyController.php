@@ -29,7 +29,7 @@ use wcmf\lib\presentation\ApplicationError;
  * | Parameter             | Description
  * |-----------------------|-------------------------
  * | _in_ / _out_ `oid`    | The object id of the object to lock
- * | _in_ / _out_ `type`   | The lock type (_optimistic_ or _pessimistic_), optional [default: _optimistic_]
+ * | _in_ / _out_ `type`   | The lock type (_optimistic_ or _pessimistic_) (optional, default: _optimistic_)
  * | __Response Actions__  | |
  * | `ok`                  | In all cases
  * </div>
@@ -42,7 +42,7 @@ use wcmf\lib\presentation\ApplicationError;
  * | Parameter             | Description
  * |-----------------------|-------------------------
  * | _in_ / _out_ `oid`    | The object id of the object to unlock
- * | _in_ / _out_ `type`   | The lock type (_optimistic_ or _pessimistic_), optional [default: _optimistic_]
+ * | _in_ / _out_ `type`   | The lock type (_optimistic_ or _pessimistic_) (optional, default: _optimistic_)
  * | __Response Actions__  | |
  * | `ok`                  | In all cases
  * </div>

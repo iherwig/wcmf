@@ -51,7 +51,7 @@ class GraphicsUtil {
    * @param $imgname Name of the imagefile to check
    * @param $width Width of the image, -1 means don't care
    * @param $height Height of the image, -1 means don't care
-   * @param $exact Boolean whether the image should match the dimension exactly or might be smaller [default: true]
+   * @param $exact Boolean whether the image should match the dimension exactly or might be smaller (default: _true_)
    * @return Boolean whether the image meets the dimensions, error string provided by getErrorMsg()
    */
   public function isValidImageDimension($imgname, $width, $height, $exact=true) {
@@ -64,7 +64,7 @@ class GraphicsUtil {
    * Check image width.
    * @param $imgname Name of the imagefile to check
    * @param $width Width of the image
-   * @param $exact Boolean whether the image width should match exactly or might be smaller [default: true]
+   * @param $exact Boolean whether the image width should match exactly or might be smaller (default: _true_)
    * @return Boolean whether the image width meets the criteria, error string provided by getErrorMsg()
    * @note This method returns true if the file does not exist.
    */
@@ -89,7 +89,7 @@ class GraphicsUtil {
    * Check image height.
    * @param $imgname Name of the imagefile to check
    * @param $height Height of the image
-   * @param $exact Boolean whether the image height should match exactly or might be smaller [default: true]
+   * @param $exact Boolean whether the image height should match exactly or might be smaller (default: _true_)
    * @return Boolean whether the image width meets the criteria, error string provided by getErrorMsg()
    * @note This method returns true if the file does not exist.
    */
@@ -249,11 +249,11 @@ class GraphicsUtil {
    * @param $color The color to use for the text (as HEX value)
    * @param $bgcolor The color to use for the background (as HEX value)
    * @param $filename The name of the file to write to
-   * @param $width The width of the image (or null if it should fit the text) [default: null]
-   * @param $height The height of the image (or null if it should fit the text) [default: null]
-   * @param $x The x offset of the text (or null if it should be centered) [default: null]
-   * @param $y The y offset of the text (or null if the baseline should be the image border) [default: null]
-   * @param $angle The angle of the text (optional) [default: 0]
+   * @param $width The width of the image (or null if it should fit the text) (default: _null_)
+   * @param $height The height of the image (or null if it should fit the text) (default: _null_)
+   * @param $x The x offset of the text (or null if it should be centered) (default: _null_)
+   * @param $y The y offset of the text (or null if the baseline should be the image border) (default: _null_)
+   * @param $angle The angle of the text (optional, default: _0_)
    * @return Boolean whether the operation succeeded, error string provided by getErrorMsg()
    */
   public function renderText($text, $fontfile, $fontsize, $color, $bgcolor, $filename,
@@ -351,7 +351,7 @@ class GraphicsUtil {
   /**
    * Calculate the dimension of the given text
    * @param $fontsize The font size (in pixels)
-   * @param $angle The angle of the characters (optional) [default: 0]
+   * @param $angle The angle of the characters (optional, default: _0_)
    * @param $fontfile The font file
    * @param $text The text
    * @return An array with the width and height values

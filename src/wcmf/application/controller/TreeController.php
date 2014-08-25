@@ -136,7 +136,7 @@ class TreeController extends Controller {
   /**
    * Get the view of a Node
    * @param $node The Node to create the view for
-   * @param $displayText The text to display (will be taken from TreeController::getDisplayText() if not specified) [default: '']
+   * @param $displayText The text to display (will be taken from TreeController::getDisplayText() if not specified) (default: '')
    * @return An associative array whose keys correspond to Ext.tree.TreeNode config parameters
    */
   protected function getViewNode(Node $node, $displayText='') {

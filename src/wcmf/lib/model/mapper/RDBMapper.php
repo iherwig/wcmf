@@ -274,8 +274,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Execute a query on the connection.
    * @param $sql The SQL statement as string
-   * @param $isSelect Boolean whether the statement is a select statement, optional [default: false]
-   * @param $bindValues An array of data to bind to the placeholders, optional [default: empty array]
+   * @param $isSelect Boolean whether the statement is a select statement (optional, default: _false_)
+   * @param $bindValues An array of data to bind to the placeholders (optional, default: empty array)
    * @return If isSelect is true, an array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC),
    * the number of affected rows else
    */
@@ -304,7 +304,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Execute a select query on the connection.
    * @param $selectStmt A SelectStatement instance
-   * @param $pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
+   * @param $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_)
    * @return An array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC)
    */
   protected function select(SelectStatement $selectStmt, PagingInfo $pagingInfo=null) {
@@ -617,9 +617,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Render a Criteria instance as string.
    * @param $criteria The Criteria instance
-   * @param $placeholder Placeholder (':columnName', '?') used instead of the value, optional [default: null]
-   * @param $tableName The table name to use (may differ from criteria's type attribute), optional
-   * @param $columnName The column name to use (may differ from criteria's attribute attribute), optional
+   * @param $placeholder Placeholder (':columnName', '?') used instead of the value (optional, default: _null_)
+   * @param $tableName The table name to use (may differ from criteria's type attribute) (optional)
+   * @param $columnName The column name to use (may differ from criteria's attribute attribute) (optional)
    * @return String
    */
   public function renderCriteria(Criteria $criteria, $placeholder=null, $tableName=null, $columnName=null) {
@@ -867,10 +867,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * Load objects defined by several query parts.
    * @param $type The type of the object
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param $pagingInfo A reference PagingInfo instance (maybe null). [default: null]
+   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
+   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param $pagingInfo A reference PagingInfo instance (optional, default: _null_)
    * @return Array of PersistentObject instances
    */
   protected function loadObjectsFromQueryParts($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
@@ -889,8 +889,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * Load objects defined by a select statement.
    * @param $selectStmt A SelectStatement instance
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
-   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) [default: BuildDepth::SINGLE]
-   * @param $pagingInfo A reference PagingInfo instance (maybe null). [default: null]
+   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
+   * @param $pagingInfo A reference PagingInfo instance (optional, default: _null_)
    * @return Array of PersistentObject instances
    */
   public function loadObjectsFromSQL(SelectStatement $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null) {
@@ -1156,7 +1156,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Get the names of the attributes in the mapped class to order by default and the sort directions
    * (ASC or DESC). The roleName parameter allows to ask for the order with respect to a specific role.
-   * @param $roleName The role name of the relation, maybe null [default: null]
+   * @param $roleName The role name of the relation (optional, default: _null_)
    * @return An array of assciative arrays with the keys sortFieldName and sortDirection (ASC or DESC)
    */
   abstract protected function getOwnDefaultOrder($roleName=null);
@@ -1192,11 +1192,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Get the SQL command to select object data from the database.
-   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (maybe null). [default: null]
-   * @param $alias The alias for the table name [default: null uses none].
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param $pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
-   * @param $queryId Identifier for the query cache (maybe null to let implementers handle it). [default: null]
+   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
+   * @param $alias The alias for the table name (default: _null_)
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_))
+   * @param $queryId Identifier for the query cache (maybe null to let implementers handle it). (default: _null_)
    * @return SelectStatement instance that selects all object data that match the condition or an array with the query parts.
    * @note The names of the data item columns MUST match the data item names provided in the '_datadef' array from RDBMapper::getObjectDefinition()
    *       Use alias names if not! The selected data will be put into the '_data' array of the object definition.
@@ -1209,9 +1209,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @note In case of a sortable many to many relation, the sortkey value must also be selected
    * @param $otherObjectProxies Array of PersistentObjectProxy instances for the objects to load the relatives for.
    * @param $otherRole The role of the other object in relation to the objects to load.
-   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null). [default: null]
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null). [default: null]
-   * @param $pagingInfo An PagingInfo instance describing which page to load, optional [default: null]
+   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (optional, default: _null_)
+   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_)
    * @return Array with SelectStatement instance and the attribute names which establish the relation between
    * the loaded objects and the proxies (proxies's attribute name first)
    */

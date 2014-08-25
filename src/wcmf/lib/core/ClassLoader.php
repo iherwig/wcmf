@@ -43,7 +43,7 @@ class ClassLoader {
   * Code from: http://php.net/manual/en/language.oop5.autoload.php
   *
   * @param $className The name of the class
-  * @param $sub The start directory [optional]
+  * @param $sub The start directory (optional, default: '/')
   * @return The directory name
   */
   function searchClass($className, $sub="/") {
