@@ -46,7 +46,7 @@ class DefaultActionMapper implements ActionMapper {
     $referrer = $request->getSender();
     $context = $request->getContext();
     $action = $request->getAction();
-    $response = new Response($referrer, $context, $action);
+    $response = new Response($referrer, $context, '');
     $response->setFormat($request->getResponseFormat());
 
     $config = ObjectFactory::getConfigurationInstance();

@@ -44,7 +44,7 @@ use wcmf\lib\presentation\Response;
  * | _out_ `numberOfSteps` | Total number of steps
  * | _out_ `displayText`   | The display text for the current step
  * | __Response Actions__  | |
- * | `continue`            | The process is not finished and `continue` should be called as next action
+ * | `next`                | The process is not finished and `continue` should be called as next action
  * | `download`            | The process is finished and the next call to `continue` will trigger the file download
  * | `done`                | The process is finished
  * </div>
@@ -60,7 +60,7 @@ use wcmf\lib\presentation\Response;
  * | _out_ `numberOfSteps` | Total number of steps
  * | _out_ `displayText`   | The display text for the current step
  * | __Response Actions__  | |
- * | `continue`            | The process is not finished and `continue` should be called as next action
+ * | `next`                | The process is not finished and `continue` should be called as next action
  * | `download`            | The process is finished and the next call to `continue` will trigger the file download
  * | `done`                | The process is finished
  * </div>
@@ -178,7 +178,7 @@ abstract class BatchController extends Controller {
     }
     else {
       // proceed
-      $response->setAction('continue');
+      $response->setAction('next');
     }
   }
 
