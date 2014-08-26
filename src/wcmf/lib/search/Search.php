@@ -16,7 +16,7 @@ use wcmf\lib\persistence\PersistentObject;
 /**
  * Search implementations are used to search entity objects.
  *
- * @author   ingo herwig <ingo@wemove.com>
+ * @author ingo herwig <ingo@wemove.com>
  */
 interface Search {
 

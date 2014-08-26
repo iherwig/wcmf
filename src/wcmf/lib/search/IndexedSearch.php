@@ -17,7 +17,7 @@ use wcmf\lib\search\Search;
  * IndexedSearch implementations are used to search entity objects
  * in a search index
  *
- * @author   ingo herwig <ingo@wemove.com>
+ * @author ingo herwig <ingo@wemove.com>
  */
 interface IndexedSearch extends Search {
 

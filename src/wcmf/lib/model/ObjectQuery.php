@@ -97,7 +97,7 @@ use wcmf\lib\persistence\ValueChangeEvent;
  * - Since the query values are set together with the operator in a single string,
  *   they must be converted to data store format already
  *
- * @author   ingo herwig <ingo@wemove.com>
+ * @author ingo herwig <ingo@wemove.com>
  */
 class ObjectQuery extends AbstractQuery {
 

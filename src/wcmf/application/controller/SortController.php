@@ -54,7 +54,7 @@ use wcmf\lib\presentation\Controller;
  * </div>
  * </div>
  *
- * @author   ingo herwig <ingo@wemove.com>
+ * @author ingo herwig <ingo@wemove.com>
  */
 class SortController extends Controller {
 

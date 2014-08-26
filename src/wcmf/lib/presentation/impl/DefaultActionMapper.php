@@ -25,7 +25,7 @@ use wcmf\lib\security\principal\impl\AnonymousUser;
 /**
  * Default ActionMapper implementation.
  *
- * @author   ingo herwig <ingo@wemove.com>
+ * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultActionMapper implements ActionMapper {
 
