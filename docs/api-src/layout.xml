@@ -10,9 +10,9 @@
       <tab type="namespacemembers" visible="no" title="" intro=""/>
     </tab>
     <tab type="classes" visible="no" title="">
-      <tab type="classlist" visible="yes" title="" intro=""/>
+      <tab type="classlist" visible="yes" title="wCMF API Documentation" intro=""/>
       <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/>
-      <tab type="hierarchy" visible="yes" title="" intro=""/>
+      <tab type="hierarchy" visible="no" title="" intro=""/>
       <tab type="classmembers" visible="no" title="" intro=""/>
     </tab>
     <tab type="files" visible="no" title="">

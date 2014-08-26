@@ -28,6 +28,15 @@ tr[class^='separator:'] {
   display: none;
 }
 
+td.entry {
+  white-space: nowrap;
+}
+
+.icona span.label-info {
+  padding-left: 9px;
+  padding-right: 8px;
+}
+
 .anchor{
   padding-top: 50px;
   margin-top: -50px;

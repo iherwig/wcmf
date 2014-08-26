@@ -20,10 +20,17 @@ $(document).ready(function() {
   $('li > a[href="functions_vars.html"] > span').before("<i class='fa fa-list'></i> ");
   $('li > a[href="functions_enum.html"] > span').before("<i class='fa fa-list'></i> ");
   $('li > a[href="functions_eval.html"] > span').before("<i class='fa fa-list'></i> ");
+
   $('img[src="ftv2ns.png"]').replaceWith('<span class="label label-danger">N</span> ');
   $('img[src="ftv2cl.png"]').replaceWith('<span class="label label-danger">C</span> ');
-  $("span.icon:contains('N')").replaceWith('<span class="label label-primary">N</span> ');
-  $("span.icon:contains('C')").replaceWith('<span class="label label-info">C</span> ');
+
+  $("a.el").each(function() {
+    var parent = $(this).parent();
+    var classIcon = $(this).attr('href').match(/^interface/) ?
+      '<span class="label label-info">I</span> ' : '<span class="label label-warning">C</span> ';
+    parent.find("span.icon:contains('N')").replaceWith('<span class="label label-default">N</span> ');
+    parent.parent().find("span.icon:contains('C')").replaceWith(classIcon);
+  });
 
   $("ul.tablist").addClass("nav nav-pills nav-justified");
   $("ul.tablist").css("margin-top", "0.5em");
