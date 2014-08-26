@@ -774,6 +774,9 @@
               <packagedElement xmi:type="uml:Class" xmi:id="_gfLv4LRnEeOfbtYsPp7Oyg" name="MultipleActionController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_pv2ecLRxEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_WbrLcC04EeSZcOHv2Y7Ocg" name="PermissionsController">
+                <generalization xmi:type="uml:Generalization" xmi:id="_WbrLcS04EeSZcOHv2Y7Ocg" general="_3TWiULQGEeOIMOFxCilDfw"/>
+              </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_giVKgLRnEeOfbtYsPp7Oyg" name="RESTController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_5-NjcLRxEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
@@ -953,6 +956,10 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_RXx8kfvcEeO7oqnkSuo0Ew" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_RXx8kvvcEeO7oqnkSuo0Ew" value="1"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_dkfBMC04EeSZcOHv2Y7Ocg" name="permissionsController" type="_WbrLcC04EeSZcOHv2Y7Ocg" association="_dkfoQC04EeSZcOHv2Y7Ocg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dkfBMS04EeSZcOHv2Y7Ocg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dkfBMi04EeSZcOHv2Y7Ocg" value="1"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_3mhdcPu5EeOmMdys2glKCA" name="cms" memberEnd="_3mhdcfu5EeOmMdys2glKCA _3mg2YPu5EeOmMdys2glKCA">
                 <ownedEnd xmi:type="uml:Property" xmi:id="_3mhdcfu5EeOmMdys2glKCA" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_3mhdcPu5EeOmMdys2glKCA">
@@ -1120,6 +1127,12 @@
                 <ownedEnd xmi:type="uml:Property" xmi:id="_wcZg4bRvEeOfbtYsPp7Oyg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_wcZg4LRvEeOfbtYsPp7Oyg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_wcZg4rRvEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_wcZg47RvEeOfbtYsPp7Oyg" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_dkfoQC04EeSZcOHv2Y7Ocg" name="checkPermissions" memberEnd="_dkfoQS04EeSZcOHv2Y7Ocg _dkfBMC04EeSZcOHv2Y7Ocg">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_dkfoQS04EeSZcOHv2Y7Ocg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_dkfoQC04EeSZcOHv2Y7Ocg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dkfoQi04EeSZcOHv2Y7Ocg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dkfoQy04EeSZcOHv2Y7Ocg" value="1"/>
                 </ownedEnd>
               </packagedElement>
             </packagedElement>
@@ -1660,4 +1673,6 @@
   <Chronos:ChiController xmi:id="_Cju5cvvcEeO7oqnkSuo0Ew" base_Class="_Cju5cPvcEeO7oqnkSuo0Ew"/>
   <Chronos:ChiActionKey xmi:id="_eOtWQPvdEeO7oqnkSuo0Ew" action="soapAction" base_Association="_RXx8k_vcEeO7oqnkSuo0Ew"/>
   <Chronos:ChiSystem xmi:id="_dlqOAARIEeSxY9ess8EBIw" plattform="wcmf" base_Class="_dlo_4ARIEeSxY9ess8EBIw"/>
+  <Chronos:ChiController xmi:id="_Wd1uoC04EeSZcOHv2Y7Ocg" base_Class="_WbrLcC04EeSZcOHv2Y7Ocg"/>
+  <Chronos:ChiActionKey xmi:id="_f46h8C04EeSZcOHv2Y7Ocg" action="checkPermissions" base_Association="_dkfoQC04EeSZcOHv2Y7Ocg"/>
 </xmi:XMI>
