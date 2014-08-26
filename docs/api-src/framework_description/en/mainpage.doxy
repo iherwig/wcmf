@@ -16,12 +16,12 @@ increase productivity significantly. Creating a wCMF-based application basically
     Start by modeling your application in wCMF's UML based Domain Specific Language (<em>DSL</em>).
     It not only supports defining the domain model, controllers and views, but also configuration and application flow.
     Graphical editors are available from the <a href="http://www.eclipse.org/papyrus/" target="_blank">Eclipse</a> and
-    <a href="http://sourceforge.net/projects/olympos/" target="_blank">Olympos</a> project.
+    <a href="http://sourceforge.net/projects/olympos/" target="_blank">Olympos</a> projects.
   </div>
   <div class="col-md-4"><h3><i class="fa fa-gears fa-2x pull-left"></i> Build</h3>
     Run the code generator to create persistence mappers, controllers, views and configuration files from the model.
     After that a web application based on the <a href="http://dojotoolkit.org/" target="_blank">Dojo Toolkit</a> is ready to be used.
-    It allows to manage entity instances and includes a full text search, localization support and user and role management.
+    It allows to manage entity instances and includes a full text search, localization support and user/role management.
   </div>
   <div class="col-md-4"><h3><i class="fa fa-expand fa-2x pull-left"></i> Extend</h3>
     wCMF's clear object oriented design is based on well known design patterns, that allow to extend the application in every aspect.
@@ -42,7 +42,7 @@ increase productivity significantly. Creating a wCMF-based application basically
 - Presentation layer based on the <a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a>
 - Configuration of the application flow through config files
 - Dependency injection support
-- Simple event processing
+- Basic event processing
 - Role based permission management (for actions, types, instances, instance properties)
 - <a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene</a> search engine integration
 - I18n support

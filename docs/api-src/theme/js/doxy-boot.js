@@ -1,29 +1,14 @@
 $(document).ready(function() {
 
+  // header
   $("div.headertitle").addClass("page-header");
   $("div.title").addClass("h1");
-
   if ($("h1").length > 0) {
     // hide header, if h1 exists
     $("div.header").hide();
   }
 
-  $('li > a[href="index.html"] > span').before("<i class='fa fa-cog'></i> ");
-  $('li > a[href="index.html"] > span').text("Home");
-  $('li > a[href="modules.html"] > span').before("<i class='fa fa-square'></i> ");
-  $('li > a[href="namespaces.html"] > span').before("<i class='fa fa-bars'></i> ");
-  $('li > a[href="annotated.html"] > span').before("<i class='fa fa-list-ul'></i> ");
-  $('li > a[href="classes.html"] > span').before("<i class='fa fa-book'></i> ");
-  $('li > a[href="inherits.html"] > span').before("<i class='fa fa-sitemap'></i> ");
-  $('li > a[href="functions.html"] > span').before("<i class='fa fa-list'></i> ");
-  $('li > a[href="functions_func.html"] > span').before("<i class='fa fa-list'></i> ");
-  $('li > a[href="functions_vars.html"] > span').before("<i class='fa fa-list'></i> ");
-  $('li > a[href="functions_enum.html"] > span').before("<i class='fa fa-list'></i> ");
-  $('li > a[href="functions_eval.html"] > span').before("<i class='fa fa-list'></i> ");
-
-  $('img[src="ftv2ns.png"]').replaceWith('<span class="label label-danger">N</span> ');
-  $('img[src="ftv2cl.png"]').replaceWith('<span class="label label-danger">C</span> ');
-
+  // namespace/class list
   $("a.el").each(function() {
     var parent = $(this).parent();
     var classIcon = $(this).attr('href').match(/^interface/) ?
@@ -32,10 +17,6 @@ $(document).ready(function() {
     parent.parent().find("span.icon:contains('C')").replaceWith(classIcon);
   });
 
-  $("ul.tablist").addClass("nav nav-pills nav-justified");
-  $("ul.tablist").css("margin-top", "0.5em");
-  $("ul.tablist").css("margin-bottom", "0.5em");
-  $("li.current").addClass("active");
   $("iframe").attr("scrolling", "yes");
 
   $("#nav-path > ul").addClass("breadcrumb");
