@@ -91,13 +91,6 @@ interface User {
   public function getRoles();
 
   /**
-   * If implementations cache loaded roles for performance reasons, they
-   * must invalidate the cache when this method is called. This might be
-   * necessary after retrieving an instance from the session.
-   */
-  public function resetRoleCache();
-
-  /**
    * Get a User instance by login.
    * @param $login The user's login
    * @return User instance.

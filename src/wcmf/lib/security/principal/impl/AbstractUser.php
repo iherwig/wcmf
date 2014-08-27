@@ -131,14 +131,6 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
-   * @see User::resetRoleCache()
-   */
-  public function resetRoleCache() {
-    $this->_cachedRoles = array();
-    $this->_hasOwnRolesLoaded = false;
-  }
-
-  /**
    * @see User::getByLogin()
    */
   public static function getByLogin($login) {

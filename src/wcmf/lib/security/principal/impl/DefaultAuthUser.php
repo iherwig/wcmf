@@ -263,15 +263,6 @@ class DefaultAuthUser implements AuthUser {
   }
 
   /**
-   * @see User::resetRoleCache()
-   */
-  public function resetRoleCache() {
-    if ($this->_user != null) {
-      $this->_user->resetRoleCache();
-    }
-  }
-
-  /**
    * @see User::getByLogin()
    */
   public static function getByLogin($login) {
