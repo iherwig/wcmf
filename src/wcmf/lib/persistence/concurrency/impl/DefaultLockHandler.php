@@ -13,6 +13,7 @@ namespace wcmf\lib\persistence\concurrency\impl;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\LockHandler;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
@@ -165,7 +166,7 @@ class DefaultLockHandler implements LockHandler {
         $lockObj = $locks[0];
         // add permission to read user informations
         $permissionManager = ObjectFactory::getInstance('permissionManager');
-        $permissionManager->addTempPermission($this->getUserType(), '', 'read');
+        $permissionManager->addTempPermission($this->getUserType(), '', PersistenceAction::READ);
         $user = $lockObj->getValue($this->getLockUserRelationName());
         $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $user->getOID(), $user->getLogin(),
                 $lockObj->getValue('sessionid'), $lockObj->getValue('since'));

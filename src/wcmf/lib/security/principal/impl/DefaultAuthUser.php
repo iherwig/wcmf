@@ -11,6 +11,7 @@
 namespace wcmf\lib\security\principal\impl;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\security\Policy;
 use wcmf\lib\security\principal\AuthUser;
 
@@ -38,11 +39,11 @@ class DefaultAuthUser implements AuthUser {
     // because there is no authorized user already, we have to add a temporary permission to the
     // PermissionManager for this operation to allow user retrieval from the persistent storage
     $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $permissionManager->addTempPermission($userTypeInst->getType(), '', 'read');
+    $permissionManager->addTempPermission($userTypeInst->getType(), '', PersistenceAction::READ);
     // try to receive the user with given credentials
     $user = $userTypeInst::getByLogin($login);
     // remove the temporary permission
-    $permissionManager->removeTempPermission($userTypeInst->getType(), '', 'read');
+    $permissionManager->removeTempPermission($userTypeInst->getType(), '', PersistenceAction::READ);
 
     // check if user exists
     $loginOk = false;

@@ -14,6 +14,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\Node;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\security\principal\User;
@@ -25,7 +26,6 @@ use wcmf\lib\security\principal\User;
  */
 abstract class AbstractUser extends Node implements User {
 
-  private $_cachedRoles = array();
   private $_hasOwnRolesLoaded = false;
 
   private static $_roleConfig = null;
@@ -117,12 +117,12 @@ abstract class AbstractUser extends Node implements User {
 
       // add permissions for loading (prevent infinite loops when trying to authorize)
       $permissionManager = ObjectFactory::getInstance('permissionManager');
-      $permissionManager->addTempPermission(self::getRoleTypeName(), '', 'read');
+      $permissionManager->addTempPermission(self::getRoleTypeName(), '', PersistenceAction::READ);
       foreach ($this->getRoleRelationNames() as $roleName) {
         $this->loadChildren($roleName);
       }
       // remove temporary permissions
-      $permissionManager->removeTempPermission(self::getRoleTypeName(), '', 'read');
+      $permissionManager->removeTempPermission(self::getRoleTypeName(), '', PersistenceAction::READ);
       $this->_hasOwnRolesLoaded = true;
     }
     // TODO add role nodes from addedNodes array
