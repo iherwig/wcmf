@@ -3,6 +3,10 @@
   display: block;
 }
 
+.jumbotron h2 {
+  line-height: 1.2;
+}
+
 .tocify {
   width: auto;
 }
