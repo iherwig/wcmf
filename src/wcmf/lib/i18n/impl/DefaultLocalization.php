@@ -21,6 +21,7 @@ use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\PersistentObjectProxy;
 
 /**
  * DefaultLocalization is a Localization implementation that saves translations
@@ -189,8 +190,11 @@ class DefaultLocalization implements Localization {
               if ($childValue != null) {
                 $children = $relation->isMultiValued() ? $childValue : array($childValue);
                 foreach ($children as $child) {
-                  $translatedChild = $this->loadTranslation($child, $lang, $useDefaults, $recursive, $translatedOIDs);
-                  $translatedObject->addNode($translatedChild, $role);
+                  // don't resolve proxies
+                  if (!($child instanceof PersistentObjectProxy)) {
+                    $translatedChild = $this->loadTranslation($child, $lang, $useDefaults, $recursive, $translatedOIDs);
+                    $translatedObject->addNode($translatedChild, $role);
+                  }
                 }
               }
             }
@@ -240,7 +244,10 @@ class DefaultLocalization implements Localization {
       $iterator = new NodeIterator($object);
       foreach($iterator as $oidStr => $obj) {
         if ($obj->getOID() != $object->getOID()) {
-          $this->saveTranslation($obj, $lang, $saveEmptyValues, false);
+          // don't resolve proxies
+          if (!($obj instanceof PersistentObjectProxy)) {
+            $this->saveTranslation($obj, $lang, $saveEmptyValues, $recursive);
+          }
         }
       }
     }

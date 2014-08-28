@@ -236,7 +236,7 @@ class BatchDisplayController extends BatchController {
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
       $localization = ObjectFactory::getInstance('localization');
-      $localization->loadTranslation($node, $request->getValue('language'), true, true);
+      $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
     }
 
     // translate values if requested

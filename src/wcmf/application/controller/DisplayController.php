@@ -96,7 +96,7 @@ class DisplayController extends Controller {
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest()) {
         $localization = ObjectFactory::getInstance('localization');
-        $localization->loadTranslation($node, $request->getValue('language'), true, true);
+        $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
       }
 
       if (Log::isDebugEnabled(__CLASS__)) {

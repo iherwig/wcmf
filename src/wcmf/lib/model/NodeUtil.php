@@ -167,7 +167,7 @@ class NodeUtil {
     // localize node if requested
     $localization = ObjectFactory::getInstance('localization');
     if ($language != null) {
-      $localization->loadTranslation($node, $language);
+      $node = $localization->loadTranslation($node, $language);
     }
 
     $displayArray = array();

@@ -155,7 +155,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $object = $persistenceFacade->create(self::TEST_TYPE);
     $object->setOID($oid);
-    ObjectFactory::getInstance('localization')->loadTranslation($object, 'de');
+    $object = ObjectFactory::getInstance('localization')->loadTranslation($object, 'de');
     $this->assertEquals(null, $object->getValue('name'));
     $this->assertEquals(null, $object->getValue('firstname'));
 

@@ -11,7 +11,6 @@
 namespace wcmf\lib\i18n;
 
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistentObject;
 
 /**
  * Localization defines the interface for storing localized entity instances
