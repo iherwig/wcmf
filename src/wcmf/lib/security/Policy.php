@@ -27,33 +27,29 @@ class Policy {
    *     'default', 'allow', 'deny'.
    */
   public static function parse($val) {
-    $rtn = array();
+    $result = array();
 
-    $roles = explode(" ", $val);
-    foreach ($roles as $value) {
-      $value=trim($value);
-      if (strlen($value)==2 && substr($value,1,1) == "*") {
-        if (substr($value,0,1)=="+") {
-          $rtn['default'] = true;
-        }
-        else if (substr($value,0,1)=="-") {
-          $rtn['default'] = false;
-        }
+    $roleValues = explode(" ", $val);
+    foreach ($roleValues as $roleValue) {
+      $roleValue = trim($roleValue);
+      $matches = array();
+      preg_match('/^([+-]?)(.+)$/', $roleValue, $matches);
+      $prefix = $matches[1];
+      $role = $matches[2];
+      if ($role === '*') {
+        $result['default'] = $prefix == '-' ? false : true;
       }
       else {
-        if (substr($value,0,1)=="+") {
-          $rtn['allow'][] = substr($value,1);
-        }
-        else if (substr($value,0,1)=="-") {
-          $rtn['deny'][] = substr($value,1);
+        if ($prefix === '-') {
+          $result['deny'][] = $role;
         }
         else {
           // entries without '+' or '-' prefix default to allow rules
-          $rtn['allow'][] = $value;
+          $result['allow'][] = $role;
         }
       }
     }
-    return $rtn;
+    return $result;
   }
 }
 ?>
