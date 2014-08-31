@@ -41,7 +41,7 @@
         <exclude name="app/public/export.xml"/>
         <exclude name="app/src/**"/>
         <exclude name="dist/**"/>
-        <exclude name="install/tables.sql"/>
+        <exclude name="install/*.sql"/>
         <exclude name="model/model-transformed/**"/>
         <exclude name="model/*.*"/>
         <exclude name="test/model/**"/>

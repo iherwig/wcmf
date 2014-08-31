@@ -11,6 +11,7 @@
 namespace wcmf\test\lib;
 
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 
 /**
  * ControllerTestCase is the base class for all wCMF test cases.
@@ -24,6 +25,19 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
     TestUtil::initFramework();
 
     parent::setUp();
+  }
+
+  /**
+   * Replace backticks in the given sql string by the actual quote char
+   * used in the connection
+   * @param $type The type defining the connection parameters
+   * @param $sql
+   * @return String
+   */
+  protected function fixQueryQuotes($sql, $type) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $connection = $persistenceFacade->getMapper($type)->getConnection();
+    return str_replace('`', $connection->getQuoteIdentifierSymbol(), $sql);
   }
 }
 ?>

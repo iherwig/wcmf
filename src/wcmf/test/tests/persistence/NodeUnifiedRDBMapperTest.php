@@ -35,6 +35,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
   protected function setUp() {
     $this->dbParams = array('dbType' => 'mysql', 'dbHostName' => 'localhost',
         'dbUserName' => 'root', 'dbPassword' => '', 'dbName' => 'wcmf_testapp', 'dbPrefix' => '');
+    parent::setUp();
   }
 
   public function testSelectSQL() {

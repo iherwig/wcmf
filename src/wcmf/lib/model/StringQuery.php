@@ -76,7 +76,7 @@ class StringQuery extends ObjectQuery {
             // 1. type or attribute (not allowed)
             // 2. type.attribute
             // 3. searchterm
-            if (!preg_match('/^\'|^"|^[0-9]/', $token)) {
+            if (!preg_match('/^\'|^[0-9]/', $token)) {
               // token is no searchterm (does not start with a quote or a number)
               $token = str_replace($quoteIdentifierSymbol, '', $token);
               $pos = strpos($token, '.');

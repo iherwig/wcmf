@@ -10,7 +10,6 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\Lock;

@@ -137,6 +137,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
                     $this->_connectionParams['dbCharSet'] : 'utf8';
             $pdoParams[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES ".$charSet;
           }
+          // sqlite specific
+          if (strtolower($this->_connectionParams['dbType'] == 'sqlite')) {
+            $pdoParams[PDO::ATTR_PERSISTENT] = true;
+          }
           $params = array(
             'host' => $this->_connectionParams['dbHostName'],
             'username' => $this->_connectionParams['dbUserName'],
@@ -210,7 +214,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $sequenceMapper = $persistenceFacade->getMapper(self::$SEQUENCE_CLASS);
       if (!($sequenceMapper instanceof RDBMapper)) {
-        throw new PersistenceException(self::$SEQUENCE_CLASS." is nor mapped by RDBMapper.");
+        throw new PersistenceException(self::$SEQUENCE_CLASS." is not mapped by RDBMapper.");
       }
       $sequenceTable = $sequenceMapper->getTableName();
       $sequenceConn = $sequenceMapper->getConnection();
@@ -222,7 +226,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         $this->_idInsertStmt = $sequenceConn->prepare("INSERT INTO ".$sequenceTable." (id) VALUES (0)");
       }
       if ($this->_idUpdateStmt == null) {
-        $this->_idUpdateStmt = $sequenceConn->prepare("UPDATE ".$sequenceTable." SET id=LAST_INSERT_ID(id+1);");
+        $this->_idUpdateStmt = $sequenceConn->prepare("UPDATE ".$sequenceTable." SET id=(id+1);");
       }
       $this->_idSelectStmt->execute();
       $rows = $this->_idSelectStmt->fetchAll(PDO::FETCH_ASSOC);

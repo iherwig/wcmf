@@ -785,21 +785,6 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   }
 
   /**
-   * Quote a value to be inserted into the database
-   * @param $value The value to quote
-   * @return The quoted value
-   */
-  protected function quote($value) {
-    if ($value === null) {
-      return 'null';
-    }
-    else {
-      $conn = $this->getConnection();
-      return $conn->quote($value);
-    }
-  }
-
-  /**
    * Make sure that the given table name is prefixed before the given expression
    * and return the modified expression.
    * @param $expression The expression

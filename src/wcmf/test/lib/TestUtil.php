@@ -39,7 +39,8 @@ class TestUtil {
 
     $config = new InifileConfiguration($configPath);
     $config->addConfiguration('config.ini');
-    ObjectFactory::configure($config);    
+    $config->addConfiguration('testdb.ini');
+    ObjectFactory::configure($config);
   }
 
   /**
