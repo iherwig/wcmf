@@ -10,9 +10,10 @@ return array(
     'wcmf\lib\model\mapper\RDBMapper' => array('level' => 'ERROR', 'appenders' => array('dailyFile')),
     'wcmf\lib\presentation\Controller' => array('level' => 'ERROR', 'appenders' => array('dailyFile')),
     'wcmf\lib\presentation\impl\DefaultActionMapper' => array('level' => 'ERROR', 'appenders' => array('dailyFile')),
-    'wcmf\lib\presentation\Application' => array('level' => 'INFO'),
-    'wcmf\lib\service\SoapServer' => array('level' => 'INFO'),
-    'wcmf\application\controller\LoggingController' => array('level' => 'INFO'),
+    'wcmf\lib\presentation\Application' => array('level' => 'INFO', 'appenders' => array('dailyFile')),
+    'wcmf\lib\service\SoapServer' => array('level' => 'DEBUG', 'appenders' => array('dailyFile')),
+    'wcmf\lib\service\SoapClient' => array('level' => 'DEBUG', 'appenders' => array('dailyFile')),
+    'wcmf\application\controller\LoggingController' => array('level' => 'INFO', 'appenders' => array('dailyFile')),
   ),
 
   'appenders' => array(

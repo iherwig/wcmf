@@ -68,6 +68,10 @@ class SoapClient extends \SoapClient {
         Log::debug($this->getDebugInfos(), __CLASS__);
       }
       $parsedResponse = preg_replace('/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFE\xFF|\xFF\xFE|\xEF\xBB\xBF)/', "", $response);
+      // fix missing last e> caused by php's built-in webserver
+      if (preg_match('/^<\?xml/', $parsedResponse) && !preg_match('/e>$/', $parsedResponse)) {
+        $parsedResponse .= 'e>';
+      }
       return $parsedResponse;
   }
 

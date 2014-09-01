@@ -10,8 +10,6 @@
  */
 namespace wcmf\test\lib;
 
-use \PDO;
-use \Zend_Db;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 

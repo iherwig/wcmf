@@ -22,7 +22,9 @@ use wcmf\lib\service\SoapClient;
  */
 class SoapTest extends DatabaseTestCase {
 
-  const ENDPOINT = "http://localhost/wcmf/src/app/public/soap";
+  protected static function getEndPoint() {
+    return "http://".SERVER_HOST.":".SERVER_PORT."/soap";
+  }
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
@@ -54,7 +56,7 @@ class SoapTest extends DatabaseTestCase {
     $this->markTestIncomplete('Relies on lucene search.');
 
     $options = array('trace' => 1, 'exceptions' => 0);
-    $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
+    $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $params = array('query' => 'Test');
     $result = $client->call("search", $params);
@@ -64,7 +66,7 @@ class SoapTest extends DatabaseTestCase {
 
   public function testList() {
     $options = array('trace' => 1, 'exceptions' => 0);
-    $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
+    $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $result = $client->call("getAuthorList");
     $this->assertFalse($result instanceof \SoapFault);
@@ -77,7 +79,7 @@ class SoapTest extends DatabaseTestCase {
 
   public function testRead() {
     $options = array('trace' => 1, 'exceptions' => 0);
-    $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
+    $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $params = array('oid' => 'app.src.model.Author:202', 'depth' => 1);
     $result = $client->call("readAuthor", $params);
@@ -96,7 +98,7 @@ class SoapTest extends DatabaseTestCase {
 
   public function testUpdate() {
     $options = array('trace' => 1, 'exceptions' => 0);
-    $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
+    $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
     $author->oid = 'app.src.model.Author:202';
@@ -128,7 +130,7 @@ class SoapTest extends DatabaseTestCase {
 
   public function testCreate() {
     $options = array('trace' => 1, 'exceptions' => 0);
-    $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
+    $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
     $author->oid = 'app.src.model.Author:wcmfa3934eb734bd3ebfbd674da8d6bcd7c9';
@@ -159,7 +161,7 @@ class SoapTest extends DatabaseTestCase {
 
   public function testDelete() {
     $options = array('trace' => 1, 'exceptions' => 0);
-    $client = new SoapClient(self::ENDPOINT.'?wsdl', 'admin', 'admin', $options);
+    $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $params = array('oid' => 'app.src.model.Author:202');
     $result = $client->call("deleteAuthor", $params);
