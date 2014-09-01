@@ -100,7 +100,7 @@ abstract class AbstractUser extends Node implements User {
    */
   public function hasRole($rolename) {
     $roles = $this->getRoles();
-    for ($i=0; $i<sizeof($roles); $i++) {
+    for ($i=0, $count=sizeof($roles); $i<$count; $i++) {
       if ($roles[$i]->getName() == $rolename) {
         return true;
       }

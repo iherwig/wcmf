@@ -29,7 +29,7 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 1),
       ),
       'User' => array(
-        array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'config' => 'permissions.ini')
+        array('id' => 555, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'config' => 'permissions.ini')
       ),
       'NMUserRole' => array(
         array('fk_user_id' => 555, 'fk_role_id' => 555),
@@ -53,7 +53,7 @@ class PermissionsTest extends DatabaseTestCase {
   }
 
   public function testPermissionOverride() {
-    TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('userPermTest', 'user1');
 
     // reading User is allowed in user's config file (overrides config.ini)
     ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('User', 555));
@@ -65,7 +65,7 @@ class PermissionsTest extends DatabaseTestCase {
    * @expectedException wcmf\lib\security\AuthorizationException
    */
   public function testPermissionOk() {
-    TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
 
@@ -78,7 +78,7 @@ class PermissionsTest extends DatabaseTestCase {
   }
 
   public function testPermissionForOnlyOneInstance() {
-    TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
     // modifying Author is forbidden
@@ -102,7 +102,7 @@ class PermissionsTest extends DatabaseTestCase {
   }
 
   public function testPermissionOnAttributeGeneral() {
-    TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
     // modifying Author.stage is forbidden
@@ -131,7 +131,7 @@ class PermissionsTest extends DatabaseTestCase {
   }
 
   public function testPermissionOnAttributeForOnlyOneInstance() {
-    TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
     // modifying Publisher.name is forbidden
@@ -155,7 +155,7 @@ class PermissionsTest extends DatabaseTestCase {
   }
 
   public function testRead() {
-    TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('userPermTest', 'user1');
 
     // read list returns only one book
     $books = ObjectFactory::getInstance('persistenceFacade')->loadObjects('Book');
@@ -168,7 +168,7 @@ class PermissionsTest extends DatabaseTestCase {
   }
 
   public function testGetOids() {
-    TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('userPermTest', 'user1');
 
     // read list returns only one book
     $oids = ObjectFactory::getInstance('persistenceFacade')->getOIDs('Book');

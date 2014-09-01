@@ -38,8 +38,6 @@ class DefaultPermissionManager implements PermissionManager {
   private $_anonymousUser = null;
   private $_tempPermissions = array();
 
-  private $_permissionsCache = array();
-
   /**
    * Constructor
    */
@@ -105,13 +103,6 @@ class DefaultPermissionManager implements PermissionManager {
         Log::debug("Permissions deactivated -> authorized", __CLASS__);
       }
       return true;
-    }
-
-    // check cached data
-    $authUser = $this->getAuthUser();
-    $cacheKey = ($authUser ? $authUser->getLogin() : '').'_'.$resource.'?'.$context.'?'.$action;
-    if (isset($this->_permissionsCache[$cacheKey])) {
-      return $this->_permissionsCache[$cacheKey];
     }
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -202,9 +193,6 @@ class DefaultPermissionManager implements PermissionManager {
       Log::debug("Result for $resource?$context?$action: ".(!$authorized ? "not " : "")."authorized", __CLASS__);
     }
 
-    // cache result
-    $this->_permissionsCache[$cacheKey] = $authorized;
-    
     return $authorized;
   }
 

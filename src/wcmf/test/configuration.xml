@@ -63,7 +63,7 @@ and open the template in the editor.
   <groups>
     <exclude>
       <!--group>controller</group-->
-      <!--group>performance</group-->
+      <group>performance</group>
     </exclude>
   </groups>
 </phpunit>

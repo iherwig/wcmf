@@ -88,7 +88,7 @@ class NodeUtilTest extends BaseTestCase {
     $node1 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
     $node1->setOID(new ObjectId('Chapter', 10));
     $condition1 = NodeUtil::getRelationQueryCondition($node1, 'NormalImage');
-    $this->assertEquals('(`NormalChapter`.`id` = 10)', $condition1);
+    $this->assertEquals($this->fixQueryQuotes('(`NormalChapter`.`id` = 10)', 'Image'), $condition1);
     // test with query
     $query1 = new StringQuery('Image', __CLASS__.__METHOD__."1");
     $query1->setConditionString($condition1);
@@ -97,13 +97,13 @@ class NodeUtilTest extends BaseTestCase {
       "`Image`.`creator`, `Image`.`modified`, `Image`.`last_editor`, `Image`.`sortkey_titlechapter`, `Image`.`sortkey_normalchapter`, `Image`.`sortkey` ".
       "FROM `Image` INNER JOIN `Chapter` AS `NormalChapter` ON ".
       "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE ((`NormalChapter`.`id` = 10)) ORDER BY `Image`.`sortkey` ASC";
-    $this->assertEquals($expected1, str_replace("\n", "", $sql1));
+    $this->assertEquals($this->fixQueryQuotes($expected1, 'Image'), str_replace("\n", "", $sql1));
 
     // Chapter -> ParentChapter
     $node2 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
     $node2->setOID(new ObjectId('Chapter', 10));
     $condition2 = NodeUtil::getRelationQueryCondition($node2, 'ParentChapter');
-    $this->assertEquals('(`SubChapter`.`id` = 10)', $condition2);
+    $this->assertEquals($this->fixQueryQuotes('(`SubChapter`.`id` = 10)', 'Chapter'), $condition2);
     // test with query
     $query2 = new StringQuery('Chapter', __CLASS__.__METHOD__."2");
     $query2->setConditionString($condition2);
@@ -113,13 +113,13 @@ class NodeUtilTest extends BaseTestCase {
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` ".
       "INNER JOIN `Chapter` AS `SubChapter` ON `SubChapter`.`fk_chapter_id` = `Chapter`.`id` ".
       "WHERE ((`SubChapter`.`id` = 10)) ORDER BY `Chapter`.`sortkey` ASC";
-    $this->assertEquals($expected2, str_replace("\n", "", $sql2));
+    $this->assertEquals($this->fixQueryQuotes($expected2, 'Chapter'), str_replace("\n", "", $sql2));
 
     // Chapter -> SubChapter
     $node3 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
     $node3->setOID(new ObjectId('Chapter', 10));
     $condition3 = NodeUtil::getRelationQueryCondition($node3, 'SubChapter');
-    $this->assertEquals('(`ParentChapter`.`id` = 10)', $condition3);
+    $this->assertEquals($this->fixQueryQuotes('(`ParentChapter`.`id` = 10)', 'Chapter'), $condition3);
     // test with query
     $query3 = new StringQuery('Chapter', __CLASS__.__METHOD__."3");
     $query3->setConditionString($condition3);
@@ -129,7 +129,7 @@ class NodeUtilTest extends BaseTestCase {
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` ".
       "INNER JOIN `Chapter` AS `ParentChapter` ON `Chapter`.`fk_chapter_id` = `ParentChapter`.`id` ".
       "WHERE ((`ParentChapter`.`id` = 10)) ORDER BY `Chapter`.`sortkey` ASC";
-    $this->assertEquals($expected3, str_replace("\n", "", $sql3));
+    $this->assertEquals($this->fixQueryQuotes($expected3, 'Chapter'), str_replace("\n", "", $sql3));
 
     TestUtil::runAnonymous(false);
   }

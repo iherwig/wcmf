@@ -14,6 +14,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileCache;
 use wcmf\lib\model\mapper\RDBMapper;
 
 /**
@@ -39,8 +40,8 @@ class TestUtil {
 
     $config = new InifileConfiguration($configPath);
     $config->addConfiguration('config.ini');
-    $config->addConfiguration('testdb.ini');
     ObjectFactory::configure($config);
+    FileCache::clearAll();
   }
 
   /**

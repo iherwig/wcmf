@@ -62,7 +62,7 @@ class StringQuery extends ObjectQuery {
       $selectStmt->distinct(true);
 
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $quoteIdentifierSymbol = '`';
+      $quoteIdentifierSymbol = $mapper->getQuoteIdentifierSymbol();
       // get all referenced types/roles from the condition and translate
       // attributes to column names
       $conditionString = $this->_condition;

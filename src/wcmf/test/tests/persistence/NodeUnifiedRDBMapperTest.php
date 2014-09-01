@@ -19,6 +19,7 @@ use app\src\model\ChapterRDBMapper;
 
 use wcmf\test\lib\BaseTestCase;
 use wcmf\test\lib\TestUtil;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObjectProxy;
@@ -33,9 +34,9 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
   protected $dbParams;
 
   protected function setUp() {
-    $this->dbParams = array('dbType' => 'mysql', 'dbHostName' => 'localhost',
-        'dbUserName' => 'root', 'dbPassword' => '', 'dbName' => 'wcmf_testapp', 'dbPrefix' => '');
     parent::setUp();
+    $config = ObjectFactory::getConfigurationInstance();
+    $this->dbParams = $config->getSection('database');
   }
 
   public function testSelectSQL() {
@@ -49,7 +50,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` ".
       "ORDER BY `Chapter`.`sortkey` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql1));
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql1));
 
     // condition 2
     $sql2 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL', array(array($criteria)))->__toString();
@@ -57,7 +58,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
       "ORDER BY `Chapter`.`sortkey` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql2));
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql2));
 
     // alias
     $sql3 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL', array(array($criteria), "ChapterAlias"))->__toString();
@@ -67,7 +68,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`Author`.`name` AS `author_name` FROM `Chapter` AS `ChapterAlias` ".
       "LEFT JOIN `Author` ON `ChapterAlias`.`fk_author_id`=`Author`.`id` WHERE (`ChapterAlias`.`name` = :ChapterAlias_name) ".
       "ORDER BY `ChapterAlias`.`sortkey` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql3));
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql3));
 
     // order 1
     $sql4 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
@@ -77,7 +78,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`Author`.`name` AS `author_name` ".
       "FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
       "ORDER BY `Chapter`.`name` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql4));
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql4));
 
     // order 2
     $sql5 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
@@ -87,7 +88,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`Author`.`name` AS `author_name` ".
       "FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
       "ORDER BY `Chapter`.`name` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql5));
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql5));
 
     // dbprefix
     $this->dbParams['dbPrefix'] = 'WCMF_';
@@ -101,7 +102,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`WCMF_Chapter`.`sortkey_author`, `WCMF_Chapter`.`sortkey_book`, `WCMF_Chapter`.`sortkey_parentchapter`, `WCMF_Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `WCMF_Chapter` LEFT JOIN `Author` ON `WCMF_Chapter`.`fk_author_id`=`Author`.`id` ".
       "WHERE (`WCMF_Chapter`.`name` = :WCMF_Chapter_name) ORDER BY `WCMF_Chapter`.`sortkey` ASC";
-    $this->assertEquals($expected, str_replace("\n", "", $sql9));
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql9));
   }
 
   public function testRelationSQL() {
@@ -122,7 +123,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $sql2 = $selectStmt2->__toString();
     $expected2 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
       "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` IN(:Author_id0)) ORDER BY `Author`.`name` ASC";
-    $this->assertEquals($expected2, str_replace("\n", "", $sql2));
+    $this->assertEquals($this->fixQueryQuotes($expected2, 'Author'), str_replace("\n", "", $sql2));
 
     // parent (order)
     $relationDescription3 = $mapper1->getRelation('Author');
@@ -135,7 +136,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $sql3 = $selectStmt3->__toString();
     $expected3 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
       "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` IN(:Author_id0)) ORDER BY `Author`.`name` ASC";
-    $this->assertEquals($expected3, str_replace("\n", "", $sql3));
+    $this->assertEquals($this->fixQueryQuotes($expected3, 'Author'), str_replace("\n", "", $sql3));
 
     // parent (criteria)
     $criteria4 = new Criteria('Author', 'name', '=', 'Unknown');
@@ -150,7 +151,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $expected4 = "SELECT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, ".
       "`Author`.`modified`, `Author`.`last_editor` FROM `Author` WHERE (`Author`.`id` IN(:Author_id0)) AND (`Author`.`name` = :Author_name) ".
       "ORDER BY `Author`.`name` ASC";
-    $this->assertEquals($expected4, str_replace("\n", "", $sql4));
+    $this->assertEquals($this->fixQueryQuotes($expected4, 'Author'), str_replace("\n", "", $sql4));
 
     // child (complete)
     $relationDescription6 = $mapper1->getRelation('NormalImage');
@@ -165,7 +166,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`Image`.`created`, `Image`.`creator`, `Image`.`modified`, `Image`.`last_editor`, ".
       "`Image`.`sortkey_titlechapter`, `Image`.`sortkey_normalchapter`, `Image`.`sortkey` ".
       "FROM `Image` WHERE (`Image`.`fk_chapter_id` IN(:Image_fk_chapter_id0)) ORDER BY `Image`.`sortkey_normalchapter` ASC";
-    $this->assertEquals($expected6, str_replace("\n", "", $sql6));
+    $this->assertEquals($this->fixQueryQuotes($expected6, 'Author'), str_replace("\n", "", $sql6));
 
     $mapper2 = new PublisherRDBMapper();
 
@@ -182,7 +183,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "`Author`.`modified`, `Author`.`last_editor`, `NMPublisherAuthor`.`sortkey_publisher`, `NMPublisherAuthor`.`fk_publisher_id` AS `_mapper_internal_id` FROM `Author` ".
       "INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_author_id`=`Author`.`id` ".
       "WHERE (`NMPublisherAuthor`.`fk_publisher_id` IN(:NMPublisherAuthor_fk_publisher_id0)) ORDER BY `NMPublisherAuthor`.`sortkey_publisher` ASC";
-    $this->assertEquals($expected8, str_replace("\n", "", $sql8));
+    $this->assertEquals($this->fixQueryQuotes($expected8, 'Author'), str_replace("\n", "", $sql8));
   }
 
   public function testInsertSQL() {

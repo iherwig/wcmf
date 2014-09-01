@@ -54,10 +54,16 @@ class ActionKey {
    * @return The best matching key or an empty string if nothing matches.
    */
   public static function getBestMatch($section, $resource, $context, $action) {
-    $cachedKeys = FileCache::get(self::CACHE_KEY, $section);
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $authUser = $permissionManager->getAuthUser();
+    $cacheKey = self::CACHE_KEY.'_'.$authUser->getLogin();
+
+    $cachedKeys = FileCache::get($cacheKey, $section);
     if ($cachedKeys == null) {
       $cachedKeys = array();
     }
+
+    // create the requested key
     $reqKey = self::createKey($resource, $context, $action);
     if (!isset($cachedKeys[$reqKey])) {
       $result = null;
@@ -72,7 +78,7 @@ class ActionKey {
       }
 
       // check resource??action
-      if ($result == null && strlen($resource) > 0 && strlen($action) > 0) {
+      if ($result === null && strlen($resource) > 0 && strlen($action) > 0) {
         $key = self::createKey($resource, '', $action);
         if ($config->hasValue($key, $section)) {
           $result = $key;
@@ -80,7 +86,7 @@ class ActionKey {
       }
 
       // check resource?context?
-      if ($result == null && strlen($resource) > 0 && strlen($context) > 0) {
+      if ($result === null && strlen($resource) > 0 && strlen($context) > 0) {
         $key = self::createKey($resource, $context, '');
         if ($config->hasValue($key, $section)) {
           $result = $key;
@@ -88,7 +94,7 @@ class ActionKey {
       }
 
       // check ?context?action
-      if ($result == null && strlen($context) > 0 && strlen($action) > 0) {
+      if ($result === null && strlen($context) > 0 && strlen($action) > 0) {
         $key = self::createKey('', $context, $action);
         if ($config->hasValue($key, $section)) {
           $result = $key;
@@ -96,7 +102,7 @@ class ActionKey {
       }
 
       // check ??action
-      if ($result == null && strlen($action) > 0) {
+      if ($result === null && strlen($action) > 0) {
         $key = self::createKey('', '', $action);
         if ($config->hasValue($key, $section)) {
           $result = $key;
@@ -104,7 +110,7 @@ class ActionKey {
       }
 
       // check resource??
-      if ($result == null && strlen($resource) > 0) {
+      if ($result === null && strlen($resource) > 0) {
         $key = self::createKey($resource, '', '');
         if ($config->hasValue($key, $section)) {
           $result = $key;
@@ -112,7 +118,7 @@ class ActionKey {
       }
 
       // check ?context?
-      if ($result == null && strlen($context) > 0) {
+      if ($result === null && strlen($context) > 0) {
         $key = self::createKey('', $context, '');
         if ($config->hasValue($key, $section)) {
           $result = $key;
@@ -120,21 +126,23 @@ class ActionKey {
       }
 
       // check ??
-      if ($result == null) {
+      if ($result === null) {
         $key = self::createKey('', '', '');
         if ($config->hasValue($key, $section)) {
           $result = $key;
         }
       }
 
-      // not found
-      if ($result == null) {
+      // no key found for requested key
+      if ($result === null) {
         $result = '';
       }
+
+      // store result for requested key
       $cachedKeys[$reqKey] = $result;
       // don't cache action keys for specific objects
       if (!is_object($resource)) {
-        FileCache::put(self::CACHE_KEY, $section, $cachedKeys);
+        FileCache::put($cacheKey, $section, $cachedKeys);
       }
     }
     return $cachedKeys[$reqKey];

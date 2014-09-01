@@ -225,14 +225,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $isArray = is_array($value);
     $values = !$isArray ? array($value) : $value;
 
-      $result = array();
+    $result = array();
     foreach ($values as $path) {
-        $absPath = WCMF_BASE.$path;
-          $result[] = FileUtil::realpath($absPath).'/';
-        }
+      $absPath = WCMF_BASE.$path;
+      $result[] = FileUtil::realpath($absPath).'/';
+    }
 
     return $isArray ? $result : (sizeof($result) > 0 ? $result[0] : null);
-      }
+  }
 
   /**
    * @see Configuration::getFileValue()

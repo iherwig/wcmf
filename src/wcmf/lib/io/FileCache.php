@@ -74,6 +74,13 @@ class FileCache {
   }
 
   /**
+   * Clear all cache sections
+   */
+  public static function clearAll() {
+    FileUtil::emptyDir(self::getCacheDir());
+  }
+
+  /**
    * Initialize the cache
    * @param $section The caching section
    */
@@ -108,11 +115,10 @@ class FileCache {
   }
 
   /**
-   * Get the cache file for the specified cache
-   * @param $section The caching section
+   * Get the cache root directory
    * @return String
    */
-  private static function getCacheFile($section) {
+  private static function getCacheDir() {
     if (self::$cacheDir == null) {
       $config = ObjectFactory::getConfigurationInstance();
       if ($config) {
@@ -124,7 +130,16 @@ class FileCache {
         self::$cacheDir = session_save_path();
       }
     }
-    return self::$cacheDir.$section;
+    return self::$cacheDir;
+  }
+
+  /**
+   * Get the cache file for the specified cache
+   * @param $section The caching section
+   * @return String
+   */
+  private static function getCacheFile($section) {
+    return self::getCacheDir().$section;
   }
 }
 ?>

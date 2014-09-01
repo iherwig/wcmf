@@ -22,8 +22,6 @@ use wcmf\lib\core\ObjectFactory;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
-  // only instantiate pdo once for test clean-up/fixture load
-  private static $pdo = null;
   private static $frameworkReady = false;
 
   // only instantiate PHPUnit_Extensions_Database_DB_IDatabaseConnection once per test
@@ -35,34 +33,23 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
       self::$frameworkReady = true;
     }
     if ($this->conn === null) {
-      $config = ObjectFactory::getConfigurationInstance();
-      $params = $config->getSection('database');
-      if (self::$pdo == null) {
-        $pdoParams = array();
-        if ($params['dbType'] == 'sqlite') {
-          $pdoParams[PDO::ATTR_PERSISTENT] = true;
-        }
+      // get connection from first entity type
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $types = $persistenceFacade->getKnownTypes();
+      $mapper = $persistenceFacade->getMapper($types[0]);
+      $pdo = $mapper->getConnection()->getConnection();
 
-        $conParams = array(
-          'host' => $params['dbHostName'],
-          'username' => $params['dbUserName'],
-          'password' => $params['dbPassword'],
-          'dbname' => $params['dbName'],
-          'driver_options' => $pdoParams
-        );
-        self::$pdo = Zend_Db::factory('Pdo_'.ucfirst($params['dbType']), $conParams)->getConnection();
-        // create sqlite db
-        if ($params['dbType'] == 'sqlite') {
-          $numTables = self::$pdo->query('SELECT count(*) FROM sqlite_master WHERE type = "table"')->fetchColumn();
-          if ($numTables == 0) {
-            $schema = file_get_contents(WCMF_BASE.'install/tables_sqlite.sql');
-            self::$pdo->exec($schema);
-          }
+      // create sqlite db
+      $params = $mapper->getConnectionParams();
+      if ($params['dbType'] == 'sqlite') {
+        $numTables = $pdo->query('SELECT count(*) FROM sqlite_master WHERE type = "table"')->fetchColumn();
+        if ($numTables == 0) {
+          $schema = file_get_contents(WCMF_BASE.'install/tables_sqlite.sql');
+          $pdo->exec($schema);
         }
       }
-      $this->conn = $this->createDefaultDBConnection(self::$pdo, $params['dbName']);
+      $this->conn = $this->createDefaultDBConnection($pdo, $params['dbName']);
     }
-
     return $this->conn;
   }
 

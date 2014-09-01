@@ -37,6 +37,12 @@ interface PersistenceMapper {
   public function getPkNames();
 
   /**
+   * Get the symbol used to quote identifiers.
+   * @return String
+   */
+  public function getQuoteIdentifierSymbol();
+
+  /**
    * Add quotation to a given identifier (like column name).
    * @param $identifier The identifier string
    * @return String

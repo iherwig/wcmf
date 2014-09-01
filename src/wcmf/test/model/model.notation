@@ -13,7 +13,7 @@
       </eAnnotations>
       <children xmi:type="notation:DecorationNode" xmi:id="_tQF3YbQ3EeOQ5oJFa1i8cg" type="5029"/>
       <children xmi:type="notation:BasicCompartment" xmi:id="_tQF3YrQ3EeOQ5oJFa1i8cg" type="7017">
-        <children xmi:type="notation:Shape" xmi:id="_upZMoLQ3EeOQ5oJFa1i8cg" type="3012" lineColor="0">
+        <children xmi:type="notation:Shape" xmi:id="_upZMoLQ3EeOQ5oJFa1i8cg" type="3012" fontColor="33023" lineColor="0">
           <element xmi:type="uml:Property" href="model.uml#_8j7BELQnEeOULris00pHLg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_upZMobQ3EeOQ5oJFa1i8cg"/>
         </children>
@@ -25,7 +25,7 @@
           <element xmi:type="uml:Property" href="model.uml#_PwCPoLQzEeOQ5oJFa1i8cg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_upZzsbQ3EeOQ5oJFa1i8cg"/>
         </children>
-        <children xmi:type="notation:Shape" xmi:id="_upaawLQ3EeOQ5oJFa1i8cg" type="3012" lineColor="0">
+        <children xmi:type="notation:Shape" xmi:id="_upaawLQ3EeOQ5oJFa1i8cg" type="3012" fontColor="33023" lineColor="0">
           <element xmi:type="uml:Property" href="model.uml#_UOL18LQzEeOQ5oJFa1i8cg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_upaawbQ3EeOQ5oJFa1i8cg"/>
         </children>

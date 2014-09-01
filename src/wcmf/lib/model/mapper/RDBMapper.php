@@ -16,6 +16,7 @@ use \Zend_Db;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\SelectStatement;
@@ -131,15 +132,20 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
           );
           // mysql specific
-          if (strtolower($this->_connectionParams['dbType'] == 'mysql')) {
+          if (strtolower($this->_connectionParams['dbType']) == 'mysql') {
             $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
             $charSet = isset($this->_connectionParams['dbCharSet']) ?
                     $this->_connectionParams['dbCharSet'] : 'utf8';
             $pdoParams[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES ".$charSet;
           }
           // sqlite specific
-          if (strtolower($this->_connectionParams['dbType'] == 'sqlite')) {
-            $pdoParams[PDO::ATTR_PERSISTENT] = true;
+          if (strtolower($this->_connectionParams['dbType']) == 'sqlite') {
+            if (strtolower($this->_connectionParams['dbName']) == ':memory:') {
+              $pdoParams[PDO::ATTR_PERSISTENT] = true;
+            }
+            else {
+              $this->_connectionParams['dbName'] = FileUtil::realpath(WCMF_BASE.$this->_connectionParams['dbName']);
+            }
           }
           $params = array(
             'host' => $this->_connectionParams['dbHostName'],
@@ -245,6 +251,16 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       Log::error("The next id query caused the following exception:\n".$ex->getMessage(), __CLASS__);
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
+  }
+
+  /**
+   * @see PersistenceMapper::getQuoteIdentifierSymbol
+   */
+  public function getQuoteIdentifierSymbol() {
+    if ($this->_conn == null) {
+      $this->connect();
+    }
+    return $this->_conn->getQuoteIdentifierSymbol();
   }
 
   /**
