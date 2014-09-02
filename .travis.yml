@@ -8,5 +8,8 @@ php:
 env:
   - TEST_DIR=src/wcmf/test/
 
+before-script:
+  - composer install
+
 script:
   - cd $TEST_DIR && phpunit --bootstrap bootstrap.php -c configuration.xml
