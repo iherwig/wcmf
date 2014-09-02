@@ -6,7 +6,7 @@ php:
   - "5.3"
 
 env:
-  - TEST_DIR=src/wcmf/test
+  - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test
 
 before_script:
   - composer install
