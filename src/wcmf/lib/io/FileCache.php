@@ -77,7 +77,10 @@ class FileCache {
    * Clear all cache sections
    */
   public static function clearAll() {
-    FileUtil::emptyDir(self::getCacheDir());
+    $cacheDir = self::getCacheDir();
+    if (is_dir($cacheDir)) {
+      FileUtil::emptyDir($cacheDir);
+    }
   }
 
   /**
