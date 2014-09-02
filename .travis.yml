@@ -6,10 +6,11 @@ php:
   - "5.3"
 
 env:
-  - TEST_DIR=src/wcmf/test/
+  - TEST_DIR=src/wcmf/test
 
 before_script:
   - composer install
+  - cd $TEST_DIR/model && ant
 
 script:
   - cd $TEST_DIR && phpunit --bootstrap bootstrap.php -c configuration.xml
