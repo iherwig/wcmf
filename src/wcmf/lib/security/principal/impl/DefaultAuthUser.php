@@ -60,24 +60,11 @@ class DefaultAuthUser implements AuthUser {
           $config->addConfiguration($userConfig);
         }
 
-        // add policies
-        $policies = $config->getSection('authorization');
-        $this->addPolicies($policies);
         $this->_login_time = strftime("%c", time());
       }
     }
 
     return $loginOk;
-  }
-
-  /**
-   * @see AuthUser::authorize()
-   */
-  public function authorize($actionKey, $defaultPolicy=null) {
-    if (isset($this->_policies[$actionKey])) {
-      return $this->matchRoles($this->_policies[$actionKey]);
-    }
-    return $defaultPolicy !== null ? $defaultPolicy : $this->_defaulPolicy;
   }
 
   /**
@@ -99,46 +86,6 @@ class DefaultAuthUser implements AuthUser {
    */
   public function getLoginTime() {
     return $this->_login_time;
-  }
-
-  /**
-   * Adds one ore more policies to the policy repository of the user.
-   * @param $policies An associative array with the policy information
-   *    (key=action, value=policy string).
-   * @note A policy string looks like this "+*, -guest, +admin"
-   */
-  protected function addPolicies(array $policies) {
-    foreach ($policies AS $key => $value) {
-      if (!isset($this->_policies[$key])) {
-        $parsedPolicies = Policy::parse($value);
-        $this->_policies[$key] = $parsedPolicies;
-      }
-    }
-  }
-
-  /**
-   * Matches the roles of the user and the roles for a certain key
-   * @param $val An array containing policy information as an associative array
-   *     with the keys ('default', 'allow', 'deny'). Where 'allow', 'deny' are arrays
-   *     itselves holding roles. 'allow' overwrites 'deny' overwrites 'default'
-   * @return Boolean whether the user has access right according to this policy.
-   */
-  protected function matchRoles($val) {
-    if (isset($val['allow'])) {
-      foreach ($val['allow'] as $value) {
-        if ($this->hasRole($value)) {
-          return true;
-        }
-      }
-    }
-    if (isset($val['deny'])) {
-      foreach ($val['deny'] as $value) {
-        if ($this->hasRole($value)) {
-          return false;
-        }
-      }
-    }
-    return isset($val['default']) ? $val['default'] : false;
   }
 
   /**

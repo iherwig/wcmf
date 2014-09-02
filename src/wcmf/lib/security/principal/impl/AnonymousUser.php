@@ -27,11 +27,6 @@ class AnonymousUser extends DefaultAuthUser implements AuthUser {
   public function __construct() {
     // all actions are forbidden if not stated otherwise
     $this->setDefaultPolicy(false);
-
-    // parse policies
-    $config = ObjectFactory::getConfigurationInstance();
-    $policies = $config->getSection('authorization');
-    $this->addPolicies($policies);
   }
 
   /**

@@ -211,7 +211,9 @@ class DefaultPermissionManager implements PermissionManager {
       Log::debug("Action key for $resource?$context?$action: '$actionKey'", __CLASS__);
     }
     $authorized = null;
-    if (strlen($actionKey) != 0 || !$returnNullIfNoPermissionExists) {
+    if (strlen($actionKey) > 0 || !$returnNullIfNoPermissionExists) {
+      // mathing permission definition found
+
       // check temporary permissions
       if (isset($this->_tempPermissions[$actionKey])) {
         if (Log::isDebugEnabled(__CLASS__)) {
@@ -220,17 +222,58 @@ class DefaultPermissionManager implements PermissionManager {
         $authorized = true;
       }
       else {
+        // check with authorized user
         if (Log::isDebugEnabled(__CLASS__)) {
           Log::debug("Authorizing with user...", __CLASS__);
         }
         $authUser = $this->getAuthUser();
-        $authorized = $authUser && $authUser->authorize($actionKey);
+        if ($authUser) {
+          $config = ObjectFactory::getConfigurationInstance();
+          $policies = Policy::parse($config->getValue($actionKey, self::AUTHORIZATION_SECTION));
+          $authorized = $this->matchRoles($policies, $authUser);
+        }
+        else {
+          $authorized = false;
+        }
+      }
+    }
+    elseif(!$returnNullIfNoPermissionExists) {
+      // no permission definied, check for users default policy
+      $authUser = $this->getAuthUser();
+      if ($authUser) {
+        $authorized = $authUser->getDefaultPolicy();
       }
     }
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Result for action key '$actionKey': ".(is_bool($authorized) ? ((!$authorized ? "not " : "")."authorized") : "not defined"), __CLASS__);
     }
     return $authorized;
+  }
+
+  /**
+   * Matches the roles of the user and the roles in the given policies
+   * @param $policies An array containing policy information as an associative array
+   *     with the keys ('default', 'allow', 'deny'). Where 'allow', 'deny' are arrays
+   *     itselves holding roles. 'allow' overwrites 'deny' overwrites 'default'
+   * @param $user AuthUser instance
+   * @return Boolean whether the user has access right according to this policy.
+   */
+  protected function matchRoles($policies, $user) {
+    if (isset($policies['allow'])) {
+      foreach ($policies['allow'] as $value) {
+        if ($user->hasRole($value)) {
+          return true;
+        }
+      }
+    }
+    if (isset($policies['deny'])) {
+      foreach ($policies['deny'] as $value) {
+        if ($user->hasRole($value)) {
+          return false;
+        }
+      }
+    }
+    return isset($policies['default']) ? $policies['default'] : false;
   }
 
   /**
