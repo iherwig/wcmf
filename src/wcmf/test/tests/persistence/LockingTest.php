@@ -248,7 +248,7 @@ class LockingTest extends DatabaseTestCase {
 
   protected function getNumPessimisticLocks($oid, $userId) {
     return $this->getConnection()->getRowCount('Locktable', "objectid = '".
-            mysql_real_escape_string($oid)."' AND fk_user_id = ".mysql_real_escape_string($userId));
+            $oid."' AND fk_user_id = ".$userId);
   }
 }
 ?>
