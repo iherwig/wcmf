@@ -12,7 +12,7 @@ before_script:
   - composer install
 
   - wget -q http://dev.wemove.com/wcmf/ChronosGenerator-0.9.9.6b.zip && unzip ChronosGenerator-0.9.9.6b.zip -d generator
-  - cd $TEST_DIR/model && ant -Dgenerator.base=generator
+  - cd $TEST_DIR/model && ant -Dgenerator.base=$TEST_DIR/generator
 
 script:
   - cd $TEST_DIR && phpunit --bootstrap bootstrap.php -c configuration.xml
