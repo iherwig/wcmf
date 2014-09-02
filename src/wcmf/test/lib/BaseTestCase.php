@@ -21,10 +21,9 @@ use wcmf\lib\core\ObjectFactory;
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
-    Log::info("Running: ".get_class($this).".".$this->getName(), __CLASS__);
     TestUtil::initFramework();
-
     parent::setUp();
+    Log::info("Running: ".get_class($this).".".$this->getName(), __CLASS__);
   }
 
   /**

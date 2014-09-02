@@ -25,10 +25,13 @@ class DefaultSession implements Session {
     // regenerate session id if cookie is lost
     $sessionName = 'wcmf'.md5(__FILE__);
     session_name($sessionName);
-    if (!isset($_COOKIE[$sessionName]) || strlen($_COOKIE[$sessionName]) == 0) {
-      session_regenerate_id();
+    // NOTE: prevent "headers already sent" errors in phpunit tests
+    if (!headers_sent()) {
+      if (!isset($_COOKIE[$sessionName]) || strlen($_COOKIE[$sessionName]) == 0) {
+        session_regenerate_id();
+      }
+      session_start();
     }
-    session_start();
   }
 
   public function __destruct() {

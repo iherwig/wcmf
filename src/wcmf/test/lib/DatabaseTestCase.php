@@ -52,12 +52,12 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
   }
 
   protected function setUp() {
-    Log::info("Running: ".get_class($this).".".$this->getName(), __CLASS__);
     if (!self::$frameworkReady) {
       TestUtil::initFramework();
       self::$frameworkReady = true;
     }
     parent::setUp();
+    Log::info("Running: ".get_class($this).".".$this->getName(), __CLASS__);
   }
 
   protected function tearDown() {

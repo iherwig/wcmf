@@ -64,7 +64,6 @@ class LockingTest extends DatabaseTestCase {
 
     // release
     $sid2 = TestUtil::startSession('user1', 'user1');
-    $this->assertNotEquals($sid1, $sid2);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
     ObjectFactory::getInstance('concurrencyManager')->releaseLock($oid);
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));

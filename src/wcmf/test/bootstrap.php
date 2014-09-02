@@ -20,10 +20,6 @@ register_shutdown_function(function() use ($resource) {
   endProcess($resource);
 });
 
-// delay any output from phpunit until the script is finished
-// in order to awoid conflicts with session headers
-ob_start();
-
 function startProcess($cmd) {
   $descriptorspec = array(
     0 => array('pipe', 'r'), // stdin
