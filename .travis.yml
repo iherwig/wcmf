@@ -7,12 +7,13 @@ php:
 
 env:
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test
+  - GENERATOR_DIR=$TRAVIS_BUILD_DIR/generator
 
 before_script:
   - composer install
 
-  - wget -q http://dev.wemove.com/wcmf/ChronosGenerator-0.9.9.6b.zip && unzip ChronosGenerator-0.9.9.6b.zip -d generator
-  - cd $TEST_DIR/model && ant -Dgenerator.base=$TEST_DIR/generator
+  - wget -q http://dev.wemove.com/wcmf/ChronosGenerator-0.9.9.6b.zip && unzip ChronosGenerator-0.9.9.6b.zip -d $GENERATOR_DIR
+  - cd $TEST_DIR/model && ant -Dgenerator.base=$GENERATOR_DIR
 
 script:
   - cd $TEST_DIR && phpunit --bootstrap bootstrap.php -c configuration.xml
