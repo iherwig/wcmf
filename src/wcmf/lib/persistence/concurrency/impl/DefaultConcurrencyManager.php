@@ -107,7 +107,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
       if ($type == Lock::TYPE_PESSIMISTIC) {
         $permissionManager = ObjectFactory::getInstance('permissionManager');
         $currentUser = $permissionManager->getAuthUser();
-        if ($lock->getUserOID() != $currentUser->getOID()) {
+        if ($lock->getLogin() != $currentUser->getLogin()) {
             throw new PessimisticLockException($lock);
         }
       }

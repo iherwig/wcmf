@@ -27,8 +27,6 @@ use wcmf\test\lib\TestUtil;
  */
 class LockingTest extends DatabaseTestCase {
 
-  private $_user1OidStr = 'User:555';
-  private $_user2OidStr = 'User:666';
   private $_bookOidStr = 'Book:777';
 
   protected function getDataSet() {
@@ -43,46 +41,43 @@ class LockingTest extends DatabaseTestCase {
       'Book' => array(
         array('id' => 777),
       ),
-      'Locktable' => array(
+      'Lock' => array(
       ),
     ));
   }
 
   public function testPessimisticLock() {
     $oid = ObjectId::parse($this->_bookOidStr);
-    $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
 
     // lock
     $sid1 = TestUtil::startSession('user1', 'user1');
-    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
-    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     TestUtil::endSession();
 
     // expect lock not to be removed
-    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
 
     // release
     $sid2 = TestUtil::startSession('user1', 'user1');
-    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->releaseLock($oid);
-    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     TestUtil::endSession();
 
     // expect lock not to be removed
-    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
   }
 
   public function testPessimisticConcurrentLock() {
     $oid = ObjectId::parse($this->_bookOidStr);
-    $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
-    $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
 
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
-    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
-    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     TestUtil::endSession();
 
     // user 2 tries to lock the object
@@ -92,7 +87,7 @@ class LockingTest extends DatabaseTestCase {
     }
     catch (PessimisticLockException $ex) {
       // check if no lock was aquired
-      $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user2Id));
+      $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user2'));
       TestUtil::endSession();
       return;
     }
@@ -101,14 +96,12 @@ class LockingTest extends DatabaseTestCase {
 
   public function testPessimisticConcurrentUpdate() {
     $oid = ObjectId::parse($this->_bookOidStr);
-    $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
-    $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
 
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
-    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
-    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     TestUtil::endSession();
 
     // user 2 tries to update the object
@@ -134,14 +127,12 @@ class LockingTest extends DatabaseTestCase {
 
   public function testPessimisticConcurrentDelete() {
     $oid = ObjectId::parse($this->_bookOidStr);
-    $user1Id = ObjectId::parse($this->_user1OidStr)->getFirstId();
-    $user2Id = ObjectId::parse($this->_user2OidStr)->getFirstId();
 
     // user 1 locks the object
     $sid1 = TestUtil::startSession('user1', 'user1');
-    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
-    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, $user1Id));
+    $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     TestUtil::endSession();
 
     // user 2 tries to delete the object
@@ -246,9 +237,9 @@ class LockingTest extends DatabaseTestCase {
     $this->fail('Expected OptimisticLockException has not been raised.');
   }
 
-  protected function getNumPessimisticLocks($oid, $userId) {
-    return $this->getConnection()->getRowCount('Locktable', "objectid = '".
-            $oid."' AND fk_user_id = ".$userId);
+  protected function getNumPessimisticLocks($oid, $login) {
+    return $this->getConnection()->getRowCount('Lock', "objectid = '".
+            $oid."' AND login = '".$login."'");
   }
 }
 ?>

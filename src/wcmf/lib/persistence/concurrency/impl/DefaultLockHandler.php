@@ -13,7 +13,6 @@ namespace wcmf\lib\persistence\concurrency\impl;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\LockHandler;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
@@ -22,19 +21,25 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 
 /**
- * DefaultLockHandler implements the LockHandler interface for relational databases.
- * Locks are represented by the entity type 'Locktable' with attributes
- * 'sessionid', 'objectid', 'since'. Locktable instances are children of the user entity.
+ * DefaultLockHandler implements the LockHandler interface for relational
+ * databases. It relies on an entity type that implements the PersistentLock
+ * interface.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultLockHandler implements LockHandler {
 
   const SESSION_VARNAME = 'DefaultLockHandler.locks';
-  const LOCKTYPE = 'Locktable';
 
-  private $_userType = null;
-  private $_lockUserRelationName = null;
+  private $_lockType = null;
+
+  /**
+   * Set the entity type name of PersistentLock instances.
+   * @param $lockType String
+   */
+  public function setLockType($lockType) {
+    $this->_lockType = $lockType;
+  }
 
   /**
    * @see LockHandler::aquireLock()
@@ -52,7 +57,7 @@ class DefaultLockHandler implements LockHandler {
       if ($lock->getType() == Lock::TYPE_PESSIMISTIC) {
         // if the existing lock is a pessimistic lock and it is owned by another
         // user, we throw an exception
-        if ($lock->getUserOID() != $currentUser->getOID()) {
+        if ($lock->getLogin() != $currentUser->getLogin()) {
           throw new PessimisticLockException($lock);
         }
         // if the existing lock is a pessimistic lock and is owned by the user
@@ -64,8 +69,7 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // create the lock instance
-    $lock = new Lock($type, $oid, $currentUser->getOID(), $currentUser->getLogin(),
-            $session->getID());
+    $lock = new Lock($type, $oid, $currentUser->getLogin(), $session->getID());
 
     // set the current state for optimistic locks
     if ($type == Lock::TYPE_OPTIMISTIC) {
@@ -86,12 +90,10 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // delete locks for the given oid and current user
-    $query = new ObjectQuery(self::LOCKTYPE, __CLASS__.__METHOD__);
-    $tpl = $query->getObjectTemplate(self::LOCKTYPE);
+    $query = new ObjectQuery($this->_lockType, __CLASS__.__METHOD__);
+    $tpl = $query->getObjectTemplate($this->_lockType);
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
-    $userTpl = $query->getObjectTemplate($this->getUserType());
-    $userTpl->setOID($currentUser->getOID());
-    $userTpl->addNode($tpl);
+    $tpl->setValue('login', Criteria::asValue("=", $currentUser->getLogin()));
     $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
       // delete lock immediatly
@@ -105,8 +107,8 @@ class DefaultLockHandler implements LockHandler {
    */
   public function releaseLocks(ObjectId $oid) {
     // delete locks for the given oid
-    $query = new ObjectQuery(self::LOCKTYPE, __CLASS__.__METHOD__);
-    $tpl = $query->getObjectTemplate(self::LOCKTYPE);
+    $query = new ObjectQuery($this->_lockType, __CLASS__.__METHOD__);
+    $tpl = $query->getObjectTemplate($this->_lockType);
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
     $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
@@ -126,11 +128,9 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // delete locks for the current user
-    $query = new ObjectQuery(self::LOCKTYPE, __CLASS__.__METHOD__);
-    $tpl = $query->getObjectTemplate(self::LOCKTYPE);
-    $userTpl = $query->getObjectTemplate($this->getUserType());
-    $userTpl->setOID($currentUser->getOID());
-    $userTpl->addNode($tpl);
+    $query = new ObjectQuery($this->_lockType, __CLASS__.__METHOD__);
+    $tpl = $query->getObjectTemplate($this->_lockType);
+    $tpl->setValue('login', Criteria::asValue("=", $currentUser->getLogin()));
     $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
       // delete lock immediatly
@@ -158,25 +158,19 @@ class DefaultLockHandler implements LockHandler {
     }
     else {
       // otherwise we need to check for a pessimistic lock in the store
-      $query = new ObjectQuery(self::LOCKTYPE, __CLASS__.__METHOD__);
-      $tpl = $query->getObjectTemplate(self::LOCKTYPE);
+      $query = new ObjectQuery($this->_lockType, __CLASS__.__METHOD__);
+      $tpl = $query->getObjectTemplate($this->_lockType);
       $tpl->setValue('objectid', Criteria::asValue('=', $oid));
       $locks = $query->execute(BuildDepth::SINGLE);
       if (sizeof($locks) > 0) {
         $lockObj = $locks[0];
-        // add permission to read user informations
-        $permissionManager = ObjectFactory::getInstance('permissionManager');
-        $permissionManager->addTempPermission($this->getUserType(), '', PersistenceAction::READ);
-        $user = $lockObj->getValue($this->getLockUserRelationName());
-        $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $user->getOID(), $user->getLogin(),
-                $lockObj->getValue('sessionid'), $lockObj->getValue('since'));
-        // remove temporary permissions
-        $permissionManager->clearTempPermissions();
+        $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $lockObj->getValue('login'),
+                $lockObj->getValue('sessionid'), $lockObj->getValue('created'));
 
         // if the lock belongs to the current user, we store
         // it in the session for later retrieval
         $currentUser = $this->getCurrentUser();
-        if ($currentUser && $user->getOID() == $currentUser->getOID()) {
+        if ($currentUser && $lockObj->getValue('login') == $currentUser->getLogin()) {
           $this->addSessionLock($lock);
         }
         return $lock;
@@ -194,7 +188,7 @@ class DefaultLockHandler implements LockHandler {
     if ($lock) {
       if ($lock->getType() == Lock::TYPE_OPTIMISTIC) {
         $currentUser = $this->getCurrentUser();
-        if ($currentUser && $lock->getUserOID() == $currentUser->getOID()) {
+        if ($currentUser && $lock->getLogin() == $currentUser->getLogin()) {
           $lock->setCurrentState($object);
           $this->storeLock($lock);
         }
@@ -211,13 +205,10 @@ class DefaultLockHandler implements LockHandler {
       // pessimistic locks must be stored in the database in order
       // to be seen by other users
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $lockObj = $persistenceFacade->create(self::LOCKTYPE, BuildDepth::REQUIRED);
-      $lockObj->setValue('sessionid', $lock->getSessionID());
-      $lockObj->setValue('objectid', $lock->getOID());
-      $lockObj->setValue('since', $lock->getCreated());
-      $userClass = get_class($persistenceFacade->create($this->getUserType(), BuildDepth::REQUIRED));
-      $user = new $userClass($lock->getUserOID());
-      $user->addNode($lockObj);
+      $lockObj = $persistenceFacade->create($this->_lockType, BuildDepth::REQUIRED);
+      $lockObj->setValue('objectid', $lock->getObjectId());
+      $lockObj->setValue('login', $lock->getLogin());
+      $lockObj->setValue('created', $lock->getCreated());
       // save lock immediatly
       $lockObj->getMapper()->save($lockObj);
     }
@@ -254,7 +245,7 @@ class DefaultLockHandler implements LockHandler {
   protected function addSessionLock(Lock $lock) {
     $session = ObjectFactory::getInstance('session');
     $locks = $this->getSessionLocks();
-    $locks[$lock->getOID()->__toString()] = $lock;
+    $locks[$lock->getObjectId()->__toString()] = $lock;
     $session->set(self::SESSION_VARNAME, $locks);
   }
 
@@ -273,31 +264,6 @@ class DefaultLockHandler implements LockHandler {
         $session->set(self::SESSION_VARNAME, $locks);
       }
     }
-  }
-
-  /**
-   * Get the user type.
-   * @return String
-   */
-  protected function getUserType() {
-    if ($this->_userType == null) {
-      $this->_userType = ObjectFactory::getInstance('User')->getType();
-    }
-    return $this->_userType;
-  }
-
-  /**
-   * Get the name of the relation between the lock type and the user type.
-   * @return String
-   */
-  protected function getLockUserRelationName() {
-    if ($this->_lockUserRelationName == null) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $mapper = $persistenceFacade->getMapper(self::LOCKTYPE);
-      $relDescs = $mapper->getRelationsByType($this->getUserType());
-      $this->_lockUserRelationName = $relDescs[0]->getOtherRole();
-    }
-    return $this->_lockUserRelationName;
   }
 }
 ?>

@@ -261,7 +261,7 @@ class SaveController extends Controller {
     catch (PessimisticLockException $ex) {
       $lock = $ex->getLock();
       $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
-        array('lockedOids' => array($lock->getOID()->__toString()))));
+        array('lockedOids' => array($lock->getObjectId()->__toString()))));
       $transaction->rollback();
     }
     catch (OptimisticLockException $ex) {

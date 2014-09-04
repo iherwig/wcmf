@@ -46,7 +46,7 @@ class ListControllerTest extends ControllerTestCase {
       'Role' => array(
         array('id' => 0, 'name' => 'administrators'),
       ),
-      'Locktable' => array(
+      'Lock' => array(
       ),
       'Translation' => array(
       ),

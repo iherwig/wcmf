@@ -20,10 +20,8 @@ class Lock {
   const TYPE_OPTIMISTIC = 'optimistic';
   const TYPE_PESSIMISTIC = 'pessimistic'; // pessimistic write lock
 
-  private $_oid = null;
-  private $_useroid = null;
+  private $_objectId = null;
   private $_login = "";
-  private $_sessid = "";
   private $_created = "";
   private $_currentState = null;
 
@@ -31,17 +29,13 @@ class Lock {
    * Creates a lock on a given object.
    * @param $type One of the Lock::Type constants
    * @param $oid ObjectId of the object to lock
-   * @param $useroid ObjectId of the user who holds the lock
    * @param $login Login name of the user who holds the lock
-   * @param $sessid Id of the session of the user
    * @param $created Creation date of the lock. If omitted the current date will be taken.
    */
-  public function __construct($type, $oid, $useroid, $login, $sessid, $created='') {
+  public function __construct($type, $oid, $login, $created='') {
     $this->_type = $type;
-    $this->_oid = $oid;
-    $this->_useroid = $useroid;
+    $this->_objectId = $oid;
     $this->_login = $login;
-    $this->_sessid = $sessid;
     if ($created == '') {
       $this->_created = date("Y-m-d H:i:s");
     }
@@ -62,43 +56,23 @@ class Lock {
    * Get the oid of the locked object.
    * @return ObjectId of the locked object.
    */
-  public function getOID() {
-    return $this->_oid;
-  }
-
-  /**
-   * Get the oid of the user who holds the lock.
-   * @return ObjectId of the user.
-   */
-  public function getUserOID()
-  {
-    return $this->_useroid;
+  public function getObjectId() {
+    return $this->_objectId;
   }
 
   /**
    * Get the login of the user who holds the lock.
    * @return The login of the user.
    */
-  public function getLogin()
-  {
+  public function getLogin() {
     return $this->_login;
-  }
-
-  /**
-   * Get the session id of the user who holds the lock.
-   * @return The session id of the user.
-   */
-  public function getSessionID()
-  {
-    return $this->_sessid;
   }
 
   /**
    * Get the creation date/time of the lock.
    * @return The creation date/time of the lock.
    */
-  public function getCreated()
-  {
+  public function getCreated() {
     return $this->_created;
   }
 

@@ -26,7 +26,7 @@ use wcmf\lib\persistence\ObjectId;
 class DisplayControllerTest extends ControllerTestCase {
 
   const TEST_OID1 = 'User:0';
-  const TEST_OID2 = 'Locktable:0';
+  const TEST_OID2 = 'UserConfig:0';
 
   protected function getControllerName() {
     return 'wcmf\application\controller\DisplayController';
@@ -46,8 +46,8 @@ class DisplayControllerTest extends ControllerTestCase {
       'Role' => array(
         array('id' => 0, 'name' => 'administrators'),
       ),
-      'Locktable' => array(
-        array('id' => 0, 'sessionid' => 'Session Id', 'fk_user_id' => 0),
+      'UserConfig' => array(
+        array('id' => 0, 'key' => 'Key', 'val' => 'Value', 'fk_user_id' => 0),
       ),
       'Translation' => array(
       ),
@@ -128,7 +128,7 @@ class DisplayControllerTest extends ControllerTestCase {
     $tmp1->setValue('name', 'Administrator [de]');
     $localization->saveTranslation($tmp1, 'de');
     $tmp2 = clone $testObj2;
-    $tmp2->setValue('sessionid', 'Session Id [de]');
+    $tmp2->setValue('val', 'Value [de]');
     $localization->saveTranslation($tmp2, 'de');
     $transaction->commit();
 
@@ -144,7 +144,7 @@ class DisplayControllerTest extends ControllerTestCase {
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = $response->getValue('object');
     $translatedChild = $translatedObj->getFirstChild();
-    $this->assertEquals('Session Id [de]', $translatedChild->getValue('sessionid'));
+    $this->assertEquals('Value [de]', $translatedChild->getValue('val'));
 
     TestUtil::endSession();
   }

@@ -149,23 +149,6 @@ class ObjectQueryTest extends BaseTestCase {
     TestUtil::runAnonymous(false);
   }
 
-  public function testColumnNotEqualsAttribute() {
-    TestUtil::runAnonymous(true);
-
-    $oid = new ObjectId('User', array(2));
-    $query = new ObjectQuery('Locktable', __CLASS__.__METHOD__."8");
-    $tpl = $query->getObjectTemplate('Locktable');
-    $tpl->setValue('sessionid', Criteria::asValue("=", "7pkt0i3ojm67s9qb66dih5nd60"));
-    $tpl->setValue('objectid', Criteria::asValue("=", $oid));
-    $sql = $query->getQueryString();
-    $expected = "SELECT DISTINCT `Locktable`.`id`, `Locktable`.`fk_user_id`, `Locktable`.`objectid`, `Locktable`.`sessionid`, ".
-      "`Locktable`.`since` FROM `Locktable` WHERE (`Locktable`.`objectid` = 'app.src.model.wcmf.User:2' AND ".
-      "`Locktable`.`sessionid` = '7pkt0i3ojm67s9qb66dih5nd60')";
-    $this->assertEquals($this->fixQueryQuotes($expected, 'Locktable'), str_replace("\n", "", $sql));
-
-    TestUtil::runAnonymous(false);
-  }
-
   public function testSortManyToManyRelation() {
     TestUtil::runAnonymous(true);
 
