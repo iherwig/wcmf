@@ -106,23 +106,22 @@ class LoginController extends Controller {
     }
 
     if ($request->getAction() == 'login') {
-      // create AuthUser instance
-      $authUser = ObjectFactory::getInstance('authUser');
+      // authenticate
+      $authManager = ObjectFactory::getInstance('authenticationManager');
 
       // try to login
-      $success = false;
       try {
-        $success = $authUser->login($request->getValue('user'), $request->getValue('password'));
+        $authUser = $authManager->login($request->getValue('user'), $request->getValue('password'));
       }
       catch (Exception $ex) {
         Log::error("Could not log in: ".$ex, __CLASS__);
       }
 
-      if ($success) {
+      if ($authUser) {
         // login succeeded
-        $permissionManager = ObjectFactory::getInstance('permissionManager');
         $session->clear();
-        $session->set($permissionManager->getAuthUserVarname(), $authUser);
+        $permissionManager = ObjectFactory::getInstance('permissionManager');
+        $permissionManager->setAuthUser($authUser);
 
         // return role names of the user
         $roleNames = array();

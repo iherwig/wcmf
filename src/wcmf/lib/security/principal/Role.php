@@ -28,12 +28,5 @@ interface Role {
    * @return The name of the role.
    */
   public function getName();
-
-  /**
-   * Get a Role instance by name.
-   * @param $name The role's name
-   * @return Role instance.
-   */
-  public static function getByName($name);
 }
 ?>

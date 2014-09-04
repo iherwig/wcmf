@@ -17,6 +17,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\Policy;
+use wcmf\lib\security\principal\User;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 
 /**
@@ -36,6 +37,7 @@ class DefaultPermissionManager implements PermissionManager {
   const AUTHORIZATION_SECTION = 'authorization';
 
   private $_anonymousUser = null;
+  private $_authUserVarName = null;
   private $_tempPermissions = array();
 
   /**
@@ -43,13 +45,15 @@ class DefaultPermissionManager implements PermissionManager {
    */
   public function __construct() {
     $this->_anonymousUser = new AnonymousUser();
+    $this->_authUserVarName = 'auth_user_'.Application::getId();
   }
 
   /**
-   * @see PermissionManager::getAuthUserVarname()
+   * @see PermissionManager::setAuthUser()
    */
-  public static function getAuthUserVarname() {
-    return 'auth_user_'.Application::getId();
+  public function setAuthUser($authUser) {
+    $session = ObjectFactory::getInstance('session');
+    $session->set($this->_authUserVarName, $authUser);
   }
 
   /**
@@ -59,9 +63,8 @@ class DefaultPermissionManager implements PermissionManager {
     $user = $this->_anonymousUser;
     // check for auth user in session
     $session = ObjectFactory::getInstance('session');
-    $userVarname = self::getAuthUserVarname();
-    if ($session->exist($userVarname)) {
-      $user = $session->get($userVarname);
+    if ($session->exist($this->_authUserVarName)) {
+      $user = $session->get($this->_authUserVarName);
     }
     return $user;
   }
@@ -187,7 +190,7 @@ class DefaultPermissionManager implements PermissionManager {
 
     if ($authorized === null) {
       $authUser = $this->getAuthUser();
-      $authorized = $authUser && $authUser->getDefaultPolicy();
+      $authorized = $authUser && $this->getDefaultPolicy($authUser);
     }
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Result for $resource?$context?$action: ".(!$authorized ? "not " : "")."authorized", __CLASS__);
@@ -241,13 +244,22 @@ class DefaultPermissionManager implements PermissionManager {
       // no permission definied, check for users default policy
       $authUser = $this->getAuthUser();
       if ($authUser) {
-        $authorized = $authUser->getDefaultPolicy();
+        $authorized = $this->getDefaultPolicy($authUser);
       }
     }
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Result for action key '$actionKey': ".(is_bool($authorized) ? ((!$authorized ? "not " : "")."authorized") : "not defined"), __CLASS__);
     }
     return $authorized;
+  }
+
+  /**
+   * Get the default policy that is used if no permission is set up
+   * for a requested action.
+   * @return Boolean
+   */
+  public function getDefaultPolicy(User $user) {
+    return ($user instanceof AnonymousUser) ? false : true;
   }
 
   /**
@@ -258,7 +270,7 @@ class DefaultPermissionManager implements PermissionManager {
    * @param $user AuthUser instance
    * @return Boolean whether the user has access right according to this policy.
    */
-  protected function matchRoles($policies, $user) {
+  protected function matchRoles($policies, User $user) {
     if (isset($policies['allow'])) {
       foreach ($policies['allow'] as $value) {
         if ($user->hasRole($value)) {

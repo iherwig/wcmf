@@ -81,12 +81,12 @@ class TestUtil {
    */
   public static function startSession($user, $password) {
     $session = ObjectFactory::getInstance('session');
-    $authUser = ObjectFactory::getInstance('authUser');
-    $success = $authUser->login($user, $password);
-    if ($success) {
-      $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $authManager = ObjectFactory::getInstance('authenticationManager');
+    $authUser = $authManager->login($user, $password);
+    if ($authUser) {
       $session->clear();
-      $session->set($permissionManager->getAuthUserVarname(), $authUser);
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
+      $permissionManager->setAuthUser($authUser);
     }
     else {
       throw new \RuntimeException("Session could not be started for user '$user'");

@@ -11,33 +11,22 @@
 namespace wcmf\lib\security\principal\impl;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\Node;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\PersistenceAction;
-use wcmf\lib\persistence\Criteria;
+use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ValidationException;
+use wcmf\lib\security\principal\Role;
 use wcmf\lib\security\principal\User;
 
 /**
- * Default implementation of a user.
+ * Default implementation of a user that is persistent.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class AbstractUser extends Node implements User {
 
-  private $_hasOwnRolesLoaded = false;
+  private $_roles = null;
 
   private static $_roleConfig = null;
-  private static $_roleTypeName = null;
-  private static $_roleRelationNames = null;
-
-  /**
-   * @see User::getUserId()
-   */
-  public function getUserId() {
-    return $this->getOID()->getFirstId();
-  }
 
   /**
    * @see User::setLogin()
@@ -98,10 +87,10 @@ abstract class AbstractUser extends Node implements User {
   /**
    * @see User::hasRole()
    */
-  public function hasRole($rolename) {
+  public function hasRole($roleName) {
     $roles = $this->getRoles();
     for ($i=0, $count=sizeof($roles); $i<$count; $i++) {
-      if ($roles[$i]->getName() == $rolename) {
+      if ($roles[$i]->getName() == $roleName) {
         return true;
       }
     }
@@ -112,35 +101,11 @@ abstract class AbstractUser extends Node implements User {
    * @see User::getRoles()
    */
   public function getRoles() {
-    if (!$this->_hasOwnRolesLoaded) {
-      // make sure that the roles are loaded
-
-      // add permissions for loading (prevent infinite loops when trying to authorize)
-      $permissionManager = ObjectFactory::getInstance('permissionManager');
-      $permissionManager->addTempPermission(self::getRoleTypeName(), '', PersistenceAction::READ);
-      foreach ($this->getRoleRelationNames() as $roleName) {
-        $this->loadChildren($roleName);
-      }
-      // remove temporary permissions
-      $permissionManager->removeTempPermission(self::getRoleTypeName(), '', PersistenceAction::READ);
-      $this->_hasOwnRolesLoaded = true;
+    if (!$this->_roles) {
+      $principalFactory = ObjectFactory::getInstance('principalFactory');
+      $this->_roles = $principalFactory->getUserRoles($this, true);
     }
-    // TODO add role nodes from addedNodes array
-    // use getChildrenEx, because we are interessted in the type
-    return $this->getChildrenEx(null, null, self::getRoleTypeName(), null);
-  }
-
-  /**
-   * @see User::getByLogin()
-   */
-  public static function getByLogin($login) {
-    $userTypeName = ObjectFactory::getInstance('User')->getType();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $user = $persistenceFacade->loadFirstObject($userTypeName, BuildDepth::SINGLE,
-                array(
-                    new Criteria($userTypeName, 'login', '=', $login)
-                ), null);
-    return $user;
+    return $this->_roles;
   }
 
   /**
@@ -178,13 +143,15 @@ abstract class AbstractUser extends Node implements User {
    */
   protected function setRoleConfig() {
     if (strlen($this->getConfig()) == 0) {
-      foreach ($this->getAddedNodes() as $role => $nodes) {
-        if (in_array($role, $this->getRoleRelationNames())) {
-          foreach ($nodes as $role) {
-            $rolename = $role->getName();
+      // check added nodes for Role instances
+      foreach ($this->getAddedNodes() as $relationName => $nodes) {
+        foreach ($nodes as $node) {
+          if ($node instanceof Role) {
+            $roleName = $node->getName();
             $roleConfigs = self::getRoleConfigs();
-            if (isset($roleConfigs[$rolename])) {
-              $this->setConfig($roleConfigs[$rolename]);
+            if (isset($roleConfigs[$roleName])) {
+              $this->setConfig($roleConfigs[$roleName]);
+              break;
             }
           }
         }
@@ -215,7 +182,8 @@ abstract class AbstractUser extends Node implements User {
       if (strlen(trim($value)) == 0) {
         throw new ValidationException(Message::get("The user requires a login name"));
       }
-      $user = self::getByLogin($value);
+      $principalFactory = ObjectFactory::getInstance('principalFactory');
+      $user = $principalFactory->getUser($value);
       if ($user != null && $user->getOID() != $this->getOID()) {
         throw new ValidationException(Message::get("The login '%0%' already exists", array($value)));
       }
@@ -231,35 +199,8 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
-   * Get the role relation names
-   * @return Array
-   */
-  protected function getRoleRelationNames() {
-    // initialize role relation definition
-    if (self::$_roleRelationNames == null) {
-      self::$_roleRelationNames = array();
-      $mapper = $this->getMapper();
-      foreach ($mapper->getRelationsByType(self::getRoleTypeName()) as $relation) {
-        self::$_roleRelationNames[] = $relation->getOtherRole();
-      }
-    }
-    return self::$_roleRelationNames;
-  }
-
-  /**
-   * Get the role type name from the application configuration
-   * @return String
-   */
-  protected static function getRoleTypeName() {
-    if (self::$_roleTypeName == null) {
-      self::$_roleTypeName = ObjectFactory::getInstance('Role')->getType();
-    }
-    return self::$_roleTypeName;
-  }
-
-  /**
    * Get the role configurations from the application configuration
-   * @return Array with rolenames as keys and config file names as values
+   * @return Array with role names as keys and config file names as values
    */
   protected static function getRoleConfigs() {
     if (self::$_roleConfig == null) {

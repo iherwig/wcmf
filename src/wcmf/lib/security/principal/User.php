@@ -18,10 +18,10 @@ namespace wcmf\lib\security\principal;
 interface User {
 
   /**
-   * Get the id of the user.
-   * @return The id.
+   * Get the object id of the user.
+   * @return ObjectId
    */
-  public function getUserId();
+  public function getOID();
 
   /**
    * Set the login of the user.
@@ -79,22 +79,15 @@ interface User {
 
   /**
    * Check for a certain role in the user roles.
-   * @param $rolename The role name to check for. e.g. "administrators"
+   * @param $roleName The role name to check for. e.g. "administrators"
    * @return Boolean whether the user has the role
    */
-  public function hasRole($rolename);
+  public function hasRole($roleName);
 
   /**
    * Get the roles of a user.
    * @return Array of role names
    */
   public function getRoles();
-
-  /**
-   * Get a User instance by login.
-   * @param $login The user's login
-   * @return User instance.
-   */
-  public static function getByLogin($login);
 }
 ?>

@@ -256,7 +256,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       return $mapper;
     }
     else {
-      throw new ConfigurationException("No PersistenceMapper found in configfile for type '".$type."'");
+      throw new ConfigurationException("No PersistenceMapper found for type '".$type."'");
     }
   }
 

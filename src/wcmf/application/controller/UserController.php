@@ -54,20 +54,17 @@ class UserController extends Controller {
 
     // load model
     $authUser = $permissionManager->getAuthUser();
-    $oid = new ObjectId(ObjectFactory::getInstance('User')->getType(), $authUser->getUserId());
 
     // add permissions for this operation
-    $userType = ObjectFactory::getInstance('User')->getType();
-    $permissionManager->addTempPermission($userType, '', 'read');
-    $permissionManager->addTempPermission($userType, '', 'modify');
-
-    $user = $persistenceFacade->load($oid);
+    $oidStr = $authUser->getOID()->_toString();
+    $permissionManager->addTempPermission($oidStr, '', 'read');
+    $permissionManager->addTempPermission($oidStr, '', 'modify');
 
     // start the persistence transaction
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     try {
-      $this->changePassword($user, $request->getValue('oldpassword'),
+      $this->changePassword($authUser, $request->getValue('oldpassword'),
         $request->getValue('newpassword1'), $request->getValue('newpassword2'));
       $transaction->commit();
     }

@@ -145,19 +145,56 @@ class DefaultLocalization implements Localization {
   /**
    * @see Localization::loadTranslation()
    */
-  public function loadTranslation($object, $lang, $useDefaults=true, $recursive=true, $translatedOIDs=array()) {
+  public function loadTranslation($object, $lang, $useDefaults=true, $recursive=true) {
+    $translatedObject = $this->loadTranslationImpl($object, $lang, $useDefaults);
+
+    // recurse if requested
+    if ($recursive) {
+      $mapper = $object->getMapper();
+      if ($mapper) {
+        $relations = $mapper->getRelations('child');
+        foreach ($relations as $relation) {
+          if ($relation->getOtherNavigability()) {
+            $role = $relation->getOtherRole();
+            $childValue = $object->getValue($role);
+            if ($childValue != null) {
+              $children = $relation->isMultiValued() ? $childValue : array($childValue);
+              foreach ($children as $child) {
+                // don't resolve proxies
+                if (!($child instanceof PersistentObjectProxy)) {
+                  $translatedChild = $this->loadTranslationImpl($child, $lang, $useDefaults);
+                  $translatedObject->addNode($translatedChild, $role);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return $translatedObject;
+  }
+
+  /**
+   * Load a translation of a single entity for a specific language.
+   * @param $object A reference to the object to load the translation into. The object
+   *    is supposed to have it's values in the default language.
+   * @param $lang The language of the translation to load.
+   * @param $useDefaults Boolean whether to use the default language values
+   *    for untranslated/empty values or not. Optional, default is true.
+   * @return A reference to the translated object.
+   * @throws IllegalArgumentException
+   */
+  protected function loadTranslationImpl($object, $lang, $useDefaults=true) {
     if ($object == null) {
       throw new IllegalArgumentException('Cannot load translation for null');
     }
+
+    $translatedObject = $object;
     $oidStr = $object->getOID()->__toString();
 
-    // if the requested language is the default language, return the original object
-    if ($lang == $this->getDefaultLanguage() || isset($translatedOIDs[$oidStr])) {
-      // nothing to do
-      $translatedObject = $object;
-    }
-    // load the translations and translate the object for any other language
-    else {
+    // load the translations and translate the object for any language
+    // different to the default language
+    if ($lang != $this->getDefaultLanguage()) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $transaction = $persistenceFacade->getTransaction();
       $translatedObject = $persistenceFacade->create($object->getType());
@@ -175,34 +212,7 @@ class DefaultLocalization implements Localization {
       for($iter->rewind(); $iter->valid(); $iter->next()) {
         $this->setTranslatedValue($translatedObject, $iter->key(), $translations, $useDefaults);
       }
-
-      $translatedOIDs[$oidStr] = true;
-
-      // recurse if requested
-      if ($recursive) {
-        $mapper = $object->getMapper();
-        if ($mapper) {
-          $relations = $mapper->getRelations('child');
-          foreach ($relations as $relation) {
-            if ($relation->getOtherNavigability()) {
-              $role = $relation->getOtherRole();
-              $childValue = $object->getValue($role);
-              if ($childValue != null) {
-                $children = $relation->isMultiValued() ? $childValue : array($childValue);
-                foreach ($children as $child) {
-                  // don't resolve proxies
-                  if (!($child instanceof PersistentObjectProxy)) {
-                    $translatedChild = $this->loadTranslation($child, $lang, $useDefaults, $recursive, $translatedOIDs);
-                    $translatedObject->addNode($translatedChild, $role);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
-
     return $translatedObject;
   }
 
@@ -212,6 +222,31 @@ class DefaultLocalization implements Localization {
    * key in the configuration 'localization' are stored.
    */
   public function saveTranslation($object, $lang, $saveEmptyValues=false, $recursive=true) {
+    $this->saveTranslationImpl($object, $lang, $saveEmptyValues);
+
+    // recurse if requested
+    if ($recursive) {
+      $iterator = new NodeIterator($object);
+      foreach($iterator as $oidStr => $obj) {
+        if ($obj->getOID() != $object->getOID()) {
+          // don't resolve proxies
+          if (!($obj instanceof PersistentObjectProxy)) {
+            $this->saveTranslationImpl($obj, $lang, $saveEmptyValues);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Save a translation of a single entity for a specific language. Only the
+   * values that have a non-empty value are considered as translations and stored.
+   * @param $object An instance of the entity type that holds the translations as values.
+   * @param $lang The language of the translation.
+   * @param $saveEmptyValues Boolean whether to save empty translations or not.
+   *    Optional, default is false
+   */
+  protected function saveTranslationImpl($object, $lang, $saveEmptyValues=false) {
     // if the requested language is the default language, do nothing
     if ($lang == $this->getDefaultLanguage()) {
       // nothing to do
@@ -235,19 +270,6 @@ class DefaultLocalization implements Localization {
         if (!in_array($valueName, $pkNames)) {
           $curIterNode = $iter->currentNode();
           $this->saveTranslatedValue($curIterNode, $valueName, $translations, $lang, $saveEmptyValues);
-        }
-      }
-    }
-
-    // recurse if requested
-    if ($recursive) {
-      $iterator = new NodeIterator($object);
-      foreach($iterator as $oidStr => $obj) {
-        if ($obj->getOID() != $object->getOID()) {
-          // don't resolve proxies
-          if (!($obj instanceof PersistentObjectProxy)) {
-            $this->saveTranslation($obj, $lang, $saveEmptyValues, $recursive);
-          }
         }
       }
     }

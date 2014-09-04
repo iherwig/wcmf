@@ -10,37 +10,88 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\security\principal\AuthUser;
-use wcmf\lib\security\principal\impl\DefaultAuthUser;
+use wcmf\lib\security\principal\User;
 
 /**
  * Anonymous user
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AnonymousUser extends DefaultAuthUser implements AuthUser {
+class AnonymousUser implements User {
+
+  const USER_GROUP_NAME = 'anonymous';
+
+  private $_config = null;
 
   /**
-   * Constructor
+   * @see User::getOID()
    */
-  public function __construct() {
-    // all actions are forbidden if not stated otherwise
-    $this->setDefaultPolicy(false);
+  public function getOID() {
+    return null;
   }
 
   /**
-   * @see AuthUser::login()
+   * @see User::setLogin()
    */
-  public function login($login, $password) {
-    // do nothing
-  }
+  public function setLogin($login) {}
 
   /**
-   * @see AuthUser::login()
+   * @see User::getLogin()
    */
   public function getLogin() {
-    return "anonymous";
+    return self::USER_GROUP_NAME;
+  }
+
+  /**
+   * @see User::setPassword()
+   */
+  public function setPassword($password) {}
+
+  /**
+   * @see User::getPassword()
+   */
+  public function getPassword() {
+    return null;
+  }
+
+  /**
+   * @see User::hashPassword
+   */
+  public function hashPassword($password) {}
+
+  /**
+   * @see User::verifyPassword
+   */
+  public function verifyPassword($password, $passwordHash) {
+    return false;
+  }
+
+  /**
+   * @see User::setConfig()
+   */
+  public function setConfig($config) {
+    $this->_config = $config;
+  }
+
+  /**
+   * @see User::getConfig()
+   */
+  public function getConfig() {
+    return $this->_config;
+  }
+
+  /**
+   * @see User::hasRole()
+   */
+  public function hasRole($rolename) {
+    return $rolename == self::USER_GROUP_NAME;
+  }
+
+  /**
+   * @see User::getRoles()
+   */
+  public function getRoles() {
+    return array(self::USER_GROUP_NAME);
   }
 }
 ?>

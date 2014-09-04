@@ -10,11 +10,10 @@
  */
 namespace wcmf\lib\security;
 
-use wcmf\lib\security\AuthUser;
-
 /**
  * PermissionManager implementations are used to handle all authorization
- * requests.
+ * requests. PermissionManager instances are configured with an AuthUser
+ * instance, against which authorization requests are processed.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -24,14 +23,14 @@ interface PermissionManager {
   const PERMISSION_MODIFIER_DENY = '-';
 
   /**
-   * Get session variable name for the authenticated user.
-   * @return The variable name.
+   * Set the authenticated user.
+   * @param $authUser AuthUser instance.
    */
-  public static function getAuthUserVarname();
+  public function setAuthUser($authUser);
 
   /**
-   * Get authenticated user.
-   * @return AuthUser object or AnonymousUser if not logged in.
+   * Get the authenticated user.
+   * @return AuthUser instance.
    */
   public function getAuthUser();
 
