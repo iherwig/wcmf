@@ -16,6 +16,7 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileCache;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\security\impl\NullPermissionManager;
 
 /**
  * TestUtil provides helper methods for testing wCMF functionality.
@@ -23,6 +24,9 @@ use wcmf\lib\model\mapper\RDBMapper;
  * @author ingo herwig <ingo@wemove.com>
  */
 class TestUtil {
+
+  private static $_nullPermissionManager = null;
+  private static $_defaultPermissionManager = null;
 
   /**
    * Set up the wcmf framework
@@ -49,8 +53,12 @@ class TestUtil {
    * @param Boolean whether to turn it off or on
    */
   public static function runAnonymous($isAnonymous) {
-    $config = ObjectFactory::getConfigurationInstance();
-    $config->setValue('anonymous', $isAnonymous, 'application');
+    if (!self::$_nullPermissionManager) {
+      self::$_nullPermissionManager = new NullPermissionManager();
+      self::$_defaultPermissionManager = ObjectFactory::getInstance('permissionManager');
+    }
+    $permissionManager = $isAnonymous ? self::$_nullPermissionManager : self::$_defaultPermissionManager;
+    ObjectFactory::registerInstance('permissionManager', $permissionManager);
   }
 
   /**

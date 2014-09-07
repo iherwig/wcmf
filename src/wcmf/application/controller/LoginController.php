@@ -49,10 +49,6 @@ use wcmf\lib\presentation\Response;
  */
 class LoginController extends Controller {
 
-  private $_anonymous = 0; // in anonymous mode all authorization requests answered positive
-                       // and AuthUser is an instance of AnonymousUser
-                       // The mode is set in configuration section 'application' key 'anonymous'
-
   /**
    * @see Controller::initialize()
    */
@@ -61,8 +57,6 @@ class LoginController extends Controller {
     if ($request->getAction() != 'login') {
       $request->clearValues();
     }
-    $config = ObjectFactory::getConfigurationInstance();
-    $this->_anonymous = $config->getBooleanValue('anonymous', 'application');
 
     parent::initialize($request, $response);
   }
@@ -73,7 +67,7 @@ class LoginController extends Controller {
   protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if ($request->getAction() == 'login' && !$this->_anonymous) {
+    if ($request->getAction() == 'login') {
       $invalidParameters = array();
       if(!$request->hasValue('user')) {
         $invalidParameters[] = 'user';
@@ -98,12 +92,6 @@ class LoginController extends Controller {
     $session = ObjectFactory::getInstance('session');
     $request = $this->getRequest();
     $response = $this->getResponse();
-
-    // return immediately if anonymous
-    if ($this->_anonymous) {
-      $request->setAction('ok');
-      return;
-    }
 
     if ($request->getAction() == 'login') {
       // authenticate

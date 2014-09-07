@@ -6,7 +6,8 @@ use wcmf\lib\core\ClassLoader;
 use wcmf\lib\io\FileUtil;
 new ClassLoader();
 
-// copy resources
+// refresh resources
+@unlink(WCMF_BASE.'app/test-db.sq3');
 FileUtil::copyRecDir('resources/app/', WCMF_BASE.'app/');
 
 // start the built-in web server

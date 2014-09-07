@@ -108,17 +108,6 @@ class Application {
    * @param $request The Request instance
    */
   public function handleException(Exception $exception, Request $request=null) {
-    if ($exception instanceof ApplicationException) {
-      $error = $exception->getError();
-      if ($error->getCode() == 'SESSION_INVALID') {
-        $request = $exception->getRequest();
-        $request->setAction('logout');
-        $request->addError($error);
-        ObjectFactory::getInstance('actionMapper')->processAction($request);
-        return;
-      }
-    }
-
     Log::error($exception->getMessage()."\n".$exception->getTraceAsString(), __CLASS__);
 
     // rollback current transaction

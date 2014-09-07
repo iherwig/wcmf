@@ -35,23 +35,6 @@ interface PermissionManager {
   public function getAuthUser();
 
   /**
-   * See if the PermissionManager is working in anonymous mode. In anonymous mode all
-   * authorization requests answered positive and AuthUser is an instance of AnonymousUser.
-   * @return Boolean whether in anonymous mode
-   */
-  public function isAnonymous();
-
-  /**
-   * Deactivate permission checking by setting the anonymous confguration value.
-   */
-  public function deactivate();
-
-  /**
-   * (Re-)activate permission checking by unsetting the anonymous confguration value.
-   */
-  public function activate();
-
-  /**
    * Authorize for given resource, context, action triple.
    * A resource could be one of the following:
    * - Controller class name (e.g. `wcmf\application\controller\SaveController`)
@@ -86,6 +69,15 @@ interface PermissionManager {
   public function removeTempPermission($resource, $context, $action);
 
   /**
+   * Check if a temporary permission for the current user exists.
+   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
+   * @return Boolean
+   */
+  public function hasTempPermission($resource, $context, $action);
+
+  /**
    * Reset all temporary permissions
    */
   public function clearTempPermissions();
@@ -95,14 +87,14 @@ interface PermissionManager {
    */
 
   /**
-   * Get the permission on a resource, context, action combination.
+   * Get the permissions on a resource, context, action combination.
    * @param $resource The resource (e.g. class name of the Controller or OID).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
-   * @return An assoziative array with keys 'default', 'allow', 'deny' and the attached roles as values.
-   * @see AuthUser::parsePolicy
+   * @return An assoziative array with keys 'default', 'allow', 'deny' and
+   * the attached roles as values or null, if no permissions are defined.
    */
-  public function getPermission($resource, $context, $action);
+  public function getPermissions($resource, $context, $action);
 
   /**
    * Create/Change a permission for a role on a resource, context, action combination.
