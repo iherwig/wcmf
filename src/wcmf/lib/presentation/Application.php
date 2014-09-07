@@ -16,7 +16,6 @@ use wcmf\lib\core\ClassLoader;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Request;
 
 /**

@@ -53,10 +53,16 @@ class DefaultActionMapper implements ActionMapper {
 
     // check authorization for controller/context/action triple
     if (!$permissionManager->authorize($referrer, $context, $action)) {
-      $authUser = $permissionManager->getAuthUser();
-      $login = $authUser->getLogin();
-      Log::error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$login."'", __CLASS__);
-      throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
+      if (sizeof($_SESSION) == 0) {
+        Log::error("Session invalid. The request was: ".$request->__toString(), __CLASS__);
+        throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
+      }
+      else {
+        $authUser = $permissionManager->getAuthUser();
+        $login = $authUser->getLogin();
+        Log::error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$login."'", __CLASS__);
+        throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
+      }
     }
 
     // get best matching action key from inifile
