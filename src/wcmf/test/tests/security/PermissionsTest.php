@@ -49,6 +49,10 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 111, 'title' => 'Book1'),
         array('id' => 222, 'title' => 'Book2'),
       ),
+      'Chapter' => array(
+        array('id' => 111, 'fk_book_id' => 111, 'name' => 'Chapter 1'),
+        array('id' => 222, 'fk_chapter_id' => 111, 'name' => 'Chapter 1.1'),
+      ),
     ));
   }
 
@@ -163,6 +167,18 @@ class PermissionsTest extends DatabaseTestCase {
     $this->assertEquals('app.src.model.Book:111', $books[0]->getOID()->__toString());
     $forbidden = ObjectFactory::getInstance('persistenceFacade')->getTransaction()->getLoaded(new ObjectId('Book', 222));
     $this->assertNull($forbidden);
+
+    TestUtil::endSession();
+  }
+
+  public function testInheritance() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    //$chapter1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 111));
+    //$this->assertNull($chapter1);
+
+    //$chapter11 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 222));
+    //$this->assertNull($chapter11);
 
     TestUtil::endSession();
   }

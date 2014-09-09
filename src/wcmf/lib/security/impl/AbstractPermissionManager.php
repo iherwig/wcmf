@@ -14,6 +14,7 @@ use wcmf\lib\config\ActionKey;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\User;
@@ -151,6 +152,45 @@ class AbstractPermissionManager {
       default:
         $authorized = $this->authorizeAction($resourceStr, $context, $action);
         break;
+    }
+
+    // check parent entities in composite relations
+    if ($authorized === null && $resourceType == self::RESOURCE_TYPE_ENTITY_INSTANCE) {
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Check parent objects", __CLASS__);
+      }
+      $mapper = $persistenceFacade->getMapper($type);
+      $parentRelations = $mapper->getRelations('parent');
+      if (sizeof($parentRelations) > 0) {
+
+        $this->addTempPermission($oidObj, $context, PersistenceAction::READ);
+        $object = $persistenceFacade->load($oidObj);
+        $this->removeTempPermission($oidObj, $context, PersistenceAction::READ);
+
+        if ($object != null) {
+          foreach ($parentRelations as $parentRelation) {
+            if ($parentRelation->getThisAggregationKind() == 'composite') {
+              $parentType = $parentRelation->getOtherType();
+
+              $this->addTempPermission($parentType, $context, PersistenceAction::READ);
+              $parents = $object->getValue($parentRelation->getOtherRole());
+              $this->removeTempPermission($parentType, $context, PersistenceAction::READ);
+
+              if ($parents != null) {
+                if (!$parentRelation->isMultiValued()) {
+                  $parents = array($parents);
+                }
+                foreach ($parents as $parent) {
+                  $authorized = $this->authorize($parent->getOID(), $context, $action);
+                  if (!$authorized) {
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     if ($authorized === null) {
