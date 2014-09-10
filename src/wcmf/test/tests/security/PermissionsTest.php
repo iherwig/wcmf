@@ -50,8 +50,10 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 222, 'title' => 'Book2'),
       ),
       'Chapter' => array(
-        array('id' => 111, 'fk_book_id' => 111, 'name' => 'Chapter 1'),
-        array('id' => 222, 'fk_chapter_id' => 111, 'name' => 'Chapter 1.1'),
+        array('id' => 111, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 1'),
+        array('id' => 222, 'fk_chapter_id' => 111, 'fk_book_id' => null, 'name' => 'Chapter 1.1'),
+        array('id' => 333, 'fk_chapter_id' => 222, 'fk_book_id' => null, 'name' => 'Chapter 1.1.1'),
+        array('id' => 444, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 2'),
       ),
     ));
   }
@@ -174,11 +176,16 @@ class PermissionsTest extends DatabaseTestCase {
   public function testInheritance() {
     TestUtil::startSession('userPermTest', 'user1');
 
-    //$chapter1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 111));
-    //$this->assertNull($chapter1);
+    // chapter 1 and sub chapters are forbidden
+    $chapter1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 111));
+    $this->assertNull($chapter1);
+    $chapter11 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 222));
+    $this->assertNull($chapter11);
+    $chapter111 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 333));
+    $this->assertNull($chapter111);
 
-    //$chapter11 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 222));
-    //$this->assertNull($chapter11);
+    $chapter2 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 444));
+    $this->assertNotNull($chapter2);
 
     TestUtil::endSession();
   }
