@@ -178,6 +178,25 @@ class ObjectFactory {
                 }
               }
             }
+            // special treatments, if value is an array
+            if (is_array($value)) {
+              $result = array();
+              $containsInstance = false;
+              // check for variables
+              foreach ($value as $val) {
+                if (is_string($val) && strpos($val, '$') === 0) {
+                  $result[] = self::getInstance(preg_replace('/^\$/', '', $val));
+                  $containsInstance = true;
+                }
+                else {
+                  $result[] = $val;
+                }
+              }
+              // only replace value, if the array containes an variable
+              if ($containsInstance) {
+                $value = $result;
+              }
+            }
             // set the property
             $setterName = self::getSetterName($key);
             if (method_exists($obj, $setterName)) {
