@@ -169,7 +169,7 @@ class SmartyView implements View {
    * @see View::getTemplate()
    */
   public static function getTemplate($controller, $context, $action) {
-    if (self::_actionKeyProvider == null) {
+    if (self::$_actionKeyProvider == null) {
       self::$_actionKeyProvider = new ConfigActionKeyProvider();
       self::$_actionKeyProvider->setConfigSection('views');
     }
