@@ -22,6 +22,7 @@ use wcmf\lib\core\ObjectFactory;
 class ConfigActionKeyProvider implements ActionKeyProvider {
 
   private $_configSection = null;
+  private $_cacheId = null;
 
   /**
    * Set the configuration section to search in.
@@ -29,6 +30,7 @@ class ConfigActionKeyProvider implements ActionKeyProvider {
    */
   public function setConfigSection($configSection) {
     $this->_configSection = $configSection;
+    $this->_cacheId = null;
   }
 
   /**
@@ -40,10 +42,24 @@ class ConfigActionKeyProvider implements ActionKeyProvider {
   }
 
   /**
+   * @see ActionKeyProvider::getKeyValue()
+   */
+  public function getKeyValue($actionKey) {
+    if ($this->containsKey($actionKey)) {
+      $config = ObjectFactory::getConfigurationInstance();
+      return $config->getValue($actionKey, $this->_configSection);
+    }
+    return null;
+  }
+
+  /**
    * @see ActionKeyProvider::getCacheId()
    */
   public function getCacheId() {
-    return __CLASS__.'.'.$this->_configSection;
+    if ($this->_cacheId ==  null) {
+      $this->_cacheId = __CLASS__.'.'.$this->_configSection;
+    }
+    return $this->_cacheId;
   }
 }
 ?>

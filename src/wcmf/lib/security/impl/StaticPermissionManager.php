@@ -41,8 +41,7 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
   public function getPermissions($resource, $context, $action) {
     $actionKey = ActionKey::getBestMatch($this->_actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
-      $config = ObjectFactory::getConfigurationInstance();
-      return $this->parsePermissions($config->getValue($actionKey, self::AUTHORIZATION_SECTION));
+      return $this->parsePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
     }
     return null;
   }

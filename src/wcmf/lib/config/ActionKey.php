@@ -59,7 +59,7 @@ class ActionKey {
   public static function getBestMatch(ActionKeyProvider $actionKeyProvider, $resource, $context, $action) {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $authUser = $permissionManager->getAuthUser();
-    $cacheKey = self::CACHE_KEY.'_'.$authUser->getLogin();
+    $cacheKey = self::CACHE_KEY.'_'.($authUser ? $authUser->getLogin() : '');
     $providerId = $actionKeyProvider->getCacheId();
 
     $cachedKeys = FileCache::get($cacheKey, $providerId);
