@@ -11,6 +11,7 @@
 namespace wcmf\lib\config;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\ActionKeyProvider;
 use wcmf\lib\io\FileCache;
 
 /**
@@ -48,19 +49,20 @@ class ActionKey {
   }
 
   /**
-   * Get a configuration key that matches a given combination of resource, context, action best.
-   * @param $section The section to search in
+   * Get an action key that matches a given combination of resource, context, action best.
+   * @param $actionKeyProvider ActionKeyProvider instance used to search action keys
    * @param $resource The given resource
    * @param $context The given context
    * @param $action The given action
    * @return The best matching key or an empty string if nothing matches.
    */
-  public static function getBestMatch($section, $resource, $context, $action) {
+  public static function getBestMatch(ActionKeyProvider $actionKeyProvider, $resource, $context, $action) {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $authUser = $permissionManager->getAuthUser();
     $cacheKey = self::CACHE_KEY.'_'.$authUser->getLogin();
+    $providerId = $actionKeyProvider->getCacheId();
 
-    $cachedKeys = FileCache::get($cacheKey, $section);
+    $cachedKeys = FileCache::get($cacheKey, $providerId);
     if ($cachedKeys == null) {
       $cachedKeys = array();
     }
@@ -69,12 +71,11 @@ class ActionKey {
     $reqKey = self::createKey($resource, $context, $action);
     if (!isset($cachedKeys[$reqKey])) {
       $result = null;
-      $config = ObjectFactory::getConfigurationInstance();
 
       // check resource?context?action
       if (strlen($resource) > 0 && strlen($context) > 0 && strlen($action) > 0) {
         $key = self::createKey($resource, $context, $action);
-        if ($config->hasValue($key, $section)) {
+        if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
         }
       }
@@ -82,7 +83,7 @@ class ActionKey {
       // check resource??action
       if ($result === null && strlen($resource) > 0 && strlen($action) > 0) {
         $key = self::createKey($resource, '', $action);
-        if ($config->hasValue($key, $section)) {
+        if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
         }
       }
@@ -90,7 +91,7 @@ class ActionKey {
       // check resource?context?
       if ($result === null && strlen($resource) > 0 && strlen($context) > 0) {
         $key = self::createKey($resource, $context, '');
-        if ($config->hasValue($key, $section)) {
+        if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
         }
       }
@@ -98,7 +99,7 @@ class ActionKey {
       // check ?context?action
       if ($result === null && strlen($context) > 0 && strlen($action) > 0) {
         $key = self::createKey('', $context, $action);
-        if ($config->hasValue($key, $section)) {
+        if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
         }
       }
@@ -106,7 +107,7 @@ class ActionKey {
       // check ??action
       if ($result === null && strlen($action) > 0) {
         $key = self::createKey('', '', $action);
-        if ($config->hasValue($key, $section)) {
+        if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
         }
       }
@@ -114,7 +115,7 @@ class ActionKey {
       // check resource??
       if ($result === null && strlen($resource) > 0) {
         $key = self::createKey($resource, '', '');
-        if ($config->hasValue($key, $section)) {
+        if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
         }
       }
@@ -122,7 +123,7 @@ class ActionKey {
       // check ?context?
       if ($result === null && strlen($context) > 0) {
         $key = self::createKey('', $context, '');
-        if ($config->hasValue($key, $section)) {
+        if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
         }
       }
@@ -130,7 +131,7 @@ class ActionKey {
       // check ??
       if ($result === null) {
         $key = self::createKey('', '', '');
-        if ($config->hasValue($key, $section)) {
+        if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
         }
       }
@@ -144,7 +145,7 @@ class ActionKey {
       $cachedKeys[$reqKey] = $result;
       // don't cache action keys for specific objects
       if (!is_object($resource)) {
-        FileCache::put($cacheKey, $section, $cachedKeys);
+        FileCache::put($cacheKey, $providerId, $cachedKeys);
       }
     }
     return $cachedKeys[$reqKey];

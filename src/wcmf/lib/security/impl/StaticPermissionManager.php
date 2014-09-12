@@ -11,6 +11,7 @@
 namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
+use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\security\PermissionManager;
 
@@ -24,11 +25,21 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
 
   const AUTHORIZATION_SECTION = 'authorization';
 
+  private $_actionKeyProvider = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    $this->_actionKeyProvider = new ConfigActionKeyProvider();
+    $this->_actionKeyProvider->setConfigSection(self::AUTHORIZATION_SECTION);
+  }
+
   /**
    * @see PermissionManager::getPermissions()
    */
   public function getPermissions($resource, $context, $action) {
-    $actionKey = ActionKey::getBestMatch(self::AUTHORIZATION_SECTION, $resource, $context, $action);
+    $actionKey = ActionKey::getBestMatch($this->_actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
       $config = ObjectFactory::getConfigurationInstance();
       return $this->parsePermissions($config->getValue($actionKey, self::AUTHORIZATION_SECTION));

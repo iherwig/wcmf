@@ -8,8 +8,9 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\lib\config;
+namespace wcmf\lib\config\impl;
 
+use wcmf\lib\config\ActionKeyProvider;
 use wcmf\lib\core\ObjectFactory;
 
 /**
@@ -18,7 +19,7 @@ use wcmf\lib\core\ObjectFactory;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ConfigActionKeyProvider {
+class ConfigActionKeyProvider implements ActionKeyProvider {
 
   private $_configSection = null;
 
@@ -26,7 +27,7 @@ class ConfigActionKeyProvider {
    * Set the configuration section to search in.
    * @param $configSection String
    */
-  public function setUserType($configSection) {
+  public function setConfigSection($configSection) {
     $this->_configSection = $configSection;
   }
 
@@ -35,7 +36,14 @@ class ConfigActionKeyProvider {
    */
   public function containsKey($actionKey) {
     $config = ObjectFactory::getConfigurationInstance();
-    return $config->hasValue($actionKey, $this->_section);
+    return $config->hasValue($actionKey, $this->_configSection);
+  }
+
+  /**
+   * @see ActionKeyProvider::getCacheId()
+   */
+  public function getCacheId() {
+    return __CLASS__.'.'.$this->_configSection;
   }
 }
 ?>

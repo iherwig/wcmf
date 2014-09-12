@@ -12,6 +12,7 @@ namespace wcmf\lib\presentation\view\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
@@ -26,6 +27,7 @@ use wcmf\lib\presentation\view\View;
 class SmartyView implements View {
 
   protected static $_sharedView = null;
+  protected static $_actionKeyProvider = null;
 
   protected $_view = null;
 
@@ -167,7 +169,12 @@ class SmartyView implements View {
    * @see View::getTemplate()
    */
   public static function getTemplate($controller, $context, $action) {
-    $actionKey = ActionKey::getBestMatch('views', $controller, $context, $action);
+    if (self::_actionKeyProvider == null) {
+      self::$_actionKeyProvider = new ConfigActionKeyProvider();
+      self::$_actionKeyProvider->setConfigSection('views');
+    }
+
+    $actionKey = ActionKey::getBestMatch(self::$_actionKeyProvider, $controller, $context, $action);
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug('SmartyView::getTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
     }

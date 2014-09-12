@@ -11,6 +11,7 @@
 namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\config\ActionKey;
+use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ActionMapper;
@@ -36,11 +37,11 @@ class DefaultActionMapper implements ActionMapper {
   public function processAction(Request $request) {
     $isDebugEnabled = Log::isDebugEnabled(__CLASS__);
 
-    // allow static call
     $eventManager = ObjectFactory::getInstance('eventManager');
-
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_ROUTE_ACTION, $request));
+    $actionKeyProvider = new ConfigActionKeyProvider();
+    $actionKeyProvider->setConfigSection('actionmapping');
 
     $referrer = $request->getSender();
     $context = $request->getContext();
@@ -66,7 +67,7 @@ class DefaultActionMapper implements ActionMapper {
     }
 
     // get best matching action key from inifile
-    $actionKey = ActionKey::getBestMatch('actionmapping', $referrer, $context, $action);
+    $actionKey = ActionKey::getBestMatch($actionKeyProvider, $referrer, $context, $action);
 
     if ($isDebugEnabled) {
       Log::debug($referrer."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
@@ -113,7 +114,7 @@ class DefaultActionMapper implements ActionMapper {
     Formatter::serialize($response);
 
     // check if an action key exists for the return action
-    $nextActionKey = ActionKey::getBestMatch('actionmapping', $controllerClass,
+    $nextActionKey = ActionKey::getBestMatch($actionKeyProvider, $controllerClass,
             $response->getContext(), $response->getAction());
 
     if (strlen($nextActionKey) == 0) {

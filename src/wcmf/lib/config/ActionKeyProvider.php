@@ -24,5 +24,11 @@ interface ActionKeyProvider {
    * @return Boolean
    */
   public function containsKey($actionKey);
+
+  /**
+   * Get a string value that uniquely describes the provider configuration.
+   * @return String
+   */
+  public function getCacheId();
 }
 ?>
