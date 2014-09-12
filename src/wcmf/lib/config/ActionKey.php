@@ -14,7 +14,9 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileCache;
 
 /**
- * ActionKey helps parsing values from action key configurations.
+ * An action key is a combination of a resource, context and action that is
+ * represented as a string. ActionKey is a helper class for handling
+ * action keys.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

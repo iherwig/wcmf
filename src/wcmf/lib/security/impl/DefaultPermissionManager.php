@@ -19,6 +19,16 @@ use wcmf\lib\security\PermissionManager;
  */
 class DefaultPermissionManager extends AbstractPermissionManager implements PermissionManager {
 
+  private $_permissionType = null;
+
+  /**
+   * Set the entity type name of Permission instances.
+   * @param $permissionType String
+   */
+  public function setPermissionType($permissionType) {
+    $this->_permissionType = $permissionType;
+  }
+
   /**
    * @see PermissionManager::getPermissions()
    */
