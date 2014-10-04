@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ActionLanguage="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_sYse0YZLEeKyw49uR6nx3g http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ActionLanguage="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_sYse0YZLEeKyw49uR6nx3g http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_1jaukLQuEeOLlbB2YLI0iw" name="PrimitiveTypes">
@@ -534,6 +534,11 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ENTEELRmEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ENTEEbRmEeOfbtYsPp7Oyg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_ENZKsLRmEeOfbtYsPp7Oyg" value="app/js/ui/data/input/widget/SelectBox"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_zFt7QEvHEeStPpqW-dyZNA" name="multiselect" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_zFuiUEvHEeStPpqW-dyZNA" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_zFuiUUvHEeStPpqW-dyZNA" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_zFuiUkvHEeStPpqW-dyZNA" value="app/js/ui/data/input/widget/MultiSelectBox"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_wOzVULRlEeOfbtYsPp7Oyg" name="text" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_F6HLMLRmEeOfbtYsPp7Oyg" value="1"/>
@@ -1688,7 +1693,7 @@
   <Chronos:ChiValue xmi:id="_RzmfELTREeOYkOsR5IzpsA" is_editable="true" input_type="password" base_Property="_P23FkLTREeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_TRojULTREeOYkOsR5IzpsA" is_editable="true" base_Property="_P5h_ELTREeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_T_H7cLTREeOYkOsR5IzpsA" is_editable="true" base_Property="_P8fMcLTREeOYkOsR5IzpsA"/>
-  <Chronos:ChiValue xmi:id="_UqU0kLTREeOYkOsR5IzpsA" is_editable="true" input_type="select#file:../config/|/\..ini$/" base_Property="_P_cZ0LTREeOYkOsR5IzpsA"/>
+  <Chronos:ChiValue xmi:id="_UqU0kLTREeOYkOsR5IzpsA" is_editable="true" input_type="select#file:../config/|/\.ini$/" base_Property="_P_cZ0LTREeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_3JZQ0LTREeOYkOsR5IzpsA" base_Property="_1-0UELTREeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_317msLTREeOYkOsR5IzpsA" is_editable="true" base_Property="_2AoR8LTREeOYkOsR5IzpsA"/>
   <Chronos:ChiValue xmi:id="_FvzEELTTEeOYkOsR5IzpsA" base_Property="_EVGnsLTTEeOYkOsR5IzpsA"/>

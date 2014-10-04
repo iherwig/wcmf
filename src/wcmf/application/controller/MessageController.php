@@ -62,5 +62,15 @@ class MessageController extends Controller {
     // success
     $response->setAction('ok');
   }
+
+  /**
+   * @see Controller::assignResponseDefaults()
+   */
+  protected function assignResponseDefaults() {
+    if (sizeof($this->getResponse()->getErrors()) > 0) {
+      parent::assignResponseDefaults();
+    }
+    // don't add anything in case of success
+  }
 }
 ?>

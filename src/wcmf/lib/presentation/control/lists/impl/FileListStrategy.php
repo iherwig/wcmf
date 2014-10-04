@@ -18,7 +18,7 @@ use wcmf\lib\io\FileUtil;
  * from an configuration section.
  * The following list definition(s) must be used in the input_type configuraton:
  * @code
- * file:path/to/files|/\..ini$/ // .ini files
+ * file:path/to/files|/\.ini$/ // .ini files
  *
  * file:path/to/files/*|/./ // all files recursive
  *
