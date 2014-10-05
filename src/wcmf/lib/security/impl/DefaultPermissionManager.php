@@ -63,14 +63,65 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    * @see PermissionManager::createPermission()
    */
   public function createPermission($resource, $context, $action, $role, $modifier) {
-    // TODO
+    return self::modifyPermission($resource, $context, $action, $role, $modifier);
   }
 
   /**
    * @see PermissionManager::removePermission()
    */
   public function removePermission($resource, $context, $action, $role) {
-    // TODO
+    return self::modifyPermission($resource, $context, $action, $role, null);
+  }
+
+  /**
+   * Modify a permission for the given role.
+   * @param $resource The resource (e.g. class name of the Controller or object id).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
+   * @param $role The role to authorize.
+   * @param $modifier One of the PERMISSION_MODIFIER_ constants, null, if the permission
+   *    should be removed.
+   * @return boolean
+   */
+  protected function modifyPermission($resource, $context, $action, $role, $modifier) {
+    $permVal = '';
+    if ($modifier != null) {
+      $permVal = $modifier.$role;
+    }
+
+    // check for existing permission
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
+    $query = new ObjectQuery($this->_permissionType, __CLASS__.__METHOD__);
+    $tpl = $query->getObjectTemplate($this->_permissionType);
+    $tpl->setValue($this->_valueMap['resource'], Criteria::asValue('=', $resource));
+    $tpl->setValue($this->_valueMap['context'], Criteria::asValue('=', $context));
+    $tpl->setValue($this->_valueMap['action'], Criteria::asValue('=', $action));
+    $permissions = $query->execute(BuildDepth::SINGLE);
+    if (sizeof($permissions) == 0 && $modifier != null) {
+      // create the permission, if it does not exist yet
+      $permission = $persistenceFacade->create($this->_permissionType);
+      $permission->setValue('resource', $resource);
+      $permission->setValue('context', $context);
+      $permission->setValue('action', $action);
+      $permission->setValue('roles', $permVal);
+    }
+    else {
+      $permission = $permissions[0];
+      $value = $permission->getValue('roles');
+      // remove role from value
+      $newValue = str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
+                    PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value);
+      if (strlen($newValue) > 0) {
+        $permission->setValue('roles', $newValue." ".$permVal);
+      }
+      else {
+        $permission->delete();
+      }
+    }
+
+    $persistenceFacade->getTransaction()->commit();
+    return true;
   }
 }
 ?>
