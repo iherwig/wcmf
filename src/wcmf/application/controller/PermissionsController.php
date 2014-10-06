@@ -21,7 +21,7 @@ use wcmf\lib\presentation\Controller;
  * The controller supports the following actions:
  *
  * <div class="controller-action">
- * <div> __Action__ _default_ </div>
+ * <div> __Action__ checkPermissions </div>
  * <div>
  * Check a set of operations.
  * | Parameter              | Description
@@ -33,9 +33,66 @@ use wcmf\lib\presentation\Controller;
  * </div>
  * </div>
  *
+ * <div class="controller-action">
+ * <div> __Action__ createPermission </div>
+ * <div>
+ * Create/Change a permission for a role on a resource, context, action combination.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ `resource`       | The resource (e.g. class name of the Controller or ObjectId).
+ * | _in_ `context`        | The context in which the action takes place (optional).
+ * | _in_ `action`         | The action to process.
+ * | _in_ `role`           | The role to add.
+ * | _in_ `modifier`       | _+_ or _-_ whether to allow or disallow the action for the role.
+ * </div>
+ * </div>
+ *
+ * <div class="controller-action">
+ * <div> __Action__ removePermission </div>
+ * <div>
+ * Remove a role from a permission on a resource, context, action combination.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ `resource`       | The resource (e.g. class name of the Controller or ObjectId).
+ * | _in_ `context`        | The context in which the action takes place (optional).
+ * | _in_ `action`         | The action to process.
+ * | _in_ `role`           | The role to remove.
+ * </div>
+ * </div>
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
 class PermissionsController extends Controller {
+
+  /**
+   * @see Controller::validate()
+   */
+  function validate() {
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $invalidParameters = array();
+    if ($request->getAction() == 'createPermission' || $request->getAction() == 'removePermission') {
+      foreach (array('resource', 'context', 'action') as $param) {
+        if(!$request->hasValue($param)) {
+          $invalidParameters[] = $param;
+        }
+      }
+    }
+    if ($request->getAction() == 'createPermission') {
+      $modifier = $request->getValue('modifier');
+      if (!($modifier == PermissionManager::PERMISSION_MODIFIER_ALLOW ||
+              $modifier == PermissionManager::PERMISSION_MODIFIER_DENY)) {
+        $invalidParameters[] = 'modifier';
+      }
+    }
+
+    if (sizeof($invalidParameters) > 0) {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => $invalidParameters)));
+      return false;
+    }
+    return true;
+  }
 
   /**
    * @see Controller::doExecute()
@@ -46,14 +103,41 @@ class PermissionsController extends Controller {
     $response = $this->getResponse();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
 
-    $result = array();
-    $permissions = $request->hasValue('operations') ? $request->getValue('operations') : array();
-    foreach($permissions as $permission) {
-      $keyParts = ActionKey::parseKey($permission);
-      $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action']);
+    // process actions
+    if ($request->getAction() == 'checkPermissions') {
+      $result = array();
+      $permissions = $request->hasValue('operations') ? $request->getValue('operations') : array();
+      foreach($permissions as $permission) {
+        $keyParts = ActionKey::parseKey($permission);
+        $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action']);
+      }
+      $response->setValue('result', $result);
     }
-    $response->setValue('result', $result);
+    else if ($request->getAction() == 'createPermission') {
+      $resource = $request->getValue('resource');
+      $context = $request->getValue('context');
+      $action = $request->getValue('action');
+      $role = $request->getValue('role');
+      $modifier = $request->getValue('modifier');
 
+      $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+      $transaction->begin();
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
+      $permissionManager->createPermission($resource, $context, $action, $role, $modifier);
+      $transaction->commit();
+    }
+    else if ($request->getAction() == 'removePermission') {
+      $resource = $request->getValue('resource');
+      $context = $request->getValue('context');
+      $action = $request->getValue('action');
+      $role = $request->getValue('role');
+
+      $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+      $transaction->begin();
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
+      $permissionManager->removePermission($resource, $context, $action, $role);
+      $transaction->commit();
+    }
     $response->setAction('ok');
   }
 }

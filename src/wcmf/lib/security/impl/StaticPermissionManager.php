@@ -15,6 +15,7 @@ use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\security\PermissionManager;
+use wcmf\lib\security\impl\AbstractPermissionManager;
 
 /**
  * StaticPermissionManager retrieves authorization rules from the

@@ -73,7 +73,7 @@ class PermissionsControllerTest extends ControllerTestCase {
     $data = array(
       'operations' => $operations
     );
-    $response = $this->runRequest('checkpermissions', $data);
+    $response = $this->runRequest('checkPermissions', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
@@ -121,7 +121,7 @@ class PermissionsControllerTest extends ControllerTestCase {
     $data = array(
       'operations' => $operations
     );
-    $response = $this->runRequest('checkpermissions', $data);
+    $response = $this->runRequest('checkPermissions', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');

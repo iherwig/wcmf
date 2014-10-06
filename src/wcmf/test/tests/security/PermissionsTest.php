@@ -11,7 +11,12 @@
 namespace wcmf\test\tests\security;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\security\PermissionManager;
+
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
 use wcmf\test\lib\TestUtil;
@@ -54,6 +59,9 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 222, 'fk_chapter_id' => 111, 'fk_book_id' => null, 'name' => 'Chapter 1.1'),
         array('id' => 333, 'fk_chapter_id' => 222, 'fk_book_id' => null, 'name' => 'Chapter 1.1.1'),
         array('id' => 444, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 2'),
+      ),
+      'Permission' => array(
+        array('id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users'),
       ),
     ));
   }
@@ -197,6 +205,82 @@ class PermissionsTest extends DatabaseTestCase {
     $oids = ObjectFactory::getInstance('persistenceFacade')->getOIDs('Book');
     $this->assertEquals(1, sizeof($oids));
     $this->assertEquals('app.src.model.Book:111', $oids[0]->__toString());
+
+    TestUtil::endSession();
+  }
+
+  public function testPermissionCreateNew() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager->createPermission('Chapter:222', 'test', 'delete', 'tester',
+            PermissionManager::PERMISSION_MODIFIER_DENY);
+    $transaction->commit();
+
+    // test
+    $oids = ObjectFactory::getInstance('persistenceFacade')->getOIDs('Permission');
+    $this->assertEquals(2, sizeof($oids));
+
+    $query = new ObjectQuery('Permission', __CLASS__.__METHOD__);
+    $tpl = $query->getObjectTemplate('Permission');
+    $tpl->setValue('resource', Criteria::asValue('=', 'Chapter:222'));
+    $tpl->setValue('context', Criteria::asValue('=', 'test'));
+    $tpl->setValue('action', Criteria::asValue('=', 'delete'));
+    $permissions = $query->execute(BuildDepth::SINGLE);
+    $this->assertEquals(1, sizeof($permissions));
+    $this->assertEquals('-tester', $permissions[0]->getValue('roles'));
+
+    TestUtil::endSession();
+  }
+
+  public function testPermissionAddToExisting() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager->createPermission('Chapter:111', 'test', 'delete', 'tester',
+            PermissionManager::PERMISSION_MODIFIER_ALLOW);
+    $transaction->commit();
+
+    // test
+    $permission = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Permission', 111));
+    $this->assertEquals('+* +users +tester', $permission->getValue('roles'));
+
+    TestUtil::endSession();
+  }
+
+  public function testPermissionRemoveFromExisting() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager->removePermission('Chapter:111', 'test', 'delete', 'users');
+    $transaction->commit();
+
+    // test
+    $permission = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Permission', 111));
+    $this->assertEquals('+*', $permission->getValue('roles'));
+
+    TestUtil::endSession();
+  }
+
+  public function testPermissionDeleteAfterRemoveLast() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager->removePermission('Chapter:111', 'test', 'delete', 'users');
+    $permissionManager->removePermission('Chapter:111', 'test', 'delete', '*');
+    $transaction->commit();
+
+    // test
+    $permission = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Permission', 111));
+    $this->assertNull($permission);
 
     TestUtil::endSession();
   }

@@ -88,7 +88,7 @@ interface PermissionManager {
 
   /**
    * Get the permissions on a resource, context, action combination.
-   * @param $resource The resource (e.g. class name of the Controller or OID).
+   * @param $resource The resource (e.g. class name of the Controller or ObjectId).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
    * @return An assoziative array with keys 'default', 'allow', 'deny' and
@@ -98,7 +98,7 @@ interface PermissionManager {
 
   /**
    * Create/Change a permission for a role on a resource, context, action combination.
-   * @param $resource The resource (e.g. class name of the Controller or OID).
+   * @param $resource The resource (e.g. class name of the Controller or ObjectId).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
    * @param $role The role to authorize.
@@ -109,7 +109,7 @@ interface PermissionManager {
 
   /**
    * Remove a role from a permission on a resource, context, action combination.
-   * @param $resource The resource (e.g. class name of the Controller or OID).
+   * @param $resource The resource (e.g. class name of the Controller or ObjectId).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
    * @param $role The role to remove.

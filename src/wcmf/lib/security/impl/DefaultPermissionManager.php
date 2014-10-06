@@ -12,7 +12,12 @@ namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\impl\PersistenceActionKeyProvider;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\security\PermissionManager;
+use wcmf\lib\security\impl\AbstractPermissionManager;
 
 /**
  * DefaultPermissionManager retrieves authorization rules the storage.
@@ -84,19 +89,17 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    * @return boolean
    */
   protected function modifyPermission($resource, $context, $action, $role, $modifier) {
-    $permVal = '';
-    if ($modifier != null) {
-      $permVal = $modifier.$role;
-    }
+    // define roles value (empty if no modifier is given)
+    $permVal = $modifier != null ? $modifier.$role : '';
 
     // check for existing permission
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $query = new ObjectQuery($this->_permissionType, __CLASS__.__METHOD__);
     $tpl = $query->getObjectTemplate($this->_permissionType);
-    $tpl->setValue($this->_valueMap['resource'], Criteria::asValue('=', $resource));
-    $tpl->setValue($this->_valueMap['context'], Criteria::asValue('=', $context));
-    $tpl->setValue($this->_valueMap['action'], Criteria::asValue('=', $action));
+    $tpl->setValue('resource', Criteria::asValue('=', $resource));
+    $tpl->setValue('context', Criteria::asValue('=', $context));
+    $tpl->setValue('action', Criteria::asValue('=', $action));
     $permissions = $query->execute(BuildDepth::SINGLE);
     if (sizeof($permissions) == 0 && $modifier != null) {
       // create the permission, if it does not exist yet
@@ -113,14 +116,12 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
       $newValue = str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
                     PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value);
       if (strlen($newValue) > 0) {
-        $permission->setValue('roles', $newValue." ".$permVal);
+        $permission->setValue('roles', trim($newValue." ".$permVal));
       }
       else {
         $permission->delete();
       }
     }
-
-    $persistenceFacade->getTransaction()->commit();
     return true;
   }
 }
