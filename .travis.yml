@@ -12,6 +12,7 @@ jdk:
   - oraclejdk8
 
 before_script:
+  - composer selfupdate
   - composer install
 
   - mkdir $WCMF_BASE_DIR/app && mkdir $WCMF_BASE_DIR/install
