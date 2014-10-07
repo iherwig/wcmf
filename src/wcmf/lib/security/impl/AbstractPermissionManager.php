@@ -49,7 +49,7 @@ class AbstractPermissionManager {
   /**
    * @see PermissionManager::setAuthUser()
    */
-  public function setAuthUser($authUser) {
+  public function setAuthUser(User $authUser) {
     $session = ObjectFactory::getInstance('session');
     $session->set($this->_authUserVarName, $authUser);
   }
@@ -70,9 +70,12 @@ class AbstractPermissionManager {
   /**
    * @see PermissionManager::authorize()
    */
-  public function authorize($resource, $context, $action) {
+  public function authorize($resource, $context, $action, User $user=null) {
+    if ($user == null) {
+      $user = $this->getAuthUser();
+    }
     if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Checking authorization for: $resource?$context?$action", __CLASS__);
+      Log::debug("Checking authorization for: '$resource?$context?$action' and user '".$user->getLogin()."'", __CLASS__);
     }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
@@ -119,38 +122,38 @@ class AbstractPermissionManager {
     // always start checking from most specific
     switch ($resourceType) {
       case (self::RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY):
-        $authorized = $this->authorizeAction($oidProperty, $context, $action);
+        $authorized = $this->authorizeAction($oidProperty, $context, $action, $user);
         if ($authorized === null) {
-          $authorized = $this->authorizeAction($typeProperty, $context, $action);
+          $authorized = $this->authorizeAction($typeProperty, $context, $action, $user);
           if ($authorized === null) {
-            $authorized = $this->authorizeAction($oid, $context, $action);
+            $authorized = $this->authorizeAction($oid, $context, $action, $user);
             if ($authorized === null) {
-              $authorized = $this->authorizeAction($type, $context, $action);
+              $authorized = $this->authorizeAction($type, $context, $action, $user);
             }
           }
         }
         break;
 
       case (self::RESOURCE_TYPE_ENTITY_INSTANCE):
-        $authorized = $this->authorizeAction($oid, $context, $action);
+        $authorized = $this->authorizeAction($oid, $context, $action, $user);
         if ($authorized === null) {
-          $authorized = $this->authorizeAction($type, $context, $action);
+          $authorized = $this->authorizeAction($type, $context, $action, $user);
         }
         break;
 
       case (self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY):
-        $authorized = $this->authorizeAction($typeProperty, $context, $action);
+        $authorized = $this->authorizeAction($typeProperty, $context, $action, $user);
         if ($authorized === null) {
-          $authorized = $this->authorizeAction($type, $context, $action);
+          $authorized = $this->authorizeAction($type, $context, $action, $user);
         }
         break;
 
       case (self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY):
-        $authorized = $this->authorizeAction($type, $context, $action);
+        $authorized = $this->authorizeAction($type, $context, $action, $user);
         break;
 
       default:
-        $authorized = $this->authorizeAction($resourceStr, $context, $action);
+        $authorized = $this->authorizeAction($resourceStr, $context, $action, $user);
         break;
     }
 
@@ -194,8 +197,7 @@ class AbstractPermissionManager {
     }
 
     if ($authorized === null) {
-      $authUser = $this->getAuthUser();
-      $authorized = $authUser && $this->getDefaultPolicy($authUser);
+      $authorized = $this->getDefaultPolicy($user);
     }
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Result for $resource?$context?$action: ".(!$authorized ? "not " : "")."authorized", __CLASS__);
@@ -210,10 +212,11 @@ class AbstractPermissionManager {
    * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
+   * @param $user User instance to use for authorization
    * @param $returnNullIfNoPermissionExists Optional, default: true
    * @return Boolean
    */
-  protected function authorizeAction($resource, $context, $action, $returnNullIfNoPermissionExists=true) {
+  protected function authorizeAction($resource, $context, $action, User $user, $returnNullIfNoPermissionExists=true) {
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Authorizing $resource?$context?$action", __CLASS__);
     }
@@ -228,15 +231,14 @@ class AbstractPermissionManager {
     }
     else {
       // check other permissions
-      $authUser = $this->getAuthUser();
       $permisssions = $this->getPermissions($resource, $context, $action);
       if ($permisssions != null) {
         // mathing permissions found, check user roles
-        $authorized = $this->matchRoles($permisssions, $authUser);
+        $authorized = $this->matchRoles($permisssions, $user);
       }
       elseif (!$returnNullIfNoPermissionExists) {
         // no permission definied, check for user's default policy
-        $authorized = $this->getDefaultPolicy($authUser);
+        $authorized = $this->getDefaultPolicy($user);
       }
     }
     if (Log::isDebugEnabled(__CLASS__)) {

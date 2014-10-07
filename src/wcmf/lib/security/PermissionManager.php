@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\security;
 
+use wcmf\lib\security\principal\User;
+
 /**
  * PermissionManager implementations are used to handle all authorization
  * requests. PermissionManager instances are configured with an AuthUser
@@ -24,13 +26,13 @@ interface PermissionManager {
 
   /**
    * Set the authenticated user.
-   * @param $authUser AuthUser instance.
+   * @param $authUser User instance.
    */
-  public function setAuthUser($authUser);
+  public function setAuthUser(User $authUser);
 
   /**
    * Get the authenticated user.
-   * @return AuthUser instance.
+   * @return User instance.
    */
   public function getAuthUser();
 
@@ -46,9 +48,10 @@ interface PermissionManager {
    * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
+   * @param $user User instance to use for authorization (optional, default: the user obtained by getAuthUser method)
    * @return Boolean whether authorization succeded/failed.
    */
-  public function authorize($resource, $context, $action);
+  public function authorize($resource, $context, $action, User $user=null);
 
   /**
    * Add a temporary permission for the current user. The permission

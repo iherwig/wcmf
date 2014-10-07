@@ -15,7 +15,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 
 /**
- * PermissionsController checks permissions for a set of operations for
+ * PermissionController checks permissions for a set of operations for
  * the current user.
  *
  * The controller supports the following actions:
@@ -27,6 +27,7 @@ use wcmf\lib\presentation\Controller;
  * | Parameter              | Description
  * |------------------------|-------------------------
  * | _in_ `operations`      | Array of resource/context/action triples in the form _resource?context?action_
+ * | _in_ `user`            | Username to check permissions for (optional, default: the authenticated user)
  * | _out_ `result`         | Associative array with the operations as keys and boolean values indicating if permissions are given or not
  * | __Response Actions__   | |
  * | `ok`                   | In all cases
@@ -62,7 +63,7 @@ use wcmf\lib\presentation\Controller;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PermissionsController extends Controller {
+class PermissionController extends Controller {
 
   /**
    * @see Controller::validate()
@@ -102,14 +103,17 @@ class PermissionsController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $principalFactory = ObjectFactory::getInstance('principalFactory');
 
     // process actions
     if ($request->getAction() == 'checkPermissions') {
       $result = array();
       $permissions = $request->hasValue('operations') ? $request->getValue('operations') : array();
+      $user = $request->hasValue('user') ? $principalFactory->getUser($request->getValue('user')) : null;
       foreach($permissions as $permission) {
         $keyParts = ActionKey::parseKey($permission);
-        $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action']);
+        $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action'],
+                $user);
       }
       $response->setValue('result', $result);
     }

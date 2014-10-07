@@ -807,7 +807,7 @@
               <packagedElement xmi:type="uml:Class" xmi:id="_gfLv4LRnEeOfbtYsPp7Oyg" name="MultipleActionController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_pv2ecLRxEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
-              <packagedElement xmi:type="uml:Class" xmi:id="_w2-bAC03EeSZcOHv2Y7Ocg" name="PermissionsController">
+              <packagedElement xmi:type="uml:Class" xmi:id="_w2-bAC03EeSZcOHv2Y7Ocg" name="PermissionController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_w2-bAS03EeSZcOHv2Y7Ocg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_giVKgLRnEeOfbtYsPp7Oyg" name="RESTController">
@@ -989,7 +989,7 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_RXx8kfvcEeO7oqnkSuo0Ew" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_RXx8kvvcEeO7oqnkSuo0Ew" value="1"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_BNtY4C04EeSZcOHv2Y7Ocg" name="permissionsController" type="_w2-bAC03EeSZcOHv2Y7Ocg" association="_BNunAC04EeSZcOHv2Y7Ocg">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_BNtY4C04EeSZcOHv2Y7Ocg" name="permissionController" type="_w2-bAC03EeSZcOHv2Y7Ocg" association="_BNunAC04EeSZcOHv2Y7Ocg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_BNtY4S04EeSZcOHv2Y7Ocg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_BNtY4i04EeSZcOHv2Y7Ocg" value="1"/>
                 </ownedAttribute>
