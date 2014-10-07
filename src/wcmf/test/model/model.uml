@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ActionLanguage="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_sYse0YZLEeKyw49uR6nx3g http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ActionLanguage="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_sYse0YZLEeKyw49uR6nx3g http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_1jaukLQuEeOLlbB2YLI0iw" name="PrimitiveTypes">
@@ -673,6 +673,15 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7_XrEbQ-EeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_7_Y5MLQ-EeOQ5oJFa1i8cg" value="+administrators"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_6bit8E5nEeSEGaIVag_Y7g" name="??checkPermissionsOfUser" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_A38wsE5oEeSEGaIVag_Y7g" value="+administrators"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_G7zJgE5oEeSEGaIVag_Y7g" name="??createPermission" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Joh1gE5oEeSEGaIVag_Y7g" value="+administrators"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_M-dPgE5oEeSEGaIVag_Y7g" name="??removePermission" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Q5StYE5oEeSEGaIVag_Y7g" value="+administrators"/>
+                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_jzU90LQ-EeOQ5oJFa1i8cg" name="app.src.model.wcmf.User??read" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_MIN98LQ_EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_MIN98bQ_EeOQ5oJFa1i8cg" value="1"/>
@@ -993,6 +1002,18 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_BNtY4S04EeSZcOHv2Y7Ocg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_BNtY4i04EeSZcOHv2Y7Ocg" value="1"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_0WnzkE5mEeSEGaIVag_Y7g" name="permissionController" type="_w2-bAC03EeSZcOHv2Y7Ocg" association="_0Wnzk05mEeSEGaIVag_Y7g">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0WnzkU5mEeSEGaIVag_Y7g" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Wnzkk5mEeSEGaIVag_Y7g" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_IHMbEE5nEeSEGaIVag_Y7g" name="permissionController" type="_w2-bAC03EeSZcOHv2Y7Ocg" association="_IHMbE05nEeSEGaIVag_Y7g">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IHMbEU5nEeSEGaIVag_Y7g" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IHMbEk5nEeSEGaIVag_Y7g" value="1"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_V7gfgE5nEeSEGaIVag_Y7g" name="permissionController" type="_w2-bAC03EeSZcOHv2Y7Ocg" association="_V7gfg05nEeSEGaIVag_Y7g">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_V7gfgU5nEeSEGaIVag_Y7g" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_V7gfgk5nEeSEGaIVag_Y7g" value="1"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_3mhdcPu5EeOmMdys2glKCA" name="cms" memberEnd="_3mhdcfu5EeOmMdys2glKCA _3mg2YPu5EeOmMdys2glKCA">
                 <ownedEnd xmi:type="uml:Property" xmi:id="_3mhdcfu5EeOmMdys2glKCA" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_3mhdcPu5EeOmMdys2glKCA">
@@ -1166,6 +1187,24 @@
                 <ownedEnd xmi:type="uml:Property" xmi:id="_BNunAS04EeSZcOHv2Y7Ocg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_BNunAC04EeSZcOHv2Y7Ocg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_BNunAi04EeSZcOHv2Y7Ocg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_BNunAy04EeSZcOHv2Y7Ocg" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_0Wnzk05mEeSEGaIVag_Y7g" name="checkPermissionsOfUser" memberEnd="_0WnzlE5mEeSEGaIVag_Y7g _0WnzkE5mEeSEGaIVag_Y7g">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_0WnzlE5mEeSEGaIVag_Y7g" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_0Wnzk05mEeSEGaIVag_Y7g">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0WnzlU5mEeSEGaIVag_Y7g" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Wnzlk5mEeSEGaIVag_Y7g" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_IHMbE05nEeSEGaIVag_Y7g" name="createPermission" memberEnd="_IHMbFE5nEeSEGaIVag_Y7g _IHMbEE5nEeSEGaIVag_Y7g">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_IHMbFE5nEeSEGaIVag_Y7g" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_IHMbE05nEeSEGaIVag_Y7g">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IHMbFU5nEeSEGaIVag_Y7g" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IHMbFk5nEeSEGaIVag_Y7g" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_V7gfg05nEeSEGaIVag_Y7g" name="removePermission" memberEnd="_V7gfhE5nEeSEGaIVag_Y7g _V7gfgE5nEeSEGaIVag_Y7g">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_V7gfhE5nEeSEGaIVag_Y7g" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_V7gfg05nEeSEGaIVag_Y7g">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_V7gfhU5nEeSEGaIVag_Y7g" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_V7gfhk5nEeSEGaIVag_Y7g" value="1"/>
                 </ownedEnd>
               </packagedElement>
             </packagedElement>
@@ -1736,4 +1775,7 @@
   <Chronos:ChiValue xmi:id="_gJEfcDkNEeSAepGYcnIyuw" base_Property="_dNmz4DkNEeSAepGYcnIyuw"/>
   <Chronos:ChiSystem xmi:id="_1fa8hzkOEeSuCfpXnqk73Q" plattform="wcmf" config="security.ini" base_Class="_1fa8gDkOEeSuCfpXnqk73Q"/>
   <Chronos:ChiSystem xmi:id="_1mktZzkOEeSuCfpXnqk73Q" plattform="wcmf" config="security.ini" base_Class="_1mktYDkOEeSuCfpXnqk73Q"/>
+  <Chronos:ChiActionKey xmi:id="_2JLWUE5mEeSEGaIVag_Y7g" action="checkPermissionsOfUser" base_Association="_0Wnzk05mEeSEGaIVag_Y7g"/>
+  <Chronos:ChiActionKey xmi:id="_K1HZ4E5nEeSEGaIVag_Y7g" action="createPermission" base_Association="_IHMbE05nEeSEGaIVag_Y7g"/>
+  <Chronos:ChiActionKey xmi:id="_YJI0sE5nEeSEGaIVag_Y7g" action="removePermission" base_Association="_V7gfg05nEeSEGaIVag_Y7g"/>
 </xmi:XMI>

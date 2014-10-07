@@ -124,7 +124,7 @@ class PermissionControllerTest extends ControllerTestCase {
       'operations' => $operations,
       'user' => 'userPermTest'
     );
-    $response = $this->runRequest('checkPermissions', $data);
+    $response = $this->runRequest('checkPermissionsOfUser', $data);
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');

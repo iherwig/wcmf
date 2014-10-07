@@ -23,7 +23,20 @@ use wcmf\lib\presentation\Controller;
  * <div class="controller-action">
  * <div> __Action__ checkPermissions </div>
  * <div>
- * Check a set of operations.
+ * Check permissions of a set of operations for the current user.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `operations`      | Array of resource/context/action triples in the form _resource?context?action_
+ * | _out_ `result`         | Associative array with the operations as keys and boolean values indicating if permissions are given or not
+ * | __Response Actions__   | |
+ * | `ok`                   | In all cases
+ * </div>
+ * </div>
+ *
+ * <div class="controller-action">
+ * <div> __Action__ checkPermissionsOfUser </div>
+ * <div>
+ * Check permissions of a set of operations for the given user.
  * | Parameter              | Description
  * |------------------------|-------------------------
  * | _in_ `operations`      | Array of resource/context/action triples in the form _resource?context?action_
@@ -109,6 +122,15 @@ class PermissionController extends Controller {
     if ($request->getAction() == 'checkPermissions') {
       $result = array();
       $permissions = $request->hasValue('operations') ? $request->getValue('operations') : array();
+      foreach($permissions as $permission) {
+        $keyParts = ActionKey::parseKey($permission);
+        $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action']);
+      }
+      $response->setValue('result', $result);
+    }
+    elseif ($request->getAction() == 'checkPermissionsOfUser') {
+      $result = array();
+      $permissions = $request->hasValue('operations') ? $request->getValue('operations') : array();
       $user = $request->hasValue('user') ? $principalFactory->getUser($request->getValue('user')) : null;
       foreach($permissions as $permission) {
         $keyParts = ActionKey::parseKey($permission);
@@ -117,7 +139,7 @@ class PermissionController extends Controller {
       }
       $response->setValue('result', $result);
     }
-    else if ($request->getAction() == 'createPermission') {
+    elseif ($request->getAction() == 'createPermission') {
       $resource = $request->getValue('resource');
       $context = $request->getValue('context');
       $action = $request->getValue('action');
@@ -130,7 +152,7 @@ class PermissionController extends Controller {
       $permissionManager->createPermission($resource, $context, $action, $role, $modifier);
       $transaction->commit();
     }
-    else if ($request->getAction() == 'removePermission') {
+    elseif ($request->getAction() == 'removePermission') {
       $resource = $request->getValue('resource');
       $context = $request->getValue('context');
       $action = $request->getValue('action');
