@@ -87,7 +87,7 @@ class PermissionControllerTest extends ControllerTestCase {
     $this->assertTrue($result['app.src.model.wcmf.User??create']);
     $this->assertTrue($result['app.src.model.wcmf.User??delete']);
     $this->assertTrue($result['app.src.model.Author??read']);
-    $this->assertTrue($result['app.src.model.Author??modify']);
+    $this->assertFalse($result['app.src.model.Author??modify']);
     $this->assertTrue($result['app.src.model.Author??create']);
     $this->assertTrue($result['app.src.model.Author??delete']);
     $this->assertTrue($result['app.src.model.Publisher??read']);
