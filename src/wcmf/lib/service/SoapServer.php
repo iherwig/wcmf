@@ -136,10 +136,15 @@ class SoapServer extends nusoap_server {
       'data' => array(
         'action1' => array(
           'action' => 'login',
-          'user' => $authHeader['Username'],
-          'password' => $authHeader['Password']['!']
+          'params' => array(
+            'user' => $authHeader['Username'],
+            'password' => $authHeader['Password']['!']
+          )
         ),
-        'action2' => array_merge(array('action' => $action), $params),
+        'action2' => array(
+            'action' => $action,
+            'params' => $params
+        ),
         'action3' => array(
           'action' => 'logout'
         )

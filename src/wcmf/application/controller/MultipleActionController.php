@@ -45,12 +45,16 @@ use wcmf\lib\util\StringUtil;
     data: {
       action1: {
         action: "create",
-        oid: "Author:wcmffb298f3784dd49548a05d43d7bf88590",
-        name: "Ingo Herwig"
+        params: {
+          oid: "Author:wcmffb298f3784dd49548a05d43d7bf88590",
+          name: "Ingo Herwig"
+        }
       },
       action2: {
         action: "read",
-        oid: "{last_created_oid:Author}"
+        params: {
+          oid: "{last_created_oid:Author}"
+        }
       }
     }
  * @endcode
@@ -131,8 +135,9 @@ class MultipleActionController extends Controller {
       $actionData = $data[$actionId];
       $context = isset($actionData['context']) ? $actionData['context'] : '';
       $action = isset($actionData['action']) ? $actionData['action'] : '';
+      $params = isset($actionData['params']) ? $actionData['params'] : array();
       $requestPart = new Request('', $context, $action);
-      $requestPart->setValues($actionData);
+      $requestPart->setValues($params);
       $requestPart->setFormat($nullFormat);
       $requestPart->setResponseFormat($nullFormat);
 
