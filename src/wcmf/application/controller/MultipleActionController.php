@@ -151,7 +151,7 @@ class MultipleActionController extends Controller {
       }
 
       // collect the result
-      $results[$actionId] = $responsePart->getValues();
+      $results[$actionId] = $responsePart != null ? $responsePart->getValues() : array();
     }
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug($results, __CLASS__);
