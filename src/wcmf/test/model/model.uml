@@ -676,6 +676,9 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_6bit8E5nEeSEGaIVag_Y7g" name="??checkPermissionsOfUser" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_A38wsE5oEeSEGaIVag_Y7g" value="+administrators"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="__lTxsFIYEeSlHJSn5e1Dgw" name="??getPermissions" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_EexbAFIZEeSlHJSn5e1Dgw" value="+administrators"/>
+                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_G7zJgE5oEeSEGaIVag_Y7g" name="??createPermission" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_Joh1gE5oEeSEGaIVag_Y7g" value="+administrators"/>
                 </ownedAttribute>
