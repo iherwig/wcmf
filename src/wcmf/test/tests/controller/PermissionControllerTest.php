@@ -53,7 +53,7 @@ class PermissionControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testAdmin() {
+  public function testCheckPermissionsAdmin() {
     TestUtil::startSession('admin', 'admin');
 
     $operations = array(
@@ -101,7 +101,7 @@ class PermissionControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testTester() {
+  public function testCheckPermissionsTester() {
     TestUtil::startSession('admin', 'admin');
 
     $operations = array(
@@ -143,6 +143,32 @@ class PermissionControllerTest extends ControllerTestCase {
     $this->assertTrue($result['app.src.model.Publisher??modify']);
     $this->assertTrue($result['app.src.model.Publisher??create']);
     $this->assertTrue($result['app.src.model.Publisher??delete']);
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testGetPermissions() {
+    TestUtil::startSession('admin', 'admin');
+
+    // simulate get permissions call
+    $data = array(
+      'resource' => 'app.src.model.wcmf.User',
+      'context' => '',
+      'action' => 'read'
+    );
+    $response = $this->runRequest('getPermissions', $data);
+
+    // test
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $result = $response->getValue('result');
+    $this->assertEquals(2, sizeof($result['allow']));
+
+    $this->assertEquals('administrators', $result['allow'][0]);
+    $this->assertEquals('tester', $result['allow'][1]);
+    $this->assertFalse($result['default']);
 
     TestUtil::endSession();
   }

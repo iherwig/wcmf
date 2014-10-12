@@ -48,6 +48,19 @@ use wcmf\lib\presentation\Controller;
  * </div>
  *
  * <div class="controller-action">
+ * <div> __Action__ getPermissions </div>
+ * <div>
+ * Get the permissions on a resource, context, action combination.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ `resource`       | The resource (e.g. class name of the Controller or ObjectId).
+ * | _in_ `context`        | The context in which the action takes place (optional).
+ * | _in_ `action`         | The action to process.
+ * | _out_ `result`        | An assoziative array with keys 'default', 'allow', 'deny' and the attached roles as values or null, if no permissions are defined.
+ * </div>
+ * </div>
+ *
+ * <div class="controller-action">
  * <div> __Action__ createPermission </div>
  * <div>
  * Create/Change a permission for a role on a resource, context, action combination.
@@ -85,7 +98,8 @@ class PermissionController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $invalidParameters = array();
-    if ($request->getAction() == 'createPermission' || $request->getAction() == 'removePermission') {
+    if ($request->getAction() == 'createPermission' || $request->getAction() == 'removePermission' ||
+             $request->getAction() == 'getPermissions') {
       foreach (array('resource', 'context', 'action') as $param) {
         if(!$request->hasValue($param)) {
           $invalidParameters[] = $param;
@@ -137,6 +151,14 @@ class PermissionController extends Controller {
         $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action'],
                 $user);
       }
+      $response->setValue('result', $result);
+    }
+    elseif ($request->getAction() == 'getPermissions') {
+      $resource = $request->getValue('resource');
+      $context = $request->getValue('context');
+      $action = $request->getValue('action');
+
+      $result = $permissionManager->getPermissions($resource, $context, $action);
       $response->setValue('result', $result);
     }
     elseif ($request->getAction() == 'createPermission') {
