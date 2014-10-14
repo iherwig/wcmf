@@ -18,9 +18,9 @@ namespace wcmf\lib\persistence;
  */
 class PersistenceAction {
 
-  const READ   = 'read';
-  const MODIFY = 'modify';
-  const DELETE = 'delete';
   const CREATE = 'create';
+  const READ   = 'read';
+  const UPDATE = 'update';
+  const DELETE = 'delete';
 }
 ?>

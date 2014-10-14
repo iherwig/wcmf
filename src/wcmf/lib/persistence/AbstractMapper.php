@@ -154,13 +154,13 @@ abstract class AbstractMapper implements PersistenceMapper {
     $oidStr = $object->getOID()->__toString();
     foreach ($object->getChangedValues() as $valueName) {
       $resource = $oidStr.'.'.$valueName;
-      if (!$this->checkAuthorization($resource, PersistenceAction::MODIFY)) {
-        $this->authorizationFailedError($resource, PersistenceAction::MODIFY);
+      if (!$this->checkAuthorization($resource, PersistenceAction::UPDATE)) {
+        $this->authorizationFailedError($resource, PersistenceAction::UPDATE);
         return;
       }
     }
-    if ($isDirty && !$this->checkAuthorization($oid, PersistenceAction::MODIFY)) {
-      $this->authorizationFailedError($oid, PersistenceAction::MODIFY);
+    if ($isDirty && !$this->checkAuthorization($oid, PersistenceAction::UPDATE)) {
+      $this->authorizationFailedError($oid, PersistenceAction::UPDATE);
       return;
     }
     elseif ($isNew && !$this->checkAuthorization($oid, PersistenceAction::CREATE)) {

@@ -13,7 +13,7 @@ namespace wcmf\application\controller;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\principal\User;
@@ -57,8 +57,8 @@ class UserController extends Controller {
 
     // add permissions for this operation
     $oidStr = $authUser->getOID()->_toString();
-    $permissionManager->addTempPermission($oidStr, '', 'read');
-    $permissionManager->addTempPermission($oidStr, '', 'modify');
+    $permissionManager->addTempPermission($oidStr, '', PersistenceAction::READ);
+    $permissionManager->addTempPermission($oidStr, '', PersistenceAction::UPDATE);
 
     // start the persistence transaction
     $transaction = $persistenceFacade->getTransaction();

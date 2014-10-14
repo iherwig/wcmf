@@ -55,7 +55,7 @@ class TransactionTest extends DatabaseTestCase {
     $newPublisher1->setValue('name', $newName);
     $id1 = $newPublisher1->getOID()->getFirstId();
     $this->assertTrue(ObjectId::isDummyId($id1));
-    // modify an existing object
+    // update an existing object
     $existingPublisher1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
     $modifiedName = $existingPublisher1->getValue('name')." modified";
     $existingPublisher1->setValue('name', $modifiedName);
@@ -91,8 +91,7 @@ class TransactionTest extends DatabaseTestCase {
     $oldName = $chapter1->getValue('name');
     $transaction->rollback();
 
-    // modify the object in another transaction (should also
-    // change the object)
+    // update the object in another transaction (should also change the object)
     $transaction->begin();
     $modifiedName = $oldName." modified";
     $chapter1->setValue('name', $modifiedName);
@@ -112,7 +111,7 @@ class TransactionTest extends DatabaseTestCase {
     $transaction = $persistenceFacade->getTransaction();
 
     $transaction->begin();
-    // modify an object
+    // update an object
     $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
     $oldName = $chapter1->getValue('name');
     $chapter1->setValue('name', $oldName." modified");
@@ -136,7 +135,7 @@ class TransactionTest extends DatabaseTestCase {
     $transaction = $persistenceFacade->getTransaction();
 
     $transaction->begin();
-    // modify objects
+    // update objects
     $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr), 1);
     $modifiedName = $chapter1->getValue('name')." modified";
     $chapter1->setValue('name', $modifiedName);

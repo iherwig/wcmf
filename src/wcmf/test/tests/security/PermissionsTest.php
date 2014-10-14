@@ -241,7 +241,7 @@ class PermissionsTest extends DatabaseTestCase {
 
     // test
     $permission = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Permission', 111));
-    //$this->assertEquals('+tester +administrators -users -*', $permission->getValue('roles'));
+    $this->assertEquals('-* +tester +administrators -users', $permission->getValue('roles'));
 
     TestUtil::endSession();
   }

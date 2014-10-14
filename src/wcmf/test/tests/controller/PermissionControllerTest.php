@@ -58,15 +58,15 @@ class PermissionControllerTest extends ControllerTestCase {
 
     $operations = array(
       'app.src.model.wcmf.User??read',
-      'app.src.model.wcmf.User??modify',
+      'app.src.model.wcmf.User??update',
       'app.src.model.wcmf.User??create',
       'app.src.model.wcmf.User??delete',
       'app.src.model.Author??read',
-      'app.src.model.Author??modify',
+      'app.src.model.Author??update',
       'app.src.model.Author??create',
       'app.src.model.Author??delete',
       'app.src.model.Publisher??read',
-      'app.src.model.Publisher??modify',
+      'app.src.model.Publisher??update',
       'app.src.model.Publisher??create',
       'app.src.model.Publisher??delete',
     );
@@ -83,15 +83,15 @@ class PermissionControllerTest extends ControllerTestCase {
     $this->assertEquals(12, sizeof($result));
 
     $this->assertTrue($result['app.src.model.wcmf.User??read']);
-    $this->assertTrue($result['app.src.model.wcmf.User??modify']);
+    $this->assertTrue($result['app.src.model.wcmf.User??update']);
     $this->assertTrue($result['app.src.model.wcmf.User??create']);
     $this->assertTrue($result['app.src.model.wcmf.User??delete']);
     $this->assertTrue($result['app.src.model.Author??read']);
-    $this->assertFalse($result['app.src.model.Author??modify']);
+    $this->assertFalse($result['app.src.model.Author??update']);
     $this->assertTrue($result['app.src.model.Author??create']);
     $this->assertTrue($result['app.src.model.Author??delete']);
     $this->assertTrue($result['app.src.model.Publisher??read']);
-    $this->assertTrue($result['app.src.model.Publisher??modify']);
+    $this->assertTrue($result['app.src.model.Publisher??update']);
     $this->assertTrue($result['app.src.model.Publisher??create']);
     $this->assertTrue($result['app.src.model.Publisher??delete']);
 
@@ -106,15 +106,15 @@ class PermissionControllerTest extends ControllerTestCase {
 
     $operations = array(
       'app.src.model.wcmf.User??read',
-      'app.src.model.wcmf.User??modify',
+      'app.src.model.wcmf.User??update',
       'app.src.model.wcmf.User??create',
       'app.src.model.wcmf.User??delete',
       'app.src.model.Author??read',
-      'app.src.model.Author??modify',
+      'app.src.model.Author??update',
       'app.src.model.Author??create',
       'app.src.model.Author??delete',
       'app.src.model.Publisher??read',
-      'app.src.model.Publisher??modify',
+      'app.src.model.Publisher??update',
       'app.src.model.Publisher??create',
       'app.src.model.Publisher??delete',
     );
@@ -132,15 +132,15 @@ class PermissionControllerTest extends ControllerTestCase {
     $this->assertEquals(12, sizeof($result));
 
     $this->assertTrue($result['app.src.model.wcmf.User??read']);
-    $this->assertFalse($result['app.src.model.wcmf.User??modify']);
+    $this->assertFalse($result['app.src.model.wcmf.User??update']);
     $this->assertFalse($result['app.src.model.wcmf.User??create']);
     $this->assertFalse($result['app.src.model.wcmf.User??delete']);
     $this->assertTrue($result['app.src.model.Author??read']);
-    $this->assertFalse($result['app.src.model.Author??modify']);
+    $this->assertFalse($result['app.src.model.Author??update']);
     $this->assertTrue($result['app.src.model.Author??create']);
     $this->assertTrue($result['app.src.model.Author??delete']);
     $this->assertTrue($result['app.src.model.Publisher??read']);
-    $this->assertTrue($result['app.src.model.Publisher??modify']);
+    $this->assertTrue($result['app.src.model.Publisher??update']);
     $this->assertTrue($result['app.src.model.Publisher??create']);
     $this->assertTrue($result['app.src.model.Publisher??delete']);
 
