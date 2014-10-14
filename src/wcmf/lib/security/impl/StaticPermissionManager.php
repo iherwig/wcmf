@@ -43,9 +43,24 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
   public function getPermissions($resource, $context, $action) {
     $actionKey = ActionKey::getBestMatch($this->_actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
-      return $this->parsePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
+      return $this->deserializePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
     }
     return null;
+  }
+
+  /**
+   * @see PermissionManager::setPermissions()
+   */
+  public function setPermissions($resource, $context, $action, $permissions) {
+    $rolesStr = $this->serializePermissions($permissions);
+    if (strlen($rolesStr)) {
+      $permKey = ActionKey::createKey($resource, $context, $action);
+      $config = $this->getConfigurationInstance();
+      $configInstance = $config['instance'];
+      $configInstance->setValue($permKey, $rolesStr);
+      $configInstance->writeConfiguration(basename($config['file']));
+      ActionKey::clearCache();
+    }
   }
 
   /**
@@ -73,6 +88,40 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
    * @return boolean
    */
   protected function modifyPermission($resource, $context, $action, $role, $modifier) {
+
+    $permKey = ActionKey::createKey($resource, $context, $action);
+    $permVal = '';
+    if ($modifier != null) {
+      $permVal = $modifier.$role;
+    }
+    $config = $this->getConfigurationInstance();
+    $configInstance = $config['instance'];
+    $value = $configInstance->getValue($permKey, self::AUTHORIZATION_SECTION);
+    if ($value === false && $modifier != null) {
+      $configInstance->setValue($permKey, $permVal, self::AUTHORIZATION_SECTION, true);
+    }
+    else {
+      // remove role from value
+      $newValue = preg_replace('/ +/', ' ', str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
+                    PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value));
+      if (strlen($newValue) > 0) {
+        $configInstance->setValue($permKey, $newValue." ".$permVal, self::AUTHORIZATION_SECTION, false);
+      }
+      else {
+        $configInstance->removeKey($permKey, self::AUTHORIZATION_SECTION);
+      }
+    }
+
+    $configInstance->writeConfiguration(basename($config['file']));
+    ActionKey::clearCache();
+    return true;
+  }
+
+  /**
+   * Get the configuration instance and file that is used to store the permissions.
+   * @return Associative array with keys 'instance' and 'file'.
+   */
+  protected function getConfigurationInstance() {
     // get config file to modify
     $appConfig = ObjectFactory::getConfigurationInstance();
     $configFiles = $appConfig->getConfigurations();
@@ -82,32 +131,12 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
 
     // create a writable configuration and modify the permission
     $mainConfig = $configFiles[0];
-    $newConfig = new InifileConfiguration(dirname($mainConfig));
-    $newConfig->addConfiguration(basename($mainConfig));
-
-    $permDef = ActionKey::createKey($resource, $context, $action);
-    $permVal = '';
-    if ($modifier != null) {
-      $permVal = $modifier.$role;
-    }
-    if ($newConfig->getValue($permDef, self::AUTHORIZATION_SECTION) === false && $modifier != null) {
-      $newConfig->setValue($permDef, $permVal, self::AUTHORIZATION_SECTION, true);
-    }
-    else {
-      $value = $newConfig->getValue($permDef, self::AUTHORIZATION_SECTION);
-      // remove role from value
-      $newValue = str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
-                    PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value);
-      if (strlen($newValue) > 0) {
-        $newConfig->setValue($permDef, $newValue." ".$permVal, self::AUTHORIZATION_SECTION, false);
-      }
-      else {
-        $newConfig->removeKey($permDef, self::AUTHORIZATION_SECTION);
-      }
-    }
-
-    $newConfig->writeConfiguration(basename($mainConfig));
-    return true;
+    $config = new InifileConfiguration(dirname($mainConfig));
+    $config->addConfiguration(basename($mainConfig));
+    return array(
+      'instance' => $config,
+      'file' => $mainConfig
+    );
   }
 }
 ?>

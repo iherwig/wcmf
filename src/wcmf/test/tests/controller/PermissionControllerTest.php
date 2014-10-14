@@ -172,5 +172,43 @@ class PermissionControllerTest extends ControllerTestCase {
 
     TestUtil::endSession();
   }
+
+  /**
+   * @group controller
+   */
+  public function testSetPermissions() {
+    TestUtil::startSession('admin', 'admin');
+
+    // simulate get permissions call
+    $data = array(
+      'resource' => 'app.src.model.wcmf.User',
+      'context' => '',
+      'action' => 'read',
+      'permissions' => array(
+        'allow' => array('administrators'),
+        'deny' => array('tester'),
+        'default' => true
+      )
+    );
+    $response = $this->runRequest('setPermissions', $data);
+
+    // test
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+
+    $data = array(
+      'resource' => 'app.src.model.wcmf.User',
+      'context' => '',
+      'action' => 'read'
+    );
+    $response = $this->runRequest('getPermissions', $data);
+    $result = $response->getValue('result');
+    $this->assertEquals(1, sizeof($result['allow']));
+    $this->assertEquals('administrators', $result['allow'][0]);
+    $this->assertEquals(1, sizeof($result['deny']));
+    $this->assertEquals('tester', $result['deny'][0]);
+    $this->assertTrue($result['default']);
+
+    TestUtil::endSession();
+  }
 }
 ?>

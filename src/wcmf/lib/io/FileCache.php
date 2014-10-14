@@ -71,6 +71,7 @@ class FileCache {
   public static function clear($section) {
     $file = self::getCacheFile($section);
     @unlink($file);
+    unset(self::$cache[$section]);
   }
 
   /**
@@ -81,6 +82,7 @@ class FileCache {
     if (is_dir($cacheDir)) {
       FileUtil::emptyDir($cacheDir);
     }
+    self::$cache = null;
   }
 
   /**

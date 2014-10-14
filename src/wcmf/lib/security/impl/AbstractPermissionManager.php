@@ -262,11 +262,15 @@ class AbstractPermissionManager {
    * and 'default' is a boolean value derived from the wildcard policy (+* or -*).
    * @param $val A role string (+*, +administrators, -guest, entries without '+' or '-'
    *     prefix default to allow rules).
-   * @return An array containing the permissions as an associative array with the keys
+   * @return Associative array containing the permissions as an associative array with the keys
    *     'default', 'allow', 'deny'.
    */
-  protected function parsePermissions($val) {
-    $result = array();
+  protected function deserializePermissions($val) {
+    $result = array(
+      'default' => null,
+      'allow' => array(),
+      'deny' => array(),
+    );
 
     $roleValues = explode(" ", $val);
     foreach ($roleValues as $roleValue) {
@@ -293,6 +297,31 @@ class AbstractPermissionManager {
       $result['default'] = false;
     }
     return $result;
+  }
+
+  /**
+   * Convert an associative permissions array with keys 'default', 'allow', 'deny'
+   * into a string.
+   * @param $permissions Associative array with keys 'default', 'allow', 'deny',
+   *     where 'allow', 'deny' are arrays itselves holding roles and 'default' is a
+   *     boolean value derived from the wildcard policy (+* or -*).
+   * @return A role string (+*, +administrators, -guest, entries without '+' or '-'
+   *     prefix default to allow rules).
+   */
+  protected function serializePermissions($permissions) {
+    $result = $permissions['default'] === true ? PermissionManager::PERMISSION_MODIFIER_ALLOW.'* ' :
+        PermissionManager::PERMISSION_MODIFIER_DENY.'* ';
+    if (isset($permissions['allow'])) {
+      foreach ($permissions['allow'] as $role) {
+        $result .= PermissionManager::PERMISSION_MODIFIER_ALLOW.$role.' ';
+      }
+    }
+    if (isset($permissions['deny'])) {
+      foreach ($permissions['deny'] as $role) {
+        $result .= PermissionManager::PERMISSION_MODIFIER_DENY.$role.' ';
+      }
+    }
+    return trim($result);
   }
 
   /**

@@ -43,6 +43,15 @@ class ChainedPermissionManager extends AbstractPermissionManager implements Perm
   }
 
   /**
+   * @see PermissionManager::setPermissions()
+   */
+  public function setPermissions($resource, $context, $action, $permissions) {
+    if (sizeof($this->_managers) > 0) {
+      $this->_managers[0]->setPermissions($resource, $context, $action, $permissions);
+    }
+  }
+
+  /**
    * @see PermissionManager::createPermission()
    */
   public function createPermission($resource, $context, $action, $role, $modifier) {

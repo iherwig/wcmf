@@ -56,7 +56,20 @@ use wcmf\lib\presentation\Controller;
  * | _in_ `resource`       | The resource (e.g. class name of the Controller or ObjectId).
  * | _in_ `context`        | The context in which the action takes place (optional).
  * | _in_ `action`         | The action to process.
- * | _out_ `result`        | An assoziative array with keys 'default', 'allow', 'deny' and the attached roles as values or null, if no permissions are defined.
+ * | _out_ `result`        | Assoziative array with keys 'default' (boolean), 'allow', 'deny' (arrays of role names) or null, if no permissions are defined.
+ * </div>
+ * </div>
+ *
+ * <div class="controller-action">
+ * <div> __Action__ setPermissions </div>
+ * <div>
+ * Set the permissions on a resource, context, action combination.
+ * | Parameter             | Description
+ * |-----------------------|-------------------------
+ * | _in_ `resource`       | The resource (e.g. class name of the Controller or ObjectId).
+ * | _in_ `context`        | The context in which the action takes place (optional).
+ * | _in_ `action`         | The action to process.
+ * | _in_ `permissions`    | Assoziative array with keys 'default' (boolean), 'allow', 'deny' (arrays of role names).
  * </div>
  * </div>
  *
@@ -99,11 +112,17 @@ class PermissionController extends Controller {
     $response = $this->getResponse();
     $invalidParameters = array();
     if ($request->getAction() == 'createPermission' || $request->getAction() == 'removePermission' ||
-             $request->getAction() == 'getPermissions') {
+             $request->getAction() == 'getPermissions' || $request->getAction() == 'setPermissions') {
       foreach (array('resource', 'context', 'action') as $param) {
         if(!$request->hasValue($param)) {
           $invalidParameters[] = $param;
         }
+      }
+    }
+    if ($request->getAction() == 'createPermission') {
+      $permissions = $request->getValue('permissions');
+      if (!isset($permissions['allow']) || !isset($permissions['deny'])) {
+        $invalidParameters[] = 'permissions';
       }
     }
     if ($request->getAction() == 'createPermission') {
@@ -160,6 +179,18 @@ class PermissionController extends Controller {
 
       $result = $permissionManager->getPermissions($resource, $context, $action);
       $response->setValue('result', $result);
+    }
+    elseif ($request->getAction() == 'setPermissions') {
+      $resource = $request->getValue('resource');
+      $context = $request->getValue('context');
+      $action = $request->getValue('action');
+      $permissions = $request->getValue('permissions');
+
+      $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+      $transaction->begin();
+      $permissionManager = ObjectFactory::getInstance('permissionManager');
+      $result = $permissionManager->setPermissions($resource, $context, $action, $permissions);
+      $transaction->commit();
     }
     elseif ($request->getAction() == 'createPermission') {
       $resource = $request->getValue('resource');

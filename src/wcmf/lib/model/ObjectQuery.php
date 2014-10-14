@@ -50,6 +50,8 @@ use wcmf\lib\persistence\ValueChangeEvent;
  * a parent child relation, than the nodes that are selected depend on the attributes of
  * the first object template that is received by ObjectQuery::getObjectTemplate.
  *
+ * @note: The query does not search in objects, that are created inside the current transaction.
+ *
  * The following example shows the usage:
  *
  * @code

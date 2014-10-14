@@ -33,6 +33,12 @@ class NullPermissionManager extends AbstractPermissionManager implements Permiss
   }
 
   /**
+   * @see PermissionManager::setPermissions()
+   */
+  public function setPermissions($resource, $context, $action, $permissions) {
+  }
+
+  /**
    * @see PermissionManager::createPermission()
    */
   public function createPermission($resource, $context, $action, $role, $modifier) {

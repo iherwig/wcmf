@@ -61,7 +61,7 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 444, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 2'),
       ),
       'Permission' => array(
-        array('id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users'),
+        array('id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users -administrators'),
       ),
     ));
   }
@@ -209,6 +209,43 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
+  public function testGetPermissions() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissions = $permissionManager->getPermissions('Chapter:111', 'test', 'delete');
+
+    // test
+    $this->assertTrue(isset($permissions['allow']));
+    $this->assertTrue(isset($permissions['deny']));
+    $this->assertTrue(isset($permissions['default']));
+    $this->assertEquals(array('users'), $permissions['allow']);
+    $this->assertEquals(array('administrators'), $permissions['deny']);
+    $this->assertTrue($permissions['default']);
+
+    TestUtil::endSession();
+  }
+
+  public function testSetPermissions() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager->setPermissions('Chapter:111', 'test', 'delete', array(
+      'allow' => array('tester', 'administrators'),
+      'deny' => array('users'),
+      'default' => false
+    ));
+    $transaction->commit();
+
+    // test
+    $permission = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Permission', 111));
+    //$this->assertEquals('+tester +administrators -users -*', $permission->getValue('roles'));
+
+    TestUtil::endSession();
+  }
+
   public function testPermissionCreateNew() {
     TestUtil::startSession('userPermTest', 'user1');
 
@@ -247,7 +284,7 @@ class PermissionsTest extends DatabaseTestCase {
 
     // test
     $permission = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Permission', 111));
-    $this->assertEquals('+* +users +tester', $permission->getValue('roles'));
+    $this->assertEquals('+* +users -administrators +tester', $permission->getValue('roles'));
 
     TestUtil::endSession();
   }
@@ -263,7 +300,7 @@ class PermissionsTest extends DatabaseTestCase {
 
     // test
     $permission = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Permission', 111));
-    $this->assertEquals('+*', $permission->getValue('roles'));
+    $this->assertEquals('+* -administrators', $permission->getValue('roles'));
 
     TestUtil::endSession();
   }
@@ -275,6 +312,7 @@ class PermissionsTest extends DatabaseTestCase {
     $transaction->begin();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $permissionManager->removePermission('Chapter:111', 'test', 'delete', 'users');
+    $permissionManager->removePermission('Chapter:111', 'test', 'delete', 'administrators');
     $permissionManager->removePermission('Chapter:111', 'test', 'delete', '*');
     $transaction->commit();
 

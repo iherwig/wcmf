@@ -24,6 +24,8 @@ use wcmf\lib\util\StringUtil;
  * different types are not necessary. Attributes have to be prepended with the
  * type name (or in case of ambiguity the role name), e.g. Author.name instead of name.
  *
+ * @note: The query does not search in objects, that are created inside the current transaction.
+ *
  * The following example shows the usage:
  *
  * @code

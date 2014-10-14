@@ -59,10 +59,10 @@ class ActionKey {
   public static function getBestMatch(ActionKeyProvider $actionKeyProvider, $resource, $context, $action) {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $authUser = $permissionManager->getAuthUser();
-    $cacheKey = self::CACHE_KEY.'_'.($authUser ? $authUser->getLogin() : '');
-    $providerId = $actionKeyProvider->getCacheId();
+    // different entries for different providers and logins
+    $cacheSection = $actionKeyProvider->getCacheId().'_'.($authUser ? $authUser->getLogin() : '');
 
-    $cachedKeys = FileCache::get($cacheKey, $providerId);
+    $cachedKeys = FileCache::get(self::CACHE_KEY, $cacheSection);
     if ($cachedKeys == null) {
       $cachedKeys = array();
     }
@@ -145,10 +145,17 @@ class ActionKey {
       $cachedKeys[$reqKey] = $result;
       // don't cache action keys for specific objects
       if (!is_object($resource)) {
-        FileCache::put($cacheKey, $providerId, $cachedKeys);
+        FileCache::put(self::CACHE_KEY, $cacheSection, $cachedKeys);
       }
     }
     return $cachedKeys[$reqKey];
+  }
+
+  /**
+   * Clear the action key cache
+   */
+  public static function clearCache() {
+    FileCache::clear(self::CACHE_KEY);
   }
 }
 ?>

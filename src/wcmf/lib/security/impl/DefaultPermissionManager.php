@@ -59,9 +59,26 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
   public function getPermissions($resource, $context, $action) {
     $actionKey = ActionKey::getBestMatch($this->_actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
-      return $this->parsePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
+      return $this->deserializePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
     }
     return null;
+  }
+
+  /**
+   * @see PermissionManager::setPermissions()
+   */
+  public function setPermissions($resource, $context, $action, $permissions) {
+    $rolesStr = $this->serializePermissions($permissions);
+    if (strlen($rolesStr)) {
+      $permission = $this->getPermissionInstance($resource, $context, $action);
+      if (!$permission) {
+        $this->createPermissionObject($resource, $context, $action, $rolesStr);
+      }
+      else {
+        $permission->setValue('roles', $rolesStr);
+      }
+      ActionKey::clearCache();
+    }
   }
 
   /**
@@ -93,28 +110,16 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
     $permVal = $modifier != null ? $modifier.$role : '';
 
     // check for existing permission
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-
-    $query = new ObjectQuery($this->_permissionType, __CLASS__.__METHOD__);
-    $tpl = $query->getObjectTemplate($this->_permissionType);
-    $tpl->setValue('resource', Criteria::asValue('=', $resource));
-    $tpl->setValue('context', Criteria::asValue('=', $context));
-    $tpl->setValue('action', Criteria::asValue('=', $action));
-    $permissions = $query->execute(BuildDepth::SINGLE);
-    if (sizeof($permissions) == 0 && $modifier != null) {
+    $permission = $this->getPermissionInstance($resource, $context, $action);
+    if (!$permission && $modifier != null) {
       // create the permission, if it does not exist yet
-      $permission = $persistenceFacade->create($this->_permissionType);
-      $permission->setValue('resource', $resource);
-      $permission->setValue('context', $context);
-      $permission->setValue('action', $action);
-      $permission->setValue('roles', $permVal);
+      $permission = $this->createPermissionObject($resource, $context, $action, $permVal);
     }
-    else {
-      $permission = $permissions[0];
+    elseif ($permission) {
       $value = $permission->getValue('roles');
       // remove role from value
-      $newValue = str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
-                    PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value);
+      $newValue = preg_replace('/ +/', ' ', str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
+                    PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value));
       if (strlen($newValue) > 0) {
         $permission->setValue('roles', trim($newValue." ".$permVal));
       }
@@ -122,7 +127,43 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
         $permission->delete();
       }
     }
+    ActionKey::clearCache();
     return true;
+  }
+
+  /**
+   * Get the permission object that matches the given parameters
+   * @param $resource Resource
+   * @param $context Context
+   * @param $action Action
+   * @return Instance of _permissionType or null
+   */
+  protected function getPermissionInstance($resource, $context, $action) {
+    $query = new ObjectQuery($this->_permissionType, __CLASS__.__METHOD__);
+    $tpl = $query->getObjectTemplate($this->_permissionType);
+    $tpl->setValue('resource', Criteria::asValue('=', $resource));
+    $tpl->setValue('context', Criteria::asValue('=', $context));
+    $tpl->setValue('action', Criteria::asValue('=', $action));
+    $permissions = $query->execute(BuildDepth::SINGLE);
+    return (sizeof($permissions) > 0) ? $permissions[0] : null;
+  }
+
+  /**
+   * Create a permission object with the given parameters
+   * @param $resource Resource
+   * @param $context Context
+   * @param $action Action
+   * @param $roles String representing the permissions as returned from serializePermissions()
+   * @return Instance of _permissionType
+   */
+  protected function createPermissionObject($resource, $context, $action, $roles) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $permission = $persistenceFacade->create($this->_permissionType);
+    $permission->setValue('resource', $resource);
+    $permission->setValue('context', $context);
+    $permission->setValue('action', $action);
+    $permission->setValue('roles', $roles);
+    return $permission;
   }
 }
 ?>

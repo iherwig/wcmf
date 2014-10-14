@@ -940,7 +940,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     // register objects with the transaction
     $registeredObjects = array();
     for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
-      $registeredObjects[] = $tx->registerLoaded($objects[$i]);
+      $registeredObject = $tx->registerLoaded($objects[$i]);
+      // don't return objects that are to be deleted by the current transaction
+      if ($registeredObject->getState() != PersistentObject::STATE_DELETED) {
+        $registeredObjects[] = $registeredObject;
+      }
     }
     return $registeredObjects;
   }

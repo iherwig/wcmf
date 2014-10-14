@@ -94,10 +94,20 @@ interface PermissionManager {
    * @param $resource The resource (e.g. class name of the Controller or ObjectId).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
-   * @return An assoziative array with keys 'default', 'allow', 'deny' and
-   * the attached roles as values or null, if no permissions are defined.
+   * @return Assoziative array with keys 'default' (boolean) and 'allow', 'deny'
+   * (arrays of role names) or null, if no permissions are defined.
    */
   public function getPermissions($resource, $context, $action);
+
+  /**
+   * Set the permissions on a resource, context, action combination.
+   * @param $resource The resource (e.g. class name of the Controller or ObjectId).
+   * @param $context The context in which the action takes place.
+   * @param $action The action to process.
+   * @param $permissions Assoziative array with keys 'default' (boolean) and
+   * 'allow', 'deny' (arrays of role names).
+   */
+  public function setPermissions($resource, $context, $action, $permissions);
 
   /**
    * Create/Change a permission for a role on a resource, context, action combination.
@@ -105,7 +115,7 @@ interface PermissionManager {
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
    * @param $role The role to authorize.
-   * @param $modifier One of the PERMISSION_MODIFIER_ constants.
+   * @param $modifier One of the PERMISSION_MODIFIER constants.
    * @return Boolean whether creation succeded/failed.
    */
   public function createPermission($resource, $context, $action, $role, $modifier);
