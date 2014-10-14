@@ -156,8 +156,8 @@ The Authorization is based on action keys (see @ref actionkey), whereby the foll
 defined by the individual parts of the key:
 @verbatim
  controller?context?action ; an action in the application flow
- type?context?action       ; an action on a domain class (read, modify, delete, create)
- oid?context?action        ; an action on a domain object (read, modify, delete, create)
+ type?context?action       ; an action on a domain class (read, update, delete, create)
+ oid?context?action        ; an action on a domain object (read, update, delete, create)
 @endverbatim
 To each of these actions different roles can be assigned (comma separated), for which a permission
 is granted (@em +) or denied (@em -). The role @em * stands for all roles.@n

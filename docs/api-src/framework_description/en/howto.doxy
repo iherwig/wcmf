@@ -340,7 +340,7 @@ The framework's controllers are located in the directory /wcmf/application/contr
 \subsection howtoapplication Programming the application
 
 A web application typically consists of several input masks (views), which
-are used to create, modify and delete data. The application is defined by the actions
+are used to create, update and delete data. The application is defined by the actions
 executable in the individual input masks. Thereby the framework makes no difference
 between actions used for data handling and those used to navigate or e.g. initiate the
 export of data.
@@ -461,10 +461,10 @@ article's @em name attribute, in the HTML page. In the same manner the other att
 
 Rights can be assigned to the execution of actions in the user interface or to the editing
 of domain classes and individual objects (instances of domain classes). For editing content the framework
-defines the rights @em read, @em modify, @em delete and @em create.@n
+defines the rights @em read, @em update, @em delete and @em create.@n
 The authorization for actions in the user interface is handled by the ActionMapper, for actions
 concerning the data the PersistenceMapper checks the permissions (and sets objects, for which
-the right @em modify is not set, to non-editable (@em is_editable = false) ).
+the right @em update is not set, to non-editable (@em is_editable = false) ).
 Both classes use the method RightsManager::authorize and generate a fatal error message,
 if authorization fails (see @ref howtoerror).
 To prevent this the rights can be retrieved directly in order to take appropriate messures:
@@ -512,7 +512,7 @@ In the sourcecode this looks as follows:
 
 The functionality described above is imlemented in the method LockManager::handleLocking,
 with the only difference that this method only acquires a lock in cases in which the
-user is allowed to modify the object.@n
+user is allowed to update the object.@n
 An object, which is loaded by another user is set to non-editable (@em is_editable = false)
 automatically upon loading.
 
