@@ -246,6 +246,22 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
+  public function testSetPermissionsNull() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction->begin();
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager->setPermissions('Chapter:111', 'test', 'delete', null);
+    $transaction->commit();
+
+    // test
+    $permission = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Permission', 111));
+    $this->assertNull($permission);
+
+    TestUtil::endSession();
+  }
+
   public function testPermissionCreateNew() {
     TestUtil::startSession('userPermTest', 'user1');
 

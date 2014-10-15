@@ -52,12 +52,26 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
    * @see PermissionManager::setPermissions()
    */
   public function setPermissions($resource, $context, $action, $permissions) {
-    $rolesStr = $this->serializePermissions($permissions);
-    if (strlen($rolesStr)) {
-      $permKey = ActionKey::createKey($resource, $context, $action);
-      $config = $this->getConfigurationInstance();
-      $configInstance = $config['instance'];
-      $configInstance->setValue($permKey, $rolesStr);
+    $permKey = ActionKey::createKey($resource, $context, $action);
+    $config = $this->getConfigurationInstance();
+    $configInstance = $config['instance'];
+    $isChanged = false;
+
+    if ($permissions != null) {
+      // set permissions
+      $rolesStr = $this->serializePermissions($permissions);
+      if (strlen($rolesStr)) {
+        $configInstance->setValue($permKey, $rolesStr, self::AUTHORIZATION_SECTION, true);
+        $isChanged = true;
+      }
+    }
+    else {
+      // delete permissions
+      $configInstance->removeKey($permKey);
+      $isChanged = true;
+    }
+
+    if ($isChanged) {
       $configInstance->writeConfiguration(basename($config['file']));
       ActionKey::clearCache();
     }

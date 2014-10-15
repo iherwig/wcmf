@@ -46,6 +46,7 @@ class PermissionControllerTest extends ControllerTestCase {
         array('id' => 1, 'name' => 'tester'),
       ),
       'Permission' => array(
+        array('id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users -administrators'),
       )
     ));
   }
@@ -179,7 +180,7 @@ class PermissionControllerTest extends ControllerTestCase {
   public function testSetPermissions() {
     TestUtil::startSession('admin', 'admin');
 
-    // simulate get permissions call
+    // simulate set permissions call
     $data = array(
       'resource' => 'app.src.model.wcmf.User',
       'context' => '',
@@ -207,6 +208,51 @@ class PermissionControllerTest extends ControllerTestCase {
     $this->assertEquals(1, sizeof($result['deny']));
     $this->assertEquals('tester', $result['deny'][0]);
     $this->assertTrue($result['default']);
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testSetPermissionsNull() {
+    TestUtil::startSession('admin', 'admin');
+
+    // simulate get permissions call
+    $data = array(
+      'resource' => 'Chapter:111',
+      'context' => 'test',
+      'action' => 'delete'
+    );
+    $response = $this->runRequest('getPermissions', $data);
+
+    // test
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $result = $response->getValue('result');
+    $this->assertEquals(1, sizeof($result['allow']));
+    $this->assertEquals(1, sizeof($result['deny']));
+    $this->assertTrue($result['default']);
+
+    // simulate set permissions call
+    $data = array(
+      'resource' => 'Chapter:111',
+      'context' => 'test',
+      'action' => 'delete',
+      'permissions' => null
+    );
+    $response = $this->runRequest('setPermissions', $data);
+
+    // test
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+
+    $data = array(
+      'resource' => 'Chapter:111',
+      'context' => 'test',
+      'action' => 'delete'
+    );
+    $response = $this->runRequest('getPermissions', $data);
+    $result = $response->getValue('result');
+    $this->assertNull($result);
 
     TestUtil::endSession();
   }

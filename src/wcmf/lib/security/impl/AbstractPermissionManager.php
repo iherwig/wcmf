@@ -277,18 +277,20 @@ class AbstractPermissionManager {
       $roleValue = trim($roleValue);
       $matches = array();
       preg_match('/^([+-]?)(.+)$/', $roleValue, $matches);
-      $prefix = $matches[1];
-      $role = $matches[2];
-      if ($role === '*') {
-        $result['default'] = $prefix == '-' ? false : true;
-      }
-      else {
-        if ($prefix === '-') {
-          $result['deny'][] = $role;
+      if (sizeof($matches) > 0) {
+        $prefix = $matches[1];
+        $role = $matches[2];
+        if ($role === '*') {
+          $result['default'] = $prefix == '-' ? false : true;
         }
         else {
-          // entries without '+' or '-' prefix default to allow rules
-          $result['allow'][] = $role;
+          if ($prefix === '-') {
+            $result['deny'][] = $role;
+          }
+          else {
+            // entries without '+' or '-' prefix default to allow rules
+            $result['allow'][] = $role;
+          }
         }
       }
     }

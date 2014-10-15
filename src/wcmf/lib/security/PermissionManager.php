@@ -105,7 +105,7 @@ interface PermissionManager {
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
    * @param $permissions Assoziative array with keys 'default' (boolean) and
-   * 'allow', 'deny' (arrays of role names).
+   * 'allow', 'deny' (arrays of role names) or null if all permissions should be deleted.
    */
   public function setPermissions($resource, $context, $action, $permissions);
 

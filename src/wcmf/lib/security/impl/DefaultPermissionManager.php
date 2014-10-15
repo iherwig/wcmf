@@ -68,15 +68,31 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    * @see PermissionManager::setPermissions()
    */
   public function setPermissions($resource, $context, $action, $permissions) {
-    $rolesStr = $this->serializePermissions($permissions);
-    if (strlen($rolesStr)) {
-      $permission = $this->getPermissionInstance($resource, $context, $action);
-      if (!$permission) {
-        $this->createPermissionObject($resource, $context, $action, $rolesStr);
+    $permissionInstance = $this->getPermissionInstance($resource, $context, $action);
+    $isChanged = false;
+
+    if ($permissions != null) {
+      // set permissions
+      $rolesStr = $this->serializePermissions($permissions);
+      if (strlen($rolesStr)) {
+        if (!$permissionInstance) {
+          $this->createPermissionObject($resource, $context, $action, $rolesStr);
+        }
+        else {
+          $permissionInstance->setValue('roles', $rolesStr);
+        }
+        $isChanged = true;
       }
-      else {
-        $permission->setValue('roles', $rolesStr);
+    }
+    else {
+      // delete permissions
+      if ($permissionInstance) {
+        $permissionInstance->delete();
+        $isChanged = true;
       }
+    }
+
+    if ($isChanged) {
       ActionKey::clearCache();
     }
   }

@@ -189,7 +189,7 @@ class PermissionController extends Controller {
       $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
       $permissionManager = ObjectFactory::getInstance('permissionManager');
-      $result = $permissionManager->setPermissions($resource, $context, $action, $permissions);
+      $permissionManager->setPermissions($resource, $context, $action, $permissions);
       $transaction->commit();
     }
     elseif ($request->getAction() == 'createPermission') {
