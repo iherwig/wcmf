@@ -47,17 +47,11 @@ class SmartyView implements View {
     $this->_view->loadFilter('pre', 'removeprids');
     $this->_view->loadFilter('output', 'trimwhitespace');
 
-    // setup smarty directories
-    $config = ObjectFactory::getConfigurationInstance();
-    if (($cacheDir = $config->getDirectoryValue('cacheDir', 'application')) === false) {
-      throw new ConfigurationException("No cache path 'cacheDir' defined in ini section 'application'.");
-    }
-    $smartyDir = $cacheDir.'smarty/';
-    $this->_view->setCompileDir($smartyDir.'templates_c/');
-    $this->_view->setCacheDir($smartyDir.'cache/');
-    FileUtil::mkdirRec($this->_view->getCompileDir());
-    FileUtil::mkdirRec($this->_view->getCacheDir());
+    // setup default smarty directories
     $this->_view->setTemplateDir(WCMF_BASE);
+    $cacheDir = session_save_path().DIRECTORY_SEPARATOR;
+    $this->_view->setCompileDir($cacheDir.'templates_c/');
+    $this->_view->setCacheDir($cacheDir.'cache/');
   }
 
   /**
@@ -83,6 +77,17 @@ class SmartyView implements View {
    */
   public function setCacheLifetime($cacheLifeTime) {
     $this->_view->cache_lifetime = $cacheLifeTime;
+  }
+
+  /**
+   * Set the caching directory
+   * @param $cacheDir String
+   */
+  public function setCacheDir($cacheDir) {
+    $this->_view->setCompileDir($cacheDir.'templates_c/');
+    $this->_view->setCacheDir($cacheDir.'cache/');
+    FileUtil::mkdirRec($this->_view->getCompileDir());
+    FileUtil::mkdirRec($this->_view->getCacheDir());
   }
 
   /**

@@ -13,7 +13,6 @@ namespace wcmf\application\controller;
 use wcmf\application\controller\BatchController;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\io\FileCache;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\PersistentIterator;
@@ -112,7 +111,7 @@ class XMLExportController extends BatchController {
    */
   protected function getDownloadFile() {
     $config = ObjectFactory::getConfigurationInstance();
-    $cacheDir = $config->getDirectoryValue('cacheDir', 'Application');
+    $cacheDir = session_save_path().DIRECTORY_SEPARATOR;
     return $cacheDir.$this->_DOCFILE;
   }
 
@@ -123,6 +122,7 @@ class XMLExportController extends BatchController {
    */
   protected function initExport($oids) {
     $session = ObjectFactory::getInstance('session');
+    $cache = ObjectFactory::getInstance('cache');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
     $filename = $documentInfo['docFile'];
@@ -154,11 +154,11 @@ class XMLExportController extends BatchController {
 
     // store root object ids in session
     $nextOID = array_shift($rootOIDs);
-    FileCache::put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
+    $cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
 
     // empty exported oids
     $tmp = array();
-    FileCache::put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $tmp);
+    $cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $tmp);
 
     // create work package for first root node
     $this->addWorkPackage(Message::get('Exporting tree: start with %0%', array($nextOID)), 1, array($nextOID), 'exportNodes');
@@ -178,6 +178,7 @@ class XMLExportController extends BatchController {
     // - If there is no iterator and no oid given, we return
 
     $session = ObjectFactory::getInstance('session');
+    $cache = ObjectFactory::getInstance('cache');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -213,13 +214,13 @@ class XMLExportController extends BatchController {
     $session->set($this->DOCUMENT_INFO, $documentInfo);
 
     // decide what to do next
-    $rootOIDs = FileCache::get(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS);
+    $rootOIDs = $cache->get(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS);
     if (!$iterator->valid() && sizeof($rootOIDs) > 0) {
       // if the current iterator is finished, set iterator null and proceed with the next root oid
       $nextOID = array_shift($rootOIDs);
       $iterator = null;
       // store remaining root oids in session
-      FileCache::put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
+      $cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
       // unset iterator id to start with new root oid
       $tmp = null;
       $session->set($this->ITERATOR_ID, $tmp);
@@ -248,6 +249,7 @@ class XMLExportController extends BatchController {
    */
   protected function finishExport($oids) {
     $session = ObjectFactory::getInstance('session');
+    $cache = ObjectFactory::getInstance('cache');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -259,7 +261,7 @@ class XMLExportController extends BatchController {
 
     // clear session variables
     $tmp = null;
-    FileCache::put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $tmp);
+    $cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $tmp);
     $session->set($this->ITERATOR_ID, $tmp);
     $session->set($this->DOCUMENT_INFO, $tmp);
   }
@@ -294,14 +296,14 @@ class XMLExportController extends BatchController {
    */
   protected function writeNode($fileHandle, ObjectId $oid, $depth, $documentInfo) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $session = ObjectFactory::getInstance('session');
+    $cache = ObjectFactory::getInstance('cache');
 
     // load node and get element name
     $node = $persistenceFacade->load($oid);
     $elementName = $persistenceFacade->getSimpleType($node->getType());
 
     // check if the node is written already
-    $exportedOids = FileCache::get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
+    $exportedOids = $cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
     if (!in_array($oid->__toString(), $exportedOids)) {
       // write node
       $mapper = $node->getMapper();
@@ -342,7 +344,7 @@ class XMLExportController extends BatchController {
 
       // register exported node
       $exportedOids[] = $oid->__toString();
-      FileCache::put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $exportedOids);
+      $cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $exportedOids);
     }
     // return the updated document info
     return $documentInfo;
@@ -354,8 +356,8 @@ class XMLExportController extends BatchController {
    * @return Integer
    */
   protected function getNumUnvisitedChildren(Node $node) {
-    $session = ObjectFactory::getInstance('session');
-    $exportedOids = FileCache::get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
+    $cache = ObjectFactory::getInstance('cache');
+    $exportedOids = $cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
 
     $childOIDs = array();
     $mapper = $node->getMapper();

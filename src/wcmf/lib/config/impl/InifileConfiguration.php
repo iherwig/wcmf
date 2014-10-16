@@ -15,6 +15,7 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\WritableConfiguration;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\IOException;
 use wcmf\lib\util\StringUtil;
@@ -667,8 +668,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @return Filename
    */
   protected function getSerializeFilename($parsedFiles) {
-    $path = session_save_path();
-    $filename = $path.'/wcmf_config_'.md5(realpath($this->_configPath).'/'.join('_', $parsedFiles));
+    $path = session_save_path().DIRECTORY_SEPARATOR;
+    $filename = $path.'wcmf_config_'.md5(realpath($this->_configPath).'/'.join('_', $parsedFiles));
     return $filename;
   }
 
@@ -694,10 +695,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Clear all caches", __CLASS__);
     }
-    if ($this->hasValue('cacheDir', 'application')) {
-      $cacheDir = $this->getDirectoryValue('cacheDir', 'application');
-      FileUtil::emptyDir($cacheDir);
-    }
+    $cache = ObjectFactory::getInstance('cache');
+    $cache->clearAll();
   }
 
   /**

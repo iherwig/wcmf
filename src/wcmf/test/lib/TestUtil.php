@@ -14,7 +14,6 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\io\FileCache;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\security\impl\NullPermissionManager;
 
@@ -45,7 +44,8 @@ class TestUtil {
     $config = new InifileConfiguration($configPath);
     $config->addConfiguration('config.ini');
     ObjectFactory::configure($config);
-    FileCache::clearAll();
+    $cache = ObjectFactory::getInstance('cache');
+    $cache->clearAll();
   }
 
   /**

@@ -31,6 +31,7 @@ class ObjectFactory {
       'session' =>               'wcmf\lib\core\Session',
       'configuration' =>         'wcmf\lib\config\Configuration',
       'localization' =>          'wcmf\lib\i18n\Localization',
+      'cache' =>                 'wcmf\lib\io\Cache',
       'persistenceFacade' =>     'wcmf\lib\persistence\PersistenceFacade',
       'transaction' =>           'wcmf\lib\persistence\Transaction',
       'concurrencyManager' =>    'wcmf\lib\persistence\concurrency\ConcurrencyManager',

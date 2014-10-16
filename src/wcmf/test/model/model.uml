@@ -40,16 +40,6 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Jj_YkLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_JkAmsLQ9EeOQ5oJFa1i8cg" value="en"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_7Zx8oLQ8EeOQ5oJFa1i8cg" name="anonymous" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LdyLwLQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_LdyLwbQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Ld0A8LQ9EeOQ5oJFa1i8cg" value="false"/>
-                </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_7c_osLQ8EeOQ5oJFa1i8cg" name="cacheDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NGOwQLQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NGOwQbQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_NGQlcLQ9EeOQ5oJFa1i8cg" value="app/cache/"/>
-                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7gMtsLQ8EeOQ5oJFa1i8cg" name="listeners" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OYK5QLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OYLgULQ9EeOQ5oJFa1i8cg" value="1"/>
@@ -165,6 +155,16 @@
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEvQRHEeSxY9ess8EBIw" name="/list/{language}/{listDef}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEvgRHEeSxY9ess8EBIw" value="action=listValues"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_Un6u8FUxEeS4i-N-Z4Tllg" name="Cache">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_Un6u8VUxEeS4i-N-Z4Tllg" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Un6u8lUxEeS4i-N-Z4Tllg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Un6u81UxEeS4i-N-Z4Tllg" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Un6u9FUxEeS4i-N-Z4Tllg" value="wcmf\lib\io\impl\FileCache"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_lEaWkFUxEeS4i-N-Z4Tllg" name="cacheDir" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_oaPp8FUxEeS4i-N-Z4Tllg" value="app/cache/"/>
                 </ownedAttribute>
               </packagedElement>
             </packagedElement>
@@ -350,6 +350,9 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_8oUdQLRFEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8oVEULRFEeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_8oWScLRFEeOQ5oJFa1i8cg" value="3600"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_lGxxQFU1EeSK86c10gl9Zw" name="cacheDir" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_yW7YsFU1EeSK86c10gl9Zw" value="app/cache/smarty/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_Ah1FcLRGEeOQ5oJFa1i8cg" name="Formats">
@@ -1806,4 +1809,6 @@
   <Chronos:ChiActionKey xmi:id="_YJI0sE5nEeSEGaIVag_Y7g" action="removePermission" base_Association="_V7gfg05nEeSEGaIVag_Y7g"/>
   <Chronos:ChiActionKey xmi:id="_2pwsAFJlEeS9X-qkDE9hqA" action="getPermissions" base_Association="_ztw08FJlEeS9X-qkDE9hqA"/>
   <Chronos:ChiActionKey xmi:id="_LYFX8FLkEeSiysnzrVykIQ" action="setPermissions" base_Association="_JQqYcFLkEeSiysnzrVykIQ"/>
+  <Chronos:ChiSystem xmi:id="_UsmaoFUxEeS4i-N-Z4Tllg" plattform="wcmf" base_Class="_Un6u8FUxEeS4i-N-Z4Tllg"/>
+  <ActionLanguage:TextualRepresentation xmi:id="_Y6ae4FUxEeS4i-N-Z4Tllg" language="org.eclipse.papyrus.uml.textedit.property.xtext.UmlProperty"/>
 </xmi:XMI>

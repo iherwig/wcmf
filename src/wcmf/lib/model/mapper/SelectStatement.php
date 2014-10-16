@@ -13,7 +13,6 @@ namespace wcmf\lib\model\mapper;
 use \Zend_Db_Select;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\io\FileCache;
 use wcmf\lib\model\mapper\RDBMapper;
 
 /**
@@ -39,13 +38,14 @@ class SelectStatement extends Zend_Db_Select {
    * @return SelectStatement
    */
   public static function get(RDBMapper $mapper, $id=self::NO_CACHE) {
+    $cache = ObjectFactory::getInstance('cache');
     $cacheSection = self::getCacheSection($mapper->getType());
     $cacheId = self::getCacheId($id);
-    if ($id == self::NO_CACHE || !FileCache::exists($cacheSection, $cacheId)) {
+    if ($id == self::NO_CACHE || !$cache->exists($cacheSection, $cacheId)) {
       $selectStmt = new SelectStatement($mapper, $id);
     }
     else {
-      $selectStmt = FileCache::get($cacheSection, $cacheId);
+      $selectStmt = $cache->get($cacheSection, $cacheId);
     }
     return $selectStmt;
   }
@@ -74,8 +74,9 @@ class SelectStatement extends Zend_Db_Select {
    * @return Boolean
    */
   public function isCached() {
+    $cache = ObjectFactory::getInstance('cache');
     return $this->_id == self::NO_CACHE ? false :
-            FileCache::exists(self::getCacheSection($this->_type), self::getCacheId($this->_id));
+            $cache->exists(self::getCacheSection($this->_type), self::getCacheId($this->_id));
   }
 
   /**
@@ -135,7 +136,8 @@ class SelectStatement extends Zend_Db_Select {
    */
   public function save() {
     if ($this->_id != self::NO_CACHE) {
-      FileCache::put(self::getCacheSection($this->_type), self::getCacheId($this->_id), $this);
+      $cache = ObjectFactory::getInstance('cache');
+      $cache->put(self::getCacheSection($this->_type), self::getCacheId($this->_id), $this);
     }
   }
 

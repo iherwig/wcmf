@@ -12,7 +12,6 @@ namespace wcmf\lib\config;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\config\ActionKeyProvider;
-use wcmf\lib\io\FileCache;
 
 /**
  * An action key is a combination of a resource, context and action that is
@@ -59,10 +58,11 @@ class ActionKey {
   public static function getBestMatch(ActionKeyProvider $actionKeyProvider, $resource, $context, $action) {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $authUser = $permissionManager->getAuthUser();
+    $cache = ObjectFactory::getInstance('cache');
     // different entries for different providers and logins
     $cacheSection = $actionKeyProvider->getCacheId().'_'.($authUser ? $authUser->getLogin() : '');
 
-    $cachedKeys = FileCache::get(self::CACHE_KEY, $cacheSection);
+    $cachedKeys = $cache->get(self::CACHE_KEY, $cacheSection);
     if ($cachedKeys == null) {
       $cachedKeys = array();
     }
@@ -145,7 +145,7 @@ class ActionKey {
       $cachedKeys[$reqKey] = $result;
       // don't cache action keys for specific objects
       if (!is_object($resource)) {
-        FileCache::put(self::CACHE_KEY, $cacheSection, $cachedKeys);
+        $cache->put(self::CACHE_KEY, $cacheSection, $cachedKeys);
       }
     }
     return $cachedKeys[$reqKey];
@@ -155,7 +155,8 @@ class ActionKey {
    * Clear the action key cache
    */
   public static function clearCache() {
-    FileCache::clear(self::CACHE_KEY);
+    $cache = ObjectFactory::getInstance('cache');
+    $cache->clear(self::CACHE_KEY);
   }
 }
 ?>
