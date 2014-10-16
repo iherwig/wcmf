@@ -10,6 +10,9 @@
  */
 namespace wcmf\test\tests\controller;
 
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\security\AuthorizationException;
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\ControllerTestCase;
 use wcmf\test\lib\TestUtil;
@@ -47,6 +50,9 @@ class PermissionControllerTest extends ControllerTestCase {
       ),
       'Permission' => array(
         array('id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users -administrators'),
+      ),
+      'Chapter' => array(
+        array('id' => 111),
       )
     ));
   }
@@ -253,6 +259,75 @@ class PermissionControllerTest extends ControllerTestCase {
     $response = $this->runRequest('getPermissions', $data);
     $result = $response->getValue('result');
     $this->assertNull($result);
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testDeletePermissions() {
+    TestUtil::startSession('admin', 'admin');
+
+    $oid = 'app.src.model.Chapter:111';
+
+    // simulate get permissions of user call
+    $data = array(
+      'operations' => array($oid.'??delete'),
+      'user' => 'admin'
+    );
+    $response = $this->runRequest('checkPermissionsOfUser', $data);
+
+    // test
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $result = $response->getValue('result');
+    $this->assertEquals(1, sizeof($result));
+    $this->assertTrue($result['app.src.model.Chapter:111??delete']);
+
+    // simulate set permissions call
+    $data = array(
+      'resource' => $oid,
+      'context' => '',
+      'action' => 'delete',
+      'permissions' => array(
+        'allow' => array(),
+        'deny' => array('administrators'),
+        'default' => true
+      )
+    );
+    $response = $this->runRequest('setPermissions', $data);
+
+    // test
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+
+    // simulate get permissions of user call
+    $data = array(
+      'operations' => array($oid.'??delete'),
+      'user' => 'admin'
+    );
+    $response = $this->runRequest('checkPermissionsOfUser', $data);
+
+    // test
+    $this->assertTrue($response->getValue('success'), 'The request was successful');
+    $result = $response->getValue('result');
+    $this->assertEquals(1, sizeof($result));
+    $this->assertFalse($result['app.src.model.Chapter:111??delete']);
+
+    // test
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $transaction = $persistenceFacade->getTransaction();
+    $transaction->begin();
+    $chapter = $persistenceFacade->load(new ObjectId('Chapter', 111));
+    $this->assertNotNull($chapter);
+    $chapter->delete();
+    try {
+      $transaction->commit();
+      $this->fail('An expected exception has not been raised.');
+    } catch (AuthorizationException $ex) {
+      $transaction->rollback();
+    }
+    $oids = $persistenceFacade->getOIDs('app.src.model.Chapter');
+    $this->assertTrue(in_array($oid, $oids), $oid." still exists");
 
     TestUtil::endSession();
   }

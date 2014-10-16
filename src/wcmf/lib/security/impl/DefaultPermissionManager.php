@@ -12,12 +12,14 @@ namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\impl\PersistenceActionKeyProvider;
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
-use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\impl\AbstractPermissionManager;
+use wcmf\lib\security\PermissionManager;
+use wcmf\lib\util\StringUtil;
 
 /**
  * DefaultPermissionManager retrieves authorization rules the storage.
@@ -57,11 +59,15 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    * @see PermissionManager::getPermissions()
    */
   public function getPermissions($resource, $context, $action) {
+    $result = null;
     $actionKey = ActionKey::getBestMatch($this->_actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
-      return $this->deserializePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
+      $result = $this->deserializePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
     }
-    return null;
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)), __CLASS__);
+    }
+    return $result;
   }
 
   /**

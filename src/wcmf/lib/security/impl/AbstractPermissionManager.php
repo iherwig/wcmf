@@ -252,7 +252,7 @@ class AbstractPermissionManager {
    * for a requested action.
    * @return Boolean
    */
-  public function getDefaultPolicy(User $user) {
+  protected function getDefaultPolicy(User $user) {
     return ($user instanceof AnonymousUser) ? false : true;
   }
 
