@@ -1,8 +1,3 @@
-#MSearchBox {
-  position: relative;
-  display: block;
-}
-
 .jumbotron h2 {
   line-height: 1.2;
 }
@@ -45,3 +40,36 @@ td.entry {
   padding-top: 50px;
   margin-top: -50px;
 }
+
+// Search
+
+#MSearchSelectWindow {
+    display: none;
+    position: absolute;
+    left: 0; top: 0;
+    border: 1px solid #868686;
+    background-color: #F8F8F8;
+    z-index: 1;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-top-left-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+    -webkit-border-bottom-right-radius: 4px;
+    -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
+}
+
+iframe#MSearchResults {
+    width: 60ex;
+    height: 15em;
+}
+
+#MSearchResultsWindow {
+    display: none;
+    position: absolute;
+    left: 0; top: 0;
+    border: 1px solid #000;
+    background-color: #EAEAEA;
+}
+

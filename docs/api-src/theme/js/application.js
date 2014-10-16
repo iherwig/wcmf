@@ -12,4 +12,8 @@ $(function() {
       context: ".panel-default"
     }).data("toc-tocify");
   }
+
+  // search
+  searchBox.OnSelectItem(0);
+  $('#MSearchSelectWindow').hide();
 });

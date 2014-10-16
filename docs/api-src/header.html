@@ -30,7 +30,11 @@
 
     <link href="theme/css/syntax.css" rel="stylesheet">
     <link href="theme/css/style.css" rel="stylesheet">
-    $search
+
+    <script src="search/search.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() { searchBox.OnSelectItem(0); });
+    </script>
 
   </head>
   <body style="min-height: 200px; padding-top: 50px;">
@@ -63,11 +67,14 @@
                 <li><a href="https://github.com/iherwig/wcmf" target="_blank"><i class="fa fa-github"></i> Code</a></li>
               </ul>
               <ul class="nav navbar-nav pull-right">
-                <form class="navbar-form navbar-left" role="search" method="get" action="search.php">
+                <form class="navbar-form navbar-left" role="search">
                   <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search" name="query">
+                    <div id="MSearchBox">
+                      <input id="MSearchField" type="text" class="form-control" placeholder="Search" name="query" onkeyup="searchBox.OnSearchFieldChange(event)">
+                    </div>
+                    <div id="MSearchSelect"></div>
+                    <div id="MSearchClose"></div>
                   </div>
-                  <button type="submit" class="btn btn-default">Submit</button>
                 </form>
               </ul>
             </div>
