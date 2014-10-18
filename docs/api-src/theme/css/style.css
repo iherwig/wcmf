@@ -44,32 +44,35 @@ td.entry {
 // Search
 
 #MSearchSelectWindow {
-    display: none;
-    position: absolute;
-    left: 0; top: 0;
-    border: 1px solid #868686;
-    background-color: #F8F8F8;
-    z-index: 1;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-top-left-radius: 4px;
-    -webkit-border-top-right-radius: 4px;
-    -webkit-border-bottom-left-radius: 4px;
-    -webkit-border-bottom-right-radius: 4px;
-    -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
-}
-
-iframe#MSearchResults {
-    width: 60ex;
-    height: 15em;
+  display: none;
+  position: absolute;
+  left: 0; top: 0;
 }
 
 #MSearchResultsWindow {
-    display: none;
-    position: absolute;
-    left: 0; top: 0;
-    border: 1px solid #000;
-    background-color: #EAEAEA;
+  display: none;
+  left: 0; top: 0;
+  margin: -55px 0 0 0;
+  z-index: 9999;
 }
 
+#MSearchResults {
+  width: 300px;
+  height: 200px;
+}
+
+.SRChildren {
+  padding-left: 10px; padding-bottom: .5em
+}
+
+.SRPage .SRChildren {
+  display: none;
+}
+
+a.SRScope {
+  display: block;
+}
+
+span.SRScope {
+  padding-left: 4px;
+}
