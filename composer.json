@@ -37,7 +37,7 @@
         "sybio/gif-creator": "1.0.0",
         "helios-ag/fm-elfinder-php-connector": "1.1.1",
         "nusphere/nusoap": "0.9.5",
-        "smarty/smarty": "v3.1.18",
+        "smarty/smarty": "v3.1.21",
         "itbz/fpdi": "1.4.4"
     },
     "autoload": {
