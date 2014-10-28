@@ -1,8 +1,8 @@
 /*!
-\page extensionpoints Extension points
+\page permissions Permissions
 <div class="has-toc"></div>
 
-\section secextensionpoints Extension points
+\section secpermissions Permissions
 
 The framework offers developers the following main points of extension
 

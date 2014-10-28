@@ -1,8 +1,8 @@
 /*!
-\page howtos HowTos
+\page persistence Persistence
 <div class="has-toc"></div>
 
-\section sechowtos HowTos
+\section secpersistence Persistence
 
 \subsection howtotype Definition of the data model
 
