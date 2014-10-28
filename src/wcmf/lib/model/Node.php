@@ -24,7 +24,7 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  * Node adds the concept of relations to PersistentObject. It is the basic component for
  * building object trees (although a Node can have more than one parents).
  * Relations are stored as values where the value name is the role name.
- * The Node class implements the 'Composite Pattern'.
+ * The Node class implements the _Composite Pattern_.
  * Use the methods addNode(), deleteNode() to build/modify trees.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -816,8 +816,8 @@ class Node extends PersistentObject {
   }
 
   /**
-   * Accept a Visitor. For use with the 'Visitor Pattern'.
-   * @param $visitor The Visitor.
+   * Accept a Visitor. For use with the _Visitor Pattern_.
+   * @param $visitor Visitor instance.
    */
   public function acceptVisitor($visitor) {
     $visitor->visit($this);

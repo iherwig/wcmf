@@ -24,8 +24,9 @@ use wcmf\lib\util\StringUtil;
 
 /**
  * PersistentObject is the base class of all persistent objects.
- * It implements the basic persistence methods (save(), delete())
- * which will be delegated to the PersistenceMapper class that constructed the object.
+ * It mainly implements an unique identifier for each instance (ObjectId),
+ * tracking of the persistent state, methods for setting and getting values
+ * as well as callback methods for lifecycle events.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

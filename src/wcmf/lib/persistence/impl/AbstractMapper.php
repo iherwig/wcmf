@@ -8,7 +8,7 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\lib\persistence;
+namespace wcmf\lib\persistence\impl;
 
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\Log;
@@ -19,6 +19,7 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\security\AuthorizationException;

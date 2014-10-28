@@ -21,7 +21,6 @@ use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\Node;
-use wcmf\lib\persistence\AbstractMapper;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
@@ -36,6 +35,7 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\UpdateOperation;
+use wcmf\lib\persistence\impl\AbstractMapper;
 
 /**
  * RDBMapper maps objects of one type to a relational database schema.
