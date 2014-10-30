@@ -695,8 +695,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Clear all caches", __CLASS__);
     }
-    $cache = ObjectFactory::getInstance('cache');
-    $cache->clearAll();
+    try {
+      $cache = ObjectFactory::getInstance('cache');
+      $cache->clearAll();
+    }
+    catch (\Exception $e) {}
   }
 
   /**
