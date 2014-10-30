@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\util;
 
+use Exception;
 use PDO;
 use Zend_Db;
 use wcmf\lib\config\ConfigurationException;
@@ -17,7 +18,6 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceException;
-use wcmf\lib\util\DBUtil;
 
 /**
  * DBUtil provides database helper functions.
@@ -81,10 +81,10 @@ class DBUtil {
         throw new ConfigurationException("No '".$initSection."' section given in configfile.");
       }
       // connect to the database
-      $connection = self::createConnection($connectionParams);
+      $conn = self::createConnection($connectionParams);
 
       Log::debug('Starting transaction ...', __CLASS__);
-      $connection->beginTransaction();
+      $conn->beginTransaction();
 
       $exception = null;
       $fh = fopen($file, 'r');
@@ -92,11 +92,11 @@ class DBUtil {
         while (!feof($fh)) {
           $command = fgets($fh, 8192);
           if (strlen(trim($command)) > 0) {
-            Log::debug('Executing command: '.$command, __CLASS__);
+            Log::debug('Executing command: '.preg_replace('/[\n]+$/', '', $command), __CLASS__);
             try {
-              $connection->query($command);
+              $conn->query($command);
             }
-            catch(PDOException $ex) {
+            catch(Exception $ex) {
               $exception = $ex;
               break;
             }
@@ -106,15 +106,15 @@ class DBUtil {
       }
       if ($exception == null) {
         Log::debug('Execution succeeded, committing ...', __CLASS__);
-        $connection->commit();
+        $conn->commit();
       }
       else {
         Log::error('Execution failed. Reason'.$exception->getMessage(), __CLASS__);
         Log::debug('Rolling back ...', __CLASS__);
-        $connection->rollBack();
+        $conn->rollBack();
       }
       Log::debug('Finished SQL script '.$file.'.', __CLASS__);
-      $connection->closeConnection();
+      $conn->closeConnection();
     }
     else {
       Log::error('SQL script '.$file.' not found.', __CLASS__);
@@ -131,40 +131,40 @@ class DBUtil {
    */
   public static function copyDatabase($srcName, $destName, $server, $user, $password) {
     if($srcName && $destName && $server && $user) {
-      DBUtil::createDatabase($destName, $server, $user, $password);
+      self::createDatabase($destName, $server, $user, $password);
 
       // setup connection
-      $dbConnect = mysql_connect($server, $user, $password);
-      if (!$dbConnect) {
-      	throw new PersistenceException("Couldn't connect to MySql: ".mysql_error());
+      $conn =null;
+      try {
+        $conn = new PDO("mysql:host=$server", $user, $password);
+      }
+      catch(Exception $ex) {
+      	throw new PersistenceException("Couldn't connect to MySql: ".$ex->getMessage());
       }
 
-      // get table list from source database
-      $sqlStatement = "SHOW TABLES FROM ".$srcName;
-      $tables = mysql_query($sqlStatement, $dbConnect);
-      if ($tables) {
-        while($row = mysql_fetch_row($tables)) {
-      	// create new table
-          $sqlStatement = "CREATE TABLE ".$destName.".".$row[0]." LIKE ".$srcName.".".$row[0];
-          Log::debug($sqlStatement, __CLASS__);
-          $result = mysql_query($sqlStatement, $dbConnect);
+      $conn->beginTransaction();
+      try {
+        // get table list from source database
+        foreach ($conn->query("SHOW TABLES FROM ".$srcName) as $row) {
+          // create new table
+          $sqlStmt = "CREATE TABLE ".$destName.".".$row[0]." LIKE ".$srcName.".".$row[0];
+          Log::debug($sqlStmt, __CLASS__);
+          $result = $conn->query($sqlStmt);
           if (!$result) {
-            throw new PersistenceException("Couldn't create table: ".mysql_error());
+            throw new PersistenceException("Couldn't create table: ".$conn->errorInfo());
           }
 
           // insert data
-          $sqlStatement = "INSERT INTO ".$destName.".".$row[0]." SELECT * FROM ".$srcName.".".$row[0];
-          Log::debug($sqlStatement, __CLASS__);
-          $result = mysql_query($sqlStatement, $dbConnect);
+          $sqlStmt = "INSERT INTO ".$destName.".".$row[0]." SELECT * FROM ".$srcName.".".$row[0];
+          Log::debug($sqlStmt, __CLASS__);
+          $result = $conn->query($sqlStmt);
           if (!$result) {
-            throw new PersistenceException("Couldn't copy data: ".mysql_error());
+            throw new PersistenceException("Couldn't copy data: ".$conn->errorInfo());
           }
+          $conn->commit();
         }
-        mysql_free_result($tables);
-        mysql_close($dbConnect);
-      }
-      else {
-        throw new PersistenceException("Couldn't select tables: ".mysql_error());
+      } catch (Exception $ex) {
+        $conn->rollback();
       }
     }
   }
@@ -180,19 +180,21 @@ class DBUtil {
     $created = false;
     if($name && $server && $user) {
       // setup connection
-      $dbConnect = mysql_connect($server, $user, $password);
-      if (!$dbConnect) {
-      	throw new PersistenceException("Couldn't connect to MySql: ".mysql_error());
+      $conn =null;
+      try {
+        $conn = new PDO("mysql:host=$server", $user, $password);
+      }
+      catch(Exception $ex) {
+      	throw new PersistenceException("Couldn't connect to MySql: ".$ex->getMessage());
       }
       // create database
-      $sqlStatement = "CREATE DATABASE IF NOT EXISTS ".$name;
-      $result = mysql_query($sqlStatement, $dbConnect);
+      $sqlStmt = "CREATE DATABASE IF NOT EXISTS ".$name;
+      $result = $conn->query($sqlStmt);
       if ($result) {
         $created = true;
       }
-      mysql_close($dbConnect);
       if (!$created) {
-	    throw new PersistenceException("Couldn't create database: ".mysql_error());
+  	    throw new PersistenceException("Couldn't create database: ".$conn->errorInfo());
       }
     }
   }
