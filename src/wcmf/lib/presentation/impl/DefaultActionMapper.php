@@ -116,12 +116,21 @@ class DefaultActionMapper implements ActionMapper {
     // check if an action key exists for the return action
     $nextActionKey = ActionKey::getBestMatch($actionKeyProvider, $controllerClass,
             $response->getContext(), $response->getAction());
+    if ($isDebugEnabled) {
+      Log::debug("Next action key: ".$nextActionKey, __CLASS__);
+    }
 
     if (strlen($nextActionKey) == 0) {
+      if ($isDebugEnabled) {
+        Log::debug("Terminate", __CLASS__);
+      }
       // stop processing
       return $response;
     }
     else {
+      if ($isDebugEnabled) {
+        Log::debug("Processing next action", __CLASS__);
+      }
       // store last response
       $this->_lastResponses[] = $response;
 
