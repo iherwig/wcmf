@@ -3,9 +3,48 @@
 
 \section secgettingstarted Getting started
 
-The directory @em blank of the framework contains an application template, which
-can be used as entry point for the development of customized applications.@n
-Please follow these steps for building your own application:
+The wCMF project mainly consists of two parts, the application framework and an
+application template.
+
+### Framework ###
+
+The wCMF framework provides the infrastructure to create PHP web applications based
+on the model-view-controller pattern. The project's source code is hosted at
+[GitHub](https://github.com/iherwig/wcmf) and can be forked or downloaded from there.
+
+If you manage your dependencies using [Composer](https://getcomposer.org/) you may
+want to add the following lines to your `composer.json`:
+
+@code
+{
+    "require-dev": {
+        "wcmf/wcmf": "dev-master"
+    }
+}
+@endcode
+
+### Default Application ###
+
+The default application is a fully functional data managing application based on the
+wCMF framework. Besides interfaces for create/read/update/delete (CRUD) operations
+on all entity types defined in the domain model, it features user, role and
+permission management as well as a lucene based search.
+
+The following screenshots show the list and detail view of an _Author_ entity type.
+
+@image html wcmf-default-app1ws.jpg
+
+@image html wcmf-default-app2ws.jpg
+
+#### Installation ####
+
+The application's source code may be forked or downloaded from
+[GitHub](https://github.com/iherwig/wcmf-default-app).
+
+After download, execute the following steps to get a running application:
+
+
+
 
 1. Copy the directory named blank to the directory ../application@n@n
 2. Create a database (e.g. wcmf)@n@n
