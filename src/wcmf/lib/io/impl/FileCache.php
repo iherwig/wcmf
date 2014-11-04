@@ -29,10 +29,11 @@ class FileCache implements Cache {
 
   /**
    * Set the cache directory (defaults to session_save_path if not given).
+   * If not existing, the directory will be created relative to WCMF_BASE.
    * @param $cacheDir String
    */
   public function setCacheDir($cacheDir) {
-    $this->_cacheDir = $cacheDir;
+    $this->_cacheDir = WCMF_BASE.$cacheDir;
   }
 
   /**

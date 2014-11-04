@@ -40,10 +40,7 @@ class ErrorHandler {
     ob_end_clean();
 
     // remove first item from backtrace as it's this function which is redundant.
-    $trace = preg_replace ('/^#0\s+' . __FUNCTION__ . "[^\n]*\n/", '', $trace, 1);
-
-    // renumber backtrace items.
-    $trace = preg_replace ('/^#(\d+)/me', '\'#\' . ($1 - 1)', $trace);
+    $trace = preg_replace('/^#0\s+'.__FUNCTION__."[^\n]*\n/", '', $trace, 1);
 
     return $trace;
   }
