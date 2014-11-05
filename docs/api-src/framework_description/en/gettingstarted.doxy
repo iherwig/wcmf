@@ -43,23 +43,28 @@ The application's source code may be forked or downloaded from
 
 After download, execute the following steps to get a running application:
 
+1. Unpack and copy the code to a directory accessable by your webserver.
+   You should see the following directories:
+   - _app_
+     - _config_
+     - _locale_
+     - _public_
+     - _src_
+   - _build_
+   - _install_
+   - _model_
+   - _tools_
 
+2. Get the external dependencies by running composer:
+   @code
+   composer install
+   @endcode
 
+3. Define your wCMF application model.
 
-1. Copy the directory named blank to the directory ../application@n@n
-2. Create a database (e.g. wcmf)@n@n
-3. Define your wCMF application model and create the application using wCMFGenerator@n
-or@n
-3.a Define your datamodel via PersistenceMapper classes and sql table definitions (see @ref howtotype)@n@n
-3.b Modify config.ini to use your datamodel@n@n
-4. Execute the sql script /application/install/tables.sql to install the
-   wCMF base tables@n@n
-5. Change passwords in table @em user (for password encryption use /wcmf/tools/password/passowrd.php)@n@n
-6. Create your data tables@n@n
-7. Modify config.ini in /application/include to use your database@n@n
-8. Protect your /application/include directory by using a .htaccess file@n@n
-9. Make sure you have activated JavaScript in your browser@n@n
-10. Run the script @em install.php in the directory /application/install/ to initialize the application@n@n
-11. Point your browser to /application/main.php and log into the application
-   using admin/admin (or other if you changed it)
+4. Generate the code.
+
+5. Create and initialize the database.
+
+6. Open the application in the browser.
 */

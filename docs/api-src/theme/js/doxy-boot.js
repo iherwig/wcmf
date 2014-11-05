@@ -63,4 +63,7 @@ $(document).ready(function() {
   // sections
   $("dl.section.note").addClass("alert").addClass("alert-info");
   $("dl.section.author").addClass("small");
+
+  // image
+  $(".image").addClass("text-center");
 });
