@@ -51,13 +51,6 @@ interface User {
   public function getPassword();
 
   /**
-   * Hash a password.
-   * @param $password The plaintext password to hash
-   * @return The hashed password.
-   */
-  public function hashPassword($password);
-
-  /**
    * Verify a password.
    * @param $password The plaintext password to verify
    * @param $passwordHash The password hash to match

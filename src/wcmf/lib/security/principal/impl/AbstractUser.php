@@ -14,6 +14,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ValidationException;
+use wcmf\lib\security\principal\PasswordService;
 use wcmf\lib\security\principal\Role;
 use wcmf\lib\security\principal\User;
 
@@ -57,17 +58,10 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
-   * @see User::hashPassword()
-   */
-  public function hashPassword($password) {
-    return password_hash($password, PASSWORD_BCRYPT);
-  }
-
-  /**
    * @see User::verifyPassword()
    */
   public function verifyPassword($password, $passwordHash) {
-    return password_verify($password, $passwordHash);
+    return PasswordService::verify($password, $passwordHash);
   }
 
   /**
@@ -132,7 +126,7 @@ abstract class AbstractUser extends Node implements User {
     if (strlen($password) > 0) {
       $info = password_get_info($password);
       if ($info['algo'] != PASSWORD_BCRYPT) {
-        $this->setValue('password', $this->hashPassword($password));
+        $this->setValue('password', PasswordService::hash($password));
       }
     }
   }
