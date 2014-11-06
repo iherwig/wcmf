@@ -102,6 +102,7 @@ class LoginController extends Controller {
         $authUser = $authManager->login($request->getValue('user'), $request->getValue('password'));
       }
       catch (Exception $ex) {
+        $authUser = null;
         Log::error("Could not log in: ".$ex, __CLASS__);
       }
 
