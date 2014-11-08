@@ -14,6 +14,8 @@ use \Exception;
 use wcmf\lib\i18n\Message;
 
 use PHPImageWorkshop\ImageWorkshop;
+use GifFrameExtractor\GifFrameExtractor;
+use GifCreator\GifCreator;
 
 /**
  * GraphicsUtil provides support for graphic manipulation.
@@ -214,9 +216,9 @@ class GraphicsUtil {
    * @param $params The paremeters to be passed to the function
    */
   public function processImageFunction($srcName, $destName, $function, $params) {
-    if (\GifFrameExtractor::isAnimatedGif($srcName)) {
+    if (GifFrameExtractor::isAnimatedGif($srcName)) {
       // for animated gifs we need to process each frame
-      $gfe = new \GifFrameExtractor();
+      $gfe = new GifFrameExtractor();
       $frames = $gfe->extract($srcName);
       $retouchedFrames = array();
       foreach ($frames as $frame) {
