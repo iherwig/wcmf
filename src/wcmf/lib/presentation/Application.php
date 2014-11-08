@@ -81,6 +81,9 @@ class Application {
       $listener = ObjectFactory::getInstance($key);
     }
 
+    // set timezone
+    date_default_timezone_set($config->getValue('timezone', 'application'));
+
     // return the request
     return $this->_initialRequest;
   }
