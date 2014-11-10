@@ -35,7 +35,7 @@ class ErrorHandler {
    */
   public static function getStackTrace() {
     ob_start();
-    debug_print_backtrace();
+    debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     $trace = ob_get_contents();
     ob_end_clean();
 

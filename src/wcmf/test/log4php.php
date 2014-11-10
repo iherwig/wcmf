@@ -2,14 +2,14 @@
 return array(
   'rootLogger' => array(
     'level' => 'INFO',
-    'appenders' => array('file', 'echo'),
+    'appenders' => array('file'),
   ),
 
   'loggers' => array(
-    'wcmf\lib\model\mapper\RDBMapper' => array('level' => 'ERROR', 'appenders' => array('file')),
-    'wcmf\lib\config\impl\InifileConfiguration' => array('level' => 'ERROR', 'appenders' => array('file')),
-    'wcmf\lib\security\impl\DefaultPermissionManager' => array('level' => 'ERROR', 'appenders' => array('file')),
-    'wcmf\lib\persistence\impl\DefaultTransaction' => array('level' => 'ERROR', 'appenders' => array('file')),
+    'wcmf\lib\model\mapper\RDBMapper' => array('level' => 'ERROR'),
+    'wcmf\lib\config\impl\InifileConfiguration' => array('level' => 'ERROR'),
+    'wcmf\lib\security\impl\DefaultPermissionManager' => array('level' => 'ERROR'),
+    'wcmf\lib\persistence\impl\DefaultTransaction' => array('level' => 'ERROR'),
   ),
 
   'appenders' => array(

@@ -34,18 +34,20 @@ class NodeRelationTest extends DatabaseTestCase {
         array('id' => 200),
       ),
       'NMPublisherAuthor' => array(
-        array('id' => 201, 'fk_publisher_id' => 200, 'fk_author_id' => 202),
+        array('id' => 201, 'fk_publisher_id' => 200, 'fk_author_id' => 203),
+        array('id' => 202, 'fk_publisher_id' => 200, 'fk_author_id' => 204),
       ),
       'Author' => array(
-        array('id' => 202),
+        array('id' => 203),
+        array('id' => 204),
       ),
       'Book' => array(
-        array('id' => 203),
+        array('id' => 205),
       ),
       'Chapter' => array(
-        array('id' => 300, 'fk_chapter_id' => 303, 'fk_author_id' => 202, 'fk_book_id' => 203),
-        array('id' => 302, 'fk_chapter_id' => 300, 'fk_author_id' => 202, 'fk_book_id' => null),
-        array('id' => 303, 'fk_chapter_id' => null, 'fk_author_id' => 202, 'fk_book_id' => null),
+        array('id' => 300, 'fk_chapter_id' => 303, 'fk_author_id' => 203, 'fk_book_id' => 205),
+        array('id' => 302, 'fk_chapter_id' => 300, 'fk_author_id' => 203, 'fk_book_id' => null),
+        array('id' => 303, 'fk_chapter_id' => null, 'fk_author_id' => 203, 'fk_book_id' => null),
       ),
       'Image' => array(
         array('id' => 305, 'fk_titlechapter_id' => 300, 'fk_chapter_id' => null),
@@ -58,8 +60,8 @@ class NodeRelationTest extends DatabaseTestCase {
     // setup the object tree
     $this->oids = array(
       'publisher' => new ObjectId('Publisher', 200),
-      'author' => new ObjectId('Author', 202),
-      'book' => new ObjectId('Book', 203),
+      'author1' => new ObjectId('Author', 203),
+      'book' => new ObjectId('Book', 205),
       'chapter' => new ObjectId('Chapter', 300),
       'subChapter1' => new ObjectId('Chapter', 302),
       'subChapter2' => new ObjectId('Chapter', 300),
@@ -80,8 +82,8 @@ class NodeRelationTest extends DatabaseTestCase {
     $publisher = $persistenceFacade->load($this->oids['publisher'], 3);
 
     $authors1 = $publisher->getChildrenEx(null, 'Author', null);
-    $this->assertEquals(1, sizeof($authors1));
-    $this->assertEquals($this->oids['author'], $authors1[0]->getOID());
+    $this->assertEquals(2, sizeof($authors1));
+    $this->assertEquals($this->oids['author1'], $authors1[0]->getOID());
 
     $author = $publisher->getFirstChild(null, 'Author', null);
     $chapters = $author->getChildrenEx(null, 'Chapter', null);
@@ -107,7 +109,7 @@ class NodeRelationTest extends DatabaseTestCase {
 
     $authors2 = $chapter1->getParentsEx(null, 'Author', null);
     $this->assertEquals(1, sizeof($authors2));
-    $this->assertEquals($this->oids['author'], $authors2[0]->getOID());
+    $this->assertEquals($this->oids['author1'], $authors2[0]->getOID());
 
     $titleImages = $chapter1->getChildrenEx(null, 'TitleImage', null);
     $this->assertEquals(1, sizeof($titleImages));
@@ -137,7 +139,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $chapter1->deleteNode($persistenceFacade->load($this->oids['book']));
     $chapter1->deleteNode($persistenceFacade->load($this->oids['subChapter1']), 'SubChapter');
     $chapter1->deleteNode($persistenceFacade->load($this->oids['parentChapter']), 'ParentChapter');
-    $chapter1->deleteNode($persistenceFacade->load($this->oids['author']));
+    $chapter1->deleteNode($persistenceFacade->load($this->oids['author1']));
     $chapter1->deleteNode($persistenceFacade->load($this->oids['titleImage']), 'TitleImage');
     $chapter1->deleteNode($persistenceFacade->load($this->oids['normalImage']), 'NormalImage');
     $transaction->commit();
@@ -161,7 +163,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $parentChapter = $persistenceFacade->load($this->oids['parentChapter'], 1);
     $this->assertEquals(0, sizeof($parentChapter->getChildrenEx(null, 'SubChapter', null)));
 
-    $author = $persistenceFacade->load($this->oids['author'], 1);
+    $author = $persistenceFacade->load($this->oids['author1'], 1);
     $this->assertEquals(2, sizeof($author->getChildrenEx(null, 'Chapter', null)));
 
     $titleImage = $persistenceFacade->load($this->oids['titleImage'], 1);
@@ -175,20 +177,17 @@ class NodeRelationTest extends DatabaseTestCase {
     TestUtil::runAnonymous(false);
   }
 
-  public function _testLoadSingle() {
+  public function _testLoadNM() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    $chapter = $persistenceFacade->load($this->oids['chapter'], BuildDepth::SINGLE);
-    $chapter->loadChildren('Book', 1);
-    $book = $chapter->getFirstChild('Book');
-    echo "title: ".$book->getTitle()."\n";
-    //*
-    foreach($chapter->getValueNames() as $name) {
-      $value = $chapter->getValue($name);
-      echo $name.": ".$value."(".sizeof($value).")\n";
-    }
-    //*/
+    $author1 = $persistenceFacade->load($this->oids['author1'], BuildDepth::SINGLE);
+    $publisher1 = $author1->getValue('Publisher');
+    $this->assertEquals(1, sizeof($publisher1));
+
+    $author2 = $persistenceFacade->load($this->oids['author2'], BuildDepth::SINGLE);
+    $publisher2 = $author1->getValue('Publisher');
+    $this->assertEquals(1, sizeof($publisher2));
     TestUtil::runAnonymous(false);
   }
 
@@ -208,7 +207,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['book']));
     $this->assertEquals(null, $persistenceFacade->load($this->oids['subChapter1']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['parentChapter']));
-    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['author']));
+    $this->assertNotEquals(null, $persistenceFacade->load($this->oids['author1']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['titleImage']));
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['normalImage']));
     $transaction->rollback();
