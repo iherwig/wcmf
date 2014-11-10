@@ -1098,6 +1098,13 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
       $relativeMap[$key][] = ($buildDepth != BuildDepth::PROXIES_ONLY) ? $relatedObject :
               new PersistentObjectProxy($relatedObject->getOID());
+
+      // remove internal value after use (important when loading nm relations,
+      // because if not done, the value will not be updated when loading the relation
+      // for another object, leading to less objects seen in the relation)
+      if (strpos($relValueName, self::INTERNAL_VALUE_PREFIX) === 0) {
+        $relatedObject->removeValue($relValueName);
+      }
     }
     foreach ($objects as $object) {
       $oidStr = $object->getOID()->__toString();
