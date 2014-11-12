@@ -10,11 +10,13 @@
  */
 namespace wcmf\test\tests\persistence;
 
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
 use wcmf\test\lib\TestUtil;
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\ObjectId;
+
+use wcmf\lib\persistence\BuildDepth;
 
 /**
  * NodeRelationTest.
@@ -57,10 +59,12 @@ class NodeRelationTest extends DatabaseTestCase {
   }
 
   protected function setUp() {
+    parent::setUp();
     // setup the object tree
     $this->oids = array(
       'publisher' => new ObjectId('Publisher', 200),
       'author1' => new ObjectId('Author', 203),
+      'author2' => new ObjectId('Author', 204),
       'book' => new ObjectId('Book', 205),
       'chapter' => new ObjectId('Chapter', 300),
       'subChapter1' => new ObjectId('Chapter', 302),
@@ -69,7 +73,6 @@ class NodeRelationTest extends DatabaseTestCase {
       'titleImage' => new ObjectId('Image', 305),
       'normalImage' => new ObjectId('Image', 306)
     );
-    parent::setUp();
   }
 
   public function testRelations() {
@@ -177,7 +180,7 @@ class NodeRelationTest extends DatabaseTestCase {
     TestUtil::runAnonymous(false);
   }
 
-  public function _testLoadNM() {
+  public function testLoadNM() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
@@ -186,7 +189,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $this->assertEquals(1, sizeof($publisher1));
 
     $author2 = $persistenceFacade->load($this->oids['author2'], BuildDepth::SINGLE);
-    $publisher2 = $author1->getValue('Publisher');
+    $publisher2 = $author2->getValue('Publisher');
     $this->assertEquals(1, sizeof($publisher2));
     TestUtil::runAnonymous(false);
   }
