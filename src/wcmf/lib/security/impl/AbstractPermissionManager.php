@@ -19,6 +19,7 @@ use wcmf\lib\presentation\Application;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\User;
 use wcmf\lib\security\principal\impl\AnonymousUser;
+use wcmf\lib\util\StringUtil;
 
 /**
  * AbstractPermissionManager is the base class for concrete PermissionManager
@@ -231,10 +232,13 @@ class AbstractPermissionManager {
     }
     else {
       // check other permissions
-      $permisssions = $this->getPermissions($resource, $context, $action);
-      if ($permisssions != null) {
+      $permissions = $this->getPermissions($resource, $context, $action);
+      if (Log::isDebugEnabled(__CLASS__)) {
+        Log::debug("Permissions: ".StringUtil::getDump($permissions), __CLASS__);
+      }
+      if ($permissions != null) {
         // mathing permissions found, check user roles
-        $authorized = $this->matchRoles($permisssions, $user);
+        $authorized = $this->matchRoles($permissions, $user);
       }
       elseif (!$returnNullIfNoPermissionExists) {
         // no permission definied, check for user's default policy
@@ -263,9 +267,12 @@ class AbstractPermissionManager {
    * @param $val A role string (+*, +administrators, -guest, entries without '+' or '-'
    *     prefix default to allow rules).
    * @return Associative array containing the permissions as an associative array with the keys
-   *     'default', 'allow', 'deny'.
+   *     'default', 'allow', 'deny' or null, if val is empty
    */
   protected function deserializePermissions($val) {
+    if (strlen($val) == 0) {
+      return null;
+    }
     $result = array(
       'default' => null,
       'allow' => array(),
@@ -342,6 +349,9 @@ class AbstractPermissionManager {
     if (isset($permissions['allow'])) {
       foreach ($permissions['allow'] as $value) {
         if ($user->hasRole($value)) {
+          if (Log::isDebugEnabled(__CLASS__)) {
+            Log::debug("Allowed because of role ".$value, __CLASS__);
+          }
           return true;
         }
       }
@@ -349,9 +359,15 @@ class AbstractPermissionManager {
     if (isset($permissions['deny'])) {
       foreach ($permissions['deny'] as $value) {
         if ($user->hasRole($value)) {
+          if (Log::isDebugEnabled(__CLASS__)) {
+            Log::debug("Denied because of role ".$value, __CLASS__);
+          }
           return false;
         }
       }
+    }
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Check default ".$permissions['default'], __CLASS__);
     }
     return isset($permissions['default']) ? $permissions['default'] : false;
   }

@@ -10,8 +10,9 @@
  */
 namespace wcmf\lib\config;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\config\ActionKeyProvider;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\Application;
 
 /**
  * An action key is a combination of a resource, context and action that is
@@ -60,7 +61,7 @@ class ActionKey {
     $authUser = $permissionManager->getAuthUser();
     $cache = ObjectFactory::getInstance('cache');
     // different entries for different providers and logins
-    $cacheSection = $actionKeyProvider->getCacheId().'_'.($authUser ? $authUser->getLogin() : '');
+    $cacheSection = md5($actionKeyProvider->getCacheId().'_'.($authUser ? $authUser->getLogin() : '').'_'.$_SERVER['SCRIPT_NAME']);
 
     $cachedKeys = $cache->get(self::CACHE_KEY, $cacheSection);
     if ($cachedKeys == null) {
