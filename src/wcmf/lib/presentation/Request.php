@@ -14,6 +14,7 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ControllerMessage;
 use wcmf\lib\presentation\format\Format;
+use wcmf\lib\util\StringUtil;
 
 /**
  * Request holds the request values that are used as input to
@@ -62,7 +63,8 @@ class Request extends ControllerMessage {
 
     // get base request data from request path
     $basePath = dirname($_SERVER['SCRIPT_NAME']);
-    $requestPath = str_replace($basePath, '', preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']));
+    $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
+    $requestPath = preg_replace('/^'.StringUtil::escapeForRegex($basePath).'/', '', $requestUri);
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Request path: ".$requestPath, __CLASS__);
     }
