@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\presentation;
 
+use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ControllerMessage;
 use wcmf\lib\presentation\format\Format;
@@ -62,6 +63,9 @@ class Request extends ControllerMessage {
     // get base request data from request path
     $basePath = dirname($_SERVER['SCRIPT_NAME']);
     $requestPath = str_replace($basePath, '', preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']));
+    if (Log::isDebugEnabled(__CLASS__)) {
+      Log::debug("Request path: ".$requestPath, __CLASS__);
+    }
     $config = ObjectFactory::getConfigurationInstance();
 
     $baseRequestValues = array();
@@ -85,8 +89,14 @@ class Request extends ControllerMessage {
         $pattern = '/^'.str_replace('/', '\/', $pattern).'\/?$/';
 
         // try to match the currrent request path
+        if (Log::isDebugEnabled(__CLASS__)) {
+          Log::debug("Check patther: ".$pattern, __CLASS__);
+        }
         $matches = array();
         if (preg_match($pattern, $requestPath, $matches)) {
+          if (Log::isDebugEnabled(__CLASS__)) {
+            Log::debug("Match", __CLASS__);
+          }
           // set parameters from request definition
           parse_str($requestDef, $baseRequestValues);
           // set parameters from request path
