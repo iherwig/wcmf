@@ -62,7 +62,7 @@ class Request extends ControllerMessage {
   public static function getDefault($controller=null, $context=null, $action=null) {
 
     // get base request data from request path
-    $basePath = dirname($_SERVER['SCRIPT_NAME']);
+    $basePath = preg_replace('/\/?[^\/]*$/', '', $_SERVER['SCRIPT_NAME']);
     $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
     $requestPath = preg_replace('/^'.StringUtil::escapeForRegex($basePath).'/', '', $requestUri);
     if (Log::isDebugEnabled(__CLASS__)) {
