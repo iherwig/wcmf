@@ -44,5 +44,65 @@ class FileCacheTest extends BaseTestCase {
     $cache->clear('test/sectionA');
     $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionA'));
   }
+
+  public function testWildcard1() {
+    $cache = ObjectFactory::getInstance('cache');
+    $cache->put('test/sectionA.1', 'testKey', 'testValue');
+    $cache->put('test/sectionA.2', 'testKey', 'testValue');
+    $cache->put('test/sectionB.1', 'testKey', 'testValue');
+    $cache->put('test/sectionB.2', 'testKey', 'testValue');
+
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionA.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionA.2'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionB.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionB.2'));
+
+    $cache->clear('test/sectionA*');
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionA.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionA.2'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionB.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionB.2'));
+    $this->assertTrue(is_dir(WCMF_BASE.'app/cache/test'));
+  }
+
+  public function testWildcard2() {
+    $cache = ObjectFactory::getInstance('cache');
+    $cache->put('test/sectionA.1', 'testKey', 'testValue');
+    $cache->put('test/sectionA.2', 'testKey', 'testValue');
+    $cache->put('test/sectionB.1', 'testKey', 'testValue');
+    $cache->put('test/sectionB.2', 'testKey', 'testValue');
+
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionA.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionA.2'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionB.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionB.2'));
+
+    $cache->clear('test/section*');
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionA.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionA.2'));
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionB.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionB.2'));
+    $this->assertTrue(is_dir(WCMF_BASE.'app/cache/test'));
+  }
+
+  public function testWildcard3() {
+    $cache = ObjectFactory::getInstance('cache');
+    $cache->put('test/sectionA.1', 'testKey', 'testValue');
+    $cache->put('test/sectionA.2', 'testKey', 'testValue');
+    $cache->put('test/sectionB.1', 'testKey', 'testValue');
+    $cache->put('test/sectionB.2', 'testKey', 'testValue');
+
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionA.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionA.2'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionB.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.'app/cache/test/sectionB.2'));
+
+    $cache->clear('te*');
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionA.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionA.2'));
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionB.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.'app/cache/test/sectionB.2'));
+    $this->assertFalse(is_dir(WCMF_BASE.'app/cache/test'));
+  }
 }
 ?>

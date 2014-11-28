@@ -303,11 +303,14 @@ class FileUtil {
 
   /**
    * Get a sanitized filename
+   * code from: http://stackoverflow.com/questions/2021624/string-sanitizer-for-filename#2021729
    * @param $file
    * @return String
    */
   public static function sanitizeFilename($file) {
-    return preg_replace("([^\w\s\d\-_~,;:\[\]\(\]]|[\.]{2,})", '', $file);
+    $file = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $file);
+    $file = preg_replace("([\.]{2,})", '', $file);
+    return $file;
   }
 }
 ?>

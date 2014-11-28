@@ -12,7 +12,6 @@ namespace wcmf\lib\config;
 
 use wcmf\lib\config\ActionKeyProvider;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\Application;
 
 /**
  * An action key is a combination of a resource, context and action that is
@@ -23,7 +22,7 @@ use wcmf\lib\presentation\Application;
  */
 class ActionKey {
 
-  const CACHE_KEY = 'actionkey';
+  const CACHE_BASE = 'actionkey/';
 
   private static $_actionDelimiter = '?';
 
@@ -61,9 +60,10 @@ class ActionKey {
     $authUser = $permissionManager->getAuthUser();
     $cache = ObjectFactory::getInstance('cache');
     // different entries for different providers and logins
-    $cacheSection = md5($actionKeyProvider->getCacheId().'_'.($authUser ? $authUser->getLogin() : '').'_'.$_SERVER['SCRIPT_NAME']);
+    $cacheSection = self::CACHE_BASE.md5(($authUser ? $authUser->getLogin() : '').'_'.$_SERVER['SCRIPT_NAME']);
+    $cacheKey = $actionKeyProvider->getCacheId();
 
-    $cachedKeys = $cache->get(self::CACHE_KEY, $cacheSection);
+    $cachedKeys = $cache->get($cacheSection, $cacheKey);
     if ($cachedKeys == null) {
       $cachedKeys = array();
     }
@@ -146,7 +146,7 @@ class ActionKey {
       $cachedKeys[$reqKey] = $result;
       // don't cache action keys for specific objects
       if (!is_object($resource)) {
-        $cache->put(self::CACHE_KEY, $cacheSection, $cachedKeys);
+        $cache->put($cacheSection, $cacheKey, $cachedKeys);
       }
     }
     return $cachedKeys[$reqKey];
@@ -157,7 +157,7 @@ class ActionKey {
    */
   public static function clearCache() {
     $cache = ObjectFactory::getInstance('cache');
-    $cache->clear(self::CACHE_KEY);
+    $cache->clear(self::CACHE_BASE.'*');
   }
 }
 ?>

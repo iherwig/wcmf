@@ -68,9 +68,26 @@ class FileCache implements Cache {
    * @see Cache::clear()
    */
   public function clear($section) {
-    $file = $this->getCacheFile($section);
-    @unlink($file);
-    unset($this->_cache[$section]);
+    if (preg_match('/\*$/', $section)) {
+      // handle wildcards
+      $cachBaseDir = $this->getCacheDir();
+      $directory = $cachBaseDir.dirname($section);
+      $pattern = '/^'.preg_replace('/\*$/', '', basename($section)).'/';
+      $files = FileUtil::getFiles($directory, $pattern, true, true);
+      foreach ($files as $file) {
+        $this->clear(str_replace($cachBaseDir, '', $file));
+      }
+      $directories = FileUtil::getDirectories($directory, $pattern, true, true);
+      foreach ($directories as $directory) {
+        $this->clear(str_replace($cachBaseDir, '', $directory).'/*');
+        @rmdir($directory);
+      }
+    }
+    else {
+      $file = $this->getCacheFile($section);
+      @unlink($file);
+      unset($this->_cache[$section]);
+    }
   }
 
   /**
