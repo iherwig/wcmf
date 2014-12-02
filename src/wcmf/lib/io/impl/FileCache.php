@@ -72,15 +72,17 @@ class FileCache implements Cache {
       // handle wildcards
       $cachBaseDir = $this->getCacheDir();
       $directory = $cachBaseDir.dirname($section);
-      $pattern = '/^'.preg_replace('/\*$/', '', basename($section)).'/';
-      $files = FileUtil::getFiles($directory, $pattern, true, true);
-      foreach ($files as $file) {
-        $this->clear(str_replace($cachBaseDir, '', $file));
-      }
-      $directories = FileUtil::getDirectories($directory, $pattern, true, true);
-      foreach ($directories as $directory) {
-        $this->clear(str_replace($cachBaseDir, '', $directory).'/*');
-        @rmdir($directory);
+      if (is_dir($directory)) {
+        $pattern = '/^'.preg_replace('/\*$/', '', basename($section)).'/';
+        $files = FileUtil::getFiles($directory, $pattern, true, true);
+        foreach ($files as $file) {
+          $this->clear(str_replace($cachBaseDir, '', $file));
+        }
+        $directories = FileUtil::getDirectories($directory, $pattern, true, true);
+        foreach ($directories as $directory) {
+          $this->clear(str_replace($cachBaseDir, '', $directory).'/*');
+          @rmdir($directory);
+        }
       }
     }
     else {

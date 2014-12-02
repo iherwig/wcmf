@@ -12,6 +12,7 @@ namespace wcmf\lib\config;
 
 use wcmf\lib\config\ActionKeyProvider;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\ObjectId;
 
 /**
  * An action key is a combination of a resource, context and action that is
@@ -61,7 +62,7 @@ class ActionKey {
     $cache = ObjectFactory::getInstance('cache');
     // different entries for different providers and logins
     $cacheSection = self::CACHE_BASE.md5(($authUser ? $authUser->getLogin() : '').'_'.$_SERVER['SCRIPT_NAME']);
-    $cacheKey = $actionKeyProvider->getCacheId();
+    $cacheKey = $actionKeyProvider->getId();
 
     $cachedKeys = $cache->get($cacheSection, $cacheKey);
     if ($cachedKeys == null) {
@@ -72,9 +73,12 @@ class ActionKey {
     $reqKey = self::createKey($resource, $context, $action);
     if (!isset($cachedKeys[$reqKey])) {
       $result = null;
+      $hasResource = strlen($resource) > 0;
+      $hasContext = strlen($context) > 0;
+      $hasAction = strlen($action) > 0;
 
       // check resource?context?action
-      if (strlen($resource) > 0 && strlen($context) > 0 && strlen($action) > 0) {
+      if ($hasResource && $hasContext && $hasAction) {
         $key = self::createKey($resource, $context, $action);
         if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
@@ -82,7 +86,7 @@ class ActionKey {
       }
 
       // check resource??action
-      if ($result === null && strlen($resource) > 0 && strlen($action) > 0) {
+      elseif ($hasResource && $hasAction) {
         $key = self::createKey($resource, '', $action);
         if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
@@ -90,7 +94,7 @@ class ActionKey {
       }
 
       // check resource?context?
-      if ($result === null && strlen($resource) > 0 && strlen($context) > 0) {
+      elseif ($hasResource && $hasContext) {
         $key = self::createKey($resource, $context, '');
         if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
@@ -98,7 +102,7 @@ class ActionKey {
       }
 
       // check ?context?action
-      if ($result === null && strlen($context) > 0 && strlen($action) > 0) {
+      elseif ($hasContext && $hasAction) {
         $key = self::createKey('', $context, $action);
         if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
@@ -106,7 +110,7 @@ class ActionKey {
       }
 
       // check ??action
-      if ($result === null && strlen($action) > 0) {
+      elseif ($hasAction) {
         $key = self::createKey('', '', $action);
         if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
@@ -114,7 +118,7 @@ class ActionKey {
       }
 
       // check resource??
-      if ($result === null && strlen($resource) > 0) {
+      elseif ($hasResource) {
         $key = self::createKey($resource, '', '');
         if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
@@ -122,7 +126,7 @@ class ActionKey {
       }
 
       // check ?context?
-      if ($result === null && strlen($context) > 0) {
+      elseif ($hasContext) {
         $key = self::createKey('', $context, '');
         if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
@@ -130,7 +134,7 @@ class ActionKey {
       }
 
       // check ??
-      if ($result === null) {
+      else {
         $key = self::createKey('', '', '');
         if ($actionKeyProvider->containsKey($key)) {
           $result = $key;
@@ -144,10 +148,9 @@ class ActionKey {
 
       // store result for requested key
       $cachedKeys[$reqKey] = $result;
-      // don't cache action keys for specific objects
-      if (!is_object($resource)) {
-        $cache->put($cacheSection, $cacheKey, $cachedKeys);
-      }
+      $cache->put($cacheSection, $cacheKey, $cachedKeys);
+
+      return $result;
     }
     return $cachedKeys[$reqKey];
   }

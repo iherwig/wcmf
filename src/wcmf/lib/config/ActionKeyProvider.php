@@ -12,6 +12,8 @@ namespace wcmf\lib\config;
 
 /**
  * Implementations of ActionKeyProvider search for action keys.
+ * If a provider is using a wcmf\lib\io\Cache, the cache section
+ * should start with ActionKey::CACHE_BASE.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -35,6 +37,6 @@ interface ActionKeyProvider {
    * Get a string value that uniquely describes the provider configuration.
    * @return String
    */
-  public function getCacheId();
+  public function getId();
 }
 ?>

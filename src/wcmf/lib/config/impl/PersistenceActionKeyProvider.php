@@ -12,9 +12,11 @@ namespace wcmf\lib\config\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\ActionKeyProvider;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\PersistentEvent;
 
 /**
  * PersistenceActionKeyProvider searches for action keys in the
@@ -26,7 +28,23 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
 
   private $_entityType = null;
   private $_valueMap = array();
-  private $_cacheId = null;
+  private $_id = null;
+
+  /**
+   * Constructor.
+   */
+  public function __construct() {
+    ObjectFactory::getInstance('eventManager')->addListener(PersistentEvent::NAME,
+      array($this, 'keyChanged'));
+  }
+
+  /**
+   * Destructor.
+   */
+  public function __destruct() {
+    ObjectFactory::getInstance('eventManager')->removeListener(PersistentEvent::NAME,
+      array($this, 'keyChanged'));
+  }
 
   /**
    * Set the entity type to search in.
@@ -34,7 +52,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    */
   public function setEntityType($entityType) {
     $this->_entityType = $entityType;
-    $this->_cacheId = null;
+    $this->_id = null;
   }
 
   /**
@@ -71,13 +89,26 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
   }
 
   /**
-   * @see ActionKeyProvider::getCacheId()
+   * @see ActionKeyProvider::getId()
    */
-  public function getCacheId() {
-    if ($this->_cacheId ==  null) {
-      $this->_cacheId = __CLASS__.'.'.$this->_entityType;
+  public function getId() {
+    if ($this->_id ==  null) {
+      $this->_id = __CLASS__.'.'.$this->_entityType;
     }
-    return $this->_cacheId;
+    return $this->_id;
+  }
+
+  /**
+   * Listen to PersistentEvent
+   * @param $event PersistentEvent instance
+   */
+  public function keyChanged(PersistentEvent $event) {
+    $object = $event->getObject();
+    if ($object->getType() == $this->_entityType) {
+      $cache = ObjectFactory::getInstance('cache');
+      $cacheSection = ActionKey::CACHE_BASE.md5($this->_id);
+      $cache->clear($cacheSection);
+    }
   }
 }
 ?>

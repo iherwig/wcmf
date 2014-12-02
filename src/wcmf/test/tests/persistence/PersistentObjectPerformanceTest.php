@@ -28,7 +28,7 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
 
   protected function getDataSet() {
     $chapters = array();
-    for ($i=0; $i<10000; $i++) {
+    for ($i=0; $i<1000; $i++) {
       $chapters[] = array('id' => $i, 'sortkey' => $i);
     }
 
@@ -47,7 +47,7 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
     TestUtil::runAnonymous(true);
     $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
     $pf = ObjectFactory::getInstance('persistenceFacade');
-    for ($i=0; $i<100; $i++) {
+    for ($i=0; $i<1000; $i++) {
       $chapter = $pf->create('Chapter', BuildDepth::SINGLE);
       $inc = 1;
       while ($inc < 15){

@@ -42,7 +42,7 @@ class PersistentObject {
   private $_data = array();            // associative array holding the data
   private $_valueProperties = array(); // associative array holding the value properties
   private $_properties = array();      // associative array holding the object properties
-  private $_state = self::STATE_CLEAN;       // the state of the PersistentObject
+  private $_state = self::STATE_CLEAN; // the state of the PersistentObject
   private $_changedAttributes = array(); // used to track changes, see setValue method
   private $_originalData = array();    // data provided to the initialize method
 
@@ -186,7 +186,7 @@ class PersistentObject {
    */
   public function setState($state) {
     $oldState = $this->_state;
-    switch ($this->_state) {
+    switch ($oldState) {
       // new object must stay new when it's modified
       case self::STATE_NEW:
         switch ($state) {

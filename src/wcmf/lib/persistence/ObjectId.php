@@ -26,6 +26,8 @@ use wcmf\lib\core\ObjectFactory;
  */
 class ObjectId {
 
+  const DELIMITER = ':';
+
   private $_prefix;
   private $_fqType;
   private $_id;
@@ -33,6 +35,7 @@ class ObjectId {
 
   private static $_dummyIdPattern = 'wcmf[A-Za-z0-9]{32}';
   private static $_idPattern = null;
+  private static $_delimiterPattern = null;
   private static $_numPkKeys = array();
 
   private static $_nullOID = null;
@@ -148,7 +151,11 @@ class ObjectId {
       return null;
     }
 
-    $oidParts = preg_split('/:/', $oid);
+    if (self::$_delimiterPattern == null) {
+      self::$_delimiterPattern = '/'.self::DELIMITER.'/';
+    }
+
+    $oidParts = preg_split(self::$_delimiterPattern, $oid);
     if (sizeof($oidParts) < 2) {
       return null;
     }
@@ -185,7 +192,7 @@ class ObjectId {
     }
 
     // get the prefix
-    $prefix = join(':', $oidParts);
+    $prefix = join(self::DELIMITER, $oidParts);
 
     return new ObjectID($type, $ids, $prefix);
   }
@@ -196,9 +203,9 @@ class ObjectId {
    */
   public function __toString() {
     if ($this->_strVal == null) {
-      $oidStr = $this->_fqType.':'.join(':', $this->_id);
+      $oidStr = $this->_fqType.self::DELIMITER.join(self::DELIMITER, $this->_id);
       if (strlen(trim($this->_prefix)) > 0) {
-        $oidStr = $this->_prefix.':'.$oidStr;
+        $oidStr = $this->_prefix.self::DELIMITER.$oidStr;
       }
       $this->_strVal = $oidStr;
     }

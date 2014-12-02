@@ -14,33 +14,30 @@ use wcmf\lib\core\Event;
 use wcmf\lib\persistence\PersistentObject;
 
 /**
- * StateChangeEvent signals a change of the state of
- * a PersistentObject instance.
+ * PersistentEvent signals create/update/delete operations
+ * on a persistent entity.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class StateChangeEvent extends Event {
+class PersistentEvent extends Event {
 
   const NAME = __CLASS__;
 
   private $_object = null;
-  private $_oldValue = null;
-  private $_newValue = null;
+  private $_action = null;
 
   /**
    * Constructor.
    * @param $object A reference to the involved PersistentObject instance.
-   * @param $oldValue The old value of the state.
-   * @param $newValue The new value of the state.
+   * @param $action One of the PersistenceAction values.
    */
-  public function __construct(PersistentObject $object, $oldValue, $newValue) {
+  public function __construct(PersistentObject $object, $action) {
     $this->_object = $object;
-    $this->_oldValue = $oldValue;
-    $this->_newValue = $newValue;
+    $this->_action = $action;
   }
 
   /**
-   * Get the object whose state has changed.
+   * Get the object involved.
    * @return PersistentObject instance
    */
   public function getObject() {
@@ -48,19 +45,11 @@ class StateChangeEvent extends Event {
   }
 
   /**
-   * Get the old value.
-   * @return Mixed
+   * Get the action.
+   * @return PersistenceAction value
    */
-  public function getOldValue() {
-    return $this->_oldValue;
-  }
-
-  /**
-   * Get the new value.
-   * @return Mixed
-   */
-  public function getNewValue() {
-    return $this->_newValue;
+  public function getAction() {
+    return $this->_action;
   }
 }
 ?>
