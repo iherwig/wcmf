@@ -62,72 +62,66 @@ class ActionKey {
     if ($hasResource && $hasContext && $hasAction) {
       $key = self::createKey($resource, $context, $action);
       if ($actionKeyProvider->containsKey($key)) {
-        $result = $key;
+        return $key;
       }
     }
 
     // check resource??action
-    elseif ($hasResource && $hasAction) {
+    if ($hasResource && $hasAction) {
       $key = self::createKey($resource, '', $action);
       if ($actionKeyProvider->containsKey($key)) {
-        $result = $key;
+        return $key;
       }
     }
 
     // check resource?context?
-    elseif ($hasResource && $hasContext) {
+    if ($hasResource && $hasContext) {
       $key = self::createKey($resource, $context, '');
       if ($actionKeyProvider->containsKey($key)) {
-        $result = $key;
+        return $key;
       }
     }
 
     // check ?context?action
-    elseif ($hasContext && $hasAction) {
+    if ($hasContext && $hasAction) {
       $key = self::createKey('', $context, $action);
       if ($actionKeyProvider->containsKey($key)) {
-        $result = $key;
+        return $key;
       }
     }
 
     // check ??action
-    elseif ($hasAction) {
+    if ($hasAction) {
       $key = self::createKey('', '', $action);
       if ($actionKeyProvider->containsKey($key)) {
-        $result = $key;
+        return $key;
       }
     }
 
     // check resource??
-    elseif ($hasResource) {
+    if ($hasResource) {
       $key = self::createKey($resource, '', '');
       if ($actionKeyProvider->containsKey($key)) {
-        $result = $key;
+        return $key;
       }
     }
 
     // check ?context?
-    elseif ($hasContext) {
+    if ($hasContext) {
       $key = self::createKey('', $context, '');
       if ($actionKeyProvider->containsKey($key)) {
-        $result = $key;
+        return $key;
       }
     }
 
     // check ??
-    else {
-      $key = self::createKey('', '', '');
-      if ($actionKeyProvider->containsKey($key)) {
-        $result = $key;
-      }
+    $key = self::createKey('', '', '');
+    if ($actionKeyProvider->containsKey($key)) {
+      return $key;
     }
 
     // no key found for requested key
-    if ($result === null) {
-      $result = '';
-    }
-
-    return $result;
+    return '';
   }
 }
 ?>
