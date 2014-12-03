@@ -56,8 +56,8 @@ class ConfigActionKeyProvider implements ActionKeyProvider {
    * @see ActionKeyProvider::getId()
    */
   public function getId() {
-    if ($this->_id ==  null) {
-      $this->_id = __CLASS__.'.'.$this->_configSection;
+    if ($this->_id == null) {
+      $this->_id = str_replace('\\', '.', __CLASS__).'.'.$this->_configSection;
     }
     return $this->_id;
   }

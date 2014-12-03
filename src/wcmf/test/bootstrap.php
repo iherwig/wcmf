@@ -7,7 +7,9 @@ use wcmf\lib\io\FileUtil;
 new ClassLoader();
 
 // refresh resources
-@unlink(WCMF_BASE.'app/test-db.sq3');
+@unlink('log.txt');
+FileUtil::emptyDir(WCMF_BASE.'app/log');
+FileUtil::emptyDir(WCMF_BASE.'app/searchIndex');
 FileUtil::copyRecDir('resources/app/', WCMF_BASE.'app/');
 
 // start the built-in web server

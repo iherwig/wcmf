@@ -79,7 +79,6 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
 
     if ($isChanged) {
       $configInstance->writeConfiguration(basename($config['file']));
-      ActionKey::clearCache();
     }
   }
 
@@ -133,7 +132,6 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
     }
 
     $configInstance->writeConfiguration(basename($config['file']));
-    ActionKey::clearCache();
     return true;
   }
 

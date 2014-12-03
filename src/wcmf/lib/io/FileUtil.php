@@ -209,13 +209,15 @@ class FileUtil {
    * @param $dirname The name of the directory
    */
   public static function emptyDir($dirname) {
-    $files = self::getFiles($dirname, '/./', true, true);
-    foreach ($files as $file) {
-      @unlink($file);
-    }
-    $dirs = self::getDirectories($dirname, '/./', true, true);
-    foreach ($dirs as $dir) {
-      @rmdir($dir);
+    if (is_dir($dirname)) {
+      $files = self::getFiles($dirname, '/./', true, true);
+      foreach ($files as $file) {
+        @unlink($file);
+      }
+      $dirs = self::getDirectories($dirname, '/./', true, true);
+      foreach ($dirs as $dir) {
+        @rmdir($dir);
+      }
     }
   }
 

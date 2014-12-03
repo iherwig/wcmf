@@ -97,10 +97,6 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
         $isChanged = true;
       }
     }
-
-    if ($isChanged) {
-      ActionKey::clearCache();
-    }
   }
 
   /**
@@ -149,7 +145,6 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
         $permission->delete();
       }
     }
-    ActionKey::clearCache();
     return true;
   }
 
