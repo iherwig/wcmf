@@ -7,9 +7,7 @@ php:
 
 env:
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test GENERATOR_DIR=$TRAVIS_BUILD_DIR/generator WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
-
-jdk:
-  - oraclejdk8
+  - JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
 before_script:
   - composer self-update
