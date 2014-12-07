@@ -17,6 +17,7 @@ before_script:
 
   - mkdir $WCMF_BASE_DIR/app && mkdir $WCMF_BASE_DIR/install
   - wget -q http://dev.wemove.com/wcmf/ChronosGenerator-0.9.9.6b.zip && unzip ChronosGenerator-0.9.9.6b.zip -d $GENERATOR_DIR
+  - export "JAVA_HOME=`/usr/lib/jvm/java-8-oracle`"
   - echo $JAVA_HOME
   - cd $TEST_DIR/model && ant -Dgenerator.base=$GENERATOR_DIR -Dgenerator.target=$WCMF_BASE_DIR
 
