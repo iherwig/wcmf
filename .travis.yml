@@ -8,7 +8,9 @@ php:
 env:
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test GENERATOR_DIR=$TRAVIS_BUILD_DIR/generator WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
 
-before_install: jdk_switcher use openjdk8
+-before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install oracle-java8-set-default
 
 before_script:
   - composer self-update
