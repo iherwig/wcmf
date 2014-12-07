@@ -8,13 +8,14 @@ php:
 env:
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test GENERATOR_DIR=$TRAVIS_BUILD_DIR/generator WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
 
+before_install: jdk_switcher use openjdk8
+
 before_script:
   - composer self-update
   - composer install
 
   - mkdir $WCMF_BASE_DIR/app && mkdir $WCMF_BASE_DIR/install
   - wget -q http://dev.wemove.com/wcmf/ChronosGenerator-0.9.9.6b.zip && unzip ChronosGenerator-0.9.9.6b.zip -d $GENERATOR_DIR
-  - jdk_switcher use openjdk8
   - echo $JAVA_HOME
   - cd $TEST_DIR/model && ant -Dgenerator.base=$GENERATOR_DIR -Dgenerator.target=$WCMF_BASE_DIR
 
