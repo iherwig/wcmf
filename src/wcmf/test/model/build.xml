@@ -1,6 +1,11 @@
 <project name="wCMF test" default="generate" basedir=".">
   <description>wCMF test model build file</description>
 
+  <target name="print-version">
+     <echo>Java/JVM version: ${ant.java.version}</echo>
+     <echo>Java/JVM detail version: ${java.version}</echo>
+  </target>
+
   <property file="build.properties"/>
 
   <target name="m2m-papyrus"
