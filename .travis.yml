@@ -9,7 +9,7 @@ jdk:
   - oraclejdk8
 
 env:
-  - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test GENERATOR_DIR=$TRAVIS_BUILD_DIR/generator WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src JAVA_HOME=/usr/lib/jvm/java-8-oracle
+  - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test GENERATOR_DIR=$TRAVIS_BUILD_DIR/generator WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
 
 before_script:
   - composer self-update
