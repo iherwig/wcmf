@@ -1,9 +1,8 @@
 <project name="wCMF test" default="generate" basedir=".">
   <description>wCMF test model build file</description>
 
-  <target name="print-version">
-     <echo>Java/JVM version: ${ant.java.version}</echo>
-     <echo>Java/JVM detail version: ${java.version}</echo>
+  <target name="print-java-version">
+     <echo>java version: ${ant.java.version}</echo>
   </target>
 
   <property file="build.properties"/>
@@ -24,7 +23,7 @@
     />
   </target>
 
-  <target name="generate" depends="m2m-papyrus"
+  <target name="generate" depends="print-java-version, m2m-papyrus"
     description="generate the code from the model" >
     <java jar="${generator.base}/ChronosGenerator.jar"
           dir="${generator.workdir}" fork="true" >
