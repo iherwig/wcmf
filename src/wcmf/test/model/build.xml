@@ -19,7 +19,7 @@
     />
   </target>
 
-  <target name="generate" depends="print-java-version, m2m-papyrus"
+  <target name="generate" depends="m2m-papyrus"
     description="generate the code from the model" >
     <java jar="${generator.base}/ChronosGenerator.jar"
           dir="${generator.workdir}" fork="true" >
