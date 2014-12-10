@@ -28,7 +28,7 @@
             "type": "package",
             "package": {
                 "name": "olympos/chronos-generator",
-                "version": "0.9.9.6b",
+                "version": "0.9.9.6",
                 "dist": {
                     "url": "http://sourceforge.net/projects/olympos/files/ChronosGenerator-0.9.9.6b-wCMF.zip",
                     "type": "zip"
@@ -38,7 +38,7 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "olympos/chronos-generator": "0.9.9.6b",
+        "olympos/chronos-generator": "0.9.*",
         "apache/log4php": "2.3.0",
         "zf1/zend-db": "1.12.6",
         "zf1/zend-http": "1.12.6",
