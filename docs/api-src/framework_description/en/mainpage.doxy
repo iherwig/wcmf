@@ -4,7 +4,7 @@
 \htmlonly
 <div class="jumbotron">
   <h1>wCMF</h1>
-  <h2>A PHP framework for building<br><kbd>reliable</kbd>, <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications</h2>
+  <h2>A PHP framework for building<br><kbd>reliable</kbd> <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications</h2>
 </div>
 
 <h2>Model-Driven Software Development</h2>
@@ -49,4 +49,5 @@ increase productivity significantly. Creating a wCMF-based application basically
 - Flexible logging (<a href="http://logging.apache.org/log4php/" target="_blank">Apache log4php</a>)
 - SOAP and REST interface supporting CRUD operations on all objects
 - Code generator for model-driven software development
+- Available under an open source license (MIT)
 */

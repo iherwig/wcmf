@@ -6,7 +6,7 @@
 The wCMF project mainly consists of two parts, the application framework and an
 application template.
 
-### Framework ###
+## Framework ##
 
 The wCMF framework provides the infrastructure to create PHP web applications based
 on the model-view-controller pattern. The project's source code is hosted at
@@ -23,7 +23,7 @@ want to add the following lines to your `composer.json`:
 }
 @endcode
 
-### Default Application ###
+## Default Application ##
 
 The default application is a fully functional data managing application based on the
 wCMF framework. Besides interfaces for create/read/update/delete (CRUD) operations
@@ -36,35 +36,98 @@ The following screenshots show the list and detail view of an _Author_ entity ty
 
 @image html wcmf-default-app2ws.jpg
 
-#### Installation ####
+### Prerequisites ###
+
+To run the wCMF default application you will need the following:
+
+- Web server (e.g. Apache)
+- PHP
+- MySQL
+- UML Modeling tool (e.g. [Eclipse Papyrus](http://www.eclipse.org/papyrus/) or [Chronos Web Modeler](http://sourceforge.net/projects/olympos/))
+- [Apache Ant](http://ant.apache.org/) for code generation and deployment
+
+### Installation ###
 
 The application's source code may be forked or downloaded from
-[GitHub](https://github.com/iherwig/wcmf-default-app).
+[GitHub](https://github.com/iherwig/wcmf-default-app). After download,
+execute the following steps to get a running application:
 
-After download, execute the following steps to get a running application:
+#### Unpack the code ####
 
-1. Unpack and copy the code to a directory accessable by your webserver.
-   You should see the following directories:
-   - _app_
-     - _config_
-     - _locale_
-     - _public_
-     - _src_
-   - _build_
-   - _install_
-   - _model_
-   - _tools_
+Put the code into a directory accessible to your web server. You should see the
+following directories:
 
-2. Get the external dependencies by running composer:
-   @code
-   composer install
-   @endcode
+- _app_
+  - _config_
+  - _locale_
+  - _public_
+  - _src_
+- _build_
+- _install_
+- _model_
+- _test_
+- _tools_
 
-3. Define your wCMF application model.
+We assume that the application's root directory is accessible via the url
+`http://localhost/wcmf-default-app`.
 
-4. Generate the code.
+#### Run Composer ####
 
-5. Create and initialize the database.
+The application uses Composer to manage external dependencies.
+Execute the following command in the root directory of the application to fetch them:
 
-6. Open the application in the browser.
+@code
+composer install
+@endcode
+
+#### Model the domain ####
+
+The application ships with a demo UML model that may be used as a quick start.
+It's located in `model/model.uml`. Base models for those who want to start
+from scratch are located in _model/base/cwm/_ and _model/base/papyrus/_. An
+in-depth guide on modeling for wCMF may be found in the section @ref modeling.
+
+#### Generate the code ####
+
+A code generator is used to generate class- and configuration files from the domain
+model. Execute the following command in the _build_ directory of the application in
+order to run the generator:
+
+@code
+ant generate
+@endcode
+
+#### Setup the database connection ####
+
+The database connection information is defined in the file `app/config/server.ini` and
+defaults to
+
+@code
+dbType = mysql
+dbHostName = 127.0.0.1
+dbName = wcmf_testapp
+dbUserName = root
+dbPassword =
+dbCharSet = utf8
+@endcode
+
+Change these values to fit your local configuration. If privileges are granted,
+the database will be created automatically in the next step. If not, you have
+to create it beforehand.
+
+#### Run installation scripts ####
+
+Open a web browser and navigate to `http://localhost/wcmf-default-app/install/`.
+Click the buttons:
+
+- _Update database_ to create the application tables
+- _Initialize database_ to create the initial data (e.g. the _admin_ user)
+
+#### Open the application ####
+
+Navigate to `http://localhost/wcmf-default-app/app/public/` to open the login screen.
+Sign in using
+
+- Username: _admin_
+- Password: _admin_
 */
