@@ -36,9 +36,18 @@ td.entry {
   padding-right: 8px;
 }
 
-.anchor{
+.anchor {
   padding-top: 50px;
   margin-top: -50px;
+}
+
+.image {
+  padding-top: 20px;
+}
+
+.caption {
+  padding: 10px 0 20px 0;
+  font-style: italic;
 }
 
 // Search

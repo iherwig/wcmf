@@ -4,4 +4,37 @@
 
 \section secmodeling Modeling
 
+wCMF applications are based on a model. The model defines the key aspects of the
+application on a higher abstraction level than code does. You can think of it as
+a condensed description of the application.
+
+A template based code generator creates source code from the model that will
+run inside the wCMF framework. Where necessary, the code can then be enhanced
+manually inside pre-defined regions. Further generation runs will protect these
+manual additions.
+
+We believe that this approach helps to develop a clear concept of the application
+and improves code quality and maintainability dramatically.
+
+Technically the model is an [UML](http://en.wikipedia.org/wiki/Unified_Modeling_Language)
+model that uses the Chronos [profile](http://en.wikipedia.org/wiki/Profile_%28UML%29) from the
+[Olympos](http://sourceforge.net/projects/olympos/) project. It is stored in
+an XML file (e.g. `model.uml`). This file can be directly edited using
+[Eclipse Papyrus](http://www.eclipse.org/papyrus/) or any other compatible UML
+modeling tool. Alternatively  you can use the
+[Chronos Web Modeler](http://sourceforge.net/projects/olympos/) that allows
+browser based collaborative modeling. wCMF uses a minimized version of the code
+generator from the Olympos project.
+
+\image html generator.png "Generator workflow"
+
+In the following sections we describe how to model the different aspects of
+the application.
+
+## Domain classes ##
+
+## Application flow ##
+
+## Configuration ##
+
 */
