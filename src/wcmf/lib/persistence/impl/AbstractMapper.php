@@ -181,8 +181,15 @@ abstract class AbstractMapper implements PersistenceMapper {
     // validate object
     $object->validateValues();
 
+    // check concurrency
+    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
+    $concurrencyManager->checkPersist($object);
+
     // save object
     $this->saveImpl($object);
+
+    // update lock
+    $concurrencyManager->updateLock($oid, $object);
 
     // call lifecycle callback
     if ($isDirty) {

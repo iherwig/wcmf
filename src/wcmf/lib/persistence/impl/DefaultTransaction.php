@@ -367,19 +367,16 @@ class DefaultTransaction implements Transaction {
    */
   protected function processUpdates() {
     $updateOids = array_keys($this->_dirtyObjects);
-    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
     while (sizeof($updateOids) > 0) {
       $key = array_shift($updateOids);
       if (self::$isDebugEnabled) {
         Log::debug("Process update on object: ".$key, __CLASS__);
       }
       $object = $this->_dirtyObjects[$key];
-      $concurrencyManager->checkPersist($object);
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->save($object);
       }
-      $concurrencyManager->updateLock($object->getOID(), $object);
       unset($this->_dirtyObjects[$key]);
       $updateOids = array_keys($this->_dirtyObjects);
     }
