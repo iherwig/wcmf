@@ -11,59 +11,83 @@ other key concepts, that are useful to know when using wCMF.
 
 \subsection model Model
 
-An application usually consists of a _domain model_ that represents the real-world
+An application usually contains a _domain model_ that represents the real-world
 concepts of the domain of interest. In object oriented programming this model is
 implemented using classes. Depending on the application requirements the instances
 of several of these classes have to be persisted in a storage in order to keep the
-contained data.
+contained data. The classes that provide the infrastructure for storing data form the
+the _persistence layer_.
 
-wCMF defines `wcmf::lib::persistence::PersistentObject` as base class for persistent
-domain classes. It mainly implements an unique identifier for each instance (see \ref oid),
-tracking of the persistent state, methods for setting and getting values as well as callback
-methods for lifecycle events. For the composition of object graphs the derived class
-`wcmf::lib::model::Node` is used as base class. It implements relation support for
-persistent objects.
+wCMF defines \link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink
+as base class for persistent domain classes. It mainly implements an unique identifier
+for each instance (see \ref oid), tracking of the persistent state, methods for setting
+and getting values as well as callback methods for lifecycle events. For the composition
+of object graphs the derived class \link wcmf::lib::model::Node `Node`\endlink is used
+as base class. It implements relation support for persistent objects.
 
-To retrieve persisted objects `wcmf::lib::persistence::PersistenceFacade` is used.
-The actual operations for creating, reading, updating and deleting objects (e.g. SQL commands)
-are defined in classes implementing the `wcmf::lib::persistence::PersistenceMapper` interface.
+To retrieve persisted objects \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink
+is used. The actual operations for creating, reading, updating and deleting objects
+(e.g. SQL commands) are defined in classes implementing the
+\link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink interface.
 Although not necessary there commonly exists one mapper class for each persistent
 domain class. Mapper classes are introduced to the persistent facade by configuration.
 
 \image html persistence.png "Persistence layer"
 
+Please refer to the section @ref persistence for a more detailed description of the
+persistence layer.
+
 \subsubsection oid Object Identifier
 
 For handling lots of different domain objects an unique identification is crucial. In order to achieve this,
 so-called _Object Identifiers_ (_OID_ or _object id_) are used. Various strategies are possible to obtain these
-identifiers, e.g. a central registry. wCMF composes these object ids from the type of the persistent domain class
-and a number, which is unique for each type. It is important that the object's type can be derived from the
-object id, because this enables the `PersistenceFacade` to determine the `PersistenceMapper` for the given object
-from the configuration. The class `wcmf::lib::persistence::ObjectId` implements this concept.
+identifiers, e.g. a central registry.
+
+wCMF composes these object ids from the type of the persistent domain class and a number, which is unique
+for each type (e.g. _Author::1_). It is important that the object's type can be derived from the object id,
+because this enables the \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink to
+determine the \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink for the given object
+from the configuration. The class \link wcmf::lib::persistence::ObjectId `ObjectId`\endlink implements this
+concept.
 
 \subsection controllers_views Presentation
 
-The user interface of a wCMF application is based on the @em Model-View-Controller (@em MVC) pattern.
-According to this pattern the application instanciates a specific controller for each action,
-which loads the data (model) required for that action and - where applicable - presents the data
-to the user via the corresponding view. Upon execution of a controller the next action will
-be determined. This could either depend on the result of the action (@em successful, @em failed etc.)
-or explicitly be specified by the user (@em save, @em delete etc.). The application flow is defined
-by stringing together controller-action pairs.
+The _presentation layer_ of a wCMF application enables users to interact with the domain model.
 
-The ActionMapper - configured via a configuration file (see @ref configuration) - controls the application
-flow. It creates @em controller objects, which execute actions like @em save changes, @em add
-elements, @em delete elements or @em display data - where applicable - with the help of views. For
-execution the Controller base class defines an algorithm, which is implemented by specialized
-subclasses.@n
-The @em model, which the controllers work with, is constituted of the domain classes - in most cases
-a tree structure of Node objects.@n
-The framework uses the <a href="http://smarty.php.net/" target="_blank">Smarty</a> Template Engine
-to create the @em views. This means, that a view is defined by a @em Smarty template (*.tpl file),
-which is displayed by an instance of the class View. Before the data is displayed the controller extracts
-it from the model and assigns it to the view instance.
+Each interaction is initiated by a _request_ and results in a _response_. In a web application the
+request data is sent by the user's browser to the server as GET or POST variables.
+
+wCMF's \link wcmf::lib::presentation::Application `Application`\endlink class transforms the request data into
+a \link wcmf::lib::presentation::Request `Request`\endlink instance. This instance is then passed to a
+\link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink instance, which creates the
+\link wcmf::lib::presentation::Response `Response`\endlink instance and delegates the actual
+execution of the request to a \link wcmf::lib::presentation::Controller `Controller`\endlink instance. Different
+controllers exist for different actions (e.g. \link wcmf::application::controller::ListController `ListController`\endlink
+for listing objects, \link wcmf::application::controller::SearchController `SearchController`\endlink for
+searching objects).
+
+The controller is determined by matching specific request parameters against a list of so called
+_action keys_ (see @ref actionkey). As the result of it's execution each controller returns action key
+parameters in the response data. If these parameters match an existing action key, the associated controller
+will be executed by passing the current response as input. In this way complex tasks may be executed by chaining
+several controller calls together.
+
+It's important to notice that a \link wcmf::lib::presentation::format::Format `Format`\endlink instance is
+associated with each request and response. The format is determined by the HTTP _Content-Type_ resp. _Accept_
+headers. \link wcmf::lib::presentation::format::Format `Format`\endlink implementations are responsible for
+de-/serializing the request and response data into the desired format (e.g. _JSON_ or _SOAP_).
+\link wcmf::lib::presentation::format::impl::HtmlFormat `HtmlFormat`\endlink especially uses a
+\link wcmf::lib::presentation::view::View `View`\endlink instance to render the response data into
+a HTML page. wCMF's uses [Smarty](http://www.smarty.net/) as the default template engine for HTML output.
 
 \image html presentation.png "Presentation layer"
+
+Please refer to the section @ref persistence for a more detailed description of the
+persistence layer.
+
+\subsubsection actionkey Action Key
+
+For details about configuring action keys see @ref configuration.
 
 \subsection accesscontrol Access control
 
@@ -73,32 +97,4 @@ and each user can be assigned to different roles. The assignment of rights is ma
 Here permissions can be explicitly granted or denied. During the application flow authentification/
 authorization is accomplished by the RightsManager together with a representation of the current user (as an
 instance of the AuthUser class, which is created upon successful login and added to the session data).
-
-\subsection applicationflow Application flow
-
-To run the wCMF in a web browser a PHP script is necessary as entry point. This is similar to a
-@em main method, which instanciates the initial application objects and hands the control over
-to these objects.
-
-In our case this script is @em main.php. It receives parameters (@em controller, @em context, @em action, @em data)
-over a HTTP request. These parameters could for instance origin from the previous view. They are made available
-to the %ActionMapper in form of an Request instance using the method ActionMapper::processAction. The %ActionMapper
-then takes over the control of the application flow and returns after finishing its task or displaying a view, respectively.
-Display of a view always interrupts the application's flow and allows the user to interact. The view sends the data obtained
-during the interaction (e.g. form data) as HTTP Request back to the script @em main.php.@n
-
-For each call of the method ActionMapper::processAction the %ActionMapper on his part instanciates an appropriate
-controller object, which is supplied with data by Controller::initialize and executed by Controller::execute.
-The Controller baseclass provides in its method @em execute the algorithm for validating the data - and if
-applicable - initializing the view. Concrete controller classes execute their specific tasks in the method
-Controller::executeKernel.
-If no view is assigned to a controller, the @em execute method returns @em true. The execution result is stored in the
-Response instance, which again is converted into a Request instance and passed to the next call of the %ActionMapper's
-@em processAction method. Thus it's possible to cascade different controllers to compose complex tasks out of several simple.
-Otherwise the controller assigns the model to the view, which is then displayed by the view with its template (here @em view.tpl).
-
-Request and Response instances are interpreted using IFormat implementations. This allows the framework to realise
-different formats for sending and receiving data. Known formats are HTML, JSON and SOAP.
-
-The configuration of the controllers, views and actions is done in the configuration file (see @ref configuration).
 */

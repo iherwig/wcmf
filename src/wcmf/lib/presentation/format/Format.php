@@ -14,8 +14,8 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * Format defines the interface for all formatter classes. Formatter
- * classes are used to map external data representations like JSON, XML/SOAP or HTML
+ * Format defines the interface for all format classes. Format instances
+ * are used to map external data representations like JSON, XML/SOAP or HTML
  * to internal ones. All data values are supposed to be scalar or array values
  * except for Nodes, for which each external representation defines a special notation.
  *
