@@ -387,19 +387,16 @@ class DefaultTransaction implements Transaction {
    */
   protected function processDeletes() {
     $deleteOids = array_keys($this->_deletedObjects);
-    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
     while (sizeof($deleteOids) > 0) {
       $key = array_shift($deleteOids);
       if (self::$isDebugEnabled) {
         Log::debug("Process delete on object: ".$key, __CLASS__);
       }
       $object = $this->_deletedObjects[$key];
-      $concurrencyManager->checkPersist($object);
       $mapper = $object->getMapper();
       if ($mapper) {
         $mapper->delete($object);
       }
-      $concurrencyManager->updateLock($object->getOID(), $object);
       unset($this->_deletedObjects[$key]);
       $deleteOids = array_keys($this->_deletedObjects);
     }

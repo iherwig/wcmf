@@ -220,6 +220,10 @@ abstract class AbstractMapper implements PersistenceMapper {
     // call lifecycle callback
     $object->beforeDelete();
 
+    // check concurrency
+    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
+    $concurrencyManager->checkPersist($object);
+
     // delete object
     $result = $this->deleteImpl($object);
     if ($result === true) {
@@ -229,7 +233,6 @@ abstract class AbstractMapper implements PersistenceMapper {
               new PersistentEvent($object, PersistenceAction::DELETE));
 
       // release any locks on the object
-      $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
       $concurrencyManager->releaseLocks($oid);
     }
     return $result;
