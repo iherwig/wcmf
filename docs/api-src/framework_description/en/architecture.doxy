@@ -17,41 +17,31 @@ implemented using classes. Depending on the application requirements the instanc
 of several of these classes have to be persisted in a storage in order to keep the
 contained data.
 
-wCMF defines wcmf::lib::persistence::PersistentObject as base class for persistent
+wCMF defines `wcmf::lib::persistence::PersistentObject` as base class for persistent
 domain classes. It mainly implements an unique identifier for each instance (see \ref oid),
 tracking of the persistent state, methods for setting and getting values as well as callback
-methods for lifecycle events. For the composition of object graphs the wcmf::lib::model::Node
-class is used as base class. It implements relation support for persistent objects.
+methods for lifecycle events. For the composition of object graphs the derived class
+`wcmf::lib::model::Node` is used as base class. It implements relation support for
+persistent objects.
 
-To retrieve persisted objects wcmf::lib::persistence::PersistenceFacade is used.
+To retrieve persisted objects `wcmf::lib::persistence::PersistenceFacade` is used.
 The actual operations for creating, reading, updating and deleting objects (e.g. SQL commands)
-are defined in classes implementing the wcmf::lib::persistence::PersistenceMapper interface.
+are defined in classes implementing the `wcmf::lib::persistence::PersistenceMapper` interface.
 Although not necessary there commonly exists one mapper class for each persistent
-domain class.
+domain class. Mapper classes are introduced to the persistent facade by configuration.
 
-\dotfile persistence.dot "Persistence infrastructure"
+\image html persistence.png "Persistence layer"
 
 \subsubsection oid Object Identifier
 
 For handling lots of different domain objects an unique identification is crucial. In order to achieve this,
 so-called _Object Identifiers_ (_OID_ or _object id_) are used. Various strategies are possible to obtain these
-identifiers, for example a central registry. wCMF composes these object ids from the type (domain class or
-type of the PersistentObject) and a number, which is unique for each type. Important is, that the object's
-type can be derived from the object id, because this enables the PersistenceFacade to determine the
-PersistenceMapper for the given object via the configuration. The class wcmf::lib::persistence::ObjectId
-implements this concept.
+identifiers, e.g. a central registry. wCMF composes these object ids from the type of the persistent domain class
+and a number, which is unique for each type. It is important that the object's type can be derived from the
+object id, because this enables the `PersistenceFacade` to determine the `PersistenceMapper` for the given object
+from the configuration. The class `wcmf::lib::persistence::ObjectId` implements this concept.
 
-\subsubsection representations Model representations
-
-The output format of the nodes (e.g. when using the OutputVisitor) is specified in the corresponding
-OutputStrategy. Examples are the XMLOutputStrategy for converting data to XML format for use in
-@em Flash movies for instance or further processing via XSLT, TreeViewOutputStrategy for creating HTML
-Treeviews or DotOutputStrategy for use with @em dot, which generates a graphic representation of the
-data.
-
-@image html data_output.png "Data output classes"
-
-\subsection userinterface User interface
+\subsection controllers_views Presentation
 
 The user interface of a wCMF application is based on the @em Model-View-Controller (@em MVC) pattern.
 According to this pattern the application instanciates a specific controller for each action,
@@ -73,7 +63,7 @@ to create the @em views. This means, that a view is defined by a @em Smarty temp
 which is displayed by an instance of the class View. Before the data is displayed the controller extracts
 it from the model and assigns it to the view instance.
 
-@image html mvc.png "MVC Classes"
+\image html presentation.png "Presentation layer"
 
 \subsection accesscontrol Access control
 
@@ -111,6 +101,4 @@ Request and Response instances are interpreted using IFormat implementations. Th
 different formats for sending and receiving data. Known formats are HTML, JSON and SOAP.
 
 The configuration of the controllers, views and actions is done in the configuration file (see @ref configuration).
-
-@image html mvc_sequence.png Application flow
 */

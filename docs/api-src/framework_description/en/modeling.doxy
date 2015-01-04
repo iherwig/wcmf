@@ -8,7 +8,7 @@ wCMF applications are based on a model. The model defines the key aspects of the
 application on a higher abstraction level than code does. You can think of it as
 a condensed description of the application.
 
-A template based code generator creates source code from the model that will
+A template based code generator transforms the model into source code that will
 run inside the wCMF framework. Where necessary, the code can then be enhanced
 manually inside pre-defined regions. Further generation runs will protect these
 manual additions.
