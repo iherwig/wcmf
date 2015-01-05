@@ -72,10 +72,10 @@ parameters in the response data. If these parameters match an existing action ke
 will be executed by passing the current response as input. In this way complex tasks may be executed by chaining
 several controller calls together.
 
-It's important to notice that a \link wcmf::lib::presentation::format::Format `Format`\endlink instance is
-associated with each request and response. The format is determined by the HTTP _Content-Type_ resp. _Accept_
-headers. \link wcmf::lib::presentation::format::Format `Format`\endlink implementations are responsible for
-de-/serializing the request and response data into the desired format (e.g. _JSON_ or _SOAP_).
+In order to support various data representations, a \link wcmf::lib::presentation::format::Format `Format`\endlink
+instance is associated with each request and response. The format is automatically determined by the HTTP
+_Content-Type_ resp. _Accept_ headers. \link wcmf::lib::presentation::format::Format `Format`\endlink implementations
+are responsible for de-/serializing the request and response data into the desired format (e.g. _JSON_ or _SOAP_).
 \link wcmf::lib::presentation::format::impl::HtmlFormat `HtmlFormat`\endlink especially uses a
 \link wcmf::lib::presentation::view::View `View`\endlink instance to render the response data into
 a HTML page. wCMF's uses [Smarty](http://www.smarty.net/) as the default template engine for HTML output.
@@ -86,6 +86,51 @@ Please refer to the section @ref persistence for a more detailed description of 
 persistence layer.
 
 \subsubsection actionkey Action Key
+
+An important concept of wCMF is that of _Action Keys_. An action key describes the state of the application together
+with the action to be performed next. The state, which the application is in, results from the current controller and
+the context, in which it is executed. Controllers must exist as classes, whereas contexts and actions may be defined
+freely.
+
+The format of the action keys is the following:
+
+@verbatim controller?context?action @endverbatim
+
+In the configuration file an action key has the controller assigned, which should be executed next if
+the action key is valid by the application's current state and the user action or the return value of
+the current controller (see also @ref applicationflow).@n
+Since parts of the action key can be omitted in the definition, an algorithm has to choose,
+which action key fits a given value triplet. This algorithm is implemented in the method
+WCMFInifileParser::getBestActionKey. In this method the %InifileParser searches in the configuration
+file for the a list of combinations successively and ends the search when it found one. After
+that the controller, which is assigned to that combination, is executed. The order of the combinations
+is the following:
+
+@verbatim
+ 1. controller?context?action
+ 2. controller??action
+ 3. controller?context?
+ 4. ?context?action
+ 5. ??action
+ 6. controller??
+ 7. ?context?
+@endverbatim
+
+As a rule of thumb the action key which describes the state of the application the most
+accurate is favoured.@n
+Frequent examples are:@n@n
+
+Always execute the %SaveController when action @em save is selected, no matter which state the application is in:
+@verbatim ??save = SaveController @endverbatim
+
+Always execute the %ProjektController when the context is @em project as long as no action is specified,
+return to the ProjektController respectively from all controllers, which have no specific action assigned
+upon termination:
+@verbatim ?project? = ProjectController @endverbatim
+
+If no matching action key can be found, the %ActionMapper tries to execute the last %Controller that had a view attached again.
+This can save some typing. For example you don't need to configure an action key for the @em ok return action of
+SaveController, if you always want to execute the %Controller afterwards, from which the @em save action was initiated.
 
 For details about configuring action keys see @ref configuration.
 

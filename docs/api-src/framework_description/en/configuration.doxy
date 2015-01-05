@@ -12,58 +12,9 @@ used in the @em ini file format. The application interprets values, which are en
 to the BASE path, which is defined in /application/base_dir.php. This is the root directory of /wcmf
 and /application by default.
 
-- @ref actionkey
 - @ref userconfig
 - @ref sections
 - @ref configexample
-
-\subsection actionkey Action Keys
-
-An important concept of the application's configuration is that of @em Action @em Keys. An action key
-describes the state of the application together with the action to be performed next. The state, which
-the application is in, results from the current controller and the context, in which it is executed.
-Controllers must exist as classes, whereas contexts and actions can be defined freely. They must only be
-taken care of in the controllers and if necessary transported between the views (as form data, see also
-@ref howtoapplication, @ref howtoviews).@n
-The format of the action keys is the following:
-
-@verbatim controller?context?action @endverbatim
-
-In the configuration file an action key has the controller assigned, which should be executed next if
-the action key is valid by the application's current state and the user action or the return value of
-the current controller (see also @ref applicationflow).@n
-Since parts of the action key can be omitted in the definition, an algorithm has to choose,
-which action key fits a given value triplet. This algorithm is implemented in the method
-WCMFInifileParser::getBestActionKey. In this method the %InifileParser searches in the configuration
-file for the a list of combinations successively and ends the search when it found one. After
-that the controller, which is assigned to that combination, is executed. The order of the combinations
-is the following:
-
-@verbatim
- 1. controller?context?action
- 2. controller??action
- 3. controller?context?
- 4. ?context?action
- 5. ??action
- 6. controller??
- 7. ?context?
-@endverbatim
-
-As a rule of thumb the action key which describes the state of the application the most
-accurate is favoured.@n
-Frequent examples are:@n@n
-
-Always execute the %SaveController when action @em save is selected, no matter which state the application is in:
-@verbatim ??save = SaveController @endverbatim
-
-Always execute the %ProjektController when the context is @em project as long as no action is specified,
-return to the ProjektController respectively from all controllers, which have no specific action assigned
-upon termination:
-@verbatim ?project? = ProjectController @endverbatim
-
-If no matching action key can be found, the %ActionMapper tries to execute the last %Controller that had a view attached again.
-This can save some typing. For example you don't need to configure an action key for the @em ok return action of
-SaveController, if you always want to execute the %Controller afterwards, from which the @em save action was initiated.
 
 \subsection userconfig Configuration for individual users
 
