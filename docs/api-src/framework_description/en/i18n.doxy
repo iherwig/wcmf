@@ -4,4 +4,31 @@
 
 \section seci18n Internationalization
 
+\subsection howtoi18n Multilanguage Support
+
+For localization of the application the method Message::get is provided. For a given (english)
+string this method searches for the required language's version. The language version can
+either be passed directly with the method call or can be set application wide (see documentation
+of Message::get).@n
+How the translation is retrieved depends on the parameter @em usegettext (see @ref seccms).
+If it is set to 1, the method uses the PHP function @em gettext. This in turn makes use of
+*.mo files in the directory /localeDir/language/LC_MESSAGES - e.g. /locale/de_DE/LC_MESSAGES/main.mo
+(see documentation of gettext).@n
+If gettext doesn't exist, the language version can also be taken from an associative array named
+messages_language (e.g. messages_de_DE).
+This must be defined in a file /localeDir/language/LC_MESSAGES/messages_language.php (e.g.
+/locale/de_DE/LC_MESSAGES/messages_de_DE.php). The keys of the array are the strings, which are
+passed to the method Message::get, the values are the corresponding translations.@n
+@note If a translation for a text doesn't exist, the string, which was passed to the method
+Message::get, will be used.
+
+For making the localization more comfortable some tools are provided in the directory /wcmf/tools/i18n:
+- @em locale.php extracts all strings to be localized (where the method Message::get is used) from the
+  application (views, controllers) and creates a *.po file for use with gettext.
+- @em po2array.php generates the array definition described above from a *.po file.
+
+For localizing the view templates a Smarty plugin is provided, which is to be used as follows:
+@verbatim {translate text="Logged in as %1%" r0=$authUser->getLogin()} @endverbatim
+
+The @em parameters of the method Message::get are defined by the values of @em r0, @em r1, ...
 */

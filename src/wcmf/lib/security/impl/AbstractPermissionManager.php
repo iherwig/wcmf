@@ -237,7 +237,7 @@ class AbstractPermissionManager {
         Log::debug("Permissions: ".StringUtil::getDump($permissions), __CLASS__);
       }
       if ($permissions != null) {
-        // mathing permissions found, check user roles
+        // matching permissions found, check user roles
         $authorized = $this->matchRoles($permissions, $user);
       }
       elseif (!$returnNullIfNoPermissionExists) {

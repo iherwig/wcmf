@@ -4,62 +4,31 @@
 
 \section secpermissions Permissions
 
-The framework offers developers the following main points of extension
+\subsection howtorights Rights management
 
-- @ref extpers
-- @ref exttype
-- @ref extoutput
-- @ref extinteraction
-- @ref extlayout
-- @ref extdataformat
+Rights can be assigned to the execution of actions in the user interface or to the editing
+of domain classes and individual objects (instances of domain classes). For editing content the framework
+defines the rights @em read, @em update, @em delete and @em create.@n
+The authorization for actions in the user interface is handled by the ActionMapper, for actions
+concerning the data the PersistenceMapper checks the permissions (and sets objects, for which
+the right @em update is not set, to non-editable (@em is_editable = false) ).
+Both classes use the method RightsManager::authorize and generate a fatal error message,
+if authorization fails (see @ref howtoerror).
+To prevent this the rights can be retrieved directly in order to take appropriate messures:
+@verbatim
+ $rightsManager = &RightsManager::getInstance();
+ if ($rightsManager->authorize($this->_request->getValue('oid'), '', ACTION_READ))
+ {
+   $object = &$persistenceFacade->load($this->_request->getValue('oid'), BUILDDEPTH_INFINITE);
+ }
+ else
+ {
+   // do something else if the user cannot read the object
+ }
+@endverbatim
 
-\subsection extpers Persistence mechanism
-
-Since the support of a persistence mechanism affects the loading, storing and deleting of
-domain objects, corresponding PersistenceMapper subclasses have to be defined. The storing of
-application data in a text file for instance requires a FileMapper for each domain class,
-which is able to load, delete and alter objects in a text file.
-
-\subsection exttype Domain classes
-
-Adding new domain classes first of all requires their definition in the persistence mechanism
-(name, attributes, contained domain classes). In a relational database this usually is achieved
-by one table per domain class and if necessary additional connection tables, which reflect the
-relations between the objects. In the next step a corresponding PersistenceMapper has to be implemented,
-which makes the access to the data and the construction of the accompanying domain object possible.@n
-If the Node class isn't sufficient for the data representation, a new domain class finally has to be
-defined (for details see @ref howtotype).
-
-\subsection extoutput Output formats
-
-The output formats, in which the application data is transformed, can be defined via an OutputStrategy.
-This strategy may be applied for example by using an OutputVisitor, to which the new format is made accessible
-by its method OutputVisitor::setOutputStrategy.@n
-If large amounts of data have to be exported, alternatively one of the subclasses of BatchController can be used,
-since these allow the splitting of long tasks into packages, which can be handled over multiple page calls.
-This is useful for example when exporting static HTML pages from a CMS.
-
-\subsection extinteraction User interaction
-
-For defining the user interaction in the simplest case solely one configuration file is needed, which
-establishes an order of controllers for certain actions. By that a controller for a complex action
-can be defined through the combination of primitive controllers (e.g. a MoveItemController from an
-InsertItemController and a DeleteItemController).
-If new actions should be added, a new controller has to be implemented (for details see @ref howtoapplication).@n
-Another way to vary the user interaction is given through the modification of the views, which means the
-modification of the form and link definitions in the templates. By defining different contexts it is also
-possible to assign different views to a controller while maintaining the same action (e.g. to display an
-input form for data in one context and the preview of the same data in another).
-
-\subsection extlayout Layout
-
-The application's appearance is completely described by the views. Since these themselves are defined in
-corresponding Smarty templates, modifying the templates makes it quite easy to fit the layout to the special
-needs of the application.
-
-\subsection extdataformat Data exchange formats
-
-Data sent to the framework and received from the framework is transported in Request and Response instances.
-The data is interpreted using an IFormat implementation. This allows to easily implement new data exchange formats.
-Already supported formats are HTML (HTMLFormat), JSON (JSONFormat) and SOAP (SOAPFormat).
+In the example the object is only loaded, if it's permitted. For the definition of rights
+see @ref secauthorization.
+@note If @em anonymous is set to one in the configuration file, the rights management
+is disabled (see @ref seccms).
 */

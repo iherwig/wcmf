@@ -50,6 +50,10 @@ td.entry {
   font-style: italic;
 }
 
+.fragment {
+  margin: 4px 8px 10px 2px !important;
+}
+
 // Search
 
 #MSearchSelectWindow {
