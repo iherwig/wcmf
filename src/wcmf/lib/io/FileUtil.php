@@ -223,54 +223,19 @@ class FileUtil {
 
   /**
    * Get the relative path between two paths
-   * code from http://php.net/manual/en/ref.filesystem.php
+   * code from http://php.net/manual/de/function.realpath.php
    * @param $path1 The first path
    * @param $path2 The second path
    * @return String
    */
   public static function getRelativePath($path1, $path2) {
-    $path1 = str_replace('\\', '/', $path1);
-    $path2 = str_replace('\\', '/', $path2);
-
-    // remove starting, ending, and double / in paths
-    $path1 = trim($path1,'/');
-    $path2 = trim($path2,'/');
-    while (substr_count($path1, '//')) $path1 = str_replace('//', '/', $path1);
-    while (substr_count($path2, '//')) $path2 = str_replace('//', '/', $path2);
-
-    // create arrays
-    $arr1 = explode('/', $path1);
-    if ($arr1 == array('')) {
-      $arr1 = array();
+    $arFrom = explode('/', rtrim($path1, '/'));
+    $arTo = explode('/', rtrim($path2, '/'));
+    while(count($arFrom) && count($arTo) && ($arFrom[0] == $arTo[0])) {
+      array_shift($arFrom);
+      array_shift($arTo);
     }
-    $arr2 = explode('/', $path2);
-    if ($arr2 == array('')) {
-      $arr2 = array();
-    }
-    $size1 = count($arr1);
-    $size2 = count($arr2);
-
-    // now the hard part :-p
-    $path='';
-    for($i=0; $i<min($size1,$size2); $i++) {
-      if ($arr1[$i] == $arr2[$i]) {
-        continue;
-      }
-      else {
-        $path = '../'.$path.$arr2[$i].'/';
-      }
-    }
-    if ($size1 > $size2) {
-      for ($i = $size2; $i < $size1; $i++) {
-        $path = '../'.$path;
-      }
-    }
-    else if ($size2 > $size1) {
-      for ($i = $size1; $i < $size2; $i++) {
-        $path .= $arr2[$i].'/';
-      }
-    }
-    return $path;
+    return str_pad("", count($arFrom) * 3, '../').implode('/', $arTo).'/';
   }
 
   /**

@@ -8,6 +8,7 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
 
@@ -129,7 +130,7 @@ function smarty_function_image($params, \Smarty_Internal_Template $template) {
     $extension = $matches[1];
 
     $destNameAbs = $template->cache_dir.md5($file.filectime($file).$requestedWidth.$requestedHeight.$sizemode).'.'.$extension;
-    $destName = URIUtil::makeRelative($destNameAbs, dirname($_SERVER['SCRIPT_FILENAME']).'/');
+    $destName = URIUtil::makeRelative($destNameAbs, dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/');
 
     // if the file does not exist in the cache, we have to create it
     $dateOrig = @fileatime($file);
