@@ -4,10 +4,17 @@
 
 \section secconfiguration Configuration
 
-The application is configured via one (or more) configuration file(s), which are parsed by the
-WCMFInifileParser class. The configuration parameters are defined by key-value pairs as they are
-used in the @em ini file format. The application interprets values, which are enclosed in curly brackets
-(@em {}), as arrays. Related parameters are arranged in sections.
+Application configuration is handled by implementations of
+\link wcmf::lib::config::Configuration `Configuration`\endlink. Currently wCMF
+provides an implementation for using [INI files](http://en.wikipedia.org/wiki/INI_file)
+(\link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink).
+
+In this format configuration parameters are defined by key-value pairs. Related
+parameters are arranged in sections.
+
+The application interprets values, which are enclosed in curly brackets
+(@em {}), as arrays
+
 @note Please note, that the framework interprets paths - if not explicitly indicated otherwise - as relative
 to the BASE path, which is defined in /application/base_dir.php. This is the root directory of /wcmf
 and /application by default.
