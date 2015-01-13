@@ -102,14 +102,14 @@ ant generate
 The database connection information is defined in the file `app/config/server.ini` and
 defaults to
 
-@code
+~~~~~~~~~~~~~{.ini}
 dbType = mysql
 dbHostName = 127.0.0.1
 dbName = wcmf_testapp
 dbUserName = root
 dbPassword =
 dbCharSet = utf8
-@endcode
+~~~~~~~~~~~~~
 
 Change these values to fit your local configuration. If privileges are granted,
 the database will be created automatically in the next step. If not, you have

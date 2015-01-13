@@ -15,8 +15,8 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
- * LogOutputStrategy outputs object changes to the logger category
- * LogOutputStrategy, loglevel info
+ * AuditingOutputStrategy outputs object changes to the logger category
+ * AuditingOutputStrategy, loglevel info
  *
  * @author ingo herwig <ingo@wemove.com>
  */

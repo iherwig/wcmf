@@ -5,23 +5,126 @@
 \section secconfiguration Configuration
 
 Application configuration is handled by implementations of
-\link wcmf::lib::config::Configuration `Configuration`\endlink. Currently wCMF
-provides an implementation for using [INI files](http://en.wikipedia.org/wiki/INI_file)
-(\link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink).
+\link wcmf::lib::config::Configuration `Configuration`\endlink.
 
-In this format configuration parameters are defined by key-value pairs. Related
-parameters are arranged in sections.
+Currently wCMF provides an implementation for using the
+[INI file](http://en.wikipedia.org/wiki/INI_file) format.
+\link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink
+handles ini files that consist of **key-value pairs** that are grouped in **sections**.
 
-The application interprets values, which are enclosed in curly brackets
-(@em {}), as arrays
+~~~~~~~~~~~~~{.ini}
+[sectionA]
+key1 = value1
+key2 = value2
 
-@note Please note, that the framework interprets paths - if not explicitly indicated otherwise - as relative
-to the BASE path, which is defined in /application/base_dir.php. This is the root directory of /wcmf
-and /application by default.
+[sectionB]
+key3 = value3
+~~~~~~~~~~~~~
 
-- @ref userconfig
-- @ref sections
-- @ref configexample
+Additionally it defines **array values** (enclosed in curly braces) and **inclusion**
+of additional files. Included files are defined in the `include` key of the `Config`
+section. Keys in the current file override keys from included files.
+
+The following example shows how to include an array of additional configuration
+files in order to separate concerns:
+
+~~~~~~~~~~~~~{.ini}
+[Config]
+include = {server.ini, persistence.ini, presentation.ini, security.ini}
+~~~~~~~~~~~~~
+
+@note While path values in the configuration are normally resolved relative to the
+value of the `WCMF_BASE` constant, the included files are expected to be located
+in the directory that is passed to the constructor of
+\link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink.
+
+\subsection di Dependency injection
+
+wCMF supports [Dependency injection](http://en.wikipedia.org/wiki/Dependency_injection)
+through the \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink class.
+This class implements _setter injection_, which means that dependencies are either
+set through a _setter method_ of the client class or a _public member variable_.
+
+Assembly details for client instances are defined in the application configuration
+in special sections containing a  `__class` key. The value of the key denotes the
+class to be used to create the client instance. All other keys are mapped to
+setters/members of that class. Complex dependencies of an instance may be set by
+using the `$` notation, which refers to another configuration section. If a section
+does not contain a `__class` key it is instantiated as an associative array.
+
+The following example demonstrates the pattern by means of the
+\link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink instance:
+
+~~~~~~~~~~~~~{.ini}
+[PersistenceFacade]
+__class = wcmf\lib\persistence\impl\DefaultPersistenceFacade
+mappers = $typeMapping
+logging = false
+logStrategy = $auditingLogStragegy
+
+[AuditingLogStragegy]
+__class = wcmf\lib\persistence\output\impl\AuditingOutputStrategy
+
+[TypeMapping]
+app.src.model.wcmf.DBSequence = $app_src_model_wcmf_DBSequenceRDBMapper
+app.src.model.wcmf.Lock = $app_src_model_wcmf_LockRDBMapper
+
+[app_src_model_wcmf_DBSequenceRDBMapper]
+__class = app\src\model\wcmf\DBSequenceRDBMapper
+connectionParams = $database
+
+[app_src_model_wcmf_LockRDBMapper]
+__class = app\src\model\wcmf\LockRDBMapper
+connectionParams = $database
+
+[Database]
+dbType = sqlite
+dbHostName = 127.0.0.1
+dbName = app/test-db.sq3
+dbUserName =
+dbPassword =
+dbCharSet = utf8
+~~~~~~~~~~~~~
+
+The first section defines that the instance named `PersistenceFacade` is an object of
+the class \link wcmf::lib::persistence::impl::DefaultPersistenceFacade `DefaultPersistenceFacade`\endlink.
+The _logging_ property is set to _false_, the _logStrategy_ property is set to an
+instance of \link wcmf::lib::persistence::output::impl::AuditingOutputStrategy `AuditingOutputStrategy`\endlink.
+The _TypeMapping_ section does not contain a `__class` key, which means that the
+_mappers_ property of `PersistenceFacade` will be an associative array. In our
+case it maps class names (e.g. _app.src.model.wcmf.DBSequence_) to mapper instances
+(e.g. `DBSequenceRDBMapper`). Further sections show that the _connectionParams_
+property of the `DBSequenceRDBMapper` instance is set to an associative array
+describing the database connection (section _Database_).
+
+@note Configuration section and key names are treated case-insensitive.
+
+The `PersistenceFacade` instance may be retrieved later by using the following
+code:
+
+~~~~~~~~~~~~~{.php}
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+~~~~~~~~~~~~~
+
+\subsubsection shareddi Shared and Non-Shared instances
+
+By default all instances created by \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink
+are _shared_ instances, which means, that they will be created on the first call
+and only returned by succeeding calls. If you want to create a _non-shared_ instance,
+you must use the `__shared` key in configuration and set it to _false_.
+
+The following example shows the configuration of a non-shared
+\link wcmf::lib::presentation::View `View`\endlink instance:
+
+~~~~~~~~~~~~~{.ini}
+[View]
+__class = wcmf\lib\presentation\view\impl\SmartyView
+__shared = false
+compileCheck = true
+caching = false
+cacheLifetime = 3600
+cacheDir = app/cache/smarty/
+~~~~~~~~~~~~~
 
 \subsection userconfig Configuration for individual users
 
@@ -277,207 +380,5 @@ In this section settings for the upload of media files are specified.
  uploadDir = path (relative to main.php !)
            ; specifies the directory, into which the SaveController uploads media files
            ; used in: class.SaveController.php, class.FormUtil.php
-@endverbatim
-
-\subsection configexample Example of a configuration file
-
-@verbatim
-
- [config]
-
- [classmapping]
- BackupController = wcmf/application/controller/admintool/class.BackupController.php
- AdminController = wcmf/application/controller/admintool/class.AdminController.php
- ConfigController = wcmf/application/controller/admintool/class.ConfigController.php
- PrincipalController = wcmf/application/controller/admintool/class.PrincipalController.php
- EditRightsController = wcmf/application/controller/admintool/class.EditRightsController.php
- MySQLBackupController = wcmf/application/controller/admintool/class.MySQLBackupController.php
- BatchController = wcmf/application/controller/class.BatchController.php
- LongTaskController = wcmf/application/controller/class.LongTaskController.php
- DeleteController = wcmf/application/controller/class.DeleteController.php
- DisplayController = wcmf/application/controller/class.DisplayController.php
- FailureController = wcmf/application/controller/class.FailureController.php
- InsertController = wcmf/application/controller/class.InsertController.php
- LoginController = wcmf/application/controller/class.LoginController.php
- PageExportController = wcmf/application/controller/class.PageExportController.php
- SimplePagingController = wcmf/application/controller/class.SimplePagingController.php
- SortController = wcmf/application/controller/class.SortController.php
- AssociateController = wcmf/application/controller/class.AssociateController.php
- ResourceTreeController = wcmf/application/controller/class.ResourceTreeController.php
- PagingController = wcmf/application/controller/class.PagingController.php
- SaveController = wcmf/application/controller/class.SaveController.php
- SimpleBatchController = wcmf/application/controller/class.SimpleBatchController.php
- SimpleLongTaskController = wcmf/application/controller/class.SimpleLongTaskController.php
- TreeViewController = wcmf/application/controller/class.TreeViewController.php
- ViewController = wcmf/application/controller/class.ViewController.php
- XMLExportController = wcmf/application/controller/class.XMLExportController.php
- CopyController = wcmf/application/controller/class.CopyController.php
- UserController = wcmf/application/controller/class.UserController.php
- ResourceListController = wcmf/application/controller/class.ResourceListController.php
- SearchController = wcmf/application/controller/class.SearchController.php
- SOAPController = wcmf/application/controller/class.SOAPController.php
- ChildrenListController = wcmf/application/controller/class.ChildrenListController.php
- NodeListController = wcmf/application/controller/class.NodeListController.php
- Controller = wcmf/lib/presentation/class.Controller.php
- UserRDB = application_1/include/model/wcmf/class.UserRDB.php
- UserRDBRDBMapper = application_1/include/model/wcmf/class.UserRDBRDBMapper.php
- RoleRDB = application_1/include/model/wcmf/class.RoleRDB.php
- RoleRDBRDBMapper = application_1/include/model/wcmf/class.RoleRDBRDBMapper.php
- NMUserRole = application_1/include/model/wcmf/class.NMUserRole.php
- NMUserRoleRDBMapper = application_1/include/model/wcmf/class.NMUserRoleRDBMapper.php
- Locktable = application_1/include/model/wcmf/class.Locktable.php
- LocktableRDBMapper = application_1/include/model/wcmf/class.LocktableRDBMapper.php
- Adodbseq = application_1/include/model/wcmf/class.Adodbseq.php
- AdodbseqRDBMapper = application_1/include/model/wcmf/class.AdodbseqRDBMapper.php
- LockManagerRDB = wcmf/lib/persistence/class.LockManagerRDB.php
- UserManagerRDB = wcmf/lib/security/class.UserManagerRDB.php
- View = wcmf/lib/presentation/class.View.php
- DefaultControlRenderer = wcmf/lib/presentation/class.DefaultControlRenderer.php
- DefaultValueRenderer = wcmf/lib/presentation/class.DefaultValueRenderer.php
- HTMLFormat = wcmf/lib/presentation/format/class.HTMLFormat.php
- JSONFormat = wcmf/lib/presentation/format/class.JSONFormat.php
- SOAPFormat = wcmf/lib/presentation/format/class.SOAPFormat.php
-
- [typemapping]
- UserRDB = UserRDBRDBMapper
- RoleRDB = RoleRDBRDBMapper
- NMUserRole = NMUserRoleRDBMapper
- Locktable = LocktableRDBMapper
- Adodbseq = AdodbseqRDBMapper
-
- [implementation]
- LockManager = LockManagerRDB
- UserManager = UserManagerRDB
- User = UserRDB
- Role = RoleRDB
- UserRole = NMUserRole
- View = View
- ControlRenderer = DefaultControlRenderer
- ValueRenderer = DefaultValueRenderer
- HTMLFormat = HTMLFormat
- JSONFormat = JSONFormat
- SOAPFormat = SOAPFormat
-
- [initparams]
- UserRDBRDBMapper = database
- RoleRDBRDBMapper = database
- NMUserRoleRDBMapper = database
- LocktableRDBMapper = database
- AdodbseqRDBMapper = database
-
- [converter]
-
- [actionmapping]
- ??fatal = FailureController
- ??delete = DeleteController
- DisplayController?? = DisplayController
- DisplayController??treeview = TreeViewController
- DisplayController??failure = FailureController
- DisplayController??definesearch = SearchController
- DisplayController??list = NodeListController
- DisplayController??edituser = UserController
- DisplayController??search = SearchController
- DisplayController??listchildren = ChildrenListController
- LoginController??ok = DisplayController
- UserController??ok = DisplayController
- ??cms = DisplayController
- ??display = DisplayController
- ??new = InsertController
- LoginController??failure = LoginController
- LoginController??dologin = LoginController
- ??login = LoginController
- ??logout = LoginController
- SimplePagingController?? = SimplePagingController
- ??sortup = SortController
- ??sortdown = SortController
- ??disassociate = AssociateController
- ??associate = AssociateController
- ResourceTreeController?? = ResourceTreeController
- ??browseresourcetree = ResourceTreeController
- ??save = SaveController
- TreeViewController?? = TreeViewController
- ??copy = CopyController
- UserController??save = UserController
- UserController?? = UserController
- ResourceListController?? = ResourceListController
- ResourceListController??delete = ResourceListController
- ??browseresources = ResourceListController
- SearchController?? = SearchController
- ??soapList = SOAPController
- ??soapCreate = SOAPController
- ??soapUpdate = SOAPController
- ??soapRead = SOAPController
- ??soapDelete = SOAPController
- ChildrenListController?? = ChildrenListController
- NodeListController?? = NodeListController
-
- [views]
- DisplayController?? = wcmf/application/views/displaynode.tpl
- FailureController?? = wcmf/application/views/displayfailure.tpl
- LoginController?? = wcmf/application/views/login.tpl
- ResourceTreeController?? = wcmf/application/views/resourcetree.tpl
- TreeViewController?? = wcmf/application/views/treeview.tpl
- UserController?? = wcmf/application/views/user.tpl
- ResourceListController?? = wcmf/application/views/resourcelist.tpl
- SearchController??definesearch = wcmf/application/views/searchpanel.tpl
- SearchController?? = wcmf/application/views/searchresult.tpl
- ChildrenListController?? = wcmf/application/views/childrenlist.tpl
- NodeListController?? = wcmf/application/views/nodelist.tpl
-
- [authorization]
-
- [roleconfig]
- administrators = admin.ini
-
- [database]
- dbType = mysql
- dbHostName = localhost
- dbName = wcmf
- dbUserName = wcmf
- dbPassword = geheim
-
- [smarty]
- templateDir = include/views/
- compileCheck = 1
-
- [cms]
- applicationTitle = DEFAULT
- localeDir = locale/
- libDir = ../wcmf/
- exportDir = ../../html/
- htmlBaseDir = ../../html/
- backupDir = backup/
- language = en_EN
- usegettext = 0
- debugView = 0
- logDBActions = 0
- logSQL = 0
- logExecuteTime = 0
- anonymous = 0
- locking = 1
- rootTypes = {}
-
- [media]
- uploadDir = ../../html/images/
-
- [htmlform]
- inputFieldNameDelimiter = -
- maxFileSize = 200000
- text = wcmf/application/views/forms/text.tpl
- textarea = wcmf/application/views/forms/textarea.tpl
- password = wcmf/application/views/forms/password.tpl
- select = wcmf/application/views/forms/select.tpl
- radio = wcmf/application/views/forms/radio.tpl
- checkbox = wcmf/application/views/forms/checkbox.tpl
- file = wcmf/application/views/forms/file.tpl
- fileex = wcmf/application/views/forms/fileex.tpl
- filebrowser = wcmf/application/views/forms/filebrowser.tpl
- linkbrowser = wcmf/application/views/forms/linkbrowser.tpl
- fckeditor = wcmf/application/views/forms/fckeditor.tpl
-
- [htmldisplay]
- text = wcmf/application/views/display/text.tpl
- image = wcmf/application/views/display/image.tpl
-
 @endverbatim
 */

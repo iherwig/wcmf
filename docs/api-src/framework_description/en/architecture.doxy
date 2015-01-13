@@ -105,7 +105,9 @@ actions may be defined freely.
 
 The format of the action keys is the following:
 
-@verbatim controller?context?action @endverbatim
+~~~~~~~~~~~~~{.ini}
+controller?context?action
+~~~~~~~~~~~~~
 
 Currently wCMF uses action keys in three different fields:
 
@@ -129,7 +131,7 @@ implemented in the method
 It checks action key lists against the following search values until a match is
 found:
 
-@verbatim
+~~~~~~~~~~~~~{.ini}
  1. controller?context?action
  2. controller??action
  3. controller?context?
@@ -137,7 +139,7 @@ found:
  5. ??action
  6. controller??
  7. ?context?
-@endverbatim
+~~~~~~~~~~~~~
 
 As a rule of thumb the action key which describes the state of the application the
 most accurate is favored.
@@ -147,12 +149,16 @@ __Examples:__
 Always execute the SaveController when action _update_ is requested, no matter which
 state the application is in:
 
-@verbatim ??update = wcmf\application\controller\SaveController @endverbatim
+~~~~~~~~~~~~~{.ini}
+??update = wcmf\application\controller\SaveController
+~~~~~~~~~~~~~
 
 Always execute the AuthorController when the application context is _author_ as
 long as no action is specified:
 
-@verbatim ?author? = app\src\controller\AuthorController @endverbatim
+~~~~~~~~~~~~~{.ini}
+?author? = app\src\controller\AuthorController
+~~~~~~~~~~~~~
 
 If no matching action key can be found,
 \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink
