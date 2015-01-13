@@ -5,7 +5,29 @@
 \section secconfiguration Configuration
 
 Application configuration is handled by implementations of
-\link wcmf::lib::config::Configuration `Configuration`\endlink.
+\link wcmf::lib::config::Configuration `Configuration`\endlink. To use the configuration
+througout the application, an instance of the appropriate implementation is
+passed to \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink. This class
+provides @ref secdi and access to the configuration.
+
+~~~~~~~~~~~~~{.php}
+$configPath = '../config/';
+$configFile = 'config.ini';
+
+// configure ObjectFactory
+$config = new InifileConfiguration($configPath);
+$config->addConfiguration($configFile);
+ObjectFactory::configure($config);
+
+// get a pre-configured instance
+$session = ObjectFactory::getInstance('session');
+
+// get a configuration value
+$config = ObjectFactory::getConfigurationInstance();
+$tz = $config->getValue('timezone', 'application');
+~~~~~~~~~~~~~
+
+\subsection secformat Configuration Format
 
 Currently wCMF provides an implementation for using the
 [INI file](http://en.wikipedia.org/wiki/INI_file) format.
@@ -13,11 +35,11 @@ Currently wCMF provides an implementation for using the
 handles ini files that consist of **key-value pairs** that are grouped in **sections**.
 
 ~~~~~~~~~~~~~{.ini}
-[sectionA]
+[SectionA]
 key1 = value1
 key2 = value2
 
-[sectionB]
+[SectionB]
 key3 = value3
 ~~~~~~~~~~~~~
 
@@ -38,7 +60,7 @@ value of the `WCMF_BASE` constant, the included files are expected to be located
 in the directory that is passed to the constructor of
 \link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink.
 
-\subsection di Dependency injection
+\subsection secdi Dependency injection
 
 wCMF supports [Dependency injection](http://en.wikipedia.org/wiki/Dependency_injection)
 through the \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink class.
@@ -106,7 +128,7 @@ code:
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 ~~~~~~~~~~~~~
 
-\subsubsection shareddi Shared and Non-Shared instances
+\subsubsection secshareddi Shared and Non-Shared instances
 
 By default all instances created by \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink
 are _shared_ instances, which means, that they will be created on the first call
