@@ -1,7 +1,7 @@
 /*!
 \page gettingstarted Getting started
 
-\section secgettingstarted Getting started
+# Getting started #
 
 The wCMF project mainly consists of two parts, the application framework and an
 application template.
@@ -15,13 +15,13 @@ on the model-view-controller pattern. The project's source code is hosted at
 If you manage your dependencies using [Composer](https://getcomposer.org/) you may
 want to add the following lines to your `composer.json`:
 
-@code
+~~~~~~~~~~~~~
 {
     "require-dev": {
         "wcmf/wcmf": "dev-master"
     }
 }
-@endcode
+~~~~~~~~~~~~~
 
 ## Default Application ##
 
@@ -43,7 +43,8 @@ To run the wCMF default application you will need the following:
 - Web server (e.g. Apache)
 - PHP
 - MySQL
-- UML Modeling tool (e.g. [Eclipse Papyrus](http://www.eclipse.org/papyrus/) or [Chronos Web Modeler](http://sourceforge.net/projects/olympos/))
+- UML Modeling tool (e.g. [Eclipse Papyrus](http://www.eclipse.org/papyrus/) or
+  [Chronos Web Modeler](http://sourceforge.net/projects/olympos/))
 - [Apache Ant](http://ant.apache.org/) for code generation and deployment
 
 ### Installation ###
@@ -76,16 +77,16 @@ We assume that the application's root directory is accessible via the url
 The application uses Composer to manage external dependencies.
 Execute the following command in the root directory of the application to fetch them:
 
-@code
+~~~~~~~~~~~~~
 composer install
-@endcode
+~~~~~~~~~~~~~
 
 #### Model the domain ####
 
 The application ships with a demo UML model that may be used as a quick start.
 It's located in `model/model.uml`. Base models for those who want to start
 from scratch are located in _model/base/cwm/_ and _model/base/papyrus/_. An
-in-depth guide on modeling for wCMF may be found in the section @ref modeling.
+in-depth guide on modeling for wCMF may be found in the section \ref modeling.
 
 #### Generate the code ####
 
@@ -93,9 +94,9 @@ A code generator is used to generate class- and configuration files from the dom
 model. Execute the following command in the _build_ directory of the application in
 order to run the generator:
 
-@code
+~~~~~~~~~~~~~
 ant generate
-@endcode
+~~~~~~~~~~~~~
 
 #### Setup the database connection ####
 

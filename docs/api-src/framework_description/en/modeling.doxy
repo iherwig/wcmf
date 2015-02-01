@@ -2,7 +2,7 @@
 \page modeling Modeling
 <div class="has-toc"></div>
 
-\section secmodeling Modeling
+# Modeling # {#model_main}
 
 wCMF applications are based on a model. The model defines the key aspects of the
 application on a higher abstraction level than code does. You can think of it as
@@ -15,6 +15,8 @@ manual additions.
 
 We believe that this approach helps to develop a clear concept of the application
 and improves code quality and maintainability dramatically.
+
+## Creating the model ## {#model_create}
 
 Technically the model is an [UML](http://en.wikipedia.org/wiki/Unified_Modeling_Language)
 model that uses the Chronos [profile](http://en.wikipedia.org/wiki/Profile_%28UML%29) from the
@@ -31,10 +33,11 @@ generator from the Olympos project.
 In the following sections we describe how to model the different aspects of
 the application.
 
-## Domain classes ##
+### Domain classes ### {#model_classes}
 
-## Application flow ##
+### Application flow ### {#model_flow}
 
-## Configuration ##
+### Configuration ### {#model_config}
 
+## Running the generator ## {#model_generate}
 */

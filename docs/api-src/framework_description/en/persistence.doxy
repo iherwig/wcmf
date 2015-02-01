@@ -2,176 +2,203 @@
 \page persistence Persistence
 <div class="has-toc"></div>
 
-\section secpersistence Persistence
+# Persistence # {#pers_main}
 
-\subsection howtotype Definition of the data model
+Persistence is related to that part of the domain model, which we could call
+the data model.
 
-The data model defines the domain classes. In principle the following steps are necessary
-to to make the domain classes available in the application:
+## Definition of the data model ## {#pers_datamodel}
 
--# Definition and creation of the database tables.@n
--# Implementation of the PersistenceMapper classes, which map the domain classes to the tables.@n
--# Creation of special domain classes, if the Node class is not sufficient.@n
+The data model consists of domain classes whose instances are persisted in the storage.
+The following steps need to be accomplished in order to make domain class instances
+persistent.
 
-Basically it doesn't matter, in which format the application data is stored. To load and store
-data application developers solely have to communicate with the PersistenceFacade.
-The PersistenceMapper classes have the actual knowledge of how to access the data.
-This abstraction makes it for instance possible to easily migrate the data storage from file based
-to databased. Only the mappers have to be exchanged. On the other hand it's also possible - an
-adequate implementation of the mappers assumed - to access arbitrary database schemes, which
-eases the connection of the wCMF to existing data sources.
+- Definition and creation of the database tables, if using a database storage.
+- Implementation of the \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink
+  classes, which map the domain classes to these tables, or anything else that is used as storage.
+- Implementation of the domain classes as subclasses of \link wcmf::lib::model::Node `Node`\endlink.
+- Configuration of the persistence layer.
 
-In practice it has been proved as advantageous to use a database as storage medium, because it has
-a better performance and can handle bigger amounts of data much better than XML files can.@n
-It is recommended to define one table for each domain class in the database scheme (e.g. @em author, @em article).
-On one hand it makes the import and export from and to other applications easier and on the other
-hand the access to the data is optimized compared to storing all data in one table, because then
-additional joins would be required to determine data types and other meta information. In addition the
-table columns can be more easily adjusted to the needs of the domain classes (in an extreme case all data
-must be stored as BLOB in an universal data table). NodeToSingleTableMapper implements the storage of all
-data in one table, which - for the said reasons - isn't recommended.
+@note If you are using the generator to create the application from a model
+(see \ref modeling), all necessary code will be generated automatically.
 
-Proceeding on these assumptions the creation of the data model becomes a lot simpler.
+### Database tables ### {#pers_tables}
 
-\subsubsection howtotables Definition of the database tables
+Still the most common storage for web applications is a _SQL_ database (e.g.
+[MySQL](http://www.mysql.com/)). It is also wCMF's default storage. Although not
+strictly necessary it is recommended to use one database table for each persistent
+class, where each class property maps to one table column and each row stores one
+instance. The object identity is stored in the primary key column, which is named
+_id_ by default.
 
-We start with step 1. Assuming we're in the fortunate situation of defining the database tables
-ourselves. Then we proceed as follows.
+@note wCMF uses a table called `DBSequence` for retrieving the next id value used for
+insertion, since _autoincrement_ columns are not supported on all database servers.
 
-- For each domain class we create one table.
-- For each attribute of a domain class we define a row with the appropriate datatype.
+#### Relations #### {#pers_relations}
 
-Further attributes follow a scheme, which is predefined by the NodeUnifiedRDBMapper. This
-makes the creation of the mappers easier:
+The following two relations types must be considered, when modeling the data
+tables:
 
-- Each table gets a primary key named @em id (int(11))
-- If one table depends on another, it gets a foreign key @em fk_table_id (int(11)), where
-  @em table stands for the name of the parent table.
+- **One-To-Many** relations are realized by adding a foreign key column to the
+child table (_many_-side), which points to the parent table (_one_-side). This
+column is named _fk_ _ + parent table name  + _ _id_ by default (e.g. _fk_author_id_).
 
-If an N to M relation should be established between two domain classes (tables), a connection
-table must be defined. This table contains two primary keys, which point to the two connected
-tables.
+- **Many-To-Many** relations between two domain classes, are established by defining
+a connection table. This table contains two primary keys, which point to the two
+connected tables.
 
-As an example serves a domain class @em Article, which is related to an @em Author:
-@verbatim
- CREATE TABLE `Article ` (
- `id` int(11) NOT NULL default '0',
- `fk_author_id` int(11) default NULL,
- `headline` VARCHAR(255),
- `text` TEXT,
- `sortkey` INT(3),
- PRIMARY KEY (`id`)
- ) TYPE=MyISAM;
-@endverbatim
+### Persistence Mappers ### {#pers_mappers}
 
-If the database tables already exist, this step is skipped. This however means, that more work
-must be put into the implementation of the PersistenceMapper.
+wCMF uses persistence mapper classes to communicate between the application and
+the persistent storage (see \ref arch_main). These classes implement the
+\link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink interface,
+which defines methods for all persistence actions. By using this pattern wCMF
+does not make any assumptions about the actual storage, which can be flat files,
+a database or anything else a mapper is able to handle. This approach also makes
+it easy to connect an existing storage to a newly created wCMF application.
 
-\subsubsection howtomapper Implementation of the PersistenceMapper
+In order to simplify the implementation of mapper classes, wCMF already contains
+a class hierarchy for a common mapping approach, which maps each concrete class
+to one database table ([Concrete Table Inheritance]
+(http://martinfowler.com/eaaCatalog/concreteTableInheritance.html)). In this
+hierarchy \link wcmf::lib::model::mapper::RDBMapper `RDBMapper`\endlink handles
+the communication with the relational database, while
+\link wcmf::lib::model::mapper::NodeUnifiedRDBMapper `NodeUnifiedRDBMapper`\endlink
+defines the actual mapping rules. Application developers simply need to implement
+one subclass of \link wcmf::lib::model::mapper::NodeUnifiedRDBMapper `NodeUnifiedRDBMapper`\endlink
+for each persistent domain class, which declares the mapping of the attributes and
+relations of that class.
 
-Of course it's always possible to write own mappers. These must inherit from PersistenceMapper
-and implement the abstract methods given there.
-Since the framework already provides mappers, it's easier to use these as base classes. In case of a relational
-database it's possible to derive custom mappers from NodeRDBMapper. Then the methods for defining
-the SQL statements must be implemented.
+@note All mapper classes, that are created by the generator are
+\link wcmf::lib::model::mapper::NodeUnifiedRDBMapper `NodeUnifiedRDBMapper`\endlink
+subclasses.
 
-Assuming the database tables are created by the scheme above, we can proceed to the next step
-and use NodeUnifiedRDBMapper as baseclass for our mappers. After that we have to implement the
-methods RDBMapper::getType, NodeRDBMapper::createObject, NodeUnifiedRDBMapper::getTableName,
-PersistenceMapper::getPkNames, NodeUnifiedRDBMapper::getMyFKColumnNameImpl and
-NodeUnifiedRDBMapper::getObjectDefinitionImpl. These methods merely ask for properties of
-the domain class.
+### Domain Classes ### {#pers_classes}
 
-The method NodeUnifiedRDBMapper::getObjectDefinitionImpl is the most important method. It supplies an
-associative array, in which the attributes of the domain class (@em _datadef) the parent and the child
-domain classes (@em _children) are defined. In addition the Article contains a reference to
-the name of the Author (@em _ref), which allows to access the Author without loading it.@n
-Detailed information on the implemetation can be found under NodeUnifiedRDBMapper::getObjectDefinitionImpl.
+Domain class instances hold the data that are used in the application and persisted
+in the storage.
 
-For configuring the domain classes in the configuration file see @ref sectypemapping.
+Persistent domain classes either inherit from
+- \link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink, which
+is a container with value getter and setter methods, or from
+- \link wcmf::lib::model::Node `Node`\endlink, which adds methods for managing
+relations.
 
-\subsubsection howtodomainclass Creating the domain classes
+These two classes are completely generic, the actual identity of the domain class -
+that is the _properties_ and the _relations_ - are defined by the related
+\link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink.
 
-The framework's PersistenceMapper work with the class Node, a subclass of PersistentObject.
-Different domain classes are created by specifying the type attribute (Node::getType) and
-a set of attributes (Node::getValueNames).
-So the class Node is a generic data container, into which data can be put by the method
-Node::setValue and retrieved by the method Node::getValue. For most applications this will
-do.
+So if no additional domain logic is required in the domain class, it would be
+sufficient to use \link wcmf::lib::model::Node `Node`\endlink as domain class.
+But in many cases you will want to execute custom code for persistent hooks or
+validation and therefor create a custom subclass of
+\link wcmf::lib::model::Node `Node`\endlink.
 
-If however more specialized domain classes are required for the application, they must
-be created by the PersistenceMapper. In this case subclasses of NodeRDBMapper must
-override the method NodeRDBMapper::createObject, which in turn creates instances of the
-special domain class.
+@note All domain classes, that are created by the generator are
+\link wcmf::lib::model::Node `Node`\endlink subclasses.
 
-\subsection howtonode Working with the class Node
+### Configuration ### {#pers_config}
 
-\subsubsection howtoload Loading a data structure
+The configuration tells the application which mapper classes are responsible
+for which domain classes. This assignment is defined in the `TypeMapping`
+configuration section. The following example shows the appropriate entries
+for the `Author` domain class:
 
-@code
-   $persistenceFacade = &PersistenceFacade::getInstance();
+~~~~~~~~~~~~~{.ini}
+[TypeMapping]
+app.src.model.Author = $app_src_model_AuthorRDBMapper
 
-   // load model
-   $oid = PersistenceFacade::composeOID(array('type' => 'section', 'id' => array('1')));
-   $node = &$persistenceFacade->load($oid, BUILDDEPTH_INFINITE);
-   if ($node == null)
-     Message::error("A Node with object id ".$oid." does not exist.";
-@endcode
+[app_src_model_AuthorRDBMapper]
+__class = app\src\model\AuthorRDBMapper
+connectionParams = $database
+
+[Database]
+dbType = sqlite
+dbHostName = 127.0.0.1
+dbName = app/test-db.sq3
+dbUserName =
+dbPassword =
+dbCharSet = utf8
+~~~~~~~~~~~~~
+
+See \ref configuration for details about the configuration format.
+
+----------------------------------------------------------------------
+
+## Using the class Node ## {#pers_node}
+
+### Loading objects ### {#pers_load}
+
+~~~~~~~~~~~~~{.php}
+$persistenceFacade = &PersistenceFacade::getInstance();
+
+// load model
+$oid = PersistenceFacade::composeOID(array('type' => 'section', 'id' => array('1')));
+$node = &$persistenceFacade->load($oid, BUILDDEPTH_INFINITE);
+if ($node == null)
+  Message::error("A Node with object id ".$oid." does not exist.";
+~~~~~~~~~~~~~
 
 The example loads the section node with id 1 and all children nodes. If the oid of the
 requested node is not known either use the appropriate methods of PersistenceFacade
 (e.g. PersistenceFacade::getOID) or in more complex cases do an ObjectQuery.
 
-\subsubsection howtoiter Traversing a data structure
+### Searching objects ### {#pers_search}
 
-@code
-   $iterator = new NodeIterator($node);
-   while(!($iterator->isEnd()))
-   {
-     $currentObject = &$iterator->getCurrentObject();
-     Message::trace($currentObject->getOID());
-     $iterator->proceed();
-   }
-@endcode
+### Traversing objects ### {#pers_iter}
+
+~~~~~~~~~~~~~{.php}
+$iterator = new NodeIterator($node);
+while(!($iterator->isEnd()))
+{
+  $currentObject = &$iterator->getCurrentObject();
+  Message::trace($currentObject->getOID());
+  $iterator->proceed();
+}
+~~~~~~~~~~~~~
 
 The example outputs the object ids of all nodes that are descendents of $node.
 
-\subsubsection howtooutput Output a data structure into different formats
+### Output objects ### {#pers_output}
 
-@code
-   $iterator = new NodeIterator($node);
+~~~~~~~~~~~~~{.php}
+$iterator = new NodeIterator($node);
 
-   // Output into dot format
-   $filename = "graph.dot";
-   $dotOS = new DotOutputStrategy($filename);
-   $ov = new OutputVisitor($dotOS);
-   $ov->startIterator($iterator);
+// Output into dot format
+$filename = "graph.dot";
+$dotOS = new DotOutputStrategy($filename);
+$ov = new OutputVisitor($dotOS);
+$ov->startIterator($iterator);
 
-   iterator->reset($node);
+iterator->reset($node);
 
-   // Output into XML format
-   $filename = "graph.xml";
-   $xmlOS = new XMLOutputStrategy($filename);
-   $ov->setOutputStrategy($xmlOS);
-   $ov->startIterator($iterator);
-@endcode
+// Output into XML format
+$filename = "graph.xml";
+$xmlOS = new XMLOutputStrategy($filename);
+$ov->setOutputStrategy($xmlOS);
+$ov->startIterator($iterator);
+~~~~~~~~~~~~~
 
-\subsubsection howtomodify Modifying a data structure
+### Modifying objects ### {#pers_modify}
 
-@code
-   $node->setValue('text', 'hello world!', DATATYPE_ATTRIBUTE);
+~~~~~~~~~~~~~{.php}
+// Create
 
-   // Saving changes
-   // If one node has been modified
-   $node->save();
+$node->setValue('text', 'hello world!', DATATYPE_ATTRIBUTE);
 
-   // If several connected nodes have been modified
-   $iterator = new NodeIterator($node);
-   $cv = new CommitVisitor();
-   $cv->startIterator($iterator);
-@endcode
+// Saving changes
+// If one node has been modified
+$node->save();
 
-\subsection howtoconcurrency Concurrency
+// If several connected nodes have been modified
+$iterator = new NodeIterator($node);
+$cv = new CommitVisitor();
+$cv->startIterator($iterator);
+
+// Delete
+~~~~~~~~~~~~~
+
+## Concurrency ## {#pers_concurrency}
 
 If more than one user works with the application at the same time, conflicts can occur, if two
 users want to edit the same object concurrently. In this case the first user can request
@@ -179,22 +206,23 @@ a lock on that object, which only allows reading access to succeeding users. Thi
 be transfered to all instances loaded in the future as long until the user unlocks the object,
 which happens automatically upon execution of an action (call to main.php).
 In the sourcecode this looks as follows:
-@verbatim
- $lockManager = &LockManager::getInstance();
- $object = &$persistenceFacade->load($this->_request->getValue('oid'), BUILDDEPTH_INFINITE);
 
- // if the object is locked by another user we retrieve the lock to show a message
- $lock = $object->getLock();
- if ($lock != null)
- {
-   $lockMsg .= $lockManager->getLockMessage($lock, $recipe->getName());
- }
- else
- {
-   // try to lock object
-   $lockManager->aquireLock($this->_request->getValue('oid'));
- }
-@endverbatim
+~~~~~~~~~~~~~{.php}
+$lockManager = &LockManager::getInstance();
+$object = &$persistenceFacade->load($this->_request->getValue('oid'), BUILDDEPTH_INFINITE);
+
+// if the object is locked by another user we retrieve the lock to show a message
+$lock = $object->getLock();
+if ($lock != null)
+{
+  $lockMsg .= $lockManager->getLockMessage($lock, $recipe->getName());
+}
+else
+{
+  // try to lock object
+  $lockManager->aquireLock($this->_request->getValue('oid'));
+}
+~~~~~~~~~~~~~
 
 The functionality described above is imlemented in the method LockManager::handleLocking,
 with the only difference that this method only acquires a lock in cases in which the
@@ -202,5 +230,5 @@ user is allowed to update the object.@n
 An object, which is loaded by another user is set to non-editable (@em is_editable = false)
 automatically upon loading.
 
-\subsection howtotransactions Transactions
+## Transactions ## {#pers_tx}
 */

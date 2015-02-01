@@ -2,13 +2,13 @@
 \page configuration Configuration
 <div class="has-toc"></div>
 
-\section secconfiguration Configuration
+# Configuration # {#conf_main}
 
 Application configuration is handled by implementations of
 \link wcmf::lib::config::Configuration `Configuration`\endlink. To use the configuration
 througout the application, an instance of the appropriate implementation is
 passed to \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink. This class
-provides @ref secdi and access to the configuration.
+provides \ref conf_di and access to the configuration.
 
 ~~~~~~~~~~~~~{.php}
 $configPath = '../config/';
@@ -27,7 +27,7 @@ $config = ObjectFactory::getConfigurationInstance();
 $tz = $config->getValue('timezone', 'application');
 ~~~~~~~~~~~~~
 
-\subsection secformat Configuration Format
+## Configuration Format ## {#conf_format}
 
 Currently wCMF provides an implementation for using the
 [INI file](http://en.wikipedia.org/wiki/INI_file) format.
@@ -60,7 +60,7 @@ value of the `WCMF_BASE` constant, the included files are expected to be located
 in the directory that is passed to the constructor of
 \link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink.
 
-\subsection secdi Dependency injection
+## Dependency injection ## {#conf_di}
 
 wCMF supports [Dependency injection](http://en.wikipedia.org/wiki/Dependency_injection)
 through the \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink class.
@@ -128,7 +128,7 @@ code:
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 ~~~~~~~~~~~~~
 
-\subsubsection secshareddi Shared and Non-Shared instances
+### Shared and Non-Shared instances ### {#conf_shareddi}
 
 By default all instances created by \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink
 are _shared_ instances, which means, that they will be created on the first call
@@ -136,7 +136,7 @@ and only returned by succeeding calls. If you want to create a _non-shared_ inst
 you must use the `__shared` key in configuration and set it to _false_.
 
 The following example shows the configuration of a non-shared
-\link wcmf::lib::presentation::View `View`\endlink instance:
+\link wcmf::lib::presentation::view::View `View`\endlink instance:
 
 ~~~~~~~~~~~~~{.ini}
 [View]
@@ -148,64 +148,99 @@ cacheLifetime = 3600
 cacheDir = app/cache/smarty/
 ~~~~~~~~~~~~~
 
-\subsection userconfig Configuration for individual users
+## Configuration for individual users ## {#conf_peruser}
 
-In the table @em user of the database scheme (see also @ref dbschema) each user can have her own configuration
-file assigned. This will be loaded after the standard configuration (config.ini) and extends its settings.
-If two keys have the same name the one from the user configuration overwrites the standard one. Using the @em roleconfig
-configuration section, you can easily asign configuration files to groups (see below).
+wCMF's user base class \link wcmf::lib::security::principal::impl::AbstractUser `AbstractUser`\endlink
+has a persistent property `config` which may be used to set a individual configuration
+for a user. This will be loaded after the standard configuration and extends its settings.
+If two keys have the same name the one from the user configuration overwrites the standard one.
+Using the _RoleConfig_ configuration section, you can easily assign configuration files
+to groups:
 
-\subsection sections Configuration file sections
+~~~~~~~~~~~~~{.ini}
+[RoleConfig]
+administrators = admin.ini
+~~~~~~~~~~~~~
 
-The following sections are known to the framework classes. Whatever parameter is necessary for the application
-can be defined in further sections and can be read using the methods of the WCMFIniFileParser.
+If a user is added to a listed role, the given configuration file will be automatically
+assigned to it, if no individual configuration is set yet.
+
+## Default configuration files ## {#conf_default}
+
+The following sections describe the configuration files that are created from
+the default application's model.
+
+### config.ini ### {#conf_config_ini}
+
+The main configuration file includes all other configuration files
+
+### permissions.ini ### {#conf_permissions_ini}
+
+### presentation.ini ### {#conf_presentation_ini}
+
+### security.ini ### {#conf_security_ini}
+
+### server.ini ### {#conf_server_ini}
+
+## Logging configuration ## {#conf_logging}
+
+-------------------------------------------------------------------------------
 
 \subsubsection secconfig [config]
 This section refers to the configuration files. The following keys are known to the framework::
-@verbatim
- include          = array with configuration files
-                  ; allows the inclusion of further configuration files
-                  ; (Included values don't overwrite the current)
-                  ; used in: class.InifileParser.php
- hiddenSections   = array with sections
-                  ; allows the hiding of sections in the admintool
-                  ; used in: class.InifileParser.php
- readonlySections = array with sections
-                  ; allows the protection of sections in the admintool
-                  ; used in: class.InifileParser.php
-@endverbatim
+
+~~~~~~~~~~~~~{.ini}
+include          = array with configuration files
+                 ; allows the inclusion of further configuration files
+                 ; (Included values don't overwrite the current)
+                 ; used in: class.InifileParser.php
+hiddenSections   = array with sections
+                 ; allows the hiding of sections in the admintool
+                 ; used in: class.InifileParser.php
+readonlySections = array with sections
+                 ; allows the protection of sections in the admintool
+                 ; used in: class.InifileParser.php
+~~~~~~~~~~~~~
 
 \subsubsection secclassmapping [classmapping]
 Since %Controller, %PersistenceMapper and other classes in the configuration file's sections are only
 labeled with their classnames, the framework needs information, in which files the class definitions can be
 found. In the section @em classmapping therefore a corresponding definition file for each class is given.
-@verbatim classname = path_to/classfilename @endverbatim
+
+~~~~~~~~~~~~~{.ini}
+classname = path_to/classfilename
+~~~~~~~~~~~~~
 
 \subsubsection sectypemapping [typemapping]
-The relation between domain classes and their PersistenceMappers (see @ref persistence) is set in the
+The relation between domain classes and their PersistenceMappers (see \ref persistence) is set in the
 section @em typemapping. A @em * as key means that all types, which are not specified, will be handled by
 the assigned %PersistenceMapper. The PersistenceFacade uses these information to find the appropriate
 %PersistenceMapper classes for the domain classes.
-@verbatim type = mapperClass @endverbatim
+
+~~~~~~~~~~~~~{.ini}
+type = mapperClass
+~~~~~~~~~~~~~
 
 \subsubsection secimplementation [implementation]
 In some cases the framework offers different implementations for abstract classes. At the moment this refers
 to basic services, which access the data storage (database, XML), e.g. AuthUser. The implementation, which
 should be used by the framework can be specified in this section. For the following classes an implementation
 can be chosen:
-@verbatim
- LockManager = LockManagerRDB|BusyLockManager|NullLockManager
- UserManager = UserManagerRDB|UserManagerXML
- User = UserRDB|UserXML
- Role = RoleRDB|RoleXML
- UserRole = NMUserRole
- View = View|NullView
- ControlRenderer = DefaultControlRenderer
- ValueRenderer = DefaultValueRenderer
- HTMLFormat = HTMLFormat
- JSONFormat = JSONFormat
- SOAPFormat = SOAPFormat
-@endverbatim
+
+~~~~~~~~~~~~~{.ini}
+LockManager = LockManagerRDB|BusyLockManager|NullLockManager
+UserManager = UserManagerRDB|UserManagerXML
+User = UserRDB|UserXML
+Role = RoleRDB|RoleXML
+UserRole = NMUserRole
+View = View|NullView
+ControlRenderer = DefaultControlRenderer
+ValueRenderer = DefaultValueRenderer
+HTMLFormat = HTMLFormat
+JSONFormat = JSONFormat
+SOAPFormat = SOAPFormat
+~~~~~~~~~~~~~
+
 Furthermore this mechanism allows developers to provide own implementations of the abstract classes.
 
 \subsubsection secinitparams [initparams]
@@ -214,34 +249,48 @@ these parameters can be grouped in sections (e.g. @em [database]) and referenced
 @em initparams. The keys are the classnames and the values the corresponding parameter sections.
 The key-value pairs of the parameter section will be passed as associative array to the constructor
 upon creation of the objects.
-@verbatim class = initsection @endverbatim
+
+~~~~~~~~~~~~~{.ini}
+class = initsection
+~~~~~~~~~~~~~
 
 \subsubsection secconverter [converter]
-In this section DataConverters for types are configured (see @ref persistence):
-@verbatim type = converterClass @endverbatim
+In this section DataConverters for types are configured (see \ref persistence):
+
+~~~~~~~~~~~~~{.ini}
+type = converterClass
+~~~~~~~~~~~~~
 
 \subsubsection secactionmapping [actionmapping]
 In the section @em actionmapping the actual application flow is defined. This is achieved by defining
 the transition from one controller to the next.@n
-The key is an action key (see @ref actionkey), which clearly describes the state the application is
+The key is an action key (see \ref actionkey), which clearly describes the state the application is
 in before the transition. The value sets the next controller to execute. The ActionMapper uses this
 information to determine which Controller is executed next.
-@verbatim controllerA?context?action = controllerB @endverbatim
+
+~~~~~~~~~~~~~{.ini}
+controllerA?context?action = controllerB
+~~~~~~~~~~~~~
 
 \subsubsection secviews [views]
 For each controller a view can be defined dependent on its context and action, which is described
 by its Smarty template (.tpl file). In the section @em views each action key can have a view template
-assigned (see @ref actionkey). The controller uses this information to determine its view.
-@verbatim controllerA?context?action = view @endverbatim
+assigned (see \ref actionkey). The controller uses this information to determine its view.
+
+~~~~~~~~~~~~~{.ini}
+controllerA?context?action = view
+~~~~~~~~~~~~~
 
 \subsubsection secauthorization [authorization]
-The Authorization is based on action keys (see @ref actionkey), whereby the following actions can be
+The Authorization is based on action keys (see \ref actionkey), whereby the following actions can be
 defined by the individual parts of the key:
-@verbatim
- controller?context?action ; an action in the application flow
- type?context?action       ; an action on a domain class (read, update, delete, create)
- oid?context?action        ; an action on a domain object (read, update, delete, create)
-@endverbatim
+
+~~~~~~~~~~~~~{.ini}
+controller?context?action ; an action in the application flow
+type?context?action       ; an action on a domain class (read, update, delete, create)
+oid?context?action        ; an action on a domain object (read, update, delete, create)
+~~~~~~~~~~~~~
+
 To each of these actions different roles can be assigned (comma separated), for which a permission
 is granted (@em +) or denied (@em -). The role @em * stands for all roles.@n
 If a permission is not explicitly granted, it is considered as denied. For not listed Aktion Keys the
@@ -250,157 +299,172 @@ authorize an AuthUser for an action.
 
 The following code shows an example, where the creation of Category instances is only allowed for users having
 the @em administrators role:
-@verbatim Category??create = -authors +administrators @endverbatim
+
+~~~~~~~~~~~~~{.ini}
+Category??create = -authors +administrators
+~~~~~~~~~~~~~
 
 \subsubsection secroleconfig [roleconfig]
 Allows auto assignment of an additional configuration file for different user roles. If a user is added
 to a listed role, then the given configuration file will be automatically assigned by the UserManager
-(see also @ref userconfig).
-@verbatim rolename = configurationfile @endverbatim
+(see also \ref userconfig).
+
+~~~~~~~~~~~~~{.ini}
+rolename = configurationfile
+~~~~~~~~~~~~~
 
 For example if users of the @em administrators role should always use the admin.ini configuration file
 you could add the following entry:
-@verbatim administrators = admin.ini @endverbatim
+
+~~~~~~~~~~~~~{.ini}
+administrators = admin.ini
+~~~~~~~~~~~~~
 
 \subsubsection seccms [cms]
 This section refers to the general application configuration. The following keys are known to the framework::
-@verbatim
- applicationTitle = application title
-                  ; specifies the title which appears in the default application
-                  ; used in: class.Controller.php, locale.php
- rootTypes        = array of domain classes
-                  ; declaration of types, which don't have parent types to allow them to be created
-                  ; on the top level of the default application
-                  ; used in: class.DisplayController.php, class.TreeViewController.php,
-                  ;               class.XMLExportController.php, graph.php
- anonymous        = 0|1
-                  ; indicates, if the user must authenticate himself upon application start.
-                  ; If the value is 1 the rights management is also disabled.
-                  ; used in: class.LoginController.php, class.RightsManager.php
- exportDir        = path (relative to main.php !)
-                  ; sets the root directory for the export of static pages
-                  ; used in: class.PageExportController.php
- htmlBaseDir      = path (relative to main.php !)
-                  ; sets the root directory for the html output
-                  ; used in: class.LinkConverter.php
- backupDir        = path (relative to main.php !)
-                  ; sets the root directory for backups
-                  ; used in: class.BackupController.php
- libDir           = path (relative to main.php !)
-                  ; sets the root directory of the framework
-                  ; used in: class.TreeViewController.php, resource.lib.php, class.FormUtil.php
- localeDir        = path (relative to main.php !)
-                  ; sets the language directory of the application
-                  ; used in: main.php, class.I18nUtil.php, po2array.php
- logDBActions     = 0|1
-                  ; specifies, whether database access should be logged in the logfile
-                  ; used in: main.php
- logSQL           = 0|1
-                  ; specifies, whether the logging of the database layer is activated
-                  ; ADOdb then logs all access in the table adodb_logsql
-                  ; used in: class.NodeRDBMapper.php, class.NodeToSingleTableMapper.php,
-                  ;               class.LockManagerRDB.php, class.AuthUserRDB.php, class.UserManagerRDB.php
- logExecuteTime   = 0|1
-                  ; specifies, whether to log the time each controller needs to execute
-                  ; used in: class.ActionMapper.php
- debugView        = 0|1
-                  ; specifies, whether Smarty should create debug output in a popup window
-                  ; used in: class.Controller.php
- language         = language code (e.g. en_EN)
-                  ; specifies the application's language (see Message::get)
-                  ; used in: main.php, locale.php
- usegettext       = 0|1
-                  ; specifies, whether the function gettext should be used for the localization of the
-                  ; application (see Message::get).
-                  ; used in: class.Message.php
- locking          = 0|1
-                  ; specifies, whether data is locked when it's opened by another user
-                  ; used in: class.LockManager.php
-@endverbatim
+
+~~~~~~~~~~~~~{.ini}
+applicationTitle = application title
+                 ; specifies the title which appears in the default application
+                 ; used in: class.Controller.php, locale.php
+rootTypes        = array of domain classes
+                 ; declaration of types, which don't have parent types to allow them to be created
+                 ; on the top level of the default application
+                 ; used in: class.DisplayController.php, class.TreeViewController.php,
+                 ;               class.XMLExportController.php, graph.php
+anonymous        = 0|1
+                 ; indicates, if the user must authenticate himself upon application start.
+                 ; If the value is 1 the rights management is also disabled.
+                 ; used in: class.LoginController.php, class.RightsManager.php
+exportDir        = path (relative to main.php !)
+                 ; sets the root directory for the export of static pages
+                 ; used in: class.PageExportController.php
+htmlBaseDir      = path (relative to main.php !)
+                 ; sets the root directory for the html output
+                 ; used in: class.LinkConverter.php
+backupDir        = path (relative to main.php !)
+                 ; sets the root directory for backups
+                 ; used in: class.BackupController.php
+libDir           = path (relative to main.php !)
+                 ; sets the root directory of the framework
+                 ; used in: class.TreeViewController.php, resource.lib.php, class.FormUtil.php
+localeDir        = path (relative to main.php !)
+                 ; sets the language directory of the application
+                 ; used in: main.php, class.I18nUtil.php, po2array.php
+logDBActions     = 0|1
+                 ; specifies, whether database access should be logged in the logfile
+                 ; used in: main.php
+logSQL           = 0|1
+                 ; specifies, whether the logging of the database layer is activated
+                 ; ADOdb then logs all access in the table adodb_logsql
+                 ; used in: class.NodeRDBMapper.php, class.NodeToSingleTableMapper.php,
+                 ;               class.LockManagerRDB.php, class.AuthUserRDB.php, class.UserManagerRDB.php
+logExecuteTime   = 0|1
+                 ; specifies, whether to log the time each controller needs to execute
+                 ; used in: class.ActionMapper.php
+debugView        = 0|1
+                 ; specifies, whether Smarty should create debug output in a popup window
+                 ; used in: class.Controller.php
+language         = language code (e.g. en_EN)
+                 ; specifies the application's language (see Message::get)
+                 ; used in: main.php, locale.php
+usegettext       = 0|1
+                 ; specifies, whether the function gettext should be used for the localization of the
+                 ; application (see Message::get).
+                 ; used in: class.Message.php
+locking          = 0|1
+                 ; specifies, whether data is locked when it's opened by another user
+                 ; used in: class.LockManager.php
+~~~~~~~~~~~~~
 
 \subsubsection sechtmlform [htmlform]
 The definition of the input controls, that are used in the application,
-is done in Smarty templates (see @ref DefaultControlRenderer). In this section the templates
+is done in Smarty templates (see \ref DefaultControlRenderer). In this section the templates
 are assigned to control names.@n
 The following input controls are already defined by the framework:
-@verbatim
- text
- textarea
- password
- select
- radio
- checkbox
- file
- fileex
- filebrowser
- linkbrowser
- fckeditor
- date
-@endverbatim
+
+~~~~~~~~~~~~~
+text
+textarea
+password
+select
+radio
+checkbox
+file
+fileex
+filebrowser
+linkbrowser
+fckeditor
+date
+~~~~~~~~~~~~~
 
 Furthermore the following keys are known to the framework:
-@verbatim
- maxFileSize             = number
-                         ; specifies the maximum size of files to upload (in bytes)
-                         ; used in: class.FormUtil.php, class.NodeUtil.php,
-                                         class.SaveController.php, class.FileUtil.php
- inputFieldNameDelimiter = char
-                         ; specifies the separator, which is used for creation of inputfield names
-                         ; (e.g. separator "-": "value-1-name-Author:0")
-                         ; used in: class.SaveController.php, class.NodeUtil.php,
-                                         class.FormUtil.php
-@endverbatim
+
+~~~~~~~~~~~~~{.ini}
+maxFileSize             = number
+                        ; specifies the maximum size of files to upload (in bytes)
+                        ; used in: class.FormUtil.php, class.NodeUtil.php,
+                                        class.SaveController.php, class.FileUtil.php
+inputFieldNameDelimiter = char
+                        ; specifies the separator, which is used for creation of inputfield names
+                        ; (e.g. separator "-": "value-1-name-Author:0")
+                        ; used in: class.SaveController.php, class.NodeUtil.php,
+                                        class.FormUtil.php
+~~~~~~~~~~~~~
 
 \subsubsection sechtmldisplay [htmldisplay]
 The definition of the value display types, that are used in the application,
-is done in Smarty templates (see @ref DefaultValueRenderer). In this section the templates
+is done in Smarty templates (see \ref DefaultValueRenderer). In this section the templates
 are assigned to value type names.@n
 The following value types are already defined by the framework:
-@verbatim
- text
- image
-@endverbatim
+
+~~~~~~~~~~~~~
+text
+image
+~~~~~~~~~~~~~
 
 \subsubsection secsmarty [smarty]
 The @em smarty section contains configuration parameters for the <a href="http://smarty.php.net/" target="_blank">
 Smarty</a> Template Engine.
-@verbatim
- compileCheck = 0|1
-                ; specifies, whether Smarty should test for modifications
-                ; in the templates upon each call
-                ; used in: class.Controller.php
- templateDir  = path (relative to main.php !)
-                ; specifies the smarty directory (the paths /smarty/templates_c
-                ; and in case of caching=1 /smarty/cache must exist in that directory)
-                ; used in: class.Controller.php
- caching = 0|1
-                ; specifies, whether Smarty should use caching
-                ; in case of a cms application caching is a good alternative to exporting
-                ; static pages
-                ; used in: class.Controller.php
- cacheLifetime = -1|number of seconds
-                ; specifies, the lifetime of the Smarty cache in seconds
-                ; the value is ignored if caching is not enabled
-                ; used in: class.Controller.php
-@endverbatim
+
+~~~~~~~~~~~~~{.ini}
+compileCheck = 0|1
+               ; specifies, whether Smarty should test for modifications
+               ; in the templates upon each call
+               ; used in: class.Controller.php
+templateDir  = path (relative to main.php !)
+               ; specifies the smarty directory (the paths /smarty/templates_c
+               ; and in case of caching=1 /smarty/cache must exist in that directory)
+               ; used in: class.Controller.php
+caching = 0|1
+               ; specifies, whether Smarty should use caching
+               ; in case of a cms application caching is a good alternative to exporting
+               ; static pages
+               ; used in: class.Controller.php
+cacheLifetime = -1|number of seconds
+               ; specifies, the lifetime of the Smarty cache in seconds
+               ; the value is ignored if caching is not enabled
+               ; used in: class.Controller.php
+~~~~~~~~~~~~~
 
 \subsubsection secmedia [media]
 In this section settings for the upload of media files are specified.
-@verbatim
- imgWidth  = array of a number and 0|1
-           ; sets - if specified - the width of an upload image
-           ; the second parameter specifies if the value must be matched exactly (1)
-           ; or if it is a maximum (0)
-           ; e.g. {625, 0}
-           ; used in: class.SaveController.php
- imgHeight = array of a number and 0|1
-           ; sets - if specified - the height of an upload image
-           ; the second parameter specifies if the value must be matched exactly (1)
-           ; or if it is a maximum (0)
-           ; e.g. {625, 1}
-           ; used in: class.SaveController.php
- uploadDir = path (relative to main.php !)
-           ; specifies the directory, into which the SaveController uploads media files
-           ; used in: class.SaveController.php, class.FormUtil.php
-@endverbatim
+
+~~~~~~~~~~~~~{.ini}
+imgWidth  = array of a number and 0|1
+          ; sets - if specified - the width of an upload image
+          ; the second parameter specifies if the value must be matched exactly (1)
+          ; or if it is a maximum (0)
+          ; e.g. {625, 0}
+          ; used in: class.SaveController.php
+imgHeight = array of a number and 0|1
+          ; sets - if specified - the height of an upload image
+          ; the second parameter specifies if the value must be matched exactly (1)
+          ; or if it is a maximum (0)
+          ; e.g. {625, 1}
+          ; used in: class.SaveController.php
+uploadDir = path (relative to main.php !)
+          ; specifies the directory, into which the SaveController uploads media files
+          ; used in: class.SaveController.php, class.FormUtil.php
+~~~~~~~~~~~~~
 */

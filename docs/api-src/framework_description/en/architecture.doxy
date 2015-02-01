@@ -2,25 +2,25 @@
 \page architecture Architecture
 <div class="has-toc"></div>
 
-\section secarchitecture Architecture
+# Architecture # {#arch_main}
 
 The main architectural concept of wCMF is the well known [Model-View-Controller]
 (http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) pattern.
 The following sections describe it's implementation in wCMF and introduce some
 other key concepts, that are useful to know when using wCMF.
 
-\subsection model Model
+## Model ## {#arch_model}
 
-An application usually contains a _domain model_ that represents the real-world
+An application is usually based on a _domain model_ that represents the real-world
 concepts of the domain of interest. In object oriented programming this model is
 implemented using classes. Depending on the application requirements the instances
 of several of these classes have to be persisted in a storage in order to keep the
-contained data. The classes that provide the infrastructure for storing data form the
-the _persistence layer_.
+contained data. These classes represent the _data model_. The classes that provide
+the infrastructure for storing data form the _persistence layer_.
 
 wCMF defines \link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink
 as base class for persistent domain classes. It mainly implements an unique identifier
-for each instance (see \ref oid), tracking of the persistent state, methods for setting
+for each instance (see \ref arch_oid), tracking of the persistent state, methods for setting
 and getting values as well as callback methods for lifecycle events. For the composition
 of object graphs the derived class \link wcmf::lib::model::Node `Node`\endlink is used
 as base class. It implements relation support for persistent objects.
@@ -28,16 +28,17 @@ as base class. It implements relation support for persistent objects.
 To retrieve persisted objects \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink
 is used. The actual operations for creating, reading, updating and deleting objects
 (e.g. SQL commands) are defined in classes implementing the
-\link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink interface.
-Although not necessary there commonly exists one mapper class for each persistent
+\link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink interface
+(see [Data Mapper Pattern](http://martinfowler.com/eaaCatalog/dataMapper.html)).
+Although not necessary there usually exists one mapper class for each persistent
 domain class. Mapper classes are introduced to the persistent facade by configuration.
 
 \image html persistence.png "Persistence layer"
 
-Please refer to the section @ref persistence for a more detailed description of the
+Please refer to the section \ref persistence for a more detailed description of the
 persistence layer.
 
-\subsubsection oid Object Identifier
+### Object Identifier ### {#arch_oid}
 
 For handling lots of different domain objects an unique identification is crucial.
 In order to achieve this, so-called _Object Identifiers_ (_OID_ or _object id_) are used.
@@ -51,7 +52,7 @@ determine the \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper
 for the given object from the configuration. The class
 \link wcmf::lib::persistence::ObjectId `ObjectId`\endlink implements this concept.
 
-\subsection controllers_views Presentation
+## Presentation ## {#arch_presentation}
 
 The _presentation layer_ of a wCMF application enables users to interact with the
 domain model.
@@ -73,7 +74,7 @@ listing objects, \link wcmf::application::controller::SearchController `SearchCo
 for searching objects).
 
 The controller is determined by matching specific request parameters against a list
-of so called _action keys_ (see @ref actionkey). As the result of it's execution
+of so called _action keys_ (see \ref arch_actionkey). As the result of it's execution
 each controller returns action key parameters in the response data. If these parameters
 match an existing action key, the associated controller will be executed by passing
 the current response as input. In this way complex tasks may be executed by chaining
@@ -92,10 +93,10 @@ as the default template engine for HTML output.
 
 \image html presentation.png "Presentation layer"
 
-Please refer to the section @ref persistence for a more detailed description of the
+Please refer to the section \ref persistence for a more detailed description of the
 persistence layer.
 
-\subsubsection actionkey Action Key
+### Action Key ### {#arch_actionkey}
 
 An important concept of wCMF is that of _Action Keys_. An action key describes the
 state of the application together with the **action** to be performed next. The state,
@@ -164,5 +165,5 @@ If no matching action key can be found,
 \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink
 returns the last response.
 
-For details about configuring action keys see @ref configuration.
+For details about configuring action keys see \ref configuration.
 */
