@@ -4,24 +4,68 @@
 
 # Presentation # {#pres_main}
 
+## Request processing ## {#pres_request}
+
+### Action mapping ### {#pres_actions}
+
+#### Internal action mapping #### {#pres_actionsint}
+
+#### External action mapping #### {#pres_actionsext}
+
+### Formats ### {#pres_format}
+
+## Programming Controllers ## {#pres_controllers}
+
+### Long running requests ### {#pres_longrequest}
+
+## Programming Views ## {#pres_views}
+
+### Caching ### {#pres_caching}
+
+## Debugging/Logging ## {#pres_debug_log}
+
+For debugging und logging output the [log4php](http://logging.apache.org/log4php/)
+framework is used. For convenient usage wCMF defines a thin wrapper class called Log.
+To log a debug message in the category of the current class, just call:
+
+~~~~~~~~~~~~~{.php}
+Log::debug($message, __CLASS__);
+~~~~~~~~~~~~~
+
+## Error handling ## {#pres_errors}
+
+In the application two types of errors are distinguished:
+- **Fatal**: Errors, which are so critical, that it's not possible to proceed with
+  the current action (e.g. the missing of a controller).
+- **Non-fatal**: Errors, which merely demand a notification to the user (e.g. invalid input)
+
+These errors can be produced in the following ways:
+
+- **Fatal**: The use of WCMFException::throwEx calls a global error handling routine:
+
+  ~~~~~~~~~~~~~{.php}
+  onError($message, $file='', $line='')
+  ~~~~~~~~~~~~~
+
+- **Non-fatal**: adding a message by calling Controller::appendErrorMsg makes this
+  message - together with all accumulated messages before and those to follow -
+  available in the next view's @em $errorMsg variable.
+  In order to delete old messages the method Controller::setErrorMsg class must
+  be called with an empty string parameter.
+
+Many classes define a method @em getErrorMsg, which provides more detailed information
+on the cause of an error.
+
+--------------------------------------------------
+
 Concerning the presentation of data, the framework offers developers the following
 main points of extension:
 
-- \ref pres_output
 - \ref pres_interaction
 - \ref pres_layout
 - \ref pres_dataformat
 
-## Output formats ## {#pres_output}
-
-The output formats, in which the application data is transformed, can be defined via an OutputStrategy.
-This strategy may be applied for example by using an OutputVisitor, to which the new format is made accessible
-by its method OutputVisitor::setOutputStrategy.@n
-If large amounts of data have to be exported, alternatively one of the subclasses of BatchController can be used,
-since these allow the splitting of long tasks into packages, which can be handled over multiple page calls.
-This is useful for example when exporting static HTML pages from a CMS.
-
-## User interaction ## {#pres_interaction}
+## User interaction ## {#pres_interaction_old}
 
 For defining the user interaction in the simplest case solely one configuration file is needed, which
 establishes an order of controllers for certain actions. By that a controller for a complex action
@@ -33,19 +77,19 @@ modification of the form and link definitions in the templates. By defining diff
 possible to assign different views to a controller while maintaining the same action (e.g. to display an
 input form for data in one context and the preview of the same data in another).
 
-## Layout ## {#pres_layout}
+## Layout ## {#pres_layout_old}
 
 The application's appearance is completely described by the views. Since these themselves are defined in
 corresponding Smarty templates, modifying the templates makes it quite easy to fit the layout to the special
 needs of the application.
 
-## Data exchange formats ## {#pres_dataformat}
+## Data exchange formats ## {#pres_dataformat_old}
 
 Data sent to the framework and received from the framework is transported in Request and Response instances.
 The data is interpreted using an IFormat implementation. This allows to easily implement new data exchange formats.
 Already supported formats are HTML (HTMLFormat), JSON (JSONFormat) and SOAP (SOAPFormat).
 
-## Programming the views ## {#pres_views}
+## Programming the views ## {#pres_views_old}
 
 Views are implemented as HTML pages (defined in the view templates), which typically contain a form,
 which displays the data to be modified. For programming dynamic parts and to access
@@ -80,7 +124,7 @@ of the Smarty template language:
   e.g.: {include file="lib:application/views/formheader.tpl"}@n
   ...
 
-## Programming the controllers ## {#pres_controllers}
+## Programming the controllers ## {#pres_controllers_old}
 
 Controllers execute the user-defined actions. In order to implement custom controllers
 a class must be derived from the baseclass Controller, which implements the methods
@@ -107,7 +151,7 @@ validate provided data.
 
 The framework's controllers are located in the directory /wcmf/application/controller.
 
-## Programming the application ## {#pres_application}
+## Programming the application ## {#pres_application_old}
 
 A web application typically consists of several input masks (views), which
 are used to create, update and delete data. The application is defined by the actions
@@ -117,21 +161,23 @@ export of data.
 
 The definition of an action requires the following steps:
 
--# \ref howtoapplication1
--# \ref howtoapplication2
--# \ref howtoapplication3
--# \ref howtoapplication4
--# \ref howtoapplication5
+-# \ref pres_app1_old
+-# \ref pres_app2_old
+-# \ref pres_app3_old
+-# \ref pres_app4_old
+-# \ref pres_app5_old
 
 As an example we use the action for displaying an @em article node in order to
 edit it. Let's look at the individual steps:
 
-\subsubsection howtoapplication1 Definition of the action name
+### Definition of the action name ### {#pres_app1_old}
+
 We name the action @em editArticle. This name need not to be unique in the whole
 application. The ActionMapper only requires the name (and the \ref actionkey defined
 by the action) to find the next appropriate controller.
 
-\subsubsection howtoapplication2 Creating the button to trigger the action
+### Creating the button to trigger the action ### {#pres_app2_old}
+
 In order to display the data the application must know which article is selected.
 This is exactly defined by it's \ref oid. The data transfer between the input
 masks is achieved by the HTTP POST mechanism, i.e. a (hidden) input field must exist,
@@ -152,7 +198,8 @@ the action could look like this:
 
 For details on programming the views see \ref howtoviews.
 
-\subsubsection howtoapplication3 Customizing the configuration file
+### Customizing the configuration file ### {#pres_app3_old}
+
 To determine the controller, which carries out the action, the ActionMapper requires
 an appropriate entry in the configuration file (see \ref secactionmapping). If
 the controllers name is @em ArticleController, the entry could look like this:
@@ -173,7 +220,8 @@ name this view @em article.tpl, the configuration entry would look like the foll
 ArticleController?? = article.tpl
 ~~~~~~~~~~~~~
 
-\subsubsection howtoapplication4 Implementing the action as a controller
+### Implementing the action as a controller ### {#pres_app4_old}
+
 The action is executed in the controller - in this example in the @em ArticleController class.
 Since the controller should display a view with the article's data, we first must specify that
 the controller has a view and second the data of the article must be passed to the view.@n
@@ -225,7 +273,8 @@ It's important that the method returns false, since this causes the ActionMapper
 to end the execution and wait for user input. The display of the view is done by
 the framework.
 
-\subsubsection howtoapplication5 Displaying data in the view
+### Displaying data in the view ### {#pres_app5_old}
+
 After the controller has provided the view with the data, the view can display the data.
 In our case after the ArticleController has been executed a variable @em article is
 known to the view, which matches the article node.@n
@@ -240,33 +289,4 @@ In the curly brackets you can find Smarty code, which calls the method NodeUtil:
 This method displays the input control (in our case a textfield), which corresponds to the
 article's @em name attribute, in the HTML page. In the same manner the other attributes can be handled.
 
-\subsection howtologdebug Debugging/Logging
-
-For debugging und logging output the <a href="http://logging.apache.org/log4php/" target="_blank">log4php</a>
-framework is used. For convenient usage wCMF defines a thin wrapper class called Log. To log a debug message
-in the category of the current class, just call:
-
-~~~~~~~~~~~~~{.php}
-Log::debug($message, __CLASS__);
-~~~~~~~~~~~~~
-
-\subsection howtoerror Error handling
-
-In the application two types of errors are distinguished:
-- @em Fatal: Errors, which are so critical, that it's not possible to proceed with the current action
-  (e.g. the missing of a controller).
-- @em Non-fatal: Errors, which merely demand a notification to the user (e.g. invalid input)
-
-These errors can be produced in the following ways:
-
-- @em Fatal: The use of WCMFException::throwEx calls a global error handling routine:
-  ~~~~~~~~~~~~~{.php}
-  onError($message, $file='', $line='')
-  ~~~~~~~~~~~~~
-- @em Non-fatal: adding a message by calling Controller::appendErrorMsg makes this message - together with
-  all accumulated messages before and those to follow - available in the next view's @em $errorMsg variable.@n
-  In order to delete old messages the method Controller::setErrorMsg class must be called with an empty string
-  parameter.
-
-Many classes define a method @em getErrorMsg, which provides more detailed information on the cause of an error.
 */

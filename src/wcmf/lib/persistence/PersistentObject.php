@@ -373,21 +373,24 @@ class PersistentObject {
   }
 
   /**
-   * Validate all values
-   * @return Empty string if validation succeeded, an error string else. The default implementation returns the result of
-   *        PersistentObject::validateValueAgainstValidateType().
+   * Validate all values by calling PersistentObject::validateValue()
+   * Throws a ValidationException in case of invalid data.
    */
   public function validateValues() {
-    $errorMsg = '';
+    $errorMessage = '';
     $iter = new NodeValueIterator($this, false);
     for($iter->rewind(); $iter->valid(); $iter->next()) {
       $curNode = $iter->currentNode();
-      $error = $curNode->validateValue($iter->key(), $iter->current());
-      if (strlen($error) > 0) {
-        $errorMsg .= $error."\n";
+      try {
+        $curNode->validateValue($iter->key(), $iter->current());
+      }
+      catch (ValidationException $ex) {
+        $errorMessage .= $ex->getMessage()."\n";
       }
     }
-    return $errorMsg;
+    if (strlen($errorMessage) > 0) {
+      throw new ValidationException($errorMessage);
+    }
   }
 
   /**

@@ -7,7 +7,7 @@
 Persistence is related to that part of the domain model, which we could call
 the data model.
 
-## Definition of the data model ## {#pers_datamodel}
+## Data model ## {#pers_datamodel}
 
 The data model consists of domain classes whose instances are persisted in the storage.
 The following steps need to be accomplished in order to make domain class instances
@@ -90,12 +90,32 @@ that is the _properties_ and the _relations_ - are defined by the related
 
 So if no additional domain logic is required in the domain class, it would be
 sufficient to use \link wcmf::lib::model::Node `Node`\endlink as domain class.
-But in many cases you will want to execute custom code for persistent hooks or
-validation and therefor create a custom subclass of
+But in many cases you will want to execute custom code for \ref pers_hooks or
+\ref pers_validation and therefor create a custom subclass of
 \link wcmf::lib::model::Node `Node`\endlink.
 
 @note All domain classes, that are created by the generator are
 \link wcmf::lib::model::Node `Node`\endlink subclasses.
+
+#### Persistence Hooks #### {#pers_hooks}
+
+Persistence hooks are methods that are called at certain points of the lifecycle of
+an instance. The default implementation of these methods is empty - in fact their
+sole purpose is to be overwritten in subclasses on order to implement special
+functionality that should be executed at those points.
+\link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink defines
+the following persistence hooks:
+
+- `afterCreate`
+- `beforeInsert`
+- `afterInsert`
+- `afterLoad`
+- `beforeUpdate`
+- `afterUpdate`
+- `beforeDelete`
+- `afterDelete`
+
+#### Values, Properties and Tags #### {#pers_values}
 
 ### Configuration ### {#pers_config}
 
@@ -125,27 +145,89 @@ See \ref configuration for details about the configuration format.
 
 ----------------------------------------------------------------------
 
-## Using the class Node ## {#pers_node}
+## Usage ## {#pers_node}
+
+The following sections show some basic examples for using the persistence layer.
 
 ### Loading objects ### {#pers_load}
 
 ~~~~~~~~~~~~~{.php}
-$persistenceFacade = &PersistenceFacade::getInstance();
+$oid = new ObjectId('Author', 1);
 
-// load model
-$oid = PersistenceFacade::composeOID(array('type' => 'section', 'id' => array('1')));
-$node = &$persistenceFacade->load($oid, BUILDDEPTH_INFINITE);
-if ($node == null)
-  Message::error("A Node with object id ".$oid." does not exist.";
+// load the Author instance with id 1
+$author = ObjectFactory::getInstance('persistenceFacade')->load($oid);
+
+// PersistenceFacade will return null, if an instance does not exist
+if ($author == null) {
+  echo("An Author with object id ".$oid." does not exist.";
+}
 ~~~~~~~~~~~~~
 
-The example loads the section node with id 1 and all children nodes. If the oid of the
-requested node is not known either use the appropriate methods of PersistenceFacade
-(e.g. PersistenceFacade::getOID) or in more complex cases do an ObjectQuery.
+In the example the _Author_ instance with id _1_ is loaded.
+
+#### Build depth #### {#pers_builddepth}
+
+When loading objects we generally distinguish between **eager** and **lazy** loading
+(see [Lazy loading](http://en.wikipedia.org/wiki/Lazy_loading)).
+By default \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink
+performs _lazy loading_ by using _virtual proxies_ (instances of
+\link wcmf::lib::persistence::PersistentObjectProxy `PersistentObjectProxy`\endlink).
+That means that related objects are retrieved from the store, only when they are
+actually accessed. In order to perform _eager loading_, a
+\link wcmf::lib::persistence::BuildDepth `BuildDepth`\endlink
+value may be passed in the method calls:
+
+~~~~~~~~~~~~~{.php}
+$oid = new ObjectId('Author', 1);
+
+// load the Author instance with id 1 together with all related objects
+$author = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::INFINITE);
+~~~~~~~~~~~~~
+
+In this example the _Author_ instance with id _1_ is loaded together with all related
+objects recursively.
+
+Instead of a \link wcmf::lib::persistence::BuildDepth `BuildDepth`\endlink
+value, an integer number may be passed indicating the depth of relations to load.
+The following image illustrates the _build depth_ parameter for a simple model.
+
+\image html builddepth.png "Build depth"
+
+If using a build depth value of _1_ the _Author A_ instance will be loaded together
+with it's related _Book_ instances (_Book A_, _Book B_). A value of _2_ will also load
+the _Chapter_ instances (_Chapter A1_, _Chapter A2_). The default value is
+\link wcmf::lib::persistence::BuildDepth::SINGLE `BuildDepth::SINGLE`\endlink,
+which means that only the _Author A_ instance is loaded. In the above illustration
+the value of _2_ is equal to passing
+\link wcmf::lib::persistence::BuildDepth::INFINITE `BuildDepth::INFINITE`\endlink.
 
 ### Searching objects ### {#pers_search}
 
-### Traversing objects ### {#pers_iter}
+To search objects in the store the
+\link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
+method may be used. It allows to set the conditions that objects should match.
+
+~~~~~~~~~~~~~{.php}
+$criteria = array(
+  new Criteria("Book", "title", "LIKE", "A%"),
+  new Criteria("Book", "year", ">=", "2014")))
+)
+
+// load all Book instances with titles starting with A and release date 2014 or later
+$books = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Book", BuildDepth::SINGLE, $criteria);
+~~~~~~~~~~~~~
+
+In this example all _Book_ instances with titles starting with _A_ and release date
+_2014 or later_ are loaded.
+
+For more complex cases the class \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
+may be used for searching.
+
+#### Sorting #### {#pers_sorting}
+
+#### Pagination #### {#pers_pagination}
+
+### Traversing object graphs ### {#pers_iter}
 
 ~~~~~~~~~~~~~{.php}
 $iterator = new NodeIterator($node);
@@ -158,26 +240,6 @@ while(!($iterator->isEnd()))
 ~~~~~~~~~~~~~
 
 The example outputs the object ids of all nodes that are descendents of $node.
-
-### Output objects ### {#pers_output}
-
-~~~~~~~~~~~~~{.php}
-$iterator = new NodeIterator($node);
-
-// Output into dot format
-$filename = "graph.dot";
-$dotOS = new DotOutputStrategy($filename);
-$ov = new OutputVisitor($dotOS);
-$ov->startIterator($iterator);
-
-iterator->reset($node);
-
-// Output into XML format
-$filename = "graph.xml";
-$xmlOS = new XMLOutputStrategy($filename);
-$ov->setOutputStrategy($xmlOS);
-$ov->startIterator($iterator);
-~~~~~~~~~~~~~
 
 ### Modifying objects ### {#pers_modify}
 
@@ -197,6 +259,8 @@ $cv->startIterator($iterator);
 
 // Delete
 ~~~~~~~~~~~~~
+
+## Validation ## {#pers_validation}
 
 ## Concurrency ## {#pers_concurrency}
 
