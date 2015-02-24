@@ -117,6 +117,8 @@ the following persistence hooks:
 
 #### Values, Properties and Tags #### {#pers_values}
 
+<span class="label label-danger">TODO</span>
+
 ### Configuration ### {#pers_config}
 
 The configuration tells the application which mapper classes are responsible
@@ -205,7 +207,7 @@ the value of _2_ is equal to passing
 
 To search objects in the store the
 \link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
-method may be used. It allows to set the conditions that objects should match.
+method may be used. It allows to set the conditions that loaded objects should match.
 
 ~~~~~~~~~~~~~{.php}
 $criteria = array(
@@ -222,13 +224,19 @@ _2014 or later_ are loaded.
 
 For more complex cases the class \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
 may be used for searching.
+<span class="label label-danger">TODO</span>
 
 #### Sorting #### {#pers_sorting}
 
+<span class="label label-danger">TODO</span>
+
 #### Pagination #### {#pers_pagination}
+
+<span class="label label-danger">TODO</span>
 
 ### Traversing object graphs ### {#pers_iter}
 
+<span class="label label-danger">TODO</span>
 ~~~~~~~~~~~~~{.php}
 $iterator = new NodeIterator($node);
 while(!($iterator->isEnd()))
@@ -242,6 +250,8 @@ while(!($iterator->isEnd()))
 The example outputs the object ids of all nodes that are descendents of $node.
 
 ### Modifying objects ### {#pers_modify}
+
+<span class="label label-danger">TODO</span>
 
 ~~~~~~~~~~~~~{.php}
 // Create
@@ -262,7 +272,11 @@ $cv->startIterator($iterator);
 
 ## Validation ## {#pers_validation}
 
+<span class="label label-danger">TODO</span>
+
 ## Concurrency ## {#pers_concurrency}
+
+<span class="label label-danger">TODO</span>
 
 If more than one user works with the application at the same time, conflicts can occur, if two
 users want to edit the same object concurrently. In this case the first user can request
@@ -295,4 +309,6 @@ An object, which is loaded by another user is set to non-editable (@em is_editab
 automatically upon loading.
 
 ## Transactions ## {#pers_tx}
+
+<span class="label label-danger">TODO</span>
 */
