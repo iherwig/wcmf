@@ -20,7 +20,7 @@ persistent.
 - Configuration of the persistence layer.
 
 @note If you are using the generator to create the application from a model
-(see \ref modeling), all necessary code will be generated automatically.
+(see \ref model), all necessary code will be generated automatically.
 
 ### Database tables ### {#pers_tables}
 
@@ -145,8 +145,6 @@ dbCharSet = utf8
 
 See \ref configuration for details about the configuration format.
 
-----------------------------------------------------------------------
-
 ## Usage ## {#pers_node}
 
 The following sections show some basic examples for using the persistence layer.
@@ -224,6 +222,7 @@ _2014 or later_ are loaded.
 
 For more complex cases the class \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
 may be used for searching.
+
 <span class="label label-danger">TODO</span>
 
 #### Sorting #### {#pers_sorting}
@@ -237,38 +236,10 @@ may be used for searching.
 ### Traversing object graphs ### {#pers_iter}
 
 <span class="label label-danger">TODO</span>
-~~~~~~~~~~~~~{.php}
-$iterator = new NodeIterator($node);
-while(!($iterator->isEnd()))
-{
-  $currentObject = &$iterator->getCurrentObject();
-  Message::trace($currentObject->getOID());
-  $iterator->proceed();
-}
-~~~~~~~~~~~~~
-
-The example outputs the object ids of all nodes that are descendents of $node.
 
 ### Modifying objects ### {#pers_modify}
 
 <span class="label label-danger">TODO</span>
-
-~~~~~~~~~~~~~{.php}
-// Create
-
-$node->setValue('text', 'hello world!', DATATYPE_ATTRIBUTE);
-
-// Saving changes
-// If one node has been modified
-$node->save();
-
-// If several connected nodes have been modified
-$iterator = new NodeIterator($node);
-$cv = new CommitVisitor();
-$cv->startIterator($iterator);
-
-// Delete
-~~~~~~~~~~~~~
 
 ## Validation ## {#pers_validation}
 
@@ -277,36 +248,6 @@ $cv->startIterator($iterator);
 ## Concurrency ## {#pers_concurrency}
 
 <span class="label label-danger">TODO</span>
-
-If more than one user works with the application at the same time, conflicts can occur, if two
-users want to edit the same object concurrently. In this case the first user can request
-a lock on that object, which only allows reading access to succeeding users. This lock will
-be transfered to all instances loaded in the future as long until the user unlocks the object,
-which happens automatically upon execution of an action (call to main.php).
-In the sourcecode this looks as follows:
-
-~~~~~~~~~~~~~{.php}
-$lockManager = &LockManager::getInstance();
-$object = &$persistenceFacade->load($this->_request->getValue('oid'), BUILDDEPTH_INFINITE);
-
-// if the object is locked by another user we retrieve the lock to show a message
-$lock = $object->getLock();
-if ($lock != null)
-{
-  $lockMsg .= $lockManager->getLockMessage($lock, $recipe->getName());
-}
-else
-{
-  // try to lock object
-  $lockManager->aquireLock($this->_request->getValue('oid'));
-}
-~~~~~~~~~~~~~
-
-The functionality described above is imlemented in the method LockManager::handleLocking,
-with the only difference that this method only acquires a lock in cases in which the
-user is allowed to update the object.@n
-An object, which is loaded by another user is set to non-editable (@em is_editable = false)
-automatically upon loading.
 
 ## Transactions ## {#pers_tx}
 

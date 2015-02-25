@@ -4,289 +4,45 @@
 
 # Presentation # {#pres_main}
 
+<span class="label label-danger">TODO</span>
+
 ## Request processing ## {#pres_request}
+
+<span class="label label-danger">TODO</span>
 
 ### Action mapping ### {#pres_actions}
 
+<span class="label label-danger">TODO</span>
+
 #### Internal action mapping #### {#pres_actionsint}
+
+<span class="label label-danger">TODO</span>
 
 #### External action mapping #### {#pres_actionsext}
 
+<span class="label label-danger">TODO</span>
+
 ### Formats ### {#pres_format}
+
+<span class="label label-danger">TODO</span>
 
 ## Programming Controllers ## {#pres_controllers}
 
+<span class="label label-danger">TODO</span>
+
 ### Long running requests ### {#pres_longrequest}
+
+<span class="label label-danger">TODO</span>
 
 ## Programming Views ## {#pres_views}
 
+<span class="label label-danger">TODO</span>
+
 ### Caching ### {#pres_caching}
+
+<span class="label label-danger">TODO</span>
 
 ## Debugging/Logging ## {#pres_debug_log}
 
-For debugging und logging output the [log4php](http://logging.apache.org/log4php/)
-framework is used. For convenient usage wCMF defines a thin wrapper class called Log.
-To log a debug message in the category of the current class, just call:
-
-~~~~~~~~~~~~~{.php}
-Log::debug($message, __CLASS__);
-~~~~~~~~~~~~~
-
-## Error handling ## {#pres_errors}
-
-In the application two types of errors are distinguished:
-- **Fatal**: Errors, which are so critical, that it's not possible to proceed with
-  the current action (e.g. the missing of a controller).
-- **Non-fatal**: Errors, which merely demand a notification to the user (e.g. invalid input)
-
-These errors can be produced in the following ways:
-
-- **Fatal**: The use of WCMFException::throwEx calls a global error handling routine:
-
-  ~~~~~~~~~~~~~{.php}
-  onError($message, $file='', $line='')
-  ~~~~~~~~~~~~~
-
-- **Non-fatal**: adding a message by calling Controller::appendErrorMsg makes this
-  message - together with all accumulated messages before and those to follow -
-  available in the next view's @em $errorMsg variable.
-  In order to delete old messages the method Controller::setErrorMsg class must
-  be called with an empty string parameter.
-
-Many classes define a method @em getErrorMsg, which provides more detailed information
-on the cause of an error.
-
---------------------------------------------------
-
-Concerning the presentation of data, the framework offers developers the following
-main points of extension:
-
-- \ref pres_interaction
-- \ref pres_layout
-- \ref pres_dataformat
-
-## User interaction ## {#pres_interaction_old}
-
-For defining the user interaction in the simplest case solely one configuration file is needed, which
-establishes an order of controllers for certain actions. By that a controller for a complex action
-can be defined through the combination of primitive controllers (e.g. a MoveItemController from an
-InsertItemController and a DeleteItemController).
-If new actions should be added, a new controller has to be implemented (for details see \ref howtoapplication).@n
-Another way to vary the user interaction is given through the modification of the views, which means the
-modification of the form and link definitions in the templates. By defining different contexts it is also
-possible to assign different views to a controller while maintaining the same action (e.g. to display an
-input form for data in one context and the preview of the same data in another).
-
-## Layout ## {#pres_layout_old}
-
-The application's appearance is completely described by the views. Since these themselves are defined in
-corresponding Smarty templates, modifying the templates makes it quite easy to fit the layout to the special
-needs of the application.
-
-## Data exchange formats ## {#pres_dataformat_old}
-
-Data sent to the framework and received from the framework is transported in Request and Response instances.
-The data is interpreted using an IFormat implementation. This allows to easily implement new data exchange formats.
-Already supported formats are HTML (HTMLFormat), JSON (JSONFormat) and SOAP (SOAPFormat).
-
-## Programming the views ## {#pres_views_old}
-
-Views are implemented as HTML pages (defined in the view templates), which typically contain a form,
-which displays the data to be modified. For programming dynamic parts and to access
-application data the <a href="http://smarty.php.net/" target="_blank">Smarty</a> template
-language is used.@n
-By default the views are stored as .tpl files in the directory /application/inlcude/views
-(see \ref secsmarty). In the directory /wcmf/application/views those views are stored, which
-the framework uses for its standard application. These are the basis for the programming of
-custom views.@n
-
-In the view templates all data, which was passed to the view instance is accessible (see
-\ref howtocontroller). In the simplest case these can be displayed via @em {$variable}. In
-addition object data can be accessed by using @em {$object->getValue(...)}. By setting
-@em debugView = 1 (see \ref seccms) in the configuration file Smarty will display the data,
-which is available in the template, in an external window.@n
-
-The data displayed in the view's form is available to the following controller. Some
-(hidden) input fields should always exist. They are defined in the file
-/wcmf/application/views/formheader.tpl, which - to simplify matters - should be reused.@n
-For handling the form data some JavaScript functions are provided (and documented) in
-the file /wcmf/blank/script/common.js.
-
-In the directory /wcmf/lib/presentation/smarty_plugins the framework defines extensions
-of the Smarty template language:
-
-- Function @em translate for localization of strings@n
-  e.g.: {translate text="Logged in as %1% since %2%" r0="$login" r1="$logindate"}
-- Function @em sessionvalue to get a session variable@n
-  e.g.: {sessionvalue name="platform"}
-- Resource @em lib to integrate templates with a relative path to the framework's
-  root directory (/wcmf)@n
-  e.g.: {include file="lib:application/views/formheader.tpl"}@n
-  ...
-
-## Programming the controllers ## {#pres_controllers_old}
-
-Controllers execute the user-defined actions. In order to implement custom controllers
-a class must be derived from the baseclass Controller, which implements the methods
-Controller::hasView and Controller::executeKernel.
-
-The Request instance passed to the Controller::initialize method provides all data of the
-preceeding view's input fields to the controller. The names of the input fields are the names
-of the request values. The controller in turn can pass data to the view by setting them on
-the Response instance.
-
-The method Controller::hasView returns @em true or @em false, whether a view is displayed
-or not (the return value can differ depending on the context or action, for an example see LoginController).@n
-The method Controller::executeKernel executes the actual action. In this method application
-data is loaded, modified, created, deleted and where required passed to the view for display
-or to the next controller to proceed.
-The method either returns @em false, which means, that the ActionMapper should call no further
-controller or true. In the latter case the ActionMapper determines the next controller
-from the context and action values of the response (see \ref actionkey).
-This means if a view should be displayed, the method must return @em false.
-
-While programming custom controllers often the methods Controller::initialize and
-Controller::validate are overridden in order to carry out initializations or to
-validate provided data.
-
-The framework's controllers are located in the directory /wcmf/application/controller.
-
-## Programming the application ## {#pres_application_old}
-
-A web application typically consists of several input masks (views), which
-are used to create, update and delete data. The application is defined by the actions
-executable in the individual input masks. Thereby the framework makes no difference
-between actions used for data handling and those used to navigate or e.g. initiate the
-export of data.
-
-The definition of an action requires the following steps:
-
--# \ref pres_app1_old
--# \ref pres_app2_old
--# \ref pres_app3_old
--# \ref pres_app4_old
--# \ref pres_app5_old
-
-As an example we use the action for displaying an @em article node in order to
-edit it. Let's look at the individual steps:
-
-### Definition of the action name ### {#pres_app1_old}
-
-We name the action @em editArticle. This name need not to be unique in the whole
-application. The ActionMapper only requires the name (and the \ref actionkey defined
-by the action) to find the next appropriate controller.
-
-### Creating the button to trigger the action ### {#pres_app2_old}
-
-In order to display the data the application must know which article is selected.
-This is exactly defined by it's \ref oid. The data transfer between the input
-masks is achieved by the HTTP POST mechanism, i.e. a (hidden) input field must exist,
-which contains the oid of the article to be displayed. Since for most applications it's often
-necessary to transfer an oid, the framework defines a standard field @em oid in each
-view (see file /wcmf/application/views/formheader.tpl), which can easily be set
-by the JavaScript function @em doDisplay (/wcmf/blank/script/common.js).
-
-The action is triggered upon submission of the input form. Another JavaScript function
-(@em submitAction) simplifies the execution. The form data is passed to the main.php
-script, which delegates the further execution to the ActionMapper. The link to execute
-the action could look like this:
-
-~~~~~~~~~~~~~{.html}
-<a href="javascript:setContext('article'); doDisplay('{$article->getOID()}');
-  submitAction('editArticle');">{translate text="edit"}</a>
-~~~~~~~~~~~~~
-
-For details on programming the views see \ref howtoviews.
-
-### Customizing the configuration file ### {#pres_app3_old}
-
-To determine the controller, which carries out the action, the ActionMapper requires
-an appropriate entry in the configuration file (see \ref secactionmapping). If
-the controllers name is @em ArticleController, the entry could look like this:
-
-~~~~~~~~~~~~~{.ini}
-[actionmapping]
-??editArticle = ArticleController
-~~~~~~~~~~~~~
-
-Don't forget to introduce the ArticleController in the configuration section \ref secclassmapping.
-
-Additionally the ArticleController should display a view for editing the article. If we
-name this view @em article.tpl, the configuration entry would look like the following (see
-\ref secviews):
-
-~~~~~~~~~~~~~{.ini}
-[views]
-ArticleController?? = article.tpl
-~~~~~~~~~~~~~
-
-### Implementing the action as a controller ### {#pres_app4_old}
-
-The action is executed in the controller - in this example in the @em ArticleController class.
-Since the controller should display a view with the article's data, we first must specify that
-the controller has a view and second the data of the article must be passed to the view.@n
-At first however it must be assured, that the controller receives an oid. This happens in
-the method Controller::validate, which searches for the entry in the passed data:
-
-~~~~~~~~~~~~~{.php}
-function validate()
-{
-  if ($this->_request->getValue('oid') == '')
-  {
-    $this->setErrorMsg("No 'oid' given in data.");
-    return false;
-  }
-  return true;
-}
-~~~~~~~~~~~~~
-
-We declare the existence of a view in the method Controller::hasView:
-
-~~~~~~~~~~~~~{.php}
-function hasView()
-{
-  return true;
-}
-~~~~~~~~~~~~~
-
-Finally the action is executed in the method @em Controller::executeKernel. Here the
-controller loads the data and provides it to the view for display by setting it on the
-response instance:
-
-~~~~~~~~~~~~~{.php}
-function executeKernel()
-{
-  $persistenceFacade = &PersistenceFacade::getInstance();
-
-  // load model
-  $article = &$persistenceFacade->load($this->_request->getValue('oid'), BUILDDEPTH_INFINITE);
-
-  // assign model to view
-  $this->_response->setValue('article', $article);
-
-  // stop processing chain
-  return false;
-}
-~~~~~~~~~~~~~
-
-It's important that the method returns false, since this causes the ActionMapper
-to end the execution and wait for user input. The display of the view is done by
-the framework.
-
-### Displaying data in the view ### {#pres_app5_old}
-
-After the controller has provided the view with the data, the view can display the data.
-In our case after the ArticleController has been executed a variable @em article is
-known to the view, which matches the article node.@n
-The programming of the views is done in HTML together with the Smarty template language.
-The file @em article.tpl could contain the following line:
-
-~~~~~~~~~~~~~{.html}
-article name: {$nodeUtil->getInputControl($article, "name")}
-~~~~~~~~~~~~~
-
-In the curly brackets you can find Smarty code, which calls the method NodeUtil::getInputControl.
-This method displays the input control (in our case a textfield), which corresponds to the
-article's @em name attribute, in the HTML page. In the same manner the other attributes can be handled.
-
+<span class="label label-danger">TODO</span>
 */

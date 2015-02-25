@@ -6,30 +6,5 @@
 
 ## Permission management ## {#perm_manage}
 
-Rights can be assigned to the execution of actions in the user interface or to the editing
-of domain classes and individual objects (instances of domain classes). For editing content the framework
-defines the rights @em read, @em update, @em delete and @em create.@n
-The authorization for actions in the user interface is handled by the ActionMapper, for actions
-concerning the data the PersistenceMapper checks the permissions (and sets objects, for which
-the right @em update is not set, to non-editable (@em is_editable = false) ).
-Both classes use the method RightsManager::authorize and generate a fatal error message,
-if authorization fails (see \ref howtoerror).
-To prevent this the rights can be retrieved directly in order to take appropriate messures:
-
-~~~~~~~~~~~~~{.php}
-$rightsManager = &RightsManager::getInstance();
-if ($rightsManager->authorize($this->_request->getValue('oid'), '', ACTION_READ))
-{
-  $object = &$persistenceFacade->load($this->_request->getValue('oid'), BUILDDEPTH_INFINITE);
-}
-else
-{
-  // do something else if the user cannot read the object
-}
-~~~~~~~~~~~~~
-
-In the example the object is only loaded, if it's permitted. For the definition of rights
-see \ref secauthorization.
-@note If @em anonymous is set to one in the configuration file, the rights management
-is disabled (see \ref seccms).
+<span class="label label-danger">TODO</span>
 */

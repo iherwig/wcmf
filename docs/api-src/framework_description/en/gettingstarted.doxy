@@ -86,7 +86,7 @@ composer install
 The application ships with a demo UML model that may be used as a quick start.
 It's located in `model/model.uml`. Base models for those who want to start
 from scratch are located in _model/base/cwm/_ and _model/base/papyrus/_. An
-in-depth guide on modeling for wCMF may be found in the section \ref modeling.
+in-depth guide on modeling for wCMF may be found in the section \ref model.
 
 #### Generate the code ####
 

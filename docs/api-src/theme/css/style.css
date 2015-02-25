@@ -5,14 +5,32 @@
 .tocify {
   width: 175px;
   margin-left: 0;
+  border: none;
+  webkit-border-radius: 0;
+  moz-border-radius: 0;
+  border-radius: 0;
 }
 
-.tocify-header, .tocify-subheader {
+.tocify-header li, .tocify-subheader li, .tocify-subheader .tocify-subheader li {
   text-indent: 0;
 }
 
 .tocify ul, .tocify li {
   line-height: inherit;
+}
+
+.tocify-header li {
+  text-transform: uppercase;
+}
+
+.tocify-subheader li {
+  text-transform: none;
+  font-size: inherit;
+}
+
+.tocify-subheader .tocify-subheader li {
+  text-transform: none;
+  font-style: italic;
 }
 
 .nav-list > .active > a, .nav-list > .active > a:hover {
@@ -67,6 +85,23 @@ td.entry {
   margin: 4px 8px 10px 2px !important;
 }
 
+.panel-default {
+  border: none;
+}
+
+.contents {
+  margin-top: -20px;
+}
+
+.textblock h2, .textblock h3, .textblock h4 {
+  padding-top: 20px;
+}
+
+.textblock h2 {
+  border-top: 1px solid #ddd;
+  margin-top: 24px;
+}
+
 // Search
 
 #MSearchSelectWindow {
@@ -88,7 +123,8 @@ td.entry {
 }
 
 .SRChildren {
-  padding-left: 10px; padding-bottom: .5em
+  padding-left: 10px;
+  padding-bottom: .5em
 }
 
 .SRPage .SRChildren {
