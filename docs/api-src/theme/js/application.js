@@ -15,13 +15,16 @@ $(function() {
 
   // search
   searchBox.OnSelectItem(0);
-  $('#MSearchSelectWindow').hide();
-  $('#MSearchBox').css("margin-top", 8);
 
+  var sBox = $('#MSearchBox');
+  var sSelectWin = $('#MSearchSelectWindow');
   var sResultWin = $('#MSearchResultsWindow');
-  sResultWin.addClass('dropdown-menu');
-
   var iframe = $('#MSearchResults');
+
+  sBox.css("margin-top", 8);
+  sBox.append(sResultWin);
+  sSelectWin.hide();
+  sResultWin.addClass('dropdown-menu');
   iframe.on( "load", function() {
     iframe.addClass('embed-responsive-item');
     var head = iframe.contents().find('head');
@@ -38,9 +41,13 @@ $(function() {
       type: "text/css"
     }));
     body.css("padding", 10);
-
-    if (sResultWin.offset().left < 0) {
-      sResultWin.css("left", 0);
-    }
+    sSelectWin.parent().css({
+      "position": "fixed",
+      "z-index": 10000
+    });
+    sResultWin.css({
+      "top": "auto",
+      "left": "auto"
+    })
   });
 });

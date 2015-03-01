@@ -1,12 +1,13 @@
 /*!
 \page gettingstarted Getting started
+<div class="has-toc"></div>
 
 # Getting started #
 
 The wCMF project mainly consists of two parts, the application framework and an
 application template.
 
-## Framework ##
+## wCMF Framework ##
 
 The wCMF framework provides the infrastructure to create PHP web applications based
 on the model-view-controller pattern. The project's source code is hosted at

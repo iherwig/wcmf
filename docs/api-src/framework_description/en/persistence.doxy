@@ -4,12 +4,11 @@
 
 # Persistence # {#pers_main}
 
-Persistence is related to that part of the domain model, which we could call
-the data model.
+Persistence refers to that part of the domain model, which we could call the data model.
 
 ## Data model ## {#pers_datamodel}
 
-The data model consists of domain classes whose instances are persisted in the storage.
+The data model consists of domain classes whose instances are saved in the storage.
 The following steps need to be accomplished in order to make domain class instances
 persistent.
 

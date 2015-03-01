@@ -19,21 +19,124 @@ and improves code quality and maintainability dramatically.
 ## Modeling ## {#model_create}
 
 Technically the model is an [UML](http://en.wikipedia.org/wiki/Unified_Modeling_Language)
-model that uses the Chronos [profile](http://en.wikipedia.org/wiki/Profile_%28UML%29) from the
+model that uses the _Chronos_ [profile](http://en.wikipedia.org/wiki/Profile_%28UML%29) from the
 [Olympos](http://sourceforge.net/projects/olympos/) project. It is stored in
 an XML file (e.g. `model.uml`). This file can be directly edited using
 [Eclipse Papyrus](http://www.eclipse.org/papyrus/) or any other compatible UML
 modeling tool. Alternatively  you can use the
 [Chronos Web Modeler](http://sourceforge.net/projects/olympos/) that allows
 browser based collaborative modeling. wCMF uses a minimized version of the code
-generator from the Olympos project.
+generator from the Olympos project with wCMF specific templates.
+
+The following diagram shows the workflow of the generator.
 
 \image html generator.png "Generator workflow"
 
-In the following sections we describe how to model the different aspects of
-the application.
+### Chronos profile ### {#model_profile}
+
+_Profiles_ are used to extend UML for different domains. They consist of __stereotypes__
+and __tags__ that are applied to model elements in order to express domain specific
+features. The following sections describe the stereotypes and tags of the _Chronos_
+profile that are used to define various aspects of a wCMF application. The complete
+[Chronos profile](https://raw.githubusercontent.com/iherwig/wcmf-default-app/master/model/chronos.profile.uml)
+is available on GitHub.
+
+You will notice that only a small part of UML is used to define the application
+and not all aspects of the application are defined in the model. Especially the
+actual behavior of controllers and domain classes is omitted, since we believe
+that this is more efficiently expressed in code. For simplicity and compatibility
+reasons all aspects can be modeled in __class diagrams__ using __classes__,
+__attributes__ and __associations__.
+
+\note UML elements and concepts that are not mentioned in the following sections
+are most likely not supported by the generator and will be ignored.
 
 ### Domain classes ### {#model_classes}
+
+The following __stereotypes__ are used to model persistent domain classes and their relations.
+
+| Name | UML meta class | Description | Example
+|------|----------------|-------------|--------
+| _ChiNode_ | Class | Persistent domain class. Must inherit from the \link wcmf::lib::model::Node `Node`\endlink. | _Article_
+| _ChiValue_ | Attribute | Persistent attribute in a _ChiNode_. | _headline_ of Article
+| _ChiValueRef_ | Attribute | ReadOnly-reference to an attribute of another _ChiNode_. | _author_name_ in Article references _name_ in Author
+| _ChiManyToMany_ | Class | Connection class in a many to many relation between _ChiNode_ classes. Must inherit from \link wcmf::lib::model::Node `Node`\endlink. | One _Author_ writes nultiple _Articles_ and one _Article_ has multiple _Authors_
+| _ChiAssociation_ | Association | Optional, e.g. used to define a foreign key name in a relation between _ChiNode_ instances. | _author_id_ in Article as foreign key to Author table
+
+#### ChiNode / ChiManyToMany #### {#model_chinode}
+
+The following __tags__ are defined on the _ChiNode_ / _ChiManyToMany_ stereotypes.
+
+| Tag | Description | Example | Default value
+|-----|-------------|---------|--------------
+| _initparams_ | Name of the configuration section, which defines initialization parameters for the \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink instance | _database_ | _database_
+| _display_value_ | Attributes to display in a list view: A single attribute name or \|-separated list of attribute names | _name\|date_ | |
+| _orderby_ | Definition of default sorting: _none_ (no order), _sortkey_ (generates a _sortkey_ column, that is used for explicit sorting) or the name of any attribute optionally followed by _ASC_ or _DESC_ | _name ASC_ | _none_
+| _is_searchable_ | Boolean, indicating whether this type should be included in the default search | _true_ | _true_
+| _is_soap_ | Boolean, indicating whether this type should be exposed to the SOAP interface | _true_ | _true_
+| _table_name_ | The name of the database table in which instances will be stored | _Author_ | Class name
+| _pk_name_ | The name of the primary key column: A single value or \|-separated list of values (the generator will add this automatically, if there is no appropriate attribute) | _fk_user_id\|fk_role_id_ | _id_
+| _child_order_ | The order of the associated child types: A single type or \|-separated list of types | _Image\|Textblock\|Attachment_ in Document type | |
+| _parent_order_ | The order of the associated parent types: A single type or \|-separated list of types | _Author\|Publisher_ in Book type | |
+
+\note Some of these tags are accessible in the application through the
+\link wcmf::lib::persistence::PersistentObject::getProperty `PersistentObject::getProperty`\endlink
+method.
+
+#### ChiValue #### {#model_chivalue}
+
+The following __tags__ are defined on the _ChiValue_ stereotype.
+
+| Tag | Description | Example | Default value
+|-----|-------------|---------|--------------
+| _app_data_type_ | Application specific attribute tags: A single value or \|-separated list of values | _TAG_A\|TAG_B_ | _DATATYPE_ATTRIBUTE_
+| _db_data_type_ | The attribute's database type | _TEXT_ | _VARCHAR(255)_ |
+| _is_editable_ | Boolean, indicating whether this attribute is editable | _true_ | _true_
+| _input_type_ | Name of the attribute's input control as listed in the _InputTypes_ configuration section | _filebrowser_ | _text_
+| _display_type_ | Name of the attribute's display type as listed in the _DisplayTypes_ configuration section | _image_ | _text_
+| _restrictions_match_ | Name of the attribute's validation type as listed in the _Validator_ configuration section | _regexp:^[0-9]*$_ | |
+| _restrictions_not_match_ | _not used_ | | |
+| _restrictions_description_ | Validation description used in case of a validation error | _The value must be an integer or empty_ | |
+| _column_name_ | The name of the database column in which the attribute will be stored | _name_ | Attribute name
+
+\note Some of these tags are accessible in the application through the
+\link wcmf::lib::persistence::PersistentObject::getValueProperty `PersistentObject::getValueProperty`\endlink
+method.
+
+#### ChiValueRef #### {#model_chivalueref}
+
+The following __tags__ are defined on the _ChiValueRef_ stereotype.
+
+| Tag | Description | Example | Default value
+|-----|-------------|---------|--------------
+| _reference_type_ |  Type, that owns the referenced attribute | _Author_ | |
+| _reference_value_ | Name of the references attribute | _name_ | |
+
+#### ChiAssociation #### {#model_association}
+
+The following __tags__ are defined on the _ChiAssociation_ stereotype.
+
+| Tag | Description | Example | Default value
+|-----|-------------|---------|--------------
+| _fk_name_ | Name of the foreign key attribute (the generator will add this automatically, if there is no appropriate attribute) | _author_id_ | _fk_\_type\_ _id_ |
+
+#### Inheritance ####
+
+<span class="label label-danger">TODO</span>
+
+#### Associations ####
+
+<span class="label label-danger">TODO</span>
+
+##### Navigability #####
+
+<span class="label label-danger">TODO</span>
+
+##### Association types #####
+
+<span class="label label-danger">TODO</span>
+
+##### Multiple associations #####
 
 <span class="label label-danger">TODO</span>
 

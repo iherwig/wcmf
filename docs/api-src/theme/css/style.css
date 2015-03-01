@@ -6,17 +6,17 @@
   width: 175px;
   margin-left: 0;
   border: none;
-  webkit-border-radius: 0;
-  moz-border-radius: 0;
   border-radius: 0;
-}
-
-.tocify-header li, .tocify-subheader li, .tocify-subheader .tocify-subheader li {
-  text-indent: 0;
 }
 
 .tocify ul, .tocify li {
   line-height: inherit;
+}
+
+.tocify-header li,
+.tocify-subheader li,
+.tocify-subheader .tocify-subheader li {
+  text-indent: 0;
 }
 
 .tocify-header li {
@@ -29,8 +29,11 @@
 }
 
 .tocify-subheader .tocify-subheader li {
-  text-transform: none;
   font-style: italic;
+}
+
+.tocify-subheader .tocify-subheader .tocify-subheader li a:before {
+  content: "- ";
 }
 
 .nav-list > .active > a, .nav-list > .active > a:hover {
@@ -52,6 +55,26 @@ a[name] {
 img {
   max-width:100% !important;
   height:auto;
+}
+
+table {
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #F5F5F5;
+}
+
+.table > tbody > tr:nth-child(odd) > td {
+  background-color: #F5F5F5;
+}
+
+.controller-action table {
+  border: none;
+}
+
+.controller-action table th {
+  background-color: #FFF;
 }
 
 tr[class^='separator:'] {
@@ -106,15 +129,10 @@ td.entry {
 
 #MSearchSelectWindow {
   display: none;
-  position: absolute;
-  left: 0; top: 0;
 }
 
 #MSearchResultsWindow {
   display: none;
-  left: 0; top: 0;
-  margin: -55px 0 0 0;
-  z-index: 9999;
 }
 
 #MSearchResults {
