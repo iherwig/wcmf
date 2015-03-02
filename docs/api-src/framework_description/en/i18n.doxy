@@ -4,7 +4,15 @@
 
 # Internationalization # {#i18n_main}
 
-## Multilanguage Support ## {#i18n_howto}
+## Localization ## {#i18n_locale}
+
+<span class="label label-danger">TODO</span>
+
+### Static texts ### {#i18n_static}
+
+<span class="label label-danger">TODO</span>
+
+### Model content ### {#i18n_dynamic}
 
 <span class="label label-danger">TODO</span>
 */

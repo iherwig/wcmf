@@ -93,8 +93,8 @@ as the default template engine for HTML output.
 
 \image html presentation.png "Presentation layer"
 
-Please refer to the section \ref persistence for a more detailed description of the
-persistence layer.
+Please refer to the section \ref presentation for a more detailed description of the
+presentation layer.
 
 ### Action Key ### {#arch_actionkey}
 

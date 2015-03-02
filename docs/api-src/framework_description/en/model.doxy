@@ -76,8 +76,8 @@ The following __tags__ are defined on the _ChiNode_ / _ChiManyToMany_ stereotype
 | _is_soap_ | Boolean, indicating whether this type should be exposed to the SOAP interface | _true_ | _true_
 | _table_name_ | The name of the database table in which instances will be stored | _Author_ | Class name
 | _pk_name_ | The name of the primary key column: A single value or \|-separated list of values (the generator will add this automatically, if there is no appropriate attribute) | _fk_user_id\|fk_role_id_ | _id_
-| _child_order_ | The order of the associated child types: A single type or \|-separated list of types | _Image\|Textblock\|Attachment_ in Document type | |
-| _parent_order_ | The order of the associated parent types: A single type or \|-separated list of types | _Author\|Publisher_ in Book type | |
+| _child_order_ | The order of the associated child types: A single type or \|-separated list of types | _Image\|Textblock\|Attachment_ in Article type | |
+| _parent_order_ | The order of the associated parent types: A single type or \|-separated list of types | _Author\|Publisher_ in Article type | |
 
 \note Some of these tags are accessible in the application through the
 \link wcmf::lib::persistence::PersistentObject::getProperty `PersistentObject::getProperty`\endlink
@@ -120,6 +120,23 @@ The following __tags__ are defined on the _ChiAssociation_ stereotype.
 |-----|-------------|---------|--------------
 | _fk_name_ | Name of the foreign key attribute (the generator will add this automatically, if there is no appropriate attribute) | _author_id_ | _fk_\_type\_ _id_ |
 
+#### Example diagram ####
+
+A simple data model is shown in the diagram below. Each of the domain classes
+_Author_, _Article_ and _Image_ is modeled with _ChiNode_ stereotype, their
+attributes with _ChiValue_ stereotype. The only exception is the _author_name_ attribute,
+which is a reference to the _name_ attribute of _Author_ and therefore uses the
+stereotype _ChiValueRef_. As the relations between the classes show, one _Author_
+can own several _Articles_ and each _Article_ in turn can contain several _Images_.
+
+All \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink instance
+are initialized using the parameters defined in the _database_ configuration section.
+
+In list views _Author_ instances are sorted by _name_ while _Article_ and _Image_
+instances get an attribute _sortkey_ which is used to define an explicit order.
+
+\image html model.png "Example diagram"
+
 #### Inheritance ####
 
 <span class="label label-danger">TODO</span>
@@ -144,11 +161,23 @@ The following __tags__ are defined on the _ChiAssociation_ stereotype.
 
 <span class="label label-danger">TODO</span>
 
+### Default model ### {#model_default}
+
+<span class="label label-danger">TODO</span>
+
+## Generator ## {#model_generator}
+
+<span class="label label-danger">TODO</span>
+
 ### Configuration ### {#model_config}
 
 <span class="label label-danger">TODO</span>
 
-## Generating ## {#model_generate}
+### Running ### {#model_run}
+
+<span class="label label-danger">TODO</span>
+
+### Artefacts ### {#model_artefacts}
 
 <span class="label label-danger">TODO</span>
 */
