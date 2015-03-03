@@ -129,7 +129,7 @@ which is a reference to the _name_ attribute of _Author_ and therefore uses the
 stereotype _ChiValueRef_. As the relations between the classes show, one _Author_
 can own several _Articles_ and each _Article_ in turn can contain several _Images_.
 
-All \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink instance
+All \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink instances
 are initialized using the parameters defined in the _database_ configuration section.
 
 In list views _Author_ instances are sorted by _name_ while _Article_ and _Image_
