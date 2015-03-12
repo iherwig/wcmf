@@ -32,102 +32,57 @@ class StringUtil {
 
   /**
    * Truncate a string up to a number of characters while preserving whole words and HTML tags
-   * code from: http://alanwhipple.com/2011/05/25/php-truncate-string-preserving-html-tags-words/
-   * @param $string String to truncate.
-   * @param $length Length of returned string, including ellipsis.
-   * @param $ending Ending to be appended to the trimmed string.
-   * @param $exact If false, $text will not be cut mid-word
-   * @param $considerHtml If true, HTML tags would be handled correctly
+   * code based on: http://www.dzone.com/snippets/truncate-text-preserving-html
+   * @param $text String to truncate.
+   * @param $length Length of returned string, excluding suffix.
+   * @param $suffix Ending to be appended to the trimmed string.
+   * @param $isHtml If true, HTML tags would be handled correctly
    * @return String
    */
-  public static function cropString($string, $length=100, $ending='...', $exact=false, $considerHtml=true) {
-    if ($considerHtml) {
-      // if the plain text is shorter than the maximum length, return the whole text
-      if (strlen(preg_replace('/<.*?>/', '', $string)) <= $length) {
-        return $string;
-      }
-      // splits all html-tags to scanable lines
-      preg_match_all('/(<.+?>)?([^<>]*)/s', $string, $lines, PREG_SET_ORDER);
-      $total_length = strlen($ending);
-      $open_tags = array();
-      $truncate = '';
-      foreach ($lines as $line_matchings) {
-        // if there is any html-tag in this line, handle it and add it (uncounted) to the output
-        if (!empty($line_matchings[1])) {
-          // if it's an "empty element" with or without xhtml-conform closing slash
-          if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
-            // do nothing
-          // if tag is a closing tag
-          } else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
-            // delete tag from $open_tags list
-            $pos = array_search($tag_matchings[1], $open_tags);
-            if ($pos !== false) {
-            unset($open_tags[$pos]);
-            }
-          // if tag is an opening tag
-          } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
-            // add tag to the beginning of $open_tags list
-            array_unshift($open_tags, strtolower($tag_matchings[1]));
-          }
-          // add html-tag to $truncate'd text
-          $truncate .= $line_matchings[1];
-        }
-        // calculate the length of the plain text part of the line; handle entities as one character
-        $content_length = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
-        if ($total_length+$content_length> $length) {
-          // the number of characters which are left
-          $left = $length - $total_length;
-          $entities_length = 0;
-          // search for html entities
-          if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', $line_matchings[2], $entities, PREG_OFFSET_CAPTURE)) {
-            // calculate the real length of all entities in the legal range
-            foreach ($entities[0] as $entity) {
-              if ($entity[1]+1-$entities_length <= $left) {
-                $left--;
-                $entities_length += strlen($entity[0]);
-              } else {
-                // no more characters left
-                break;
-              }
-            }
-          }
-          $truncate .= substr($line_matchings[2], 0, $left+$entities_length);
-          // maximum lenght is reached, so get off the loop
-          break;
-        } else {
-          $truncate .= $line_matchings[2];
-          $total_length += $content_length;
-        }
-        // if the maximum length is reached, get off the loop
-        if($total_length>= $length) {
+  public static function cropString($text, $length=100, $suffix = '…', $isHTML = true) {
+    $i = 0;
+    $simpleTags=array('br'=>true,'hr'=>true,'input'=>true,'image'=>true,'link'=>true,'meta'=>true);
+    $tags = array();
+    if($isHTML) {
+      preg_match_all('/<[^>]+>([^<]*)/', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+      foreach($m as $o) {
+        if($o[0][1] - $i >= $length) {
           break;
         }
-      }
-    } else {
-      if (strlen($string) <= $length) {
-        return $string;
-      } else {
-        $truncate = substr($string, 0, $length - strlen($ending));
-      }
-    }
-    // if the words shouldn't be cut in the middle...
-    if (!$exact) {
-      // ...search the last occurance of a space...
-      $spacepos = strrpos($truncate, ' ');
-      if (isset($spacepos)) {
-        // ...and cut the text in this position
-        $truncate = substr($truncate, 0, $spacepos);
+        $t = substr(strtok($o[0][0], " \t\n\r\0\x0B>"), 1);
+        // test if the tag is unpaired, then we mustn't save them
+        if($t[0] != '/' && (!isset($simpleTags[$t]))) {
+          $tags[] = $t;
+        }
+        elseif(end($tags) == substr($t, 1)) {
+          array_pop($tags);
+        }
+        $i += $o[1][1] - $o[0][1];
       }
     }
-    // add the defined ending to the text
-    $truncate .= $ending;
-    if($considerHtml) {
-      // close all unclosed html-tags
-      foreach ($open_tags as $tag) {
-        $truncate .= '</' . $tag . '>';
-      }
+    // output without closing tags
+    $output = substr($text, 0, $length = min(strlen($text), $length + $i));
+    // closing tags
+    $output2 = (count($tags = array_reverse($tags)) ? '' : '');
+    // Find last space or HTML tag (solving problem with last space in HTML tag eg. )
+    $pos = @(int)end(end(preg_split('/<.*>| /', $output, -1, PREG_SPLIT_OFFSET_CAPTURE)));
+    // Append closing tags to output
+    $output.=$output2;
+    // Get everything until last space
+    $one = substr($output, 0, $pos);
+    // Get the rest
+    $two = substr($output, $pos, (strlen($output) - $pos));
+    // Extract all tags from the last bit
+    preg_match_all('/<(.*?)>/s', $two, $tags);
+    // Add suffix if needed
+    if (strlen($text) > $length) {
+      $one .= $suffix;
     }
-    return $truncate;
+    // Re-attach tags
+    $output = $one . implode($tags[0]);
+    // Added to remove unnecessary closure
+    $output = str_replace('','',$output);
+    return $output;
   }
 
   /**
