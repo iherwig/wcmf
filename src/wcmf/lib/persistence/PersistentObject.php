@@ -291,9 +291,11 @@ class PersistentObject {
   }
 
   /**
+   * <!--
    * Persistence hook methods.
    * Subclasses may override this to implement special application requirements.
    * The default implementations do nothing.
+   * -->
    */
 
   /**
@@ -338,7 +340,9 @@ class PersistentObject {
   public function afterDelete() {}
 
   /**
+   * <!--
    * Values and Properties
+   * -->
    */
 
   /**
@@ -664,7 +668,9 @@ class PersistentObject {
   }
 
   /**
+   * <!--
    * Output
+   * -->
    */
 
   /**

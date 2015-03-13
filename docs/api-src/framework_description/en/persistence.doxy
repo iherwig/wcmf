@@ -105,18 +105,36 @@ functionality that should be executed at those points.
 \link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink defines
 the following persistence hooks:
 
-- `afterCreate`
-- `beforeInsert`
-- `afterInsert`
-- `afterLoad`
-- `beforeUpdate`
-- `afterUpdate`
-- `beforeDelete`
-- `afterDelete`
+- \link wcmf::lib::persistence::PersistentObject::afterCreate `afterCreate`\endlink
+- \link wcmf::lib::persistence::PersistentObject::beforeInsert `beforeInsert`\endlink
+- \link wcmf::lib::persistence::PersistentObject::afterInsert `afterInsert`\endlink
+- \link wcmf::lib::persistence::PersistentObject::afterLoad `afterLoad`\endlink
+- \link wcmf::lib::persistence::PersistentObject::beforeUpdate `beforeUpdate`\endlink
+- \link wcmf::lib::persistence::PersistentObject::afterUpdate `afterUpdate`\endlink
+- \link wcmf::lib::persistence::PersistentObject::beforeDelete `beforeDelete`\endlink
+- \link wcmf::lib::persistence::PersistentObject::afterDelete `afterDelete`\endlink
 
 #### Values, Properties and Tags #### {#pers_values}
 
-<span class="label label-danger">TODO</span>
+The following terms are important to know when working with wCMF's domain classes:
+
+- __Values__ are the persistent attributes of a domain class. You can think
+  of them as class members. Values are accessed using the methods
+  \link wcmf::lib::persistence::PersistentObject::getValue `getValue`\endlink
+  and \link wcmf::lib::persistence::PersistentObject::setValue `setValue`\endlink.
+- __Properties__ apply to domain classes and domain class values. They describe
+  static features like the `display_value` of the class or the `input_type`
+  of a value. Properties are defined in the model as _tags_ (see \ref model_profile)
+  and are accessed using the methods
+  \link wcmf::lib::persistence::PersistentObject::getProperty `getProperty`\endlink/
+  \link wcmf::lib::persistence::PersistentObject::setProperty `setProperty`\endlink
+  and
+  \link wcmf::lib::persistence::PersistentObject::getValueProperty `getValueProperty`\endlink/
+  \link wcmf::lib::persistence::PersistentObject::setValueProperty `setValueProperty`\endlink
+- __Tags__ are a special property used on values in order to group them by certain
+  aspects. For example the edit forms in the default application only display
+  domain class values that have are tagged with `DATATYPE_ATTRIBUTE`. Tags are
+  defined in the model using the _tag_ `app_data_type` (see \ref model_chivalue).
 
 ### Configuration ### {#pers_config}
 
@@ -162,7 +180,7 @@ if ($author == null) {
 }
 ~~~~~~~~~~~~~
 
-In the example the _Author_ instance with id _1_ is loaded.
+In the example the `Author` instance with id `1` is loaded.
 
 #### Build depth #### {#pers_builddepth}
 
@@ -183,7 +201,7 @@ $oid = new ObjectId('Author', 1);
 $author = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::INFINITE);
 ~~~~~~~~~~~~~
 
-In this example the _Author_ instance with id _1_ is loaded together with all related
+In this example the `Author` instance with id `1` is loaded together with all related
 objects recursively.
 
 Instead of a \link wcmf::lib::persistence::BuildDepth `BuildDepth`\endlink
@@ -192,12 +210,12 @@ The following image illustrates the _build depth_ parameter for a simple model.
 
 \image html builddepth.png "Build depth"
 
-If using a build depth value of _1_ the _Author A_ instance will be loaded together
-with it's related _Book_ instances (_Book A_, _Book B_). A value of _2_ will also load
-the _Chapter_ instances (_Chapter A1_, _Chapter A2_). The default value is
+If using a build depth value of `1` the `Author` instance _Author A_ will be loaded together
+with it's related `Book` instances (_Book A_, _Book B_). A value of `2` will also load
+the `Chapter` instances (_Chapter A1_, _Chapter A2_). The default value is
 \link wcmf::lib::persistence::BuildDepth::SINGLE `BuildDepth::SINGLE`\endlink,
 which means that only the _Author A_ instance is loaded. In the above illustration
-the value of _2_ is equal to passing
+the value of `2` is equal to passing
 \link wcmf::lib::persistence::BuildDepth::INFINITE `BuildDepth::INFINITE`\endlink.
 
 ### Searching objects ### {#pers_search}
@@ -216,17 +234,38 @@ $criteria = array(
 $books = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Book", BuildDepth::SINGLE, $criteria);
 ~~~~~~~~~~~~~
 
-In this example all _Book_ instances with titles starting with _A_ and release date
+In this example all `Book` instances with titles starting with _A_ and release date
 _2014 or later_ are loaded.
 
-For more complex cases the class \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
-may be used for searching.
-
-<span class="label label-danger">TODO</span>
+More complex use cases are supported by the \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
+class.
 
 #### Sorting #### {#pers_sorting}
 
-<span class="label label-danger">TODO</span>
+When loading a list of objects, the default order of the
+\link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink
+class is used for sorting. This default order is defined in the model (`orderby` tag
+of `ChiNode`, see \ref model_chinode). Besides this, all loading methods (e.g.
+\link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink)
+accept an `orderby` parameter for explicitly setting a different order.
+
+A list of already loaded \link wcmf::lib::model::Node `Node`\endlink
+instances may be sorted by using \link wcmf::lib::model::NodeComparator `NodeComparator`\endlink
+in the following way:
+
+~~~~~~~~~~~~~{.php}
+$nodeList = array(...);
+
+// set up a comparator for node type and created date
+$sortCriteria = array(
+  NodeComparator::ATTRIB_TYPE => NodeComparator::SORTTYPE_ASC,
+  'created' => NodeComparator::SORTTYPE_DESC
+);
+$comparator = new NodeComparator($sortCriteria);
+
+// sort node list
+usort($nodeList, array($comparator, 'compare'));
+~~~~~~~~~~~~~
 
 #### Pagination #### {#pers_pagination}
 
