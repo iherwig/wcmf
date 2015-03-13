@@ -139,29 +139,103 @@ instances get an attribute _sortkey_ which is used to define an explicit order.
 
 #### Inheritance ####
 
-<span class="label label-danger">TODO</span>
+If different domain classes should have the same attributes, a common base class
+can make these available to inheriting classes. An example may be an `EntityBase` type,
+which defines meta information like creation date and last modification date for
+all domain classes. The diagram below illustrates the concept.
+
+\image html model_inheritance.png "Inheritance"
 
 #### Associations ####
 
-<span class="label label-danger">TODO</span>
+Relations between domain classes - e.g. parent-child relations - are modeled as
+associations. Three different __types of associations__ are supported: _compositions_,
+_aggregations_ and _one-directional associations_ as shown in the following
+diagram.
+
+\image html associations.png "Association types"
+
+It is important to understand how wCMF recognizes __parents and children__ in an
+association. In case of compositions and aggregations the parent is always
+the class, that is connected with the diamond end of the association. Other
+associations are treated as parent-child relation, if they are only navigable
+in one direction, which is then defined as the child to parent direction.
+
+The association types differ in the treatment of children in case of __deletion__
+of the parent. In aggregations and normal associations children are not deleted,
+while composite children are deleted on parent deletion. On the other hand the
+default application allows __creation__ of child instances in a composition, while
+the other two types only allow adding existing instances.
+
+The following table summarizes the behavior of the different association types
+regarding the operations allowed on child instances:
+
+| Association type | Delete children | Create children | Associate children
+|------------------|-----------------|-----------------|-------------------
+| Composition      | Yes             | Yes             | No
+| Aggregation      | No              | Yes             | Yes
+| Association      | No              | No              | Yes
+
+Inheritance will cause the generator to create new relations in the following cases:
+
+- Subclasses of parent classes of the current class will become parents too.
+- Parent classes of the superclass of the current class will become parents too.
+- Subclasses of child classes of the current class will become children too.
+- Child classes of super classes of the current class will become children too.
+
+##### Multiplicity #####
+
+The multiplicity at the association ends limits the amount of instances that
+are allowed at that relation end. In a typical parent-child relation the parent
+end has a value of `1` and the child end has a value of `0..*` meaning that a
+child instance is connected to exactly one parent instance, while any number
+of child instances may be connected to the parent instance (including zero).
+This kind of relation is called __one-to-many relation__ and is easy to realize
+in a database by using a _foreign key_ column.
+
+__Many-to-many relations__ on the other hand allow an arbitrary number of
+instances at both ends and are typically realized in an database using a
+_junction table_. The Chronos profile allows for this by providing the `ChiManyToMany`
+stereotype. The following diagram shows how to model a many-to-many relation:
+
+\image html many-to-many.png "Many-to-many relation"
+
+Using compositions ensures that many-to-many instances are deleted correctly,
+when the parent instances are deleted.
 
 ##### Navigability #####
 
-<span class="label label-danger">TODO</span>
+Another aspect of associations is the use of __arrow ends__ that define the
+navigability. If an arrow end is omitted on one end, instances at that end
+are not accessible from the other end.
 
-##### Association types #####
-
-<span class="label label-danger">TODO</span>
+Regarding the database schema all three association types will result in the
+creation of a foreign key column in the child table that points to the parent
+table.
 
 ##### Multiple associations #####
 
-<span class="label label-danger">TODO</span>
+Sometimes multiple associations have to be defined between two domain classes.
+For example there are `Person` and `Task` domain classes and tasks should be
+associated with persons so that each task has an owner and a creator. This results
+in two aggregations between the two domain classes.
+
+In this case __role names__ have to be assigned to the association ends, to allow
+wCMF to know which role a person has in relation to a given task.
+
+The following diagram illustrates the example:
+
+\image html multiple-associations.png "Role names in multiple associations"
 
 ### Application flow ### {#model_flow}
 
 <span class="label label-danger">TODO</span>
 
 ### Default model ### {#model_default}
+
+<span class="label label-danger">TODO</span>
+
+## Modeling tools ## {#model_tools}
 
 <span class="label label-danger">TODO</span>
 
