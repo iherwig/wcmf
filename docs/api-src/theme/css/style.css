@@ -53,8 +53,12 @@ a[name] {
 }
 
 img {
-  max-width:100% !important;
-  height:auto;
+  max-width: 100% !important;
+  height: auto;
+}
+
+.image-table table th, .image-table table td {
+  border: none !important;
 }
 
 .controller-action table {
