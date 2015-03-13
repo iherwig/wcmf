@@ -215,14 +215,16 @@ can make these available to inheriting classes. An example may be an `EntityBase
 which defines meta information like creation date and last modification date for
 all domain classes. The diagram below illustrates the concept.
 
-\image html model_inheritance.png "Inheritance"
+\image html inheritance.png "Inheritance"
 
 Inheritance will cause the generator to create new relations in the following cases:
 
-- Subclasses of parent classes of the current class will become parents too.
-- Parent classes of the superclass of the current class will become parents too.
-- Subclasses of child classes of the current class will become children too.
-- Child classes of super classes of the current class will become children too.
+<div class="image-table">
+| Parent relations | Child relations
+|------------------|----------------
+\image html inherited-relation1.png "Subclass B becomes parent of A" | \image html inherited-relation3.png "Subclass B becomes child of A"
+\image html inherited-relation2.png "Parent class of B becomes parent of A" | \image html inherited-relation4.png "Child class of B becomes child of A"
+</div>
 
 ### Application flow ### {#model_flow}
 

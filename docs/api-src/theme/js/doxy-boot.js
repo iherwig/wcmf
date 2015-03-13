@@ -46,11 +46,17 @@ $(document).ready(function() {
 
   $("div.ttc").hide();
 
-  // controller action tables
-  $("table.doxtable").addClass('table');
+  // tables
+  $("table.doxtable").addClass('table').addClass('table-striped');
   $("table.doxtable tr").each(function() {
     $(this).children("td:nth(0)").addClass("text-nowrap");
   });
+
+  // image tables
+  $("div.image-table table").removeClass('table-striped');
+  $("div.image-table th").addClass("text-center");
+
+  // controller action tables
   $("div.controller-action").addClass("panel panel-info");
   $("div.controller-action").each(function() {
     $(this).children("div:nth(0)").addClass("panel-heading");

@@ -57,18 +57,6 @@ img {
   height:auto;
 }
 
-table {
-  border: 1px solid #ddd;
-}
-
-table th {
-  background-color: #F5F5F5;
-}
-
-.table > tbody > tr:nth-child(odd) > td {
-  background-color: #F5F5F5;
-}
-
 .controller-action table {
   border: none;
 }
