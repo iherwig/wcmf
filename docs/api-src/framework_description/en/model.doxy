@@ -137,15 +137,6 @@ instances get an attribute _sortkey_ which is used to define an explicit order.
 
 \image html model.png "Example diagram"
 
-#### Inheritance ####
-
-If different domain classes should have the same attributes, a common base class
-can make these available to inheriting classes. An example may be an `EntityBase` type,
-which defines meta information like creation date and last modification date for
-all domain classes. The diagram below illustrates the concept.
-
-\image html model_inheritance.png "Inheritance"
-
 #### Associations ####
 
 Relations between domain classes - e.g. parent-child relations - are modeled as
@@ -176,13 +167,6 @@ regarding the operations allowed on child instances:
 | Aggregation      | No              | Yes             | Yes
 | Association      | No              | No              | Yes
 
-Inheritance will cause the generator to create new relations in the following cases:
-
-- Subclasses of parent classes of the current class will become parents too.
-- Parent classes of the superclass of the current class will become parents too.
-- Subclasses of child classes of the current class will become children too.
-- Child classes of super classes of the current class will become children too.
-
 ##### Multiplicity #####
 
 The multiplicity at the association ends limits the amount of instances that
@@ -207,25 +191,38 @@ when the parent instances are deleted.
 
 Another aspect of associations is the use of __arrow ends__ that define the
 navigability. If an arrow end is omitted on one end, instances at that end
-are not accessible from the other end.
-
-Regarding the database schema all three association types will result in the
-creation of a foreign key column in the child table that points to the parent
-table.
+are not accessible from the other end. Regarding the database schema all three
+association types will result in the creation of a foreign key column in the
+child table that points to the parent table.
 
 ##### Multiple associations #####
 
 Sometimes multiple associations have to be defined between two domain classes.
-For example there are `Person` and `Task` domain classes and tasks should be
-associated with persons so that each task has an owner and a creator. This results
-in two aggregations between the two domain classes.
+For example if there are `Person` and `Task` domain classes and tasks should be
+associated with persons. If each task should have an owner and a creator, there
+will be two aggregations between the two domain classes. In order to allow wCMF
+to know which role a person has in relation to a given task, __role names__ have
+to be assigned to the association ends.
 
-In this case __role names__ have to be assigned to the association ends, to allow
-wCMF to know which role a person has in relation to a given task.
-
-The following diagram illustrates the example:
+The following diagram illustrates the given example:
 
 \image html multiple-associations.png "Role names in multiple associations"
+
+#### Inheritance ####
+
+If different domain classes should have the same attributes, a common base class
+can make these available to inheriting classes. An example may be an `EntityBase` type,
+which defines meta information like creation date and last modification date for
+all domain classes. The diagram below illustrates the concept.
+
+\image html model_inheritance.png "Inheritance"
+
+Inheritance will cause the generator to create new relations in the following cases:
+
+- Subclasses of parent classes of the current class will become parents too.
+- Parent classes of the superclass of the current class will become parents too.
+- Subclasses of child classes of the current class will become children too.
+- Child classes of super classes of the current class will become children too.
 
 ### Application flow ### {#model_flow}
 

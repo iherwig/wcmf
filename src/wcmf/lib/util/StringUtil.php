@@ -36,10 +36,10 @@ class StringUtil {
    * @param $text String to truncate.
    * @param $length Length of returned string, excluding suffix.
    * @param $suffix Ending to be appended to the trimmed string.
-   * @param $isHtml If true, HTML tags would be handled correctly
+   * @param $isHTML If true, HTML tags would be handled correctly
    * @return String
    */
-  public static function cropString($text, $length=100, $suffix = '…', $isHTML = true) {
+  public static function cropString($text, $length=100, $suffix='…', $isHTML=true) {
     $i = 0;
     $simpleTags=array('br'=>true,'hr'=>true,'input'=>true,'image'=>true,'link'=>true,'meta'=>true);
     $tags = array();
