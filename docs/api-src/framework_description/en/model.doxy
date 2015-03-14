@@ -57,11 +57,11 @@ The following __stereotypes__ are used to model persistent domain classes and th
 
 | Name | UML meta class | Description | Example
 |------|----------------|-------------|--------
-| _ChiNode_ | Class | Persistent domain class. Must inherit from the \link wcmf::lib::model::Node `Node`\endlink. | _Article_
-| _ChiValue_ | Attribute | Persistent attribute in a _ChiNode_. | _headline_ of Article
-| _ChiValueRef_ | Attribute | ReadOnly-reference to an attribute of another _ChiNode_. | _author_name_ in Article references _name_ in Author
-| _ChiManyToMany_ | Class | Connection class in a many to many relation between _ChiNode_ classes. Must inherit from \link wcmf::lib::model::Node `Node`\endlink. | One _Author_ writes nultiple _Articles_ and one _Article_ has multiple _Authors_
-| _ChiAssociation_ | Association | Optional, e.g. used to define a foreign key name in a relation between _ChiNode_ instances. | _author_id_ in Article as foreign key to Author table
+| _ChiNode_ | Class | Persistent domain class, must inherit from the \link wcmf::lib::model::Node `Node`\endlink | _Article_
+| _ChiValue_ | Attribute | Persistent attribute in a _ChiNode_ | _headline_ of Article
+| _ChiValueRef_ | Attribute | ReadOnly-reference to an attribute of another _ChiNode_ | _author_name_ in Article references _name_ in Author
+| _ChiManyToMany_ | Class | Connection class in a many to many relation between _ChiNode_ classes, must inherit from \link wcmf::lib::model::Node `Node`\endlink | One _Author_ writes nultiple _Articles_ and one _Article_ has multiple _Authors_
+| _ChiAssociation_ | Association | Optional, e.g. used to define a foreign key name in a relation between _ChiNode_ instances | _author_id_ in Article as foreign key to Author table
 
 #### ChiNode / ChiManyToMany #### {#model_chinode}
 
@@ -120,7 +120,7 @@ The following __tags__ are defined on the _ChiAssociation_ stereotype.
 |-----|-------------|---------|--------------
 | _fk_name_ | Name of the foreign key attribute (the generator will add this automatically, if there is no appropriate attribute) | _author_id_ | _fk_\_type\_ _id_ |
 
-#### Example diagram ####
+#### Example class diagram #### {#model_class_example}
 
 A simple data model is shown in the diagram below. Each of the domain classes
 _Author_, _Article_ and _Image_ is modeled with _ChiNode_ stereotype, their
@@ -135,7 +135,7 @@ are initialized using the parameters defined in the _database_ configuration sec
 In list views _Author_ instances are sorted by _name_ while _Article_ and _Image_
 instances get an attribute _sortkey_ which is used to define an explicit order.
 
-\image html model.png "Example diagram"
+\image html model.png "Example class diagram"
 
 #### Associations ####
 
@@ -228,29 +228,155 @@ Inheritance will cause the generator to create new relations in the following ca
 
 ### Application flow ### {#model_flow}
 
-<span class="label label-danger">TODO</span>
+Since a wCMF application is based on the Model-View-Controller pattern, application
+flow is defined in terms of _controllers_ and _views_. Controller execution is triggered
+by _actions_ which are initiated by the application user.
+
+The following __stereotypes__ are used to model user interaction.
+
+| Name | UML meta class | Description | Example
+|------|----------------|-------------|--------
+| _ChiController_ | Class | Controller class, must inherit from the \link wcmf::lib::presentation::Controller `Controller`\endlink | _LoginController_
+| _ChiView_ | Class | View assigned to a _ChiController_ | _login_
+| _ChiActionKey_ | Association | Associates two _ChiController_ instances (to define a control flow) or a _ChiView_ with a _ChiController_ (to define a view attachment), must be _one directional_ | |
+
+\note Multiple action keys may be defined between controllers or controllers and
+views each one used in a different context or for a different action.
+
+#### ChiController #### {#model_chicontroller}
+
+No __tags__ are defined on the _ChiController_ stereotype.
+
+#### ChiView #### {#model_chiview}
+
+No __tags__ are defined on the _ChiView_ stereotype.
+
+#### ChiActionKey #### {#model_chiactionkey}
+
+The following __tags__ are defined on the _ChiActionKey_ stereotype.
+
+| Tag | Description | Example | Default value
+|-----|-------------|---------|--------------
+| _action_ |  The action, which is triggered by this association. If empty, any action is valid | _save_ | |
+| _context_ | The context, in which this association is valid. If empty, any context is valid | _author_ | |
+| _config_ | The configuration, in which this association is defined | _config.ini_ | _config.ini_ |
+
+#### Example application flow #### {#model_example_flow}
+
+An example for a simple interaction model is given in the diagram below. The
+controllers are modeled with the stereotype _ChiController_, the associations with
+_ChiActionKey_ stereotype. Each association's tagged values are displayed in an
+attached note. Since the association between _AuthorController_ and _author_ view
+does not define the tagged values _action_ and _context_, _AuthorController_
+displays this view for every action and context. The same applies to _ArticleController_
+and the _article_ view. _SaveController_ does not display a view, it only stores
+the data passed to it and returns to the next controller.
+
+For associations, which link controllers, at least the tagged value _action_ is set.
+Since obviously all _save_ actions result in the execution of _SaveController_,
+no context is necessary. The context is helpful, when we want to solve the
+ambiguousness of the action _ok_ upon termination of _SaveController_.
+We define, that the context is _author_ when editing the author and _article_
+when editing articles. By this the application always knows to which controller it
+should return to after executing _SaveController_.
+
+\image html flow.png "Example application flow"
+
+\note In order to simplify modeling the following default rule applies:
+If a controller has no view attached (meaning that execution of the following
+controller needs no user decision) and no _ChiActionKey_ association starts from
+that controller, the application automatically chooses the preceding controller
+to execute next. For that reason the _ok_ actions may be omitted in the diagram.
+
+### Configuration ### {#model_config}
+
+The following __stereotypes__ are used to model the application configuration.
+
+| Name | UML meta class | Description | Example
+|------|----------------|-------------|--------
+| _ChiSystem_ | Class | A configuration section, class members and their default values become key-value pairs inside the section | _Database_
+
+#### ChiSystem #### {#model_chisystem}
+
+The following __tags__ are defined on the _ChiSystem_ stereotype.
+
+| Tag | Description | Example | Default value
+|-----|-------------|---------|--------------
+| _platform_ |  The platform to which the configuration settings apply | _wcmf_ | |
+| _config_ | The configuration, in which the settings are defined | _config.ini_ | _config.ini_ |
+
+#### Example configuration #### {#model_example_config}
+
+The following diagram shows the configuration of a database connection. The
+connection parameters can be accessed later using the
+\link wcmf::lib::config::Configuration::getSection `Configuration::getSection`\endlink
+method and passing _database_ as `section` paramter.
+
+\image html config.png "Example configuration"
 
 ### Default model ### {#model_default}
 
-<span class="label label-danger">TODO</span>
+The wCMF default application inlcudes a demo UML model located in `model/model.uml`.
+It is a good starting point for own experiments. For those who want to start from
+scratch there are also base models in _model/base/cwm/_ (for
+[Chronos Web Modeler](http://sourceforge.net/projects/olympos/)) and
+_model/base/papyrus/_ (for [Eclipse Papyrus](http://www.eclipse.org/papyrus/)).
 
-## Modeling tools ## {#model_tools}
+The default model has the following package structure:
 
-<span class="label label-danger">TODO</span>
+- _model_
+  - _wcmf test_
+    - _Primitive types_
+    - _root_
+      - __configuration__ Application specific configuration
+        - _default_
+          - _config.ini_
+            - `«ChiSystem» Config`
+            - ...
+          - ...
+      - _wcmf_ Framework packages with useful (base-)classes
+        - _application_
+          - _controller_ Existing controllers
+            - `«ChiController» AssociateController`
+            - ...
+        - _lib_
+          - _presentation_
+            - `«ChiController» Controller` Base class for all controller classes
+          - _model_
+            - `«ChiNode» Node` Base class for all domain classes
+          - _security_
+            - _principal_
+              - _impl_
+                - `AbstractUser` Base class for custom user class
+                - `AbstractRole` Base class for custom role class
+      - _app_ Application specific packages
+        - _src_
+          - __model__ Domain class package
+            - _wcmf_ Default framework classes
+              - `«ChiNode» DBSequence`
+              - ...
+            - `«ChiNode» EntityBase` Base class for domain classes with audit info
+            - ...
+          - __controller__ Controller package
+            - `«ChiController» RootController` Main controller of default application
+          - __views__ Views package
+            - `«ChiView» cms` Main view of default application
+
+Application specific model elements will mostly reside in the __emphasized__ packages.
 
 ## Generator ## {#model_generator}
 
 <span class="label label-danger">TODO</span>
 
-### Configuration ### {#model_config}
+### Configuration ### {#generator_config}
 
 <span class="label label-danger">TODO</span>
 
-### Running ### {#model_run}
+### Running ### {#generator_run}
 
 <span class="label label-danger">TODO</span>
 
-### Artefacts ### {#model_artefacts}
+### Artefacts ### {#generator_artefacts}
 
 <span class="label label-danger">TODO</span>
 */

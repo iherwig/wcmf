@@ -218,34 +218,12 @@ which means that only the _Author A_ instance is loaded. In the above illustrati
 the value of `2` is equal to passing
 \link wcmf::lib::persistence::BuildDepth::INFINITE `BuildDepth::INFINITE`\endlink.
 
-### Searching objects ### {#pers_search}
-
-To search objects in the store the
-\link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
-method may be used. It allows to set the conditions that loaded objects should match.
-
-~~~~~~~~~~~~~{.php}
-$criteria = array(
-  new Criteria("Book", "title", "LIKE", "A%"),
-  new Criteria("Book", "year", ">=", "2014")))
-)
-
-// load all Book instances with titles starting with A and release date 2014 or later
-$books = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Book", BuildDepth::SINGLE, $criteria);
-~~~~~~~~~~~~~
-
-In this example all `Book` instances with titles starting with _A_ and release date
-_2014 or later_ are loaded.
-
-More complex use cases are supported by the \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
-class.
-
 #### Sorting #### {#pers_sorting}
 
 When loading a list of objects, the default order of the
 \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink
-class is used for sorting. This default order is defined in the model (`orderby` tag
-of `ChiNode`, see \ref model_chinode). Besides this, all loading methods (e.g.
+class is used for sorting. This default order is defined in the model (_orderby_ tag
+of _ChiNode_, see \ref model_chinode). Besides this, all loading methods (e.g.
 \link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink)
 accept an `orderby` parameter for explicitly setting a different order.
 
@@ -270,6 +248,28 @@ usort($nodeList, array($comparator, 'compare'));
 #### Pagination #### {#pers_pagination}
 
 <span class="label label-danger">TODO</span>
+
+### Searching objects ### {#pers_search}
+
+To search objects in the store the
+\link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
+method may be used. It allows to set the conditions that loaded objects should match.
+
+~~~~~~~~~~~~~{.php}
+$criteria = array(
+  new Criteria("Book", "title", "LIKE", "A%"),
+  new Criteria("Book", "year", ">=", "2014")))
+)
+
+// load all Book instances with titles starting with A and release date 2014 or later
+$books = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Book", BuildDepth::SINGLE, $criteria);
+~~~~~~~~~~~~~
+
+In this example all `Book` instances with titles starting with _A_ and release date
+_2014 or later_ are loaded.
+
+More complex use cases are supported by the \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
+class.
 
 ### Traversing object graphs ### {#pers_iter}
 
