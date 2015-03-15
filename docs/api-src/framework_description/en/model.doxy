@@ -366,17 +366,151 @@ Application specific model elements will mostly reside in the __emphasized__ pac
 
 ## Generator ## {#model_generator}
 
-<span class="label label-danger">TODO</span>
+wCMF uses the code generator from the [Olympos](http://sourceforge.net/projects/olympos/)
+project which is originally based on _openArchitectureWare_. The generator is
+a JAVA application that executes user defined workflows. Workflows are organized in
+cartridges one of which is the wCMF cartridge. Cartridges are written in the
+_Xtent/Xpand_ language.
+
+If you are using [Composer](https://getcomposer.org/), the generator will be installed
+as a dependency in the directory _vendor/olympos/chronos-generator_. It may be also
+be downloaded from
+[SourceForge](http://sourceforge.net/projects/olympos/files/ChronosGenerator-0.9.9.6b-wCMF.zip).
 
 ### Configuration ### {#generator_config}
 
-<span class="label label-danger">TODO</span>
+The configuration of the generator is stored as key-value pairs in a file called
+`workflow.properties` in the _model_ directory. It contains the following __variables__:
+
+| Variable | Description | Default value
+|----------|-------------|--------------
+| _profilename_ | Name of the used UML profile | _Chronos_ |
+| _profileUmlFile_ | Path to the profile file | <em>${basePath}/metamodel/chronos.profile.uml</em> |
+| _modelUmlFile_ | Model file to generate code from | _model.uml_ |
+| _transformedModelUmlFile_ | Location for the model transformed into the generator's internal format (used for debug purposes) | _model-transformed_ |
+| _rootPackage_ | Model package containing _libraryPackage_ and _applicationPackage_. It's name will be stripped from paths to classes | _wcmf test::root_ |
+| _libraryPackage_ | Model package, in which the wCMF framework is defined. From this package no files will be generated | _wcmf_ |
+| _applicationPackage_ | Model package, in which the application is modeled | _app_ |
+| _doCheck_ | Indicates whether the generator should run checks on the model | _true_ |
+| _preCheckFile_ | Check file, that should be used before the transformation into the internal model format | _cartridge::Wcmf::checks::pre_ |
+| _postCheckFile_ | Check file, that should be used after the transformation into the internal model format | _cartridge::Wcmf::checks::post_ |
+| _requiredControllerSuperclass_ | Controller base class, from which all controllers must inherit, used in the checks | _model::${rootPackage}::${libraryPackage}::lib::presentation::Controller_ |
+| _requiredNodeSuperclass_ | Domain base class, from which all domain classes must inherit, used in the checks | _model::${rootPackage}::${libraryPackage}::lib::model::Node_ |
+| _doBackup_ | Indicates whether the generator should do a backup of the application, before generating any files | _false_ |
+| _expand_ | Template definition to start the generation from | _cartridge::Wcmf::templates::Root::root_ |
+| _outputEncoding_ | Encoding of the generated files | _UTF-8_ |
+| _configFileDefault_ | Name of the default configuration file, general properties like type mapping are declared here | _config.ini_ |
+| _projectname_ | Name of the application | _wcmf testapp_ |
+| _targetDir_ | Directory, in which the application is created | _targetDir_ |
+| _prExcludes_ | File patterns to be excluded when searching for protected regions | <em>*.svn-base, .git, vendor</em> |
+| _printGenerateDate_ | Indicates whether the generation date should be printed in generated file headers | _false_ |
+| _headerText_ | Text to be prepended to generated files | |
+
+The variables `${basePath}` (generator location) and `${targetDir}` (generated code
+location) must be provided as __command line__ arguments when running the generator
+(see \ref generator_run).
 
 ### Running ### {#generator_run}
 
-<span class="label label-danger">TODO</span>
+The generator is started using the __command__
+
+<pre>
+java -Djava.library.path=<strong><em>libPath</em></strong> -jar ChronosGenerator.jar <strong><em>workflowFile</em></strong> -basePath=<strong><em>basePath</em></strong> -propertyFile=<strong><em>propertyFile</em></strong> -targetDir=<strong><em>targetDir</em></strong>
+</pre>
+
+The __parameters__ are explained in the following table.
+
+| Parameter | Description | Default value
+|-----------|-------------|--------------
+| _libPath_ | Path to the generator libraries | <em>../vendor/olympos/chronos-generator/lib</em> |
+| _workflowFile_ | Workflow definition file | <em>../vendor/olympos/chronos-generator/cartridge/Wcmf/workflow/wcmf.oaw</em> |
+| _basePath_ | Path to the generator installation | <em>../vendor/olympos/chronos-generator/</em> |
+| _propertyFile_ | Workflow configuration file | <em>../model/workflow.properties</em> |
+| _targetDir_ | Path to the generated files | <em>../</em> |
+
+The __default values__ apply, if the generator is run from the _build_ directory of
+the wCMF default application.
+
+Since the code generator is integrated into the __ant deployment script__ of the
+application, it's also sufficient to run the following command in the _build_
+directory:
+
+<pre>
+ant generate
+</pre>
 
 ### Artefacts ### {#generator_artefacts}
 
-<span class="label label-danger">TODO</span>
+The generator creates the following files:
+
+- __SQL scripts__ are generated in the _install_ directory. They contain the
+  table definitions for [MySQL](http://www.mysql.com) databases (`install/tables_mysql.sql`)
+  and [SQLite](https://sqlite.org) databases (`install/tables_sqlite.sql`). For each domain
+  class one table is created, inherited attributes are stored in each table
+  ([Concrete Table Inheritance] (http://martinfowler.com/eaaCatalog/concreteTableInheritance.html)).
+
+- __Mapper__ classes are generated in directories corresponding to the
+  model packages (_app/src/model_, if the default model packages are used). For
+  each `ChiNode`/`ChiManyToMany` class one subclass of
+  \link wcmf::lib::model::mapper::NodeUnifiedRDBMapper `NodeUnifiedRDBMapper`\endlink
+  is created (e.g. `AuthorRDBMapper`).
+
+- __Domain classes__ are generated in the same directories as the mapper classes.
+  For each `ChiNode`/`ChiManyToMany` class two classes are created, one base class
+  that contains all generated code (e.g. `AuthorBase`) and one empty subclass,
+  that is used to add custom code (e.g. `Author`). The base class inherits from
+  \link wcmf::lib::model::Node `Node`\endlink.
+
+- __Configuration files__ in the [INI file](http://en.wikipedia.org/wiki/INI_file)
+  format are generated in the _app/config_ directory. Configuration files are
+  implicitly defined in the model by the `ChiActionKey.config` and `ChiSystem.config`
+  tags. For each name mentioned in these tags, one configuration file will be
+  created, containing all definitions related to it. Furthermore, the default
+  configuration file (_config.ini_ per default) contains the domain class
+  mapping definitions.
+
+- __Controller__ classes are generated in directories corresponding to the
+  model packages (_app/src/controller_, if the default model packages are used). For
+  each `ChiController` class one subclass of
+  \link wcmf::lib::presentation::Controller `Controller`\endlink will be created.
+
+- __View__ templates are generated in directories corresponding to the
+  model packages (_app/src/views_, if the default model packages are used). For
+  each `ChiView` class one empty template file will be created.
+
+#### Protected regions #### {#generator_pr}
+
+The generator creates functional code, but of course __custom code__ must be added
+in order to implement domain specific functionality. For this reason
+the generator adds sections that are enclosed in `PROTECTED REGION` tags,
+between which the user is supposed to place custom code. When re-generating
+the code later (e.g. because of model changes), this custom code will be preserved.
+
+An example of a class file containing protected regions is shown below.
+
+~~~~~~~~~~~~~{.php}
+<?php
+/**
+ * This file was generated by ChronosGenerator  from model.uml.
+ * Manual modifications should be placed inside the protected regions.
+ */
+namespace app\src\model;
+
+use app\src\model\AuthorBase;
+// PROTECTED REGION ID(app/src/model/Author.php/Import) ENABLED START
+// PROTECTED REGION END
+
+/**
+ * Author description:
+ *
+ * @author
+ * @version 1.0
+ */
+class Author extends AuthorBase {
+// PROTECTED REGION ID(app/src/model/Author.php/Body) ENABLED START
+// PROTECTED REGION END
+}
+?>
+~~~~~~~~~~~~~
+
 */
