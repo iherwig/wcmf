@@ -373,7 +373,7 @@ cartridges one of which is the wCMF cartridge. Cartridges are written in the
 _Xtent/Xpand_ language.
 
 If you are using [Composer](https://getcomposer.org/), the generator will be installed
-as a dependency in the directory _vendor/olympos/chronos-generator_. It may be also
+as a dependency in the directory _vendor/olympos/chronos-generator_. It may also
 be downloaded from
 [SourceForge](http://sourceforge.net/projects/olympos/files/ChronosGenerator-0.9.9.6b-wCMF.zip).
 
@@ -449,7 +449,7 @@ The generator creates the following files:
   class one table is created, inherited attributes are stored in each table
   ([Concrete Table Inheritance] (http://martinfowler.com/eaaCatalog/concreteTableInheritance.html)).
 
-- __Mapper__ classes are generated in directories corresponding to the
+- __Mapper classes__ are generated in directories corresponding to the
   model packages (_app/src/model_, if the default model packages are used). For
   each `ChiNode`/`ChiManyToMany` class one subclass of
   \link wcmf::lib::model::mapper::NodeUnifiedRDBMapper `NodeUnifiedRDBMapper`\endlink
@@ -469,12 +469,12 @@ The generator creates the following files:
   configuration file (_config.ini_ per default) contains the domain class
   mapping definitions.
 
-- __Controller__ classes are generated in directories corresponding to the
+- __Controller classes__ are generated in directories corresponding to the
   model packages (_app/src/controller_, if the default model packages are used). For
   each `ChiController` class one subclass of
   \link wcmf::lib::presentation::Controller `Controller`\endlink will be created.
 
-- __View__ templates are generated in directories corresponding to the
+- __View templates__ are generated in directories corresponding to the
   model packages (_app/src/views_, if the default model packages are used). For
   each `ChiView` class one empty template file will be created.
 
