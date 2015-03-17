@@ -211,7 +211,7 @@ The following image illustrates the _build depth_ parameter for a simple model.
 \image html builddepth.png "Build depth"
 
 If using a build depth value of _1_ the `Author` instance _Author A_ will be loaded together
-with it's related `Book` instances (_Book A_, _Book B_). A value of _2_ will also load
+with it's related `Articles` instances (_Article A_, _Article B_). A value of _2_ will also load
 the `Chapter` instances (_Chapter A1_, _Chapter A2_). The default value is
 \link wcmf::lib::persistence::BuildDepth::SINGLE `BuildDepth::SINGLE`\endlink,
 which means that only the _Author A_ instance is loaded. In the above illustration
@@ -273,21 +273,54 @@ method may be used. It allows to set the conditions that loaded objects should m
 
 ~~~~~~~~~~~~~{.php}
 $criteria = array(
-  new Criteria("Book", "title", "LIKE", "A%"),
-  new Criteria("Book", "year", ">=", "2014")))
+  new Criteria("Article", "title", "LIKE", "A%"),
+  new Criteria("Article", "year", ">=", "2014")))
 )
 
-// load all Book instances with titles starting with A and release date 2014 or later
-$books = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Book", BuildDepth::SINGLE, $criteria);
+// load all Article instances with titles starting with A and release date 2014 or later
+$articles = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Article", BuildDepth::SINGLE, $criteria);
 ~~~~~~~~~~~~~
 
-In this example all `Book` instances with titles starting with _A_ and release date
+In this example all `Article` instances with titles starting with _A_ and release date
 _2014 or later_ are loaded.
 
 More complex use cases are supported by the \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
-class.
+class. For example it allows to set search constraints on connected objects as
+shown in the following example:
 
-### Iterators ### {#pers_iter}
+~~~~~~~~~~~~~{.php}
+// create a Author query
+$query = new ObjectQuery('Author');
+
+// query part: Author.name LIKE 'A%' OR Author.name LIKE 'B%'
+$authorTpl1 = $query->getObjectTemplate("Author");
+$authorTpl1->setValue("name", Criteria::asValue("LIKE", "A%"));
+$authorTpl2 = $query->getObjectTemplate("Author", null, Criteria::OPERATOR_OR);
+$authorTpl2->setValue("name", Criteria::asValue("LIKE", "B%"));
+
+// query part: Article.created >= '2004-01-01' AND Article.created < '2005-01-01'
+$articleTpl1 = $query->getObjectTemplate("Article");
+$articleTpl1->setValue("created", Criteria::asValue(">=", "2004-01-01"));
+$articleTpl2 = $query->getObjectTemplate("Article");
+$articleTpl2->setValue("created", Criteria::asValue("<", "2005-01-01"));
+
+// connect query nodes
+$authorTpl1->addNode($articleTpl1);
+$authorTpl1->addNode($articleTpl2);
+
+// load result
+$authorList = $query->execute(BuildDepth::SINGLE);
+~~~~~~~~~~~~~
+
+In this example all `Author` instances are loaded which have names starting with
+_A_ or _B_ and which have `Article` instances connected that are created in the
+year _2014_.
+
+Besides this, wCMF integrates the
+[Lucene](http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html)
+search engine in the class \link wcmf::lib::search::impl::LuceneSearch `LuceneSearch`\endlink.
+
+### Iterating objects ### {#pers_iter}
 
 wCMF provides several [iterator](http://php.net/manual/en/class.iterator.php)
 classes for traversing objects and values.
@@ -326,7 +359,7 @@ to split the iteration of large lists into smaller parts.
 // traverse 10 nodes starting from $oid
 $counter = 0;
 $it = new PersistentIterator($oid);
-while ($it->valid() && $counter < 10) {
+while($it->valid() && $counter < 10) {
   echo "current object: ".$it->currentNode();
   $it->next();
   $counter++;
@@ -337,7 +370,7 @@ $iterId = $it->save();
 
 // load the iterator state later and traverse the remaining nodes
 $it = PersistentIterator::load($iterId);
-while ($it->valid()) {
+while($it->valid()) {
   echo "current object: ".$it->currentNode();
   $it->next();
 }
@@ -384,7 +417,77 @@ $tx->commit();
 
 ## Validation ## {#pers_validation}
 
-<span class="label label-danger">TODO</span>
+Before persisting objects, their content has to be validated according to the
+application requirements. Validation is handled in
+\link wcmf::lib::persistence::PersistentObject::validateValue `PersistentObject::validateValue`\endlink
+(for a single attribute) or
+\link wcmf::lib::persistence::PersistentObject::validateValues `PersistentObject::validateValues`\endlink
+(for the complete instance). These methods are called when values are changed via
+\link wcmf::lib::persistence::PersistentObject::setValue `PersistentObject::setValue`\endlink
+or right before persisting the object in
+\link wcmf::lib::persistence::impl::AbstractMapper::save `AbstractMapper::save`\endlink.
+Both validation methods throw a
+\link wcmf::lib::persistence::ValidationException `ValidationException`\endlink, if
+validation fails.
+
+The actual validation is delegated to the
+\link wcmf::lib::persistence::validator::Validator `Validator`\endlink
+class, which uses
+\link wcmf::lib::persistence::validator::ValidateType `ValidateType`\endlink
+implementations for validating different types of attributes. Each validation type
+accepts configuration options, that are passed in as a string value. The format
+of this value is completely up to the validator type implementation. In order
+to define, which validation should be applied to a domain class attribute, the
+_tag_ `restrictions_match` is used in the model (see \ref model_chivalue).
+
+Currently three __validation types__ are supported:
+
+\link wcmf::lib::persistence::validator::impl::Filter `Filter`\endlink
+validates against a PHP filter (see [filter_var](http://php.net/manual/en/function.filter-var.php)),
+e.g.
+~~~~~~~~~~~~~{.php}
+// FILTER_VALIDATE_INT with min_range option and FILTER_FLAG_ALLOW_HEX flag
+filter:int|{"options":{"min_range":0},"flags":2}
+~~~~~~~~~~~~~
+
+\link wcmf::lib::persistence::validator::impl::Image `Image`\endlink
+checks _width_ and _height_ of the referred image file
+e.g.
+~~~~~~~~~~~~~{.php}
+// image width exactly 200px, height less than 100px
+image:{"width":[200,1],"height":[100,0]}
+~~~~~~~~~~~~~
+
+\link wcmf::lib::persistence::validator::impl::RegExp `RegExp`\endlink
+validates against a regular expression (see [preg_match](http://php.net/manual/en/function.preg-match.php))
+e.g.
+~~~~~~~~~~~~~{.php}
+// integer or empty
+regexp:^[0-9]*$
+~~~~~~~~~~~~~
+
+\note The validation type is derived from the part of the configuration string,
+that precedes the first colon.
+
+Custom validation types may be added in the configuration. For example
+after adding `myValidator` (implemented in `MyValidator` class):
+
+~~~~~~~~~~~~~{.ini}
+[Validators]
+regexp = $regexpValidator
+filter = $filterValidator
+image = $imageValidator
+myValidator = $myValidator
+
+[MyValidator]
+__class = path\to\MyValidator
+~~~~~~~~~~~~~
+
+it may be used in the following way:
+
+~~~~~~~~~~~~~{.php}
+myValidator:custom_configuration_string_passed_by_MyValidator
+~~~~~~~~~~~~~
 
 ## Concurrency ## {#pers_concurrency}
 

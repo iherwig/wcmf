@@ -89,12 +89,12 @@ The following __tags__ are defined on the _ChiValue_ stereotype.
 
 | Tag | Description | Example | Default value
 |-----|-------------|---------|--------------
-| _app_data_type_ | Application specific attribute tags: A single value or \|-separated list of values | _TAG_A\|TAG_B_ | _DATATYPE_ATTRIBUTE_
+| _app_data_type_ | Application specific attribute tags: A single value or \|-separated list of values (see \ref pers_values) | _TAG_A\|TAG_B_ | _DATATYPE_ATTRIBUTE_
 | _db_data_type_ | The attribute's database type | _TEXT_ | _VARCHAR(255)_ |
 | _is_editable_ | Boolean, indicating whether this attribute is editable | _true_ | _true_
 | _input_type_ | Name of the attribute's input control as listed in the _InputTypes_ configuration section | _filebrowser_ | _text_
 | _display_type_ | Name of the attribute's display type as listed in the _DisplayTypes_ configuration section | _image_ | _text_
-| _restrictions_match_ | Name of the attribute's validation type as listed in the _Validator_ configuration section | _regexp:^[0-9]*$_ | |
+| _restrictions_match_ | Name of the attribute's validation type as listed in the _Validator_ configuration section (see \ref pers_validation) | _regexp:^[0-9]*$_ | |
 | _restrictions_not_match_ | _not used_ | | |
 | _restrictions_description_ | Validation description used in case of a validation error | _The value must be an integer or empty_ | |
 | _column_name_ | The name of the database column in which the attribute will be stored | _name_ | Attribute name

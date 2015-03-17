@@ -62,28 +62,28 @@ use wcmf\lib\persistence\ValueChangeEvent;
  * $query = new ObjectQuery('Author');
  *
  * // (Author.name LIKE '%ingo%' AND Author.email LIKE '%wemove%')
- * $authorTpl1 = &$query->getObjectTemplate('Author');
+ * $authorTpl1 = $query->getObjectTemplate('Author');
  * $authorTpl1->setValue("name", "ingo");
  * $authorTpl1->setValue("email", "LIKE '%wemove%'");
  *
  * // OR Author.name LIKE '%herwig%'
- * $authorTpl2 = &$query->getObjectTemplate('Author', null, Criteria::OPERATOR_OR);
+ * $authorTpl2 = $query->getObjectTemplate('Author', null, Criteria::OPERATOR_OR);
  * $authorTpl2->setValue("name", "herwig");
  *
  * // Recipe.created >= '2004-01-01' AND Recipe.created < '2005-01-01'
- * $recipeTpl1 = &$query->getObjectTemplate('Recipe');
+ * $recipeTpl1 = $query->getObjectTemplate('Recipe');
  * $recipeTpl1->setValue("created", ">= '2004-01-01'");
- * $recipeTpl2 = &$query->getObjectTemplate('Recipe');
+ * $recipeTpl2 = $query->getObjectTemplate('Recipe');
  * $recipeTpl2->setValue("created", "< '2005-01-01'");
  *
  * // AND (Recipe.name LIKE '%Salat%' OR Recipe.portions = 4)
  * // could have be built using one template, but this demonstrates the usage
  * // of the ObjectQuery::makeGroup() method
- * $recipeTpl3 = &$query->getObjectTemplate('Recipe');
+ * $recipeTpl3 = $query->getObjectTemplate('Recipe');
  * $recipeTpl3->setValue("name", "Salat");
- * $recipeTpl4 = &$query->getObjectTemplate('Recipe', null, Criteria::OPERATOR_OR);
+ * $recipeTpl4 = $query->getObjectTemplate('Recipe', null, Criteria::OPERATOR_OR);
  * $recipeTpl4->setValue("portions", "= 4");
- * $query->makeGroup(array(&$recipeTpl3, &$recipeTpl4), Criteria::OPERATOR_AND);
+ * $query->makeGroup(array($recipeTpl3, $recipeTpl4), Criteria::OPERATOR_AND);
  *
  * $authorTpl1->addNode($recipeTpl1, 'Recipe');
  * $authorTpl1->addNode($recipeTpl2, 'Recipe');
