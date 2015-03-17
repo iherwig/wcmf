@@ -49,7 +49,7 @@ class Node extends PersistentObject {
    */
   public function __construct(ObjectId $oid=null) {
     parent::__construct($oid);
-    // get parent::getValue method bz refelction
+    // get parent::getValue method by reflection
     if (self::$_parentGetValueMethod == null) {
       $reflector = new \ReflectionClass(__CLASS__);
       $parent = $reflector->getParentClass();

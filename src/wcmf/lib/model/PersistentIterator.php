@@ -14,7 +14,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 
 /**
- * PersistentIterator is used to iterate over a tree/list build of oids
+ * PersistentIterator is used to iterate over a tree/list built of oids
  * using a Depth-First-Algorithm. To persist its state use the PersistentIterator::save() method,
  * to restore its state use the static PersistentIterator::load() method, which returns the loaded instance.
  * States are identified by an unique id, which is provided after saving.

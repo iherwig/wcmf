@@ -180,7 +180,7 @@ if ($author == null) {
 }
 ~~~~~~~~~~~~~
 
-In the example the `Author` instance with id `1` is loaded.
+In the example the `Author` instance with id _1_ is loaded.
 
 #### Build depth #### {#pers_builddepth}
 
@@ -201,7 +201,7 @@ $oid = new ObjectId('Author', 1);
 $author = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::INFINITE);
 ~~~~~~~~~~~~~
 
-In this example the `Author` instance with id `1` is loaded together with all related
+In this example the `Author` instance with id _1_ is loaded together with all related
 objects recursively.
 
 Instead of a \link wcmf::lib::persistence::BuildDepth `BuildDepth`\endlink
@@ -210,12 +210,12 @@ The following image illustrates the _build depth_ parameter for a simple model.
 
 \image html builddepth.png "Build depth"
 
-If using a build depth value of `1` the `Author` instance _Author A_ will be loaded together
-with it's related `Book` instances (_Book A_, _Book B_). A value of `2` will also load
+If using a build depth value of _1_ the `Author` instance _Author A_ will be loaded together
+with it's related `Book` instances (_Book A_, _Book B_). A value of _2_ will also load
 the `Chapter` instances (_Chapter A1_, _Chapter A2_). The default value is
 \link wcmf::lib::persistence::BuildDepth::SINGLE `BuildDepth::SINGLE`\endlink,
 which means that only the _Author A_ instance is loaded. In the above illustration
-the value of `2` is equal to passing
+the value of _2_ is equal to passing
 \link wcmf::lib::persistence::BuildDepth::INFINITE `BuildDepth::INFINITE`\endlink.
 
 #### Sorting #### {#pers_sorting}
@@ -247,7 +247,23 @@ usort($nodeList, array($comparator, 'compare'));
 
 #### Pagination #### {#pers_pagination}
 
-<span class="label label-danger">TODO</span>
+In order to reduce the response time of your application when displaying large lists
+of objects, [pagination](http://en.wikipedia.org/wiki/Pagination#Pagination_in_web_content)
+may be used. This technique splits the list into smaller parts (_pages_) that are displayed
+one by one. In wCMF the class \link wcmf::lib::persistence::PagingInfo `PagingInfo`\endlink
+implements the concept.
+
+The following code shows how to load _25_ `Author` instances starting from
+position _50_:
+
+~~~~~~~~~~~~~{.php}
+// setup paging
+$pagingInfo = new PagingInfo(25);
+$pagingInfo->setOffset(50);
+
+// load the Author instances
+$authors = ObjectFactory::getInstance('persistenceFacade')->loadObjects('Author', BuildDepth::SINGLE, null, null, $pagingInfo);
+~~~~~~~~~~~~~
 
 ### Searching objects ### {#pers_search}
 
@@ -271,13 +287,100 @@ _2014 or later_ are loaded.
 More complex use cases are supported by the \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
 class.
 
-### Traversing object graphs ### {#pers_iter}
+### Iterators ### {#pers_iter}
 
-<span class="label label-danger">TODO</span>
+wCMF provides several [iterator](http://php.net/manual/en/class.iterator.php)
+classes for traversing objects and values.
+
+\link wcmf::lib::model::NodeIterator `NodeIterator`\endlink allows to traverse
+object graphs starting from a root \link wcmf::lib::model::Node `Node`\endlink.
+The algorithm used is [depth-first search](http://en.wikipedia.org/wiki/Depth-first_search).
+
+~~~~~~~~~~~~~{.php}
+// traverse $root and all descendents
+$it = new NodeIterator($root);
+foreach($it as $oid => $obj) {
+  echo "current object id: $oid";
+  echo "current object: $obj";
+}
+~~~~~~~~~~~~~
+
+\link wcmf::lib::model::NodeValueIterator `NodeValueIterator`\endlink is used
+to iterate over all persistent values of a \link wcmf::lib::model::Node `Node`\endlink.
+
+~~~~~~~~~~~~~{.php}
+// traverse all values of $object
+$it = new NodeValueIterator($object);
+for($it->rewind(); $it->valid(); $it->next()) {
+  echo "current object: ".$it->currentNode();
+  echo "current attribute name: ".$it->key();
+  echo "current attribute value: ".$it->current();
+}
+~~~~~~~~~~~~~
+
+\link wcmf::lib::model::PersistentIterator `PersistentIterator`\endlink allows
+to traverse object graphs as well, but it's state may be persisted in order
+to split the iteration of large lists into smaller parts.
+
+~~~~~~~~~~~~~{.php}
+// traverse 10 nodes starting from $oid
+$counter = 0;
+$it = new PersistentIterator($oid);
+while ($it->valid() && $counter < 10) {
+  echo "current object: ".$it->currentNode();
+  $it->next();
+  $counter++;
+}
+
+// save iterator state in the session
+$iterId = $it->save();
+
+// load the iterator state later and traverse the remaining nodes
+$it = PersistentIterator::load($iterId);
+while ($it->valid()) {
+  echo "current object: ".$it->currentNode();
+  $it->next();
+}
+~~~~~~~~~~~~~
 
 ### Modifying objects ### {#pers_modify}
 
-<span class="label label-danger">TODO</span>
+Domain class instances are created by calling the
+\link wcmf::lib::persistence::PersistenceFacade::create `PersistenceFacade::create`\endlink
+method or simply the class constructor, where the first approach is preferred
+over the second because it also sets the default values on attributes.
+
+Changes on instances are persisted automatically, when the current transaction
+is committed (see \ref pers_tx). Objects are removed from the store by calling the
+\link wcmf::lib::persistence::PersistentObject::delete `PersistentObject::delete`\endlink
+method.
+
+~~~~~~~~~~~~~{.php}
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+$tx = $persistenceFacade->getTransaction();
+
+// create an Author instance
+$author = $persistenceFacade->create('Author');
+$author->setValue('name', 'Author A');
+
+// create an Article instance and attach it to the author
+$article = $persistenceFacade->create('Article');
+$article->setValue('title', 'Article A');
+$author->addNode($article);
+
+// save everything
+$tx->commit();
+
+// get the author's object id
+$oid = $author->getOID()
+
+// delete the author instance
+$author = $persistenceFacade->load($oid);
+$author->delete();
+
+// save everything
+$tx->commit();
+~~~~~~~~~~~~~
 
 ## Validation ## {#pers_validation}
 

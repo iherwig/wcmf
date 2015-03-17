@@ -13,7 +13,7 @@ namespace wcmf\lib\model;
 use wcmf\lib\model\Node;
 
 /**
- * NodeIterator is used to iterate over a tree/list build of Nodes
+ * NodeIterator is used to iterate over a tree/list built of Nodes
  * using a Depth-First-Algorithm. Classes used with the NodeIterator must
  * implement the getChildren() and getOID() methods.
  *

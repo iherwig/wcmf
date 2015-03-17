@@ -617,39 +617,6 @@ The @em parameters of the method Message::get are defined by the values of @em r
 P E R S I S T E N C E
 =====================
 
-### Traversing object graphs ### {#pers_iter}
-
-~~~~~~~~~~~~~{.php}
-$iterator = new NodeIterator($node);
-while(!($iterator->isEnd()))
-{
-  $currentObject = &$iterator->getCurrentObject();
-  Message::trace($currentObject->getOID());
-  $iterator->proceed();
-}
-~~~~~~~~~~~~~
-
-The example outputs the object ids of all nodes that are descendents of $node.
-
-### Modifying objects ### {#pers_modify}
-
-~~~~~~~~~~~~~{.php}
-// Create
-
-$node->setValue('text', 'hello world!', DATATYPE_ATTRIBUTE);
-
-// Saving changes
-// If one node has been modified
-$node->save();
-
-// If several connected nodes have been modified
-$iterator = new NodeIterator($node);
-$cv = new CommitVisitor();
-$cv->startIterator($iterator);
-
-// Delete
-~~~~~~~~~~~~~
-
 ## Concurrency ## {#pers_concurrency}
 
 If more than one user works with the application at the same time, conflicts can occur, if two
