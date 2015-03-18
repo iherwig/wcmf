@@ -430,6 +430,8 @@ Both validation methods throw a
 \link wcmf::lib::persistence::ValidationException `ValidationException`\endlink, if
 validation fails.
 
+### Validation types ### {#pers_validation_types}
+
 The actual validation is delegated to the
 \link wcmf::lib::persistence::validator::Validator `Validator`\endlink
 class, which uses
@@ -440,7 +442,7 @@ of this value is completely up to the validator type implementation. In order
 to define, which validation should be applied to a domain class attribute, the
 _tag_ `restrictions_match` is used in the model (see \ref model_chivalue).
 
-Currently three __validation types__ are supported:
+Currently three validation types are supported:
 
 \link wcmf::lib::persistence::validator::impl::Filter `Filter`\endlink
 validates against a PHP filter (see [filter_var](http://php.net/manual/en/function.filter-var.php)),
@@ -495,11 +497,13 @@ When two or more users try to access the same object at the same time problems
 like _lost updates_ might occur. These issues are avoided by _concurrency control_
 mechanisms, typically _object locking_.
 
-wCMF provides two different __locking strategies__:
+### Locking ### {#pers_locking}
 
-- _Pessimistic locking_: An explicit lock is obtained by one user, that blocks
+wCMF provides two locking strategies:
+
+- __Pessimistic locking__: An explicit lock is obtained by one user, that blocks
   write access to the object for other users until the lock is released.
-- _Optimistic locking_: A copy of the initial object data is stored for each user
+- __Optimistic locking__: A copy of the initial object data is stored for each user
   and checked against later, when the user tries to store the object. The operation
   fails, if another user has updated the object data in the meantime.
 
