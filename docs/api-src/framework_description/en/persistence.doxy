@@ -491,7 +491,46 @@ myValidator:custom_configuration_string_passed_by_MyValidator
 
 ## Concurrency ## {#pers_concurrency}
 
-<span class="label label-danger">TODO</span>
+When two or more users try to access the same object at the same time problems
+like _lost updates_ might occur. These issues are avoided by _concurrency control_
+mechanisms, typically _object locking_.
+
+wCMF provides two different __locking strategies__:
+
+- _Pessimistic locking_: An explicit lock is obtained by one user, that blocks
+  write access to the object for other users until the lock is released.
+- _Optimistic locking_: A copy of the initial object data is stored for each user
+  and checked against later, when the user tries to store the object. The operation
+  fails, if another user has updated the object data in the meantime.
+
+For more detailed information see
+[database locks](http://en.wikipedia.org/wiki/Lock_%28computer_science%29#Database_locks).
+
+\link wcmf::lib::persistence::concurrency::Lock `Lock`\endlink instances are
+obtained by calling
+\link wcmf::lib::persistence::concurrency::ConcurrencyManager::aquireLock `ConcurrencyManager::aquireLock`\endlink
+and released using
+\link wcmf::lib::persistence::concurrency::ConcurrencyManager::releaseLock `ConcurrencyManager::releaseLock`\endlink
+like shown in the following example:
+
+~~~~~~~~~~~~~{.php}
+// object id of the object to lock
+$oid = new ObjectId('Author', 1);
+
+// aquire an optimistic lock for the object
+$lockType = Lock::TYPE_OPTIMISTIC;
+$concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
+try {
+  $concurrencyManager->aquireLock($oid, $lockType);
+}
+catch (PessimisticLockException $ex) {
+  // another user already holds a lock on this object
+  echo $ex->getMessage();
+}
+
+// release lock later
+$concurrencyManager->releaseLock($oid, $lockType);
+~~~~~~~~~~~~~
 
 ## Transactions ## {#pers_tx}
 
