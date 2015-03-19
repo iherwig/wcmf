@@ -21,6 +21,14 @@ namespace wcmf\lib\persistence;
 interface Transaction {
 
   /**
+   * Register a loaded object. Mappers must call this method on each
+   * loaded object. The returned object is the registered instance.
+   * @param $object PersistentObject instance
+   * @return PersistentObject instance
+   */
+  function registerLoaded(PersistentObject $object);
+
+  /**
    * Register a newly created object
    * @param $object PersistentObject instance
    */
@@ -61,14 +69,6 @@ interface Transaction {
    * @return Boolean
    */
   function isActive();
-
-  /**
-   * Register a loaded object. Mappers must call this method on each
-   * loaded object. The returned object is the registered instance.
-   * @param $object PersistentObject instance
-   * @return PersistentObject instance
-   */
-  function registerLoaded(PersistentObject $object);
 
   /**
    * Get a loaded object.

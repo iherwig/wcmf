@@ -62,6 +62,47 @@ class DefaultTransaction implements Transaction {
   }
 
   /**
+   * @see Transaction::registerLoaded()
+   */
+  public function registerLoaded(PersistentObject $object) {
+    $oid = $object->getOID();
+    $key = $oid->__toString();
+    if (self::$isDebugEnabled) {
+      Log::debug("New Data:\n".$object->dump(), __CLASS__);
+      Log::debug("Registry before:\n".$this->dump(), __CLASS__);
+    }
+    // register the object if it is newly loaded or
+    // merge the attributes, if it is already loaded
+    $registeredObject = null;
+    if (isset($this->_loadedObjects[$key])) {
+      $registeredObject = $this->_loadedObjects[$key];
+      // merge existing attributes with new attributes
+      if (self::$isDebugEnabled) {
+        Log::debug("Merging data of ".$key, __CLASS__);
+      }
+      $registeredObject->mergeValues($object);
+    }
+    else {
+      if (self::$isDebugEnabled) {
+        Log::debug("Register loaded object: ".$key, __CLASS__);
+      }
+      $this->_loadedObjects[$key] = $object;
+      // start to listen to changes if the transaction is active
+      if ($this->_isActive) {
+        if (self::$isDebugEnabled) {
+          Log::debug("Start listening to: ".$key, __CLASS__);
+        }
+        $this->_observedObjects[$key] = $object;
+      }
+      $registeredObject = $object;
+    }
+    if (self::$isDebugEnabled) {
+      Log::debug("Registry after:\n".$this->dump(), __CLASS__);
+    }
+    return $registeredObject;
+  }
+
+  /**
    * @see Transaction::registerNew()
    */
   public function registerNew(PersistentObject $object) {
@@ -203,59 +244,6 @@ class DefaultTransaction implements Transaction {
   }
 
   /**
-   * @see Transaction::registerLoaded()
-   */
-  public function registerLoaded(PersistentObject $object) {
-    $oid = $object->getOID();
-    $key = $oid->__toString();
-    if (self::$isDebugEnabled) {
-      Log::debug("New Data:\n".$object->dump(), __CLASS__);
-      Log::debug("Registry before:\n".$this->dump(), __CLASS__);
-    }
-    // register the object if it is newly loaded or
-    // merge the attributes, if it is already loaded
-    $registeredObject = null;
-    if (isset($this->_loadedObjects[$key])) {
-      $registeredObject = $this->_loadedObjects[$key];
-      // merge existing attributes with new attributes
-      if (self::$isDebugEnabled) {
-        Log::debug("Merging data of ".$key, __CLASS__);
-      }
-      $registeredObject->mergeValues($object);
-    }
-    else {
-      if (self::$isDebugEnabled) {
-        Log::debug("Register loaded object: ".$key, __CLASS__);
-      }
-      $this->_loadedObjects[$key] = $object;
-      // start to listen to changes if the transaction is active
-      if ($this->_isActive) {
-        if (self::$isDebugEnabled) {
-          Log::debug("Start listening to: ".$key, __CLASS__);
-        }
-        $this->_observedObjects[$key] = $object;
-      }
-      $registeredObject = $object;
-    }
-    if (self::$isDebugEnabled) {
-      Log::debug("Registry after:\n".$this->dump(), __CLASS__);
-    }
-    return $registeredObject;
-  }
-
-  /**
-   * Dump the registry content into a string
-   * @return String
-   */
-  protected function dump() {
-    $str = '';
-    foreach (array_values($this->_loadedObjects) as $curObject) {
-      $str .= $curObject->dump();
-    }
-    return $str;
-  }
-
-  /**
    * @see Transaction::getLoaded()
    */
   public function getLoaded(ObjectId $oid) {
@@ -286,6 +274,18 @@ class DefaultTransaction implements Transaction {
     }
     unset($this->_observedObjects[$key]);
     $this->_detachedObjects[$key] = $oid;
+  }
+
+  /**
+   * Dump the registry content into a string
+   * @return String
+   */
+  protected function dump() {
+    $str = '';
+    foreach (array_values($this->_loadedObjects) as $curObject) {
+      $str .= $curObject->dump();
+    }
+    return $str;
   }
 
   /**

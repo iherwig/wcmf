@@ -538,5 +538,44 @@ $concurrencyManager->releaseLock($oid, $lockType);
 
 ## Transactions ## {#pers_tx}
 
-<span class="label label-danger">TODO</span>
+wCMF supports [database transactions](http://en.wikipedia.org/wiki/Database_transaction).
+There is only __one transaction at the same time__ and it may be obtained using the
+\link wcmf::lib::persistence::PersistenceFacade::getTransaction `PersistenceFacade::getTransaction`\endlink
+method. The transaction has an _active_ state, which is set in the
+\link wcmf::lib::persistence::Transaction::begin `Transaction::begin`\endlink
+method and reset on commit or rollback.
+
+The following example shows, how to use transactions:
+
+~~~~~~~~~~~~~{.php}
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
+// get the current transaction and start it
+$transaction = $persistenceFacade->getTransaction();
+$transaction->begin();
+try {
+  // load the the Author instance with id 1 and make changes to it
+  $author = $persistenceFacade->load(new ObjectId('Author', 1));
+  $author->setValue("name", "Author B");
+
+  // save the changes
+  $transaction->commit();
+}
+catch(Exception $ex) {
+  // rollback the transaction if the commit fails
+  echo $ex->getMessage();
+  $transaction->rollback();
+}
+~~~~~~~~~~~~~
+
+\note Even if not obtained explicitely, there is always a transaction existing
+in the background, to which objects loaded from the store are attached. But in order
+to persist changes when doing a commit, the transaction has to be set _active_
+_before_ loading or creating the object.
+
+There are situations where you want to let the current transaction __ignore changes__
+made to newly created objects or objects loaded from the store. In these cases you
+can use the method
+\link wcmf::lib::persistence::Transaction::detach `Transaction::detach`\endlink
+in order to disconnect the object from the transaction.
 */
