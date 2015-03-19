@@ -117,10 +117,6 @@ td.entry {
   font-style: italic;
 }
 
-.fragment {
-  margin: 4px 8px 10px 2px !important;
-}
-
 .panel-default {
   border: none;
 }
@@ -138,7 +134,20 @@ td.entry {
   margin-top: 24px;
 }
 
-// Search
+.jumbotron h2 {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 20px;
+}
+
+/* Code */
+
+div.line {
+  text-indent: 0;
+  padding-left: 0;
+}
+
+/* Search */
 
 #MSearchSelectWindow {
   display: none;

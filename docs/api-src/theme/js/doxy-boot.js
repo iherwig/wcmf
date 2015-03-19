@@ -30,7 +30,12 @@ $(document).ready(function() {
   $("table.directory").addClass("table table-striped");
   $("div.summary > a").addClass("btn btn-default btn-xs");
   $("table.fieldtable").addClass("table");
-  $(".fragment").addClass("well");
+  $(".fragment").addClass("well").removeClass("fragment");
+  $(".line").each(function() {
+    var $this = $(this);
+    $this.find("a, span.lineno").remove();
+    $this.html($this.html().replace(/^&nbsp;/g, ''));
+  });
   $(".memitem").addClass("panel panel-info");
   $(".memproto").addClass("panel-heading");
   $(".memdoc").addClass("panel-body");

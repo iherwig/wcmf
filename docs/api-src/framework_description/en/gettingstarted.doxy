@@ -105,6 +105,7 @@ The database connection information is defined in the file `app/config/server.in
 defaults to
 
 ~~~~~~~~~~~~~{.ini}
+[Database]
 dbType = mysql
 dbHostName = 127.0.0.1
 dbName = wcmf_testapp
