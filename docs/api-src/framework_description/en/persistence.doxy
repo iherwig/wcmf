@@ -527,7 +527,7 @@ $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
 try {
   $concurrencyManager->aquireLock($oid, $lockType);
 }
-catch (PessimisticLockException $ex) {
+catch(PessimisticLockException $ex) {
   // another user already holds a lock on this object
   echo $ex->getMessage();
 }

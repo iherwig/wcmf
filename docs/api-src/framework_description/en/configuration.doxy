@@ -108,12 +108,12 @@ dbPassword =
 dbCharSet = utf8
 ~~~~~~~~~~~~~
 
-The first section defines that the instance named `PersistenceFacade` is an object of
+The first section defines that the instance named _PersistenceFacade_ is an object of
 the class \link wcmf::lib::persistence::impl::DefaultPersistenceFacade `DefaultPersistenceFacade`\endlink.
 The _logging_ property is set to _false_, the _logStrategy_ property is set to an
 instance of \link wcmf::lib::persistence::output::impl::AuditingOutputStrategy `AuditingOutputStrategy`\endlink.
 The _TypeMapping_ section does not contain a `__class` key, which means that the
-_mappers_ property of `PersistenceFacade` will be an associative array. In our
+_mappers_ property of _PersistenceFacade_ will be an associative array. In our
 case it maps class names (e.g. _app.src.model.wcmf.DBSequence_) to mapper instances
 (e.g. `DBSequenceRDBMapper`). Further sections show that the _connectionParams_
 property of the `DBSequenceRDBMapper` instance is set to an associative array
@@ -121,8 +121,8 @@ describing the database connection (section _Database_).
 
 @note Configuration section and key names are treated case-insensitive.
 
-The `PersistenceFacade` instance may be retrieved later by using the following
-code:
+The \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink
+instance may be retrieved later by using the following code:
 
 ~~~~~~~~~~~~~{.php}
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
