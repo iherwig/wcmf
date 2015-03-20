@@ -36,13 +36,17 @@
   content: "- ";
 }
 
-.nav-list > .active > a, .nav-list > .active > a:hover {
-  color: #ffffff;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
-  background-color: #0088cc;
+.tocify .nav-list > .active > a, .tocify .nav-list > .active > a:hover {
+  font-weight: bold;
+  border-left: medium solid #428bca;
 }
 
-.nav-list > li > a {
+.tocify .nav > li > a:hover, .tocify .nav > li > a:focus {
+  font-weight: bold;
+  background: none;
+}
+
+.tocify .nav-list > li > a {
   padding: 10px;
 }
 
@@ -117,20 +121,8 @@ td.entry {
   border: none;
 }
 
-.contents {
-  margin-top: -20px;
-}
-
 .textblock h2, .textblock h3, .textblock h4, .textblock h5 {
   margin-top: 20px;
-}
-
-.textblock h2 {
-  border-top: 1px solid #ddd;
-}
-
-.jumbotron h2 {
-  border-top: none;
 }
 
 /* Code */

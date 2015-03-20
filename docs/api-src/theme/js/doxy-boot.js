@@ -32,9 +32,8 @@ $(document).ready(function() {
   $("table.fieldtable").addClass("table");
   $(".fragment").addClass("well").removeClass("fragment");
   $(".line").each(function() {
-    var $this = $(this);
-    $this.find("a[name], span.lineno").remove();
-    $this.html($this.html().replace(/^&nbsp;/g, ''));
+    $(this).find("a[name], span.lineno").hide();
+    $(this).html($(this).html().replace(/^&nbsp;/g, ''));
   });
   $(".memitem").addClass("panel panel-info");
   $(".memproto").addClass("panel-heading");
