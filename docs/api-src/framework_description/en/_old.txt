@@ -613,38 +613,3 @@ For localizing the view templates a Smarty plugin is provided, which is to be us
 ~~~~~~~~~~~~~
 
 The @em parameters of the method Message::get are defined by the values of @em r0, @em r1, ...
-
-P E R S I S T E N C E
-=====================
-
-## Concurrency ## {#pers_concurrency}
-
-If more than one user works with the application at the same time, conflicts can occur, if two
-users want to edit the same object concurrently. In this case the first user can request
-a lock on that object, which only allows reading access to succeeding users. This lock will
-be transfered to all instances loaded in the future as long until the user unlocks the object,
-which happens automatically upon execution of an action (call to main.php).
-In the sourcecode this looks as follows:
-
-~~~~~~~~~~~~~{.php}
-$lockManager = &LockManager::getInstance();
-$object = &$persistenceFacade->load($this->_request->getValue('oid'), BUILDDEPTH_INFINITE);
-
-// if the object is locked by another user we retrieve the lock to show a message
-$lock = $object->getLock();
-if ($lock != null)
-{
-  $lockMsg .= $lockManager->getLockMessage($lock, $recipe->getName());
-}
-else
-{
-  // try to lock object
-  $lockManager->aquireLock($this->_request->getValue('oid'));
-}
-~~~~~~~~~~~~~
-
-The functionality described above is imlemented in the method LockManager::handleLocking,
-with the only difference that this method only acquires a lock in cases in which the
-user is allowed to update the object.@n
-An object, which is loaded by another user is set to non-editable (@em is_editable = false)
-automatically upon loading.

@@ -2,12 +2,12 @@
 \page gettingstarted Getting started
 <div class="has-toc"></div>
 
-# Getting started #
+# Getting started # {#getting_started}
 
 The wCMF project mainly consists of two parts, the application framework and an
 application template.
 
-## wCMF Framework ##
+## wCMF Framework ## {#framework}
 
 The wCMF framework provides the infrastructure to create PHP web applications based
 on the model-view-controller pattern. The project's source code is hosted at
@@ -24,7 +24,7 @@ want to add the following lines to your `composer.json`:
 }
 ~~~~~~~~~~~~~
 
-## Default Application ##
+## Default Application ## {#app}
 
 The default application is a fully functional data managing application based on the
 wCMF framework. Besides interfaces for create/read/update/delete (CRUD) operations
@@ -37,7 +37,7 @@ The following screenshots show the list and detail view of an _Author_ entity ty
 
 @image html wcmf-default-app2ws.png
 
-### Prerequisites ###
+### Prerequisites ### {#app_pre}
 
 To run the wCMF default application you will need the following:
 
@@ -48,13 +48,13 @@ To run the wCMF default application you will need the following:
   [Chronos Web Modeler](http://sourceforge.net/projects/olympos/))
 - [Apache Ant](http://ant.apache.org/) for code generation and deployment
 
-### Installation ###
+### Installation ### {#app_install}
 
 The application's source code may be forked or downloaded from
 [GitHub](https://github.com/iherwig/wcmf-default-app). After download,
 execute the following steps to get a running application:
 
-#### Unpack the code ####
+#### Unpack the code #### {#app_install_zip}
 
 Put the code into a directory accessible to your web server. You should see the
 following directories:
@@ -73,7 +73,7 @@ following directories:
 We assume that the application's root directory is accessible via the url
 `http://localhost/wcmf-default-app`.
 
-#### Run Composer ####
+#### Run Composer #### {#app_install_composer}
 
 The application uses Composer to manage external dependencies.
 Execute the following command in the root directory of the application to fetch them:
@@ -82,14 +82,14 @@ Execute the following command in the root directory of the application to fetch 
 composer install
 ~~~~~~~~~~~~~
 
-#### Model the domain ####
+### Model the domain ### {#app_model}
 
 The application ships with a demo UML model that may be used as a quick start.
 It's located in `model/model.uml`. Base models for those who want to start
 from scratch are located in _model/base/cwm/_ and _model/base/papyrus/_. An
 in-depth guide on modeling for wCMF may be found in the section \ref model.
 
-#### Generate the code ####
+### Generate the code ### {#app_gen}
 
 A code generator is used to generate class- and configuration files from the domain
 model. Execute the following command in the _build_ directory of the application in
@@ -99,7 +99,7 @@ order to run the generator:
 ant generate
 ~~~~~~~~~~~~~
 
-#### Setup the database connection ####
+### Setup the database connection ### {#app_db}
 
 The database connection information is defined in the file `app/config/server.ini` and
 defaults to
@@ -118,7 +118,7 @@ Change these values to fit your local configuration. If privileges are granted,
 the database will be created automatically in the next step. If not, you have
 to create it beforehand.
 
-#### Run installation scripts ####
+### Run installation scripts ### {#app_db_init}
 
 Open a web browser and navigate to `http://localhost/wcmf-default-app/install/`.
 Click the buttons:
@@ -126,7 +126,7 @@ Click the buttons:
 - _Update database_ to create the application tables
 - _Initialize database_ to create the initial data (e.g. the _admin_ user)
 
-#### Open the application ####
+### Open the application ### {#app_run}
 
 Navigate to `http://localhost/wcmf-default-app/app/public/` to open the login screen.
 Sign in using

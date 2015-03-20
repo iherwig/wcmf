@@ -33,7 +33,7 @@ $(document).ready(function() {
   $(".fragment").addClass("well").removeClass("fragment");
   $(".line").each(function() {
     var $this = $(this);
-    $this.find("a, span.lineno").remove();
+    $this.find("a[name], span.lineno").remove();
     $this.html($this.html().replace(/^&nbsp;/g, ''));
   });
   $(".memitem").addClass("panel panel-info");

@@ -9,7 +9,8 @@ $(function() {
     $("#toc").tocify({
       selectors: "h2,h3,h4,h5",
       theme: "bootstrap",
-      context: ".panel-default"
+      context: ".panel-default",
+      scrollTo: 50
     }).data("toc-tocify");
   }
 

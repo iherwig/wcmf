@@ -175,7 +175,7 @@ $oid = new ObjectId('Author', 1);
 $author = ObjectFactory::getInstance('persistenceFacade')->load($oid);
 
 // PersistenceFacade will return null, if an instance does not exist
-if ($author == null) {
+if($author == null) {
   echo("An Author with object id ".$oid." does not exist.";
 }
 ~~~~~~~~~~~~~
