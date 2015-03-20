@@ -54,13 +54,19 @@
   position: relative;
   font-size: 0.7em;
   left: 0;
-  bottom: -1.5em;
-  margin-left: -1.1em;
+  bottom: -1.4em;
+  margin-left: -1.3em;
   opacity: 0;
 
   -webkit-transition: opacity 0.1s ease-in-out 0.1s;
   -moz-transition: opacity 0.1s ease-in-out 0.1s;
   -ms-transition: opacity 0.1s ease-in-out 0.1s;
+}
+
+i.fa-slack {
+  -ms-transform: rotate(19deg);
+  -webkit-transform: rotate(19deg);
+  transform: rotate(19deg);
 }
 
 h2:hover .header-link,
