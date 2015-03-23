@@ -47,7 +47,7 @@
         "sybio/image-workshop": "2.0.5",
         "sybio/gif-frame-extractor": "1.0.0",
         "sybio/gif-creator": "1.0.0",
-        "helios-ag/fm-elfinder-php-connector": "1.1.1",
+        "helios-ag/fm-elfinder-php-connector": "~2.2",
         "nusphere/nusoap": "0.9.5",
         "smarty/smarty": "v3.1.21",
         "itbz/fpdi": "1.4.4"
