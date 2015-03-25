@@ -162,7 +162,9 @@ class RESTController extends Controller {
       // delegate further processing to ListController
       $offset = 0;
 
-      // transform range header
+      // parse headers
+
+      // range
       if ($request->hasHeader('Range')) {
         if (preg_match('/^items=([\-]?[0-9]+)-([\-]?[0-9]+)$/', $request->getHeader('Range'), $matches)) {
           $offset = intval($matches[1]);
@@ -172,8 +174,9 @@ class RESTController extends Controller {
         }
       }
 
-      // transform sort definition
+      // parse get paramters
       foreach ($request->getValues() as $key => $value) {
+        // sort definition
         if (preg_match('/^sort\(([^\)]+)\)$|sortBy=([.]+)$/', $key, $matches)) {
           $sortDefs = preg_split('/,/', $matches[1]);
           // ListController allows only one sortfield
@@ -182,6 +185,15 @@ class RESTController extends Controller {
           $sortDirection = preg_match('/^-/', $sortDef) ? 'desc' : 'asc';
           $request->setValue('sortFieldName', $sortFieldName);
           $request->setValue('sortDirection', $sortDirection);
+          break;
+        }
+        // limit
+        if (preg_match('/^limit\(([^\)]+)\)$/', $key, $matches)) {
+          $rangeDefs = preg_split('/,/', $matches[1]);
+          $limit = intval(array_pop($rangeDefs));
+          $offset = sizeof($rangeDefs) > 0 ? intval($rangeDefs[0]) : 0;
+          $request->setValue('offset', $offset);
+          $request->setValue('limit', $limit);
           break;
         }
       }
@@ -225,9 +237,10 @@ class RESTController extends Controller {
       $response->setValues($objects);
 
       // set response range header
-      $limit = sizeof($objects);
+      $size = sizeof($objects);
+      $limit = $size == 0 ? $offset : $offset+$size-1;
       $total = $subResponse->getValue('totalCount');
-      $response->setHeader('Content-Range', 'items '.$offset.'-'.($offset+$limit-1).'/'.$total);
+      $response->setHeader('Content-Range', 'items '.$offset.'-'.$limit.'/'.$total);
     }
   }
 

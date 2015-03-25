@@ -39,7 +39,7 @@ class JsonFormat extends HierarchicalFormat {
   public static function printJSONResult() {
     if (self::$_jsonUsed) {
       $data = self::$_jsonData;
-      if ($data != null) {
+      if ($data !== null) {
         $encoded = json_encode($data);
         if (Log::isDebugEnabled('JsonFormat')) {
           Log::debug($data, 'JsonFormat');
