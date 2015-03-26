@@ -56,12 +56,14 @@ class RESTController extends Controller {
       $sourceOid = new ObjectId($request->getValue('className'), $request->getValue('sourceId'));
       $request->setValue('sourceOid', $sourceOid->__toString());
     }
-    // construct targetOid from sourceOid, relation and targetId
+    // construct oid, targetOid from sourceOid, relation and targetId
     if ($request->hasValue('sourceOid') && $request->hasValue('relation') && $request->hasValue('targetId')) {
       $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
       $relatedType = $this->getRelatedType($sourceOid, $request->getValue('relation'));
       $targetOid = new ObjectId($relatedType, $request->getValue('targetId'));
       $request->setValue('targetOid', $targetOid->__toString());
+      // non-collection requests
+      $request->setValue('oid', $targetOid->__toString());
     }
     parent::initialize($request, $response);
   }
@@ -340,8 +342,17 @@ class RESTController extends Controller {
         $orderReferenceOid = 'ORDER_BOTTOM';
       }
       else {
-        list($ignore, $orderReferenceOidStr) = preg_split('/ /', $position);
-        $orderReferenceOid = ObjectId::parse($orderReferenceOidStr);
+        list($ignore, $orderReferenceIdStr) = preg_split('/ /', $position);
+        if ($request->hasValue('relation') && $request->hasValue('sourceOid')) {
+          // sort in relation
+          $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
+          $relatedType = $this->getRelatedType($sourceOid, $request->getValue('relation'));
+          $orderReferenceOid = new ObjectId($relatedType, $orderReferenceIdStr);
+        }
+        else {
+          // sort in root
+          $orderReferenceOid = new ObjectId($request->getValue('className'), $orderReferenceIdStr);
+        }
       }
     }
 
