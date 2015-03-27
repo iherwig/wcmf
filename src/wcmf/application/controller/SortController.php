@@ -315,6 +315,7 @@ class SortController extends Controller {
    * @return Boolean
    */
   protected function checkObjects($objectMap) {
+    $response = $this->getResponse();
     $invalidOids = array();
     foreach ($objectMap as $parameterName => $object) {
       if ($object == null) {

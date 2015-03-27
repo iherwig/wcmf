@@ -156,7 +156,7 @@
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEuARHEeSxY9ess8EBIw" value="action=restAction&amp;collection=1"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEuQRHEeSxY9ess8EBIw" name="/rest/{language}/{className}/{sourceId|[0-9]+}/{relation}/{targetId|[0-9]+}" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEugRHEeSxY9ess8EBIw" value="action=restAction&amp;collection=1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEugRHEeSxY9ess8EBIw" value="action=restAction&amp;collection=0"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEuwRHEeSxY9ess8EBIw" name="/soap" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEvARHEeSxY9ess8EBIw" value="action=soapAction"/>

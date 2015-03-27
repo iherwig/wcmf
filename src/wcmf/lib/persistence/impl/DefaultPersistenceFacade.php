@@ -127,8 +127,8 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $transaction = $this->getTransaction();
     $obj = $transaction->getLoaded($oid);
 
-    // if not cached, load
-    if ($obj == null) {
+    // if not cached or build depth requested, load
+    if ($obj == null || $buildDepth != BuildDepth::SINGLE) {
       $mapper = $this->getMapper($oid->getType());
       if ($mapper != null) {
         $obj = $mapper->load($oid, $buildDepth);
