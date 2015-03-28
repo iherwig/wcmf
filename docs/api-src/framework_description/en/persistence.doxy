@@ -33,6 +33,13 @@ _id_ by default.
 @note wCMF uses a table called `DBSequence` for retrieving the next id value used for
 insertion, since _autoincrement_ columns are not supported on all database servers.
 
+#### Primary keys #### {#pers_id}
+
+Primary keys are used to clearly identify an object in the database. They can consist
+of one (_simple_) or more (_compound_) columns. The default name for a primary
+key column is _id_. wCMF stores the primary key of an object together with it's type
+name in an \link wcmf::lib::persistence::ObjectId `ObjectId`\endlink instance.
+
 #### Relations #### {#pers_relations}
 
 The following two relations types must be considered, when modeling the data
@@ -490,6 +497,13 @@ it may be used in the following way:
 ~~~~~~~~~~~~~{.php}
 myValidator:custom_configuration_string_passed_by_MyValidator
 ~~~~~~~~~~~~~
+
+### Complex validation ### {#pers_validation_custom}
+
+The described validation types only operate on one attribute. If more complex
+validation is required, e.g. if dependencies between several attributes exist, the method
+\link wcmf::lib::persistence::PersistentObject::validateValue `PersistentObject::validateValue`\endlink
+may be overriden in the appropriate domain class.
 
 ## Concurrency ## {#pers_concurrency}
 

@@ -199,7 +199,7 @@ class DefaultLocalization implements Localization {
       $transaction = $persistenceFacade->getTransaction();
       $translatedObject = $persistenceFacade->create($object->getType());
       $transaction->detach($translatedObject->getOID());
-      $object->copyValues($translatedObject, false);
+      $object->copyValues($translatedObject, true);
 
       $query = new ObjectQuery($this->_translationType, __CLASS__.'load_save');
       $tpl = $query->getObjectTemplate($this->_translationType);

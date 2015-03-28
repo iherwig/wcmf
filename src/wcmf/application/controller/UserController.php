@@ -56,7 +56,7 @@ class UserController extends Controller {
     $authUser = $permissionManager->getAuthUser();
 
     // add permissions for this operation
-    $oidStr = $authUser->getOID()->_toString();
+    $oidStr = $authUser->getOID()->__toString();
     $permissionManager->addTempPermission($oidStr, '', PersistenceAction::READ);
     $permissionManager->addTempPermission($oidStr, '', PersistenceAction::UPDATE);
 
