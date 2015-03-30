@@ -4,7 +4,12 @@
 
 # Presentation # {#pres_main}
 
-<span class="label label-danger">TODO</span>
+Presentation refers to the part of the application that is visible to the user
+(_user interface_) and handles user interaction. Web applications typically
+implement a _request-response pattern_, where a client sends a request to the
+application, which results in a response after the application processed it.
+wCMF encapsulates the described procedure inside the
+\link wcmf::lib::presentation::Application `Application`\endlink class.
 
 ## Request processing ## {#pres_request}
 
