@@ -4,12 +4,36 @@
 
 # Presentation # {#pres_main}
 
-Presentation refers to the part of the application that is visible to the user
-(_user interface_) and handles user interaction. Web applications typically
-implement a _request-response pattern_, where a client sends a request to the
-application, which results in a response after the application processed it.
-wCMF encapsulates the described procedure inside the
-\link wcmf::lib::presentation::Application `Application`\endlink class.
+Presentation refers to the part of the application that is visible to the user -
+the _user interface_ - and the handling of user interaction.
+
+## Application ## {#pres_application}
+
+Web applications typically implement a _request-response pattern_, where a
+client sends a request to the application, which returns a response after
+processing it. wCMF encapsulates the described procedure inside the
+\link wcmf::lib::presentation::Application `Application`\endlink class. The
+following code shows the usage of this class in the main entry script of
+wCMF's default application.
+
+~~~~~~~~~~~~~{.php}
+$application = new Application();
+try {
+  // initialize the application
+  $request = $application->initialize(WCMF_BASE.'app/config/', 'config.ini', '', '', 'cms');
+
+  // run the application
+  $application->run($request);
+}
+catch (Exception $ex) {
+  try {
+    $application->handleException($ex, isset($request) ? $request : null);
+  }
+  catch (Exception $unhandledEx) {
+    echo("An unhandled exception occured. Please see log file for details.");
+  }
+}
+~~~~~~~~~~~~~
 
 ## Request processing ## {#pres_request}
 
