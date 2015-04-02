@@ -659,15 +659,22 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $columnName = $attrDesc->getColumn();
     }
 
-    $result = $mapper->quoteIdentifier($tableName).".".$mapper->quoteIdentifier($columnName).
-                " ".$criteria->getOperator()." ";
+    $result = $mapper->quoteIdentifier($tableName).".".$mapper->quoteIdentifier($columnName);
+    $operator = $criteria->getOperator();
     $value = $criteria->getValue();
-    $valueStr = !$placeholder ? $mapper->quoteValue($value) : $placeholder;
-    if (is_array($value)) {
-      $result .= "(".$valueStr.")";
+    if ($operator == '=' && $value === null) {
+      // handle null values
+      $result .= " IS NULL";
     }
     else {
-      $result .= $valueStr;
+      $result .= " ".$criteria->getOperator()." ";
+      $valueStr = !$placeholder ? $mapper->quoteValue($value) : $placeholder;
+      if (is_array($value)) {
+        $result .= "(".$valueStr.")";
+      }
+      else {
+        $result .= $valueStr;
+      }
     }
     return $result;
   }

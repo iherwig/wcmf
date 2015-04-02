@@ -12,6 +12,8 @@ namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
+use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -138,6 +140,7 @@ class RESTController extends Controller {
   protected function handleGet() {
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     if ($request->getBooleanValue('collection') === false) {
       // read a specific object
@@ -200,7 +203,26 @@ class RESTController extends Controller {
         }
       }
 
-      // TODO: create query from optional GET values
+      // create query from optional GET values
+      if ($request->hasValue('className')) {
+        $mapper = $persistenceFacade->getMapper($request->getValue('className'));
+        $type = $mapper->getType();
+        $objectQuery = new ObjectQuery($type);
+        $queryTemplate = $objectQuery->getObjectTemplate($type);
+        foreach ($mapper->getAttributes() as $attribute) {
+          $param = $attribute->getName();
+          if ($request->hasValue($param)) {
+            $value = $request->getValue($param);
+            // handle null values correctly
+            $value = strtolower($value) == 'null' ? null : $value;
+            $queryTemplate->setValue($param, Criteria::asValue('=', $value));
+          }
+        }
+        $query = $objectQuery->getQueryCondition();
+        if (strlen($query) > 0) {
+          $request->setValue('query', $query);
+        }
+      }
 
       // rewrite query if querying for a relation
       if ($request->hasValue("relation") && $request->hasValue('sourceOid')) {
@@ -208,7 +230,6 @@ class RESTController extends Controller {
 
         // set the query
         $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
         $sourceNode = $persistenceFacade->load($sourceOid);
         if ($sourceNode) {
           $query = NodeUtil::getRelationQueryCondition($sourceNode, $relationName);

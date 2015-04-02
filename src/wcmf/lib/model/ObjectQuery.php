@@ -357,17 +357,14 @@ class ObjectQuery extends AbstractQuery {
         if ($criterion instanceof Criteria) {
           $attributeDesc = $mapper->getAttribute($valueName);
           if ($attributeDesc) {
-            // ignore foreign keys
-            if (!$mapper->isForeignKey($valueName)) {
-              // add the combine operator, if there are already other conditions
-              if (strlen($condition) > 0) {
-                $condition .= ' '.$criterion->getCombineOperator().' ';
-              }
-              // because the attributes are not selected with alias, the column name has to be used
-              $condition .= $mapper->renderCriteria($criterion, '?',
-                  $tpl->getProperty(self::PROPERTY_TABLE_NAME), $attributeDesc->getColumn());
-              $this->_bindOrder[] = $this->getBindPosition($criterion, $this->_conditions);
+            // add the combine operator, if there are already other conditions
+            if (strlen($condition) > 0) {
+              $condition .= ' '.$criterion->getCombineOperator().' ';
             }
+            // because the attributes are not selected with alias, the column name has to be used
+            $condition .= $mapper->renderCriteria($criterion, '?',
+                $tpl->getProperty(self::PROPERTY_TABLE_NAME), $attributeDesc->getColumn());
+            $this->_bindOrder[] = $this->getBindPosition($criterion, $this->_conditions);
           }
         }
       }
@@ -534,10 +531,7 @@ class ObjectQuery extends AbstractQuery {
           $valueName = $criterion->getAttribute();
           $attributeDesc = $mapper->getAttribute($valueName);
           if ($attributeDesc) {
-            // ignore foreign keys
-            if (!$mapper->isForeignKey($valueName)) {
-              $criteriaFlat[] = $criterion;
-            }
+            $criteriaFlat[] = $criterion;
           }
         }
       }
