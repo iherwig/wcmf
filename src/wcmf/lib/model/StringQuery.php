@@ -70,7 +70,7 @@ class StringQuery extends ObjectQuery {
       $conditionString = $this->_condition;
       $otherRoles = array();
       $tokens = StringUtil::splitQuoted($conditionString, "/[\s=<>()!]+/", "'", true);
-      $operators = array('and', 'or', 'not', 'like', 'is', 'null');
+      $operators = array('and', 'or', 'not', 'like', 'regexp', 'is', 'null');
       foreach ($tokens as $token) {
         if (strlen($token) > 0) {
           if (!in_array(strtolower($token), $operators)) {

@@ -132,6 +132,7 @@ class RESTController extends Controller {
    * | _in_ `id`        | If collection is _false_, the object with _className_/_id_ will be loaded
    * | _in_ `sortBy`    | _?sortBy=+foo_ for sorting the list by foo ascending or
    * | _in_ `sort`      | _?sort(+foo)_ for sorting the list by foo ascending
+   * | _in_ `limit`     | _?limit(10,25)_ for loading 25 objects starting from position 10
    * | _in_ `relation`  | Relation name if objects in relation to another object should be loaded (determines the type of the returned objects)
    * | _in_ `sourceId`  | Id of the object to which the returned objects are related (determines the object id together with _className_)
    * | _out_            | Single object or list of objects. In case of a list, the _Content-Range_ header will be set.
@@ -205,17 +206,27 @@ class RESTController extends Controller {
 
       // create query from optional GET values
       if ($request->hasValue('className')) {
+        $operatorMap = array('eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
+            'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp');
         $mapper = $persistenceFacade->getMapper($request->getValue('className'));
         $type = $mapper->getType();
         $objectQuery = new ObjectQuery($type);
-        $queryTemplate = $objectQuery->getObjectTemplate($type);
-        foreach ($mapper->getAttributes() as $attribute) {
-          $param = $attribute->getName();
-          if ($request->hasValue($param)) {
-            $value = $request->getValue($param);
+        foreach ($request->getValues() as $name => $value) {
+          if ($mapper->hasAttribute($name)) {
+            $queryTemplate = $objectQuery->getObjectTemplate($type);
             // handle null values correctly
             $value = strtolower($value) == 'null' ? null : $value;
-            $queryTemplate->setValue($param, Criteria::asValue('=', $value));
+            // extract optional operator from value e.g. lt=2015-01-01
+            $parts = explode('=', $value);
+            $op = $parts[0];
+            if (sizeof($parts) > 0 && isset($operatorMap[$op])) {
+              $operator = $operatorMap[$op];
+              $value = $parts[1];
+            }
+            else {
+              $operator = '=';
+            }
+            $queryTemplate->setValue($name, Criteria::asValue($operator, $value));
           }
         }
         $query = $objectQuery->getQueryCondition();
