@@ -58,23 +58,71 @@ The details of request execution are the topic of the next section.
 ## Request processing ## {#pres_request}
 
 The \link wcmf::lib::presentation::Request `Request`\endlink instance created
-on initialization provides all information about the incoming HTTP request, that
-is necessary for execution. Upon execution, the following actions are performed:
+on initialization of the application provides all information about the incoming
+HTTP request, that is necessary for execution. Upon execution, the following
+actions are performed:
 
 1. The \link wcmf::lib::presentation::Request `Request`\endlink instance is passed
    to \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink for further
    processing.
-2. The _action key_ is determined from the request parameters (see \ref arch_actionkey).
+2. The \ref arch_actionkey is determined from the request parameters.
 3. \link wcmf::lib::security::PermissionManager `PermissionManager`\endlink is
    asked to authorize the action key for the current user (see \ref perm_check).
-4. The request data is transformed to the internal application format (see
-   \ref pres_format).
+4. If authorization is successful, the request data is transformed into the internal
+   application format (see \ref pres_format).
 5. The \link wcmf::lib::presentation::Controller `Controller`\endlink instance
-   for the requested action is determined (see \ref pres_actions).
+   matching the request is determined (see \ref pres_actions) and executed.
 6. The \link wcmf::lib::presentation::Response `Response`\endlink instance is
    obtained after execution.
-7. The response data is transformed to the requested response format (see
+7. The response data is transformed into the requested response format (see
    \ref pres_format).
+8. Execution returns to step 3, if a valid action key is contained in the response
+   data and terminates, if not.
+
+### Formats ### {#pres_format}
+
+wCMF is designed to be able to consume various request formats and produce
+several response formats. While some clients communicate using
+[JSON](http://en.wikipedia.org/wiki/JSON) format, others might prefer to encode
+data in [XML](http://en.wikipedia.org/wiki/XML).
+The \link wcmf::lib::presentation::format::Formatter `Formatter`\endlink class
+is used to determine the required format and delegate the actual formatting to
+the correct \link wcmf::lib::presentation::format::Format `Format`\endlink
+implementation. wCMF currently contains the following __implementations__:
+
+- \link wcmf::lib::presentation::format::impl::HtmlFormat `HtmlFormat`\endlink
+  expects all data to be sent as key-value-pairs. Object data are transferred in
+  parameters named `value-`<em>name-oid</em> (e.g. `value-title-Book:3`).
+  Responses in this format are rendered as HTML views (see \ref pres_views).
+- \link wcmf::lib::presentation::format::impl::JsonFormat `JsonFormat`\endlink
+  handles JSON encoded request data and encodes response data into the same format.
+- \link wcmf::lib::presentation::format::impl::SoapFormat `SoapFormat`\endlink
+  is used together with the [NuSOAP](http://sourceforge.net/projects/nusoap/)
+  library to implement a SOAP interface.
+- \link wcmf::lib::presentation::format::impl::NullFormat `NullFormat`\endlink
+  is used internally, if no formatting is required, e.g. if one controller calls
+  another controller.
+
+If not explicitely set, the request and response format is automatically
+determined from the __HTTP headers__:
+
+- The `Content-Type` header defines the __request__ format
+- The `Accept` header defines the __response__ format
+
+Formats are defined in the `Formats` configuration section as shown in the following
+example:
+
+~~~~~~~~~~~~~{.ini}
+[Formats]
+html = $htmlFormat
+null = $nullFormat
+
+[HtmlFormat]
+__class = wcmf\lib\presentation\format\impl\HtmlFormat
+
+[NullFormat]
+__class = wcmf\lib\presentation\format\impl\NullFormat
+~~~~~~~~~~~~~
 
 ### Action mapping ### {#pres_actions}
 
@@ -88,15 +136,7 @@ is necessary for execution. Upon execution, the following actions are performed:
 
 <span class="label label-danger">TODO</span>
 
-### Formats ### {#pres_format}
-
-<span class="label label-danger">TODO</span>
-
-### Events ### {#pres_events}
-
-<span class="label label-danger">TODO</span>
-
-## Programming Controllers ## {#pres_controllers}
+## Controllers ## {#pres_controllers}
 
 <span class="label label-danger">TODO</span>
 
@@ -104,11 +144,15 @@ is necessary for execution. Upon execution, the following actions are performed:
 
 <span class="label label-danger">TODO</span>
 
-## Programming Views ## {#pres_views}
+## Views ## {#pres_views}
 
 <span class="label label-danger">TODO</span>
 
 ### Caching ### {#pres_caching}
+
+<span class="label label-danger">TODO</span>
+
+## Events ## {#pres_events}
 
 <span class="label label-danger">TODO</span>
 

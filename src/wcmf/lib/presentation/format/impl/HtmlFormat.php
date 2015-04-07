@@ -21,7 +21,7 @@ use wcmf\lib\util\StringUtil;
  * has to be done via the field names. So Nodes are represented by their values
  * whose field names are of the form value-`name`-`oid`. All of these
  * values will be removed from the request and replaced by Node instances
- * representing the data. The each node is stored under its oid in the data array.
+ * representing the data. Each node is stored under its object id in the data array.
  *
  * HtmlFormat serializes the response to a template, which will be rendered
  * by the View implementation defined in the configuration section 'view'.
