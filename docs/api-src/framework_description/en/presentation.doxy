@@ -10,10 +10,12 @@ the _user interface_ - and the handling of user interaction.
 ## Application ## {#pres_application}
 
 Web applications typically implement a _request-response pattern_, where a
-client sends a request to the application, which returns a response after
-processing it. wCMF encapsulates the described procedure inside the
+client sends a
+([HTTP](http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol)-)request to the
+application, which returns a response after processing it. wCMF encapsulates the
+described procedure inside the
 \link wcmf::lib::presentation::Application `Application`\endlink class. The
-following code shows the usage of this class in the main entry script of
+following code demonstrates the usage of this class in the main entry script of
 wCMF's default application.
 
 ~~~~~~~~~~~~~{.php}
@@ -23,7 +25,7 @@ try {
   $request = $application->initialize(WCMF_BASE.'app/config/', 'config.ini', '', '', 'cms');
 
   // run the application
-  $application->run($request);
+  $response = $application->run($request);
 }
 catch (Exception $ex) {
   try {
@@ -35,9 +37,44 @@ catch (Exception $ex) {
 }
 ~~~~~~~~~~~~~
 
+The example shows the three important public methods of the
+\link wcmf::lib::presentation::Application `Application`\endlink class:
+
+- The \link wcmf::lib::presentation::Application::initialize `initialize`\endlink
+  method is used to __setup__ the
+  \link wcmf::lib::presentation::Application `Application`\endlink. It returns a
+  \link wcmf::lib::presentation::Request `Request`\endlink instance, that may be
+  modified before execution.
+- The \link wcmf::lib::presentation::Application::run `run`\endlink method is
+  called to __execute__ the given request. The method returns a
+  \link wcmf::lib::presentation::Response `Response`\endlink instance, that is not
+  used in this example.
+- The \link wcmf::lib::presentation::Application::handleException `handleException`\endlink
+  method is called, if an __exception__ occurs. The method rolls back the database
+  transaction and calls the `failure` action.
+
+The details of request execution are the topic of the next section.
+
 ## Request processing ## {#pres_request}
 
-<span class="label label-danger">TODO</span>
+The \link wcmf::lib::presentation::Request `Request`\endlink instance created
+on initialization provides all information about the incoming HTTP request, that
+is necessary for execution. Upon execution, the following actions are performed:
+
+1. The \link wcmf::lib::presentation::Request `Request`\endlink instance is passed
+   to \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink for further
+   processing.
+2. The _action key_ is determined from the request parameters (see \ref arch_actionkey).
+3. \link wcmf::lib::security::PermissionManager `PermissionManager`\endlink is
+   asked to authorize the action key for the current user (see \ref perm_check).
+4. The request data is transformed to the internal application format (see
+   \ref pres_format).
+5. The \link wcmf::lib::presentation::Controller `Controller`\endlink instance
+   for the requested action is determined (see \ref pres_actions).
+6. The \link wcmf::lib::presentation::Response `Response`\endlink instance is
+   obtained after execution.
+7. The response data is transformed to the requested response format (see
+   \ref pres_format).
 
 ### Action mapping ### {#pres_actions}
 

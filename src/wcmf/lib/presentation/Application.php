@@ -105,7 +105,7 @@ class Application {
 
   /**
    * Default exception handling method. Rolls back the transaction and
-   * re-executes the last request (expected in the session variable 'lastRequest').
+   * executes 'failure' action.
    * @param $exception The Exception instance
    * @param $request The Request instance
    */
