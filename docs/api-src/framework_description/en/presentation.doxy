@@ -88,7 +88,7 @@ data in [XML](http://en.wikipedia.org/wiki/XML).
 The \link wcmf::lib::presentation::format::Formatter `Formatter`\endlink class
 is used to determine the required format and delegate the actual formatting to
 the correct \link wcmf::lib::presentation::format::Format `Format`\endlink
-implementation. wCMF currently contains the following __implementations__:
+implementation. wCMF currently provides the following __implementations__:
 
 - \link wcmf::lib::presentation::format::impl::HtmlFormat `HtmlFormat`\endlink
   expects all data to be sent as key-value-pairs. Object data are transferred in
@@ -104,7 +104,7 @@ implementation. wCMF currently contains the following __implementations__:
   another controller.
 
 If not explicitely set, the request and response format is automatically
-determined from the __HTTP headers__:
+determined from the __HTTP headers__ sent with the request:
 
 - The `Content-Type` header defines the __request__ format
 - The `Accept` header defines the __response__ format
@@ -124,15 +124,17 @@ __class = wcmf\lib\presentation\format\impl\HtmlFormat
 __class = wcmf\lib\presentation\format\impl\NullFormat
 ~~~~~~~~~~~~~
 
-### Action mapping ### {#pres_actions}
+### Routing ### {#pres_routing}
+
+Routing is the process of selecting the correct
+\link wcmf::lib::presentation::Controller `Controller`\endlink for a given request.
+wCMF distinguishes between _internal_ and _external_ routing.
+
+#### Internal routing #### {#pres_routingint}
 
 <span class="label label-danger">TODO</span>
 
-#### Internal action mapping #### {#pres_actionsint}
-
-<span class="label label-danger">TODO</span>
-
-#### External action mapping #### {#pres_actionsext}
+#### External routing #### {#pres_routingext}
 
 <span class="label label-danger">TODO</span>
 
