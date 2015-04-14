@@ -140,8 +140,9 @@ The following terms are important to know when working with wCMF's domain classe
   \link wcmf::lib::persistence::PersistentObject::setValueProperty `setValueProperty`\endlink
 - __Tags__ are a special property used on values in order to group them by certain
   aspects. For example the edit forms in the default application only display
-  domain class values that have are tagged with `DATATYPE_ATTRIBUTE`. Tags are
-  defined in the model using the _tag_ `app_data_type` (see \ref model_chivalue).
+  domain class values that are tagged with `DATATYPE_ATTRIBUTE` and only those
+  attributes are editable in the translation form that are tagged with `TRANSLATABLE`.
+  Tags are defined in the model using the _tag_ `app_data_type` (see \ref model_chivalue).
 
 ### Configuration ### {#pers_config}
 

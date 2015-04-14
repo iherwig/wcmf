@@ -57,7 +57,7 @@ class AttributeDescription {
    * Check if this attribute is tagged with the given application specific tags
    * @param $tags An array of tags that the attribute should match. Empty array results in true the given matchMode (default: empty array)
    * @param $matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags (default: 'all')
-   * @return True if the attribute has all data types, false else
+   * @return True if the attribute tags satisfy the match mode, false else
    */
   public function matchTags(array $tags=array(), $matchMode='all') {
     $numGivenTags = sizeof($tags);
