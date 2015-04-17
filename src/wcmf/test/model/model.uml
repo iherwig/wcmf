@@ -1806,10 +1806,10 @@
   <Chronos:ChiSystem xmi:id="_FeKyBTRKEeSRmq5T8ey5JQ" plattform="wcmf" config="security.ini" base_Class="_FeKyADRKEeSRmq5T8ey5JQ"/>
   <Chronos:ChiSystem xmi:id="_PXgOpTRKEeSRmq5T8ey5JQ" plattform="wcmf" config="security.ini" base_Class="_PXgOoDRKEeSRmq5T8ey5JQ"/>
   <Chronos:ChiNode xmi:id="_VG9c4DkNEeSAepGYcnIyuw" base_Class="_VEQuMDkNEeSAepGYcnIyuw" display_value="resource|context|action|roles"/>
-  <Chronos:ChiValue xmi:id="_VG-D8DkNEeSAepGYcnIyuw" base_Property="_VEQuMTkNEeSAepGYcnIyuw"/>
-  <Chronos:ChiValue xmi:id="_VG-rADkNEeSAepGYcnIyuw" base_Property="_VEQuNTkNEeSAepGYcnIyuw"/>
-  <Chronos:ChiValue xmi:id="_VG_SEDkNEeSAepGYcnIyuw" base_Property="_VEQuOTkNEeSAepGYcnIyuw"/>
-  <Chronos:ChiValue xmi:id="_gJEfcDkNEeSAepGYcnIyuw" base_Property="_dNmz4DkNEeSAepGYcnIyuw"/>
+  <Chronos:ChiValue xmi:id="_VG-D8DkNEeSAepGYcnIyuw" is_editable="true" base_Property="_VEQuMTkNEeSAepGYcnIyuw"/>
+  <Chronos:ChiValue xmi:id="_VG-rADkNEeSAepGYcnIyuw" is_editable="true" base_Property="_VEQuNTkNEeSAepGYcnIyuw"/>
+  <Chronos:ChiValue xmi:id="_VG_SEDkNEeSAepGYcnIyuw" is_editable="true" base_Property="_VEQuOTkNEeSAepGYcnIyuw"/>
+  <Chronos:ChiValue xmi:id="_gJEfcDkNEeSAepGYcnIyuw" is_editable="true" base_Property="_dNmz4DkNEeSAepGYcnIyuw"/>
   <Chronos:ChiSystem xmi:id="_1fa8hzkOEeSuCfpXnqk73Q" plattform="wcmf" config="security.ini" base_Class="_1fa8gDkOEeSuCfpXnqk73Q"/>
   <Chronos:ChiSystem xmi:id="_1mktZzkOEeSuCfpXnqk73Q" plattform="wcmf" config="security.ini" base_Class="_1mktYDkOEeSuCfpXnqk73Q"/>
   <Chronos:ChiActionKey xmi:id="_2JLWUE5mEeSEGaIVag_Y7g" action="checkPermissionsOfUser" base_Association="_0Wnzk05mEeSEGaIVag_Y7g"/>
