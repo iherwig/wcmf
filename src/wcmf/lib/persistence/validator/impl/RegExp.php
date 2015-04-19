@@ -10,13 +10,16 @@
  */
 namespace wcmf\lib\persistence\validator\impl;
 
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\persistence\validator\ValidateType;
 
 /**
- * RegExp ValidateType validates against the given regular expression.
+ * RegExp validates against the given regular expression.
  *
+ * Configuration example:
  * @code
- * regexp:^[0-9]*$  // integer or empty
+ * // integer or empty
+ * regexp:{"pattern":"^[0-9]*$"}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -25,9 +28,13 @@ class RegExp implements ValidateType {
 
   /**
    * @see ValidateType::validate
+   * $options is an associative array with key 'pattern'
    */
   public function validate($value, $options=null) {
-    return preg_match("/".$options."/m", $value);
+    if (!isset($options['pattern'])) {
+      throw new ConfigurationException("No 'pattern' given in regexp options: "+$options);
+    }
+    return preg_match("/".$options['pattern']."/m", $value);
   }
 }
 ?>

@@ -14,12 +14,15 @@ use wcmf\lib\persistence\validator\ValidateType;
 use wcmf\lib\util\GraphicsUtil;
 
 /**
- * Image ValidateType validates an image value.
+ * Image validates an image value.
  *
+ * Configuration examples:
  * @code
- * image:{"width":[200,1],"height":[100,0]}  // width exactly 200px, height less than 100px
+ * // width exactly 200px, height less than 100px
+ * image:{"width":[200,1],"height":[100,0]}
  *
- * imagesize:{"height":[300,0]}  // arbitrary width, height exactly 300px
+ * // arbitrary width, height exactly 300px
+ * image:{"height":[300,0]}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -28,15 +31,15 @@ class Image implements ValidateType {
 
   /**
    * @see ValidateType::validate
+   * $options is an associative array with keys 'width' (optional) and 'height' (optional)
    */
   public function validate($value, $options=null) {
     if (strlen($value) == 0) {
       return true;
     }
 
-    $imageOptions = json_decode($options, true);
-    $imgWidth = isset($imageOptions['width']) ? $imageOptions['width'] : false;
-    $imgHeight = isset($imageOptions['height']) ? $imageOptions['height'] : false;
+    $imgWidth = isset($options['width']) ? $options['width'] : false;
+    $imgHeight = isset($options['height']) ? $options['height'] : false;
 
     if ($imgWidth === false && $imgHeight === false) {
       return true;

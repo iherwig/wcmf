@@ -20,7 +20,7 @@ interface ValidateType {
   /**
    * Validate a given value. The options format is type specific.
    * @param $value The value to validate
-   * @param $options Optional options passed as a string
+   * @param $options Optional implementation specific options passed as an associative array
    * @return Boolean
    */
   function validate($value, $options=null);

@@ -10,18 +10,23 @@
  */
 namespace wcmf\lib\persistence\validator\impl;
 
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\persistence\validator\ValidateType;
 
 /**
- * Filter ValidateType validates against the given php filter.
- * Example for using FILTER_VALIDATE_INT with min_range option
- * and FILTER_FLAG_ALLOW_HEX flag and FILTER_VALIDATE_REGEXP with
- * regexp option:
+ * Filter validates against the given php filter.
  *
+ * Configuration examples:
  * @code
- * filter:int|{"options":{"min_range":0},"flags":2}
+ * // FILTER_VALIDATE_INT with min_range option and FILTER_FLAG_ALLOW_HEX flag
+ * filter:{"type":"int","options":{"options":{"min_range":0},"flags":2}}
  *
- * filter:validate_regexp|{"options":{"regexp":"/^[0-9]*$/"}}
+ * // FILTER_VALIDATE_BOOLEAN simple and with FILTER_NULL_ON_FAILURE flag
+ * filter:{"type":"boolean"}
+ * filter:{"type":"boolean","options":{"flags":134217728}}
+ *
+ * // FILTER_VALIDATE_REGEXP with regexp option
+ * filter:{"type":"validate_regexp","options":{"options":{"regexp":"/^[0-9]*$/"}}}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -30,11 +35,14 @@ class Filter implements ValidateType {
 
   /**
    * @see ValidateType::validate
+   * $options is an associative array with keys 'type' and 'options' (optional)
    */
   public function validate($value, $options=null) {
-    $filterDef = explode('|', $options, 2);
-    $filterName = $filterDef[0];
-    $filterOptions = sizeof($filterDef) > 1 ? json_decode($filterDef[1], true) : null;
+    if (!isset($options['type'])) {
+      throw new ConfigurationException("No 'type' given in filter options: "+$options);
+    }
+    $filterName = $options['type'];
+    $filterOptions = isset($options['options']) ? $options['options'] : null;
     return filter_var($value, filter_id($filterName), $filterOptions) !== false;
   }
 }

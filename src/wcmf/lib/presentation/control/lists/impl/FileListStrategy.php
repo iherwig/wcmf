@@ -10,19 +10,24 @@
  */
 namespace wcmf\lib\presentation\control\lists\impl;
 
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 use wcmf\lib\io\FileUtil;
 
 /**
- * FileListStrategy implements list of key value pairs that is retrieved
+ * FileListStrategy implements a list of key value pairs that is retrieved
  * from an configuration section.
- * The following list definition(s) must be used in the input_type configuraton:
+ *
+ * Configuration examples:
  * @code
- * file:path/to/files|/\.ini$/ // .ini files
+ * // .ini files
+ * {"type":"file","paths":["path/to/files"],"pattern":"\\\\.ini$"}
  *
- * file:path/to/files/*|/./ // all files recursive
+ * // all files recursive
+ * {"type":"file","paths":["path/to/files/*"]}
  *
- * file:path/to/files1,path/to/files2/* // multiple paths
+ * // multiple paths
+ * {"type":"file","paths":["path/to/files","path/to/files2/*"]}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -31,57 +36,36 @@ class FileListStrategy implements ListStrategy {
 
   /**
    * @see ListStrategy::getList
+   * $options is an associative array with keys 'paths' and 'pattern' (optional)
    */
-  public function getList($configuration, $language=null) {
-
-    $listConfig = $this->parseConfiguration($configuration);
+  public function getList($options, $language=null) {
+    if (!isset($options['paths']) || !is_array($options['paths'])) {
+      throw new ConfigurationException("No array 'paths' given in list options: "+$options);
+    }
+    $paths = $options['paths'];
+    $pattern = isset($options['pattern']) ? '/'.$options['pattern'].'/' : '/./';
 
     $list = array();
-    $directories = $listConfig['directories'];
-    $pattern = $listConfig['pattern'];
-
-    foreach ($directories as $directory) {
-      $recursive = preg_match('/\/\*$/', $directory);
+    foreach ($paths as $path) {
+      $recursive = preg_match('/\/\*$/', $path);
       if ($recursive) {
-        $directory = preg_replace('/\*$/', '', $directory);
+        $path = preg_replace('/\*$/', '', $path);
       }
       // if multiple directories or recursive, we show the complete file path
-      $prependDirectory = sizeof($directories) > 1 || $recursive;
+      $prependDirectory = sizeof($paths) > 1 || $recursive;
 
-      $files = FileUtil::getFiles($directory, $pattern, $prependDirectory, $recursive);
+      $files = FileUtil::getFiles($path, $pattern, $prependDirectory, $recursive);
       foreach ($files as $file) {
         $list[$file] = $file;
       }
     }
-
     return $list;
-  }
-
-  /**
-   * Parse the given list configuration
-   * @param $configuration The configuration
-   * @return Associative array with keys 'directories' and 'pattern'
-   */
-  protected function parseConfiguration($configuration) {
-    if (strPos($configuration, '|')) {
-      list($dirDef, $pattern) = explode('|', $configuration, 2);
-    }
-    else {
-      $dirDef = $configuration;
-      $pattern = '/./';
-    }
-    $directories = explode(',', $dirDef);
-
-    return array(
-      'directories' => $directories,
-      'pattern' => $pattern
-    );
   }
 
   /**
    * @see ListStrategy::isStatic
    */
-  public function isStatic($configuration) {
+  public function isStatic($options) {
     return false;
   }
 }

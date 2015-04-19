@@ -10,16 +10,19 @@
  */
 namespace wcmf\lib\presentation\control\lists\impl;
 
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 
 /**
- * ConfigListStrategy implements list of key value pairs that is retrieved
- * from an configuration section.
- * The following list definition(s) must be used in the input_type configuraton:
+ * ConfigListStrategy implements a list of key/value pairs that is retrieved
+ * from a configuration section.
+ *
+ * Configuration example:
  * @code
- * config:section // where section is the name of a configuration section
+ * // configuration section EntityStage
+ * {"type":"config","section":"EntityStage"}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -30,12 +33,17 @@ class ConfigListStrategy implements ListStrategy {
 
   /**
    * @see ListStrategy::getList
+   * $options is an associative array with key 'section'
    */
-  public function getList($configuration, $language=null) {
-    $listKey = $configuration.$language;
+  public function getList($options, $language=null) {
+    if (!isset($options['section'])) {
+      throw new ConfigurationException("No 'pattern' given in list options: "+$options);
+    }
+    $section = $options['section'];
+    $listKey = $section.$language;
     if (!isset($this->_lists[$listKey])) {
       $config = ObjectFactory::getConfigurationInstance();
-      $map = $config->getSection($configuration);
+      $map = $config->getSection($section);
       $result = array();
       foreach ($map as $key => $value) {
         $result[$key] = Message::get($value, null, $language);
@@ -48,7 +56,7 @@ class ConfigListStrategy implements ListStrategy {
   /**
    * @see ListStrategy::isStatic
    */
-  public function isStatic($configuration) {
+  public function isStatic($options) {
     return true;
   }
 }

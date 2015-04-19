@@ -92,9 +92,9 @@ The following __tags__ are defined on the _ChiValue_ stereotype.
 | _app_data_type_ | Application specific attribute tags: A single value or \|-separated list of values (see \ref pers_values) | _TAG_A\|TAG_B_ | _DATATYPE_ATTRIBUTE_
 | _db_data_type_ | The attribute's database type | _TEXT_ | _VARCHAR(255)_ |
 | _is_editable_ | Boolean, indicating whether this attribute is editable | _true_ | _true_
-| _input_type_ | Name of the attribute's input control as listed in the _InputTypes_ configuration section | _filebrowser_ | _text_
+| _input_type_ | Name of the attribute's input control as listed in the _InputTypes_ configuration section and additional configuration encoded as JSON string | _filebrowser_ or _ckeditor:{"toolbarSet":"full"}_ | _text_
 | _display_type_ | Name of the attribute's display type as listed in the _DisplayTypes_ configuration section | _image_ | _text_
-| _restrictions_match_ | Name of the attribute's validation type as listed in the _Validator_ configuration section (see \ref pers_validation) | _regexp:^[0-9]*$_ | |
+| _restrictions_match_ | Name of the attribute's validation type as listed in the _Validator_ configuration section (see \ref pers_validation) and additional configuration encoded as JSON string | _regexp:{"pattern":"^[0-9]*$"}_ or _image:{"height":[300,0]}_ | |
 | _restrictions_not_match_ | _not used_ | | |
 | _restrictions_description_ | Validation description used in case of a validation error | _The value must be an integer or empty_ | |
 | _column_name_ | The name of the database column in which the attribute will be stored | _name_ | Attribute name
@@ -443,11 +443,23 @@ ant generate
 
 The generator creates the following files:
 
+#### Configuration #### {#generator_artefacts_config}
+
 - __SQL scripts__ are generated in the _install_ directory. They contain the
   table definitions for [MySQL](http://www.mysql.com) databases (`install/tables_mysql.sql`)
   and [SQLite](https://sqlite.org) databases (`install/tables_sqlite.sql`). For each domain
   class one table is created, inherited attributes are stored in each table
   ([Concrete Table Inheritance] (http://martinfowler.com/eaaCatalog/concreteTableInheritance.html)).
+
+- __Configuration files__ in the [INI file](http://en.wikipedia.org/wiki/INI_file)
+  format are generated in the _app/config_ directory. Configuration files are
+  implicitly defined in the model by the `ChiActionKey.config` and `ChiSystem.config`
+  tags. For each name mentioned in these tags, one configuration file will be
+  created, containing all definitions related to it. Furthermore, the default
+  configuration file (_config.ini_ per default) contains the domain class
+  mapping definitions.
+
+#### PHP Code #### {#generator_artefacts_php}
 
 - __Mapper classes__ are generated in directories corresponding to the
   model packages (_app/src/model_, if the default model packages are used). For
@@ -459,24 +471,28 @@ The generator creates the following files:
   For each `ChiNode`/`ChiManyToMany` class two classes are created, one base class
   that contains all generated code (e.g. `AuthorBase`) and one empty subclass,
   that is used to add custom code (e.g. `Author`). The base class inherits from
-  \link wcmf::lib::model::Node `Node`\endlink.
-
-- __Configuration files__ in the [INI file](http://en.wikipedia.org/wiki/INI_file)
-  format are generated in the _app/config_ directory. Configuration files are
-  implicitly defined in the model by the `ChiActionKey.config` and `ChiSystem.config`
-  tags. For each name mentioned in these tags, one configuration file will be
-  created, containing all definitions related to it. Furthermore, the default
-  configuration file (_config.ini_ per default) contains the domain class
-  mapping definitions.
+  \link wcmf::lib::model::Node `Node`\endlink or one of it's subclasses.
 
 - __Controller classes__ are generated in directories corresponding to the
   model packages (_app/src/controller_, if the default model packages are used). For
   each `ChiController` class one subclass of
   \link wcmf::lib::presentation::Controller `Controller`\endlink will be created.
 
+#### Template Code #### {#generator_artefacts_tpl}
+
 - __View templates__ are generated in directories corresponding to the
   model packages (_app/src/views_, if the default model packages are used). For
   each `ChiView` class one empty template file will be created.
+
+#### JavaScript Code #### {#generator_artefacts_js}
+
+- __Domain classes__ are generated in a subdirectory of _public/js_
+  (_app/public/js/app/src/model_, if the default model packages are used).
+  For each `ChiNode`/`ChiManyToMany` one subclass of `Entity` is created.
+
+- An [AMD](http://en.wikipedia.org/wiki/Asynchronous_module_definition) file
+  referencing all domain classes is created in _public/js/model_
+  (_app/public/js/model/_TypeList.js_, if the default model packages are used).
 
 #### Protected regions #### {#generator_pr}
 

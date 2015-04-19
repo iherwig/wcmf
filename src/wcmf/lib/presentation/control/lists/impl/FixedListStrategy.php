@@ -15,61 +15,51 @@ use wcmf\lib\i18n\Message;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 
 /**
- * FixedListStrategy implements a constant list of key value pairs.
- * The following list definition(s) must be used in the input_type configuraton:
- * @code
- * fix:key1[val1]|key2[val2]|... // list with explicit key value pairs
+ * FixedListStrategy implements a constant list of key/value pairs.
  *
- * fix:$global_array_variable // list with key value pairs defined in a global variable
+ * Configuration examples:
+ * @code
+ * // list with explicit key/value pairs
+ * {"type":"fix","items":{"key1":"val1","key2":"val2"}}
+ *
+ * // list with key/value pairs defined in a global variable
+ * {"type":"fix","items":"$global_array_variable"}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class FixedListStrategy implements ListStrategy {
 
-  private $_lists = array();
-
   /**
    * @see ListStrategy::getList
+   * $options is an associative array with keys 'items'
    */
-  public function getList($configuration, $language=null) {
-    $listKey = $configuration.$language;
-    if (!isset($this->_lists[$listKey])) {
-      // see if we have an array variable or a list definition
-      if (strPos($configuration, '$') === 0) {
-        $entries = $GLOBALS[subStr($configuration, 1)];
-      }
-      else {
-        $entries = explode('|', $configuration);
-      }
-      if (!is_array($entries)) {
-        throw new ConfigurationException($configuration." is no array.");
-      }
-      // process list
-      foreach($entries as $curEntry) {
-        preg_match_all("/([^\[]*)\[*([^\]]*)\]*/", $curEntry, $matches);
-        if (sizeOf($matches) > 0) {
-          $val1 = $matches[1][0];
-          $val2 = $matches[2][0];
-          if ($val2 != '') {
-            // value given
-            $map[$val1] = Message::get($val2, null, $language);
-          }
-          else {
-            // only key given
-            $map[$val1] = Message::get($val1, null, $language);
-          }
-        }
-      }
-      $this->_lists[$listKey] = $map;
+  public function getList($options, $language=null) {
+    if (!isset($options['items'])) {
+      throw new ConfigurationException("No 'items' given in list options: "+$options);
     }
-    return $this->_lists[$listKey];
+    $items = $options['items'];
+
+    // see if we have an array variable or a list definition
+    if (!is_array($items) && strPos($options, '$') === 0) {
+      $items = $GLOBALS[subStr($options, 1)];
+      if (!is_array($items)) {
+        throw new ConfigurationException($options['items']." is no array.");
+      }
+    }
+
+    // translate values
+    $result = array();
+    foreach ($items as $key => $value) {
+      $result[$key] = Message::get($value, null, $language);
+    }
+    return $result;
   }
 
   /**
    * @see ListStrategy::isStatic
    */
-  public function isStatic($configuration) {
+  public function isStatic($options) {
     return true;
   }
 }

@@ -8,7 +8,7 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\test\tests\core;
+namespace wcmf\test\tests\presentation;
 
 use wcmf\test\lib\BaseTestCase;
 use wcmf\lib\persistence\ObjectId;

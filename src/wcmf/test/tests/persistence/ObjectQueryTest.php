@@ -16,7 +16,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
-use wcmf\lib\persistence\ObjectId;
 
 /**
  * ObjectQueryTest.

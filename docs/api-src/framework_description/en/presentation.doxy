@@ -71,7 +71,7 @@ actions are performed:
 4. If authorization is successful, the request data is transformed into the internal
    application format (see \ref pres_format).
 5. The \link wcmf::lib::presentation::Controller `Controller`\endlink instance
-   matching the request is determined (see \ref pres_actions) and executed.
+   matching the request is determined (see \ref pres_routing) and executed.
 6. The \link wcmf::lib::presentation::Response `Response`\endlink instance is
    obtained after execution.
 7. The response data is transformed into the requested response format (see

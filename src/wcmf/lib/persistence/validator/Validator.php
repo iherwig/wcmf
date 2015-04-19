@@ -26,7 +26,8 @@ class Validator {
    * Validate the given value against the given validateType description.
    * @param $value The value to validate
    * @param $validateTypeDesc A string in the form validateType:options, where
-   *     validateType is a key in the configuration section 'validators'
+   *     validateType is a key in the configuration section 'validators' and
+   *     options is a JSON encoded string as used in the 'restrictions_match' definition
    * @return Boolean
    */
   public static function validate($value, $validateTypeDesc) {
@@ -35,7 +36,11 @@ class Validator {
 
     // get the validator that should be used for this value
     $validator = self::getValidateType($validateTypeName);
-    return $validator->validate($value, $validateOptions);
+    $decodedOptions = json_decode($validateOptions, true);
+    if ($decodedOptions === null) {
+      throw new ConfigurationException("No valid JSON format: ".$validateOptions);
+    }
+    return $validator->validate($value, $decodedOptions);
   }
 
   /**
