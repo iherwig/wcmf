@@ -55,16 +55,16 @@ class ValueListProviderTest extends DatabaseTestCase {
   }
 
   public function testFileList() {
-    $listDef = '{"type":"file","paths":["../../app/config"],"pattern":"\\\\.ini$"}';
+    $listDef = '{"type":"file","paths":["../../install"],"pattern":"\\\\.sql$"}';
     $list = ValueListProvider::getList($listDef);
-    $this->assertEquals(7, sizeof(array_keys($list['items'])));
-    $this->assertEquals('config.ini', $list['items']['config.ini']);
+    $this->assertEquals(2, sizeof(array_keys($list['items'])));
+    $this->assertEquals('tables_mysql.sql', $list['items']['tables_mysql.sql']);
     $this->assertFalse($list['isStatic']);
 
     $inputType = 'select:{"list":'.$listDef.'}';
-    $this->assertEquals('config.ini', ValueListProvider::translateValue('config.ini', $inputType));
+    $this->assertEquals('tables_mysql.sql', ValueListProvider::translateValue('tables_mysql.sql', $inputType));
     // not found
-    $this->assertEquals('test.ini', ValueListProvider::translateValue('test.ini', $inputType));
+    $this->assertEquals('test.sql', ValueListProvider::translateValue('test.sql', $inputType));
   }
 
   public function testFixedList() {
