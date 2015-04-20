@@ -10,8 +10,9 @@
  */
 namespace wcmf\lib\presentation\control;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -29,7 +30,7 @@ class ValueListProvider {
 
   /**
    * Get a list of key/value pairs defined by the given configuration.
-   * @param $definition The list definition as used in the input_type definition
+   * @param $definition The list definition as given in the input_type definition
    *                  in the 'list' parameter (e.g. '{"type":"config","section":"EntityStage"}')
    * @param $language The language if the values should be localized. Optional,
    *                  default is Localization::getDefaultLanguage()
@@ -38,7 +39,6 @@ class ValueListProvider {
    */
   public static function getList($definition, $language=null) {
 
-    $result = array();
     $decodedDefinition = json_decode($definition, true);
     if ($decodedDefinition === null) {
       throw new ConfigurationException("No valid JSON format: ".$definition);
@@ -50,11 +50,21 @@ class ValueListProvider {
     // get the strategy
     $strategy = self::getListStrategy($decodedDefinition['type']);
 
-    // build list
-    $result['items'] = $strategy->getList($decodedDefinition, $language);
-    $result['isStatic'] = $strategy->isStatic($decodedDefinition);
+    // add empty item, if defined
+    $items = array();
+    if (isset($decodedDefinition['emptyItem'])) {
+      $items[''] = Message::get($decodedDefinition['emptyItem'], null, $language);
+    }
 
-    return $result;
+    // build list
+    foreach($strategy->getList($decodedDefinition, $language) as $key => $value) {
+      $items[$key] = $value;
+    }
+
+    return array(
+      'items' => $items,
+      'isStatic' => $strategy->isStatic($decodedDefinition)
+    );
   }
 
   /**

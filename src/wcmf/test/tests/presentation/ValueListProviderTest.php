@@ -104,5 +104,19 @@ class ValueListProviderTest extends DatabaseTestCase {
     $this->assertEquals('A1, A2', ValueListProvider::translateValue('1,2', $inputType));
     TestUtil::runAnonymous(false);
   }
+
+  public function testEmptyItem() {
+    TestUtil::runAnonymous(true);
+    $listDef1 = '{"type":"node","types":["Author"],"query":"Author.name LIKE \'A%\'","emptyItem":""}';
+    $list1 = ValueListProvider::getList($listDef1);
+    $this->assertEquals(3, sizeof(array_keys($list1['items'])));
+    $this->assertEquals("", $list1['items']['']);
+
+    $listDef2 = '{"type":"node","types":["Author"],"query":"Author.name LIKE \'A%\'","emptyItem":"- Please select -"}';
+    $list2 = ValueListProvider::getList($listDef2);
+    $this->assertEquals(3, sizeof(array_keys($list2['items'])));
+    $this->assertEquals("- Please select -", $list2['items']['']);
+    TestUtil::runAnonymous(false);
+  }
 }
 ?>
