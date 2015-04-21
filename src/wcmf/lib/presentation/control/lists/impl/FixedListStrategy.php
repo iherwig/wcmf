@@ -19,6 +19,9 @@ use wcmf\lib\presentation\control\lists\ListStrategy;
  *
  * Configuration examples:
  * @code
+ * // list with only values (the keys will be the same as the values)
+ * {"type":"fix","items":["val1","val2"]}
+ *
  * // list with explicit key/value pairs
  * {"type":"fix","items":{"key1":"val1","key2":"val2"}}
  *
@@ -40,12 +43,17 @@ class FixedListStrategy implements ListStrategy {
     }
     $items = $options['items'];
 
-    // see if we have an array variable or a list definition
+
+    // check if we have an array variable or a list definition
     if (!is_array($items) && strPos($options, '$') === 0) {
       $items = $GLOBALS[subStr($options, 1)];
       if (!is_array($items)) {
         throw new ConfigurationException($options['items']." is no array.");
       }
+    }
+    // check if we only have values and need to create keys
+    else if (array_values($items) === $items) {
+      $items = array_combine($items, $items);
     }
 
     // translate values
