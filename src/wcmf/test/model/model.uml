@@ -182,7 +182,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_8j7BELQnEeOULris00pHLg" name="dbType" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_KPmcALQqEeOULris00pHLg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_KPo4QLQqEeOULris00pHLg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_KPqGYLQqEeOULris00pHLg" value="mysql"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_KPqGYLQqEeOULris00pHLg" value="sqlite"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_KCOYQLQzEeOQ5oJFa1i8cg" name="dbHostName" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LpOyULQzEeOQ5oJFa1i8cg" value="1"/>
@@ -192,12 +192,12 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_PwCPoLQzEeOQ5oJFa1i8cg" name="dbName" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_P9dnoLQzEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_P9dnobQzEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_P9eOsLQzEeOQ5oJFa1i8cg" value="wcmf_testapp"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_P9eOsLQzEeOQ5oJFa1i8cg" value="app/test-db.sq3"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_UOL18LQzEeOQ5oJFa1i8cg" name="dbUserName" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_U2i2cLQzEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_U2i2cbQzEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_U2jdgLQzEeOQ5oJFa1i8cg" value="root"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_U2jdgLQzEeOQ5oJFa1i8cg" value=""/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_XJqIkLQzEeOQ5oJFa1i8cg" name="dbPassword" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XsRtcLQzEeOQ5oJFa1i8cg" value="1"/>
