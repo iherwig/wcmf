@@ -95,7 +95,7 @@ class Request extends ControllerMessage {
 
         // try to match the currrent request path
         if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Check patther: ".$pattern, __CLASS__);
+          Log::debug("Check path: ".$pattern, __CLASS__);
         }
         $matches = array();
         if (preg_match($pattern, $requestPath, $matches)) {
