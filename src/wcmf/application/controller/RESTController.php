@@ -210,9 +210,14 @@ class RESTController extends Controller {
             'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp');
         $mapper = $persistenceFacade->getMapper($request->getValue('className'));
         $type = $mapper->getType();
+        $simpleType = $persistenceFacade->getSimpleType($type);
         $objectQuery = new ObjectQuery($type);
         foreach ($request->getValues() as $name => $value) {
-          if ($mapper->hasAttribute($name)) {
+          if (strpos($name, '.') > 0) {
+            // check name for type.attribute
+            list($typeInName, $attributeInName) = preg_split('/\.+(?=[^\.]+$)/', $name);
+            if (($typeInName == $type || $typeInName == $simpleType) &&
+                    $mapper->hasAttribute($attributeInName)) {
             $queryTemplate = $objectQuery->getObjectTemplate($type);
             // handle null values correctly
             $value = strtolower($value) == 'null' ? null : $value;
@@ -226,7 +231,8 @@ class RESTController extends Controller {
             else {
               $operator = '=';
             }
-            $queryTemplate->setValue($name, Criteria::asValue($operator, $value));
+              $queryTemplate->setValue($attributeInName, Criteria::asValue($operator, $value));
+            }
           }
         }
         $query = $objectQuery->getQueryCondition();
