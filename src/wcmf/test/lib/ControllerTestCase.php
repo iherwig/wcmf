@@ -18,7 +18,6 @@ use wcmf\lib\presentation\Request;
 /**
  * ControllerTestCase is a PHPUnit test case, that
  * serves as base class for test cases used for Controllers.
- * The application is configured to
  *
  * @author ingo herwig <ingo@wemove.com>
  */
