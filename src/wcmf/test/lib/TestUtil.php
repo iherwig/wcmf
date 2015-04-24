@@ -49,6 +49,47 @@ class TestUtil {
   }
 
   /**
+   * Start the built-in webserver
+   */
+  public static function startServer() {
+    define('SERVER_HOST', 'localhost');
+    define('SERVER_PORT', 8500);
+    $cmd = sprintf('php -S %s:%d -t %s', SERVER_HOST, SERVER_PORT, WCMF_BASE.'app/public');
+
+    $descriptorspec = array(
+      0 => array('pipe', 'r'), // stdin
+      1 => array('pipe', 'w'), // stdout
+      2 => array('pipe', 'a') // stderr
+    );
+    $pipes = null;
+    if (self::isWindows()) {
+      $resource = proc_open("start /B ".$cmd, $descriptorspec, $pipes);
+    }
+    else {
+      $resource = proc_open("nohup ".$cmd, $descriptorspec, $pipes);
+    }
+    if (!is_resource($resource)) {
+      exit("Failed to execute ".$cmd);
+    }
+
+    // kill the web server when the process ends
+    register_shutdown_function(function() use ($resource) {
+      $status = proc_get_status($resource);
+      $pid = $status['pid'];
+      if (self::isWindows()) {
+        $output = array_filter(explode(" ", shell_exec("wmic process get parentprocessid,processid | find \"$pid\"")));
+        array_pop($output);
+        $pid = end($output);
+        exec("taskkill /F /T /PID $pid");
+      }
+      else {
+        $pid = $pid+1;
+        exec("kill -9 $pid");
+      }
+    });
+  }
+
+  /**
    * Turn authorization validation on/off.
    * @param Boolean whether to turn it off or on
    */
@@ -187,6 +228,10 @@ class TestUtil {
     echo 'Queries per second: '.$queryCount/$totalTime."\n";
     echo 'Longest query length: '.$longestTime."\n";
     echo "Longest query: \n".$longestQuery."\n";
+  }
+
+  public static function isWindows() {
+    return (substr(php_uname(), 0, 7) == "Windows");
   }
 }
 ?>
