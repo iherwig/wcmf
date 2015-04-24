@@ -62,7 +62,9 @@ class Request extends ControllerMessage {
   public static function getDefault($controller=null, $context=null, $action=null) {
     // fix request parameters
     self::fix($_POST, file_get_contents('php://input'));
-    self::fix($_GET, $_SERVER['QUERY_STRING']);
+    if (isset($_SERVER['QUERY_STRING'])) {
+      self::fix($_GET, $_SERVER['QUERY_STRING']);
+    }
 
     // get base request data from request path
     $basePath = preg_replace('/\/?[^\/]*$/', '', $_SERVER['SCRIPT_NAME']);
