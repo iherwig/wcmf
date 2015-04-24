@@ -25,9 +25,10 @@ and open the template in the editor.
          verbose="true">
   <testsuites>
     <testsuite name="Controller">
-      <file>tests/controller/ListControllerTest.php</file>
       <file>tests/controller/DeleteControllerTest.php</file>
       <file>tests/controller/DisplayControllerTest.php</file>
+      <file>tests/controller/ListControllerTest.php</file>
+      <file>tests/controller/PermissionControllerTest.php</file>
       <file>tests/controller/SaveControllerTest.php</file>
     </testsuite>
     <testsuite name="Core">
@@ -38,6 +39,9 @@ and open the template in the editor.
     </testsuite>
     <testsuite name="I18N">
       <file>tests/i18n/LocalizationTest.php</file>
+    </testsuite>
+    <testsuite name="IO">
+      <file>tests/io/FileCacheTest.php</file>
     </testsuite>
     <testsuite name="Model">
       <file>tests/model/IteratorTest.php</file>
@@ -58,6 +62,18 @@ and open the template in the editor.
       <file>tests/persistence/SortTest.php</file>
       <file>tests/persistence/StringQueryTest.php</file>
       <file>tests/persistence/TransactionTest.php</file>
+      <file>tests/persistence/ValidatorTest.php</file>
+    </testsuite>
+    <testsuite name="Presentation">
+      <file>tests/persistence/InternalLinkTest.php</file>
+      <file>tests/persistence/ValueListProviderTest.php</file>
+    </testsuite>
+    <testsuite name="Security">
+      <file>tests/persistence/PermissionsTest.php</file>
+      <file>tests/persistence/UserTest.php</file>
+    </testsuite>
+    <testsuite name="Service">
+      <file>tests/persistence/SoapTest.php</file>
     </testsuite>
   </testsuites>
   <groups>
