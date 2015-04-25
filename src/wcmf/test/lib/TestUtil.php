@@ -76,7 +76,7 @@ class TestUtil {
     register_shutdown_function(function() use ($resource) {
       $status = proc_get_status($resource);
       $pid = $status['pid'];
-      if (self::isWindows()) {
+      if (TestUtil::isWindows()) {
         $output = array_filter(explode(" ", shell_exec("wmic process get parentprocessid,processid | find \"$pid\"")));
         array_pop($output);
         $pid = end($output);
