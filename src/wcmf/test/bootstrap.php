@@ -13,5 +13,5 @@ FileUtil::emptyDir(WCMF_BASE.'app/log');
 FileUtil::emptyDir(WCMF_BASE.'app/searchIndex');
 FileUtil::copyRecDir('resources/app/', WCMF_BASE.'app/');
 
-TestUtil::startServer();
+TestUtil::startServer(WCMF_BASE.'app/public');
 ?>

@@ -27,7 +27,8 @@ try {
 catch (Exception $ex) {
   try {
     $application->handleException($ex, isset($request) ? $request : null);
-  } catch (Exception $unhandledEx) {
+  }
+  catch (Exception $unhandledEx) {
     $error = "An unhandled exception occured. Please see log file for details.";
   }
 }

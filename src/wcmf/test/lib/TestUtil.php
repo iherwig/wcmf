@@ -50,11 +50,13 @@ class TestUtil {
 
   /**
    * Start the built-in webserver
+   * @param $documentRoot Document root directory
+   * @param $router Router script filename (optional)
    */
-  public static function startServer() {
+  public static function startServer($documentRoot, $router='') {
     define('SERVER_HOST', 'localhost');
     define('SERVER_PORT', 8500);
-    $cmd = sprintf('php -S %s:%d -t %s', SERVER_HOST, SERVER_PORT, WCMF_BASE.'app/public');
+    $cmd = sprintf('php -S %s:%d -t %s %s', SERVER_HOST, SERVER_PORT, $documentRoot, $router);
 
     $descriptorspec = array(
       0 => array('pipe', 'r'), // stdin
