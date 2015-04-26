@@ -451,13 +451,13 @@ class RESTController extends Controller {
     // in case of success, return object only
     $oidStr = $this->getFirstRequestOid();
     if (!$subResponse->hasErrors()) {
-      if ($subResponse->hasValue($oidStr)) {
-      $object = $subResponse->getValue($oidStr);
       $response->clearValues();
-      $response->setValue($oidStr, $object);
-        $this->setLocationHeaderFromOid($response->getValue('oid'));
+      if ($subResponse->hasValue($oidStr)) {
+        $object = $subResponse->getValue($oidStr);
+        $response->setValue($oidStr, $object);
       }
       $response->setStatus(Response::STATUS_202);
+      $this->setLocationHeaderFromOid($response->getValue('oid'));
     }
     else {
       // in case of error, return default response
