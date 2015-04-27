@@ -60,8 +60,7 @@ class Request extends ControllerMessage {
    * @return Request
    */
   public static function getDefault($controller=null, $context=null, $action=null) {
-    // fix request parameters
-    self::fix($_POST, file_get_contents('php://input'));
+    // fix get request parameters
     if (isset($_SERVER['QUERY_STRING'])) {
       self::fix($_GET, $_SERVER['QUERY_STRING']);
     }

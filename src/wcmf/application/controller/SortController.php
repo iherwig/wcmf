@@ -298,10 +298,10 @@ class SortController extends Controller {
     $tpl1 = $query->getObjectTemplate($type);
     $tpl2 = $query->getObjectTemplate($type);
     if ($lowerValue != self::UNBOUND) {
-      $tpl1->setValue($sortkeyName, Criteria::asValue('>', $lowerValue));
+      $tpl1->setValue($sortkeyName, Criteria::asValue('>', $lowerValue), true);
     }
     if ($upperValue != self::UNBOUND) {
-      $tpl2->setValue($sortkeyName, Criteria::asValue('<', $upperValue));
+      $tpl2->setValue($sortkeyName, Criteria::asValue('<', $upperValue), true);
     }
     $objects = $query->execute(BuildDepth::SINGLE);
     return $objects;
