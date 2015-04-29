@@ -36,15 +36,16 @@ class ObjectFactory {
       'transaction' =>           'wcmf\lib\persistence\Transaction',
       'concurrencyManager' =>    'wcmf\lib\persistence\concurrency\ConcurrencyManager',
       'actionMapper' =>          'wcmf\lib\presentation\ActionMapper',
+      'request' =>               'wcmf\lib\presentation\Request',
+      'response' =>              'wcmf\lib\presentation\Response',
+      'listStrategies' =>        'wcmf\lib\presentation\control\lists\ListStrategy',
+      'formats' =>               'wcmf\lib\presentation\format\Format',
       'view' =>                  'wcmf\lib\presentation\view\View',
       'authenticationManager' => 'wcmf\lib\security\AuthenticationManager',
       'permissionManager' =>     'wcmf\lib\security\PermissionManager',
       'principalFactory' =>      'wcmf\lib\security\principal\PrincipalFactory',
       'user' =>                  'wcmf\lib\security\principal\User',
       'role' =>                  'wcmf\lib\security\principal\Role',
-
-      'formats' =>               'wcmf\lib\presentation\format\Format',
-      'listStrategies' =>        'wcmf\lib\presentation\control\lists\ListStrategy'
   );
 
   /**
