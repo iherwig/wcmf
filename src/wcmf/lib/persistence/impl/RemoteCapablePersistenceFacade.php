@@ -18,7 +18,6 @@ use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\impl\DefaultPersistenceFacade;
-use wcmf\lib\presentation\Request;
 use wcmf\lib\service\RemotingServer;
 
 /**
@@ -211,10 +210,9 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       $serverKey = array_pop(preg_split('/:/', $umi->getPrefix()));
 
       // create the request
-      $request = new Request(
-        '',
-        '',
-        'display',
+      $request = ObjectFactory::getInstance('request');
+      $request->setAction('display');
+      $request->setValues(
         array(
           'oid' => $oid->toString(),
           'depth' => "".$buildDepth,

@@ -117,10 +117,9 @@ class HTTPClient implements RemotingClient {
    */
   protected function doLogin() {
     if ($this->_user) {
-      $request = new Request(
-        'wcmf\application\controller\LoginController',
-        '',
-        'login',
+      $request = ObjectFactory::getInstance('request');
+      $request->setAction('login');
+      $request->setValues(
         array(
           'login' => $this->_user['login'],
           'password' => $this->_user['password']

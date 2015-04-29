@@ -14,7 +14,6 @@ use \RuntimeException;
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\service\RemotingClient;
 
@@ -113,7 +112,8 @@ class RPCClient implements RemotingClient {
     chdir($currentDir);
 
     $responseData = json_decode($jsonResponse[0], true);
-    $response = new Response(null, null, null, $responseData);
+    $response = ObjectFactory::getInstance('response');
+    $response->setValues($responseData);
     $response->setFormat($jsonFormat);
     Formatter::deserialize($response);
     if (Log::isDebugEnabled(__CLASS__)) {
@@ -139,10 +139,9 @@ class RPCClient implements RemotingClient {
    */
   protected function doLogin() {
     if ($this->_user) {
-      $request = new Request(
-        '',
-        '',
-        'login',
+      $request = ObjectFactory::getInstance('request');
+      $request->setAction('login');
+      $request->setValues(
         array(
           'login' => $this->_user['login'],
           'password' => $this->_user['password']

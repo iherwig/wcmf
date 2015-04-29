@@ -134,7 +134,10 @@ abstract class Controller {
    */
   protected function executeSubAction($action) {
     $curRequest = $this->getRequest();
-    $subRequest = new Request(get_class($this), $curRequest->getContext(), $action);
+    $subRequest = ObjectFactory::getInstance('request');
+    $subRequest->setSender(get_class($this));
+    $subRequest->setContext($curRequest->getContext());
+    $subRequest->setAction($action);
     $subRequest->setHeaders($curRequest->getHeaders());
     $subRequest->setValues($curRequest->getValues());
     $formats = ObjectFactory::getInstance('formats');

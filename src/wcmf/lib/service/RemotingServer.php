@@ -11,7 +11,6 @@
 namespace wcmf\lib\service;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\Response;
 use wcmf\lib\service\impl\HTTPClient;
 use wcmf\lib\service\impl\RPCClient;
 
@@ -55,7 +54,7 @@ class RemotingServer {
       $response = $client->call($request);
       return $response;
     }
-    return new Response(null, null, null);
+    return ObjectFactory::getInstance('response');
   }
 
   /**

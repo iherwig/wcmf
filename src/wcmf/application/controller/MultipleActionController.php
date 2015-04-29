@@ -15,7 +15,6 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\presentation\Request;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -136,7 +135,9 @@ class MultipleActionController extends Controller {
       $context = isset($actionData['context']) ? $actionData['context'] : '';
       $action = isset($actionData['action']) ? $actionData['action'] : '';
       $params = isset($actionData['params']) ? $actionData['params'] : array();
-      $requestPart = new Request('', $context, $action);
+      $requestPart = ObjectFactory::getInstance('request');
+      $requestPart->setContext($context);
+      $requestPart->setAction($action);
       $requestPart->setValues($params);
       $requestPart->setFormat($nullFormat);
       $requestPart->setResponseFormat($nullFormat);

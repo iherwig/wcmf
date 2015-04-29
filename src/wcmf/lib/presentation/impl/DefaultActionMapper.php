@@ -20,7 +20,6 @@ use wcmf\lib\presentation\ApplicationEvent;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\Response;
 
 /**
  * Default ActionMapper implementation.
@@ -46,7 +45,9 @@ class DefaultActionMapper implements ActionMapper {
     $referrer = $request->getSender();
     $context = $request->getContext();
     $action = $request->getAction();
-    $response = new Response($referrer, $context, '');
+    $response = ObjectFactory::getInstance('response');
+    $response->setSender($referrer);
+    $response->setContext($context);
     $response->setFormat($request->getResponseFormat());
 
     $config = ObjectFactory::getConfigurationInstance();
@@ -135,7 +136,10 @@ class DefaultActionMapper implements ActionMapper {
       $this->_lastResponses[] = $response;
 
       // proceed based on the result
-      $nextRequest = new Request($controllerClass, $response->getContext(), $response->getAction());
+      $nextRequest = ObjectFactory::getInstance('request');
+      $nextRequest->setSender($controllerClass);
+      $nextRequest->setContext($response->getContext());
+      $nextRequest->setAction($response->getAction());
       $nextRequest->setFormat($response->getFormat());
       $nextRequest->setValues($response->getValues());
       $nextRequest->setErrors($response->getErrors());

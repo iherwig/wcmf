@@ -13,7 +13,6 @@ namespace wcmf\test\lib;
 use wcmf\test\lib\DatabaseTestCase;
 use wcmf\test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\Request;
 
 /**
  * ControllerTestCase is a PHPUnit test case, that
@@ -41,7 +40,8 @@ abstract class ControllerTestCase extends DatabaseTestCase {
     TestUtil::setConfigValue('??'.$action, $this->getControllerName(), 'actionmapping');
 
     // make request
-    $request = new Request('', '', $action);
+    $request = ObjectFactory::getInstance('request');
+    $request->setAction($action);
     foreach ($data as $key => $value) {
       $request->setValue($key, $value);
     }

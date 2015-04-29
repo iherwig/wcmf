@@ -10,18 +10,15 @@
  */
 namespace wcmf\test\tests\format;
 
-use wcmf\test\lib\BaseTestCase;
-
 use app\src\model\Author;
 use app\src\model\Book;
 use app\src\model\Chapter;
 use app\src\model\Image;
-
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\impl\DionysosNodeSerializer;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\impl\JsonFormat;
+use wcmf\test\lib\BaseTestCase;
 
 /**
  * JsonFormatTest.
@@ -31,7 +28,7 @@ use wcmf\lib\presentation\format\impl\JsonFormat;
 class JsonFormatTest extends BaseTestCase {
 
   public function testDeserializeSimple() {
-    $message = new Request('controller', 'context', 'action');
+    $message = ObjectFactory::getInstance('request');
     $message->setValues(array(
                 'string' => 'abc',
                 'integer' => 123,
@@ -72,7 +69,7 @@ class JsonFormatTest extends BaseTestCase {
   }
 
   public function testDeserializeNodeSimple() {
-    $message = new Request('controller', 'context', 'action');
+    $message = ObjectFactory::getInstance('request');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'oid' => 'app.src.model.Book:123',
@@ -102,7 +99,7 @@ class JsonFormatTest extends BaseTestCase {
   }
 
   public function testDeserializeNodeHierarchy() {
-    $message = new Request('controller', 'context', 'action');
+    $message = ObjectFactory::getInstance('request');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'oid' => 'app.src.model.Book:123',
@@ -178,7 +175,7 @@ class JsonFormatTest extends BaseTestCase {
   }
 
   public function testDeserializeNodeList() {
-    $message = new Request('controller', 'context', 'action');
+    $message = ObjectFactory::getInstance('request');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'list' => array(
@@ -227,7 +224,7 @@ class JsonFormatTest extends BaseTestCase {
   }
 
   public function testSerializeSimple() {
-    $message = new Response('controller', 'context', 'action');
+    $message = ObjectFactory::getInstance('response');
     $message->setValues(array(
                 'string' => 'abc',
                 'integer' => 123,
@@ -272,7 +269,7 @@ class JsonFormatTest extends BaseTestCase {
     $book->setValue('title', 'Matrix - The Original');
     $book->setValue('modified', '2011-10-01 00:01:01');
 
-    $message = new Response('controller', 'context', 'action');
+    $message = ObjectFactory::getInstance('response');
     $message->setValues(array(
                 'app.src.model.Book:123' => $book,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
@@ -321,7 +318,7 @@ class JsonFormatTest extends BaseTestCase {
     $book1->addNode($chapter11, 'Chapter');
     $book1->addNode($chapter12, 'Chapter');
 
-    $message = new Response('controller', 'context', 'action');
+    $message = ObjectFactory::getInstance('response');
     $message->setValues(array(
                 'app.src.model.Book:123' => $book1,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
@@ -381,7 +378,7 @@ class JsonFormatTest extends BaseTestCase {
     $list1 = array('type' => 'Chapter',
         'content' => array('contentType' => 'Chapter', $chapter1, $chapter2, $chapter3));
 
-    $message = new Response('controller', 'context', 'action');
+    $message = ObjectFactory::getInstance('response');
     $message->setValues(array(
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'list' => $list1));

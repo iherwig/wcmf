@@ -423,6 +423,30 @@
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_8kYjALRGEeOQ5oJFa1i8cg" value="wcmf\lib\presentation\format\impl\NullFormat"/>
                 </ownedAttribute>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_23RmMO46EeSt-PWkeJaU5w" name="Request">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_23RmMe46EeSt-PWkeJaU5w" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_23RmMu46EeSt-PWkeJaU5w" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_23RmM-46EeSt-PWkeJaU5w" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_23RmNO46EeSt-PWkeJaU5w" value="wcmf\lib\presentation\impl\DefaultRequest"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_8wTHsO49EeSt-PWkeJaU5w" name="__shared" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_8wTHse49EeSt-PWkeJaU5w" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8wTHsu49EeSt-PWkeJaU5w" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_8wTHs-49EeSt-PWkeJaU5w" value="false"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_3J3yEO46EeSt-PWkeJaU5w" name="Response">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_3J3yEe46EeSt-PWkeJaU5w" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3J3yEu46EeSt-PWkeJaU5w" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_3J3yE-46EeSt-PWkeJaU5w" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_3J3yFO46EeSt-PWkeJaU5w" value="wcmf\lib\presentation\impl\DefaultResponse"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_89--YO49EeSt-PWkeJaU5w" name="__shared" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_89--Ye49EeSt-PWkeJaU5w" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_89--Yu49EeSt-PWkeJaU5w" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_89--Y-49EeSt-PWkeJaU5w" value="false"/>
+                </ownedAttribute>
+              </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_DgsN0LRHEeOQ5oJFa1i8cg" name="ListStrategies">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_JHalwLRHEeOQ5oJFa1i8cg" name="fix" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OKMjILRHEeOQ5oJFa1i8cg" value="1"/>
@@ -1817,4 +1841,6 @@
   <Chronos:ChiActionKey xmi:id="_2pwsAFJlEeS9X-qkDE9hqA" action="getPermissions" base_Association="_ztw08FJlEeS9X-qkDE9hqA"/>
   <Chronos:ChiActionKey xmi:id="_LYFX8FLkEeSiysnzrVykIQ" action="setPermissions" base_Association="_JQqYcFLkEeSiysnzrVykIQ"/>
   <Chronos:ChiSystem xmi:id="_UsmaoFUxEeS4i-N-Z4Tllg" plattform="wcmf" base_Class="_Un6u8FUxEeS4i-N-Z4Tllg"/>
+  <Chronos:ChiSystem xmi:id="_28CKYO46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_23RmMO46EeSt-PWkeJaU5w"/>
+  <Chronos:ChiSystem xmi:id="_3J3yFe46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_3J3yEO46EeSt-PWkeJaU5w"/>
 </xmi:XMI>

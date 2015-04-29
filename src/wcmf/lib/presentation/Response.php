@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\presentation;
 
-use wcmf\lib\presentation\ControllerMessage;
-
 /**
  * Response holds the response values that are used as output from
  * Controller instances. It is typically instantiated by the ActionMapper
@@ -19,7 +17,7 @@ use wcmf\lib\presentation\ControllerMessage;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Response extends ControllerMessage {
+interface Response extends ControllerMessage {
 
   const STATUS_200 = '200 OK';
   const STATUS_201 = '201 Created';
@@ -29,42 +27,31 @@ class Response extends ControllerMessage {
   const STATUS_400 = '400 Bad Request';
   const STATUS_404 = '404 Not Found';
 
-  private $_cacheId = null;
-  private $_status = self::STATUS_200;
-
   /**
    * Set a string value that uniquely identifies the request data
    * that cause the current response. This value maybe used to compare
    * two requests and return cached responses based on the result.
    * @param $cacheId
    */
-  public function setCacheId($cacheId) {
-    $this->_cacheId = $cacheId;
-  }
+  public function setCacheId($cacheId);
 
   /**
    * Get the cache id.
    * @see Response::setCacheId()
    * @return The id
    */
-  public function getCacheId() {
-    return $this->_cacheId;
-  }
+  public function getCacheId();
 
   /**
    * Set the response HTTP status code
    * @param $status The HTTP status code
    */
-  public function setStatus($status) {
-    $this->_status = $status;
-  }
+  public function setStatus($status);
 
   /**
    * Get the response HTTP status code
    * @return String
    */
-  public function getStatus() {
-    return $this->_status;
-  }
+  public function getStatus();
 }
 ?>

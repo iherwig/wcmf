@@ -60,7 +60,8 @@ class Application {
     ObjectFactory::configure($config);
 
     // create the Request instance
-    $this->_initialRequest = Request::getDefault($defaultController, $defaultContext, $defaultAction);
+    $this->_initialRequest = ObjectFactory::getInstance('request');
+    $this->_initialRequest->initialize($defaultController, $defaultContext, $defaultAction);
 
     // initialize session
     $session = ObjectFactory::getInstance('session');

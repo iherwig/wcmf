@@ -18,8 +18,6 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\format\Formatter;
-use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\Response;
 use wcmf\lib\util\URIUtil;
 
 /**
@@ -129,7 +127,8 @@ class SoapServer extends nusoap_server {
     $authHeader = $this->requestHeader['Security']['UsernameToken'];
     $formats = ObjectFactory::getInstance('formats');
 
-    $request = new Request('', '', 'actionSet');
+    $request = ObjectFactory::getInstance('request');
+    $request->setAction('actionSet');
     $request->setFormat($formats['soap']);
     $request->setResponseFormat($formats['null']);
     $request->setValues(array(
@@ -159,7 +158,10 @@ class SoapServer extends nusoap_server {
     }
     $responseData = $response->getValue('data');
     $data = $responseData['action2'];
-    $actionResponse = new Response($data['controller'], $data['context'], $data['action']);
+    $actionResponse = ObjectFactory::getInstance('response');
+    $actionResponse->setSender($data['controller']);
+    $actionResponse->setContext($data['context']);
+    $actionResponse->setAction($data['action']);
     $actionResponse->setFormat($formats['soap']);
     $actionResponse->setValues($data);
     Formatter::serialize($actionResponse);
