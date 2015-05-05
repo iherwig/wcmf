@@ -708,6 +708,9 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7_XrEbQ-EeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_7_Y5MLQ-EeOQ5oJFa1i8cg" value="+administrators"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_Oo_DgPL_EeSGf8RGitWq-A" name="??checkPermissions" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Oo_DgfL_EeSGf8RGitWq-A" value="+*"/>
+                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_6bit8E5nEeSEGaIVag_Y7g" name="??checkPermissionsOfUser" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_A38wsE5oEeSEGaIVag_Y7g" value="+administrators"/>
                 </ownedAttribute>
