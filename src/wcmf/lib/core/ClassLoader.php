@@ -17,29 +17,32 @@ namespace wcmf\lib\core;
  */
 class ClassLoader {
 
+  private $_baseDir = '';
+
   /**
    * Constructor.
+   * @param $baseDir Base directory from which namespaces will be resolved
+   *    (usually WCMF_BASE)
    */
-  public function __construct() {
+  public function __construct($baseDir) {
+    if (!file_exists($baseDir) || is_file($baseDir)) {
+      throw new \Exception("Base dir '".$baseDir."' is not a directory.");
+    }
+    $baseDir = preg_replace('/\/\/$/', '/', $baseDir.'/');
+    $this->_baseDir = $baseDir;
     spl_autoload_register(array($this, 'load'), true, true);
   }
 
   private function load($className) {
-    if (!defined('WCMF_BASE')) {
-      throw new \Exception("Constant WCMF_BASE is not defined. "
-              . "Please define this constant to point to "
-              ."the base directory of your class files.");
-    }
-    // search under WCMF_BASE assuming that namespaces
-    // match directories
-    $filename = WCMF_BASE.str_replace("\\", "/", $className).'.php';
+    // search under baseDir assuming that namespaces match directories
+    $filename = $this->_baseDir.str_replace("\\", "/", $className).'.php';
     if (file_exists($filename)) {
       include($filename);
     }
   }
 
   /**
-  * Search a class definition in any subfolder of WCMF_BASE
+  * Search a class definition in any subfolder of baseDir
   * Code from: http://php.net/manual/en/language.oop5.autoload.php
   *
   * @param $className The name of the class
@@ -47,14 +50,14 @@ class ClassLoader {
   * @return The directory name
   */
   function searchClass($className, $sub="/") {
-    if(file_exists(WCMF_BASE.$sub.getFileName($className))) {
-      return WCMF_BASE.$sub;
+    if(file_exists($this->_baseDir.$sub.getFileName($className))) {
+      return $this->_baseDir.$sub;
     }
 
-    $dir = dir(WCMF_BASE.$sub);
+    $dir = dir($this->_baseDir.$sub);
     while(false !== ($folder = $dir->read())) {
       if($folder != "." && $folder != "..") {
-        if(is_dir(WCMF_BASE.$sub.$folder)) {
+        if(is_dir($this->_baseDir.$sub.$folder)) {
           $subFolder = searchClass($className, $sub.$folder."/");
           if($subFolder) {
             return $subFolder;

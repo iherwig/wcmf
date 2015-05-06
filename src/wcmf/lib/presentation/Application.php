@@ -34,7 +34,7 @@ class Application {
    * Constructor
    */
   public function __construct() {
-    new ClassLoader();
+    new ClassLoader(WCMF_BASE);
     new ErrorHandler();
     $this->_startTime = microtime(true);
     register_shutdown_function(array($this, "shutdown"));
