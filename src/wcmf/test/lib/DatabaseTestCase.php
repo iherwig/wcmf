@@ -12,6 +12,7 @@ namespace wcmf\test\lib;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\util\TestUtil;
 
 /**
  * ControllerTestCase is a PHPUnit test case, that
@@ -27,7 +28,7 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
 
   public final function getConnection() {
     if (!self::$frameworkReady) {
-      TestUtil::initFramework(get_class($this), $this->getName());
+      TestUtil::initFramework(WCMF_BASE.'app/config/');
       self::$frameworkReady = true;
     }
     if ($this->conn === null) {
@@ -53,7 +54,7 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
 
   protected function setUp() {
     if (!self::$frameworkReady) {
-      TestUtil::initFramework();
+      TestUtil::initFramework(WCMF_BASE.'app/config/');
       self::$frameworkReady = true;
     }
     parent::setUp();

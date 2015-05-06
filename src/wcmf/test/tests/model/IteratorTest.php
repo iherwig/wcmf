@@ -12,12 +12,13 @@ namespace wcmf\test\tests\model;
 
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\util\TestUtil;
 
 /**
  * IteratorTest.

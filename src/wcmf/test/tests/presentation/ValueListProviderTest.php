@@ -10,10 +10,11 @@
  */
 namespace wcmf\test\tests\presentation;
 
-use wcmf\lib\presentation\control\ValueListProvider;
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
-use wcmf\test\lib\TestUtil;
+
+use wcmf\lib\presentation\control\ValueListProvider;
+use wcmf\lib\util\TestUtil;
 
 function g_getListValues($prefix) {
   return array(

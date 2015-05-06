@@ -11,11 +11,12 @@
 namespace wcmf\test\tests\model;
 
 use wcmf\test\lib\BaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\util\TestUtil;
 
 /**
  * NodeUtilTest.

@@ -8,7 +8,7 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\test\lib;
+namespace wcmf\lib\util;
 
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\InifileConfiguration;
@@ -29,11 +29,11 @@ class TestUtil {
 
   /**
    * Set up the wcmf framework
+   * @param configPath The path to the configuration directory
    */
-  public static function initFramework() {
+  public static function initFramework($configPath) {
     ObjectFactory::clear();
 
-    $configPath = WCMF_BASE.'app/config/';
     if (!file_exists($configPath)) {
       throw new Exception('Configuration path '.$configPath.' does not exist. '.
               'Did you forget to generate code from the model?');

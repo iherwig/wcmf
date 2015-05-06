@@ -10,12 +10,13 @@
  */
 namespace wcmf\test\tests\controller;
 
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\ControllerTestCase;
+
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\security\AuthorizationException;
-use wcmf\test\lib\ArrayDataSet;
-use wcmf\test\lib\ControllerTestCase;
-use wcmf\test\lib\TestUtil;
+use wcmf\lib\util\TestUtil;
 
 /**
  * PermissionsControllerTest.

@@ -18,11 +18,12 @@ use app\src\model\Chapter;
 use app\src\model\ChapterRDBMapper;
 
 use wcmf\test\lib\BaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObjectProxy;
+use wcmf\lib\util\TestUtil;
 
 /**
  * NodeUnifiedRDBMapperTest.

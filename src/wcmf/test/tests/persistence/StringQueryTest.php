@@ -11,8 +11,9 @@
 namespace wcmf\test\tests\persistence;
 
 use wcmf\test\lib\BaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\model\StringQuery;
+use wcmf\lib\util\TestUtil;
 
 /**
  * StringQueryTest.

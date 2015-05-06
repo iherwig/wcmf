@@ -12,6 +12,7 @@ namespace wcmf\test\lib;
 
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\util\TestUtil;
 
 /**
  * ControllerTestCase is the base class for all wCMF test cases.
@@ -21,7 +22,7 @@ use wcmf\lib\core\ObjectFactory;
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 
   protected function setUp() {
-    TestUtil::initFramework();
+    TestUtil::initFramework(WCMF_BASE.'app/config/');
     parent::setUp();
     Log::info("Running: ".get_class($this).".".$this->getName(), __CLASS__);
   }

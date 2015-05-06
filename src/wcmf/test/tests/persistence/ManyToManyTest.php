@@ -14,10 +14,11 @@ use app\src\model\wcmf\Role;
 
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\util\TestUtil;
 
 /**
  * ManyToManyTest.

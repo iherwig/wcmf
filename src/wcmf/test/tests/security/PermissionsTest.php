@@ -10,16 +10,16 @@
  */
 namespace wcmf\test\tests\security;
 
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
+
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\security\PermissionManager;
-
-use wcmf\test\lib\ArrayDataSet;
-use wcmf\test\lib\DatabaseTestCase;
-use wcmf\test\lib\TestUtil;
+use wcmf\lib\util\TestUtil;
 
 /**
  * PermissionsTest.

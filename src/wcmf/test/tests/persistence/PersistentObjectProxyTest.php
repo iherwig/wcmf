@@ -12,10 +12,11 @@ namespace wcmf\test\tests\persistence;
 
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
+use wcmf\lib\util\TestUtil;
 
 /**
  * PersistentObjectProxyTest.

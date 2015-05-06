@@ -12,12 +12,13 @@ namespace wcmf\test\tests\persistence;
 
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\util\TestUtil;
 
 /**
  * PersistentObjectPerformanceTest.

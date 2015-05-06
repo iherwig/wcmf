@@ -11,11 +11,12 @@
 namespace wcmf\test\tests\persistence;
 
 use wcmf\test\lib\BaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\util\TestUtil;
 
 /**
  * ObjectQueryTest.

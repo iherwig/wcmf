@@ -11,8 +11,8 @@
 namespace wcmf\test\lib;
 
 use wcmf\test\lib\DatabaseTestCase;
-use wcmf\test\lib\TestUtil;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\util\TestUtil;
 
 /**
  * ControllerTestCase is a PHPUnit test case, that

@@ -11,10 +11,11 @@
 namespace wcmf\test\tests\model;
 
 use wcmf\test\lib\BaseTestCase;
-use wcmf\test\lib\TestUtil;
+
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\util\TestUtil;
 
 /**
  * NodeTest.
