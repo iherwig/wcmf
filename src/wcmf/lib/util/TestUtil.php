@@ -34,8 +34,8 @@ class TestUtil {
   public static function initFramework($configPath) {
     ObjectFactory::clear();
 
-    if (!file_exists($configPath)) {
-      throw new Exception('Configuration path '.$configPath.' does not exist. '.
+    if (!file_exists($configPath) || is_file($configPath)) {
+      throw new \Exception('Configuration path '.$configPath.' is not a directory. '.
               'Did you forget to generate code from the model?');
     }
 
