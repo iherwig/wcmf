@@ -47,7 +47,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     // condition 1
     $sql1 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL')->__toString();
-    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` ".
       "ORDER BY `Chapter`.`sortkey` ASC";
@@ -55,7 +55,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     // condition 2
     $sql2 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL', array(array($criteria)))->__toString();
-    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
       "ORDER BY `Chapter`.`sortkey` ASC";
@@ -64,7 +64,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     // alias
     $sql3 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL', array(array($criteria), "ChapterAlias"))->__toString();
     $expected = "SELECT `ChapterAlias`.`id`, `ChapterAlias`.`fk_chapter_id`, `ChapterAlias`.`fk_book_id`, `ChapterAlias`.`fk_author_id`, `ChapterAlias`.`name`, ".
-      "`ChapterAlias`.`created`, `ChapterAlias`.`creator`, `ChapterAlias`.`modified`, `ChapterAlias`.`last_editor`, ".
+      "`ChapterAlias`.`content`, `ChapterAlias`.`created`, `ChapterAlias`.`creator`, `ChapterAlias`.`modified`, `ChapterAlias`.`last_editor`, ".
       "`ChapterAlias`.`sortkey_author`, `ChapterAlias`.`sortkey_book`, `ChapterAlias`.`sortkey_parentchapter`, `ChapterAlias`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` AS `ChapterAlias` ".
       "LEFT JOIN `Author` ON `ChapterAlias`.`fk_author_id`=`Author`.`id` WHERE (`ChapterAlias`.`name` = :ChapterAlias_name) ".
@@ -74,7 +74,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     // order 1
     $sql4 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
             array(array($criteria), null, array("name ASC")))->__toString();
-    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` ".
       "FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
@@ -84,7 +84,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     // order 2
     $sql5 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
             array(array($criteria), null, array("Chapter.name ASC")))->__toString();
-    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` ".
       "FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
@@ -99,7 +99,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     // condition
     $sql9 = TestUtil::callProtectedMethod($mapper2, 'getSelectSQL', array(array($criteria)))->__toString();
     $expected = "SELECT `WCMF_Chapter`.`id`, `WCMF_Chapter`.`fk_chapter_id`, `WCMF_Chapter`.`fk_book_id`, `WCMF_Chapter`.`fk_author_id`, `WCMF_Chapter`.`name`, ".
-      "`WCMF_Chapter`.`created`, `WCMF_Chapter`.`creator`, `WCMF_Chapter`.`modified`, `WCMF_Chapter`.`last_editor`, ".
+      "`WCMF_Chapter`.`content`, `WCMF_Chapter`.`created`, `WCMF_Chapter`.`creator`, `WCMF_Chapter`.`modified`, `WCMF_Chapter`.`last_editor`, ".
       "`WCMF_Chapter`.`sortkey_author`, `WCMF_Chapter`.`sortkey_book`, `WCMF_Chapter`.`sortkey_parentchapter`, `WCMF_Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `WCMF_Chapter` LEFT JOIN `Author` ON `WCMF_Chapter`.`fk_author_id`=`Author`.`id` ".
       "WHERE (`WCMF_Chapter`.`name` = :WCMF_Chapter_name) ORDER BY `WCMF_Chapter`.`sortkey` ASC";
@@ -208,7 +208,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $op = $operations[0];
     $str = $op->__toString();
     $this->assertEquals('wcmf\lib\persistence\InsertOperation:type=app.src.model.Chapter,values='
-            . '(id=1,fk_chapter_id=3,fk_book_id=NULL,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin,'
+            . '(id=1,fk_chapter_id=3,fk_book_id=NULL,fk_author_id=2,name=Chapter 1,content=NULL,created=2010-02-21,creator=admin,'
             . 'modified=NULL,last_editor=NULL,sortkey_author=NULL,sortkey_book=NULL,sortkey_parentchapter=NULL,sortkey=NULL),'
             . 'criteria=()', $str);
   }
@@ -234,7 +234,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     $op = $operations[0];
     $str = $op->__toString();
     $this->assertEquals('wcmf\lib\persistence\UpdateOperation:type=app.src.model.Chapter,values='
-            . '(id=1,fk_chapter_id=3,fk_book_id=NULL,fk_author_id=2,name=Chapter 1,created=2010-02-21,creator=admin,'
+            . '(id=1,fk_chapter_id=3,fk_book_id=NULL,fk_author_id=2,name=Chapter 1,content=NULL,created=2010-02-21,creator=admin,'
             . 'modified=NULL,last_editor=NULL,sortkey_author=NULL,sortkey_book=NULL,sortkey_parentchapter=NULL,sortkey=NULL),'
             . 'criteria=([AND] app.src.model.Chapter.id = 1)', $str);
   }

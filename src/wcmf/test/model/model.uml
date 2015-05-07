@@ -1581,6 +1581,7 @@
                 <generalization xmi:type="uml:Generalization" xmi:id="_7JZAQLU5EeORdpT3S9OOtw" general="_ylwfELQ4EeOQ5oJFa1i8cg"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_kn2icLU4EeORdpT3S9OOtw" name="author_name" type="_agg3ALQwEeOLlbB2YLI0iw"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_kq-u8LU4EeORdpT3S9OOtw" name="name" type="_agg3ALQwEeOLlbB2YLI0iw"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_njBmAPT-EeSdk57oe2HXMQ" name="content" type="_agg3ALQwEeOLlbB2YLI0iw"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_oIwA4LU5EeORdpT3S9OOtw" name="" type="_BGWqwLU2EeORdpT3S9OOtw" association="_oIydILU5EeORdpT3S9OOtw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_oIwA4bU5EeORdpT3S9OOtw" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_oIwA4rU5EeORdpT3S9OOtw" value="1"/>
@@ -1846,4 +1847,5 @@
   <Chronos:ChiSystem xmi:id="_UsmaoFUxEeS4i-N-Z4Tllg" plattform="wcmf" base_Class="_Un6u8FUxEeS4i-N-Z4Tllg"/>
   <Chronos:ChiSystem xmi:id="_28CKYO46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_23RmMO46EeSt-PWkeJaU5w"/>
   <Chronos:ChiSystem xmi:id="_3J3yFe46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_3J3yEO46EeSt-PWkeJaU5w"/>
+  <Chronos:ChiValue xmi:id="_nmvoYPT-EeSdk57oe2HXMQ" db_data_type="TEXT" is_editable="true" input_type="ckeditor:{&quot;toolbarSet&quot;:&quot;wcmf&quot;}" base_Property="_njBmAPT-EeSdk57oe2HXMQ"/>
 </xmi:XMI>

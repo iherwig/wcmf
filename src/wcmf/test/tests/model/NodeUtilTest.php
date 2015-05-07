@@ -109,7 +109,7 @@ class NodeUtilTest extends BaseTestCase {
     $query2 = new StringQuery('Chapter', __CLASS__.__METHOD__."2");
     $query2->setConditionString($condition2);
     $sql2 = $query2->getQueryString();
-    $expected2 = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+    $expected2 = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` ".
       "INNER JOIN `Chapter` AS `SubChapter` ON `SubChapter`.`fk_chapter_id` = `Chapter`.`id` ".
@@ -125,7 +125,7 @@ class NodeUtilTest extends BaseTestCase {
     $query3 = new StringQuery('Chapter', __CLASS__.__METHOD__."3");
     $query3->setConditionString($condition3);
     $sql3 = $query3->getQueryString();
-    $expected3 = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+    $expected3 = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` ".
       "INNER JOIN `Chapter` AS `ParentChapter` ON `Chapter`.`fk_chapter_id` = `ParentChapter`.`id` ".

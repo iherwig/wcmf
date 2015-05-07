@@ -120,8 +120,8 @@ class ObjectQueryTest extends BaseTestCase {
     $page2Tpl->setValue("name", Criteria::asValue("LIKE", "Chapter 1%")); // explicit LIKE
     $page1Tpl->addNode($page2Tpl, 'SubChapter');
     $sql = $query->getQueryString();
-    $expected = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
-      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, ".
+    $expected = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, ".
+      "`Chapter`.`created`, `Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, ".
       "`Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` INNER JOIN `Chapter` AS `Chapter_1` ON ".
       "`Chapter_1`.`fk_chapter_id` = `Chapter`.`id` WHERE (`Chapter`.`creator` LIKE '%ingo%') AND (`Chapter_1`.`name` LIKE 'Chapter 1%') ".

@@ -70,7 +70,7 @@ class StringQueryTest extends BaseTestCase {
     $query = new StringQuery('Chapter', __CLASS__.__METHOD__."4");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
+    $expected = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` INNER JOIN `Chapter` AS `SubChapter` ON ".
       "`SubChapter`.`fk_chapter_id` = `Chapter`.`id` WHERE (`Chapter`.`creator` LIKE '%ingo%' AND `SubChapter`.`name` ".
@@ -103,8 +103,8 @@ class StringQueryTest extends BaseTestCase {
     $query = new StringQuery('Chapter', __CLASS__.__METHOD__."6");
     $query->setConditionString($queryStr);
     $sql = $query->getQueryString();
-    $expected = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`created`, ".
-      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, ".
+    $expected = "SELECT DISTINCT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, ".
+      "`Chapter`.`created`, `Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, ".
       "`Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`Author`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` ON `Chapter`.`fk_author_id`=`Author`.`id` INNER JOIN `Chapter` AS `ParentChapter` ON ".
       "`Chapter`.`fk_chapter_id` = `ParentChapter`.`id` WHERE (`ParentChapter`.`id` = 10) ORDER BY `Chapter`.`sortkey` ASC";
