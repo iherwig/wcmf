@@ -102,15 +102,15 @@ An important concept of wCMF is that of _Action Keys_. An action key describes t
 state of the application together with the **action** to be performed next. The state,
 which the application is in, results from the current **controller** and the **context**,
 in which it is executed. Controllers must exist as classes, whereas contexts and
-actions may be defined freely.
+actions may be arbitrary strings.
 
-The format of the action keys is the following:
+The string representation of an action key is as follows:
 
 ~~~~~~~~~~~~~{.ini}
 controller?context?action
 ~~~~~~~~~~~~~
 
-Currently wCMF uses action keys in three different fields:
+wCMF uses action keys for the following concerns:
 
 1. In **routing definitions** controller names are assigned action keys.
    \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink uses these
@@ -147,14 +147,14 @@ most accurate is favored.
 
 __Examples:__
 
-Always execute the SaveController when action _update_ is requested, no matter which
+Always execute `SaveController` when action _update_ is requested, no matter which
 state the application is in:
 
 ~~~~~~~~~~~~~{.ini}
 ??update = wcmf\application\controller\SaveController
 ~~~~~~~~~~~~~
 
-Always execute the AuthorController when the application context is _author_ as
+Always execute `AuthorController` when the application context is _author_ as
 long as no action is specified:
 
 ~~~~~~~~~~~~~{.ini}
