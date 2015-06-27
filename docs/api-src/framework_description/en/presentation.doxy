@@ -132,11 +132,42 @@ wCMF distinguishes between _internal_ and _external_ routing.
 
 #### Internal routing #### {#pres_routingint}
 
-<span class="label label-danger">TODO</span>
+Internal routing takes place after the \link wcmf::lib::presentation::Request `Request`\endlink
+instance is created and initialized. wCMF inspects the **action key** formed from
+it's _sender_, _context_ and _action_ parameters (see \ref arch_actionkey) to
+determine the controller to be executed next. The mapping of action keys to
+controllers is defined in the `ActionMapping` configuration section.
+
+If the executed controller together with the _context_ and _action_ parameters of
+the response match another action key, the corresponding controller
+will be executed afterwards. This allows to chain several actions together.
 
 #### External routing #### {#pres_routingext}
 
-<span class="label label-danger">TODO</span>
+The mapping of the current **request uri** to an action key is called external
+routing. The default logic is implemented in the
+\link wcmf::lib::presentation::impl::DefaultRequest::initialize `DefaultRequest::initialize`\endlink
+method. The method matches the _path part_ of the request uri against the entries
+of the `Routes` configuration section. Variables declared in path segments will
+be automatically passed as request parameters.
+
+The following example configuration taken from the default application illustrates
+the concept:
+
+~~~~~~~~~~~~~{.ini}
+[Routes]
+/ = action=cms
+/rest/{language}/{className} = action=restAction&collection=1
+/rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
+~~~~~~~~~~~~~
+
+- The first entry is matched by the root path, which is then mapped to the _cms_
+action - corresponding to the action key <em>??cms</em>.
+- The second entry defines the _language_ and _className_ variables (surrounded
+by curly braces) and would be matched by the request uris <em>/rest/de/Author</em>
+or <em>/rest/en/Book</em>. The executed action would be _restAction_.
+- The _id_ variable in the third entry must be an integer because of the regular
+expression constraint `[0-9]+`.
 
 ## Controllers ## {#pres_controllers}
 
