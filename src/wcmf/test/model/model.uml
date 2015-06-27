@@ -528,6 +528,9 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_za6-AL1jEeO1KMg8cXW3Mg" name="date" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_2ctUAL1jEeO1KMg8cXW3Mg" value="app/js/ui/data/display/renderer/Date"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_xCE3gB0YEeWsd8Y5mBAgtw" name="check" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_xCE3gR0YEeWsd8Y5mBAgtw" value="app/js/ui/data/display/renderer/Check"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_nvfmsLRlEeOfbtYsPp7Oyg" name="InputTypes">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_v3JqULRlEeOfbtYsPp7Oyg" name="checkbox" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
