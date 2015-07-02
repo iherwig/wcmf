@@ -26,8 +26,10 @@ class URIUtil {
    * @param $base Base URI
    */
   public static function makeRelative($abs_uri, $base) {
-    $abs_uri = preg_replace("{^[^:]+://[^/]+}", '', $abs_uri);
-    $base = preg_replace("{^[^:]+://[^/]+}", '', $base);
+    // normalize slashes and remove drive names
+    list($abs_uri, $base) = preg_replace(
+            array("{^[^:]+://[^/]+}", "/\\\\/"), array('', '/'),
+            array($abs_uri, $base));
 
     $abs_array = explode('/', $abs_uri);
     $base_array = explode('/', $base);
