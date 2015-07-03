@@ -27,8 +27,8 @@ class LocalizationTest extends DatabaseTestCase {
 
   const EXPECTED_DEFAULT_LANGUAGE_CODE = 'en';
   const EXPECTED_DEFAULT_LANGUAGE_NAME = 'English';
-  const TEST_OID1 = 'User:301';
-  const TEST_OID2 = 'User:302';
+  const TEST_OID1 = 'Book:301';
+  const TEST_OID2 = 'Book:302';
   const TRANSLATION_TYPE = 'Translation';
 
   protected function getDataSet() {
@@ -36,9 +36,9 @@ class LocalizationTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
-      'User' => array(
-        array('id' => 301, 'login' => 'ingo', 'name' => 'Herwig', 'firstname' => 'Ingo', 'config' => ''),
-        array('id' => 302, 'login' => 'user', 'config' => ''),
+      'Book' => array(
+        array('id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''),
+        array('id' => 302, 'title' => '', 'description' => '', 'year' => ''),
       ),
       'Translation' => array(
       ),
@@ -86,8 +86,8 @@ class LocalizationTest extends DatabaseTestCase {
 
     // store a translation
     $tmp = clone $testObj;
-    $tmp->setValue('name', 'Herwig [de]');
-    $tmp->setValue('firstname', 'Ingo [de]');
+    $tmp->setValue('title', 'title [de]');
+    $tmp->setValue('description', 'description [de]');
     $localization->saveTranslation($tmp, 'de');
     $transaction->commit();
 
@@ -96,15 +96,15 @@ class LocalizationTest extends DatabaseTestCase {
     $testObjUntranslated = $localization->loadTranslation($testObj, $localization->getDefaultLanguage());
     $this->assertTrue($testObjUntranslated != null,
       "The untranslated object could be retrieved by Localization class");
-    $this->assertEquals('Herwig', $testObjUntranslated->getValue('name'),
-      "The untranslated name is 'Herwig'");
+    $this->assertEquals('title [en]', $testObjUntranslated->getValue('title'),
+      "The untranslated title is 'title [en]'");
 
     // get a value in the translation language
     $testObjTranslated = $localization->loadTranslation($testObj, 'de');
     $this->assertTrue($testObjTranslated != null,
       "The translated object could be retrieved by Localization class");
-    $this->assertEquals('Herwig [de]', $testObjTranslated->getValue('name'),
-      "The translated name is 'Herwig [de]'");
+    $this->assertEquals('title [de]', $testObjTranslated->getValue('title'),
+      "The translated title is 'title [de]'");
     $transaction->rollback();
 
     TestUtil::runAnonymous(false);
@@ -122,13 +122,10 @@ class LocalizationTest extends DatabaseTestCase {
     $testObj = $persistenceFacade->load($oid);
     $transaction->detach($oid);
 
-    // set the input type of an attribute to a not translatable type
-    $testObj->setValueProperty('name', 'input_type', 'notTranslatable');
-
     // store a translation for an untranslatable value
     $tmp = clone $testObj;
-    $tmp->setValue('name', "Herwig [de]");
-    $tmp->setValue('firstname', "Ingo [de]");
+    $tmp->setValue('year', "2012-12-12 [de]");
+    $tmp->setValue('title', "title [de]");
     $localization->saveTranslation($tmp, 'de');
     $transaction->commit();
 
@@ -136,7 +133,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
             array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
-      new Criteria(self::TRANSLATION_TYPE, "attribute", "=", "name")));
+      new Criteria(self::TRANSLATION_TYPE, "attribute", "=", "year")));
     $this->assertEquals(0, sizeof($oids),
       "There must be no translation for the untranslatable value in the translation table");
     $transaction->rollback();
@@ -239,7 +236,7 @@ class LocalizationTest extends DatabaseTestCase {
     $transaction->begin();
     $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
             array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
-      new Criteria(self::TRANSLATION_TYPE, "attribute", "=", "name")));
+      new Criteria(self::TRANSLATION_TYPE, "attribute", "=", "title")));
     $this->assertEquals(1, sizeof($oids),
       "There must be only one entry in the translation table");
     $transaction->rollback();
@@ -258,24 +255,24 @@ class LocalizationTest extends DatabaseTestCase {
     $oid = ObjectId::parse(self::TEST_OID1);
     $testObj = $persistenceFacade->load($oid);
     $transaction->detach($oid);
-    $originalValue = $testObj->getValue('name');
+    $originalValue = $testObj->getValue('title');
 
     // store a translation for only one value
     $tmp = clone $testObj;
     $tmp->clearValues();
-    $tmp->setValue('firstname', "Ingo [de]");
+    $tmp->setValue('description', "description [de]");
     $localization->saveTranslation($tmp, 'de');
     $transaction->commit();
 
     // get the value in the translation language with loading defaults
     $transaction->begin();
     $testObjTranslated1 = $localization->loadTranslation($testObj, 'de', true);
-    $this->assertEquals($originalValue, $testObjTranslated1->getValue('name'),
+    $this->assertEquals($originalValue, $testObjTranslated1->getValue('title'),
       "The translated value is the default value");
 
     // get the value in the translation language without loading defaults
     $testObjTranslated2 = $localization->loadTranslation($testObj, 'de', false);
-    $this->assertEquals(0, strlen($testObjTranslated2->getValue('name')),
+    $this->assertEquals(0, strlen($testObjTranslated2->getValue('title')),
       "The translated value is empty");
     $transaction->rollback();
 
@@ -296,10 +293,10 @@ class LocalizationTest extends DatabaseTestCase {
 
     // store a translation in two languages
     $tmp1 = clone $testObj;
-    $tmp1->setValue('name', 'Herwig [de]');
+    $tmp1->setValue('title', 'title [de]');
     $localization->saveTranslation($tmp1, 'de', true);
     $tmp2 = clone $testObj;
-    $tmp2->setValue('name', 'Herwig [it]');
+    $tmp2->setValue('title', 'title [it]');
     $localization->saveTranslation($tmp2, 'it', true);
     $transaction->commit();
 
@@ -324,10 +321,10 @@ class LocalizationTest extends DatabaseTestCase {
 
     // store a translation in two languages
     $tmp1 = clone $testObj;
-    $tmp1->setValue('name', 'Herwig [de]');
+    $tmp1->setValue('title', 'title [de]');
     $localization->saveTranslation($tmp1, 'de', true);
     $tmp2 = clone $testObj;
-    $tmp2->setValue('name', 'Herwig [it]');
+    $tmp2->setValue('title', 'title [it]');
     $localization->saveTranslation($tmp2, 'it', true);
     $transaction->commit();
 
@@ -361,10 +358,10 @@ class LocalizationTest extends DatabaseTestCase {
 
     // store a translation in two languages
     $tmp1 = clone $testObj1;
-    $tmp1->setValue('name', 'Herwig [de]');
+    $tmp1->setValue('title', 'title [de]');
     $localization->saveTranslation($tmp1, 'de', true);
     $tmp2 = clone $testObj1;
-    $tmp2->setValue('name', 'Herwig [it]');
+    $tmp2->setValue('title', 'title [it]');
     $localization->saveTranslation($tmp2, 'it', true);
     $transaction->commit();
 
@@ -376,10 +373,10 @@ class LocalizationTest extends DatabaseTestCase {
 
     // store a translation in two languages
     $tmp3 = clone $testObj2;
-    $tmp3->setValue('name', 'Herwig [de]');
+    $tmp3->setValue('title', 'title [de]');
     $localization->saveTranslation($tmp3, 'de', true);
     $tmp4 = clone $testObj2;
-    $tmp4->setValue('name', 'Herwig [it]');
+    $tmp4->setValue('title', 'title [it]');
     $localization->saveTranslation($tmp4, 'it', true);
     $transaction->commit();
 

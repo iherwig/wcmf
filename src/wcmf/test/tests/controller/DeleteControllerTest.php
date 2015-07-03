@@ -27,8 +27,10 @@ use wcmf\lib\util\TestUtil;
  */
 class DeleteControllerTest extends ControllerTestCase {
 
-  const TEST_TYPE = 'User';
-  const TEST_OID = 'User:1';
+  const TEST_TYPE1 = 'User';
+  const TEST_TYPE2 = 'Book';
+  const TEST_OID1 = 'User:1';
+  const TEST_OID2 = 'Book:301';
 
   protected function getControllerName() {
     return 'wcmf\application\controller\DeleteController';
@@ -49,6 +51,9 @@ class DeleteControllerTest extends ControllerTestCase {
       'Role' => array(
         array('id' => 0, 'name' => 'administrators'),
       ),
+      'Book' => array(
+        array('id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''),
+      ),
       'Lock' => array(
       ),
       'Translation' => array(
@@ -61,7 +66,7 @@ class DeleteControllerTest extends ControllerTestCase {
    */
   public function testDelete() {
     TestUtil::startSession('admin', 'admin');
-    $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
+    $oid = ObjectId::parse(DeleteControllerTest::TEST_OID1);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a delete call
@@ -72,7 +77,7 @@ class DeleteControllerTest extends ControllerTestCase {
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE);
+    $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE1);
     $this->assertTrue(!in_array($oid, $oids), $oid." is does not exist after deleting");
 
     TestUtil::endSession();
@@ -83,7 +88,7 @@ class DeleteControllerTest extends ControllerTestCase {
    */
   public function testDeleteTranslation() {
     TestUtil::startSession('admin', 'admin');
-    $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
+    $oid = ObjectId::parse(DeleteControllerTest::TEST_OID2);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // store a 1st translation
@@ -92,14 +97,14 @@ class DeleteControllerTest extends ControllerTestCase {
     $transaction->begin();
     $testObj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
     $tmpDe = clone $testObj;
-    $tmpDe->setValue('name', 'Herwig [de]');
-    $tmpDe->setValue('firstname', 'Ingo [de]');
+    $tmpDe->setValue('title', 'title [de]');
+    $tmpDe->setValue('description', 'description [de]');
     $localization->saveTranslation($tmpDe, 'de');
 
     // store a 2nd translation
     $tmpIt = clone $testObj;
-    $tmpIt->setValue('name', 'Herwig [it]');
-    $tmpIt->setValue('firstname', 'Ingo [it]');
+    $tmpIt->setValue('title', 'title [it]');
+    $tmpIt->setValue('description', 'description [it]');
     $localization->saveTranslation($tmpIt, 'it');
     $transaction->commit();
 
@@ -112,7 +117,7 @@ class DeleteControllerTest extends ControllerTestCase {
 
     // tests
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE);
+    $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE2);
     $this->assertTrue(in_array($oid, $oids), $oid." still exists after deleting the translation");
 
     $query = new ObjectQuery('Translation', __CLASS__.__METHOD__);
@@ -132,7 +137,7 @@ class DeleteControllerTest extends ControllerTestCase {
    */
   public function testDeleteComplete() {
     TestUtil::startSession('admin', 'admin');
-    $oid = ObjectId::parse(DeleteControllerTest::TEST_OID);
+    $oid = ObjectId::parse(DeleteControllerTest::TEST_OID1);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // store a translation
@@ -153,7 +158,7 @@ class DeleteControllerTest extends ControllerTestCase {
 
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
-    $object = $persistenceFacade->create(self::TEST_TYPE);
+    $object = $persistenceFacade->create(self::TEST_TYPE1);
     $object->setOID($oid);
     $object = ObjectFactory::getInstance('localization')->loadTranslation($object, 'de');
     $this->assertEquals(null, $object->getValue('name'));

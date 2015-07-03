@@ -67,11 +67,6 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_pkguwbQ9EeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_pkh84LQ9EeOQ5oJFa1i8cg" value="wcmf\lib\i18n\impl\DefaultLocalization"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_gze-ALQ9EeOQ5oJFa1i8cg" name="inputTypes" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_tZtesLQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_tZuFwLQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_tZvT4LQ9EeOQ5oJFa1i8cg" value="{text, textarea, filebrowser, linkbrowser, ckeditor}"/>
-                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_g2nKgLQ9EeOQ5oJFa1i8cg" name="languageType" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_vBTuoLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_vBUVsLQ9EeOQ5oJFa1i8cg" value="1"/>
@@ -1811,12 +1806,12 @@
   <Chronos:ChiNode xmi:id="_fYudELU2EeORdpT3S9OOtw" base_Class="_BGWqwLU2EeORdpT3S9OOtw" display_value="name" is_searchable="true" is_soap="true" orderby="name"/>
   <Chronos:ChiValue xmi:id="_tmBpQLU2EeORdpT3S9OOtw" is_editable="true" base_Property="_rq2WALU2EeORdpT3S9OOtw"/>
   <Chronos:ChiNode xmi:id="_206lQLU3EeORdpT3S9OOtw" base_Class="_BJe3QLU2EeORdpT3S9OOtw" display_value="title" is_searchable="true" is_soap="true" orderby="title DESC"/>
-  <Chronos:ChiValue xmi:id="_Ct8BsLU4EeORdpT3S9OOtw" is_editable="true" base_Property="__mzRoLU3EeORdpT3S9OOtw"/>
-  <Chronos:ChiValue xmi:id="_DWKfULU4EeORdpT3S9OOtw" is_editable="true" input_type="textarea" base_Property="__p_vkLU3EeORdpT3S9OOtw"/>
+  <Chronos:ChiValue xmi:id="_Ct8BsLU4EeORdpT3S9OOtw" app_data_type="DATATYPE_ATTRIBUTE|TRANSLATABLE" is_editable="true" base_Property="__mzRoLU3EeORdpT3S9OOtw"/>
+  <Chronos:ChiValue xmi:id="_DWKfULU4EeORdpT3S9OOtw" app_data_type="DATATYPE_ATTRIBUTE|TRANSLATABLE" is_editable="true" input_type="textarea" base_Property="__p_vkLU3EeORdpT3S9OOtw"/>
   <Chronos:ChiValue xmi:id="_D9RioLU4EeORdpT3S9OOtw" is_editable="true" input_type="date" base_Property="__svhkLU3EeORdpT3S9OOtw"/>
   <Chronos:ChiNode xmi:id="_cDacMLU4EeORdpT3S9OOtw" base_Class="_BMnDwLU2EeORdpT3S9OOtw" display_value="name" is_searchable="true" is_soap="true" orderby="sortkey"/>
   <Chronos:ChiValueRef xmi:id="_nlhNcLU4EeORdpT3S9OOtw" base_Property="_kn2icLU4EeORdpT3S9OOtw" reference_value="name" reference_type="Author"/>
-  <Chronos:ChiValue xmi:id="_p0IaELU4EeORdpT3S9OOtw" is_editable="true" base_Property="_kq-u8LU4EeORdpT3S9OOtw"/>
+  <Chronos:ChiValue xmi:id="_p0IaELU4EeORdpT3S9OOtw" app_data_type="DATATYPE_ATTRIBUTE|TRANSLATABLE" is_editable="true" base_Property="_kq-u8LU4EeORdpT3S9OOtw"/>
   <Chronos:ChiNode xmi:id="_uWjcYLU4EeORdpT3S9OOtw" base_Class="_BQLVILU2EeORdpT3S9OOtw" display_value="filename" is_searchable="true" is_soap="true" orderby="sortkey"/>
   <Chronos:ChiValue xmi:id="_169B8LU4EeORdpT3S9OOtw" is_editable="true" input_type="filebrowser" display_type="image" column_name="file" base_Property="_0UxuULU4EeORdpT3S9OOtw"/>
   <Chronos:ChiManyToMany xmi:id="_7oE80LU4EeORdpT3S9OOtw" base_Class="_BTThoLU2EeORdpT3S9OOtw" orderby="sortkey"/>
@@ -1850,5 +1845,5 @@
   <Chronos:ChiSystem xmi:id="_UsmaoFUxEeS4i-N-Z4Tllg" plattform="wcmf" base_Class="_Un6u8FUxEeS4i-N-Z4Tllg"/>
   <Chronos:ChiSystem xmi:id="_28CKYO46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_23RmMO46EeSt-PWkeJaU5w"/>
   <Chronos:ChiSystem xmi:id="_3J3yFe46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_3J3yEO46EeSt-PWkeJaU5w"/>
-  <Chronos:ChiValue xmi:id="_nmvoYPT-EeSdk57oe2HXMQ" db_data_type="TEXT" is_editable="true" input_type="ckeditor:{&quot;toolbarSet&quot;:&quot;wcmf&quot;}" base_Property="_njBmAPT-EeSdk57oe2HXMQ"/>
+  <Chronos:ChiValue xmi:id="_nmvoYPT-EeSdk57oe2HXMQ" app_data_type="DATATYPE_ATTRIBUTE|TRANSLATABLE" db_data_type="TEXT" is_editable="true" input_type="ckeditor:{&quot;toolbarSet&quot;:&quot;wcmf&quot;}" base_Property="_njBmAPT-EeSdk57oe2HXMQ"/>
 </xmi:XMI>

@@ -25,8 +25,10 @@ use wcmf\lib\util\TestUtil;
  */
 class SaveControllerTest extends ControllerTestCase {
 
-  const TEST_OID = 'User:0';
-  const TEST_TYPE = 'User';
+  const TEST_TYPE1 = 'User';
+  const TEST_TYPE2 = 'Book';
+  const TEST_OID1 = 'User:0';
+  const TEST_OID2 = 'Book:301';
 
   protected function getControllerName() {
     return 'wcmf\application\controller\SaveController';
@@ -46,6 +48,9 @@ class SaveControllerTest extends ControllerTestCase {
       'Role' => array(
         array('id' => 0, 'name' => 'administrators'),
       ),
+      'Book' => array(
+        array('id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''),
+      ),
       'Lock' => array(
       ),
       'Translation' => array(
@@ -58,7 +63,7 @@ class SaveControllerTest extends ControllerTestCase {
    */
   public function testSave() {
     TestUtil::startSession('admin', 'admin');
-    $oid = ObjectId::parse(self::TEST_OID);
+    $oid = ObjectId::parse(self::TEST_OID1);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a simple update call
@@ -83,13 +88,13 @@ class SaveControllerTest extends ControllerTestCase {
    */
   public function testSaveTranslation() {
     TestUtil::startSession('admin', 'admin');
-    $oid = ObjectId::parse(self::TEST_OID);
+    $oid = ObjectId::parse(self::TEST_OID2);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a translate call
     $testObj = $persistenceFacade->load($oid);
     $persistenceFacade->getTransaction()->detach($testObj->getOID());
-    $testObj->setValue('name', 'Administrator [de]');
+    $testObj->setValue('title', 'title [de]');
     $data = array(
       $oid->__toString() => $testObj,
       'language' => 'de'
@@ -99,7 +104,7 @@ class SaveControllerTest extends ControllerTestCase {
     // test
     $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = ObjectFactory::getInstance('localization')->loadTranslatedObject($oid, 'de');
-    $this->assertEquals('Administrator [de]', $translatedObj->getValue('name'));
+    $this->assertEquals('title [de]', $translatedObj->getValue('title'));
 
     TestUtil::endSession();
   }
@@ -112,12 +117,12 @@ class SaveControllerTest extends ControllerTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a simple create call with initial data
-    $type = self::TEST_TYPE;
+    $type = self::TEST_TYPE1;
     $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $testObj->setValue('login', 'user');
     $testObj->setValue('password', 'user');
     $data = array(
-      'className' => self::TEST_TYPE,
+      'className' => self::TEST_TYPE1,
       $testObj->getOid()->__toString() => $testObj
     );
     $response = $this->runRequest('create', $data);
@@ -140,12 +145,12 @@ class SaveControllerTest extends ControllerTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a translate call
-    $type = self::TEST_TYPE;
+    $type = self::TEST_TYPE1;
     $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $testObj->setValue('login', 'user [de]');
     $testObj->setValue('password', 'user');
     $data = array(
-      'className' => self::TEST_TYPE,
+      'className' => self::TEST_TYPE1,
       $testObj->getOid()->__toString() => $testObj,
       'language' => 'de'
     );

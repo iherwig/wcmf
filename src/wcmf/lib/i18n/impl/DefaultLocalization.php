@@ -33,6 +33,10 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  * 'translation', 'language' with the appropriate getter and setter methods. It
  * is defined calling the Localization::setTranslationType() method.
  *
+ * A translation is only stored for values with the tag TRANSLATABLE
+ * (see AttributeDescription). This allows to exclude certain values
+ * e.g. date values from the translation process by omitting this tag.
+ *
  * The default language is defined in the configuration key 'defaultLanguage'
  * in section 'localization'.
  *
@@ -44,11 +48,6 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  * If translation entity type and configuration section are defined, the
  * configuration section is preferred.
  *
- * To exclude values of a special type (like date values) from the translation,
- * they may be omitted in the array that is defined calling the
- * Localization::setInputTypes() method. This array lists all input_types whose
- * translations are stored.
- *
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultLocalization implements Localization {
@@ -57,7 +56,6 @@ class DefaultLocalization implements Localization {
   private $_defaultLanguage = null;
   private $_translationType = null;
   private $_languageType = null;
-  private $_inputTypes = array();
 
   /**
    * Set the default language.
@@ -91,14 +89,6 @@ class DefaultLocalization implements Localization {
       throw new IllegalArgumentException('The language type \''.$languageType.'\' is unknown.');
     }
     $this->_languageType = $languageType;
-  }
-
-  /**
-   * Set the input_types whose translations are stored.
-   * @param $inputTypes Array
-   */
-  public function setInputTypes(Array $inputTypes) {
-    $this->_inputTypes = $inputTypes;
   }
 
   /**
@@ -218,8 +208,7 @@ class DefaultLocalization implements Localization {
 
   /**
    * @see Localization::loadTranslation()
-   * @note Only values whose input_type property is listed in the 'inputTypes'
-   * key in the configuration 'localization' are stored.
+   * @note Only values with tag TRANSLATABLE are stored.
    */
   public function saveTranslation($object, $lang, $saveEmptyValues=false, $recursive=true) {
     $this->saveTranslationImpl($object, $lang, $saveEmptyValues);
@@ -334,8 +323,9 @@ class DefaultLocalization implements Localization {
    *    translation is found or not.
    */
   private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults) {
-    $inputType = $object->getValueProperty($valueName, 'input_type');
-    if (in_array($inputType, $this->_inputTypes)) {
+    $mapper = $object->getMapper();
+    $isTranslatable = $mapper != null ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
+    if ($isTranslatable) {
       // empty the value, if the default language values should not be used
       if (!$useDefaults) {
         $object->setValue($valueName, null, true);
@@ -364,8 +354,9 @@ class DefaultLocalization implements Localization {
    * @param $saveEmptyValues Boolean whether to also save empty translations or not.
    */
   private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang, $saveEmptyValues) {
-    $inputType = $object->getValueProperty($valueName, 'input_type');
-    if (in_array($inputType, $this->_inputTypes)) {
+    $mapper = $object->getMapper();
+    $isTranslatable = $mapper != null ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
+    if ($isTranslatable) {
       $value = $object->getValue($valueName);
       if ($saveEmptyValues || strlen($value) > 0) {
         $translation = null;
