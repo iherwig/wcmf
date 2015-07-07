@@ -75,12 +75,13 @@ class MediaController extends Controller {
 
     // get root path and root url for the browser
     $rootPath = $this->getResourceBaseDir();
-    $relRootPath = FileUtil::getRelativePath(dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])), $rootPath);
+    $relRootPath = URIUtil::makeRelative($rootPath, dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])));
     $refURL = dirname(URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']).'/';
     $rootUrl = URIUtil::makeAbsolute($relRootPath, $refURL);
 
+    // requested directory (ElFinder expects DIRECTORY_SEPARATOR)
     $directory = $request->hasValue('directory') ? $request->getValue('directory') : $rootPath;
-    $absDirectory = realpath($directory);
+    $absDirectory = FileUtil::realpath($directory).'/';
 
     // set common response values
     if ($request->hasValue('fieldName')) {
@@ -94,12 +95,12 @@ class MediaController extends Controller {
         // 'debug' => true,
         'roots' => array(
           array(
-            'driver' => 'LocalFileSystem', // driver for accessing file system (REQUIRED)
-            'path' => $rootPath,           // path to files (REQUIRED)
-            'URL' => $rootUrl,             // URL to files (REQUIRED)
+            'driver' => 'LocalFileSystem',
+            'path' => str_replace('/', DIRECTORY_SEPARATOR, rtrim($rootPath, '/')),
+            'URL' => $rootUrl,
             'alias' => 'Media',
             'tmbBgColor' => 'transparent',
-            'startPath' => $absDirectory
+            'startPath' => str_replace('/', DIRECTORY_SEPARATOR, rtrim($absDirectory, '/'))
           )
         ),
         'bind' => array(

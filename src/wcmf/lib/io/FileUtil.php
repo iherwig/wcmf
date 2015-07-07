@@ -222,23 +222,6 @@ class FileUtil {
   }
 
   /**
-   * Get the relative path between two paths
-   * code from http://php.net/manual/de/function.realpath.php
-   * @param $path1 The first path
-   * @param $path2 The second path
-   * @return String
-   */
-  public static function getRelativePath($path1, $path2) {
-    $arFrom = explode('/', rtrim($path1, '/'));
-    $arTo = explode('/', rtrim($path2, '/'));
-    while(count($arFrom) && count($arTo) && ($arFrom[0] == $arTo[0])) {
-      array_shift($arFrom);
-      array_shift($arTo);
-    }
-    return str_pad("", count($arFrom) * 3, '../').implode('/', $arTo).'/';
-  }
-
-  /**
    * Realpath function that also works for non existing paths
    * code from http://www.php.net/manual/en/function.realpath.php
    * @param $path
@@ -246,11 +229,11 @@ class FileUtil {
    */
   public static function realpath($path) {
     if (file_exists($path)) {
-      return realpath($path);
+      return str_replace("\\", "/", realpath($path));
     }
     else {
-      $path = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
-      $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
+      $path = str_replace("\\", "/", $path);
+      $parts = array_filter(explode("/", $path), 'strlen');
       $absolutes = array();
       foreach ($parts as $part) {
         if ('.' == $part) continue;
@@ -260,7 +243,7 @@ class FileUtil {
           $absolutes[] = $part;
         }
       }
-      $result = implode(DIRECTORY_SEPARATOR, $absolutes);
+      $result = implode("/", $absolutes);
       if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
         $result = '/'.$result;
       }

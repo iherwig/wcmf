@@ -22,15 +22,17 @@ class URIUtil {
   /**
    * Convert an absolute URI to a relative
    * code from http://www.webmasterworld.com/forum88/334.htm
-   * @param $abs_uri Absolute URI to convert
+   * @param $abs_uri Absolute URI to convert, may have a trailing filename
    * @param $base Base URI
    */
   public static function makeRelative($abs_uri, $base) {
     // normalize slashes and remove drive names
-    list($abs_uri, $base) = preg_replace(
-            array("{^[^:]+://[^/]+}", "/\\\\/"), array('', '/'),
-            array($abs_uri, $base));
+    list($abs_uri, $base) = self::normalize(array($abs_uri, $base));
 
+    // add slash to base if missing
+    if (!preg_match('/\/$/', $base)) {
+      $base .= '/';
+    }
     $abs_array = explode('/', $abs_uri);
     $base_array = explode('/', $base);
 
@@ -42,6 +44,7 @@ class URIUtil {
     if (strrpos($base, '/') !== strlen($base)) {
       array_pop($base_array);
     }
+
     // ignore common path
     while (sizeof($abs_array) > 0 && sizeof($base_array) > 0 && $abs_array[0] == $base_array[0]) {
       array_shift($abs_array);
@@ -60,36 +63,41 @@ class URIUtil {
    * @param $base Base URI
    */
   public static function makeAbsolute($rel_uri, $base) {
+    list($rel_uri, $base) = self::normalize(array($rel_uri, $base));
+
     if(strpos($rel_uri, "//") === 0) {
       return "http:".$rel_uri;
     }
-    /* return if already absolute URL */
+    // return if already absolute URL
     if (parse_url($rel_uri, PHP_URL_SCHEME) != '') {
       return $rel_uri;
     }
-    /* add slash to base if missing */
+    // add slash to base if missing
     if (!preg_match('/\/$/', $base)) {
       $base .= '/';
     }
     $firstChar = (strlen($rel_uri) > 0) ? substr($rel_uri, 0, 1) : '';
-    /* queries and anchors */
+    // queries and anchors
     if ($firstChar == '#' || $firstChar == '?') {
       return $base.$rel_uri;
     }
-    /* parse base URL and convert to local variables: $scheme, $host, $path */
+    // parse base URL and convert to local variables: $scheme, $host, $path
     extract(parse_url($base));
-    /* remove non-directory element from path */
+    $scheme = !isset($scheme) ? 'http' : $scheme;
+    $host = !isset($host) ? '' : $host;
+    $path = !isset($path) ? '' : $path;
+    // remove non-directory element from path
     $path = preg_replace('#/[^/]*$#', '', $path);
-    /* destroy path if relative url points to root */
+    // destroy path if relative url points to root
     if ($firstChar == '/') {
       $path = '';
     }
-    /* dirty absolute URL */
+    // dirty absolute URL
     $abs = "$host$path/$rel_uri";
-    /* replace '//' or '/./' or '/foo/../' with '/' */
+    // replace '//' or '/./' or '/foo/../' with '/'
     $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
     for ($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
-    /* absolute URL is ready! */
+    // absolute URL is ready!
     return $scheme.'://'.$abs;
   }
 
@@ -104,10 +112,12 @@ class URIUtil {
    * and the absolute and relative URI (as seen from the executed script) as values
    */
   public static function translate($rel_uri, $base) {
-    $self = UriUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+    list($rel_uri, $base) = self::normalize(array($rel_uri, $base));
+
+    $self = self::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $path = dirname($self).'/';
     $absUrl = self::makeAbsolute($rel_uri, $path.$base);
-    $relUrl = self::makeRelative($absUrl, $self);
+    $relUrl = self::makeRelative($absUrl, $path);
 
     return array('absolute' => $absUrl, 'relative' => $relUrl);
   }
@@ -170,6 +180,17 @@ class URIUtil {
       $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
    }
    return $pageURL;
+  }
+
+  /**
+   * Normalize slashes and remove drive names
+   * @param paths Path to normalize or array of paths
+   */
+  public static function normalize($paths) {
+    return preg_replace(
+            array("/\\\\/", "{^[^:]+:}", ), array('/', ''),
+            $paths);
+
   }
 }
 ?>

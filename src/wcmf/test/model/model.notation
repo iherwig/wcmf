@@ -989,10 +989,6 @@
           <element xmi:type="uml:Property" href="model.uml#_gwhJkLQ9EeOQ5oJFa1i8cg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_igLJUbQ9EeOQ5oJFa1i8cg"/>
         </children>
-        <children xmi:type="notation:Shape" xmi:id="_igLJUrQ9EeOQ5oJFa1i8cg" type="3012" lineColor="0">
-          <element xmi:type="uml:Property" href="model.uml#_gze-ALQ9EeOQ5oJFa1i8cg"/>
-          <layoutConstraint xmi:type="notation:Location" xmi:id="_igLJU7Q9EeOQ5oJFa1i8cg"/>
-        </children>
         <children xmi:type="notation:Shape" xmi:id="_igLwYLQ9EeOQ5oJFa1i8cg" type="3012" lineColor="0">
           <element xmi:type="uml:Property" href="model.uml#_g2nKgLQ9EeOQ5oJFa1i8cg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_igLwYbQ9EeOQ5oJFa1i8cg"/>
