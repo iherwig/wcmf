@@ -48,7 +48,7 @@ of additional files. Included files are defined in the `include` key of the `Con
 section. Keys in the current file override keys from included files.
 
 The following example shows how to include an array of additional configuration
-files in order to separate concerns:
+files to separate concerns:
 
 ~~~~~~~~~~~~~{.ini}
 [Config]

@@ -9,7 +9,7 @@ Persistence refers to that part of the domain model, which we could call the dat
 ## Data model ## {#pers_datamodel}
 
 The data model consists of domain classes whose instances are saved in the storage.
-The following steps need to be accomplished in order to make domain class instances
+The following steps need to be accomplished to make domain class instances
 persistent.
 
 - Definition and creation of the database tables, if using a database storage.
@@ -63,7 +63,7 @@ does not make any assumptions about the actual storage, which can be flat files,
 a database or anything else a mapper is able to handle. This approach also makes
 it easy to connect an existing storage to a newly created wCMF application.
 
-In order to simplify the implementation of mapper classes, wCMF already contains
+To simplify the implementation of mapper classes, wCMF already contains
 a class hierarchy for a common mapping approach, which maps each concrete class
 to one database table ([Concrete Table Inheritance]
 (http://martinfowler.com/eaaCatalog/concreteTableInheritance.html)). In this
@@ -138,7 +138,7 @@ The following terms are important to know when working with wCMF's domain classe
   and
   \link wcmf::lib::persistence::PersistentObject::getValueProperty `getValueProperty`\endlink/
   \link wcmf::lib::persistence::PersistentObject::setValueProperty `setValueProperty`\endlink
-- __Tags__ are a special property used on values in order to group them by certain
+- __Tags__ are a special property used on values to group them by certain
   aspects. For example the edit forms in the default application only display
   domain class values that are tagged with `DATATYPE_ATTRIBUTE` and only those
   attributes are editable in the translation form that are tagged with `TRANSLATABLE`.
@@ -198,7 +198,7 @@ By default \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\e
 performs _lazy loading_ by using _virtual proxies_ (instances of
 \link wcmf::lib::persistence::PersistentObjectProxy `PersistentObjectProxy`\endlink).
 That means that related objects are retrieved from the store, only when they are
-actually accessed. In order to perform _eager loading_, a
+actually accessed. To perform _eager loading_, a
 \link wcmf::lib::persistence::BuildDepth `BuildDepth`\endlink
 value may be passed in the method calls:
 
@@ -255,7 +255,7 @@ usort($nodeList, array($comparator, 'compare'));
 
 #### Pagination #### {#pers_pagination}
 
-In order to reduce the response time of your application when displaying large lists
+To reduce the response time of your application when displaying large lists
 of objects, [pagination](http://en.wikipedia.org/wiki/Pagination#Pagination_in_web_content)
 may be used. This technique splits the list into smaller parts (_pages_) that are displayed
 one by one. In wCMF the class \link wcmf::lib::persistence::PagingInfo `PagingInfo`\endlink
@@ -360,8 +360,8 @@ for($it->rewind(); $it->valid(); $it->next()) {
 ~~~~~~~~~~~~~
 
 \link wcmf::lib::model::PersistentIterator `PersistentIterator`\endlink allows
-to traverse object graphs as well, but it's state may be persisted in order
-to split the iteration of large lists into smaller parts.
+to traverse object graphs as well, but it's state may be persisted to split the
+iteration of large lists into smaller parts.
 
 ~~~~~~~~~~~~~{.php}
 // traverse 10 nodes starting from $oid
@@ -446,8 +446,8 @@ class, which uses
 \link wcmf::lib::persistence::validator::ValidateType `ValidateType`\endlink
 implementations for validating different types of attributes. Each validation type
 accepts configuration options, that are passed in as a string value. The format
-of this value is completely up to the validator type implementation. In order
-to define, which validation should be applied to a domain class attribute, the
+of this value is completely up to the validator type implementation. To define
+which validation should be applied to a domain class attribute, the
 _tag_ `restrictions_match` is used in the model (see \ref model_chivalue).
 
 Currently three validation types are supported:
@@ -584,13 +584,13 @@ catch(Exception $ex) {
 ~~~~~~~~~~~~~
 
 \note Even if not obtained explicitely, there is always a transaction existing
-in the background, to which objects loaded from the store are attached. But in order
-to persist changes when doing a commit, the transaction has to be set _active_
+in the background, to which objects loaded from the store are attached. But to
+persist changes when doing a commit, the transaction has to be set _active_
 _before_ loading or creating the object.
 
 There are situations where you want to let the current transaction __ignore changes__
 made to newly created objects or objects loaded from the store. In these cases you
 can use the method
 \link wcmf::lib::persistence::Transaction::detach `Transaction::detach`\endlink
-in order to disconnect the object from the transaction.
+to disconnect the object from the transaction.
 */

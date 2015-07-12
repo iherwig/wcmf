@@ -210,7 +210,7 @@ abstract class Controller {
   }
 
   /**
-   * Checks the language request parameter and adds an respons error,
+   * Checks the language request parameter and adds an response error,
    * if it is not contained in the Localization::getSupportedLanguages() list.
    * @return Boolean
    */

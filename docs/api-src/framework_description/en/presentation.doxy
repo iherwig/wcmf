@@ -135,21 +135,22 @@ wCMF distinguishes between _internal_ and _external_ routing.
 Internal routing takes place after the \link wcmf::lib::presentation::Request `Request`\endlink
 instance is created and initialized. wCMF inspects the **action key** formed from
 it's _sender_, _context_ and _action_ parameters (see \ref arch_actionkey) to
-determine the controller to be executed next. The mapping of action keys to
-controllers is defined in the `ActionMapping` configuration section.
+determine the controller to be executed for the request. The mapping of action
+keys to controllers is defined in the `ActionMapping` configuration section.
 
 If the executed controller together with the _context_ and _action_ parameters of
 the response match another action key, the corresponding controller
-will be executed afterwards. This allows to chain several actions together.
+will be executed afterwards. This allows to chain several actions together. If no
+matching action key is found, the response is returned to the client.
 
 #### External routing #### {#pres_routingext}
 
-The mapping of the current **request uri** to an action key is called external
-routing. The default logic is implemented in the
+The mapping of the current **request uri** to an **action key** is called external
+routing. The default mapping logic is implemented in the
 \link wcmf::lib::presentation::impl::DefaultRequest::initialize `DefaultRequest::initialize`\endlink
 method. The method matches the _path part_ of the request uri against the entries
-of the `Routes` configuration section. Variables declared in path segments will
-be automatically passed as request parameters.
+of the `Routes` configuration section to find an appropriate action key.
+Variables declared in path segments will be automatically passed as request parameters.
 
 The following example configuration taken from the default application illustrates
 the concept:
@@ -171,11 +172,45 @@ expression constraint `[0-9]+`.
 
 ## Controllers ## {#pres_controllers}
 
-<span class="label label-danger">TODO</span>
+Controllers take the user input from the request and modify the model according
+to it. As a result a response is created which is presented to the user in a view
+or any other format.
+
+wCMF provides \link wcmf::lib::presentation::Controller `Controller`\endlink as
+abstract base class for controller implementations. There are three important
+methods defined in this class, which are called by
+\link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink in the following order:
+
+- \link wcmf::lib::presentation::Controller::initialize `Controller::initialize`\endlink
+  is called directly after instantiation of the controller. The current
+  \link wcmf::lib::presentation::Request `Request`\endlink and
+  \link wcmf::lib::presentation::Response `Response`\endlink instances are passed
+  as parameters and subclasses may override this method to implement task specific
+  initializations.
+- \link wcmf::lib::presentation::Controller::validate `Controller::validate`\endlink
+  is called afterwards to check the validity of the request parameters. The default
+  implementation returns _true_ and subclasses are assumed to override this method
+  if necessary to do task specific validations.
+- \link wcmf::lib::presentation::Controller::doExecute `Controller::doExecute`\endlink
+  is called finally. Subclasses must implement this method to define the actual
+  behavior of the controller.
 
 ### Long running requests ### {#pres_longrequest}
 
-<span class="label label-danger">TODO</span>
+There are situations where you want to split a long running process into parts,
+because it's exceeding memory or time limits or simply to give the user feedback
+about the progress. By subclassing
+\link wcmf::application::controller::BatchController `BatchController`\endlink
+the implementation of this behavior is as simple as defining the steps of
+the process in the
+\link wcmf::application::controller::BatchController::getWorkPackage `BatchController::getWorkPackage`\endlink
+method.
+
+\link wcmf::application::controller::SearchIndexController `SearchIndexController`\endlink
+is an example for a controller implementing a long running process. It is used
+to create a Lucene search index over all searchable entity objects. The process
+is split into collecting all object ids and then indexing them. In the final
+step the index is optimized.
 
 ## Views ## {#pres_views}
 

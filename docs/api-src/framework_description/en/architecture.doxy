@@ -14,9 +14,9 @@ other key concepts, that are useful to know when using wCMF.
 An application is usually based on a _domain model_ that represents the real-world
 concepts of the domain of interest. In object oriented programming this model is
 implemented using classes. Depending on the application requirements the instances
-of several of these classes have to be persisted in a storage in order to keep the
-contained data. These classes represent the _data model_. The classes that provide
-the infrastructure for storing data form the _persistence layer_.
+of several of these classes have to be persisted in a storage to keep the contained
+data. These classes represent the _data model_. The classes that provide the
+infrastructure for storing data form the _persistence layer_.
 
 wCMF defines \link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink
 as base class for persistent domain classes. It mainly implements an unique identifier
@@ -41,7 +41,7 @@ persistence layer.
 ### Object Identifier ### {#arch_oid}
 
 For handling lots of different domain objects an unique identification is crucial.
-In order to achieve this, so-called _Object Identifiers_ (_OID_ or _object id_) are used.
+To achieve this, so-called _Object Identifiers_ (_OID_ or _object id_) are used.
 Various strategies are possible to obtain these identifiers, e.g. a central registry.
 
 wCMF composes these object ids from the type of the persistent domain class and a
@@ -80,7 +80,7 @@ match an existing action key, the associated controller will be executed by pass
 the current response as input. In this way complex tasks may be executed by chaining
 several controller calls together.
 
-In order to support various data representations, a
+To support various data representations, a
 \link wcmf::lib::presentation::format::Format `Format`\endlink instance is associated
 with each request and response. The format is automatically determined by the HTTP
 _Content-Type_ resp. _Accept_ headers. \link wcmf::lib::presentation::format::Format `Format`\endlink

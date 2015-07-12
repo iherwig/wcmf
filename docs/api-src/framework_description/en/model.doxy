@@ -35,7 +35,7 @@ The following diagram shows the workflow of the generator.
 ### Chronos profile ### {#model_profile}
 
 _Profiles_ are used to extend UML for different domains. They consist of __stereotypes__
-and __tags__ that are applied to model elements in order to express domain specific
+and __tags__ that are applied to model elements to express domain specific
 features. The following sections describe the stereotypes and tags of the _Chronos_
 profile that are used to define various aspects of a wCMF application. The complete
 [Chronos profile](https://raw.githubusercontent.com/iherwig/wcmf-default-app/master/model/chronos.profile.uml)
@@ -282,7 +282,7 @@ should return to after executing _SaveController_.
 
 \image html flow.png "Example application flow"
 
-\note In order to simplify modeling the following default rule applies:
+\note To simplify modeling the following default rule applies:
 If a controller has no view attached (meaning that execution of the following
 controller needs no user decision) and no _ChiActionKey_ association starts from
 that controller, the application automatically chooses the preceding controller
@@ -497,7 +497,7 @@ The generator creates the following files:
 #### Protected regions #### {#generator_pr}
 
 The generator creates functional code, but of course __custom code__ must be added
-in order to implement domain specific functionality. For this reason
+to implement domain specific functionality. For this reason
 the generator adds sections that are enclosed in `PROTECTED REGION` tags,
 between which the user is supposed to place custom code. When re-generating
 the code later (e.g. because of model changes), this custom code will be preserved.
