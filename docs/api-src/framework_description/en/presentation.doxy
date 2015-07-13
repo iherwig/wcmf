@@ -181,19 +181,57 @@ abstract base class for controller implementations. There are three important
 methods defined in this class, which are called by
 \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink in the following order:
 
-- \link wcmf::lib::presentation::Controller::initialize `Controller::initialize`\endlink
+1. \link wcmf::lib::presentation::Controller::initialize `Controller::initialize`\endlink
   is called directly after instantiation of the controller. The current
   \link wcmf::lib::presentation::Request `Request`\endlink and
   \link wcmf::lib::presentation::Response `Response`\endlink instances are passed
   as parameters and subclasses may override this method to implement task specific
   initializations.
-- \link wcmf::lib::presentation::Controller::validate `Controller::validate`\endlink
+2. \link wcmf::lib::presentation::Controller::validate `Controller::validate`\endlink
   is called afterwards to check the validity of the request parameters. The default
   implementation returns _true_ and subclasses are assumed to override this method
   if necessary to do task specific validations.
-- \link wcmf::lib::presentation::Controller::doExecute `Controller::doExecute`\endlink
+3. \link wcmf::lib::presentation::Controller::doExecute `Controller::doExecute`\endlink
   is called finally. Subclasses must implement this method to define the actual
   behavior of the controller.
+
+### Error handling ### {#pres_errors}
+
+Errors are typically divided into __fatal errors__ and __non-fatal errors__.
+
+By definition the application is not able to recover from a _fatal error_, meaning
+that it's not functioning correctly. An example would be a programming error or
+a missing vital resource. These errors normally need to be fixed by the application
+maintainer. In case of _non-fatal errors_ a notice to the user is sufficient in most
+cases. A typical example would be invalid user input, that can be fixed by the user
+itself.
+
+In wCMF the following two strategies are recommended for handling these kind of
+situations:
+
+- In case of a __fatal error__, an exception should be thrown. If it is not caught
+  inside the application code, it will bubble up to the main script (usually
+  _index.php_). In case the application is set up like in the \ref pres_application
+  section, the method
+  \link wcmf::lib::presentation::Application::handleException `Application::handleException`\endlink
+  will be called. This method rolls back the current transaction and calls the
+  `failure` action, which is executed by
+  \link wcmf::application::controller::FailureController `FailureController`\endlink
+  by default.
+
+- If a __non-fatal error__ occurs, an instance of
+  \link wcmf::lib::presentation::ApplicationError `ApplicationError`\endlink
+  should be created and added to the response using the
+  \link wcmf::lib::presentation::Response::addError `Response::addError`\endlink
+  method. The error class provides the
+  \link wcmf::lib::presentation::ApplicationError::get `ApplicationError::get`\endlink
+  method to retrieve predefined errors. The following example shows how to signal
+  an invalid _type_ parameter while request validation:
+
+~~~~~~~~~~~~~{.php}
+$response->addError(ApplicationError::get('PARAMETER_INVALID',
+  array('invalidParameters' => array('type'))));
+~~~~~~~~~~~~~
 
 ### Long running requests ### {#pres_longrequest}
 
@@ -216,7 +254,7 @@ step the index is optimized.
 
 <span class="label label-danger">TODO</span>
 
-### Caching ### {#pres_caching}
+## Caching ## {#pres_caching}
 
 <span class="label label-danger">TODO</span>
 
