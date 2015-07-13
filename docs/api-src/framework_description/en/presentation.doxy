@@ -143,6 +143,28 @@ the response match another action key, the corresponding controller
 will be executed afterwards. This allows to chain several actions together. If no
 matching action key is found, the response is returned to the client.
 
+The following code is taken from the default application configuration and shows
+the configuration of the indexing process (see \ref pres_longrequest):
+
+~~~~~~~~~~~~~{.ini}
+[ActionMapping]
+??indexAll = wcmf\application\controller\SearchIndexController
+wcmf\application\controller\SearchIndexController??continue =
+                            wcmf\application\controller\SearchIndexController
+~~~~~~~~~~~~~
+
+- The first line states that the action `indexAll` called from _any_ controller and
+  in _any_ context will invoke
+  \link wcmf::application::controller::SearchIndexController `SearchIndexController`\endlink,
+  which will set a state dependent action name on the response (see
+  \link wcmf::application::controller::BatchController `BatchController`\endlink).
+- The second line tells \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink
+  to re-invoke
+  \link wcmf::application::controller::SearchIndexController `SearchIndexController`\endlink,
+  if it was the last controller and the action is `continue`. So this action key
+  only matches, if the last controller was
+  \link wcmf::application::controller::SearchIndexController `SearchIndexController`\endlink.
+
 #### External routing #### {#pres_routingext}
 
 The mapping of the current **request uri** to an **action key** is called external
