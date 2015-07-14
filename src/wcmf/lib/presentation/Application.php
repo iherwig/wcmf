@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\presentation;
 
-use Exception;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ClassLoader;
 use wcmf\lib\core\ErrorHandler;
@@ -110,7 +109,7 @@ class Application {
    * @param $exception The Exception instance
    * @param $request The Request instance
    */
-  public function handleException(Exception $exception, Request $request=null) {
+  public function handleException(\Exception $exception, Request $request=null) {
     Log::error($exception->getMessage()."\n".$exception->getTraceAsString(), __CLASS__);
 
     // rollback current transaction
