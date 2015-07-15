@@ -89,11 +89,12 @@ class I18nUtil {
           'Message::get\(([\'"])(.*?)\\1',    // usage in PHP code, e.g. Message::get("Text to translate")
           'Dict\.translate\(([\'"])(.*?)\\3', // usage in JS code, e.g. Dict.translate("Text to translate")
           '\{translate:(.*?)[\|\}]', // usage in dojo template, e.g. {translate:Text to translate}, {translate:Text to translate|...}
+          '\{translate.*? text=([\'"])(.*?)\\6', // usage in Smarty template, e.g. {translate text="Text to translate"}
       );
       preg_match_all('/'.join('|', $messagePatterns).'/i', $content, $matchesTmp);
       $matches = array();
       // filter out empty and duplicates
-      foreach(array_merge($matchesTmp[2], $matchesTmp[4], $matchesTmp[5]) as $match) {
+      foreach(array_merge($matchesTmp[2], $matchesTmp[4], $matchesTmp[5], $matchesTmp[7]) as $match) {
         if ($match != '' && !in_array($match, $matches)) {
           $matches[] = $match;
         }
