@@ -17,7 +17,7 @@ use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\PersistenceAction;
-use wcmf\lib\persistence\PersistentEvent;
+use wcmf\lib\persistence\PersistenceEvent;
 
 /**
  * PersistenceActionKeyProvider searches for action keys in the
@@ -39,7 +39,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    * Constructor.
    */
   public function __construct() {
-    ObjectFactory::getInstance('eventManager')->addListener(PersistentEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->addListener(PersistenceEvent::NAME,
       array($this, 'keyChanged'));
   }
 
@@ -47,7 +47,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    * Destructor.
    */
   public function __destruct() {
-    ObjectFactory::getInstance('eventManager')->removeListener(PersistentEvent::NAME,
+    ObjectFactory::getInstance('eventManager')->removeListener(PersistenceEvent::NAME,
       array($this, 'keyChanged'));
   }
 
@@ -153,7 +153,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    * Listen to PersistentEvent
    * @param $event PersistentEvent instance
    */
-  public function keyChanged(PersistentEvent $event) {
+  public function keyChanged(PersistenceEvent $event) {
     $object = $event->getObject();
     if ($object->getType() == $this->_entityType) {
       $cache = ObjectFactory::getInstance('cache');

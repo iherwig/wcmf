@@ -19,7 +19,7 @@ use wcmf\lib\persistence\PersistentObject;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PersistentEvent extends Event {
+class PersistenceEvent extends Event {
 
   const NAME = __CLASS__;
 

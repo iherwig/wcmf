@@ -21,7 +21,7 @@ use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
-use wcmf\lib\persistence\PersistentEvent;
+use wcmf\lib\persistence\PersistenceEvent;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\security\AuthorizationException;
 
@@ -194,13 +194,13 @@ abstract class AbstractMapper implements PersistenceMapper {
     // call lifecycle callback
     if ($isDirty) {
       $object->afterUpdate();
-      ObjectFactory::getInstance('eventManager')->dispatch(PersistentEvent::NAME,
-              new PersistentEvent($object, PersistenceAction::UPDATE));
+      ObjectFactory::getInstance('eventManager')->dispatch(PersistenceEvent::NAME,
+              new PersistenceEvent($object, PersistenceAction::UPDATE));
     }
     elseif ($isNew) {
       $object->afterInsert();
-      ObjectFactory::getInstance('eventManager')->dispatch(PersistentEvent::NAME,
-              new PersistentEvent($object, PersistenceAction::CREATE));
+      ObjectFactory::getInstance('eventManager')->dispatch(PersistenceEvent::NAME,
+              new PersistenceEvent($object, PersistenceAction::CREATE));
     }
   }
 
@@ -229,8 +229,8 @@ abstract class AbstractMapper implements PersistenceMapper {
     if ($result === true) {
       // call lifecycle callback
       $object->afterDelete();
-      ObjectFactory::getInstance('eventManager')->dispatch(PersistentEvent::NAME,
-              new PersistentEvent($object, PersistenceAction::DELETE));
+      ObjectFactory::getInstance('eventManager')->dispatch(PersistenceEvent::NAME,
+              new PersistenceEvent($object, PersistenceAction::DELETE));
 
       // release any locks on the object
       $concurrencyManager->releaseLocks($oid);
