@@ -51,7 +51,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7gMtsLQ8EeOQ5oJFa1i8cg" name="listeners" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OYK5QLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OYLgULQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OYMucLQ9EeOQ5oJFa1i8cg" value="{Search}"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OYMucLQ9EeOQ5oJFa1i8cg" value="{Search, EventListener}"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_SQkHILQ9EeOQ5oJFa1i8cg" name="Media">
@@ -168,6 +168,11 @@
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_lEaWkFUxEeS4i-N-Z4Tllg" name="cacheDir" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_oaPp8FUxEeS4i-N-Z4Tllg" value="app/cache/"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_QM0nECshEeWUuIR_KoweBQ" name="EventListener">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_XEozcCshEeWUuIR_KoweBQ" name="__class" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_adlsQCshEeWUuIR_KoweBQ" value="app\src\lib\EventListener"/>
                 </ownedAttribute>
               </packagedElement>
             </packagedElement>
@@ -1846,4 +1851,5 @@
   <Chronos:ChiSystem xmi:id="_28CKYO46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_23RmMO46EeSt-PWkeJaU5w"/>
   <Chronos:ChiSystem xmi:id="_3J3yFe46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_3J3yEO46EeSt-PWkeJaU5w"/>
   <Chronos:ChiValue xmi:id="_nmvoYPT-EeSdk57oe2HXMQ" app_data_type="DATATYPE_ATTRIBUTE|TRANSLATABLE" db_data_type="TEXT" is_editable="true" input_type="ckeditor:{&quot;toolbarSet&quot;:&quot;wcmf&quot;}" base_Property="_njBmAPT-EeSdk57oe2HXMQ"/>
+  <Chronos:ChiSystem xmi:id="_2_GakCtFEeWoF5Z7Jotdrw" plattform="wcmf" base_Class="_QM0nECshEeWUuIR_KoweBQ"/>
 </xmi:XMI>
