@@ -210,8 +210,8 @@ class DefaultLocalization implements Localization {
    * @see Localization::loadTranslation()
    * @note Only values with tag TRANSLATABLE are stored.
    */
-  public function saveTranslation($object, $lang, $saveEmptyValues=false, $recursive=true) {
-    $this->saveTranslationImpl($object, $lang, $saveEmptyValues);
+  public function saveTranslation($object, $lang, $recursive=true) {
+    $this->saveTranslationImpl($object, $lang);
 
     // recurse if requested
     if ($recursive) {
@@ -220,7 +220,7 @@ class DefaultLocalization implements Localization {
         if ($obj->getOID() != $object->getOID()) {
           // don't resolve proxies
           if (!($obj instanceof PersistentObjectProxy)) {
-            $this->saveTranslationImpl($obj, $lang, $saveEmptyValues);
+            $this->saveTranslationImpl($obj, $lang);
           }
         }
       }
@@ -232,10 +232,8 @@ class DefaultLocalization implements Localization {
    * values that have a non-empty value are considered as translations and stored.
    * @param $object An instance of the entity type that holds the translations as values.
    * @param $lang The language of the translation.
-   * @param $saveEmptyValues Boolean whether to save empty translations or not.
-   *    Optional, default is false
    */
-  protected function saveTranslationImpl($object, $lang, $saveEmptyValues=false) {
+  protected function saveTranslationImpl($object, $lang) {
     // if the requested language is the default language, do nothing
     if ($lang == $this->getDefaultLanguage()) {
       // nothing to do
@@ -258,7 +256,7 @@ class DefaultLocalization implements Localization {
         $valueName = $iter->key();
         if (!in_array($valueName, $pkNames)) {
           $curIterNode = $iter->currentNode();
-          $this->saveTranslatedValue($curIterNode, $valueName, $translations, $lang, $saveEmptyValues);
+          $this->saveTranslatedValue($curIterNode, $valueName, $translations, $lang);
         }
       }
     }
@@ -351,37 +349,34 @@ class DefaultLocalization implements Localization {
    * @param $existingTranslations An array of already existing translation
    *    instances for the object.
    * @param $lang The language of the translations.
-   * @param $saveEmptyValues Boolean whether to also save empty translations or not.
    */
-  private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang, $saveEmptyValues) {
+  private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang) {
     $mapper = $object->getMapper();
     $isTranslatable = $mapper != null ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
     if ($isTranslatable) {
       $value = $object->getValue($valueName);
-      if ($saveEmptyValues || strlen($value) > 0) {
-        $translation = null;
+      $translation = null;
 
-        // check if a translation already exists
-        for ($i=0, $count=sizeof($existingTranslations); $i<$count; $i++) {
-          $curValueName = $existingTranslations[$i]->getValue('attribute');
-          if ($curValueName == $valueName) {
-            $translation = &$existingTranslations[$i];
-            break;
-          }
+      // check if a translation already exists
+      for ($i=0, $count=sizeof($existingTranslations); $i<$count; $i++) {
+        $curValueName = $existingTranslations[$i]->getValue('attribute');
+        if ($curValueName == $valueName) {
+          $translation = &$existingTranslations[$i];
+          break;
         }
-
-        // if not, create a new translation
-        if ($translation == null) {
-          $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-          $translation = $persistenceFacade->create($this->_translationType);
-        }
-
-        // set all required properties
-        $translation->setValue('objectid', $object->getOID()->__toString());
-        $translation->setValue('attribute', $valueName);
-        $translation->setValue('translation', $object->getValue($valueName));
-        $translation->setValue('language', $lang);
       }
+
+      // if not, create a new translation
+      if ($translation == null) {
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $translation = $persistenceFacade->create($this->_translationType);
+      }
+
+      // set all required properties
+      $translation->setValue('objectid', $object->getOID()->__toString());
+      $translation->setValue('attribute', $valueName);
+      $translation->setValue('translation', $object->getValue($valueName));
+      $translation->setValue('language', $lang);
     }
   }
 }

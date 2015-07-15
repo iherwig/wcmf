@@ -153,9 +153,9 @@ class LocalizationTest extends DatabaseTestCase {
     $testObj = $persistenceFacade->load($oid);
     $transaction->detach($oid);
 
-    // store a translation in the default language with saveEmptyValues = true
+    // store a translation in the default language
     $tmp = clone $testObj;
-    $localization->saveTranslation($tmp, $localization->getDefaultLanguage(), true);
+    $localization->saveTranslation($tmp, $localization->getDefaultLanguage());
     $transaction->commit();
 
     // there must be no translation for the default language in the translation table
@@ -169,7 +169,7 @@ class LocalizationTest extends DatabaseTestCase {
     TestUtil::runAnonymous(false);
   }
 
-  public function testDontSaveUntranslatedValues() {
+  public function testSaveEmptyValues() {
     TestUtil::runAnonymous(true);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
@@ -181,21 +181,10 @@ class LocalizationTest extends DatabaseTestCase {
     $testObj = $persistenceFacade->load($oid);
     $transaction->detach($oid);
 
-    // store a translation all values empty and saveEmptyValues = false
+    // store a translation all values empty
     $tmp = clone $testObj;
     $tmp->clearValues();
-    $localization->saveTranslation($tmp, 'de', false);
-    $transaction->commit();
-
-    // there must be no translation for the untranslated values in the translation table
-    $transaction->begin();
-    $oids1 = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())));
-    $this->assertEquals(0, sizeof($oids1),
-      "There must be no translation for the untranslated values in the translation table");
-
-    // store a translation all values empty and saveEmptyValues = true
-    $localization->saveTranslation($tmp, 'de', true);
+    $localization->saveTranslation($tmp, 'de');
     $transaction->commit();
 
     // there must be translations for the untranslated values in the translation table
@@ -294,10 +283,10 @@ class LocalizationTest extends DatabaseTestCase {
     // store a translation in two languages
     $tmp1 = clone $testObj;
     $tmp1->setValue('title', 'title [de]');
-    $localization->saveTranslation($tmp1, 'de', true);
+    $localization->saveTranslation($tmp1, 'de');
     $tmp2 = clone $testObj;
     $tmp2->setValue('title', 'title [it]');
-    $localization->saveTranslation($tmp2, 'it', true);
+    $localization->saveTranslation($tmp2, 'it');
     $transaction->commit();
 
     // delete one translation
@@ -322,10 +311,10 @@ class LocalizationTest extends DatabaseTestCase {
     // store a translation in two languages
     $tmp1 = clone $testObj;
     $tmp1->setValue('title', 'title [de]');
-    $localization->saveTranslation($tmp1, 'de', true);
+    $localization->saveTranslation($tmp1, 'de');
     $tmp2 = clone $testObj;
     $tmp2->setValue('title', 'title [it]');
-    $localization->saveTranslation($tmp2, 'it', true);
+    $localization->saveTranslation($tmp2, 'it');
     $transaction->commit();
 
     // delete all translations
@@ -359,10 +348,10 @@ class LocalizationTest extends DatabaseTestCase {
     // store a translation in two languages
     $tmp1 = clone $testObj1;
     $tmp1->setValue('title', 'title [de]');
-    $localization->saveTranslation($tmp1, 'de', true);
+    $localization->saveTranslation($tmp1, 'de');
     $tmp2 = clone $testObj1;
     $tmp2->setValue('title', 'title [it]');
-    $localization->saveTranslation($tmp2, 'it', true);
+    $localization->saveTranslation($tmp2, 'it');
     $transaction->commit();
 
     // create a new object
@@ -374,10 +363,10 @@ class LocalizationTest extends DatabaseTestCase {
     // store a translation in two languages
     $tmp3 = clone $testObj2;
     $tmp3->setValue('title', 'title [de]');
-    $localization->saveTranslation($tmp3, 'de', true);
+    $localization->saveTranslation($tmp3, 'de');
     $tmp4 = clone $testObj2;
     $tmp4->setValue('title', 'title [it]');
-    $localization->saveTranslation($tmp4, 'it', true);
+    $localization->saveTranslation($tmp4, 'it');
     $transaction->commit();
 
     // delete one language

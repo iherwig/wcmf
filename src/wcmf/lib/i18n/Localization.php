@@ -70,12 +70,10 @@ interface Localization {
    * values that have a non-empty value are considered as translations and stored.
    * @param $object An instance of the entity type that holds the translations as values.
    * @param $lang The language of the translation.
-   * @param $saveEmptyValues Boolean whether to save empty translations or not.
-   *    Optional, default is false
    * @param $recursive Boolean whether to save translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    */
-  public function saveTranslation($object, $lang, $saveEmptyValues=false, $recursive=true);
+  public function saveTranslation($object, $lang, $recursive=true);
 
   /**
    * Remove translations for a given entity.
