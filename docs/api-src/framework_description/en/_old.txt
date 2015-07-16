@@ -295,30 +295,6 @@ To log a debug message in the category of the current class, just call:
 Log::debug($message, __CLASS__);
 ~~~~~~~~~~~~~
 
-## Error handling ## {#pres_errors}
-
-In the application two types of errors are distinguished:
-- **Fatal**: Errors, which are so critical, that it's not possible to proceed with
-  the current action (e.g. the missing of a controller).
-- **Non-fatal**: Errors, which merely demand a notification to the user (e.g. invalid input)
-
-These errors can be produced in the following ways:
-
-- **Fatal**: The use of WCMFException::throwEx calls a global error handling routine:
-
-  ~~~~~~~~~~~~~{.php}
-  onError($message, $file='', $line='')
-  ~~~~~~~~~~~~~
-
-- **Non-fatal**: adding a message by calling Controller::appendErrorMsg makes this
-  message - together with all accumulated messages before and those to follow -
-  available in the next view's @em $errorMsg variable.
-  In order to delete old messages the method Controller::setErrorMsg class must
-  be called with an empty string parameter.
-
-Many classes define a method @em getErrorMsg, which provides more detailed information
-on the cause of an error.
-
 --------------------------------------------------
 
 Concerning the presentation of data, the framework offers developers the following

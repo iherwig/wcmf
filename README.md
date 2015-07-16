@@ -1,6 +1,6 @@
 wCMF
 ----
-wCMF (wemove Content Management Framework) is a lightweight 
+wCMF (wemove Content Management Framework) is a lightweight
 Model Driven Development approach to application
 development based on the MVC pattern. It allows to create any kind of
 PHP web application, e.g. CRM, CMS from an UML model.
@@ -26,5 +26,5 @@ Features
 - Flexible logging (<a href="http://logging.apache.org/log4php/" target="_blank">Apache log4php</a>)
 - SOAP and REST interface supporting CRUD operations on all objects
 - Code generator for model-driven software development
-- Also available:
-  - Modern Dojo based [default application](https://github.com/iherwig/wcmf-default-app) for content management
+- Available under an open source license (MIT)
+- Modern [Dojo](https://dojotoolkit.org/) based [default application](https://github.com/iherwig/wcmf-default-app) for content management

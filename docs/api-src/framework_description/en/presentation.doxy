@@ -109,6 +109,12 @@ determined from the __HTTP headers__ sent with the request:
 - The `Content-Type` header defines the __request__ format
 - The `Accept` header defines the __response__ format
 
+To find the correct format, the
+[Media Type](https://www.iana.org/assignments/media-types/media-types.xhtml)
+value set in those headers is matched against the mime type of all registered
+formats (see
+\link wcmf::lib::presentation::format::Format::getMimeType `Format::getMimeType`\endlink).
+
 Formats are defined in the `Formats` configuration section as shown in the following
 example:
 
@@ -196,7 +202,8 @@ the concept:
 
 Controllers take the user input from the request and modify the model according
 to it. As a result a response is created which is presented to the user in a view
-or any other format.
+or any other format. Which controller is executed on a specific request is
+determined in the routing process (see \ref pres_routing).
 
 wCMF provides \link wcmf::lib::presentation::Controller `Controller`\endlink as
 abstract base class for controller implementations. There are three important
@@ -274,7 +281,39 @@ step the index is optimized.
 
 ## Views ## {#pres_views}
 
-<span class="label label-danger">TODO</span>
+Views are used to present application information to the user. In a web application
+they are typically HTML pages displayed in the browser.
+
+In wCMF the response will be turned into an HTML page, if the `Accept` HTTP header
+is set to _text/html_ (see \ref pres_format). The appropriate
+\link wcmf::lib::presentation::format::Format `Format`\endlink implementation is
+\link wcmf::lib::presentation::format::impl::HtmlFormat `HtmlFormat`\endlink.
+It renders the response into a template file using the configured
+\link wcmf::lib::presentation::view::View `View`\endlink implementation. The format
+of the template files depends on the chosen that implementation. Since different
+actions may require different views to be displayed, a mapping of action keys to
+view templates is defined in the `Views` configuration section.
+
+The following example shows the configuration of the
+\link wcmf::lib::presentation::view::impl::SmartyView `SmartyView`\endlink class
+and the mapping of action keys to views in the default application:
+
+~~~~~~~~~~~~~{.ini}
+[View]
+__class = wcmf\lib\presentation\view\impl\SmartyView
+__shared = false
+compileCheck = true
+caching = false
+cacheLifetime = 3600
+cacheDir = app/cache/smarty/
+
+[Views]
+app\src\controller\RootController?? = app/src/views/cms.tpl
+~~~~~~~~~~~~~
+
+Since the default application only uses an HTML page to bootstrap the
+actual [Dojo](https://dojotoolkit.org/) application, there is only one view mapping
+for `RootController`.
 
 ## Caching ## {#pres_caching}
 
@@ -284,7 +323,7 @@ step the index is optimized.
 
 <span class="label label-danger">TODO</span>
 
-## Debugging/Logging ## {#pres_debug_log}
+## Logging ## {#pres_log}
 
 <span class="label label-danger">TODO</span>
 */
