@@ -14,7 +14,7 @@ use wcmf\lib\presentation\Request;
 
 /**
  * RemotingClient defines the interface for clients to be used
- * with RemotingFacade.
+ * with RemotingServer.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

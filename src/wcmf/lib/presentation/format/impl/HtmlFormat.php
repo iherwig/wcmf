@@ -26,9 +26,9 @@ use wcmf\lib\util\StringUtil;
  * HtmlFormat serializes the response to a template, which will be rendered
  * by the View implementation defined in the configuration section 'view'.
  * The template is determined by the current action key. The response property
- * 'html_tpl_format' allows to select a derivate of that template file. E.g.
+ * 'html_tpl_format' allows to select a specific version of that template file. E.g.
  * if the template would be home.tpl, setting the 'html_tpl_format' property
- * to 'mobile' would select the template home-mobile.tpl. If a derivate does
+ * to 'mobile' would select the template home-mobile.tpl. If a version does
  * not exist, it is ignored and the default template is used.
  *
  * @author ingo herwig <ingo@wemove.com>

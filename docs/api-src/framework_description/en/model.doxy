@@ -478,6 +478,10 @@ The generator creates the following files:
   each `ChiController` class one subclass of
   \link wcmf::lib::presentation::Controller `Controller`\endlink will be created.
 
+- The __SOAP interface__ is generated in the file _app/public/soap-interface.php_.
+  \link wcmf::application::controller::SOAPController `SOAPController`\endlink
+  uses this file to configure the \link wcmf::lib::service::SoapServer `SoapServer`\endlink.
+
 #### Template Code #### {#generator_artefacts_tpl}
 
 - __View templates__ are generated in directories corresponding to the
