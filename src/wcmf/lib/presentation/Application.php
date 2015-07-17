@@ -36,8 +36,25 @@ class Application {
     new ClassLoader(WCMF_BASE);
     new ErrorHandler();
     $this->_startTime = microtime(true);
-    register_shutdown_function(array($this, "shutdown"));
     ob_start(array($this, "outputHandler"));
+  }
+
+  /**
+   * Destructor
+   */
+  public function __destruct() {
+    // log resource usage
+    if (Log::isDebugEnabled(__CLASS__)) {
+      $timeDiff = microtime(true)-$this->_startTime;
+      $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
+      $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
+      if ($this->_initialRequest != null) {
+        $msg .= " Request[".$this->_initialRequest->getSender()."?".
+                $this->_initialRequest->getContext()."?".$this->_initialRequest->getAction()."]";
+      }
+      Log::debug($msg, __CLASS__);
+    }
+    ob_end_flush();
   }
 
   /**
@@ -128,26 +145,6 @@ class Application {
     else {
       throw $exception;
     }
-  }
-
-  /**
-   * This method is called on script shutdown
-   * @note must be public
-   */
-  public function shutdown() {
-    // log resource usage
-    if (Log::isDebugEnabled(__CLASS__)) {
-      $timeDiff = microtime(true)-$this->_startTime;
-      $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
-      $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
-      if ($this->_initialRequest != null) {
-        $msg .= " Request[".$this->_initialRequest->getSender()."?".
-                $this->_initialRequest->getContext()."?".$this->_initialRequest->getAction()."]";
-      }
-      Log::debug($msg, __CLASS__);
-    }
-
-    ob_end_flush();
   }
 
   /**

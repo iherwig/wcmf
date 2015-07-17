@@ -184,7 +184,7 @@ class URIUtil {
 
   /**
    * Normalize slashes and remove drive names
-   * @param paths Path to normalize or array of paths
+   * @param $paths Path to normalize or array of paths
    */
   public static function normalize($paths) {
     return preg_replace(

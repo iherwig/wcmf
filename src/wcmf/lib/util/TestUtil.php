@@ -29,7 +29,7 @@ class TestUtil {
 
   /**
    * Set up the wcmf framework
-   * @param configPath The path to the configuration directory
+   * @param $configPath The path to the configuration directory
    */
   public static function initFramework($configPath) {
     ObjectFactory::clear();
@@ -93,7 +93,7 @@ class TestUtil {
 
   /**
    * Turn authorization validation on/off.
-   * @param Boolean whether to turn it off or on
+   * @param $isAnonymous Boolean whether to turn it off or on
    */
   public static function runAnonymous($isAnonymous) {
     if (!self::$_nullPermissionManager) {
@@ -106,7 +106,7 @@ class TestUtil {
 
   /**
    * Process a request as if it was sent to main.php
-   * @param request The Request instance
+   * @param $request The Request instance
    * @return The Response instance (result of the last ActionMapper::processAction() call)
    */
   public static function simulateRequest($request) {
@@ -125,8 +125,8 @@ class TestUtil {
 
   /**
    * Start a session. This is usefull for simulateRequest calls
-   * @param user The name of the user
-   * @param password The password of the user
+   * @param $user The name of the user
+   * @param $password The password of the user
    * @return The session id. Use this as data['sid'] parameter for
    *    subsequent simulateRequest calls
    */
@@ -165,9 +165,9 @@ class TestUtil {
 
   /**
    * Call a protected/private method of an instance (PHP >= 5.3.2)
-   * @param instance The instance
-   * @param methodName The method name
-   * @param args An array of method arguments
+   * @param $instance The instance
+   * @param $methodName The method name
+   * @param $args An array of method arguments
    */
   public static function callProtectedMethod($instance, $methodName, $args=null) {
     $className = get_class($instance);
@@ -191,7 +191,7 @@ class TestUtil {
 
   /**
    * Enable the Zend_Db_Profiler for a given entity type.
-   * @param type The entity type
+   * @param $type The entity type
    */
   public static function enableProfiler($type) {
     $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($type);
@@ -203,7 +203,7 @@ class TestUtil {
   /**
    * Print the profile of the operations on a given entity type.
    * The profiler must have been enabled first
-   * @param type The entity type
+   * @param $type The entity type
    */
   public static function printProfile($type) {
     $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($type);

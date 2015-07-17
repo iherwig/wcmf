@@ -439,9 +439,101 @@ next time it is needed.
 
 ## Events ## {#pres_events}
 
-<span class="label label-danger">TODO</span>
+Events are a way to decouple parts of a software by introducing an indirect
+communication. They allow clients to react to certain application events without
+the event source knowing them. wCMF uses the
+[publish-subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern)
+messaging pattern, in which \link wcmf::lib::core::EventManager `EventManager`\endlink
+acts as the message broker. Subscribers use this class to register for certain
+\link wcmf::lib::core::Event `Event`\endlink types and publishers to send the
+events.
+
+The following events are defined in wCMF:
+
+- \link wcmf::lib::persistence::PersistenceEvent `PersistenceEvent`\endlink
+  is sent whenever a \link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink
+  instance is created, updated or deleted.
+- \link wcmf::lib::persistence::PropertyChangeEvent `PropertyChangeEvent`\endlink,
+  \link wcmf::lib::persistence::ValueChangeEvent `ValueChangeEvent`\endlink and
+  \link wcmf::lib::persistence::StateChangeEvent `StateChangeEvent`\endlink
+  signal changes in \link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink
+  instances.
+- \link wcmf::lib::presentation::ApplicationEvent `ApplicationEvent`\endlink
+  allows to listen to the different steps of the request handling process.
+
+The event system may be extended by custom events by inheriting from the
+\link wcmf::lib::core::Event `Event`\endlink class.
+
+The class below is a basic example for a listener that subscribes to persistence
+events:
+
+~~~~~~~~~~~~~{.php}
+class PersistenceEventListener {
+
+  public function __construct() {
+    ObjectFactory::getInstance('eventManager')->addListener(PersistenceEvent::NAME,
+      array($this, 'persisted'));
+  }
+
+  public function __destruct() {
+    ObjectFactory::getInstance('eventManager')->removeListener(PersistenceEvent::NAME,
+      array($this, 'persisted'));
+  }
+
+  /**
+   * Listen to PersistenceEvent
+   * @param $event PersistenceEvent instance
+   */
+  public function persisted(PersistenceEvent $event) {
+    // do something on any create/update/delete
+  }
+}
+~~~~~~~~~~~~~
+
+@note To prevent memory leaks the
+\link wcmf::lib::core::EventManager::removeListener `EventManager::removeListener`\endlink
+method __must__ be called, if the event listener is destroyed.
+
+To send a persistence event, the following code is used:
+
+~~~~~~~~~~~~~{.php}
+ObjectFactory::getInstance('eventManager')->dispatch(PersistenceEvent::NAME,
+        new PersistenceEvent($object, PersistenceAction::UPDATE));
+~~~~~~~~~~~~~
+
+### Implicit listener installation ###
+
+In some cases you may want to install event listeners without explicitely
+instantiating them, because there is no appropriate place for that. For these
+cases the \link wcmf::lib::presentation::Application `Application`\endlink class
+reads the `listeners` value of the `Application` configuration section and
+initializes all instances listed there.
+
+The default application defines two listeners as shown in the following example:
+
+~~~~~~~~~~~~~{.ini}
+[Application]
+listeners = {Search, EventListener}
+~~~~~~~~~~~~~
+
+Each entry in the `listeners` array is supposed to refer to an instance
+configuration (see \ref conf_di).
 
 ## Logging ## {#pres_log}
 
-<span class="label label-danger">TODO</span>
+wCMF uses [log4php](http://logging.apache.org/log4php/) for logging. To simplify
+the usage, the \link wcmf::lib::core::Log `Log`\endlink class acts
+as a facade to the library.
+
+The following example shows how to log an error message with a stack trace
+appended (see
+\link wcmf::lib::core::ErrorHandler::getStackTrace `ErrorHandler::getStackTrace`\endlink):
+
+~~~~~~~~~~~~~{.php}
+Log::error("An error occured.\n".ErrorHandler::getStackTrace(), __CLASS__);
+~~~~~~~~~~~~~
+
+The second method parameter indicates the __logger name__. It's a good practice
+to set this to the `__CLASS__` constant, since this allows to enable/disable
+loggers by class names in the configuration (see \ref conf_logging).
 */

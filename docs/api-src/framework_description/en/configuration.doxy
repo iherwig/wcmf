@@ -6,9 +6,11 @@
 
 Application configuration is handled by implementations of
 \link wcmf::lib::config::Configuration `Configuration`\endlink. To use the configuration
-througout the application, an instance of the appropriate implementation is
+throughout the application, an instance of the appropriate implementation is
 passed to \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink. This class
 provides \ref conf_di and access to the configuration.
+
+The following code demonstrates how to set up and use the configuration in code:
 
 ~~~~~~~~~~~~~{.php}
 $configPath = '../config/';
@@ -27,12 +29,15 @@ $config = ObjectFactory::getConfigurationInstance();
 $tz = $config->getValue('timezone', 'application');
 ~~~~~~~~~~~~~
 
+If you are using the \link wcmf::lib::presentation::Application `Application`\endlink
+class to bootstrap the application, the configuration setup is done automatically.
+
 ## Configuration Format ## {#conf_format}
 
 Currently wCMF provides an implementation for using the
 [INI file](http://en.wikipedia.org/wiki/INI_file) format.
 \link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink
-handles ini files that consist of **key-value pairs** that are grouped in **sections**.
+handles ini files that consist of **key-value pairs** that are grouped in **sections**:
 
 ~~~~~~~~~~~~~{.ini}
 [SectionA]
@@ -165,32 +170,45 @@ administrators = admin.ini
 If a user is added to a listed role, the given configuration file will be automatically
 assigned to it, if no individual configuration is set yet.
 
-## Default configuration files ## {#conf_default}
-
-The following sections describe the configuration files that are created from
-the default application's model.
-
-### config.ini ### {#conf_config_ini}
-
-<span class="label label-danger">TODO</span>
-
-### permissions.ini ### {#conf_permissions_ini}
-
-<span class="label label-danger">TODO</span>
-
-### presentation.ini ### {#conf_presentation_ini}
-
-<span class="label label-danger">TODO</span>
-
-### security.ini ### {#conf_security_ini}
-
-<span class="label label-danger">TODO</span>
-
-### server.ini ### {#conf_server_ini}
-
-<span class="label label-danger">TODO</span>
-
 ## Logging configuration ## {#conf_logging}
 
-<span class="label label-danger">TODO</span>
+wCMF uses [log4php](http://logging.apache.org/log4php/) for logging. The logging
+configuration is expected to be stored in a file called _log4php.php_, located in
+the same directory as the other configuration files (see \ref conf_format).
+
+The configuration is applied as follows:
+
+~~~~~~~~~~~~~{.php}
+$configPath = '../config/';
+Log::configure($configPath.'log4php.php');
+~~~~~~~~~~~~~
+
+If you are using the \link wcmf::lib::presentation::Application `Application`\endlink
+class to bootstrap the application, the logging setup is done automatically.
+
+wCMF uses log4php's
+[PHP configuration format](https://logging.apache.org/log4php/docs/configuration.html#PHP).
+By default the log level is set to `ERROR` and a daily log file is created in the
+directory _app/log/_.
+
+Since in wCMF each class uses it's own logger named after the class, it's easy
+to set the log level for individual classes.
+
+The following configuration sets the log level of the
+\link wcmf::lib::presentation::Controller `Controller`\endlink class to `DEBUG`:
+
+~~~~~~~~~~~~~{.php}
+return array(
+  'rootLogger' => array(
+    'level' => 'ERROR',
+    'appenders' => array('dailyFile', 'echo'),
+  ),
+
+  'loggers' => array(
+    'wcmf\lib\presentation\Controller' => array('level' => 'DEBUG', 'appenders' => array('dailyFile')),
+  ),
+
+  ...
+);
+~~~~~~~~~~~~~
 */

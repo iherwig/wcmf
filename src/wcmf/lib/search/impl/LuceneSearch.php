@@ -46,13 +46,12 @@ class LuceneSearch implements IndexedSearch {
     // listen to object change events
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
-    register_shutdown_function(array($this, 'shutdown'));
   }
 
   /**
-   * Shutdown search
+   * Destructor
    */
-  public function shutdown() {
+  public function __destruct() {
     $this->commitIndex();
     ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));

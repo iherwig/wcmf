@@ -1,0 +1,22 @@
+/*!
+\page security Security
+<div class="has-toc"></div>
+
+# Security # {#sec_main}
+
+## Authentication ## {#sec_authentication}
+
+<span class="label label-danger">TODO</span>
+
+## Authorization ## {#sec_authorization}
+
+<span class="label label-danger">TODO</span>
+
+### Permission management ### {#sec_perm_manage}
+
+<span class="label label-danger">TODO</span>
+
+### Checking permissions ### {#sec_perm_check}
+
+<span class="label label-danger">TODO</span>
+*/
