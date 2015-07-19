@@ -86,7 +86,17 @@ rules have to defined in the first place an enforced afterwards.
 ### Permissions ### {#sec_perm}
 
 Access control rules are expressed as _permissions_. Permissions are either
-granted or denied to a role (see \ref sec_users_roles).
+granted or denied to a role (see \ref sec_users_roles). A permission in wCMF
+is a combination of a _resource_, a _context_ and an _action_ and the notation
+is similar to action keys (see \ref arch_actionkey).
+
+A resource could be one of the following:
+
+- Controller class name (e.g. `wcmf\application\controller\SaveController`)
+- Type name (e.g. `app.src.model.wcmf.User`)
+- Type and propery name (e.g. `app.src.model.wcmf.User.login`)
+- Object id (e.g. `app.src.model.wcmf.User:123`)
+- Object id and propery name (e.g. `app.src.model.wcmf.User:123.login`)
 
 <span class="label label-danger">TODO</span>
 
