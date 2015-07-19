@@ -146,12 +146,24 @@ The following terms are important to know when working with wCMF's domain classe
 
 ### Configuration ### {#pers_config}
 
-The configuration tells the application which mapper classes are responsible
+Entry point of configuring the persistence layer is
+\link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink
+(see \ref pers_usage).
+The configuration mainly tells the facade which mapper classes are responsible
 for which domain classes. This assignment is defined in the `TypeMapping`
 configuration section. The following example shows the appropriate entries
 for the `Author` domain class:
 
 ~~~~~~~~~~~~~{.ini}
+[PersistenceFacade]
+__class = wcmf\lib\persistence\impl\DefaultPersistenceFacade
+mappers = $typeMapping
+logging = false
+logStrategy = $auditingLogStragegy
+
+[AuditingLogStragegy]
+__class = wcmf\lib\persistence\output\impl\AuditingOutputStrategy
+
 [TypeMapping]
 app.src.model.Author = $app_src_model_AuthorRDBMapper
 
@@ -168,10 +180,11 @@ dbPassword =
 dbCharSet = utf8
 ~~~~~~~~~~~~~
 
-See \ref configuration for details about the configuration format.
+## Usage ## {#pers_usage}
 
-## Usage ## {#pers_node}
-
+\link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink is
+the main entry point to the persistence layer. It is  used to create and retrieve
+\link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink instances.
 The following sections show some basic examples for using the persistence layer.
 
 ### Loading objects ### {#pers_load}
@@ -384,7 +397,7 @@ while($it->valid()) {
 }
 ~~~~~~~~~~~~~
 
-### Modifying objects ### {#pers_modify}
+### Creating / Modifying objects ### {#pers_create_modify}
 
 Domain class instances are created by calling the
 \link wcmf::lib::persistence::PersistenceFacade::create `PersistenceFacade::create`\endlink
@@ -550,6 +563,26 @@ catch(PessimisticLockException $ex) {
 // release lock later
 $concurrencyManager->releaseLock($oid, $lockType);
 ~~~~~~~~~~~~~
+
+The actual storage and retrieval of
+\link wcmf::lib::persistence::concurrency::Lock `Lock`\endlink instances is
+delegated to
+\link wcmf::lib::persistence::concurrency::LockHandler `LockHandler`\endlink.
+The following lines show the concurrency configuration in the default application:
+
+~~~~~~~~~~~~~{.ini}
+[ConcurrencyManager]
+__class = wcmf\lib\persistence\concurrency\impl\DefaultConcurrencyManager
+lockHandler = $lockHandler
+
+[LockHandler]
+__class = wcmf\lib\persistence\concurrency\impl\DefaultLockHandler
+lockType = app.src.model.wcmf.Lock
+~~~~~~~~~~~~~
+
+As you can see the
+\link wcmf::lib::persistence::concurrency::LockHandler `LockHandler`\endlink
+implementation is exchangeable.
 
 ## Transactions ## {#pers_tx}
 

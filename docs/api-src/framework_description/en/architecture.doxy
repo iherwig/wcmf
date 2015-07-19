@@ -147,8 +147,12 @@ most accurate is favored.
 
 __Examples:__
 
-Always execute `SaveController` when action _update_ is requested, no matter which
-state the application is in:
+The following examples are taken from the `ActionMapping` configuration section,
+which defines which \link wcmf::lib::presentation::Controller `Controller`\endlink
+to execute for a given action key (see \ref pres_routingint).
+
+Always execute \link wcmf::application::controller::SaveController `SaveController`\endlink
+when action _update_ is requested, no matter which state the application is in:
 
 ~~~~~~~~~~~~~{.ini}
 ??update = wcmf\application\controller\SaveController
@@ -160,10 +164,4 @@ long as no action is specified:
 ~~~~~~~~~~~~~{.ini}
 ?author? = app\src\controller\AuthorController
 ~~~~~~~~~~~~~
-
-If no matching action key can be found,
-\link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink
-returns the last response.
-
-For details about configuring action keys see \ref configuration.
 */

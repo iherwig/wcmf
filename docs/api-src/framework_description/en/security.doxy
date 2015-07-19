@@ -4,9 +4,55 @@
 
 # Security # {#sec_main}
 
+Two key aspects of securing an application are _authentication_ and
+_authorization_. While __authentication__ is the process of determining the
+identity of a user, __authorization__ means determining if the user is allowed
+to do what he or she is about to do.
+
 ## Authentication ## {#sec_authentication}
 
-<span class="label label-danger">TODO</span>
+In wCMF Authentication is handled by implementations of
+\link wcmf::lib::security::AuthenticationManager `AuthenticationManager`\endlink.
+
+Currently the framework provides
+\link wcmf::lib::security::impl::DefaultAuthenticationManager `DefaultAuthenticationManager`\endlink,
+which implements a __login/password__ based authentication procedure. This is
+done by matching the given credentials against existing
+\link wcmf::lib::security::principal::User `User`\endlink instances, which are
+provided by
+\link wcmf::lib::security::principal::PrincipalFactory `PrincipalFactory`\endlink.
+\link wcmf::lib::security::principal::impl::DefaultPrincipalFactory `DefaultPrincipalFactory`\endlink
+retrieves user instances from the storage.
+
+The following code demonstrates the authentication process as it is implemented
+in \link wcmf::application::controller::LoginController `LoginController`\endlink:
+
+~~~~~~~~~~~~~{.php}
+$authManager = ObjectFactory::getInstance('authenticationManager');
+$login = $request->getValue('user');
+$password = $request->getValue('password');
+
+try {
+  $authUser = $authManager->login($login, $password);
+}
+catch (Exception $ex) {
+  Log::error("Could not log in: ".$ex, __CLASS__);
+}
+~~~~~~~~~~~~~
+
+The configuration of the authentication process in the default application looks
+like the following:
+
+~~~~~~~~~~~~~{.ini}
+[AuthenticationManager]
+__class = wcmf\lib\security\impl\DefaultAuthenticationManager
+principalFactory = $principalFactory
+
+[PrincipalFactory]
+__class = wcmf\lib\security\principal\impl\DefaultPrincipalFactory
+userType = app.src.model.wcmf.User
+roleType = app.src.model.wcmf.Role
+~~~~~~~~~~~~~
 
 ## Authorization ## {#sec_authorization}
 

@@ -37,7 +37,7 @@ catch (Exception $ex) {
 }
 ~~~~~~~~~~~~~
 
-The example shows the three important public methods of the
+The example shows the three important methods of the
 \link wcmf::lib::presentation::Application `Application`\endlink class:
 
 - The \link wcmf::lib::presentation::Application::initialize `initialize`\endlink
@@ -67,7 +67,7 @@ actions are performed:
    processing.
 2. The \ref arch_actionkey is determined from the request parameters.
 3. \link wcmf::lib::security::PermissionManager `PermissionManager`\endlink is
-   asked to authorize the action key for the current user (see \ref perm_check).
+   asked to authorize the action key for the current user (see \ref sec_perm_check).
 4. If authorization is successful, the request data is transformed into the internal
    application format (see \ref pres_format).
 5. The \link wcmf::lib::presentation::Controller `Controller`\endlink instance
@@ -501,7 +501,7 @@ ObjectFactory::getInstance('eventManager')->dispatch(PersistenceEvent::NAME,
         new PersistenceEvent($object, PersistenceAction::UPDATE));
 ~~~~~~~~~~~~~
 
-### Implicit listener installation ###
+### Implicit listener installation ### {#pres_listeners}
 
 In some cases you may want to install event listeners without explicitely
 instantiating them, because there is no appropriate place for that. For these

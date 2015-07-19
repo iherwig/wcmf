@@ -8,8 +8,8 @@
 </div>
 
 <h2>Model-Driven Software Development</h2>
-wCMF strongly encourages Model-Driven Software Development (<em>MDSD</em>) to help you focus on the application domain and
-increase productivity significantly. Creating a wCMF-based application basically involves three steps:
+wCMF features a Model-Driven Software Development (<em>MDSD</em>) approach that puts your focus on the application domain and
+increases productivity significantly. Creating a wCMF-based application basically involves three steps:
 
 <div class="row">
   <div class="col-md-4"><h3><i class="fa fa-sitemap fa-2x pull-left"></i> Model</h3>

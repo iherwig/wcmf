@@ -65,6 +65,11 @@ value of the `WCMF_BASE` constant, the included files are expected to be located
 in the directory that is passed to the constructor of
 \link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink.
 
+The possibility to include configuration files into others is useful, if you want
+to __separate varying parts__ from static ones to simplify the deployment process.
+In the default application for example all server specific configuration (e.g.
+database connection) are separated into a file called _server.ini_.
+
 ## Dependency injection ## {#conf_di}
 
 wCMF supports [Dependency injection](http://en.wikipedia.org/wiki/Dependency_injection)
@@ -169,6 +174,38 @@ administrators = admin.ini
 
 If a user is added to a listed role, the given configuration file will be automatically
 assigned to it, if no individual configuration is set yet.
+
+## Default application configuration ## {#conf_default_app}
+
+The default application uses some special configuration sections:
+
+~~~~~~~~~~~~~{.ini}
+[Application]
+title = WCMF TEST MODEL
+color = #428BCA
+localeDir = app/locale/
+rootTypes = {Author, Book, Publisher}
+language = en
+timezone = Europe/Berlin
+listeners = {Search, EventListener}
+
+[Media]
+uploadDir = app/public/media/
+~~~~~~~~~~~~~
+
+- `Application`
+  - `title` Application title
+  - `color` Color to be used in the header of the login screen
+  - `localeDir` Directory, where localization files are located (used by
+    \link wcmf::lib::i18n::Message `Message`\endlink class)
+  - `language` UI language (used by
+    \link wcmf::lib::i18n::Message `Message`\endlink class)
+  - `rootTypes` List of entity types to create tabs for
+  - `timezone` Application timezone
+  - `listeners` List of listeners to install (see \ref pres_listeners)
+
+- `Media`
+  - `uploadDir` Directory, to which media files should be uploaded
 
 ## Logging configuration ## {#conf_logging}
 
