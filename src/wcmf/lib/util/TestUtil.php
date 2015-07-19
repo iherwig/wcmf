@@ -136,8 +136,7 @@ class TestUtil {
     $authUser = $authManager->login($user, $password);
     if ($authUser) {
       $session->clear();
-      $permissionManager = ObjectFactory::getInstance('permissionManager');
-      $permissionManager->setAuthUser($authUser);
+      $session->setAuthUser($authUser);
     }
     else {
       throw new \RuntimeException("Session could not be started for user '$user'");

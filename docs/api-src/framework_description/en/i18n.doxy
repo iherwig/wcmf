@@ -8,6 +8,26 @@
 
 <span class="label label-danger">TODO</span>
 
+_config.ini_
+
+~~~~~~~~~~~~~{.ini}
+[Localization]
+__class = wcmf\lib\i18n\impl\DefaultLocalization
+languageType = Language
+translationType = Translation
+~~~~~~~~~~~~~
+
+_server.ini_
+
+~~~~~~~~~~~~~{.ini}
+[Localization]
+defaultLanguage = en
+
+[Languages]
+de = Deutsch
+en = English
+~~~~~~~~~~~~~
+
 ### Static texts ### {#i18n_static}
 
 <span class="label label-danger">TODO</span>

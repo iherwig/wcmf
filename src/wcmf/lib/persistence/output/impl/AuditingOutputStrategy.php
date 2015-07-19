@@ -40,8 +40,8 @@ class AuditingOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $user = $permissionManager->getAuthUser();
+    $session = ObjectFactory::getInstance('session');
+    $user = $session->getAuthUser();
 
     switch ($state = $obj->getState()) {
       // log insert action

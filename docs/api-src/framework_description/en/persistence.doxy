@@ -45,11 +45,11 @@ name in an \link wcmf::lib::persistence::ObjectId `ObjectId`\endlink instance.
 The following two relations types must be considered, when modeling the data
 tables:
 
-- **One-To-Many** relations are realized by adding a foreign key column to the
+- __One-To-Many__ relations are realized by adding a foreign key column to the
 child table (_many_-side), which points to the parent table (_one_-side). This
 column is named _fk_ _ + parent table name  + _ _id_ by default (e.g. _fk_author_id_).
 
-- **Many-To-Many** relations between two domain classes, are established by defining
+- __Many-To-Many__ relations between two domain classes, are established by defining
 a connection table. This table contains two primary keys, which point to the two
 connected tables.
 
@@ -205,7 +205,7 @@ In the example the `Author` instance with id _1_ is loaded.
 
 #### Build depth #### {#pers_builddepth}
 
-When loading objects we generally distinguish between **eager** and **lazy** loading
+When loading objects we generally distinguish between __eager__ and __lazy__ loading
 (see [Lazy loading](http://en.wikipedia.org/wiki/Lazy_loading)).
 By default \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink
 performs _lazy loading_ by using _virtual proxies_ (instances of

@@ -45,6 +45,7 @@ class UserController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
+    $session = ObjectFactory::getInstance('session');
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
@@ -53,7 +54,7 @@ class UserController extends Controller {
     // change password
 
     // load model
-    $authUser = $permissionManager->getAuthUser();
+    $authUser = $session->getAuthUser();
 
     // add permissions for this operation
     $oidStr = $authUser->getOID()->__toString();

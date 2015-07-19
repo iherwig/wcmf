@@ -109,8 +109,7 @@ class LoginController extends Controller {
       if ($authUser) {
         // login succeeded
         $session->clear();
-        $permissionManager = ObjectFactory::getInstance('permissionManager');
-        $permissionManager->setAuthUser($authUser);
+        $session->setAuthUser($authUser);
 
         // return role names of the user
         $roleNames = array();

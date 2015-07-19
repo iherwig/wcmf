@@ -86,8 +86,7 @@ class Application {
     $session->clearErrors();
 
     // load user configuration
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $authUser = $permissionManager->getAuthUser();
+    $authUser = $session->getAuthUser();
     if ($authUser && strlen($authUser->getConfig()) > 0) {
       $config->addConfiguration($authUser->getConfig(), true);
     }
@@ -167,14 +166,6 @@ class Application {
       }
     }
     return $buffer;
-  }
-
-  /**
-   * Get an unique id for the application based on main script location.
-   * @return The id
-   */
-  public static function getId() {
-    return md5(__FILE__);
   }
 }
 ?>

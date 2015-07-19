@@ -11,6 +11,8 @@
 namespace wcmf\lib\core\impl;
 
 use wcmf\lib\core\Session;
+use wcmf\lib\security\principal\User;
+use wcmf\lib\security\principal\impl\AnonymousUser;
 
 /**
  * Default session implementation.
@@ -21,6 +23,12 @@ class DefaultSession implements Session {
 
   private static $ERROR_VARNAME = 'Session.errors';
 
+  private $_anonymousUser = null;
+  private $_authUserVarName = null;
+
+  /**
+   * Constructor
+   */
   public function __construct() {
     // regenerate session id if cookie is lost
     $sessionName = 'wcmf'.md5(__FILE__);
@@ -32,6 +40,8 @@ class DefaultSession implements Session {
       }
       session_start();
     }
+    $this->_authUserVarName = 'auth_user_'.md5(__FILE__);
+    $this->_anonymousUser = new AnonymousUser();
   }
 
   public function __destruct() {
@@ -91,6 +101,25 @@ class DefaultSession implements Session {
   public function destroy() {
     $_SESSION = array();
     @session_destroy();
+  }
+
+  /**
+   * @see Session::setAuthUser()
+   */
+  public function setAuthUser(User $authUser) {
+    $this->set($this->_authUserVarName, $authUser);
+  }
+
+  /**
+   * @see Session::getAuthUser()
+   */
+  public function getAuthUser() {
+    $user = $this->_anonymousUser;
+    // check for auth user in session
+    if ($this->exist($this->_authUserVarName)) {
+      $user = $this->get($this->_authUserVarName);
+    }
+    return $user;
   }
 
   /**

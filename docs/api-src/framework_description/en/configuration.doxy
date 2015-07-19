@@ -37,7 +37,7 @@ class to bootstrap the application, the configuration setup is done automaticall
 Currently wCMF provides an implementation for using the
 [INI file](http://en.wikipedia.org/wiki/INI_file) format.
 \link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink
-handles ini files that consist of **key-value pairs** that are grouped in **sections**:
+handles ini files that consist of __key-value pairs__ that are grouped in __sections__:
 
 ~~~~~~~~~~~~~{.ini}
 [SectionA]
@@ -48,7 +48,7 @@ key2 = value2
 key3 = value3
 ~~~~~~~~~~~~~
 
-Additionally it defines **array values** (enclosed in curly braces) and **inclusion**
+Additionally it defines __array values__ (enclosed in curly braces) and __inclusion__
 of additional files. Included files are defined in the `include` key of the `Config`
 section. Keys in the current file override keys from included files.
 

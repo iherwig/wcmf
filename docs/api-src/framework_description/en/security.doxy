@@ -4,36 +4,49 @@
 
 # Security # {#sec_main}
 
-Two key aspects of securing an application are _authentication_ and
-_authorization_. While __authentication__ is the process of determining the
-identity of a user, __authorization__ means determining if the user is allowed
-to do what he or she is about to do.
+Two key aspects of securing an application are _authentication_ and _authorization_.
+While __authentication__ is the process of verifying the identity of a user,
+__authorization__ means determining if the user is allowed to do what he or she
+is about to do. That implies that authentication is a precondition for
+authorization.
+
+## Users and Roles ## {#sec_users_roles}
+
+Users are essential for an authentication system. In wCMF users are represented
+as instances of classes implementing the
+\link wcmf::lib::security::principal::User `User`\endlink interface. Since wCMF's
+authorization system is role based, users are organized in roles. Role classes
+implement the \link wcmf::lib::security::principal::Role `Role`\endlink interface.
 
 ## Authentication ## {#sec_authentication}
 
-In wCMF Authentication is handled by implementations of
+In wCMF authentication is handled by implementations of
 \link wcmf::lib::security::AuthenticationManager `AuthenticationManager`\endlink.
 
 Currently the framework provides
 \link wcmf::lib::security::impl::DefaultAuthenticationManager `DefaultAuthenticationManager`\endlink,
-which implements a __login/password__ based authentication procedure. This is
-done by matching the given credentials against existing
-\link wcmf::lib::security::principal::User `User`\endlink instances, which are
-provided by
+which implements a __login/password__ based authentication procedure by matching
+the given user credentials against existing
+\link wcmf::lib::security::principal::User `User`\endlink instances. These instances
+are provided by implementations of
 \link wcmf::lib::security::principal::PrincipalFactory `PrincipalFactory`\endlink.
-\link wcmf::lib::security::principal::impl::DefaultPrincipalFactory `DefaultPrincipalFactory`\endlink
-retrieves user instances from the storage.
 
-The following code demonstrates the authentication process as it is implemented
+The following code demonstrates the authentication process as implemented
 in \link wcmf::application::controller::LoginController `LoginController`\endlink:
 
 ~~~~~~~~~~~~~{.php}
-$authManager = ObjectFactory::getInstance('authenticationManager');
+// get the user credentials from the request
 $login = $request->getValue('user');
 $password = $request->getValue('password');
 
 try {
+  // try to login using the credentials
+  $authManager = ObjectFactory::getInstance('authenticationManager');
   $authUser = $authManager->login($login, $password);
+
+  // set the authenticated user in the session
+  $session = ObjectFactory::getInstance('session');
+  $session->setAuthUser($authUser);
 }
 catch (Exception $ex) {
   Log::error("Could not log in: ".$ex, __CLASS__);
@@ -54,11 +67,26 @@ userType = app.src.model.wcmf.User
 roleType = app.src.model.wcmf.Role
 ~~~~~~~~~~~~~
 
+Since
+\link wcmf::lib::security::principal::impl::DefaultPrincipalFactory `DefaultPrincipalFactory`\endlink
+retrieves user instances from the storage, it needs to configured with the
+appropriate entity types. If required, the default user type may be replaced
+by custom implementations of \link wcmf::lib::security::principal::User `User`\endlink.
+
+@note The authenticated user, that is associated with the current session is
+obtained using the \link wcmf::lib::core::Session::getAuthUser `Session::getAuthUser`\endlink
+method.
+
 ## Authorization ## {#sec_authorization}
 
-<span class="label label-danger">TODO</span>
+The purpose of authorization is controlling access to application resources,
+which could be controllers or entity instances. To establish __access control__,
+rules have to defined in the first place an enforced afterwards.
 
-### Permission management ### {#sec_perm_manage}
+### Permissions ### {#sec_perm}
+
+Access control rules are expressed as _permissions_. Permissions are either
+granted or denied to a role (see \ref sec_users_roles).
 
 <span class="label label-danger">TODO</span>
 

@@ -221,8 +221,8 @@ class DefaultLockHandler implements LockHandler {
    * @return User instance
    */
   protected function getCurrentUser() {
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    return $permissionManager->getAuthUser();
+    $session = ObjectFactory::getInstance('session');
+    return $session->getAuthUser();
   }
 
   /**

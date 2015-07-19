@@ -15,7 +15,6 @@ use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
-use wcmf\lib\presentation\Application;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\User;
 use wcmf\lib\security\principal\impl\AnonymousUser;
@@ -35,45 +34,15 @@ class AbstractPermissionManager {
   const RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY = 'entity.instance.property';
   const RESOURCE_TYPE_OTHER = 'other';
 
-  private $_anonymousUser = null;
-  private $_authUserVarName = null;
   private $_tempPermissions = array();
-
-  /**
-   * Constructor
-   */
-  public function __construct() {
-    $this->_anonymousUser = new AnonymousUser();
-    $this->_authUserVarName = 'auth_user_'.Application::getId();
-  }
-
-  /**
-   * @see PermissionManager::setAuthUser()
-   */
-  public function setAuthUser(User $authUser) {
-    $session = ObjectFactory::getInstance('session');
-    $session->set($this->_authUserVarName, $authUser);
-  }
-
-  /**
-   * @see PermissionManager::getAuthUser()
-   */
-  public function getAuthUser() {
-    $user = $this->_anonymousUser;
-    // check for auth user in session
-    $session = ObjectFactory::getInstance('session');
-    if ($session->exist($this->_authUserVarName)) {
-      $user = $session->get($this->_authUserVarName);
-    }
-    return $user;
-  }
 
   /**
    * @see PermissionManager::authorize()
    */
   public function authorize($resource, $context, $action, User $user=null) {
     if ($user == null) {
-      $user = $this->getAuthUser();
+      $session = ObjectFactory::getInstance('session');
+      $user = $session->getAuthUser();
     }
     if (Log::isDebugEnabled(__CLASS__)) {
       Log::debug("Checking authorization for: '$resource?$context?$action' and user '".$user->getLogin()."'", __CLASS__);

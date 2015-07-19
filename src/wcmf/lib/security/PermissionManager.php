@@ -25,18 +25,6 @@ interface PermissionManager {
   const PERMISSION_MODIFIER_DENY = '-';
 
   /**
-   * Set the authenticated user.
-   * @param $authUser User instance.
-   */
-  public function setAuthUser(User $authUser);
-
-  /**
-   * Get the authenticated user.
-   * @return User instance.
-   */
-  public function getAuthUser();
-
-  /**
    * Authorize for given resource, context, action triple.
    * A resource could be one of the following:
    * - Controller class name (e.g. `wcmf\application\controller\SaveController`)
@@ -48,7 +36,7 @@ interface PermissionManager {
    * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
-   * @param $user User instance to use for authorization (optional, default: the user obtained by getAuthUser method)
+   * @param $user User instance to use for authorization (optional, default: the user obtained by Session::getAuthUser method)
    * @return Boolean whether authorization succeded/failed.
    */
   public function authorize($resource, $context, $action, User $user=null);

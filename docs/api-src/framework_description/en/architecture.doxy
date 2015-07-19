@@ -99,8 +99,8 @@ presentation layer.
 ### Action Key ### {#arch_actionkey}
 
 An important concept of wCMF is that of _Action Keys_. An action key describes the
-state of the application together with the **action** to be performed next. The state,
-which the application is in, results from the current **controller** and the **context**,
+state of the application together with the __action__ to be performed next. The state,
+which the application is in, results from the current __controller__ and the __context__,
 in which it is executed. Controllers must exist as classes, whereas contexts and
 actions may be arbitrary strings.
 
@@ -112,14 +112,14 @@ controller?context?action
 
 wCMF uses action keys for the following concerns:
 
-1. In **routing definitions** controller names are assigned action keys.
+1. In __routing definitions__ controller names are assigned action keys.
    \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink uses these
    definitions to execute the correct controller when the application is in a
    certain state.
-2. In **view definitions** template filenames are assigned to action keys.
+2. In __view definitions__ template filenames are assigned to action keys.
    \link wcmf::lib::presentation::view::View `View`\endlink determines the view
    template to be displayed for the current application state.
-3. In **permission definitions** roles are assigned to action keys. In this case
+3. In __permission definitions__ roles are assigned to action keys. In this case
    the controller value of the action key is interpreted as resource and can
    also define an entity type or entity instance.
    \link wcmf::lib::security::PermissionManager `PermissionManager`\endlink uses
