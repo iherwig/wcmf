@@ -30,7 +30,7 @@
                 "name": "olympos/chronos-generator",
                 "version": "0.9.9.6",
                 "dist": {
-                    "url": "http://sourceforge.net/projects/olympos/files/ChronosGenerator-0.9.9.6b-wCMF.zip",
+                    "url": "http://downloads.sourceforge.net/project/olympos/ChronosGenerator-0.9.9.6b-wCMF.zip",
                     "type": "zip"
                 }
             }

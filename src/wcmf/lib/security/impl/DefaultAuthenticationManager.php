@@ -21,6 +21,16 @@ use wcmf\lib\security\AuthenticationManager;
  */
 class DefaultAuthenticationManager implements AuthenticationManager {
 
+  private $_principalFactory = null;
+
+  /**
+   * Set the PrincipalFacotry instance.
+   * @param $principalFactory String
+   */
+  public function setPrincipalFactory($principalFactory) {
+    $this->_principalFactory = $principalFactory;
+  }
+
   /**
    * @see AuthenticationManager::login()
    */
@@ -28,8 +38,7 @@ class DefaultAuthenticationManager implements AuthenticationManager {
     $config = ObjectFactory::getConfigurationInstance();
 
     // try to receive the user with given credentials
-    $principalFactory = ObjectFactory::getInstance('principalFactory');
-    $user = $principalFactory->getUser($login, true);
+    $user = $this->_principalFactory->getUser($login, true);
 
     // check if user exists
     $loginOk = false;
