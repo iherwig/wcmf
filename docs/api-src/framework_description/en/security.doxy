@@ -86,17 +86,70 @@ rules have to defined in the first place an enforced afterwards.
 ### Permissions ### {#sec_perm}
 
 Access control rules are expressed as _permissions_. Permissions are either
-granted or denied to a role (see \ref sec_users_roles). A permission in wCMF
-is a combination of a _resource_, a _context_ and an _action_ and the notation
-is similar to action keys (see \ref arch_actionkey).
+granted or denied to a role (see \ref sec_users_roles). Subject of a permission
+in wCMF is a combination of a _resource_, a _context_ and an _action_ and the
+notation is the same as for action keys (see \ref arch_actionkey), except
+that the _controller_ value is an arbitrary resource.
 
-A resource could be one of the following:
+If written as an equation, the left side of the permission is the action key,
+while the right side is the list of roles, that are involved. Each role has either
+a <em>+</em> or a <em>-</em> sign prepended, meaning the permission is granted
+to the role or denied. The following code shows the __format__:
 
-- Controller class name (e.g. `wcmf\application\controller\SaveController`)
-- Type name (e.g. `app.src.model.wcmf.User`)
-- Type and propery name (e.g. `app.src.model.wcmf.User.login`)
-- Object id (e.g. `app.src.model.wcmf.User:123`)
-- Object id and propery name (e.g. `app.src.model.wcmf.User:123.login`)
+~~~~~~~~~~~~~{.ini}
+resource?context?action = +allowedRole -deniedRole ...
+~~~~~~~~~~~~~
+
+@note Permissions may be formed from any string values for _resource_, _context_
+and _action_ as long as they can be written as action key. Roles that are not
+listed in the permission are denied per default.
+
+Besides custom resources, wCMF supports the following __built-in resources__:
+
+- __Entity type__ to restrict access on all instances of an entity type
+  (e.g. `app.src.model.wcmf.User`)
+- __Entity property__ to restrict access on a certain property of an entity type
+  (e.g. `app.src.model.wcmf.User.login`)
+- __Entity instance__ to restrict access on one entity instance
+  (e.g. `app.src.model.wcmf.User:123`)
+- __Entity instance propery__ to restrict access on a certain property of one
+  entity instance (e.g. `app.src.model.wcmf.User:123.login`)
+
+The actions for these resources are properties of
+\link wcmf::lib::persistence::PersistenceAction `PersistenceAction`\endlink,
+e.g. \link wcmf::lib::persistence::PersistenceAction::READ `PersistenceAction::READ`\endlink.
+
+The following code shows some permission examples:
+
+~~~~~~~~~~~~~{.ini}
+; tester role is not allowed to update any authors except for the specified one
+; tester role is not allowed to update any authors stage attribute
+app.src.model.Author??update = -tester
+app.src.model.Author:111??update = +tester
+app.src.model.Author.stage??update = +administrators
+
+; tester role is not allowed to update any publishers name except for the specified one
+; tester role is not allowed to update any authors stage attribute
+app.src.model.Publisher.name??update = -tester
+app.src.model.Publisher:111.name??update = +tester
+
+; tester role is not allowed to read any book name except for the specified one
+app.src.model.Book??read = -tester
+app.src.model.Book:111??read = +tester
+
+; tester role is not allowed to read chapter 111 and due to inheritance also not chapter 222
+app.src.model.Chapter:111??read = -tester +administrators
+
+; custom permissions
+customPermission??start = +tester
+customPermission??stop = -tester
+~~~~~~~~~~~~~
+
+#### Default policy ####
+
+<span class="label label-danger">TODO</span>
+
+#### Permission inheritance ####
 
 <span class="label label-danger">TODO</span>
 

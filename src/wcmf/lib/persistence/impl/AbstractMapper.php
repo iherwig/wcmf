@@ -277,6 +277,8 @@ abstract class AbstractMapper implements PersistenceMapper {
       else {
         $tx->detach($object->getOID());
       }
+      // TODO remove attribute values for which the user is not authorized
+      // should use some pre-check if restrictions on the entity type exist
     }
     return $result;
   }

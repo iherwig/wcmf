@@ -110,6 +110,9 @@ The string representation of an action key is as follows:
 controller?context?action
 ~~~~~~~~~~~~~
 
+@note Since question marks (?) are used to separate the parts of an action key,
+a question mark is not allowed inside the parts itself.
+
 wCMF uses action keys for the following concerns:
 
 1. In __routing definitions__ controller names are assigned action keys.

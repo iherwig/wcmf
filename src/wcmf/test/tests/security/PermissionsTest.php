@@ -209,6 +209,18 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
+  public function testCustomPermission() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+
+    // test
+    $this->assertTrue($permissionManager->authorize('customPermission', '', 'start'));
+    $this->assertFalse($permissionManager->authorize('customPermission', '', 'stop'));
+
+    TestUtil::endSession();
+  }
+
   public function testGetPermissions() {
     TestUtil::startSession('userPermTest', 'user1');
 
