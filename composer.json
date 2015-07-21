@@ -2,7 +2,7 @@
     "name": "wcmf/wcmf",
     "type": "library",
     "description": "The wCMF web application framework",
-    "keywords": ["framework"],
+    "keywords": ["framework", "mvc", "model-driven"],
     "license": "MIT",
     "authors": [
         {
