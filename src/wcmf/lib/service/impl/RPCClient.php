@@ -19,7 +19,7 @@ use wcmf\lib\service\RemotingClient;
 
 /**
  * RPCClient is used to do calls to other wCMF instances on the same mashine.
- * @see RemotingFacade
+ * @see RemotingServer
  *
  * @author ingo herwig <ingo@wemove.com>
  */

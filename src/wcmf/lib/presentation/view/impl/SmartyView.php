@@ -18,9 +18,18 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\view\View;
 
+if (!class_exists('Smarty')) {
+    throw new \wcmf\lib\config\ConfigurationException(
+            'wcmf\lib\presentation\view\impl\SmartyView requires '.
+            'Smarty. If you are using composer, add smarty/smarty '.
+            'as dependency to your project');
+}
+
 /**
  * View is used by Controller to handle the view presentation in MVC pattern.
  * View is a subclass of Smarty that is customized for use with the wCMF.
+ *
+ * @note This class requires Smarty
  *
  * @author ingo herwig <ingo@wemove.com>
  */

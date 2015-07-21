@@ -36,16 +36,16 @@ class ObjectFactoryTest extends BaseTestCase {
   }
 
   public function testDINonShared() {
-    $obj = ObjectFactory::getInstance('view');
-    $this->assertEquals('wcmf\lib\presentation\view\impl\SmartyView', get_class($obj));
+    $obj = ObjectFactory::getInstance('request');
+    $this->assertEquals('wcmf\lib\presentation\impl\DefaultRequest', get_class($obj));
 
     // modify instance
     $obj->setValue('test', 'value1');
     $this->assertEquals('value1', $obj->getValue('test'));
 
     // get second time (same instance)
-    $obj2 = ObjectFactory::getInstance('view');
-    $this->assertEquals('wcmf\lib\presentation\view\impl\SmartyView', get_class($obj2));
+    $obj2 = ObjectFactory::getInstance('request');
+    $this->assertEquals('wcmf\lib\presentation\impl\DefaultRequest', get_class($obj2));
 
     // modify instance
     $obj2->setValue('test', 'value2');

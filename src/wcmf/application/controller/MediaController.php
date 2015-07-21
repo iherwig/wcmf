@@ -19,8 +19,17 @@ use wcmf\lib\util\URIUtil;
 use FM\ElFinderPHP\ElFinder;
 use FM\ElFinderPHP\Connector\ElFinderConnector;
 
+if (!class_exists('ElFinder')) {
+    throw new \wcmf\lib\config\ConfigurationException(
+            'wcmf\application\controller\MediaController requires '.
+            'ElFinder. If you are using composer, add helios-ag/fm-elfinder-php-connector '.
+            'as dependency to your project');
+}
+
 /**
  * MediaController integrates elFinder (https://github.com/Studio-42/elFinder) into wCMF.
+ *
+ * @note This class requires ElFinder
  *
  * The controller supports the following actions:
  *

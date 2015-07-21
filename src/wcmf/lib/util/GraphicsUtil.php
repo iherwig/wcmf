@@ -17,8 +17,18 @@ use PHPImageWorkshop\ImageWorkshop;
 use GifFrameExtractor\GifFrameExtractor;
 use GifCreator\GifCreator;
 
+if (!class_exists('ImageWorkshop') || !class_exists('GifFrameExtractor') || !class_exists('GifCreator')) {
+    throw new \wcmf\lib\config\ConfigurationException(
+            'wcmf\lib\util\GraphicsUtil requires '.
+            'ImageWorkshop, GifFrameExtractor and GifCreator. If you are using composer, '.
+            'add sybio/image-workshop, sybio/gif-frame-extractor and sybio/gif-creator '.
+            'as dependency to your project');
+}
+
 /**
  * GraphicsUtil provides support for graphic manipulation.
+ *
+ * @note This class requires ImageWorkshop, GifFrameExtractor and GifCreator
  *
  * @author ingo herwig <ingo@wemove.com>
  */

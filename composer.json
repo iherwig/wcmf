@@ -13,20 +13,6 @@
         {
             "type": "package",
             "package": {
-                "name": "nusphere/nusoap",
-                "version": "0.9.5",
-                "dist": {
-                    "url": "http://downloads.sourceforge.net/project/nusoap/nusoap/0.9.5/nusoap-0.9.5.zip",
-                    "type": "zip"
-                },
-                "autoload": {
-                    "classmap": ["lib/"]
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
                 "name": "olympos/chronos-generator",
                 "version": "0.9.9.6",
                 "dist": {
@@ -39,18 +25,20 @@
     "require": {
         "php": ">=5.3.0",
         "olympos/chronos-generator": "0.9.*",
-        "apache/log4php": "2.3.0",
-        "zf1/zend-db": "1.12.6",
-        "zf1/zend-http": "1.12.6",
-        "zf1/zend-search-lucene": "1.12.6",
-        "ircmaxell/password-compat": "1.0.3",
-        "sybio/image-workshop": "2.0.5",
-        "sybio/gif-frame-extractor": "1.0.0",
-        "sybio/gif-creator": "1.0.0",
-        "helios-ag/fm-elfinder-php-connector": "~2.2",
-        "nusphere/nusoap": "0.9.5",
-        "smarty/smarty": "v3.1.21",
-        "itbz/fpdi": "1.4.4"
+        "apache/log4php": "~2.3",
+        "zf1/zend-db": "~1.12",
+        "zf1/zend-search-lucene": "~1.12",
+        "ircmaxell/password-compat": "~1.0",
+        "fergusean/nusoap": "~0.9"
+    },
+    "suggest": {
+        "smarty/smarty": "Use this package to render Smarty views via SmartyView",
+        "helios-ag/fm-elfinder-php-connector": "Use this package to integrate ElFinder with MediaController",
+        "setasign/fpdi-fpdf": "Use this package to generate PDF files",
+        "sybio/image-workshop": "Use this package for image manipulations with GraphicsUtil",
+        "sybio/gif-frame-extractor": "Use this package for image manipulations with GraphicsUtil",
+        "sybio/gif-creator": "Use this package for image manipulations with GraphicsUtil",
+        "zf1/zend-http": "Use this package, if you want to communicate to other wCMF instances over HTTP"
     },
     "autoload": {
         "psr-4": {

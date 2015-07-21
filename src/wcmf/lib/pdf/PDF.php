@@ -10,8 +10,17 @@
  */
 namespace wcmf\lib\pdf;
 
+if (!class_exists('FPDI')) {
+    throw new \wcmf\lib\config\ConfigurationException(
+            'wcmf\lib\pdf\PDF requires '.
+            'FPDI. If you are using composer, add setasign/fpdi '.
+            'as dependency to your project');
+}
+
 /**
  * PDF extends FPDF/FPDI.
+ *
+ * @note This class requires FPDI
  *
  * @author ingo herwig <ingo@wemove.com>
  */

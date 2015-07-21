@@ -19,9 +19,18 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\service\RemotingClient;
 
+if (!class_exists('Zend_Http_Client')) {
+    throw new \wcmf\lib\config\ConfigurationException(
+            'wcmf\lib\service\impl\HTTPClient requires '.
+            'Zend_Http_Client. If you are using composer, add zf1/zend-http '.
+            'as dependency to your project');
+}
+
 /**
  * HTTPClient is used to do calls to other wCMF instances over HTTP.
- * @see RemotingFacade
+ * @see RemotingServer
+ *
+ * @note This class requires Zend_Http_Client
  *
  * @author ingo herwig <ingo@wemove.com>
  */
