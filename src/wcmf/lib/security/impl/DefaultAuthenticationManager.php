@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\security\impl;
 
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\security\AuthenticationManager;
 
@@ -38,6 +39,9 @@ class DefaultAuthenticationManager implements AuthenticationManager {
     $config = ObjectFactory::getConfigurationInstance();
 
     // try to receive the user with given credentials
+    if ($this->_principalFactory == null) {
+      throw new ConfigurationException("The principalFactory is not set.");
+    }
     $user = $this->_principalFactory->getUser($login, true);
 
     // check if user exists

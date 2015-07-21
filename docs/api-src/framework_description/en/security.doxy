@@ -17,16 +17,18 @@ as instances of classes implementing the
 \link wcmf::lib::security::principal::User `User`\endlink interface. Since wCMF's
 authorization system is role based, users are organized in roles. Role classes
 implement the \link wcmf::lib::security::principal::Role `Role`\endlink interface.
+A user could have multiple roles, while multiple users could have the
+same role.
 
 ## Authentication ## {#sec_authentication}
 
 In wCMF authentication is handled by implementations of
 \link wcmf::lib::security::AuthenticationManager `AuthenticationManager`\endlink.
 
-Currently the framework provides
-\link wcmf::lib::security::impl::DefaultAuthenticationManager `DefaultAuthenticationManager`\endlink,
-which implements a __login/password__ based authentication procedure by matching
-the given user credentials against existing
+By default
+\link wcmf::lib::security::impl::DefaultAuthenticationManager `DefaultAuthenticationManager`\endlink
+is used. It implements a __login/password__ based authentication procedure by
+matching the given user credentials against existing
 \link wcmf::lib::security::principal::User `User`\endlink instances. These instances
 are provided by implementations of
 \link wcmf::lib::security::principal::PrincipalFactory `PrincipalFactory`\endlink.
@@ -53,6 +55,11 @@ catch (Exception $ex) {
 }
 ~~~~~~~~~~~~~
 
+@note The authenticated user, that is associated with the current session is
+obtained using the \link wcmf::lib::core::Session::getAuthUser `Session::getAuthUser`\endlink
+method. Until successful authentication, the user stored in the session is an instance of
+\link wcmf::lib::security::principal::impl::AnonymousUser `AnonymousUser`\endlink.
+
 The configuration of the authentication process in the default application looks
 like the following:
 
@@ -73,87 +80,111 @@ retrieves user instances from the storage, it needs to configured with the
 appropriate entity types. If required, the default user type may be replaced
 by custom implementations of \link wcmf::lib::security::principal::User `User`\endlink.
 
-@note The authenticated user, that is associated with the current session is
-obtained using the \link wcmf::lib::core::Session::getAuthUser `Session::getAuthUser`\endlink
-method.
-
 ## Authorization ## {#sec_authorization}
 
 The purpose of authorization is controlling access to application resources,
 which could be controllers or entity instances. To establish __access control__,
-rules have to defined in the first place an enforced afterwards.
+rules have to be defined in the first place and enforced afterwards.
 
 ### Permissions ### {#sec_perm}
 
 Access control rules are expressed as _permissions_. Permissions are either
-granted or denied to a role (see \ref sec_users_roles). Subject of a permission
-in wCMF is a combination of a _resource_, a _context_ and an _action_ and the
-notation is the same as for action keys (see \ref arch_actionkey), except
-that the _controller_ value is an arbitrary resource.
+granted or denied to a role (see \ref sec_users_roles).
 
-If written as an equation, the left side of the permission is the action key,
-while the right side is the list of roles, that are involved. Each role has either
-a <em>+</em> or a <em>-</em> sign prepended, meaning the permission is granted
-to the role or denied. The following code shows the __format__:
+A permission definition in wCMF consists of two parts:
+
+- The __permission subject__ is a combination of a _resource_, a _context_ and an
+  _action_ and the notation is the same as for action keys (see \ref arch_actionkey),
+  except that the _controller_ value is an arbitrary resource.
+- The __involved roles__ are listed space-separated and each one is prepended with
+  a _modifier_ (<em>+</em> for granting and <em>-</em> for denying).
+
+The following code illustrates the __format__:
 
 ~~~~~~~~~~~~~{.ini}
 resource?context?action = +allowedRole -deniedRole ...
 ~~~~~~~~~~~~~
 
-@note Permissions may be formed from any string values for _resource_, _context_
-and _action_ as long as they can be written as action key. Roles that are not
-listed in the permission are denied per default.
+#### Implicit denial ####
 
-Besides custom resources, wCMF supports the following __built-in resources__:
+Roles that are not listed in the permission are denied per default. The wildcard
+character (<em>*</em>) is used to define the permission for all roles that are
+not explicitly listed.
 
-- __Entity type__ to restrict access on all instances of an entity type
-  (e.g. `app.src.model.wcmf.User`)
-- __Entity property__ to restrict access on a certain property of an entity type
-  (e.g. `app.src.model.wcmf.User.login`)
-- __Entity instance__ to restrict access on one entity instance
-  (e.g. `app.src.model.wcmf.User:123`)
-- __Entity instance propery__ to restrict access on a certain property of one
-  entity instance (e.g. `app.src.model.wcmf.User:123.login`)
-
-The actions for these resources are properties of
-\link wcmf::lib::persistence::PersistenceAction `PersistenceAction`\endlink,
-e.g. \link wcmf::lib::persistence::PersistenceAction::READ `PersistenceAction::READ`\endlink.
-
-The following code shows some permission examples:
+The following code grants the permission only to _allowedRole_
 
 ~~~~~~~~~~~~~{.ini}
-; tester role is not allowed to update any authors except for the specified one
-; tester role is not allowed to update any authors stage attribute
-app.src.model.Author??update = -tester
-app.src.model.Author:111??update = +tester
-app.src.model.Author.stage??update = +administrators
-
-; tester role is not allowed to update any publishers name except for the specified one
-; tester role is not allowed to update any authors stage attribute
-app.src.model.Publisher.name??update = -tester
-app.src.model.Publisher:111.name??update = +tester
-
-; tester role is not allowed to read any book name except for the specified one
-app.src.model.Book??read = -tester
-app.src.model.Book:111??read = +tester
-
-; tester role is not allowed to read chapter 111 and due to inheritance also not chapter 222
-app.src.model.Chapter:111??read = -tester +administrators
-
-; custom permissions
-customPermission??start = +tester
-customPermission??stop = -tester
+resource?context?action = +allowedRole -*
 ~~~~~~~~~~~~~
 
-#### Default policy ####
+and is equivalent to
 
-<span class="label label-danger">TODO</span>
+~~~~~~~~~~~~~{.ini}
+resource?context?action = +allowedRole
+~~~~~~~~~~~~~
+
+#### Built-in resources ####
+
+The resource value could be set to any string to implement custom application
+specific permissions.
+
+Besides this, wCMF uses the following built-in resources:
+
+- _Controller_ to restrict access on execution of a controller
+  (e.g. `wcmf\application\controller\SaveController`)
+- _Entity type_ to restrict access on all instances of an entity type
+  (e.g. `app.src.model.wcmf.User`)
+- _Entity property_ to restrict access on a certain property of an entity type
+  (e.g. `app.src.model.wcmf.User.login`)
+- _Entity instance_ to restrict access on one entity instance
+  (e.g. `app.src.model.wcmf.User:123`)
+- _Entity instance propery_ to restrict access on a certain property of one
+  entity instance (e.g. `app.src.model.wcmf.User:123.login`)
+
+The actions for the persistency related resources are properties of
+\link wcmf::lib::persistence::PersistenceAction `PersistenceAction`\endlink,
+e.g. \link wcmf::lib::persistence::PersistenceAction::READ `PersistenceAction::READ`\endlink.
 
 #### Permission inheritance ####
 
 <span class="label label-danger">TODO</span>
 
+#### Examples ####
+
+The following code shows some permission examples:
+
+~~~~~~~~~~~~~
+// tester role is not allowed to update any authors except for the specified one
+// tester role is not allowed to update any authors stage attribute
+app.src.model.Author??update = -tester
+app.src.model.Author:111??update = +tester
+app.src.model.Author.stage??update = +administrators
+
+// tester role is not allowed to update any publishers name except for the specified one
+// tester role is not allowed to update any authors stage attribute
+app.src.model.Publisher.name??update = -tester
+app.src.model.Publisher:111.name??update = +tester
+
+// tester role is not allowed to read any book name except for the specified one
+app.src.model.Book??read = -tester
+app.src.model.Book:111??read = +tester
+
+// tester role is not allowed to read chapter 111 and due to inheritance also not chapter 222
+app.src.model.Chapter:111??read = -tester +administrators
+
+// tester role is not allowed to execute SaveController
+wcmf\application\controller\SaveController?? = -tester
+
+// custom permissions
+customPermission??start = +tester
+customPermission??stop = -tester
+~~~~~~~~~~~~~
+
 ### Checking permissions ### {#sec_perm_check}
+
+<span class="label label-danger">TODO</span>
+
+#### Default policy ####
 
 <span class="label label-danger">TODO</span>
 */
