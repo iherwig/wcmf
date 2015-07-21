@@ -129,7 +129,8 @@ class StringUtil {
    * @param $string The string to search in
    * @return An array with urls
    * @note This method searches for occurences of <a..href="xxx"..>, <img..src="xxx"..>,
-   * <input..src="xxx"..> or <form..action="xxx"..> and extracts xxx.
+   * <input..src="xxx"..>, <form..action="xxx"..>, <link..href="xxx"..>, <script..src="xxx"..>
+   * and extracts xxx.
    */
   public static function getUrls($string) {
     preg_match_all("/<a[^>]+href=\"([^\">]+)/i", $string, $links);
@@ -149,7 +150,9 @@ class StringUtil {
     preg_match_all("/<img[^>]+src=\"([^\">]+)/i", $string, $images);
     preg_match_all("/<input[^>]+src=\"([^\">]+)/i", $string, $buttons);
     preg_match_all("/<form[^>]+action=\"([^\">]+)/i", $string, $actions);
-    return array_merge($links[1], $images[1], $buttons[1], $actions[1]);
+    preg_match_all("/<link[^>]+href=\"([^\">]+)/i", $string, $css);
+    preg_match_all("/<script[^>]+src=\"([^\">]+)/i", $string, $scripts);
+    return array_merge($links[1], $images[1], $buttons[1], $actions[1], $css[1], $scripts[1]);
   }
 
   /**

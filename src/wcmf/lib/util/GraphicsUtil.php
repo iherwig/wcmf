@@ -17,7 +17,9 @@ use PHPImageWorkshop\ImageWorkshop;
 use GifFrameExtractor\GifFrameExtractor;
 use GifCreator\GifCreator;
 
-if (!class_exists('ImageWorkshop') || !class_exists('GifFrameExtractor') || !class_exists('GifCreator')) {
+if (!class_exists('PHPImageWorkshop\ImageWorkshop') ||
+        !class_exists('GifFrameExtractor\GifFrameExtractor') ||
+        !class_exists('GifCreator\GifCreator')) {
     throw new \wcmf\lib\config\ConfigurationException(
             'wcmf\lib\util\GraphicsUtil requires '.
             'ImageWorkshop, GifFrameExtractor and GifCreator. If you are using composer, '.
