@@ -2,6 +2,7 @@
     "name": "wcmf/wcmf",
     "type": "library",
     "description": "The wCMF web application framework",
+    "keywords": ["famework"]
     "license": "MIT",
     "authors": [
         {
