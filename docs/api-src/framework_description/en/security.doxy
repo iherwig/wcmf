@@ -147,7 +147,15 @@ e.g. \link wcmf::lib::persistence::PersistenceAction::READ `PersistenceAction::R
 
 #### Permission inheritance ####
 
-<span class="label label-danger">TODO</span>
+Permissions on __entity instances__ are passed to child entities in a _composite
+relation_ (see \ref model_associations). The following image illustrates this:
+
+\image html permission-inheritance.png "Permission inheritance"
+
+If access to the `Book` instance _Book A_ is restricted for one role, the same
+restriction also applies for the `Chapter` instances belonging to it
+(_Chapter A1_, _Chapter A2_). An inherited access restriction can be removed by
+explicitly granting the permission on the object in question.
 
 #### Examples ####
 
@@ -169,8 +177,11 @@ app.src.model.Publisher:111.name??update = +tester
 app.src.model.Book??read = -tester
 app.src.model.Book:111??read = +tester
 
-// tester role is not allowed to read chapter 111 and due to inheritance also not chapter 222
+// tester is not allowed to read chapter 111 and due to inheritance also not sub chapter 222,
+// and sub sub chapter 333, sub chapter 555 explicitly allowed and due to inheritance
+// also sub sub chapter 666
 app.src.model.Chapter:111??read = -tester +administrators
+app.src.model.Chapter:555??read = +tester +administrators
 
 // tester role is not allowed to execute SaveController
 wcmf\application\controller\SaveController?? = -tester
@@ -180,9 +191,28 @@ customPermission??start = +tester
 customPermission??stop = -tester
 ~~~~~~~~~~~~~
 
-### Checking permissions ### {#sec_perm_check}
+### Creating permissions ### {#sec_perm_create}
 
 <span class="label label-danger">TODO</span>
+
+#### Temporary permissions #### {#sec_perm_temp}
+
+<span class="label label-danger">TODO</span>
+
+### Checking permissions ### {#sec_perm_check}
+
+If a user has the permission to access a resource in the requested way can be
+tested by using the
+\link wcmf::lib::security::PermissionManager::authorize `PermissionManager::authorize`\endlink
+method. The method returns a boolean value indication whether authorization
+succeeded or not.
+
+The following code shows how to determine, if the current user is allowed to read
+the given object:
+
+~~~~~~~~~~~~~{.php}
+$canRead = $permissionManager->authorize($$object->getOID(), '', PersistenceAction::READ);
+~~~~~~~~~~~~~
 
 #### Default policy ####
 

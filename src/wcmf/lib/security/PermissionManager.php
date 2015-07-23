@@ -37,7 +37,7 @@ interface PermissionManager {
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
    * @param $user User instance to use for authorization (optional, default: the user obtained by Session::getAuthUser method)
-   * @return Boolean whether authorization succeded/failed.
+   * @return Boolean whether authorization succeeded/failed.
    */
   public function authorize($resource, $context, $action, User $user=null);
 

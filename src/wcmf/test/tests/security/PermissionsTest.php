@@ -59,6 +59,8 @@ class PermissionsTest extends DatabaseTestCase {
         array('id' => 222, 'fk_chapter_id' => 111, 'fk_book_id' => null, 'name' => 'Chapter 1.1'),
         array('id' => 333, 'fk_chapter_id' => 222, 'fk_book_id' => null, 'name' => 'Chapter 1.1.1'),
         array('id' => 444, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 2'),
+        array('id' => 555, 'fk_chapter_id' => 111, 'fk_book_id' => null, 'name' => 'Chapter 1.2'),
+        array('id' => 666, 'fk_chapter_id' => 555, 'fk_book_id' => null, 'name' => 'Chapter 1.2.1'),
       ),
       'Permission' => array(
         array('id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users -administrators'),
@@ -191,6 +193,10 @@ class PermissionsTest extends DatabaseTestCase {
     $this->assertNull($chapter11);
     $chapter111 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 333));
     $this->assertNull($chapter111);
+    $chapter12 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 555));
+    $this->assertNotNull($chapter12);
+    $chapter121 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 666));
+    $this->assertNotNull($chapter121);
 
     $chapter2 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Chapter', 444));
     $this->assertNotNull($chapter2);

@@ -137,7 +137,7 @@ instances get an attribute _sortkey_ which is used to define an explicit order.
 
 \image html model.png "Example class diagram"
 
-#### Associations ####
+#### Associations #### {#model_associations}
 
 Relations between domain classes - e.g. parent-child relations - are modeled as
 associations. Three different __types of associations__ are supported: _compositions_,
@@ -167,7 +167,7 @@ regarding the operations allowed on child instances:
 | Aggregation      | No              | Yes             | Yes
 | Association      | No              | No              | Yes
 
-##### Multiplicity #####
+##### Multiplicity ##### {#model_multiplicity}
 
 The multiplicity at the association ends limits the amount of instances that
 are allowed at that relation end. In a typical parent-child relation the parent
@@ -187,7 +187,7 @@ stereotype. The following diagram shows how to model a many-to-many relation:
 Using compositions ensures that many-to-many instances are deleted correctly,
 when the parent instances are deleted.
 
-##### Navigability #####
+##### Navigability ##### {#model_navigability}
 
 Another aspect of associations is the use of __arrow ends__ that define the
 navigability. If an arrow end is omitted on one end, instances at that end
@@ -195,7 +195,7 @@ are not accessible from the other end. Regarding the database schema all three
 association types will result in the creation of a foreign key column in the
 child table that points to the parent table.
 
-##### Multiple associations #####
+##### Multiple associations ##### {#model_multiple_associations}
 
 Sometimes multiple associations have to be defined between two domain classes.
 For example if there are `Person` and `Task` domain classes and tasks should be
@@ -208,7 +208,7 @@ The following diagram illustrates the given example:
 
 \image html multiple-associations.png "Role names in multiple associations"
 
-#### Inheritance ####
+#### Inheritance #### {#model_inheritance}
 
 If different domain classes should have the same attributes, a common base class
 can make these available to inheriting classes. An example may be an `EntityBase` type,
