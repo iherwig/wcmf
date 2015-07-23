@@ -61,13 +61,6 @@ abstract class Controller {
     // set sender on response
     $response->setSender(get_class($this));
 
-    // restore the error messages of a previous call
-    if ($request->hasErrors()) {
-      foreach ($request->getErrors() as $error) {
-        $response->addError($error);
-      }
-    }
-
     $this->_request = $request;
     $this->_response = $response;
   }

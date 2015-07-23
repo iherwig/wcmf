@@ -23,6 +23,7 @@ use wcmf\lib\presentation\Controller;
  * Display the errors contained in the request.
  * | Parameter             | Description
  * |-----------------------|-------------------------
+ * | _out_ `errors`        | Array of error messages
  * | __Response Actions__  | |
  * | `ok`                  | In all cases
  * </div>
@@ -38,7 +39,8 @@ class FailureController extends Controller {
   function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $response->setErrors($request->getErrors());
+    $response->setValue('errors', $request->getErrors());
+    $response->setContext('');
     $response->setAction('ok');
   }
 }
