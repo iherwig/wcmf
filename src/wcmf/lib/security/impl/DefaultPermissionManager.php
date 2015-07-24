@@ -23,7 +23,7 @@ use wcmf\lib\util\StringUtil;
 
 /**
  * DefaultPermissionManager retrieves authorization rules the storage.
- * It is configures with an entity type that stores permissions and must
+ * It is configured with an entity type that stores permissions and must
  * have the values 'resource', 'context', 'action', 'roles'.
  *
  * @author ingo herwig <ingo@wemove.com>

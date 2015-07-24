@@ -20,6 +20,9 @@ implement the \link wcmf::lib::security::principal::Role `Role`\endlink interfac
 A user could have multiple roles, while multiple users could have the
 same role.
 
+The concrete implementations of these interfaces are configured in
+\link wcmf::lib::security::principal::PrincipalFactory `PrincipalFactory`\endlink.
+
 ## Authentication ## {#sec_authentication}
 
 In wCMF authentication is handled by implementations of
@@ -55,10 +58,14 @@ catch (Exception $ex) {
 }
 ~~~~~~~~~~~~~
 
-@note The authenticated user, that is associated with the current session is
-obtained using the \link wcmf::lib::core::Session::getAuthUser `Session::getAuthUser`\endlink
-method. Until successful authentication, the user stored in the session is an instance of
+@note The user, that is associated with the current session - the _current user_ -
+is obtained using the
+\link wcmf::lib::core::Session::getAuthUser `Session::getAuthUser`\endlink
+method. Before successful authentication, this user is an instance of
 \link wcmf::lib::security::principal::impl::AnonymousUser `AnonymousUser`\endlink.
+It will be replaced by an instance of the application's
+\link wcmf::lib::security::principal::User `User`\endlink type after successful
+authentication.
 
 The configuration of the authentication process in the default application looks
 like the following:
@@ -191,30 +198,137 @@ customPermission??start = +tester
 customPermission??stop = -tester
 ~~~~~~~~~~~~~
 
-### Creating permissions ### {#sec_perm_create}
+### Permission management ### {#sec_perm_manage}
 
-<span class="label label-danger">TODO</span>
+Permission management includes _creation_, _modification_ and _deletion_ of permissions
+as well as handling _authorization requests_. In an wCMF application an instance
+of \link wcmf::lib::security::PermissionManager `PermissionManager`\endlink is
+used for these tasks. It is configured in the `PermissionManager` configuration
+section.
+
+Generally there are two kinds of permissions to be defined in an application.
+
+- _Static permissions_ are already known when the application is designed,
+  e.g. restriction to entity types or controllers. Since these permissions are
+  not likely to be changed by application users, they can be stored in the
+  application configuration.
+- _Dynamic permissions_ are defined on the application data. These permissions
+  will be set when the appropriate data is created. To allow application users
+  to change these permissions they are typically stored in the database.
+
+Different permission types require different ways of permission management,
+particularly regarding storing permissions. To support this wCMF provides
+several implementations of the
+\link wcmf::lib::security::PermissionManager `PermissionManager`\endlink interface:
+
+- \link wcmf::lib::security::impl::StaticPermissionManager `StaticPermissionManager`\endlink
+  is used to retrieve permissions from the application configuration. The
+  permissions are stored in the `Authorization` configuration section like shown
+  in the following code:
+
+~~~~~~~~~~~~~{.ini}
+[Authorization]
+??login = +*
+??logout = +*
+??checkPermissions = +*
+??checkPermissionsOfUser = +administrators
+app.src.model.wcmf.User??read = +administrators
+app.src.model.wcmf.User??update = +administrators
+app.src.model.wcmf.User??delete = +administrators
+app.src.model.wcmf.User??create = +administrators
+~~~~~~~~~~~~~
+
+- \link wcmf::lib::security::impl::DefaultPermissionManager `DefaultPermissionManager`\endlink
+  handles permissions that are stored in the database. The entity type that actually
+  stores the permissions is required to have a _resource_, _context_, _action_
+  and _roles_ attribute and is defined in the application configuration. The
+  following lines are taken from the configuration of the default application:
+
+~~~~~~~~~~~~~{.ini}
+[DefaultPermissionManager]
+__class = wcmf\lib\security\impl\DefaultPermissionManager
+permissionType = app.src.model.wcmf.Permission
+~~~~~~~~~~~~~
+
+- \link wcmf::lib::security::impl::ChainedPermissionManager `ChainedPermissionManager`\endlink
+  is used to combine different
+  \link wcmf::lib::security::PermissionManager `PermissionManager`\endlink instances.
+  When asked for authorization, it delegates the request to all it's managers, while
+  creation, modification and deletion of permissions is always handled by the
+  first contained manager. An example configuration of this manager is shown in
+  the code below:
+
+~~~~~~~~~~~~~{.ini}
+[PermissionManager]
+__class = wcmf\lib\security\impl\ChainedPermissionManager
+managers = {$defaultPermissionManager, $staticPermissionManager}
+
+[DefaultPermissionManager]
+__class = wcmf\lib\security\impl\DefaultPermissionManager
+permissionType = app.src.model.wcmf.Permission
+
+[StaticPermissionManager]
+__class = wcmf\lib\security\impl\StaticPermissionManager
+~~~~~~~~~~~~~
+
+- \link wcmf::lib::security::impl::NullPermissionManager `NullPermissionManager`\endlink
+  acts like there is no permission manager and is merely used for testing.
+
+All implementations inherit from
+\link wcmf::lib::security::impl::AbstractPermissionManager `AbstractPermissionManager`\endlink,
+which already provides most of parts for handling authorization requests.
 
 #### Temporary permissions #### {#sec_perm_temp}
 
-<span class="label label-danger">TODO</span>
+There are situations, where a piece of code requires a certain permission in the
+context of the current user, which is not possible to grant throughout the whole
+application. For example, if a user wants to sign in to the application,
+\link wcmf::lib::security::principal::PrincipalFactory `PrincipalFactory`\endlink
+needs to provide a user instance although the anonymous user is not allowed
+to read user instances. To accomplish this,
+\link wcmf::lib::security::PermissionManager `PermissionManager`\endlink allows
+to set a transient, temporary permission like in the following example:
+
+~~~~~~~~~~~~~{.php}
+$permissionManager = ObjectFactory::getInstance('permissionManager');
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+$userType = 'app.src.model.wcmf.User';
+
+// set up a temporary permission to read the user instance for the given login
+$permissionManager->addTempPermission($userType, '', PersistenceAction::READ);
+
+$user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE,
+            array(
+                new Criteria($userType, 'login', '=', $login)
+            ), null);
+
+// remove the temporary permission
+$permissionManager->removeTempPermission($userType, '', PersistenceAction::READ);
+~~~~~~~~~~~~~
 
 ### Checking permissions ### {#sec_perm_check}
 
-If a user has the permission to access a resource in the requested way can be
-tested by using the
+To test, if a user has the permission to access a resource in the requested way
+the method
 \link wcmf::lib::security::PermissionManager::authorize `PermissionManager::authorize`\endlink
-method. The method returns a boolean value indication whether authorization
-succeeded or not.
+is used. It returns a boolean value indicating whether the user is authorized
+or not.
 
 The following code shows how to determine, if the current user is allowed to read
 the given object:
 
 ~~~~~~~~~~~~~{.php}
-$canRead = $permissionManager->authorize($$object->getOID(), '', PersistenceAction::READ);
+$canRead = $permissionManager->authorize($object->getOID(), '', PersistenceAction::READ);
 ~~~~~~~~~~~~~
 
-#### Default policy ####
+#### Default policies #### {#sec_perm_default_policies}
 
-<span class="label label-danger">TODO</span>
+Default policies answer the question, what happens if __no permission__ is defined
+on a requested resource. These rules depend on the authentication status of the
+current user and are defined in
+\link wcmf::lib::security::impl::AbstractPermissionManager `AbstractPermissionManager`\endlink
+as follows:
+
+- _Not authenticated_: Resource is _not accessible_
+- _Authenticated_: Resource is _accessible_
 */
