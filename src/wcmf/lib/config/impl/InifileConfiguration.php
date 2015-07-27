@@ -652,8 +652,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
           }
 
           // everything is up-to-date
-          foreach($vars as $key=>$val) {
-            eval("$"."this->$key = $"."vars['"."$key'];");
+          foreach($vars as $key => $val) {
+            $this->$key = $val;
           }
           return true;
         }
