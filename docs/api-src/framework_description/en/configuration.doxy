@@ -74,8 +74,9 @@ database connection) are separated into a file called _server.ini_.
 
 wCMF supports [Dependency injection](http://en.wikipedia.org/wiki/Dependency_injection)
 through the \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink class.
-This class implements _setter injection_, which means that dependencies are either
-set through a _setter method_ of the client class or a _public member variable_.
+This class implements _constructor_ and _setter injection_, which means that dependencies
+are either set through the constructor or a _setter method_ of the client class
+or a _public member variable_.
 
 Assembly details for client instances are defined in the application configuration
 in special sections containing a  `__class` key. The value of the key denotes the

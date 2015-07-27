@@ -44,8 +44,7 @@ class JsonFormatTest extends BaseTestCase {
                 )
             ));
 
-    $format = new JsonFormat();
-    $format->setSerializer(new DionysosNodeSerializer());
+    $format = new JsonFormat(new DionysosNodeSerializer());
     $format->deserialize($message);
 
     // test
@@ -79,8 +78,7 @@ class JsonFormatTest extends BaseTestCase {
                 )
             ));
 
-    $format = new JsonFormat();
-    $format->setSerializer(new DionysosNodeSerializer());
+    $format = new JsonFormat(new DionysosNodeSerializer());
     $format->deserialize($message);
 
     // test
@@ -145,8 +143,7 @@ class JsonFormatTest extends BaseTestCase {
                 )
             ));
 
-    $format = new JsonFormat();
-    $format->setSerializer(new DionysosNodeSerializer());
+    $format = new JsonFormat(new DionysosNodeSerializer());
     $format->deserialize($message);
 
     // test
@@ -203,8 +200,7 @@ class JsonFormatTest extends BaseTestCase {
                     )
                     )));
 
-    $format = new JsonFormat();
-    $format->setSerializer(new DionysosNodeSerializer());
+    $format = new JsonFormat(new DionysosNodeSerializer());
     $format->deserialize($message);
 
     // test
@@ -240,8 +236,7 @@ class JsonFormatTest extends BaseTestCase {
                 )
             ));
 
-    $format = new JsonFormat();
-    $format->setSerializer(new DionysosNodeSerializer());
+    $format = new JsonFormat(new DionysosNodeSerializer());
     $format->serialize($message);
 
     // test
@@ -275,8 +270,7 @@ class JsonFormatTest extends BaseTestCase {
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
             ));
 
-    $format = new JsonFormat();
-    $format->setSerializer(new DionysosNodeSerializer());
+    $format = new JsonFormat(new DionysosNodeSerializer());
     $format->serialize($message);
 
     // test
@@ -324,8 +318,7 @@ class JsonFormatTest extends BaseTestCase {
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
         ));
 
-    $format = new JsonFormat();
-    $format->setSerializer(new DionysosNodeSerializer());
+    $format = new JsonFormat(new DionysosNodeSerializer());
     $format->serialize($message);
 
     // test
@@ -383,8 +376,7 @@ class JsonFormatTest extends BaseTestCase {
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'list' => $list1));
 
-    $format = new JsonFormat();
-    $format->setSerializer(new DionysosNodeSerializer());
+    $format = new JsonFormat(new DionysosNodeSerializer());
     $format->serialize($message);
 
     // test

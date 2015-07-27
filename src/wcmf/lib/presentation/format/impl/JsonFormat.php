@@ -11,7 +11,6 @@
 namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\core\Log;
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 
@@ -36,6 +35,14 @@ class JsonFormat extends HierarchicalFormat {
 
   protected $_serializer = null;
 
+  /**
+   * Constructor
+   * @param $serializer NodeSerializer instance
+   */
+  public function __construct(NodeSerializer $serializer) {
+    $this->_serializer = $serializer;
+  }
+
   public static function printJSONResult() {
     if (self::$_jsonUsed) {
       $data = self::$_jsonData;
@@ -58,14 +65,6 @@ class JsonFormat extends HierarchicalFormat {
   }
 
   /**
-   * Set the NodeSerializer instance to use
-   * @param $serializer NodeSerializer
-   */
-  public function setSerializer(NodeSerializer $serializer) {
-    $this->_serializer = $serializer;
-  }
-
-  /**
    * @see HierarchicalFormat::afterSerialize()
    */
   protected function afterSerialize($values) {
@@ -84,9 +83,6 @@ class JsonFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::isSerializedNode()
    */
   protected function isSerializedNode($value) {
-    if ($this->_serializer == null) {
-      throw new ConfigurationException("The serializer is not set.");
-    }
     return $this->_serializer->isSerializedNode($value);
   }
 
@@ -94,9 +90,6 @@ class JsonFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::serializeNode()
    */
   protected function serializeNode($value) {
-    if ($this->_serializer == null) {
-      throw new ConfigurationException("The serializer is not set.");
-    }
     $node = $this->_serializer->serializeNode($value);
     return $node;
   }
@@ -105,9 +98,6 @@ class JsonFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::deserializeNode()
    */
   protected function deserializeNode($value) {
-    if ($this->_serializer == null) {
-      throw new ConfigurationException("The serializer is not set.");
-    }
     $result = $this->_serializer->deserializeNode($value);
     return $result;
   }

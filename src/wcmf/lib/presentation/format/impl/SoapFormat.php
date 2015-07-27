@@ -24,6 +24,14 @@ class SoapFormat extends HierarchicalFormat {
   protected $_serializer = null;
 
   /**
+   * Constructor
+   * @param $serializer NodeSerializer instance
+   */
+  public function __construct(NodeSerializer $serializer) {
+    $this->_serializer = $serializer;
+  }
+
+  /**
    * @see Format::getMimeType()
    */
   public function getMimeType() {
@@ -42,9 +50,6 @@ class SoapFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::isSerializedNode()
    */
   protected function isSerializedNode($value) {
-    if ($this->_serializer == null) {
-      throw new ConfigurationException("The serializer is not set.");
-    }
     return $this->_serializer->isSerializedNode($value);
   }
 
@@ -52,9 +57,6 @@ class SoapFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::serializeNode()
    */
   protected function serializeNode($value) {
-    if ($this->_serializer == null) {
-      throw new ConfigurationException("The serializer is not set.");
-    }
     $node = $this->_serializer->serializeNode($value);
     return $node;
   }
@@ -63,9 +65,6 @@ class SoapFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::deserializeNode()
    */
   protected function deserializeNode($value) {
-    if ($this->_serializer == null) {
-      throw new ConfigurationException("The serializer is not set.");
-    }
     $result = $this->_serializer->deserializeNode($value);
     return $result;
   }

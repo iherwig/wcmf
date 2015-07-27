@@ -101,14 +101,6 @@ class ObjectFactory {
   }
 
   /**
-   * Get the names of the created shared instances.
-   * @return Array
-   */
-  public static function getInstanceNames() {
-    return array_keys(self::$_instances);
-  }
-
-  /**
    * Register a shared instance with a given name.
    * @param $name The name of the instance.
    * @param $instance The instance
@@ -138,8 +130,9 @@ class ObjectFactory {
    * @param $name The name by which the instance may be retrieved later
    * using ObjectFactory::getInstance()
    * @param $configuration Associative array with key value pairs for instance properties
-   * and the special keys '__class' (optional, denotes the instance class name),
-   * '__shared' (optional, if true, the instance may be reused using ObjectFactory::getInstance())
+   * passed to the constructor, setters or public properties and the special keys '__class'
+   * (optional, denotes the instance class name), '__shared' (optional, if true, the
+   * instance may be reused using ObjectFactory::getInstance())
    * @return Object
    */
   public static function createInstance($name, $configuration) {
@@ -151,8 +144,24 @@ class ObjectFactory {
 
       // class definition must be supplied by autoloader
       if (class_exists($className)) {
+
+        // collect constructor parameters
+        $cParams = array();
+        $refClass = new \ReflectionClass($className);
+        if ($refClass->hasMethod('__construct')) {
+          $refConstructor = new \ReflectionMethod($className, '__construct');
+          $refParameters = $refConstructor->getParameters();
+          foreach ($refParameters as $param) {
+            $paramName = $param->name;
+            if (isset($configuration[$paramName])) {
+              $cParams[$paramName] = self::resolveValue($configuration[$paramName]);
+            }
+          }
+        }
+
         // create the instance
-        $obj = new $className;
+        $obj = $refClass->newInstanceArgs($cParams);
+
         // check against interface
         $interface = self::getInterface($name);
         if ($interface != null && !($obj instanceof $interface)) {
@@ -161,44 +170,9 @@ class ObjectFactory {
         }
         // set the instance properties
         foreach ($configuration as $key => $value) {
-          // exclude properties starting with __
-          if (strpos($key, '__') !== 0) {
-            // special treatments, if value is a string
-            if (is_string($value)) {
-              // replace variables denoted by a leading $
-              if (strpos($value, '$') === 0) {
-                $value = self::getInstance(preg_replace('/^\$/', '', $value));
-              }
-              else {
-                // convert booleans
-                $lower = strtolower($value);
-                if ($lower === 'true') {
-                  $value = true;
-                }
-                if ($lower === 'false') {
-                  $value = false;
-                }
-              }
-            }
-            // special treatments, if value is an array
-            if (is_array($value)) {
-              $result = array();
-              $containsInstance = false;
-              // check for variables
-              foreach ($value as $val) {
-                if (is_string($val) && strpos($val, '$') === 0) {
-                  $result[] = self::getInstance(preg_replace('/^\$/', '', $val));
-                  $containsInstance = true;
-                }
-                else {
-                  $result[] = $val;
-                }
-              }
-              // only replace value, if the array containes an variable
-              if ($containsInstance) {
-                $value = $result;
-              }
-            }
+          // exclude properties starting with __ and constructor parameters
+          if (strpos($key, '__') !== 0 && !isset($cParams[$key])) {
+            $value = self::resolveValue($value);
             // set the property
             $setterName = self::getSetterName($key);
             if (method_exists($obj, $setterName)) {
@@ -242,6 +216,51 @@ class ObjectFactory {
       $instance = $configuration;
     }
     return $instance;
+  }
+
+  /**
+   * Resolve a configuration value into a parameter
+   * @param $value
+   * @return Mixed
+   */
+  protected static function resolveValue($value) {
+    // special treatments, if value is a string
+    if (is_string($value)) {
+      // replace variables denoted by a leading $
+      if (strpos($value, '$') === 0) {
+        $value = self::getInstance(preg_replace('/^\$/', '', $value));
+      }
+      else {
+        // convert booleans
+        $lower = strtolower($value);
+        if ($lower === 'true') {
+          $value = true;
+        }
+        if ($lower === 'false') {
+          $value = false;
+        }
+      }
+    }
+    // special treatments, if value is an array
+    if (is_array($value)) {
+      $result = array();
+      $containsInstance = false;
+      // check for variables
+      foreach ($value as $val) {
+        if (is_string($val) && strpos($val, '$') === 0) {
+          $result[] = self::getInstance(preg_replace('/^\$/', '', $val));
+          $containsInstance = true;
+        }
+        else {
+          $result[] = $val;
+        }
+      }
+      // only replace value, if the array containes an variable
+      if ($containsInstance) {
+        $value = $result;
+      }
+    }
+    return $value;
   }
 
   /**
