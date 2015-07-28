@@ -81,7 +81,7 @@ class ObjectId {
   }
 
   /**
-   * Get the prefix
+   * Get the NULL instance
    * @return String
    */
   public static function NULL_OID() {

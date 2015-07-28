@@ -44,6 +44,9 @@ class ObjectIdTest extends BaseTestCase {
     // too much pks
     $oidStr3 = 'User:1:2';
     $this->assertFalse(ObjectId::isValid($oidStr3), "'User:1:2' is not valid");
+
+    // null
+    $this->assertTrue(ObjectId::isValid(ObjectId::NULL_OID()), "NULL oid is valid");
   }
 
   public function testParse() {

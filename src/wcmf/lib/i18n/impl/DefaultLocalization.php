@@ -135,7 +135,7 @@ class DefaultLocalization implements Localization {
   /**
    * @see Localization::loadTranslation()
    */
-  public function loadTranslation($object, $lang, $useDefaults=true, $recursive=true) {
+  public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true) {
     $translatedObject = $this->loadTranslationImpl($object, $lang, $useDefaults);
 
     // recurse if requested
@@ -174,7 +174,7 @@ class DefaultLocalization implements Localization {
    * @return A reference to the translated object.
    * @throws IllegalArgumentException
    */
-  protected function loadTranslationImpl($object, $lang, $useDefaults=true) {
+  protected function loadTranslationImpl(PersistentObject $object, $lang, $useDefaults=true) {
     if ($object == null) {
       throw new IllegalArgumentException('Cannot load translation for null');
     }
@@ -210,7 +210,7 @@ class DefaultLocalization implements Localization {
    * @see Localization::loadTranslation()
    * @note Only values with tag TRANSLATABLE are stored.
    */
-  public function saveTranslation($object, $lang, $recursive=true) {
+  public function saveTranslation(PersistentObject $object, $lang, $recursive=true) {
     $this->saveTranslationImpl($object, $lang);
 
     // recurse if requested
@@ -233,7 +233,7 @@ class DefaultLocalization implements Localization {
    * @param $object An instance of the entity type that holds the translations as values.
    * @param $lang The language of the translation.
    */
-  protected function saveTranslationImpl($object, $lang) {
+  protected function saveTranslationImpl(PersistentObject $object, $lang) {
     // if the requested language is the default language, do nothing
     if ($lang == $this->getDefaultLanguage()) {
       // nothing to do
@@ -250,7 +250,7 @@ class DefaultLocalization implements Localization {
       $translations = $query->execute(BuildDepth::SINGLE);
 
       // save the translations, ignore pk values
-      $pkNames = $object->getPkNames();
+      $pkNames = $object->getMapper()->getPkNames();
       $iter = new NodeValueIterator($object, false);
       for($iter->rewind(); $iter->valid(); $iter->next()) {
         $valueName = $iter->key();

@@ -125,7 +125,7 @@ class LuceneSearch implements IndexedSearch {
           $highlightedRegex = '/((<b style="color:black;background-color:#[0-9a-f]{6}">)+)([^<]+?)((<\/b>)+)/';
           $obj = $persistenceFacade->load($oid);
           if ($obj) {
-            $valueNames = $obj->getPersistentValueNames();
+            $valueNames = $obj->getValueNames(true);
             foreach ($valueNames as $curValueName) {
               $inputType = $obj->getValueProperty($curValueName, 'input_type');
               $value = $this->encodeValue($obj->getValue($curValueName), $inputType);
@@ -219,7 +219,7 @@ class LuceneSearch implements IndexedSearch {
         // create the document
         $doc = new \Zend_Search_Lucene_Document();
 
-        $valueNames = $indexObj->getPersistentValueNames();
+        $valueNames = $indexObj->getValueNames(true);
 
         $doc->addField(\Zend_Search_Lucene_Field::unIndexed('oid', $oidStr, 'UTF-8'));
         $typeField = \Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'UTF-8');

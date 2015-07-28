@@ -200,17 +200,6 @@ class NodeUtil {
   }
 
   /**
-   * Get the display name for a Node type defined by the mappers 'alt' property.
-   * @param $type The name of the type
-   * @return The display string
-   */
-  public static function getDisplayNameFromType($type) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $typeNode = $persistenceFacade->create($type, BuildDepth::SINGLE);
-    return $typeNode->getObjectDisplayName();
-  }
-
-  /**
    * Make all urls matching a given base url in a Node relative.
    * @param $node A reference to the Node the holds the value
    * @param $baseUrl The baseUrl to which matching urls will be made relative
@@ -291,7 +280,8 @@ class NodeUtil {
    * @param $node The Node instance
    */
   public static function removeNonDisplayValues(Node $node) {
-    $displayValues = $node->getDisplayValueNames($node);
+    $displayValueStr = $node->getProperty('display_value');
+    $displayValues = preg_split('/\|/', $displayValueStr);
     $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $displayValues)) {

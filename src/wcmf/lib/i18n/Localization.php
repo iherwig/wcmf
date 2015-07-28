@@ -11,6 +11,7 @@
 namespace wcmf\lib\i18n;
 
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
  * Localization defines the interface for storing localized entity instances
@@ -63,7 +64,7 @@ interface Localization {
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    * @return A reference to the translated object.
    */
-  public function loadTranslation($object, $lang, $useDefaults=true, $recursive=true);
+  public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true);
 
   /**
    * Save a translation of an entity for a specific language. Only the
@@ -73,7 +74,7 @@ interface Localization {
    * @param $recursive Boolean whether to save translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
    */
-  public function saveTranslation($object, $lang, $recursive=true);
+  public function saveTranslation(PersistentObject $object, $lang, $recursive=true);
 
   /**
    * Remove translations for a given entity.

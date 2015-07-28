@@ -102,7 +102,7 @@ class SaveController extends Controller {
 
           // iterate over all values given in the node
           $mapper = $curRequestObject->getMapper();
-          $pkValueNames = $curRequestObject->getPkNames();
+          $pkValueNames = $mapper->getPkNames();
           foreach ($curRequestObject->getValueNames() as $curValueName) {
             // check if the attribute exists
             if ($mapper && !$mapper->hasAttribute($curValueName) && !$mapper->hasRelation($curValueName)) {
