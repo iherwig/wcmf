@@ -344,12 +344,9 @@ class DefaultTransaction implements Transaction {
         }
       }
       if ($canInsert) {
-        $mapper = $object->getMapper();
-        if ($mapper) {
-          $oldOid = $object->getOID();
-          $mapper->save($object);
-          $changedOids[$oldOid->__toString()] = $object->getOID()->__toString();
-        }
+        $oldOid = $object->getOID();
+        $object->getMapper()->save($object);
+        $changedOids[$oldOid->__toString()] = $object->getOID()->__toString();
       }
       unset($this->_newObjects[$key]);
       $insertOids = array_keys($this->_newObjects);
@@ -373,10 +370,7 @@ class DefaultTransaction implements Transaction {
         Log::debug("Process update on object: ".$key, __CLASS__);
       }
       $object = $this->_dirtyObjects[$key];
-      $mapper = $object->getMapper();
-      if ($mapper) {
-        $mapper->save($object);
-      }
+      $object->getMapper()->save($object);
       unset($this->_dirtyObjects[$key]);
       $updateOids = array_keys($this->_dirtyObjects);
     }
@@ -393,10 +387,7 @@ class DefaultTransaction implements Transaction {
         Log::debug("Process delete on object: ".$key, __CLASS__);
       }
       $object = $this->_deletedObjects[$key];
-      $mapper = $object->getMapper();
-      if ($mapper) {
-        $mapper->delete($object);
-      }
+      $object->getMapper()->delete($object);
       unset($this->_deletedObjects[$key]);
       $deleteOids = array_keys($this->_deletedObjects);
     }

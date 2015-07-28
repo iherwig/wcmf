@@ -83,24 +83,19 @@ class NodeIterator implements \Iterator {
     // collect navigable children for the given aggregation kinds
     $childrenArray = array();
     $mapper = $this->_currentNode->getMapper();
-    if ($mapper) {
-      $relations = $mapper->getRelations('child');
-      $followAll = sizeof($this->_aggregationKinds) == 0;
-      foreach ($relations as $relation) {
-        $aggregationKind = $relation->getOtherAggregationKind();
-        if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->_aggregationKinds))) {
-          $childValue = $this->_currentNode->getValue($relation->getOtherRole());
-          if ($childValue != null) {
-            $children = $relation->isMultiValued() ? $childValue : array($childValue);
-            foreach ($children as $child) {
-              $childrenArray[] = $child;
-            }
+    $relations = $mapper->getRelations('child');
+    $followAll = sizeof($this->_aggregationKinds) == 0;
+    foreach ($relations as $relation) {
+      $aggregationKind = $relation->getOtherAggregationKind();
+      if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->_aggregationKinds))) {
+        $childValue = $this->_currentNode->getValue($relation->getOtherRole());
+        if ($childValue != null) {
+          $children = $relation->isMultiValued() ? $childValue : array($childValue);
+          foreach ($children as $child) {
+            $childrenArray[] = $child;
           }
         }
       }
-    }
-    else {
-      $childrenArray = $this->_currentNode->getChildren();
     }
     $this->addToQueue($childrenArray);
 

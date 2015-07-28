@@ -130,9 +130,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     // if not cached or build depth requested, load
     if ($obj == null || $buildDepth != BuildDepth::SINGLE) {
       $mapper = $this->getMapper($oid->getType());
-      if ($mapper != null) {
-        $obj = $mapper->load($oid, $buildDepth);
-      }
+      $obj = $mapper->load($oid, $buildDepth);
     }
     return $obj;
   }
@@ -145,16 +143,13 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
 
-    $obj = null;
     $mapper = $this->getMapper($type);
-    if ($mapper != null) {
-      $obj = $mapper->create($type, $buildDepth);
+    $obj = $mapper->create($type, $buildDepth);
 
-      // register the object with the transaction, if it is active
-      $transaction = $this->getTransaction();
-      if ($transaction->isActive()) {
-        $transaction->registerNew($obj);
-      }
+    // register the object with the transaction, if it is active
+    $transaction = $this->getTransaction();
+    if ($transaction->isActive()) {
+      $transaction->registerNew($obj);
     }
 
     return $obj;
@@ -178,11 +173,8 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
-    $result = array();
     $mapper = $this->getMapper($type);
-    if ($mapper != null) {
-      $result = $mapper->getOIDs($type, $criteria, $orderby, $pagingInfo);
-    }
+    $result = $mapper->getOIDs($type, $criteria, $orderby, $pagingInfo);
     return $result;
   }
 
@@ -209,11 +201,8 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
-    $result = array();
     $mapper = $this->getMapper($type);
-    if ($mapper != null) {
-      $result = $mapper->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
-    }
+    $result = $mapper->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
     return $result;
   }
 

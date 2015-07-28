@@ -61,12 +61,9 @@ class ArrayOutputStrategy implements OutputStrategy {
       $value = $this->writeValue($obj->getValue($name));
       $content['values'][$name]['value'] = $value;
       if ($this->_writeValueProperties) {
-        $mapper = $obj->getMapper();
-        if ($mapper) {
-          $content['values'][$name]['properties'] = array();
-          foreach($obj->getValuePropertyNames($name) as $propertyName) {
-            $content['values'][$name]['properties'][$propertyName] = $this->writeValue($obj->getValueProperty($name, $propertyname));
-          }
+        $content['values'][$name]['properties'] = array();
+        foreach($obj->getValuePropertyNames($name) as $propertyName) {
+          $content['values'][$name]['properties'][$propertyName] = $this->writeValue($obj->getValueProperty($name, $propertyname));
         }
       }
     }

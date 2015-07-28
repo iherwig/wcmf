@@ -140,21 +140,18 @@ class DefaultLocalization implements Localization {
 
     // recurse if requested
     if ($recursive) {
-      $mapper = $object->getMapper();
-      if ($mapper) {
-        $relations = $mapper->getRelations('child');
-        foreach ($relations as $relation) {
-          if ($relation->getOtherNavigability()) {
-            $role = $relation->getOtherRole();
-            $childValue = $object->getValue($role);
-            if ($childValue != null) {
-              $children = $relation->isMultiValued() ? $childValue : array($childValue);
-              foreach ($children as $child) {
-                // don't resolve proxies
-                if (!($child instanceof PersistentObjectProxy)) {
-                  $translatedChild = $this->loadTranslationImpl($child, $lang, $useDefaults);
-                  $translatedObject->addNode($translatedChild, $role);
-                }
+      $relations = $object->getMapper()->getRelations('child');
+      foreach ($relations as $relation) {
+        if ($relation->getOtherNavigability()) {
+          $role = $relation->getOtherRole();
+          $childValue = $object->getValue($role);
+          if ($childValue != null) {
+            $children = $relation->isMultiValued() ? $childValue : array($childValue);
+            foreach ($children as $child) {
+              // don't resolve proxies
+              if (!($child instanceof PersistentObjectProxy)) {
+                $translatedChild = $this->loadTranslationImpl($child, $lang, $useDefaults);
+                $translatedObject->addNode($translatedChild, $role);
               }
             }
           }
