@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\security\AuthorizationException;
@@ -61,7 +60,7 @@ class ListController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     if($request->hasValue('limit') && intval($request->getValue('limit')) < 0) {
-      Log::warn(ApplicationError::get('LIMIT_NEGATIVE'), __CLASS__);
+      $this->getLogger()->warn(ApplicationError::get('LIMIT_NEGATIVE'));
     }
     if($request->hasValue('sortDirection')) {
       $sortDirection = $request->getValue('sortDirection');
@@ -182,7 +181,7 @@ class ListController extends Controller {
         }
       }
     }
-    Log::debug("Load objects with query: ".$query->getLastQueryString(), __CLASS__);
+    $this->getLogger()->debug("Load objects with query: ".$query->getLastQueryString());
     return $objects;
   }
 

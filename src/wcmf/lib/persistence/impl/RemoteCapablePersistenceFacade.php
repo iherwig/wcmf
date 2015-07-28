@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\persistence\impl;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\persistence\ObjectId;
@@ -37,10 +37,15 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   private $_remotingServer = null;
 
+  private static $_logger = null;
+
   /**
    * Constructor
    */
   public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     // initialize session variables
     $session = ObjectFactory::getInstance('session');
     if (!$session->exist(self::PROXY_OBJECTS_SESSION_VARNAME)) {
@@ -154,7 +159,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @return The proxy object.
    */
   protected function getProxyObject(ObjectId $umi, $buildDepth) {
-    Log::debug("Get proxy object for: ".$umi, __CLASS__);
+    self::$_logger->debug("Get proxy object for: ".$umi);
 
     // local objects don't have a proxy
     if (strlen($umi->getPrefix()) == 0) {
@@ -179,14 +184,14 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       }
       if (!$proxy) {
         // the proxy has to be created
-        Log::debug("Creating...", __CLASS__);
+        self::$_logger->debug("Creating...");
         $proxy = $persistenceFacade->create($umi->getType(), BuildDepth::SINGLE);
         $proxy->setValue('umi', $umi);
         $proxy->save();
       }
       $this->registerProxyObject($umi, $proxy, $buildDepth);
     }
-    Log::debug("Proxy oid: ".$proxy->getOID(), __CLASS__);
+    self::$_logger->debug("Proxy oid: ".$proxy->getOID());
     return $proxy;
   }
 
@@ -196,14 +201,14 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @param $buildDepth buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BuildDepth::REQUIRED)
    */
   protected function loadRemoteObject(ObjectId $umi, $buildDepth) {
-    Log::debug("Resolve proxy object for: ".$umi, __CLASS__);
+    self::$_logger->debug("Resolve proxy object for: ".$umi);
 
     // check if the remote object was loaded already
     $obj = $this->getRegisteredRemoteObject($umi, $buildDepth);
 
     // resolve the object if requested for the first time
     if (!$obj) {
-      Log::debug("Retrieving...", __CLASS__);
+      self::$_logger->debug("Retrieving...");
 
       // determine remote oid
       $oid = new ObjectId($umi->getType(), $umi->getId());
@@ -220,7 +225,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
           'translateValues' => $this->_isTranslatingValues
         )
       );
-      Log::debug("Request:\n".$request->toString(), __CLASS__);
+      self::$_logger->debug("Request:\n".$request->toString());
 
       // do the remote call
       $response = $this->_remotingServer->doCall($serverKey, $request);
@@ -245,7 +250,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
         if ($proxy) {
           $proxyOID = $proxy->getOID();
           if (strlen($proxyOID->getPrefix()) > 0) {
-            Log::debug("NOT A PROXY", __CLASS__);
+            self::$_logger->debug("NOT A PROXY");
           }
           $obj->setValue('_proxyOid', $proxyOID);
 
@@ -263,12 +268,12 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       }
     }
 
-    if (Log::isDebugEnabled(__CLASS__)) {
+    if (self::$_logger->isDebugEnabled()) {
       if ($obj) {
-        Log::debug("Resolved to: ".$obj->toString(), __CLASS__);
+        self::$_logger->debug("Resolved to: ".$obj->toString());
       }
       else {
-        Log::debug("Could not resolve: ".$umi, __CLASS__);
+        self::$_logger->debug("Could not resolve: ".$umi);
       }
     }
     return $obj;
@@ -283,7 +288,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   protected function registerProxyObject(ObjectID $umi, PersistentObject $obj, $buildDepth) {
     $oid = $obj->getOID();
     if (strlen($oid->getPrefix()) > 0) {
-      Log::debug("NOT A PROXY", __CLASS__);
+      self::$_logger->debug("NOT A PROXY");
       return;
     }
     $this->registerObject($umi, $obj, $buildDepth, self::PROXY_OBJECTS_SESSION_VARNAME);

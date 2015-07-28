@@ -11,7 +11,7 @@
 namespace wcmf\lib\service\impl;
 
 use \RuntimeException;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\format\Formatter;
@@ -28,6 +28,8 @@ class RPCClient implements RemotingClient {
   // constants
   const SIDS_SESSION_VARNAME = 'RPCClient.sids';
 
+  private static $_logger = null;
+
   private $_serverCli = null;
   private $_php = null;
   private $_user = null;
@@ -38,7 +40,9 @@ class RPCClient implements RemotingClient {
    * @param $user The remote user instance.
    */
   public function __construct($serverCli, $user) {
-
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     $this->_serverCli = realpath($serverCli);
     if (!file_exists($this->_serverCli)) {
       throw new RuntimeException("Could not setup RPCClient: ".$this->_serverCli." not found.");
@@ -98,16 +102,16 @@ class RPCClient implements RemotingClient {
     );
     $currentDir = getcwd();
     chdir(dirname($this->_serverCli));
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Do remote call to: ".$this->_serverCli, __CLASS__);
-      Log::debug("Request:\n".$request->toString(), __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Do remote call to: ".$this->_serverCli);
+      self::$_logger->debug("Request:\n".$request->toString());
     }
     // store and reopen the session (see http://bugs.php.net/bug.php?id=44942)
     session_write_close();
     exec($this->_php.' '.$this->_serverCli.' '.join(' ', $arguments), $jsonResponse, $returnValue);
     session_start();
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Response [JSON]:\n".$jsonResponse[0], __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Response [JSON]:\n".$jsonResponse[0]);
     }
     chdir($currentDir);
 
@@ -116,8 +120,8 @@ class RPCClient implements RemotingClient {
     $response->setValues($responseData);
     $response->setFormat($jsonFormat);
     Formatter::deserialize($response);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Response:\n".$response->toString(), __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Response:\n".$response->toString());
     }
 
     if (!$response->getValue('success')) {
@@ -190,7 +194,7 @@ class RPCClient implements RemotingClient {
    */
   protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');
-    Log::error("Error in remote call to ".$this->_serverCli.": ".$errorMsg."\n".$response->toString(), __CLASS__);
+    self::$_logger->error("Error in remote call to ".$this->_serverCli.": ".$errorMsg."\n".$response->toString());
     throw new RuntimeException("Error in remote call to ".$this->_serverCli.": ".$errorMsg);
   }
 }

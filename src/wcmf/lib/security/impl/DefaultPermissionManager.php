@@ -12,7 +12,7 @@ namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\impl\PersistenceActionKeyProvider;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -33,10 +33,15 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
   private $_permissionType = null;
   private $_actionKeyProvider = null;
 
+  private static $_logger = null;
+
   /**
    * Constructor
    */
   public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     $this->_actionKeyProvider = new PersistenceActionKeyProvider();
     $this->_actionKeyProvider->setValueMap(array(
         'resource' => 'resource',
@@ -64,8 +69,8 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
     if (strlen($actionKey) > 0) {
       $result = $this->deserializePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)), __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)));
     }
     return $result;
   }

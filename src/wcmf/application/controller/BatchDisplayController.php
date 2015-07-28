@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
@@ -255,11 +254,12 @@ class BatchDisplayController extends BatchController {
 
     $this->register($oid);
 
-    if (Log::isInfoEnabled(__CLASS__)) {
-      Log::info("Loaded: ".$node->getOID(), __CLASS__);
+    $logger = $this->getLogger();
+    if ($logger->isInfoEnabled()) {
+      $logger->info("Loaded: ".$node->getOID());
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($node->toString(), __CLASS__);
+    if ($logger->isDebugEnabled()) {
+      $logger->debug($node->toString());
     }
   }
 

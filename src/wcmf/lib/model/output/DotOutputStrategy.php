@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\model\output;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PersistentObject;
 
@@ -35,6 +35,8 @@ class DotOutputStrategy implements OutputStrategy {
   private $_nodeStyle = '';
   private $_edgeStyle = '';
 
+  private static $_logger = null;
+
   /**
    * Constructor.
    * @param $file The output file name.
@@ -57,6 +59,9 @@ class DotOutputStrategy implements OutputStrategy {
     else {
       $this->_edgeStyle = $this->DEFAULT_EDGE_STYLE;
     }
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   /**
@@ -67,7 +72,7 @@ class DotOutputStrategy implements OutputStrategy {
     if (file_exists($this->_file)) {
       $this->_fp = fopen($this->_file, "r");
       if (!$this->_fp) {
-        Log::warn("Can't write to file ".$this->_file.". Another user holds the lock. Try again later.", __CLASS__);
+        self::$_logger->warn("Can't write to file ".$this->_file.". Another user holds the lock. Try again later.");
         return;
       }
       else {

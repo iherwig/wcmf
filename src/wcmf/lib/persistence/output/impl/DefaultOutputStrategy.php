@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\persistence\output\impl;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\output\OutputStrategy;
 
@@ -22,25 +22,36 @@ use wcmf\lib\persistence\output\OutputStrategy;
  */
 class DefaultOutputStrategy implements OutputStrategy {
 
+  private static $_logger = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
+  }
+
   /**
    * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
-    Log::info("DOCUMENT START.", __CLASS__);
+    self::$_logger->info("DOCUMENT START.");
   }
 
   /**
    * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
-    Log::info("DOCUMENT END.", __CLASS__);
+    self::$_logger->info("DOCUMENT END.");
   }
 
   /**
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    Log::info($obj->toString(), __CLASS__);
+    self::$_logger->info($obj->toString());
   }
 }
 ?>

@@ -12,7 +12,7 @@ namespace wcmf\lib\service;
 
 use SoapHeader;
 use SoapVar;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 
 /**
  * SoapClient is used to communicate with wCMF soap services.
@@ -26,6 +26,8 @@ class SoapClient extends \SoapClient {
   private $_user;
   private $_password;
 
+  private static $_logger = null;
+
   /**
    * Constructor
    * @param $wsdl
@@ -35,7 +37,9 @@ class SoapClient extends \SoapClient {
    */
   public function __construct($wsdl, $user, $password, $options) {
     parent::__construct($wsdl, $options);
-
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     $this->_user = $user;
     $this->_password = $password;
   }
@@ -57,15 +61,15 @@ class SoapClient extends \SoapClient {
    * @see SoapClient::__doRequest
    */
   public function __doRequest($request, $location, $action, $version, $one_way=0){
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Request:", __CLASS__);
-        Log::debug($request, __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Request:");
+        self::$_logger->debug($request);
       }
       $response = trim(parent::__doRequest($request, $location, $action, $version, $one_way));
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Response:", __CLASS__);
-        Log::debug($response, __CLASS__);
-        Log::debug($this->getDebugInfos(), __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Response:");
+        self::$_logger->debug($response);
+        self::$_logger->debug($this->getDebugInfos());
       }
       $parsedResponse = preg_replace('/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFE\xFF|\xFF\xFE|\xEF\xBB\xBF)/', "", $response);
       // fix missing last e> caused by php's built-in webserver

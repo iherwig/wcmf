@@ -11,7 +11,7 @@
 namespace wcmf\lib\persistence\concurrency\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
@@ -33,12 +33,17 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
 
   private $_lockHandler = null;
 
+  private static $_logger = null;
+
   /**
    * Set the LockHandler used for locking.
    * @param $lockHandler
    */
   public function setLockHandler(LockHandler $lockHandler) {
     $this->_lockHandler = $lockHandler;
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   /**
@@ -135,9 +140,9 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
           if (!($attribute instanceof ReferenceDescription)) {
             $currentValue = $currentState->getValue($valueName);
             if (strval($currentValue) != strval($originalValue)) {
-              if (Log::isDebugEnabled(__CLASS__)) {
-                Log::debug("Current state is different to original state: ".$object->getOID()."-".$valueName.": current[".
-                        serialize($currentValue)."], original[".serialize($originalValue)."]", __CLASS__);
+              if (self::$_logger->isDebugEnabled()) {
+                self::$_logger->debug("Current state is different to original state: ".$object->getOID()."-".$valueName.": current[".
+                        serialize($currentValue)."], original[".serialize($originalValue)."]");
               }
               throw new OptimisticLockException($currentState);
             }

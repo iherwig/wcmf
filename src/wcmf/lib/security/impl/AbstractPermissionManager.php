@@ -11,7 +11,7 @@
 namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
@@ -36,6 +36,17 @@ class AbstractPermissionManager {
 
   private $_tempPermissions = array();
 
+  private static $_logger = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
+  }
+
   /**
    * @see PermissionManager::authorize()
    */
@@ -44,8 +55,8 @@ class AbstractPermissionManager {
       $session = ObjectFactory::getInstance('session');
       $user = $session->getAuthUser();
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Checking authorization for: '$resource?$context?$action' and user '".$user->getLogin()."'", __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Checking authorization for: '$resource?$context?$action' and user '".$user->getLogin()."'");
     }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
@@ -84,8 +95,8 @@ class AbstractPermissionManager {
       // defaults to other
       $resourceType = self::RESOURCE_TYPE_OTHER;
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Resource type: ".$resourceType, __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Resource type: ".$resourceType);
     }
 
     // proceed by authorizing type depending resource
@@ -129,8 +140,8 @@ class AbstractPermissionManager {
 
     // check parent entities in composite relations
     if ($authorized === null && $resourceType == self::RESOURCE_TYPE_ENTITY_INSTANCE) {
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Check parent objects", __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Check parent objects");
       }
       $mapper = $persistenceFacade->getMapper($type);
       $parentRelations = $mapper->getRelations('parent');
@@ -169,8 +180,8 @@ class AbstractPermissionManager {
     if ($authorized === null) {
       $authorized = $this->getDefaultPolicy($user);
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Result for $resource?$context?$action: ".(!$authorized ? "not " : "")."authorized", __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Result for $resource?$context?$action: ".(!$authorized ? "not " : "")."authorized");
     }
 
     return $authorized;
@@ -187,23 +198,23 @@ class AbstractPermissionManager {
    * @return Boolean
    */
   protected function authorizeAction($resource, $context, $action, User $user, $returnNullIfNoPermissionExists=true) {
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Authorizing $resource?$context?$action", __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Authorizing $resource?$context?$action");
     }
     $authorized = null;
 
     // check temporary permissions
     if ($this->hasTempPermission($resource, $context, $action)) {
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Has temporary permission", __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Has temporary permission");
       }
       $authorized = true;
     }
     else {
       // check other permissions
       $permissions = $this->getPermissions($resource, $context, $action);
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Permissions: ".StringUtil::getDump($permissions), __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Permissions: ".StringUtil::getDump($permissions));
       }
       if ($permissions != null) {
         // matching permissions found, check user roles
@@ -214,8 +225,8 @@ class AbstractPermissionManager {
         $authorized = $this->getDefaultPolicy($user);
       }
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Result for $resource?$context?$action: ".(is_bool($authorized) ? ((!$authorized ? "not " : "")."authorized") : "not defined"), __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Result for $resource?$context?$action: ".(is_bool($authorized) ? ((!$authorized ? "not " : "")."authorized") : "not defined"));
     }
     return $authorized;
   }
@@ -312,14 +323,14 @@ class AbstractPermissionManager {
    * @return Boolean whether the user has access right according to the permissions.
    */
   protected function matchRoles($permissions, User $user) {
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Matching roles for ".$user->getLogin(), __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Matching roles for ".$user->getLogin());
     }
     if (isset($permissions['allow'])) {
       foreach ($permissions['allow'] as $value) {
         if ($user->hasRole($value)) {
-          if (Log::isDebugEnabled(__CLASS__)) {
-            Log::debug("Allowed because of role ".$value, __CLASS__);
+          if (self::$_logger->isDebugEnabled()) {
+            self::$_logger->debug("Allowed because of role ".$value);
           }
           return true;
         }
@@ -328,15 +339,15 @@ class AbstractPermissionManager {
     if (isset($permissions['deny'])) {
       foreach ($permissions['deny'] as $value) {
         if ($user->hasRole($value)) {
-          if (Log::isDebugEnabled(__CLASS__)) {
-            Log::debug("Denied because of role ".$value, __CLASS__);
+          if (self::$_logger->isDebugEnabled()) {
+            self::$_logger->debug("Denied because of role ".$value);
           }
           return false;
         }
       }
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Check default ".$permissions['default'], __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Check default ".$permissions['default']);
     }
     return isset($permissions['default']) ? $permissions['default'] : false;
   }
@@ -346,8 +357,8 @@ class AbstractPermissionManager {
    */
   public function addTempPermission($resource, $context, $action) {
     $actionKey = ActionKey::createKey($resource, $context, $action);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Adding temporary permission for '$actionKey'", __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Adding temporary permission for '$actionKey'");
     }
     $this->_tempPermissions[$actionKey] = true;
   }
@@ -357,8 +368,8 @@ class AbstractPermissionManager {
    */
   public function removeTempPermission($resource, $context, $action) {
     $actionKey = ActionKey::createKey($resource, $context, $action);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Removing temporary permission for '$actionKey'", __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Removing temporary permission for '$actionKey'");
     }
     unset($this->_tempPermissions[$actionKey]);
   }

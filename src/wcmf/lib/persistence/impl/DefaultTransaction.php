@@ -11,7 +11,7 @@
 namespace wcmf\lib\persistence\impl;
 
 use \Exception;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\Transaction;
 use wcmf\lib\persistence\ObjectId;
@@ -25,8 +25,9 @@ use wcmf\lib\persistence\StateChangeEvent;
  */
 class DefaultTransaction implements Transaction {
 
-  private static $isInfoEnabled = false;
-  private static $isDebugEnabled = false;
+  private static $_isInfoEnabled = false;
+  private static $_isDebugEnabled = false;
+  private static $_logger = null;
 
   private $_id = '';
   private $_isActive = false;
@@ -46,11 +47,14 @@ class DefaultTransaction implements Transaction {
    * Constructor.
    */
   public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
-    self::$isInfoEnabled = Log::isInfoEnabled(__CLASS__);
-    self::$isDebugEnabled = Log::isDebugEnabled(__CLASS__);
+    self::$_isInfoEnabled = self::$_logger->isInfoEnabled();
+    self::$_isDebugEnabled = self::$_logger->isDebugEnabled();
   }
 
   /**
@@ -67,9 +71,9 @@ class DefaultTransaction implements Transaction {
   public function registerLoaded(PersistentObject $object) {
     $oid = $object->getOID();
     $key = $oid->__toString();
-    if (self::$isDebugEnabled) {
-      Log::debug("New Data:\n".$object->dump(), __CLASS__);
-      Log::debug("Registry before:\n".$this->dump(), __CLASS__);
+    if (self::$_isDebugEnabled) {
+      self::$_logger->debug("New Data:\n".$object->dump());
+      self::$_logger->debug("Registry before:\n".$this->dump());
     }
     // register the object if it is newly loaded or
     // merge the attributes, if it is already loaded
@@ -77,27 +81,27 @@ class DefaultTransaction implements Transaction {
     if (isset($this->_loadedObjects[$key])) {
       $registeredObject = $this->_loadedObjects[$key];
       // merge existing attributes with new attributes
-      if (self::$isDebugEnabled) {
-        Log::debug("Merging data of ".$key, __CLASS__);
+      if (self::$_isDebugEnabled) {
+        self::$_logger->debug("Merging data of ".$key);
       }
       $registeredObject->mergeValues($object);
     }
     else {
-      if (self::$isDebugEnabled) {
-        Log::debug("Register loaded object: ".$key, __CLASS__);
+      if (self::$_isDebugEnabled) {
+        self::$_logger->debug("Register loaded object: ".$key);
       }
       $this->_loadedObjects[$key] = $object;
       // start to listen to changes if the transaction is active
       if ($this->_isActive) {
-        if (self::$isDebugEnabled) {
-          Log::debug("Start listening to: ".$key, __CLASS__);
+        if (self::$_isDebugEnabled) {
+          self::$_logger->debug("Start listening to: ".$key);
         }
         $this->_observedObjects[$key] = $object;
       }
       $registeredObject = $object;
     }
-    if (self::$isDebugEnabled) {
-      Log::debug("Registry after:\n".$this->dump(), __CLASS__);
+    if (self::$_isDebugEnabled) {
+      self::$_logger->debug("Registry after:\n".$this->dump());
     }
     return $registeredObject;
   }
@@ -110,8 +114,8 @@ class DefaultTransaction implements Transaction {
       return;
     }
     $key = $object->getOID()->__toString();
-    if (self::$isDebugEnabled) {
-      Log::debug("Register new object: ".$key, __CLASS__);
+    if (self::$_isDebugEnabled) {
+      self::$_logger->debug("Register new object: ".$key);
     }
     $this->_newObjects[$key] = $object;
     $this->_observedObjects[$key] = $object;
@@ -129,8 +133,8 @@ class DefaultTransaction implements Transaction {
     if (isset($this->_newObjects[$key]) || isset($this->_deletedObjects[$key])) {
       return;
     }
-    if (self::$isDebugEnabled) {
-      Log::debug("Register dirty object: ".$key, __CLASS__);
+    if (self::$_isDebugEnabled) {
+      self::$_logger->debug("Register dirty object: ".$key);
     }
     $this->_dirtyObjects[$key] = $object;
   }
@@ -153,8 +157,8 @@ class DefaultTransaction implements Transaction {
     if (isset($this->_dirtyObjects[$key])) {
       unset($this->_dirtyObjects[$key]);
     }
-    if (self::$isDebugEnabled) {
-      Log::debug("Register deleted object: ".$key, __CLASS__);
+    if (self::$_isDebugEnabled) {
+      self::$_logger->debug("Register deleted object: ".$key);
     }
     $this->_deletedObjects[$key] = $object;
   }
@@ -163,8 +167,8 @@ class DefaultTransaction implements Transaction {
    * @see Transaction::begin()
    */
   public function begin() {
-    if (self::$isInfoEnabled) {
-      Log::info("Starting transaction", __CLASS__);
+    if (self::$_isInfoEnabled) {
+      self::$_logger->info("Starting transaction");
     }
     $this->_isActive = true;
   }
@@ -173,8 +177,8 @@ class DefaultTransaction implements Transaction {
    * @see Transaction::commit()
    */
   public function commit() {
-    if (self::$isInfoEnabled) {
-      Log::info("Commit transaction", __CLASS__);
+    if (self::$_isInfoEnabled) {
+      self::$_logger->info("Commit transaction");
     }
     $changedOids = array();
     if ($this->_isActive) {
@@ -200,8 +204,8 @@ class DefaultTransaction implements Transaction {
                           sizeof($this->_deletedObjects) == 0);
         }
         // commit transaction for each mapper
-        if (self::$isInfoEnabled) {
-          Log::info("Committing transaction", __CLASS__);
+        if (self::$_isInfoEnabled) {
+          self::$_logger->info("Committing transaction");
         }
         foreach ($knowTypes as $type) {
           $mapper = $persistenceFacade->getMapper($type);
@@ -210,7 +214,7 @@ class DefaultTransaction implements Transaction {
       }
       catch (Exception $ex) {
         // rollback transaction for each mapper
-        Log::error("Rolling back transaction. Exception: ".$ex->__toString(), __CLASS__);
+        self::$_logger->error("Rolling back transaction. Exception: ".$ex->__toString());
         foreach ($knowTypes as $type) {
           $mapper = $persistenceFacade->getMapper($type);
           $mapper->rollbackTransaction();
@@ -228,8 +232,8 @@ class DefaultTransaction implements Transaction {
    * @see Transaction::rollback()
    */
   public function rollback() {
-    if (self::$isInfoEnabled) {
-      Log::info("Rollback transaction", __CLASS__);
+    if (self::$_isInfoEnabled) {
+      self::$_logger->info("Rollback transaction");
     }
     // forget changes
     $this->clear();
@@ -325,8 +329,8 @@ class DefaultTransaction implements Transaction {
     $insertOids = array_keys($this->_newObjects);
     while (sizeof($insertOids) > 0) {
       $key = array_shift($insertOids);
-      if (self::$isDebugEnabled) {
-        Log::debug("Process insert on object: ".$key, __CLASS__);
+      if (self::$_isDebugEnabled) {
+        self::$_logger->debug("Process insert on object: ".$key);
       }
       $object = $this->_newObjects[$key];
       // postpone insert, if the object has required objects that are
@@ -335,8 +339,8 @@ class DefaultTransaction implements Transaction {
       $requiredObjects = $object->getIndispensableObjects();
       foreach ($requiredObjects as $requiredObject) {
         if ($requiredObject->getState() == PersistentObject::STATE_NEW) {
-          if (self::$isDebugEnabled) {
-            Log::debug("Postpone insert of object: ".$key.". Required objects are not saved yet.", __CLASS__);
+          if (self::$_isDebugEnabled) {
+            self::$_logger->debug("Postpone insert of object: ".$key.". Required objects are not saved yet.");
           }
           $pendingInserts[] = $object;
           $canInsert = false;
@@ -366,8 +370,8 @@ class DefaultTransaction implements Transaction {
     $updateOids = array_keys($this->_dirtyObjects);
     while (sizeof($updateOids) > 0) {
       $key = array_shift($updateOids);
-      if (self::$isDebugEnabled) {
-        Log::debug("Process update on object: ".$key, __CLASS__);
+      if (self::$_isDebugEnabled) {
+        self::$_logger->debug("Process update on object: ".$key);
       }
       $object = $this->_dirtyObjects[$key];
       $object->getMapper()->save($object);
@@ -383,8 +387,8 @@ class DefaultTransaction implements Transaction {
     $deleteOids = array_keys($this->_deletedObjects);
     while (sizeof($deleteOids) > 0) {
       $key = array_shift($deleteOids);
-      if (self::$isDebugEnabled) {
-        Log::debug("Process delete on object: ".$key, __CLASS__);
+      if (self::$_isDebugEnabled) {
+        self::$_logger->debug("Process delete on object: ".$key);
       }
       $object = $this->_deletedObjects[$key];
       $object->getMapper()->delete($object);
@@ -408,8 +412,8 @@ class DefaultTransaction implements Transaction {
     //if (isset($this->_observedObjects[$object->getOID()->__toString()])) {
       $oldState = $event->getOldValue();
       $newState = $event->getNewValue();
-      if (self::$isDebugEnabled) {
-        Log::debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState, __CLASS__);
+      if (self::$_isDebugEnabled) {
+        self::$_logger->debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState);
       }
       switch ($newState) {
         case PersistentObject::STATE_NEW:

@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\core;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 
 /**
  * ErrorHandler catches all php errors and transforms fatal
@@ -22,11 +22,16 @@ class ErrorHandler {
 
   private static $FATAL_ERRORS = array(E_USER_ERROR => '', E_RECOVERABLE_ERROR => '');
 
+  private static $_logger = null;
+
   /**
    * Constructor.
    */
   public function __construct() {
     set_error_handler(array($this, 'handleError'));
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   /**
@@ -64,7 +69,7 @@ class ErrorHandler {
 
     // -- NON-FATAL ERROR/WARNING/NOTICE
     else if( $errorIsEnabled ) {
-        Log::warn($errstr, __CLASS__);
+        self::$_logger->warn($errstr);
         return false; // Make sure this ends up in $php_errormsg, if appropriate
     }
   }

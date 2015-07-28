@@ -13,7 +13,7 @@ namespace wcmf\test\tests\persistence;
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\ObjectQuery;
@@ -26,6 +26,8 @@ use wcmf\lib\util\TestUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 class PersistentObjectPerformanceTest extends DatabaseTestCase {
+
+  private static $_logger = null;
 
   protected function getDataSet() {
     $chapters = array();
@@ -40,6 +42,14 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
       'Chapter' => $chapters,
     ));
   }
+
+  protected function setUp() {
+    parent::setUp();
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
+  }
+
 
   /**
    * @group performance
@@ -69,8 +79,8 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $start = time();
     $chapters = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE);
-    Log::info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds", __CLASS__);
-    Log::info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes", __CLASS__);
+    self::$_logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
+    self::$_logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
     TestUtil::runAnonymous(false);
   }
 
@@ -82,8 +92,8 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
     $start = time();
     $query = new ObjectQuery('Chapter');
     $chapters = $query->execute(BuildDepth::SINGLE);
-    Log::info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds", __CLASS__);
-    Log::info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes", __CLASS__);
+    self::$_logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
+    self::$_logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
     TestUtil::runAnonymous(false);
   }
 
@@ -95,8 +105,8 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
     $start = time();
     $query = new ObjectQuery('Chapter', SelectStatement::NO_CACHE);
     $chapters = $query->execute(BuildDepth::SINGLE);
-    Log::info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds", __CLASS__);
-    Log::info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes", __CLASS__);
+    self::$_logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
+    self::$_logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
     TestUtil::runAnonymous(false);
   }
 }

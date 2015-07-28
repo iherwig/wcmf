@@ -12,7 +12,7 @@ namespace wcmf\lib\service;
 
 use Exception;
 use nusoap_server;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
@@ -32,10 +32,15 @@ class SoapServer extends nusoap_server {
 
   private $_application = null;
 
+  private static $_logger = null;
+
   /**
    * Constructor
    */
   public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     $scriptURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $endpoint = dirname($scriptURL).'/soap';
     $this->configureWSDL('SOAPService', self::TNS, $endpoint, 'document');
@@ -91,8 +96,8 @@ class SoapServer extends nusoap_server {
    * @see nusoap_server::service
    */
   public function service($data) {
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($data, __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug($data);
     }
     try {
       $oldErrorReporting = error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
@@ -120,9 +125,9 @@ class SoapServer extends nusoap_server {
    * @return The Response instance from the executed Controller
    */
   public function doCall($action, $params) {
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("SoapServer action: ".$action, __CLASS__);
-      Log::debug($params, __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("SoapServer action: ".$action);
+      self::$_logger->debug($params);
     }
     $authHeader = $this->requestHeader['Security']['UsernameToken'];
     $formats = ObjectFactory::getInstance('formats');
@@ -165,8 +170,8 @@ class SoapServer extends nusoap_server {
     $actionResponse->setFormat($formats['soap']);
     $actionResponse->setValues($data);
     Formatter::serialize($actionResponse);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($actionResponse->__toString(), __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug($actionResponse->__toString());
     }
     return $actionResponse;
   }
@@ -176,7 +181,7 @@ class SoapServer extends nusoap_server {
    * @param $ex
    */
   private function handleException($ex) {
-    Log::error($ex->getMessage()."\n".$ex->getTraceAsString(), __CLASS__);
+    self::$_logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
     $this->fault('SOAP-ENV:SERVER', $ex->getMessage(), '', '');
     $this->send_response();
   }

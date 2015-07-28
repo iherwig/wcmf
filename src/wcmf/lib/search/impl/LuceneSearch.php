@@ -11,7 +11,7 @@
 namespace wcmf\lib\search\impl;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
@@ -39,10 +39,15 @@ class LuceneSearch implements IndexedSearch {
   private $_index;
   private $_indexIsDirty = false;
 
+  private static $_logger = null;
+
   /**
    * Constructor
    */
   public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     // listen to object change events
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
@@ -67,7 +72,7 @@ class LuceneSearch implements IndexedSearch {
     if (!is_writeable($this->_indexPath)) {
       throw new ConfigurationException("Index path '".$indexPath."' is not writeable.");
     }
-    Log::debug("Lucene index location: ".$this->_indexPath, __CLASS__);
+    self::$_logger->debug("Lucene index location: ".$this->_indexPath);
   }
 
   /**
@@ -176,7 +181,7 @@ class LuceneSearch implements IndexedSearch {
    * @see IndexedSearch::commitIndex()
    */
   public function commitIndex($optimize = true) {
-    Log::debug("Commit index", __CLASS__);
+    self::$_logger->debug("Commit index");
     if ($this->_indexIsDirty) {
       $index = $this->getIndex(false);
       if ($index) {
@@ -212,8 +217,8 @@ class LuceneSearch implements IndexedSearch {
         // load translation
         $indexObj = $localization->loadTranslation($obj, $language, false);
 
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Add/Update index for: ".$oidStr." language:".$language, __CLASS__);
+        if (self::$_logger->isDebugEnabled()) {
+          self::$_logger->debug("Add/Update index for: ".$oidStr." language:".$language);
         }
 
         // create the document
@@ -262,8 +267,8 @@ class LuceneSearch implements IndexedSearch {
    */
   public function deleteFromIndex(PersistentObject $obj) {
     if ($this->isSearchable($obj)) {
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Delete from index: ".$obj->getOID(), __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Delete from index: ".$obj->getOID());
       }
       $index = $this->getIndex();
 

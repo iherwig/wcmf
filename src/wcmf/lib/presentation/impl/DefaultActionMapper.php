@@ -12,7 +12,7 @@ namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
@@ -31,11 +31,22 @@ class DefaultActionMapper implements ActionMapper {
 
   private $_lastResponses = array();
 
+  private static $_logger = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
+  }
+
   /**
    * @see ActionMapper::processAction()
    */
   public function processAction(Request $request) {
-    $isDebugEnabled = Log::isDebugEnabled(__CLASS__);
+    $isDebugEnabled = self::$_logger->isDebugEnabled();
 
     $eventManager = ObjectFactory::getInstance('eventManager');
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
@@ -59,12 +70,12 @@ class DefaultActionMapper implements ActionMapper {
       $session = ObjectFactory::getInstance('session');
       $authUser = $session->getAuthUser();
       if ($authUser instanceof AnonymousUser) {
-        Log::error("Session invalid. The request was: ".$request->__toString(), __CLASS__);
+        self::$_logger->error("Session invalid. The request was: ".$request->__toString());
         throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
       }
       else {
         $login = $authUser->getLogin();
-        Log::error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$login."'", __CLASS__);
+        self::$_logger->error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$login."'");
         throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
       }
     }
@@ -73,7 +84,7 @@ class DefaultActionMapper implements ActionMapper {
     $actionKey = ActionKey::getBestMatch($actionKeyProvider, $referrer, $context, $action);
 
     if ($isDebugEnabled) {
-      Log::debug($referrer."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
+      self::$_logger->debug($referrer."?".$context."?".$action.' -> '.$actionKey);
     }
 
     $controllerClass = null;
@@ -95,13 +106,13 @@ class DefaultActionMapper implements ActionMapper {
 
     // everything is right in place, start processing
     if ($isDebugEnabled) {
-      Log::debug("Request: ".$request->__toString(), __CLASS__);
+      self::$_logger->debug("Request: ".$request->__toString());
     }
     Formatter::deserialize($request);
 
     // initialize controller
     if ($isDebugEnabled) {
-      Log::debug("Execute ".$controllerClass." with request: ".$request->__toString(), __CLASS__);
+      self::$_logger->debug("Execute ".$controllerClass." with request: ".$request->__toString());
     }
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_INITIALIZE_CONTROLLER, $request, $response, $controllerObj));
@@ -120,19 +131,19 @@ class DefaultActionMapper implements ActionMapper {
     $nextActionKey = ActionKey::getBestMatch($actionKeyProvider, $controllerClass,
             $response->getContext(), $response->getAction());
     if ($isDebugEnabled) {
-      Log::debug("Next action key: ".$nextActionKey, __CLASS__);
+      self::$_logger->debug("Next action key: ".$nextActionKey);
     }
 
     if (strlen($nextActionKey) == 0) {
       if ($isDebugEnabled) {
-        Log::debug("Terminate", __CLASS__);
+        self::$_logger->debug("Terminate");
       }
       // stop processing
       return $response;
     }
     else {
       if ($isDebugEnabled) {
-        Log::debug("Processing next action", __CLASS__);
+        self::$_logger->debug("Processing next action");
       }
       // store last response
       $this->_lastResponses[] = $response;

@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeUtil;
@@ -79,6 +78,7 @@ class DisplayController extends Controller {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $logger = $this->getLogger();
 
     // load model
     $oid = ObjectId::parse($request->getValue('oid'));
@@ -99,8 +99,8 @@ class DisplayController extends Controller {
         $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
       }
 
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug(nl2br($node->__toString()), __CLASS__);
+      if ($logger->isDebugEnabled()) {
+        $logger->debug(nl2br($node->__toString()));
       }
 
       // translate values if requested

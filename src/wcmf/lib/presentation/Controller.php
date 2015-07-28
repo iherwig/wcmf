@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\presentation;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -42,6 +42,15 @@ abstract class Controller {
 
   private $_request = null;
   private $_response = null;
+
+  private $_logger = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    $this->_logger = LogManager::getLogger(__CLASS__);
+  }
 
   /**
    * Initialize the Controller with request/response data. Which data is required is defined by the Controller.
@@ -80,10 +89,10 @@ abstract class Controller {
    * by concrete Controller subclasses.
    */
   public function execute() {
-    $isDebugEnabled = Log::isDebugEnabled(__CLASS__);
+    $isDebugEnabled = $this->_logger->isDebugEnabled();
     if ($isDebugEnabled) {
-      Log::debug('Executing: '.get_class($this), __CLASS__);
-      Log::debug('Request: '.$this->_request, __CLASS__);
+      $this->_logger->debug('Executing: '.get_class($this));
+      $this->_logger->debug('Request: '.$this->_request);
     }
 
     // validate controller data
@@ -100,13 +109,13 @@ abstract class Controller {
     // prepare the response
     $this->assignResponseDefaults();
     if ($isDebugEnabled) {
-      Log::debug('Response: '.$this->_response, __CLASS__);
+      $this->_logger->debug('Response: '.$this->_response);
     }
 
     // log errors
     $errors = $this->_response->getErrors();
     for ($i=0,$count=sizeof($errors); $i<$count; $i++) {
-      Log::error($errors[$i]->__toString(), __CLASS__);
+      $this->_logger->error($errors[$i]->__toString());
     }
   }
 
@@ -155,6 +164,14 @@ abstract class Controller {
    */
   public function getResponse() {
     return $this->_response;
+  }
+
+  /**
+   * Get the Logger object.
+   * @return Logger object
+   */
+  protected function getLogger() {
+    return $this->_logger;
   }
 
   /**

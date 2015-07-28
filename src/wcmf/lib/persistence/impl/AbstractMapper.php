@@ -11,7 +11,7 @@
 namespace wcmf\lib\persistence\impl;
 
 use wcmf\lib\core\ErrorHandler;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
@@ -40,6 +40,17 @@ abstract class AbstractMapper implements PersistenceMapper {
 
   private $_attributeNames = array();
   private $_relationNames = array();
+
+  private static $_logger = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
+  }
 
   /**
    * @see PersistenceMapper::hasRelation()
@@ -338,7 +349,7 @@ abstract class AbstractMapper implements PersistenceMapper {
     // when reading only log the error to avoid errors on the display
     $msg = Message::get("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
     if ($action == PersistenceAction::READ) {
-      Log::error($msg."\n".ErrorHandler::getStackTrace(), __CLASS__);
+      self::$_logger->error($msg."\n".ErrorHandler::getStackTrace());
     }
     else {
       throw new AuthorizationException($msg);

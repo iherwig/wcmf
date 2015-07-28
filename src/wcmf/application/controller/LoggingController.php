@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\Log;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -42,36 +41,37 @@ class LoggingController extends Controller {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $logger = $this->getLogger();
 
     $logType = $request->getValue('type');
     $message = $request->getValue('message');
     switch($logType) {
       case 'TRACE':
-        Log::trace($message, __CLASS__);
+        $logger->trace($message);
         break;
 
       case 'DEBUG':
-        Log::debug($message, __CLASS__);
+        $logger->debug($message);
         break;
 
       case 'INFO':
-        Log::info($message, __CLASS__);
+        $logger->info($message);
         break;
 
       case 'WARNING':
-        Log::warn($message, __CLASS__);
+        $logger->warn($message);
         break;
 
       case 'ERROR':
-        Log::error($message, __CLASS__);
+        $logger->error($message);
         break;
 
       case 'FATAL':
-        Log::fatal($message, __CLASS__);
+        $logger->fatal($message);
         break;
 
       default:
-        Log::error("Unknown log message type: ".$logType, __CLASS__);
+        $logger->error("Unknown log message type: ".$logType);
     }
 
     $response->setAction('ok');

@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\presentation\format\impl;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 
@@ -32,6 +32,7 @@ class JsonFormat extends HierarchicalFormat {
 
   private static $_jsonData = array();
   private static $_jsonUsed = false;
+  private static $_logger = null;
 
   protected $_serializer = null;
 
@@ -41,6 +42,9 @@ class JsonFormat extends HierarchicalFormat {
    */
   public function __construct(NodeSerializer $serializer) {
     $this->_serializer = $serializer;
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   public static function printJSONResult() {
@@ -48,9 +52,9 @@ class JsonFormat extends HierarchicalFormat {
       $data = self::$_jsonData;
       if ($data !== null) {
         $encoded = json_encode($data);
-        if (Log::isDebugEnabled('JsonFormat')) {
-          Log::debug($data, 'JsonFormat');
-          Log::debug($encoded, 'JsonFormat');
+        if (self::$_logger->isDebugEnabled('JsonFormat')) {
+          self::$_logger->debug($data, 'JsonFormat');
+          self::$_logger->debug($encoded, 'JsonFormat');
         }
         print($encoded);
       }

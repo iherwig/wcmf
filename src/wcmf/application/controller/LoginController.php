@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use \Exception;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -103,7 +102,7 @@ class LoginController extends Controller {
       }
       catch (Exception $ex) {
         $authUser = null;
-        Log::error("Could not log in: ".$ex, __CLASS__);
+        $this->getLogger()->error("Could not log in: ".$ex);
       }
 
       if ($authUser) {

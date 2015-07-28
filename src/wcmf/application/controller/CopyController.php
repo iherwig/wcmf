@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeUtil;
@@ -205,8 +204,9 @@ class CopyController extends BatchController {
         // set the result and finish
         $this->endProcess($nodeCopy->getOID());
 
-        if (Log::isInfoEnabled(__CLASS__)) {
-          Log::info("Moved: ".$nodeOID." to ".$parentNode->getOID(), __CLASS__);
+        $logger = $this->getLogger();
+        if ($logger->isInfoEnabled()) {
+          $logger->info("Moved: ".$nodeOID." to ".$parentNode->getOID());
         }
       }
       $transaction->commit();
@@ -322,8 +322,9 @@ class CopyController extends BatchController {
    * @return The copied Node or null
    */
   protected function copyNode(ObjectId $oid) {
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Copying node ".$oid, __CLASS__);
+    $logger = $this->getLogger();
+    if ($logger->isDebugEnabled()) {
+      $logger->debug("Copying node ".$oid);
     }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
@@ -346,11 +347,11 @@ class CopyController extends BatchController {
     // save copy
     $this->registerCopy($node, $nodeCopy);
 
-    if (Log::isInfoEnabled(__CLASS__)) {
-      Log::info("Copied: ".$node->getOID()." to ".$nodeCopy->getOID(), __CLASS__);
+    if ($logger->isInfoEnabled()) {
+      $logger->info("Copied: ".$node->getOID()." to ".$nodeCopy->getOID());
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($nodeCopy->__toString(), __CLASS__);
+    if ($logger->isDebugEnabled()) {
+      $logger->debug($nodeCopy->__toString());
     }
 
     // create the connections to already copied relatives
@@ -367,9 +368,9 @@ class CopyController extends BatchController {
           $copiedRelative = $this->getCopy($relative->getOID());
           if ($copiedRelative != null) {
             $nodeCopy->addNode($copiedRelative, $otherRole);
-            if (Log::isDebugEnabled(__CLASS__)) {
-              Log::debug("Added ".$copiedRelative->getOID()." to ".$nodeCopy->getOID(), __CLASS__);
-              Log::debug($copiedRelative->__toString(), __CLASS__);
+            if ($logger->isDebugEnabled()) {
+              $logger->debug("Added ".$copiedRelative->getOID()." to ".$nodeCopy->getOID());
+              $logger->debug($copiedRelative->__toString());
             }
           }
         }
@@ -443,8 +444,9 @@ class CopyController extends BatchController {
     // check if the oid exists in the registry
     $oidStr = $origOID->__toString();
     if (!isset($registry[$oidStr])) {
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Copy of ".$oidStr." not found.", __CLASS__);
+      $logger = $this->getLogger();
+      if ($logger->isDebugEnabled()) {
+        $logger->debug("Copy of ".$oidStr." not found.");
       }
       return null;
     }

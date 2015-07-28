@@ -14,7 +14,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\WritableConfiguration;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\IOException;
@@ -43,12 +43,17 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   private $_configPath = null;
   private $_configExtension = 'ini';
 
+  private static $_logger = null;
+
   /**
    * Constructor.
    * @param $configPath The path, either absolute or relative to the executed script
    */
   public function __construct($configPath) {
     $this->_configPath = $configPath;
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   /**
@@ -77,8 +82,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @note ini files referenced in section 'config' key 'include' are parsed afterwards
    */
   public function addConfiguration($name, $processValues=true) {
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Add configuration: ".$name, __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Add configuration: ".$name);
     }
     $filename = $this->_configPath.$name;
 
@@ -86,25 +91,25 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     // we don't only check if it's parsed, because order matters
     $numParsedFiles = sizeof($this->_addedFiles);
     $lastFile = $numParsedFiles > 0 ? $this->_addedFiles[$numParsedFiles-1] : '';
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Parsed files: ".$numParsedFiles.", last file: ".$lastFile, __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Parsed files: ".$numParsedFiles.", last file: ".$lastFile);
     }
     if ($numParsedFiles > 0 && $lastFile == $filename) {
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Skipping", __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Skipping");
       }
       return;
     }
 
     if (file_exists($filename)) {
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Adding...", __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Adding...");
       }
       // try to unserialize an already parsed ini file sequence
       $this->_addedFiles[] = $filename;
       if (!$this->unserialize($this->_addedFiles)) {
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Parse first time", __CLASS__);
+        if (self::$_logger->isDebugEnabled()) {
+          self::$_logger->debug("Parse first time");
         }
         $result = $this->processFile($filename, $this->_configArray, $this->_containedFiles);
         $this->_configArray = $result['config'];
@@ -121,8 +126,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
         $this->serialize();
       }
       else {
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Reuse from cache", __CLASS__);
+        if (self::$_logger->isDebugEnabled()) {
+          self::$_logger->debug("Reuse from cache");
         }
       }
     }
@@ -614,8 +619,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   protected function serialize() {
     if ($this->_useCache && !$this->isModified()) {
       $cacheFile = $this->getSerializeFilename($this->_addedFiles);
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("Serialize configuration: ".join(',', $this->_addedFiles)." to file: ".$cacheFile, __CLASS__);
+      if (self::$_logger->isDebugEnabled()) {
+        self::$_logger->debug("Serialize configuration: ".join(',', $this->_addedFiles)." to file: ".$cacheFile);
       }
       if ($fh = @fopen($cacheFile, "w")) {
         if (@fwrite($fh, serialize(get_object_vars($this)))) {
@@ -692,8 +697,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Clear application cache.
    */
   protected function clearAllCache() {
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Clear all caches", __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Clear all caches");
     }
     try {
       $cache = ObjectFactory::getInstance('cache');

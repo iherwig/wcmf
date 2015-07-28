@@ -28,6 +28,7 @@ class ObjectFactory {
    */
   private static $_requiredInterfaces = array(
       'eventManager' =>          'wcmf\lib\core\EventManager',
+      'logger' =>                'wcmf\lib\core\Logger',
       'session' =>               'wcmf\lib\core\Session',
       'configuration' =>         'wcmf\lib\config\Configuration',
       'localization' =>          'wcmf\lib\i18n\Localization',
@@ -80,22 +81,28 @@ class ObjectFactory {
   /**
    * Get an instance from the configuration.
    * @param $name The name of the instance (section, where the instance is defined)
+   * @param $dynamicConfiguration Associative array with key value pairs for
+   * dynamic instance properties (optional)
    * @return Object
    */
-  public static function getInstance($name) {
+  public static function getInstance($name, $dynamicConfiguration=array()) {
     $instance = null;
 
+    // dynamic configuration must be included in internal instance key
+    $instanceKey = sizeof($dynamicConfiguration) == 0 ? $name : $name.json_encode($dynamicConfiguration);
+
     // check if the instance is registered already
-    if (!isset(self::$_instances[$name])) {
+    if (!isset(self::$_instances[$instanceKey])) {
       if (self::$_configuration == null) {
         throw new ConfigurationException('No Configuration instance provided. Do this by calling the configure() method.');
       }
-      // get instance configuration
-      $instanceConfig = self::$_configuration->getSection($name);
-      $instance = self::createInstance($name, $instanceConfig);
+      // get static instance configuration
+      $staticConfiguration = self::$_configuration->getSection($name);
+      $configuration = array_merge($staticConfiguration, $dynamicConfiguration);
+      $instance = self::createInstance($name, $configuration, $instanceKey);
     }
     else {
-      $instance = self::$_instances[$name];
+      $instance = self::$_instances[$instanceKey];
     }
     return $instance;
   }
@@ -135,7 +142,7 @@ class ObjectFactory {
    * instance may be reused using ObjectFactory::getInstance())
    * @return Object
    */
-  public static function createInstance($name, $configuration) {
+  private static function createInstance($name, $configuration, $instanceKey) {
     $instance = null;
 
     if (isset($configuration['__class'])) {
@@ -185,7 +192,7 @@ class ObjectFactory {
         }
         // register the instance if it is shared (default)
         if (!isset($configuration['__shared']) || $configuration['__shared'] == 'true') {
-          self::registerInstance($name, $obj);
+          self::registerInstance($instanceKey, $obj);
         }
         $instance = $obj;
       }
@@ -212,7 +219,7 @@ class ObjectFactory {
         }
       }
       // always register maps
-      self::registerInstance($name, $configuration);
+      self::registerInstance($instanceKey, $configuration);
       $instance = $configuration;
     }
     return $instance;

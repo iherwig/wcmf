@@ -12,7 +12,7 @@ namespace wcmf\lib\model;
 
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
@@ -45,6 +45,7 @@ class Node extends DefaultPersistentObject {
   private $_orderedNodes = array();
 
   private static $_parentGetValueMethod = null;
+  private static $_logger = null;
 
   /**
    * Constructor
@@ -56,6 +57,9 @@ class Node extends DefaultPersistentObject {
       $reflector = new \ReflectionClass(__CLASS__);
       $parent = $reflector->getParentClass();
       self::$_parentGetValueMethod = $parent->getMethod('getValue');
+    }
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -206,7 +210,7 @@ class Node extends DefaultPersistentObject {
         }
       }
       else {
-        Log::warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".ErrorHandler::getStackTrace(),
+        self::$_logger->warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".ErrorHandler::getStackTrace(),
           __CLASS__);
       }
     }

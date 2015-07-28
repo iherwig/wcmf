@@ -13,7 +13,7 @@ namespace wcmf\lib\presentation\view\impl;
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\view\View;
@@ -35,8 +35,9 @@ if (!class_exists('Smarty')) {
  */
 class SmartyView implements View {
 
-  protected static $_sharedView = null;
-  protected static $_actionKeyProvider = null;
+  private static $_sharedView = null;
+  private static $_actionKeyProvider = null;
+  private static $_logger = null;
 
   protected $_view = null;
 
@@ -44,6 +45,9 @@ class SmartyView implements View {
    * Constructor
    */
   public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     $this->_view = new \Smarty();
     $this->_view->error_reporting = E_ALL;
 
@@ -190,8 +194,8 @@ class SmartyView implements View {
     }
 
     $actionKey = ActionKey::getBestMatch(self::$_actionKeyProvider, $controller, $context, $action);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug('SmartyView::getTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey, __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug('SmartyView::getTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey);
     }
     // get corresponding view
     $config = ObjectFactory::getConfigurationInstance();

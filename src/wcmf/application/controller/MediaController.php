@@ -169,7 +169,8 @@ class MediaController extends Controller {
       $source = $removedFiles[$i]['realpath'];
       $target = $elfinder->realpath($addedFiles[$i]['hash']);
     }
-    Log::debug($cmd." file: ".$source." -> ".$target, __CLASS__);
+    $logger = $this->getLogger();
+    $logger->debug($cmd." file: ".$source." -> ".$target);
   }
 
   /**

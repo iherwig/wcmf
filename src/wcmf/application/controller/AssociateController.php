@@ -12,7 +12,6 @@ namespace wcmf\application\controller;
 
 use \Exception;
 
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
@@ -159,7 +158,7 @@ class AssociateController extends Controller {
       $transaction->commit();
     }
     catch (Exception $ex) {
-      Log::error($ex, __CLASS__);
+      $this->getLogger()->error($ex);
       $response->addError(ApplicationError::fromException($ex));
       $transaction->rollback();
     }

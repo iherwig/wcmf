@@ -13,7 +13,7 @@ namespace wcmf\lib\presentation;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ClassLoader;
 use wcmf\lib\core\ErrorHandler;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 
@@ -29,6 +29,8 @@ class Application {
 
   private $_debug = true;
 
+  private static $_logger = null;
+
   /**
    * Constructor
    */
@@ -37,6 +39,9 @@ class Application {
     new ErrorHandler();
     $this->_startTime = microtime(true);
     ob_start(array($this, "outputHandler"));
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   /**
@@ -44,7 +49,7 @@ class Application {
    */
   public function __destruct() {
     // log resource usage
-    if (Log::isDebugEnabled(__CLASS__)) {
+    if (self::$_logger->isDebugEnabled()) {
       $timeDiff = microtime(true)-$this->_startTime;
       $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
       $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
@@ -52,7 +57,7 @@ class Application {
         $msg .= " Request[".$this->_initialRequest->getSender()."?".
                 $this->_initialRequest->getContext()."?".$this->_initialRequest->getAction()."]";
       }
-      Log::debug($msg, __CLASS__);
+      self::$_logger->debug($msg);
     }
     ob_end_flush();
   }
@@ -70,7 +75,7 @@ class Application {
   public function initialize($configPath='../config/', $mainConfigFile='config.ini',
     $defaultController='', $defaultContext='', $defaultAction='login') {
 
-    Log::configure($configPath.'log4php.php');
+    LogManager::configure(new \wcmf\lib\core\impl\Log4phpLogger('ROOT', $configPath.'log4php.php'));
     $config = new InifileConfiguration($configPath);
     $config->addConfiguration($mainConfigFile);
     ObjectFactory::configure($config);
@@ -126,7 +131,7 @@ class Application {
    * @param $request The Request instance
    */
   public function handleException(\Exception $exception, Request $request=null) {
-    Log::error($exception->getMessage()."\n".$exception->getTraceAsString(), __CLASS__);
+    self::$_logger->error($exception->getMessage()."\n".$exception->getTraceAsString());
 
     // rollback current transaction
     if (ObjectFactory::getConfigurationInstance() != null) {
@@ -157,7 +162,7 @@ class Application {
     $error = error_get_last();
     if ($error !== NULL) {
       $info = "Error: ".$error['message']." in ".$error['file']." on line ".$error['line'];
-      Log::error($info, __CLASS__);
+      self::$_logger->error($info);
 
       // suppress error message in browser
       if (!$this->_debug) {

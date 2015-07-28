@@ -12,7 +12,7 @@ namespace wcmf\lib\util;
 
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\InifileConfiguration;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\security\impl\NullPermissionManager;
@@ -39,7 +39,7 @@ class TestUtil {
               'Did you forget to generate code from the model?');
     }
 
-    Log::configure('log4php.php');
+    LogManager::configure(new \wcmf\lib\core\impl\Log4phpLogger('ROOT', 'log4php.php'));
 
     $config = new InifileConfiguration($configPath);
     $config->addConfiguration('config.ini');

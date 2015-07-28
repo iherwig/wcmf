@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use Exception;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -112,6 +111,8 @@ class MultipleActionController extends Controller {
     // create and execute requests for the actions given in data
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $logger = $this->getLogger();
+
     $results = array();
     $data = $request->getValue('data');
     $actions = array_keys($data);
@@ -124,8 +125,8 @@ class MultipleActionController extends Controller {
 
     for($i=0; $i<$numActions; $i++) {
       $actionId = $actions[$i];
-      if (Log::isDebugEnabled(__CLASS__)) {
-        Log::debug("processing action: ".$actionId.":\n".StringUtil::getDump($data[$actionId]), __CLASS__);
+      if ($logger->isDebugEnabled()) {
+        $logger->debug("processing action: ".$actionId.":\n".StringUtil::getDump($data[$actionId]));
       }
       // replace special variables
       $this->replaceVariables($data[$actionId]);
@@ -147,15 +148,15 @@ class MultipleActionController extends Controller {
         $responsePart = $actionMapper->processAction($requestPart);
       }
       catch (Exception $ex) {
-        Log::error($ex->__toString(), __CLASS__);
+        $logger->error($ex->__toString());
         $exceptions[] = $ex;
       }
 
       // collect the result
       $results[$actionId] = $responsePart != null ? $responsePart->getValues() : array();
     }
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug($results, __CLASS__);
+    if ($logger->isDebugEnabled()) {
+      $logger->debug($results);
     }
     // add error from first exception to mark the action set execution as failed
     if (sizeof($exceptions) > 0) {
@@ -174,6 +175,7 @@ class MultipleActionController extends Controller {
    * @param $data A reference to the associative data array
    */
   private function replaceVariables(&$data) {
+    $logger = $this->getLogger();
     $keys = array_keys($data);
     for($i=0; $i<sizeof($keys); $i++) {
       $key = $keys[$i];
@@ -185,12 +187,12 @@ class MultipleActionController extends Controller {
 
       // replace entry
       if ($key != $newKey || $value != $newValue) {
-        if (Log::isDebugEnabled(__CLASS__)) {
+        if ($logger->isDebugEnabled()) {
           if ($key != $newKey) {
-            Log::debug("Replace $key by $newKey", __CLASS__);
+            $logger->debug("Replace $key by $newKey");
           }
           if ($value != $newValue) {
-            Log::debug("Replace $value by $newValue", __CLASS__);
+            $logger->debug("Replace $value by $newValue");
           }
         }
         unset($data[$key]);

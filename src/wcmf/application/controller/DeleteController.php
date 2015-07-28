@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use \Exception;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
@@ -58,6 +57,7 @@ class DeleteController extends Controller {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $logger = $this->getLogger();
 
     $oid = ObjectId::parse($request->getValue('oid'));
 
@@ -69,7 +69,7 @@ class DeleteController extends Controller {
       if ($oid) {
         $doomedNode = $persistenceFacade->load($oid, BuildDepth::SINGLE);
         if ($doomedNode == null) {
-          Log::warn("An object with oid ".$oid." is does not exist.", __CLASS__);
+          $logger->warn("An object with oid ".$oid." is does not exist.");
         }
         else {
           if($this->confirmDelete($doomedNode)) {

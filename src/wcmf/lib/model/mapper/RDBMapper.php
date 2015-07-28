@@ -10,11 +10,10 @@
  */
 namespace wcmf\lib\model\mapper;
 
-use \Exception;
-use \PDO;
-use \Zend_Db;
+use Exception;
+use PDO;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
@@ -24,6 +23,7 @@ use wcmf\lib\model\Node;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
+use wcmf\lib\persistence\impl\AbstractMapper;
 use wcmf\lib\persistence\InsertOperation;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
@@ -35,7 +35,7 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\UpdateOperation;
-use wcmf\lib\persistence\impl\AbstractMapper;
+use Zend_Db;
 
 /**
  * RDBMapper maps objects of one type to a relational database schema.
@@ -47,9 +47,10 @@ use wcmf\lib\persistence\impl\AbstractMapper;
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   private static $SEQUENCE_CLASS = 'DBSequence';
-  private static $connections = array();   // registry for connections, key: connId
-  private static $inTransaction = array(); // registry for transaction status (boolean), key: connId
-  private static $isDebugEnabled = false;
+  private static $_connections = array();   // registry for connections, key: connId
+  private static $_inTransaction = array(); // registry for transaction status (boolean), key: connId
+  private static $_isDebugEnabled = false;
+  private static $_logger = null;
 
   private $_connectionParams = null; // database connection parameters
   private $_connId = null;     // a connection identifier composed of the connection parameters
@@ -73,7 +74,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * Constructor
    */
   public function __construct() {
-    self::$isDebugEnabled = Log::isDebugEnabled(__CLASS__);
+    parent::__construct();
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
+    self::$_isDebugEnabled = self::$_logger->isDebugEnabled();
   }
 
   /**
@@ -122,8 +127,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           $this->_connectionParams['dbUserName'], $this->_connectionParams['dbPassword'], $this->_connectionParams['dbName']));
 
       // reuse an existing connection if possible
-      if (isset(self::$connections[$this->_connId])) {
-        $this->_conn = self::$connections[$this->_connId];
+      if (isset(self::$_connections[$this->_connId])) {
+        $this->_conn = self::$_connections[$this->_connId];
       }
       else {
         try {
@@ -162,7 +167,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           $this->_conn->setFetchMode(Zend_Db::FETCH_ASSOC);
 
           // store the connection for reuse
-          self::$connections[$this->_connId] = $this->_conn;
+          self::$_connections[$this->_connId] = $this->_conn;
         }
         catch(Exception $ex) {
           throw new PersistenceException("Connection to ".$this->_connectionParams['dbHostName'].".".
@@ -248,7 +253,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       return $id;
     }
     catch (Exception $ex) {
-      Log::error("The next id query caused the following exception:\n".$ex->getMessage(), __CLASS__);
+      self::$_logger->error("The next id query caused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
   }
@@ -316,7 +321,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
     }
     catch (Exception $ex) {
-      Log::error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
+      self::$_logger->error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
   }
@@ -342,21 +347,21 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           return array();
         }
       }
-      if (self::$isDebugEnabled) {
-        Log::debug("Execute statement: ".$selectStmt->__toString(), __CLASS__);
-        Log::debug($selectStmt->getBind(), __CLASS__);
+      if (self::$_isDebugEnabled) {
+        self::$_logger->debug("Execute statement: ".$selectStmt->__toString());
+        self::$_logger->debug($selectStmt->getBind());
       }
       $result = $selectStmt->query();
       // save statement on success
       $selectStmt->save();
       $rows = $result->fetchAll();
-      if (self::$isDebugEnabled) {
-        Log::debug("Result: ".sizeof($rows)." row(s)", __CLASS__);
+      if (self::$_isDebugEnabled) {
+        self::$_logger->debug("Result: ".sizeof($rows)." row(s)");
       }
       return $rows;
     }
     catch (Exception $ex) {
-      Log::error("The query: ".$selectStmt."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
+      self::$_logger->error("The query: ".$selectStmt."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
   }
@@ -409,7 +414,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
     }
     catch (Exception $ex) {
-      Log::error("The operation: ".$operation."\ncaused the following exception:\n".$ex->getMessage(), __CLASS__);
+      self::$_logger->error("The operation: ".$operation."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
     return $affectedRows;
@@ -683,8 +688,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see AbstractMapper::loadImpl()
    */
   protected function loadImpl(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
-    if (self::$isDebugEnabled) {
-      Log::debug("Load object: ".$oid->__toString(), __CLASS__);
+    if (self::$_isDebugEnabled) {
+      self::$_logger->debug("Load object: ".$oid->__toString());
     }
     // delegate to loadObjects
     $criteria = $this->createPKCondition($oid);
@@ -883,8 +888,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see PersistenceFacade::loadObjectsImpl()
    */
   protected function loadObjectsImpl($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    if (self::$isDebugEnabled) {
-      Log::debug("Load objects: ".$type, __CLASS__);
+    if (self::$_isDebugEnabled) {
+      self::$_logger->debug("Load objects: ".$type);
     }
     $objects = $this->loadObjectsFromQueryParts($type, $buildDepth, $criteria, $orderby, $pagingInfo);
     return $objects;
@@ -1069,8 +1074,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   protected function loadRelationImpl(array $objects, $role, $buildDepth=BuildDepth::SINGLE,
     $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    if (self::$isDebugEnabled) {
-      Log::debug("Load relation: ".$role, __CLASS__);
+    if (self::$_isDebugEnabled) {
+      self::$_logger->debug("Load relation: ".$role);
     }
     $relatives = array();
     if (sizeof($objects) == 0) {
@@ -1175,7 +1180,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param $isInTransaction Boolean whether the connection is in a transaction or not
    */
   protected function setIsInTransaction($isInTransaction) {
-    self::$inTransaction[$this->_connId] = $isInTransaction;
+    self::$_inTransaction[$this->_connId] = $isInTransaction;
   }
 
   /**
@@ -1183,7 +1188,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @return Boolean
    */
   protected function isInTransaction() {
-    return isset(self::$inTransaction[$this->_connId]) && self::$inTransaction[$this->_connId] === true;
+    return isset(self::$_inTransaction[$this->_connId]) && self::$_inTransaction[$this->_connId] === true;
   }
 
   /**

@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\persistence\output\impl;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\output\OutputStrategy;
 
@@ -21,6 +21,17 @@ use wcmf\lib\persistence\output\OutputStrategy;
  * @author ingo herwig <ingo@wemove.com>
  */
 class AuditingOutputStrategy implements OutputStrategy {
+
+  private static $_logger = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
+  }
 
   /**
    * @see OutputStrategy::writeHeader
@@ -46,7 +57,7 @@ class AuditingOutputStrategy implements OutputStrategy {
     switch ($state = $obj->getState()) {
       // log insert action
       case PersistentObject::STATE_NEW:
-        Log::info('INSERT '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$user->getLogin(), __CLASS__);
+        self::$_logger->info('INSERT '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$user->getLogin());
         break;
       // log update action
       case PersistentObject::STATE_DIRTY:
@@ -67,12 +78,12 @@ class AuditingOutputStrategy implements OutputStrategy {
             $diff .= $value['name'].':'.$value['old'].'->'.$value['new'].' ';
           }
         }
-        Log::info('SAVE '.$obj->getOID().': '.$diff.' USER: '.$user->getLogin(), __CLASS__);
+        self::$_logger->info('SAVE '.$obj->getOID().': '.$diff.' USER: '.$user->getLogin());
         break;
       // log delete action
       case PersistentObject::STATE_DELETED:
         // get old object from storage
-        Log::info('DELETE '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$user->getLogin(), __CLASS__);
+        self::$_logger->info('DELETE '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$user->getLogin());
         break;
     }
   }

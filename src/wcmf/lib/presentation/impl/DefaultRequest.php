@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\presentation\impl;
 
-use wcmf\lib\core\Log;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\format\Format;
 use wcmf\lib\presentation\impl\AbstractControllerMessage;
@@ -34,10 +34,15 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   private $_method = null;
 
+  private static $_logger = null;
+
   /**
    * Constructor
    */
   public function __construct() {
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
     // add header values to request
     foreach (self::getAllHeaders() as $name => $value) {
       $this->setHeader($name, $value);
@@ -69,8 +74,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     $basePath = preg_replace('/\/?[^\/]*$/', '', $_SERVER['SCRIPT_NAME']);
     $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
     $requestPath = preg_replace('/^'.StringUtil::escapeForRegex($basePath).'/', '', $requestUri);
-    if (Log::isDebugEnabled(__CLASS__)) {
-      Log::debug("Request path: ".$requestPath, __CLASS__);
+    if (self::$_logger->isDebugEnabled()) {
+      self::$_logger->debug("Request path: ".$requestPath);
     }
     $config = ObjectFactory::getConfigurationInstance();
 
@@ -95,13 +100,13 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         $pattern = '/^'.str_replace('/', '\/', $pattern).'\/?$/';
 
         // try to match the currrent request path
-        if (Log::isDebugEnabled(__CLASS__)) {
-          Log::debug("Check path: ".$pattern, __CLASS__);
+        if (self::$_logger->isDebugEnabled()) {
+          self::$_logger->debug("Check path: ".$pattern);
         }
         $matches = array();
         if (preg_match($pattern, $requestPath, $matches)) {
-          if (Log::isDebugEnabled(__CLASS__)) {
-            Log::debug("Match", __CLASS__);
+          if (self::$_logger->isDebugEnabled()) {
+            self::$_logger->debug("Match");
           }
           // set parameters from request definition
           parse_str($requestDef, $baseRequestValues);

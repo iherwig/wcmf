@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use \Exception;
-use wcmf\lib\core\Log;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
@@ -271,7 +270,7 @@ class SaveController extends Controller {
       $transaction->rollback();
     }
     catch (Exception $ex) {
-      Log::error($ex, __CLASS__);
+      $this->getLogger()->error($ex);
       $response->addError(ApplicationError::fromException($ex));
       $transaction->rollback();
     }
