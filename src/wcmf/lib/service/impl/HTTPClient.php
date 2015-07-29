@@ -10,9 +10,6 @@
  */
 namespace wcmf\lib\service\impl;
 
-use \Exception;
-use \RuntimeException;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ControllerMessage;
 use wcmf\lib\presentation\Request;
@@ -48,7 +45,7 @@ class HTTPClient implements RemotingClient {
    */
   public function __construct($serverUrl, $user) {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     $this->_client = new Zend_Http_Client($serverUrl, array(
         'keepalive' => true,
@@ -98,9 +95,9 @@ class HTTPClient implements RemotingClient {
     try {
       $httpResponse = $this->_client->request();
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       self::$_logger->error("Error in remote call to ".$url.":\n".$ex, __FILE__);
-      throw new RuntimeException("Error in remote call to ".$url.": ".$ex->getMessage());
+      throw new \RuntimeException("Error in remote call to ".$url.": ".$ex->getMessage());
     }
 
     // deserialize the response
@@ -119,7 +116,7 @@ class HTTPClient implements RemotingClient {
       }
       $url = $this->_client->getUri();
       self::$_logger->error("Error in remote call to ".$url.": ".$errorMsg."\n".$response->toString(), __FILE__);
-      throw new RuntimeException("Error in remote call: $errorMsg");
+      throw new \RuntimeException("Error in remote call: $errorMsg");
     }
     return $response;
   }
@@ -146,7 +143,7 @@ class HTTPClient implements RemotingClient {
       }
     }
     else {
-      throw new RuntimeException("Remote user required for remote call.");
+      throw new \RuntimeException("Remote user required for remote call.");
     }
   }
 
@@ -157,7 +154,7 @@ class HTTPClient implements RemotingClient {
   protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');
     self::$_logger->error("Error in remote call to ".$this->_serverBase.": ".$errorMsg."\n".$response->toString(), __FILE__);
-    throw new RuntimeException("Error in remote call to ".$this->_serverBase.": ".$errorMsg);
+    throw new \RuntimeException("Error in remote call to ".$this->_serverBase.": ".$errorMsg);
   }
 }
 ?>

@@ -10,9 +10,7 @@
  */
 namespace wcmf\lib\service;
 
-use SoapHeader;
-use SoapVar;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\ObjectFactory;
 
 /**
  * SoapClient is used to communicate with wCMF soap services.
@@ -38,7 +36,7 @@ class SoapClient extends \SoapClient {
   public function __construct($wsdl, $user, $password, $options) {
     parent::__construct($wsdl, $options);
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     $this->_user = $user;
     $this->_password = $password;
@@ -94,7 +92,7 @@ class SoapClient extends \SoapClient {
           <wsse:Nonce EncodingType="'.self::OASIS.'/oasis-200401-wss-soap-message-security-1.0#Base64Binary">'.$nonce.'</wsse:Nonce>
         </wsse:UsernameToken>
       </wsse:Security>';
-    return new SoapHeader(self::OASIS.'/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', new SoapVar($xml, XSD_ANYXML), true);
+    return new \SoapHeader(self::OASIS.'/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', new \SoapVar($xml, XSD_ANYXML), true);
   }
 
   /**

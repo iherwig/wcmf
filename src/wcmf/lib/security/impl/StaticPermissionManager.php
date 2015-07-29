@@ -13,7 +13,6 @@ namespace wcmf\lib\security\impl;
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\config\impl\InifileConfiguration;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\security\impl\AbstractPermissionManager;
 use wcmf\lib\security\PermissionManager;
@@ -38,7 +37,7 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     $this->_actionKeyProvider = new ConfigActionKeyProvider();
     $this->_actionKeyProvider->setConfigSection(self::AUTHORIZATION_SECTION);

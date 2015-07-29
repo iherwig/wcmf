@@ -17,6 +17,8 @@ use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 
+new ClassLoader(WCMF_BASE);
+
 /**
  * Application is the main application class, that does all the initialization.
  *
@@ -33,15 +35,29 @@ class Application {
 
   /**
    * Constructor
+   * @param $configPath The path where config files reside (as seen from the entry script) (optional, default: 'config/')
+   * @param $mainConfigFile The main configuration file to use (optional, default: 'config.ini')
    */
-  public function __construct() {
-    new ClassLoader(WCMF_BASE);
-    new ErrorHandler();
+  public function __construct($configPath='../config/', $mainConfigFile='config.ini') {
     $this->_startTime = microtime(true);
-    ob_start(array($this, "outputHandler"));
+
+    // create logger
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = new \wcmf\lib\core\impl\Log4phpLogger(__CLASS__, $configPath.'log4php.php');
     }
+
+    ob_start(array($this, "outputHandler"));
+
+    // setup logging
+    $logManager = new LogManager(self::$_logger);
+    ObjectFactory::registerInstance('logManager', $logManager);
+
+    // setup configuration
+    $config = new InifileConfiguration($configPath);
+    $config->addConfiguration($mainConfigFile);
+    ObjectFactory::configure($config);
+
+    new ErrorHandler();
   }
 
   /**
@@ -63,22 +79,15 @@ class Application {
   }
 
   /**
-   * Initialize the application.
+   * Initialize the request.
    *
-   * @param $configPath The path where config files reside (as seen from main.php) (optional, default: 'config/')
-   * @param $mainConfigFile The main configuration file to use (optional, default: 'config.ini')
    * @param $defaultController The controller to call if none is given in request parameters (optional, default: '')
    * @param $defaultContext The context to set if none is given in request parameters (optional, default: '')
    * @param $defaultAction The action to perform if none is given in request parameters (optional, default: 'login')
    * @return Request instance representing the current HTTP request
    */
-  public function initialize($configPath='../config/', $mainConfigFile='config.ini',
-    $defaultController='', $defaultContext='', $defaultAction='login') {
-
-    LogManager::configure(new \wcmf\lib\core\impl\Log4phpLogger('ROOT', $configPath.'log4php.php'));
-    $config = new InifileConfiguration($configPath);
-    $config->addConfiguration($mainConfigFile);
-    ObjectFactory::configure($config);
+  public function initialize($defaultController='', $defaultContext='', $defaultAction='login') {
+    $config = ObjectFactory::getConfigurationInstance();
 
     // create the Request instance
     $this->_initialRequest = ObjectFactory::getInstance('request');

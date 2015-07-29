@@ -10,12 +10,11 @@
  */
 namespace wcmf\lib\util;
 
-use Exception;
 use PDO;
 use Zend_Db;
+
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceException;
 
@@ -55,7 +54,7 @@ class DBUtil {
         $conn->setFetchMode(Zend_Db::FETCH_ASSOC);
         return $conn;
       }
-      catch(Exception $ex) {
+      catch(\Exception $ex) {
         throw new PersistenceException("Connection to ".$connectionParams['dbHostName'].".".
           $connectionParams['dbName']." failed: ".$ex->getMessage());
       }
@@ -72,7 +71,7 @@ class DBUtil {
    * @return Boolean whether execution succeeded or not.
    */
   public static function executeScript($file, $initSection) {
-    $logger = LogManager::getLogger(__CLASS__);
+    $logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     if (file_exists($file)) {
       $logger->info('Executing SQL script '.$file.' ...');
 
@@ -97,7 +96,7 @@ class DBUtil {
             try {
               $conn->query($command);
             }
-            catch(Exception $ex) {
+            catch(\Exception $ex) {
               $exception = $ex;
               break;
             }
@@ -131,7 +130,7 @@ class DBUtil {
    * @param $password The password
    */
   public static function copyDatabase($srcName, $destName, $server, $user, $password) {
-    $logger = LogManager::getLogger(__CLASS__);
+    $logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     if ($srcName && $destName && $server && $user) {
       self::createDatabase($destName, $server, $user, $password);
 
@@ -140,7 +139,7 @@ class DBUtil {
       try {
         $conn = new PDO("mysql:host=$server", $user, $password);
       }
-      catch(Exception $ex) {
+      catch(\Exception $ex) {
       	throw new PersistenceException("Couldn't connect to MySql: ".$ex->getMessage());
       }
 
@@ -165,7 +164,7 @@ class DBUtil {
           }
           $conn->commit();
         }
-      } catch (Exception $ex) {
+      } catch (\Exception $ex) {
         $conn->rollback();
       }
     }
@@ -186,7 +185,7 @@ class DBUtil {
       try {
         $conn = new PDO("mysql:host=$server", $user, $password);
       }
-      catch(Exception $ex) {
+      catch(\Exception $ex) {
       	throw new PersistenceException("Couldn't connect to MySql: ".$ex->getMessage());
       }
       // create database

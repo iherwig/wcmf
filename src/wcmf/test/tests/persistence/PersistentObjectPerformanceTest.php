@@ -13,7 +13,6 @@ namespace wcmf\test\tests\persistence;
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
 
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\ObjectQuery;
@@ -46,7 +45,7 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
   protected function setUp() {
     parent::setUp();
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

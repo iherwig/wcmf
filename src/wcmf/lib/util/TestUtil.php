@@ -39,7 +39,8 @@ class TestUtil {
               'Did you forget to generate code from the model?');
     }
 
-    LogManager::configure(new \wcmf\lib\core\impl\Log4phpLogger('ROOT', 'log4php.php'));
+    $logManager = new LogManager(new \wcmf\lib\core\impl\Log4phpLogger('wcmf', 'log4php.php'));
+    ObjectFactory::registerInstance('logManager', $logManager);
 
     $config = new InifileConfiguration($configPath);
     $config->addConfiguration('config.ini');

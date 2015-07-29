@@ -11,7 +11,6 @@
 namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
@@ -43,7 +42,7 @@ class AbstractPermissionManager {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

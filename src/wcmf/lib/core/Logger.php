@@ -84,10 +84,10 @@ interface Logger {
   public function isFatalEnabled();
 
   /**
-   * Get a logger by name
+   * Get a Logger instance by name
    * @param $name The name
    * @return Logger
    */
-  public function getLogger($name);
+  public static function getLogger($name);
 }
 ?>

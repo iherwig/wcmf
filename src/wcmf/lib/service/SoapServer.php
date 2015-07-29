@@ -10,9 +10,6 @@
  */
 namespace wcmf\lib\service;
 
-use Exception;
-use nusoap_server;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
@@ -26,7 +23,7 @@ use wcmf\lib\util\URIUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SoapServer extends nusoap_server {
+class SoapServer extends \nusoap_server {
 
   const TNS = 'http://wcmf.sourceforge.net';
 
@@ -39,7 +36,7 @@ class SoapServer extends nusoap_server {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     $scriptURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $endpoint = dirname($scriptURL).'/soap';
@@ -87,7 +84,7 @@ class SoapServer extends nusoap_server {
     try {
       $this->_application->initialize();
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       $this->handleException($ex);
     }
   }
@@ -104,7 +101,7 @@ class SoapServer extends nusoap_server {
       parent::service($data);
       error_reporting($oldErrorReporting);
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       $this->handleException($ex);
     }
   }

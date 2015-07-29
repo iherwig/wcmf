@@ -11,7 +11,6 @@
 namespace wcmf\lib\persistence\impl;
 
 use wcmf\lib\core\ErrorHandler;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
@@ -48,7 +47,7 @@ abstract class AbstractMapper implements PersistenceMapper {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

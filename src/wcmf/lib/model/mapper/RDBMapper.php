@@ -13,7 +13,6 @@ namespace wcmf\lib\model\mapper;
 use Exception;
 use PDO;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
@@ -76,7 +75,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   public function __construct() {
     parent::__construct();
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     self::$_isDebugEnabled = self::$_logger->isDebugEnabled();
   }

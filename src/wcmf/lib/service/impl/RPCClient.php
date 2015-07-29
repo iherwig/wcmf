@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\service\impl;
 
-use \RuntimeException;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\format\Formatter;
@@ -41,11 +39,11 @@ class RPCClient implements RemotingClient {
    */
   public function __construct($serverCli, $user) {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     $this->_serverCli = realpath($serverCli);
     if (!file_exists($this->_serverCli)) {
-      throw new RuntimeException("Could not setup RPCClient: ".$this->_serverCli." not found.");
+      throw new \RuntimeException("Could not setup RPCClient: ".$this->_serverCli." not found.");
     }
 
     // locate the php executable
@@ -159,7 +157,7 @@ class RPCClient implements RemotingClient {
       }
     }
     else {
-      throw new RuntimeException("Remote user required for remote call.");
+      throw new \RuntimeException("Remote user required for remote call.");
     }
   }
 
@@ -195,7 +193,7 @@ class RPCClient implements RemotingClient {
   protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');
     self::$_logger->error("Error in remote call to ".$this->_serverCli.": ".$errorMsg."\n".$response->toString());
-    throw new RuntimeException("Error in remote call to ".$this->_serverCli.": ".$errorMsg);
+    throw new \RuntimeException("Error in remote call to ".$this->_serverCli.": ".$errorMsg);
   }
 }
 ?>

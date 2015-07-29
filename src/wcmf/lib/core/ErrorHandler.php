@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\core;
 
-use wcmf\lib\core\LogManager;
-
 /**
  * ErrorHandler catches all php errors and transforms fatal
  * errors into ErrorExceptions and non-fatal into log messages
@@ -30,7 +28,7 @@ class ErrorHandler {
   public function __construct() {
     set_error_handler(array($this, 'handleError'));
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

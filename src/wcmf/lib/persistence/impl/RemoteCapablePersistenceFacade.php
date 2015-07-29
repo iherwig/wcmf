@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\persistence\impl;
 
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\persistence\ObjectId;
@@ -44,7 +43,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     // initialize session variables
     $session = ObjectFactory::getInstance('session');

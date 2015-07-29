@@ -13,7 +13,6 @@ namespace wcmf\lib\presentation\view\impl;
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\view\View;
@@ -46,7 +45,7 @@ class SmartyView implements View {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     $this->_view = new \Smarty();
     $this->_view->error_reporting = E_ALL;

@@ -6,10 +6,10 @@ return array(
   ),
 
   'loggers' => array(
-    'wcmf\lib\model\mapper\RDBMapper' => array('level' => 'ERROR'),
-    'wcmf\lib\config\impl\InifileConfiguration' => array('level' => 'ERROR'),
-    'wcmf\lib\security\impl\DefaultPermissionManager' => array('level' => 'ERROR'),
-    'wcmf\lib\persistence\impl\DefaultTransaction' => array('level' => 'ERROR'),
+    'wcmf.lib.model.mapper.RDBMapper' => array('level' => 'ERROR'),
+    'wcmf.lib.config.impl.InifileConfiguration' => array('level' => 'ERROR'),
+    'wcmf.lib.security.impl.DefaultPermissionManager' => array('level' => 'ERROR'),
+    'wcmf.lib.persistence.impl.DefaultTransaction' => array('level' => 'ERROR'),
   ),
 
   'appenders' => array(

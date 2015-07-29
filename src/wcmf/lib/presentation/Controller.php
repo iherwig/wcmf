@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\presentation;
 
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -49,7 +48,7 @@ abstract class Controller {
    * Constructor
    */
   public function __construct() {
-    $this->_logger = LogManager::getLogger(__CLASS__);
+    $this->_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
   }
 
   /**

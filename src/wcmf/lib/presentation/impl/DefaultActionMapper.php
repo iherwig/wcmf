@@ -12,7 +12,6 @@ namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
@@ -38,7 +37,7 @@ class DefaultActionMapper implements ActionMapper {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

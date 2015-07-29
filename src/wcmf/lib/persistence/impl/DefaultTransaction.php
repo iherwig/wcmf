@@ -11,7 +11,6 @@
 namespace wcmf\lib\persistence\impl;
 
 use \Exception;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\Transaction;
 use wcmf\lib\persistence\ObjectId;
@@ -48,7 +47,7 @@ class DefaultTransaction implements Transaction {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,

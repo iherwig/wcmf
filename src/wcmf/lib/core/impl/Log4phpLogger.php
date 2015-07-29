@@ -13,10 +13,7 @@ namespace wcmf\lib\core\impl;
 use \Logger;
 
 /**
- * Log is used to log application events. The implementation
- * is a wrapper over log4php. All methods may be called in a way.
- * @note The only reason, why this class inherits from Logger is to get the
- * correct location information.
+ * Log4phpLogger is a wrapper for the log4php library.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -118,7 +115,7 @@ class Log4phpLogger implements \wcmf\lib\core\Logger {
   /**
    * @see Logger::getLogger()
    */
-  public function getLogger($name) {
+  public static function getLogger($name) {
     return new Log4phpLogger($name);
   }
 }

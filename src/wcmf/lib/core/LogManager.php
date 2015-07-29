@@ -10,26 +10,21 @@
  */
 namespace wcmf\lib\core;
 
-use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\ObjectFactory;
-
 /**
  * LogManager is used to retrieve Logger instances.
- * Logger objects are instantiated from the Logger configuration section
- * and get the logger name passed additionally.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class LogManager {
 
-  private static $_loggerInstance = null;
+  private $_logger = null;
 
   /**
-   * Configure the LogManager with a Logger instance
-   * @param type $loggerInstance
+   * Constructor
+   * @param $logger Logger instance
    */
-  public static function configure(Logger $loggerInstance) {
-    self::$_loggerInstance = $loggerInstance;
+  public function __construct(Logger $logger) {
+    $this->_logger = $logger;
   }
 
   /**
@@ -37,11 +32,8 @@ class LogManager {
    * @param $name The logger name
    * @return Logger
    */
-  public static function getLogger($name) {
-    if (self::$_loggerInstance == null) {
-      throw new ConfigurationException('LogManager::configure has to be called before using Logger');
-    }
-    return self::$_loggerInstance->getLogger($name);
+  public function getLogger($name) {
+    return $this->_logger->getLogger($name);
   }
 }
 ?>

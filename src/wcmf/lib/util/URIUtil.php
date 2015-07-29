@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\util;
 
-use wcmf\lib\core\LogManager;
-
 /**
  * URIUtil provides support for uri manipulation.
  *
@@ -130,7 +128,6 @@ class URIUtil {
    * @return Boolean whether the url is available
    */
   public static function validateUrl($url, $timeout=5) {
-    $logger = LogManager::getLogger(__CLASS__);
     $url_parts = @parse_url($url);
     // check local relative url
     if (empty($url_parts["host"])) {
@@ -147,9 +144,6 @@ class URIUtil {
     curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
     $r = curl_exec($ch);
     $headers = split("\n", $r);
-    if ($logger->isDebugEnabled()) {
-      $logger->debug("$url: HTTP-Response: ".  json_encode($headers));
-    }
 
     preg_match('/.+ ([0-9]{3}) .+/', $headers[0], $matches);
     return (intval($matches[1]) < 400);

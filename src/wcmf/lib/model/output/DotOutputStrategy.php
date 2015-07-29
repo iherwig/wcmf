@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\model\output;
 
-use wcmf\lib\core\LogManager;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PersistentObject;
 
@@ -60,7 +59,7 @@ class DotOutputStrategy implements OutputStrategy {
       $this->_edgeStyle = $this->DEFAULT_EDGE_STYLE;
     }
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

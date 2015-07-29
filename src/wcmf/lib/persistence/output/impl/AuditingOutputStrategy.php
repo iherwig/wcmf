@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\persistence\output\impl;
 
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\output\OutputStrategy;
 
@@ -29,7 +29,7 @@ class AuditingOutputStrategy implements OutputStrategy {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

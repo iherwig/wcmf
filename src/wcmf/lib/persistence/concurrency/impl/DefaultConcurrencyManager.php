@@ -11,7 +11,6 @@
 namespace wcmf\lib\persistence\concurrency\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
@@ -42,7 +41,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
   public function setLockHandler(LockHandler $lockHandler) {
     $this->_lockHandler = $lockHandler;
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

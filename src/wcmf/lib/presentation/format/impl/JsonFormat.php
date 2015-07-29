@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\presentation\format\impl;
 
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 
@@ -43,7 +43,7 @@ class JsonFormat extends HierarchicalFormat {
   public function __construct(NodeSerializer $serializer) {
     $this->_serializer = $serializer;
     if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
   }
 

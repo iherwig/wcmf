@@ -16,7 +16,7 @@ namespace wcmf\lib\config;
  * be created on application startup and must be registered at ObjectFactory
  * using the ObjectFactory::configure() method.
  *
- * Configurations are supposed to be separated into section, that contain
+ * Configurations are supposed to be separated into sections, that contain
  * keys with values. Section names and keys are treated case insensitive.
  *
  * There maybe more than one application configuration.

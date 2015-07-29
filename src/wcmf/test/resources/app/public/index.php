@@ -16,10 +16,10 @@ require_once(dirname(WCMF_BASE)."/vendor/autoload.php");
 use \Exception;
 use wcmf\lib\presentation\Application;
 
-$application = new Application();
+$application = new Application(WCMF_BASE.'app/config/', 'config.ini');
 try {
   // initialize the application
-  $request = $application->initialize(WCMF_BASE.'app/config/', 'config.ini', '', '', 'cms');
+  $request = $application->initialize('', '', 'cms');
 
   // run the application
   $application->run($request);
