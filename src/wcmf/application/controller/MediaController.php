@@ -119,7 +119,7 @@ class MediaController extends Controller {
 
       // run elFinder
       $connector = new ElFinderConnector(new ElFinder($opts));
-      $connector->run();
+      $connector->run($_GET);
 
       // unreachable, since elFinder calls exit()
       $response->setAction('ok');
